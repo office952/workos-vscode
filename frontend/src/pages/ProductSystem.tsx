@@ -2,11 +2,13 @@ import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   productTemplatesApi,
+  productTemplateAvailabilityApi,
   materialsApi,
   parseTemplateComponentsWithLegacy,
   validateTemplateComponentsStrict,
   PRODUCT_COMPONENT_TYPES,
   type ProductTemplateEntity,
+  type ProductTemplateAvailabilityItem,
   type ProductTemplateComponent,
   type ProductComponentType,
   type ProductTemplateOperation,
@@ -78,6 +80,8 @@ import {
 } from "@/features/product-system/productAggregateDisplay";
 import {
   TemplateLibraryView,
+  type CatalogDensity,
+  type ProductSystemCatalogView,
   type TemplateLibraryRowSummary,
 } from "@/features/product-system/TemplateLibraryView";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
@@ -1979,12 +1983,22 @@ function productSystemLoadModeToSource(
 
 function ProductSystemInfoPopover({
   loadMode,
-  activeCount,
-  archivedCount,
+  catalogCounts = {
+    activeProducts: 0,
+    candidateProducts: 0,
+    internalModules: 0,
+    sharedComponents: 0,
+    archivedExperimental: 0,
+  },
 }: {
   loadMode: "api" | "mock" | "empty_real" | "auth_required" | "error";
-  activeCount: number;
-  archivedCount: number;
+  catalogCounts?: {
+    activeProducts: number;
+    candidateProducts: number;
+    internalModules: number;
+    sharedComponents: number;
+    archivedExperimental: number;
+  };
 }) {
   return (
     <Popover>
@@ -2040,7 +2054,7 @@ function ProductSystemInfoPopover({
         <p className="mt-2 text-[10px] text-slate-600">
           Sursă date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
           {" · "}
-          {activeCount} activ pentru ofertă · {archivedCount} arhivate
+          {catalogCounts.activeProducts} produse ofertabile · {catalogCounts.candidateProducts} in pregatire · {catalogCounts.internalModules} module interne
         </p>
       </PopoverContent>
     </Popover>
@@ -2053,6 +2067,7 @@ function ProductSystemInfoPopover({
 export default function ProductSystem() {
   type TemplateLoadMode = "api" | "mock" | "empty_real" | "auth_required" | "error";
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
+  const [availabilityItems, setAvailabilityItems] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [families, setFamilies] = useState<ProductFamily[]>([]);
   const [materials, setMaterials] = useState<InventoryMaterialEntity[]>([]);
   const [loading, setLoading] = useState(true);
@@ -2062,6 +2077,8 @@ export default function ProductSystem() {
   const [screen, setScreen] = useState<ProductSystemScreen>(getInitialProductSystemScreen);
   const [libraryTab, setLibraryTab] = useState<LibraryTab>("active");
   const [librarySearch, setLibrarySearch] = useState("");
+  const [catalogView, setCatalogView] = useState<ProductSystemCatalogView>("overview");
+  const [catalogDensity, setCatalogDensity] = useState<CatalogDensity>("compact");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState<DraftTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -2079,10 +2096,15 @@ export default function ProductSystem() {
     let loaded: ProductTemplateEntity[] = [];
 
     try {
-      const [templateResult, famRes, matRes] = await Promise.allSettled([
+      const [templateResult, famRes, matRes, availabilityRes] = await Promise.allSettled([
         productTemplatesApi.list(),
         productFamiliesApi.list({ limit: 500, sort: "label" }),
         materialsApi.list({}, { limit: 500, sort: "code" }),
+        productTemplateAvailabilityApi.list({
+          offerable_only: false,
+          include_runtime_modules: true,
+          include_archived: true,
+        }),
       ]);
 
       // Handle families (non-critical) — fall back to mock if API fails
@@ -2102,6 +2124,12 @@ export default function ProductSystem() {
         setMaterials(Array.isArray(matRes.value) ? matRes.value : []);
       } else {
         setMaterials([]);
+      }
+
+      if (availabilityRes.status === "fulfilled") {
+        setAvailabilityItems(Array.isArray(availabilityRes.value.items) ? availabilityRes.value.items : []);
+      } else {
+        setAvailabilityItems([]);
       }
 
       // Handle templates (critical)
@@ -2154,6 +2182,7 @@ export default function ProductSystem() {
         setTemplates(loaded);
         setFamilies(mockProductFamilies() as unknown as ProductFamily[]);
         setMaterials([]);
+        setAvailabilityItems([]);
         setWarning("DEV MOCK DATA — aceste date nu vin din API real.");
         setLoadMode("mock");
       } else if (isAuthError) {
@@ -2161,12 +2190,14 @@ export default function ProductSystem() {
         setTemplates([]);
         setFamilies([]);
         setMaterials([]);
+        setAvailabilityItems([]);
         setWarning("Lipsă sesiune / autentificare necesară pentru API real.");
         setLoadMode("auth_required");
       } else {
         console.error("Failed to load product templates", e);
         loaded = [];
         setTemplates([]);
+        setAvailabilityItems([]);
         setError("Nu s-au putut încărca șabloanele. Verifică conexiunea la backend.");
         setLoadMode("error");
       }
@@ -2188,6 +2219,16 @@ export default function ProductSystem() {
 
   const activeOwnerCount = filterActiveTemplatesForQuote(templates).length;
   const archivedCount = filterArchivedExperimentalTemplates(templates).length;
+  const catalogCounts = useMemo(
+    () => ({
+      activeProducts: availabilityItems.filter((item) => item.display_group === "active_products").length,
+      candidateProducts: availabilityItems.filter((item) => item.display_group === "candidate_products").length,
+      internalModules: availabilityItems.filter((item) => item.display_group === "internal_modules").length,
+      sharedComponents: availabilityItems.filter((item) => item.display_group === "shared_components").length,
+      archivedExperimental: availabilityItems.filter((item) => item.display_group === "archived_experimental").length,
+    }),
+    [availabilityItems]
+  );
 
   const materialsByCode = useMemo(() => {
     const m = new Map<string, InventoryMaterialEntity>();
@@ -2409,12 +2450,12 @@ export default function ProductSystem() {
             <h1 className="text-[18px] font-bold text-slate-100">
               {shouldShowEditorScreen(screen, draft)
                 ? "ProductSystem / Blueprint Studio"
-                : "ProductSystem / Șabloane"}
+                : "Product System Catalog"}
             </h1>
             <p className="text-[11px] text-slate-500 mt-0.5">
               {shouldShowEditorScreen(screen, draft)
                 ? "Editor pentru structura șablonului selectat."
-                : "Alege un șablon pentru a edita structura, componentele, operațiile și materialele."}
+                : "Catalogul logic al produselor, modulelor si componentelor Product System."}
             </p>
             {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
               <p className="text-[10px] text-amber-400/90 mt-2">
@@ -2431,8 +2472,7 @@ export default function ProductSystem() {
           <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
           <ProductSystemInfoPopover
             loadMode={loadMode}
-            activeCount={activeOwnerCount}
-            archivedCount={archivedCount}
+            catalogCounts={catalogCounts}
           />
           <Link
             to="/product-system/blueprint-dossier"
@@ -2529,10 +2569,15 @@ export default function ProductSystem() {
         ) : shouldShowLibraryScreen(screen) ? (
           <TemplateLibraryView
             templates={templates}
+            availabilityItems={availabilityItems}
             tab={libraryTab}
             onTabChange={setLibraryTab}
             search={librarySearch}
             onSearchChange={setLibrarySearch}
+            catalogView={catalogView}
+            onCatalogViewChange={setCatalogView}
+            density={catalogDensity}
+            onDensityChange={setCatalogDensity}
             summaries={enrichedTemplateSummaries}
             recommendedTemplateId={recommendedTemplate?.id ?? null}
             activeCount={activeOwnerCount}
