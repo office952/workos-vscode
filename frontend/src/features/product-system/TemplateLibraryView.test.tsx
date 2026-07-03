@@ -17,6 +17,32 @@ const VOLUM_ALUMINUM = "TPL-VOLUM-ALUMINIU_v1";
 const FACE = "TPL-VOLUMETRIC-FACE_v1";
 const LOGO_FACE = "TPL-VOLUMETRIC-LOGO-FACE_v1";
 
+const LETTER_SHARED_CONTRACTS = [
+  { component_key: "volumetric_face", display_name: "Volumetric face", profile_key: "letters", module_template_code: FACE, confidence: "MEDIUM", owner_decision: "APPROVE_AS_DIRECTION", shared_truth_fields: ["component_role", "area"], not_confirmed: [] },
+  { component_key: "volumetric_back", display_name: "Volumetric back", profile_key: "letters", module_template_code: "TPL-VOLUMETRIC-BACK_v1", confidence: "MEDIUM", owner_decision: "APPROVE_AS_DIRECTION", shared_truth_fields: ["component_role", "area"], not_confirmed: [] },
+  { component_key: "volumetric_return_side", display_name: "Volumetric return / side", profile_key: "letters", module_template_code: VOLUM_ALUMINUM, confidence: "MEDIUM", owner_decision: "APPROVE_AS_DIRECTION", shared_truth_fields: ["component_role", "perimeter"], not_confirmed: [] },
+  { component_key: "volumetric_lighting", display_name: "Volumetric lighting", profile_key: "letters", module_template_code: "TPL-VOLUMETRIC-LED_v1", confidence: "PARTIAL", owner_decision: "NEEDS_MORE_AUDIT", shared_truth_fields: ["led_module_count", "psu_selection"], not_confirmed: ["lighting_zones"] },
+  { component_key: "volumetric_surface_finish", display_name: "Volumetric surface finish", profile_key: "letters", module_template_code: "TPL-VOLUMETRIC-FINISH_v1", confidence: "LOW", owner_decision: "KEEP_SEPARATE_NOW", shared_truth_fields: ["finish_target"], not_confirmed: ["shared_packaging_qc_boundary"] },
+  { component_key: "volumetric_mounting_interface", display_name: "Volumetric mounting interface", profile_key: "letters", module_template_code: "TPL-METAL-PREMOUNT-STRUCTURE_v1", confidence: "LOW", owner_decision: "KEEP_SEPARATE_NOW", shared_truth_fields: ["mounting_support_requirement"], not_confirmed: ["mounting_alignment"] },
+];
+
+const LOGO_SHARED_CONTRACTS = LETTER_SHARED_CONTRACTS.map((contract) => ({
+  ...contract,
+  profile_key: "logo",
+  module_template_code: contract.component_key === "volumetric_face"
+    ? LOGO_FACE
+    : contract.component_key === "volumetric_back"
+      ? "TPL-VOLUMETRIC-LOGO-BACK_v1"
+      : contract.component_key === "volumetric_return_side"
+        ? "TPL-VOLUMETRIC-LOGO-RETURN_v1"
+        : contract.component_key === "volumetric_lighting"
+          ? "TPL-VOLUMETRIC-LOGO-LIGHTING_v1"
+          : contract.component_key === "volumetric_surface_finish"
+            ? "TPL-VOLUMETRIC-LOGO-FINISH_v1"
+            : "TPL-VOLUMETRIC-LOGO-MOUNTING_v1",
+  not_confirmed: contract.component_key === "volumetric_lighting" ? ["irregular_shape_impact"] : contract.not_confirmed,
+}));
+
 const LETTER_COMPOSITION = [
   { role_key: "front_face", role_label: "Fata litera", module_template_code: FACE, module_product_system_role: "internal_module", relation_type: "required_module", is_required: true, sort_order: 10, ui_hint: "Fata vizuala debitata din plexiglas.", status_label: "Modul intern activ" },
   { role_key: "back_panel", role_label: "Spate litera", module_template_code: "TPL-VOLUMETRIC-BACK_v1", module_product_system_role: "internal_module", relation_type: "required_module", is_required: true, sort_order: 20, ui_hint: "Spatele literei / inchidere corp.", status_label: "Modul intern activ" },
@@ -81,6 +107,7 @@ function makeAvailability(
     child_module_codes: [],
     shared_with_product_codes: [],
     composition_modules: [],
+    shared_component_contracts: [],
     ...overrides,
   };
 }
@@ -110,6 +137,7 @@ function createCatalogFixture() {
       ui_label: "Produs activ pentru ofertare",
       ui_description: "Poate fi ales ca produs initial in Work Intake.",
       composition_modules: LETTER_COMPOSITION,
+      shared_component_contracts: LETTER_SHARED_CONTRACTS,
     }),
     makeAvailability(logo, {
       is_parent: true,
@@ -126,6 +154,7 @@ function createCatalogFixture() {
       ui_label: "Produs in pregatire",
       ui_description: "Nu apare in Work Intake pana la GO owner.",
       composition_modules: LOGO_COMPOSITION,
+      shared_component_contracts: LOGO_SHARED_CONTRACTS,
     }),
     makeAvailability(volumAluminum, {
       runtime_module: true,
@@ -275,6 +304,11 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("3");
     expect(screen.getByTestId("product-system-overview-card-composition")).toHaveTextContent("2");
     expect(screen.getByTestId("product-system-overview-card-archived")).toHaveTextContent("0");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Shared Volumetric Foundation");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("2 produse conectate");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("6 contracte comune");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Lighting PARTIAL");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Logo: candidate / not Work Intake");
     expect(screen.queryByTestId("product-system-components-list")).not.toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-component-row-${VOLUM_ALUMINUM}`)).not.toBeInTheDocument();
   });
@@ -299,8 +333,14 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(within(products).getByTestId(`product-system-template-icon-${LETTERS}`)).toHaveClass("h-16");
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LETTERS}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LOGO}`)).toBeInTheDocument();
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Foundation 6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Foundation 6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
     expect(within(products).getByTestId(`product-system-template-meta-trigger-${LETTERS}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-meta-trigger-${LOGO}`)).toBeInTheDocument();
+    expect(screen.queryByTestId(`product-system-template-shared-foundation-${LETTERS}`)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(`product-system-template-shared-foundation-${LOGO}`)).not.toBeInTheDocument();
     expect(screen.queryByText("Nu apare in Work Intake.")).not.toBeInTheDocument();
     expect(screen.queryByText("Necesita GO owner pentru ofertare.")).not.toBeInTheDocument();
     expect(screen.queryByTestId("product-system-view-overview")).not.toBeInTheDocument();
@@ -315,18 +355,26 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
 
     const lettersMeta = screen.getByTestId(`product-system-template-meta-popover-${LETTERS}`);
     expect(within(lettersMeta).getByText("Module")).toBeInTheDocument();
-    expect(within(lettersMeta).getByText("6")).toBeInTheDocument();
+    expect(within(lettersMeta).getAllByText("6").length).toBeGreaterThanOrEqual(1);
     expect(within(lettersMeta).getByText("Validare")).toBeInTheDocument();
     expect(within(lettersMeta).getByText("6/6")).toBeInTheDocument();
     expect(within(lettersMeta).getByText("Work Intake")).toBeInTheDocument();
     expect(within(lettersMeta).getAllByText("Da").length).toBeGreaterThan(0);
     expect(within(lettersMeta).getByText("GO owner")).toBeInTheDocument();
+    expect(within(lettersMeta).getByText("Shared foundation")).toBeInTheDocument();
+    expect(within(lettersMeta).getByText("6 contracte")).toBeInTheDocument();
+    expect(within(lettersMeta).getByText("Profile")).toBeInTheDocument();
+    expect(within(lettersMeta).getByText("letters")).toBeInTheDocument();
     expect(within(lettersMeta).getAllByText("Nu").length).toBeGreaterThan(0);
 
     fireEvent.click(within(products).getByTestId(`product-system-template-meta-trigger-${LOGO}`));
     const logoMeta = screen.getByTestId(`product-system-template-meta-popover-${LOGO}`);
     expect(within(logoMeta).getByText("Work Intake")).toBeInTheDocument();
     expect(within(logoMeta).getByText("GO owner")).toBeInTheDocument();
+    expect(within(logoMeta).getByText("Shared foundation")).toBeInTheDocument();
+    expect(within(logoMeta).getByText("6 contracte")).toBeInTheDocument();
+    expect(within(logoMeta).getByText("Profile")).toBeInTheDocument();
+    expect(within(logoMeta).getByText("logo")).toBeInTheDocument();
     expect(within(logoMeta).getAllByText("Da").length).toBeGreaterThan(0);
     expect(within(logoMeta).getAllByText("Nu").length).toBeGreaterThan(0);
   });
@@ -378,6 +426,10 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
 
     expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "detailed");
     expect(screen.getByTestId(`product-system-template-composition-trigger-${LETTERS}`)).toHaveTextContent("Module produs (6)");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Shared foundation: 6 contracte");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Lighting PARTIAL");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
     expect(screen.getByTestId("product-system-products-list").textContent).toContain("Work Intake: DA");
     expect(screen.getByText("GO owner")).toBeInTheDocument();
     expect(screen.getByText("Apare in Work Intake")).toBeInTheDocument();
@@ -394,7 +446,14 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getByTestId("product-system-view-components")).toBeInTheDocument();
     expect(within(components).getByText(VOLUM_ALUMINUM)).toBeInTheDocument();
     expect(within(components).getByText(FACE)).toBeInTheDocument();
+    expect(within(components).getByText(LOGO_FACE)).toBeInTheDocument();
     expect(screen.getByTestId(`product-system-component-row-${VOLUM_ALUMINUM}`)).toBeInTheDocument();
+    expect(within(screen.getByTestId(`product-system-component-foundation-${FACE}`)).getByText("volumetric_face")).toBeInTheDocument();
+    expect(screen.getByTestId(`product-system-component-foundation-${FACE}`)).toHaveTextContent("Profil: letters");
+    expect(within(screen.getByTestId(`product-system-component-foundation-${LOGO_FACE}`)).getByText("volumetric_face")).toBeInTheDocument();
+    expect(screen.getByTestId(`product-system-component-foundation-${LOGO_FACE}`)).toHaveTextContent("Profil: logo");
+    expect(components.textContent).not.toContain("Shared");
+    expect(components.textContent).not.toContain("Nu");
     expect(screen.queryByTestId(`product-system-component-row-${LETTERS}`)).not.toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-template-icon-${VOLUM_ALUMINUM}`)).not.toBeInTheDocument();
     expect(screen.queryByTestId("product-system-products-list")).not.toBeInTheDocument();

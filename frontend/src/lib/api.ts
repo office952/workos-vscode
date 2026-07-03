@@ -318,6 +318,53 @@ export interface ProductTemplateAvailabilityItem {
   module_codes: string[];
   status: string;
   status_reason: string;
+  product_system_role:
+    | "offerable_product"
+    | "candidate_product"
+    | "internal_module"
+    | "shared_component"
+    | "archived_experimental"
+    | string;
+  display_group:
+    | "active_products"
+    | "candidate_products"
+    | "internal_modules"
+    | "shared_components"
+    | "archived_experimental"
+    | string;
+  importance_rank: number;
+  owner_decision_required: boolean;
+  readiness_reason: string;
+  ui_label: string;
+  ui_description: string;
+  parent_product_codes: string[];
+  child_module_codes: string[];
+  shared_with_product_codes: string[];
+  composition_modules: ProductTemplateCompositionModule[];
+  shared_component_contracts: SharedVolumetricComponentSummary[];
+}
+
+export interface ProductTemplateCompositionModule {
+  role_key: string;
+  role_label: string;
+  module_template_code: string;
+  module_product_system_role?: string | null;
+  relation_type?: string | null;
+  is_required: boolean;
+  sort_order: number;
+  ui_hint?: string | null;
+  status_label?: string | null;
+}
+
+export interface SharedVolumetricComponentSummary {
+  component_key: string;
+  display_name: string;
+  profile_key: "letters" | "logo" | string;
+  module_template_code: string;
+  confidence: "HIGH" | "MEDIUM" | "LOW" | "PARTIAL" | "NOT_CONFIRMED" | string;
+  owner_decision: "APPROVE_AS_DIRECTION" | "KEEP_SEPARATE_NOW" | "NEEDS_MORE_AUDIT" | "FORBIDDEN_NOW" | string;
+  shared_truth_fields: string[];
+  not_confirmed: string[];
 }
 
 export interface ProductTemplateAvailabilityResponse {

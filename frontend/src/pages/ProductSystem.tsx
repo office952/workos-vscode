@@ -1491,6 +1491,46 @@ function CollapsibleComponentCard({
 // ============================================================
 // EDITOR PANEL — Redesigned with visual components
 // ============================================================
+function SharedVolumetricFoundationPanel({
+  availability,
+}: {
+  availability?: ProductTemplateAvailabilityItem | null;
+}) {
+  const contracts = availability?.shared_component_contracts ?? [];
+  if (contracts.length === 0) return null;
+
+  const profiles = Array.from(new Set(contracts.map((contract) => contract.profile_key))).join(" + ");
+  const lighting = contracts.find((contract) => contract.component_key === "volumetric_lighting");
+
+  return (
+    <section data-testid="product-system-editor-shared-foundation" className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div>
+          <h3 className="text-[13px] font-bold text-cyan-100">Shared component foundation</h3>
+          <p className="mt-0.5 text-[11px] text-cyan-300/70">Read-only contract comun metadata. No pricing, no runtime activation, no Work Intake exposure change.</p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Read-only</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Profile {profiles}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Contracts {contracts.length}</span>
+          {lighting?.confidence === "PARTIAL" ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting PARTIAL</span> : null}
+        </div>
+      </div>
+      <div className="mt-2 grid gap-1.5 md:grid-cols-2 xl:grid-cols-3">
+        {contracts.map((contract) => (
+          <div key={contract.component_key} className="rounded-lg border border-slate-800 bg-slate-950/40 px-2.5 py-1.5">
+            <p className="text-[11px] font-bold text-slate-100">{contract.display_name}</p>
+            <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">Contract comun: {contract.component_key}</p>
+            <p className="mt-0.5 text-[10px] text-slate-500">Profil: {contract.profile_key}</p>
+            <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500">{contract.module_template_code}</p>
+            <p className="mt-1 text-[10px] text-slate-400">{contract.confidence} · {contract.owner_decision}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function TemplateEditor({
   draft,
   isNew,
@@ -1505,6 +1545,7 @@ function TemplateEditor({
   saving,
   families,
   materials,
+  availability,
 }: {
   draft: DraftTemplate;
   isNew: boolean;
@@ -1523,6 +1564,7 @@ function TemplateEditor({
   saving: boolean;
   families: ProductFamily[];
   materials: InventoryMaterialEntity[];
+  availability?: ProductTemplateAvailabilityItem | null;
 }) {
   const [studioTab, setStudioTab] = useState<"structure" | "general" | "operational" | "form-system">("structure");
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
@@ -1688,23 +1730,26 @@ function TemplateEditor({
   const internalHoursLabel = formatInternalTemplateHours(draft.estimated_hours);
 
   const generalTabPanel = (
-    <TemplateGeneralTabPanel
-      draft={draft}
-      readOnly={readOnly}
-      saving={saving}
-      isNew={isNew}
-      familyList={familyList}
-      internalHoursLabel={internalHoursLabel}
-      componentCount={displayCounts.components}
-      operationCount={displayCounts.operations}
-      materialCount={displayCounts.materials}
-      isArchivedForQuote={archivePolicy.isArchivedForQuote}
-      canArchive={archivePolicy.canArchive}
-      archiveBlockReason={archivePolicy.blockReason}
-      onNotesChange={(value) => update("notes", value)}
-      onDescriptionChange={(value) => update("description", value)}
-      onArchive={readOnly ? undefined : onArchive}
-    />
+    <div className="space-y-3">
+      <TemplateGeneralTabPanel
+        draft={draft}
+        readOnly={readOnly}
+        saving={saving}
+        isNew={isNew}
+        familyList={familyList}
+        internalHoursLabel={internalHoursLabel}
+        componentCount={displayCounts.components}
+        operationCount={displayCounts.operations}
+        materialCount={displayCounts.materials}
+        isArchivedForQuote={archivePolicy.isArchivedForQuote}
+        canArchive={archivePolicy.canArchive}
+        archiveBlockReason={archivePolicy.blockReason}
+        onNotesChange={(value) => update("notes", value)}
+        onDescriptionChange={(value) => update("description", value)}
+        onArchive={readOnly ? undefined : onArchive}
+      />
+      <SharedVolumetricFoundationPanel availability={availability} />
+    </div>
   );
 
   const structurePanel = (
@@ -2229,6 +2274,9 @@ export default function ProductSystem() {
     }),
     [availabilityItems]
   );
+  const selectedAvailability = draft
+    ? availabilityItems.find((item) => item.template_code.trim().toUpperCase() === draft.template_code.trim().toUpperCase()) ?? null
+    : null;
 
   const materialsByCode = useMemo(() => {
     const m = new Map<string, InventoryMaterialEntity>();
@@ -2555,6 +2603,7 @@ export default function ProductSystem() {
             saving={saving}
             families={families}
             materials={materials}
+            availability={selectedAvailability}
           />
         ) : loadMode === "auth_required" && !loading ? (
           <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">

@@ -113,11 +113,35 @@ async def test_letters_is_offerable_parent_with_modules(db_session):
     response = await ProductTemplateAvailabilityService(db_session).list_availability()
     item = _by_code(response.items)[LETTERS]
     assert item.quote_offerable is True
+    assert item.product_system_role == "offerable_product"
+    assert item.display_group == "active_products"
+    assert item.owner_decision_required is False
     assert item.is_parent is True
     assert item.has_modules is True
     assert item.status == "offerable"
     assert item.status_reason == "owner_valid_parent_template"
     assert set(LETTER_MODULES).issubset(set(item.module_codes))
+    assert len(item.composition_modules) == 6
+    roles = {module.role_label: module for module in item.composition_modules}
+    assert set(roles) == {
+        "Fata litera",
+        "Spate litera",
+        "Cant / laterale",
+        "LED / iluminare",
+        "Finisaje",
+        "Structura montaj",
+    }
+    assert roles["Fata litera"].module_template_code == "TPL-VOLUMETRIC-FACE_v1"
+    assert roles["Cant / laterale"].module_template_code == VOLUM_ALUMINUM
+    assert roles["Structura montaj"].module_template_code == PREMOUNT
+    assert roles["Structura montaj"].is_required is False
+    assert roles["Structura montaj"].status_label == "Optional / conditionat"
+    assert len(item.shared_component_contracts) == 6
+    by_contract = {contract.component_key: contract for contract in item.shared_component_contracts}
+    assert by_contract["volumetric_face"].profile_key == "letters"
+    assert by_contract["volumetric_face"].module_template_code == "TPL-VOLUMETRIC-FACE_v1"
+    assert by_contract["volumetric_lighting"].confidence == "PARTIAL"
+    assert by_contract["volumetric_lighting"].owner_decision == "NEEDS_MORE_AUDIT"
 
 
 @pytest.mark.asyncio
@@ -129,7 +153,46 @@ async def test_child_module_templates_are_runtime_only(db_session):
         item = by_code[code]
         assert item.runtime_module is True
         assert item.quote_offerable is False
+        assert item.product_system_role == "internal_module"
+        assert item.display_group == "internal_modules"
+        assert item.owner_decision_required is False
+        assert item.parent_product_codes == [LETTERS]
         assert item.status_reason == "runtime_module_only"
+        assert item.composition_modules == []
+
+
+@pytest.mark.asyncio
+async def test_logo_parent_is_candidate_product_not_offerable(db_session):
+    await _seed_availability_fixture(db_session)
+    response = await ProductTemplateAvailabilityService(db_session).list_availability()
+    item = _by_code(response.items)[LOGO]
+    assert item.quote_offerable is False
+    assert item.is_parent is True
+    assert item.has_modules is True
+    assert item.runtime_module is False
+    assert item.product_system_role == "candidate_product"
+    assert item.display_group == "candidate_products"
+    assert item.owner_decision_required is True
+    assert set(LOGO_MODULES).issubset(set(item.child_module_codes))
+    assert len(item.composition_modules) == 6
+    roles = {module.role_label: module for module in item.composition_modules}
+    assert set(roles) == {
+        "Fata logo",
+        "Return / cant logo",
+        "Spate logo",
+        "Iluminare logo",
+        "Finisaje logo",
+        "Montaj logo",
+    }
+    assert roles["Fata logo"].module_template_code == "TPL-VOLUMETRIC-LOGO-FACE_v1"
+    assert roles["Return / cant logo"].module_template_code == "TPL-VOLUMETRIC-LOGO-RETURN_v1"
+    assert all(module.is_required for module in item.composition_modules)
+    assert len(item.shared_component_contracts) == 6
+    by_contract = {contract.component_key: contract for contract in item.shared_component_contracts}
+    assert by_contract["volumetric_face"].profile_key == "logo"
+    assert by_contract["volumetric_face"].module_template_code == "TPL-VOLUMETRIC-LOGO-FACE_v1"
+    assert by_contract["volumetric_lighting"].confidence == "PARTIAL"
+    assert "irregular_shape_impact" in by_contract["volumetric_lighting"].not_confirmed
 
 
 @pytest.mark.asyncio
@@ -149,6 +212,35 @@ async def test_offerable_only_filters_to_offerable_templates(db_session):
     )
     assert [item.template_code for item in response.items] == [LETTERS]
     assert response.offerable_count == 1
+    assert all(item.quote_offerable for item in response.items)
+    assert len(response.items[0].composition_modules) == 6
+    assert len(response.items[0].shared_component_contracts) == 6
+    assert LOGO not in [item.template_code for item in response.items]
+    assert not any(item.runtime_module for item in response.items)
+
+
+@pytest.mark.asyncio
+async def test_shared_component_metadata_does_not_change_availability_behavior(db_session):
+    await _seed_availability_fixture(db_session)
+    response = await ProductTemplateAvailabilityService(db_session).list_availability()
+    by_code = _by_code(response.items)
+
+    assert by_code[LETTERS].quote_offerable is True
+    assert by_code[LETTERS].product_system_role == "offerable_product"
+    assert by_code[LOGO].quote_offerable is False
+    assert by_code[LOGO].product_system_role == "candidate_product"
+    assert {item.profile_key for item in by_code[LETTERS].shared_component_contracts} == {"letters"}
+    assert {item.profile_key for item in by_code[LOGO].shared_component_contracts} == {"logo"}
+    assert by_code[VOLUM_ALUMINUM].shared_component_contracts == []
+
+
+@pytest.mark.asyncio
+async def test_availability_copy_does_not_use_blocked_archive_restore_word(db_session):
+    await _seed_availability_fixture(db_session)
+    response = await ProductTemplateAvailabilityService(db_session).list_availability()
+    body = response.model_dump_json()
+    blocked = "dez" + "arhivat"
+    assert blocked not in body.lower()
 
 
 def test_endpoint_does_not_modify_db(auth_client, db_fixture):

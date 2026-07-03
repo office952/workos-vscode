@@ -61,9 +61,20 @@ class IntakeV4LayerRoleLayer(BaseModel):
     dominant_fill: str | None = None
 
 
+class IntakeV4LayerBindingContract(BaseModel):
+    layer_key: str
+    source_layer_name: str | None = None
+    detected_kind: str | None = None
+    suggested_semantic_role: str | None = None
+    confirmed_semantic_role: str | None = None
+    target_template_code: str | None = None
+    binding_status: Literal["pending", "suggested", "confirmed", "ignored"] = "pending"
+
+
 class IntakeV4LayerRoleSetup(BaseModel):
     confirmation_status: LayerSetupStatus = "missing"
     layers: list[IntakeV4LayerRoleLayer] = Field(default_factory=list)
+    layer_bindings: list[IntakeV4LayerBindingContract] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
 
 

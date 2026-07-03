@@ -72,6 +72,25 @@ const RUNTIME_MODULE_TEMPLATE = {
   status_reason: "runtime_module_only",
 };
 
+const LOGO_CANDIDATE_TEMPLATE = {
+  template_id: 15,
+  template_code: "TPL-VOLUMETRIC-LOGO_v1",
+  family_id: "litere_volumetrice",
+  family_name: "Litere volumetrice",
+  description: "Produs candidat pentru logo volumetric",
+  db_active: true,
+  quote_offerable: false,
+  runtime_module: false,
+  is_parent: true,
+  has_modules: true,
+  parent_codes: [],
+  module_codes: ["TPL-VOLUMETRIC-LOGO-FACE_v1"],
+  status: "experimental",
+  status_reason: "not_owner_valid",
+  product_system_role: "candidate_product",
+  display_group: "candidate_products",
+};
+
 describe("NewIntakeDialog offer method and Product System template wizard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -84,7 +103,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     mockIntakesCreate.mockResolvedValue({ id: 10 });
     mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-1", workspace_code: "IV6-TEST" });
     mockAvailabilityList.mockResolvedValue({
-      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE],
+      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE, LOGO_CANDIDATE_TEMPLATE],
       total: 2,
       offerable_count: 1,
       runtime_module_count: 1,
@@ -140,13 +159,14 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     });
   });
 
-  it("shows only quote_offerable templates and hides runtime modules", async () => {
+  it("shows only quote_offerable templates and hides runtime modules or Logo candidate", async () => {
     renderDialog();
     await selectMethodAndContinue();
 
     const list = screen.getByTestId("offerable-template-list");
     expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
+    expect(within(list).queryByText("TPL-VOLUMETRIC-LOGO_v1")).not.toBeInTheDocument();
   });
 
   it("does not use blocked archive wording", async () => {
