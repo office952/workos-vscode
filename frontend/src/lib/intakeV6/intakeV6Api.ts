@@ -113,11 +113,16 @@ export async function createIntakeV6Workspace(body: {
 
 export async function ensureIntakeV6WorkspaceForIntakeRequest(
   intakeRequestCode: string,
+  options: {
+    offer_method?: string;
+    selected_template_code?: string;
+    source?: string;
+  } = {},
 ): Promise<IntakeV4WorkspaceResponse> {
   return requestIntakeV6Json(`${intakeV6ApiBase()}/workspaces/ensure-for-intake-request`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ intake_request_code: intakeRequestCode }),
+    body: JSON.stringify({ intake_request_code: intakeRequestCode, ...options }),
   });
 }
 

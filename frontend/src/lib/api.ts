@@ -303,6 +303,30 @@ export interface ProductTemplateEntity {
   updated_at?: string;
 }
 
+export interface ProductTemplateAvailabilityItem {
+  template_id: number;
+  template_code: string;
+  family_id?: string | null;
+  family_name?: string | null;
+  description?: string | null;
+  db_active: boolean;
+  quote_offerable: boolean;
+  runtime_module: boolean;
+  is_parent: boolean;
+  has_modules: boolean;
+  parent_codes: string[];
+  module_codes: string[];
+  status: string;
+  status_reason: string;
+}
+
+export interface ProductTemplateAvailabilityResponse {
+  items: ProductTemplateAvailabilityItem[];
+  total: number;
+  offerable_count: number;
+  runtime_module_count: number;
+}
+
 // ============================================================
 // Helpers for product template JSON fields
 // ============================================================
@@ -909,6 +933,31 @@ export const ordersApi = makeCrud<OrderEntity>('orders');
 export const materialsApi = makeCrud<InventoryMaterialEntity>('inventory_materials');
 export const suppliersApi = makeCrud<SupplierEntity>('suppliers');
 export const productTemplatesApi = makeCrud<ProductTemplateEntity>('product_templates');
+
+export const productTemplateAvailabilityApi = {
+  list: async (
+    opts: {
+      offerable_only?: boolean;
+      include_runtime_modules?: boolean;
+      include_archived?: boolean;
+    } = {}
+  ): Promise<ProductTemplateAvailabilityResponse> => {
+    const { getAPIBaseURL } = await import('./config');
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(opts)) {
+      if (typeof value === 'boolean') params.set(key, String(value));
+    }
+    const qs = params.toString();
+    const response = await fetch(
+      `${getAPIBaseURL()}/api/v1/product-system/template-availability${qs ? `?${qs}` : ''}`,
+      { credentials: 'include' }
+    );
+    if (!response.ok) {
+      throw new Error(`Product template availability lookup failed (${response.status}).`);
+    }
+    return (await response.json()) as ProductTemplateAvailabilityResponse;
+  },
+};
 
 // Shortcut helpers
 export const listIntakes = () => intakesApi.list();

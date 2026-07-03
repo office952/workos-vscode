@@ -182,6 +182,10 @@ class IntakeV4WorkspacePayload(BaseModel):
     client: IntakeV4ClientRequest = Field(default_factory=IntakeV4ClientRequest)
     product_binding: IntakeV4ProductBinding
     intake_request_code: str | None = None
+    offer_method: str | None = None
+    selected_template_code: str | None = None
+    source: str | None = None
+    work_intake_context: dict[str, Any] = Field(default_factory=dict)
     svg_source: IntakeV4SvgSource | None = None
     svg_source_text: str | None = None
     svg_analysis_json: dict[str, Any] | None = None
@@ -198,10 +202,16 @@ class IntakeV4WorkspaceCreateRequest(BaseModel):
     client_name: str | None = None
     job_title: str | None = None
     intake_request_code: str | None = None
+    offer_method: str | None = None
+    selected_template_code: str | None = None
+    source: str | None = None
 
 
 class IntakeV4EnsureWorkspaceForIntakeRequestBody(BaseModel):
     intake_request_code: str = Field(min_length=1, max_length=64)
+    offer_method: str | None = None
+    selected_template_code: str | None = None
+    source: str | None = None
 
 
 class IntakeV4WorkspaceResponse(BaseModel):

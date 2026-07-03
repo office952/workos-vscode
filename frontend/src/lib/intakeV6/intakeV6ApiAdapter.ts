@@ -18,8 +18,13 @@ export async function bootstrapIntakeV6Workspace(
 
 export async function resolveIntakeV6Workspace(
   workspaceKey: string,
+  options: {
+    offer_method?: string;
+    selected_template_code?: string;
+    source?: string;
+  } = {},
 ): Promise<IntakeV6WorkspaceResponse> {
-  return ensureIntakeV6WorkspaceForIntakeRequest(workspaceKey);
+  return ensureIntakeV6WorkspaceForIntakeRequest(workspaceKey, options);
 }
 
 export { persistIntakeV6AnalysisBundle };

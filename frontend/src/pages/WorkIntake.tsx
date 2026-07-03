@@ -189,12 +189,14 @@ export default function WorkIntake() {
       <NewIntakeDialog
         open={newDialogOpen}
         onClose={() => setNewDialogOpen(false)}
-        onCreated={async (code, productFamily) => {
+        onCreated={async (code, productFamily, workspaceId, templateCode) => {
           await refresh();
           navigate(
             resolveIntakeEditPath({
               id: code,
+              confirmedTemplateCode: templateCode ?? null,
               productFamily: productFamily ?? null,
+              workspaceId: workspaceId ?? null,
             })
           );
         }}

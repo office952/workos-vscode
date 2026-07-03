@@ -177,6 +177,9 @@ async def ensure_workspace_for_intake_request_v6(
         db,
         request.intake_request_code,
         current_user,
+        offer_method=request.offer_method,
+        selected_template_code=request.selected_template_code,
+        source=request.source,
     )
 
 

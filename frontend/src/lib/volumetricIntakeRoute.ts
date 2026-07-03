@@ -4,14 +4,14 @@
 
 import { isLitereVolumetriceFamily } from "@/lib/intakeProductSpec";
 import type { IntakeStatus } from "@/lib/mockData";
-import { TPL_VOLUMETRIC_LETTERS } from "@/lib/volumetricQuoteInput";
+import { isVolumetricLettersTemplateCode } from "@/lib/volumetricQuoteInput";
 
 export function shouldUseVolumetricIntakePage(
   confirmedTemplateCode: string | null | undefined,
   productFamily: string | null | undefined
 ): boolean {
   const code = (confirmedTemplateCode ?? "").trim();
-  if (code === TPL_VOLUMETRIC_LETTERS) return true;
+  if (isVolumetricLettersTemplateCode(confirmedTemplateCode)) return true;
   if (!code && isLitereVolumetriceFamily(productFamily)) return true;
   return false;
 }

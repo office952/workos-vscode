@@ -1,28 +1,49 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { X, Plus, Search, UserPlus, CheckCircle2, AlertTriangle } from "lucide-react";
-import { clientsApi, intakesApi, type ClientEntity, type IntakeRequestEntity } from "@/lib/api";
-import { productFamiliesApi, type ProductFamily } from "@/api/productFamilies";
-import IntakeWorkTypePicker from "@/components/workos/IntakeWorkTypePicker";
-import InfoHint from "@/components/workos/templateIntakeWorkspace/InfoHint";
+import { X, Plus, Search, UserPlus, CheckCircle2, AlertTriangle, Boxes } from "lucide-react";
 import {
-  formatMissingRequirementsMessage,
-  getQuickStartMissingRequirements,
-  resolveWorkTypeFamilyId,
-} from "@/lib/intakeQuickStartWorkTypes";
+  clientsApi,
+  intakesApi,
+  productTemplateAvailabilityApi,
+  type ClientEntity,
+  type IntakeRequestEntity,
+  type ProductTemplateAvailabilityItem,
+} from "@/lib/api";
+import InfoHint from "@/components/workos/templateIntakeWorkspace/InfoHint";
 import { INTAKE_DELIVERY_OPTIONS } from "@/lib/intakeDeliverySemantics";
 import { formatApiErrorFromUnknown, canCreateIntakeRequest } from "@/lib/apiError";
 import { useAuth } from "@/contexts/AuthContext";
+import { ensureIntakeV6WorkspaceForIntakeRequest } from "@/lib/intakeV6/intakeV6Api";
 
 interface NewIntakeDialogProps {
   open: boolean;
   onClose: () => void;
-  onCreated: (intakeCode: string, productFamily?: string | null) => void;
+  onCreated: (intakeCode: string, productFamily?: string | null, workspaceId?: string | null, templateCode?: string | null) => void;
 }
 
-type Step = "client" | "details";
+type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
+
+type OfferMethodId = "svg_analyzer_intake_v6";
+
+const OFFER_METHODS: Array<{
+  id: OfferMethodId;
+  label: string;
+  description: string;
+  statusLabel: string;
+  enabled: boolean;
+}> = [
+  {
+    id: "svg_analyzer_intake_v6",
+    label: "SVG Analyzer - Intake V6",
+    description: "Analizează fișiere SVG, pregătește Product Truth și pornește formularul modular Intake V6.",
+    statusLabel: "Activ",
+    enabled: true,
+  },
+];
+
+const WORK_INTAKE_NEW_REQUEST_SOURCE = "work_intake_new_request";
 
 const CHANNELS = [
   { value: "email", label: "Email" },
@@ -50,7 +71,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
   const canCreateIntake = canCreateIntakeRequest(
     typeof user?.role === "string" ? user.role : undefined
   );
-  const [step, setStep] = useState<Step>("client");
+  const [step, setStep] = useState<Step>("method");
   const [mode, setMode] = useState<ClientMode>("existing");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,10 +80,11 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
   const [clientSearch, setClientSearch] = useState("");
   const [selectedClient, setSelectedClient] = useState<ClientEntity | null>(null);
   const [loadingClients, setLoadingClients] = useState(false);
-  const [productFamilies, setProductFamilies] = useState<ProductFamily[]>([]);
-  const [loadingFamilies, setLoadingFamilies] = useState(false);
-  const [familyLoadError, setFamilyLoadError] = useState<string | null>(null);
-  const [selectedWorkTypeId, setSelectedWorkTypeId] = useState<string | null>(null);
+  const [offerableTemplates, setOfferableTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
+  const [loadingTemplates, setLoadingTemplates] = useState(false);
+  const [templateLoadError, setTemplateLoadError] = useState<string | null>(null);
+  const [selectedOfferMethod, setSelectedOfferMethod] = useState<OfferMethodId | null>(null);
+  const [selectedTemplateCode, setSelectedTemplateCode] = useState<string | null>(null);
 
   const [newClient, setNewClient] = useState({
     name: "",
@@ -96,32 +118,34 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
 
   useEffect(() => {
     if (!open) return;
-    setLoadingFamilies(true);
-    setFamilyLoadError(null);
-    productFamiliesApi
-      .list({ query: { active: true }, limit: 500, sort: "label" })
+    setLoadingTemplates(true);
+    setTemplateLoadError(null);
+    productTemplateAvailabilityApi
+      .list({ offerable_only: true, include_runtime_modules: false, include_archived: false })
       .then((response) => {
-        const activeFamilies = response.items.filter((family) => family.active);
-        setProductFamilies(activeFamilies);
+        const offerable = response.items.filter((template) => template.quote_offerable);
+        setOfferableTemplates(offerable);
+        setSelectedTemplateCode((current) => current ?? offerable[0]?.template_code ?? null);
       })
       .catch((err) => {
-        console.warn("[NewIntakeDialog] failed to load product families", err);
-        setProductFamilies([]);
-        setFamilyLoadError(
-          "Familiile de produs active nu au putut fi încărcate. Cererea nu poate fi creată până la rezolvarea sursei backend."
+        console.warn("[NewIntakeDialog] failed to load offerable templates", err);
+        setOfferableTemplates([]);
+        setTemplateLoadError(
+          "Template-urile active pentru ofertare nu au putut fi încărcate din Product System."
         );
       })
-      .finally(() => setLoadingFamilies(false));
+      .finally(() => setLoadingTemplates(false));
   }, [open]);
 
   useEffect(() => {
     if (!open) {
       setTimeout(() => {
-        setStep("client");
+        setStep("method");
         setMode("existing");
         setSelectedClient(null);
         setClientSearch("");
-        setSelectedWorkTypeId(null);
+        setSelectedOfferMethod(null);
+        setSelectedTemplateCode(null);
         setError(null);
         setSubmitting(false);
         setNewClient({
@@ -163,19 +187,12 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
     return false;
   };
 
-  const missingRequirements = getQuickStartMissingRequirements({
-    workTypeId: selectedWorkTypeId,
-    description: intake.description,
-    channel: intake.channel,
-    registry: productFamilies,
-    registryLoading: loadingFamilies,
-    registryError: familyLoadError,
-  });
+  const selectedTemplate = offerableTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
+  const canProceedFromMethod = () => !!selectedOfferMethod;
+  const canProceedFromTemplate = () => !!selectedTemplate && !loadingTemplates && !templateLoadError;
+  const canSubmit = () => canProceedFromClient() && canProceedFromTemplate() && intake.description.trim().length > 0;
 
-  const missingRequirementsMessage = formatMissingRequirementsMessage(missingRequirements);
-  const canSubmit = () => canProceedFromClient() && missingRequirements.length === 0;
-
-  const resolvedFamilyId = resolveWorkTypeFamilyId(selectedWorkTypeId, productFamilies);
+  const resolvedFamilyId = selectedTemplate?.family_id ?? "";
 
   const clientDisplayName =
     mode === "existing" ? selectedClient?.name : newClient.name.trim() || "—";
@@ -188,8 +205,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
       );
       return;
     }
-    if (resolvedFamilyId === null) {
-      setError("Selectează tipul de lucrare înainte de a crea cererea.");
+    if (!selectedOfferMethod || !selectedTemplate) {
+      setError("Selectează modalitatea de ofertare și template-ul Product System înainte de a crea cererea.");
       return;
     }
     setSubmitting(true);
@@ -231,9 +248,17 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
         notes: "",
         priority: intake.priority,
         delivery_type: intake.delivery_type,
+        confirmed_template_code: selectedTemplate.template_code,
+        confirmed_template_name: selectedTemplate.description ?? selectedTemplate.template_code,
       });
 
-      onCreated(code, resolvedFamilyId);
+      const workspace = await ensureIntakeV6WorkspaceForIntakeRequest(code, {
+        offer_method: selectedOfferMethod,
+        selected_template_code: selectedTemplate.template_code,
+        source: WORK_INTAKE_NEW_REQUEST_SOURCE,
+      });
+
+      onCreated(code, resolvedFamilyId, workspace.id, selectedTemplate.template_code);
       onClose();
     } catch (err: unknown) {
       console.error("[NewIntakeDialog] submit failed", err);
@@ -255,7 +280,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
             <Plus className="w-4 h-4 text-emerald-400" />
             <h2 className="text-[14px] font-bold text-slate-100">Cerere Nouă</h2>
             <span className="text-[10px] text-slate-500 bg-slate-800/60 px-2 py-0.5 rounded">
-              Pas {step === "client" ? "1" : "2"}/2
+              Pas {step === "method" ? "1" : step === "template" ? "2" : "3"}/3
             </span>
           </div>
           <button
@@ -268,7 +293,98 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
         </div>
 
         <div className="flex-1 overflow-y-auto p-5">
-          {step === "client" && (
+          {step === "method" && (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-[14px] font-bold text-slate-100">Alege modalitatea de ofertare</h3>
+                <p className="text-[12px] text-slate-400 mt-1">
+                  Selectează cum începe cererea comercială. Prima metodă activă pornește workspace-ul modular Intake V6.
+                </p>
+              </div>
+              <div className="space-y-2">
+                {OFFER_METHODS.map((method) => (
+                  <button
+                    key={method.id}
+                    type="button"
+                    disabled={!method.enabled}
+                    onClick={() => method.enabled && setSelectedOfferMethod(method.id)}
+                    className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                      selectedOfferMethod === method.id
+                        ? "bg-blue-600/15 border-blue-500/50"
+                        : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                    } ${method.enabled ? "" : "opacity-50 cursor-not-allowed"}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[13px] font-bold text-slate-100">{method.label}</p>
+                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{method.description}</p>
+                      </div>
+                      <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
+                        {method.statusLabel}
+                      </span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {step === "template" && (
+            <div className="space-y-4">
+              <div>
+                <h3 className="text-[14px] font-bold text-slate-100">Alege template-ul Product System</h3>
+                <p className="text-[12px] text-slate-400 mt-1">
+                  Selectează un template activ pentru ofertare. Modulele interne rămân gestionate de Product System și nu se aleg direct aici.
+                </p>
+              </div>
+              <section className="space-y-2">
+                <div className="flex items-center gap-1.5">
+                  <Boxes className="w-3.5 h-3.5 text-blue-400" />
+                  <h4 className="text-[12px] font-bold text-slate-200">Template-uri active pentru ofertare</h4>
+                </div>
+                <div className="space-y-2" data-testid="offerable-template-list">
+                  {loadingTemplates ? (
+                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile ofertabile...</p>
+                  ) : offerableTemplates.length === 0 ? (
+                    <p className="text-[11px] text-slate-500 p-4 text-center border border-[#2A3548] rounded-lg bg-[#1A2236]">
+                      Nu există template-uri active pentru ofertare disponibile.
+                    </p>
+                  ) : (
+                    offerableTemplates.map((template) => (
+                      <button
+                        key={template.template_code}
+                        type="button"
+                        onClick={() => setSelectedTemplateCode(template.template_code)}
+                        className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                          selectedTemplateCode === template.template_code
+                            ? "bg-blue-600/15 border-blue-500/50"
+                            : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
+                            <p className="text-[11px] text-slate-400 mt-1">{template.family_name ?? "Product System"}</p>
+                            {template.description && (
+                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{template.description}</p>
+                            )}
+                            {template.has_modules && (
+                              <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
+                            )}
+                          </div>
+                          <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
+                            Activ pentru ofertare
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </section>
+            </div>
+          )}
+
+          {step === "details" && (
             <div className="space-y-4">
               <p className="text-[12px] text-slate-400">
                 Alege un client existent sau creează unul nou.
@@ -434,50 +550,21 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   </div>
                 </div>
               )}
-            </div>
-          )}
-
-          {step === "details" && (
-            <div className="space-y-5">
+              <div className="space-y-5 pt-2">
               <div className="flex items-center justify-between gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5">
                 <div className="min-w-0">
-                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Client</p>
-                  <p className="text-[13px] font-semibold text-slate-200 truncate">{clientDisplayName}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">
-                    {mode === "existing"
-                      ? selectedClient?.identity_type === "fiscal"
-                        ? `CUI: ${selectedClient?.cui}`
-                        : `Temporar: ${selectedClient?.temp_ref}`
-                      : mode === "new_fiscal"
-                        ? `CUI: ${newClient.cui}`
-                        : "Client temporar (va fi creat)"}
-                  </p>
+                  <p className="text-[10px] text-slate-500 uppercase tracking-wide">Template Product System</p>
+                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "—"}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Template activ pentru ofertare"}</p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => setStep("client")}
+                  onClick={() => setStep("template")}
                   className="shrink-0 text-[11px] font-semibold text-blue-400 hover:text-blue-300"
                 >
-                  Schimbă client
+                  Schimbă template
                 </button>
               </div>
-
-              <section className="space-y-2">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="text-[12px] font-bold text-slate-200">Ce vrei să produci?</h3>
-                  <span className="text-red-400 text-[11px]">*</span>
-                  <InfoHint label="Despre tip lucrare">
-                    Alege tipul de lucrare. Poți începe cu o cerere generică dacă nu ești sigur — detaliile se
-                    completează în workspace-ul cererii.
-                  </InfoHint>
-                </div>
-                <IntakeWorkTypePicker
-                  selectedWorkTypeId={selectedWorkTypeId}
-                  onSelect={setSelectedWorkTypeId}
-                  registry={productFamilies}
-                  loading={loadingFamilies}
-                />
-              </section>
 
               <section className="space-y-3">
                 <h3 className="text-[12px] font-bold text-slate-200">Date cerere</h3>
@@ -569,41 +656,54 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   </div>
                 </div>
               </section>
+              </div>
             </div>
           )}
 
-          {(familyLoadError || error) && (
+          {(templateLoadError || error) && (
             <div className="mt-3 flex items-start gap-2 px-3 py-2 bg-red-900/20 border border-red-800/40 rounded-lg">
               <AlertTriangle className="w-3.5 h-3.5 text-red-400 mt-0.5 shrink-0" />
-              <p className="text-[11px] text-red-300">{error ?? familyLoadError}</p>
+              <p className="text-[11px] text-red-300">{error ?? templateLoadError}</p>
             </div>
           )}
         </div>
 
         <div className="flex items-center justify-between px-5 py-3 border-t border-[#2A3548] bg-[#0A0F1C]">
           <button
-            onClick={step === "details" ? () => setStep("client") : onClose}
+            onClick={step === "details" ? () => setStep("template") : step === "template" ? () => setStep("method") : onClose}
             className="text-[12px] font-semibold text-slate-400 hover:text-slate-200 transition-colors"
             disabled={submitting}
           >
-            {step === "details" ? "← Înapoi" : "Anulează"}
+            {step === "method" ? "Anulează" : "← Înapoi"}
           </button>
           <div className="flex flex-col items-end gap-1">
-            {step === "details" && missingRequirementsMessage && !submitting && (
+            {step === "details" && !canSubmit() && !submitting && (
               <p
                 className="text-[10px] text-amber-400/90"
                 data-testid="create-intake-missing-requirements"
               >
-                {missingRequirementsMessage}
+                Completează: client, descriere
               </p>
             )}
             <div className="flex items-center gap-2">
-              {step === "client" ? (
+              {step === "method" ? (
+                <button
+                  onClick={() => setStep("template")}
+                  disabled={!canProceedFromMethod()}
+                  className={`px-4 py-2 text-[12px] font-bold rounded-lg transition-colors ${
+                    canProceedFromMethod()
+                      ? "bg-blue-600 hover:bg-blue-500 text-white"
+                      : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
+                  }`}
+                >
+                  Continuă →
+                </button>
+              ) : step === "template" ? (
                 <button
                   onClick={() => setStep("details")}
-                  disabled={!canProceedFromClient()}
+                  disabled={!canProceedFromTemplate()}
                   className={`px-4 py-2 text-[12px] font-bold rounded-lg transition-colors ${
-                    canProceedFromClient()
+                    canProceedFromTemplate()
                       ? "bg-blue-600 hover:bg-blue-500 text-white"
                       : "bg-slate-700/60 text-slate-500 cursor-not-allowed"
                   }`}

@@ -47,6 +47,7 @@ from services.intake_v6_product_system_service import (
     build_binding_response,
     resolve_product_template_or_raise,
 )
+from services.product_template_availability_service import ProductTemplateAvailabilityService
 from services.intake_v6_production_preview_service import build_v6_task_preview_response
 
 
@@ -101,6 +102,39 @@ def _derive_workspace_status(readiness_status: str) -> str:
     if readiness_status == "finish_setup_incomplete":
         return "collecting_data"
     return "draft"
+
+
+async def _resolve_offerable_template_code_or_raise(
+    db: AsyncSession,
+    selected_template_code: str | None,
+    *,
+    require_selected: bool,
+) -> str:
+    candidate = (selected_template_code or "").strip()
+    if not candidate:
+        if require_selected:
+            raise HTTPException(status_code=422, detail={"error": "selected_template_code_required"})
+        return "TPL-VOLUMETRIC-LETTERS_v2"
+
+    availability = await ProductTemplateAvailabilityService(db).list_availability()
+    by_code = {item.template_code.upper(): item for item in availability.items}
+    item = by_code.get(candidate.upper())
+    if item is None:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "selected_template_not_found", "selected_template_code": candidate},
+        )
+    if not item.quote_offerable:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "selected_template_not_quote_offerable",
+                "selected_template_code": item.template_code,
+                "status": item.status,
+                "status_reason": item.status_reason,
+            },
+        )
+    return item.template_code
 
 
 def _reset_internal_draft_quote_confirmation(payload_raw: dict[str, Any]) -> None:
@@ -206,6 +240,16 @@ async def create_intake_v6_workspace(
             "bound_at": now,
         },
         intake_request_code=intake_request_code,
+        offer_method=(request.offer_method or None),
+        selected_template_code=(request.selected_template_code or request.template_code),
+        source=(request.source or None),
+        work_intake_context={
+            "offer_method": request.offer_method,
+            "selected_template_code": request.selected_template_code or request.template_code,
+            "source": request.source,
+            "selected_template_is_initial": True,
+            "product_truth_final_decided_later": True,
+        },
     )
     record = IntakeV6WorkspaceRecord(
         id=str(uuid.uuid4()),
@@ -236,6 +280,10 @@ async def ensure_intake_v6_workspace_for_intake_request(
     db: AsyncSession,
     intake_request_code: str,
     current_user: UserResponse,
+    *,
+    offer_method: str | None = None,
+    selected_template_code: str | None = None,
+    source: str | None = None,
 ) -> IntakeV6WorkspaceResponse:
     code = intake_request_code.strip()
     if not code:
@@ -256,12 +304,20 @@ async def ensure_intake_v6_workspace_for_intake_request(
     description = (intake.description or "").strip()
     title_source = description or code
     title = f"{intake.client_name} — {title_source}"[:200]
+    resolved_template_code = await _resolve_offerable_template_code_or_raise(
+        db,
+        selected_template_code,
+        require_selected=(source == "work_intake_new_request"),
+    )
     create_request = IntakeV6WorkspaceCreateRequest(
         title=title,
-        template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        template_code=resolved_template_code,
         client_name=intake.client_name,
         job_title=description or None,
         intake_request_code=code,
+        offer_method=offer_method,
+        selected_template_code=resolved_template_code,
+        source=source,
     )
     return await create_intake_v6_workspace(db, create_request, current_user)
 

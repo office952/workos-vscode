@@ -1,11 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import NewIntakeDialog from "./NewIntakeDialog";
 
 const mockClientsList = vi.fn();
 const mockClientsCreate = vi.fn();
 const mockIntakesCreate = vi.fn();
-const mockProductFamiliesList = vi.fn();
+const mockAvailabilityList = vi.fn();
+const mockEnsureIntakeV6Workspace = vi.fn();
 
 vi.mock("@/lib/api", () => ({
   clientsApi: {
@@ -15,12 +16,13 @@ vi.mock("@/lib/api", () => ({
   intakesApi: {
     create: (...args: unknown[]) => mockIntakesCreate(...args),
   },
+  productTemplateAvailabilityApi: {
+    list: (...args: unknown[]) => mockAvailabilityList(...args),
+  },
 }));
 
-vi.mock("@/api/productFamilies", () => ({
-  productFamiliesApi: {
-    list: (...args: unknown[]) => mockProductFamiliesList(...args),
-  },
+vi.mock("@/lib/intakeV6/intakeV6Api", () => ({
+  ensureIntakeV6WorkspaceForIntakeRequest: (...args: unknown[]) => mockEnsureIntakeV6Workspace(...args),
 }));
 
 vi.mock("@/contexts/AuthContext", () => ({
@@ -36,104 +38,134 @@ vi.mock("@/contexts/AuthContext", () => ({
   }),
 }));
 
-const REGISTRY_FAMILIES = [
-  { id: 1, family_id: "litere_volumetrice", label: "Litere volumetrice", active: true },
-  { id: 2, family_id: "print_large_format", label: "Print format mare", active: true },
-  { id: 3, family_id: "servicii_montaj", label: "Servicii montaj", active: true },
-  { id: 4, family_id: "casete_luminoase", label: "Casete luminoase", active: true },
-  { id: 5, family_id: "vinyl_stickers", label: "Autocolant", active: true },
-  { id: 6, family_id: "semnalistica_interioara", label: "Semnalistică interioară", active: true },
-  { id: 7, family_id: "semnalistica_exterioara", label: "Semnalistică exterioară", active: true },
-];
+const OFFERABLE_TEMPLATE = {
+  template_id: 1,
+  template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+  family_id: "litere_volumetrice",
+  family_name: "Litere volumetrice",
+  description: "Template ofertabil pentru litere volumetrice",
+  db_active: true,
+  quote_offerable: true,
+  runtime_module: false,
+  is_parent: true,
+  has_modules: true,
+  parent_codes: [],
+  module_codes: ["TPL-VOLUM-ALUMINIU_v1"],
+  status: "offerable",
+  status_reason: "owner_valid_parent_template",
+};
 
-describe("NewIntakeDialog quick start UI", () => {
+const RUNTIME_MODULE_TEMPLATE = {
+  template_id: 3,
+  template_code: "TPL-VOLUM-ALUMINIU_v1",
+  family_id: "litere_volumetrice",
+  family_name: "Litere volumetrice",
+  description: "Modul intern runtime",
+  db_active: true,
+  quote_offerable: false,
+  runtime_module: true,
+  is_parent: false,
+  has_modules: false,
+  parent_codes: ["TPL-VOLUMETRIC-LETTERS_v2"],
+  module_codes: [],
+  status: "runtime_module",
+  status_reason: "runtime_module_only",
+};
+
+describe("NewIntakeDialog offer method and Product System template wizard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockClientsList.mockResolvedValue([]);
-    mockProductFamiliesList.mockResolvedValue({
-      items: REGISTRY_FAMILIES,
-      total: REGISTRY_FAMILIES.length,
-      skip: 0,
-      limit: 500,
-    });
     mockClientsCreate.mockResolvedValue({
       id: 1,
       name: "STAGING TEST CLIENT",
       contact_person: "QA User",
     });
     mockIntakesCreate.mockResolvedValue({ id: 10 });
+    mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-1", workspace_code: "IV6-TEST" });
+    mockAvailabilityList.mockResolvedValue({
+      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE],
+      total: 2,
+      offerable_count: 1,
+      runtime_module_count: 1,
+    });
   });
 
-  function renderDialog() {
+  function renderDialog(onCreated = vi.fn()) {
     return render(
-      <NewIntakeDialog open={true} onClose={vi.fn()} onCreated={vi.fn()} />
+      <NewIntakeDialog open={true} onClose={vi.fn()} onCreated={onCreated} />
     );
   }
 
+  async function selectMethodAndContinue() {
+    fireEvent.click(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+    await screen.findByText(/Template-uri active pentru ofertare/i);
+  }
+
   async function moveToDetailsStep() {
+    await selectMethodAndContinue();
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+    await screen.findByText(/Alege un client existent/i);
+  }
+
+  it("opens on Pas 1 Modalitate ofertare", () => {
+    renderDialog();
+
+    expect(screen.getByText(/Alege modalitatea de ofertare/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Alege un client existent/i)).not.toBeInTheDocument();
+  });
+
+  it("shows SVG Analyzer - Intake V6 as the active method", async () => {
+    renderDialog();
+
+    expect(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i })).toBeInTheDocument();
+    expect(screen.getByText("Activ")).toBeInTheDocument();
+  });
+
+  it("does not continue without selecting an offer method", () => {
+    renderDialog();
+
+    expect(screen.getByRole("button", { name: /Continuă/i })).toBeDisabled();
+  });
+
+  it("loads Product System templates from availability API", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    expect(mockAvailabilityList).toHaveBeenCalledWith({
+      offerable_only: true,
+      include_runtime_modules: false,
+      include_archived: false,
+    });
+  });
+
+  it("shows only quote_offerable templates and hides runtime modules", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const list = screen.getByTestId("offerable-template-list");
+    expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
+  });
+
+  it("does not use blocked archive wording", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const blockedArchiveWord = new RegExp(["dez", "arhivat"].join(""), "i");
+    expect(screen.queryByText(blockedArchiveWord)).not.toBeInTheDocument();
+  });
+
+  it("sends offer_method and selected_template_code to Intake V6 ensure", async () => {
+    const onCreated = vi.fn();
+    renderDialog(onCreated);
+    await moveToDetailsStep();
+
     fireEvent.click(screen.getByRole("button", { name: "Client Temporar" }));
     fireEvent.change(screen.getByPlaceholderText(/SC Exemplu SRL sau Ion Popescu/i), {
       target: { value: "STAGING TEST CLIENT" },
     });
-    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
-    await screen.findByRole("button", { name: /Creează Cerere/i });
-  }
-
-  it("opens quick start with human-readable work type cards, not native family select", async () => {
-    renderDialog();
-    await moveToDetailsStep();
-
-    expect(screen.getByTestId("work-type-picker")).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: /Litere volumetrice/i })).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: /Nu știu încă \/ Cerere generică/i })).toBeInTheDocument();
-    expect(screen.queryByRole("combobox", { name: /Familie Produs/i })).not.toBeInTheDocument();
-    expect(screen.queryByText(/litere_volumetrice/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Registry:/i)).not.toBeInTheDocument();
-  });
-
-  it("loads active product families from backend registry for picker availability", async () => {
-    renderDialog();
-    await moveToDetailsStep();
-
-    expect(mockProductFamiliesList).toHaveBeenCalledWith({
-      query: { active: true },
-      limit: 500,
-      sort: "label",
-    });
-  });
-
-  it("shows visible missing requirements when create is disabled", async () => {
-    renderDialog();
-    await moveToDetailsStep();
-
-    const createButton = screen.getByRole("button", { name: /Creează Cerere/i });
-    expect(createButton).toBeDisabled();
-    expect(screen.getByTestId("create-intake-missing-requirements")).toHaveTextContent(
-      /Completează: tip lucrare, descriere/i
-    );
-  });
-
-  it("does not create intake when registry has no active families", async () => {
-    mockProductFamiliesList.mockResolvedValueOnce({ items: [], total: 0, skip: 0, limit: 500 });
-
-    renderDialog();
-    await moveToDetailsStep();
-
-    fireEvent.change(
-      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
-      { target: { value: "Test intake without family" } }
-    );
-    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
-
-    expect(mockClientsCreate).not.toHaveBeenCalled();
-    expect(mockIntakesCreate).not.toHaveBeenCalled();
-  });
-
-  it("submits volumetric draft with litere_volumetrice family and no product_spec_json", async () => {
-    renderDialog();
-    await moveToDetailsStep();
-
-    fireEvent.click(screen.getByRole("radio", { name: /Litere volumetrice/i }));
     fireEvent.change(
       screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
       { target: { value: "Litere volumetrice pentru fațadă magazin" } }
@@ -141,95 +173,28 @@ describe("NewIntakeDialog quick start UI", () => {
     fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
 
     await waitFor(() => {
-      expect(mockClientsCreate).toHaveBeenCalledTimes(1);
-      expect(mockIntakesCreate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          product_family: "litere_volumetrice",
-          description: "Litere volumetrice pentru fațadă magazin",
-          status: "new",
-        })
-      );
+      expect(mockEnsureIntakeV6Workspace).toHaveBeenCalledTimes(1);
     });
 
-    const payload = mockIntakesCreate.mock.calls[0][0];
-    expect(payload.product_spec_json).toBeUndefined();
-  });
-
-  it("keeps generic option available and creates unresolved draft without servicii_montaj fallback", async () => {
-    renderDialog();
-    await moveToDetailsStep();
-
-    fireEvent.click(screen.getByRole("radio", { name: /Nu știu încă \/ Cerere generică/i }));
-    fireEvent.change(
-      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
-      { target: { value: "Cerere generică — tip necunoscut" } }
+    const intakePayload = mockIntakesCreate.mock.calls[0][0];
+    const [intakeCode, ensurePayload] = mockEnsureIntakeV6Workspace.mock.calls[0];
+    expect(intakeCode).toMatch(/^IR-/);
+    expect(intakePayload).toEqual(
+      expect.objectContaining({
+        product_family: "litere_volumetrice",
+        confirmed_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+      })
     );
-    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
-
-    await waitFor(() => {
-      expect(mockIntakesCreate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          product_family: "",
-          description: "Cerere generică — tip necunoscut",
-          status: "new",
-        })
-      );
+    expect(ensurePayload).toEqual({
+      offer_method: "svg_analyzer_intake_v6",
+      selected_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+      source: "work_intake_new_request",
     });
-
-    const payload = mockIntakesCreate.mock.calls[0][0];
-    expect(payload.product_family).not.toBe("servicii_montaj");
-    expect(payload.product_spec_json).toBeUndefined();
-  });
-
-  it("surfaces backend family validation errors clearly", async () => {
-    mockIntakesCreate.mockRejectedValueOnce(new Error("Invalid product_family/family_id 'print_digital'"));
-
-    renderDialog();
-    await moveToDetailsStep();
-
-    fireEvent.click(screen.getByRole("radio", { name: /Litere volumetrice/i }));
-    fireEvent.change(
-      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
-      { target: { value: "Validated intake payload" } }
+    expect(onCreated).toHaveBeenCalledWith(
+      expect.stringMatching(/^IR-/),
+      "litere_volumetrice",
+      "workspace-1",
+      "TPL-VOLUMETRIC-LETTERS_v2"
     );
-    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
-
-    expect(await screen.findByText(/Tipul de lucrare selectat nu mai este valid/i)).toBeInTheDocument();
-  });
-
-  it("shows clear message for intake.create permission_denied", async () => {
-    mockClientsCreate.mockResolvedValue({
-      id: 1,
-      name: "SC LEX HOTEL SRL",
-      contact_person: "Contact",
-    });
-    mockIntakesCreate.mockRejectedValueOnce({
-      message: "Request failed with status code 403",
-      response: {
-        status: 403,
-        data: {
-          detail: {
-            error: "permission_denied",
-            permission: "intake.create",
-            role: "employee_mobile",
-            message: "Role 'employee_mobile' does not have permission 'intake.create'",
-          },
-        },
-      },
-    });
-
-    renderDialog();
-    await moveToDetailsStep();
-
-    fireEvent.click(screen.getByRole("radio", { name: /Litere volumetrice/i }));
-    fireEvent.change(
-      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
-      { target: { value: "Litere Volumetrice luminoase - 4800 x 600mm" } }
-    );
-    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
-
-    expect(
-      await screen.findByText(/Contul Employee Mobile nu poate crea cereri Work Intake/i)
-    ).toBeInTheDocument();
   });
 });
