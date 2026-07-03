@@ -1,0 +1,63 @@
+{
+    "title": "product_templates",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "template_code": {
+            "type": "string",
+            "description": "Unique code like TOTEM-ILUMINAT-STD"
+        },
+        "family_id": {
+            "type": "string",
+            "description": "Machine-readable family id"
+        },
+        "family_name": {
+            "type": "string",
+            "description": "Human-readable product family name"
+        },
+        "description": {
+            "type": "string",
+            "description": "Short description of the template"
+        },
+        "components_json": {
+            "type": "string",
+            "description": "JSON array of components"
+        },
+        "operations_json": {
+            "type": "string",
+            "description": "JSON array of operation steps with code/name/workcenter/estimatedMinutes/sequence"
+        },
+        "required_materials_json": {
+            "type": "string",
+            "description": "JSON array of required materials"
+        },
+        "estimated_hours": {
+            "type": "number",
+            "description": "Total estimated labor hours"
+        },
+        "base_labor_rate": {
+            "type": "number",
+            "description": "Default labor rate per hour in RON"
+        },
+        "base_margin_pct": {
+            "type": "number",
+            "description": "Default target margin percentage"
+        },
+        "active": {
+            "type": "boolean",
+            "description": "Whether template is currently usable"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-text notes"
+        }
+    },
+    "required": [
+        "id",
+        "template_code",
+        "family_name"
+    ]
+}

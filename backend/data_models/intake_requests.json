@@ -1,0 +1,89 @@
+{
+    "title": "intake_requests",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "code": {
+            "type": "string",
+            "description": "Business code like WI-3320"
+        },
+        "client_id": {
+            "type": "integer",
+            "description": "FK clients.id"
+        },
+        "client_name": {
+            "type": "string",
+            "description": "Denormalized client name for list display"
+        },
+        "contact_person": {
+            "type": "string",
+            "description": "Contact person at client"
+        },
+        "channel": {
+            "type": "string",
+            "description": "email/phone/walk_in/web_form"
+        },
+        "product_family": {
+            "type": "string",
+            "description": "Product family name"
+        },
+        "description": {
+            "type": "string",
+            "description": "Free-text request description"
+        },
+        "dimensions": {
+            "type": "string",
+            "description": "Dimensions as free-text"
+        },
+        "quantity": {
+            "type": "integer",
+            "description": "Quantity requested"
+        },
+        "status": {
+            "type": "string",
+            "description": "new/in_review/needs_info/ready_for_quote/blocked/cancelled"
+        },
+        "assigned_to": {
+            "type": "string",
+            "description": "Assigned person name"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-text notes"
+        },
+        "priority": {
+            "type": "string",
+            "description": "low/normal/high/urgent"
+        },
+        "delivery_type": {
+            "type": "string",
+            "description": "pickup/delivery_standard/delivery_express/delivery_install/courier"
+        },
+        "product_spec_json": {
+            "type": "string",
+            "description": "Optional JSON text: per-customer product specification (e.g. Product 001 litere volumetrice)"
+        },
+        "confirmed_template_code": {
+            "type": "string",
+            "description": "Operator-confirmed ProductSystem template_code"
+        },
+        "confirmed_template_name": {
+            "type": "string",
+            "description": "Display name for confirmed template (optional)"
+        },
+        "site_audit_json": {
+            "type": "string",
+            "description": "JSON text: site/mounting audit (address, photos status, power, checks)"
+        }
+    },
+    "required": [
+        "id",
+        "code",
+        "client_name",
+        "product_family",
+        "status"
+    ]
+}

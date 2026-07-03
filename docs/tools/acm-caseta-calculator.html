@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>WorkOS — Calculator Casetă ACM (Bond)</title>
+  <style>
+    :root {
+      --bg-deep: #0f1419;
+      --bg-panel: #1a222d;
+      --bg-input: #242e3b;
+      --border: #2d3a4a;
+      --text: #e8edf2;
+      --text-muted: #8b9aab;
+      --accent: #2dd4a8;
+      --accent-dim: #1a9e7a;
+      --accent-blue: #38bdf8;
+      --accent-amber: #fbbf24;
+      --danger: #f87171;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
+      --font: "Segoe UI", system-ui, -apple-system, sans-serif;
+      --mono: "Cascadia Code", "Consolas", monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { font-family: var(--font); background: var(--bg-deep); color: var(--text); min-height: 100dvh; line-height: 1.5; }
+    .app-header { background: linear-gradient(135deg, #152028 0%, #1a2836 100%); border-bottom: 1px solid var(--border); padding: 1rem 1.25rem; position: sticky; top: 0; z-index: 10; }
+    .app-header h1 { font-size: 1.15rem; font-weight: 600; }
+    .app-header p { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .layout { display: grid; grid-template-columns: 1fr; gap: 1rem; padding: 1rem; max-width: 1200px; margin: 0 auto; }
+    @media (min-width: 900px) { .layout { grid-template-columns: 360px 1fr; padding: 1.25rem; } }
+    .panel { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+    .panel-head { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+    .panel-body { padding: 1rem; }
+    .field-grid { display: grid; gap: 0.85rem; }
+    .field label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; }
+    .field label span.unit { color: var(--accent-blue); font-family: var(--mono); font-size: 0.72rem; }
+    .field input, .field select { width: 100%; padding: 0.6rem 0.75rem; background: var(--bg-input); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 1rem; font-family: var(--mono); }
+    .field input:focus, .field select:focus { outline: none; border-color: var(--accent); }
+    .field input:disabled { opacity: 0.45; cursor: not-allowed; }
+    .field-check { display: flex; align-items: center; gap: 0.6rem; padding: 0.65rem 0.75rem; background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.25); border-radius: 6px; cursor: pointer; user-select: none; }
+    .field-check input { width: auto; accent-color: var(--accent-amber); }
+    .field-check span { font-size: 0.85rem; }
+    .results { margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+    .result-row { display: flex; justify-content: space-between; align-items: baseline; padding: 0.4rem 0; font-size: 0.88rem; }
+    .result-row .label { color: var(--text-muted); }
+    .result-row .value { font-family: var(--mono); font-weight: 600; color: var(--accent); }
+    .result-row.highlight .value { font-size: 1.05rem; color: var(--accent-blue); }
+    .instructions { margin-top: 1rem; padding: 0.85rem; background: rgba(45,212,168,0.06); border: 1px solid rgba(45,212,168,0.2); border-radius: 6px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+    .instructions strong { color: var(--text); }
+    .instructions ul { margin: 0.5rem 0 0 1.1rem; }
+    .svg-wrap { background: #f4f6f8; border-radius: 6px; overflow: auto; min-height: 280px; display: flex; align-items: center; justify-content: center; padding: 0.5rem; }
+    .svg-wrap svg { max-width: 100%; height: auto; display: block; }
+    .actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+    .btn { flex: 1; min-width: 140px; padding: 0.7rem 1rem; border: none; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .btn-primary { background: var(--accent); color: var(--bg-deep); }
+    .btn-secondary { background: var(--bg-input); color: var(--text); border: 1px solid var(--border); }
+    .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 0.75rem; font-size: 0.75rem; color: var(--text-muted); }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .legend-line { width: 24px; height: 3px; border-radius: 2px; }
+    .legend-line.contur { background: #1a1a1a; }
+    .legend-line.frezare { background: repeating-linear-gradient(90deg, var(--danger) 0 4px, transparent 4px 7px); }
+    .legend-line.d2 { background: rgba(220, 38, 38, 0.55); }
+    .footer-note { text-align: center; padding: 1rem; font-size: 0.72rem; color: var(--text-muted); }
+    .axis-note { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.5rem; font-style: italic; }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>Calculator Casetă ACM — Bond</h1>
+  <p>Origine CNC (0,0) = colț stânga-jos · D1 drept · D2 trapez la 45°</p>
+</header>
+
+<main class="layout">
+  <section class="panel">
+    <div class="panel-head">Parametri producție</div>
+    <div class="panel-body">
+      <form id="calcForm" class="field-grid" autocomplete="off">
+        <div class="field">
+          <label>Lățime finită casetă <span class="unit">W (mm)</span></label>
+          <input type="number" id="wFinit" value="600" min="1" step="1" required />
+        </div>
+        <div class="field">
+          <label>Înălțime finită casetă <span class="unit">H (mm)</span></label>
+          <input type="number" id="hFinit" value="400" min="1" step="1" required />
+        </div>
+        <div class="field">
+          <label>Flanșă principală (perete) <span class="unit">D1 (mm)</span></label>
+          <input type="number" id="d1Flansa" value="50" min="1" step="1" required />
+        </div>
+        <label class="field-check">
+          <input type="checkbox" id="dublaIntoarcere" />
+          <span>Dublă întoarcere (ranforsare interioară D2)</span>
+        </label>
+        <div class="field">
+          <label>Întoarcere secundară <span class="unit">D2 (mm)</span></label>
+          <input type="number" id="d2Intoarcere" value="20" min="1" step="1" disabled />
+        </div>
+        <div class="field">
+          <label>Grosime material <span class="unit">t (mm)</span></label>
+          <input type="number" id="grosime" value="4" min="1" step="0.5" required />
+        </div>
+        <div class="field">
+          <label>Corecție îndoire K <span class="unit">mm / îndoire 90°</span></label>
+          <input type="number" id="kFactor" value="2.0" min="0" step="0.1" required />
+        </div>
+        <div class="field">
+          <label>Tip colț</label>
+          <select id="tipColt">
+            <option value="simplu">Colț simplu (pătrat)</option>
+            <option value="urechi">Urechi de prindere (suprapuse)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Extensie ureche prindere <span class="unit">mm</span></label>
+          <input type="number" id="extensieUreche" value="20" min="5" step="1" />
+        </div>
+      </form>
+      <div class="results" id="results"></div>
+      <div class="instructions" id="instructions"></div>
+      <div class="actions">
+        <button type="button" class="btn btn-primary" id="btnDxf">Descarcă fișier DXF pentru CNC</button>
+        <button type="button" class="btn btn-secondary" id="btnReset">Resetează</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">Desfășurată 2D — Schiță debitare</div>
+    <div class="panel-body">
+      <div class="svg-wrap" id="svgContainer"></div>
+      <p class="axis-note">Axe: originea (0,0) = colț stânga-jos al foii (convenție CNC). Sus = +Y.</p>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-line contur"></span> Contur debitare</div>
+        <div class="legend-item"><span class="legend-line frezare"></span> Linii frezare V 90°</div>
+        <div class="legend-item"><span class="legend-line d2"></span> Întoarcere D2 (trapez 45°)</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<p class="footer-note">WorkOS · Casetă ACM · Perete D1 rectangular · D2 trapez cu teșitură 45° de la L1×L1</p>
+
+<script>
+(function () {
+  "use strict";
+
+  const EXTENSIE_DEFAULT = 20;
+  const D2_DEFAULT = 20;
+
+  const els = {
+    wFinit: document.getElementById("wFinit"),
+    hFinit: document.getElementById("hFinit"),
+    d1Flansa: document.getElementById("d1Flansa"),
+    dublaIntoarcere: document.getElementById("dublaIntoarcere"),
+    d2Intoarcere: document.getElementById("d2Intoarcere"),
+    grosime: document.getElementById("grosime"),
+    kFactor: document.getElementById("kFactor"),
+    tipColt: document.getElementById("tipColt"),
+    extensieUreche: document.getElementById("extensieUreche"),
+    results: document.getElementById("results"),
+    instructions: document.getElementById("instructions"),
+    svgContainer: document.getElementById("svgContainer"),
+    btnDxf: document.getElementById("btnDxf"),
+    btnReset: document.getElementById("btnReset"),
+  };
+
+  /* ==========================================================================
+   * SISTEM DE COordonate: originea (0,0) = colț STÂNGA-JOS al foii (CNC).
+   * Y crește în sus. SVG inversează Y la randare.
+   * ========================================================================== */
+
+  /**
+   * Calculează dimensiuni, frezări și axe.
+   * Dublă întoarcere: W/H_debitare = W/H + 2·D1 + 2·D2 − 4K
+   * Simplu: W/H + 2·D1 − 2K
+   */
+  function calculeaza(wFinit, hFinit, d1, d2, k, dubla) {
+    const kAxa = dubla ? 4 : 2;
+    const d2e = dubla ? d2 : 0;
+
+    const W = wFinit + 2 * d1 + 2 * d2e - kAxa * k;
+    const H = hFinit + 2 * d1 + 2 * d2e - kAxa * k;
+
+    let x1, x2, x3, x4, y1, y2, y3, y4;
+
+    if (dubla) {
+      x1 = d2e - k;
+      x2 = d2e + d1 - 2 * k;
+      x3 = W - x2;
+      x4 = W - x1;
+      y1 = d2e - k;
+      y2 = d2e + d1 - 2 * k;
+      y3 = H - y2;
+      y4 = H - y1;
+    } else {
+      const o = d1 - k;
+      x1 = o;
+      x2 = o;
+      x3 = W - o;
+      x4 = W - o;
+      y1 = o;
+      y2 = o;
+      y3 = H - o;
+      y4 = H - o;
+    }
+
+    const fataW = dubla ? x3 - x2 : x2 - x1;
+    const fataH = dubla ? y3 - y2 : y2 - y1;
+
+    return {
+      wFinit, hFinit, d1, d2: d2e, k, dubla, W, H, kAxa,
+      x1, x2, x3, x4, y1, y2, y3, y4,
+      fataW, fataH,
+      dimColt: dubla ? d1 + d2e : d1,
+    };
+  }
+
+  /** Cele 4 zone D2 (trapezuri cu teșitură 45°) — câte una pe fiecare latură. */
+  function zoneD2Trapez(calc) {
+    const { x1, x4, y1, y4, W, H } = calc;
+    return [
+      { id: "stanga",  pts: [{ x: 0, y: 0 }, { x: x1, y: y1 }, { x: x1, y: y4 }, { x: 0, y: H }] },
+      { id: "dreapta", pts: [{ x: W, y: 0 }, { x: x4, y: y1 }, { x: x4, y: y4 }, { x: W, y: H }] },
+      { id: "jos",     pts: [{ x: 0, y: 0 }, { x: x1, y: y1 }, { x: x4, y: y1 }, { x: W, y: 0 }] },
+      { id: "sus",     pts: [{ x: 0, y: H }, { x: x1, y: y4 }, { x: x4, y: y4 }, { x: W, y: H }] },
+    ];
+  }
+
+  /**
+   * Contur EXTERIOR — dublă întoarcere.
+   * D1 = drept (90°). D2 = trapez cu teșitură 45° de la L1×L1 spre colțul foii — pe TOATE cele 4 laturi.
+   */
+  function conturDubla(calc, extensie) {
+    const { x1, x2, x3, x4, y1, y2, y3, y4, W, H } = calc;
+    const ext = extensie;
+
+    const pts = [
+      // ── Colț stânga-jos (0,0): teșitură D2 → perete D1 drept ──
+      { x: 0, y: 0 },
+      { x: x1, y: y1 },
+      { x: x1, y: y2 },
+      { x: x2, y: y2 },
+      { x: x3, y: y2 },
+      // ── Colț dreapta-jos (W,0) ──
+      { x: x4, y: y2 },
+      { x: x4, y: y1 },
+      { x: W, y: 0 },
+      // ── Margine dreapta x=W (cu urechi opționale) ──
+      { x: W, y: y1 },
+    ];
+    if (ext > 0) pts.push({ x: W, y: y1 + ext });
+    pts.push({ x: W, y: y3 });
+    if (ext > 0) pts.push({ x: W, y: y3 - ext });
+    pts.push(
+      // ── Colț dreapta-sus (W,H): teșitură D2 ──
+      { x: W, y: H },
+      { x: x4, y: y4 },
+      { x: x4, y: y3 },
+      { x: x3, y: y3 },
+      { x: x2, y: y3 },
+      // ── Colț stânga-sus (0,H) ──
+      { x: x1, y: y3 },
+      { x: x1, y: y4 },
+      { x: 0, y: H }
+    );
+    // ── Margine stânga x=0 (închide spre origine) ──
+    if (ext > 0) pts.push({ x: 0, y: y4 - ext });
+    pts.push({ x: 0, y: y1 });
+    if (ext > 0) pts.push({ x: 0, y: y1 + ext });
+
+    return pts;
+  }
+
+  /** Contur întoarcere simplă — cruce (+) cu colțuri drepte, origine BL. */
+  function conturSimpla(calc, tipColt, extensie) {
+    const o = calc.x1;
+    const { W, H } = calc;
+    const yLo = o;
+    const yHi = H - o;
+    const ext = tipColt === "urechi" ? extensie : 0;
+
+    const pts = [
+      { x: o, y: 0 }, { x: W - o, y: 0 },
+      { x: W - o, y: yLo }, { x: W, y: yLo },
+    ];
+    if (ext > 0) pts.push({ x: W, y: yLo + ext });
+    pts.push({ x: W, y: yHi });
+    if (ext > 0) pts.push({ x: W, y: yHi - ext });
+    pts.push(
+      { x: W - o, y: yHi }, { x: W - o, y: H }, { x: o, y: H },
+      { x: o, y: yHi }, { x: 0, y: yHi }
+    );
+    if (ext > 0) pts.push({ x: 0, y: yHi - ext });
+    pts.push({ x: 0, y: yLo });
+    if (ext > 0) pts.push({ x: 0, y: yLo + ext });
+    pts.push({ x: o, y: yLo });
+    return pts;
+  }
+
+  function construiesteContur(calc, tipColt, extensie) {
+    if (calc.dubla) {
+      const ext = tipColt === "urechi" ? extensie : 0;
+      return conturDubla(calc, ext);
+    }
+    return conturSimpla(calc, tipColt, extensie);
+  }
+
+  /** Linii frezare — traversează complet foaia (0→W / 0→H). */
+  function construiesteLiniiFrezare(calc) {
+    const { W, H, dubla, x1, x2, x3, x4, y1, y2, y3, y4 } = calc;
+    const linii = [];
+
+    if (dubla) {
+      [x1, x2, x3, x4].forEach((x) => linii.push({ x1: x, y1: 0, x2: x, y2: H }));
+      [y1, y2, y3, y4].forEach((y) => linii.push({ x1: 0, y1: y, x2: W, y2: y }));
+    } else {
+      const o = x1;
+      linii.push(
+        { x1: o, y1: 0, x2: o, y2: H },
+        { x1: W - o, y1: 0, x2: W - o, y2: H },
+        { x1: 0, y1: o, x2: W, y2: o },
+        { x1: 0, y1: H - o, x2: W, y2: H - o }
+      );
+    }
+    return linii;
+  }
+
+  /** Convertește Y matematic (jos=0) → Y SVG (sus=0). */
+  function toSvgY(y, H) { return H - y; }
+
+  function randareSvg(calc, tipColt, extensie) {
+    const contur = construiesteContur(calc, tipColt, extensie);
+    const frezari = construiesteLiniiFrezare(calc);
+    const { W, H } = calc;
+    const padding = 50;
+
+    const svgPts = contur.map((p) => ({ x: p.x, y: toSvgY(p.y, H) }));
+    const xs = svgPts.map((p) => p.x);
+    const ys = svgPts.map((p) => p.y);
+    const minX = Math.min(0, ...xs);
+    const maxX = Math.max(W, ...xs);
+    const minY = Math.min(0, ...ys);
+    const maxY = Math.max(H, ...ys);
+    const drawW = maxX - minX;
+    const drawH = maxY - minY;
+    const scale = Math.min((600 - padding * 2) / drawW, (450 - padding * 2) / drawH, 2.5);
+    const svgW = drawW * scale + padding * 2;
+    const svgH = drawH * scale + padding * 2 + 28;
+
+    const tx = (x) => padding + (x - minX) * scale;
+    const ty = (y) => padding + (y - minY) * scale;
+
+    let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${svgW} ${svgH}" width="${svgW}" height="${svgH}">`;
+    svg += `<rect width="100%" height="100%" fill="#f4f6f8"/>`;
+    svg += `<defs><pattern id="grid" width="${10 * scale}" height="${10 * scale}" patternUnits="userSpaceOnUse">`;
+    svg += `<path d="M ${10 * scale} 0 L 0 0 0 ${10 * scale}" fill="none" stroke="#dde3ea" stroke-width="0.5"/></pattern></defs>`;
+    svg += `<rect x="${tx(minX)}" y="${ty(minY)}" width="${drawW * scale}" height="${drawH * scale}" fill="url(#grid)"/>`;
+
+    // Zone D2 trapezoidale — toate cele 4 laturi (ca în schița roșie)
+    if (calc.dubla) {
+      zoneD2Trapez(calc).forEach((z) => {
+        const d = z.pts.map((p, i) => {
+          const sy = toSvgY(p.y, H);
+          return `${i === 0 ? "M" : "L"} ${tx(p.x)} ${ty(sy)}`;
+        }).join(" ") + " Z";
+        svg += `<path d="${d}" fill="rgba(220,38,38,0.22)" stroke="#dc2626" stroke-width="1"/>`;
+      });
+    }
+
+    const conturPath = svgPts.map((p, i) => `${i === 0 ? "M" : "L"} ${tx(p.x)} ${ty(p.y)}`).join(" ") + " Z";
+    svg += `<path d="${conturPath}" fill="rgba(255,255,255,0.65)" stroke="#1a1a1a" stroke-width="2"/>`;
+
+    frezari.forEach((l) => {
+      svg += `<line x1="${tx(l.x1)}" y1="${ty(toSvgY(l.y1, H))}" x2="${tx(l.x2)}" y2="${ty(toSvgY(l.y2, H))}" stroke="#dc2626" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+    });
+
+    // Cote
+    const dimY = ty(maxY) + 20;
+    svg += `<line x1="${tx(0)}" y1="${dimY}" x2="${tx(W)}" y2="${dimY}" stroke="#334155" stroke-width="1"/>`;
+    svg += `<text x="${tx(W / 2)}" y="${dimY + 14}" text-anchor="middle" font-size="12" fill="#0f766e" font-weight="600" font-family="monospace">W = ${W.toFixed(1)} mm</text>`;
+
+    const dimX = tx(minX) - 16;
+    svg += `<line x1="${dimX}" y1="${ty(toSvgY(H, H))}" x2="${dimX}" y2="${ty(toSvgY(0, H))}" stroke="#334155" stroke-width="1"/>`;
+    svg += `<text x="${dimX - 6}" y="${ty(toSvgY(H / 2, H))}" text-anchor="middle" font-size="12" fill="#0f766e" font-weight="600" font-family="monospace" transform="rotate(-90, ${dimX - 6}, ${ty(toSvgY(H / 2, H))})">H = ${H.toFixed(1)} mm</text>`;
+
+    const cy = ty(toSvgY((calc.y2 + calc.y3) / 2, H));
+    svg += `<text x="${tx((calc.x2 + calc.x3) / 2)}" y="${cy}" text-anchor="middle" dominant-baseline="middle" font-size="11" fill="#0369a1" font-family="monospace">${calc.fataW.toFixed(0)} × ${calc.fataH.toFixed(0)}</text>`;
+    svg += `<text x="${tx((calc.x2 + calc.x3) / 2)}" y="${cy + 14}" text-anchor="middle" font-size="9" fill="#64748b" font-family="sans-serif">față finită</text>`;
+
+    // Origine CNC
+    svg += `<circle cx="${tx(0)}" cy="${ty(toSvgY(0, H))}" r="4" fill="#0f766e"/>`;
+    svg += `<text x="${tx(0) + 8}" y="${ty(toSvgY(0, H)) - 6}" font-size="9" fill="#0f766e" font-family="monospace">(0,0)</text>`;
+
+    svg += `</svg>`;
+    return svg;
+  }
+
+  function dxfNum(n) { return Number(n).toFixed(4); }
+
+  function genereazaDxf(calc, tipColt, extensie) {
+    const contur = construiesteContur(calc, tipColt, extensie);
+    const frezari = construiesteLiniiFrezare(calc);
+    const lines = [];
+
+    lines.push("0", "SECTION", "2", "HEADER", "0", "ENDSEC");
+    lines.push("0", "SECTION", "2", "TABLES");
+    lines.push("0", "TABLE", "2", "LAYER", "70", "2");
+    lines.push("0", "LAYER", "2", "CONTUR", "70", "0", "62", "7", "6", "CONTINUOUS");
+    lines.push("0", "LAYER", "2", "FREZARE", "70", "0", "62", "1", "6", "DASHED");
+    lines.push("0", "ENDTAB", "0", "ENDSEC");
+    lines.push("0", "SECTION", "2", "ENTITIES");
+
+    lines.push("0", "POLYLINE", "8", "CONTUR", "66", "1", "70", "1");
+    contur.forEach((p) => lines.push("0", "VERTEX", "8", "CONTUR", "10", dxfNum(p.x), "20", dxfNum(p.y)));
+    lines.push("0", "SEQEND", "8", "CONTUR");
+
+    frezari.forEach((l) => {
+      lines.push("0", "LINE", "8", "FREZARE", "10", dxfNum(l.x1), "20", dxfNum(l.y1), "11", dxfNum(l.x2), "21", dxfNum(l.y2));
+    });
+
+    lines.push("0", "ENDSEC", "0", "EOF");
+    return lines.join("\r\n");
+  }
+
+  function descarcaFisier(continut, nume, mime) {
+    const blob = new Blob([continut], { type: mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = nume;
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  function citesteInputuri() {
+    return {
+      wFinit: parseFloat(els.wFinit.value) || 0,
+      hFinit: parseFloat(els.hFinit.value) || 0,
+      d1: parseFloat(els.d1Flansa.value) || 0,
+      d2: parseFloat(els.d2Intoarcere.value) || D2_DEFAULT,
+      grosime: parseFloat(els.grosime.value) || 4,
+      k: parseFloat(els.kFactor.value) || 0,
+      dubla: els.dublaIntoarcere.checked,
+      tipColt: els.tipColt.value,
+      extensie: parseFloat(els.extensieUreche.value) || EXTENSIE_DEFAULT,
+    };
+  }
+
+  function valideaza(inp) {
+    if (inp.wFinit <= 0 || inp.hFinit <= 0 || inp.d1 <= 0) return "W, H și D1 trebuie să fie pozitive.";
+    if (inp.dubla && inp.d2 <= 0) return "D2 trebuie pozitiv când dubla întoarcere e activă.";
+    const kMax = inp.dubla ? Math.min(inp.d1, inp.d2) : inp.d1;
+    if (kMax <= inp.k) return inp.dubla ? "K trebuie mai mic decât D1 și D2." : "D1 trebuie mai mare decât K.";
+    return null;
+  }
+
+  function fmt(v) { return v.toFixed(1); }
+
+  function randareRezultate(calc, inp) {
+    let frez = "";
+    if (calc.dubla) {
+      frez = `
+        <div class="result-row"><span class="label">L1 stânga / jos (D2−K)</span><span class="value">${fmt(calc.x1)} / ${fmt(calc.y1)} mm</span></div>
+        <div class="result-row"><span class="label">L2 stânga / jos (D2+D1−2K)</span><span class="value">${fmt(calc.x2)} / ${fmt(calc.y2)} mm</span></div>
+        <div class="result-row"><span class="label">L2 dreapta / sus</span><span class="value">${fmt(calc.x3)} / ${fmt(calc.y3)} mm</span></div>
+        <div class="result-row"><span class="label">L1 dreapta / sus</span><span class="value">${fmt(calc.x4)} / ${fmt(calc.y4)} mm</span></div>`;
+    } else {
+      frez = `<div class="result-row"><span class="label">Offset frezare (D1−K)</span><span class="value">${fmt(calc.x1)} mm</span></div>`;
+    }
+
+    els.results.innerHTML = `
+      <div class="result-row highlight"><span class="label">Foaie W × H</span><span class="value">${fmt(calc.W)} × ${fmt(calc.H)} mm</span></div>
+      <div class="result-row"><span class="label">Față finită</span><span class="value">${fmt(calc.fataW)} × ${fmt(calc.fataH)} mm</span></div>
+      <div class="result-row"><span class="label">Mod</span><span class="value">${calc.dubla ? "Dublă întoarcere" : "Simplă"}</span></div>
+      ${frez}
+      <div class="result-row"><span class="label">Corecții K / axă</span><span class="value">${calc.kAxa} × ${inp.k} mm</span></div>`;
+  }
+
+  function randareInstructiuni(calc, inp) {
+    let body = "";
+    if (calc.dubla) {
+      body = `
+        <li>Origine <strong>(0,0)</strong> = colț stânga-jos al foii (convenție CNC).</li>
+        <li><strong>Peretele D1</strong> (L2→L1) rămâne drept la 90° pe toate cele 4 laturi.</li>
+        <li><strong>Întoarcerea D2</strong> = trapez cu teșitură 45° pe fiecare latură (stânga, dreapta, sus, jos) — de la L1×L1 spre colțul foii.</li>
+        <li>Exemplu colț stânga-jos: (0,0) → 45° → (x1,y1) → vertical → (x1,y2) → orizontal → (x2,y2).</li>
+        <li>8 linii frezare complete (0→W / 0→H). Adâncime ~${Math.max(1, inp.grosime - 0.5).toFixed(1)} mm.</li>
+        <li>Rezultat finit: <strong>${calc.wFinit}×${calc.hFinit} mm</strong>, perete D1=${inp.d1} mm, întoarcere D2=${inp.d2} mm spre interior.</li>`;
+    } else {
+      body = `
+        <li>4 linii frezare la offset D1−K = ${fmt(calc.x1)} mm, de la margine la margine.</li>
+        <li>Colțuri decupate ${calc.dimColt}×${calc.dimColt} mm (cruce +).</li>`;
+    }
+
+    els.instructions.innerHTML = `
+      <strong>Instrucțiuni — ${calc.dubla ? "Dublă întoarcere" : "Întoarcere simplă"}</strong>
+      <ul>${body}</ul>`;
+  }
+
+  function actualizeaza() {
+    const inp = citesteInputuri();
+    els.d2Intoarcere.disabled = !inp.dubla;
+    els.extensieUreche.disabled = inp.tipColt !== "urechi";
+    const err = valideaza(inp);
+    if (err) {
+      els.results.innerHTML = `<p style="color:var(--danger);font-size:0.85rem">${err}</p>`;
+      els.instructions.innerHTML = "";
+      els.svgContainer.innerHTML = "";
+      return null;
+    }
+    const calc = calculeaza(inp.wFinit, inp.hFinit, inp.d1, inp.d2, inp.k, inp.dubla);
+    randareRezultate(calc, inp);
+    randareInstructiuni(calc, inp);
+    els.svgContainer.innerHTML = randareSvg(calc, inp.tipColt, inp.extensie);
+    return { calc, inp };
+  }
+
+  document.querySelectorAll("#calcForm input, #calcForm select").forEach((el) => {
+    el.addEventListener("input", actualizeaza);
+    el.addEventListener("change", actualizeaza);
+  });
+
+  els.btnDxf.addEventListener("click", () => {
+    const s = actualizeaza();
+    if (!s) return;
+    const { calc, inp } = s;
+    descarcaFisier(
+      genereazaDxf(calc, inp.tipColt, inp.extensie),
+      `caseta-acm_${calc.wFinit}x${calc.hFinit}_${calc.dubla ? "dubla" : "simpla"}.dxf`,
+      "application/dxf"
+    );
+  });
+
+  els.btnReset.addEventListener("click", () => {
+    els.wFinit.value = 600; els.hFinit.value = 400; els.d1Flansa.value = 50;
+    els.dublaIntoarcere.checked = false; els.d2Intoarcere.value = D2_DEFAULT;
+    els.grosime.value = 4; els.kFactor.value = 2.0;
+    els.tipColt.value = "simplu"; els.extensieUreche.value = EXTENSIE_DEFAULT;
+    actualizeaza();
+  });
+
+  actualizeaza();
+})();
+</script>
+</body>
+</html>

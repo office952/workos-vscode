@@ -1,0 +1,421 @@
+import type { GeometrySummary, ParsedSvgDocument } from './types'
+import {
+  isLetterLayerId,
+  isLogoLayerId,
+  letterSemanticForSolidFill,
+} from './anaMariaLetterSemantics'
+import {
+  isCorelInternalGroupId,
+  isGenericLayerName,
+  isSemanticProductionOrArtworkLayerName,
+  normalizeLayerDisplayName,
+} from './layerNameSemantics'
+import { shouldPreserveExistingLayerStructure } from './pseudoLayerExpansionGuard'
+
+export type ExpandedLayerKind = 'real' | 'pseudo' | 'raster_artwork'
+
+export interface LayerExpansionMeta {
+  layerKind: ExpandedLayerKind
+  layerOrigin: string
+  roleReason: string
+}
+
+export interface SemanticPseudoLayerExpansionResult {
+  doc: ParsedSvgDocument
+  layerMeta: Map<string, LayerExpansionMeta>
+}
+
+function viewBoxCenterX(doc: ParsedSvgDocument): number | null {
+  if (!doc.viewBox) return null
+  return doc.viewBox.minX + doc.viewBox.width / 2
+}
+
+function isDrawableElement(type: ParsedSvgDocument['elements'][number]['type']): boolean {
+  return type !== 'group' && type !== 'unknown'
+}
+
+function findRealLetterGroups(doc: ParsedSvgDocument): ParsedSvgDocument['groups'] {
+  return doc.groups.filter((group) => {
+    if (isCorelInternalGroupId(group.id)) return false
+    return isLetterLayerId(group.id) || isLetterLayerId(group.name ?? '')
+  })
+}
+
+function findRealLogoGroups(doc: ParsedSvgDocument): ParsedSvgDocument['groups'] {
+  return doc.groups.filter((group) => {
+    if (isCorelInternalGroupId(group.id)) return false
+    return isLogoLayerId(group.id) || isLogoLayerId(group.name ?? '')
+  })
+}
+
+function drawableIdsForLayer(
+  elements: ParsedSvgDocument['elements'],
+  layerId: string,
+): string[] {
+  return elements
+    .filter((element) => element.layerId === layerId && isDrawableElement(element.type))
+    .map((element) => element.elementId)
+}
+
+function isLogoStrokeOutlinePath(element: ParsedSvgDocument['elements'][number]): boolean {
+  if (element.type !== 'path') return false
+  const fill = element.fillSolid ?? element.fill
+  const stroke = element.strokeSolid ?? element.stroke
+  const fillNone = fill == null || fill === 'none' || fill === 'transparent'
+  const hasStroke = stroke != null && stroke !== 'none'
+  return fillNone && hasStroke
+}
+
+function assignLogoGroupElement(
+  elements: ParsedSvgDocument['elements'],
+  group: ParsedSvgDocument['groups'][number],
+  elementId: string,
+  layerId: string,
+  layerName: string,
+): void {
+  const element = elements.find((entry) => entry.elementId === elementId)
+  if (element) {
+    element.layerId = layerId
+    element.layerName = layerName
+  }
+  if (!group.elementIds.includes(elementId)) {
+    group.elementIds.push(elementId)
+  }
+}
+
+function bboxOverlap(
+  a: { x: number; y: number; width: number; height: number },
+  b: { x: number; y: number; width: number; height: number },
+  margin = 0,
+): boolean {
+  return !(
+    a.x + a.width + margin < b.x ||
+    b.x + b.width + margin < a.x ||
+    a.y + a.height + margin < b.y ||
+    b.y + b.height + margin < a.y
+  )
+}
+
+function assignRasterLogoLayers(
+  doc: ParsedSvgDocument,
+  geometry: GeometrySummary,
+  elements: ParsedSvgDocument['elements'],
+  newGroups: ParsedSvgDocument['groups'],
+  layerMeta: Map<string, LayerExpansionMeta>,
+  layerKind: ExpandedLayerKind,
+): void {
+  const geoById = new Map(geometry.elementGeometries.map((g) => [g.elementId, g]))
+  const centerX = viewBoxCenterX(doc)
+  const images = elements.filter((element) => element.type === 'image')
+
+  for (const image of images) {
+    const geo = geoById.get(image.elementId)
+    const bbox = geo?.bbox
+    const imageCenterX = bbox ? bbox.x + bbox.width / 2 : 0
+    const side = centerX != null && imageCenterX >= centerX ? 'right' : 'left'
+    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
+    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+
+    const imageElement = elements.find((entry) => entry.elementId === image.elementId)
+    const parentLayerId = imageElement?.layerId ?? null
+
+    let group = newGroups.find((entry) => entry.id === id)
+    if (!group) {
+      group = { id, name, elementIds: [] }
+      newGroups.push(group)
+      layerMeta.set(id, {
+        layerKind: layerKind === 'real' ? 'real' : 'raster_artwork',
+        layerOrigin: layerKind === 'real' ? 'corel_logo_layer' : 'raster_image_split',
+        roleReason:
+          layerKind === 'real'
+            ? 'Named Corel logo layer preserved as printed artwork.'
+            : 'Raster image isolated as printed artwork pseudo-layer.',
+      })
+    }
+
+    assignLogoGroupElement(elements, group, image.elementId, id, name)
+
+    const outlineMargin = bbox ? Math.max(bbox.width, bbox.height) * 0.08 : 0
+    for (const candidate of elements) {
+      if (candidate.elementId === image.elementId) continue
+      if (!isLogoStrokeOutlinePath(candidate)) continue
+      if (candidate.layerId === id) continue
+
+      let shouldAssign = false
+      if (parentLayerId && candidate.layerId === parentLayerId) {
+        shouldAssign = true
+      } else if (bbox) {
+        const candidateGeo = geoById.get(candidate.elementId)
+        if (candidateGeo?.bbox && bboxOverlap(bbox, candidateGeo.bbox, outlineMargin)) {
+          shouldAssign = true
+        }
+      }
+
+      if (shouldAssign) {
+        assignLogoGroupElement(elements, group, candidate.elementId, id, name)
+      }
+    }
+  }
+}
+
+function assignedElementIds(groups: ParsedSvgDocument['groups']): Set<string> {
+  return new Set(groups.flatMap((group) => group.elementIds))
+}
+
+function assignStrokeOnlyLogoLayers(
+  doc: ParsedSvgDocument,
+  geometry: GeometrySummary,
+  elements: ParsedSvgDocument['elements'],
+  newGroups: ParsedSvgDocument['groups'],
+  layerMeta: Map<string, LayerExpansionMeta>,
+  layerKind: ExpandedLayerKind,
+): void {
+  const geoById = new Map(geometry.elementGeometries.map((g) => [g.elementId, g]))
+  const centerX = viewBoxCenterX(doc)
+  const alreadyAssigned = assignedElementIds(newGroups)
+  const candidates = elements
+    .filter((element) => isLogoStrokeOutlinePath(element) && !alreadyAssigned.has(element.elementId))
+    .sort((a, b) => {
+      const aBox = geoById.get(a.elementId)?.bbox
+      const bBox = geoById.get(b.elementId)?.bbox
+      return (aBox?.x ?? a.index) - (bBox?.x ?? b.index)
+    })
+
+  for (const candidate of candidates) {
+    const bbox = geoById.get(candidate.elementId)?.bbox
+    const candidateCenterX = bbox ? bbox.x + bbox.width / 2 : null
+    const side = centerX != null && candidateCenterX != null && candidateCenterX >= centerX ? 'right' : 'left'
+    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
+    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+
+    let group = newGroups.find((entry) => entry.id === id)
+    if (!group) {
+      group = { id, name, elementIds: [] }
+      newGroups.push(group)
+    }
+    if (!layerMeta.has(id)) {
+      layerMeta.set(id, {
+        layerKind: layerKind === 'real' ? 'real' : 'pseudo',
+        layerOrigin: layerKind === 'real' ? 'corel_logo_stroke_outline' : 'stroke_vector_outline',
+        roleReason: 'Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.',
+      })
+    }
+
+    assignLogoGroupElement(elements, group, candidate.elementId, id, name)
+  }
+}
+
+function buildRealSemanticLayerSet(
+  doc: ParsedSvgDocument,
+  elements: ParsedSvgDocument['elements'],
+  geometry: GeometrySummary,
+): SemanticPseudoLayerExpansionResult | null {
+  const letterGroups = findRealLetterGroups(doc)
+  if (letterGroups.length < 4) return null
+
+  const layerMeta = new Map<string, LayerExpansionMeta>()
+  const newGroups: ParsedSvgDocument['groups'] = []
+
+  for (const group of letterGroups) {
+    const name = normalizeLayerDisplayName(group.name ?? group.id)
+    const elementIds = drawableIdsForLayer(elements, group.id)
+    if (elementIds.length === 0) continue
+    newGroups.push({ id: group.id, name, elementIds })
+    layerMeta.set(group.id, {
+      layerKind: 'real',
+      layerOrigin: 'corel_layer_name',
+      roleReason: 'Named Corel letter layer preserved as production geometry.',
+    })
+    for (const elementId of elementIds) {
+      const element = elements.find((entry) => entry.elementId === elementId)
+      if (element) {
+        element.layerName = name
+      }
+    }
+  }
+
+  if (newGroups.length < 4) return null
+
+  const logoGroups = findRealLogoGroups(doc)
+  if (logoGroups.length >= 2) {
+    for (const group of logoGroups) {
+      const name = normalizeLayerDisplayName(group.name ?? group.id)
+      const directIds = drawableIdsForLayer(elements, group.id)
+      newGroups.push({ id: group.id, name, elementIds: [...directIds] })
+      layerMeta.set(group.id, {
+        layerKind: 'real',
+        layerOrigin: 'corel_logo_layer',
+        roleReason: 'Named Corel logo layer preserved as printed artwork.',
+      })
+    }
+    assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'real')
+  } else {
+    assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'real')
+  }
+
+  assignStrokeOnlyLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'real')
+
+  const activeGroups = newGroups.filter((group) => group.elementIds.length > 0)
+  if (activeGroups.length < 6) return null
+
+  return {
+    doc: { ...doc, groups: activeGroups, elements },
+    layerMeta,
+  }
+}
+
+function preserveParsedGroupsWithDrawableContent(
+  doc: ParsedSvgDocument,
+  elements: ParsedSvgDocument['elements'],
+  layerMeta: Map<string, LayerExpansionMeta>,
+): ParsedSvgDocument['groups'] {
+  const preserved: ParsedSvgDocument['groups'] = []
+  for (const group of doc.groups) {
+    if (isCorelInternalGroupId(group.id)) continue
+    const elementIds = drawableIdsForLayer(elements, group.id)
+    if (elementIds.length === 0) continue
+    const name = group.name ?? group.id
+    preserved.push({ id: group.id, name, elementIds })
+    if (isSemanticProductionOrArtworkLayerName(name)) {
+      layerMeta.set(group.id, {
+        layerKind: 'real',
+        layerOrigin: 'corel_layer_name',
+        roleReason: 'Named SVG group preserved as production or artwork layer.',
+      })
+    }
+  }
+  return preserved
+}
+
+export function expandSemanticAndPseudoLayers(
+  doc: ParsedSvgDocument,
+  geometry: GeometrySummary,
+): SemanticPseudoLayerExpansionResult {
+  const elements = doc.elements.map((element) => ({ ...element }))
+
+  const realSet = buildRealSemanticLayerSet(doc, elements, geometry)
+  if (realSet) {
+    return realSet
+  }
+
+  if (shouldPreserveExistingLayerStructure(doc)) {
+    return { doc, layerMeta: new Map() }
+  }
+
+  const layerMeta = new Map<string, LayerExpansionMeta>()
+  const newGroups: ParsedSvgDocument['groups'] = []
+
+  const drawable = elements.filter((element) => isDrawableElement(element.type))
+  const images = drawable.filter((element) => element.type === 'image')
+  const vectors = drawable.filter((element) => element.type !== 'image')
+  const vectorsWithFill = vectors.filter((element) => element.fillSolid)
+
+  const uniqueFills = Array.from(
+    new Set(vectorsWithFill.map((element) => element.fillSolid!.toLowerCase())),
+  )
+
+  assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
+
+  for (const fill of uniqueFills) {
+    const semantic = letterSemanticForSolidFill(fill)
+    const letterId = semantic?.letterId ?? `fill-${fill.replace('#', '')}`
+    const id = `pseudo:${letterId}`
+    const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
+    if (!newGroups.some((group) => group.id === id)) {
+      newGroups.push({ id, name, elementIds: [] })
+      layerMeta.set(id, {
+        layerKind: 'pseudo',
+        layerOrigin: 'solid_fill_cluster',
+        roleReason: 'Pseudo-layer generated from solid vector fill color cluster.',
+      })
+    }
+  }
+
+  for (const vector of vectorsWithFill) {
+    const semantic = letterSemanticForSolidFill(vector.fillSolid!)
+    const letterId = semantic?.letterId ?? `fill-${vector.fillSolid!.replace('#', '')}`
+    const id = `pseudo:${letterId}`
+    const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
+    const element = elements.find((entry) => entry.elementId === vector.elementId)
+    if (!element) continue
+    element.layerId = id
+    element.layerName = name
+    const group = newGroups.find((entry) => entry.id === id)
+    if (group) {
+      group.elementIds.push(vector.elementId)
+    }
+  }
+
+  const semanticGroups = doc.groups.filter((group) => {
+    const name = group.name ?? group.id
+    return isSemanticProductionOrArtworkLayerName(name) && !isCorelInternalGroupId(group.id)
+  })
+
+  if (uniqueFills.length <= 1 && semanticGroups.length > 0) {
+    for (const group of semanticGroups) {
+      const name = group.name ?? group.id
+      const elementIds = drawableIdsForLayer(elements, group.id)
+      if (elementIds.length === 0) continue
+      newGroups.push({ id: group.id, name, elementIds })
+      layerMeta.set(group.id, {
+        layerKind: 'real',
+        layerOrigin: 'corel_layer_name',
+        roleReason: 'Named Corel layer preserved as production layer.',
+      })
+    }
+  }
+
+  const onlyGenericRoots =
+    doc.groups.length > 0 &&
+    doc.groups.every((group) => {
+      const name = group.name ?? group.id
+      return isGenericLayerName(name) || isCorelInternalGroupId(group.id)
+    })
+
+  if (
+    onlyGenericRoots &&
+    vectorsWithFill.length > 0 &&
+    uniqueFills.length === 1 &&
+    newGroups.length === 0
+  ) {
+    const id = 'pseudo:single_solid'
+    const name = 'Pseudo solid vectors'
+    newGroups.push({
+      id,
+      name,
+      elementIds: vectorsWithFill.map((element) => element.elementId),
+    })
+    layerMeta.set(id, {
+      layerKind: 'pseudo',
+      layerOrigin: 'generic_layer_promotion',
+      roleReason: 'Generic Corel layer promoted to pseudo production layer.',
+    })
+    for (const vector of vectorsWithFill) {
+      const element = elements.find((entry) => entry.elementId === vector.elementId)
+      if (element) {
+        element.layerId = id
+        element.layerName = name
+      }
+    }
+  }
+
+  if (images.length > 0 && newGroups.filter((g) => isLogoLayerId(g.id)).length === 0) {
+    assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
+  }
+
+  assignStrokeOnlyLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
+
+  let activeGroups = newGroups.filter((group) => group.elementIds.length > 0)
+  if (activeGroups.length === 0) {
+    activeGroups = preserveParsedGroupsWithDrawableContent(doc, elements, layerMeta)
+  }
+
+  return {
+    doc: {
+      ...doc,
+      groups: activeGroups,
+      elements,
+    },
+    layerMeta,
+  }
+}

@@ -1,0 +1,185 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "canonicalSource": "docs/canonical/canonical__agent_authority_map.md",
+  "version": "1.0.0",
+  "updatedAt": "2026-04-30",
+  "agents": [
+    {
+      "id": "nucleu",
+      "label": "Nucleu",
+      "domain": "System Truth & Arbitration",
+      "description": "Agentul Adevărului — arbitrul final al sistemului. Nu escaladează, este nivelul final de arbitraj.",
+      "authority": [
+        "Adevărul final de sistem",
+        "Boundary-uri canonice",
+        "Conflicte între agenți",
+        "Reguli care devin canonice",
+        "Fișiere .md de referință oficială"
+      ],
+      "noAuthority": [
+        "Implementare directă",
+        "Execuție UI finală",
+        "Explorare de tool-uri"
+      ],
+      "escalatesWhen": [],
+      "owner": "WorkOS Core",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#3-workos---nucleu"
+    },
+    {
+      "id": "contracts",
+      "label": "Contracte",
+      "domain": "Module Contracts & Integration",
+      "description": "Păzește contractele dintre module și handoff-urile reale dintre subsisteme.",
+      "authority": [
+        "Shape-ul contractelor",
+        "Ce trece între module",
+        "Snapshot vs context vs payload",
+        "Ownership-ul datelor la trecere"
+      ],
+      "noAuthority": [
+        "Stil UI",
+        "Layout vizual",
+        "Implementare tehnică finală",
+        "Alegerea tool-urilor externe"
+      ],
+      "escalatesWhen": [
+        "Două module își dispută ownership-ul",
+        "Un contract rupe un boundary validat",
+        "Un handoff schimbă legea sistemului"
+      ],
+      "owner": "WorkOS Integration",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#4-workos---contracte-si-integrare"
+    },
+    {
+      "id": "costing",
+      "label": "Costing/OC",
+      "domain": "Economic & Operational Truth",
+      "description": "Păzește adevărul economic și operațional al sistemului (costuri, inventar, capacitate, realism).",
+      "authority": [
+        "Formule și costuri",
+        "Quantity sources și cost units",
+        "Consumption logic",
+        "Inventar și nesting",
+        "Resurse și capacitate",
+        "Relația WorkOS ↔ OC"
+      ],
+      "noAuthority": [
+        "UI final",
+        "Layout vizual",
+        "Design system",
+        "Strategia de tool-uri externe"
+      ],
+      "escalatesWhen": [
+        "Calculul afectează legea sistemului",
+        "UI vrea să falsifice modelul economic",
+        "Compromis care strică adevărul OC/inventar"
+      ],
+      "owner": "WorkOS Costing",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#5-workos---costing-oc-inventar"
+    },
+    {
+      "id": "ui_ux",
+      "label": "UI/UX",
+      "domain": "Interaction & Design System",
+      "description": "Traduce adevărul sistemului în interacțiune, structură de ecrane, ierarhie vizuală și design system.",
+      "authority": [
+        "Structura ecranelor",
+        "Ierarhia informației",
+        "Flow UX",
+        "Operate Mode vs Build Mode",
+        "Reguli UI",
+        "Figma direction"
+      ],
+      "noAuthority": [
+        "Logica de business",
+        "Statusuri canonice noi",
+        "Gate-uri noi",
+        "Reguli de calcul",
+        "Boundary-uri funcționale"
+      ],
+      "escalatesWhen": [
+        "O regulă de business este neclară",
+        "UX cere schimbarea unei legi de sistem",
+        "Utilitatea aparentă intră în conflict cu adevărul"
+      ],
+      "owner": "WorkOS UI/UX",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#6-workos---ui-ux"
+    },
+    {
+      "id": "implementation",
+      "label": "Implementare",
+      "domain": "Technical Execution",
+      "description": "Transformă specificațiile validate în cod real, fără improvizații.",
+      "authority": [
+        "Structura tehnică a implementării",
+        "Amplasarea în cod",
+        "Funcții, servicii, hooks, DTO",
+        "Refactor intern (fără schimbare business)"
+      ],
+      "noAuthority": [
+        "Reguli de business",
+        "Design de produs",
+        "UX final",
+        "Contracte canonice",
+        "Workaround-uri ascunse"
+      ],
+      "escalatesWhen": [
+        "Specificația este ambiguă",
+        "Implementarea ar cere compromis",
+        "Codul existent contrazice documentele canonice"
+      ],
+      "owner": "WorkOS Implementation",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#7-workos---implementare"
+    },
+    {
+      "id": "qa",
+      "label": "QA",
+      "domain": "Alignment & Audit",
+      "description": "Verifică alinierea dintre toate sursele de adevăr (Nucleu, .md, cod, SQL, runtime, Atoms, Figma).",
+      "authority": [
+        "Identificarea mismatch-urilor",
+        "Identificarea duplicate truth",
+        "Verificarea alinierii doc ↔ cod ↔ UI",
+        "Audit de contradicții"
+      ],
+      "noAuthority": [
+        "Schimbarea legii de business",
+        "Redesign UI ca decizie finală",
+        "Implementare finală",
+        "Alegerea tool-urilor externe"
+      ],
+      "escalatesWhen": [
+        "Două surse spun lucruri diferite",
+        "UI, codul și documentația se contrazic",
+        "Trebuie arbitrat ce rămâne canonic"
+      ],
+      "owner": "WorkOS QA Alignment",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#8-workos---qa-alignment"
+    },
+    {
+      "id": "external",
+      "label": "Soluții Ext.",
+      "domain": "External Tools & Integrations",
+      "description": "Caută și evaluează aplicații, servicii și integrări externe care pot ajuta real WorkOS.",
+      "authority": [
+        "Explorare de opțiuni externe",
+        "Comparații",
+        "Estimare impact timp/cost/calitate",
+        "Recomandări argumentate"
+      ],
+      "noAuthority": [
+        "Arhitectura de bază",
+        "Logica de business",
+        "UI final",
+        "Alegerea finală fără validare Nucleu"
+      ],
+      "escalatesWhen": [
+        "O soluție externă ar schimba direcția",
+        "Apare risc de dependență periculoasă",
+        "Impactul este strategic, nu tactic"
+      ],
+      "owner": "WorkOS External Solutions",
+      "sourceOfTruth": "docs/canonical/canonical__agent_authority_map.md#9-workos---solutii-externe"
+    }
+  ]
+}

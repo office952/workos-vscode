@@ -1,0 +1,19 @@
+{
+  "name": "WorkOS Employee",
+  "short_name": "WorkOS",
+  "description": "Employee mobile workspace for WorkOS.",
+  "start_url": "/employee-app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#070B14",
+  "theme_color": "#111827",
+  "icons": [
+    {
+      "src": "/icons/workos-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

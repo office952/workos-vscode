@@ -1,0 +1,126 @@
+"""CostEngine company-level config service.
+
+This module is READ-MOSTLY for the CostEngine: it loads the singleton
+config row and aggregates live inputs from employees + recurring payments
+into a `CostEngineBaseConfig` dict. It DOES NOT compute product cost.
+"""
+import logging
+from typing import Any, Dict, List, Optional
+
+from models.cost_engine_config import CostEngineConfig
+from services.employees import EmployeesService, is_valid_for_cost_engine
+from services.recurring_payments import (
+    RecurringPaymentsService,
+    monthly_equivalent,
+)
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
+
+
+async def load_base_currency(db: AsyncSession) -> str:
+    """Return the canonical base currency from CostEngine settings (moneda_implicita)."""
+    cfg = await CostEngineConfigService(db).get_or_create()
+    raw = str(cfg.moneda_implicita or "RON").strip().upper()
+    return raw or "RON"
+
+
+class CostEngineConfigService:
+    def __init__(self, db: AsyncSession):
+        self.db = db
+
+    async def get_or_create(self) -> CostEngineConfig:
+        """Return the singleton config row (id=1), creating it on first use."""
+        result = await self.db.execute(select(CostEngineConfig).order_by(CostEngineConfig.id.asc()))
+        row = result.scalars().first()
+        if row is not None:
+            return row
+        row = CostEngineConfig(
+            moneda_implicita="EUR",
+            overhead_profile_name="default",
+            metoda_overhead="pe_ora_productiva",
+            allow_manual_override=False,
+        )
+        self.db.add(row)
+        await self.db.commit()
+        await self.db.refresh(row)
+        return row
+
+    async def update(self, update_data: Dict[str, Any]) -> CostEngineConfig:
+        row = await self.get_or_create()
+        for k, v in update_data.items():
+            if hasattr(row, k) and k not in {"id", "created_at", "updated_at"}:
+                setattr(row, k, v)
+        await self.db.commit()
+        await self.db.refresh(row)
+        return row
+
+    async def compute_base_config(self) -> Dict[str, Any]:
+        """Aggregate live inputs into the canonical `CostEngineBaseConfig` dict.
+
+        NOTE: This is strictly an input-builder for CostEngine; the dict it
+        returns contains NO product-specific math. A downstream consumer
+        (CostEngine) is the sole authority to turn these inputs into an
+        actual cost per product.
+        """
+        cfg = await self.get_or_create()
+        warnings: List[str] = []
+
+        employees_svc = EmployeesService(self.db)
+        payments_svc = RecurringPaymentsService(self.db)
+
+        active_productive = await employees_svc.get_active_productive()
+
+        # Per-row validity check. Invalid rows are EXCLUDED from the aggregates
+        # and reported as warnings — never silently treated as zero.
+        valid_employees = []
+        for emp in active_productive:
+            if is_valid_for_cost_engine(emp):
+                valid_employees.append(emp)
+            else:
+                warnings.append(
+                    f"employee_invalid:id={emp.id}:missing_cost_or_productive_hours"
+                )
+
+        total_productive_hours = sum(
+            float(e.ore_productive_luna or 0) for e in valid_employees
+        )
+        total_productive_cost = sum(
+            float(e.cost_lunar_firma or 0) for e in valid_employees
+        )
+
+        if total_productive_hours <= 0:
+            average_labour_hour_cost: Optional[float] = None
+            overhead_hour_cost: Optional[float] = None
+            warnings.append("no_productive_hours_available")
+        else:
+            average_labour_hour_cost = round(total_productive_cost / total_productive_hours, 4)
+
+        overhead_rows = await payments_svc.get_overhead_contributors()
+        monthly_overhead_cost = round(sum(monthly_equivalent(r) for r in overhead_rows), 2)
+
+        if total_productive_hours > 0:
+            overhead_hour_cost = round(monthly_overhead_cost / total_productive_hours, 4)
+
+        # Validity: we need productive hours AND a real labour rate to feed CostEngine.
+        valid = (
+            total_productive_hours > 0
+            and average_labour_hour_cost is not None
+            and average_labour_hour_cost > 0
+        )
+
+        return {
+            "currency": cfg.moneda_implicita or "RON",
+            "total_productive_hours_month": round(total_productive_hours, 2),
+            "average_labour_hour_cost": average_labour_hour_cost or 0.0,
+            "monthly_overhead_cost": monthly_overhead_cost,
+            "overhead_hour_cost": overhead_hour_cost if total_productive_hours > 0 else 0.0,
+            "valid": valid,
+            "warnings": warnings,
+            # Supplemental, for UI read-only display:
+            "overhead_profile_name": cfg.overhead_profile_name,
+            "metoda_overhead": cfg.metoda_overhead,
+            "cost_ora_manopera_default": cfg.cost_ora_manopera_default,
+            "allow_manual_override": bool(cfg.allow_manual_override),
+        }

@@ -1,0 +1,95 @@
+{
+    "title": "orders",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "code": {
+            "type": "string",
+            "description": "Business code like ORD-1120"
+        },
+        "quote_id": {
+            "type": "integer",
+            "description": "FK quotes.id"
+        },
+        "quote_code": {
+            "type": "string",
+            "description": "Denormalized quote code"
+        },
+        "client_id": {
+            "type": "integer",
+            "description": "FK clients.id"
+        },
+        "client_name": {
+            "type": "string",
+            "description": "Denormalized client name"
+        },
+        "contact_person": {
+            "type": "string",
+            "description": "Contact person"
+        },
+        "status": {
+            "type": "string",
+            "description": "created/confirmed/locked/in_execution/completed/cancelled"
+        },
+        "product_summary": {
+            "type": "string",
+            "description": "Short summary of product"
+        },
+        "total_amount": {
+            "type": "number",
+            "description": "Total amount"
+        },
+        "locked_at": {
+            "type": "string",
+            "description": "ISO datetime when snapshot was locked"
+        },
+        "promised_delivery": {
+            "type": "string",
+            "description": "ISO date of promised delivery"
+        },
+        "job_id": {
+            "type": "string",
+            "description": "Linked production job id"
+        },
+        "payment_status": {
+            "type": "string",
+            "description": "pending/partial/paid"
+        },
+        "snapshot_version": {
+            "type": "integer",
+            "description": "Snapshot version"
+        },
+        "snapshot_line_items": {
+            "type": "string",
+            "description": "JSON frozen snapshot of quote line items"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-text notes"
+        },
+        "readiness_snapshot": {
+            "type": "object",
+            "nullable": true,
+            "description": "Immutable product readiness snapshot captured at order acceptance. Null for orders created before readiness gate enforcement. Contains source, snapshot_type, snapshot_at, readiness_result (canonical ProductReadinessResult), warnings_acknowledged, warnings_acknowledged_at, warnings_acknowledgement_reason."
+        },
+        "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO datetime when order was created"
+        },
+        "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO datetime when order was last updated"
+        }
+    },
+    "required": [
+        "id",
+        "code",
+        "client_name",
+        "status"
+    ]
+}

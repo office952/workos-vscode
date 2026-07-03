@@ -1,0 +1,71 @@
+import type { RollNestingConfig, SheetNestingConfig } from './nestingTypes'
+
+export const DEFAULT_ROLL_CONFIGS: RollNestingConfig[] = [
+  {
+    configId: 'vinyl_roll_1000',
+    materialType: 'roll',
+    rollWidthMm: 1000,
+    leftMarginMm: 20,
+    rightMarginMm: 20,
+    usableWidthMm: 960,
+    partSpacingMm: 5,
+    allowRotation: true,
+  },
+  {
+    configId: 'vinyl_roll_1260',
+    materialType: 'roll',
+    rollWidthMm: 1260,
+    leftMarginMm: 20,
+    rightMarginMm: 20,
+    usableWidthMm: 1220,
+    partSpacingMm: 5,
+    allowRotation: true,
+  },
+]
+
+export const DEFAULT_SHEET_CONFIGS: SheetNestingConfig[] = [
+  {
+    configId: 'sheet_3000x2000',
+    materialType: 'sheet',
+    sheetWidthMm: 2000,
+    sheetLengthMm: 3000,
+    edgeMarginMm: 10,
+    usableWidthMm: 1980,
+    usableLengthMm: 2980,
+    partSpacingMm: 20,
+    allowRotation: true,
+  },
+  {
+    configId: 'sheet_3000x1500',
+    materialType: 'sheet',
+    sheetWidthMm: 1500,
+    sheetLengthMm: 3000,
+    edgeMarginMm: 10,
+    usableWidthMm: 1480,
+    usableLengthMm: 2980,
+    partSpacingMm: 20,
+    allowRotation: true,
+  },
+  {
+    configId: 'sheet_4000x1500',
+    materialType: 'sheet',
+    sheetWidthMm: 1500,
+    sheetLengthMm: 4000,
+    edgeMarginMm: 10,
+    usableWidthMm: 1480,
+    usableLengthMm: 3980,
+    partSpacingMm: 20,
+    allowRotation: true,
+  },
+  {
+    configId: 'sheet_1300x900',
+    materialType: 'sheet',
+    sheetWidthMm: 900,
+    sheetLengthMm: 1300,
+    edgeMarginMm: 10,
+    usableWidthMm: 880,
+    usableLengthMm: 1280,
+    partSpacingMm: 20,
+    allowRotation: true,
+  },
+]

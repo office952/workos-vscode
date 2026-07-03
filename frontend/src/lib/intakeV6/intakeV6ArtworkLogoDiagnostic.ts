@@ -1,0 +1,11 @@
+export * from './intakeV4ArtworkLogoDiagnostic';
+
+export {
+	ANA_MARIA_COREL_LOGO_VECTOR_REFERENCE_M as ANA_MARIA_V6_COREL_LOGO_VECTOR_REFERENCE_M,
+	INTAKE_V4_ARTWORK_LOGO_PERIMETER_DIAGNOSTIC_NOTE as INTAKE_V6_ARTWORK_LOGO_PERIMETER_DIAGNOSTIC_NOTE,
+	INTAKE_V4_COREL_LOGO_VECTOR_REFERENCE_MISMATCH as INTAKE_V6_COREL_LOGO_VECTOR_REFERENCE_MISMATCH,
+	INTAKE_V4_LOGO_RASTER_EXTERNAL_MISSING_WARNING as INTAKE_V6_LOGO_RASTER_EXTERNAL_MISSING_WARNING,
+	buildIntakeV4ArtworkLogoDiagnostic as buildIntakeV6ArtworkLogoDiagnostic,
+} from './intakeV4ArtworkLogoDiagnostic';
+
+export type { IntakeV4ArtworkLogoDiagnostic as IntakeV6ArtworkLogoDiagnostic } from './intakeV4ArtworkLogoDiagnostic';

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOCK — Pricing Registry v3 polish (card rows, Oferte rhythm)</title>
+  <style>
+    :root {
+      --bg: #0a0f1c; --panel: #111827; --border: #1e293b; --text: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
+      --blue: #60a5fa; --ok: #34d399; --warn: #fbbf24; --bad: #f87171; --mono: ui-monospace, monospace;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 13px; line-height: 1.5; padding: 24px; }
+    .mock-tag { text-align: center; font-size: 10px; color: #fde68a; padding: 6px; background: rgba(251,191,36,.08); border-radius: 6px; margin-bottom: 16px; }
+    h1 { font-size: 18px; display: flex; align-items: center; gap: 8px; }
+    .lede { color: var(--muted); font-size: 12px; margin-top: 4px; max-width: 640px; }
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 16px 0; }
+    .tab { padding: 6px 12px; border-radius: 999px; border: 1px solid var(--border); background: transparent; color: var(--muted); font: inherit; font-size: 12px; cursor: pointer; }
+    .tab.on { background: rgba(37,99,235,.2); color: var(--blue); border-color: rgba(59,130,246,.5); }
+    .boundary { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 11px; color: var(--dim); margin-bottom: 16px; }
+    .workspace { display: grid; grid-template-columns: 1fr 380px; gap: 16px; }
+    .list-panel, .detail-panel { background: #0d1321; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .list-head { padding: 12px 16px; background: var(--panel); border-bottom: 1px solid var(--border); }
+    .list-head h2 { font-size: 13px; }
+    .list-head p { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .list-body { padding: 16px; }
+    .section-head { background: #0f1629; border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 12px; font-weight: 600; }
+    .group-head { display: flex; align-items: center; gap: 8px; margin: 16px 0 8px; }
+    .group-head span { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); }
+    .group-head .line { flex: 1; height: 1px; background: var(--border); }
+    .group-head .n { font-size: 10px; color: #475569; }
+    .rows { display: flex; flex-direction: column; gap: 8px; }
+    /* Oferte-like card row */
+    .entry {
+      background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px;
+      border-left: 4px solid var(--ok); cursor: pointer; transition: border-color .15s;
+    }
+    .entry:hover { border-color: #64748b; }
+    .entry.on { border-color: rgba(59,130,246,.5); box-shadow: 0 0 0 1px rgba(59,130,246,.3); }
+    .entry.warn { border-left-color: var(--warn); }
+    .entry.bad { border-left-color: var(--bad); }
+    .entry-top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .entry-name { font-size: 13px; font-weight: 600; color: #f1f5f9; }
+    .entry-cat { font-size: 10px; color: var(--dim); background: rgba(30,41,59,.6); padding: 2px 6px; border-radius: 4px; margin-left: 6px; }
+    .entry-code { font-family: var(--mono); font-size: 11px; color: var(--blue); margin-top: 4px; opacity: .9; }
+    .entry-meta { font-size: 11px; margin-top: 8px; color: var(--muted); }
+    .entry-meta .ok { color: var(--ok); font-weight: 600; }
+    .entry-meta .warn { color: var(--warn); font-weight: 600; }
+    .entry-price { text-align: right; font-size: 15px; font-weight: 700; white-space: nowrap; }
+    .entry-unit { font-size: 10px; color: var(--dim); text-align: right; }
+    .detail-panel { padding: 16px; }
+    .detail-panel h2 { font-size: 16px; }
+    .detail-card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-top: 12px; }
+    .hero { font-size: 22px; font-weight: 700; }
+    .impact { background: rgba(37,99,235,.12); border: 1px solid rgba(59,130,246,.25); border-radius: 10px; padding: 12px; font-size: 11px; color: #93c5fd; margin-top: 12px; }
+    @media (max-width: 900px) { .workspace { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <p class="mock-tag">MOCK v3 — polish final: card rows (ritm Oferte), delimitare pe toate taburile, template picker scalabil</p>
+  <h1>Pricing Registry</h1>
+  <p class="lede">Prețuri folosite în calculul de ofertă. Modificările de aici nu afectează stocul din Inventar &amp; OC.</p>
+
+  <div class="tabs">
+    <button class="tab on">Acoperire template</button>
+    <button class="tab">Toate intrările</button>
+    <button class="tab">Verificare <span style="color:#fde68a">(14)</span></button>
+    <button class="tab">Adaos comercial</button>
+    <button class="tab">Istoric / audit</button>
+  </div>
+
+  <div class="boundary">
+    <strong style="color:var(--muted)">Pricing</strong> = prețuri standardizate pentru ofertare.
+    <strong style="color:var(--muted)">Inventory</strong> = stoc, furnizori, recepții — referință operațională, nu sursa de editare a prețurilor de ofertare.
+  </div>
+
+  <div class="workspace">
+    <div class="list-panel">
+      <div class="list-head">
+        <h2>Acoperire template — TPL-VOLUMETRIC-LETTERS</h2>
+        <p>Stack-ul de prețuri pentru template-ul activ: materiale, operații, adaos.</p>
+      </div>
+      <div class="list-body">
+        <div class="section-head">Materiale</div>
+        <div class="group-head"><span>LED / electrice</span><div class="line"></div><span class="n">2</span></div>
+        <div class="rows">
+          <div class="entry on">
+            <div class="entry-top">
+              <div>
+                <span class="entry-name">Modul LED (rezistent apă)</span><span class="entry-cat">LED / electrice</span>
+                <div class="entry-code">MAT-LED-MODULE</div>
+                <div class="entry-meta"><span class="ok">Owner-confirmed</span> · În calcul ofertă</div>
+              </div>
+              <div><div class="entry-price">0,50 EUR</div><div class="entry-unit">buc</div></div>
+            </div>
+          </div>
+          <div class="entry bad">
+            <div class="entry-top">
+              <div>
+                <span class="entry-name">Sursă LED 12V 100W</span><span class="entry-cat">LED / electrice</span>
+                <div class="entry-code">MAT-LED-PSU-12V-100W</div>
+                <div class="entry-meta"><span class="ok">Owner-confirmed</span> · În calcul ofertă</div>
+              </div>
+              <div><div class="entry-price">80,00 RON</div><div class="entry-unit">buc</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="group-head"><span>Consumabile</span><div class="line"></div><span class="n">2</span></div>
+        <div class="rows">
+          <div class="entry warn">
+            <div class="entry-top">
+              <div>
+                <span class="entry-name">Vopsea RAL</span><span class="entry-cat">Consumabile</span>
+                <div class="entry-code">MAT-VOPSEA-RAL</div>
+                <div class="entry-meta"><span class="warn">Needs review</span> · Preliminar — review</div>
+              </div>
+              <div><div class="entry-price">8,00 EUR</div><div class="entry-unit">set</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="section-head" style="margin-top:20px">Servicii / operații</div>
+        <div class="group-head"><span>Formare cant</span><div class="line"></div><span class="n">1</span></div>
+        <div class="rows">
+          <div class="entry">
+            <div class="entry-top">
+              <div>
+                <span class="entry-name">Modelare cant profil litere</span><span class="entry-cat">Operații / Rate</span>
+                <div class="entry-code">RETURN_PROFILE_MACHINE_FORMING</div>
+                <div class="entry-meta"><span class="ok">Owner-confirmed</span> · În calcul ofertă</div>
+              </div>
+              <div><div class="entry-price">5,00 EUR</div><div class="entry-unit">ml</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="detail-panel">
+      <h2>Modul LED (rezistent apă)</h2>
+      <p style="font-family:var(--mono);font-size:11px;color:var(--blue);margin-top:4px">MAT-LED-MODULE</p>
+      <div class="detail-card">
+        <p style="font-size:10px;color:var(--dim);text-transform:uppercase">Valoare în calcul ofertă</p>
+        <p class="hero">0,50 EUR</p>
+        <p style="font-size:11px;color:var(--dim)">buc · Owner-confirmed</p>
+      </div>
+      <div class="impact"><strong>Impact ofertă:</strong> modifică prețul folosit în calcul. Nu modifică stocul sau ultimul preț de achiziție din Inventory.</div>
+      <p style="font-size:11px;color:var(--blue);margin-top:12px">→ Vezi referința operațională în Inventory</p>
+    </div>
+  </div>
+  <p style="font-size:10px;color:var(--dim);margin-top:16px">Același pattern card-row se aplică pe Toate intrările, Verificare, Adaos, Istoric.</p>
+</body>
+</html>

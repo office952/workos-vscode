@@ -1,0 +1,74 @@
+[
+    {
+        "code": "SUP-01",
+        "name": "MetalPro SRL",
+        "category": "Metal",
+        "lead_time_days": 7,
+        "rating": 5,
+        "active_orders": 3,
+        "last_delivery": "2026-04-15"
+    },
+    {
+        "code": "SUP-02",
+        "name": "PlastiTech",
+        "category": "Plastic",
+        "lead_time_days": 5,
+        "rating": 4,
+        "active_orders": 2,
+        "last_delivery": "2026-04-10"
+    },
+    {
+        "code": "SUP-03",
+        "name": "GrafixRO",
+        "category": "Folii",
+        "lead_time_days": 3,
+        "rating": 5,
+        "active_orders": 1,
+        "last_delivery": "2026-04-18"
+    },
+    {
+        "code": "SUP-04",
+        "name": "PrintInk EU",
+        "category": "Cerneală",
+        "lead_time_days": 10,
+        "rating": 4,
+        "active_orders": 1,
+        "last_delivery": "2026-03-28"
+    },
+    {
+        "code": "SUP-05",
+        "name": "LED Solutions",
+        "category": "Electrice",
+        "lead_time_days": 5,
+        "rating": 5,
+        "active_orders": 2,
+        "last_delivery": "2026-04-16"
+    },
+    {
+        "code": "SUP-06",
+        "name": "ElectroParts",
+        "category": "Electrice",
+        "lead_time_days": 4,
+        "rating": 4,
+        "active_orders": 1,
+        "last_delivery": "2026-04-09"
+    },
+    {
+        "code": "SUP-07",
+        "name": "FeroTech",
+        "category": "Feronerie",
+        "lead_time_days": 3,
+        "rating": 4,
+        "active_orders": 0,
+        "last_delivery": "2026-04-03"
+    },
+    {
+        "code": "SUP-08",
+        "name": "ConstructMat",
+        "category": "Consumabile",
+        "lead_time_days": 2,
+        "rating": 5,
+        "active_orders": 1,
+        "last_delivery": "2026-04-07"
+    }
+]

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+     width="1000mm"
+     height="200mm"
+     viewBox="0 0 1000 200">
+  <g inkscape:groupmode="layer" inkscape:label="LITERE" id="LITERE">
+    <rect x="200" y="40" width="500" height="120" fill="none" stroke="#000"/>
+    <path d="M240 150 L280 50 L320 150"/>
+  </g>
+  <g inkscape:groupmode="layer" inkscape:label="DIBOND" id="DIBOND">
+    <rect x="100" y="20" width="800" height="160" fill="none" stroke="#666"/>
+  </g>
+  <g inkscape:groupmode="layer" inkscape:label="CADRU" id="CADRU">
+    <rect x="10" y="10" width="980" height="180" fill="none" stroke="#999"/>
+  </g>
+</svg>

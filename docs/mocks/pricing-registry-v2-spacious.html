@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOCK — Pricing Registry v2 spacious final (WorkOS)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #0a0f1c; --bg-panel: #0d1321; --bg-elevated: #111827;
+      --border: #1e293b; --text: #e2e8f0; --muted: #94a3b8; --dim: #64748b;
+      --blue: #60a5fa; --blue-soft: rgba(37,99,235,.15);
+      --ok: #34d399; --warn: #fbbf24; --bad: #f87171;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+      --sans: "DM Sans", system-ui, sans-serif; --r: 10px;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: var(--sans); background: var(--bg-deep); color: var(--text); font-size: 13px; line-height: 1.5; }
+
+    .shell { display: flex; height: 100vh; overflow: hidden; }
+    .app-nav { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--bg-panel); border-right: 1px solid var(--border); transition: width .2s; }
+    .shell.collapsed .app-nav { width: 60px; }
+    .shell.collapsed .nav-label, .shell.collapsed .nav-section-title, .shell.collapsed .nav-logo-text, .shell.collapsed .nav-version span { display: none; }
+    .shell.collapsed .nav-link { justify-content: center; padding: 8px; }
+    .nav-logo { display: flex; align-items: center; gap: 8px; height: 48px; padding: 0 16px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 700; color: #f1f5f9; }
+    .nav-logo svg { color: var(--blue); }
+    .nav-scroll { flex: 1; overflow-y: auto; padding: 8px; }
+    .nav-section-title { padding: 8px 12px 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: #475569; }
+    .nav-link { display: flex; align-items: center; gap: 12px; padding: 8px 12px; margin-bottom: 2px; border-radius: 6px; font-size: 13px; font-weight: 500; color: var(--muted); text-decoration: none; border-left: 2px solid transparent; }
+    .nav-link:hover { color: var(--text); background: rgba(30,41,59,.5); }
+    .nav-link.active { color: var(--blue); background: var(--blue-soft); border-left-color: #3b82f6; }
+    .nav-link svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .85; }
+    .nav-version { padding: 8px 12px; font-size: 10px; color: #475569; font-family: var(--mono); border-top: 1px solid var(--border); }
+    .nav-collapse { height: 40px; border: none; border-top: 1px solid var(--border); background: transparent; color: var(--dim); cursor: pointer; font-size: 14px; }
+    .shell-main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+    .shell-topbar { display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 16px; background: var(--bg-panel); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .global-search { display: flex; align-items: center; gap: 8px; width: 288px; background: var(--bg-elevated); border-radius: 6px; padding: 6px 12px; }
+    .global-search input { flex: 1; background: transparent; border: none; outline: none; font-size: 12px; color: #cbd5e1; font-family: inherit; }
+    .global-search svg { width: 14px; height: 14px; color: #64748b; }
+    .topbar-alert { font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 6px; background: rgba(127,29,29,.35); border: 1px solid rgba(185,28,28,.45); color: #fca5a5; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: #2563eb; color: #fff; font-size: 11px; font-weight: 700; border: none; cursor: pointer; }
+    .mock-strip { flex-shrink: 0; text-align: center; padding: 4px 12px; font-size: 10px; font-weight: 600; color: #fde68a; background: rgba(251,191,36,.08); border-bottom: 1px solid rgba(251,191,36,.15); }
+
+    .pricing-page { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; padding: 16px 24px 0; }
+    .page-head { flex-shrink: 0; margin-bottom: 14px; }
+    .page-head h1 { font-size: 18px; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 8px; }
+    .page-head h1 svg { color: var(--blue); width: 18px; height: 18px; }
+    .page-head .lede { margin-top: 4px; color: var(--muted); font-size: 12px; max-width: 720px; }
+    .boundary-inline { margin-top: 6px; font-size: 11px; color: var(--dim); }
+    .boundary-inline strong { color: var(--muted); font-weight: 600; }
+
+    /* View tabs — secondary views */
+    .view-tabs { display: flex; gap: 4px; flex-shrink: 0; margin-bottom: 14px; flex-wrap: wrap; }
+    .view-tab {
+      padding: 6px 12px; border-radius: 8px; border: 1px solid transparent; background: transparent;
+      color: var(--muted); font: inherit; font-size: 12px; font-weight: 500; cursor: pointer;
+    }
+    .view-tab:hover { color: var(--text); background: var(--bg-elevated); }
+    .view-tab.on { color: var(--blue); background: var(--blue-soft); border-color: rgba(59,130,246,.3); }
+    .view-hint { font-size: 10px; color: var(--dim); margin-left: auto; align-self: center; max-width: 280px; text-align: right; line-height: 1.4; }
+
+    .view-body { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .view-panel { display: none; flex: 1; flex-direction: column; min-height: 0; overflow: hidden; }
+    .view-panel.on { display: flex; }
+
+    /* Template selector — scalable */
+    .tpl-zone { flex-shrink: 0; margin-bottom: 12px; }
+    .tpl-active {
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+      padding: 14px 16px; border-radius: var(--r); background: var(--bg-panel); border: 1px solid var(--border);
+    }
+    .tpl-active-main { min-width: 0; }
+    .tpl-active-code { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--blue); }
+    .tpl-active-label { font-size: 14px; font-weight: 500; color: #f1f5f9; margin-top: 2px; }
+    .tpl-active-status { font-size: 11px; font-weight: 600; margin-top: 6px; }
+    .tpl-active-status.ok { color: var(--ok); }
+    .tpl-active-status.partial { color: var(--warn); }
+    .tpl-active-status.blocked { color: var(--bad); }
+    .tpl-active-status.complete { color: var(--ok); }
+    .tpl-change-btn {
+      padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated);
+      color: var(--text); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .tpl-change-btn:hover { border-color: rgba(96,165,250,.4); color: var(--blue); }
+
+    .recent-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .recent-label { font-size: 10px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; }
+    .recent-chip {
+      padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-elevated);
+      font: inherit; font-size: 11px; color: var(--muted); cursor: pointer;
+    }
+    .recent-chip:hover, .recent-chip.on { color: var(--blue); border-color: rgba(59,130,246,.35); background: var(--blue-soft); }
+    .recent-chip .rc-code { font-family: var(--mono); font-size: 9px; display: block; opacity: .75; margin-top: 1px; }
+
+    .tpl-summary-bar {
+      display: flex; flex-wrap: wrap; gap: 12px 20px; margin-top: 10px; padding: 10px 14px;
+      border-radius: 8px; background: var(--bg-elevated); border: 1px solid var(--border); font-size: 11px; color: var(--muted);
+    }
+    .tpl-summary-bar .item strong { color: var(--text); font-weight: 600; }
+    .tpl-summary-bar .warn-note { color: #fde68a; }
+
+    /* Template picker overlay */
+    .picker-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 200;
+      align-items: flex-start; justify-content: center; padding: 80px 24px 24px;
+    }
+    .picker-overlay.open { display: flex; }
+    .picker-panel {
+      width: min(560px, 100%); max-height: min(70vh, 520px); background: var(--bg-panel);
+      border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0,0,0,.45);
+    }
+    .picker-head { padding: 14px 16px; border-bottom: 1px solid var(--border); }
+    .picker-head h3 { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+    .picker-search { width: 100%; margin-top: 10px; padding: 9px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated); color: var(--text); font: inherit; font-size: 13px; }
+    .picker-filters { display: flex; gap: 6px; flex-wrap: wrap; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+    .picker-filters select {
+      padding: 5px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-elevated);
+      color: var(--muted); font: inherit; font-size: 11px;
+    }
+    .picker-list { flex: 1; overflow-y: auto; padding: 8px; }
+    .picker-item {
+      display: block; width: 100%; text-align: left; padding: 10px 12px; border-radius: 8px; border: none;
+      background: transparent; color: inherit; font: inherit; cursor: pointer; margin-bottom: 2px;
+    }
+    .picker-item:hover { background: rgba(30,41,59,.5); }
+    .picker-item.on { background: var(--blue-soft); }
+    .picker-item .pi-code { font-family: var(--mono); font-size: 11px; color: var(--blue); font-weight: 600; }
+    .picker-item .pi-label { font-size: 13px; color: #f1f5f9; margin-top: 2px; }
+    .picker-item .pi-meta { font-size: 10px; color: var(--dim); margin-top: 4px; }
+    .picker-foot { padding: 10px 16px; border-top: 1px solid var(--border); font-size: 10px; color: var(--dim); }
+
+    /* Banner + problem queue */
+    .alert-zone { flex-shrink: 0; margin-bottom: 10px; }
+    .nudge {
+      padding: 10px 14px; border-radius: var(--r); display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 12px;
+    }
+    .nudge.bad { background: rgba(248,113,113,.08); border: 1px solid rgba(248,113,113,.2); color: #fecaca; }
+    .nudge.warn { background: rgba(251,191,36,.08); border: 1px solid rgba(251,191,36,.2); color: #fde68a; }
+    .nudge button { background: none; border: none; color: var(--blue); font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .problem-queue {
+      margin-top: 8px; padding: 10px 12px; border-radius: 8px; background: var(--bg-panel); border: 1px solid var(--border);
+    }
+    .problem-queue summary { font-size: 11px; font-weight: 600; color: var(--muted); cursor: pointer; list-style: none; }
+    .problem-queue summary::-webkit-details-marker { display: none; }
+    .pq-item {
+      display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border);
+      font-size: 11px; cursor: pointer;
+    }
+    .pq-item:last-child { border-bottom: none; }
+    .pq-item:hover { color: var(--text); }
+    .pq-num { width: 18px; height: 18px; border-radius: 50%; font-size: 10px; font-weight: 700; display: grid; place-items: center; flex-shrink: 0; }
+    .pq-num.bad { background: rgba(248,113,113,.2); color: var(--bad); }
+    .pq-num.warn { background: rgba(251,191,36,.2); color: var(--warn); }
+    .pq-code { font-family: var(--mono); font-size: 10px; color: var(--blue); font-weight: 600; }
+    .pq-desc { color: var(--dim); margin-top: 2px; }
+
+    .workspace {
+      flex: 1; display: grid; grid-template-columns: 1fr 360px; gap: 0; min-height: 0; overflow: hidden;
+      border: 1px solid var(--border); border-radius: var(--r) var(--r) 0 0; background: var(--bg-panel);
+    }
+    .stack-toolbar {
+      display: flex; align-items: center; justify-content: space-between; padding: 10px 14px;
+      border-bottom: 1px solid var(--border); background: var(--bg-elevated);
+    }
+    .stack-toolbar input {
+      width: 200px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+      background: var(--bg-panel); color: var(--text); font: inherit; font-size: 11px;
+    }
+    .list-pane { overflow-y: auto; padding: 4px 8px 28px; }
+
+    .section-title {
+      font-size: 11px; font-weight: 700; color: #f1f5f9; padding: 16px 10px 6px;
+      border-bottom: 1px solid var(--border); margin: 8px 4px 4px;
+    }
+    .group-label { font-size: 10px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--dim); margin: 14px 10px 6px; }
+
+    .entry {
+      display: grid; grid-template-columns: 1fr auto auto; gap: 10px 14px; align-items: center;
+      padding: 11px 12px; border-radius: 8px; cursor: pointer; border: 1px solid transparent;
+    }
+    .entry:hover { background: rgba(30,41,59,.35); }
+    .entry.on { background: var(--blue-soft); border-color: rgba(59,130,246,.25); }
+    .entry .name { font-weight: 500; color: #f1f5f9; font-size: 13px; }
+    .entry .code { font-family: var(--mono); font-size: 10px; color: var(--dim); margin-top: 2px; }
+    .entry .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .tag { font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+    .tag-ok { color: var(--ok); background: rgba(52,211,153,.1); }
+    .tag-warn { color: var(--warn); background: rgba(251,191,36,.1); }
+    .tag-bad { color: var(--bad); background: rgba(248,113,113,.1); }
+    .tag-impact { color: var(--dim); background: rgba(100,116,139,.12); font-weight: 500; }
+    .entry .price-col { text-align: right; min-width: 72px; }
+    .entry .price { font-weight: 600; font-size: 13px; }
+    .entry .unit { font-size: 10px; color: var(--dim); }
+    .entry-actions { display: flex; gap: 4px; }
+    .icon-btn {
+      width: 26px; height: 26px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-elevated);
+      color: var(--dim); cursor: pointer; font-size: 11px;
+    }
+    .icon-btn:hover { color: var(--blue); border-color: rgba(96,165,250,.35); }
+
+    .stack { display: none; }
+    .stack.active { display: block; }
+
+    .detail-pane { border-left: 1px solid var(--border); background: var(--bg-elevated); overflow-y: auto; padding: 20px 18px 28px; }
+    .detail h2 { font-size: 16px; font-weight: 600; color: #f1f5f9; }
+    .detail .mono { font-family: var(--mono); font-size: 11px; color: var(--dim); margin-top: 4px; }
+    .detail .status-line { font-size: 11px; font-weight: 600; margin: 12px 0 0; }
+    .detail .status-line.ok { color: var(--ok); }
+    .detail .status-line.warn { color: var(--warn); }
+    .detail .status-line.bad { color: var(--bad); }
+    .detail .hero-price { margin-top: 16px; font-size: 24px; font-weight: 600; color: #fff; }
+    .detail .hero-unit { font-size: 12px; color: var(--muted); font-weight: 400; }
+    .impact-box {
+      margin-top: 14px; padding: 10px 12px; border-radius: 8px; font-size: 11px; line-height: 1.55;
+      background: rgba(34,211,238,.06); border: 1px solid rgba(34,211,238,.2); color: #a5f3fc;
+    }
+    .impact-box strong { color: #22d3ee; }
+    .detail .meta-row { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .detail .meta-item label { display: block; font-size: 9px; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 3px; }
+    .detail .meta-item span { font-size: 12px; }
+    .edit-warn { margin-top: 14px; padding: 10px; border-radius: 8px; font-size: 10px; line-height: 1.5; color: var(--muted); background: rgba(37,99,235,.08); border: 1px solid rgba(96,165,250,.2); }
+    .actions { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+    .btn { padding: 9px 14px; border-radius: 8px; border: none; font: inherit; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+    .btn-primary { background: #2563eb; color: #fff; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .history-block { margin-top: 18px; }
+    .history-block h4 { font-size: 10px; text-transform: uppercase; color: var(--dim); margin-bottom: 8px; }
+    .history-block li { list-style: none; padding: 6px 0; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); }
+    .history-block li strong { color: var(--text); }
+
+    /* Secondary views */
+    .secondary-panel { flex: 1; overflow-y: auto; padding: 16px; border: 1px solid var(--border); border-radius: var(--r); background: var(--bg-panel); margin-bottom: 16px; }
+    .secondary-panel h3 { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #f1f5f9; }
+    .secondary-panel p { font-size: 12px; color: var(--muted); line-height: 1.55; margin-bottom: 10px; }
+    .all-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .all-table th { text-align: left; padding: 8px; font-size: 9px; text-transform: uppercase; color: var(--dim); border-bottom: 1px solid var(--border); }
+    .all-table td { padding: 8px; border-bottom: 1px solid var(--border); color: var(--muted); }
+    .all-table .mono { font-family: var(--mono); color: var(--blue); font-size: 10px; }
+    .markup-card { padding: 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elevated); margin-bottom: 8px; font-size: 12px; }
+    .markup-card .mc-title { font-weight: 600; color: #f1f5f9; }
+    .markup-card .mc-sub { font-size: 11px; color: var(--dim); margin-top: 4px; }
+
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: 1fr; }
+      .detail-pane { border-left: none; border-top: 1px solid var(--border); }
+      .app-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" id="shell">
+    <aside class="app-nav" aria-label="Navigare principală">
+      <div class="nav-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+        <span class="nav-logo-text">WorkOS</span>
+      </div>
+      <div class="nav-scroll">
+        <div class="nav-section">
+          <p class="nav-section-title">Operațiuni</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="nav-label">Control Tower</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20V8l10-4 10 4v12"/></svg><span class="nav-label">Shop Floor</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Comercial</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><span class="nav-label">Oferte</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Resurse</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="nav-label">Inventar &amp; OC</span></a>
+          <a class="nav-link active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span class="nav-label">Pricing</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><span class="nav-label">Product System</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Sistem</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/></svg><span class="nav-label">Setări</span></a>
+        </div>
+      </div>
+      <div class="nav-version"><span>v</span> mock-pricing-v2</div>
+      <button type="button" class="nav-collapse" id="navCollapse">‹</button>
+    </aside>
+
+    <div class="shell-main">
+      <header class="shell-topbar">
+        <div class="global-search">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" placeholder="Search jobs, tasks, machines..." />
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="topbar-alert">2 critical</span>
+          <button type="button" class="user-avatar">OF</button>
+        </div>
+      </header>
+      <div class="mock-strip">MOCK — Pricing Registry v2 spacious · /inventory/pricing · static HTML</div>
+
+      <div class="pricing-page">
+        <header class="page-head">
+          <h1>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Pricing Registry
+          </h1>
+          <p class="lede">Prețuri standardizate pentru calculul de ofertă — materiale, operații și adaos. Nu modifică stocul Inventory.</p>
+          <p class="boundary-inline"><strong>Pricing</strong> = ofertare · <strong>Inventory</strong> = stoc, furnizori, loturi (referință operațională, nu sursa prețului de ofertă)</p>
+        </header>
+
+        <div class="view-tabs" id="viewTabs">
+          <button type="button" class="view-tab on" data-view="coverage">Acoperire template</button>
+          <button type="button" class="view-tab" data-view="all">Toate intrările</button>
+          <button type="button" class="view-tab" data-view="verify">Verificare</button>
+          <button type="button" class="view-tab" data-view="markup">Adaos comercial</button>
+          <button type="button" class="view-tab" data-view="audit">Istoric / audit</button>
+          <span class="view-hint">Folosește <em>Toate intrările</em> pentru audit global. Lucrul zilnic pornește de la template.</span>
+        </div>
+
+        <!-- DEFAULT: Template coverage -->
+        <div class="view-body">
+          <div class="view-panel on" id="view-coverage">
+            <div class="tpl-zone">
+              <div class="tpl-active">
+                <div class="tpl-active-main">
+                  <div class="tpl-active-code" id="activeCode">TPL-VOLUMETRIC-LETTERS</div>
+                  <div class="tpl-active-label" id="activeLabel">Litere volumetrice · Product 001</div>
+                  <div class="tpl-active-status partial" id="activeStatus">● Calcul preliminar disponibil</div>
+                </div>
+                <button type="button" class="tpl-change-btn" id="openPicker">Schimbă template…</button>
+              </div>
+              <div class="recent-row">
+                <span class="recent-label">Recente</span>
+                <button type="button" class="recent-chip on" data-key="volumetric"><span>Product 001</span><span class="rc-code">TPL-VOLUMETRIC-LETTERS</span></button>
+                <button type="button" class="recent-chip" data-key="acm-panel"><span>ACM casetat</span><span class="rc-code">TPL-ACM-CASSETTED-PANEL</span></button>
+                <button type="button" class="recent-chip" data-key="acm-letters"><span>Litere ACM</span><span class="rc-code">TPL-CUT-ACM-LETTERS</span></button>
+              </div>
+              <div class="tpl-summary-bar" id="summaryBar">
+                <span class="item"><strong id="sumOwner">9</strong> owner-confirmed</span>
+                <span class="item"><strong id="sumReview">3</strong> estimări / review</span>
+                <span class="item"><strong id="sumMissing">1</strong> rată lipsă</span>
+                <span class="item warn-note" id="sumFinal">Ofertă finală blocată până la confirmări</span>
+              </div>
+            </div>
+
+            <div class="alert-zone">
+              <div class="nudge bad" id="nudge">
+                <span id="nudgeText"><strong style="color:var(--bad)">1 rată lipsă</strong> · <span style="color:#fde68a">2 estimări</span> de confirmat</span>
+                <button type="button" id="nudgeBtn">Mergi la problemă</button>
+              </div>
+              <details class="problem-queue" open>
+                <summary>Problem queue (3)</summary>
+                <div class="pq-item" data-goto="PAINTING"><span class="pq-num bad">1</span><div><div class="pq-code">PAINTING</div><div class="pq-desc">Rată lipsă — blochează calcul complet vopsire</div></div></div>
+                <div class="pq-item" data-goto="MAT-VOPSEA-RAL"><span class="pq-num warn">2</span><div><div class="pq-code">MAT-VOPSEA-RAL</div><div class="pq-desc">Estimat — confirmare owner</div></div></div>
+                <div class="pq-item" data-goto="MAT-CONSUMABILE-MONTAJ"><span class="pq-num warn">3</span><div><div class="pq-code">MAT-CONSUMABILE-MONTAJ</div><div class="pq-desc">Needs review — medie ofertare</div></div></div>
+              </details>
+            </div>
+
+            <div class="workspace">
+              <div>
+                <div class="stack-toolbar">
+                  <span style="font-size:11px;color:var(--dim);font-weight:600">Stack prețuri template</span>
+                  <input type="search" placeholder="Filtrează intrări…" id="search" />
+                </div>
+                <div class="list-pane" id="listPane">
+                  <!-- VOLUMETRIC STACK -->
+                  <div class="stack active" id="stack-volumetric">
+                    <div class="section-title">Materiale</div>
+                    <div class="group-label">Plăci</div>
+                    <div class="entry on" data-entry
+                      data-name="Modul LED" data-code="MAT-LED-MODULE" data-category="LED / electrice"
+                      data-price="0,50" data-unit="EUR / buc" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Modifică prețul modulului LED folosit în calculul preliminar pentru litere volumetrice."
+                      data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials"
+                      data-history="0,50 EUR — owner-confirmed, 04 iun|0,51 EUR — smoke test, 05 iun">
+                      <div><div class="name">Modul LED</div><div class="code">MAT-LED-MODULE</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">0,50 EUR</div><div class="unit">/ buc</div></div>
+                      <div class="entry-actions"><button class="icon-btn" title="Edit">✎</button><button class="icon-btn" title="Istoric">⏱</button></div>
+                    </div>
+                    <div class="entry" data-entry data-name="Față litere plexi 3 mm" data-code="MAT-ACP-FATA-LITERE" data-category="Plăci"
+                      data-price="16,00" data-unit="EUR / mp" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Față volumetrică — mp în BOM." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="16,00 EUR — 04 iun">
+                      <div><div class="name">Față litere plexi 3 mm</div><div class="code">MAT-ACP-FATA-LITERE</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">16,00 EUR</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button><button class="icon-btn">⏱</button></div>
+                    </div>
+                    <div class="entry" data-entry data-name="Spate Forex 10 mm" data-code="MAT-SPATE-PVC-LITERE" data-category="Plăci"
+                      data-price="16,00" data-unit="EUR / mp" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Spate literă — mp standardizat." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Spate Forex 10 mm</div><div class="code">MAT-SPATE-PVC-LITERE</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">16,00 EUR</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="entry" data-entry data-name="Șablon montaj Forex 3 mm" data-code="MAT-SABLON-MONTAJ" data-category="Plăci"
+                      data-price="6,00" data-unit="EUR / mp" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Șablon montaj — linie separată." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Șablon montaj Forex 3 mm</div><div class="code">MAT-SABLON-MONTAJ</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">6,00 EUR</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="group-label">Profile / canturi</div>
+                    <div class="entry" data-entry data-name="Return/cant 60 mm" data-code="MAT-PROFIL-LATERAL-LITERE-60MM" data-category="Profile"
+                      data-price="3,00" data-unit="EUR / ml" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Cant lateral — ml perimetru." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Return/cant 60 mm</div><div class="code">MAT-PROFIL-LATERAL-LITERE-60MM</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">3,00 EUR</div><div class="unit">/ ml</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="group-label">LED / electrice</div>
+                    <div class="entry" data-entry data-name="Sursă LED 12V 100W" data-code="MAT-LED-PSU-12V-100W" data-category="LED / electrice"
+                      data-price="80,00" data-unit="RON / buc" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="PSU alocat per proiect — conversie EUR la calcul." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Sursă LED 12V 100W</div><div class="code">MAT-LED-PSU-12V-100W</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">80,00 RON</div><div class="unit">/ buc</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="group-label">Consumabile</div>
+                    <div class="entry" data-entry data-name="Vopsea RAL spray" data-code="MAT-VOPSEA-RAL" data-category="Consumabile"
+                      data-price="8,00" data-unit="EUR / set" data-status="warn" data-status-text="Estimat" data-impact="Preliminar — review"
+                      data-blurb="8 EUR/set estimat — confirmă owner." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Vopsea RAL spray</div><div class="code">MAT-VOPSEA-RAL</div><div class="tags"><span class="tag tag-warn">Estimat</span><span class="tag tag-impact">Preliminar — review</span></div></div>
+                      <div class="price-col"><div class="price">8,00 EUR</div><div class="unit">/ set</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="entry" data-entry data-name="Consumabile montaj" data-code="MAT-CONSUMABILE-MONTAJ" data-category="Consumabile"
+                      data-price="5,00" data-unit="EUR / set" data-status="warn" data-status-text="Needs review" data-impact="Preliminar — review"
+                      data-blurb="Medie ofertare — review periodic." data-template="TPL-VOLUMETRIC-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">Consumabile montaj</div><div class="code">MAT-CONSUMABILE-MONTAJ</div><div class="tags"><span class="tag tag-warn">Needs review</span><span class="tag tag-impact">Preliminar — review</span></div></div>
+                      <div class="price-col"><div class="price">5,00 EUR</div><div class="unit">/ set</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+
+                    <div class="section-title">Servicii / operații</div>
+                    <div class="group-label">Formare cant</div>
+                    <div class="entry" data-entry data-name="Modelare cant profil" data-code="RETURN_PROFILE_MACHINE_FORMING" data-category="Formare cant"
+                      data-price="5,00" data-unit="EUR / ml" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Rată formare cant per ml." data-template="TPL-VOLUMETRIC-LETTERS" data-source="workcenter_rates" data-history="">
+                      <div><div class="name">Modelare cant profil</div><div class="code">RETURN_PROFILE_MACHINE_FORMING</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">5,00 EUR</div><div class="unit">/ ml</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="group-label">Lipire cant</div>
+                    <div class="entry" data-entry data-name="Lipire față pe profil" data-code="RETURN_PROFILE_FACE_BONDING" data-category="Lipire cant"
+                      data-price="7,00" data-unit="EUR / ml" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Rată lipire față-cant." data-template="TPL-VOLUMETRIC-LETTERS" data-source="workcenter_rates" data-history="">
+                      <div><div class="name">Lipire față pe profil</div><div class="code">RETURN_PROFILE_FACE_BONDING</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">7,00 EUR</div><div class="unit">/ ml</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="group-label">Vopsire</div>
+                    <div class="entry" data-entry data-name="Vopsire RAL" data-code="PAINTING" data-category="Vopsire"
+                      data-price="—" data-unit="rată lipsă" data-status="bad" data-status-text="Rată lipsă" data-impact="Blochează calcul complet"
+                      data-blurb="Rată serviciu neconfigurată." data-template="TPL-VOLUMETRIC-LETTERS" data-source="workcenter_rates" data-history="">
+                      <div><div class="name">Vopsire RAL</div><div class="code">PAINTING</div><div class="tags"><span class="tag tag-bad">Rată lipsă</span><span class="tag tag-impact">Blochează calcul complet</span></div></div>
+                      <div class="price-col"><div class="price" style="color:var(--bad)">Lipsă</div><div class="unit">serviciu</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+
+                    <div class="section-title">Adaos comercial</div>
+                    <div class="entry" data-entry data-name="Reguli adaos — Plăci / LED" data-code="MARKUP-POLICIES" data-category="Adaos"
+                      data-price="—" data-unit="0 active" data-status="warn" data-status-text="Deferred" data-impact="Fără adaos — preț vânzare incomplet"
+                      data-blurb="Editare reguli adaos — build separat. Nu e lipsă de cost material."
+                      data-template="TPL-VOLUMETRIC-LETTERS" data-source="commercial_markup_policies" data-history="">
+                      <div><div class="name">Adaos comercial — Plăci / LED / Global</div><div class="code">MARKUP-POLICIES</div><div class="tags"><span class="tag tag-warn">Build separat</span><span class="tag tag-impact">Completitudine comercială</span></div></div>
+                      <div class="price-col"><div class="price" style="color:var(--dim)">—</div><div class="unit">read-only</div></div>
+                      <div class="entry-actions"><button class="icon-btn" disabled style="opacity:.4">✎</button></div>
+                    </div>
+                  </div>
+
+                  <!-- ACM PANEL -->
+                  <div class="stack" id="stack-acm-panel">
+                    <div class="section-title">Materiale</div>
+                    <div class="group-label">Plăci</div>
+                    <div class="entry on" data-entry data-name="ACM Bond 3 mm" data-code="MAT-ACM-BOND-3MM" data-category="Plăci"
+                      data-price="15,00" data-unit="EUR / mp" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Față casetă ACM 3 mm." data-template="TPL-ACM-CASSETTED-PANEL" data-source="inventory_materials" data-history="15,00 EUR — 04 iun">
+                      <div><div class="name">ACM Bond 3 mm</div><div class="code">MAT-ACM-BOND-3MM</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span><span class="tag tag-impact">În calcul ofertă</span></div></div>
+                      <div class="price-col"><div class="price">15,00 EUR</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="entry" data-entry data-name="ACM Bond 4 mm" data-code="MAT-ACM-BOND-4MM" data-category="Plăci"
+                      data-price="—" data-unit="preț lipsă" data-status="bad" data-status-text="Preț lipsă" data-impact="Blochează calcul complet"
+                      data-blurb="Fără preț owner — blochează casete 4 mm." data-template="TPL-ACM-CASSETTED-PANEL" data-source="inventory_materials" data-history="">
+                      <div><div class="name">ACM Bond 4 mm</div><div class="code">MAT-ACM-BOND-4MM</div><div class="tags"><span class="tag tag-bad">Preț lipsă</span><span class="tag tag-impact">Blochează calcul complet</span></div></div>
+                      <div class="price-col"><div class="price" style="color:var(--bad)">Lipsă</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="section-title">Servicii / operații</div>
+                    <div class="entry" data-entry data-name="V-groove + pliere" data-code="WC_VGROOVE_FOLD" data-category="V-groove"
+                      data-price="4,00" data-unit="EUR / ml" data-status="warn" data-status-text="Needs review" data-impact="Preliminar — review"
+                      data-blurb="Validare folding ACM." data-template="TPL-ACM-CASSETTED-PANEL" data-source="workcenter_rates" data-history="">
+                      <div><div class="name">V-groove + pliere</div><div class="code">WC_VGROOVE_FOLD</div><div class="tags"><span class="tag tag-warn">Needs review</span><span class="tag tag-impact">Preliminar — review</span></div></div>
+                      <div class="price-col"><div class="price">4,00 EUR</div><div class="unit">/ ml</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="section-title">Adaos comercial</div>
+                    <div class="entry" data-entry data-name="Adaos comercial" data-code="MARKUP-POLICIES" data-category="Adaos"
+                      data-price="—" data-unit="deferred" data-status="warn" data-status-text="Deferred" data-impact="Build separat"
+                      data-blurb="Adaos comercial — flux dedicat." data-template="TPL-ACM-CASSETTED-PANEL" data-source="commercial_markup_policies" data-history="">
+                      <div><div class="name">Adaos comercial</div><div class="code">MARKUP-POLICIES</div><div class="tags"><span class="tag tag-warn">Build separat</span></div></div>
+                      <div class="price-col"><div class="price" style="color:var(--dim)">—</div></div>
+                      <div class="entry-actions"><button class="icon-btn" disabled style="opacity:.4">✎</button></div>
+                    </div>
+                  </div>
+
+                  <!-- ACM LETTERS -->
+                  <div class="stack" id="stack-acm-letters">
+                    <div class="section-title">Materiale</div>
+                    <div class="entry on" data-entry data-name="ACM Bond 3 mm" data-code="MAT-ACM-BOND-3MM" data-category="Plăci"
+                      data-price="15,00" data-unit="EUR / mp" data-status="ok" data-status-text="Owner-confirmed" data-impact="În calcul ofertă"
+                      data-blurb="Litere ACM decupate." data-template="TPL-CUT-ACM-LETTERS" data-source="inventory_materials" data-history="">
+                      <div><div class="name">ACM Bond 3 mm</div><div class="code">MAT-ACM-BOND-3MM</div><div class="tags"><span class="tag tag-ok">Owner-confirmed</span></div></div>
+                      <div class="price-col"><div class="price">15,00 EUR</div><div class="unit">/ mp</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                    <div class="section-title">Servicii / operații</div>
+                    <div class="entry" data-entry data-name="V-groove + pliere" data-code="WC_VGROOVE_FOLD" data-category="V-groove"
+                      data-price="4,00" data-unit="EUR / ml" data-status="warn" data-status-text="Needs review" data-impact="Preliminar — review"
+                      data-blurb="Confirmă pliere litere ACM." data-template="TPL-CUT-ACM-LETTERS" data-source="workcenter_rates" data-history="">
+                      <div><div class="name">V-groove + pliere</div><div class="code">WC_VGROOVE_FOLD</div><div class="tags"><span class="tag tag-warn">Needs review</span></div></div>
+                      <div class="price-col"><div class="price">4,00 EUR</div><div class="unit">/ ml</div></div>
+                      <div class="entry-actions"><button class="icon-btn">✎</button></div>
+                    </div>
+                  </div>
+
+                  <!-- Placeholder stacks for scalable catalog -->
+                  <div class="stack" id="stack-lightbox"><p style="padding:24px;color:var(--dim);font-size:12px">TPL-LIGHTBOX-STANDARD — 14 intrări (mock prescurtat). Selectorul scalează la 50+ template-uri fără chips pe pagină.</p></div>
+                  <div class="stack" id="stack-banner"><p style="padding:24px;color:var(--dim);font-size:12px">TPL-BANNER-STANDARD — acoperire completă · 9 intrări owner-confirmed.</p></div>
+                  <div class="stack" id="stack-plexi"><p style="padding:24px;color:var(--dim);font-size:12px">TPL-PLEXI-PLATE — acoperire completă · fără blockers.</p></div>
+                </div>
+              </div>
+
+              <aside class="detail-pane">
+                <div class="detail" id="detail">
+                  <div class="status-line ok" id="dStatus">Owner-confirmed</div>
+                  <h2 id="dName">Modul LED</h2>
+                  <div class="mono" id="dCode">MAT-LED-MODULE</div>
+                  <div class="hero-price"><span id="dPrice">0,50</span> <span class="hero-unit" id="dUnit">EUR / buc</span></div>
+                  <div class="impact-box"><strong>Impact ofertă:</strong> <span id="dImpact">Modifică prețul modulului LED folosit în calculul preliminar pentru litere volumetrice.</span></div>
+                  <div class="meta-row">
+                    <div class="meta-item"><label>Categorie</label><span id="dCategory">LED / electrice</span></div>
+                    <div class="meta-item"><label>Încredere</label><span id="dConfidence">Owner-confirmed</span></div>
+                    <div class="meta-item"><label>Template</label><span id="dTemplate">TPL-VOLUMETRIC-LETTERS</span></div>
+                    <div class="meta-item"><label>Sursă</label><span id="dSource" style="font-family:var(--mono);font-size:11px;color:var(--dim)">inventory_materials</span></div>
+                  </div>
+                  <p style="margin-top:12px;font-size:11px;color:var(--muted);line-height:1.55" id="dWhy"><strong>De ce în Pricing?</strong> Preț standardizat pentru ofertare — nu stoc Inventory.</p>
+                  <div class="edit-warn">Salvarea modifică valoarea folosită în ofertare. Nu modifică stocul, loturile sau ultimul preț de achiziție.</div>
+                  <div class="actions">
+                    <button type="button" class="btn btn-primary" id="editBtn">Editează prețul</button>
+                    <button type="button" class="btn btn-ghost">Vezi referința operațională în Inventory</button>
+                  </div>
+                  <div class="history-block">
+                    <h4>Istoric / audit</h4>
+                    <ul id="dHistory"></ul>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </div>
+
+          <!-- Secondary views -->
+          <div class="view-panel" id="view-all">
+            <div class="secondary-panel">
+              <h3>Toate intrările de pricing</h3>
+              <p>Vizualizare secundară pentru audit global — nu înlocuiește lucrul pe template.</p>
+              <table class="all-table">
+                <thead><tr><th>Cod</th><th>Tip</th><th>Preț</th><th>Template</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">MAT-LED-MODULE</td><td>Material</td><td>0,50 EUR/buc</td><td>TPL-VOLUMETRIC-LETTERS</td><td>Owner</td></tr>
+                  <tr><td class="mono">MAT-ACM-BOND-3MM</td><td>Material</td><td>15 EUR/mp</td><td>TPL-ACM-*</td><td>Owner</td></tr>
+                  <tr><td class="mono">MAT-ACM-BOND-4MM</td><td>Material</td><td style="color:var(--bad)">Lipsă</td><td>TPL-ACM-CASSETTED-PANEL</td><td>Missing</td></tr>
+                  <tr><td class="mono">PAINTING</td><td>Rată</td><td style="color:var(--bad)">Lipsă</td><td>TPL-VOLUMETRIC-LETTERS</td><td>Missing</td></tr>
+                  <tr><td class="mono">WC_VGROOVE_FOLD</td><td>Rată</td><td>4 EUR/ml</td><td>TPL-ACM-*</td><td>Review</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="view-panel" id="view-verify">
+            <div class="secondary-panel">
+              <h3>Verificare — toate template-urile</h3>
+              <p>Agregat probleme din catalog (mock). Lucrul zilnic rămâne pe template selectat.</p>
+              <div class="pq-item" style="cursor:default;border:none"><span class="pq-num bad">!</span><div><div class="pq-code">MAT-ACM-BOND-4MM</div><div class="pq-desc">TPL-ACM-CASSETTED-PANEL — preț lipsă</div></div></div>
+              <div class="pq-item" style="cursor:default;border:none"><span class="pq-num bad">!</span><div><div class="pq-code">PAINTING</div><div class="pq-desc">TPL-VOLUMETRIC-LETTERS — rată lipsă</div></div></div>
+              <div class="pq-item" style="cursor:default;border:none"><span class="pq-num warn">!</span><div><div class="pq-code">MAT-VOPSEA-RAL</div><div class="pq-desc">Estimat — confirmare owner</div></div></div>
+            </div>
+          </div>
+          <div class="view-panel" id="view-markup">
+            <div class="secondary-panel">
+              <h3>Adaos comercial</h3>
+              <p>Regulile de adaos afectează estimarea prețului de vânzare — separate de costul de bază material/operație.</p>
+              <div class="markup-card"><div class="mc-title">Plăci — volumetric</div><div class="mc-sub">0 reguli active · build separat · read-only în Pricing v1</div></div>
+              <div class="markup-card"><div class="mc-title">LED / electrice</div><div class="mc-sub">0 reguli active · lipsă adaos = completitudine comercială incompletă</div></div>
+              <div class="markup-card"><div class="mc-title">Global</div><div class="mc-sub">Editare reguli adaos — flux dedicat (nu Pricing v1)</div></div>
+            </div>
+          </div>
+          <div class="view-panel" id="view-audit">
+            <div class="secondary-panel">
+              <h3>Istoric / audit recent</h3>
+              <ul class="history-block" style="margin:0"><li><strong>MAT-LED-MODULE</strong> 0,51 → 0,50 EUR · smoke test · 05 iun 2026</li><li><strong>MAT-ACP-FATA-LITERE</strong> seed owner-confirmed · 04 iun 2026</li><li><strong>RETURN_PROFILE_MACHINE_FORMING</strong> notes update · 04 iun 2026</li></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template picker -->
+  <div class="picker-overlay" id="pickerOverlay">
+    <div class="picker-panel" role="dialog" aria-label="Selectează template">
+      <div class="picker-head">
+        <h3>Selectează template Product System</h3>
+        <input type="search" class="picker-search" id="pickerSearch" placeholder="Caută template, produs sau familie…" />
+      </div>
+      <div class="picker-filters">
+        <select id="filterFamily"><option value="">Familie produs</option><option>Product 001</option><option>ACM</option><option>Casete</option><option>Banner</option></select>
+        <select id="filterStatus"><option value="">Status</option><option value="complete">Complet</option><option value="partial">Parțial</option><option value="blocked">Blocat</option><option value="review">Review</option></select>
+        <select><option>Active only</option><option>Toate</option></select>
+        <select><option>Recente / favorite</option><option>Doar favorite</option></select>
+      </div>
+      <div class="picker-list" id="pickerList"></div>
+      <div class="picker-foot">52 template-uri în catalog (mock) · afișate max 6 exemple · search filtrează lista</div>
+    </div>
+  </div>
+
+  <script>
+    var TEMPLATES = {
+      volumetric: { key: 'volumetric', code: 'TPL-VOLUMETRIC-LETTERS', label: 'Litere volumetrice · Product 001', family: 'Product 001', status: 'partial', statusLabel: 'Calcul preliminar disponibil', owner: 9, review: 3, missing: 1, finalNote: 'Ofertă finală blocată până la confirmări', stackId: 'stack-volumetric', favorite: true },
+      'acm-panel': { key: 'acm-panel', code: 'TPL-ACM-CASSETTED-PANEL', label: 'Panou ACM casetat', family: 'ACM', status: 'blocked', statusLabel: 'Blocat — preț lipsă', owner: 1, review: 1, missing: 1, finalNote: 'Blocaj ofertă finală la 4 mm', stackId: 'stack-acm-panel' },
+      'acm-letters': { key: 'acm-letters', code: 'TPL-CUT-ACM-LETTERS', label: 'Litere / forme decupate ACM', family: 'ACM', status: 'partial', statusLabel: 'Calcul preliminar parțial', owner: 1, review: 1, missing: 0, finalNote: 'Gata pentru preliminar', stackId: 'stack-acm-letters' },
+      lightbox: { key: 'lightbox', code: 'TPL-LIGHTBOX-STANDARD', label: 'Casetă luminoasă standard', family: 'Casete', status: 'review', statusLabel: 'Review operații', owner: 10, review: 2, missing: 0, finalNote: 'Confirmă 2 rate', stackId: 'stack-lightbox' },
+      banner: { key: 'banner', code: 'TPL-BANNER-STANDARD', label: 'Banner standard', family: 'Banner', status: 'complete', statusLabel: 'Acoperire completă', owner: 9, review: 0, missing: 0, finalNote: 'Gata pentru ofertă', stackId: 'stack-banner' },
+      plexi: { key: 'plexi', code: 'TPL-PLEXI-PLATE', label: 'Plexiglas / debitare', family: 'Plăci', status: 'complete', statusLabel: 'Acoperire completă', owner: 7, review: 0, missing: 0, finalNote: 'Fără blockers', stackId: 'stack-plexi' }
+    };
+
+    var currentKey = 'volumetric';
+
+    function renderPickerList() {
+      var q = (document.getElementById('pickerSearch').value || '').toLowerCase();
+      var fam = document.getElementById('filterFamily').value;
+      var st = document.getElementById('filterStatus').value;
+      var list = document.getElementById('pickerList');
+      list.innerHTML = '';
+      Object.keys(TEMPLATES).forEach(function(k) {
+        var t = TEMPLATES[k];
+        var text = (t.code + ' ' + t.label + ' ' + t.family).toLowerCase();
+        if (q && text.indexOf(q) < 0) return;
+        if (fam && t.family !== fam) return;
+        if (st && t.status !== st) return;
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'picker-item' + (k === currentKey ? ' on' : '');
+        btn.dataset.key = k;
+        btn.innerHTML = '<div class="pi-code">' + t.code + '</div><div class="pi-label">' + t.label + '</div><div class="pi-meta">' + t.statusLabel + ' · ' + t.owner + ' owner · ' + t.review + ' review</div>';
+        btn.addEventListener('click', function() { selectTemplate(k); closePicker(); });
+        list.appendChild(btn);
+      });
+    }
+
+    function updateTemplateUI(key) {
+      var t = TEMPLATES[key];
+      if (!t) return;
+      currentKey = key;
+      document.getElementById('activeCode').textContent = t.code;
+      document.getElementById('activeLabel').textContent = t.label;
+      var stEl = document.getElementById('activeStatus');
+      stEl.textContent = '● ' + t.statusLabel;
+      stEl.className = 'tpl-active-status ' + (t.status === 'complete' ? 'complete' : t.status === 'blocked' ? 'blocked' : t.status === 'review' ? 'partial' : 'partial');
+      document.getElementById('sumOwner').textContent = t.owner;
+      document.getElementById('sumReview').textContent = t.review;
+      document.getElementById('sumMissing').textContent = t.missing;
+      document.getElementById('sumFinal').textContent = t.finalNote;
+      document.getElementById('sumFinal').style.display = t.missing > 0 || t.review > 2 ? '' : 'none';
+      document.querySelectorAll('.recent-chip').forEach(function(c) { c.classList.toggle('on', c.dataset.key === key); });
+      Object.keys(TEMPLATES).forEach(function(k) {
+        var el = document.getElementById(TEMPLATES[k].stackId);
+        if (el) el.classList.toggle('active', k === key);
+      });
+      var stack = document.getElementById(t.stackId);
+      var pq = document.querySelector('.problem-queue');
+      if (key === 'volumetric') {
+        document.getElementById('nudge').className = 'nudge bad';
+        document.getElementById('nudgeText').innerHTML = '<strong style="color:var(--bad)">1 rată lipsă</strong> · <span style="color:#fde68a">2 estimări</span> de confirmat';
+        if (pq) pq.style.display = '';
+      } else if (key === 'acm-panel') {
+        document.getElementById('nudge').className = 'nudge bad';
+        document.getElementById('nudgeText').innerHTML = '<strong style="color:var(--bad)">1 preț lipsă</strong> — MAT-ACM-BOND-4MM';
+        if (pq) pq.style.display = 'none';
+      } else {
+        document.getElementById('nudge').className = 'nudge warn';
+        document.getElementById('nudgeText').textContent = t.review ? t.review + ' punct(e) de review' : 'Fără blockers';
+        if (pq) pq.style.display = 'none';
+      }
+      if (stack) {
+        var first = stack.querySelector('.entry.on') || stack.querySelector('.entry');
+        if (first) selectEntry(first);
+      }
+      renderPickerList();
+    }
+
+    function selectTemplate(key) { updateTemplateUI(key); }
+
+    function selectEntry(el) {
+      if (!el.dataset.code) return;
+      var stack = el.closest('.stack');
+      if (stack) stack.querySelectorAll('.entry').forEach(function(e) { e.classList.remove('on'); });
+      el.classList.add('on');
+      var st = el.dataset.status || 'ok';
+      var stEl = document.getElementById('dStatus');
+      stEl.textContent = el.dataset.statusText || '';
+      stEl.className = 'status-line ' + st;
+      document.getElementById('dName').textContent = el.dataset.name || '';
+      document.getElementById('dCode').textContent = el.dataset.code || '';
+      document.getElementById('dPrice').textContent = el.dataset.price || '—';
+      document.getElementById('dUnit').textContent = el.dataset.unit || '';
+      document.getElementById('dImpact').textContent = el.dataset.blurb || '';
+      document.getElementById('dCategory').textContent = el.dataset.category || '—';
+      document.getElementById('dConfidence').textContent = el.dataset.statusText || '';
+      document.getElementById('dTemplate').textContent = el.dataset.template || '';
+      document.getElementById('dSource').textContent = el.dataset.source || '';
+      var hist = document.getElementById('dHistory');
+      hist.innerHTML = '';
+      var items = (el.dataset.history || '').split('|').filter(Boolean);
+      if (items.length) {
+        items.forEach(function(item) {
+          var li = document.createElement('li');
+          var parts = item.split(' — ');
+          li.innerHTML = '<strong>' + (parts[0] || item) + '</strong>' + (parts[1] ? ' — ' + parts[1] : '');
+          hist.appendChild(li);
+        });
+      } else {
+        hist.innerHTML = '<li style="border:none;color:var(--dim)">Niciun istoric.</li>';
+      }
+      var isRate = el.dataset.source === 'workcenter_rates';
+      var isMarkup = el.dataset.code === 'MARKUP-POLICIES';
+      document.getElementById('editBtn').textContent = isMarkup ? 'Indisponibil (build separat)' : isRate ? 'Editează rata' : 'Editează prețul';
+      document.getElementById('editBtn').disabled = isMarkup;
+      document.getElementById('editBtn').style.opacity = isMarkup ? '0.5' : '1';
+    }
+
+    function gotoCode(code) {
+      document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.toggle('on', t.dataset.view === 'coverage'); });
+      document.querySelectorAll('.view-panel').forEach(function(p) { p.classList.toggle('on', p.id === 'view-coverage'); });
+      var row = document.querySelector('.stack.active .entry[data-code="' + code + '"]') ||
+        document.querySelector('.entry[data-code="' + code + '"]');
+      if (row) {
+        var stack = row.closest('.stack');
+        if (stack && !stack.classList.contains('active')) {
+          Object.keys(TEMPLATES).forEach(function(k) {
+            if (TEMPLATES[k].stackId === stack.id) selectTemplate(k);
+          });
+        }
+        selectEntry(row);
+        row.classList.add('on');
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+
+    function openPicker() { document.getElementById('pickerOverlay').classList.add('open'); renderPickerList(); document.getElementById('pickerSearch').focus(); }
+    function closePicker() { document.getElementById('pickerOverlay').classList.remove('open'); }
+
+    document.getElementById('navCollapse').addEventListener('click', function() {
+      document.getElementById('shell').classList.toggle('collapsed');
+      this.textContent = document.getElementById('shell').classList.contains('collapsed') ? '›' : '‹';
+    });
+    document.getElementById('openPicker').addEventListener('click', openPicker);
+    document.getElementById('pickerOverlay').addEventListener('click', function(e) { if (e.target === this) closePicker(); });
+    document.getElementById('pickerSearch').addEventListener('input', renderPickerList);
+    document.getElementById('filterFamily').addEventListener('change', renderPickerList);
+    document.getElementById('filterStatus').addEventListener('change', renderPickerList);
+    document.querySelectorAll('.recent-chip').forEach(function(c) {
+      c.addEventListener('click', function() { selectTemplate(c.dataset.key); });
+    });
+    document.querySelectorAll('[data-entry]').forEach(function(el) {
+      el.addEventListener('click', function(e) { if (!e.target.closest('.icon-btn')) selectEntry(el); });
+    });
+    document.getElementById('nudgeBtn').addEventListener('click', function() { gotoCode('PAINTING'); });
+    document.querySelectorAll('.pq-item[data-goto]').forEach(function(el) {
+      el.addEventListener('click', function() { gotoCode(el.dataset.goto); });
+    });
+    document.getElementById('search').addEventListener('input', function() {
+      var q = this.value.toLowerCase().trim();
+      document.querySelectorAll('.stack.active .entry').forEach(function(el) {
+        var text = (el.dataset.name + ' ' + el.dataset.code).toLowerCase();
+        el.style.display = !q || text.indexOf(q) >= 0 ? '' : 'none';
+      });
+    });
+    document.querySelectorAll('.view-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.view-tab').forEach(function(t) { t.classList.remove('on'); });
+        document.querySelectorAll('.view-panel').forEach(function(p) { p.classList.remove('on'); });
+        tab.classList.add('on');
+        document.getElementById('view-' + tab.dataset.view).classList.add('on');
+      });
+    });
+
+    selectTemplate('volumetric');
+    renderPickerList();
+  </script>
+</body>
+</html>

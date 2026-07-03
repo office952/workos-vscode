@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "company": {
+    "tax_id": "RO12345678",
+    "name": "Example SRL",
+    "registration_number": "J40/1234/2020",
+    "address": "Strada Exemplu 1",
+    "city": "Bucuresti",
+    "county": "Bucuresti",
+    "vat_payer": true
+  }
+}

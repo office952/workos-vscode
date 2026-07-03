@@ -1,0 +1,129 @@
+{
+  "sample_marker": "SAMPLE_ONLY_NOT_RUNTIME_PAYLOAD",
+  "metadata": {
+    "schema_version": "product_truth_draft_v1",
+    "workspace_id": "c8dda47f-e2a7-4fea-800c-2dc01b2be5a3",
+    "workspace_code": "IV6-BB8EE3F8",
+    "intake_id": "IR-MR18L96M",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_family": "volumetric_letters",
+    "generated_at": "2026-07-01T00:00:00.000Z",
+    "preview_only": true
+  },
+  "source_svg": {
+    "file_name": "gradi-curat.svg",
+    "analysis_status": "parsed",
+    "source_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "layers": [
+    { "layer_key": "pseudo:maria", "layer_name": "maria", "auto_role": "face", "confirmed_role": "face", "state": "confirmed" },
+    { "layer_key": "pseudo:soare", "layer_name": "soare", "auto_role": "face", "confirmed_role": "face", "state": "confirmed" },
+    { "layer_key": "pseudo:ana", "layer_name": "ana", "auto_role": "face", "confirmed_role": "face", "state": "confirmed" },
+    { "layer_key": "pseudo:gradinita", "layer_name": "gradinita", "auto_role": "face", "confirmed_role": "face", "state": "confirmed" },
+    { "layer_key": "logo-stanga", "layer_name": "logo stanga", "auto_role": "printed_artwork", "confirmed_role": "printed_artwork", "state": "confirmed" },
+    { "layer_key": "logo-dreapta", "layer_name": "logo dreapta", "auto_role": "printed_artwork", "confirmed_role": "printed_artwork", "state": "confirmed" }
+  ],
+  "components": {
+    "face": {
+      "material_family": { "value": "plexiglas_opal", "state": "confirmed", "source": "operator" },
+      "thickness_mm": { "value": 3, "state": "confirmed", "source": "operator" }
+    },
+    "back": {
+      "material": { "value": "forex_10", "state": "confirmed" },
+      "bevel_enabled": { "value": false, "state": "confirmed" }
+    },
+    "return_cant": {
+      "depth_mm": { "value": 60, "state": "confirmed" },
+      "finish_type": { "value": "white_aluminum", "state": "confirmed" }
+    },
+    "finish": {
+      "finish_target": { "value": "face", "state": "confirmed" },
+      "face_finish_type": { "value": "oracal_651", "state": "confirmed" },
+      "oracal_series": { "value": "651", "state": "confirmed" },
+      "oracal_color": { "value": null, "state": "unknown", "note": "Color is held per group." },
+      "roll_width_mm": { "value": 1000, "state": "confirmed" },
+      "print_required": { "value": true, "state": "confirmed" },
+      "lamination_required": { "value": true, "state": "confirmed" },
+      "group_finishes": [
+        { "group_key": "pseudo:maria", "face_oracal_code": "056", "return_depth_mm": 60, "confirmed": true },
+        { "group_key": "pseudo:soare", "face_oracal_code": "032", "return_depth_mm": 60, "confirmed": true },
+        { "group_key": "pseudo:ana", "face_oracal_code": "056", "return_depth_mm": 60, "confirmed": true },
+        { "group_key": "pseudo:gradinita", "face_oracal_code": "032", "return_depth_mm": 60, "confirmed": true }
+      ]
+    },
+    "artwork": {
+      "items": [
+        { "layer_key": "logo-stanga", "artwork_decision": "printed", "print_required": true, "lamination_required": true, "estimated_area_m2": 0.4002, "state": "confirmed" },
+        { "layer_key": "logo-dreapta", "artwork_decision": "printed", "print_required": true, "lamination_required": true, "estimated_area_m2": 0.4003, "state": "confirmed" }
+      ],
+      "note": "printed_artwork SVG roles are suggestions until operator decision exists. Print and lamination are separate booleans."
+    },
+    "lighting": {
+      "illuminated": { "value": true, "state": "confirmed" },
+      "lighting_system_type": { "value": "led_modules", "state": "confirmed" },
+      "light_color": { "value": "neutral", "state": "confirmed" }
+    },
+    "electrical": {
+      "led_module_power_w": { "value": 0.75, "state": "confirmed" },
+      "selected_psu_watts": { "value": 100, "state": "confirmed" },
+      "cable_defaults": {
+        "value": {
+          "per_letter_cable_m": 1,
+          "final_feed_cable_m": 5,
+          "per_letter_cable_type": "2x0.75",
+          "final_feed_cable_type": "2x1.5"
+        },
+        "state": "owner_default",
+        "note": "Included quote defaults, not site planning truth."
+      },
+      "psu_placement": { "value": null, "state": "unknown", "boundary": "order_execution_unless_quote_scope" },
+      "extra_cable_or_site_details": { "value": null, "state": "unknown", "boundary": "order_execution_unless_quote_scope" }
+    },
+    "support": {
+      "support_required": { "value": "no", "state": "confirmed" },
+      "support_type": { "value": null, "state": "not_applicable" },
+      "support_source": { "value": null, "state": "not_applicable" },
+      "note": "support_required is never confirmed from mounting_system, direct_wall, support_panel, or frame SVG hints."
+    },
+    "mounting": {
+      "mounting_scope": { "value": "mounting_included", "state": "confirmed" },
+      "mounting_system": { "value": "direct_wall", "state": "confirmed" },
+      "mounting_template_required": { "value": true, "state": "confirmed" },
+      "mounting_template_area_m2": { "value": 3.052, "state": "confirmed" }
+    },
+    "pricing_boundary": {
+      "commercial_preview_status": "preview_only",
+      "commercial_price": null,
+      "cost_engine_output": null,
+      "note": "Commercial price is not Product Truth and no CostEngine data is embedded."
+    }
+  },
+  "readiness": {
+    "product_truth_draft_complete": true,
+    "ready_for_commercial_proposal": false,
+    "ready_for_quote_snapshot": false,
+    "ready_for_order_snapshot": false,
+    "ready_for_product_aggregate": false,
+    "ready_for_execution_plan": false,
+    "phase_marker": "PHASE_3A_PREVIEW_ONLY"
+  },
+  "blockers": [],
+  "warnings": [
+    {
+      "code": "PRINT_LAMINATION_ENCODED_NOT_CANONICAL",
+      "severity": "warning",
+      "affected_component": "artwork",
+      "affected_field": "artwork_finishes.execution_type",
+      "source": "existing_form",
+      "quote_blocker": false,
+      "order_blocker": false,
+      "execution_blocker": false
+    }
+  ],
+  "audit": [
+    {
+      "code": "PRODUCT_TRUTH_DRAFT_BUILT_IN_MEMORY",
+      "message": "Documentation sample mirrors the frontend-only pure builder contract and is not a runtime payload."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+    "title": "clients",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "name": {
+            "type": "string",
+            "description": "Company or individual name"
+        },
+        "identity_type": {
+            "type": "string",
+            "description": "temp or fiscal"
+        },
+        "temp_ref": {
+            "type": "string",
+            "description": "Temporary reference code"
+        },
+        "cui": {
+            "type": "string",
+            "description": "Fiscal code (CUI/CIF)"
+        },
+        "contact_person": {
+            "type": "string",
+            "description": "Main contact person"
+        },
+        "phone": {
+            "type": "string",
+            "description": "Phone number"
+        },
+        "email": {
+            "type": "string",
+            "description": "Email address"
+        },
+        "address": {
+            "type": "string",
+            "description": "Address"
+        },
+        "city": {
+            "type": "string",
+            "description": "City"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-text notes"
+        }
+    },
+    "required": [
+        "id",
+        "name",
+        "identity_type"
+    ]
+}

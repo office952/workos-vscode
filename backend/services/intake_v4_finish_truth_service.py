@@ -1,0 +1,289 @@
+"""Resolve effective Intake V4 finish truth from per-layer groups (not stale globals)."""
+
+from __future__ import annotations
+
+from collections import Counter
+from typing import Any
+
+from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
+
+INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
+
+_RETURN_FINISH_OPERATOR_LABELS: dict[str, str] = {
+    "white_aluminum": "Alb",
+    "black_aluminum": "Negru",
+    "gold_aluminum": "Auriu",
+    "mirror_silver": "Argintiu",
+    "standard_aluminum": "Argintiu",
+    "oracal_wrapped": "Oracal 651",
+    "colantat": "Oracal 651",
+    "oracal": "Oracal 651",
+    "ral_paint": "Vopsit RAL",
+    "vopsit_ral": "Vopsit RAL",
+    "painted": "Vopsit RAL",
+    "paint": "Vopsit RAL",
+    "ral": "Vopsit RAL",
+    "mixed": "mixt",
+    "same_as_face": "La fel ca fața (legacy)",
+    "none": "Cant / volum nespecificat (legacy)",
+    "unspecified": "Cant / volum nespecificat (legacy)",
+}
+
+_FACE_VINYL_FINISHES = frozenset(
+    {
+        "oracal_651",
+        "oracal_8500",
+        "oracal_641",
+        "print_laminate",
+        "printed_vinyl",
+        "printed_laminated_vinyl",
+        "oracal",
+        "651",
+        "8500",
+    }
+)
+_FACE_PRINT_LAMINATE = frozenset(
+    {"print_laminate", "print_translucent", "printed_vinyl", "printed_laminated_vinyl", "printed_vinyl_on_face"}
+)
+_PRINT_ARTWORK_EXECUTION = frozenset(
+    {"print_laminate", "print_translucent", "printed_vinyl", "printed_laminated_vinyl", "printed_vinyl_on_face"}
+)
+
+
+def _token(value: str | None, default: str) -> str:
+    raw = (value or default).strip().lower()
+    return raw or default.strip().lower()
+
+
+def format_intake_v4_return_finish_operator_label(
+    token: str | None,
+    default: str = INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE,
+) -> str:
+    """Map internal return_finish_type tokens to operator-facing labels."""
+    key = _token(token, default)
+    return _RETURN_FINISH_OPERATOR_LABELS.get(key) or key.replace("_", " ")
+
+
+def _group_dict_face_finish(group: dict[str, Any], default_face_finish: str) -> str:
+    return _token(group.get("face_finish_type"), default_face_finish)
+
+
+def _group_model_face_finish(group: IntakeV4LetterGroupFinish, default_face_finish: str) -> str:
+    return _token(group.face_finish_type, default_face_finish)
+
+
+def face_vinyl_required(face_finish: str) -> bool:
+    token = face_finish.strip().lower()
+    if token in {"none", "colored_plexiglas"}:
+        return False
+    return token in _FACE_VINYL_FINISHES
+
+
+def face_finish_is_print_laminate(face_finish: str) -> bool:
+    return face_finish.strip().lower() in _FACE_PRINT_LAMINATE
+
+
+def artwork_print_execution(execution_type: str | None) -> bool:
+    return _token(execution_type, "needs_decision") in _PRINT_ARTWORK_EXECUTION
+
+
+def any_letter_group_face_vinyl_required(
+    letter_groups: list[Any],
+    default_face_finish: str,
+) -> bool:
+    if not letter_groups:
+        return face_vinyl_required(default_face_finish)
+    return any(
+        face_vinyl_required(_group_dict_face_finish(group, default_face_finish))
+        for group in letter_groups
+        if isinstance(group, dict)
+    )
+
+
+def any_letter_group_face_print_laminate(
+    letter_groups: list[Any],
+    default_face_finish: str,
+) -> bool:
+    if not letter_groups:
+        return face_finish_is_print_laminate(default_face_finish)
+    return any(
+        face_finish_is_print_laminate(_group_dict_face_finish(group, default_face_finish))
+        for group in letter_groups
+        if isinstance(group, dict)
+    )
+
+
+def _collect_return_finish_tokens(
+    letter_groups: list[Any],
+    artwork_finishes: list[Any],
+    default_return_finish: str,
+) -> list[str]:
+    tokens: list[str] = []
+    for group in letter_groups:
+        if not isinstance(group, dict):
+            continue
+        raw = group.get("return_finish_type")
+        if raw:
+            tokens.append(_token(str(raw), default_return_finish))
+    for row in artwork_finishes:
+        if not isinstance(row, dict):
+            continue
+        raw = row.get("return_finish_type")
+        if raw:
+            tokens.append(_token(str(raw), default_return_finish))
+    return tokens
+
+
+def resolve_effective_return_finish_label(
+    letter_groups: list[Any],
+    artwork_finishes: list[Any],
+    default_return_finish: str,
+) -> str:
+    tokens = _collect_return_finish_tokens(letter_groups, artwork_finishes, default_return_finish)
+    if not tokens:
+        return _token(default_return_finish, INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE)
+    unique = set(tokens)
+    if len(unique) == 1:
+        return tokens[0]
+    return "mixed"
+
+
+def resolve_effective_return_depth_mm(
+    letter_groups: list[Any],
+    artwork_finishes: list[Any],
+    global_depth_mm: float | int | None,
+) -> float | int | None:
+    depths: list[float] = []
+    for group in letter_groups:
+        if not isinstance(group, dict):
+            continue
+        depth = group.get("return_depth_mm")
+        if depth is not None:
+            try:
+                parsed = float(depth)
+            except (TypeError, ValueError):
+                continue
+            if parsed > 0:
+                depths.append(parsed)
+    for row in artwork_finishes:
+        if not isinstance(row, dict):
+            continue
+        depth = row.get("return_depth_mm")
+        if depth is not None:
+            try:
+                parsed = float(depth)
+            except (TypeError, ValueError):
+                continue
+            if parsed > 0:
+                depths.append(parsed)
+    if depths:
+        return max(depths)
+    return global_depth_mm
+
+
+def _dominant_token(values: list[str | None], fallback: str | None) -> str | None:
+    cleaned = [str(v).strip() for v in values if v is not None and str(v).strip()]
+    if not cleaned:
+        return fallback
+    return Counter(cleaned).most_common(1)[0][0]
+
+
+def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4FinishSetup:
+    """Sync job-level finish fields from per-layer truth when groups/artwork exist."""
+    groups = list(setup.letter_group_finishes or [])
+    artwork = list(setup.artwork_finishes or [])
+    updates: dict[str, Any] = {}
+
+    if setup.backing_mode == "forex_10_with_bevel":
+        updates["back_bevel_enabled"] = True
+    elif setup.backing_mode in {"none", "forex_10_no_bevel"}:
+        updates["back_bevel_enabled"] = False
+
+    if setup.selected_psu_watts is None and setup.psu_configuration:
+        psu_values = [int(w) for w in setup.psu_configuration if isinstance(w, int) and w > 0]
+        if psu_values:
+            updates["selected_psu_watts"] = max(psu_values)
+
+    if not groups and not artwork:
+        return setup.model_copy(update=updates) if updates else setup
+
+    if groups:
+        updates["face_finish_type"] = _dominant_token(
+            [g.face_finish_type for g in groups],
+            setup.face_finish_type,
+        )
+        updates["return_finish_type"] = _dominant_token(
+            [g.return_finish_type for g in groups],
+            setup.return_finish_type,
+        )
+        depths = [g.return_depth_mm for g in groups if g.return_depth_mm is not None]
+        if depths:
+            updates["return_depth_mm"] = max(float(d) for d in depths)
+    elif artwork:
+        updates["return_finish_type"] = _dominant_token(
+            [a.return_finish_type for a in artwork],
+            setup.return_finish_type,
+        )
+        depths = [a.return_depth_mm for a in artwork if a.return_depth_mm is not None]
+        if depths:
+            updates["return_depth_mm"] = max(float(d) for d in depths)
+
+    return setup.model_copy(update={k: v for k, v in updates.items() if v is not None})
+
+
+_RETURN_ORACAL = frozenset({"oracal_wrapped", "colantat", "oracal"})
+_RETURN_RAL = frozenset({"ral_paint", "vopsit_ral", "ral", "painted", "paint"})
+
+
+def _return_requires_oracal_color(return_finish: str) -> bool:
+    return _token(return_finish, "").strip() in _RETURN_ORACAL
+
+
+def _return_requires_ral_color(return_finish: str) -> bool:
+    return _token(return_finish, "").strip() in _RETURN_RAL
+
+
+def list_finish_setup_color_fatal_blockers(setup: IntakeV4FinishSetup | None) -> list[str]:
+    """Fatal when Oracal/RAL color selection is required but missing."""
+    if setup is None:
+        return []
+    blockers: list[str] = []
+    default_face = _token(setup.face_finish_type, "oracal_651")
+    default_return = _token(setup.return_finish_type, INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE)
+    groups = list(setup.letter_group_finishes or [])
+    if groups:
+        for group in groups:
+            face = _group_model_face_finish(group, default_face)
+            if face_vinyl_required(face) and not (group.face_oracal_code or "").strip():
+                blockers.append(f"missing_face_oracal_color:{group.group_key}")
+            ret = _token(group.return_finish_type, default_return)
+            if _return_requires_oracal_color(ret) and not (group.return_oracal_code or "").strip():
+                blockers.append(f"missing_return_oracal_color:{group.group_key}")
+            if _return_requires_ral_color(ret) and not (group.return_oracal_code or "").strip():
+                blockers.append(f"missing_ral_color:{group.group_key}")
+    else:
+        if face_vinyl_required(default_face):
+            blockers.append("missing_face_oracal_color:global")
+        ret = default_return
+        if _return_requires_oracal_color(ret) and not (setup.return_oracal_code or "").strip():
+            blockers.append("missing_return_oracal_color:global")
+        if _return_requires_ral_color(ret) and not (setup.return_oracal_code or "").strip():
+            blockers.append("missing_ral_color:global")
+
+    for row in setup.artwork_finishes or []:
+        ret = _token(row.return_finish_type, default_return)
+        if _return_requires_oracal_color(ret) and not (row.return_oracal_code or "").strip():
+            blockers.append(f"missing_return_oracal_color:artwork:{row.layer_key}")
+        if _return_requires_ral_color(ret) and not (row.return_oracal_code or "").strip():
+            blockers.append(f"missing_ral_color:artwork:{row.layer_key}")
+    return blockers
+
+
+def letter_groups_require_face_vinyl(setup: IntakeV4FinishSetup | None) -> bool:
+    if setup is None:
+        return False
+    default = _token(setup.face_finish_type, "oracal_651")
+    groups = [g.model_dump(mode="json") for g in (setup.letter_group_finishes or [])]
+    if groups:
+        return any_letter_group_face_vinyl_required(groups, default)
+    return face_vinyl_required(default)

@@ -1,0 +1,100 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.eggs/
+
+# Build / dist
+dist/
+build/
+*.local
+*.tsbuildinfo
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Local SQLite dev database (not tracked — use seeds/scripts)
+dev.db
+dev.db-journal
+dev.db.forensic*
+dev.backup*
+dev.FORENSIC*
+local_dev.db
+local_dev.db-journal
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Archives / backups
+*.zip
+*.rar
+*.7z
+*.bak
+*.backup
+
+# E2E generated fixture manifest (run seed_commercial_e2e_fixture.py)
+frontend/e2e/.commercial-fixture.json
+
+# Logs & cache
+logs/
+backend/logs/
+*.log
+.cache/
+.turbo/
+.vite/
+coverage/
+htmlcov/
+
+# OS / IDE (local only)
+.DS_Store
+Thumbs.db
+.cursor/
+.mgx/
+
+# Local workspace artifacts (keep on disk; do not commit)
+backend/validation_input/
+backend/generated_documents/
+backend/storage/intake_svg_uploads/
+backend/storage/intake_work_files/
+backend/storage/intake_artwork_prints/
+backend/.debug_uploads/
+exports/
+experiments/
+
+# WIP scope-separation backups (HEAD/MIXED snapshots, local patches)
+*.HEAD.ts
+*.MIXED.ts
+*.HEAD.tsx
+*.MIXED.tsx
+*.HEAD.py
+*.MIXED.py
+_editor_diff.patch
+_panel_diff.patch
+
+# Frontend test artifacts
+frontend/playwright-report/
+frontend/test-results/
+
+# Local audit / test scratch (canonical baseline exclusions)
+tmp/
+*.exitcode
+*_build_check.txt
+frontend_vite_build_check.txt
+frontend_tsc_runtime_check.txt
+tmp_*.txt
+tmp_*.json
+fisiere-teste/
+.vscode/

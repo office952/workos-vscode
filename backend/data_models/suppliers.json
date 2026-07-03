@@ -1,0 +1,43 @@
+{
+    "title": "suppliers",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "code": {
+            "type": "string",
+            "description": "Business code like SUP-01"
+        },
+        "name": {
+            "type": "string",
+            "description": "Supplier name"
+        },
+        "category": {
+            "type": "string",
+            "description": "Category"
+        },
+        "lead_time_days": {
+            "type": "integer",
+            "description": "Lead time in days"
+        },
+        "rating": {
+            "type": "integer",
+            "description": "Rating 1-5"
+        },
+        "active_orders": {
+            "type": "integer",
+            "description": "Count of active orders"
+        },
+        "last_delivery": {
+            "type": "string",
+            "description": "ISO date of last delivery"
+        }
+    },
+    "required": [
+        "id",
+        "code",
+        "name"
+    ]
+}

@@ -1,0 +1,3529 @@
+{
+  "schemaName": "svg-analyzer-analysis",
+  "schemaVersion": "1.10.0",
+  "engineVersion": "1.10.0",
+  "createdAt": "2026-06-22T21:04:11.762Z",
+  "sourceFileName": "pbl-layere.svg",
+  "sourceFileSize": 5631,
+  "file": {
+    "name": "pbl-layere.svg",
+    "sizeBytes": 5631,
+    "detectedUnits": "cm",
+    "conversionConfidence": "high",
+    "physicalSizeSource": "svg width/height"
+  },
+  "document": {
+    "widthMm": 2700,
+    "heightMm": 350.00100000000003,
+    "viewBox": "0 0 269.74656 34.96722",
+    "viewBoxWidth": 269.74656,
+    "viewBoxHeight": 34.96722,
+    "scaleX": 10.009395485896095,
+    "scaleY": 10.009403092381952,
+    "mmPerViewBoxUnit": 10.009399289139022,
+    "boundingAreaSqm": 0.9450027000000001,
+    "filledAreaSqm": 0.19756515182246506,
+    "areaConfidence": "medium",
+    "areaEstimated": true
+  },
+  "geometry": {
+    "perimeterMm": 15467.212472942261,
+    "perimeterMl": 15.467212472942261,
+    "perimeterConfidence": "medium",
+    "pathElementCount": 2,
+    "subPathCount": 15,
+    "closedSubPathCount": 15,
+    "openSubPathCount": 0,
+    "shapeCount": 3,
+    "transformCount": 0
+  },
+  "layers": [
+    {
+      "id": "Layer_x0020_1",
+      "name": "Layer_x0020_1",
+      "autoRole": "printed_artwork",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "printed_artwork",
+          "confidence": "high",
+          "reason": "Gradient, pattern, image, or multicolor paint detected."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [],
+        "strokes": [],
+        "gradientRefs": [
+          "id0"
+        ],
+        "hasGradient": true,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": true,
+        "fillCount": 0,
+        "textElementCount": 0,
+        "paintKind": "policromie"
+      },
+      "productionHint": "print_vinyl",
+      "roleGuess": "printed_artwork",
+      "elementCount": 1,
+      "pathElementCount": 0,
+      "subPathCount": 0,
+      "closedSubPathCount": 0,
+      "openSubPathCount": 0,
+      "widthMm": 585.8013946187689,
+      "heightMm": 337.2561991782858,
+      "boundingAreaSqm": 0.1975651518224651,
+      "filledAreaSqm": 0.19756515182246506,
+      "areaConfidence": "high",
+      "perimeterMm": 1846.115187594109,
+      "perimeterMl": 1.846115187594109,
+      "colors": [
+        "url(#id0)"
+      ],
+      "warnings": [
+        {
+          "code": "GRADIENT_OR_POLICROMIE_PRINT_VINYL",
+          "severity": "warning",
+          "message": "Layer uses gradient/policromie \u2014 entire zone prints on vinyl as one piece.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "Layer_x0020_2",
+      "name": "Layer_x0020_2",
+      "autoRole": "face",
+      "autoConfidence": "medium",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "medium",
+          "reason": "Multiple closed shapes with uniform fill \u2014 typical volumetric letters."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#009846"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 8,
+      "closedSubPathCount": 8,
+      "openSubPathCount": 0,
+      "widthMm": 942.2109797127937,
+      "heightMm": 350.0009671051607,
+      "boundingAreaSqm": 0.3297747541165788,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 6168.251813032671,
+      "perimeterMl": 6.168251813032671,
+      "colors": [
+        "#009846"
+      ],
+      "warnings": []
+    },
+    {
+      "id": "Layer_x0020_3",
+      "name": "Layer_x0020_3",
+      "autoRole": "face",
+      "autoConfidence": "medium",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "medium",
+          "reason": "Multiple closed shapes with uniform fill \u2014 typical volumetric letters."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#66c3d0"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 7,
+      "closedSubPathCount": 7,
+      "openSubPathCount": 0,
+      "widthMm": 1053.4882742419531,
+      "heightMm": 342.63845336404154,
+      "boundingAreaSqm": 0.36096559292341607,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 7452.845472315481,
+      "perimeterMl": 7.452845472315481,
+      "colors": [
+        "#66c3d0"
+      ],
+      "warnings": []
+    }
+  ],
+  "layerRoleConfirmation": {
+    "schemaVersion": "layer_role_confirmation_v1",
+    "confirmationStatus": "missing",
+    "layers": [
+      {
+        "layerKey": "Layer_x0020_1",
+        "layerId": "Layer_x0020_1",
+        "layerName": "Layer_x0020_1",
+        "autoRole": "printed_artwork",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "printed_artwork",
+            "confidence": "high",
+            "reason": "Gradient, pattern, image, or multicolor paint detected."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [],
+          "strokes": [],
+          "gradientRefs": [
+            "id0"
+          ],
+          "hasGradient": true,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": true,
+          "fillCount": 0,
+          "textElementCount": 0,
+          "paintKind": "policromie"
+        },
+        "productionHint": "print_vinyl"
+      },
+      {
+        "layerKey": "Layer_x0020_2",
+        "layerId": "Layer_x0020_2",
+        "layerName": "Layer_x0020_2",
+        "autoRole": "face",
+        "autoConfidence": "medium",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "medium",
+            "reason": "Multiple closed shapes with uniform fill \u2014 typical volumetric letters."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#009846"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      },
+      {
+        "layerKey": "Layer_x0020_3",
+        "layerId": "Layer_x0020_3",
+        "layerName": "Layer_x0020_3",
+        "autoRole": "face",
+        "autoConfidence": "medium",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "medium",
+            "reason": "Multiple closed shapes with uniform fill \u2014 typical volumetric letters."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#66c3d0"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      }
+    ]
+  },
+  "colors": {
+    "unique": [
+      "url(#id0)",
+      "#009846",
+      "#66c3d0"
+    ],
+    "dominant": [
+      "url(#id0)",
+      "#009846",
+      "#66c3d0"
+    ],
+    "fills": [
+      "url(#id0)",
+      "#009846",
+      "#66c3d0"
+    ],
+    "strokes": [],
+    "byLayer": {
+      "unassigned": [],
+      "Layer_x0020_1": [
+        "url(#id0)"
+      ],
+      "Layer_x0020_2": [
+        "#009846"
+      ],
+      "Layer_x0020_3": [
+        "#66c3d0"
+      ]
+    }
+  },
+  "warnings": [
+    {
+      "code": "PERIMETER_CONFIDENCE_MEDIUM",
+      "severity": "warning",
+      "message": "Perimeter should be validated against CAD reference for high confidence.",
+      "scope": "benchmark"
+    }
+  ],
+  "errors": [],
+  "confidence": {
+    "dimensions": "high",
+    "perimeter": "medium",
+    "area": "medium",
+    "layers": "high",
+    "colors": "high"
+  },
+  "benchmark": {
+    "status": "NO_REFERENCE",
+    "referenceSource": null,
+    "referencePerimeterMm": null,
+    "analyzerPerimeterMm": 15467.212472942261,
+    "deltaMm": null,
+    "deltaPercent": null,
+    "passThresholdPercent": null
+  },
+  "exportMeta": {
+    "exportedAt": "2026-06-22T21:04:11.767Z",
+    "exportedBy": "local-user",
+    "appName": "SVG Analyzer Engine",
+    "schemaVersion": "1.10.0",
+    "notes": []
+  },
+  "debug": {
+    "groups": 3,
+    "elements": 6,
+    "transformedElementCount": 0,
+    "outsideViewBoxCount": 0,
+    "tinyElementCount": 0
+  },
+  "parts": {
+    "strategy": "subpath-shape-grouping",
+    "fallbackStrategy": "layer-as-part",
+    "extractionMode": "split-preferred",
+    "count": 11,
+    "nestableCount": 11,
+    "totalBoundingAreaSqm": 0.5834429712847368,
+    "totalPerimeterMm": 13597.873088660492,
+    "totalPerimeterMl": 13.597873088660492,
+    "items": [
+      {
+        "id": "split_layer_x0020_2_1_4",
+        "name": "Layer_x0020_2_04",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          1,
+          2
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "Layer_x0020_2",
+          "layerName": "Layer_x0020_2",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": -252.57087574058193,
+          "yMm": 0,
+          "rightMm": -110.4221915478883,
+          "bottomMm": 342.6384533640416,
+          "widthMm": 142.14868419269362,
+          "heightMm": 342.6384533640416,
+          "boundingAreaSqm": 0.04870560529951813
+        },
+        "geometry": {
+          "outerPerimeterMm": 969.5744166677526,
+          "outerPerimeterMl": 0.9695744166677527,
+          "innerPerimeterMm": 230.61663098862064,
+          "innerPerimeterMl": 0.23061663098862065,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1200.1910476563733,
+          "totalContourPerimeterMl": 1.2001910476563733,
+          "perimeterMm": 969.5744166677526,
+          "perimeterMl": 0.9695744166677527,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_2_1_1",
+        "name": "Layer_x0020_2_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          5,
+          6
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_2",
+          "layerName": "Layer_x0020_2",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": -236.84510851741564,
+          "yMm": -0.00040037597165708516,
+          "rightMm": -34.38709106985138,
+          "bottomMm": 350.0005667291891,
+          "widthMm": 202.45801744756426,
+          "heightMm": 350.0009671051607,
+          "boundingAreaSqm": 0.07086050190484099
+        },
+        "geometry": {
+          "outerPerimeterMm": 1596.5765295513531,
+          "outerPerimeterMl": 1.5965765295513532,
+          "innerPerimeterMm": 212.06625740624435,
+          "innerPerimeterMl": 0.21206625740624435,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1808.6427869575975,
+          "totalContourPerimeterMl": 1.8086427869575976,
+          "perimeterMm": 1596.5765295513531,
+          "perimeterMl": 1.5965765295513532,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_2_1_3",
+        "name": "Layer_x0020_2_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          7
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "Layer_x0020_2",
+          "layerName": "Layer_x0020_2",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": -88.7387297738336,
+          "yMm": -58.47761318495823,
+          "rightMm": 102.08866598172983,
+          "bottomMm": 284.1607400850905,
+          "widthMm": 190.82739575556343,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.06538478464049813
+        },
+        "geometry": {
+          "outerPerimeterMm": 1008.3796273700308,
+          "outerPerimeterMl": 1.0083796273700307,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1008.3796273700308,
+          "totalContourPerimeterMl": 1.0083796273700307,
+          "perimeterMm": 1008.3796273700308,
+          "perimeterMl": 1.0083796273700307,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_2_1_2",
+        "name": "Layer_x0020_2_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          4
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_2",
+          "layerName": "Layer_x0020_2",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": -88.73852958584779,
+          "yMm": -58.4776131849582,
+          "rightMm": 117.16372215710923,
+          "bottomMm": 284.1609402730762,
+          "widthMm": 205.90225174295702,
+          "heightMm": 342.63855345803444,
+          "boundingAreaSqm": 0.07055004969095884
+        },
+        "geometry": {
+          "outerPerimeterMm": 1077.6534699654046,
+          "outerPerimeterMl": 1.0776534699654046,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1077.6534699654046,
+          "totalContourPerimeterMl": 1.0776534699654046,
+          "perimeterMm": 1077.6534699654046,
+          "perimeterMl": 1.0776534699654046,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_2_1_5",
+        "name": "Layer_x0020_2_05",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          0
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_2",
+          "layerName": "Layer_x0020_2",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 1522.3842892992652,
+          "yMm": 0.00020018798577520178,
+          "rightMm": 1611.123019073099,
+          "bottomMm": 342.6385534580345,
+          "widthMm": 88.73872977383371,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.030405292240982224
+        },
+        "geometry": {
+          "outerPerimeterMm": 862.7541660877647,
+          "outerPerimeterMl": 0.8627541660877647,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 862.7541660877647,
+          "totalContourPerimeterMl": 0.8627541660877647,
+          "perimeterMm": 862.7541660877647,
+          "perimeterMl": 0.8627541660877647,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_3_2_1",
+        "name": "Layer_x0020_3_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          14,
+          10,
+          11
+        ],
+        "contourCount": 3,
+        "outerContourCount": 1,
+        "innerContourCount": 2,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "Layer_x0020_3",
+          "layerName": "Layer_x0020_3",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 3
+        },
+        "bounds": {
+          "xMm": -308.7792580126995,
+          "yMm": 0,
+          "rightMm": -35.67960480005786,
+          "bottomMm": 342.6383532700487,
+          "widthMm": 273.0996532126416,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.09357441545540089
+        },
+        "geometry": {
+          "outerPerimeterMm": 2366.550847270673,
+          "outerPerimeterMl": 2.366550847270673,
+          "innerPerimeterMm": 1349.7868743736965,
+          "innerPerimeterMl": 1.3497868743736965,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 3716.3377216443696,
+          "totalContourPerimeterMl": 3.7163377216443694,
+          "perimeterMm": 2366.550847270673,
+          "perimeterMl": 2.366550847270673,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 3,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#66c3d0"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_3_2_4",
+        "name": "Layer_x0020_3_04",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          13
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_3",
+          "layerName": "Layer_x0020_3",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": -178.97826887708064,
+          "yMm": 0,
+          "rightMm": -25.199163180371954,
+          "bottomMm": 342.6383532700487,
+          "widthMm": 153.77910569670868,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.05269061954326103
+        },
+        "geometry": {
+          "outerPerimeterMm": 1221.1280371585794,
+          "outerPerimeterMl": 1.2211280371585795,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1221.1280371585794,
+          "totalContourPerimeterMl": 1.2211280371585795,
+          "perimeterMm": 1221.1280371585794,
+          "perimeterMl": 1.2211280371585795,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#66c3d0"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_3_2_2",
+        "name": "Layer_x0020_3_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          9,
+          3
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_3",
+          "layerName": "Layer_x0020_3",
+          "elementIds": [
+            "el-3",
+            "el-2"
+          ],
+          "pathElementCount": 2,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": -126.06648226084106,
+          "yMm": -220.48534594327523,
+          "rightMm": 97.7133573644614,
+          "bottomMm": 122.15300732677346,
+          "widthMm": 223.77983962530246,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.07667555574424922
+        },
+        "geometry": {
+          "outerPerimeterMm": 1157.7165634397115,
+          "outerPerimeterMl": 1.1577165634397115,
+          "innerPerimeterMm": 191.5155563354901,
+          "innerPerimeterMl": 0.19151555633549008,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1349.2321197752017,
+          "totalContourPerimeterMl": 1.3492321197752017,
+          "perimeterMm": 1157.7165634397115,
+          "perimeterMl": 1.1577165634397115,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#66c3d0"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_3_2_3",
+        "name": "Layer_x0020_3_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          12
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_3",
+          "layerName": "Layer_x0020_3",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": -88.73872977383355,
+          "yMm": -58.47751309096534,
+          "rightMm": 116.30361447619354,
+          "bottomMm": 284.1608401790834,
+          "widthMm": 205.0423442500271,
+          "heightMm": 342.6383532700487,
+          "boundingAreaSqm": 0.07025537118445972
+        },
+        "geometry": {
+          "outerPerimeterMm": 1033.262907679627,
+          "outerPerimeterMl": 1.033262907679627,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1033.262907679627,
+          "totalContourPerimeterMl": 1.033262907679627,
+          "perimeterMm": 1033.262907679627,
+          "perimeterMl": 1.033262907679627,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#66c3d0"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_layer_x0020_3_2_5",
+        "name": "Layer_x0020_3_05",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          8
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "Layer_x0020_3",
+          "layerName": "Layer_x0020_3",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 2572.2094236833723,
+          "yMm": 76.16942661649725,
+          "rightMm": 2602.287668547235,
+          "bottomMm": 220.48554613126103,
+          "widthMm": 30.078244863862892,
+          "heightMm": 144.31611951476378,
+          "boundingAreaSqm": 0.004340775580567567
+        },
+        "geometry": {
+          "outerPerimeterMm": 320.29120436554064,
+          "outerPerimeterMl": 0.32029120436554065,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 320.29120436554064,
+          "totalContourPerimeterMl": 0.32029120436554065,
+          "perimeterMm": 320.29120436554064,
+          "perimeterMl": 0.32029120436554065,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#66c3d0"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "part_layer_x0020_1_001",
+        "name": "Layer_x0020_1",
+        "partExtractionMethod": "layer-as-part",
+        "shapeKind": "unknown",
+        "sourceSubPathIndexes": [],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "low",
+        "groupingReason": "print-zone",
+        "source": {
+          "layerId": "Layer_x0020_1",
+          "layerName": "Layer_x0020_1",
+          "elementIds": [],
+          "pathElementCount": 0,
+          "subPathCount": 0
+        },
+        "bounds": {
+          "xMm": null,
+          "yMm": null,
+          "rightMm": null,
+          "bottomMm": null,
+          "widthMm": 585.8013946187689,
+          "heightMm": 337.2561991782858,
+          "boundingAreaSqm": 0.1975651518224651
+        },
+        "geometry": {
+          "outerPerimeterMm": 1846.115187594109,
+          "outerPerimeterMl": 1.846115187594109,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1846.115187594109,
+          "totalContourPerimeterMl": 1.846115187594109,
+          "perimeterMm": 1846.115187594109,
+          "perimeterMl": 1.846115187594109,
+          "filledAreaSqm": 0.19756515182246506,
+          "closedSubPathCount": 0,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "url(#id0)"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "print-area-bbox",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "high",
+          "source": "high"
+        },
+        "warnings": [
+          {
+            "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+            "severity": "info",
+            "message": "Print zone \u2014 entire layer nests as one piece on vinyl.",
+            "scope": "part",
+            "targetId": "part_layer_x0020_1_001"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Contained subpath kept as separate outer contour due geometric ambiguity.",
+        "scope": "part",
+        "targetId": "el-2_sp_8"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-2_sp_3"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-3_sp_11"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-3_sp_12"
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Subpath containment is ambiguous; nearest container chosen.",
+        "scope": "part",
+        "targetId": "el-3_sp_12",
+        "details": {
+          "candidateCount": 2
+        }
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Cross-layer hole promoted by compound-path even-odd containment.",
+        "scope": "part",
+        "targetId": "el-2_sp_4"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Detached contour assigned as letter hole by nearest-parent fallback.",
+        "scope": "part",
+        "targetId": "el-2_sp_7"
+      },
+      {
+        "code": "PART_SPLIT_PERIMETER_MISMATCH",
+        "severity": "warning",
+        "message": "Split perimeter audit indicates differences between outer/total contour and document perimeter.",
+        "scope": "parts",
+        "details": {
+          "documentPerimeterMm": 15467.212472942261,
+          "partsOuterPerimeterMm": 11613.887769556439,
+          "partsTotalContourPerimeterMm": 13597.873088660492,
+          "deltaOuterVsDocumentMm": 3853.3247033858224,
+          "deltaTotalVsDocumentMm": 1869.3393842817695,
+          "explanation": "Document perimeter includes all contours; geometry.perimeterMm currently stores outer perimeter while totalContourPerimeterMm captures inner/fragment paths."
+        }
+      }
+    ],
+    "splitDiagnostics": {
+      "enabled": true,
+      "pathElementCount": 2,
+      "subPathCount": 15,
+      "groupsCreated": 10,
+      "fallbackUsed": false,
+      "confidence": "medium",
+      "notes": [
+        "geometry.perimeterMm stores outer perimeter for backward compatibility.",
+        "geometry.totalContourPerimeterMm includes outer + inner + fragment contours."
+      ],
+      "subPathDiagnostics": [
+        {
+          "subPathIndex": 0,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": 1522.3842892992652,
+            "y": 0.00020018798577520178,
+            "width": 88.73872977383367,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_5",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 1,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -252.57087574058193,
+            "y": 0,
+            "width": 142.14868419269362,
+            "height": 342.6384533640416
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_4",
+          "classification": "outer",
+          "reason": "Outer contour with attached fragments."
+        },
+        {
+          "subPathIndex": 2,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -237.84754985622288,
+            "y": 187.9976384825309,
+            "width": 28.42999708292022,
+            "height": 96.16310160255954
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_4",
+          "classification": "inner",
+          "reason": "Contained with low area ratio relative to parent."
+        },
+        {
+          "subPathIndex": 3,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": 0,
+            "y": -129.52052576753715,
+            "width": 28.42979689493446,
+            "height": 76.24099382141459
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_2",
+          "classification": "inner",
+          "reason": "Cross-layer hole promoted by compound-path even-odd containment."
+        },
+        {
+          "subPathIndex": 4,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -88.73852958584779,
+            "y": -58.4776131849582,
+            "width": 205.90225174295702,
+            "height": 342.63855345803444
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_2",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 5,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -236.84510851741564,
+            "y": -0.00040037597165708516,
+            "width": 202.45801744756426,
+            "height": 350.0009671051607
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 6,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -328.6668333662969,
+            "y": 58.477412996972454,
+            "width": 27.997190657657875,
+            "height": 87.50146792770309
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_1",
+          "classification": "inner",
+          "reason": "Detached contour assigned as letter hole by nearest-parent fallback."
+        },
+        {
+          "subPathIndex": 7,
+          "layerName": "Layer_x0020_2",
+          "closed": true,
+          "bboxMm": {
+            "x": -88.7387297738336,
+            "y": -58.47761318495823,
+            "width": 190.82739575556343,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_2_1_3",
+          "classification": "outer",
+          "reason": "Outer contour with attached fragments."
+        },
+        {
+          "subPathIndex": 8,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": 2572.2094236833723,
+            "y": 76.16942661649725,
+            "width": 30.078244863862718,
+            "height": 144.31611951476378
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_5",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 9,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -126.06648226084106,
+            "y": -220.48534594327523,
+            "width": 223.77983962530246,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_2",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 10,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -276.97649374531096,
+            "y": 0,
+            "width": 88.73862967984067,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_1",
+          "classification": "inner",
+          "reason": "Contained with low area ratio relative to parent."
+        },
+        {
+          "subPathIndex": 11,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -238.0660550427048,
+            "y": 58.47721280898668,
+            "width": 27.564784608367045,
+            "height": 225.68342718211088
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_1",
+          "classification": "inner",
+          "reason": "Contained with low area ratio relative to parent."
+        },
+        {
+          "subPathIndex": 12,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -88.73872977383355,
+            "y": -58.47751309096534,
+            "width": 205.0423442500271,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_3",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 13,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -178.97826887708064,
+            "y": 0,
+            "width": 153.77910569670868,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_4",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 14,
+          "layerName": "Layer_x0020_3",
+          "closed": true,
+          "bboxMm": {
+            "x": -308.7792580126995,
+            "y": 0,
+            "width": 273.0996532126416,
+            "height": 342.6383532700487
+          },
+          "assignedGroupId": "split_layer_x0020_3_2_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        }
+      ],
+      "layerChildSummary": [
+        {
+          "layerName": "Layer_x0020_1",
+          "childPartsCount": 1,
+          "childPartIds": [
+            "part_layer_x0020_1_001"
+          ]
+        },
+        {
+          "layerName": "Layer_x0020_2",
+          "childPartsCount": 5,
+          "childPartIds": [
+            "split_layer_x0020_2_1_4",
+            "split_layer_x0020_2_1_1",
+            "split_layer_x0020_2_1_3",
+            "split_layer_x0020_2_1_2",
+            "split_layer_x0020_2_1_5"
+          ]
+        },
+        {
+          "layerName": "Layer_x0020_3",
+          "childPartsCount": 5,
+          "childPartIds": [
+            "split_layer_x0020_3_2_1",
+            "split_layer_x0020_3_2_4",
+            "split_layer_x0020_3_2_2",
+            "split_layer_x0020_3_2_3",
+            "split_layer_x0020_3_2_5"
+          ]
+        }
+      ]
+    }
+  },
+  "nesting": {
+    "strategy": "bounding-box-shelf",
+    "generatedAt": "2026-06-22T21:04:11.767Z",
+    "inputs": {
+      "partsCount": 11,
+      "nestablePartsCount": 11
+    },
+    "jobInputs": [
+      {
+        "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_2:#009846",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1000",
+        "materialLabel": "vinyl_roll_1000",
+        "sourceLayerName": "Layer_x0020_2",
+        "colorKey": "#009846",
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_2|#009846",
+        "items": [
+          {
+            "itemId": "split_layer_x0020_2_1_4",
+            "itemName": "Layer_x0020_2_04",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 142.14867430792307,
+            "heightMm": 342.63845716399663,
+            "bounds": {
+              "widthMm": 142.14867430792307,
+              "heightMm": 342.63845716399663,
+              "boundingAreaSqm": 0.048705602452774215
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_1",
+            "itemName": "Layer_x0020_2_01",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 202.45801218749787,
+            "heightMm": 350.00094644366874,
+            "bounds": {
+              "widthMm": 202.45801218749787,
+              "heightMm": 350.00094644366874,
+              "boundingAreaSqm": 0.07086049588072808
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_3",
+            "itemName": "Layer_x0020_2_03",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 190.82740820011074,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 190.82740820011074,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.06538478687129977
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_2",
+            "itemName": "Layer_x0020_2_02",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 205.90225601332452,
+            "heightMm": 342.63857171248094,
+            "bounds": {
+              "widthMm": 205.90225601332452,
+              "heightMm": 342.63857171248094,
+              "boundingAreaSqm": 0.0705500549127831
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_5",
+            "itemName": "Layer_x0020_2_05",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 88.73872527742378,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 88.73872527742378,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.030405289754869756
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1000,
+          "usableWidthMm": 960,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_3:#66c3d0",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1000",
+        "materialLabel": "vinyl_roll_1000",
+        "sourceLayerName": "Layer_x0020_3",
+        "colorKey": "#66c3d0",
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_3|#66c3d0",
+        "items": [
+          {
+            "itemId": "split_layer_x0020_3_2_1",
+            "itemName": "Layer_x0020_3_01",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 273.09968062485757,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 273.09968062485757,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.09357442193812694
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_4",
+            "itemName": "Layer_x0020_3_04",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 153.77911601829078,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 153.77911601829078,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.05269062144138574
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_2",
+            "itemName": "Layer_x0020_3_02",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 223.77987614030462,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 223.77987614030462,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07667556587141862
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_3",
+            "itemName": "Layer_x0020_3_03",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 205.04234054171081,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 205.04234054171081,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07025536772921727
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_5",
+            "itemName": "Layer_x0020_3_05",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 30.078293737882632,
+            "heightMm": 144.316122544953,
+            "bounds": {
+              "widthMm": 30.078293737882632,
+              "heightMm": 144.316122544953,
+              "boundingAreaSqm": 0.004340782725019362
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1000,
+          "usableWidthMm": 960,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_1:unknown",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1000",
+        "materialLabel": "vinyl_roll_1000",
+        "sourceLayerName": "Layer_x0020_1",
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_1|unknown",
+        "items": [
+          {
+            "itemId": "part_layer_x0020_1_001",
+            "itemName": "Layer_x0020_1",
+            "sourceLayerName": "Layer_x0020_1",
+            "colorKey": null,
+            "widthMm": 585.8013946187689,
+            "heightMm": 337.2561991782858,
+            "bounds": {
+              "widthMm": 585.8013946187689,
+              "heightMm": 337.2561991782858,
+              "boundingAreaSqm": 0.1975651518224651
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": [
+              {
+                "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+                "severity": "info",
+                "message": "Print zone \u2014 entire layer nests as one piece on vinyl.",
+                "scope": "part",
+                "targetId": "part_layer_x0020_1_001"
+              }
+            ]
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1000,
+          "usableWidthMm": 960,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_2:#009846",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1260",
+        "materialLabel": "vinyl_roll_1260",
+        "sourceLayerName": "Layer_x0020_2",
+        "colorKey": "#009846",
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_2|#009846",
+        "items": [
+          {
+            "itemId": "split_layer_x0020_2_1_4",
+            "itemName": "Layer_x0020_2_04",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 142.14867430792307,
+            "heightMm": 342.63845716399663,
+            "bounds": {
+              "widthMm": 142.14867430792307,
+              "heightMm": 342.63845716399663,
+              "boundingAreaSqm": 0.048705602452774215
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_1",
+            "itemName": "Layer_x0020_2_01",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 202.45801218749787,
+            "heightMm": 350.00094644366874,
+            "bounds": {
+              "widthMm": 202.45801218749787,
+              "heightMm": 350.00094644366874,
+              "boundingAreaSqm": 0.07086049588072808
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_3",
+            "itemName": "Layer_x0020_2_03",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 190.82740820011074,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 190.82740820011074,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.06538478687129977
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_2",
+            "itemName": "Layer_x0020_2_02",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 205.90225601332452,
+            "heightMm": 342.63857171248094,
+            "bounds": {
+              "widthMm": 205.90225601332452,
+              "heightMm": 342.63857171248094,
+              "boundingAreaSqm": 0.0705500549127831
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_5",
+            "itemName": "Layer_x0020_2_05",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 88.73872527742378,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 88.73872527742378,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.030405289754869756
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1260,
+          "usableWidthMm": 1220,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_3:#66c3d0",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1260",
+        "materialLabel": "vinyl_roll_1260",
+        "sourceLayerName": "Layer_x0020_3",
+        "colorKey": "#66c3d0",
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_3|#66c3d0",
+        "items": [
+          {
+            "itemId": "split_layer_x0020_3_2_1",
+            "itemName": "Layer_x0020_3_01",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 273.09968062485757,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 273.09968062485757,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.09357442193812694
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_4",
+            "itemName": "Layer_x0020_3_04",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 153.77911601829078,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 153.77911601829078,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.05269062144138574
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_2",
+            "itemName": "Layer_x0020_3_02",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 223.77987614030462,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 223.77987614030462,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07667556587141862
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_3",
+            "itemName": "Layer_x0020_3_03",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 205.04234054171081,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 205.04234054171081,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07025536772921727
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_5",
+            "itemName": "Layer_x0020_3_05",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 30.078293737882632,
+            "heightMm": 144.316122544953,
+            "bounds": {
+              "widthMm": 30.078293737882632,
+              "heightMm": 144.316122544953,
+              "boundingAreaSqm": 0.004340782725019362
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1260,
+          "usableWidthMm": 1220,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_1:unknown",
+        "jobKind": "roll",
+        "materialKey": "vinyl_roll_1260",
+        "materialLabel": "vinyl_roll_1260",
+        "sourceLayerName": "Layer_x0020_1",
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "Layer_x0020_1|unknown",
+        "items": [
+          {
+            "itemId": "part_layer_x0020_1_001",
+            "itemName": "Layer_x0020_1",
+            "sourceLayerName": "Layer_x0020_1",
+            "colorKey": null,
+            "widthMm": 585.8013946187689,
+            "heightMm": 337.2561991782858,
+            "bounds": {
+              "widthMm": 585.8013946187689,
+              "heightMm": 337.2561991782858,
+              "boundingAreaSqm": 0.1975651518224651
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": [
+              {
+                "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+                "severity": "info",
+                "message": "Print zone \u2014 entire layer nests as one piece on vinyl.",
+                "scope": "part",
+                "targetId": "part_layer_x0020_1_001"
+              }
+            ]
+          }
+        ],
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1260,
+          "usableWidthMm": 1220,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "assignmentSource": "auto-from-layer-color",
+        "separationReason": "source-layer-color-preview"
+      },
+      {
+        "jobId": "sheet:sheet_3000x2000:child-parts:global",
+        "jobKind": "sheet",
+        "materialKey": "sheet_3000x2000",
+        "materialLabel": "sheet_3000x2000",
+        "sourceLayerName": null,
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "sheet-sheet_3000x2000-preview",
+        "items": [
+          {
+            "itemId": "split_layer_x0020_2_1_4",
+            "itemName": "Layer_x0020_2_04",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 142.14867430792307,
+            "heightMm": 342.63845716399663,
+            "bounds": {
+              "widthMm": 142.14867430792307,
+              "heightMm": 342.63845716399663,
+              "boundingAreaSqm": 0.048705602452774215
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_1",
+            "itemName": "Layer_x0020_2_01",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 202.45801218749787,
+            "heightMm": 350.00094644366874,
+            "bounds": {
+              "widthMm": 202.45801218749787,
+              "heightMm": 350.00094644366874,
+              "boundingAreaSqm": 0.07086049588072808
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_3",
+            "itemName": "Layer_x0020_2_03",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 190.82740820011074,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 190.82740820011074,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.06538478687129977
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_2",
+            "itemName": "Layer_x0020_2_02",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 205.90225601332452,
+            "heightMm": 342.63857171248094,
+            "bounds": {
+              "widthMm": 205.90225601332452,
+              "heightMm": 342.63857171248094,
+              "boundingAreaSqm": 0.0705500549127831
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_2_1_5",
+            "itemName": "Layer_x0020_2_05",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "widthMm": 88.73872527742378,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 88.73872527742378,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.030405289754869756
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_1",
+            "itemName": "Layer_x0020_3_01",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 273.09968062485757,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 273.09968062485757,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.09357442193812694
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_4",
+            "itemName": "Layer_x0020_3_04",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 153.77911601829078,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 153.77911601829078,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.05269062144138574
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_2",
+            "itemName": "Layer_x0020_3_02",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 223.77987614030462,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 223.77987614030462,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07667556587141862
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_3",
+            "itemName": "Layer_x0020_3_03",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 205.04234054171081,
+            "heightMm": 342.63834261551233,
+            "bounds": {
+              "widthMm": 205.04234054171081,
+              "heightMm": 342.63834261551233,
+              "boundingAreaSqm": 0.07025536772921727
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "split_layer_x0020_3_2_5",
+            "itemName": "Layer_x0020_3_05",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "widthMm": 30.078293737882632,
+            "heightMm": 144.316122544953,
+            "bounds": {
+              "widthMm": 30.078293737882632,
+              "heightMm": 144.316122544953,
+              "boundingAreaSqm": 0.004340782725019362
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": []
+          },
+          {
+            "itemId": "part_layer_x0020_1_001",
+            "itemName": "Layer_x0020_1",
+            "sourceLayerName": "Layer_x0020_1",
+            "colorKey": null,
+            "widthMm": 585.8013946187689,
+            "heightMm": 337.2561991782858,
+            "bounds": {
+              "widthMm": 585.8013946187689,
+              "heightMm": 337.2561991782858,
+              "boundingAreaSqm": 0.1975651518224651
+            },
+            "sourceType": "part",
+            "roleAssignment": null,
+            "canNest": true,
+            "preferredSheetConfigId": null,
+            "materialLabel": null,
+            "sourceWarnings": [
+              {
+                "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+                "severity": "info",
+                "message": "Print zone \u2014 entire layer nests as one piece on vinyl.",
+                "scope": "part",
+                "targetId": "part_layer_x0020_1_001"
+              }
+            ]
+          }
+        ],
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 3000,
+          "sheetWidthMm": 2000,
+          "usableLengthMm": 2980,
+          "usableWidthMm": 1980,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "assignmentSource": "default-preview",
+        "separationReason": "sheet-config-routing"
+      },
+      {
+        "jobId": "sheet:sheet_3000x1500:child-parts:global",
+        "jobKind": "sheet",
+        "materialKey": "sheet_3000x1500",
+        "materialLabel": "sheet_3000x1500",
+        "sourceLayerName": null,
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "sheet-sheet_3000x1500-preview",
+        "items": [],
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 3000,
+          "sheetWidthMm": 1500,
+          "usableLengthMm": 2980,
+          "usableWidthMm": 1480,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "assignmentSource": "default-preview",
+        "separationReason": "sheet-config-routing"
+      },
+      {
+        "jobId": "sheet:sheet_4000x1500:child-parts:global",
+        "jobKind": "sheet",
+        "materialKey": "sheet_4000x1500",
+        "materialLabel": "sheet_4000x1500",
+        "sourceLayerName": null,
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "sheet-sheet_4000x1500-preview",
+        "items": [],
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 4000,
+          "sheetWidthMm": 1500,
+          "usableLengthMm": 3980,
+          "usableWidthMm": 1480,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "assignmentSource": "default-preview",
+        "separationReason": "sheet-config-routing"
+      },
+      {
+        "jobId": "sheet:sheet_1300x900:child-parts:global",
+        "jobKind": "sheet",
+        "materialKey": "sheet_1300x900",
+        "materialLabel": "sheet_1300x900",
+        "sourceLayerName": null,
+        "colorKey": null,
+        "granularity": "child-parts",
+        "itemType": "child-part",
+        "separationKey": "sheet-sheet_1300x900-preview",
+        "items": [],
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 1300,
+          "sheetWidthMm": 900,
+          "usableLengthMm": 1280,
+          "usableWidthMm": 880,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "assignmentSource": "default-preview",
+        "separationReason": "sheet-config-routing"
+      }
+    ],
+    "rolls": [
+      {
+        "configId": "vinyl_roll_1000",
+        "materialType": "roll",
+        "granularity": "child-parts",
+        "assignmentSource": "auto-from-layer-color",
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1000,
+          "usableWidthMm": 960,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "rollWidthMm": 1000,
+        "usableWidthMm": 960,
+        "leftMarginMm": 20,
+        "rightMarginMm": 20,
+        "partSpacingMm": 5,
+        "allowRotation": true,
+        "jobs": [
+          {
+            "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_2:#009846",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1000:child-parts:Layer_x0020_2:#009846",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 5,
+            "placedItemsCount": 5,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 538.4658653641073,
+            "usedWidthMm": 844.7881924640728,
+            "usedLengthMm": 538.4658653641073,
+            "usedRollAreaSqm": 0.5384658653641073,
+            "partsBoundingAreaSqm": 0.28590622987245495,
+            "wasteAreaSqm": 0.2525596354916524,
+            "efficiencyPercent": 53.09644459619124,
+            "placements": [
+              {
+                "partId": "split_layer_x0020_2_1_1",
+                "partName": "Layer_x0020_2_01",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 350.00094644366874,
+                "placedHeightMm": 202.45801218749787,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_2",
+                "partName": "Layer_x0020_2_02",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 375.00094644366874,
+                "yMm": 0,
+                "placedWidthMm": 342.63857171248094,
+                "placedHeightMm": 205.90225601332452,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_4",
+                "partName": "Layer_x0020_2_04",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 722.6395181561497,
+                "yMm": 0,
+                "placedWidthMm": 142.14867430792307,
+                "placedHeightMm": 342.63845716399663,
+                "rotationDeg": 0,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_3",
+                "partName": "Layer_x0020_2_03",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 20,
+                "yMm": 347.63845716399663,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 190.82740820011074,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_5",
+                "partName": "Layer_x0020_2_05",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 367.63834261551233,
+                "yMm": 347.63845716399663,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 88.73872527742378,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_2",
+                  "colorKey": "#009846",
+                  "separationReason": "source-layer-color-preview"
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_1",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 202.45801218749787,
+                  "originalHeightMm": 350.00094644366874,
+                  "rotatedWidthMm": 350.00094644366874,
+                  "rotatedHeightMm": 202.45801218749787
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_2",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 205.90225601332452,
+                  "originalHeightMm": 342.63857171248094,
+                  "rotatedWidthMm": 342.63857171248094,
+                  "rotatedHeightMm": 205.90225601332452
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_3",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 190.82740820011074,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 190.82740820011074
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_5",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 88.73872527742378,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 88.73872527742378
+                }
+              }
+            ]
+          },
+          {
+            "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_3:#66c3d0",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1000:child-parts:Layer_x0020_3:#66c3d0",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 5,
+            "placedItemsCount": 5,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 501.4174586338031,
+            "usedWidthMm": 900.3190257727355,
+            "usedLengthMm": 501.4174586338031,
+            "usedRollAreaSqm": 0.5014174586338032,
+            "partsBoundingAreaSqm": 0.29753675970516796,
+            "wasteAreaSqm": 0.2038806989286352,
+            "efficiencyPercent": 59.339130415573734,
+            "placements": [
+              {
+                "partId": "split_layer_x0020_3_2_1",
+                "partName": "Layer_x0020_3_01",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 273.09968062485757,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_2",
+                "partName": "Layer_x0020_3_02",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 367.63834261551233,
+                "yMm": 0,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 223.77987614030462,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_3",
+                "partName": "Layer_x0020_3_03",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 715.2766852310247,
+                "yMm": 0,
+                "placedWidthMm": 205.04234054171081,
+                "placedHeightMm": 342.63834261551233,
+                "rotationDeg": 0,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_4",
+                "partName": "Layer_x0020_3_04",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 20,
+                "yMm": 347.63834261551233,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 153.77911601829078,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_5",
+                "partName": "Layer_x0020_3_05",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 367.63834261551233,
+                "yMm": 347.63834261551233,
+                "placedWidthMm": 144.316122544953,
+                "placedHeightMm": 30.078293737882632,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_3",
+                  "colorKey": "#66c3d0",
+                  "separationReason": "source-layer-color-preview"
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_1",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 273.09968062485757,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 273.09968062485757
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_2",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 223.77987614030462,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 223.77987614030462
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_4",
+                "details": {
+                  "configId": "vinyl_roll_1000",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 153.77911601829078,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 153.77911601829078
+                }
+              }
+            ]
+          },
+          {
+            "jobId": "roll:vinyl_roll_1000:child-parts:Layer_x0020_1:unknown",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1000:child-parts:Layer_x0020_1:unknown",
+            "sourceLayerName": "Layer_x0020_1",
+            "colorKey": null,
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 1,
+            "placedItemsCount": 1,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 337.2561991782858,
+            "usedWidthMm": 585.8013946187689,
+            "usedLengthMm": 337.2561991782858,
+            "usedRollAreaSqm": 0.33725619917828575,
+            "partsBoundingAreaSqm": 0.1975651518224651,
+            "wasteAreaSqm": 0.13969104735582066,
+            "efficiencyPercent": 58.58013946187689,
+            "placements": [
+              {
+                "partId": "part_layer_x0020_1_001",
+                "partName": "Layer_x0020_1",
+                "sourceLayerName": "Layer_x0020_1",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1000",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 585.8013946187689,
+                "placedHeightMm": 337.2561991782858,
+                "rotationDeg": 0,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_1",
+                  "colorKey": null,
+                  "separationReason": "source-layer-color-preview"
+                }
+              }
+            ]
+          }
+        ],
+        "aggregate": {
+          "jobsCount": 3,
+          "totalSourceItemsCount": 11,
+          "totalPlacedItemsCount": 11,
+          "totalUnplacedItemsCount": 0,
+          "totalUsedLengthMm": 1377.1395231761962
+        }
+      },
+      {
+        "configId": "vinyl_roll_1260",
+        "materialType": "roll",
+        "granularity": "child-parts",
+        "assignmentSource": "auto-from-layer-color",
+        "materialFrame": {
+          "materialType": "roll",
+          "rollWidthMm": 1260,
+          "usableWidthMm": 1220,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "minimize-consumed-length"
+        },
+        "rollWidthMm": 1260,
+        "usableWidthMm": 1220,
+        "leftMarginMm": 20,
+        "rightMarginMm": 20,
+        "partSpacingMm": 5,
+        "allowRotation": true,
+        "jobs": [
+          {
+            "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_2:#009846",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1260:child-parts:Layer_x0020_2:#009846",
+            "sourceLayerName": "Layer_x0020_2",
+            "colorKey": "#009846",
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 5,
+            "placedItemsCount": 5,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 401.7296642134353,
+            "usedWidthMm": 1045.2779753201464,
+            "usedLengthMm": 401.7296642134353,
+            "usedRollAreaSqm": 0.5061793769089284,
+            "partsBoundingAreaSqm": 0.28590622987245495,
+            "wasteAreaSqm": 0.2202731470364735,
+            "efficiencyPercent": 56.48318420603988,
+            "placements": [
+              {
+                "partId": "split_layer_x0020_2_1_1",
+                "partName": "Layer_x0020_2_01",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 350.00094644366874,
+                "placedHeightMm": 202.45801218749787,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_2",
+                "partName": "Layer_x0020_2_02",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 375.00094644366874,
+                "yMm": 0,
+                "placedWidthMm": 342.63857171248094,
+                "placedHeightMm": 205.90225601332452,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_4",
+                "partName": "Layer_x0020_2_04",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 722.6395181561497,
+                "yMm": 0,
+                "placedWidthMm": 342.63845716399663,
+                "placedHeightMm": 142.14867430792307,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_3",
+                "partName": "Layer_x0020_2_03",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 20,
+                "yMm": 210.90225601332452,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 190.82740820011074,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_2_1_5",
+                "partName": "Layer_x0020_2_05",
+                "sourceLayerName": "Layer_x0020_2",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 367.63834261551233,
+                "yMm": 210.90225601332452,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 88.73872527742378,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_2",
+                  "colorKey": "#009846",
+                  "separationReason": "source-layer-color-preview"
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_1",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 202.45801218749787,
+                  "originalHeightMm": 350.00094644366874,
+                  "rotatedWidthMm": 350.00094644366874,
+                  "rotatedHeightMm": 202.45801218749787
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_2",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 205.90225601332452,
+                  "originalHeightMm": 342.63857171248094,
+                  "rotatedWidthMm": 342.63857171248094,
+                  "rotatedHeightMm": 205.90225601332452
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_4",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 142.14867430792307,
+                  "originalHeightMm": 342.63845716399663,
+                  "rotatedWidthMm": 342.63845716399663,
+                  "rotatedHeightMm": 142.14867430792307
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_3",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 190.82740820011074,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 190.82740820011074
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_2_1_5",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 88.73872527742378,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 88.73872527742378
+                }
+              }
+            ]
+          },
+          {
+            "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_3:#66c3d0",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1260:child-parts:Layer_x0020_3:#66c3d0",
+            "sourceLayerName": "Layer_x0020_3",
+            "colorKey": "#66c3d0",
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 5,
+            "placedItemsCount": 5,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 377.71663635339496,
+            "usedWidthMm": 1196.6941438648278,
+            "usedLengthMm": 377.71663635339496,
+            "usedRollAreaSqm": 0.47592296180527766,
+            "partsBoundingAreaSqm": 0.29753675970516796,
+            "wasteAreaSqm": 0.1783862021001097,
+            "efficiencyPercent": 62.51784082376428,
+            "placements": [
+              {
+                "partId": "split_layer_x0020_3_2_1",
+                "partName": "Layer_x0020_3_01",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 273.09968062485757,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_2",
+                "partName": "Layer_x0020_3_02",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 367.63834261551233,
+                "yMm": 0,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 223.77987614030462,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_3",
+                "partName": "Layer_x0020_3_03",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 715.2766852310247,
+                "yMm": 0,
+                "placedWidthMm": 342.63834261551233,
+                "placedHeightMm": 205.04234054171081,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_4",
+                "partName": "Layer_x0020_3_04",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 1062.915027846537,
+                "yMm": 0,
+                "placedWidthMm": 153.77911601829078,
+                "placedHeightMm": 342.63834261551233,
+                "rotationDeg": 0,
+                "spacingMm": 5
+              },
+              {
+                "partId": "split_layer_x0020_3_2_5",
+                "partName": "Layer_x0020_3_05",
+                "sourceLayerName": "Layer_x0020_3",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 20,
+                "yMm": 347.63834261551233,
+                "placedWidthMm": 144.316122544953,
+                "placedHeightMm": 30.078293737882632,
+                "rotationDeg": 90,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_3",
+                  "colorKey": "#66c3d0",
+                  "separationReason": "source-layer-color-preview"
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_1",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 273.09968062485757,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 273.09968062485757
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_2",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 223.77987614030462,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 223.77987614030462
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_3",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 205.04234054171081,
+                  "originalHeightMm": 342.63834261551233,
+                  "rotatedWidthMm": 342.63834261551233,
+                  "rotatedHeightMm": 205.04234054171081
+                }
+              },
+              {
+                "code": "NESTING_PART_ROTATED_TO_FIT",
+                "severity": "info",
+                "message": "Part rotated 90 degrees by width-first decision.",
+                "scope": "part",
+                "targetId": "split_layer_x0020_3_2_5",
+                "details": {
+                  "configId": "vinyl_roll_1260",
+                  "reason": "reduce-consumed-length",
+                  "originalWidthMm": 30.078293737882632,
+                  "originalHeightMm": 144.316122544953,
+                  "rotatedWidthMm": 144.316122544953,
+                  "rotatedHeightMm": 30.078293737882632
+                }
+              }
+            ]
+          },
+          {
+            "jobId": "roll:vinyl_roll_1260:child-parts:Layer_x0020_1:unknown",
+            "assignmentSource": "auto-from-layer-color",
+            "jobKey": "roll:vinyl_roll_1260:child-parts:Layer_x0020_1:unknown",
+            "sourceLayerName": "Layer_x0020_1",
+            "colorKey": null,
+            "separationReason": "source-layer-color-preview",
+            "itemType": "child-part",
+            "sourceItemsCount": 1,
+            "placedItemsCount": 1,
+            "unplacedItemsCount": 0,
+            "consumedLengthMm": 337.2561991782858,
+            "usedWidthMm": 585.8013946187689,
+            "usedLengthMm": 337.2561991782858,
+            "usedRollAreaSqm": 0.4249428109646401,
+            "partsBoundingAreaSqm": 0.1975651518224651,
+            "wasteAreaSqm": 0.227377659142175,
+            "efficiencyPercent": 46.49217417609277,
+            "placements": [
+              {
+                "partId": "part_layer_x0020_1_001",
+                "partName": "Layer_x0020_1",
+                "sourceLayerName": "Layer_x0020_1",
+                "materialType": "roll",
+                "containerId": "vinyl_roll_1260",
+                "xMm": 20,
+                "yMm": 0,
+                "placedWidthMm": 585.8013946187689,
+                "placedHeightMm": 337.2561991782858,
+                "rotationDeg": 0,
+                "spacingMm": 5
+              }
+            ],
+            "unplaced": [],
+            "warnings": [
+              {
+                "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                "severity": "info",
+                "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                "scope": "nesting",
+                "details": {
+                  "sourceLayerName": "Layer_x0020_1",
+                  "colorKey": null,
+                  "separationReason": "source-layer-color-preview"
+                }
+              }
+            ]
+          }
+        ],
+        "aggregate": {
+          "jobsCount": 3,
+          "totalSourceItemsCount": 11,
+          "totalPlacedItemsCount": 11,
+          "totalUnplacedItemsCount": 0,
+          "totalUsedLengthMm": 1116.702499745116
+        }
+      }
+    ],
+    "sheets": [
+      {
+        "configId": "sheet_3000x2000",
+        "materialType": "sheet",
+        "granularity": "child-parts",
+        "assignmentSource": "default-preview",
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 3000,
+          "sheetWidthMm": 2000,
+          "usableLengthMm": 2980,
+          "usableWidthMm": 1980,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "itemType": "child-part",
+        "sourceItemsCount": 11,
+        "placedItemsCount": 11,
+        "unplacedItemsCount": 0,
+        "sheetWidthMm": 2000,
+        "sheetLengthMm": 3000,
+        "usableWidthMm": 1980,
+        "usableLengthMm": 2980,
+        "edgeMarginMm": 10,
+        "partSpacingMm": 20,
+        "allowRotation": true,
+        "sheetsUsed": 1,
+        "consumedLengthMm": 586.418218755817,
+        "usedWidthMm": 1974.1790505637728,
+        "preservedLengthMm": 2393.581781244183,
+        "usedSheetAreaSqm": 6,
+        "partsBoundingAreaSqm": 0.7810081414000879,
+        "wasteAreaSqm": 5.218991858599912,
+        "efficiencyPercent": 13.01680235666813,
+        "placements": [
+          {
+            "partId": "part_layer_x0020_1_001",
+            "partName": "Layer_x0020_1",
+            "sourceLayerName": "Layer_x0020_1",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 10,
+            "yMm": 10,
+            "placedWidthMm": 585.8013946187689,
+            "placedHeightMm": 337.2561991782858,
+            "rotationDeg": 0,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_2_1_1",
+            "partName": "Layer_x0020_2_01",
+            "sourceLayerName": "Layer_x0020_2",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 615.8013946187689,
+            "yMm": 10,
+            "placedWidthMm": 350.00094644366874,
+            "placedHeightMm": 202.45801218749787,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_2_1_2",
+            "partName": "Layer_x0020_2_02",
+            "sourceLayerName": "Layer_x0020_2",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 985.8023410624376,
+            "yMm": 10,
+            "placedWidthMm": 342.63857171248094,
+            "placedHeightMm": 205.90225601332452,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_2_1_4",
+            "partName": "Layer_x0020_2_04",
+            "sourceLayerName": "Layer_x0020_2",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 1348.4409127749186,
+            "yMm": 10,
+            "placedWidthMm": 342.63845716399663,
+            "placedHeightMm": 142.14867430792307,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_3_2_1",
+            "partName": "Layer_x0020_3_01",
+            "sourceLayerName": "Layer_x0020_3",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 1711.0793699389153,
+            "yMm": 10,
+            "placedWidthMm": 273.09968062485757,
+            "placedHeightMm": 342.63834261551233,
+            "rotationDeg": 0,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_3_2_2",
+            "partName": "Layer_x0020_3_02",
+            "sourceLayerName": "Layer_x0020_3",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 10,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 342.63834261551233,
+            "placedHeightMm": 223.77987614030462,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_3_2_3",
+            "partName": "Layer_x0020_3_03",
+            "sourceLayerName": "Layer_x0020_3",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 372.63834261551233,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 342.63834261551233,
+            "placedHeightMm": 205.04234054171081,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_2_1_3",
+            "partName": "Layer_x0020_2_03",
+            "sourceLayerName": "Layer_x0020_2",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 735.2766852310247,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 342.63834261551233,
+            "placedHeightMm": 190.82740820011074,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_3_2_4",
+            "partName": "Layer_x0020_3_04",
+            "sourceLayerName": "Layer_x0020_3",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 1097.915027846537,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 342.63834261551233,
+            "placedHeightMm": 153.77911601829078,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_2_1_5",
+            "partName": "Layer_x0020_2_05",
+            "sourceLayerName": "Layer_x0020_2",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 1460.5533704620493,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 342.63834261551233,
+            "placedHeightMm": 88.73872527742378,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          },
+          {
+            "partId": "split_layer_x0020_3_2_5",
+            "partName": "Layer_x0020_3_05",
+            "sourceLayerName": "Layer_x0020_3",
+            "materialType": "sheet",
+            "containerId": "sheet_1",
+            "xMm": 1823.1917130775616,
+            "yMm": 372.63834261551233,
+            "placedWidthMm": 144.316122544953,
+            "placedHeightMm": 30.078293737882632,
+            "rotationDeg": 90,
+            "spacingMm": 20
+          }
+        ],
+        "unplaced": [],
+        "warnings": [
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_2_1_1",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 202.45801218749787,
+              "originalHeightMm": 350.00094644366874,
+              "rotatedWidthMm": 350.00094644366874,
+              "rotatedHeightMm": 202.45801218749787
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_2_1_2",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 205.90225601332452,
+              "originalHeightMm": 342.63857171248094,
+              "rotatedWidthMm": 342.63857171248094,
+              "rotatedHeightMm": 205.90225601332452
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_2_1_4",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 142.14867430792307,
+              "originalHeightMm": 342.63845716399663,
+              "rotatedWidthMm": 342.63845716399663,
+              "rotatedHeightMm": 142.14867430792307
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_3_2_2",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 223.77987614030462,
+              "originalHeightMm": 342.63834261551233,
+              "rotatedWidthMm": 342.63834261551233,
+              "rotatedHeightMm": 223.77987614030462
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_3_2_3",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 205.04234054171081,
+              "originalHeightMm": 342.63834261551233,
+              "rotatedWidthMm": 342.63834261551233,
+              "rotatedHeightMm": 205.04234054171081
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_2_1_3",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 190.82740820011074,
+              "originalHeightMm": 342.63834261551233,
+              "rotatedWidthMm": 342.63834261551233,
+              "rotatedHeightMm": 190.82740820011074
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_3_2_4",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 153.77911601829078,
+              "originalHeightMm": 342.63834261551233,
+              "rotatedWidthMm": 342.63834261551233,
+              "rotatedHeightMm": 153.77911601829078
+            }
+          },
+          {
+            "code": "NESTING_PART_ROTATED_TO_FIT",
+            "severity": "info",
+            "message": "Part rotated 90 degrees by width-first decision.",
+            "scope": "part",
+            "targetId": "split_layer_x0020_2_1_5",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "reason": "reduce-consumed-length",
+              "originalWidthMm": 88.73872527742378,
+              "originalHeightMm": 342.63834261551233,
+              "rotatedWidthMm": 342.63834261551233,
+              "rotatedHeightMm": 88.73872527742378
+            }
+          },
+          {
+            "code": "NESTING_LOW_EFFICIENCY",
+            "severity": "info",
+            "message": "Sheet nesting efficiency is below 30%.",
+            "scope": "nesting",
+            "details": {
+              "configId": "sheet_3000x2000",
+              "efficiencyPercent": 13.01680235666813
+            }
+          }
+        ]
+      },
+      {
+        "configId": "sheet_3000x1500",
+        "materialType": "sheet",
+        "granularity": "child-parts",
+        "assignmentSource": "default-preview",
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 3000,
+          "sheetWidthMm": 1500,
+          "usableLengthMm": 2980,
+          "usableWidthMm": 1480,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "itemType": "child-part",
+        "sourceItemsCount": 0,
+        "placedItemsCount": 0,
+        "unplacedItemsCount": 0,
+        "sheetWidthMm": 1500,
+        "sheetLengthMm": 3000,
+        "usableWidthMm": 1480,
+        "usableLengthMm": 2980,
+        "edgeMarginMm": 10,
+        "partSpacingMm": 20,
+        "allowRotation": true,
+        "sheetsUsed": 1,
+        "consumedLengthMm": 0,
+        "usedWidthMm": 0,
+        "preservedLengthMm": 2980,
+        "usedSheetAreaSqm": 4.5,
+        "partsBoundingAreaSqm": 0,
+        "wasteAreaSqm": 4.5,
+        "efficiencyPercent": 0,
+        "placements": [],
+        "unplaced": [],
+        "warnings": []
+      },
+      {
+        "configId": "sheet_4000x1500",
+        "materialType": "sheet",
+        "granularity": "child-parts",
+        "assignmentSource": "default-preview",
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 4000,
+          "sheetWidthMm": 1500,
+          "usableLengthMm": 3980,
+          "usableWidthMm": 1480,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "itemType": "child-part",
+        "sourceItemsCount": 0,
+        "placedItemsCount": 0,
+        "unplacedItemsCount": 0,
+        "sheetWidthMm": 1500,
+        "sheetLengthMm": 4000,
+        "usableWidthMm": 1480,
+        "usableLengthMm": 3980,
+        "edgeMarginMm": 10,
+        "partSpacingMm": 20,
+        "allowRotation": true,
+        "sheetsUsed": 1,
+        "consumedLengthMm": 0,
+        "usedWidthMm": 0,
+        "preservedLengthMm": 3980,
+        "usedSheetAreaSqm": 6,
+        "partsBoundingAreaSqm": 0,
+        "wasteAreaSqm": 6,
+        "efficiencyPercent": 0,
+        "placements": [],
+        "unplaced": [],
+        "warnings": []
+      },
+      {
+        "configId": "sheet_1300x900",
+        "materialType": "sheet",
+        "granularity": "child-parts",
+        "assignmentSource": "default-preview",
+        "materialFrame": {
+          "materialType": "sheet",
+          "sheetLengthMm": 1300,
+          "sheetWidthMm": 900,
+          "usableLengthMm": 1280,
+          "usableWidthMm": 880,
+          "feedAxis": "length",
+          "crossAxis": "width",
+          "packingDirection": "width-first",
+          "optimizeFor": "preserve-continuous-length"
+        },
+        "itemType": "child-part",
+        "sourceItemsCount": 0,
+        "placedItemsCount": 0,
+        "unplacedItemsCount": 0,
+        "sheetWidthMm": 900,
+        "sheetLengthMm": 1300,
+        "usableWidthMm": 880,
+        "usableLengthMm": 1280,
+        "edgeMarginMm": 10,
+        "partSpacingMm": 20,
+        "allowRotation": true,
+        "sheetsUsed": 1,
+        "consumedLengthMm": 0,
+        "usedWidthMm": 0,
+        "preservedLengthMm": 1280,
+        "usedSheetAreaSqm": 1.17,
+        "partsBoundingAreaSqm": 0,
+        "wasteAreaSqm": 1.17,
+        "efficiencyPercent": 0,
+        "placements": [],
+        "unplaced": [],
+        "warnings": []
+      }
+    ],
+    "warnings": [
+      {
+        "code": "NESTING_USES_BOUNDING_BOX_ONLY",
+        "severity": "info",
+        "message": "Nesting MVP uses bounding-box shelf placement only.",
+        "scope": "nesting"
+      },
+      {
+        "code": "NESTING_CHILD_PARTS_ONLY",
+        "severity": "info",
+        "message": "Nesting always uses individual child parts. Layer roles (face/backing/cut) are confirmed separately on the layer table.",
+        "scope": "nesting"
+      },
+      {
+        "code": "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+        "severity": "info",
+        "message": "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+        "scope": "nesting"
+      }
+    ]
+  }
+}

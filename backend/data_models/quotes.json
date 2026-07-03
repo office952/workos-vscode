@@ -1,0 +1,93 @@
+{
+    "title": "quotes",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "code": {
+            "type": "string",
+            "description": "Business code like QT-2245"
+        },
+        "intake_id": {
+            "type": "integer",
+            "description": "FK intake_requests.id"
+        },
+        "intake_code": {
+            "type": "string",
+            "description": "Denormalized intake code"
+        },
+        "client_id": {
+            "type": "integer",
+            "description": "FK clients.id"
+        },
+        "client_name": {
+            "type": "string",
+            "description": "Denormalized client name"
+        },
+        "contact_person": {
+            "type": "string",
+            "description": "Contact person"
+        },
+        "status": {
+            "type": "string",
+            "description": "draft/priced/sent/viewed/negotiating/accepted/rejected/expired"
+        },
+        "version": {
+            "type": "integer",
+            "description": "Quote version starting at 1"
+        },
+        "valid_until": {
+            "type": "string",
+            "description": "ISO date string"
+        },
+        "line_items": {
+            "type": "string",
+            "description": "JSON-encoded array of line items"
+        },
+        "subtotal": {
+            "type": "number",
+            "description": "Subtotal amount"
+        },
+        "discount": {
+            "type": "number",
+            "description": "Discount amount"
+        },
+        "discount_pct": {
+            "type": "number",
+            "description": "Discount percent"
+        },
+        "total_before_vat": {
+            "type": "number",
+            "description": "Total before VAT"
+        },
+        "vat": {
+            "type": "number",
+            "description": "VAT amount"
+        },
+        "grand_total": {
+            "type": "number",
+            "description": "Grand total including VAT"
+        },
+        "margin_pct": {
+            "type": "number",
+            "description": "Margin percent"
+        },
+        "notes": {
+            "type": "string",
+            "description": "Free-text notes"
+        },
+        "assigned_to": {
+            "type": "string",
+            "description": "Assigned person name"
+        }
+    },
+    "required": [
+        "id",
+        "code",
+        "client_name",
+        "status",
+        "version"
+    ]
+}

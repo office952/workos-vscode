@@ -1,0 +1,1597 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Intake V4 Operator - Redesign</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080d16;
+      --nav: #0b1220;
+      --panel: #0d1422;
+      --panel-2: #111a2b;
+      --panel-3: #172135;
+      --line: #27344a;
+      --line-strong: #3b4c67;
+      --text: #eef5ff;
+      --muted: #9fb0c9;
+      --faint: #6f809b;
+      --cyan: #29c6df;
+      --cyan-soft: rgba(41, 198, 223, 0.16);
+      --green: #3ed68a;
+      --green-soft: rgba(62, 214, 138, 0.14);
+      --amber: #e6b54a;
+      --amber-soft: rgba(230, 181, 74, 0.14);
+      --violet: #a78bfa;
+      --red: #f87171;
+      --radius: 8px;
+      --shadow: 0 20px 44px rgba(0, 0, 0, 0.34);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--nav);
+      border-right: 1px solid #1d2a3d;
+      overflow: hidden;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 56px;
+      padding: 0 16px;
+      border-bottom: 1px solid #1d2a3d;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(41, 198, 223, 0.5);
+      border-radius: 6px;
+      background: var(--cyan-soft);
+      color: var(--cyan);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .brand strong {
+      font-size: 15px;
+      letter-spacing: -0.01em;
+    }
+
+    .site-nav {
+      flex: 1;
+      overflow: auto;
+      padding: 10px 8px 12px;
+    }
+
+    .nav-group {
+      margin-bottom: 12px;
+    }
+
+    .nav-title {
+      padding: 8px 12px 5px;
+      color: var(--faint);
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      width: 100%;
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border: 0;
+      border-left: 2px solid transparent;
+      border-radius: 6px;
+      background: transparent;
+      color: #a9b8cf;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      border-left-color: var(--cyan);
+      background: rgba(41, 198, 223, 0.12);
+      color: #dffbff;
+    }
+
+    .nav-icon {
+      width: 18px;
+      height: 18px;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      border: 1px solid #263652;
+      border-radius: 5px;
+      color: #8fb8ff;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .sidebar-footer {
+      padding: 10px 12px;
+      border-top: 1px solid #1d2a3d;
+      color: var(--faint);
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
+    .sidebar-footer strong {
+      color: var(--text);
+    }
+
+    .desktop {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto auto auto 1fr;
+    }
+
+    .topbar {
+      min-height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 24px;
+      background: #0b1220;
+      border-bottom: 1px solid #1d2a3d;
+    }
+
+    .search {
+      width: min(430px, 100%);
+      min-height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid #17243a;
+      border-radius: 7px;
+      background: #111827;
+      color: var(--faint);
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .search input {
+      width: 100%;
+      min-height: 32px;
+      border: 0;
+      outline: 0;
+      color: var(--muted);
+      background: transparent;
+      padding: 0;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 28px;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #0a111e;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .pill.ok {
+      border-color: rgba(62, 214, 138, 0.45);
+      background: var(--green-soft);
+      color: #b9f8d6;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .livebar {
+      min-height: 32px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 0 24px;
+      border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+      background: rgba(6, 78, 59, 0.18);
+      color: #38f2a3;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .job {
+      display: grid;
+      grid-template-columns: minmax(260px, 1.3fr) repeat(5, minmax(120px, 0.55fr));
+      gap: 1px;
+      background: #1d2a3d;
+      border-bottom: 1px solid #1d2a3d;
+    }
+
+    .job-cell {
+      min-width: 0;
+      padding: 12px 16px;
+      background: #0b1220;
+    }
+
+    .job-cell span {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--faint);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .job-cell strong {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--text);
+      font-size: 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cockpit {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 380px;
+      gap: 14px;
+      width: min(1900px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+      align-items: start;
+    }
+
+    .workarea {
+      min-width: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .smart {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(280px, 0.44fr);
+      gap: 12px;
+    }
+
+    .panel,
+    fieldset,
+    .inspector {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .status-panel {
+      padding: 12px;
+      background: linear-gradient(180deg, rgba(17, 26, 43, 0.98), rgba(10, 17, 30, 0.98));
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .panel-head h1,
+    .panel-head h2,
+    .panel-head h3 {
+      margin: 0;
+      color: var(--text);
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .status-card {
+      min-height: 86px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+    }
+
+    .status-card span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--faint);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-card strong {
+      display: block;
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.22;
+    }
+
+    .status-card small {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .quick-actions button,
+    .step-button,
+    .scope-button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+      color: var(--muted);
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    .quick-actions button:hover,
+    .step-button:hover,
+    .scope-button:hover {
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+
+    .quick-actions button.active,
+    .step-button[aria-selected="true"],
+    .scope-button[aria-selected="true"] {
+      border-color: rgba(41, 198, 223, 0.6);
+      background: var(--cyan-soft);
+      color: var(--text);
+      box-shadow: inset 0 0 0 1px rgba(41, 198, 223, 0.1);
+    }
+
+    .guard-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .guard {
+      display: grid;
+      grid-template-columns: 10px minmax(0, 1fr) auto;
+      gap: 8px;
+      align-items: center;
+      min-height: 30px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .guard .dot {
+      color: var(--green);
+    }
+
+    .guard strong {
+      color: var(--text);
+      font-size: 12px;
+    }
+
+    .guard em {
+      color: var(--amber);
+      font-style: normal;
+      font-weight: 900;
+      font-size: 11px;
+      text-align: right;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .step-button {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-height: 52px;
+      padding: 10px 12px;
+      text-align: left;
+    }
+
+    .step-button span:first-child {
+      display: grid;
+      gap: 3px;
+    }
+
+    .step-button small {
+      color: var(--faint);
+      font-weight: 650;
+    }
+
+    .stage {
+      min-width: 0;
+    }
+
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    fieldset {
+      margin: 0;
+      padding: 14px;
+      min-width: 0;
+    }
+
+    legend {
+      padding: 0 8px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.02em;
+    }
+
+    .layer-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.75fr) minmax(0, 1fr) minmax(240px, 0.58fr);
+      gap: 12px;
+      align-items: start;
+    }
+
+    .preview {
+      min-height: 260px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        #0a111e;
+      background-size: 24px 24px;
+      padding: 18px;
+    }
+
+    .preview svg {
+      width: 100%;
+      height: auto;
+      max-height: 220px;
+    }
+
+    .layer-board {
+      display: grid;
+      gap: 8px;
+    }
+
+    .layer-chip {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+      color: var(--muted);
+      text-align: left;
+    }
+
+    .layer-chip.active {
+      border-color: rgba(41, 198, 223, 0.7);
+      background: var(--cyan-soft);
+      color: var(--text);
+    }
+
+    .swatch {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+    }
+
+    .layer-chip strong {
+      display: block;
+      color: inherit;
+      font-size: 13px;
+    }
+
+    .layer-chip small {
+      display: block;
+      color: var(--faint);
+      font-size: 11px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 22px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(62, 214, 138, 0.35);
+      color: #bcf8d8;
+      background: var(--green-soft);
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .detail {
+      display: grid;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+    }
+
+    .detail h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .detail dl {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 12px;
+      margin: 0;
+      font-size: 12px;
+    }
+
+    .detail dt {
+      color: var(--muted);
+    }
+
+    .detail dd {
+      margin: 0;
+      color: var(--text);
+      font-weight: 800;
+      text-align: right;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .field {
+      min-width: 0;
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    label,
+    .field-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      min-height: 40px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #080f1a;
+      color: var(--text);
+      padding: 8px 10px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    select:focus,
+    input:focus,
+    textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(41, 198, 223, 0.14);
+    }
+
+    .scope-shell {
+      display: grid;
+      grid-template-columns: 180px minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .scope-nav {
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .scope-button {
+      min-height: 44px;
+      text-align: left;
+      padding: 9px 10px;
+    }
+
+    .scope-panel {
+      display: none;
+    }
+
+    .scope-panel.active {
+      display: block;
+    }
+
+    .group-card {
+      display: grid;
+      grid-template-columns: 130px repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      align-items: end;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+      margin-bottom: 10px;
+    }
+
+    .group-name {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--text);
+      font-weight: 900;
+      min-width: 0;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 40px;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .check-row input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--cyan);
+    }
+
+    .file-control {
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: #080f1a;
+      overflow: hidden;
+    }
+
+    .file-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+      padding: 5px 9px;
+      border: 1px solid rgba(41, 198, 223, 0.5);
+      border-radius: 5px;
+      background: var(--cyan-soft);
+      color: #dffbff;
+      font-size: 12px;
+      font-weight: 900;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .file-name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .handoff {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1fr);
+      gap: 12px;
+    }
+
+    .gate-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .gate {
+      display: grid;
+      grid-template-columns: 20px minmax(0, 1fr);
+      gap: 9px;
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #0a111e;
+    }
+
+    .gate input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--cyan);
+      margin-top: 2px;
+    }
+
+    .gate strong {
+      display: block;
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .gate small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.35;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #0b1220;
+    }
+
+    .status-line {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 34px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0a111e;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .status-line.ok {
+      border-color: rgba(62, 214, 138, 0.35);
+      background: var(--green-soft);
+      color: #c6fadd;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn {
+      min-height: 40px;
+      padding: 9px 13px;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      background: var(--panel-3);
+      color: var(--text);
+      font-weight: 900;
+    }
+
+    .btn.primary {
+      border-color: rgba(41, 198, 223, 0.65);
+      background: #0d5464;
+      color: #e7fbff;
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--muted);
+    }
+
+    .btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .inspector {
+      position: sticky;
+      top: 16px;
+      overflow: hidden;
+    }
+
+    .inspector-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      background: #0b1220;
+    }
+
+    .inspector-head h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .ledger-filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .ledger-filters button {
+      min-height: 30px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0a111e;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .ledger-filters button.active {
+      border-color: rgba(41, 198, 223, 0.55);
+      background: var(--cyan-soft);
+      color: var(--text);
+    }
+
+    .ledger-wrap {
+      max-height: calc(100vh - 362px);
+      overflow: auto;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .ledger {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .ledger th,
+    .ledger td {
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    .ledger th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #0a111e;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .ledger td:nth-child(2),
+    .ledger td:nth-child(3),
+    .ledger th:nth-child(2),
+    .ledger th:nth-child(3) {
+      text-align: right;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ledger tbody tr {
+      cursor: pointer;
+      transition: background 120ms ease, box-shadow 120ms ease;
+    }
+
+    .ledger tbody tr:hover,
+    .ledger tbody tr.selected {
+      background: rgba(41, 198, 223, 0.08);
+      box-shadow: inset 3px 0 0 var(--cyan);
+    }
+
+    .cost-detail {
+      display: grid;
+      gap: 8px;
+      padding: 12px 14px;
+      background: #0b1220;
+    }
+
+    .cost-detail span {
+      color: var(--muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .cost-detail strong {
+      color: var(--text);
+      font-size: 14px;
+    }
+
+    .cost-detail small {
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .total-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 12px 14px;
+      border-top: 1px solid var(--line);
+      background: #0a111e;
+      font-weight: 950;
+    }
+
+    @media (max-width: 1320px) {
+      .app {
+        grid-template-columns: 200px minmax(0, 1fr);
+      }
+
+      .cockpit {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 12px;
+        padding: 12px;
+      }
+
+      .status-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .smart {
+        grid-template-columns: 1fr;
+      }
+
+      .group-card {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .group-name {
+        grid-column: 1 / -1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" aria-label="Meniu WorkOS">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">W</span>
+        <strong>WorkOS</strong>
+      </div>
+      <nav class="site-nav">
+        <div class="nav-group">
+          <div class="nav-title">Operațiuni</div>
+          <button class="nav-item" type="button"><span class="nav-icon">CT</span>Control Tower</button>
+          <button class="nav-item" type="button"><span class="nav-icon">SF</span>Shop Floor</button>
+          <button class="nav-item active" type="button"><span class="nav-icon">OP</span>Operator</button>
+          <button class="nav-item" type="button"><span class="nav-icon">AT</span>Atelier Tablet</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-title">Comercial</div>
+          <button class="nav-item" type="button"><span class="nav-icon">CL</span>Clienți</button>
+          <button class="nav-item" type="button"><span class="nav-icon">WI</span>Work Intake</button>
+          <button class="nav-item" type="button"><span class="nav-icon">OF</span>Oferte</button>
+          <button class="nav-item" type="button"><span class="nav-icon">CO</span>Comenzi</button>
+          <button class="nav-item" type="button"><span class="nav-icon">EX</span>Execuție</button>
+          <button class="nav-item" type="button"><span class="nav-icon">DC</span>Documente</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-title">Resurse</div>
+          <button class="nav-item" type="button"><span class="nav-icon">OC</span>Inventar & OC</button>
+          <button class="nav-item" type="button"><span class="nav-icon">PR</span>Pricing</button>
+          <button class="nav-item" type="button"><span class="nav-icon">PS</span>Product System</button>
+          <button class="nav-item" type="button"><span class="nav-icon">CB</span>Colaboratori</button>
+          <button class="nav-item" type="button"><span class="nav-icon">UT</span>Utilaje</button>
+          <button class="nav-item" type="button"><span class="nav-icon">RP</span>Rapoarte</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-title">Personal</div>
+          <button class="nav-item" type="button"><span class="nav-icon">AO</span>Angajați operaționali</button>
+          <button class="nav-item" type="button"><span class="nav-icon">HR</span>Evidență internă HR</button>
+        </div>
+        <div class="nav-group">
+          <div class="nav-title">Sistem</div>
+          <button class="nav-item" type="button"><span class="nav-icon">MC</span>Module Chain</button>
+          <button class="nav-item" type="button"><span class="nav-icon">GV</span>Governance</button>
+          <button class="nav-item" type="button"><span class="nav-icon">ST</span>Setări</button>
+        </div>
+      </nav>
+      <div class="sidebar-footer"><strong>WorkOS BUILD_25</strong><br>TEST · shell operator</div>
+    </aside>
+
+    <main class="desktop">
+      <header class="topbar">
+        <label class="search">
+          <span aria-hidden="true">⌕</span>
+          <input type="search" placeholder="Caută joburi, taskuri, utilaje..." aria-label="Caută joburi, taskuri, utilaje">
+        </label>
+        <div class="top-actions">
+          <span class="pill ok"><span class="dot"></span> LIVE / DB</span>
+          <span class="pill">Template: TPL-VOLUMETRIC-LETTERS</span>
+          <span class="pill">Autosave activ</span>
+          <span class="pill">DA</span>
+        </div>
+      </header>
+
+      <div class="livebar"><span class="dot"></span> LIVE / DB — Sursa de date: backend live</div>
+
+      <section class="job" aria-label="Context lucrare">
+        <div class="job-cell"><span>Workspace</span><strong>IV4-4C8EA27B</strong></div>
+        <div class="job-cell"><span>Fișier</span><strong>gradi-curat.svg</strong></div>
+        <div class="job-cell"><span>Lățime</span><strong>5087 mm</strong></div>
+        <div class="job-cell"><span>Înălțime</span><strong>600 mm</strong></div>
+        <div class="job-cell"><span>Perimetru total</span><strong>31.638 m</strong></div>
+        <div class="job-cell"><span>Șablon montaj</span><strong>3.052 m²</strong></div>
+      </section>
+
+      <section class="cockpit">
+        <div class="workarea">
+          <section class="smart" aria-label="Status inteligent operator">
+            <div class="status-panel panel">
+              <div class="panel-head">
+                <h1>Spațiu operator V4</h1>
+                <span class="pill ok"><span class="dot"></span> Product System dominant</span>
+              </div>
+              <div class="status-grid">
+                <div class="status-card">
+                  <span>Pas curent</span>
+                  <strong data-current-step>Layere</strong>
+                  <small data-step-guidance>Confirmă rolurile vectorilor înainte de finisaje.</small>
+                </div>
+                <div class="status-card">
+                  <span>Zonă activă</span>
+                  <strong data-current-scope>Hartă layere</strong>
+                  <small>Formularul se schimbă după contextul real de producție.</small>
+                </div>
+                <div class="status-card">
+                  <span>Auto-confirmare</span>
+                  <strong data-save-state>confirmat</strong>
+                  <small>Modificările intră automat în draft.</small>
+                </div>
+                <div class="status-card">
+                  <span>Impact calcul</span>
+                  <strong data-impact>493.49 EUR</strong>
+                  <small data-impact-note>Total intern estimat pentru materialele vizibile.</small>
+                </div>
+              </div>
+              <div class="quick-actions">
+                <button type="button" data-action="show-materials">Materiale</button>
+                <button type="button" data-action="show-operations">Operații</button>
+                <button type="button" data-action="go-confirm">Pregătește draft</button>
+              </div>
+            </div>
+
+            <div class="status-panel panel">
+              <div class="panel-head">
+                <h2>Verificări active</h2>
+                <span class="pill">reguli active</span>
+              </div>
+              <div class="guard-list">
+                <div class="guard"><span class="dot"></span><strong>Perimetru canonic</strong><em>31.638 m</em></div>
+                <div class="guard"><span class="dot"></span><strong>Oracal separat</strong><em>651 față · 8500 față · 651 cant</em></div>
+                <div class="guard"><span class="dot"></span><strong>Spate obligatoriu</strong><em>Forex 10 mm</em></div>
+                <div class="guard"><span class="dot"></span><strong>LED implicit</strong><em>0.75 W neutral</em></div>
+              </div>
+            </div>
+          </section>
+
+          <nav class="steps" aria-label="Pași operator">
+            <button class="step-button" type="button" data-step="layers" aria-selected="true">
+              <span><strong>Layere</strong><small>clasificare vectori</small></span>
+              <span>1</span>
+            </button>
+            <button class="step-button" type="button" data-step="finishes" aria-selected="false">
+              <span><strong>Finisaje</strong><small>zone + materiale</small></span>
+              <span>2</span>
+            </button>
+            <button class="step-button" type="button" data-step="confirm" aria-selected="false">
+              <span><strong>Confirmare</strong><small>draft intern</small></span>
+              <span>3</span>
+            </button>
+          </nav>
+
+          <form id="operator-form">
+            <section class="step-panel active" data-panel="layers">
+              <fieldset>
+                <legend>1. Clasificare layere SVG</legend>
+                <div class="layer-layout">
+                  <div class="preview" aria-label="Previzualizare vector">
+                    <svg viewBox="0 0 720 170" role="img" aria-label="Previzualizare simplificată gradi-curat.svg">
+                      <rect x="18" y="20" width="684" height="130" rx="8" fill="#07101d" stroke="#2b3a51"/>
+                      <circle cx="70" cy="85" r="34" fill="#2b8cff" opacity="0.92"/>
+                      <circle cx="650" cy="85" r="34" fill="#2b8cff" opacity="0.92"/>
+                      <text x="124" y="98" font-family="Arial, sans-serif" font-size="68" font-weight="800" fill="#16a8dc">maria</text>
+                      <text x="350" y="98" font-family="Arial, sans-serif" font-size="68" font-weight="800" fill="#f97316">grădinița</text>
+                      <path d="M270 62 L286 95 L322 100 L296 124 L303 158 L270 140 L237 158 L244 124 L218 100 L254 95 Z" fill="#f43f5e"/>
+                      <text x="128" y="135" font-family="Arial, sans-serif" font-size="28" font-weight="800" fill="#18b866">ana</text>
+                    </svg>
+                  </div>
+
+                  <div class="layer-board" id="layer-board"></div>
+
+                  <aside class="detail" aria-label="Detalii layer selectat">
+                    <h3 data-layer-title>pseudo maria</h3>
+                    <dl>
+                      <dt>Rol</dt><dd data-layer-role>Litere volumetrice</dd>
+                      <dt>Arie</dt><dd data-layer-area>0.512 m²</dd>
+                      <dt>Perimetru</dt><dd data-layer-perimeter>8.42 m</dd>
+                      <dt>Status</dt><dd>confirmat</dd>
+                    </dl>
+                    <label for="layer-role-select">Schimbă rol</label>
+                    <select id="layer-role-select">
+                      <option selected>Litere volumetrice</option>
+                      <option>Emblemă / artwork print</option>
+                      <option>Spate / template</option>
+                      <option>Ignorat tehnic</option>
+                    </select>
+                  </aside>
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="step-panel" data-panel="finishes">
+              <fieldset>
+                <legend>2. Finisaje pe zone de producție</legend>
+                <div class="scope-shell">
+                  <nav class="scope-nav" aria-label="Zone finisaje">
+                    <button class="scope-button" type="button" data-scope="letters" aria-selected="true">Litere</button>
+                    <button class="scope-button" type="button" data-scope="emblems" aria-selected="false">Embleme / logo</button>
+                    <button class="scope-button" type="button" data-scope="template" aria-selected="false">Template + spate</button>
+                    <button class="scope-button" type="button" data-scope="led" aria-selected="false">LED</button>
+                  </nav>
+
+                  <div>
+                    <section class="scope-panel active" data-scope-panel="letters">
+                      <div class="group-card">
+                        <div class="group-name"><span class="swatch" style="background:#0ea5e9"></span>maria</div>
+                        <div class="field"><label>Față</label><select><option selected>Oracal 651</option><option>Oracal 8500 translucent</option><option>Print + laminare</option></select></div>
+                        <div class="field"><label>Culoare</label><select><option selected>651-053 Light blue</option><option>651-010 White</option></select></div>
+                        <div class="field"><label>Rolă</label><select><option selected>1000 mm</option><option>1260 mm</option></select></div>
+                        <div class="field"><label>Cant / volum</label><select><option selected>Oracal 651</option><option>Alb</option><option>Vopsit RAL</option></select></div>
+                        <div class="field"><label>Adâncime</label><select><option>60 mm</option><option selected>80 mm</option><option>100 mm</option></select></div>
+                      </div>
+                      <div class="group-card">
+                        <div class="group-name"><span class="swatch" style="background:#f43f5e"></span>soare</div>
+                        <div class="field"><label>Față</label><select><option selected>Oracal 8500 translucent</option><option>Oracal 651</option></select></div>
+                        <div class="field"><label>Culoare</label><select><option selected>8500-031 Red</option><option>8500-025 Brimstone yellow</option></select></div>
+                        <div class="field"><label>Rolă</label><select><option selected>1000 mm</option><option>1260 mm</option></select></div>
+                        <div class="field"><label>Cant / volum</label><select><option selected>Alb</option><option>Oracal 651</option></select></div>
+                        <div class="field"><label>Adâncime</label><select><option selected>60 mm</option><option>80 mm</option><option>100 mm</option></select></div>
+                      </div>
+                      <div class="group-card">
+                        <div class="group-name"><span class="swatch" style="background:#16a34a"></span>ana</div>
+                        <div class="field"><label>Față</label><select><option selected>Oracal 651</option><option>Oracal 8500 translucent</option></select></div>
+                        <div class="field"><label>Culoare</label><select><option selected>651-062 Light green</option><option>651-064 Yellow green</option></select></div>
+                        <div class="field"><label>Rolă</label><select><option selected>1000 mm</option><option>1260 mm</option></select></div>
+                        <div class="field"><label>Cant / volum</label><select><option selected>Alb</option><option>Oracal 651</option></select></div>
+                        <div class="field"><label>Adâncime</label><select><option selected>60 mm</option><option>80 mm</option><option>100 mm</option></select></div>
+                      </div>
+                      <div class="group-card">
+                        <div class="group-name"><span class="swatch" style="background:#fb923c"></span>grădinița</div>
+                        <div class="field"><label>Față</label><select><option selected>Oracal 651</option><option>Oracal 8500 translucent</option></select></div>
+                        <div class="field"><label>Culoare</label><select><option selected>651-034 Orange</option><option>651-020 Golden yellow</option></select></div>
+                        <div class="field"><label>Rolă</label><select><option selected>1000 mm</option><option>1260 mm</option></select></div>
+                        <div class="field"><label>Cant / volum</label><select><option selected>Alb</option><option>Oracal 651</option></select></div>
+                        <div class="field"><label>Adâncime</label><select><option selected>60 mm</option><option>80 mm</option><option>100 mm</option></select></div>
+                      </div>
+                    </section>
+
+                    <section class="scope-panel" data-scope-panel="emblems">
+                      <div class="form-grid">
+                        <div class="field span-6">
+                          <label>logo stânga · aplicare</label>
+                          <select><option selected>Print + laminare</option><option>Colantare plexiglas</option><option>Vopsire RAL</option></select>
+                        </div>
+                        <div class="field span-6">
+                          <label>logo dreapta · aplicare</label>
+                          <select><option selected>Print + laminare</option><option>Colantare plexiglas</option><option>Vopsire RAL</option></select>
+                        </div>
+                        <div class="field span-3"><label class="check-row"><input type="checkbox" checked> Translucent stânga</label></div>
+                        <div class="field span-3"><label class="check-row"><input type="checkbox"> Transparent stânga</label></div>
+                        <div class="field span-3"><label class="check-row"><input type="checkbox" checked> Translucent dreapta</label></div>
+                        <div class="field span-3"><label class="check-row"><input type="checkbox"> Transparent dreapta</label></div>
+                        <div class="field span-4"><label>Cant emblemă stânga</label><select><option>Alb</option><option selected>Vopsit RAL</option><option>Oracal 651</option></select></div>
+                        <div class="field span-4"><label>Cant emblemă dreapta</label><select><option>Alb</option><option>Vopsit RAL</option><option selected>Oracal 651</option></select></div>
+                        <div class="field span-4"><label>Adâncime emblemă</label><select><option selected>60 mm</option><option>80 mm</option><option>100 mm</option></select></div>
+                        <div class="field span-6">
+                          <label>Artwork stânga</label>
+                          <div class="file-control"><input class="sr-only" id="art-left" type="file"><label class="file-button" for="art-left">Atașează</label><span class="file-name">niciun fișier</span></div>
+                        </div>
+                        <div class="field span-6">
+                          <label>Artwork dreapta</label>
+                          <div class="file-control"><input class="sr-only" id="art-right" type="file"><label class="file-button" for="art-right">Atașează</label><span class="file-name">niciun fișier</span></div>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section class="scope-panel" data-scope-panel="template">
+                      <div class="form-grid">
+                        <div class="field span-4"><label>Spate litere</label><select><option selected>Forex 10 mm fără șanfren</option><option>Forex 10 mm cu șanfren</option></select></div>
+                        <div class="field span-4"><label>Arie șablon montaj</label><input type="number" value="3.0523" step="0.0001"></div>
+                        <div class="field span-4"><label>Material șablon</label><select><option selected>Forex</option><option>Hârtie</option></select></div>
+                        <div class="field span-6"><label>Sistem montaj</label><select><option selected>Direct perete</option><option>Bară oțel</option><option>Bară aluminiu</option><option>Panou ACM</option></select></div>
+                        <div class="field span-6"><label>Accesorii montaj</label><input type="text" value="5% din confecționare, fără adaos ofertat"></div>
+                      </div>
+                    </section>
+
+                    <section class="scope-panel" data-scope-panel="led">
+                      <div class="form-grid">
+                        <div class="field span-3"><label class="check-row"><input type="checkbox" checked> LED activ</label></div>
+                        <div class="field span-3"><label>Sistem</label><select><option selected>Module LED</option><option>Bandă LED</option></select></div>
+                        <div class="field span-3"><label>Putere modul</label><select><option selected>0.75 W</option><option>1.00 W</option><option>1.44 W</option></select></div>
+                        <div class="field span-3"><label>Culoare lumină</label><select><option>Warm white</option><option selected>Neutral white</option><option>Cool white</option></select></div>
+                        <div class="field span-6"><label>Iluminare litere</label><input type="text" value="linie/perimetru litere, calcul separat"></div>
+                        <div class="field span-6"><label>Iluminare embleme</label><input type="text" value="module pe arie, distanță configurabilă după cant"></div>
+                        <div class="field span-6"><label>Sursă LED</label><select><option>100 W</option><option selected>160 W</option><option>200 W</option></select></div>
+                        <div class="field span-6"><label>Observație calcul</label><input type="text" value="emblemele nu folosesc aceeași formulă ca literele"></div>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+              </fieldset>
+            </section>
+
+            <section class="step-panel" data-panel="confirm">
+              <fieldset>
+                <legend>3. Confirmare draft intern</legend>
+                <div class="handoff">
+                  <div class="gate-list">
+                    <label class="gate"><input type="checkbox" checked><span><strong>Rolurile layerelor sunt corecte</strong><small>Literele și emblemele au fost separate înainte de ofertare.</small></span></label>
+                    <label class="gate"><input type="checkbox" checked><span><strong>Finisajele sunt confirmate</strong><small>Materialele, cantul, șablonul și LED-ul sunt sursa pentru calculul intern.</small></span></label>
+                    <label class="gate"><input type="checkbox" checked><span><strong>Artwork-ul emblemelor rămâne atașabil</strong><small>Vectorii sunt calculați; fișierele finale pot fi atașate pentru producție.</small></span></label>
+                    <label class="gate"><input type="checkbox" checked><span><strong>Se creează doar draft intern</strong><small>Nu trimite ofertă clientului, nu creează comandă, nu consumă inventar.</small></span></label>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field span-6"><label>Litere volumetrice</label><input type="text" value="luminoase · 4 grupuri"></div>
+                    <div class="field span-6"><label>Embleme / logo</label><input type="text" value="luminoase · print + laminare"></div>
+                    <div class="field span-6"><label>Perimetru cant total</label><input type="text" value="31.638 m"></div>
+                    <div class="field span-6"><label>Spate litere</label><input type="text" value="Forex 10 mm fără șanfren"></div>
+                    <div class="field span-12"><label>Notă internă ofertare</label><textarea>Calcul intern pregătit pentru draft. Verifică tarifele CNC/template înainte de oferta finală.</textarea></div>
+                    <div class="field span-12">
+                      <label>Pachet producție</label>
+                      <div class="file-control"><input class="sr-only" id="pack" type="file" multiple><label class="file-button" for="pack">Atașează pachet</label><span class="file-name">niciun fișier</span></div>
+                    </div>
+                  </div>
+                </div>
+              </fieldset>
+            </section>
+
+            <div class="actions">
+              <span class="status-line ok" data-action-state><span class="dot"></span> ultima modificare autoconfirmată</span>
+              <div class="button-row">
+                <button class="btn ghost" type="button" data-prev disabled>Înapoi</button>
+                <button class="btn primary" type="button" data-next>Continuă la finisaje</button>
+                <button class="btn" type="button" data-draft hidden>Creează draft ofertă</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <aside class="inspector" aria-label="Calcul live">
+          <div class="inspector-head">
+            <h2>Calcul intern live</h2>
+            <span class="pill ok"><span class="dot"></span> Materiale separate pe zone</span>
+            <div class="ledger-filters">
+              <button class="active" type="button" data-filter="all">Toate</button>
+              <button type="button" data-filter="material">Materiale</button>
+              <button type="button" data-filter="operation">Operații</button>
+            </div>
+          </div>
+          <div class="ledger-wrap">
+            <table class="ledger">
+              <thead>
+                <tr><th>Material / operație</th><th>Consum</th><th>Preț</th></tr>
+              </thead>
+              <tbody id="ledger-body"></tbody>
+            </table>
+          </div>
+          <div class="cost-detail">
+            <span>Rând selectat</span>
+            <strong data-cost-title>Total intern estimat</strong>
+            <small data-cost-note>Click pe un rând pentru detaliu de consum și preț.</small>
+          </div>
+          <div class="total-row"><span>Total intern estimat</span><span data-total>0.00 EUR</span></div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const layers = [
+      { id: "maria", name: "pseudo maria", role: "Litere volumetrice", area: "0.512 m²", perimeter: "8.42 m", color: "#0ea5e9" },
+      { id: "soare", name: "pseudo soare", role: "Litere volumetrice", area: "0.211 m²", perimeter: "5.16 m", color: "#f43f5e" },
+      { id: "ana", name: "pseudo ana", role: "Litere volumetrice", area: "0.348 m²", perimeter: "6.28 m", color: "#16a34a" },
+      { id: "gradinita", name: "pseudo grădinița", role: "Litere volumetrice", area: "0.474 m²", perimeter: "6.89 m", color: "#fb923c" },
+      { id: "logo-left", name: "logo stânga", role: "Emblemă / artwork print", area: "0.489 m²", perimeter: "2.45 m", color: "#2b8cff" },
+      { id: "logo-right", name: "logo dreapta", role: "Emblemă / artwork print", area: "0.490 m²", perimeter: "2.44 m", color: "#2b8cff" },
+    ];
+
+    const ledgerRows = [
+      { type: "material", name: "Plexiglas 3 mm / față litere", qty: "1.545 m²", price: 24.72, note: "Separat de embleme pentru adevăr de consum." },
+      { type: "material", name: "Plexiglas 3 mm / embleme/logo", qty: "0.979 m²", price: 15.66, note: "Emblemele sunt scope separat." },
+      { type: "material", name: "Forex 10 mm / spate litere", qty: "2.524 m²", price: 40.38, note: "Spate obligatoriu pentru template." },
+      { type: "material", name: "Forex / șablon montaj", qty: "3.052 m²", price: 18.31, note: "Șablon pe lungimea graficii." },
+      { type: "material", name: "Oracal 651 / față litere", qty: "0.837 m²", price: 7.53, note: "Serie față, nu cant." },
+      { type: "material", name: "Oracal 8500 / față litere", qty: "0.774 m²", price: 15.48, note: "Translucent față litere." },
+      { type: "material", name: "Oracal 651 / cant volum", qty: "0.496 m²", price: 4.47, note: "Separat de colantarea feței." },
+      { type: "operation", name: "Autocolant print", qty: "0.800 m²", price: 1.20, note: "Material print." },
+      { type: "operation", name: "Serviciu print", qty: "0.800 m²", price: 6.80, note: "Operație print." },
+      { type: "operation", name: "Laminare print", qty: "0.800 m²", price: 4.00, note: "Operație laminare." },
+      { type: "operation", name: "Cant litere", qty: "26.75 m", price: 96.29, note: "Cant litere, fără embleme." },
+      { type: "operation", name: "Cant embleme/logo", qty: "4.89 m", price: 17.61, note: "Cant embleme separat." },
+      { type: "material", name: "Module LED litere", qty: "95 buc", price: 57.00, note: "Calcul litere." },
+      { type: "material", name: "Module LED embleme", qty: "50 buc", price: 30.00, note: "Calcul pe arie emblemă." },
+      { type: "material", name: "Sursă LED 160 W", qty: "1 buc", price: 24.00, note: "Sursă selectată." },
+      { type: "operation", name: "CNC debitare plexiglas", qty: "31.64 m", price: 63.28, note: "Operație pe perimetru canonic." },
+      { type: "operation", name: "CNC debitare Forex", qty: "31.64 m", price: 47.46, note: "Operație pe perimetru canonic." },
+      { type: "material", name: "Accesorii montaj", qty: "5% confecționare", price: 19.30, note: "Fără adaos ofertat clientului." },
+    ];
+
+    const stepMeta = {
+      layers: { label: "Layere", scope: "Hartă layere", guidance: "Confirmă rolurile vectorilor înainte de finisaje.", next: "Continuă la finisaje" },
+      finishes: { label: "Finisaje", scope: "Litere", guidance: "Alege zona de producție și verifică impactul în calcul.", next: "Continuă la confirmare" },
+      confirm: { label: "Confirmare", scope: "Draft intern", guidance: "Confirmarea creează doar draft intern, nu ofertă trimisă.", next: "" },
+    };
+
+    let currentStep = "layers";
+    let currentScope = "letters";
+    let currentFilter = "all";
+    let saveTimer = null;
+
+    const layerBoard = document.getElementById("layer-board");
+    const ledgerBody = document.getElementById("ledger-body");
+    const currentStepEl = document.querySelector("[data-current-step]");
+    const currentScopeEl = document.querySelector("[data-current-scope]");
+    const guidanceEl = document.querySelector("[data-step-guidance]");
+    const saveStateEl = document.querySelector("[data-save-state]");
+    const actionStateEl = document.querySelector("[data-action-state]");
+    const impactEl = document.querySelector("[data-impact]");
+    const impactNoteEl = document.querySelector("[data-impact-note]");
+    const totalEl = document.querySelector("[data-total]");
+    const costTitleEl = document.querySelector("[data-cost-title]");
+    const costNoteEl = document.querySelector("[data-cost-note]");
+    const prevButton = document.querySelector("[data-prev]");
+    const nextButton = document.querySelector("[data-next]");
+    const draftButton = document.querySelector("[data-draft]");
+
+    function formatCurrency(value) {
+      return `${value.toFixed(2)} EUR`;
+    }
+
+    function pulseAutosave() {
+      saveStateEl.textContent = "în curs";
+      actionStateEl.classList.remove("ok");
+      actionStateEl.innerHTML = '<span class="dot"></span> autoconfirmare activă';
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        saveStateEl.textContent = "confirmat";
+        actionStateEl.classList.add("ok");
+        actionStateEl.innerHTML = '<span class="dot"></span> ultima modificare autoconfirmată';
+      }, 650);
+    }
+
+    function renderLayers(activeId = "maria") {
+      layerBoard.innerHTML = layers.map((layer) => `
+        <button class="layer-chip ${layer.id === activeId ? "active" : ""}" type="button" data-layer="${layer.id}">
+          <span class="swatch" style="background:${layer.color}"></span>
+          <span><strong>${layer.name}</strong><small>${layer.role}</small></span>
+          <span class="badge">ok</span>
+        </button>
+      `).join("");
+      selectLayer(activeId);
+    }
+
+    function selectLayer(id) {
+      const layer = layers.find((item) => item.id === id) || layers[0];
+      document.querySelectorAll("[data-layer]").forEach((button) => button.classList.toggle("active", button.dataset.layer === layer.id));
+      document.querySelector("[data-layer-title]").textContent = layer.name;
+      document.querySelector("[data-layer-role]").textContent = layer.role;
+      document.querySelector("[data-layer-area]").textContent = layer.area;
+      document.querySelector("[data-layer-perimeter]").textContent = layer.perimeter;
+      impactEl.textContent = layer.name;
+      impactNoteEl.textContent = `${layer.role} · ${layer.area} · ${layer.perimeter}`;
+    }
+
+    function renderLedger() {
+      const rows = ledgerRows.filter((row) => currentFilter === "all" || row.type === currentFilter);
+      ledgerBody.innerHTML = rows.map((row, index) => `
+        <tr data-cost-index="${ledgerRows.indexOf(row)}" class="${index === 0 ? "selected" : ""}">
+          <td>${row.name}</td>
+          <td>${row.qty}</td>
+          <td>${formatCurrency(row.price)}</td>
+        </tr>
+      `).join("");
+      const total = ledgerRows.reduce((sum, row) => sum + row.price, 0);
+      totalEl.textContent = formatCurrency(total);
+      if (rows.length) {
+        selectCost(ledgerRows.indexOf(rows[0]));
+      }
+    }
+
+    function selectCost(index) {
+      const row = ledgerRows[index] || ledgerRows[0];
+      document.querySelectorAll("[data-cost-index]").forEach((tr) => tr.classList.toggle("selected", Number(tr.dataset.costIndex) === index));
+      costTitleEl.textContent = `${row.name} · ${formatCurrency(row.price)}`;
+      costNoteEl.textContent = `${row.qty} · ${row.note}`;
+      impactEl.textContent = formatCurrency(row.price);
+      impactNoteEl.textContent = row.name;
+    }
+
+    function setStep(step) {
+      currentStep = step;
+      const meta = stepMeta[step];
+      document.querySelectorAll("[data-step]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.step === step)));
+      document.querySelectorAll("[data-panel]").forEach((panel) => panel.classList.toggle("active", panel.dataset.panel === step));
+      currentStepEl.textContent = meta.label;
+      currentScopeEl.textContent = step === "finishes" ? document.querySelector(`[data-scope="${currentScope}"]`)?.textContent || meta.scope : meta.scope;
+      guidanceEl.textContent = meta.guidance;
+      prevButton.disabled = step === "layers";
+      nextButton.hidden = step === "confirm";
+      draftButton.hidden = step !== "confirm";
+      if (step !== "confirm") {
+        nextButton.textContent = meta.next;
+      }
+    }
+
+    function setScope(scope) {
+      currentScope = scope;
+      document.querySelectorAll("[data-scope]").forEach((button) => button.setAttribute("aria-selected", String(button.dataset.scope === scope)));
+      document.querySelectorAll("[data-scope-panel]").forEach((panel) => panel.classList.toggle("active", panel.dataset.scopePanel === scope));
+      currentScopeEl.textContent = document.querySelector(`[data-scope="${scope}"]`)?.textContent || "Scope";
+      pulseAutosave();
+    }
+
+    document.addEventListener("click", (event) => {
+      const stepButton = event.target.closest("[data-step]");
+      if (stepButton) setStep(stepButton.dataset.step);
+
+      const layerButton = event.target.closest("[data-layer]");
+      if (layerButton) selectLayer(layerButton.dataset.layer);
+
+      const scopeButton = event.target.closest("[data-scope]");
+      if (scopeButton) setScope(scopeButton.dataset.scope);
+
+      const costRow = event.target.closest("[data-cost-index]");
+      if (costRow) selectCost(Number(costRow.dataset.costIndex));
+
+      const filterButton = event.target.closest("[data-filter]");
+      if (filterButton) {
+        currentFilter = filterButton.dataset.filter;
+        document.querySelectorAll("[data-filter]").forEach((button) => button.classList.toggle("active", button === filterButton));
+        renderLedger();
+      }
+
+      const actionButton = event.target.closest("[data-action]");
+      if (actionButton?.dataset.action === "show-materials") {
+        document.querySelector('[data-filter="material"]').click();
+      }
+      if (actionButton?.dataset.action === "show-operations") {
+        document.querySelector('[data-filter="operation"]').click();
+      }
+      if (actionButton?.dataset.action === "go-confirm") {
+        setStep("confirm");
+      }
+    });
+
+    prevButton.addEventListener("click", () => {
+      if (currentStep === "finishes") setStep("layers");
+      if (currentStep === "confirm") setStep("finishes");
+    });
+
+    nextButton.addEventListener("click", () => {
+      if (currentStep === "layers") setStep("finishes");
+      else if (currentStep === "finishes") setStep("confirm");
+    });
+
+    document.getElementById("operator-form").addEventListener("change", pulseAutosave);
+
+    document.querySelectorAll('input[type="file"]').forEach((input) => {
+      input.addEventListener("change", () => {
+        const fileName = input.files?.length ? [...input.files].map((file) => file.name).join(", ") : "niciun fișier";
+        input.closest(".file-control")?.querySelector(".file-name")?.replaceChildren(fileName);
+      });
+    });
+
+    renderLayers();
+    renderLedger();
+    setStep("layers");
+  </script>
+</body>
+</html>

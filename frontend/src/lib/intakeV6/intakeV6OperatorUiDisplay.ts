@@ -1,0 +1,10 @@
+export * from "./intakeV4OperatorUiDisplay";
+
+export {
+	formatIntakeV4LinearQuantityDisplay as formatIntakeV6LinearQuantityDisplay,
+	groupIntakeV4Warnings as groupIntakeV6Warnings,
+	INTAKE_V4_MATERIAL_ESTIMATE_DISCLAIMER as INTAKE_V6_MATERIAL_ESTIMATE_DISCLAIMER,
+	INTAKE_V4_PREVIEW_ONLY_BANNER as INTAKE_V6_PREVIEW_ONLY_BANNER,
+	INTAKE_V4_TASK_PREVIEW_BOUNDARY_LINE as INTAKE_V6_TASK_PREVIEW_BOUNDARY_LINE,
+	splitMaterialBreakdownOperationRows as splitIntakeV6MaterialBreakdownOperationRows,
+} from "./intakeV4OperatorUiDisplay";

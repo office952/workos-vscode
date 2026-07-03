@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="ro" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WorkOS Intake V3 — Smart Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg0:#0A0F1A;--bg1:#111827;--bg2:#1E293B;--bg3:#0D1321;--brd:#2A3548;--t1:#F1F5F9;--t2:#94A3B8;--tm:#64748B;--em:#34D399;--em-bg:rgba(16,185,129,.08);--em-brd:rgba(16,185,129,.25);--am:#FBBF24;--am-bg:rgba(245,158,11,.08);--am-brd:rgba(245,158,11,.25);--bl:#60A5FA;--bl-bg:rgba(59,130,246,.08);--bl-brd:rgba(59,130,246,.2);--pu:#A78BFA;--pu-bg:rgba(167,139,250,.06);--vi:#8B5CF6;--vi-bg:rgba(139,92,246,.06);--vi-brd:rgba(139,92,246,.3);--rd:#F87171;--rd-bg:rgba(248,113,113,.06);--radius:10px;--radius-sm:6px;}
+
+/* Light theme */
+[data-theme="light"]{--bg0:#F8FAFC;--bg1:#FFFFFF;--bg2:#F1F5F9;--bg3:#E2E8F0;--brd:#CBD5E1;--t1:#0F172A;--t2:#475569;--tm:#64748B;--em:#059669;--em-bg:rgba(5,150,105,.08);--em-brd:rgba(5,150,105,.25);--am:#D97706;--am-bg:rgba(217,119,6,.08);--am-brd:rgba(217,119,6,.25);--bl:#2563EB;--bl-bg:rgba(37,99,235,.06);--bl-brd:rgba(37,99,235,.2);--pu:#7C3AED;--pu-bg:rgba(124,58,237,.06);--vi:#6D28D9;--vi-bg:rgba(109,40,217,.06);--vi-brd:rgba(109,40,217,.3);--rd:#DC2626;--rd-bg:rgba(220,38,38,.06);}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg0);color:var(--t1);line-height:1.6;min-height:100vh;font-size:14px;letter-spacing:-0.01em;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .6s,color .4s;}
+
+/* Header */
+.hdr{background:var(--bg1);border-bottom:1px solid var(--brd);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;position:relative;z-index:10;transition:background .4s;}
+.hdr-left{display:flex;align-items:center;gap:12px;}
+.hdr-id{font-size:12px;font-weight:700;color:var(--bl);font-family:'JetBrains Mono',monospace;background:var(--bl-bg);padding:4px 10px;border-radius:var(--radius-sm);letter-spacing:.3px;}
+.hdr-title{font-size:16px;font-weight:700;letter-spacing:-0.02em;}
+.hdr-count{font-size:13px;color:var(--em);font-weight:600;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.hdr-file{font-size:11px;color:var(--tm);font-family:'JetBrains Mono',monospace;}
+
+/* Smart Summary Banner (#7) */
+.smart-banner{background:linear-gradient(90deg,var(--bl-bg),var(--pu-bg));border-bottom:1px solid var(--brd);padding:8px 28px;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--t2);position:relative;z-index:10;overflow:hidden;transition:all .4s;}
+.smart-banner .sb-icon{font-size:14px;animation:float 3s ease-in-out infinite;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
+.smart-banner .sb-msg{flex:1;font-weight:500;}
+.smart-banner .sb-action{font-size:10px;color:var(--bl);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+
+/* Progress bar */
+.progress{background:var(--bg1);border-bottom:1px solid var(--brd);padding:16px 28px;display:flex;align-items:center;gap:0;position:relative;z-index:10;transition:background .4s;}
+.step-ind{display:flex;align-items:center;gap:0;flex:1;}
+.step-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;border:2px solid var(--brd);color:var(--tm);background:var(--bg2);flex-shrink:0;cursor:pointer;transition:all .2s;position:relative;}
+.step-dot.active{border-color:var(--bl);color:var(--bl);background:var(--bl-bg);box-shadow:0 0 12px rgba(96,165,250,.15);}
+.step-dot.done{border-color:var(--em);color:var(--em);background:var(--em-bg);}
+.step-label{font-size:11px;font-weight:600;color:var(--tm);margin-left:8px;white-space:nowrap;letter-spacing:.3px;}
+.step-label.active{color:var(--bl);}
+.step-label.done{color:var(--em);}
+.step-line{flex:1;height:2px;background:var(--brd);margin:0 14px;border-radius:1px;}
+.step-line.done{background:var(--em);}
+
+/* Blocker badge on step dot */
+.blocker-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--rd);color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg1);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+
+/* Mini status bar */
+.status-bar{background:var(--bg2);border-bottom:1px solid var(--brd);padding:8px 28px;display:flex;align-items:center;gap:16px;font-size:11px;color:var(--t2);position:relative;z-index:10;transition:background .4s;}
+.status-bar .sb-item{display:flex;align-items:center;gap:5px;}
+.sb-dot{width:8px;height:8px;border-radius:50%;}
+
+/* Layer summary strip */
+.layer-strip{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.layer-chip{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--brd);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;}
+.layer-chip:hover{border-color:var(--bl);background:var(--bl-bg);}
+.chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+
+/* Content */
+.content{max-width:920px;margin:0 auto;padding:24px 28px 90px;position:relative;z-index:1;transition:max-width .3s;}
+.step-panel{display:none;}
+.step-panel.active{display:block;animation:fadeIn .25s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* Cards */
+.card{background:var(--bg1);border:1px solid var(--brd);border-radius:var(--radius);padding:20px;margin-bottom:16px;transition:border-color .2s,opacity .3s,filter .3s,background .4s;}
+.card:hover{border-color:rgba(96,165,250,.15);}
+.card-t{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+
+/* Layer cards */
+.layer{background:var(--bg1);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;transition:all .3s;}
+.layer.pending{border-color:var(--am-brd);}
+.layer.ignored{opacity:.55;border-style:dashed;}
+.layer-head{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;}
+.layer-sw{width:32px;height:32px;border-radius:8px;border:1px solid var(--brd);flex-shrink:0;}
+.layer-info{flex:1;}
+.layer-name{font-size:15px;font-weight:700;letter-spacing:-0.01em;}
+.layer-meta{font-size:11px;color:var(--tm);margin-top:2px;}
+.layer-badge{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 10px;border-radius:var(--radius-sm);transition:all .4s ease;}
+.b-ok{background:var(--em-bg);border:1px solid var(--em-brd);color:var(--em);}
+.b-pend{background:var(--am-bg);border:1px solid var(--am-brd);color:var(--am);}
+.b-ign{background:rgba(100,116,139,.06);border:1px solid rgba(100,116,139,.12);color:var(--tm);}
+.b-plan{background:var(--bl-bg);border:1px solid var(--bl-brd);color:var(--bl);}
+.b-vi{background:var(--vi-bg);border:1px solid var(--vi-brd);color:var(--vi);}
+
+.layer-body{padding:0 20px 20px;display:none;}
+.layer.open .layer-body{display:block;}
+
+/* Focus mode (#6) */
+.focus-active .layer{opacity:.3;filter:blur(1px);pointer-events:none;transition:all .3s;}
+.focus-active .layer.focused{opacity:1;filter:none;pointer-events:auto;border-color:var(--bl);box-shadow:0 0 20px rgba(96,165,250,.15);}
+.focus-active .note,.focus-active .layer-strip,.focus-active .svg-prev,.focus-active .svg-dropzone{opacity:.2;filter:blur(1px);}
+.focus-exit{position:fixed;top:50%;right:20px;transform:translateY(-50%);background:var(--bg1);border:1px solid var(--bl-brd);color:var(--bl);font-size:10px;font-weight:700;padding:8px 12px;border-radius:var(--radius-sm);cursor:pointer;z-index:200;display:none;box-shadow:0 4px 16px rgba(0,0,0,.3);}
+.focus-active .focus-exit{display:block;animation:fadeIn .3s;}
+
+/* Sub-group row */
+.subgrp{background:var(--bg3);border:1px solid var(--brd);border-radius:8px;padding:14px;margin-bottom:10px;transition:background .4s;}
+.subgrp-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.subgrp-sw{width:20px;height:20px;border-radius:5px;border:1px solid var(--brd);}
+.subgrp-name{font-size:13px;font-weight:700;}
+.subgrp-det{font-size:10px;color:var(--tm);}
+
+/* Form elements */
+.lbl{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--tm);font-weight:600;margin-bottom:5px;display:block;}
+.inp,.sel{width:100%;background:var(--bg3);border:1px solid var(--brd);border-radius:var(--radius-sm);padding:9px 12px;font-size:13px;color:var(--t1);outline:none;margin-bottom:0;transition:border-color .2s,background .4s;}
+.inp:focus,.sel:focus{border-color:var(--bl);box-shadow:0 0 0 2px rgba(96,165,250,.08);}
+.sel{appearance:auto;}
+.row{display:grid;gap:12px;margin-bottom:12px;}
+.r2{grid-template-columns:1fr 1fr;}
+.r3{grid-template-columns:1fr 1fr 1fr;}
+.r4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:700px){.r2,.r3,.r4{grid-template-columns:1fr;}}
+
+/* Color picker inline */
+.cpk{display:flex;align-items:center;gap:10px;background:var(--bg0);border:1px solid var(--brd);border-radius:var(--radius-sm);padding:10px 12px;transition:background .4s;}
+.cpk-sw{width:24px;height:24px;border-radius:5px;border:1px solid var(--brd);flex-shrink:0;}
+.cpk-txt{font-size:13px;font-weight:600;}
+.cpk-code{font-size:11px;color:var(--tm);font-family:'JetBrains Mono',monospace;}
+.cpk-series{font-size:9px;color:var(--pu);background:var(--pu-bg);padding:2px 7px;border-radius:4px;font-weight:700;text-transform:uppercase;}
+
+/* Buttons */
+.btn{padding:10px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .15s;letter-spacing:.01em;}
+.btn-p{background:#2563EB;color:white;}
+.btn-p:hover{background:#1D4ED8;box-shadow:0 4px 12px rgba(37,99,235,.25);}
+.btn-s{background:var(--bg2);border:1px solid var(--brd);color:var(--t1);}
+.btn-s:hover{border-color:var(--bl);}
+.btn-e{background:rgba(16,185,129,.12);border:1px solid var(--em-brd);color:var(--em);}
+.btn-dis{background:var(--bg2);border:1px solid var(--brd);color:var(--tm);cursor:not-allowed;opacity:.55;}
+.btn-reset{background:transparent;border:1px solid var(--brd);color:var(--tm);font-size:10px;padding:5px 10px;border-radius:4px;cursor:pointer;transition:all .15s;}
+.btn-reset:hover{border-color:var(--am);color:var(--am);}
+
+/* Notes */
+.note{font-size:12px;padding:10px 14px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.6;transition:opacity .3s,filter .3s;}
+.note-b{background:var(--bl-bg);border:1px solid var(--bl-brd);color:var(--bl);}
+.note-a{background:var(--am-bg);border:1px solid var(--am-brd);color:var(--am);}
+.note-e{background:var(--em-bg);border:1px solid var(--em-brd);color:var(--em);}
+.note-m{background:rgba(100,116,139,.04);border:1px solid rgba(100,116,139,.1);color:var(--tm);}
+
+/* Stats */
+.stat{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--radius-sm);padding:12px;text-align:center;transition:background .4s;}
+.stat-v{font-size:20px;font-weight:700;letter-spacing:-0.02em;}
+.stat-l{font-size:10px;color:var(--tm);text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
+
+/* Material rows */
+.mat-row{display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--brd);font-size:12px;}
+.mat-row:last-child{border-bottom:none;}
+.mat-head{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--tm);font-weight:700;padding:8px 12px;background:var(--bg2);border-radius:var(--radius-sm) var(--radius-sm) 0 0;}
+.mat-grp{background:var(--bg3);border:1px solid var(--brd);border-radius:8px;margin-bottom:12px;overflow:hidden;transition:background .4s;}
+.mat-grp-t{font-size:12px;font-weight:700;padding:10px 12px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:8px;}
+.mat-formula{font-size:10px;color:var(--tm);font-style:italic;padding:6px 12px 8px;}
+
+/* Readiness */
+.rdy{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(42,53,72,.5);font-size:13px;}
+.rdy:last-child{border-bottom:none;}
+.rdy-icon{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.rdy-ok{background:var(--em);color:#000;}
+.rdy-warn{background:var(--am);color:#000;}
+
+/* Footer nav */
+.nav-footer{position:fixed;bottom:0;left:0;right:0;background:var(--bg1);border-top:1px solid var(--brd);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;z-index:100;backdrop-filter:blur(8px);transition:background .4s;}
+.nav-hint{font-size:12px;color:var(--tm);}
+.nav-keys{font-size:9px;color:var(--tm);opacity:.6;margin-top:2px;}
+
+/* Collapse */
+details>summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--t2);padding:8px 0;list-style:none;}
+details>summary::-webkit-details-marker{display:none;}
+details>summary::before{content:'▶ ';font-size:9px;}
+details[open]>summary::before{content:'▼ ';}
+
+.cfm{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);margin-top:8px;}
+.cfm input{accent-color:var(--em);width:16px;height:16px;}
+
+/* SVG preview */
+.svg-prev{background:#F8FAFC;border:1px solid var(--brd);border-radius:var(--radius);padding:18px;text-align:center;margin-bottom:16px;position:relative;transition:opacity .3s,filter .3s;}
+[data-theme="light"] .svg-prev{background:#FFFFFF;}
+.svg-prev .replace-btn{position:absolute;top:10px;right:10px;background:var(--bg2);border:1px solid var(--brd);color:var(--t2);font-size:10px;font-weight:600;padding:5px 10px;border-radius:4px;cursor:pointer;transition:all .15s;}
+.svg-prev .replace-btn:hover{border-color:var(--bl);color:var(--bl);}
+
+/* SVG Upload Drop Zone */
+.svg-dropzone{border:2px dashed var(--brd);border-radius:var(--radius);padding:32px 18px;text-align:center;margin-bottom:16px;cursor:pointer;transition:all .2s;}
+.svg-dropzone:hover{border-color:var(--bl);background:var(--bl-bg);box-shadow:0 0 16px rgba(96,165,250,.08);}
+.svg-dropzone .dz-icon{font-size:28px;margin-bottom:8px;opacity:.5;}
+.svg-dropzone .dz-text{font-size:12px;color:var(--t2);margin-bottom:10px;}
+.svg-dropzone .dz-btn{display:inline-block;background:var(--bg2);border:1px solid var(--brd);color:var(--bl);font-size:11px;font-weight:600;padding:6px 14px;border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;}
+.svg-dropzone .dz-btn:hover{background:var(--bl-bg);border-color:var(--bl);}
+.svg-file-info{font-size:11px;color:var(--tm);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.svg-file-info .fi-replace{color:var(--bl);cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:2px;}
+.svg-file-info .fi-replace:hover{color:#93C5FD;}
+
+/* Collapsible auto-derived */
+.derived-wrap{background:var(--bg1);border:1px solid var(--brd);border-radius:var(--radius);margin-bottom:16px;overflow:hidden;transition:background .4s;}
+.derived-toggle{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;font-size:12px;font-weight:600;color:var(--t2);border-bottom:1px solid transparent;transition:all .2s;}
+.derived-wrap.open .derived-toggle{border-bottom-color:var(--brd);}
+.derived-toggle .arrow{transition:transform .2s;font-size:10px;}
+.derived-wrap.open .derived-toggle .arrow{transform:rotate(90deg);}
+.derived-body{display:none;padding:0;}
+.derived-wrap.open .derived-body{display:block;}
+.derived-body .card{border:none;border-bottom:1px solid var(--brd);border-radius:0;margin-bottom:0;}
+.derived-body .card:last-child{border-bottom:none;}
+
+/* Voice Command Hint (#1) */
+.voice-hint{position:fixed;bottom:75px;right:28px;z-index:150;display:flex;align-items:center;gap:8px;flex-direction:row-reverse;}
+.voice-btn{width:40px;height:40px;border-radius:50%;background:var(--bg1);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative;}
+.voice-btn:hover{border-color:var(--bl);box-shadow:0 0 16px rgba(96,165,250,.15);}
+.voice-btn .mic-icon{font-size:16px;animation:micPulse 2.5s ease-in-out infinite;}
+@keyframes micPulse{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.1);}}
+.voice-tooltip{background:var(--bg1);border:1px solid var(--brd);border-radius:var(--radius-sm);padding:10px 14px;font-size:11px;color:var(--t2);display:none;max-width:200px;box-shadow:0 8px 24px rgba(0,0,0,.3);}
+.voice-btn:hover+.voice-tooltip,.voice-tooltip:hover{display:block;}
+.voice-tooltip code{background:var(--bg3);padding:1px 5px;border-radius:3px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--bl);}
+
+/* AI Copilot Sidebar (#2) */
+.copilot{position:fixed;top:0;right:-320px;width:300px;height:100vh;background:var(--bg1);border-left:1px solid var(--brd);z-index:180;transition:right .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-8px 0 32px rgba(0,0,0,.2);}
+.copilot.open{right:0;}
+.copilot-toggle{position:fixed;top:50%;right:0;transform:translateY(-50%);width:32px;height:64px;background:var(--bg1);border:1px solid var(--brd);border-right:none;border-radius:var(--radius-sm) 0 0 var(--radius-sm);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:181;font-size:16px;transition:right .35s cubic-bezier(.4,0,.2,1);box-shadow:-2px 0 8px rgba(0,0,0,.2);}
+.copilot.open~.copilot-toggle{right:300px;}
+.copilot-head{padding:16px;border-bottom:1px solid var(--brd);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;}
+.copilot-head .ai-dot{width:8px;height:8px;border-radius:50%;background:var(--em);animation:pulse 2s infinite;}
+.copilot-body{flex:1;overflow-y:auto;padding:14px;}
+.copilot-msg{background:var(--bg3);border:1px solid var(--brd);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:10px;font-size:12px;color:var(--t2);line-height:1.5;animation:fadeIn .3s;}
+.copilot-msg .cm-label{font-size:9px;text-transform:uppercase;letter-spacing:.5px;color:var(--bl);font-weight:700;margin-bottom:4px;}
+.copilot-msg .cm-action{display:inline-block;margin-top:6px;font-size:10px;color:var(--em);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+
+/* Theme toggle (#5) */
+.theme-toggle{width:32px;height:32px;border-radius:50%;background:var(--bg2);border:1px solid var(--brd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .2s;position:relative;overflow:hidden;}
+.theme-toggle:hover{border-color:var(--bl);}
+.theme-morph{position:fixed;border-radius:50%;background:var(--bg0);z-index:9999;pointer-events:none;transition:none;}
+
+/* Sound toggle (#4) */
+.sound-toggle{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--tm);cursor:pointer;padding:4px 8px;border-radius:4px;border:1px solid transparent;transition:all .15s;}
+.sound-toggle:hover{border-color:var(--brd);color:var(--t2);}
+.sound-toggle .snd-icon{font-size:12px;}
+
+/* Confetti (#8) */
+.confetti-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9998;pointer-events:none;}
+
+/* Gesture hint */
+.gesture-hint{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--bg1);border:1px solid var(--bl-brd);border-radius:var(--radius);padding:12px 20px;font-size:13px;color:var(--bl);font-weight:600;z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.gesture-hint.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- PARTICLE BACKGROUND -->
+<canvas id="atoms-bg" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;"></canvas>
+
+<!-- SMART SUMMARY BANNER (#7) -->
+<div class="smart-banner" id="smart-banner">
+  <span class="sb-icon">🧠</span>
+  <span class="sb-msg" id="smart-msg">Emblema layer needs print artwork confirmation — confirm to unlock quote creation</span>
+  <span class="sb-action" id="smart-action" onclick="handleSmartAction()">Fix now →</span>
+</div>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-id">IV3-PBL-COLOR</span>
+    <span class="hdr-title">PUBLIMEDIA — Litere volumetrice</span>
+    <span class="hdr-count">12 litere</span>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-file">pbl-color.svg · 61 KB · CorelDRAW 2020</span>
+    <span class="layer-badge b-ok">SVG Saved</span>
+    <!-- Theme Toggle (#5) -->
+    <div class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle theme">🌗</div>
+  </div>
+</header>
+
+<!-- PROGRESS BAR -->
+<div class="progress" id="progress-bar">
+  <div class="step-ind">
+    <div class="step-dot active" data-step="1">1</div>
+    <span class="step-label active">LAYERS</span>
+    <div class="step-line"></div>
+    <div class="step-dot" data-step="2">2</div>
+    <span class="step-label">REVIEW</span>
+    <div class="step-line"></div>
+    <div class="step-dot" data-step="3">3<span class="blocker-badge" id="blocker-dot">1</span></div>
+    <span class="step-label">CONFIRM</span>
+  </div>
+</div>
+
+<!-- MINI STATUS BAR -->
+<div class="status-bar" id="status-bar">
+  <div class="sb-item"><span class="sb-dot" style="background:var(--em);"></span> <span id="sb-confirmed">2/3</span> layers confirmed</div>
+  <div class="sb-item"><span class="sb-dot" style="background:var(--rd);"></span> <span id="sb-blockers">1</span> blocker</div>
+  <div class="sb-item" style="margin-left:auto;font-size:10px;color:var(--tm);">Quote: <span id="sb-quote" style="color:var(--am);">Blocked</span></div>
+</div>
+
+<!-- ==================== STEP 1: LAYERS ==================== -->
+<div class="content">
+<div class="step-panel active" id="step-1">
+
+  <!-- SVG Upload Zone + Preview -->
+  <div id="svg-preview-state" class="svg-prev">
+    <button class="replace-btn" onclick="showDropzone()">↻ Replace SVG</button>
+    <svg viewBox="0 0 366 80" width="440" height="96" xmlns="http://www.w3.org/2000/svg">
+      <rect fill="#F8FAFC" width="366" height="80" rx="4"/>
+      <polygon fill="#CF1C5F" points="40,5 45,20 61,20 48,29 53,44 40,35 27,44 32,29 19,20 35,20" opacity="0.9"/>
+      <polygon fill="#F5A00F" points="40,5 45,20 61,20 48,29 53,44 40,35 27,44 32,29 19,20 35,20" opacity="0.4" transform="rotate(36,40,25)"/>
+      <text x="88" y="50" fill="#E31E24" font-size="24" font-weight="bold" font-family="sans-serif">RC</text>
+      <text x="148" y="48" fill="#393185" font-size="16" font-weight="bold" font-family="sans-serif">PUBLIMEDIA</text>
+      <line x1="88" y1="28" x2="350" y2="28" stroke="#2B2A29" stroke-width="0.3" opacity="0.3"/>
+      <line x1="88" y1="52" x2="350" y2="52" stroke="#2B2A29" stroke-width="0.3" opacity="0.3"/>
+    </svg>
+    <div class="svg-file-info">
+      <span>pbl-color.svg · 61 KB · Uploaded 2 min ago</span>
+      <span class="fi-replace" onclick="showDropzone()">Replace</span>
+    </div>
+  </div>
+
+  <div id="svg-dropzone-state" class="svg-dropzone" style="display:none;" onclick="simulateUpload()">
+    <div class="dz-icon">📁</div>
+    <div class="dz-text">Drag & drop SVG file here, or click to browse</div>
+    <span class="dz-btn">Browse files</span>
+  </div>
+
+  <!-- Layer Summary Strip -->
+  <div class="layer-strip" id="layer-strip">
+    <div class="layer-chip" onclick="scrollToLayer('layer-litere')">
+      <span class="chip-dot" style="background:var(--em);"></span>
+      <span>Litere volumetrice</span>
+    </div>
+    <div class="layer-chip" onclick="scrollToLayer('layer-emblema')">
+      <span class="chip-dot" style="background:var(--am);"></span>
+      <span>Emblema</span>
+    </div>
+    <div class="layer-chip" onclick="scrollToLayer('layer-cadru')">
+      <span class="chip-dot" style="background:var(--tm);"></span>
+      <span>Cadru</span>
+    </div>
+  </div>
+
+  <div class="note note-b" style="margin-bottom:14px;">Layer names are detection evidence. Your confirmed setup is production truth.</div>
+
+  <!-- LAYER 1: Litere volumetrice -->
+  <div class="layer open" id="layer-litere" data-status="confirmed">
+    <div class="layer-head" onclick="toggleLayer('layer-litere')">
+      <div class="layer-sw" style="background:linear-gradient(135deg,#E31E24 50%,#393185 50%);"></div>
+      <div class="layer-info">
+        <div class="layer-name">Litere volumetrice</div>
+        <div class="layer-meta">2 sub-groups · 12 glyphs · 2 SVG fills detected</div>
+      </div>
+      <span class="layer-badge b-ok" id="badge-litere">Confirmed</span>
+    </div>
+    <div class="layer-body">
+      <div class="row r2" style="margin-bottom:12px;">
+        <div><label class="lbl">Role</label><select class="sel" data-default="Face / Letters"><option selected>Face / Letters</option><option>Return / Cant</option><option>Backing</option><option>Printed Artwork</option><option>Technical Cutouts</option><option>Reference / Ignore</option></select></div>
+        <div><label class="lbl">Material Family</label><select class="sel" data-default="Oracal 8500 — translucent"><option>Oracal 641</option><option>Oracal 651</option><option selected>Oracal 8500 — translucent</option><option>Custom / manual</option></select></div>
+      </div>
+
+      <!-- Sub-group: RC -->
+      <div class="subgrp">
+        <div class="subgrp-head">
+          <div class="subgrp-sw" style="background:#E31E24;"></div>
+          <span class="subgrp-name">RC</span>
+          <span class="subgrp-det">2 glyphs · SVG fill #E31E24</span>
+        </div>
+        <div class="cpk">
+          <div class="cpk-sw" style="background:#E31E24;"></div>
+          <span class="cpk-txt">031 Red</span>
+          <span class="cpk-code">#E31E24</span>
+          <span class="cpk-series">Oracal 8500</span>
+        </div>
+        <div class="cfm"><input type="checkbox" checked onchange="updateStatus()"> <span>Sub-group confirmed</span></div>
+      </div>
+
+      <!-- Sub-group: PUBLIMEDIA -->
+      <div class="subgrp">
+        <div class="subgrp-head">
+          <div class="subgrp-sw" style="background:#393185;"></div>
+          <span class="subgrp-name">PUBLIMEDIA</span>
+          <span class="subgrp-det">10 glyphs · SVG fill #393185</span>
+        </div>
+        <div class="cpk">
+          <div class="cpk-sw" style="background:#393185;"></div>
+          <span class="cpk-txt">518 Steel Blue</span>
+          <span class="cpk-code">#393185</span>
+          <span class="cpk-series">Oracal 8500</span>
+        </div>
+        <div class="cfm"><input type="checkbox" checked onchange="updateStatus()"> <span>Sub-group confirmed</span></div>
+      </div>
+
+      <div style="text-align:right;margin-top:8px;">
+        <button class="btn-reset" onclick="resetLayer('layer-litere')">↺ Reset to SVG defaults</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 2: Emblema (pending) -->
+  <div class="layer pending open" id="layer-emblema" data-status="pending">
+    <div class="layer-head" onclick="toggleLayer('layer-emblema')">
+      <div class="layer-sw" style="background:conic-gradient(#CF1C5F,#F5A00F,#55A948,#2F8AB7,#7F2A75,#CF1C5F);"></div>
+      <div class="layer-info">
+        <div class="layer-name">Emblema</div>
+        <div class="layer-meta">510 polygons · multi-color gradient star · clip-path</div>
+      </div>
+      <span class="layer-badge b-pend" id="badge-emblema" title="Print artwork confirmation required">Needs setup</span>
+    </div>
+    <div class="layer-body">
+      <div class="note note-a">⚡ Suggested: Printed Artwork. 510 gradient polygons — cannot be single Oracal color.</div>
+      <div class="row r2">
+        <div><label class="lbl">Role</label><select class="sel" data-default="Printed Artwork"><option>Face / Letters</option><option>Return / Cant</option><option>Backing</option><option selected>Printed Artwork</option><option>Technical Cutouts</option><option>Reference / Ignore</option></select></div>
+        <div><label class="lbl">Print Method</label><select class="sel" data-default="Printed vinyl"><option selected>Printed vinyl</option><option>Direct print</option><option>Other</option></select></div>
+      </div>
+      <div class="row r3">
+        <div><label class="lbl">Laminate</label><select class="sel" data-default="Yes"><option selected>Yes</option><option>No</option></select></div>
+        <div><label class="lbl">Contour Cut</label><select class="sel" data-default="Yes — star shape"><option selected>Yes — star shape</option><option>No</option></select></div>
+        <div><label class="lbl">White Ink</label><select class="sel" data-default="White ink underlay"><option>None</option><option selected>White ink underlay</option><option>White vinyl backing</option></select></div>
+      </div>
+      <div class="row r2">
+        <div><label class="lbl">Area Estimate</label><input class="inp" data-default="~0.35 m² (star ~80×80 cm)" value="~0.35 m² (star ~80×80 cm)"></div>
+        <div><label class="lbl">Print Notes</label><input class="inp" data-default="Gradient star, white underlay, contour cut" value="Gradient star, white underlay, contour cut"></div>
+      </div>
+      <div class="cfm"><input type="checkbox" id="cfm-emblema" onchange="updateStatus()"> <span>Confirm print artwork setup</span></div>
+
+      <div style="text-align:right;margin-top:8px;">
+        <button class="btn-reset" onclick="resetLayer('layer-emblema')">↺ Reset to SVG defaults</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LAYER 3: Cadru (ignored) -->
+  <div class="layer ignored" id="layer-cadru" data-status="ignored">
+    <div class="layer-head" onclick="toggleLayer('layer-cadru')">
+      <div class="layer-sw" style="background:transparent;border:2px dashed #2B2A29;"></div>
+      <div class="layer-info">
+        <div class="layer-name">Cadru</div>
+        <div class="layer-meta">10 rects · stroke only #2B2A29 · alignment guides</div>
+      </div>
+      <span class="layer-badge b-ign">Reference / Ignore</span>
+    </div>
+    <div class="layer-body">
+      <div style="font-size:12px;color:var(--tm);padding:6px 0;">Reference layer — used for alignment/dimensions only. Not used in production material calculations.</div>
+      <div class="row r2">
+        <div><label class="lbl">Role</label><select class="sel" data-default="Reference / Ignore"><option>Face / Letters</option><option>Return / Cant</option><option>Backing</option><option>Printed Artwork</option><option>Technical Cutouts</option><option selected>Reference / Ignore</option></select></div>
+      </div>
+      <div style="text-align:right;margin-top:8px;">
+        <button class="btn-reset" onclick="resetLayer('layer-cadru')">↺ Reset to SVG defaults</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== STEP 2: REVIEW ==================== -->
+<div class="step-panel" id="step-2">
+
+  <div class="derived-wrap open" id="derived-wrap">
+    <div class="derived-toggle" onclick="toggleDerived()">
+      <span>⚙️ Auto-derived settings (Geometry, Return/Cant, Lighting)</span>
+      <span class="arrow">▶</span>
+    </div>
+    <div class="derived-body">
+      <div class="card">
+        <div class="card-t">📐 Geometry <span class="layer-badge b-ok">Confirmed</span></div>
+        <div class="row r4">
+          <div class="stat"><div class="stat-v">4654</div><div class="stat-l">Width (mm)</div></div>
+          <div class="stat"><div class="stat-v">1019</div><div class="stat-l">Height (mm)</div></div>
+          <div class="stat"><div class="stat-v">80</div><div class="stat-l">Depth (mm)</div></div>
+          <div class="stat"><div class="stat-v" style="color:var(--em);">12</div><div class="stat-l">Letters</div></div>
+        </div>
+        <div style="display:flex;gap:14px;margin-top:10px;font-size:12px;color:var(--t2);">
+          <span>Perimeter: ~28 m</span>
+          <span>Face area: ~3.2 m²</span>
+          <span>Assembly area: ~4.74 m²</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">↩️ Return / Cant <span class="layer-badge b-ign" style="font-size:7px;">Global Default</span></div>
+        <div class="note note-m">No dedicated Return/Cant layer detected. Default treatment applies globally.</div>
+        <div class="row r3">
+          <div><label class="lbl">Treatment</label><select class="sel"><option selected>Standard aluminum (white)</option><option>Black aluminum</option><option>Mirror</option><option>Oracal wrapped</option><option>RAL painted</option></select></div>
+          <div><label class="lbl">Depth</label><select class="sel"><option>30 mm</option><option>60 mm</option><option selected>80 mm</option><option>100 mm</option></select></div>
+          <div><label class="lbl">Backing</label><select class="sel"><option selected>Forex 10 mm</option><option>ACM / Dibond</option><option>Plexiglas</option></select></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-t">💡 Lighting & PSU <span class="layer-badge b-plan">Planning</span></div>
+        <div class="note note-m">Lighting plan — used for quote and production planning.</div>
+        <div class="row r4">
+          <div><label class="lbl">Mode</label><select class="sel"><option selected>Frontlit</option><option>Backlit / halo</option><option>Non-illuminated</option></select></div>
+          <div><label class="lbl">LED System</label><select class="sel"><option selected>LED modules</option><option>LED strip</option></select></div>
+          <div><label class="lbl">Color</label><select class="sel"><option selected>Warm</option><option>Cold</option><option>Neutral</option></select></div>
+          <div><label class="lbl">Module Power</label><select class="sel"><option>0.72 W</option><option selected>1.44 W</option></select></div>
+        </div>
+        <div class="row r4" style="margin-top:8px;">
+          <div class="stat"><div class="stat-v">120</div><div class="stat-l">Modules</div></div>
+          <div class="stat"><div class="stat-v">173 W</div><div class="stat-l">LED Total</div></div>
+          <div class="stat"><div class="stat-v">225 W</div><div class="stat-l">Required (×1.3)</div></div>
+          <div class="stat"><div class="stat-v" style="color:var(--em);">2×160W</div><div class="stat-l">PSU Proposal</div></div>
+        </div>
+        <details style="margin-top:8px;"><summary>Manual PSU override</summary>
+          <div class="row r2" style="padding:8px 0;">
+            <div><label class="lbl">Custom PSU</label><input class="inp" placeholder="e.g. 3×100W"></div>
+            <div><label class="lbl">Reason</label><input class="inp" placeholder="e.g. stock issue"></div>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">📦 Material Breakdown <span class="layer-badge b-plan">Read-only</span></div>
+    <div class="note note-m">Material calculation is read-only. It estimates needs from confirmed geometry, layers and finishes.</div>
+    <div style="font-size:11px;color:var(--tm);margin-bottom:10px;">Based on confirmed layer setup only. Pending layers marked separately.</div>
+
+    <div class="mat-grp">
+      <div class="mat-grp-t"><div class="cpk-sw" style="width:10px;height:10px;background:linear-gradient(135deg,#E31E24 50%,#393185 50%);border:none;border-radius:2px;"></div> Face Materials</div>
+      <div class="mat-head" style="display:grid;grid-template-columns:2fr 1.5fr 1fr 1fr auto;gap:8px;">
+        <span>Material</span><span>Source</span><span>Estimated</span><span>Calc (+20%)</span><span>Status</span>
+      </div>
+      <div class="mat-row">
+        <span><span style="display:inline-block;width:8px;height:8px;background:#E31E24;border-radius:2px;margin-right:4px;"></span>Oracal 8500 — 031 Red</span>
+        <span>RC face (2 letters)</span>
+        <span>~0.45 m²</span>
+        <span style="font-weight:600;">~0.54 m²</span>
+        <span class="layer-badge b-ok">Confirmed</span>
+      </div>
+      <div class="mat-row">
+        <span><span style="display:inline-block;width:8px;height:8px;background:#393185;border-radius:2px;margin-right:4px;"></span>Oracal 8500 — 518 Steel Blue</span>
+        <span>PUBLIMEDIA face (10)</span>
+        <span>~2.75 m²</span>
+        <span style="font-weight:600;">~3.30 m²</span>
+        <span class="layer-badge b-ok">Confirmed</span>
+      </div>
+      <div class="mat-formula">face vinyl = confirmed face area × 1.2 waste</div>
+    </div>
+
+    <div class="mat-grp" style="border-color:var(--am-brd);">
+      <div class="mat-grp-t" style="color:var(--am);">🖨️ Printed Artwork</div>
+      <div class="mat-row" style="opacity:.65;">
+        <span>Printed vinyl + laminate</span>
+        <span>Emblema</span>
+        <span>~0.35 m²</span>
+        <span style="color:var(--am);">Pending</span>
+        <span class="layer-badge b-pend">Needs confirmation</span>
+      </div>
+      <div class="mat-formula">Emblema pending print confirmation — not included in final calculation.</div>
+    </div>
+
+    <div class="mat-grp">
+      <div class="mat-grp-t">🔲 Backing</div>
+      <div class="mat-row">
+        <span>Forex 10 mm</span>
+        <span>Global backing</span>
+        <span>~4.74 m²</span>
+        <span style="font-weight:600;">~5.69 m²</span>
+        <span class="layer-badge b-ok">Confirmed</span>
+      </div>
+      <div class="mat-formula">backing = assembly area × 1.2 waste</div>
+    </div>
+
+    <div class="mat-grp">
+      <div class="mat-grp-t">↩️ Return / Cant</div>
+      <div class="mat-row">
+        <span>Aluminum — white</span>
+        <span>Global fallback (80mm)</span>
+        <span>~28 m</span>
+        <span style="font-weight:600;">~33.6 m</span>
+        <span class="layer-badge b-ign">Default</span>
+      </div>
+      <div class="mat-formula">return = confirmed perimeter × 1.2 waste</div>
+    </div>
+
+    <div class="mat-grp">
+      <div class="mat-grp-t">💡 Lighting</div>
+      <div class="mat-row">
+        <span>LED modules (1.44W)</span>
+        <span>Lighting plan</span>
+        <span>120 modules</span>
+        <span style="font-weight:600;">120 pcs</span>
+        <span class="layer-badge b-plan">Planned</span>
+      </div>
+      <div class="mat-row">
+        <span>Power supplies</span>
+        <span>Auto proposal</span>
+        <span>225 W needed</span>
+        <span style="font-weight:600;">2 × 160 W</span>
+        <span class="layer-badge b-plan">Planned</span>
+      </div>
+      <div class="mat-formula">PSU = LED total × 1.3 reserve</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">✅ Readiness</div>
+    <div class="rdy"><div class="rdy-icon rdy-ok">✓</div><div>SVG analyzed & saved (pbl-color.svg, 61 KB)</div></div>
+    <div class="rdy"><div class="rdy-icon rdy-ok">✓</div><div>Geometry confirmed (4654 × 1019 × 80 mm, 12 letters)</div></div>
+    <div class="rdy"><div class="rdy-icon rdy-ok">✓</div><div>Litere volumetrice: RC + PUBLIMEDIA confirmed (Oracal 8500)</div></div>
+    <div class="rdy"><div class="rdy-icon rdy-warn">!</div><div style="color:var(--am);">Emblema needs print artwork confirmation before quote can be created</div></div>
+    <div class="rdy"><div class="rdy-icon rdy-ok">✓</div><div>Lighting plan complete (2×160W)</div></div>
+    <div class="rdy"><div class="rdy-icon rdy-ok">✓</div><div>Return/Cant: global default (aluminum white, 80mm)</div></div>
+    <div style="font-size:11px;color:var(--tm);margin-top:10px;padding-top:8px;border-top:1px solid var(--brd);">Material estimate is preview-only. No inventory mutation at this stage.</div>
+  </div>
+
+  <details class="card" style="padding:0;">
+    <summary style="padding:16px 20px;margin:0;">Show advanced technical details</summary>
+    <div style="padding:0 20px 16px;font-size:11px;color:var(--tm);line-height:2.2;">
+      <div>Source: pbl-color.svg · CorelDRAW 2020 (64-Bit) · viewBox 0 0 365.97667 80.08659</div>
+      <div>Layers: Cadru (Reference), Litere volumetrice (Face), Emblema (Print pending)</div>
+      <div>Colors: #E31E24→Oracal 031, #393185→Oracal 518, #2B2A29 (frame stroke)</div>
+      <div>Clip-path: id0 (star shape for Emblema)</div>
+      <div>Policies: guard=enabled · owner_decision=required · snapshot=on_create</div>
+    </div>
+  </details>
+
+</div>
+
+<!-- ==================== STEP 3: CONFIRM ==================== -->
+<div class="step-panel" id="step-3">
+
+  <div class="card">
+    <div class="card-t">📋 Summary</div>
+    <div style="display:grid;grid-template-columns:110px 1fr;gap:4px 14px;font-size:13px;line-height:2;">
+      <span style="color:var(--tm);">Request</span><span style="font-family:monospace;color:var(--bl);">IV3-PBL-COLOR</span>
+      <span style="color:var(--tm);">Source</span><span>pbl-color.svg (CorelDRAW 2020)</span>
+      <span style="color:var(--tm);">Dimensions</span><span>4654 × 1019 × 80 mm</span>
+      <span style="color:var(--tm);">Letters</span><span style="color:var(--em);font-weight:700;">12 (RC: 2 + PUBLIMEDIA: 10)</span>
+      <span style="color:var(--tm);">Illumination</span><span>Frontlit · 2×160W PSU</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">✓ Confirmed Setup</div>
+    <div style="font-size:13px;line-height:2.2;color:var(--t2);">
+      <div>✓ <span style="display:inline-block;width:10px;height:10px;background:#E31E24;border-radius:3px;margin:0 5px;"></span> RC → Oracal 8500 — 031 Red (~0.54 m²)</div>
+      <div>✓ <span style="display:inline-block;width:10px;height:10px;background:#393185;border-radius:3px;margin:0 5px;"></span> PUBLIMEDIA → Oracal 8500 — 518 Steel Blue (~3.30 m²)</div>
+      <div>✓ Backing: Forex 10 mm (~5.69 m²)</div>
+      <div>✓ Return: Aluminum white, 80 mm (~33.6 m)</div>
+      <div>✓ LED: 120 modules + 2×160W PSU</div>
+    </div>
+    <div style="font-size:13px;line-height:2;color:var(--am);margin-top:8px;padding-top:8px;border-top:1px solid var(--brd);">
+      <div>⚠ Pending: Emblema — printed artwork (needs confirmation in Step 1)</div>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center;padding:24px;" id="quote-card">
+    <button class="btn btn-dis" style="font-size:15px;padding:14px 32px;" id="quote-btn">Create Guarded Draft Quote</button>
+    <div class="note note-a" style="margin-top:12px;text-align:left;" id="quote-blocker"><strong>Blocked:</strong> "Emblema" layer needs print artwork confirmation. Complete setup in Step 1.</div>
+    <div style="font-size:11px;color:var(--tm);margin-top:10px;">When ready: creates guarded draft only. No production start, no inventory, no tasks.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-t">Production Preview</div>
+    <div class="row r2">
+      <div style="font-size:12px;color:var(--t2);line-height:2;">
+        <div style="font-weight:600;color:var(--em);margin-bottom:4px;">Available</div>
+        <div>• Geometry & layer data</div>
+        <div>• Material breakdown (read-only)</div>
+        <div>• Lighting plan</div>
+      </div>
+      <div style="font-size:12px;color:var(--tm);line-height:2;">
+        <div style="font-weight:600;margin-bottom:4px;">After confirmation</div>
+        <div>• Procurement check</div>
+        <div>• Task handoff</div>
+        <div>• Production start</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- FOOTER NAV -->
+<div class="nav-footer">
+  <button class="btn btn-s" id="btn-back" style="visibility:hidden;">← Back</button>
+  <div style="text-align:center;">
+    <span class="nav-hint" id="nav-hint">Step 1 of 3 — Configure detected layers</span>
+    <div class="nav-keys">← → or Enter/Esc · Swipe · Scroll on progress bar</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <!-- Sound toggle (#4) -->
+    <div class="sound-toggle" id="sound-toggle" onclick="toggleSound()">
+      <span class="snd-icon">🔇</span>
+      <span id="snd-label">Off</span>
+    </div>
+    <button class="btn btn-p" id="btn-next">Next: Review →</button>
+  </div>
+</div>
+
+<!-- Voice Command Hint (#1) -->
+<div class="voice-hint">
+  <div class="voice-btn" id="voice-btn">
+    <span class="mic-icon">🎙️</span>
+  </div>
+  <div class="voice-tooltip">
+    <div style="font-weight:600;margin-bottom:6px;color:var(--t1);">Voice Commands</div>
+    <div><code>next step</code> — advance</div>
+    <div><code>confirm all</code> — confirm layers</div>
+    <div><code>show review</code> — go to Step 2</div>
+    <div><code>focus emblema</code> — focus mode</div>
+    <div style="margin-top:6px;font-size:9px;color:var(--tm);">Click mic to activate (mock)</div>
+  </div>
+</div>
+
+<!-- AI Copilot Sidebar (#2) -->
+<div class="copilot" id="copilot">
+  <div class="copilot-head">
+    <span class="ai-dot"></span>
+    <span>AI Copilot</span>
+    <span style="margin-left:auto;font-size:10px;color:var(--tm);">Context-aware</span>
+  </div>
+  <div class="copilot-body" id="copilot-body">
+    <div class="copilot-msg">
+      <div class="cm-label">💡 Suggestion</div>
+      Emblema has 510 gradient polygons — this cannot be cut from a single Oracal color. I've pre-selected "Printed Artwork" as the role.
+      <div class="cm-action" onclick="scrollToLayer('layer-emblema')">Go to Emblema →</div>
+    </div>
+    <div class="copilot-msg">
+      <div class="cm-label">📊 Insight</div>
+      Based on similar projects, Oracal 8500 translucent performs best for frontlit letters at this scale (4.6m wide).
+    </div>
+    <div class="copilot-msg">
+      <div class="cm-label">⚡ Quick Action</div>
+      All sub-groups in "Litere volumetrice" are confirmed. You can proceed to Step 2 for review.
+      <div class="cm-action" onclick="goToStep(2)">Go to Review →</div>
+    </div>
+  </div>
+</div>
+<div class="copilot-toggle" id="copilot-toggle" onclick="toggleCopilot()">🤖</div>
+
+<!-- Focus Mode Exit Button (#6) -->
+<button class="focus-exit" id="focus-exit" onclick="exitFocus()">✕ Exit Focus</button>
+
+<!-- Gesture Hint (#3) -->
+<div class="gesture-hint" id="gesture-hint"></div>
+
+<!-- Confetti Canvas (#8) -->
+<canvas class="confetti-canvas" id="confetti-canvas"></canvas>
+
+<script>
+let currentStep = 1;
+const totalSteps = 3;
+const hints = ['Step 1 of 3 — Configure detected layers','Step 2 of 3 — Review auto-derived settings','Step 3 of 3 — Confirm and create quote'];
+const nextLabels = ['Next: Review →','Next: Confirm →','Done'];
+
+// Sound state (#4)
+let soundEnabled = false;
+let audioCtx = null;
+
+function initAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playTick(){
+  if(!soundEnabled) return;
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.value = 800;
+  osc.type = 'sine';
+  gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.08);
+}
+
+function playConfirm(){
+  if(!soundEnabled) return;
+  initAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.frequency.value = 523;
+  osc.type = 'sine';
+  gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+  osc.start();
+  osc.stop(audioCtx.currentTime + 0.2);
+  setTimeout(()=>{
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.frequency.value = 659;
+    osc2.type = 'sine';
+    gain2.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+    osc2.start();
+    osc2.stop(audioCtx.currentTime + 0.15);
+  },100);
+}
+
+function toggleSound(){
+  soundEnabled = !soundEnabled;
+  document.getElementById('snd-label').textContent = soundEnabled ? 'On' : 'Off';
+  document.querySelector('.snd-icon').textContent = soundEnabled ? '🔊' : '🔇';
+  if(soundEnabled) playTick();
+}
+
+function goToStep(n){
+  if(n<1||n>totalSteps) return;
+  currentStep = n;
+  playTick();
+  document.querySelectorAll('.step-panel').forEach((p,i)=>{p.classList.toggle('active',i===n-1);});
+  document.querySelectorAll('.step-dot').forEach((d,i)=>{
+    d.classList.remove('active','done');
+    if(i<n-1) d.classList.add('done');
+    else if(i===n-1) d.classList.add('active');
+  });
+  document.querySelectorAll('.step-label').forEach((l,i)=>{
+    l.classList.remove('active','done');
+    if(i<n-1) l.classList.add('done');
+    else if(i===n-1) l.classList.add('active');
+  });
+  document.querySelectorAll('.step-line').forEach((l,i)=>{l.classList.toggle('done',i<n-1);});
+  document.getElementById('btn-back').style.visibility = n===1?'hidden':'visible';
+  document.getElementById('btn-next').textContent = nextLabels[n-1];
+  if(n===totalSteps) document.getElementById('btn-next').classList.add('btn-dis');
+  else document.getElementById('btn-next').classList.remove('btn-dis');
+  document.getElementById('nav-hint').textContent = hints[n-1];
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateSmartBanner();
+  updateCopilot();
+
+  if(n===1){
+    setTimeout(()=>{
+      const pending = document.querySelector('.layer.pending');
+      if(pending) pending.scrollIntoView({behavior:'smooth',block:'center'});
+    },300);
+  }
+
+  // Check celebration on Step 3
+  if(n===3) checkCelebration();
+}
+
+document.getElementById('btn-next').addEventListener('click',()=>{if(currentStep<totalSteps)goToStep(currentStep+1);});
+document.getElementById('btn-back').addEventListener('click',()=>{if(currentStep>1)goToStep(currentStep-1);});
+document.querySelectorAll('.step-dot').forEach(d=>{d.addEventListener('click',()=>goToStep(parseInt(d.dataset.step)));});
+
+// Keyboard shortcuts
+document.addEventListener('keydown',(e)=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA') return;
+  if(e.key==='ArrowRight'||e.key==='Enter'){e.preventDefault();if(currentStep<totalSteps)goToStep(currentStep+1);}
+  if(e.key==='ArrowLeft'||e.key==='Escape'){e.preventDefault();if(currentStep>1)goToStep(currentStep-1);}
+});
+
+// Gesture Navigation (#3) — wheel on progress bar
+document.getElementById('progress-bar').addEventListener('wheel',(e)=>{
+  e.preventDefault();
+  if(e.deltaY > 0 || e.deltaX > 0){
+    if(currentStep<totalSteps){goToStep(currentStep+1);showGesture('→ Step '+(currentStep));}
+  } else {
+    if(currentStep>1){goToStep(currentStep-1);showGesture('← Step '+(currentStep));}
+  }
+},{passive:false});
+
+// Touch swipe on progress bar
+let touchStartX = 0;
+document.getElementById('progress-bar').addEventListener('touchstart',(e)=>{touchStartX=e.touches[0].clientX;});
+document.getElementById('progress-bar').addEventListener('touchend',(e)=>{
+  const diff = e.changedTouches[0].clientX - touchStartX;
+  if(Math.abs(diff)>50){
+    if(diff<0 && currentStep<totalSteps){goToStep(currentStep+1);showGesture('→ Step '+currentStep);}
+    else if(diff>0 && currentStep>1){goToStep(currentStep-1);showGesture('← Step '+currentStep);}
+  }
+});
+
+function showGesture(text){
+  const el = document.getElementById('gesture-hint');
+  el.textContent = text;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),800);
+}
+
+function toggleLayer(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function scrollToLayer(id){
+  if(currentStep!==1) goToStep(1);
+  setTimeout(()=>{
+    const el = document.getElementById(id);
+    if(el){
+      if(!el.classList.contains('open')) el.classList.add('open');
+      el.scrollIntoView({behavior:'smooth',block:'center'});
+      el.style.boxShadow='0 0 0 2px var(--bl)';
+      setTimeout(()=>{el.style.boxShadow='';},1500);
+    }
+  },100);
+}
+
+function toggleDerived(){
+  document.getElementById('derived-wrap').classList.toggle('open');
+}
+
+function resetLayer(id){
+  const layer = document.getElementById(id);
+  layer.querySelectorAll('.sel').forEach(sel=>{
+    const def = sel.getAttribute('data-default');
+    if(def){
+      for(let i=0;i<sel.options.length;i++){
+        if(sel.options[i].text===def){sel.selectedIndex=i;break;}
+      }
+    }
+  });
+  layer.querySelectorAll('.inp').forEach(inp=>{
+    const def = inp.getAttribute('data-default');
+    if(def) inp.value = def;
+  });
+}
+
+// Focus Mode (#6) — double-click layer head
+document.querySelectorAll('.layer-head').forEach(head=>{
+  head.addEventListener('dblclick',(e)=>{
+    e.stopPropagation();
+    const layer = head.closest('.layer');
+    const panel = document.getElementById('step-1');
+    panel.classList.add('focus-active');
+    document.querySelectorAll('.layer').forEach(l=>l.classList.remove('focused'));
+    layer.classList.add('focused');
+    if(!layer.classList.contains('open')) layer.classList.add('open');
+  });
+});
+
+function exitFocus(){
+  document.getElementById('step-1').classList.remove('focus-active');
+  document.querySelectorAll('.layer').forEach(l=>l.classList.remove('focused'));
+}
+
+// Dynamic status update
+function updateStatus(){
+  const layers = document.querySelectorAll('.layer[data-status]');
+  let confirmed = 0, pending = 0, ignored = 0;
+
+  layers.forEach(layer=>{
+    const status = layer.getAttribute('data-status');
+    if(status==='ignored') {ignored++; return;}
+
+    const checks = layer.querySelectorAll('.cfm input[type="checkbox"]');
+    const allChecked = checks.length > 0 && Array.from(checks).every(c=>c.checked);
+
+    if(allChecked){
+      confirmed++;
+      layer.setAttribute('data-status','confirmed');
+      layer.classList.remove('pending');
+      const badge = layer.querySelector('.layer-badge');
+      if(badge && badge.classList.contains('b-pend')){
+        badge.classList.remove('b-pend');
+        badge.classList.add('b-ok');
+        badge.textContent = 'Confirmed';
+        badge.removeAttribute('title');
+        playConfirm();
+      }
+    } else {
+      pending++;
+      layer.setAttribute('data-status','pending');
+      if(!layer.classList.contains('pending')) layer.classList.add('pending');
+      const badge = layer.querySelector('.layer-badge');
+      if(badge && badge.classList.contains('b-ok') && layer.id !== 'layer-cadru'){
+        badge.classList.remove('b-ok');
+        badge.classList.add('b-pend');
+        badge.textContent = 'Needs setup';
+        badge.setAttribute('title','Print artwork confirmation required');
+      }
+    }
+  });
+
+  const total = confirmed + pending + ignored;
+  const displayConfirmed = confirmed + ignored;
+
+  document.getElementById('sb-confirmed').textContent = displayConfirmed + '/' + total;
+  document.getElementById('sb-blockers').textContent = pending;
+  document.getElementById('sb-quote').textContent = pending > 0 ? 'Blocked' : 'Ready';
+  document.getElementById('sb-quote').style.color = pending > 0 ? 'var(--am)' : 'var(--em)';
+
+  const blockerDot = document.getElementById('blocker-dot');
+  if(pending > 0){
+    blockerDot.style.display = 'flex';
+    blockerDot.textContent = pending;
+  } else {
+    blockerDot.style.display = 'none';
+  }
+
+  // Update quote button
+  const quoteBtn = document.getElementById('quote-btn');
+  const quoteBl = document.getElementById('quote-blocker');
+  if(pending === 0){
+    quoteBtn.classList.remove('btn-dis');
+    quoteBtn.classList.add('btn-e');
+    quoteBtn.textContent = '✓ Create Guarded Draft Quote';
+    quoteBl.style.display = 'none';
+  } else {
+    quoteBtn.classList.add('btn-dis');
+    quoteBtn.classList.remove('btn-e');
+    quoteBtn.textContent = 'Create Guarded Draft Quote';
+    quoteBl.style.display = 'block';
+  }
+
+  const chips = document.querySelectorAll('.layer-chip .chip-dot');
+  const layerArr = Array.from(layers);
+  layerArr.forEach((layer,i)=>{
+    if(chips[i]){
+      const s = layer.getAttribute('data-status');
+      chips[i].style.background = s==='confirmed'?'var(--em)':s==='pending'?'var(--am)':'var(--tm)';
+    }
+  });
+
+  updateSmartBanner();
+  updateCopilot();
+
+  // Check celebration
+  if(currentStep === 3 && pending === 0) triggerCelebration();
+}
+
+// Smart Summary Banner (#7)
+function updateSmartBanner(){
+  const msg = document.getElementById('smart-msg');
+  const action = document.getElementById('smart-action');
+  const pending = parseInt(document.getElementById('sb-blockers').textContent);
+
+  if(currentStep === 1){
+    if(pending > 0){
+      msg.textContent = 'Emblema layer needs print artwork confirmation — confirm to unlock quote creation';
+      action.textContent = 'Fix now →';
+      action.onclick = ()=>scrollToLayer('layer-emblema');
+    } else {
+      msg.textContent = '✓ All layers confirmed! Proceed to Review for material breakdown.';
+      action.textContent = 'Next →';
+      action.onclick = ()=>goToStep(2);
+    }
+  } else if(currentStep === 2){
+    msg.textContent = 'Review auto-derived settings. Material breakdown is read-only preview.';
+    action.textContent = 'Continue →';
+    action.onclick = ()=>goToStep(3);
+  } else {
+    if(pending > 0){
+      msg.textContent = '⚠ Cannot create quote — go back to Step 1 to confirm remaining layers';
+      action.textContent = 'Go back →';
+      action.onclick = ()=>goToStep(1);
+    } else {
+      msg.textContent = '🎉 All ready! You can create the guarded draft quote now.';
+      action.textContent = '';
+    }
+  }
+}
+
+function handleSmartAction(){
+  document.getElementById('smart-action').click();
+}
+
+// AI Copilot (#2)
+function toggleCopilot(){
+  document.getElementById('copilot').classList.toggle('open');
+}
+
+function updateCopilot(){
+  const body = document.getElementById('copilot-body');
+  const pending = parseInt(document.getElementById('sb-blockers').textContent);
+
+  if(currentStep === 2){
+    body.innerHTML = `
+      <div class="copilot-msg"><div class="cm-label">📐 Analysis</div>At 4.6m width with 12 letters, the 80mm depth is standard. Consider 100mm if mounting height exceeds 4m.<div class="cm-action" onclick="goToStep(1)">Adjust depth →</div></div>
+      <div class="copilot-msg"><div class="cm-label">💡 Tip</div>2×160W PSU gives 320W capacity for 225W load — 42% headroom. This is optimal for outdoor installations.</div>
+      <div class="copilot-msg"><div class="cm-label">📦 Material</div>Total face vinyl needed: ~3.84 m². Standard Oracal 8500 roll is 1.26m × 50m — one roll covers this project.</div>
+    `;
+  } else if(currentStep === 3){
+    if(pending > 0){
+      body.innerHTML = `
+        <div class="copilot-msg"><div class="cm-label">⚠ Blocker</div>Emblema needs confirmation before quote. The 510-polygon gradient star requires printed vinyl + laminate + contour cut.<div class="cm-action" onclick="goToStep(1);scrollToLayer('layer-emblema')">Fix it →</div></div>
+      `;
+    } else {
+      body.innerHTML = `
+        <div class="copilot-msg"><div class="cm-label">🎉 Ready</div>All layers confirmed! The guarded draft quote will include all confirmed materials. No production actions will be triggered.</div>
+        <div class="copilot-msg"><div class="cm-label">💰 Estimate</div>Based on material quantities, estimated production cost range: €850–€1,200 (excluding installation).</div>
+      `;
+    }
+  } else {
+    body.innerHTML = `
+      <div class="copilot-msg"><div class="cm-label">💡 Suggestion</div>Emblema has 510 gradient polygons — this cannot be cut from a single Oracal color. I've pre-selected "Printed Artwork" as the role.<div class="cm-action" onclick="scrollToLayer('layer-emblema')">Go to Emblema →</div></div>
+      <div class="copilot-msg"><div class="cm-label">📊 Insight</div>Based on similar projects, Oracal 8500 translucent performs best for frontlit letters at this scale (4.6m wide).</div>
+      <div class="copilot-msg"><div class="cm-label">⚡ Quick Action</div>All sub-groups in "Litere volumetrice" are confirmed. You can proceed to Step 2 for review.<div class="cm-action" onclick="goToStep(2)">Go to Review →</div></div>
+    `;
+  }
+}
+
+// Theme Toggle (#5) — morphing circle expand
+function toggleTheme(){
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+
+  // Create morphing circle
+  const btn = document.getElementById('theme-toggle');
+  const rect = btn.getBoundingClientRect();
+  const cx = rect.left + rect.width/2;
+  const cy = rect.top + rect.height/2;
+  const maxR = Math.max(
+    Math.hypot(cx, cy),
+    Math.hypot(window.innerWidth - cx, cy),
+    Math.hypot(cx, window.innerHeight - cy),
+    Math.hypot(window.innerWidth - cx, window.innerHeight - cy)
+  );
+
+  const morph = document.createElement('div');
+  morph.className = 'theme-morph';
+  morph.style.left = cx + 'px';
+  morph.style.top = cy + 'px';
+  morph.style.width = '0px';
+  morph.style.height = '0px';
+  morph.style.background = next === 'light' ? '#F8FAFC' : '#0A0F1A';
+  document.body.appendChild(morph);
+
+  requestAnimationFrame(()=>{
+    morph.style.transition = 'all .6s cubic-bezier(.4,0,.2,1)';
+    morph.style.width = maxR*2 + 'px';
+    morph.style.height = maxR*2 + 'px';
+    morph.style.left = (cx - maxR) + 'px';
+    morph.style.top = (cy - maxR) + 'px';
+  });
+
+  setTimeout(()=>{
+    html.setAttribute('data-theme', next);
+    document.getElementById('theme-toggle').textContent = next === 'dark' ? '🌗' : '☀️';
+    morph.remove();
+  },600);
+
+  playTick();
+}
+
+// Confetti Celebration (#8)
+let confettiTriggered = false;
+
+function checkCelebration(){
+  const pending = parseInt(document.getElementById('sb-blockers').textContent);
+  if(pending === 0 && !confettiTriggered) triggerCelebration();
+}
+
+function triggerCelebration(){
+  if(confettiTriggered) return;
+  confettiTriggered = true;
+
+  const canvas = document.getElementById('confetti-canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const particles = [];
+  const colors = ['#34D399','#60A5FA','#FBBF24','#A78BFA','#F87171','#F472B6'];
+
+  for(let i=0;i<80;i++){
+    particles.push({
+      x: Math.random()*canvas.width,
+      y: -20 - Math.random()*200,
+      vx: (Math.random()-0.5)*4,
+      vy: 2 + Math.random()*4,
+      size: 4 + Math.random()*6,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rotation: Math.random()*360,
+      rotSpeed: (Math.random()-0.5)*10,
+      opacity: 1,
+      shape: Math.random()>0.5?'rect':'circle'
+    });
+  }
+
+  let frame = 0;
+  function animateConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let alive = false;
+
+    particles.forEach(p=>{
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.1;
+      p.rotation += p.rotSpeed;
+      p.opacity -= 0.005;
+
+      if(p.opacity > 0 && p.y < canvas.height + 50){
+        alive = true;
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rotation * Math.PI/180);
+        ctx.globalAlpha = p.opacity;
+        ctx.fillStyle = p.color;
+        if(p.shape === 'rect'){
+          ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+        } else {
+          ctx.beginPath();
+          ctx.arc(0,0,p.size/2,0,Math.PI*2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+    });
+
+    frame++;
+    if(alive && frame < 200) requestAnimationFrame(animateConfetti);
+    else ctx.clearRect(0,0,canvas.width,canvas.height);
+  }
+  animateConfetti();
+
+  // Play celebration sound
+  if(soundEnabled){
+    initAudio();
+    [523,659,784,1047].forEach((freq,i)=>{
+      setTimeout(()=>{
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.frequency.value = freq;
+        osc.type = 'sine';
+        gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+      },i*120);
+    });
+  }
+}
+
+// SVG Upload zone toggle
+function showDropzone(){
+  document.getElementById('svg-preview-state').style.display = 'none';
+  document.getElementById('svg-dropzone-state').style.display = 'block';
+}
+function simulateUpload(){
+  document.getElementById('svg-dropzone-state').style.display = 'none';
+  document.getElementById('svg-preview-state').style.display = 'block';
+}
+
+// Initial updates
+updateStatus();
+updateSmartBanner();
+</script>
+
+<!-- ATOM PARTICLES — CLUSTERED MOLECULES + ULTRA SLOW DRIFT -->
+<script>
+(function(){
+  const canvas = document.getElementById('atoms-bg');
+  const ctx = canvas.getContext('2d');
+  let W, H;
+
+  const CLUSTER_COUNT = 9;
+  const ORBIT_RADIUS = 220;
+  const colors = ['rgba(227,30,36,','rgba(57,49,133,','rgba(52,211,153,','rgba(167,139,250,','rgba(96,165,250,','rgba(251,191,36,','rgba(248,113,113,','rgba(56,189,248,','rgba(244,114,182,'];
+
+  const clusters = [];
+  const pulses = [];
+  const MAX_PULSES = 10;
+  const PULSE_WIDTH = 0.22;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    clusters.forEach(c=>{
+      if(c.cx > W) c.cx = W - 150;
+      if(c.cy > H) c.cy = H - 150;
+    });
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  for(let c=0;c<CLUSTER_COUNT;c++){
+    const cluster = {
+      cx: 150 + Math.random()*(W-300),
+      cy: 150 + Math.random()*(H-300),
+      vx: (Math.random()-0.5)*0.02,
+      vy: (Math.random()-0.5)*0.02,
+      color: colors[c % colors.length],
+      particles: []
+    };
+
+    const count = 5 + Math.floor(Math.random()*3);
+    for(let i=0;i<count;i++){
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 0.07 + Math.random()*0.05;
+      cluster.particles.push({
+        ox: (Math.random()-0.5)*ORBIT_RADIUS*1.8,
+        oy: (Math.random()-0.5)*ORBIT_RADIUS*1.8,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        angleRate: (Math.random()-0.5) * 0.0005,
+        sinePhase: Math.random() * Math.PI * 2,
+        sineSpeed: 0.0008 + Math.random()*0.001,
+        sineAmp: 0.008 + Math.random()*0.01,
+        r: 4 + Math.random()*2,
+        alpha: 0.14 + Math.random()*0.1,
+        x: 0, y: 0,
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseSpeed: (Math.PI * 2) / (600 + Math.random() * 240)
+      });
+    }
+    clusters.push(cluster);
+  }
+
+  // CONSTELLATION: "UNITY" — cyclical convergence from floating atoms
+  // Vertical layout: U-N-I-T-Y stacked top to bottom in left margin
+  const unityLetterPts = {
+    U: [[0,0],[0,1],[0,2],[0.5,2.5],[1,2.5],[1.5,2.5],[2,2],[2,1],[2,0]],
+    N: [[0,4],[0,5],[0,6],[1,4.5],[1,5.5],[2,4],[2,5],[2,6]],
+    I: [[0.8,8],[0.8,8.7],[1,9.4],[1.2,10]],
+    T: [[0,12],[0.8,12],[1,12],[1.2,12],[2,12],[1,12.8],[1,13.5],[1,14.2]],
+    Y: [[0,16],[0.5,16.8],[1,17.5],[1,18.3],[1,19],[1.5,16.8],[2,16]]
+  };
+  const unityConns = {
+    U: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8]],
+    N: [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7]],
+    I: [[0,1],[1,2],[2,3]],
+    T: [[0,1],[1,2],[2,3],[3,4],[2,5],[5,6],[6,7]],
+    Y: [[0,1],[1,2],[2,3],[3,4],[5,2],[6,5]]
+  };
+  const unityScale = 16;
+  const unityTargets = []; // {tx, ty} target positions relative to formation center
+  const unityConnections = []; // [i,j] index pairs
+  let uOff = 0;
+  ['U','N','I','T','Y'].forEach(letter => {
+    const pts = unityLetterPts[letter];
+    const conns = unityConns[letter];
+    conns.forEach(c => unityConnections.push([c[0]+uOff, c[1]+uOff]));
+    pts.forEach(pt => {
+      unityTargets.push({ tx: pt[0]*unityScale, ty: pt[1]*unityScale });
+    });
+    uOff += pts.length;
+  });
+
+  // Select atoms from existing clusters to participate
+  const UNITY_COUNT = unityTargets.length;
+  const unityParticles = []; // references to cluster particles
+  let selectedCount = 0;
+  for(let ci=0; ci<clusters.length && selectedCount < UNITY_COUNT; ci++){
+    const cl = clusters[ci];
+    for(let pi=0; pi<cl.particles.length && selectedCount < UNITY_COUNT; pi++){
+      unityParticles.push({ cluster: ci, idx: pi, delay: Math.random()*0.3 });
+      selectedCount++;
+    }
+  }
+
+  // Animation cycle state
+  const UNITY_CYCLE = 1350; // ~22.5s at 60fps
+  const PHASE_FREE_END = 480;      // 0-8s: free floating
+  const PHASE_CONVERGE_END = 720;  // 8-12s: converging
+  const PHASE_HOLD_END = 960;      // 12-16s: holding
+  const PHASE_DISPERSE_END = 1200; // 16-20s: dispersing
+  // 20-22.5s: free again before restart
+  let unityFrame = 0;
+  const unityCenterX = () => Math.min(70, W * 0.04);
+  const unityCenterY = () => H * 0.18;
+
+  function spawnPulse(){
+    if(pulses.length >= MAX_PULSES) return;
+    const ci = Math.floor(Math.random()*CLUSTER_COUNT);
+    const cl = clusters[ci];
+    if(cl.particles.length < 2) return;
+    const from = Math.floor(Math.random()*cl.particles.length);
+    let to = Math.floor(Math.random()*cl.particles.length);
+    while(to === from) to = Math.floor(Math.random()*cl.particles.length);
+    pulses.push({
+      cluster: ci, from, to,
+      t: -PULSE_WIDTH,
+      speed: 0.001 + Math.random()*0.001,
+      fade: 1
+    });
+  }
+
+  for(let i=0;i<5;i++) spawnPulse();
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+
+    clusters.forEach(cl=>{
+      cl.cx += cl.vx;
+      cl.cy += cl.vy;
+      if(Math.random() < 0.0005){
+        cl.vx += (Math.random()-0.5)*0.005;
+        cl.vy += (Math.random()-0.5)*0.005;
+        const maxSpeed = 0.025;
+        const sp = Math.sqrt(cl.vx*cl.vx + cl.vy*cl.vy);
+        if(sp > maxSpeed){ cl.vx *= maxSpeed/sp; cl.vy *= maxSpeed/sp; }
+      }
+      if(cl.cx < 100 || cl.cx > W-100) cl.vx *= -1;
+      if(cl.cy < 100 || cl.cy > H-100) cl.vy *= -1;
+      cl.cx = Math.max(100, Math.min(W-100, cl.cx));
+      cl.cy = Math.max(100, Math.min(H-100, cl.cy));
+    });
+
+    clusters.forEach(cl=>{
+      cl.particles.forEach(p=>{
+        const currentAngle = Math.atan2(p.vy, p.vx);
+        const currentSpeed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+        p.sinePhase += p.sineSpeed;
+        const angleDelta = p.angleRate + Math.sin(p.sinePhase) * p.sineAmp * 0.005;
+        const newAngle = currentAngle + angleDelta;
+        const targetSpeed = 0.09;
+        const adjustedSpeed = currentSpeed + (targetSpeed - currentSpeed) * 0.003;
+        p.vx = Math.cos(newAngle) * adjustedSpeed;
+        p.vy = Math.sin(newAngle) * adjustedSpeed;
+        p.ox += p.vx;
+        p.oy += p.vy;
+        const dist = Math.sqrt(p.ox*p.ox + p.oy*p.oy);
+        if(dist > ORBIT_RADIUS){
+          const pull = (dist - ORBIT_RADIUS) * 0.0003;
+          p.vx -= (p.ox / dist) * pull;
+          p.vy -= (p.oy / dist) * pull;
+        }
+        p.x = cl.cx + p.ox;
+        p.y = cl.cy + p.oy;
+      });
+    });
+
+    clusters.forEach(cl=>{
+      const pts = cl.particles;
+      for(let i=0;i<pts.length;i++){
+        for(let j=i+1;j<pts.length;j++){
+          const dx = pts[i].x - pts[j].x;
+          const dy = pts[i].y - pts[j].y;
+          const dist = Math.sqrt(dx*dx+dy*dy);
+          const maxD = 250;
+          if(dist > maxD) continue;
+          const opacity = 0.08 + (1 - dist/maxD)*0.16;
+          ctx.beginPath();
+          ctx.moveTo(pts[i].x, pts[i].y);
+          ctx.lineTo(pts[j].x, pts[j].y);
+          ctx.strokeStyle = cl.color + opacity + ')';
+          ctx.lineWidth = 0.4 + (1 - dist/maxD)*0.5;
+          ctx.stroke();
+        }
+      }
+    });
+
+    for(let i=0;i<clusters.length;i++){
+      for(let j=i+1;j<clusters.length;j++){
+        const dx = clusters[i].cx - clusters[j].cx;
+        const dy = clusters[i].cy - clusters[j].cy;
+        const dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist < 450 && Math.random() < 0.0005){
+          ctx.save();
+          ctx.setLineDash([3,10]);
+          ctx.beginPath();
+          ctx.moveTo(clusters[i].cx, clusters[i].cy);
+          ctx.lineTo(clusters[j].cx, clusters[j].cy);
+          ctx.strokeStyle = 'rgba(96,165,250,0.04)';
+          ctx.lineWidth = 0.4;
+          ctx.stroke();
+          ctx.restore();
+        }
+      }
+    }
+
+    for(let i=pulses.length-1;i>=0;i--){
+      const pulse = pulses[i];
+      pulse.t += pulse.speed;
+      if(pulse.t > 1){
+        pulse.fade -= 0.008;
+        if(pulse.fade <= 0){
+          pulses.splice(i, 1);
+          continue;
+        }
+      }
+      const cl = clusters[pulse.cluster];
+      const a = cl.particles[pulse.from];
+      const b = cl.particles[pulse.to];
+      if(!a || !b) {pulses.splice(i,1);continue;}
+      const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+      const center = Math.max(0, Math.min(1, pulse.t));
+      const halfW = PULSE_WIDTH / 2;
+      const start = Math.max(0, center - halfW);
+      const end = Math.min(1, center + halfW);
+      const peakOpacity = 0.35 * pulse.fade;
+      grad.addColorStop(0, 'rgba(96,165,250,0)');
+      if(start > 0.01) grad.addColorStop(Math.max(0.01, start - 0.03), 'rgba(96,165,250,0)');
+      grad.addColorStop(start, 'rgba(96,165,250,' + (peakOpacity * 0.3) + ')');
+      grad.addColorStop((start + end) / 2, 'rgba(96,165,250,' + peakOpacity + ')');
+      grad.addColorStop(end, 'rgba(96,165,250,' + (peakOpacity * 0.3) + ')');
+      if(end < 0.99) grad.addColorStop(Math.min(0.99, end + 0.03), 'rgba(96,165,250,0)');
+      grad.addColorStop(1, 'rgba(96,165,250,0)');
+      ctx.beginPath();
+      ctx.moveTo(a.x, a.y);
+      ctx.lineTo(b.x, b.y);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.4;
+      ctx.stroke();
+    }
+
+    if(Math.random() < 0.004 && pulses.length < MAX_PULSES) spawnPulse();
+
+    clusters.forEach(cl=>{
+      cl.particles.forEach(p=>{
+        p.pulsePhase += p.pulseSpeed;
+        const pulse = 0.5 + 0.5 * Math.sin(p.pulsePhase);
+        const pAlpha = 0.10 + pulse * 0.06;
+        const sizeBoost = pulse * 0.6;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r*2.2 + sizeBoost*0.5, 0, Math.PI*2);
+        ctx.fillStyle = cl.color + (pAlpha*0.15) + ')';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r + sizeBoost, 0, Math.PI*2);
+        ctx.fillStyle = cl.color + pAlpha + ')';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (p.r + sizeBoost)*0.4, 0, Math.PI*2);
+        ctx.fillStyle = cl.color + Math.min(pAlpha*1.5, 0.22) + ')';
+        ctx.fill();
+      });
+    });
+
+    // UNITY cyclical constellation animation
+    unityFrame = (unityFrame + 1) % UNITY_CYCLE;
+    const ucx = unityCenterX();
+    const ucy = unityCenterY();
+
+    // Determine phase and interpolation factor
+    let unityT = 0; // 0 = free, 1 = fully formed
+    let lineAlpha = 0;
+    if(unityFrame < PHASE_FREE_END){
+      unityT = 0;
+      lineAlpha = 0;
+    } else if(unityFrame < PHASE_CONVERGE_END){
+      const raw = (unityFrame - PHASE_FREE_END) / (PHASE_CONVERGE_END - PHASE_FREE_END);
+      unityT = raw * raw * (3 - 2 * raw);
+      lineAlpha = Math.max(0, (raw - 0.6) / 0.4);
+    } else if(unityFrame < PHASE_HOLD_END){
+      unityT = 1;
+      lineAlpha = 1;
+    } else if(unityFrame < PHASE_DISPERSE_END){
+      const raw = 1 - (unityFrame - PHASE_HOLD_END) / (PHASE_DISPERSE_END - PHASE_HOLD_END);
+      unityT = raw * raw * (3 - 2 * raw);
+      lineAlpha = Math.max(0, (raw - 0.5) / 0.5);
+    } else {
+      unityT = 0;
+      lineAlpha = 0;
+    }
+
+    // Apply position influence to selected particles
+    unityParticles.forEach((up, idx) => {
+      if(idx >= UNITY_COUNT) return;
+      const p = clusters[up.cluster].particles[up.idx];
+      const target = unityTargets[idx];
+      let localT = Math.max(0, Math.min(1, (unityT - up.delay) / (1 - up.delay)));
+      localT = localT * localT * (3 - 2 * localT);
+
+      if(localT > 0){
+        const targetX = ucx + target.tx;
+        const targetY = ucy + target.ty;
+        const jx = localT > 0.9 ? (Math.sin(unityFrame*0.02 + idx)*1.2) : 0;
+        const jy = localT > 0.9 ? (Math.cos(unityFrame*0.025 + idx*1.3)*1.0) : 0;
+        p.x = p.x * (1 - localT) + (targetX + jx) * localT;
+        p.y = p.y * (1 - localT) + (targetY + jy) * localT;
+      }
+    });
+
+    // Draw connection lines when forming/holding
+    if(lineAlpha > 0.01){
+      unityConnections.forEach(conn => {
+        if(conn[0] >= unityParticles.length || conn[1] >= unityParticles.length) return;
+        const pa = clusters[unityParticles[conn[0]].cluster].particles[unityParticles[conn[0]].idx];
+        const pb = clusters[unityParticles[conn[1]].cluster].particles[unityParticles[conn[1]].idx];
+        ctx.beginPath();
+        ctx.moveTo(pa.x, pa.y);
+        ctx.lineTo(pb.x, pb.y);
+        ctx.strokeStyle = 'rgba(96,165,250,' + (lineAlpha * 0.12).toFixed(3) + ')';
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      });
+    }
+
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+</body>
+</html>

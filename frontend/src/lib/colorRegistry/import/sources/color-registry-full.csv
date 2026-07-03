@@ -1,0 +1,348 @@
+system,brand,series,code,name,romanianName,previewHex,finish,usageScope,translucent,active,source,notes
+RAL,,,1000,Green beige,,#BEBD7F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1001,Beige,,#C2B078,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1002,Sand yellow,,#C6A664,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1003,Signal yellow,,#E5BE01,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1004,Golden yellow,,#CDA434,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1005,Honey yellow,,#A98307,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1006,Maize yellow,,#E4A010,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1007,Daffodil yellow,,#DC9D00,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1011,Brown beige,,#8A6642,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1012,Lemon yellow,,#C7B446,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1013,Oyster white,,#EAE6CA,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1014,Ivory,,#E1CC4F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1015,Light ivory,,#E6D690,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1016,Sulfur yellow,,#EDFF21,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1017,Saffron yellow,,#F5D033,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1018,Zinc yellow,,#F8F32B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1019,Grey beige,,#9E9764,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1020,Olive yellow,,#999950,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1021,Rape yellow,,#F3DA0B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1023,Traffic yellow,,#FAD201,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1024,Ochre yellow,,#AEA04B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1026,Luminous yellow,,#FFFF00,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1027,Curry,,#9D9101,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1028,Melon yellow,,#F4A900,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1032,Broom yellow,,#D6AE01,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1033,Dahlia yellow,,#F3A505,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1034,Pastel yellow,,#EFA94A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1035,Pearl beige,,#6A5D4D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1036,Pearl gold,,#705335,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,1037,Sun yellow,,#F39F18,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2000,Yellow orange,,#ED760E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2001,Red orange,,#C93C20,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2002,Vermilion,,#CB2821,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2003,Pastel orange,,#FF7514,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2004,Pure orange,,#F44611,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2005,Luminous orange,,#FF2301,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2007,Luminous bright orange,,#FFA420,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2008,Bright red orange,,#F75E25,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2009,Traffic orange,,#F54021,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2010,Signal orange,,#D84B20,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2011,Deep orange,,#EC7C26,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2012,Salmon range,,#E55137,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,2013,Pearl orange,,#C35831,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3000,Flame red,,#AF2B1E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3001,Signal red,,#A52019,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3002,Carmine red,,#A2231D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3003,Ruby red,,#9B111E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3004,Purple red,,#75151E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3005,Wine red,,#5E2129,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3007,Black red,,#412227,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3009,Oxide red,,#642424,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3011,Brown red,,#781F19,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3012,Beige red,,#C1876B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3013,Tomato red,,#A12312,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3014,Antique pink,,#D36E70,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3015,Light pink,,#EA899A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3016,Coral red,,#B32821,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3017,Rose,,#E63244,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3018,Strawberry red,,#D53032,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3020,Traffic red,,#CC0605,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3022,Salmon pink,,#D95030,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3024,Luminous red,,#F80000,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3026,"""Luminous bright red""",,#FE0000,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3027,Raspberry red,,#C51D34,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3028,Pure  red,,#CB3234,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3031,Orient red,,#B32428,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3032,Pearl ruby red,,#721422,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,3033,Pearl pink,,#B44C43,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4001,Red lilac,,#6D3F5B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4002,Red violet,,#922B3E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4003,Heather violet,,#DE4C8A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4004,Claret violet,,#641C34,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4005,Blue lilac,,#6C4675,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4006,Traffic purple,,#A03472,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4007,Purple violet,,#4A192C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4008,Signal violet,,#924E7D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4009,Pastel violet,,#A18594,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4010,Telemagenta,,#CF3476,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4011,Pearl violet,,#8673A1,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,4012,Pearl black berry,,#6C6874,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5000,Violet blue,,#354D73,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5001,Green blue,,#1F3438,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5002,Ultramarine blue,,#20214F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5003,Saphire blue,,#1D1E33,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5004,Black blue,,#18171C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5005,Signal blue,,#1E2460,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5007,Brillant blue,,#3E5F8A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5008,Grey blue,,#26252D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5009,Azure blue,,#025669,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5010,Gentian blue,,#0E294B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5011,Steel blue,,#231A24,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5012,Light blue,,#3B83BD,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5013,Cobalt blue,,#1E213D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5014,Pigeon blue,,#606E8C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5015,Sky blue,,#2271B3,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5017,Traffic blue,,#063971,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5018,Turquoise blue,,#3F888F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5019,Capri blue,,#1B5583,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5020,Ocean blue,,#1D334A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5021,Water blue,,#256D7B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5022,Night blue,,#252850,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5023,Distant blue,,#49678D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5024,Pastel blue,,#5D9B9B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5025,Pearl gentian blue,,#2A6478,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,5026,Pearl night blue,,#102C54,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6000,Patina green,,#316650,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6001,Emerald green,,#287233,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6002,Leaf green,,#2D572C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6003,Olive green,,#424632,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6004,Blue green,,#1F3A3D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6005,Moss green,,#2F4538,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6006,Grey olive,,#3E3B32,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6007,Bottle green,,#343B29,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6008,Brown green,,#39352A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6009,Fir green,,#31372B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6010,Grass green,,#35682D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6011,Reseda green,,#587246,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6012,Black green,,#343E40,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6013,Reed green,,#6C7156,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6014,Yellow olive,,#47402E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6015,Black olive,,#3B3C36,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6016,Turquoise green,,#1E5945,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6017,May green,,#4C9141,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6018,Yellow green,,#57A639,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6019,Pastel green,,#BDECB6,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6020,Chrome green,,#2E3A23,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6021,Pale green,,#89AC76,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6022,Olive drab,,#25221B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6024,Traffic green,,#308446,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6025,Fern green,,#3D642D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6026,Opal green,,#015D52,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6027,Light green,,#84C3BE,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6028,Pine green,,#2C5545,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6029,Mint green,,#20603D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6032,Signal green,,#317F43,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6033,Mint turquoise,,#497E76,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6034,Pastel turquoise,,#7FB5B5,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6035,Pearl green,,#1C542D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6036,Pearl opal green,,#193737,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6037,Pure green,,#008F39,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,6038,Luminous green,,#00BB2D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7000,Squirrel grey,,#78858B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7001,Silver grey,,#8A9597,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7002,Olive grey,,#7E7B52,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7003,Moss grey,,#6C7059,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7004,Signal grey,,#969992,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7005,Mouse grey,,#646B63,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7006,Beige grey,,#6D6552,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7008,Khaki grey,,#6A5F31,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7009,Green grey,,#4D5645,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7010,Tarpaulin grey,,#4C514A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7011,Iron grey,,#434B4D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7012,Basalt grey,,#4E5754,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7013,Brown grey,,#464531,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7015,Slate grey,,#434750,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7016,Anthracite grey,,#293133,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7021,Black grey,,#23282B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7022,Umbra grey,,#332F2C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7023,Concrete grey,,#686C5E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7024,Graphite grey,,#474A51,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7026,Granite grey,,#2F353B,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7030,Stone grey,,#8B8C7A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7031,Blue grey,,#474B4E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7032,Pebble grey,,#B8B799,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7033,Cement grey,,#7D8471,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7034,Yellow grey,,#8F8B66,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7035,Light grey,,#D7D7D7,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7036,Platinum grey,,#7F7679,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7037,Dusty grey,,#7D7F7D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7038,Agate grey,,#B5B8B1,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7039,Quartz grey,,#6C6960,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7040,Window grey,,#9DA1AA,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7042,Traffic grey A,,#8D948D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7043,Traffic grey B,,#4E5452,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7044,Silk grey,,#CAC4B0,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7045,Telegrey 1,,#909090,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7046,Telegrey 2,,#82898F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7047,Telegrey 4,,#D0D0D0,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,7048,Pearl mouse grey,,#898176,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8000,Green brown,,#826C34,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8001,Ochre brown,,#955F20,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8002,Signal brown,,#6C3B2A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8003,Clay brown,,#734222,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8004,Copper brown,,#8E402A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8007,Fawn brown,,#59351F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8008,Olive brown,,#6F4F28,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8011,Nut brown,,#5B3A29,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8012,Red brown,,#592321,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8014,Sepia brown,,#382C1E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8015,Chestnut brown,,#633A34,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8016,Mahogany brown,,#4C2F27,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8017,Chocolate brown,,#45322E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8019,Grey brown,,#403A3A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8022,Black brown,,#212121,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8023,Orange brown,,#A65E2E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8024,Beige brown,,#79553D,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8025,Pale brown,,#755C48,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8028,Terra brown,,#4E3B31,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,8029,Pearl copper,,#763C28,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9001,Cream,,#FDF4E3,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9002,Grey white,,#E7EBDA,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9003,Signal white,,#F4F4F4,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9004,Signal black,,#282828,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9005,Jet black,,#0A0A0A,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9006,White aluminium,,#A5A5A5,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9007,Grey aluminium,,#8F8F8F,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9010,Pure white,,#FFFFFF,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9011,Graphite black,,#1C1C1C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9016,Traffic white,,#F6F6F6,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9017,Traffic black,,#1E1E1E,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9018,Papyrus white,,#D7D7D7,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9022,Pearl light grey,,#9C9C9C,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+RAL,,,9023,Pearl dark grey,,#828282,matte,return;structure;cable_channel,false,true,RAL Classic (ral_standard.csv gist/nichtich),Preview HEX approximate — physical RAL standard is authoritative
+ORACAL,Oracal,651,010,White,,#E6E9EE,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,010M,White,,#E6E9EE,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,020,Golden yellow,,#FBAA00,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,019,Signal yellow,,#E6A700,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,021,Yellow,,#FEC500,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,022,Light yellow,,#F2CA00,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,022M,Light yellow,,#F2CA00,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,025,Brimstone yellow,,#F2E210,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,026,Purple red (gloss only,,#5E050E,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,312,Burgundy (gloss only,,#6F000E,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,312M,Burgundy,,#6F000E,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,030,Dark red,,#900E16,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,031,Red,,#B0000D,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,031M,Red,,#B0000D,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,032,Light red,,#C91100,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,034,Orange,,#E1512C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,034M,Orange,,#E1512C,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,047,Orange red,,#D33100,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,036,Light orange,,#EA6700,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,035,Pastel orange,,#FC6C00,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,341,Coral,,#F88873,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,404,Purple,,#412773,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,040,Violet,,#5D2C68,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,040M,Violet,,#5D2C68,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,043,Lavender,,#775EA0,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,042,Lilac,,#B893BC,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,041,Pink,,#C22B6B,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,041M,Pink,,#C22B6B,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,045,Soft pink,,#ED84B6,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,045M,Soft pink,,#ED84B6,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,562,Deep sea blue,,#131E3A,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,518,Steel blue,,#13133E,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,050,Dark blue,,#1B2E5D,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,050M,Dark blue,,#1B2E5D,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,065,Cobalt blue,,#12226C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,049,King blue,,#152A78,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,086,Brilliant blue,,#1930AB,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,067,Blue,,#003A79,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,057,Traffic blue,,#00408C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,051,Gentian blue,,#004684,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,098,Gentian,,#0050A2,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,052,Azure blue,,#005DAB,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,084,Sky blue,,#0075BB,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,084M,Sky blue,,#0075BB,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,053,Light blue,,#0089C3,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,056,Ice blue,,#3DA1D2,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,066,Turquoise blue,,#00818C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,054,Turquoise,,#009B97,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,054M,Turquoise,,#009B97,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,055m,Int,,#5FCDB7,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,060,Dark green,,#004028,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,613,Forest green,,#005236,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,061,Green,,#00784B,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,061M,Green,,#00784B,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,068,Grass green,,#007A42,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,062,Light green,,#00873C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,064,Yellow green,,#289901,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,063,Lime-tree green,,#6AA72D,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,080,Brown,,#432F1E,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,080M,Brown,,#432F1E,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,083,Nut brown,,#AF591F,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,824,Imitation gold,,#D2972F,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,081,Light brown,,#A8885C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,082,Beige,,#CEC09F,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,023,Cream (gloss only,,#EBD494,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,070,Black,,#0D0E11,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,070M,Black,,#231F20,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,073,Dark grey,,#4B4C4C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,073M,Dark grey,,#4B4C4C,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,071,Grey,,#757D7C,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,071M,Grey,,#757D7C,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,076,Telegrey,,#818689,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,074m,Iddle grey,,#8A8F8B,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,072,Light grey,,#BFC2C0,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,090,Silver grey,,#686A6D,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,090M,Silver grey metallic,,#686A6D,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,091,Gold,,#756232,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,651,091M,Gold metallic,,#756232,matte,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Matte variant
+ORACAL,Oracal,651,092,Copper,,#6B411D,gloss,return;face_vinyl,false,true,ORAFOL ORACAL 651 Intermediate Cal,Colored cast vinyl
+ORACAL,Oracal,8500,010,White,,#E7E8E5,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,025,Brimstone yellow,,#D1C600,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,021,Yellow,,#FFCF00,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,013,Zinc yellow,,#F5BD00,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,020,Golden yellow,,#FBAA00,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,207,Ochre yellow,,#D2972F,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,015,Yellow,,#FEC500,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,034,Orange,,#E1512C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,330,Fox red,,#B0000D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,323,Coral red,,#C91100,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,032,Light red,,#C91100,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,329,Carnation red,,#B0000D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,016,Crimson,,#900E16,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,031,Red,,#B0000D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,017,Cherry red,,#900E16,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,030,Dark red,,#900E16,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,085,Pale pink,,#ED84B6,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,413,Light pink,,#C22B6B,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,041,Pink,,#C22B6B,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,008,Heather red,,#900E16,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,040,Violet,,#5D2C68,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,403,Light violet,,#B893BC,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,012,Lilac,,#B893BC,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,527,Pastel blue,,#0089C3,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,053,Light blue,,#0089C3,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,052,Azure blue,,#005DAB,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,051,Gentian blue,,#004684,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,528,Grey blue,,#64788C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,005m,Iddle blue,,#0075BB,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,006,Intensive blue,,#1930AB,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,049,King blue,,#152A78,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,542,Caribic blue,,#0075BB,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,065,Cobalt blue,,#12226C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,007,Dark blue,,#1B2E5D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,541,Dark turquoise,,#00818C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,066,Turquoise blue,,#009B97,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,054,Turquoise,,#009B97,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,062,Light green,,#00873C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,063,Lime-tree green,,#6AA72D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,009m,Iddle green,,#00784B,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,614,Reed green,,#005236,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,068,Grass green,,#007A42,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,618,Dragon green,,#008164,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,087,Emerald,,#008164,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,060,Dark green,,#004028,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,070,Black,,#0D0E11,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,076,Telegrey,,#818689,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,072,Light grey,,#BFC2C0,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,074m,Iddle grey,,#8A8F8B,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,805,Ivory,,#F6F4EC,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,011,Pale brown,,#A8885C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,081,Light brown,,#A8885C,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,090,Silver grey,,#686A6D,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,091,Gold,,#756232,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face
+ORACAL,Oracal,8500,088,Coffee brown,,#432F1E,translucent_matte,face_vinyl;illuminated_face,true,true,ORAFOL ORACAL 8500 Translucent Cal,Translucent — color effect depends on LED behind face

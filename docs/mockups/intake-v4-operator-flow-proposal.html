@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Intake V4 Operator Flow Proposal</title>
+  <style>
+    :root {
+      --bg: #090d12;
+      --panel: #101722;
+      --panel-2: #141c29;
+      --line: #2a3544;
+      --text: #edf3fb;
+      --muted: #8fa2b7;
+      --soft: #c8d5e4;
+      --cyan: #22c8e5;
+      --green: #37d67a;
+      --amber: #f4b740;
+      --red: #f06b6b;
+      --violet: #9b87ff;
+      --blue: #3fa7ff;
+      --orange: #ff8a30;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.32);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+    }
+
+    .side {
+      border-right: 1px solid var(--line);
+      background: #0b1018;
+      padding: 18px 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      margin-bottom: 28px;
+    }
+
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #285d72;
+      color: var(--cyan);
+      border-radius: 6px;
+      background: #0d1820;
+      font-weight: 900;
+    }
+
+    .nav-title {
+      margin: 22px 0 8px;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--soft);
+      padding: 8px 8px;
+      border-radius: 6px;
+    }
+
+    .nav-item.active {
+      background: #12222a;
+      color: #e8fbff;
+    }
+
+    .main {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .search {
+      width: 340px;
+      max-width: 100%;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0e141e;
+      color: var(--soft);
+      padding: 0 12px;
+    }
+
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 99px;
+      background: var(--green);
+      box-shadow: 0 0 0 4px rgba(55, 214, 122, 0.12);
+    }
+
+    .job-header {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .job-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 16px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-weight: 800;
+      font-size: 12px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    h1 {
+      font-size: 20px;
+      line-height: 1.2;
+      margin: 0 0 6px;
+    }
+
+    .subline {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 1px;
+      background: var(--line);
+    }
+
+    .metric {
+      background: #0c121b;
+      padding: 12px 14px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .metric strong {
+      font-size: 17px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stepper {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .step-btn {
+      border: 1px solid var(--line);
+      background: #0d131d;
+      color: var(--muted);
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .step-btn[aria-current="true"] {
+      border-color: #1a8ca4;
+      background: #0f2028;
+      color: var(--text);
+    }
+
+    .step-index {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 99px;
+      background: #162231;
+      color: var(--soft);
+      font-weight: 900;
+    }
+
+    .step-btn[aria-current="true"] .step-index {
+      background: var(--cyan);
+      color: #061014;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 430px;
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: 8px;
+      padding: 14px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      font-size: 13px;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: var(--muted);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .job-main > .tag {
+      align-self: center;
+      justify-self: end;
+    }
+
+    .tag.ok { border-color: rgba(55, 214, 122, 0.5); color: #9df0be; }
+    .tag.warn { border-color: rgba(244, 183, 64, 0.55); color: #ffd98a; }
+    .tag.info { border-color: rgba(34, 200, 229, 0.5); color: #9deeff; }
+
+    .step-panel {
+      display: none;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .preview {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0b1018;
+      padding: 10px;
+      min-height: 260px;
+    }
+
+    .preview svg {
+      width: 100%;
+      height: 210px;
+      display: block;
+      background: #111927;
+      border-radius: 6px;
+      border: 1px solid #1e2a38;
+    }
+
+    .legend {
+      display: grid;
+      gap: 7px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--soft);
+    }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      border-radius: 3px;
+      display: inline-block;
+      vertical-align: -2px;
+      margin-right: 6px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .table th {
+      color: var(--muted);
+      text-transform: uppercase;
+      font-size: 10px;
+      text-align: left;
+      padding: 8px 8px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .table td {
+      padding: 9px 8px;
+      border-bottom: 1px solid rgba(42, 53, 68, 0.7);
+      vertical-align: top;
+    }
+
+    .table td:last-child,
+    .table th:last-child {
+      text-align: right;
+    }
+
+    .mono {
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .group-row {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #0d131d;
+      padding: 12px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .group-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .group-name {
+      font-weight: 800;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(110px, 1fr));
+      gap: 8px;
+    }
+
+    .field {
+      border: 1px solid var(--line);
+      background: #090f17;
+      border-radius: 6px;
+      min-height: 56px;
+      padding: 8px;
+    }
+
+    .field span {
+      display: block;
+      color: var(--muted);
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .field strong {
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .ledger {
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ledger-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 8px;
+    }
+
+    .ledger-total strong {
+      font-size: 18px;
+    }
+
+    .ledger-list {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .ledger-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 98px 82px;
+      gap: 6px;
+      padding: 8px;
+      border-bottom: 1px solid rgba(42, 53, 68, 0.7);
+      font-size: 11px;
+    }
+
+    .ledger-row.head {
+      position: sticky;
+      top: 0;
+      background: #16202e;
+      color: var(--muted);
+      text-transform: uppercase;
+      font-weight: 800;
+      font-size: 10px;
+      z-index: 1;
+    }
+
+    .ledger-row span:nth-child(2),
+    .ledger-row span:nth-child(3) {
+      text-align: right;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .callout {
+      border: 1px solid rgba(244, 183, 64, 0.5);
+      background: rgba(244, 183, 64, 0.08);
+      color: #ffe0a2;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    .check-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .check-item {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      display: grid;
+      grid-template-columns: 22px minmax(0, 1fr) auto;
+      gap: 9px;
+      align-items: start;
+      background: #0d131d;
+    }
+
+    .box {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .box.ok {
+      border-color: rgba(55, 214, 122, 0.55);
+      background: rgba(55, 214, 122, 0.12);
+    }
+
+    .footer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 16px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      background: #121b28;
+      color: var(--text);
+      border-radius: 6px;
+      min-height: 36px;
+      padding: 0 12px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .btn.primary {
+      border-color: #168aa1;
+      background: #0c5f70;
+      color: white;
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 1fr; }
+      .side { display: none; }
+      .workspace { grid-template-columns: 1fr; }
+      .ledger { position: relative; top: 0; max-height: none; }
+      .split { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px) {
+      .main { padding: 12px; }
+      .job-main { grid-template-columns: 1fr; }
+      .stepper { grid-template-columns: 1fr; }
+      .grid-2, .form-grid, .metrics { grid-template-columns: 1fr; }
+      .ledger-row { grid-template-columns: minmax(0, 1fr) 96px 70px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="side">
+      <div class="brand"><span class="brand-mark">W</span> WorkOS</div>
+      <div class="nav-title">Operațiuni</div>
+      <div class="nav-item">Control Tower</div>
+      <div class="nav-item active">Operator</div>
+      <div class="nav-item">Atelier Tablet</div>
+      <div class="nav-title">Comercial</div>
+      <div class="nav-item">Work Intake</div>
+      <div class="nav-item">Oferte</div>
+      <div class="nav-title">Resurse</div>
+      <div class="nav-item">Pricing</div>
+      <div class="nav-item">Product System</div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <input class="search" value="gradi-curat.svg" aria-label="Caută" />
+        <div class="status-row"><span class="dot"></span> Backend live · ProductSystem activ</div>
+      </div>
+
+      <header class="job-header">
+        <div class="job-main">
+          <div>
+            <div class="eyebrow">IV4-4C8EA27B · Litere volumetrice</div>
+            <h1>Operator workspace V4</h1>
+            <div class="subline">gradi-curat.svg · 27 KB · 6/6 layere confirmate · SVG ready</div>
+          </div>
+          <span class="tag ok">Pregătit pentru quote preview</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><span>Lățime</span><strong>5087 mm</strong></div>
+          <div class="metric"><span>Înălțime</span><strong>600 mm</strong></div>
+          <div class="metric"><span>Perimetru vectorial</span><strong>31.638 m</strong></div>
+          <div class="metric"><span>Template</span><strong>TPL volumetric</strong></div>
+        </div>
+      </header>
+
+      <nav class="stepper" aria-label="Pași intake">
+        <button class="step-btn" data-step="1" aria-current="true"><span class="step-index">1</span><span><strong>Layere</strong><br><small>Clasificare vector</small></span></button>
+        <button class="step-btn" data-step="2" aria-current="false"><span class="step-index">2</span><span><strong>Finisaje</strong><br><small>Template + preț live</small></span></button>
+        <button class="step-btn" data-step="3" aria-current="false"><span class="step-index">3</span><span><strong>Confirmare</strong><br><small>Draft intern</small></span></button>
+      </nav>
+
+      <div class="workspace">
+        <section class="panel">
+          <div class="step-panel active" data-panel="1">
+            <div class="panel-title">
+              <h2>Hartă vectorială</h2>
+              <span class="tag ok">6/6 confirmate</span>
+            </div>
+            <div class="split">
+              <div class="preview" aria-label="Preview vectorial">
+                <svg viewBox="0 0 560 210" role="img" aria-label="Schiță gradi-curat">
+                  <rect x="16" y="24" width="528" height="150" fill="#0c1420" stroke="#253348" />
+                  <path d="M45 134 L70 72 L95 134 L82 134 L76 118 L58 118 L52 134 Z" fill="#18aee8" />
+                  <path d="M116 74 h38 q25 0 25 27 q0 24 -25 24 h-18 v28 h-20 Z" fill="#f04444" />
+                  <circle cx="230" cy="105" r="36" fill="#17b765" />
+                  <path d="M310 72 h68 v20 h-46 v20 h42 v19 h-42 v22 h-22 Z" fill="#ff8a30" />
+                  <path d="M418 62 q42 0 55 34 q-18 -10 -38 -8 q-28 3 -35 25 q-6 23 16 32 q29 12 55 -9 q-10 35 -55 35 q-54 0 -54 -54 q0 -55 56 -55 Z" fill="#f4b740" />
+                  <path d="M492 128 c28 -30 31 -60 4 -72 c38 1 55 29 44 60 c-8 22 -26 34 -48 36 Z" fill="#9b87ff" />
+                </svg>
+                <div class="legend">
+                  <div><span class="swatch" style="background:#18aee8"></span> Litere pseudo maria · față</div>
+                  <div><span class="swatch" style="background:#f4b740"></span> Logo stânga/dreapta · artwork</div>
+                </div>
+              </div>
+              <div>
+                <table class="table">
+                  <thead><tr><th>Layer</th><th>Rol confirmat</th><th>Producție</th><th>Status</th></tr></thead>
+                  <tbody>
+                    <tr><td><span class="swatch" style="background:#18aee8"></span>pseudo maria</td><td>Față litere</td><td>CNC + cant</td><td><span class="tag ok">ok</span></td></tr>
+                    <tr><td><span class="swatch" style="background:#f04444"></span>pseudo soare</td><td>Față litere</td><td>CNC + cant</td><td><span class="tag ok">ok</span></td></tr>
+                    <tr><td><span class="swatch" style="background:#17b765"></span>pseudo ana</td><td>Față litere</td><td>CNC + cant</td><td><span class="tag ok">ok</span></td></tr>
+                    <tr><td><span class="swatch" style="background:#ff8a30"></span>pseudo gradinita</td><td>Față litere</td><td>CNC + cant</td><td><span class="tag ok">ok</span></td></tr>
+                    <tr><td><span class="swatch" style="background:#f4b740"></span>logo stânga</td><td>Emblemă/logo</td><td>Print + laminare</td><td><span class="tag warn">review</span></td></tr>
+                    <tr><td><span class="swatch" style="background:#9b87ff"></span>logo dreapta</td><td>Emblemă/logo</td><td>Print + laminare</td><td><span class="tag warn">review</span></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-panel" data-panel="2">
+            <div class="panel-title">
+              <h2>Finisaje dictare template</h2>
+              <span class="tag info">Autosave activ</span>
+            </div>
+            <div class="grid-2">
+              <div class="group-row">
+                <div class="group-head"><span class="group-name">Litere volumetrice</span><span class="tag ok">19 luminoase</span></div>
+                <div class="form-grid">
+                  <div class="field"><span>Față</span><strong>Oracal 651 / 8500</strong></div>
+                  <div class="field"><span>Rolă</span><strong>1000 mm</strong></div>
+                  <div class="field"><span>Cant</span><strong>60 mm · Alb / 651</strong></div>
+                  <div class="field"><span>LED</span><strong>0.75 W · neutral</strong></div>
+                </div>
+              </div>
+              <div class="group-row">
+                <div class="group-head"><span class="group-name">Embleme / logo</span><span class="tag ok">2 luminoase</span></div>
+                <div class="form-grid">
+                  <div class="field"><span>Execuție</span><strong>Print + laminare</strong></div>
+                  <div class="field"><span>Print</span><strong>Translucent</strong></div>
+                  <div class="field"><span>Cant</span><strong>60 mm · RAL / 651</strong></div>
+                  <div class="field"><span>Module</span><strong>60 buc</strong></div>
+                </div>
+              </div>
+            </div>
+            <div class="grid-2" style="margin-top:12px">
+              <div class="group-row">
+                <div class="group-head"><span class="group-name">Template</span><span class="tag ok">ProductSystem</span></div>
+                <div class="form-grid">
+                  <div class="field"><span>Spate</span><strong>Forex 10 mm fără șanfren</strong></div>
+                  <div class="field"><span>Șablon montaj</span><strong>3.0523 m²</strong></div>
+                  <div class="field"><span>Montaj</span><strong>Direct perete</strong></div>
+                  <div class="field"><span>Sursă</span><strong>160 W</strong></div>
+                </div>
+              </div>
+              <div class="group-row">
+                <div class="group-head"><span class="group-name">Cant / volum</span><span class="tag info">31.64 m real</span></div>
+                <div class="form-grid">
+                  <div class="field"><span>Litere</span><strong>26.75 m</strong></div>
+                  <div class="field"><span>Embleme</span><strong>4.89 m</strong></div>
+                  <div class="field"><span>Preț</span><strong>37.97 m</strong></div>
+                  <div class="field"><span>Pierdere</span><strong>+20%</strong></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="step-panel" data-panel="3">
+            <div class="panel-title">
+              <h2>Confirmare draft intern</h2>
+              <span class="tag warn">Review-only</span>
+            </div>
+            <div class="callout">Există atenționări de review pentru vector/artwork. Draftul intern poate continua doar după confirmarea operatorului și păstrează blocajele client/order/producție.</div>
+            <div class="check-list">
+              <div class="check-item"><span class="box ok">✓</span><div><strong>Finisaje confirmate</strong><br><span class="subline">Litere, embleme, LED, backing și șablon sunt salvate.</span></div><span class="tag ok">ok</span></div>
+              <div class="check-item"><span class="box">!</span><div><strong>Vector/artwork de revizuit</strong><br><span class="subline">Confirmă metoda de producție și fișierul/grafica pentru producție.</span></div><span class="tag warn">review</span></div>
+              <div class="check-item"><span class="box ok">✓</span><div><strong>Confirmare operator</strong><br><span class="subline">Permite doar draft quote intern, fără client send, order sau producție.</span></div><span class="tag info">activ</span></div>
+              <div class="check-item"><span class="box">×</span><div><strong>Trimitere client / comandă</strong><br><span class="subline">Blocat până la rezolvarea warning-urilor și validarea comercială.</span></div><span class="tag warn">blocat</span></div>
+            </div>
+          </div>
+
+          <div class="footer-actions">
+            <button class="btn" id="prevBtn" type="button">Înapoi</button>
+            <button class="btn primary" id="nextBtn" type="button">Continuă</button>
+          </div>
+        </section>
+
+        <aside class="panel ledger" aria-label="Calcul live">
+          <div class="ledger-total">
+            <div>
+              <div class="eyebrow">Calcul live</div>
+              <div class="subline">Materiale, consumabile și operații estimate</div>
+            </div>
+            <strong class="mono">658.31 EUR</strong>
+          </div>
+          <div class="ledger-list">
+            <div class="ledger-row head"><span>Material / operație</span><span>Consum</span><span>Preț EUR</span></div>
+            <div class="ledger-row"><span>Plexiglas 3 mm / față litere</span><span>1.545 m²</span><span>24.72</span></div>
+            <div class="ledger-row"><span>Plexiglas 3 mm / embleme/logo</span><span>0.979 m²</span><span>15.66</span></div>
+            <div class="ledger-row"><span>Forex 10 mm / spate litere</span><span>2.524 m²</span><span>40.38</span></div>
+            <div class="ledger-row"><span>Oracal 651 / față litere</span><span>0.837 m²</span><span>7.53</span></div>
+            <div class="ledger-row"><span>Oracal 8500 / față litere</span><span>0.774 m²</span><span>15.48</span></div>
+            <div class="ledger-row"><span>Oracal 651 / cant volum</span><span>0.496 m²</span><span>4.47</span></div>
+            <div class="ledger-row"><span>Autocolant print</span><span>0.800 m²</span><span>1.44</span></div>
+            <div class="ledger-row"><span>Laminare print</span><span>0.800 m²</span><span>4.80</span></div>
+            <div class="ledger-row"><span>Cant / volum litere</span><span>26.75 m</span><span>96.29</span></div>
+            <div class="ledger-row"><span>Cant / volum embleme/logo</span><span>4.89 m</span><span>17.61</span></div>
+            <div class="ledger-row"><span>Module LED</span><span>145 buc</span><span>87.00</span></div>
+            <div class="ledger-row"><span>Sursă LED</span><span>1 buc</span><span>24.00</span></div>
+            <div class="ledger-row"><span>CNC față plexiglas</span><span>24.65 ml-pass</span><span>36.97</span></div>
+            <div class="ledger-row"><span>CNC șanfren față</span><span>24.65 ml-pass</span><span>36.97</span></div>
+            <div class="ledger-row"><span>CNC spate Forex</span><span>123.24 ml-pass</span><span>184.87</span></div>
+            <div class="ledger-row"><span>Serviciu print</span><span>0.961 m²</span><span>8.17</span></div>
+            <div class="ledger-row"><span>Aplicare Oracal cant</span><span>7.09 m</span><span>tarif lipsă</span></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const stepButtons = Array.from(document.querySelectorAll(".step-btn"));
+    const panels = Array.from(document.querySelectorAll(".step-panel"));
+    const prev = document.getElementById("prevBtn");
+    const next = document.getElementById("nextBtn");
+    let activeStep = 1;
+
+    function renderStep(step) {
+      activeStep = Math.max(1, Math.min(3, step));
+      stepButtons.forEach((button) => {
+        button.setAttribute("aria-current", button.dataset.step === String(activeStep) ? "true" : "false");
+      });
+      panels.forEach((panel) => {
+        panel.classList.toggle("active", panel.dataset.panel === String(activeStep));
+      });
+      prev.disabled = activeStep === 1;
+      next.textContent = activeStep === 3 ? "Creează draft intern" : "Continuă";
+    }
+
+    stepButtons.forEach((button) => {
+      button.addEventListener("click", () => renderStep(Number(button.dataset.step)));
+    });
+    prev.addEventListener("click", () => renderStep(activeStep - 1));
+    next.addEventListener("click", () => renderStep(activeStep + 1));
+    renderStep(1);
+  </script>
+</body>
+</html>

@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MOCK — ProductSystem Studio v2 (WorkOS)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-deep: #070b14;
+      --bg-panel: #0d1321;
+      --bg-elevated: #111827;
+      --bg-hover: #1a2332;
+      --border: #1e293b;
+      --border-soft: #2a3548;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #8b5cf6;
+      --accent-soft: rgba(139, 92, 246, 0.15);
+      --ok: #10b981;
+      --ok-soft: rgba(16, 185, 129, 0.12);
+      --warn: #f59e0b;
+      --warn-soft: rgba(245, 158, 11, 0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      --font: "DM Sans", system-ui, sans-serif;
+      --mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: var(--font);
+      background: var(--bg-deep);
+      color: var(--text);
+      font-size: 13px;
+      line-height: 1.45;
+      overflow: hidden;
+    }
+
+    /* —— WorkOS app shell (ca App.tsx) —— */
+    .shell {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+      background: #0a0f1c;
+    }
+    .app-nav {
+      width: 220px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      transition: width 0.2s;
+    }
+    .shell.collapsed .app-nav { width: 60px; }
+    .shell.collapsed .nav-label,
+    .shell.collapsed .nav-section-title,
+    .shell.collapsed .nav-logo-text,
+    .shell.collapsed .nav-version span { display: none; }
+    .shell.collapsed .nav-link { justify-content: center; padding-left: 0; padding-right: 0; }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .nav-logo svg { color: #60a5fa; flex-shrink: 0; }
+    .nav-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .nav-section-title {
+      padding: 8px 12px 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #475569;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 12px;
+      margin-bottom: 2px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #94a3b8;
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+    .nav-link:hover {
+      color: #e2e8f0;
+      background: rgba(30, 41, 59, 0.5);
+    }
+    .nav-link.active {
+      color: #60a5fa;
+      background: rgba(37, 99, 235, 0.15);
+      border-left-color: #3b82f6;
+    }
+    .nav-link svg { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.85; }
+    .nav-version {
+      padding: 8px 12px;
+      font-size: 10px;
+      color: #475569;
+      font-family: var(--mono);
+      border-top: 1px solid var(--border);
+    }
+    .nav-collapse {
+      height: 40px;
+      border: none;
+      border-top: 1px solid var(--border);
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .nav-collapse:hover { color: #cbd5e1; }
+
+    .shell-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .shell-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 48px;
+      padding: 0 16px;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .global-search {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 288px;
+      max-width: 40%;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      padding: 6px 12px;
+      border: 1px solid transparent;
+    }
+    .global-search input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 12px;
+      color: #cbd5e1;
+      font-family: inherit;
+    }
+    .global-search input::placeholder { color: #475569; }
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .topbar-alert {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: rgba(127, 29, 29, 0.35);
+      border: 1px solid rgba(185, 28, 28, 0.45);
+      color: #fca5a5;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+    }
+
+    .mock-banner {
+      flex-shrink: 0;
+      background: linear-gradient(90deg, #7c3aed, #4f46e5);
+      color: #fff;
+      text-align: center;
+      padding: 5px 12px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .ps-page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      padding: 12px 16px 0;
+      gap: 10px;
+    }
+    .ps-page-header {
+      flex-shrink: 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .ps-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    .ps-breadcrumb a { color: #94a3b8; text-decoration: none; }
+    .ps-breadcrumb a:hover { color: #e2e8f0; }
+    .ps-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ps-icon {
+      padding: 8px;
+      background: rgba(139, 92, 246, 0.12);
+      border-radius: 12px;
+    }
+    .ps-title-row h1 {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .ps-title-row p {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .ps-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .ps-badge.api {
+      color: #6ee7b7;
+      background: rgba(6, 78, 59, 0.35);
+      border-color: rgba(16, 185, 129, 0.35);
+    }
+    .ps-page-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .ps-page-actions .btn { white-space: nowrap; }
+
+    .app {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      flex: 1;
+      min-height: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius) var(--radius) 0 0;
+      overflow: hidden;
+      background: var(--bg-elevated);
+    }
+
+    /* —— Top command bar —— */
+    .command-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-dim);
+      font-size: 12px;
+    }
+    .breadcrumb strong { color: var(--text-muted); font-weight: 600; }
+    .template-identity {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .template-identity h1 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .chip-active { background: var(--ok-soft); color: var(--ok); border: 1px solid rgba(16,185,129,.35); }
+    .chip-family { background: var(--accent-soft); color: #c4b5fd; border: 1px solid rgba(139,92,246,.35); }
+    .metrics-inline {
+      display: flex;
+      gap: 8px;
+    }
+    .metric-pill {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      text-align: center;
+      min-width: 52px;
+    }
+    .metric-pill .n { font-size: 15px; font-weight: 700; color: #fff; }
+    .metric-pill .l { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
+    .validation-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--ok-soft);
+      border: 1px solid rgba(16,185,129,.3);
+      color: var(--ok);
+      font-weight: 700;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .actions { display: flex; gap: 8px; }
+    .btn {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg-hover); color: var(--text); }
+    .btn-primary { background: var(--ok); color: #042f1a; box-shadow: 0 4px 14px rgba(16,185,129,.35); }
+    .btn-primary:hover { filter: brightness(1.08); }
+
+    /* —— Main 3-column —— */
+    .workspace {
+      display: grid;
+      grid-template-columns: 280px 1fr 320px;
+      min-height: 0;
+      overflow: hidden;
+    }
+
+    /* Left: library */
+    .library {
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .library-header {
+      padding: 14px 14px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .library-header h2 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .search {
+      width: 100%;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px 8px 32px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+    }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-tag {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 600;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .filter-tag.on { background: var(--accent-soft); border-color: rgba(139,92,246,.4); color: #ddd6fe; }
+    .template-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+    }
+    .tpl-card {
+      width: 100%;
+      text-align: left;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      cursor: pointer;
+      color: inherit;
+      font-family: inherit;
+      transition: background .12s, border-color .12s;
+    }
+    .tpl-card:hover { background: var(--bg-hover); }
+    .tpl-card.selected {
+      background: var(--accent-soft);
+      border-color: rgba(139, 92, 246, 0.45);
+    }
+    .tpl-card .code { font-weight: 700; font-size: 12px; color: #f8fafc; }
+    .tpl-card .meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+    .tpl-card .counts {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+
+    /* Center: studio */
+    .studio {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      background: var(--bg-deep);
+    }
+    .studio-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-panel);
+    }
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-deep);
+      padding: 3px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+    .tab {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: var(--text-dim);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .tab.active { background: var(--bg-elevated); color: var(--text); }
+    .studio-body {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      min-height: 0;
+    }
+    .layer-stack {
+      overflow-y: auto;
+      padding: 16px;
+    }
+    .layer-stack h3 {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .layer {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+    .layer-rail {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 28px;
+      flex-shrink: 0;
+    }
+    .layer-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+    .layer-line {
+      flex: 1;
+      width: 2px;
+      background: var(--border-soft);
+      margin: 4px 0;
+    }
+    .layer-card {
+      flex: 1;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .layer.selected .layer-card {
+      border-color: rgba(139, 92, 246, 0.55);
+      box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.2);
+    }
+    .layer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .layer-title { font-weight: 700; font-size: 13px; }
+    .layer-type {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .layer-emoji { font-size: 18px; }
+    .layer-stats {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .layer-stats span { font-family: var(--mono); }
+
+    /* Detail drawer */
+    .detail {
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .detail-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .detail-header h4 { font-size: 14px; font-weight: 700; }
+    .detail-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+    .detail-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border);
+      padding: 0 8px;
+    }
+    .detail-tab {
+      padding: 10px 12px;
+      border: none;
+      background: none;
+      color: var(--text-dim);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+    .detail-tab.active { color: #c4b5fd; border-bottom-color: var(--accent); }
+    .detail-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+    }
+    .detail-panel { display: none; }
+    .detail-panel.active { display: block; }
+    .field-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .field label {
+      display: block;
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .field input, .field select {
+      width: 100%;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 9px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 11px;
+    }
+    .op-row, .mat-row {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .op-row .top, .mat-row .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    .op-row .name { font-weight: 600; font-size: 12px; }
+    .op-row .code { font-family: var(--mono); font-size: 10px; color: var(--text-dim); }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+    .badge {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-ok { background: var(--ok-soft); color: var(--ok); }
+    .badge-warn { background: var(--warn-soft); color: var(--warn); }
+    .badge-info { background: rgba(56,189,248,.12); color: #38bdf8; }
+    .formula-block {
+      background: rgba(139, 92, 246, 0.08);
+      border: 1px dashed rgba(139, 92, 246, 0.35);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    .formula-block strong { color: #c4b5fd; font-family: var(--mono); }
+
+    /* Right: insight rail */
+    .insight {
+      background: var(--bg-panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow-y: auto;
+    }
+    .insight-section {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .insight-section h3 {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .preview-card {
+      background: linear-gradient(145deg, #111827 0%, #0d1321 60%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 12px 10px;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+    }
+    .preview-card-caption {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+    .letter-3d-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 168px;
+      border-radius: var(--radius-sm);
+      background: radial-gradient(ellipse 70% 60% at 50% 55%, rgba(139, 92, 246, 0.12), transparent 70%);
+    }
+    .letter-svg {
+      width: 100%;
+      max-width: 220px;
+      height: auto;
+      display: block;
+    }
+    /* Straturi 3D — repaus vs evidențiat */
+    .l3d-part {
+      transition: fill 0.35s ease, stroke 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
+      opacity: 0.28;
+    }
+    .l3d-part.highlight {
+      opacity: 1;
+    }
+    .l3d-part.pulse {
+      animation: layerPulse 1.4s ease-in-out infinite;
+    }
+    @keyframes layerPulse {
+      0%, 100% { filter: drop-shadow(0 0 6px var(--pulse-color, rgba(167, 139, 250, 0.5))); }
+      50% { filter: drop-shadow(0 0 18px var(--pulse-color, rgba(167, 139, 250, 0.95))); }
+    }
+    .l3d-spate { --pulse-color: rgba(59, 130, 246, 0.9); }
+    .l3d-lateral { --pulse-color: rgba(139, 92, 246, 0.95); }
+    .l3d-face { --pulse-color: rgba(245, 158, 11, 0.95); }
+    .l3d-led { --pulse-color: rgba(250, 204, 21, 0.95); }
+    .l3d-finisaj { --pulse-color: rgba(52, 211, 153, 0.95); }
+    .l3d-spate.highlight { fill: #2563eb; }
+    .l3d-lateral.highlight { fill: #7c3aed; }
+    .l3d-face.highlight { fill: #f59e0b; }
+    .l3d-led.highlight { fill: #fde047; opacity: 0.85 !important; }
+    .l3d-finisaj.highlight {
+      stroke: #34d399;
+      stroke-width: 3;
+      opacity: 1 !important;
+    }
+    .l3d-face-hole {
+      opacity: 1 !important;
+      pointer-events: none;
+    }
+    .layer-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .layer-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      padding: 4px 6px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .layer-toggle:hover { background: var(--bg-hover); }
+    .layer-toggle input {
+      accent-color: var(--accent);
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+    .layer-toggle .swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .layer-toggle.volum {
+      margin-top: 4px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-soft);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .checklist li.ok::before {
+      content: "✓";
+      color: var(--ok);
+      font-weight: 700;
+    }
+    .checklist li.warn::before {
+      content: "!";
+      color: var(--warn);
+      font-weight: 700;
+    }
+    .notes-box {
+      width: 100%;
+      min-height: 72px;
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 11px;
+      resize: vertical;
+    }
+    .link-card {
+      display: block;
+      padding: 10px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: #c4b5fd;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    .link-card:hover { border-color: rgba(139,92,246,.5); }
+
+    .vision-note {
+      margin: 12px 16px 20px;
+      padding: 12px;
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      color: #93c5fd;
+      line-height: 1.5;
+    }
+    .vision-note strong { display: block; margin-bottom: 6px; color: #bfdbfe; }
+
+    @media (max-width: 1200px) {
+      .workspace { grid-template-columns: 240px 1fr; }
+      .insight { display: none; }
+      .studio-body { grid-template-columns: 1fr; }
+      .detail { border-left: none; border-top: 1px solid var(--border); max-height: 40vh; }
+    }
+    @media (max-width: 900px) {
+      .app-nav { display: none; }
+      .ps-page-header { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell" id="shell">
+    <!-- Meniu principal WorkOS (App.tsx) -->
+    <aside class="app-nav" aria-label="Navigare principală">
+      <div class="nav-logo">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h8l-1 8 10-12h-8l1-8z"/></svg>
+        <span class="nav-logo-text">WorkOS</span>
+      </div>
+      <div class="nav-scroll">
+        <div class="nav-section">
+          <p class="nav-section-title">Operațiuni</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg><span class="nav-label">Control Tower</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20V8l10-4 10 4v12"/><path d="M6 20v-6h12v6"/></svg><span class="nav-label">Shop Floor</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Comercial</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><span class="nav-label">Clienți</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-6l-2 3H8l-2-3H2"/></svg><span class="nav-label">Work Intake</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg><span class="nav-label">Oferte</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Resurse</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/></svg><span class="nav-label">Inventar &amp; OC</span></a>
+          <a class="nav-link active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/></svg><span class="nav-label">Product System</span></a>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42"/></svg><span class="nav-label">Utilaje</span></a>
+        </div>
+        <div class="nav-section">
+          <p class="nav-section-title">Sistem</p>
+          <a class="nav-link" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span class="nav-label">Setări</span></a>
+        </div>
+      </div>
+      <div class="nav-version"><span>build</span> mock-studio-v2</div>
+      <button type="button" class="nav-collapse" id="navCollapse" title="Restrânge meniul">‹</button>
+    </aside>
+
+    <div class="shell-main">
+      <header class="shell-topbar">
+        <div class="global-search">
+          <svg width="14" height="14" fill="#64748b" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" placeholder="Search jobs, tasks, machines..." />
+        </div>
+        <div class="topbar-actions">
+          <span class="topbar-alert">2 critical</span>
+          <button type="button" class="user-avatar" title="Cont">OF</button>
+        </div>
+      </header>
+
+      <div class="mock-banner">
+        MOCK UI — Studio v2 în shell WorkOS · nu afectează aplicația · propunere editor șablon
+      </div>
+
+      <div class="ps-page">
+        <div class="ps-page-header">
+          <div>
+            <div class="ps-breadcrumb">
+              <a href="#">← Dashboard</a>
+              <span>›</span>
+              <span style="color:#cbd5e1">ProductSystem / Blueprint Studio</span>
+            </div>
+            <div class="ps-title-row">
+              <div class="ps-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2"><path d="M16.5 9.4 7.55 4.24"/><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8"/></svg>
+              </div>
+              <div>
+                <h1>ProductSystem / Blueprint Studio</h1>
+                <p>Șabloane operaționale — componente, operații, materiale</p>
+              </div>
+              <span class="ps-badge">12 șabloane</span>
+              <span class="ps-badge api">API REAL</span>
+            </div>
+          </div>
+          <div class="ps-page-actions">
+            <button type="button" class="btn btn-ghost">Blueprint Dossier</button>
+            <button type="button" class="btn btn-ghost">Reîncarcă</button>
+            <button type="button" class="btn btn-primary" style="background:#059669;color:#fff">+ Șablon Nou</button>
+          </div>
+        </div>
+
+  <div class="app">
+    <header class="command-bar">
+      <nav class="breadcrumb">
+        <span>Șablon selectat</span>
+        <span>›</span>
+        <strong>TPL-VOLUMETRIC-LETTERS</strong>
+      </nav>
+      <div class="template-identity">
+        <h1>TPL-VOLUMETRIC-LETTERS</h1>
+        <span class="chip chip-active">Activ</span>
+        <span class="chip chip-family">litere volumetrice</span>
+        <div class="metrics-inline">
+          <div class="metric-pill"><div class="n">5</div><div class="l">Comp.</div></div>
+          <div class="metric-pill"><div class="n">10</div><div class="l">Op.</div></div>
+          <div class="metric-pill"><div class="n">8</div><div class="l">Mat.</div></div>
+          <div class="metric-pill"><div class="n">2.8h</div><div class="l">Ore</div></div>
+        </div>
+      </div>
+      <button type="button" class="validation-badge" title="Deschide checklist validare">
+        <span>6 / 6</span>
+        <span style="opacity:.8">validare</span>
+      </button>
+      <div class="actions">
+        <button type="button" class="btn btn-ghost">Anulează</button>
+        <button type="button" class="btn btn-primary">Salvează</button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <!-- LEFT: Library -->
+      <aside class="library">
+        <div class="library-header">
+          <h2>Șabloane</h2>
+          <input type="search" class="search" placeholder="Caută cod sau familie…" value="volum" />
+        </div>
+        <div class="filters">
+          <span class="filter-tag on">Toate</span>
+          <span class="filter-tag">Litere 3D</span>
+          <span class="filter-tag">Print</span>
+          <span class="filter-tag">LED</span>
+        </div>
+        <div class="template-list">
+          <button type="button" class="tpl-card selected">
+            <div class="code">TPL-VOLUMETRIC-LETTERS</div>
+            <div class="meta">Litere volumetrice · BUILD 4</div>
+            <div class="counts"><span>5c</span><span>10o</span><span>8m</span></div>
+          </button>
+          <button type="button" class="tpl-card">
+            <div class="code">TPL-LIGHTBOX-STANDARD</div>
+            <div class="meta">Casete luminoase</div>
+            <div class="counts"><span>5c</span><span>8o</span><span>5m</span></div>
+          </button>
+          <button type="button" class="tpl-card">
+            <div class="code">LIT-VOL-HALO</div>
+            <div class="meta">Litere halo LED</div>
+            <div class="counts"><span>5c</span><span>8o</span><span>4m</span></div>
+          </button>
+          <button type="button" class="tpl-card">
+            <div class="code">TPL-BANNER-STANDARD</div>
+            <div class="meta">Print format mare</div>
+            <div class="counts"><span>4c</span><span>6o</span><span>3m</span></div>
+          </button>
+        </div>
+      </aside>
+
+      <!-- CENTER: Studio -->
+      <main class="studio">
+        <div class="studio-toolbar">
+          <div class="tabs" role="tablist">
+            <button type="button" class="tab active" data-studio-tab="structure">Structură produs</button>
+            <button type="button" class="tab" data-studio-tab="general">Informații generale</button>
+            <button type="button" class="tab" data-studio-tab="notes">Note interne</button>
+          </div>
+          <button type="button" class="btn btn-ghost" style="font-size:11px">+ Componentă</button>
+        </div>
+
+        <div class="studio-body">
+          <section class="layer-stack">
+            <h3>Etape construcție — click pentru detaliu</h3>
+
+            <article class="layer" data-layer="1" data-l3d="face">
+              <div class="layer-rail"><span class="layer-num">1</span><span class="layer-line"></span></div>
+              <div class="layer-card">
+                <div class="layer-head">
+                  <div>
+                    <div class="layer-title">Față litere — tăiere CNC/laser</div>
+                    <div class="layer-type">Vizual față · comp_face_litere</div>
+                  </div>
+                  <span class="layer-emoji">🔤</span>
+                </div>
+                <div class="layer-stats"><span>2 op.</span><span>1 mat.</span><span>45 min</span></div>
+              </div>
+            </article>
+
+            <article class="layer selected" data-layer="2" data-l3d="lateral">
+              <div class="layer-rail"><span class="layer-num">2</span><span class="layer-line"></span></div>
+              <div class="layer-card">
+                <div class="layer-head">
+                  <div>
+                    <div class="layer-title">Laterale litere — formare profil</div>
+                    <div class="layer-type">Volum aluminiu · comp_lateral_litere</div>
+                  </div>
+                  <span class="layer-emoji">🔤</span>
+                </div>
+                <div class="layer-stats"><span>1 op.</span><span>1 mat.</span><span>formulă</span></div>
+              </div>
+            </article>
+
+            <article class="layer" data-layer="3" data-l3d="spate">
+              <div class="layer-rail"><span class="layer-num">3</span><span class="layer-line"></span></div>
+              <div class="layer-card">
+                <div class="layer-head">
+                  <div>
+                    <div class="layer-title">Spate litere — Forex 10 mm</div>
+                    <div class="layer-type">Capac spate · comp_spate_litere</div>
+                  </div>
+                  <span class="layer-emoji">📦</span>
+                </div>
+                <div class="layer-stats"><span>1 op.</span><span>1 mat.</span></div>
+              </div>
+            </article>
+
+            <article class="layer" data-layer="4" data-l3d="led">
+              <div class="layer-rail"><span class="layer-num">4</span><span class="layer-line"></span></div>
+              <div class="layer-card">
+                <div class="layer-head">
+                  <div>
+                    <div class="layer-title">Iluminare LED litere</div>
+                    <div class="layer-type">ELECTRIC_LED · comp_led_litere</div>
+                  </div>
+                  <span class="layer-emoji">⚡</span>
+                </div>
+                <div class="layer-stats"><span>2 op.</span><span>2 mat.</span><span>30 min</span></div>
+              </div>
+            </article>
+
+            <article class="layer" data-layer="5" data-l3d="finisaj">
+              <div class="layer-rail"><span class="layer-num">5</span></div>
+              <div class="layer-card">
+                <div class="layer-head">
+                  <div>
+                    <div class="layer-title">Finisare — vopsire, asamblare, QC</div>
+                    <div class="layer-type">FINISAJ · comp_finisaj_litere</div>
+                  </div>
+                  <span class="layer-emoji">🎯</span>
+                </div>
+                <div class="layer-stats"><span>4 op.</span><span>3 mat.</span><span>95 min</span></div>
+              </div>
+            </article>
+          </section>
+
+          <aside class="detail">
+            <div class="detail-header">
+              <h4 id="detail-title">Laterale litere — formare profil</h4>
+              <p class="detail-sub" id="detail-sub">Componentă 2 · LITERE_3D</p>
+            </div>
+            <div class="detail-tabs">
+              <button type="button" class="detail-tab active" data-detail="ops">Operații</button>
+              <button type="button" class="detail-tab" data-detail="mats">Materiale</button>
+              <button type="button" class="detail-tab" data-detail="meta">Metadate formulă</button>
+            </div>
+            <div class="detail-content">
+              <div class="detail-panel active" id="panel-ops">
+                <div class="op-row">
+                  <div class="top">
+                    <span class="name">Formare laterale</span>
+                    <span class="code">side_forming</span>
+                  </div>
+                  <div class="field-grid">
+                    <div class="field"><label>Workcenter</label><input value="ASSEMBLY" readonly /></div>
+                    <div class="field"><label>Minute</label><input value="0" readonly /></div>
+                  </div>
+                  <div class="formula-block">
+                    <strong>formula_id:</strong> perimeter_based_time<br />
+                    <span style="color:var(--text-dim)">speed_m_per_min · passes — read-only în UI actual</span>
+                  </div>
+                </div>
+              </div>
+              <div class="detail-panel" id="panel-mats">
+                <div class="mat-row">
+                  <div class="top">
+                    <span class="name">Profil lateral litere</span>
+                    <span class="code">MAT-PROFIL-LATERAL-LITERE</span>
+                  </div>
+                  <div class="badge-row">
+                    <span class="badge badge-ok">În registru</span>
+                    <span class="badge badge-warn">Fără preț</span>
+                  </div>
+                  <div class="formula-block">
+                    <strong>letter_perimeter</strong> · unit: ml · qty: din ofertă
+                  </div>
+                </div>
+              </div>
+              <div class="detail-panel" id="panel-meta">
+                <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">
+                  Parametrii configurabili (text, font, RAL, montaj) rămân în Intake / Dossier / Ofertă — nu în șablon.
+                </p>
+                <div class="formula-block">
+                  <strong>Șablonul</strong> definește structura; valorile concrete vin din cererea clientului.
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+
+      <!-- RIGHT: Insight -->
+      <aside class="insight">
+        <section class="insight-section">
+          <h3>Previzualizare · literă 3D pe straturi</h3>
+          <div class="preview-card">
+            <div class="letter-3d-wrap">
+              <svg class="letter-svg" id="letter3d" viewBox="0 0 280 220" xmlns="http://www.w3.org/2000/svg" aria-label="Literă A volumetrică — straturi">
+                <!-- Capac spate — Forex 10 mm închidere -->
+                <path class="l3d-part l3d-spate l3d-volum" d="M 158 52 L 218 82 L 218 168 L 158 198 L 98 168 L 98 82 Z" fill="#1e3a5f" />
+                <!-- Lateral stânga — profil extrudat -->
+                <path class="l3d-part l3d-lateral l3d-volum" d="M 58 82 L 98 52 L 158 52 L 98 82 Z" fill="#4c1d95" />
+                <path class="l3d-part l3d-lateral l3d-volum" d="M 58 82 L 98 82 L 98 168 L 58 168 Z" fill="#5b21b6" />
+                <!-- Lateral dreapta -->
+                <path class="l3d-part l3d-lateral l3d-volum" d="M 158 52 L 218 82 L 218 168 L 158 198 L 158 52 Z" fill="#6d28d9" />
+                <!-- Față (ACP) — contur A -->
+                <path class="l3d-part l3d-face l3d-volum" d="M 98 82 L 128 52 L 158 52 L 178 82 L 168 118 L 148 118 L 138 168 L 118 168 L 108 118 L 88 118 Z" fill="#b45309" />
+                <path class="l3d-part l3d-face-hole" d="M 118 118 L 138 118 L 133 138 L 123 138 Z" fill="#0d1321" />
+                <!-- LED — canal lumină (spate față) -->
+                <path class="l3d-part l3d-led" d="M 108 90 L 148 90 L 143 108 L 113 108 Z" fill="#ca8a04" opacity="0.5" />
+                <ellipse class="l3d-part l3d-led" cx="128" cy="98" rx="18" ry="8" fill="#fef08a" opacity="0.45" />
+                <!-- Finisaj — contur / vopsire -->
+                <path class="l3d-part l3d-finisaj" d="M 98 82 L 128 52 L 158 52 L 178 82 L 168 118 L 148 118 L 138 168 L 118 168 L 108 118 L 88 118 Z" fill="none" stroke="#065f46" stroke-width="2" stroke-linejoin="round" />
+                <path class="l3d-part l3d-finisaj" d="M 58 82 L 98 52 L 158 52 L 218 82 L 218 168 L 158 198 L 98 168 L 58 168 Z" fill="none" stroke="#047857" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7" />
+              </svg>
+            </div>
+            <p class="preview-card-caption">Bifează un strat — corpul pulsează și prinde culoarea componentei</p>
+            <div class="layer-toggles" id="layerToggles">
+              <label class="layer-toggle volum">
+                <input type="checkbox" data-focus="volum" />
+                <span class="swatch" style="background:linear-gradient(135deg,#7c3aed,#f59e0b)"></span>
+                Volum (corp 3D complet)
+              </label>
+              <label class="layer-toggle">
+                <input type="checkbox" data-focus="face" />
+                <span class="swatch" style="background:#f59e0b"></span>
+                Vizual față
+              </label>
+              <label class="layer-toggle">
+                <input type="checkbox" data-focus="lateral" checked />
+                <span class="swatch" style="background:#8b5cf6"></span>
+                Volum aluminiu
+              </label>
+              <label class="layer-toggle">
+                <input type="checkbox" data-focus="spate" />
+                <span class="swatch" style="background:#3b82f6"></span>
+                Capac spate · Forex 10 mm
+              </label>
+              <label class="layer-toggle">
+                <input type="checkbox" data-focus="led" />
+                <span class="swatch" style="background:#facc15"></span>
+                LED · ELECTRIC_LED
+              </label>
+              <label class="layer-toggle">
+                <input type="checkbox" data-focus="finisaj" />
+                <span class="swatch" style="background:#34d399"></span>
+                Finisaj · vopsire / QC
+              </label>
+            </div>
+          </div>
+        </section>
+        <section class="insight-section">
+          <h3>Validare design-time</h3>
+          <ul class="checklist">
+            <li class="ok">Cod șablon și familie</li>
+            <li class="ok">Componente tipizate</li>
+            <li class="ok">Operații cu nume</li>
+            <li class="ok">Materiale în registru</li>
+            <li class="ok">Metadate formulă păstrate</li>
+            <li class="warn">Readiness canonic — vezi backend</li>
+          </ul>
+        </section>
+        <section class="insight-section">
+          <h3>Note interne</h3>
+          <textarea class="notes-box" readonly>Input params: text, font, height_mm… [save-smoke-ok]</textarea>
+        </section>
+        <section class="insight-section">
+          <h3>Legături</h3>
+          <a href="#" class="link-card" onclick="return false">Blueprint Dossier →</a>
+          <a href="#" class="link-card" onclick="return false" style="margin-top:6px">Work Intake (familie) →</a>
+        </section>
+        <div class="vision-note">
+          <strong>Integrare în app</strong>
+          Meniul stânga + top bar = <code>App.tsx</code> (neschimbat). Header pagină = <code>ProductSystem.tsx</code>. Zona de dedesubt = editor propus: bibliotecă șabloane · studio stack · panou insight (preview 3D, validare).
+        </div>
+      </aside>
+    </div>
+  </div>
+      </div><!-- .ps-page -->
+    </div><!-- .shell-main -->
+  </div><!-- .shell -->
+
+  <script>
+    document.getElementById("navCollapse")?.addEventListener("click", () => {
+      const shell = document.getElementById("shell");
+      const btn = document.getElementById("navCollapse");
+      shell?.classList.toggle("collapsed");
+      if (btn) btn.textContent = shell?.classList.contains("collapsed") ? "›" : "‹";
+    });
+
+    const letter3d = document.getElementById("letter3d");
+    const layerData = {
+      1: { title: "Față litere — tăiere CNC/laser", sub: "Componentă 1 · LITERE_3D" },
+      2: { title: "Laterale litere — formare profil", sub: "Componentă 2 · LITERE_3D" },
+      3: { title: "Spate litere — Forex 10 mm", sub: "Componentă 3 · spate literă (nu panou ACM)" },
+      4: { title: "Iluminare LED litere", sub: "Componentă 4 · ELECTRIC_LED" },
+      5: { title: "Finisare — vopsire, asamblare, QC", sub: "Componentă 5 · FINISAJ" },
+    };
+
+    function updateLetter3dHighlight() {
+      const checked = [...document.querySelectorAll(".layer-toggle input:checked")].map(
+        (i) => i.dataset.focus
+      );
+      letter3d.querySelectorAll(".l3d-part").forEach((p) => {
+        p.classList.remove("highlight", "pulse");
+      });
+      const addHighlight = (selector) => {
+        letter3d.querySelectorAll(selector).forEach((p) => {
+          p.classList.add("highlight", "pulse");
+        });
+      };
+      if (checked.includes("volum")) {
+        addHighlight(".l3d-volum");
+      }
+      ["face", "lateral", "spate", "led", "finisaj"].forEach((key) => {
+        if (checked.includes(key)) addHighlight(".l3d-" + key);
+      });
+    }
+
+    document.querySelectorAll(".layer-toggle input").forEach((input) => {
+      input.addEventListener("change", () => {
+        if (input.dataset.focus === "volum" && input.checked) {
+          document.querySelectorAll('.layer-toggle input:not([data-focus="volum"])').forEach((o) => {
+            o.checked = false;
+          });
+        } else if (input.checked && input.dataset.focus !== "volum") {
+          const vol = document.querySelector('.layer-toggle input[data-focus="volum"]');
+          if (vol) vol.checked = false;
+        }
+        updateLetter3dHighlight();
+      });
+    });
+    updateLetter3dHighlight();
+
+    const layers = document.querySelectorAll(".layer");
+    layers.forEach((el) => {
+      el.addEventListener("click", () => {
+        layers.forEach((l) => l.classList.remove("selected"));
+        el.classList.add("selected");
+        const id = el.dataset.layer;
+        document.getElementById("detail-title").textContent = layerData[id].title;
+        document.getElementById("detail-sub").textContent = layerData[id].sub;
+
+        const l3d = el.dataset.l3d;
+        if (l3d) {
+          document.querySelectorAll(".layer-toggle input").forEach((i) => {
+            i.checked = i.dataset.focus === l3d;
+          });
+          const vol = document.querySelector('.layer-toggle input[data-focus="volum"]');
+          if (vol) vol.checked = false;
+          updateLetter3dHighlight();
+        }
+      });
+    });
+
+    document.querySelectorAll(".detail-tab").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".detail-tab").forEach((t) => t.classList.remove("active"));
+        document.querySelectorAll(".detail-panel").forEach((p) => p.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById("panel-" + tab.dataset.detail).classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".tab[data-studio-tab]").forEach((tab) => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab[data-studio-tab]").forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+      });
+    });
+
+    document.querySelectorAll(".tpl-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll(".tpl-card").forEach((c) => c.classList.remove("selected"));
+        card.classList.add("selected");
+      });
+    });
+
+    document.querySelectorAll(".filter-tag").forEach((tag) => {
+      tag.addEventListener("click", () => {
+        document.querySelectorAll(".filter-tag").forEach((t) => t.classList.remove("on"));
+        tag.classList.add("on");
+      });
+    });
+  </script>
+</body>
+</html>

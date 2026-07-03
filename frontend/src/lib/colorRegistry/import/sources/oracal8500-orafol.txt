@@ -1,0 +1,112 @@
+# ORACAL 8500 Translucent Cal — Orafol sample colors (back-lit preview sRGB)
+# Full 55-color catalogue codes per ORAFOL product spec + distributor listings
+sRGB231, 232, 229
+#010white
+sRGB209, 198, 0
+#025brimstone yellow
+sRGB255, 207, 0
+#021yellow
+sRGB245, 189, 0
+#013zinc yellow
+sRGB251, 170, 0
+#020golden yellow
+sRGB210, 151, 47
+#207ochre yellow
+sRGB254, 197, 0
+#015yellow
+sRGB225, 81, 44
+#034orange
+sRGB176, 0, 13
+#330fox red
+sRGB201, 17, 0
+#323coral red
+sRGB201, 17, 0
+#032light red
+sRGB176, 0, 13
+#329carnation red
+sRGB144, 14, 22
+#016crimson
+sRGB176, 0, 13
+#031red
+sRGB144, 14, 22
+#017cherry red
+sRGB144, 14, 22
+#030dark red
+sRGB237, 132, 182
+#085pale pink
+sRGB194, 43, 107
+#413light pink
+sRGB194, 43, 107
+#041pink
+sRGB144, 14, 22
+#008heather red
+sRGB93, 44, 104
+#040violet
+sRGB184, 147, 188
+#403light violet
+sRGB184, 147, 188
+#012lilac
+sRGB0, 137, 195
+#527pastel blue
+sRGB0, 137, 195
+#053light blue
+sRGB0, 93, 171
+#052azure blue
+sRGB0, 70, 132
+#051gentian blue
+sRGB100, 120, 140
+#528grey blue
+sRGB0, 117, 187
+#005middle blue
+sRGB25, 48, 171
+#006intensive blue
+sRGB21, 42, 120
+#049king blue
+sRGB0, 117, 187
+#542caribic blue
+sRGB18, 34, 108
+#065cobalt blue
+sRGB27, 46, 93
+#007dark blue
+sRGB0, 129, 140
+#541dark turquoise
+sRGB0, 155, 151
+#066turquoise blue
+sRGB0, 155, 151
+#054turquoise
+sRGB0, 135, 60
+#062light green
+sRGB106, 167, 45
+#063lime-tree green
+sRGB0, 120, 75
+#009middle green
+sRGB0, 82, 54
+#614reed green
+sRGB0, 122, 66
+#068grass green
+sRGB0, 129, 100
+#618dragon green
+sRGB0, 129, 100
+#087emerald
+sRGB0, 64, 40
+#060dark green
+sRGB13, 14, 17
+#070black
+sRGB129, 134, 137
+#076telegrey
+sRGB191, 194, 192
+#072light grey
+sRGB138, 143, 139
+#074middle grey
+sRGB246, 244, 236
+#805ivory
+sRGB168, 136, 92
+#011pale brown
+sRGB168, 136, 92
+#081light brown
+sRGB104, 106, 109
+#090silver grey
+sRGB117, 98, 50
+#091gold
+sRGB67, 47, 30
+#088coffee brown

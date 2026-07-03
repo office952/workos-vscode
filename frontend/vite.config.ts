@@ -1,0 +1,108 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react-swc';
+import path from 'path';
+import { atoms } from '@metagptx/web-sdk/plugins';
+
+function escapeHtmlAttr(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+process.env.VITE_APP_TITLE ??= process.env.OVERVIEW_TITLE ?? 'shadcnui';
+process.env.VITE_APP_DESCRIPTION ??= process.env.OVERVIEW_DESCRIPTION ?? 'Atoms Generated Project';
+process.env.VITE_APP_TITLE = escapeHtmlAttr(process.env.VITE_APP_TITLE);
+process.env.VITE_APP_DESCRIPTION = escapeHtmlAttr(process.env.VITE_APP_DESCRIPTION);
+process.env.VITE_APP_LOGO_URL ??= process.env.OVERVIEW_LOGO_URL ?? 'https://public-frontend-cos.metadl.com/mgx/img/favicon_atoms.ico';
+
+// https://vitejs.dev/config/
+export default defineConfig(() => {
+  return {
+    plugins: [
+      react(),
+      // atoms() can intercept dev clicks; opt-in only (VITE_ENABLE_MGX_ATOMS=true).
+      ...(process.env.VITE_ENABLE_MGX_ATOMS === 'true' ? [atoms()] : []),
+    ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
+    },
+    server: {
+      host: '0.0.0.0', // Listen on all network interfaces.
+      port: parseInt(process.env.VITE_PORT || '3000'),
+      allowedHosts: true as const, // Allow App Viewer proxy hostnames
+      // Backend port can be overridden with BACKEND_PORT=... pnpm run dev.
+      // Default 8000 matches the canonical uvicorn launch for this
+      // workspace. The upstream timeout bounds the proxy wait so that a
+      // mis-pointed or slow backend surfaces as an explicit 504 to the
+      // browser fetch() call instead of an indefinite pending request.
+      // The frontend also has an AbortController-based client-side
+      // timeout in src/api/execution.ts::generatePlan, which is the
+      // authoritative UI-liveness guard against "stuck loading" states.
+      proxy: {
+        '/api': {
+          target: `http://localhost:${process.env.BACKEND_PORT || '8000'}`,
+          changeOrigin: true,
+          timeout: 30_000,
+          proxyTimeout: 30_000,
+        },
+      },
+      watch: { usePolling: true, interval: 600 },
+    },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            // Vendor chunks
+            'react-vendor': ['react', 'react-dom'],
+            'router-vendor': ['react-router-dom'],
+            'ui-vendor': [
+              '@radix-ui/react-accordion',
+              '@radix-ui/react-alert-dialog',
+              '@radix-ui/react-aspect-ratio',
+              '@radix-ui/react-avatar',
+              '@radix-ui/react-checkbox',
+              '@radix-ui/react-collapsible',
+              '@radix-ui/react-context-menu',
+              '@radix-ui/react-dialog',
+              '@radix-ui/react-dropdown-menu',
+              '@radix-ui/react-hover-card',
+              '@radix-ui/react-label',
+              '@radix-ui/react-menubar',
+              '@radix-ui/react-navigation-menu',
+              '@radix-ui/react-popover',
+              '@radix-ui/react-progress',
+              '@radix-ui/react-radio-group',
+              '@radix-ui/react-scroll-area',
+              '@radix-ui/react-select',
+              '@radix-ui/react-separator',
+              '@radix-ui/react-slider',
+              '@radix-ui/react-slot',
+              '@radix-ui/react-switch',
+              '@radix-ui/react-tabs',
+              '@radix-ui/react-toast',
+              '@radix-ui/react-toggle',
+              '@radix-ui/react-toggle-group',
+              '@radix-ui/react-tooltip',
+            ],
+            'form-vendor': ['react-hook-form', '@hookform/resolvers', 'zod'],
+            'utils-vendor': [
+              'axios',
+              'clsx',
+              'tailwind-merge',
+              'class-variance-authority',
+              'date-fns',
+              'lucide-react',
+            ],
+            'query-vendor': ['@tanstack/react-query'],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000,
+    },
+  };
+});

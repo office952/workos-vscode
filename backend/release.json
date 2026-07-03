@@ -1,0 +1,9 @@
+{
+  "app_name": "WorkOS",
+  "release_version": "BUILD_25",
+  "release_label": "workos-staging-release-BUILD_25",
+  "environment": "staging",
+  "release_scope": "/workspace/app",
+  "build_time": "2026-05-25T18:04:09Z",
+  "_mirror_of": "/workspace/app/release.json"
+}

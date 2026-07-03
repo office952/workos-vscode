@@ -1,0 +1,108 @@
+{
+    "title": "inventory_materials",
+    "type": "object",
+    "properties": {
+        "id": {
+            "type": "integer",
+            "description": "Primary key, auto-increment"
+        },
+        "code": {
+            "type": "string",
+            "description": "Business code like MAT-001"
+        },
+        "name": {
+            "type": "string",
+            "description": "Material name"
+        },
+        "category": {
+            "type": "string",
+            "description": "Category name"
+        },
+        "unit": {
+            "type": "string",
+            "description": "Unit of measure"
+        },
+        "stock_current": {
+            "type": "number",
+            "description": "Current stock quantity"
+        },
+        "stock_min": {
+            "type": "number",
+            "description": "Minimum stock threshold"
+        },
+        "stock_max": {
+            "type": "number",
+            "description": "Maximum stock target"
+        },
+        "unit_cost": {
+            "type": "number",
+            "description": "Unit cost in RON"
+        },
+        "supplier": {
+            "type": "string",
+            "description": "Supplier name"
+        },
+        "last_restocked": {
+            "type": "string",
+            "description": "ISO date of last restock"
+        },
+        "consumption_rate": {
+            "type": "number",
+            "description": "Average daily consumption"
+        },
+        "location": {
+            "type": "string",
+            "description": "Warehouse location"
+        },
+        "sheet_format_type": {
+            "type": "string",
+            "description": "Physical format type: none|sheet|roll|linear|piece|unknown"
+        },
+        "sheet_width": {
+            "type": "number",
+            "description": "Sheet width in sheet_unit"
+        },
+        "sheet_height": {
+            "type": "number",
+            "description": "Sheet height in sheet_unit"
+        },
+        "sheet_unit": {
+            "type": "string",
+            "description": "Sheet dimension unit: mm|cm|m|unknown"
+        },
+        "sheet_thickness": {
+            "type": "number",
+            "description": "Optional sheet thickness"
+        },
+        "sheet_thickness_unit": {
+            "type": "string",
+            "description": "Thickness unit: mm|cm|m|unknown"
+        },
+        "usable_width": {
+            "type": "number",
+            "description": "Optional usable width after process constraints"
+        },
+        "usable_height": {
+            "type": "number",
+            "description": "Optional usable height after process constraints"
+        },
+        "format_source": {
+            "type": "string",
+            "description": "Source of format data: manual|supplier|imported|unknown"
+        },
+        "format_verified": {
+            "type": "boolean",
+            "description": "Whether sheet format was manually verified"
+        },
+        "format_notes": {
+            "type": "string",
+            "description": "Optional notes about sheet format configuration"
+        }
+    },
+    "required": [
+        "id",
+        "code",
+        "name",
+        "unit"
+    ]
+}

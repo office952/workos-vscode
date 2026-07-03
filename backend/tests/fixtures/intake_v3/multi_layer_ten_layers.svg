@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 50" width="220mm" height="50mm">
+  <g id="PROD_01"><path d="M5 40 L10 10 L15 40 Z"/></g>
+  <g id="PROD_02"><path d="M18 40 L23 10 L28 40 Z"/></g>
+  <g id="PROD_03"><path d="M31 40 L36 10 L41 40 Z"/></g>
+  <g id="PROD_04"><path d="M44 40 L49 10 L54 40 Z"/></g>
+  <g id="PROD_05"><path d="M57 40 L62 10 L67 40 Z"/></g>
+  <g id="PROD_06"><path d="M70 40 L75 10 L80 40 Z"/></g>
+  <g id="PROD_07"><path d="M83 40 L88 10 L93 40 Z"/></g>
+  <g id="PROD_08"><path d="M96 40 L101 10 L106 40 Z"/></g>
+  <g id="PROD_09"><path d="M109 40 L114 10 L119 40 Z"/></g>
+  <g id="PROD_10"><path d="M122 40 L127 10 L132 40 Z"/></g>
+  <g id="TECH_REF"><path d="M140 5 L150 5 L150 15 L140 15 Z"/></g>
+  <g id="GOLURI"><path d="M160 20 L170 20 L170 30 L160 30 Z"/></g>
+</svg>

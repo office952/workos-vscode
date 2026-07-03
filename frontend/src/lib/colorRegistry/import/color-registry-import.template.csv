@@ -1,0 +1,4 @@
+system,brand,series,code,name,romanianName,previewHex,finish,usageScope,translucent,active,source,notes
+RAL,,,9010,Pure White,Alb pur,#F7F9EF,matte,return;structure;cable_channel,false,true,template_example,HEX approximate — not for production import
+ORACAL,Oracal,651,010,White,Alb,#F5F5F0,gloss,return;face_vinyl,false,true,template_example,Oracal 651 colored vinyl
+ORACAL,Oracal,8500,010,White Translucent,Alb translucid,#F0F4F8,translucent_matte,face_vinyl;illuminated_face,true,true,template_example,Oracal 8500 translucent — not interchangeable with 651

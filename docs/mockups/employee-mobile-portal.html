@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>WorkOS Employee Mobile — Concept mock</title>
+  <style>
+    :root {
+      --bg: #0d1321;
+      --panel: #111827;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #60a5fa;
+      --amber: #fbbf24;
+      --emerald: #34d399;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .wrap { max-width: 420px; margin: 0 auto; padding: 16px 16px 32px; }
+    .banner {
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 11px;
+      color: #fcd34d;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+    header h1 { font-size: 20px; margin: 0 0 4px; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(245, 158, 11, 0.5);
+      background: rgba(245, 158, 11, 0.15);
+      color: #fcd34d;
+      margin-bottom: 12px;
+    }
+    nav.tabs {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+    }
+    nav.tabs button {
+      flex: 0 0 auto;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    nav.tabs button.active {
+      color: var(--accent);
+      border-color: rgba(96, 165, 250, 0.5);
+      background: rgba(37, 99, 235, 0.15);
+    }
+    .screen { display: none; }
+    .screen.active { display: block; }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .card h2 { font-size: 14px; margin: 0 0 6px; }
+    .card p { font-size: 11px; color: var(--muted); margin: 0; line-height: 1.5; }
+    .pill {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .pill.live { color: var(--emerald); border-color: rgba(52, 211, 153, 0.4); }
+    .row { display: flex; justify-content: space-between; font-size: 12px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+    .row:last-child { border-bottom: none; }
+    footer { margin-top: 20px; font-size: 10px; color: #64748b; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="banner">
+      <strong>Concept mock — not runtime.</strong> Static preview for owner review. No API calls. No real employee data.
+    </div>
+    <header>
+      <span class="badge">📱 MOBILE CONCEPT</span>
+      <h1>WorkOS Employee</h1>
+      <p style="font-size:12px;color:var(--muted);margin:0;">Angajat demo: <strong style="color:var(--text)">Alex M.</strong> · Operator print</p>
+    </header>
+
+    <nav class="tabs" aria-label="Screens">
+      <button type="button" class="active" data-screen="today">Azi</button>
+      <button type="button" data-screen="tasks">Taskuri</button>
+      <button type="button" data-screen="requests">Cereri</button>
+      <button type="button" data-screen="attendance">Pontaj</button>
+      <button type="button" data-screen="money">Sold / Plăți</button>
+      <button type="button" data-screen="field">Montaj</button>
+    </nav>
+
+    <section id="today" class="screen active">
+      <div class="card">
+        <span class="pill live">Program azi</span>
+        <h2>08:00 – 16:00 · Print LF</h2>
+        <p>Pontaj: <strong style="color:var(--emerald)">Prezent</strong> · 2 taskuri · 1 montaj planificat</p>
+      </div>
+      <div class="card">
+        <span class="pill">Alerte</span>
+        <h2>Materiale lipsă — TSK-1042</h2>
+        <p>Verifică stoc laminare înainte de start.</p>
+      </div>
+    </section>
+
+    <section id="tasks" class="screen">
+      <div class="card">
+        <span class="pill">Alocat</span>
+        <h2>TSK-1042 · Print banner</h2>
+        <p>Client: Demo Retail · Estimare 45 min</p>
+      </div>
+      <div class="card">
+        <span class="pill">Planificat</span>
+        <h2>TSK-1048 · Laminare</h2>
+        <p>Start după finalizarea TSK-1042.</p>
+      </div>
+    </section>
+
+    <section id="requests" class="screen">
+      <div class="card">
+        <span class="pill">Draft</span>
+        <h2>Cerere zi liberă</h2>
+        <p>20 iun 2026 · Așteaptă aprobare manager.</p>
+      </div>
+      <div class="card">
+        <span class="pill">Approved</span>
+        <h2>Cerere avans</h2>
+        <p>500 RON · Aprobat · ledger pending sync.</p>
+      </div>
+    </section>
+
+    <section id="attendance" class="screen">
+      <div class="card">
+        <span class="pill live">Iunie 2026</span>
+        <h2>Rezumat pontaj</h2>
+        <div class="row"><span>Zile lucrate</span><span>12</span></div>
+        <div class="row"><span>Concediu</span><span>1</span></div>
+        <div class="row"><span>Ore supl.</span><span>3h</span></div>
+      </div>
+    </section>
+
+    <section id="money" class="screen">
+      <div class="card">
+        <span class="pill">Sold intern</span>
+        <h2>Avans activ: 500 RON</h2>
+        <p>Evidență internă — nu document fiscal.</p>
+      </div>
+      <div class="card">
+        <span class="pill">Plăți confirmate</span>
+        <h2>Slot 15 · 1.200 RON</h2>
+        <p>Plată internă înregistrată · iun 2026.</p>
+      </div>
+    </section>
+
+    <section id="field" class="screen">
+      <div class="card">
+        <span class="pill live">Montaj teren</span>
+        <h2>ORD-2201 · Fațadă luminată</h2>
+        <p>Locație: Demo Mall · Echipă: 3 persoane · Checklist 2/6</p>
+      </div>
+      <div class="card">
+        <span class="pill">Poze</span>
+        <h2>Înainte / După</h2>
+        <p>Upload planificat — build Field Reality (Faza 6).</p>
+      </div>
+    </section>
+
+    <footer>WorkOS Employee Mobile Portal · Blueprint mock · 2026</footer>
+  </div>
+  <script>
+    document.querySelectorAll("nav.tabs button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("nav.tabs button").forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.screen).classList.add("active");
+      });
+    });
+  </script>
+</body>
+</html>

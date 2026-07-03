@@ -1,0 +1,928 @@
+﻿2026-06-30 04:52:36,140 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,140 INFO sqlalchemy.engine.Engine SELECT name FROM sqlite_master WHERE type='table'
+2026-06-30 04:52:36,140 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ()
+2026-06-30 04:52:36,140 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_attendance_events)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(employees)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(oidc_states)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(cost_engine_config)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(company_commercial_settings)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(attendance_request_effects)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(clients)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_payment_records)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(users)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_balance_transactions)
+2026-06-30 04:52:36,148 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,153 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_requests)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine PRAGMA table_info(task_clarification_requests)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine PRAGMA table_info(machines)
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,154 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,158 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,158 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_skill_authorizations)
+2026-06-30 04:52:36,158 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,158 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,160 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,160 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_workcenter_authorizations)
+2026-06-30 04:52:36,161 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ()
+2026-06-30 04:52:36,161 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,161 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,161 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,182 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,182 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,184 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,184 INFO sqlalchemy.engine.Engine PRAGMA table_info(employee_resource_authorizations)
+2026-06-30 04:52:36,184 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine PRAGMA table_info(operation_employee_authorizations)
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine PRAGMA table_info(operation_resource_requirements)
+2026-06-30 04:52:36,185 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine PRAGMA table_info(field_installation_teams)
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ()
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine PRAGMA table_info(field_installation_team_members)
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ()
+2026-06-30 04:52:36,186 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,187 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,187 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,187 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,187 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,188 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,188 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,188 INFO sqlalchemy.engine.Engine PRAGMA table_info(execution_observation_config)
+2026-06-30 04:52:36,188 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine PRAGMA table_info(execution_reality)
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ()
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine PRAGMA table_info(execution_plan)
+2026-06-30 04:52:36,189 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,190 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,190 INFO sqlalchemy.engine.Engine PRAGMA table_info(inventory_materials)
+2026-06-30 04:52:36,190 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,190 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine PRAGMA table_info(intake_requests)
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine PRAGMA table_info(inventory_material_price_history)
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,191 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine PRAGMA table_info(inventory_material_source_review_audit)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine PRAGMA table_info(commercial_markup_policies)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine PRAGMA table_info(integration_settings)
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ()
+2026-06-30 04:52:36,192 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,195 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,202 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,203 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,203 INFO sqlalchemy.engine.Engine PRAGMA table_info(inventory_sheet_remediation_audit_events)
+2026-06-30 04:52:36,203 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ()
+2026-06-30 04:52:36,204 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,204 INFO sqlalchemy.engine.Engine PRAGMA table_info(orders)
+2026-06-30 04:52:36,204 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine PRAGMA table_info(output_blocks)
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine PRAGMA table_info(product_templates)
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,205 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine PRAGMA table_info(product_template_module_links)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine PRAGMA table_info(recurring_payments)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine PRAGMA table_info(suppliers)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine PRAGMA table_info(quotes)
+2026-06-30 04:52:36,206 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,207 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,207 INFO sqlalchemy.engine.Engine PRAGMA table_info(product_families)
+2026-06-30 04:52:36,207 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,207 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,208 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,208 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,208 INFO sqlalchemy.engine.Engine PRAGMA table_info(product_blueprint_dossier)
+2026-06-30 04:52:36,208 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(workcenter_rates)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(quote_documents_archive)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(vector_assets)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00006s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(intake_v4_workspaces)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(intake_v3_workspaces)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(intake_v6_workspaces)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00005s] ()
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine PRAGMA table_info(intake_v5_projects)
+2026-06-30 04:52:36,209 INFO sqlalchemy.engine.Engine [generated in 0.00004s] ()
+2026-06-30 04:52:36,216 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,216 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,216 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,216 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("oidc_states")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("clients")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("cost_engine_config")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("company_commercial_settings")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employees")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_attendance_events")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("attendance_request_effects")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_balance_transactions")
+2026-06-30 04:52:36,218 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_payment_records")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_requests")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("task_clarification_requests")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("machines")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_skill_authorizations")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_workcenter_authorizations")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("employee_resource_authorizations")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("operation_resource_requirements")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("operation_employee_authorizations")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("field_installation_teams")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("field_installation_team_members")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("execution_observation_config")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("execution_plan")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("execution_reality")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("intake_requests")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("inventory_materials")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("inventory_material_price_history")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("inventory_material_source_review_audit")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("commercial_markup_policies")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("integration_settings")
+2026-06-30 04:52:36,223 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("inventory_sheet_remediation_audit_events")
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("orders")
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("output_blocks")
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("product_families")
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("product_templates")
+2026-06-30 04:52:36,228 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("product_template_module_links")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("quotes")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("recurring_payments")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("suppliers")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("product_blueprint_dossier")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("workcenter_rates")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("quote_documents_archive")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("vector_assets")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("intake_v3_workspaces")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("intake_v4_workspaces")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("intake_v5_projects")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("intake_v6_workspaces")
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine COMMIT
+2026-06-30 04:52:36,230 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-06-30 04:52:36,248 INFO sqlalchemy.engine.Engine SELECT quotes.id, quotes.code, quotes.intake_id, quotes.intake_code, quotes.client_id, quotes.client_name, quotes.contact_person, quotes.status, quotes.version, quotes.valid_until, quotes.line_items, quotes.subtotal, quotes.discount, quotes.discount_pct, quotes.total_before_vat, quotes.vat, quotes.grand_total, quotes.margin_pct, quotes.notes, quotes.assigned_to, quotes.created_at, quotes.updated_at 
+FROM quotes 
+WHERE quotes.id = ?
+2026-06-30 04:52:36,248 INFO sqlalchemy.engine.Engine [generated in 0.00012s] (4,)
+2026-06-30 04:52:36,248 INFO sqlalchemy.engine.Engine SELECT intake_v6_workspaces.id, intake_v6_workspaces.workspace_code, intake_v6_workspaces.title, intake_v6_workspaces.template_code, intake_v6_workspaces.status, intake_v6_workspaces.payload_json, intake_v6_workspaces.readiness_status, intake_v6_workspaces.created_by_user_id, intake_v6_workspaces.updated_by_user_id, intake_v6_workspaces.created_at, intake_v6_workspaces.updated_at, intake_v6_workspaces.archived_at 
+FROM intake_v6_workspaces 
+WHERE intake_v6_workspaces.id = ?
+2026-06-30 04:52:36,248 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ('3035cbc4-c333-4a3c-9677-2cde09fd6e40',)
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ?
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ('TPL-VOLUMETRIC-LETTERS_v2',)
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine [generated in 0.00009s] (1,)
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,251 INFO sqlalchemy.engine.Engine [generated in 0.00008s] (1,)
+2026-06-30 04:52:36,257 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,257 INFO sqlalchemy.engine.Engine [generated in 0.00010s] (2, 3)
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine SELECT intake_v6_workspaces.id, intake_v6_workspaces.workspace_code, intake_v6_workspaces.title, intake_v6_workspaces.template_code, intake_v6_workspaces.status, intake_v6_workspaces.payload_json, intake_v6_workspaces.readiness_status, intake_v6_workspaces.created_by_user_id, intake_v6_workspaces.updated_by_user_id, intake_v6_workspaces.created_at, intake_v6_workspaces.updated_at, intake_v6_workspaces.archived_at 
+FROM intake_v6_workspaces 
+WHERE intake_v6_workspaces.id = ?
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ('3035cbc4-c333-4a3c-9677-2cde09fd6e40', 1, 0)
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine [cached since 0.007598s ago] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine [cached since 0.006906s ago] (1,)
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,258 INFO sqlalchemy.engine.Engine [cached since 0.006152s ago] (1,)
+2026-06-30 04:52:36,263 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,263 INFO sqlalchemy.engine.Engine [cached since 0.005838s ago] (2, 3)
+2026-06-30 04:52:36,263 INFO sqlalchemy.engine.Engine SELECT intake_v6_workspaces.id, intake_v6_workspaces.workspace_code, intake_v6_workspaces.title, intake_v6_workspaces.template_code, intake_v6_workspaces.status, intake_v6_workspaces.payload_json, intake_v6_workspaces.readiness_status, intake_v6_workspaces.created_by_user_id, intake_v6_workspaces.updated_by_user_id, intake_v6_workspaces.created_at, intake_v6_workspaces.updated_at, intake_v6_workspaces.archived_at 
+FROM intake_v6_workspaces 
+WHERE intake_v6_workspaces.id = ?
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,263 INFO sqlalchemy.engine.Engine [cached since 0.005328s ago] ('3035cbc4-c333-4a3c-9677-2cde09fd6e40', 1, 0)
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine [cached since 0.0125s ago] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine [cached since 0.01183s ago] (1,)
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,265 INFO sqlalchemy.engine.Engine [cached since 0.01101s ago] (1,)
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine [cached since 0.01077s ago] (2, 3)
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ('active',)
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,268 INFO sqlalchemy.engine.Engine [cached since 0.001194s ago] ('active',)
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine SELECT workcenter_rates.id, workcenter_rates.code, workcenter_rates.label, workcenter_rates.rate_per_hour, workcenter_rates.rate_per_linear_meter, workcenter_rates.rate_basis, workcenter_rates.currency, workcenter_rates.status, workcenter_rates.is_active, workcenter_rates.approval_reference, workcenter_rates.notes, workcenter_rates.created_at, workcenter_rates.updated_at 
+FROM workcenter_rates 
+WHERE workcenter_rates.status = ? OR workcenter_rates.is_active IS 1
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine [generated in 0.00010s] ('active',)
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id = ?
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine [generated in 0.00008s] (1,)
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id = ?
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine [generated in 0.00008s] (1, 1, 0)
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,272 INFO sqlalchemy.engine.Engine [generated in 0.00009s] (1, 1, 0)
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.code IN (?, ?)
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine [generated in 0.00011s] ('MAT-SABLON-HARTIE', 'MAT-SABLON-MONTAJ')
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine SELECT cost_engine_config.id, cost_engine_config.moneda_implicita, cost_engine_config.ore_productive_luna_firma, cost_engine_config.overhead_profile_name, cost_engine_config.metoda_overhead, cost_engine_config.cost_ora_manopera_default, cost_engine_config.allow_manual_override, cost_engine_config.created_at, cost_engine_config.updated_at 
+FROM cost_engine_config ORDER BY cost_engine_config.id ASC
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine [generated in 0.00007s] ()
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine [cached since 0.01166s ago] ('active',)
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,279 INFO sqlalchemy.engine.Engine [cached since 0.01254s ago] ('active',)
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine SELECT workcenter_rates.id, workcenter_rates.code, workcenter_rates.label, workcenter_rates.rate_per_hour, workcenter_rates.rate_per_linear_meter, workcenter_rates.rate_basis, workcenter_rates.currency, workcenter_rates.status, workcenter_rates.is_active, workcenter_rates.approval_reference, workcenter_rates.notes, workcenter_rates.created_at, workcenter_rates.updated_at 
+FROM workcenter_rates 
+WHERE workcenter_rates.status = ? OR workcenter_rates.is_active IS 1
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine [cached since 0.01081s ago] ('active',)
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine SELECT workcenter_rates.id, workcenter_rates.code, workcenter_rates.label, workcenter_rates.rate_per_hour, workcenter_rates.rate_per_linear_meter, workcenter_rates.rate_basis, workcenter_rates.currency, workcenter_rates.status, workcenter_rates.is_active, workcenter_rates.approval_reference, workcenter_rates.notes, workcenter_rates.created_at, workcenter_rates.updated_at 
+FROM workcenter_rates 
+WHERE workcenter_rates.status = ? OR workcenter_rates.is_active IS 1
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine [cached since 0.01145s ago] ('active',)
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine PRAGMA table_info(company_commercial_settings)
+2026-06-30 04:52:36,283 INFO sqlalchemy.engine.Engine [cached since 0.1349s ago] ()
+2026-06-30 04:52:36,285 INFO sqlalchemy.engine.Engine SELECT company_commercial_settings.id, company_commercial_settings.default_vat_pct, company_commercial_settings.eur_to_ron_rate, company_commercial_settings.created_at, company_commercial_settings.updated_at 
+FROM company_commercial_settings ORDER BY company_commercial_settings.id ASC
+2026-06-30 04:52:36,285 INFO sqlalchemy.engine.Engine [generated in 0.00008s] ()
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine [cached since 0.03228s ago] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine [cached since 0.03149s ago] (1,)
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine [cached since 0.03076s ago] (1,)
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,286 INFO sqlalchemy.engine.Engine [cached since 0.03041s ago] (2, 3)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine [cached since 0.0352s ago] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine [cached since 0.03442s ago] (1,)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine [cached since 0.03366s ago] (1,)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine [cached since 0.03329s ago] (2, 3)
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,288 INFO sqlalchemy.engine.Engine [cached since 0.02152s ago] ('active',)
+2026-06-30 04:52:36,292 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials 
+WHERE inventory_materials.status = ?
+2026-06-30 04:52:36,292 INFO sqlalchemy.engine.Engine [cached since 0.02236s ago] ('active',)
+2026-06-30 04:52:36,293 INFO sqlalchemy.engine.Engine SELECT workcenter_rates.id, workcenter_rates.code, workcenter_rates.label, workcenter_rates.rate_per_hour, workcenter_rates.rate_per_linear_meter, workcenter_rates.rate_basis, workcenter_rates.currency, workcenter_rates.status, workcenter_rates.is_active, workcenter_rates.approval_reference, workcenter_rates.notes, workcenter_rates.created_at, workcenter_rates.updated_at 
+FROM workcenter_rates 
+WHERE workcenter_rates.status = ? OR workcenter_rates.is_active IS 1
+2026-06-30 04:52:36,293 INFO sqlalchemy.engine.Engine [cached since 0.02068s ago] ('active',)
+2026-06-30 04:52:36,293 INFO sqlalchemy.engine.Engine SELECT inventory_materials.id, inventory_materials.code, inventory_materials.name, inventory_materials.category, inventory_materials.subcategory, inventory_materials.unit, inventory_materials.stock_current, inventory_materials.stock_min, inventory_materials.stock_max, inventory_materials.unit_cost, inventory_materials.currency, inventory_materials.vat_percent, inventory_materials.valid_from, inventory_materials.supplier, inventory_materials.supplier_id, inventory_materials.source_name, inventory_materials.source_url, inventory_materials.source_checked_at, inventory_materials.source_notes, inventory_materials.source_review_status, inventory_materials.source_reviewed_at, inventory_materials.source_reviewed_by, inventory_materials.last_restocked, inventory_materials.consumption_rate, inventory_materials.location, inventory_materials.sheet_format_type, inventory_materials.sheet_width, inventory_materials.sheet_height, inventory_materials.sheet_unit, inventory_materials.sheet_thickness, inventory_materials.sheet_thickness_unit, inventory_materials.usable_width, inventory_materials.usable_height, inventory_materials.format_source, inventory_materials.format_verified, inventory_materials.format_notes, inventory_materials.status, inventory_materials.created_at, inventory_materials.updated_at 
+FROM inventory_materials
+2026-06-30 04:52:36,293 INFO sqlalchemy.engine.Engine [cached since 0.02021s ago] ()
+2026-06-30 04:52:36,295 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code = ? ORDER BY product_templates.id ASC
+ LIMIT ? OFFSET ?
+2026-06-30 04:52:36,295 INFO sqlalchemy.engine.Engine [cached since 0.04132s ago] ('TPL-VOLUMETRIC-LETTERS_v2', 1, 0)
+2026-06-30 04:52:36,295 INFO sqlalchemy.engine.Engine SELECT product_blueprint_dossier.id, product_blueprint_dossier.template_id, product_blueprint_dossier.template_code, product_blueprint_dossier.dossier_version, product_blueprint_dossier.status, product_blueprint_dossier.sections_json, product_blueprint_dossier.variants_json, product_blueprint_dossier.layers_json, product_blueprint_dossier.task_rules_json, product_blueprint_dossier.time_assumptions_json, product_blueprint_dossier.costengine_mapping_json, product_blueprint_dossier.quote_readiness_json, product_blueprint_dossier.output_blocks_json, product_blueprint_dossier.visual_prompt_blocks_json, product_blueprint_dossier.production_notes_json, product_blueprint_dossier.qc_checkpoints_json, product_blueprint_dossier.risks_json, product_blueprint_dossier.completion_state_json, product_blueprint_dossier.owner_role, product_blueprint_dossier.reviewer_role, product_blueprint_dossier.reviewed_at, product_blueprint_dossier.created_at, product_blueprint_dossier.updated_at 
+FROM product_blueprint_dossier 
+WHERE product_blueprint_dossier.template_id = ?
+2026-06-30 04:52:36,295 INFO sqlalchemy.engine.Engine [cached since 0.04048s ago] (1,)
+2026-06-30 04:52:36,296 INFO sqlalchemy.engine.Engine SELECT product_template_module_links.id, product_template_module_links.parent_template_id, product_template_module_links.parent_template_code, product_template_module_links.module_template_id, product_template_module_links.module_template_code, product_template_module_links.relation_type, product_template_module_links.trigger_field, product_template_module_links.trigger_value_json, product_template_module_links.input_mapping_json, product_template_module_links.default_values_json, product_template_module_links.pricing_mode, product_template_module_links.execution_mode, product_template_module_links.active, product_template_module_links.notes, product_template_module_links.created_at, product_template_module_links.updated_at 
+FROM product_template_module_links 
+WHERE product_template_module_links.parent_template_id = ? AND product_template_module_links.active IS 1
+2026-06-30 04:52:36,296 INFO sqlalchemy.engine.Engine [cached since 0.03974s ago] (1,)
+2026-06-30 04:52:36,296 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.id IN (?, ?)
+2026-06-30 04:52:36,296 INFO sqlalchemy.engine.Engine [cached since 0.03933s ago] (2, 3)
+2026-06-30 04:52:36,297 INFO sqlalchemy.engine.Engine SELECT product_templates.id, product_templates.template_code, product_templates.family_id, product_templates.family_name, product_templates.description, product_templates.components_json, product_templates.operations_json, product_templates.required_materials_json, product_templates.estimated_hours, product_templates.base_labor_rate, product_templates.base_margin_pct, product_templates.active, product_templates.notes, product_templates.created_at, product_templates.updated_at 
+FROM product_templates 
+WHERE product_templates.template_code IN (?, ?, ?)
+2026-06-30 04:52:36,297 INFO sqlalchemy.engine.Engine [generated in 0.00009s] ('TPL-METAL-PREMOUNT-STRUCTURE_v1', 'TPL-VOLUM-ALUMINIU_v1', 'TPL-VOLUMETRIC-LETTERS_v2')
+2026-06-30 04:52:36,299 INFO sqlalchemy.engine.Engine SELECT quotes.id, quotes.code, quotes.intake_id, quotes.intake_code, quotes.client_id, quotes.client_name, quotes.contact_person, quotes.status, quotes.version, quotes.valid_until, quotes.line_items, quotes.subtotal, quotes.discount, quotes.discount_pct, quotes.total_before_vat, quotes.vat, quotes.grand_total, quotes.margin_pct, quotes.notes, quotes.assigned_to, quotes.created_at, quotes.updated_at 
+FROM quotes 
+WHERE quotes.id = ?
+2026-06-30 04:52:36,299 INFO sqlalchemy.engine.Engine [cached since 0.05067s ago] (4,)
+2026-06-30 04:52:36,299 INFO sqlalchemy.engine.Engine ROLLBACK
+{
+  "quote_before": {
+    "id": 4,
+    "code": "Q-V6-IV6-DC1B0887-1782771393",
+    "status": "draft",
+    "grand_total": 0.0,
+    "intake_id": null,
+    "intake_code": "IV6-3035cbc4-c333-4a3c-9677-2cde09fd6e40",
+    "margin_pct": 0.0
+  },
+  "quote_input_from_line_items": {},
+  "workspace": {
+    "workspace_id": "3035cbc4-c333-4a3c-9677-2cde09fd6e40",
+    "workspace_code": "IV6-DC1B0887",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "status": "ready_for_quote_preview",
+    "readiness_status": "ready_for_quote_preview",
+    "payload_summary": {
+      "finish_keys": [],
+      "mounting_system": null,
+      "lighting_system_type": null,
+      "illuminated": null,
+      "selected_psu_watts": null,
+      "quote_geometry_keys": [
+        "artwork_area_m2",
+        "artwork_boxes",
+        "artwork_piece_count",
+        "artwork_return_layers",
+        "artwork_return_perimeter_ml",
+        "cnc_cutting_perimeter_ml",
+        "confirmed",
+        "cutting_contours_count",
+        "cutting_perimeter_ml",
+        "face_area_m2",
+        "face_cutting_perimeter_ml",
+        "geometry_source",
+        "height_mm",
+        "hole_perimeter_ml",
+        "inner_hole_letter_perimeter_ml",
+        "inner_holes_count",
+        "led_perimeter_ml",
+        "led_perimeter_policy",
+        "letter_count",
+        "letter_perimeter_m",
+        "letter_return_perimeter_ml",
+        "material_piece_count",
+        "outer_letter_perimeter_ml",
+        "part_classification_confidence",
+        "part_classification_warnings",
+        "primary_letters_layer_key",
+        "real_letters_count",
+        "return_material_perimeter_ml",
+        "total_letter_perimeter_ml",
+        "volumetric_piece_count",
+        "width_mm"
+      ],
+      "letter_count": 19,
+      "letter_face_area_m2": null,
+      "letter_perimeter_m": 20.9727,
+      "return_depth_mm": null,
+      "svg_file_name": "gradi-curat.svg",
+      "width_mm": 5086.99,
+      "height_mm": 600.03
+    }
+  },
+  "template": {
+    "template_id": 1,
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "active": true
+  },
+  "resolved_quote_input": {},
+  "product_definition": {
+    "readiness_status": "partial",
+    "selected_modules": [
+      {
+        "code": "sistem_led",
+        "state": "conditional_active"
+      },
+      {
+        "code": "finisaje",
+        "state": "conditional_active"
+      }
+    ],
+    "optional_modules": [
+      {
+        "code": "modelare_cant",
+        "state": "pending"
+      },
+      {
+        "code": "structura_suport",
+        "state": "inactive"
+      },
+      {
+        "code": "debitare_fata",
+        "state": "pending"
+      },
+      {
+        "code": "debitare_spate",
+        "state": "pending"
+      },
+      {
+        "code": "geometry_svg",
+        "state": "pending"
+      }
+    ],
+    "inactive_modules": [
+      {
+        "code": "structura_suport",
+        "state": "inactive"
+      },
+      {
+        "code": "electrica_logo",
+        "state": "future_reserved"
+      }
+    ],
+    "missing_required_fields": [
+      "height_mm",
+      "letter_face_area_m2",
+      "volum_aluminum_module_template_code",
+      "width_mm"
+    ],
+    "unresolved_warnings": [
+      "TRIGGER_FIELD_MISMATCH: structura_suport link=metal_support_required intake=finish_setup.mounting_system",
+      "PARENT_COMPONENTS_EMPTY: Parent template has no direct components (components_json=[]); aggregate uses dossier and linked modules as authoritative structure.",
+      "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow."
+    ],
+    "invalid_combinations": [],
+    "provenance": [
+      {
+        "key": "form_contract",
+        "source": "intake_v6_modular_form_contract",
+        "detail": "version=1.0.0 bindings=22"
+      },
+      {
+        "key": "mini_module_registry",
+        "source": "mini_module_registry_service",
+        "detail": "active_modules=7"
+      },
+      {
+        "key": "product_aggregate",
+        "source": "product_aggregate_service",
+        "detail": "components=5 operations=17"
+      },
+      {
+        "key": "workspace_payload",
+        "source": "intake_v6_workspaces.payload_json",
+        "detail": "workspace_id=3035cbc4-c333-4a3c-9677-2cde09fd6e40 read_only=true"
+      }
+    ],
+    "source_context": {
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "workspace_id": "3035cbc4-c333-4a3c-9677-2cde09fd6e40",
+      "quote_id": null,
+      "source_payload_type": "workspace_payload"
+    }
+  },
+  "cost_bom": {
+    "bom_status": "blocked",
+    "source": "v2_aggregate",
+    "uses_parent_bom_as_structural_truth": false,
+    "aggregate_cost_source": true,
+    "costable_materials_count": 20,
+    "costable_operations_count": 15,
+    "missing_pricing_count": 1,
+    "missing_geometry_count": 2,
+    "missing_pricing": [
+      {
+        "item_type": "operation",
+        "code": "WC_ASSEMBLY",
+        "reason": "workcenter_rate_missing_or_zero",
+        "module_code": "modelare_cant"
+      }
+    ],
+    "missing_geometry": [
+      "debitare_fata:letter_face_area_m2",
+      "debitare_spate:letter_face_area_m2"
+    ],
+    "pricing_blockers": [],
+    "missing_inventory_materials": [],
+    "skipped_items": [
+      {
+        "item_type": "module",
+        "item_key": "geometry_svg",
+        "reason": "geometry_gate",
+        "detail": "SVG geometry analysis is readiness gate only \u2014 not a priced cost line."
+      },
+      {
+        "item_type": "module",
+        "item_key": "electrica_logo",
+        "reason": "future_reserved",
+        "detail": "FUTURE_RESERVED \u2014 not costed in Step 7B."
+      },
+      {
+        "item_type": "component",
+        "item_key": "comp_flat_legacy",
+        "reason": "legacy_parent_only",
+        "detail": "Parent flat legacy BOM (comp_flat_legacy) is diagnostic only \u2014 not structural truth."
+      },
+      {
+        "item_type": "material",
+        "item_key": "MAT-PREMOUNT-BAR-STEEL",
+        "reason": "module_inactive",
+        "detail": "Excluded \u2014 module structura_suport inactive."
+      },
+      {
+        "item_type": "material",
+        "item_key": "MAT-PREMOUNT-BAR-ALUMINUM",
+        "reason": "module_inactive",
+        "detail": "Excluded \u2014 module structura_suport inactive."
+      },
+      {
+        "item_type": "operation",
+        "item_key": "svg_geometry_analysis",
+        "reason": "geometry_gate",
+        "detail": "Non-priced geometry readiness gate."
+      },
+      {
+        "item_type": "operation",
+        "item_key": "premount_bar_preparation",
+        "reason": "non_priced_internal",
+        "detail": "Operation marked non_priced \u2014 internal/future, not quoted."
+      }
+    ],
+    "comp_flat_legacy_in_skipped": false,
+    "comp_flat_legacy_in_costable": false,
+    "comp_auto_1_in_costable": false,
+    "externalization_requirements": [
+      {
+        "code": "EXT_POWDER_COATING_RAL",
+        "label": "Vopsire electrostatic\u0103 / RAL",
+        "module_code": "modelare_cant",
+        "reason": "RAL finish can be subcontracted to a powder-coating collaborator.",
+        "supplier_type": "powder_coating_partner",
+        "selected_now": false,
+        "requires_external_price": false,
+        "blocks_pricing_if_selected_without_price": false,
+        "creates_external_task_now": false,
+        "owner_step": 9,
+        "production_mode": "external_service_possible"
+      },
+      {
+        "code": "EXT_MOUNTING_SUBCONTRACT",
+        "label": "Montaj / instalare subcontractat\u0103",
+        "module_code": "finisaje",
+        "reason": "On-site mounting may be subcontracted to installation partner.",
+        "supplier_type": "installation_partner",
+        "selected_now": false,
+        "requires_external_price": false,
+        "blocks_pricing_if_selected_without_price": false,
+        "creates_external_task_now": false,
+        "owner_step": 9,
+        "production_mode": "external_service_possible"
+      },
+      {
+        "code": "EXT_METAL_FAB_SUBCONTRACT",
+        "label": "L\u0103c\u0103tu\u0219erie / structur\u0103 metalic\u0103 subcontractat\u0103",
+        "module_code": "structura_suport",
+        "reason": "Premount structure fabrication can be sent to metalworking collaborator.",
+        "supplier_type": "metalworking_partner",
+        "selected_now": false,
+        "requires_external_price": false,
+        "blocks_pricing_if_selected_without_price": false,
+        "creates_external_task_now": false,
+        "owner_step": 9,
+        "production_mode": "external_service_possible"
+      },
+      {
+        "code": "EXT_PROFILE_FORMING",
+        "label": "Modelare profil lateral \u2014 colaborator fallback",
+        "module_code": "modelare_cant",
+        "reason": "Large-volume profile forming may use external CNC partner when internal WC unavailable.",
+        "supplier_type": "cnc_partner",
+        "selected_now": false,
+        "requires_external_price": false,
+        "blocks_pricing_if_selected_without_price": false,
+        "creates_external_task_now": false,
+        "owner_step": 9,
+        "production_mode": "external_service_possible"
+      },
+      {
+        "code": "EXT_ELECTRICA_LOGO",
+        "label": "Electrificare logo \u2014 viitor",
+        "module_code": "electrica_logo",
+        "reason": "Electrical logo module reserved for future Step 8+ wiring integration.",
+        "supplier_type": null,
+        "selected_now": false,
+        "requires_external_price": false,
+        "blocks_pricing_if_selected_without_price": false,
+        "creates_external_task_now": false,
+        "owner_step": 8,
+        "production_mode": "future_reserved"
+      }
+    ]
+  },
+  "simulation": {
+    "available": true,
+    "safe_no_persist": true,
+    "status": "blocked",
+    "cost_engine_version": "v2",
+    "blocked_reasons": [
+      "product_invalid:dimensions"
+    ],
+    "blockers": [
+      "letters_face_material_missing",
+      "letters_lateral_profile_missing",
+      "letters_cnc_laser_workcenter_missing",
+      "product_invalid:dimensions"
+    ],
+    "warnings": [
+      "components_missing",
+      "letters_vector_file_required"
+    ],
+    "total_cost": 0,
+    "parent_total_cost": null,
+    "trace": {
+      "source": "product-system-cost-simulation",
+      "no_persist": true,
+      "used_template_snapshot": true,
+      "used_costengine_formulas": true,
+      "changed_entities": [],
+      "simulation_context": {
+        "source": "step7e_quote4_dry_run",
+        "reason": "owner dry-run validation",
+        "quote_id": 4,
+        "no_persist": true
+      },
+      "linked_modules_count": 0
+    },
+    "readiness": {
+      "ready_for_quote": false,
+      "overall_status": "blocked",
+      "blockers": [
+        "letters_face_material_missing",
+        "letters_lateral_profile_missing",
+        "letters_cnc_laser_workcenter_missing"
+      ],
+      "warnings": [
+        "components_missing",
+        "letters_vector_file_required"
+      ],
+      "quote_gate": {
+        "simulate_ready": false,
+        "ready_for_quote": false,
+        "can_create_commercial_quote": false,
+        "requires_acknowledgement": false,
+        "blockers": [
+          "product_invalid:dimensions",
+          "letters_face_material_missing",
+          "letters_lateral_profile_missing",
+          "letters_cnc_laser_workcenter_missing",
+          "quote_input_missing:width_mm",
+          "quote_input_missing:height_mm",
+          "quote_input_missing:letter_face_area_m2",
+          "quote_input_missing:letter_perimeter_m",
+          "quote_input_missing:letter_count",
+          "quote_input_missing:depth_mm_or_return_depth_mm",
+          "quote_input_missing:selected_psu_watts",
+          "quote_input_missing:mounting_template_area_m2",
+          "letters_vector_file_required"
+        ],
+        "warnings": [
+          "components_missing",
+          "letters_vector_file_required"
+        ],
+        "notes": [],
+        "classified": {
+          "cost_blockers": [
+            "product_invalid:dimensions"
+          ],
+          "readiness_blockers": [
+            "letters_face_material_missing",
+            "letters_lateral_profile_missing",
+            "letters_cnc_laser_workcenter_missing"
+          ],
+          "geometry_blockers": [
+            "quote_input_missing:width_mm",
+            "quote_input_missing:height_mm",
+            "quote_input_missing:letter_face_area_m2",
+            "quote_input_missing:letter_perimeter_m",
+            "quote_input_missing:letter_count",
+            "quote_input_missing:depth_mm_or_return_depth_mm",
+            "quote_input_missing:selected_psu_watts",
+            "quote_input_missing:mounting_template_area_m2"
+          ],
+          "vector_blockers": [
+            "letters_vector_file_required"
+          ],
+          "production_metadata_blockers": [],
+          "capture_blockers": [],
+          "warnings": [
+            "components_missing",
+            "letters_vector_file_required"
+          ],
+          "acknowledgement_pending": [
+            "components_missing",
+            "letters_vector_file_required"
+          ]
+        },
+        "reason_codes": [
+          "product_invalid:dimensions",
+          "letters_face_material_missing",
+          "letters_lateral_profile_missing",
+          "letters_cnc_laser_workcenter_missing",
+          "quote_input_missing:width_mm",
+          "quote_input_missing:height_mm",
+          "quote_input_missing:letter_face_area_m2",
+          "quote_input_missing:letter_perimeter_m",
+          "quote_input_missing:letter_count",
+          "quote_input_missing:depth_mm_or_return_depth_mm",
+          "quote_input_missing:selected_psu_watts",
+          "quote_input_missing:mounting_template_area_m2",
+          "letters_vector_file_required"
+        ]
+      },
+      "simulate_ready": false,
+      "can_create_commercial_quote": false
+    },
+    "component_breakdown_count": 0
+  },
+  "quote_after": {
+    "status": "draft",
+    "grand_total": 0.0
+  },
+  "db_unchanged": true,
+  "parity": {
+    "pd_active_modules": [
+      "finisaje",
+      "sistem_led"
+    ],
+    "bom_active_modules": [
+      "debitare_fata",
+      "debitare_spate",
+      "finisaje",
+      "geometry_svg",
+      "modelare_cant",
+      "sistem_led"
+    ],
+    "modules_match": false
+  }
+}
