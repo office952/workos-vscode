@@ -46,3 +46,11 @@ class SharedVolumetricComponentSummary(BaseModel):
     owner_decision: str
     shared_truth_fields: list[str] = Field(default_factory=list)
     not_confirmed: list[str] = Field(default_factory=list)
+    calculation_strategy_key: str | None = None
+    strategy_source_template_code: str | None = None
+    strategy_status: str | None = None
+    strategy_meaning: str | None = None
+    required_truth: list[str] = Field(default_factory=list)
+    shared_module_template_code: str | None = None
+    legacy_replaced_by: str | None = None
+    reserved_module_template_code: str | None = None

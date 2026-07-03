@@ -147,3 +147,156 @@ Owner observed that Product System UI did not visibly communicate the shared vol
 - No Work Intake exposure change.
 - No Logo offerable activation.
 - No DB migration, seed execution as persisted operation, commit, or push.
+
+## Shared Contracts Primary Catalog Alignment
+
+### Problem
+
+Owner observed that Product System UI still looked like 12 duplicate internal modules plus shared metadata. That presentation was technically explainable but product-system misleading: shared volumetric contracts should be the primary catalog entities, while Letters and Logo module templates are profile bindings/backing templates under each contract.
+
+### Direction
+
+Shared contracts are now treated as first-class catalog entities in the UI. The primary model is 6 shared volumetric component contracts with Letters and Logo bindings under each contract. Technical module templates remain visible as backing/binding details, not as the default component model.
+
+### Changes
+
+- Product System Overview now uses `Shared Volumetric Contracts` copy and surfaces 6 shared contracts, 2 connected products, 12 module bindings, Letters offerable status, Logo candidate / not Work Intake status, and Lighting `PARTIAL / needs LED calculation strategy`.
+- Overview contextualizes catalog totals as technical catalog entries instead of implying they are shared component counts.
+- Products cards now show `Shared contracts: 6/6`, profile, Work Intake visibility, and lighting strategy state for Letters versus Logo.
+- Components tab now defaults to shared contract rows: `volumetric_face`, `volumetric_back`, `volumetric_return_side`, `volumetric_lighting`, `volumetric_surface_finish`, and `volumetric_mounting_interface`.
+- Each shared contract row shows Letters and Logo bindings with profile, backing module template, offerable/candidate role, Work Intake status, and runtime status.
+- Technical module rows remain available behind the `Module tehnice` filter.
+- Product System editor shared foundation panel now presents contracts as the main list and shows component key, profile, backing module template, confidence, owner decision, runtime status, and no pricing/runtime activation copy.
+- Logo editor metadata explicitly states `Candidate only`, `Not Work Intake`, and that offerability requires Product Truth, Modular Form, ProductDefinition, and Pricing readiness.
+- Lighting stays display-only: Letters shows current LED strategy, Logo shows `NEEDS_LED_CALCULATION_STRATEGY`, and the shared status remains `PARTIAL`.
+
+### Verification
+
+- PASS: `frontend/src/features/product-system/TemplateLibraryView.test.tsx` - 12 passed after shared-contract-first assertions were updated.
+- PASS: frontend TypeScript app check - no output / no errors after editor panel update.
+
+### Non-Changes
+
+- No Logo offerable activation.
+- No Work Intake exposure change.
+- No LED formula or LED calculation behavior.
+- No Pricing Registry changes.
+- No CostEngine changes.
+- No CommercialPriceProposal changes.
+- No ProductDefinition runtime changes.
+- No ProductAggregate implementation changes.
+- No Task Graph changes.
+- No ExecutionPlan changes.
+- No Employee Mobile changes.
+- No DB migration.
+- No seed execution as a persisted operation.
+- No runtime materialization of shared contracts.
+- No commit or push.
+
+## LED Strategy Variant Audit — Shared Lighting Module
+
+### Owner Question
+
+Can Logo and Letters use the same LED module with a separate electrical calculation strategy?
+
+### Findings
+
+- Letters currently uses `TPL-VOLUMETRIC-LED_v1` through the `sistem_led` mini-module and `comp_led_litere` dossier component.
+- Logo currently uses the dedicated backing template `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` with `comp_logo_lighting`, `logo_led_install`, `logo_electrical_test`, `logo_led_modules`, and `logo_psu_count` metadata from the seed.
+- Both profiles use the same LED material roles: `MAT-LED-MODULE` and `MAT-LED-PSU-12V`.
+- Both profiles have LED count and PSU concepts, but the source fields differ: Letters uses `led_module_count`, `lighting_system_type`, `psu_configuration`; Logo uses `emblem_led_module_count`, `logo_lighting_mode`, and `selected_psu_watts`.
+- No audited formula exists yet for Logo shape-based LED derivation, zones, circuits, halo/front-lit/combined behavior, service access, or PSU grouping.
+
+### Decision
+
+Use a hybrid metadata-only direction now:
+
+- Treat `TPL-VOLUMETRIC-LED_v1` as the target shared lighting module in read-only Product System metadata.
+- Keep `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` as the current legacy/reserved Logo backing module until the Logo LED calculation strategy is defined and validated.
+- Define separate calculation strategy metadata without formula execution:
+	- Letters: `letters_standard_led_calculation`, `ACTIVE_FOR_LETTERS`.
+	- Logo: `logo_led_calculation_strategy`, `NEEDS_DEFINITION`.
+
+Runtime migration to one LED module is not approved in this slice.
+
+### Changes
+
+- Added optional read-only fields to shared volumetric summary metadata: `calculation_strategy_key`, `strategy_status`, `required_truth`, `shared_module_template_code`, `legacy_replaced_by`, and `reserved_module_template_code`.
+- Populated `volumetric_lighting` metadata for Letters and Logo with separate strategy keys/statuses and required Product Truth categories.
+- Product System Overview now shows the lighting module as shared and states `Calculation strategies: Letters active / Logo needs definition`.
+- Products cards show `LED strategy: letters standard` for Letters and `LED strategy: logo needs definition` for Logo.
+- Components lighting row shows shared module `TPL-VOLUMETRIC-LED_v1`, both strategy states, and the legacy/reserved Logo lighting backing template.
+- Editor shared foundation panel shows the same read-only strategy metadata for lighting.
+- Backend and frontend tests cover the metadata while preserving offerability boundaries.
+
+### Non-Changes
+
+- No LED formula.
+- No runtime LED calculation.
+- No Pricing Registry changes.
+- No CostEngine changes.
+- No CommercialPriceProposal changes.
+- No ProductDefinition runtime changes.
+- No ProductAggregate implementation changes.
+- No Task Graph changes.
+- No ExecutionPlan changes.
+- No Employee Mobile changes.
+- No Logo offerable activation.
+- No Work Intake exposure change.
+- No DB migration.
+- No seed execution as a persisted operation.
+- No runtime replacement or archival of `TPL-VOLUMETRIC-LOGO-LIGHTING_v1`.
+- No commit or push.
+
+## Logo Lighting Strategy Source Clarification
+
+### Owner Question
+
+Is the LED calculation strategy already in `TPL-VOLUMETRIC-LOGO-LIGHTING_v1`?
+
+### Finding
+
+Partially yes. `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` is not a complete validated runtime LED calculation strategy, but it already carries the Logo lighting profile/backing strategy metadata:
+
+- input mapping for `logo_lighting_mode`, `emblem_led_module_count`, and `selected_psu_watts`;
+- Logo-specific operations `logo_led_install` and `logo_electrical_test`;
+- Logo-specific formula ids `logo_led_modules` and `logo_psu_count`;
+- shared material identities `MAT-LED-MODULE` and `MAT-LED-PSU-12V`;
+- quote readiness remains false on the Logo parent.
+
+The evidence supports treating `TPL-VOLUMETRIC-LED_v1` as the shared primary lighting module while treating `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` as the Logo strategy/profile source until Product Truth and runtime validation exist.
+
+### Decision
+
+Use `TREAT_LOGO_LIGHTING_AS_STRATEGY` for the current Product System metadata model:
+
+- shared primary module: `TPL-VOLUMETRIC-LED_v1`;
+- Letters strategy source: `TPL-VOLUMETRIC-LED_v1`, status `ACTIVE_FOR_LETTERS`;
+- Logo strategy source: `TPL-VOLUMETRIC-LOGO-LIGHTING_v1`, status `NEEDS_PRODUCT_TRUTH`;
+- `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` is reserved as a Logo lighting profile/backing strategy, not a duplicated primary LED module and not archived yet.
+
+### Changes
+
+- Added strategy source and meaning metadata to shared volumetric lighting summaries.
+- Updated Logo lighting metadata to identify `TPL-VOLUMETRIC-LOGO-LIGHTING_v1` as the Logo strategy source instead of a primary duplicate module.
+- Updated Product System Overview, Products, Components, and editor copy to show the shared lighting module and both strategy sources.
+- Updated backend and frontend tests to assert the strategy source model and preserve Logo non-offerability.
+
+### Non-Changes
+
+- No LED formula.
+- No runtime LED calculation.
+- No Pricing Registry changes.
+- No CostEngine changes.
+- No CommercialPriceProposal changes.
+- No Quote/Order changes.
+- No ProductDefinition runtime for Logo.
+- No ProductAggregate implementation.
+- No Task Graph changes.
+- No ExecutionPlan changes.
+- No Employee Mobile changes.
+- No DB migration.
+- No seed execution as a persisted operation.
+- No Logo offerable activation.
+- No Work Intake exposure change.
+- No commit or push.

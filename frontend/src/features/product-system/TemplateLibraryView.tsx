@@ -18,6 +18,35 @@ type SharedFoundationModuleMapping = {
   ownerDecision: string;
 };
 
+type SharedVolumetricContractBinding = {
+  productTemplateCode: string;
+  productLabel: string;
+  profileKey: string;
+  moduleTemplateCode: string;
+  productSystemRole: string;
+  quoteOfferable: boolean;
+  workIntakeLabel: string;
+  runtimeStatus: string;
+  calculationStrategyKey?: string | null;
+  strategySourceTemplateCode?: string | null;
+  strategyStatus?: string | null;
+  strategyMeaning?: string | null;
+  requiredTruth: string[];
+  sharedModuleTemplateCode?: string | null;
+  legacyReplacedBy?: string | null;
+  reservedModuleTemplateCode?: string | null;
+};
+
+type SharedVolumetricContractGroup = {
+  componentKey: string;
+  displayName: string;
+  confidence: string;
+  ownerDecision: string;
+  sharedTruthFields: string[];
+  notConfirmed: string[];
+  bindings: SharedVolumetricContractBinding[];
+};
+
 export interface TemplateLibraryRowSummary {
   components: number;
   operations: number;
@@ -154,6 +183,103 @@ function CompactMetadataPopover({
   );
 }
 
+function getProductProfileLabel(profileKey: string): string {
+  if (profileKey === "letters") return "Letters";
+  if (profileKey === "logo") return "Logo";
+  return profileKey;
+}
+
+function getBindingRuntimeStatus({
+  componentKey,
+  profileKey,
+  quoteOfferable,
+  strategyStatus,
+}: {
+  componentKey: string;
+  profileKey: string;
+  quoteOfferable: boolean;
+  strategyStatus?: string | null;
+}): string {
+  if (componentKey === "volumetric_lighting" && strategyStatus) {
+    return strategyStatus;
+  }
+  if (componentKey === "volumetric_lighting" && profileKey === "logo") {
+    return "NEEDS_LED_CALCULATION_STRATEGY";
+  }
+  if (componentKey === "volumetric_lighting" && profileKey === "letters") {
+    return "current LED strategy";
+  }
+  return quoteOfferable ? "offerable binding" : "candidate binding";
+}
+
+function buildSharedVolumetricContractGroups(
+  availabilityItems: ProductTemplateAvailabilityItem[]
+): SharedVolumetricContractGroup[] {
+  const groups = new Map<string, SharedVolumetricContractGroup>();
+
+  for (const item of availabilityItems) {
+    for (const contract of item.shared_component_contracts ?? []) {
+      const existing = groups.get(contract.component_key);
+      const group = existing ?? {
+        componentKey: contract.component_key,
+        displayName: contract.display_name,
+        confidence: contract.confidence,
+        ownerDecision: contract.owner_decision,
+        sharedTruthFields: contract.shared_truth_fields,
+        notConfirmed: contract.not_confirmed,
+        bindings: [],
+      };
+
+      group.bindings.push({
+        productTemplateCode: item.template_code,
+        productLabel: getProductProfileLabel(contract.profile_key),
+        profileKey: contract.profile_key,
+        moduleTemplateCode: contract.module_template_code,
+        productSystemRole: item.product_system_role,
+        quoteOfferable: item.quote_offerable,
+        workIntakeLabel: item.quote_offerable ? "Work Intake DA" : "Work Intake NU",
+        runtimeStatus: getBindingRuntimeStatus({
+          componentKey: contract.component_key,
+          profileKey: contract.profile_key,
+          quoteOfferable: item.quote_offerable,
+          strategyStatus: contract.strategy_status,
+        }),
+        calculationStrategyKey: contract.calculation_strategy_key,
+        strategySourceTemplateCode: contract.strategy_source_template_code,
+        strategyStatus: contract.strategy_status,
+        strategyMeaning: contract.strategy_meaning,
+        requiredTruth: contract.required_truth ?? [],
+        sharedModuleTemplateCode: contract.shared_module_template_code,
+        legacyReplacedBy: contract.legacy_replaced_by,
+        reservedModuleTemplateCode: contract.reserved_module_template_code,
+      });
+
+      groups.set(contract.component_key, group);
+    }
+  }
+
+  return Array.from(groups.values()).map((group) => ({
+    ...group,
+    bindings: group.bindings.sort((a, b) => a.productLabel.localeCompare(b.productLabel)),
+  }));
+}
+
+function formatStrategyLabel(binding: SharedVolumetricContractBinding): string {
+  if (binding.calculationStrategyKey === "letters_standard_led_calculation") {
+    return "LED strategy: letters standard";
+  }
+  if (binding.calculationStrategyKey === "logo_led_calculation_strategy") {
+    return "LED strategy: logo needs Product Truth/runtime validation";
+  }
+  return binding.runtimeStatus;
+}
+
+function getLightingStrategyBinding(
+  contracts: ProductTemplateAvailabilityItem["shared_component_contracts"]
+) {
+  return contracts.find((contract) => contract.component_key === "volumetric_lighting");
+}
+
 function TemplateLibraryRow({
   template,
   availability,
@@ -184,6 +310,7 @@ function TemplateLibraryRow({
   const moduleCount = compositionModules.length || availability?.child_module_codes.length || availability?.module_codes.length || 0;
   const sharedContracts = availability?.shared_component_contracts ?? [];
   const sharedProfileLabel = Array.from(new Set(sharedContracts.map((contract) => contract.profile_key))).join(" + ");
+  const lightingStrategy = getLightingStrategyBinding(sharedContracts);
   const hasLightingAudit = sharedContracts.some((contract) => contract.component_key === "volumetric_lighting" && (contract.confidence === "PARTIAL" || contract.owner_decision === "NEEDS_MORE_AUDIT"));
   const compactStatusLabel = availability?.display_group === "candidate_products" ? "In pregatire" : availability?.display_group === "active_products" ? "Produs ofertabil" : label;
   const metricsLine = summary.showDualCounts && summary.aggregateCounts && summary.parentDirectCounts
@@ -249,8 +376,10 @@ function TemplateLibraryRow({
             {detailed ? <p className="text-[11px] text-slate-500 mt-1">{metricsLine}</p> : <p className="mt-1 text-[11px] font-bold text-slate-300">{compactStatusLabel}</p>}
             {!detailed && sharedContracts.length > 0 ? (
               <div data-testid={`product-system-template-compact-foundation-${template.template_code}`} className="mt-1 flex flex-wrap gap-1 text-[9px] font-bold">
-                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Foundation {sharedContracts.length}</span>
+                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared contracts: {sharedContracts.length}/6</span>
                 <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
+                <span className={`rounded border px-1.5 py-0.5 ${availability?.quote_offerable ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>Work Intake {availability?.quote_offerable ? "DA" : "NU"}</span>
+                {lightingStrategy?.calculation_strategy_key ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{lightingStrategy.profile_key === "logo" ? "LED strategy: logo needs Product Truth/runtime validation" : "LED strategy: letters standard"}</span> : null}
               </div>
             ) : null}
             {detailed ? (
@@ -263,9 +392,9 @@ function TemplateLibraryRow({
             ) : null}
             {detailed && sharedContracts.length > 0 ? (
               <div data-testid={`product-system-template-shared-foundation-${template.template_code}`} className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
-                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared foundation: {sharedContracts.length} contracte</span>
+                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared contracts: {sharedContracts.length}/6</span>
                 <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
-                {hasLightingAudit ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">Lighting PARTIAL</span> : null}
+                {hasLightingAudit ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{lightingStrategy?.profile_key === "logo" ? "LED strategy: logo needs Product Truth/runtime validation" : "LED strategy: letters standard"}</span> : null}
               </div>
             ) : null}
             {detailed && parentCodes.length > 0 ? (
@@ -451,7 +580,7 @@ const CATALOG_VIEWS: Array<{
 ];
 
 type ProductFilter = "all" | "offerable" | "candidate" | "owner_go";
-type ComponentFilter = "all" | "internal" | "shared";
+type ComponentFilter = "contracts" | "technical" | "all";
 
 function normalizeTemplateCode(code: string): string {
   return code.trim().toUpperCase();
@@ -588,12 +717,13 @@ export function TemplateLibraryView({
 }) {
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const [productFilter, setProductFilter] = useState<ProductFilter>("all");
-  const [componentFilter, setComponentFilter] = useState<ComponentFilter>("all");
+  const [componentFilter, setComponentFilter] = useState<ComponentFilter>("contracts");
   const [parentFilter, setParentFilter] = useState("all");
   const availabilityByCode = new Map(
     availabilityItems.map((item) => [normalizeTemplateCode(item.template_code), item])
   );
   const sharedFoundationByModule = buildSharedFoundationModuleMap(availabilityItems);
+  const sharedContractGroups = buildSharedVolumetricContractGroups(availabilityItems);
   const q = search.trim().toLowerCase();
   const allCatalogRows = templates
     .map((template) => ({
@@ -638,8 +768,7 @@ export function TemplateLibraryView({
   const searchedComponentRows = componentRows
     .filter((row) => !q || getRowSearchText(row).includes(q))
     .filter((row) => {
-      if (componentFilter === "internal") return row.availability.product_system_role === "internal_module";
-      if (componentFilter === "shared") return Boolean(sharedFoundationByModule.get(normalizeTemplateCode(row.template.template_code))) || row.availability.product_system_role === "shared_component";
+      if (componentFilter === "technical") return row.availability.product_system_role === "internal_module";
       return true;
     })
     .filter((row) => {
@@ -647,6 +776,23 @@ export function TemplateLibraryView({
       const parents = row.availability.parent_product_codes.length > 0 ? row.availability.parent_product_codes : row.availability.parent_codes;
       return parents.includes(parentFilter);
     });
+  const searchedSharedContractGroups = sharedContractGroups.filter((group) => {
+    if (!q) return true;
+    return [
+      group.componentKey,
+      group.displayName,
+      group.confidence,
+      group.ownerDecision,
+      ...group.bindings.flatMap((binding) => [
+        binding.productTemplateCode,
+        binding.productLabel,
+        binding.profileKey,
+        binding.moduleTemplateCode,
+        binding.runtimeStatus,
+        binding.productSystemRole,
+      ]),
+    ].join(" ").toLowerCase().includes(q);
+  });
   const searchedCompositionRows = productRows.filter((row) => !q || getCompositionSearchText(row).includes(q));
   const searchedArchivedRows = archivedRows.filter((row) => !q || getRowSearchText(row).includes(q));
   const currentView = CATALOG_VIEWS.find((view) => view.id === catalogView) ?? CATALOG_VIEWS[0];
@@ -658,8 +804,12 @@ export function TemplateLibraryView({
   const sharedFoundationLightingPartial = sharedFoundationProductRows.some((row) =>
     row.availability.shared_component_contracts.some((contract) => contract.component_key === "volumetric_lighting" && contract.confidence === "PARTIAL")
   );
+  const sharedLightingModuleCode = sharedFoundationProductRows
+    .flatMap((row) => row.availability.shared_component_contracts)
+    .find((contract) => contract.component_key === "volumetric_lighting")?.shared_module_template_code;
   const hasOfferableSharedFoundationProduct = sharedFoundationProductRows.some((row) => row.availability.quote_offerable);
   const hasCandidateSharedFoundationProduct = sharedFoundationProductRows.some((row) => row.availability.product_system_role === "candidate_product");
+  const sharedFoundationBindingCount = sharedContractGroups.reduce((total, group) => total + group.bindings.length, 0);
 
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
@@ -711,7 +861,7 @@ export function TemplateLibraryView({
         <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Product System catalog views">
           {CATALOG_VIEWS.map((view) => {
             const active = catalogView === view.id;
-            const count = view.id === "products" ? productRows.length : view.id === "components" ? componentRows.length : view.id === "composition" ? compositionRows.length : view.id === "archived" ? archivedRows.length : allCatalogRows.length;
+            const count = view.id === "products" ? productRows.length : view.id === "components" ? sharedContractGroups.length || componentRows.length : view.id === "composition" ? compositionRows.length : view.id === "archived" ? archivedRows.length : allCatalogRows.length;
             return (
               <button
                 key={view.id}
@@ -744,7 +894,7 @@ export function TemplateLibraryView({
             </p> : null}
           </div>
           <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-400">
-            {allCatalogRows.length} total
+            {allCatalogRows.length} catalog entries
           </span>
         </div>
 
@@ -760,9 +910,9 @@ export function TemplateLibraryView({
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {[
                 { id: "products" as const, title: "Produse", count: productRows.length, detail: `${grouped.active_products.length} ofertabil, ${grouped.candidate_products.length} in pregatire`, action: "Vezi produse" },
-                { id: "components" as const, title: "Componente / Module", count: componentRows.length, detail: `${grouped.internal_modules.length} module interne, ${sharedFoundationByModule.size} mapate la contract comun`, action: "Vezi componente" },
+                { id: "components" as const, title: "Shared contracts", count: sharedContractGroups.length, detail: `${sharedFoundationBindingCount} module bindings / backing templates`, action: "Vezi contracte" },
                 { id: "composition" as const, title: "Compozitii", count: compositionRows.length, detail: "Produse cu compozitie expusa in API", action: "Vezi compozitii" },
-                { id: "archived" as const, title: "Arhivate / experimentale", count: archivedRows.length, detail: "Template-uri scoase din flow activ", action: "Vezi arhivate" },
+                { id: "archived" as const, title: "Catalog entries", count: allCatalogRows.length, detail: "Total tehnic: produse, module backing si arhive", action: "Vezi catalog" },
               ].map((card) => (
                 <button key={card.id} type="button" onClick={() => onCatalogViewChange(card.id)} data-testid={`product-system-overview-card-${card.id}`} className="rounded-lg border border-slate-800 bg-slate-900/60 px-3 py-2 text-left transition-colors hover:border-purple-500/40 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/40">
                   <span className="flex items-center justify-between gap-2 text-[11px] font-bold text-slate-200"><span>{card.title}</span><span className="text-lg text-slate-100">{card.count}</span></span>
@@ -775,18 +925,23 @@ export function TemplateLibraryView({
             <div data-testid="product-system-overview-shared-foundation" className="rounded-lg border border-cyan-800/40 bg-cyan-950/10 px-3 py-2">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-[12px] font-bold text-cyan-100">Shared Volumetric Foundation</p>
-                  <p className="mt-0.5 text-[10px] text-cyan-300/70">Read-only Product System metadata. Nu activeaza pricing, executie sau Work Intake.</p>
+                  <p className="text-[12px] font-bold text-cyan-100">Shared Volumetric Contracts</p>
+                  <p className="mt-0.5 text-[10px] text-cyan-300/70">6 contracte comune ca entitati principale; modulele sunt bindings tehnice. Nu activeaza pricing, executie sau Work Intake.</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">{sharedFoundationProductRows.length} produse conectate</span>
                   <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">{sharedFoundationContractKeys.size} contracte comune</span>
-                  {sharedFoundationLightingPartial ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting PARTIAL / needs audit</span> : null}
+                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">{sharedFoundationBindingCount} module bindings</span>
+                  {sharedLightingModuleCode ? <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Lighting shared module: {sharedLightingModuleCode}</span> : null}
+                  {sharedFoundationLightingPartial ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting profile needs Product Truth/runtime validation</span> : null}
                 </div>
               </div>
               <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
                 {hasOfferableSharedFoundationProduct ? <span className="rounded border border-emerald-700/40 bg-emerald-900/20 px-2 py-0.5 text-emerald-300">Letters: offerable</span> : null}
                 {hasCandidateSharedFoundationProduct ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Logo: candidate / not Work Intake</span> : null}
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Letters strategy source: TPL-VOLUMETRIC-LED_v1</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">Logo lighting profile is not a duplicated primary module</span>
               </div>
             </div>
 
@@ -820,7 +975,7 @@ export function TemplateLibraryView({
 
               {catalogView === "components" ? (
                 <div className="flex flex-wrap gap-2">
-                  {[["all", "Toate componentele"], ["internal", "Module interne"], ["shared", "Contract comun"]].map(([id, label]) => (
+                  {[["contracts", "Contracte comune"], ["technical", "Module tehnice"], ["all", "Toate"]].map(([id, label]) => (
                     <button key={id} type="button" onClick={() => setComponentFilter(id as ComponentFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${componentFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
                   ))}
                   <select aria-label="Filtru produs parinte" value={parentFilter} onChange={(event) => setParentFilter(event.target.value)} className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-300 outline-none">
@@ -840,10 +995,55 @@ export function TemplateLibraryView({
 
             {catalogView === "components" ? (
               <div className="space-y-2">
-                {detailed ? <p className="text-[11px] text-slate-500">Componente interne si shared folosite de produse. Nu se aleg direct in Work Intake.</p> : null}
-                {searchedComponentRows.length === 0 ? (
+                {detailed ? <p className="text-[11px] text-slate-500">Contractele comune sunt entitatile principale; modulele template raman bindings/backing tehnice.</p> : null}
+                {(componentFilter === "contracts" || componentFilter === "all") && searchedSharedContractGroups.length > 0 ? (
+                  <div className="space-y-2" data-testid="product-system-shared-contracts-list">
+                    {searchedSharedContractGroups.map((contract) => (
+                      <div key={contract.componentKey} data-testid={`product-system-shared-contract-row-${contract.componentKey}`} className="rounded-lg border border-slate-800 bg-slate-950/40 px-3 py-2">
+                        <div className="flex flex-wrap items-start justify-between gap-2">
+                          <div>
+                            <p className="font-mono text-[12px] font-bold text-cyan-100">{contract.componentKey}</p>
+                            <p className="mt-0.5 text-[11px] font-bold text-slate-200">{contract.displayName}</p>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+                            <span className={`rounded border px-2 py-0.5 ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span>
+                            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">{contract.ownerDecision}</span>
+                            <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">{contract.bindings.length} bindings</span>
+                          </div>
+                        </div>
+                        <div className="mt-2 grid gap-2 md:grid-cols-2">
+                          {contract.bindings.map((binding) => (
+                            <div key={`${contract.componentKey}-${binding.productTemplateCode}-${binding.profileKey}`} className="rounded-md border border-slate-800 bg-slate-900/60 px-2.5 py-1.5">
+                              <div className="flex flex-wrap items-center justify-between gap-2">
+                                <p className="text-[11px] font-bold text-slate-100">{binding.productLabel}</p>
+                                <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${binding.quoteOfferable ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-amber-700/40 bg-amber-900/20 text-amber-300"}`}>{binding.productSystemRole === "candidate_product" ? "candidate" : "offerable"}</span>
+                              </div>
+                              <p className="mt-1 font-mono text-[10px] text-slate-400">{binding.moduleTemplateCode}</p>
+                              {contract.componentKey === "volumetric_lighting" && binding.sharedModuleTemplateCode ? (
+                                <p className="mt-0.5 font-mono text-[10px] text-cyan-200">Shared primary module: {binding.sharedModuleTemplateCode}</p>
+                              ) : null}
+                              {contract.componentKey === "volumetric_lighting" && binding.strategySourceTemplateCode ? (
+                                <p className="mt-0.5 font-mono text-[10px] text-amber-200">{binding.profileKey === "logo" ? "Logo" : "Letters"} strategy source: {binding.strategySourceTemplateCode}</p>
+                              ) : null}
+                              <p className="mt-0.5 text-[10px] text-slate-500">Profile {binding.profileKey} · {binding.workIntakeLabel}</p>
+                              <p className="mt-0.5 text-[10px] font-bold text-slate-300">{contract.componentKey === "volumetric_lighting" ? formatStrategyLabel(binding) : binding.runtimeStatus}</p>
+                              {contract.componentKey === "volumetric_lighting" && binding.strategyMeaning ? (
+                                <p className="mt-0.5 text-[9px] text-slate-500">{binding.strategyMeaning}</p>
+                              ) : null}
+                              {contract.componentKey === "volumetric_lighting" && binding.reservedModuleTemplateCode ? (
+                                <p className="mt-0.5 font-mono text-[9px] text-slate-500">Logo lighting profile source: {binding.reservedModuleTemplateCode}, status reserved/backing strategy</p>
+                              ) : null}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+                {(componentFilter === "technical" || componentFilter === "all") && searchedComponentRows.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio componenta pentru filtrele curente.</div>
-                ) : (
+                ) : null}
+                {(componentFilter === "technical" || componentFilter === "all") && searchedComponentRows.length > 0 ? (
                   <div className="overflow-hidden rounded-lg border border-slate-800" data-testid="product-system-components-list">
                     <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1.15fr)_minmax(0,0.9fr)_minmax(0,1.25fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[9px] font-bold uppercase text-slate-500"><span>Rol / label</span><span>Template code</span><span>Folosit de</span><span>Contract comun</span><span>Status</span></div>
                     <div className="divide-y divide-slate-800/80">
@@ -869,7 +1069,7 @@ export function TemplateLibraryView({
                       })}
                     </div>
                   </div>
-                )}
+                ) : null}
               </div>
             ) : null}
 

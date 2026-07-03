@@ -365,6 +365,14 @@ export interface SharedVolumetricComponentSummary {
   owner_decision: "APPROVE_AS_DIRECTION" | "KEEP_SEPARATE_NOW" | "NEEDS_MORE_AUDIT" | "FORBIDDEN_NOW" | string;
   shared_truth_fields: string[];
   not_confirmed: string[];
+  calculation_strategy_key?: string | null;
+  strategy_source_template_code?: string | null;
+  strategy_status?: string | null;
+  strategy_meaning?: string | null;
+  required_truth?: string[];
+  shared_module_template_code?: string | null;
+  legacy_replaced_by?: string | null;
+  reserved_module_template_code?: string | null;
 }
 
 export interface ProductTemplateAvailabilityResponse {

@@ -219,8 +219,40 @@ SHARED_VOLUMETRIC_COMPONENT_CONTRACTS: list[SharedVolumetricComponentContract] =
         logo_role_label="Iluminare logo",
         letters_behavior_notes=["Uses lighting_system_type, led_module_count and PSU configuration."],
         logo_behavior_notes=["Uses logo_lighting_mode, emblem_led_module_count and logo electrical test."],
-        letters_template_config={"led_count_key": "led_module_count", "psu_key": "selected_psu_watts", "display_label": "LED / iluminare"},
-        logo_template_config={"led_count_key": "emblem_led_module_count", "psu_key": "selected_psu_watts", "display_label": "Iluminare logo"},
+        letters_template_config={
+            "led_count_key": "led_module_count",
+            "psu_key": "selected_psu_watts",
+            "display_label": "LED / iluminare",
+            "shared_module_template_code": VOLUMETRIC_LED_TEMPLATE_CODE,
+            "calculation_strategy_key": "letters_standard_led_calculation",
+            "strategy_source_template_code": VOLUMETRIC_LED_TEMPLATE_CODE,
+            "strategy_status": "ACTIVE_FOR_LETTERS",
+            "strategy_meaning": "Letters lighting calculation strategy is carried by the shared LED module.",
+            "required_truth": [
+                "face_area",
+                "lighting_mode",
+                "led_density_config",
+                "psu_config",
+            ],
+        },
+        logo_template_config={
+            "led_count_key": "emblem_led_module_count",
+            "psu_key": "selected_psu_watts",
+            "display_label": "Iluminare logo",
+            "shared_module_template_code": VOLUMETRIC_LED_TEMPLATE_CODE,
+            "calculation_strategy_key": "logo_led_calculation_strategy",
+            "strategy_source_template_code": VOLUMETRIC_LOGO_LIGHTING_TEMPLATE_CODE,
+            "strategy_status": "NEEDS_PRODUCT_TRUTH",
+            "strategy_meaning": "Logo lighting module is a profile/backing strategy source, not a duplicated primary LED module.",
+            "required_truth": [
+                "logo_lighting_mode",
+                "logo_illuminated_area",
+                "logo_shape_complexity",
+                "lighting_zones",
+                "psu_config",
+            ],
+            "reserved_module_template_code": VOLUMETRIC_LOGO_LIGHTING_TEMPLATE_CODE,
+        },
         confidence="PARTIAL",
         owner_decision="NEEDS_MORE_AUDIT",
         letters_not_confirmed=["front_lit_halo_combined", "lighting_zones", "circuits", "service_access"],
@@ -294,6 +326,7 @@ def get_shared_volumetric_component_summaries_for_template(
             (item for item in contract.profiles if item.profile_key == binding.profile_key),
             None,
         )
+        template_config = profile.template_config if profile else {}
         summaries.append(
             SharedVolumetricComponentSummary(
                 component_key=contract.component_key,
@@ -304,6 +337,44 @@ def get_shared_volumetric_component_summaries_for_template(
                 owner_decision=contract.owner_decision,
                 shared_truth_fields=contract.shared_truth_fields,
                 not_confirmed=profile.not_confirmed if profile else [],
+                calculation_strategy_key=(
+                    str(template_config.get("calculation_strategy_key"))
+                    if template_config.get("calculation_strategy_key")
+                    else None
+                ),
+                strategy_source_template_code=(
+                    str(template_config.get("strategy_source_template_code"))
+                    if template_config.get("strategy_source_template_code")
+                    else None
+                ),
+                strategy_status=(
+                    str(template_config.get("strategy_status"))
+                    if template_config.get("strategy_status")
+                    else None
+                ),
+                strategy_meaning=(
+                    str(template_config.get("strategy_meaning"))
+                    if template_config.get("strategy_meaning")
+                    else None
+                ),
+                required_truth=[str(item) for item in template_config.get("required_truth", [])]
+                if isinstance(template_config.get("required_truth"), list)
+                else [],
+                shared_module_template_code=(
+                    str(template_config.get("shared_module_template_code"))
+                    if template_config.get("shared_module_template_code")
+                    else None
+                ),
+                legacy_replaced_by=(
+                    str(template_config.get("legacy_replaced_by"))
+                    if template_config.get("legacy_replaced_by")
+                    else None
+                ),
+                reserved_module_template_code=(
+                    str(template_config.get("reserved_module_template_code"))
+                    if template_config.get("reserved_module_template_code")
+                    else None
+                ),
             )
         )
     return summaries

@@ -1501,13 +1501,27 @@ function SharedVolumetricFoundationPanel({
 
   const profiles = Array.from(new Set(contracts.map((contract) => contract.profile_key))).join(" + ");
   const lighting = contracts.find((contract) => contract.component_key === "volumetric_lighting");
+  const isCandidate = availability?.product_system_role === "candidate_product";
+  const isLogoProfile = contracts.some((contract) => contract.profile_key === "logo");
+  const runtimeStatusFor = (contract: (typeof contracts)[number]) => {
+    if (contract.component_key === "volumetric_lighting" && contract.strategy_status) {
+      return contract.strategy_status;
+    }
+    if (contract.component_key === "volumetric_lighting" && contract.profile_key === "logo") {
+      return "NEEDS_LED_CALCULATION_STRATEGY";
+    }
+    if (contract.component_key === "volumetric_lighting" && contract.profile_key === "letters") {
+      return "current LED strategy";
+    }
+    return availability?.quote_offerable ? "offerable binding" : "candidate binding";
+  };
 
   return (
     <section data-testid="product-system-editor-shared-foundation" className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-[13px] font-bold text-cyan-100">Shared component foundation</h3>
-          <p className="mt-0.5 text-[11px] text-cyan-300/70">Read-only contract comun metadata. No pricing, no runtime activation, no Work Intake exposure change.</p>
+          <p className="mt-0.5 text-[11px] text-cyan-300/70">Contracte comune ca entitati principale; backing module templates sunt binding-uri de profil. No pricing, no runtime activation, no Work Intake exposure change.</p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Read-only</span>
@@ -1516,14 +1530,42 @@ function SharedVolumetricFoundationPanel({
           {lighting?.confidence === "PARTIAL" ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-2 py-0.5 text-amber-300">Lighting PARTIAL</span> : null}
         </div>
       </div>
+      {isCandidate && isLogoProfile ? (
+        <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/15 px-2.5 py-2 text-[10px] text-amber-200" data-testid="product-system-editor-logo-candidate-readiness">
+          <p className="font-bold">Candidate only · Not Work Intake</p>
+          <p className="mt-0.5 text-amber-200/75">Offerability requires Product Truth + Modular Form + ProductDefinition + Pricing readiness.</p>
+        </div>
+      ) : null}
       <div className="mt-2 grid gap-1.5 md:grid-cols-2 xl:grid-cols-3">
         {contracts.map((contract) => (
           <div key={contract.component_key} className="rounded-lg border border-slate-800 bg-slate-950/40 px-2.5 py-1.5">
-            <p className="text-[11px] font-bold text-slate-100">{contract.display_name}</p>
-            <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">Contract comun: {contract.component_key}</p>
-            <p className="mt-0.5 text-[10px] text-slate-500">Profil: {contract.profile_key}</p>
-            <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500">{contract.module_template_code}</p>
-            <p className="mt-1 text-[10px] text-slate-400">{contract.confidence} · {contract.owner_decision}</p>
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div>
+                <p className="text-[11px] font-bold text-slate-100">{contract.display_name}</p>
+                <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">{contract.component_key}</p>
+              </div>
+              <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span>
+            </div>
+            <p className="mt-1 text-[10px] text-slate-500">Profile: {contract.profile_key}</p>
+            <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500">Backing module: {contract.module_template_code}</p>
+            {contract.component_key === "volumetric_lighting" && contract.shared_module_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Shared module: {contract.shared_module_template_code}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.strategy_source_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Strategy source: {contract.strategy_source_template_code}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.calculation_strategy_key ? (
+              <p className="mt-0.5 truncate font-mono text-[10px] text-amber-300">Strategy: {contract.calculation_strategy_key}</p>
+            ) : null}
+            <p className="mt-1 text-[10px] text-slate-400">Owner decision: {contract.owner_decision}</p>
+            <p className="mt-0.5 text-[10px] font-bold text-slate-300">Runtime status: {runtimeStatusFor(contract)}</p>
+            {contract.component_key === "volumetric_lighting" && contract.strategy_meaning ? (
+              <p className="mt-0.5 text-[9px] text-slate-500">{contract.strategy_meaning}</p>
+            ) : null}
+            {contract.component_key === "volumetric_lighting" && contract.reserved_module_template_code ? (
+              <p className="mt-0.5 truncate font-mono text-[9px] text-slate-500">Logo lighting strategy/profile source: {contract.reserved_module_template_code}</p>
+            ) : null}
+            <p className="mt-0.5 text-[9px] text-slate-600">No pricing / no runtime activation.</p>
           </div>
         ))}
       </div>

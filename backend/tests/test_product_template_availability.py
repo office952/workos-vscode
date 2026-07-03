@@ -142,6 +142,11 @@ async def test_letters_is_offerable_parent_with_modules(db_session):
     assert by_contract["volumetric_face"].module_template_code == "TPL-VOLUMETRIC-FACE_v1"
     assert by_contract["volumetric_lighting"].confidence == "PARTIAL"
     assert by_contract["volumetric_lighting"].owner_decision == "NEEDS_MORE_AUDIT"
+    assert by_contract["volumetric_lighting"].shared_module_template_code == "TPL-VOLUMETRIC-LED_v1"
+    assert by_contract["volumetric_lighting"].calculation_strategy_key == "letters_standard_led_calculation"
+    assert by_contract["volumetric_lighting"].strategy_source_template_code == "TPL-VOLUMETRIC-LED_v1"
+    assert by_contract["volumetric_lighting"].strategy_status == "ACTIVE_FOR_LETTERS"
+    assert "psu_config" in by_contract["volumetric_lighting"].required_truth
 
 
 @pytest.mark.asyncio
@@ -193,6 +198,14 @@ async def test_logo_parent_is_candidate_product_not_offerable(db_session):
     assert by_contract["volumetric_face"].module_template_code == "TPL-VOLUMETRIC-LOGO-FACE_v1"
     assert by_contract["volumetric_lighting"].confidence == "PARTIAL"
     assert "irregular_shape_impact" in by_contract["volumetric_lighting"].not_confirmed
+    assert by_contract["volumetric_lighting"].module_template_code == "TPL-VOLUMETRIC-LOGO-LIGHTING_v1"
+    assert by_contract["volumetric_lighting"].shared_module_template_code == "TPL-VOLUMETRIC-LED_v1"
+    assert by_contract["volumetric_lighting"].calculation_strategy_key == "logo_led_calculation_strategy"
+    assert by_contract["volumetric_lighting"].strategy_source_template_code == "TPL-VOLUMETRIC-LOGO-LIGHTING_v1"
+    assert by_contract["volumetric_lighting"].strategy_status == "NEEDS_PRODUCT_TRUTH"
+    assert by_contract["volumetric_lighting"].strategy_meaning == "Logo lighting module is a profile/backing strategy source, not a duplicated primary LED module."
+    assert by_contract["volumetric_lighting"].reserved_module_template_code == "TPL-VOLUMETRIC-LOGO-LIGHTING_v1"
+    assert "logo_shape_complexity" in by_contract["volumetric_lighting"].required_truth
 
 
 @pytest.mark.asyncio
