@@ -29,10 +29,6 @@ import {
   type IntakeV6TaskPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import {
-  getPreOrderTechnicalPreview,
-  type PreOrderTechnicalPreviewResponse,
-} from "@/lib/intakeV6/preOrderTechnicalPreviewApi";
-import {
   resolveIntakeV6EmblemLightingDepthMm,
   resolveLetterPerimeterForFinish,
   syncIntakeV6FinishLightingForLayerState,
@@ -89,7 +85,6 @@ import IntakeV6OrderBoundTaskReadinessPanel from "../IntakeV6OrderBoundTaskReadi
 import IntakeV6QuoteCommercialSpinePanel from "../IntakeV6QuoteCommercialSpinePanel";
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
 import FormSystemBackboneAwarenessPanel from "../FormSystemBackboneAwarenessPanel";
-import PreOrderTechnicalPreviewPanel from "../PreOrderTechnicalPreviewPanel";
 import { toast } from "@/components/ui/sonner";
 import { useTemplateFormContract } from "@/lib/intakeV6/useTemplateFormContract";
 import {
@@ -590,8 +585,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     useState<IntakeV6TaskGenerationDryRunResponse | null>(null);
   const [orderBoundReadiness, setOrderBoundReadiness] =
     useState<IntakeV6OrderBoundTaskReadinessResponse | null>(null);
-  const [preOrderTechnicalPreview, setPreOrderTechnicalPreview] =
-    useState<PreOrderTechnicalPreviewResponse | null>(null);
   const [breakdown, setBreakdown] = useState<IntakeV6MaterialBreakdownResponse | null>(null);
   const [logicalListReadModel, setLogicalListReadModel] = useState<IntakeV6LogicalListReadModelResponse | null>(null);
   const [binding, setBinding] = useState<IntakeV6ProductSystemBindingResponse | null>(null);
@@ -644,9 +637,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [loadingQuoteHandoffPreview, setLoadingQuoteHandoffPreview] = useState(false);
   const [loadingTaskGenerationDryRun, setLoadingTaskGenerationDryRun] = useState(false);
   const [loadingOrderBoundReadiness, setLoadingOrderBoundReadiness] = useState(false);
-  const [loadingPreOrderTechnicalPreview, setLoadingPreOrderTechnicalPreview] = useState(false);
   const [loadingBreakdown, setLoadingBreakdown] = useState(false);
-  const [preOrderTechnicalPreviewError, setPreOrderTechnicalPreviewError] = useState<string | null>(null);
   const [localSheetQuoteOverride, setLocalSheetQuoteOverride] =
     useState<IntakeV6SheetFootprintOverride | null>(null);
   const [saving, setSaving] = useState(false);
@@ -1101,38 +1092,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     state.localFileHash,
     persistedSvgFileHash,
   ]);
-
-  useEffect(() => {
-    if (!analysisReady) {
-      setPreOrderTechnicalPreview(null);
-      setPreOrderTechnicalPreviewError(null);
-      return;
-    }
-    let cancelled = false;
-    setLoadingPreOrderTechnicalPreview(true);
-    setPreOrderTechnicalPreviewError(null);
-    void getPreOrderTechnicalPreview({
-      productTemplateCode: modularTemplateCode ?? state.workspace?.template_code ?? undefined,
-      sourceRef: workspaceId ?? undefined,
-    })
-      .then((response) => {
-        if (!cancelled) setPreOrderTechnicalPreview(response);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setPreOrderTechnicalPreview(null);
-          setPreOrderTechnicalPreviewError(
-            err instanceof Error ? err.message : "Previzualizarea tehnica este indisponibila.",
-          );
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoadingPreOrderTechnicalPreview(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [analysisReady, modularTemplateCode, state.workspace?.template_code, workspaceId]);
 
   const activeTasks = useMemo(
     () => preview?.items.filter((item) => item.active) ?? [],
@@ -2044,12 +2003,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
       <FormSystemBackboneAwarenessPanel
         backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
-      />
-
-      <PreOrderTechnicalPreviewPanel
-        preview={preOrderTechnicalPreview}
-        loading={loadingPreOrderTechnicalPreview}
-        error={preOrderTechnicalPreviewError}
       />
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">
