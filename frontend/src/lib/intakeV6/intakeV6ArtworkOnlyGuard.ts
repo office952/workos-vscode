@@ -5,14 +5,14 @@ import { isArtworkLayerName } from "@/lib/intakeSvgContracts";
 export const ARTWORK_ONLY_REQUIRES_DECISION_CODE = "artwork_only_requires_decision";
 
 export const ARTWORK_ONLY_STEP1_MESSAGE =
-  "Fișierul pare să conțină doar artwork/policromie, fără litere volumetrice detectabile.";
+  "Fișierul pare să conțină logo/vector constructiv fără straturi de litere volumetrice.";
 
-export const ARTWORK_ONLY_REVIEW_TITLE = "Artwork / policromie necesită decizie";
+export const ARTWORK_ONLY_REVIEW_TITLE = "Logo / vector constructiv necesită confirmare";
 
 export const ARTWORK_ONLY_CONFIRM_MESSAGES = [
   "Nu există straturi de litere volumetrice confirmate.",
-  "Artwork/policromie necesită decizie operator.",
-  "Template-ul curent este Litere volumetrice; fișierul încărcat pare artwork-only.",
+  "Logo/vector constructiv necesită confirmare operator.",
+  "Analyzer-ul va recomanda compoziția de produs înainte de Review.",
 ] as const;
 
 export function layerHasLetterPathGeometry(layer: SvgAnalysisLayer): boolean {
@@ -175,8 +175,8 @@ export function resolveArtworkOnlyFatalBlockers(
 
 export function artworkOnlyLayerDisplayType(layer: SvgAnalysisLayer): string {
   const paint = layer.paintEvidence;
-  if (paint?.paintKind === "policromie" || paint?.hasGradient) return "policromie / gradient";
-  if (layer.autoRole === "printed_artwork") return "artwork / policromie";
-  if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return "artwork / policromie";
-  return "artwork / gradient";
+  if (paint?.paintKind === "policromie" || paint?.hasGradient) return "vector constructiv / finisaj complex";
+  if (layer.autoRole === "printed_artwork") return "logo / vector constructiv";
+  if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return "logo / vector constructiv";
+  return "vector constructiv";
 }

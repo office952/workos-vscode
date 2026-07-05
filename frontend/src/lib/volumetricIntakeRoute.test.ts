@@ -4,10 +4,12 @@ import {
   buildIntakeV6Path,
   findIntakeByRouteParam,
   hasIntakeStatusReadinessConflict,
+  isIntakeV6CapableTemplateCode,
   intakeEditUsesVolumetricWorkspace,
   intakePrimaryEditLabel,
   resolveIntakeEditPath,
   shouldUseVolumetricIntakePage,
+  TPL_VOLUMETRIC_LOGO_V1,
 } from "@/lib/volumetricIntakeRoute";
 import { TPL_VOLUMETRIC_LETTERS } from "@/lib/volumetricQuoteInput";
 
@@ -16,6 +18,21 @@ describe("volumetricIntakeRoute", () => {
     expect(
       shouldUseVolumetricIntakePage(TPL_VOLUMETRIC_LETTERS, "totem")
     ).toBe(true);
+  });
+
+  it("routes confirmed TPL-VOLUMETRIC-LOGO_v1 to Intake V6", () => {
+    expect(isIntakeV6CapableTemplateCode(TPL_VOLUMETRIC_LOGO_V1)).toBe(true);
+    expect(
+      shouldUseVolumetricIntakePage(TPL_VOLUMETRIC_LOGO_V1, "totem")
+    ).toBe(true);
+    expect(
+      resolveIntakeEditPath({
+        id: "IR-LOGO",
+        confirmedTemplateCode: TPL_VOLUMETRIC_LOGO_V1,
+        productFamily: "litere_volumetrice",
+        workspaceId: "workspace-logo",
+      })
+    ).toBe("/intake-v6/workspace-logo/operator");
   });
 
   it("routes litere_volumetrice family before template confirmation", () => {
@@ -91,6 +108,17 @@ describe("volumetricIntakeRoute", () => {
         productFamily: "litere_volumetrice",
       })
     ).toBe("/intake-v6/IR-NEW/operator");
+  });
+
+  it("routes analyzer-first requests by ensured workspace id before template truth exists", () => {
+    expect(
+      resolveIntakeEditPath({
+        id: "IR-ANALYZER",
+        confirmedTemplateCode: null,
+        productFamily: "",
+        workspaceId: "workspace-analyzer-first",
+      })
+    ).toBe("/intake-v6/workspace-analyzer-first/operator");
   });
 
   it("uses Intake V6 primary label only for volumetric intakes", () => {

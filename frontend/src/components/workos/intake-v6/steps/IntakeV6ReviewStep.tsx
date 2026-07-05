@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import {
   getIntakeV6AiInformationalAssistCandidate,
+  getIntakeV6LogicalListReadModel,
   getIntakeV6MaterialBreakdown,
   getIntakeV6OrderBoundTaskReadiness,
   getIntakeV6PricedQuoteDryRun,
@@ -16,6 +17,7 @@ import {
   getIntakeV6Workspace,
   type IntakeV6AiInformationalAssistPreviewResponse,
   type IntakeV6FinishSetup,
+  type IntakeV6LogicalListReadModelResponse,
   type IntakeV6MaterialBreakdownResponse,
   type IntakeV6OrderBoundTaskReadinessResponse,
   type IntakeV6PricedQuoteDryRunResponse,
@@ -26,6 +28,10 @@ import {
   type IntakeV6TaskGenerationDryRunResponse,
   type IntakeV6TaskPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
+import {
+  getPreOrderTechnicalPreview,
+  type PreOrderTechnicalPreviewResponse,
+} from "@/lib/intakeV6/preOrderTechnicalPreviewApi";
 import {
   resolveIntakeV6EmblemLightingDepthMm,
   resolveLetterPerimeterForFinish,
@@ -82,6 +88,8 @@ import IntakeV6TaskGenerationDryRunPanel from "../IntakeV6TaskGenerationDryRunPa
 import IntakeV6OrderBoundTaskReadinessPanel from "../IntakeV6OrderBoundTaskReadinessPanel";
 import IntakeV6QuoteCommercialSpinePanel from "../IntakeV6QuoteCommercialSpinePanel";
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
+import FormSystemBackboneAwarenessPanel from "../FormSystemBackboneAwarenessPanel";
+import PreOrderTechnicalPreviewPanel from "../PreOrderTechnicalPreviewPanel";
 import { toast } from "@/components/ui/sonner";
 import { useTemplateFormContract } from "@/lib/intakeV6/useTemplateFormContract";
 import {
@@ -124,6 +132,13 @@ import {
 } from "../reviewFieldLayout";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
 import IntakeV6LiveCalculationSummary from "../IntakeV6LiveCalculationSummary";
+import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
+import {
+  LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE,
+  LOGO_ONLY_COMMERCIAL_GUARD_TITLE,
+  LOGO_ONLY_NOT_OFFERABLE_STATUS,
+  isLogoOnlyCandidateNotOfferableStatus,
+} from "@/lib/intakeV6/intakeV6LogoOnlyCommercialGuard";
 import { useCompanyCommercialSettings } from "@/hooks/useCompanyCommercialSettings";
 import IntakeV6OperatorWorkSummaryTechnicalDetails from "../IntakeV6OperatorWorkSummaryTechnicalDetails";
 import { buildIntakeV6OperatorWorkSummaryCounts } from "@/lib/intakeV6/intakeV6ConfirmSummary";
@@ -145,11 +160,11 @@ import {
   sanitizeLetterGroupsForArtworkOnlyGuard,
 } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import IntakeV6ArtworkOnlyDecisionPanel from "../IntakeV6ArtworkOnlyDecisionPanel";
-import IntakeV6ModularFormAwarenessPanel from "../IntakeV6ModularFormAwarenessPanel";
 import { resolveLayerCardStatus } from "../letterGroupCardPresentation";
 import { useIntakeV6WorkspaceHeaderStatus } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
+import { resolveModuleActivationAttentionWarnings } from "@/lib/intakeV6/intakeV6ModuleActivationPreview";
 import {
   resolveIntakeV6ReviewRefetchGroups,
   type IntakeV6ReviewDirtyDomain,
@@ -405,11 +420,12 @@ function applyMountingTemplateMinimumArea(
 }
 
 export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHook }) {
-  const { state, saveFinishSetup, trySetStep } = hook;
+  const { state, saveFinishSetup, trySetStep, confirmProductComposition } = hook;
   const { setOverlay, setHandlers } = useIntakeV6WorkspaceHeaderStatus();
   const workspaceId = state.workspace?.id;
-  const { eurToRonRate } = useCompanyCommercialSettings(Boolean(workspaceId));
+  const { vatPct, eurToRonRate } = useCompanyCommercialSettings(Boolean(workspaceId));
   const payload = state.workspace?.payload as Record<string, unknown> | undefined;
+  const logoOnlyCandidateNotOfferable = isLogoOnlyCandidateNotOfferableStatus(state.workspace?.readiness_status);
 
   // Template form contract — drives dynamic options for face/return finish selects
   const templateContract = useTemplateFormContract(workspaceId);
@@ -557,7 +573,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     );
   }, [payload]);
   const [commercialInputs, setCommercialInputs] = useState<IntakeV6OfferCommercialInputs>(() =>
-    resolveIntakeV6OfferCommercialDefaults(null, persistedCommercialInputs),
+    ({ ...resolveIntakeV6OfferCommercialDefaults(null, persistedCommercialInputs), vatPercent: vatPct }),
   );
   const [productionDryRun, setProductionDryRun] = useState<IntakeV6ProductionTaskDryRunResponse | null>(
     null,
@@ -574,7 +590,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     useState<IntakeV6TaskGenerationDryRunResponse | null>(null);
   const [orderBoundReadiness, setOrderBoundReadiness] =
     useState<IntakeV6OrderBoundTaskReadinessResponse | null>(null);
+  const [preOrderTechnicalPreview, setPreOrderTechnicalPreview] =
+    useState<PreOrderTechnicalPreviewResponse | null>(null);
   const [breakdown, setBreakdown] = useState<IntakeV6MaterialBreakdownResponse | null>(null);
+  const [logicalListReadModel, setLogicalListReadModel] = useState<IntakeV6LogicalListReadModelResponse | null>(null);
   const [binding, setBinding] = useState<IntakeV6ProductSystemBindingResponse | null>(null);
   const templateFormContract = templateContract.contract;
   const modularTemplateCode =
@@ -625,7 +644,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [loadingQuoteHandoffPreview, setLoadingQuoteHandoffPreview] = useState(false);
   const [loadingTaskGenerationDryRun, setLoadingTaskGenerationDryRun] = useState(false);
   const [loadingOrderBoundReadiness, setLoadingOrderBoundReadiness] = useState(false);
+  const [loadingPreOrderTechnicalPreview, setLoadingPreOrderTechnicalPreview] = useState(false);
   const [loadingBreakdown, setLoadingBreakdown] = useState(false);
+  const [preOrderTechnicalPreviewError, setPreOrderTechnicalPreviewError] = useState<string | null>(null);
   const [localSheetQuoteOverride, setLocalSheetQuoteOverride] =
     useState<IntakeV6SheetFootprintOverride | null>(null);
   const [saving, setSaving] = useState(false);
@@ -634,6 +655,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     INITIAL_REVIEW_PREVIEW_REFRESH,
   );
   const autosaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const commercialSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const artworkSectionRef = useRef<HTMLDivElement | null>(null);
   const liveCalcRef = useRef<HTMLDivElement | null>(null);
   const artworkHighlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -643,6 +665,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [reviewTab, setReviewTab] = useState<IntakeV6ReviewTabId>("finisaje");
   const localRevisionRef = useRef(0);
   const autosaveRequestRef = useRef(0);
+  const commercialInputsSyncKeyRef = useRef<string | null>(null);
 
   const selectorPendingSave = useMemo(
     () => isIntakeV6SelectorStatePendingSave(form, payload, letterGroups, artworkFinishes),
@@ -674,10 +697,32 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       JSON.stringify(serializeIntakeV6OfferCommercialInputs(commercialInputs)) !==
       JSON.stringify(
         serializeIntakeV6OfferCommercialInputs(
-          persistedCommercialInputs ?? resolveIntakeV6OfferCommercialDefaults(pricingPreview),
+          {
+            ...(persistedCommercialInputs ?? resolveIntakeV6OfferCommercialDefaults(pricingPreview)),
+            vatPercent: vatPct,
+          },
         ),
       ),
-    [commercialInputs, persistedCommercialInputs, pricingPreview],
+    [commercialInputs, persistedCommercialInputs, pricingPreview, vatPct],
+  );
+  const syncedCommercialInputs = useMemo(
+    () => ({
+      ...resolveIntakeV6OfferCommercialDefaults(
+        pricingPreview,
+        persistedCommercialInputs == null
+          ? undefined
+          : serializeIntakeV6OfferCommercialInputs(persistedCommercialInputs),
+      ),
+      vatPercent: vatPct,
+    }),
+    [persistedCommercialInputs, pricingPreview, vatPct],
+  );
+  const syncedCommercialInputsKey = useMemo(
+    () =>
+      `${workspaceId ?? "none"}:${JSON.stringify(
+        serializeIntakeV6OfferCommercialInputs(syncedCommercialInputs),
+      )}`,
+    [workspaceId, syncedCommercialInputs],
   );
   const localReviewEditsPending = selectorPendingSave || commercialInputsPendingSave || saving;
 
@@ -890,23 +935,29 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.pricedQuote]);
 
   useEffect(() => {
-    setCommercialInputs(
-      resolveIntakeV6OfferCommercialDefaults(
-        pricingPreview,
-        persistedCommercialInputs == null ? undefined : serializeIntakeV6OfferCommercialInputs(persistedCommercialInputs),
-      ),
-    );
-  }, [workspaceId]);
+    if (!workspaceId || !analysisReady) {
+      setLogicalListReadModel(null);
+      return;
+    }
+    let cancelled = false;
+    void getIntakeV6LogicalListReadModel(workspaceId)
+      .then((response) => {
+        if (!cancelled) setLogicalListReadModel(response);
+      })
+      .catch(() => {
+        if (!cancelled) setLogicalListReadModel(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.breakdown, previewRefresh.pricedQuote]);
 
   useEffect(() => {
     if (commercialInputsPendingSave) return;
-    setCommercialInputs(
-      resolveIntakeV6OfferCommercialDefaults(
-        pricingPreview,
-        persistedCommercialInputs == null ? undefined : serializeIntakeV6OfferCommercialInputs(persistedCommercialInputs),
-      ),
-    );
-  }, [workspaceId, pricingPreview?.workspace_id, persistedCommercialInputs, commercialInputsPendingSave]);
+    if (commercialInputsSyncKeyRef.current === syncedCommercialInputsKey) return;
+    commercialInputsSyncKeyRef.current = syncedCommercialInputsKey;
+    setCommercialInputs(syncedCommercialInputs);
+  }, [commercialInputsPendingSave, syncedCommercialInputs, syncedCommercialInputsKey]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
@@ -1051,6 +1102,38 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     persistedSvgFileHash,
   ]);
 
+  useEffect(() => {
+    if (!analysisReady) {
+      setPreOrderTechnicalPreview(null);
+      setPreOrderTechnicalPreviewError(null);
+      return;
+    }
+    let cancelled = false;
+    setLoadingPreOrderTechnicalPreview(true);
+    setPreOrderTechnicalPreviewError(null);
+    void getPreOrderTechnicalPreview({
+      productTemplateCode: modularTemplateCode ?? state.workspace?.template_code ?? undefined,
+      sourceRef: workspaceId ?? undefined,
+    })
+      .then((response) => {
+        if (!cancelled) setPreOrderTechnicalPreview(response);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          setPreOrderTechnicalPreview(null);
+          setPreOrderTechnicalPreviewError(
+            err instanceof Error ? err.message : "Previzualizarea tehnica este indisponibila.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingPreOrderTechnicalPreview(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [analysisReady, modularTemplateCode, state.workspace?.template_code, workspaceId]);
+
   const activeTasks = useMemo(
     () => preview?.items.filter((item) => item.active) ?? [],
     [preview],
@@ -1100,7 +1183,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     });
   }
 
-  function buildCurrentFinishBody(confirmed = true): IntakeV6FinishSetup {
+  function buildCurrentFinishBody(
+    confirmed = true,
+    commercialInputsOverride?: IntakeV6OfferCommercialInputs,
+  ): IntakeV6FinishSetup {
     return syncLighting(
       syncIntakeV6FinishPayloadFromLayerFinishes(
         {
@@ -1119,7 +1205,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           letter_group_finishes: letterGroups,
           artwork_finishes: artworkFinishes,
           artwork_complexity_decisions: artworkComplexityDecisions,
-          commercial_inputs: serializeIntakeV6OfferCommercialInputs(commercialInputs),
+          commercial_inputs: serializeIntakeV6OfferCommercialInputs(
+            commercialInputsOverride ?? commercialInputs,
+          ),
           confirmed,
         },
         letterGroups,
@@ -1138,7 +1226,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     );
   }
 
-  async function saveCurrentFinish(confirmed = true) {
+  async function saveCurrentFinish(
+    confirmed = true,
+    commercialInputsOverride?: IntakeV6OfferCommercialInputs,
+  ) {
     if (!workspaceId) return;
     const requestId = autosaveRequestRef.current + 1;
     autosaveRequestRef.current = requestId;
@@ -1146,7 +1237,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     setSaving(true);
     setError(null);
     try {
-      const body = buildCurrentFinishBody(confirmed);
+      const body = buildCurrentFinishBody(confirmed, commercialInputsOverride);
       const pendingDomains = new Set(pendingDirtyDomainsRef.current);
       const workspace = await saveFinishSetup(body);
       if (
@@ -1163,6 +1254,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           pricingPreview,
           nextFinish.commercial_inputs,
         );
+        const nextSettingsVatCommercialInputs = { ...nextCommercialInputs, vatPercent: vatPct };
         if (buildFinishSetupSyncSignature(syncedNextForm) !== buildFinishSetupSyncSignature(form)) {
           setForm(syncedNextForm);
         }
@@ -1174,9 +1266,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         }
         if (
           buildJsonSignature(serializeIntakeV6OfferCommercialInputs(commercialInputs)) !==
-          buildJsonSignature(serializeIntakeV6OfferCommercialInputs(nextCommercialInputs))
+          buildJsonSignature(serializeIntakeV6OfferCommercialInputs(nextSettingsVatCommercialInputs))
         ) {
-          setCommercialInputs(nextCommercialInputs);
+          setCommercialInputs(nextSettingsVatCommercialInputs);
         }
         pendingDirtyDomainsRef.current.clear();
         pendingAutosavePolicyRef.current = "short";
@@ -1194,7 +1286,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   }
 
   useEffect(() => {
-    if (!workspaceId || !analysisReady || (!selectorPendingSave && !commercialInputsPendingSave)) return;
+    if (!workspaceId || !analysisReady || !selectorPendingSave) return;
     if (autosaveTimerRef.current) {
       clearTimeout(autosaveTimerRef.current);
     }
@@ -1210,6 +1302,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       }
     };
   }, [workspaceId, analysisReady, selectorPendingSave, commercialInputsPendingSave, autosaveIdentityKey]);
+
+  useEffect(() => {
+    return () => {
+      if (commercialSaveTimerRef.current) {
+        clearTimeout(commercialSaveTimerRef.current);
+        commercialSaveTimerRef.current = null;
+      }
+    };
+  }, []);
 
   const psuLabel =
     form.psu_configuration && form.psu_configuration.length > 0
@@ -1246,15 +1347,23 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ),
     [letterGroups, state.analyzerReport, state.layerRoleConfirmation],
   );
-  const effectiveReviewWarnings = useMemo(
-    () =>
-      resolveArtworkOnlyReviewWarnings(
-        state.analyzerReport as SvgAnalysisCoreReport | null,
-        state.layerRoleConfirmation,
-        quoteHandoffPreview?.review_warnings,
-      ),
-    [state.analyzerReport, state.layerRoleConfirmation, quoteHandoffPreview?.review_warnings],
+  const modularAttentionWarnings = useMemo(
+    () => resolveModuleActivationAttentionWarnings(modularAwareness.preview),
+    [modularAwareness.preview],
   );
+  const effectiveReviewWarnings = useMemo(() => {
+    const handoffWarnings = resolveArtworkOnlyReviewWarnings(
+      state.analyzerReport as SvgAnalysisCoreReport | null,
+      state.layerRoleConfirmation,
+      quoteHandoffPreview?.review_warnings,
+    );
+    return [...new Set([...handoffWarnings, ...modularAttentionWarnings])];
+  }, [
+    state.analyzerReport,
+    state.layerRoleConfirmation,
+    quoteHandoffPreview?.review_warnings,
+    modularAttentionWarnings,
+  ]);
 
   useEffect(() => {
     if (!artworkOnlyRequiresDecision || letterGroups.length === 0) return;
@@ -1311,12 +1420,30 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     () => collectArtworkUndecidedWarnings(effectiveReviewWarnings),
     [effectiveReviewWarnings],
   );
+  const stepOneConfirmedArtworkLayerKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const layer of state.layerRoleConfirmation?.layers ?? []) {
+      const role = layer.confirmedRole ?? layer.autoRole;
+      if (
+        layer.confirmationState === "confirmed" &&
+        (role === "printed_artwork" || role === "logo" || role === "policromie")
+      ) {
+        keys.add(layer.layerKey);
+        if (layer.layerName) keys.add(layer.layerName);
+      }
+    }
+    return keys;
+  }, [state.layerRoleConfirmation]);
+  const allArtworkConfirmedInStepOne =
+    artworkFinishes.length > 0 &&
+    artworkFinishes.every((row) => stepOneConfirmedArtworkLayerKeys.has(row.layer_key) || stepOneConfirmedArtworkLayerKeys.has(row.layer_name));
   const hasUnconfirmedArtwork = artworkFinishes.some((row) => !row.confirmed);
   const allArtworkConfirmed =
     artworkFinishes.length > 0 && artworkFinishes.every((row) => row.confirmed);
   const hasVectorResidualWarning = hasUnclassifiedVectorArtworkWarning(effectiveReviewWarnings);
-  const showArtworkDecisionAlert =
-    hasUnconfirmedArtwork || artworkDecisionMessages.length > 0;
+  const showArtworkDecisionAlert = artworkDecisionMessages.length > 0 && !allArtworkConfirmedInStepOne;
+  const artworkOnlyBlocked =
+    artworkOnlyRequiresDecision && (!allArtworkConfirmedInStepOne || hasUnconfirmedArtwork);
 
   const pendingConfirmationCount = useMemo(() => {
     let count = 0;
@@ -1366,13 +1493,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
   const handleJumpToPending = useCallback(() => {
     setReviewTab("finisaje");
-    if (hasUnconfirmedArtwork || artworkDecisionMessages.length > 0) {
+    if (artworkDecisionMessages.length > 0 && !allArtworkConfirmedInStepOne) {
       handleVerifyArtwork();
       return;
     }
     const firstWarning = document.querySelector('[data-layer-card-status="warning"]');
     firstWarning?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [artworkDecisionMessages.length, handleVerifyArtwork, hasUnconfirmedArtwork]);
+  }, [allArtworkConfirmedInStepOne, artworkDecisionMessages.length, handleVerifyArtwork]);
 
   useEffect(() => {
     return () => {
@@ -1415,6 +1542,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     reviewHandoffSurfacing,
     selectorPendingSave,
     pendingConfirmationCount,
+    effectiveReviewWarnings,
     quoteGeometry.width_mm,
     quoteGeometry.height_mm,
     geometryMetrics,
@@ -1448,6 +1576,20 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) : null}
       {analysisReady ? (
         <>
+      <div className="mb-4">
+        <IntakeV6ProductCompositionPanel
+          payload={state.workspace?.payload as Record<string, unknown> | undefined}
+          onConfirm={(items) => void confirmProductComposition(items)}
+        />
+      </div>
+      {logoOnlyCandidateNotOfferable ? (
+        <div
+          className="mb-4 rounded border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-[12px] leading-relaxed text-amber-100"
+          data-testid="intake-v6-review-logo-only-commercial-guard"
+        >
+          <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
+        </div>
+      ) : null}
       <div className="mb-4 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
         <IntakeV6LiveCalculationSummary
           breakdown={breakdown}
@@ -1455,14 +1597,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           loading={loadingBreakdown || faceBackPrepDraft.loading}
           layout="bar"
           operatorCantPerimeterM={operatorCantPerimeterM}
-          pendingSave={selectorPendingSave}
+          pendingSave={localReviewEditsPending}
           letterGroups={effectiveLetterGroups}
           artworkFinishes={artworkFinishes}
           pricingPreview={pricingPreview}
           officialPricing={pricedQuoteDryRun}
+          logicalList={logicalListReadModel}
           commercialInputs={commercialInputs}
           eurToRonRate={eurToRonRate}
-          artworkOnlyBlocked={artworkOnlyRequiresDecision}
+          artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
         />
       </div>
 
@@ -1493,7 +1636,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 confirmation={state.layerRoleConfirmation}
                 variant="review"
               />
-            ) : (
+            ) : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
               description="Față, cant și artwork — același card compact pe strat."
@@ -1525,6 +1668,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   onVerifyArtwork={handleVerifyArtwork}
                   showResidualVectorNotice={allArtworkConfirmed && hasVectorResidualWarning}
                   highlightUnconfirmed={highlightArtworkUnconfirmed}
+                  stepOneConfirmedLayerKeys={stepOneConfirmedArtworkLayerKeys}
                   allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
                   onChange={(next) => {
                     setArtworkFinishes(next);
@@ -1537,7 +1681,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </div>
             ) : null}
             </IntakeV6ReviewSectionShell>
-            )}
           </div>
         ) : null}
 
@@ -1848,7 +1991,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
       <IntakeV6ReviewSaveFooter
         saving={saving}
-        pendingSave={selectorPendingSave}
+          pendingSave={localReviewEditsPending}
         error={error}
       />
         </div>
@@ -1864,14 +2007,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             loading={loadingBreakdown || faceBackPrepDraft.loading}
             layout="rightPanel"
             operatorCantPerimeterM={operatorCantPerimeterM}
-            pendingSave={selectorPendingSave}
+            pendingSave={localReviewEditsPending}
             letterGroups={effectiveLetterGroups}
             artworkFinishes={artworkFinishes}
             pricingPreview={pricingPreview}
             officialPricing={pricedQuoteDryRun}
+            logicalList={logicalListReadModel}
             commercialInputs={commercialInputs}
             eurToRonRate={eurToRonRate}
-            artworkOnlyBlocked={artworkOnlyRequiresDecision}
+            artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
           />
           <IntakeV6PricingInputPanel
             preview={pricingPreview}
@@ -1880,14 +2024,33 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             loading={loadingPricingPreview}
             commercialInputs={commercialInputs}
             onCommercialInputsChange={(next) => {
+              const nextCommercialInputs = { ...next, vatPercent: vatPct };
               markLocalFinishChanged(["commercial_preview"], "long");
-              setCommercialInputs(next);
+              setCommercialInputs(nextCommercialInputs);
+              if (commercialSaveTimerRef.current) {
+                clearTimeout(commercialSaveTimerRef.current);
+              }
+              commercialSaveTimerRef.current = setTimeout(() => {
+                commercialSaveTimerRef.current = null;
+                void saveCurrentFinish(true, nextCommercialInputs);
+              }, 700);
             }}
             eurToRonRate={eurToRonRate}
             variant="commercialSliders"
+            commercialGuard={logoOnlyCandidateNotOfferable ? LOGO_ONLY_NOT_OFFERABLE_STATUS : null}
           />
         </div>
       </div>
+
+      <FormSystemBackboneAwarenessPanel
+        backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
+      />
+
+      <PreOrderTechnicalPreviewPanel
+        preview={preOrderTechnicalPreview}
+        loading={loadingPreOrderTechnicalPreview}
+        error={preOrderTechnicalPreviewError}
+      />
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">
       {binding ? (
@@ -1922,17 +2085,29 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       />
 
       <div className="mb-0">
-        <IntakeV6MaterialBreakdownPanel
-          breakdown={breakdown}
-          loading={loadingBreakdown}
-          pendingSave={selectorPendingSave}
-          analysisBundlePending={!analysisReady}
-          workspaceId={workspaceId}
-          workspaceTitle={state.workspace?.title}
-          templateCode={state.workspace?.template_code}
-          sheetQuoteOverride={effectiveSheetQuoteOverride}
-          onSheetFootprintOverrideSaved={handleSheetFootprintOverrideSaved}
-        />
+        {logoOnlyCandidateNotOfferable ? (
+          <div
+            className={`${v6.card} mb-0 border-amber-500/30 bg-amber-500/10`}
+            data-testid="intake-v6-materials-prices-logo-only-guard"
+          >
+            <h3 className={v6.sectionTitle}>Materiale / preturi guarded</h3>
+            <p className="mt-1 text-[11px] leading-relaxed text-amber-100/90">
+              Preview intern neofertabil: logo-only candidate nu este quote-ready. Materialele si preturile nu reprezinta oferta finala.
+            </p>
+          </div>
+        ) : (
+          <IntakeV6MaterialBreakdownPanel
+            breakdown={breakdown}
+            loading={loadingBreakdown}
+            pendingSave={localReviewEditsPending}
+            analysisBundlePending={!analysisReady}
+            workspaceId={workspaceId}
+            workspaceTitle={state.workspace?.title}
+            templateCode={state.workspace?.template_code}
+            sheetQuoteOverride={effectiveSheetQuoteOverride}
+            onSheetFootprintOverrideSaved={handleSheetFootprintOverrideSaved}
+          />
+        )}
       </div>
 
         <IntakeV6GeometryPanel
@@ -2198,13 +2373,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) : null}
       </IntakeV6TechnicalDetailsAccordion>
 
-      <IntakeV6ModularFormAwarenessPanel
-        loadStatus={modularAwareness.loadStatus}
-        preview={modularAwareness.preview}
-        triggerMismatchNote={modularAwareness.preview?.triggerMismatchNote}
-        templateCode={modularTemplateCode}
-        variant="review"
-      />
         </>
       ) : null}
 

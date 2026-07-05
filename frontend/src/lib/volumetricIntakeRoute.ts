@@ -1,17 +1,29 @@
 /**
- * Routing helpers for TPL-VOLUMETRIC-LETTERS dedicated intake shell.
+ * Routing helpers for templates handled by the dedicated Intake V6 shell.
  */
 
 import { isLitereVolumetriceFamily } from "@/lib/intakeProductSpec";
 import type { IntakeStatus } from "@/lib/mockData";
 import { isVolumetricLettersTemplateCode } from "@/lib/volumetricQuoteInput";
 
+export const TPL_VOLUMETRIC_LOGO_V1 = "TPL-VOLUMETRIC-LOGO_v1";
+
+export function isIntakeV6CapableTemplateCode(
+  templateCode: string | null | undefined
+): boolean {
+  const normalized = (templateCode ?? "").trim().toUpperCase();
+  return (
+    isVolumetricLettersTemplateCode(templateCode) ||
+    normalized === TPL_VOLUMETRIC_LOGO_V1.toUpperCase()
+  );
+}
+
 export function shouldUseVolumetricIntakePage(
   confirmedTemplateCode: string | null | undefined,
   productFamily: string | null | undefined
 ): boolean {
   const code = (confirmedTemplateCode ?? "").trim();
-  if (isVolumetricLettersTemplateCode(confirmedTemplateCode)) return true;
+  if (isIntakeV6CapableTemplateCode(confirmedTemplateCode)) return true;
   if (!code && isLitereVolumetriceFamily(productFamily)) return true;
   return false;
 }
@@ -60,6 +72,9 @@ export function resolveIntakeEditPath(input: {
   productFamily?: string | null;
   workspaceId?: string | null;
 }): string {
+  if (input.workspaceId?.trim()) {
+    return buildIntakeV6Path(input.workspaceId);
+  }
   if (
     intakeEditUsesVolumetricWorkspace(
       input.confirmedTemplateCode,

@@ -23,6 +23,7 @@ import type { IntakeV6ModularFormContractResponse } from "./intakeV6ModularFormC
 import type {
   IntakeV6OfferHandoffRequest,
   IntakeV6OfferHandoffResponse,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6PricedQuoteDryRunResponse,
   IntakeV6PricedQuoteWriteRequest,
   IntakeV6PricedQuoteWriteResponse,
@@ -35,6 +36,8 @@ export type {
   IntakeV6CommercialTotals,
   IntakeV6OfferHandoffRequest,
   IntakeV6OfferHandoffResponse,
+  IntakeV6LogicalListLineTrace,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6PricedQuoteBlocker,
   IntakeV6PricedQuoteDryRunResponse,
   IntakeV6PricedQuoteWriteRequest,
@@ -103,6 +106,11 @@ export async function createIntakeV6Workspace(body: {
   client_name?: string;
   job_title?: string;
   intake_request_code?: string;
+  analyzer_mode?: "analyzer_first" | "template_hint" | "template_locked";
+  template_hint_code?: string;
+  selected_template_code?: string;
+  offer_method?: string;
+  source?: string;
 }): Promise<IntakeV4WorkspaceResponse> {
   return requestIntakeV6Json(`${intakeV6ApiBase()}/workspaces`, {
     method: "POST",
@@ -115,6 +123,8 @@ export async function ensureIntakeV6WorkspaceForIntakeRequest(
   intakeRequestCode: string,
   options: {
     offer_method?: string;
+    analyzer_mode?: "analyzer_first" | "template_hint" | "template_locked";
+    template_hint_code?: string;
     selected_template_code?: string;
     source?: string;
   } = {},
@@ -154,6 +164,24 @@ export async function saveIntakeV6FinishSetup(
   });
 }
 
+export async function saveIntakeV6ProductCompositionConfirmation(
+  workspaceId: string,
+  body: {
+    confirmed: boolean;
+    items?: Array<Record<string, unknown>>;
+    operator_note?: string | null;
+  },
+): Promise<IntakeV4WorkspaceResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/product-composition-confirmation`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+}
+
 export async function getIntakeV6TaskPreview(
   workspaceId: string,
   finishDraft?: Partial<IntakeV4FinishSetup>,
@@ -177,6 +205,14 @@ export async function getIntakeV6MaterialBreakdown(
 ): Promise<import("./intakeV4Api").IntakeV4MaterialBreakdownResponse> {
   return requestIntakeV6Json(
     `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/material-breakdown`,
+  );
+}
+
+export async function getIntakeV6LogicalListReadModel(
+  workspaceId: string,
+): Promise<IntakeV6LogicalListReadModelResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/logical-list-read-model`,
   );
 }
 

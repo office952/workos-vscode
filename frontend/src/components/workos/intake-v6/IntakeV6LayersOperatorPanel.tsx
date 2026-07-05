@@ -75,11 +75,10 @@ export default function IntakeV6LayersOperatorPanel({
               type="button"
               className={`${v6.btnConfirm} inline-flex w-full items-center justify-center gap-2`}
               onClick={onConfirmAllRoles}
-              disabled={artworkOnlyRequiresDecision}
               data-testid="intake-v6-confirm-all-roles"
             >
               <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden />
-              Confirmă toate sugestiile
+              {artworkOnlyRequiresDecision ? "Confirmă logo/vector" : "Confirmă toate sugestiile"}
               {layerStats.pending > 0 ? (
                 <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-[11px] font-bold tabular-nums">
                   {layerStats.pending}
@@ -101,7 +100,7 @@ export default function IntakeV6LayersOperatorPanel({
               className="rounded border border-amber-500/30 bg-amber-500/10 px-2.5 py-2 text-[11px] leading-relaxed text-amber-100/90"
               data-testid="intake-v6-artwork-only-operator-hint"
             >
-              {ARTWORK_ONLY_STEP1_MESSAGE} Confirmă explicit artwork-ul sau reîncarcă un fișier cu litere.
+              {ARTWORK_ONLY_STEP1_MESSAGE} Confirmă vectorul constructiv sau reîncarcă un fișier cu straturi separate.
             </p>
           ) : null}
 

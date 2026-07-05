@@ -1,0 +1,1495 @@
+﻿{
+    "read_only":  true,
+    "source":  "gradi_logical_list_read_model_v1",
+    "workspace_id":  "dcf3c7ea-1e26-44d0-a159-6c78a638a528",
+    "workspace_code":  "IV6-351F1BAA",
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_composition_recommendation":  {
+                                               "status":  "needs_confirmation",
+                                               "composition_type":  "letters_plus_logo",
+                                               "source":  "analyzer_rules_v1",
+                                               "recommended_templates":  [
+                                                                             {
+                                                                                 "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                                                 "role_in_composition":  "letters",
+                                                                                 "reason":  "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+                                                                                 "source_layer_ids":  [
+                                                                                                          "pseudo:maria",
+                                                                                                          "pseudo:soare",
+                                                                                                          "pseudo:ana",
+                                                                                                          "pseudo:gradinita"
+                                                                                                      ],
+                                                                                 "confidence":  "high",
+                                                                                 "status":  "suggested"
+                                                                             },
+                                                                             {
+                                                                                 "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                                 "role_in_composition":  "logo_vector_atipic",
+                                                                                 "reason":  "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+                                                                                 "source_layer_ids":  [
+                                                                                                          "logo-stanga",
+                                                                                                          "logo-dreapta"
+                                                                                                      ],
+                                                                                 "confidence":  "high",
+                                                                                 "status":  "suggested"
+                                                                             }
+                                                                         ],
+                                               "composition_items":  [
+                                                                         {
+                                                                             "composition_item_id":  "letters",
+                                                                             "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                                             "component_role":  "volumetric_letters",
+                                                                             "source_layer_ids":  [
+                                                                                                      "pseudo:maria",
+                                                                                                      "pseudo:soare",
+                                                                                                      "pseudo:ana",
+                                                                                                      "pseudo:gradinita"
+                                                                                                  ],
+                                                                             "source_group_ids":  [
+                                                                                                      "pseudo:maria",
+                                                                                                      "pseudo:soare",
+                                                                                                      "pseudo:ana",
+                                                                                                      "pseudo:gradinita"
+                                                                                                  ],
+                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                             "status":  "suggested"
+                                                                         },
+                                                                         {
+                                                                             "composition_item_id":  "logo",
+                                                                             "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                             "component_role":  "volumetric_logo",
+                                                                             "source_layer_ids":  [
+                                                                                                      "logo-stanga",
+                                                                                                      "logo-dreapta"
+                                                                                                  ],
+                                                                             "source_group_ids":  [
+                                                                                                      "logo-stanga",
+                                                                                                      "logo-dreapta"
+                                                                                                  ],
+                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                             "status":  "suggested"
+                                                                         }
+                                                                     ],
+                                               "shared_modules_policy":  {
+                                                                             "dedupe_common_operations":  true,
+                                                                             "graphic_verification_scope":  "assembly",
+                                                                             "file_preparation_scope":  "assembly",
+                                                                             "light_test_scope":  "assembly",
+                                                                             "packaging_scope":  "assembly"
+                                                                         },
+                                               "blockers":  [
+
+                                                            ],
+                                               "warnings":  [
+
+                                                            ],
+                                               "generated_at":  "2026-07-05T21:53:57.811424+00:00"
+                                           },
+    "product_composition_confirmed":  {
+                                          "confirmed":  true,
+                                          "confirmed_at":  "2026-07-05T21:53:58.750646+00:00",
+                                          "confirmed_by":  "dev@localhost",
+                                          "items":  [
+                                                        {
+                                                            "composition_item_id":  "letters",
+                                                            "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                            "component_role":  "volumetric_letters",
+                                                            "source_layer_ids":  [
+                                                                                     "pseudo:maria",
+                                                                                     "pseudo:soare",
+                                                                                     "pseudo:ana",
+                                                                                     "pseudo:gradinita"
+                                                                                 ],
+                                                            "source_group_ids":  [
+                                                                                     "pseudo:maria",
+                                                                                     "pseudo:soare",
+                                                                                     "pseudo:ana",
+                                                                                     "pseudo:gradinita"
+                                                                                 ],
+                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                            "status":  "suggested"
+                                                        },
+                                                        {
+                                                            "composition_item_id":  "logo",
+                                                            "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                            "component_role":  "volumetric_logo",
+                                                            "source_layer_ids":  [
+                                                                                     "logo-stanga",
+                                                                                     "logo-dreapta"
+                                                                                 ],
+                                                            "source_group_ids":  [
+                                                                                     "logo-stanga",
+                                                                                     "logo-dreapta"
+                                                                                 ],
+                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                            "status":  "suggested"
+                                                        }
+                                                    ],
+                                          "operator_note":  null,
+                                          "source":  "operator_confirmation_v1"
+                                      },
+    "composition_items":  [
+                              {
+                                  "composition_item_id":  "letters",
+                                  "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                  "component_role":  "volumetric_letters",
+                                  "source_layer_ids":  [
+                                                           "pseudo:maria",
+                                                           "pseudo:soare",
+                                                           "pseudo:ana",
+                                                           "pseudo:gradinita"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "pseudo:maria",
+                                                           "pseudo:soare",
+                                                           "pseudo:ana",
+                                                           "pseudo:gradinita"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              },
+                              {
+                                  "composition_item_id":  "logo",
+                                  "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                  "component_role":  "volumetric_logo",
+                                  "source_layer_ids":  [
+                                                           "logo-stanga",
+                                                           "logo-dreapta"
+                                                       ],
+                                  "source_group_ids":  [
+                                                           "logo-stanga",
+                                                           "logo-dreapta"
+                                                       ],
+                                  "shared_module_policy":  "dedupe_common_operations",
+                                  "status":  "suggested"
+                              }
+                          ],
+    "fixture_hint":  "gradi-curat.svg",
+    "categories":  [
+                       "TOATE",
+                       "MATERIALE",
+                       "SERVICII / OPERATII",
+                       "MANOPERA"
+                   ],
+    "core_row_count":  21,
+    "target_core_row_count":  21,
+    "core_rows_complete":  true,
+    "rows":  [
+                 {
+                     "line_id":  "material.plexiglas_face",
+                     "display_label":  "Plexiglas 3 mm / fata litere",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_face_litere",
+                     "module_code":  "debitare_fata",
+                     "formula_code_proposed":  "MATERIAL_PLEXI_FACE_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  1.2638,
+                     "unit":  "m2",
+                     "subtotal":  20.2208,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "plexiglas_face",
+                                            "label":  "Plexiglas 3 mm / faÈÄ litere",
+                                            "quantity":  1.2638,
+                                            "unit":  "m2",
+                                            "subtotal":  20.2208,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "sheet_nesting_role_split_quote_estimate",
+                                            "material_code":  "MAT-ACP-FATA-LITERE",
+                                            "material_variant_code":  "PLEXIGLAS_3MM_OPAL",
+                                            "inventory_status":  "batch_missing",
+                                            "material_catalog_source":  "shared_material_color_catalog_registry",
+                                            "material_catalog_version":  "readonly_seedless_v1",
+                                            "inventory_key_preview":  "PLEXIGLAS_3MM_OPAL::BATCH_PENDING",
+                                            "stock_identity_status":  "batch_pending",
+                                            "material_family":  "PLEXIGLAS",
+                                            "material_series":  "PLEXIGLAS_3MM",
+                                            "catalog_color_code":  "WHITE",
+                                            "catalog_color_name":  "Opal",
+                                            "cnc_processable":  true,
+                                            "compatible_cnc_operations":  [
+                                                                              "CNC_CUT_PLEXIGLAS_3MM",
+                                                                              "CNC_FLAT_RECESS_PLEXIGLAS_GLUE_SEAT",
+                                                                              "CANAL_PLAT_GHIDAJ"
+                                                                          ]
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "material_code":  "PLEXIGLAS_3MM",
+                     "material_name":  "Plexiglas 3 mm",
+                     "thickness_mm":  3.0,
+                     "nesting_group":  "PLEXIGLAS_3MM_FACE_BATCH",
+                     "batch_roles":  [
+                                         "LETTER_FACE"
+                                     ],
+                     "shared_batch_roles":  [
+                                                "LETTER_FACE",
+                                                "LOGO_FACE"
+                                            ],
+                     "material_tariff_source":  "pricing_registry",
+                     "material_tariff_eur_per_m2":  16.0,
+                     "batch_trace":  {
+                                         "batch_code":  "PLEXIGLAS_3MM_FACE_BATCH",
+                                         "material_code":  "PLEXIGLAS_3MM",
+                                         "letter_face_area_m2":  1.2638,
+                                         "logo_face_area_m2":  0.8005,
+                                         "total_face_area_m2":  2.0643,
+                                         "nesting_method":  "shared_face_batch_logical_trace",
+                                         "material_tariff_source":  "pricing_registry",
+                                         "material_tariff_eur_per_m2":  16.0,
+                                         "sheet_batch_note":  "LETTER_FACE and LOGO_FACE share the same physical Plexiglas 3 mm batch.",
+                                         "shared_batch_roles":  [
+                                                                    "LETTER_FACE",
+                                                                    "LOGO_FACE"
+                                                                ]
+                                     },
+                     "material_variant_code":  "PLEXIGLAS_3MM_OPAL",
+                     "inventory_status":  "batch_missing",
+                     "material_catalog_source":  "shared_material_color_catalog_registry",
+                     "material_catalog_version":  "readonly_seedless_v1",
+                     "inventory_key_preview":  "PLEXIGLAS_3MM_OPAL::BATCH_PENDING",
+                     "stock_identity_status":  "batch_pending",
+                     "material_family":  "PLEXIGLAS",
+                     "material_series":  "PLEXIGLAS_3MM",
+                     "catalog_color_code":  "WHITE",
+                     "catalog_color_name":  "Opal",
+                     "cnc_processable":  true,
+                     "compatible_cnc_operations":  [
+                                                       "CNC_CUT_PLEXIGLAS_3MM",
+                                                       "CNC_FLAT_RECESS_PLEXIGLAS_GLUE_SEAT",
+                                                       "CANAL_PLAT_GHIDAJ"
+                                                   ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.logo_plexiglas_face",
+                     "display_label":  "Plexiglas 3 mm / embleme/logo",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_logo_face",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  0.8005,
+                     "unit":  "m2",
+                     "subtotal":  12.808,
+                     "currency":  "EUR",
+                     "runtime_source":  "shared_material_batch",
+                     "child_rows":  [
+
+                                    ],
+                     "preferences":  {
+                                         "artwork_layer_count":  2
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "Logical logo/emblem row priced from shared PLEXIGLAS_3MM batch; no separate logo material tariff exists."
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "material_code":  "PLEXIGLAS_3MM",
+                     "material_name":  "Plexiglas 3 mm",
+                     "thickness_mm":  3.0,
+                     "nesting_group":  "PLEXIGLAS_3MM_FACE_BATCH",
+                     "batch_roles":  [
+                                         "LOGO_FACE"
+                                     ],
+                     "shared_batch_roles":  [
+                                                "LETTER_FACE",
+                                                "LOGO_FACE"
+                                            ],
+                     "material_tariff_source":  "pricing_registry",
+                     "material_tariff_eur_per_m2":  16.0,
+                     "batch_trace":  {
+                                         "batch_code":  "PLEXIGLAS_3MM_FACE_BATCH",
+                                         "material_code":  "PLEXIGLAS_3MM",
+                                         "letter_face_area_m2":  1.2638,
+                                         "logo_face_area_m2":  0.8005,
+                                         "total_face_area_m2":  2.0643,
+                                         "nesting_method":  "shared_face_batch_logical_trace",
+                                         "material_tariff_source":  "pricing_registry",
+                                         "material_tariff_eur_per_m2":  16.0,
+                                         "sheet_batch_note":  "LETTER_FACE and LOGO_FACE share the same physical Plexiglas 3 mm batch.",
+                                         "shared_batch_roles":  [
+                                                                    "LETTER_FACE",
+                                                                    "LOGO_FACE"
+                                                                ]
+                                     },
+                     "material_variant_code":  "PLEXIGLAS_3MM_OPAL",
+                     "inventory_status":  "batch_missing",
+                     "material_catalog_source":  "shared_material_color_catalog_registry",
+                     "material_catalog_version":  "readonly_seedless_v1",
+                     "inventory_key_preview":  "PLEXIGLAS_3MM_OPAL::BATCH_PENDING",
+                     "stock_identity_status":  "batch_pending",
+                     "material_family":  "PLEXIGLAS",
+                     "material_series":  "PLEXIGLAS_3MM",
+                     "catalog_color_code":  "WHITE",
+                     "catalog_color_name":  "Opal",
+                     "cnc_processable":  true,
+                     "compatible_cnc_operations":  [
+                                                       "CNC_CUT_PLEXIGLAS_3MM",
+                                                       "CNC_FLAT_RECESS_PLEXIGLAS_GLUE_SEAT",
+                                                       "CANAL_PLAT_GHIDAJ"
+                                                   ],
+                     "source_composition_item_id":  "logo",
+                     "source_template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                     "source_component_role":  "volumetric_logo"
+                 },
+                 {
+                     "line_id":  "material.forex_backing",
+                     "display_label":  "Forex 10 mm / spate litere",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_spate_litere",
+                     "module_code":  "debitare_spate",
+                     "formula_code_proposed":  "MATERIAL_FOREX_BACK_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "PARTIAL",
+                     "quantity":  1.2638,
+                     "unit":  "m2",
+                     "subtotal":  20.2208,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "forex_backing",
+                                            "label":  "Forex 10 mm / spate litere",
+                                            "quantity":  1.2638,
+                                            "unit":  "m2",
+                                            "subtotal":  20.2208,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "backing_area_fallback_from_face_quoteable_area",
+                                            "material_code":  "MAT-SPATE-PVC-LITERE",
+                                            "material_variant_code":  "FOREX_10MM_WHITE",
+                                            "inventory_status":  "batch_missing",
+                                            "material_catalog_source":  "shared_material_color_catalog_registry",
+                                            "material_catalog_version":  "readonly_seedless_v1",
+                                            "inventory_key_preview":  "FOREX_10MM_WHITE::BATCH_PENDING",
+                                            "stock_identity_status":  "batch_pending",
+                                            "material_family":  "FOREX",
+                                            "material_series":  "FOREX_10MM",
+                                            "catalog_color_code":  "WHITE",
+                                            "catalog_color_name":  "White",
+                                            "cnc_processable":  true,
+                                            "compatible_cnc_operations":  [
+                                                                              "CNC_CUT_FOREX_10MM",
+                                                                              "CNC_FLAT_RECESS_FOREX_BACK_SEAT"
+                                                                          ]
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "BACKING_AREA_FALLBACK_USED"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "material_variant_code":  "FOREX_10MM_WHITE",
+                     "inventory_status":  "batch_missing",
+                     "material_catalog_source":  "shared_material_color_catalog_registry",
+                     "material_catalog_version":  "readonly_seedless_v1",
+                     "inventory_key_preview":  "FOREX_10MM_WHITE::BATCH_PENDING",
+                     "stock_identity_status":  "batch_pending",
+                     "material_family":  "FOREX",
+                     "material_series":  "FOREX_10MM",
+                     "catalog_color_code":  "WHITE",
+                     "catalog_color_name":  "White",
+                     "cnc_processable":  true,
+                     "compatible_cnc_operations":  [
+                                                       "CNC_CUT_FOREX_10MM",
+                                                       "CNC_FLAT_RECESS_FOREX_BACK_SEAT"
+                                                   ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.face_oracal",
+                     "display_label":  "Vinil fata Oracal 651",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_face_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "MATERIAL_ORACAL_FACE_BY_NESTED_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  1.6111,
+                     "unit":  "m2",
+                     "subtotal":  14.4999,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "face_vinyl_651",
+                                            "label":  "Vinil faÈÄ Oracal 651",
+                                            "quantity":  1.6111,
+                                            "unit":  "m2",
+                                            "subtotal":  14.4999,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "roll_nesting_quote_estimate",
+                                            "material_code":  "MAT-ORACAL-651",
+                                            "material_variant_code":  null,
+                                            "inventory_status":  "color_missing",
+                                            "material_catalog_source":  "shared_material_color_catalog_registry",
+                                            "material_catalog_version":  "readonly_seedless_v1",
+                                            "inventory_key_preview":  null,
+                                            "stock_identity_status":  "unknown",
+                                            "material_family":  null,
+                                            "material_series":  null,
+                                            "catalog_color_code":  "UNKNOWN",
+                                            "catalog_color_name":  "Unknown",
+                                            "cnc_processable":  false,
+                                            "compatible_cnc_operations":  [
+
+                                                                          ]
+                                        }
+                                    ],
+                     "preferences":  {
+                                         "oracal_preference_count":  4
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "material_variant_code":  null,
+                     "inventory_status":  "split_by_child_rows",
+                     "material_catalog_source":  "shared_material_color_catalog_registry",
+                     "material_catalog_version":  "readonly_seedless_v1",
+                     "inventory_key_preview":  null,
+                     "stock_identity_status":  "not_required",
+                     "material_family":  null,
+                     "material_series":  "multiple",
+                     "catalog_color_code":  "UNKNOWN",
+                     "catalog_color_name":  "Unknown",
+                     "cnc_processable":  false,
+                     "compatible_cnc_operations":  [
+
+                                                   ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.print",
+                     "display_label":  "Material print Orafol",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "MATERIAL_PRINT_BY_NESTED_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "SPLIT_IN_RUNTIME",
+                     "quantity":  0.80046,
+                     "unit":  "m2",
+                     "subtotal":  1.441,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "artwork_logo-stanga_print_vinyl",
+                                            "label":  "Material print Orafol â logo stÃ¢nga",
+                                            "quantity":  0.4002298565185999,
+                                            "unit":  "m2",
+                                            "subtotal":  0.7205,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "print_area_quote_estimate",
+                                            "material_code":  "MAT-VINYL-PRINT"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-dreapta_print_vinyl",
+                                            "label":  "Material print Orafol â logo dreapta",
+                                            "quantity":  0.4002298565186002,
+                                            "unit":  "m2",
+                                            "subtotal":  0.7205,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "print_area_quote_estimate",
+                                            "material_code":  "MAT-VINYL-PRINT"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "PRINT_ROWS_AGGREGATED_FOR_LOGICAL_LIST"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.lamination",
+                     "display_label":  "Material laminare Orafol",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "MATERIAL_LAMINATION_BY_NESTED_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "SPLIT_IN_RUNTIME",
+                     "quantity":  0.80046,
+                     "unit":  "m2",
+                     "subtotal":  9.606,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "artwork_logo-stanga_laminated_vinyl",
+                                            "label":  "Material laminare Orafol â logo stÃ¢nga",
+                                            "quantity":  0.4002298565185999,
+                                            "unit":  "m2",
+                                            "subtotal":  4.803,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "laminate_area_quote_estimate",
+                                            "material_code":  "MAT-VINYL-PRINT-LAMINATED"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-dreapta_laminated_vinyl",
+                                            "label":  "Material laminare Orafol â logo dreapta",
+                                            "quantity":  0.4002298565186002,
+                                            "unit":  "m2",
+                                            "subtotal":  4.803,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "laminate_area_quote_estimate",
+                                            "material_code":  "MAT-VINYL-PRINT-LAMINATED"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "LAMINATION_ROWS_AGGREGATED_FOR_LOGICAL_LIST"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.return_profile",
+                     "display_label":  "Cant / volum litere + interioare + artwork",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_lateral_litere",
+                     "module_code":  "modelare_cant",
+                     "formula_code_proposed":  "MATERIAL_CANT_BY_PERIMETER_DEPTH_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  31.6382,
+                     "unit":  "m",
+                     "subtotal":  113.8974,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "return_material",
+                                            "label":  "Cant / volum litere + interioare + artwork (Alb) Â· 60.0 mm",
+                                            "quantity":  31.6382,
+                                            "unit":  "m",
+                                            "subtotal":  113.8974,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "perimeter_with_waste",
+                                            "material_code":  "MAT-PROFIL-LATERAL-LITERE-60MM"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "Cant labor is intentionally separate and depth-independent in current runtime trace."
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "material_variant_code":  "ALUMINUM_RETURN_GENERIC",
+                     "inventory_status":  "inventory_key_preview_ready",
+                     "material_catalog_source":  "shared_material_color_catalog_registry",
+                     "material_catalog_version":  "readonly_seedless_v1",
+                     "inventory_key_preview":  "ALUMINUM_RETURN_GENERIC::BATCH_PENDING",
+                     "stock_identity_status":  "batch_pending",
+                     "material_family":  "ALUMINUM_RETURN",
+                     "material_series":  "ALUMINUM_RETURN_GENERIC",
+                     "catalog_color_code":  "UNKNOWN",
+                     "catalog_color_name":  "Unknown",
+                     "cnc_processable":  false,
+                     "compatible_cnc_operations":  [
+
+                                                   ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.led_modules",
+                     "display_label":  "Module LED",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_led_litere",
+                     "module_code":  "sistem_led",
+                     "formula_code_proposed":  "MATERIAL_LED_MODULES_BY_AREA_DENSITY_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "legacy_unversioned",
+                     "status":  "MATCHED",
+                     "quantity":  144.0,
+                     "unit":  "buc",
+                     "subtotal":  86.4,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "led_modules",
+                                            "label":  "Module LED (0.75 W / buc)",
+                                            "quantity":  144.0,
+                                            "unit":  "buc",
+                                            "subtotal":  86.4,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "led_modules_perimeter_pitch_estimate",
+                                            "material_code":  "MAT-LED-MODULE"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "FORMULA_TRACE_MISSING"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.led_psu",
+                     "display_label":  "Sursa LED 12V",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_led_litere",
+                     "module_code":  "sistem_led",
+                     "formula_code_proposed":  "MATERIAL_PSU_BY_POWER_SAFETY_FACTOR_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "legacy_unversioned",
+                     "status":  "MATCHED",
+                     "quantity":  1.0,
+                     "unit":  "buc",
+                     "subtotal":  24.0,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "led_psu",
+                                            "label":  "SursÄ LED 12V (140.4 W necesari)",
+                                            "quantity":  1.0,
+                                            "unit":  "buc",
+                                            "subtotal":  24.0,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "psu_configuration_quote_estimate",
+                                            "material_code":  "MAT-LED-PSU-12V-160W"
+                                        }
+                                    ],
+                     "preferences":  {
+                                         "required_psu_watts":  140.4,
+                                         "selected_psu_watts":  100,
+                                         "psu_configuration":  [
+                                                                   160
+                                                               ]
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "PSU_UNDERSIZED"
+                                  ],
+                     "blockers":  [
+                                      "PSU_UNDERSIZED"
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.adhesive_cant",
+                     "display_label":  "Adeziv lipire cant pe fete litere",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_lateral_litere",
+                     "module_code":  "modelare_cant",
+                     "formula_code_proposed":  "MATERIAL_ADHESIVE_CANT_BY_PERIMETER_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  53.4944,
+                     "unit":  "ml",
+                     "subtotal":  6.2935,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "adhesive_return_to_face",
+                                            "label":  "Adeziv lipire cant pe feÈe litere",
+                                            "quantity":  53.4944,
+                                            "unit":  "ml",
+                                            "subtotal":  6.2935,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "adhesive_return_to_face_ml_per_ml_cant",
+                                            "material_code":  "MAT-ADEZIV-CANT-LITERE"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.adhesive_led",
+                     "display_label":  "Adeziv suplimentar module LED",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_led_litere",
+                     "module_code":  "sistem_led",
+                     "formula_code_proposed":  "MATERIAL_ADHESIVE_LED_BY_MODULE_COUNT_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  28.8,
+                     "unit":  "ml",
+                     "subtotal":  3.3882,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "adhesive_led_modules",
+                                            "label":  "Adeziv suplimentar module LED",
+                                            "quantity":  28.8,
+                                            "unit":  "ml",
+                                            "subtotal":  3.3882,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "adhesive_led_modules_ml_per_module",
+                                            "material_code":  "MAT-ADEZIV-CANT-LITERE"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.wire_letters",
+                     "display_label":  "Cablu electric MYYUP 2 x 0.75",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_led_litere",
+                     "module_code":  "sistem_led",
+                     "formula_code_proposed":  "MATERIAL_CABLE_LOW_VOLTAGE_BY_RULE_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  19.0,
+                     "unit":  "ml",
+                     "subtotal":  7.0784,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "wire_letters_myyup_2x075",
+                                            "label":  "Cablu electric MYYUP 2 x 0.75",
+                                            "quantity":  19.0,
+                                            "unit":  "ml",
+                                            "subtotal":  7.0784,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "wire_letters_myyup_2x075_per_segment",
+                                            "material_code":  "MAT-CABLU-MYYUP-2X075"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.wire_supply",
+                     "display_label":  "Cablu electric MYYUP 2 x 1.5 alimentare 220V",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_led_litere",
+                     "module_code":  "sistem_led",
+                     "formula_code_proposed":  "MATERIAL_CABLE_SUPPLY_BY_RULE_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  5.0,
+                     "unit":  "ml",
+                     "subtotal":  3.8235,
+                     "currency":  "EUR",
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "wire_supply_myyup_2x15",
+                                            "label":  "Cablu electric MYYUP 2 x 1.5 alimentare 220V",
+                                            "quantity":  5.0,
+                                            "unit":  "ml",
+                                            "subtotal":  3.8235,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "wire_supply_myyup_2x15_per_job",
+                                            "material_code":  "MAT-CABLU-MYYUP-2X15"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "material.mounting_accessories",
+                     "display_label":  "Accesorii montaj / conectori",
+                     "category":  "MATERIALE",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "MATERIAL_MOUNTING_ACCESSORIES_BY_COST_PERCENT_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "legacy_unversioned",
+                     "status":  "MATCHED",
+                     "quantity":  1.0,
+                     "unit":  "job",
+                     "subtotal":  37.4638,
+                     "currency":  "EUR",
+                     "runtime_source":  "cost_formula_mounting_accessories_5pct",
+                     "child_rows":  [
+                                        {
+                                            "key":  "mounting_accessories_percent",
+                                            "label":  "Accesorii montaj / conectori (5% cost confectie)",
+                                            "quantity":  1.0,
+                                            "unit":  "job",
+                                            "subtotal":  37.4638,
+                                            "currency":  "EUR",
+                                            "runtime_source":  "cost_formula_mounting_accessories_5pct",
+                                            "basis":  "manufacturing_cost_subtotal_before_markup",
+                                            "material_code":  "MAT-CONSUMABILE-MONTAJ"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "COMMERCIAL_FORMULA_UNVERSIONED"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.cnc_face",
+                     "display_label":  "Debitare CNC fata Plexiglas",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_face_litere",
+                     "module_code":  "debitare_fata",
+                     "formula_code_proposed":  "SERVICE_CNC_FACE_CUT_BY_CONTOUR_LENGTH_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  25.0188,
+                     "unit":  "ml",
+                     "subtotal":  37.5282,
+                     "currency":  "EUR",
+                     "runtime_source":  "owner_confirmed_plexiglas_cut_baseline",
+                     "child_rows":  [
+
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "operation_code":  "CNC_CUT_PLEXIGLAS_3MM",
+                     "operation_kind":  "cut",
+                     "material_code":  "PLEXIGLAS_3MM",
+                     "thickness_mm":  3.0,
+                     "operation_depth_mm":  3.0,
+                     "pass_depth_mm":  3.5,
+                     "pass_count":  1,
+                     "tariff_basis":  "ml_pass",
+                     "tariff_eur_per_ml_pass":  1.5,
+                     "tariff_eur_per_ml":  null,
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.cnc_face_bevel",
+                     "display_label":  "Canal plat ghidaj fata Plexiglas",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_face_litere",
+                     "module_code":  "debitare_fata",
+                     "formula_code_proposed":  "SERVICE_CNC_FACE_BEVEL_BY_CONTOUR_LENGTH_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  25.0188,
+                     "unit":  "ml",
+                     "subtotal":  37.5282,
+                     "currency":  "EUR",
+                     "runtime_source":  "owner_confirmed_plexiglas_guide_channel_baseline",
+                     "child_rows":  [
+
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "LEGACY_LABEL_SANFREN_RENAMED_TO_CANAL_PLAT_GHIDAJ",
+                                      "GUIDE_CHANNEL_DEPTH_FORM_FIELD_PENDING"
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "operation_code":  "CNC_FLAT_RECESS_PLEXIGLAS_GLUE_SEAT",
+                     "operation_kind":  "flat_recess",
+                     "material_code":  "PLEXIGLAS_3MM",
+                     "thickness_mm":  3.0,
+                     "operation_depth_mm":  1.0,
+                     "pass_depth_mm":  3.5,
+                     "pass_count":  1,
+                     "tariff_basis":  "ml_pass",
+                     "tariff_eur_per_ml_pass":  1.5,
+                     "tariff_eur_per_ml":  null,
+                     "operation_semantics":  [
+                                                 "flat_recess",
+                                                 "guide_channel",
+                                                 "glue_seat",
+                                                 "flat_channel"
+                                             ],
+                     "legacy_labels":  [
+                                           "bevel",
+                                           "sanfren"
+                                       ],
+                     "legacy_label":  "Sanfren CNC fata Plexiglas",
+                     "canonical_label":  "Canal plat ghidaj fata Plexiglas",
+                     "not_v_cut":  true,
+                     "future_form_field_key":  "guide_channel_depth_mm",
+                     "future_form_field_default_mm":  1.0,
+                     "future_form_field_aliases":  [
+                                                       "flat_recess_depth_mm"
+                                                   ],
+                     "future_admin_registry_required":  true,
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.cnc_back",
+                     "display_label":  "Debitare CNC spate Forex",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_spate_litere",
+                     "module_code":  "debitare_spate",
+                     "formula_code_proposed":  "SERVICE_CNC_BACK_CUT_BY_CONTOUR_LENGTH_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  25.0188,
+                     "unit":  "ml",
+                     "subtotal":  187.641,
+                     "currency":  "EUR",
+                     "runtime_source":  "owner_contract_confirmed_forex_baseline",
+                     "child_rows":  [
+
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "FOREX_BACK_ROW_AGGREGATES_CUT_AND_FLAT_RECESS_TRACE"
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "operation_code":  "CNC_CUT_FOREX_10MM",
+                     "operation_kind":  "cut",
+                     "material_code":  "FOREX_10MM",
+                     "thickness_mm":  10.0,
+                     "operation_depth_mm":  10.0,
+                     "pass_depth_mm":  3.5,
+                     "pass_count":  5,
+                     "tariff_basis":  "ml_pass",
+                     "tariff_eur_per_ml_pass":  1.5,
+                     "tariff_eur_per_ml":  null,
+                     "cut_passes":  3,
+                     "flat_recess_passes":  2,
+                     "total_effective_passes":  5,
+                     "owner_pass_override":  true,
+                     "operation_semantics":  [
+                                                 "cut",
+                                                 "flat_recess",
+                                                 "back_seat"
+                                             ],
+                     "trace_breakdown":  [
+                                             {
+                                                 "operation_code":  "CNC_CUT_FOREX_10MM",
+                                                 "operation_kind":  "cut",
+                                                 "operation_depth_mm":  10.0,
+                                                 "pass_count":  3,
+                                                 "tariff_basis":  "ml_pass",
+                                                 "tariff_eur_per_ml_pass":  1.5
+                                             },
+                                             {
+                                                 "operation_code":  "CNC_FLAT_RECESS_FOREX_BACK_SEAT",
+                                                 "operation_kind":  "flat_recess",
+                                                 "operation_depth_mm":  7.0,
+                                                 "pass_count":  2,
+                                                 "tariff_basis":  "ml_pass",
+                                                 "tariff_eur_per_ml_pass":  1.5
+                                             }
+                                         ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.print",
+                     "display_label":  "Serviciu print",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "SERVICE_PRINT_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "SPLIT_IN_RUNTIME",
+                     "quantity":  0.9606,
+                     "unit":  "m2",
+                     "subtotal":  8.1652,
+                     "currency":  null,
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "artwork_logo-stanga_print_service",
+                                            "label":  "Serviciu print â logo stÃ¢nga",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  4.0826,
+                                            "currency":  null,
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "Arie print ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-dreapta_print_service",
+                                            "label":  "Serviciu print â logo dreapta",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  4.0826,
+                                            "currency":  null,
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "Arie print ofertata incl. waste"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.lamination",
+                     "display_label":  "Serviciu laminare X-PRO",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "SERVICE_LAMINATION_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "legacy_unversioned",
+                     "status":  "SPLIT_IN_RUNTIME",
+                     "quantity":  0.9606,
+                     "unit":  "m2",
+                     "subtotal":  1.9212,
+                     "currency":  null,
+                     "runtime_source":  "intake_v6_owner_lamination_service",
+                     "child_rows":  [
+                                        {
+                                            "key":  "artwork_logo-stanga_lamination_service",
+                                            "label":  "Serviciu laminare X-PRO â logo stÃ¢nga",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  0.9606,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_lamination_service",
+                                            "basis":  "Arie laminare ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-dreapta_lamination_service",
+                                            "label":  "Serviciu laminare X-PRO â logo dreapta",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  0.9606,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_lamination_service",
+                                            "basis":  "Arie laminare ofertata incl. waste"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "service.application",
+                     "display_label":  "Serviciu aplicare",
+                     "category":  "SERVICII_OPERATII",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_finisaj_litere",
+                     "module_code":  "finisaje",
+                     "formula_code_proposed":  "SERVICE_APPLICATION_BY_AREA_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "legacy_unversioned",
+                     "status":  "SPLIT_IN_RUNTIME",
+                     "quantity":  2.4771,
+                     "unit":  "m2",
+                     "subtotal":  7.4313,
+                     "currency":  null,
+                     "runtime_source":  "intake_v6_owner_application_service",
+                     "child_rows":  [
+                                        {
+                                            "key":  "letter_face_pseudo:maria_application_service",
+                                            "label":  "Serviciu aplicare â pseudo maria (blue)",
+                                            "quantity":  0.3373,
+                                            "unit":  "m2",
+                                            "subtotal":  1.0119,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare vinil ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "letter_face_pseudo:soare_application_service",
+                                            "label":  "Serviciu aplicare â pseudo soare (red)",
+                                            "quantity":  0.3685,
+                                            "unit":  "m2",
+                                            "subtotal":  1.1055,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare vinil ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "letter_face_pseudo:ana_application_service",
+                                            "label":  "Serviciu aplicare â pseudo ana (green)",
+                                            "quantity":  0.2356,
+                                            "unit":  "m2",
+                                            "subtotal":  0.7068,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare vinil ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "letter_face_pseudo:gradinita_application_service",
+                                            "label":  "Serviciu aplicare â pseudo gradinita (orange)",
+                                            "quantity":  0.5751,
+                                            "unit":  "m2",
+                                            "subtotal":  1.7253,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare vinil ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-stanga_application_service",
+                                            "label":  "Serviciu aplicare â logo stÃ¢nga",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  1.4409,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare ofertata incl. waste"
+                                        },
+                                        {
+                                            "key":  "artwork_logo-dreapta_application_service",
+                                            "label":  "Serviciu aplicare â logo dreapta",
+                                            "quantity":  0.4803,
+                                            "unit":  "m2",
+                                            "subtotal":  1.4409,
+                                            "currency":  null,
+                                            "runtime_source":  "intake_v6_owner_application_service",
+                                            "basis":  "Arie aplicare ofertata incl. waste"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+                                  "APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"
+                              ],
+                     "warnings":  [
+
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 },
+                 {
+                     "line_id":  "labor.cant_glue",
+                     "display_label":  "Lipire cant / volum pe fata litere",
+                     "category":  "MANOPERA",
+                     "product_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "component_code":  "comp_lateral_litere",
+                     "module_code":  "modelare_cant",
+                     "formula_code_proposed":  "LABOR_CANT_GLUE_BY_PERIMETER_V1",
+                     "formula_version_proposed":  "v1",
+                     "formula_status":  "proposed_binding",
+                     "status":  "MATCHED",
+                     "quantity":  31.6382,
+                     "unit":  "m",
+                     "subtotal":  158.191,
+                     "currency":  null,
+                     "runtime_source":  "pricing_registry",
+                     "child_rows":  [
+                                        {
+                                            "key":  "return_material",
+                                            "label":  "Lipire cant / volum pe faÈÄ litere",
+                                            "quantity":  31.6382,
+                                            "unit":  "m",
+                                            "subtotal":  158.191,
+                                            "currency":  null,
+                                            "runtime_source":  "pricing_registry",
+                                            "basis":  "Perimetru grafica totala / cant total (lipire)"
+                                        }
+                                    ],
+                     "preferences":  {
+
+                                     },
+                     "gaps":  [
+
+                              ],
+                     "warnings":  [
+                                      "Current runtime keeps cant labor constant across 60/80/100 depth variants."
+                                  ],
+                     "blockers":  [
+
+                                  ],
+                     "source_composition_item_id":  "letters",
+                     "source_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                     "source_component_role":  "volumetric_letters"
+                 }
+             ],
+    "excluded_extra_commercial_lines":  [
+                                            {
+                                                "code":  "ambalare",
+                                                "label":  "Ambalare",
+                                                "module_code":  "finisaje",
+                                                "component_code":  "comp_finisaj_litere",
+                                                "basis_type":  "fixed",
+                                                "quantity":  null,
+                                                "unit":  "set",
+                                                "commercial_unit_price":  null,
+                                                "subtotal":  null,
+                                                "pricing_rule_code":  "VOL_V2_PACKAGING_PENDING",
+                                                "source":  "commercial_rules_volumetric_v2:packaging_rule_pending",
+                                                "owner_decision_required":  true,
+                                                "warnings":  [
+
+                                                             ]
+                                            },
+                                            {
+                                                "code":  "montaj",
+                                                "label":  "Montaj Èantier",
+                                                "module_code":  "finisaje",
+                                                "component_code":  null,
+                                                "basis_type":  "fixed",
+                                                "quantity":  null,
+                                                "unit":  "locatie",
+                                                "commercial_unit_price":  null,
+                                                "subtotal":  null,
+                                                "pricing_rule_code":  "VOL_V2_SITE_MOUNT_FUTURE",
+                                                "source":  "commercial_rules_volumetric_v2:site_mount_future_optional",
+                                                "owner_decision_required":  true,
+                                                "warnings":  [
+
+                                                             ]
+                                            }
+                                        ],
+    "warnings":  [
+                     "BACKING_AREA_FALLBACK_USED",
+                     "ORACAL_ROLL_COLOR_SPLIT_MISSING",
+                     "PSU_UNDERSIZED"
+                 ],
+    "blockers":  [
+                     "PSU_UNDERSIZED"
+                 ],
+    "runtime_totals":  {
+                           "material_breakdown":  {
+                                                      "material_cost_total":  786.74,
+                                                      "estimated_cost_total":  786.74,
+                                                      "currency":  "EUR",
+                                                      "contains_estimates":  true,
+                                                      "contains_missing_prices":  false
+                                                  },
+                           "priced_quote_dry_run":  {
+                                                        "subtotal_net":  5416.7,
+                                                        "vat_rate":  21.0,
+                                                        "vat_amount":  1137.51,
+                                                        "total_gross":  6554.21,
+                                                        "currency":  "RON"
+                                                    }
+                       },
+    "validation":  {
+                       "no_duplicate_primary_tabs":  true,
+                       "ambalare_montaj_excluded_from_core_rows":  true,
+                       "categories_valid":  true,
+                       "formula_trace_metadata_present":  true
+                   }
+}

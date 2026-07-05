@@ -43,6 +43,9 @@ from services.intake_v6_layer_role_service import (
     build_layer_role_setup_from_path_summary,
     merge_layer_roles_after_reupload,
 )
+from services.intake_v6_product_composition_recommendation_service import (
+    apply_product_composition_recommendation,
+)
 from services.intake_v6_product_system_service import (
     build_binding_response,
     resolve_product_template_or_raise,
@@ -89,15 +92,73 @@ def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
     setup = payload.layer_role_setup
     if setup is None or setup.confirmation_status != "complete":
         return "layer_roles_incomplete"
+    recommendation = payload.product_composition_recommendation
+    if isinstance(recommendation, dict) and recommendation.get("status") == "blocked":
+        blockers = recommendation.get("blockers")
+        if isinstance(blockers, list) and blockers:
+            return str(blockers[0].get("code") if isinstance(blockers[0], dict) else blockers[0]).lower()
+        return "product_composition_blocked"
+    if isinstance(recommendation, dict):
+        confirmed = payload.product_composition_confirmed
+        if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
+            return "product_composition_not_confirmed"
     if payload.finish_setup is None or not payload.finish_setup.confirmed:
         return "finish_setup_incomplete"
+    if _is_logo_only_candidate_not_offerable(payload):
+        return "logo_only_candidate_not_offerable"
     return "ready_for_quote_preview"
+
+
+def _logo_constructive_model_confirmed(payload: IntakeV6WorkspacePayload) -> bool:
+    finish = payload.finish_setup
+    if finish is None:
+        return False
+    artwork_rows = finish.artwork_finishes or []
+    if not artwork_rows:
+        return False
+    return all(getattr(row, "confirmed", False) is True for row in artwork_rows)
+
+
+def _is_logo_only_candidate_not_offerable(payload: IntakeV6WorkspacePayload) -> bool:
+    recommendation = payload.product_composition_recommendation
+    if isinstance(recommendation, dict) and recommendation.get("composition_type") == "logo_only":
+        return False
+
+    setup = payload.layer_role_setup
+    finish = payload.finish_setup
+    if setup is None or finish is None:
+        return False
+
+    has_letter_role = any(
+        (layer.confirmed_role or layer.auto_role) == "face"
+        for layer in setup.layers
+        if layer.confirmation_state != "ignored"
+    )
+    if has_letter_role:
+        return False
+
+    has_logo_artwork_role = any(
+        (layer.confirmed_role or layer.auto_role) in {"printed_artwork", "logo"}
+        for layer in setup.layers
+        if layer.confirmation_state != "ignored"
+    )
+    if not has_logo_artwork_role:
+        return False
+
+    letter_rows = finish.letter_group_finishes or []
+    artwork_rows = finish.artwork_finishes or []
+    return len(letter_rows) == 0 and len(artwork_rows) > 0 and not _logo_constructive_model_confirmed(payload)
 
 
 def _derive_workspace_status(readiness_status: str) -> str:
     if readiness_status == "ready_for_quote_preview":
         return "ready_for_quote_preview"
-    if readiness_status in {"missing_svg", "layer_roles_incomplete"}:
+    if readiness_status in {
+        "missing_svg",
+        "layer_roles_incomplete",
+        "product_composition_not_confirmed",
+        "logo_only_candidate_not_offerable",
+    }:
         return "collecting_data"
     if readiness_status == "finish_setup_incomplete":
         return "collecting_data"
@@ -241,10 +302,14 @@ async def create_intake_v6_workspace(
         },
         intake_request_code=intake_request_code,
         offer_method=(request.offer_method or None),
+        analyzer_mode=(request.analyzer_mode or None),
+        template_hint_code=(request.template_hint_code or None),
         selected_template_code=(request.selected_template_code or request.template_code),
         source=(request.source or None),
         work_intake_context={
             "offer_method": request.offer_method,
+            "analyzer_mode": request.analyzer_mode,
+            "template_hint_code": request.template_hint_code,
             "selected_template_code": request.selected_template_code or request.template_code,
             "source": request.source,
             "selected_template_is_initial": True,
@@ -282,6 +347,8 @@ async def ensure_intake_v6_workspace_for_intake_request(
     current_user: UserResponse,
     *,
     offer_method: str | None = None,
+    analyzer_mode: str | None = None,
+    template_hint_code: str | None = None,
     selected_template_code: str | None = None,
     source: str | None = None,
 ) -> IntakeV6WorkspaceResponse:
@@ -306,8 +373,8 @@ async def ensure_intake_v6_workspace_for_intake_request(
     title = f"{intake.client_name} — {title_source}"[:200]
     resolved_template_code = await _resolve_offerable_template_code_or_raise(
         db,
-        selected_template_code,
-        require_selected=(source == "work_intake_new_request"),
+        selected_template_code or template_hint_code,
+        require_selected=(source == "work_intake_new_request" and analyzer_mode != "analyzer_first"),
     )
     create_request = IntakeV6WorkspaceCreateRequest(
         title=title,
@@ -316,7 +383,9 @@ async def ensure_intake_v6_workspace_for_intake_request(
         job_title=description or None,
         intake_request_code=code,
         offer_method=offer_method,
-        selected_template_code=resolved_template_code,
+        analyzer_mode=analyzer_mode,
+        template_hint_code=template_hint_code,
+        selected_template_code=selected_template_code,
         source=source,
     )
     return await create_intake_v6_workspace(db, create_request, current_user)
@@ -393,6 +462,7 @@ async def upload_svg_to_intake_v6_workspace(
         "upload_status": "analyzed",
     }
     payload_raw["layer_role_setup"] = layer_setup.model_dump(mode="json")
+    apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
     else:
@@ -462,9 +532,9 @@ async def save_analysis_bundle_for_intake_v6_workspace(
     payload_raw["svg_analysis_json"] = request.svg_analysis_json
     payload_raw["layer_role_setup"] = layer_setup_dict
     payload_raw["svg_source_text"] = validation.svg_text
+    apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
-        payload_raw.pop("quote_geometry", None)
     else:
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
@@ -496,11 +566,57 @@ async def save_layer_roles_for_intake_v6_workspace(
     updates = [item.model_dump(mode="json") for item in request.layers]
     updated_setup = apply_layer_role_updates(setup, updates)
     payload_raw["layer_role_setup"] = updated_setup.model_dump(mode="json")
+    apply_product_composition_recommendation(payload_raw)
     _reset_internal_draft_quote_confirmation(payload_raw)
     if payload_raw.get("finish_setup"):
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
         apply_v6_pricing_preview_derived_state(payload_raw)
+    payload = _parse_payload(payload_raw)
+    return await _persist_payload(db, record, payload, current_user=current_user)
+
+
+async def save_product_composition_confirmation_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    *,
+    confirmed: bool,
+    items: list[dict[str, Any]] | None = None,
+    operator_note: str | None = None,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    record = await _get_record_or_404(db, workspace_id)
+    if record.archived_at is not None:
+        raise HTTPException(status_code=400, detail={"error": "workspace_archived", "workspace_id": workspace_id})
+
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    if not isinstance(payload_raw.get("product_composition_recommendation"), dict):
+        if payload_raw.get("layer_role_setup"):
+            apply_product_composition_recommendation(payload_raw)
+        else:
+            raise HTTPException(status_code=422, detail={"error": "product_composition_recommendation_missing"})
+
+    recommendation = payload_raw.get("product_composition_recommendation")
+    if isinstance(recommendation, dict) and recommendation.get("status") == "blocked" and confirmed:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "product_composition_blocked",
+                "blockers": recommendation.get("blockers") or [],
+            },
+        )
+
+    payload_raw["product_composition_confirmed"] = {
+        "confirmed": bool(confirmed),
+        "confirmed_at": _utcnow().isoformat() if confirmed else None,
+        "confirmed_by": current_user.email or current_user.name or str(current_user.id),
+        "items": items if items is not None else (recommendation.get("composition_items") if isinstance(recommendation, dict) else []),
+        "operator_note": operator_note,
+        "source": "operator_confirmation_v1",
+    }
+    _reset_internal_draft_quote_confirmation(payload_raw)
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 
@@ -567,6 +683,8 @@ async def save_finish_setup_for_intake_v6_workspace(
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
     payload_raw["finish_setup"] = normalized.model_dump(mode="json")
+    if payload_raw.get("layer_role_setup"):
+        apply_product_composition_recommendation(payload_raw)
     if dossier_warnings:
         payload_raw.setdefault("_dossier_validation_warnings", [])
         payload_raw["_dossier_validation_warnings"] = dossier_warnings

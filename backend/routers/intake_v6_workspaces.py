@@ -35,6 +35,7 @@ from schemas.intake_v6 import (
     IntakeV6OwnerApprovalRequest,
     IntakeV6PricedQuoteWriteRequest,
     IntakeV6PricingInputPreviewResponse,
+    IntakeV6ProductCompositionConfirmationRequest,
     IntakeV6ProductionHandoffPreviewResponse,
     IntakeV6ProductSystemBindingResponse,
     IntakeV6QuoteHandoffPreviewResponse,
@@ -92,8 +93,17 @@ from services.intake_v6_workspace_service import (
     save_finish_setup_for_intake_v6_workspace,
     save_internal_draft_quote_confirmation_for_workspace,
     save_layer_roles_for_intake_v6_workspace,
+    save_product_composition_confirmation_for_workspace,
     save_sheet_footprint_override_for_intake_v6_workspace,
     upload_svg_to_intake_v6_workspace,
+)
+from services.gradi_logical_list_read_model_service import get_gradi_logical_list_read_model
+from services.form_system_contract_backbone_service import build_form_system_contract_map
+from services.linked_template_runtime_segment_extraction_service import (
+    extract_linked_template_segments_from_workspace_payload,
+)
+from services.letter_group_finish_readiness_service import (
+    build_letter_group_finish_readiness_from_workspace_payload,
 )
 from services.tpl_volumetric_face_back_prep_cost_draft_service import (
     get_tpl_volumetric_face_back_prep_cost_draft_for_workspace,
@@ -178,6 +188,8 @@ async def ensure_workspace_for_intake_request_v6(
         request.intake_request_code,
         current_user,
         offer_method=request.offer_method,
+        analyzer_mode=request.analyzer_mode,
+        template_hint_code=request.template_hint_code,
         selected_template_code=request.selected_template_code,
         source=request.source,
     )
@@ -247,6 +259,23 @@ async def update_finish_setup_v6(
     return await save_finish_setup_for_intake_v6_workspace(db, workspace_id, request, current_user)
 
 
+@router.put("/workspaces/{workspace_id}/product-composition-confirmation", response_model=IntakeV6WorkspaceResponse)
+async def update_product_composition_confirmation_v6(
+    workspace_id: str,
+    request: IntakeV6ProductCompositionConfirmationRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> IntakeV6WorkspaceResponse:
+    return await save_product_composition_confirmation_for_workspace(
+        db,
+        workspace_id,
+        confirmed=request.confirmed,
+        items=request.items,
+        operator_note=request.operator_note,
+        current_user=current_user,
+    )
+
+
 @router.put(
     "/workspaces/{workspace_id}/operator/sheet-footprint-override",
     response_model=IntakeV6SheetFootprintOverrideResponse,
@@ -284,6 +313,58 @@ async def get_product_system_binding_v6(
     db: AsyncSession = Depends(get_db),
 ) -> IntakeV6ProductSystemBindingResponse:
     return await get_product_system_binding_for_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/linked-template-segments")
+async def get_linked_template_segments_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    root_template_code = workspace.template_code
+    backbone = build_form_system_contract_map(root_template_code)
+    linked_template_composition = backbone.get("linked_template_composition", {})
+    runtime_segments = extract_linked_template_segments_from_workspace_payload(
+        root_template_code=root_template_code,
+        workspace_payload=payload,
+        linked_template_composition=linked_template_composition,
+    )
+    return {
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": root_template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "linked_template_composition": linked_template_composition,
+        "linked_template_runtime_segments": runtime_segments,
+        "downstream_write_intent": backbone.get("downstream_write_intent", {}),
+        "read_only": True,
+    }
+
+
+@router.get("/workspaces/{workspace_id}/letter-group-finish-readiness")
+async def get_letter_group_finish_readiness_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    readiness = build_letter_group_finish_readiness_from_workspace_payload(
+        payload=payload,
+        root_template_code=workspace.template_code,
+    )
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        **readiness,
+    }
 
 
 @router.get(
@@ -337,6 +418,14 @@ async def get_material_breakdown_v6(
     db: AsyncSession = Depends(get_db),
 ) -> IntakeV6MaterialBreakdownResponse:
     return await get_material_breakdown_for_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/logical-list-read-model")
+async def get_logical_list_read_model_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_gradi_logical_list_read_model(db, workspace_id)
 
 
 @router.get(

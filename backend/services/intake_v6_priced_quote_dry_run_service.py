@@ -69,7 +69,12 @@ def _read_number(raw: Any) -> float | None:
 	return value
 
 
-def _read_commercial_inputs(payload_raw: dict[str, Any], quote_input: dict[str, Any]) -> dict[str, float]:
+def _read_commercial_inputs(
+	payload_raw: dict[str, Any],
+	quote_input: dict[str, Any],
+	*,
+	settings_vat_percent: float,
+) -> dict[str, float]:
 	finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
 	commercial_inputs = (
 		finish_setup.get("commercial_inputs")
@@ -87,7 +92,7 @@ def _read_commercial_inputs(payload_raw: dict[str, Any], quote_input: dict[str, 
 	return {
 		"markup_percent": pick("markup_percent", 35.0),
 		"discount_percent": pick("discount_percent", 0.0),
-		"vat_percent": pick("vat_percent", 21.0),
+		"vat_percent": float(settings_vat_percent),
 		"manual_adjustment_ron": pick("manual_adjustment_ron", 0.0),
 	}
 
@@ -195,6 +200,17 @@ async def build_intake_v6_priced_quote_dry_run(
 	if not isinstance(payload_raw, dict):
 		payload_raw = {}
 	payload = _parse_payload(payload_raw)
+	composition_recommendation = (
+		payload_raw.get("product_composition_recommendation")
+		if isinstance(payload_raw.get("product_composition_recommendation"), dict)
+		else None
+	)
+	composition_confirmation = (
+		payload_raw.get("product_composition_confirmed")
+		if isinstance(payload_raw.get("product_composition_confirmed"), dict)
+		else None
+	)
+	composition_confirmed = bool(composition_confirmation and composition_confirmation.get("confirmed") is True)
 
 	pricing_preview = build_v6_pricing_input_preview(
 		workspace_id=workspace_id_str,
@@ -202,10 +218,22 @@ async def build_intake_v6_priced_quote_dry_run(
 		template_code=record.template_code,
 	)
 	quote_input = dict(getattr(pricing_preview, "quote_input_payload", {}) or {})
-	commercial_inputs = _read_commercial_inputs(payload_raw, quote_input)
+	settings_vat_percent = float(await get_default_vat_pct(db))
+	commercial_inputs = _read_commercial_inputs(
+		payload_raw,
+		quote_input,
+		settings_vat_percent=settings_vat_percent,
+	)
 
 	warnings = list(getattr(pricing_preview, "adapter_warnings", []) or [])
 	blockers: list[dict[str, str]] = []
+	if composition_recommendation and not composition_confirmed:
+		blockers.append(
+			_blocker(
+				"PRODUCT_COMPOSITION_NOT_CONFIRMED",
+				"Operatorul trebuie sa confirme compozitia produsului propusa de analyzer inainte de priced dry-run ready.",
+			)
+		)
 	if not getattr(pricing_preview, "is_ready_for_quote", False):
 		for code in getattr(pricing_preview, "adapter_blockers", []) or []:
 			blockers.append(_blocker(str(code), "V6 backend pricing input is not ready for dry-run."))
@@ -267,7 +295,7 @@ async def build_intake_v6_priced_quote_dry_run(
 			)
 		subtotal = _positive_number(commercial_preview.subtotal_commercial)
 		line_items = _commercial_line_items(commercial_preview)
-		vat_rate = float(await get_default_vat_pct(db))
+		vat_rate = settings_vat_percent
 
 	if commercial_preview is not None and commercial_preview.status != "ready":
 		blockers.append(
@@ -320,6 +348,9 @@ async def build_intake_v6_priced_quote_dry_run(
 		"workspace_code": record.workspace_code,
 		"intake_code": getattr(payload, "intake_request_code", None),
 		"template_code": record.template_code,
+		"product_composition_recommendation": composition_recommendation,
+		"product_composition_confirmed": composition_confirmation,
+		"composition_items": (composition_recommendation or {}).get("composition_items", []),
 		"pricing_source": V6_PRICED_DRY_RUN_SOURCE,
 		"pricing_mode": pricing_mode,
 		"commercial_totals": totals,

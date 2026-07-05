@@ -1,0 +1,1440 @@
+﻿{
+    "id":  "0f08c338-c435-4e01-a243-7c19ff12ad44",
+    "workspace_code":  "IV6-AA060867",
+    "title":  "QA Analyzer First Logo â QA analyzer-first logo.svg composition",
+    "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "status":  "ready_for_quote_preview",
+    "payload":  {
+                    "schema_version":  "1.0.0",
+                    "client":  {
+                                   "client_name":  "QA Analyzer First Logo",
+                                   "job_title":  "QA analyzer-first logo.svg composition",
+                                   "width_mm":  null,
+                                   "height_mm":  null
+                               },
+                    "product_binding":  {
+                                            "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                            "template_id":  1,
+                                            "template_label":  "Litere volumetrice",
+                                            "product_family":  "litere_volumetrice",
+                                            "product_family_name":  "Litere volumetrice",
+                                            "bound_at":  "2026-07-05T21:51:12.386617Z"
+                                        },
+                    "intake_request_code":  "IR-MR8BSL51",
+                    "offer_method":  "svg_analyzer_intake_v6",
+                    "analyzer_mode":  "analyzer_first",
+                    "template_hint_code":  null,
+                    "selected_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                    "source":  "work_intake_new_request",
+                    "work_intake_context":  {
+                                                "offer_method":  "svg_analyzer_intake_v6",
+                                                "analyzer_mode":  "analyzer_first",
+                                                "template_hint_code":  null,
+                                                "selected_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                                "source":  "work_intake_new_request",
+                                                "selected_template_is_initial":  true,
+                                                "product_truth_final_decided_later":  true
+                                            },
+                    "svg_source":  {
+                                       "file_name":  "logo.svg",
+                                       "file_size_bytes":  943,
+                                       "file_hash":  "0eeb1be8d36ed6f5561328439a4eb370806c41aa0203d4c4d58e41951695bebe",
+                                       "upload_status":  "analyzed"
+                                   },
+                    "svg_source_text":  "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\r\n\u003c!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\"\u003e\r\n\u003c!-- Creator: CorelDRAW 2020 (64-Bit) --\u003e\r\n\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" width=\"150.02cm\" height=\"150.02cm\" version=\"1.1\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\r\nviewBox=\"0 0 117.30907 117.30864\"\r\n xmlns:xlink=\"http://www.w3.org/1999/xlink\"\r\n xmlns:xodm=\"http://www.corel.com/coreldraw/odm/2003\"\u003e\r\n \u003cg id=\"Volumetrice\"\u003e\r\n  \u003cmetadata id=\"CorelCorpID_0Corel-Layer\"/\u003e\r\n  \u003cpolygon fill=\"none\" stroke=\"#2B2A29\" stroke-width=\"0.01379\" stroke-miterlimit=\"2.61313\" points=\"58.65454,0.00868 87.97779,22.40967 117.30107,44.81065 106.10058,81.05619 94.90009,117.30175 58.65454,117.30175 22.409,117.30175 11.2085,81.0562 0.00801,44.81065 29.33127,22.40967 \"/\u003e\r\n \u003c/g\u003e\r\n\u003c/svg\u003e\r\n",
+                    "svg_analysis_json":  {
+                                              "schemaName":  "svg-analyzer-analysis",
+                                              "schemaVersion":  "1.11.0",
+                                              "engineVersion":  "1.11.0",
+                                              "createdAt":  "2026-07-05T21:51:17.146Z",
+                                              "sourceFileName":  "logo.svg",
+                                              "sourceFileSize":  943,
+                                              "file":  {
+                                                           "name":  "logo.svg",
+                                                           "sizeBytes":  943,
+                                                           "detectedUnits":  "cm",
+                                                           "conversionConfidence":  "high",
+                                                           "physicalSizeSource":  "svg width/height"
+                                                       },
+                                              "document":  {
+                                                               "widthMm":  1500.2,
+                                                               "heightMm":  1500.2,
+                                                               "viewBox":  "0 0 117.30907 117.30864",
+                                                               "viewBoxWidth":  117.30907,
+                                                               "viewBoxHeight":  117.30864,
+                                                               "scaleX":  12.788439973141037,
+                                                               "scaleY":  12.788486849732466,
+                                                               "mmPerViewBoxUnit":  12.788463411436751,
+                                                               "boundingAreaSqm":  2.25060004,
+                                                               "filledAreaSqm":  1.554707620008002,
+                                                               "areaConfidence":  "high",
+                                                               "areaEstimated":  false
+                                                           },
+                                              "geometry":  {
+                                                               "perimeterMm":  4755.266984151134,
+                                                               "perimeterMl":  4.755266984151135,
+                                                               "perimeterConfidence":  "medium",
+                                                               "pathElementCount":  0,
+                                                               "subPathCount":  0,
+                                                               "closedSubPathCount":  0,
+                                                               "openSubPathCount":  0,
+                                                               "shapeCount":  1,
+                                                               "transformCount":  0
+                                                           },
+                                              "layers":  [
+                                                             {
+                                                                 "id":  "logo-dreapta",
+                                                                 "name":  "logo dreapta",
+                                                                 "layerKind":  "pseudo",
+                                                                 "layerOrigin":  "stroke_vector_outline",
+                                                                 "roleReason":  "Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.",
+                                                                 "autoRole":  "printed_artwork",
+                                                                 "autoConfidence":  "high",
+                                                                 "autoRoleCandidates":  [
+                                                                                            {
+                                                                                                "role":  "printed_artwork",
+                                                                                                "confidence":  "high",
+                                                                                                "reason":  "Raster artwork layer â print on vinyl."
+                                                                                            }
+                                                                                        ],
+                                                                 "paintEvidence":  {
+                                                                                       "fills":  [
+
+                                                                                                 ],
+                                                                                       "strokes":  [
+                                                                                                       "#2b2a29"
+                                                                                                   ],
+                                                                                       "gradientRefs":  [
+
+                                                                                                        ],
+                                                                                       "hasGradient":  false,
+                                                                                       "hasPattern":  false,
+                                                                                       "hasImage":  false,
+                                                                                       "isMulticolor":  false,
+                                                                                       "fillCount":  1,
+                                                                                       "textElementCount":  0,
+                                                                                       "paintKind":  "solid"
+                                                                                   },
+                                                                 "productionHint":  "print_vinyl",
+                                                                 "roleGuess":  "printed_artwork",
+                                                                 "elementCount":  1,
+                                                                 "pathElementCount":  0,
+                                                                 "subPathCount":  0,
+                                                                 "closedSubPathCount":  0,
+                                                                 "openSubPathCount":  0,
+                                                                 "widthMm":  1499.9980062254556,
+                                                                 "heightMm":  1499.9981341100897,
+                                                                 "boundingAreaSqm":  2.249994210507038,
+                                                                 "filledAreaSqm":  1.554707620008002,
+                                                                 "areaConfidence":  "high",
+                                                                 "perimeterMm":  4755.266984151134,
+                                                                 "perimeterMl":  4.755266984151135,
+                                                                 "colors":  [
+                                                                                "#2b2a29"
+                                                                            ],
+                                                                 "warnings":  [
+                                                                                  {
+                                                                                      "code":  "STROKE_ONLY_VECTOR_LAYER",
+                                                                                      "severity":  "warning",
+                                                                                      "message":  "Stroke-only vector isolated as logo/artwork candidate - confirm what it represents and how it goes to production.",
+                                                                                      "scope":  "layer"
+                                                                                  }
+                                                                              ]
+                                                             }
+                                                         ],
+                                              "layerRoleConfirmation":  {
+                                                                            "schemaVersion":  "layer_role_confirmation_v1",
+                                                                            "confirmationStatus":  "missing",
+                                                                            "layers":  [
+                                                                                           {
+                                                                                               "layerKey":  "logo-dreapta",
+                                                                                               "layerId":  "logo-dreapta",
+                                                                                               "layerName":  "logo dreapta",
+                                                                                               "autoRole":  "printed_artwork",
+                                                                                               "autoConfidence":  "high",
+                                                                                               "autoRoleCandidates":  [
+                                                                                                                          {
+                                                                                                                              "role":  "printed_artwork",
+                                                                                                                              "confidence":  "high",
+                                                                                                                              "reason":  "Raster artwork layer â print on vinyl."
+                                                                                                                          }
+                                                                                                                      ],
+                                                                                               "confirmedRole":  null,
+                                                                                               "confirmationState":  "pending",
+                                                                                               "operatorNote":  null,
+                                                                                               "plexiInserts10mm":  false,
+                                                                                               "returnDepthMm":  null,
+                                                                                               "returnDepth2Mm":  null,
+                                                                                               "illuminationCarcassDepthMm":  null,
+                                                                                               "paintEvidence":  {
+                                                                                                                     "fills":  [
+
+                                                                                                                               ],
+                                                                                                                     "strokes":  [
+                                                                                                                                     "#2b2a29"
+                                                                                                                                 ],
+                                                                                                                     "gradientRefs":  [
+
+                                                                                                                                      ],
+                                                                                                                     "hasGradient":  false,
+                                                                                                                     "hasPattern":  false,
+                                                                                                                     "hasImage":  false,
+                                                                                                                     "isMulticolor":  false,
+                                                                                                                     "fillCount":  1,
+                                                                                                                     "textElementCount":  0,
+                                                                                                                     "paintKind":  "solid"
+                                                                                                                 },
+                                                                                               "productionHint":  "print_vinyl"
+                                                                                           }
+                                                                                       ]
+                                                                        },
+                                              "colors":  {
+                                                             "unique":  [
+                                                                            "#2b2a29"
+                                                                        ],
+                                                             "dominant":  [
+                                                                              "#2b2a29"
+                                                                          ],
+                                                             "fills":  [
+
+                                                                       ],
+                                                             "strokes":  [
+                                                                             "#2b2a29"
+                                                                         ],
+                                                             "byLayer":  {
+                                                                             "unassigned":  [
+
+                                                                                            ],
+                                                                             "logo dreapta":  [
+                                                                                                  "#2b2a29"
+                                                                                              ]
+                                                                         }
+                                                         },
+                                              "warnings":  [
+                                                               {
+                                                                   "code":  "PERIMETER_CONFIDENCE_MEDIUM",
+                                                                   "severity":  "warning",
+                                                                   "message":  "Perimeter should be validated against CAD reference for high confidence.",
+                                                                   "scope":  "benchmark"
+                                                               }
+                                                           ],
+                                              "errors":  [
+
+                                                         ],
+                                              "confidence":  {
+                                                                 "dimensions":  "high",
+                                                                 "perimeter":  "medium",
+                                                                 "area":  "high",
+                                                                 "layers":  "high",
+                                                                 "colors":  "high"
+                                                             },
+                                              "benchmark":  {
+                                                                "status":  "NO_REFERENCE",
+                                                                "referenceSource":  null,
+                                                                "referencePerimeterMm":  null,
+                                                                "analyzerPerimeterMm":  4755.266984151134,
+                                                                "deltaMm":  null,
+                                                                "deltaPercent":  null,
+                                                                "passThresholdPercent":  null
+                                                            },
+                                              "exportMeta":  {
+                                                                 "exportedAt":  "2026-07-05T21:51:17.148Z",
+                                                                 "exportedBy":  "local-user",
+                                                                 "appName":  "SVG Analyzer Engine",
+                                                                 "schemaVersion":  "1.11.0",
+                                                                 "notes":  [
+
+                                                                           ]
+                                                             },
+                                              "debug":  {
+                                                            "groups":  1,
+                                                            "elements":  2,
+                                                            "transformedElementCount":  0,
+                                                            "outsideViewBoxCount":  0,
+                                                            "tinyElementCount":  0
+                                                        },
+                                              "artworkComplexity":  {
+                                                                        "assessments":  [
+
+                                                                                        ],
+                                                                        "has_raster_over_vector":  false,
+                                                                        "default_recommended_application":  null
+                                                                    },
+                                              "parts":  {
+                                                            "strategy":  "layer-as-part",
+                                                            "fallbackStrategy":  "layer-as-part",
+                                                            "extractionMode":  "fallback-layer",
+                                                            "count":  1,
+                                                            "nestableCount":  1,
+                                                            "totalBoundingAreaSqm":  0,
+                                                            "totalPerimeterMm":  0,
+                                                            "totalPerimeterMl":  0,
+                                                            "items":  [
+                                                                          {
+                                                                              "id":  "part_logo_dreapta_001",
+                                                                              "name":  "logo dreapta",
+                                                                              "partExtractionMethod":  "layer-as-part",
+                                                                              "shapeKind":  "unknown",
+                                                                              "sourceSubPathIndexes":  [
+
+                                                                                                       ],
+                                                                              "contourCount":  1,
+                                                                              "outerContourCount":  1,
+                                                                              "innerContourCount":  0,
+                                                                              "splitConfidence":  "low",
+                                                                              "groupingReason":  "print-zone",
+                                                                              "source":  {
+                                                                                             "layerId":  "logo-dreapta",
+                                                                                             "layerName":  "logo dreapta",
+                                                                                             "elementIds":  [
+
+                                                                                                            ],
+                                                                                             "pathElementCount":  0,
+                                                                                             "subPathCount":  0
+                                                                                         },
+                                                                              "bounds":  {
+                                                                                             "xMm":  null,
+                                                                                             "yMm":  null,
+                                                                                             "rightMm":  null,
+                                                                                             "bottomMm":  null,
+                                                                                             "widthMm":  1499.9980062254556,
+                                                                                             "heightMm":  1499.9981341100897,
+                                                                                             "boundingAreaSqm":  2.249994210507038
+                                                                                         },
+                                                                              "geometry":  {
+                                                                                               "outerPerimeterMm":  4755.266984151134,
+                                                                                               "outerPerimeterMl":  4.755266984151135,
+                                                                                               "innerPerimeterMm":  0,
+                                                                                               "innerPerimeterMl":  0,
+                                                                                               "fragmentPerimeterMm":  0,
+                                                                                               "fragmentPerimeterMl":  0,
+                                                                                               "totalContourPerimeterMm":  4755.266984151134,
+                                                                                               "totalContourPerimeterMl":  4.755266984151135,
+                                                                                               "perimeterMm":  4755.266984151134,
+                                                                                               "perimeterMl":  4.755266984151135,
+                                                                                               "filledAreaSqm":  1.554707620008002,
+                                                                                               "closedSubPathCount":  0,
+                                                                                               "openSubPathCount":  0
+                                                                                           },
+                                                                              "colors":  [
+                                                                                             "#2b2a29"
+                                                                                         ],
+                                                                              "quantity":  1,
+                                                                              "canNest":  true,
+                                                                              "nestingMethod":  "print-area-bbox",
+                                                                              "confidence":  {
+                                                                                                 "bounds":  "high",
+                                                                                                 "perimeter":  "medium",
+                                                                                                 "area":  "high",
+                                                                                                 "source":  "high"
+                                                                                             },
+                                                                              "warnings":  [
+                                                                                               {
+                                                                                                   "code":  "PART_PRINT_ZONE_WHOLE_VINYL",
+                                                                                                   "severity":  "info",
+                                                                                                   "message":  "Print zone â entire layer nests as one piece on vinyl.",
+                                                                                                   "scope":  "part",
+                                                                                                   "targetId":  "part_logo_dreapta_001"
+                                                                                               }
+                                                                                           ]
+                                                                          }
+                                                                      ],
+                                                            "warnings":  [
+                                                                             {
+                                                                                 "code":  "SUBPATH_GROUPING_FALLBACK_USED",
+                                                                                 "severity":  "warning",
+                                                                                 "message":  "No subpaths extracted; fallback to layer-as-part.",
+                                                                                 "scope":  "parts"
+                                                                             },
+                                                                             {
+                                                                                 "code":  "NO_EXTRACTABLE_PARTS",
+                                                                                 "severity":  "warning",
+                                                                                 "message":  "No extractable parts were generated from current layers.",
+                                                                                 "scope":  "parts"
+                                                                             },
+                                                                             {
+                                                                                 "code":  "PART_TOTAL_PERIMETER_MISMATCH",
+                                                                                 "severity":  "warning",
+                                                                                 "message":  "Parts perimeter total differs from document perimeter.",
+                                                                                 "scope":  "parts",
+                                                                                 "details":  {
+                                                                                                 "documentPerimeterMm":  4755.266984151134,
+                                                                                                 "partsOuterPerimeterMm":  0,
+                                                                                                 "partsTotalContourPerimeterMm":  0,
+                                                                                                 "deltaOuterVsDocumentMm":  4755.266984151134,
+                                                                                                 "deltaTotalVsDocumentMm":  4755.266984151134,
+                                                                                                 "explanation":  "Layer fallback has no split contour decomposition; values mirror layer perimeter totals."
+                                                                                             }
+                                                                             }
+                                                                         ],
+                                                            "splitDiagnostics":  {
+                                                                                     "enabled":  true,
+                                                                                     "pathElementCount":  0,
+                                                                                     "subPathCount":  0,
+                                                                                     "groupsCreated":  0,
+                                                                                     "fallbackUsed":  true,
+                                                                                     "confidence":  "low",
+                                                                                     "notes":  [
+                                                                                                   "No subpaths extracted from paths."
+                                                                                               ],
+                                                                                     "subPathDiagnostics":  [
+
+                                                                                                            ],
+                                                                                     "layerChildSummary":  [
+                                                                                                               {
+                                                                                                                   "layerName":  "logo dreapta",
+                                                                                                                   "childPartsCount":  1,
+                                                                                                                   "childPartIds":  [
+                                                                                                                                        "part_logo_dreapta_001"
+                                                                                                                                    ]
+                                                                                                               }
+                                                                                                           ]
+                                                                                 }
+                                                        },
+                                              "nesting":  {
+                                                              "strategy":  "bounding-box-shelf",
+                                                              "generatedAt":  "2026-07-05T21:51:17.148Z",
+                                                              "inputs":  {
+                                                                             "partsCount":  1,
+                                                                             "nestablePartsCount":  1
+                                                                         },
+                                                              "jobInputs":  [
+                                                                                {
+                                                                                    "jobId":  "roll:vinyl_roll_1000:child-parts:logo dreapta:#2b2a29",
+                                                                                    "jobKind":  "roll",
+                                                                                    "materialKey":  "vinyl_roll_1000",
+                                                                                    "materialLabel":  "vinyl_roll_1000",
+                                                                                    "sourceLayerName":  "logo dreapta",
+                                                                                    "colorKey":  "#2b2a29",
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "logo dreapta|#2b2a29",
+                                                                                    "items":  [
+                                                                                                  {
+                                                                                                      "itemId":  "part_logo_dreapta_001",
+                                                                                                      "itemName":  "logo dreapta",
+                                                                                                      "sourceLayerName":  "logo dreapta",
+                                                                                                      "colorKey":  "#2b2a29",
+                                                                                                      "widthMm":  1499.9980062254556,
+                                                                                                      "heightMm":  1499.9981341100897,
+                                                                                                      "bounds":  {
+                                                                                                                     "widthMm":  1499.9980062254556,
+                                                                                                                     "heightMm":  1499.9981341100897,
+                                                                                                                     "boundingAreaSqm":  2.249994210507038
+                                                                                                                 },
+                                                                                                      "sourceType":  "part",
+                                                                                                      "roleAssignment":  null,
+                                                                                                      "canNest":  true,
+                                                                                                      "preferredSheetConfigId":  null,
+                                                                                                      "materialLabel":  null,
+                                                                                                      "sourceWarnings":  [
+                                                                                                                             {
+                                                                                                                                 "code":  "PART_PRINT_ZONE_WHOLE_VINYL",
+                                                                                                                                 "severity":  "info",
+                                                                                                                                 "message":  "Print zone â entire layer nests as one piece on vinyl.",
+                                                                                                                                 "scope":  "part",
+                                                                                                                                 "targetId":  "part_logo_dreapta_001"
+                                                                                                                             }
+                                                                                                                         ]
+                                                                                                  }
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "roll",
+                                                                                                          "rollWidthMm":  1000,
+                                                                                                          "usableWidthMm":  960,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "minimize-consumed-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "auto-from-layer-color",
+                                                                                    "separationReason":  "source-layer-color-preview"
+                                                                                },
+                                                                                {
+                                                                                    "jobId":  "roll:vinyl_roll_1260:child-parts:logo dreapta:#2b2a29",
+                                                                                    "jobKind":  "roll",
+                                                                                    "materialKey":  "vinyl_roll_1260",
+                                                                                    "materialLabel":  "vinyl_roll_1260",
+                                                                                    "sourceLayerName":  "logo dreapta",
+                                                                                    "colorKey":  "#2b2a29",
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "logo dreapta|#2b2a29",
+                                                                                    "items":  [
+                                                                                                  {
+                                                                                                      "itemId":  "part_logo_dreapta_001",
+                                                                                                      "itemName":  "logo dreapta",
+                                                                                                      "sourceLayerName":  "logo dreapta",
+                                                                                                      "colorKey":  "#2b2a29",
+                                                                                                      "widthMm":  1499.9980062254556,
+                                                                                                      "heightMm":  1499.9981341100897,
+                                                                                                      "bounds":  {
+                                                                                                                     "widthMm":  1499.9980062254556,
+                                                                                                                     "heightMm":  1499.9981341100897,
+                                                                                                                     "boundingAreaSqm":  2.249994210507038
+                                                                                                                 },
+                                                                                                      "sourceType":  "part",
+                                                                                                      "roleAssignment":  null,
+                                                                                                      "canNest":  true,
+                                                                                                      "preferredSheetConfigId":  null,
+                                                                                                      "materialLabel":  null,
+                                                                                                      "sourceWarnings":  [
+                                                                                                                             {
+                                                                                                                                 "code":  "PART_PRINT_ZONE_WHOLE_VINYL",
+                                                                                                                                 "severity":  "info",
+                                                                                                                                 "message":  "Print zone â entire layer nests as one piece on vinyl.",
+                                                                                                                                 "scope":  "part",
+                                                                                                                                 "targetId":  "part_logo_dreapta_001"
+                                                                                                                             }
+                                                                                                                         ]
+                                                                                                  }
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "roll",
+                                                                                                          "rollWidthMm":  1260,
+                                                                                                          "usableWidthMm":  1220,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "minimize-consumed-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "auto-from-layer-color",
+                                                                                    "separationReason":  "source-layer-color-preview"
+                                                                                },
+                                                                                {
+                                                                                    "jobId":  "sheet:sheet_3000x2000:child-parts:global",
+                                                                                    "jobKind":  "sheet",
+                                                                                    "materialKey":  "sheet_3000x2000",
+                                                                                    "materialLabel":  "sheet_3000x2000",
+                                                                                    "sourceLayerName":  null,
+                                                                                    "colorKey":  null,
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "sheet-sheet_3000x2000-preview",
+                                                                                    "items":  [
+                                                                                                  {
+                                                                                                      "itemId":  "part_logo_dreapta_001",
+                                                                                                      "itemName":  "logo dreapta",
+                                                                                                      "sourceLayerName":  "logo dreapta",
+                                                                                                      "colorKey":  "#2b2a29",
+                                                                                                      "widthMm":  1499.9980062254556,
+                                                                                                      "heightMm":  1499.9981341100897,
+                                                                                                      "bounds":  {
+                                                                                                                     "widthMm":  1499.9980062254556,
+                                                                                                                     "heightMm":  1499.9981341100897,
+                                                                                                                     "boundingAreaSqm":  2.249994210507038
+                                                                                                                 },
+                                                                                                      "sourceType":  "part",
+                                                                                                      "roleAssignment":  null,
+                                                                                                      "canNest":  true,
+                                                                                                      "preferredSheetConfigId":  null,
+                                                                                                      "materialLabel":  null,
+                                                                                                      "sourceWarnings":  [
+                                                                                                                             {
+                                                                                                                                 "code":  "PART_PRINT_ZONE_WHOLE_VINYL",
+                                                                                                                                 "severity":  "info",
+                                                                                                                                 "message":  "Print zone â entire layer nests as one piece on vinyl.",
+                                                                                                                                 "scope":  "part",
+                                                                                                                                 "targetId":  "part_logo_dreapta_001"
+                                                                                                                             }
+                                                                                                                         ]
+                                                                                                  }
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "sheet",
+                                                                                                          "sheetLengthMm":  3000,
+                                                                                                          "sheetWidthMm":  2000,
+                                                                                                          "usableLengthMm":  2980,
+                                                                                                          "usableWidthMm":  1980,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "preserve-continuous-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "default-preview",
+                                                                                    "separationReason":  "sheet-config-routing"
+                                                                                },
+                                                                                {
+                                                                                    "jobId":  "sheet:sheet_3000x1500:child-parts:global",
+                                                                                    "jobKind":  "sheet",
+                                                                                    "materialKey":  "sheet_3000x1500",
+                                                                                    "materialLabel":  "sheet_3000x1500",
+                                                                                    "sourceLayerName":  null,
+                                                                                    "colorKey":  null,
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "sheet-sheet_3000x1500-preview",
+                                                                                    "items":  [
+
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "sheet",
+                                                                                                          "sheetLengthMm":  3000,
+                                                                                                          "sheetWidthMm":  1500,
+                                                                                                          "usableLengthMm":  2980,
+                                                                                                          "usableWidthMm":  1480,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "preserve-continuous-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "default-preview",
+                                                                                    "separationReason":  "sheet-config-routing"
+                                                                                },
+                                                                                {
+                                                                                    "jobId":  "sheet:sheet_4000x1500:child-parts:global",
+                                                                                    "jobKind":  "sheet",
+                                                                                    "materialKey":  "sheet_4000x1500",
+                                                                                    "materialLabel":  "sheet_4000x1500",
+                                                                                    "sourceLayerName":  null,
+                                                                                    "colorKey":  null,
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "sheet-sheet_4000x1500-preview",
+                                                                                    "items":  [
+
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "sheet",
+                                                                                                          "sheetLengthMm":  4000,
+                                                                                                          "sheetWidthMm":  1500,
+                                                                                                          "usableLengthMm":  3980,
+                                                                                                          "usableWidthMm":  1480,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "preserve-continuous-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "default-preview",
+                                                                                    "separationReason":  "sheet-config-routing"
+                                                                                },
+                                                                                {
+                                                                                    "jobId":  "sheet:sheet_1300x900:child-parts:global",
+                                                                                    "jobKind":  "sheet",
+                                                                                    "materialKey":  "sheet_1300x900",
+                                                                                    "materialLabel":  "sheet_1300x900",
+                                                                                    "sourceLayerName":  null,
+                                                                                    "colorKey":  null,
+                                                                                    "granularity":  "child-parts",
+                                                                                    "itemType":  "child-part",
+                                                                                    "separationKey":  "sheet-sheet_1300x900-preview",
+                                                                                    "items":  [
+
+                                                                                              ],
+                                                                                    "materialFrame":  {
+                                                                                                          "materialType":  "sheet",
+                                                                                                          "sheetLengthMm":  1300,
+                                                                                                          "sheetWidthMm":  900,
+                                                                                                          "usableLengthMm":  1280,
+                                                                                                          "usableWidthMm":  880,
+                                                                                                          "feedAxis":  "length",
+                                                                                                          "crossAxis":  "width",
+                                                                                                          "packingDirection":  "width-first",
+                                                                                                          "optimizeFor":  "preserve-continuous-length"
+                                                                                                      },
+                                                                                    "assignmentSource":  "default-preview",
+                                                                                    "separationReason":  "sheet-config-routing"
+                                                                                }
+                                                                            ],
+                                                              "rolls":  [
+                                                                            {
+                                                                                "configId":  "vinyl_roll_1000",
+                                                                                "materialType":  "roll",
+                                                                                "granularity":  "child-parts",
+                                                                                "assignmentSource":  "auto-from-layer-color",
+                                                                                "materialFrame":  {
+                                                                                                      "materialType":  "roll",
+                                                                                                      "rollWidthMm":  1000,
+                                                                                                      "usableWidthMm":  960,
+                                                                                                      "feedAxis":  "length",
+                                                                                                      "crossAxis":  "width",
+                                                                                                      "packingDirection":  "width-first",
+                                                                                                      "optimizeFor":  "minimize-consumed-length"
+                                                                                                  },
+                                                                                "rollWidthMm":  1000,
+                                                                                "usableWidthMm":  960,
+                                                                                "leftMarginMm":  20,
+                                                                                "rightMarginMm":  20,
+                                                                                "partSpacingMm":  5,
+                                                                                "allowRotation":  true,
+                                                                                "jobs":  [
+                                                                                             {
+                                                                                                 "jobId":  "roll:vinyl_roll_1000:child-parts:logo dreapta:#2b2a29",
+                                                                                                 "assignmentSource":  "auto-from-layer-color",
+                                                                                                 "jobKey":  "roll:vinyl_roll_1000:child-parts:logo dreapta:#2b2a29",
+                                                                                                 "sourceLayerName":  "logo dreapta",
+                                                                                                 "colorKey":  "#2b2a29",
+                                                                                                 "separationReason":  "source-layer-color-preview",
+                                                                                                 "itemType":  "child-part",
+                                                                                                 "sourceItemsCount":  1,
+                                                                                                 "placedItemsCount":  0,
+                                                                                                 "unplacedItemsCount":  1,
+                                                                                                 "consumedLengthMm":  0,
+                                                                                                 "usedWidthMm":  0,
+                                                                                                 "usedLengthMm":  0,
+                                                                                                 "usedRollAreaSqm":  0,
+                                                                                                 "partsBoundingAreaSqm":  0,
+                                                                                                 "wasteAreaSqm":  0,
+                                                                                                 "efficiencyPercent":  0,
+                                                                                                 "placements":  [
+
+                                                                                                                ],
+                                                                                                 "unplaced":  [
+                                                                                                                  {
+                                                                                                                      "partId":  "part_logo_dreapta_001",
+                                                                                                                      "partName":  "logo dreapta",
+                                                                                                                      "reason":  "DOES_NOT_FIT_USABLE_WIDTH"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                 "warnings":  [
+                                                                                                                  {
+                                                                                                                      "code":  "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                                                                                                                      "severity":  "info",
+                                                                                                                      "message":  "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                                                                                                                      "scope":  "nesting",
+                                                                                                                      "details":  {
+                                                                                                                                      "sourceLayerName":  "logo dreapta",
+                                                                                                                                      "colorKey":  "#2b2a29",
+                                                                                                                                      "separationReason":  "source-layer-color-preview"
+                                                                                                                                  }
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "code":  "NESTING_PART_UNPLACED",
+                                                                                                                      "severity":  "warning",
+                                                                                                                      "message":  "Part does not fit roll usable width 960mm.",
+                                                                                                                      "scope":  "part",
+                                                                                                                      "targetId":  "part_logo_dreapta_001",
+                                                                                                                      "details":  {
+                                                                                                                                      "usableWidthMm":  960
+                                                                                                                                  }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ],
+                                                                                "aggregate":  {
+                                                                                                  "jobsCount":  1,
+                                                                                                  "totalSourceItemsCount":  1,
+                                                                                                  "totalPlacedItemsCount":  0,
+                                                                                                  "totalUnplacedItemsCount":  1,
+                                                                                                  "totalUsedLengthMm":  0
+                                                                                              }
+                                                                            },
+                                                                            {
+                                                                                "configId":  "vinyl_roll_1260",
+                                                                                "materialType":  "roll",
+                                                                                "granularity":  "child-parts",
+                                                                                "assignmentSource":  "auto-from-layer-color",
+                                                                                "materialFrame":  {
+                                                                                                      "materialType":  "roll",
+                                                                                                      "rollWidthMm":  1260,
+                                                                                                      "usableWidthMm":  1220,
+                                                                                                      "feedAxis":  "length",
+                                                                                                      "crossAxis":  "width",
+                                                                                                      "packingDirection":  "width-first",
+                                                                                                      "optimizeFor":  "minimize-consumed-length"
+                                                                                                  },
+                                                                                "rollWidthMm":  1260,
+                                                                                "usableWidthMm":  1220,
+                                                                                "leftMarginMm":  20,
+                                                                                "rightMarginMm":  20,
+                                                                                "partSpacingMm":  5,
+                                                                                "allowRotation":  true,
+                                                                                "jobs":  [
+                                                                                             {
+                                                                                                 "jobId":  "roll:vinyl_roll_1260:child-parts:logo dreapta:#2b2a29",
+                                                                                                 "assignmentSource":  "auto-from-layer-color",
+                                                                                                 "jobKey":  "roll:vinyl_roll_1260:child-parts:logo dreapta:#2b2a29",
+                                                                                                 "sourceLayerName":  "logo dreapta",
+                                                                                                 "colorKey":  "#2b2a29",
+                                                                                                 "separationReason":  "source-layer-color-preview",
+                                                                                                 "itemType":  "child-part",
+                                                                                                 "sourceItemsCount":  1,
+                                                                                                 "placedItemsCount":  0,
+                                                                                                 "unplacedItemsCount":  1,
+                                                                                                 "consumedLengthMm":  0,
+                                                                                                 "usedWidthMm":  0,
+                                                                                                 "usedLengthMm":  0,
+                                                                                                 "usedRollAreaSqm":  0,
+                                                                                                 "partsBoundingAreaSqm":  0,
+                                                                                                 "wasteAreaSqm":  0,
+                                                                                                 "efficiencyPercent":  0,
+                                                                                                 "placements":  [
+
+                                                                                                                ],
+                                                                                                 "unplaced":  [
+                                                                                                                  {
+                                                                                                                      "partId":  "part_logo_dreapta_001",
+                                                                                                                      "partName":  "logo dreapta",
+                                                                                                                      "reason":  "DOES_NOT_FIT_USABLE_WIDTH"
+                                                                                                                  }
+                                                                                                              ],
+                                                                                                 "warnings":  [
+                                                                                                                  {
+                                                                                                                      "code":  "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                                                                                                                      "severity":  "info",
+                                                                                                                      "message":  "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                                                                                                                      "scope":  "nesting",
+                                                                                                                      "details":  {
+                                                                                                                                      "sourceLayerName":  "logo dreapta",
+                                                                                                                                      "colorKey":  "#2b2a29",
+                                                                                                                                      "separationReason":  "source-layer-color-preview"
+                                                                                                                                  }
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                      "code":  "NESTING_PART_UNPLACED",
+                                                                                                                      "severity":  "warning",
+                                                                                                                      "message":  "Part does not fit roll usable width 1220mm.",
+                                                                                                                      "scope":  "part",
+                                                                                                                      "targetId":  "part_logo_dreapta_001",
+                                                                                                                      "details":  {
+                                                                                                                                      "usableWidthMm":  1220
+                                                                                                                                  }
+                                                                                                                  }
+                                                                                                              ]
+                                                                                             }
+                                                                                         ],
+                                                                                "aggregate":  {
+                                                                                                  "jobsCount":  1,
+                                                                                                  "totalSourceItemsCount":  1,
+                                                                                                  "totalPlacedItemsCount":  0,
+                                                                                                  "totalUnplacedItemsCount":  1,
+                                                                                                  "totalUsedLengthMm":  0
+                                                                                              }
+                                                                            }
+                                                                        ],
+                                                              "sheets":  [
+                                                                             {
+                                                                                 "configId":  "sheet_3000x2000",
+                                                                                 "materialType":  "sheet",
+                                                                                 "granularity":  "child-parts",
+                                                                                 "assignmentSource":  "default-preview",
+                                                                                 "materialFrame":  {
+                                                                                                       "materialType":  "sheet",
+                                                                                                       "sheetLengthMm":  3000,
+                                                                                                       "sheetWidthMm":  2000,
+                                                                                                       "usableLengthMm":  2980,
+                                                                                                       "usableWidthMm":  1980,
+                                                                                                       "feedAxis":  "length",
+                                                                                                       "crossAxis":  "width",
+                                                                                                       "packingDirection":  "width-first",
+                                                                                                       "optimizeFor":  "preserve-continuous-length"
+                                                                                                   },
+                                                                                 "itemType":  "child-part",
+                                                                                 "sourceItemsCount":  1,
+                                                                                 "placedItemsCount":  1,
+                                                                                 "unplacedItemsCount":  0,
+                                                                                 "sheetWidthMm":  2000,
+                                                                                 "sheetLengthMm":  3000,
+                                                                                 "usableWidthMm":  1980,
+                                                                                 "usableLengthMm":  2980,
+                                                                                 "edgeMarginMm":  10,
+                                                                                 "partSpacingMm":  20,
+                                                                                 "allowRotation":  true,
+                                                                                 "sheetsUsed":  1,
+                                                                                 "consumedLengthMm":  1499.9980062254556,
+                                                                                 "usedWidthMm":  1499.9981341100897,
+                                                                                 "preservedLengthMm":  1480.0019937745444,
+                                                                                 "usedSheetAreaSqm":  6,
+                                                                                 "partsBoundingAreaSqm":  2.249994210507038,
+                                                                                 "wasteAreaSqm":  3.750005789492962,
+                                                                                 "efficiencyPercent":  37.499903508450636,
+                                                                                 "placements":  [
+                                                                                                    {
+                                                                                                        "partId":  "part_logo_dreapta_001",
+                                                                                                        "partName":  "logo dreapta",
+                                                                                                        "sourceLayerName":  "logo dreapta",
+                                                                                                        "materialType":  "sheet",
+                                                                                                        "containerId":  "sheet_1",
+                                                                                                        "xMm":  10,
+                                                                                                        "yMm":  10,
+                                                                                                        "placedWidthMm":  1499.9981341100897,
+                                                                                                        "placedHeightMm":  1499.9980062254556,
+                                                                                                        "rotationDeg":  90,
+                                                                                                        "spacingMm":  20
+                                                                                                    }
+                                                                                                ],
+                                                                                 "unplaced":  [
+
+                                                                                              ],
+                                                                                 "warnings":  [
+                                                                                                  {
+                                                                                                      "code":  "NESTING_PART_ROTATED_TO_FIT",
+                                                                                                      "severity":  "info",
+                                                                                                      "message":  "Part rotated 90 degrees by width-first decision.",
+                                                                                                      "scope":  "part",
+                                                                                                      "targetId":  "part_logo_dreapta_001",
+                                                                                                      "details":  {
+                                                                                                                      "configId":  "sheet_3000x2000",
+                                                                                                                      "reason":  "reduce-consumed-length",
+                                                                                                                      "originalWidthMm":  1499.9980062254556,
+                                                                                                                      "originalHeightMm":  1499.9981341100897,
+                                                                                                                      "rotatedWidthMm":  1499.9981341100897,
+                                                                                                                      "rotatedHeightMm":  1499.9980062254556
+                                                                                                                  }
+                                                                                                  }
+                                                                                              ]
+                                                                             },
+                                                                             {
+                                                                                 "configId":  "sheet_3000x1500",
+                                                                                 "materialType":  "sheet",
+                                                                                 "granularity":  "child-parts",
+                                                                                 "assignmentSource":  "default-preview",
+                                                                                 "materialFrame":  {
+                                                                                                       "materialType":  "sheet",
+                                                                                                       "sheetLengthMm":  3000,
+                                                                                                       "sheetWidthMm":  1500,
+                                                                                                       "usableLengthMm":  2980,
+                                                                                                       "usableWidthMm":  1480,
+                                                                                                       "feedAxis":  "length",
+                                                                                                       "crossAxis":  "width",
+                                                                                                       "packingDirection":  "width-first",
+                                                                                                       "optimizeFor":  "preserve-continuous-length"
+                                                                                                   },
+                                                                                 "itemType":  "child-part",
+                                                                                 "sourceItemsCount":  0,
+                                                                                 "placedItemsCount":  0,
+                                                                                 "unplacedItemsCount":  0,
+                                                                                 "sheetWidthMm":  1500,
+                                                                                 "sheetLengthMm":  3000,
+                                                                                 "usableWidthMm":  1480,
+                                                                                 "usableLengthMm":  2980,
+                                                                                 "edgeMarginMm":  10,
+                                                                                 "partSpacingMm":  20,
+                                                                                 "allowRotation":  true,
+                                                                                 "sheetsUsed":  1,
+                                                                                 "consumedLengthMm":  0,
+                                                                                 "usedWidthMm":  0,
+                                                                                 "preservedLengthMm":  2980,
+                                                                                 "usedSheetAreaSqm":  4.5,
+                                                                                 "partsBoundingAreaSqm":  0,
+                                                                                 "wasteAreaSqm":  4.5,
+                                                                                 "efficiencyPercent":  0,
+                                                                                 "placements":  [
+
+                                                                                                ],
+                                                                                 "unplaced":  [
+
+                                                                                              ],
+                                                                                 "warnings":  [
+
+                                                                                              ]
+                                                                             },
+                                                                             {
+                                                                                 "configId":  "sheet_4000x1500",
+                                                                                 "materialType":  "sheet",
+                                                                                 "granularity":  "child-parts",
+                                                                                 "assignmentSource":  "default-preview",
+                                                                                 "materialFrame":  {
+                                                                                                       "materialType":  "sheet",
+                                                                                                       "sheetLengthMm":  4000,
+                                                                                                       "sheetWidthMm":  1500,
+                                                                                                       "usableLengthMm":  3980,
+                                                                                                       "usableWidthMm":  1480,
+                                                                                                       "feedAxis":  "length",
+                                                                                                       "crossAxis":  "width",
+                                                                                                       "packingDirection":  "width-first",
+                                                                                                       "optimizeFor":  "preserve-continuous-length"
+                                                                                                   },
+                                                                                 "itemType":  "child-part",
+                                                                                 "sourceItemsCount":  0,
+                                                                                 "placedItemsCount":  0,
+                                                                                 "unplacedItemsCount":  0,
+                                                                                 "sheetWidthMm":  1500,
+                                                                                 "sheetLengthMm":  4000,
+                                                                                 "usableWidthMm":  1480,
+                                                                                 "usableLengthMm":  3980,
+                                                                                 "edgeMarginMm":  10,
+                                                                                 "partSpacingMm":  20,
+                                                                                 "allowRotation":  true,
+                                                                                 "sheetsUsed":  1,
+                                                                                 "consumedLengthMm":  0,
+                                                                                 "usedWidthMm":  0,
+                                                                                 "preservedLengthMm":  3980,
+                                                                                 "usedSheetAreaSqm":  6,
+                                                                                 "partsBoundingAreaSqm":  0,
+                                                                                 "wasteAreaSqm":  6,
+                                                                                 "efficiencyPercent":  0,
+                                                                                 "placements":  [
+
+                                                                                                ],
+                                                                                 "unplaced":  [
+
+                                                                                              ],
+                                                                                 "warnings":  [
+
+                                                                                              ]
+                                                                             },
+                                                                             {
+                                                                                 "configId":  "sheet_1300x900",
+                                                                                 "materialType":  "sheet",
+                                                                                 "granularity":  "child-parts",
+                                                                                 "assignmentSource":  "default-preview",
+                                                                                 "materialFrame":  {
+                                                                                                       "materialType":  "sheet",
+                                                                                                       "sheetLengthMm":  1300,
+                                                                                                       "sheetWidthMm":  900,
+                                                                                                       "usableLengthMm":  1280,
+                                                                                                       "usableWidthMm":  880,
+                                                                                                       "feedAxis":  "length",
+                                                                                                       "crossAxis":  "width",
+                                                                                                       "packingDirection":  "width-first",
+                                                                                                       "optimizeFor":  "preserve-continuous-length"
+                                                                                                   },
+                                                                                 "itemType":  "child-part",
+                                                                                 "sourceItemsCount":  0,
+                                                                                 "placedItemsCount":  0,
+                                                                                 "unplacedItemsCount":  0,
+                                                                                 "sheetWidthMm":  900,
+                                                                                 "sheetLengthMm":  1300,
+                                                                                 "usableWidthMm":  880,
+                                                                                 "usableLengthMm":  1280,
+                                                                                 "edgeMarginMm":  10,
+                                                                                 "partSpacingMm":  20,
+                                                                                 "allowRotation":  true,
+                                                                                 "sheetsUsed":  1,
+                                                                                 "consumedLengthMm":  0,
+                                                                                 "usedWidthMm":  0,
+                                                                                 "preservedLengthMm":  1280,
+                                                                                 "usedSheetAreaSqm":  1.17,
+                                                                                 "partsBoundingAreaSqm":  0,
+                                                                                 "wasteAreaSqm":  1.17,
+                                                                                 "efficiencyPercent":  0,
+                                                                                 "placements":  [
+
+                                                                                                ],
+                                                                                 "unplaced":  [
+
+                                                                                              ],
+                                                                                 "warnings":  [
+
+                                                                                              ]
+                                                                             }
+                                                                         ],
+                                                              "warnings":  [
+                                                                               {
+                                                                                   "code":  "NESTING_USES_BOUNDING_BOX_ONLY",
+                                                                                   "severity":  "info",
+                                                                                   "message":  "Nesting MVP uses bounding-box shelf placement only.",
+                                                                                   "scope":  "nesting"
+                                                                               },
+                                                                               {
+                                                                                   "code":  "NESTING_CHILD_PARTS_ONLY",
+                                                                                   "severity":  "info",
+                                                                                   "message":  "Nesting always uses individual child parts. Layer roles (face/backing/cut) are confirmed separately on the layer table.",
+                                                                                   "scope":  "nesting"
+                                                                               },
+                                                                               {
+                                                                                   "code":  "NESTING_ROLL_SEPARATED_BY_LAYER_COLOR",
+                                                                                   "severity":  "info",
+                                                                                   "message":  "Roll nesting is separated by source layer/color so different vinyl colors are not mixed in the same roll job.",
+                                                                                   "scope":  "nesting"
+                                                                               }
+                                                                           ]
+                                                          }
+                                          },
+                    "path_geometry_summary":  {
+                                                  "parse_status":  "parsed",
+                                                  "metrics_version":  "v2-path-metrics",
+                                                  "bbox_w_mm":  1499.995257,
+                                                  "bbox_h_mm":  1500.000883,
+                                                  "area_mm2_approx":  1554707.620003,
+                                                  "perimeter_mm_approx":  4755.266984,
+                                                  "warnings":  [
+                                                                   "svg_sanitized_doctype_removed"
+                                                               ],
+                                                  "sanitization":  {
+                                                                       "original_file_has_doctype":  true,
+                                                                       "analysis_sanitized":  true,
+                                                                       "sanitization_reason":  "svg_doctype_removed",
+                                                                       "source_file_name":  "logo.svg",
+                                                                       "source_content_hash":  "0eeb1be8d36ed6f5561328439a4eb370806c41aa0203d4c4d58e41951695bebe",
+                                                                       "analysis_content_hash":  "b1ca0d2e974504a3134e58d4aa04d54413a6b39443249da3c7b847e33119f2ab"
+                                                                   },
+                                                  "doctype_removed_for_safe_parse":  true,
+                                                  "layers":  [
+                                                                 {
+                                                                     "layer_id":  "Volumetrice",
+                                                                     "layer_name":  "Volumetrice",
+                                                                     "layer_key":  "Volumetrice",
+                                                                     "display_name":  "Volumetrice",
+                                                                     "source":  "drawable_summary",
+                                                                     "element_counts":  {
+                                                                                            "paths":  0,
+                                                                                            "polygons":  1,
+                                                                                            "polylines":  0,
+                                                                                            "rects":  0,
+                                                                                            "circles":  0,
+                                                                                            "ellipses":  0,
+                                                                                            "texts":  0,
+                                                                                            "total":  1
+                                                                                        },
+                                                                     "color_evidence":  {
+                                                                                            "fills":  [
+
+                                                                                                      ],
+                                                                                            "strokes":  [
+                                                                                                            "#2B2A29"
+                                                                                                        ],
+                                                                                            "dominant_fill":  null,
+                                                                                            "dominant_stroke":  "#2B2A29",
+                                                                                            "is_multicolor":  false,
+                                                                                            "fill_groups":  [
+
+                                                                                                            ]
+                                                                                        },
+                                                                     "font_evidence":  {
+                                                                                           "has_text":  false,
+                                                                                           "font_families":  [
+
+                                                                                                             ],
+                                                                                           "converted_to_paths":  false,
+                                                                                           "note":  null
+                                                                                       },
+                                                                     "path_count":  0,
+                                                                     "closed_contour_count":  0,
+                                                                     "perimeter_mm":  null,
+                                                                     "area_mm2":  null
+                                                                 }
+                                                             ],
+                                                  "layer_count":  1,
+                                                  "contour_split":  {
+                                                                        "outer_contour_perimeter_mm":  null,
+                                                                        "inner_hole_perimeter_mm":  null,
+                                                                        "total_cutting_perimeter_mm":  null,
+                                                                        "split_quality":  "missing"
+                                                                    },
+                                                  "drawable_layers":  [
+                                                                          {
+                                                                              "layer_id":  "Volumetrice",
+                                                                              "layer_name":  "Volumetrice",
+                                                                              "layer_key":  "Volumetrice",
+                                                                              "display_name":  "Volumetrice",
+                                                                              "source":  "drawable_summary",
+                                                                              "element_counts":  {
+                                                                                                     "paths":  0,
+                                                                                                     "polygons":  1,
+                                                                                                     "polylines":  0,
+                                                                                                     "rects":  0,
+                                                                                                     "circles":  0,
+                                                                                                     "ellipses":  0,
+                                                                                                     "texts":  0,
+                                                                                                     "total":  1
+                                                                                                 },
+                                                                              "color_evidence":  {
+                                                                                                     "fills":  [
+
+                                                                                                               ],
+                                                                                                     "strokes":  [
+                                                                                                                     "#2B2A29"
+                                                                                                                 ],
+                                                                                                     "dominant_fill":  null,
+                                                                                                     "dominant_stroke":  "#2B2A29",
+                                                                                                     "is_multicolor":  false,
+                                                                                                     "fill_groups":  [
+
+                                                                                                                     ]
+                                                                                                 },
+                                                                              "font_evidence":  {
+                                                                                                    "has_text":  false,
+                                                                                                    "font_families":  [
+
+                                                                                                                      ],
+                                                                                                    "converted_to_paths":  false,
+                                                                                                    "note":  null
+                                                                                                }
+                                                                          }
+                                                                      ],
+                                                  "font_evidence":  {
+                                                                        "has_text":  false,
+                                                                        "font_families":  [
+
+                                                                                          ],
+                                                                        "converted_to_paths":  false,
+                                                                        "note":  null
+                                                                    },
+                                                  "letter_perimeter_m":  4.7553,
+                                                  "total_letter_perimeter_ml":  4.7553,
+                                                  "return_material_perimeter_ml":  9.5106,
+                                                  "face_area_m2":  2.2506,
+                                                  "letter_face_area_m2":  2.2506,
+                                                  "artwork_area_m2":  1.5547,
+                                                  "artwork_boxes":  [
+                                                                        {
+                                                                            "layer_key":  "logo-dreapta",
+                                                                            "layer_name":  "logo dreapta",
+                                                                            "width_mm":  1499.9980062254556,
+                                                                            "height_mm":  1499.9981341100897,
+                                                                            "area_m2":  1.5547
+                                                                        }
+                                                                    ],
+                                                  "inner_holes_count":  0,
+                                                  "cutting_contours_count":  0,
+                                                  "material_piece_count":  0,
+                                                  "width_mm":  1500.2,
+                                                  "height_mm":  1500.2,
+                                                  "backing_present":  true,
+                                                  "back_bevel_enabled":  false,
+                                                  "backing_material":  "FOREX_10MM",
+                                                  "backing_thickness_mm":  10.0,
+                                                  "letter_return_perimeter_ml":  4.7553,
+                                                  "artwork_return_perimeter_ml":  4.7553,
+                                                  "led_perimeter_ml":  4.7553,
+                                                  "artwork_piece_count":  1,
+                                                  "volumetric_piece_count":  1,
+                                                  "outer_letter_perimeter_ml":  4.7553,
+                                                  "cnc_cutting_perimeter_ml":  4.7553
+                                              },
+                    "quote_geometry":  {
+                                           "letter_perimeter_m":  4.7553,
+                                           "total_letter_perimeter_ml":  4.7553,
+                                           "return_material_perimeter_ml":  9.5106,
+                                           "face_cutting_perimeter_ml":  null,
+                                           "cutting_perimeter_ml":  null,
+                                           "hole_perimeter_ml":  null,
+                                           "face_area_m2":  2.2506,
+                                           "artwork_area_m2":  1.5547,
+                                           "artwork_boxes":  [
+                                                                 {
+                                                                     "layer_key":  "logo-dreapta",
+                                                                     "layer_name":  "logo dreapta",
+                                                                     "width_mm":  1499.9980062254556,
+                                                                     "height_mm":  1499.9981341100897,
+                                                                     "area_m2":  1.5547
+                                                                 }
+                                                             ],
+                                           "letter_count":  null,
+                                           "real_letters_count":  null,
+                                           "inner_holes_count":  0,
+                                           "cutting_contours_count":  0,
+                                           "material_piece_count":  0,
+                                           "part_classification_confidence":  "high",
+                                           "part_classification_warnings":  [
+
+                                                                            ],
+                                           "primary_letters_layer_key":  null,
+                                           "width_mm":  1500.2,
+                                           "height_mm":  1500.2,
+                                           "geometry_source":  "nest2_document_geometry",
+                                           "confirmed":  true,
+                                           "outer_letter_perimeter_ml":  4.7553,
+                                           "inner_hole_letter_perimeter_ml":  null,
+                                           "letter_return_perimeter_ml":  4.7553,
+                                           "artwork_return_perimeter_ml":  4.7553,
+                                           "cnc_cutting_perimeter_ml":  4.7553,
+                                           "led_perimeter_ml":  4.7553,
+                                           "led_perimeter_policy":  "outer_face_letters_excludes_holes_and_artwork",
+                                           "artwork_piece_count":  1,
+                                           "volumetric_piece_count":  1,
+                                           "artwork_return_layers":  [
+                                                                         {
+                                                                             "layer_key":  "logo-dreapta",
+                                                                             "layer_name":  "logo dreapta",
+                                                                             "return_finish_type":  "white_aluminum",
+                                                                             "return_depth_mm":  60.0,
+                                                                             "return_perimeter_ml":  4.7553,
+                                                                             "execution_type":  "print_laminate"
+                                                                         }
+                                                                     ]
+                                       },
+                    "layer_role_setup":  {
+                                             "confirmation_status":  "complete",
+                                             "layers":  [
+                                                            {
+                                                                "layer_key":  "logo-dreapta",
+                                                                "layer_id":  "logo-dreapta",
+                                                                "layer_name":  "logo dreapta",
+                                                                "auto_role":  "printed_artwork",
+                                                                "auto_confidence":  "high",
+                                                                "confirmed_role":  "printed_artwork",
+                                                                "confirmation_state":  "confirmed",
+                                                                "operator_note":  null,
+                                                                "path_count":  null,
+                                                                "dominant_fill":  null
+                                                            }
+                                                        ],
+                                             "layer_bindings":  [
+
+                                                                ],
+                                             "warnings":  [
+
+                                                          ]
+                                         },
+                    "layer_role_review":  {
+                                              "roles":  [
+                                                            {
+                                                                "layer_id":  "logo-dreapta",
+                                                                "source_label":  "logo dreapta",
+                                                                "display_label":  "Logo volumetric",
+                                                                "original_label":  "logo dreapta",
+                                                                "operator_role":  "volumetric_logo",
+                                                                "technical_role":  "printed_artwork",
+                                                                "role_source":  "confirmed",
+                                                                "confidence":  "high",
+                                                                "geometry_ref":  {
+                                                                                     "layer_key":  "logo-dreapta"
+                                                                                 },
+                                                                "color_refs":  [
+
+                                                                               ],
+                                                                "status":  "confirmed"
+                                                            }
+                                                        ]
+                                          },
+                    "product_composition_recommendation":  {
+                                                               "status":  "needs_confirmation",
+                                                               "composition_type":  "logo_only",
+                                                               "source":  "analyzer_rules_v1",
+                                                               "recommended_templates":  [
+                                                                                             {
+                                                                                                 "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                                                 "role_in_composition":  "logo_vector_atipic",
+                                                                                                 "reason":  "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+                                                                                                 "source_layer_ids":  [
+                                                                                                                          "logo-dreapta"
+                                                                                                                      ],
+                                                                                                 "confidence":  "high",
+                                                                                                 "status":  "suggested"
+                                                                                             }
+                                                                                         ],
+                                                               "composition_items":  [
+                                                                                         {
+                                                                                             "composition_item_id":  "logo",
+                                                                                             "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                                             "component_role":  "volumetric_logo",
+                                                                                             "source_layer_ids":  [
+                                                                                                                      "logo-dreapta"
+                                                                                                                  ],
+                                                                                             "source_group_ids":  [
+                                                                                                                      "logo-dreapta"
+                                                                                                                  ],
+                                                                                             "shared_module_policy":  "dedupe_common_operations",
+                                                                                             "status":  "suggested"
+                                                                                         }
+                                                                                     ],
+                                                               "shared_modules_policy":  {
+                                                                                             "dedupe_common_operations":  true,
+                                                                                             "graphic_verification_scope":  "assembly",
+                                                                                             "file_preparation_scope":  "assembly",
+                                                                                             "light_test_scope":  "assembly",
+                                                                                             "packaging_scope":  "assembly"
+                                                                                         },
+                                                               "blockers":  [
+
+                                                                            ],
+                                                               "warnings":  [
+
+                                                                            ],
+                                                               "generated_at":  "2026-07-05T21:53:20.576422+00:00"
+                                                           },
+                    "product_composition_confirmed":  {
+                                                          "confirmed":  true,
+                                                          "confirmed_at":  "2026-07-05T21:53:11.658805+00:00",
+                                                          "confirmed_by":  "dev@localhost",
+                                                          "items":  [
+                                                                        {
+                                                                            "composition_item_id":  "logo",
+                                                                            "template_code":  "TPL-VOLUMETRIC-LOGO_v1",
+                                                                            "component_role":  "volumetric_logo",
+                                                                            "source_layer_ids":  [
+                                                                                                     "logo-dreapta"
+                                                                                                 ],
+                                                                            "source_group_ids":  [
+                                                                                                     "logo-dreapta"
+                                                                                                 ],
+                                                                            "shared_module_policy":  "dedupe_common_operations",
+                                                                            "status":  "suggested"
+                                                                        }
+                                                                    ],
+                                                          "operator_note":  null,
+                                                          "source":  "operator_confirmation_v1"
+                                                      },
+                    "terminology_mode":  "constructive_vector",
+                    "finish_setup":  {
+                                         "face_finish_type":  "oracal_651",
+                                         "face_vinyl_roll_width_mm":  1000.0,
+                                         "return_finish_type":  "white_aluminum",
+                                         "volum_aluminum_module_template_code":  null,
+                                         "return_oracal_code":  null,
+                                         "return_oracal_name":  null,
+                                         "return_depth_mm":  60.0,
+                                         "illuminated":  true,
+                                         "lighting_system_type":  "led_modules",
+                                         "light_color":  "neutral",
+                                         "led_module_power_w":  0.75,
+                                         "led_strip_power_w_per_ml":  5.0,
+                                         "led_module_count":  228,
+                                         "letter_led_strip_length_m":  null,
+                                         "emblem_led_strip_length_m":  null,
+                                         "total_led_strip_length_m":  null,
+                                         "estimated_led_watts":  171.0,
+                                         "required_psu_watts":  222.3,
+                                         "selected_psu_watts":  100,
+                                         "psu_configuration":  [
+                                                                   200,
+                                                                   60
+                                                               ],
+                                         "psu_allocation_status":  "ok",
+                                         "letter_group_finishes":  [
+
+                                                                   ],
+                                         "artwork_finishes":  [
+                                                                  {
+                                                                      "layer_key":  "logo-dreapta",
+                                                                      "layer_name":  "logo dreapta",
+                                                                      "display_name":  null,
+                                                                      "source_layer_name":  "logo dreapta",
+                                                                      "original_detected_label":  "logo dreapta",
+                                                                      "position_hint":  null,
+                                                                      "execution_type":  "print_laminate",
+                                                                      "color_mode":  "polychrome",
+                                                                      "print_transparency":  "translucent",
+                                                                      "material_code":  null,
+                                                                      "face_personalization_method":  "print_laminate",
+                                                                      "face_roll_width_mm":  null,
+                                                                      "print_roll_width_mm":  null,
+                                                                      "lamination_roll_width_mm":  null,
+                                                                      "roll_side_retraction_mm":  null,
+                                                                      "roll_total_retraction_mm":  null,
+                                                                      "face_oracal_code":  null,
+                                                                      "face_oracal_name":  null,
+                                                                      "print_material_code":  null,
+                                                                      "lamination_material_code":  null,
+                                                                      "estimated_area_m2":  1.554707620008002,
+                                                                      "element_count":  1,
+                                                                      "distinct_fill_count":  1,
+                                                                      "return_finish_type":  "white_aluminum",
+                                                                      "return_oracal_code":  null,
+                                                                      "return_oracal_name":  null,
+                                                                      "return_depth_mm":  60.0,
+                                                                      "confirmed":  false
+                                                                  }
+                                                              ],
+                                         "artwork_complexity_decisions":  [
+
+                                                                          ],
+                                         "backing_mode":  "forex_10_no_bevel",
+                                         "back_bevel_enabled":  false,
+                                         "mounting_template_enabled":  true,
+                                         "mounting_template_area_m2":  2.2506,
+                                         "mounting_template_material_type":  "forex",
+                                         "mounting_system":  "direct_wall",
+                                         "mounting_bar_profile":  "30x30x1.5",
+                                         "emblem_lighting_mode":  "area_lit",
+                                         "letter_led_module_count":  20,
+                                         "emblem_led_module_count":  208,
+                                         "total_led_module_count":  228,
+                                         "commercial_inputs":  {
+                                                                   "markup_percent":  35.0,
+                                                                   "discount_percent":  0.0,
+                                                                   "vat_percent":  21.0,
+                                                                   "manual_adjustment_ron":  0.0
+                                                               },
+                                         "confirmed":  true,
+                                         "internal_draft_quote_confirmed":  false
+                                     },
+                    "sheet_quote_override":  null
+                },
+    "readiness_status":  "ready_for_quote_preview",
+    "created_at":  "2026-07-05T21:51:12.386617",
+    "updated_at":  "2026-07-05T21:53:20.577732"
+}

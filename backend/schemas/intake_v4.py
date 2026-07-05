@@ -99,10 +99,24 @@ class IntakeV4LetterGroupFinish(BaseModel):
 class IntakeV4ArtworkFinish(BaseModel):
     layer_key: str
     layer_name: str | None = None
+    display_name: str | None = None
+    source_layer_name: str | None = None
+    original_detected_label: str | None = None
+    position_hint: str | None = None
     execution_type: str | None = "needs_decision"
     color_mode: str | None = "unknown"
     print_transparency: Literal["standard", "translucent", "transparent"] = "standard"
     material_code: str | None = None
+    face_personalization_method: Literal["none_raw_plexi", "oracal", "print_laminate"] | None = None
+    face_roll_width_mm: float | None = None
+    print_roll_width_mm: float | None = None
+    lamination_roll_width_mm: float | None = None
+    roll_side_retraction_mm: float | None = None
+    roll_total_retraction_mm: float | None = None
+    face_oracal_code: str | None = None
+    face_oracal_name: str | None = None
+    print_material_code: str | None = None
+    lamination_material_code: str | None = None
     estimated_area_m2: float | None = None
     element_count: int | None = None
     distinct_fill_count: int | None = None
@@ -194,6 +208,8 @@ class IntakeV4WorkspacePayload(BaseModel):
     product_binding: IntakeV4ProductBinding
     intake_request_code: str | None = None
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
     work_intake_context: dict[str, Any] = Field(default_factory=dict)
@@ -203,6 +219,10 @@ class IntakeV4WorkspacePayload(BaseModel):
     path_geometry_summary: dict[str, Any] | None = None
     quote_geometry: dict[str, Any] | None = None
     layer_role_setup: IntakeV4LayerRoleSetup | None = None
+    layer_role_review: dict[str, Any] | None = None
+    product_composition_recommendation: dict[str, Any] | None = None
+    product_composition_confirmed: dict[str, Any] | None = None
+    terminology_mode: str | None = None
     finish_setup: IntakeV4FinishSetup | None = None
     sheet_quote_override: dict[str, Any] | None = None
 
@@ -214,6 +234,8 @@ class IntakeV4WorkspaceCreateRequest(BaseModel):
     job_title: str | None = None
     intake_request_code: str | None = None
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
 
@@ -221,8 +243,16 @@ class IntakeV4WorkspaceCreateRequest(BaseModel):
 class IntakeV4EnsureWorkspaceForIntakeRequestBody(BaseModel):
     intake_request_code: str = Field(min_length=1, max_length=64)
     offer_method: str | None = None
+    analyzer_mode: Literal["analyzer_first", "template_hint", "template_locked"] | None = None
+    template_hint_code: str | None = None
     selected_template_code: str | None = None
     source: str | None = None
+
+
+class IntakeV4ProductCompositionConfirmationRequest(BaseModel):
+    confirmed: bool = True
+    items: list[dict[str, Any]] = Field(default_factory=list)
+    operator_note: str | None = None
 
 
 class IntakeV4WorkspaceResponse(BaseModel):

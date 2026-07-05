@@ -39,6 +39,7 @@ from schemas.intake_v4 import (
     IntakeV4OwnerApprovalRequest,
     IntakeV4PricingInputPreviewResponse,
     IntakeV4ProductBinding,
+    IntakeV4ProductCompositionConfirmationRequest,
     IntakeV4ProductionHandoffPreviewResponse,
     IntakeV4ProductSystemBindingResponse,
     IntakeV4QuoteHandoffPreviewResponse,
@@ -89,6 +90,7 @@ IntakeV6NestingPreviewResponse = IntakeV4NestingPreviewResponse
 IntakeV6OwnerApprovalRequest = IntakeV4OwnerApprovalRequest
 IntakeV6PricingInputPreviewResponse = IntakeV4PricingInputPreviewResponse
 IntakeV6ProductBinding = IntakeV4ProductBinding
+IntakeV6ProductCompositionConfirmationRequest = IntakeV4ProductCompositionConfirmationRequest
 IntakeV6ProductionHandoffPreviewResponse = IntakeV4ProductionHandoffPreviewResponse
 IntakeV6ProductSystemBindingResponse = IntakeV4ProductSystemBindingResponse
 IntakeV6QuoteHandoffPreviewResponse = IntakeV4QuoteHandoffPreviewResponse

@@ -16,6 +16,12 @@ export function hasPersistedAnalysis(payload: Record<string, unknown> | undefine
   return isAnalysisPersisted(payload);
 }
 
+export function isProductCompositionConfirmed(payload: Record<string, unknown> | undefined): boolean {
+  const confirmation = payload?.product_composition_confirmed;
+  if (confirmation == null || typeof confirmation !== "object" || Array.isArray(confirmation)) return false;
+  return (confirmation as Record<string, unknown>).confirmed === true;
+}
+
 export function canAccessIntakeV6Step(state: IntakeV6WorkspaceState, step: IntakeV6StepId): boolean {
   if (step === "layers") return true;
 
@@ -50,8 +56,16 @@ export function getIntakeV6FirstBlocker(state: IntakeV6WorkspaceState): string |
     return "Confirmă rolul pentru toate straturile.";
   }
 
+  if (readiness === "product_composition_not_confirmed" && !isProductCompositionConfirmed(payload)) {
+    return "Confirmă compoziția produsului propusă de analyzer.";
+  }
+
   if (state.currentStep === "confirm" && !isFinishSetupConfirmed(payload)) {
     return "Confirmă finisajele în pasul Review.";
+  }
+
+  if (state.currentStep === "confirm" && !isProductCompositionConfirmed(payload)) {
+    return "Confirmă compoziția produsului în pasul Review.";
   }
 
   if (readiness && readiness !== "ready_for_quote_preview" && state.currentStep === "confirm") {
@@ -65,10 +79,15 @@ export function isIntakeV6ReadyForQuotePreview(state: IntakeV6WorkspaceState): b
   return (
     isAnalysisReadyForReview(state) &&
     state.workspace?.readiness_status === "ready_for_quote_preview" &&
+    isProductCompositionConfirmed(state.workspace?.payload) &&
     isFinishSetupConfirmed(state.workspace?.payload)
   );
 }
 
 export function canContinueFromReviewStep(state: IntakeV6WorkspaceState): boolean {
-  return isAnalysisReadyForReview(state) && isFinishSetupConfirmed(state.workspace?.payload);
+  return (
+    isAnalysisReadyForReview(state) &&
+    isProductCompositionConfirmed(state.workspace?.payload) &&
+    isFinishSetupConfirmed(state.workspace?.payload)
+  );
 }

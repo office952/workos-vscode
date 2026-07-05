@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { isAnalysisReadyForReview } from "./intakeV6AnalysisIdentity";
-import { canAccessIntakeV6Step, getIntakeV6FirstBlocker } from "./intakeV6Readiness";
+import { canAccessIntakeV6Step, canContinueFromReviewStep, getIntakeV6FirstBlocker } from "./intakeV6Readiness";
 import { initialIntakeV6WorkspaceState } from "./intakeV6WorkspaceReducer";
 
 const syncedWorkspace = {
@@ -17,6 +17,7 @@ const syncedWorkspace = {
     svg_analysis_json: { layers: [] },
     layer_role_setup: { confirmation_status: "complete", layers: [] },
     finish_setup: { confirmed: true },
+    product_composition_confirmed: { confirmed: true },
   },
 };
 
@@ -43,5 +44,23 @@ describe("intakeV6Readiness boundary", () => {
     };
     expect(isAnalysisReadyForReview(state)).toBe(true);
     expect(canAccessIntakeV6Step(state, "review")).toBe(true);
+  });
+
+  it("blocks confirm until product composition is confirmed", () => {
+    const state = {
+      ...initialIntakeV6WorkspaceState,
+      currentStep: "review" as const,
+      workspace: {
+        ...syncedWorkspace,
+        readiness_status: "product_composition_not_confirmed",
+        payload: {
+          ...syncedWorkspace.payload,
+          product_composition_confirmed: { confirmed: false },
+        },
+      },
+    };
+
+    expect(canContinueFromReviewStep(state)).toBe(false);
+    expect(getIntakeV6FirstBlocker(state)).toMatch(/compoziția produsului/i);
   });
 });

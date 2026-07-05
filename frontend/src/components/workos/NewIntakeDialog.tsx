@@ -26,6 +26,7 @@ type Step = "method" | "template" | "details";
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
 
 type OfferMethodId = "svg_analyzer_intake_v6";
+const ANALYZER_MODE = "analyzer_first";
 
 const OFFER_METHODS: Array<{
   id: OfferMethodId;
@@ -125,7 +126,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
       .then((response) => {
         const offerable = response.items.filter((template) => template.quote_offerable);
         setOfferableTemplates(offerable);
-        setSelectedTemplateCode((current) => current ?? offerable[0]?.template_code ?? null);
+        setSelectedTemplateCode((current) => current ?? null);
       })
       .catch((err) => {
         console.warn("[NewIntakeDialog] failed to load offerable templates", err);
@@ -189,7 +190,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
 
   const selectedTemplate = offerableTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
   const canProceedFromMethod = () => !!selectedOfferMethod;
-  const canProceedFromTemplate = () => !!selectedTemplate && !loadingTemplates && !templateLoadError;
+  const canProceedFromTemplate = () => !loadingTemplates && !templateLoadError;
   const canSubmit = () => canProceedFromClient() && canProceedFromTemplate() && intake.description.trim().length > 0;
 
   const resolvedFamilyId = selectedTemplate?.family_id ?? "";
@@ -205,8 +206,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
       );
       return;
     }
-    if (!selectedOfferMethod || !selectedTemplate) {
-      setError("Selectează modalitatea de ofertare și template-ul Product System înainte de a crea cererea.");
+    if (!selectedOfferMethod) {
+      setError("Selectează modalitatea de ofertare înainte de a crea cererea.");
       return;
     }
     setSubmitting(true);
@@ -248,17 +249,18 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
         notes: "",
         priority: intake.priority,
         delivery_type: intake.delivery_type,
-        confirmed_template_code: selectedTemplate.template_code,
-        confirmed_template_name: selectedTemplate.description ?? selectedTemplate.template_code,
+        confirmed_template_code: selectedTemplate?.template_code,
+        confirmed_template_name: selectedTemplate?.description ?? selectedTemplate?.template_code,
       });
 
       const workspace = await ensureIntakeV6WorkspaceForIntakeRequest(code, {
         offer_method: selectedOfferMethod,
-        selected_template_code: selectedTemplate.template_code,
+        analyzer_mode: ANALYZER_MODE,
+        template_hint_code: selectedTemplate?.template_code,
         source: WORK_INTAKE_NEW_REQUEST_SOURCE,
       });
 
-      onCreated(code, resolvedFamilyId, workspace.id, selectedTemplate.template_code);
+      onCreated(code, resolvedFamilyId, workspace.id, selectedTemplate?.template_code ?? null);
       onClose();
     } catch (err: unknown) {
       console.error("[NewIntakeDialog] submit failed", err);
@@ -332,15 +334,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
           {step === "template" && (
             <div className="space-y-4">
               <div>
-                <h3 className="text-[14px] font-bold text-slate-100">Alege template-ul Product System</h3>
+                <h3 className="text-[14px] font-bold text-slate-100">Hint Product System opțional</h3>
                 <p className="text-[12px] text-slate-400 mt-1">
-                  Selectează un template activ pentru ofertare. Modulele interne rămân gestionate de Product System și nu se aleg direct aici.
+                  Analyzer-ul pornește primul. Alege un hint doar dacă operatorul știe deja familia probabilă.
                 </p>
               </div>
               <section className="space-y-2">
                 <div className="flex items-center gap-1.5">
                   <Boxes className="w-3.5 h-3.5 text-blue-400" />
-                  <h4 className="text-[12px] font-bold text-slate-200">Template-uri active pentru ofertare</h4>
+                  <h4 className="text-[12px] font-bold text-slate-200">Template hint</h4>
                 </div>
                 <div className="space-y-2" data-testid="offerable-template-list">
                   {loadingTemplates ? (
@@ -350,6 +352,30 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       Nu există template-uri active pentru ofertare disponibile.
                     </p>
                   ) : (
+                    <button
+                      type="button"
+                      onClick={() => setSelectedTemplateCode(null)}
+                      className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                        selectedTemplateCode === null
+                          ? "bg-blue-600/15 border-blue-500/50"
+                          : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                      }`}
+                      data-testid="analyzer-first-no-template-hint"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <p className="text-[13px] font-bold text-slate-100">Analyzer-first</p>
+                          <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                            SVG-ul decide compoziția: logo, litere, sau litere + logo.
+                          </p>
+                        </div>
+                        <span className="shrink-0 text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded px-2 py-0.5">
+                          Recomandat
+                        </span>
+                      </div>
+                    </button>
+                  )}
+                  {!loadingTemplates && offerableTemplates.length > 0 ? (
                     offerableTemplates.map((template) => (
                       <button
                         key={template.template_code}
@@ -378,7 +404,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         </div>
                       </button>
                     ))
-                  )}
+                  ) : null}
                 </div>
               </section>
             </div>
@@ -554,15 +580,15 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
               <div className="flex items-center justify-between gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5">
                 <div className="min-w-0">
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide">Template Product System</p>
-                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "—"}</p>
-                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Template activ pentru ofertare"}</p>
+                  <p className="text-[13px] font-semibold text-slate-200 truncate">{selectedTemplate?.template_code ?? "Analyzer-first"}</p>
+                  <p className="text-[10px] text-slate-500 mt-0.5 truncate">{selectedTemplate?.family_name ?? "Fără template final înainte de SVG"}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => setStep("template")}
                   className="shrink-0 text-[11px] font-semibold text-blue-400 hover:text-blue-300"
                 >
-                  Schimbă template
+                  Schimbă hint
                 </button>
               </div>
 

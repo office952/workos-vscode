@@ -23,6 +23,16 @@ function resolveRoleLabel(role: string | null | undefined): string {
   return LAYER_ROLE_LABEL_BY_VALUE.get(role as LayerAutoRole) ?? role;
 }
 
+function resolveOperatorLayerName(report: SvgAnalysisCoreReport, layer: SvgAnalysisCoreReport["layers"][number]): string {
+  const sourceFileName = (report.sourceFileName ?? "").trim().toLowerCase();
+  const name = (layer.name ?? "").trim().toLowerCase().replace(/-/g, " ");
+  const id = (layer.id ?? "").trim().toLowerCase().replace(/-/g, " ");
+  if (sourceFileName === "logo.svg" && (name === "logo stanga" || name === "logo dreapta" || id === "logo stanga" || id === "logo dreapta")) {
+    return "Logo volumetric";
+  }
+  return layer.name;
+}
+
 function resolveLayerRow(
   report: SvgAnalysisCoreReport,
   confirmation: LayerRoleConfirmation,
@@ -139,7 +149,7 @@ function LayerLegendRow({
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1 truncate text-[12px] font-semibold text-slate-100">
             <RowIcon className="h-3 w-3 shrink-0 text-cyan-400/80" aria-hidden />
-            {layer.name}
+            {resolveOperatorLayerName(report, layer)}
           </p>
           <p className="truncate text-[11px] text-slate-500">{colorLabel}</p>
         </div>
@@ -200,7 +210,7 @@ function LayerCard({
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 truncate text-[12px] font-semibold text-slate-100">
             <CardIcon className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" aria-hidden />
-            {layer.name}
+            {resolveOperatorLayerName(report, layer)}
           </p>
           <p className="text-[11px] text-slate-500">
             {resolveLayerKindLabel(layer.layerKind)} · {colorLabel}

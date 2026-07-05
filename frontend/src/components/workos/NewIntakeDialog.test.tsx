@@ -72,23 +72,23 @@ const RUNTIME_MODULE_TEMPLATE = {
   status_reason: "runtime_module_only",
 };
 
-const LOGO_CANDIDATE_TEMPLATE = {
+const LOGO_OFFERABLE_TEMPLATE = {
   template_id: 15,
   template_code: "TPL-VOLUMETRIC-LOGO_v1",
   family_id: "litere_volumetrice",
   family_name: "Litere volumetrice",
-  description: "Produs candidat pentru logo volumetric",
+  description: "Produs ofertabil pentru logo volumetric",
   db_active: true,
-  quote_offerable: false,
+  quote_offerable: true,
   runtime_module: false,
   is_parent: true,
   has_modules: true,
   parent_codes: [],
   module_codes: ["TPL-VOLUMETRIC-LOGO-FACE_v1"],
-  status: "experimental",
-  status_reason: "not_owner_valid",
-  product_system_role: "candidate_product",
-  display_group: "candidate_products",
+  status: "offerable",
+  status_reason: "owner_valid_parent_template",
+  product_system_role: "offerable_product",
+  display_group: "active_products",
 };
 
 describe("NewIntakeDialog offer method and Product System template wizard", () => {
@@ -103,9 +103,9 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     mockIntakesCreate.mockResolvedValue({ id: 10 });
     mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-1", workspace_code: "IV6-TEST" });
     mockAvailabilityList.mockResolvedValue({
-      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE, LOGO_CANDIDATE_TEMPLATE],
-      total: 2,
-      offerable_count: 1,
+      items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE, LOGO_OFFERABLE_TEMPLATE],
+      total: 3,
+      offerable_count: 2,
       runtime_module_count: 1,
     });
   });
@@ -119,7 +119,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
   async function selectMethodAndContinue() {
     fireEvent.click(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i }));
     fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
-    await screen.findByText(/Template-uri active pentru ofertare/i);
+    await screen.findByText(/Template hint/i);
   }
 
   async function moveToDetailsStep() {
@@ -159,14 +159,14 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     });
   });
 
-  it("shows only quote_offerable templates and hides runtime modules or Logo candidate", async () => {
+  it("shows only quote_offerable templates and hides runtime modules", async () => {
     renderDialog();
     await selectMethodAndContinue();
 
     const list = screen.getByTestId("offerable-template-list");
     expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(within(list).getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
-    expect(within(list).queryByText("TPL-VOLUMETRIC-LOGO_v1")).not.toBeInTheDocument();
   });
 
   it("does not use blocked archive wording", async () => {
@@ -177,7 +177,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     expect(screen.queryByText(blockedArchiveWord)).not.toBeInTheDocument();
   });
 
-  it("sends offer_method and selected_template_code to Intake V6 ensure", async () => {
+  it("creates analyzer-first intake without a locked selected template", async () => {
     const onCreated = vi.fn();
     renderDialog(onCreated);
     await moveToDetailsStep();
@@ -201,20 +201,68 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     expect(intakeCode).toMatch(/^IR-/);
     expect(intakePayload).toEqual(
       expect.objectContaining({
-        product_family: "litere_volumetrice",
-        confirmed_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+        product_family: "",
+        confirmed_template_code: undefined,
       })
     );
     expect(ensurePayload).toEqual({
       offer_method: "svg_analyzer_intake_v6",
-      selected_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
+      analyzer_mode: "analyzer_first",
+      template_hint_code: undefined,
+      source: "work_intake_new_request",
+    });
+    expect(onCreated).toHaveBeenCalledWith(
+      expect.stringMatching(/^IR-/),
+      "",
+      "workspace-1",
+      null
+    );
+  });
+
+  it("creates a logo hinted analyzer-first request through the Intake V6 bridge", async () => {
+    const onCreated = vi.fn();
+    mockEnsureIntakeV6Workspace.mockResolvedValue({ id: "workspace-logo", workspace_code: "IV6-LOGO" });
+    renderDialog(onCreated);
+    await selectMethodAndContinue();
+
+    fireEvent.click(screen.getByRole("button", { name: /TPL-VOLUMETRIC-LOGO_v1/i }));
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+    await screen.findByText(/Alege un client existent/i);
+
+    fireEvent.click(screen.getByRole("button", { name: "Client Temporar" }));
+    fireEvent.change(screen.getByPlaceholderText(/SC Exemplu SRL sau Ion Popescu/i), {
+      target: { value: "STAGING LOGO CLIENT" },
+    });
+    fireEvent.change(
+      screen.getByPlaceholderText(/Litere volumetrice pentru fațadă/i),
+      { target: { value: "Logo volumetric pentru fațadă magazin" } }
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Creează Cerere/i }));
+
+    await waitFor(() => {
+      expect(mockEnsureIntakeV6Workspace).toHaveBeenCalledTimes(1);
+    });
+
+    const intakePayload = mockIntakesCreate.mock.calls[0][0];
+    const [intakeCode, ensurePayload] = mockEnsureIntakeV6Workspace.mock.calls[0];
+    expect(intakeCode).toMatch(/^IR-/);
+    expect(intakePayload).toEqual(
+      expect.objectContaining({
+        product_family: "litere_volumetrice",
+        confirmed_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      })
+    );
+    expect(ensurePayload).toEqual({
+      offer_method: "svg_analyzer_intake_v6",
+      analyzer_mode: "analyzer_first",
+      template_hint_code: "TPL-VOLUMETRIC-LOGO_v1",
       source: "work_intake_new_request",
     });
     expect(onCreated).toHaveBeenCalledWith(
       expect.stringMatching(/^IR-/),
       "litere_volumetrice",
-      "workspace-1",
-      "TPL-VOLUMETRIC-LETTERS_v2"
+      "workspace-logo",
+      "TPL-VOLUMETRIC-LOGO_v1"
     );
   });
 });

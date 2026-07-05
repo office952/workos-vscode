@@ -1,0 +1,97 @@
+from services.intake_v6_product_composition_recommendation_service import (
+    LETTERS_TEMPLATE_CODE,
+    LOGO_TEMPLATE_CODE,
+    SUPPORT_TEMPLATE_PENDING,
+    build_layer_role_review,
+    build_product_composition_recommendation,
+)
+
+
+def _payload(file_name: str, layers: list[dict]) -> dict:
+    return {
+        "svg_source": {"file_name": file_name, "file_size_bytes": 123, "upload_status": "analyzed"},
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": layers,
+            "layer_bindings": [],
+            "warnings": [],
+        },
+    }
+
+
+def _layer(key: str, name: str, role: str) -> dict:
+    return {
+        "layer_key": key,
+        "layer_id": key,
+        "layer_name": name,
+        "auto_role": role,
+        "confirmed_role": role,
+        "confirmation_state": "confirmed",
+        "auto_confidence": "high",
+    }
+
+
+def test_recommends_logo_template_for_logo_only_svg() -> None:
+    payload = _payload("logo.svg", [_layer("logo-dreapta", "logo dreapta", "printed_artwork")])
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "logo_only"
+    assert [item["template_code"] for item in recommendation["composition_items"]] == [LOGO_TEMPLATE_CODE]
+    assert recommendation["blockers"] == []
+
+
+def test_recommends_letters_template_for_letters_only_svg() -> None:
+    payload = _payload("letters.svg", [_layer("letters", "Litere", "face")])
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "letters_only"
+    assert [item["template_code"] for item in recommendation["composition_items"]] == [LETTERS_TEMPLATE_CODE]
+
+
+def test_recommends_letters_plus_logo_for_gradi_mixed_roles() -> None:
+    payload = _payload(
+        "gradi-curat.svg",
+        [
+            _layer("letters", "Litere GRADI", "face"),
+            _layer("logo-stanga", "logo stanga", "printed_artwork"),
+            _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+        ],
+    )
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "letters_plus_logo"
+    assert [item["template_code"] for item in recommendation["composition_items"]] == [
+        LETTERS_TEMPLATE_CODE,
+        LOGO_TEMPLATE_CODE,
+    ]
+    logo_item = next(item for item in recommendation["composition_items"] if item["component_role"] == "volumetric_logo")
+    assert logo_item["source_layer_ids"] == ["logo-stanga", "logo-dreapta"]
+
+
+def test_support_role_is_explicit_pending_template_not_absorbed() -> None:
+    payload = _payload(
+        "complex.svg",
+        [
+            _layer("letters", "Litere", "face"),
+            _layer("logo", "Logo", "logo"),
+            _layer("fundal", "Fundal caseta", "support_panel"),
+        ],
+    )
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "letters_plus_logo_plus_support"
+    assert any(item["component_role"] == "support_panel" for item in recommendation["composition_items"])
+    assert [warning["code"] for warning in recommendation["warnings"]] == [SUPPORT_TEMPLATE_PENDING]
+
+
+def test_logo_svg_generated_side_label_is_neutral_for_operator() -> None:
+    payload = _payload("logo.svg", [_layer("logo-dreapta", "logo dreapta", "printed_artwork")])
+
+    review = build_layer_role_review(payload)
+
+    assert review["roles"][0]["display_label"] == "Logo volumetric"
+    assert review["roles"][0]["operator_role"] == "volumetric_logo"
