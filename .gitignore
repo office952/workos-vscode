@@ -45,6 +45,9 @@ local_dev.db-journal
 *.bak
 *.backup
 
+# Local archive folders
+_archived_local_exports/
+
 # E2E generated fixture manifest (run seed_commercial_e2e_fixture.py)
 frontend/e2e/.commercial-fixture.json
 
