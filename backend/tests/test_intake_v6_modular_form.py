@@ -22,6 +22,9 @@ def test_form_contract_exists_for_volumetric_v2(form_service: IntakeV6ModularFor
     assert contract is not None
     assert contract.summary.template_code == TEMPLATE
     assert contract.summary.active_module_count == 7
+    assert contract.form_system_backbone is not None
+    assert contract.form_system_backbone["root"]["canonical_code"] == TEMPLATE
+    assert contract.form_system_backbone["linked_template_composition"]["linked_templates"][0]["composition_role"] == "linked_logo_segment"
 
 
 def test_all_active_modules_have_form_sections(form_service: IntakeV6ModularFormContractService):
@@ -82,6 +85,27 @@ def test_unknown_template_returns_none(form_service: IntakeV6ModularFormContract
     assert form_service.get_for_template("TPL-UNKNOWN") is None
 
 
+def test_legacy_letters_alias_returns_canonical_modular_contract(form_service: IntakeV6ModularFormContractService):
+    contract = form_service.get_for_template("TPL-VOLUMETRIC-LETTERS")
+    assert contract is not None
+    assert contract.summary.template_code == TEMPLATE
+    assert contract.form_system_backbone is not None
+    assert contract.form_system_backbone["root"]["requested_code"] == "TPL-VOLUMETRIC-LETTERS"
+    assert contract.form_system_backbone["root"]["canonical_code"] == TEMPLATE
+    assert contract.form_system_backbone["root"]["canonical_alias_resolution"] is True
+
+
+def test_modular_form_contract_blocks_logo_and_component_roots(form_service: IntakeV6ModularFormContractService):
+    assert form_service.get_for_template("TPL-VOLUMETRIC-LOGO_v1") is None
+    assert form_service.get_for_template("TPL-VOLUMETRIC-FACE_v1") is None
+
+    logo_backbone = form_service.get_backbone_section_for_template("TPL-VOLUMETRIC-LOGO_v1")
+    assert logo_backbone is not None
+    assert logo_backbone["root"]["allowed"] is False
+    assert logo_backbone["root"]["blocker_code"] == "LOGO_NOT_OFFERABLE"
+    assert "linked_template_composition" not in logo_backbone
+
+
 @pytest.fixture
 def form_auth_client(db_fixture):
     from main import app
@@ -119,6 +143,8 @@ def test_form_contract_endpoint_200(form_auth_client):
     body = response.json()
     assert body["summary"]["active_module_count"] == 7
     assert len(body["field_bindings"]) >= 20
+    assert body["form_system_backbone"]["read_only"] is True
+    assert body["form_system_backbone"]["root"]["canonical_code"] == TEMPLATE
 
 
 def test_form_contract_endpoint_404(form_auth_client):

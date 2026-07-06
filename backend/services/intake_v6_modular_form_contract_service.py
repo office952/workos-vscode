@@ -11,6 +11,7 @@ from schemas.intake_v6_modular_form import (
     TriggerFieldAlignment,
 )
 from schemas.mini_module_registry import REGISTRY_VERSION
+from services.form_system_contract_backbone_service import build_form_system_contract_map
 from services.mini_module_registry_service import MiniModuleRegistryService, get_mini_module_registry_service
 
 PILOT_TEMPLATE = "TPL-VOLUMETRIC-LETTERS_v2"
@@ -309,10 +310,26 @@ class IntakeV6ModularFormContractService:
     def __init__(self, registry: MiniModuleRegistryService | None = None) -> None:
         self._registry = registry or get_mini_module_registry_service()
 
-    def get_for_template(self, template_code: str) -> IntakeV6ModularFormContract | None:
-        if template_code != PILOT_TEMPLATE:
+    def get_backbone_section_for_template(self, template_code: str) -> dict | None:
+        backbone = build_form_system_contract_map(template_code)
+        root = backbone.get("root") if isinstance(backbone.get("root"), dict) else {}
+        if root.get("allowed") is not True:
+            return backbone
+        if root.get("canonical_code") != PILOT_TEMPLATE:
             return None
-        registry_response = self._registry.get_by_template(template_code)
+        return backbone
+
+    def get_for_template(self, template_code: str) -> IntakeV6ModularFormContract | None:
+        backbone = self.get_backbone_section_for_template(template_code)
+        if backbone is None:
+            return None
+        root = backbone.get("root") if isinstance(backbone.get("root"), dict) else {}
+        if root.get("allowed") is not True:
+            return None
+        canonical_template_code = str(root.get("canonical_code") or "")
+        if canonical_template_code != PILOT_TEMPLATE:
+            return None
+        registry_response = self._registry.get_by_template(canonical_template_code)
         active_modules = [
             m for m in registry_response.modules if m.operational_status == "ACTIVE_OPERATIONAL"
         ]
@@ -368,7 +385,7 @@ class IntakeV6ModularFormContractService:
 
         return IntakeV6ModularFormContract(
             summary=IntakeV6ModularFormContractSummary(
-                template_code=template_code,
+                template_code=canonical_template_code,
                 registry_version=REGISTRY_VERSION,
                 active_module_count=len(active_modules),
                 field_binding_count=len(VOLUMETRIC_FIELD_BINDINGS),
@@ -376,6 +393,7 @@ class IntakeV6ModularFormContractService:
             ),
             modules=modules,
             field_bindings=VOLUMETRIC_FIELD_BINDINGS,
+            form_system_backbone=backbone,
             trigger_alignments=TRIGGER_ALIGNMENTS,
             valid_combinations=VALID_COMBINATIONS,
             invalid_combinations=INVALID_COMBINATIONS,

@@ -94,6 +94,7 @@ class IntakeV6ModularFormContract(BaseModel):
     summary: IntakeV6ModularFormContractSummary
     modules: list[IntakeModuleFormSection] = Field(default_factory=list)
     field_bindings: list[IntakeFormFieldBinding] = Field(default_factory=list)
+    form_system_backbone: dict[str, Any] | None = None
     trigger_alignments: list[TriggerFieldAlignment] = Field(default_factory=list)
     valid_combinations: list[str] = Field(default_factory=list)
     invalid_combinations: list[str] = Field(default_factory=list)
