@@ -51,6 +51,11 @@ export default function IntakeV6OperatorWorkspaceFooter({
 
   const problemDetails = status.details.filter((row) => row.tone === "warn" || row.tone === "bad");
   const reviewWarnings = statusCtx?.overlay.reviewWarnings ?? [];
+  const issueCount =
+    (footerReason ? 1 : 0) +
+    problemDetails.length +
+    reviewWarnings.length +
+    status.actions.length;
   const showIssuesDrawer =
     Boolean(footerReason) ||
     status.actions.length > 0 ||
@@ -81,7 +86,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
           >
             <span>
               Probleme & atenționări
-              {status.actionCount > 0 ? ` (${status.actionCount})` : ""}
+              {issueCount > 0 ? ` (${issueCount})` : ""}
             </span>
             <span className="text-slate-500">{issuesOpen ? "▾" : "▸"}</span>
           </button>

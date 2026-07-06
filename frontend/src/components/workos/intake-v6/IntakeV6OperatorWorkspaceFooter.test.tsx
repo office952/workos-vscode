@@ -1,18 +1,60 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { useEffect } from "react";
 import { describe, expect, it, vi } from "vitest";
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { IntakeV6WorkspaceHeaderStatusProvider, useIntakeV6WorkspaceHeaderStatus } from "./IntakeV6WorkspaceHeaderStatusContext";
+import type { IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
 
-function OverlaySeed() {
+function baseWorkspaceState(overrides: Partial<IntakeV6WorkspaceState> = {}): IntakeV6WorkspaceState {
+  return {
+    workspaceId: "ws-1",
+    phase: "svg_ready",
+    error: null,
+    loadErrorCode: null,
+    currentStep: "layers",
+    workspace: null,
+    svg: { fileName: "logo.svg", fileSizeBytes: 1200, previewSource: null },
+    layerChips: [
+      { layerKey: "a", displayName: "A", status: "pending" },
+      { layerKey: "b", displayName: "B", status: "pending" },
+      { layerKey: "c", displayName: "C", status: "pending" },
+      { layerKey: "d", displayName: "D", status: "pending" },
+      { layerKey: "e", displayName: "E", status: "pending" },
+      { layerKey: "f", displayName: "F", status: "pending" },
+    ],
+    analysisRunId: 1,
+    analyzerStatus: "ready",
+    analyzerError: null,
+    svgSource: null,
+    analyzerReport: null,
+    layerRoleConfirmation: null,
+    localFileHash: null,
+    unsavedAnalysis: false,
+    ...overrides,
+  };
+}
+
+function OverlaySeed({
+  reviewWarnings = [],
+  layersTotal = 6,
+  layersConfirmed = 0,
+}: {
+  reviewWarnings?: string[];
+  layersTotal?: number;
+  layersConfirmed?: number;
+}) {
   const { setOverlay } = useIntakeV6WorkspaceHeaderStatus();
   useEffect(() => {
-    setOverlay({ layersTotal: 6, layersConfirmed: 0 });
-  }, [setOverlay]);
+    setOverlay({ layersTotal, layersConfirmed, reviewWarnings });
+  }, [layersConfirmed, layersTotal, reviewWarnings, setOverlay]);
   return null;
 }
 
-function renderFooter(overrides: Partial<Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0]> = {}) {
+function renderFooter(
+  overrides: Partial<Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0]> = {},
+  reviewWarnings: string[] = [],
+  overlayCounts: { layersTotal?: number; layersConfirmed?: number } = {},
+) {
   const props: Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0] = {
     currentStep: "layers",
     stepIndex: 0,
@@ -24,61 +66,60 @@ function renderFooter(overrides: Partial<Parameters<typeof IntakeV6OperatorWorks
     onBack: vi.fn(),
     onNext: vi.fn(),
     persisting: false,
+    workspaceState: baseWorkspaceState(),
     ...overrides,
   };
 
   return render(
     <IntakeV6WorkspaceHeaderStatusProvider>
-      <OverlaySeed />
+      <OverlaySeed reviewWarnings={reviewWarnings} {...overlayCounts} />
       <IntakeV6OperatorWorkspaceFooter {...props} />
     </IntakeV6WorkspaceHeaderStatusProvider>,
   );
 }
 
 describe("IntakeV6OperatorWorkspaceFooter", () => {
-  it("shows Product Truth blocker summary next to disabled Continue to Review CTA", () => {
+  it("keeps the issues drawer collapsed next to disabled Continue to Review CTA", () => {
     renderFooter();
 
     expect(screen.getByTestId("intake-v6-footer-next")).toBeDisabled();
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("BLOCKED");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("NEEDS_CONFIRMATION");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-title")).toHaveTextContent(
-      "Product Truth incomplet",
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-message")).toHaveTextContent(
-      /Rolurile layerelor\/grupurilor trebuie confirmate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-submessage")).toHaveTextContent(
-      /Pricing Registry este pregătit/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-submessage")).toHaveTextContent(
-      /6 grupuri\/straturi detectate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary-next-action")).toHaveTextContent(
-      /Confirmă rolurile pentru toate grupurile detectate/i,
-    );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).not.toHaveTextContent(/pricing not ready/i);
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).not.toHaveTextContent(/ora|minut/i);
+    expect(screen.getByTestId("intake-v6-footer-issues-toggle")).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByTestId("intake-v6-footer-issues-content")).not.toBeInTheDocument();
   });
 
-  it("keeps real pricing coverage distinct from Product Truth blocker", () => {
+  it("shows the blocker only after expanding the issues drawer", () => {
     renderFooter({
       currentStep: "confirm",
       footerBlocker: "Calculul live conține linii fără tarif configurat.",
       nextDisabled: true,
     });
 
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent(
-      "Pricing coverage de verificat",
+    expect(screen.queryByText("Calculul live conține linii fără tarif configurat.")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(screen.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent(
+      "Calculul live conține linii fără tarif configurat.",
     );
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("WARNING");
-    expect(screen.getByTestId("intake-v6-disabled-cta-summary")).toHaveTextContent("NEEDS_FORM_INPUT");
   });
 
-  it("does not show disabled summary when CTA is enabled", () => {
-    renderFooter({ nextDisabled: false, footerBlocker: "Confirmă rolul pentru toate straturile." });
+  it("counts review warnings in the collapsed issues title", () => {
+    renderFooter(
+      {
+        nextDisabled: false,
+        footerBlocker: null,
+        workspaceState: baseWorkspaceState({ layerChips: [] }),
+      },
+      ["Verifica latimea cantului."],
+      { layersTotal: 0, layersConfirmed: 0 },
+    );
 
     expect(screen.getByTestId("intake-v6-footer-next")).toBeEnabled();
-    expect(screen.queryByTestId("intake-v6-disabled-cta-summary")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-footer-issues-toggle")).toHaveTextContent(
+      "Probleme & atenționări (1)",
+    );
+    expect(screen.queryByText("Verifica latimea cantului.")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(screen.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent(
+      "Verifica latimea cantului.",
+    );
   });
 });
