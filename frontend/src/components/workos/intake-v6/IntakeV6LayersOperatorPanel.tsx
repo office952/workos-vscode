@@ -69,6 +69,10 @@ export default function IntakeV6LayersOperatorPanel({
           </p>
         </div>
 
+        <div>
+          <h3 className={v6.sectionTitle}>Rezumat straturi</h3>
+        </div>
+
         <div className="flex flex-col gap-2">
           {report && confirmation && confirmation.confirmationStatus !== "complete" ? (
             <button

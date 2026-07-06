@@ -1,4 +1,6 @@
 import { INTAKE_V6_LAYER_ROLE_OPTIONS } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
+import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
+import { INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { Layers, Palette, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
@@ -11,6 +13,8 @@ const LAYER_ROLE_LABEL_BY_VALUE = new Map(
   INTAKE_V6_LAYER_ROLE_OPTIONS.map((option) => [option.value, option.label]),
 );
 
+const INTAKE_V6_NO_PAGINATION_MAX_LAYERS = 6;
+
 function resolveLayerKindLabel(kind: string | null | undefined): string {
   if (kind === "real") return "Strat vector client";
   if (kind === "pseudo") return "Strat generat";
@@ -21,6 +25,12 @@ function resolveLayerKindLabel(kind: string | null | undefined): string {
 function resolveRoleLabel(role: string | null | undefined): string {
   if (!role) return "—";
   return LAYER_ROLE_LABEL_BY_VALUE.get(role as LayerAutoRole) ?? role;
+}
+
+function shortRoleLabel(role: LayerAutoRole): string {
+  if (role === "face") return "Vector Litere";
+  if (role === "logo" || role === "printed_artwork") return "Vector Atipic";
+  return resolveRoleLabel(role);
 }
 
 function resolveOperatorLayerName(report: SvgAnalysisCoreReport, layer: SvgAnalysisCoreReport["layers"][number]): string {
@@ -50,14 +60,35 @@ function resolveLayerRow(
 }
 
 function LayerRoleSelect({
+  layer,
+  report,
   layerKey,
   selectedRole,
   onUpdateLayerRole,
+  workspaceTemplateCode,
 }: {
+  layer: SvgAnalysisCoreReport["layers"][number];
+  report: SvgAnalysisCoreReport;
   layerKey: string;
   selectedRole: LayerAutoRole;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
+  workspaceTemplateCode?: string | null;
 }) {
+  const target = resolveIntakeV6LayerTargetTemplate({
+    layer,
+    selectedRole,
+    workspaceTemplateCode,
+  });
+  const recommendedOrder: LayerAutoRole[] =
+    target.templateCode === INTAKE_V6_LOGO_TEMPLATE_CODE
+      ? ["logo", "printed_artwork", "vinyl", "face", "ignore", "unknown"]
+      : ["face", "return", "backing", "vinyl", "ignore", "unknown"];
+  const recommended = recommendedOrder
+    .map((value) => INTAKE_V6_LAYER_ROLE_OPTIONS.find((option) => option.value === value))
+    .filter((option): option is (typeof INTAKE_V6_LAYER_ROLE_OPTIONS)[number] => Boolean(option));
+  const recommendedValues = new Set(recommended.map((option) => option.value));
+  const secondary = INTAKE_V6_LAYER_ROLE_OPTIONS.filter((option) => !recommendedValues.has(option.value));
+
   return (
     <select
       className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
@@ -65,11 +96,20 @@ function LayerRoleSelect({
       onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
       data-testid={`intake-v6-layer-role-${layerKey}`}
     >
-      {INTAKE_V6_LAYER_ROLE_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
+      <optgroup label="Recomandate">
+        {recommended.map((option) => (
+          <option key={option.value} value={option.value}>
+            {shortRoleLabel(option.value)}
+          </option>
+        ))}
+      </optgroup>
+      <optgroup label="Alte roluri">
+        {secondary.map((option) => (
+          <option key={option.value} value={option.value}>
+            {shortRoleLabel(option.value)}
+          </option>
+        ))}
+      </optgroup>
     </select>
   );
 }
@@ -250,6 +290,7 @@ export default function IntakeV6LayersRoleTable({
   layout = compact ? "cards" : "table",
   hoveredLayerKey = null,
   onHoverLayerKey,
+  workspaceTemplateCode,
 }: {
   report: SvgAnalysisCoreReport;
   confirmation: LayerRoleConfirmation;
@@ -258,17 +299,19 @@ export default function IntakeV6LayersRoleTable({
   layout?: "table" | "cards" | "legend";
   hoveredLayerKey?: string | null;
   onHoverLayerKey?: (layerKey: string | null) => void;
+  workspaceTemplateCode?: string | null;
 }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [internalHoveredLayerKey, setInternalHoveredLayerKey] = useState<string | null>(null);
   const focusedLayerKey = hoveredLayerKey ?? internalHoveredLayerKey;
   const setFocusedLayerKey = onHoverLayerKey ?? setInternalHoveredLayerKey;
-  const pageCount = Math.max(1, Math.ceil(report.layers.length / INTAKE_V6_CARD_PAGE_SIZE));
+  const shouldPaginate = report.layers.length > Math.max(INTAKE_V6_CARD_PAGE_SIZE, INTAKE_V6_NO_PAGINATION_MAX_LAYERS);
+  const pageCount = shouldPaginate ? Math.max(1, Math.ceil(report.layers.length / INTAKE_V6_CARD_PAGE_SIZE)) : 1;
   const paginatedLayers = useMemo(() => {
-    if (report.layers.length <= INTAKE_V6_CARD_PAGE_SIZE) return report.layers;
+    if (!shouldPaginate) return report.layers;
     const start = pageIndex * INTAKE_V6_CARD_PAGE_SIZE;
     return report.layers.slice(start, start + INTAKE_V6_CARD_PAGE_SIZE);
-  }, [pageIndex, report.layers]);
+  }, [pageIndex, report.layers, shouldPaginate]);
 
   useEffect(() => {
     setPageIndex((current) => Math.min(current, pageCount - 1));
@@ -314,7 +357,7 @@ export default function IntakeV6LayersRoleTable({
             {report.layers.length} straturi
           </span>
         </div>
-        {report.layers.length > INTAKE_V6_CARD_PAGE_SIZE ? (
+        {shouldPaginate ? (
           <IntakeV6CardPagination
             pageIndex={pageIndex}
             pageCount={pageCount}
@@ -328,19 +371,50 @@ export default function IntakeV6LayersRoleTable({
           data-testid="intake-v6-layer-card-grid"
           onMouseLeave={() => setFocusedLayerKey(null)}
         >
-          {paginatedLayers.map((layer) => {
+            {paginatedLayers.map((layer, index) => {
             const { layerKey } = resolveLayerRow(report, confirmation, layer);
+              const display = buildIntakeV6LayerDisplayLabel(layer, pageIndex * INTAKE_V6_CARD_PAGE_SIZE + index, report);
+              const primaryLabel = display.primaryLabel.replace(/\s*\/\s*artwork$/i, "");
+              const target = resolveIntakeV6LayerTargetTemplate({
+                layer,
+                selectedRole: resolveLayerRow(report, confirmation, layer).selectedRole,
+                workspaceTemplateCode,
+              });
             return (
-              <LayerCard
-                key={layer.id}
-                layer={layer}
-                report={report}
-                confirmation={confirmation}
-                onUpdateLayerRole={onUpdateLayerRole}
-                focused={focusedLayerKey === layerKey}
-                onFocus={() => setFocusedLayerKey(layerKey)}
-                onBlur={() => setFocusedLayerKey(null)}
-              />
+                <article
+                  key={layer.id}
+                  className={`rounded-md border px-3 py-3 transition outline-none focus-visible:ring-1 focus-visible:ring-cyan-400/50 ${
+                    focusedLayerKey === layerKey
+                      ? "border-cyan-400/40 bg-cyan-400/5"
+                      : resolveLayerRow(report, confirmation, layer).requiresAttention
+                        ? "border-amber-500/30 bg-amber-500/5"
+                        : "border-[#2A3548]/80 bg-[#0A0F1A]/40"
+                  }`}
+                  data-testid={`intake-v6-layer-row-${layerKey}`}
+                  tabIndex={0}
+                  onMouseEnter={() => setFocusedLayerKey(layerKey)}
+                  onMouseLeave={() => setFocusedLayerKey(null)}
+                  onFocus={() => setFocusedLayerKey(layerKey)}
+                  onBlur={() => setFocusedLayerKey(null)}
+                >
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-[12px] font-semibold text-slate-100">{primaryLabel}</p>
+                      <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
+                      <p className="text-[11px] text-slate-500">Țintă automată Product System: {target.templateCode}</p>
+                    </div>
+                    <LayerStatusBadge state={resolveLayerRow(report, confirmation, layer).entry?.confirmationState} layerKey={layerKey} />
+                  </div>
+                  <p className="mb-2 text-[11px] text-slate-400">Rol producție</p>
+                  <LayerRoleSelect
+                    layer={layer}
+                    report={report}
+                    layerKey={layerKey}
+                    selectedRole={resolveLayerRow(report, confirmation, layer).selectedRole}
+                    onUpdateLayerRole={onUpdateLayerRole}
+                    workspaceTemplateCode={workspaceTemplateCode}
+                  />
+                </article>
             );
           })}
         </div>

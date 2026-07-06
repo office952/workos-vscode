@@ -305,8 +305,8 @@ describe("IntakeV6LayersRoleTable display labels", () => {
       />,
     );
 
-    expect(screen.getByDisplayValue("face").selectedOptions[0]?.textContent).toBe("Vector Litere");
-    expect(screen.getByDisplayValue("printed_artwork").selectedOptions[0]?.textContent).toBe("Vector Atipic");
+    expect((screen.getByTestId("intake-v6-layer-role-pseudo:maria") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Litere");
+    expect((screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Atipic");
   });
 
   it("keeps all six layers visible without pagination", () => {
