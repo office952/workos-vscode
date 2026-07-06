@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type {
   IntakeV6ArtworkFinish,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6MaterialBreakdownResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
@@ -306,7 +307,88 @@ const baseBreakdown: IntakeV6MaterialBreakdownResponse = {
   warnings: [],
 };
 
+const logicalList: IntakeV6LogicalListReadModelResponse = {
+  read_only: true,
+  source: "gradi_logical_list_read_model_v1",
+  core_row_count: 21,
+  target_core_row_count: 21,
+  core_rows_complete: true,
+  categories: ["TOATE", "MATERIALE", "SERVICII / OPERATII", "MANOPERA"],
+  rows: [
+    ["material.plexiglas_face", "MATERIALE", "MATCHED", "Plexiglas 3 mm / fata litere", 1.2638, "m2", "MATERIAL_PLEXI_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 1],
+    ["material.logo_plexiglas_face", "MATERIALE", "MATCHED", "Plexiglas 3 mm / embleme/logo", 0.8005, "m2", "MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 0],
+    ["material.forex_backing", "MATERIALE", "PARTIAL", "Forex 10 mm / spate litere", 1.2638, "m2", "MATERIAL_FOREX_BACK_BY_AREA_V1", "v1", "proposed_binding", ["BACKING_AREA_FALLBACK_USED"], [], 1],
+    ["material.face_oracal", "MATERIALE", "PARTIAL_TARIFF_CONFIRMATION_REQUIRED", "Vinil fata Oracal - consum pe serii 641 + 651", 1.3751, "m2", "MATERIAL_ORACAL_FACE_BY_NESTED_AREA_V1", "v1", "proposed_binding", [], ["ORACAL_ROLL_COLOR_SPLIT_MISSING"], 2],
+    ["material.print", "MATERIALE", "SPLIT_IN_RUNTIME", "Material print Orafol", 0.996821, "m2", "MATERIAL_PRINT_BY_NESTED_AREA_V1", "v1", "proposed_binding", ["PRINT_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], [], 3],
+    ["material.lamination", "MATERIALE", "SPLIT_IN_RUNTIME", "Material laminare Orafol", 0.996821, "m2", "MATERIAL_LAMINATION_BY_NESTED_AREA_V1", "v1", "proposed_binding", ["LAMINATION_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], [], 3],
+    ["material.led_modules", "MATERIALE", "MATCHED", "Module LED", 144, "buc", "MATERIAL_LED_MODULES_BY_AREA_DENSITY_V1", "v1", "legacy_unversioned", ["FORMULA_TRACE_MISSING"], [], 1],
+    ["material.led_psu", "MATERIALE", "MATCHED", "Sursa LED 12V", 1, "buc", "MATERIAL_PSU_BY_POWER_SAFETY_FACTOR_V1", "v1", "legacy_unversioned", [], [], 1],
+    ["service.cnc_face", "SERVICII_OPERATII", "MATCHED", "Debitare CNC fata Plexiglas", 25.0188, "ml", "SERVICE_CNC_FACE_CUT_BY_CONTOUR_LENGTH_V1", "v1", "proposed_binding", [], [], 0],
+    ["service.print", "SERVICII_OPERATII", "SPLIT_IN_RUNTIME", "Serviciu print", 1.1962, "m2", "SERVICE_PRINT_BY_AREA_V1", "v1", "proposed_binding", ["PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], [], 3],
+    ["service.lamination", "SERVICII_OPERATII", "SPLIT_IN_RUNTIME", "Serviciu laminare X-PRO", 1.1962, "m2", "SERVICE_LAMINATION_BY_AREA_V1", "v1", "legacy_unversioned", ["LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], [], 3],
+    ["service.application", "SERVICII_OPERATII", "SPLIT_IN_RUNTIME", "Serviciu aplicare", 1.1962, "m2", "SERVICE_APPLICATION_BY_AREA_V1", "v1", "legacy_unversioned", ["APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], [], 3],
+    ["labor.cant_glue", "MANOPERA", "MATCHED", "Lipire cant / volum pe fata litere", 31.6382, "m", "LABOR_CANT_GLUE_BY_PERIMETER_V1", "v1", "proposed_binding", [], [], 1],
+  ].map(([line_id, category, status, display_label, quantity, unit, formula_code_proposed, formula_version_proposed, formula_status, gaps, warnings, childCount]) => ({
+    line_id: String(line_id),
+    category: String(category),
+    status: String(status),
+    display_label: String(display_label),
+    quantity: Number(quantity),
+    unit: String(unit),
+    formula_code_proposed: String(formula_code_proposed),
+    formula_version_proposed: String(formula_version_proposed),
+    formula_status: String(formula_status),
+    gaps: gaps as string[],
+    warnings: warnings as string[],
+    child_rows: Array.from({ length: Number(childCount) }, (_, index) => ({ index })),
+  })),
+  warnings: ["BACKING_AREA_FALLBACK_USED"],
+  blockers: [],
+  validation: { formula_trace_metadata_present: true },
+};
+
 describe("IntakeV6LiveCalculationSummary", () => {
+  it("uses logical-list rows as the primary owner-facing list when available", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        logicalList={logicalList}
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent("21/21");
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_face")).toHaveTextContent(
+      /Plexiglas 3 mm \/ fata litere/,
+    );
+    expect(screen.getByTestId("intake-v6-live-material-used-material.logo_plexiglas_face")).toHaveTextContent(
+      /Plexiglas 3 mm \/ embleme\/logo/,
+    );
+    expect(screen.getByTestId("intake-v6-live-material-used-material.forex_backing")).toHaveTextContent(
+      /Forex 10 mm \/ spate litere/,
+    );
+    expect(screen.getByTestId("intake-v6-live-material-used-material.face_oracal")).toHaveTextContent(/Oracal/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.led_modules")).toHaveTextContent(/Module LED/);
+    expect(screen.getByTestId("intake-v6-live-material-used-service.cnc_face")).toHaveTextContent(/Debitare CNC/);
+    expect(screen.getByTestId("intake-v6-live-material-used-labor.cant_glue")).toHaveTextContent(/Lipire cant/);
+    expect(screen.queryByTestId("intake-v6-live-material-used-plexi_letters")).not.toBeInTheDocument();
+  });
+
+  it("shows logical-list formula metadata, gaps, categories, and child row counts", () => {
+    render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={logicalList} />);
+
+    expect(screen.getByTestId("intake-v6-logical-list-category-MATERIALE")).toHaveTextContent(/Materiale/);
+    expect(screen.getByTestId("intake-v6-logical-list-category-SERVICII_OPERATII")).toHaveTextContent(/Servicii/);
+    expect(screen.getByTestId("intake-v6-logical-list-category-MANOPERA")).toHaveTextContent(/Manoperă/);
+    expect(screen.getByTestId("intake-v6-logical-formula-material.plexiglas_face")).toHaveTextContent(
+      "MATERIAL_PLEXI_FACE_BY_AREA_V1 @ v1",
+    );
+    expect(screen.getByTestId("intake-v6-logical-gaps-material.forex_backing")).toHaveTextContent(
+      "BACKING_AREA_FALLBACK_USED",
+    );
+    expect(screen.getByTestId("intake-v6-logical-children-material.face_oracal")).toHaveTextContent("child rows: 2");
+  });
+
   it("renders one compact table with quantity and price columns", () => {
     render(
       <IntakeV6LiveCalculationSummary
@@ -322,7 +404,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByText("Linie")).toBeInTheDocument();
     expect(screen.getByText("Consum")).toBeInTheDocument();
     expect(screen.getByText("Preț")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent("298.45 EUR");
+    expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);
     expect(screen.getByTestId("intake-v6-live-missing-rates-banner")).toHaveTextContent(/Tarife lipsă/);
   });
 
@@ -452,8 +534,8 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-live-calc-filters")).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("intake-v6-live-filter-lighting"));
-    expect(screen.getByTestId("intake-v6-live-material-used-led_modules")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("intake-v6-live-filter-services_operations"));
+    expect(screen.getByTestId("intake-v6-live-material-used-cnc_face")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-live-material-used-plexi_letters")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("intake-v6-live-filter-all"));
@@ -471,9 +553,9 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.queryByTestId("intake-v6-live-filter-subtotal")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("intake-v6-live-filter-lighting"));
+    fireEvent.click(screen.getByTestId("intake-v6-live-filter-services_operations"));
     expect(screen.getByTestId("intake-v6-live-filter-subtotal")).toHaveTextContent(/Subtotal filtru:/);
-    expect(screen.getByTestId("intake-v6-live-filter-line-count")).toHaveTextContent(/Nr\. linii: 1/);
+    expect(screen.getByTestId("intake-v6-live-filter-line-count")).toHaveTextContent(/Nr\. linii: 5/);
     expect(screen.queryByTestId("intake-v6-live-filter-artwork")).not.toBeInTheDocument();
   });
 

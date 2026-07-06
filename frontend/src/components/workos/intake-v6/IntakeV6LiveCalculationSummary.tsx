@@ -1,5 +1,7 @@
 import type {
   IntakeV6ArtworkFinish,
+  IntakeV6LogicalListLineTrace,
+  IntakeV6LogicalListReadModelResponse,
   IntakeV6MaterialBreakdownResponse,
   IntakeV6PricedQuoteDryRunResponse,
   IntakeV6PricingInputPreviewResponse,
@@ -34,6 +36,14 @@ import { v6 } from "./atoms/intakeV6Presentation";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
+type LiveCalcDisplayRow = ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number] & {
+  category?: string;
+  formulaText?: string;
+  gapText?: string;
+  childCount?: number;
+  source?: "logical-list" | "material-breakdown";
+};
+
 function joinClassNames(...parts: Array<string | false | null | undefined>): string {
   return parts.filter(Boolean).join(" ");
 }
@@ -43,52 +53,136 @@ function totalCostLabel(value: number | null | undefined, currency: string): str
   return formatFaceBackPrepMoney(value, currency);
 }
 
+function normalizeLogicalCategory(category: string | null | undefined): string {
+  if (!category) return "FARA_CATEGORIE";
+  return category === "SERVICII / OPERATII" ? "SERVICII_OPERATII" : category;
+}
+
+function logicalCategoryLabel(category: string | null | undefined): string {
+  const normalized = normalizeLogicalCategory(category);
+  if (normalized === "MATERIALE") return "Materiale";
+  if (normalized === "SERVICII_OPERATII") return "Servicii / Operații";
+  if (normalized === "MANOPERA") return "Manoperă";
+  return normalized.replace(/_/g, " ");
+}
+
+function formatLogicalQuantity(row: IntakeV6LogicalListLineTrace): string {
+  if (row.quantity == null || !Number.isFinite(row.quantity)) return "cantitate lipsă";
+  const quantity = Math.round(row.quantity * 10000) / 10000;
+  return `${quantity} ${row.unit ?? ""}`.trim();
+}
+
+function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
+  if ((row.blockers?.length ?? 0) > 0) return "blocat";
+  if ((row.gaps?.length ?? 0) > 0) return "gap explicit";
+  if (row.formula_status === "legacy_unversioned") return "legacy";
+  if (row.status?.includes("PARTIAL")) return "estimat";
+  if (row.status === "MATCHED") return "priced";
+  return row.status?.toLowerCase().replace(/_/g, " ") || "read-only";
+}
+
+function buildLogicalDisplayRows(logicalList: IntakeV6LogicalListReadModelResponse | null | undefined): LiveCalcDisplayRow[] {
+  const rows = logicalList?.rows ?? [];
+  return rows.map((row) => {
+    const formula = [row.formula_code_proposed, row.formula_version_proposed].filter(Boolean).join(" @ ");
+    const gaps = [...(row.gaps ?? []), ...(row.warnings ?? []), ...(row.blockers ?? [])];
+    return {
+      groupKey: row.line_id,
+      label: row.display_label,
+      quantityText: formatLogicalQuantity(row),
+      costText: resolveLogicalStatus(row),
+      muted: (row.gaps?.length ?? 0) > 0 || (row.blockers?.length ?? 0) > 0,
+      category: normalizeLogicalCategory(row.category),
+      formulaText: formula || "formula lipsă",
+      gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
+      childCount: row.child_rows?.length ?? 0,
+      source: "logical-list",
+    } satisfies LiveCalcDisplayRow;
+  });
+}
+
 function LiveCalcLineList({
   filteredRows,
   activeFilter,
   filterTotals,
   currency,
+  logicalMode = false,
 }: {
-  filteredRows: ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>;
+  filteredRows: LiveCalcDisplayRow[];
   activeFilter: LiveCalcFilterId;
   filterTotals: ReturnType<typeof sumFilteredLiveCalcRows>;
   currency: string;
+  logicalMode?: boolean;
 }) {
+  const groups = logicalMode
+    ? Array.from(
+        filteredRows.reduce((map, row) => {
+          const category = row.category ?? "FARA_CATEGORIE";
+          const existing = map.get(category) ?? [];
+          existing.push(row);
+          map.set(category, existing);
+          return map;
+        }, new Map<string, LiveCalcDisplayRow[]>()),
+      )
+    : [["", filteredRows] as [string, LiveCalcDisplayRow[]]];
+
   return (
     <div className="overflow-hidden rounded border border-[#1F2A3D]/90">
       <div className="grid grid-cols-[minmax(0,1fr)_80px_84px] border-b border-[#1F2A3D] bg-[#101827] px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
         <span>Linie</span>
         <span className="text-right">Consum</span>
-        <span className="text-right">Preț</span>
+        <span className="text-right">{logicalMode ? "Status" : "Preț"}</span>
       </div>
       <ul className="divide-y divide-[#1F2A3D]/80 text-[12px]" data-testid="intake-v6-live-materials-list">
         {filteredRows.length === 0 ? (
           <li className="px-2.5 py-2.5 text-[12px] text-slate-400">Nicio linie pentru filtrul selectat.</li>
         ) : (
-          filteredRows.map((item) => (
-            <li
-              key={item.groupKey}
-              className="grid grid-cols-[minmax(0,1fr)_80px_84px] items-start gap-2 px-2.5 py-2"
-              data-testid={`intake-v6-live-material-used-${item.groupKey}`}
-            >
-              <span className="min-w-0 truncate leading-relaxed text-slate-200" title={item.label}>
-                {item.label}
-              </span>
-              <span className="text-right font-mono text-[12px] tabular-nums text-slate-300">{item.quantityText}</span>
-              <span
-                className={joinClassNames(
-                  "text-right font-mono text-[12px] tabular-nums",
-                  item.muted ? "text-amber-200/90" : "text-slate-100",
-                )}
-                data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
-              >
-                {item.costText}
-              </span>
+          groups.map(([category, items]) => (
+            <li key={category || "breakdown"} className="contents">
+              {logicalMode ? (
+                <div
+                  className="bg-[#0d1420] px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-200/80"
+                  data-testid={`intake-v6-logical-list-category-${category}`}
+                >
+                  {logicalCategoryLabel(category)} · {items.length}
+                </div>
+              ) : null}
+              {items.map((item) => (
+                <div
+                  key={item.groupKey}
+                  className="grid grid-cols-[minmax(0,1fr)_80px_84px] items-start gap-2 px-2.5 py-2"
+                  data-testid={`intake-v6-live-material-used-${item.groupKey}`}
+                >
+                  <span className="min-w-0 leading-relaxed text-slate-200" title={item.label}>
+                    <span className="block truncate">{item.label}</span>
+                    {logicalMode ? (
+                      <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">
+                        <span data-testid={`intake-v6-logical-formula-${item.groupKey}`}>{item.formulaText}</span>
+                        <span data-testid={`intake-v6-logical-gaps-${item.groupKey}`}>{item.gapText}</span>
+                        <span data-testid={`intake-v6-logical-children-${item.groupKey}`}>
+                          child rows: {item.childCount ?? 0}
+                        </span>
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="text-right font-mono text-[12px] tabular-nums text-slate-300">{item.quantityText}</span>
+                  <span
+                    className={joinClassNames(
+                      "text-right text-[12px] tabular-nums",
+                      logicalMode ? "font-semibold" : "font-mono",
+                      item.muted ? "text-amber-200/90" : "text-slate-100",
+                    )}
+                    data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
+                  >
+                    {item.costText}
+                  </span>
+                </div>
+              ))}
             </li>
           ))
         )}
       </ul>
-      {activeFilter !== "all" ? (
+      {activeFilter !== "all" && !logicalMode ? (
         <div
           className="flex flex-wrap items-center justify-between gap-2 border-t border-[#1F2A3D] bg-[#0d1420]/80 px-2.5 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-live-filter-subtotal"
@@ -181,6 +275,7 @@ export default function IntakeV6LiveCalculationSummary({
   artworkFinishes = [],
   pricingPreview = null,
   officialPricing = null,
+  logicalList = null,
   commercialInputs = null,
   eurToRonRate = null,
   hideTitle = false,
@@ -197,6 +292,7 @@ export default function IntakeV6LiveCalculationSummary({
   artworkFinishes?: IntakeV6ArtworkFinish[];
   pricingPreview?: IntakeV6PricingInputPreviewResponse | null;
   officialPricing?: IntakeV6PricedQuoteDryRunResponse | null;
+  logicalList?: IntakeV6LogicalListReadModelResponse | null;
   commercialInputs?: IntakeV6OfferCommercialInputs | null;
   eurToRonRate?: number | null;
   hideTitle?: boolean;
@@ -209,13 +305,18 @@ export default function IntakeV6LiveCalculationSummary({
   const missingPrices = artworkOnlyBlocked ? false : breakdown?.totals.contains_missing_prices === true;
   const isBar = layout === "bar";
   const isRightPanel = layout === "rightPanel";
-  const rows = buildIntakeV6LiveMaterialsUsedRows({
+  const breakdownRows = buildIntakeV6LiveMaterialsUsedRows({
     breakdown,
     operatorCantPerimeterM,
     letterGroups,
     artworkFinishes,
     currency,
   });
+  const logicalRows = useMemo(() => buildLogicalDisplayRows(logicalList), [logicalList]);
+  const usesLogicalList = logicalRows.length > 0;
+  const rows: LiveCalcDisplayRow[] = usesLogicalList ? logicalRows : breakdownRows.map((row) => ({ ...row, source: "material-breakdown" }));
+  const logicalRowCount = logicalList?.core_row_count ?? logicalRows.length;
+  const logicalTargetRowCount = logicalList?.target_core_row_count ?? null;
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<LiveCalcFilterId>("all");
   const offerModel =
@@ -240,7 +341,7 @@ export default function IntakeV6LiveCalculationSummary({
   );
   const filterOptions = useMemo(() => resolveLiveCalcFilterOptions(rows), [rows]);
   const filterTotals = useMemo(() => sumFilteredLiveCalcRows(filteredRows), [filteredRows]);
-  const previewRows = isRightPanel ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
+  const previewRows = isRightPanel && !usesLogicalList ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
   const hiddenPreviewCount = Math.max(0, filteredRows.length - previewRows.length);
   const missingRateLabels = rows
     .filter((row) => row.muted || row.costText === "tarif lipsă")
@@ -304,6 +405,14 @@ export default function IntakeV6LiveCalculationSummary({
         </p>
       ) : null}
       {filterChips}
+      {usesLogicalList ? (
+        <p
+          className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
+          data-testid="intake-v6-logical-list-summary"
+        >
+          Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri · material breakdown în detalii tehnice.
+        </p>
+      ) : null}
       {loading ? (
         <p className="text-[11px] text-slate-400">Actualizez estimările…</p>
       ) : rows.length > 0 ? (
@@ -312,6 +421,7 @@ export default function IntakeV6LiveCalculationSummary({
           activeFilter={activeFilter}
           filterTotals={filterTotals}
           currency={currency}
+          logicalMode={usesLogicalList}
         />
       ) : (
         <p className="text-[11px] text-slate-400">Nu există încă breakdown live.</p>
@@ -496,12 +606,21 @@ export default function IntakeV6LiveCalculationSummary({
           <p className="mb-2 text-[11px] text-slate-400">Actualizez estimările…</p>
         ) : rows.length > 0 ? (
           <div data-testid="intake-v6-live-materials-used">
+            {usesLogicalList ? (
+              <p
+                className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
+                data-testid="intake-v6-logical-list-summary"
+              >
+                Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
+              </p>
+            ) : null}
             {filterChips}
             <LiveCalcLineList
               filteredRows={previewRows}
               activeFilter={activeFilter}
               filterTotals={filterTotals}
               currency={currency}
+              logicalMode={usesLogicalList}
             />
             {hiddenPreviewCount > 0 ? (
               <p className="mt-1.5 text-[11px] text-slate-400" data-testid="intake-v6-live-preview-more">
@@ -619,6 +738,14 @@ export default function IntakeV6LiveCalculationSummary({
         <p className="text-[11px] text-slate-400">Actualizez estimările…</p>
       ) : rows.length > 0 ? (
         <div data-testid="intake-v6-live-materials-used">
+          {usesLogicalList ? (
+            <p
+              className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
+              data-testid="intake-v6-logical-list-summary"
+            >
+              Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
+            </p>
+          ) : null}
           {filterChips}
 
           <button
@@ -640,6 +767,7 @@ export default function IntakeV6LiveCalculationSummary({
               activeFilter={activeFilter}
               filterTotals={filterTotals}
               currency={currency}
+              logicalMode={usesLogicalList}
             />
           </div>
         </div>

@@ -27,6 +27,49 @@ export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_hash?: string;
 };
 
+export type IntakeV6LogicalListCategory = "MATERIALE" | "SERVICII_OPERATII" | "MANOPERA" | string;
+
+export type IntakeV6LogicalListLineTrace = {
+  line_id: string;
+  display_label: string;
+  category: IntakeV6LogicalListCategory;
+  product_template_code?: string | null;
+  component_code?: string | null;
+  module_code?: string | null;
+  formula_code_proposed?: string | null;
+  formula_version_proposed?: string | null;
+  formula_status?: string | null;
+  status?: string | null;
+  quantity?: number | null;
+  unit?: string | null;
+  subtotal?: number | null;
+  currency?: string | null;
+  runtime_source?: string | null;
+  child_rows?: Array<Record<string, unknown>>;
+  preferences?: Record<string, unknown>;
+  gaps?: string[];
+  warnings?: string[];
+  blockers?: string[];
+};
+
+export type IntakeV6LogicalListReadModelResponse = {
+  read_only?: boolean;
+  source?: string;
+  workspace_id?: string | null;
+  workspace_code?: string | null;
+  template_code?: string | null;
+  categories?: string[];
+  core_row_count?: number | null;
+  target_core_row_count?: number | null;
+  core_rows_complete?: boolean;
+  rows?: IntakeV6LogicalListLineTrace[];
+  excluded_extra_commercial_lines?: Array<Record<string, unknown>>;
+  warnings?: string[];
+  blockers?: string[];
+  runtime_totals?: Record<string, unknown>;
+  validation?: Record<string, boolean | string | number | null>;
+};
+
 export type IntakeV6PricedQuoteWriteRequest = {
   quote_id: number;
   expected_total_gross: number;
