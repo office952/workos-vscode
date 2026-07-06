@@ -244,11 +244,11 @@ function operatorHintForProductLine(
 ): string {
   switch (moduleCode) {
     case "debitare_fata":
-      return state === "pending" ? "Completează finisajele feței" : "Pregătită din fișierul încărcat";
+      return state === "pending" ? "Verifica daca finisajul fetelor este corect." : "Pregătită din fișierul încărcat";
     case "modelare_cant":
-      return state === "pending" ? "Completează adâncimea cantului" : "Volum aluminiu / cant lateral";
+      return state === "pending" ? "Verifica latimea cantului." : "Volum aluminiu / cant lateral";
     case "debitare_spate":
-      return state === "pending" ? "Completează setările spatelui" : "Capac/spate pregătit";
+      return state === "pending" ? "Verifica daca varianta de confectionare a spatelui este corecta." : "Capac/spate pregătit";
     case "sistem_led":
       if (state === "inactive") return "Fără iluminare";
       if (state === "pending") return "LED în curs de completare";
@@ -337,6 +337,38 @@ function buildOperatorProductSummaryView(
     mountingNotApplicableNote,
     technical,
   };
+}
+
+const OPERATOR_ATTENTION_MESSAGES: Partial<Record<string, string>> = {
+  debitare_fata: "Verifica daca finisajul fetelor este corect.",
+  modelare_cant: "Verifica latimea cantului.",
+  debitare_spate: "Verifica daca varianta de confectionare a spatelui este corecta.",
+};
+
+export function resolveModuleActivationAttentionWarnings(
+  preview: ModuleActivationPreviewResult | null | undefined,
+): string[] {
+  if (!preview) return [];
+
+  const warnings: string[] = [];
+  const lines = [
+    ...preview.operatorView.productReady,
+    ...preview.operatorView.mounting,
+  ];
+
+  for (const line of lines) {
+    if (line.state !== "pending" && line.missingFields.length === 0) continue;
+    const message = OPERATOR_ATTENTION_MESSAGES[line.key];
+    if (message && !warnings.includes(message)) {
+      warnings.push(message);
+    }
+  }
+
+  if (preview.triggerMismatchNote && preview.structuraSuportDerived) {
+    warnings.push(preview.triggerMismatchNote);
+  }
+
+  return warnings;
 }
 
 export function buildModuleActivationPreview(

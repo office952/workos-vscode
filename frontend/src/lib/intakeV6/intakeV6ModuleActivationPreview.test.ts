@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildModuleActivationPreview } from "./intakeV6ModuleActivationPreview";
+import {
+  buildModuleActivationPreview,
+  resolveModuleActivationAttentionWarnings,
+} from "./intakeV6ModuleActivationPreview";
 import type { IntakeV6ModularFormContractResponse } from "./intakeV6ModularFormContractTypes";
 
 const SAMPLE_CONTRACT: IntakeV6ModularFormContractResponse = {
@@ -104,6 +107,17 @@ describe("buildModuleActivationPreview", () => {
     expect(labels).toContain("Spate litere");
     expect(labels).toContain("Iluminare LED");
     expect(labels).toContain("Finisaje");
+  });
+
+  it("returns only operator attention messages for pending product checks", () => {
+    const preview = buildModuleActivationPreview(SAMPLE_CONTRACT, {
+      ...READY_INPUT,
+      finishSetup: { mounting_system: "direct_wall", illuminated: false },
+    });
+
+    expect(resolveModuleActivationAttentionWarnings(preview)).toEqual([
+      "Verifica daca finisajul fetelor este corect.",
+    ]);
   });
 
   it("excludes structura_suport from product and mounting when direct_wall", () => {
