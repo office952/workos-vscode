@@ -13,11 +13,12 @@ describe("resolveLetterGroupFaceFinishOptions", () => {
 
   it("includes allowed letter face finishes with none option", () => {
     const options = resolveLetterGroupFaceFinishOptions(templateWithPrint);
-    expect(options.map((o) => o.value)).toEqual(["none", "oracal_641", "oracal_651", "oracal_8500"]);
+    expect(options.map((o) => o.value)).toEqual(["none", "oracal_641", "oracal_651", "oracal_8500", "print_laminate"]);
     expect(options.find((o) => o.value === "none")?.label).toBe("Fără finisaj — plexiglas brut");
+    expect(options.find((o) => o.value === "print_laminate")?.label).toBe("Print + laminare");
   });
 
-  it("excludes print vinyl options from letter groups", () => {
+  it("excludes legacy print-only vinyl option from letter groups", () => {
     const options = resolveLetterGroupFaceFinishOptions(templateWithPrint);
     const labels = options.map((o) => o.label);
     expect(labels).not.toContain("Print pe vinyl");

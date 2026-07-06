@@ -142,8 +142,40 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expect(labels).toContain("Oracal 641");
     expect(labels).toContain("Oracal 651");
     expect(labels).toContain("Oracal 8500 — translucid");
+    expect(labels).toContain("Print + laminare");
     expect(labels).not.toContain("Print pe vinyl");
     expect(labels).not.toContain("Print + laminare pe vinyl");
+  });
+
+  it("lets letter groups select print and lamination", () => {
+    const onChange = vi.fn();
+    render(<IntakeV6ReviewLetterGroupsSection groups={groups} onChange={onChange} />);
+    expandLetterGroupCard("a");
+    fireEvent.change(screen.getByTestId("intake-v6-face-type-a"), {
+      target: { value: "print_laminate" },
+    });
+    const next = onChange.mock.calls.at(-1)![0] as IntakeV6LetterGroupFinish[];
+    expect(next[0]).toMatchObject({
+      group_key: "a",
+      face_finish_type: "print_laminate",
+      face_oracal_code: null,
+      face_vinyl_roll_width_mm: 1050,
+      confirmed: false,
+    });
+  });
+
+  it("uses print and lamination roll widths for letter groups", () => {
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={[{ ...groups[0]!, face_finish_type: "print_laminate", face_vinyl_roll_width_mm: 1050 }]}
+        onChange={vi.fn()}
+      />,
+    );
+    expandLetterGroupCard("a");
+    const select = screen.getByTestId("intake-v6-face-roll-width-a");
+    const values = Array.from(select.querySelectorAll("option")).map((option) => option.getAttribute("value"));
+    expect(values).toEqual(["", "1050", "1320", "1500"]);
+    expect(values).not.toContain("1000");
   });
 
   it("emits existing callback when letter face finish changes", () => {

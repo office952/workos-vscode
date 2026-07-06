@@ -17,10 +17,24 @@ export type IntakeV4ArtworkPrintTransparency = "standard" | "translucent" | "tra
 export interface IntakeV4ArtworkFinish {
   layer_key: string;
   layer_name: string;
+  display_name?: string | null;
+  source_layer_name?: string | null;
+  original_detected_label?: string | null;
+  position_hint?: string | null;
   execution_type: SvgArtworkExecutionType;
   color_mode: SvgArtworkColorMode;
   print_transparency?: IntakeV4ArtworkPrintTransparency;
   material_code?: string | null;
+  face_personalization_method?: "none_raw_plexi" | "oracal" | "print_laminate" | null;
+  face_roll_width_mm?: number | null;
+  print_roll_width_mm?: number | null;
+  lamination_roll_width_mm?: number | null;
+  roll_side_retraction_mm?: number | null;
+  roll_total_retraction_mm?: number | null;
+  face_oracal_code?: string | null;
+  face_oracal_name?: string | null;
+  print_material_code?: string | null;
+  lamination_material_code?: string | null;
   estimated_area_m2?: number | null;
   element_count?: number | null;
   distinct_fill_count?: number | null;
@@ -76,9 +90,12 @@ export function deriveArtworkFinishesFromAnalyzer(
     rows.push({
       layer_key: entry.layerKey,
       layer_name: getOperatorLayerLabel(layer.id, layer.name),
+      source_layer_name: layer.name,
+      original_detected_label: layer.name,
       execution_type: "print_laminate",
       color_mode: "polychrome",
       print_transparency: "translucent",
+      face_personalization_method: "print_laminate",
       estimated_area_m2: layerAreaM2(layer),
       element_count: layer.elementCount,
       distinct_fill_count: layer.colors?.length ?? null,
@@ -105,10 +122,24 @@ export function mergeArtworkFinishes(
         prior.execution_type && prior.execution_type !== "needs_decision"
           ? prior.execution_type
           : row.execution_type,
+      display_name: prior.display_name ?? row.display_name,
+      source_layer_name: prior.source_layer_name ?? row.source_layer_name,
+      original_detected_label: prior.original_detected_label ?? row.original_detected_label,
+      position_hint: prior.position_hint ?? row.position_hint,
       color_mode:
         prior.color_mode && prior.color_mode !== "unknown" ? prior.color_mode : row.color_mode,
       print_transparency: prior.print_transparency ?? row.print_transparency,
       material_code: prior.material_code,
+      face_personalization_method: prior.face_personalization_method ?? row.face_personalization_method,
+      face_roll_width_mm: prior.face_roll_width_mm ?? row.face_roll_width_mm,
+      print_roll_width_mm: prior.print_roll_width_mm ?? row.print_roll_width_mm,
+      lamination_roll_width_mm: prior.lamination_roll_width_mm ?? row.lamination_roll_width_mm,
+      roll_side_retraction_mm: prior.roll_side_retraction_mm ?? row.roll_side_retraction_mm,
+      roll_total_retraction_mm: prior.roll_total_retraction_mm ?? row.roll_total_retraction_mm,
+      face_oracal_code: prior.face_oracal_code ?? row.face_oracal_code,
+      face_oracal_name: prior.face_oracal_name ?? row.face_oracal_name,
+      print_material_code: prior.print_material_code ?? row.print_material_code,
+      lamination_material_code: prior.lamination_material_code ?? row.lamination_material_code,
       return_finish_type: prior.return_finish_type ?? row.return_finish_type,
       return_oracal_code: prior.return_oracal_code ?? row.return_oracal_code,
       return_oracal_name: prior.return_oracal_name ?? row.return_oracal_name,
@@ -130,6 +161,10 @@ export function artworkFinishesFromPayload(
     .map((item) => ({
       layer_key: String(item.layer_key ?? ""),
       layer_name: String(item.layer_name ?? item.layer_key ?? ""),
+      display_name: typeof item.display_name === "string" ? item.display_name : null,
+      source_layer_name: typeof item.source_layer_name === "string" ? item.source_layer_name : null,
+      original_detected_label: typeof item.original_detected_label === "string" ? item.original_detected_label : null,
+      position_hint: typeof item.position_hint === "string" ? item.position_hint : null,
       execution_type: (item.execution_type as SvgArtworkExecutionType) ?? "print_laminate",
       color_mode: (item.color_mode as SvgArtworkColorMode) ?? "polychrome",
       print_transparency:
@@ -139,6 +174,21 @@ export function artworkFinishesFromPayload(
           ? item.print_transparency
           : "standard",
       material_code: typeof item.material_code === "string" ? item.material_code : null,
+      face_personalization_method:
+        item.face_personalization_method === "none_raw_plexi" ||
+        item.face_personalization_method === "oracal" ||
+        item.face_personalization_method === "print_laminate"
+          ? item.face_personalization_method
+          : null,
+      face_roll_width_mm: typeof item.face_roll_width_mm === "number" ? item.face_roll_width_mm : null,
+      print_roll_width_mm: typeof item.print_roll_width_mm === "number" ? item.print_roll_width_mm : null,
+      lamination_roll_width_mm: typeof item.lamination_roll_width_mm === "number" ? item.lamination_roll_width_mm : null,
+      roll_side_retraction_mm: typeof item.roll_side_retraction_mm === "number" ? item.roll_side_retraction_mm : null,
+      roll_total_retraction_mm: typeof item.roll_total_retraction_mm === "number" ? item.roll_total_retraction_mm : null,
+      face_oracal_code: typeof item.face_oracal_code === "string" ? item.face_oracal_code : null,
+      face_oracal_name: typeof item.face_oracal_name === "string" ? item.face_oracal_name : null,
+      print_material_code: typeof item.print_material_code === "string" ? item.print_material_code : null,
+      lamination_material_code: typeof item.lamination_material_code === "string" ? item.lamination_material_code : null,
       estimated_area_m2:
         typeof item.estimated_area_m2 === "number" ? item.estimated_area_m2 : null,
       element_count: typeof item.element_count === "number" ? item.element_count : null,

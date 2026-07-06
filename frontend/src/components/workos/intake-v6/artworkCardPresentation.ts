@@ -7,6 +7,16 @@ const EXECUTION_LABEL: Record<string, string> = {
   print_laminate: "Print + laminare",
   print_only: "Print",
   vinyl_only: "Vinyl",
+  cut_vinyl: "Oracal",
+  translucent_vinyl: "Oracal 8500 — translucid",
+  needs_decision: "Fără finisaj — plexiglas brut",
+};
+
+const ARTWORK_MATERIAL_LABEL: Record<string, string> = {
+  ORACAL_641: "Oracal 641",
+  ORACAL_651: "Oracal 651",
+  ORACAL_8500: "Oracal 8500 — translucid",
+  ORAFOL_PRINT_LAMINATION: "Print + laminare",
 };
 
 export function artworkExecutionLabel(row: IntakeV6ArtworkFinish): string {
@@ -20,9 +30,8 @@ export function artworkTransparencyLabel(row: IntakeV6ArtworkFinish): string | n
 }
 
 export function buildArtworkFaceSummaryLine(row: IntakeV6ArtworkFinish): string {
-  const parts = [artworkExecutionLabel(row)];
-  const transparency = artworkTransparencyLabel(row);
-  if (transparency) parts.push(transparency);
+  const materialLabel = row.material_code ? ARTWORK_MATERIAL_LABEL[row.material_code] : null;
+  const parts = [materialLabel ?? artworkExecutionLabel(row)];
   if (row.color_mode === "polychrome") parts.push("Policrom");
   return parts.join(" · ");
 }

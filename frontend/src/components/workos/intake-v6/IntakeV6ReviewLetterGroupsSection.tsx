@@ -1,11 +1,14 @@
 import ColorRegistrySelect from "@/components/workos/colorRegistry/ColorRegistrySelect";
-import { INTAKE_ROLL_WIDTH_OPTIONS } from "@/lib/intakeVolumetricSpec";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
 import {
   faceFinishNeedsColorPicker,
   faceFinishNeedsRollWidth,
+  faceFinishRollWidthOptions,
   normalizeFaceVinylRollWidthMm,
   oracalColorPaletteSeriesForFace,
+  PRINT_LAMINATION_ROLL_WIDTHS_MM,
+  PRINT_LAMINATION_SIDE_RETRACTION_MM,
+  PRINT_LAMINATION_TOTAL_RETRACTION_MM,
 } from "@/lib/intakeV6/intakeV6FaceFinishOptions";
 import { resolveLetterGroupFaceFinishOptions } from "@/lib/intakeV6/intakeV6LetterGroupFaceFinishOptions";
 import {
@@ -141,6 +144,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           {paginatedGroups.map((group) => {
             const showColor = faceFinishNeedsColorPicker(group.face_finish_type);
             const showRollWidth = faceFinishNeedsRollWidth(group.face_finish_type);
+            const rollWidthOptions = faceFinishRollWidthOptions(group.face_finish_type);
             const accent = layerAccentColor(group.source_fill_color);
             const faceSummary = buildFaceSummaryLine(group, effectiveFaceOptions);
             const cantSummary = buildCantSummaryLine(group);
@@ -231,9 +235,9 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             patchGroup(group.group_key, {
                               face_finish_type: event.target.value,
                               face_oracal_code:
-                                event.target.value === "none" ? null : group.face_oracal_code,
+                                faceFinishNeedsColorPicker(event.target.value) ? group.face_oracal_code : null,
                               face_oracal_name:
-                                event.target.value === "none" ? null : group.face_oracal_name,
+                                faceFinishNeedsColorPicker(event.target.value) ? group.face_oracal_name : null,
                               face_vinyl_roll_width_mm: normalizeFaceVinylRollWidthMm(
                                 event.target.value,
                                 group.face_vinyl_roll_width_mm,
@@ -281,12 +285,20 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             data-testid={`intake-v6-face-roll-width-${group.group_key}`}
                           >
                             <option value="">—</option>
-                            {INTAKE_ROLL_WIDTH_OPTIONS.map((option) => (
+                            {rollWidthOptions.map((option) => (
                               <option key={option.value} value={option.value}>
                                 {option.label}
                               </option>
                             ))}
                           </select>
+                          {group.face_finish_type === "print_laminate" ? (
+                            <span
+                              className="text-[10px] leading-relaxed text-slate-500"
+                              data-testid={`intake-v6-face-roll-width-print-note-${group.group_key}`}
+                            >
+                              Rola print/laminare: {PRINT_LAMINATION_ROLL_WIDTHS_MM.join(" / ")} mm. Util dupa retragere: {PRINT_LAMINATION_ROLL_WIDTHS_MM.map((width) => width - PRINT_LAMINATION_TOTAL_RETRACTION_MM).join(" / ")} mm ({PRINT_LAMINATION_SIDE_RETRACTION_MM} + {PRINT_LAMINATION_SIDE_RETRACTION_MM} mm).
+                            </span>
+                          ) : null}
                         </label>
                       ) : null}
                     </div>

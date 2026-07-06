@@ -6,12 +6,12 @@ export const INTAKE_V6_LETTER_GROUP_FACE_FINISH_VALUES = [
   "oracal_641",
   "oracal_651",
   "oracal_8500",
+  "print_laminate",
 ] as const;
 
 const DISALLOWED_LETTER_GROUP_FACE_FINISH = new Set([
   "printed_vinyl",
   "printed_laminated_vinyl",
-  "print_laminate",
   "colored_plexiglas",
 ]);
 
@@ -29,6 +29,10 @@ export function resolveLetterGroupFaceFinishOptions(
   }
   if (templateOptions) {
     for (const opt of templateOptions) {
+      if (opt.value === "printed_laminated_vinyl") {
+        labelByValue.set("print_laminate", opt.label.replace(" pe vinyl", ""));
+        continue;
+      }
       if (!isDisallowedLetterGroupFaceFinish(opt.value)) {
         labelByValue.set(opt.value, opt.label);
       }

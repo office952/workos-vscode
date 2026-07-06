@@ -5,6 +5,22 @@ const LETTER_GROUP_FACE_UI_OPTIONS = [
   { value: "print_laminate", label: "Print + laminare" },
 ] as const;
 
+export const INTAKE_V4_ORACAL_FACE_ROLL_WIDTH_OPTIONS = [
+  { value: 1000, label: "1000 mm" },
+  { value: 1260, label: "1260 mm" },
+] as const;
+
+export const PRINT_LAMINATION_ROLL_WIDTHS_MM = [1050, 1320, 1500] as const;
+
+export const PRINT_LAMINATION_SIDE_RETRACTION_MM = 20;
+
+export const PRINT_LAMINATION_TOTAL_RETRACTION_MM = PRINT_LAMINATION_SIDE_RETRACTION_MM * 2;
+
+export const PRINT_LAMINATION_ROLL_WIDTH_OPTIONS = PRINT_LAMINATION_ROLL_WIDTHS_MM.map((width) => ({
+  value: width,
+  label: `${width} mm`,
+})) as Array<{ value: (typeof PRINT_LAMINATION_ROLL_WIDTHS_MM)[number]; label: string }>;
+
 export const INTAKE_V4_FACE_FINISH_OPTIONS = [
   { value: "none", label: "Fără finisaj — plexiglas brut" },
   ...LETTER_GROUP_FACE_UI_OPTIONS,
@@ -41,8 +57,31 @@ export function faceFinishNeedsRollWidth(faceFinishType: string | null | undefin
 
 export const INTAKE_V4_DEFAULT_ORACAL_FACE_ROLL_WIDTH_MM = 1000;
 
+export const INTAKE_V4_DEFAULT_PRINT_LAMINATION_ROLL_WIDTH_MM = 1050;
+
+function allowedRollWidthsForFace(faceFinishType: string | null | undefined): readonly number[] {
+  const token = String(faceFinishType ?? "").trim().toLowerCase();
+  if (token === "print_laminate") return PRINT_LAMINATION_ROLL_WIDTHS_MM;
+  if (token === "oracal_641" || token === "oracal_651" || token === "oracal_8500") {
+    return INTAKE_V4_ORACAL_FACE_ROLL_WIDTH_OPTIONS.map((option) => option.value);
+  }
+  return [];
+}
+
+export function faceFinishRollWidthOptions(
+  faceFinishType: string | null | undefined,
+): readonly { value: number; label: string }[] {
+  const token = String(faceFinishType ?? "").trim().toLowerCase();
+  if (token === "print_laminate") return PRINT_LAMINATION_ROLL_WIDTH_OPTIONS;
+  if (token === "oracal_641" || token === "oracal_651" || token === "oracal_8500") {
+    return INTAKE_V4_ORACAL_FACE_ROLL_WIDTH_OPTIONS;
+  }
+  return [];
+}
+
 export function faceFinishDefaultRollWidthMm(faceFinishType: string | null | undefined): number | null {
   const token = String(faceFinishType ?? "").trim().toLowerCase();
+  if (token === "print_laminate") return INTAKE_V4_DEFAULT_PRINT_LAMINATION_ROLL_WIDTH_MM;
   return token === "oracal_641" || token === "oracal_651" || token === "oracal_8500"
     ? INTAKE_V4_DEFAULT_ORACAL_FACE_ROLL_WIDTH_MM
     : null;
@@ -53,7 +92,8 @@ export function normalizeFaceVinylRollWidthMm(
   rollWidthMm: number | null | undefined,
 ): number | null {
   if (!faceFinishNeedsRollWidth(faceFinishType)) return null;
-  if (typeof rollWidthMm === "number" && Number.isFinite(rollWidthMm) && rollWidthMm > 0) {
+  const allowed = allowedRollWidthsForFace(faceFinishType);
+  if (typeof rollWidthMm === "number" && Number.isFinite(rollWidthMm) && allowed.includes(rollWidthMm)) {
     return rollWidthMm;
   }
   return faceFinishDefaultRollWidthMm(faceFinishType);
