@@ -81,7 +81,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
   const [clientSearch, setClientSearch] = useState("");
   const [selectedClient, setSelectedClient] = useState<ClientEntity | null>(null);
   const [loadingClients, setLoadingClients] = useState(false);
-  const [offerableTemplates, setOfferableTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
+  const [visibleTemplates, setVisibleTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [templateLoadError, setTemplateLoadError] = useState<string | null>(null);
   const [selectedOfferMethod, setSelectedOfferMethod] = useState<OfferMethodId | null>(null);
@@ -122,17 +122,22 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
     setLoadingTemplates(true);
     setTemplateLoadError(null);
     productTemplateAvailabilityApi
-      .list({ offerable_only: true, include_runtime_modules: false, include_archived: false })
+      .list({ offerable_only: false, include_runtime_modules: false, include_archived: true })
       .then((response) => {
-        const offerable = response.items.filter((template) => template.quote_offerable);
-        setOfferableTemplates(offerable);
+        const visible = response.items.filter(
+          (template) =>
+            template.quote_offerable ||
+            template.product_system_role === "candidate_product" ||
+            template.display_group === "candidate_products"
+        );
+        setVisibleTemplates(visible);
         setSelectedTemplateCode((current) => current ?? null);
       })
       .catch((err) => {
         console.warn("[NewIntakeDialog] failed to load offerable templates", err);
-        setOfferableTemplates([]);
+        setVisibleTemplates([]);
         setTemplateLoadError(
-          "Template-urile active pentru ofertare nu au putut fi încărcate din Product System."
+          "Template-urile candidate din Product System nu au putut fi încărcate."
         );
       })
       .finally(() => setLoadingTemplates(false));
@@ -188,7 +193,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
     return false;
   };
 
-  const selectedTemplate = offerableTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
+  const selectedTemplate = visibleTemplates.find((template) => template.template_code === selectedTemplateCode) ?? null;
   const canProceedFromMethod = () => !!selectedOfferMethod;
   const canProceedFromTemplate = () => !loadingTemplates && !templateLoadError;
   const canSubmit = () => canProceedFromClient() && canProceedFromTemplate() && intake.description.trim().length > 0;
@@ -344,12 +349,12 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                   <Boxes className="w-3.5 h-3.5 text-blue-400" />
                   <h4 className="text-[12px] font-bold text-slate-200">Template hint</h4>
                 </div>
-                <div className="space-y-2" data-testid="offerable-template-list">
+                <div className="space-y-2" data-testid="template-hint-list">
                   {loadingTemplates ? (
-                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile ofertabile...</p>
-                  ) : offerableTemplates.length === 0 ? (
+                    <p className="text-[11px] text-slate-500 p-4 text-center">Se încarcă template-urile candidate...</p>
+                  ) : visibleTemplates.length === 0 ? (
                     <p className="text-[11px] text-slate-500 p-4 text-center border border-[#2A3548] rounded-lg bg-[#1A2236]">
-                      Nu există template-uri active pentru ofertare disponibile.
+                      Nu există template-uri candidate disponibile.
                     </p>
                   ) : (
                     <button
@@ -375,8 +380,8 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                       </div>
                     </button>
                   )}
-                  {!loadingTemplates && offerableTemplates.length > 0 ? (
-                    offerableTemplates.map((template) => (
+                  {!loadingTemplates && visibleTemplates.length > 0 ? (
+                    visibleTemplates.map((template) => (
                       <button
                         key={template.template_code}
                         type="button"
@@ -398,10 +403,21 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                               <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
                             )}
                           </div>
-                          <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
-                            Activ pentru ofertare
-                          </span>
+                          {template.quote_offerable ? (
+                            <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
+                              Activ pentru ofertare
+                            </span>
+                          ) : (
+                            <span className="shrink-0 text-[10px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-2 py-0.5">
+                              Candidat compozitie
+                            </span>
+                          )}
                         </div>
+                        {!template.quote_offerable ? (
+                          <p className="mt-2 text-[10px] text-amber-200">
+                            Disponibil prin analyzer / linked composition. Nu porneste ofertare directa.
+                          </p>
+                        ) : null}
                       </button>
                     ))
                   ) : null}

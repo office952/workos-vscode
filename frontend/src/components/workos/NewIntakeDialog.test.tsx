@@ -77,18 +77,18 @@ const LOGO_OFFERABLE_TEMPLATE = {
   template_code: "TPL-VOLUMETRIC-LOGO_v1",
   family_id: "litere_volumetrice",
   family_name: "Litere volumetrice",
-  description: "Produs ofertabil pentru logo volumetric",
+  description: "Produs candidat pentru logo volumetric",
   db_active: true,
-  quote_offerable: true,
+  quote_offerable: false,
   runtime_module: false,
   is_parent: true,
   has_modules: true,
   parent_codes: [],
   module_codes: ["TPL-VOLUMETRIC-LOGO-FACE_v1"],
-  status: "offerable",
-  status_reason: "owner_valid_parent_template",
-  product_system_role: "offerable_product",
-  display_group: "active_products",
+  status: "experimental",
+  status_reason: "not_owner_valid",
+  product_system_role: "candidate_product",
+  display_group: "candidate_products",
 };
 
 describe("NewIntakeDialog offer method and Product System template wizard", () => {
@@ -105,7 +105,7 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     mockAvailabilityList.mockResolvedValue({
       items: [OFFERABLE_TEMPLATE, RUNTIME_MODULE_TEMPLATE, LOGO_OFFERABLE_TEMPLATE],
       total: 3,
-      offerable_count: 2,
+      offerable_count: 1,
       runtime_module_count: 1,
     });
   });
@@ -153,20 +153,32 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     await selectMethodAndContinue();
 
     expect(mockAvailabilityList).toHaveBeenCalledWith({
-      offerable_only: true,
+      offerable_only: false,
       include_runtime_modules: false,
-      include_archived: false,
+      include_archived: true,
     });
   });
 
-  it("shows only quote_offerable templates and hides runtime modules", async () => {
+  it("shows offerable and candidate templates but hides runtime modules", async () => {
     renderDialog();
     await selectMethodAndContinue();
 
-    const list = screen.getByTestId("offerable-template-list");
+    const list = screen.getByTestId("template-hint-list");
     expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(within(list).getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
+    expect(within(list).getByText("Activ pentru ofertare")).toBeInTheDocument();
+    expect(within(list).getByText("Candidat compozitie")).toBeInTheDocument();
+    expect(within(list).getByText(/Disponibil prin analyzer \/ linked composition/i)).toBeInTheDocument();
+  });
+
+  it("does not mark Logo candidate as direct offerable", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const logoCard = screen.getByRole("button", { name: /TPL-VOLUMETRIC-LOGO_v1/i });
+    expect(logoCard).toHaveTextContent("Candidat compozitie");
+    expect(logoCard).not.toHaveTextContent("Activ pentru ofertare");
   });
 
   it("does not use blocked archive wording", async () => {
