@@ -81,6 +81,23 @@ Forbidden in this context:
 - De confirmat
 - Recomandate / Alte roluri optgroups
 
+## Analysis Panel Contract
+
+For the volumetric letters + logo context, `Atentie analiza` must use the same owner-facing taxonomy as Step 1 layer decisions:
+
+- Vector Litere
+- Vector Logo
+
+It must not expose legacy/internal/operator-confusing terms as primary labels:
+
+- Vector Atipic
+- Vector Atipic / logo
+- artwork candidate
+- stroke-only vector
+- logo/artwork candidate
+
+The panel is explanatory only. It must not define a separate role taxonomy from `Decizii straturi`.
+
 ## Form System Link
 
 Form System must create the required fields from Product System / component contracts using:

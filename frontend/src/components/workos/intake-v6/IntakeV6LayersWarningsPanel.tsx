@@ -5,8 +5,12 @@ import IntakeV6LayerStatusIcon from "./IntakeV6LayerStatusIcon";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 const PSEUDO_LAYER_HINT =
-  /pseudo-layer generated from solid vector fills/i;
+  /pseudo-layer generated from solid vector fill/i;
 const STROKE_VECTOR_HINT = /stroke-only vector isolated/i;
+
+function isOwnerTaxonomyTechnicalWarning(message: string): boolean {
+  return PSEUDO_LAYER_HINT.test(message) || STROKE_VECTOR_HINT.test(message);
+}
 
 function resolveLayerKey(
   confirmation: LayerRoleConfirmation | null,
@@ -95,7 +99,7 @@ export default function IntakeV6LayersWarningsPanel({
     for (const layer of report.layers) {
       for (const warning of layer.warnings ?? []) {
         const message = typeof warning === "string" ? warning : warning.message;
-        if (PSEUDO_LAYER_HINT.test(message)) continue;
+        if (isOwnerTaxonomyTechnicalWarning(message)) continue;
         if (seen.has(message)) continue;
         seen.add(message);
         items.push(message);
@@ -105,7 +109,7 @@ export default function IntakeV6LayersWarningsPanel({
   }, [report]);
 
   const totalCount =
-    (parseWarning ? 1 : 0) + scopeWarnings.length + pseudoLayerGroups.length + otherLayerWarnings.length;
+    (parseWarning ? 1 : 0) + scopeWarnings.length + pseudoLayerGroups.length + atypicalVectorGroups.length + otherLayerWarnings.length;
 
   if (totalCount === 0) return null;
 
@@ -154,7 +158,7 @@ export default function IntakeV6LayersWarningsPanel({
               <div>
                 <p className="font-semibold text-amber-100">Layere propuse ca Vector Litere</p>
                 <p className={`mt-0.5 ${v6.sectionDesc} text-amber-200/75`}>
-                  Analyzer-ul a grupat automat aceste layere ca litere volumetrice. Confirmă rolul fiecărui layer înainte de Review.
+                  Analyzer-ul a grupat automat aceste layere pentru litere volumetrice. Confirmă rolurile în Decizii straturi înainte de Review.
                 </p>
               </div>
             </div>
@@ -187,7 +191,7 @@ export default function IntakeV6LayersWarningsPanel({
               <div>
                 <p className="font-semibold text-amber-100">Layere propuse ca Vector Logo</p>
                 <p className={`mt-0.5 ${v6.sectionDesc} text-amber-200/75`}>
-                  Analyzer-ul a identificat aceste contururi ca logo volumetric. Confirmă rolurile înainte de Review.
+                  Analyzer-ul a identificat aceste contururi ca logo volumetric. Confirmă rolurile în Decizii straturi înainte de Review.
                 </p>
               </div>
             </div>
@@ -210,7 +214,7 @@ export default function IntakeV6LayersWarningsPanel({
           </div>
         ) : null}
 
-        {otherLayerWarnings.filter((warning) => !STROKE_VECTOR_HINT.test(warning)).map((warning, index) => (
+        {otherLayerWarnings.map((warning, index) => (
           <p
             key={`layer-other-${index}-${warning}`}
             className="rounded-md border border-amber-500/10 bg-[#0A0F1A]/35 px-2.5 py-1.5 text-[11px] text-amber-100/80"

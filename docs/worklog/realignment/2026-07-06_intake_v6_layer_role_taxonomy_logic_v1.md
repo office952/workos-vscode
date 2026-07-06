@@ -115,6 +115,57 @@ Created:
 - Internal legacy values may still exist but must not leak as owner-facing labels.
 - Pas 2 logical list/material/nesting is separate backlog.
 
+## Post-Commit Follow-up: Analysis Panel Alignment
+
+Owner observed after commit `a1a1fef` that the right-side `Atenție analiză` panel was not fully covered by the Step 1 dropdown verification and could still expose technical/analyzer language in the operator warning surface.
+
+Fix applied:
+
+- `Atenție analiză` uses the same owner-facing taxonomy as `Decizii straturi`:
+  - Vector Litere
+  - Vector Logo
+- Technical analyzer messages for pseudo generated layers and stroke-only/logo-artwork candidates are filtered out of the operator-facing warning list.
+- The panel explains the analyzer suggestion but points the operator back to `Decizii straturi` for confirmation.
+- The Step 1 dropdown logic was not changed.
+
+Focused tests:
+
+- `pnpm.cmd --dir frontend exec vitest run src/components/workos/intake-v6/IntakeV6LayersOperatorPanel.test.tsx --reporter=verbose` PASS, `2 passed`.
+- `pnpm.cmd --dir frontend exec vitest run src/components/workos/intake-v6/IntakeV6LayersRoleTable.test.tsx --reporter=verbose` PASS, `6 passed`.
+- `pnpm.cmd --dir frontend exec vitest run src/components/workos/intake-v6/IntakeV6LayersOperatorPanel.test.tsx src/components/workos/intake-v6/IntakeV6LayersRoleTable.test.tsx --reporter=verbose` PASS, `8 passed`.
+- `git diff --check` PASS.
+- `git diff --cached --check` PASS.
+
+UI verification:
+
+- route: `/intake-v6/3c494f9f-4507-497a-912f-4f45fe709642/operator?t=20260706-step1`;
+- workspace: `IV6-0EFC6C31`;
+- SVG: `gradi-curat.svg`;
+- current step: `Straturi`;
+- `Atenție analiză` shows `Layere propuse ca Vector Litere` and `Layere propuse ca Vector Logo`;
+- `Atenție analiză` does not show `Vector Atipic`, `Vector Atipic / logo`, `stroke-only`, `artwork candidate`, or `logo/artwork candidate`;
+- dropdowns remain exact owner taxonomy:
+  - layers 1-4 selected `Vector Litere`;
+  - layers 5-6 selected `Vector Logo`;
+  - each dropdown has exactly `Vector Litere`, `Vector Logo`;
+  - optgroups: none;
+- template composition remains visible:
+  - `TPL-VOLUMETRIC-LETTERS_v2`;
+  - `TPL-VOLUMETRIC-LOGO_v1`.
+
+Boundaries confirmed:
+
+- analyzer untouched;
+- dropdown untouched;
+- template mapping untouched;
+- Pas 2 logical list untouched;
+- Pas 3 untouched;
+- pricing/nesting/material untouched;
+- Product Truth/ProductDefinition untouched;
+- Quote/Order untouched;
+- Execution/ProductAggregate/TaskGraph untouched;
+- DB/seed/migration untouched.
+
 ## Next Step
 
 After commit:
