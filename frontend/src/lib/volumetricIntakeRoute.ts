@@ -11,11 +11,7 @@ export const TPL_VOLUMETRIC_LOGO_V1 = "TPL-VOLUMETRIC-LOGO_v1";
 export function isIntakeV6CapableTemplateCode(
   templateCode: string | null | undefined
 ): boolean {
-  const normalized = (templateCode ?? "").trim().toUpperCase();
-  return (
-    isVolumetricLettersTemplateCode(templateCode) ||
-    normalized === TPL_VOLUMETRIC_LOGO_V1.toUpperCase()
-  );
+  return isVolumetricLettersTemplateCode(templateCode);
 }
 
 export function shouldUseVolumetricIntakePage(
@@ -72,16 +68,17 @@ export function resolveIntakeEditPath(input: {
   productFamily?: string | null;
   workspaceId?: string | null;
 }): string {
-  if (input.workspaceId?.trim()) {
-    return buildIntakeV6Path(input.workspaceId);
-  }
+  const confirmedTemplateCode = input.confirmedTemplateCode?.trim() ?? "";
   if (
     intakeEditUsesVolumetricWorkspace(
-      input.confirmedTemplateCode,
+      confirmedTemplateCode,
       input.productFamily ?? null
     )
   ) {
     return buildIntakeV6Path(input.workspaceId ?? input.id);
+  }
+  if (input.workspaceId?.trim() && !confirmedTemplateCode) {
+    return buildIntakeV6Path(input.workspaceId);
   }
   return buildIntakeLegacyPath(input.id);
 }

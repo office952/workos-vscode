@@ -167,7 +167,7 @@ async def test_child_module_templates_are_runtime_only(db_session):
 
 
 @pytest.mark.asyncio
-async def test_logo_parent_is_candidate_product_not_offerable(db_session):
+async def test_logo_parent_remains_candidate_product_not_offerable(db_session):
     await _seed_availability_fixture(db_session)
     response = await ProductTemplateAvailabilityService(db_session).list_availability()
     item = _by_code(response.items)[LOGO]
@@ -272,7 +272,7 @@ def test_endpoint_does_not_modify_db(auth_client, db_fixture):
     assert response.status_code == 200
     body = response.json()
     assert body["total"] == 1
-    assert body["items"][0]["template_code"] == LETTERS
+    assert [item["template_code"] for item in body["items"]] == [LETTERS]
     assert before == after == 14
 
 

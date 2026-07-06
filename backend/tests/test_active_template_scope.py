@@ -10,16 +10,21 @@ from sqlalchemy import select
 from models.product_templates import Product_templates
 from seeds.seed_active_template_scope import seed_active_template_scope
 from seeds.seed_build4_templates import seed_build4_templates
+from seeds.seed_tpl_volumetric_logo_v1 import seed_tpl_volumetric_logo_v1
 from services.active_template_scope import (
     OWNER_VALID_ACTIVE_TEMPLATE_CODE,
     is_owner_valid_active_template,
     load_quote_active_template_codes,
+    normalize_template_code,
     template_active_for_quote,
 )
 from services.pricing_registry_service import PricingRegistryService
 from services.svg_layer_analysis_service import SvgLayerAnalysisService
 from services.svg_layer_template_mapping import map_svg_layer_to_template
 from tests._db_fixture import IsolatedDBFixture
+
+
+LOGO_TEMPLATE_CODE = "TPL-VOLUMETRIC-LOGO_v1"
 
 
 def _run(coro):
@@ -32,6 +37,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
         cls.db_fixture = IsolatedDBFixture()
         cls.db_fixture.setup()
         _run(seed_build4_templates())
+        _run(seed_tpl_volumetric_logo_v1())
         _run(seed_active_template_scope())
 
     @classmethod
@@ -45,7 +51,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
             async with db_manager.async_session_maker() as session:
                 rows = (await session.execute(select(Product_templates))).scalars().all()
                 active_codes = sorted(
-                    r.template_code
+                    normalize_template_code(r.template_code)
                     for r in rows
                     if r.active is not False and r.template_code
                 )
@@ -53,7 +59,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
                 return active_codes, inactive_count
 
         active_codes, inactive_count = _run(_go())
-        self.assertEqual(active_codes, [OWNER_VALID_ACTIVE_TEMPLATE_CODE])
+        self.assertEqual(active_codes, [])
         self.assertGreater(inactive_count, 0)
 
     def test_load_quote_active_template_codes(self) -> None:
@@ -63,7 +69,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
             async with db_manager.async_session_maker() as session:
                 return await load_quote_active_template_codes(session)
 
-        self.assertEqual(_run(_go()), [OWNER_VALID_ACTIVE_TEMPLATE_CODE])
+        self.assertEqual(_run(_go()), [])
 
     def test_pricing_registry_only_owner_valid_active(self) -> None:
         from core.database import db_manager
@@ -74,7 +80,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
                 return [u["template_code"] for u in reg.get("template_usage") or []]
 
         usage_codes = _run(_go())
-        self.assertEqual(usage_codes, [OWNER_VALID_ACTIVE_TEMPLATE_CODE])
+        self.assertEqual(usage_codes, [])
 
     def test_inactive_template_not_active_for_quote(self) -> None:
         self.assertFalse(
@@ -92,6 +98,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
                 OWNER_VALID_ACTIVE_TEMPLATE_CODE, db_active=True
             )
         )
+        self.assertFalse(template_active_for_quote(LOGO_TEMPLATE_CODE, db_active=True))
 
     def test_svg_inactive_template_reports_blockers(self) -> None:
         m = map_svg_layer_to_template(
@@ -106,6 +113,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
     def test_svg_volumetric_active_no_inactive_blockers(self) -> None:
         m = map_svg_layer_to_template(
             OWNER_VALID_ACTIVE_TEMPLATE_CODE,
+            known_template_codes=[OWNER_VALID_ACTIVE_TEMPLATE_CODE],
             active_template_codes=[OWNER_VALID_ACTIVE_TEMPLATE_CODE],
         )
         self.assertEqual(m.blockers, ())
@@ -125,7 +133,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
         """.strip()
         result = SvgLayerAnalysisService.analyze(
             svg,
-            active_template_codes=[OWNER_VALID_ACTIVE_TEMPLATE_CODE],
+            active_template_codes=["TPL-VOLUMETRIC-LETTERS"],
         )
         by_name = {row.svg_layer_name: row for row in result.layers}
         self.assertNotIn("template_not_active_for_quote", by_name["TPL-VOLUMETRIC-LETTERS"].blockers)
@@ -135,5 +143,7 @@ class TestActiveTemplateScopeSeed(unittest.TestCase):
 
 class TestOwnerValidHelpers(unittest.TestCase):
     def test_is_owner_valid_active_template(self) -> None:
-        self.assertTrue(is_owner_valid_active_template("tpl-volumetric-letters"))
+        self.assertTrue(is_owner_valid_active_template(OWNER_VALID_ACTIVE_TEMPLATE_CODE.lower()))
+        self.assertFalse(is_owner_valid_active_template("tpl-volumetric-letters"))
+        self.assertFalse(is_owner_valid_active_template("tpl-volumetric-logo"))
         self.assertFalse(is_owner_valid_active_template("TPL-BANNER-STANDARD"))

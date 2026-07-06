@@ -20,11 +20,11 @@ describe("volumetricIntakeRoute", () => {
     ).toBe(true);
   });
 
-  it("routes confirmed TPL-VOLUMETRIC-LOGO_v1 to Intake V6", () => {
-    expect(isIntakeV6CapableTemplateCode(TPL_VOLUMETRIC_LOGO_V1)).toBe(true);
+  it("keeps confirmed TPL-VOLUMETRIC-LOGO_v1 on non-direct root routing", () => {
+    expect(isIntakeV6CapableTemplateCode(TPL_VOLUMETRIC_LOGO_V1)).toBe(false);
     expect(
       shouldUseVolumetricIntakePage(TPL_VOLUMETRIC_LOGO_V1, "totem")
-    ).toBe(true);
+    ).toBe(false);
     expect(
       resolveIntakeEditPath({
         id: "IR-LOGO",
@@ -32,7 +32,7 @@ describe("volumetricIntakeRoute", () => {
         productFamily: "litere_volumetrice",
         workspaceId: "workspace-logo",
       })
-    ).toBe("/intake-v6/workspace-logo/operator");
+    ).toBe("/intake/IR-LOGO");
   });
 
   it("routes litere_volumetrice family before template confirmation", () => {
@@ -125,6 +125,9 @@ describe("volumetricIntakeRoute", () => {
     expect(
       intakePrimaryEditLabel(TPL_VOLUMETRIC_LETTERS, "litere_volumetrice")
     ).toBe("Deschide Intake V6");
+    expect(
+      intakePrimaryEditLabel(TPL_VOLUMETRIC_LOGO_V1, "litere_volumetrice")
+    ).toBe("Instrumentează Comanda");
     expect(intakePrimaryEditLabel(null, "Totemuri / Pyloni")).toBe(
       "Instrumentează Comanda"
     );

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import WorkIntake from "./WorkIntake";
 import { TPL_VOLUMETRIC_LETTERS } from "@/lib/volumetricQuoteInput";
@@ -23,7 +23,29 @@ vi.mock("@/hooks/useBackendData", () => ({
 }));
 
 vi.mock("@/components/workos/NewIntakeDialog", () => ({
-  default: () => null,
+  default: ({ open, onCreated }: { open: boolean; onCreated: (code: string, productFamily?: string | null, workspaceId?: string | null, templateCode?: string | null) => void }) =>
+    open ? (
+      <button
+        type="button"
+        data-testid="mock-new-logo-intake-created"
+        onClick={() => onCreated("IR-LOGO-NEW", "litere_volumetrice", "workspace-logo-new", "TPL-VOLUMETRIC-LOGO_v1")}
+      >
+        Simulează cerere logo
+      </button>
+    ) : null,
+}));
+
+vi.mock("@/contexts/AuthContext", () => ({
+  useAuth: () => ({
+    user: { id: "dev-admin", role: "admin", email: "dev@localhost", name: "Dev Admin" },
+    loading: false,
+    isAuthenticated: true,
+    authState: "authenticated",
+    canAccessProtectedApi: true,
+    devAuthEnabled: true,
+    logout: vi.fn(),
+    login: vi.fn(),
+  }),
 }));
 
 vi.mock("@/lib/dataStore", () => ({
@@ -144,6 +166,33 @@ describe("WorkIntake list selection and routing", () => {
     expect(
       screen.getByRole("button", { name: /Deschide Intake V6/i })
     ).toBeInTheDocument();
+  });
+
+  it("keeps a newly-created logo request on the non-direct intake path", async () => {
+    const refresh = vi.fn().mockResolvedValue(undefined);
+    mockUseBackendData.mockReturnValue({
+      intakes: [],
+      loading: false,
+      error: null,
+      source: "db",
+      sourcesDetail: { intakes: "db" },
+      refresh,
+    });
+
+    render(
+      <MemoryRouter>
+        <WorkIntake />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Cerere Nouă/i }));
+    fireEvent.click(screen.getByTestId("mock-new-logo-intake-created"));
+
+    await waitFor(() => {
+      expect(refresh).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).toHaveBeenCalledWith("/intake/IR-LOGO-NEW");
+    });
+    expect(mockNavigate).not.toHaveBeenCalledWith("/intake-v6/workspace-logo-new/operator");
   });
 
   it("navigates to legacy intake only via explicit primary edit button", () => {
