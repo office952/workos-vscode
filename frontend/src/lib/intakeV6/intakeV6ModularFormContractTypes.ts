@@ -75,10 +75,80 @@ export interface IntakeV6ModularFormContractSummary {
   warnings?: string[];
 }
 
+export interface FormSystemBackboneRoot {
+  requested_code?: string | null;
+  code?: string | null;
+  canonical_code?: string | null;
+  root_type?: string | null;
+  quote_mode?: string | null;
+  offerability_status?: string | null;
+  canonical_alias_resolution?: boolean | null;
+  allowed?: boolean | null;
+  blocked?: boolean | null;
+  blocker_code?: string | null;
+  reason?: string | null;
+}
+
+export interface FormSystemBackboneComponent {
+  component_key?: string | null;
+  label?: string | null;
+  component_template_code?: string | null;
+  module_code?: string | null;
+  coverage?: string | null;
+  role?: string | null;
+  notes?: string | null;
+}
+
+export interface FormSystemBackboneField {
+  field_key?: string | null;
+  operator_label?: string | null;
+  owning_component?: string | null;
+  component_template_code?: string | null;
+  source_type?: string | null;
+  state?: string | null;
+  product_truth_path?: string | null;
+  missing_target_path?: string | null;
+  required_for?: string[];
+  blocker_code?: string | null;
+  notes?: string | null;
+}
+
+export interface FormSystemBackboneBlocker {
+  field_key?: string | null;
+  owning_component?: string | null;
+  blocker_code?: string | null;
+  state?: string | null;
+  blocks?: string[];
+  message?: string | null;
+  severity?: string | null;
+}
+
+export interface FormSystemBackboneReadiness {
+  status?: string | null;
+  blockers?: FormSystemBackboneBlocker[];
+  operator_confirmation_required?: string[];
+  suggestions_allowed?: string[];
+  fallback_or_hydrated_not_confirmed?: string[];
+  downstream_later?: string[];
+}
+
+export interface FormSystemBackboneContract {
+  contract_version?: string | null;
+  read_only?: boolean | null;
+  root?: FormSystemBackboneRoot | null;
+  components?: FormSystemBackboneComponent[];
+  fields?: FormSystemBackboneField[];
+  readiness?: FormSystemBackboneReadiness | null;
+  blockers?: FormSystemBackboneBlocker[];
+  downstream_write_intent?: Record<string, boolean>;
+  notes?: string[];
+}
+
 export interface IntakeV6ModularFormContractResponse {
   summary: IntakeV6ModularFormContractSummary;
   modules: IntakeV6ModularFormModuleSection[];
   field_bindings: IntakeV6ModularFormFieldBinding[];
+  form_system_backbone?: FormSystemBackboneContract | null;
   trigger_alignments: IntakeV6ModularTriggerAlignment[];
   valid_combinations?: string[];
   invalid_combinations?: string[];
