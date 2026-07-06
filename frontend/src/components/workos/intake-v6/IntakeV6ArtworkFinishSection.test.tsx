@@ -29,17 +29,92 @@ function expandArtworkCard(layerKey: string) {
 }
 
 describe("IntakeV6ArtworkFinishSection", () => {
-  it("defaults to print + laminare and allows translucent without changing execution", () => {
+  it("uses unified face personalization options without transparent controls", () => {
     const onChange = vi.fn();
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
     expandArtworkCard("logo");
     expect(screen.getByTestId("intake-v6-artwork-execution-logo")).toHaveTextContent("Print + laminare");
     expect(screen.getByTestId("intake-v6-artwork-cant-logo")).toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("intake-v6-artwork-translucent-logo"));
+    const method = screen.getByTestId("intake-v6-artwork-face-method-logo");
+    const labels = Array.from(method.querySelectorAll("option")).map((opt) => opt.textContent);
+    expect(labels).toEqual([
+      "Fără finisaj — plexiglas brut",
+      "Oracal 641",
+      "Oracal 651",
+      "Oracal 8500 — translucid",
+      "Print + laminare",
+    ]);
+    expect(screen.queryByTestId("intake-v6-artwork-transparent-logo")).not.toBeInTheDocument();
+    const rollWidth = screen.getByTestId("intake-v6-artwork-roll-width-logo");
+    expect(Array.from(rollWidth.querySelectorAll("option")).map((option) => option.getAttribute("value"))).toEqual([
+      "",
+      "1050",
+      "1320",
+      "1500",
+    ]);
+    expect(screen.getByTestId("intake-v6-artwork-roll-retraction-logo")).toHaveTextContent("1050 / 1320 / 1500 mm");
+    expect(screen.getByTestId("intake-v6-artwork-roll-retraction-logo")).toHaveTextContent("1010 / 1280 / 1460 mm");
+    fireEvent.change(method, { target: { value: "oracal_651" } });
+    const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
+    expect(next[0]?.execution_type).toBe("cut_vinyl");
+    expect(next[0]?.material_code).toBe("ORACAL_651");
+    expect(next[0]?.confirmed).toBe(false);
+  });
+
+  it("lets logo switch back to print and lamination", () => {
+    const onChange = vi.fn();
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={[{ ...rows[0]!, execution_type: "cut_vinyl", material_code: "ORACAL_651" }]}
+        onChange={onChange}
+      />,
+    );
+    expandArtworkCard("logo");
+    fireEvent.change(screen.getByTestId("intake-v6-artwork-face-method-logo"), {
+      target: { value: "print_laminate" },
+    });
     const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
     expect(next[0]?.execution_type).toBe("print_laminate");
-    expect(next[0]?.print_transparency).toBe("translucent");
-    expect(next[0]?.confirmed).toBe(false);
+    expect(next[0]?.material_code).toBe("ORAFOL_PRINT_LAMINATION");
+    expect(next[0]?.face_personalization_method).toBe("print_laminate");
+    expect(next[0]?.face_roll_width_mm).toBe(1050);
+    expect(next[0]?.print_roll_width_mm).toBe(1050);
+    expect(next[0]?.lamination_roll_width_mm).toBe(1050);
+    expect(next[0]?.print_transparency).toBe("standard");
+  });
+
+  it("persists print and lamination roll width on logo/artwork rows", () => {
+    const onChange = vi.fn();
+    render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
+    expandArtworkCard("logo");
+    fireEvent.change(screen.getByTestId("intake-v6-artwork-roll-width-logo"), {
+      target: { value: "1320" },
+    });
+    const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
+    expect(next[0]).toMatchObject({
+      face_roll_width_mm: 1320,
+      print_roll_width_mm: 1320,
+      lamination_roll_width_mm: 1320,
+      roll_side_retraction_mm: 20,
+      roll_total_retraction_mm: 40,
+      confirmed: false,
+    });
+  });
+
+  it("uses Oracal roll widths for logo Oracal method", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={[{ ...rows[0]!, execution_type: "cut_vinyl", material_code: "ORACAL_651" }]}
+        onChange={vi.fn()}
+      />,
+    );
+    expandArtworkCard("logo");
+    const rollWidth = screen.getByTestId("intake-v6-artwork-roll-width-logo");
+    expect(Array.from(rollWidth.querySelectorAll("option")).map((option) => option.getAttribute("value"))).toEqual([
+      "",
+      "1000",
+      "1260",
+    ]);
   });
 
   it("updates emblem cant settings through return fields", () => {
@@ -59,7 +134,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
     expandArtworkCard("logo");
     const button = screen.getByTestId("intake-v6-artwork-confirm-logo");
-    expect(button).toHaveTextContent("Confirm vector atipic");
+    expect(button).toHaveTextContent("Confirm vector logo");
     fireEvent.click(button);
     const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
     expect(next[0]?.confirmed).toBe(true);
@@ -68,11 +143,26 @@ describe("IntakeV6ArtworkFinishSection", () => {
     expect(next[0]?.return_finish_type).toBe("white_aluminum");
   });
 
-  it("shows Artwork confirmat when confirmed=true", () => {
+  it("shows Vector Logo confirmat when confirmed=true", () => {
     render(<IntakeV6ArtworkFinishSection rows={confirmedRows} onChange={vi.fn()} />);
     expandArtworkCard("logo");
-    expect(screen.getByTestId("intake-v6-artwork-confirm-logo")).toHaveTextContent("Vector Atipic confirmat");
+    expect(screen.getByTestId("intake-v6-artwork-confirm-logo")).toHaveTextContent("Vector Logo confirmat");
     expect(screen.getByTestId("intake-v6-artwork-confirmed-logo")).toHaveTextContent("OK");
+  });
+
+  it("shows Step 1 confirmation instead of a second artwork confirmation CTA", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        stepOneConfirmedLayerKeys={new Set(["logo"])}
+      />,
+    );
+    expandArtworkCard("logo");
+    expect(screen.getByTestId("intake-v6-artwork-step1-confirmed-logo")).toHaveTextContent(
+      "Vector Logo confirmat in Pasul 1",
+    );
+    expect(screen.queryByTestId("intake-v6-artwork-confirm-logo")).not.toBeInTheDocument();
   });
 
   it("does not force confirmed=false when only cant depth changes on a confirmed row", () => {
@@ -131,6 +221,43 @@ describe("IntakeV6ArtworkFinishSection", () => {
     expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Logo");
     expect(screen.getByTestId("intake-v6-artwork-face-summary-logo")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-artwork-cant-summary-logo")).toBeInTheDocument();
+  });
+
+  it("uses generic logo naming with source metadata tooltip", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={[
+          { ...rows[0]!, layer_key: "logo-dreapta", layer_name: "logo dreapta", source_layer_name: "logo-dreapta", element_count: 2 },
+          { ...rows[0]!, layer_key: "logo-stanga", layer_name: "logo stanga", source_layer_name: "logo-stanga", element_count: 1 },
+        ]}
+        onChange={vi.fn()}
+        stepOneConfirmedLayerKeys={new Set(["logo-dreapta", "logo-stanga"])}
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-artwork-header-logo-dreapta")).toHaveTextContent("Logo 1");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo-stanga")).toHaveTextContent("Logo 2");
+    expect(screen.getByTestId("intake-v6-artwork-logo-dreapta")).toHaveAttribute(
+      "title",
+      expect.stringContaining("source: logo-dreapta"),
+    );
+    expect(screen.getByTestId("intake-v6-artwork-logo-dreapta")).toHaveAttribute(
+      "title",
+      expect.stringContaining("position: dreapta"),
+    );
+    expect(screen.getByTestId("intake-v6-artwork-logo-dreapta")).toHaveAttribute(
+      "title",
+      expect.stringContaining("status: confirmat in Pasul 1"),
+    );
+    expandArtworkCard("logo-dreapta");
+    expect(screen.getByTestId("intake-v6-artwork-source-metadata-logo-dreapta")).toHaveTextContent(
+      /sursa SVG: logo-dreapta/,
+    );
+    expect(screen.getByTestId("intake-v6-artwork-source-metadata-logo-dreapta")).toHaveTextContent(
+      /pozitie: dreapta/,
+    );
+    expect(screen.getByTestId("intake-v6-artwork-source-metadata-logo-dreapta")).toHaveTextContent(
+      /confirmat in Pasul 1/,
+    );
   });
 
   it("keeps artwork_finishes shape when cant depth changes", () => {

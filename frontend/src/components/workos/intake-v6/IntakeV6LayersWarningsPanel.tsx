@@ -6,6 +6,7 @@ import { v6 } from "./atoms/intakeV6Presentation";
 
 const PSEUDO_LAYER_HINT =
   /pseudo-layer generated from solid vector fills/i;
+const STROKE_VECTOR_HINT = /stroke-only vector isolated/i;
 
 function resolveLayerKey(
   confirmation: LayerRoleConfirmation | null,
@@ -59,6 +60,31 @@ export default function IntakeV6LayersWarningsPanel({
         });
       }
     }
+    return layers;
+  }, [report, confirmation]);
+
+  const atypicalVectorGroups = useMemo(() => {
+    if (!report) return [];
+    const layers: Array<{
+      layerKey: string;
+      layerName: string;
+      state: LayerRoleConfirmation["layers"][number]["confirmationState"] | undefined;
+    }> = [];
+
+    for (const layer of report.layers) {
+      const messages = (layer.warnings ?? []).map((warning) =>
+        typeof warning === "string" ? warning : warning.message,
+      );
+      const isAtypical = layer.autoRole === "printed_artwork" || layer.autoRole === "logo" || messages.some((message) => STROKE_VECTOR_HINT.test(message));
+      if (!isAtypical) continue;
+      const layerKey = resolveLayerKey(confirmation, layer);
+      layers.push({
+        layerKey,
+        layerName: layer.name,
+        state: resolveLayerState(confirmation, layerKey),
+      });
+    }
+
     return layers;
   }, [report, confirmation]);
 
@@ -126,9 +152,9 @@ export default function IntakeV6LayersWarningsPanel({
             <div className="mb-2 flex items-start gap-2">
               <Layers className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" aria-hidden />
               <div>
-                <p className="font-semibold text-amber-100">Straturi pseudo generate</p>
+                <p className="font-semibold text-amber-100">Layere propuse ca Vector Litere</p>
                 <p className={`mt-0.5 ${v6.sectionDesc} text-amber-200/75`}>
-                  Vector solid grupat automat — confirmă rolul față pentru litere volumetrice.
+                  Analyzer-ul a grupat automat aceste layere ca litere volumetrice. Confirmă rolul fiecărui layer înainte de Review.
                 </p>
               </div>
             </div>
@@ -151,7 +177,40 @@ export default function IntakeV6LayersWarningsPanel({
           </div>
         ) : null}
 
-        {otherLayerWarnings.map((warning, index) => (
+        {atypicalVectorGroups.length > 0 ? (
+          <div
+            className="rounded-md border border-amber-500/20 bg-[#0A0F1A]/50 px-2.5 py-2"
+            data-testid="intake-v6-atypical-layer-warning-group"
+          >
+            <div className="mb-2 flex items-start gap-2">
+              <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300" aria-hidden />
+              <div>
+                <p className="font-semibold text-amber-100">Layere propuse ca Vector Logo</p>
+                <p className={`mt-0.5 ${v6.sectionDesc} text-amber-200/75`}>
+                  Analyzer-ul a identificat aceste contururi ca logo volumetric. Confirmă rolurile înainte de Review.
+                </p>
+              </div>
+            </div>
+            <ul className="flex flex-wrap gap-1.5">
+              {atypicalVectorGroups.map((layer) => (
+                <li key={layer.layerKey}>
+                  <button
+                    type="button"
+                    className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-100 transition hover:border-amber-400/40 hover:bg-amber-500/15"
+                    onClick={() => onJumpToLayer?.(layer.layerKey)}
+                    data-testid={`intake-v6-warning-atypical-chip-${layer.layerKey}`}
+                    title={`${layer.layerName} — deschide stratul`}
+                  >
+                    <IntakeV6LayerStatusIcon state={layer.state} size="sm" />
+                    <span className="truncate">{layer.layerName}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {otherLayerWarnings.filter((warning) => !STROKE_VECTOR_HINT.test(warning)).map((warning, index) => (
           <p
             key={`layer-other-${index}-${warning}`}
             className="rounded-md border border-amber-500/10 bg-[#0A0F1A]/35 px-2.5 py-1.5 text-[11px] text-amber-100/80"

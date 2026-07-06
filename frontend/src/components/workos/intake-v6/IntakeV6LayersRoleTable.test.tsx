@@ -288,10 +288,10 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     );
 
     fireEvent.change(screen.getByTestId("intake-v6-layer-role-pseudo:maria"), {
-      target: { value: "logo" },
+      target: { value: "printed_artwork" },
     });
 
-    expect(onUpdateLayerRole).toHaveBeenCalledWith("pseudo:maria", "logo");
+    expect(onUpdateLayerRole).toHaveBeenCalledWith("pseudo:maria", "printed_artwork");
   });
 
   it("renders owner-facing role labels for letters and atypical vectors", () => {
@@ -306,7 +306,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     );
 
     expect((screen.getByTestId("intake-v6-layer-role-pseudo:maria") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Litere");
-    expect((screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Atipic");
+    expect((screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement).selectedOptions[0]?.textContent).toBe("Vector Logo");
   });
 
   it("keeps all six layers visible without pagination", () => {
@@ -324,7 +324,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(screen.getByText("Layer 6 — contur negru")).toBeInTheDocument();
   });
 
-  it("shows contextual grouped dropdown options for letters and logo layers", () => {
+  it("shows exactly the two owner-approved dropdown options for letters and logo layers", () => {
     render(
       <IntakeV6LayersRoleTable
         report={buildReport()}
@@ -338,11 +338,46 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     const lettersSelect = screen.getByTestId("intake-v6-layer-role-pseudo:maria");
     const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga");
 
-    expect(lettersSelect.querySelector('optgroup[label="Recomandate"]')).not.toBeNull();
-    expect(lettersSelect.querySelector('optgroup[label="Alte roluri"]')).not.toBeNull();
-    expect(logoSelect.querySelector('optgroup[label="Recomandate"]')).not.toBeNull();
-    expect(logoSelect.querySelector('optgroup[label="Alte roluri"]')).not.toBeNull();
-    expect(lettersSelect.querySelector('optgroup[label="Recomandate"] option')?.getAttribute("value")).toBe("face");
-    expect(logoSelect.querySelector('optgroup[label="Recomandate"] option')?.getAttribute("value")).toBe("logo");
+    expect(lettersSelect.querySelector("optgroup")).toBeNull();
+    expect(logoSelect.querySelector("optgroup")).toBeNull();
+    const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(new Set(letterOptions).size).toBe(letterOptions.length);
+    expect(new Set(logoOptions).size).toBe(logoOptions.length);
+    expect(lettersSelect.textContent).not.toContain("Vinil aplicat");
+    expect(lettersSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
+    expect(lettersSelect.textContent).not.toContain("Cant / volum");
+    expect(lettersSelect.textContent).not.toContain("Spate / backing");
+    expect(lettersSelect.textContent).not.toContain("Vector Atipic");
+    expect(lettersSelect.textContent).not.toContain("Vector Atipic / logo");
+    expect(lettersSelect.textContent).not.toContain("Ignora strat");
+    expect(lettersSelect.textContent).not.toContain("De confirmat");
+    expect(lettersSelect.textContent).not.toContain("Decupaj interior");
+    expect(lettersSelect.textContent).not.toContain("Gauri montaj");
+    expect(lettersSelect.textContent).not.toContain("Referinta / ghidaj");
+  });
+
+  it("uses the same owner taxonomy when the Letters+Logo context is detected from layer targets", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    const lettersSelect = screen.getByTestId("intake-v6-layer-role-pseudo:maria");
+    const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga");
+    const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+
+    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(logoSelect.querySelector("optgroup")).toBeNull();
+    expect(logoSelect.textContent).not.toContain("Vector Atipic");
+    expect(logoSelect.textContent).not.toContain("Cant / volum");
   });
 });

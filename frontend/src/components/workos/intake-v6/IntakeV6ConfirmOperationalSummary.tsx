@@ -13,6 +13,7 @@ import { formatEdgeCantDepthMm, formatEdgeCantMl } from "@/lib/intakeV6/intakeV6
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 import IntakeV6OperatorWorkSummaryTechnicalDetails from "./IntakeV6OperatorWorkSummaryTechnicalDetails";
 import { v6 } from "./atoms/intakeV6Presentation";
+import { INTAKE_V6_OWNER_ROLE_LABEL_LETTERS, INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 
 function SummaryRow({
   label,
@@ -123,13 +124,13 @@ export default function IntakeV6ConfirmOperationalSummary({
         <>
       <SummarySection title="Rezumat lucrare" testId="intake-v6-confirm-structure">
         <SummaryRow
-          label="Vector Litere"
+          label={INTAKE_V6_OWNER_ROLE_LABEL_LETTERS}
           value={formatLetterWorkStatus(summary)}
           testId="intake-v6-confirm-volumetric-letters"
           hint="Layere confirmate ca litere volumetrice in lucrare."
         />
         <SummaryRow
-          label="Vector Atipic"
+          label={INTAKE_V6_OWNER_ROLE_LABEL_LOGO}
           value={formatEmblemWorkStatus(summary)}
           testId="intake-v6-confirm-emblem-count"
           hint="Elemente confirmate ca emblemă/logo, cu statusul iluminării."
@@ -180,7 +181,7 @@ export default function IntakeV6ConfirmOperationalSummary({
         {summary.finish.artworkRows.map((row) => (
           <SummaryRow
             key={row.layerKey}
-            label={`Vector Atipic ${row.layerName}`}
+            label={`${INTAKE_V6_OWNER_ROLE_LABEL_LOGO} ${row.layerName}`}
             value={[
               row.executionLabel,
               row.printTransparencyLabel,

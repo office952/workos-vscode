@@ -1,6 +1,10 @@
-import { INTAKE_V6_LAYER_ROLE_OPTIONS } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
+import {
+  INTAKE_V6_LAYER_ROLE_OPTIONS,
+  getIntakeV6OwnerRoleLabel,
+  getIntakeV6RoleOptionsForLayer,
+} from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
-import { INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
+import { INTAKE_V6_LETTERS_TEMPLATE_CODE, INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { Layers, Palette, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
@@ -23,14 +27,7 @@ function resolveLayerKindLabel(kind: string | null | undefined): string {
 }
 
 function resolveRoleLabel(role: string | null | undefined): string {
-  if (!role) return "—";
-  return LAYER_ROLE_LABEL_BY_VALUE.get(role as LayerAutoRole) ?? role;
-}
-
-function shortRoleLabel(role: LayerAutoRole): string {
-  if (role === "face") return "Vector Litere";
-  if (role === "logo" || role === "printed_artwork") return "Vector Atipic";
-  return resolveRoleLabel(role);
+  return getIntakeV6OwnerRoleLabel(role);
 }
 
 function resolveOperatorLayerName(report: SvgAnalysisCoreReport, layer: SvgAnalysisCoreReport["layers"][number]): string {
@@ -66,6 +63,7 @@ function LayerRoleSelect({
   selectedRole,
   onUpdateLayerRole,
   workspaceTemplateCode,
+  ownerRoleTaxonomyActive,
 }: {
   layer: SvgAnalysisCoreReport["layers"][number];
   report: SvgAnalysisCoreReport;
@@ -73,43 +71,58 @@ function LayerRoleSelect({
   selectedRole: LayerAutoRole;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
   workspaceTemplateCode?: string | null;
+  ownerRoleTaxonomyActive?: boolean;
 }) {
   const target = resolveIntakeV6LayerTargetTemplate({
     layer,
     selectedRole,
     workspaceTemplateCode,
   });
-  const recommendedOrder: LayerAutoRole[] =
-    target.templateCode === INTAKE_V6_LOGO_TEMPLATE_CODE
-      ? ["logo", "printed_artwork", "vinyl", "face", "ignore", "unknown"]
-      : ["face", "return", "backing", "vinyl", "ignore", "unknown"];
-  const recommended = recommendedOrder
-    .map((value) => INTAKE_V6_LAYER_ROLE_OPTIONS.find((option) => option.value === value))
-    .filter((option): option is (typeof INTAKE_V6_LAYER_ROLE_OPTIONS)[number] => Boolean(option));
-  const recommendedValues = new Set(recommended.map((option) => option.value));
-  const secondary = INTAKE_V6_LAYER_ROLE_OPTIONS.filter((option) => !recommendedValues.has(option.value));
+  const groups = getIntakeV6RoleOptionsForLayer({
+    layer,
+    layerDisplay: buildIntakeV6LayerDisplayLabel(layer, 0, report).secondaryLabel,
+    confirmedRole: selectedRole,
+    detectedKind: layer.layerKind,
+    targetTemplateCode: target.templateCode,
+    activeTemplateCode: ownerRoleTaxonomyActive ? INTAKE_V6_LETTERS_TEMPLATE_CODE : workspaceTemplateCode,
+    assemblyType: ownerRoleTaxonomyActive || workspaceTemplateCode === INTAKE_V6_LETTERS_TEMPLATE_CODE ? "letters_logo" : null,
+  });
+  const recommended = groups.recommendedOptions;
+  const secondary = groups.secondaryOptions;
+  const normalizedSelectedRole = selectedRole === "logo" ? "printed_artwork" : selectedRole;
+  const flatOptions = groups.displayMode === "flat";
 
   return (
     <select
       className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
-      value={selectedRole}
+      value={normalizedSelectedRole}
       onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
       data-testid={`intake-v6-layer-role-${layerKey}`}
     >
+      {flatOptions
+        ? recommended.map((option) => (
+            <option key={option.value} value={option.value}>
+              {resolveRoleLabel(option.value)}
+            </option>
+          ))
+        : (
       <optgroup label="Recomandate">
         {recommended.map((option) => (
           <option key={option.value} value={option.value}>
-            {shortRoleLabel(option.value)}
+            {resolveRoleLabel(option.value)}
           </option>
         ))}
       </optgroup>
-      <optgroup label="Alte roluri">
-        {secondary.map((option) => (
-          <option key={option.value} value={option.value}>
-            {shortRoleLabel(option.value)}
-          </option>
-        ))}
-      </optgroup>
+          )}
+      {!flatOptions && secondary.length > 0 ? (
+        <optgroup label="Alte roluri">
+          {secondary.map((option) => (
+            <option key={option.value} value={option.value}>
+              {resolveRoleLabel(option.value)}
+            </option>
+          ))}
+        </optgroup>
+      ) : null}
     </select>
   );
 }
@@ -307,6 +320,16 @@ export default function IntakeV6LayersRoleTable({
   const setFocusedLayerKey = onHoverLayerKey ?? setInternalHoveredLayerKey;
   const shouldPaginate = report.layers.length > Math.max(INTAKE_V6_CARD_PAGE_SIZE, INTAKE_V6_NO_PAGINATION_MAX_LAYERS);
   const pageCount = shouldPaginate ? Math.max(1, Math.ceil(report.layers.length / INTAKE_V6_CARD_PAGE_SIZE)) : 1;
+  const ownerRoleTaxonomyActive = useMemo(() => {
+    const targetCodes = new Set(
+      report.layers.map((layer) => resolveIntakeV6LayerTargetTemplate({
+        layer,
+        selectedRole: resolveLayerRow(report, confirmation, layer).selectedRole,
+        workspaceTemplateCode,
+      }).templateCode),
+    );
+    return targetCodes.has(INTAKE_V6_LETTERS_TEMPLATE_CODE) && targetCodes.has(INTAKE_V6_LOGO_TEMPLATE_CODE);
+  }, [confirmation, report, workspaceTemplateCode]);
   const paginatedLayers = useMemo(() => {
     if (!shouldPaginate) return report.layers;
     const start = pageIndex * INTAKE_V6_CARD_PAGE_SIZE;
@@ -413,6 +436,7 @@ export default function IntakeV6LayersRoleTable({
                     selectedRole={resolveLayerRow(report, confirmation, layer).selectedRole}
                     onUpdateLayerRole={onUpdateLayerRole}
                     workspaceTemplateCode={workspaceTemplateCode}
+                    ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
                   />
                 </article>
             );

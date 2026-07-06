@@ -1,4 +1,5 @@
 import type { IntakeV6OperatorWorkSummaryCounts } from "@/lib/intakeV6/intakeV6ConfirmSummary";
+import { INTAKE_V6_OWNER_ROLE_LABEL_LETTERS, INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 function fmtCount(value: number | null | undefined): string {
@@ -24,7 +25,7 @@ export default function IntakeV6OperatorWorkSummary({
             className="text-slate-500"
             title="Layere confirmate ca litere volumetrice in lucrare."
           >
-            Vector Litere
+            {INTAKE_V6_OWNER_ROLE_LABEL_LETTERS}
           </dt>
           <dd className={v6.mono} data-testid={`${testId}-volumetric-letters`}>
             {fmtCount(counts.productionParts)}
@@ -35,7 +36,7 @@ export default function IntakeV6OperatorWorkSummary({
             className="text-slate-500"
             title="Elemente confirmate ca emblemă/logo."
           >
-            Vector Atipic
+            {INTAKE_V6_OWNER_ROLE_LABEL_LOGO}
           </dt>
           <dd className={v6.mono} data-testid={`${testId}-emblem-count`}>
             {fmtCount(counts.artworkCount)}

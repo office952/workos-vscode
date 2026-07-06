@@ -1,1 +1,71 @@
-export { INTAKE_V4_LAYER_ROLE_OPTIONS as INTAKE_V6_LAYER_ROLE_OPTIONS } from "./intakeV4LayerRoleOptions";
+import type { LayerAutoRole } from "@/lib/svgAnalyzer";
+import { INTAKE_V4_LAYER_ROLE_OPTIONS } from "./intakeV4LayerRoleOptions";
+
+export const INTAKE_V6_LAYER_ROLE_OPTIONS = INTAKE_V4_LAYER_ROLE_OPTIONS;
+export const INTAKE_V6_OWNER_ROLE_LABEL_LETTERS = "Vector Litere";
+export const INTAKE_V6_OWNER_ROLE_LABEL_LOGO = "Vector Logo";
+
+export interface IntakeV6LayerRoleOptionContext {
+	layer: { name?: string | null; layerKind?: string | null; autoRole?: string | null };
+	layerDisplay?: string | null;
+	confirmedRole?: string | null;
+	detectedKind?: string | null;
+	targetTemplateCode?: string | null;
+	activeTemplateCode?: string | null;
+	assemblyType?: string | null;
+}
+
+export interface IntakeV6LayerRoleOptionGroups {
+	recommendedOptions: ReadonlyArray<{ value: LayerAutoRole; label: string }>;
+	secondaryOptions: ReadonlyArray<{ value: LayerAutoRole; label: string }>;
+	fallbackOptions: ReadonlyArray<{ value: LayerAutoRole; label: string }>;
+	displayMode: "flat" | "grouped";
+}
+
+const LETTERS = "TPL-VOLUMETRIC-LETTERS_v2";
+const LOGO = "TPL-VOLUMETRIC-LOGO_v1";
+
+function pickOption(value: LayerAutoRole) {
+	return INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === value)!;
+}
+
+function isCurrentVolumetricContext(args: IntakeV6LayerRoleOptionContext): boolean {
+	return args.activeTemplateCode === LETTERS && (args.targetTemplateCode === LETTERS || args.targetTemplateCode === LOGO);
+}
+
+export function getIntakeV6OwnerRoleLabel(role: string | null | undefined): string {
+	if (role === "face") return INTAKE_V6_OWNER_ROLE_LABEL_LETTERS;
+	if (role === "logo" || role === "printed_artwork") return INTAKE_V6_OWNER_ROLE_LABEL_LOGO;
+	if (!role) return "—";
+	return INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === role)?.label ?? role;
+}
+
+export function getIntakeV6RoleOptionsForLayer(
+	args: IntakeV6LayerRoleOptionContext,
+): IntakeV6LayerRoleOptionGroups {
+	if (isCurrentVolumetricContext(args)) {
+		const recommended = [pickOption("face"), pickOption("printed_artwork")];
+		return {
+			recommendedOptions: recommended,
+			secondaryOptions: [],
+			fallbackOptions: [],
+			displayMode: "flat",
+		};
+	}
+
+	const defaultRecommendedValues: LayerAutoRole[] = args.targetTemplateCode === LOGO
+		? ["logo", "printed_artwork", "vinyl", "face", "ignore", "unknown"]
+		: ["face", "return", "backing", "vinyl", "ignore", "unknown"];
+	const recommendedOptions = defaultRecommendedValues
+		.map((value) => INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === value))
+		.filter((option): option is (typeof INTAKE_V4_LAYER_ROLE_OPTIONS)[number] => Boolean(option));
+	const recommendedValues = new Set(recommendedOptions.map((option) => option.value));
+	const secondaryOptions = INTAKE_V4_LAYER_ROLE_OPTIONS.filter((option) => !recommendedValues.has(option.value));
+
+	return {
+		recommendedOptions,
+		secondaryOptions,
+		fallbackOptions: [],
+		displayMode: "grouped",
+	};
+}
