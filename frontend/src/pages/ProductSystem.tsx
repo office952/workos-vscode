@@ -1491,6 +1491,15 @@ function CollapsibleComponentCard({
 // ============================================================
 // EDITOR PANEL — Redesigned with visual components
 // ============================================================
+const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
+  volumetric_face: "TPL-VOLUMETRIC-FACE_v1",
+  volumetric_back: "TPL-VOLUMETRIC-BACK_v1",
+  volumetric_return_side: "TPL-VOLUM-ALUMINIU_v1",
+  volumetric_surface_finish: "TPL-VOLUMETRIC-FINISH_v1",
+  volumetric_mounting_interface: "TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1",
+  volumetric_lighting: "TPL-VOLUMETRIC-LED_v1",
+};
+
 function SharedVolumetricFoundationPanel({
   availability,
 }: {
@@ -1513,7 +1522,7 @@ function SharedVolumetricFoundationPanel({
     if (contract.component_key === "volumetric_lighting" && contract.profile_key === "letters") {
       return "current LED strategy";
     }
-    return availability?.quote_offerable ? "offerable binding" : "candidate binding";
+    return availability?.quote_offerable ? "offerable binding" : "candidate / linked child binding";
   };
 
   return (
@@ -1532,7 +1541,7 @@ function SharedVolumetricFoundationPanel({
       </div>
       {isCandidate && isLogoProfile ? (
         <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/15 px-2.5 py-2 text-[10px] text-amber-200" data-testid="product-system-editor-logo-candidate-readiness">
-          <p className="font-bold">Candidate only · Not Work Intake</p>
+          <p className="font-bold">Candidate / linked child only · Not Work Intake</p>
           <p className="mt-0.5 text-amber-200/75">Offerability requires Product Truth + Modular Form + ProductDefinition + Pricing readiness.</p>
         </div>
       ) : null}
@@ -1547,7 +1556,7 @@ function SharedVolumetricFoundationPanel({
               <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span>
             </div>
             <p className="mt-1 text-[10px] text-slate-500">Profile: {contract.profile_key}</p>
-            <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500">Backing module: {contract.module_template_code}</p>
+            <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Shared module: {SHARED_VOLUMETRIC_EDITOR_MODULES[contract.component_key] ?? contract.shared_module_template_code ?? contract.module_template_code}</p>
             {contract.component_key === "volumetric_lighting" && contract.shared_module_template_code ? (
               <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Shared module: {contract.shared_module_template_code}</p>
             ) : null}
@@ -1770,6 +1779,9 @@ function TemplateEditor({
     "";
 
   const internalHoursLabel = formatInternalTemplateHours(draft.estimated_hours);
+  const isLogoSharedProfile = availability?.shared_component_contracts?.some(
+    (contract) => contract.profile_key === "logo"
+  ) ?? false;
 
   const generalTabPanel = (
     <div className="space-y-3">
@@ -1798,6 +1810,8 @@ function TemplateEditor({
     <div className="space-y-4">
       {aggregateLoading ? (
         <div className="text-[11px] text-slate-500">Se încarcă ProductAggregate…</div>
+      ) : isLogoSharedProfile ? (
+        <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
         <ProductAggregateOverviewPanel
           aggregate={aggregate}
@@ -1806,7 +1820,7 @@ function TemplateEditor({
         />
       )}
 
-      {preferAggregateDisplay && aggregate ? (
+      {preferAggregateDisplay && aggregate && !isLogoSharedProfile ? (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />

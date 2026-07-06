@@ -16,6 +16,14 @@ const LOGO = "TPL-VOLUMETRIC-LOGO_v1";
 const VOLUM_ALUMINUM = "TPL-VOLUM-ALUMINIU_v1";
 const FACE = "TPL-VOLUMETRIC-FACE_v1";
 const LOGO_FACE = "TPL-VOLUMETRIC-LOGO-FACE_v1";
+const OLD_LOGO_BACKING_TEMPLATE_CODES = [
+  "TPL-VOLUMETRIC-LOGO-FACE_v1",
+  "TPL-VOLUMETRIC-LOGO-BACK_v1",
+  "TPL-VOLUMETRIC-LOGO-RETURN_v1",
+  "TPL-VOLUMETRIC-LOGO-FINISH_v1",
+  "TPL-VOLUMETRIC-LOGO-MOUNTING_v1",
+];
+const OLD_LOGO_BACKING_LABELS = ["Fata logo", "Spate logo", "Return logo", "Cant logo", "Montaj logo", "Finisaje logo"];
 
 const LETTER_SHARED_CONTRACTS = [
   { component_key: "volumetric_face", display_name: "Volumetric face", profile_key: "letters", module_template_code: FACE, confidence: "MEDIUM", owner_decision: "APPROVE_AS_DIRECTION", shared_truth_fields: ["component_role", "area"], not_confirmed: [] },
@@ -148,19 +156,20 @@ function createCatalogFixture() {
       shared_component_contracts: LETTER_SHARED_CONTRACTS,
     }),
     makeAvailability(logo, {
+      quote_offerable: false,
       is_parent: true,
       has_modules: true,
       module_codes: [LOGO_FACE],
       child_module_codes: [LOGO_FACE],
-      status: "experimental",
-      status_reason: "not_owner_valid",
+      status: "not_offerable",
+      status_reason: "candidate_linked_child_only",
       product_system_role: "candidate_product",
       display_group: "candidate_products",
       importance_rank: 20,
       owner_decision_required: true,
-      readiness_reason: "Produs structural existent, dar necesita GO owner pentru ofertare.",
-      ui_label: "Produs in pregatire",
-      ui_description: "Nu apare in Work Intake pana la GO owner.",
+      readiness_reason: "Logo ramane candidate / linked child in compozitia Letters; nu este root ofertabil separat.",
+      ui_label: "Produs candidat / linked child",
+      ui_description: "Participa in compozitie cu Letters. Nu se alege direct in Work Intake.",
       composition_modules: LOGO_COMPOSITION,
       shared_component_contracts: LOGO_SHARED_CONTRACTS,
     }),
@@ -308,19 +317,21 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getByRole("tab", { name: /Overview/i })).toHaveAttribute("aria-selected", "true");
     expect(screen.getByTestId("product-system-overview-card-products")).toHaveTextContent("Produse");
     expect(screen.getByTestId("product-system-overview-card-products")).toHaveTextContent("2");
-    expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("Shared contracts");
+    expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("Shared modules");
     expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("6");
     expect(screen.getByTestId("product-system-overview-card-composition")).toHaveTextContent("2");
     expect(screen.getByTestId("product-system-overview-card-archived")).toHaveTextContent("5");
-    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Shared Volumetric Contracts");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Shared Volumetric Modules");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Letters si Logo consuma aceleasi 6 componente comune");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("2 produse conectate");
-    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("6 contracte comune");
-    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("12 module bindings");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("6 componente comune");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("12 product usages");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Lighting shared module: TPL-VOLUMETRIC-LED_v1");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Logo lighting profile is not a duplicated primary module");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Lighting profile needs Product Truth/runtime validation");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Letters: offerable");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Logo: candidate / not Work Intake");
     expect(screen.queryByTestId("product-system-components-list")).not.toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-component-row-${VOLUM_ALUMINUM}`)).not.toBeInTheDocument();
@@ -340,20 +351,29 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(within(products).queryByText(VOLUM_ALUMINUM)).not.toBeInTheDocument();
     expect(products.textContent).not.toContain("Work Intake: DA");
     expect(within(products).queryByText("GO owner")).not.toBeInTheDocument();
-    expect(within(products).getByText("Produs ofertabil")).toBeInTheDocument();
+    expect(within(products).getAllByText("Produs ofertabil").length).toBeGreaterThanOrEqual(1);
     expect(within(products).getByText("In pregatire")).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-icon-${LETTERS}`)).toHaveAttribute("data-icon-size", "large");
     expect(within(products).getByTestId(`product-system-template-icon-${LETTERS}`)).toHaveClass("h-16");
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LETTERS}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LOGO}`)).toBeInTheDocument();
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Shared contracts: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Shared base: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Shared modules: 6/6");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Work Intake DA");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("LED strategy: letters standard");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared contracts: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared base: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared modules: 6/6");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Work Intake NU");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("LED strategy: logo needs Product Truth/runtime validation");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Lighting strategy/profile source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
+    for (const hiddenCode of OLD_LOGO_BACKING_TEMPLATE_CODES) {
+      expect(products).not.toHaveTextContent(hiddenCode);
+    }
+    for (const hiddenLabel of OLD_LOGO_BACKING_LABELS) {
+      expect(products).not.toHaveTextContent(hiddenLabel);
+    }
     expect(within(products).getByTestId(`product-system-template-meta-trigger-${LETTERS}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-meta-trigger-${LOGO}`)).toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-template-shared-foundation-${LETTERS}`)).not.toBeInTheDocument();
@@ -387,12 +407,10 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     fireEvent.click(within(products).getByTestId(`product-system-template-meta-trigger-${LOGO}`));
     const logoMeta = screen.getByTestId(`product-system-template-meta-popover-${LOGO}`);
     expect(within(logoMeta).getByText("Work Intake")).toBeInTheDocument();
-    expect(within(logoMeta).getByText("GO owner")).toBeInTheDocument();
     expect(within(logoMeta).getByText("Shared foundation")).toBeInTheDocument();
     expect(within(logoMeta).getByText("6 contracte")).toBeInTheDocument();
     expect(within(logoMeta).getByText("Profile")).toBeInTheDocument();
     expect(within(logoMeta).getByText("logo")).toBeInTheDocument();
-    expect(within(logoMeta).getAllByText("Da").length).toBeGreaterThan(0);
     expect(within(logoMeta).getAllByText("Nu").length).toBeGreaterThan(0);
   });
 
@@ -419,7 +437,7 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     fireEvent.click(screen.getByRole("tab", { name: /Produse/i }));
     const products = screen.getByTestId("product-system-products-list");
     const lettersTrigger = within(products).getByTestId(`product-system-template-composition-trigger-${LETTERS}`);
-    expect(lettersTrigger).toHaveAccessibleName("Afiseaza modulele produsului, 6 module");
+    expect(lettersTrigger).toHaveAccessibleName("Afiseaza baza comuna volumetrica, 6 module comune");
     expect(lettersTrigger).toHaveAttribute("aria-expanded", "false");
     expect(lettersTrigger).not.toHaveTextContent("Module");
     expect(lettersTrigger).not.toHaveTextContent("Module (6)");
@@ -427,9 +445,13 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     fireEvent.click(lettersTrigger);
 
     expect(lettersTrigger).toHaveAttribute("aria-expanded", "true");
-    expect(within(products).getByText("Fata litera")).toBeInTheDocument();
-    expect(within(products).getByText(FACE)).toBeInTheDocument();
-    expect(within(products).getByText("Optional / conditionat")).toBeInTheDocument();
+    const lettersSharedComposition = within(products).getByTestId(`product-system-template-shared-composition-${LETTERS}`);
+    expect(lettersSharedComposition).toHaveTextContent("Shared volumetric base: 6 module comune");
+    expect(lettersSharedComposition).toHaveTextContent("Fata comuna");
+    expect(lettersSharedComposition).toHaveTextContent("Spate comuna");
+    expect(lettersSharedComposition).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
+    expect(lettersSharedComposition).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
+    expect(lettersSharedComposition).toHaveTextContent("Work Intake: DA");
   });
 
   it("shows detailed copy and dates only after switching density", () => {
@@ -442,20 +464,20 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     fireEvent.click(screen.getByTestId("product-system-density-detailed"));
 
     expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "detailed");
-    expect(screen.getByTestId(`product-system-template-composition-trigger-${LETTERS}`)).toHaveTextContent("Module produs (6)");
+    expect(screen.getByTestId(`product-system-template-composition-trigger-${LETTERS}`)).toHaveTextContent("Shared base (6 comune)");
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
-    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Shared contracts: 6/6");
-    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("LED strategy: letters standard");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Shared modules: 6/6");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
-    expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("LED strategy: logo needs Product Truth/runtime validation");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("Lighting strategy/profile source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
     expect(screen.getByTestId("product-system-products-list").textContent).toContain("Work Intake: DA");
-    expect(screen.getByText("GO owner")).toBeInTheDocument();
-    expect(screen.getByText("Apare in Work Intake")).toBeInTheDocument();
+    expect(screen.getAllByText("GO owner").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Apare in Work Intake").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Actualizat: 01.07.2026 · Creat: 01.07.2026")).toHaveLength(2);
     expect(screen.getByText(/Necesita GO owner pentru ofertare/)).toBeInTheDocument();
   });
 
-  it("switches to Components view and shows shared contracts as primary rows", () => {
+  it("switches to Components view and shows compact shared component cards with usage popovers", () => {
     renderCatalog();
 
     fireEvent.click(screen.getByRole("tab", { name: /Componente/i }));
@@ -466,19 +488,35 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getAllByTestId(/product-system-shared-contract-row-/)).toHaveLength(6);
     const faceContract = screen.getByTestId("product-system-shared-contract-row-volumetric_face");
     expect(within(faceContract).getByText("volumetric_face")).toBeInTheDocument();
-    expect(within(faceContract).getByText(FACE)).toBeInTheDocument();
-    expect(within(faceContract).getByText(LOGO_FACE)).toBeInTheDocument();
-    expect(within(faceContract).getByText("Profile letters · Work Intake DA")).toBeInTheDocument();
-    expect(within(faceContract).getByText("Profile logo · Work Intake NU")).toBeInTheDocument();
+    expect(within(faceContract).getByText("Volumetric face")).toBeInTheDocument();
+    expect(faceContract).toHaveTextContent(`Shared primary module: ${FACE}`);
+    expect(faceContract).toHaveTextContent("shared");
+    expect(faceContract).toHaveTextContent("used by 2 products");
+    expect(faceContract).not.toHaveTextContent(LOGO_FACE);
+    expect(faceContract).not.toHaveTextContent("Profile letters");
+    expect(faceContract).not.toHaveTextContent("Profile logo");
+    expect(faceContract).not.toHaveTextContent("Letters strategy source");
+    expect(faceContract).not.toHaveTextContent("Logo strategy source");
+    fireEvent.mouseEnter(screen.getByTestId("product-system-shared-usage-trigger-volumetric_face"));
+    const faceUsage = screen.getByTestId("product-system-shared-usage-popover-volumetric_face");
+    expect(faceUsage).toHaveTextContent("Componenta");
+    expect(faceUsage).toHaveTextContent("Shared module: TPL-VOLUMETRIC-FACE_v1");
+    expect(faceUsage).toHaveTextContent(`${LETTERS}offerable — Work Intake DA`);
+    expect(faceUsage).toHaveTextContent(`${LOGO}candidate / linked child — Work Intake NU`);
+    fireEvent.mouseLeave(screen.getByTestId("product-system-shared-usage-trigger-volumetric_face"));
     const lightingContract = screen.getByTestId("product-system-shared-contract-row-volumetric_lighting");
-    expect(lightingContract).toHaveTextContent("PARTIAL");
     expect(lightingContract).toHaveTextContent("Shared primary module: TPL-VOLUMETRIC-LED_v1");
-    expect(lightingContract).toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
-    expect(lightingContract).toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
-    expect(lightingContract).toHaveTextContent("LED strategy: letters standard");
-    expect(lightingContract).toHaveTextContent("LED strategy: logo needs Product Truth/runtime validation");
-    expect(lightingContract).toHaveTextContent("Logo lighting module is a profile/backing strategy source, not a duplicated primary LED module.");
-    expect(lightingContract).toHaveTextContent("Logo lighting profile source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1, status reserved/backing strategy");
+    expect(lightingContract).not.toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
+    expect(lightingContract).not.toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
+    fireEvent.mouseEnter(screen.getByTestId("product-system-shared-usage-trigger-volumetric_lighting"));
+    const lightingUsage = screen.getByTestId("product-system-shared-usage-popover-volumetric_lighting");
+    expect(lightingUsage).toHaveTextContent("Shared module: TPL-VOLUMETRIC-LED_v1");
+    expect(lightingUsage).toHaveTextContent(`${LETTERS}offerable — Work Intake DA — strategy: TPL-VOLUMETRIC-LED_v1`);
+    expect(lightingUsage).toHaveTextContent(`${LOGO}candidate / linked child — Work Intake NU — strategy: TPL-VOLUMETRIC-LOGO-LIGHTING_v1`);
+    fireEvent.mouseLeave(screen.getByTestId("product-system-shared-usage-trigger-volumetric_lighting"));
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_return_side")).toHaveTextContent(`Shared primary module: ${VOLUM_ALUMINUM}`);
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_finish")).toHaveTextContent("Volumetric finish");
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_mounting_structure")).toHaveTextContent("Volumetric mounting / structure");
     expect(screen.queryByTestId("product-system-components-list")).not.toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-component-row-${LETTERS}`)).not.toBeInTheDocument();
     expect(screen.queryByTestId(`product-system-template-icon-${VOLUM_ALUMINUM}`)).not.toBeInTheDocument();
@@ -489,11 +527,34 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     const components = screen.getByTestId("product-system-components-list");
     expect(within(components).getByText(VOLUM_ALUMINUM)).toBeInTheDocument();
     expect(within(components).getByText(FACE)).toBeInTheDocument();
-    expect(within(components).getByText(LOGO_FACE)).toBeInTheDocument();
+    expect(within(components).queryByText(LOGO_FACE)).not.toBeInTheDocument();
     expect(screen.getByTestId(`product-system-component-row-${VOLUM_ALUMINUM}`)).toBeInTheDocument();
+    for (const hiddenCode of OLD_LOGO_BACKING_TEMPLATE_CODES) {
+      expect(components).not.toHaveTextContent(hiddenCode);
+    }
   });
 
-  it("switches to Composition view and renders product to module relations", () => {
+  it("keeps Components compact dense and adds owner details only in detailed density", () => {
+    renderCatalog();
+
+    fireEvent.click(screen.getByRole("tab", { name: /Componente/i }));
+
+    expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "compact");
+    expect(screen.queryByText("Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.")).not.toBeInTheDocument();
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).not.toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).not.toHaveTextContent("Logo lighting profile is strategy only");
+
+    fireEvent.click(screen.getByTestId("product-system-density-detailed"));
+
+    expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "detailed");
+    expect(screen.getByText("Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("Logo lighting profile is strategy only, not a duplicated primary module.");
+  });
+
+  it("switches to Composition view and renders shared volumetric base as the primary model", () => {
     renderCatalog();
 
     fireEvent.click(screen.getByRole("tab", { name: /Compozitii/i }));
@@ -501,13 +562,40 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     const composition = screen.getByTestId("product-system-composition-list");
     expect(screen.getByTestId("product-system-view-composition")).toBeInTheDocument();
     expect(within(composition).getByText(LETTERS)).toBeInTheDocument();
-    expect(within(composition).getByText(/Fata litera/)).toBeInTheDocument();
-    expect(within(composition).queryByText(FACE)).not.toBeInTheDocument();
     expect(within(composition).getByText(LOGO)).toBeInTheDocument();
-    expect(within(composition).getByText(/Fata logo/)).toBeInTheDocument();
+
+    const lettersSharedBase = within(composition).getByTestId(`product-system-composition-shared-base-${LETTERS}`);
+    expect(lettersSharedBase).toHaveTextContent("Shared volumetric base: 6 module comune");
+    expect(lettersSharedBase).toHaveTextContent("Fata comuna -> TPL-VOLUMETRIC-FACE_v1");
+    expect(lettersSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
+    expect(lettersSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
+    expect(lettersSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
+    expect(lettersSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(lettersSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
+    expect(lettersSharedBase).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
+    expect(lettersSharedBase).toHaveTextContent("Work Intake: DA");
+
+    const logoSharedBase = within(composition).getByTestId(`product-system-composition-shared-base-${LOGO}`);
+    expect(logoSharedBase).toHaveTextContent("Shared volumetric base: 6 module comune");
+    expect(logoSharedBase).toHaveTextContent("Fata comuna -> TPL-VOLUMETRIC-FACE_v1");
+    expect(logoSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
+    expect(logoSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
+    expect(logoSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
+    expect(logoSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(logoSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
+    expect(logoSharedBase).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
+    expect(logoSharedBase).toHaveTextContent("Work Intake: NU");
+    expect(logoSharedBase).toHaveTextContent("candidate / linked child / Work Intake NU");
+    expect(logoSharedBase).toHaveTextContent("Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.");
+    for (const hiddenCode of OLD_LOGO_BACKING_TEMPLATE_CODES) {
+      expect(composition).not.toHaveTextContent(hiddenCode);
+    }
+    for (const hiddenLabel of OLD_LOGO_BACKING_LABELS) {
+      expect(composition).not.toHaveTextContent(hiddenLabel);
+    }
 
     fireEvent.click(screen.getByTestId("product-system-density-detailed"));
-    expect(within(composition).getByText(FACE)).toBeInTheDocument();
+    expect(within(composition).queryByText("Technical backing / historical bindings")).not.toBeInTheDocument();
   });
 
   it("switches to Archived view and shows empty state when none exist", () => {
