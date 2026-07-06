@@ -199,12 +199,8 @@ export default function IntakeV6PricingInputPanel({
             max={100}
             step={1}
             value={activeCommercialInputs.vatPercent}
-            onChange={(event) =>
-              setCommercialInputs({
-                ...activeCommercialInputs,
-                vatPercent: Number(event.target.value) || 0,
-              })
-            }
+            readOnly
+            disabled
             className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-vat"
           />
@@ -462,12 +458,8 @@ export default function IntakeV6PricingInputPanel({
                 max={100}
                 step={1}
                 value={activeCommercialInputs.vatPercent}
-                onChange={(event) =>
-                  setCommercialInputs({
-                    ...activeCommercialInputs,
-                    vatPercent: Number(event.target.value) || 0,
-                  })
-                }
+                readOnly
+                disabled
                 className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-vat"
               />

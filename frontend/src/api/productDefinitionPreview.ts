@@ -43,6 +43,28 @@ export interface ProductDefinitionOperationRole {
   provenance: string;
 }
 
+export interface ProductDefinitionLinkedRuntimeSegmentReadiness {
+  ready_for_pricing?: boolean;
+  ready_for_quote?: boolean;
+  ready_for_order?: boolean;
+  ready_for_execution?: boolean;
+}
+
+export interface ProductDefinitionLinkedRuntimeSegment {
+  segment_key: string;
+  parent_root_template_code: string;
+  owning_template_code: string;
+  composition_role: string;
+  binding_status: string;
+  product_truth_readiness?: ProductDefinitionLinkedRuntimeSegmentReadiness | null;
+}
+
+export interface ProductDefinitionLinkedRuntimeSegmentsSummary {
+  root_template_code: string;
+  composition_mode?: string;
+  segments: ProductDefinitionLinkedRuntimeSegment[];
+}
+
 export interface ProductDefinitionPreview {
   preview_version: string;
   template_code: string;
@@ -59,6 +81,7 @@ export interface ProductDefinitionPreview {
   components: ProductDefinitionComponentRole[];
   material_roles: ProductDefinitionMaterialRole[];
   operation_roles: ProductDefinitionOperationRole[];
+  linked_template_runtime_segments?: ProductDefinitionLinkedRuntimeSegmentsSummary | null;
   canonical_values: Record<string, unknown>;
   geometry_inputs: Record<string, unknown>;
   validation: {

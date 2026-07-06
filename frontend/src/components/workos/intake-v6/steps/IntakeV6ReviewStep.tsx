@@ -128,6 +128,7 @@ import {
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
 import IntakeV6LiveCalculationSummary from "../IntakeV6LiveCalculationSummary";
 import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
+import { getProductDefinitionPreview, ProductDefinitionPreviewNotFoundError, type ProductDefinitionPreview } from "@/api/productDefinitionPreview";
 import {
   LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE,
   LOGO_ONLY_COMMERCIAL_GUARD_TITLE,
@@ -588,6 +589,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [breakdown, setBreakdown] = useState<IntakeV6MaterialBreakdownResponse | null>(null);
   const [logicalListReadModel, setLogicalListReadModel] = useState<IntakeV6LogicalListReadModelResponse | null>(null);
   const [binding, setBinding] = useState<IntakeV6ProductSystemBindingResponse | null>(null);
+  const [productDefinitionPreview, setProductDefinitionPreview] = useState<ProductDefinitionPreview | null>(null);
   const templateFormContract = templateContract.contract;
   const modularTemplateCode =
     binding?.template_code?.trim() ||
@@ -838,6 +840,29 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       cancelled = true;
     };
   }, [workspaceId, analysisIdentityKey, analysisReady]);
+
+  useEffect(() => {
+    if (!workspaceId || !analysisReady || !templateCode) {
+      setProductDefinitionPreview(null);
+      return;
+    }
+    let cancelled = false;
+    void getProductDefinitionPreview(templateCode, workspaceId)
+      .then((response) => {
+        if (!cancelled) setProductDefinitionPreview(response);
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        if (error instanceof ProductDefinitionPreviewNotFoundError) {
+          setProductDefinitionPreview(null);
+          return;
+        }
+        setProductDefinitionPreview(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId, analysisReady, templateCode]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -1538,6 +1563,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       <div className="mb-4">
         <IntakeV6ProductCompositionPanel
           payload={state.workspace?.payload as Record<string, unknown> | undefined}
+          linkedSegments={productDefinitionPreview?.linked_template_runtime_segments ?? null}
           onConfirm={(items) => void confirmProductComposition(items)}
         />
       </div>

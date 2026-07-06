@@ -1,5 +1,6 @@
 import { CheckCircle2, Layers3, TriangleAlert } from "lucide-react";
 import { v6 } from "./atoms/intakeV6Presentation";
+import type { ProductDefinitionLinkedRuntimeSegmentsSummary } from "@/api/productDefinitionPreview";
 
 type CompositionItem = {
   composition_item_id?: string;
@@ -57,10 +58,12 @@ function compositionLabel(type: string | undefined): string {
 
 export default function IntakeV6ProductCompositionPanel({
   payload,
+  linkedSegments,
   onConfirm,
   compact = false,
 }: {
   payload: Record<string, unknown> | null | undefined;
+  linkedSegments?: ProductDefinitionLinkedRuntimeSegmentsSummary | null;
   onConfirm?: (items: Array<Record<string, unknown>>) => void;
   compact?: boolean;
 }) {
@@ -71,6 +74,7 @@ export default function IntakeV6ProductCompositionPanel({
   const items = recommendation.composition_items ?? [];
   const blockers = recommendation.blockers ?? [];
   const warnings = recommendation.warnings ?? [];
+  const linkedSegmentItems = linkedSegments?.segments ?? [];
   const canConfirm = !confirmed && recommendation.status !== "blocked" && items.length > 0;
 
   return (
@@ -105,6 +109,40 @@ export default function IntakeV6ProductCompositionPanel({
           </div>
         ))}
       </div>
+
+      {linkedSegmentItems.length > 0 ? (
+        <div
+          className="mt-3 rounded border border-cyan-500/25 bg-[#0A0F1A]/55 p-3"
+          data-testid="intake-v6-product-definition-linked-segments"
+        >
+          <p className="text-[11px] font-semibold text-cyan-200">Segmente legate Product Definition</p>
+          {linkedSegments?.root_template_code ? (
+            <p className="mt-1 text-[10px] text-slate-400">
+              Root Product Definition: <span className="font-mono text-slate-200">{linkedSegments.root_template_code}</span>
+            </p>
+          ) : null}
+          <div className="mt-2 space-y-2">
+            {linkedSegmentItems.map((segment) => (
+              <div
+                key={segment.segment_key}
+                className="rounded border border-[#2A3548]/80 bg-[#111827]/55 p-2.5"
+                data-testid={`intake-v6-product-definition-linked-segment-${segment.segment_key}`}
+              >
+                <p className="text-[11px] font-semibold text-slate-100">Segment linked detectat din Product Definition</p>
+                <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{segment.owning_template_code}</p>
+                <p className="mt-1 text-[10px] text-amber-200">Candidat compozitie, nu produs ofertabil separat</p>
+                <p className="mt-0.5 text-[10px] text-slate-400">
+                  Role: {segment.composition_role} · status binding: {segment.binding_status}
+                </p>
+                <p className="mt-0.5 text-[10px] text-slate-500">Nu activeaza pricing, quote, order sau execution separat</p>
+                <p className="mt-0.5 text-[10px] text-slate-500">
+                  pricing={segment.product_truth_readiness?.ready_for_pricing === true ? "DA" : "NU"} · quote={segment.product_truth_readiness?.ready_for_quote === true ? "DA" : "NU"} · order={segment.product_truth_readiness?.ready_for_order === true ? "DA" : "NU"} · execution={segment.product_truth_readiness?.ready_for_execution === true ? "DA" : "NU"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {warnings.length || blockers.length ? (
         <div className="mt-3 space-y-1 text-[11px] text-amber-100">
