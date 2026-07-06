@@ -110,6 +110,7 @@ class ProductDefinitionPreview(BaseModel):
     components: list[ProductDefinitionComponentRole] = Field(default_factory=list)
     material_roles: list[ProductDefinitionMaterialRole] = Field(default_factory=list)
     operation_roles: list[ProductDefinitionOperationRole] = Field(default_factory=list)
+    linked_template_runtime_segments: dict[str, Any] | None = None
     canonical_values: dict[str, Any] = Field(default_factory=dict)
     geometry_inputs: dict[str, Any] = Field(default_factory=dict)
     validation: ProductDefinitionValidation = Field(default_factory=ProductDefinitionValidation)

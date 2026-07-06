@@ -25,6 +25,9 @@ from schemas.product_definition import (
     ReadinessStatus,
 )
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
+from services.linked_template_runtime_segment_extraction_service import (
+    extract_linked_template_segments_from_workspace_payload,
+)
 from services.mini_module_registry_service import MiniModuleRegistryService, get_mini_module_registry_service
 from services.product_aggregate_service import ProductAggregateService
 
@@ -461,6 +464,16 @@ class ProductDefinitionBuilderService:
         canonical_values = _build_canonical_values(form_contract.field_bindings, payload)
         geometry_inputs = _build_geometry_inputs(canonical_values)
 
+        linked_template_runtime_segments = None
+        backbone = form_contract.form_system_backbone if isinstance(form_contract.form_system_backbone, dict) else {}
+        linked_template_composition = backbone.get("linked_template_composition")
+        if isinstance(linked_template_composition, dict):
+            linked_template_runtime_segments = extract_linked_template_segments_from_workspace_payload(
+                root_template_code=template_code,
+                workspace_payload=payload,
+                linked_template_composition=linked_template_composition,
+            )
+
         inactive_module_codes = {
             m.module_code for m in inactive if m.state in ("inactive", "future_reserved")
         }
@@ -564,6 +577,7 @@ class ProductDefinitionBuilderService:
             components=_build_components(aggregate, active_modules),
             material_roles=_build_material_roles(aggregate, active_modules),
             operation_roles=_build_operation_roles(aggregate, active_modules),
+            linked_template_runtime_segments=linked_template_runtime_segments,
             canonical_values=canonical_values,
             geometry_inputs=geometry_inputs,
             validation=validation,
