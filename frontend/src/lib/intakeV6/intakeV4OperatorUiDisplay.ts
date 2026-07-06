@@ -227,6 +227,9 @@ export function formatWorkspaceReadinessLabel(status: string | null | undefined)
   if (status === "finish_setup_incomplete") {
     return "Finisaje incomplete";
   }
+  if (status === "logo_only_candidate_not_offerable") {
+    return "Logo candidate read-only — neofertabil comercial";
+  }
   return status?.replace(/_/g, " ") ?? "—";
 }
 

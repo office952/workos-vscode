@@ -1,4 +1,9 @@
 import type { IntakeV6StepId, IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
+import {
+  LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE,
+  LOGO_ONLY_COMMERCIAL_GUARD_TITLE,
+  isLogoOnlyCandidateNotOfferableStatus,
+} from "@/lib/intakeV6/intakeV6LogoOnlyCommercialGuard";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import IntakeV6ProgressBar from "./IntakeV6ProgressBar";
 import { v6 } from "./intakeV6Presentation";
@@ -38,6 +43,7 @@ export default function IntakeV6Header({
       : undefined) ??
     ws?.template_code ??
     "—";
+  const logoOnlyCandidate = isLogoOnlyCandidateNotOfferableStatus(ws?.readiness_status);
 
   return (
     <header className="border-b border-[#2A3548] bg-[#111827]" data-testid="intake-v6-header">
@@ -53,7 +59,7 @@ export default function IntakeV6Header({
             ·
           </span>
           <span className="truncate text-slate-400" data-testid="intake-v6-header-template">
-            {template}
+            {logoOnlyCandidate ? LOGO_ONLY_COMMERCIAL_GUARD_TITLE : template}
           </span>
           <span className="text-slate-600" aria-hidden>
             ·
@@ -61,6 +67,14 @@ export default function IntakeV6Header({
           <span className="text-slate-500" data-testid="intake-v6-header-step">
             {STEP_LABELS[state.currentStep]}
           </span>
+          {logoOnlyCandidate ? (
+            <span
+              className="basis-full text-[11px] font-semibold text-amber-200 sm:basis-auto"
+              data-testid="intake-v6-header-logo-only-guard"
+            >
+              {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE} Context UI existent: {template} shell.
+            </span>
+          ) : null}
         </div>
 
         {onPromoteTemplateV2 ? (
