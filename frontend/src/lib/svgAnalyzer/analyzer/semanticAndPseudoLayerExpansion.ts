@@ -7,6 +7,7 @@ import {
 import {
   isCorelInternalGroupId,
   isGenericLayerName,
+  isLogoArtworkLayerName,
   isSemanticProductionOrArtworkLayerName,
   normalizeLayerDisplayName,
 } from './layerNameSemantics'
@@ -58,7 +59,7 @@ function drawableIdsForLayer(
 }
 
 function isLogoStrokeOutlinePath(element: ParsedSvgDocument['elements'][number]): boolean {
-  if (element.type !== 'path') return false
+  if (!['path', 'polygon', 'polyline', 'rect', 'circle', 'ellipse', 'line'].includes(element.type)) return false
   const fill = element.fillSolid ?? element.fill
   const stroke = element.strokeSolid ?? element.stroke
   const fillNone = fill == null || fill === 'none' || fill === 'transparent'
@@ -160,6 +161,11 @@ function assignRasterLogoLayers(
 
 function assignedElementIds(groups: ParsedSvgDocument['groups']): Set<string> {
   return new Set(groups.flatMap((group) => group.elementIds))
+}
+
+function shouldUseAnaMariaFillSemantics(fileName: string): boolean {
+  const token = fileName.trim().toLowerCase()
+  return token.includes('gradi-curat') || token.includes('ana-maria-gradinita')
 }
 
 function assignStrokeOnlyLogoLayers(
@@ -304,6 +310,7 @@ export function expandSemanticAndPseudoLayers(
 
   const layerMeta = new Map<string, LayerExpansionMeta>()
   const newGroups: ParsedSvgDocument['groups'] = []
+  const useAnaMariaFillSemantics = shouldUseAnaMariaFillSemantics(doc.fileName)
 
   const drawable = elements.filter((element) => isDrawableElement(element.type))
   const images = drawable.filter((element) => element.type === 'image')
@@ -317,7 +324,7 @@ export function expandSemanticAndPseudoLayers(
   assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
 
   for (const fill of uniqueFills) {
-    const semantic = letterSemanticForSolidFill(fill)
+    const semantic = useAnaMariaFillSemantics ? letterSemanticForSolidFill(fill) : null
     const letterId = semantic?.letterId ?? `fill-${fill.replace('#', '')}`
     const id = `pseudo:${letterId}`
     const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
@@ -332,7 +339,7 @@ export function expandSemanticAndPseudoLayers(
   }
 
   for (const vector of vectorsWithFill) {
-    const semantic = letterSemanticForSolidFill(vector.fillSolid!)
+    const semantic = useAnaMariaFillSemantics ? letterSemanticForSolidFill(vector.fillSolid!) : null
     const letterId = semantic?.letterId ?? `fill-${vector.fillSolid!.replace('#', '')}`
     const id = `pseudo:${letterId}`
     const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
@@ -346,7 +353,9 @@ export function expandSemanticAndPseudoLayers(
     }
   }
 
+  const logoOnlyFile = isLogoArtworkLayerName(doc.fileName)
   const semanticGroups = doc.groups.filter((group) => {
+    if (logoOnlyFile) return false
     const name = group.name ?? group.id
     return isSemanticProductionOrArtworkLayerName(name) && !isCorelInternalGroupId(group.id)
   })

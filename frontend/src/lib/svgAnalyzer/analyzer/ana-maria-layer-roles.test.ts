@@ -137,7 +137,7 @@ describe("ana-maria six-layer classification", () => {
     const draft = buildLayerRoleConfirmationDraft(report.layers);
     const rows = buildLayerRoleRowsForDisplay(report, draft);
     expect(rows.length).toBe(6);
-    expect(rows.filter((row) => row.selectedRoleLabel.includes("Față litere")).length).toBe(4);
-    expect(rows.filter((row) => row.selectedRoleLabel.includes("Artwork")).length).toBe(2);
+    expect(rows.filter((row) => row.selectedRoleLabel.includes("Litere volumetrice / Vector litere")).length).toBe(4);
+    expect(rows.filter((row) => row.selectedRoleLabel.includes("Logo volumetric / Vector atipic constructiv")).length).toBe(2);
   });
 });
