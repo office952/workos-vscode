@@ -113,13 +113,14 @@ export function resolveIntakeV6StepFromReadiness(
   if (readinessStatus === "finish_setup_incomplete") return "review";
 
   const finish = payload?.finish_setup;
-  if (finish != null && typeof finish === "object" && !Array.isArray(finish)) {
-    if ((finish as Record<string, unknown>).confirmed === true) return "confirm";
-  }
-
   const hasAnalysis = payload?.svg_analysis_json != null;
   const setup = parseLayerRoleSetup(payload?.layer_role_setup);
   if (hasAnalysis && setup?.confirmation_status === "complete") return "review";
+  if (hasAnalysis && setup?.confirmation_status !== "complete") return "layers";
+
+  if (finish != null && typeof finish === "object" && !Array.isArray(finish)) {
+    if ((finish as Record<string, unknown>).confirmed === true) return "confirm";
+  }
 
   return "layers";
 }

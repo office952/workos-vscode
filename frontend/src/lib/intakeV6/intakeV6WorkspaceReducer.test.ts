@@ -329,6 +329,43 @@ describe("intakeV6WorkspaceReducer load during upload", () => {
     expect(reloaded.currentStep).toBe("review");
   });
 
+  it("keeps workspace on layers when persisted analysis has incomplete layer roles even with stale confirmed finish", () => {
+    const reloaded = intakeV6WorkspaceReducer(initialIntakeV6WorkspaceState, {
+      type: "LOAD_SUCCESS",
+      workspace: {
+        id: "ws-logo-incomplete",
+        workspace_code: "IV6-LOGO",
+        title: "Logo incomplete",
+        template_code: "TPL-VOLUMETRIC-LETTERS",
+        status: "collecting_data",
+        readiness_status: "layer_roles_incomplete",
+        payload: {
+          svg_source: {
+            file_name: "logo.svg",
+            file_size_bytes: 943,
+            file_hash: "logo-source-hash",
+            upload_status: "analyzed",
+          },
+          svg_source_text: "<svg/>",
+          svg_analysis_json: {
+            layerRoleConfirmation: {
+              schemaVersion: "layer_role_confirmation_v1",
+              confirmationStatus: "missing",
+              layers: [],
+            },
+            layers: [],
+            document: { widthMm: 100, heightMm: 50 },
+            errors: [],
+          },
+          layer_role_setup: { confirmation_status: "missing", layers: [] },
+          finish_setup: { confirmed: true },
+        },
+      },
+    });
+
+    expect(reloaded.currentStep).toBe("layers");
+  });
+
   it("preserves unsaved when local file hash differs from persisted on reload", () => {
     const withLocal = {
       ...initialIntakeV6WorkspaceState,
