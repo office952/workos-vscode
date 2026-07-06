@@ -254,9 +254,9 @@ beforeEach(() => {
     pricing_source: "intake_v6_backend_priced_dry_run",
     commercial_totals: {
       subtotal_net: 1000,
-      vat_rate: 19,
-      vat_amount: 190,
-      total_gross: 1190,
+      vat_rate: 21,
+      vat_amount: 210,
+      total_gross: 1210,
       currency: "RON",
     },
     blockers: [],
@@ -539,7 +539,7 @@ describe("IntakeV6ConfirmStep", () => {
       expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("nu creeaza comanda"));
       expect(mockedPricedHandoff).toHaveBeenCalledWith("0f300dcf-0b77-4fc1-affd-6e2a20329804", {
         client_analysis_hash: "a".repeat(64),
-        expected_total_gross: 1190,
+        expected_total_gross: 1210,
         expected_pricing_hash: "hash-123",
         operator_confirmation: true,
       });

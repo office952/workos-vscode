@@ -85,9 +85,9 @@ def _dry_run(**overrides):
         "pricing_source": "intake_v6_backend_priced_dry_run",
         "commercial_totals": {
             "subtotal_net": 1000.0,
-            "vat_rate": 19.0,
-            "vat_amount": 190.0,
-            "total_gross": 1190.0,
+            "vat_rate": 21.0,
+            "vat_amount": 210.0,
+            "total_gross": 1210.0,
             "currency": "RON",
         },
         "commercial_line_items": [
@@ -160,7 +160,7 @@ async def _write(**kwargs):
         FakeDb(),
         "workspace-v6",
         quote_id=kwargs.pop("quote_id", 6),
-        expected_total_gross=kwargs.pop("expected_total_gross", 1190.0),
+        expected_total_gross=kwargs.pop("expected_total_gross", 1210.0),
         operator_confirmation=kwargs.pop("operator_confirmation", True),
         expected_pricing_hash=kwargs.pop("expected_pricing_hash", None),
         operator_identifier="test@example.com",
@@ -177,13 +177,13 @@ async def test_successful_write_updates_existing_eligible_v6_unpriced_quote_with
 
     assert result["status"] == write_service.V6_PRICED_QUOTE_WRITTEN
     assert result["commercial_totals"]["subtotal_net"] == 1000.0
-    assert result["commercial_totals"]["vat"] == 190.0
-    assert result["commercial_totals"]["total_gross"] == 1190.0
+    assert result["commercial_totals"]["vat"] == 210.0
+    assert result["commercial_totals"]["total_gross"] == 1210.0
     assert FakeQuotesService.quote.status == "priced"
     assert FakeQuotesService.quote.subtotal == 1000.0
     assert FakeQuotesService.quote.total_before_vat == 1000.0
-    assert FakeQuotesService.quote.vat == 190.0
-    assert FakeQuotesService.quote.grand_total == 1190.0
+    assert FakeQuotesService.quote.vat == 210.0
+    assert FakeQuotesService.quote.grand_total == 1210.0
 
 
 @pytest.mark.asyncio
@@ -215,8 +215,8 @@ async def test_successful_write_updates_human_summary_for_priced_quote() -> None
     write_trace = notes["intake_v6_linkage_v1"]["intake_v6_priced_quote_write_v1"]
     assert write_trace["workspace_id"] == "workspace-v6"
     assert write_trace["intake_code"] == "IR-TEST"
-    assert write_trace["expected_total_gross"] == 1190.0
-    assert write_trace["written_total_gross"] == 1190.0
+    assert write_trace["expected_total_gross"] == 1210.0
+    assert write_trace["written_total_gross"] == 1210.0
     assert write_trace["no_v4_v2_commercial_truth"] is True
     assert write_trace["frontend_preview_not_used"] is True
     assert write_trace["quote_snapshot_created"] is False
@@ -296,7 +296,7 @@ async def test_workspace_mismatch_prevents_write() -> None:
 
 @pytest.mark.asyncio
 async def test_already_priced_quote_prevents_write() -> None:
-    FakeQuotesService.quote = _quote(grand_total=1190.0, subtotal=1000.0)
+    FakeQuotesService.quote = _quote(grand_total=1210.0, subtotal=1000.0)
 
     result = await _write()
 
@@ -418,7 +418,7 @@ async def test_write_service_does_not_create_quote_snapshot_or_order_on_success(
         db,
         "workspace-v6",
         quote_id=6,
-        expected_total_gross=1190.0,
+        expected_total_gross=1210.0,
         operator_confirmation=True,
     )
 
