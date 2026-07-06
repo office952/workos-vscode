@@ -8,13 +8,9 @@ export type LiveCalcFilterId =
 
   | "materials"
 
-  | "operations"
+  | "services_operations"
 
-  | "consumables"
-
-  | "lighting"
-
-  | "cant"
+  | "labor"
 
   | "missing_rates";
 
@@ -26,13 +22,9 @@ export const LIVE_CALC_BASE_FILTER_OPTIONS: ReadonlyArray<{ id: LiveCalcFilterId
 
   { id: "materials", label: "Materiale" },
 
-  { id: "operations", label: "Operații" },
+  { id: "services_operations", label: "Servicii / Operații" },
 
-  { id: "consumables", label: "Consumabile" },
-
-  { id: "lighting", label: "Iluminare" },
-
-  { id: "cant", label: "Cant/volum" },
+  { id: "labor", label: "Manoperă" },
 
 ];
 
@@ -76,67 +68,59 @@ const OPERATION_KEYS = new Set([
 
   "edge_oracal_application",
 
+  "service.cnc_face",
+
+  "service.cnc_face_bevel",
+
+  "service.cnc_back",
+
+  "service.print",
+
+  "service.lamination",
+
+  "service.application",
+
+]);
+
+
+
+const LABOR_KEYS = new Set([
+
   "edge_bond",
 
-]);
-
-
-
-const LIGHTING_KEYS = new Set([
-
-  "led_modules",
-
-  "led_psu",
-
-  "wire_letters_myyup_2x075",
-
-  "wire_supply_myyup_2x15",
-
-  "adhesive_led_modules",
+  "labor.cant_glue",
 
 ]);
 
 
 
-const ARTWORK_KEYS = new Set([
+const MATERIAL_KEYS = new Set([
+
+  "plexi",
+
+  "plexi_letters",
 
   "plexi_emblems",
 
-  "cant_emblems",
+  "forex",
 
-  "print_vinyl",
+  "oracal_641",
 
-  "lamination_material",
+  "oracal_651",
 
-  "print_service",
-
-  "lamination_service",
-
-  "application_service",
-
-]);
-
-
-
-const CANT_KEYS = new Set([
-
-  "cant_letters",
-
-  "cant_emblems",
+  "oracal_8500",
 
   "oracal_cant_651",
 
   "ral_paint_spray",
 
-  "edge_oracal_application",
+  "print_vinyl",
 
-  "edge_cant_labor",
+  "lamination_material",
 
-]);
+  "cant_letters",
 
-
-
-const CONSUMABLE_KEYS = new Set([
+  "cant_emblems",
 
   "led_modules",
 
@@ -152,21 +136,41 @@ const CONSUMABLE_KEYS = new Set([
 
   "mounting_accessories_percent",
 
+  "material.plexiglas_face",
+
+  "material.logo_plexiglas_face",
+
+  "material.forex_backing",
+
+  "material.face_oracal",
+
+  "material.print",
+
+  "material.lamination",
+
+  "material.return_profile",
+
+  "material.led_modules",
+
+  "material.led_psu",
+
+  "material.adhesive_cant",
+
+  "material.adhesive_led",
+
+  "material.wire_letters",
+
+  "material.wire_supply",
+
+  "material.mounting_accessories",
+
 ]);
 
 
 
 function isMaterialRow(groupKey: string): boolean {
 
-  if (ARTWORK_KEYS.has(groupKey) || CANT_KEYS.has(groupKey) || OPERATION_KEYS.has(groupKey)) {
-
-    return false;
-
-  }
-
-  if (CONSUMABLE_KEYS.has(groupKey)) return false;
-
-  return true;
+  return MATERIAL_KEYS.has(groupKey);
 
 }
 
@@ -260,13 +264,9 @@ export function liveCalcRowMatchesFilter(
 
   if (filter === "missing_rates") return rowHasMissingRate(row);
 
-  if (filter === "operations") return OPERATION_KEYS.has(key);
+  if (filter === "services_operations") return OPERATION_KEYS.has(key);
 
-  if (filter === "lighting") return LIGHTING_KEYS.has(key);
-
-  if (filter === "cant") return CANT_KEYS.has(key);
-
-  if (filter === "consumables") return CONSUMABLE_KEYS.has(key);
+  if (filter === "labor") return LABOR_KEYS.has(key);
 
   if (filter === "materials") return isMaterialRow(key);
 
