@@ -98,18 +98,25 @@ export function mergeLetterGroupFinishes(
   const savedByKey = new Map(saved.map((item) => [item.group_key, item]));
   return derived.map((item) => {
     const prior = savedByKey.get(item.group_key);
+    const sameSourceFill =
+      !prior ||
+      (prior.source_fill_color != null &&
+        item.source_fill_color != null &&
+        prior.source_fill_color.trim().toLowerCase() === item.source_fill_color.trim().toLowerCase());
     const merged = prior
       ? {
           ...item,
-          face_finish_type: prior.face_finish_type ?? item.face_finish_type,
-          face_oracal_code: prior.face_oracal_code,
-          face_oracal_name: prior.face_oracal_name,
-          return_finish_type: prior.return_finish_type ?? item.return_finish_type,
-          return_oracal_code: prior.return_oracal_code,
-          return_oracal_name: prior.return_oracal_name,
-          return_depth_mm: prior.return_depth_mm ?? item.return_depth_mm,
-          face_vinyl_roll_width_mm: prior.face_vinyl_roll_width_mm ?? item.face_vinyl_roll_width_mm,
-          confirmed: prior.confirmed,
+          face_finish_type: sameSourceFill ? prior.face_finish_type ?? item.face_finish_type : item.face_finish_type,
+          face_oracal_code: sameSourceFill ? prior.face_oracal_code : item.face_oracal_code,
+          face_oracal_name: sameSourceFill ? prior.face_oracal_name : item.face_oracal_name,
+          return_finish_type: sameSourceFill ? prior.return_finish_type ?? item.return_finish_type : item.return_finish_type,
+          return_oracal_code: sameSourceFill ? prior.return_oracal_code : item.return_oracal_code,
+          return_oracal_name: sameSourceFill ? prior.return_oracal_name : item.return_oracal_name,
+          return_depth_mm: sameSourceFill ? prior.return_depth_mm ?? item.return_depth_mm : item.return_depth_mm,
+          face_vinyl_roll_width_mm: sameSourceFill
+            ? prior.face_vinyl_roll_width_mm ?? item.face_vinyl_roll_width_mm
+            : item.face_vinyl_roll_width_mm,
+          confirmed: sameSourceFill ? prior.confirmed : false,
         }
       : item;
     return normalizeLetterGroupFaceRollWidth(applyNearestOracal651ToLetterGroup(merged));
