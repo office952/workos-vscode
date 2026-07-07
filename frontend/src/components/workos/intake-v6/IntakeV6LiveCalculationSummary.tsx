@@ -148,6 +148,26 @@ function hasBlockingLogicalGaps(row: IntakeV6LogicalListLineTrace): boolean {
   return (row.gaps ?? []).some((gap) => !NON_BLOCKING_LOGICAL_GAPS.has(gap));
 }
 
+function hasRealLogicalRoute(row: IntakeV6LogicalListLineTrace): boolean {
+  return Boolean(row.line_id && (row.formula_code_proposed || row.display_label));
+}
+
+function hasVisiblePricedLogicalContribution(
+  row: IntakeV6LogicalListLineTrace,
+  amountValue: number | null,
+): boolean {
+  return hasFinitePositiveNumber(row.quantity) && hasFinitePositiveNumber(amountValue) && hasRealLogicalRoute(row);
+}
+
+function shouldHighlightLogicalRow(
+  row: IntakeV6LogicalListLineTrace,
+  statusLabel: string,
+  amountValue: number | null,
+): boolean {
+  if (!hasVisiblePricedLogicalContribution(row, amountValue)) return false;
+  return statusLabel !== "priced";
+}
+
 function resolveLogicalDiagnosticReason(
   row: IntakeV6LogicalListLineTrace,
   statusLabel: string,
@@ -168,10 +188,10 @@ function classifyLogicalRow(
   statusLabel: string,
   amountValue: number | null,
 ): LiveCalcDisplayBucket {
+  if (hasVisiblePricedLogicalContribution(row, amountValue)) return "included";
   if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "missing";
   if (hasBlockingLogicalGaps(row) || (row.blockers?.length ?? 0) > 0) return "missing";
   if (row.status === "SPLIT_IN_RUNTIME") return "excluded";
-  if (hasFinitePositiveNumber(amountValue)) return "included";
   if (row.formula_status === "legacy_unversioned") return "legacy";
   if (row.status?.includes("PARTIAL")) return "diagnostic";
   if (row.status === "MATCHED") return "missing";
@@ -212,6 +232,8 @@ function buildLogicalDisplayRows(
     const amountCurrency = row.currency ?? fallbackCurrency;
     const statusLabel = resolveLogicalStatus(row);
     const displayBucket = classifyLogicalRow(row, statusLabel, amountValue);
+    const highlightedRow = shouldHighlightLogicalRow(row, statusLabel, amountValue);
+    const visiblePricedContribution = hasVisiblePricedLogicalContribution(row, amountValue);
     const groupKey = resolveLogicalVisibleKey(row);
     const technicalDetails = buildLogicalTechnicalDetails(row);
     const existing = grouped.get(groupKey);
@@ -223,7 +245,7 @@ function buildLogicalDisplayRows(
         quantityValue: row.quantity ?? null,
         quantityUnit: row.unit ?? null,
         costText: amountValue != null ? formatFaceBackPrepMoney(amountValue, amountCurrency) : "fără preț",
-        muted: displayBucket !== "included",
+        muted: displayBucket !== "included" || highlightedRow,
         category: normalizeLogicalCategory(row.category),
         formulaText: formula || "formula lipsă",
         gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
@@ -241,22 +263,47 @@ function buildLogicalDisplayRows(
       } satisfies LiveCalcDisplayRow);
       return;
     }
-    const mergedAmount = (existing.amountValue ?? 0) + (amountValue ?? 0);
-    const mergedQuantity = (existing.quantityValue ?? 0) + (row.quantity ?? 0);
-    existing.quantityValue = mergedQuantity;
-    existing.quantityUnit = row.unit ?? existing.quantityUnit ?? null;
-    existing.quantityText = formatLogicalQuantity({
-      ...row,
-      quantity: mergedQuantity,
-      unit: existing.quantityUnit ?? row.unit,
-    } as IntakeV6LogicalListLineTrace);
-    existing.costText = mergedAmount > 0 ? formatFaceBackPrepMoney(mergedAmount, amountCurrency) : existing.costText;
-    existing.amountValue = mergedAmount > 0 ? mergedAmount : existing.amountValue;
-    existing.amountCurrency = amountCurrency;
+    const existingVisibleContribution = hasFinitePositiveNumber(existing.quantityValue) && hasFinitePositiveNumber(existing.amountValue);
+    if (visiblePricedContribution) {
+      const mergedAmount = existingVisibleContribution ? (existing.amountValue ?? 0) + (amountValue ?? 0) : amountValue;
+      const mergedQuantity = existingVisibleContribution ? (existing.quantityValue ?? 0) + (row.quantity ?? 0) : row.quantity;
+      existing.quantityValue = mergedQuantity ?? null;
+      existing.quantityUnit = row.unit ?? existing.quantityUnit ?? null;
+      existing.quantityText = formatLogicalQuantity({
+        ...row,
+        quantity: mergedQuantity ?? row.quantity,
+        unit: existing.quantityUnit ?? row.unit,
+      } as IntakeV6LogicalListLineTrace);
+      existing.costText = mergedAmount != null ? formatFaceBackPrepMoney(mergedAmount, amountCurrency) : existing.costText;
+      existing.amountValue = mergedAmount;
+      existing.amountCurrency = amountCurrency;
+    } else if (!existingVisibleContribution) {
+      const mergedAmount = (existing.amountValue ?? 0) + (amountValue ?? 0);
+      const mergedQuantity = (existing.quantityValue ?? 0) + (row.quantity ?? 0);
+      existing.quantityValue = mergedQuantity;
+      existing.quantityUnit = row.unit ?? existing.quantityUnit ?? null;
+      existing.quantityText = formatLogicalQuantity({
+        ...row,
+        quantity: mergedQuantity,
+        unit: existing.quantityUnit ?? row.unit,
+      } as IntakeV6LogicalListLineTrace);
+      existing.costText = mergedAmount > 0 ? formatFaceBackPrepMoney(mergedAmount, amountCurrency) : existing.costText;
+      existing.amountValue = mergedAmount > 0 ? mergedAmount : existing.amountValue;
+      existing.amountCurrency = amountCurrency;
+    }
     existing.childCount = (existing.childCount ?? 0) + (row.child_rows?.length ?? 0);
     existing.technicalDetails = dedupeStrings([...(existing.technicalDetails ?? []), ...technicalDetails]);
     existing.gapText = dedupeStrings([existing.gapText, gaps.length > 0 ? gaps.join(" · ") : null]).join(" · ") || "fără gap";
-    if (existing.displayBucket !== "missing" && displayBucket !== "included") {
+    if (visiblePricedContribution) {
+      existing.displayBucket = "included";
+      existing.muted = Boolean(existing.muted) || highlightedRow;
+      existing.diagnosticReason = undefined;
+      if (!existingVisibleContribution || existing.statusLabel === "priced" || !existing.statusLabel) {
+        existing.statusLabel = statusLabel;
+      }
+      return;
+    }
+    if (existing.displayBucket !== "included" && existing.displayBucket !== "missing" && displayBucket !== "included") {
       existing.displayBucket = displayBucket;
       existing.muted = true;
       existing.statusLabel = statusLabel;

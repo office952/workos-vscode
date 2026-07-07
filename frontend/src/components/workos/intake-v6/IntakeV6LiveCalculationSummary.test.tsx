@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type {
   IntakeV6ArtworkFinish,
@@ -352,6 +352,17 @@ const logicalList: IntakeV6LogicalListReadModelResponse = {
   validation: { formula_trace_metadata_present: true },
 };
 
+function buildLogicalListWithRows(
+  rows: IntakeV6LogicalListReadModelResponse["rows"],
+): IntakeV6LogicalListReadModelResponse {
+  return {
+    ...logicalList,
+    core_row_count: rows.length,
+    target_core_row_count: rows.length,
+    rows,
+  };
+}
+
 describe("IntakeV6LiveCalculationSummary", () => {
   it("uses logical-list rows as the primary owner-facing list when available", () => {
     render(
@@ -412,6 +423,59 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByText("Preț / status")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).toHaveTextContent(/50[,.]40\s*EUR/);
     expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).not.toHaveTextContent(/^priced$/i);
+  });
+
+  it("keeps positive partial and split runtime logical rows visible in the main list with status chips", () => {
+    render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={logicalList} />);
+
+    expect(screen.getByTestId("intake-v6-live-material-used-material.forex_backing")).toHaveTextContent(/Forex 10 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).toHaveTextContent(/28[,.]80\s*EUR/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).toHaveTextContent(/estimat|gap explicit/i);
+
+    expect(screen.getByTestId("intake-v6-live-material-used-material.print")).toHaveTextContent(/Material print Orafol/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.lamination")).toHaveTextContent(/Material laminare Orafol/);
+    expect(screen.getByTestId("intake-v6-live-material-used-service.print")).toHaveTextContent(/Serviciu print/);
+    expect(screen.getByTestId("intake-v6-live-material-used-service.lamination")).toHaveTextContent(/Serviciu laminare X-PRO/);
+    expect(screen.getByTestId("intake-v6-live-material-used-service.application")).toHaveTextContent(/Serviciu aplicare/);
+
+    const diagnostics = screen.getByTestId("intake-v6-live-diagnostics");
+    expect(within(diagnostics).queryByText("Forex 10 mm")).not.toBeInTheDocument();
+    expect(within(diagnostics).queryByText("Material print Orafol")).not.toBeInTheDocument();
+    expect(within(diagnostics).queryByText("Material laminare Orafol")).not.toBeInTheDocument();
+    expect(within(diagnostics).queryByText("Serviciu print")).not.toBeInTheDocument();
+    expect(within(diagnostics).queryByText("Serviciu laminare X-PRO")).not.toBeInTheDocument();
+    expect(within(diagnostics).queryByText("Serviciu aplicare")).not.toBeInTheDocument();
+  });
+
+  it("does not let a placeholder logo plexiglas row downgrade a valid shared plexiglas row", () => {
+    const placeholderLogicalList = buildLogicalListWithRows([
+      {
+        ...logicalList.rows[0]!,
+        quantity: 1,
+        subtotal: 16,
+        currency: "EUR",
+        display_label: "Plexiglas 3 mm / fata litere",
+      },
+      {
+        ...logicalList.rows[1]!,
+        quantity: null,
+        subtotal: null,
+        currency: "EUR",
+        display_label: "Plexiglas 3 mm / embleme/logo",
+        child_rows: [],
+      },
+    ]);
+
+    render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={placeholderLogicalList} />);
+
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/Plexiglas 3 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/Plexiglas 3 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/1\s*m2/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).toHaveTextContent(/16[,.]00\s*EUR/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).not.toHaveTextContent(/112[,.]00\s*EUR/);
+    expect(screen.queryByText(/7\s*m2/i)).not.toBeInTheDocument();
+
+    expect(screen.queryByTestId("intake-v6-live-diagnostics")).not.toBeInTheDocument();
   });
 
   it("keeps gap explicit and missing quantity rows out of the main included list by default", () => {
