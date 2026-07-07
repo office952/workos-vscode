@@ -14,6 +14,12 @@ import { INTAKE_DELIVERY_OPTIONS } from "@/lib/intakeDeliverySemantics";
 import { formatApiErrorFromUnknown, canCreateIntakeRequest } from "@/lib/apiError";
 import { useAuth } from "@/contexts/AuthContext";
 import { ensureIntakeV6WorkspaceForIntakeRequest } from "@/lib/intakeV6/intakeV6Api";
+import {
+  INTAKE_V6_ANALYSIS_SOURCES,
+  canCreateIntakeV6WorkspaceFromSource,
+  getIntakeV6AnalysisSourceStatusLabel,
+  type IntakeV6AnalysisSourceMethodId,
+} from "@/lib/intakeV6/intakeV6AnalysisSourceTypes";
 
 interface NewIntakeDialogProps {
   open: boolean;
@@ -24,32 +30,21 @@ interface NewIntakeDialogProps {
 type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
-
-type OfferMethodId = "svg_analyzer_intake_v6" | "image_analyzer_intake_v6_preview";
 const ANALYZER_MODE = "analyzer_first";
 
 const OFFER_METHODS: Array<{
-  id: OfferMethodId;
+  id: IntakeV6AnalysisSourceMethodId;
   label: string;
   description: string;
   statusLabel: string;
   enabled: boolean;
-}> = [
-  {
-    id: "svg_analyzer_intake_v6",
-    label: "SVG Analyzer - Intake V6",
-    description: "Analizează fișiere SVG, pregătește Product Truth și pornește formularul modular Intake V6.",
-    statusLabel: "Activ",
-    enabled: true,
-  },
-  {
-    id: "image_analyzer_intake_v6_preview",
-    label: "Image Analyzer - Intake V6",
-    description: "Va permite prefill din analiza imagine dupa review operator. Momentan este doar preview; nu creeaza oferta, comanda sau executie.",
-    statusLabel: "Preview only",
-    enabled: false,
-  },
-];
+}> = INTAKE_V6_ANALYSIS_SOURCES.map((source) => ({
+  id: source.methodId,
+  label: source.label,
+  description: source.description,
+  statusLabel: getIntakeV6AnalysisSourceStatusLabel(source.status),
+  enabled: canCreateIntakeV6WorkspaceFromSource(source),
+}));
 
 const WORK_INTAKE_NEW_REQUEST_SOURCE = "work_intake_new_request";
 
@@ -91,7 +86,7 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
   const [visibleTemplates, setVisibleTemplates] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [loadingTemplates, setLoadingTemplates] = useState(false);
   const [templateLoadError, setTemplateLoadError] = useState<string | null>(null);
-  const [selectedOfferMethod, setSelectedOfferMethod] = useState<OfferMethodId | null>(null);
+  const [selectedOfferMethod, setSelectedOfferMethod] = useState<IntakeV6AnalysisSourceMethodId | null>(null);
   const [selectedTemplateCode, setSelectedTemplateCode] = useState<string | null>(null);
 
   const [newClient, setNewClient] = useState({
