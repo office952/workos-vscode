@@ -196,6 +196,22 @@ function buildSixLayerReport(): SvgAnalysisCoreReport {
   return base;
 }
 
+function buildLogoOnlyReport(): SvgAnalysisCoreReport {
+  const base = buildReport();
+  base.sourceFileName = "cerc100cm.svg";
+  base.layers = [base.layers[1]!];
+  base.colors = {
+    unique: ["#2B2A29"],
+    dominant: ["#2B2A29"],
+    fills: [],
+    strokes: ["#2B2A29"],
+    byLayer: {
+      "logo stanga": ["#2B2A29"],
+    },
+  };
+  return base;
+}
+
 function buildConfirmation(): LayerRoleConfirmation {
   return {
     schemaVersion: "layer_role_confirmation_v1",
@@ -271,7 +287,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(screen.getByText("Țintă automată Product System: TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getAllByText("Rol producție").length).toBeGreaterThan(0);
     expect(screen.getByText("Layer 2 — contur negru")).toBeInTheDocument();
-    expect(screen.getByText("Grup detectat: logo stanga")).toBeInTheDocument();
+    expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(screen.queryByText(/pseudo maria/i)).not.toBeInTheDocument();
   });
 
@@ -379,5 +395,32 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(logoSelect.querySelector("optgroup")).toBeNull();
     expect(logoSelect.textContent).not.toContain("Vector Atipic");
     expect(logoSelect.textContent).not.toContain("Cant / volum");
+  });
+
+  it("keeps the owner-only dropdown in a single-logo workspace", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildLogoOnlyReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    const logoSelect = screen.getByTestId("intake-v6-layer-role-logo-stanga") as HTMLSelectElement;
+    const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
+
+    expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
+    expect(logoSelect.selectedOptions[0]?.textContent).toBe("Vector Logo");
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(logoSelect.textContent).not.toContain("Vinil aplicat");
+    expect(logoSelect.textContent).not.toContain("Ignora strat");
+    expect(logoSelect.textContent).not.toContain("De confirmat");
+    expect(logoSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
+    expect(logoSelect.textContent).not.toContain("Decupaj interior");
+    expect(logoSelect.textContent).not.toContain("Gauri montaj");
+    expect(logoSelect.textContent).not.toContain("Referinta / ghidaj");
+    expect(logoSelect.textContent).not.toContain("Cant / volum");
+    expect(logoSelect.textContent).not.toContain("Spate / backing");
   });
 });

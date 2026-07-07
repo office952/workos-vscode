@@ -10,7 +10,7 @@ import {
   SVG_ARTWORK_EXECUTION_OPTIONS,
 } from "@/lib/svgArtworkContracts";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
-import { getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 
 export type IntakeV4ArtworkPrintTransparency = "standard" | "translucent" | "transparent";
 
@@ -81,6 +81,7 @@ export function deriveArtworkFinishesFromAnalyzer(
   if (!report || !confirmation) return [];
 
   const rows: IntakeV4ArtworkFinish[] = [];
+  const logoLabelMap = buildOperatorLogoLabelMap(report.layers);
   for (const layer of report.layers) {
     const entry = layerEntry(confirmation, layer.id, layer.name);
     if (!entry || entry.confirmationState === "ignored") continue;
@@ -89,7 +90,7 @@ export function deriveArtworkFinishesFromAnalyzer(
 
     rows.push({
       layer_key: entry.layerKey,
-      layer_name: getOperatorLayerLabel(layer.id, layer.name),
+      layer_name: getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap }),
       source_layer_name: layer.name,
       original_detected_label: layer.name,
       execution_type: "print_laminate",

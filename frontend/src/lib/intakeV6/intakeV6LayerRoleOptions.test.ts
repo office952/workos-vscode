@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getIntakeV6RoleOptionsForLayer } from "./intakeV6LayerRoleOptions";
+import { getIntakeV6RoleOptionsForLayer, normalizeIntakeV6OwnerSelectableRole } from "./intakeV6LayerRoleOptions";
 
 describe("getIntakeV6RoleOptionsForLayer", () => {
   it("returns the two owner-approved roles for volumetric letters layers", () => {
@@ -63,17 +63,37 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
     expect(result.fallbackOptions).toEqual([]);
   });
 
-  it("keeps the currently selected role available even when it is not recommended", () => {
+  it("keeps grouped fallback behavior for non-volumetric contexts", () => {
     const result = getIntakeV6RoleOptionsForLayer({
       layer: { name: "maria", layerKind: "pseudo", autoRole: "face" },
       layerDisplay: "Grup detectat: maria",
       confirmedRole: "bevel",
       detectedKind: "pseudo",
-      targetTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
-      activeTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
-      assemblyType: "letters_only",
+      targetTemplateCode: null,
+      activeTemplateCode: null,
+      assemblyType: null,
     });
 
     expect(result.secondaryOptions.map((option) => option.value)).toContain("drill");
+  });
+
+  it("normalizes legacy logo-ish roles to Vector Logo for owner dropdowns", () => {
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { name: "Logo 1", layerKind: "pseudo", autoRole: "printed_artwork" },
+        confirmedRole: "vinyl",
+        targetTemplateCode: "TPL-VOLUMETRIC-LOGO_v1",
+      }),
+    ).toBe("printed_artwork");
+  });
+
+  it("normalizes unknown letter-ish roles to Vector Litere for owner dropdowns", () => {
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { name: "maria", layerKind: "pseudo", autoRole: "face" },
+        confirmedRole: "unknown",
+        targetTemplateCode: "TPL-VOLUMETRIC-LETTERS_v2",
+      }),
+    ).toBe("face");
   });
 });

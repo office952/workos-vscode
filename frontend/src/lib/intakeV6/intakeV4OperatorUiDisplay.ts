@@ -8,6 +8,59 @@ const PRINT_OPERATION_TYPES = new Set(["print_vinyl", "lamination", "vinyl_appli
 
 const ADHESIVE_MATERIAL_KEY_HINTS = ["adhesive", "adeziv"];
 
+const POSITIONAL_LOGO_PATTERN = /logo(?:\s|_|-)*(?:stanga|dreapta|centru|center|middle|left|right|sus|jos|top|bottom)/i;
+
+type OperatorLayerIdentity = {
+  id?: string | null;
+  name?: string | null;
+  layerKey?: string | null;
+  layerName?: string | null;
+};
+
+function normalizeOperatorLayerToken(value: string | null | undefined): string {
+  return String(value ?? "").trim().toLowerCase().replace(/[_-]+/g, " ");
+}
+
+function setLogoLabelToken(
+  target: Map<string, string>,
+  value: string | null | undefined,
+  label: string,
+): void {
+  const normalized = normalizeOperatorLayerToken(value);
+  if (!normalized) return;
+  target.set(normalized, label);
+}
+
+export function isPositionalLogoLayer(
+  layerId: string | null | undefined,
+  layerName?: string | null,
+): boolean {
+  const id = normalizeOperatorLayerToken(layerId);
+  const name = normalizeOperatorLayerToken(layerName);
+  return POSITIONAL_LOGO_PATTERN.test(id) || POSITIONAL_LOGO_PATTERN.test(name);
+}
+
+export function buildOperatorLogoLabelMap(
+  layers: OperatorLayerIdentity[],
+): Map<string, string> {
+  const labelMap = new Map<string, string>();
+  let logoIndex = 0;
+
+  for (const layer of layers) {
+    if (!isPositionalLogoLayer(layer.id ?? layer.layerKey, layer.name ?? layer.layerName)) {
+      continue;
+    }
+    logoIndex += 1;
+    const label = `Logo ${logoIndex}`;
+    setLogoLabelToken(labelMap, layer.id, label);
+    setLogoLabelToken(labelMap, layer.name, label);
+    setLogoLabelToken(labelMap, layer.layerKey, label);
+    setLogoLabelToken(labelMap, layer.layerName, label);
+  }
+
+  return labelMap;
+}
+
 export function isInternalCorelLayerId(value: string | null | undefined): boolean {
   const token = String(value ?? "").trim();
   return /^_\d+$/.test(token) || /^_220\d+/.test(token);
@@ -16,15 +69,20 @@ export function isInternalCorelLayerId(value: string | null | undefined): boolea
 export function getOperatorLayerLabel(
   layerId: string,
   layerName?: string | null,
+  options?: { logoLabelMap?: ReadonlyMap<string, string> },
 ): string {
   const id = layerId.trim().toLowerCase();
   const name = String(layerName ?? "").trim().toLowerCase();
+  const explicitLogoLabel =
+    options?.logoLabelMap?.get(normalizeOperatorLayerToken(layerId)) ??
+    options?.logoLabelMap?.get(normalizeOperatorLayerToken(layerName));
 
-  if (/logo.?stanga|logo-stanga|logo stanga/.test(name) || id === "logo-stanga") {
-    return "logo stânga";
+  if (explicitLogoLabel) {
+    return explicitLogoLabel;
   }
-  if (/logo.?dreapta|logo-dreapta|logo dreapta/.test(name) || id === "logo-dreapta") {
-    return "logo dreapta";
+
+  if (isPositionalLogoLayer(layerId, layerName)) {
+    return "Logo";
   }
   if (name && !isInternalCorelLayerId(name)) {
     return layerName!.trim();

@@ -1,6 +1,7 @@
 import { CheckCircle2, Layers3, TriangleAlert } from "lucide-react";
 import { v6 } from "./atoms/intakeV6Presentation";
 import type { ProductDefinitionLinkedRuntimeSegmentsSummary } from "@/api/productDefinitionPreview";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 
 type CompositionItem = {
   composition_item_id?: string;
@@ -56,6 +57,21 @@ function compositionLabel(type: string | undefined): string {
   return "Compozitie produs";
 }
 
+function formatSourceLayerIds(items: CompositionItem[]): Map<string, string> {
+  const logoLabelMap = buildOperatorLogoLabelMap(
+    items.flatMap((item) =>
+      (item.source_layer_ids ?? []).map((layerId) => ({ id: layerId, name: layerId })),
+    ),
+  );
+  const labels = new Map<string, string>();
+  for (const item of items) {
+    for (const layerId of item.source_layer_ids ?? []) {
+      labels.set(layerId, getOperatorLayerLabel(layerId, layerId, { logoLabelMap }));
+    }
+  }
+  return labels;
+}
+
 export default function IntakeV6ProductCompositionPanel({
   payload,
   linkedSegments,
@@ -72,6 +88,7 @@ export default function IntakeV6ProductCompositionPanel({
 
   const confirmed = isConfirmed(payload);
   const items = recommendation.composition_items ?? [];
+  const sourceLayerLabels = formatSourceLayerIds(items);
   const blockers = recommendation.blockers ?? [];
   const warnings = recommendation.warnings ?? [];
   const linkedSegmentItems = linkedSegments?.segments ?? [];
@@ -101,7 +118,9 @@ export default function IntakeV6ProductCompositionPanel({
             <p className="text-[11px] font-semibold text-slate-100">{roleLabel(item.component_role)}</p>
             <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{item.template_code}</p>
             {item.source_layer_ids?.length ? (
-              <p className="mt-1 text-[10px] text-slate-500">Straturi: {item.source_layer_ids.join(", ")}</p>
+              <p className="mt-1 text-[10px] text-slate-500">
+                Straturi: {item.source_layer_ids.map((layerId) => sourceLayerLabels.get(layerId) ?? layerId).join(", ")}
+              </p>
             ) : null}
             {item.status === "pending_template" ? (
               <p className="mt-1 text-[10px] text-amber-300">Template suport pending</p>

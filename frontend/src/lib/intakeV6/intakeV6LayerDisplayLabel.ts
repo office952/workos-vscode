@@ -1,4 +1,5 @@
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel, isPositionalLogoLayer } from "./intakeV4OperatorUiDisplay";
 
 const VISUAL_COLOR_LABELS: Record<string, string> = {
   "#00a0e3": "albastru",
@@ -94,11 +95,15 @@ export function buildIntakeV6LayerDisplayLabel(
 } {
   const normalizedName = normalizeDetectedName(layer.name ?? "");
   const resolvedSourceLayerName = resolveSourceLayerName(layer, report, sourceLayerName);
+  const logoLabelMap = report ? buildOperatorLogoLabelMap(report.layers) : undefined;
+  const neutralLogoLabel = isPositionalLogoLayer(layer.id, layer.name)
+    ? getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap })
+    : null;
 
   if (layer.layerKind === "real") {
     return {
       primaryLabel: buildPrimaryLabel(layer, index),
-      secondaryLabel: `Nume layer fișier: ${layer.name}`,
+      secondaryLabel: `Nume layer fișier: ${neutralLogoLabel ?? layer.name}`,
       sourceLabel: null,
       technicalKey: layer.id ?? layer.name,
     };
@@ -106,7 +111,11 @@ export function buildIntakeV6LayerDisplayLabel(
 
   return {
     primaryLabel: buildPrimaryLabel(layer, index),
-    secondaryLabel: normalizedName ? `Grup detectat: ${normalizedName}` : "Grup generat automat",
+    secondaryLabel: neutralLogoLabel
+      ? `Grup detectat: ${neutralLogoLabel}`
+      : normalizedName
+        ? `Grup detectat: ${normalizedName}`
+        : "Grup generat automat",
     sourceLabel: resolvedSourceLayerName ? `Layer sursa: ${resolvedSourceLayerName}` : null,
     technicalKey: layer.id ?? layer.name,
   };

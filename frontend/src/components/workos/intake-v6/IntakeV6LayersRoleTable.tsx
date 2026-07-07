@@ -1,9 +1,10 @@
 import {
-  INTAKE_V6_LAYER_ROLE_OPTIONS,
+  INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS,
   getIntakeV6OwnerRoleLabel,
-  getIntakeV6RoleOptionsForLayer,
+  normalizeIntakeV6OwnerSelectableRole,
 } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { INTAKE_V6_LETTERS_TEMPLATE_CODE, INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { Layers, Palette, Sparkles } from "lucide-react";
@@ -12,10 +13,6 @@ import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6Card
 import IntakeV6LayerStatusIcon from "./IntakeV6LayerStatusIcon";
 import { resolveLayerColorHumanLabel } from "./layerColorDisplay";
 import { v6 } from "./atoms/intakeV6Presentation";
-
-const LAYER_ROLE_LABEL_BY_VALUE = new Map(
-  INTAKE_V6_LAYER_ROLE_OPTIONS.map((option) => [option.value, option.label]),
-);
 
 const INTAKE_V6_NO_PAGINATION_MAX_LAYERS = 6;
 
@@ -34,10 +31,11 @@ function resolveOperatorLayerName(report: SvgAnalysisCoreReport, layer: SvgAnaly
   const sourceFileName = (report.sourceFileName ?? "").trim().toLowerCase();
   const name = (layer.name ?? "").trim().toLowerCase().replace(/-/g, " ");
   const id = (layer.id ?? "").trim().toLowerCase().replace(/-/g, " ");
+  const logoLabelMap = buildOperatorLogoLabelMap(report.layers);
   if (sourceFileName === "logo.svg" && (name === "logo stanga" || name === "logo dreapta" || id === "logo stanga" || id === "logo dreapta")) {
     return "Logo volumetric";
   }
-  return layer.name;
+  return getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap });
 }
 
 function resolveLayerRow(
@@ -58,39 +56,27 @@ function resolveLayerRow(
 
 function LayerRoleSelect({
   layer,
-  report,
   layerKey,
   selectedRole,
   onUpdateLayerRole,
   workspaceTemplateCode,
-  ownerRoleTaxonomyActive,
 }: {
   layer: SvgAnalysisCoreReport["layers"][number];
-  report: SvgAnalysisCoreReport;
   layerKey: string;
   selectedRole: LayerAutoRole;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
   workspaceTemplateCode?: string | null;
-  ownerRoleTaxonomyActive?: boolean;
 }) {
   const target = resolveIntakeV6LayerTargetTemplate({
     layer,
     selectedRole,
     workspaceTemplateCode,
   });
-  const groups = getIntakeV6RoleOptionsForLayer({
+  const normalizedSelectedRole = normalizeIntakeV6OwnerSelectableRole({
     layer,
-    layerDisplay: buildIntakeV6LayerDisplayLabel(layer, 0, report).secondaryLabel,
     confirmedRole: selectedRole,
-    detectedKind: layer.layerKind,
     targetTemplateCode: target.templateCode,
-    activeTemplateCode: ownerRoleTaxonomyActive ? INTAKE_V6_LETTERS_TEMPLATE_CODE : workspaceTemplateCode,
-    assemblyType: ownerRoleTaxonomyActive || workspaceTemplateCode === INTAKE_V6_LETTERS_TEMPLATE_CODE ? "letters_logo" : null,
   });
-  const recommended = groups.recommendedOptions;
-  const secondary = groups.secondaryOptions;
-  const normalizedSelectedRole = selectedRole === "logo" ? "printed_artwork" : selectedRole;
-  const flatOptions = groups.displayMode === "flat";
 
   return (
     <select
@@ -99,30 +85,11 @@ function LayerRoleSelect({
       onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
       data-testid={`intake-v6-layer-role-${layerKey}`}
     >
-      {flatOptions
-        ? recommended.map((option) => (
-            <option key={option.value} value={option.value}>
-              {resolveRoleLabel(option.value)}
-            </option>
-          ))
-        : (
-      <optgroup label="Recomandate">
-        {recommended.map((option) => (
-          <option key={option.value} value={option.value}>
-            {resolveRoleLabel(option.value)}
-          </option>
-        ))}
-      </optgroup>
-          )}
-      {!flatOptions && secondary.length > 0 ? (
-        <optgroup label="Alte roluri">
-          {secondary.map((option) => (
-            <option key={option.value} value={option.value}>
-              {resolveRoleLabel(option.value)}
-            </option>
-          ))}
-        </optgroup>
-      ) : null}
+      {INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </select>
   );
 }
@@ -155,6 +122,8 @@ function LayerLegendRow({
   report,
   confirmation,
   onUpdateLayerRole,
+  workspaceTemplateCode,
+  ownerRoleTaxonomyActive,
   focused,
   onFocus,
   onBlur,
@@ -163,6 +132,8 @@ function LayerLegendRow({
   report: SvgAnalysisCoreReport;
   confirmation: LayerRoleConfirmation;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
+  workspaceTemplateCode?: string | null;
+  ownerRoleTaxonomyActive?: boolean;
   focused?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -209,9 +180,13 @@ function LayerLegendRow({
         <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} />
       </div>
       <LayerRoleSelect
+        layer={layer}
+        report={report}
         layerKey={layerKey}
         selectedRole={selectedRole}
         onUpdateLayerRole={onUpdateLayerRole}
+        workspaceTemplateCode={workspaceTemplateCode}
+        ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
       />
     </li>
   );
@@ -222,6 +197,8 @@ function LayerCard({
   report,
   confirmation,
   onUpdateLayerRole,
+  workspaceTemplateCode,
+  ownerRoleTaxonomyActive,
   focused = false,
   onFocus,
   onBlur,
@@ -230,6 +207,8 @@ function LayerCard({
   report: SvgAnalysisCoreReport;
   confirmation: LayerRoleConfirmation;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
+  workspaceTemplateCode?: string | null;
+  ownerRoleTaxonomyActive?: boolean;
   focused?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -287,9 +266,13 @@ function LayerCard({
         </p>
       ) : null}
       <LayerRoleSelect
+        layer={layer}
+        report={report}
         layerKey={layerKey}
         selectedRole={selectedRole}
         onUpdateLayerRole={onUpdateLayerRole}
+        workspaceTemplateCode={workspaceTemplateCode}
+        ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
       />
     </article>
   );
@@ -353,9 +336,10 @@ export default function IntakeV6LayersRoleTable({
             <LayerLegendRow
               key={layer.id}
               layer={layer}
-              report={report}
               confirmation={confirmation}
               onUpdateLayerRole={onUpdateLayerRole}
+              workspaceTemplateCode={workspaceTemplateCode}
+              ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
               focused={focusedLayerKey === layerKey}
               onFocus={() => setFocusedLayerKey(layerKey)}
               onBlur={() => setFocusedLayerKey(null)}
@@ -431,12 +415,10 @@ export default function IntakeV6LayersRoleTable({
                   <p className="mb-2 text-[11px] text-slate-400">Rol producție</p>
                   <LayerRoleSelect
                     layer={layer}
-                    report={report}
                     layerKey={layerKey}
                     selectedRole={resolveLayerRow(report, confirmation, layer).selectedRole}
                     onUpdateLayerRole={onUpdateLayerRole}
                     workspaceTemplateCode={workspaceTemplateCode}
-                    ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
                   />
                 </article>
             );
@@ -467,13 +449,14 @@ export default function IntakeV6LayersRoleTable({
               confirmation,
               layer,
             );
+            const displayName = resolveOperatorLayerName(report, layer);
             return (
               <tr
                 key={layer.id}
                 className={`border-t border-[#2A3548] ${requiresAttention ? "bg-amber-500/5" : ""}`}
                 data-testid={`intake-v6-layer-row-${layerKey}`}
               >
-                <td className="py-2 pr-3 font-medium text-slate-200">{layer.name}</td>
+                <td className="py-2 pr-3 font-medium text-slate-200">{displayName}</td>
                 <td className="py-2 pr-3 text-slate-400">{resolveLayerKindLabel(layer.layerKind)}</td>
                 <td className="py-2 pr-3 text-slate-400">
                   <div>{resolveRoleLabel(layer.autoRole)}</div>
@@ -484,9 +467,11 @@ export default function IntakeV6LayersRoleTable({
                 </td>
                 <td className="py-2 pr-3">
                   <LayerRoleSelect
+                    layer={layer}
                     layerKey={layerKey}
                     selectedRole={selectedRole}
                     onUpdateLayerRole={onUpdateLayerRole}
+                    workspaceTemplateCode={workspaceTemplateCode}
                   />
                 </td>
                 <td className="py-2">

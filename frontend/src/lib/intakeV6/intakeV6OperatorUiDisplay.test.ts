@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { IntakeV6CncOperationRow } from "./intakeV6Api";
 import {
   adaptBackingAbsentOperationLabel,
+  buildOperatorLogoLabelMap,
   formatIntakeV6LinearQuantityDisplay,
   getOperatorLayerLabel,
   isInternalCorelLayerId,
@@ -13,10 +14,24 @@ import {
 
 describe("intakeV6OperatorUiDisplay", () => {
   it("maps internal Corel ids to friendly logo labels", () => {
+    const logoLabelMap = buildOperatorLogoLabelMap([
+      { id: "logo-dreapta", name: "logo dreapta" },
+      { id: "logo-stanga", name: "logo stanga" },
+    ]);
+
     expect(isInternalCorelLayerId("_2209257786352")).toBe(true);
-    expect(getOperatorLayerLabel("logo-dreapta", "logo dreapta")).toBe("logo dreapta");
-    expect(getOperatorLayerLabel("_2209257786352", "logo dreapta")).toBe("logo dreapta");
+    expect(getOperatorLayerLabel("logo-dreapta", "logo dreapta", { logoLabelMap })).toBe("Logo 1");
+    expect(getOperatorLayerLabel("logo-stanga", "logo stanga", { logoLabelMap })).toBe("Logo 2");
+    expect(getOperatorLayerLabel("_2209257786352", "logo dreapta", { logoLabelMap })).toBe("Logo 1");
     expect(getOperatorLayerLabel("_2209257786352", "_2209257786352")).toBe("artwork layer");
+  });
+
+  it("numbers a single positional logo as Logo 1 regardless of side token", () => {
+    const rightOnlyMap = buildOperatorLogoLabelMap([{ id: "logo-dreapta", name: "logo dreapta" }]);
+    const centerOnlyMap = buildOperatorLogoLabelMap([{ id: "logo-centru", name: "logo centru" }]);
+
+    expect(getOperatorLayerLabel("logo-dreapta", "logo dreapta", { logoLabelMap: rightOnlyMap })).toBe("Logo 1");
+    expect(getOperatorLayerLabel("logo-centru", "logo centru", { logoLabelMap: centerOnlyMap })).toBe("Logo 1");
   });
 
   it("formats CNC linear quantity as meters not milliliters", () => {

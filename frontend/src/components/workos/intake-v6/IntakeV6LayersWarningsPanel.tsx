@@ -1,6 +1,7 @@
 import type { LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { AlertTriangle, FileWarning, Layers, Sparkles } from "lucide-react";
 import { useMemo } from "react";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import IntakeV6LayerStatusIcon from "./IntakeV6LayerStatusIcon";
 import { v6 } from "./atoms/intakeV6Presentation";
 
@@ -43,6 +44,7 @@ export default function IntakeV6LayersWarningsPanel({
   scopeWarnings: string[];
   onJumpToLayer?: (layerKey: string) => void;
 }) {
+  const logoLabelMap = useMemo(() => buildOperatorLogoLabelMap(report?.layers ?? []), [report]);
   const pseudoLayerGroups = useMemo(() => {
     if (!report) return [];
     const layers: Array<{
@@ -59,13 +61,13 @@ export default function IntakeV6LayersWarningsPanel({
         const layerKey = resolveLayerKey(confirmation, layer);
         layers.push({
           layerKey,
-          layerName: layer.name,
+          layerName: getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap }),
           state: resolveLayerState(confirmation, layerKey),
         });
       }
     }
     return layers;
-  }, [report, confirmation]);
+  }, [report, confirmation, logoLabelMap]);
 
   const atypicalVectorGroups = useMemo(() => {
     if (!report) return [];
@@ -84,13 +86,13 @@ export default function IntakeV6LayersWarningsPanel({
       const layerKey = resolveLayerKey(confirmation, layer);
       layers.push({
         layerKey,
-        layerName: layer.name,
+        layerName: getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap }),
         state: resolveLayerState(confirmation, layerKey),
       });
     }
 
     return layers;
-  }, [report, confirmation]);
+  }, [report, confirmation, logoLabelMap]);
 
   const otherLayerWarnings = useMemo(() => {
     if (!report) return [];

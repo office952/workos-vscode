@@ -9,7 +9,7 @@ import {
   layerIsArtworkCandidate,
 } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { INTAKE_V6_LOGO_TEMPLATE_CODE } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
-import { getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
+import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { AlertTriangle, ImageIcon, Upload } from "lucide-react";
 import { v6 } from "./atoms/intakeV6Presentation";
 
@@ -31,6 +31,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
 
   const candidateLayers = report.layers.filter((layer) => layerIsArtworkCandidate(layer));
   const sourceFileName = (report.sourceFileName ?? "").trim().toLowerCase();
+  const logoLabelMap = buildOperatorLogoLabelMap(report.layers);
 
   return (
     <div
@@ -59,7 +60,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
           const normalizedId = (layer.id ?? "").trim().toLowerCase().replace(/-/g, " ");
           const displayName = sourceFileName === "logo.svg" && (normalizedName === "logo stanga" || normalizedName === "logo dreapta" || normalizedId === "logo stanga" || normalizedId === "logo dreapta")
             ? "Logo volumetric"
-            : getOperatorLayerLabel(layer.id, layer.name);
+            : getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap });
           const roleLabel = entry?.confirmationState === "pending" ? "needs decision" : entry?.confirmedRole ?? entry?.autoRole;
           const confidence = entry?.autoConfidence ?? "low";
 

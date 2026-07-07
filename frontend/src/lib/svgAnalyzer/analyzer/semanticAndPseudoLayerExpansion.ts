@@ -97,6 +97,13 @@ function bboxOverlap(
   )
 }
 
+function resolveSequentialLogoName(groups: ParsedSvgDocument['groups'], groupId: string): string {
+  const existingIndex = groups.findIndex((entry) => entry.id === groupId)
+  const logoGroupCount = groups.filter((entry) => entry.id.startsWith('logo-')).length
+  const index = existingIndex >= 0 ? existingIndex + 1 : logoGroupCount + 1
+  return `Logo ${index}`
+}
+
 function assignRasterLogoLayers(
   doc: ParsedSvgDocument,
   geometry: GeometrySummary,
@@ -115,7 +122,7 @@ function assignRasterLogoLayers(
     const imageCenterX = bbox ? bbox.x + bbox.width / 2 : 0
     const side = centerX != null && imageCenterX >= centerX ? 'right' : 'left'
     const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+    const name = resolveSequentialLogoName(newGroups, id)
 
     const imageElement = elements.find((entry) => entry.elementId === image.elementId)
     const parentLayerId = imageElement?.layerId ?? null
@@ -182,9 +189,7 @@ function assignStrokeOnlyLogoLayers(
   const candidates = elements
     .filter((element) => isLogoStrokeOutlinePath(element) && !alreadyAssigned.has(element.elementId))
     .sort((a, b) => {
-      const aBox = geoById.get(a.elementId)?.bbox
-      const bBox = geoById.get(b.elementId)?.bbox
-      return (aBox?.x ?? a.index) - (bBox?.x ?? b.index)
+      return a.index - b.index
     })
 
   for (const candidate of candidates) {
@@ -192,7 +197,7 @@ function assignStrokeOnlyLogoLayers(
     const candidateCenterX = bbox ? bbox.x + bbox.width / 2 : null
     const side = centerX != null && candidateCenterX != null && candidateCenterX >= centerX ? 'right' : 'left'
     const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = side === 'left' ? 'logo stanga' : 'logo dreapta'
+    const name = resolveSequentialLogoName(newGroups, id)
 
     let group = newGroups.find((entry) => entry.id === id)
     if (!group) {

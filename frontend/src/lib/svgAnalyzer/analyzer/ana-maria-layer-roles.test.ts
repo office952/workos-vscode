@@ -20,7 +20,6 @@ function analyzeFixture(fileName: string) {
 }
 
 const LAYERED_LETTER_NAMES = ["gradinita", "ana", "maria", "soare"];
-const LAYERED_LOGO_NAMES = ["logo stanga", "logo dreapta"];
 
 describe("ana-maria six-layer classification", () => {
   it("layered SVG detects 6 semantic layers with correct roles", () => {
@@ -35,9 +34,9 @@ describe("ana-maria six-layer classification", () => {
       expect(layer?.autoConfidence).toBe("high");
     }
 
-    for (const name of LAYERED_LOGO_NAMES) {
-      const layer = report.layers.find((entry) => entry.name === name);
-      expect(layer, `missing logo layer ${name}`).toBeTruthy();
+    for (const id of ["logo-stanga", "logo-dreapta"]) {
+      const layer = report.layers.find((entry) => entry.id === id);
+      expect(layer, `missing logo layer ${id}`).toBeTruthy();
       expect(layer?.layerKind).toBe("real");
       expect(layer?.autoRole).toBe("printed_artwork");
     }
@@ -64,8 +63,8 @@ describe("ana-maria six-layer classification", () => {
     expect(report.layers.some((layer) => layer.name.includes("ana"))).toBe(true);
     expect(report.layers.some((layer) => layer.name.includes("maria"))).toBe(true);
     expect(report.layers.some((layer) => layer.name.includes("soare"))).toBe(true);
-    expect(report.layers.some((layer) => layer.name.includes("logo stanga"))).toBe(true);
-    expect(report.layers.some((layer) => layer.name.includes("logo dreapta"))).toBe(true);
+    expect(report.layers.some((layer) => layer.name === "Logo 1")).toBe(true);
+    expect(report.layers.some((layer) => layer.name === "Logo 2")).toBe(true);
   });
 
   it("unlayered stroke-only logo vectors are operator-visible artwork layers", () => {
@@ -87,7 +86,7 @@ describe("ana-maria six-layer classification", () => {
     const logoLayers = report.layers.filter(
       (layer) => layer.id === "logo-stanga" || layer.id === "logo-dreapta",
     );
-    expect(logoLayers.map((layer) => layer.name).sort()).toEqual(["logo dreapta", "logo stanga"]);
+    expect(logoLayers.map((layer) => layer.name)).toEqual(["Logo 1", "Logo 2"]);
     expect(logoLayers.every((layer) => layer.autoRole === "printed_artwork")).toBe(true);
     expect(logoLayers.every((layer) => layer.layerOrigin === "stroke_vector_outline")).toBe(true);
     expect(logoLayers.every((layer) => layer.pathElementCount === 1)).toBe(true);

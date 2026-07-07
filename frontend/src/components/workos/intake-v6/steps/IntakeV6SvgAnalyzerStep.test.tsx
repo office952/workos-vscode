@@ -205,8 +205,8 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
   it("highlights left and right logo layers independently", () => {
     const svg = readFileSync(join(fixtureDir, SEMANTIC_FIXTURE), "utf8");
     const report = analyzeSemanticFixture();
-    const leftLayer = report.layers.find((layer) => layer.name.toLowerCase().includes("logo stanga"));
-    const rightLayer = report.layers.find((layer) => layer.name.toLowerCase().includes("logo dreapta"));
+    const leftLayer = report.layers.find((layer) => layer.name === "Logo 1");
+    const rightLayer = report.layers.find((layer) => layer.name === "Logo 2");
     expect(leftLayer).toBeTruthy();
     expect(rightLayer).toBeTruthy();
 
@@ -215,11 +215,11 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
 
     const resolveKey = (layerName: string) =>
       report.layerRoleConfirmation.layers.find((entry) =>
-        entry.layerName?.toLowerCase().includes(layerName),
+        entry.layerName === layerName,
       )?.layerKey ?? layerName;
 
-    const leftKey = resolveKey("logo stanga");
-    const rightKey = resolveKey("logo dreapta");
+    const leftKey = resolveKey("Logo 1");
+    const rightKey = resolveKey("Logo 2");
     const canvas = () => screen.getByTestId("intake-v6-preview-inspect-canvas-canvas");
     const activeCount = () => canvas().querySelectorAll(".intake-v6-svg-layer-active").length;
 

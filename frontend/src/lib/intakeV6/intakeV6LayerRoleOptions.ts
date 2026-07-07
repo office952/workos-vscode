@@ -4,6 +4,13 @@ import { INTAKE_V4_LAYER_ROLE_OPTIONS } from "./intakeV4LayerRoleOptions";
 export const INTAKE_V6_LAYER_ROLE_OPTIONS = INTAKE_V4_LAYER_ROLE_OPTIONS;
 export const INTAKE_V6_OWNER_ROLE_LABEL_LETTERS = "Vector Litere";
 export const INTAKE_V6_OWNER_ROLE_LABEL_LOGO = "Vector Logo";
+export const INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS: ReadonlyArray<{
+	value: LayerAutoRole;
+	label: string;
+}> = [
+	{ value: "face", label: INTAKE_V6_OWNER_ROLE_LABEL_LETTERS },
+	{ value: "printed_artwork", label: INTAKE_V6_OWNER_ROLE_LABEL_LOGO },
+];
 
 export interface IntakeV6LayerRoleOptionContext {
 	layer: { name?: string | null; layerKind?: string | null; autoRole?: string | null };
@@ -38,6 +45,16 @@ export function getIntakeV6OwnerRoleLabel(role: string | null | undefined): stri
 	if (role === "logo" || role === "printed_artwork") return INTAKE_V6_OWNER_ROLE_LABEL_LOGO;
 	if (!role) return "—";
 	return INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === role)?.label ?? role;
+}
+
+export function normalizeIntakeV6OwnerSelectableRole(
+	args: Pick<IntakeV6LayerRoleOptionContext, "layer" | "confirmedRole" | "targetTemplateCode">,
+): LayerAutoRole {
+	if (args.confirmedRole === "face") return "face";
+	if (args.confirmedRole === "logo" || args.confirmedRole === "printed_artwork") return "printed_artwork";
+	if (args.targetTemplateCode === LOGO) return "printed_artwork";
+	if (args.layer.autoRole === "logo" || args.layer.autoRole === "printed_artwork") return "printed_artwork";
+	return "face";
 }
 
 export function getIntakeV6RoleOptionsForLayer(

@@ -55,6 +55,7 @@ describe("IntakeV6ProductCompositionPanel", () => {
     expect(screen.getByText("Litere volumetrice + logo volumetric")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
+    expect(screen.getByText(/Straturi: Logo 1, Logo 2/i)).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: /Confirma compozitia produsului/i }));
 
