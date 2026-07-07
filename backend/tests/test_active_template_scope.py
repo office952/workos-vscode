@@ -146,4 +146,6 @@ class TestOwnerValidHelpers(unittest.TestCase):
         self.assertTrue(is_owner_valid_active_template(OWNER_VALID_ACTIVE_TEMPLATE_CODE.lower()))
         self.assertFalse(is_owner_valid_active_template("tpl-volumetric-letters"))
         self.assertFalse(is_owner_valid_active_template("tpl-volumetric-logo"))
+        self.assertFalse(is_owner_valid_active_template("tpl-volum-aluminiu-v1"))
+        self.assertFalse(is_owner_valid_active_template("tpl-metal-premount-structure-v1"))
         self.assertFalse(is_owner_valid_active_template("TPL-BANNER-STANDARD"))
