@@ -343,7 +343,7 @@ const logicalList: IntakeV6LogicalListReadModelResponse = {
     formula_status: String(formula_status),
     gaps: gaps as string[],
     warnings: warnings as string[],
-    child_rows: Array.from({ length: Number(childCount) }, (_, index) => ({ index })),
+    child_rows: Array.from({ length: Number(childCount) }, (_, index) => ({ index, display_name: `${display_label} #${index + 1}` })),
     subtotal: subtotal == null ? null : Number(subtotal),
     currency: String(currency),
   })),
@@ -363,14 +363,12 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent("16/16");
-    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_face")).toHaveTextContent(
-      /Plexiglas 3 mm \/ fata litere/,
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(
+      /Plexiglas 3 mm/,
     );
-    expect(screen.getByTestId("intake-v6-live-material-used-material.logo_plexiglas_face")).toHaveTextContent(
-      /Plexiglas 3 mm \/ embleme\/logo/,
-    );
+    expect(screen.queryByTestId("intake-v6-live-material-used-material.logo_plexiglas_face")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-used-material.forex_backing")).toHaveTextContent(
-      /Forex 10 mm \/ spate litere/,
+      /Forex 10 mm/,
     );
     expect(screen.getByTestId("intake-v6-live-material-used-material.face_oracal")).toHaveTextContent(/Oracal/);
     expect(screen.getByTestId("intake-v6-live-material-used-material.led_modules")).toHaveTextContent(/Module LED/);
@@ -395,22 +393,25 @@ describe("IntakeV6LiveCalculationSummary", () => {
 
     fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
 
-    expect(screen.getByTestId("intake-v6-logical-formula-material.plexiglas_face")).toHaveTextContent(
+    expect(screen.getByTestId("intake-v6-logical-source-material.plexiglas_shared-0")).toHaveTextContent(
+      /Sursă: Plexiglas 3 mm \/ fata litere/,
+    );
+    expect(screen.getByTestId("intake-v6-logical-formula-material.plexiglas_shared")).toHaveTextContent(
       "MATERIAL_PLEXI_FACE_BY_AREA_V1 @ v1",
     );
     expect(screen.getByTestId("intake-v6-logical-gaps-material.forex_backing")).toHaveTextContent(/BACKING_AREA_FALLBACK_USED|fără gap/);
     expect(screen.getByTestId("intake-v6-logical-children-material.face_oracal")).toHaveTextContent("child rows: 2");
 
     fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
-    expect(screen.queryByTestId("intake-v6-logical-formula-material.plexiglas_face")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-logical-formula-material.plexiglas_shared")).not.toBeInTheDocument();
   });
 
   it("shows numeric prices for included logical-list rows instead of the word priced", () => {
     render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={logicalList} />);
 
     expect(screen.getByText("Preț / status")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_face")).toHaveTextContent(/32[,.]00\s*EUR/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_face")).not.toHaveTextContent(/^priced$/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).toHaveTextContent(/50[,.]40\s*EUR/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).not.toHaveTextContent(/^priced$/i);
   });
 
   it("keeps gap explicit and missing quantity rows out of the main included list by default", () => {
@@ -456,7 +457,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-missing-rates-banner")).toHaveTextContent(/Tarife lipsă/);
   });
 
-  it("splits plexiglas between letters and emblems while keeping total price allocated", () => {
+  it("shows one generic plexiglas row and keeps source split only in technical details", () => {
     render(
       <IntakeV6LiveCalculationSummary
         breakdown={baseBreakdown}
@@ -466,17 +467,14 @@ describe("IntakeV6LiveCalculationSummary", () => {
       />,
     );
 
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi_letters")).toHaveTextContent(
-      /Plexiglas 3 mm \/ față litere/,
-    );
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi_letters")).toHaveTextContent(/1\.000 m²/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-plexi_letters")).toHaveTextContent("16.00 EUR");
+    expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toHaveTextContent(/Plexiglas 3 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toHaveTextContent(/2\.000 m²/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-plexi")).toHaveTextContent("32.00 EUR");
+    expect(screen.queryByText(/față litere/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/embleme\/logo/i)).not.toBeInTheDocument();
 
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi_emblems")).toHaveTextContent(
-      /Plexiglas 3 mm \/ embleme\/logo/,
-    );
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi_emblems")).toHaveTextContent(/1\.000 m²/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-plexi_emblems")).toHaveTextContent("16.00 EUR");
+    fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
+    expect(screen.getByTestId("intake-v6-breakdown-source-plexi-0")).toHaveTextContent(/Sursă: Plexiglas 3 mm \/ față litere/);
   });
 
   it("keeps Oracal series and cant Oracal separated with their own prices", () => {
@@ -579,10 +577,10 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-calc-filters")).toBeInTheDocument();
     fireEvent.click(screen.getByTestId("intake-v6-live-filter-services_operations"));
     expect(screen.getByTestId("intake-v6-live-material-used-cnc_face")).toBeInTheDocument();
-    expect(screen.queryByTestId("intake-v6-live-material-used-plexi_letters")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-live-material-used-plexi")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("intake-v6-live-filter-all"));
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi_letters")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toBeInTheDocument();
   });
 
   it("shows filter subtotal footer when a category filter is active", () => {

@@ -1720,7 +1720,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm / față litere",
+                    "Plexiglas 3 mm",
                     "material",
                     sheet_face_qty,
                     "m2",
@@ -1736,7 +1736,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm / față litere",
+                    "Plexiglas 3 mm",
                     "material",
                     face_area,
                     "m2",
@@ -1774,7 +1774,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     sheet_backing_qty,
                     "m2",
@@ -1790,7 +1790,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_material_area,
                     "m2",
@@ -1806,7 +1806,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_area,
                     "m2",
@@ -1821,7 +1821,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "forex_backing",
-                    "Forex 10 mm / spate litere",
+                    "Forex 10 mm",
                     "material",
                     backing_material_area,
                     "m2",

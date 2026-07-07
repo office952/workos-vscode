@@ -44,6 +44,9 @@ type LiveCalcDisplayRow = ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[
   formulaText?: string;
   gapText?: string;
   childCount?: number;
+  technicalDetails?: string[];
+  quantityValue?: number | null;
+  quantityUnit?: string | null;
   source?: "logical-list" | "material-breakdown";
   amountValue?: number | null;
   amountCurrency?: string | null;
@@ -78,6 +81,49 @@ function formatLogicalQuantity(row: IntakeV6LogicalListLineTrace): string {
   if (row.quantity == null || !Number.isFinite(row.quantity)) return "cantitate lipsă";
   const quantity = Math.round(row.quantity * 10000) / 10000;
   return `${quantity} ${row.unit ?? ""}`.trim();
+}
+
+function dedupeStrings(values: Array<string | null | undefined>): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const value of values) {
+    const trimmed = value?.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    result.push(trimmed);
+  }
+  return result;
+}
+
+function resolveLogicalVisibleKey(row: IntakeV6LogicalListLineTrace): string {
+  if (row.line_id === "material.plexiglas_face" || row.line_id === "material.logo_plexiglas_face") {
+    return "material.plexiglas_shared";
+  }
+  return row.line_id;
+}
+
+function resolveLogicalVisibleLabel(row: IntakeV6LogicalListLineTrace): string {
+  if (row.line_id === "material.plexiglas_face" || row.line_id === "material.logo_plexiglas_face") {
+    return "Plexiglas 3 mm";
+  }
+  if (row.line_id === "material.forex_backing") return "Forex 10 mm";
+  if (row.line_id === "material.return_profile") return "Cant / volum";
+  if (row.line_id === "labor.cant_glue") return "Lipire cant / volum";
+  return row.display_label;
+}
+
+function buildLogicalTechnicalDetails(row: IntakeV6LogicalListLineTrace): string[] {
+  const details: Array<string | null> = [];
+  if (row.display_label) details.push(`Sursă: ${row.display_label}`);
+  const childRows = Array.isArray(row.child_rows) ? row.child_rows : [];
+  for (const child of childRows) {
+    if (!child || typeof child !== "object") continue;
+    const displayName = typeof child.display_name === "string" ? child.display_name : null;
+    const materialCode = typeof child.material_code === "string" ? child.material_code : null;
+    if (displayName) details.push(`Rând runtime: ${displayName}`);
+    if (materialCode) details.push(`Cod runtime: ${materialCode}`);
+  }
+  return dedupeStrings(details);
 }
 
 function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
@@ -158,33 +204,70 @@ function buildLogicalDisplayRows(
   fallbackCurrency: string,
 ): LiveCalcDisplayRow[] {
   const rows = logicalList?.rows ?? [];
-  return rows.map((row) => {
+  const grouped = new Map<string, LiveCalcDisplayRow>();
+  rows.forEach((row) => {
     const formula = [row.formula_code_proposed, row.formula_version_proposed].filter(Boolean).join(" @ ");
     const gaps = [...(row.gaps ?? []), ...(row.warnings ?? []), ...(row.blockers ?? [])];
     const amountValue = hasFinitePositiveNumber(row.subtotal) ? row.subtotal : null;
     const amountCurrency = row.currency ?? fallbackCurrency;
     const statusLabel = resolveLogicalStatus(row);
     const displayBucket = classifyLogicalRow(row, statusLabel, amountValue);
-    return {
-      groupKey: row.line_id,
-      label: row.display_label,
-      quantityText: formatLogicalQuantity(row),
-      costText: amountValue != null ? formatFaceBackPrepMoney(amountValue, amountCurrency) : "fără preț",
-      muted: displayBucket !== "included",
-      category: normalizeLogicalCategory(row.category),
-      formulaText: formula || "formula lipsă",
-      gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
-      childCount: row.child_rows?.length ?? 0,
-      source: "logical-list",
-      amountValue,
-      amountCurrency,
-      statusLabel,
-      displayBucket,
-      diagnosticReason:
-        displayBucket === "included"
-          ? undefined
-          : resolveLogicalDiagnosticReason(row, statusLabel, amountValue),
-    } satisfies LiveCalcDisplayRow;
+    const groupKey = resolveLogicalVisibleKey(row);
+    const technicalDetails = buildLogicalTechnicalDetails(row);
+    const existing = grouped.get(groupKey);
+    if (!existing) {
+      grouped.set(groupKey, {
+        groupKey,
+        label: resolveLogicalVisibleLabel(row),
+        quantityText: formatLogicalQuantity(row),
+        quantityValue: row.quantity ?? null,
+        quantityUnit: row.unit ?? null,
+        costText: amountValue != null ? formatFaceBackPrepMoney(amountValue, amountCurrency) : "fără preț",
+        muted: displayBucket !== "included",
+        category: normalizeLogicalCategory(row.category),
+        formulaText: formula || "formula lipsă",
+        gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
+        childCount: row.child_rows?.length ?? 0,
+        technicalDetails,
+        source: "logical-list",
+        amountValue,
+        amountCurrency,
+        statusLabel,
+        displayBucket,
+        diagnosticReason:
+          displayBucket === "included"
+            ? undefined
+            : resolveLogicalDiagnosticReason(row, statusLabel, amountValue),
+      } satisfies LiveCalcDisplayRow);
+      return;
+    }
+    const mergedAmount = (existing.amountValue ?? 0) + (amountValue ?? 0);
+    const mergedQuantity = (existing.quantityValue ?? 0) + (row.quantity ?? 0);
+    existing.quantityValue = mergedQuantity;
+    existing.quantityUnit = row.unit ?? existing.quantityUnit ?? null;
+    existing.quantityText = formatLogicalQuantity({
+      ...row,
+      quantity: mergedQuantity,
+      unit: existing.quantityUnit ?? row.unit,
+    } as IntakeV6LogicalListLineTrace);
+    existing.costText = mergedAmount > 0 ? formatFaceBackPrepMoney(mergedAmount, amountCurrency) : existing.costText;
+    existing.amountValue = mergedAmount > 0 ? mergedAmount : existing.amountValue;
+    existing.amountCurrency = amountCurrency;
+    existing.childCount = (existing.childCount ?? 0) + (row.child_rows?.length ?? 0);
+    existing.technicalDetails = dedupeStrings([...(existing.technicalDetails ?? []), ...technicalDetails]);
+    existing.gapText = dedupeStrings([existing.gapText, gaps.length > 0 ? gaps.join(" · ") : null]).join(" · ") || "fără gap";
+    if (existing.displayBucket !== "missing" && displayBucket !== "included") {
+      existing.displayBucket = displayBucket;
+      existing.muted = true;
+      existing.statusLabel = statusLabel;
+      existing.diagnosticReason = resolveLogicalDiagnosticReason(row, statusLabel, amountValue);
+    }
+  });
+  return Array.from(grouped.values()).map((row) => {
+    if (row.amountValue != null && row.amountCurrency) {
+      row.costText = formatFaceBackPrepMoney(row.amountValue, row.amountCurrency);
+    }
+    return row;
   });
 }
 
@@ -301,11 +384,20 @@ function LiveCalcLineList({
                     <span className="block truncate">{item.label}</span>
                     {logicalMode && showTechnicalDetails ? (
                       <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">
+                        {(item.technicalDetails ?? []).map((detail, index) => (
+                          <span key={detail} data-testid={`intake-v6-logical-source-${item.groupKey}-${index}`}>{detail}</span>
+                        ))}
                         <span data-testid={`intake-v6-logical-formula-${item.groupKey}`}>{item.formulaText}</span>
                         <span data-testid={`intake-v6-logical-gaps-${item.groupKey}`}>{item.gapText}</span>
                         <span data-testid={`intake-v6-logical-children-${item.groupKey}`}>
                           child rows: {item.childCount ?? 0}
                         </span>
+                      </span>
+                    ) : !logicalMode && showTechnicalDetails && (item.technicalDetails?.length ?? 0) > 0 ? (
+                      <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">
+                        {(item.technicalDetails ?? []).map((detail, index) => (
+                          <span key={detail} data-testid={`intake-v6-breakdown-source-${item.groupKey}-${index}`}>{detail}</span>
+                        ))}
                       </span>
                     ) : null}
                   </span>
