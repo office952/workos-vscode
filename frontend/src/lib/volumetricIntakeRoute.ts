@@ -68,6 +68,9 @@ export function resolveIntakeEditPath(input: {
   productFamily?: string | null;
   workspaceId?: string | null;
 }): string {
+  if (isIntakeRequestRouteKey(input.id)) {
+    return buildIntakeV6Path(input.workspaceId ?? input.id);
+  }
   const confirmedTemplateCode = input.confirmedTemplateCode?.trim() ?? "";
   if (
     intakeEditUsesVolumetricWorkspace(
@@ -89,7 +92,7 @@ export function intakePrimaryEditLabel(
 ): string {
   return intakeEditUsesVolumetricWorkspace(confirmedTemplateCode, productFamily)
     ? "Deschide Intake V6"
-    : "Instrumentează Comanda";
+    : "Deschide Intake V6";
 }
 
 /** Stored status is ahead of what computed readiness / template / spec allow. */

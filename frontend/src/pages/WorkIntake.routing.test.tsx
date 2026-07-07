@@ -28,7 +28,7 @@ vi.mock("@/components/workos/NewIntakeDialog", () => ({
       <button
         type="button"
         data-testid="mock-new-logo-intake-created"
-        onClick={() => onCreated("IR-LOGO-NEW", "litere_volumetrice", "workspace-logo-new", "TPL-VOLUMETRIC-LOGO_v1")}
+        onClick={() => onCreated("IR-LOGONEW", "litere_volumetrice", "workspace-logo-new", "TPL-VOLUMETRIC-LOGO_v1")}
       >
         Simulează cerere logo
       </button>
@@ -190,12 +190,11 @@ describe("WorkIntake list selection and routing", () => {
 
     await waitFor(() => {
       expect(refresh).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenCalledWith("/intake/IR-LOGO-NEW");
+      expect(mockNavigate).toHaveBeenCalledWith("/intake-v6/workspace-logo-new/operator");
     });
-    expect(mockNavigate).not.toHaveBeenCalledWith("/intake-v6/workspace-logo-new/operator");
   });
 
-  it("navigates to legacy intake only via explicit primary edit button", () => {
+  it("navigates non-volumetric requests to Intake V6 via explicit primary edit button", () => {
     mockUseBackendData.mockReturnValue({
       intakes: [
         baseIntake({
@@ -222,9 +221,9 @@ describe("WorkIntake list selection and routing", () => {
 
     fireEvent.click(screen.getByTestId("work-intake-primary-edit"));
 
-    expect(mockNavigate).toHaveBeenCalledWith("/intake/WI-3321");
+    expect(mockNavigate).toHaveBeenCalledWith("/intake-v6/WI-3321/operator");
     expect(
-      screen.getByRole("button", { name: /Instrumentează Comanda/i })
+      screen.getByRole("button", { name: /Deschide Intake V6/i })
     ).toBeInTheDocument();
   });
 
