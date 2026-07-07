@@ -505,6 +505,10 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
         assert forex.quantity_basis == "backing_area_fallback_from_artwork_box_footprint"
         assert plexi.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
         assert forex.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert plexi.source_part_ids == ["art-a"]
+        assert forex.source_part_ids == ["art-a"]
+        assert plexi.trace_markers == []
+        assert forex.trace_markers == []
         assert "artwork_area_m2" not in plexi.quantity_source
         assert "face_area_m2" not in plexi.quantity_source
         assert "artwork_area_m2" not in forex.quantity_source

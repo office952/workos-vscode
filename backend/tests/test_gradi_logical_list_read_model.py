@@ -21,6 +21,8 @@ def _row(key: str, label: str, quantity: float, unit: str, cost: float, **extra)
         pricing_status=extra.get("pricing_status"),
         quantity_basis=extra.get("quantity_basis"),
         quantity_source=extra.get("quantity_source"),
+        source_part_ids=extra.get("source_part_ids"),
+        trace_markers=extra.get("trace_markers"),
         basis_label=extra.get("basis_label"),
         operation_type=extra.get("operation_type"),
     )
@@ -130,6 +132,7 @@ def _logo_only_breakdown() -> SimpleNamespace:
                 16.0064,
                 quantity_basis="artwork_box_bounding_footprint_quote_estimate",
                 quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                source_part_ids=["art-a"],
             ),
             _row("return_material", "Cant / volum litere + artwork", 3.142, "m", 11.3112),
         ],
@@ -308,6 +311,7 @@ def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_pl
                 36.0,
                 quantity_basis="artwork_box_bounding_footprint_quote_estimate",
                 quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                source_part_ids=["art-a"],
             ),
             _row(
                 "forex_backing",
@@ -317,6 +321,7 @@ def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_pl
                 43.2,
                 quantity_basis="backing_area_fallback_from_artwork_box_footprint",
                 quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                source_part_ids=["art-a"],
             ),
         ],
         consumable_rows=[],
@@ -340,12 +345,17 @@ def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_pl
     assert logo["batch_trace"]["logo_face_area_m2"] == pytest.approx(2.25, rel=0, abs=1e-4)
     assert forex["quantity"] == pytest.approx(2.25, rel=0, abs=1e-4)
     assert forex["subtotal"] == pytest.approx(43.2, rel=0, abs=1e-4)
+    assert logo["source_part_ids"] == ["art-a"]
+    assert forex["source_part_ids"] == ["art-a"]
     child = forex["child_rows"][0]
     assert child["basis"] == "backing_area_fallback_from_artwork_box_footprint"
+    assert child["source_part_ids"] == ["art-a"]
 
 
 def test_logo_only_logical_rows_still_expose_trace_debt_when_source_part_ids_are_missing() -> None:
-    assert _logo_only_breakdown().material_rows[0].quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    row = _logo_only_breakdown().material_rows[0]
+    assert row.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    assert row.source_part_ids == ["art-a"]
 
 
 def test_gradi_logical_read_model_keeps_series_breakdown_when_oracal_row_aggregates_641_and_651() -> None:

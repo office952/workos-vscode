@@ -425,6 +425,8 @@ def _quote_cost_row(
     unit_price: float | None = None,
     price_source: str = "missing",
     currency: str = "EUR",
+    source_part_ids: list[str] | None = None,
+    trace_markers: list[str] | None = None,
 ) -> IntakeV4MaterialQuantityRow:
     base, priced, waste_pct = _with_waste(qty, apply_buffer=apply_quote_waste)
     material_cost = round(priced * unit_price, 4) if unit_price is not None and priced > 0 else None
@@ -451,6 +453,8 @@ def _quote_cost_row(
         estimated_cost=material_cost,
         price_source=price_source,
         currency=currency,
+        source_part_ids=list(source_part_ids or []),
+        trace_markers=list(trace_markers or []),
     )
 
 
@@ -470,6 +474,8 @@ def _cost_row(
     confidence: str = "estimate_for_quote",
     price_source: str = "missing",
     currency: str = "EUR",
+    source_part_ids: list[str] | None = None,
+    trace_markers: list[str] | None = None,
 ) -> IntakeV4MaterialQuantityRow:
     basis = quantity_basis or quantity_source
     return _quote_cost_row(
@@ -487,7 +493,44 @@ def _cost_row(
         unit_price=unit_price,
         price_source=price_source,
         currency=currency,
+        source_part_ids=source_part_ids,
+        trace_markers=trace_markers,
     )
+
+
+def _logo_only_artwork_source_part_ids(
+    analysis: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
+) -> list[str]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return []
+    try:
+        from services.intake_v4_letter_part_classification_service import classify_letter_parts_from_analysis
+
+        classified = classify_letter_parts_from_analysis(analysis, layer_role_setup or {})
+        hole_ids = {
+            str(row.get("part_id") or "")
+            for row in (classified.get("parts") or [])
+            if isinstance(row, dict) and row.get("is_inner_hole")
+        }
+    except Exception:
+        hole_ids = set()
+
+    result: list[str] = []
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id or part_id in hole_ids:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role in {"printed_artwork", "logo", "policromie"}:
+            result.append(part_id)
+    return result
 
 
 def _return_registry_code(return_depth_mm: Any) -> str | None:
@@ -1751,6 +1794,11 @@ def build_intake_v4_material_breakdown(
         if not has_confirmed_letter_face_content
         else None
     )
+    logo_only_artwork_part_ids = (
+        _logo_only_artwork_source_part_ids(analysis, layer_role_setup)
+        if logo_only_artwork_box_footprint is not None
+        else []
+    )
     sheet_quote_candidates = compute_sheet_quote_material_candidates(
         nesting,
         analysis,
@@ -1824,6 +1872,8 @@ def build_intake_v4_material_breakdown(
                     registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
                     apply_quote_waste=False,
                     confidence=CONFIDENCE_NESTING_MEDIUM,
+                    source_part_ids=logo_only_artwork_part_ids,
+                    trace_markers=([] if logo_only_artwork_part_ids else ["SOURCE_PART_IDS_MISSING_FOR_LOGO_ONLY_FOOTPRINT"]),
                 )
             )
         elif face_area:
@@ -1945,6 +1995,8 @@ def build_intake_v4_material_breakdown(
                     quantity_quality="estimated",
                     registry_code=MATERIAL_REGISTRY_CODES["forex_backing"],
                     confidence=CONFIDENCE_AREA_FALLBACK,
+                    source_part_ids=logo_only_artwork_part_ids if backing_material_basis == BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT else None,
+                    trace_markers=([] if logo_only_artwork_part_ids or backing_material_basis != BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT else ["SOURCE_PART_IDS_MISSING_FOR_LOGO_ONLY_FOOTPRINT"]),
                 )
             )
     elif (backing_area or sheet_backing_qty or logo_only_artwork_box_footprint or backing_present) and not backing_confirmed:

@@ -279,13 +279,13 @@ def _build_material_traces(
 ) -> list[IntakeV4NestingPreviewMaterialTrace]:
     traces: list[IntakeV4NestingPreviewMaterialTrace] = []
     for row in material_rows:
-        source_part_ids: list[str] = []
+        source_part_ids: list[str] = list(getattr(row, "source_part_ids", []) or [])
         if row.material_key == "plexiglas_face":
-            source_part_ids = [p.part_id for p in parts if "plexiglas_face" in p.counted_in_material_lines]
+            source_part_ids = source_part_ids or [p.part_id for p in parts if "plexiglas_face" in p.counted_in_material_lines]
         elif row.material_key == "forex_backing":
-            source_part_ids = [p.part_id for p in parts if "forex_backing" in p.counted_in_material_lines]
+            source_part_ids = source_part_ids or [p.part_id for p in parts if "forex_backing" in p.counted_in_material_lines]
         elif row.material_key == "face_vinyl":
-            source_part_ids = [p.part_id for p in parts if "face_vinyl" in p.counted_in_material_lines]
+            source_part_ids = source_part_ids or [p.part_id for p in parts if "face_vinyl" in p.counted_in_material_lines]
         traces.append(
             IntakeV4NestingPreviewMaterialTrace(
                 material_key=row.material_key,

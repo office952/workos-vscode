@@ -135,6 +135,8 @@ def _child_ref(row: dict[str, Any]) -> dict[str, Any]:
         "series",
         "selected_series",
         "material_code",
+        "source_part_ids",
+        "trace_markers",
         "inventory_consumption_key",
         "inventory_color_keys",
         "group_keys",
@@ -402,6 +404,22 @@ def _line(
     resolved_currency = currency if currency is not None else (first.get("currency") if first else None)
     resolved_source = runtime_source if runtime_source is not None else (_source(first) if first else None)
     resolved_status = status or ("MATCHED" if rows else "PARTIAL")
+    resolved_source_part_ids = sorted(
+        {
+            str(part_id)
+            for row in (rows or [])
+            for part_id in (row.get("source_part_ids") or [])
+            if isinstance(part_id, str) and part_id.strip()
+        }
+    )
+    resolved_trace_markers = sorted(
+        {
+            str(marker)
+            for row in (rows or [])
+            for marker in (row.get("trace_markers") or [])
+            if isinstance(marker, str) and marker.strip()
+        }
+    )
     return {
         "line_id": line_id,
         "display_label": display_label,
@@ -419,6 +437,8 @@ def _line(
         "currency": resolved_currency,
         "runtime_source": resolved_source,
         "child_rows": child_rows,
+        "source_part_ids": resolved_source_part_ids,
+        "trace_markers": resolved_trace_markers,
         "preferences": preferences or {},
         "gaps": gaps or [],
         "warnings": warnings or [],

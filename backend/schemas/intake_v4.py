@@ -529,6 +529,8 @@ class IntakeV4MaterialQuantityRow(BaseModel):
     estimated_cost: float | None = None
     confidence: str = "estimate_for_quote"
     consumption_mode: Literal["quote_estimate"] = "quote_estimate"
+    source_part_ids: list[str] = Field(default_factory=list)
+    trace_markers: list[str] = Field(default_factory=list)
 
 
 class IntakeV4MaterialBreakdownTotals(BaseModel):

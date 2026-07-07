@@ -216,8 +216,8 @@ class TestIntakeV4NestingPreview:
         forex_trace = next(t for t in preview.material_traces if t.material_key == "forex_backing")
         assert plexi_trace.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
         assert forex_trace.quantity_basis == "backing_area_fallback_from_artwork_box_footprint"
-        assert plexi_trace.source_part_ids == []
-        assert forex_trace.source_part_ids == []
+        assert plexi_trace.source_part_ids == ["art-a"]
+        assert forex_trace.source_part_ids == ["art-a"]
 
     def test_roll_jobs_mark_active_vs_alternative_width(self):
         payload = _payload_with_nesting_placements()

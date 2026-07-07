@@ -76,6 +76,8 @@ def build_shared_plexiglas_face_batch_overrides(
     runtime_letter_area = _number(letter_face_row.get("quantity") if letter_face_row else None)
     letter_area = runtime_letter_area if has_letter_face_content else 0.0
     letter_subtotal = _number(letter_face_row.get("estimated_cost") if letter_face_row else None)
+    source_part_ids = list(letter_face_row.get("source_part_ids") or []) if letter_face_row else []
+    trace_markers = list(letter_face_row.get("trace_markers") or []) if letter_face_row else []
     if letter_subtotal is None and letter_face_row is not None:
         letter_subtotal = _number(letter_face_row.get("material_cost"))
     runtime_unit_price = _number(letter_face_row.get("unit_price") if letter_face_row else None)
@@ -150,6 +152,8 @@ def build_shared_plexiglas_face_batch_overrides(
         "batch_trace": batch_trace,
         "warnings": logo_warnings,
         "gaps": logo_gaps,
+        "source_part_ids": source_part_ids,
+        "trace_markers": trace_markers,
     }
     return {
         "material.plexiglas_face": letter_override,
