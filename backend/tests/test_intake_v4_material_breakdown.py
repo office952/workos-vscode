@@ -324,6 +324,9 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
                 "face_area_m2": 1.0004,
                 "letter_face_area_m2": 1.0004,
                 "artwork_area_m2": 1.0,
+                "artwork_boxes": [
+                    {"layer_key": "logo-dreapta", "width_mm": 1000, "height_mm": 1000, "area_m2": 1.0}
+                ],
                 "return_material_perimeter_ml": 6.284,
                 "letter_return_perimeter_ml": 3.142,
                 "artwork_return_perimeter_ml": 3.142,
@@ -367,11 +370,66 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
 
         result = build_intake_v4_material_breakdown("ws-logo-only-prorated-blocked", payload)
         plexi = next(row for row in result.material_rows if row.material_key == "plexiglas_face")
-        assert plexi.quantity_basis == BASIS_AREA_FALLBACK
-        assert plexi.quantity == pytest.approx(1.0004, rel=0, abs=1e-4)
+        assert plexi.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
+        assert plexi.quantity == pytest.approx(1.0, rel=0, abs=1e-4)
         assert plexi.estimated_cost is None
         assert not any(w.code == "sheet_nesting_prorated_fallback" for w in result.warnings)
         assert any(w.code == "sheet_nesting_prorated_fallback_blocked_for_logo_only" for w in result.warnings)
+
+    def test_logo_only_unconfirmed_backing_does_not_emit_forex_from_area_fallback(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "art-a", "sourceLayerName": "Logo 1", "placedWidthMm": 1500, "placedHeightMm": 1500}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {"items": [{"id": "art-a", "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"}}]},
+                "layers": [
+                    {"id": "logo-dreapta", "name": "Logo 1", "perimeterMl": 4.7553, "filledAreaSqm": 1.5547, "widthMm": 1500, "heightMm": 1500}
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-unconfirmed-backing", payload)
+        keys = {row.material_key for row in result.material_rows}
+        assert "plexiglas_face" in keys
+        assert "forex_backing" not in keys
+        assert any(w.code == "backing_not_confirmed" for w in result.warnings)
 
 
 class TestIntakeV4ArtworkVolumetricBreakdown:

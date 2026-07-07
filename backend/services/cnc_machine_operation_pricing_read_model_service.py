@@ -109,7 +109,16 @@ def build_shared_plexiglas_face_batch_overrides(
     }
 
     logo_quantity = _number(logo_face_area_m2)
-    logo_subtotal = _cost_area(quantity_m2=logo_quantity, tariff_eur_per_m2=material_tariff_eur_per_m2)
+    if (
+        not has_letter_face_content
+        and runtime_letter_area is not None
+        and logo_quantity is not None
+        and letter_subtotal is not None
+        and abs(runtime_letter_area - logo_quantity) < 1e-6
+    ):
+        logo_subtotal = round(letter_subtotal, 4)
+    else:
+        logo_subtotal = _cost_area(quantity_m2=logo_quantity, tariff_eur_per_m2=material_tariff_eur_per_m2)
     logo_warnings: list[str] = []
     logo_gaps: list[str] = []
     logo_status = "MATCHED"

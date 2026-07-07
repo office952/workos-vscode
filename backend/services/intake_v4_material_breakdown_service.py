@@ -29,6 +29,7 @@ from services.intake_v4_artwork_complexity_service import (
 )
 from services.intake_v4_backing_mode_service import (
     BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK,
+    resolve_backing_mode_from_finish,
     resolve_backing_material_area_m2,
     resolve_volumetric_backing_state,
 )
@@ -47,6 +48,7 @@ from services.intake_v4_nesting_material_precision import (
     SHEET_EXCLUDED_ROLES,
     _layer_role_for_name as _sheet_layer_role_for_name,
     apply_sheet_material_quantity_floor,
+    backing_layer_confirmed,
     compute_eligible_sheet_face_area_sum_sqm,
     compute_roll_nesting_vinyl_area_by_layer,
     compute_roll_nesting_vinyl_estimate,
@@ -144,6 +146,8 @@ SHEET_CONFIG_AREA_SQM: dict[str, float] = {
 BASIS_ROLL_NESTING = "roll_nesting_quote_estimate"
 BASIS_SHEET_NESTING = "sheet_nesting_quote_estimate"  # legacy alias in tests/docs
 BASIS_AREA_FALLBACK = "area_with_waste_fallback"
+BASIS_ARTWORK_BOX_FOOTPRINT = "artwork_box_bounding_footprint_quote_estimate"
+BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT = "backing_area_fallback_from_artwork_box_footprint"
 BASIS_PERIMETER = "perimeter_with_waste"
 CONFIDENCE_NESTING = "estimate_from_nesting_high"
 CONFIDENCE_NESTING_PARTIAL = "estimate_from_nesting_medium"
@@ -248,6 +252,29 @@ def _layer_metrics_from_analysis(
             perimeter_ml = perimeter_mm / 1000 if perimeter_mm else None
         return area, perimeter_ml
     return None, None
+
+
+def _artwork_box_footprint_area_sqm(*geom_sources: Any) -> float | None:
+    for source in geom_sources:
+        if not isinstance(source, dict):
+            continue
+        boxes = source.get("artwork_boxes")
+        if not isinstance(boxes, list):
+            continue
+        total = 0.0
+        found = False
+        for box in boxes:
+            if not isinstance(box, dict):
+                continue
+            width_mm = _positive(box.get("width_mm"))
+            height_mm = _positive(box.get("height_mm"))
+            if width_mm is None or height_mm is None:
+                continue
+            total += (width_mm * height_mm) / 1_000_000.0
+            found = True
+        if found and total > 0:
+            return round(total, 4)
+    return None
 
 
 def _has_confirmed_letter_face_content(
@@ -1585,6 +1612,7 @@ def build_intake_v4_material_breakdown(
     warnings: list[IntakeV4MaterialBreakdownWarning] = []
     artwork_complexity_operation_rows: list[IntakeV4CncOperationRow] = []
     path_geom = payload.path_geometry_summary if isinstance(payload.path_geometry_summary, dict) else {}
+    raw_quote_geom = payload_raw.get("quote_geometry") if isinstance(payload_raw.get("quote_geometry"), dict) else {}
     resolved_quote = resolve_v4_quote_geometry(payload)
     path_geom = merge_quote_geometry_into_path_summary(path_geom, resolved_quote)
     quote_geom = resolved_quote
@@ -1592,6 +1620,7 @@ def build_intake_v4_material_breakdown(
     geometry_block = analysis.get("geometry") if isinstance(analysis.get("geometry"), dict) else {}
     nesting = analysis.get("nesting") if isinstance(analysis.get("nesting"), dict) else {}
     finish = payload.finish_setup.model_dump(mode="json") if payload.finish_setup else {}
+    raw_finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
 
     if not analysis:
         warnings.append(_warn("missing_svg_analysis", "Lipsește analiza SVG persistată.", source="svg_analysis_json"))
@@ -1662,11 +1691,13 @@ def build_intake_v4_material_breakdown(
     layer_role_setup_raw = payload_raw.get("layer_role_setup")
     layer_role_setup = layer_role_setup_raw if isinstance(layer_role_setup_raw, dict) else None
     quote_geom_dict = quote_geom if isinstance(quote_geom, dict) else {}
-    backing_mode, backing_confirmed, back_bevel_enabled = resolve_volumetric_backing_state(
+    backing_mode, backing_present, back_bevel_enabled = resolve_volumetric_backing_state(
         finish,
         layer_role_setup,
         quote_geometry=quote_geom_dict,
     )
+    backing_mode_explicit = raw_finish.get("backing_mode") is not None
+    backing_confirmed = backing_layer_confirmed(layer_role_setup) or backing_mode_explicit
 
     nesting_rows = _nesting_rows_from_analysis(nesting)
     roll_vinyl = compute_roll_nesting_vinyl_estimate(nesting, layer_role_setup=layer_role_setup)
@@ -1715,6 +1746,11 @@ def build_intake_v4_material_breakdown(
         sheet_face_qty = None
         sheet_backing_qty = None
         suppressed_logo_only_sheet_face_fallback = True
+    logo_only_artwork_box_footprint = (
+        _artwork_box_footprint_area_sqm(raw_quote_geom, path_geom, quote_geom, geometry_block)
+        if not has_confirmed_letter_face_content
+        else None
+    )
     sheet_quote_candidates = compute_sheet_quote_material_candidates(
         nesting,
         analysis,
@@ -1757,7 +1793,7 @@ def build_intake_v4_material_breakdown(
     material_rows: list[IntakeV4MaterialQuantityRow] = []
     consumable_rows: list[IntakeV4MaterialQuantityRow] = []
 
-    if face_area or sheet_face_qty:
+    if face_area or sheet_face_qty or logo_only_artwork_box_footprint:
         if sheet_face_qty:
             material_rows.append(
                 _cost_row(
@@ -1772,6 +1808,22 @@ def build_intake_v4_material_breakdown(
                     registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
                     apply_quote_waste=False,
                     confidence=sheet_confidence if sheet_nesting_valid else CONFIDENCE_NESTING_MEDIUM,
+                )
+            )
+        elif logo_only_artwork_box_footprint:
+            material_rows.append(
+                _cost_row(
+                    "plexiglas_face",
+                    "Plexiglas 3 mm",
+                    "material",
+                    logo_only_artwork_box_footprint,
+                    "m2",
+                    quantity_basis=BASIS_ARTWORK_BOX_FOOTPRINT,
+                    quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+                    quantity_quality="calculated",
+                    registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
+                    apply_quote_waste=False,
+                    confidence=CONFIDENCE_NESTING_MEDIUM,
                 )
             )
         elif face_area:
@@ -1798,15 +1850,36 @@ def build_intake_v4_material_breakdown(
             backing_area_m2=backing_area,
             sheet_backing_area_sqm=sheet_backing_qty,
             sheet_face_quoteable_area_sqm=sheet_face_qty,
-            face_area_gross_m2=face_area,
+            face_area_gross_m2=logo_only_artwork_box_footprint or face_area,
         )
     )
+    if (
+        logo_only_artwork_box_footprint is not None
+        and backing_material_basis is not None
+        and backing_material_area is not None
+        and abs(backing_material_area - logo_only_artwork_box_footprint) < 1e-6
+        and backing_material_basis != BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK
+    ):
+        backing_material_basis = BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT
+        backing_material_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
     if backing_area_quoteable_fallback:
         warnings.append(
             _warn(
                 "backing_area_fallback_used",
                 "Arie spate Forex — fallback din arie plexiglas ofertabilă / nesting (lipsește backing_area_m2 dedicată).",
                 source="sheet_nesting_face_quoteable|backing_area_missing",
+                severity="info",
+            )
+        )
+    elif (
+        backing_material_basis == BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT
+        and backing_material_area is not None
+    ):
+        warnings.append(
+            _warn(
+                "backing_artwork_box_footprint_used",
+                "Arie spate Forex — fallback explicit din bounding footprint artwork/logo deoarece backing dedicat lipsește.",
+                source="quote_geometry.artwork_boxes|bounding_box_footprint",
                 severity="info",
             )
         )
@@ -1874,7 +1947,7 @@ def build_intake_v4_material_breakdown(
                     confidence=CONFIDENCE_AREA_FALLBACK,
                 )
             )
-    elif (backing_area or sheet_backing_qty) and not backing_confirmed:
+    elif (backing_area or sheet_backing_qty or logo_only_artwork_box_footprint or backing_present) and not backing_confirmed:
         warnings.append(
             _warn(
                 "backing_not_confirmed",

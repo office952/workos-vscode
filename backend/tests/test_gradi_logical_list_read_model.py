@@ -121,7 +121,15 @@ def _logo_only_breakdown() -> SimpleNamespace:
         template_code="TPL-VOLUMETRIC-LETTERS_v2",
         totals={"estimated_cost_total": 27.3112, "currency": "EUR"},
         material_rows=[
-            _row("plexiglas_face", "Plexiglas 3 mm", 1.0004, "m2", 16.0064),
+            _row(
+                "plexiglas_face",
+                "Plexiglas 3 mm",
+                1.0004,
+                "m2",
+                16.0064,
+                quantity_basis="artwork_box_bounding_footprint_quote_estimate",
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+            ),
             _row("return_material", "Cant / volum litere + artwork", 3.142, "m", 11.3112),
         ],
         consumable_rows=[],
@@ -279,8 +287,8 @@ def test_logo_only_runtime_does_not_emit_letters_plexiglas_logical_row() -> None
     by_id = {row["line_id"]: row for row in result["rows"]}
 
     assert "material.plexiglas_face" not in by_id
-    assert by_id["material.logo_plexiglas_face"]["quantity"] == 1.0
-    assert by_id["material.logo_plexiglas_face"]["subtotal"] == pytest.approx(16.0, rel=0, abs=1e-4)
+    assert by_id["material.logo_plexiglas_face"]["quantity"] == 1.0004
+    assert by_id["material.logo_plexiglas_face"]["subtotal"] == pytest.approx(16.0064, rel=0, abs=1e-4)
     assert by_id["material.logo_plexiglas_face"]["batch_roles"] == ["LOGO_FACE"]
     assert by_id["material.logo_plexiglas_face"]["shared_batch_roles"] == ["LOGO_FACE"]
 
