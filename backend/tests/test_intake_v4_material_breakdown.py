@@ -431,6 +431,104 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
         assert "forex_backing" not in keys
         assert any(w.code == "backing_not_confirmed" for w in result.warnings)
 
+    def test_logo_only_physical_material_rows_use_artwork_box_footprint_source(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "art-a", "sourceLayerName": "Logo 1", "placedWidthMm": 1500, "placedHeightMm": 1500}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {"items": [{"id": "art-a", "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"}}]},
+                "layers": [
+                    {"id": "logo-dreapta", "name": "Logo 1", "perimeterMl": 4.7553, "filledAreaSqm": 1.5547, "widthMm": 1500, "heightMm": 1500}
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 2.2506,
+                "letter_face_area_m2": 2.2506,
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-dreapta", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+            "finish_setup": {
+                "backing_mode": "forex_10_no_bevel",
+                "letter_group_finishes": [],
+                "artwork_finishes": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "execution_type": "none_raw_plexi",
+                        "face_personalization_method": "none_raw_plexi",
+                        "estimated_area_m2": 1.5547,
+                        "return_finish_type": "white_aluminum",
+                        "return_depth_mm": 60,
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-footprint-contract", payload)
+        plexi = next(row for row in result.material_rows if row.material_key == "plexiglas_face")
+        forex = next(row for row in result.material_rows if row.material_key == "forex_backing")
+
+        assert plexi.quantity == pytest.approx(2.25, rel=0, abs=1e-4)
+        assert forex.quantity == pytest.approx(2.25, rel=0, abs=1e-4)
+        assert plexi.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
+        assert forex.quantity_basis == "backing_area_fallback_from_artwork_box_footprint"
+        assert plexi.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert forex.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert "artwork_area_m2" not in plexi.quantity_source
+        assert "face_area_m2" not in plexi.quantity_source
+        assert "artwork_area_m2" not in forex.quantity_source
+        assert "face_area_m2" not in forex.quantity_source
+        assert any(w.code == "backing_artwork_box_footprint_used" for w in result.warnings)
+
+    def test_print_material_should_not_use_raw_area_alias_as_final_physical_source(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["face_finish_type"] = "print_laminate"
+        payload["finish_setup"]["letter_group_finishes"] = [
+            {
+                "group_key": "litere-volumetrice-1",
+                "layer_name": "litere-volumetrice-1",
+                "face_finish_type": "print_laminate",
+                "face_area_m2": 1.5,
+                "return_finish_type": "standard_aluminum",
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-print-contract", payload)
+        print_row = next(row for row in result.material_rows if row.material_key.endswith("print_vinyl"))
+
+        assert "face_area_m2" not in (print_row.quantity_source or "")
+        assert "artwork_finishes|svg_analysis_json.layers" not in (print_row.quantity_source or "")
+
 
 class TestIntakeV4ArtworkVolumetricBreakdown:
     def test_separate_emblem_adds_plexiglas_and_return(self):

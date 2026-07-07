@@ -165,6 +165,60 @@ class TestIntakeV4NestingPreview:
         if art_parts:
             assert art_parts[0].part_kind == "artwork_part"
 
+    def test_logo_only_artwork_footprint_trace_can_be_empty_part_ids_and_still_marks_trace_debt(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS_v2"},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "placements": [
+                                {"partId": "art-a", "sourceLayerName": "Logo 1", "xMm": 0, "yMm": 0, "placedWidthMm": 1500, "placedHeightMm": 1500}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {"items": [{"id": "art-a", "source": {"layerId": "logo-1", "layerName": "Logo 1"}}]},
+                "layers": [{"id": "logo-1", "name": "Logo 1", "filledAreaSqm": 1.5547}],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {"layer_key": "logo-1", "layer_name": "Logo 1", "confirmed_role": "printed_artwork", "confirmation_state": "confirmed"},
+                ],
+            },
+            "quote_geometry": {
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-1", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "path_geometry_summary": {
+                "artwork_area_m2": 1.5547,
+                "artwork_boxes": [{"layer_key": "logo-1", "width_mm": 1500, "height_mm": 1500, "area_m2": 2.25}],
+            },
+            "finish_setup": {
+                "backing_mode": "forex_10_no_bevel",
+                "letter_group_finishes": [],
+                "artwork_finishes": [
+                    {"layer_key": "logo-1", "layer_name": "Logo 1", "execution_type": "none_raw_plexi", "estimated_area_m2": 1.5547}
+                ],
+            },
+        }
+
+        breakdown = build_intake_v4_material_breakdown("ws-logo-preview-trace", payload)
+        preview = breakdown.nesting_preview
+        assert preview is not None
+        plexi_trace = next(t for t in preview.material_traces if t.material_key == "plexiglas_face")
+        forex_trace = next(t for t in preview.material_traces if t.material_key == "forex_backing")
+        assert plexi_trace.quantity_basis == "artwork_box_bounding_footprint_quote_estimate"
+        assert forex_trace.quantity_basis == "backing_area_fallback_from_artwork_box_footprint"
+        assert plexi_trace.source_part_ids == []
+        assert forex_trace.source_part_ids == []
+
     def test_roll_jobs_mark_active_vs_alternative_width(self):
         payload = _payload_with_nesting_placements()
         breakdown = build_intake_v4_material_breakdown("ws-preview", payload)

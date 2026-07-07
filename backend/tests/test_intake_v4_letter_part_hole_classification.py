@@ -115,6 +115,43 @@ class TestIntakeV4LetterPartHoleClassification:
         assert hole["nestable"] is False
         assert hole["counts_as_material_piece"] is False
 
+    def test_letter_O_with_inner_hole_should_nest_as_one_piece_with_negative_cutout_not_two_material_parts(self):
+        analysis = {
+            "parts": {
+                "items": [
+                    _part("outer-o", layer="face-layer", x=0, y=0, width=200, height=200, outer_mm=800, inner_mm=120, inner_count=1, contour_count=2),
+                    _part("inner-o-hole", layer="face-layer", x=60, y=60, width=50, height=50, outer_mm=180),
+                ]
+            }
+        }
+        result = classify_letter_parts_from_analysis(analysis, _layer_setup(("face-layer", "face")))
+
+        assert result["real_letters_count"] == 1
+        assert result["material_piece_count"] == 1
+        assert result["inner_holes_count"] == 2
+        hole = next(row for row in result["parts"] if row["part_id"] == "inner-o-hole")
+        assert hole["is_inner_hole"] is True
+        assert hole["nestable"] is False
+        assert hole["counts_as_material_piece"] is False
+
+    def test_letter_A_inner_counter_should_not_be_nested_as_positive_material_piece(self):
+        analysis = {
+            "parts": {
+                "items": [
+                    _part("outer-a", layer="face-layer", x=0, y=0, width=220, height=220, outer_mm=900, inner_mm=90, inner_count=1, contour_count=2),
+                    _part("inner-a-hole", layer="face-layer", x=85, y=90, width=35, height=35, outer_mm=120),
+                ]
+            }
+        }
+        result = classify_letter_parts_from_analysis(analysis, _layer_setup(("face-layer", "face")))
+
+        assert result["real_letters_count"] == 1
+        assert result["material_piece_count"] == 1
+        hole = next(row for row in result["parts"] if row["part_id"] == "inner-a-hole")
+        assert hole["is_inner_hole"] is True
+        assert hole["nestable"] is False
+        assert hole["counts_as_material_piece"] is False
+
     def test_hole_perimeter_contributes_to_cutting_perimeter(self):
         analysis = {
             "parts": {

@@ -20,6 +20,7 @@ def _row(key: str, label: str, quantity: float, unit: str, cost: float, **extra)
         price_source=extra.get("price_source", "pricing_registry"),
         pricing_status=extra.get("pricing_status"),
         quantity_basis=extra.get("quantity_basis"),
+        quantity_source=extra.get("quantity_source"),
         basis_label=extra.get("basis_label"),
         operation_type=extra.get("operation_type"),
     )
@@ -291,6 +292,60 @@ def test_logo_only_runtime_does_not_emit_letters_plexiglas_logical_row() -> None
     assert by_id["material.logo_plexiglas_face"]["subtotal"] == pytest.approx(16.0064, rel=0, abs=1e-4)
     assert by_id["material.logo_plexiglas_face"]["batch_roles"] == ["LOGO_FACE"]
     assert by_id["material.logo_plexiglas_face"]["shared_batch_roles"] == ["LOGO_FACE"]
+
+
+def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_plexi_and_forex() -> None:
+    breakdown = SimpleNamespace(
+        workspace_id="workspace-logo-only-footprint",
+        template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        totals={"estimated_cost_total": 79.2, "currency": "EUR"},
+        material_rows=[
+            _row(
+                "plexiglas_face",
+                "Plexiglas 3 mm",
+                2.25,
+                "m2",
+                36.0,
+                quantity_basis="artwork_box_bounding_footprint_quote_estimate",
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+            ),
+            _row(
+                "forex_backing",
+                "Forex 10 mm",
+                2.25,
+                "m2",
+                43.2,
+                quantity_basis="backing_area_fallback_from_artwork_box_footprint",
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint",
+            ),
+        ],
+        consumable_rows=[],
+        operation_rows=[],
+        edge_cant_operation_rows=[],
+        warnings=[{"code": "backing_artwork_box_footprint_used"}],
+    )
+
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_logo_only_payload(),
+        material_breakdown=breakdown,
+        priced_dry_run={"workspace_id": "workspace-logo-only", "template_code": "TPL-VOLUMETRIC-LETTERS_v2", "commercial_totals": {"total_gross": 0, "currency": "RON"}, "commercial_line_items": []},
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+
+    logo = by_id["material.logo_plexiglas_face"]
+    forex = by_id["material.forex_backing"]
+
+    assert logo["quantity"] == pytest.approx(2.25, rel=0, abs=1e-4)
+    assert logo["subtotal"] == pytest.approx(36.0, rel=0, abs=1e-4)
+    assert logo["batch_trace"]["logo_face_area_m2"] == pytest.approx(2.25, rel=0, abs=1e-4)
+    assert forex["quantity"] == pytest.approx(2.25, rel=0, abs=1e-4)
+    assert forex["subtotal"] == pytest.approx(43.2, rel=0, abs=1e-4)
+    child = forex["child_rows"][0]
+    assert child["basis"] == "backing_area_fallback_from_artwork_box_footprint"
+
+
+def test_logo_only_logical_rows_still_expose_trace_debt_when_source_part_ids_are_missing() -> None:
+    assert _logo_only_breakdown().material_rows[0].quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
 
 
 def test_gradi_logical_read_model_keeps_series_breakdown_when_oracal_row_aggregates_641_and_651() -> None:
