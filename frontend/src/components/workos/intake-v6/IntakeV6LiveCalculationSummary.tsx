@@ -10,8 +10,9 @@ import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCost
 import { INTAKE_V6_PENDING_SAVE_BANNER } from "@/lib/intakeV6/intakeV6FinishHydration";
 import { buildIntakeV6LiveMaterialsUsedRows } from "@/lib/intakeV6/intakeV6LiveMaterialsUsedDisplay";
 import {
+  LIVE_CALC_BASE_FILTER_OPTIONS,
   filterLiveCalcRows,
-  resolveLiveCalcFilterOptions,
+  parseLiveCalcRowCost,
   sumFilteredLiveCalcRows,
   type LiveCalcFilterId,
 } from "@/lib/intakeV6/intakeV6LiveCalculationRowFilters";
@@ -36,12 +37,19 @@ import { v6 } from "./atoms/intakeV6Presentation";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
+type LiveCalcDisplayBucket = "included" | "diagnostic" | "missing" | "legacy" | "excluded";
+
 type LiveCalcDisplayRow = ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number] & {
   category?: string;
   formulaText?: string;
   gapText?: string;
   childCount?: number;
   source?: "logical-list" | "material-breakdown";
+  amountValue?: number | null;
+  amountCurrency?: string | null;
+  statusLabel?: string;
+  displayBucket: LiveCalcDisplayBucket;
+  diagnosticReason?: string;
 };
 
 function joinClassNames(...parts: Array<string | false | null | undefined>): string {
@@ -81,24 +89,158 @@ function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
   return row.status?.toLowerCase().replace(/_/g, " ") || "read-only";
 }
 
-function buildLogicalDisplayRows(logicalList: IntakeV6LogicalListReadModelResponse | null | undefined): LiveCalcDisplayRow[] {
+function hasFinitePositiveNumber(value: number | null | undefined): value is number {
+  return value != null && Number.isFinite(value) && value > 0;
+}
+
+const NON_BLOCKING_LOGICAL_GAPS = new Set([
+  "FORMULA_TRACE_MISSING",
+  "COMMERCIAL_FORMULA_UNVERSIONED",
+]);
+
+function hasBlockingLogicalGaps(row: IntakeV6LogicalListLineTrace): boolean {
+  return (row.gaps ?? []).some((gap) => !NON_BLOCKING_LOGICAL_GAPS.has(gap));
+}
+
+function resolveLogicalDiagnosticReason(
+  row: IntakeV6LogicalListLineTrace,
+  statusLabel: string,
+  amountValue: number | null,
+): string {
+  if (row.formula_status === "legacy_unversioned" && amountValue == null) return "Legacy";
+  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "Lipsa cantitate";
+  if (hasBlockingLogicalGaps(row)) return "Fără tarif";
+  if ((row.blockers?.length ?? 0) > 0) return "Diagnostic tehnic";
+  if (statusLabel === "priced" && amountValue == null) return "Fără tarif";
+  if (row.status?.includes("PARTIAL")) return "Diagnostic tehnic";
+  if (row.status === "SPLIT_IN_RUNTIME") return "Neactiv în template curent";
+  return "Diagnostic tehnic";
+}
+
+function classifyLogicalRow(
+  row: IntakeV6LogicalListLineTrace,
+  statusLabel: string,
+  amountValue: number | null,
+): LiveCalcDisplayBucket {
+  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "missing";
+  if (hasBlockingLogicalGaps(row) || (row.blockers?.length ?? 0) > 0) return "missing";
+  if (row.status === "SPLIT_IN_RUNTIME") return "excluded";
+  if (hasFinitePositiveNumber(amountValue)) return "included";
+  if (row.formula_status === "legacy_unversioned") return "legacy";
+  if (row.status?.includes("PARTIAL")) return "diagnostic";
+  if (row.status === "MATCHED") return "missing";
+  return "diagnostic";
+}
+
+function classifyBreakdownRow(row: ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number]): Pick<LiveCalcDisplayRow, "amountValue" | "amountCurrency" | "statusLabel" | "displayBucket" | "diagnosticReason"> {
+  const amountValue = parseLiveCalcRowCost(row.costText);
+  if (row.muted === true || amountValue == null) {
+    const quantityMissing = row.quantityText === "cantitate lipsă";
+    return {
+      amountValue,
+      amountCurrency: null,
+      statusLabel: quantityMissing ? "cantitate lipsă" : "fără tarif",
+      displayBucket: quantityMissing ? "missing" : "diagnostic",
+      diagnosticReason: quantityMissing ? "Lipsa cantitate" : "Fără tarif",
+    };
+  }
+  return {
+    amountValue,
+    amountCurrency: null,
+    statusLabel: undefined,
+    displayBucket: "included",
+    diagnosticReason: undefined,
+  };
+}
+
+function buildLogicalDisplayRows(
+  logicalList: IntakeV6LogicalListReadModelResponse | null | undefined,
+  fallbackCurrency: string,
+): LiveCalcDisplayRow[] {
   const rows = logicalList?.rows ?? [];
   return rows.map((row) => {
     const formula = [row.formula_code_proposed, row.formula_version_proposed].filter(Boolean).join(" @ ");
     const gaps = [...(row.gaps ?? []), ...(row.warnings ?? []), ...(row.blockers ?? [])];
+    const amountValue = hasFinitePositiveNumber(row.subtotal) ? row.subtotal : null;
+    const amountCurrency = row.currency ?? fallbackCurrency;
+    const statusLabel = resolveLogicalStatus(row);
+    const displayBucket = classifyLogicalRow(row, statusLabel, amountValue);
     return {
       groupKey: row.line_id,
       label: row.display_label,
       quantityText: formatLogicalQuantity(row),
-      costText: resolveLogicalStatus(row),
-      muted: (row.gaps?.length ?? 0) > 0 || (row.blockers?.length ?? 0) > 0,
+      costText: amountValue != null ? formatFaceBackPrepMoney(amountValue, amountCurrency) : "fără preț",
+      muted: displayBucket !== "included",
       category: normalizeLogicalCategory(row.category),
       formulaText: formula || "formula lipsă",
       gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
       childCount: row.child_rows?.length ?? 0,
       source: "logical-list",
+      amountValue,
+      amountCurrency,
+      statusLabel,
+      displayBucket,
+      diagnosticReason:
+        displayBucket === "included"
+          ? undefined
+          : resolveLogicalDiagnosticReason(row, statusLabel, amountValue),
     } satisfies LiveCalcDisplayRow;
   });
+}
+
+function DiagnosticBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex rounded border border-[#2A3548] bg-[#111827] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+      {label}
+    </span>
+  );
+}
+
+function DiagnosticSection({ rows }: { rows: LiveCalcDisplayRow[] }) {
+  const grouped = rows.reduce((map, row) => {
+    const key = row.diagnosticReason ?? "Diagnostic tehnic";
+    const existing = map.get(key) ?? [];
+    existing.push(row);
+    map.set(key, existing);
+    return map;
+  }, new Map<string, LiveCalcDisplayRow[]>());
+
+  if (grouped.size === 0) return null;
+
+  return (
+    <details
+      className="mt-3 rounded border border-[#2A3548] bg-[#0d1420]/80"
+      data-testid="intake-v6-live-diagnostics"
+    >
+      <summary className="cursor-pointer list-none px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-amber-200">
+        Neincluse / necesită configurare ({rows.length})
+      </summary>
+      <div className="border-t border-[#1F2A3D]/80 px-2.5 py-2">
+        {Array.from(grouped.entries()).map(([reason, items]) => (
+          <div key={reason} className="mb-3 last:mb-0" data-testid={`intake-v6-live-diagnostic-group-${reason}`}>
+            <p className="mb-1 text-[11px] font-semibold text-amber-100/90">
+              {reason} · {items.length}
+            </p>
+            <ul className="space-y-1 text-[11px] text-slate-300">
+              {items.map((item) => (
+                <li key={item.groupKey} className="rounded border border-[#1F2A3D]/80 bg-[#0A0F1A]/70 px-2 py-1.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="min-w-0 truncate">{item.label}</span>
+                    <span className="shrink-0 font-mono text-slate-400">{item.quantityText}</span>
+                  </div>
+                  <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500">
+                    {item.statusLabel ? <DiagnosticBadge label={item.statusLabel} /> : null}
+                    {item.costText && item.costText !== "fără preț" ? <span>{item.costText}</span> : null}
+                    {item.gapText ? <span>{item.gapText}</span> : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </details>
+  );
 }
 
 function LiveCalcLineList({
@@ -107,12 +249,14 @@ function LiveCalcLineList({
   filterTotals,
   currency,
   logicalMode = false,
+  showTechnicalDetails = false,
 }: {
   filteredRows: LiveCalcDisplayRow[];
   activeFilter: LiveCalcFilterId;
   filterTotals: ReturnType<typeof sumFilteredLiveCalcRows>;
   currency: string;
   logicalMode?: boolean;
+  showTechnicalDetails?: boolean;
 }) {
   const groups = logicalMode
     ? Array.from(
@@ -131,7 +275,7 @@ function LiveCalcLineList({
       <div className="grid grid-cols-[minmax(0,1fr)_80px_84px] border-b border-[#1F2A3D] bg-[#101827] px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
         <span>Linie</span>
         <span className="text-right">Consum</span>
-        <span className="text-right">{logicalMode ? "Status" : "Preț"}</span>
+        <span className="text-right">{logicalMode ? "Preț / status" : "Preț"}</span>
       </div>
       <ul className="divide-y divide-[#1F2A3D]/80 text-[12px]" data-testid="intake-v6-live-materials-list">
         {filteredRows.length === 0 ? (
@@ -155,7 +299,7 @@ function LiveCalcLineList({
                 >
                   <span className="min-w-0 leading-relaxed text-slate-200" title={item.label}>
                     <span className="block truncate">{item.label}</span>
-                    {logicalMode ? (
+                    {logicalMode && showTechnicalDetails ? (
                       <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">
                         <span data-testid={`intake-v6-logical-formula-${item.groupKey}`}>{item.formulaText}</span>
                         <span data-testid={`intake-v6-logical-gaps-${item.groupKey}`}>{item.gapText}</span>
@@ -174,7 +318,12 @@ function LiveCalcLineList({
                     )}
                     data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
                   >
-                    {item.costText}
+                    <span className="block">{item.costText}</span>
+                    {logicalMode && item.statusLabel ? (
+                      <span className="mt-1 inline-flex justify-end">
+                        <DiagnosticBadge label={item.statusLabel} />
+                      </span>
+                    ) : null}
                   </span>
                 </div>
               ))}
@@ -312,13 +461,19 @@ export default function IntakeV6LiveCalculationSummary({
     artworkFinishes,
     currency,
   });
-  const logicalRows = useMemo(() => buildLogicalDisplayRows(logicalList), [logicalList]);
+  const logicalRows = useMemo(() => buildLogicalDisplayRows(logicalList, currency), [logicalList, currency]);
   const usesLogicalList = logicalRows.length > 0;
-  const rows: LiveCalcDisplayRow[] = usesLogicalList ? logicalRows : breakdownRows.map((row) => ({ ...row, source: "material-breakdown" }));
+  const rows: LiveCalcDisplayRow[] = usesLogicalList
+    ? logicalRows
+    : breakdownRows.map((row) => {
+        const classification = classifyBreakdownRow(row);
+        return { ...row, source: "material-breakdown", ...classification };
+      });
   const logicalRowCount = logicalList?.core_row_count ?? logicalRows.length;
   const logicalTargetRowCount = logicalList?.target_core_row_count ?? null;
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<LiveCalcFilterId>("all");
+  const [showTechnicalDetails, setShowTechnicalDetails] = useState(false);
   const offerModel =
     !artworkOnlyBlocked && pricingPreview && commercialInputs
       ? buildIntakeV6OfferModel({
@@ -335,25 +490,29 @@ export default function IntakeV6LiveCalculationSummary({
     officialTotals?.total_gross != null;
   const displayGrossRon = hasOfficialTotals ? officialTotals.total_gross : offerModel?.totalGross ?? null;
   const displayNetRon = hasOfficialTotals ? officialTotals.subtotal_net : offerModel?.subtotalNet ?? null;
-  const filteredRows = useMemo(
-    () => filterLiveCalcRows(rows, activeFilter),
-    [rows, activeFilter],
-  );
-  const filterOptions = useMemo(() => resolveLiveCalcFilterOptions(rows), [rows]);
+  const includedRows = useMemo(() => rows.filter((row) => row.displayBucket === "included"), [rows]);
+  const diagnosticRows = useMemo(() => rows.filter((row) => row.displayBucket !== "included"), [rows]);
+  const filteredRows = useMemo(() => {
+    if (activeFilter === "missing_rates") return diagnosticRows;
+    return filterLiveCalcRows(includedRows, activeFilter);
+  }, [activeFilter, diagnosticRows, includedRows]);
+  const filterOptions = useMemo(() => {
+    if (diagnosticRows.length === 0) return LIVE_CALC_BASE_FILTER_OPTIONS;
+    return [...LIVE_CALC_BASE_FILTER_OPTIONS, { id: "missing_rates" as const, label: "Fără tarif / diagnostic" }];
+  }, [diagnosticRows.length]);
   const filterTotals = useMemo(() => sumFilteredLiveCalcRows(filteredRows), [filteredRows]);
   const previewRows = isRightPanel && !usesLogicalList ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
   const hiddenPreviewCount = Math.max(0, filteredRows.length - previewRows.length);
-  const missingRateLabels = rows
-    .filter((row) => row.muted || row.costText === "tarif lipsă")
+  const missingRateLabels = diagnosticRows
     .map((row) => row.label);
   const visibleMissingRateLabels = missingRateLabels.slice(0, 2);
   const hiddenMissingRateCount = Math.max(0, missingRateLabels.length - visibleMissingRateLabels.length);
 
   useEffect(() => {
-    if (activeFilter === "missing_rates" && !filterOptions.some((opt) => opt.id === "missing_rates")) {
+    if (activeFilter === "missing_rates" && diagnosticRows.length === 0) {
       setActiveFilter("all");
     }
-  }, [activeFilter, filterOptions]);
+  }, [activeFilter, diagnosticRows.length]);
 
   const filterChips = (
     <div
@@ -385,6 +544,20 @@ export default function IntakeV6LiveCalculationSummary({
     </div>
   );
 
+  const technicalDetailsToggle = (
+    <label
+      className="mb-2 flex items-center gap-2 rounded border border-[#243044]/80 bg-[#101827]/60 px-2.5 py-2 text-[11px] text-slate-300"
+      data-testid="intake-v6-live-technical-toggle"
+    >
+      <input
+        type="checkbox"
+        checked={showTechnicalDetails}
+        onChange={(event) => setShowTechnicalDetails(event.target.checked)}
+      />
+      <span>Afișează detalii tehnice</span>
+    </label>
+  );
+
   const detailsBody = (
     <>
       <CantMetricsStrip operatorCantPerimeterM={operatorCantPerimeterM} />
@@ -405,6 +578,7 @@ export default function IntakeV6LiveCalculationSummary({
         </p>
       ) : null}
       {filterChips}
+      {technicalDetailsToggle}
       {usesLogicalList ? (
         <p
           className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
@@ -416,13 +590,17 @@ export default function IntakeV6LiveCalculationSummary({
       {loading ? (
         <p className="text-[11px] text-slate-400">Actualizez estimările…</p>
       ) : rows.length > 0 ? (
-        <LiveCalcLineList
-          filteredRows={filteredRows}
-          activeFilter={activeFilter}
-          filterTotals={filterTotals}
-          currency={currency}
-          logicalMode={usesLogicalList}
-        />
+        <>
+          <LiveCalcLineList
+            filteredRows={filteredRows}
+            activeFilter={activeFilter}
+            filterTotals={filterTotals}
+            currency={currency}
+            logicalMode={usesLogicalList}
+            showTechnicalDetails={showTechnicalDetails}
+          />
+          {activeFilter !== "missing_rates" ? <DiagnosticSection rows={diagnosticRows} /> : null}
+        </>
       ) : (
         <p className="text-[11px] text-slate-400">Nu există încă breakdown live.</p>
       )}
@@ -615,13 +793,16 @@ export default function IntakeV6LiveCalculationSummary({
               </p>
             ) : null}
             {filterChips}
+            {technicalDetailsToggle}
             <LiveCalcLineList
               filteredRows={previewRows}
               activeFilter={activeFilter}
               filterTotals={filterTotals}
               currency={currency}
               logicalMode={usesLogicalList}
+              showTechnicalDetails={showTechnicalDetails}
             />
+            {activeFilter !== "missing_rates" ? <DiagnosticSection rows={diagnosticRows} /> : null}
             {hiddenPreviewCount > 0 ? (
               <p className="mt-1.5 text-[11px] text-slate-400" data-testid="intake-v6-live-preview-more">
                 +{hiddenPreviewCount} linii în detaliu
@@ -747,6 +928,7 @@ export default function IntakeV6LiveCalculationSummary({
             </p>
           ) : null}
           {filterChips}
+          {technicalDetailsToggle}
 
           <button
             type="button"
@@ -768,7 +950,9 @@ export default function IntakeV6LiveCalculationSummary({
               filterTotals={filterTotals}
               currency={currency}
               logicalMode={usesLogicalList}
+              showTechnicalDetails={showTechnicalDetails}
             />
+            {activeFilter !== "missing_rates" ? <DiagnosticSection rows={diagnosticRows} /> : null}
           </div>
         </div>
       ) : (

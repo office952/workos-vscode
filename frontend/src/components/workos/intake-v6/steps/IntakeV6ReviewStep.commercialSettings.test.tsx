@@ -492,6 +492,35 @@ describe("IntakeV6ReviewStep commercial settings regression", () => {
     await waitFor(() => expect(screen.getByTestId("intake-v6-offer-markup")).toHaveValue(50));
   });
 
+  it("hydrates persisted markup instead of keeping the stale default 35", async () => {
+    const workspace = {
+      id: "ws-persisted",
+      workspace_code: "IV6-PERSISTED",
+      title: "persisted",
+      template_code: "TPL-VOLUMETRIC-LETTERS",
+      readiness_status: "ready_for_quote_preview",
+      payload: buildWorkspacePayload({
+        commercial_inputs: {
+          markup_percent: 15,
+          discount_percent: 10,
+          vat_percent: 21,
+          manual_adjustment_ron: 100,
+        },
+      }),
+    };
+    const hook = buildHook(workspace as unknown as Record<string, unknown>, vi.fn() as never);
+
+    render(
+      <MemoryRouter>
+        <IntakeV6ReviewStep hook={hook} />
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(screen.getByTestId("intake-v6-offer-markup")).toHaveValue(15));
+    expect(screen.getByTestId("intake-v6-offer-discount")).toHaveValue(10);
+    expect(screen.getByTestId("intake-v6-offer-manual-adjustment")).toHaveValue(100);
+  });
+
   it("persists discount 0 -> 10 in the commercial payload", async () => {
     const { saveBodies, saveFinishSetup } = renderReviewStepHarness();
 

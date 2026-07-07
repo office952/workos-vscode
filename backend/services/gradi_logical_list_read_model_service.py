@@ -883,6 +883,7 @@ def build_gradi_logical_list_read_model_from_runtime(
         _line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face")),
         _line(line_id="material.logo_plexiglas_face", display_label="Plexiglas 3 mm / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", status="PARTIAL", quantity=artwork_area if isinstance(artwork_area, (int, float)) else None, unit="m2", gaps=["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"], warnings=["Structural logo/emblem plexiglas row is logical only until runtime material row exists."], preferences={"artwork_layer_count": len(artwork_prefs)}),
         _line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=mat("forex_backing"), status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else []),
+        *([
         _line(
             line_id="material.face_oracal",
             display_label=fallback_oracal_meta.get("display_label") or "Vinil fata Oracal 651",
@@ -900,9 +901,14 @@ def build_gradi_logical_list_read_model_from_runtime(
             subtotal=fallback_oracal_meta.get("subtotal") if fallback_oracal_meta else None,
             currency=fallback_oracal_meta.get("currency") if fallback_oracal_meta else None,
             runtime_source=fallback_oracal_meta.get("runtime_source") if fallback_oracal_meta else None,
-        ),
-        _line(line_id="material.print", display_label="Material print Orafol", category=CORE_CATEGORY_MATERIALS, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="MATERIAL_PRINT_BY_NESTED_AREA_V1", rows=print_material_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_ROWS_AGGREGATED_FOR_LOGICAL_LIST"]),
-        _line(line_id="material.lamination", display_label="Material laminare Orafol", category=CORE_CATEGORY_MATERIALS, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="MATERIAL_LAMINATION_BY_NESTED_AREA_V1", rows=lamination_material_rows, status="SPLIT_IN_RUNTIME", gaps=["LAMINATION_ROWS_AGGREGATED_FOR_LOGICAL_LIST"]),
+        )
+        ] if effective_oracal_rows or fallback_oracal_meta or oracal_prefs else []),
+        *([
+        _line(line_id="material.print", display_label="Material print Orafol", category=CORE_CATEGORY_MATERIALS, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="MATERIAL_PRINT_BY_NESTED_AREA_V1", rows=print_material_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        ] if print_material_rows else []),
+        *([
+        _line(line_id="material.lamination", display_label="Material laminare Orafol", category=CORE_CATEGORY_MATERIALS, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="MATERIAL_LAMINATION_BY_NESTED_AREA_V1", rows=lamination_material_rows, status="SPLIT_IN_RUNTIME", gaps=["LAMINATION_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        ] if lamination_material_rows else []),
         _line(line_id="material.return_profile", display_label="Cant / volum litere + interioare + artwork", category=CORE_CATEGORY_MATERIALS, component_code="comp_lateral_litere", module_code="modelare_cant", formula_code="MATERIAL_CANT_BY_PERIMETER_DEPTH_V1", rows=mat("return_material"), warnings=["Cant labor is intentionally separate and depth-independent in current runtime trace."]),
         _line(line_id="material.led_modules", display_label="Module LED", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_LED_MODULES_BY_AREA_DENSITY_V1", rows=con("led_modules"), formula_status="legacy_unversioned", gaps=["FORMULA_TRACE_MISSING"]),
         _line(line_id="material.led_psu", display_label="Sursa LED 12V", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_PSU_BY_POWER_SAFETY_FACTOR_V1", rows=con("led_psu"), formula_status="legacy_unversioned", preferences={"required_psu_watts": required_psu, "selected_psu_watts": selected_psu, "psu_configuration": finish.get("psu_configuration")}, warnings=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_warnings else [], blockers=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_blockers else []),
@@ -914,9 +920,15 @@ def build_gradi_logical_list_read_model_from_runtime(
         _line(line_id="service.cnc_face", display_label="Debitare CNC fata Plexiglas", category=CORE_CATEGORY_SERVICES, component_code="comp_face_litere", module_code="debitare_fata", formula_code="SERVICE_CNC_FACE_CUT_BY_CONTOUR_LENGTH_V1", rows=op("cnc_face_cutting_plexiglas_3mm")),
         _line(line_id="service.cnc_face_bevel", display_label="Canal plat ghidaj fata Plexiglas", category=CORE_CATEGORY_SERVICES, component_code="comp_face_litere", module_code="debitare_fata", formula_code="SERVICE_CNC_FACE_BEVEL_BY_CONTOUR_LENGTH_V1", rows=op("cnc_face_bevel_plexiglas_3mm")),
         _line(line_id="service.cnc_back", display_label="Debitare CNC spate Forex", category=CORE_CATEGORY_SERVICES, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="SERVICE_CNC_BACK_CUT_BY_CONTOUR_LENGTH_V1", rows=op("cnc_backing_cutting_forex_10mm"), status="PARTIAL", gaps=["DRY_RUN_BACK_CNC_M2_DEV_BRIDGE"], warnings=["Material is m2; CNC service is contour ml; dry-run commercial bridge remains m2."]),
-        _line(line_id="service.print", display_label="Serviciu print", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_PRINT_BY_AREA_V1", rows=print_service_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"]),
-        _line(line_id="service.lamination", display_label="Serviciu laminare X-PRO", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_LAMINATION_BY_AREA_V1", rows=lamination_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"]),
-        _line(line_id="service.application", display_label="Serviciu aplicare", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_APPLICATION_BY_AREA_V1", rows=application_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"]),
+        *([
+        _line(line_id="service.print", display_label="Serviciu print", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_PRINT_BY_AREA_V1", rows=print_service_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        ] if print_service_rows else []),
+        *([
+        _line(line_id="service.lamination", display_label="Serviciu laminare X-PRO", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_LAMINATION_BY_AREA_V1", rows=lamination_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        ] if lamination_service_rows else []),
+        *([
+        _line(line_id="service.application", display_label="Serviciu aplicare", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_APPLICATION_BY_AREA_V1", rows=application_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        ] if application_service_rows else []),
         _line(line_id="labor.cant_glue", display_label="Lipire cant / volum pe fata litere", category=CORE_CATEGORY_LABOR, component_code="comp_lateral_litere", module_code="modelare_cant", formula_code="LABOR_CANT_GLUE_BY_PERIMETER_V1", rows=edge_rows, warnings=["Current runtime keeps cant labor constant across 60/80/100 depth variants."]),
     ]
 
@@ -929,6 +941,7 @@ def build_gradi_logical_list_read_model_from_runtime(
         face_cut_row=_first(op("cnc_face_cutting_plexiglas_3mm")),
         face_flat_recess_row=_first(op("cnc_face_bevel_plexiglas_3mm")),
         back_cut_row=_first(op("cnc_backing_cutting_forex_10mm")),
+        back_flat_recess_row=_first(op("cnc_backing_bevel_forex_10mm")),
         face_cut_quantity_fallback_ml=cnc_perimeter_ml,
         face_flat_recess_quantity_fallback_ml=cnc_perimeter_ml,
         back_cut_quantity_fallback_ml=cnc_perimeter_ml,

@@ -571,6 +571,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [commercialInputs, setCommercialInputs] = useState<IntakeV6OfferCommercialInputs>(() =>
     ({ ...resolveIntakeV6OfferCommercialDefaults(null, persistedCommercialInputs), vatPercent: vatPct }),
   );
+  const [commercialInputsDirty, setCommercialInputsDirty] = useState(false);
   const [productionDryRun, setProductionDryRun] = useState<IntakeV6ProductionTaskDryRunResponse | null>(
     null,
   );
@@ -687,6 +688,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
   const commercialInputsPendingSave = useMemo(
     () =>
+      commercialInputsDirty &&
       JSON.stringify(serializeIntakeV6OfferCommercialInputs(commercialInputs)) !==
       JSON.stringify(
         serializeIntakeV6OfferCommercialInputs(
@@ -696,7 +698,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           },
         ),
       ),
-    [commercialInputs, persistedCommercialInputs, pricingPreview, vatPct],
+    [commercialInputs, commercialInputsDirty, persistedCommercialInputs, pricingPreview, vatPct],
   );
   const syncedCommercialInputs = useMemo(
     () => ({
@@ -969,11 +971,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.breakdown, previewRefresh.pricedQuote]);
 
   useEffect(() => {
-    if (commercialInputsPendingSave) return;
+    if (commercialInputsDirty && commercialInputsPendingSave) return;
     if (commercialInputsSyncKeyRef.current === syncedCommercialInputsKey) return;
     commercialInputsSyncKeyRef.current = syncedCommercialInputsKey;
+    setCommercialInputsDirty(false);
     setCommercialInputs(syncedCommercialInputs);
-  }, [commercialInputsPendingSave, syncedCommercialInputs, syncedCommercialInputsKey]);
+  }, [commercialInputsDirty, commercialInputsPendingSave, syncedCommercialInputs, syncedCommercialInputsKey]);
 
   useEffect(() => {
     if (!workspaceId || !analysisReady) {
@@ -1252,6 +1255,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           buildJsonSignature(serializeIntakeV6OfferCommercialInputs(commercialInputs)) !==
           buildJsonSignature(serializeIntakeV6OfferCommercialInputs(nextSettingsVatCommercialInputs))
         ) {
+          setCommercialInputsDirty(false);
           setCommercialInputs(nextSettingsVatCommercialInputs);
         }
         pendingDirtyDomainsRef.current.clear();
@@ -2011,6 +2015,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             onCommercialInputsChange={(next) => {
               const nextCommercialInputs = { ...next, vatPercent: vatPct };
               markLocalFinishChanged(["commercial_preview"], "long");
+              setCommercialInputsDirty(true);
               setCommercialInputs(nextCommercialInputs);
               if (commercialSaveTimerRef.current) {
                 clearTimeout(commercialSaveTimerRef.current);

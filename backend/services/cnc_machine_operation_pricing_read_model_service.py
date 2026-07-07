@@ -189,6 +189,7 @@ def build_cnc_operation_pricing_overrides(
     face_cut_row: Mapping[str, Any] | None,
     face_flat_recess_row: Mapping[str, Any] | None,
     back_cut_row: Mapping[str, Any] | None,
+    back_flat_recess_row: Mapping[str, Any] | None = None,
     face_cut_quantity_fallback_ml: float | None = None,
     face_flat_recess_quantity_fallback_ml: float | None = None,
     back_cut_quantity_fallback_ml: float | None = None,
@@ -261,9 +262,21 @@ def build_cnc_operation_pricing_overrides(
     back_cut_quantity = _number(back_cut_row.get("quantity") if back_cut_row else None)
     if back_cut_quantity is None:
         back_cut_quantity = _number(back_cut_quantity_fallback_ml)
+    back_cut_pass_count = int(_number(back_cut_row.get("passes") if back_cut_row else None) or 3)
     back_cut_subtotal = _number(back_cut_row.get("estimated_cost") if back_cut_row else None)
     if back_cut_subtotal is None:
-        back_cut_subtotal = _cost_ml_pass(quantity_ml=back_cut_quantity, pass_count=5, tariff_eur_per_ml_pass=1.5)
+        back_cut_subtotal = _cost_ml_pass(quantity_ml=back_cut_quantity, pass_count=back_cut_pass_count, tariff_eur_per_ml_pass=1.5)
+    back_flat_recess_passes = int(_number(back_flat_recess_row.get("passes") if back_flat_recess_row else None) or 0)
+    back_flat_recess_subtotal = _number(back_flat_recess_row.get("estimated_cost") if back_flat_recess_row else None)
+    if back_flat_recess_subtotal is None and back_flat_recess_passes > 0:
+        back_flat_recess_subtotal = _cost_ml_pass(
+            quantity_ml=back_cut_quantity,
+            pass_count=back_flat_recess_passes,
+            tariff_eur_per_ml_pass=1.5,
+        )
+    back_total_subtotal = (back_cut_subtotal or 0.0) + (back_flat_recess_subtotal or 0.0)
+    back_has_subtotal = back_cut_subtotal is not None or back_flat_recess_subtotal is not None
+    total_effective_passes = back_cut_pass_count + back_flat_recess_passes
     overrides["service.cnc_back"] = _base_operation_override(
         operation_code="CNC_CUT_FOREX_10MM",
         operation_kind="cut",
@@ -271,39 +284,41 @@ def build_cnc_operation_pricing_overrides(
         thickness_mm=10.0,
         operation_depth_mm=10.0,
         pass_depth_mm=DEFAULT_PASS_DEPTH_MM,
-        pass_count=5,
+        pass_count=total_effective_passes,
         tariff_basis="ml_pass",
         tariff_eur_per_ml_pass=1.5,
         tariff_source="owner_contract_confirmed_forex_baseline",
-        subtotal=back_cut_subtotal,
+        subtotal=back_total_subtotal if back_has_subtotal else None,
         quantity_ml=back_cut_quantity,
         status="MATCHED",
-        warnings=["FOREX_BACK_ROW_AGGREGATES_CUT_AND_FLAT_RECESS_TRACE"],
+        warnings=["FOREX_BACK_ROW_AGGREGATES_CUT_AND_FLAT_RECESS_TRACE"] if back_flat_recess_passes > 0 else [],
         extra={
             "quantity": back_cut_quantity,
             "unit": "ml" if back_cut_quantity is not None else None,
-            "cut_passes": 3,
-            "flat_recess_passes": 2,
-            "total_effective_passes": 5,
+            "cut_passes": back_cut_pass_count,
+            "flat_recess_passes": back_flat_recess_passes,
+            "total_effective_passes": total_effective_passes,
             "owner_pass_override": True,
-            "operation_semantics": ["cut", "flat_recess", "back_seat"],
+            "operation_semantics": ["cut"] + (["flat_recess", "back_seat"] if back_flat_recess_passes > 0 else []),
             "trace_breakdown": [
                 {
                     "operation_code": "CNC_CUT_FOREX_10MM",
                     "operation_kind": "cut",
                     "operation_depth_mm": 10.0,
-                    "pass_count": 3,
+                    "pass_count": back_cut_pass_count,
                     "tariff_basis": "ml_pass",
                     "tariff_eur_per_ml_pass": 1.5,
                 },
-                {
-                    "operation_code": "CNC_FLAT_RECESS_FOREX_BACK_SEAT",
-                    "operation_kind": "flat_recess",
-                    "operation_depth_mm": 7.0,
-                    "pass_count": 2,
-                    "tariff_basis": "ml_pass",
-                    "tariff_eur_per_ml_pass": 1.5,
-                },
+                *([
+                    {
+                        "operation_code": "CNC_FLAT_RECESS_FOREX_BACK_SEAT",
+                        "operation_kind": "flat_recess",
+                        "operation_depth_mm": 7.0,
+                        "pass_count": back_flat_recess_passes,
+                        "tariff_basis": "ml_pass",
+                        "tariff_eur_per_ml_pass": 1.5,
+                    }
+                ] if back_flat_recess_passes > 0 else []),
             ],
         },
     )

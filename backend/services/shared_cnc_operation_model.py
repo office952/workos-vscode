@@ -22,8 +22,9 @@ DEFAULT_FACE_PLEXI_THICKNESS_MM = 3.0
 DEFAULT_FOREX_BACKING_THICKNESS_MM = 10.0
 DEFAULT_CNC_PRICING_RATE_KEY = "workcenter_rates:CNC_ROUTER:per_linear_meter"
 
-# Owner decision: Forex 10 mm debitare uses 5 passes (not strict ceil(10/3.5)=3).
-FOREX_10MM_CUTTING_PASSES_OWNER = 5
+# Owner decision: Forex 10 mm debitare uses 3 passes; bevel adds 2 more, for 5 total.
+FOREX_10MM_CUTTING_PASSES_OWNER = 3
+FOREX_10MM_BEVEL_PASSES_OWNER = 2
 
 
 class CncOperationType(str, Enum):
@@ -430,7 +431,9 @@ VOLUMETRIC_BACKING_BEVEL_RULE = CncOperationRule(
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="backing_cnc_cutting_perimeter",
     basis_label="Perimetru CNC spate",
-    passes=1,
+    passes=FOREX_10MM_BEVEL_PASSES_OWNER,
+    depth_per_pass_mm=DEFAULT_DEPTH_PER_PASS_MM,
+    owner_pass_override=True,
     material_pricing_rate_key=None,
     material_key="forex_10mm",
     production_binding=VOLUMETRIC_BACKING_BEVEL_BINDING,
