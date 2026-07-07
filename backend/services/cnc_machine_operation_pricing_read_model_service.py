@@ -71,13 +71,18 @@ def build_shared_plexiglas_face_batch_overrides(
     *,
     letter_face_row: Mapping[str, Any] | None,
     logo_face_area_m2: float | None,
+    has_letter_face_content: bool = True,
 ) -> dict[str, dict[str, Any]]:
-    letter_area = _number(letter_face_row.get("quantity") if letter_face_row else None)
+    runtime_letter_area = _number(letter_face_row.get("quantity") if letter_face_row else None)
+    letter_area = runtime_letter_area if has_letter_face_content else 0.0
     letter_subtotal = _number(letter_face_row.get("estimated_cost") if letter_face_row else None)
     if letter_subtotal is None and letter_face_row is not None:
         letter_subtotal = _number(letter_face_row.get("material_cost"))
-    material_tariff_eur_per_m2 = _rate_from_row(quantity=letter_area, subtotal=letter_subtotal)
-    shared_roles = ["LETTER_FACE"] + (["LOGO_FACE"] if isinstance(logo_face_area_m2, (int, float)) and logo_face_area_m2 > 0 else [])
+    runtime_unit_price = _number(letter_face_row.get("unit_price") if letter_face_row else None)
+    material_tariff_eur_per_m2 = runtime_unit_price or _rate_from_row(quantity=letter_area, subtotal=letter_subtotal)
+    if material_tariff_eur_per_m2 is None and runtime_letter_area is not None and runtime_letter_area > 0:
+        material_tariff_eur_per_m2 = _rate_from_row(quantity=runtime_letter_area, subtotal=letter_subtotal)
+    shared_roles = ([] if not has_letter_face_content else ["LETTER_FACE"]) + (["LOGO_FACE"] if isinstance(logo_face_area_m2, (int, float)) and logo_face_area_m2 > 0 else [])
     batch_trace = {
         "batch_code": PLEXIGLAS_3MM_FACE_BATCH,
         "material_code": PLEXIGLAS_3MM,
@@ -96,7 +101,7 @@ def build_shared_plexiglas_face_batch_overrides(
         "material_name": "Plexiglas 3 mm",
         "thickness_mm": 3.0,
         "nesting_group": PLEXIGLAS_3MM_FACE_BATCH,
-        "batch_roles": ["LETTER_FACE"],
+        "batch_roles": (["LETTER_FACE"] if has_letter_face_content else []),
         "shared_batch_roles": shared_roles,
         "material_tariff_source": batch_trace["material_tariff_source"],
         "material_tariff_eur_per_m2": material_tariff_eur_per_m2,

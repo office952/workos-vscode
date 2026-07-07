@@ -250,6 +250,35 @@ def _layer_metrics_from_analysis(
     return None, None
 
 
+def _has_confirmed_letter_face_content(
+    *,
+    layer_role_setup: dict[str, Any] | None,
+    letter_groups: list[Any],
+) -> bool:
+    if letter_groups:
+        for group in letter_groups:
+            if not isinstance(group, dict):
+                continue
+            layer_key = str(group.get("group_key") or group.get("layer_key") or "")
+            layer_name = str(group.get("layer_name") or layer_key)
+            role = _sheet_layer_role_for_name(layer_role_setup, layer_key, layer_name)
+            if role == "face":
+                return True
+            if role is None and (_positive(group.get("face_area_m2")) or _positive(group.get("perimeter_m"))):
+                return True
+    layers = (layer_role_setup or {}).get("layers") if isinstance(layer_role_setup, dict) else None
+    if isinstance(layers, list):
+        for layer in layers:
+            if not isinstance(layer, dict):
+                continue
+            if str(layer.get("confirmation_state") or "").strip().lower() == "ignored":
+                continue
+            role = str(layer.get("confirmed_role") or layer.get("auto_role") or "").strip().lower()
+            if role == "face":
+                return True
+    return False
+
+
 def _append_artwork_volumetric_rows(
     *,
     artwork_finishes: list[Any],
@@ -1662,6 +1691,10 @@ def build_intake_v4_material_breakdown(
         letter_groups=letter_groups,
         artwork_finishes=artwork_finishes,
     )
+    has_confirmed_letter_face_content = _has_confirmed_letter_face_content(
+        layer_role_setup=layer_role_setup,
+        letter_groups=letter_groups,
+    )
     sheet_split, sheet_quantity_floor_applied = (
         (sheet_split, False)
         if sheet_split.mode == "prorated_fallback"
@@ -1673,6 +1706,15 @@ def build_intake_v4_material_breakdown(
     sheet_quote_override = sheet_quote_override_from_payload(payload_raw)
     sheet_face_qty = sheet_split.face_area_sqm
     sheet_backing_qty = sheet_split.backing_area_sqm
+    suppressed_logo_only_sheet_face_fallback = False
+    if (
+        sheet_split.mode == "prorated_fallback"
+        and not has_confirmed_letter_face_content
+        and bool(artwork_finishes)
+    ):
+        sheet_face_qty = None
+        sheet_backing_qty = None
+        suppressed_logo_only_sheet_face_fallback = True
     sheet_quote_candidates = compute_sheet_quote_material_candidates(
         nesting,
         analysis,
@@ -2163,7 +2205,7 @@ def build_intake_v4_material_breakdown(
                     severity="info",
                 )
             )
-    if sheet_split.used_sheet_area_sqm:
+    if sheet_split.used_sheet_area_sqm and not suppressed_logo_only_sheet_face_fallback:
         warnings.append(
             _warn(
                 "nesting_used_for_quote_not_stock",
@@ -2172,12 +2214,21 @@ def build_intake_v4_material_breakdown(
                 severity="info",
             )
         )
-    if sheet_split.mode == "prorated_fallback":
+    if sheet_split.mode == "prorated_fallback" and not suppressed_logo_only_sheet_face_fallback:
         warnings.append(
             _warn(
                 "sheet_nesting_prorated_fallback",
                 "Nesting placă — lipsesc metadata placements/role; suprafața plăcii este repartizată proporțional față/spate.",
                 source="svg_analysis_json.nesting",
+            )
+        )
+    elif suppressed_logo_only_sheet_face_fallback:
+        warnings.append(
+            _warn(
+                "sheet_nesting_prorated_fallback_blocked_for_logo_only",
+                "Nesting placă fallback pentru fața de litere a fost blocat: nu există Vector Litere confirmat, doar artwork/logo.",
+                source="svg_analysis_json.nesting",
+                severity="info",
             )
         )
     elif sheet_split.mode == "partial_role_split":

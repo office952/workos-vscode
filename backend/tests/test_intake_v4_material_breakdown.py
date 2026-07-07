@@ -279,6 +279,100 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
         assert plexi.quantity == 1.5
         assert plexi.quantity_basis == BASIS_AREA_FALLBACK
 
+    def test_logo_only_artwork_blocks_letters_sheet_prorated_fallback_for_plexiglas(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {
+                                    "partId": "art-a",
+                                    "sourceLayerName": "Logo 1",
+                                    "placedWidthMm": 1000,
+                                    "placedHeightMm": 1000,
+                                }
+                            ],
+                        }
+                    ]
+                },
+                "parts": {
+                    "items": [
+                        {
+                            "id": "art-a",
+                            "source": {"layerId": "logo-dreapta", "layerName": "Logo 1"},
+                        }
+                    ]
+                },
+                "layers": [
+                    {
+                        "id": "logo-dreapta",
+                        "name": "Logo 1",
+                        "perimeterMl": 3.142,
+                        "filledAreaSqm": 1.0,
+                    }
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 1.0004,
+                "letter_face_area_m2": 1.0004,
+                "artwork_area_m2": 1.0,
+                "return_material_perimeter_ml": 6.284,
+                "letter_return_perimeter_ml": 3.142,
+                "artwork_return_perimeter_ml": 3.142,
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 1.0004,
+                "letter_face_area_m2": 1.0004,
+                "artwork_area_m2": 1.0,
+                "return_material_perimeter_ml": 6.284,
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    }
+                ],
+            },
+            "finish_setup": {
+                "face_finish_type": "oracal_651",
+                "return_finish_type": "white_aluminum",
+                "return_depth_mm": 60,
+                "illuminated": True,
+                "letter_group_finishes": [],
+                "artwork_finishes": [
+                    {
+                        "layer_key": "logo-dreapta",
+                        "layer_name": "Logo 1",
+                        "execution_type": "none_raw_plexi",
+                        "face_personalization_method": "none_raw_plexi",
+                        "estimated_area_m2": 1.0,
+                        "return_finish_type": "white_aluminum",
+                        "return_depth_mm": 60,
+                    }
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-logo-only-prorated-blocked", payload)
+        plexi = next(row for row in result.material_rows if row.material_key == "plexiglas_face")
+        assert plexi.quantity_basis == BASIS_AREA_FALLBACK
+        assert plexi.quantity == pytest.approx(1.0004, rel=0, abs=1e-4)
+        assert plexi.estimated_cost is None
+        assert not any(w.code == "sheet_nesting_prorated_fallback" for w in result.warnings)
+        assert any(w.code == "sheet_nesting_prorated_fallback_blocked_for_logo_only" for w in result.warnings)
+
 
 class TestIntakeV4ArtworkVolumetricBreakdown:
     def test_separate_emblem_adds_plexiglas_and_return(self):

@@ -446,6 +446,25 @@ def _quote_geometry(payload: dict[str, Any]) -> dict[str, Any]:
     return geometry if isinstance(geometry, dict) else {}
 
 
+def _has_confirmed_letter_face_content(payload: dict[str, Any]) -> bool:
+    finish = _finish(payload)
+    setup = _layer_role_setup(payload)
+    groups = finish.get("letter_group_finishes") or []
+    if isinstance(groups, list) and groups:
+        return True
+    layers = setup.get("layers") if isinstance(setup, dict) else None
+    if isinstance(layers, list):
+        for layer in layers:
+            if not isinstance(layer, dict):
+                continue
+            if str(layer.get("confirmation_state") or "").strip().lower() == "ignored":
+                continue
+            role = str(layer.get("confirmed_role") or layer.get("auto_role") or "").strip().lower()
+            if role == "face":
+                return True
+    return False
+
+
 def _oracal_preferences(finish: dict[str, Any]) -> list[dict[str, Any]]:
     prefs: list[dict[str, Any]] = []
     for row in finish.get("letter_group_finishes") or []:
@@ -878,11 +897,12 @@ def build_gradi_logical_list_read_model_from_runtime(
     print_service_rows = _find(operation_rows, "print_service")
     lamination_service_rows = _find(operation_rows, "lamination_service")
     application_service_rows = _find(operation_rows, "application_service")
+    has_confirmed_letter_face_content = _has_confirmed_letter_face_content(workspace_payload)
 
     rows: list[dict[str, Any]] = [
-        _line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face")),
+        *([_line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face"))] if has_confirmed_letter_face_content else []),
         _line(line_id="material.logo_plexiglas_face", display_label="Plexiglas 3 mm / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", status="PARTIAL", quantity=artwork_area if isinstance(artwork_area, (int, float)) else None, unit="m2", gaps=["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"], warnings=["Structural logo/emblem plexiglas row is logical only until runtime material row exists."], preferences={"artwork_layer_count": len(artwork_prefs)}),
-        _line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=mat("forex_backing"), status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else []),
+        *([_line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=mat("forex_backing"), status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else [])] if has_confirmed_letter_face_content or mat("forex_backing") else []),
         *([
         _line(
             line_id="material.face_oracal",
@@ -935,6 +955,7 @@ def build_gradi_logical_list_read_model_from_runtime(
     plexiglas_overrides = build_shared_plexiglas_face_batch_overrides(
         letter_face_row=_first(mat("plexiglas_face")),
         logo_face_area_m2=artwork_area if isinstance(artwork_area, (int, float)) else None,
+        has_letter_face_content=has_confirmed_letter_face_content,
     )
     cnc_perimeter_ml = resolve_cnc_perimeter_ml(geometry)
     cnc_overrides = build_cnc_operation_pricing_overrides(

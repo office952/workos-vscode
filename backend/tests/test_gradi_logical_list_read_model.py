@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+import pytest
+
 from services.gradi_logical_list_read_model_service import build_gradi_logical_list_read_model_from_runtime
 
 
@@ -72,6 +74,61 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
             ],
         },
     }
+
+
+def _logo_only_payload() -> dict:
+    return {
+        "svg_source": {"file_name": "cerc100cm.svg"},
+        "quote_geometry": {
+            "face_area_m2": 1.0004,
+            "letter_face_area_m2": 1.0004,
+            "artwork_area_m2": 1.0,
+            "return_material_perimeter_ml": 6.284,
+            "letter_return_perimeter_ml": 3.142,
+            "artwork_return_perimeter_ml": 3.142,
+        },
+        "layer_role_setup": {
+            "layers": [
+                {"layerKey": "logo-dreapta", "layerName": "Logo 1", "confirmedRole": "printed_artwork", "confirmationState": "confirmed"},
+            ]
+        },
+        "finish_setup": {
+            "letter_group_finishes": [],
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-dreapta",
+                    "layer_name": "Logo 1",
+                    "execution_type": "none_raw_plexi",
+                    "face_personalization_method": "none_raw_plexi",
+                    "estimated_area_m2": 1.0,
+                    "return_finish_type": "white_aluminum",
+                    "return_depth_mm": 60,
+                }
+            ],
+        },
+        "product_composition_recommendation": {
+            "composition_type": "logo_only",
+            "recommended_templates": [
+                {"template_code": "TPL-VOLUMETRIC-LOGO_v1", "role_in_composition": "logo_vector_atipic"}
+            ],
+        },
+    }
+
+
+def _logo_only_breakdown() -> SimpleNamespace:
+    return SimpleNamespace(
+        workspace_id="workspace-logo-only",
+        template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        totals={"estimated_cost_total": 27.3112, "currency": "EUR"},
+        material_rows=[
+            _row("plexiglas_face", "Plexiglas 3 mm", 1.0004, "m2", 16.0064),
+            _row("return_material", "Cant / volum litere + artwork", 3.142, "m", 11.3112),
+        ],
+        consumable_rows=[],
+        operation_rows=[],
+        edge_cant_operation_rows=[],
+        warnings=[{"code": "sheet_nesting_prorated_fallback_blocked_for_logo_only"}],
+    )
 
 
 def _breakdown() -> SimpleNamespace:
@@ -213,6 +270,19 @@ def test_gradi_logical_read_model_aggregates_split_print_lamination_application_
     assert len(by_id["service.application"]["child_rows"]) == 3
     assert by_id["material.face_oracal"]["line_id"] != by_id["material.print"]["line_id"]
     assert by_id["material.face_oracal"]["line_id"] != by_id["material.lamination"]["line_id"]
+
+
+def test_logo_only_runtime_does_not_emit_letters_plexiglas_logical_row() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_logo_only_payload(), material_breakdown=_logo_only_breakdown(), priced_dry_run={"workspace_id": "workspace-logo-only", "template_code": "TPL-VOLUMETRIC-LETTERS_v2", "commercial_totals": {"total_gross": 0, "currency": "RON"}, "commercial_line_items": []}
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+
+    assert "material.plexiglas_face" not in by_id
+    assert by_id["material.logo_plexiglas_face"]["quantity"] == 1.0
+    assert by_id["material.logo_plexiglas_face"]["subtotal"] == pytest.approx(16.0, rel=0, abs=1e-4)
+    assert by_id["material.logo_plexiglas_face"]["batch_roles"] == ["LOGO_FACE"]
+    assert by_id["material.logo_plexiglas_face"]["shared_batch_roles"] == ["LOGO_FACE"]
 
 
 def test_gradi_logical_read_model_keeps_series_breakdown_when_oracal_row_aggregates_641_and_651() -> None:
