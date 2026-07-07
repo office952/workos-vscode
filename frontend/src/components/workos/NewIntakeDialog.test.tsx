@@ -138,8 +138,29 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
   it("shows SVG Analyzer - Intake V6 as the active method", async () => {
     renderDialog();
 
-    expect(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /SVG Analyzer - Intake V6/i })).toBeEnabled();
     expect(screen.getByText("Activ")).toBeInTheDocument();
+  });
+
+  it("shows Image Analyzer - Intake V6 as preview-only and disabled", async () => {
+    renderDialog();
+
+    const imageMethod = await screen.findByRole("button", { name: /Image Analyzer - Intake V6/i });
+    expect(imageMethod).toBeDisabled();
+    expect(imageMethod).toHaveTextContent("Preview only");
+    expect(imageMethod).toHaveTextContent(/nu creeaza oferta, comanda sau executie/i);
+  });
+
+  it("does not create a workspace from the Image Analyzer preview card", async () => {
+    renderDialog();
+
+    const imageMethod = await screen.findByRole("button", { name: /Image Analyzer - Intake V6/i });
+    fireEvent.click(imageMethod);
+    fireEvent.click(screen.getByRole("button", { name: /Continuă/i }));
+
+    expect(screen.getByRole("button", { name: /Continuă/i })).toBeDisabled();
+    expect(screen.getByText(/Alege modalitatea de ofertare/i)).toBeInTheDocument();
+    expect(mockEnsureIntakeV6Workspace).not.toHaveBeenCalled();
   });
 
   it("does not continue without selecting an offer method", () => {

@@ -25,7 +25,7 @@ type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
 
-type OfferMethodId = "svg_analyzer_intake_v6";
+type OfferMethodId = "svg_analyzer_intake_v6" | "image_analyzer_intake_v6_preview";
 const ANALYZER_MODE = "analyzer_first";
 
 const OFFER_METHODS: Array<{
@@ -41,6 +41,13 @@ const OFFER_METHODS: Array<{
     description: "Analizează fișiere SVG, pregătește Product Truth și pornește formularul modular Intake V6.",
     statusLabel: "Activ",
     enabled: true,
+  },
+  {
+    id: "image_analyzer_intake_v6_preview",
+    label: "Image Analyzer - Intake V6",
+    description: "Va permite prefill din analiza imagine dupa review operator. Momentan este doar preview; nu creeaza oferta, comanda sau executie.",
+    statusLabel: "Preview only",
+    enabled: false,
   },
 ];
 
