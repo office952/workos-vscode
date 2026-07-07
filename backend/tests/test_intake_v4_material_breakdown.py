@@ -533,6 +533,101 @@ class TestIntakeV4MaterialBreakdownLetterGroups:
         assert "face_area_m2" not in (print_row.quantity_source or "")
         assert "artwork_finishes|svg_analysis_json.layers" not in (print_row.quantity_source or "")
 
+    def test_letters_plus_logo_linked_segment_adds_logo_backing_and_runtime_face_rows(self):
+        payload = {
+            "schema_version": "1.0.0",
+            "product_binding": {"template_code": PILOT_V4_TEMPLATE_CODE},
+            "svg_analysis_json": {
+                "nesting": {
+                    "sheets": [
+                        {
+                            "configId": "sheet_3000x2000",
+                            "sheetsUsed": 1,
+                            "usedSheetAreaSqm": 6.0,
+                            "placedItemsCount": 1,
+                            "unplacedItemsCount": 0,
+                            "placements": [
+                                {"partId": "face-a", "sourceLayerName": "letters", "placedWidthMm": 1000, "placedHeightMm": 1263.8}
+                            ],
+                        }
+                    ]
+                },
+                "parts": {
+                    "items": [
+                        {"id": "face-a", "source": {"layerId": "letters", "layerName": "letters"}},
+                        {"id": "part_logo_1_001", "source": {"layerId": "logo-stanga", "layerName": "Logo 1"}},
+                        {"id": "part_logo_2_002", "source": {"layerId": "logo-dreapta", "layerName": "Logo 2"}},
+                    ]
+                },
+                "layers": [
+                    {"id": "letters", "name": "letters", "filledAreaSqm": 1.2638, "perimeterMl": 10.0},
+                    {"id": "logo-stanga", "name": "Logo 1", "filledAreaSqm": 0.4002},
+                    {"id": "logo-dreapta", "name": "Logo 2", "filledAreaSqm": 0.4002},
+                ],
+            },
+            "quote_geometry": {
+                "face_area_m2": 1.2638,
+                "letter_face_area_m2": 1.2638,
+                "artwork_area_m2": 0.8005,
+                "artwork_boxes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "width_mm": 667.2126344054284, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "width_mm": 667.2126344054288, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                ],
+            },
+            "path_geometry_summary": {
+                "face_area_m2": 1.2638,
+                "letter_face_area_m2": 1.2638,
+                "artwork_area_m2": 0.8005,
+                "artwork_boxes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "width_mm": 667.2126344054284, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "width_mm": 667.2126344054288, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                ],
+            },
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {"layer_key": "letters", "layer_name": "letters", "confirmed_role": "face", "confirmation_state": "confirmed"},
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "confirmed_role": "printed_artwork", "confirmation_state": "confirmed"},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "confirmed_role": "printed_artwork", "confirmation_state": "confirmed"},
+                ],
+            },
+            "finish_setup": {
+                "backing_mode": "forex_10_no_bevel",
+                "letter_group_finishes": [{"group_key": "letters", "layer_name": "letters", "face_area_m2": 1.2638, "face_finish_type": "oracal_651"}],
+                "artwork_finishes": [
+                    {"layer_key": "logo-stanga", "layer_name": "Logo 1", "execution_type": "print_laminate", "face_personalization_method": "print_laminate", "estimated_area_m2": 0.4002, "return_depth_mm": 60},
+                    {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "execution_type": "print_laminate", "face_personalization_method": "print_laminate", "estimated_area_m2": 0.4002, "return_depth_mm": 60},
+                ],
+            },
+            "product_composition_recommendation": {
+                "composition_type": "letters_plus_logo",
+                "recommended_templates": [
+                    {"template_code": PILOT_V4_TEMPLATE_CODE, "role_in_composition": "letters"},
+                    {"template_code": "TPL-VOLUMETRIC-LOGO_v1", "role_in_composition": "logo_vector_atipic"},
+                ],
+                "composition_items": [
+                    {"composition_item_id": "letters", "template_code": PILOT_V4_TEMPLATE_CODE, "component_role": "volumetric_letters", "source_layer_ids": ["letters"]},
+                    {"composition_item_id": "logo", "template_code": "TPL-VOLUMETRIC-LOGO_v1", "component_role": "volumetric_logo", "source_layer_ids": ["logo-stanga", "logo-dreapta"]},
+                ],
+            },
+        }
+
+        result = build_intake_v4_material_breakdown("ws-linked-logo-backing", payload)
+        logo_plexi_rows = [row for row in result.material_rows if row.material_key.startswith("artwork_plexiglas_")]
+        logo_forex_rows = [row for row in result.material_rows if row.material_key.startswith("artwork_forex_backing_")]
+
+        assert len(logo_plexi_rows) == 2
+        assert len(logo_forex_rows) == 2
+        assert sum(row.quantity for row in logo_plexi_rows) == pytest.approx(0.8004, rel=0, abs=1e-4)
+        assert sum(row.quantity for row in logo_forex_rows) == pytest.approx(0.8004, rel=0, abs=1e-4)
+        assert all(row.quantity_basis == "linked_logo_face_bounding_footprint_quote_estimate" for row in logo_plexi_rows)
+        assert all(row.quantity_basis == "linked_logo_backing_bounding_footprint_quote_estimate" for row in logo_forex_rows)
+        assert all("linked_logo_segment" in row.quantity_source for row in logo_plexi_rows)
+        assert all("linked_logo_segment" in row.quantity_source for row in logo_forex_rows)
+        assert {part_id for row in logo_plexi_rows for part_id in row.source_part_ids} == {"part_logo_1_001", "part_logo_2_002"}
+        assert {part_id for row in logo_forex_rows for part_id in row.source_part_ids} == {"part_logo_1_001", "part_logo_2_002"}
+        assert any(w.code == "linked_logo_backing_fallback_used" for w in result.warnings)
+
 
 class TestIntakeV4ArtworkVolumetricBreakdown:
     def test_separate_emblem_adds_plexiglas_and_return(self):

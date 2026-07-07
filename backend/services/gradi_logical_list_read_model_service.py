@@ -582,6 +582,40 @@ def _runtime_material_quantity(rows: list[dict[str, Any]]) -> float | None:
     return None
 
 
+def _runtime_material_total_quantity(rows: list[dict[str, Any]]) -> float | None:
+    total = 0.0
+    found = False
+    for row in rows:
+        quantity = _positive(row.get("quantity"))
+        if quantity is None:
+            quantity = _positive(row.get("base_quantity"))
+        if quantity is None:
+            continue
+        total += quantity
+        found = True
+    return round(total, 4) if found else None
+
+
+def _runtime_material_subtotal(rows: list[dict[str, Any]]) -> float | None:
+    subtotal = _sum_cost(rows)
+    return round(subtotal, 4) if subtotal is not None else None
+
+
+def _runtime_material_source_part_ids(rows: list[dict[str, Any]]) -> list[str]:
+    return sorted(
+        {
+            str(part_id)
+            for row in rows
+            for part_id in (row.get("source_part_ids") or [])
+            if isinstance(part_id, str) and part_id.strip()
+        }
+    )
+
+
+def _runtime_material_rows_with_prefix(rows: list[dict[str, Any]], prefix: str) -> list[dict[str, Any]]:
+    return [row for row in rows if _row_key(row).startswith(prefix)]
+
+
 def _build_oracal_fallback_rows(
     *,
     workspace_payload: dict[str, Any],
@@ -930,14 +964,19 @@ def build_gradi_logical_list_read_model_from_runtime(
     application_service_rows = _find(operation_rows, "application_service")
     has_confirmed_letter_face_content = _has_confirmed_letter_face_content(workspace_payload)
 
-    logo_runtime_plexi_quantity = None
-    if not has_confirmed_letter_face_content:
-        logo_runtime_plexi_quantity = _runtime_material_quantity(mat("plexiglas_face"))
+    logo_runtime_plexi_rows = _runtime_material_rows_with_prefix(material_rows, "artwork_plexiglas_")
+    if not logo_runtime_plexi_rows and not has_confirmed_letter_face_content:
+        logo_runtime_plexi_rows = mat("plexiglas_face")
+    logo_runtime_plexi_quantity = _runtime_material_total_quantity(logo_runtime_plexi_rows)
+    logo_runtime_plexi_subtotal = _runtime_material_subtotal(logo_runtime_plexi_rows)
+    logo_runtime_plexi_source_part_ids = _runtime_material_source_part_ids(logo_runtime_plexi_rows)
+    linked_logo_backing_rows = _runtime_material_rows_with_prefix(material_rows, "artwork_forex_backing_")
+    forex_rows = mat("forex_backing") + linked_logo_backing_rows
 
     rows: list[dict[str, Any]] = [
         *([_line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face"))] if has_confirmed_letter_face_content else []),
-        _line(line_id="material.logo_plexiglas_face", display_label="Plexiglas 3 mm / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", status=("PARTIAL" if logo_runtime_plexi_quantity is None else None), quantity=(logo_runtime_plexi_quantity if logo_runtime_plexi_quantity is not None else artwork_area if isinstance(artwork_area, (int, float)) else None), unit="m2", gaps=(["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"] if logo_runtime_plexi_quantity is None else []), warnings=(["Structural logo/emblem plexiglas row is logical only until runtime material row exists."] if logo_runtime_plexi_quantity is None else []), preferences={"artwork_layer_count": len(artwork_prefs)}),
-        *([_line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=mat("forex_backing"), status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else [])] if has_confirmed_letter_face_content or mat("forex_backing") else []),
+        _line(line_id="material.logo_plexiglas_face", display_label="Plexiglas 3 mm / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", rows=logo_runtime_plexi_rows or None, status=("PARTIAL" if logo_runtime_plexi_quantity is None else None), quantity=(logo_runtime_plexi_quantity if logo_runtime_plexi_quantity is not None else artwork_area if isinstance(artwork_area, (int, float)) else None), unit="m2", subtotal=logo_runtime_plexi_subtotal, gaps=(["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"] if logo_runtime_plexi_quantity is None else []), warnings=(["Structural logo/emblem plexiglas row is logical only until runtime material row exists."] if logo_runtime_plexi_quantity is None else []), preferences={"artwork_layer_count": len(artwork_prefs)}),
+        *([_line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=forex_rows, status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else [], warnings=(["LINKED_LOGO_BACKING_FALLBACK_USED"] if linked_logo_backing_rows else []))] if has_confirmed_letter_face_content or forex_rows else []),
         *([
         _line(
             line_id="material.face_oracal",
@@ -988,7 +1027,16 @@ def build_gradi_logical_list_read_model_from_runtime(
     ]
 
     plexiglas_overrides = build_shared_plexiglas_face_batch_overrides(
-        letter_face_row=_first(mat("plexiglas_face")),
+        letter_face_row=(
+            {
+                **(_first(logo_runtime_plexi_rows) if logo_runtime_plexi_rows else _first(mat("plexiglas_face")) or {}),
+                "quantity": logo_runtime_plexi_quantity if not has_confirmed_letter_face_content else (_first(mat("plexiglas_face")) or {}).get("quantity"),
+                "estimated_cost": logo_runtime_plexi_subtotal if not has_confirmed_letter_face_content else (_first(mat("plexiglas_face")) or {}).get("estimated_cost"),
+                "source_part_ids": logo_runtime_plexi_source_part_ids if not has_confirmed_letter_face_content else (_first(mat("plexiglas_face")) or {}).get("source_part_ids"),
+            }
+            if (logo_runtime_plexi_rows or mat("plexiglas_face"))
+            else None
+        ),
         logo_face_area_m2=(logo_runtime_plexi_quantity if logo_runtime_plexi_quantity is not None else artwork_area if isinstance(artwork_area, (int, float)) else None),
         has_letter_face_content=has_confirmed_letter_face_content,
     )
@@ -1060,6 +1108,9 @@ def build_gradi_logical_list_read_model_from_runtime(
                 oracal_row["warnings"] = sorted(set(list(oracal_row.get("warnings") or []) + ["ORACAL_ROLL_COLOR_SPLIT_MISSING"]))
 
     logo_plexi_row = next((row for row in rows if row.get("line_id") == "material.logo_plexiglas_face"), None)
+    if isinstance(logo_plexi_row, dict) and logo_runtime_plexi_source_part_ids:
+        logo_plexi_row["source_part_ids"] = logo_runtime_plexi_source_part_ids
+
     if artwork_prefs and not (isinstance(logo_plexi_row, dict) and logo_plexi_row.get("status") == "MATCHED"):
         response_warnings.append("LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING")
 

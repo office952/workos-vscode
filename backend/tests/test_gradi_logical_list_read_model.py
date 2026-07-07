@@ -50,7 +50,15 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
                 {"id": "pseudo:soare", "name": "pseudo:soare", "filledAreaSqm": 0.3},
                 {"id": "pseudo:gradinita", "name": "pseudo:gradinita", "filledAreaSqm": 0.6009},
                 {"id": "pseudo:ana", "name": "pseudo:ana", "filledAreaSqm": 0.1964},
+                {"id": "logo-stanga", "name": "Logo 1", "filledAreaSqm": 0.4002},
+                {"id": "logo-dreapta", "name": "Logo 2", "filledAreaSqm": 0.4002},
             ],
+            "parts": {
+                "items": [
+                    {"id": "part_logo_1_001", "source": {"layerId": "logo-stanga", "layerName": "Logo 1"}},
+                    {"id": "part_logo_2_002", "source": {"layerId": "logo-dreapta", "layerName": "Logo 2"}},
+                ]
+            },
         },
         "layer_role_setup": {
             "layers": [
@@ -58,13 +66,22 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
                 {"layerKey": "pseudo:soare", "layerName": "pseudo:soare", "confirmedRole": "face"},
                 {"layerKey": "pseudo:gradinita", "layerName": "pseudo:gradinita", "confirmedRole": "face"},
                 {"layerKey": "pseudo:ana", "layerName": "pseudo:ana", "confirmedRole": "face"},
+                {"layerKey": "logo-stanga", "layerName": "Logo 1", "confirmedRole": "printed_artwork"},
+                {"layerKey": "logo-dreapta", "layerName": "Logo 2", "confirmedRole": "printed_artwork"},
             ]
         },
-        "quote_geometry": {"artwork_area_m2": 0.8005},
+        "quote_geometry": {
+            "artwork_area_m2": 0.8005,
+            "artwork_boxes": [
+                {"layer_key": "logo-stanga", "layer_name": "Logo 1", "width_mm": 667.2126344054284, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+                {"layer_key": "logo-dreapta", "layer_name": "Logo 2", "width_mm": 667.2126344054288, "height_mm": 599.8535337617757, "area_m2": 0.4002},
+            ],
+        },
         "finish_setup": {
             "required_psu_watts": 140.4,
             "selected_psu_watts": selected_psu_watts,
             "psu_configuration": [160],
+            "backing_mode": "forex_10_no_bevel",
             "letter_group_finishes": [
                 {"group_key": "pseudo:maria", "layer_name": "pseudo:maria", "face_finish_type": "oracal_651", "face_oracal_code": "053", "face_oracal_name": "Light blue", "face_vinyl_roll_width_mm": 1000},
                 {"group_key": "pseudo:soare", "layer_name": "pseudo:soare", "face_finish_type": "oracal_651", "face_oracal_code": "047", "face_oracal_name": "Orange red", "face_vinyl_roll_width_mm": 1000},
@@ -74,6 +91,17 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
             "artwork_finishes": [
                 {"layer_key": "logo-stanga", "face_personalization_method": "print_laminate"},
                 {"layer_key": "logo-dreapta", "face_personalization_method": "print_laminate"},
+            ],
+        },
+        "product_composition_recommendation": {
+            "composition_type": "letters_plus_logo",
+            "recommended_templates": [
+                {"template_code": "TPL-VOLUMETRIC-LETTERS_v2", "role_in_composition": "letters"},
+                {"template_code": "TPL-VOLUMETRIC-LOGO_v1", "role_in_composition": "logo_vector_atipic"},
+            ],
+            "composition_items": [
+                {"composition_item_id": "letters", "template_code": "TPL-VOLUMETRIC-LETTERS_v2", "component_role": "volumetric_letters", "source_layer_ids": ["pseudo:maria", "pseudo:soare", "pseudo:ana", "pseudo:gradinita"], "source_group_ids": ["pseudo:maria", "pseudo:soare", "pseudo:ana", "pseudo:gradinita"]},
+                {"composition_item_id": "logo", "template_code": "TPL-VOLUMETRIC-LOGO_v1", "component_role": "volumetric_logo", "source_layer_ids": ["logo-stanga", "logo-dreapta"], "source_group_ids": ["logo-stanga", "logo-dreapta"]},
             ],
         },
     }
@@ -151,6 +179,10 @@ def _breakdown() -> SimpleNamespace:
         material_rows=[
             _row("plexiglas_face", "Plexiglas 3 mm / fata litere", 1.2638, "m2", 20.2208),
             _row("forex_backing", "Forex 10 mm / spate litere", 1.2638, "m2", 20.2208),
+            _row("artwork_plexiglas_logo-stanga", "Plexiglas față emblemă — Logo 1", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_1_001"]),
+            _row("artwork_plexiglas_logo-dreapta", "Plexiglas față emblemă — Logo 2", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_2_002"]),
+            _row("artwork_forex_backing_logo-stanga", "Forex backing emblemă — Logo 1", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_backing_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_1_001"]),
+            _row("artwork_forex_backing_logo-dreapta", "Forex backing emblemă — Logo 2", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_backing_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_2_002"]),
             _row("letter_face_pseudo:ana_print_vinyl", "Material print Orafol - pseudo ana", 0.1964, "m2", 0.3534),
             _row("letter_face_pseudo:ana_laminated_vinyl", "Material laminare Orafol - pseudo ana", 0.1964, "m2", 2.356),
             _row("artwork_logo-stanga_print_vinyl", "Material print Orafol - logo stanga", 0.4002, "m2", 0.7205),
@@ -185,7 +217,7 @@ def _breakdown() -> SimpleNamespace:
         edge_cant_operation_rows=[
             _row("edge_cant_bond_to_face", "Lipire cant / volum pe fata litere", 31.6382, "m", 158.191),
         ],
-        warnings=[{"code": "roll_nesting_color_split_missing"}, {"code": "backing_area_fallback_used"}],
+        warnings=[{"code": "roll_nesting_color_split_missing"}, {"code": "backing_area_fallback_used"}, {"code": "linked_logo_backing_fallback_used"}],
     )
 
 
@@ -237,12 +269,12 @@ def test_gradi_logical_read_model_builds_oracal_row_and_logo_plexi_rows_without_
     assert {row["inventory_consumption_key"] for row in by_id["material.face_oracal"]["child_rows"]} == {"ORACAL_641", "ORACAL_651"}
     assert "ORACAL_MATERIAL_RUNTIME_ROW_MISSING" not in by_id["material.face_oracal"]["gaps"]
     assert by_id["material.logo_plexiglas_face"]["display_label"] == "Plexiglas 3 mm / embleme/logo"
-    assert by_id["material.logo_plexiglas_face"]["quantity"] == 0.8005
+    assert by_id["material.logo_plexiglas_face"]["quantity"] == pytest.approx(0.8004, rel=0, abs=1e-4)
     assert by_id["material.logo_plexiglas_face"]["material_code"] == "PLEXIGLAS_3MM"
     assert by_id["material.logo_plexiglas_face"]["nesting_group"] == "PLEXIGLAS_3MM_FACE_BATCH"
     assert by_id["material.logo_plexiglas_face"]["material_tariff_source"] == "pricing_registry"
     assert by_id["material.logo_plexiglas_face"]["status"] == "MATCHED"
-    assert by_id["material.logo_plexiglas_face"]["subtotal"] == 12.808
+    assert by_id["material.logo_plexiglas_face"]["subtotal"] == pytest.approx(12.8064, rel=0, abs=1e-4)
     assert "ORACAL_MATERIAL_RUNTIME_ROW_MISSING" not in result["warnings"]
 
 
@@ -261,8 +293,8 @@ def test_gradi_logical_read_model_shares_plexiglas_material_batch_between_letter
     assert logo["nesting_group"] == "PLEXIGLAS_3MM_FACE_BATCH"
     assert letters["material_tariff_eur_per_m2"] == logo["material_tariff_eur_per_m2"] == 16.0
     assert letters["batch_trace"]["letter_face_area_m2"] == 1.2638
-    assert letters["batch_trace"]["logo_face_area_m2"] == 0.8005
-    assert letters["batch_trace"]["total_face_area_m2"] == 2.0643
+    assert letters["batch_trace"]["logo_face_area_m2"] == pytest.approx(0.8004, rel=0, abs=1e-4)
+    assert letters["batch_trace"]["total_face_area_m2"] == pytest.approx(2.0642, rel=0, abs=1e-4)
     assert logo["batch_roles"] == ["LOGO_FACE"]
     assert letters["batch_roles"] == ["LETTER_FACE"]
 
@@ -350,6 +382,31 @@ def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_pl
     child = forex["child_rows"][0]
     assert child["basis"] == "backing_area_fallback_from_artwork_box_footprint"
     assert child["source_part_ids"] == ["art-a"]
+
+
+def test_gradi_linked_logo_backing_scope_adds_logo_forex_to_logical_total() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=_dry_run()
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+
+    forex = by_id["material.forex_backing"]
+    assert forex["quantity"] == pytest.approx(2.0642, rel=0, abs=1e-4)
+    assert forex["subtotal"] == pytest.approx(33.0272, rel=0, abs=1e-4)
+    assert any(child["key"].startswith("artwork_forex_backing_") for child in forex["child_rows"])
+    assert forex["warnings"] == ["LINKED_LOGO_BACKING_FALLBACK_USED"]
+
+
+def test_gradi_logo_plexiglas_uses_runtime_rows_not_artwork_area_fallback() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=_dry_run()
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+
+    logo = by_id["material.logo_plexiglas_face"]
+    assert logo["source_part_ids"] == ["part_logo_1_001", "part_logo_2_002"]
+    assert logo["quantity"] == pytest.approx(0.8004, rel=0, abs=1e-4)
+    assert logo["subtotal"] == pytest.approx(12.8064, rel=0, abs=1e-4)
 
 
 def test_logo_only_logical_rows_still_expose_trace_debt_when_source_part_ids_are_missing() -> None:

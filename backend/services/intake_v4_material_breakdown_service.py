@@ -148,6 +148,8 @@ BASIS_SHEET_NESTING = "sheet_nesting_quote_estimate"  # legacy alias in tests/do
 BASIS_AREA_FALLBACK = "area_with_waste_fallback"
 BASIS_ARTWORK_BOX_FOOTPRINT = "artwork_box_bounding_footprint_quote_estimate"
 BASIS_BACKING_AREA_ARTWORK_BOX_FOOTPRINT = "backing_area_fallback_from_artwork_box_footprint"
+BASIS_LINKED_LOGO_FACE_FOOTPRINT = "linked_logo_face_bounding_footprint_quote_estimate"
+BASIS_LINKED_LOGO_BACKING_FOOTPRINT = "linked_logo_backing_bounding_footprint_quote_estimate"
 BASIS_PERIMETER = "perimeter_with_waste"
 CONFIDENCE_NESTING = "estimate_from_nesting_high"
 CONFIDENCE_NESTING_PARTIAL = "estimate_from_nesting_medium"
@@ -530,6 +532,67 @@ def _logo_only_artwork_source_part_ids(
         role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
         if role in {"printed_artwork", "logo", "policromie"}:
             result.append(part_id)
+    return result
+
+
+def _linked_volumetric_logo_boxes(payload_raw: dict[str, Any]) -> list[dict[str, Any]]:
+    recommendation = payload_raw.get("product_composition_recommendation")
+    quote_geometry = payload_raw.get("quote_geometry")
+    if not isinstance(quote_geometry, dict):
+        return []
+    boxes = quote_geometry.get("artwork_boxes")
+    if not isinstance(boxes, list):
+        return []
+    if isinstance(recommendation, dict):
+        if recommendation.get("composition_type") in {"letters_plus_logo", "letters_plus_logo_plus_support"}:
+            items = recommendation.get("composition_items")
+            if isinstance(items, list) and any(isinstance(item, dict) and item.get("component_role") == "volumetric_logo" for item in items):
+                return [box for box in boxes if isinstance(box, dict) and _positive(box.get("area_m2"))]
+
+    finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
+    artwork_finishes = finish_setup.get("artwork_finishes") if isinstance(finish_setup.get("artwork_finishes"), list) else []
+    if not artwork_finishes:
+        return []
+    layer_role_setup = payload_raw.get("layer_role_setup") if isinstance(payload_raw.get("layer_role_setup"), dict) else None
+    has_letter_face = False
+    has_logo_artwork = False
+    for layer in (layer_role_setup or {}).get("layers") or []:
+        if not isinstance(layer, dict):
+            continue
+        role = str(layer.get("confirmed_role") or layer.get("auto_role") or "").strip().lower()
+        state = str(layer.get("confirmation_state") or "").strip().lower()
+        if state == "ignored":
+            continue
+        if role == "face":
+            has_letter_face = True
+        if role in {"printed_artwork", "logo", "policromie"}:
+            has_logo_artwork = True
+    if not (has_letter_face and has_logo_artwork):
+        return []
+    return [box for box in boxes if isinstance(box, dict) and _positive(box.get("area_m2"))]
+
+
+def _linked_logo_source_part_ids_by_layer(analysis: dict[str, Any], layer_role_setup: dict[str, Any] | None) -> dict[str, list[str]]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return {}
+    result: dict[str, list[str]] = {}
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role not in {"printed_artwork", "logo", "policromie"}:
+            continue
+        for key in {layer_id, layer_name}:
+            if not key:
+                continue
+            result.setdefault(key, []).append(part_id)
     return result
 
 
@@ -1799,6 +1862,8 @@ def build_intake_v4_material_breakdown(
         if logo_only_artwork_box_footprint is not None
         else []
     )
+    linked_logo_boxes = _linked_volumetric_logo_boxes(payload_raw) if has_confirmed_letter_face_content else []
+    linked_logo_part_ids_by_layer = _linked_logo_source_part_ids_by_layer(analysis, layer_role_setup) if linked_logo_boxes else {}
     sheet_quote_candidates = compute_sheet_quote_material_candidates(
         nesting,
         analysis,
@@ -2005,6 +2070,56 @@ def build_intake_v4_material_breakdown(
                 "backing_not_confirmed",
                 "Backing neconfirmat — Forex/backing exclus din material estimate.",
                 source="layer_role_setup",
+                severity="info",
+            )
+        )
+
+    for box in linked_logo_boxes:
+        layer_key = str(box.get("layer_key") or "")
+        layer_name = str(box.get("layer_name") or layer_key or "Linked logo")
+        area = _positive(box.get("area_m2"))
+        if area is None:
+            continue
+        source_part_ids = linked_logo_part_ids_by_layer.get(layer_key) or linked_logo_part_ids_by_layer.get(layer_name) or []
+        trace_markers = [] if source_part_ids else ["SOURCE_PART_IDS_MISSING_FOR_LINKED_LOGO_FOOTPRINT"]
+        material_rows.append(
+            _cost_row(
+                f"artwork_plexiglas_{layer_key}",
+                f"Plexiglas față emblemă — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_LINKED_LOGO_FACE_FOOTPRINT,
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
+                quantity_quality="calculated",
+                registry_code=MATERIAL_REGISTRY_CODES["plexiglas_face"],
+                apply_quote_waste=False,
+                confidence=CONFIDENCE_NESTING_MEDIUM,
+                source_part_ids=source_part_ids,
+                trace_markers=trace_markers,
+            )
+        )
+        material_rows.append(
+            _cost_row(
+                f"artwork_forex_backing_{layer_key}",
+                f"Forex backing emblemă — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_LINKED_LOGO_BACKING_FOOTPRINT,
+                quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
+                quantity_quality="calculated",
+                registry_code=MATERIAL_REGISTRY_CODES["forex_backing"],
+                confidence=CONFIDENCE_NESTING_MEDIUM,
+                source_part_ids=source_part_ids,
+                trace_markers=trace_markers,
+            )
+        )
+        warnings.append(
+            _warn(
+                "linked_logo_backing_fallback_used",
+                f"Linked volumetric logo backing for {layer_name} folosește același bounding footprint ca fața logo, până la geometrie dedicată de backing.",
+                source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment",
                 severity="info",
             )
         )
