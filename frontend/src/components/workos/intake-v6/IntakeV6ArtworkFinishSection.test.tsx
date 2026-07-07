@@ -61,6 +61,60 @@ describe("IntakeV6ArtworkFinishSection", () => {
     expect(next[0]?.confirmed).toBe(false);
   });
 
+  it("selecting raw clears stale print and oracal fields coherently", () => {
+    const onChange = vi.fn();
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={[
+          {
+            ...rows[0]!,
+            execution_type: "print_laminate",
+            face_personalization_method: "none_raw_plexi",
+            material_code: "ORAFOL_PRINT_LAMINATION",
+            print_material_code: "ORAFOL_PRINT",
+            lamination_material_code: "ORAFOL_LAMINATION",
+          },
+        ]}
+        onChange={onChange}
+      />,
+    );
+    expandArtworkCard("logo");
+    expect(screen.getByTestId("intake-v6-artwork-execution-logo")).toHaveTextContent("Fără finisaj — plexiglas brut");
+    expect((screen.getByTestId("intake-v6-artwork-face-method-logo") as HTMLSelectElement).value).toBe("none");
+    fireEvent.change(screen.getByTestId("intake-v6-artwork-face-method-logo"), {
+      target: { value: "none" },
+    });
+    const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
+    expect(next[0]).toMatchObject({
+      execution_type: "none_raw_plexi",
+      color_mode: "none",
+      face_personalization_method: "none_raw_plexi",
+      material_code: null,
+      print_material_code: null,
+      lamination_material_code: null,
+      face_roll_width_mm: null,
+      print_roll_width_mm: null,
+      lamination_roll_width_mm: null,
+    });
+  });
+
+  it("selecting Oracal clears stale print fields and keeps a coherent header", () => {
+    const onChange = vi.fn();
+    render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
+    expandArtworkCard("logo");
+    fireEvent.change(screen.getByTestId("intake-v6-artwork-face-method-logo"), {
+      target: { value: "oracal_641" },
+    });
+    const next = onChange.mock.calls[0]![0] as IntakeV6ArtworkFinish[];
+    expect(next[0]).toMatchObject({
+      execution_type: "cut_vinyl",
+      face_personalization_method: "oracal",
+      material_code: "ORACAL_641",
+      print_material_code: null,
+      lamination_material_code: null,
+    });
+  });
+
   it("lets logo switch back to print and lamination", () => {
     const onChange = vi.fn();
     render(

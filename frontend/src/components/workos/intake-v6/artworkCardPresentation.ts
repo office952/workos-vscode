@@ -1,9 +1,11 @@
 import type { IntakeV6ArtworkFinish } from "@/lib/intakeV6/intakeV6ArtworkFinish";
+import { normalizeArtworkFinishState } from "@/lib/intakeV6/intakeV4ArtworkFinish";
 import { cantFinishLabel } from "./letterGroupCardPresentation";
 
 export const INTAKE_V6_ARTWORK_LAYER_ACCENT = "#0891b2";
 
 const EXECUTION_LABEL: Record<string, string> = {
+  none_raw_plexi: "Fără finisaj — plexiglas brut",
   print_laminate: "Print + laminare",
   print_only: "Print",
   vinyl_only: "Vinyl",
@@ -20,7 +22,8 @@ const ARTWORK_MATERIAL_LABEL: Record<string, string> = {
 };
 
 export function artworkExecutionLabel(row: IntakeV6ArtworkFinish): string {
-  return EXECUTION_LABEL[row.execution_type] ?? "Print + laminare";
+  const normalized = normalizeArtworkFinishState(row);
+  return EXECUTION_LABEL[normalized.execution_type] ?? "Print + laminare";
 }
 
 export function artworkTransparencyLabel(row: IntakeV6ArtworkFinish): string | null {
@@ -30,9 +33,10 @@ export function artworkTransparencyLabel(row: IntakeV6ArtworkFinish): string | n
 }
 
 export function buildArtworkFaceSummaryLine(row: IntakeV6ArtworkFinish): string {
-  const materialLabel = row.material_code ? ARTWORK_MATERIAL_LABEL[row.material_code] : null;
-  const parts = [materialLabel ?? artworkExecutionLabel(row)];
-  if (row.color_mode === "polychrome") parts.push("Policrom");
+  const normalized = normalizeArtworkFinishState(row);
+  const materialLabel = normalized.material_code ? ARTWORK_MATERIAL_LABEL[normalized.material_code] : null;
+  const parts = [materialLabel ?? artworkExecutionLabel(normalized)];
+  if (normalized.color_mode === "polychrome") parts.push("Policrom");
   return parts.join(" · ");
 }
 

@@ -1242,6 +1242,62 @@ def _append_artwork_print_rows(
         )
 
 
+def _artwork_oracal_series(row: dict[str, Any]) -> str | None:
+    material_code = str(row.get("material_code") or "").strip().upper()
+    execution = str(row.get("execution_type") or "needs_decision").strip().lower()
+    if material_code == "ORACAL_641":
+        return "641"
+    if material_code == "ORACAL_8500" or execution == "translucent_vinyl":
+        return "8500"
+    if material_code == "ORACAL_651" or execution == "cut_vinyl":
+        return "651"
+    return None
+
+
+def _append_artwork_face_vinyl_rows(
+    *,
+    artwork_finishes: list[Any],
+    analysis: dict[str, Any],
+    material_rows: list[IntakeV4MaterialQuantityRow],
+) -> None:
+    for row in artwork_finishes:
+        if not isinstance(row, dict):
+            continue
+        if str(row.get("face_personalization_method") or "").strip().lower() != "oracal":
+            continue
+        series = _artwork_oracal_series(row)
+        if not series:
+            continue
+        layer_key = str(row.get("layer_key") or "")
+        layer_name = str(row.get("layer_name") or layer_key)
+        area = _positive(row.get("estimated_area_m2"))
+        if area is None:
+            area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
+        if not area:
+            continue
+        owner_price = resolve_intake_v4_owner_oracal_face_price(series)
+        if not owner_price:
+            continue
+        unit_price, currency, price_source = owner_price
+        material_rows.append(
+            _cost_row(
+                f"artwork_{layer_key}_face_vinyl_{series}",
+                f"Vinil față Oracal {series} — {layer_name}",
+                "material",
+                area,
+                "m2",
+                quantity_basis=BASIS_AREA_FALLBACK,
+                quantity_source="artwork_finishes|svg_analysis_json.layers",
+                quantity_quality="calculated",
+                registry_code=f"MAT-ORACAL-{series}",
+                confidence=CONFIDENCE_AREA_FALLBACK,
+                unit_price=unit_price,
+                price_source=price_source,
+                currency=currency,
+            )
+        )
+
+
 def _append_face_vinyl_application_rows(
     *,
     letter_groups: list[Any],
@@ -1308,7 +1364,7 @@ def _append_artwork_vinyl_application_rows(
         if not isinstance(row, dict):
             continue
         execution = str(row.get("execution_type") or "needs_decision").strip().lower()
-        if execution != "vinyl_only":
+        if execution not in {"vinyl_only", "cut_vinyl", "translucent_vinyl"}:
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
@@ -1545,6 +1601,10 @@ def build_intake_v4_material_breakdown(
         if groups_present
         else _face_finish_is_print_laminate(face_finish)
     )
+    artwork_only_face_finish = bool(artwork_finishes) and not groups_present
+    if artwork_only_face_finish:
+        face_vinyl_required_effective = False
+        print_laminate_effective = False
 
     geom_sources = [path_geom, quote_geom, geometry_block]
     face_area = _float_metric(geom_sources, "face_area_m2", "letter_face_area_m2")
@@ -2043,6 +2103,12 @@ def build_intake_v4_material_breakdown(
         material_rows=material_rows,
         warnings=warnings,
     )
+    _append_artwork_face_vinyl_rows(
+        artwork_finishes=artwork_finishes,
+        analysis=analysis,
+        material_rows=material_rows,
+    )
+
     _append_artwork_print_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,

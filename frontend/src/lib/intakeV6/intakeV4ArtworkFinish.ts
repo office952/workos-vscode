@@ -47,6 +47,56 @@ export interface IntakeV4ArtworkFinish {
 
 const ARTWORK_ROLES = new Set(["printed_artwork", "logo", "policromie"]);
 
+export function normalizeArtworkFinishState(
+  row: IntakeV4ArtworkFinish,
+): IntakeV4ArtworkFinish {
+  if (row.face_personalization_method === "none_raw_plexi") {
+    return {
+      ...row,
+      execution_type: "none_raw_plexi",
+      color_mode: "none",
+      material_code: null,
+      face_oracal_code: null,
+      face_oracal_name: null,
+      print_material_code: null,
+      lamination_material_code: null,
+      face_roll_width_mm: null,
+      print_roll_width_mm: null,
+      lamination_roll_width_mm: null,
+      roll_side_retraction_mm: null,
+      roll_total_retraction_mm: null,
+    };
+  }
+  if (row.face_personalization_method === "print_laminate") {
+    return {
+      ...row,
+      execution_type: "print_laminate",
+      color_mode: "polychrome",
+      material_code: "ORAFOL_PRINT_LAMINATION",
+      print_material_code: row.print_material_code ?? "ORAFOL_PRINT",
+      lamination_material_code: row.lamination_material_code ?? "ORAFOL_LAMINATION",
+      face_oracal_code: null,
+      face_oracal_name: null,
+    };
+  }
+  if (row.face_personalization_method === "oracal") {
+    const materialCode = row.material_code === "ORACAL_641"
+      ? "ORACAL_641"
+      : row.material_code === "ORACAL_8500" || row.execution_type === "translucent_vinyl"
+        ? "ORACAL_8500"
+        : "ORACAL_651";
+    return {
+      ...row,
+      execution_type: materialCode === "ORACAL_8500" ? "translucent_vinyl" : "cut_vinyl",
+      color_mode: "monochrome",
+      material_code: materialCode,
+      print_material_code: null,
+      lamination_material_code: null,
+    };
+  }
+  return row;
+}
+
 function layerEntry(
   confirmation: LayerRoleConfirmation,
   layerId: string,
@@ -117,7 +167,7 @@ export function mergeArtworkFinishes(
   return derived.map((row) => {
     const prior = byKey.get(row.layer_key);
     if (!prior) return row;
-    return {
+    return normalizeArtworkFinishState({
       ...row,
       execution_type:
         prior.execution_type && prior.execution_type !== "needs_decision"
@@ -146,7 +196,7 @@ export function mergeArtworkFinishes(
       return_oracal_name: prior.return_oracal_name ?? row.return_oracal_name,
       return_depth_mm: prior.return_depth_mm ?? row.return_depth_mm,
       confirmed: prior.confirmed,
-    };
+    });
   });
 }
 
@@ -159,7 +209,7 @@ export function artworkFinishesFromPayload(
   if (!Array.isArray(raw)) return [];
   return raw
     .filter((item): item is Record<string, unknown> => item != null && typeof item === "object")
-    .map((item) => ({
+    .map((item) => normalizeArtworkFinishState({
       layer_key: String(item.layer_key ?? ""),
       layer_name: String(item.layer_name ?? item.layer_key ?? ""),
       display_name: typeof item.display_name === "string" ? item.display_name : null,

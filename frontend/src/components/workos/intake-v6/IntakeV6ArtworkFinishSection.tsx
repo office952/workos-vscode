@@ -141,8 +141,8 @@ function patchArtworkFaceMethod(method: ArtworkFaceMethod): Partial<IntakeV6Artw
     };
   }
   return {
-    execution_type: "needs_decision",
-    color_mode: "unknown",
+    execution_type: "none_raw_plexi",
+    color_mode: "none",
     print_transparency: "standard",
     material_code: null,
     face_personalization_method: "none_raw_plexi",

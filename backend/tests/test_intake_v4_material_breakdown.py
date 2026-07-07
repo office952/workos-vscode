@@ -656,6 +656,155 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         assert "letter_face_print_vinyl" not in keys
         assert "artwork_layer-1_print_vinyl" not in keys
 
+    def test_artwork_raw_skips_global_oracal_face_fallback(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "none_raw_plexi",
+                "face_personalization_method": "none_raw_plexi",
+                "color_mode": "none",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-raw", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert "Vinil față Oracal 651" not in names
+        assert all("Serviciu aplicare — litere" != name for name in op_names)
+        assert any("Plexiglas 3 mm / față litere" == name for name in names)
+
+    def test_artwork_oracal_641_adds_logo_specific_vinyl_and_application(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "cut_vinyl",
+                "face_personalization_method": "oracal",
+                "material_code": "ORACAL_641",
+                "color_mode": "monochrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-641", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "Plexiglas 3 mm / față litere" for name in names)
+        assert any("Vinil față Oracal 641 — Logo 1" == name for name in names)
+        assert "Vinil față Oracal 651" not in names
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    def test_artwork_oracal_8500_adds_logo_specific_vinyl_and_application(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "translucent_vinyl",
+                "face_personalization_method": "oracal",
+                "material_code": "ORACAL_8500",
+                "color_mode": "monochrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-8500", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "Plexiglas 3 mm / față litere" for name in names)
+        assert any("Vinil față Oracal 8500 — Logo 1" == name for name in names)
+        assert "Vinil față Oracal 651" not in names
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    def test_artwork_print_laminate_adds_logo_specific_rows(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "print_laminate",
+                "face_personalization_method": "print_laminate",
+                "material_code": "ORAFOL_PRINT_LAMINATION",
+                "print_material_code": "ORAFOL_PRINT",
+                "lamination_material_code": "ORAFOL_LAMINATION",
+                "color_mode": "polychrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        result = build_intake_v4_material_breakdown("ws-art-print", payload)
+        names = {row.display_name for row in result.material_rows}
+        op_names = {row.display_name for row in result.operation_rows}
+        assert any(name == "Plexiglas 3 mm / față litere" for name in names)
+        assert any("Material print Orafol — Logo 1" == name for name in names)
+        assert any("Material laminare Orafol — Logo 1" == name for name in names)
+        assert any("Serviciu print — Logo 1" == name for name in op_names)
+        assert any("Serviciu laminare X-PRO — Logo 1" == name for name in op_names)
+        assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
+
+    @pytest.mark.asyncio
+    async def test_artwork_finish_totals_are_additive_relative_to_raw(self):
+        def _artwork_payload(execution_type: str, face_personalization_method: str, material_code: str | None):
+            payload = _payload_finish_truth_base()
+            payload["finish_setup"]["letter_group_finishes"] = []
+            payload["finish_setup"]["artwork_finishes"] = [
+                {
+                    "layer_key": "layer-1",
+                    "layer_name": "Logo 1",
+                    "execution_type": execution_type,
+                    "face_personalization_method": face_personalization_method,
+                    "material_code": material_code,
+                    "print_material_code": "ORAFOL_PRINT" if execution_type == "print_laminate" else None,
+                    "lamination_material_code": "ORAFOL_LAMINATION" if execution_type == "print_laminate" else None,
+                    "color_mode": "polychrome" if execution_type == "print_laminate" else ("none" if execution_type == "none_raw_plexi" else "monochrome"),
+                    "estimated_area_m2": 0.198,
+                    "return_finish_type": "standard_aluminum",
+                    "return_depth_mm": 60,
+                }
+            ]
+            return payload
+
+        material_prices = {
+            "MAT-ACP-FATA-LITERE": {"unit_cost": 16.0, "currency": "EUR"},
+            "MAT-VINYL-PRINT": {"unit_cost": 1.8, "currency": "EUR"},
+            "MAT-VINYL-PRINT-LAMINATED": {"unit_cost": 12.0, "currency": "EUR"},
+        }
+
+        with patch(
+            "services.inventory_materials_admin_service.load_material_pricing_dict",
+            new_callable=AsyncMock,
+        ) as material_lookup, patch(
+            "services.workcenter_rates_service.load_workcenter_rate_pricing_dict",
+            new_callable=AsyncMock,
+        ) as rate_lookup:
+            material_lookup.return_value = material_prices
+            rate_lookup.return_value = {}
+
+            raw = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-raw", _artwork_payload("none_raw_plexi", "none_raw_plexi", None))  # type: ignore[arg-type]
+            o641 = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-641", _artwork_payload("cut_vinyl", "oracal", "ORACAL_641"))  # type: ignore[arg-type]
+            o8500 = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-8500", _artwork_payload("translucent_vinyl", "oracal", "ORACAL_8500"))  # type: ignore[arg-type]
+            pr = await build_intake_v4_material_breakdown_with_registry(None, "ws-art-total-print", _artwork_payload("print_laminate", "print_laminate", "ORAFOL_PRINT_LAMINATION"))  # type: ignore[arg-type]
+
+        assert raw.totals.estimated_cost_total is not None
+        assert o641.totals.estimated_cost_total is not None
+        assert o8500.totals.estimated_cost_total is not None
+        assert pr.totals.estimated_cost_total is not None
+        assert o641.totals.estimated_cost_total >= raw.totals.estimated_cost_total
+        assert o8500.totals.estimated_cost_total >= raw.totals.estimated_cost_total
+        assert pr.totals.estimated_cost_total >= raw.totals.estimated_cost_total
+
     def test_standard_aluminum_return_label_not_oracal_wrapped(self):
         result = build_intake_v4_material_breakdown("ws-truth-e", _payload_finish_truth_base())
         ret = next(row for row in result.material_rows if row.material_key == "return_material")

@@ -1,4 +1,5 @@
 export type SvgArtworkExecutionType =
+  | "none_raw_plexi"
   | "print_laminate"
   | "print_only"
   | "cut_vinyl"
@@ -6,6 +7,7 @@ export type SvgArtworkExecutionType =
   | "needs_decision";
 
 export type SvgArtworkColorMode =
+  | "none"
   | "polychrome"
   | "monochrome"
   | "unknown";
@@ -22,6 +24,7 @@ export const SVG_ARTWORK_EXECUTION_OPTIONS: Array<{
   value: SvgArtworkExecutionType;
   label: string;
 }> = [
+  { value: "none_raw_plexi", label: "Fără finisaj — plexiglas brut" },
   { value: "print_laminate", label: "Print + laminare" },
   { value: "print_only", label: "Print" },
   { value: "cut_vinyl", label: "Colant tăiat" },
@@ -33,6 +36,7 @@ export const SVG_ARTWORK_COLOR_MODE_OPTIONS: Array<{
   value: SvgArtworkColorMode;
   label: string;
 }> = [
+  { value: "none", label: "Fără culoare suplimentară" },
   { value: "polychrome", label: "Policromie" },
   { value: "monochrome", label: "Monocrom" },
   { value: "unknown", label: "Necunoscut" },
