@@ -412,9 +412,56 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
     expect(screen.getByTestId("intake-v6-logical-gaps-material.forex_backing")).toHaveTextContent(/BACKING_AREA_FALLBACK_USED|fără gap/);
     expect(screen.getByTestId("intake-v6-logical-children-material.face_oracal")).toHaveTextContent("child rows: 2");
+    expect(screen.getByTestId("intake-v6-logical-child-rows-material.face_oracal")).toHaveTextContent(
+      /Vinil fata Oracal - consum pe serii 641 \+ 651 #1/i,
+    );
 
     fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
     expect(screen.queryByTestId("intake-v6-logical-formula-material.plexiglas_shared")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-logical-child-rows-material.face_oracal")).not.toBeInTheDocument();
+  });
+
+  it("shows logical child split rows for PSU only when technical details are enabled", () => {
+    const psuLogicalList = buildLogicalListWithRows([
+      {
+        ...logicalList.rows.find((row) => row.line_id === "material.led_psu")!,
+        quantity: 2,
+        subtotal: 67.2,
+        child_rows: [
+          {
+            key: "led_psu_100w",
+            material_code: "MAT-LED-PSU-12V-100W",
+            quantity: 1,
+            unit: "buc",
+            subtotal: 19.2,
+            currency: "EUR",
+          },
+          {
+            key: "led_psu_200w",
+            material_code: "MAT-LED-PSU-12V-200W",
+            quantity: 1,
+            unit: "buc",
+            subtotal: 48,
+            currency: "EUR",
+          },
+        ],
+      },
+    ]);
+
+    render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={psuLogicalList} />);
+
+    expect(screen.getByTestId("intake-v6-live-material-used-material.led_psu")).toHaveTextContent(/Sursa LED 12V/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.led_psu")).toHaveTextContent(/2 buc/);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.led_psu")).toHaveTextContent(/67[,.]20\s*EUR/);
+    expect(screen.queryByTestId("intake-v6-logical-child-rows-material.led_psu")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
+
+    expect(screen.getByTestId("intake-v6-logical-child-rows-material.led_psu")).toHaveTextContent(/Sursa 12V 100W/i);
+    expect(screen.getByTestId("intake-v6-logical-child-rows-material.led_psu")).toHaveTextContent(/1 buc.*19[,.]20\s*EUR/i);
+    expect(screen.getByTestId("intake-v6-logical-child-rows-material.led_psu")).toHaveTextContent(/Sursa 12V 200W/i);
+    expect(screen.getByTestId("intake-v6-logical-child-rows-material.led_psu")).toHaveTextContent(/1 buc.*48[,.]00\s*EUR/i);
+    expect(screen.getByTestId("intake-v6-logical-children-material.led_psu")).toHaveTextContent("child rows: 2");
   });
 
   it("shows numeric prices for included logical-list rows instead of the word priced", () => {

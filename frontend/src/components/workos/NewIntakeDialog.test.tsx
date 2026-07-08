@@ -188,18 +188,51 @@ describe("NewIntakeDialog offer method and Product System template wizard", () =
     expect(within(list).getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(within(list).getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(within(list).queryByText("TPL-VOLUM-ALUMINIU_v1")).not.toBeInTheDocument();
+    expect(within(list).getAllByText("Product Template").length).toBeGreaterThanOrEqual(2);
     expect(within(list).getByText("Activ pentru ofertare")).toBeInTheDocument();
     expect(within(list).getByText("Candidat compozitie")).toBeInTheDocument();
-    expect(within(list).getByText(/Disponibil prin analyzer \/ linked composition/i)).toBeInTheDocument();
+    expect(within(list).getByText("Work Intake DA")).toBeInTheDocument();
+    expect(within(list).getByText("Work Intake NU")).toBeInTheDocument();
+    expect(within(list).getByText(/Product Template activ pentru litere volumetrice/i)).toBeInTheDocument();
+    expect(within(list).getByText(/Product Template logo volumetric/i)).toBeInTheDocument();
   });
 
-  it("does not mark Logo candidate as direct offerable", async () => {
+  it("renders Logo as product template candidate without component-root wording", async () => {
     renderDialog();
     await selectMethodAndContinue();
 
     const logoCard = screen.getByRole("button", { name: /TPL-VOLUMETRIC-LOGO_v1/i });
+    expect(logoCard).toHaveTextContent("Product Template");
     expect(logoCard).toHaveTextContent("Candidat compozitie");
+    expect(logoCard).toHaveTextContent("Work Intake NU");
+    expect(logoCard).toHaveTextContent("Nu porneste oferta directa");
+    expect(logoCard).toHaveTextContent("Root direct: blocat pana la owner GO");
     expect(logoCard).not.toHaveTextContent("Activ pentru ofertare");
+    expect(logoCard).not.toHaveTextContent(/componenta volumetrica logo/i);
+    expect(logoCard).not.toHaveTextContent(/component root/i);
+    expect(logoCard).not.toHaveTextContent(/component quote/i);
+  });
+
+  it("renders Letters as active Product Template root with Work Intake DA", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const lettersCard = screen.getByRole("button", { name: /TPL-VOLUMETRIC-LETTERS_v2/i });
+    expect(lettersCard).toHaveTextContent("Product Template");
+    expect(lettersCard).toHaveTextContent("Activ pentru ofertare");
+    expect(lettersCard).toHaveTextContent("Work Intake DA");
+    expect(lettersCard).toHaveTextContent("Root direct: permis");
+    expect(lettersCard).toHaveTextContent(/Porneste cerere directa pentru root-ul ofertabil curent/i);
+  });
+
+  it("keeps Analyzer-first recommended", async () => {
+    renderDialog();
+    await selectMethodAndContinue();
+
+    const analyzerFirstCard = screen.getByTestId("analyzer-first-no-template-hint");
+    expect(analyzerFirstCard).toHaveTextContent("Analyzer-first");
+    expect(analyzerFirstCard).toHaveTextContent("Recomandat");
+    expect(analyzerFirstCard).toHaveTextContent(/SVG-ul decide compoziția/i);
   });
 
   it("does not use blocked archive wording", async () => {

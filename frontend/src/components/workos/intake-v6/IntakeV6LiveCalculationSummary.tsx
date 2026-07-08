@@ -39,11 +39,19 @@ const RIGHT_PANEL_PREVIEW_LINES = 5;
 
 type LiveCalcDisplayBucket = "included" | "diagnostic" | "missing" | "legacy" | "excluded";
 
+type LogicalChildRowDisplay = {
+  key: string;
+  label: string;
+  quantityText: string;
+  costText: string | null;
+};
+
 type LiveCalcDisplayRow = ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number] & {
   category?: string;
   formulaText?: string;
   gapText?: string;
   childCount?: number;
+  childRows?: LogicalChildRowDisplay[];
   technicalDetails?: string[];
   quantityValue?: number | null;
   quantityUnit?: string | null;
@@ -124,6 +132,63 @@ function buildLogicalTechnicalDetails(row: IntakeV6LogicalListLineTrace): string
     if (materialCode) details.push(`Cod runtime: ${materialCode}`);
   }
   return dedupeStrings(details);
+}
+
+function formatLogicalChildLabel(child: Record<string, unknown>): string {
+  const materialCode = typeof child.material_code === "string" ? child.material_code.trim() : "";
+  const displayName = typeof child.display_name === "string" ? child.display_name.trim() : "";
+  const label = typeof child.label === "string" ? child.label.trim() : "";
+  const key = typeof child.key === "string" ? child.key.trim() : "";
+  const psuMatch = materialCode.match(/^MAT-LED-PSU-(\d+V)-(\d+W)$/i);
+  if (psuMatch) {
+    return `Sursa ${psuMatch[1]} ${psuMatch[2]}`;
+  }
+  return displayName || label || materialCode || key || "Child row";
+}
+
+function formatLogicalChildQuantity(child: Record<string, unknown>): string {
+  const quantity = typeof child.quantity === "number" && Number.isFinite(child.quantity) ? child.quantity : null;
+  const unit = typeof child.unit === "string" ? child.unit.trim() : "";
+  if (quantity == null) return unit || "cantitate lipsă";
+  const normalized = Math.round(quantity * 10000) / 10000;
+  return `${normalized} ${unit}`.trim();
+}
+
+function formatLogicalChildCost(child: Record<string, unknown>): string | null {
+  const subtotal = typeof child.subtotal === "number" && Number.isFinite(child.subtotal) ? child.subtotal : null;
+  const currency = typeof child.currency === "string" && child.currency.trim() ? child.currency.trim() : null;
+  if (subtotal == null || currency == null) return null;
+  return formatFaceBackPrepMoney(subtotal, currency);
+}
+
+function buildLogicalChildRows(row: IntakeV6LogicalListLineTrace): LogicalChildRowDisplay[] {
+  const childRows = Array.isArray(row.child_rows) ? row.child_rows : [];
+  return childRows.flatMap((child, index) => {
+    if (!child || typeof child !== "object") return [];
+    const childRecord = child as Record<string, unknown>;
+    const identity =
+      (typeof childRecord.key === "string" && childRecord.key.trim()) ||
+      (typeof childRecord.material_code === "string" && childRecord.material_code.trim()) ||
+      (typeof childRecord.display_name === "string" && childRecord.display_name.trim()) ||
+      `child-${index + 1}`;
+    return [{
+      key: identity,
+      label: formatLogicalChildLabel(childRecord),
+      quantityText: formatLogicalChildQuantity(childRecord),
+      costText: formatLogicalChildCost(childRecord),
+    }];
+  });
+}
+
+function mergeLogicalChildRows(
+  existingRows: LogicalChildRowDisplay[] | undefined,
+  nextRows: LogicalChildRowDisplay[],
+): LogicalChildRowDisplay[] {
+  const merged = new Map<string, LogicalChildRowDisplay>();
+  for (const row of [...(existingRows ?? []), ...nextRows]) {
+    if (!merged.has(row.key)) merged.set(row.key, row);
+  }
+  return Array.from(merged.values());
 }
 
 function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
@@ -330,6 +395,7 @@ function buildLogicalDisplayRows(
     const visiblePricedContribution = hasVisiblePricedLogicalContribution(row, amountValue);
     const groupKey = resolveLogicalVisibleKey(row);
     const technicalDetails = buildLogicalTechnicalDetails(row);
+    const childRows = buildLogicalChildRows(row);
     const existing = grouped.get(groupKey);
     if (!existing) {
       grouped.set(groupKey, {
@@ -344,6 +410,7 @@ function buildLogicalDisplayRows(
         formulaText: formula || "formula lipsă",
         gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
         childCount: row.child_rows?.length ?? 0,
+        childRows,
         technicalDetails,
         source: "logical-list",
         amountValue,
@@ -386,6 +453,7 @@ function buildLogicalDisplayRows(
       existing.amountCurrency = amountCurrency;
     }
     existing.childCount = (existing.childCount ?? 0) + (row.child_rows?.length ?? 0);
+    existing.childRows = mergeLogicalChildRows(existing.childRows, childRows);
     existing.technicalDetails = dedupeStrings([...(existing.technicalDetails ?? []), ...technicalDetails]);
     existing.gapText = dedupeStrings([existing.gapText, gaps.length > 0 ? gaps.join(" · ") : null]).join(" · ") || "fără gap";
     if (visiblePricedContribution) {
@@ -538,6 +606,25 @@ function LiveCalcLineList({
                         <span data-testid={`intake-v6-logical-children-${item.groupKey}`}>
                           child rows: {item.childCount ?? 0}
                         </span>
+                        {(item.childRows?.length ?? 0) > 0 ? (
+                          <span
+                            className="mt-1 block rounded border border-[#1F2A3D]/80 bg-[#0A0F1A]/70 px-2 py-1"
+                            data-testid={`intake-v6-logical-child-rows-${item.groupKey}`}
+                          >
+                            {(item.childRows ?? []).map((childRow) => (
+                              <span
+                                key={childRow.key}
+                                className="flex items-center justify-between gap-2"
+                                data-testid={`intake-v6-logical-child-row-${item.groupKey}-${childRow.key}`}
+                              >
+                                <span className="truncate text-slate-400">{childRow.label}</span>
+                                <span className="shrink-0 font-mono text-slate-500">
+                                  {childRow.quantityText}{childRow.costText ? ` · ${childRow.costText}` : ""}
+                                </span>
+                              </span>
+                            ))}
+                          </span>
+                        ) : null}
                       </span>
                     ) : !logicalMode && showTechnicalDetails && (item.technicalDetails?.length ?? 0) > 0 ? (
                       <span className="mt-0.5 block space-y-0.5 text-[10px] leading-snug text-slate-500">

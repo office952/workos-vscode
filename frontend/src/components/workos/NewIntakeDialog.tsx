@@ -31,6 +31,71 @@ type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
 const ANALYZER_MODE = "analyzer_first";
+const LETTERS_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2";
+const LOGO_TEMPLATE_CODE = "TPL-VOLUMETRIC-LOGO_v1";
+
+type TemplateHintPresentation = {
+  categoryLabel: string;
+  familyLabel: string;
+  badgeLabel: string;
+  badgeClassName: string;
+  description: string;
+  workIntakeLabel: string;
+  directRootLabel: string;
+};
+
+function getTemplateHintPresentation(template: ProductTemplateAvailabilityItem): TemplateHintPresentation {
+  if (template.template_code === LETTERS_TEMPLATE_CODE) {
+    return {
+      categoryLabel: "Product Template",
+      familyLabel: template.family_name ?? "Litere volumetrice",
+      badgeLabel: "Activ pentru ofertare",
+      badgeClassName:
+        "text-emerald-300 bg-emerald-500/10 border-emerald-500/30",
+      description:
+        "Product Template activ pentru litere volumetrice. Porneste cerere directa pentru root-ul ofertabil curent.",
+      workIntakeLabel: "Work Intake DA",
+      directRootLabel: "Root direct: permis",
+    };
+  }
+
+  if (
+    template.template_code === LOGO_TEMPLATE_CODE ||
+    template.product_system_role === "candidate_product" ||
+    template.display_group === "candidate_products"
+  ) {
+    return {
+      categoryLabel: "Product Template",
+      familyLabel: template.family_name ?? "Logo volumetric",
+      badgeLabel: "Candidat compozitie",
+      badgeClassName:
+        "text-amber-300 bg-amber-500/10 border-amber-500/30",
+      description:
+        "Product Template logo volumetric. Disponibil pentru analyzer / linked composition. Nu porneste oferta directa.",
+      workIntakeLabel: "Work Intake NU",
+      directRootLabel: "Root direct: blocat pana la owner GO",
+    };
+  }
+
+  return {
+    categoryLabel: "Product Template",
+    familyLabel: template.family_name ?? "Product System",
+    badgeLabel: template.quote_offerable ? "Activ pentru ofertare" : "Candidat compozitie",
+    badgeClassName: template.quote_offerable
+      ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"
+      : "text-amber-300 bg-amber-500/10 border-amber-500/30",
+    description:
+      template.ui_description?.trim() ||
+      template.description?.trim() ||
+      (template.quote_offerable
+        ? "Product Template activ in Product System."
+        : "Product Template disponibil doar prin analyzer / linked composition."),
+    workIntakeLabel: template.quote_offerable ? "Work Intake DA" : "Work Intake NU",
+    directRootLabel: template.quote_offerable
+      ? "Root direct: permis"
+      : "Root direct: blocat pana la owner GO",
+  };
+}
 
 const OFFER_METHODS: Array<{
   id: IntakeV6AnalysisSourceMethodId;
@@ -383,45 +448,49 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                     </button>
                   )}
                   {!loadingTemplates && visibleTemplates.length > 0 ? (
-                    visibleTemplates.map((template) => (
-                      <button
-                        key={template.template_code}
-                        type="button"
-                        onClick={() => setSelectedTemplateCode(template.template_code)}
-                        className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
-                          selectedTemplateCode === template.template_code
-                            ? "bg-blue-600/15 border-blue-500/50"
-                            : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
-                        }`}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="min-w-0">
-                            <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
-                            <p className="text-[11px] text-slate-400 mt-1">{template.family_name ?? "Product System"}</p>
-                            {template.description && (
-                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{template.description}</p>
-                            )}
-                            {template.has_modules && (
-                              <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
-                            )}
+                    visibleTemplates.map((template) => {
+                      const presentation = getTemplateHintPresentation(template);
+
+                      return (
+                        <button
+                          key={template.template_code}
+                          type="button"
+                          onClick={() => setSelectedTemplateCode(template.template_code)}
+                          className={`w-full text-left rounded-lg border px-4 py-3 transition-colors ${
+                            selectedTemplateCode === template.template_code
+                              ? "bg-blue-600/15 border-blue-500/50"
+                              : "bg-[#1A2236] border-[#2A3548] hover:border-slate-500"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-[13px] font-mono font-bold text-slate-100 break-all">{template.template_code}</p>
+                              <p className="text-[10px] uppercase tracking-wide text-slate-500 mt-1">
+                                {presentation.categoryLabel}
+                              </p>
+                              <p className="text-[11px] text-slate-400 mt-1">{presentation.familyLabel}</p>
+                              <p className="text-[11px] text-slate-500 mt-1 leading-relaxed">{presentation.description}</p>
+                              <div className="mt-2 flex flex-wrap gap-2 text-[10px]">
+                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-300">
+                                  {presentation.workIntakeLabel}
+                                </span>
+                                <span className="rounded border border-slate-700 bg-slate-950/50 px-2 py-0.5 text-slate-400">
+                                  {presentation.directRootLabel}
+                                </span>
+                              </div>
+                              {template.has_modules ? (
+                                <p className="text-[10px] text-slate-500 mt-2">Module interne gestionate automat: {template.module_codes.length}</p>
+                              ) : null}
+                            </div>
+                            <span
+                              className={`shrink-0 rounded border px-2 py-0.5 text-[10px] font-semibold ${presentation.badgeClassName}`}
+                            >
+                              {presentation.badgeLabel}
+                            </span>
                           </div>
-                          {template.quote_offerable ? (
-                            <span className="shrink-0 text-[10px] font-semibold text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 rounded px-2 py-0.5">
-                              Activ pentru ofertare
-                            </span>
-                          ) : (
-                            <span className="shrink-0 text-[10px] font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded px-2 py-0.5">
-                              Candidat compozitie
-                            </span>
-                          )}
-                        </div>
-                        {!template.quote_offerable ? (
-                          <p className="mt-2 text-[10px] text-amber-200">
-                            Disponibil prin analyzer / linked composition. Nu porneste ofertare directa.
-                          </p>
-                        ) : null}
-                      </button>
-                    ))
+                        </button>
+                      );
+                    })
                   ) : null}
                 </div>
               </section>
