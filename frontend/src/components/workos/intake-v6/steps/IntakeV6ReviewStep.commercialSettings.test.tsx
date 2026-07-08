@@ -110,6 +110,9 @@ vi.mock("../IntakeV6TaskGenerationDryRunPanel", () => ({ default: () => null }))
 vi.mock("../IntakeV6OrderBoundTaskReadinessPanel", () => ({ default: () => null }));
 vi.mock("../IntakeV6QuoteCommercialSpinePanel", () => ({ default: () => null }));
 vi.mock("../FormSystemBackboneAwarenessPanel", () => ({ default: () => null }));
+vi.mock("../IntakeV6ReturnCantBlockedStateAwarenessPanel", () => ({
+  default: () => <div data-testid="mock-return-cant-blocked-awareness" />,
+}));
 vi.mock("../PreOrderTechnicalPreviewPanel", () => ({ default: () => null }));
 vi.mock("../IntakeV6ReturnCantFields", () => ({ default: () => null }));
 vi.mock("../IntakeV6ProductionTaskDryRunPanel", () => ({ default: () => null }));
@@ -556,5 +559,15 @@ describe("IntakeV6ReviewStep commercial settings regression", () => {
       manual_adjustment_ron: 100,
     });
     await waitFor(() => expect(screen.getByTestId("intake-v6-offer-manual-adjustment")).toHaveValue(100));
+  });
+
+  it("mounts the return/cant blocked awareness panel in review without ready-state claims", async () => {
+    renderReviewStepHarness();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("mock-return-cant-blocked-awareness")).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/preview ready/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/calculation ready/i)).not.toBeInTheDocument();
   });
 });

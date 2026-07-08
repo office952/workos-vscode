@@ -86,6 +86,8 @@ import IntakeV6QuoteCommercialSpinePanel from "../IntakeV6QuoteCommercialSpinePa
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
 import FormSystemBackboneAwarenessPanel from "../FormSystemBackboneAwarenessPanel";
 import { toast } from "@/components/ui/sonner";
+import { buildProductTruthDraft } from "@/lib/intakeV6/productTruth/productTruthDraftBuilder";
+import { mapReturnCantTruthFieldsReadonly } from "@/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper";
 import { useTemplateFormContract } from "@/lib/intakeV6/useTemplateFormContract";
 import {
   globalFinishSetupToReturnCant,
@@ -93,6 +95,7 @@ import {
   shouldHideGlobalFinishSettings,
 } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import IntakeV6ReturnCantFields from "../IntakeV6ReturnCantFields";
+import IntakeV6ReturnCantBlockedStateAwarenessPanel from "../IntakeV6ReturnCantBlockedStateAwarenessPanel";
 import IntakeV6ProductionTaskDryRunPanel from "../IntakeV6ProductionTaskDryRunPanel";
 import type { IntakeV6ProductionTaskDryRunResponse } from "@/lib/intakeV6/productionTaskDryRunContracts";
 import {
@@ -1342,6 +1345,67 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ),
     [letterGroups, state.analyzerReport, state.layerRoleConfirmation],
   );
+  const returnCantReadonlyAwareness = useMemo(() => {
+    const svgFileName =
+      typeof svgSourcePayload?.file_name === "string"
+        ? svgSourcePayload.file_name
+        : typeof svgSourcePayload?.fileName === "string"
+          ? svgSourcePayload.fileName
+          : null;
+    const svgSourceHash =
+      typeof svgSourcePayload?.file_hash === "string"
+        ? svgSourcePayload.file_hash
+        : typeof svgSourcePayload?.sourceHash === "string"
+          ? svgSourcePayload.sourceHash
+          : null;
+
+    const productTruthDraft = buildProductTruthDraft({
+      workspaceId,
+      workspaceCode: state.workspace?.workspace_code ?? null,
+      intakeId: workspaceId,
+      templateCode: "TPL-VOLUMETRIC-LETTERS_v2",
+      productFamily: "volumetric_letters",
+      generatedAt: "2026-07-08T00:00:00.000Z",
+      svgSource: {
+        fileName: svgFileName,
+        sourceHash: svgSourceHash,
+        analysisStatus: analysisReady ? "parsed" : "missing",
+      },
+      quoteGeometry: quoteGeometry
+        ? {
+            width_mm: quoteGeometry.width_mm,
+            height_mm: quoteGeometry.height_mm,
+            letter_count: quoteGeometry.letter_count,
+            face_area_m2: quoteGeometry.face_area_m2,
+            return_material_perimeter_ml: quoteGeometry.return_material_perimeter_ml,
+            geometry_source: quoteGeometry.geometry_source,
+            confirmed: quoteGeometry.confirmed,
+          }
+        : null,
+      layerRoleSetup: state.layerRoleConfirmation
+        ? layerRoleConfirmationToV6Setup(state.layerRoleConfirmation)
+        : null,
+      finishSetup: {
+        ...form,
+        letter_group_finishes: effectiveLetterGroups,
+        artwork_finishes: artworkFinishes,
+      },
+    });
+
+    return mapReturnCantTruthFieldsReadonly({
+      templateCode: "TPL-VOLUMETRIC-LETTERS_v2",
+      rootType: "product_template",
+      quoteMode: "product_total",
+      productTruthDraft,
+      quoteGeometry: quoteGeometry
+        ? {
+            letter_perimeter_m: quoteGeometry.letter_perimeter_m,
+            geometry_source: quoteGeometry.geometry_source,
+            confirmed: quoteGeometry.confirmed,
+          }
+        : null,
+    });
+  }, [analysisReady, artworkFinishes, effectiveLetterGroups, form, quoteGeometry, state.layerRoleConfirmation, state.workspace?.workspace_code, svgSourcePayload, workspaceId]);
   const modularAttentionWarnings = useMemo(
     () => resolveModuleActivationAttentionWarnings(modularAwareness.preview),
     [modularAwareness.preview],
@@ -1676,6 +1740,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 />
               </div>
             ) : null}
+            <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
             </IntakeV6ReviewSectionShell>
           </div>
         ) : null}
