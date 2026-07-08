@@ -73,6 +73,10 @@ Key contract anchors:
 
 ### TemplateLibraryView.tsx
 
+Superseded note:
+- Superseded by `d8b70ab`: canonical runtime/backend mounting template code is `TPL-METAL-PREMOUNT-STRUCTURE_v1`.
+- Historical alias references below are retained only as then-observed UI state and must not be reused as canonical template code.
+
 - Adds `Share2` icon usage for a new shared component usage popover.
 - Adds `SharedComponentUsagePopover`, showing which products use a shared component and whether each binding is candidate/offerable with Work Intake status.
 - Adds a hardcoded shared volumetric base map for six common modules:

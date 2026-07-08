@@ -36,7 +36,7 @@ Results:
 Decision: AUDIT + LOCAL FIX
 
 Why this stayed local:
-- the only confirmed live mismatch was a Product System UI mapping that rendered `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1`
+- the only confirmed live mismatch was a Product System UI mapping that rendered the stale alias `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1`
 - backend canonical runtime/template contract already uses `TPL-METAL-PREMOUNT-STRUCTURE_v1`
 - finish naming drift in this slice is display-level aliasing, not a conflicting runtime template code
 
@@ -59,7 +59,7 @@ Evidence surfaces:
 - `backend/services/product_template_availability_service.py`
 - `backend/services/active_template_scope.py`
 
-The non-canonical `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` appeared in the audited active UI slice as a frontend-only Product System mapping. It is not declared as a backend runtime alias in `RUNTIME_TEMPLATE_CODE_BY_ALIAS` and therefore is a dangerous pseudo-canonical name.
+The stale alias `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` appeared in the audited active UI slice as a frontend-only Product System mapping. It is not declared as a backend runtime alias in `RUNTIME_TEMPLATE_CODE_BY_ALIAS` and therefore is a dangerous pseudo-canonical name.
 
 Risk if left unchanged:
 - Product System UI would display a mounting module code different from the active backend module code
@@ -103,11 +103,11 @@ This layering is acceptable only if display aliases do not drift into fake templ
 | `volumetric_mounting_structure` | UI alias / display owner key | TOLERATED_ALIAS | Product System components/test ids only in audited slice |
 | `mounting_structure` | role label / composition role key | TOLERATED_ALIAS | availability metadata and UI composition rows |
 | `premount` / `premount_structure` | descriptive operational alias | TOLERATED_ALIAS | mini-module registry / docs; not a competing template code |
-| `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` | fake pseudo-canonical template code | DANGEROUS_ALIAS | appeared in Product System frontend mapping; not backed by backend runtime alias resolution |
+| `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` | stale pseudo-canonical template code | DANGEROUS_ALIAS | appeared in Product System frontend mapping; not backed by backend runtime alias resolution |
 
 Answer to mandatory question:
 - `TPL-METAL-PREMOUNT-STRUCTURE_v1` is the canonical active template code.
-- `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` is not canonical in the audited live slice and was corrected where it actively misrepresented Product System UI truth.
+- `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` is a stale alias, not canonical in the audited live slice, and was corrected where it actively misrepresented Product System UI truth.
 
 ## Finish alias matrix
 
@@ -151,5 +151,5 @@ Unsafe moves deferred out of scope:
 ## Next safe slice
 
 1. If desired, standardize Product System display keys from `volumetric_finish` / `volumetric_mounting_structure` to canonical contract keys in a dedicated UI-only slice.
-2. Audit docs that still present `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` as if it were a real active runtime template.
+2. Audit docs that still present the stale alias `TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1` as if it were a real active runtime template.
 3. Leave intake/quote bridge semantics unchanged unless a dedicated build targets the `mounting_system` -> `metal_support_required` boundary.
