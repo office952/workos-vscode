@@ -160,6 +160,7 @@ import { resolveLayerCardStatus } from "../letterGroupCardPresentation";
 import { useIntakeV6WorkspaceHeaderStatus } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
+import { layerRoleConfirmationToV6Setup } from "@/lib/intakeV6/intakeV6LayerRoleBridge";
 import { resolveModuleActivationAttentionWarnings } from "@/lib/intakeV6/intakeV6ModuleActivationPreview";
 import {
   resolveIntakeV6ReviewRefetchGroups,
@@ -613,6 +614,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     svgSource: svgSourcePayload,
     analysisReady,
   });
+  const backboneRuntimeState = useMemo(
+    () => ({
+      layerRoleSetup: state.layerRoleConfirmation ? layerRoleConfirmationToV6Setup(state.layerRoleConfirmation) : null,
+    }),
+    [state.layerRoleConfirmation],
+  );
   const volumAluminumModuleLinks = useMemo(
     () =>
       (binding?.module_links ?? []).filter(
@@ -2034,6 +2041,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
       <FormSystemBackboneAwarenessPanel
         backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
+        runtimeState={backboneRuntimeState}
       />
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">

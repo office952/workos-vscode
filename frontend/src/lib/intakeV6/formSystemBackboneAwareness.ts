@@ -4,6 +4,14 @@ import type {
   FormSystemBackboneContract,
 } from "./intakeV6ModularFormContractTypes";
 import { buildFormSystemBackboneFieldProjection, type FormSystemBackboneFieldProjection } from "./formSystemBackboneFieldProjection";
+import {
+  applyFormSystemRuntimeStateOverlay,
+  type FormSystemRuntimeStateOverlayInput,
+} from "./formSystemBackboneRuntimeStateOverlay";
+import {
+  evaluateRuntimeOverlayReadinessPolicy,
+  type RuntimeReadinessPolicyDecision,
+} from "./formSystemBackboneRuntimeReadinessPolicy";
 
 export interface FormSystemBackboneFieldSummary {
   fieldKey: string;
@@ -12,6 +20,7 @@ export interface FormSystemBackboneFieldSummary {
   state: string;
   targetPath: string;
   blockerCode: string | null;
+  warningRelaxed: boolean;
 }
 
 export interface FormSystemBackboneAwarenessModel {
@@ -73,14 +82,18 @@ function summarizeComponent(component: FormSystemBackboneComponent) {
   };
 }
 
-function summarizeField(projection: FormSystemBackboneFieldProjection): FormSystemBackboneFieldSummary {
+function summarizeField(
+  projection: FormSystemBackboneFieldProjection,
+  policyDecision: RuntimeReadinessPolicyDecision | null,
+): FormSystemBackboneFieldSummary {
   return {
     fieldKey: projection.fieldKey,
     owningComponent: projection.ownerId,
     sourceType: text(projection.trace.sourceType, projection.sourceKind),
     state: projection.state,
     targetPath: text(projection.productTruthPathCandidate, text(projection.valuePath, "missing_target_path")),
-    blockerCode: projection.blockers[0] ?? null,
+    blockerCode: policyDecision?.canRelaxFieldWarning ? null : projection.blockers[0] ?? null,
+    warningRelaxed: policyDecision?.canRelaxFieldWarning === true,
   };
 }
 
@@ -128,10 +141,18 @@ function resolveAwarenessProjection(backbone: FormSystemBackboneContract): FormS
   return buildFormSystemBackboneFieldProjection(backbone, { fieldKeys });
 }
 
+function policyDecisionMap(
+  decisions: RuntimeReadinessPolicyDecision[],
+): Map<string, RuntimeReadinessPolicyDecision> {
+  return new Map(decisions.map((decision) => [decision.fieldKey, decision]));
+}
+
 export function buildFormSystemBackboneAwarenessFromProjection(
   projection: FormSystemBackboneFieldProjection[],
+  policyDecisions: RuntimeReadinessPolicyDecision[] = [],
 ): Pick<FormSystemBackboneAwarenessModel, "fields" | "stateWarnings"> {
-  const fields = projection.map(summarizeField);
+  const decisionsByField = policyDecisionMap(policyDecisions);
+  const fields = projection.map((entry) => summarizeField(entry, decisionsByField.get(entry.fieldKey) ?? null));
   return {
     fields,
     stateWarnings: buildStateWarnings(fields),
@@ -140,6 +161,7 @@ export function buildFormSystemBackboneAwarenessFromProjection(
 
 export function buildFormSystemBackboneAwarenessModel(
   backbone: FormSystemBackboneContract | null | undefined,
+  runtimeState: FormSystemRuntimeStateOverlayInput | null = null,
 ): FormSystemBackboneAwarenessModel {
   if (!backbone || typeof backbone !== "object") {
     return {
@@ -158,7 +180,13 @@ export function buildFormSystemBackboneAwarenessModel(
 
   const components = (backbone.components ?? []).map(summarizeComponent);
   const projection = resolveAwarenessProjection(backbone);
-  const awarenessProjection = buildFormSystemBackboneAwarenessFromProjection(projection);
+  const overlaidProjection = applyFormSystemRuntimeStateOverlay(projection, runtimeState ?? {});
+  const policyDecisions = evaluateRuntimeOverlayReadinessPolicy({
+    originalProjection: projection,
+    overlaidProjection,
+    backboneReadiness: backbone.readiness,
+  });
+  const awarenessProjection = buildFormSystemBackboneAwarenessFromProjection(overlaidProjection, policyDecisions);
   const blockers = (backbone.blockers ?? backbone.readiness?.blockers ?? []).map(summarizeBlocker);
   const downstreamWriteIntent = backbone.downstream_write_intent ?? {};
   const unsafeWriteIntents = Object.entries(downstreamWriteIntent)

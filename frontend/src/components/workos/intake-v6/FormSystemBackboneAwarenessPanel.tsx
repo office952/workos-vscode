@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 
 import { buildFormSystemBackboneAwarenessModel } from "@/lib/intakeV6/formSystemBackboneAwareness";
 import type { FormSystemBackboneContract } from "@/lib/intakeV6/intakeV6ModularFormContractTypes";
+import type { FormSystemRuntimeStateOverlayInput } from "@/lib/intakeV6/formSystemBackboneRuntimeStateOverlay";
 
 function Badge({ children, tone = "muted" }: { children: ReactNode; tone?: "ok" | "warn" | "bad" | "muted" }) {
   const toneClass =
@@ -24,10 +25,12 @@ function coverageTone(coverage: string): "ok" | "warn" | "bad" | "muted" {
 
 export default function FormSystemBackboneAwarenessPanel({
   backbone,
+  runtimeState,
 }: {
   backbone?: FormSystemBackboneContract | null;
+  runtimeState?: FormSystemRuntimeStateOverlayInput | null;
 }) {
-  const model = buildFormSystemBackboneAwarenessModel(backbone);
+  const model = buildFormSystemBackboneAwarenessModel(backbone, runtimeState ?? null);
   const [detailsOpen, setDetailsOpen] = useState(false);
   const summaryText = model.available
     ? `${model.root.canonicalCode} · ${model.fields.length} fields · ${model.blockers.length} blockers · ${model.downstreamWriteSafe ? "downstream safe" : "write-intent warning"}`

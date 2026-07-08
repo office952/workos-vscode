@@ -4,7 +4,9 @@ import {
   buildFormSystemBackboneAwarenessModel,
 } from "./formSystemBackboneAwareness";
 import { buildFormSystemBackboneFieldProjection } from "./formSystemBackboneFieldProjection";
+import { applyFormSystemRuntimeStateOverlay } from "./formSystemBackboneRuntimeStateOverlay";
 import type { FormSystemBackboneContract } from "./intakeV6ModularFormContractTypes";
+import type { IntakeV6LayerRoleSetup } from "./intakeV6LayerRoleBridge";
 
 function sampleBackbone(overrides: Partial<FormSystemBackboneContract> = {}): FormSystemBackboneContract {
   return {
@@ -88,6 +90,12 @@ function sampleBackbone(overrides: Partial<FormSystemBackboneContract> = {}): Fo
         blocker_code: "LAYER_ROLES_INCOMPLETE",
         message: "Layer role suggestions need confirmation.",
       },
+      {
+        field_key: "readiness.product_truth_blockers",
+        owning_component: "readiness",
+        blocker_code: "PRODUCT_TRUTH_INCOMPLETE",
+        message: "Readiness summarizes missing required truth.",
+      },
     ],
     downstream_write_intent: {
       pricing_write: false,
@@ -97,6 +105,24 @@ function sampleBackbone(overrides: Partial<FormSystemBackboneContract> = {}): Fo
       db_write: false,
     },
     ...overrides,
+  };
+}
+
+function confirmedLayerRoleSetup(): IntakeV6LayerRoleSetup {
+  return {
+    confirmation_status: "complete",
+    layers: [
+      {
+        layer_key: "face-1",
+        layer_id: "face-1",
+        layer_name: "Face 1",
+        auto_role: "face",
+        auto_confidence: "high",
+        confirmed_role: "face",
+        confirmation_state: "confirmed",
+      },
+    ],
+    warnings: [],
   };
 }
 
@@ -161,6 +187,66 @@ describe("buildFormSystemBackboneAwarenessModel", () => {
     expect(awareness.stateWarnings).toContain("Fallback/hydrated values are not confirmed.");
   });
 
+  it("keeps baseline awareness unchanged when no runtime overlay is provided", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), null);
+
+    expect(model.fields.find((field) => field.fieldKey === "svg.layer_group_role")).toMatchObject({
+      state: "suggested",
+      blockerCode: "LAYER_ROLES_INCOMPLETE",
+      warningRelaxed: false,
+    });
+    expect(model.fields.find((field) => field.fieldKey === "svg.selected_layer_group")).toMatchObject({
+      state: "missing",
+      blockerCode: "SELECTED_FACE_LAYER_MISSING",
+      warningRelaxed: false,
+    });
+  });
+
+  it("relaxes the field row for runtime-confirmed svg.layer_group_role while preserving Product Truth boundary messaging", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.fields.find((field) => field.fieldKey === "svg.layer_group_role")).toMatchObject({
+      state: "confirmed",
+      sourceType: "operator_confirmed",
+      blockerCode: null,
+      warningRelaxed: true,
+    });
+    expect(model.stateWarnings).not.toContain("Suggested values are not confirmed.");
+    expect(model.stateWarnings).toContain("Operator confirmation remains the Product Truth boundary.");
+  });
+
+  it("relaxes runtime-confirmed svg.selected_layer_group field row but preserves broad blocker rows", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.fields.find((field) => field.fieldKey === "svg.selected_layer_group")).toMatchObject({
+      state: "confirmed",
+      blockerCode: null,
+      warningRelaxed: true,
+    });
+    expect(model.blockers.map((blocker) => blocker.code)).toContain("PRODUCT_TRUTH_INCOMPLETE");
+  });
+
+  it("keeps non-matching field-addressed blockers and hydrated fields unchanged", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.fields.find((field) => field.fieldKey === "return.depth_mm")).toMatchObject({
+      state: "hydrated",
+      blockerCode: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+      warningRelaxed: false,
+    });
+    expect(model.fields.find((field) => field.fieldKey === "lighting.type")).toMatchObject({
+      state: "fallback",
+      blockerCode: "LIGHTING_MODE_CONFIRMATION_REQUIRED",
+      warningRelaxed: false,
+    });
+  });
+
   it("excludes PSU and material rows from awareness projection wiring", () => {
     const model = buildFormSystemBackboneAwarenessModel(sampleBackbone());
     const keys = model.fields.map((field) => field.fieldKey);
@@ -174,9 +260,24 @@ describe("buildFormSystemBackboneAwarenessModel", () => {
     const backbone = sampleBackbone();
     const before = JSON.stringify(backbone);
 
-    buildFormSystemBackboneAwarenessModel(backbone);
+    buildFormSystemBackboneAwarenessModel(backbone, { layerRoleSetup: confirmedLayerRoleSetup() });
 
     expect(JSON.stringify(backbone)).toBe(before);
+  });
+
+  it("does not mutate backbone projection or runtime overlay input", () => {
+    const projection = buildFormSystemBackboneFieldProjection(sampleBackbone(), {
+      fieldKeys: ["svg.layer_group_role", "svg.selected_layer_group", "return.depth_mm"],
+    });
+    const runtimeState = { layerRoleSetup: confirmedLayerRoleSetup() };
+    const projectionBefore = JSON.stringify(projection);
+    const runtimeBefore = JSON.stringify(runtimeState);
+
+    const overlaidProjection = applyFormSystemRuntimeStateOverlay(projection, runtimeState);
+    buildFormSystemBackboneAwarenessFromProjection(overlaidProjection);
+
+    expect(JSON.stringify(projection)).toBe(projectionBefore);
+    expect(JSON.stringify(runtimeState)).toBe(runtimeBefore);
   });
 
   it("marks write-intent warnings without executing anything", () => {
