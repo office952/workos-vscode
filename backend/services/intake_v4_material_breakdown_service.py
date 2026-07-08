@@ -279,6 +279,34 @@ def _artwork_box_footprint_area_sqm(*geom_sources: Any) -> float | None:
     return None
 
 
+def _artwork_box_area_for_layer(
+    layer_key: str,
+    layer_name: str,
+    *geom_sources: Any,
+) -> float | None:
+    for source in geom_sources:
+        if not isinstance(source, dict):
+            continue
+        boxes = source.get("artwork_boxes")
+        if not isinstance(boxes, list):
+            continue
+        for box in boxes:
+            if not isinstance(box, dict):
+                continue
+            box_key = str(box.get("layer_key") or "")
+            box_name = str(box.get("layer_name") or box_key)
+            if layer_key not in {box_key, box_name} and layer_name not in {box_key, box_name}:
+                continue
+            width_mm = _positive(box.get("width_mm"))
+            height_mm = _positive(box.get("height_mm"))
+            if width_mm is not None and height_mm is not None:
+                return round((width_mm * height_mm) / 1_000_000.0, 4)
+            area = _positive(box.get("area_m2"))
+            if area is not None:
+                return round(area, 4)
+    return None
+
+
 def _has_confirmed_letter_face_content(
     *,
     layer_role_setup: dict[str, Any] | None,
@@ -593,6 +621,30 @@ def _linked_logo_source_part_ids_by_layer(analysis: dict[str, Any], layer_role_s
             if not key:
                 continue
             result.setdefault(key, []).append(part_id)
+    return result
+
+
+def _artwork_source_part_ids_by_layer(analysis: dict[str, Any], layer_role_setup: dict[str, Any] | None) -> dict[str, list[str]]:
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return {}
+
+    result: dict[str, list[str]] = {}
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        role = _sheet_layer_role_for_name(layer_role_setup, layer_id, layer_name)
+        if role not in {"printed_artwork", "logo", "policromie"}:
+            continue
+        for key in {layer_id, layer_name}:
+            if key:
+                result.setdefault(key, []).append(part_id)
     return result
 
 
@@ -1374,9 +1426,12 @@ def _append_artwork_print_rows(
     *,
     artwork_finishes: list[Any],
     analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
     material_rows: list[IntakeV4MaterialQuantityRow],
     operation_rows: list[IntakeV4CncOperationRow] | None = None,
 ) -> None:
+    source_part_ids_by_layer = _artwork_source_part_ids_by_layer(analysis, layer_role_setup)
     for row in artwork_finishes:
         if not isinstance(row, dict):
             continue
@@ -1387,7 +1442,11 @@ def _append_artwork_print_rows(
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
-        area = _positive(row.get("estimated_area_m2"))
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        quantity_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
+            quantity_source = "artwork_finishes|svg_analysis_json.layers"
         if area is None:
             area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
         if not area:
@@ -1397,11 +1456,15 @@ def _append_artwork_print_rows(
             area_m2=area,
             material_rows=material_rows,
             operation_rows=operation_rows,
-            quantity_source="artwork_finishes|svg_analysis_json.layers",
+            quantity_source=quantity_source,
             key_prefix=f"artwork_{layer_key}",
             display_suffix=layer_name,
             include_lamination=include_lamination,
         )
+        source_part_ids = source_part_ids_by_layer.get(layer_key) or source_part_ids_by_layer.get(layer_name) or []
+        for item in material_rows:
+            if item.material_key in {f"artwork_{layer_key}_print_vinyl", f"artwork_{layer_key}_laminated_vinyl"}:
+                item.source_part_ids = list(source_part_ids)
 
 
 def _artwork_oracal_series(row: dict[str, Any]) -> str | None:
@@ -1420,8 +1483,11 @@ def _append_artwork_face_vinyl_rows(
     *,
     artwork_finishes: list[Any],
     analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    layer_role_setup: dict[str, Any] | None,
     material_rows: list[IntakeV4MaterialQuantityRow],
 ) -> None:
+    source_part_ids_by_layer = _artwork_source_part_ids_by_layer(analysis, layer_role_setup)
     for row in artwork_finishes:
         if not isinstance(row, dict):
             continue
@@ -1432,7 +1498,11 @@ def _append_artwork_face_vinyl_rows(
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
-        area = _positive(row.get("estimated_area_m2"))
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        quantity_source = "quote_geometry.artwork_boxes|bounding_box_footprint"
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
+            quantity_source = "artwork_finishes|svg_analysis_json.layers"
         if area is None:
             area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
         if not area:
@@ -1449,13 +1519,14 @@ def _append_artwork_face_vinyl_rows(
                 area,
                 "m2",
                 quantity_basis=BASIS_AREA_FALLBACK,
-                quantity_source="artwork_finishes|svg_analysis_json.layers",
+                quantity_source=quantity_source,
                 quantity_quality="calculated",
                 registry_code=f"MAT-ORACAL-{series}",
                 confidence=CONFIDENCE_AREA_FALLBACK,
                 unit_price=unit_price,
                 price_source=price_source,
                 currency=currency,
+                source_part_ids=source_part_ids_by_layer.get(layer_key) or source_part_ids_by_layer.get(layer_name) or [],
             )
         )
 
@@ -1518,6 +1589,7 @@ def _append_artwork_vinyl_application_rows(
     *,
     artwork_finishes: list[Any],
     analysis: dict[str, Any],
+    quote_geometry: dict[str, Any],
     operation_rows: list[IntakeV4CncOperationRow] | None,
 ) -> None:
     if operation_rows is None:
@@ -1530,7 +1602,9 @@ def _append_artwork_vinyl_application_rows(
             continue
         layer_key = str(row.get("layer_key") or "")
         layer_name = str(row.get("layer_name") or layer_key)
-        area = _positive(row.get("estimated_area_m2"))
+        area = _artwork_box_area_for_layer(layer_key, layer_name, quote_geometry)
+        if area is None:
+            area = _positive(row.get("estimated_area_m2"))
         if area is None:
             area, _ = _layer_metrics_from_analysis(analysis, layer_key, layer_name)
         if not area:
@@ -2388,18 +2462,23 @@ def build_intake_v4_material_breakdown(
     _append_artwork_face_vinyl_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,
+        quote_geometry=quote_geom_dict,
+        layer_role_setup=layer_role_setup,
         material_rows=material_rows,
     )
 
     _append_artwork_print_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,
+        quote_geometry=quote_geom_dict,
+        layer_role_setup=layer_role_setup,
         material_rows=material_rows,
         operation_rows=artwork_complexity_operation_rows,
     )
     _append_artwork_vinyl_application_rows(
         artwork_finishes=artwork_finishes,
         analysis=analysis,
+        quote_geometry=quote_geom_dict,
         operation_rows=artwork_complexity_operation_rows,
     )
     ral_paint_geometry = dict(path_geom)

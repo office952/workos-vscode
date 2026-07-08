@@ -1103,6 +1103,69 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         assert any("Serviciu laminare X-PRO — Logo 1" == name for name in op_names)
         assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
 
+    def test_artwork_print_laminate_prefers_artwork_box_footprint_source_when_available(self):
+        payload = _payload_finish_truth_base()
+        payload["finish_setup"]["letter_group_finishes"] = []
+        payload["finish_setup"]["artwork_finishes"] = [
+            {
+                "layer_key": "layer-1",
+                "layer_name": "Logo 1",
+                "execution_type": "print_laminate",
+                "face_personalization_method": "print_laminate",
+                "material_code": "ORAFOL_PRINT_LAMINATION",
+                "print_material_code": "ORAFOL_PRINT",
+                "lamination_material_code": "ORAFOL_LAMINATION",
+                "color_mode": "polychrome",
+                "estimated_area_m2": 0.198,
+                "return_finish_type": "standard_aluminum",
+                "return_depth_mm": 60,
+            }
+        ]
+        payload["svg_analysis_json"]["layers"] = [
+            {
+                "id": "layer-1",
+                "name": "Logo 1",
+                "filledAreaSqm": 0.198,
+                "widthMm": 600,
+                "heightMm": 500,
+            }
+        ]
+        payload["layer_role_setup"] = {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "layer-1",
+                    "layer_name": "Logo 1",
+                    "confirmed_role": "printed_artwork",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+        }
+        payload["svg_analysis_json"]["parts"] = {
+            "items": [
+                {
+                    "id": "art-logo-1",
+                    "source": {"layerId": "layer-1", "layerName": "Logo 1"},
+                }
+            ]
+        }
+
+        result = build_intake_v4_material_breakdown("ws-art-print-footprint", payload)
+
+        print_row = next(row for row in result.material_rows if row.material_key == "artwork_layer-1_print_vinyl")
+        laminate_row = next(row for row in result.material_rows if row.material_key == "artwork_layer-1_laminated_vinyl")
+        print_service = next(row for row in result.operation_rows if row.key == "artwork_layer-1_print_service")
+        application_service = next(row for row in result.operation_rows if row.key == "artwork_layer-1_application_service")
+
+        assert print_row.quantity == pytest.approx(0.3, rel=0, abs=1e-4)
+        assert laminate_row.quantity == pytest.approx(0.3, rel=0, abs=1e-4)
+        assert print_row.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert laminate_row.quantity_source == "quote_geometry.artwork_boxes|bounding_box_footprint"
+        assert print_row.source_part_ids == ["art-logo-1"]
+        assert laminate_row.source_part_ids == ["art-logo-1"]
+        assert print_service.operation_equivalent_quantity == pytest.approx(round(0.3 * (1.0 + WASTE_PERCENT / 100.0), 4), rel=0, abs=1e-4)
+        assert application_service.operation_equivalent_quantity == pytest.approx(round(0.3 * (1.0 + WASTE_PERCENT / 100.0), 4), rel=0, abs=1e-4)
+
     @pytest.mark.asyncio
     async def test_artwork_finish_totals_are_additive_relative_to_raw(self):
         def _artwork_payload(execution_type: str, face_personalization_method: str, material_code: str | None):
