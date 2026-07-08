@@ -420,6 +420,11 @@ function DiagnosticBadge({ label }: { label: string }) {
   );
 }
 
+function isActionableStatusLabel(label: string | undefined): boolean {
+  const token = String(label ?? "").trim().toLowerCase();
+  return token === "cantitate lipsă" || token === "fără tarif" || token === "blocat";
+}
+
 function DiagnosticSection({ rows }: { rows: LiveCalcDisplayRow[] }) {
   const grouped = rows.reduce((map, row) => {
     const key = row.diagnosticReason ?? "Diagnostic tehnic";
@@ -552,7 +557,7 @@ function LiveCalcLineList({
                     data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
                   >
                     <span className="block">{item.costText}</span>
-                    {logicalMode && item.statusLabel ? (
+                    {logicalMode && item.statusLabel && (showTechnicalDetails || isActionableStatusLabel(item.statusLabel)) ? (
                       <span className="mt-1 inline-flex justify-end">
                         <DiagnosticBadge label={item.statusLabel} />
                       </span>

@@ -1,4 +1,5 @@
-import { CheckCircle2, Layers3, TriangleAlert } from "lucide-react";
+import { CheckCircle2, ChevronDown, Layers3, TriangleAlert } from "lucide-react";
+import { useState } from "react";
 import { v6 } from "./atoms/intakeV6Presentation";
 import type { ProductDefinitionLinkedRuntimeSegmentsSummary } from "@/api/productDefinitionPreview";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
@@ -93,25 +94,45 @@ export default function IntakeV6ProductCompositionPanel({
   const warnings = recommendation.warnings ?? [];
   const linkedSegmentItems = linkedSegments?.segments ?? [];
   const canConfirm = !confirmed && recommendation.status !== "blocked" && items.length > 0;
+  const hasIssues = blockers.length > 0 || warnings.length > 0;
+  const [open, setOpen] = useState(() => !confirmed || hasIssues);
 
   return (
     <section
       className={`${v6.cardCompact} ${confirmed ? "border-emerald-500/30 bg-emerald-500/5" : "border-cyan-500/30 bg-cyan-500/5"}`}
       data-testid="intake-v6-product-composition-panel"
     >
-      <div className="flex items-start justify-between gap-3">
+      <button
+        type="button"
+        className="flex w-full items-start justify-between gap-3 text-left"
+        onClick={() => setOpen((value) => !value)}
+        aria-expanded={open}
+        data-testid="intake-v6-product-composition-toggle"
+      >
         <div className="min-w-0">
           <p className="flex items-center gap-2 text-[12px] font-semibold text-slate-100">
             <Layers3 className="h-3.5 w-3.5 text-cyan-300" aria-hidden />
             Compozitie produs propusa
           </p>
-          <p className="mt-1 text-[11px] text-slate-400">{compositionLabel(recommendation.composition_type)}</p>
+          <p className="mt-1 text-[11px] text-slate-400" data-testid="intake-v6-product-composition-summary">
+            {compositionLabel(recommendation.composition_type)}
+          </p>
+          {linkedSegmentItems.length > 0 ? (
+            <p className="mt-1 text-[10px] text-slate-500" data-testid="intake-v6-product-composition-linked-count">
+              {linkedSegmentItems.length} segmente linked
+            </p>
+          ) : null}
         </div>
-        <span className={`shrink-0 rounded border px-2 py-0.5 text-[10px] font-semibold ${confirmed ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-amber-500/30 bg-amber-500/10 text-amber-200"}`}>
-          {confirmed ? "Confirmata" : "Necesita confirmare"}
-        </span>
-      </div>
+        <div className="flex shrink-0 items-center gap-2">
+          <span className={`rounded border px-2 py-0.5 text-[10px] font-semibold ${confirmed ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-amber-500/30 bg-amber-500/10 text-amber-200"}`}>
+            {confirmed ? "Confirmata" : "Necesita confirmare"}
+          </span>
+          <ChevronDown className={`h-4 w-4 text-slate-400 transition ${open ? "rotate-180" : ""}`} aria-hidden />
+        </div>
+      </button>
 
+      {open ? (
+      <div data-testid="intake-v6-product-composition-details">
       <div className={`mt-3 grid gap-2 ${compact ? "" : "sm:grid-cols-2"}`}>
         {items.map((item) => (
           <div key={item.composition_item_id ?? item.template_code} className="rounded border border-[#2A3548]/80 bg-[#0A0F1A]/60 p-2.5">
@@ -184,6 +205,8 @@ export default function IntakeV6ProductCompositionPanel({
           <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
           Confirma compozitia produsului
         </button>
+      ) : null}
+      </div>
       ) : null}
     </section>
   );

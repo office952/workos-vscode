@@ -430,18 +430,18 @@ describe("IntakeV6LiveCalculationSummary", () => {
 
     expect(screen.getByTestId("intake-v6-live-material-used-material.forex_backing")).toHaveTextContent(/Forex 10 mm/);
     expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).toHaveTextContent(/28[,.]80\s*EUR/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).toHaveTextContent(/estimat/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).not.toHaveTextContent(/estimat|gap explicit|split in runtime/i);
 
     expect(screen.getByTestId("intake-v6-live-material-used-material.print")).toHaveTextContent(/Material print Orafol/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-material.print")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.print")).not.toHaveTextContent(/split in runtime|gap explicit|priced/i);
     expect(screen.getByTestId("intake-v6-live-material-used-material.lamination")).toHaveTextContent(/Material laminare Orafol/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-material.lamination")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.lamination")).not.toHaveTextContent(/split in runtime|gap explicit|priced/i);
     expect(screen.getByTestId("intake-v6-live-material-used-service.print")).toHaveTextContent(/Serviciu print/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-service.print")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-service.print")).not.toHaveTextContent(/split in runtime|gap explicit|priced/i);
     expect(screen.getByTestId("intake-v6-live-material-used-service.lamination")).toHaveTextContent(/Serviciu laminare X-PRO/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-service.lamination")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-service.lamination")).not.toHaveTextContent(/split in runtime|gap explicit|priced/i);
     expect(screen.getByTestId("intake-v6-live-material-used-service.application")).toHaveTextContent(/Serviciu aplicare/);
-    expect(screen.getByTestId("intake-v6-live-material-cost-service.application")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-service.application")).not.toHaveTextContent(/split in runtime|gap explicit|priced/i);
 
     const diagnostics = screen.getByTestId("intake-v6-live-diagnostics");
     expect(within(diagnostics).queryByText("Forex 10 mm")).not.toBeInTheDocument();
@@ -505,7 +505,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
 
     fireEvent.click(screen.getByTestId("intake-v6-live-filter-missing_rates"));
     expect(screen.getByTestId("intake-v6-live-material-used-material.cantitate_lipsa")).toHaveTextContent(/cantitate lipsa/i);
-    expect(screen.getByTestId("intake-v6-live-material-cost-service.gap_explicit")).toHaveTextContent(/gap explicit/i);
+    expect(screen.getByTestId("intake-v6-live-material-used-service.gap_explicit")).toHaveTextContent(/Gap explicit service/);
   });
 
   it("keeps explicit gaps distinct from missing pricing when quantity and subtotal exist", () => {
@@ -520,8 +520,19 @@ describe("IntakeV6LiveCalculationSummary", () => {
 
     render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={gapButPriced} />);
 
+    fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
     expect(screen.getByTestId("intake-v6-live-material-cost-service.gap_explicit")).toHaveTextContent(/gap explicit/i);
     expect(screen.getByTestId("intake-v6-live-material-cost-service.gap_explicit")).not.toHaveTextContent(/fără tarif/i);
+  });
+
+  it("shows technical-only badges again when technical details are enabled", () => {
+    render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={logicalList} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
+
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.forex_backing")).toHaveTextContent(/estimat/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-material.print")).toHaveTextContent(/split in runtime/i);
+    expect(screen.getByTestId("intake-v6-live-material-cost-service.print")).toHaveTextContent(/split in runtime/i);
   });
 
   it("does not add semantic warning labels to normal priced rows", () => {

@@ -1599,7 +1599,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       </div>
 
       <div
-        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] xl:grid-cols-[minmax(0,1fr)_minmax(300px,340px)]"
+        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(320px,370px)] xl:grid-cols-[minmax(0,1fr)_minmax(345px,390px)]"
         data-testid="intake-v6-review-layout"
       >
         <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">

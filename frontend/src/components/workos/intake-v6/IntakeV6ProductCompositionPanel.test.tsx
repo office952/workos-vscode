@@ -27,6 +27,15 @@ const payload = {
   product_composition_confirmed: { confirmed: false },
 };
 
+const confirmedPayload = {
+  ...payload,
+  product_composition_recommendation: {
+    ...payload.product_composition_recommendation,
+    status: "confirmed",
+  },
+  product_composition_confirmed: { confirmed: true },
+};
+
 const linkedSegments = {
   root_template_code: "TPL-VOLUMETRIC-LETTERS_v2",
   segments: [
@@ -80,5 +89,22 @@ describe("IntakeV6ProductCompositionPanel", () => {
     expect(screen.queryByTestId("intake-v6-product-definition-linked-segments")).not.toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
+  });
+
+  it("collapses by default when already confirmed and can expand to show full details", () => {
+    render(<IntakeV6ProductCompositionPanel payload={confirmedPayload} linkedSegments={linkedSegments} />);
+
+    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "false");
+    expect(screen.getByTestId("intake-v6-product-composition-summary")).toHaveTextContent("Litere volumetrice + logo volumetric");
+    expect(screen.getByTestId("intake-v6-product-composition-linked-count")).toHaveTextContent("1 segmente linked");
+    expect(screen.queryByTestId("intake-v6-product-composition-details")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
+
+    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("intake-v6-product-composition-details")).toBeInTheDocument();
+    expect(screen.getAllByText("TPL-VOLUMETRIC-LETTERS_v2").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("TPL-VOLUMETRIC-LOGO_v1").length).toBeGreaterThan(0);
+    expect(screen.getByTestId("intake-v6-product-definition-linked-segments")).toHaveTextContent("Nu activeaza pricing, quote, order sau execution separat");
   });
 });
