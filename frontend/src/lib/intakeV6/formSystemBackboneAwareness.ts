@@ -52,9 +52,23 @@ export interface FormSystemBackboneAwarenessModel {
     component: string;
     message: string;
   }>;
+  blockerRows: FormSystemBackboneBlockerPresentation[];
   stateWarnings: string[];
   downstreamWriteSafe: boolean;
   unsafeWriteIntents: string[];
+}
+
+export interface FormSystemBackboneBlockerPresentation {
+  fieldKey: string | null;
+  component: string;
+  blockerCode: string;
+  message: string;
+  severity: "active" | "relaxed_field_level";
+  isFieldAddressed: boolean;
+  isBroadOrGlobal: boolean;
+  canRelax: boolean;
+  reason: string;
+  trace: Record<string, unknown>;
 }
 
 const EMPTY_ROOT = {
@@ -103,6 +117,50 @@ function summarizeBlocker(blocker: FormSystemBackboneBlocker) {
     component: text(blocker.owning_component, text(blocker.field_key, "readiness")),
     message: text(blocker.message, text(blocker.blocker_code, "Product Truth blocker")),
   };
+}
+
+function blockerFieldKey(blocker: FormSystemBackboneBlocker): string | null {
+  const fieldKey = text(blocker.field_key, "");
+  return fieldKey || null;
+}
+
+function isBroadOrGlobalBlockerField(fieldKey: string | null): boolean {
+  return fieldKey == null || fieldKey === "readiness.product_truth_blockers";
+}
+
+function summarizeBlockerRows(
+  blockers: FormSystemBackboneBlocker[],
+  decisions: RuntimeReadinessPolicyDecision[],
+): FormSystemBackboneBlockerPresentation[] {
+  const decisionsByField = policyDecisionMap(decisions);
+  return blockers.map((blocker) => {
+    const fieldKey = blockerFieldKey(blocker);
+    const isBroadOrGlobal = isBroadOrGlobalBlockerField(fieldKey);
+    const isFieldAddressed = fieldKey != null && !isBroadOrGlobal;
+    const decision = fieldKey ? decisionsByField.get(fieldKey) ?? null : null;
+    const canRelax = isFieldAddressed && decision?.canRelaxFieldWarning === true;
+
+    return {
+      fieldKey,
+      component: text(blocker.owning_component, text(blocker.field_key, "readiness")),
+      blockerCode: text(blocker.blocker_code, "UNKNOWN_BLOCKER"),
+      message: text(blocker.message, text(blocker.blocker_code, "Product Truth blocker")),
+      severity: canRelax ? "relaxed_field_level" : "active",
+      isFieldAddressed,
+      isBroadOrGlobal,
+      canRelax,
+      reason: canRelax
+        ? "Resolved by runtime confirmation; kept for backbone audit."
+        : decision?.reason ?? "Backbone blocker remains active.",
+      trace: {
+        blockerState: text(blocker.state, "unknown"),
+        blockerBlocks: Array.isArray(blocker.blocks) ? [...blocker.blocks] : [],
+        policyFieldStateChanged: decision?.fieldStateChanged ?? false,
+        policyCanRelaxFieldWarning: decision?.canRelaxFieldWarning ?? false,
+        policyCanRelaxGlobalBlocker: decision?.canRelaxGlobalBlocker ?? false,
+      },
+    };
+  });
 }
 
 function coverageCounts(components: ReturnType<typeof summarizeComponent>[]) {
@@ -172,6 +230,7 @@ export function buildFormSystemBackboneAwarenessModel(
       components: [],
       fields: [],
       blockers: [],
+      blockerRows: [],
       stateWarnings: ["Form System Backbone diagnostic unavailable."],
       downstreamWriteSafe: true,
       unsafeWriteIntents: [],
@@ -187,7 +246,9 @@ export function buildFormSystemBackboneAwarenessModel(
     backboneReadiness: backbone.readiness,
   });
   const awarenessProjection = buildFormSystemBackboneAwarenessFromProjection(overlaidProjection, policyDecisions);
-  const blockers = (backbone.blockers ?? backbone.readiness?.blockers ?? []).map(summarizeBlocker);
+  const rawBlockers = backbone.blockers ?? backbone.readiness?.blockers ?? [];
+  const blockers = rawBlockers.map(summarizeBlocker);
+  const blockerRows = summarizeBlockerRows(rawBlockers, policyDecisions);
   const downstreamWriteIntent = backbone.downstream_write_intent ?? {};
   const unsafeWriteIntents = Object.entries(downstreamWriteIntent)
     .filter(([, value]) => value !== false)
@@ -208,6 +269,7 @@ export function buildFormSystemBackboneAwarenessModel(
     components,
     fields: awarenessProjection.fields,
     blockers,
+    blockerRows,
     stateWarnings: awarenessProjection.stateWarnings,
     downstreamWriteSafe: unsafeWriteIntents.length === 0,
     unsafeWriteIntents,

@@ -144,12 +144,22 @@ export default function FormSystemBackboneAwarenessPanel({
             </div>
             <div className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2" data-testid="form-system-backbone-blockers">
               <p className="mb-1 font-semibold text-slate-100">Readiness / blockers ({model.blockers.length})</p>
-              {model.blockers.length > 0 ? (
+              {model.blockerRows.length > 0 ? (
                 <ul className="space-y-1 text-slate-300">
-                  {model.blockers.slice(0, 4).map((blocker) => (
-                    <li key={`${blocker.code}-${blocker.component}`}>
-                      <span className="font-mono text-[10px] text-amber-200">{blocker.code}</span>
+                  {model.blockerRows.slice(0, 4).map((blocker) => (
+                    <li key={`${blocker.blockerCode}-${blocker.component}-${blocker.fieldKey ?? "broad"}`}>
+                      <span className={`font-mono text-[10px] ${blocker.severity === "relaxed_field_level" ? "text-emerald-200" : "text-amber-200"}`}>
+                        {blocker.blockerCode}
+                      </span>
                       <span className="text-slate-500"> · {blocker.component}</span>
+                      {blocker.severity === "relaxed_field_level" ? (
+                        <span
+                          className="ml-1.5 inline-block rounded border border-emerald-700/40 bg-emerald-950/25 px-1.5 py-0.5 text-[10px] text-emerald-200"
+                          data-testid="form-system-backbone-blocker-relaxed"
+                        >
+                          Resolved by runtime confirmation; kept for backbone audit.
+                        </span>
+                      ) : null}
                     </li>
                   ))}
                 </ul>

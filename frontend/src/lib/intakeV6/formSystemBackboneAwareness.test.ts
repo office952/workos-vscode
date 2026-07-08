@@ -230,6 +230,68 @@ describe("buildFormSystemBackboneAwarenessModel", () => {
     expect(model.blockers.map((blocker) => blocker.code)).toContain("PRODUCT_TRUTH_INCOMPLETE");
   });
 
+  it("keeps a matching field-addressed blocker row visible but marks it relaxed", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone({
+      blockers: [
+        {
+          field_key: "svg.selected_layer_group",
+          owning_component: "svg_layer_roles",
+          blocker_code: "SELECTED_FACE_LAYER_MISSING",
+          message: "Select confirmed face layer refs.",
+        },
+      ],
+    }), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.blockerRows).toEqual([
+      expect.objectContaining({
+        fieldKey: "svg.selected_layer_group",
+        blockerCode: "SELECTED_FACE_LAYER_MISSING",
+        severity: "relaxed_field_level",
+        isFieldAddressed: true,
+        isBroadOrGlobal: false,
+        canRelax: true,
+      }),
+    ]);
+  });
+
+  it("keeps broad or global blocker rows active", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.blockerRows.find((blocker) => blocker.blockerCode === "PRODUCT_TRUTH_INCOMPLETE")).toMatchObject({
+      severity: "active",
+      isBroadOrGlobal: true,
+      canRelax: false,
+    });
+  });
+
+  it("keeps non-matching field-addressed blockers active", () => {
+    const model = buildFormSystemBackboneAwarenessModel(sampleBackbone({
+      blockers: [
+        {
+          field_key: "return.depth_mm",
+          owning_component: "return_cant",
+          blocker_code: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+          message: "Hydrated return depth still needs operator acceptance.",
+        },
+      ],
+    }), {
+      layerRoleSetup: confirmedLayerRoleSetup(),
+    });
+
+    expect(model.blockerRows).toEqual([
+      expect.objectContaining({
+        fieldKey: "return.depth_mm",
+        blockerCode: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+        severity: "active",
+        canRelax: false,
+      }),
+    ]);
+  });
+
   it("keeps non-matching field-addressed blockers and hydrated fields unchanged", () => {
     const model = buildFormSystemBackboneAwarenessModel(sampleBackbone(), {
       layerRoleSetup: confirmedLayerRoleSetup(),
