@@ -127,6 +127,7 @@ function buildLogicalTechnicalDetails(row: IntakeV6LogicalListLineTrace): string
 }
 
 function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
+  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "cantitate lipsă";
   if ((row.blockers?.length ?? 0) > 0) return "blocat";
   if ((row.gaps?.length ?? 0) > 0) return "gap explicit";
   if (row.formula_status === "legacy_unversioned") return "legacy";
@@ -168,6 +169,75 @@ function shouldHighlightLogicalRow(
   return statusLabel !== "priced";
 }
 
+function hasExplicitLogicalGap(row: IntakeV6LogicalListLineTrace): boolean {
+  return (row.gaps?.length ?? 0) > 0;
+}
+
+function hasFallbackLogicalTrace(row: IntakeV6LogicalListLineTrace): boolean {
+  const tokens = [
+    ...(row.gaps ?? []),
+    ...(row.warnings ?? []),
+    row.status ?? null,
+  ]
+    .filter(Boolean)
+    .map((token) => String(token).toLowerCase());
+  return tokens.some((token) => token.includes("fallback"));
+}
+
+function hasPartialLogicalTrace(row: IntakeV6LogicalListLineTrace): boolean {
+  if (row.status === "SPLIT_IN_RUNTIME") return false;
+  const tokens = [
+    row.status ?? null,
+    ...(row.warnings ?? []),
+    ...(row.gaps ?? []),
+  ]
+    .filter(Boolean)
+    .map((token) => String(token).toLowerCase());
+  return tokens.some(
+    (token) =>
+      token.includes("partial") ||
+      token.includes("trace") ||
+      token.includes("aggregated_for_logical_list"),
+  );
+}
+
+function hasMissingLogicalPrice(
+  row: IntakeV6LogicalListLineTrace,
+  amountValue: number | null,
+): boolean {
+  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return false;
+  if (resolveLogicalStatus(row) === "priced" && amountValue == null) return true;
+  const tokens = [
+    row.status ?? null,
+    ...(row.gaps ?? []),
+    ...(row.blockers ?? []),
+    ...(row.warnings ?? []),
+  ]
+    .filter(Boolean)
+    .map((token) => String(token).toLowerCase());
+  return tokens.some(
+    (token) =>
+      token.includes("missing_rate") ||
+      token.includes("missing_price") ||
+      token.includes("tarif"),
+  );
+}
+
+function hasBreakdownFallback(row: ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number]): boolean {
+  const text = `${row.debugSource ?? ""} ${row.subLabel ?? ""} ${row.label ?? ""}`.toLowerCase();
+  return text.includes("fallback");
+}
+
+function hasBreakdownExplicitGap(row: ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number]): boolean {
+  const text = `${row.label ?? ""} ${row.subLabel ?? ""}`.toLowerCase();
+  return text.includes("gap explicit");
+}
+
+function hasBreakdownPartialTrace(row: ReturnType<typeof buildIntakeV6LiveMaterialsUsedRows>[number]): boolean {
+  const text = `${row.debugSource ?? ""} ${row.subLabel ?? ""} ${row.label ?? ""}`.toLowerCase();
+  return text.includes("partial") || text.includes("split_in_runtime") || text.includes("trace partial");
+}
+
 function resolveLogicalDiagnosticReason(
   row: IntakeV6LogicalListLineTrace,
   statusLabel: string,
@@ -175,10 +245,12 @@ function resolveLogicalDiagnosticReason(
 ): string {
   if (row.formula_status === "legacy_unversioned" && amountValue == null) return "Legacy";
   if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "Lipsa cantitate";
-  if (hasBlockingLogicalGaps(row)) return "Fără tarif";
+  if (hasMissingLogicalPrice(row, amountValue)) return "Fără tarif";
+  if (hasExplicitLogicalGap(row)) return "Gap explicit";
+  if (hasFallbackLogicalTrace(row)) return "Fallback";
   if ((row.blockers?.length ?? 0) > 0) return "Diagnostic tehnic";
   if (statusLabel === "priced" && amountValue == null) return "Fără tarif";
-  if (row.status?.includes("PARTIAL")) return "Diagnostic tehnic";
+  if (hasPartialLogicalTrace(row)) return "Trace partial";
   if (row.status === "SPLIT_IN_RUNTIME") return "Neactiv în template curent";
   return "Diagnostic tehnic";
 }
@@ -190,10 +262,11 @@ function classifyLogicalRow(
 ): LiveCalcDisplayBucket {
   if (hasVisiblePricedLogicalContribution(row, amountValue)) return "included";
   if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "missing";
-  if (hasBlockingLogicalGaps(row) || (row.blockers?.length ?? 0) > 0) return "missing";
+  if (hasMissingLogicalPrice(row, amountValue)) return "missing";
+  if ((row.blockers?.length ?? 0) > 0) return "missing";
   if (row.status === "SPLIT_IN_RUNTIME") return "excluded";
   if (row.formula_status === "legacy_unversioned") return "legacy";
-  if (row.status?.includes("PARTIAL")) return "diagnostic";
+  if (hasExplicitLogicalGap(row) || hasFallbackLogicalTrace(row) || hasPartialLogicalTrace(row)) return "diagnostic";
   if (row.status === "MATCHED") return "missing";
   return "diagnostic";
 }
@@ -202,12 +275,33 @@ function classifyBreakdownRow(row: ReturnType<typeof buildIntakeV6LiveMaterialsU
   const amountValue = parseLiveCalcRowCost(row.costText);
   if (row.muted === true || amountValue == null) {
     const quantityMissing = row.quantityText === "cantitate lipsă";
+    const explicitGap = hasBreakdownExplicitGap(row);
+    const fallback = hasBreakdownFallback(row);
+    const partialTrace = hasBreakdownPartialTrace(row);
+    const diagnosticReason = quantityMissing
+      ? "Lipsa cantitate"
+      : explicitGap
+        ? "Gap explicit"
+        : fallback
+          ? "Fallback"
+          : partialTrace
+            ? "Trace partial"
+            : "Fără tarif";
     return {
       amountValue,
       amountCurrency: null,
-      statusLabel: quantityMissing ? "cantitate lipsă" : "fără tarif",
+      statusLabel:
+        quantityMissing
+          ? "cantitate lipsă"
+          : diagnosticReason === "Gap explicit"
+            ? "gap explicit"
+            : diagnosticReason === "Fallback"
+              ? "fallback"
+              : diagnosticReason === "Trace partial"
+                ? "trace partial"
+                : "fără tarif",
       displayBucket: quantityMissing ? "missing" : "diagnostic",
-      diagnosticReason: quantityMissing ? "Lipsa cantitate" : "Fără tarif",
+      diagnosticReason,
     };
   }
   return {
@@ -637,7 +731,7 @@ export default function IntakeV6LiveCalculationSummary({
   }, [activeFilter, diagnosticRows, includedRows]);
   const filterOptions = useMemo(() => {
     if (diagnosticRows.length === 0) return LIVE_CALC_BASE_FILTER_OPTIONS;
-    return [...LIVE_CALC_BASE_FILTER_OPTIONS, { id: "missing_rates" as const, label: "Fără tarif / diagnostic" }];
+    return [...LIVE_CALC_BASE_FILTER_OPTIONS, { id: "missing_rates" as const, label: "Diagnostic / trace" }];
   }, [diagnosticRows.length]);
   const filterTotals = useMemo(() => sumFilteredLiveCalcRows(filteredRows), [filteredRows]);
   const previewRows = isRightPanel && !usesLogicalList ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
