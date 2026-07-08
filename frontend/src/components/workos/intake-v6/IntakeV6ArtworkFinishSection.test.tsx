@@ -29,6 +29,13 @@ function expandArtworkCard(layerKey: string) {
 }
 
 describe("IntakeV6ArtworkFinishSection", () => {
+  it("shows Lipsa in the header when confirmed=false and there is no step-one confirmation", () => {
+    render(<IntakeV6ArtworkFinishSection rows={rows} onChange={vi.fn()} />);
+
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Lipsă");
+    expect(screen.queryByTestId("intake-v6-artwork-step1-badge-logo")).not.toBeInTheDocument();
+  });
+
   it("uses unified face personalization options without transparent controls", () => {
     const onChange = vi.fn();
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
@@ -199,9 +206,24 @@ describe("IntakeV6ArtworkFinishSection", () => {
 
   it("shows Vector Logo confirmat when confirmed=true", () => {
     render(<IntakeV6ArtworkFinishSection rows={confirmedRows} onChange={vi.fn()} />);
+
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("OK");
     expandArtworkCard("logo");
     expect(screen.getByTestId("intake-v6-artwork-confirm-logo")).toHaveTextContent("Vector Logo confirmat");
     expect(screen.getByTestId("intake-v6-artwork-confirmed-logo")).toHaveTextContent("OK");
+  });
+
+  it("shows Confirmat in Pasul 1 in the header when confirmed=false but step-one confirmation exists", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        stepOneConfirmedLayerKeys={new Set(["logo"])}
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Confirmat in Pasul 1");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent("Lipsă");
   });
 
   it("shows Step 1 confirmation instead of a second artwork confirmation CTA", () => {

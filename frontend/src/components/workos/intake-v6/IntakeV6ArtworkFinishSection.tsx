@@ -392,6 +392,15 @@ export default function IntakeV6ArtworkFinishSection({
                           </span>
                         </AtomsBadge>
                       </span>
+                    ) : stepOneConfirmed ? (
+                      <span data-testid={`intake-v6-artwork-step1-badge-${row.layer_key}`}>
+                        <AtomsBadge tone="ok">
+                          <span className="inline-flex items-center gap-0.5">
+                            <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
+                            Confirmat in Pasul 1
+                          </span>
+                        </AtomsBadge>
+                      </span>
                     ) : (
                       <AtomsBadge tone="pending">
                         <span className="inline-flex items-center gap-0.5">
