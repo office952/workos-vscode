@@ -209,7 +209,7 @@ def _breakdown() -> SimpleNamespace:
             _row("wire_letters_myyup_2x075", "Cablu electric MYYUP 2 x 0.75", 19.0, "ml", 7.0784),
             _row("wire_supply_myyup_2x15", "Cablu electric MYYUP 2 x 1.5 alimentare 220V", 5.0, "ml", 3.8235),
             _row("led_modules", "Module LED", 144.0, "buc", 86.4),
-            _row("led_psu", "Sursa LED 12V", 1.0, "buc", 24.0),
+            _row("led_psu_160w", "Sursa LED 12V 160W", 1.0, "buc", 24.0, material_code="MAT-LED-PSU-12V-160W", registry_code="MAT-LED-PSU-12V-160W", quantity_basis="psu_configuration_quote_estimate", quantity_source="finish_setup.psu_configuration"),
             _row("mounting_accessories_percent", "Accesorii montaj / conectori", 1.0, "job", 36.8058),
         ],
         operation_rows=[

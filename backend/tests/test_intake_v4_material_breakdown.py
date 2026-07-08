@@ -914,10 +914,41 @@ class TestIntakeV4NestingMaterialPrecisionIntegration:
         payload["finish_setup"]["required_psu_watts"] = 200
         result = build_intake_v4_material_breakdown("ws-led", payload)
         led = next(row for row in result.consumable_rows if row.material_key == "led_modules")
-        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu")
+        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu_100w")
         assert led.confidence == CONFIDENCE_FORMULA
         assert psu.quantity_basis == "psu_configuration_quote_estimate"
         assert psu.confidence == CONFIDENCE_FORMULA
+
+    def test_led_psu_configuration_splits_rows_by_wattage(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["illuminated"] = True
+        payload["finish_setup"]["led_module_count"] = 42
+        payload["finish_setup"]["psu_configuration"] = [160, 60, 60]
+        payload["finish_setup"]["required_psu_watts"] = 269.57
+
+        result = build_intake_v4_material_breakdown("ws-led-split", payload)
+        psu_rows = [row for row in result.consumable_rows if str(row.material_key).startswith("led_psu_")]
+
+        assert len(psu_rows) == 2
+        by_code = {row.registry_code: row for row in psu_rows}
+        assert by_code["MAT-LED-PSU-12V-160W"].quantity == 1.0
+        assert by_code["MAT-LED-PSU-12V-60W"].quantity == 2.0
+        assert sum(row.quantity for row in psu_rows) == 3.0
+        assert all(row.quantity_basis == "psu_configuration_quote_estimate" for row in psu_rows)
+
+    def test_led_psu_configuration_unknown_wattage_exposes_warning(self):
+        payload = _payload_with_letter_groups(roll_nesting=False, sheet_nesting=False)
+        payload["finish_setup"]["illuminated"] = True
+        payload["finish_setup"]["led_module_count"] = 42
+        payload["finish_setup"]["psu_configuration"] = [180]
+        payload["finish_setup"]["required_psu_watts"] = 180
+
+        result = build_intake_v4_material_breakdown("ws-led-unknown", payload)
+        psu = next(row for row in result.consumable_rows if row.material_key == "led_psu_180w")
+
+        assert psu.registry_code == "MAT-LED-PSU-12V"
+        assert psu.price_source == "missing"
+        assert "PSU material missing for 180W" in psu.warnings
 
     def test_roll_color_split_warning(self):
         payload = _payload_with_letter_groups(roll_nesting=True)

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from collections import Counter
+
 import math
 from typing import Any
 
@@ -659,15 +661,28 @@ def _return_registry_code(return_depth_mm: Any) -> str | None:
 
 
 def _psu_registry_code(psu_configuration: list[Any] | None) -> str | None:
-    if not isinstance(psu_configuration, list) or not psu_configuration:
+    grouped_psu = _group_psu_configuration(psu_configuration)
+    if not grouped_psu:
         return None
-    watts_values = [int(w) for w in psu_configuration if isinstance(w, (int, float)) and w > 0]
-    if not watts_values:
-        return "MAT-LED-PSU-12V"
-    max_watts = max(watts_values)
+    return grouped_psu[0][1]
+
+
+def _group_psu_configuration(psu_configuration: list[Any] | None) -> list[tuple[int, str | None, int]]:
+    if not isinstance(psu_configuration, list) or not psu_configuration:
+        return []
+    watts_counter = Counter(
+        int(watts)
+        for watts in psu_configuration
+        if isinstance(watts, (int, float)) and watts > 0
+    )
+    if not watts_counter:
+        return []
     from services.volumetric_material_rate_resolver import PSU_WATTS_TO_VARIANT_CODE
 
-    return PSU_WATTS_TO_VARIANT_CODE.get(max_watts, "MAT-LED-PSU-12V")
+    grouped: list[tuple[int, str | None, int]] = []
+    for watts in sorted(watts_counter):
+        grouped.append((watts, PSU_WATTS_TO_VARIANT_CODE.get(watts), watts_counter[watts]))
+    return grouped
 
 
 def _is_price_missing_for_quantity(row: IntakeV4MaterialQuantityRow) -> bool:
@@ -2699,14 +2714,17 @@ def build_intake_v4_material_breakdown(
             warnings.append(_warn("missing_led_count", "Iluminare activă — număr module LED indisponibil.", source="geometry.perimeter"))
 
         psu_config = finish.get("psu_configuration")
-        psu_count = len(psu_config) if isinstance(psu_config, list) and psu_config else None
-        if psu_count:
-            psu_code = _psu_registry_code(psu_config if isinstance(psu_config, list) else None)
-            watts = finish.get("required_psu_watts")
-            label = f"Sursă LED 12V ({watts} W necesari)" if watts else "Sursă LED 12V"
-            consumable_rows.append(
-                _cost_row(
-                    "led_psu",
+        grouped_psu = _group_psu_configuration(psu_config if isinstance(psu_config, list) else None)
+        if grouped_psu:
+            watts_required = finish.get("required_psu_watts")
+            for watts_value, psu_code, psu_count in grouped_psu:
+                label = (
+                    f"Sursă LED 12V {watts_value}W ({watts_required} W necesari)"
+                    if watts_required
+                    else f"Sursă LED 12V {watts_value}W"
+                )
+                row = _cost_row(
+                    f"led_psu_{watts_value}w",
                     label,
                     "consumable",
                     float(psu_count),
@@ -2714,10 +2732,17 @@ def build_intake_v4_material_breakdown(
                     quantity_basis="psu_configuration_quote_estimate",
                     quantity_source="finish_setup.psu_configuration",
                     quantity_quality="calculated",
-                    registry_code=psu_code,
+                    registry_code=psu_code or "MAT-LED-PSU-12V",
                     confidence=CONFIDENCE_FORMULA,
                 )
-            )
+                row.trace_markers = list(row.trace_markers or []) + [f"psu_wattage:{watts_value}"]
+                if psu_code is None:
+                    row.warnings = list(row.warnings or []) + [
+                        f"PSU material missing for {watts_value}W"
+                    ]
+                    row.price_source = "missing"
+                    row.registry_code = "MAT-LED-PSU-12V"
+                consumable_rows.append(row)
         elif finish.get("required_psu_watts"):
             warnings.append(_warn("missing_psu_config", "Consum LED estimat — configurează sursele PSU.", source="finish_setup.psu_configuration"))
 
