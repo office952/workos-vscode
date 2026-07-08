@@ -4,6 +4,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { StatusBadge } from "@/components/workos/design-system";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 import { isActiveTemplateForQuote } from "@/lib/activeTemplateScope";
+import { getProductTemplateScopePresentation } from "@/lib/productTemplateScopePresentation";
 import { getProductTemplateIconConfig } from "@/features/product-system/productTemplateIconRegistry";
 import {
   formatTemplateListDate,
@@ -26,6 +27,7 @@ type SharedVolumetricContractBinding = {
   productSystemRole: string;
   quoteOfferable: boolean;
   workIntakeLabel: string;
+  usageModeLabel: string;
   runtimeStatus: string;
   calculationStrategyKey?: string | null;
   strategySourceTemplateCode?: string | null;
@@ -232,7 +234,7 @@ function SharedComponentUsagePopover({
               <div key={`${componentCode}-${binding.productTemplateCode}-${binding.profileKey}`} className="rounded-md border border-slate-800 bg-slate-900/70 px-2 py-1.5">
                 <p className="font-mono text-[10px] font-bold text-slate-100">{binding.productTemplateCode}</p>
                 <p className="mt-0.5 text-[10px] text-slate-400">
-                  {binding.productSystemRole === "candidate_product" ? "candidate / linked child" : "offerable"} — {binding.workIntakeLabel}
+                  {binding.usageModeLabel} — {binding.workIntakeLabel}
                   {contract.componentKey === "volumetric_lighting" && binding.strategySourceTemplateCode ? ` — strategy: ${binding.strategySourceTemplateCode}` : ""}
                 </p>
               </div>
@@ -280,6 +282,7 @@ function buildSharedVolumetricContractGroups(
 
   for (const item of availabilityItems) {
     for (const contract of item.shared_component_contracts ?? []) {
+      const scope = getProductTemplateScopePresentation(item);
       const existing = groups.get(contract.component_key);
       const group = existing ?? {
         componentKey: contract.component_key,
@@ -298,7 +301,8 @@ function buildSharedVolumetricContractGroups(
         moduleTemplateCode: contract.module_template_code,
         productSystemRole: item.product_system_role,
         quoteOfferable: item.quote_offerable,
-        workIntakeLabel: item.quote_offerable ? "Work Intake DA" : "Work Intake NU",
+        workIntakeLabel: scope.workIntakeLabel,
+        usageModeLabel: scope.usageModeLabel,
         runtimeStatus: getBindingRuntimeStatus({
           componentKey: contract.component_key,
           profileKey: contract.profile_key,
@@ -414,6 +418,7 @@ function TemplateLibraryRow({
   const [compositionOpen, setCompositionOpen] = useState(false);
   const detailed = density === "detailed";
   const quoteActive = isActiveTemplateForQuote(template);
+  const scope = availability ? getProductTemplateScopePresentation(availability) : null;
   const updated = formatTemplateListDate(template.updated_at);
   const created = formatTemplateListDate(template.created_at);
   const label = availability?.ui_label ?? (quoteActive ? "Produs activ pentru ofertare" : "Arhivat / experimental");
@@ -430,7 +435,7 @@ function TemplateLibraryRow({
   const sharedProfileLabel = Array.from(new Set(sharedContracts.map((contract) => contract.profile_key))).join(" + ");
   const lightingStrategy = getLightingStrategyBinding(sharedContracts);
   const hasLightingAudit = sharedContracts.some((contract) => contract.component_key === "volumetric_lighting" && (contract.confidence === "PARTIAL" || contract.owner_decision === "NEEDS_MORE_AUDIT"));
-  const compactStatusLabel = availability?.display_group === "candidate_products" ? "In pregatire" : availability?.display_group === "active_products" ? "Produs ofertabil" : label;
+  const compactStatusLabel = scope?.catalogStatusLabel ?? label;
   const metricsLine = summary.showDualCounts && summary.aggregateCounts && summary.parentDirectCounts
     ? [
         label,
@@ -498,7 +503,7 @@ function TemplateLibraryRow({
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared base: {sharedContracts.length}/6</span>
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared modules: {sharedContracts.length}/6</span>
                   <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
-                  <span className={`rounded border px-1.5 py-0.5 ${availability?.quote_offerable ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>Work Intake {availability?.quote_offerable ? "DA" : "NU"}</span>
+                  <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{scope?.workIntakeLabel ?? `Work Intake ${availability?.quote_offerable ? "DA" : "NU"}`}</span>
                 </div>
                 {lightingStrategy?.strategy_source_template_code ? <p className="font-mono text-[9px] text-amber-200">{lightingStrategy.profile_key === "logo" ? "Lighting strategy/profile source" : "Lighting strategy source"}: {lightingStrategy.strategy_source_template_code}</p> : null}
                 <p className="font-mono text-[9px] text-slate-500">Common modules: {formatSharedModuleCodes()}</p>
@@ -508,7 +513,7 @@ function TemplateLibraryRow({
               <div className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
                 <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Module {moduleCount}</span>
                 <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Validare {summary.validationPassed}/{summary.validationTotal}</span>
-                <span className={`rounded border px-1.5 py-0.5 ${availability?.quote_offerable ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>Work Intake: {availability?.quote_offerable ? "DA" : "NU"}</span>
+                <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</span>
                 {availability?.owner_decision_required ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">GO owner</span> : null}
               </div>
             ) : null}
@@ -524,16 +529,16 @@ function TemplateLibraryRow({
                 Folosit de: {parentCodes.join(", ")}
               </p>
             ) : null}
-            {detailed && availability?.display_group === "active_products" ? (
+            {detailed && scope?.isDirectRootAllowed ? (
               <p className="text-[10px] text-emerald-300/90 mt-1">Apare in Work Intake</p>
             ) : null}
             {detailed && availability?.runtime_module ? (
               <p className="text-[10px] text-slate-500 mt-1">Nu se alege direct in Work Intake</p>
             ) : null}
-            {detailed && availability?.owner_decision_required ? (
+            {detailed && !availability?.runtime_module && scope?.forbiddenReason ? (
               <p className="text-[10px] text-amber-300/90 mt-1">
                 Nu apare in Work Intake. {" "}
-                Necesita GO owner pentru ofertare.
+                {scope.forbiddenReason}
               </p>
             ) : null}
             {detailed && (updated || created) && (
@@ -578,7 +583,7 @@ function TemplateLibraryRow({
               moduleCount={moduleCount}
               validationPassed={summary.validationPassed}
               validationTotal={summary.validationTotal}
-              workIntakeVisible={Boolean(availability?.quote_offerable)}
+              workIntakeVisible={Boolean(scope?.isDirectRootAllowed)}
               ownerDecisionRequired={Boolean(availability?.owner_decision_required)}
               sharedProfileLabel={sharedProfileLabel || null}
               sharedContractCount={sharedContracts.length}
@@ -621,8 +626,8 @@ function TemplateLibraryRow({
                   <p className="font-bold text-cyan-100">Shared volumetric base: 6 module comune</p>
                   <p className="mt-1 text-slate-300">Modules: {formatSharedBaseModules()}</p>
                   {lightingStrategySource ? <p className="mt-1 font-mono text-[10px] text-amber-200">Lighting strategy source: {lightingStrategySource}</p> : null}
-                  <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {availability?.quote_offerable ? "DA" : "NU"}</p>
-                  {availability?.display_group === "candidate_products" ? <p className="mt-1 text-[10px] text-amber-200">Status: candidate / linked child / Work Intake NU</p> : null}
+                  <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {scope?.workIntakeLabel.replace("Work Intake ", "") ?? (availability?.quote_offerable ? "DA" : "NU")}</p>
+                  {scope?.isCandidateComposition ? <p className="mt-1 text-[10px] text-amber-200">Status: {scope.usageModeLabel} / {scope.workIntakeLabel}</p> : null}
                   {lightingStrategy?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-slate-500">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
                 </div>
               ) : (
@@ -1208,25 +1213,29 @@ export function TemplateLibraryView({
             {catalogView === "composition" ? (
               <div className="space-y-2" data-testid="product-system-composition-list">
                 {detailed ? <p className="text-[11px] text-slate-500">Model principal: shared volumetric base. Backing bindings raman tehnice/istorice.</p> : null}
-                {searchedCompositionRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio compozitie pentru cautarea curenta.</div> : searchedCompositionRows.map(({ template, availability }) => (
-                  <div key={template.id} className="rounded-lg border border-slate-800 bg-slate-900/40 p-2.5">
-                    <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[12px] font-bold text-slate-100">{template.template_code}</p><p className="mt-0.5 text-[10px] text-slate-500">{availability.ui_label}</p></div><span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2 py-1 text-[10px] font-bold text-cyan-200">Shared base: 6/6</span></div>
-                    {hasSharedVolumetricBase(availability) ? (
-                      <div data-testid={`product-system-composition-shared-base-${template.template_code}`} className="mt-2 rounded-lg border border-cyan-900/40 bg-cyan-950/10 px-2.5 py-2 text-[11px]">
-                        <p className="font-bold text-cyan-100">Shared volumetric base: 6 module comune</p>
-                        <p className="mt-1 text-slate-300">Modules: {formatSharedBaseModules()}</p>
-                        {getLightingStrategySource(availability) ? <p className="mt-1 font-mono text-[10px] text-amber-200">Lighting strategy source: {getLightingStrategySource(availability)}</p> : null}
-                        <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {availability.quote_offerable ? "DA" : "NU"}</p>
-                        {availability.display_group === "candidate_products" ? <p className="mt-1 text-[10px] text-amber-200">Status: candidate / linked child / Work Intake NU</p> : null}
-                        {getLightingStrategyBinding(availability.shared_component_contracts)?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-slate-500">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
-                      </div>
-                    ) : availability.composition_modules.length === 0 ? <div className="mt-3 rounded-lg border border-dashed border-slate-700 bg-slate-950/40 px-3 py-3 text-[11px] text-slate-500">Produsul nu are compozitie expusa in API.</div> : (
-                      detailed ? <div className="mt-2 divide-y divide-slate-800 overflow-hidden rounded-lg border border-slate-800">
-                        {availability.composition_modules.map((module) => <div key={`${template.template_code}-${module.role_key}-${module.module_template_code}`} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"><span className="font-bold text-slate-100">{module.role_label}</span><span className="truncate font-mono text-[10px] text-slate-400">{module.module_template_code}</span><span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-slate-300">{module.status_label ?? (module.is_required ? "Modul intern activ" : "Optional / conditionat")}</span></div>)}
-                      </div> : <p className="mt-2 text-[11px] text-slate-300">{availability.composition_modules.map((module) => module.role_label).join(" | ")}</p>
-                    )}
-                  </div>
-                ))}
+                {searchedCompositionRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio compozitie pentru cautarea curenta.</div> : searchedCompositionRows.map(({ template, availability }) => {
+                  const scope = getProductTemplateScopePresentation(availability);
+
+                  return (
+                    <div key={template.id} className="rounded-lg border border-slate-800 bg-slate-900/40 p-2.5">
+                      <div className="flex flex-wrap items-center justify-between gap-2"><div><p className="font-mono text-[12px] font-bold text-slate-100">{template.template_code}</p><p className="mt-0.5 text-[10px] text-slate-500">{availability.ui_label}</p></div><span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2 py-1 text-[10px] font-bold text-cyan-200">Shared base: 6/6</span></div>
+                      {hasSharedVolumetricBase(availability) ? (
+                        <div data-testid={`product-system-composition-shared-base-${template.template_code}`} className="mt-2 rounded-lg border border-cyan-900/40 bg-cyan-950/10 px-2.5 py-2 text-[11px]">
+                          <p className="font-bold text-cyan-100">Shared volumetric base: 6 module comune</p>
+                          <p className="mt-1 text-slate-300">Modules: {formatSharedBaseModules()}</p>
+                          {getLightingStrategySource(availability) ? <p className="mt-1 font-mono text-[10px] text-amber-200">Lighting strategy source: {getLightingStrategySource(availability)}</p> : null}
+                          <p className="mt-1 text-[10px] font-bold text-slate-300">Work Intake: {scope.workIntakeLabel.replace("Work Intake ", "")}</p>
+                          {scope.isCandidateComposition ? <p className="mt-1 text-[10px] text-amber-200">Status: {scope.usageModeLabel} / {scope.workIntakeLabel}</p> : null}
+                          {getLightingStrategyBinding(availability.shared_component_contracts)?.profile_key === "logo" ? <p className="mt-1 text-[10px] text-slate-500">Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.</p> : null}
+                        </div>
+                      ) : availability.composition_modules.length === 0 ? <div className="mt-3 rounded-lg border border-dashed border-slate-700 bg-slate-950/40 px-3 py-3 text-[11px] text-slate-500">Produsul nu are compozitie expusa in API.</div> : (
+                        detailed ? <div className="mt-2 divide-y divide-slate-800 overflow-hidden rounded-lg border border-slate-800">
+                          {availability.composition_modules.map((module) => <div key={`${template.template_code}-${module.role_key}-${module.module_template_code}`} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"><span className="font-bold text-slate-100">{module.role_label}</span><span className="truncate font-mono text-[10px] text-slate-400">{module.module_template_code}</span><span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-slate-300">{module.status_label ?? (module.is_required ? "Modul intern activ" : "Optional / conditionat")}</span></div>)}
+                        </div> : <p className="mt-2 text-[11px] text-slate-300">{availability.composition_modules.map((module) => module.role_label).join(" | ")}</p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             ) : null}
 

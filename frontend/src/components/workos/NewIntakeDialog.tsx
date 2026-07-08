@@ -15,6 +15,10 @@ import { formatApiErrorFromUnknown, canCreateIntakeRequest } from "@/lib/apiErro
 import { useAuth } from "@/contexts/AuthContext";
 import { ensureIntakeV6WorkspaceForIntakeRequest } from "@/lib/intakeV6/intakeV6Api";
 import {
+  getAnalyzerFirstScopePresentation,
+  getProductTemplateScopePresentation,
+} from "@/lib/productTemplateScopePresentation";
+import {
   INTAKE_V6_ANALYSIS_SOURCES,
   canCreateIntakeV6WorkspaceFromSource,
   getIntakeV6AnalysisSourceStatusLabel,
@@ -31,8 +35,6 @@ type Step = "method" | "template" | "details";
 
 type ClientMode = "existing" | "new_temp" | "new_fiscal";
 const ANALYZER_MODE = "analyzer_first";
-const LETTERS_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2";
-const LOGO_TEMPLATE_CODE = "TPL-VOLUMETRIC-LOGO_v1";
 
 type TemplateHintPresentation = {
   categoryLabel: string;
@@ -45,55 +47,18 @@ type TemplateHintPresentation = {
 };
 
 function getTemplateHintPresentation(template: ProductTemplateAvailabilityItem): TemplateHintPresentation {
-  if (template.template_code === LETTERS_TEMPLATE_CODE) {
-    return {
-      categoryLabel: "Product Template",
-      familyLabel: template.family_name ?? "Litere volumetrice",
-      badgeLabel: "Activ pentru ofertare",
-      badgeClassName:
-        "text-emerald-300 bg-emerald-500/10 border-emerald-500/30",
-      description:
-        "Product Template activ pentru litere volumetrice. Porneste cerere directa pentru root-ul ofertabil curent.",
-      workIntakeLabel: "Work Intake DA",
-      directRootLabel: "Root direct: permis",
-    };
-  }
-
-  if (
-    template.template_code === LOGO_TEMPLATE_CODE ||
-    template.product_system_role === "candidate_product" ||
-    template.display_group === "candidate_products"
-  ) {
-    return {
-      categoryLabel: "Product Template",
-      familyLabel: template.family_name ?? "Logo volumetric",
-      badgeLabel: "Candidat compozitie",
-      badgeClassName:
-        "text-amber-300 bg-amber-500/10 border-amber-500/30",
-      description:
-        "Product Template logo volumetric. Disponibil pentru analyzer / linked composition. Nu porneste oferta directa.",
-      workIntakeLabel: "Work Intake NU",
-      directRootLabel: "Root direct: blocat pana la owner GO",
-    };
-  }
+  const scope = getProductTemplateScopePresentation(template);
 
   return {
     categoryLabel: "Product Template",
-    familyLabel: template.family_name ?? "Product System",
-    badgeLabel: template.quote_offerable ? "Activ pentru ofertare" : "Candidat compozitie",
-    badgeClassName: template.quote_offerable
+    familyLabel: scope.familyLabel,
+    badgeLabel: scope.statusLabel,
+    badgeClassName: scope.isDirectRootAllowed
       ? "text-emerald-300 bg-emerald-500/10 border-emerald-500/30"
       : "text-amber-300 bg-amber-500/10 border-amber-500/30",
-    description:
-      template.ui_description?.trim() ||
-      template.description?.trim() ||
-      (template.quote_offerable
-        ? "Product Template activ in Product System."
-        : "Product Template disponibil doar prin analyzer / linked composition."),
-    workIntakeLabel: template.quote_offerable ? "Work Intake DA" : "Work Intake NU",
-    directRootLabel: template.quote_offerable
-      ? "Root direct: permis"
-      : "Root direct: blocat pana la owner GO",
+    description: scope.shortDescription,
+    workIntakeLabel: scope.workIntakeLabel,
+    directRootLabel: scope.rootDirectLabel,
   };
 }
 
@@ -135,6 +100,7 @@ type IntakeCreateForm = {
 };
 
 export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeDialogProps) {
+  const analyzerFirstPresentation = getAnalyzerFirstScopePresentation();
   const { user } = useAuth();
   const canCreateIntake = canCreateIntakeRequest(
     typeof user?.role === "string" ? user.role : undefined
@@ -438,11 +404,11 @@ export default function NewIntakeDialog({ open, onClose, onCreated }: NewIntakeD
                         <div>
                           <p className="text-[13px] font-bold text-slate-100">Analyzer-first</p>
                           <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
-                            SVG-ul decide compoziția: logo, litere, sau litere + logo.
+                            {analyzerFirstPresentation.shortDescription}
                           </p>
                         </div>
                         <span className="shrink-0 text-[10px] font-semibold text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded px-2 py-0.5">
-                          Recomandat
+                          {analyzerFirstPresentation.statusLabel}
                         </span>
                       </div>
                     </button>
