@@ -29,6 +29,16 @@ export function allocatePSUCombination(
   const maxUnits = Math.max(1, Math.ceil(requiredWatts / PSU_WATTS[0]) + 1);
   let best: PsuAllocationResult | null = null;
 
+  // Mirrors backend/services/intake_v3_lighting_plan_service.py::propose_psu_units.
+  // Canonical policy:
+  // 1) fewer PSUs first
+  // 2) then lower spare capacity
+  // 3) then larger max PSU if still tied
+  const score = (configuration: number[]) => {
+    const total = configuration.reduce((sum, watts) => sum + watts, 0);
+    return [configuration.length, total - requiredWatts, -Math.max(...configuration)] as const;
+  };
+
   const search = (startIndex: number, remainingUnits: number, current: number[]) => {
     const total = current.reduce((sum, watts) => sum + watts, 0);
     if (total >= requiredWatts) {
@@ -39,9 +49,12 @@ export function allocatePSUCombination(
       };
       if (
         !best ||
-        candidate.totalCapacityWatts < best.totalCapacityWatts ||
-        (candidate.totalCapacityWatts === best.totalCapacityWatts &&
-          candidate.configuration.length < best.configuration.length)
+        score(candidate.configuration)[0] < score(best.configuration)[0] ||
+        (score(candidate.configuration)[0] === score(best.configuration)[0] &&
+          score(candidate.configuration)[1] < score(best.configuration)[1]) ||
+        (score(candidate.configuration)[0] === score(best.configuration)[0] &&
+          score(candidate.configuration)[1] === score(best.configuration)[1] &&
+          score(candidate.configuration)[2] < score(best.configuration)[2])
       ) {
         best = candidate;
       }
