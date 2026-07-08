@@ -6,7 +6,7 @@ HEAD before:
 
 HEAD after:
 
-- pending at write time
+- `e1eef16`
 
 Fisiere citite:
 
