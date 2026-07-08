@@ -362,7 +362,7 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Work Intake DA");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared base: 6/6");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared modules: 6/6");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
@@ -570,7 +570,7 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(lettersSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
     expect(lettersSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
     expect(lettersSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
-    expect(lettersSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(lettersSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(lettersSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
     expect(lettersSharedBase).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(lettersSharedBase).toHaveTextContent("Work Intake: DA");
@@ -581,7 +581,7 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(logoSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
     expect(logoSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
     expect(logoSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
-    expect(logoSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1");
+    expect(logoSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(logoSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
     expect(logoSharedBase).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
     expect(logoSharedBase).toHaveTextContent("Work Intake: NU");

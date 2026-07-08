@@ -352,7 +352,7 @@ const SHARED_VOLUMETRIC_BASE_MODULES = [
   { componentKey: "volumetric_back", ownerComponentKey: "volumetric_back", ownerLabel: "Volumetric back", label: "Spate comuna", moduleTemplateCode: "TPL-VOLUMETRIC-BACK_v1" },
   { componentKey: "volumetric_return_side", ownerComponentKey: "volumetric_return_side", ownerLabel: "Volumetric return / side", label: "Cant / return comun", moduleTemplateCode: "TPL-VOLUM-ALUMINIU_v1" },
   { componentKey: "volumetric_surface_finish", ownerComponentKey: "volumetric_finish", ownerLabel: "Volumetric finish", label: "Finisaj comun", moduleTemplateCode: "TPL-VOLUMETRIC-FINISH_v1" },
-  { componentKey: "volumetric_mounting_interface", ownerComponentKey: "volumetric_mounting_structure", ownerLabel: "Volumetric mounting / structure", label: "Montaj / structura comuna", moduleTemplateCode: "TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1" },
+  { componentKey: "volumetric_mounting_interface", ownerComponentKey: "volumetric_mounting_structure", ownerLabel: "Volumetric mounting / structure", label: "Montaj / structura comuna", moduleTemplateCode: "TPL-METAL-PREMOUNT-STRUCTURE_v1" },
   { componentKey: "volumetric_lighting", ownerComponentKey: "volumetric_lighting", ownerLabel: "Volumetric lighting", label: "Lighting / LED comun", moduleTemplateCode: "TPL-VOLUMETRIC-LED_v1" },
 ];
 

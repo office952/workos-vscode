@@ -1496,7 +1496,7 @@ const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
   volumetric_back: "TPL-VOLUMETRIC-BACK_v1",
   volumetric_return_side: "TPL-VOLUM-ALUMINIU_v1",
   volumetric_surface_finish: "TPL-VOLUMETRIC-FINISH_v1",
-  volumetric_mounting_interface: "TPL-VOLUMETRIC-MOUNTING-STRUCTURE_v1",
+  volumetric_mounting_interface: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
   volumetric_lighting: "TPL-VOLUMETRIC-LED_v1",
 };
 
