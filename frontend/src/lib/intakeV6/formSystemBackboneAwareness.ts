@@ -2,8 +2,8 @@ import type {
   FormSystemBackboneBlocker,
   FormSystemBackboneComponent,
   FormSystemBackboneContract,
-  FormSystemBackboneField,
 } from "./intakeV6ModularFormContractTypes";
+import { buildFormSystemBackboneFieldProjection, type FormSystemBackboneFieldProjection } from "./formSystemBackboneFieldProjection";
 
 export interface FormSystemBackboneFieldSummary {
   fieldKey: string;
@@ -73,14 +73,14 @@ function summarizeComponent(component: FormSystemBackboneComponent) {
   };
 }
 
-function summarizeField(field: FormSystemBackboneField): FormSystemBackboneFieldSummary {
+function summarizeField(projection: FormSystemBackboneFieldProjection): FormSystemBackboneFieldSummary {
   return {
-    fieldKey: text(field.field_key, "unknown_field"),
-    owningComponent: text(field.owning_component, "missing_owner"),
-    sourceType: text(field.source_type, "missing_source"),
-    state: text(field.state, "missing_state"),
-    targetPath: text(field.product_truth_path, text(field.missing_target_path, "missing_target_path")),
-    blockerCode: typeof field.blocker_code === "string" && field.blocker_code.trim() ? field.blocker_code : null,
+    fieldKey: projection.fieldKey,
+    owningComponent: projection.ownerId,
+    sourceType: text(projection.trace.sourceType, projection.sourceKind),
+    state: projection.state,
+    targetPath: text(projection.productTruthPathCandidate, text(projection.valuePath, "missing_target_path")),
+    blockerCode: projection.blockers[0] ?? null,
   };
 }
 
@@ -107,12 +107,35 @@ function coverageCounts(components: ReturnType<typeof summarizeComponent>[]) {
 }
 
 function buildStateWarnings(fields: FormSystemBackboneFieldSummary[]): string[] {
-  const hasSuggested = fields.some((field) => field.sourceType === "svg_suggested" || field.state === "suggested");
+  const hasSuggested = fields.some((field) => field.state === "suggested");
   const hasFallbackOrHydrated = fields.some((field) => field.state === "fallback" || field.state === "hydrated");
   const warnings: string[] = ["Operator confirmation remains the Product Truth boundary."];
   if (hasSuggested) warnings.unshift("Suggested values are not confirmed.");
   if (hasFallbackOrHydrated) warnings.splice(hasSuggested ? 1 : 0, 0, "Fallback/hydrated values are not confirmed.");
   return warnings;
+}
+
+const FORBIDDEN_FIELD_KEYS = new Set([
+  "lighting.psu_configuration",
+  "materials.led_psu",
+  "material.led_psu",
+]);
+
+function resolveAwarenessProjection(backbone: FormSystemBackboneContract): FormSystemBackboneFieldProjection[] {
+  const fieldKeys = (backbone.fields ?? [])
+    .map((field) => text(field.field_key, ""))
+    .filter((fieldKey) => fieldKey && !FORBIDDEN_FIELD_KEYS.has(fieldKey));
+  return buildFormSystemBackboneFieldProjection(backbone, { fieldKeys });
+}
+
+export function buildFormSystemBackboneAwarenessFromProjection(
+  projection: FormSystemBackboneFieldProjection[],
+): Pick<FormSystemBackboneAwarenessModel, "fields" | "stateWarnings"> {
+  const fields = projection.map(summarizeField);
+  return {
+    fields,
+    stateWarnings: buildStateWarnings(fields),
+  };
 }
 
 export function buildFormSystemBackboneAwarenessModel(
@@ -134,7 +157,8 @@ export function buildFormSystemBackboneAwarenessModel(
   }
 
   const components = (backbone.components ?? []).map(summarizeComponent);
-  const fields = (backbone.fields ?? []).map(summarizeField);
+  const projection = resolveAwarenessProjection(backbone);
+  const awarenessProjection = buildFormSystemBackboneAwarenessFromProjection(projection);
   const blockers = (backbone.blockers ?? backbone.readiness?.blockers ?? []).map(summarizeBlocker);
   const downstreamWriteIntent = backbone.downstream_write_intent ?? {};
   const unsafeWriteIntents = Object.entries(downstreamWriteIntent)
@@ -154,9 +178,9 @@ export function buildFormSystemBackboneAwarenessModel(
     },
     coverage: coverageCounts(components),
     components,
-    fields,
+    fields: awarenessProjection.fields,
     blockers,
-    stateWarnings: buildStateWarnings(fields),
+    stateWarnings: awarenessProjection.stateWarnings,
     downstreamWriteSafe: unsafeWriteIntents.length === 0,
     unsafeWriteIntents,
   };
