@@ -24,7 +24,14 @@ def _row(key: str, label: str, quantity: float, unit: str, cost: float, **extra)
         source_part_ids=extra.get("source_part_ids"),
         trace_markers=extra.get("trace_markers"),
         basis_label=extra.get("basis_label"),
+        basis_key=extra.get("basis_key"),
         operation_type=extra.get("operation_type"),
+        pricing_rate_key=extra.get("pricing_rate_key"),
+        operation_equivalent_quantity=extra.get("operation_equivalent_quantity"),
+        operation_equivalent_unit=extra.get("operation_equivalent_unit"),
+        warnings=extra.get("warnings"),
+        mapping_gaps=extra.get("mapping_gaps"),
+        gaps=extra.get("gaps"),
     )
 
 
@@ -55,6 +62,10 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
             ],
             "parts": {
                 "items": [
+                    {"id": "part_face_maria_001", "source": {"layerId": "pseudo:maria", "layerName": "pseudo:maria"}},
+                    {"id": "part_face_soare_002", "source": {"layerId": "pseudo:soare", "layerName": "pseudo:soare"}},
+                    {"id": "part_face_ana_003", "source": {"layerId": "pseudo:ana", "layerName": "pseudo:ana"}},
+                    {"id": "part_face_gradinita_004", "source": {"layerId": "pseudo:gradinita", "layerName": "pseudo:gradinita"}},
                     {"id": "part_logo_1_001", "source": {"layerId": "logo-stanga", "layerName": "Logo 1"}},
                     {"id": "part_logo_2_002", "source": {"layerId": "logo-dreapta", "layerName": "Logo 2"}},
                 ]
@@ -177,18 +188,18 @@ def _breakdown() -> SimpleNamespace:
         template_code="TPL-VOLUMETRIC-LETTERS_v2",
         totals={"estimated_cost_total": 772.92, "currency": "EUR"},
         material_rows=[
-            _row("plexiglas_face", "Plexiglas 3 mm / fata litere", 1.2638, "m2", 20.2208),
-            _row("forex_backing", "Forex 10 mm / spate litere", 1.2638, "m2", 20.2208),
+            _row("plexiglas_face", "Plexiglas 3 mm / fata litere", 1.2638, "m2", 20.2208, quantity_basis="sheet_nesting_role_split_quote_estimate", quantity_source="svg_analysis_json.nesting|sheet_3000x2000|single_face"),
+            _row("forex_backing", "Forex 10 mm / spate litere", 1.2638, "m2", 20.2208, quantity_basis="backing_area_fallback_from_face_quoteable_area", quantity_source="sheet_nesting_face_quoteable|backing_area_missing"),
             _row("artwork_plexiglas_logo-stanga", "Plexiglas față emblemă — Logo 1", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_1_001"]),
             _row("artwork_plexiglas_logo-dreapta", "Plexiglas față emblemă — Logo 2", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_2_002"]),
             _row("artwork_forex_backing_logo-stanga", "Forex backing emblemă — Logo 1", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_backing_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_1_001"]),
             _row("artwork_forex_backing_logo-dreapta", "Forex backing emblemă — Logo 2", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_backing_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_2_002"]),
-            _row("letter_face_pseudo:ana_print_vinyl", "Material print Orafol - pseudo ana", 0.1964, "m2", 0.3534),
-            _row("letter_face_pseudo:ana_laminated_vinyl", "Material laminare Orafol - pseudo ana", 0.1964, "m2", 2.356),
-            _row("artwork_logo-stanga_print_vinyl", "Material print Orafol - logo stanga", 0.4002, "m2", 0.7205),
-            _row("artwork_logo-stanga_laminated_vinyl", "Material laminare Orafol - logo stanga", 0.4002, "m2", 4.803),
-            _row("artwork_logo-dreapta_print_vinyl", "Material print Orafol - logo dreapta", 0.4002, "m2", 0.7205),
-            _row("artwork_logo-dreapta_laminated_vinyl", "Material laminare Orafol - logo dreapta", 0.4002, "m2", 4.803),
+            _row("letter_face_pseudo:ana_print_vinyl", "Material print Orafol - pseudo ana", 0.1964, "m2", 0.3534, quantity_basis="print_area_quote_estimate", quantity_source="letter_group_finishes|geometry"),
+            _row("letter_face_pseudo:ana_laminated_vinyl", "Material laminare Orafol - pseudo ana", 0.1964, "m2", 2.356, quantity_basis="laminate_area_quote_estimate", quantity_source="letter_group_finishes|geometry"),
+            _row("artwork_logo-stanga_print_vinyl", "Material print Orafol - logo stanga", 0.4002, "m2", 0.7205, quantity_basis="print_area_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint", source_part_ids=["part_logo_1_001"]),
+            _row("artwork_logo-stanga_laminated_vinyl", "Material laminare Orafol - logo stanga", 0.4002, "m2", 4.803, quantity_basis="laminate_area_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint", source_part_ids=["part_logo_1_001"]),
+            _row("artwork_logo-dreapta_print_vinyl", "Material print Orafol - logo dreapta", 0.4002, "m2", 0.7205, quantity_basis="print_area_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint", source_part_ids=["part_logo_2_002"]),
+            _row("artwork_logo-dreapta_laminated_vinyl", "Material laminare Orafol - logo dreapta", 0.4002, "m2", 4.803, quantity_basis="laminate_area_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint", source_part_ids=["part_logo_2_002"]),
             _row("return_material", "Cant / volum litere + interioare + artwork", 31.6382, "m", 113.8974),
         ],
         consumable_rows=[
@@ -204,15 +215,15 @@ def _breakdown() -> SimpleNamespace:
             _row("cnc_face_cutting_plexiglas_3mm", "Debitare CNC fata Plexiglas", 25.0188, "ml", 37.5282),
             _row("cnc_face_bevel_plexiglas_3mm", "Sanfren CNC fata Plexiglas", 25.0188, "ml", 37.5282),
             _row("cnc_backing_cutting_forex_10mm", "Debitare CNC spate Forex", 25.0188, "ml", 187.641),
-            _row("letter_face_pseudo:ana_print_service", "Serviciu print - pseudo ana", 0.2356, "m2", 2.0026),
-            _row("letter_face_pseudo:ana_lamination_service", "Serviciu laminare X-PRO - pseudo ana", 0.2356, "m2", 0.4712),
-            _row("letter_face_pseudo:ana_application_service", "Serviciu aplicare - pseudo ana", 0.2356, "m2", 0.7068),
-            _row("artwork_logo-stanga_print_service", "Serviciu print - logo stanga", 0.4803, "m2", 4.0826),
-            _row("artwork_logo-stanga_lamination_service", "Serviciu laminare X-PRO - logo stanga", 0.4803, "m2", 0.9606),
-            _row("artwork_logo-stanga_application_service", "Serviciu aplicare - logo stanga", 0.4803, "m2", 1.4409),
-            _row("artwork_logo-dreapta_print_service", "Serviciu print - logo dreapta", 0.4803, "m2", 4.0826),
-            _row("artwork_logo-dreapta_lamination_service", "Serviciu laminare X-PRO - logo dreapta", 0.4803, "m2", 0.9606),
-            _row("artwork_logo-dreapta_application_service", "Serviciu aplicare - logo dreapta", 0.4803, "m2", 1.4409),
+            _row("letter_face_pseudo:ana_print_service", "Serviciu print - pseudo ana", 0.2356, "m2", 2.0026, operation_type="print_vinyl", basis_key="print_area_quote_estimate", basis_label="Arie print ofertata incl. waste", pricing_rate_key="workcenter_rates:LARGE_FORMAT_PRINT:per_square_meter", pricing_status="pricing_registry", operation_equivalent_quantity=0.2356, operation_equivalent_unit="m2"),
+            _row("letter_face_pseudo:ana_lamination_service", "Serviciu laminare X-PRO - pseudo ana", 0.2356, "m2", 0.4712, operation_type="lamination", basis_key="laminate_area_quote_estimate", basis_label="Arie laminare ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_LAMINATE:per_square_meter", pricing_status="intake_v6_owner_lamination_service", operation_equivalent_quantity=0.2356, operation_equivalent_unit="m2"),
+            _row("letter_face_pseudo:ana_application_service", "Serviciu aplicare - pseudo ana", 0.2356, "m2", 0.7068, operation_type="vinyl_application", basis_key="area_with_waste_fallback", basis_label="Arie aplicare vinil ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_VINYL_APPLICATION:per_square_meter", pricing_status="intake_v6_owner_application_service", operation_equivalent_quantity=0.2356, operation_equivalent_unit="m2"),
+            _row("artwork_logo-stanga_print_service", "Serviciu print - logo stanga", 0.4803, "m2", 4.0826, operation_type="print_vinyl", basis_key="print_area_quote_estimate", basis_label="Arie print ofertata incl. waste", pricing_rate_key="workcenter_rates:LARGE_FORMAT_PRINT:per_square_meter", pricing_status="pricing_registry", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
+            _row("artwork_logo-stanga_lamination_service", "Serviciu laminare X-PRO - logo stanga", 0.4803, "m2", 0.9606, operation_type="lamination", basis_key="laminate_area_quote_estimate", basis_label="Arie laminare ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_LAMINATE:per_square_meter", pricing_status="intake_v6_owner_lamination_service", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
+            _row("artwork_logo-stanga_application_service", "Serviciu aplicare - logo stanga", 0.4803, "m2", 1.4409, operation_type="vinyl_application", basis_key="print_area_quote_estimate", basis_label="Arie aplicare ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_VINYL_APPLICATION:per_square_meter", pricing_status="intake_v6_owner_application_service", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
+            _row("artwork_logo-dreapta_print_service", "Serviciu print - logo dreapta", 0.4803, "m2", 4.0826, operation_type="print_vinyl", basis_key="print_area_quote_estimate", basis_label="Arie print ofertata incl. waste", pricing_rate_key="workcenter_rates:LARGE_FORMAT_PRINT:per_square_meter", pricing_status="pricing_registry", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
+            _row("artwork_logo-dreapta_lamination_service", "Serviciu laminare X-PRO - logo dreapta", 0.4803, "m2", 0.9606, operation_type="lamination", basis_key="laminate_area_quote_estimate", basis_label="Arie laminare ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_LAMINATE:per_square_meter", pricing_status="intake_v6_owner_lamination_service", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
+            _row("artwork_logo-dreapta_application_service", "Serviciu aplicare - logo dreapta", 0.4803, "m2", 1.4409, operation_type="vinyl_application", basis_key="print_area_quote_estimate", basis_label="Arie aplicare ofertata incl. waste", pricing_rate_key="workcenter_rates:WC_VINYL_APPLICATION:per_square_meter", pricing_status="intake_v6_owner_application_service", operation_equivalent_quantity=0.4803, operation_equivalent_unit="m2"),
         ],
         edge_cant_operation_rows=[
             _row("edge_cant_bond_to_face", "Lipire cant / volum pe fata litere", 31.6382, "m", 158.191),
@@ -314,6 +325,85 @@ def test_gradi_logical_read_model_aggregates_split_print_lamination_application_
     assert len(by_id["service.application"]["child_rows"]) == 3
     assert by_id["material.face_oracal"]["line_id"] != by_id["material.print"]["line_id"]
     assert by_id["material.face_oracal"]["line_id"] != by_id["material.lamination"]["line_id"]
+
+
+def test_gradi_logical_read_model_exposes_child_trace_fields_for_materials_and_services() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=_dry_run()
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+
+    logo_child = by_id["material.logo_plexiglas_face"]["child_rows"][0]
+    forex_child = by_id["material.forex_backing"]["child_rows"][0]
+    print_child = by_id["material.print"]["child_rows"][1]
+    laminate_child = by_id["material.lamination"]["child_rows"][1]
+    print_service_child = by_id["service.print"]["child_rows"][1]
+    lamination_service_child = by_id["service.lamination"]["child_rows"][1]
+    application_service_child = by_id["service.application"]["child_rows"][1]
+
+    assert logo_child["quantity_basis"] == "linked_logo_face_bounding_footprint_quote_estimate"
+    assert logo_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment"
+    assert logo_child["source_part_ids"] == ["part_logo_1_001"]
+
+    assert forex_child["quantity_basis"] == "backing_area_fallback_from_face_quoteable_area"
+    assert forex_child["quantity_source"] == "pricing_registry" or forex_child["quantity_source"] == "sheet_nesting_face_quoteable|backing_area_missing"
+
+    assert print_child["quantity_basis"] == "print_area_quote_estimate"
+    assert print_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    assert laminate_child["quantity_basis"] == "laminate_area_quote_estimate"
+    assert laminate_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+
+    assert print_service_child["quantity_basis"] == "print_area_quote_estimate"
+    assert print_service_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    assert print_service_child["pricing_status"] == "pricing_registry"
+    assert print_service_child["pricing_rate_key"] == "workcenter_rates:LARGE_FORMAT_PRINT:per_square_meter"
+    assert print_service_child["waste_factor"] == pytest.approx(1.2, rel=0, abs=1e-4)
+
+    assert lamination_service_child["quantity_basis"] == "laminate_area_quote_estimate"
+    assert lamination_service_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    assert lamination_service_child["pricing_status"] == "intake_v6_owner_lamination_service"
+    assert lamination_service_child["waste_factor"] == pytest.approx(1.2, rel=0, abs=1e-4)
+
+    assert application_service_child["quantity_basis"] == "print_area_quote_estimate"
+    assert application_service_child["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+    assert application_service_child["pricing_status"] == "intake_v6_owner_application_service"
+    assert application_service_child["waste_factor"] == pytest.approx(1.2, rel=0, abs=1e-4)
+
+
+def test_gradi_logical_read_model_exposes_mixed_application_trace_without_hiding_fallbacks() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=_dry_run()
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+    app_children = {row["key"]: row for row in by_id["service.application"]["child_rows"]}
+
+    assert app_children["letter_face_pseudo:ana_application_service"]["quantity_basis"] == "area_with_waste_fallback"
+    assert app_children["letter_face_pseudo:ana_application_service"]["source_material_key"] == "letter_face_pseudo:ana_print_vinyl"
+    assert app_children["letter_face_pseudo:ana_application_service"]["quantity_source"] == "letter_group_finishes|geometry"
+    assert app_children["letter_face_pseudo:ana_application_service"]["waste_factor"] == pytest.approx(1.1996, rel=0, abs=1e-4)
+
+    assert app_children["artwork_logo-stanga_application_service"]["quantity_basis"] == "print_area_quote_estimate"
+    assert app_children["artwork_logo-stanga_application_service"]["source_material_key"] == "artwork_logo-stanga_print_vinyl"
+    assert app_children["artwork_logo-stanga_application_service"]["quantity_source"] == "quote_geometry.artwork_boxes|bounding_box_footprint"
+
+
+def test_gradi_logical_read_model_propagates_confirmed_face_source_part_ids_without_changing_quantities() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=_dry_run()
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+    letters = by_id["material.plexiglas_face"]
+    child = letters["child_rows"][0]
+
+    assert letters["quantity"] == pytest.approx(1.2638, rel=0, abs=1e-4)
+    assert letters["subtotal"] == pytest.approx(20.2208, rel=0, abs=1e-4)
+    assert letters["source_part_ids"] == [
+        "part_face_ana_003",
+        "part_face_gradinita_004",
+        "part_face_maria_001",
+        "part_face_soare_002",
+    ]
+    assert child["source_part_ids"] == letters["source_part_ids"]
 
 
 def test_logo_only_runtime_does_not_emit_letters_plexiglas_logical_row() -> None:

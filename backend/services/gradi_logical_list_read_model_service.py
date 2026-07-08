@@ -120,7 +120,95 @@ def _cost(row: dict[str, Any]) -> float | None:
     return _row_cost(row)
 
 
-def _child_ref(row: dict[str, Any]) -> dict[str, Any]:
+def _related_material_candidates_for_service(row: dict[str, Any]) -> list[str]:
+    key = _row_key(row)
+    if not key:
+        return []
+    if key.endswith("_print_service"):
+        return [f"{key[:-len('_print_service')]}_print_vinyl"]
+    if key.endswith("_lamination_service"):
+        return [f"{key[:-len('_lamination_service')]}_laminated_vinyl"]
+    if key.endswith("_application_service"):
+        prefix = key[:-len("_application_service")]
+        return [
+            f"{prefix}_print_vinyl",
+            f"{prefix}_face_vinyl",
+            f"{prefix}_laminated_vinyl",
+        ]
+    return []
+
+
+def _related_material_row_for_service(
+    row: dict[str, Any],
+    sibling_rows: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+    material_by_key = {
+        _row_key(candidate): candidate
+        for candidate in sibling_rows
+        if _row_key(candidate) and candidate is not row
+    }
+    for candidate_key in _related_material_candidates_for_service(row):
+        candidate = material_by_key.get(candidate_key)
+        if isinstance(candidate, dict):
+            return candidate
+    return None
+
+
+def _service_trace_fields(
+    row: dict[str, Any],
+    sibling_rows: list[dict[str, Any]],
+) -> dict[str, Any]:
+    related_material = _related_material_row_for_service(row, sibling_rows)
+    service_quantity = _positive(row.get("operation_equivalent_quantity")) or _positive(row.get("quantity"))
+    source_quantity = _positive(related_material.get("quantity")) if isinstance(related_material, dict) else None
+
+    waste_factor = None
+    waste_percent = None
+    if service_quantity is not None and source_quantity is not None and source_quantity > 0:
+        waste_factor = round(service_quantity / source_quantity, 4)
+        waste_percent = round((waste_factor - 1.0) * 100.0, 4)
+
+    gaps = list(row.get("mapping_gaps") or row.get("gaps") or [])
+    if not row.get("basis_key"):
+        gaps.append("SERVICE_BASIS_KEY_MISSING")
+    if not row.get("basis_label"):
+        gaps.append("SERVICE_BASIS_LABEL_MISSING")
+    if related_material is None:
+        gaps.append("SERVICE_SOURCE_MATERIAL_ROW_MISSING")
+    elif not related_material.get("quantity_source"):
+        gaps.append("SERVICE_SOURCE_TRACE_UNRESOLVED")
+
+    trace_fields: dict[str, Any] = {
+        "quantity_basis": row.get("basis_key") or row.get("basis_label"),
+        "basis_key": row.get("basis_key"),
+        "basis_label": row.get("basis_label"),
+        "pricing_status": row.get("pricing_status"),
+        "pricing_rate_key": row.get("pricing_rate_key"),
+        "operation_equivalent_quantity": row.get("operation_equivalent_quantity"),
+        "operation_equivalent_unit": row.get("operation_equivalent_unit"),
+        "quantity_source": related_material.get("quantity_source") if isinstance(related_material, dict) else None,
+        "source_material_key": _row_key(related_material) if isinstance(related_material, dict) else None,
+        "source_material_quantity": related_material.get("quantity") if isinstance(related_material, dict) else None,
+        "source_material_unit": related_material.get("unit") if isinstance(related_material, dict) else None,
+        "source_part_ids": (
+            list(related_material.get("source_part_ids") or [])
+            if isinstance(related_material, dict) and related_material.get("source_part_ids")
+            else list(row.get("source_part_ids") or [])
+        ),
+        "warnings": list(row.get("warnings") or []),
+        "gaps": sorted({str(gap) for gap in gaps if isinstance(gap, str) and gap.strip()}),
+    }
+    if waste_factor is not None:
+        trace_fields["waste_factor"] = waste_factor
+        trace_fields["waste_percent"] = waste_percent
+        trace_fields["waste_note"] = (
+            f"service quantity follows source material quantity with waste factor {waste_factor:g}"
+        )
+    return trace_fields
+
+
+def _child_ref(row: dict[str, Any], sibling_rows: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    sibling_rows = sibling_rows or []
     child = {
         "key": _row_key(row),
         "label": _row_label(row),
@@ -130,13 +218,26 @@ def _child_ref(row: dict[str, Any]) -> dict[str, Any]:
         "currency": row.get("currency"),
         "runtime_source": _source(row),
         "basis": row.get("quantity_basis") or row.get("basis_label") or row.get("basis_type"),
+        "quantity_basis": row.get("quantity_basis"),
+        "quantity_source": row.get("quantity_source"),
+        "warnings": list(row.get("warnings") or []),
+        "gaps": list(row.get("gaps") or row.get("mapping_gaps") or []),
     }
+    if row.get("operation_type"):
+        child.update(_service_trace_fields(row, sibling_rows))
     for key in (
         "series",
         "selected_series",
         "material_code",
         "source_part_ids",
         "trace_markers",
+        "pricing_status",
+        "pricing_rate_key",
+        "basis_key",
+        "basis_label",
+        "operation_type",
+        "operation_equivalent_quantity",
+        "operation_equivalent_unit",
         "inventory_consumption_key",
         "inventory_color_keys",
         "group_keys",
@@ -395,8 +496,9 @@ def _line(
     currency: str | None = None,
     runtime_source: str | None = None,
     formula_status: str = "proposed_binding",
+    trace_rows: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
-    child_rows = [_child_ref(row) for row in (rows or [])]
+    child_rows = [_child_ref(row, trace_rows or rows or []) for row in (rows or [])]
     first = (rows or [None])[0]
     resolved_quantity = quantity if quantity is not None else (_sum_quantity(rows or []) if rows else None)
     resolved_unit = unit if unit is not None else (first.get("unit") if first else None)
@@ -610,6 +712,46 @@ def _runtime_material_source_part_ids(rows: list[dict[str, Any]]) -> list[str]:
             if isinstance(part_id, str) and part_id.strip()
         }
     )
+
+
+def _confirmed_role(layer_role_setup: dict[str, Any] | None, layer_id: str, layer_name: str) -> str | None:
+    layers = layer_role_setup.get("layers") if isinstance(layer_role_setup, dict) else None
+    if not isinstance(layers, list):
+        return None
+    for entry in layers:
+        if not isinstance(entry, dict):
+            continue
+        entry_key = str(entry.get("layer_key") or entry.get("layerKey") or "")
+        entry_id = str(entry.get("layer_id") or entry.get("layerId") or "")
+        entry_name = str(entry.get("layer_name") or entry.get("layerName") or "")
+        if layer_id not in {entry_key, entry_id, entry_name} and layer_name not in {entry_key, entry_id, entry_name}:
+            continue
+        state = str(entry.get("confirmation_state") or entry.get("confirmationState") or "").strip().lower()
+        if state == "ignored":
+            return None
+        return str(entry.get("confirmed_role") or entry.get("confirmedRole") or entry.get("auto_role") or entry.get("autoRole") or "").strip().lower() or None
+    return None
+
+
+def _confirmed_face_source_part_ids(workspace_payload: dict[str, Any]) -> list[str]:
+    analysis = _svg_analysis(workspace_payload)
+    parts = (analysis.get("parts") or {}).get("items") if isinstance(analysis.get("parts"), dict) else None
+    if not isinstance(parts, list):
+        return []
+    layer_role_setup = _layer_role_setup(workspace_payload)
+    result: list[str] = []
+    for item in parts:
+        if not isinstance(item, dict):
+            continue
+        part_id = str(item.get("id") or "").strip()
+        if not part_id:
+            continue
+        source = item.get("source") if isinstance(item.get("source"), dict) else {}
+        layer_id = str(source.get("layerId") or "")
+        layer_name = str(source.get("layerName") or layer_id)
+        if _confirmed_role(layer_role_setup, layer_id, layer_name) == "face":
+            result.append(part_id)
+    return sorted({part_id for part_id in result if part_id})
 
 
 def _runtime_material_rows_with_prefix(rows: list[dict[str, Any]], prefix: str) -> list[dict[str, Any]]:
@@ -972,6 +1114,7 @@ def build_gradi_logical_list_read_model_from_runtime(
     logo_runtime_plexi_source_part_ids = _runtime_material_source_part_ids(logo_runtime_plexi_rows)
     linked_logo_backing_rows = _runtime_material_rows_with_prefix(material_rows, "artwork_forex_backing_")
     forex_rows = mat("forex_backing") + linked_logo_backing_rows
+    all_runtime_rows = [*material_rows, *consumable_rows, *operation_rows, *edge_rows]
 
     rows: list[dict[str, Any]] = [
         *([_line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face"))] if has_confirmed_letter_face_content else []),
@@ -1015,13 +1158,13 @@ def build_gradi_logical_list_read_model_from_runtime(
         _line(line_id="service.cnc_face_bevel", display_label="Canal plat ghidaj fata Plexiglas", category=CORE_CATEGORY_SERVICES, component_code="comp_face_litere", module_code="debitare_fata", formula_code="SERVICE_CNC_FACE_BEVEL_BY_CONTOUR_LENGTH_V1", rows=op("cnc_face_bevel_plexiglas_3mm")),
         _line(line_id="service.cnc_back", display_label="Debitare CNC spate Forex", category=CORE_CATEGORY_SERVICES, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="SERVICE_CNC_BACK_CUT_BY_CONTOUR_LENGTH_V1", rows=op("cnc_backing_cutting_forex_10mm"), status="PARTIAL", gaps=["DRY_RUN_BACK_CNC_M2_DEV_BRIDGE"], warnings=["Material is m2; CNC service is contour ml; dry-run commercial bridge remains m2."]),
         *([
-        _line(line_id="service.print", display_label="Serviciu print", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_PRINT_BY_AREA_V1", rows=print_service_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        _line(line_id="service.print", display_label="Serviciu print", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_PRINT_BY_AREA_V1", rows=print_service_rows, status="SPLIT_IN_RUNTIME", gaps=["PRINT_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], trace_rows=all_runtime_rows)
         ] if print_service_rows else []),
         *([
-        _line(line_id="service.lamination", display_label="Serviciu laminare X-PRO", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_LAMINATION_BY_AREA_V1", rows=lamination_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        _line(line_id="service.lamination", display_label="Serviciu laminare X-PRO", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_LAMINATION_BY_AREA_V1", rows=lamination_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["LAMINATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], trace_rows=all_runtime_rows)
         ] if lamination_service_rows else []),
         *([
-        _line(line_id="service.application", display_label="Serviciu aplicare", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_APPLICATION_BY_AREA_V1", rows=application_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"])
+        _line(line_id="service.application", display_label="Serviciu aplicare", category=CORE_CATEGORY_SERVICES, component_code="comp_finisaj_litere", module_code="finisaje", formula_code="SERVICE_APPLICATION_BY_AREA_V1", rows=application_service_rows, status="SPLIT_IN_RUNTIME", formula_status="legacy_unversioned", gaps=["APPLICATION_SERVICE_ROWS_AGGREGATED_FOR_LOGICAL_LIST"], trace_rows=all_runtime_rows)
         ] if application_service_rows else []),
         _line(line_id="labor.cant_glue", display_label="Lipire cant / volum pe fata litere", category=CORE_CATEGORY_LABOR, component_code="comp_lateral_litere", module_code="modelare_cant", formula_code="LABOR_CANT_GLUE_BY_PERIMETER_V1", rows=edge_rows, warnings=["Current runtime keeps cant labor constant across 60/80/100 depth variants."]),
     ]
@@ -1106,6 +1249,14 @@ def build_gradi_logical_list_read_model_from_runtime(
             )
             if "ORACAL_ROLL_COLOR_SPLIT_MISSING" in response_warnings:
                 oracal_row["warnings"] = sorted(set(list(oracal_row.get("warnings") or []) + ["ORACAL_ROLL_COLOR_SPLIT_MISSING"]))
+
+    letter_face_source_part_ids = _confirmed_face_source_part_ids(workspace_payload)
+    letter_plexi_row = next((row for row in rows if row.get("line_id") == "material.plexiglas_face"), None)
+    if isinstance(letter_plexi_row, dict) and letter_face_source_part_ids:
+        letter_plexi_row["source_part_ids"] = letter_face_source_part_ids
+        for child in letter_plexi_row.get("child_rows") or []:
+            if isinstance(child, dict) and not child.get("source_part_ids"):
+                child["source_part_ids"] = letter_face_source_part_ids
 
     logo_plexi_row = next((row for row in rows if row.get("line_id") == "material.logo_plexiglas_face"), None)
     if isinstance(logo_plexi_row, dict) and logo_runtime_plexi_source_part_ids:
