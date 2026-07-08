@@ -1090,7 +1090,18 @@ def build_gradi_logical_list_read_model_from_runtime(
 
     required_psu = finish.get("required_psu_watts")
     selected_psu = finish.get("selected_psu_watts")
-    if isinstance(required_psu, (int, float)) and isinstance(selected_psu, (int, float)) and selected_psu < required_psu:
+    psu_configuration = finish.get("psu_configuration")
+    configured_psu_capacity = None
+    if isinstance(psu_configuration, list):
+        configured_psu_values = [
+            float(value)
+            for value in psu_configuration
+            if isinstance(value, (int, float))
+        ]
+        if configured_psu_values:
+            configured_psu_capacity = sum(configured_psu_values)
+    effective_psu_capacity = configured_psu_capacity if isinstance(configured_psu_capacity, (int, float)) else selected_psu
+    if isinstance(required_psu, (int, float)) and isinstance(effective_psu_capacity, (int, float)) and effective_psu_capacity < required_psu:
         response_warnings.append("PSU_UNDERSIZED")
         response_blockers.append("PSU_UNDERSIZED")
 
@@ -1148,7 +1159,7 @@ def build_gradi_logical_list_read_model_from_runtime(
         ] if lamination_material_rows else []),
         _line(line_id="material.return_profile", display_label="Cant / volum litere + interioare + artwork", category=CORE_CATEGORY_MATERIALS, component_code="comp_lateral_litere", module_code="modelare_cant", formula_code="MATERIAL_CANT_BY_PERIMETER_DEPTH_V1", rows=mat("return_material"), warnings=["Cant labor is intentionally separate and depth-independent in current runtime trace."]),
         _line(line_id="material.led_modules", display_label="Module LED", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_LED_MODULES_BY_AREA_DENSITY_V1", rows=con("led_modules"), formula_status="legacy_unversioned", gaps=["FORMULA_TRACE_MISSING"]),
-        _line(line_id="material.led_psu", display_label="Sursa LED 12V", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_PSU_BY_POWER_SAFETY_FACTOR_V1", rows=con("led_psu"), formula_status="legacy_unversioned", preferences={"required_psu_watts": required_psu, "selected_psu_watts": selected_psu, "psu_configuration": finish.get("psu_configuration")}, warnings=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_warnings else [], blockers=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_blockers else []),
+        _line(line_id="material.led_psu", display_label="Sursa LED 12V", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_PSU_BY_POWER_SAFETY_FACTOR_V1", rows=con("led_psu"), formula_status="legacy_unversioned", preferences={"required_psu_watts": required_psu, "selected_psu_watts": selected_psu, "configured_psu_capacity": configured_psu_capacity, "psu_configuration": psu_configuration}, warnings=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_warnings else [], blockers=["PSU_UNDERSIZED"] if "PSU_UNDERSIZED" in response_blockers else []),
         _line(line_id="material.adhesive_cant", display_label="Adeziv lipire cant pe fete litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_lateral_litere", module_code="modelare_cant", formula_code="MATERIAL_ADHESIVE_CANT_BY_PERIMETER_V1", rows=con("adhesive_return_to_face")),
         _line(line_id="material.adhesive_led", display_label="Adeziv suplimentar module LED", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_ADHESIVE_LED_BY_MODULE_COUNT_V1", rows=con("adhesive_led_modules")),
         _line(line_id="material.wire_letters", display_label="Cablu electric MYYUP 2 x 0.75", category=CORE_CATEGORY_MATERIALS, component_code="comp_led_litere", module_code="sistem_led", formula_code="MATERIAL_CABLE_LOW_VOLTAGE_BY_RULE_V1", rows=con("wire_letters_myyup_2x075")),

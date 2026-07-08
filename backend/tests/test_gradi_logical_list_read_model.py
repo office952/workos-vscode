@@ -35,7 +35,8 @@ def _row(key: str, label: str, quantity: float, unit: str, cost: float, **extra)
     )
 
 
-def _payload(*, selected_psu_watts: int = 100) -> dict:
+def _payload(*, selected_psu_watts: int = 100, psu_configuration: list[int] | None = None) -> dict:
+    effective_psu_configuration = psu_configuration if psu_configuration is not None else [160]
     return {
         "svg_source": {"file_name": "gradi-curat.svg"},
         "svg_analysis_json": {
@@ -91,7 +92,7 @@ def _payload(*, selected_psu_watts: int = 100) -> dict:
         "finish_setup": {
             "required_psu_watts": 140.4,
             "selected_psu_watts": selected_psu_watts,
-            "psu_configuration": [160],
+            "psu_configuration": effective_psu_configuration,
             "backing_mode": "forex_10_no_bevel",
             "letter_group_finishes": [
                 {"group_key": "pseudo:maria", "layer_name": "pseudo:maria", "face_finish_type": "oracal_651", "face_oracal_code": "053", "face_oracal_name": "Light blue", "face_vinyl_roll_width_mm": 1000},
@@ -767,7 +768,7 @@ def test_gradi_logical_read_model_uses_geometry_fallback_for_cnc_trace_when_oper
 
 def test_gradi_logical_read_model_flags_undersized_psu() -> None:
     result = build_gradi_logical_list_read_model_from_runtime(
-        workspace_payload=_payload(selected_psu_watts=60),
+        workspace_payload=_payload(selected_psu_watts=60, psu_configuration=[60]),
         material_breakdown=_breakdown(),
         priced_dry_run=_dry_run(),
     )
@@ -777,3 +778,18 @@ def test_gradi_logical_read_model_flags_undersized_psu() -> None:
     assert "PSU_UNDERSIZED" in result["blockers"]
     assert "PSU_UNDERSIZED" in psu["warnings"]
     assert "PSU_UNDERSIZED" in psu["blockers"]
+
+
+def test_gradi_logical_read_model_uses_configured_psu_capacity_before_selected_value() -> None:
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(selected_psu_watts=100),
+        material_breakdown=_breakdown(),
+        priced_dry_run=_dry_run(),
+    )
+    psu = {row["line_id"]: row for row in result["rows"]}["material.led_psu"]
+
+    assert "PSU_UNDERSIZED" not in result["warnings"]
+    assert "PSU_UNDERSIZED" not in result["blockers"]
+    assert "PSU_UNDERSIZED" not in psu["warnings"]
+    assert "PSU_UNDERSIZED" not in psu["blockers"]
+    assert psu["preferences"]["configured_psu_capacity"] == 160.0
