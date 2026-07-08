@@ -32,6 +32,15 @@ export default function FormSystemBackboneAwarenessPanel({
 }) {
   const model = buildFormSystemBackboneAwarenessModel(backbone, runtimeState ?? null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const visibleBlockerRows = model.blockerRows.slice(0, 4);
+  const visibleBlockerKeys = new Set(
+    visibleBlockerRows.map((blocker) => `${blocker.blockerCode}-${blocker.component}-${blocker.fieldKey ?? "broad"}`),
+  );
+  const hiddenBroadBlockers = model.blockerRows.filter(
+    (blocker) =>
+      blocker.isBroadOrGlobal &&
+      !visibleBlockerKeys.has(`${blocker.blockerCode}-${blocker.component}-${blocker.fieldKey ?? "broad"}`),
+  );
   const summaryText = model.available
     ? `${model.root.canonicalCode} · ${model.fields.length} fields · ${model.blockers.length} blockers · ${model.downstreamWriteSafe ? "downstream safe" : "write-intent warning"}`
     : "diagnostic unavailable · Review flow unchanged";
@@ -145,8 +154,9 @@ export default function FormSystemBackboneAwarenessPanel({
             <div className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2" data-testid="form-system-backbone-blockers">
               <p className="mb-1 font-semibold text-slate-100">Readiness / blockers ({model.blockers.length})</p>
               {model.blockerRows.length > 0 ? (
+                <>
                 <ul className="space-y-1 text-slate-300">
-                  {model.blockerRows.slice(0, 4).map((blocker) => (
+                  {visibleBlockerRows.map((blocker) => (
                     <li key={`${blocker.blockerCode}-${blocker.component}-${blocker.fieldKey ?? "broad"}`}>
                       <span className={`font-mono text-[10px] ${blocker.severity === "relaxed_field_level" ? "text-emerald-200" : "text-amber-200"}`}>
                         {blocker.blockerCode}
@@ -163,6 +173,20 @@ export default function FormSystemBackboneAwarenessPanel({
                     </li>
                   ))}
                 </ul>
+                {hiddenBroadBlockers.length > 0 ? (
+                  <div className="mt-2 rounded border border-red-800/40 bg-red-950/15 px-2.5 py-2" data-testid="form-system-backbone-global-blockers">
+                    <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-red-200">Product Truth blockers</p>
+                    <ul className="space-y-1 text-slate-300">
+                      {hiddenBroadBlockers.map((blocker) => (
+                        <li key={`global-${blocker.blockerCode}-${blocker.component}-${blocker.fieldKey ?? "broad"}`}>
+                          <span className="font-mono text-[10px] text-red-200">{blocker.blockerCode}</span>
+                          <span className="text-slate-500"> · {blocker.component}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                </>
               ) : (
                 <p className="text-slate-400">No blockers reported by the read-only contract.</p>
               )}

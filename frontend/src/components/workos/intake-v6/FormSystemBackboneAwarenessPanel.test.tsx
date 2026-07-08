@@ -145,6 +145,27 @@ describe("FormSystemBackboneAwarenessPanel", () => {
     expect(screen.getAllByTestId("form-system-backbone-blocker-relaxed")).toHaveLength(1);
   });
 
+  it("surfaces broad blockers explicitly when the visible blocker slice is full", () => {
+    const crowdedBackbone: FormSystemBackboneContract = {
+      ...backbone,
+      blockers: [
+        { field_key: "svg.layer_group_role", blocker_code: "LAYER_ROLES_INCOMPLETE", owning_component: "svg_layer_roles", message: "Confirm roles" },
+        { field_key: "svg.selected_layer_group", blocker_code: "SELECTED_FACE_LAYER_MISSING", owning_component: "svg_layer_roles", message: "Select face layer" },
+        { field_key: "face.material", blocker_code: "FACE_MATERIAL_MISSING", owning_component: "face", message: "Face material missing" },
+        { field_key: "face.finish_artwork_target", blocker_code: "FACE_FINISH_TARGET_MISSING", owning_component: "finish_artwork", message: "Finish target missing" },
+        { field_key: "readiness.product_truth_blockers", blocker_code: "PRODUCT_TRUTH_INCOMPLETE", owning_component: "readiness", message: "Readiness summarizes missing required truth." },
+      ],
+    };
+
+    render(<FormSystemBackboneAwarenessPanel backbone={crowdedBackbone} runtimeState={runtimeState} />);
+
+    fireEvent.click(screen.getByTestId("form-system-backbone-toggle"));
+
+    expect(screen.getByTestId("form-system-backbone-blockers")).toHaveTextContent("Readiness / blockers (5)");
+    expect(screen.getByTestId("form-system-backbone-global-blockers")).toHaveTextContent("PRODUCT_TRUTH_INCOMPLETE");
+    expect(screen.getByTestId("form-system-backbone-global-blockers")).toHaveTextContent("Product Truth blockers");
+  });
+
   it("handles missing backbone compactly without crashing", () => {
     render(<FormSystemBackboneAwarenessPanel backbone={null} />);
 
