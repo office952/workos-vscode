@@ -13,11 +13,13 @@ describe("activeTemplateScope", () => {
     expect(isOwnerValidActiveTemplate(OWNER_VALID_ACTIVE_TEMPLATE_CODE)).toBe(true);
     expect(isOwnerValidActiveTemplate("TPL-VOLUMETRIC-LOGO_v1")).toBe(false);
     expect(isOwnerValidActiveTemplate("TPL-VOLUM-ALUMINIU_v1")).toBe(false);
+    expect(isOwnerValidActiveTemplate("TPL-METAL-PREMOUNT-STRUCTURE_v1")).toBe(false);
   });
 
   it("keeps only the current owner-valid root template active for quote scope", () => {
     const templates = [
       { template_code: OWNER_VALID_ACTIVE_TEMPLATE_CODE, active: true },
+      { template_code: "TPL-METAL-PREMOUNT-STRUCTURE_v1", active: true },
       { template_code: "TPL-VOLUM-ALUMINIU_v1", active: true },
       { template_code: "TPL-VOLUMETRIC-LOGO_v1", active: true },
       { template_code: "TPL-LEGACY-EXPERIMENT", active: true },
@@ -27,6 +29,7 @@ describe("activeTemplateScope", () => {
       { template_code: OWNER_VALID_ACTIVE_TEMPLATE_CODE, active: true },
     ]);
     expect(filterArchivedExperimentalTemplates(templates)).toEqual([
+      { template_code: "TPL-METAL-PREMOUNT-STRUCTURE_v1", active: true },
       { template_code: "TPL-VOLUM-ALUMINIU_v1", active: true },
       { template_code: "TPL-VOLUMETRIC-LOGO_v1", active: true },
       { template_code: "TPL-LEGACY-EXPERIMENT", active: true },
