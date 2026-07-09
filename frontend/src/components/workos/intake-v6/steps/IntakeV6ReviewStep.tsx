@@ -6,6 +6,7 @@ import {
   getIntakeV6LogicalListReadModel,
   getIntakeV6MaterialBreakdown,
   getIntakeV6OrderBoundTaskReadiness,
+  getIntakeV6ProductTruthPromotionPlanner,
   getIntakeV6PricedQuoteDryRun,
   getIntakeV6PricingInputPreview,
   getIntakeV6ProductionHandoffPreview,
@@ -21,6 +22,7 @@ import {
   type IntakeV6LogicalListReadModelResponse,
   type IntakeV6MaterialBreakdownResponse,
   type IntakeV6OrderBoundTaskReadinessResponse,
+  type IntakeV6ProductTruthPromotionPlannerResponse,
   type IntakeV6PricedQuoteDryRunResponse,
   type IntakeV6PricingInputPreviewResponse,
   type IntakeV6ProductionHandoffPreviewResponse,
@@ -88,6 +90,7 @@ import IntakeV6QuoteCommercialSpinePanel from "../IntakeV6QuoteCommercialSpinePa
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
 import FormSystemBackboneAwarenessPanel from "../FormSystemBackboneAwarenessPanel";
 import FormSystemRuntimeCaptureReadModelPanel from "../FormSystemRuntimeCaptureReadModelPanel";
+import ProductTruthPromotionPlannerPanel from "../ProductTruthPromotionPlannerPanel";
 import { toast } from "@/components/ui/sonner";
 import { buildProductTruthDraft } from "@/lib/intakeV6/productTruth/productTruthDraftBuilder";
 import { mapReturnCantTruthFieldsReadonly } from "@/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper";
@@ -600,6 +603,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [productDefinitionPreview, setProductDefinitionPreview] = useState<ProductDefinitionPreview | null>(null);
   const [runtimeCaptureReadModel, setRuntimeCaptureReadModel] =
     useState<IntakeV6RuntimeCaptureReadModelResponse | null>(null);
+  const [productTruthPromotionPlanner, setProductTruthPromotionPlanner] =
+    useState<IntakeV6ProductTruthPromotionPlannerResponse | null>(null);
   const templateFormContract = templateContract.contract;
   const modularTemplateCode =
     binding?.template_code?.trim() ||
@@ -657,11 +662,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [loadingOrderBoundReadiness, setLoadingOrderBoundReadiness] = useState(false);
   const [loadingBreakdown, setLoadingBreakdown] = useState(false);
   const [loadingRuntimeCaptureReadModel, setLoadingRuntimeCaptureReadModel] = useState(false);
+  const [loadingProductTruthPromotionPlanner, setLoadingProductTruthPromotionPlanner] = useState(false);
   const [localSheetQuoteOverride, setLocalSheetQuoteOverride] =
     useState<IntakeV6SheetFootprintOverride | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [runtimeCaptureReadModelError, setRuntimeCaptureReadModelError] = useState<string | null>(null);
+  const [productTruthPromotionPlannerError, setProductTruthPromotionPlannerError] = useState<string | null>(null);
   const [previewRefresh, setPreviewRefresh] = useState<ReviewPreviewRefreshState>(
     INITIAL_REVIEW_PREVIEW_REFRESH,
   );
@@ -1017,6 +1024,42 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       })
       .finally(() => {
         if (!cancelled) setLoadingRuntimeCaptureReadModel(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId, state.workspace?.updated_at]);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setProductTruthPromotionPlanner(null);
+      setProductTruthPromotionPlannerError(null);
+      setLoadingProductTruthPromotionPlanner(false);
+      return;
+    }
+    let cancelled = false;
+    const resetPlanner = productTruthPromotionPlanner?.workspace_id !== workspaceId;
+    if (resetPlanner) {
+      setProductTruthPromotionPlanner(null);
+    }
+    setProductTruthPromotionPlannerError(null);
+    setLoadingProductTruthPromotionPlanner(true);
+    void getIntakeV6ProductTruthPromotionPlanner(workspaceId)
+      .then((response) => {
+        if (!cancelled) setProductTruthPromotionPlanner(response);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          if (resetPlanner) {
+            setProductTruthPromotionPlanner(null);
+          }
+          setProductTruthPromotionPlannerError(
+            err instanceof Error ? err.message : "Product truth promotion planner indisponibil.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingProductTruthPromotionPlanner(false);
       });
     return () => {
       cancelled = true;
@@ -2156,6 +2199,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         model={runtimeCaptureReadModel}
         loading={loadingRuntimeCaptureReadModel}
         error={runtimeCaptureReadModelError}
+      />
+
+      <ProductTruthPromotionPlannerPanel
+        model={productTruthPromotionPlanner}
+        loading={loadingProductTruthPromotionPlanner}
+        error={productTruthPromotionPlannerError}
       />
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">

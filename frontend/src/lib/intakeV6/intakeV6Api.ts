@@ -95,6 +95,41 @@ export interface IntakeV6RuntimeCaptureReadModelResponse {
   notes: string[];
 }
 
+export interface IntakeV6ProductTruthPromotionPlannerEntry {
+  entry_key: string;
+  field_key: string;
+  runtime_source: string;
+  product_truth_path: string;
+  state: string;
+  value_status: string;
+  promotion_allowed: boolean;
+  reason: string;
+  blockers: string[];
+  identity_key?: string;
+}
+
+export interface IntakeV6ProductTruthPromotionPlannerBlocker {
+  field_key: string;
+  identity_key?: string;
+  blockers: string[];
+  state: string;
+}
+
+export interface IntakeV6ProductTruthPromotionPlannerResponse {
+  read_only: boolean;
+  workspace_id: string;
+  workspace_record_id: string;
+  workspace_code: string;
+  root_template_code: string | null;
+  product_binding_template_code: string | null;
+  planner_version: string;
+  eligible_entries: IntakeV6ProductTruthPromotionPlannerEntry[];
+  blocked_entries: IntakeV6ProductTruthPromotionPlannerEntry[];
+  blockers: IntakeV6ProductTruthPromotionPlannerBlocker[];
+  downstream_write_intent: Record<string, boolean>;
+  notes: string[];
+}
+
 function parseIntakeV6ApiErrorMessage(status: number, raw: string): string {
   if (!raw.trim()) return `Request failed (${status})`;
   try {
@@ -315,6 +350,14 @@ export async function getIntakeV6RuntimeCaptureReadModel(
 ): Promise<IntakeV6RuntimeCaptureReadModelResponse> {
   return requestIntakeV6Json(
     `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/runtime-capture-read-model`,
+  );
+}
+
+export async function getIntakeV6ProductTruthPromotionPlanner(
+  workspaceId: string,
+): Promise<IntakeV6ProductTruthPromotionPlannerResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/product-truth-promotion-planner`,
   );
 }
 
