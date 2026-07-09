@@ -79,7 +79,6 @@ import {
   shouldPreferAggregateDisplay,
 } from "@/features/product-system/productAggregateDisplay";
 import {
-  TemplateLibraryView,
   type CatalogDensity,
   type ProductSystemCatalogView,
   type TemplateLibraryRowSummary,
@@ -87,6 +86,13 @@ import {
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "@/features/product-system/componentFirstReadonlyCompleteness";
 import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
+import { buildComponentFirstReadonlySetModel } from "@/features/product-system/componentFirstReadonlySetModel";
+import {
+  ProductSystemCatalogShell,
+  buildProductSystemCatalogSummary,
+  getDefaultProductSystemPrimaryTab,
+} from "@/features/product-system/ProductSystemCatalogShell";
+import type { ProductSystemPrimaryTab } from "@/features/product-system/productSystemCatalogShellTypes";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -3329,6 +3335,7 @@ export default function ProductSystem() {
   const [librarySearch, setLibrarySearch] = useState("");
   const [catalogView, setCatalogView] = useState<ProductSystemCatalogView>("overview");
   const [catalogDensity, setCatalogDensity] = useState<CatalogDensity>("compact");
+  const [primaryTab, setPrimaryTab] = useState<ProductSystemPrimaryTab>(getDefaultProductSystemPrimaryTab);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState<DraftTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -3547,6 +3554,40 @@ export default function ProductSystem() {
       selectedTemplateCode={COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE}
     />
   ) : null;
+
+  const hasComponentFirstCandidate = useMemo(
+    () =>
+      buildComponentFirstReadonlySetModel(templates, availabilityItems, COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE) !=
+      null,
+    [templates, availabilityItems],
+  );
+
+  const ownerDecisionRequiredCount = useMemo(
+    () => availabilityItems.filter((item) => item.owner_decision_required).length,
+    [availabilityItems],
+  );
+
+  const catalogSummary = useMemo(
+    () =>
+      buildProductSystemCatalogSummary({
+        catalogCounts,
+        archivedCount,
+        hasComponentFirstCandidate,
+        ownerDecisionRequiredCount,
+      }),
+    [catalogCounts, archivedCount, hasComponentFirstCandidate, ownerDecisionRequiredCount],
+  );
+
+  const handlePrimaryTabChange = useCallback((tab: ProductSystemPrimaryTab) => {
+    setPrimaryTab(tab);
+    if (tab === "products") {
+      setCatalogView("overview");
+    } else if (tab === "components") {
+      setCatalogView("components");
+    } else if (tab === "archived") {
+      setCatalogView("archived");
+    }
+  }, []);
 
   const editorReadOnly = useMemo(() => {
     if (isNew || !selectedId) return false;
@@ -3831,62 +3872,41 @@ export default function ProductSystem() {
             </p>
           </div>
         ) : shouldShowLibraryScreen(screen) ? (
-          <div className="space-y-4">
-            <section
-              data-testid="product-system-catalog-overview"
-              className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
-            >
-              <h2 className="text-[14px] font-bold text-slate-100">Catalog Overview</h2>
-              <p className="mt-1 text-[11px] text-slate-400">
-                Product System separates offerable existing roots from parallel readonly candidate sets. Component-first
-                letters remain inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
-              </p>
-            </section>
-
-            {componentFirstLibraryReadonlyPanel ? (
+          <ProductSystemCatalogShell
+            primaryTab={primaryTab}
+            onPrimaryTabChange={handlePrimaryTabChange}
+            summary={catalogSummary}
+            hasComponentFirstCandidate={hasComponentFirstCandidate}
+            catalogOverview={
               <section
-                data-testid="product-system-candidate-sets"
-                className="rounded-xl border border-cyan-900/40 bg-slate-950/20 px-4 py-3"
+                data-testid="product-system-catalog-overview"
+                className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
               >
-                <h2 className="text-[14px] font-bold text-cyan-100">Candidate Sets</h2>
-                <p className="mt-1 text-[11px] text-cyan-200/70">
-                  Readonly parallel sets â€” not in Work Intake, not offerable, no activation controls.
+                <h2 className="text-[14px] font-bold text-slate-100">Catalog Overview</h2>
+                <p className="mt-1 text-[12px] text-slate-400">
+                  Product System separates offerable existing roots from parallel readonly candidate sets. Component-first
+                  letters remain inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
                 </p>
-                <div className="mt-3">{componentFirstLibraryReadonlyPanel}</div>
               </section>
-            ) : null}
-
-            <section
-              data-testid="product-system-existing-roots"
-              className="rounded-xl border border-purple-900/30 bg-slate-950/20 px-4 py-3"
-            >
-              <h2 className="text-[14px] font-bold text-slate-100">Existing Roots</h2>
-              <p className="mt-1 text-[11px] text-slate-400">
-                Active catalog including TPL-VOLUMETRIC-LETTERS_v2 (offerable root). Offerable status below applies to
-                existing roots only â€” not to component-first candidate sets above.
-              </p>
-              <div className="mt-3">
-                <TemplateLibraryView
-                  templates={templates}
-                  availabilityItems={availabilityItems}
-                  tab={libraryTab}
-                  onTabChange={setLibraryTab}
-                  search={librarySearch}
-                  onSearchChange={setLibrarySearch}
-                  catalogView={catalogView}
-                  onCatalogViewChange={setCatalogView}
-                  density={catalogDensity}
-                  onDensityChange={setCatalogDensity}
-                  summaries={enrichedTemplateSummaries}
-                  recommendedTemplateId={recommendedTemplate?.id ?? null}
-                  activeCount={activeOwnerCount}
-                  archivedCount={archivedCount}
-                  loading={loading}
-                  onOpenTemplate={handleOpenEditor}
-                />
-              </div>
-            </section>
-          </div>
+            }
+            candidateSetsPanel={componentFirstLibraryReadonlyPanel}
+            templates={templates}
+            availabilityItems={availabilityItems}
+            libraryTab={libraryTab}
+            onLibraryTabChange={setLibraryTab}
+            librarySearch={librarySearch}
+            onLibrarySearchChange={setLibrarySearch}
+            catalogView={catalogView}
+            onCatalogViewChange={setCatalogView}
+            catalogDensity={catalogDensity}
+            onCatalogDensityChange={setCatalogDensity}
+            summaries={enrichedTemplateSummaries}
+            recommendedTemplateId={recommendedTemplate?.id ?? null}
+            activeCount={activeOwnerCount}
+            archivedCount={archivedCount}
+            loading={loading}
+            onOpenTemplate={handleOpenEditor}
+          />
         ) : null}
       </div>
 

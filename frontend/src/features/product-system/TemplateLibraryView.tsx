@@ -826,7 +826,7 @@ function buildSharedFoundationModuleMap(
 export function TemplateLibraryView({
   templates,
   availabilityItems = [],
-  tab,
+  tab: _tab,
   search,
   onSearchChange,
   catalogView,
@@ -837,6 +837,8 @@ export function TemplateLibraryView({
   recommendedTemplateId,
   loading,
   onOpenTemplate,
+  shellContextLabel,
+  restrictCatalogView,
 }: {
   templates: ProductTemplateEntity[];
   availabilityItems?: ProductTemplateAvailabilityItem[];
@@ -854,8 +856,11 @@ export function TemplateLibraryView({
   archivedCount: number;
   loading: boolean;
   onOpenTemplate: (template: ProductTemplateEntity) => void;
+  shellContextLabel?: string;
+  restrictCatalogView?: ProductSystemCatalogView;
 }) {
   const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const effectiveCatalogView = restrictCatalogView ?? catalogView;
   const [productFilter, setProductFilter] = useState<ProductFilter>("all");
   const [componentFilter, setComponentFilter] = useState<ComponentFilter>("contracts");
   const [parentFilter, setParentFilter] = useState("all");
@@ -939,7 +944,7 @@ export function TemplateLibraryView({
   });
   const searchedCompositionRows = productRows.filter((row) => !q || getCompositionSearchText(row).includes(q));
   const searchedArchivedRows = archivedRows.filter((row) => !q || getRowSearchText(row).includes(q));
-  const currentView = CATALOG_VIEWS.find((view) => view.id === catalogView) ?? CATALOG_VIEWS[0];
+  const currentView = CATALOG_VIEWS.find((view) => view.id === effectiveCatalogView) ?? CATALOG_VIEWS[0];
   const detailed = density === "detailed";
   const sharedFoundationProductRows = productRows.filter((row) => row.availability.shared_component_contracts.length > 0);
   const sharedFoundationContractKeys = new Set(
@@ -957,7 +962,7 @@ export function TemplateLibraryView({
 
   useEffect(() => {
     headingRef.current?.focus({ preventScroll: true });
-  }, [catalogView]);
+  }, [effectiveCatalogView]);
 
   const renderTemplateRow = ({ template, availability }: (typeof allCatalogRows)[number]) => {
     const summary = summaries.get(template.id) ?? {
@@ -985,8 +990,12 @@ export function TemplateLibraryView({
       <div className="rounded-lg border border-[#1E293B] bg-[#0D1321] px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <p className="text-[14px] font-bold text-slate-100">Product System Catalog</p>
-            {detailed ? <p className="mt-0.5 text-[11px] text-slate-500">Catalog scalabil pentru produse, componente si compozitii.</p> : null}
+            <p className="text-[14px] font-bold text-slate-100">{shellContextLabel ?? "Product System Catalog"}</p>
+            {detailed ? (
+              <p className="mt-0.5 text-[11px] text-slate-500">
+                Catalog scalabil pentru produse, componente si compozitii.
+              </p>
+            ) : null}
           </div>
           <div className="flex items-center gap-1 rounded-lg border border-slate-800 bg-slate-950/50 p-0.5" aria-label="Afisare catalog">
             {(["compact", "detailed"] as const).map((mode) => (
@@ -1002,9 +1011,10 @@ export function TemplateLibraryView({
             ))}
           </div>
         </div>
+        {restrictCatalogView ? null : (
         <div className="mt-2 flex flex-wrap gap-1.5" role="tablist" aria-label="Product System catalog views">
           {CATALOG_VIEWS.map((view) => {
-            const active = catalogView === view.id;
+            const active = effectiveCatalogView === view.id;
             const count = view.id === "products" ? productRows.length : view.id === "components" ? sharedContractGroups.length || componentRows.length : view.id === "composition" ? compositionRows.length : view.id === "archived" ? archivedRows.length : allCatalogRows.length;
             return (
               <button
@@ -1025,16 +1035,17 @@ export function TemplateLibraryView({
             );
           })}
         </div>
+        )}
       </div>
 
-      <section className="rounded-lg border border-[#1E293B] bg-[#0B1120]/70 p-3" data-testid={`product-system-view-${catalogView}`}>
+      <section className="rounded-lg border border-[#1E293B] bg-[#0B1120]/70 p-3" data-testid={`product-system-view-${effectiveCatalogView}`}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 ref={headingRef} tabIndex={-1} className="text-[14px] font-bold text-slate-100 focus:outline-none">
               {currentView.label}
             </h2>
             {detailed ? <p className="mt-0.5 text-[11px] text-slate-500">
-              {catalogView === "overview" ? "Alege o zona pentru lucru. Overview-ul nu afiseaza toate componentele, ca sa ramana clar si rapid la volum mare." : currentView.description}
+              {effectiveCatalogView === "overview" ? "Alege o zona pentru lucru. Overview-ul nu afiseaza toate componentele, ca sa ramana clar si rapid la volum mare." : currentView.description}
             </p> : null}
           </div>
           <span className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-400">
@@ -1049,7 +1060,7 @@ export function TemplateLibraryView({
           </div>
         ) : allCatalogRows.length === 0 ? (
           <div className="text-center py-12 text-slate-500 text-[13px]">Nu există șabloane în registru.</div>
-        ) : catalogView === "overview" ? (
+        ) : effectiveCatalogView === "overview" ? (
           <div className="space-y-3">
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {[
@@ -1109,7 +1120,7 @@ export function TemplateLibraryView({
                 <input type="text" placeholder="Caută cod șablon, familie…" value={search} onChange={(e) => onSearchChange(e.target.value)} className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full" />
               </div>
 
-              {catalogView === "products" ? (
+              {effectiveCatalogView === "products" ? (
                 <div className="flex flex-wrap gap-2">
                   {[["all", "Toate produsele"], ["offerable", "Ofertabile"], ["candidate", "In pregatire"], ["owner_go", "Necesita GO owner"]].map(([id, label]) => (
                     <button key={id} type="button" onClick={() => setProductFilter(id as ProductFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${productFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
@@ -1117,7 +1128,7 @@ export function TemplateLibraryView({
                 </div>
               ) : null}
 
-              {catalogView === "components" ? (
+              {effectiveCatalogView === "components" ? (
                 <div className="flex flex-wrap gap-2">
                   {[["contracts", "Componente comune"], ["technical", "Module tehnice"], ["all", "Toate"]].map(([id, label]) => (
                     <button key={id} type="button" onClick={() => setComponentFilter(id as ComponentFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${componentFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
@@ -1130,14 +1141,14 @@ export function TemplateLibraryView({
               ) : null}
             </div>
 
-            {catalogView === "products" ? (
+            {effectiveCatalogView === "products" ? (
               <div className="space-y-2">
                 {detailed ? <p className="text-[11px] text-slate-500">Produse ofertabile si produse in pregatire. Modulele interne nu sunt afisate aici.</p> : null}
                 {searchedProductRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Niciun produs pentru filtrele curente.</div> : <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" data-testid="product-system-products-list">{searchedProductRows.map(renderTemplateRow)}</div>}
               </div>
             ) : null}
 
-            {catalogView === "components" ? (
+            {effectiveCatalogView === "components" ? (
               <div className="space-y-2">
                 {detailed ? <p className="text-[11px] text-slate-500">Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.</p> : null}
                 {(componentFilter === "contracts" || componentFilter === "all") && searchedSharedContractGroups.length > 0 ? (
@@ -1210,7 +1221,7 @@ export function TemplateLibraryView({
               </div>
             ) : null}
 
-            {catalogView === "composition" ? (
+            {effectiveCatalogView === "composition" ? (
               <div className="space-y-2" data-testid="product-system-composition-list">
                 {detailed ? <p className="text-[11px] text-slate-500">Model principal: shared volumetric base. Backing bindings raman tehnice/istorice.</p> : null}
                 {searchedCompositionRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nicio compozitie pentru cautarea curenta.</div> : searchedCompositionRows.map(({ template, availability }) => {
@@ -1239,7 +1250,7 @@ export function TemplateLibraryView({
               </div>
             ) : null}
 
-            {catalogView === "archived" ? (
+            {effectiveCatalogView === "archived" ? (
               <div className="space-y-3" data-testid="product-system-archived-list">
                 <p className="text-[11px] text-slate-500">Template-uri scoase din flow activ sau pastrate pentru analiza.</p>
                 {searchedArchivedRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Nu exista template-uri arhivate sau experimentale in catalogul curent.</div> : <div className="space-y-2">{searchedArchivedRows.map(renderTemplateRow)}</div>}

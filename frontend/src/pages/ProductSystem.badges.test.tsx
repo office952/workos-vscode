@@ -24,11 +24,21 @@ const COMPONENT_FIRST_TAB = {
   guardsAudit: "product-system-component-first-tab-guards-audit",
 } as const;
 
+function openPrimaryTab(
+  tab: "products" | "components" | "candidate-sets" | "dossiers" | "guards-audit" | "archived",
+) {
+  fireEvent.click(screen.getByTestId(`product-system-primary-tab-${tab}`));
+}
+
 function openComponentFirstTab(tabTestId: string) {
   fireEvent.click(screen.getByTestId(tabTestId));
 }
 
 async function openComponentFirstCandidateDetail() {
+  await waitFor(() => {
+    expect(screen.getByTestId("product-system-primary-tab-candidate-sets")).toBeInTheDocument();
+  });
+  openPrimaryTab("candidate-sets");
   await waitFor(() => {
     expect(screen.getByTestId("product-system-component-first-candidate-set-card")).toBeInTheDocument();
   });
@@ -1096,17 +1106,22 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("not linked yet");
   });
 
-  it("separates catalog overview, candidate sets, and existing roots", async () => {
+  it("separates catalog overview, candidate sets, and existing roots across primary tabs", async () => {
     renderProductSystem();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-catalog-overview")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tabs")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-products")).toHaveAttribute("aria-selected", "true");
     expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-existing-roots")).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
+
+    openPrimaryTab("candidate-sets");
+    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
   });
 
   it("exposes all component-first candidate tabs", async () => {
@@ -1134,6 +1149,8 @@ describe("ProductSystem design-system badges", () => {
 
   it("shows card-based candidate UI with product composer card, six component cards, and readonly settings drawers", async () => {
     renderProductSystem();
+
+    openPrimaryTab("candidate-sets");
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-candidate-set-card")).toBeInTheDocument();
@@ -1213,11 +1230,49 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-card")).toHaveTextContent("NOT OFFERABLE");
 
     expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
 
     expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+  });
+
+  it("exposes primary IA shell tabs with Products as default and separated surfaces", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-primary-tab-products")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-components")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-candidate-sets")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-dossiers")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-guards-audit")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-archived")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-primary-tab-products")).toHaveAttribute("aria-selected", "true");
+    expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
+
+    openPrimaryTab("candidate-sets");
+    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
+
+    openPrimaryTab("components");
+    expect(screen.getByTestId("product-system-components-tab-panel")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-view-components")).toBeInTheDocument();
+
+    openPrimaryTab("dossiers");
+    expect(screen.getByTestId("product-system-dossiers-tab-panel")).toBeInTheDocument();
+
+    openPrimaryTab("guards-audit");
+    expect(screen.getByTestId("product-system-guards-audit-tab-panel")).toBeInTheDocument();
+
+    openPrimaryTab("archived");
+    expect(screen.getByTestId("product-system-archived-tab-panel")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-view-archived")).toBeInTheDocument();
+
+    openPrimaryTab("products");
+    expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
   });
 
 });
