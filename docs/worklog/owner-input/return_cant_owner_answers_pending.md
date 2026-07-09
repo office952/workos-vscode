@@ -80,23 +80,24 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 14 | Oracal catalog source | Sursă listă completă? Catalog intern / import / administrabil? | **Toate codurile Oracal oficiale** | partial | Țintă confirmată. Import/listă efectivă pending. |
-| 15 | Oracal calculation | Model consum Oracal? | **lățime rolă × lungime folosită = mp** | answered | Nu se calculează simplu pe ml. |
-| 16 | Oracal roll widths | Lățimi rolă? | **100 cm · 126 cm** | answered | Confirmat owner. |
+| 14 | Oracal catalog source | Sursă listă completă? Catalog intern / import / administrabil? | **Intake V6 colorRegistry — oracal651.ts + oracal8500.ts (641 reutilizează paleta 651)** | answered | Cross-ref readonly — fără catalog duplicat în Product System |
+| 15 | Oracal calculation | Model consum Oracal? | **lățime rolă × lungime folosită = mp** | answered | Nu se calculează simplu pe ml |
+| 16 | Oracal roll widths | Lățimi rolă? | **100 cm · 126 cm** | answered | Confirmat owner |
 
 ## K. Oracal price table
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 17 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | **mp (din lățime rolă × lungime)** | answered | Confirmat via calculation model. |
-| 18 | Oracal price table | Valori preț pe cod/familie? | **Owner are tabelul — valori neintroduse** | partial | Mod pe cod/familie confirmat. Fără valori inventate. |
+| 17 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | **mp (din lățime rolă × lungime)** | answered | Confirmat via calculation model |
+| 18 | Oracal series prices | Prețuri pe serie 651 / 641 / 8500? | **651 = 8 EUR/mp · 641 = 5 EUR/mp · 8500 = 13 EUR/mp** | answered | Owner confirmat — fără activare pricing |
+| 19 | Oracal price table complete | Valori preț pe toate codurile/seriile? | **Serii 651/641/8500 confirmate — restul pending** | partial | Fără valori inventate în afara celor confirmate |
 
 ## L. RAL selector source/list
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 19 | RAL list source | RAL Classic / Design / Effect / altă listă? | **RAL Classic (ca Intake V6)** | answered | Cross-ref colorRegistry/ralColors.ts |
-| 20 | RAL catalog shape | Cod simplu vs cod + nume culoare? | | partial | Colectie confirmată — câmpuri pending |
+| 20 | RAL list source | RAL Classic / Design / Effect / altă listă? | **Intake V6 ralColors.ts — RAL Classic (213 culori)** | answered | Cross-ref readonly colorRegistry/ralColors.ts |
+| 21 | RAL catalog shape | Cod simplu vs cod + nume culoare? | **RAL Classic structurat în color registry Intake V6** | answered | Fără coduri RAL inventate |
 
 ## M. RAL material price by depth
 
@@ -140,10 +141,11 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 | Item | Contract key | Status |
 |------|--------------|--------|
-| Import catalog coduri Oracal efectiv | `oracal_code_list` | partial |
-| Valori tabel prețuri Oracal pe cod/familie | `oracal_price_table` | partial |
-| Formă catalog Oracal | `oracal_catalog_shape` | pending |
-| Formă catalog RAL în product system | `ral_catalog_shape` | partial |
+| Tabel prețuri Oracal complet (coduri/serii în afara 651/641/8500) | `oracal_price_table` | partial |
+| Formă catalog Oracal stocat separat în Product System | `oracal_catalog_shape` | pending |
+| Extragere modul catalog shared stabil | cross-ref only | pending |
+| Pricing activation | — | blocked |
+| Product Truth live write | — | blocked |
 
 ## Ce NU se completează fără confirmare owner explicită
 
@@ -155,4 +157,4 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 ## Următorul pas
 
-Task: **RETURN-CANT Oracal catalog import + price table values apply** — owner furnizează import catalog Oracal și valori tabel prețuri.
+Task: **RETURN-CANT Oracal remaining series/code prices apply** — owner furnizează prețuri pe cod/familie în afara seriilor 651/641/8500, dacă e nevoie.

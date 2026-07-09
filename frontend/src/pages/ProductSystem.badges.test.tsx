@@ -1742,7 +1742,7 @@ describe("ProductSystem design-system badges", () => {
       /Still missing before ProductDefinition/i,
     );
     expect(screen.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveTextContent(
-      /toate codurile Oracal oficiale/i,
+      /Intake V6 colorRegistry/i,
     );
     expect(screen.getByTestId("product-system-return-cant-owner-inputs-safety")).toHaveTextContent(
       "No Product Truth live write",
@@ -1776,8 +1776,19 @@ describe("ProductSystem design-system badges", () => {
       /Ready for pricing: NO/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-summary-pricing-active")).toHaveTextContent("0");
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-oracal_catalog_source")).toHaveTextContent(
+      /Intake V6/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-ral_catalog_source")).toHaveTextContent(
+      /Intake V6|ralColors/i,
+    );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveTextContent(
-      /toate codurile Oracal oficiale/i,
+      /Intake V6|color registry/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveTextContent(/8\.00 EUR\/mp/i);
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveTextContent(/5\.00 EUR\/mp/i);
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-8500")).toHaveTextContent(
+      /13\.00 EUR\/mp/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveTextContent(
       /2\.00 EUR\/ml/i,

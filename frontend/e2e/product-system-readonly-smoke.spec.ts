@@ -215,7 +215,7 @@ test.describe("Product System readonly smoke", () => {
       /1\.00 EUR\/ml/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveText(
-      /toate codurile Oracal oficiale/i,
+      /Intake V6 colorRegistry/i,
     );
     const returnCantPanel = page.getByTestId("product-system-return-cant-owner-inputs");
     await expect(returnCantPanel).not.toHaveText(/ORACAL-\d+/i);
@@ -230,8 +230,19 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-return-cant-catalog-price-ready-for-pricing")).toHaveText(
       /Ready for pricing: NO/i,
     );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_catalog_source")).toHaveText(
+      /Intake V6/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_catalog_source")).toHaveText(
+      /Intake V6|ralColors/i,
+    );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveText(
-      /toate codurile Oracal oficiale/i,
+      /Intake V6|color registry/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveText(/8\.00 EUR\/mp/i);
+    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveText(/5\.00 EUR\/mp/i);
+    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-8500")).toHaveText(
+      /13\.00 EUR\/mp/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_calculation_model")).toHaveText(
       /lățime rolă.*lungime folosită|mp/i,
@@ -240,7 +251,7 @@ test.describe("Product System readonly smoke", () => {
       /100 cm.*126 cm/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_price_table")).toHaveText(
-      /Owner are tabelul|preț pe cod\/familie/i,
+      /651\/641\/8500 confirmate|restul codurilor/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_price_mode")).toHaveText(
       /preț.*cod\/familie/i,

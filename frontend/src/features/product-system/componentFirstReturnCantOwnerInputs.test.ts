@@ -29,8 +29,9 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(selector?.status).toBe("owner_confirmed");
     expect(selector?.value).toBe("listă completă Oracal");
     const catalog = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "oracal_code_list");
-    expect(catalog?.status).toBe("partial_confirmed");
-    expect(String(catalog?.value)).toMatch(/toate codurile Oracal oficiale/i);
+    expect(catalog?.status).toBe("owner_confirmed");
+    expect(String(catalog?.value)).toMatch(/Intake V6 colorRegistry/i);
+    expect(String(catalog?.value)).toMatch(/oracal651\.ts/i);
   });
 
   it("confirms Oracal pricing mode as pret pe cod/familie", () => {
@@ -122,7 +123,7 @@ describe("componentFirstReturnCantOwnerInputs", () => {
 
   it("formats partial catalog values with target not dash or zero", () => {
     const catalog = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "oracal_code_list")!;
-    expect(formatReturnCantOwnerInputDisplayValue(catalog)).toMatch(/toate codurile Oracal oficiale/i);
+    expect(formatReturnCantOwnerInputDisplayValue(catalog)).toMatch(/Intake V6 colorRegistry/i);
     expect(formatReturnCantOwnerInputDisplayValue(catalog)).not.toBe("-");
     expect(formatReturnCantOwnerInputDisplayValue(catalog)).not.toBe("0");
   });
@@ -131,7 +132,7 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     const summary = buildReturnCantOwnerInputSummary();
     expect(summary.globalStatus).toBe("OWNER_INPUT_REQUIRED");
     expect(summary.confirmedCount).toBeGreaterThan(10);
-    expect(summary.partialCount).toBe(1);
+    expect(summary.partialCount).toBe(0);
   });
 
   it("aligns with workshop field contract keys", () => {

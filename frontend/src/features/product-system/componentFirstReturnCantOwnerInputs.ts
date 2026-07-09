@@ -50,22 +50,21 @@ export const RETURN_CANT_CONFIRMED_SO_FAR: string[] = [
 ];
 
 export const RETURN_CANT_PARTIAL_SO_FAR: string[] = [
-  "Catalog Oracal: țintă coduri oficiale confirmată — import pending",
-  "Tabel prețuri Oracal: owner are tabelul — valori neintroduse",
+  "Tabel prețuri Oracal complet: serii 651/641/8500 confirmate — restul codurilor pending",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRICING: string[] = [
-  "Import catalog coduri Oracal efectiv",
-  "Valori tabel prețuri Oracal pe cod/familie",
+  "Valori tabel prețuri Oracal pe cod/familie în afara seriilor 651/641/8500",
+  "Extragere modul catalog shared stabil — viitor, dacă Product System necesită materializare separată",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [];
 
 /** Owner questions kept visible until answered — no invented answers. */
 export const RETURN_CANT_OWNER_QUESTIONS_PENDING: string[] = [
-  "Import catalog Oracal: sursă/listă efectivă pentru toate codurile oficiale?",
-  "Tabel prețuri Oracal: valori pe cod/familie?",
+  "Prețuri Oracal pe cod/familie în afara seriilor 651/641/8500?",
   "Formă catalog Oracal: cod simplu vs cod + nume + familie?",
+  "Extragere modul catalog shared stabil — dacă Product System necesită materializare separată?",
 ];
 
 function confirmedInput(
@@ -154,14 +153,15 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     notesRo:
       "Owner chose B — selector listă completă. Catalogul efectiv de coduri rămâne OWNER INPUT REQUIRED.",
   }),
-  partialInput({
+  confirmedInput({
     key: "oracal_code_list",
-    labelRo: "Catalog coduri Oracal (date efective)",
-    value: "Țintă: toate codurile Oracal oficiale — import pending",
+    labelRo: "Catalog coduri Oracal (Intake V6 cross-ref)",
+    value:
+      "Intake V6 colorRegistry — oracal651.ts + oracal8500.ts (641 reutilizează paleta 651)",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "execution"],
-    ownerQuestionRo: "Sursă/import listă completă Oracal oficială?",
-    notesRo: "Țintă catalog confirmată — fără coduri Oracal inventate.",
+    notesRo:
+      "Cross-ref readonly Intake V6 — fără catalog duplicat. Prețuri serii 651/641/8500 confirmate separat.",
   }),
   confirmedInput({
     key: "oracal_pricing_mode",

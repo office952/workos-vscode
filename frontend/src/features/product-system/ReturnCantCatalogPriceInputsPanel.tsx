@@ -6,6 +6,7 @@ import {
   getReturnCantCatalogPriceInputsByCategory,
   RETURN_CANT_CATALOG_PRICE_INPUTS,
   RETURN_CANT_CATALOG_PRICE_SECTIONS,
+  RETURN_CANT_ORACAL_SERIES_PRICES,
   type ReturnCantCatalogPriceInput,
 } from "./componentFirstReturnCantCatalogPriceInputs";
 
@@ -142,6 +143,27 @@ export function ReturnCantCatalogPriceInputsPanel() {
           <p className="text-base font-bold tabular-nums text-slate-200">{summary.pricingActiveCount}</p>
         </div>
       </div>
+
+      <article
+        data-testid="product-system-return-cant-catalog-price-oracal-series-summary"
+        className="rounded-lg border border-cyan-800/30 bg-cyan-950/10 px-3 py-2.5"
+      >
+        <p className="text-[10px] font-bold uppercase text-cyan-200/90">Oracal series prices (readonly)</p>
+        <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
+          {RETURN_CANT_ORACAL_SERIES_PRICES.map((entry) => (
+            <li
+              key={entry.series}
+              data-testid={`product-system-return-cant-oracal-series-price-${entry.series}`}
+            >
+              • {entry.series} = {entry.price.toFixed(2)} EUR/mp · pricing active: NO
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-[10px] text-slate-400">
+          Known series ready: {summary.oracalSeriesPricing.oracalSeriesPricingReadyForKnownSeries ? "YES" : "NO"} ·
+          full table ready: NO
+        </p>
+      </article>
 
       <article
         data-testid="product-system-return-cant-catalog-price-blockers"

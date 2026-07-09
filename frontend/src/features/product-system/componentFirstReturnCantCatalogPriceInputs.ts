@@ -49,6 +49,128 @@ export const RETURN_CANT_DEPTH_MM_PLACEHOLDERS = ["30", "60", "80", "100"] as co
 export const RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH =
   "frontend/src/lib/colorRegistry/ralColors.ts";
 
+export type ReturnCantIntakeV6CatalogSourceReference = {
+  sourceFeature: "Intake V6";
+  sourceFile: string;
+  sourceFiles: readonly string[];
+  sourceType: "readonly_ui_catalog_reference";
+  duplicationPolicy: "do_not_duplicate_catalog";
+  productSystemUse: "read-only cross-reference for RETURN-CANT workshop";
+  catalogFormat: string;
+  reusableReadonly: true;
+};
+
+export const RETURN_CANT_INTAKE_V6_ORACAL_CATALOG_SOURCE: ReturnCantIntakeV6CatalogSourceReference =
+  {
+    sourceFeature: "Intake V6",
+    sourceFile: "frontend/src/lib/colorRegistry/colorRegistry.ts",
+    sourceFiles: [
+      "frontend/src/lib/colorRegistry/oracal651.ts",
+      "frontend/src/lib/colorRegistry/oracal8500.ts",
+      "frontend/src/components/workos/colorRegistry/ColorRegistrySelect.tsx",
+      "frontend/src/components/workos/intake-v6/IntakeV6ReturnCantFields.tsx",
+    ],
+    sourceType: "readonly_ui_catalog_reference",
+    duplicationPolicy: "do_not_duplicate_catalog",
+    productSystemUse: "read-only cross-reference for RETURN-CANT workshop",
+    catalogFormat:
+      "ColorRegistryItem[] — serii 651 (79 culori) + 8500 (translucid); seria 641 reutilizează paleta 651 în Intake V6",
+    reusableReadonly: true,
+  };
+
+export const RETURN_CANT_INTAKE_V6_RAL_CATALOG_SOURCE: ReturnCantIntakeV6CatalogSourceReference =
+  {
+    sourceFeature: "Intake V6",
+    sourceFile: RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH,
+    sourceFiles: [
+      RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH,
+      "frontend/src/lib/colorRegistry/colorRegistry.ts",
+      "frontend/src/components/workos/colorRegistry/ColorRegistrySelect.tsx",
+      "frontend/src/components/workos/intake-v6/IntakeV6ReturnCantFields.tsx",
+    ],
+    sourceType: "readonly_ui_catalog_reference",
+    duplicationPolicy: "do_not_duplicate_catalog",
+    productSystemUse: "read-only cross-reference for RETURN-CANT workshop",
+    catalogFormat: "ColorRegistryItem[] — RAL Classic (213 culori)",
+    reusableReadonly: true,
+  };
+
+export type ReturnCantOracalSeriesPrice = {
+  series: "651" | "641" | "8500";
+  labelRo: string;
+  price: number;
+  currency: "EUR";
+  unit: "mp";
+  status: "owner_confirmed";
+  source: "owner_confirmed_in_chat";
+  notesRo: string;
+  pricingActive: false;
+};
+
+export const RETURN_CANT_ORACAL_SERIES_PRICES: ReturnCantOracalSeriesPrice[] = [
+  {
+    series: "651",
+    labelRo: "Oracal 651",
+    price: 8,
+    currency: "EUR",
+    unit: "mp",
+    status: "owner_confirmed",
+    source: "owner_confirmed_in_chat",
+    notesRo: "Preț serie owner confirmat — EUR/mp. Catalog culori: oracal651.ts.",
+    pricingActive: false,
+  },
+  {
+    series: "641",
+    labelRo: "Oracal 641",
+    price: 5,
+    currency: "EUR",
+    unit: "mp",
+    status: "owner_confirmed",
+    source: "owner_confirmed_in_chat",
+    notesRo:
+      "Preț serie owner confirmat — EUR/mp. În Intake V6 paleta 641 reutilizează seria 651.",
+    pricingActive: false,
+  },
+  {
+    series: "8500",
+    labelRo: "Oracal 8500",
+    price: 13,
+    currency: "EUR",
+    unit: "mp",
+    status: "owner_confirmed",
+    source: "owner_confirmed_in_chat",
+    notesRo: "Preț serie owner confirmat — EUR/mp. Catalog culori: oracal8500.ts.",
+    pricingActive: false,
+  },
+];
+
+export type ReturnCantOracalSeriesPricingSummary = {
+  confirmedOracalSeriesPriceCount: number;
+  missingOracalSeriesPriceCount: number;
+  oracalSeriesPricingReadyForKnownSeries: boolean;
+  oracalFullPricingReady: false;
+};
+
+export function buildOracalSeriesPricingSummary(
+  seriesPrices: ReturnCantOracalSeriesPrice[] = RETURN_CANT_ORACAL_SERIES_PRICES,
+): ReturnCantOracalSeriesPricingSummary {
+  const confirmedOracalSeriesPriceCount = seriesPrices.filter(
+    (entry) => entry.status === "owner_confirmed",
+  ).length;
+  return {
+    confirmedOracalSeriesPriceCount,
+    missingOracalSeriesPriceCount: 0,
+    oracalSeriesPricingReadyForKnownSeries: confirmedOracalSeriesPriceCount === seriesPrices.length,
+    oracalFullPricingReady: false,
+  };
+}
+
+export function formatIntakeV6CatalogSourceValue(
+  source: ReturnCantIntakeV6CatalogSourceReference,
+): string {
+  return `${source.sourceFeature} · ${source.sourceFile} · ${source.duplicationPolicy}`;
+}
+
 export const RETURN_CANT_RAL_MATERIAL_PRICE_CODES = {
   "30": "MAT-VOPSEA-RAL-CANT-30MM",
   "60": "MAT-VOPSEA-RAL-CANT-60MM",
@@ -68,22 +190,34 @@ export const RETURN_CANT_RAL_MINIMUM = {
 
 export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
   {
+    key: "oracal_catalog_source",
+    labelRo: "Sursă catalog Oracal (Intake V6)",
+    category: "oracal_catalog",
+    status: "owner_confirmed",
+    confirmedValue: formatIntakeV6CatalogSourceValue(RETURN_CANT_INTAKE_V6_ORACAL_CATALOG_SOURCE),
+    knownSoFarRo:
+      "Owner confirmat: culorile Oracal există deja în Intake V6. Cross-ref readonly — fără duplicare catalog. Fișiere: colorRegistry.ts · oracal651.ts · oracal8500.ts.",
+    stillMissingRo: [
+      "Materializare catalog separat în Product System — ne necesară dacă cross-ref Intake V6 rămâne sursa",
+      "Extragere modul catalog shared stabil — viitor, dacă e nevoie",
+    ],
+    ownerQuestionRo: "Confirmare sursă catalog Oracal Intake V6.",
+    blocks: ["catalog", "operator_ui", "pricing"],
+    mustNotInvent: false,
+    pricingActive: false,
+  },
+  {
     key: "oracal_selector_source",
     labelRo: "Țintă catalog Oracal",
     category: "oracal_catalog",
-    status: "partial_confirmed",
-    confirmedValue: "toate codurile Oracal oficiale",
+    status: "owner_confirmed",
+    confirmedValue: "Intake V6 color registry — toate codurile Oracal oficiale (651 + 8500)",
     knownSoFarRo:
-      "Owner confirmat: catalog țintă = toate codurile Oracal oficiale. Fără înregistrări catalog inventate.",
-    stillMissingRo: [
-      "Import/listă efectivă de coduri în catalog product system",
-      "Format catalog confirmat",
-      "Ownership / întreținere catalog",
-    ],
-    ownerQuestionRo:
-      "Care este sursa/importul listei complete Oracal? (manual, fișier, administrabil mai târziu?)",
+      "Owner confirmat: catalog țintă = coduri Oracal din Intake V6. Seria 641 folosește paleta 651. Fără catalog duplicat în Product System.",
+    stillMissingRo: ["Prețuri pe cod individual în afara seriilor 651/641/8500 confirmate"],
+    ownerQuestionRo: "Confirmare țintă catalog Oracal din Intake V6.",
     blocks: ["catalog", "operator_ui", "pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
@@ -143,23 +277,57 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     pricingActive: false,
   },
   {
+    key: "oracal_series_prices_by_series",
+    labelRo: "Prețuri Oracal pe serie (owner confirmat)",
+    category: "oracal_pricing",
+    status: "owner_confirmed",
+    confirmedValue: RETURN_CANT_ORACAL_SERIES_PRICES.map(
+      (entry) => `${entry.series} = ${entry.price.toFixed(2)} EUR/mp`,
+    ),
+    unit: "eur",
+    knownSoFarRo:
+      "Owner confirmat: 651 = 8 EUR/mp · 641 = 5 EUR/mp · 8500 = 13 EUR/mp. Calcul mp = lățime rolă × lungime folosită.",
+    stillMissingRo: [
+      "Prețuri pe cod/familie în afara seriilor 651/641/8500",
+      "Formulă runtime — neactivată în acest task",
+    ],
+    ownerQuestionRo: "Confirmare prețuri Oracal pe serie.",
+    blocks: ["pricing"],
+    mustNotInvent: false,
+    pricingActive: false,
+  },
+  {
     key: "oracal_price_table",
-    labelRo: "Tabel prețuri Oracal",
+    labelRo: "Tabel prețuri Oracal (complet)",
     category: "oracal_pricing",
     status: "partial_confirmed",
-    confirmedValue: "Owner are tabelul — preț pe cod/familie",
+    confirmedValue: "Serii 651/641/8500 confirmate — restul codurilor/seriilor pending",
     knownSoFarRo:
-      "Owner confirmat: tabelul/preturile există și modul este pe cod/familie. Valorile exacte nu sunt încă introduse.",
+      "Owner confirmat: preț pe cod/familie. Serii 651 = 8 · 641 = 5 · 8500 = 13 EUR/mp. Tabel complet pe toate codurile oficiale — incomplet.",
     stillMissingRo: [
-      "Valori preț unitar pe cod/familie",
-      "Monedă",
-      "Unitate preț",
-      "Mapare cod/familie",
-      "Sursă efectivă / dată efectivă",
+      "Valori preț unitar pe cod/familie în afara seriilor confirmate",
+      "Mapare completă cod/familie",
+      "Sursă efectivă / dată efectivă pentru tabel complet",
     ],
-    ownerQuestionRo: "Introduceți valorile tabelului Oracal pe cod/familie.",
+    ownerQuestionRo: "Introduceți valorile tabelului Oracal pentru coduri/serii neconfirmate.",
     blocks: ["pricing"],
     mustNotInvent: true,
+    pricingActive: false,
+  },
+  {
+    key: "ral_catalog_source",
+    labelRo: "Sursă catalog RAL Classic (Intake V6)",
+    category: "ral_catalog",
+    status: "owner_confirmed",
+    confirmedValue: formatIntakeV6CatalogSourceValue(RETURN_CANT_INTAKE_V6_RAL_CATALOG_SOURCE),
+    knownSoFarRo:
+      "Owner confirmat: culorile RAL Classic există deja în Intake V6. Cross-ref readonly: ralColors.ts — fără duplicare catalog.",
+    stillMissingRo: [
+      "Materializare listă separată în catalog product system — ne necesară dacă cross-ref Intake V6 rămâne sursa",
+    ],
+    ownerQuestionRo: "Confirmare sursă catalog RAL Intake V6.",
+    blocks: ["catalog", "operator_ui", "pricing"],
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
@@ -169,10 +337,8 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     status: "owner_confirmed",
     confirmedValue: "RAL Classic",
     knownSoFarRo:
-      "Owner confirmat: RAL Classic — ca în UI Intake V6. Cross-ref readonly: colorRegistry/ralColors.ts.",
-    stillMissingRo: [
-      "Materializare listă în catalog product system (dacă separat de color registry)",
-    ],
+      "Owner confirmat: RAL Classic — ca în UI Intake V6. Cross-ref readonly: colorRegistry/ralColors.ts (213 culori).",
+    stillMissingRo: ["Formulă runtime RAL — neactivată în acest task"],
     ownerQuestionRo: "Confirmare colecție RAL Classic.",
     blocks: ["catalog", "operator_ui", "pricing"],
     mustNotInvent: true,
@@ -182,11 +348,11 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     key: "ral_catalog_shape",
     labelRo: "Formă catalog RAL (doar structură)",
     category: "ral_catalog",
-    status: "partial_confirmed",
-    confirmedValue: "RAL Classic (ral_code · ral_name · collection · active)",
+    status: "owner_confirmed",
+    confirmedValue: "RAL Classic (ral_code · ral_name · collection · active) — Intake V6 ralColors.ts",
     knownSoFarRo:
-      "Colectie RAL Classic confirmată. Listă există în color registry Intake V6 — fără coduri RAL inventate aici.",
-    stillMissingRo: ["Confirmare câmpuri stocate în product system catalog"],
+      "Colectie RAL Classic confirmată. Listă structurată în color registry Intake V6 — fără coduri RAL inventate aici.",
+    stillMissingRo: ["Extragere modul catalog shared stabil — viitor, dacă Product System necesită materializare separată"],
     ownerQuestionRo: "Pentru RAL vrei cod simplu sau cod + nume culoare?",
     blocks: ["catalog", "operator_ui"],
     mustNotInvent: true,
@@ -307,26 +473,33 @@ export const RETURN_CANT_CATALOG_PRICE_SECTIONS: ReturnCantCatalogPriceSection[]
 
 export function computeBlockersBeforePricing(
   inputs: ReturnCantCatalogPriceInput[] = RETURN_CANT_CATALOG_PRICE_INPUTS,
+  seriesPrices: ReturnCantOracalSeriesPrice[] = RETURN_CANT_ORACAL_SERIES_PRICES,
 ): readonly string[] {
   const blockers: string[] = [];
 
-  const oracalCatalogShape = inputs.find((i) => i.key === "oracal_catalog_shape");
-  const oracalSelector = inputs.find((i) => i.key === "oracal_selector_source");
-  if (
-    oracalCatalogShape?.status === "owner_input_required" ||
-    oracalSelector?.status === "partial_confirmed"
-  ) {
-    blockers.push("Oracal actual catalog data/import not stored yet");
+  const oracalCatalogSource = inputs.find((i) => i.key === "oracal_catalog_source");
+  if (oracalCatalogSource?.status !== "owner_confirmed") {
+    blockers.push("Oracal actual complete import/source wiring not safely reusable yet");
   }
 
   const oracalPriceTable = inputs.find((i) => i.key === "oracal_price_table");
-  if (oracalPriceTable?.status !== "owner_confirmed") {
-    blockers.push("Oracal price table values not stored yet");
+  const oracalPricingSummary = buildOracalSeriesPricingSummary(seriesPrices);
+  if (oracalPriceTable?.status !== "owner_confirmed" || !oracalPricingSummary.oracalFullPricingReady) {
+    blockers.push("Oracal price table for all official codes/series not complete");
   }
 
-  const ralCatalogShape = inputs.find((i) => i.key === "ral_catalog_shape");
-  if (ralCatalogShape?.status !== "owner_confirmed") {
-    blockers.push("RAL list data/source not materialized in product system catalog");
+  const ralCatalogSource = inputs.find((i) => i.key === "ral_catalog_source");
+  if (ralCatalogSource?.status !== "owner_confirmed") {
+    blockers.push("RAL catalog source not cross-referenced from Intake V6");
+  }
+
+  if (
+    oracalCatalogSource?.status === "owner_confirmed" ||
+    ralCatalogSource?.status === "owner_confirmed"
+  ) {
+    blockers.push(
+      "Stable shared catalog extraction remains future work if Product System catalog materialization is needed",
+    );
   }
 
   blockers.push("Pricing activation not allowed");
@@ -343,6 +516,7 @@ export type ReturnCantCatalogPriceSummary = {
   pricingActiveCount: number;
   readyForPricing: false;
   blockersBeforePricing: readonly string[];
+  oracalSeriesPricing: ReturnCantOracalSeriesPricingSummary;
 };
 
 export function catalogPriceInputStatusLabel(
@@ -394,6 +568,7 @@ export function buildReturnCantCatalogPriceSummary(
     pricingActiveCount: inputs.filter((i) => i.pricingActive).length,
     readyForPricing: false,
     blockersBeforePricing: computeBlockersBeforePricing(inputs),
+    oracalSeriesPricing: buildOracalSeriesPricingSummary(),
   };
 }
 
