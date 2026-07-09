@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Layers } from "lucide-react";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 import {
   assessComponentFirstContractDrift,
@@ -8,6 +9,7 @@ import {
   componentFirstSourceDescription,
   componentFirstSourceLabel,
   componentFirstSourceTone,
+  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
   normalizeComponentFirstTemplateCode,
   type ComponentFirstTemplateCode,
 } from "./componentFirstReadonlyCompleteness";
@@ -29,7 +31,6 @@ import {
   componentFirstFormReadinessLabel,
   componentFirstFormReadinessTone,
   componentFirstFormRuntimeLinkLabel,
-  getComponentFirstFormReadinessEntry,
   type ComponentFirstFormReadinessEntry,
 } from "./componentFirstReadonlyFormSystemReadiness";
 import {
@@ -51,6 +52,21 @@ import {
   type ComponentFirstReadonlyComponent,
   type ComponentFirstReadonlySetModel,
 } from "./componentFirstReadonlySetModel";
+import {
+  ComponentFirstReadonlySettingsSheet,
+  componentFirstDisplayName,
+  ComponentFirstSemanticLabel,
+  dossierEntryForTemplate,
+  isComponentFirstComposer,
+  type ComponentFirstSettingsTarget,
+  truthOwnerLabel,
+} from "./ComponentFirstReadonlySettingsSheet";
+import {
+  ComponentFirstStatusStrip,
+  ReadonlyCardShell,
+  ReadonlyLinkButton,
+} from "./componentFirstReadonlyUiShared";
+import { getProductTemplateIconConfig } from "./productTemplateIconRegistry";
 
 export type ComponentFirstCandidateTab =
   | "overview"
@@ -78,26 +94,21 @@ const DOSSIER_FORBIDDEN_LABELS: Record<ComponentFirstDossierForbiddenNow, string
   work_intake_exposure: "No Work Intake exposure",
 };
 
-const COMPONENT_DISPLAY_LABEL: Partial<Record<ComponentFirstTemplateCode, string>> = {
-  "TPL-COMP-LETTER-FACE_v1": "Face",
-  "TPL-COMP-LETTER-BACK_v1": "Back",
-  "TPL-COMP-LETTER-RETURN-CANT_v1": "Return/Cant",
-  "TPL-COMP-LETTER-LED_v1": "LED",
-  "TPL-COMP-LETTER-FINISH_v1": "Finish",
-  "TPL-COMP-LETTER-MOUNTING_v1": "Mounting",
-};
-
-function truthOwnerLabel(owner: "product_composer" | "component_owned_truth"): string {
-  return owner === "product_composer" ? "Product composer orchestration" : "Component-owned truth";
-}
-
 function productTruthPrefixForTemplate(templateCode: string): string | null {
-  const label = COMPONENT_DISPLAY_LABEL[templateCode as ComponentFirstTemplateCode];
-  if (!label) return null;
+  const label = componentFirstDisplayName(templateCode);
   const summary = COMPONENT_FIRST_PRODUCT_TRUTH_COMPACT_PATH_SUMMARIES.find(
     (entry) => entry.label === label.toUpperCase() || entry.label === label
   );
   return summary?.pathPrefix ?? null;
+}
+
+function formEntryForComponent(
+  templateCode: string,
+  entries: ComponentFirstFormReadinessEntry[]
+): ComponentFirstFormReadinessEntry | undefined {
+  return entries.find(
+    (entry) => normalizeComponentFirstTemplateCode(entry.templateCode) === normalizeComponentFirstTemplateCode(templateCode)
+  );
 }
 
 function groupProductTruthByTemplate(
@@ -113,38 +124,284 @@ function groupProductTruthByTemplate(
   return map;
 }
 
-function dossierEntryForTemplate(
-  templateCode: string,
-  contract: readonly ComponentFirstDossierContractEntry[] = COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE
-): ComponentFirstDossierContractEntry | undefined {
-  return contract.find(
-    (entry) => normalizeComponentFirstTemplateCode(entry.templateCode) === normalizeComponentFirstTemplateCode(templateCode)
+function TemplateIcon({ templateCode, compact }: { templateCode: string; compact?: boolean }) {
+  const iconConfig = getProductTemplateIconConfig(
+    templateCode,
+    isComponentFirstComposer(templateCode) ? "candidate_product" : "internal_module"
+  );
+  const Icon = iconConfig.Icon;
+  const size = compact ? "h-9 w-9" : "h-11 w-11";
+  const inner = compact ? "h-5 w-5" : "h-6 w-6";
+
+  return (
+    <div
+      className={`${size} flex shrink-0 items-center justify-center rounded-xl border`}
+      style={{
+        color: iconConfig.color,
+        backgroundColor: iconConfig.backgroundColor,
+        borderColor: iconConfig.borderColor,
+      }}
+    >
+      {iconConfig.iconUrl ? (
+        <span
+          aria-hidden="true"
+          className={`${inner} block`}
+          style={{
+            backgroundColor: "currentColor",
+            mask: `url(${iconConfig.iconUrl}) center / contain no-repeat`,
+            WebkitMask: `url(${iconConfig.iconUrl}) center / contain no-repeat`,
+          }}
+        />
+      ) : Icon ? (
+        <Icon aria-hidden="true" className={inner} />
+      ) : null}
+    </div>
   );
 }
 
-function formEntryForComponent(
-  templateCode: string,
-  entries: ComponentFirstFormReadinessEntry[]
-): ComponentFirstFormReadinessEntry | undefined {
-  return entries.find(
-    (entry) => normalizeComponentFirstTemplateCode(entry.templateCode) === normalizeComponentFirstTemplateCode(templateCode)
-  );
-}
-
-function ComponentFirstForbiddenSummary() {
+function ComponentFirstForbiddenSummary({ compact = false }: { compact?: boolean }) {
   return (
     <div
       data-testid="product-system-component-first-forbidden-summary"
       className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300"
     >
       <p className="font-bold uppercase tracking-wide text-slate-400">Forbidden capabilities (candidate set)</p>
-      <ul className="mt-1.5 space-y-0.5">
-        <li>Not exposed in Work Intake</li>
-        <li>No Pricing / Quote / Order / Execution</li>
-        <li>No ProductDefinition runtime / ProductAggregate / TaskGraph / ExecutionPlan</li>
-        <li>No task materialization · No Product Truth write · Activation requires owner GO</li>
-      </ul>
+      {compact ? (
+        <p className="mt-1">
+          Not exposed in Work Intake · No Pricing / Quote / Order / Execution · No ProductDefinition runtime /
+          ProductAggregate / TaskGraph / ExecutionPlan · Owner GO required
+        </p>
+      ) : (
+        <ul className="mt-1.5 space-y-0.5">
+          <li>Not exposed in Work Intake</li>
+          <li>No Pricing / Quote / Order / Execution</li>
+          <li>No ProductDefinition runtime / ProductAggregate / TaskGraph / ExecutionPlan</li>
+          <li>No task materialization · No Product Truth write · Activation requires owner GO</li>
+        </ul>
+      )}
     </div>
+  );
+}
+
+function ComponentFirstProductComposerCard({
+  model,
+  variant,
+  onViewProductSettings,
+  onViewProductDossier,
+  onViewComponents,
+}: {
+  model: ComponentFirstReadonlySetModel;
+  variant: "overview" | "compact";
+  onViewProductSettings: () => void;
+  onViewProductDossier: () => void;
+  onViewComponents: () => void;
+}) {
+  const testId =
+    variant === "overview"
+      ? "product-system-component-first-product-card"
+      : "product-system-component-first-composer-card";
+
+  return (
+    <ReadonlyCardShell testId={testId} className="border-cyan-900/40 bg-[#111827]">
+      <div className="flex items-start gap-3">
+        <TemplateIcon templateCode={model.composerTemplateCode} compact={variant === "compact"} />
+        <div className="min-w-0 flex-1">
+          <p className="text-[12px] font-bold text-slate-100">
+            {variant === "overview" ? "Litere volumetrice component-first" : model.composerTemplateCode}
+          </p>
+          <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">{model.composerTemplateCode}</p>
+          <p className="mt-1 text-[10px] text-slate-400">Type: Product Template / Composer</p>
+          {variant === "overview" ? (
+            <>
+              <ComponentFirstSemanticLabel />
+              <div className="mt-2 grid gap-1 text-[10px] text-slate-300">
+                <p>Role: compune componentele</p>
+                <p>Owns material truth: no · Owns operation truth: no</p>
+                <p>Components: {model.components.length}</p>
+                <p data-testid="product-system-component-first-completeness-count">
+                  Live rows: {model.foundRowCount}/{model.expectedRowCount}
+                </p>
+                <p>Work Intake: no · Pricing / Quote / Order / Execution: no</p>
+                <p>Owner GO required</p>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="mt-1 text-[10px] text-cyan-200">Composer — coordinates components only</p>
+              <p className="mt-1 text-[10px] text-slate-400">
+                does not own material truth · does not own operation truth · no module links:{" "}
+                {String(model.noModuleLinks)}
+              </p>
+            </>
+          )}
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            <ReadonlyLinkButton
+              label="View product settings"
+              testId="product-system-component-first-view-product-settings"
+              onClick={onViewProductSettings}
+            />
+            <ReadonlyLinkButton
+              label="View product dossier"
+              testId="product-system-component-first-view-product-dossier"
+              onClick={onViewProductDossier}
+            />
+            <ReadonlyLinkButton
+              label="View components"
+              testId="product-system-component-first-view-components"
+              onClick={onViewComponents}
+            />
+          </div>
+        </div>
+      </div>
+    </ReadonlyCardShell>
+  );
+}
+
+function ComponentFirstComponentEntityCard({
+  component,
+  dossierEntry,
+  formEntry,
+  productTruthPrefix,
+  onViewComponentSettings,
+  onViewComponentDossier,
+}: {
+  component: ComponentFirstReadonlyComponent;
+  dossierEntry?: ComponentFirstDossierContractEntry;
+  formEntry?: ComponentFirstFormReadinessEntry;
+  productTruthPrefix: string | null;
+  onViewComponentSettings: () => void;
+  onViewComponentDossier: () => void;
+}) {
+  const displayName = componentFirstDisplayName(component.templateCode);
+  const fieldGroups =
+    formEntry && formEntry.role === "component_template" ? formEntry.fieldGroups.join(", ") : null;
+  const blockerCount = component.blockers.length;
+  const dependencySummary = component.dependencies.length
+    ? `${component.dependencies.length} dependencies`
+    : "no dependencies";
+
+  return (
+    <ReadonlyCardShell testId={`product-system-component-first-component-${component.templateCode}`}>
+      <div className="flex items-start gap-2.5">
+        <TemplateIcon templateCode={component.templateCode} compact />
+        <div className="min-w-0 flex-1">
+          <p className="text-[12px] font-bold text-slate-100">{displayName}</p>
+          <p className="font-mono text-[10px] font-bold text-cyan-200">{component.templateCode}</p>
+          <p className="text-[10px] text-slate-500">{component.componentId}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1 text-[9px] font-bold">
+            <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">
+              Component Template
+            </span>
+            <span className="rounded border border-cyan-800/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">
+              INACTIVE · READONLY · CANDIDATE
+            </span>
+          </div>
+          <div className="mt-2 grid gap-1 text-[10px] text-slate-300">
+            <p data-testid={`product-system-component-first-truth-owner-${component.templateCode}`}>
+              <span className="text-slate-500">Truth owner:</span>{" "}
+              {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "component_owned_truth")}
+            </p>
+            {dossierEntry ? (
+              <p data-testid={`product-system-component-first-dossier-role-${component.templateCode}`}>
+                <span className="text-slate-500">Dossier role:</span> {dossierEntry.expectedDossierRole}
+              </p>
+            ) : null}
+            {fieldGroups ? (
+              <p data-testid={`product-system-component-first-field-groups-${component.templateCode}`}>
+                <span className="text-slate-500">Field groups:</span> {fieldGroups}
+              </p>
+            ) : null}
+            {productTruthPrefix ? (
+              <p
+                data-testid={`product-system-component-first-pt-prefix-${component.templateCode}`}
+                className="font-mono text-cyan-200/85"
+              >
+                Product Truth prefix: {productTruthPrefix}
+              </p>
+            ) : null}
+            <p>
+              <span className="text-slate-500">Live/fallback:</span>{" "}
+              {component.liveRowPresent ? "live inactive row" : "contract fallback row"}
+            </p>
+            <p>
+              <span className="text-slate-500">Blockers:</span> {blockerCount} ·{" "}
+              <span className="text-slate-500">Dependencies:</span> {dependencySummary}
+            </p>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <ReadonlyLinkButton
+              label="View component settings"
+              testId={`product-system-component-first-view-component-settings-${component.templateCode}`}
+              onClick={onViewComponentSettings}
+            />
+            <ReadonlyLinkButton
+              label="View dossier"
+              testId={`product-system-component-first-view-dossier-${component.templateCode}`}
+              onClick={onViewComponentDossier}
+            />
+          </div>
+        </div>
+      </div>
+    </ReadonlyCardShell>
+  );
+}
+
+function ComponentFirstCandidateSetCard({
+  model,
+  ownerSummary,
+  onViewCandidate,
+}: {
+  model: ComponentFirstReadonlySetModel;
+  ownerSummary: ReturnType<typeof buildComponentFirstOwnerSummary>;
+  onViewCandidate: () => void;
+}) {
+  return (
+    <ReadonlyCardShell
+      testId="product-system-component-first-candidate-set-card"
+      className="border-cyan-800/50 bg-cyan-950/10 hover:border-cyan-700/50"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 items-start gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-cyan-800/40 bg-cyan-950/30 text-cyan-300">
+            <Layers className="h-5 w-5" />
+          </div>
+          <div className="min-w-0">
+            <h3 className="text-[13px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
+            <p className="mt-0.5 font-mono text-[10px] text-cyan-200/85">
+              {COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE} · Template set 7/7
+            </p>
+            <ComponentFirstSemanticLabel />
+            <div className="mt-2 flex flex-wrap gap-1 text-[9px] font-bold">
+              <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-1.5 py-0.5 text-cyan-200">
+                INACTIVE
+              </span>
+              <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-1.5 py-0.5 text-cyan-200">
+                CANDIDATE
+              </span>
+              <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-1.5 py-0.5 text-cyan-200">
+                READONLY
+              </span>
+              <span className="rounded border border-rose-700/40 bg-rose-900/20 px-1.5 py-0.5 text-rose-200">
+                NOT OFFERABLE
+              </span>
+            </div>
+            <div className="mt-2 space-y-0.5 text-[10px] text-slate-300">
+              <p data-testid="product-system-component-first-completeness-count">
+                Live rows: {model.foundRowCount}/{model.expectedRowCount}
+              </p>
+              <p>Work Intake: no</p>
+              <p>Pricing / Quote / Order / Execution: no</p>
+              <p>Owner GO required · Status: {ownerSummary.statusTitle}</p>
+            </div>
+          </div>
+        </div>
+        <ReadonlyLinkButton
+          label="View candidate readonly"
+          testId="product-system-component-first-view-candidate"
+          onClick={onViewCandidate}
+        />
+      </div>
+    </ReadonlyCardShell>
   );
 }
 
@@ -152,29 +409,22 @@ function ComponentFirstOverviewPanel({
   model,
   ownerSummary,
   driftAssessment,
+  onViewProductSettings,
+  onViewProductDossier,
+  onViewComponents,
 }: {
   model: ComponentFirstReadonlySetModel;
   ownerSummary: ReturnType<typeof buildComponentFirstOwnerSummary>;
   driftAssessment: ReturnType<typeof assessComponentFirstContractDrift>;
+  onViewProductSettings: () => void;
+  onViewProductDossier: () => void;
+  onViewComponents: () => void;
 }) {
   const blocked = ownerSummary.statusLevel === "BLOCKED";
 
   return (
     <div data-testid="product-system-component-first-panel-overview" className="space-y-3">
-      <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-        <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
-        <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">CANDIDATE</span>
-        <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">READONLY</span>
-        <span
-          data-testid="product-system-component-first-not-offerable"
-          className="rounded border border-rose-700/40 bg-rose-900/20 px-2 py-0.5 text-rose-200"
-        >
-          NOT OFFERABLE
-        </span>
-        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-          Not exposed in Work Intake
-        </span>
-      </div>
+      <ComponentFirstStatusStrip />
 
       {blocked ? (
         <p className="rounded border border-rose-700/40 bg-rose-900/20 px-3 py-2 text-[11px] font-bold text-rose-200">
@@ -182,11 +432,19 @@ function ComponentFirstOverviewPanel({
         </p>
       ) : null}
 
+      <ComponentFirstProductComposerCard
+        model={model}
+        variant="overview"
+        onViewProductSettings={onViewProductSettings}
+        onViewProductDossier={onViewProductDossier}
+        onViewComponents={onViewComponents}
+      />
+
       <article
         data-testid="product-system-component-first-owner-review"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Owner review</p>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Owner review (compact)</p>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <span
             data-testid="product-system-component-first-owner-status-title"
@@ -199,12 +457,6 @@ function ComponentFirstOverviewPanel({
             className={`rounded border px-2 py-0.5 text-[10px] font-bold ${componentFirstSourceTone(model.sourceMode)}`}
           >
             {componentFirstSourceLabel(model.sourceMode)}
-          </span>
-          <span
-            data-testid="product-system-component-first-completeness-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[10px] font-bold text-slate-300"
-          >
-            Live rows: {model.foundRowCount}/{model.expectedRowCount}
           </span>
         </div>
         <p
@@ -224,9 +476,13 @@ function ComponentFirstOverviewPanel({
             </li>
           ))}
         </ul>
+        <p className="mt-2 text-[10px] text-slate-400">
+          Drift/completeness summary: live {model.foundRowCount}/{model.expectedRowCount} · contract check in Guards /
+          Audit
+        </p>
         <p
           data-testid="product-system-component-first-owner-next-step"
-          className="mt-2 text-[10px] font-mono text-cyan-200/85"
+          className="mt-1 text-[10px] font-mono text-cyan-200/85"
         >
           Next owner decision: {ownerSummary.nextOwnerDecisionNeeded.replaceAll("_", " ").toLowerCase()}
         </p>
@@ -238,7 +494,7 @@ function ComponentFirstOverviewPanel({
         </p>
       </article>
 
-      <ComponentFirstForbiddenSummary />
+      <ComponentFirstForbiddenSummary compact />
 
       <p className="text-[10px] text-cyan-300/75">{componentFirstSourceDescription(model.sourceMode)}</p>
       {model.missingTemplateCodes.length > 0 ? (
@@ -266,157 +522,30 @@ function ComponentFirstOverviewPanel({
   );
 }
 
-function ComponentFirstComponentEntityCard({
-  component,
-  dossierEntry,
-  formEntry,
-  productTruthPrefix,
-}: {
-  component: ComponentFirstReadonlyComponent;
-  dossierEntry?: ComponentFirstDossierContractEntry;
-  formEntry?: ComponentFirstFormReadinessEntry;
-  productTruthPrefix: string | null;
-}) {
-  const fieldGroups =
-    formEntry && formEntry.role === "component_template" ? formEntry.fieldGroups.join(", ") : null;
-
-  return (
-    <article
-      data-testid={`product-system-component-first-component-${component.templateCode}`}
-      className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 p-3"
-    >
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="font-mono text-[10px] font-bold text-cyan-200">{component.templateCode}</p>
-          <p className="mt-0.5 text-[11px] font-bold text-slate-100">{component.componentId}</p>
-        </div>
-        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
-          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">
-            {component.componentKind}
-          </span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">
-            active = {String(component.active)}
-          </span>
-          <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">
-            {component.readinessState}
-          </span>
-          {!component.liveRowPresent ? (
-            <span className="rounded border border-orange-700/40 bg-orange-900/20 px-1.5 py-0.5 text-orange-300">
-              contract fallback row
-            </span>
-          ) : (
-            <span className="rounded border border-emerald-700/40 bg-emerald-900/20 px-1.5 py-0.5 text-emerald-300">
-              live inactive row
-            </span>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-2 grid gap-1.5 text-[10px] text-slate-300">
-        <p>
-          <span className="text-slate-500">Role:</span> {component.roleLabel}
-        </p>
-        {dossierEntry ? (
-          <p data-testid={`product-system-component-first-dossier-role-${component.templateCode}`}>
-            <span className="text-slate-500">Dossier role:</span> {dossierEntry.expectedDossierRole}
-          </p>
-        ) : null}
-        <p data-testid={`product-system-component-first-truth-owner-${component.templateCode}`}>
-          <span className="text-slate-500">Truth ownership:</span>{" "}
-          {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "component_owned_truth")}
-        </p>
-        {fieldGroups ? (
-          <p data-testid={`product-system-component-first-field-groups-${component.templateCode}`}>
-            <span className="text-slate-500">Future field groups:</span> {fieldGroups}
-          </p>
-        ) : null}
-        {productTruthPrefix ? (
-          <p
-            data-testid={`product-system-component-first-pt-prefix-${component.templateCode}`}
-            className="font-mono text-cyan-200/85"
-          >
-            Product Truth prefix: {productTruthPrefix}
-          </p>
-        ) : null}
-        <p className="font-mono text-cyan-200/85">{component.targetProductTruthPath}</p>
-      </div>
-
-      <details className="mt-2 text-[10px] text-slate-400">
-        <summary className="cursor-pointer font-semibold text-slate-300">Blockers & guards</summary>
-        <p className="mt-1">Dependencies: {component.dependencies.join(", ") || "none"}</p>
-        <p className="mt-1 font-mono text-amber-200/85">Blockers: {component.blockers.join(", ") || "none"}</p>
-        <p className="mt-1">Activation guard: {component.activationGuard}</p>
-      </details>
-    </article>
-  );
-}
-
 function ComponentFirstComponentsPanel({
   model,
   formReadiness,
+  onViewProductSettings,
+  onViewProductDossier,
+  onViewComponentSettings,
+  onViewComponentDossier,
 }: {
   model: ComponentFirstReadonlySetModel;
   formReadiness: ReturnType<typeof assessComponentFirstFormSystemReadiness>;
+  onViewProductSettings: () => void;
+  onViewProductDossier: () => void;
+  onViewComponentSettings: (templateCode: string) => void;
+  onViewComponentDossier: (templateCode: string) => void;
 }) {
   return (
     <div data-testid="product-system-component-first-panel-components" className="space-y-3">
-      <article
-        data-testid="product-system-component-first-composer-card"
-        className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <p className="text-[12px] font-bold text-slate-100">{model.composerTemplateCode}</p>
-            <p className="mt-0.5 text-[10px] text-cyan-200">Composer — coordinates components only</p>
-          </div>
-          <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
-            <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">
-              readiness: {model.composerReadiness}
-            </span>
-            <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">
-              guard: {model.composerActivationGuard}
-            </span>
-          </div>
-        </div>
-        <div className="mt-2 grid gap-2 md:grid-cols-2 text-[10px] text-slate-200">
-          <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-            <p className="font-bold uppercase tracking-wide text-slate-400">Composer boundary</p>
-            <p className="mt-1">does not own material truth</p>
-            <p className="mt-0.5">does not own operation truth</p>
-            <p className="mt-0.5">
-              no module links: <span className="font-bold text-cyan-200">{String(model.noModuleLinks)}</span>
-            </p>
-          </div>
-          <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-            <p className="font-bold uppercase tracking-wide text-slate-400">Blockers</p>
-            <p className="mt-1 font-mono text-amber-200/85">{model.composerBlockers.join(", ") || "OWNER_GO_REQUIRED"}</p>
-          </div>
-        </div>
-        <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-          <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
-            <span>Composition list</span>
-            <span>Template</span>
-            <span>Kind</span>
-            <span>Product Truth target</span>
-          </div>
-          <div className="divide-y divide-slate-800/80">
-            {model.compositionList.map((entry) => (
-              <div
-                key={entry.componentTemplateCode}
-                className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]"
-              >
-                <div>
-                  <p className="font-bold text-slate-100">{entry.role.toUpperCase()}</p>
-                  <p className="mt-0.5 font-mono text-[9px] text-slate-500">{entry.componentId}</p>
-                </div>
-                <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
-                <p className="text-slate-300">{entry.kind}</p>
-                <p className="font-mono text-slate-300">{entry.targetProductTruthPath}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </article>
+      <ComponentFirstProductComposerCard
+        model={model}
+        variant="compact"
+        onViewProductSettings={onViewProductSettings}
+        onViewProductDossier={onViewProductDossier}
+        onViewComponents={() => undefined}
+      />
 
       <section
         data-testid="product-system-component-first-components-list"
@@ -428,6 +557,7 @@ function ComponentFirstComponentsPanel({
             {model.components.length} components
           </span>
         </div>
+        <ComponentFirstSemanticLabel />
         <div className="mt-3 grid gap-3 xl:grid-cols-2">
           {model.components.map((component) => (
             <ComponentFirstComponentEntityCard
@@ -436,6 +566,8 @@ function ComponentFirstComponentsPanel({
               dossierEntry={dossierEntryForTemplate(component.templateCode)}
               formEntry={formEntryForComponent(component.templateCode, formReadiness.contractEntries)}
               productTruthPrefix={productTruthPrefixForTemplate(component.templateCode)}
+              onViewComponentSettings={() => onViewComponentSettings(component.templateCode)}
+              onViewComponentDossier={() => onViewComponentDossier(component.templateCode)}
             />
           ))}
         </div>
@@ -446,21 +578,37 @@ function ComponentFirstComponentsPanel({
 
 function ComponentFirstDossierPanel({
   dossierAlignment,
+  dossierFocus,
+  onViewSettings,
+  onFocusComponent,
 }: {
   dossierAlignment: ReturnType<typeof assessComponentFirstDossierAlignment>;
+  dossierFocus: string | null;
+  onViewSettings: (templateCode: string) => void;
+  onFocusComponent: (templateCode: string) => void;
 }) {
+  const composerEntry = dossierAlignment.contractEntries.find((entry) =>
+    isComponentFirstComposer(entry.templateCode)
+  );
+  const componentEntries = dossierAlignment.contractEntries.filter(
+    (entry) => !isComponentFirstComposer(entry.templateCode)
+  );
+
   return (
     <section data-testid="product-system-component-first-panel-dossier" className="space-y-3">
       <div
-        data-testid="product-system-component-first-dossier-section"
+        data-testid="product-system-component-first-dossier-workspace"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Dossier contract (readonly)</h4>
+        <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Dossier workspace (readonly)</h4>
         <div
-          data-testid="product-system-component-first-dossier-alignment"
+          data-testid="product-system-component-first-dossier-section"
           className="mt-2 space-y-2"
         >
-          <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold">
+          <div
+            data-testid="product-system-component-first-dossier-alignment"
+            className="flex flex-wrap items-center gap-2 text-[10px] font-bold"
+          >
             <span
               data-testid="product-system-component-first-dossier-contract-count"
               className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
@@ -486,35 +634,70 @@ function ComponentFirstDossierPanel({
           >
             Truth ownership: Composer = product orchestration only; Components = component-owned truth
           </p>
-          <p
-            data-testid="product-system-component-first-dossier-guard"
-            className="text-[10px] font-mono text-cyan-200/80"
+          <div
+            data-testid="product-system-component-first-dossier-global-forbidden"
+            className="rounded border border-rose-900/40 bg-rose-950/20 px-2 py-1.5 text-[10px] text-rose-200/90"
           >
-            Guard: No task materialization; No ProductAggregate runtime; No ProductDefinition activation; No Pricing /
-            Quote / Order / Execution; No Work Intake exposure
-          </p>
-          {dossierAlignment.runtimeActivationLeakIssues.length > 0 ? (
-            <p
-              data-testid="product-system-component-first-dossier-activation-leak"
-              className="text-[10px] font-mono text-rose-200/90"
-            >
-              Activation leak signals: {dossierAlignment.runtimeActivationLeakIssues.join(", ")}
-            </p>
-          ) : null}
+            <span data-testid="product-system-component-first-dossier-guard">
+              No task materialization · No ProductAggregate runtime · No TaskGraph / ExecutionPlan · No Pricing /
+              Quote / Order / Execution · No Work Intake exposure
+            </span>
+          </div>
         </div>
       </div>
 
-      <div
-        data-testid="product-system-component-first-dossier-cards"
-        className="grid gap-3 xl:grid-cols-2"
-      >
-        {dossierAlignment.contractEntries.map((entry) => (
+      {composerEntry ? (
+        <article
+          data-testid={`product-system-component-first-dossier-composer-card`}
+          className={`rounded-lg border p-3 ${
+            dossierFocus === composerEntry.templateCode
+              ? "border-purple-500/50 bg-purple-950/20 ring-1 ring-purple-500/30"
+              : "border-purple-800/50 bg-purple-950/10"
+          }`}
+        >
+          <p className="text-[10px] font-bold uppercase tracking-wide text-purple-200">Product Composer Dossier</p>
+          <p className="mt-1 font-mono text-[10px] font-bold text-cyan-200">{composerEntry.templateCode}</p>
+          <div className="mt-2 space-y-1 text-[10px] text-slate-300">
+            <p>Entity type: Product Composer</p>
+            <p>Dossier role: {composerEntry.expectedDossierRole}</p>
+            <p>Truth owner: {truthOwnerLabel(composerEntry.expectedTruthOwner)}</p>
+            <p>Future metadata: {composerEntry.futureAllowedMetadata.join(", ")}</p>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1 text-[9px] font-bold">
+            {composerEntry.forbiddenNow.map((item) => (
+              <span
+                key={item}
+                className="rounded border border-rose-800/40 bg-rose-950/30 px-1.5 py-0.5 text-rose-200"
+              >
+                {DOSSIER_FORBIDDEN_LABELS[item]}
+              </span>
+            ))}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <ReadonlyLinkButton
+              label="View settings"
+              testId="product-system-component-first-dossier-view-settings-composer"
+              onClick={() => onViewSettings(composerEntry.templateCode)}
+            />
+          </div>
+        </article>
+      ) : null}
+
+      <div data-testid="product-system-component-first-dossier-cards" className="grid gap-3 xl:grid-cols-2">
+        {componentEntries.map((entry) => (
           <article
             key={entry.templateCode}
             data-testid={`product-system-component-first-dossier-card-${entry.templateCode}`}
-            className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 p-3"
+            className={`rounded-lg border bg-[#0D1321]/90 p-3 ${
+              dossierFocus === entry.templateCode
+                ? "border-cyan-500/50 ring-1 ring-cyan-500/30"
+                : "border-slate-800/90"
+            }`}
           >
             <p className="font-mono text-[10px] font-bold text-cyan-200">{entry.templateCode}</p>
+            <p className="text-[10px] text-slate-400">
+              {componentFirstDisplayName(entry.templateCode)} · Component Template
+            </p>
             <div className="mt-2 space-y-1 text-[10px] text-slate-300">
               <p>
                 <span className="text-slate-500">Dossier role:</span> {entry.expectedDossierRole}
@@ -523,11 +706,7 @@ function ComponentFirstDossierPanel({
                 <span className="text-slate-500">Truth owner:</span> {truthOwnerLabel(entry.expectedTruthOwner)}
               </p>
               <p>
-                <span className="text-slate-500">Kind:</span> {entry.expectedKind}
-              </p>
-              <p>
-                <span className="text-slate-500">Future metadata:</span>{" "}
-                {entry.futureAllowedMetadata.join(", ")}
+                <span className="text-slate-500">Future metadata:</span> {entry.futureAllowedMetadata.join(", ")}
               </p>
             </div>
             <div className="mt-2 flex flex-wrap gap-1 text-[9px] font-bold">
@@ -539,6 +718,18 @@ function ComponentFirstDossierPanel({
                   {DOSSIER_FORBIDDEN_LABELS[item]}
                 </span>
               ))}
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              <ReadonlyLinkButton
+                label="View settings"
+                testId={`product-system-component-first-dossier-view-settings-${entry.templateCode}`}
+                onClick={() => onViewSettings(entry.templateCode)}
+              />
+              <ReadonlyLinkButton
+                label="Focus component"
+                testId={`product-system-component-first-dossier-focus-${entry.templateCode}`}
+                onClick={() => onFocusComponent(entry.templateCode)}
+              />
             </div>
           </article>
         ))}
@@ -874,12 +1065,18 @@ export function ComponentFirstReadonlyCandidatePanel({
   templates,
   availabilityItems,
   selectedTemplateCode,
+  variant = "catalog",
 }: {
   templates: ProductTemplateEntity[];
   availabilityItems: ProductTemplateAvailabilityItem[];
   selectedTemplateCode: string;
+  variant?: "catalog" | "inline";
 }) {
+  const [detailOpen, setDetailOpen] = useState(variant === "inline");
   const [activeTab, setActiveTab] = useState<ComponentFirstCandidateTab>("overview");
+  const [settingsTarget, setSettingsTarget] = useState<ComponentFirstSettingsTarget | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [dossierFocus, setDossierFocus] = useState<string | null>(null);
 
   const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
   const driftAssessment = assessComponentFirstContractDrift(templates);
@@ -903,82 +1100,149 @@ export function ComponentFirstReadonlyCandidatePanel({
     { liveTemplates: templates }
   );
 
+  const openSettings = (target: ComponentFirstSettingsTarget) => {
+    setSettingsTarget(target);
+    setSettingsOpen(true);
+  };
+
+  const openProductSettings = () => openSettings({ kind: "product" });
+  const openComponentSettings = (templateCode: string) => openSettings({ kind: "component", templateCode });
+
+  const openProductDossier = () => {
+    setActiveTab("dossier");
+    setDossierFocus(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE);
+  };
+
+  const openComponentDossier = (templateCode: string) => {
+    setActiveTab("dossier");
+    setDossierFocus(templateCode);
+  };
+
+  const openComponentsTab = () => setActiveTab("components");
+
   if (!model) {
     return null;
   }
 
+  if (variant === "catalog" && !detailOpen) {
+    return (
+      <ComponentFirstCandidateSetCard
+        model={model}
+        ownerSummary={ownerSummary}
+        onViewCandidate={() => setDetailOpen(true)}
+      />
+    );
+  }
+
   return (
-    <section
-      data-testid="product-system-component-first-letters-set"
-      className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-cyan-900/40 pb-3">
-        <div>
-          <h3 className="text-[13px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
-          <p className="mt-0.5 text-[11px] text-cyan-200/75">
-            Parallel readonly candidate set — does not replace TPL-VOLUMETRIC-LETTERS_v2 and does not activate anything.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-            active = {String(model.composerActive)}
-          </span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-            catalog status = {model.composerCatalogStatus}
-          </span>
-        </div>
-      </div>
-
-      <div
-        className="mt-3 flex flex-wrap gap-1.5"
-        role="tablist"
-        aria-label="Component-first candidate sections"
+    <>
+      <section
+        data-testid="product-system-component-first-letters-set"
+        className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
       >
-        {CANDIDATE_TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={activeTab === tab.id}
-            data-testid={tab.testId}
-            onClick={() => setActiveTab(tab.id)}
-            className={`rounded-md border px-2.5 py-1 text-[10px] font-bold transition-colors ${
-              activeTab === tab.id
-                ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
-                : "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-cyan-900/40 pb-3">
+          <div>
+            <h3 className="text-[13px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
+            <p className="mt-0.5 text-[11px] text-cyan-200/75">
+              Parallel readonly candidate set — does not replace TPL-VOLUMETRIC-LETTERS_v2 and does not activate anything.
+            </p>
+            <ComponentFirstSemanticLabel />
+          </div>
+          <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+              active = {String(model.composerActive)}
+            </span>
+            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+              catalog status = {model.composerCatalogStatus}
+            </span>
+          </div>
+        </div>
 
-      <div className="mt-3">
-        {activeTab === "overview" ? (
-          <ComponentFirstOverviewPanel
-            model={model}
-            ownerSummary={ownerSummary}
-            driftAssessment={driftAssessment}
-          />
-        ) : null}
-        {activeTab === "components" ? (
-          <ComponentFirstComponentsPanel model={model} formReadiness={formReadiness} />
-        ) : null}
-        {activeTab === "dossier" ? <ComponentFirstDossierPanel dossierAlignment={dossierAlignment} /> : null}
-        {activeTab === "form-system" ? <ComponentFirstFormSystemPanel formReadiness={formReadiness} /> : null}
-        {activeTab === "product-truth" ? (
-          <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
-        ) : null}
-        {activeTab === "guards-audit" ? (
-          <ComponentFirstGuardsAuditPanel
-            model={model}
-            driftAssessment={driftAssessment}
-            dossierAlignment={dossierAlignment}
-            productDefinitionReadiness={productDefinitionReadiness}
-          />
-        ) : null}
-      </div>
-    </section>
+        <div
+          className="mt-3 flex flex-wrap gap-1.5"
+          role="tablist"
+          aria-label="Component-first candidate sections"
+        >
+          {CANDIDATE_TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              data-testid={tab.testId}
+              onClick={() => setActiveTab(tab.id)}
+              className={`rounded-md border px-2.5 py-1 text-[10px] font-bold transition-colors ${
+                activeTab === tab.id
+                  ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
+                  : "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-3">
+          {activeTab === "overview" ? (
+            <ComponentFirstOverviewPanel
+              model={model}
+              ownerSummary={ownerSummary}
+              driftAssessment={driftAssessment}
+              onViewProductSettings={openProductSettings}
+              onViewProductDossier={openProductDossier}
+              onViewComponents={openComponentsTab}
+            />
+          ) : null}
+          {activeTab === "components" ? (
+            <ComponentFirstComponentsPanel
+              model={model}
+              formReadiness={formReadiness}
+              onViewProductSettings={openProductSettings}
+              onViewProductDossier={openProductDossier}
+              onViewComponentSettings={openComponentSettings}
+              onViewComponentDossier={openComponentDossier}
+            />
+          ) : null}
+          {activeTab === "dossier" ? (
+            <ComponentFirstDossierPanel
+              dossierAlignment={dossierAlignment}
+              dossierFocus={dossierFocus}
+              onViewSettings={(templateCode) =>
+                isComponentFirstComposer(templateCode)
+                  ? openProductSettings()
+                  : openComponentSettings(templateCode)
+              }
+              onFocusComponent={(templateCode) => {
+                setDossierFocus(templateCode);
+                setActiveTab("components");
+              }}
+            />
+          ) : null}
+          {activeTab === "form-system" ? <ComponentFirstFormSystemPanel formReadiness={formReadiness} /> : null}
+          {activeTab === "product-truth" ? (
+            <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
+          ) : null}
+          {activeTab === "guards-audit" ? (
+            <ComponentFirstGuardsAuditPanel
+              model={model}
+              driftAssessment={driftAssessment}
+              dossierAlignment={dossierAlignment}
+              productDefinitionReadiness={productDefinitionReadiness}
+            />
+          ) : null}
+        </div>
+      </section>
+
+      <ComponentFirstReadonlySettingsSheet
+        open={settingsOpen}
+        onOpenChange={setSettingsOpen}
+        target={settingsTarget}
+        model={model}
+        formEntries={formReadiness.contractEntries}
+        truthEntries={productTruthMapping.contractEntries}
+        dossierRuntimeLinkState={componentFirstDossierRuntimeLinkLabel(dossierAlignment.dossierRuntimeLinkState)}
+      />
+    </>
   );
 }
 

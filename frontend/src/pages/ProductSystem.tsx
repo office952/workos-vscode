@@ -2923,6 +2923,7 @@ function TemplateEditor({
       templates={allTemplates}
       availabilityItems={availabilityItems}
       selectedTemplateCode={draft.template_code}
+      variant="inline"
     />
   );
 
