@@ -14,9 +14,15 @@ FIXTURE_SVG = Path(__file__).parent / "fixtures" / "intake_v3" / "multi_layer_te
 
 @pytest.fixture(scope="module")
 def seeded_db(db_fixture):
-    asyncio.get_event_loop().run_until_complete(seed_build4_templates())
-    asyncio.get_event_loop().run_until_complete(seed_tpl_volumetric_letters_dossier())
-    asyncio.get_event_loop().run_until_complete(seed_tpl_volumetric_letters_v2())
+    from core.database import db_manager
+
+    db_manager.engine = getattr(db_fixture, "_engine", None)
+    db_manager.async_session_maker = db_fixture.session_maker
+    db_manager._initialized = True
+
+    db_fixture.run(seed_build4_templates())
+    db_fixture.run(seed_tpl_volumetric_letters_dossier())
+    db_fixture.run(seed_tpl_volumetric_letters_v2())
     return db_fixture
 
 
