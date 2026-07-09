@@ -455,6 +455,7 @@ function CatalogBucketSection({
   onOpenEntry,
   onSettingsEntry,
   onOpenSection,
+  onViewReplacementMap,
 }: {
   group: UnifiedCatalogBucketGroup;
   expanded: boolean;
@@ -467,8 +468,11 @@ function CatalogBucketSection({
     entry: UnifiedCatalogEntry,
     section: UnifiedCatalogDetailSection | "components" | "dossier" | "guards-audit" | "guards",
   ) => void;
+  onViewReplacementMap?: () => void;
 }) {
   const theme = UNIFIED_CATALOG_BUCKET_THEMES[group.bucket.id];
+  const isLegacyBucket = group.bucket.id === "legacy-shared-modules";
+  const legacyCount = group.entries.length;
 
   return (
     <section
@@ -500,6 +504,43 @@ function CatalogBucketSection({
       </button>
       {expanded ? (
         <div className="space-y-2 border-t border-slate-800/60 px-3 py-3">
+          {isLegacyBucket ? (
+            <div
+              data-testid="product-system-legacy-bucket-support-banner"
+              className="rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2.5"
+            >
+              <p
+                data-testid="product-system-legacy-bucket-support-copy"
+                className="text-xs font-semibold text-amber-200/90"
+              >
+                Legacy support only — used by parent product, not new component-first.
+              </p>
+              <p className="mt-1 text-[10px] text-slate-400">
+                Replacement path proposed · readonly mapping · no delete now · future deprecation candidate.
+              </p>
+              {legacyCount > 20 ? (
+                <p
+                  data-testid="product-system-legacy-bucket-scale-hint"
+                  className="mt-2 text-[10px] font-medium text-slate-500"
+                >
+                  Use search/filter before expanding full legacy list ({legacyCount} modules).
+                </p>
+              ) : null}
+              {onViewReplacementMap ? (
+                <button
+                  type="button"
+                  data-testid="product-system-legacy-bucket-view-replacement-map"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onViewReplacementMap();
+                  }}
+                  className="mt-2 rounded-md border border-purple-800/40 bg-purple-950/30 px-2.5 py-1 text-[10px] font-semibold text-purple-200 transition-colors hover:bg-purple-900/30"
+                >
+                  View replacement map
+                </button>
+              ) : null}
+            </div>
+          ) : null}
           {group.entries.map((entry) => (
             <UnifiedCatalogRow
               key={entry.id}
@@ -655,6 +696,16 @@ export function ProductSystemUnifiedCatalog({
     setBucketExpanded((current) => ({ ...current, [bucketId]: !current[bucketId] }));
   };
 
+  const viewLegacyReplacementMap = () => {
+    const legacyEntries = entries.filter((entry) => entry.bucket === "legacy-shared-modules" && entry.kind === "template");
+    const faceEntry =
+      legacyEntries.find((entry) => entry.templateCode === "TPL-VOLUMETRIC-FACE_v1") ?? legacyEntries[0];
+    if (!faceEntry) return;
+    setSelectedEntryId(faceEntry.id);
+    setBucketExpanded((current) => ({ ...current, "legacy-shared-modules": true }));
+    setTemplateDetailSection("guards");
+  };
+
   return (
     <div className="space-y-4" data-testid="product-system-unified-catalog" data-layout="comfortable">
       {catalogOverview ?? null}
@@ -733,6 +784,9 @@ export function ProductSystemUnifiedCatalog({
                 onOpenEntry={openEntry}
                 onSettingsEntry={openSettings}
                 onOpenSection={openSection}
+                onViewReplacementMap={
+                  group.bucket.id === "legacy-shared-modules" ? viewLegacyReplacementMap : undefined
+                }
               />
             ))
           )}

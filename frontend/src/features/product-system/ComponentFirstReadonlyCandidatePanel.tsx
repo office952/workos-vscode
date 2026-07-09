@@ -70,6 +70,10 @@ import {
   ReadonlyStatusChip,
 } from "./componentFirstReadonlyUiShared";
 import { getProductTemplateIconConfig } from "./productTemplateIconRegistry";
+import {
+  ComponentFirstReplacementContextPanel,
+  LegacyReplacementReadinessPanel,
+} from "./LegacyReplacementReadinessPanel";
 
 export type ComponentFirstCandidateTab =
   | "overview"
@@ -485,6 +489,8 @@ function ComponentFirstOverviewPanel({
         onViewProductDossier={onViewProductDossier}
         onViewComponents={onViewComponents}
       />
+
+      <ComponentFirstReplacementContextPanel />
 
       <article
         data-testid="product-system-component-first-owner-review"
@@ -1183,6 +1189,8 @@ function ComponentFirstGuardsAuditPanel({
           <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
         </div>
       ) : null}
+
+      <LegacyReplacementReadinessPanel />
     </div>
   );
 }

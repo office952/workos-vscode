@@ -69,7 +69,7 @@ export const UNIFIED_CATALOG_BUCKETS: Array<{
   {
     id: "legacy-shared-modules",
     label: "Module legacy partajate",
-    description: "Componente interne folosite de compoziția produsului părinte.",
+    description: "Legacy support only — used by parent product, not new component-first.",
     testId: "product-system-catalog-bucket-legacy-shared-modules",
     toggleTestId: "product-system-catalog-bucket-toggle-legacy-shared-modules",
     defaultExpanded: false,

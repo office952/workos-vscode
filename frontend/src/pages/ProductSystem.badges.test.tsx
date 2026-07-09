@@ -1575,4 +1575,98 @@ describe("ProductSystem design-system badges", () => {
     );
   });
 
+  it("shows legacy replacement readiness map with NOT READY FOR DELETE and zero delete-ready", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, legacyFaceTemplate]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, legacyFaceAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await expandCatalogBucketAsync(CATALOG_BUCKET.legacyModules, "product-system-catalog-bucket-toggle-legacy-shared-modules");
+    fireEvent.click(screen.getByTestId("product-system-legacy-bucket-view-replacement-map"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-legacy-replacement-readiness")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-legacy-replacement-global-verdict")).toHaveTextContent(
+      "NOT READY FOR DELETE",
+    );
+    expect(screen.getByTestId("product-system-legacy-replacement-summary-delete-ready-count")).toHaveTextContent("0");
+
+    const table = screen.getByTestId("product-system-legacy-replacement-table");
+    expect(table).toHaveTextContent("TPL-VOLUMETRIC-FACE_v1");
+    expect(table).toHaveTextContent("TPL-COMP-LETTER-FACE_v1");
+    expect(table).toHaveTextContent("TPL-VOLUMETRIC-LED_v1");
+    expect(table).toHaveTextContent("TPL-COMP-LETTER-LED_v1");
+    expect(table).toHaveTextContent("TPL-VOLUM-ALUMINIU_v1");
+    expect(table).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
+    expect(table.textContent?.match(/NO DELETE/g)?.length ?? 0).toBeGreaterThanOrEqual(7);
+  });
+
+  it("shows legacy bucket support copy and no delete actions", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, legacyFaceTemplate]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, legacyFaceAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await expandCatalogBucketAsync(CATALOG_BUCKET.legacyModules, "product-system-catalog-bucket-toggle-legacy-shared-modules");
+
+    expect(screen.getByTestId("product-system-legacy-bucket-support-copy")).toHaveTextContent(
+      /Legacy support only/i,
+    );
+    expect(screen.getByTestId("product-system-legacy-bucket-support-copy")).toHaveTextContent(/not new component-first/i);
+    expect(screen.queryByRole("button", { name: /^delete now$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /ready to delete/i })).not.toBeInTheDocument();
+  });
+
+  it("shows component-first replacement context as readonly without runtime replacement", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+
+    const context = screen.getByTestId("product-system-component-first-replacement-context");
+    expect(context).toHaveTextContent(/Nu înlocuiește runtime acum/i);
+    expect(context).toHaveTextContent(/replacement map readonly/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-face")).toHaveTextContent(/FACE/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-back")).toHaveTextContent(/BACK/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-return-cant")).toHaveTextContent(/RETURN-CANT/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-led")).toHaveTextContent(/LED/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-finish")).toHaveTextContent(/FINISH/i);
+    expect(screen.getByTestId("product-system-component-first-replaces-mounting")).toHaveTextContent(/MOUNTING/i);
+  });
+
+  it("keeps dangerous replacement wording out of legacy readiness UI", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, legacyFaceTemplate]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, legacyFaceAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await expandCatalogBucketAsync(CATALOG_BUCKET.legacyModules, "product-system-catalog-bucket-toggle-legacy-shared-modules");
+    fireEvent.click(screen.getByTestId("product-system-legacy-bucket-view-replacement-map"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-legacy-replacement-readiness")).toBeInTheDocument();
+    });
+
+    const panel = screen.getByTestId("product-system-legacy-replacement-readiness");
+    expect(panel.textContent?.toLowerCase()).not.toMatch(/ready to delete/);
+    expect(panel.textContent?.toLowerCase()).not.toMatch(/migrated live/);
+    expect(panel.textContent?.toLowerCase()).not.toMatch(/activated replacement/);
+    expect(panel.textContent?.toLowerCase()).not.toMatch(/work intake exposed/);
+    expect(panel.textContent?.toLowerCase()).not.toMatch(/make offerable/);
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+  });
+
 });

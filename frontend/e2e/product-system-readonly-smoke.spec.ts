@@ -182,6 +182,44 @@ test.describe("Product System readonly smoke", () => {
 
     await saveScreenshot(page, "05_legacy_collapsed");
 
+    await expandBucketIfNeeded(page, BUCKET.legacyModules, BUCKET_TOGGLE.legacyModules);
+    await expect(page.getByTestId("product-system-legacy-bucket-support-copy")).toHaveText(
+      /Legacy support only/i,
+    );
+    await page.getByTestId("product-system-legacy-bucket-view-replacement-map").click();
+    await expect(page.getByTestId("product-system-legacy-replacement-readiness")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByTestId("product-system-legacy-replacement-global-verdict")).toHaveText(
+      /NOT READY FOR DELETE/i,
+    );
+    await expect(page.getByTestId("product-system-legacy-replacement-summary-delete-ready-count")).toHaveText("0");
+    const replacementTable = page.getByTestId("product-system-legacy-replacement-table");
+    await expect(replacementTable).toContainText("TPL-VOLUMETRIC-FACE_v1");
+    await expect(replacementTable).toContainText("TPL-COMP-LETTER-FACE_v1");
+    await expect(replacementTable).toContainText("TPL-VOLUMETRIC-LED_v1");
+    await expect(replacementTable).toContainText("TPL-COMP-LETTER-LED_v1");
+    await expect(replacementTable).toContainText("TPL-VOLUM-ALUMINIU_v1");
+    await expect(replacementTable).toContainText("TPL-COMP-LETTER-RETURN-CANT_v1");
+
+    await saveScreenshot(page, "06_legacy_replacement_readiness");
+
+    await expandBucketIfNeeded(page, BUCKET.componentFirstSets, BUCKET_TOGGLE.componentFirstSets);
+    await page.getByTestId("product-system-unified-row-candidate-set").click();
+    await expect(page.getByTestId("product-system-component-first-replacement-context")).toBeVisible({
+      timeout: 15_000,
+    });
+    await expect(page.getByTestId("product-system-component-first-replacement-context")).toHaveText(
+      /Nu înlocuiește runtime acum|replacement map readonly/i,
+    );
+    await expect(page.getByTestId("product-system-component-first-replaces-face")).toBeVisible();
+
+    await saveScreenshot(page, "07_component_first_replacement_context");
+
+    const pageText = (await page.locator("body").innerText()).toLowerCase();
+    expect(pageText).not.toMatch(/ready to delete/);
+    await expect(page.getByRole("button", { name: /^delete now$/i })).toHaveCount(0);
+
     await assertNoDangerousActions(page);
   });
 });

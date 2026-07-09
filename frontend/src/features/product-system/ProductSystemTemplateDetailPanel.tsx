@@ -9,6 +9,7 @@ import type {
   UnifiedCatalogBucketId,
   UnifiedCatalogDetailSection,
 } from "./productSystemUnifiedCatalogTypes";
+import { LegacyReplacementReadinessPanel } from "./LegacyReplacementReadinessPanel";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -280,22 +281,27 @@ export function ProductSystemTemplateDetailPanel({
       ) : null}
 
       {section === "guards" ? (
-        <section
-          data-testid="product-system-template-detail-guards"
-          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
-        >
-          <p>
-            <span className="text-slate-500">Status:</span> {availability.status}
-          </p>
-          <p className="mt-1">
-            <span className="text-slate-500">Motiv:</span> {availability.status_reason}
-          </p>
-          <details className="mt-3 text-sm text-slate-500">
-            <summary className="cursor-pointer select-none hover:text-slate-400">Detaliu readiness</summary>
-            <p className="mt-1">{availability.readiness_reason}</p>
-            <p className="mt-1">Readonly · Nu runtime · Fără Pricing / Quote / Order / Execution.</p>
-          </details>
-        </section>
+        <div className="space-y-4">
+          <section
+            data-testid="product-system-template-detail-guards"
+            className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+          >
+            <p>
+              <span className="text-slate-500">Status:</span> {availability.status}
+            </p>
+            <p className="mt-1">
+              <span className="text-slate-500">Motiv:</span> {availability.status_reason}
+            </p>
+            <details className="mt-3 text-sm text-slate-500">
+              <summary className="cursor-pointer select-none hover:text-slate-400">Detaliu readiness</summary>
+              <p className="mt-1">{availability.readiness_reason}</p>
+              <p className="mt-1">Readonly · Nu runtime · Fără Pricing / Quote / Order / Execution.</p>
+            </details>
+          </section>
+          {catalogBucket === "legacy-shared-modules" ? (
+            <LegacyReplacementReadinessPanel highlightLegacyCode={template.template_code} />
+          ) : null}
+        </div>
       ) : null}
     </div>
   );
