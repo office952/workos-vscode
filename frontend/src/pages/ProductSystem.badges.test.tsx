@@ -1415,4 +1415,35 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
+  it("uses compact catalog layout without strong bucket border accents", async () => {
+    mockTemplateList.mockResolvedValue([
+      volumetricTemplate,
+      logoTemplate,
+      legacyFaceTemplate,
+      componentFirstComposerTemplate,
+      ...componentFirstTemplates,
+    ]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, logoAvailability, legacyFaceAvailability, componentFirstAvailability],
+      total: 4,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-unified-catalog")).toHaveAttribute("data-layout", "compact");
+    });
+
+    expect(screen.getByTestId("product-system-compact-toolbar")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
+    expect(screen.getByTestId(CATALOG_BUCKET.legacyModules)).toHaveAttribute("data-expanded", "false");
+
+    const lettersRow = screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2");
+    expect(within(lettersRow).getByRole("button", { name: "Open" })).toBeInTheDocument();
+    expect(within(lettersRow).getByRole("button", { name: "Guards" })).toBeInTheDocument();
+
+    const currentBucket = screen.getByTestId(CATALOG_BUCKET.currentProducts);
+    expect(currentBucket.className).not.toMatch(/border-l-emerald|border-l-cyan|border-l-amber/);
+  });
+
 });

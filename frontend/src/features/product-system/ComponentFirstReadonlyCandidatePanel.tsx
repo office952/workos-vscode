@@ -1277,7 +1277,7 @@ export function ComponentFirstReadonlyCandidatePanel({
     <>
       <section
         data-testid="product-system-component-first-letters-set"
-        className={isDetailPanel ? "space-y-3" : "rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"}
+        className={isDetailPanel ? "space-y-1.5" : "rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"}
       >
         {!isDetailPanel ? (
           <div className="flex flex-wrap items-start justify-between gap-3 border-b border-cyan-900/40 pb-3">
@@ -1299,17 +1299,16 @@ export function ComponentFirstReadonlyCandidatePanel({
           </div>
         ) : (
           <div>
-            <h3 className="text-[15px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
-            <p className="mt-0.5 text-[12px] text-cyan-200/75">
-              Candidate readonly · NOT OFFERABLE · 1 Product Composer + 6 Component Templates
+            <p className="text-[11px] font-bold text-slate-200">Component-first Letters Candidate</p>
+            <p className="text-[10px] text-slate-500">
+              Readonly · NOT OFFERABLE · 1 Composer + 6 Components · no Work Intake / Pricing / Quote / Execution
             </p>
             <p
               data-testid="product-system-component-first-detail-meta"
-              className="mt-1 text-[11px] font-mono text-slate-400"
+              className="mt-0.5 text-[10px] font-mono text-slate-600"
             >
               active = {String(model.composerActive)} · catalog status = {model.composerCatalogStatus}
             </p>
-            <ComponentFirstSemanticLabel />
           </div>
         )}
 

@@ -116,3 +116,31 @@ export type UnifiedCatalogBucketGroup = {
   bucket: (typeof UNIFIED_CATALOG_BUCKETS)[number];
   entries: UnifiedCatalogEntry[];
 };
+
+export type UnifiedCatalogBucketTheme = {
+  dot: string;
+  badge: string;
+};
+
+export const UNIFIED_CATALOG_BUCKET_THEMES: Record<UnifiedCatalogBucketId, UnifiedCatalogBucketTheme> = {
+  "current-products": {
+    dot: "bg-emerald-400/80",
+    badge: "border-emerald-800/40 bg-emerald-950/25 text-emerald-200/90",
+  },
+  "candidate-products": {
+    dot: "bg-amber-400/80",
+    badge: "border-amber-800/40 bg-amber-950/25 text-amber-200/90",
+  },
+  "component-first-sets": {
+    dot: "bg-cyan-400/80",
+    badge: "border-cyan-800/40 bg-cyan-950/25 text-cyan-200/90",
+  },
+  "legacy-shared-modules": {
+    dot: "bg-slate-500/80",
+    badge: "border-slate-700/60 bg-slate-900/60 text-slate-400",
+  },
+  archived: {
+    dot: "bg-zinc-500/70",
+    badge: "border-slate-700/60 bg-slate-900/60 text-slate-400",
+  },
+};

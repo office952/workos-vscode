@@ -17,6 +17,7 @@ import {
 } from "./ProductSystemTemplateDetailPanel";
 import {
   UNIFIED_CATALOG_BUCKETS,
+  UNIFIED_CATALOG_BUCKET_THEMES,
   UNIFIED_CATALOG_FILTERS,
   type UnifiedCatalogBucketGroup,
   type UnifiedCatalogBucketId,
@@ -105,7 +106,55 @@ function rowActionLabels(entry: UnifiedCatalogEntry): {
   };
 }
 
-function CatalogRowAction({
+function SummaryStrip({ summary }: { summary: UnifiedCatalogSummary }) {
+  return (
+    <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-slate-500">
+      <span>
+        <span className="font-bold tabular-nums text-slate-300">{summary.products}</span> roots
+      </span>
+      <span className="text-slate-700" aria-hidden="true">
+        ·
+      </span>
+      <span>
+        <span className="font-bold tabular-nums text-slate-300">{summary.components}</span> modules
+      </span>
+      <span className="text-slate-700" aria-hidden="true">
+        ·
+      </span>
+      <span>
+        <span className="font-bold tabular-nums text-slate-300">{summary.candidateSets}</span> comp-first
+      </span>
+      {summary.dossiers != null ? (
+        <>
+          <span className="text-slate-700" aria-hidden="true">
+            ·
+          </span>
+          <span>
+            <span className="font-bold tabular-nums text-slate-300">{summary.dossiers}</span> dossiers
+          </span>
+        </>
+      ) : null}
+      {summary.blocked != null ? (
+        <>
+          <span className="text-slate-700" aria-hidden="true">
+            ·
+          </span>
+          <span className="text-amber-300/90">
+            <span className="font-bold tabular-nums">{summary.blocked}</span> blocked
+          </span>
+        </>
+      ) : null}
+      <span className="text-slate-700" aria-hidden="true">
+        ·
+      </span>
+      <span>
+        <span className="font-bold tabular-nums text-slate-300">{summary.archived}</span> archived
+      </span>
+    </p>
+  );
+}
+
+function CatalogRowPrimaryAction({
   label,
   testId,
   onClick,
@@ -122,7 +171,31 @@ function CatalogRowAction({
         event.stopPropagation();
         onClick();
       }}
-      className="rounded-md border border-slate-700 bg-slate-900/80 px-2 py-1 text-[11px] font-bold text-cyan-200 hover:border-cyan-600/40 hover:bg-cyan-950/40"
+      className="shrink-0 rounded border border-purple-700/50 bg-purple-950/40 px-1.5 py-0.5 text-[10px] font-bold text-purple-100 hover:bg-purple-900/50"
+    >
+      {label}
+    </button>
+  );
+}
+
+function CatalogRowSecondaryAction({
+  label,
+  testId,
+  onClick,
+}: {
+  label: string;
+  testId: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick();
+      }}
+      className="rounded px-1 py-0.5 text-[10px] font-medium text-slate-500 hover:text-slate-300"
     >
       {label}
     </button>
@@ -153,6 +226,7 @@ function UnifiedCatalogRow({
       ? "product-system-unified-row-candidate-set"
       : `product-system-unified-row-${entry.templateCode}`;
   const actions = rowActionLabels(entry);
+  const theme = UNIFIED_CATALOG_BUCKET_THEMES[entry.bucket];
 
   return (
     <article
@@ -168,60 +242,61 @@ function UnifiedCatalogRow({
       }}
       role="listitem"
       tabIndex={0}
-      className={`rounded-lg border px-3 py-2.5 transition-colors ${
+      className={`cursor-pointer rounded-md border px-2 py-1 transition-colors ${
         selected
-          ? "border-purple-500/50 bg-purple-950/20 ring-1 ring-purple-500/20"
-          : "border-slate-800/90 bg-[#111827] hover:border-slate-600/50"
+          ? "border-slate-600/80 bg-slate-900/70 ring-1 ring-purple-500/15"
+          : "border-slate-800/70 bg-[#111827]/60 hover:border-slate-700 hover:bg-slate-900/40"
       }`}
     >
-      <div className="flex flex-wrap items-start justify-between gap-2">
+      <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="text-[15px] font-bold text-slate-100">{entry.name}</p>
-          <p className="font-mono text-[11px] text-slate-300">{entry.templateCode}</p>
-          <div className="mt-1.5 flex flex-wrap gap-1">
-            <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-[11px] font-bold text-slate-300">
+          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0">
+            <p className="text-[12px] font-bold leading-tight text-slate-100">{entry.name}</p>
+            <p className="font-mono text-[9px] text-slate-600">{entry.templateCode}</p>
+          </div>
+          <div className="mt-0.5 flex flex-wrap gap-0.5">
+            <span className="rounded border border-slate-800 bg-slate-950/80 px-1 py-px text-[9px] font-bold uppercase text-slate-500">
               {entry.entityType}
             </span>
-            <span
-              className={`rounded border px-1.5 py-0.5 text-[11px] font-bold ${
-                entry.bucket === "component-first-sets"
-                  ? "border-cyan-700/40 bg-cyan-950/40 text-cyan-200"
-                  : entry.bucket === "current-products"
-                    ? "border-emerald-700/40 bg-emerald-950/30 text-emerald-200"
-                    : entry.bucket === "candidate-products"
-                      ? "border-amber-700/40 bg-amber-950/30 text-amber-200"
-                      : entry.bucket === "legacy-shared-modules"
-                        ? "border-slate-600/50 bg-slate-900 text-slate-400"
-                        : "border-slate-700 bg-slate-900 text-slate-400"
-              }`}
-            >
-              {entry.lifecycleLabel}
-            </span>
+            <span className={`rounded border px-1 py-px text-[9px] font-bold ${theme.badge}`}>{entry.lifecycleLabel}</span>
             {entry.isBlocked ? (
-              <span className="rounded border border-amber-700/40 bg-amber-950/30 px-1.5 py-0.5 text-[11px] font-bold text-amber-200">
+              <span className="rounded border border-amber-800/40 bg-amber-950/25 px-1 py-px text-[9px] font-bold text-amber-200/90">
                 Owner GO
               </span>
             ) : null}
           </div>
-          {entry.metadata ? <p className="mt-1.5 line-clamp-2 text-[12px] text-slate-400">{entry.metadata}</p> : null}
         </div>
-        <div className="flex flex-wrap items-center justify-end gap-1.5">
-          <CatalogRowAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
-          <CatalogRowAction
-            label={actions.settings}
-            testId={`${rowTestId}-action-settings`}
-            onClick={onSettings}
-          />
-          <CatalogRowAction label={actions.dossier} testId={`${rowTestId}-action-dossier`} onClick={onDossier} />
-          {actions.components ? (
-            <CatalogRowAction
+        <CatalogRowPrimaryAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
+      </div>
+      <div
+        className="mt-0.5 flex flex-wrap items-center gap-0.5"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <CatalogRowSecondaryAction
+          label={actions.settings}
+          testId={`${rowTestId}-action-settings`}
+          onClick={onSettings}
+        />
+        <span className="text-[9px] text-slate-700" aria-hidden="true">
+          ·
+        </span>
+        <CatalogRowSecondaryAction label={actions.dossier} testId={`${rowTestId}-action-dossier`} onClick={onDossier} />
+        {actions.components ? (
+          <>
+            <span className="text-[9px] text-slate-700" aria-hidden="true">
+              ·
+            </span>
+            <CatalogRowSecondaryAction
               label={actions.components}
               testId={`${rowTestId}-action-components`}
               onClick={onComponents}
             />
-          ) : null}
-          <CatalogRowAction label={actions.guards} testId={`${rowTestId}-action-guards`} onClick={onGuards} />
-        </div>
+          </>
+        ) : null}
+        <span className="text-[9px] text-slate-700" aria-hidden="true">
+          ·
+        </span>
+        <CatalogRowSecondaryAction label={actions.guards} testId={`${rowTestId}-action-guards`} onClick={onGuards} />
       </div>
     </article>
   );
@@ -249,30 +324,33 @@ function CatalogBucketSection({
     section: UnifiedCatalogDetailSection | "components" | "dossier" | "guards-audit" | "guards",
   ) => void;
 }) {
+  const theme = UNIFIED_CATALOG_BUCKET_THEMES[group.bucket.id];
+
   return (
     <section
       data-testid={group.bucket.testId}
       data-expanded={expanded ? "true" : "false"}
-      className="rounded-xl border border-slate-800/80 bg-slate-950/20"
+      className="overflow-hidden rounded-md border border-slate-800/70 bg-slate-950/10"
     >
       <button
         type="button"
         data-testid={group.bucket.toggleTestId}
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+        className="flex w-full items-center justify-between gap-2 px-2 py-1 text-left hover:bg-slate-900/35"
       >
-        <span className="flex items-center gap-2">
+        <span className="flex min-w-0 items-center gap-1.5">
           {expanded ? (
-            <ChevronDown className="h-4 w-4 text-slate-400" />
+            <ChevronDown className="h-3 w-3 shrink-0 text-slate-500" />
           ) : (
-            <ChevronRight className="h-4 w-4 text-slate-400" />
+            <ChevronRight className="h-3 w-3 shrink-0 text-slate-500" />
           )}
-          <span className="text-[13px] font-bold text-slate-100">{group.bucket.label}</span>
+          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${theme.dot}`} aria-hidden="true" />
+          <span className="truncate text-[11px] font-bold text-slate-200">{group.bucket.label}</span>
         </span>
-        <span className="text-[11px] font-bold text-slate-500">{group.entries.length} entries</span>
+        <span className="shrink-0 text-[9px] font-bold tabular-nums text-slate-500">{group.entries.length}</span>
       </button>
       {expanded ? (
-        <div className="space-y-2 border-t border-slate-800/80 px-2 pb-2 pt-2">
+        <div className="space-y-1 border-t border-slate-800/60 px-1.5 py-1">
           {group.entries.map((entry) => (
             <UnifiedCatalogRow
               key={entry.id}
@@ -396,87 +474,70 @@ export function ProductSystemUnifiedCatalog({
   };
 
   return (
-    <div className="space-y-4" data-testid="product-system-unified-catalog">
+    <div className="space-y-2" data-testid="product-system-unified-catalog" data-layout="compact">
       {catalogOverview}
 
       <section
-        data-testid="product-system-summary-bar"
-        className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-2.5"
+        data-testid="product-system-compact-toolbar"
+        className="rounded-md border border-slate-800/70 bg-slate-950/15 px-2 py-1.5"
       >
-        <p className="text-[12px] text-slate-400">
-          <span className="font-bold text-slate-200">{summary.products}</span> product roots ·{" "}
-          <span className="font-bold text-slate-200">{summary.components}</span> legacy modules ·{" "}
-          <span className="font-bold text-slate-200">{summary.candidateSets}</span> component-first sets
-          {summary.dossiers != null ? (
-            <>
-              {" "}
-              · <span className="font-bold text-slate-200">{summary.dossiers}</span> dossier contracts
-            </>
-          ) : null}
-          {summary.blocked != null ? (
-            <>
-              {" "}
-              · <span className="font-bold text-amber-200">{summary.blocked}</span> blocked / owner GO
-            </>
-          ) : null}
-          {" · "}
-          <span className="font-bold text-slate-200">{summary.archived}</span> archived
-        </p>
-      </section>
-
-      <section
-        data-testid="product-system-unified-search-filter"
-        className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
-      >
-        <div className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2">
-          <Search className="h-4 w-4 shrink-0 text-slate-500" />
-          <input
-            type="text"
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search template code, bucket, lifecycle…"
-            data-testid="product-system-unified-search"
-            className="w-full bg-transparent text-[13px] text-slate-200 outline-none placeholder:text-slate-600"
-          />
+        <div data-testid="product-system-summary-bar">
+          <SummaryStrip summary={summary} />
         </div>
         <div
-          className="mt-3 flex flex-wrap gap-1.5"
-          role="group"
-          aria-label="Catalog filters"
-          data-testid="product-system-unified-filter-chips"
+          data-testid="product-system-unified-search-filter"
+          className="mt-1 flex flex-col gap-1 lg:flex-row lg:items-center"
         >
-          {UNIFIED_CATALOG_FILTERS.map((chip) => {
-            const active = filter === chip.id;
-            return (
-              <button
-                key={chip.id}
-                type="button"
-                data-testid={chip.testId}
-                aria-pressed={active}
-                onClick={() => setFilter(chip.id)}
-                className={`rounded-md border px-2.5 py-1 text-[12px] font-bold transition-colors ${
-                  active
-                    ? "border-purple-500/50 bg-purple-500/10 text-purple-100"
-                    : "border-slate-700 bg-slate-900/70 text-slate-300 hover:border-purple-500/30"
-                }`}
-              >
-                {chip.label}
-              </button>
-            );
-          })}
+          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded border border-slate-800/80 bg-[#0a0f18]/80 px-2 py-1">
+            <Search className="h-3 w-3 shrink-0 text-slate-600" />
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search code, bucket, lifecycle…"
+              data-testid="product-system-unified-search"
+              className="w-full bg-transparent text-[11px] text-slate-200 outline-none placeholder:text-slate-600"
+            />
+          </div>
+          <div
+            className="flex flex-wrap gap-1"
+            role="group"
+            aria-label="Catalog filters"
+            data-testid="product-system-unified-filter-chips"
+          >
+            {UNIFIED_CATALOG_FILTERS.map((chip) => {
+              const active = filter === chip.id;
+              return (
+                <button
+                  key={chip.id}
+                  type="button"
+                  data-testid={chip.testId}
+                  aria-pressed={active}
+                  onClick={() => setFilter(chip.id)}
+                  className={`rounded border px-2 py-0.5 text-[10px] font-bold transition-colors ${
+                    active
+                      ? "border-purple-600/50 bg-purple-950/30 text-purple-100"
+                      : "border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300"
+                  }`}
+                >
+                  {chip.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <section data-testid="product-system-unified-results-list" className="space-y-3" role="list">
-          <div className="flex items-center justify-between gap-2 px-1">
-            <h2 className="text-[14px] font-bold text-slate-100">Catalog buckets</h2>
-            <span className="text-[11px] font-bold text-slate-500">{filteredEntries.length} entries</span>
+      <div className="grid gap-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] xl:items-start">
+        <section data-testid="product-system-unified-results-list" className="space-y-1" role="list">
+          <div className="flex items-center justify-between gap-2 px-0.5">
+            <h2 className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Catalog buckets</h2>
+            <span className="text-[9px] font-bold tabular-nums text-slate-600">{filteredEntries.length}</span>
           </div>
           {loading ? (
-            <p className="px-1 text-[12px] text-slate-500">Se încarcă catalogul…</p>
+            <p className="px-0.5 text-[10px] text-slate-600">Se încarcă catalogul…</p>
           ) : bucketGroups.length === 0 ? (
-            <p className="rounded-lg border border-dashed border-slate-700 px-3 py-4 text-[12px] text-slate-500">
+            <p className="rounded-md border border-dashed border-slate-800 px-2 py-3 text-[11px] text-slate-500">
               Niciun rezultat pentru filtrele curente.
             </p>
           ) : (
@@ -498,10 +559,10 @@ export function ProductSystemUnifiedCatalog({
 
         <section
           data-testid="product-system-detail-panel"
-          className="min-h-[24rem] rounded-xl border border-slate-800/80 bg-slate-950/20 px-4 py-3"
+          className="min-h-[14rem] rounded-md border border-slate-800/70 bg-slate-950/15 px-2 py-1.5 xl:sticky xl:top-2 xl:max-h-[calc(100vh-140px)] xl:overflow-y-auto"
         >
           {!selectedEntry ? (
-            <p className="text-[12px] text-slate-500">Select a catalog entry to view detail, dossier, and guards.</p>
+            <p className="py-6 text-center text-[11px] text-slate-600">Selectează o intrare pentru detail.</p>
           ) : selectedEntry.kind === "candidate-set" ? (
             <div data-testid="product-system-candidate-sets">
               <ComponentFirstReadonlyCandidatePanel
@@ -521,6 +582,7 @@ export function ProductSystemUnifiedCatalog({
               section={templateDetailSection}
               onSectionChange={setTemplateDetailSection}
               onOpenEditor={() => onOpenTemplate(selectedEntry.template!)}
+              rowMetadata={selectedEntry.metadata}
             />
           ) : null}
         </section>

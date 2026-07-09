@@ -79,6 +79,7 @@ export function ProductSystemTemplateDetailPanel({
   section,
   onSectionChange,
   onOpenEditor,
+  rowMetadata,
 }: {
   template: ProductTemplateEntity;
   availability: ProductTemplateAvailabilityItem;
@@ -86,6 +87,7 @@ export function ProductSystemTemplateDetailPanel({
   section: UnifiedCatalogDetailSection;
   onSectionChange: (section: UnifiedCatalogDetailSection) => void;
   onOpenEditor: () => void;
+  rowMetadata?: string;
 }) {
   const isProduct =
     catalogBucket === "current-products" || catalogBucket === "candidate-products";
@@ -94,29 +96,29 @@ export function ProductSystemTemplateDetailPanel({
   const scope = getProductTemplateScopePresentation(availability);
 
   return (
-    <div data-testid="product-system-template-detail-panel" className="space-y-3">
-      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3">
-        <div className="flex flex-wrap items-start gap-2">
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] font-bold text-slate-100">{template.family_name || template.template_code}</p>
-            <p className="mt-0.5 font-mono text-[11px] text-slate-300">{template.template_code}</p>
-            <p
-              data-testid="product-system-template-detail-bucket-headline"
-              className="mt-1 text-[12px] font-bold text-slate-200"
-            >
-              {overview.headline}
-            </p>
+    <div data-testid="product-system-template-detail-panel" className="space-y-1.5">
+      <div className="flex flex-wrap items-start gap-2 border-b border-slate-800/70 pb-1.5">
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0">
+            <p className="text-[12px] font-bold text-slate-100">{template.family_name || template.template_code}</p>
+            <p className="font-mono text-[9px] text-slate-600">{template.template_code}</p>
           </div>
-          <StatusBadge
-            domain="productSystem"
-            status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
-            label={scope.catalogStatusLabel}
-            className="shrink-0 text-[11px] uppercase"
-          />
+          <p
+            data-testid="product-system-template-detail-bucket-headline"
+            className="mt-0.5 text-[10px] font-semibold text-slate-400"
+          >
+            {overview.headline}
+          </p>
         </div>
+        <StatusBadge
+          domain="productSystem"
+          status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
+          label={scope.catalogStatusLabel}
+          className="shrink-0 text-[9px] uppercase"
+        />
       </div>
 
-      <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Template detail sections">
+      <div className="flex flex-wrap gap-0.5" role="tablist" aria-label="Template detail sections">
         {sections.map((tab) => (
           <button
             key={tab.id}
@@ -125,10 +127,10 @@ export function ProductSystemTemplateDetailPanel({
             aria-selected={section === tab.id}
             data-testid={tab.testId}
             onClick={() => onSectionChange(tab.id)}
-            className={`rounded-md border px-2.5 py-1 text-[12px] font-bold transition-colors ${
+            className={`rounded px-2 py-0.5 text-[10px] font-bold transition-colors ${
               section === tab.id
-                ? "border-purple-500/50 bg-purple-500/10 text-purple-100"
-                : "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
+                ? "bg-purple-950/40 text-purple-100 ring-1 ring-purple-700/30"
+                : "text-slate-500 hover:bg-slate-900/60 hover:text-slate-300"
             }`}
           >
             {tab.label}
@@ -139,45 +141,52 @@ export function ProductSystemTemplateDetailPanel({
       {section === "overview" ? (
         <section
           data-testid="product-system-template-detail-overview"
-          className="space-y-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-200"
+          className="space-y-1.5 rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-200"
         >
-          <ul className="space-y-1">
-            {overview.bullets.map((bullet) => (
-              <li key={bullet}>• {bullet}</li>
-            ))}
-          </ul>
-          <p>
-            <span className="text-slate-500">Work Intake:</span> {scope.workIntakeLabel}
-          </p>
-          <p>
-            <span className="text-slate-500">Usage:</span> {scope.usageModeLabel}
-          </p>
+          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px]">
+            <p>
+              <span className="text-slate-500">Work Intake:</span> {scope.workIntakeLabel}
+            </p>
+            <p>
+              <span className="text-slate-500">Usage:</span> {scope.usageModeLabel}
+            </p>
+          </div>
           {availability.owner_decision_required ? (
-            <p className="text-amber-200">Owner decision required — not offerable as direct root.</p>
+            <p className="text-[10px] text-amber-200/90">Owner decision required — not offerable as direct root.</p>
           ) : null}
-          {catalogBucket === "legacy-shared-modules" ? (
-            <p className="text-slate-400">Legacy shared module contract — not component-first.</p>
+          {rowMetadata ? (
+            <p className="line-clamp-2 text-[10px] text-slate-500">{rowMetadata}</p>
           ) : null}
+          <details className="text-[10px] text-slate-400">
+            <summary className="cursor-pointer select-none text-slate-500 hover:text-slate-300">More context</summary>
+            <ul className="mt-1 space-y-0.5 pl-3">
+              {overview.bullets.map((bullet) => (
+                <li key={bullet}>{bullet}</li>
+              ))}
+            </ul>
+            {catalogBucket === "legacy-shared-modules" ? (
+              <p className="mt-1 pl-3">Legacy shared module contract — not component-first.</p>
+            ) : null}
+          </details>
         </section>
       ) : null}
 
       {section === "composition" && isProduct ? (
         <section
           data-testid="product-system-template-detail-composition"
-          className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-200"
+          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-200"
         >
-          <p className="mb-2 text-slate-400">Legacy shared modules linked to this product root.</p>
           {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
-            <p className="text-slate-400">No composition modules exposed in availability.</p>
+            <p className="text-slate-500">No composition modules exposed in availability.</p>
           ) : (
-            <ul className="space-y-1">
+            <ul className="space-y-0.5">
               {availability.composition_modules.map((module) => (
-                <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-[11px]">
+                <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-[10px]">
                   {module.role_label}: {module.module_template_code} · {module.status_label}
                 </li>
               ))}
               {availability.shared_component_contracts.map((contract) => (
-                <li key={contract.component_key} className="font-mono text-[11px]">
+                <li key={contract.component_key} className="font-mono text-[10px]">
                   {contract.display_name}: {contract.module_template_code} · legacy shared module
                 </li>
               ))}
@@ -189,35 +198,35 @@ export function ProductSystemTemplateDetailPanel({
       {section === "components" && isProduct ? (
         <section
           data-testid="product-system-template-detail-components"
-          className="overflow-hidden rounded-lg border border-slate-800/90"
+          className="overflow-hidden rounded border border-slate-800/70"
         >
-          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[11px] font-bold uppercase text-slate-500">
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/70 bg-slate-950/30 px-2 py-1 text-[9px] font-bold uppercase text-slate-500">
             <span>Role</span>
             <span>Module code</span>
             <span>Status</span>
           </div>
           {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
-            <p className="px-3 py-3 text-[12px] text-slate-400">No linked components in composition.</p>
+            <p className="px-2 py-2 text-[10px] text-slate-500">No linked components in composition.</p>
           ) : (
             <>
               {availability.composition_modules.map((module) => (
                 <div
                   key={`${module.role_key}-${module.module_template_code}`}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/50 px-2 py-1 text-[10px] text-slate-200 last:border-b-0"
                 >
                   <span>{module.role_label}</span>
-                  <span className="font-mono text-[11px] text-slate-300">{module.module_template_code}</span>
-                  <span className="text-[11px] text-slate-400">{module.status_label}</span>
+                  <span className="font-mono text-[9px] text-slate-400">{module.module_template_code}</span>
+                  <span className="text-[9px] text-slate-500">{module.status_label}</span>
                 </div>
               ))}
               {availability.shared_component_contracts.map((contract) => (
                 <div
                   key={contract.component_key}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/50 px-2 py-1 text-[10px] text-slate-200 last:border-b-0"
                 >
                   <span>{contract.display_name}</span>
-                  <span className="font-mono text-[11px] text-slate-300">{contract.module_template_code}</span>
-                  <span className="text-[11px] text-slate-400">legacy module</span>
+                  <span className="font-mono text-[9px] text-slate-400">{contract.module_template_code}</span>
+                  <span className="text-[9px] text-slate-500">legacy module</span>
                 </div>
               ))}
             </>
@@ -228,15 +237,14 @@ export function ProductSystemTemplateDetailPanel({
       {section === "dossier" ? (
         <section
           data-testid="product-system-template-detail-dossier"
-          className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
+          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
         >
-          <p>Readonly readiness contract — design-time template dossier lives in the template editor.</p>
-          <p className="mt-2 text-slate-400">Not runtime dossier activation from catalog browse.</p>
+          <p>Readonly readiness contract — dossier lives in template editor.</p>
           <button
             type="button"
             data-testid="product-system-template-detail-open-editor"
             onClick={onOpenEditor}
-            className="mt-3 rounded-md border border-purple-700/40 bg-purple-950/30 px-2.5 py-1 text-[12px] font-bold text-purple-200"
+            className="mt-1.5 rounded border border-purple-800/40 bg-purple-950/30 px-2 py-0.5 text-[10px] font-bold text-purple-200"
           >
             Open template
           </button>
@@ -246,10 +254,10 @@ export function ProductSystemTemplateDetailPanel({
       {section === "fields" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-fields"
-          className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
+          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
         >
-          <p>Legacy module fields and contract metadata are configured in Product System editor.</p>
-          <p className="mt-2 font-mono text-[11px] text-slate-400">
+          <p>Legacy module fields configured in Product System editor.</p>
+          <p className="mt-1 font-mono text-[10px] text-slate-500">
             Parents:{" "}
             {(availability.parent_product_codes.length > 0
               ? availability.parent_product_codes
@@ -262,28 +270,29 @@ export function ProductSystemTemplateDetailPanel({
       {section === "product-truth-paths" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-product-truth-paths"
-          className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
+          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
         >
-          <p>Product Truth paths are owned by the parent product composition and legacy module contract.</p>
-          <p className="mt-2 text-slate-400">Readonly catalog view — no Product Truth write from this surface.</p>
+          <p>Product Truth paths owned by parent product composition.</p>
+          <p className="mt-1 text-[10px] text-slate-500">Readonly catalog view — no Product Truth write.</p>
         </section>
       ) : null}
 
       {section === "guards" ? (
         <section
           data-testid="product-system-template-detail-guards"
-          className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
+          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
         >
           <p>
             <span className="text-slate-500">Status:</span> {availability.status}
           </p>
-          <p className="mt-1">
+          <p className="mt-0.5">
             <span className="text-slate-500">Reason:</span> {availability.status_reason}
           </p>
-          <p className="mt-2 text-slate-400">{availability.readiness_reason}</p>
-          <p className="mt-2 text-[11px] text-slate-500">
-            Readonly readiness contract · Not runtime · No Pricing / Quote / Order / Execution activation.
-          </p>
+          <details className="mt-1 text-[10px] text-slate-500">
+            <summary className="cursor-pointer select-none hover:text-slate-400">Readiness detail</summary>
+            <p className="mt-0.5">{availability.readiness_reason}</p>
+            <p className="mt-0.5">Readonly · Not runtime · No Pricing / Quote / Order / Execution.</p>
+          </details>
         </section>
       ) : null}
     </div>

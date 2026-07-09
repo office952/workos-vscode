@@ -3640,9 +3640,9 @@ export default function ProductSystem() {
   }, [draft?.id, templates, activeOwnerCount]);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-[11px] text-slate-500">
+      <div className="flex items-center gap-2 text-[10px] text-slate-500">
         <Link
           to="/dashboard"
           className="flex items-center gap-1 hover:text-slate-300 transition-colors"
@@ -3658,34 +3658,32 @@ export default function ProductSystem() {
       </div>
 
       {/* Header */}
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-start gap-3 min-w-0">
-          <div className="p-2 bg-purple-500/10 rounded-xl shrink-0">
-            <Package className="w-6 h-6 text-purple-400" />
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className="p-1.5 bg-purple-500/10 rounded-lg shrink-0">
+            <Package className="w-5 h-5 text-purple-400" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-[18px] font-bold text-slate-100">
+            <h1 className="text-[16px] font-bold text-slate-100 leading-tight">
               {shouldShowEditorScreen(screen, draft)
                 ? "ProductSystem / Blueprint Studio"
                 : "Product System Catalog"}
             </h1>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              {shouldShowEditorScreen(screen, draft)
-                ? "Editor pentru structura È™ablonului selectat."
-                : "Catalogul logic al produselor, modulelor si componentelor Product System."}
-            </p>
+            {shouldShowEditorScreen(screen, draft) ? (
+              <p className="text-[10px] text-slate-500 mt-0.5">Editor pentru structura sablonului selectat.</p>
+            ) : null}
             {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
-              <p className="text-[10px] text-amber-400/90 mt-2">
+              <p className="text-[10px] text-amber-400/90 mt-0.5">
                 {loadMode === "mock"
-                  ? "Mod previzualizare â€” date mock, nu API live."
+                  ? "Mod previzualizare — date mock, nu API live."
                   : loadMode === "auth_required"
-                    ? "Autentificare necesarÄƒ pentru È™abloane reale."
-                    : "ÃŽncÄƒrcarea È™abloanelor a eÈ™uat â€” reÃ®ncarcÄƒ sau verificÄƒ backend."}
+                    ? "Autentificare necesara pentru sabloane reale."
+                    : "Incarcarea sabloanelor a esuat — reincarca sau verifica backend."}
               </p>
             ) : null}
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
           <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
           <ProductSystemInfoPopover
             loadMode={loadMode}
@@ -3755,7 +3753,7 @@ export default function ProductSystem() {
         </div>
       )}
 
-      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-200px)]">
+      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-120px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
           <TemplateEditor
             key={selectedId ?? (isNew ? "new" : draft.template_code)}
@@ -3790,16 +3788,12 @@ export default function ProductSystem() {
           <ProductSystemUnifiedCatalog
             summary={catalogSummary}
             catalogOverview={
-              <section
+              <p
                 data-testid="product-system-catalog-overview"
-                className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
+                className="text-[10px] leading-snug text-slate-500"
               >
-                <h2 className="text-[14px] font-bold text-slate-100">Catalog Overview</h2>
-                <p className="mt-1 text-[12px] text-slate-400">
-                  Unified design-time catalog with search, filters, and master-detail. Component-first letters remain
-                  inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
-                </p>
-              </section>
+                Design-time catalog · readonly browse · component-first Letters inactive · master-detail below
+              </p>
             }
             templates={templates}
             availabilityItems={availabilityItems}
