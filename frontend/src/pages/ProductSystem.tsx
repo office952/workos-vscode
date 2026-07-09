@@ -1500,6 +1500,407 @@ const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
   volumetric_lighting: "TPL-VOLUMETRIC-LED_v1",
 };
 
+type OwnershipFieldAudit = {
+  key: string;
+  productTruthPath: string;
+  sourceState: string;
+  warning: string;
+};
+
+type SharedComponentOwnershipAudit = {
+  componentKey: string;
+  label: string;
+  primaryTemplateCode: string;
+  separateCalculationStatus: "read_only_contract" | "partial_ready" | "calculation_blocked";
+  separateCalculationLabel: string;
+  shouldOwn: string[];
+  gaps: string[];
+  fields: OwnershipFieldAudit[];
+  note: string;
+};
+
+const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipAudit> = {
+  volumetric_face: {
+    componentKey: "volumetric_face",
+    label: "Face / front",
+    primaryTemplateCode: "TPL-VOLUMETRIC-FACE_v1",
+    separateCalculationStatus: "partial_ready",
+    separateCalculationLabel: "partial_ready",
+    shouldOwn: ["selected_layer_refs", "material", "thickness_mm", "finish_target"],
+    gaps: ["material still falls back in product-root flow", "selected layer ownership still needs explicit confirmation"],
+    fields: [
+      {
+        key: "selected_layer_refs",
+        productTruthPath: "components.face.selected_layer_refs",
+        sourceState: "product context only",
+        warning: "source not wired yet for component-owned confirmation",
+      },
+      {
+        key: "material",
+        productTruthPath: "components.face.material",
+        sourceState: "component-owned pending",
+        warning: "component-owned source missing confirmation",
+      },
+      {
+        key: "finish_target",
+        productTruthPath: "components.finish.target",
+        sourceState: "component-owned pending",
+        warning: "shared finish target still crosses product/root context",
+      },
+    ],
+    note: "Face truth exists directionally, but Product Template still carries fallback/hydrated context for material and finish alignment.",
+  },
+  volumetric_back: {
+    componentKey: "volumetric_back",
+    label: "Back / spate",
+    primaryTemplateCode: "TPL-VOLUMETRIC-BACK_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["backing_mode", "material", "bevel_enabled"],
+    gaps: ["back material remains too implicit", "back confirmation path is not explicit enough"],
+    fields: [
+      {
+        key: "backing_mode",
+        productTruthPath: "components.back.backing_mode",
+        sourceState: "component-owned fallback",
+        warning: "hydrated default is not final truth",
+      },
+      {
+        key: "material",
+        productTruthPath: "components.back.material",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet for explicit back material ownership",
+      },
+    ],
+    note: "Back remains component-shaped, but not ready for honest separate calculation without explicit owner-confirmed material truth.",
+  },
+  volumetric_return_side: {
+    componentKey: "volumetric_return_side",
+    label: "VOLUM ALUMINIU / CANT",
+    primaryTemplateCode: "TPL-VOLUM-ALUMINIU_v1",
+    separateCalculationStatus: "partial_ready",
+    separateCalculationLabel: "partial_ready · calculation blocked",
+    shouldOwn: [
+      "return_depth_mm",
+      "perimeter_source",
+      "material_profile",
+      "finish_type",
+      "color_target",
+      "layer_group_ids",
+      "confirmation_state",
+    ],
+    gaps: [
+      "material_profile is still missing as component truth",
+      "perimeter_source is still a dependency, not a first-class component path",
+      "confirmation_state is missing on the component boundary",
+    ],
+    fields: [
+      {
+        key: "return_depth_mm",
+        productTruthPath: "components.return_cant.return_depth_mm",
+        sourceState: "component-owned fallback",
+        warning: "hydrated depth is not confirmed truth",
+      },
+      {
+        key: "perimeter_source",
+        productTruthPath: "components.return_cant.perimeter_source",
+        sourceState: "derived dependency",
+        warning: "source not wired yet as explicit face/root dependency",
+      },
+      {
+        key: "material_profile",
+        productTruthPath: "components.return_cant.material_profile",
+        sourceState: "missing component truth",
+        warning: "component-owned source missing",
+      },
+      {
+        key: "finish_type",
+        productTruthPath: "components.return_cant.finish_type",
+        sourceState: "component-owned pending",
+        warning: "finish path still mixes setup hydration with component truth",
+      },
+      {
+        key: "color_target",
+        productTruthPath: "components.return_cant.color_target",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet for explicit RAL / Oracal / paint boundary",
+      },
+      {
+        key: "layer_group_ids",
+        productTruthPath: "components.return_cant.layer_group_ids",
+        sourceState: "missing component truth",
+        warning: "component-owned source missing",
+      },
+      {
+        key: "confirmation_state",
+        productTruthPath: "components.return_cant.confirmation_state",
+        sourceState: "missing component truth",
+        warning: "calculation blocked until component-scoped confirmation exists",
+      },
+    ],
+    note: "Separate calculation remains blocked even though cant already has partial form coverage. Show gaps, do not invent readiness.",
+  },
+  volumetric_surface_finish: {
+    componentKey: "volumetric_surface_finish",
+    label: "Finish / artwork",
+    primaryTemplateCode: "TPL-VOLUMETRIC-FINISH_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["finish_target", "print_required", "lamination_required"],
+    gaps: ["finish family boundaries remain mixed", "artwork-derived consequences still need a cleaner owner split"],
+    fields: [
+      {
+        key: "finish_target",
+        productTruthPath: "components.finish.target",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet as one canonical finish path",
+      },
+      {
+        key: "print_required",
+        productTruthPath: "components.finish.print_required",
+        sourceState: "component-owned pending",
+        warning: "derived consequence still depends on artwork decisions",
+      },
+    ],
+    note: "Finish is a real component boundary, but the current system should keep it read-only until the field ownership split is cleaner.",
+  },
+  volumetric_mounting_interface: {
+    componentKey: "volumetric_mounting_interface",
+    label: "Mounting / support",
+    primaryTemplateCode: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    separateCalculationStatus: "calculation_blocked",
+    separateCalculationLabel: "calculation blocked",
+    shouldOwn: ["mounting_system", "support_required"],
+    gaps: ["support_required is still missing as first-class component truth", "metal_support_required remains downstream-only"],
+    fields: [
+      {
+        key: "mounting_system",
+        productTruthPath: "components.mounting.system",
+        sourceState: "component-owned fallback",
+        warning: "hydrated/default mounting system is not final component truth",
+      },
+      {
+        key: "support_required",
+        productTruthPath: "components.support.support_required",
+        sourceState: "missing component truth",
+        warning: "component-owned source missing",
+      },
+    ],
+    note: "Mounting stays component-owned directionally, but support truth is still downstream-derived instead of first-class component input.",
+  },
+  volumetric_lighting: {
+    componentKey: "volumetric_lighting",
+    label: "Lighting",
+    primaryTemplateCode: "TPL-VOLUMETRIC-LED_v1",
+    separateCalculationStatus: "read_only_contract",
+    separateCalculationLabel: "read-only contract",
+    shouldOwn: ["illumination_type", "led_module_count", "strategy_profile"],
+    gaps: ["strategy exists, but primary lighting truth is still partial", "operator-confirmed lighting state is not component-complete"],
+    fields: [
+      {
+        key: "illumination_type",
+        productTruthPath: "components.lighting.illumination_type",
+        sourceState: "component-owned fallback",
+        warning: "current lighting mode is still hydrated or defaulted",
+      },
+      {
+        key: "led_module_count",
+        productTruthPath: "components.lighting.led_module_count",
+        sourceState: "component-owned pending",
+        warning: "source not wired yet for operator-confirmed LED count",
+      },
+      {
+        key: "strategy_profile",
+        productTruthPath: "components.lighting.strategy_profile",
+        sourceState: "product context only",
+        warning: "strategy/profile is not the primary shared component truth",
+      },
+    ],
+    note: "Lighting is valid as a shared component, but separate calculation must remain read-only until owner-confirmed lighting truth is explicit.",
+  },
+};
+
+const SHARED_COMPONENT_OWNERSHIP_ORDER = [
+  "volumetric_face",
+  "volumetric_back",
+  "volumetric_return_side",
+  "volumetric_surface_finish",
+  "volumetric_mounting_interface",
+  "volumetric_lighting",
+] as const;
+
+function ownershipStatusClass(status: SharedComponentOwnershipAudit["separateCalculationStatus"]) {
+  switch (status) {
+    case "partial_ready":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    case "read_only_contract":
+      return "border-cyan-700/40 bg-cyan-950/30 text-cyan-200";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+function ownershipFieldStateClass(sourceState: string) {
+  if (sourceState.includes("missing")) {
+    return "border-red-700/30 bg-red-950/20 text-red-200";
+  }
+  if (sourceState.includes("fallback") || sourceState.includes("pending")) {
+    return "border-amber-700/30 bg-amber-950/20 text-amber-200";
+  }
+  if (sourceState.includes("dependency")) {
+    return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
+  }
+  return "border-slate-700 bg-slate-900 text-slate-300";
+}
+
+function ComponentCalculationOwnershipPanel({
+  availability,
+}: {
+  availability?: ProductTemplateAvailabilityItem | null;
+}) {
+  const contracts = availability?.shared_component_contracts ?? [];
+  if (contracts.length === 0) {
+    return null;
+  }
+
+  const contractsByKey = new Map(contracts.map((contract) => [contract.component_key, contract]));
+  const rows = SHARED_COMPONENT_OWNERSHIP_ORDER
+    .map((componentKey) => {
+      const audit = SHARED_COMPONENT_OWNERSHIP_AUDIT[componentKey];
+      const contract = contractsByKey.get(componentKey);
+      if (!audit || !contract) {
+        return null;
+      }
+      return { audit, contract };
+    })
+    .filter((row): row is { audit: SharedComponentOwnershipAudit; contract: NonNullable<typeof contracts[number]> } => Boolean(row));
+
+  if (rows.length === 0) {
+    return null;
+  }
+
+  const isLogoCandidate =
+    availability?.template_code === "TPL-VOLUMETRIC-LOGO_v1" ||
+    contracts.some((contract) => contract.profile_key === "logo");
+  const profileLabel = Array.from(new Set(contracts.map((contract) => contract.profile_key))).join(" + ");
+
+  return (
+    <section
+      data-testid="product-system-component-ownership-panel"
+      className="rounded-xl border border-amber-800/40 bg-amber-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-[13px] font-bold text-amber-100">Component calculation ownership</h3>
+          <p className="mt-0.5 text-[11px] text-amber-200/75">
+            Product Template remains composer only. Component Templates own technical truth; this panel shows current ownership, gaps, and blocked calculation boundaries without inventing readiness.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200">Read-only</span>
+          <span className="rounded border border-amber-700/40 bg-amber-950/40 px-2 py-0.5 text-amber-200" data-testid="product-system-ownership-composer-badge">Product Template = composer</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No component root</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No component quote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No promote</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">No mutation call</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">Profile {profileLabel}</span>
+        </div>
+      </div>
+
+      <div
+        className="mt-3 rounded-lg border border-red-800/40 bg-red-950/15 px-3 py-2 text-[11px] text-red-200"
+        data-testid="product-system-ownership-product-template-warning"
+      >
+        Product Template still carries component-owned defaults, hydrated values, or dependencies in the product-root flow. Treat this page as ownership audit only until component-owned sources are wired.
+      </div>
+
+      {isLogoCandidate ? (
+        <div
+          className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-[11px] text-amber-200"
+          data-testid="product-system-ownership-logo-candidate"
+        >
+          <p className="font-bold">TPL-VOLUMETRIC-LOGO_v1 remains candidate / read-only / linked child.</p>
+          <p className="mt-0.5 text-amber-200/75">Do not activate it as Work Intake root or commercial root from this surface.</p>
+        </div>
+      ) : null}
+
+      <div className="mt-3 grid gap-3 xl:grid-cols-2">
+        {rows.map(({ audit, contract }) => {
+          const moduleCode =
+            contract.shared_module_template_code ??
+            contract.module_template_code ??
+            audit.primaryTemplateCode;
+          return (
+            <article
+              key={audit.componentKey}
+              data-testid={`product-system-ownership-component-${audit.componentKey}`}
+              className="rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="text-[12px] font-bold text-slate-100">{audit.label}</p>
+                  <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{moduleCode}</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">Owner boundary: Component Template</p>
+                </div>
+                <span
+                  className={`rounded border px-2 py-0.5 text-[9px] font-bold ${ownershipStatusClass(audit.separateCalculationStatus)}`}
+                  data-testid={`product-system-ownership-status-${audit.componentKey}`}
+                >
+                  {audit.separateCalculationLabel}
+                </span>
+              </div>
+
+              <div className="mt-2 flex flex-wrap gap-1.5 text-[10px]">
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Confidence {contract.confidence}</span>
+                <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Owner decision {contract.owner_decision}</span>
+              </div>
+
+              <div className="mt-3 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Should own</p>
+                <p className="mt-1 font-mono text-[10px] text-slate-200">{audit.shouldOwn.join(", ")}</p>
+              </div>
+
+              <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
+                <p className="text-[10px] font-bold uppercase tracking-wide text-slate-400">Current gaps</p>
+                <div className="mt-1 space-y-1 text-[10px] text-amber-200/85">
+                  {audit.gaps.map((gap) => (
+                    <p key={gap}>{gap}</p>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-2 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
+                <div className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                  <span>Canonical field key</span>
+                  <span>Product Truth path</span>
+                  <span>Source/state</span>
+                  <span>Warning</span>
+                </div>
+                <div className="divide-y divide-slate-800/80">
+                  {audit.fields.map((field) => (
+                    <div key={field.key} className="grid grid-cols-[minmax(0,0.95fr)_minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]">
+                      <p className="font-mono font-bold text-slate-100">{field.key}</p>
+                      <p className="font-mono text-cyan-200/85">{field.productTruthPath}</p>
+                      <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${ownershipFieldStateClass(field.sourceState)}`}>{field.sourceState}</span>
+                      <p className="text-amber-200/85">{field.warning}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <p className="mt-2 text-[10px] text-slate-400">{audit.note}</p>
+            </article>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-[10px] text-slate-500">
+        Canonical field bindings stay read-only. Use the Form System tab for the backing field-binding map; do not treat ProductAggregate or ProductDefinition as primary owners.
+      </p>
+    </section>
+  );
+}
+
 function SharedVolumetricFoundationPanel({
   availability,
 }: {
@@ -1808,6 +2209,8 @@ function TemplateEditor({
 
   const structurePanel = (
     <div className="space-y-4">
+      <ComponentCalculationOwnershipPanel availability={availability} />
+
       {aggregateLoading ? (
         <div className="text-[11px] text-slate-500">Se încarcă ProductAggregate…</div>
       ) : isLogoSharedProfile ? (
