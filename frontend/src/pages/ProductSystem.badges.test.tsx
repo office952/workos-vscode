@@ -859,4 +859,63 @@ describe("ProductSystem design-system badges", () => {
     });
   });
 
+  it("shows Form System readiness block for 0/7 fallback without live form activation", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
+    });
+
+    const formBlock = screen.getByTestId("product-system-component-first-form-system-readiness");
+    expect(screen.getByTestId("product-system-component-first-form-readiness-contract-count")).toHaveTextContent("Readiness contract: 7/7");
+    expect(screen.getByTestId("product-system-component-first-form-runtime-link")).toHaveTextContent("readonly contract only");
+    expect(screen.getByTestId("product-system-component-first-form-readiness-state")).toHaveTextContent("READONLY_FALLBACK_ONLY");
+    expect(formBlock).toHaveTextContent("no Work Intake exposure");
+    expect(formBlock).toHaveTextContent("no Product Truth write");
+    expect(formBlock).toHaveTextContent("Face:");
+    expect(formBlock).toHaveTextContent("Return/cant:");
+    expect(formBlock).not.toHaveTextContent("ready to quote");
+    expect(formBlock).not.toHaveTextContent("offerable");
+    expect(formBlock.querySelector("input")).toBeNull();
+    expect(formBlock.querySelector("select")).toBeNull();
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+  });
+
+  it("shows owner review and Form System readiness together", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-owner-review")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-owner-review").compareDocumentPosition(
+      screen.getByTestId("product-system-component-first-form-system-readiness")
+    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("shows READONLY_READY_FOR_MAPPING when 7/7 inactive rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-form-readiness-state")).toHaveTextContent("READONLY_READY_FOR_MAPPING");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-form-runtime-link")).toHaveTextContent("not linked yet");
+  });
+
 });

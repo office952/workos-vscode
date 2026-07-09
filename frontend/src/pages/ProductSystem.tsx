@@ -114,6 +114,12 @@ import {
   buildComponentFirstOwnerSummary,
   componentFirstOwnerStatusTone,
 } from "@/features/product-system/componentFirstReadonlyOwnerSummary";
+import {
+  assessComponentFirstFormSystemReadiness,
+  componentFirstFormReadinessLabel,
+  componentFirstFormReadinessTone,
+  componentFirstFormRuntimeLinkLabel,
+} from "@/features/product-system/componentFirstReadonlyFormSystemReadiness";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2787,6 +2793,12 @@ function ComponentFirstReadonlyStatusPanel({
     driftAssessment,
     dossierAlignment
   );
+  const formReadiness = assessComponentFirstFormSystemReadiness(
+    driftAssessment.completeness,
+    dossierAlignment,
+    ownerSummary,
+    { drift: driftAssessment, liveTemplates: templates }
+  );
   if (!model) {
     return null;
   }
@@ -2838,6 +2850,62 @@ function ComponentFirstReadonlyStatusPanel({
         >
           Cannot use in Work Intake; cannot price; Cannot create quote/order; cannot materialize tasks.
         </p>
+      </article>
+      <article
+        data-testid="product-system-component-first-form-system-readiness"
+        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
+      >
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Form System readiness</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+          <span
+            data-testid="product-system-component-first-form-readiness-contract-count"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+          >
+            Readiness contract: {formReadiness.readinessContractEntries}/{formReadiness.expectedComponents}
+          </span>
+          <span
+            data-testid="product-system-component-first-form-runtime-link"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+          >
+            {componentFirstFormRuntimeLinkLabel(formReadiness.runtimeFormSystemLinkState)}
+          </span>
+          <span
+            data-testid="product-system-component-first-form-readiness-state"
+            className={`rounded border px-2 py-0.5 ${componentFirstFormReadinessTone(formReadiness.overallFormReadinessState)}`}
+          >
+            State: {componentFirstFormReadinessLabel(formReadiness.overallFormReadinessState)}
+          </span>
+        </div>
+        <p
+          data-testid="product-system-component-first-form-field-ownership"
+          className="mt-2 text-[10px] text-slate-300"
+        >
+          Field ownership: Composer = coordinates sections only; Components = own future fields
+        </p>
+        <ul
+          data-testid="product-system-component-first-form-compact-fields"
+          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
+        >
+          {formReadiness.compactFieldSummaries.map((summary) => (
+            <li key={summary.label}>
+              <span className="font-semibold text-slate-300">{summary.label}:</span> {summary.fields}
+            </li>
+          ))}
+        </ul>
+        <p
+          data-testid="product-system-component-first-form-guard"
+          className="mt-2 text-[10px] font-mono text-cyan-200/80"
+        >
+          Guard: no live form activation; no Work Intake exposure; no Product Truth write; no Pricing / Quote / Order / Execution
+        </p>
+        {formReadiness.unsafeSignals.length > 0 ? (
+          <p
+            data-testid="product-system-component-first-form-unsafe-signals"
+            className="mt-1 text-[10px] font-mono text-rose-200/90"
+          >
+            Unsafe signals: {formReadiness.unsafeSignals.join(", ")}
+          </p>
+        ) : null}
       </article>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

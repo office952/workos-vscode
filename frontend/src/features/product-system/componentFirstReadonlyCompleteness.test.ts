@@ -19,6 +19,12 @@ import {
   buildComponentFirstOwnerSummary,
   COMPONENT_FIRST_OWNER_FORBIDDEN_WORDING,
 } from "./componentFirstReadonlyOwnerSummary";
+import {
+  assessComponentFirstFormSystemReadiness,
+  COMPONENT_FIRST_FORM_SYSTEM_READINESS_CONTRACT,
+  getComponentFirstFormReadinessEntry,
+  validateComponentFirstFormSystemReadinessContract,
+} from "./componentFirstReadonlyFormSystemReadiness";
 
 function liveRow(
   templateCode: string,
@@ -285,5 +291,125 @@ describe("componentFirstReadonlyOwnerSummary", () => {
         expect(text).not.toContain(forbidden.toLowerCase());
       }
     }
+  });
+});
+
+function formReadinessFor(liveRows: ComponentFirstLiveTemplateRow[]) {
+  const drift = assessComponentFirstContractDrift(liveRows);
+  const dossier = assessComponentFirstDossierAlignment(liveRows, { drift });
+  const owner = buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+  return assessComponentFirstFormSystemReadiness(drift.completeness, dossier, owner, {
+    drift,
+    liveTemplates: liveRows,
+  });
+}
+
+describe("componentFirstReadonlyFormSystemReadiness", () => {
+  it("Form System readiness contract has exactly 7 entries", () => {
+    const validation = validateComponentFirstFormSystemReadinessContract();
+    expect(COMPONENT_FIRST_FORM_SYSTEM_READINESS_CONTRACT).toHaveLength(COMPONENT_FIRST_EXPECTED_ROW_COUNT);
+    expect(validation.valid).toBe(true);
+    expect(validation.issues).toEqual([]);
+  });
+
+  it("composer coordinates sections only and owns_truth=false", () => {
+    const composer = getComponentFirstFormReadinessEntry(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE);
+    expect(composer?.role).toBe("product_composer");
+    if (composer?.role === "product_composer") {
+      expect(composer.ownsTruth).toBe(false);
+      expect(composer.formSystemRole).toBe("compose_component_sections");
+      expect(composer.coordinates).toContain("selected components");
+    }
+  });
+
+  it("all 6 components own future fields", () => {
+    const componentEntries = COMPONENT_FIRST_FORM_SYSTEM_READINESS_CONTRACT.filter(
+      (entry) => entry.role === "component_template"
+    );
+    expect(componentEntries).toHaveLength(6);
+    expect(componentEntries.every((entry) => entry.ownsTruth === true)).toBe(true);
+    expect(componentEntries.every((entry) => entry.fieldGroups.length > 0)).toBe(true);
+  });
+
+  it("face includes material/thickness/finish target", () => {
+    const face = getComponentFirstFormReadinessEntry("TPL-COMP-LETTER-FACE_v1");
+    expect(face?.role).toBe("component_template");
+    if (face?.role === "component_template") {
+      expect(face.fieldGroups).toEqual(
+        expect.arrayContaining(["face_material", "face_thickness", "face_finish_target"])
+      );
+    }
+  });
+
+  it("return_cant includes material/depth/finish", () => {
+    const returnCant = getComponentFirstFormReadinessEntry("TPL-COMP-LETTER-RETURN-CANT_v1");
+    if (returnCant?.role === "component_template") {
+      expect(returnCant.fieldGroups).toEqual(
+        expect.arrayContaining(["return_material", "return_depth", "return_finish"])
+      );
+    }
+  });
+
+  it("led includes illumination/led density/power supply", () => {
+    const led = getComponentFirstFormReadinessEntry("TPL-COMP-LETTER-LED_v1");
+    if (led?.role === "component_template") {
+      expect(led.fieldGroups).toEqual(
+        expect.arrayContaining(["illumination_mode", "led_density", "power_supply_policy"])
+      );
+    }
+  });
+
+  it("finish includes stock/oracal/ral/print policy", () => {
+    const finish = getComponentFirstFormReadinessEntry("TPL-COMP-LETTER-FINISH_v1");
+    if (finish?.role === "component_template") {
+      expect(finish.fieldGroups).toEqual(
+        expect.arrayContaining(["stock_color", "oracal_code", "ral_code", "print_lamination_policy"])
+      );
+    }
+  });
+
+  it("mounting includes surface/spacer/drilling/site notes", () => {
+    const mounting = getComponentFirstFormReadinessEntry("TPL-COMP-LETTER-MOUNTING_v1");
+    if (mounting?.role === "component_template") {
+      expect(mounting.fieldGroups).toEqual(
+        expect.arrayContaining(["mounting_surface", "spacer_policy", "template_drilling_policy", "site_installation_notes"])
+      );
+    }
+  });
+
+  it("0/7 live => READONLY_FALLBACK_ONLY", () => {
+    const assessment = formReadinessFor([]);
+    expect(assessment.overallFormReadinessState).toBe("READONLY_FALLBACK_ONLY");
+    expect(assessment.runtimeFormSystemLinkState).toBe("READONLY_CONTRACT_ONLY");
+  });
+
+  it("7/7 inactive => READONLY_READY_FOR_MAPPING", () => {
+    const assessment = formReadinessFor(matchingLiveSet());
+    expect(assessment.overallFormReadinessState).toBe("READONLY_READY_FOR_MAPPING");
+    expect(assessment.readinessContractEntries).toBe(7);
+  });
+
+  it("partial => READONLY_PARTIAL_LIVE_ROWS", () => {
+    const assessment = formReadinessFor(matchingLiveSet().slice(0, 3));
+    expect(assessment.overallFormReadinessState).toBe("READONLY_PARTIAL_LIVE_ROWS");
+  });
+
+  it("active row => BLOCKED_INVALID_LIVE_STATE", () => {
+    const rows = matchingLiveSet();
+    rows[0] = { ...rows[0], active: true };
+    const assessment = formReadinessFor(rows);
+    expect(assessment.overallFormReadinessState).toBe("BLOCKED_INVALID_LIVE_STATE");
+  });
+
+  it("form activation leak => BLOCKED_FORM_ACTIVATION_LEAK", () => {
+    const rows = matchingLiveSet();
+    rows[1] = {
+      ...rows[1],
+      notes: JSON.stringify({ form_system_active: true, work_intake_exposed: true }),
+    };
+    const assessment = formReadinessFor(rows);
+    expect(assessment.overallFormReadinessState).toBe("BLOCKED_FORM_ACTIVATION_LEAK");
+    expect(assessment.runtimeFormSystemLinkState).toBe("BLOCKED_RUNTIME_FORM_ACTIVATION_LEAK");
+    expect(assessment.unsafeSignals.length).toBeGreaterThan(0);
   });
 });
