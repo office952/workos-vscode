@@ -109,6 +109,10 @@ def test_endpoint_returns_read_only_planner_output(auth_client, planner_workspac
     assert body["workspace_id"] == WORKSPACE_ID
     assert body["workspace_record_id"] == WORKSPACE_ID
     assert body["workspace_code"] == WORKSPACE_CODE
+    assert "root_template_code" in body
+    assert body["root_template_code"] == ROOT
+    assert "product_binding_template_code" in body
+    assert body["product_binding_template_code"] == ROOT
     assert body["planner_version"] == "v1"
     assert set(_entries_by_key(body["eligible_entries"])) == {
         "svg.selected_layer_refs[]",
@@ -155,6 +159,8 @@ def test_endpoint_returns_eligible_and_blocked_entries(auth_client, db_fixture):
     body = _get(auth_client, workspace_id).json()
     blocked = _entries_by_key(body["blocked_entries"])
 
+    assert body["root_template_code"] == ROOT
+    assert body["product_binding_template_code"] == ROOT
     assert body["eligible_entries"] == []
     assert blocked["svg.selected_layer_refs[]"][0]["blockers"] == ["SELECTED_LAYER_REFS_MISSING"]
     assert blocked["finish.finish_target"][0]["blockers"] == ["FINISH_TARGET_MISSING"]

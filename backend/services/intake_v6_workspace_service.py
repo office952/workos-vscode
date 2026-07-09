@@ -399,6 +399,7 @@ async def get_product_truth_promotion_planner_for_workspace(
 ) -> dict[str, Any]:
     workspace = await get_intake_v6_workspace(db, workspace_id)
     payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
     planner = build_product_truth_promotion_plan(
         payload,
         template_code=workspace.template_code,
@@ -410,6 +411,8 @@ async def get_product_truth_promotion_planner_for_workspace(
         "workspace_id": workspace_id,
         "workspace_record_id": workspace.id,
         "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
         "planner_version": planner.get("planner_version") or "v1",
         "eligible_entries": planner.get("eligible_entries") or [],
         "blocked_entries": planner.get("blocked_entries") or [],
