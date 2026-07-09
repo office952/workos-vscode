@@ -33,6 +33,7 @@ from schemas.intake_v6 import (
     IntakeV6OrderBoundTaskReadinessResponse,
     IntakeV6OfferHandoffRequest,
     IntakeV6OwnerApprovalRequest,
+    IntakeV6ProductTruthWriterDryRunRequest,
     IntakeV6PricedQuoteWriteRequest,
     IntakeV6PricingInputPreviewResponse,
     IntakeV6ProductCompositionConfirmationRequest,
@@ -78,6 +79,7 @@ from services.intake_v6_workspace_service import (
     create_intake_v6_workspace,
     ensure_intake_v6_workspace_for_intake_request,
     get_form_system_runtime_capture_read_model_for_workspace,
+    get_product_truth_writer_dry_run_for_workspace,
     get_product_truth_promotion_planner_for_workspace,
     get_ai_informational_assist_candidate_for_workspace,
     get_ai_semantic_classification_candidate_for_workspace,
@@ -227,6 +229,15 @@ async def get_product_truth_promotion_planner_v6(
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     return await get_product_truth_promotion_planner_for_workspace(db, workspace_id)
+
+
+@router.post("/workspaces/{workspace_id}/product-truth-writer/dry-run")
+async def post_product_truth_writer_dry_run_v6(
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterDryRunRequest,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_product_truth_writer_dry_run_for_workspace(db, workspace_id, request)
 
 
 @router.post("/workspaces/{workspace_id}/svg", response_model=IntakeV6SvgUploadResponse)

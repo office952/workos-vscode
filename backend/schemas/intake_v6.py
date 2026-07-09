@@ -204,3 +204,15 @@ class IntakeV6QuoteSnapshotV2CreateRequest(BaseModel):
     operator_confirmation: bool = True
     expected_grand_total: float | None = None
     expected_pricing_hash: str | None = None
+
+
+class IntakeV6ProductTruthWriterDryRunRequest(BaseModel):
+    dry_run_only: Literal[True]
+    expected_workspace_code: str | None = None
+    expected_root_template_code: str
+    expected_product_binding_template_code: str
+    planner_version: str
+    planner_hash: str | None = None
+    payload_hash_basis: str | None = None
+    actor: dict[str, Any] = Field(default_factory=dict)
+    requested_entry_keys: list[str] | None = None

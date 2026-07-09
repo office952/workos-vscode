@@ -23,6 +23,7 @@ from schemas.intake_v6 import (
     IntakeV6FinishSetup,
     IntakeV6LayerRoleSetup,
     IntakeV6LayerRoleUpdateRequest,
+    IntakeV6ProductTruthWriterDryRunRequest,
     IntakeV6ProductSystemBindingResponse,
     IntakeV6SvgUploadResponse,
     IntakeV6TaskPreviewResponse,
@@ -58,6 +59,12 @@ from services.form_system_runtime_capture_read_model_service import (
 )
 from services.product_truth_promotion_planner_service import (
     build_product_truth_promotion_plan,
+)
+from services.product_truth_writer_dry_run_service import (
+    build_product_truth_writer_dry_run_response,
+    compute_payload_hash,
+    compute_planner_hash,
+    downstream_write_intent_is_all_false,
 )
 from services.return_cant_product_truth_bridge import (
     apply_return_cant_runtime_product_truth_bridge,
@@ -420,6 +427,114 @@ async def get_product_truth_promotion_planner_for_workspace(
         "downstream_write_intent": downstream_write_intent,
         "notes": planner.get("notes") or [],
     }
+
+
+async def get_product_truth_writer_dry_run_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterDryRunRequest,
+) -> dict[str, Any]:
+    if request.dry_run_only is not True:
+        raise HTTPException(status_code=422, detail={"error": "dry_run_only_required"})
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    product_binding = payload_raw.get("product_binding") if isinstance(payload_raw.get("product_binding"), dict) else {}
+    planner = build_product_truth_promotion_plan(
+        payload_raw,
+        template_code=record.template_code,
+    )
+    planner_response = {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": record.id,
+        "workspace_code": record.workspace_code,
+        "root_template_code": record.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "planner_version": planner.get("planner_version") or "v1",
+        "eligible_entries": planner.get("eligible_entries") or [],
+        "blocked_entries": planner.get("blocked_entries") or [],
+        "blockers": planner.get("blockers") or [],
+        "downstream_write_intent": dict(planner.get("downstream_write_intent") or {}),
+        "notes": planner.get("notes") or [],
+    }
+    planner_response["downstream_write_intent"].setdefault("product_truth_write", False)
+
+    if planner_response.get("read_only") is not True:
+        raise HTTPException(status_code=422, detail={"error": "planner_not_read_only"})
+    if not downstream_write_intent_is_all_false(planner_response.get("downstream_write_intent") or {}):
+        raise HTTPException(status_code=422, detail={"error": "downstream_write_intent_not_false"})
+    if request.expected_workspace_code and request.expected_workspace_code != record.workspace_code:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "workspace_code_mismatch",
+                "expected_workspace_code": request.expected_workspace_code,
+                "workspace_code": record.workspace_code,
+            },
+        )
+    if request.expected_root_template_code != record.template_code:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "root_template_code_mismatch",
+                "expected_root_template_code": request.expected_root_template_code,
+                "root_template_code": record.template_code,
+            },
+        )
+    if request.expected_product_binding_template_code != product_binding.get("template_code"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "product_binding_template_code_mismatch",
+                "expected_product_binding_template_code": request.expected_product_binding_template_code,
+                "product_binding_template_code": product_binding.get("template_code"),
+            },
+        )
+    if request.planner_version != planner_response.get("planner_version"):
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "planner_version_mismatch",
+                "expected_planner_version": request.planner_version,
+                "planner_version": planner_response.get("planner_version"),
+            },
+        )
+
+    payload_hash_basis = compute_payload_hash(payload_raw)
+    planner_hash = compute_planner_hash(planner_response)
+    if request.payload_hash_basis and request.payload_hash_basis != payload_hash_basis:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "payload_hash_basis_mismatch",
+                "expected_payload_hash_basis": request.payload_hash_basis,
+                "payload_hash_basis": payload_hash_basis,
+            },
+        )
+    if request.planner_hash and request.planner_hash != planner_hash:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "planner_hash_mismatch",
+                "expected_planner_hash": request.planner_hash,
+                "planner_hash": planner_hash,
+            },
+        )
+
+    return build_product_truth_writer_dry_run_response(
+        workspace_id=workspace_id,
+        workspace_record_id=record.id,
+        workspace_code=record.workspace_code,
+        root_template_code=record.template_code,
+        product_binding_template_code=product_binding.get("template_code"),
+        payload_raw=copy.deepcopy(payload_raw),
+        planner_response=copy.deepcopy(planner_response),
+        actor=request.actor,
+        requested_entry_keys=request.requested_entry_keys,
+    )
 
 
 async def ensure_intake_v6_workspace_for_intake_request(
