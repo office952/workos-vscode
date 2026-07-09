@@ -15,6 +15,19 @@ function renderProductSystem() {
   );
 }
 
+const COMPONENT_FIRST_TAB = {
+  overview: "product-system-component-first-tab-overview",
+  components: "product-system-component-first-tab-components",
+  dossier: "product-system-component-first-tab-dossier",
+  formSystem: "product-system-component-first-tab-form-system",
+  productTruth: "product-system-component-first-tab-product-truth",
+  guardsAudit: "product-system-component-first-tab-guards-audit",
+} as const;
+
+function openComponentFirstTab(tabTestId: string) {
+  fireEvent.click(screen.getByTestId(tabTestId));
+}
+
 vi.mock("@/lib/mockGuard", () => ({
   isMockEnabled: () => false,
 }));
@@ -538,28 +551,29 @@ describe("ProductSystem design-system badges", () => {
     });
 
     const panel = screen.getByTestId("product-system-component-first-letters-set");
-    const composerCard = screen.getByTestId("product-system-component-first-composer-card");
-    const dependencyGraph = screen.getByTestId("product-system-component-first-dependency-graph");
-    const componentsList = screen.getByTestId("product-system-component-first-components-list");
 
-    expect(panel).toHaveTextContent("Component-first letters template set");
+    expect(panel).toHaveTextContent("Component-first Letters Candidate");
     expect(panel).toHaveTextContent("INACTIVE");
     expect(panel).toHaveTextContent("CANDIDATE");
     expect(panel).toHaveTextContent("READONLY");
+    expect(screen.getByTestId("product-system-component-first-not-offerable")).toHaveTextContent("NOT OFFERABLE");
     expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("LIVE SEEDED INACTIVE ROWS");
-    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 7/7");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("Live rows: 7/7");
     expect(screen.queryByTestId("product-system-component-first-missing-rows")).not.toBeInTheDocument();
     expect(screen.queryByTestId("product-system-component-first-invalid-active-rows")).not.toBeInTheDocument();
     expect(panel).toHaveTextContent("active = false");
-    expect(panel).toHaveTextContent("No Work Intake exposure: true");
-    expect(panel).toHaveTextContent("No Pricing activation: true");
-    expect(panel).toHaveTextContent("No ProductDefinition activation: true");
-    expect(panel).toHaveTextContent("No ProductAggregate runtime wiring: true");
-    expect(panel).toHaveTextContent("No executable operations: true");
-    expect(panel).toHaveTextContent("No executable BOM: true");
+    expect(screen.getByTestId("product-system-component-first-forbidden-summary")).toHaveTextContent("Not exposed in Work Intake");
+    expect(screen.getByTestId("product-system-component-first-forbidden-summary")).toHaveTextContent("No Pricing / Quote / Order / Execution");
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.components);
+    const composerCard = screen.getByTestId("product-system-component-first-composer-card");
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+    const dependencyGraph = screen.getByTestId("product-system-component-first-dependency-graph");
+    openComponentFirstTab(COMPONENT_FIRST_TAB.components);
+    const componentsList = screen.getByTestId("product-system-component-first-components-list");
 
     expect(composerCard).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
-    expect(composerCard).toHaveTextContent("Product Template / composer only");
+    expect(composerCard).toHaveTextContent("Composer — coordinates components only");
     expect(composerCard).toHaveTextContent("does not own material truth");
     expect(composerCard).toHaveTextContent("does not own operation truth");
     expect(composerCard).toHaveTextContent("no module links: true");
@@ -602,7 +616,7 @@ describe("ProductSystem design-system badges", () => {
     });
 
     expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("CODE CONTRACT FALLBACK");
-    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 0/7");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("Live rows: 0/7");
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
   });
@@ -625,9 +639,11 @@ describe("ProductSystem design-system badges", () => {
       expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("PARTIAL LIVE INACTIVE ROWS");
     });
 
-    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 3/7");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("Live rows: 3/7");
+    openComponentFirstTab(COMPONENT_FIRST_TAB.overview);
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
+    openComponentFirstTab(COMPONENT_FIRST_TAB.components);
     expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-FACE_v1")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-LED_v1")).toHaveTextContent("contract fallback row");
   });
@@ -650,7 +666,7 @@ describe("ProductSystem design-system badges", () => {
       expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("BLOCKED / INVALID LIVE STATE");
     });
 
-    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 7/7");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("Live rows: 7/7");
     expect(screen.getByTestId("product-system-component-first-invalid-active-rows")).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
     expect(screen.queryByTestId("product-system-component-first-source-label")).not.toHaveTextContent("LIVE SEEDED INACTIVE ROWS");
   });
@@ -679,6 +695,12 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-drift-guard")).toBeInTheDocument();
     });
 
@@ -703,6 +725,12 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-contract-check")).toHaveTextContent("contract check: WARNING");
     });
 
@@ -718,6 +746,12 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.dossier);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-dossier-alignment")).toBeInTheDocument();
     });
 
@@ -728,6 +762,9 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-dossier-truth-ownership")).toHaveTextContent("component-owned truth");
     expect(screen.getByTestId("product-system-component-first-dossier-guard")).toHaveTextContent("No task materialization");
     expect(screen.getByTestId("product-system-component-first-dossier-guard")).toHaveTextContent("No ProductAggregate runtime");
+    expect(screen.getByTestId("product-system-component-first-dossier-section")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-component-first-dossier-cards")).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^product-system-component-first-dossier-card-/).length).toBe(7);
     expect(screen.queryByTestId("product-system-component-first-dossier-activation-leak")).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
@@ -742,6 +779,12 @@ describe("ProductSystem design-system badges", () => {
     });
 
     renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.dossier);
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-dossier-alignment-state")).toHaveTextContent("Alignment: READONLY_ALIGNED");
@@ -765,6 +808,12 @@ describe("ProductSystem design-system badges", () => {
     });
 
     renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.dossier);
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-dossier-alignment-state")).toHaveTextContent("Alignment: BLOCKED_INVALID_LIVE_STATE");
@@ -814,8 +863,10 @@ describe("ProductSystem design-system badges", () => {
 
     const ownerCard = screen.getByTestId("product-system-component-first-owner-review");
     expect(ownerCard).toHaveTextContent("7/7");
-    expect(ownerCard).toHaveTextContent("Cannot create quote");
+    expect(ownerCard).toHaveTextContent("cannot create quote");
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
     expect(screen.getByTestId("product-system-component-first-drift-guard")).toBeInTheDocument();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.dossier);
     expect(screen.getByTestId("product-system-component-first-dossier-alignment")).toBeInTheDocument();
   });
 
@@ -866,6 +917,12 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
     });
 
@@ -875,8 +932,8 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-form-readiness-state")).toHaveTextContent("READONLY_FALLBACK_ONLY");
     expect(formBlock).toHaveTextContent("no Work Intake exposure");
     expect(formBlock).toHaveTextContent("no Product Truth write");
-    expect(formBlock).toHaveTextContent("Face:");
-    expect(formBlock).toHaveTextContent("Return/cant:");
+    expect(formBlock).toHaveTextContent("TPL-COMP-LETTER-FACE_v1");
+    expect(formBlock).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
     expect(formBlock).not.toHaveTextContent("ready to quote");
     expect(formBlock).not.toHaveTextContent("offerable");
     expect(formBlock.querySelector("input")).toBeNull();
@@ -886,7 +943,7 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows owner review and Form System readiness together", async () => {
+  it("shows owner review and Form System readiness in separate tabs", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
@@ -894,12 +951,11 @@ describe("ProductSystem design-system badges", () => {
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-owner-review")).toBeInTheDocument();
-      expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-component-first-owner-review").compareDocumentPosition(
-      screen.getByTestId("product-system-component-first-form-system-readiness")
-    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId(COMPONENT_FIRST_TAB.formSystem)).toBeInTheDocument();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
   });
 
   it("shows READONLY_READY_FOR_MAPPING when 7/7 inactive rows exist", async () => {
@@ -910,6 +966,12 @@ describe("ProductSystem design-system badges", () => {
     });
 
     renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-form-readiness-state")).toHaveTextContent("READONLY_READY_FOR_MAPPING");
@@ -925,6 +987,12 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
     });
 
@@ -934,28 +1002,28 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-truth-mapping-state")).toHaveTextContent("READONLY_MAPPING_FALLBACK_ONLY");
     expect(screen.getByTestId("product-system-component-first-product-truth-write-policy")).toHaveTextContent("no Product Truth write");
     expect(screen.getByTestId("product-system-component-first-product-truth-state-policy")).toHaveTextContent("suggested != confirmed");
-    expect(mappingBlock).toHaveTextContent("product.components.face.*");
-    expect(mappingBlock).toHaveTextContent("product.components.led.*");
+    expect(mappingBlock).toHaveTextContent("product.components.face.material");
+    expect(mappingBlock).toHaveTextContent("product.components.led.type");
     expect(mappingBlock).not.toHaveTextContent("Product Truth confirmed");
     expect(mappingBlock.querySelector("input")).toBeNull();
     expect(mappingBlock.querySelector("select")).toBeNull();
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows Form readiness and Product Truth mapping together", async () => {
+  it("shows Form readiness and Product Truth mapping in separate tabs", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
-      expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
+      expect(screen.getByTestId(COMPONENT_FIRST_TAB.productTruth)).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-component-first-form-system-readiness").compareDocumentPosition(
-      screen.getByTestId("product-system-component-first-product-truth-mapping")
-    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+    expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
   });
 
   it("shows READONLY_MAPPING_READY when 7/7 inactive rows exist", async () => {
@@ -966,6 +1034,12 @@ describe("ProductSystem design-system badges", () => {
     });
 
     renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-truth-mapping-state")).toHaveTextContent("READONLY_MAPPING_READY");
@@ -979,6 +1053,12 @@ describe("ProductSystem design-system badges", () => {
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
     renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
@@ -999,20 +1079,20 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows Product Truth mapping and ProductDefinition readiness together", async () => {
+  it("shows Product Truth mapping and ProductDefinition readiness in separate tabs", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
-      expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
+      expect(screen.getByTestId(COMPONENT_FIRST_TAB.guardsAudit)).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-component-first-product-truth-mapping").compareDocumentPosition(
-      screen.getByTestId("product-system-component-first-product-definition-readiness")
-    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+    expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+    expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
   });
 
   it("shows READONLY_CONSUMPTION_READY when 7/7 inactive rows exist", async () => {
@@ -1025,10 +1105,56 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-definition-readiness-state")).toHaveTextContent("READONLY_CONSUMPTION_READY");
     });
 
     expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("not linked yet");
+  });
+
+  it("separates catalog overview, candidate sets, and existing roots", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-catalog-overview")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
+    expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-existing-roots")).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
+  });
+
+  it("exposes all component-first candidate tabs", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    for (const tabId of Object.values(COMPONENT_FIRST_TAB)) {
+      expect(screen.getByTestId(tabId)).toBeInTheDocument();
+    }
+  });
+
+  it("keeps dangerous offerable wording out of candidate panel context", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    const candidatePanel = screen.getByTestId("product-system-component-first-letters-set");
+    expect(candidatePanel).not.toHaveTextContent("ready to quote");
+    expect(candidatePanel).not.toHaveTextContent("active product");
+    expect(candidatePanel).not.toHaveTextContent("available in Work Intake");
+    expect(candidatePanel).not.toHaveTextContent("live form");
+    expect(candidatePanel).not.toHaveTextContent("production ready");
   });
 
 });

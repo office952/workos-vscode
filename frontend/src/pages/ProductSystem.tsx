@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+﻿import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   productTemplatesApi,
@@ -85,53 +85,8 @@ import {
   type TemplateLibraryRowSummary,
 } from "@/features/product-system/TemplateLibraryView";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
-import {
-  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-  COMPONENT_FIRST_COMPONENT_TEMPLATE_CODES,
-  COMPONENT_FIRST_EXPECTED_ROW_COUNT,
-  COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES,
-  assessComponentFirstLiveCompleteness,
-  assessComponentFirstContractDrift,
-  componentFirstContractCheckLabel,
-  componentFirstContractCheckTone,
-  componentFirstDriftLabel,
-  componentFirstSourceDescription,
-  componentFirstSourceLabel,
-  componentFirstSourceTone,
-  isComponentFirstLettersTemplate,
-  normalizeComponentFirstTemplateCode,
-  type ComponentFirstCompletenessAssessment,
-  type ComponentFirstSourceMode,
-  type ComponentFirstTemplateCode,
-} from "@/features/product-system/componentFirstReadonlyCompleteness";
-import {
-  assessComponentFirstDossierAlignment,
-  componentFirstDossierRuntimeLinkLabel,
-  componentFirstOverallAlignmentLabel,
-  componentFirstOverallAlignmentTone,
-} from "@/features/product-system/componentFirstReadonlyDossierAlignment";
-import {
-  buildComponentFirstOwnerSummary,
-  componentFirstOwnerStatusTone,
-} from "@/features/product-system/componentFirstReadonlyOwnerSummary";
-import {
-  assessComponentFirstFormSystemReadiness,
-  componentFirstFormReadinessLabel,
-  componentFirstFormReadinessTone,
-  componentFirstFormRuntimeLinkLabel,
-} from "@/features/product-system/componentFirstReadonlyFormSystemReadiness";
-import {
-  assessComponentFirstProductTruthMapping,
-  componentFirstProductTruthMappingLabel,
-  componentFirstProductTruthMappingTone,
-  componentFirstProductTruthRuntimeLinkLabel,
-} from "@/features/product-system/componentFirstReadonlyProductTruthMapping";
-import {
-  assessComponentFirstProductDefinitionReadiness,
-  componentFirstProductDefinitionReadinessLabel,
-  componentFirstProductDefinitionReadinessTone,
-  componentFirstProductDefinitionRuntimeLinkLabel,
-} from "@/features/product-system/componentFirstReadonlyProductDefinitionReadiness";
+import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "@/features/product-system/componentFirstReadonlyCompleteness";
+import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -179,7 +134,7 @@ import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import type { SourceState } from "@/components/workos/design-system";
 
 // ============================================================
-// COMPONENT TYPE CONFIG — icons, colors, descriptions, emoji
+// COMPONENT TYPE CONFIG â€” icons, colors, descriptions, emoji
 // ============================================================
 const COMPONENT_TYPE_CONFIG: Record<
   ProductComponentType,
@@ -198,18 +153,18 @@ const COMPONENT_TYPE_CONFIG: Record<
     color: "text-blue-400",
     bgColor: "bg-blue-500/10",
     borderColor: "border-blue-500/30",
-    label: "Structură Metalică",
-    description: "Cadrul principal — profile sudate, debitate CNC",
-    emoji: "🏗️",
+    label: "StructurÄƒ MetalicÄƒ",
+    description: "Cadrul principal â€” profile sudate, debitate CNC",
+    emoji: "ðŸ—ï¸",
   },
   FATA_ACP_ROUTATA: {
     icon: <LayoutGrid className="w-5 h-5" />,
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     borderColor: "border-amber-500/30",
-    label: "Față ACP Routată",
+    label: "FaÈ›Äƒ ACP RoutatÄƒ",
     description: "Panoul frontal din aluminiu compozit, routat CNC",
-    emoji: "🎨",
+    emoji: "ðŸŽ¨",
   },
   DIFUZIE_PLEXI: {
     icon: <Sparkles className="w-5 h-5" />,
@@ -217,8 +172,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-cyan-500/10",
     borderColor: "border-cyan-500/30",
     label: "Difuzie Plexiglas",
-    description: "Placa de difuzie din plexiglas opal pentru iluminare uniformă",
-    emoji: "💎",
+    description: "Placa de difuzie din plexiglas opal pentru iluminare uniformÄƒ",
+    emoji: "ðŸ’Ž",
   },
   ILUMINARE: {
     icon: <Lightbulb className="w-5 h-5" />,
@@ -227,7 +182,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-yellow-500/30",
     label: "Iluminare LED",
     description: "Module LED, drivere, cablaj electric",
-    emoji: "💡",
+    emoji: "ðŸ’¡",
   },
   RELIEF_PLEXI_10MM: {
     icon: <Box className="w-5 h-5" />,
@@ -235,8 +190,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-purple-500/10",
     borderColor: "border-purple-500/30",
     label: "Relief Plexiglas 10mm",
-    description: "Litere/forme 3D din plexiglas de 10mm, tăiate laser",
-    emoji: "✨",
+    description: "Litere/forme 3D din plexiglas de 10mm, tÄƒiate laser",
+    emoji: "âœ¨",
   },
   FINISAJ: {
     icon: <Paintbrush className="w-5 h-5" />,
@@ -244,8 +199,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-emerald-500/10",
     borderColor: "border-emerald-500/30",
     label: "Finisaj",
-    description: "Vopsire, lăcuire, aplicare folii, asamblare finală",
-    emoji: "🎯",
+    description: "Vopsire, lÄƒcuire, aplicare folii, asamblare finalÄƒ",
+    emoji: "ðŸŽ¯",
   },
   // BUILD 4: Advertising production types
   PRINT_SUBSTRATE: {
@@ -254,8 +209,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-rose-500/10",
     borderColor: "border-rose-500/30",
     label: "Substrat Print",
-    description: "Banner, mesh, PVC — suprafața de imprimare",
-    emoji: "🖨️",
+    description: "Banner, mesh, PVC â€” suprafaÈ›a de imprimare",
+    emoji: "ðŸ–¨ï¸",
   },
   VINYL_APPLICATION: {
     icon: <Layers className="w-5 h-5" />,
@@ -263,8 +218,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-pink-500/10",
     borderColor: "border-pink-500/30",
     label: "Aplicare Vinyl",
-    description: "Autocolant, sticker, folie — aplicare și tăiere",
-    emoji: "📋",
+    description: "Autocolant, sticker, folie â€” aplicare È™i tÄƒiere",
+    emoji: "ðŸ“‹",
   },
   PLEXI_PANEL: {
     icon: <Box className="w-5 h-5" />,
@@ -272,8 +227,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-sky-500/10",
     borderColor: "border-sky-500/30",
     label: "Panou Plexiglas",
-    description: "Placă plexiglas — tăiere, gravare, montaj",
-    emoji: "🪟",
+    description: "PlacÄƒ plexiglas â€” tÄƒiere, gravare, montaj",
+    emoji: "ðŸªŸ",
   },
   FRAME_PROFILE: {
     icon: <Frame className="w-5 h-5" />,
@@ -281,8 +236,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-orange-500/10",
     borderColor: "border-orange-500/30",
     label: "Profil Cadru",
-    description: "Profil aluminiu pentru casetă luminoasă",
-    emoji: "🔲",
+    description: "Profil aluminiu pentru casetÄƒ luminoasÄƒ",
+    emoji: "ðŸ”²",
   },
   LITERE_3D: {
     icon: <Box className="w-5 h-5" />,
@@ -290,8 +245,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-violet-500/10",
     borderColor: "border-violet-500/30",
     label: "Litere 3D",
-    description: "Litere volumetrice — față plexi/acrilic, bordură aluminiu, spate Forex 10 mm, LED pe spate",
-    emoji: "🔤",
+    description: "Litere volumetrice â€” faÈ›Äƒ plexi/acrilic, bordurÄƒ aluminiu, spate Forex 10 mm, LED pe spate",
+    emoji: "ðŸ”¤",
   },
   ELECTRIC_LED: {
     icon: <Lightbulb className="w-5 h-5" />,
@@ -300,7 +255,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     borderColor: "border-amber-500/30",
     label: "Sistem LED",
     description: "Module LED, surse, cablaj pentru iluminare",
-    emoji: "⚡",
+    emoji: "âš¡",
   },
   EXTERNALIZARE: {
     icon: <RefreshCw className="w-5 h-5" />,
@@ -308,17 +263,17 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-red-500/10",
     borderColor: "border-red-500/30",
     label: "Externalizare",
-    description: "Producție externalizată la furnizor",
-    emoji: "🏭",
+    description: "ProducÈ›ie externalizatÄƒ la furnizor",
+    emoji: "ðŸ­",
   },
   TAIERE_CNC_LASER: {
     icon: <Cog className="w-5 h-5" />,
     color: "text-teal-400",
     bgColor: "bg-teal-500/10",
     borderColor: "border-teal-500/30",
-    label: "Tăiere CNC/Laser",
-    description: "Operații de debitare CNC sau laser",
-    emoji: "⚙️",
+    label: "TÄƒiere CNC/Laser",
+    description: "OperaÈ›ii de debitare CNC sau laser",
+    emoji: "âš™ï¸",
   },
   LAMINARE: {
     icon: <Layers className="w-5 h-5" />,
@@ -326,14 +281,14 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-lime-500/10",
     borderColor: "border-lime-500/30",
     label: "Laminare",
-    description: "Laminare protecție UV, mat sau lucios",
-    emoji: "🛡️",
+    description: "Laminare protecÈ›ie UV, mat sau lucios",
+    emoji: "ðŸ›¡ï¸",
   },
 };
 
 function getVolumetricStageIcon(stage: { code: string; label: string }): React.ReactNode | null {
   const key = `${stage.code} ${stage.label}`.toLowerCase();
-  if (key.includes("face") || key.includes("față") || key.includes("fata") || key.includes("vizual")) {
+  if (key.includes("face") || key.includes("faÈ›Äƒ") || key.includes("fata") || key.includes("vizual")) {
     return <ScanLine className="w-5 h-5" />;
   }
   if (key.includes("lateral") || key.includes("volum") || key.includes("profil")) {
@@ -378,8 +333,8 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!routing) {
     if (!opCode.trim()) return null;
     return (
-      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
-        ⚠ Routing lipsă
+      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsÄƒ â€” operaÈ›ie necunoscutÄƒ">
+        âš  Routing lipsÄƒ
       </span>
     );
   }
@@ -388,7 +343,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   return (
     <span
       className={`px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 border border-slate-700/50 whitespace-nowrap ${ws.color}`}
-      title={`Stație: ${ws.name} · Skill: ${routing.skillLabel} · Tablet-ready ✓`}
+      title={`StaÈ›ie: ${ws.name} Â· Skill: ${routing.skillLabel} Â· Tablet-ready âœ“`}
     >
       {ws.icon} {ws.shortName}
     </span>
@@ -418,7 +373,7 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
 }
 
 // ============================================================
-// DRAFT SHAPE — Sprint #15
+// DRAFT SHAPE â€” Sprint #15
 // ============================================================
 interface DraftTemplate {
   id?: number;
@@ -434,363 +389,6 @@ interface DraftTemplate {
   notes: string;
 }
 
-type ComponentFirstReadonlyComponent = {
-  templateCode: string;
-  componentId: string;
-  roleLabel: string;
-  componentKind: string;
-  targetProductTruthPath: string;
-  dependencies: string[];
-  blockers: string[];
-  readinessState: string;
-  activationGuard: string;
-  active: boolean;
-  liveRowPresent: boolean;
-};
-
-type ComponentFirstReadonlySetModel = {
-  sourceMode: ComponentFirstSourceMode;
-  foundRowCount: number;
-  expectedRowCount: number;
-  missingTemplateCodes: ComponentFirstTemplateCode[];
-  invalidActiveTemplateCodes: ComponentFirstTemplateCode[];
-  selectedTemplateCode: string;
-  composerTemplateCode: string;
-  composerActive: boolean;
-  composerCatalogStatus: string;
-  composerReadiness: string;
-  composerActivationGuard: string;
-  composerBlockers: string[];
-  compositionList: Array<{
-    componentId: string;
-    componentTemplateCode: string;
-    role: string;
-    kind: string;
-    targetProductTruthPath: string;
-  }>;
-  dependencyGraph: Array<{ from: string; to: string }>;
-  noModuleLinks: boolean;
-  noWorkIntakeExposure: boolean;
-  noPricingActivation: boolean;
-  noProductDefinitionActivation: boolean;
-  noProductAggregateRuntimeWiring: boolean;
-  noExecutableOperations: boolean;
-  noExecutableBom: boolean;
-  components: ComponentFirstReadonlyComponent[];
-};
-
-function buildFallbackComponentFirstReadonlySetModel(
-  selectedTemplateCode: string,
-  assessment?: ComponentFirstCompletenessAssessment
-): ComponentFirstReadonlySetModel {
-  return {
-    sourceMode: assessment?.sourceMode ?? "code_contract_fallback",
-    foundRowCount: assessment?.foundRowCount ?? 0,
-    expectedRowCount: assessment?.expectedRowCount ?? COMPONENT_FIRST_EXPECTED_ROW_COUNT,
-    missingTemplateCodes: assessment?.missingTemplateCodes ?? [...COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES],
-    invalidActiveTemplateCodes: assessment?.invalidActiveTemplateCodes ?? [],
-    selectedTemplateCode,
-    composerTemplateCode: COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-    composerActive: false,
-    composerCatalogStatus: "not_seeded_live",
-    composerReadiness: "planned",
-    composerActivationGuard: "COMPONENT_FIRST_SET_INERT_UNTIL_OWNER_GO",
-    composerBlockers: [
-      "OWNER_GO_REQUIRED",
-      "COMPONENT_TRUTH_NOT_IMPLEMENTED",
-      "WORK_INTAKE_NOT_ENABLED",
-      "PRICING_NOT_ENABLED",
-      "PRODUCT_DEFINITION_NOT_ENABLED",
-    ],
-    compositionList: [
-      {
-        componentId: "comp_letter_face_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-FACE_v1",
-        role: "face",
-        kind: "structural",
-        targetProductTruthPath: "components.face.instances[]",
-      },
-      {
-        componentId: "comp_letter_back_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-BACK_v1",
-        role: "back",
-        kind: "structural",
-        targetProductTruthPath: "components.back.instances[]",
-      },
-      {
-        componentId: "comp_letter_return_cant_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-RETURN-CANT_v1",
-        role: "return_cant",
-        kind: "structural",
-        targetProductTruthPath: "components.return_cant.instances[]",
-      },
-      {
-        componentId: "comp_letter_led_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-LED_v1",
-        role: "lighting",
-        kind: "functional",
-        targetProductTruthPath: "components.led.instances[]",
-      },
-      {
-        componentId: "comp_letter_finish_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-FINISH_v1",
-        role: "finish",
-        kind: "functional",
-        targetProductTruthPath: "components.finish.instances[]",
-      },
-      {
-        componentId: "comp_letter_mounting_v1",
-        componentTemplateCode: "TPL-COMP-LETTER-MOUNTING_v1",
-        role: "mounting",
-        kind: "functional",
-        targetProductTruthPath: "components.mounting.instances[]",
-      },
-    ],
-    dependencyGraph: [
-      { from: "comp_letter_face_v1", to: "comp_letter_return_cant_v1" },
-      { from: "comp_letter_face_v1", to: "comp_letter_back_v1" },
-      { from: "comp_letter_face_v1", to: "comp_letter_led_v1" },
-      { from: "comp_letter_face_v1", to: "comp_letter_finish_v1" },
-      { from: "comp_letter_back_v1", to: "comp_letter_finish_v1" },
-      { from: "comp_letter_return_cant_v1", to: "comp_letter_finish_v1" },
-      { from: "comp_letter_back_v1", to: "comp_letter_mounting_v1" },
-      { from: "product_root", to: "comp_letter_mounting_v1" },
-    ],
-    noModuleLinks: true,
-    noWorkIntakeExposure: true,
-    noPricingActivation: true,
-    noProductDefinitionActivation: true,
-    noProductAggregateRuntimeWiring: true,
-    noExecutableOperations: true,
-    noExecutableBom: true,
-    components: [
-      {
-        templateCode: "TPL-COMP-LETTER-FACE_v1",
-        componentId: "comp_letter_face_v1",
-        roleLabel: "structural face",
-        componentKind: "structural",
-        targetProductTruthPath: "components.face.instances[]",
-        dependencies: [],
-        blockers: ["SOURCE_LAYERS_UNCONFIRMED", "FACE_MATERIAL_MISSING", "FACE_THICKNESS_MISSING"],
-        readinessState: "planned",
-        activationGuard: "FACE_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-      {
-        templateCode: "TPL-COMP-LETTER-BACK_v1",
-        componentId: "comp_letter_back_v1",
-        roleLabel: "structural back",
-        componentKind: "structural",
-        targetProductTruthPath: "components.back.instances[]",
-        dependencies: ["comp_letter_face_v1"],
-        blockers: ["FACE_GEOMETRY_REF_MISSING", "BACK_MATERIAL_MISSING", "BACKING_MODE_MISSING"],
-        readinessState: "planned",
-        activationGuard: "BACK_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-      {
-        templateCode: "TPL-COMP-LETTER-RETURN-CANT_v1",
-        componentId: "comp_letter_return_cant_v1",
-        roleLabel: "structural return/cant",
-        componentKind: "structural",
-        targetProductTruthPath: "components.return_cant.instances[]",
-        dependencies: ["components.face.confirmed_perimeter"],
-        blockers: ["SOURCE_FACE_PERIMETER_REF_MISSING", "MATERIAL_PROFILE_MISSING", "DEPTH_MM_MISSING", "CONFIRMATION_STATE_MISSING"],
-        readinessState: "planned",
-        activationGuard: "RETURN_CANT_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-      {
-        templateCode: "TPL-COMP-LETTER-LED_v1",
-        componentId: "comp_letter_led_v1",
-        roleLabel: "functional lighting",
-        componentKind: "functional",
-        targetProductTruthPath: "components.led.instances[]",
-        dependencies: ["components.face.confirmed_area"],
-        blockers: ["LIGHTING_MODE_MISSING", "SOURCE_FACE_AREA_REF_MISSING", "LED_DENSITY_CONFIG_MISSING"],
-        readinessState: "planned",
-        activationGuard: "LED_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-      {
-        templateCode: "TPL-COMP-LETTER-FINISH_v1",
-        componentId: "comp_letter_finish_v1",
-        roleLabel: "functional finish",
-        componentKind: "functional",
-        targetProductTruthPath: "components.finish.instances[]",
-        dependencies: ["comp_letter_face_v1", "comp_letter_back_v1", "comp_letter_return_cant_v1"],
-        blockers: ["FINISH_TARGET_MISSING", "FINISH_TYPE_MISSING", "COLOR_DECISION_MISSING"],
-        readinessState: "planned",
-        activationGuard: "FINISH_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-      {
-        templateCode: "TPL-COMP-LETTER-MOUNTING_v1",
-        componentId: "comp_letter_mounting_v1",
-        roleLabel: "functional mounting",
-        componentKind: "functional",
-        targetProductTruthPath: "components.mounting.instances[]",
-        dependencies: ["comp_letter_back_v1", "product.install_context"],
-        blockers: ["MOUNTING_MODE_MISSING", "SUPPORT_REQUIRED_UNKNOWN", "INSTALL_CONTEXT_MISSING"],
-        readinessState: "planned",
-        activationGuard: "MOUNTING_CONTRACT_ONLY_NOT_EXECUTABLE",
-        active: false,
-        liveRowPresent: false,
-      },
-    ],
-  };
-}
-
-function safeJsonParse<T>(raw: string | undefined | null, fallback: T): T {
-  if (!raw) return fallback;
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    return fallback;
-  }
-}
-
-function parseLiveComponentFirstComponent(
-  template: ProductTemplateEntity,
-  templateCode: ComponentFirstTemplateCode
-): ComponentFirstReadonlyComponent {
-  const notes = safeJsonParse<Record<string, unknown>>(template.notes, {});
-  const componentContracts = safeJsonParse<Array<Record<string, unknown>>>(template.components_json, []);
-  const component = componentContracts[0] ?? {};
-  const dependencies = Array.isArray(component.dependencies)
-    ? component.dependencies.map((entry) => {
-        if (typeof entry === "string") return entry;
-        if (entry && typeof entry === "object") {
-          const record = entry as Record<string, unknown>;
-          return String(record.source_path ?? record.source_component_id ?? record.dependency_key ?? "unknown");
-        }
-        return "unknown";
-      })
-    : [];
-  const blockers = Array.isArray(component.blockers)
-    ? component.blockers.map((entry) => String(entry))
-    : [];
-
-  return {
-    templateCode,
-    componentId: String(component.component_id ?? ""),
-    roleLabel: String(component.role_label ?? component.role_key ?? "component"),
-    componentKind: String(component.component_kind ?? "unknown"),
-    targetProductTruthPath: String(component.target_product_truth_path ?? ""),
-    dependencies,
-    blockers,
-    readinessState: String(component.readiness_state ?? notes.readiness ?? "planned"),
-    activationGuard: String(component.activation_guard ?? notes.activation_guard ?? "OWNER_GO_REQUIRED"),
-    active: template.active !== false,
-    liveRowPresent: true,
-  };
-}
-
-function buildComponentFirstReadonlySetModel(
-  templates: ProductTemplateEntity[],
-  availabilityItems: ProductTemplateAvailabilityItem[],
-  selectedTemplateCode: string | null | undefined
-): ComponentFirstReadonlySetModel | null {
-  if (!isComponentFirstLettersTemplate(selectedTemplateCode)) {
-    return null;
-  }
-
-  const assessment = assessComponentFirstLiveCompleteness(templates);
-  if (assessment.sourceMode === "code_contract_fallback") {
-    return buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode), assessment);
-  }
-
-  const fallback = buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode), assessment);
-  const templateByCode = new Map(templates.map((template) => [normalizeComponentFirstTemplateCode(template.template_code), template]));
-  const availabilityByCode = new Map(availabilityItems.map((item) => [normalizeComponentFirstTemplateCode(item.template_code), item]));
-  const composer = templateByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
-
-  const composerComponents = composer
-    ? safeJsonParse<Array<Record<string, unknown>>>(composer.components_json, [])
-    : fallback.compositionList.map((entry) => ({
-        component_id: entry.componentId,
-        component_template_code: entry.componentTemplateCode,
-        role: entry.role,
-        kind: entry.kind,
-        target_product_truth_path: entry.targetProductTruthPath,
-      }));
-  const composerNotes = composer
-    ? safeJsonParse<Record<string, unknown>>(composer.notes, {})
-    : {
-        readiness: fallback.composerReadiness,
-        activation_guard: fallback.composerActivationGuard,
-        blockers: fallback.composerBlockers,
-        component_dependency_graph: fallback.dependencyGraph.map((entry) => ({
-          from: entry.from,
-          to: entry.to,
-        })),
-        work_intake_exposed: fallback.noWorkIntakeExposure ? false : true,
-        pricing_active: fallback.noPricingActivation ? false : true,
-        product_definition_active: fallback.noProductDefinitionActivation ? false : true,
-        product_aggregate_runtime_consumed: fallback.noProductAggregateRuntimeWiring ? false : true,
-        no_executable_operations: fallback.noExecutableOperations,
-        no_executable_bom: fallback.noExecutableBom,
-      };
-  const composerAvailability = availabilityByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
-
-  const components = COMPONENT_FIRST_COMPONENT_TEMPLATE_CODES.map((templateCode) => {
-    const template = templateByCode.get(normalizeComponentFirstTemplateCode(templateCode));
-    if (template) {
-      return parseLiveComponentFirstComponent(template, templateCode);
-    }
-    const fallbackComponent = fallback.components.find((entry) => entry.templateCode === templateCode);
-    return fallbackComponent ?? null;
-  }).filter((entry): entry is ComponentFirstReadonlyComponent => Boolean(entry));
-
-  return {
-    sourceMode: assessment.sourceMode,
-    foundRowCount: assessment.foundRowCount,
-    expectedRowCount: assessment.expectedRowCount,
-    missingTemplateCodes: assessment.missingTemplateCodes,
-    invalidActiveTemplateCodes: assessment.invalidActiveTemplateCodes,
-    selectedTemplateCode: String(selectedTemplateCode),
-    composerTemplateCode: composer?.template_code ?? fallback.composerTemplateCode,
-    composerActive: composer ? composer.active !== false : false,
-    composerCatalogStatus: composerAvailability?.status ?? (composer ? "archived" : "not_seeded_live"),
-    composerReadiness: String(composerNotes.readiness ?? "planned"),
-    composerActivationGuard: String(composerNotes.activation_guard ?? "OWNER_GO_REQUIRED"),
-    composerBlockers: Array.isArray(composerNotes.blockers)
-      ? composerNotes.blockers.map((entry) => String(entry))
-      : [],
-    compositionList: composerComponents.map((entry) => ({
-      componentId: String(entry.component_id ?? ""),
-      componentTemplateCode: String(entry.component_template_code ?? ""),
-      role: String(entry.role ?? ""),
-      kind: String(entry.kind ?? ""),
-      targetProductTruthPath: String(entry.target_product_truth_path ?? ""),
-    })),
-    dependencyGraph: Array.isArray(composerNotes.component_dependency_graph)
-      ? composerNotes.component_dependency_graph.map((entry) => {
-          const record = (entry ?? {}) as Record<string, unknown>;
-          return {
-            from: String(record.from ?? "unknown"),
-            to: String(record.to ?? "unknown"),
-          };
-        })
-      : fallback.dependencyGraph,
-    noModuleLinks:
-      (composerAvailability?.module_codes?.length ?? 0) === 0 &&
-      (composerAvailability?.child_module_codes?.length ?? 0) === 0 &&
-      composerAvailability?.has_modules !== true,
-    noWorkIntakeExposure: composer ? composerNotes.work_intake_exposed === false : true,
-    noPricingActivation: composer ? composerNotes.pricing_active === false : true,
-    noProductDefinitionActivation: composer ? composerNotes.product_definition_active === false : true,
-    noProductAggregateRuntimeWiring: composer ? composerNotes.product_aggregate_runtime_consumed === false : true,
-    noExecutableOperations: composer ? composerNotes.no_executable_operations === true : true,
-    noExecutableBom: composer ? composerNotes.no_executable_bom === true : true,
-    components,
-  };
-}
 
 function entityToDraft(e: ProductTemplateEntity): DraftTemplate {
   const components = parseTemplateComponentsWithLegacy(
@@ -829,7 +427,7 @@ function emptyDraft(): DraftTemplate {
 }
 
 // ============================================================
-// SERIALIZATION — Sprint #15/#27 dual representation
+// SERIALIZATION â€” Sprint #15/#27 dual representation
 // ============================================================
 function serializeOperation(
   op: ProductTemplateOperation,
@@ -951,16 +549,16 @@ function computeValidation(
   const familyKnown =
     draft.family_id.trim().length > 0 &&
     (families.length === 0
-      ? draft.family_name.trim().length > 0  // registry not loaded — trust template data
+      ? draft.family_name.trim().length > 0  // registry not loaded â€” trust template data
       : families.some((f) => f.family_id === draft.family_id));
 
   return [
-    { key: "template_code", label: "Cod șablon completat", ok: draft.template_code.trim().length > 0 },
-    { key: "family", label: "Familie produs selectată", ok: familyKnown },
-    { key: "components_min_1", label: "Minim o componentă", ok: draft.components.length > 0 },
+    { key: "template_code", label: "Cod È™ablon completat", ok: draft.template_code.trim().length > 0 },
+    { key: "family", label: "Familie produs selectatÄƒ", ok: familyKnown },
+    { key: "components_min_1", label: "Minim o componentÄƒ", ok: draft.components.length > 0 },
     { key: "components_typed", label: "Componente cu tip valid", ok: componentsAllTyped },
-    { key: "each_component_has_operation", label: "Fiecare componentă are operații", ok: eachHasOp },
-    { key: "each_component_has_material", label: "Fiecare componentă are materiale", ok: eachHasMat },
+    { key: "each_component_has_operation", label: "Fiecare componentÄƒ are operaÈ›ii", ok: eachHasOp },
+    { key: "each_component_has_material", label: "Fiecare componentÄƒ are materiale", ok: eachHasMat },
   ];
 }
 
@@ -975,7 +573,7 @@ function getDraftDisplayCounts(draft: DraftTemplate) {
     0
   );
   const operationHours =
-    totalMinutes > 0 ? `${Math.round((totalMinutes / 60) * 10) / 10}h` : "—";
+    totalMinutes > 0 ? `${Math.round((totalMinutes / 60) * 10) / 10}h` : "â€”";
   const internalCalibrationHours =
     (draft.estimated_hours ?? 0) > 0
       ? `${draft.estimated_hours}h`
@@ -990,7 +588,7 @@ function getDraftDisplayCounts(draft: DraftTemplate) {
 }
 
 // ============================================================
-// VISUAL PRODUCT ILLUSTRATION — SVG totem/sign (orientative only)
+// VISUAL PRODUCT ILLUSTRATION â€” SVG totem/sign (orientative only)
 // ============================================================
 function ProductIllustration({ components }: { components: ProductTemplateComponent[] }) {
   const hasType = (t: ProductComponentType) => components.some((c) => c.type === t);
@@ -1000,7 +598,7 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
       <div className="text-center py-8 px-3 border border-dashed border-[#2A3548] rounded-lg bg-[#0D1321]/60">
         <Package className="w-10 h-10 text-slate-600 mx-auto mb-2" />
         <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-          Previzualizare indisponibilă — șablonul nu are componente definite.
+          Previzualizare indisponibilÄƒ â€” È™ablonul nu are componente definite.
         </p>
       </div>
     );
@@ -1086,14 +684,14 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
       </svg>
 
       <p className="text-[9px] text-slate-600 text-center mt-2 italic">
-        Stratificare orientativă (tipuri principale)
+        Stratificare orientativÄƒ (tipuri principale)
       </p>
     </div>
   );
 }
 
 // ============================================================
-// PRODUCT PREVIEW PANEL — operator-facing visual summary
+// PRODUCT PREVIEW PANEL â€” operator-facing visual summary
 // ============================================================
 function ProductPreviewPanel({
   draft,
@@ -1115,19 +713,19 @@ function ProductPreviewPanel({
       {!compact && (
         <div className="space-y-1">
           <h3 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
-            Previzualizare orientativă
+            Previzualizare orientativÄƒ
           </h3>
           <p className="text-[10px] text-slate-500 leading-relaxed">
-            Vizualizare orientativă · date din șablon
+            Vizualizare orientativÄƒ Â· date din È™ablon
           </p>
           <p className="text-[9px] text-slate-600 italic">
-            Nu reprezintă randare tehnică finală
+            Nu reprezintÄƒ randare tehnicÄƒ finalÄƒ
           </p>
         </div>
       )}
       {compact && (
         <p className="text-[9px] text-slate-600 italic leading-relaxed">
-          Vizualizare orientativă · nu e randare tehnică finală
+          Vizualizare orientativÄƒ Â· nu e randare tehnicÄƒ finalÄƒ
         </p>
       )}
 
@@ -1162,10 +760,10 @@ function ProductPreviewPanel({
                       {index + 1}. {typeLabel}
                     </p>
                     <p className="text-[10px] text-slate-300 truncate">
-                      {formatComponentDisplayName(c.name) || "Fără denumire"}
+                      {formatComponentDisplayName(c.name) || "FÄƒrÄƒ denumire"}
                     </p>
                     <p className="text-[8px] text-slate-500 mt-0.5">
-                      {opCount} op. · {matCount} mat.
+                      {opCount} op. Â· {matCount} mat.
                     </p>
                   </div>
                 </li>
@@ -1258,7 +856,7 @@ function MaterialRegistryStatusReadonly({
           status="missing"
           label={getMaterialRegistryUnknownLabel()}
           className="text-[8px] uppercase"
-          title="Codul nu există în registrul de materiale încărcat pe această pagină"
+          title="Codul nu existÄƒ Ã®n registrul de materiale Ã®ncÄƒrcat pe aceastÄƒ paginÄƒ"
         />
       </div>
     );
@@ -1284,7 +882,7 @@ function MaterialRegistryStatusReadonly({
       {hasMaterialSourceNotes(registryRow) && sourceNotes ? (
         <div className="mt-1 border-t border-[#1E293B]/80 pt-1">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Note sursă (referință, nu alias runtime)
+            Note sursÄƒ (referinÈ›Äƒ, nu alias runtime)
           </p>
           <p className="text-[9px] text-slate-400 leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
             {sourceNotes}
@@ -1315,7 +913,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
         </span>
         {(isFormulaBased || quoteInputs.length > 0) && (
           <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide rounded bg-amber-900/30 text-amber-300 border border-amber-700/40">
-            Depinde de ofertă
+            Depinde de ofertÄƒ
           </span>
         )}
         {row.calculation_type ? (
@@ -1330,7 +928,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
       {paramsText ? (
         <div className="mb-1">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Parametri formulă
+            Parametri formulÄƒ
           </p>
           <pre className="text-[9px] text-slate-400 font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
             {paramsText}
@@ -1339,14 +937,14 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
       ) : null}
       {quoteInputs.length > 0 ? (
         <p className="text-[9px] text-slate-400 mb-1">
-          Input ofertă:{" "}
+          Input ofertÄƒ:{" "}
           <span className="text-amber-300/90 font-mono">{quoteInputs.join(", ")}</span>
         </p>
       ) : null}
       {extrasText ? (
         <div>
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Metadate păstrate din șablon
+            Metadate pÄƒstrate din È™ablon
           </p>
           <pre className="text-[9px] text-slate-500 font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
             {extrasText}
@@ -1358,7 +956,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
 }
 
 // ============================================================
-// COLLAPSIBLE COMPONENT CARD — the main redesign
+// COLLAPSIBLE COMPONENT CARD â€” the main redesign
 // ============================================================
 function CollapsibleComponentCard({
   component,
@@ -1479,7 +1077,7 @@ function CollapsibleComponentCard({
           : "border-[#1E293B] bg-[#111827] hover:border-slate-600"
       }`}
     >
-      {/* Collapsed header — always visible */}
+      {/* Collapsed header â€” always visible */}
       <div className="w-full text-left px-4 py-3 flex items-center gap-3">
         <button
           type="button"
@@ -1503,7 +1101,7 @@ function CollapsibleComponentCard({
             )}
           </div>
           <p className="text-[13px] font-semibold text-slate-200 truncate mt-0.5">
-            {displayName || <span className="text-slate-500 italic">Fără nume</span>}
+            {displayName || <span className="text-slate-500 italic">FÄƒrÄƒ nume</span>}
           </p>
         </div>
 
@@ -1524,7 +1122,7 @@ function CollapsibleComponentCard({
               e.stopPropagation();
               onToggleExpand();
             }}
-            aria-label={expanded ? "Închide editarea componentei" : "Deschide editarea componentei"}
+            aria-label={expanded ? "ÃŽnchide editarea componentei" : "Deschide editarea componentei"}
             aria-expanded={expanded}
             className={`w-8 h-8 rounded-lg border flex items-center justify-center shrink-0 transition-colors ${
               expanded
@@ -1552,7 +1150,7 @@ function CollapsibleComponentCard({
           <div className="grid grid-cols-3 gap-3 pt-3">
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                ID Componentă
+                ID ComponentÄƒ
                 <Tooltip text="Identificator unic intern (ex: comp_1, cadru_principal)">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
@@ -1567,8 +1165,8 @@ function CollapsibleComponentCard({
             </div>
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                Tip Componentă
-                <Tooltip text="Categoria componentei — determină fluxul de producție">
+                Tip ComponentÄƒ
+                <Tooltip text="Categoria componentei â€” determinÄƒ fluxul de producÈ›ie">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
               </label>
@@ -1591,8 +1189,8 @@ function CollapsibleComponentCard({
             </div>
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                Nume Componentă
-                <Tooltip text="Denumirea descriptivă (ex: Cadru metalic sudat 2x1m)">
+                Nume ComponentÄƒ
+                <Tooltip text="Denumirea descriptivÄƒ (ex: Cadru metalic sudat 2x1m)">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
               </label>
@@ -1617,23 +1215,23 @@ function CollapsibleComponentCard({
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
               <p className="text-[11px] text-amber-300">
                 {component._legacy
-                  ? "Componentă migrată din forma veche. Confirmă tipul și salvează."
-                  : "Operații/materiale vechi atașate aici. Revizuiește și redistribuie dacă e cazul."}
+                  ? "ComponentÄƒ migratÄƒ din forma veche. ConfirmÄƒ tipul È™i salveazÄƒ."
+                  : "OperaÈ›ii/materiale vechi ataÈ™ate aici. RevizuieÈ™te È™i redistribuie dacÄƒ e cazul."}
               </p>
             </div>
           )}
 
           <div className="px-3 py-2.5 rounded-lg border border-[#2A3548] bg-[#0D1321]/80 space-y-1.5">
             <p className="text-[10px] text-slate-400 leading-relaxed">
-              Câmpurile dinamice sunt afișate informativ. Editarea formulelor se va trata într-un pas separat.
+              CÃ¢mpurile dinamice sunt afiÈ™ate informativ. Editarea formulelor se va trata Ã®ntr-un pas separat.
             </p>
             <p className="text-[10px] text-slate-300 leading-relaxed">
-              Parametrii configurabili ai produsului — text, font, înălțime, adâncime, tip iluminare, RAL,
-              montaj — nu se editează aici ca reguli de șablon. Ei trebuie colectați în Intake / Dossier /
-              Ofertă și folosiți de formulele dinamice.
+              Parametrii configurabili ai produsului â€” text, font, Ã®nÄƒlÈ›ime, adÃ¢ncime, tip iluminare, RAL,
+              montaj â€” nu se editeazÄƒ aici ca reguli de È™ablon. Ei trebuie colectaÈ›i Ã®n Intake / Dossier /
+              OfertÄƒ È™i folosiÈ›i de formulele dinamice.
             </p>
             <p className="text-[10px] text-slate-500 italic leading-relaxed">
-              Șablonul definește structura produsului; valorile concrete vin din cererea clientului și
+              È˜ablonul defineÈ™te structura produsului; valorile concrete vin din cererea clientului È™i
               ofertare.
             </p>
           </div>
@@ -1644,7 +1242,7 @@ function CollapsibleComponentCard({
               <div className="flex items-center gap-2">
                 <Cog className="w-4 h-4 text-blue-400" />
                 <span className="text-[12px] font-bold text-slate-200">
-                  Operații de Producție
+                  OperaÈ›ii de ProducÈ›ie
                 </span>
                 <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-full font-bold">
                   {component.operations.length}
@@ -1654,14 +1252,14 @@ function CollapsibleComponentCard({
                 onClick={addOp}
                 className="flex items-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold transition-colors"
               >
-                <Plus className="w-3 h-3" /> Adaugă Operație
+                <Plus className="w-3 h-3" /> AdaugÄƒ OperaÈ›ie
               </button>
             </div>
 
             {component.operations.length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-3 bg-red-900/10 border border-red-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
-                <p className="text-[11px] text-red-300">Nicio operație definită — necesară minim 1 pentru salvare.</p>
+                <p className="text-[11px] text-red-300">Nicio operaÈ›ie definitÄƒ â€” necesarÄƒ minim 1 pentru salvare.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1687,7 +1285,7 @@ function CollapsibleComponentCard({
                         {dynamicMeta ? (
                           <span
                             className="shrink-0 px-1 py-0.5 text-[8px] font-bold uppercase rounded bg-cyan-900/40 text-cyan-300 border border-cyan-700/40"
-                            title="Linie dinamică — metadate formule mai jos"
+                            title="Linie dinamicÄƒ â€” metadate formule mai jos"
                           >
                             Dinamic
                           </span>
@@ -1706,7 +1304,7 @@ function CollapsibleComponentCard({
                           placeholder="Debitare CNC"
                           className="flex-[2] bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 outline-none focus:border-blue-500/50"
                         />
-                        <Tooltip text="Centrul de lucru (ex: CNC, Sudură, Vopsitorie)">
+                        <Tooltip text="Centrul de lucru (ex: CNC, SudurÄƒ, Vopsitorie)">
                           <input
                             type="text"
                             value={op.workcenter}
@@ -1777,7 +1375,7 @@ function CollapsibleComponentCard({
                     : "bg-emerald-600 hover:bg-emerald-500 text-white"
                 }`}
               >
-                <Plus className="w-3 h-3" /> Adaugă Material
+                <Plus className="w-3 h-3" /> AdaugÄƒ Material
               </button>
             </div>
 
@@ -1785,7 +1383,7 @@ function CollapsibleComponentCard({
               <div className="flex items-center gap-2 px-3 py-3 bg-amber-900/10 border border-amber-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-amber-400" />
                 <p className="text-[11px] text-amber-300">
-                  Registrul de materiale nu este încărcat. Materialele din șablon sunt afișate direct.{" "}
+                  Registrul de materiale nu este Ã®ncÄƒrcat. Materialele din È™ablon sunt afiÈ™ate direct.{" "}
                   <Link to="/inventory" className="underline hover:text-amber-200">Inventar</Link>
                 </p>
               </div>
@@ -1793,7 +1391,7 @@ function CollapsibleComponentCard({
             {component.materials.length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-3 bg-red-900/10 border border-red-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
-                <p className="text-[11px] text-red-300">Niciun material — necesar minim 1 din registru.</p>
+                <p className="text-[11px] text-red-300">Niciun material â€” necesar minim 1 din registru.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1816,7 +1414,7 @@ function CollapsibleComponentCard({
                         {dynamicMeta ? (
                           <span
                             className="shrink-0 px-1 py-0.5 text-[8px] font-bold uppercase rounded bg-violet-900/40 text-violet-300 border border-violet-700/40"
-                            title="Linie dinamică — metadate formule mai jos"
+                            title="Linie dinamicÄƒ â€” metadate formule mai jos"
                           >
                             Dinamic
                           </span>
@@ -1839,13 +1437,13 @@ function CollapsibleComponentCard({
                             ? formatMaterialRegistryShortName(row.name)
                             : m.name
                               ? formatMaterialRegistryShortName(m.name)
-                              : "—"}
+                              : "â€”"}
                         </span>
                         <Tooltip
                           text={
                             dynamicMeta
-                              ? "Cantitate calculată la ofertare din formulă și unități (mp, ml, buc)"
-                              : "Cantitate statică de referință per unitate de produs"
+                              ? "Cantitate calculatÄƒ la ofertare din formulÄƒ È™i unitÄƒÈ›i (mp, ml, buc)"
+                              : "Cantitate staticÄƒ de referinÈ›Äƒ per unitate de produs"
                           }
                         >
                           <input
@@ -1858,7 +1456,7 @@ function CollapsibleComponentCard({
                           />
                         </Tooltip>
                         <span className="text-[10px] text-slate-500 font-mono w-10">
-                          {row ? row.unit : m.unit || "—"}
+                          {row ? row.unit : m.unit || "â€”"}
                         </span>
                         <button
                           onClick={() => removeMat(i)}
@@ -1885,7 +1483,7 @@ function CollapsibleComponentCard({
               onClick={onRemove}
               className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors"
             >
-              <Trash2 className="w-3.5 h-3.5" /> Șterge Componenta
+              <Trash2 className="w-3.5 h-3.5" /> È˜terge Componenta
             </button>
           </div>
         </div>
@@ -1895,7 +1493,7 @@ function CollapsibleComponentCard({
 }
 
 // ============================================================
-// EDITOR PANEL — Redesigned with visual components
+// EDITOR PANEL â€” Redesigned with visual components
 // ============================================================
 const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
   volumetric_face: "TPL-VOLUMETRIC-FACE_v1",
@@ -2069,7 +1667,7 @@ const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipA
     label: "VOLUM ALUMINIU / CANT",
     primaryTemplateCode: "TPL-VOLUM-ALUMINIU_v1",
     separateCalculationStatus: "partial_ready",
-    separateCalculationLabel: "partial_ready · calculation blocked",
+    separateCalculationLabel: "partial_ready Â· calculation blocked",
     shouldOwn: [
       "return_depth_mm",
       "perimeter_source",
@@ -2788,516 +2386,6 @@ function CompositionReadModelTable({
   );
 }
 
-function ComponentFirstReadonlyStatusPanel({
-  templates,
-  availabilityItems,
-  selectedTemplateCode,
-}: {
-  templates: ProductTemplateEntity[];
-  availabilityItems: ProductTemplateAvailabilityItem[];
-  selectedTemplateCode: string;
-}) {
-  const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
-  const driftAssessment = assessComponentFirstContractDrift(templates);
-  const dossierAlignment = assessComponentFirstDossierAlignment(templates, { drift: driftAssessment });
-  const ownerSummary = buildComponentFirstOwnerSummary(
-    driftAssessment.completeness,
-    driftAssessment,
-    dossierAlignment
-  );
-  const formReadiness = assessComponentFirstFormSystemReadiness(
-    driftAssessment.completeness,
-    dossierAlignment,
-    ownerSummary,
-    { drift: driftAssessment, liveTemplates: templates }
-  );
-  const productTruthMapping = assessComponentFirstProductTruthMapping(formReadiness, ownerSummary);
-  const productDefinitionReadiness = assessComponentFirstProductDefinitionReadiness(
-    productTruthMapping,
-    formReadiness,
-    ownerSummary,
-    { liveTemplates: templates }
-  );
-  if (!model) {
-    return null;
-  }
-
-  return (
-    <section
-      data-testid="product-system-component-first-letters-set"
-      className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
-    >
-      <article
-        data-testid="product-system-component-first-owner-review"
-        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
-      >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Owner review</p>
-        <div className="mt-2 flex flex-wrap items-center gap-2">
-          <span
-            data-testid="product-system-component-first-owner-status-title"
-            className={`rounded border px-2 py-0.5 text-[11px] font-bold ${componentFirstOwnerStatusTone(ownerSummary.statusLevel)}`}
-          >
-            Status: {ownerSummary.statusTitle}
-          </span>
-        </div>
-        <p
-          data-testid="product-system-component-first-owner-summary"
-          className="mt-2 text-[11px] leading-relaxed text-slate-200"
-        >
-          {ownerSummary.oneSentenceSummary}
-        </p>
-        <ul
-          data-testid="product-system-component-first-owner-checks"
-          className="mt-2 space-y-1 text-[10px] text-slate-300"
-        >
-          {ownerSummary.ownerVisibleChecks.map((check) => (
-            <li key={check.label}>
-              <span className="text-slate-400">{check.label}:</span>{" "}
-              <span className="font-semibold text-slate-100">{check.value}</span>
-            </li>
-          ))}
-        </ul>
-        <p
-          data-testid="product-system-component-first-owner-next-step"
-          className="mt-2 text-[10px] font-mono text-cyan-200/85"
-        >
-          Next owner decision: {ownerSummary.nextOwnerDecisionNeeded.replaceAll("_", " ").toLowerCase()}
-        </p>
-        <p
-          data-testid="product-system-component-first-owner-guard"
-          className="mt-1 text-[10px] font-mono text-slate-400"
-        >
-          Cannot use in Work Intake; cannot price; Cannot create quote/order; cannot materialize tasks.
-        </p>
-      </article>
-      <article
-        data-testid="product-system-component-first-form-system-readiness"
-        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
-      >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Form System readiness</p>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
-          <span
-            data-testid="product-system-component-first-form-readiness-contract-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
-          >
-            Readiness contract: {formReadiness.readinessContractEntries}/{formReadiness.expectedComponents}
-          </span>
-          <span
-            data-testid="product-system-component-first-form-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
-          >
-            {componentFirstFormRuntimeLinkLabel(formReadiness.runtimeFormSystemLinkState)}
-          </span>
-          <span
-            data-testid="product-system-component-first-form-readiness-state"
-            className={`rounded border px-2 py-0.5 ${componentFirstFormReadinessTone(formReadiness.overallFormReadinessState)}`}
-          >
-            State: {componentFirstFormReadinessLabel(formReadiness.overallFormReadinessState)}
-          </span>
-        </div>
-        <p
-          data-testid="product-system-component-first-form-field-ownership"
-          className="mt-2 text-[10px] text-slate-300"
-        >
-          Field ownership: Composer = coordinates sections only; Components = own future fields
-        </p>
-        <ul
-          data-testid="product-system-component-first-form-compact-fields"
-          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
-        >
-          {formReadiness.compactFieldSummaries.map((summary) => (
-            <li key={summary.label}>
-              <span className="font-semibold text-slate-300">{summary.label}:</span> {summary.fields}
-            </li>
-          ))}
-        </ul>
-        <p
-          data-testid="product-system-component-first-form-guard"
-          className="mt-2 text-[10px] font-mono text-cyan-200/80"
-        >
-          Guard: no live form activation; no Work Intake exposure; no Product Truth write; no Pricing / Quote / Order / Execution
-        </p>
-        {formReadiness.unsafeSignals.length > 0 ? (
-          <p
-            data-testid="product-system-component-first-form-unsafe-signals"
-            className="mt-1 text-[10px] font-mono text-rose-200/90"
-          >
-            Unsafe signals: {formReadiness.unsafeSignals.join(", ")}
-          </p>
-        ) : null}
-      </article>
-      <article
-        data-testid="product-system-component-first-product-truth-mapping"
-        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
-      >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Product Truth mapping</p>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
-          <span
-            data-testid="product-system-component-first-product-truth-mapping-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
-          >
-            Mapping contract: {productTruthMapping.mappingContractEntriesCount}/{productTruthMapping.expectedMappingEntriesCount}
-          </span>
-          <span
-            data-testid="product-system-component-first-product-truth-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
-          >
-            {componentFirstProductTruthRuntimeLinkLabel(productTruthMapping.runtimeProductTruthLinkState)}
-          </span>
-          <span
-            data-testid="product-system-component-first-product-truth-mapping-state"
-            className={`rounded border px-2 py-0.5 ${componentFirstProductTruthMappingTone(productTruthMapping.overallMappingState)}`}
-          >
-            State: {componentFirstProductTruthMappingLabel(productTruthMapping.overallMappingState)}
-          </span>
-        </div>
-        <p
-          data-testid="product-system-component-first-product-truth-write-policy"
-          className="mt-2 text-[10px] text-slate-300"
-        >
-          Write policy: no Product Truth write
-        </p>
-        <p
-          data-testid="product-system-component-first-product-truth-state-policy"
-          className="mt-1 text-[10px] font-mono text-slate-400"
-        >
-          State policy: suggested != confirmed; fallback/hydrated != confirmed; operator confirmation required later
-        </p>
-        <ul
-          data-testid="product-system-component-first-product-truth-compact-paths"
-          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
-        >
-          {productTruthMapping.compactPathSummaries.map((summary) => (
-            <li key={summary.label}>
-              <span className="font-semibold text-slate-300">{summary.label}</span>{" "}
-              <span className="font-mono text-cyan-200/80">-&gt; {summary.pathPrefix}</span>
-            </li>
-          ))}
-        </ul>
-        <p
-          data-testid="product-system-component-first-product-truth-guard"
-          className="mt-2 text-[10px] font-mono text-cyan-200/80"
-        >
-          Guard: readonly mapping only; no confirmed Product Truth values created; no Intake V6 write path
-        </p>
-        {productTruthMapping.writeEnabledEntries.length > 0 ? (
-          <p
-            data-testid="product-system-component-first-product-truth-write-leak"
-            className="mt-1 text-[10px] font-mono text-rose-200/90"
-          >
-            Write leak entries: {productTruthMapping.writeEnabledEntries.join(", ")}
-          </p>
-        ) : null}
-      </article>
-      <article
-        data-testid="product-system-component-first-product-definition-readiness"
-        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
-      >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">ProductDefinition readiness</p>
-        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
-          <span
-            data-testid="product-system-component-first-product-definition-paths-count"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
-          >
-            Consumption contract: {productDefinitionReadiness.mappedPathsCount}/{productDefinitionReadiness.requiredPathsCount} paths
-          </span>
-          <span
-            data-testid="product-system-component-first-product-definition-runtime-link"
-            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
-          >
-            {componentFirstProductDefinitionRuntimeLinkLabel(productDefinitionReadiness.runtimeProductDefinitionLinkState)}
-          </span>
-          <span
-            data-testid="product-system-component-first-product-definition-readiness-state"
-            className={`rounded border px-2 py-0.5 ${componentFirstProductDefinitionReadinessTone(productDefinitionReadiness.overallProductDefinitionReadinessState)}`}
-          >
-            State: {componentFirstProductDefinitionReadinessLabel(productDefinitionReadiness.overallProductDefinitionReadinessState)}
-          </span>
-        </div>
-        <p
-          data-testid="product-system-component-first-product-definition-missing-behavior"
-          className="mt-2 text-[10px] text-slate-300"
-        >
-          Missing truth behavior: report missing truth; do not invent; do not price; do not create aggregate/tasks
-        </p>
-        <p
-          data-testid="product-system-component-first-product-definition-state-policy"
-          className="mt-1 text-[10px] font-mono text-slate-400"
-        >
-          State policy: suggested/fallback/hydrated/manual draft are not ProductDefinition truth; confirmed truth required later
-        </p>
-        <ul
-          data-testid="product-system-component-first-product-definition-compact-paths"
-          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
-        >
-          {productDefinitionReadiness.compactPathSummaries.map((summary) => (
-            <li key={summary.label}>
-              <span className="font-semibold text-slate-300">{summary.label} required paths:</span> {summary.paths}
-            </li>
-          ))}
-        </ul>
-        <p
-          data-testid="product-system-component-first-product-definition-guard"
-          className="mt-2 text-[10px] font-mono text-cyan-200/80"
-        >
-          Guard: no invent; no price; no quote/order; no ProductAggregate; no TaskGraph/ExecutionPlan; no task materialization
-        </p>
-      </article>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h3 className="text-[13px] font-bold text-cyan-100">Component-first letters template set</h3>
-          <p className="mt-0.5 text-[11px] text-cyan-200/75">
-            Readonly candidate set only. Product Template composes; Component Templates own calculable truth. This section does not activate anything and does not create runtime wiring.
-          </p>
-          <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] font-bold">
-            <span
-              data-testid="product-system-component-first-source-label"
-              className={`rounded border px-2 py-0.5 ${componentFirstSourceTone(model.sourceMode)}`}
-            >
-              {componentFirstSourceLabel(model.sourceMode)}
-            </span>
-            <span
-              data-testid="product-system-component-first-completeness-count"
-              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
-            >
-              completeness: {model.foundRowCount}/{model.expectedRowCount}
-            </span>
-            <span className="text-cyan-300/75">{componentFirstSourceDescription(model.sourceMode)}</span>
-          </div>
-          {model.missingTemplateCodes.length > 0 ? (
-            <p
-              data-testid="product-system-component-first-missing-rows"
-              className="mt-1 text-[10px] font-mono text-orange-200/90"
-            >
-              Missing live rows: {model.missingTemplateCodes.join(", ")}
-            </p>
-          ) : null}
-          {model.invalidActiveTemplateCodes.length > 0 ? (
-            <p
-              data-testid="product-system-component-first-invalid-active-rows"
-              className="mt-1 text-[10px] font-mono text-rose-200/90"
-            >
-              Invalid active rows: {model.invalidActiveTemplateCodes.join(", ")}
-            </p>
-          ) : null}
-          <div
-            data-testid="product-system-component-first-drift-guard"
-            className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2"
-          >
-            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold">
-              <span
-                data-testid="product-system-component-first-contract-check"
-                className={`rounded border px-2 py-0.5 ${componentFirstContractCheckTone(driftAssessment.contractCheckStatus)}`}
-              >
-                {componentFirstContractCheckLabel(driftAssessment.contractCheckStatus)}
-              </span>
-              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-                expected rows: {driftAssessment.completeness.expectedRowCount}
-              </span>
-              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-                live rows: {driftAssessment.completeness.foundRowCount}/{driftAssessment.completeness.expectedRowCount}
-              </span>
-              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-                drift: {componentFirstDriftLabel(driftAssessment.driftState)}
-              </span>
-            </div>
-            {driftAssessment.liveRowDriftIssues.length > 0 ? (
-              <p
-                data-testid="product-system-component-first-drift-warnings"
-                className="mt-1 text-[10px] font-mono text-amber-200/90"
-              >
-                Drift warnings: {driftAssessment.liveRowDriftIssues.join(", ")}
-              </p>
-            ) : null}
-            {driftAssessment.liveExtraFamilyRows.length > 0 ? (
-              <p className="mt-1 text-[10px] font-mono text-amber-200/90">
-                Extra family rows: {driftAssessment.liveExtraFamilyRows.join(", ")}
-              </p>
-            ) : null}
-            {driftAssessment.fallbackContractIssues.length > 0 ? (
-              <p className="mt-1 text-[10px] font-mono text-rose-200/90">
-                Fallback contract issues: {driftAssessment.fallbackContractIssues.join(", ")}
-              </p>
-            ) : null}
-            {driftAssessment.metadataUnavailableWarnings.length > 0 ? (
-              <p
-                data-testid="product-system-component-first-metadata-warnings"
-                className="mt-1 text-[10px] font-mono text-slate-400"
-              >
-                Metadata unavailable: {driftAssessment.metadataUnavailableWarnings.join(", ")}
-              </p>
-            ) : null}
-          </div>
-          <div
-            data-testid="product-system-component-first-dossier-alignment"
-            className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2"
-          >
-            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-300">Dossier alignment</p>
-            <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] font-bold">
-              <span
-                data-testid="product-system-component-first-dossier-contract-count"
-                className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
-              >
-                Dossier contract: {dossierAlignment.dossierContractCount}/{dossierAlignment.expectedCount}
-              </span>
-              <span
-                data-testid="product-system-component-first-dossier-runtime-link"
-                className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
-              >
-                {componentFirstDossierRuntimeLinkLabel(dossierAlignment.dossierRuntimeLinkState)}
-              </span>
-              <span
-                data-testid="product-system-component-first-dossier-alignment-state"
-                className={`rounded border px-2 py-0.5 ${componentFirstOverallAlignmentTone(dossierAlignment.overallAlignmentState)}`}
-              >
-                Alignment: {componentFirstOverallAlignmentLabel(dossierAlignment.overallAlignmentState)}
-              </span>
-            </div>
-            <p
-              data-testid="product-system-component-first-dossier-truth-ownership"
-              className="mt-1 text-[10px] text-slate-300"
-            >
-              Truth ownership: Composer = product orchestration only; Components = component-owned truth
-            </p>
-            <p
-              data-testid="product-system-component-first-dossier-guard"
-              className="mt-1 text-[10px] font-mono text-cyan-200/80"
-            >
-              Guard: No task materialization; No ProductAggregate runtime; No ProductDefinition activation; No Pricing / Quote / Order / Execution
-            </p>
-            {dossierAlignment.runtimeActivationLeakIssues.length > 0 ? (
-              <p
-                data-testid="product-system-component-first-dossier-activation-leak"
-                className="mt-1 text-[10px] font-mono text-rose-200/90"
-              >
-                Activation leak signals: {dossierAlignment.runtimeActivationLeakIssues.join(", ")}
-              </p>
-            ) : null}
-          </div>
-        </div>
-        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
-          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">CANDIDATE</span>
-          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">READONLY</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">active = {String(model.composerActive)}</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">catalog status = {model.composerCatalogStatus}</span>
-        </div>
-      </div>
-
-              <div className="mt-3 grid gap-2 md:grid-cols-3">
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No Work Intake exposure: <span className="font-bold text-cyan-200">{String(model.noWorkIntakeExposure)}</span></div>
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No Pricing activation: <span className="font-bold text-cyan-200">{String(model.noPricingActivation)}</span></div>
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No ProductDefinition activation: <span className="font-bold text-cyan-200">{String(model.noProductDefinitionActivation)}</span></div>
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No ProductAggregate runtime wiring: <span className="font-bold text-cyan-200">{String(model.noProductAggregateRuntimeWiring)}</span></div>
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No executable operations: <span className="font-bold text-cyan-200">{String(model.noExecutableOperations)}</span></div>
-                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No executable BOM: <span className="font-bold text-cyan-200">{String(model.noExecutableBom)}</span></div>
-              </div>
-
-              <article
-                data-testid="product-system-component-first-composer-card"
-                className="mt-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <p className="text-[12px] font-bold text-slate-100">{model.composerTemplateCode}</p>
-                    <p className="mt-0.5 text-[10px] text-cyan-200">Product Template / composer only</p>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
-                    <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">readiness: {model.composerReadiness}</span>
-                    <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">guard: {model.composerActivationGuard}</span>
-                  </div>
-                </div>
-
-                <div className="mt-2 grid gap-2 md:grid-cols-2">
-                  <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">
-                    <p className="font-bold uppercase tracking-wide text-slate-400">Composer boundary</p>
-                    <p className="mt-1">does not own material truth</p>
-                    <p className="mt-0.5">does not own operation truth</p>
-                    <p className="mt-0.5">no module links: <span className="font-bold text-cyan-200">{String(model.noModuleLinks)}</span></p>
-                  </div>
-                  <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">
-                    <p className="font-bold uppercase tracking-wide text-slate-400">Blockers</p>
-                    <p className="mt-1 font-mono text-amber-200/85">{model.composerBlockers.join(", ") || "OWNER_GO_REQUIRED"}</p>
-                  </div>
-                </div>
-
-                <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
-                  <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
-                    <span>Composition list</span>
-                    <span>Template</span>
-                    <span>Kind</span>
-                    <span>Product Truth target</span>
-                  </div>
-                  <div className="divide-y divide-slate-800/80">
-                    {model.compositionList.map((entry) => (
-                      <div key={entry.componentTemplateCode} className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]">
-                        <div>
-                          <p className="font-bold text-slate-100">{entry.role.toUpperCase()}</p>
-                          <p className="mt-0.5 font-mono text-[9px] text-slate-500">{entry.componentId}</p>
-                        </div>
-                        <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
-                        <p className="text-slate-300">{entry.kind}</p>
-                        <p className="font-mono text-slate-300">{entry.targetProductTruthPath}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </article>
-
-              <section
-                data-testid="product-system-component-first-dependency-graph"
-                className="mt-3 rounded-lg border border-violet-800/40 bg-violet-950/10 p-3"
-              >
-                <h4 className="text-[11px] font-bold uppercase tracking-wide text-violet-100">Dependency graph</h4>
-                <div className="mt-2 grid gap-1 text-[10px] text-violet-200/85">
-                  {model.dependencyGraph.map((edge) => (
-                    <p key={`${edge.from}-${edge.to}`} className="font-mono">{edge.from} -&gt; {edge.to}</p>
-                  ))}
-                </div>
-              </section>
-
-              <section
-                data-testid="product-system-component-first-components-list"
-                className="mt-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3"
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-100">Component templates</h4>
-                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">{model.components.length} components</span>
-                </div>
-                <div className="mt-3 grid gap-3 xl:grid-cols-2">
-                  {model.components.map((component) => (
-                    <article
-                      key={component.templateCode}
-                      data-testid={`product-system-component-first-component-${component.templateCode}`}
-                      className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 p-3"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-2">
-                        <div>
-                          <p className="font-mono text-[10px] font-bold text-cyan-200">{component.templateCode}</p>
-                          <p className="mt-0.5 text-[11px] font-bold text-slate-100">{component.componentId}</p>
-                        </div>
-                        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
-                          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">{component.componentKind}</span>
-                          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">active = {String(component.active)}</span>
-                          <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{component.readinessState}</span>
-                          {!component.liveRowPresent ? (
-                            <span className="rounded border border-orange-700/40 bg-orange-900/20 px-1.5 py-0.5 text-orange-300">contract fallback row</span>
-                          ) : null}
-                        </div>
-                      </div>
-                      <p className="mt-2 text-[10px] text-slate-300">{component.roleLabel}</p>
-                      <p className="mt-1 font-mono text-[10px] text-cyan-200/85">{component.targetProductTruthPath}</p>
-                      <p className="mt-2 text-[10px] text-slate-400">Dependencies: {component.dependencies.join(", ") || "none"}</p>
-                      <p className="mt-1 font-mono text-[10px] text-amber-200/85">Blockers: {component.blockers.join(", ") || "none"}</p>
-                      <p className="mt-1 text-[10px] text-slate-400">Activation guard: {component.activationGuard}</p>
-                    </article>
-                  ))}
-                </div>
-              </section>
-    </section>
-  );
-}
-
 function ReturnCantSeparateCalculationSourcePaths({
   sharedWithProductCodes,
 }: {
@@ -3584,7 +2672,7 @@ function SharedVolumetricFoundationPanel({
       </div>
       {isCandidate && isLogoProfile ? (
         <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/15 px-2.5 py-2 text-[10px] text-amber-200" data-testid="product-system-editor-logo-candidate-readiness">
-          <p className="font-bold">Candidate / linked child only · Not Work Intake</p>
+          <p className="font-bold">Candidate / linked child only Â· Not Work Intake</p>
           <p className="mt-0.5 text-amber-200/75">Offerability requires Product Truth + Modular Form + ProductDefinition + Pricing readiness.</p>
         </div>
       ) : null}
@@ -3831,7 +2919,7 @@ function TemplateEditor({
   ) ?? false;
 
   const componentFirstReadonlyPanel = (
-    <ComponentFirstReadonlyStatusPanel
+    <ComponentFirstReadonlyCandidatePanel
       templates={allTemplates}
       availabilityItems={availabilityItems}
       selectedTemplateCode={draft.template_code}
@@ -3869,7 +2957,7 @@ function TemplateEditor({
       <ComponentCalculationOwnershipPanel availability={availability} />
 
       {aggregateLoading ? (
-        <div className="text-[11px] text-slate-500">Se încarcă ProductAggregate…</div>
+        <div className="text-[11px] text-slate-500">Se Ã®ncarcÄƒ ProductAggregateâ€¦</div>
       ) : isLogoSharedProfile ? (
         <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
@@ -3884,7 +2972,7 @@ function TemplateEditor({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-            <h3 className="text-[14px] font-bold text-slate-100">Structură produs (ProductAggregate)</h3>
+            <h3 className="text-[14px] font-bold text-slate-100">StructurÄƒ produs (ProductAggregate)</h3>
             <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
               {aggregate.components.length}
             </span>
@@ -3892,7 +2980,7 @@ function TemplateEditor({
           <ProductAggregateStructureList aggregate={aggregate} />
           {draft.components.some(isSyntheticAutoComponent) ? (
             <div className="rounded-lg border border-amber-700/40 bg-amber-900/10 px-3 py-2 text-[10px] text-amber-200">
-              Legacy parent row conține componentă sintetică (comp_auto_1) — folosită doar pentru compatibilitate edit, nu ca adevăr structural.
+              Legacy parent row conÈ›ine componentÄƒ sinteticÄƒ (comp_auto_1) â€” folositÄƒ doar pentru compatibilitate edit, nu ca adevÄƒr structural.
             </div>
           ) : null}
         </div>
@@ -3915,13 +3003,13 @@ function TemplateEditor({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-              <h3 className="text-[14px] font-bold text-slate-100">Structură produs</h3>
+              <h3 className="text-[14px] font-bold text-slate-100">StructurÄƒ produs</h3>
               <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
                 {draft.components.length}
               </span>
             </div>
             <p className="text-[10px] text-slate-500 mt-1 pl-7">
-              Apasă pe o componentă pentru detalii în panoul din dreapta. Folosește săgeata pentru
+              ApasÄƒ pe o componentÄƒ pentru detalii Ã®n panoul din dreapta. FoloseÈ™te sÄƒgeata pentru
               editare inline.
             </p>
           </div>
@@ -3931,7 +3019,7 @@ function TemplateEditor({
               onClick={addComponent}
               className="flex items-center gap-1.5 px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[11px] font-bold transition-colors shadow-lg shadow-purple-900/20"
             >
-              <Plus className="w-3.5 h-3.5" /> Adaugă componentă
+              <Plus className="w-3.5 h-3.5" /> AdaugÄƒ componentÄƒ
             </button>
           ) : null}
         </div>
@@ -3939,9 +3027,9 @@ function TemplateEditor({
         {draft.components.length === 0 ? (
           <div className="bg-[#111827] border border-[#1E293B] border-dashed rounded-xl p-8 text-center">
             <Layers className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentă definită</p>
+            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentÄƒ definitÄƒ</p>
             <p className="text-[11px] text-slate-500 mb-4">
-              Adaugă componentele care definesc structura produsului.
+              AdaugÄƒ componentele care definesc structura produsului.
             </p>
             {!readOnly ? (
               <button
@@ -3949,7 +3037,7 @@ function TemplateEditor({
                 onClick={addComponent}
                 className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[12px] font-bold transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" /> Prima componentă
+                <Plus className="w-3.5 h-3.5" /> Prima componentÄƒ
               </button>
             ) : null}
           </div>
@@ -4003,14 +3091,14 @@ function TemplateEditor({
         onChangeTemplate={onChangeTemplate}
         onBackToLibrary={onBackToLibrary}
         pricingHref={!isNew && draft.active ? `/inventory/pricing?template=${encodeURIComponent(draft.template_code)}` : undefined}
-        changeTemplateLabel={isNew ? "Alege template" : "Schimbă template"}
+        changeTemplateLabel={isNew ? "Alege template" : "SchimbÄƒ template"}
         readOnly={readOnly}
       />
 
       {readOnly ? (
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/15 border-b border-amber-800/30 text-[11px] text-amber-300 shrink-0">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          Șablon arhivat — vizualizare read-only. Nu este activ pentru ofertă sau Pricing.
+          È˜ablon arhivat â€” vizualizare read-only. Nu este activ pentru ofertÄƒ sau Pricing.
         </div>
       ) : null}
 
@@ -4035,7 +3123,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                Structură produs
+                StructurÄƒ produs
               </button>
               <button
                 type="button"
@@ -4046,7 +3134,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                Resurse operaționale
+                Resurse operaÈ›ionale
               </button>
               <button
                 type="button"
@@ -4069,7 +3157,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                Informații generale
+                InformaÈ›ii generale
               </button>
             </div>
           </div>
@@ -4084,7 +3172,7 @@ function TemplateEditor({
                   ? (
                       isNew ? (
                         <div className="text-[11px] text-slate-500">
-                          Form System este disponibil după salvarea template-ului.
+                          Form System este disponibil dupÄƒ salvarea template-ului.
                         </div>
                       ) : (
                         <FormSystemAdminPanel templateCode={draft.template_code} />
@@ -4167,7 +3255,7 @@ function ProductSystemInfoPopover({
         <button
           type="button"
           className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
-          aria-label="Informații ProductSystem"
+          aria-label="InformaÈ›ii ProductSystem"
         >
           <Info className="w-3.5 h-3.5" /> Info
         </button>
@@ -4176,46 +3264,46 @@ function ProductSystemInfoPopover({
         align="end"
         className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-[#111827] p-4 text-slate-200 shadow-xl"
       >
-        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcționează?</p>
+        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcÈ›ioneazÄƒ?</p>
         <ul className="space-y-2 text-[11px] text-slate-400 leading-relaxed list-disc pl-4">
           <li>
-            Fiecare produs este definit ca un <strong className="text-purple-300">șablon</strong>{" "}
+            Fiecare produs este definit ca un <strong className="text-purple-300">È™ablon</strong>{" "}
             format din <strong className="text-blue-300">componente</strong>.
           </li>
           <li>
-            Componentele conțin <strong className="text-blue-300">operații</strong> și{" "}
-            <strong className="text-emerald-300">materiale</strong> necesare producției.
+            Componentele conÈ›in <strong className="text-blue-300">operaÈ›ii</strong> È™i{" "}
+            <strong className="text-emerald-300">materiale</strong> necesare producÈ›iei.
           </li>
           <li>
-            Șablonul este folosit în{" "}
+            È˜ablonul este folosit Ã®n{" "}
             <Link
               to="/intake"
               className="text-purple-300 underline underline-offset-2 hover:text-purple-200"
             >
               Work Intake
             </Link>{" "}
-            și la generarea ofertelor.
+            È™i la generarea ofertelor.
           </li>
           <li>
-            Validarea completă a șablonului se face în pașii următori (ofertare, comenzi, prețuri).
+            Validarea completÄƒ a È™ablonului se face Ã®n paÈ™ii urmÄƒtori (ofertare, comenzi, preÈ›uri).
           </li>
           <li>
-            ProductSystem este zona de <strong className="text-amber-300/90">configurare șablon</strong>{" "}
-            — structură produs, materiale și operații.
+            ProductSystem este zona de <strong className="text-amber-300/90">configurare È™ablon</strong>{" "}
+            â€” structurÄƒ produs, materiale È™i operaÈ›ii.
           </li>
           <li>
-            Șabloanele nu se șterg din interfață; se <strong className="text-slate-300">arhivează</strong>{" "}
-            pentru a păstra istoricul.
+            È˜abloanele nu se È™terg din interfaÈ›Äƒ; se <strong className="text-slate-300">arhiveazÄƒ</strong>{" "}
+            pentru a pÄƒstra istoricul.
           </li>
         </ul>
         <p className="mt-3 text-[10px] text-slate-500 border-t border-slate-700/80 pt-3">
-          Prețurile și ofertele folosesc aceste șabloane în modulele dedicate — fără modificarea datelor
+          PreÈ›urile È™i ofertele folosesc aceste È™abloane Ã®n modulele dedicate â€” fÄƒrÄƒ modificarea datelor
           istorice.
         </p>
         <p className="mt-2 text-[10px] text-slate-600">
-          Sursă date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
-          {" · "}
-          {catalogCounts.activeProducts} produse ofertabile · {catalogCounts.candidateProducts} in pregatire · {catalogCounts.internalModules} module interne
+          SursÄƒ date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
+          {" Â· "}
+          {catalogCounts.activeProducts} produse ofertabile Â· {catalogCounts.candidateProducts} in pregatire Â· {catalogCounts.internalModules} module interne
         </p>
       </PopoverContent>
     </Popover>
@@ -4268,7 +3356,7 @@ export default function ProductSystem() {
         }),
       ]);
 
-      // Handle families (non-critical) — fall back to mock if API fails
+      // Handle families (non-critical) â€” fall back to mock if API fails
       const famItems = famRes.status === "fulfilled"
         ? Array.isArray(famRes.value?.items) ? famRes.value.items : []
         : [];
@@ -4301,7 +3389,7 @@ export default function ProductSystem() {
           setTemplates(apiTemplates);
           setLoadMode("api");
         } else if (useMock) {
-          // API responded successfully with an empty list — keep true empty state.
+          // API responded successfully with an empty list â€” keep true empty state.
           loaded = [];
           setTemplates([]);
           setLoadMode("empty_real");
@@ -4315,21 +3403,21 @@ export default function ProductSystem() {
         const errMsg = err instanceof Error ? err.message : String(err);
         const isAuthError = /40[13]/.test(errMsg) || /unauthorized|forbidden|permisiune/i.test(errMsg);
         if (useMock) {
-          // Mock enabled — always fall back to mock data on API failure
+          // Mock enabled â€” always fall back to mock data on API failure
           loaded = mockTemplatesToEntities() as unknown as ProductTemplateEntity[];
           setTemplates(loaded);
-          setWarning("DEV MOCK DATA — aceste date nu vin din API real.");
+          setWarning("DEV MOCK DATA â€” aceste date nu vin din API real.");
           setLoadMode("mock");
         } else if (isAuthError) {
           loaded = [];
           setTemplates([]);
-          setError("Nu ai permisiune să accesezi șabloanele. Autentifică-te și reîncearcă.");
+          setError("Nu ai permisiune sÄƒ accesezi È™abloanele. AutentificÄƒ-te È™i reÃ®ncearcÄƒ.");
           setLoadMode("auth_required");
         } else {
           console.error("Failed to load product templates", err);
           loaded = [];
           setTemplates([]);
-          setError("Nu s-au putut încărca șabloanele. Verifică conexiunea la backend.");
+          setError("Nu s-au putut Ã®ncÄƒrca È™abloanele. VerificÄƒ conexiunea la backend.");
           setLoadMode("error");
         }
       }
@@ -4344,7 +3432,7 @@ export default function ProductSystem() {
         setFamilies(mockProductFamilies() as unknown as ProductFamily[]);
         setMaterials([]);
         setAvailabilityItems([]);
-        setWarning("DEV MOCK DATA — aceste date nu vin din API real.");
+        setWarning("DEV MOCK DATA â€” aceste date nu vin din API real.");
         setLoadMode("mock");
       } else if (isAuthError) {
         loaded = [];
@@ -4352,14 +3440,14 @@ export default function ProductSystem() {
         setFamilies([]);
         setMaterials([]);
         setAvailabilityItems([]);
-        setWarning("Lipsă sesiune / autentificare necesară pentru API real.");
+        setWarning("LipsÄƒ sesiune / autentificare necesarÄƒ pentru API real.");
         setLoadMode("auth_required");
       } else {
         console.error("Failed to load product templates", e);
         loaded = [];
         setTemplates([]);
         setAvailabilityItems([]);
-        setError("Nu s-au putut încărca șabloanele. Verifică conexiunea la backend.");
+        setError("Nu s-au putut Ã®ncÄƒrca È™abloanele. VerificÄƒ conexiunea la backend.");
         setLoadMode("error");
       }
     } finally {
@@ -4452,7 +3540,7 @@ export default function ProductSystem() {
   );
 
   const componentFirstLibraryReadonlyPanel = shouldShowLibraryScreen(screen) ? (
-    <ComponentFirstReadonlyStatusPanel
+    <ComponentFirstReadonlyCandidatePanel
       templates={templates}
       availabilityItems={availabilityItems}
       selectedTemplateCode={COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE}
@@ -4512,7 +3600,7 @@ export default function ProductSystem() {
       setMessage({
         type: "error",
         text:
-          `Salvarea blocată — ${structuralErrors.length} eroare(i) structurale: ` +
+          `Salvarea blocatÄƒ â€” ${structuralErrors.length} eroare(i) structurale: ` +
           structuralErrors
             .slice(0, 3)
             .map((e) => `${e.path} [${e.code}]`)
@@ -4528,11 +3616,11 @@ export default function ProductSystem() {
       if (isNew) {
         const created = await productTemplatesApi.create(payload);
         savedId = created.id;
-        setMessage({ type: "success", text: `Șablon creat: ${created.template_code}` });
+        setMessage({ type: "success", text: `È˜ablon creat: ${created.template_code}` });
       } else if (draft.id) {
         await productTemplatesApi.update(draft.id, payload);
         savedId = draft.id;
-        setMessage({ type: "success", text: `Șablon actualizat: ${draft.template_code}` });
+        setMessage({ type: "success", text: `È˜ablon actualizat: ${draft.template_code}` });
       }
       const list = await loadTemplates();
       const refreshed = savedId != null ? list.find((t) => t.id === savedId) : null;
@@ -4543,7 +3631,7 @@ export default function ProductSystem() {
       }
     } catch (e) {
       console.error("Save failed", e);
-      setMessage({ type: "error", text: "Salvarea a eșuat. Verifică consola pentru detalii." });
+      setMessage({ type: "error", text: "Salvarea a eÈ™uat. VerificÄƒ consola pentru detalii." });
     } finally {
       setSaving(false);
     }
@@ -4557,13 +3645,13 @@ export default function ProductSystem() {
     if (!policy.canArchive) {
       setMessage({
         type: "error",
-        text: policy.blockReason ?? "Arhivarea nu este permisă pentru acest șablon.",
+        text: policy.blockReason ?? "Arhivarea nu este permisÄƒ pentru acest È™ablon.",
       });
       return;
     }
     if (
       !confirm(
-        `Arhivezi șablonul ${draft.template_code}?\n\nȘablonul va fi mutat în Arhivate și nu va mai apărea în fluxurile active de ofertare. Datele rămân păstrate.`
+        `Arhivezi È™ablonul ${draft.template_code}?\n\nÈ˜ablonul va fi mutat Ã®n Arhivate È™i nu va mai apÄƒrea Ã®n fluxurile active de ofertare. Datele rÄƒmÃ¢n pÄƒstrate.`
       )
     ) {
       return;
@@ -4572,12 +3660,12 @@ export default function ProductSystem() {
     try {
       const payload = draftToPayload({ ...draft, active: false });
       await productTemplatesApi.update(draft.id, payload);
-      setMessage({ type: "success", text: `Șablon arhivat: ${draft.template_code}` });
+      setMessage({ type: "success", text: `È˜ablon arhivat: ${draft.template_code}` });
       await loadTemplates();
       handleBackToLibrary();
     } catch (e) {
       console.error("Archive failed", e);
-      setMessage({ type: "error", text: "Arhivarea a eșuat. Verifică consola pentru detalii." });
+      setMessage({ type: "error", text: "Arhivarea a eÈ™uat. VerificÄƒ consola pentru detalii." });
     } finally {
       setSaving(false);
     }
@@ -4608,7 +3696,7 @@ export default function ProductSystem() {
         <span className="text-slate-300">
           {shouldShowEditorScreen(screen, draft)
             ? "ProductSystem / Blueprint Studio"
-            : "ProductSystem / Șabloane"}
+            : "ProductSystem / È˜abloane"}
         </span>
       </div>
 
@@ -4626,16 +3714,16 @@ export default function ProductSystem() {
             </h1>
             <p className="text-[11px] text-slate-500 mt-0.5">
               {shouldShowEditorScreen(screen, draft)
-                ? "Editor pentru structura șablonului selectat."
+                ? "Editor pentru structura È™ablonului selectat."
                 : "Catalogul logic al produselor, modulelor si componentelor Product System."}
             </p>
             {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
               <p className="text-[10px] text-amber-400/90 mt-2">
                 {loadMode === "mock"
-                  ? "Mod previzualizare — date mock, nu API live."
+                  ? "Mod previzualizare â€” date mock, nu API live."
                   : loadMode === "auth_required"
-                    ? "Autentificare necesară pentru șabloane reale."
-                    : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
+                    ? "Autentificare necesarÄƒ pentru È™abloane reale."
+                    : "ÃŽncÄƒrcarea È™abloanelor a eÈ™uat â€” reÃ®ncarcÄƒ sau verificÄƒ backend."}
               </p>
             ) : null}
           </div>
@@ -4657,13 +3745,13 @@ export default function ProductSystem() {
             disabled={loading}
             className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> ReÃ®ncarcÄƒ
           </button>
           <button
             onClick={handleNew}
             className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
           >
-            <Plus className="w-3.5 h-3.5" /> Șablon Nou
+            <Plus className="w-3.5 h-3.5" /> È˜ablon Nou
           </button>
         </div>
       </div>
@@ -4691,7 +3779,7 @@ export default function ProductSystem() {
             onClick={loadTemplates}
             className="ml-auto text-[11px] text-amber-300 hover:text-amber-200 underline"
           >
-            Reîncarcă
+            ReÃ®ncarcÄƒ
           </button>
         </div>
       )}
@@ -4705,16 +3793,10 @@ export default function ProductSystem() {
             onClick={loadTemplates}
             className="ml-auto text-[11px] text-red-300 hover:text-red-200 underline"
           >
-            Reîncarcă
+            ReÃ®ncarcÄƒ
           </button>
         </div>
       )}
-
-      {componentFirstLibraryReadonlyPanel ? (
-        <div className="rounded-xl border border-slate-800/80 bg-slate-950/30 p-3">
-          {componentFirstLibraryReadonlyPanel}
-        </div>
-      ) : null}
 
       <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-200px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
@@ -4741,31 +3823,69 @@ export default function ProductSystem() {
           <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">
             <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
             <p className="text-[12px] text-amber-300 font-semibold">
-              Lipsă sesiune / autentificare necesară pentru API real.
+              LipsÄƒ sesiune / autentificare necesarÄƒ pentru API real.
             </p>
             <p className="text-[11px] text-amber-400/80 mt-1">
-              ProductSystem nu poate valida șabloanele reale fără autentificare.
+              ProductSystem nu poate valida È™abloanele reale fÄƒrÄƒ autentificare.
             </p>
           </div>
         ) : shouldShowLibraryScreen(screen) ? (
-          <TemplateLibraryView
-            templates={templates}
-            availabilityItems={availabilityItems}
-            tab={libraryTab}
-            onTabChange={setLibraryTab}
-            search={librarySearch}
-            onSearchChange={setLibrarySearch}
-            catalogView={catalogView}
-            onCatalogViewChange={setCatalogView}
-            density={catalogDensity}
-            onDensityChange={setCatalogDensity}
-            summaries={enrichedTemplateSummaries}
-            recommendedTemplateId={recommendedTemplate?.id ?? null}
-            activeCount={activeOwnerCount}
-            archivedCount={archivedCount}
-            loading={loading}
-            onOpenTemplate={handleOpenEditor}
-          />
+          <div className="space-y-4">
+            <section
+              data-testid="product-system-catalog-overview"
+              className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-3"
+            >
+              <h2 className="text-[14px] font-bold text-slate-100">Catalog Overview</h2>
+              <p className="mt-1 text-[11px] text-slate-400">
+                Product System separates offerable existing roots from parallel readonly candidate sets. Component-first
+                letters remain inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
+              </p>
+            </section>
+
+            {componentFirstLibraryReadonlyPanel ? (
+              <section
+                data-testid="product-system-candidate-sets"
+                className="rounded-xl border border-cyan-900/40 bg-slate-950/20 px-4 py-3"
+              >
+                <h2 className="text-[14px] font-bold text-cyan-100">Candidate Sets</h2>
+                <p className="mt-1 text-[11px] text-cyan-200/70">
+                  Readonly parallel sets â€” not in Work Intake, not offerable, no activation controls.
+                </p>
+                <div className="mt-3">{componentFirstLibraryReadonlyPanel}</div>
+              </section>
+            ) : null}
+
+            <section
+              data-testid="product-system-existing-roots"
+              className="rounded-xl border border-purple-900/30 bg-slate-950/20 px-4 py-3"
+            >
+              <h2 className="text-[14px] font-bold text-slate-100">Existing Roots</h2>
+              <p className="mt-1 text-[11px] text-slate-400">
+                Active catalog including TPL-VOLUMETRIC-LETTERS_v2 (offerable root). Offerable status below applies to
+                existing roots only â€” not to component-first candidate sets above.
+              </p>
+              <div className="mt-3">
+                <TemplateLibraryView
+                  templates={templates}
+                  availabilityItems={availabilityItems}
+                  tab={libraryTab}
+                  onTabChange={setLibraryTab}
+                  search={librarySearch}
+                  onSearchChange={setLibrarySearch}
+                  catalogView={catalogView}
+                  onCatalogViewChange={setCatalogView}
+                  density={catalogDensity}
+                  onDensityChange={setCatalogDensity}
+                  summaries={enrichedTemplateSummaries}
+                  recommendedTemplateId={recommendedTemplate?.id ?? null}
+                  activeCount={activeOwnerCount}
+                  archivedCount={archivedCount}
+                  loading={loading}
+                  onOpenTemplate={handleOpenEditor}
+                />
+              </div>
+            </section>
+          </div>
         ) : null}
       </div>
 
