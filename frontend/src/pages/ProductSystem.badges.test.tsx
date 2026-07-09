@@ -711,4 +711,64 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByTestId("product-system-component-first-drift-warnings")).not.toBeInTheDocument();
   });
 
+  it("shows dossier alignment readonly contract with no runtime dossier linkage", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-dossier-alignment")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-dossier-contract-count")).toHaveTextContent("Dossier contract: 7/7");
+    expect(screen.getByTestId("product-system-component-first-dossier-runtime-link")).toHaveTextContent("Runtime dossier rows: readonly contract only");
+    expect(screen.getByTestId("product-system-component-first-dossier-alignment-state")).toHaveTextContent("Alignment: READONLY_FALLBACK_ONLY");
+    expect(screen.getByTestId("product-system-component-first-dossier-truth-ownership")).toHaveTextContent("Composer = product orchestration only");
+    expect(screen.getByTestId("product-system-component-first-dossier-truth-ownership")).toHaveTextContent("component-owned truth");
+    expect(screen.getByTestId("product-system-component-first-dossier-guard")).toHaveTextContent("No task materialization");
+    expect(screen.getByTestId("product-system-component-first-dossier-guard")).toHaveTextContent("No ProductAggregate runtime");
+    expect(screen.queryByTestId("product-system-component-first-dossier-activation-leak")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+  });
+
+  it("shows READONLY_ALIGNED dossier alignment when 7/7 live inactive rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-dossier-alignment-state")).toHaveTextContent("Alignment: READONLY_ALIGNED");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-dossier-contract-count")).toHaveTextContent("Dossier contract: 7/7");
+    expect(screen.getByTestId("product-system-component-first-dossier-runtime-link")).toHaveTextContent("Runtime dossier rows: not linked yet");
+    expect(screen.queryByTestId("product-system-component-first-dossier-activation-leak")).not.toBeInTheDocument();
+  });
+
+  it("shows BLOCKED dossier alignment when any expected row is active", async () => {
+    const activeLeakComposer = {
+      ...componentFirstComposerTemplate,
+      active: true,
+    };
+
+    mockTemplateList.mockResolvedValue([volumetricTemplate, activeLeakComposer, ...componentFirstTemplates.slice(1)]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, { ...componentFirstAvailability, db_active: true }],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-dossier-alignment-state")).toHaveTextContent("Alignment: BLOCKED_INVALID_LIVE_STATE");
+    });
+  });
+
 });

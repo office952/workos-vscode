@@ -10,6 +10,11 @@ import {
   type ComponentFirstFallbackContractRow,
   type ComponentFirstLiveTemplateRow,
 } from "./componentFirstReadonlyCompleteness";
+import {
+  COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE,
+  assessComponentFirstDossierAlignment,
+  validateComponentFirstDossierContract,
+} from "./componentFirstReadonlyDossierAlignment";
 
 function liveRow(
   templateCode: string,
@@ -136,5 +141,83 @@ describe("componentFirstReadonlyCompleteness fixture comparison", () => {
     const drift = assessComponentFirstContractDrift(rows);
     expect(drift.liveExtraFamilyRows).toContain("TPL-COMP-LETTER-EXTRA_v1");
     expect(drift.driftState).toBe("LIVE_EXTRA_EXPECTED_FAMILY_ROW");
+  });
+});
+
+describe("componentFirstReadonlyDossierAlignment", () => {
+  it("dossier alignment contract has exactly 7 entries", () => {
+    const validation = validateComponentFirstDossierContract();
+    expect(COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE).toHaveLength(COMPONENT_FIRST_EXPECTED_ROW_COUNT);
+    expect(validation.valid).toBe(true);
+    expect(validation.issues).toEqual([]);
+  });
+
+  it("composer is product_composer / composer_orchestration", () => {
+    const composer = COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.find(
+      (entry) => entry.templateCode === COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE
+    );
+    expect(composer?.expectedKind).toBe("product_composer");
+    expect(composer?.expectedDossierRole).toBe("composer_orchestration");
+    expect(composer?.expectedTruthOwner).toBe("product_composer");
+  });
+
+  it("all 6 component templates are component_template / component-owned truth", () => {
+    const componentEntries = COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.filter(
+      (entry) => entry.expectedKind === "component_template"
+    );
+    expect(componentEntries).toHaveLength(6);
+    expect(componentEntries.every((entry) => entry.expectedTruthOwner === "component_owned_truth")).toBe(true);
+    expect(componentEntries.map((entry) => entry.templateCode)).toEqual(COMPONENT_FIRST_COMPONENT_TEMPLATE_CODES);
+  });
+
+  it("7/7 live inactive + 7/7 dossier contract => READONLY_ALIGNED", () => {
+    const assessment = assessComponentFirstDossierAlignment(matchingLiveSet());
+    expect(assessment.dossierContractCount).toBe(7);
+    expect(assessment.liveFoundCount).toBe(7);
+    expect(assessment.overallAlignmentState).toBe("READONLY_ALIGNED");
+    expect(assessment.dossierRuntimeLinkState).toBe("NOT_LINKED_YET");
+  });
+
+  it("0/7 live + 7/7 dossier contract => READONLY_FALLBACK_ONLY", () => {
+    const assessment = assessComponentFirstDossierAlignment([]);
+    expect(assessment.dossierContractCount).toBe(7);
+    expect(assessment.liveFoundCount).toBe(0);
+    expect(assessment.overallAlignmentState).toBe("READONLY_FALLBACK_ONLY");
+    expect(assessment.dossierRuntimeLinkState).toBe("READONLY_CONTRACT_ONLY");
+  });
+
+  it("partial live + 7/7 dossier contract => READONLY_PARTIAL", () => {
+    const assessment = assessComponentFirstDossierAlignment(matchingLiveSet().slice(0, 3));
+    expect(assessment.dossierContractCount).toBe(7);
+    expect(assessment.liveFoundCount).toBe(3);
+    expect(assessment.overallAlignmentState).toBe("READONLY_PARTIAL");
+    expect(assessment.dossierRuntimeLinkState).toBe("PARTIAL_RUNTIME_LINK");
+  });
+
+  it("any active expected row => BLOCKED_INVALID_LIVE_STATE", () => {
+    const rows = matchingLiveSet();
+    rows[0] = { ...rows[0], active: true };
+    const assessment = assessComponentFirstDossierAlignment(rows);
+    expect(assessment.overallAlignmentState).toBe("BLOCKED_INVALID_LIVE_STATE");
+  });
+
+  it("runtime dossier not linked yet is readonly contract readiness, not failure", () => {
+    const assessment = assessComponentFirstDossierAlignment([]);
+    expect(assessment.dossierRuntimeLinkState).toBe("READONLY_CONTRACT_ONLY");
+    expect(assessment.overallAlignmentState).toBe("READONLY_FALLBACK_ONLY");
+    expect(assessment.runtimeActivationLeakIssues).toEqual([]);
+  });
+
+  it("detects dossier activation leak signals from live rows", () => {
+    const rows = matchingLiveSet();
+    rows[1] = {
+      ...rows[1],
+      notes: JSON.stringify({ task_materialization: true, quote_mode: "active" }),
+      operations_json: JSON.stringify([{ op: "cut" }]),
+    };
+    const assessment = assessComponentFirstDossierAlignment(rows);
+    expect(assessment.overallAlignmentState).toBe("BLOCKED_DOSSIER_ACTIVATION_LEAK");
+    expect(assessment.dossierRuntimeLinkState).toBe("BLOCKED_RUNTIME_ACTIVATION_LEAK");
+    expect(assessment.runtimeActivationLeakIssues.length).toBeGreaterThan(0);
   });
 });

@@ -104,6 +104,12 @@ import {
   type ComponentFirstSourceMode,
   type ComponentFirstTemplateCode,
 } from "@/features/product-system/componentFirstReadonlyCompleteness";
+import {
+  assessComponentFirstDossierAlignment,
+  componentFirstDossierRuntimeLinkLabel,
+  componentFirstOverallAlignmentLabel,
+  componentFirstOverallAlignmentTone,
+} from "@/features/product-system/componentFirstReadonlyDossierAlignment";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2771,6 +2777,7 @@ function ComponentFirstReadonlyStatusPanel({
 }) {
   const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
   const driftAssessment = assessComponentFirstContractDrift(templates);
+  const dossierAlignment = assessComponentFirstDossierAlignment(templates, { drift: driftAssessment });
   if (!model) {
     return null;
   }
@@ -2862,6 +2869,52 @@ function ComponentFirstReadonlyStatusPanel({
                 className="mt-1 text-[10px] font-mono text-slate-400"
               >
                 Metadata unavailable: {driftAssessment.metadataUnavailableWarnings.join(", ")}
+              </p>
+            ) : null}
+          </div>
+          <div
+            data-testid="product-system-component-first-dossier-alignment"
+            className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2"
+          >
+            <p className="text-[10px] font-bold uppercase tracking-wide text-slate-300">Dossier alignment</p>
+            <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+              <span
+                data-testid="product-system-component-first-dossier-contract-count"
+                className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+              >
+                Dossier contract: {dossierAlignment.dossierContractCount}/{dossierAlignment.expectedCount}
+              </span>
+              <span
+                data-testid="product-system-component-first-dossier-runtime-link"
+                className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+              >
+                {componentFirstDossierRuntimeLinkLabel(dossierAlignment.dossierRuntimeLinkState)}
+              </span>
+              <span
+                data-testid="product-system-component-first-dossier-alignment-state"
+                className={`rounded border px-2 py-0.5 ${componentFirstOverallAlignmentTone(dossierAlignment.overallAlignmentState)}`}
+              >
+                Alignment: {componentFirstOverallAlignmentLabel(dossierAlignment.overallAlignmentState)}
+              </span>
+            </div>
+            <p
+              data-testid="product-system-component-first-dossier-truth-ownership"
+              className="mt-1 text-[10px] text-slate-300"
+            >
+              Truth ownership: Composer = product orchestration only; Components = component-owned truth
+            </p>
+            <p
+              data-testid="product-system-component-first-dossier-guard"
+              className="mt-1 text-[10px] font-mono text-cyan-200/80"
+            >
+              Guard: No task materialization; No ProductAggregate runtime; No ProductDefinition activation; No Pricing / Quote / Order / Execution
+            </p>
+            {dossierAlignment.runtimeActivationLeakIssues.length > 0 ? (
+              <p
+                data-testid="product-system-component-first-dossier-activation-leak"
+                className="mt-1 text-[10px] font-mono text-rose-200/90"
+              >
+                Activation leak signals: {dossierAlignment.runtimeActivationLeakIssues.join(", ")}
               </p>
             ) : null}
           </div>
