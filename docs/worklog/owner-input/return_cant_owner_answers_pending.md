@@ -80,51 +80,50 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 14 | Oracal catalog source | Sursă listă completă? Catalog intern / import / administrabil? | | partial | Mod listă completă confirmat (#1). Sursă + format + ownership lipsă. |
+| 14 | Oracal catalog source | Sursă listă completă? Catalog intern / import / administrabil? | **Toate codurile Oracal oficiale** | partial | Țintă confirmată. Import/listă efectivă pending. |
+| 15 | Oracal calculation | Model consum Oracal? | **lățime rolă × lungime folosită = mp** | answered | Nu se calculează simplu pe ml. |
+| 16 | Oracal roll widths | Lățimi rolă? | **100 cm · 126 cm** | answered | Confirmat owner. |
 
 ## K. Oracal price table
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 15 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | | pending | Mod preț pe cod/familie confirmat (#2). Unitate neconfirmată. |
-| 16 | Oracal price table | Valori preț pe cod/familie? | | pending | Fără tabel inventat. Monedă + unitate + dată efectivă lipsă. |
+| 17 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | **mp (din lățime rolă × lungime)** | answered | Confirmat via calculation model. |
+| 18 | Oracal price table | Valori preț pe cod/familie? | **Owner are tabelul — valori neintroduse** | partial | Mod pe cod/familie confirmat. Fără valori inventate. |
 
 ## L. RAL selector source/list
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 17 | RAL list source | RAL Classic / Design / Effect / altă listă? | | partial | Mod selector standard confirmat (#3). Sursă/listă efectivă lipsă. |
-| 18 | RAL catalog shape | Cod simplu vs cod + nume culoare? | | pending | Doar structură propusă — fără listă inventată. |
+| 19 | RAL list source | RAL Classic / Design / Effect / altă listă? | **RAL Classic (ca Intake V6)** | answered | Cross-ref colorRegistry/ralColors.ts |
+| 20 | RAL catalog shape | Cod simplu vs cod + nume culoare? | | partial | Colectie confirmată — câmpuri pending |
 
 ## M. RAL material price by depth
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 19 | RAL material 30 mm | Preț material/ml la 30 mm? | | pending | Unitate ml confirmată (#9). |
-| 20 | RAL material 60 mm | Preț material/ml la 60 mm? | | pending | Idem. |
-| 21 | RAL material 80 mm | Preț material/ml la 80 mm? | | pending | Idem. |
-| 22 | RAL material 100 mm | Preț material/ml la 100 mm? | | pending | Idem. |
+| 21 | RAL material 30 mm | Preț material/ml la 30 mm? | **2.00 EUR/ml (MAT-VOPSEA-RAL-CANT-30MM)** | answered | Owner confirmat |
+| 22 | RAL material 60 mm | Preț material/ml la 60 mm? | **2.50 EUR/ml (MAT-VOPSEA-RAL-CANT-60MM)** | answered | Owner confirmat |
+| 23 | RAL material 80 mm | Preț material/ml la 80 mm? | **3.00 EUR/ml (MAT-VOPSEA-RAL-CANT-80MM)** | answered | Owner confirmat |
+| 24 | RAL material 100 mm | Preț material/ml la 100 mm? | **4.00 EUR/ml (MAT-VOPSEA-RAL-CANT-100MM)** | answered | Owner confirmat |
 
 ## N. RAL labor price by depth
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 23 | RAL labor 30 mm | Preț manoperă/ml la 30 mm? | | pending | Unitate ml confirmată (#10). |
-| 24 | RAL labor 60 mm | Preț manoperă/ml la 60 mm? | | pending | Idem. |
-| 25 | RAL labor 80 mm | Preț manoperă/ml la 80 mm? | | pending | Idem. |
-| 26 | RAL labor 100 mm | Preț manoperă/ml la 100 mm? | | pending | Idem. |
+| 25 | RAL labor all depths | Preț manoperă/ml? | **1.00 EUR/ml — același preț toate adâncimile** | answered | Owner confirmat |
 
 ## O. RAL minimum rule
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 27 | RAL minimum | Există minim? Valoare? Material / manoperă / total? | | pending | Fără minim inventat. |
+| 27 | RAL minimum | Există minim? Valoare? Material / manoperă / total? | **100 lei — scope pending** | partial | Fără conversie automată lei→EUR |
 
 ## P. Material-depth compatibility
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 28 | Compatibility | Aluminiu 0.6 mm valid pentru 30/60/80/100 mm? Excepții? | | pending | Material + adâncimi confirmate — combinații neconfirmate. |
+| 28 | Compatibility | Aluminiu 0.6 mm valid pentru 30/60/80/100 mm? Excepții? | **DA — valid pentru toate** | answered | Owner confirmat |
 
 ---
 
@@ -139,23 +138,20 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 | Item | Contract key | Status |
 |------|--------------|--------|
-| Catalog coduri Oracal efectiv | `oracal_code_list` | pending |
-| Tabel prețuri Oracal pe cod/familie | (catalog pricing) | pending |
-| Sursă/listă selector RAL standard | `ral_selector_source` | pending |
-| Valori preț material Vopsit RAL | `ral_material_price_rule` (preț) | partial |
-| Valori preț/minim manoperă Vopsit RAL | `ral_labor_price_rule`, `minimum_price_rule` | partial/pending |
-| Compatibilitate material ↔ adâncime | `material_depth_compatibility` | pending |
+| Import catalog coduri Oracal efectiv | `oracal_code_list` | partial |
+| Valori tabel prețuri Oracal pe cod/familie | `oracal_price_table` | partial |
+| Formă catalog Oracal | `oracal_catalog_shape` | pending |
+| Formă catalog RAL în product system | `ral_catalog_shape` | partial |
+| Scope minim Vopsit RAL 100 lei | `ral_minimum_rule` | partial |
 
 ## Ce NU se completează fără confirmare owner explicită
 
-- Liste Oracal sau coduri
-- Tabele / liste RAL
-- Prețuri material sau manoperă
-- Formule pricing
-- Reguli compatibilitate material/adâncime
+- Coduri Oracal individuale inventate
+- Valori tabel Oracal inventate
+- Coduri RAL inventate în product system catalog
+- Conversie automată lei→EUR
+- Formule pricing runtime
 
 ## Următorul pas
 
-Task: **RETURN-CANT catalog and price data apply** — owner furnizează sursă catalog Oracal, tabel prețuri, sursă/listă RAL, valori preț RAL pe adâncime, minim, compatibilitate material/adâncime.
-
-Contract workshop: `componentFirstReturnCantCatalogPriceInputs.ts`
+Task: **RETURN-CANT Oracal catalog import + price table values apply** — owner furnizează import catalog Oracal, valori tabel prețuri, scope minim 100 lei.

@@ -34,7 +34,7 @@ export type ReturnCantCatalogPriceInput = {
   category: ReturnCantCatalogPriceCategory;
   status: ReturnCantCatalogInputStatus | ReturnCantPricingInputStatus;
   confirmedValue: string | number | boolean | string[] | null;
-  unit?: "ml" | "mp" | "buc" | "set" | "lei" | "eur" | "none";
+  unit?: "ml" | "mp" | "buc" | "set" | "lei" | "eur" | "cm" | "none";
   knownSoFarRo: string;
   stillMissingRo: string[];
   ownerQuestionRo: string;
@@ -45,22 +45,33 @@ export type ReturnCantCatalogPriceInput = {
 
 export const RETURN_CANT_DEPTH_MM_PLACEHOLDERS = ["30", "60", "80", "100"] as const;
 
+/** Read-only cross-reference — same RAL Classic source as Intake V6 color registry. */
+export const RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH =
+  "frontend/src/lib/colorRegistry/ralColors.ts";
+
+export const RETURN_CANT_RAL_MATERIAL_PRICE_CODES = {
+  "30": "MAT-VOPSEA-RAL-CANT-30MM",
+  "60": "MAT-VOPSEA-RAL-CANT-60MM",
+  "80": "MAT-VOPSEA-RAL-CANT-80MM",
+  "100": "MAT-VOPSEA-RAL-CANT-100MM",
+} as const;
+
 export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
   {
     key: "oracal_selector_source",
-    labelRo: "Sursă listă completă Oracal",
+    labelRo: "Țintă catalog Oracal",
     category: "oracal_catalog",
     status: "partial_confirmed",
-    confirmedValue: "listă completă Oracal",
-    knownSoFarRo: "Owner confirmat: selector listă completă Oracal.",
+    confirmedValue: "toate codurile Oracal oficiale",
+    knownSoFarRo:
+      "Owner confirmat: catalog țintă = toate codurile Oracal oficiale. Fără înregistrări catalog inventate.",
     stillMissingRo: [
-      "Sursa listei complete",
-      "Format catalog",
-      "Cine întreține catalogul",
-      "Cod + nume + culoare + familie + disponibilitate",
+      "Import/listă efectivă de coduri în catalog product system",
+      "Format catalog confirmat",
+      "Ownership / întreținere catalog",
     ],
     ownerQuestionRo:
-      "Care este sursa listei complete Oracal? O introducem manual într-un catalog intern, importăm din fișier, sau o ținem ca listă administrabilă mai târziu?",
+      "Care este sursa/importul listei complete Oracal? (manual, fișier, administrabil mai târziu?)",
     blocks: ["catalog", "operator_ui", "pricing"],
     mustNotInvent: true,
     pricingActive: false,
@@ -72,10 +83,7 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     status: "owner_input_required",
     confirmedValue: null,
     knownSoFarRo: "Propunere structură: code · name · family · color_group · active · notes — fără date.",
-    stillMissingRo: [
-      "Confirmare câmpuri stocate",
-      "Catalog efectiv de coduri",
-    ],
+    stillMissingRo: ["Confirmare câmpuri stocate", "Catalog efectiv de coduri importat"],
     ownerQuestionRo:
       "Pentru codurile Oracal vrei să stocăm doar codul sau cod + nume culoare + familie + grupă culoare?",
     blocks: ["catalog", "operator_ui"],
@@ -88,29 +96,38 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     category: "oracal_pricing",
     status: "owner_confirmed",
     confirmedValue: "preț pe cod/familie",
-    knownSoFarRo: "Owner confirmat: preț diferit pe cod/familie.",
-    stillMissingRo: [
-      "Tabel prețuri efectiv",
-      "Monedă",
-      "Unitate preț",
-      "Mapare familie",
-    ],
+    knownSoFarRo: "Owner confirmat: preț diferit pe cod/familie. Owner are tabelul — valorile nu sunt încă stocate.",
+    stillMissingRo: [],
     ownerQuestionRo: "Care sunt prețurile Oracal pe cod/familie?",
     blocks: ["pricing"],
     mustNotInvent: true,
     pricingActive: false,
   },
   {
-    key: "oracal_price_unit",
-    labelRo: "Unitate preț Oracal",
+    key: "oracal_calculation_model",
+    labelRo: "Model calcul consum Oracal",
     category: "oracal_pricing",
-    status: "owner_input_required",
-    confirmedValue: null,
+    status: "owner_confirmed",
+    confirmedValue: "mp = lățime rolă × lungime folosită",
+    unit: "mp",
     knownSoFarRo:
-      "Material/manoperă cant confirmate pe ml — unitatea Oracal pricing nu este presupusă.",
-    stillMissingRo: ["Unitate calcul preț Oracal (ml / mp folie / altceva)"],
-    ownerQuestionRo:
-      "Prețul Oracal îl calculăm pe ml de cant, mp de folie, sau altă unitate? Pentru cant recomandarea tehnică este ml, dar nu confirmăm fără owner.",
+      "Owner confirmat: calcul din lățimea rolei × lungimea folosită = mp. Nu se calculează simplu pe ml.",
+    stillMissingRo: ["Formulă runtime — neactivată în acest task"],
+    ownerQuestionRo: "Confirmare model calcul consum Oracal.",
+    blocks: ["pricing"],
+    mustNotInvent: true,
+    pricingActive: false,
+  },
+  {
+    key: "oracal_roll_widths",
+    labelRo: "Lățimi rolă Oracal",
+    category: "oracal_pricing",
+    status: "owner_confirmed",
+    confirmedValue: ["100 cm", "126 cm"],
+    unit: "cm",
+    knownSoFarRo: "Owner confirmat: lățimi rolă A = 100 cm · B = 126 cm.",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare lățimi rolă Oracal.",
     blocks: ["pricing"],
     mustNotInvent: true,
     pricingActive: false,
@@ -119,34 +136,34 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     key: "oracal_price_table",
     labelRo: "Tabel prețuri Oracal",
     category: "oracal_pricing",
-    status: "owner_input_required",
-    confirmedValue: null,
-    knownSoFarRo: "Mod preț pe cod/familie confirmat — fără tabel inventat.",
+    status: "partial_confirmed",
+    confirmedValue: "Owner are tabelul — preț pe cod/familie",
+    knownSoFarRo:
+      "Owner confirmat: tabelul/preturile există și modul este pe cod/familie. Valorile exacte nu sunt încă introduse.",
     stillMissingRo: [
-      "Cod/familie",
-      "Preț unitar",
+      "Valori preț unitar pe cod/familie",
       "Monedă",
-      "Unitate",
-      "Dată efectivă (opțional, mai târziu)",
+      "Unitate preț",
+      "Mapare cod/familie",
+      "Sursă efectivă / dată efectivă",
     ],
-    ownerQuestionRo: "Care sunt prețurile Oracal pe cod/familie?",
+    ownerQuestionRo: "Introduceți valorile tabelului Oracal pe cod/familie.",
     blocks: ["pricing"],
     mustNotInvent: true,
     pricingActive: false,
   },
   {
     key: "ral_selector_source",
-    labelRo: "Sursă selector RAL standard",
+    labelRo: "Sursă selector RAL",
     category: "ral_catalog",
-    status: "partial_confirmed",
-    confirmedValue: "selector standard RAL",
-    knownSoFarRo: "Owner confirmat: mod selector standard RAL.",
+    status: "owner_confirmed",
+    confirmedValue: "RAL Classic",
+    knownSoFarRo:
+      "Owner confirmat: RAL Classic — ca în UI Intake V6. Cross-ref readonly: colorRegistry/ralColors.ts.",
     stillMissingRo: [
-      "Sursa listei standard RAL",
-      "Colectie (RAL Classic / Design / Effect / altă)",
-      "Cod + nume culoare",
+      "Materializare listă în catalog product system (dacă separat de color registry)",
     ],
-    ownerQuestionRo: "Folosim RAL Classic ca listă standard sau altă listă RAL?",
+    ownerQuestionRo: "Confirmare colecție RAL Classic.",
     blocks: ["catalog", "operator_ui", "pricing"],
     mustNotInvent: true,
     pricingActive: false,
@@ -155,10 +172,11 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     key: "ral_catalog_shape",
     labelRo: "Formă catalog RAL (doar structură)",
     category: "ral_catalog",
-    status: "owner_input_required",
-    confirmedValue: null,
-    knownSoFarRo: "Propunere structură: ral_code · ral_name · collection · active — fără date.",
-    stillMissingRo: ["Confirmare câmpuri stocate", "Listă RAL efectivă"],
+    status: "partial_confirmed",
+    confirmedValue: "RAL Classic (ral_code · ral_name · collection · active)",
+    knownSoFarRo:
+      "Colectie RAL Classic confirmată. Listă există în color registry Intake V6 — fără coduri RAL inventate aici.",
+    stillMissingRo: ["Confirmare câmpuri stocate în product system catalog"],
     ownerQuestionRo: "Pentru RAL vrei cod simplu sau cod + nume culoare?",
     blocks: ["catalog", "operator_ui"],
     mustNotInvent: true,
@@ -172,30 +190,29 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     confirmedValue: "ml",
     unit: "ml",
     knownSoFarRo: "Owner confirmat: material Vopsit RAL pe ml.",
-    stillMissingRo: [
-      "Valoare preț",
-      "Diferențiere pe adâncime 30/60/80/100 mm",
-      "Monedă",
-    ],
-    ownerQuestionRo:
-      "Care este prețul material Vopsit RAL pe ml pentru 30 / 60 / 80 / 100 mm? Este același sau diferit pe adâncime?",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare unitate material Vopsit RAL.",
     blocks: ["pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
     key: "ral_material_price_by_depth",
     labelRo: "Preț material Vopsit RAL pe adâncime",
     category: "ral_material_pricing",
-    status: "owner_input_required",
-    confirmedValue: null,
-    unit: "ml",
-    knownSoFarRo: "Unitate ml confirmată — fără valori preț.",
-    stillMissingRo: RETURN_CANT_DEPTH_MM_PLACEHOLDERS.map((d) => `${d} mm — OWNER INPUT REQUIRED`),
-    ownerQuestionRo:
-      "Care este prețul material Vopsit RAL pe ml pentru 30 / 60 / 80 / 100 mm? Este același sau diferit pe adâncime?",
+    status: "owner_confirmed",
+    confirmedValue: [
+      "30 mm: 2.00 EUR/ml (MAT-VOPSEA-RAL-CANT-30MM)",
+      "60 mm: 2.50 EUR/ml (MAT-VOPSEA-RAL-CANT-60MM)",
+      "80 mm: 3.00 EUR/ml (MAT-VOPSEA-RAL-CANT-80MM)",
+      "100 mm: 4.00 EUR/ml (MAT-VOPSEA-RAL-CANT-100MM)",
+    ],
+    unit: "eur",
+    knownSoFarRo: "Owner confirmat: prețuri material consumabile pentru ofertare — fără activare pricing engine.",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare prețuri material Vopsit RAL pe adâncime.",
     blocks: ["pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
@@ -206,46 +223,42 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     confirmedValue: "ml",
     unit: "ml",
     knownSoFarRo: "Owner confirmat: manoperă Vopsit RAL pe ml.",
-    stillMissingRo: [
-      "Valoare preț manoperă",
-      "Regulă minim",
-      "Diferențiere pe adâncime",
-    ],
-    ownerQuestionRo:
-      "Care este prețul manoperă Vopsit RAL pe ml pentru 30 / 60 / 80 / 100 mm? Este același sau diferit pe adâncime?",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare unitate manoperă Vopsit RAL.",
     blocks: ["pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
     key: "ral_labor_price_by_depth",
     labelRo: "Preț manoperă Vopsit RAL pe adâncime",
     category: "ral_labor_pricing",
-    status: "owner_input_required",
-    confirmedValue: null,
-    unit: "ml",
-    knownSoFarRo: "Unitate ml confirmată — fără valori preț.",
-    stillMissingRo: RETURN_CANT_DEPTH_MM_PLACEHOLDERS.map((d) => `${d} mm — OWNER INPUT REQUIRED`),
-    ownerQuestionRo:
-      "Care este prețul manoperă Vopsit RAL pe ml pentru 30 / 60 / 80 / 100 mm? Este același sau diferit pe adâncime?",
+    status: "owner_confirmed",
+    confirmedValue: RETURN_CANT_DEPTH_MM_PLACEHOLDERS.map((d) => `${d} mm: 1.00 EUR/ml`),
+    unit: "eur",
+    knownSoFarRo:
+      "Owner confirmat: 1.00 EUR/ml — același preț indiferent de adâncime/lățime cant.",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare preț manoperă Vopsit RAL.",
     blocks: ["pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
     key: "ral_minimum_rule",
     labelRo: "Regulă minim Vopsit RAL",
     category: "minimum_rule",
-    status: "owner_input_required",
-    confirmedValue: null,
-    knownSoFarRo: "Fără minim presupus.",
+    status: "partial_confirmed",
+    confirmedValue: "100 lei",
+    unit: "lei",
+    knownSoFarRo:
+      "Owner confirmat: minim Vopsire RAL = 100 lei («de aici începem»). Fără conversie automată lei→EUR.",
     stillMissingRo: [
-      "Există minim?",
-      "Valoare minim",
+      "Minim pe lucrare / set / culoare RAL / comandă?",
       "Se aplică la material / manoperă / total?",
     ],
     ownerQuestionRo:
-      "Există preț minim pentru Vopsit RAL pe lucrare/set? Dacă da, care este minimul și se aplică la material, manoperă sau total?",
+      "Pe ce bază se aplică minimul de 100 lei: lucrare, set, culoare RAL sau comandă? Material, manoperă sau total?",
     blocks: ["pricing"],
     mustNotInvent: true,
     pricingActive: false,
@@ -254,18 +267,13 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     key: "return_material_depth_compatibility",
     labelRo: "Compatibilitate material ↔ adâncime",
     category: "material_depth_compatibility",
-    status: "owner_input_required",
-    confirmedValue: null,
-    knownSoFarRo: "Material cant = aluminiu 0.6 mm. Adâncimi = 30 / 60 / 80 / 100 mm.",
-    stillMissingRo: [
-      "Validitate aluminiu 0.6 mm pentru toate adâncimile",
-      "Excepții sau combinații interzise",
-      "Adâncimi care cer alt material/grosime",
-    ],
-    ownerQuestionRo:
-      "Aluminiu 0.6 mm este valid pentru toate adâncimile 30 / 60 / 80 / 100 mm sau există combinații interzise?",
+    status: "owner_confirmed",
+    confirmedValue: "aluminiu 0.6 mm valid pentru 30 / 60 / 80 / 100 mm",
+    knownSoFarRo: "Owner confirmat: aluminiu 0.6 mm valid pentru toate adâncimile standard.",
+    stillMissingRo: [],
+    ownerQuestionRo: "Confirmare compatibilitate material/adâncime.",
     blocks: ["product_definition", "pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
 ];
@@ -290,14 +298,40 @@ export const RETURN_CANT_CATALOG_PRICE_SECTIONS: ReturnCantCatalogPriceSection[]
   },
 ];
 
-export const RETURN_CANT_BLOCKERS_BEFORE_PRICING = [
-  "Oracal actual catalog missing",
-  "Oracal price table missing",
-  "RAL selector source/list missing",
-  "RAL material prices missing",
-  "RAL labor prices/minimum missing",
-  "Material/depth compatibility missing",
-] as const;
+export function computeBlockersBeforePricing(
+  inputs: ReturnCantCatalogPriceInput[] = RETURN_CANT_CATALOG_PRICE_INPUTS,
+): readonly string[] {
+  const blockers: string[] = [];
+
+  const oracalCatalogShape = inputs.find((i) => i.key === "oracal_catalog_shape");
+  const oracalSelector = inputs.find((i) => i.key === "oracal_selector_source");
+  if (
+    oracalCatalogShape?.status === "owner_input_required" ||
+    oracalSelector?.status === "partial_confirmed"
+  ) {
+    blockers.push("Oracal actual catalog data/import not stored yet");
+  }
+
+  const oracalPriceTable = inputs.find((i) => i.key === "oracal_price_table");
+  if (oracalPriceTable?.status !== "owner_confirmed") {
+    blockers.push("Oracal price table values not stored yet");
+  }
+
+  const ralCatalogShape = inputs.find((i) => i.key === "ral_catalog_shape");
+  if (ralCatalogShape?.status !== "owner_confirmed") {
+    blockers.push("RAL list data/source not materialized in product system catalog");
+  }
+
+  const ralMinimum = inputs.find((i) => i.key === "ral_minimum_rule");
+  if (ralMinimum?.status === "partial_confirmed") {
+    blockers.push("RAL minimum scope unresolved (100 lei confirmed)");
+  }
+
+  blockers.push("Pricing activation not allowed");
+  blockers.push("Product Truth live write not allowed");
+
+  return blockers;
+}
 
 export type ReturnCantCatalogPriceSummary = {
   totalCatalogPriceInputs: number;
@@ -357,7 +391,7 @@ export function buildReturnCantCatalogPriceSummary(
     ownerInputRequiredCount: inputs.filter((i) => i.status === "owner_input_required").length,
     pricingActiveCount: inputs.filter((i) => i.pricingActive).length,
     readyForPricing: false,
-    blockersBeforePricing: RETURN_CANT_BLOCKERS_BEFORE_PRICING,
+    blockersBeforePricing: computeBlockersBeforePricing(inputs),
   };
 }
 

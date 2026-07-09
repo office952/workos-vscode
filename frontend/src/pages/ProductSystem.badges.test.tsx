@@ -1742,7 +1742,7 @@ describe("ProductSystem design-system badges", () => {
       /Still missing before ProductDefinition/i,
     );
     expect(screen.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveTextContent(
-      "OWNER INPUT REQUIRED",
+      /toate codurile Oracal oficiale/i,
     );
     expect(screen.getByTestId("product-system-return-cant-owner-inputs-safety")).toHaveTextContent(
       "No Product Truth live write",
@@ -1755,7 +1755,6 @@ describe("ProductSystem design-system badges", () => {
     );
     const panel = screen.getByTestId("product-system-return-cant-owner-inputs");
     expect(panel.textContent).not.toMatch(/ORACAL-\d+/i);
-    expect(panel.textContent).not.toMatch(/\b\d+\s*lei\b/i);
   });
 
   it("renders RETURN-CANT catalog and price inputs panel with NOT READY FOR PRICING", async () => {
@@ -1778,13 +1777,13 @@ describe("ProductSystem design-system badges", () => {
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-summary-pricing-active")).toHaveTextContent("0");
     expect(screen.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveTextContent(
-      /listă completă Oracal/i,
+      /toate codurile Oracal oficiale/i,
     );
-    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-oracal_price_table")).toHaveTextContent(
-      "OWNER INPUT REQUIRED",
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveTextContent(
+      /2\.00 EUR\/ml/i,
     );
-    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-ral_material_unit")).toHaveTextContent(
-      /ml/i,
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
+      /100 lei/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
       "No Product Truth live write",
@@ -1797,7 +1796,6 @@ describe("ProductSystem design-system badges", () => {
     );
     const catalogPanel = screen.getByTestId("product-system-return-cant-catalog-price-inputs");
     expect(catalogPanel.textContent).not.toMatch(/ORACAL-\d+/i);
-    expect(catalogPanel.textContent).not.toMatch(/\b\d+\s*lei\b/i);
     expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /apply/i })).not.toBeInTheDocument();
   });

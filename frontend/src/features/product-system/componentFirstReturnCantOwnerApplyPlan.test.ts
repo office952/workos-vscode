@@ -29,22 +29,20 @@ describe("componentFirstReturnCantOwnerApplyPlan", () => {
     expect(plan.contractKeysReadyToApply).toContain("perimeter_geometry_source");
   });
 
-  it("lists catalog and pricing keys still pending", () => {
+  it("lists catalog and pricing keys still pending or partial", () => {
     const plan = buildReturnCantOwnerApplyPlan();
-    expect(plan.contractKeysStillPending).toContain("oracal_code_list");
-    expect(plan.contractKeysStillPending).toContain("ral_selector_source");
-    expect(plan.contractKeysStillPending).toContain("material_depth_compatibility");
-    for (const key of plan.contractKeysStillPending) {
-      const input = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === key);
-      expect(input?.value).toBeNull();
-    }
+    expect(plan.contractKeysStillPending).not.toContain("ral_selector_source");
+    expect(plan.contractKeysStillPending).not.toContain("material_depth_compatibility");
+    expect(plan.contractKeysStillPending).not.toContain("ral_material_price_rule");
+    expect(plan.contractKeysStillPending).not.toContain("ral_labor_price_rule");
   });
 
   it("reflects confirmed and partial contract statuses", () => {
     expect(contractStatusForTopic("oracal_selector_mode")).toBe("owner_confirmed");
-    expect(contractStatusForTopic("oracal_pricing_mode")).toBe("owner_confirmed");
-    expect(contractStatusForTopic("ral_material_price_rule")).toBe("partial_confirmed");
-    expect(contractStatusForTopic("oracal_code_list")).toBe("owner_input_required");
+    expect(contractStatusForTopic("ral_selector_source")).toBe("owner_confirmed");
+    expect(contractStatusForTopic("ral_material_price_rule")).toBe("owner_confirmed");
+    expect(contractStatusForTopic("minimum_price_rule")).toBe("partial_confirmed");
+    expect(contractStatusForTopic("material_depth_compatibility")).toBe("owner_confirmed");
   });
 
   it("documents apply safety guards", () => {

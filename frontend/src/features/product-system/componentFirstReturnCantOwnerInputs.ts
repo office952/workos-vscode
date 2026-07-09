@@ -50,32 +50,25 @@ export const RETURN_CANT_CONFIRMED_SO_FAR: string[] = [
 ];
 
 export const RETURN_CANT_PARTIAL_SO_FAR: string[] = [
-  "RAL material Vopsit: unitate ml confirmată — valori preț lipsă",
-  "RAL manoperă Vopsit: unitate ml confirmată — preț/minim lipsă",
+  "Catalog Oracal: țintă coduri oficiale confirmată — import pending",
+  "Tabel prețuri Oracal: owner are tabelul — valori neintroduse",
+  "Minim Vopsit RAL: 100 lei confirmat — scope pending",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRICING: string[] = [
-  "Catalog coduri Oracal efectiv",
-  "Tabel prețuri Oracal pe cod/familie",
-  "Sursă/listă selector RAL standard",
-  "Valori preț material Vopsit RAL (unitate ml confirmată)",
-  "Valori preț/minim manoperă Vopsit RAL (unitate ml confirmată)",
-  "Minim preț cant (dacă există)",
+  "Import catalog coduri Oracal efectiv",
+  "Valori tabel prețuri Oracal pe cod/familie",
+  "Scope minim Vopsit RAL (100 lei confirmat)",
 ];
 
-export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [
-  "Compatibilitate material ↔ adâncime",
-];
+export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [];
 
 /** Owner questions kept visible until answered — no invented answers. */
 export const RETURN_CANT_OWNER_QUESTIONS_PENDING: string[] = [
-  "Catalog Oracal efectiv: care coduri intră în listă completă?",
+  "Import catalog Oracal: sursă/listă efectivă pentru toate codurile oficiale?",
   "Tabel prețuri Oracal: valori pe cod/familie?",
-  "Sursă/listă RAL standard pentru selector?",
-  "Vopsit RAL material: valori preț pe adâncime (unitate ml confirmată)?",
-  "Vopsit RAL manoperă: valori preț și minim (unitate ml confirmată)?",
-  "Există minim de preț pentru cant? Pe ce bază?",
-  "Ce combinații material/adâncime sunt valide pentru aluminiu 0.6 mm?",
+  "Scope minim Vopsit RAL 100 lei: lucrare / set / culoare / comandă? material / manoperă / total?",
+  "Formă catalog Oracal: cod simplu vs cod + nume + familie?",
 ];
 
 function confirmedInput(
@@ -164,12 +157,14 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     notesRo:
       "Owner chose B — selector listă completă. Catalogul efectiv de coduri rămâne OWNER INPUT REQUIRED.",
   }),
-  pendingInput({
+  partialInput({
     key: "oracal_code_list",
     labelRo: "Catalog coduri Oracal (date efective)",
+    value: "Țintă: toate codurile Oracal oficiale — import pending",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "execution"],
-    ownerQuestionRo: "Care coduri Oracal intră în catalogul complet? (mod selector deja confirmat)",
-    notesRo: "Mod selector confirmat — fără listă Oracal inventată.",
+    ownerQuestionRo: "Sursă/import listă completă Oracal oficială?",
+    notesRo: "Țintă catalog confirmată — fără coduri Oracal inventate.",
   }),
   confirmedInput({
     key: "oracal_pricing_mode",
@@ -189,12 +184,13 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     notesRo:
       "Owner chose B — selector standard RAL. Sursa/lista RAL efectivă rămâne OWNER INPUT REQUIRED.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "ral_selector_source",
     labelRo: "Sursă/listă selector RAL standard",
+    value: "RAL Classic (ca în Intake V6 / colorRegistry)",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "execution"],
-    ownerQuestionRo: "Care este sursa sau lista RAL pentru selector standard?",
-    notesRo: "Mod selector confirmat — fără tabel RAL inventat.",
+    notesRo: "Owner confirmat RAL Classic — cross-ref colorRegistry/ralColors.ts.",
   }),
   confirmedInput({
     key: "ral_material_labor_separation",
@@ -239,33 +235,35 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     blockingArea: ["pricing"],
     notesRo: "Manoperă cant calculată pe ml (metru liniar).",
   }),
-  partialInput({
+  confirmedInput({
     key: "ral_material_price_rule",
     labelRo: "Regulă preț material Vopsit RAL",
-    value: "Unitate: ml — preț neconfirmat",
-    unit: "ml",
+    value:
+      "30=2.00 EUR/ml · 60=2.50 · 80=3.00 · 100=4.00 EUR/ml (consumabile ofertare)",
+    unit: "eur",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Valori preț material Vopsit RAL pe adâncime? (unitate ml confirmată)",
-    notesRo: "Unitate ml confirmată de owner. Fără prețuri material inventate.",
+    notesRo: "Prețuri owner confirmate — fără activare pricing engine.",
   }),
-  partialInput({
+  confirmedInput({
     key: "ral_labor_price_rule",
     labelRo: "Regulă manoperă Vopsit RAL",
-    value: "Unitate: ml — preț/minim neconfirmat",
-    unit: "ml",
+    value: "1.00 EUR/ml — același preț toate adâncimile",
+    unit: "eur",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Valori preț manoperă și minim? (unitate ml confirmată)",
-    notesRo: "Unitate ml confirmată de owner. Fără prețuri/formule manoperă inventate.",
+    notesRo: "Preț manoperă owner confirmat — fără activare pricing engine.",
   }),
-  pendingInput({
+  partialInput({
     key: "minimum_price_rule",
-    labelRo: "Minim preț cant (dacă există)",
+    labelRo: "Minim preț Vopsit RAL",
+    value: "100 lei — scope pending",
     unit: "lei",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Există minim de preț pentru cant? Dacă da, pe ce bază?",
-    notesRo: "Fără minim inventat.",
+    ownerQuestionRo:
+      "Pe ce bază se aplică minimul 100 lei: lucrare, set, culoare, comandă? Material, manoperă sau total?",
+    notesRo: "Minim confirmat — fără conversie automată lei→EUR.",
   }),
   confirmedInput({
     key: "perimeter_geometry_source",
@@ -276,12 +274,13 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     notesRo:
       "Owner confirmat: calcul pe perimetru/contur real. Algoritm SVG/nesting ne modificat în acest task.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "material_depth_compatibility",
     labelRo: "Compatibilitate material ↔ adâncime",
+    value: "aluminiu 0.6 mm valid pentru 30 / 60 / 80 / 100 mm",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["product_definition"],
-    ownerQuestionRo: "Ce combinații material/adâncime sunt valide pentru aluminiu 0.6 mm?",
-    notesRo: "Reguli de compatibilitate neconfirmate.",
+    notesRo: "Owner confirmat: toate adâncimile standard compatibile.",
   }),
   confirmedInput({
     key: "separate_calculation_component_truth",

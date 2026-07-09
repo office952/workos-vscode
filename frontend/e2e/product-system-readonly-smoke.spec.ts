@@ -209,17 +209,16 @@ test.describe("Product System readonly smoke", () => {
       /perimetru\/contur real/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_material_price_rule")).toHaveText(
-      /ml.*preț neconfirmat/i,
+      /2\.00 EUR\/ml/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_labor_price_rule")).toHaveText(
-      /ml.*preț\/minim neconfirmat/i,
+      /1\.00 EUR\/ml/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveText(
-      /OWNER INPUT REQUIRED/i,
+      /toate codurile Oracal oficiale/i,
     );
     const returnCantPanel = page.getByTestId("product-system-return-cant-owner-inputs");
     await expect(returnCantPanel).not.toHaveText(/ORACAL-\d+/i);
-    await expect(returnCantPanel).not.toHaveText(/\b\d+\s*lei\b/i);
     await expect(page.getByRole("button", { name: /^save$/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /write product truth/i })).toHaveCount(0);
 
@@ -232,35 +231,39 @@ test.describe("Product System readonly smoke", () => {
       /Ready for pricing: NO/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveText(
-      /listă completă Oracal/i,
+      /toate codurile Oracal oficiale/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_calculation_model")).toHaveText(
+      /lățime rolă.*lungime folosită|mp/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_roll_widths")).toHaveText(
+      /100 cm.*126 cm/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_price_table")).toHaveText(
-      /OWNER INPUT REQUIRED/i,
+      /Owner are tabelul|preț pe cod\/familie/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_price_mode")).toHaveText(
       /preț.*cod\/familie/i,
     );
-    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_selector_source")).toHaveText(
-      /selector standard RAL/i,
-    );
-    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_catalog_shape")).toHaveText(
-      /OWNER INPUT REQUIRED/i,
-    );
-    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_material_unit")).toHaveText(
-      /ml/i,
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_selector_source")).toHaveText(
+      /RAL Classic/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveText(
-      /OWNER INPUT REQUIRED/i,
+      /2\.00 EUR\/ml/i,
     );
-    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_labor_unit")).toHaveText(/ml/i);
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_labor_price_by_depth")).toHaveText(
+      /1\.00 EUR\/ml/i,
+    );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
-      /OWNER INPUT REQUIRED/i,
+      /100 lei/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_minimum_rule")).toHaveText(
+      /100 lei|Fără conversie automată/i,
     );
     await expect(
-      page.getByTestId("product-system-return-cant-catalog-price-row-return_material_depth_compatibility"),
-    ).toBeVisible();
+      page.getByTestId("product-system-return-cant-catalog-price-value-return_material_depth_compatibility"),
+    ).toHaveText(/aluminiu 0\.6 mm/i);
     await expect(catalogPricePanel).not.toHaveText(/ORACAL-\d+/i);
-    await expect(catalogPricePanel).not.toHaveText(/\b\d+\s*lei\b/i);
     await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
       /No Product Truth live write/i,
     );

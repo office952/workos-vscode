@@ -29,8 +29,8 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(selector?.status).toBe("owner_confirmed");
     expect(selector?.value).toBe("listă completă Oracal");
     const catalog = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "oracal_code_list");
-    expect(catalog?.status).toBe("owner_input_required");
-    expect(catalog?.value).toBeNull();
+    expect(catalog?.status).toBe("partial_confirmed");
+    expect(String(catalog?.value)).toMatch(/toate codurile Oracal oficiale/i);
   });
 
   it("confirms Oracal pricing mode as pret pe cod/familie", () => {
@@ -44,8 +44,8 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(ralMode?.status).toBe("owner_confirmed");
     expect(ralMode?.value).toBe("selector standard RAL");
     const ralSource = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_selector_source");
-    expect(ralSource?.status).toBe("owner_input_required");
-    expect(ralSource?.value).toBeNull();
+    expect(ralSource?.status).toBe("owner_confirmed");
+    expect(String(ralSource?.value)).toMatch(/RAL Classic/i);
   });
 
   it("confirms return depths as 30 / 60 / 80 / 100 mm", () => {
@@ -73,21 +73,27 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(formatReturnCantOwnerInputDisplayValue(stockPrice!)).toMatch(/Nu — doar informație atelier/i);
   });
 
+  it("confirms material-depth compatibility and RAL selector source", () => {
+    const compat = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "material_depth_compatibility");
+    const ralSource = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_selector_source");
+    expect(compat?.status).toBe("owner_confirmed");
+    expect(ralSource?.status).toBe("owner_confirmed");
+    expect(String(ralSource?.value)).toMatch(/RAL Classic/i);
+  });
+
   it("confirms perimeter geometry source as perimetru/contur real", () => {
     const perimeter = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "perimeter_geometry_source");
     expect(perimeter?.status).toBe("owner_confirmed");
     expect(perimeter?.value).toBe("perimetru/contur real al literelor");
   });
 
-  it("marks RAL material/labor price rules as partial with ml unit only", () => {
+  it("marks RAL material/labor price rules as owner_confirmed from owner answers", () => {
     const materialRule = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_material_price_rule");
     const laborRule = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_labor_price_rule");
-    expect(materialRule?.status).toBe("partial_confirmed");
-    expect(laborRule?.status).toBe("partial_confirmed");
-    expect(String(materialRule?.value)).toMatch(/ml/i);
-    expect(String(laborRule?.value)).toMatch(/ml/i);
-    expect(String(materialRule?.value)).toMatch(/preț neconfirmat/i);
-    expect(String(laborRule?.value)).toMatch(/preț\/minim neconfirmat/i);
+    expect(materialRule?.status).toBe("owner_confirmed");
+    expect(laborRule?.status).toBe("owner_confirmed");
+    expect(String(materialRule?.value)).toMatch(/2\.00 EUR\/ml/i);
+    expect(String(laborRule?.value)).toMatch(/1\.00 EUR\/ml/i);
   });
 
   it("confirms RAL material/labor separation as model not price", () => {
@@ -97,18 +103,22 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(String(ralSep?.value)).not.toMatch(/\d+\s*(lei|eur)/i);
   });
 
-  it("does not contain fake Oracal codes, RAL lists, or prices", () => {
-    for (const input of RETURN_CANT_OWNER_INPUTS) {
-      const serialized = JSON.stringify(input.value ?? "");
-      expect(serialized).not.toMatch(/ORACAL-\d+/i);
-      expect(serialized).not.toMatch(/RAL\s*\d{4}/i);
-      expect(serialized).not.toMatch(/\b\d+(\.\d+)?\s*(lei|eur|ron)\b/i);
-    }
+  it("does not contain fake Oracal codes or uninvented catalog entries", () => {
+    const catalogPending = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "oracal_code_list")!;
+    expect(JSON.stringify(catalogPending.value)).not.toMatch(/ORACAL-\d+/i);
+    expect(JSON.stringify(catalogPending.value)).not.toMatch(/RAL\s*\d{4}/i);
   });
 
-  it("formats unknown catalog values as OWNER INPUT REQUIRED not dash or zero", () => {
+  it("allows owner-confirmed RAL EUR prices and minimum lei", () => {
+    const material = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_material_price_rule");
+    const minimum = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "minimum_price_rule");
+    expect(String(material?.value)).toMatch(/2\.00 EUR\/ml/i);
+    expect(String(minimum?.value)).toMatch(/100 lei/i);
+  });
+
+  it("formats partial catalog values with target not dash or zero", () => {
     const catalog = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "oracal_code_list")!;
-    expect(formatReturnCantOwnerInputDisplayValue(catalog)).toBe(RETURN_CANT_OWNER_INPUT_DISPLAY_UNKNOWN);
+    expect(formatReturnCantOwnerInputDisplayValue(catalog)).toMatch(/toate codurile Oracal oficiale/i);
     expect(formatReturnCantOwnerInputDisplayValue(catalog)).not.toBe("-");
     expect(formatReturnCantOwnerInputDisplayValue(catalog)).not.toBe("0");
   });
@@ -118,7 +128,6 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(summary.globalStatus).toBe("OWNER_INPUT_REQUIRED");
     expect(summary.confirmedCount).toBeGreaterThan(10);
     expect(summary.partialCount).toBe(2);
-    expect(summary.pendingCount).toBeGreaterThan(0);
   });
 
   it("aligns with workshop field contract keys", () => {
