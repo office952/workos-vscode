@@ -30,6 +30,8 @@ TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS"
 
 RETURN_PROFILE_MACHINE_FORMING_CODE = "RETURN_PROFILE_MACHINE_FORMING"
 RETURN_PROFILE_FACE_BONDING_CODE = "RETURN_PROFILE_FACE_BONDING"
+RETURN_CANT_VINYL_APPLICATION_LABOR_CODE = "RETURN_CANT_VINYL_APPLICATION_LABOR"
+RETURN_CANT_RAL_PAINT_LABOR_CODE = "RETURN_CANT_RAL_PAINT_LABOR"
 
 TVA_RATE_NOTE = (
     "Owner-defined quote pricing rate. Stored excluding TVA; "
@@ -184,6 +186,19 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
         ),
     },
     {
+        "code": RETURN_CANT_RAL_PAINT_LABOR_CODE,
+        "label": "Manopera vopsit RAL pe cant",
+        "rate_basis": "per_linear_meter",
+        "rate_per_linear_meter": 1.0,
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed: return_cant RAL paint labor = 1 EUR/ml excluding TVA. "
+            "Dedicated return_cant paint_application labor row; do not replace with generic PAINTING. "
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
         "code": "VINYL_APPLICATION",
         "label": "Aplicare autocolant / Oracal (legacy)",
         "rate_basis": "per_square_meter",
@@ -207,6 +222,19 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
             "Owner-confirmed: 5 EUR/mp excluding TVA for face vinyl application labor. "
             "Quantity from face_vinyl_used_sqm (nesting preferred). "
             "Material Oracal/print remains separate."
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
+        "code": RETURN_CANT_VINYL_APPLICATION_LABOR_CODE,
+        "label": "Aplicare folie autocolanta pe cant",
+        "rate_basis": "per_linear_meter",
+        "rate_per_linear_meter": 1.0,
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed: return_cant vinyl application labor = 1 EUR/ml excluding TVA. "
+            "Dedicated return_cant vinyl_application labor row; do not replace with FACE_VINYL_APPLICATION_LABOR or VINYL_APPLICATION. "
             + TVA_RATE_NOTE
         ),
     },

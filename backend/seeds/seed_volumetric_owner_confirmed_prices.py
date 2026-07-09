@@ -150,6 +150,50 @@ OWNER_CONFIRMED_VOLUMETRIC_PRICES: List[_PriceRow] = [
         ),
     },
     {
+        "code": "MAT-VOPSEA-RAL-CANT-30MM",
+        "unit_cost": 2.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 30 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 30 mm = 2 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-60MM",
+        "unit_cost": 2.5,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 60 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 60 mm = 2.5 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-80MM",
+        "unit_cost": 3.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 80 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 80 mm = 3 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
+        "code": "MAT-VOPSEA-RAL-CANT-100MM",
+        "unit_cost": 4.0,
+        "currency": "EUR",
+        "name": "Vopsire RAL cant 100 mm - material",
+        "source_notes": (
+            "Owner-confirmed purchase: return_cant RAL material 100 mm = 4 EUR/ml excluding TVA. "
+            "Width-scoped material row for return_cant paint_application only. "
+            "Material row remains separate from RETURN_CANT_RAL_PAINT_LABOR."
+        ),
+    },
+    {
         "code": "MAT-ORACAL-651",
         "unit_cost": 9.0,
         "currency": "EUR",
