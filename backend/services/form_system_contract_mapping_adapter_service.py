@@ -169,6 +169,18 @@ def build_form_system_contract_readonly_mapping(
             blocker_code = selected_layer_runtime.get("blocker_code")
             entry["blockers"] = [blocker_code] if blocker_code else []
             break
+    if payload_raw is not None:
+        finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+        finish_target = str(finish_setup.get("finish_target") or "").strip() if finish_setup else ""
+        finish_confirmed = bool(finish_setup.get("confirmed") is True) if finish_setup else False
+        for entry in entries:
+            if entry["field_key"] != "finish.finish_target":
+                continue
+            if finish_target and finish_confirmed:
+                entry["source"] = "payload_persisted"
+                entry["state"] = "confirmed"
+                entry["blockers"] = []
+            break
     blockers = [
         {
             "field_key": field["field_key"],

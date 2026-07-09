@@ -461,6 +461,34 @@ def _overlay_runtime_selected_layer_field(
     return fields
 
 
+def _overlay_runtime_finish_target_field(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    if finish is None:
+        return fields
+    finish_target = str(finish.get("finish_target") or "").strip()
+    finish_confirmed = finish.get("confirmed") is True
+
+    for field in fields:
+        if field.get("field_key") != "face.finish_artwork_target":
+            continue
+        if finish_target and finish_confirmed:
+            field.update(
+                {
+                    "source_type": "payload_persisted",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Persisted finish_setup.finish_target captured from confirmed operator finish setup is available as runtime truth.",
+                }
+            )
+        return fields
+    return fields
+
+
 def _linked_template_composition() -> dict[str, Any]:
     return {
         "contract_version": "linked_template_composition_v1",
@@ -529,7 +557,10 @@ def build_form_system_contract_map(
             reason=reason,
         )
 
-    fields = _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw)
+    fields = _overlay_runtime_finish_target_field(
+        _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+        payload_raw,
+    )
     readiness = _build_readiness(fields)
     return {
         "contract_version": CONTRACT_VERSION,

@@ -263,6 +263,38 @@ def test_runtime_selected_layer_refs_without_stable_ids_are_ambiguous():
     assert field["blocker_code"] == "SELECTED_LAYER_REFS_AMBIGUOUS"
 
 
+def test_runtime_finish_target_confirms_backbone_field_when_persisted_and_confirmed():
+    payload = {
+        "finish_setup": {
+            "finish_target": "face",
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["face.finish_artwork_target"]
+
+    assert field["source_type"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+
+
+def test_runtime_finish_target_unconfirmed_does_not_unlock_backbone_field():
+    payload = {
+        "finish_setup": {
+            "finish_target": "face",
+            "confirmed": False,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["face.finish_artwork_target"]
+
+    assert field["source_type"] == "operator_confirmed"
+    assert field["state"] == "missing"
+    assert field["blocker_code"] == "FACE_FINISH_TARGET_MISSING"
+
+
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():
     contract = build_form_system_contract_map(ROOT)
 

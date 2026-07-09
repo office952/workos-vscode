@@ -140,6 +140,39 @@ def test_selected_layer_runtime_overlay_missing_refs_remains_blocked() -> None:
     assert field["blockers"] == ["SELECTED_LAYER_REFS_UNCONFIRMED"]
 
 
+def test_finish_target_runtime_overlay_reads_persisted_finish_target() -> None:
+    payload = {
+        "finish_setup": {
+            "finish_target": "face",
+            "confirmed": True,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["finish.finish_target"]
+
+    assert field["source"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blockers"] == []
+    assert field["product_truth_path"] == "components.finish.target"
+
+
+def test_finish_target_runtime_overlay_unconfirmed_does_not_become_confirmed() -> None:
+    payload = {
+        "finish_setup": {
+            "finish_target": "face",
+            "confirmed": False,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["finish.finish_target"]
+
+    assert field["state"] == "blocked"
+    assert field["source"] == "ui_zone_implied_target"
+    assert field["blockers"] == ["FINISH_TARGET_MISSING"]
+
+
 def test_no_pricing_quote_or_execution_coupling() -> None:
     model = build_form_system_contract_readonly_mapping(ROOT)
 

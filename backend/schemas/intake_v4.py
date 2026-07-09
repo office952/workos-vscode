@@ -156,6 +156,7 @@ class IntakeV4CommercialInputs(BaseModel):
 class IntakeV4FinishSetup(BaseModel):
     face_finish_type: str | None = None
     face_vinyl_roll_width_mm: float | None = None
+    finish_target: Literal["face", "cant", "artwork", "back", "all"] | None = None
     return_finish_type: str | None = None
     volum_aluminum_module_template_code: str | None = None
     return_oracal_code: str | None = None
