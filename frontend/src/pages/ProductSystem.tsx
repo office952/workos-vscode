@@ -91,6 +91,10 @@ import {
   COMPONENT_FIRST_EXPECTED_ROW_COUNT,
   COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES,
   assessComponentFirstLiveCompleteness,
+  assessComponentFirstContractDrift,
+  componentFirstContractCheckLabel,
+  componentFirstContractCheckTone,
+  componentFirstDriftLabel,
   componentFirstSourceDescription,
   componentFirstSourceLabel,
   componentFirstSourceTone,
@@ -2766,6 +2770,7 @@ function ComponentFirstReadonlyStatusPanel({
   selectedTemplateCode: string;
 }) {
   const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
+  const driftAssessment = assessComponentFirstContractDrift(templates);
   if (!model) {
     return null;
   }
@@ -2812,6 +2817,54 @@ function ComponentFirstReadonlyStatusPanel({
               Invalid active rows: {model.invalidActiveTemplateCodes.join(", ")}
             </p>
           ) : null}
+          <div
+            data-testid="product-system-component-first-drift-guard"
+            className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2"
+          >
+            <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold">
+              <span
+                data-testid="product-system-component-first-contract-check"
+                className={`rounded border px-2 py-0.5 ${componentFirstContractCheckTone(driftAssessment.contractCheckStatus)}`}
+              >
+                {componentFirstContractCheckLabel(driftAssessment.contractCheckStatus)}
+              </span>
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+                expected rows: {driftAssessment.completeness.expectedRowCount}
+              </span>
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+                live rows: {driftAssessment.completeness.foundRowCount}/{driftAssessment.completeness.expectedRowCount}
+              </span>
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+                drift: {componentFirstDriftLabel(driftAssessment.driftState)}
+              </span>
+            </div>
+            {driftAssessment.liveRowDriftIssues.length > 0 ? (
+              <p
+                data-testid="product-system-component-first-drift-warnings"
+                className="mt-1 text-[10px] font-mono text-amber-200/90"
+              >
+                Drift warnings: {driftAssessment.liveRowDriftIssues.join(", ")}
+              </p>
+            ) : null}
+            {driftAssessment.liveExtraFamilyRows.length > 0 ? (
+              <p className="mt-1 text-[10px] font-mono text-amber-200/90">
+                Extra family rows: {driftAssessment.liveExtraFamilyRows.join(", ")}
+              </p>
+            ) : null}
+            {driftAssessment.fallbackContractIssues.length > 0 ? (
+              <p className="mt-1 text-[10px] font-mono text-rose-200/90">
+                Fallback contract issues: {driftAssessment.fallbackContractIssues.join(", ")}
+              </p>
+            ) : null}
+            {driftAssessment.metadataUnavailableWarnings.length > 0 ? (
+              <p
+                data-testid="product-system-component-first-metadata-warnings"
+                className="mt-1 text-[10px] font-mono text-slate-400"
+              >
+                Metadata unavailable: {driftAssessment.metadataUnavailableWarnings.join(", ")}
+              </p>
+            ) : null}
+          </div>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>

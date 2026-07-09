@@ -672,4 +672,43 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
+  it("shows contract check drift guard with OK status when fallback contract is valid and no live rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-drift-guard")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-contract-check")).toHaveTextContent("contract check: OK");
+    expect(screen.getByTestId("product-system-component-first-drift-guard")).toHaveTextContent("drift: NO_DRIFT");
+    expect(screen.getByTestId("product-system-component-first-drift-guard")).toHaveTextContent("live rows: 0/7");
+    expect(screen.getByTestId("product-system-component-first-drift-guard")).toHaveTextContent("expected rows: 7");
+  });
+
+  it("shows WARNING contract check when live rows exist but metadata is unavailable", async () => {
+    const sparseLiveRows = componentFirstTemplates.map((template) => ({
+      ...template,
+      family_id: undefined,
+      family_name: undefined,
+      notes: undefined,
+      components_json: "[]",
+    }));
+
+    mockTemplateList.mockResolvedValue([volumetricTemplate, ...sparseLiveRows]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability, componentFirstAvailability], total: 2 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-contract-check")).toHaveTextContent("contract check: WARNING");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-metadata-warnings")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-component-first-drift-guard")).toHaveTextContent("live rows: 7/7");
+    expect(screen.queryByTestId("product-system-component-first-drift-warnings")).not.toBeInTheDocument();
+  });
+
 });
