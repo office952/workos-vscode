@@ -136,6 +136,7 @@ def test_required_field_set_includes_requested_backbone_fields():
         "lighting.type",
         "lighting.led_profile",
         "mounting.support_option",
+        "mounting.mounting_scope",
         "readiness.product_truth_blockers",
     ):
         assert key in fields
@@ -369,6 +370,57 @@ def test_runtime_artwork_lamination_unconfirmed_does_not_unlock_backbone_field()
     assert field["source_type"] == "payload_artwork_rows"
     assert field["state"] == "blocked"
     assert field["blocker_code"] == "LAMINATION_REQUIRED_UNKNOWN"
+
+
+def test_runtime_mounting_scope_confirms_backbone_field_when_persisted_and_confirmed():
+    payload = {
+        "finish_setup": {
+            "mounting_scope": "mounting_included",
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["mounting.mounting_scope"]
+
+    assert field["source_type"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+
+
+def test_runtime_mounting_scope_missing_stays_blocked_without_mounting_system_or_support_type_fallback():
+    payload = {
+        "finish_setup": {
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["mounting.mounting_scope"]
+
+    assert field["source_type"] == "operator_confirmed"
+    assert field["state"] == "missing"
+    assert field["blocker_code"] == "MOUNTING_SCOPE_MISSING"
+
+
+def test_runtime_mounting_scope_unconfirmed_does_not_unlock_backbone_field():
+    payload = {
+        "finish_setup": {
+            "mounting_scope": "mounting_included",
+            "confirmed": False,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["mounting.mounting_scope"]
+
+    assert field["source_type"] == "operator_confirmed"
+    assert field["state"] == "blocked"
+    assert field["blocker_code"] == "MOUNTING_SCOPE_MISSING"
 
 
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():

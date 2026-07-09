@@ -232,6 +232,7 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
 
 
 ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
+MountingScopeValue = Literal["no_mounting", "mounting_included", "mounting_external", "to_be_decided"]
 
 _ARTWORK_RUNTIME_BLOCKER_BY_FIELD: dict[ArtworkRuntimeBooleanField, str] = {
     "print_required": "PRINT_REQUIRED_UNKNOWN",
@@ -298,6 +299,45 @@ def artwork_finish_runtime_boolean_state(
         "status": "confirmed",
         "blocker_code": None,
         "rows": persisted_rows,
+        "source_path": source_path,
+    }
+
+
+def mounting_scope_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    source_path = "finish_setup.mounting_scope"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    mounting_scope = getattr(normalized_setup, "mounting_scope", None)
+    if not mounting_scope:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "MOUNTING_SCOPE_MISSING",
+            "value": mounting_scope,
+            "source_path": source_path,
+        }
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": mounting_scope,
         "source_path": source_path,
     }
 

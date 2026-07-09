@@ -55,12 +55,12 @@ FIELD_SPECS: list[FieldSpec] = [
     {
         "field_key": "mounting.mounting_scope",
         "owner": "mounting_support",
-        "source": "operator_mounting_scope_decision",
+        "source": "operator_confirmed",
         "state": "blocked",
         "product_truth_path": "components.mounting.mountingScope",
         "confirmation_required": True,
         "blockers": ["MOUNTING_SCOPE_MISSING"],
-        "notes": "Commercial mounting scope is documented but not a first-class runtime field in current Intake V6 Review.",
+        "notes": "Commercial mounting scope is canonical only as an explicit finish_setup.mounting_scope field; it must not be inferred from mounting_system or support_type.",
     },
     {
         "field_key": "svg.selected_layer_group",
@@ -170,7 +170,7 @@ def build_form_system_contract_readonly_mapping(
             entry["blockers"] = [blocker_code] if blocker_code else []
             break
     if payload_raw is not None:
-        for field_key in ("finish.print_required", "finish.lamination_required"):
+        for field_key in ("finish.print_required", "finish.lamination_required", "mounting.mounting_scope"):
             runtime_field = backbone_fields.get(field_key)
             if runtime_field is None:
                 continue

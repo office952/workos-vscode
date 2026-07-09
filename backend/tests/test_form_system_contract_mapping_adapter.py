@@ -251,6 +251,57 @@ def test_print_and_lamination_runtime_overlay_unconfirmed_rows_do_not_become_con
     assert fields["finish.lamination_required"]["blockers"] == ["LAMINATION_REQUIRED_UNKNOWN"]
 
 
+def test_mounting_scope_runtime_overlay_reads_persisted_mounting_scope() -> None:
+    payload = {
+        "finish_setup": {
+            "mounting_scope": "mounting_included",
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["mounting.mounting_scope"]
+
+    assert field["source"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blockers"] == []
+
+
+def test_mounting_scope_runtime_overlay_missing_value_remains_blocked_without_mounting_system_or_support_fallback() -> None:
+    payload = {
+        "finish_setup": {
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["mounting.mounting_scope"]
+
+    assert field["source"] == "operator_confirmed"
+    assert field["state"] == "missing"
+    assert field["blockers"] == ["MOUNTING_SCOPE_MISSING"]
+
+
+def test_mounting_scope_runtime_overlay_unconfirmed_value_does_not_become_confirmed() -> None:
+    payload = {
+        "finish_setup": {
+            "mounting_scope": "mounting_included",
+            "confirmed": False,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["mounting.mounting_scope"]
+
+    assert field["source"] == "operator_confirmed"
+    assert field["state"] == "blocked"
+    assert field["blockers"] == ["MOUNTING_SCOPE_MISSING"]
+
+
 def test_no_pricing_quote_or_execution_coupling() -> None:
     model = build_form_system_contract_readonly_mapping(ROOT)
 

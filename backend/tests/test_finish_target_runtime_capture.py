@@ -198,3 +198,40 @@ def test_save_finish_setup_persists_lamination_required_row_level(v4_client):
     assert artwork[0]["lamination_required"] is True
     assert artwork[1]["lamination_required"] is False
     assert "lamination_required" not in finish
+
+
+def test_save_finish_setup_persists_mounting_scope_runtime_field(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "mounting_scope": "mounting_included",
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+
+    assert finish["mounting_scope"] == "mounting_included"
+
+
+def test_save_finish_setup_without_mounting_scope_keeps_field_absent_even_with_mounting_system_and_support_type(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "mounting_system": "steel_bars",
+            "support_type": "steel_frame",
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+
+    assert finish.get("mounting_scope") is None

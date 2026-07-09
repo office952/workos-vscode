@@ -7,7 +7,7 @@ from typing import Any
 
 from schemas.intake_v4 import IntakeV4LayerRoleSetup
 from services.active_template_scope import is_owner_valid_active_template
-from services.intake_v4_finish_truth_service import artwork_finish_runtime_boolean_state
+from services.intake_v4_finish_truth_service import artwork_finish_runtime_boolean_state, mounting_scope_runtime_state
 from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
 from services.template_architecture_scope import (
     STRUCTURE_PREMOUNT_TEMPLATE_CODE,
@@ -376,6 +376,19 @@ FIELDS: list[dict[str, Any]] = [
         "requires_operator_confirmation": True,
     },
     {
+        "field_key": "mounting.mounting_scope",
+        "operator_label": "Scope comercial montaj",
+        "owning_component": "mounting_support",
+        "component_template_code": STRUCTURE_PREMOUNT_TEMPLATE_CODE,
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.mounting.mountingScope",
+        "required_for": ["quote_preview", "priced_quote", "order_snapshot", "product_definition", "execution_later"],
+        "blocker_code": "MOUNTING_SCOPE_MISSING",
+        "notes": "Commercial mounting scope must be captured explicitly from operator finish setup; mounting_system and support_type are separate fields.",
+        "requires_operator_confirmation": True,
+    },
+    {
         "field_key": "readiness.product_truth_blockers",
         "operator_label": "Blockere Product Truth",
         "owning_component": "readiness",
@@ -555,6 +568,40 @@ def _overlay_runtime_artwork_finish_boolean_fields(
     return fields
 
 
+def _overlay_runtime_mounting_scope_field(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    runtime = mounting_scope_runtime_state(finish_setup)
+
+    for field in fields:
+        if field.get("field_key") != "mounting.mounting_scope":
+            continue
+        if runtime["status"] == "confirmed":
+            field.update(
+                {
+                    "source_type": "payload_persisted",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Persisted finish_setup.mounting_scope captured from confirmed operator finish setup is available as runtime truth.",
+                }
+            )
+            return fields
+        field.update(
+            {
+                "source_type": "operator_confirmed",
+                "state": "missing" if runtime["status"] == "missing" else "blocked",
+                "blocker_code": "MOUNTING_SCOPE_MISSING",
+                "notes": "Mounting scope remains blocked until finish_setup.mounting_scope is explicitly persisted and confirmed. No fallback from mounting_system or support_type is allowed.",
+            }
+        )
+        return fields
+    return fields
+
+
 def _linked_template_composition() -> dict[str, Any]:
     return {
         "contract_version": "linked_template_composition_v1",
@@ -624,8 +671,11 @@ def build_form_system_contract_map(
         )
 
     fields = _overlay_runtime_finish_target_field(
-        _overlay_runtime_artwork_finish_boolean_fields(
-            _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+        _overlay_runtime_mounting_scope_field(
+            _overlay_runtime_artwork_finish_boolean_fields(
+                _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+                payload_raw,
+            ),
             payload_raw,
         ),
         payload_raw,
