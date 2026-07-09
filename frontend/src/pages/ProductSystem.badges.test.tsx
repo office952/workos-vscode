@@ -546,6 +546,7 @@ describe("ProductSystem design-system badges", () => {
     expect(panel).toHaveTextContent("INACTIVE");
     expect(panel).toHaveTextContent("CANDIDATE");
     expect(panel).toHaveTextContent("READONLY");
+    expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("LIVE SEEDED INACTIVE ROWS");
     expect(panel).toHaveTextContent("active = false");
     expect(panel).toHaveTextContent("No Work Intake exposure: true");
     expect(panel).toHaveTextContent("No Pricing activation: true");

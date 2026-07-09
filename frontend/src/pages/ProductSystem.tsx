@@ -440,6 +440,18 @@ type ComponentFirstReadonlySetModel = {
   components: ComponentFirstReadonlyComponent[];
 };
 
+function componentFirstSourceLabel(sourceMode: ComponentFirstReadonlySetModel["sourceMode"]): string {
+  return sourceMode === "live_seeded"
+    ? "LIVE SEEDED INACTIVE ROWS"
+    : "CODE CONTRACT FALLBACK";
+}
+
+function componentFirstSourceTone(sourceMode: ComponentFirstReadonlySetModel["sourceMode"]): string {
+  return sourceMode === "live_seeded"
+    ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300"
+    : "border-amber-700/40 bg-amber-900/20 text-amber-300";
+}
+
 function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: string): ComponentFirstReadonlySetModel {
   return {
     sourceMode: "code_contract_fallback",
@@ -2731,9 +2743,19 @@ function ComponentFirstReadonlyStatusPanel({
           <p className="mt-0.5 text-[11px] text-cyan-200/75">
             Readonly candidate set only. Product Template composes; Component Templates own calculable truth. This section does not activate anything and does not create runtime wiring.
           </p>
-          <p className="mt-1 text-[10px] text-cyan-300/75">
-            Source: {model.sourceMode === "live_seeded" ? "live seeded rows" : "code contract fallback until live seed is intentionally applied"}.
-          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+            <span
+              data-testid="product-system-component-first-source-label"
+              className={`rounded border px-2 py-0.5 ${componentFirstSourceTone(model.sourceMode)}`}
+            >
+              {componentFirstSourceLabel(model.sourceMode)}
+            </span>
+            <span className="text-cyan-300/75">
+              {model.sourceMode === "live_seeded"
+                ? "Rows exist in DB/API and remain inactive by design."
+                : "Live inert rows are absent; showing accepted readonly contract until a deliberate non-live-altering seed review step is approved."}
+            </span>
+          </div>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
