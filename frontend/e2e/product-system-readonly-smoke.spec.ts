@@ -178,11 +178,41 @@ test.describe("Product System readonly smoke", () => {
     await expect(workshop).toHaveText(/Întrebări pentru owner/i);
     await expect(page.getByTestId("product-system-return-cant-owner-inputs")).toBeVisible({ timeout: 10_000 });
     await expect(page.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveText(/Confirmed so far/i);
+    await expect(page.getByTestId("product-system-return-cant-partial-so-far")).toHaveText(/Partial confirmed/i);
     await expect(page.getByTestId("product-system-return-cant-missing-before-pricing")).toHaveText(
       /Still missing before pricing/i,
     );
     await expect(page.getByTestId("product-system-return-cant-missing-before-product-definition")).toHaveText(
       /Still missing before ProductDefinition/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_selector_mode")).toHaveText(
+      /listă completă Oracal/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_pricing_mode")).toHaveText(
+      /preț pe cod\/familie/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_input_mode")).toHaveText(
+      /selector standard RAL/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-return_depths_standard")).toHaveText(
+      /30 mm.*60 mm.*80 mm.*100 mm/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-return_material")).toHaveText(
+      /aluminiu 0\.6 mm/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-return_material_unit")).toHaveText(/^ml$/i);
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-return_labor_unit")).toHaveText(/^ml$/i);
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-stock_color_affects_price")).toHaveText(
+      /Nu — doar informație atelier/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-perimeter_geometry_source")).toHaveText(
+      /perimetru\/contur real/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_material_price_rule")).toHaveText(
+      /ml.*preț neconfirmat/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_labor_price_rule")).toHaveText(
+      /ml.*preț\/minim neconfirmat/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveText(
       /OWNER INPUT REQUIRED/i,

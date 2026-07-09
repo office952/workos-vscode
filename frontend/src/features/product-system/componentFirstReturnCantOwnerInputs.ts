@@ -2,6 +2,7 @@ import { FINISH_TYPE_VALUES, RETURN_CANT_WORKSHOP_FIELDS } from "./componentFirs
 
 export type OwnerConfirmedValueStatus =
   | "owner_confirmed"
+  | "partial_confirmed"
   | "owner_input_required"
   | "blocked_until_owner_decision"
   | "not_applicable_yet";
@@ -34,42 +35,47 @@ export const RETURN_CANT_OWNER_INPUT_DISPLAY_UNKNOWN = "OWNER INPUT REQUIRED" as
 
 export const RETURN_CANT_CONFIRMED_SO_FAR: string[] = [
   "Variante finisaj cant: Culoare Stock · Oracal · Vopsit RAL",
-  "Culoare Stock: operator tastează culoarea pentru atelier (fără presupunere cost diferit)",
+  "Oracal selector: listă completă (catalog efectiv încă necesar)",
+  "Oracal pricing: preț pe cod/familie (tabel prețuri încă necesar)",
+  "RAL mode: selector standard (sursă/listă RAL încă necesară)",
+  "Adâncimi standard cant: 30 / 60 / 80 / 100 mm",
+  "Material cant: aluminiu 0.6 mm",
+  "Unitate material cant: ml",
+  "Unitate manoperă cant: ml",
+  "Culoare Stock: fără impact preț — doar informație atelier",
+  "Geometrie cant: perimetru/contur real al literelor",
   "Vopsit RAL: material și manoperă tratate separat (model, nu prețuri)",
   "Calcul separat: necesită component-owned truth pe path componentă",
   "Fără activare: no Product Truth write · no Pricing · no Work Intake",
 ];
 
+export const RETURN_CANT_PARTIAL_SO_FAR: string[] = [
+  "RAL material Vopsit: unitate ml confirmată — valori preț lipsă",
+  "RAL manoperă Vopsit: unitate ml confirmată — preț/minim lipsă",
+];
+
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRICING: string[] = [
-  "Listă coduri Oracal",
-  "Mod pricing Oracal (preț unic vs pe cod/familie)",
-  "Mod RAL (text liber vs selector vs listă standard)",
-  "Adâncimi standard cant (30/60/80/100 mm?)",
-  "Material cant (aluminiu, PVC, plexi, altceva?)",
-  "Unitate material cant",
-  "Unitate manoperă cant",
-  "Regulă preț material Vopsit RAL",
-  "Regulă manoperă Vopsit RAL",
-  "Minim preț (dacă există)",
+  "Catalog coduri Oracal efectiv",
+  "Tabel prețuri Oracal pe cod/familie",
+  "Sursă/listă selector RAL standard",
+  "Valori preț material Vopsit RAL (unitate ml confirmată)",
+  "Valori preț/minim manoperă Vopsit RAL (unitate ml confirmată)",
+  "Minim preț cant (dacă există)",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [
-  "Adâncimi standard cant confirmate",
-  "Sursă geometrie / perimetru necesar calcul cant",
   "Compatibilitate material ↔ adâncime",
 ];
 
 /** Owner questions kept visible until answered — no invented answers. */
 export const RETURN_CANT_OWNER_QUESTIONS_PENDING: string[] = [
-  "Adâncimi standard cant: 30 mm? 60 mm? 80 mm? 100 mm? altele?",
-  "Material cant: aluminiu? PVC? plexiglas/acrylic? altceva? 30/60 mm același material sau diferit?",
-  "Culoare Stock: culoarea tastată influențează prețul sau este doar informație atelier?",
-  "Oracal: selector complet? coduri uzuale + alt cod? text liber? preț unic sau pe cod/familie?",
-  "Vopsit RAL material: preț material 30/60/80 mm? unitate ml/mp/set/bucată?",
-  "Vopsit RAL manoperă: pe ml? set? piesă/literă? mp? minim + ml?",
-  "Unitate generală calcul cant: material și manoperă pe ml de cant? altă regulă?",
-  "RAL: text liber sau selector? Există listă standard?",
-  "Sursă perimetru pentru calcul cant: față confirmată? alt path?",
+  "Catalog Oracal efectiv: care coduri intră în listă completă?",
+  "Tabel prețuri Oracal: valori pe cod/familie?",
+  "Sursă/listă RAL standard pentru selector?",
+  "Vopsit RAL material: valori preț pe adâncime (unitate ml confirmată)?",
+  "Vopsit RAL manoperă: valori preț și minim (unitate ml confirmată)?",
+  "Există minim de preț pentru cant? Pe ce bază?",
+  "Ce combinații material/adâncime sunt valide pentru aluminiu 0.6 mm?",
 ];
 
 function confirmedInput(
@@ -82,6 +88,19 @@ function confirmedInput(
     status: "owner_confirmed",
     source: partial.source ?? "existing_project_memory",
     mustNotInvent: false,
+  };
+}
+
+function partialInput(
+  partial: Omit<ReturnCantOwnerInput, "status" | "source" | "mustNotInvent"> & {
+    value: NonNullable<ReturnCantOwnerInput["value"]>;
+  },
+): ReturnCantOwnerInput {
+  return {
+    ...partial,
+    status: "partial_confirmed",
+    source: partial.source ?? "owner_confirmed_in_chat",
+    mustNotInvent: true,
   };
 }
 
@@ -126,36 +145,56 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     blockingArea: ["execution"],
     notesRo: "Informație clară atelier. Cost diferit NU este presupus fără confirmare owner.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "stock_color_affects_price",
     labelRo: "Culoare Stock influențează prețul?",
+    value: false,
     unit: "none",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo:
-      "Culoarea tastată influențează prețul sau este doar informație atelier?",
-    notesRo: "Decizie owner — nu presupunem impact pricing.",
+    notesRo:
+      "Owner confirmat: NU — culoarea tastată este doar informație atelier, fără impact preț.",
+  }),
+  confirmedInput({
+    key: "oracal_selector_mode",
+    labelRo: "Mod selector Oracal",
+    value: "listă completă Oracal",
+    source: "owner_confirmed_in_chat",
+    blockingArea: ["pricing", "execution"],
+    notesRo:
+      "Owner chose B — selector listă completă. Catalogul efectiv de coduri rămâne OWNER INPUT REQUIRED.",
   }),
   pendingInput({
     key: "oracal_code_list",
-    labelRo: "Listă coduri Oracal",
+    labelRo: "Catalog coduri Oracal (date efective)",
     blockingArea: ["pricing", "execution"],
-    ownerQuestionRo:
-      "Selector complet? Coduri uzuale + alt cod? Text liber? Care coduri intră în listă?",
-    notesRo: "Fără listă Oracal inventată.",
+    ownerQuestionRo: "Care coduri Oracal intră în catalogul complet? (mod selector deja confirmat)",
+    notesRo: "Mod selector confirmat — fără listă Oracal inventată.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "oracal_pricing_mode",
     labelRo: "Mod pricing Oracal",
+    value: "preț pe cod/familie",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Preț unic pentru toate codurile Oracal sau preț diferit pe cod/familie?",
-    notesRo: "Fără mod pricing presupus.",
+    notesRo:
+      "Owner chose B — preț diferit pe cod/familie. Tabelul de prețuri rămâne OWNER INPUT REQUIRED.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "ral_input_mode",
     labelRo: "Mod introducere RAL",
+    value: "selector standard RAL",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "execution"],
-    ownerQuestionRo: "RAL ca text liber, selector sau listă standard?",
-    notesRo: "Fără tabel RAL inventat.",
+    notesRo:
+      "Owner chose B — selector standard RAL. Sursa/lista RAL efectivă rămâne OWNER INPUT REQUIRED.",
+  }),
+  pendingInput({
+    key: "ral_selector_source",
+    labelRo: "Sursă/listă selector RAL standard",
+    blockingArea: ["pricing", "execution"],
+    ownerQuestionRo: "Care este sursa sau lista RAL pentru selector standard?",
+    notesRo: "Mod selector confirmat — fără tabel RAL inventat.",
   }),
   confirmedInput({
     key: "ral_material_labor_separation",
@@ -165,53 +204,60 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     blockingArea: ["pricing", "workshop_only"],
     notesRo: "Model de business confirmat — nu include prețuri sau formule.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "return_depths_standard",
     labelRo: "Adâncimi standard cant",
+    value: ["30", "60", "80", "100"],
     unit: "mm",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "product_definition"],
-    ownerQuestionRo: "30 mm? 60 mm? 80 mm? 100 mm? altele?",
-    notesRo: "Fără adâncimi default inventate.",
+    notesRo: "Owner confirmat: 30 / 60 / 80 / 100 mm.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "return_material",
     labelRo: "Material cant",
+    value: "aluminiu 0.6 mm",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing", "product_definition"],
-    ownerQuestionRo:
-      "Aluminiu? PVC? plexiglas/acrylic? altceva? 30/60 mm același material sau diferit?",
-    notesRo: "Fără material implicit.",
+    notesRo: "Owner confirmat: aluminiu 0.6 mm (material + grosime).",
   }),
-  pendingInput({
+  confirmedInput({
     key: "return_material_unit",
     labelRo: "Unitate calcul material cant",
-    unit: "none",
+    value: "ml",
+    unit: "ml",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Material pe ml, mp, bucată, set sau altă unitate?",
-    notesRo: "Fără unitate presupusă.",
+    notesRo: "Material cant calculat pe ml (metru liniar).",
   }),
-  pendingInput({
+  confirmedInput({
     key: "return_labor_unit",
     labelRo: "Unitate manoperă cant",
-    unit: "none",
+    value: "ml",
+    unit: "ml",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Manoperă pe ml, bucată, set, mp sau altfel?",
-    notesRo: "Fără unitate presupusă.",
+    notesRo: "Manoperă cant calculată pe ml (metru liniar).",
   }),
-  pendingInput({
+  partialInput({
     key: "ral_material_price_rule",
     labelRo: "Regulă preț material Vopsit RAL",
-    unit: "lei",
+    value: "Unitate: ml — preț neconfirmat",
+    unit: "ml",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Preț material 30 mm? 60 mm? 80 mm? Unitate ml/mp/set/bucată?",
-    notesRo: "Fără prețuri material inventate.",
+    ownerQuestionRo: "Valori preț material Vopsit RAL pe adâncime? (unitate ml confirmată)",
+    notesRo: "Unitate ml confirmată de owner. Fără prețuri material inventate.",
   }),
-  pendingInput({
+  partialInput({
     key: "ral_labor_price_rule",
     labelRo: "Regulă manoperă Vopsit RAL",
-    unit: "lei",
+    value: "Unitate: ml — preț/minim neconfirmat",
+    unit: "ml",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo: "Pe ml? set? piesă/literă? mp? minim + ml?",
-    notesRo: "Fără formule manoperă inventate.",
+    ownerQuestionRo: "Valori preț manoperă și minim? (unitate ml confirmată)",
+    notesRo: "Unitate ml confirmată de owner. Fără prețuri/formule manoperă inventate.",
   }),
   pendingInput({
     key: "minimum_price_rule",
@@ -221,18 +267,20 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     ownerQuestionRo: "Există minim de preț pentru cant? Dacă da, pe ce bază?",
     notesRo: "Fără minim inventat.",
   }),
-  pendingInput({
+  confirmedInput({
     key: "perimeter_geometry_source",
     labelRo: "Sursă perimetru / geometrie cant",
+    value: "perimetru/contur real al literelor",
+    source: "owner_confirmed_in_chat",
     blockingArea: ["product_definition"],
-    ownerQuestionRo: "Perimetrul vine din față confirmată? Alt path Product Truth?",
-    notesRo: "Necesar pentru ProductDefinition — neconfirmat.",
+    notesRo:
+      "Owner confirmat: calcul pe perimetru/contur real. Algoritm SVG/nesting ne modificat în acest task.",
   }),
   pendingInput({
     key: "material_depth_compatibility",
     labelRo: "Compatibilitate material ↔ adâncime",
     blockingArea: ["product_definition"],
-    ownerQuestionRo: "Ce combinații material/adâncime sunt valide?",
+    ownerQuestionRo: "Ce combinații material/adâncime sunt valide pentru aluminiu 0.6 mm?",
     notesRo: "Reguli de compatibilitate neconfirmate.",
   }),
   confirmedInput({
@@ -254,6 +302,7 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
 export type ReturnCantOwnerInputSummary = {
   globalStatus: "OWNER_INPUT_REQUIRED";
   confirmedCount: number;
+  partialCount: number;
   pendingCount: number;
   blockedCount: number;
   missingBeforePricingCount: number;
@@ -261,15 +310,26 @@ export type ReturnCantOwnerInputSummary = {
 };
 
 export function formatReturnCantOwnerInputDisplayValue(input: ReturnCantOwnerInput): string {
-  if (input.status !== "owner_confirmed" || input.value === null) {
+  const hasDisplayValue =
+    (input.status === "owner_confirmed" || input.status === "partial_confirmed") &&
+    input.value !== null;
+
+  if (!hasDisplayValue) {
     return RETURN_CANT_OWNER_INPUT_DISPLAY_UNKNOWN;
   }
-  if (Array.isArray(input.value)) {
-    return input.value.join(" · ");
+
+  if (input.key === "stock_color_affects_price" && typeof input.value === "boolean") {
+    return input.value ? "Da" : "Nu — doar informație atelier";
   }
+
+  if (Array.isArray(input.value)) {
+    return input.value.map((v) => `${v} mm`).join(" · ");
+  }
+
   if (typeof input.value === "boolean") {
     return input.value ? "Da (model confirmat)" : "Nu";
   }
+
   return String(input.value);
 }
 
@@ -277,21 +337,27 @@ export function buildReturnCantOwnerInputSummary(
   inputs: ReturnCantOwnerInput[] = RETURN_CANT_OWNER_INPUTS,
 ): ReturnCantOwnerInputSummary {
   const confirmedCount = inputs.filter((i) => i.status === "owner_confirmed").length;
+  const partialCount = inputs.filter((i) => i.status === "partial_confirmed").length;
   const pendingCount = inputs.filter((i) => i.status === "owner_input_required").length;
   const blockedCount = inputs.filter((i) => i.status === "blocked_until_owner_decision").length;
   const missingBeforePricingCount = inputs.filter(
     (i) =>
       i.status !== "owner_confirmed" &&
+      i.status !== "partial_confirmed" &&
       i.blockingArea.includes("pricing") &&
       i.key !== "pricing_activation",
   ).length;
   const missingBeforeProductDefinitionCount = inputs.filter(
-    (i) => i.status !== "owner_confirmed" && i.blockingArea.includes("product_definition"),
+    (i) =>
+      i.status !== "owner_confirmed" &&
+      i.status !== "partial_confirmed" &&
+      i.blockingArea.includes("product_definition"),
   ).length;
 
   return {
     globalStatus: "OWNER_INPUT_REQUIRED",
     confirmedCount,
+    partialCount,
     pendingCount,
     blockedCount,
     missingBeforePricingCount,
@@ -327,6 +393,8 @@ export function ownerConfirmedValueStatusLabel(status: OwnerConfirmedValueStatus
   switch (status) {
     case "owner_confirmed":
       return "CONFIRMED";
+    case "partial_confirmed":
+      return "PARTIAL";
     case "owner_input_required":
       return "OWNER INPUT";
     case "blocked_until_owner_decision":

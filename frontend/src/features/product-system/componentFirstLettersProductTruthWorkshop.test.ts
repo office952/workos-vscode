@@ -23,13 +23,24 @@ describe("componentFirstLettersProductTruthWorkshop", () => {
     expect(stockNote?.requirement).toContain("informational");
   });
 
-  it("RETURN-CANT has Oracal/RAL fields as owner_input_required", () => {
+  it("RETURN-CANT has Oracal/RAL catalog fields still owner_input_required", () => {
     expect(RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "oracal_code")?.status).toBe(
       "owner_input_required",
     );
     expect(RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "ral_code")?.status).toBe(
       "owner_input_required",
     );
+  });
+
+  it("RETURN-CANT has confirmed depths, material, and units from owner answers", () => {
+    const depth = RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "return_depth_mm");
+    expect(depth?.status).toBe("confirmed");
+    expect(depth?.allowedValues).toEqual(["30", "60", "80", "100"]);
+    const material = RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "return_material");
+    expect(material?.status).toBe("confirmed");
+    expect(material?.allowedValues).toEqual(["aluminiu 0.6 mm"]);
+    expect(RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "return_material_unit")?.defaultValue).toBe("ml");
+    expect(RETURN_CANT_WORKSHOP_FIELDS.find((f) => f.fieldKey === "return_labor_unit")?.defaultValue).toBe("ml");
   });
 
   it("RETURN-CANT has RAL material/labor rules as owner_input_required with mustNotInvent", () => {
@@ -39,6 +50,7 @@ describe("componentFirstLettersProductTruthWorkshop", () => {
     expect(laborRule?.status).toBe("owner_input_required");
     expect(materialRule?.mustNotInvent).toBe(true);
     expect(laborRule?.mustNotInvent).toBe(true);
+    expect(materialRule?.notesRo).toMatch(/ml confirmată/i);
   });
 
   it("all components have at least one owner question", () => {

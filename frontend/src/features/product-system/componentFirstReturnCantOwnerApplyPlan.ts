@@ -20,8 +20,7 @@ export type ReturnCantOwnerAnswerTopic = {
 
 /**
  * Workshop-only mirror of owner-answers doc state.
- * Update docStatus only when return_cant_owner_answers_pending.md is explicitly filled by owner.
- * As of bc73b81 audit: all topics pending — no answers applied to contract.
+ * Updated d64c427 → apply v2: owner answers from prompt applied to contract.
  */
 export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
   {
@@ -29,9 +28,9 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     section: "A",
     topic: "Oracal selector",
     questionRo: "Selector coduri uzuale + alt cod? Listă completă? Text liber?",
-    contractKeys: ["oracal_code_list"],
-    docStatus: "pending",
-    notesRo: "Fără listă Oracal în contract până la răspuns owner.",
+    contractKeys: ["oracal_selector_mode"],
+    docStatus: "answered",
+    notesRo: "Mod listă completă confirmat — catalog efectiv (oracal_code_list) încă pending.",
   },
   {
     priority: 2,
@@ -39,8 +38,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Oracal pricing",
     questionRo: "Preț unic sau preț pe cod/familie?",
     contractKeys: ["oracal_pricing_mode"],
-    docStatus: "pending",
-    notesRo: "Fără mod pricing presupus.",
+    docStatus: "answered",
+    notesRo: "Mod preț pe cod/familie confirmat — tabel prețuri încă pending.",
   },
   {
     priority: 3,
@@ -48,8 +47,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "RAL mode",
     questionRo: "Text liber? Selector standard? Selector + text liber?",
     contractKeys: ["ral_input_mode"],
-    docStatus: "pending",
-    notesRo: "Fără tabel RAL inventat.",
+    docStatus: "answered",
+    notesRo: "Selector standard confirmat — sursă/listă RAL încă pending.",
   },
   {
     priority: 4,
@@ -57,8 +56,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Adâncimi cant",
     questionRo: "30 / 60 / 80 / 100 mm? altele?",
     contractKeys: ["return_depths_standard"],
-    docStatus: "pending",
-    notesRo: "Workshop field: return_depth_mm.",
+    docStatus: "answered",
+    notesRo: "30 / 60 / 80 / 100 mm confirmate.",
   },
   {
     priority: 5,
@@ -66,8 +65,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Material cant",
     questionRo: "Aluminiu? PVC? plexi? alt material?",
     contractKeys: ["return_material"],
-    docStatus: "pending",
-    notesRo: "Fără material default.",
+    docStatus: "answered",
+    notesRo: "Aluminiu 0.6 mm confirmat.",
   },
   {
     priority: 6,
@@ -75,8 +74,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Material vs adâncime",
     questionRo: "Același material 30/60 mm sau diferit?",
     contractKeys: ["return_material"],
-    docStatus: "pending",
-    notesRo: "Poate completa răspunsul material.",
+    docStatus: "answered",
+    notesRo: "Un singur material aluminiu 0.6 mm pentru toate adâncimile.",
   },
   {
     priority: 7,
@@ -84,8 +83,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Unitate material",
     questionRo: "ml / mp / buc / set? Perimetru cant ca bază?",
     contractKeys: ["return_material_unit"],
-    docStatus: "pending",
-    notesRo: "Fără unitate presupusă.",
+    docStatus: "answered",
+    notesRo: "ml confirmat.",
   },
   {
     priority: 8,
@@ -93,8 +92,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Unitate manoperă",
     questionRo: "ml / mp / buc / set?",
     contractKeys: ["return_labor_unit"],
-    docStatus: "pending",
-    notesRo: "Fără unitate presupusă.",
+    docStatus: "answered",
+    notesRo: "ml confirmat.",
   },
   {
     priority: 9,
@@ -102,8 +101,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "RAL material price",
     questionRo: "Preț material 30/60/80 mm? Unitate?",
     contractKeys: ["ral_material_price_rule"],
-    docStatus: "pending",
-    notesRo: "Fără prețuri inventate.",
+    docStatus: "partial",
+    notesRo: "Unitate ml confirmată — prețuri lipsă.",
   },
   {
     priority: 10,
@@ -111,8 +110,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "RAL manoperă + minim",
     questionRo: "ml / set / piesă / minim + ml? Există minim?",
     contractKeys: ["ral_labor_price_rule", "minimum_price_rule"],
-    docStatus: "pending",
-    notesRo: "Fără formule inventate.",
+    docStatus: "partial",
+    notesRo: "Unitate ml confirmată — preț/minim lipsă.",
   },
   {
     priority: 11,
@@ -120,8 +119,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Culoare Stock pricing",
     questionRo: "Influențează prețul sau doar info atelier?",
     contractKeys: ["stock_color_affects_price"],
-    docStatus: "pending",
-    notesRo: "Mod operator deja confirmat separat.",
+    docStatus: "answered",
+    notesRo: "NU — doar informație atelier.",
   },
   {
     priority: 12,
@@ -129,8 +128,8 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "Perimetru / geometrie",
     questionRo: "Perimetru litere? bounding/nesting/contur? Product Truth path?",
     contractKeys: ["perimeter_geometry_source"],
-    docStatus: "pending",
-    notesRo: "Blocant ProductDefinition.",
+    docStatus: "answered",
+    notesRo: "Perimetru/contur real al literelor confirmat.",
   },
   {
     priority: 13,
@@ -139,7 +138,7 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     questionRo: "Ce combinații sunt valide?",
     contractKeys: ["material_depth_compatibility"],
     docStatus: "pending",
-    notesRo: "Blocant ProductDefinition.",
+    notesRo: "Blocant ProductDefinition — neconfirmat.",
   },
 ];
 
@@ -148,6 +147,7 @@ export type ReturnCantOwnerApplyPlan = {
   answersSource: typeof RETURN_CANT_OWNER_ANSWERS_DOC_PATH | "owner_prompt" | "none";
   topicsPending: number;
   topicsAnswered: number;
+  topicsPartial: number;
   contractKeysReadyToApply: string[];
   contractKeysStillPending: string[];
   applyBlockedReason: string;
@@ -159,7 +159,8 @@ export function buildReturnCantOwnerApplyPlan(
   topics: ReturnCantOwnerAnswerTopic[] = RETURN_CANT_OWNER_ANSWER_TOPICS,
 ): ReturnCantOwnerApplyPlan {
   const answeredTopics = topics.filter((t) => t.docStatus === "answered");
-  const answersFound = answeredTopics.length > 0;
+  const partialTopics = topics.filter((t) => t.docStatus === "partial");
+  const answersFound = answeredTopics.length > 0 || partialTopics.length > 0;
 
   const contractKeysReadyToApply = answeredTopics.flatMap((t) => t.contractKeys);
   const uniqueReady = [...new Set(contractKeysReadyToApply)];
@@ -172,15 +173,16 @@ export function buildReturnCantOwnerApplyPlan(
 
   return {
     answersFound,
-    answersSource: answersFound ? RETURN_CANT_OWNER_ANSWERS_DOC_PATH : "none",
+    answersSource: answersFound ? "owner_prompt" : "none",
     topicsPending: topics.filter((t) => t.docStatus === "pending").length,
     topicsAnswered: answeredTopics.length,
+    topicsPartial: partialTopics.length,
     contractKeysReadyToApply: uniqueReady,
     contractKeysStillPending,
     applyBlockedReason: answersFound
-      ? "Partial answers — apply only answered contract keys; rest stays OWNER INPUT REQUIRED"
-      : "No owner answers in pending doc or prompt — contract values unchanged",
-    nextSliceTitle: "COMPONENT_FIRST_RETURN_CANT_OWNER_ANSWERS_APPLY_V2",
+      ? "Partial catalog/pricing data still pending — no pricing activation"
+      : "No owner answers — contract values unchanged",
+    nextSliceTitle: "COMPONENT_FIRST_RETURN_CANT_CATALOG_AND_PRICING_DATA_V3",
     globalWorkshopStatus: "OWNER_INPUT_REQUIRED",
   };
 }

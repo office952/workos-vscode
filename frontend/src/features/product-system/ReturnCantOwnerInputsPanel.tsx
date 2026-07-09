@@ -3,6 +3,7 @@ import {
   formatReturnCantOwnerInputDisplayValue,
   ownerConfirmedValueStatusLabel,
   RETURN_CANT_CONFIRMED_SO_FAR,
+  RETURN_CANT_PARTIAL_SO_FAR,
   RETURN_CANT_OWNER_INPUTS,
   RETURN_CANT_OWNER_QUESTIONS_PENDING,
   RETURN_CANT_STILL_MISSING_BEFORE_PRICING,
@@ -16,13 +17,15 @@ function StatusChip({
   testId,
 }: {
   label: string;
-  tone: "emerald" | "amber" | "rose" | "slate";
+  tone: "emerald" | "amber" | "rose" | "slate" | "cyan";
   testId?: string;
 }) {
   const toneClass =
     tone === "emerald"
       ? "border-emerald-800/40 bg-emerald-950/25 text-emerald-200"
-      : tone === "amber"
+      : tone === "cyan"
+        ? "border-cyan-800/40 bg-cyan-950/25 text-cyan-200"
+        : tone === "amber"
         ? "border-amber-800/40 bg-amber-950/25 text-amber-200"
         : tone === "rose"
           ? "border-rose-800/40 bg-rose-950/25 text-rose-200"
@@ -40,6 +43,7 @@ function StatusChip({
 
 function inputTone(status: ReturnCantOwnerInput["status"]) {
   if (status === "owner_confirmed") return "emerald" as const;
+  if (status === "partial_confirmed") return "cyan" as const;
   if (status === "owner_input_required") return "amber" as const;
   if (status === "blocked_until_owner_decision") return "rose" as const;
   return "slate" as const;
@@ -91,7 +95,7 @@ export function ReturnCantOwnerInputsPanel() {
         <p className="mt-1 text-[10px] text-slate-500">Workshop only · nu este sursă runtime · nu scrie Product Truth live</p>
       </div>
 
-      <div className="grid gap-3 lg:grid-cols-3">
+      <div className="grid gap-3 lg:grid-cols-2 xl:grid-cols-4">
         <article
           data-testid="product-system-return-cant-confirmed-so-far"
           className="rounded-lg border border-emerald-800/30 bg-emerald-950/10 px-3 py-2.5"
@@ -99,6 +103,18 @@ export function ReturnCantOwnerInputsPanel() {
           <p className="text-[10px] font-bold uppercase text-emerald-200/90">Confirmed so far</p>
           <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
             {RETURN_CANT_CONFIRMED_SO_FAR.map((item) => (
+              <li key={item}>• {item}</li>
+            ))}
+          </ul>
+        </article>
+
+        <article
+          data-testid="product-system-return-cant-partial-so-far"
+          className="rounded-lg border border-cyan-800/30 bg-cyan-950/10 px-3 py-2.5"
+        >
+          <p className="text-[10px] font-bold uppercase text-cyan-200/90">Partial confirmed</p>
+          <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
+            {RETURN_CANT_PARTIAL_SO_FAR.map((item) => (
               <li key={item}>• {item}</li>
             ))}
           </ul>
@@ -176,8 +192,8 @@ export function ReturnCantOwnerInputsPanel() {
         <p>No Work Intake exposure</p>
         <p>No runtime replacement</p>
         <p className="mt-1 text-slate-500">
-          Summary: {summary.confirmedCount} confirmed · {summary.pendingCount} pending ·{" "}
-          {summary.blockedCount} blocked
+          Summary: {summary.confirmedCount} confirmed · {summary.partialCount} partial ·{" "}
+          {summary.pendingCount} pending · {summary.blockedCount} blocked
         </p>
       </div>
     </section>
