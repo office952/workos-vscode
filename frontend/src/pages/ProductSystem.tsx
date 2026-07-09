@@ -387,6 +387,329 @@ interface DraftTemplate {
   notes: string;
 }
 
+const COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE = "TPL-LETTERS-COMPOSER_v1";
+const COMPONENT_FIRST_TEMPLATE_CODES = [
+  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+  "TPL-COMP-LETTER-FACE_v1",
+  "TPL-COMP-LETTER-BACK_v1",
+  "TPL-COMP-LETTER-RETURN-CANT_v1",
+  "TPL-COMP-LETTER-LED_v1",
+  "TPL-COMP-LETTER-FINISH_v1",
+  "TPL-COMP-LETTER-MOUNTING_v1",
+] as const;
+
+type ComponentFirstTemplateCode = (typeof COMPONENT_FIRST_TEMPLATE_CODES)[number];
+
+type ComponentFirstReadonlyComponent = {
+  templateCode: string;
+  componentId: string;
+  roleLabel: string;
+  componentKind: string;
+  targetProductTruthPath: string;
+  dependencies: string[];
+  blockers: string[];
+  readinessState: string;
+  activationGuard: string;
+  active: boolean;
+};
+
+type ComponentFirstReadonlySetModel = {
+  sourceMode: "live_seeded" | "code_contract_fallback";
+  selectedTemplateCode: string;
+  composerTemplateCode: string;
+  composerActive: boolean;
+  composerCatalogStatus: string;
+  composerReadiness: string;
+  composerActivationGuard: string;
+  composerBlockers: string[];
+  compositionList: Array<{
+    componentId: string;
+    componentTemplateCode: string;
+    role: string;
+    kind: string;
+    targetProductTruthPath: string;
+  }>;
+  dependencyGraph: Array<{ from: string; to: string }>;
+  noModuleLinks: boolean;
+  noWorkIntakeExposure: boolean;
+  noPricingActivation: boolean;
+  noProductDefinitionActivation: boolean;
+  noProductAggregateRuntimeWiring: boolean;
+  noExecutableOperations: boolean;
+  noExecutableBom: boolean;
+  components: ComponentFirstReadonlyComponent[];
+};
+
+function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: string): ComponentFirstReadonlySetModel {
+  return {
+    sourceMode: "code_contract_fallback",
+    selectedTemplateCode,
+    composerTemplateCode: COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+    composerActive: false,
+    composerCatalogStatus: "not_seeded_live",
+    composerReadiness: "planned",
+    composerActivationGuard: "COMPONENT_FIRST_SET_INERT_UNTIL_OWNER_GO",
+    composerBlockers: [
+      "OWNER_GO_REQUIRED",
+      "COMPONENT_TRUTH_NOT_IMPLEMENTED",
+      "WORK_INTAKE_NOT_ENABLED",
+      "PRICING_NOT_ENABLED",
+      "PRODUCT_DEFINITION_NOT_ENABLED",
+    ],
+    compositionList: [
+      {
+        componentId: "comp_letter_face_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-FACE_v1",
+        role: "face",
+        kind: "structural",
+        targetProductTruthPath: "components.face.instances[]",
+      },
+      {
+        componentId: "comp_letter_back_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-BACK_v1",
+        role: "back",
+        kind: "structural",
+        targetProductTruthPath: "components.back.instances[]",
+      },
+      {
+        componentId: "comp_letter_return_cant_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-RETURN-CANT_v1",
+        role: "return_cant",
+        kind: "structural",
+        targetProductTruthPath: "components.return_cant.instances[]",
+      },
+      {
+        componentId: "comp_letter_led_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-LED_v1",
+        role: "lighting",
+        kind: "functional",
+        targetProductTruthPath: "components.led.instances[]",
+      },
+      {
+        componentId: "comp_letter_finish_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-FINISH_v1",
+        role: "finish",
+        kind: "functional",
+        targetProductTruthPath: "components.finish.instances[]",
+      },
+      {
+        componentId: "comp_letter_mounting_v1",
+        componentTemplateCode: "TPL-COMP-LETTER-MOUNTING_v1",
+        role: "mounting",
+        kind: "functional",
+        targetProductTruthPath: "components.mounting.instances[]",
+      },
+    ],
+    dependencyGraph: [
+      { from: "comp_letter_face_v1", to: "comp_letter_return_cant_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_back_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_led_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_back_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_return_cant_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_back_v1", to: "comp_letter_mounting_v1" },
+      { from: "product_root", to: "comp_letter_mounting_v1" },
+    ],
+    noModuleLinks: true,
+    noWorkIntakeExposure: true,
+    noPricingActivation: true,
+    noProductDefinitionActivation: true,
+    noProductAggregateRuntimeWiring: true,
+    noExecutableOperations: true,
+    noExecutableBom: true,
+    components: [
+      {
+        templateCode: "TPL-COMP-LETTER-FACE_v1",
+        componentId: "comp_letter_face_v1",
+        roleLabel: "structural face",
+        componentKind: "structural",
+        targetProductTruthPath: "components.face.instances[]",
+        dependencies: [],
+        blockers: ["SOURCE_LAYERS_UNCONFIRMED", "FACE_MATERIAL_MISSING", "FACE_THICKNESS_MISSING"],
+        readinessState: "planned",
+        activationGuard: "FACE_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+      {
+        templateCode: "TPL-COMP-LETTER-BACK_v1",
+        componentId: "comp_letter_back_v1",
+        roleLabel: "structural back",
+        componentKind: "structural",
+        targetProductTruthPath: "components.back.instances[]",
+        dependencies: ["comp_letter_face_v1"],
+        blockers: ["FACE_GEOMETRY_REF_MISSING", "BACK_MATERIAL_MISSING", "BACKING_MODE_MISSING"],
+        readinessState: "planned",
+        activationGuard: "BACK_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+      {
+        templateCode: "TPL-COMP-LETTER-RETURN-CANT_v1",
+        componentId: "comp_letter_return_cant_v1",
+        roleLabel: "structural return/cant",
+        componentKind: "structural",
+        targetProductTruthPath: "components.return_cant.instances[]",
+        dependencies: ["components.face.confirmed_perimeter"],
+        blockers: ["SOURCE_FACE_PERIMETER_REF_MISSING", "MATERIAL_PROFILE_MISSING", "DEPTH_MM_MISSING", "CONFIRMATION_STATE_MISSING"],
+        readinessState: "planned",
+        activationGuard: "RETURN_CANT_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+      {
+        templateCode: "TPL-COMP-LETTER-LED_v1",
+        componentId: "comp_letter_led_v1",
+        roleLabel: "functional lighting",
+        componentKind: "functional",
+        targetProductTruthPath: "components.led.instances[]",
+        dependencies: ["components.face.confirmed_area"],
+        blockers: ["LIGHTING_MODE_MISSING", "SOURCE_FACE_AREA_REF_MISSING", "LED_DENSITY_CONFIG_MISSING"],
+        readinessState: "planned",
+        activationGuard: "LED_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+      {
+        templateCode: "TPL-COMP-LETTER-FINISH_v1",
+        componentId: "comp_letter_finish_v1",
+        roleLabel: "functional finish",
+        componentKind: "functional",
+        targetProductTruthPath: "components.finish.instances[]",
+        dependencies: ["comp_letter_face_v1", "comp_letter_back_v1", "comp_letter_return_cant_v1"],
+        blockers: ["FINISH_TARGET_MISSING", "FINISH_TYPE_MISSING", "COLOR_DECISION_MISSING"],
+        readinessState: "planned",
+        activationGuard: "FINISH_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+      {
+        templateCode: "TPL-COMP-LETTER-MOUNTING_v1",
+        componentId: "comp_letter_mounting_v1",
+        roleLabel: "functional mounting",
+        componentKind: "functional",
+        targetProductTruthPath: "components.mounting.instances[]",
+        dependencies: ["comp_letter_back_v1", "product.install_context"],
+        blockers: ["MOUNTING_MODE_MISSING", "SUPPORT_REQUIRED_UNKNOWN", "INSTALL_CONTEXT_MISSING"],
+        readinessState: "planned",
+        activationGuard: "MOUNTING_CONTRACT_ONLY_NOT_EXECUTABLE",
+        active: false,
+      },
+    ],
+  };
+}
+
+function safeJsonParse<T>(raw: string | undefined | null, fallback: T): T {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+}
+
+function normalizeComponentFirstTemplateCode(templateCode: string | null | undefined): string {
+  return String(templateCode ?? "").trim().toUpperCase();
+}
+
+function isComponentFirstLettersTemplate(templateCode: string | null | undefined): templateCode is ComponentFirstTemplateCode {
+  return COMPONENT_FIRST_TEMPLATE_CODES.some(
+    (candidate) => normalizeComponentFirstTemplateCode(candidate) === normalizeComponentFirstTemplateCode(templateCode)
+  );
+}
+
+function buildComponentFirstReadonlySetModel(
+  templates: ProductTemplateEntity[],
+  availabilityItems: ProductTemplateAvailabilityItem[],
+  selectedTemplateCode: string | null | undefined
+): ComponentFirstReadonlySetModel | null {
+  if (!isComponentFirstLettersTemplate(selectedTemplateCode)) {
+    return null;
+  }
+
+  const templateByCode = new Map(templates.map((template) => [normalizeComponentFirstTemplateCode(template.template_code), template]));
+  const availabilityByCode = new Map(availabilityItems.map((item) => [normalizeComponentFirstTemplateCode(item.template_code), item]));
+  const composer = templateByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
+  if (!composer) {
+    return buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode));
+  }
+
+  const composerComponents = safeJsonParse<Array<Record<string, unknown>>>(composer.components_json, []);
+  const composerNotes = safeJsonParse<Record<string, unknown>>(composer.notes, {});
+  const composerAvailability = availabilityByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
+
+  const components = COMPONENT_FIRST_TEMPLATE_CODES.slice(1)
+    .map((templateCode) => {
+      const template = templateByCode.get(normalizeComponentFirstTemplateCode(templateCode));
+      if (!template) return null;
+      const notes = safeJsonParse<Record<string, unknown>>(template.notes, {});
+      const componentContracts = safeJsonParse<Array<Record<string, unknown>>>(template.components_json, []);
+      const component = componentContracts[0] ?? {};
+      const dependencies = Array.isArray(component.dependencies)
+        ? component.dependencies.map((entry) => {
+            if (typeof entry === "string") return entry;
+            if (entry && typeof entry === "object") {
+              const record = entry as Record<string, unknown>;
+              return String(record.source_path ?? record.source_component_id ?? record.dependency_key ?? "unknown");
+            }
+            return "unknown";
+          })
+        : [];
+      const blockers = Array.isArray(component.blockers)
+        ? component.blockers.map((entry) => String(entry))
+        : [];
+
+      return {
+        templateCode,
+        componentId: String(component.component_id ?? ""),
+        roleLabel: String(component.role_label ?? component.role_key ?? "component"),
+        componentKind: String(component.component_kind ?? "unknown"),
+        targetProductTruthPath: String(component.target_product_truth_path ?? ""),
+        dependencies,
+        blockers,
+        readinessState: String(component.readiness_state ?? notes.readiness ?? "planned"),
+        activationGuard: String(component.activation_guard ?? notes.activation_guard ?? "OWNER_GO_REQUIRED"),
+        active: template.active !== false,
+      } satisfies ComponentFirstReadonlyComponent;
+    })
+    .filter((entry): entry is ComponentFirstReadonlyComponent => Boolean(entry));
+
+  return {
+    sourceMode: "live_seeded",
+    selectedTemplateCode: String(selectedTemplateCode),
+    composerTemplateCode: composer.template_code,
+    composerActive: composer.active !== false,
+    composerCatalogStatus: composerAvailability?.status ?? "archived",
+    composerReadiness: String(composerNotes.readiness ?? "planned"),
+    composerActivationGuard: String(composerNotes.activation_guard ?? "OWNER_GO_REQUIRED"),
+    composerBlockers: Array.isArray(composerNotes.blockers)
+      ? composerNotes.blockers.map((entry) => String(entry))
+      : [],
+    compositionList: composerComponents.map((entry) => ({
+      componentId: String(entry.component_id ?? ""),
+      componentTemplateCode: String(entry.component_template_code ?? ""),
+      role: String(entry.role ?? ""),
+      kind: String(entry.kind ?? ""),
+      targetProductTruthPath: String(entry.target_product_truth_path ?? ""),
+    })),
+    dependencyGraph: Array.isArray(composerNotes.component_dependency_graph)
+      ? composerNotes.component_dependency_graph.map((entry) => {
+          const record = (entry ?? {}) as Record<string, unknown>;
+          return {
+            from: String(record.from ?? "unknown"),
+            to: String(record.to ?? "unknown"),
+          };
+        })
+      : [],
+    noModuleLinks:
+      (composerAvailability?.module_codes?.length ?? 0) === 0 &&
+      (composerAvailability?.child_module_codes?.length ?? 0) === 0 &&
+      composerAvailability?.has_modules !== true,
+    noWorkIntakeExposure: composerNotes.work_intake_exposed === false,
+    noPricingActivation: composerNotes.pricing_active === false,
+    noProductDefinitionActivation: composerNotes.product_definition_active === false,
+    noProductAggregateRuntimeWiring: composerNotes.product_aggregate_runtime_consumed === false,
+    noExecutableOperations: composerNotes.no_executable_operations === true,
+    noExecutableBom: composerNotes.no_executable_bom === true,
+    components,
+  };
+}
+
 function entityToDraft(e: ProductTemplateEntity): DraftTemplate {
   const components = parseTemplateComponentsWithLegacy(
     e.components_json,
@@ -2383,6 +2706,155 @@ function CompositionReadModelTable({
   );
 }
 
+function ComponentFirstReadonlyStatusPanel({
+  templates,
+  availabilityItems,
+  selectedTemplateCode,
+}: {
+  templates: ProductTemplateEntity[];
+  availabilityItems: ProductTemplateAvailabilityItem[];
+  selectedTemplateCode: string;
+}) {
+  const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
+  if (!model) {
+    return null;
+  }
+
+  return (
+    <section
+      data-testid="product-system-component-first-letters-set"
+      className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h3 className="text-[13px] font-bold text-cyan-100">Component-first letters template set</h3>
+          <p className="mt-0.5 text-[11px] text-cyan-200/75">
+            Readonly candidate set only. Product Template composes; Component Templates own calculable truth. This section does not activate anything and does not create runtime wiring.
+          </p>
+          <p className="mt-1 text-[10px] text-cyan-300/75">
+            Source: {model.sourceMode === "live_seeded" ? "live seeded rows" : "code contract fallback until live seed is intentionally applied"}.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">CANDIDATE</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">READONLY</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">active = {String(model.composerActive)}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">catalog status = {model.composerCatalogStatus}</span>
+        </div>
+      </div>
+
+              <div className="mt-3 grid gap-2 md:grid-cols-3">
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No Work Intake exposure: <span className="font-bold text-cyan-200">{String(model.noWorkIntakeExposure)}</span></div>
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No Pricing activation: <span className="font-bold text-cyan-200">{String(model.noPricingActivation)}</span></div>
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No ProductDefinition activation: <span className="font-bold text-cyan-200">{String(model.noProductDefinitionActivation)}</span></div>
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No ProductAggregate runtime wiring: <span className="font-bold text-cyan-200">{String(model.noProductAggregateRuntimeWiring)}</span></div>
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No executable operations: <span className="font-bold text-cyan-200">{String(model.noExecutableOperations)}</span></div>
+                <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">No executable BOM: <span className="font-bold text-cyan-200">{String(model.noExecutableBom)}</span></div>
+              </div>
+
+              <article
+                data-testid="product-system-component-first-composer-card"
+                className="mt-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div>
+                    <p className="text-[12px] font-bold text-slate-100">{model.composerTemplateCode}</p>
+                    <p className="mt-0.5 text-[10px] text-cyan-200">Product Template / composer only</p>
+                  </div>
+                  <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+                    <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">readiness: {model.composerReadiness}</span>
+                    <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">guard: {model.composerActivationGuard}</span>
+                  </div>
+                </div>
+
+                <div className="mt-2 grid gap-2 md:grid-cols-2">
+                  <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">
+                    <p className="font-bold uppercase tracking-wide text-slate-400">Composer boundary</p>
+                    <p className="mt-1">does not own material truth</p>
+                    <p className="mt-0.5">does not own operation truth</p>
+                    <p className="mt-0.5">no module links: <span className="font-bold text-cyan-200">{String(model.noModuleLinks)}</span></p>
+                  </div>
+                  <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-200">
+                    <p className="font-bold uppercase tracking-wide text-slate-400">Blockers</p>
+                    <p className="mt-1 font-mono text-amber-200/85">{model.composerBlockers.join(", ") || "OWNER_GO_REQUIRED"}</p>
+                  </div>
+                </div>
+
+                <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
+                  <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+                    <span>Composition list</span>
+                    <span>Template</span>
+                    <span>Kind</span>
+                    <span>Product Truth target</span>
+                  </div>
+                  <div className="divide-y divide-slate-800/80">
+                    {model.compositionList.map((entry) => (
+                      <div key={entry.componentTemplateCode} className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.95fr)_minmax(0,0.75fr)_minmax(0,1fr)] gap-2 px-3 py-2 text-[10px]">
+                        <div>
+                          <p className="font-bold text-slate-100">{entry.role.toUpperCase()}</p>
+                          <p className="mt-0.5 font-mono text-[9px] text-slate-500">{entry.componentId}</p>
+                        </div>
+                        <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
+                        <p className="text-slate-300">{entry.kind}</p>
+                        <p className="font-mono text-slate-300">{entry.targetProductTruthPath}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </article>
+
+              <section
+                data-testid="product-system-component-first-dependency-graph"
+                className="mt-3 rounded-lg border border-violet-800/40 bg-violet-950/10 p-3"
+              >
+                <h4 className="text-[11px] font-bold uppercase tracking-wide text-violet-100">Dependency graph</h4>
+                <div className="mt-2 grid gap-1 text-[10px] text-violet-200/85">
+                  {model.dependencyGraph.map((edge) => (
+                    <p key={`${edge.from}-${edge.to}`} className="font-mono">{edge.from} -&gt; {edge.to}</p>
+                  ))}
+                </div>
+              </section>
+
+              <section
+                data-testid="product-system-component-first-components-list"
+                className="mt-3 rounded-lg border border-slate-800 bg-slate-950/40 p-3"
+              >
+                <div className="flex items-center justify-between gap-2">
+                  <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-100">Component templates</h4>
+                  <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">{model.components.length} components</span>
+                </div>
+                <div className="mt-3 grid gap-3 xl:grid-cols-2">
+                  {model.components.map((component) => (
+                    <article
+                      key={component.templateCode}
+                      data-testid={`product-system-component-first-component-${component.templateCode}`}
+                      className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 p-3"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-mono text-[10px] font-bold text-cyan-200">{component.templateCode}</p>
+                          <p className="mt-0.5 text-[11px] font-bold text-slate-100">{component.componentId}</p>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+                          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">{component.componentKind}</span>
+                          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">active = {String(component.active)}</span>
+                          <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{component.readinessState}</span>
+                        </div>
+                      </div>
+                      <p className="mt-2 text-[10px] text-slate-300">{component.roleLabel}</p>
+                      <p className="mt-1 font-mono text-[10px] text-cyan-200/85">{component.targetProductTruthPath}</p>
+                      <p className="mt-2 text-[10px] text-slate-400">Dependencies: {component.dependencies.join(", ") || "none"}</p>
+                      <p className="mt-1 font-mono text-[10px] text-amber-200/85">Blockers: {component.blockers.join(", ") || "none"}</p>
+                      <p className="mt-1 text-[10px] text-slate-400">Activation guard: {component.activationGuard}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+    </section>
+  );
+}
+
 function ReturnCantSeparateCalculationSourcePaths({
   sharedWithProductCodes,
 }: {
@@ -2725,6 +3197,8 @@ function TemplateEditor({
   families,
   materials,
   availability,
+  allTemplates,
+  availabilityItems,
 }: {
   draft: DraftTemplate;
   isNew: boolean;
@@ -2744,6 +3218,8 @@ function TemplateEditor({
   families: ProductFamily[];
   materials: InventoryMaterialEntity[];
   availability?: ProductTemplateAvailabilityItem | null;
+  allTemplates: ProductTemplateEntity[];
+  availabilityItems: ProductTemplateAvailabilityItem[];
 }) {
   const [studioTab, setStudioTab] = useState<"structure" | "general" | "operational" | "form-system">("structure");
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
@@ -2911,8 +3387,17 @@ function TemplateEditor({
     (contract) => contract.profile_key === "logo"
   ) ?? false;
 
+  const componentFirstReadonlyPanel = (
+    <ComponentFirstReadonlyStatusPanel
+      templates={allTemplates}
+      availabilityItems={availabilityItems}
+      selectedTemplateCode={draft.template_code}
+    />
+  );
+
   const generalTabPanel = (
     <div className="space-y-3">
+      {componentFirstReadonlyPanel}
       <TemplateGeneralTabPanel
         draft={draft}
         readOnly={readOnly}
@@ -2936,6 +3421,8 @@ function TemplateEditor({
 
   const structurePanel = (
     <div className="space-y-4">
+      {componentFirstReadonlyPanel}
+
       <ComponentCalculationOwnershipPanel availability={availability} />
 
       {aggregateLoading ? (
@@ -3521,6 +4008,14 @@ export default function ProductSystem() {
     [templates]
   );
 
+  const componentFirstLibraryReadonlyPanel = shouldShowLibraryScreen(screen) ? (
+    <ComponentFirstReadonlyStatusPanel
+      templates={templates}
+      availabilityItems={availabilityItems}
+      selectedTemplateCode={COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE}
+    />
+  ) : null;
+
   const editorReadOnly = useMemo(() => {
     if (isNew || !selectedId) return false;
     const entity = templates.find((t) => t.id === selectedId);
@@ -3772,6 +4267,12 @@ export default function ProductSystem() {
         </div>
       )}
 
+      {componentFirstLibraryReadonlyPanel ? (
+        <div className="rounded-xl border border-slate-800/80 bg-slate-950/30 p-3">
+          {componentFirstLibraryReadonlyPanel}
+        </div>
+      ) : null}
+
       <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-200px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
           <TemplateEditor
@@ -3790,6 +4291,8 @@ export default function ProductSystem() {
             families={families}
             materials={materials}
             availability={selectedAvailability}
+            allTemplates={templates}
+            availabilityItems={availabilityItems}
           />
         ) : loadMode === "auth_required" && !loading ? (
           <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">

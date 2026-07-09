@@ -70,6 +70,198 @@ const volumetricTemplate: ProductTemplateEntity = {
   required_materials_json: "[]",
 };
 
+const componentFirstComposerTemplate: ProductTemplateEntity = {
+  id: 2,
+  template_code: "TPL-LETTERS-COMPOSER_v1",
+  family_name: "Litere component-first candidate",
+  active: false,
+  components_json: JSON.stringify([
+    {
+      component_id: "comp_letter_face_v1",
+      component_template_code: "TPL-COMP-LETTER-FACE_v1",
+      role: "face",
+      kind: "structural",
+      target_product_truth_path: "components.face.instances[]",
+    },
+    {
+      component_id: "comp_letter_back_v1",
+      component_template_code: "TPL-COMP-LETTER-BACK_v1",
+      role: "back",
+      kind: "structural",
+      target_product_truth_path: "components.back.instances[]",
+    },
+    {
+      component_id: "comp_letter_return_cant_v1",
+      component_template_code: "TPL-COMP-LETTER-RETURN-CANT_v1",
+      role: "return_cant",
+      kind: "structural",
+      target_product_truth_path: "components.return_cant.instances[]",
+    },
+    {
+      component_id: "comp_letter_led_v1",
+      component_template_code: "TPL-COMP-LETTER-LED_v1",
+      role: "lighting",
+      kind: "functional",
+      target_product_truth_path: "components.led.instances[]",
+    },
+    {
+      component_id: "comp_letter_finish_v1",
+      component_template_code: "TPL-COMP-LETTER-FINISH_v1",
+      role: "finish",
+      kind: "functional",
+      target_product_truth_path: "components.finish.instances[]",
+    },
+    {
+      component_id: "comp_letter_mounting_v1",
+      component_template_code: "TPL-COMP-LETTER-MOUNTING_v1",
+      role: "mounting",
+      kind: "functional",
+      target_product_truth_path: "components.mounting.instances[]",
+    },
+  ]),
+  operations_json: "[]",
+  required_materials_json: "[]",
+  notes: JSON.stringify({
+    readiness: "planned",
+    offerable: false,
+    work_intake_exposed: false,
+    pricing_active: false,
+    product_definition_active: false,
+    product_aggregate_runtime_consumed: false,
+    no_executable_operations: true,
+    no_executable_bom: true,
+    activation_guard: "COMPONENT_FIRST_SET_INERT_UNTIL_OWNER_GO",
+    blockers: [
+      "OWNER_GO_REQUIRED",
+      "COMPONENT_TRUTH_NOT_IMPLEMENTED",
+      "WORK_INTAKE_NOT_ENABLED",
+      "PRICING_NOT_ENABLED",
+      "PRODUCT_DEFINITION_NOT_ENABLED",
+    ],
+    component_dependency_graph: [
+      { from: "comp_letter_face_v1", to: "comp_letter_return_cant_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_back_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_led_v1" },
+      { from: "comp_letter_face_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_back_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_return_cant_v1", to: "comp_letter_finish_v1" },
+      { from: "comp_letter_back_v1", to: "comp_letter_mounting_v1" },
+      { from: "product_root", to: "comp_letter_mounting_v1" },
+    ],
+  }),
+};
+
+function componentFirstContractTemplate(
+  id: number,
+  templateCode: string,
+  componentId: string,
+  roleLabel: string,
+  componentKind: string,
+  targetProductTruthPath: string,
+  dependencies: Array<string | Record<string, string>>,
+  blockers: string[],
+  activationGuard: string,
+): ProductTemplateEntity {
+  return {
+    id,
+    template_code: templateCode,
+    family_name: "Litere component-first candidate",
+    active: false,
+    components_json: JSON.stringify([
+      {
+        component_id: componentId,
+        role_label: roleLabel,
+        component_kind: componentKind,
+        target_product_truth_path: targetProductTruthPath,
+        dependencies,
+        blockers,
+        readiness_state: "planned",
+        activation_guard: activationGuard,
+      },
+    ]),
+    operations_json: "[]",
+    required_materials_json: "[]",
+    notes: JSON.stringify({
+      readiness: "planned",
+      offerable: false,
+      work_intake_exposed: false,
+      pricing_active: false,
+      product_definition_active: false,
+      activation_guard: activationGuard,
+    }),
+  };
+}
+
+const componentFirstTemplates: ProductTemplateEntity[] = [
+  componentFirstComposerTemplate,
+  componentFirstContractTemplate(
+    3,
+    "TPL-COMP-LETTER-FACE_v1",
+    "comp_letter_face_v1",
+    "structural face",
+    "structural",
+    "components.face.instances[]",
+    [],
+    ["SOURCE_LAYERS_UNCONFIRMED", "FACE_MATERIAL_MISSING"],
+    "FACE_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+  componentFirstContractTemplate(
+    4,
+    "TPL-COMP-LETTER-BACK_v1",
+    "comp_letter_back_v1",
+    "structural back",
+    "structural",
+    "components.back.instances[]",
+    [{ source_component_id: "comp_letter_face_v1" }],
+    ["FACE_GEOMETRY_REF_MISSING", "BACK_MATERIAL_MISSING"],
+    "BACK_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+  componentFirstContractTemplate(
+    5,
+    "TPL-COMP-LETTER-RETURN-CANT_v1",
+    "comp_letter_return_cant_v1",
+    "structural return/cant",
+    "structural",
+    "components.return_cant.instances[]",
+    [{ source_path: "components.face.confirmed_perimeter" }],
+    ["SOURCE_FACE_PERIMETER_REF_MISSING", "MATERIAL_PROFILE_MISSING"],
+    "RETURN_CANT_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+  componentFirstContractTemplate(
+    6,
+    "TPL-COMP-LETTER-LED_v1",
+    "comp_letter_led_v1",
+    "functional lighting",
+    "functional",
+    "components.led.instances[]",
+    [{ source_path: "components.face.confirmed_area" }],
+    ["LIGHTING_MODE_MISSING", "LED_DENSITY_CONFIG_MISSING"],
+    "LED_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+  componentFirstContractTemplate(
+    7,
+    "TPL-COMP-LETTER-FINISH_v1",
+    "comp_letter_finish_v1",
+    "functional finish",
+    "functional",
+    "components.finish.instances[]",
+    ["comp_letter_face_v1", "comp_letter_back_v1", "comp_letter_return_cant_v1"],
+    ["FINISH_TARGET_MISSING", "FINISH_TYPE_MISSING"],
+    "FINISH_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+  componentFirstContractTemplate(
+    8,
+    "TPL-COMP-LETTER-MOUNTING_v1",
+    "comp_letter_mounting_v1",
+    "functional mounting",
+    "functional",
+    "components.mounting.instances[]",
+    [{ source_component_id: "comp_letter_back_v1" }, { source_path: "product.install_context" }],
+    ["MOUNTING_MODE_MISSING", "INSTALL_CONTEXT_MISSING"],
+    "MOUNTING_CONTRACT_ONLY_NOT_EXECUTABLE",
+  ),
+];
+
 const volumetricAvailability: ProductTemplateAvailabilityItem = {
   template_id: 1,
   template_code: "TPL-VOLUMETRIC-LETTERS_v2",
@@ -182,11 +374,40 @@ const volumetricAvailability: ProductTemplateAvailabilityItem = {
   ],
 };
 
+const componentFirstAvailability: ProductTemplateAvailabilityItem = {
+  template_id: 2,
+  template_code: "TPL-LETTERS-COMPOSER_v1",
+  family_id: "litere_component_first_candidate",
+  family_name: "Litere component-first candidate",
+  description: "Inactive component-first letters composer",
+  db_active: false,
+  quote_offerable: false,
+  runtime_module: false,
+  is_parent: false,
+  has_modules: false,
+  parent_codes: [],
+  module_codes: [],
+  status: "archived",
+  status_reason: "db_inactive",
+  product_system_role: "archived_experimental",
+  display_group: "archived_experimental",
+  importance_rank: 80,
+  owner_decision_required: true,
+  readiness_reason: "Inactive candidate / readonly only.",
+  ui_label: "Catalog entry inactiv",
+  ui_description: "Nu apare in Work Intake.",
+  parent_product_codes: [],
+  child_module_codes: [],
+  shared_with_product_codes: [],
+  composition_modules: [],
+  shared_component_contracts: [],
+};
+
 describe("ProductSystem design-system badges", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockTemplateList.mockResolvedValue([volumetricTemplate]);
-    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+    mockTemplateList.mockResolvedValue([volumetricTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability, componentFirstAvailability], total: 2 });
   });
 
   it("renders SourceBadge mapped from live API load mode", async () => {
@@ -307,6 +528,63 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByText(/calculation blocked until component-scoped confirmation exists/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/ready for future calculation/i)).not.toBeInTheDocument();
+  });
+
+  it("shows the inactive component-first letters set as readonly candidate with no activation controls", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    const panel = screen.getByTestId("product-system-component-first-letters-set");
+    const composerCard = screen.getByTestId("product-system-component-first-composer-card");
+    const dependencyGraph = screen.getByTestId("product-system-component-first-dependency-graph");
+    const componentsList = screen.getByTestId("product-system-component-first-components-list");
+
+    expect(panel).toHaveTextContent("Component-first letters template set");
+    expect(panel).toHaveTextContent("INACTIVE");
+    expect(panel).toHaveTextContent("CANDIDATE");
+    expect(panel).toHaveTextContent("READONLY");
+    expect(panel).toHaveTextContent("active = false");
+    expect(panel).toHaveTextContent("No Work Intake exposure: true");
+    expect(panel).toHaveTextContent("No Pricing activation: true");
+    expect(panel).toHaveTextContent("No ProductDefinition activation: true");
+    expect(panel).toHaveTextContent("No ProductAggregate runtime wiring: true");
+    expect(panel).toHaveTextContent("No executable operations: true");
+    expect(panel).toHaveTextContent("No executable BOM: true");
+
+    expect(composerCard).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
+    expect(composerCard).toHaveTextContent("Product Template / composer only");
+    expect(composerCard).toHaveTextContent("does not own material truth");
+    expect(composerCard).toHaveTextContent("does not own operation truth");
+    expect(composerCard).toHaveTextContent("no module links: true");
+
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-FACE_v1");
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-BACK_v1");
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-LED_v1");
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-FINISH_v1");
+    expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
+    expect(componentsList).toHaveTextContent("comp_letter_face_v1");
+    expect(componentsList).toHaveTextContent("comp_letter_back_v1");
+    expect(componentsList).toHaveTextContent("components.face.instances[]");
+    expect(componentsList).toHaveTextContent("components.return_cant.instances[]");
+    expect(componentsList).toHaveTextContent("components.led.instances[]");
+    expect(componentsList).toHaveTextContent("components.finish.instances[]");
+    expect(componentsList).toHaveTextContent("components.mounting.instances[]");
+
+    expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_return_cant_v1");
+    expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_back_v1");
+    expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_led_v1");
+    expect(dependencyGraph).toHaveTextContent("comp_letter_back_v1 -> comp_letter_mounting_v1");
+    expect(dependencyGraph).toHaveTextContent("product_root -> comp_letter_mounting_v1");
+
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /pricing/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
 });
