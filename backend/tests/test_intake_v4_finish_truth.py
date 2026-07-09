@@ -82,6 +82,27 @@ def test_artwork_print_transparency_persists_through_finish_setup_schema():
     assert setup.model_dump(mode="json")["artwork_finishes"][0]["print_transparency"] == "transparent"
 
 
+def test_artwork_print_and_lamination_booleans_persist_through_finish_setup_schema():
+    setup = IntakeV4FinishSetup.model_validate(
+        {
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo",
+                    "layer_name": "Logo",
+                    "print_required": True,
+                    "lamination_required": False,
+                }
+            ],
+        }
+    )
+
+    assert setup.artwork_finishes[0].print_required is True
+    assert setup.artwork_finishes[0].lamination_required is False
+    dumped = setup.model_dump(mode="json")["artwork_finishes"][0]
+    assert dumped["print_required"] is True
+    assert dumped["lamination_required"] is False
+
+
 def test_format_return_finish_operator_labels():
     assert format_intake_v4_return_finish_operator_label("oracal_wrapped") == "Oracal 651"
     assert format_intake_v4_return_finish_operator_label("white_aluminum") == "Alb"

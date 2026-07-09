@@ -122,6 +122,8 @@ class IntakeV4ArtworkFinish(BaseModel):
     face_roll_width_mm: float | None = None
     print_roll_width_mm: float | None = None
     lamination_roll_width_mm: float | None = None
+    print_required: bool | None = None
+    lamination_required: bool | None = None
     roll_side_retraction_mm: float | None = None
     roll_total_retraction_mm: float | None = None
     face_oracal_code: str | None = None

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any
+from typing import Any, Literal
 
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
 
@@ -229,6 +229,77 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
             updates["return_depth_mm"] = max(float(d) for d in depths)
 
     return setup.model_copy(update={k: v for k, v in updates.items() if v is not None})
+
+
+ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
+
+_ARTWORK_RUNTIME_BLOCKER_BY_FIELD: dict[ArtworkRuntimeBooleanField, str] = {
+    "print_required": "PRINT_REQUIRED_UNKNOWN",
+    "lamination_required": "LAMINATION_REQUIRED_UNKNOWN",
+}
+
+
+def artwork_finish_runtime_boolean_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+    field_name: ArtworkRuntimeBooleanField,
+) -> dict[str, Any]:
+    blocker_code = _ARTWORK_RUNTIME_BLOCKER_BY_FIELD[field_name]
+    source_path = f"finish_setup.artwork_finishes[].{field_name}"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": blocker_code,
+            "rows": [],
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    artwork_rows = list(normalized_setup.artwork_finishes or [])
+    if not artwork_rows:
+        return {
+            "status": "missing",
+            "blocker_code": blocker_code,
+            "rows": [],
+            "source_path": source_path,
+        }
+
+    persisted_rows: list[dict[str, Any]] = []
+    setup_confirmed = normalized_setup.confirmed is True
+    for row in artwork_rows:
+        value = getattr(row, field_name, None)
+        if value is None:
+            return {
+                "status": "missing",
+                "blocker_code": blocker_code,
+                "rows": persisted_rows,
+                "source_path": source_path,
+            }
+
+        row_confirmed = row.confirmed is True or setup_confirmed
+        persisted_rows.append(
+            {
+                "layer_key": row.layer_key,
+                "value": value,
+                "confirmed": row_confirmed,
+            }
+        )
+        if not row_confirmed:
+            return {
+                "status": "unconfirmed",
+                "blocker_code": blocker_code,
+                "rows": persisted_rows,
+                "source_path": source_path,
+            }
+
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "rows": persisted_rows,
+        "source_path": source_path,
+    }
 
 
 _RETURN_ORACAL = frozenset({"oracal_wrapped", "colantat", "oracal"})

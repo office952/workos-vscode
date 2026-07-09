@@ -7,6 +7,7 @@ from typing import Any
 
 from schemas.intake_v4 import IntakeV4LayerRoleSetup
 from services.active_template_scope import is_owner_valid_active_template
+from services.intake_v4_finish_truth_service import artwork_finish_runtime_boolean_state
 from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
 from services.template_architecture_scope import (
     STRUCTURE_PREMOUNT_TEMPLATE_CODE,
@@ -286,6 +287,32 @@ FIELDS: list[dict[str, Any]] = [
         "notes": "Separates face, return/cant, and artwork finish targets.",
     },
     {
+        "field_key": "finish.print_required",
+        "operator_label": "Print artwork necesar",
+        "owning_component": "finish_artwork",
+        "component_template_code": VOLUMETRIC_FINISH_TEMPLATE_CODE,
+        "source_type": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].printRequired",
+        "required_for": ["quote_preview", "priced_quote", "order_snapshot", "product_definition", "execution_later"],
+        "blocker_code": "PRINT_REQUIRED_UNKNOWN",
+        "notes": "Artwork print requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth.",
+        "requires_operator_confirmation": True,
+    },
+    {
+        "field_key": "finish.lamination_required",
+        "operator_label": "Laminare artwork necesară",
+        "owning_component": "finish_artwork",
+        "component_template_code": VOLUMETRIC_FINISH_TEMPLATE_CODE,
+        "source_type": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].laminationRequired",
+        "required_for": ["quote_preview", "priced_quote", "order_snapshot", "product_definition", "execution_later"],
+        "blocker_code": "LAMINATION_REQUIRED_UNKNOWN",
+        "notes": "Artwork lamination requirement must be captured explicitly per artwork finish row; no global aggregation is canonical truth.",
+        "requires_operator_confirmation": True,
+    },
+    {
         "field_key": "return.material",
         "operator_label": "Material cant/return",
         "owning_component": "return_cant",
@@ -489,6 +516,45 @@ def _overlay_runtime_finish_target_field(
     return fields
 
 
+def _overlay_runtime_artwork_finish_boolean_fields(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    if finish_setup is None:
+        return fields
+
+    runtime_by_key = {
+        "finish.print_required": artwork_finish_runtime_boolean_state(finish_setup, "print_required"),
+        "finish.lamination_required": artwork_finish_runtime_boolean_state(finish_setup, "lamination_required"),
+    }
+    for field in fields:
+        runtime = runtime_by_key.get(field.get("field_key"))
+        if runtime is None:
+            continue
+        if runtime["status"] == "confirmed":
+            field.update(
+                {
+                    "source_type": "payload_persisted",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": f"Persisted {runtime['source_path']} values are present on all artwork finish rows and anchored by finish or row confirmation.",
+                }
+            )
+            continue
+        field.update(
+            {
+                "source_type": "payload_artwork_rows",
+                "state": "blocked",
+                "blocker_code": runtime["blocker_code"],
+                "notes": f"{runtime['source_path']} remains blocked until every persisted artwork finish row carries an explicit value and confirmation.",
+            }
+        )
+    return fields
+
+
 def _linked_template_composition() -> dict[str, Any]:
     return {
         "contract_version": "linked_template_composition_v1",
@@ -558,7 +624,10 @@ def build_form_system_contract_map(
         )
 
     fields = _overlay_runtime_finish_target_field(
-        _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+        _overlay_runtime_artwork_finish_boolean_fields(
+            _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+            payload_raw,
+        ),
         payload_raw,
     )
     readiness = _build_readiness(fields)

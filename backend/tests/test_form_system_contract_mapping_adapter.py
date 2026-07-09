@@ -62,8 +62,8 @@ def test_product_truth_path_is_generated_explicitly() -> None:
     model = build_form_system_contract_readonly_mapping(ROOT)
     by_key = _by_key(model)
 
-    assert by_key["finish.print_required"]["product_truth_path"] == "components.finish.printRequired"
-    assert by_key["finish.lamination_required"]["product_truth_path"] == "components.finish.laminationRequired"
+    assert by_key["finish.print_required"]["product_truth_path"] == "components.artwork.items[].printRequired"
+    assert by_key["finish.lamination_required"]["product_truth_path"] == "components.artwork.items[].laminationRequired"
     assert by_key["mounting.mounting_scope"]["product_truth_path"] == "components.mounting.mountingScope"
 
 
@@ -171,6 +171,84 @@ def test_finish_target_runtime_overlay_unconfirmed_does_not_become_confirmed() -
     assert field["state"] == "blocked"
     assert field["source"] == "ui_zone_implied_target"
     assert field["blockers"] == ["FINISH_TARGET_MISSING"]
+
+
+def test_print_and_lamination_runtime_overlay_reads_persisted_row_level_source() -> None:
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "print_required": True,
+                    "lamination_required": False,
+                },
+                {
+                    "layer_key": "logo-right",
+                    "print_required": False,
+                    "lamination_required": True,
+                },
+            ],
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    fields = _by_key(model)
+
+    assert fields["finish.print_required"]["source"] == "payload_persisted"
+    assert fields["finish.print_required"]["state"] == "confirmed"
+    assert fields["finish.print_required"]["blockers"] == []
+    assert fields["finish.lamination_required"]["source"] == "payload_persisted"
+    assert fields["finish.lamination_required"]["state"] == "confirmed"
+    assert fields["finish.lamination_required"]["blockers"] == []
+
+
+def test_print_and_lamination_runtime_overlay_missing_values_remain_blocked() -> None:
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "lamination_required": True,
+                }
+            ],
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    fields = _by_key(model)
+
+    assert fields["finish.print_required"]["source"] == "payload_artwork_rows"
+    assert fields["finish.print_required"]["state"] == "blocked"
+    assert fields["finish.print_required"]["blockers"] == ["PRINT_REQUIRED_UNKNOWN"]
+    assert fields["finish.lamination_required"]["source"] == "payload_persisted"
+    assert fields["finish.lamination_required"]["state"] == "confirmed"
+    assert fields["finish.lamination_required"]["blockers"] == []
+
+
+def test_print_and_lamination_runtime_overlay_unconfirmed_rows_do_not_become_confirmed() -> None:
+    payload = {
+        "finish_setup": {
+            "confirmed": False,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "print_required": True,
+                    "lamination_required": True,
+                    "confirmed": False,
+                }
+            ],
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    fields = _by_key(model)
+
+    assert fields["finish.print_required"]["state"] == "blocked"
+    assert fields["finish.print_required"]["blockers"] == ["PRINT_REQUIRED_UNKNOWN"]
+    assert fields["finish.lamination_required"]["state"] == "blocked"
+    assert fields["finish.lamination_required"]["blockers"] == ["LAMINATION_REQUIRED_UNKNOWN"]
 
 
 def test_no_pricing_quote_or_execution_coupling() -> None:

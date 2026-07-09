@@ -15,22 +15,22 @@ FIELD_SPECS: list[FieldSpec] = [
     {
         "field_key": "finish.print_required",
         "owner": "finish_artwork",
-        "source": "artwork_execution_type_evidence",
-        "state": "draft",
-        "product_truth_path": "components.finish.printRequired",
+        "source": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].printRequired",
         "confirmation_required": True,
         "blockers": ["PRINT_REQUIRED_UNKNOWN"],
-        "notes": "Current Review/artwork flow can imply print intent from execution_type, but the canonical field remains a separate explicit boolean.",
+        "notes": "Artwork print requirement is canonical only as an explicit boolean on each persisted artwork finish row; execution_type evidence alone is not confirmed truth.",
     },
     {
         "field_key": "finish.lamination_required",
         "owner": "finish_artwork",
-        "source": "artwork_execution_type_evidence",
-        "state": "draft",
-        "product_truth_path": "components.finish.laminationRequired",
+        "source": "payload_artwork_rows",
+        "state": "blocked",
+        "product_truth_path": "components.artwork.items[].laminationRequired",
         "confirmation_required": True,
         "blockers": ["LAMINATION_REQUIRED_UNKNOWN"],
-        "notes": "Lamination remains distinct from print; current execution_type evidence does not make it confirmed truth.",
+        "notes": "Artwork lamination requirement is canonical only as an explicit boolean on each persisted artwork finish row; execution_type evidence alone is not confirmed truth.",
     },
     {
         "field_key": "finish.finish_target",
@@ -169,6 +169,19 @@ def build_form_system_contract_readonly_mapping(
             blocker_code = selected_layer_runtime.get("blocker_code")
             entry["blockers"] = [blocker_code] if blocker_code else []
             break
+    if payload_raw is not None:
+        for field_key in ("finish.print_required", "finish.lamination_required"):
+            runtime_field = backbone_fields.get(field_key)
+            if runtime_field is None:
+                continue
+            for entry in entries:
+                if entry["field_key"] != field_key:
+                    continue
+                entry["source"] = runtime_field.get("source_type") or entry["source"]
+                entry["state"] = runtime_field.get("state") or entry["state"]
+                blocker_code = runtime_field.get("blocker_code")
+                entry["blockers"] = [blocker_code] if blocker_code else []
+                break
     if payload_raw is not None:
         finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
         finish_target = str(finish_setup.get("finish_target") or "").strip() if finish_setup else ""

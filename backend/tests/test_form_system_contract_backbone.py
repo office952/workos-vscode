@@ -129,6 +129,8 @@ def test_required_field_set_includes_requested_backbone_fields():
         "svg.selected_layer_group",
         "face.material",
         "face.finish_artwork_target",
+        "finish.print_required",
+        "finish.lamination_required",
         "return.material",
         "return.depth_mm",
         "lighting.type",
@@ -293,6 +295,80 @@ def test_runtime_finish_target_unconfirmed_does_not_unlock_backbone_field():
     assert field["source_type"] == "operator_confirmed"
     assert field["state"] == "missing"
     assert field["blocker_code"] == "FACE_FINISH_TARGET_MISSING"
+
+
+def test_runtime_artwork_print_and_lamination_confirm_backbone_fields_row_level_only():
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "print_required": True,
+                    "lamination_required": False,
+                },
+                {
+                    "layer_key": "logo-right",
+                    "print_required": False,
+                    "lamination_required": True,
+                },
+            ],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    fields = _fields_by_key(contract)
+
+    assert fields["finish.print_required"]["source_type"] == "payload_persisted"
+    assert fields["finish.print_required"]["state"] == "confirmed"
+    assert fields["finish.print_required"]["product_truth_path"] == "components.artwork.items[].printRequired"
+    assert fields["finish.lamination_required"]["source_type"] == "payload_persisted"
+    assert fields["finish.lamination_required"]["state"] == "confirmed"
+    assert fields["finish.lamination_required"]["product_truth_path"] == "components.artwork.items[].laminationRequired"
+
+
+def test_runtime_artwork_print_missing_value_keeps_backbone_blocked():
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "lamination_required": True,
+                }
+            ],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["finish.print_required"]
+
+    assert field["source_type"] == "payload_artwork_rows"
+    assert field["state"] == "blocked"
+    assert field["blocker_code"] == "PRINT_REQUIRED_UNKNOWN"
+
+
+def test_runtime_artwork_lamination_unconfirmed_does_not_unlock_backbone_field():
+    payload = {
+        "finish_setup": {
+            "confirmed": False,
+            "artwork_finishes": [
+                {
+                    "layer_key": "logo-left",
+                    "print_required": True,
+                    "lamination_required": True,
+                    "confirmed": False,
+                }
+            ],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["finish.lamination_required"]
+
+    assert field["source_type"] == "payload_artwork_rows"
+    assert field["state"] == "blocked"
+    assert field["blocker_code"] == "LAMINATION_REQUIRED_UNKNOWN"
 
 
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():

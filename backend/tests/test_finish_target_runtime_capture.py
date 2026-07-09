@@ -132,3 +132,69 @@ def test_save_finish_setup_without_finish_target_keeps_field_absent(v4_client):
     assert saved.status_code == 200, saved.text
     finish = saved.json()["payload"]["finish_setup"]
     assert finish.get("finish_target") is None
+
+
+def test_save_finish_setup_persists_print_required_row_level(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "face-1",
+                    "execution_type": "print_laminate",
+                    "print_required": True,
+                    "lamination_required": False,
+                },
+                {
+                    "layer_key": "face-2",
+                    "execution_type": "vinyl_cut",
+                    "print_required": False,
+                    "lamination_required": False,
+                },
+            ],
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+    artwork = finish["artwork_finishes"]
+
+    assert artwork[0]["print_required"] is True
+    assert artwork[1]["print_required"] is False
+    assert "print_required" not in finish
+
+
+def test_save_finish_setup_persists_lamination_required_row_level(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "confirmed": True,
+            "artwork_finishes": [
+                {
+                    "layer_key": "face-1",
+                    "execution_type": "print_laminate",
+                    "print_required": True,
+                    "lamination_required": True,
+                },
+                {
+                    "layer_key": "face-2",
+                    "execution_type": "print",
+                    "print_required": True,
+                    "lamination_required": False,
+                },
+            ],
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+    artwork = finish["artwork_finishes"]
+
+    assert artwork[0]["lamination_required"] is True
+    assert artwork[1]["lamination_required"] is False
+    assert "lamination_required" not in finish
