@@ -1,7 +1,7 @@
 # FACE Component Truth — Owner Inputs Pending
 
 **Date:** 2026-07-09  
-**Status:** Owner input required before FACE pricing / ProductDefinition / FINISH workshop  
+**Status:** Superseded by signed owner decisions — see [face_component_truth_owner_decision_v1.md](./face_component_truth_owner_decision_v1.md)  
 **Source decisions:** [canonical_finish_enum_map_owner_decision_v1.md](./canonical_finish_enum_map_owner_decision_v1.md)  
 **Workshop contract:** `frontend/src/features/product-system/componentFirstFaceTruthWorkshop.ts`
 

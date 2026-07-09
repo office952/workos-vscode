@@ -1,14 +1,17 @@
 import {
   buildFaceReadinessSummary,
-  FACE_CUT_PROCESS_EVIDENCE,
+  FACE_COMPONENT_TEMPLATE_CODE,
+  FACE_CUT_PROCESS_DECISIONS,
   FACE_DOES_NOT_OWN,
+  FACE_DOES_NOT_OWN_CONFIRMED,
   FACE_DOWNSTREAM_OUTPUTS,
   FACE_FORBIDDEN_OWNERSHIP,
-  FACE_MATERIAL_FAMILY_EVIDENCE,
+  FACE_MATERIAL_FAMILY_DECISIONS,
+  FACE_NESTING_BASIS_RULE,
   FACE_OWNER_TRUTH_FIELDS,
   FACE_READINESS_BLOCKERS,
+  FACE_THICKNESS_DECISIONS,
   FACE_TRUTH_WORKSHOP_FIELDS,
-  FACE_COMPONENT_TEMPLATE_CODE,
   FACE_WORKSHOP_STATUS,
   type FaceTruthField,
   type FaceWorkshopFieldStatus,
@@ -119,10 +122,22 @@ export function FaceTruthWorkshopPanel() {
           testId="product-system-face-truth-product-truth-blocked"
         />
         <StatusChip
-          label="FINISH depends on FACE boundary"
+          label="FINISH workshop — separate slice"
           tone="violet"
           testId="product-system-face-truth-finish-depends-badge"
         />
+        <StatusChip
+          label="Owner decisions applied"
+          tone="emerald"
+          testId="product-system-face-truth-owner-decisions-badge"
+        />
+        {FACE_DOES_NOT_OWN_CONFIRMED ? (
+          <StatusChip
+            label="Does-not-own confirmed"
+            tone="emerald"
+            testId="product-system-face-truth-does-not-own-confirmed"
+          />
+        ) : null}
       </div>
 
       <div
@@ -176,6 +191,12 @@ export function FaceTruthWorkshopPanel() {
         <p className="mt-1 text-[10px] text-slate-400">
           SVG layer / vector contour din Intake V6. Handoff path exact pending — fără runtime bridge.
         </p>
+        <p
+          data-testid="product-system-face-truth-nesting-basis"
+          className="mt-2 text-[10px] font-semibold text-cyan-200/90"
+        >
+          Nesting basis: {FACE_NESTING_BASIS_RULE}
+        </p>
       </article>
 
       <article
@@ -216,9 +237,9 @@ export function FaceTruthWorkshopPanel() {
         data-testid="product-system-face-truth-material-thickness"
         className="rounded-lg border border-amber-900/30 bg-amber-950/10 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase text-amber-200">Material / thickness owner inputs</p>
+        <p className="text-[11px] font-bold uppercase text-amber-200">Material / thickness — owner confirmed</p>
         <div className="mt-2 space-y-2">
-          {FACE_MATERIAL_FAMILY_EVIDENCE.map((material) => (
+          {FACE_MATERIAL_FAMILY_DECISIONS.map((material) => (
             <div
               key={material.materialFamily}
               data-testid={`product-system-face-truth-material-${material.materialFamily.replace(/\s+/g, "-").toLowerCase()}`}
@@ -226,21 +247,35 @@ export function FaceTruthWorkshopPanel() {
             >
               <div className="flex flex-wrap items-center gap-2">
                 <span className="font-semibold text-slate-200">{material.materialFamily}</span>
-                <StatusChip label={material.status.replace(/_/g, " ").toUpperCase()} tone="amber" />
+                <StatusChip
+                  label={material.allowedForFaceStandard ? "FACE YES" : "FACE NO"}
+                  tone={material.allowedForFaceStandard ? "emerald" : "slate"}
+                />
+                <StatusChip label={material.status.replace(/_/g, " ").toUpperCase()} tone="emerald" />
               </div>
-              {material.thicknessHints.length > 0 ? (
-                <p className="mt-1 text-slate-400">Thickness hints (evidence): {material.thicknessHints.join(", ")}</p>
-              ) : null}
               <p className="mt-0.5 text-slate-500">{material.notesRo}</p>
             </div>
           ))}
         </div>
-        <div className="mt-3">
-          <p className="text-[10px] font-bold text-slate-400">Cut process evidence</p>
+        <div className="mt-3" data-testid="product-system-face-truth-thickness-decisions">
+          <p className="text-[10px] font-bold text-slate-400">Thickness decisions</p>
           <ul className="mt-1 space-y-1 text-[10px] text-slate-300">
-            {FACE_CUT_PROCESS_EVIDENCE.map((entry) => (
-              <li key={entry.process}>
-                • {entry.process} — {fieldStatusLabel(entry.status)}
+            {FACE_THICKNESS_DECISIONS.map((entry) => (
+              <li key={entry.materialFamily}>
+                • {entry.materialFamily}: default {entry.defaultThicknessMm ?? "—"} mm
+                {entry.optionalThicknessesMm.length > 0
+                  ? ` · optional ${entry.optionalThicknessesMm.join("/")} mm`
+                  : ""}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="mt-3" data-testid="product-system-face-truth-cut-process-matrix">
+          <p className="text-[10px] font-bold text-slate-400">Cut process matrix</p>
+          <ul className="mt-1 space-y-1 text-[10px] text-slate-300">
+            {FACE_CUT_PROCESS_DECISIONS.map((entry) => (
+              <li key={`${entry.materialFamily}-${entry.thicknessMm}`}>
+                • {entry.materialFamily} {entry.thicknessMm} mm → {entry.process} ({fieldStatusLabel(entry.status)})
               </li>
             ))}
           </ul>
