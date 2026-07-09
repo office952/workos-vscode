@@ -1477,6 +1477,9 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
     expect(screen.getByTestId(CATALOG_BUCKET.legacyModules)).toHaveAttribute("data-expanded", "false");
 
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    });
     const lettersRow = screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2");
     expect(within(lettersRow).getByRole("button", { name: "Open" })).toBeInTheDocument();
     fireEvent.click(within(lettersRow).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2-action-more"));
@@ -1667,6 +1670,64 @@ describe("ProductSystem design-system badges", () => {
     expect(panel.textContent?.toLowerCase()).not.toMatch(/make offerable/);
     expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+  });
+
+  it("renders Product Truth owner workshop in component-first guards with RETURN-CANT priority", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-truth-owner-workshop")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-truth-workshop-global-status")).toHaveTextContent(
+      "OWNER INPUT REQUIRED",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-disclaimer")).toHaveTextContent(
+      /nu este Product Truth live/i,
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-safety-copy")).toHaveTextContent(
+      "No Product Truth write",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-safety-copy")).toHaveTextContent(
+      "No Pricing activation",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-safety-copy")).toHaveTextContent(
+      "No Work Intake exposure",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-tab-RETURN-CANT")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-truth-workshop-return-cant-finish-options")).toHaveTextContent(
+      "Culoare Stock",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-return-cant-finish-options")).toHaveTextContent("Oracal");
+    expect(screen.getByTestId("product-system-truth-workshop-return-cant-finish-options")).toHaveTextContent(
+      "Vopsit RAL",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-owner-questions")).toHaveTextContent(
+      "Întrebări pentru owner",
+    );
+    expect(screen.getByTestId("product-system-truth-workshop-fields-table-RETURN-CANT")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps legacy replacement NOT READY FOR DELETE alongside workshop panel", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-truth-owner-workshop")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("product-system-legacy-replacement-global-verdict")).toHaveTextContent(
+      "NOT READY FOR DELETE",
+    );
   });
 
 });

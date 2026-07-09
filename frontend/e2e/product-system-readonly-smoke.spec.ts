@@ -163,6 +163,22 @@ test.describe("Product System readonly smoke", () => {
     await expect(guardLabels).toHaveText(/ProductAggregate runtime:\s*blocked/i);
     await expect(guardLabels).toHaveText(/Quote\/Order\/Execution:\s*blocked/i);
 
+    const workshop = page.getByTestId("product-system-truth-owner-workshop");
+    await expect(workshop).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("product-system-truth-workshop-global-status")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    await expect(workshop).toHaveText(/RETURN-CANT/i);
+    await expect(workshop).toHaveText(/Culoare Stock/i);
+    await expect(workshop).toHaveText(/Oracal/i);
+    await expect(workshop).toHaveText(/Vopsit RAL/i);
+    await expect(workshop).toHaveText(/No Product Truth write/i);
+    await expect(workshop).toHaveText(/No Pricing activation/i);
+    await expect(workshop).toHaveText(/No Work Intake exposure/i);
+    await expect(workshop).toHaveText(/Întrebări pentru owner/i);
+    await expect(page.getByRole("button", { name: /^save$/i })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: /write product truth/i })).toHaveCount(0);
+
     await saveScreenshot(page, "04_component_first_guards_blocked");
 
     const legacyBucket = page.getByTestId(BUCKET.legacyModules);

@@ -74,6 +74,7 @@ import {
   ComponentFirstReplacementContextPanel,
   LegacyReplacementReadinessPanel,
 } from "./LegacyReplacementReadinessPanel";
+import { ComponentFirstProductTruthWorkshopPanel } from "./ComponentFirstProductTruthWorkshopPanel";
 
 export type ComponentFirstCandidateTab =
   | "overview"
@@ -1189,6 +1190,8 @@ function ComponentFirstGuardsAuditPanel({
           <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
         </div>
       ) : null}
+
+      <ComponentFirstProductTruthWorkshopPanel />
 
       <LegacyReplacementReadinessPanel />
     </div>
