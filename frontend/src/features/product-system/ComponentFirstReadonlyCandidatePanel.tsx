@@ -63,8 +63,10 @@ import {
 } from "./ComponentFirstReadonlySettingsSheet";
 import {
   ComponentFirstStatusStrip,
+  ReadonlyCardFooter,
   ReadonlyCardShell,
   ReadonlyLinkButton,
+  ReadonlyStatusChip,
 } from "./componentFirstReadonlyUiShared";
 import { getProductTemplateIconConfig } from "./productTemplateIconRegistry";
 
@@ -202,57 +204,73 @@ function ComponentFirstProductComposerCard({
       : "product-system-component-first-composer-card";
 
   return (
-    <ReadonlyCardShell testId={testId} className="border-cyan-900/40 bg-[#111827]">
-      <div className="flex items-start gap-3">
+    <ReadonlyCardShell
+      testId={testId}
+      className="border-purple-800/40 bg-[#111827] hover:border-purple-600/40 hover:bg-[#131B2E]"
+    >
+      <div className="flex min-h-[5rem] items-start gap-3">
         <TemplateIcon templateCode={model.composerTemplateCode} compact={variant === "compact"} />
         <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-bold text-slate-100">
-            {variant === "overview" ? "Litere volumetrice component-first" : model.composerTemplateCode}
-          </p>
-          <p className="mt-0.5 font-mono text-[10px] font-bold text-cyan-200">{model.composerTemplateCode}</p>
-          <p className="mt-1 text-[10px] text-slate-400">Type: Product Template / Composer</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-[13px] font-bold text-slate-100">
+              {variant === "overview" ? "Litere volumetrice component-first" : model.composerTemplateCode}
+            </p>
+            <ReadonlyStatusChip label="Product Template / Composer" tone="purple" />
+          </div>
+          <p className="mt-0.5 font-mono text-[11px] font-bold text-slate-200">{model.composerTemplateCode}</p>
+          {variant === "overview" ? (
+            <p className="mt-0.5 text-[12px] text-slate-400">Component-first letters candidate composer</p>
+          ) : null}
+          <div className="mt-2 flex flex-wrap gap-1">
+            <ReadonlyStatusChip label="INACTIVE" tone="cyan" />
+            <ReadonlyStatusChip label="CANDIDATE" tone="cyan" />
+            <ReadonlyStatusChip label="READONLY" tone="cyan" />
+            <ReadonlyStatusChip label="NOT OFFERABLE" tone="rose" />
+          </div>
           {variant === "overview" ? (
             <>
               <ComponentFirstSemanticLabel />
-              <div className="mt-2 grid gap-1 text-[10px] text-slate-300">
-                <p>Role: compune componentele</p>
-                <p>Owns material truth: no · Owns operation truth: no</p>
-                <p>Components: {model.components.length}</p>
-                <p data-testid="product-system-component-first-completeness-count">
-                  Live rows: {model.foundRowCount}/{model.expectedRowCount}
-                </p>
-                <p>Work Intake: no · Pricing / Quote / Order / Execution: no</p>
-                <p>Owner GO required</p>
-              </div>
+              <p
+                data-testid="product-system-component-first-completeness-count"
+                className="mt-2 text-[11px] font-bold text-slate-300"
+              >
+                Live rows: {model.foundRowCount}/{model.expectedRowCount} · {model.components.length} components · Work
+                Intake: no · Owner GO required
+              </p>
+              <details className="mt-2 text-[10px] text-slate-400">
+                <summary className="cursor-pointer font-semibold text-slate-300">Composer details</summary>
+                <div className="mt-1 grid gap-1 text-slate-300">
+                  <p>Role: compune componentele</p>
+                  <p>Owns material truth: no · Owns operation truth: no</p>
+                  <p>Pricing / Quote / Order / Execution: no</p>
+                </div>
+              </details>
             </>
           ) : (
-            <>
-              <p className="mt-1 text-[10px] text-cyan-200">Composer — coordinates components only</p>
-              <p className="mt-1 text-[10px] text-slate-400">
-                does not own material truth · does not own operation truth · no module links:{" "}
-                {String(model.noModuleLinks)}
-              </p>
-            </>
+            <p className="mt-2 text-[10px] text-slate-400">
+              Composer — coordinates components only · does not own material truth · does not own operation truth ·
+              no module links: {String(model.noModuleLinks)}
+            </p>
           )}
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            <ReadonlyLinkButton
-              label="View product settings"
-              testId="product-system-component-first-view-product-settings"
-              onClick={onViewProductSettings}
-            />
-            <ReadonlyLinkButton
-              label="View product dossier"
-              testId="product-system-component-first-view-product-dossier"
-              onClick={onViewProductDossier}
-            />
-            <ReadonlyLinkButton
-              label="View components"
-              testId="product-system-component-first-view-components"
-              onClick={onViewComponents}
-            />
-          </div>
         </div>
       </div>
+      <ReadonlyCardFooter>
+        <ReadonlyLinkButton
+          label="View product settings"
+          testId="product-system-component-first-view-product-settings"
+          onClick={onViewProductSettings}
+        />
+        <ReadonlyLinkButton
+          label="View product dossier"
+          testId="product-system-component-first-view-product-dossier"
+          onClick={onViewProductDossier}
+        />
+        <ReadonlyLinkButton
+          label="View components"
+          testId="product-system-component-first-view-components"
+          onClick={onViewComponents}
+        />
+      </ReadonlyCardFooter>
     </ReadonlyCardShell>
   );
 }
@@ -282,66 +300,76 @@ function ComponentFirstComponentEntityCard({
 
   return (
     <ReadonlyCardShell testId={`product-system-component-first-component-${component.templateCode}`}>
-      <div className="flex items-start gap-2.5">
+      <div className="flex min-h-[4.5rem] items-start gap-2.5">
         <TemplateIcon templateCode={component.templateCode} compact />
         <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-bold text-slate-100">{displayName}</p>
-          <p className="font-mono text-[10px] font-bold text-cyan-200">{component.templateCode}</p>
-          <p className="text-[10px] text-slate-500">{component.componentId}</p>
-          <div className="mt-1.5 flex flex-wrap gap-1 text-[9px] font-bold">
-            <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">
-              Component Template
-            </span>
-            <span className="rounded border border-cyan-800/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">
-              INACTIVE · READONLY · CANDIDATE
-            </span>
+          <p className="text-[13px] font-bold text-slate-100">{displayName}</p>
+          <p className="font-mono text-[11px] font-bold text-slate-200">{component.templateCode}</p>
+          <div className="mt-1.5 flex flex-wrap gap-1">
+            <ReadonlyStatusChip label="Component Template" tone="slate" />
+            <ReadonlyStatusChip label="INACTIVE · READONLY · CANDIDATE" tone="cyan" />
           </div>
-          <div className="mt-2 grid gap-1 text-[10px] text-slate-300">
-            <p data-testid={`product-system-component-first-truth-owner-${component.templateCode}`}>
-              <span className="text-slate-500">Truth owner:</span>{" "}
+          <p className="mt-2 text-[11px] text-slate-300">
+            <span data-testid={`product-system-component-first-truth-owner-${component.templateCode}`}>
               {truthOwnerLabel(dossierEntry?.expectedTruthOwner ?? "component_owned_truth")}
-            </p>
+            </span>
             {dossierEntry ? (
-              <p data-testid={`product-system-component-first-dossier-role-${component.templateCode}`}>
-                <span className="text-slate-500">Dossier role:</span> {dossierEntry.expectedDossierRole}
-              </p>
-            ) : null}
-            {fieldGroups ? (
-              <p data-testid={`product-system-component-first-field-groups-${component.templateCode}`}>
-                <span className="text-slate-500">Field groups:</span> {fieldGroups}
-              </p>
+              <>
+                {" · "}
+                <span data-testid={`product-system-component-first-dossier-role-${component.templateCode}`}>
+                  dossier: {dossierEntry.expectedDossierRole}
+                </span>
+              </>
             ) : null}
             {productTruthPrefix ? (
-              <p
-                data-testid={`product-system-component-first-pt-prefix-${component.templateCode}`}
-                className="font-mono text-cyan-200/85"
-              >
-                Product Truth prefix: {productTruthPrefix}
-              </p>
+              <>
+                {" · "}
+                <span
+                  data-testid={`product-system-component-first-pt-prefix-${component.templateCode}`}
+                  className="font-mono text-cyan-200/85"
+                >
+                  Product Truth prefix: {productTruthPrefix}
+                </span>
+              </>
             ) : null}
-            <p>
-              <span className="text-slate-500">Live/fallback:</span>{" "}
-              {component.liveRowPresent ? "live inactive row" : "contract fallback row"}
-            </p>
-            <p>
-              <span className="text-slate-500">Blockers:</span> {blockerCount} ·{" "}
-              <span className="text-slate-500">Dependencies:</span> {dependencySummary}
-            </p>
-          </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            <ReadonlyLinkButton
-              label="View component settings"
-              testId={`product-system-component-first-view-component-settings-${component.templateCode}`}
-              onClick={onViewComponentSettings}
-            />
-            <ReadonlyLinkButton
-              label="View dossier"
-              testId={`product-system-component-first-view-dossier-${component.templateCode}`}
-              onClick={onViewComponentDossier}
-            />
-          </div>
+          </p>
+          <p className="mt-1 text-[10px] text-slate-400">
+            Live/fallback: {component.liveRowPresent ? "live inactive row" : "contract fallback row"} ·{" "}
+            <span className="font-semibold text-amber-200/90">
+              {blockerCount} blockers · {dependencySummary}
+            </span>
+          </p>
+          <details className="mt-2 text-[10px] text-slate-400">
+            <summary className="cursor-pointer font-semibold text-slate-300">Component details</summary>
+            <div className="mt-1 space-y-1 text-slate-300">
+              <p className="text-slate-500">{component.componentId}</p>
+              {fieldGroups ? (
+                <p data-testid={`product-system-component-first-field-groups-${component.templateCode}`}>
+                  Field groups: {fieldGroups}
+                </p>
+              ) : null}
+              {component.blockers.length > 0 ? (
+                <p className="font-mono text-amber-200/80">Blockers: {component.blockers.join(", ")}</p>
+              ) : null}
+              {component.dependencies.length > 0 ? (
+                <p className="font-mono text-slate-400">Dependencies: {component.dependencies.join(", ")}</p>
+              ) : null}
+            </div>
+          </details>
         </div>
       </div>
+      <ReadonlyCardFooter>
+        <ReadonlyLinkButton
+          label="View component settings"
+          testId={`product-system-component-first-view-component-settings-${component.templateCode}`}
+          onClick={onViewComponentSettings}
+        />
+        <ReadonlyLinkButton
+          label="View dossier"
+          testId={`product-system-component-first-view-dossier-${component.templateCode}`}
+          onClick={onViewComponentDossier}
+        />
+      </ReadonlyCardFooter>
     </ReadonlyCardShell>
   );
 }
@@ -648,13 +676,22 @@ function ComponentFirstDossierPanel({
 
       {composerEntry ? (
         <article
-          data-testid={`product-system-component-first-dossier-composer-card`}
+          data-testid="product-system-component-first-dossier-composer-card"
+          data-focused={dossierFocus === composerEntry.templateCode ? "true" : "false"}
           className={`rounded-lg border p-3 ${
             dossierFocus === composerEntry.templateCode
-              ? "border-purple-500/50 bg-purple-950/20 ring-1 ring-purple-500/30"
+              ? "border-purple-500/60 bg-purple-950/30 ring-2 ring-purple-500/40 shadow-[0_0_0_1px_rgba(168,85,247,0.25)]"
               : "border-purple-800/50 bg-purple-950/10"
           }`}
         >
+          {dossierFocus === composerEntry.templateCode ? (
+            <p
+              data-testid="product-system-component-first-dossier-focused-label"
+              className="mb-2 inline-flex rounded border border-purple-500/50 bg-purple-900/40 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-purple-100"
+            >
+              Focused dossier
+            </p>
+          ) : null}
           <p className="text-[10px] font-bold uppercase tracking-wide text-purple-200">Product Composer Dossier</p>
           <p className="mt-1 font-mono text-[10px] font-bold text-cyan-200">{composerEntry.templateCode}</p>
           <div className="mt-2 space-y-1 text-[10px] text-slate-300">
@@ -684,16 +721,27 @@ function ComponentFirstDossierPanel({
       ) : null}
 
       <div data-testid="product-system-component-first-dossier-cards" className="grid gap-3 xl:grid-cols-2">
-        {componentEntries.map((entry) => (
+        {componentEntries.map((entry) => {
+          const isFocused = dossierFocus === entry.templateCode;
+          return (
           <article
             key={entry.templateCode}
             data-testid={`product-system-component-first-dossier-card-${entry.templateCode}`}
+            data-focused={isFocused ? "true" : "false"}
             className={`rounded-lg border bg-[#0D1321]/90 p-3 ${
-              dossierFocus === entry.templateCode
-                ? "border-cyan-500/50 ring-1 ring-cyan-500/30"
+              isFocused
+                ? "border-cyan-500/60 ring-2 ring-cyan-500/40 shadow-[0_0_0_1px_rgba(34,211,238,0.25)]"
                 : "border-slate-800/90"
             }`}
           >
+            {isFocused ? (
+              <p
+                data-testid={`product-system-component-first-dossier-focused-label-${entry.templateCode}`}
+                className="mb-2 inline-flex rounded border border-cyan-500/50 bg-cyan-950/50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wide text-cyan-100"
+              >
+                Focused dossier
+              </p>
+            ) : null}
             <p className="font-mono text-[10px] font-bold text-cyan-200">{entry.templateCode}</p>
             <p className="text-[10px] text-slate-400">
               {componentFirstDisplayName(entry.templateCode)} · Component Template
@@ -732,7 +780,8 @@ function ComponentFirstDossierPanel({
               />
             </div>
           </article>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -1214,7 +1263,6 @@ export function ComponentFirstReadonlyCandidatePanel({
               }
               onFocusComponent={(templateCode) => {
                 setDossierFocus(templateCode);
-                setActiveTab("components");
               }}
             />
           ) : null}

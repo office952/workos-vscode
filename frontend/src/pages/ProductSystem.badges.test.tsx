@@ -1160,9 +1160,14 @@ describe("ProductSystem design-system badges", () => {
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-settings-sheet")).toBeInTheDocument();
     });
+    expect(screen.getByTestId("product-system-component-first-readonly-drawer-banner")).toHaveTextContent(
+      "READONLY · NO SAVE · NO WRITE",
+    );
     expect(screen.getByTestId("product-system-component-first-settings-sheet")).toHaveTextContent(
       "Product Settings — TPL-LETTERS-COMPOSER_v1",
     );
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^edit$/i })).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId(`product-system-component-first-view-component-settings-${faceCode}`));
     await waitFor(() => {
@@ -1170,6 +1175,7 @@ describe("ProductSystem design-system badges", () => {
         "Component Settings — Face",
       );
     });
+    expect(screen.getByTestId("product-system-component-first-readonly-drawer-banner")).toBeVisible();
 
     fireEvent.click(screen.getByTestId(`product-system-component-first-view-component-settings-${ledCode}`));
     await waitFor(() => {
@@ -1183,10 +1189,28 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-dossier-composer-card")).toBeInTheDocument();
     expect(screen.getAllByTestId(/^product-system-component-first-dossier-card-/).length).toBe(6);
 
+    openComponentFirstTab(COMPONENT_FIRST_TAB.components);
+    fireEvent.click(screen.getByTestId(`product-system-component-first-view-dossier-${faceCode}`));
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-panel-dossier")).toBeInTheDocument();
+      expect(screen.getByTestId(`product-system-component-first-dossier-card-${faceCode}`)).toHaveAttribute(
+        "data-focused",
+        "true",
+      );
+    });
+    expect(screen.getByTestId(`product-system-component-first-dossier-focused-label-${faceCode}`)).toBeInTheDocument();
+
     fireEvent.click(screen.getByTestId(`product-system-component-first-dossier-focus-${faceCode}`));
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-component-first-panel-components")).toBeInTheDocument();
+      expect(screen.getByTestId(`product-system-component-first-dossier-card-${faceCode}`)).toHaveAttribute(
+        "data-focused",
+        "true",
+      );
     });
+    expect(screen.getByTestId("product-system-component-first-panel-dossier")).toBeInTheDocument();
+
+    openComponentFirstTab(COMPONENT_FIRST_TAB.overview);
+    expect(screen.getByTestId("product-system-component-first-product-card")).toHaveTextContent("NOT OFFERABLE");
 
     expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();

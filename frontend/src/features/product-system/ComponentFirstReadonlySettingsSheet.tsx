@@ -23,6 +23,7 @@ import {
   ComponentFirstSemanticLabel,
   ComponentFirstStatusStrip,
   isComponentFirstComposer,
+  ReadonlyDrawerBanner,
   truthOwnerLabel,
 } from "./componentFirstReadonlyUiShared";
 
@@ -351,7 +352,8 @@ export function ComponentFirstReadonlySettingsSheet({
         data-testid="product-system-component-first-settings-sheet"
         className="w-full overflow-y-auto border-[#1E293B] bg-[#0A0F1A] sm:max-w-lg"
       >
-        <SheetHeader className="border-b border-slate-800 pb-3">
+        <SheetHeader className="space-y-2 border-b border-slate-800 pb-3">
+          <ReadonlyDrawerBanner />
           <SheetTitle className="text-left text-[13px] font-bold text-slate-100">{title}</SheetTitle>
           <SheetDescription className="text-left text-[11px] text-slate-400">
             Readonly contract view — no save, no edit, no activation.
