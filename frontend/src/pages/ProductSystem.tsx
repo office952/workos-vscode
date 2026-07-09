@@ -78,33 +78,23 @@ import {
   resolveDisplayCounts,
   shouldPreferAggregateDisplay,
 } from "@/features/product-system/productAggregateDisplay";
-import {
-  type CatalogDensity,
-  type ProductSystemCatalogView,
-  type TemplateLibraryRowSummary,
-} from "@/features/product-system/TemplateLibraryView";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "@/features/product-system/componentFirstReadonlyCompleteness";
-import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
 import { buildComponentFirstReadonlySetModel } from "@/features/product-system/componentFirstReadonlySetModel";
+import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
 import {
-  ProductSystemCatalogShell,
-  buildProductSystemCatalogSummary,
-  getDefaultProductSystemPrimaryTab,
-} from "@/features/product-system/ProductSystemCatalogShell";
-import type { ProductSystemPrimaryTab } from "@/features/product-system/productSystemCatalogShellTypes";
-import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
+  buildUnifiedCatalogSummary,
+  ProductSystemUnifiedCatalog,
+} from "@/features/product-system/ProductSystemUnifiedCatalog";
 import {
   getInitialProductSystemScreen,
   isTemplateEditableForQuote,
   shouldShowEditorScreen,
   shouldShowLibraryScreen,
-  type LibraryTab,
   type ProductSystemScreen,
 } from "@/features/product-system/productSystemNavigation";
 import {
   recordTemplateOpened,
-  resolveDefaultTemplate,
 } from "@/features/product-system/templateSelectionStorage";
 import {
   Package,
@@ -3331,11 +3321,6 @@ export default function ProductSystem() {
   const [warning, setWarning] = useState<string | null>(null);
   const [loadMode, setLoadMode] = useState<TemplateLoadMode>("api");
   const [screen, setScreen] = useState<ProductSystemScreen>(getInitialProductSystemScreen);
-  const [libraryTab, setLibraryTab] = useState<LibraryTab>("active");
-  const [librarySearch, setLibrarySearch] = useState("");
-  const [catalogView, setCatalogView] = useState<ProductSystemCatalogView>("overview");
-  const [catalogDensity, setCatalogDensity] = useState<CatalogDensity>("compact");
-  const [primaryTab, setPrimaryTab] = useState<ProductSystemPrimaryTab>(getDefaultProductSystemPrimaryTab);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [draft, setDraft] = useState<DraftTemplate | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -3496,65 +3481,6 @@ export default function ProductSystem() {
     return m;
   }, [materials]);
 
-  const templateSummaries = useMemo(() => {
-    const map = new Map<number, TemplateLibraryRowSummary>();
-    for (const t of templates) {
-      const d = entityToDraft(t);
-      const validation = computeValidation(d, families, materialsByCode);
-      const counts = getDraftDisplayCounts(d);
-      map.set(t.id, {
-        components: counts.components,
-        operations: counts.operations,
-        materials: counts.materials,
-        validationPassed: validation.filter((v) => v.ok).length,
-        validationTotal: validation.length,
-      });
-    }
-    return map;
-  }, [templates, families, materialsByCode]);
-
-  const templateCodes = useMemo(
-    () => templates.map((t) => t.template_code).filter(Boolean),
-    [templates],
-  );
-  const { summaries: aggregateLibrarySummaries } = useProductAggregateLibrarySummaries(templateCodes);
-
-  const enrichedTemplateSummaries = useMemo(() => {
-    const map = new Map<number, TemplateLibraryRowSummary>();
-    for (const t of templates) {
-      const base = templateSummaries.get(t.id);
-      if (!base) continue;
-      const agg = aggregateLibrarySummaries.get(t.template_code);
-      if (agg?.showDualCounts && agg.aggregateCounts) {
-        map.set(t.id, {
-          ...base,
-          components: agg.aggregateCounts.components,
-          operations: agg.aggregateCounts.operations,
-          materials: agg.aggregateCounts.materials,
-          aggregateCounts: agg.aggregateCounts,
-          parentDirectCounts: agg.parentCounts,
-          showDualCounts: true,
-        });
-      } else {
-        map.set(t.id, base);
-      }
-    }
-    return map;
-  }, [templates, templateSummaries, aggregateLibrarySummaries]);
-
-  const recommendedTemplate = useMemo(
-    () => resolveDefaultTemplate(templates),
-    [templates]
-  );
-
-  const componentFirstLibraryReadonlyPanel = shouldShowLibraryScreen(screen) ? (
-    <ComponentFirstReadonlyCandidatePanel
-      templates={templates}
-      availabilityItems={availabilityItems}
-      selectedTemplateCode={COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE}
-    />
-  ) : null;
-
   const hasComponentFirstCandidate = useMemo(
     () =>
       buildComponentFirstReadonlySetModel(templates, availabilityItems, COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE) !=
@@ -3569,7 +3495,7 @@ export default function ProductSystem() {
 
   const catalogSummary = useMemo(
     () =>
-      buildProductSystemCatalogSummary({
+      buildUnifiedCatalogSummary({
         catalogCounts,
         archivedCount,
         hasComponentFirstCandidate,
@@ -3577,17 +3503,6 @@ export default function ProductSystem() {
       }),
     [catalogCounts, archivedCount, hasComponentFirstCandidate, ownerDecisionRequiredCount],
   );
-
-  const handlePrimaryTabChange = useCallback((tab: ProductSystemPrimaryTab) => {
-    setPrimaryTab(tab);
-    if (tab === "products") {
-      setCatalogView("overview");
-    } else if (tab === "components") {
-      setCatalogView("components");
-    } else if (tab === "archived") {
-      setCatalogView("archived");
-    }
-  }, []);
 
   const editorReadOnly = useMemo(() => {
     if (isNew || !selectedId) return false;
@@ -3872,11 +3787,8 @@ export default function ProductSystem() {
             </p>
           </div>
         ) : shouldShowLibraryScreen(screen) ? (
-          <ProductSystemCatalogShell
-            primaryTab={primaryTab}
-            onPrimaryTabChange={handlePrimaryTabChange}
+          <ProductSystemUnifiedCatalog
             summary={catalogSummary}
-            hasComponentFirstCandidate={hasComponentFirstCandidate}
             catalogOverview={
               <section
                 data-testid="product-system-catalog-overview"
@@ -3884,26 +3796,13 @@ export default function ProductSystem() {
               >
                 <h2 className="text-[14px] font-bold text-slate-100">Catalog Overview</h2>
                 <p className="mt-1 text-[12px] text-slate-400">
-                  Product System separates offerable existing roots from parallel readonly candidate sets. Component-first
-                  letters remain inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
+                  Unified design-time catalog with search, filters, and master-detail. Component-first letters remain
+                  inactive and do not replace TPL-VOLUMETRIC-LETTERS_v2.
                 </p>
               </section>
             }
-            candidateSetsPanel={componentFirstLibraryReadonlyPanel}
             templates={templates}
             availabilityItems={availabilityItems}
-            libraryTab={libraryTab}
-            onLibraryTabChange={setLibraryTab}
-            librarySearch={librarySearch}
-            onLibrarySearchChange={setLibrarySearch}
-            catalogView={catalogView}
-            onCatalogViewChange={setCatalogView}
-            catalogDensity={catalogDensity}
-            onCatalogDensityChange={setCatalogDensity}
-            summaries={enrichedTemplateSummaries}
-            recommendedTemplateId={recommendedTemplate?.id ?? null}
-            activeCount={activeOwnerCount}
-            archivedCount={archivedCount}
             loading={loading}
             onOpenTemplate={handleOpenEditor}
           />

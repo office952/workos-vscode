@@ -87,6 +87,15 @@ const CANDIDATE_TABS: Array<{ id: ComponentFirstCandidateTab; label: string; tes
   { id: "guards-audit", label: "Guards / Audit", testId: "product-system-component-first-tab-guards-audit" },
 ];
 
+export type ComponentFirstDetailPanelSection = "overview" | "components" | "dossier" | "guards-audit";
+
+const DETAIL_PANEL_TABS: Array<{ id: ComponentFirstDetailPanelSection; label: string; testId: string }> = [
+  { id: "overview", label: "Overview", testId: "product-system-component-first-tab-overview" },
+  { id: "components", label: "Components", testId: "product-system-component-first-tab-components" },
+  { id: "dossier", label: "Dossier", testId: "product-system-component-first-tab-dossier" },
+  { id: "guards-audit", label: "Guards", testId: "product-system-component-first-tab-guards-audit" },
+];
+
 const DOSSIER_FORBIDDEN_LABELS: Record<ComponentFirstDossierForbiddenNow, string> = {
   task_materialization: "No task materialization",
   execution_plan: "No ExecutionPlan",
@@ -557,6 +566,7 @@ function ComponentFirstComponentsPanel({
   onViewProductDossier,
   onViewComponentSettings,
   onViewComponentDossier,
+  compactList = false,
 }: {
   model: ComponentFirstReadonlySetModel;
   formReadiness: ReturnType<typeof assessComponentFirstFormSystemReadiness>;
@@ -564,6 +574,7 @@ function ComponentFirstComponentsPanel({
   onViewProductDossier: () => void;
   onViewComponentSettings: (templateCode: string) => void;
   onViewComponentDossier: (templateCode: string) => void;
+  compactList?: boolean;
 }) {
   return (
     <div data-testid="product-system-component-first-panel-components" className="space-y-3">
@@ -581,24 +592,66 @@ function ComponentFirstComponentsPanel({
       >
         <div className="flex items-center justify-between gap-2">
           <h4 className="text-[11px] font-bold uppercase tracking-wide text-slate-100">Component templates</h4>
-          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">
+          <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[11px] font-bold text-slate-300">
             {model.components.length} components
           </span>
         </div>
         <ComponentFirstSemanticLabel />
-        <div className="mt-3 grid gap-3 xl:grid-cols-2">
-          {model.components.map((component) => (
-            <ComponentFirstComponentEntityCard
-              key={component.templateCode}
-              component={component}
-              dossierEntry={dossierEntryForTemplate(component.templateCode)}
-              formEntry={formEntryForComponent(component.templateCode, formReadiness.contractEntries)}
-              productTruthPrefix={productTruthPrefixForTemplate(component.templateCode)}
-              onViewComponentSettings={() => onViewComponentSettings(component.templateCode)}
-              onViewComponentDossier={() => onViewComponentDossier(component.templateCode)}
-            />
-          ))}
-        </div>
+        {compactList ? (
+          <div
+            data-testid="product-system-component-first-components-table"
+            className="mt-3 overflow-hidden rounded-lg border border-slate-800"
+          >
+            <div className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800 bg-slate-950/40 px-2.5 py-1.5 text-[11px] font-bold uppercase text-slate-500">
+              <span>Name</span>
+              <span>Template code</span>
+              <span>Blockers</span>
+            </div>
+            {model.components.map((component) => (
+              <div
+                key={component.templateCode}
+                data-testid={`product-system-component-first-component-row-${component.templateCode}`}
+                className="grid grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+              >
+                <span className="font-bold">{componentFirstDisplayName(component.templateCode)}</span>
+                <span className="font-mono text-[11px] text-slate-300">{component.templateCode}</span>
+                <div className="flex flex-wrap items-center gap-1">
+                  <span className="text-[11px] text-amber-200">{component.blockers.length} blockers</span>
+                  <button
+                    type="button"
+                    data-testid={`product-system-component-first-view-component-settings-${component.templateCode}`}
+                    onClick={() => onViewComponentSettings(component.templateCode)}
+                    className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-[10px] font-bold text-cyan-200"
+                  >
+                    Settings
+                  </button>
+                  <button
+                    type="button"
+                    data-testid={`product-system-component-first-view-dossier-${component.templateCode}`}
+                    onClick={() => onViewComponentDossier(component.templateCode)}
+                    className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-[10px] font-bold text-cyan-200"
+                  >
+                    Dossier
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-3 grid gap-3 xl:grid-cols-2">
+            {model.components.map((component) => (
+              <ComponentFirstComponentEntityCard
+                key={component.templateCode}
+                component={component}
+                dossierEntry={dossierEntryForTemplate(component.templateCode)}
+                formEntry={formEntryForComponent(component.templateCode, formReadiness.contractEntries)}
+                productTruthPrefix={productTruthPrefixForTemplate(component.templateCode)}
+                onViewComponentSettings={() => onViewComponentSettings(component.templateCode)}
+                onViewComponentDossier={() => onViewComponentDossier(component.templateCode)}
+              />
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
@@ -952,11 +1005,17 @@ function ComponentFirstGuardsAuditPanel({
   driftAssessment,
   dossierAlignment,
   productDefinitionReadiness,
+  formReadiness,
+  productTruthMapping,
+  includeReadinessSections = false,
 }: {
   model: ComponentFirstReadonlySetModel;
   driftAssessment: ReturnType<typeof assessComponentFirstContractDrift>;
   dossierAlignment: ReturnType<typeof assessComponentFirstDossierAlignment>;
   productDefinitionReadiness: ReturnType<typeof assessComponentFirstProductDefinitionReadiness>;
+  formReadiness?: ReturnType<typeof assessComponentFirstFormSystemReadiness>;
+  productTruthMapping?: ReturnType<typeof assessComponentFirstProductTruthMapping>;
+  includeReadinessSections?: boolean;
 }) {
   return (
     <div data-testid="product-system-component-first-panel-guards-audit" className="space-y-3">
@@ -1106,6 +1165,18 @@ function ComponentFirstGuardsAuditPanel({
           Dossier activation leaks: {dossierAlignment.runtimeActivationLeakIssues.join(", ")}
         </p>
       ) : null}
+
+      {includeReadinessSections && formReadiness ? (
+        <div data-testid="product-system-component-first-guards-form-system-section" className="space-y-3">
+          <ComponentFirstFormSystemPanel formReadiness={formReadiness} />
+        </div>
+      ) : null}
+
+      {includeReadinessSections && productTruthMapping ? (
+        <div data-testid="product-system-component-first-guards-product-truth-section" className="space-y-3">
+          <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -1115,17 +1186,34 @@ export function ComponentFirstReadonlyCandidatePanel({
   availabilityItems,
   selectedTemplateCode,
   variant = "catalog",
+  detailSection = "overview",
+  onDetailSectionChange,
 }: {
   templates: ProductTemplateEntity[];
   availabilityItems: ProductTemplateAvailabilityItem[];
   selectedTemplateCode: string;
-  variant?: "catalog" | "inline";
+  variant?: "catalog" | "inline" | "detail-panel";
+  detailSection?: ComponentFirstDetailPanelSection;
+  onDetailSectionChange?: (section: ComponentFirstDetailPanelSection) => void;
 }) {
+  const isDetailPanel = variant === "detail-panel";
   const [detailOpen, setDetailOpen] = useState(variant === "inline");
-  const [activeTab, setActiveTab] = useState<ComponentFirstCandidateTab>("overview");
+  const [internalTab, setInternalTab] = useState<ComponentFirstCandidateTab>("overview");
   const [settingsTarget, setSettingsTarget] = useState<ComponentFirstSettingsTarget | null>(null);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [dossierFocus, setDossierFocus] = useState<string | null>(null);
+
+  const activeTab: ComponentFirstCandidateTab | ComponentFirstDetailPanelSection = isDetailPanel
+    ? detailSection
+    : internalTab;
+
+  const setActiveTab = (tab: ComponentFirstCandidateTab | ComponentFirstDetailPanelSection) => {
+    if (isDetailPanel) {
+      onDetailSectionChange?.(tab as ComponentFirstDetailPanelSection);
+      return;
+    }
+    setInternalTab(tab as ComponentFirstCandidateTab);
+  };
 
   const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
   const driftAssessment = assessComponentFirstContractDrift(templates);
@@ -1183,36 +1271,54 @@ export function ComponentFirstReadonlyCandidatePanel({
     );
   }
 
+  const sectionTabs = isDetailPanel ? DETAIL_PANEL_TABS : CANDIDATE_TABS;
+
   return (
     <>
       <section
         data-testid="product-system-component-first-letters-set"
-        className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
+        className={isDetailPanel ? "space-y-3" : "rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"}
       >
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-cyan-900/40 pb-3">
+        {!isDetailPanel ? (
+          <div className="flex flex-wrap items-start justify-between gap-3 border-b border-cyan-900/40 pb-3">
+            <div>
+              <h3 className="text-[13px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
+              <p className="mt-0.5 text-[11px] text-cyan-200/75">
+                Parallel readonly candidate set — does not replace TPL-VOLUMETRIC-LETTERS_v2 and does not activate anything.
+              </p>
+              <ComponentFirstSemanticLabel />
+            </div>
+            <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+                active = {String(model.composerActive)}
+              </span>
+              <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
+                catalog status = {model.composerCatalogStatus}
+              </span>
+            </div>
+          </div>
+        ) : (
           <div>
-            <h3 className="text-[13px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
-            <p className="mt-0.5 text-[11px] text-cyan-200/75">
-              Parallel readonly candidate set — does not replace TPL-VOLUMETRIC-LETTERS_v2 and does not activate anything.
+            <h3 className="text-[15px] font-bold text-cyan-100">Component-first Letters Candidate</h3>
+            <p className="mt-0.5 text-[12px] text-cyan-200/75">
+              Candidate readonly · NOT OFFERABLE · 1 Product Composer + 6 Component Templates
+            </p>
+            <p
+              data-testid="product-system-component-first-detail-meta"
+              className="mt-1 text-[11px] font-mono text-slate-400"
+            >
+              active = {String(model.composerActive)} · catalog status = {model.composerCatalogStatus}
             </p>
             <ComponentFirstSemanticLabel />
           </div>
-          <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
-            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-              active = {String(model.composerActive)}
-            </span>
-            <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">
-              catalog status = {model.composerCatalogStatus}
-            </span>
-          </div>
-        </div>
+        )}
 
         <div
-          className="mt-3 flex flex-wrap gap-1.5"
+          className={`${isDetailPanel ? "" : "mt-3 "}flex flex-wrap gap-1.5`}
           role="tablist"
           aria-label="Component-first candidate sections"
         >
-          {CANDIDATE_TABS.map((tab) => (
+          {sectionTabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -1220,7 +1326,7 @@ export function ComponentFirstReadonlyCandidatePanel({
               aria-selected={activeTab === tab.id}
               data-testid={tab.testId}
               onClick={() => setActiveTab(tab.id)}
-              className={`rounded-md border px-2.5 py-1 text-[10px] font-bold transition-colors ${
+              className={`rounded-md border px-2.5 py-1 text-[11px] font-bold transition-colors ${
                 activeTab === tab.id
                   ? "border-cyan-500/50 bg-cyan-500/10 text-cyan-100"
                   : "border-slate-700 bg-slate-900 text-slate-400 hover:text-slate-200"
@@ -1231,7 +1337,7 @@ export function ComponentFirstReadonlyCandidatePanel({
           ))}
         </div>
 
-        <div className="mt-3">
+        <div className={isDetailPanel ? "mt-2" : "mt-3"}>
           {activeTab === "overview" ? (
             <ComponentFirstOverviewPanel
               model={model}
@@ -1250,6 +1356,7 @@ export function ComponentFirstReadonlyCandidatePanel({
               onViewProductDossier={openProductDossier}
               onViewComponentSettings={openComponentSettings}
               onViewComponentDossier={openComponentDossier}
+              compactList={isDetailPanel}
             />
           ) : null}
           {activeTab === "dossier" ? (
@@ -1266,8 +1373,10 @@ export function ComponentFirstReadonlyCandidatePanel({
               }}
             />
           ) : null}
-          {activeTab === "form-system" ? <ComponentFirstFormSystemPanel formReadiness={formReadiness} /> : null}
-          {activeTab === "product-truth" ? (
+          {!isDetailPanel && activeTab === "form-system" ? (
+            <ComponentFirstFormSystemPanel formReadiness={formReadiness} />
+          ) : null}
+          {!isDetailPanel && activeTab === "product-truth" ? (
             <ComponentFirstProductTruthPanel productTruthMapping={productTruthMapping} />
           ) : null}
           {activeTab === "guards-audit" ? (
@@ -1276,6 +1385,9 @@ export function ComponentFirstReadonlyCandidatePanel({
               driftAssessment={driftAssessment}
               dossierAlignment={dossierAlignment}
               productDefinitionReadiness={productDefinitionReadiness}
+              formReadiness={formReadiness}
+              productTruthMapping={productTruthMapping}
+              includeReadinessSections={isDetailPanel}
             />
           ) : null}
         </div>

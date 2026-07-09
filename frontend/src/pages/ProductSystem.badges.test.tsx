@@ -19,15 +19,21 @@ const COMPONENT_FIRST_TAB = {
   overview: "product-system-component-first-tab-overview",
   components: "product-system-component-first-tab-components",
   dossier: "product-system-component-first-tab-dossier",
-  formSystem: "product-system-component-first-tab-form-system",
-  productTruth: "product-system-component-first-tab-product-truth",
   guardsAudit: "product-system-component-first-tab-guards-audit",
 } as const;
 
-function openPrimaryTab(
-  tab: "products" | "components" | "candidate-sets" | "dossiers" | "guards-audit" | "archived",
-) {
-  fireEvent.click(screen.getByTestId(`product-system-primary-tab-${tab}`));
+const UNIFIED_FILTER = {
+  all: "product-system-filter-all",
+  products: "product-system-filter-products",
+  components: "product-system-filter-components",
+  candidateSets: "product-system-filter-candidate-sets",
+  activeRoots: "product-system-filter-active-roots",
+  archived: "product-system-filter-archived",
+  blocked: "product-system-filter-blocked",
+} as const;
+
+function openUnifiedFilter(filterTestId: string) {
+  fireEvent.click(screen.getByTestId(filterTestId));
 }
 
 function openComponentFirstTab(tabTestId: string) {
@@ -36,16 +42,19 @@ function openComponentFirstTab(tabTestId: string) {
 
 async function openComponentFirstCandidateDetail() {
   await waitFor(() => {
-    expect(screen.getByTestId("product-system-primary-tab-candidate-sets")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-catalog")).toBeInTheDocument();
   });
-  openPrimaryTab("candidate-sets");
   await waitFor(() => {
-    expect(screen.getByTestId("product-system-component-first-candidate-set-card")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
   });
-  fireEvent.click(screen.getByTestId("product-system-component-first-view-candidate"));
+  fireEvent.click(screen.getByTestId("product-system-unified-row-candidate-set"));
   await waitFor(() => {
     expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
   });
+}
+
+function openCandidateGuardsReadiness() {
+  openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
 }
 
 vi.mock("@/lib/mockGuard", () => ({
@@ -459,14 +468,13 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByTestId("product-system-density-detailed"));
-    fireEvent.click(screen.getByTestId("product-system-view-tab-products"));
+    fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-template-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-template-detail-panel")).toBeInTheDocument();
     });
 
     const activeBadge = document.querySelector('[data-status-domain="productSystem"][data-status="active"]');
@@ -489,17 +497,10 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByTestId("product-system-density-detailed"));
-    fireEvent.click(screen.getByTestId("product-system-view-tab-products"));
-
-    await waitFor(() => {
-      expect(screen.getByTestId("product-system-template-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
-    });
-
-    fireEvent.click(screen.getByTestId("product-system-template-TPL-VOLUMETRIC-LETTERS_v2"));
+    fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2-action-open"));
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-ownership-panel")).toBeInTheDocument();
@@ -602,13 +603,7 @@ describe("ProductSystem design-system badges", () => {
     expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-LED_v1");
     expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-FINISH_v1");
     expect(componentsList).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
-    expect(componentsList).toHaveTextContent("comp_letter_face_v1");
-    expect(componentsList).toHaveTextContent("comp_letter_back_v1");
-    expect(componentsList).toHaveTextContent("Product Truth prefix: product.components.face.*");
-    expect(componentsList).toHaveTextContent("Product Truth prefix: product.components.return_cant.*");
-    expect(componentsList).toHaveTextContent("Product Truth prefix: product.components.led.*");
-    expect(componentsList).toHaveTextContent("Product Truth prefix: product.components.finish.*");
-    expect(componentsList).toHaveTextContent("Product Truth prefix: product.components.mounting.*");
+    expect(screen.getByTestId("product-system-component-first-components-table")).toBeInTheDocument();
 
     expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_return_cant_v1");
     expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_back_v1");
@@ -660,8 +655,8 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
     expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
     openComponentFirstTab(COMPONENT_FIRST_TAB.components);
-    expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-FACE_v1")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-LED_v1")).toHaveTextContent("contract fallback row");
+    expect(screen.getByTestId("product-system-component-first-component-row-TPL-COMP-LETTER-FACE_v1")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-component-first-component-row-TPL-COMP-LETTER-LED_v1")).toBeInTheDocument();
   });
 
   it("shows BLOCKED / INVALID LIVE STATE when any expected row is active", async () => {
@@ -921,7 +916,7 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    openCandidateGuardsReadiness();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
@@ -944,7 +939,7 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows owner review and Form System readiness in separate tabs", async () => {
+  it("shows owner review and Form System readiness folded into Guards tab", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
@@ -952,8 +947,7 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    expect(screen.getByTestId(COMPONENT_FIRST_TAB.formSystem)).toBeInTheDocument();
-    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    openCandidateGuardsReadiness();
     expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
   });
 
@@ -968,7 +962,7 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    openCandidateGuardsReadiness();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-form-readiness-state")).toHaveTextContent("READONLY_READY_FOR_MAPPING");
@@ -985,7 +979,7 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+    openCandidateGuardsReadiness();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
@@ -1005,7 +999,7 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows Form readiness and Product Truth mapping in separate tabs", async () => {
+  it("shows Form readiness and Product Truth mapping folded into Guards tab", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
@@ -1013,11 +1007,8 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    expect(screen.getByTestId(COMPONENT_FIRST_TAB.productTruth)).toBeInTheDocument();
-
-    openComponentFirstTab(COMPONENT_FIRST_TAB.formSystem);
+    openCandidateGuardsReadiness();
     expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
-    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
     expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
   });
 
@@ -1032,7 +1023,7 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+    openCandidateGuardsReadiness();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-component-first-product-truth-mapping-state")).toHaveTextContent("READONLY_MAPPING_READY");
@@ -1070,7 +1061,7 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
   });
 
-  it("shows Product Truth mapping and ProductDefinition readiness in separate tabs", async () => {
+  it("shows Product Truth mapping and ProductDefinition readiness in Guards tab", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
 
@@ -1080,9 +1071,8 @@ describe("ProductSystem design-system badges", () => {
 
     expect(screen.getByTestId(COMPONENT_FIRST_TAB.guardsAudit)).toBeInTheDocument();
 
-    openComponentFirstTab(COMPONENT_FIRST_TAB.productTruth);
+    openCandidateGuardsReadiness();
     expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
-    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
     expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
   });
 
@@ -1106,25 +1096,25 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("not linked yet");
   });
 
-  it("separates catalog overview, candidate sets, and existing roots across primary tabs", async () => {
+  it("shows unified catalog with volumetric and candidate rows in one surface", async () => {
     renderProductSystem();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-catalog-overview")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-primary-tabs")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-products")).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
-    expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-existing-roots")).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
-
-    openPrimaryTab("candidate-sets");
-    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-primary-tabs")).not.toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-catalog")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-search-filter")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-results-list")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-dossiers-tab-panel")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-guards-audit-tab-panel")).not.toBeInTheDocument();
   });
 
-  it("exposes all component-first candidate tabs", async () => {
+  it("exposes four component-first candidate detail tabs", async () => {
     renderProductSystem();
 
     await openComponentFirstCandidateDetail();
@@ -1132,6 +1122,8 @@ describe("ProductSystem design-system badges", () => {
     for (const tabId of Object.values(COMPONENT_FIRST_TAB)) {
       expect(screen.getByTestId(tabId)).toBeInTheDocument();
     }
+    expect(screen.queryByTestId("product-system-component-first-tab-form-system")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-component-first-tab-product-truth")).not.toBeInTheDocument();
   });
 
   it("keeps dangerous offerable wording out of candidate panel context", async () => {
@@ -1147,17 +1139,15 @@ describe("ProductSystem design-system badges", () => {
     expect(candidatePanel).not.toHaveTextContent("production ready");
   });
 
-  it("shows card-based candidate UI with product composer card, six component cards, and readonly settings drawers", async () => {
+  it("shows unified candidate detail with composer summary, six component rows, and readonly settings drawers", async () => {
     renderProductSystem();
 
-    openPrimaryTab("candidate-sets");
-
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-component-first-candidate-set-card")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     });
-    expect(screen.getByTestId("product-system-component-first-semantic-label")).toHaveTextContent(
-      "1 Product Composer + 6 Component Templates",
-    );
+    expect(screen.getByTestId("product-system-unified-row-candidate-set-action-open")).toHaveTextContent("Open");
+    expect(screen.getByTestId("product-system-unified-row-candidate-set-action-settings")).toHaveTextContent("Settings");
+    expect(screen.getByTestId("product-system-unified-row-candidate-set-action-dossier")).toHaveTextContent("Dossier");
 
     await openComponentFirstCandidateDetail();
 
@@ -1166,7 +1156,8 @@ describe("ProductSystem design-system badges", () => {
 
     openComponentFirstTab(COMPONENT_FIRST_TAB.components);
     expect(screen.getByTestId("product-system-component-first-composer-card")).toBeInTheDocument();
-    expect(screen.getAllByTestId(/^product-system-component-first-component-TPL-COMP-LETTER-/).length).toBe(6);
+    expect(screen.getByTestId("product-system-component-first-components-table")).toBeInTheDocument();
+    expect(screen.getAllByTestId(/^product-system-component-first-component-row-TPL-COMP-LETTER-/).length).toBe(6);
 
     const faceCode = "TPL-COMP-LETTER-FACE_v1";
     const ledCode = "TPL-COMP-LETTER-LED_v1";
@@ -1237,42 +1228,40 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
-  it("exposes primary IA shell tabs with Products as default and separated surfaces", async () => {
+  it("exposes unified catalog filter chips and master-detail without tab shell", async () => {
     renderProductSystem();
 
     await waitFor(() => {
       expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("product-system-primary-tab-products")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-components")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-candidate-sets")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-dossiers")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-guards-audit")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-archived")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-primary-tab-products")).toHaveAttribute("aria-selected", "true");
-    expect(screen.getByTestId("product-system-existing-roots")).toBeInTheDocument();
-
-    openPrimaryTab("candidate-sets");
-    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-primary-tabs")).not.toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-filter-chips")).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.all)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.products)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.components)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.candidateSets)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.activeRoots)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.archived)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.blocked)).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
 
-    openPrimaryTab("components");
-    expect(screen.getByTestId("product-system-components-tab-panel")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-view-components")).toBeInTheDocument();
+    openUnifiedFilter(UNIFIED_FILTER.candidateSets);
+    expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
 
-    openPrimaryTab("dossiers");
-    expect(screen.getByTestId("product-system-dossiers-tab-panel")).toBeInTheDocument();
+    openUnifiedFilter(UNIFIED_FILTER.activeRoots);
+    expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
 
-    openPrimaryTab("guards-audit");
-    expect(screen.getByTestId("product-system-guards-audit-tab-panel")).toBeInTheDocument();
+    openUnifiedFilter(UNIFIED_FILTER.all);
+    fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2"));
+    expect(screen.getByTestId("product-system-detail-panel")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-template-detail-panel")).toBeInTheDocument();
 
-    openPrimaryTab("archived");
-    expect(screen.getByTestId("product-system-archived-tab-panel")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-view-archived")).toBeInTheDocument();
-
-    openPrimaryTab("products");
-    expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("product-system-unified-row-candidate-set"));
+    expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-dossiers-tab-panel")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-guards-audit-tab-panel")).not.toBeInTheDocument();
   });
 
 });
