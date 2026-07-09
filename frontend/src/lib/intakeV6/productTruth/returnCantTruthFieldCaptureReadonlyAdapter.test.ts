@@ -40,7 +40,6 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
       ]),
     )
     expect(entry.pricing_keys_required).not.toContain("MAT-ORACAL-651")
-    expect(entry.pricing_keys_required).not.toContain("ral_paint_application_labor")
     expect(entry.pricing_keys_status).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
@@ -161,8 +160,6 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
     expect(entry.blockers).toEqual(
       expect.arrayContaining([
         "RETURN_CANT_VINYL_COLOR_CODE_MISSING",
-        "RETURN_CANT_VINYL_MATERIAL_ALIGNMENT_REQUIRED",
-        "RETURN_CANT_VINYL_APPLICATION_LABOR_ALIGNMENT_REQUIRED",
       ]),
     )
     expect(entry.warnings).toContain("REUSABLE_VINYL_CATALOG_BOUNDARY_REQUIRED")
@@ -171,12 +168,12 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
         expect.objectContaining({
           slot: "vinyl_material",
           key: "MAT-ORACAL-651",
-          status: "alignment_required",
+          status: "present",
         }),
         expect.objectContaining({
           slot: "vinyl_application_labor",
-          key: "return_cant_vinyl_application_labor",
-          status: "alignment_required",
+          key: "RETURN_CANT_VINYL_APPLICATION_LABOR",
+          status: "present",
         }),
       ]),
     )
@@ -220,8 +217,6 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
     )
     expect(entry.blockers).toEqual(
       expect.arrayContaining([
-        "RETURN_CANT_RAL_PAINT_PRICING_ALIGNMENT_REQUIRED",
-        "RETURN_CANT_RAL_PAINT_LABOR_ALIGNMENT_REQUIRED",
         "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
       ]),
     )
@@ -241,13 +236,13 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
       expect.arrayContaining([
         expect.objectContaining({
           slot: "ral_paint_material_by_width",
-          key: "ral_paint_material_80mm",
-          status: "alignment_required",
+          key: "MAT-VOPSEA-RAL-CANT-80MM",
+          status: "present",
         }),
         expect.objectContaining({
           slot: "ral_paint_labor",
-          key: "ral_paint_application_labor",
-          status: "alignment_required",
+          key: "RETURN_CANT_RAL_PAINT_LABOR",
+          status: "present",
         }),
       ]),
     )
@@ -282,5 +277,87 @@ describe("mapReturnCantTruthFieldCaptureReadonlyAdapter", () => {
     expect(entry.vinyl?.series).toBe("651")
     expect(entry.pricing_keys_required).not.toContain("MAT-ORACAL-641")
     expect(model.formula.vinyl_material_quantity_formula).toBe("perimetru_ml x latime_cant_m")
+  })
+
+  it("stays blocked for vinyl when required final pricing refs are missing from runtime evidence", () => {
+    const model = mapReturnCantTruthFieldCaptureReadonlyAdapter({
+      letter_group_finishes: [
+        {
+          group_key: "pseudo:vinyl-missing-pricing",
+          return_finish_type: "oracal_wrapped",
+          return_depth_mm: 60,
+          return_oracal_code: "070",
+          return_oracal_name: "Black",
+        },
+      ],
+      pricingRegistryEvidence: {
+        vinyl651LiveKeyPresent: false,
+        vinylApplicationLaborKeyPresent: false,
+      },
+    })
+
+    const entry = entryByKey(model, "pseudo:vinyl-missing-pricing")
+    expect(entry.blockers).toEqual(
+      expect.arrayContaining([
+        "RETURN_CANT_VINYL_MATERIAL_PRICING_KEY_MISSING",
+        "RETURN_CANT_VINYL_APPLICATION_LABOR_PRICING_KEY_MISSING",
+      ]),
+    )
+    expect(entry.pricing_keys_status).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          slot: "vinyl_material",
+          key: "MAT-ORACAL-651",
+          status: "missing",
+        }),
+        expect.objectContaining({
+          slot: "vinyl_application_labor",
+          key: "RETURN_CANT_VINYL_APPLICATION_LABOR",
+          status: "missing",
+        }),
+      ]),
+    )
+    expect(model.overall_readiness).toBe("blocked")
+  })
+
+  it("stays blocked for RAL when required final pricing refs are missing from runtime evidence", () => {
+    const model = mapReturnCantTruthFieldCaptureReadonlyAdapter({
+      artwork_finishes: [
+        {
+          layer_key: "logo-ral-missing-pricing",
+          return_finish_type: "ral_paint",
+          return_depth_mm: 80,
+          return_oracal_code: "RAL 3020",
+          return_oracal_name: "Traffic red",
+        },
+      ],
+      pricingRegistryEvidence: {
+        ralPaintMaterialByWidthPresent: { 80: false },
+        ralPaintLaborKeyPresent: false,
+      },
+    })
+
+    const entry = entryByKey(model, "logo-ral-missing-pricing")
+    expect(entry.blockers).toEqual(
+      expect.arrayContaining([
+        "RETURN_CANT_RAL_PAINT_PRICING_KEY_MISSING",
+        "RETURN_CANT_RAL_PAINT_LABOR_PRICING_KEY_MISSING",
+      ]),
+    )
+    expect(entry.pricing_keys_status).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          slot: "ral_paint_material_by_width",
+          key: "MAT-VOPSEA-RAL-CANT-80MM",
+          status: "missing",
+        }),
+        expect.objectContaining({
+          slot: "ral_paint_labor",
+          key: "RETURN_CANT_RAL_PAINT_LABOR",
+          status: "missing",
+        }),
+      ]),
+    )
+    expect(model.overall_readiness).toBe("blocked")
   })
 })

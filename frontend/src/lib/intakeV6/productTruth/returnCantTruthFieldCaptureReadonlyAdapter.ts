@@ -20,6 +20,13 @@ const DEPTH_TO_PROFILE_KEY: Record<number, string> = {
   100: "MAT-PROFIL-LATERAL-LITERE-100MM",
 }
 
+const DEPTH_TO_RAL_PAINT_MATERIAL_KEY: Record<number, string> = {
+  30: "MAT-VOPSEA-RAL-CANT-30MM",
+  60: "MAT-VOPSEA-RAL-CANT-60MM",
+  80: "MAT-VOPSEA-RAL-CANT-80MM",
+  100: "MAT-VOPSEA-RAL-CANT-100MM",
+}
+
 const GENERIC_LABOR_KEYS = [
   "RETURN_PROFILE_MACHINE_FORMING",
   "RETURN_PROFILE_FACE_BONDING",
@@ -212,16 +219,16 @@ function defaultPricingEvidence(): Required<ReturnCantTruthFieldCaptureReadonlyP
     laborFaceBondingPresent: true,
     vinyl641LiveKeyPresent: true,
     vinyl651LiveKeyPresent: true,
-    vinylApplicationLaborKeyPresent: false,
-    vinylCantAlignmentClear: false,
+    vinylApplicationLaborKeyPresent: true,
+    vinylCantAlignmentClear: true,
     ralPaintMaterialByWidthPresent: {
-      30: false,
-      60: false,
-      80: false,
-      100: false,
+      30: true,
+      60: true,
+      80: true,
+      100: true,
     },
-    ralPaintLaborKeyPresent: false,
-    ralPaintAlignmentClear: false,
+    ralPaintLaborKeyPresent: true,
+    ralPaintAlignmentClear: true,
   }
 }
 
@@ -510,39 +517,35 @@ function buildPricingKeyStatuses(args: {
   if (args.semanticVariant === "vinyl_application") {
     const vinylKey =
       args.vinylSeries === "641"
-        ? args.pricingEvidence.vinyl641LiveKeyPresent
-          ? "MAT-ORACAL-641"
-          : null
-        : args.pricingEvidence.vinyl651LiveKeyPresent
+        ? "MAT-ORACAL-641"
+        : args.vinylSeries === "651"
           ? "MAT-ORACAL-651"
           : null
     statuses.push({
       slot: "vinyl_material",
       key: vinylKey,
-      status: args.pricingEvidence.vinylCantAlignmentClear ? "present" : "alignment_required",
-      source: args.pricingEvidence.vinylCantAlignmentClear ? "/inventory/pricing" : "shared_edge_cant_rules",
-      blocker: args.pricingEvidence.vinylCantAlignmentClear
-        ? null
-        : "RETURN_CANT_VINYL_MATERIAL_ALIGNMENT_REQUIRED",
-      warning: args.pricingEvidence.vinylCantAlignmentClear
-        ? null
-        : "REUSABLE_VINYL_CATALOG_BOUNDARY_REQUIRED",
+      status:
+        vinylKey != null &&
+        ((args.vinylSeries === "641" && args.pricingEvidence.vinyl641LiveKeyPresent) ||
+          (args.vinylSeries === "651" && args.pricingEvidence.vinyl651LiveKeyPresent))
+          ? "present"
+          : "missing",
+      source: vinylKey != null ? "/inventory/pricing" : "shared_edge_cant_rules",
+      blocker:
+        vinylKey != null &&
+        ((args.vinylSeries === "641" && args.pricingEvidence.vinyl641LiveKeyPresent) ||
+          (args.vinylSeries === "651" && args.pricingEvidence.vinyl651LiveKeyPresent))
+          ? null
+          : "RETURN_CANT_VINYL_MATERIAL_PRICING_KEY_MISSING",
     })
     statuses.push({
       slot: "vinyl_application_labor",
-      key: "return_cant_vinyl_application_labor",
-      status:
-        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
-          ? "present"
-          : "alignment_required",
-      source:
-        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
-          ? "/inventory/pricing"
-          : "pricing_target_contract",
-      blocker:
-        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
-          ? null
-          : "RETURN_CANT_VINYL_APPLICATION_LABOR_ALIGNMENT_REQUIRED",
+      key: "RETURN_CANT_VINYL_APPLICATION_LABOR",
+      status: args.pricingEvidence.vinylApplicationLaborKeyPresent ? "present" : "missing",
+      source: "/inventory/pricing",
+      blocker: args.pricingEvidence.vinylApplicationLaborKeyPresent
+        ? null
+        : "RETURN_CANT_VINYL_APPLICATION_LABOR_PRICING_KEY_MISSING",
     })
     statuses.push({
       slot: "ral_paint_material_by_width",
@@ -555,7 +558,11 @@ function buildPricingKeyStatuses(args: {
   }
 
   if (args.semanticVariant === "paint_application") {
-    const ralMaterialKey = args.depthMm == null ? null : `ral_paint_material_${args.depthMm}mm`
+    const ralMaterialKey = args.depthMm == null ? null : DEPTH_TO_RAL_PAINT_MATERIAL_KEY[args.depthMm] ?? null
+    const ralMaterialKeyPresent =
+      args.depthMm != null &&
+      [30, 60, 80, 100].includes(args.depthMm) &&
+      args.pricingEvidence.ralPaintMaterialByWidthPresent[args.depthMm as 30 | 60 | 80 | 100] === true
     statuses.push({ slot: "vinyl_material", key: null, status: "not_applicable", source: "not_applicable" })
     statuses.push({
       slot: "vinyl_application_labor",
@@ -566,27 +573,18 @@ function buildPricingKeyStatuses(args: {
     statuses.push({
       slot: "ral_paint_material_by_width",
       key: ralMaterialKey,
-      status: args.pricingEvidence.ralPaintAlignmentClear ? "present" : "alignment_required",
-      source: args.pricingEvidence.ralPaintAlignmentClear ? "/inventory/pricing" : "pricing_target_contract",
-      blocker: args.pricingEvidence.ralPaintAlignmentClear
-        ? null
-        : "RETURN_CANT_RAL_PAINT_PRICING_ALIGNMENT_REQUIRED",
+      status: ralMaterialKeyPresent ? "present" : "missing",
+      source: "/inventory/pricing",
+      blocker: ralMaterialKeyPresent ? null : "RETURN_CANT_RAL_PAINT_PRICING_KEY_MISSING",
     })
     statuses.push({
       slot: "ral_paint_labor",
-      key: "ral_paint_application_labor",
-      status:
-        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
-          ? "present"
-          : "alignment_required",
-      source:
-        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
-          ? "/inventory/pricing"
-          : "pricing_target_contract",
-      blocker:
-        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
-          ? null
-          : "RETURN_CANT_RAL_PAINT_LABOR_ALIGNMENT_REQUIRED",
+      key: "RETURN_CANT_RAL_PAINT_LABOR",
+      status: args.pricingEvidence.ralPaintLaborKeyPresent ? "present" : "missing",
+      source: "/inventory/pricing",
+      blocker: args.pricingEvidence.ralPaintLaborKeyPresent
+        ? null
+        : "RETURN_CANT_RAL_PAINT_LABOR_PRICING_KEY_MISSING",
     })
   }
 
