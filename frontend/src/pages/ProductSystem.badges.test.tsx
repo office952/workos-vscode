@@ -771,4 +771,92 @@ describe("ProductSystem design-system badges", () => {
     });
   });
 
+  it("shows owner review card for 0/7 fallback with safe readonly wording", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-owner-review")).toBeInTheDocument();
+    });
+
+    const ownerCard = screen.getByTestId("product-system-component-first-owner-review");
+    expect(screen.getByTestId("product-system-component-first-owner-status-title")).toHaveTextContent("Safe readonly contract");
+    expect(ownerCard).toHaveTextContent("Live seeded rows:");
+    expect(ownerCard).toHaveTextContent("0/7");
+    expect(ownerCard).toHaveTextContent("Work Intake exposure:");
+    expect(ownerCard).toHaveTextContent("no");
+    expect(ownerCard).toHaveTextContent("Pricing / Quote / Order / Execution:");
+    expect(ownerCard).toHaveTextContent("no");
+    expect(ownerCard).toHaveTextContent("Cannot use in Work Intake");
+    expect(ownerCard).not.toHaveTextContent("ready to quote");
+    expect(ownerCard).not.toHaveTextContent("offerable");
+    expect(ownerCard).not.toHaveTextContent("active product");
+    expect(ownerCard).not.toHaveTextContent("available in Work Intake");
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+  });
+
+  it("shows owner review complete-but-not-offerable when 7/7 inactive rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-owner-status-title")).toHaveTextContent("not offerable");
+    });
+
+    const ownerCard = screen.getByTestId("product-system-component-first-owner-review");
+    expect(ownerCard).toHaveTextContent("7/7");
+    expect(ownerCard).toHaveTextContent("Cannot create quote");
+    expect(screen.getByTestId("product-system-component-first-drift-guard")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-component-first-dossier-alignment")).toBeInTheDocument();
+  });
+
+  it("shows owner review partial state when only some live rows exist", async () => {
+    mockTemplateList.mockResolvedValue([
+      volumetricTemplate,
+      componentFirstComposerTemplate,
+      componentFirstTemplates[1],
+      componentFirstTemplates[2],
+    ]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-owner-status-title")).toHaveTextContent("Partial live rows");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-owner-review")).toHaveTextContent("not complete");
+  });
+
+  it("shows owner review blocked state when any expected row is active", async () => {
+    const activeLeakComposer = {
+      ...componentFirstComposerTemplate,
+      active: true,
+    };
+
+    mockTemplateList.mockResolvedValue([volumetricTemplate, activeLeakComposer, ...componentFirstTemplates.slice(1)]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, { ...componentFirstAvailability, db_active: true }],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-owner-status-title")).toHaveTextContent("Blocked");
+    });
+  });
+
 });

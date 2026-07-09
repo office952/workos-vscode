@@ -110,6 +110,10 @@ import {
   componentFirstOverallAlignmentLabel,
   componentFirstOverallAlignmentTone,
 } from "@/features/product-system/componentFirstReadonlyDossierAlignment";
+import {
+  buildComponentFirstOwnerSummary,
+  componentFirstOwnerStatusTone,
+} from "@/features/product-system/componentFirstReadonlyOwnerSummary";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2778,6 +2782,11 @@ function ComponentFirstReadonlyStatusPanel({
   const model = buildComponentFirstReadonlySetModel(templates, availabilityItems, selectedTemplateCode);
   const driftAssessment = assessComponentFirstContractDrift(templates);
   const dossierAlignment = assessComponentFirstDossierAlignment(templates, { drift: driftAssessment });
+  const ownerSummary = buildComponentFirstOwnerSummary(
+    driftAssessment.completeness,
+    driftAssessment,
+    dossierAlignment
+  );
   if (!model) {
     return null;
   }
@@ -2787,6 +2796,49 @@ function ComponentFirstReadonlyStatusPanel({
       data-testid="product-system-component-first-letters-set"
       className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
     >
+      <article
+        data-testid="product-system-component-first-owner-review"
+        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
+      >
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Owner review</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2">
+          <span
+            data-testid="product-system-component-first-owner-status-title"
+            className={`rounded border px-2 py-0.5 text-[11px] font-bold ${componentFirstOwnerStatusTone(ownerSummary.statusLevel)}`}
+          >
+            Status: {ownerSummary.statusTitle}
+          </span>
+        </div>
+        <p
+          data-testid="product-system-component-first-owner-summary"
+          className="mt-2 text-[11px] leading-relaxed text-slate-200"
+        >
+          {ownerSummary.oneSentenceSummary}
+        </p>
+        <ul
+          data-testid="product-system-component-first-owner-checks"
+          className="mt-2 space-y-1 text-[10px] text-slate-300"
+        >
+          {ownerSummary.ownerVisibleChecks.map((check) => (
+            <li key={check.label}>
+              <span className="text-slate-400">{check.label}:</span>{" "}
+              <span className="font-semibold text-slate-100">{check.value}</span>
+            </li>
+          ))}
+        </ul>
+        <p
+          data-testid="product-system-component-first-owner-next-step"
+          className="mt-2 text-[10px] font-mono text-cyan-200/85"
+        >
+          Next owner decision: {ownerSummary.nextOwnerDecisionNeeded.replaceAll("_", " ").toLowerCase()}
+        </p>
+        <p
+          data-testid="product-system-component-first-owner-guard"
+          className="mt-1 text-[10px] font-mono text-slate-400"
+        >
+          Cannot use in Work Intake; cannot price; Cannot create quote/order; cannot materialize tasks.
+        </p>
+      </article>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-[13px] font-bold text-cyan-100">Component-first letters template set</h3>

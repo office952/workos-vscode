@@ -15,6 +15,10 @@ import {
   assessComponentFirstDossierAlignment,
   validateComponentFirstDossierContract,
 } from "./componentFirstReadonlyDossierAlignment";
+import {
+  buildComponentFirstOwnerSummary,
+  COMPONENT_FIRST_OWNER_FORBIDDEN_WORDING,
+} from "./componentFirstReadonlyOwnerSummary";
 
 function liveRow(
   templateCode: string,
@@ -219,5 +223,67 @@ describe("componentFirstReadonlyDossierAlignment", () => {
     expect(assessment.overallAlignmentState).toBe("BLOCKED_DOSSIER_ACTIVATION_LEAK");
     expect(assessment.dossierRuntimeLinkState).toBe("BLOCKED_RUNTIME_ACTIVATION_LEAK");
     expect(assessment.runtimeActivationLeakIssues.length).toBeGreaterThan(0);
+  });
+});
+
+function ownerSummaryFor(liveRows: ComponentFirstLiveTemplateRow[]) {
+  const drift = assessComponentFirstContractDrift(liveRows);
+  const dossier = assessComponentFirstDossierAlignment(liveRows, { drift });
+  return buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+}
+
+describe("componentFirstReadonlyOwnerSummary", () => {
+  it("at 0/7 live says readonly, not exposed, no pricing/quote/order/execution", () => {
+    const summary = ownerSummaryFor([]);
+    expect(summary.statusLevel).toBe("NEEDS_LIVE_ROWS");
+    expect(summary.statusTitle).toContain("Safe readonly contract");
+    expect(summary.canBeUsedInWorkIntake).toBe(false);
+    expect(summary.canPrice).toBe(false);
+    expect(summary.canCreateQuote).toBe(false);
+    expect(summary.canCreateOrder).toBe(false);
+    expect(summary.canMaterializeTasks).toBe(false);
+    expect(summary.ownerVisibleChecks.find((c) => c.label === "Work Intake exposure")?.value).toBe("no");
+    expect(summary.ownerVisibleChecks.find((c) => c.label === "Pricing / Quote / Order / Execution")?.value).toBe("no");
+    expect(summary.ownerVisibleChecks.find((c) => c.label === "Live seeded rows")?.value).toBe("0/7");
+  });
+
+  it("at 7/7 inactive says complete but still not offerable", () => {
+    const summary = ownerSummaryFor(matchingLiveSet());
+    expect(summary.statusLevel).toBe("SAFE_READONLY");
+    expect(summary.statusTitle.toLowerCase()).toContain("not offerable");
+    expect(summary.canCreateQuote).toBe(false);
+    expect(summary.canPrice).toBe(false);
+    expect(summary.ownerVisibleChecks.find((c) => c.label === "Live seeded rows")?.value).toBe("7/7");
+  });
+
+  it("at partial live says partial and not complete", () => {
+    const summary = ownerSummaryFor(matchingLiveSet().slice(0, 3));
+    expect(summary.statusLevel).toBe("PARTIAL_LIVE_ROWS");
+    expect(summary.oneSentenceSummary.toLowerCase()).toContain("partial");
+    expect(summary.oneSentenceSummary.toLowerCase()).toContain("not treat as complete");
+  });
+
+  it("at blocked says blocked", () => {
+    const rows = matchingLiveSet();
+    rows[0] = { ...rows[0], active: true };
+    const summary = ownerSummaryFor(rows);
+    expect(summary.statusLevel).toBe("BLOCKED");
+    expect(summary.statusTitle.toLowerCase()).toContain("blocked");
+  });
+
+  it("does not use dangerous commercial wording", () => {
+    const scenarios = [[], matchingLiveSet(), matchingLiveSet().slice(0, 3)];
+    for (const rows of scenarios) {
+      const summary = ownerSummaryFor(rows);
+      const text = JSON.stringify(summary).toLowerCase();
+      const withoutNegatedOfferable = text.replace(/not offerable/g, "");
+      for (const forbidden of COMPONENT_FIRST_OWNER_FORBIDDEN_WORDING) {
+        if (forbidden === "offerable") {
+          expect(withoutNegatedOfferable).not.toContain("offerable");
+          continue;
+        }
+        expect(text).not.toContain(forbidden.toLowerCase());
+      }
+    }
   });
 });
