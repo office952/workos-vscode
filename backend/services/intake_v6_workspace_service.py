@@ -56,6 +56,9 @@ from services.intake_v6_production_preview_service import build_v6_task_preview_
 from services.form_system_runtime_capture_read_model_service import (
     build_form_system_runtime_capture_read_model,
 )
+from services.product_truth_promotion_planner_service import (
+    build_product_truth_promotion_plan,
+)
 from services.return_cant_product_truth_bridge import (
     apply_return_cant_runtime_product_truth_bridge,
     clear_return_cant_runtime_product_truth,
@@ -387,6 +390,32 @@ async def get_form_system_runtime_capture_read_model_for_workspace(
         "blockers": read_model.get("blockers") or [],
         "downstream_write_intent": read_model.get("downstream_write_intent") or {},
         "notes": read_model.get("notes") or [],
+    }
+
+
+async def get_product_truth_promotion_planner_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    planner = build_product_truth_promotion_plan(
+        payload,
+        template_code=workspace.template_code,
+    )
+    downstream_write_intent = dict(planner.get("downstream_write_intent") or {})
+    downstream_write_intent.setdefault("product_truth_write", False)
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "planner_version": planner.get("planner_version") or "v1",
+        "eligible_entries": planner.get("eligible_entries") or [],
+        "blocked_entries": planner.get("blocked_entries") or [],
+        "blockers": planner.get("blockers") or [],
+        "downstream_write_intent": downstream_write_intent,
+        "notes": planner.get("notes") or [],
     }
 
 

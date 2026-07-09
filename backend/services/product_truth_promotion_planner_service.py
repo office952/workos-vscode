@@ -32,6 +32,7 @@ def _payload_to_dict(payload: Any) -> dict[str, Any] | None:
 
 def _downstream_write_intent() -> dict[str, bool]:
     return {
+        "product_truth_write": False,
         "pricing_write": False,
         "quote_write": False,
         "order_write": False,
