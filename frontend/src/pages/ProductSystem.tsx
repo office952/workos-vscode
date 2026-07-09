@@ -85,6 +85,21 @@ import {
   type TemplateLibraryRowSummary,
 } from "@/features/product-system/TemplateLibraryView";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
+import {
+  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+  COMPONENT_FIRST_COMPONENT_TEMPLATE_CODES,
+  COMPONENT_FIRST_EXPECTED_ROW_COUNT,
+  COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES,
+  assessComponentFirstLiveCompleteness,
+  componentFirstSourceDescription,
+  componentFirstSourceLabel,
+  componentFirstSourceTone,
+  isComponentFirstLettersTemplate,
+  normalizeComponentFirstTemplateCode,
+  type ComponentFirstCompletenessAssessment,
+  type ComponentFirstSourceMode,
+  type ComponentFirstTemplateCode,
+} from "@/features/product-system/componentFirstReadonlyCompleteness";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -387,19 +402,6 @@ interface DraftTemplate {
   notes: string;
 }
 
-const COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE = "TPL-LETTERS-COMPOSER_v1";
-const COMPONENT_FIRST_TEMPLATE_CODES = [
-  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-  "TPL-COMP-LETTER-FACE_v1",
-  "TPL-COMP-LETTER-BACK_v1",
-  "TPL-COMP-LETTER-RETURN-CANT_v1",
-  "TPL-COMP-LETTER-LED_v1",
-  "TPL-COMP-LETTER-FINISH_v1",
-  "TPL-COMP-LETTER-MOUNTING_v1",
-] as const;
-
-type ComponentFirstTemplateCode = (typeof COMPONENT_FIRST_TEMPLATE_CODES)[number];
-
 type ComponentFirstReadonlyComponent = {
   templateCode: string;
   componentId: string;
@@ -411,10 +413,15 @@ type ComponentFirstReadonlyComponent = {
   readinessState: string;
   activationGuard: string;
   active: boolean;
+  liveRowPresent: boolean;
 };
 
 type ComponentFirstReadonlySetModel = {
-  sourceMode: "live_seeded" | "code_contract_fallback";
+  sourceMode: ComponentFirstSourceMode;
+  foundRowCount: number;
+  expectedRowCount: number;
+  missingTemplateCodes: ComponentFirstTemplateCode[];
+  invalidActiveTemplateCodes: ComponentFirstTemplateCode[];
   selectedTemplateCode: string;
   composerTemplateCode: string;
   composerActive: boolean;
@@ -440,21 +447,16 @@ type ComponentFirstReadonlySetModel = {
   components: ComponentFirstReadonlyComponent[];
 };
 
-function componentFirstSourceLabel(sourceMode: ComponentFirstReadonlySetModel["sourceMode"]): string {
-  return sourceMode === "live_seeded"
-    ? "LIVE SEEDED INACTIVE ROWS"
-    : "CODE CONTRACT FALLBACK";
-}
-
-function componentFirstSourceTone(sourceMode: ComponentFirstReadonlySetModel["sourceMode"]): string {
-  return sourceMode === "live_seeded"
-    ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300"
-    : "border-amber-700/40 bg-amber-900/20 text-amber-300";
-}
-
-function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: string): ComponentFirstReadonlySetModel {
+function buildFallbackComponentFirstReadonlySetModel(
+  selectedTemplateCode: string,
+  assessment?: ComponentFirstCompletenessAssessment
+): ComponentFirstReadonlySetModel {
   return {
-    sourceMode: "code_contract_fallback",
+    sourceMode: assessment?.sourceMode ?? "code_contract_fallback",
+    foundRowCount: assessment?.foundRowCount ?? 0,
+    expectedRowCount: assessment?.expectedRowCount ?? COMPONENT_FIRST_EXPECTED_ROW_COUNT,
+    missingTemplateCodes: assessment?.missingTemplateCodes ?? [...COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES],
+    invalidActiveTemplateCodes: assessment?.invalidActiveTemplateCodes ?? [],
     selectedTemplateCode,
     composerTemplateCode: COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
     composerActive: false,
@@ -541,6 +543,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "FACE_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
       {
         templateCode: "TPL-COMP-LETTER-BACK_v1",
@@ -553,6 +556,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "BACK_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
       {
         templateCode: "TPL-COMP-LETTER-RETURN-CANT_v1",
@@ -565,6 +569,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "RETURN_CANT_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
       {
         templateCode: "TPL-COMP-LETTER-LED_v1",
@@ -577,6 +582,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "LED_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
       {
         templateCode: "TPL-COMP-LETTER-FINISH_v1",
@@ -589,6 +595,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "FINISH_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
       {
         templateCode: "TPL-COMP-LETTER-MOUNTING_v1",
@@ -601,6 +608,7 @@ function buildFallbackComponentFirstReadonlySetModel(selectedTemplateCode: strin
         readinessState: "planned",
         activationGuard: "MOUNTING_CONTRACT_ONLY_NOT_EXECUTABLE",
         active: false,
+        liveRowPresent: false,
       },
     ],
   };
@@ -615,14 +623,40 @@ function safeJsonParse<T>(raw: string | undefined | null, fallback: T): T {
   }
 }
 
-function normalizeComponentFirstTemplateCode(templateCode: string | null | undefined): string {
-  return String(templateCode ?? "").trim().toUpperCase();
-}
+function parseLiveComponentFirstComponent(
+  template: ProductTemplateEntity,
+  templateCode: ComponentFirstTemplateCode
+): ComponentFirstReadonlyComponent {
+  const notes = safeJsonParse<Record<string, unknown>>(template.notes, {});
+  const componentContracts = safeJsonParse<Array<Record<string, unknown>>>(template.components_json, []);
+  const component = componentContracts[0] ?? {};
+  const dependencies = Array.isArray(component.dependencies)
+    ? component.dependencies.map((entry) => {
+        if (typeof entry === "string") return entry;
+        if (entry && typeof entry === "object") {
+          const record = entry as Record<string, unknown>;
+          return String(record.source_path ?? record.source_component_id ?? record.dependency_key ?? "unknown");
+        }
+        return "unknown";
+      })
+    : [];
+  const blockers = Array.isArray(component.blockers)
+    ? component.blockers.map((entry) => String(entry))
+    : [];
 
-function isComponentFirstLettersTemplate(templateCode: string | null | undefined): templateCode is ComponentFirstTemplateCode {
-  return COMPONENT_FIRST_TEMPLATE_CODES.some(
-    (candidate) => normalizeComponentFirstTemplateCode(candidate) === normalizeComponentFirstTemplateCode(templateCode)
-  );
+  return {
+    templateCode,
+    componentId: String(component.component_id ?? ""),
+    roleLabel: String(component.role_label ?? component.role_key ?? "component"),
+    componentKind: String(component.component_kind ?? "unknown"),
+    targetProductTruthPath: String(component.target_product_truth_path ?? ""),
+    dependencies,
+    blockers,
+    readinessState: String(component.readiness_state ?? notes.readiness ?? "planned"),
+    activationGuard: String(component.activation_guard ?? notes.activation_guard ?? "OWNER_GO_REQUIRED"),
+    active: template.active !== false,
+    liveRowPresent: true,
+  };
 }
 
 function buildComponentFirstReadonlySetModel(
@@ -634,59 +668,63 @@ function buildComponentFirstReadonlySetModel(
     return null;
   }
 
+  const assessment = assessComponentFirstLiveCompleteness(templates);
+  if (assessment.sourceMode === "code_contract_fallback") {
+    return buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode), assessment);
+  }
+
+  const fallback = buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode), assessment);
   const templateByCode = new Map(templates.map((template) => [normalizeComponentFirstTemplateCode(template.template_code), template]));
   const availabilityByCode = new Map(availabilityItems.map((item) => [normalizeComponentFirstTemplateCode(item.template_code), item]));
   const composer = templateByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
-  if (!composer) {
-    return buildFallbackComponentFirstReadonlySetModel(String(selectedTemplateCode));
-  }
 
-  const composerComponents = safeJsonParse<Array<Record<string, unknown>>>(composer.components_json, []);
-  const composerNotes = safeJsonParse<Record<string, unknown>>(composer.notes, {});
+  const composerComponents = composer
+    ? safeJsonParse<Array<Record<string, unknown>>>(composer.components_json, [])
+    : fallback.compositionList.map((entry) => ({
+        component_id: entry.componentId,
+        component_template_code: entry.componentTemplateCode,
+        role: entry.role,
+        kind: entry.kind,
+        target_product_truth_path: entry.targetProductTruthPath,
+      }));
+  const composerNotes = composer
+    ? safeJsonParse<Record<string, unknown>>(composer.notes, {})
+    : {
+        readiness: fallback.composerReadiness,
+        activation_guard: fallback.composerActivationGuard,
+        blockers: fallback.composerBlockers,
+        component_dependency_graph: fallback.dependencyGraph.map((entry) => ({
+          from: entry.from,
+          to: entry.to,
+        })),
+        work_intake_exposed: fallback.noWorkIntakeExposure ? false : true,
+        pricing_active: fallback.noPricingActivation ? false : true,
+        product_definition_active: fallback.noProductDefinitionActivation ? false : true,
+        product_aggregate_runtime_consumed: fallback.noProductAggregateRuntimeWiring ? false : true,
+        no_executable_operations: fallback.noExecutableOperations,
+        no_executable_bom: fallback.noExecutableBom,
+      };
   const composerAvailability = availabilityByCode.get(normalizeComponentFirstTemplateCode(COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE));
 
-  const components = COMPONENT_FIRST_TEMPLATE_CODES.slice(1)
-    .map((templateCode) => {
-      const template = templateByCode.get(normalizeComponentFirstTemplateCode(templateCode));
-      if (!template) return null;
-      const notes = safeJsonParse<Record<string, unknown>>(template.notes, {});
-      const componentContracts = safeJsonParse<Array<Record<string, unknown>>>(template.components_json, []);
-      const component = componentContracts[0] ?? {};
-      const dependencies = Array.isArray(component.dependencies)
-        ? component.dependencies.map((entry) => {
-            if (typeof entry === "string") return entry;
-            if (entry && typeof entry === "object") {
-              const record = entry as Record<string, unknown>;
-              return String(record.source_path ?? record.source_component_id ?? record.dependency_key ?? "unknown");
-            }
-            return "unknown";
-          })
-        : [];
-      const blockers = Array.isArray(component.blockers)
-        ? component.blockers.map((entry) => String(entry))
-        : [];
-
-      return {
-        templateCode,
-        componentId: String(component.component_id ?? ""),
-        roleLabel: String(component.role_label ?? component.role_key ?? "component"),
-        componentKind: String(component.component_kind ?? "unknown"),
-        targetProductTruthPath: String(component.target_product_truth_path ?? ""),
-        dependencies,
-        blockers,
-        readinessState: String(component.readiness_state ?? notes.readiness ?? "planned"),
-        activationGuard: String(component.activation_guard ?? notes.activation_guard ?? "OWNER_GO_REQUIRED"),
-        active: template.active !== false,
-      } satisfies ComponentFirstReadonlyComponent;
-    })
-    .filter((entry): entry is ComponentFirstReadonlyComponent => Boolean(entry));
+  const components = COMPONENT_FIRST_COMPONENT_TEMPLATE_CODES.map((templateCode) => {
+    const template = templateByCode.get(normalizeComponentFirstTemplateCode(templateCode));
+    if (template) {
+      return parseLiveComponentFirstComponent(template, templateCode);
+    }
+    const fallbackComponent = fallback.components.find((entry) => entry.templateCode === templateCode);
+    return fallbackComponent ?? null;
+  }).filter((entry): entry is ComponentFirstReadonlyComponent => Boolean(entry));
 
   return {
-    sourceMode: "live_seeded",
+    sourceMode: assessment.sourceMode,
+    foundRowCount: assessment.foundRowCount,
+    expectedRowCount: assessment.expectedRowCount,
+    missingTemplateCodes: assessment.missingTemplateCodes,
+    invalidActiveTemplateCodes: assessment.invalidActiveTemplateCodes,
     selectedTemplateCode: String(selectedTemplateCode),
-    composerTemplateCode: composer.template_code,
-    composerActive: composer.active !== false,
-    composerCatalogStatus: composerAvailability?.status ?? "archived",
+    composerTemplateCode: composer?.template_code ?? fallback.composerTemplateCode,
+    composerActive: composer ? composer.active !== false : false,
+    composerCatalogStatus: composerAvailability?.status ?? (composer ? "archived" : "not_seeded_live"),
     composerReadiness: String(composerNotes.readiness ?? "planned"),
     composerActivationGuard: String(composerNotes.activation_guard ?? "OWNER_GO_REQUIRED"),
     composerBlockers: Array.isArray(composerNotes.blockers)
@@ -707,17 +745,17 @@ function buildComponentFirstReadonlySetModel(
             to: String(record.to ?? "unknown"),
           };
         })
-      : [],
+      : fallback.dependencyGraph,
     noModuleLinks:
       (composerAvailability?.module_codes?.length ?? 0) === 0 &&
       (composerAvailability?.child_module_codes?.length ?? 0) === 0 &&
       composerAvailability?.has_modules !== true,
-    noWorkIntakeExposure: composerNotes.work_intake_exposed === false,
-    noPricingActivation: composerNotes.pricing_active === false,
-    noProductDefinitionActivation: composerNotes.product_definition_active === false,
-    noProductAggregateRuntimeWiring: composerNotes.product_aggregate_runtime_consumed === false,
-    noExecutableOperations: composerNotes.no_executable_operations === true,
-    noExecutableBom: composerNotes.no_executable_bom === true,
+    noWorkIntakeExposure: composer ? composerNotes.work_intake_exposed === false : true,
+    noPricingActivation: composer ? composerNotes.pricing_active === false : true,
+    noProductDefinitionActivation: composer ? composerNotes.product_definition_active === false : true,
+    noProductAggregateRuntimeWiring: composer ? composerNotes.product_aggregate_runtime_consumed === false : true,
+    noExecutableOperations: composer ? composerNotes.no_executable_operations === true : true,
+    noExecutableBom: composer ? composerNotes.no_executable_bom === true : true,
     components,
   };
 }
@@ -2750,12 +2788,30 @@ function ComponentFirstReadonlyStatusPanel({
             >
               {componentFirstSourceLabel(model.sourceMode)}
             </span>
-            <span className="text-cyan-300/75">
-              {model.sourceMode === "live_seeded"
-                ? "Rows exist in DB/API and remain inactive by design."
-                : "Live inert rows are absent; showing accepted readonly contract until a deliberate non-live-altering seed review step is approved."}
+            <span
+              data-testid="product-system-component-first-completeness-count"
+              className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+            >
+              completeness: {model.foundRowCount}/{model.expectedRowCount}
             </span>
+            <span className="text-cyan-300/75">{componentFirstSourceDescription(model.sourceMode)}</span>
           </div>
+          {model.missingTemplateCodes.length > 0 ? (
+            <p
+              data-testid="product-system-component-first-missing-rows"
+              className="mt-1 text-[10px] font-mono text-orange-200/90"
+            >
+              Missing live rows: {model.missingTemplateCodes.join(", ")}
+            </p>
+          ) : null}
+          {model.invalidActiveTemplateCodes.length > 0 ? (
+            <p
+              data-testid="product-system-component-first-invalid-active-rows"
+              className="mt-1 text-[10px] font-mono text-rose-200/90"
+            >
+              Invalid active rows: {model.invalidActiveTemplateCodes.join(", ")}
+            </p>
+          ) : null}
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
@@ -2862,6 +2918,9 @@ function ComponentFirstReadonlyStatusPanel({
                           <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">{component.componentKind}</span>
                           <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">active = {String(component.active)}</span>
                           <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{component.readinessState}</span>
+                          {!component.liveRowPresent ? (
+                            <span className="rounded border border-orange-700/40 bg-orange-900/20 px-1.5 py-0.5 text-orange-300">contract fallback row</span>
+                          ) : null}
                         </div>
                       </div>
                       <p className="mt-2 text-[10px] text-slate-300">{component.roleLabel}</p>

@@ -547,6 +547,9 @@ describe("ProductSystem design-system badges", () => {
     expect(panel).toHaveTextContent("CANDIDATE");
     expect(panel).toHaveTextContent("READONLY");
     expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("LIVE SEEDED INACTIVE ROWS");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 7/7");
+    expect(screen.queryByTestId("product-system-component-first-missing-rows")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-component-first-invalid-active-rows")).not.toBeInTheDocument();
     expect(panel).toHaveTextContent("active = false");
     expect(panel).toHaveTextContent("No Work Intake exposure: true");
     expect(panel).toHaveTextContent("No Pricing activation: true");
@@ -580,6 +583,87 @@ describe("ProductSystem design-system badges", () => {
     expect(dependencyGraph).toHaveTextContent("comp_letter_face_v1 -> comp_letter_led_v1");
     expect(dependencyGraph).toHaveTextContent("comp_letter_back_v1 -> comp_letter_mounting_v1");
     expect(dependencyGraph).toHaveTextContent("product_root -> comp_letter_mounting_v1");
+
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /pricing/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+  });
+
+  it("shows CODE CONTRACT FALLBACK when no component-first live rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("CODE CONTRACT FALLBACK");
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 0/7");
+    expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
+    expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
+  });
+
+  it("shows PARTIAL LIVE INACTIVE ROWS when only some expected rows exist", async () => {
+    mockTemplateList.mockResolvedValue([
+      volumetricTemplate,
+      componentFirstComposerTemplate,
+      componentFirstTemplates[1],
+      componentFirstTemplates[2],
+    ]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("PARTIAL LIVE INACTIVE ROWS");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 3/7");
+    expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-RETURN-CANT_v1");
+    expect(screen.getByTestId("product-system-component-first-missing-rows")).toHaveTextContent("TPL-COMP-LETTER-MOUNTING_v1");
+    expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-FACE_v1")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-component-first-component-TPL-COMP-LETTER-LED_v1")).toHaveTextContent("contract fallback row");
+  });
+
+  it("shows BLOCKED / INVALID LIVE STATE when any expected row is active", async () => {
+    const activeLeakComposer = {
+      ...componentFirstComposerTemplate,
+      active: true,
+    };
+
+    mockTemplateList.mockResolvedValue([volumetricTemplate, activeLeakComposer, ...componentFirstTemplates.slice(1)]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, { ...componentFirstAvailability, db_active: true }],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-source-label")).toHaveTextContent("BLOCKED / INVALID LIVE STATE");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("completeness: 7/7");
+    expect(screen.getByTestId("product-system-component-first-invalid-active-rows")).toHaveTextContent("TPL-LETTERS-COMPOSER_v1");
+    expect(screen.queryByTestId("product-system-component-first-source-label")).not.toHaveTextContent("LIVE SEEDED INACTIVE ROWS");
+  });
+
+  it("keeps component-first readonly panel free of activation controls across completeness states", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, componentFirstTemplates[1]]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
+    });
 
     expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
