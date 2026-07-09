@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import ProductSystem from "./ProductSystem";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
@@ -24,12 +24,20 @@ const COMPONENT_FIRST_TAB = {
 
 const UNIFIED_FILTER = {
   all: "product-system-filter-all",
-  products: "product-system-filter-products",
-  components: "product-system-filter-components",
-  candidateSets: "product-system-filter-candidate-sets",
-  activeRoots: "product-system-filter-active-roots",
+  currentProducts: "product-system-filter-current-products",
+  candidateProducts: "product-system-filter-candidate-products",
+  componentFirstSets: "product-system-filter-component-first-sets",
+  legacyModules: "product-system-filter-legacy-modules",
   archived: "product-system-filter-archived",
   blocked: "product-system-filter-blocked",
+} as const;
+
+const CATALOG_BUCKET = {
+  currentProducts: "product-system-catalog-bucket-current-products",
+  candidateProducts: "product-system-catalog-bucket-candidate-products",
+  componentFirstSets: "product-system-catalog-bucket-component-first-sets",
+  legacyModules: "product-system-catalog-bucket-legacy-shared-modules",
+  archived: "product-system-catalog-bucket-archived",
 } as const;
 
 function openUnifiedFilter(filterTestId: string) {
@@ -445,6 +453,84 @@ const componentFirstAvailability: ProductTemplateAvailabilityItem = {
   shared_component_contracts: [],
 };
 
+const logoTemplate: ProductTemplateEntity = {
+  id: 10,
+  template_code: "TPL-VOLUMETRIC-LOGO_v1",
+  family_name: "Logo volumetric",
+  active: true,
+  components_json: "[]",
+  operations_json: "[]",
+  required_materials_json: "[]",
+};
+
+const logoAvailability: ProductTemplateAvailabilityItem = {
+  template_id: 10,
+  template_code: "TPL-VOLUMETRIC-LOGO_v1",
+  family_id: "volumetric",
+  family_name: "Logo volumetric",
+  description: "Logo candidate product",
+  db_active: true,
+  quote_offerable: false,
+  runtime_module: false,
+  is_parent: true,
+  has_modules: true,
+  parent_codes: [],
+  module_codes: [],
+  status: "candidate",
+  status_reason: "owner_go_required",
+  product_system_role: "candidate_product",
+  display_group: "candidate_products",
+  importance_rank: 20,
+  owner_decision_required: true,
+  readiness_reason: "Candidate product — linked/analyzer only.",
+  ui_label: "Candidat compozitie logo",
+  ui_description: "Nu porneste oferta directa in Work Intake.",
+  parent_product_codes: [],
+  child_module_codes: [],
+  shared_with_product_codes: [],
+  composition_modules: [],
+  shared_component_contracts: [],
+};
+
+const legacyFaceTemplate: ProductTemplateEntity = {
+  id: 11,
+  template_code: "TPL-VOLUMETRIC-FACE_v1",
+  family_name: "Volumetric face module",
+  active: true,
+  components_json: "[]",
+  operations_json: "[]",
+  required_materials_json: "[]",
+};
+
+const legacyFaceAvailability: ProductTemplateAvailabilityItem = {
+  template_id: 11,
+  template_code: "TPL-VOLUMETRIC-FACE_v1",
+  family_id: "volumetric",
+  family_name: "Face module",
+  description: "Legacy shared face module",
+  db_active: true,
+  quote_offerable: false,
+  runtime_module: true,
+  is_parent: false,
+  has_modules: false,
+  parent_codes: ["TPL-VOLUMETRIC-LETTERS_v2"],
+  module_codes: [],
+  status: "internal",
+  status_reason: "legacy_module",
+  product_system_role: "internal_module",
+  display_group: "internal_modules",
+  importance_rank: 40,
+  owner_decision_required: false,
+  readiness_reason: "Legacy internal module used by parent product.",
+  ui_label: "Modul intern",
+  ui_description: "Folosit de produs parinte.",
+  parent_product_codes: ["TPL-VOLUMETRIC-LETTERS_v2"],
+  child_module_codes: [],
+  shared_with_product_codes: ["TPL-VOLUMETRIC-LOGO_v1"],
+  composition_modules: [],
+  shared_component_contracts: [],
+};
+
 describe("ProductSystem design-system badges", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -487,7 +573,7 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     });
 
     expect(screen.getByRole("heading", { name: "Product System Catalog" })).toBeInTheDocument();
@@ -611,11 +697,11 @@ describe("ProductSystem design-system badges", () => {
     expect(dependencyGraph).toHaveTextContent("comp_letter_back_v1 -> comp_letter_mounting_v1");
     expect(dependencyGraph).toHaveTextContent("product_root -> comp_letter_mounting_v1");
 
-    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /pricing/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /^pricing$/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
   it("shows CODE CONTRACT FALLBACK when no component-first live rows exist", async () => {
@@ -690,11 +776,12 @@ describe("ProductSystem design-system badges", () => {
 
     await openComponentFirstCandidateDetail();
 
-    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /pricing/i })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
+    const panel = screen.getByTestId("product-system-component-first-letters-set");
+    expect(within(panel).queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /^pricing$/i })).not.toBeInTheDocument();
+    expect(within(panel).queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
   it("shows contract check drift guard with OK status when fallback contract is valid and no live rows exist", async () => {
@@ -1096,7 +1183,7 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("not linked yet");
   });
 
-  it("shows unified catalog with volumetric and candidate rows in one surface", async () => {
+  it("shows unified catalog with volumetric and candidate rows in bucketed surface", async () => {
     renderProductSystem();
 
     await waitFor(() => {
@@ -1105,8 +1192,8 @@ describe("ProductSystem design-system badges", () => {
 
     expect(screen.queryByTestId("product-system-primary-tabs")).not.toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-catalog")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-unified-search-filter")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-unified-results-list")).toBeInTheDocument();
+    expect(screen.getByTestId(CATALOG_BUCKET.currentProducts)).toBeInTheDocument();
+    expect(screen.getByTestId(CATALOG_BUCKET.componentFirstSets)).toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
@@ -1238,19 +1325,19 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByTestId("product-system-primary-tabs")).not.toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-filter-chips")).toBeInTheDocument();
     expect(screen.getByTestId(UNIFIED_FILTER.all)).toBeInTheDocument();
-    expect(screen.getByTestId(UNIFIED_FILTER.products)).toBeInTheDocument();
-    expect(screen.getByTestId(UNIFIED_FILTER.components)).toBeInTheDocument();
-    expect(screen.getByTestId(UNIFIED_FILTER.candidateSets)).toBeInTheDocument();
-    expect(screen.getByTestId(UNIFIED_FILTER.activeRoots)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.currentProducts)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.candidateProducts)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.componentFirstSets)).toBeInTheDocument();
+    expect(screen.getByTestId(UNIFIED_FILTER.legacyModules)).toBeInTheDocument();
     expect(screen.getByTestId(UNIFIED_FILTER.archived)).toBeInTheDocument();
     expect(screen.getByTestId(UNIFIED_FILTER.blocked)).toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
 
-    openUnifiedFilter(UNIFIED_FILTER.candidateSets);
+    openUnifiedFilter(UNIFIED_FILTER.componentFirstSets);
     expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
 
-    openUnifiedFilter(UNIFIED_FILTER.activeRoots);
+    openUnifiedFilter(UNIFIED_FILTER.currentProducts);
     expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
 
     openUnifiedFilter(UNIFIED_FILTER.all);
@@ -1262,6 +1349,70 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-candidate-sets")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-dossiers-tab-panel")).not.toBeInTheDocument();
     expect(screen.queryByTestId("product-system-guards-audit-tab-panel")).not.toBeInTheDocument();
+  });
+
+  it("groups catalog entries into lifecycle buckets with clear labels", async () => {
+    mockTemplateList.mockResolvedValue([
+      volumetricTemplate,
+      logoTemplate,
+      legacyFaceTemplate,
+      componentFirstComposerTemplate,
+      ...componentFirstTemplates,
+    ]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, logoAvailability, legacyFaceAvailability, componentFirstAvailability],
+      total: 4,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId(CATALOG_BUCKET.currentProducts)).toBeInTheDocument();
+    });
+
+    const currentBucket = screen.getByTestId(CATALOG_BUCKET.currentProducts);
+    expect(currentBucket).toHaveAttribute("data-expanded", "true");
+    expect(within(currentBucket).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+    expect(within(currentBucket).queryByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1")).not.toBeInTheDocument();
+
+    const candidateBucket = screen.getByTestId(CATALOG_BUCKET.candidateProducts);
+    expect(candidateBucket).toHaveAttribute("data-expanded", "true");
+    const logoRow = within(candidateBucket).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1");
+    expect(logoRow).toHaveTextContent("Candidate product");
+    expect(logoRow).toHaveTextContent("Not Work Intake");
+    expect(logoRow).not.toHaveTextContent("Offerable");
+    expect(logoRow).not.toHaveTextContent("Used today");
+
+    const componentFirstBucket = screen.getByTestId(CATALOG_BUCKET.componentFirstSets);
+    expect(componentFirstBucket).toHaveAttribute("data-expanded", "true");
+    expect(within(componentFirstBucket).getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
+    expect(within(componentFirstBucket).getByText(/NOT OFFERABLE/i)).toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-unified-row-TPL-COMP-LETTER-FACE_v1")).not.toBeInTheDocument();
+
+    const legacyBucket = screen.getByTestId(CATALOG_BUCKET.legacyModules);
+    expect(legacyBucket).toHaveAttribute("data-expanded", "false");
+    fireEvent.click(screen.getByTestId("product-system-catalog-bucket-toggle-legacy-shared-modules"));
+    await waitFor(() => {
+      expect(legacyBucket).toHaveAttribute("data-expanded", "true");
+    });
+    const legacyRow = within(legacyBucket).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-FACE_v1");
+    expect(legacyRow).toHaveTextContent("Legacy internal module");
+    expect(legacyRow).toHaveTextContent("Used by parent product");
+
+    fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2"));
+    expect(screen.getByTestId("product-system-template-detail-bucket-headline")).toHaveTextContent(
+      "Current active root · Used today",
+    );
+
+    fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1"));
+    expect(screen.getByTestId("product-system-template-detail-bucket-headline")).toHaveTextContent(
+      "Candidate product · Not Work Intake",
+    );
+    expect(screen.getByTestId("product-system-template-detail-overview")).toHaveTextContent("no Logo activation");
+
+    expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
 });

@@ -1,14 +1,20 @@
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 
+export type UnifiedCatalogBucketId =
+  | "current-products"
+  | "candidate-products"
+  | "component-first-sets"
+  | "legacy-shared-modules"
+  | "archived";
+
 export type UnifiedCatalogFilter =
   | "all"
-  | "products"
-  | "components"
-  | "candidate-sets"
-  | "active-roots"
-  | "readonly"
-  | "blocked"
-  | "archived";
+  | "current-products"
+  | "candidate-products"
+  | "component-first-sets"
+  | "legacy-modules"
+  | "archived"
+  | "blocked";
 
 export const UNIFIED_CATALOG_FILTERS: Array<{
   id: UnifiedCatalogFilter;
@@ -16,13 +22,62 @@ export const UNIFIED_CATALOG_FILTERS: Array<{
   testId: string;
 }> = [
   { id: "all", label: "All", testId: "product-system-filter-all" },
-  { id: "products", label: "Products", testId: "product-system-filter-products" },
-  { id: "components", label: "Components", testId: "product-system-filter-components" },
-  { id: "candidate-sets", label: "Candidate sets", testId: "product-system-filter-candidate-sets" },
-  { id: "active-roots", label: "Active roots", testId: "product-system-filter-active-roots" },
-  { id: "readonly", label: "Readonly", testId: "product-system-filter-readonly" },
-  { id: "blocked", label: "Blocked / Owner GO", testId: "product-system-filter-blocked" },
+  { id: "current-products", label: "Current products", testId: "product-system-filter-current-products" },
+  { id: "candidate-products", label: "Candidate products", testId: "product-system-filter-candidate-products" },
+  { id: "component-first-sets", label: "Component-first sets", testId: "product-system-filter-component-first-sets" },
+  { id: "legacy-modules", label: "Legacy modules", testId: "product-system-filter-legacy-modules" },
   { id: "archived", label: "Archived", testId: "product-system-filter-archived" },
+  { id: "blocked", label: "Blocked / Owner GO", testId: "product-system-filter-blocked" },
+];
+
+export const UNIFIED_CATALOG_BUCKETS: Array<{
+  id: UnifiedCatalogBucketId;
+  label: string;
+  testId: string;
+  toggleTestId: string;
+  defaultExpanded: boolean;
+  order: number;
+}> = [
+  {
+    id: "current-products",
+    label: "Current Products / Active Roots",
+    testId: "product-system-catalog-bucket-current-products",
+    toggleTestId: "product-system-catalog-bucket-toggle-current-products",
+    defaultExpanded: true,
+    order: 1,
+  },
+  {
+    id: "candidate-products",
+    label: "Candidate Products",
+    testId: "product-system-catalog-bucket-candidate-products",
+    toggleTestId: "product-system-catalog-bucket-toggle-candidate-products",
+    defaultExpanded: true,
+    order: 2,
+  },
+  {
+    id: "component-first-sets",
+    label: "Component-first Candidate Sets",
+    testId: "product-system-catalog-bucket-component-first-sets",
+    toggleTestId: "product-system-catalog-bucket-toggle-component-first-sets",
+    defaultExpanded: true,
+    order: 3,
+  },
+  {
+    id: "legacy-shared-modules",
+    label: "Legacy Shared Modules",
+    testId: "product-system-catalog-bucket-legacy-shared-modules",
+    toggleTestId: "product-system-catalog-bucket-toggle-legacy-shared-modules",
+    defaultExpanded: false,
+    order: 4,
+  },
+  {
+    id: "archived",
+    label: "Archived / Experimental",
+    testId: "product-system-catalog-bucket-archived",
+    toggleTestId: "product-system-catalog-bucket-toggle-archived",
+    defaultExpanded: false,
+    order: 5,
+  },
 ];
 
 export type UnifiedCatalogEntryKind = "template" | "candidate-set";
@@ -30,6 +85,7 @@ export type UnifiedCatalogEntryKind = "template" | "candidate-set";
 export type UnifiedCatalogEntry = {
   id: string;
   kind: UnifiedCatalogEntryKind;
+  bucket: UnifiedCatalogBucketId;
   name: string;
   templateCode: string;
   entityType: string;
@@ -55,3 +111,8 @@ export type UnifiedCatalogDetailSection =
   | "fields"
   | "product-truth-paths"
   | "guards";
+
+export type UnifiedCatalogBucketGroup = {
+  bucket: (typeof UNIFIED_CATALOG_BUCKETS)[number];
+  entries: UnifiedCatalogEntry[];
+};

@@ -1,26 +1,29 @@
-import { useMemo, useState, type ReactNode } from "react";
-import { Search } from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { ChevronDown, ChevronRight, Search } from "lucide-react";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
+import { LETTERS_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "./componentFirstReadonlyCompleteness";
 import { ComponentFirstReadonlyCandidatePanel } from "./ComponentFirstReadonlyCandidatePanel";
 import {
   buildUnifiedCatalogEntries,
   CANDIDATE_SET_ENTRY_ID,
   filterUnifiedCatalogEntries,
+  groupUnifiedCatalogEntriesByBucket,
 } from "./buildUnifiedCatalogEntries";
 import { COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE } from "./componentFirstReadonlyDossierAlignment";
-import { buildComponentFirstReadonlySetModel } from "./componentFirstReadonlySetModel";
 import {
   defaultTemplateDetailSection,
   ProductSystemTemplateDetailPanel,
 } from "./ProductSystemTemplateDetailPanel";
 import {
+  UNIFIED_CATALOG_BUCKETS,
   UNIFIED_CATALOG_FILTERS,
+  type UnifiedCatalogBucketGroup,
+  type UnifiedCatalogBucketId,
   type UnifiedCatalogDetailSection,
   type UnifiedCatalogEntry,
   type UnifiedCatalogFilter,
 } from "./productSystemUnifiedCatalogTypes";
-import { ReadonlyLinkButton } from "./componentFirstReadonlyUiShared";
 
 export type UnifiedCatalogSummary = {
   products: number;
@@ -55,6 +58,50 @@ export function buildUnifiedCatalogSummary({
     dossiers: hasComponentFirstCandidate ? COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.length : null,
     blocked: ownerDecisionRequiredCount > 0 ? ownerDecisionRequiredCount : null,
     archived: catalogCounts.archivedExperimental > 0 ? catalogCounts.archivedExperimental : archivedCount,
+  };
+}
+
+function initialBucketExpandedState(): Record<UnifiedCatalogBucketId, boolean> {
+  return UNIFIED_CATALOG_BUCKETS.reduce(
+    (acc, bucket) => {
+      acc[bucket.id] = bucket.defaultExpanded;
+      return acc;
+    },
+    {} as Record<UnifiedCatalogBucketId, boolean>,
+  );
+}
+
+function rowActionLabels(entry: UnifiedCatalogEntry): {
+  open: string;
+  settings: string;
+  dossier: string;
+  components: string | null;
+  guards: string;
+} {
+  if (entry.kind === "candidate-set") {
+    return {
+      open: "Open readonly",
+      settings: "Settings readonly",
+      dossier: "Dossier",
+      components: "Components",
+      guards: "Guards",
+    };
+  }
+  if (entry.bucket === "legacy-shared-modules") {
+    return {
+      open: "Open module",
+      settings: "View parent usage",
+      dossier: "Dossier",
+      components: null,
+      guards: "Guards",
+    };
+  }
+  return {
+    open: "Open",
+    settings: "Settings",
+    dossier: "Dossier",
+    components: entry.isProduct ? "Components" : null,
+    guards: "Guards",
   };
 }
 
@@ -105,10 +152,12 @@ function UnifiedCatalogRow({
     entry.kind === "candidate-set"
       ? "product-system-unified-row-candidate-set"
       : `product-system-unified-row-${entry.templateCode}`;
+  const actions = rowActionLabels(entry);
 
   return (
     <article
       data-testid={rowTestId}
+      data-bucket={entry.bucket}
       data-selected={selected ? "true" : "false"}
       onClick={onSelect}
       onKeyDown={(event) => {
@@ -117,7 +166,7 @@ function UnifiedCatalogRow({
           onSelect();
         }
       }}
-      role="button"
+      role="listitem"
       tabIndex={0}
       className={`rounded-lg border px-3 py-2.5 transition-colors ${
         selected
@@ -135,33 +184,111 @@ function UnifiedCatalogRow({
             </span>
             <span
               className={`rounded border px-1.5 py-0.5 text-[11px] font-bold ${
-                entry.isCandidateReadonly
+                entry.bucket === "component-first-sets"
                   ? "border-cyan-700/40 bg-cyan-950/40 text-cyan-200"
-                  : entry.isActiveRoot
+                  : entry.bucket === "current-products"
                     ? "border-emerald-700/40 bg-emerald-950/30 text-emerald-200"
-                    : "border-slate-700 bg-slate-900 text-slate-400"
+                    : entry.bucket === "candidate-products"
+                      ? "border-amber-700/40 bg-amber-950/30 text-amber-200"
+                      : entry.bucket === "legacy-shared-modules"
+                        ? "border-slate-600/50 bg-slate-900 text-slate-400"
+                        : "border-slate-700 bg-slate-900 text-slate-400"
               }`}
             >
               {entry.lifecycleLabel}
             </span>
+            {entry.isBlocked ? (
+              <span className="rounded border border-amber-700/40 bg-amber-950/30 px-1.5 py-0.5 text-[11px] font-bold text-amber-200">
+                Owner GO
+              </span>
+            ) : null}
           </div>
           {entry.metadata ? <p className="mt-1.5 line-clamp-2 text-[12px] text-slate-400">{entry.metadata}</p> : null}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-1.5">
-          <CatalogRowAction label="Open" testId={`${rowTestId}-action-open`} onClick={onOpen} />
-          <CatalogRowAction label="Settings" testId={`${rowTestId}-action-settings`} onClick={onSettings} />
-          <CatalogRowAction label="Dossier" testId={`${rowTestId}-action-dossier`} onClick={onDossier} />
-          {entry.isProduct || entry.kind === "candidate-set" ? (
+          <CatalogRowAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
+          <CatalogRowAction
+            label={actions.settings}
+            testId={`${rowTestId}-action-settings`}
+            onClick={onSettings}
+          />
+          <CatalogRowAction label={actions.dossier} testId={`${rowTestId}-action-dossier`} onClick={onDossier} />
+          {actions.components ? (
             <CatalogRowAction
-              label="Components"
+              label={actions.components}
               testId={`${rowTestId}-action-components`}
               onClick={onComponents}
             />
           ) : null}
-          <CatalogRowAction label="Guards" testId={`${rowTestId}-action-guards`} onClick={onGuards} />
+          <CatalogRowAction label={actions.guards} testId={`${rowTestId}-action-guards`} onClick={onGuards} />
         </div>
       </div>
     </article>
+  );
+}
+
+function CatalogBucketSection({
+  group,
+  expanded,
+  onToggle,
+  selectedEntryId,
+  onSelectEntry,
+  onOpenEntry,
+  onSettingsEntry,
+  onOpenSection,
+}: {
+  group: UnifiedCatalogBucketGroup;
+  expanded: boolean;
+  onToggle: () => void;
+  selectedEntryId: string | null;
+  onSelectEntry: (entry: UnifiedCatalogEntry) => void;
+  onOpenEntry: (entry: UnifiedCatalogEntry) => void;
+  onSettingsEntry: (entry: UnifiedCatalogEntry) => void;
+  onOpenSection: (
+    entry: UnifiedCatalogEntry,
+    section: UnifiedCatalogDetailSection | "components" | "dossier" | "guards-audit" | "guards",
+  ) => void;
+}) {
+  return (
+    <section
+      data-testid={group.bucket.testId}
+      data-expanded={expanded ? "true" : "false"}
+      className="rounded-xl border border-slate-800/80 bg-slate-950/20"
+    >
+      <button
+        type="button"
+        data-testid={group.bucket.toggleTestId}
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left"
+      >
+        <span className="flex items-center gap-2">
+          {expanded ? (
+            <ChevronDown className="h-4 w-4 text-slate-400" />
+          ) : (
+            <ChevronRight className="h-4 w-4 text-slate-400" />
+          )}
+          <span className="text-[13px] font-bold text-slate-100">{group.bucket.label}</span>
+        </span>
+        <span className="text-[11px] font-bold text-slate-500">{group.entries.length} entries</span>
+      </button>
+      {expanded ? (
+        <div className="space-y-2 border-t border-slate-800/80 px-2 pb-2 pt-2">
+          {group.entries.map((entry) => (
+            <UnifiedCatalogRow
+              key={entry.id}
+              entry={entry}
+              selected={selectedEntryId === entry.id}
+              onSelect={() => onSelectEntry(entry)}
+              onOpen={() => onOpenEntry(entry)}
+              onSettings={() => onSettingsEntry(entry)}
+              onDossier={() => onOpenSection(entry, "dossier")}
+              onComponents={() => onOpenSection(entry, "components")}
+              onGuards={() => onOpenSection(entry, "guards")}
+            />
+          ))}
+        </div>
+      ) : null}
+    </section>
   );
 }
 
@@ -189,6 +316,7 @@ export function ProductSystemUnifiedCatalog({
   const [candidateDetailSection, setCandidateDetailSection] = useState<
     "overview" | "components" | "dossier" | "guards-audit"
   >("overview");
+  const [bucketExpanded, setBucketExpanded] = useState(initialBucketExpandedState);
 
   const entries = useMemo(
     () => buildUnifiedCatalogEntries({ templates, availabilityItems }),
@@ -200,7 +328,26 @@ export function ProductSystemUnifiedCatalog({
     [entries, filter, search],
   );
 
-  const selectedEntry = filteredEntries.find((entry) => entry.id === selectedEntryId) ?? null;
+  const bucketGroups = useMemo(
+    () => groupUnifiedCatalogEntriesByBucket(filteredEntries),
+    [filteredEntries],
+  );
+
+  const selectedEntry =
+    filteredEntries.find((entry) => entry.id === selectedEntryId) ??
+    entries.find((entry) => entry.id === selectedEntryId) ??
+    null;
+
+  useEffect(() => {
+    if (selectedEntryId || loading || entries.length === 0) return;
+    const lettersEntry = entries.find(
+      (entry) => entry.templateCode === LETTERS_TEMPLATE_CODE && entry.bucket === "current-products",
+    );
+    if (lettersEntry) {
+      setSelectedEntryId(lettersEntry.id);
+      setTemplateDetailSection("overview");
+    }
+  }, [entries, loading, selectedEntryId]);
 
   const selectEntry = (entry: UnifiedCatalogEntry) => {
     setSelectedEntryId(entry.id);
@@ -215,7 +362,6 @@ export function ProductSystemUnifiedCatalog({
     selectEntry(entry);
     if (entry.kind === "template" && entry.template) {
       onOpenTemplate(entry.template);
-      return;
     }
   };
 
@@ -245,6 +391,10 @@ export function ProductSystemUnifiedCatalog({
     setTemplateDetailSection(section as UnifiedCatalogDetailSection);
   };
 
+  const toggleBucket = (bucketId: UnifiedCatalogBucketId) => {
+    setBucketExpanded((current) => ({ ...current, [bucketId]: !current[bucketId] }));
+  };
+
   return (
     <div className="space-y-4" data-testid="product-system-unified-catalog">
       {catalogOverview}
@@ -254,9 +404,9 @@ export function ProductSystemUnifiedCatalog({
         className="rounded-xl border border-slate-800/80 bg-slate-950/30 px-4 py-2.5"
       >
         <p className="text-[12px] text-slate-400">
-          <span className="font-bold text-slate-200">{summary.products}</span> products ·{" "}
-          <span className="font-bold text-slate-200">{summary.components}</span> components ·{" "}
-          <span className="font-bold text-slate-200">{summary.candidateSets}</span> candidate sets
+          <span className="font-bold text-slate-200">{summary.products}</span> product roots ·{" "}
+          <span className="font-bold text-slate-200">{summary.components}</span> legacy modules ·{" "}
+          <span className="font-bold text-slate-200">{summary.candidateSets}</span> component-first sets
           {summary.dossiers != null ? (
             <>
               {" "}
@@ -284,7 +434,7 @@ export function ProductSystemUnifiedCatalog({
             type="text"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search template code, name, lifecycle…"
+            placeholder="Search template code, bucket, lifecycle…"
             data-testid="product-system-unified-search"
             className="w-full bg-transparent text-[13px] text-slate-200 outline-none placeholder:text-slate-600"
           />
@@ -318,29 +468,29 @@ export function ProductSystemUnifiedCatalog({
       </section>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-        <section data-testid="product-system-unified-results-list" className="space-y-2">
+        <section data-testid="product-system-unified-results-list" className="space-y-3" role="list">
           <div className="flex items-center justify-between gap-2 px-1">
-            <h2 className="text-[14px] font-bold text-slate-100">Catalog results</h2>
+            <h2 className="text-[14px] font-bold text-slate-100">Catalog buckets</h2>
             <span className="text-[11px] font-bold text-slate-500">{filteredEntries.length} entries</span>
           </div>
           {loading ? (
             <p className="px-1 text-[12px] text-slate-500">Se încarcă catalogul…</p>
-          ) : filteredEntries.length === 0 ? (
+          ) : bucketGroups.length === 0 ? (
             <p className="rounded-lg border border-dashed border-slate-700 px-3 py-4 text-[12px] text-slate-500">
               Niciun rezultat pentru filtrele curente.
             </p>
           ) : (
-            filteredEntries.map((entry) => (
-              <UnifiedCatalogRow
-                key={entry.id}
-                entry={entry}
-                selected={selectedEntryId === entry.id}
-                onSelect={() => selectEntry(entry)}
-                onOpen={() => openEntry(entry)}
-                onSettings={() => openSettings(entry)}
-                onDossier={() => openSection(entry, "dossier")}
-                onComponents={() => openSection(entry, "components")}
-                onGuards={() => openSection(entry, "guards")}
+            bucketGroups.map((group) => (
+              <CatalogBucketSection
+                key={group.bucket.id}
+                group={group}
+                expanded={bucketExpanded[group.bucket.id] ?? group.bucket.defaultExpanded}
+                onToggle={() => toggleBucket(group.bucket.id)}
+                selectedEntryId={selectedEntryId}
+                onSelectEntry={selectEntry}
+                onOpenEntry={openEntry}
+                onSettingsEntry={openSettings}
+                onOpenSection={openSection}
               />
             ))
           )}
@@ -367,6 +517,7 @@ export function ProductSystemUnifiedCatalog({
             <ProductSystemTemplateDetailPanel
               template={selectedEntry.template}
               availability={selectedEntry.availability}
+              catalogBucket={selectedEntry.bucket}
               section={templateDetailSection}
               onSectionChange={setTemplateDetailSection}
               onOpenEditor={() => onOpenTemplate(selectedEntry.template!)}

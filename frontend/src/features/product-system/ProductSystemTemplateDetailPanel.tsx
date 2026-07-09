@@ -1,6 +1,14 @@
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 import { StatusBadge } from "@/components/workos/design-system";
-import type { UnifiedCatalogDetailSection } from "./productSystemUnifiedCatalogTypes";
+import {
+  LETTERS_TEMPLATE_CODE,
+  LOGO_TEMPLATE_CODE,
+  getProductTemplateScopePresentation,
+} from "@/lib/productTemplateScopePresentation";
+import type {
+  UnifiedCatalogBucketId,
+  UnifiedCatalogDetailSection,
+} from "./productSystemUnifiedCatalogTypes";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Overview", testId: "product-system-template-detail-tab-overview" },
@@ -18,23 +26,72 @@ const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string
   { id: "guards", label: "Guards", testId: "product-system-template-detail-tab-guards" },
 ];
 
+function bucketOverviewCopy(
+  templateCode: string,
+  bucket: UnifiedCatalogBucketId,
+  availability: ProductTemplateAvailabilityItem,
+): { headline: string; bullets: string[] } {
+  const scope = getProductTemplateScopePresentation(availability);
+
+  if (templateCode === LETTERS_TEMPLATE_CODE || bucket === "current-products") {
+    return {
+      headline: "Current active root · Used today",
+      bullets: [
+        "Offerable product root currently used in Work Intake.",
+        "Composition uses legacy shared modules — not component-first TPL-COMP-*.",
+        "Separate from component-first Letters Candidate set.",
+      ],
+    };
+  }
+
+  if (templateCode === LOGO_TEMPLATE_CODE || bucket === "candidate-products") {
+    return {
+      headline: "Candidate product · Not Work Intake",
+      bullets: [
+        "Requires owner GO before any direct root / offerable path.",
+        "Linked / analyzer composition only — no Logo activation from catalog.",
+        "Not a component-first Product Composer.",
+      ],
+    };
+  }
+
+  if (bucket === "legacy-shared-modules") {
+    return {
+      headline: "Legacy internal module",
+      bullets: [
+        "Used by parent product composition — not a standalone quoteable root.",
+        "Not a component-first TPL-COMP-* template.",
+        "Readonly readiness contract in catalog — not runtime execution.",
+      ],
+    };
+  }
+
+  return {
+    headline: scope.catalogStatusLabel,
+    bullets: [scope.shortDescription, scope.rootDirectLabel],
+  };
+}
+
 export function ProductSystemTemplateDetailPanel({
   template,
   availability,
+  catalogBucket,
   section,
   onSectionChange,
   onOpenEditor,
 }: {
   template: ProductTemplateEntity;
   availability: ProductTemplateAvailabilityItem;
+  catalogBucket: UnifiedCatalogBucketId;
   section: UnifiedCatalogDetailSection;
   onSectionChange: (section: UnifiedCatalogDetailSection) => void;
   onOpenEditor: () => void;
 }) {
   const isProduct =
-    availability.product_system_role === "offerable_product" ||
-    availability.product_system_role === "candidate_product";
+    catalogBucket === "current-products" || catalogBucket === "candidate-products";
   const sections = isProduct ? PRODUCT_SECTIONS : COMPONENT_SECTIONS;
+  const overview = bucketOverviewCopy(template.template_code, catalogBucket, availability);
+  const scope = getProductTemplateScopePresentation(availability);
 
   return (
     <div data-testid="product-system-template-detail-panel" className="space-y-3">
@@ -43,12 +100,17 @@ export function ProductSystemTemplateDetailPanel({
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-bold text-slate-100">{template.family_name || template.template_code}</p>
             <p className="mt-0.5 font-mono text-[11px] text-slate-300">{template.template_code}</p>
-            <p className="mt-1 text-[12px] text-slate-400">{availability.ui_label}</p>
+            <p
+              data-testid="product-system-template-detail-bucket-headline"
+              className="mt-1 text-[12px] font-bold text-slate-200"
+            >
+              {overview.headline}
+            </p>
           </div>
           <StatusBadge
             domain="productSystem"
-            status={availability.display_group === "archived_experimental" ? "archived" : "active"}
-            label={availability.ui_label}
+            status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
+            label={scope.catalogStatusLabel}
             className="shrink-0 text-[11px] uppercase"
           />
         </div>
@@ -75,22 +137,26 @@ export function ProductSystemTemplateDetailPanel({
       </div>
 
       {section === "overview" ? (
-        <section className="space-y-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-200">
+        <section
+          data-testid="product-system-template-detail-overview"
+          className="space-y-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-200"
+        >
+          <ul className="space-y-1">
+            {overview.bullets.map((bullet) => (
+              <li key={bullet}>• {bullet}</li>
+            ))}
+          </ul>
           <p>
-            <span className="text-slate-500">Type:</span> {isProduct ? "Product template" : "Component template"}
+            <span className="text-slate-500">Work Intake:</span> {scope.workIntakeLabel}
           </p>
           <p>
-            <span className="text-slate-500">Lifecycle:</span> {availability.ui_label}
-          </p>
-          <p>
-            <span className="text-slate-500">Work Intake:</span>{" "}
-            {availability.quote_offerable ? "visible for offerable roots" : "not exposed"}
-          </p>
-          <p>
-            <span className="text-slate-500">Readiness:</span> {availability.readiness_reason || "—"}
+            <span className="text-slate-500">Usage:</span> {scope.usageModeLabel}
           </p>
           {availability.owner_decision_required ? (
-            <p className="text-amber-200">Owner decision required before activation paths.</p>
+            <p className="text-amber-200">Owner decision required — not offerable as direct root.</p>
+          ) : null}
+          {catalogBucket === "legacy-shared-modules" ? (
+            <p className="text-slate-400">Legacy shared module contract — not component-first.</p>
           ) : null}
         </section>
       ) : null}
@@ -100,13 +166,19 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-detail-composition"
           className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-200"
         >
-          {availability.composition_modules.length === 0 ? (
+          <p className="mb-2 text-slate-400">Legacy shared modules linked to this product root.</p>
+          {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
             <p className="text-slate-400">No composition modules exposed in availability.</p>
           ) : (
             <ul className="space-y-1">
               {availability.composition_modules.map((module) => (
                 <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-[11px]">
                   {module.role_label}: {module.module_template_code} · {module.status_label}
+                </li>
+              ))}
+              {availability.shared_component_contracts.map((contract) => (
+                <li key={contract.component_key} className="font-mono text-[11px]">
+                  {contract.display_name}: {contract.module_template_code} · legacy shared module
                 </li>
               ))}
             </ul>
@@ -124,19 +196,31 @@ export function ProductSystemTemplateDetailPanel({
             <span>Module code</span>
             <span>Status</span>
           </div>
-          {availability.composition_modules.length === 0 ? (
+          {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
             <p className="px-3 py-3 text-[12px] text-slate-400">No linked components in composition.</p>
           ) : (
-            availability.composition_modules.map((module) => (
-              <div
-                key={`${module.role_key}-${module.module_template_code}`}
-                className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
-              >
-                <span>{module.role_label}</span>
-                <span className="font-mono text-[11px] text-slate-300">{module.module_template_code}</span>
-                <span className="text-[11px] text-slate-400">{module.status_label}</span>
-              </div>
-            ))
+            <>
+              {availability.composition_modules.map((module) => (
+                <div
+                  key={`${module.role_key}-${module.module_template_code}`}
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+                >
+                  <span>{module.role_label}</span>
+                  <span className="font-mono text-[11px] text-slate-300">{module.module_template_code}</span>
+                  <span className="text-[11px] text-slate-400">{module.status_label}</span>
+                </div>
+              ))}
+              {availability.shared_component_contracts.map((contract) => (
+                <div
+                  key={contract.component_key}
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/60 px-2.5 py-2 text-[12px] text-slate-200 last:border-b-0"
+                >
+                  <span>{contract.display_name}</span>
+                  <span className="font-mono text-[11px] text-slate-300">{contract.module_template_code}</span>
+                  <span className="text-[11px] text-slate-400">legacy module</span>
+                </div>
+              ))}
+            </>
           )}
         </section>
       ) : null}
@@ -146,10 +230,8 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-detail-dossier"
           className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
         >
-          <p>Design-time template dossier lives in the template editor configuration.</p>
-          <p className="mt-2 text-slate-400">
-            Open the template to inspect materials, operations, and notes. No runtime dossier activation from catalog.
-          </p>
+          <p>Readonly readiness contract — design-time template dossier lives in the template editor.</p>
+          <p className="mt-2 text-slate-400">Not runtime dossier activation from catalog browse.</p>
           <button
             type="button"
             data-testid="product-system-template-detail-open-editor"
@@ -166,7 +248,7 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-detail-fields"
           className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
         >
-          <p>Component template fields and contract metadata are configured in Product System editor.</p>
+          <p>Legacy module fields and contract metadata are configured in Product System editor.</p>
           <p className="mt-2 font-mono text-[11px] text-slate-400">
             Parents:{" "}
             {(availability.parent_product_codes.length > 0
@@ -182,7 +264,7 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-detail-product-truth-paths"
           className="rounded-lg border border-slate-800/90 bg-[#0D1321]/70 px-3 py-3 text-[12px] text-slate-300"
         >
-          <p>Product Truth paths are owned by the parent product composition and component contract.</p>
+          <p>Product Truth paths are owned by the parent product composition and legacy module contract.</p>
           <p className="mt-2 text-slate-400">Readonly catalog view — no Product Truth write from this surface.</p>
         </section>
       ) : null}
@@ -200,7 +282,7 @@ export function ProductSystemTemplateDetailPanel({
           </p>
           <p className="mt-2 text-slate-400">{availability.readiness_reason}</p>
           <p className="mt-2 text-[11px] text-slate-500">
-            No Pricing / Quote / Order / Execution activation from catalog browse.
+            Readonly readiness contract · Not runtime · No Pricing / Quote / Order / Execution activation.
           </p>
         </section>
       ) : null}
