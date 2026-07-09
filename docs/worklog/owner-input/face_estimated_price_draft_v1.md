@@ -2,9 +2,10 @@
 
 > **Authority:** `OWNER_ESTIMATE_DRAFT` — not Pricing Registry, not active pricing, editable by owner.
 
-**Date:** 2026-07-09  
-**HEAD:** `35f2f7e` — Record FACE component truth owner decisions  
+**Date:** 2026-07-09
+**HEAD:** `df49462` — Record FACE price registry alignment owner decision
 **Owner:** Alex / P-Media
+**3 mm alignment:** Previous draft **15 EUR/mp** superseded by `face_price_registry_alignment_owner_decision_v1.md`. Current readonly draft **16 EUR/mp** (MAT-ACP-FATA-LITERE registry authority). Still owner estimate / not active pricing.
 
 ---
 
@@ -12,7 +13,7 @@
 
 | Grosime | Pret estimativ | Unitate | Status |
 |--------:|---------------:|---------|--------|
-| 3 mm | 15 EUR | mp | owner_estimate_draft |
+| 3 mm | 16 EUR | mp | owner_estimate_draft (aligned to MAT-ACP-FATA-LITERE) |
 | 5 mm | 25 EUR | mp | owner_estimate_draft (optional) |
 | 10 mm | 50 EUR | mp | owner_estimate_draft (optional) |
 

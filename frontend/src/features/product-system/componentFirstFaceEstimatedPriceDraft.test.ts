@@ -21,7 +21,7 @@ describe("componentFirstFaceEstimatedPriceDraft", () => {
   });
 
   it("includes owner material estimate drafts for Plexiglas 3/5/10 mm", () => {
-    expect(getFaceEstimateDraftByKey("plexiglas_3mm_material")?.estimateValue).toBe(15);
+    expect(getFaceEstimateDraftByKey("plexiglas_3mm_material")?.estimateValue).toBe(16);
     expect(getFaceEstimateDraftByKey("plexiglas_5mm_material")?.estimateValue).toBe(25);
     expect(getFaceEstimateDraftByKey("plexiglas_10mm_material")?.estimateValue).toBe(50);
     expect(FACE_MATERIAL_ESTIMATE_DRAFTS.every((e) => e.status === "owner_estimate_draft")).toBe(true);
@@ -55,7 +55,7 @@ describe("componentFirstFaceEstimatedPriceDraft", () => {
   it("formats estimate values with units", () => {
     const material = getFaceEstimateDraftByKey("plexiglas_3mm_material")!;
     const cnc = getFaceEstimateDraftByKey("plexiglas_3mm_cnc")!;
-    expect(formatFaceEstimateDraftValue(material)).toBe("15.00 EUR/mp");
+    expect(formatFaceEstimateDraftValue(material)).toBe("16.00 EUR/mp");
     expect(formatFaceEstimateDraftValue(cnc)).toBe("1.00 EUR/ml contur");
   });
 

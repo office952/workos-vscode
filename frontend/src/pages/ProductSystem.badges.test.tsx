@@ -1916,7 +1916,7 @@ describe("ProductSystem design-system badges", () => {
       "Pricing active rows: 0",
     );
     expect(screen.getByTestId("product-system-face-estimate-draft-value-plexiglas_3mm_material")).toHaveTextContent(
-      "15.00 EUR/mp",
+      "16.00 EUR/mp",
     );
     expect(screen.getByTestId("product-system-face-estimate-draft-value-plexiglas_3mm_cnc")).toHaveTextContent(
       "1.00 EUR/ml contur",

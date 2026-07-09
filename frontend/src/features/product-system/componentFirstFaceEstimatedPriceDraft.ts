@@ -2,6 +2,7 @@
  * FACE estimated material / CNC price draft — readonly workshop only.
  * Authority: OWNER_ESTIMATE_DRAFT — not Pricing Registry, not active pricing.
  * Source: owner conversation 2026-07-09 + face_component_truth_owner_decision_v1.md
+ * 3 mm material aligned to face_price_registry_alignment_owner_decision_v1.md (MAT-ACP-FATA-LITERE = 16 EUR/mp) — still readonly draft, not active pricing.
  */
 
 export const FACE_ESTIMATE_DRAFT_AUTHORITY = {
@@ -65,10 +66,11 @@ export const FACE_MATERIAL_ESTIMATE_DRAFTS: readonly FaceEstimateDraftEntry[] = 
     materialFamily: "Plexiglas / acrylic",
     thicknessMm: 3,
     process: null,
-    estimateValue: 15,
+    estimateValue: 16,
     unit: "mp",
     faceStandard: true,
-    notesRo: "Linie standard FACE. Draft owner — nu Pricing Registry authority.",
+    notesRo:
+      "Linie standard FACE. Aliniat la MAT-ACP-FATA-LITERE (16 EUR/mp) — owner draft readonly, nu Pricing Registry authority.",
     pricingActive: false,
     mustNotWritePricingRegistry: true,
   },
@@ -176,7 +178,7 @@ export const FACE_INVENTORY_PRICING_CROSS_REFERENCES: readonly FaceInventoryCros
     registryAuthority: false,
     draftAuthority: FACE_ESTIMATE_DRAFT_AUTHORITY.label,
     notesRo:
-      "Intake V4 map plexiglas_face → MAT-ACP-FATA-LITERE. Registry rate poate diferi de draft 15 EUR/mp — fără write, fără activare.",
+      "Intake V4 map plexiglas_face → MAT-ACP-FATA-LITERE. Aliniat la registry authority 16 EUR/mp — draft readonly, fără write, fără activare.",
   },
   {
     key: "plexiglas_5mm_registry_key",
