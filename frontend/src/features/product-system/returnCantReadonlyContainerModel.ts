@@ -20,6 +20,7 @@ export interface ReturnCantReadonlyContainerFieldAudit {
   label: string;
   sourceType:
     | "component truth"
+    | "component dependency anchor"
     | "Form System capture"
     | "root geometry context"
     | "parent aggregate support"
@@ -92,10 +93,10 @@ const SOURCE_TYPE_ROWS: ReturnCantReadonlyContainerFieldAudit[] = [
   {
     key: "source_face_perimeter_ref",
     label: "source_face_perimeter_ref",
-    sourceType: "missing",
-    currentSource: "components.face.confirmed_perimeter is target language, not yet explicit reference wiring",
+    sourceType: "component dependency anchor",
+    currentSource: "components.face.confirmed_perimeter",
     targetPath: "components.return_cant.instances[].source_face_perimeter_ref",
-    note: "Return/cant must reference face perimeter, not invent its own perimeter source.",
+    note: "Canonical dependency anchor only. Actual resolved reference is not migrated yet, so readiness stays blocked.",
   },
   {
     key: "perimeter_source",

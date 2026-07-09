@@ -275,13 +275,18 @@ describe("ProductSystem design-system badges", () => {
     expect(functionalMap).toHaveTextContent("SUPPORT / MOUNTING");
     expect(truthContainer).toBeInTheDocument();
     expect(truthContainer).toHaveTextContent("components.return_cant.instances[]");
+    expect(truthContainer).toHaveTextContent("source_face_perimeter_ref");
     expect(screen.getByTestId("product-system-return-cant-face-dependency")).toHaveTextContent("components.face.confirmed_perimeter");
     expect(screen.getByTestId("product-system-return-cant-legacy-alias")).toHaveTextContent("components.returnCant.depthMm");
     expect(truthContainer).toHaveTextContent("status: BLOCKED");
     expect(truthContainer).toHaveTextContent("component_template_code");
     expect(truthContainer).toHaveTextContent("resource_requirements_ref");
+    expect(truthContainer).toHaveTextContent("component dependency anchor");
     expect(truthContainer).toHaveTextContent("Form System capture");
     expect(truthContainer).toHaveTextContent("root geometry context");
+    expect(truthContainer).toHaveTextContent("quote_geometry.letter_perimeter_m");
+    expect(truthContainer).toHaveTextContent("confirmed_perimeter_m");
+    expect(truthContainer).not.toHaveTextContent("confirmed_perimeter_m confirmed");
     expect(screen.getByTestId("product-system-return-cant-aggregate-boundary")).toHaveTextContent("ProductAggregate is derived read model");
     expect(returnCantSourcePaths).toBeInTheDocument();
     expect(screen.getByText("Separate calculation source paths")).toBeInTheDocument();

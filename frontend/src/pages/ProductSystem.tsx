@@ -2210,6 +2210,8 @@ function returnCantTruthSourceClass(sourceType: ReturnCantTruthContainerFieldAud
   switch (sourceType) {
     case "component truth":
       return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "component dependency anchor":
+      return "border-cyan-700/40 bg-cyan-950/30 text-cyan-200";
     case "Form System capture":
       return "border-amber-700/40 bg-amber-900/20 text-amber-300";
     case "root geometry context":
