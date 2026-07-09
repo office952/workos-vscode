@@ -33,6 +33,17 @@ import {
   validateComponentFirstProductTruthMappingContract,
   type ComponentFirstProductTruthMappingEntry,
 } from "./componentFirstReadonlyProductTruthMapping";
+import {
+  assessComponentFirstProductDefinitionReadiness,
+  COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT,
+  COMPONENT_FIRST_PRODUCT_DEFINITION_FORBIDDEN_OUTPUT,
+  COMPONENT_FIRST_PRODUCT_DEFINITION_FORBIDDEN_VALUE_STATES,
+  COMPONENT_FIRST_PRODUCT_DEFINITION_REQUIRED_PATHS_COUNT,
+  getComponentFirstProductDefinitionEntry,
+  getComponentFirstProductDefinitionPathsForRole,
+  validateComponentFirstProductDefinitionConsumptionContract,
+  type ComponentFirstProductDefinitionConsumptionEntry,
+} from "./componentFirstReadonlyProductDefinitionReadiness";
 
 function liveRow(
   templateCode: string,
@@ -543,5 +554,162 @@ describe("componentFirstReadonlyProductTruthMapping", () => {
     const assessment = assessComponentFirstProductTruthMapping(formReadiness, owner, brokenContract);
     expect(assessment.overallMappingState).toBe("BLOCKED_PRODUCT_TRUTH_WRITE_LEAK");
     expect(assessment.unsafeStatePolicyEntries.length).toBeGreaterThan(0);
+  });
+});
+
+function productDefinitionReadinessFor(
+  liveRows: ComponentFirstLiveTemplateRow[],
+  options?: {
+    productTruthContract?: readonly ComponentFirstProductTruthMappingEntry[];
+    productDefinitionContract?: readonly ComponentFirstProductDefinitionConsumptionEntry[];
+  }
+) {
+  const drift = assessComponentFirstContractDrift(liveRows);
+  const dossier = assessComponentFirstDossierAlignment(liveRows, { drift });
+  const owner = buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+  const formReadiness = assessComponentFirstFormSystemReadiness(drift.completeness, dossier, owner, {
+    drift,
+    liveTemplates: liveRows,
+  });
+  const productTruthMapping = assessComponentFirstProductTruthMapping(formReadiness, owner, options?.productTruthContract);
+  return assessComponentFirstProductDefinitionReadiness(productTruthMapping, formReadiness, owner, {
+    liveTemplates: liveRows,
+    contract: options?.productDefinitionContract,
+  });
+}
+
+describe("componentFirstReadonlyProductDefinitionReadiness", () => {
+  it("ProductDefinition readiness contract includes expected component paths", () => {
+    const validation = validateComponentFirstProductDefinitionConsumptionContract();
+    expect(COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT).toHaveLength(7);
+    expect(validation.valid).toBe(true);
+    expect(COMPONENT_FIRST_PRODUCT_DEFINITION_REQUIRED_PATHS_COUNT).toBe(29);
+  });
+
+  it("all entries have may_activate_product_definition_now=false", () => {
+    expect(
+      COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT.every(
+        (entry) => entry.mayActivateProductDefinitionNow === false
+      )
+    ).toBe(true);
+  });
+
+  it("suggested/fallback/hydrated/manual_draft are forbidden states", () => {
+    for (const entry of COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT) {
+      expect(entry.forbiddenValueStates).toEqual(
+        expect.arrayContaining(["suggested", "fallback_readonly", "hydrated_readonly", "manual_draft"])
+      );
+      expect(entry.allowedFutureValueState).toBe("confirmed_later");
+    }
+  });
+
+  it("missing truth behavior includes do_not_invent and report_missing_truth", () => {
+    for (const entry of COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT) {
+      expect(entry.missingTruthBehavior).toContain("do_not_invent");
+      expect(entry.missingTruthBehavior).toContain("report_missing_truth");
+      expect(entry.missingTruthBehavior).toContain("do_not_price");
+      expect(entry.missingTruthBehavior).toContain("do_not_create_aggregate");
+    }
+  });
+
+  it("ProductDefinition forbidden output includes price/quote/order/ProductAggregate/TaskGraph/ExecutionPlan/task materialization", () => {
+    expect(COMPONENT_FIRST_PRODUCT_DEFINITION_FORBIDDEN_OUTPUT).toEqual(
+      expect.arrayContaining([
+        "price",
+        "quote",
+        "order",
+        "ProductAggregate",
+        "TaskGraph",
+        "ExecutionPlan",
+        "task_materialization",
+      ])
+    );
+    for (const entry of COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT) {
+      expect(entry.productDefinitionForbiddenOutput).toEqual(
+        expect.arrayContaining(["price", "quote", "order", "ProductAggregate", "TaskGraph", "ExecutionPlan"])
+      );
+    }
+  });
+
+  it("FACE required paths match Product Truth mapping", () => {
+    const facePaths = getComponentFirstProductDefinitionPathsForRole("face");
+    expect(facePaths).toEqual(
+      expect.arrayContaining([
+        "product.components.face.material",
+        "product.components.face.thickness",
+        "product.components.face.finish_target",
+      ])
+    );
+    const faceEntry = getComponentFirstProductDefinitionEntry("TPL-COMP-LETTER-FACE_v1");
+    expect(faceEntry?.requiredProductTruthPaths).toHaveLength(4);
+  });
+
+  it("LED required paths match Product Truth mapping", () => {
+    const ledPaths = getComponentFirstProductDefinitionPathsForRole("led");
+    expect(ledPaths).toEqual(
+      expect.arrayContaining([
+        "product.components.led.illumination_mode",
+        "product.components.led.density",
+        "product.components.led.power_supply_policy",
+      ])
+    );
+  });
+
+  it("FINISH required paths match Product Truth mapping", () => {
+    const finishPaths = getComponentFirstProductDefinitionPathsForRole("finish");
+    expect(finishPaths).toEqual(
+      expect.arrayContaining(["product.components.finish.oracal_code", "product.components.finish.ral_code"])
+    );
+  });
+
+  it("MOUNTING required paths match Product Truth mapping", () => {
+    const mountingPaths = getComponentFirstProductDefinitionPathsForRole("mounting");
+    expect(mountingPaths).toEqual(
+      expect.arrayContaining([
+        "product.components.mounting.surface",
+        "product.components.mounting.spacer_policy",
+        "product.components.mounting.template_drilling_policy",
+      ])
+    );
+  });
+
+  it("0/7 live => READONLY_CONSUMPTION_FALLBACK_ONLY", () => {
+    const assessment = productDefinitionReadinessFor([]);
+    expect(assessment.overallProductDefinitionReadinessState).toBe("READONLY_CONSUMPTION_FALLBACK_ONLY");
+    expect(assessment.runtimeProductDefinitionLinkState).toBe("READONLY_CONSUMPTION_CONTRACT_ONLY");
+    expect(assessment.mappedPathsCount).toBe(29);
+  });
+
+  it("7/7 inactive => READONLY_CONSUMPTION_READY", () => {
+    const assessment = productDefinitionReadinessFor(matchingLiveSet());
+    expect(assessment.overallProductDefinitionReadinessState).toBe("READONLY_CONSUMPTION_READY");
+    expect(assessment.requiredPathsCount).toBe(29);
+  });
+
+  it("Product Truth write leak blocks ProductDefinition readiness", () => {
+    const brokenMapping = COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.map((entry, index) =>
+      index === 0 ? ({ ...entry, mayWriteNow: true } as ComponentFirstProductTruthMappingEntry) : entry
+    );
+    const assessment = productDefinitionReadinessFor([], { productTruthContract: brokenMapping });
+    expect(assessment.overallProductDefinitionReadinessState).toBe("BLOCKED_PRODUCT_TRUTH_WRITE_LEAK");
+  });
+
+  it("runtime ProductDefinition leak blocks readiness", () => {
+    const rows = matchingLiveSet();
+    rows[0] = {
+      ...rows[0],
+      notes: JSON.stringify({ product_definition_active: true, pricing_active: true }),
+    };
+    const assessment = productDefinitionReadinessFor(rows);
+    expect(assessment.overallProductDefinitionReadinessState).toBe("BLOCKED_PRODUCT_DEFINITION_RUNTIME_LEAK");
+    expect(assessment.runtimeProductDefinitionLinkState).toBe("BLOCKED_PRODUCT_DEFINITION_RUNTIME_LEAK");
+  });
+
+  it("activation-enabled contract entry blocks readiness", () => {
+    const brokenContract = COMPONENT_FIRST_PRODUCT_DEFINITION_CONSUMPTION_CONTRACT.map((entry, index) =>
+      index === 0 ? ({ ...entry, mayActivateProductDefinitionNow: true } as ComponentFirstProductDefinitionConsumptionEntry) : entry
+    );
+    const assessment = productDefinitionReadinessFor([], { productDefinitionContract: brokenContract });
+    expect(assessment.overallProductDefinitionReadinessState).toBe("BLOCKED_PRODUCT_DEFINITION_RUNTIME_LEAK");
   });
 });

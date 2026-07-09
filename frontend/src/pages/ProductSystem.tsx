@@ -126,6 +126,12 @@ import {
   componentFirstProductTruthMappingTone,
   componentFirstProductTruthRuntimeLinkLabel,
 } from "@/features/product-system/componentFirstReadonlyProductTruthMapping";
+import {
+  assessComponentFirstProductDefinitionReadiness,
+  componentFirstProductDefinitionReadinessLabel,
+  componentFirstProductDefinitionReadinessTone,
+  componentFirstProductDefinitionRuntimeLinkLabel,
+} from "@/features/product-system/componentFirstReadonlyProductDefinitionReadiness";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2806,6 +2812,12 @@ function ComponentFirstReadonlyStatusPanel({
     { drift: driftAssessment, liveTemplates: templates }
   );
   const productTruthMapping = assessComponentFirstProductTruthMapping(formReadiness, ownerSummary);
+  const productDefinitionReadiness = assessComponentFirstProductDefinitionReadiness(
+    productTruthMapping,
+    formReadiness,
+    ownerSummary,
+    { liveTemplates: templates }
+  );
   if (!model) {
     return null;
   }
@@ -2976,6 +2988,60 @@ function ComponentFirstReadonlyStatusPanel({
             Write leak entries: {productTruthMapping.writeEnabledEntries.join(", ")}
           </p>
         ) : null}
+      </article>
+      <article
+        data-testid="product-system-component-first-product-definition-readiness"
+        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
+      >
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">ProductDefinition readiness</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+          <span
+            data-testid="product-system-component-first-product-definition-paths-count"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+          >
+            Consumption contract: {productDefinitionReadiness.mappedPathsCount}/{productDefinitionReadiness.requiredPathsCount} paths
+          </span>
+          <span
+            data-testid="product-system-component-first-product-definition-runtime-link"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+          >
+            {componentFirstProductDefinitionRuntimeLinkLabel(productDefinitionReadiness.runtimeProductDefinitionLinkState)}
+          </span>
+          <span
+            data-testid="product-system-component-first-product-definition-readiness-state"
+            className={`rounded border px-2 py-0.5 ${componentFirstProductDefinitionReadinessTone(productDefinitionReadiness.overallProductDefinitionReadinessState)}`}
+          >
+            State: {componentFirstProductDefinitionReadinessLabel(productDefinitionReadiness.overallProductDefinitionReadinessState)}
+          </span>
+        </div>
+        <p
+          data-testid="product-system-component-first-product-definition-missing-behavior"
+          className="mt-2 text-[10px] text-slate-300"
+        >
+          Missing truth behavior: report missing truth; do not invent; do not price; do not create aggregate/tasks
+        </p>
+        <p
+          data-testid="product-system-component-first-product-definition-state-policy"
+          className="mt-1 text-[10px] font-mono text-slate-400"
+        >
+          State policy: suggested/fallback/hydrated/manual draft are not ProductDefinition truth; confirmed truth required later
+        </p>
+        <ul
+          data-testid="product-system-component-first-product-definition-compact-paths"
+          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
+        >
+          {productDefinitionReadiness.compactPathSummaries.map((summary) => (
+            <li key={summary.label}>
+              <span className="font-semibold text-slate-300">{summary.label} required paths:</span> {summary.paths}
+            </li>
+          ))}
+        </ul>
+        <p
+          data-testid="product-system-component-first-product-definition-guard"
+          className="mt-2 text-[10px] font-mono text-cyan-200/80"
+        >
+          Guard: no invent; no price; no quote/order; no ProductAggregate; no TaskGraph/ExecutionPlan; no task materialization
+        </p>
       </article>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

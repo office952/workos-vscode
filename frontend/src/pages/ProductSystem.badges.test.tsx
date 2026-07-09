@@ -974,4 +974,61 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-product-truth-runtime-link")).toHaveTextContent("not linked yet");
   });
 
+  it("shows ProductDefinition readiness block for 0/7 fallback without runtime activation", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
+    });
+
+    const pdBlock = screen.getByTestId("product-system-component-first-product-definition-readiness");
+    expect(screen.getByTestId("product-system-component-first-product-definition-paths-count")).toHaveTextContent("29/29 paths");
+    expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("readonly contract only");
+    expect(screen.getByTestId("product-system-component-first-product-definition-readiness-state")).toHaveTextContent("READONLY_CONSUMPTION_FALLBACK_ONLY");
+    expect(screen.getByTestId("product-system-component-first-product-definition-missing-behavior")).toHaveTextContent("do not invent");
+    expect(screen.getByTestId("product-system-component-first-product-definition-state-policy")).toHaveTextContent("suggested/fallback/hydrated/manual draft");
+    expect(pdBlock).toHaveTextContent("FACE required paths");
+    expect(pdBlock).toHaveTextContent("LED required paths");
+    expect(pdBlock).not.toHaveTextContent("ready to quote");
+    expect(pdBlock).not.toHaveTextContent("TaskGraph active");
+    expect(pdBlock.querySelector("input")).toBeNull();
+    expect(pdBlock.querySelector("select")).toBeNull();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+  });
+
+  it("shows Product Truth mapping and ProductDefinition readiness together", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-component-first-product-definition-readiness")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-product-truth-mapping").compareDocumentPosition(
+      screen.getByTestId("product-system-component-first-product-definition-readiness")
+    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("shows READONLY_CONSUMPTION_READY when 7/7 inactive rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-product-definition-readiness-state")).toHaveTextContent("READONLY_CONSUMPTION_READY");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-product-definition-runtime-link")).toHaveTextContent("not linked yet");
+  });
+
 });
