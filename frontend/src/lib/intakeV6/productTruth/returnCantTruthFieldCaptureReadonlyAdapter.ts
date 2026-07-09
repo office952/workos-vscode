@@ -25,10 +25,13 @@ const GENERIC_LABOR_KEYS = [
   "RETURN_PROFILE_FACE_BONDING",
 ] as const
 
-export type ReturnCantSemanticVariant = "stock_color" | "oracal" | "ral_paint"
+export type ReturnCantSemanticVariant =
+  | "stock_color"
+  | "vinyl_application"
+  | "paint_application"
 
 export interface ReturnCantReadonlyCatalogReference {
-  family: "stock_color" | "oracal" | "ral_paint"
+  family: "stock_color" | "vinyl_application" | "paint_application"
   reference: string | null
   display_label: string | null
   stores_price: false
@@ -36,12 +39,38 @@ export interface ReturnCantReadonlyCatalogReference {
 }
 
 export interface ReturnCantReadonlyPricingKeyStatus {
-  slot: "material_profile_width" | "finish_extra" | "labor_machine_forming" | "labor_face_bonding"
+  slot:
+    | "material_profile_width"
+    | "vinyl_material"
+    | "vinyl_application_labor"
+    | "ral_paint_material_by_width"
+    | "ral_paint_labor"
+    | "labor_machine_forming"
+    | "labor_face_bonding"
   key: string | null
   status: "present" | "missing" | "alignment_required" | "not_applicable"
-  source: "/inventory/pricing" | "shared_edge_cant_rules" | "not_applicable"
+  source:
+    | "/inventory/pricing"
+    | "shared_edge_cant_rules"
+    | "pricing_target_contract"
+    | "not_applicable"
   blocker?: string | null
   warning?: string | null
+}
+
+export interface ReturnCantReadonlyVinylReference {
+  material_family: "vinyl_color_catalog"
+  series: "641" | "651" | null
+  color_code: string | null
+  color_name: string | null
+  catalog_reference: string | null
+}
+
+export interface ReturnCantReadonlyPaintReference {
+  system: "RAL" | null
+  ral_code: string | null
+  color_name: string | null
+  catalog_reference: string | null
 }
 
 export interface ReturnCantTruthFieldCaptureReadonlyVectorEntry {
@@ -52,10 +81,10 @@ export interface ReturnCantTruthFieldCaptureReadonlyVectorEntry {
   current_return_depth_mm: number | null
   current_raw_finish_option: string | null
   corrected_semantic_variant: ReturnCantSemanticVariant | null
+  user_facing_finish_label: "Culoare Stoc" | "Folie autocolanta" | "Vopsit RAL" | null
   stock_color_label: string | null
-  oracal_code: string | null
-  ral_code: string | null
-  paint_target: string | null
+  vinyl: ReturnCantReadonlyVinylReference | null
+  paint: ReturnCantReadonlyPaintReference | null
   catalog_reference: ReturnCantReadonlyCatalogReference | null
   catalog_source: string
   catalog_boundary_status: "reference_only" | "reusable_finish_catalog_required"
@@ -70,10 +99,13 @@ export interface ReturnCantTruthFieldCaptureReadonlyVectorEntry {
 }
 
 export interface ReturnCantTruthFieldCaptureReadonlyAdapterFormula {
-  quantity_basis: "ml"
-  quantity_formula: "confirmed_perimeter_m"
-  material_quantity_ml: "components.face.confirmed_perimeter.value"
-  labor_quantity_ml: "components.face.confirmed_perimeter.value"
+  quantity_basis: "component_specific"
+  profile_material_quantity_formula: "perimetru_ml"
+  generic_labor_quantity_formula: "perimetru_ml"
+  vinyl_material_quantity_formula: "perimetru_ml x latime_cant_m"
+  vinyl_labor_quantity_formula: "perimetru_ml"
+  paint_material_quantity_formula: "pricing_target_by_width"
+  paint_labor_quantity_formula: "perimetru_ml"
   pricing_values_source: "/inventory/pricing"
   catalog_values_source: "reusable_finish_catalog_future"
   component_stores_price: false
@@ -98,16 +130,19 @@ export interface ReturnCantTruthFieldCaptureReadonlyPricingRegistryEvidence {
   depthMaterialKeyPresent?: Partial<Record<30 | 60 | 80 | 100, boolean>>
   laborMachineFormingPresent?: boolean
   laborFaceBondingPresent?: boolean
-  oracal651LiveKeyPresent?: boolean
-  oracal651CantAlignmentClear?: boolean
-  ralPaintKeyPresent?: boolean
+  vinyl641LiveKeyPresent?: boolean
+  vinyl651LiveKeyPresent?: boolean
+  vinylApplicationLaborKeyPresent?: boolean
+  vinylCantAlignmentClear?: boolean
+  ralPaintMaterialByWidthPresent?: Partial<Record<30 | 60 | 80 | 100, boolean>>
+  ralPaintLaborKeyPresent?: boolean
   ralPaintAlignmentClear?: boolean
 }
 
 export interface ReturnCantTruthFieldCaptureReadonlyCatalogEvidence {
   stockColorBoundaryClear?: boolean
-  oracalBoundaryClear?: boolean
-  ralBoundaryClear?: boolean
+  vinylBoundaryClear?: boolean
+  paintBoundaryClear?: boolean
 }
 
 export interface ReturnCantTruthFieldCaptureReadonlyLayerEvidence {
@@ -139,10 +174,10 @@ export interface ReturnCantTruthFieldCaptureReadonlyAdapterInput {
 interface ResolvedSemanticVariant {
   corrected_semantic_variant: ReturnCantSemanticVariant | null
   current_raw_finish_option: string | null
+  user_facing_finish_label: "Culoare Stoc" | "Folie autocolanta" | "Vopsit RAL" | null
   stock_color_label: string | null
-  oracal_code: string | null
-  ral_code: string | null
-  paint_target: string | null
+  vinyl: ReturnCantReadonlyVinylReference | null
+  paint: ReturnCantReadonlyPaintReference | null
   catalog_reference: ReturnCantReadonlyCatalogReference | null
   catalog_source: string
   catalog_boundary_status: "reference_only" | "reusable_finish_catalog_required"
@@ -175,9 +210,17 @@ function defaultPricingEvidence(): Required<ReturnCantTruthFieldCaptureReadonlyP
     },
     laborMachineFormingPresent: true,
     laborFaceBondingPresent: true,
-    oracal651LiveKeyPresent: true,
-    oracal651CantAlignmentClear: false,
-    ralPaintKeyPresent: true,
+    vinyl641LiveKeyPresent: true,
+    vinyl651LiveKeyPresent: true,
+    vinylApplicationLaborKeyPresent: false,
+    vinylCantAlignmentClear: false,
+    ralPaintMaterialByWidthPresent: {
+      30: false,
+      60: false,
+      80: false,
+      100: false,
+    },
+    ralPaintLaborKeyPresent: false,
     ralPaintAlignmentClear: false,
   }
 }
@@ -185,8 +228,8 @@ function defaultPricingEvidence(): Required<ReturnCantTruthFieldCaptureReadonlyP
 function defaultCatalogEvidence(): Required<ReturnCantTruthFieldCaptureReadonlyCatalogEvidence> {
   return {
     stockColorBoundaryClear: false,
-    oracalBoundaryClear: false,
-    ralBoundaryClear: false,
+    vinylBoundaryClear: false,
+    paintBoundaryClear: false,
   }
 }
 
@@ -196,17 +239,24 @@ function buildTargetPaths(instanceKey: string): string[] {
     `${base}.vector_type`,
     `${base}.depth_mm`,
     `${base}.finish_variant.type`,
+    `${base}.finish_variant.user_facing_label`,
     `${base}.finish_variant.stock_color_label`,
-    `${base}.finish_variant.oracal_code`,
-    `${base}.finish_variant.ral_code`,
-    `${base}.finish_variant.paint_target`,
-    `${base}.finish_variant.catalog_reference`,
+    `${base}.finish_variant.vinyl.material_family`,
+    `${base}.finish_variant.vinyl.series`,
+    `${base}.finish_variant.vinyl.color_code`,
+    `${base}.finish_variant.vinyl.catalog_reference`,
+    `${base}.finish_variant.paint.system`,
+    `${base}.finish_variant.paint.ral_code`,
+    `${base}.finish_variant.paint.catalog_reference`,
     `${base}.layer_group_ids`,
     `${base}.confirmation_state`,
     `${base}.perimeter_source`,
     `${base}.perimeter_dependency.face_confirmed_perimeter.*`,
     `${base}.pricing_keys.material_profile_width`,
-    `${base}.pricing_keys.finish_extra`,
+    `${base}.pricing_keys.vinyl_material`,
+    `${base}.pricing_keys.vinyl_application_labor`,
+    `${base}.pricing_keys.ral_paint_material_by_width`,
+    `${base}.pricing_keys.ral_paint_labor`,
   ]
 }
 
@@ -249,8 +299,19 @@ function buildConfirmationGap(args: {
   return "INSTANCE_CONFIRMATION_STATE_MISSING"
 }
 
+function buildVinylCatalogReference(series: "641" | "651" | null, colorCode: string | null): string | null {
+  if (series == null || colorCode == null) return null
+  return `vinyl_color_catalog:${series}:${colorCode}`
+}
+
+function buildPaintCatalogReference(ralCode: string | null): string | null {
+  if (ralCode == null) return null
+  return `paint_color_catalog:RAL:${ralCode}`
+}
+
 function resolveSemanticVariant(args: {
   finishType: string | undefined
+  materialCode: string | undefined
   colorCode: string | undefined
   colorName: string | undefined
   catalogEvidence: Required<ReturnCantTruthFieldCaptureReadonlyCatalogEvidence>
@@ -274,62 +335,76 @@ function resolveSemanticVariant(args: {
     return variant
   }
   if (token === "oracal_wrapped" || token === "oracal_651" || token === "vinyl") {
+    const seriesToken = nonEmptyString(args.materialCode) ?? "651"
+    const series = seriesToken === "641" || seriesToken === "651" ? seriesToken : null
+    const colorCode = nonEmptyString(args.colorCode)
+    const colorName = nonEmptyString(args.colorName)
     const warnings: string[] = []
-    if (!args.catalogEvidence.oracalBoundaryClear) {
-      uniquePush(warnings, "REUSABLE_ORACAL_CATALOG_BOUNDARY_REQUIRED")
+    if (!args.catalogEvidence.vinylBoundaryClear) {
+      uniquePush(warnings, "REUSABLE_VINYL_CATALOG_BOUNDARY_REQUIRED")
+    }
+    if (series == null) {
+      uniquePush(warnings, "RETURN_CANT_VINYL_SERIES_UNKNOWN")
     }
     return {
-      corrected_semantic_variant: "oracal",
-      current_raw_finish_option: "Oracal 651",
+      corrected_semantic_variant: "vinyl_application",
+      current_raw_finish_option: series != null ? `Oracal ${series}` : "Folie autocolanta",
+      user_facing_finish_label: "Folie autocolanta",
       stock_color_label: null,
-      oracal_code: nonEmptyString(args.colorCode) ?? null,
-      ral_code: null,
-      paint_target: null,
+      vinyl: {
+        material_family: "vinyl_color_catalog",
+        series,
+        color_code: colorCode,
+        color_name: colorName,
+        catalog_reference: buildVinylCatalogReference(series, colorCode),
+      },
+      paint: null,
       catalog_reference: {
-        family: "oracal",
-        reference: nonEmptyString(args.colorCode) ?? null,
-        display_label: nonEmptyString(args.colorName) ?? nonEmptyString(args.colorCode) ?? "Oracal 651",
+        family: "vinyl_application",
+        reference: buildVinylCatalogReference(series, colorCode) ?? colorCode ?? series,
+        display_label: colorName ?? colorCode ?? (series != null ? `Oracal ${series}` : "Folie autocolanta"),
         stores_price: false,
         stores_cost: false,
       },
-      catalog_source: "reusable_oracal_catalog",
-      catalog_boundary_status: args.catalogEvidence.oracalBoundaryClear
+      catalog_source: "reusable_vinyl_catalog",
+      catalog_boundary_status: args.catalogEvidence.vinylBoundaryClear
         ? "reference_only"
         : "reusable_finish_catalog_required",
-      blockers:
-        nonEmptyString(args.colorCode) == null
-          ? ["RETURN_CANT_ORACAL_CODE_MISSING"]
-          : [],
+      blockers: colorCode == null ? ["RETURN_CANT_VINYL_COLOR_CODE_MISSING"] : [],
       warnings,
     }
   }
   if (token === "ral_paint" || token === "painted" || token === "paint") {
+    const ralCode = nonEmptyString(args.colorCode)
+    const colorName = nonEmptyString(args.colorName)
     const warnings: string[] = []
-    if (!args.catalogEvidence.ralBoundaryClear) {
-      uniquePush(warnings, "REUSABLE_RAL_CATALOG_BOUNDARY_REQUIRED")
+    if (!args.catalogEvidence.paintBoundaryClear) {
+      uniquePush(warnings, "REUSABLE_PAINT_CATALOG_BOUNDARY_REQUIRED")
     }
     return {
-      corrected_semantic_variant: "ral_paint",
+      corrected_semantic_variant: "paint_application",
       current_raw_finish_option: "Vopsit RAL",
+      user_facing_finish_label: "Vopsit RAL",
       stock_color_label: null,
-      oracal_code: null,
-      ral_code: nonEmptyString(args.colorCode) ?? null,
-      paint_target: null,
+      vinyl: null,
+      paint: {
+        system: "RAL",
+        ral_code: ralCode,
+        color_name: colorName,
+        catalog_reference: buildPaintCatalogReference(ralCode),
+      },
       catalog_reference: {
-        family: "ral_paint",
-        reference: nonEmptyString(args.colorCode) ?? null,
-        display_label: nonEmptyString(args.colorName) ?? nonEmptyString(args.colorCode) ?? "Vopsit RAL",
+        family: "paint_application",
+        reference: buildPaintCatalogReference(ralCode),
+        display_label: colorName ?? ralCode ?? "Vopsit RAL",
         stores_price: false,
         stores_cost: false,
       },
-      catalog_source: "reusable_ral_catalog",
-      catalog_boundary_status: args.catalogEvidence.ralBoundaryClear
+      catalog_source: "reusable_paint_catalog",
+      catalog_boundary_status: args.catalogEvidence.paintBoundaryClear
         ? "reference_only"
         : "reusable_finish_catalog_required",
-      blockers: [
-        ...(nonEmptyString(args.colorCode) == null ? ["RETURN_CANT_RAL_CODE_MISSING"] : []),
-        "RETURN_CANT_PAINT_TARGET_FIELD_MISSING",
-      ],
+      blockers: ralCode == null ? ["RETURN_CANT_RAL_CODE_MISSING"] : [],
       warnings,
     }
   }
@@ -337,10 +412,10 @@ function resolveSemanticVariant(args: {
   return {
     corrected_semantic_variant: null,
     current_raw_finish_option: nonEmptyString(args.finishType),
+    user_facing_finish_label: null,
     stock_color_label: null,
-    oracal_code: null,
-    ral_code: null,
-    paint_target: null,
+    vinyl: null,
+    paint: null,
     catalog_reference: null,
     catalog_source: "reusable_finish_catalog_required",
     catalog_boundary_status: "reusable_finish_catalog_required",
@@ -356,10 +431,10 @@ function buildStockColorVariant(
   return {
     corrected_semantic_variant: "stock_color",
     current_raw_finish_option: stockColorLabel,
+    user_facing_finish_label: "Culoare Stoc",
     stock_color_label: stockColorLabel,
-    oracal_code: null,
-    ral_code: null,
-    paint_target: null,
+    vinyl: null,
+    paint: null,
     catalog_reference: {
       family: "stock_color",
       reference: stockColorLabel,
@@ -381,6 +456,7 @@ function buildStockColorVariant(
 function buildPricingKeyStatuses(args: {
   depthMm: number | null
   semanticVariant: ReturnCantSemanticVariant | null
+  vinylSeries: "641" | "651" | null
   pricingEvidence: Required<ReturnCantTruthFieldCaptureReadonlyPricingRegistryEvidence>
 }): ReturnCantReadonlyPricingKeyStatus[] {
   const statuses: ReturnCantReadonlyPricingKeyStatus[] = []
@@ -414,40 +490,103 @@ function buildPricingKeyStatuses(args: {
   })
 
   if (args.semanticVariant === "stock_color") {
+    statuses.push({ slot: "vinyl_material", key: null, status: "not_applicable", source: "not_applicable" })
     statuses.push({
-      slot: "finish_extra",
+      slot: "vinyl_application_labor",
       key: null,
       status: "not_applicable",
       source: "not_applicable",
     })
-    return statuses
-  }
-
-  if (args.semanticVariant === "oracal") {
     statuses.push({
-      slot: "finish_extra",
-      key: args.pricingEvidence.oracal651LiveKeyPresent ? "MAT-ORACAL-651" : null,
-      status: args.pricingEvidence.oracal651CantAlignmentClear ? "present" : "alignment_required",
-      source: args.pricingEvidence.oracal651CantAlignmentClear ? "/inventory/pricing" : "shared_edge_cant_rules",
-      blocker: args.pricingEvidence.oracal651CantAlignmentClear
-        ? null
-        : "ORACAL_651_CANT_PRICING_ALIGNMENT_REQUIRED",
-      warning: args.pricingEvidence.oracal651CantAlignmentClear
-        ? null
-        : "REUSABLE_ORACAL_CATALOG_BOUNDARY_REQUIRED",
+      slot: "ral_paint_material_by_width",
+      key: null,
+      status: "not_applicable",
+      source: "not_applicable",
     })
+    statuses.push({ slot: "ral_paint_labor", key: null, status: "not_applicable", source: "not_applicable" })
     return statuses
   }
 
-  if (args.semanticVariant === "ral_paint") {
+  if (args.semanticVariant === "vinyl_application") {
+    const vinylKey =
+      args.vinylSeries === "641"
+        ? args.pricingEvidence.vinyl641LiveKeyPresent
+          ? "MAT-ORACAL-641"
+          : null
+        : args.pricingEvidence.vinyl651LiveKeyPresent
+          ? "MAT-ORACAL-651"
+          : null
     statuses.push({
-      slot: "finish_extra",
-      key: args.pricingEvidence.ralPaintKeyPresent ? "MAT-VOPSEA-RAL" : null,
+      slot: "vinyl_material",
+      key: vinylKey,
+      status: args.pricingEvidence.vinylCantAlignmentClear ? "present" : "alignment_required",
+      source: args.pricingEvidence.vinylCantAlignmentClear ? "/inventory/pricing" : "shared_edge_cant_rules",
+      blocker: args.pricingEvidence.vinylCantAlignmentClear
+        ? null
+        : "RETURN_CANT_VINYL_MATERIAL_ALIGNMENT_REQUIRED",
+      warning: args.pricingEvidence.vinylCantAlignmentClear
+        ? null
+        : "REUSABLE_VINYL_CATALOG_BOUNDARY_REQUIRED",
+    })
+    statuses.push({
+      slot: "vinyl_application_labor",
+      key: "return_cant_vinyl_application_labor",
+      status:
+        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
+          ? "present"
+          : "alignment_required",
+      source:
+        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
+          ? "/inventory/pricing"
+          : "pricing_target_contract",
+      blocker:
+        args.pricingEvidence.vinylApplicationLaborKeyPresent && args.pricingEvidence.vinylCantAlignmentClear
+          ? null
+          : "RETURN_CANT_VINYL_APPLICATION_LABOR_ALIGNMENT_REQUIRED",
+    })
+    statuses.push({
+      slot: "ral_paint_material_by_width",
+      key: null,
+      status: "not_applicable",
+      source: "not_applicable",
+    })
+    statuses.push({ slot: "ral_paint_labor", key: null, status: "not_applicable", source: "not_applicable" })
+    return statuses
+  }
+
+  if (args.semanticVariant === "paint_application") {
+    const ralMaterialKey = args.depthMm == null ? null : `ral_paint_material_${args.depthMm}mm`
+    statuses.push({ slot: "vinyl_material", key: null, status: "not_applicable", source: "not_applicable" })
+    statuses.push({
+      slot: "vinyl_application_labor",
+      key: null,
+      status: "not_applicable",
+      source: "not_applicable",
+    })
+    statuses.push({
+      slot: "ral_paint_material_by_width",
+      key: ralMaterialKey,
       status: args.pricingEvidence.ralPaintAlignmentClear ? "present" : "alignment_required",
-      source: "/inventory/pricing",
+      source: args.pricingEvidence.ralPaintAlignmentClear ? "/inventory/pricing" : "pricing_target_contract",
       blocker: args.pricingEvidence.ralPaintAlignmentClear
         ? null
         : "RETURN_CANT_RAL_PAINT_PRICING_ALIGNMENT_REQUIRED",
+    })
+    statuses.push({
+      slot: "ral_paint_labor",
+      key: "ral_paint_application_labor",
+      status:
+        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
+          ? "present"
+          : "alignment_required",
+      source:
+        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
+          ? "/inventory/pricing"
+          : "pricing_target_contract",
+      blocker:
+        args.pricingEvidence.ralPaintLaborKeyPresent && args.pricingEvidence.ralPaintAlignmentClear
+          ? null
+          : "RETURN_CANT_RAL_PAINT_LABOR_ALIGNMENT_REQUIRED",
     })
   }
 
@@ -462,7 +601,10 @@ function buildPricingKeysRequired(statuses: ReturnCantReadonlyPricingKeyStatus[]
   return required
 }
 
-function buildGlobalPerimeterState(input: ReturnCantTruthFieldCaptureReadonlyAdapterInput, target: string[]) {
+function buildGlobalPerimeterState(
+  input: ReturnCantTruthFieldCaptureReadonlyAdapterInput,
+  target: string[],
+) {
   if (
     input.faceConfirmedPerimeter?.value != null &&
     lower(input.faceConfirmedPerimeter.source_state) === "confirmed" &&
@@ -483,6 +625,7 @@ function buildEntry(args: {
   sourceRowKey: string
   label: string
   finishType: string | undefined
+  materialCode: string | undefined
   colorCode: string | undefined
   colorName: string | undefined
   depthMm: number | undefined
@@ -493,6 +636,7 @@ function buildEntry(args: {
 }): ReturnCantTruthFieldCaptureReadonlyVectorEntry {
   const semantic = resolveSemanticVariant({
     finishType: args.finishType,
+    materialCode: args.materialCode,
     colorCode: args.colorCode,
     colorName: args.colorName,
     catalogEvidence: args.catalogEvidence,
@@ -501,6 +645,7 @@ function buildEntry(args: {
   const pricing_keys_status = buildPricingKeyStatuses({
     depthMm: args.depthMm ?? null,
     semanticVariant: semantic.corrected_semantic_variant,
+    vinylSeries: semantic.vinyl?.series ?? null,
     pricingEvidence: args.pricingEvidence,
   })
   const pricing_keys_required = buildPricingKeysRequired(pricing_keys_status)
@@ -543,10 +688,10 @@ function buildEntry(args: {
     current_return_depth_mm: args.depthMm ?? null,
     current_raw_finish_option: semantic.current_raw_finish_option,
     corrected_semantic_variant: semantic.corrected_semantic_variant,
+    user_facing_finish_label: semantic.user_facing_finish_label,
     stock_color_label: semantic.stock_color_label,
-    oracal_code: semantic.oracal_code,
-    ral_code: semantic.ral_code,
-    paint_target: semantic.paint_target,
+    vinyl: semantic.vinyl,
+    paint: semantic.paint,
     catalog_reference: semantic.catalog_reference,
     catalog_source: semantic.catalog_source,
     catalog_boundary_status: semantic.catalog_boundary_status,
@@ -587,12 +732,17 @@ function dedupe(values: string[]): string[] {
 export function mapReturnCantTruthFieldCaptureReadonlyAdapter(
   input: ReturnCantTruthFieldCaptureReadonlyAdapterInput,
 ): ReturnCantTruthFieldCaptureReadonlyAdapterOutput {
+  const pricingDefaults = defaultPricingEvidence()
   const pricingEvidence = {
-    ...defaultPricingEvidence(),
+    ...pricingDefaults,
     ...input.pricingRegistryEvidence,
     depthMaterialKeyPresent: {
-      ...defaultPricingEvidence().depthMaterialKeyPresent,
+      ...pricingDefaults.depthMaterialKeyPresent,
       ...input.pricingRegistryEvidence?.depthMaterialKeyPresent,
+    },
+    ralPaintMaterialByWidthPresent: {
+      ...pricingDefaults.ralPaintMaterialByWidthPresent,
+      ...input.pricingRegistryEvidence?.ralPaintMaterialByWidthPresent,
     },
   }
   const catalogEvidence = {
@@ -611,6 +761,7 @@ export function mapReturnCantTruthFieldCaptureReadonlyAdapter(
         sourceRowKey: group.group_key,
         label: nonEmptyString(group.layer_name) ?? group.group_key,
         finishType: cant.finishType,
+        materialCode: cant.materialCode,
         colorCode: cant.colorCode,
         colorName: cant.colorName,
         depthMm: cant.depthMm,
@@ -631,6 +782,7 @@ export function mapReturnCantTruthFieldCaptureReadonlyAdapter(
         sourceRowKey: row.layer_key,
         label: nonEmptyString(row.layer_name) ?? row.layer_key,
         finishType: cant.finishType,
+        materialCode: cant.materialCode,
         colorCode: cant.colorCode,
         colorName: cant.colorName,
         depthMm: cant.depthMm,
@@ -660,10 +812,13 @@ export function mapReturnCantTruthFieldCaptureReadonlyAdapter(
     quote_mode: nonEmptyString(input.quoteMode) ?? QUOTE_MODE,
     vector_entries,
     formula: {
-      quantity_basis: "ml",
-      quantity_formula: "confirmed_perimeter_m",
-      material_quantity_ml: "components.face.confirmed_perimeter.value",
-      labor_quantity_ml: "components.face.confirmed_perimeter.value",
+      quantity_basis: "component_specific",
+      profile_material_quantity_formula: "perimetru_ml",
+      generic_labor_quantity_formula: "perimetru_ml",
+      vinyl_material_quantity_formula: "perimetru_ml x latime_cant_m",
+      vinyl_labor_quantity_formula: "perimetru_ml",
+      paint_material_quantity_formula: "pricing_target_by_width",
+      paint_labor_quantity_formula: "perimetru_ml",
       pricing_values_source: "/inventory/pricing",
       catalog_values_source: "reusable_finish_catalog_future",
       component_stores_price: false,
