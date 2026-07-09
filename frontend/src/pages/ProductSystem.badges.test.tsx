@@ -1891,4 +1891,43 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
   });
 
+  it("renders FACE estimated price draft panel with owner draft authority", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-face-estimate-draft-panel")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-face-estimate-draft-authority-badge")).toHaveTextContent(
+      /OWNER ESTIMATE DRAFT/i,
+    );
+    expect(screen.getByTestId("product-system-face-estimate-not-registry-badge")).toHaveTextContent(
+      /NOT PRICING REGISTRY/i,
+    );
+    expect(screen.getByTestId("product-system-face-estimate-ready-for-pricing")).toHaveTextContent(
+      "Ready for pricing: NO",
+    );
+    expect(screen.getByTestId("product-system-face-estimate-pricing-active-count")).toHaveTextContent(
+      "Pricing active rows: 0",
+    );
+    expect(screen.getByTestId("product-system-face-estimate-draft-value-plexiglas_3mm_material")).toHaveTextContent(
+      "15.00 EUR/mp",
+    );
+    expect(screen.getByTestId("product-system-face-estimate-draft-value-plexiglas_3mm_cnc")).toHaveTextContent(
+      "1.00 EUR/ml contur",
+    );
+    expect(screen.getByTestId("product-system-face-estimate-cnc-minimum-value")).toHaveTextContent(/50 lei/i);
+    expect(screen.getByTestId("product-system-face-estimate-cross-ref-plexiglas_3mm_registry_key")).toHaveTextContent(
+      /MAT-ACP-FATA-LITERE/i,
+    );
+    expect(screen.getByTestId("product-system-face-estimate-draft-safety")).toHaveTextContent(
+      /No Pricing activation/i,
+    );
+  });
+
 });

@@ -17,6 +17,7 @@ import {
   type FaceWorkshopFieldStatus,
 } from "./componentFirstFaceTruthWorkshop";
 import { CANONICAL_FINISH_RETIRED_PATHS } from "./canonicalFinishEnumMap";
+import { FaceEstimatedPriceDraftPanel } from "./FaceEstimatedPriceDraftPanel";
 
 function StatusChip({
   label,
@@ -281,6 +282,8 @@ export function FaceTruthWorkshopPanel() {
           </ul>
         </div>
       </article>
+
+      <FaceEstimatedPriceDraftPanel />
 
       <div className="overflow-x-auto">
         <table

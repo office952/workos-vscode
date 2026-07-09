@@ -383,7 +383,7 @@ export const FACE_READINESS_BLOCKERS: readonly string[] = [
   "Handoff path exact geometrie Intake V6 → FACE truth — neconectat (runtime)",
   "Contract outputs — nu live în Product Truth",
   "Plexiglas 5 / 10 mm — confirmare owner per job înainte de pricing",
-  "Chei pricing FACE (Plexiglas 3 mm) — cross-reference inventory pending",
+  "Owner estimate drafts (material/CNC) — NOT Pricing Registry authority; not active",
   "Product Truth live write — blocked",
   "ProductDefinition bridge — blocked",
   "FINISH workshop — slice separat (FACE core boundary owner-confirmed)",
