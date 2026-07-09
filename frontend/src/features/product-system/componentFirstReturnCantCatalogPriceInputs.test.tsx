@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import {
   buildOracalPricingKeyCoverageSummary,
+  buildRalPricingKeyCoverageSummary,
   buildReturnCantCatalogPriceSummary,
   computeBlockersBeforePricing,
   formatCatalogPriceConfirmedValue,
@@ -12,6 +13,7 @@ import {
   RETURN_CANT_PRICING_SOURCE,
   RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH,
   RETURN_CANT_RAL_MINIMUM,
+  RETURN_CANT_RAL_PRICING_REGISTRY_KEYS,
 } from "./componentFirstReturnCantCatalogPriceInputs";
 import { ReturnCantCatalogPriceInputsPanel } from "./ReturnCantCatalogPriceInputsPanel";
 
@@ -109,26 +111,50 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     expect(RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH).toMatch(/ralColors\.ts/);
   });
 
-  it("confirms RAL material prices by depth from owner", () => {
-    const prices = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "ral_material_price_by_depth");
-    expect(prices?.status).toBe("owner_confirmed");
-    expect(prices?.confirmedValue).toEqual([
-      "30 mm: 2.00 EUR/ml (MAT-VOPSEA-RAL-CANT-30MM)",
-      "60 mm: 2.50 EUR/ml (MAT-VOPSEA-RAL-CANT-60MM)",
-      "80 mm: 3.00 EUR/ml (MAT-VOPSEA-RAL-CANT-80MM)",
-      "100 mm: 4.00 EUR/ml (MAT-VOPSEA-RAL-CANT-100MM)",
+  it("declares RAL Pricing Registry keys for material by depth and labor without numeric prices", () => {
+    expect(RETURN_CANT_RAL_PRICING_REGISTRY_KEYS).toHaveLength(5);
+    const materialKeys = RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.filter((entry) => entry.kind === "material");
+    expect(materialKeys.map((entry) => entry.pricingKey)).toEqual([
+      "MAT-VOPSEA-RAL-CANT-30MM",
+      "MAT-VOPSEA-RAL-CANT-60MM",
+      "MAT-VOPSEA-RAL-CANT-80MM",
+      "MAT-VOPSEA-RAL-CANT-100MM",
     ]);
+    const laborKey = RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.find((entry) => entry.kind === "labor");
+    expect(laborKey?.pricingKey).toBe("RETURN_CANT_RAL_PAINT_LABOR");
+    for (const entry of RETURN_CANT_RAL_PRICING_REGISTRY_KEYS) {
+      expect(entry.unit).toBe("ml");
+      expect(entry.currency).toBe("EUR");
+      expect(entry.pricingActive).toBe(false);
+      expect(entry.source).toBe("/inventory/pricing");
+      expect(entry).not.toHaveProperty("price");
+    }
+
+    const materialPrices = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "ral_material_price_by_depth");
+    expect(materialPrices?.status).toBe("owner_confirmed");
+    expect(materialPrices?.confirmedValue).toEqual([
+      "MAT-VOPSEA-RAL-CANT-30MM",
+      "MAT-VOPSEA-RAL-CANT-60MM",
+      "MAT-VOPSEA-RAL-CANT-80MM",
+      "MAT-VOPSEA-RAL-CANT-100MM",
+    ]);
+    expect(String(materialPrices?.knownSoFarRo)).toMatch(/\/inventory\/pricing/i);
+    expect(String(materialPrices?.knownSoFarRo)).not.toMatch(/2\.00 EUR\/ml|2\.50|3\.00|4\.00 EUR\/ml/);
   });
 
-  it("confirms RAL labor price 1.00 EUR/ml for all depths", () => {
+  it("declares RAL labor Pricing Registry key without EUR literal", () => {
     const labor = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "ral_labor_price_by_depth");
     expect(labor?.status).toBe("owner_confirmed");
-    expect(labor?.confirmedValue).toEqual([
-      "30 mm: 1.00 EUR/ml",
-      "60 mm: 1.00 EUR/ml",
-      "80 mm: 1.00 EUR/ml",
-      "100 mm: 1.00 EUR/ml",
-    ]);
+    expect(labor?.confirmedValue).toBe("RETURN_CANT_RAL_PAINT_LABOR");
+    expect(String(labor?.knownSoFarRo)).toMatch(/RETURN_CANT_RAL_PAINT_LABOR/i);
+    expect(String(labor?.knownSoFarRo)).not.toMatch(/1\.00 EUR\/ml/);
+
+    const summary = buildRalPricingKeyCoverageSummary();
+    expect(summary.declaredRalMaterialPricingKeyCount).toBe(4);
+    expect(summary.declaredRalLaborPricingKeyCount).toBe(1);
+    expect(summary.ralMaterialPricingKeysDeclared).toBe(true);
+    expect(summary.ralLaborPricingKeyDeclared).toBe(true);
+    expect(summary.ralFullPricingReady).toBe(false);
   });
 
   it("confirms RAL minimum 100 lei per RAL color on material plus labor total without auto conversion", () => {
@@ -165,10 +191,15 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     for (const entry of RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS) {
       expect(entry.pricingActive).toBe(false);
     }
+    for (const entry of RETURN_CANT_RAL_PRICING_REGISTRY_KEYS) {
+      expect(entry.pricingActive).toBe(false);
+    }
     const summary = buildReturnCantCatalogPriceSummary();
     expect(summary.readyForPricing).toBe(false);
     expect(summary.pricingActiveCount).toBe(0);
     expect(summary.oracalPricingKeyCoverage.oracalKnownSeriesPricingKeysDeclared).toBe(true);
+    expect(summary.ralPricingKeyCoverage.ralMaterialPricingKeysDeclared).toBe(true);
+    expect(summary.ralPricingKeyCoverage.ralLaborPricingKeyDeclared).toBe(true);
   });
 
   it("computes updated blockers before pricing", () => {
@@ -206,7 +237,7 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
 });
 
 describe("ReturnCantCatalogPriceInputsPanel", () => {
-  it("renders NOT READY FOR PRICING with Intake V6 cross-ref and Oracal pricing registry keys", () => {
+  it("renders NOT READY FOR PRICING with Intake V6 cross-ref, Oracal and RAL pricing registry keys", () => {
     render(<ReturnCantCatalogPriceInputsPanel />);
     expect(screen.getByTestId("product-system-return-cant-catalog-price-global-status")).toHaveTextContent(
       /NOT READY FOR PRICING/i,
@@ -241,11 +272,44 @@ describe("ReturnCantCatalogPriceInputsPanel", () => {
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_selector_source")).toHaveTextContent(
       /RAL Classic/i,
     );
+    expect(screen.getByTestId("product-system-return-cant-ral-pricing-source")).toHaveTextContent(
+      /\/inventory\/pricing/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-material-price-30")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-material-price-60")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-60MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-material-price-80")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-80MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-material-price-100")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-100MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-labor-price")).toHaveTextContent(
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).not.toHaveTextContent(
       /2\.00 EUR\/ml/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_labor_price_by_depth")).toHaveTextContent(
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_labor_price_by_depth")).not.toHaveTextContent(
       /1\.00 EUR\/ml/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveTextContent(
+      /100 lei/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveTextContent(
+      /owner commercial rule/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveTextContent(
+      /NOT in Pricing Registry/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
       /100 lei/i,

@@ -8,7 +8,10 @@ import {
   RETURN_CANT_CATALOG_PRICE_SECTIONS,
   RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS,
   RETURN_CANT_PRICING_SOURCE,
+  RETURN_CANT_RAL_MINIMUM,
+  RETURN_CANT_RAL_PRICING_REGISTRY_KEYS,
   type ReturnCantCatalogPriceInput,
+  type ReturnCantRalMaterialPricingRegistryReference,
 } from "./componentFirstReturnCantCatalogPriceInputs";
 
 function StatusChip({
@@ -174,6 +177,62 @@ export function ReturnCantCatalogPriceInputsPanel() {
           {summary.oracalPricingKeyCoverage.oracalKnownSeriesPricingKeysDeclared ? "YES" : "NO"} · full
           table ready: NO · prices edited in Pricing Registry only
         </p>
+      </article>
+
+      <article
+        data-testid="product-system-return-cant-catalog-price-ral-series-summary"
+        className="rounded-lg border border-violet-800/30 bg-violet-950/10 px-3 py-2.5"
+      >
+        <p className="text-[10px] font-bold uppercase text-violet-200/90">
+          RAL pricing registry keys (readonly)
+        </p>
+        <p
+          data-testid="product-system-return-cant-ral-pricing-source"
+          className="mt-2 text-[10px] text-slate-300"
+        >
+          Pricing source: {RETURN_CANT_PRICING_SOURCE.pricingSourceRoute} · pricing active: NO
+        </p>
+        <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
+          {RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.filter(
+            (entry): entry is ReturnCantRalMaterialPricingRegistryReference => entry.kind === "material",
+          ).map((entry) => (
+            <li
+              key={entry.pricingKey}
+              data-testid={`product-system-return-cant-ral-material-price-${entry.depthMm}`}
+            >
+              • Material {entry.depthMm} mm → {entry.pricingKey} · {entry.unit} · source: {entry.source} ·
+              pricing active: NO
+            </li>
+          ))}
+          {RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.filter((entry) => entry.kind === "labor").map((entry) => (
+            <li key={entry.pricingKey} data-testid="product-system-return-cant-ral-labor-price">
+              • Labor → {entry.pricingKey} · {entry.unit} · source: {entry.source} · pricing active: NO
+            </li>
+          ))}
+        </ul>
+        <p className="mt-2 text-[10px] text-slate-400">
+          Material keys declared:{" "}
+          {summary.ralPricingKeyCoverage.ralMaterialPricingKeysDeclared ? "YES" : "NO"} · labor key declared:{" "}
+          {summary.ralPricingKeyCoverage.ralLaborPricingKeyDeclared ? "YES" : "NO"} · prices edited in Pricing
+          Registry only
+        </p>
+      </article>
+
+      <article
+        data-testid="product-system-return-cant-ral-minimum-owner-policy"
+        className="rounded-lg border border-amber-800/30 bg-amber-950/10 px-3 py-2.5"
+      >
+        <p className="text-[10px] font-bold uppercase text-amber-200/90">Owner commercial policy</p>
+        <p className="mt-2 text-[10px] text-slate-300" data-testid="product-system-return-cant-ral-minimum-policy">
+          RAL minimum: {RETURN_CANT_RAL_MINIMUM.ral_minimum_amount}{" "}
+          {RETURN_CANT_RAL_MINIMUM.ral_minimum_currency} · owner commercial rule · NOT in Pricing Registry
+        </p>
+        <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
+          <li>• scope = {RETURN_CANT_RAL_MINIMUM.ral_minimum_scope_label_ro}</li>
+          <li>• applies to = {RETURN_CANT_RAL_MINIMUM.ral_minimum_applies_to_label_ro}</li>
+          <li>• NOT Pricing Registry</li>
+          <li>• no auto FX conversion</li>
+        </ul>
       </article>
 
       <article

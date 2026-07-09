@@ -209,10 +209,16 @@ test.describe("Product System readonly smoke", () => {
       /perimetru\/contur real/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_material_price_rule")).toHaveText(
-      /2\.00 EUR\/ml/i,
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_material_price_rule")).toHaveText(
+      /\/inventory\/pricing/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_labor_price_rule")).toHaveText(
-      /1\.00 EUR\/ml/i,
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-ral_labor_price_rule")).toHaveText(
+      /\/inventory\/pricing/i,
     );
     await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveText(
       /Intake V6 colorRegistry/i,
@@ -266,11 +272,38 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_selector_source")).toHaveText(
       /RAL Classic/i,
     );
+    await expect(page.getByTestId("product-system-return-cant-ral-pricing-source")).toHaveText(
+      /\/inventory\/pricing/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-material-price-30")).toHaveText(
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-material-price-60")).toHaveText(
+      /MAT-VOPSEA-RAL-CANT-60MM/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-material-price-80")).toHaveText(
+      /MAT-VOPSEA-RAL-CANT-80MM/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-material-price-100")).toHaveText(
+      /MAT-VOPSEA-RAL-CANT-100MM/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-labor-price")).toHaveText(
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveText(
-      /2\.00 EUR\/ml/i,
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_labor_price_by_depth")).toHaveText(
-      /1\.00 EUR\/ml/i,
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveText(
+      /100 lei/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveText(
+      /owner commercial rule/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveText(
+      /NOT in Pricing Registry/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
       /100 lei/i,
@@ -293,6 +326,7 @@ test.describe("Product System readonly smoke", () => {
     await expect(catalogPricePanel).toHaveText(/MAT-ORACAL-641/);
     await expect(catalogPricePanel).toHaveText(/\/inventory\/pricing/i);
     await expect(catalogPricePanel).not.toHaveText(/8\.00 EUR\/mp|5\.00 EUR\/mp|13\.00 EUR\/mp/i);
+    await expect(catalogPricePanel).not.toHaveText(/2\.00 EUR\/ml|2\.50 EUR\/ml|3\.00 EUR\/ml|4\.00 EUR\/ml|1\.00 EUR\/ml/i);
     await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
       /No Product Truth live write/i,
     );

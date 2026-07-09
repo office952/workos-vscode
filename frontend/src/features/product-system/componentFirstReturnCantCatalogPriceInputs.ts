@@ -164,12 +164,109 @@ export function formatIntakeV6CatalogSourceValue(
   return `${source.sourceFeature} · ${source.sourceFile} · ${source.duplicationPolicy}`;
 }
 
-export const RETURN_CANT_RAL_MATERIAL_PRICE_CODES = {
-  "30": "MAT-VOPSEA-RAL-CANT-30MM",
-  "60": "MAT-VOPSEA-RAL-CANT-60MM",
-  "80": "MAT-VOPSEA-RAL-CANT-80MM",
-  "100": "MAT-VOPSEA-RAL-CANT-100MM",
-} as const;
+export type ReturnCantRalMaterialPricingRegistryReference = {
+  kind: "material";
+  depthMm: 30 | 60 | 80 | 100;
+  pricingKey: string;
+  source: typeof RETURN_CANT_PRICING_SOURCE.pricingSourceRoute;
+  unit: "ml";
+  currency: "EUR";
+  pricingActive: false;
+};
+
+export type ReturnCantRalLaborPricingRegistryReference = {
+  kind: "labor";
+  pricingKey: string;
+  source: typeof RETURN_CANT_PRICING_SOURCE.pricingSourceRoute;
+  unit: "ml";
+  currency: "EUR";
+  pricingActive: false;
+};
+
+export type ReturnCantRalPricingRegistryReference =
+  | ReturnCantRalMaterialPricingRegistryReference
+  | ReturnCantRalLaborPricingRegistryReference;
+
+export const RETURN_CANT_RAL_PRICING_REGISTRY_KEYS: ReturnCantRalPricingRegistryReference[] = [
+  {
+    kind: "material",
+    depthMm: 30,
+    pricingKey: "MAT-VOPSEA-RAL-CANT-30MM",
+    source: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    unit: "ml",
+    currency: "EUR",
+    pricingActive: false,
+  },
+  {
+    kind: "material",
+    depthMm: 60,
+    pricingKey: "MAT-VOPSEA-RAL-CANT-60MM",
+    source: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    unit: "ml",
+    currency: "EUR",
+    pricingActive: false,
+  },
+  {
+    kind: "material",
+    depthMm: 80,
+    pricingKey: "MAT-VOPSEA-RAL-CANT-80MM",
+    source: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    unit: "ml",
+    currency: "EUR",
+    pricingActive: false,
+  },
+  {
+    kind: "material",
+    depthMm: 100,
+    pricingKey: "MAT-VOPSEA-RAL-CANT-100MM",
+    source: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    unit: "ml",
+    currency: "EUR",
+    pricingActive: false,
+  },
+  {
+    kind: "labor",
+    pricingKey: "RETURN_CANT_RAL_PAINT_LABOR",
+    source: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    unit: "ml",
+    currency: "EUR",
+    pricingActive: false,
+  },
+];
+
+export const RETURN_CANT_RAL_MATERIAL_PRICE_CODES = Object.fromEntries(
+  RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.filter(
+    (entry): entry is ReturnCantRalMaterialPricingRegistryReference => entry.kind === "material",
+  ).map((entry) => [String(entry.depthMm), entry.pricingKey]),
+) as Record<(typeof RETURN_CANT_DEPTH_MM_PLACEHOLDERS)[number], string>;
+
+export type ReturnCantRalPricingKeyCoverageSummary = {
+  declaredRalMaterialPricingKeyCount: number;
+  declaredRalLaborPricingKeyCount: number;
+  ralMaterialPricingKeysDeclared: boolean;
+  ralLaborPricingKeyDeclared: boolean;
+  ralFullPricingReady: false;
+};
+
+export function buildRalPricingKeyCoverageSummary(
+  registryKeys: ReturnCantRalPricingRegistryReference[] = RETURN_CANT_RAL_PRICING_REGISTRY_KEYS,
+): ReturnCantRalPricingKeyCoverageSummary {
+  const materialKeys = registryKeys.filter(
+    (entry): entry is ReturnCantRalMaterialPricingRegistryReference => entry.kind === "material",
+  );
+  const laborKeys = registryKeys.filter(
+    (entry): entry is ReturnCantRalLaborPricingRegistryReference => entry.kind === "labor",
+  );
+  return {
+    declaredRalMaterialPricingKeyCount: materialKeys.length,
+    declaredRalLaborPricingKeyCount: laborKeys.length,
+    ralMaterialPricingKeysDeclared:
+      materialKeys.length === 4 && materialKeys.every((entry) => entry.pricingKey.length > 0),
+    ralLaborPricingKeyDeclared:
+      laborKeys.length === 1 && laborKeys[0]?.pricingKey === "RETURN_CANT_RAL_PAINT_LABOR",
+    ralFullPricingReady: false,
+  };
+}
 
 export const RETURN_CANT_RAL_MINIMUM = {
   ral_minimum_amount: 100,
@@ -368,14 +465,12 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     labelRo: "Preț material Vopsit RAL pe adâncime",
     category: "ral_material_pricing",
     status: "owner_confirmed",
-    confirmedValue: [
-      "30 mm: 2.00 EUR/ml (MAT-VOPSEA-RAL-CANT-30MM)",
-      "60 mm: 2.50 EUR/ml (MAT-VOPSEA-RAL-CANT-60MM)",
-      "80 mm: 3.00 EUR/ml (MAT-VOPSEA-RAL-CANT-80MM)",
-      "100 mm: 4.00 EUR/ml (MAT-VOPSEA-RAL-CANT-100MM)",
-    ],
-    unit: "eur",
-    knownSoFarRo: "Owner confirmat: prețuri material consumabile pentru ofertare — fără activare pricing engine.",
+    confirmedValue: RETURN_CANT_RAL_PRICING_REGISTRY_KEYS.filter(
+      (entry): entry is ReturnCantRalMaterialPricingRegistryReference => entry.kind === "material",
+    ).map((entry) => entry.pricingKey),
+    unit: "none",
+    knownSoFarRo:
+      "Prețurile material RAL sunt referințe către Pricing Registry (/inventory/pricing), nu valori duplicate în Product System.",
     stillMissingRo: [],
     ownerQuestionRo: "Confirmare prețuri material Vopsit RAL pe adâncime.",
     blocks: ["pricing"],
@@ -401,10 +496,10 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     labelRo: "Preț manoperă Vopsit RAL pe adâncime",
     category: "ral_labor_pricing",
     status: "owner_confirmed",
-    confirmedValue: RETURN_CANT_DEPTH_MM_PLACEHOLDERS.map((d) => `${d} mm: 1.00 EUR/ml`),
-    unit: "eur",
+    confirmedValue: "RETURN_CANT_RAL_PAINT_LABOR",
+    unit: "none",
     knownSoFarRo:
-      "Owner confirmat: 1.00 EUR/ml — același preț indiferent de adâncime/lățime cant.",
+      "Manoperă RAL este referință către Pricing Registry key RETURN_CANT_RAL_PAINT_LABOR.",
     stillMissingRo: [],
     ownerQuestionRo: "Confirmare preț manoperă Vopsit RAL.",
     blocks: ["pricing"],
@@ -508,6 +603,7 @@ export type ReturnCantCatalogPriceSummary = {
   readyForPricing: false;
   blockersBeforePricing: readonly string[];
   oracalPricingKeyCoverage: ReturnCantOracalPricingKeyCoverageSummary;
+  ralPricingKeyCoverage: ReturnCantRalPricingKeyCoverageSummary;
 };
 
 export function catalogPriceInputStatusLabel(
@@ -560,6 +656,7 @@ export function buildReturnCantCatalogPriceSummary(
     readyForPricing: false,
     blockersBeforePricing: computeBlockersBeforePricing(inputs),
     oracalPricingKeyCoverage: buildOracalPricingKeyCoverageSummary(),
+    ralPricingKeyCoverage: buildRalPricingKeyCoverageSummary(),
   };
 }
 

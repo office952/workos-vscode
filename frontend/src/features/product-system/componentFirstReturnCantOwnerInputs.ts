@@ -236,20 +236,23 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     key: "ral_material_price_rule",
     labelRo: "Regulă preț material Vopsit RAL",
     value:
-      "30=2.00 EUR/ml · 60=2.50 · 80=3.00 · 100=4.00 EUR/ml (consumabile ofertare)",
-    unit: "eur",
+      "MAT-VOPSEA-RAL-CANT-30MM · MAT-VOPSEA-RAL-CANT-60MM · MAT-VOPSEA-RAL-CANT-80MM · MAT-VOPSEA-RAL-CANT-100MM · source: /inventory/pricing · EUR/ml resolved by registry",
+    unit: "none",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    notesRo: "Prețuri owner confirmate — fără activare pricing engine.",
+    notesRo:
+      "Chei Pricing Registry readonly — fără valori EUR duplicate în Product System. Fără activare pricing engine.",
   }),
   confirmedInput({
     key: "ral_labor_price_rule",
     labelRo: "Regulă manoperă Vopsit RAL",
-    value: "1.00 EUR/ml — același preț toate adâncimile",
-    unit: "eur",
+    value:
+      "RETURN_CANT_RAL_PAINT_LABOR · source: /inventory/pricing · EUR/ml resolved by registry · același preț toate adâncimile",
+    unit: "none",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    notesRo: "Preț manoperă owner confirmat — fără activare pricing engine.",
+    notesRo:
+      "Cheie Pricing Registry readonly — fără valori EUR duplicate în Product System. Fără activare pricing engine.",
   }),
   confirmedInput({
     key: "minimum_price_rule",

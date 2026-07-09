@@ -88,13 +88,17 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(perimeter?.value).toBe("perimetru/contur real al literelor");
   });
 
-  it("marks RAL material/labor price rules as owner_confirmed from owner answers", () => {
+  it("marks RAL material/labor price rules as owner_confirmed with Pricing Registry key references", () => {
     const materialRule = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_material_price_rule");
     const laborRule = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_labor_price_rule");
     expect(materialRule?.status).toBe("owner_confirmed");
     expect(laborRule?.status).toBe("owner_confirmed");
-    expect(String(materialRule?.value)).toMatch(/2\.00 EUR\/ml/i);
-    expect(String(laborRule?.value)).toMatch(/1\.00 EUR\/ml/i);
+    expect(String(materialRule?.value)).toMatch(/MAT-VOPSEA-RAL-CANT-30MM/i);
+    expect(String(materialRule?.value)).toMatch(/\/inventory\/pricing/i);
+    expect(String(materialRule?.value)).not.toMatch(/2\.00 EUR\/ml/i);
+    expect(String(laborRule?.value)).toMatch(/RETURN_CANT_RAL_PAINT_LABOR/i);
+    expect(String(laborRule?.value)).toMatch(/\/inventory\/pricing/i);
+    expect(String(laborRule?.value)).not.toMatch(/1\.00 EUR\/ml/i);
   });
 
   it("confirms RAL material/labor separation as model not price", () => {
@@ -110,10 +114,11 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(JSON.stringify(catalogPending.value)).not.toMatch(/RAL\s*\d{4}/i);
   });
 
-  it("allows owner-confirmed RAL EUR prices and minimum lei per color on material plus labor", () => {
+  it("allows owner-confirmed RAL registry keys and minimum lei per color on material plus labor", () => {
     const material = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_material_price_rule");
     const minimum = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "minimum_price_rule");
-    expect(String(material?.value)).toMatch(/2\.00 EUR\/ml/i);
+    expect(String(material?.value)).toMatch(/MAT-VOPSEA-RAL-CANT-30MM/i);
+    expect(String(material?.value)).not.toMatch(/2\.00 EUR\/ml/i);
     expect(minimum?.status).toBe("owner_confirmed");
     expect(String(minimum?.value)).toMatch(/100 lei/i);
     expect(String(minimum?.value)).toMatch(/pe culoare RAL/i);

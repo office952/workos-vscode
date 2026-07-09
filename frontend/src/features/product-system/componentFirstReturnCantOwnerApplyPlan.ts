@@ -112,7 +112,7 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     contractKeys: ["ral_labor_price_rule", "minimum_price_rule"],
     docStatus: "answered",
     notesRo:
-      "Manoperă 1.00 EUR/ml confirmată. Minim 100 lei pe culoare RAL, aplicat la total material + manoperă.",
+      "Manoperă RAL — cheie registry RETURN_CANT_RAL_PAINT_LABOR. Minim 100 lei pe culoare RAL, aplicat la total material + manoperă.",
   },
   {
     priority: 11,

@@ -1795,7 +1795,19 @@ describe("ProductSystem design-system badges", () => {
       /MAT-ORACAL-8500/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveTextContent(
+      /MAT-VOPSEA-RAL-CANT-30MM/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).not.toHaveTextContent(
       /2\.00 EUR\/ml/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-labor-price")).toHaveTextContent(
+      /RETURN_CANT_RAL_PAINT_LABOR/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveTextContent(
+      /100 lei/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-ral-minimum-policy")).toHaveTextContent(
+      /NOT in Pricing Registry/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
       /100 lei/i,
