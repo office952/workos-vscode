@@ -52,6 +52,10 @@ from services.intake_v6_product_system_service import (
 )
 from services.product_template_availability_service import ProductTemplateAvailabilityService
 from services.intake_v6_production_preview_service import build_v6_task_preview_response
+from services.return_cant_product_truth_bridge import (
+    apply_return_cant_runtime_product_truth_bridge,
+    clear_return_cant_runtime_product_truth,
+)
 
 
 def _utcnow() -> datetime:
@@ -465,8 +469,11 @@ async def upload_svg_to_intake_v6_workspace(
     apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     response = await _persist_payload(db, record, payload, current_user=current_user)
@@ -535,11 +542,14 @@ async def save_analysis_bundle_for_intake_v6_workspace(
     apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
+        clear_return_cant_runtime_product_truth(payload_raw)
     else:
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
         apply_v6_pricing_preview_derived_state(payload_raw)
         _reset_internal_draft_quote_confirmation(payload_raw)
+        if payload_raw.get("finish_setup"):
+            apply_return_cant_runtime_product_truth_bridge(payload_raw)
 
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
@@ -572,6 +582,7 @@ async def save_layer_roles_for_intake_v6_workspace(
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
         apply_v6_pricing_preview_derived_state(payload_raw)
+        apply_return_cant_runtime_product_truth_bridge(payload_raw)
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 
@@ -691,6 +702,7 @@ async def save_finish_setup_for_intake_v6_workspace(
     from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
     apply_v6_pricing_preview_derived_state(payload_raw)
+    apply_return_cant_runtime_product_truth_bridge(payload_raw)
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 

@@ -222,6 +222,7 @@ class IntakeV4WorkspacePayload(BaseModel):
     layer_role_review: dict[str, Any] | None = None
     product_composition_recommendation: dict[str, Any] | None = None
     product_composition_confirmed: dict[str, Any] | None = None
+    product_truth: dict[str, Any] | None = None
     terminology_mode: str | None = None
     finish_setup: IntakeV4FinishSetup | None = None
     sheet_quote_override: dict[str, Any] | None = None
