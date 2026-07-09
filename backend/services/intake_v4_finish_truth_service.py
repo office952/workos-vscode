@@ -342,6 +342,45 @@ def mounting_scope_runtime_state(
     }
 
 
+def support_type_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    source_path = "finish_setup.support_type"
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    support_type = str(getattr(normalized_setup, "support_type", "") or "").strip()
+    if not support_type:
+        return {
+            "status": "missing",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "SUPPORT_TYPE_MISSING",
+            "value": support_type,
+            "source_path": source_path,
+        }
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": support_type,
+        "source_path": source_path,
+    }
+
+
 _RETURN_ORACAL = frozenset({"oracal_wrapped", "colantat", "oracal"})
 _RETURN_RAL = frozenset({"ral_paint", "vopsit_ral", "ral", "painted", "paint"})
 

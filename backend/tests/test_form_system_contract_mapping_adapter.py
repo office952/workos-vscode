@@ -65,6 +65,7 @@ def test_product_truth_path_is_generated_explicitly() -> None:
     assert by_key["finish.print_required"]["product_truth_path"] == "components.artwork.items[].printRequired"
     assert by_key["finish.lamination_required"]["product_truth_path"] == "components.artwork.items[].laminationRequired"
     assert by_key["mounting.mounting_scope"]["product_truth_path"] == "components.mounting.mountingScope"
+    assert by_key["support.support_type"]["product_truth_path"] == "components.support.supportType"
 
 
 def test_selected_layer_remains_evidence_without_confirmation() -> None:
@@ -300,6 +301,61 @@ def test_mounting_scope_runtime_overlay_unconfirmed_value_does_not_become_confir
     assert field["source"] == "operator_confirmed"
     assert field["state"] == "blocked"
     assert field["blockers"] == ["MOUNTING_SCOPE_MISSING"]
+
+
+def test_support_type_runtime_overlay_reads_persisted_support_type() -> None:
+    payload = {
+        "finish_setup": {
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "confirmed": True,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["support.support_type"]
+
+    assert field["source"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blockers"] == []
+
+
+def test_support_type_runtime_overlay_missing_value_remains_blocked_without_fallbacks() -> None:
+    payload = {
+        "finish_setup": {
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "support_source": "detected_svg",
+            "confirmed": True,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["support.support_type"]
+
+    assert field["source"] == "operator_confirmed"
+    assert field["state"] == "missing"
+    assert field["blockers"] == ["SUPPORT_TYPE_MISSING"]
+
+
+def test_support_type_runtime_overlay_unconfirmed_value_does_not_become_confirmed() -> None:
+    payload = {
+        "finish_setup": {
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "confirmed": False,
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["support.support_type"]
+
+    assert field["source"] == "operator_confirmed"
+    assert field["state"] == "blocked"
+    assert field["blockers"] == ["SUPPORT_TYPE_MISSING"]
 
 
 def test_no_pricing_quote_or_execution_coupling() -> None:

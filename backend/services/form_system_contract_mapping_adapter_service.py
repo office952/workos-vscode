@@ -45,12 +45,12 @@ FIELD_SPECS: list[FieldSpec] = [
     {
         "field_key": "support.support_type",
         "owner": "mounting_support",
-        "source": "mounting_bridge_or_operator_input",
+        "source": "operator_confirmed",
         "state": "blocked",
         "product_truth_path": "components.support.supportType",
         "confirmation_required": True,
         "blockers": ["SUPPORT_TYPE_MISSING"],
-        "notes": "Support type is a separate support truth field and must not be silently inferred from mounting_system.",
+        "notes": "Support type is canonical only as an explicit finish_setup.support_type field; it must not be inferred from support_required, mounting_system, mounting_scope, or SVG evidence.",
     },
     {
         "field_key": "mounting.mounting_scope",
@@ -170,7 +170,7 @@ def build_form_system_contract_readonly_mapping(
             entry["blockers"] = [blocker_code] if blocker_code else []
             break
     if payload_raw is not None:
-        for field_key in ("finish.print_required", "finish.lamination_required", "mounting.mounting_scope"):
+        for field_key in ("finish.print_required", "finish.lamination_required", "mounting.mounting_scope", "support.support_type"):
             runtime_field = backbone_fields.get(field_key)
             if runtime_field is None:
                 continue

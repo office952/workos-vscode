@@ -9,6 +9,7 @@ from services.intake_v4_finish_truth_service import (
     mounting_scope_runtime_state,
     normalize_intake_v4_finish_setup,
     resolve_effective_return_finish_label,
+    support_type_runtime_state,
 )
 
 
@@ -148,6 +149,57 @@ def test_mounting_scope_runtime_state_requires_explicit_value_and_confirmation()
     )
     assert confirmed["status"] == "confirmed"
     assert confirmed["value"] == "mounting_included"
+
+
+def test_support_type_persists_through_finish_setup_schema():
+    setup = IntakeV4FinishSetup.model_validate(
+        {
+            "support_type": "steel_frame",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+        }
+    )
+
+    assert setup.support_type == "steel_frame"
+    assert setup.model_dump(mode="json")["support_type"] == "steel_frame"
+
+
+def test_support_type_runtime_state_requires_explicit_value_and_confirmation():
+    assert support_type_runtime_state(None)["status"] == "missing"
+
+    missing = support_type_runtime_state(
+        {
+            "confirmed": True,
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+        }
+    )
+    assert missing["status"] == "missing"
+    assert missing["blocker_code"] == "SUPPORT_TYPE_MISSING"
+
+    unconfirmed = support_type_runtime_state(
+        {
+            "confirmed": False,
+            "support_type": "steel_frame",
+            "support_required": "yes",
+        }
+    )
+    assert unconfirmed["status"] == "unconfirmed"
+    assert unconfirmed["blocker_code"] == "SUPPORT_TYPE_MISSING"
+
+    confirmed = support_type_runtime_state(
+        {
+            "confirmed": True,
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "support_source": "detected_svg",
+        }
+    )
+    assert confirmed["status"] == "confirmed"
+    assert confirmed["value"] == "steel_frame"
 
 
 def test_format_return_finish_operator_labels():

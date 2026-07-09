@@ -235,3 +235,43 @@ def test_save_finish_setup_without_mounting_scope_keeps_field_absent_even_with_m
     finish = saved.json()["payload"]["finish_setup"]
 
     assert finish.get("mounting_scope") is None
+
+
+def test_save_finish_setup_persists_support_type_runtime_field(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+
+    assert finish["support_type"] == "steel_frame"
+
+
+def test_save_finish_setup_without_support_type_keeps_field_absent_even_with_support_required_mounting_system_and_scope(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "support_source": "detected_svg",
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+
+    assert finish.get("support_type") is None

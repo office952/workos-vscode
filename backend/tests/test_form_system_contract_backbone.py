@@ -137,6 +137,7 @@ def test_required_field_set_includes_requested_backbone_fields():
         "lighting.led_profile",
         "mounting.support_option",
         "mounting.mounting_scope",
+        "support.support_type",
         "readiness.product_truth_blockers",
     ):
         assert key in fields
@@ -421,6 +422,61 @@ def test_runtime_mounting_scope_unconfirmed_does_not_unlock_backbone_field():
     assert field["source_type"] == "operator_confirmed"
     assert field["state"] == "blocked"
     assert field["blocker_code"] == "MOUNTING_SCOPE_MISSING"
+
+
+def test_runtime_support_type_confirms_backbone_field_when_persisted_and_confirmed():
+    payload = {
+        "finish_setup": {
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["support.support_type"]
+
+    assert field["source_type"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+
+
+def test_runtime_support_type_missing_stays_blocked_without_support_required_mounting_or_scope_fallbacks():
+    payload = {
+        "finish_setup": {
+            "support_required": "yes",
+            "mounting_system": "steel_bars",
+            "mounting_scope": "mounting_included",
+            "support_source": "detected_svg",
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["support.support_type"]
+
+    assert field["source_type"] == "operator_confirmed"
+    assert field["state"] == "missing"
+    assert field["blocker_code"] == "SUPPORT_TYPE_MISSING"
+
+
+def test_runtime_support_type_unconfirmed_does_not_unlock_backbone_field():
+    payload = {
+        "finish_setup": {
+            "support_type": "steel_frame",
+            "support_required": "yes",
+            "confirmed": False,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["support.support_type"]
+
+    assert field["source_type"] == "operator_confirmed"
+    assert field["state"] == "blocked"
+    assert field["blocker_code"] == "SUPPORT_TYPE_MISSING"
 
 
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():

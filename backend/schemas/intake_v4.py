@@ -189,6 +189,7 @@ class IntakeV4FinishSetup(BaseModel):
     mounting_scope: Literal["no_mounting", "mounting_included", "mounting_external", "to_be_decided"] | None = None
     mounting_system: Literal["direct_wall", "steel_bars", "aluminum_bars", "acm_panel"] | None = None
     mounting_bar_profile: str | None = None
+    support_type: str | None = None
     emblem_lighting_mode: Literal["excluded", "area_lit", "needs_decision"] = "area_lit"
     letter_led_module_count: int | None = None
     emblem_led_module_count: int | None = None
