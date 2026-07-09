@@ -84,6 +84,7 @@ import {
   type ProductSystemCatalogView,
   type TemplateLibraryRowSummary,
 } from "@/features/product-system/TemplateLibraryView";
+import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2224,6 +2225,8 @@ function returnCantTruthSourceClass(sourceType: ReturnCantTruthContainerFieldAud
 }
 
 function ReturnCantTruthContainerPanel() {
+  const model = buildReturnCantReadonlyContainerModel();
+
   return (
     <section
       data-testid="product-system-return-cant-truth-container"
@@ -2237,21 +2240,21 @@ function ReturnCantTruthContainerPanel() {
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
-          <span className="rounded border border-fuchsia-700/40 bg-fuchsia-950/30 px-1.5 py-0.5 text-fuchsia-200">target: components.return_cant.instances[]</span>
-          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">status: BLOCKED</span>
+          <span className="rounded border border-fuchsia-700/40 bg-fuchsia-950/30 px-1.5 py-0.5 text-fuchsia-200">target: {model.targetContainerPath}</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">status: {model.readiness.toUpperCase()}</span>
         </div>
       </div>
 
       <div className="mt-2 rounded-lg border border-cyan-800/40 bg-cyan-950/15 px-3 py-2 text-[10px] text-cyan-200" data-testid="product-system-return-cant-face-dependency">
-        FACE -&gt; RETURN_CANT dependency: target upstream is `components.face.confirmed_perimeter`. Until that dependency is explicit and confirmed, return/cant stays blocked and must not invent its own perimeter truth from aggregate/root context.
+        FACE -&gt; RETURN_CANT dependency: target upstream is `{model.upstreamDependencies[0]?.canonicalPath}`. Until that dependency is explicit and confirmed, return/cant stays blocked and must not invent its own perimeter truth from aggregate/root context.
       </div>
 
       <div className="mt-2 rounded-lg border border-fuchsia-800/40 bg-fuchsia-950/15 px-3 py-2 text-[10px] text-fuchsia-200" data-testid="product-system-return-cant-legacy-alias">
-        Legacy alias still present: `components.returnCant.*` is diagnostic/compatibility language only. Canonical target remains `components.return_cant.instances[]`.
+        Legacy alias still present: `{model.legacyAliasPaths.join(", ")}` is diagnostic/compatibility language only. Canonical target remains `{model.targetContainerPath}`.
       </div>
 
       <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300" data-testid="product-system-return-cant-aggregate-boundary">
-        ProductAggregate is derived read model, not truth source. Parent aggregate or root geometry support rows may explain current runtime behavior, but they do not satisfy component-owned truth requirements.
+        {model.productAggregateBoundaryNote}
       </div>
 
       <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
@@ -2262,7 +2265,7 @@ function ReturnCantTruthContainerPanel() {
           <span>Target path</span>
         </div>
         <div className="divide-y divide-slate-800/80">
-          {RETURN_CANT_TRUTH_CONTAINER_FIELDS.map((field) => (
+          {model.sourceTypeRows.map((field) => (
             <div key={field.key} data-testid={`product-system-return-cant-truth-field-${field.key}`} className="px-3 py-2 text-[10px]">
               <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2">
                 <div>

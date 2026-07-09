@@ -276,7 +276,7 @@ describe("ProductSystem design-system badges", () => {
     expect(truthContainer).toBeInTheDocument();
     expect(truthContainer).toHaveTextContent("components.return_cant.instances[]");
     expect(screen.getByTestId("product-system-return-cant-face-dependency")).toHaveTextContent("components.face.confirmed_perimeter");
-    expect(screen.getByTestId("product-system-return-cant-legacy-alias")).toHaveTextContent("components.returnCant.*");
+    expect(screen.getByTestId("product-system-return-cant-legacy-alias")).toHaveTextContent("components.returnCant.depthMm");
     expect(truthContainer).toHaveTextContent("status: BLOCKED");
     expect(truthContainer).toHaveTextContent("component_template_code");
     expect(truthContainer).toHaveTextContent("resource_requirements_ref");
