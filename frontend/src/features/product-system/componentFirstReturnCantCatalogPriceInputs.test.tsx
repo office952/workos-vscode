@@ -6,6 +6,7 @@ import {
   formatCatalogPriceConfirmedValue,
   RETURN_CANT_CATALOG_PRICE_INPUTS,
   RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH,
+  RETURN_CANT_RAL_MINIMUM,
 } from "./componentFirstReturnCantCatalogPriceInputs";
 import { ReturnCantCatalogPriceInputsPanel } from "./ReturnCantCatalogPriceInputsPanel";
 
@@ -71,13 +72,23 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     ]);
   });
 
-  it("marks RAL minimum 100 lei partial with scope pending and no auto conversion", () => {
+  it("confirms RAL minimum 100 lei per RAL color on material plus labor total without auto conversion", () => {
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_amount).toBe(100);
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_currency).toBe("lei");
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_scope).toBe("per_ral_color");
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_scope_label_ro).toMatch(/pe culoare RAL/i);
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_applies_to).toBe("material_plus_labor_total");
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_applies_to_label_ro).toMatch(/total material RAL \+ manoperă/i);
+    expect(RETURN_CANT_RAL_MINIMUM.ral_minimum_conversion_policy).toBe("no_auto_conversion");
+
     const minimum = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "ral_minimum_rule");
-    expect(minimum?.status).toBe("partial_confirmed");
-    expect(minimum?.confirmedValue).toBe("100 lei");
+    expect(minimum?.status).toBe("owner_confirmed");
+    expect(minimum?.confirmedValue).toMatch(/100 lei/i);
+    expect(minimum?.confirmedValue).toMatch(/pe culoare RAL/i);
+    expect(minimum?.confirmedValue).toMatch(/total material RAL \+ manoperă/i);
     expect(minimum?.unit).toBe("lei");
     expect(minimum?.knownSoFarRo).toMatch(/fără conversie automată/i);
-    expect(minimum?.stillMissingRo.length).toBeGreaterThan(0);
+    expect(minimum?.stillMissingRo).toContain("Formulă runtime — neactivată în acest task");
   });
 
   it("confirms material-depth compatibility for Al 0.6 mm all depths", () => {
@@ -99,8 +110,12 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
 
   it("computes updated blockers before pricing", () => {
     const blockers = computeBlockersBeforePricing();
+    expect(blockers).toContain("Oracal actual catalog data/import not stored yet");
     expect(blockers).toContain("Oracal price table values not stored yet");
-    expect(blockers).toContain("RAL minimum scope unresolved (100 lei confirmed)");
+    expect(blockers).toContain("RAL list data/source not materialized in product system catalog");
+    expect(blockers).toContain("Pricing activation not allowed");
+    expect(blockers).toContain("Product Truth live write not allowed");
+    expect(blockers).not.toContain("RAL minimum scope unresolved (100 lei confirmed)");
     expect(blockers).not.toContain("RAL material prices missing");
     expect(blockers).not.toContain("Material/depth compatibility missing");
   });
@@ -147,6 +162,15 @@ describe("ReturnCantCatalogPriceInputsPanel", () => {
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
       /100 lei/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
+      /pe culoare RAL/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
+      /total material RAL \+ manoperă/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-ral_minimum_rule")).toHaveTextContent(
+      /fără conversie automată/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
       /No Pricing activation/i,

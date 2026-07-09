@@ -52,13 +52,11 @@ export const RETURN_CANT_CONFIRMED_SO_FAR: string[] = [
 export const RETURN_CANT_PARTIAL_SO_FAR: string[] = [
   "Catalog Oracal: țintă coduri oficiale confirmată — import pending",
   "Tabel prețuri Oracal: owner are tabelul — valori neintroduse",
-  "Minim Vopsit RAL: 100 lei confirmat — scope pending",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRICING: string[] = [
   "Import catalog coduri Oracal efectiv",
   "Valori tabel prețuri Oracal pe cod/familie",
-  "Scope minim Vopsit RAL (100 lei confirmat)",
 ];
 
 export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [];
@@ -67,7 +65,6 @@ export const RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION: string[] = [];
 export const RETURN_CANT_OWNER_QUESTIONS_PENDING: string[] = [
   "Import catalog Oracal: sursă/listă efectivă pentru toate codurile oficiale?",
   "Tabel prețuri Oracal: valori pe cod/familie?",
-  "Scope minim Vopsit RAL 100 lei: lucrare / set / culoare / comandă? material / manoperă / total?",
   "Formă catalog Oracal: cod simplu vs cod + nume + familie?",
 ];
 
@@ -254,16 +251,16 @@ export const RETURN_CANT_OWNER_INPUTS: ReturnCantOwnerInput[] = [
     blockingArea: ["pricing"],
     notesRo: "Preț manoperă owner confirmat — fără activare pricing engine.",
   }),
-  partialInput({
+  confirmedInput({
     key: "minimum_price_rule",
     labelRo: "Minim preț Vopsit RAL",
-    value: "100 lei — scope pending",
+    value:
+      "100 lei · pe culoare RAL · total material + manoperă · fără conversie automată lei→EUR",
     unit: "lei",
     source: "owner_confirmed_in_chat",
     blockingArea: ["pricing"],
-    ownerQuestionRo:
-      "Pe ce bază se aplică minimul 100 lei: lucrare, set, culoare, comandă? Material, manoperă sau total?",
-    notesRo: "Minim confirmat — fără conversie automată lei→EUR.",
+    notesRo:
+      "Owner confirmat scope pe culoare RAL, aplicat la total material + manoperă. Fără conversie automată lei→EUR.",
   }),
   confirmedInput({
     key: "perimeter_geometry_source",

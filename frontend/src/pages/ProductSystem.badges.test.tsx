@@ -1785,6 +1785,12 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
       /100 lei/i,
     );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
+      /pe culoare RAL/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveTextContent(
+      /total material RAL \+ manoperă/i,
+    );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
       "No Product Truth live write",
     );

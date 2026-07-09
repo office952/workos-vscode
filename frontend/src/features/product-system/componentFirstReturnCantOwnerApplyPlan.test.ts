@@ -13,7 +13,7 @@ describe("componentFirstReturnCantOwnerApplyPlan", () => {
     expect(plan.answersFound).toBe(true);
     expect(plan.answersSource).toBe("owner_prompt");
     expect(plan.topicsAnswered).toBeGreaterThan(0);
-    expect(plan.topicsPartial).toBe(2);
+    expect(plan.topicsPartial).toBe(1);
     expect(plan.topicsPending).toBe(1);
     expect(plan.globalWorkshopStatus).toBe("OWNER_INPUT_REQUIRED");
   });
@@ -41,7 +41,7 @@ describe("componentFirstReturnCantOwnerApplyPlan", () => {
     expect(contractStatusForTopic("oracal_selector_mode")).toBe("owner_confirmed");
     expect(contractStatusForTopic("ral_selector_source")).toBe("owner_confirmed");
     expect(contractStatusForTopic("ral_material_price_rule")).toBe("owner_confirmed");
-    expect(contractStatusForTopic("minimum_price_rule")).toBe("partial_confirmed");
+    expect(contractStatusForTopic("minimum_price_rule")).toBe("owner_confirmed");
     expect(contractStatusForTopic("material_depth_compatibility")).toBe("owner_confirmed");
   });
 

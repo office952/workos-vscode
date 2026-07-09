@@ -56,6 +56,16 @@ export const RETURN_CANT_RAL_MATERIAL_PRICE_CODES = {
   "100": "MAT-VOPSEA-RAL-CANT-100MM",
 } as const;
 
+export const RETURN_CANT_RAL_MINIMUM = {
+  ral_minimum_amount: 100,
+  ral_minimum_currency: "lei" as const,
+  ral_minimum_scope: "per_ral_color" as const,
+  ral_minimum_scope_label_ro: "pe culoare RAL",
+  ral_minimum_applies_to: "material_plus_labor_total" as const,
+  ral_minimum_applies_to_label_ro: "total material RAL + manoperă",
+  ral_minimum_conversion_policy: "no_auto_conversion" as const,
+} as const;
+
 export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
   {
     key: "oracal_selector_source",
@@ -248,19 +258,16 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     key: "ral_minimum_rule",
     labelRo: "Regulă minim Vopsit RAL",
     category: "minimum_rule",
-    status: "partial_confirmed",
-    confirmedValue: "100 lei",
+    status: "owner_confirmed",
+    confirmedValue:
+      "100 lei · pe culoare RAL · total material RAL + manoperă · fără conversie automată lei→EUR",
     unit: "lei",
     knownSoFarRo:
-      "Owner confirmat: minim Vopsire RAL = 100 lei («de aici începem»). Fără conversie automată lei→EUR.",
-    stillMissingRo: [
-      "Minim pe lucrare / set / culoare RAL / comandă?",
-      "Se aplică la material / manoperă / total?",
-    ],
-    ownerQuestionRo:
-      "Pe ce bază se aplică minimul de 100 lei: lucrare, set, culoare RAL sau comandă? Material, manoperă sau total?",
+      "Owner confirmat: minim 100 lei, scope pe culoare RAL, aplicat la total material + manoperă. Fără conversie automată lei→EUR.",
+    stillMissingRo: ["Formulă runtime — neactivată în acest task"],
+    ownerQuestionRo: "Confirmare scope minim Vopsit RAL.",
     blocks: ["pricing"],
-    mustNotInvent: true,
+    mustNotInvent: false,
     pricingActive: false,
   },
   {
@@ -320,11 +327,6 @@ export function computeBlockersBeforePricing(
   const ralCatalogShape = inputs.find((i) => i.key === "ral_catalog_shape");
   if (ralCatalogShape?.status !== "owner_confirmed") {
     blockers.push("RAL list data/source not materialized in product system catalog");
-  }
-
-  const ralMinimum = inputs.find((i) => i.key === "ral_minimum_rule");
-  if (ralMinimum?.status === "partial_confirmed") {
-    blockers.push("RAL minimum scope unresolved (100 lei confirmed)");
   }
 
   blockers.push("Pricing activation not allowed");

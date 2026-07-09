@@ -109,11 +109,15 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     expect(JSON.stringify(catalogPending.value)).not.toMatch(/RAL\s*\d{4}/i);
   });
 
-  it("allows owner-confirmed RAL EUR prices and minimum lei", () => {
+  it("allows owner-confirmed RAL EUR prices and minimum lei per color on material plus labor", () => {
     const material = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "ral_material_price_rule");
     const minimum = RETURN_CANT_OWNER_INPUTS.find((i) => i.key === "minimum_price_rule");
     expect(String(material?.value)).toMatch(/2\.00 EUR\/ml/i);
+    expect(minimum?.status).toBe("owner_confirmed");
     expect(String(minimum?.value)).toMatch(/100 lei/i);
+    expect(String(minimum?.value)).toMatch(/pe culoare RAL/i);
+    expect(String(minimum?.value)).toMatch(/total material \+ manoperă/i);
+    expect(String(minimum?.value)).toMatch(/fără conversie automată/i);
   });
 
   it("formats partial catalog values with target not dash or zero", () => {
@@ -127,7 +131,7 @@ describe("componentFirstReturnCantOwnerInputs", () => {
     const summary = buildReturnCantOwnerInputSummary();
     expect(summary.globalStatus).toBe("OWNER_INPUT_REQUIRED");
     expect(summary.confirmedCount).toBeGreaterThan(10);
-    expect(summary.partialCount).toBe(2);
+    expect(summary.partialCount).toBe(1);
   });
 
   it("aligns with workshop field contract keys", () => {

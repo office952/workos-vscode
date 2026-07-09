@@ -257,8 +257,17 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
       /100 lei/i,
     );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
+      /pe culoare RAL/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
+      /total material RAL \+ manoperă/i,
+    );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_minimum_rule")).toHaveText(
-      /100 lei|Fără conversie automată/i,
+      /fără conversie automată/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-blockers")).not.toHaveText(
+      /RAL minimum scope unresolved/i,
     );
     await expect(
       page.getByTestId("product-system-return-cant-catalog-price-value-return_material_depth_compatibility"),

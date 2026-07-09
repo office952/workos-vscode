@@ -117,7 +117,9 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
-| 27 | RAL minimum | Există minim? Valoare? Material / manoperă / total? | **100 lei — scope pending** | partial | Fără conversie automată lei→EUR |
+| 27 | RAL minimum | Există minim? Valoare? Scope? Material / manoperă / total? | **100 lei, pe culoare RAL, aplicat la total material + manoperă** | answered | Fără conversie automată lei→EUR · fără activare pricing · fără formulă runtime |
+
+---
 
 ## P. Material-depth compatibility
 
@@ -142,7 +144,6 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 | Valori tabel prețuri Oracal pe cod/familie | `oracal_price_table` | partial |
 | Formă catalog Oracal | `oracal_catalog_shape` | pending |
 | Formă catalog RAL în product system | `ral_catalog_shape` | partial |
-| Scope minim Vopsit RAL 100 lei | `ral_minimum_rule` | partial |
 
 ## Ce NU se completează fără confirmare owner explicită
 
@@ -154,4 +155,4 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 ## Următorul pas
 
-Task: **RETURN-CANT Oracal catalog import + price table values apply** — owner furnizează import catalog Oracal, valori tabel prețuri, scope minim 100 lei.
+Task: **RETURN-CANT Oracal catalog import + price table values apply** — owner furnizează import catalog Oracal și valori tabel prețuri.

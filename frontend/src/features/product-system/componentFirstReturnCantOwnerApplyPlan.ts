@@ -110,8 +110,9 @@ export const RETURN_CANT_OWNER_ANSWER_TOPICS: ReturnCantOwnerAnswerTopic[] = [
     topic: "RAL manoperă + minim",
     questionRo: "ml / set / piesă / minim + ml? Există minim?",
     contractKeys: ["ral_labor_price_rule", "minimum_price_rule"],
-    docStatus: "partial",
-    notesRo: "Unitate ml confirmată — preț/minim lipsă.",
+    docStatus: "answered",
+    notesRo:
+      "Manoperă 1.00 EUR/ml confirmată. Minim 100 lei pe culoare RAL, aplicat la total material + manoperă.",
   },
   {
     priority: 11,
