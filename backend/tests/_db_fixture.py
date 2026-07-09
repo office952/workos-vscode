@@ -173,6 +173,19 @@ class IsolatedDBFixture:
         """Run a coroutine on this fixture's event loop."""
         return self.loop.run_until_complete(coro)
 
+    def patch_global_db_manager(self) -> None:
+        """Re-bind the global db_manager to this fixture's engine/sessionmaker.
+
+        TestClient lifespan shutdown can reset the singleton between suites.
+        This helper lets follow-on fixtures re-assert the test DB binding
+        before seed helpers or service code reach for `db_manager` directly.
+        """
+        from core.database import db_manager
+
+        db_manager.engine = self._engine
+        db_manager.async_session_maker = self._session_maker
+        db_manager._initialized = True
+
     def reset_tables(self, tables) -> None:
         """Delete all rows from the given ORM tables (preserves schema)."""
 
