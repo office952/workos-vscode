@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreHorizontal, Search } from "lucide-react";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 import { LETTERS_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "./componentFirstReadonlyCompleteness";
@@ -178,27 +178,92 @@ function CatalogRowPrimaryAction({
   );
 }
 
-function CatalogRowSecondaryAction({
-  label,
-  testId,
-  onClick,
+function CatalogRowActionsMenu({
+  rowTestId,
+  actions,
+  onSettings,
+  onDossier,
+  onComponents,
+  onGuards,
 }: {
-  label: string;
-  testId: string;
-  onClick: () => void;
+  rowTestId: string;
+  actions: ReturnType<typeof rowActionLabels>;
+  onSettings: () => void;
+  onDossier: () => void;
+  onComponents: () => void;
+  onGuards: () => void;
 }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <button
-      type="button"
-      data-testid={testId}
-      onClick={(event) => {
-        event.stopPropagation();
-        onClick();
-      }}
-      className="rounded px-1 py-0.5 text-[10px] font-medium text-slate-500 hover:text-slate-300"
-    >
-      {label}
-    </button>
+    <div className="relative">
+      <button
+        type="button"
+        data-testid={`${rowTestId}-action-more`}
+        onClick={(event) => {
+          event.stopPropagation();
+          setOpen((current) => !current);
+        }}
+        className="shrink-0 rounded border border-slate-800 bg-slate-900/60 p-0.5 text-slate-500 hover:text-slate-300"
+        aria-label="More row actions"
+        aria-expanded={open}
+      >
+        <MoreHorizontal className="h-3.5 w-3.5" />
+      </button>
+      {open ? (
+        <div
+          className="absolute right-0 top-full z-20 mt-0.5 min-w-[9rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg"
+          onClick={(event) => event.stopPropagation()}
+        >
+          <button
+            type="button"
+            data-testid={`${rowTestId}-action-settings`}
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            onClick={() => {
+              onSettings();
+              setOpen(false);
+            }}
+          >
+            {actions.settings}
+          </button>
+          <button
+            type="button"
+            data-testid={`${rowTestId}-action-dossier`}
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            onClick={() => {
+              onDossier();
+              setOpen(false);
+            }}
+          >
+            {actions.dossier}
+          </button>
+          {actions.components ? (
+            <button
+              type="button"
+              data-testid={`${rowTestId}-action-components`}
+              className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+              onClick={() => {
+                onComponents();
+                setOpen(false);
+              }}
+            >
+              {actions.components}
+            </button>
+          ) : null}
+          <button
+            type="button"
+            data-testid={`${rowTestId}-action-guards`}
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            onClick={() => {
+              onGuards();
+              setOpen(false);
+            }}
+          >
+            {actions.guards}
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 }
 
@@ -248,7 +313,7 @@ function UnifiedCatalogRow({
           : "border-slate-800/70 bg-[#111827]/60 hover:border-slate-700 hover:bg-slate-900/40"
       }`}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-center gap-2">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0">
             <p className="text-[12px] font-bold leading-tight text-slate-100">{entry.name}</p>
@@ -266,37 +331,17 @@ function UnifiedCatalogRow({
             ) : null}
           </div>
         </div>
-        <CatalogRowPrimaryAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
-      </div>
-      <div
-        className="mt-0.5 flex flex-wrap items-center gap-0.5"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <CatalogRowSecondaryAction
-          label={actions.settings}
-          testId={`${rowTestId}-action-settings`}
-          onClick={onSettings}
-        />
-        <span className="text-[9px] text-slate-700" aria-hidden="true">
-          ·
-        </span>
-        <CatalogRowSecondaryAction label={actions.dossier} testId={`${rowTestId}-action-dossier`} onClick={onDossier} />
-        {actions.components ? (
-          <>
-            <span className="text-[9px] text-slate-700" aria-hidden="true">
-              ·
-            </span>
-            <CatalogRowSecondaryAction
-              label={actions.components}
-              testId={`${rowTestId}-action-components`}
-              onClick={onComponents}
-            />
-          </>
-        ) : null}
-        <span className="text-[9px] text-slate-700" aria-hidden="true">
-          ·
-        </span>
-        <CatalogRowSecondaryAction label={actions.guards} testId={`${rowTestId}-action-guards`} onClick={onGuards} />
+        <div className="flex shrink-0 items-center gap-1" onClick={(event) => event.stopPropagation()}>
+          <CatalogRowPrimaryAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
+          <CatalogRowActionsMenu
+            rowTestId={rowTestId}
+            actions={actions}
+            onSettings={onSettings}
+            onDossier={onDossier}
+            onComponents={onComponents}
+            onGuards={onGuards}
+          />
+        </div>
       </div>
     </article>
   );
@@ -371,7 +416,7 @@ function CatalogBucketSection({
 }
 
 type ProductSystemUnifiedCatalogProps = {
-  catalogOverview: ReactNode;
+  catalogOverview?: ReactNode;
   templates: ProductTemplateEntity[];
   availabilityItems: ProductTemplateAvailabilityItem[];
   summary: UnifiedCatalogSummary;
@@ -475,7 +520,7 @@ export function ProductSystemUnifiedCatalog({
 
   return (
     <div className="space-y-2" data-testid="product-system-unified-catalog" data-layout="compact">
-      {catalogOverview}
+      {catalogOverview ?? null}
 
       <section
         data-testid="product-system-compact-toolbar"
@@ -486,44 +531,49 @@ export function ProductSystemUnifiedCatalog({
         </div>
         <div
           data-testid="product-system-unified-search-filter"
-          className="mt-1 flex flex-col gap-1 lg:flex-row lg:items-center"
+          className="mt-1 flex min-w-0 items-center gap-2"
         >
-          <div className="flex min-w-0 flex-1 items-center gap-1.5 rounded border border-slate-800/80 bg-[#0a0f18]/80 px-2 py-1">
+          <div className="flex w-44 shrink-0 items-center gap-1.5 rounded border border-slate-800/80 bg-[#0a0f18]/80 px-2 py-1 sm:w-52">
             <Search className="h-3 w-3 shrink-0 text-slate-600" />
             <input
               type="text"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search code, bucket, lifecycle…"
+              placeholder="Search…"
               data-testid="product-system-unified-search"
               className="w-full bg-transparent text-[11px] text-slate-200 outline-none placeholder:text-slate-600"
             />
           </div>
           <div
-            className="flex flex-wrap gap-1"
-            role="group"
-            aria-label="Catalog filters"
-            data-testid="product-system-unified-filter-chips"
+            className="min-w-0 flex-1 overflow-x-auto scrollbar-thin"
+            data-testid="product-system-unified-filter-chips-scroll"
           >
-            {UNIFIED_CATALOG_FILTERS.map((chip) => {
-              const active = filter === chip.id;
-              return (
-                <button
-                  key={chip.id}
-                  type="button"
-                  data-testid={chip.testId}
-                  aria-pressed={active}
-                  onClick={() => setFilter(chip.id)}
-                  className={`rounded border px-2 py-0.5 text-[10px] font-bold transition-colors ${
-                    active
-                      ? "border-purple-600/50 bg-purple-950/30 text-purple-100"
-                      : "border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300"
-                  }`}
-                >
-                  {chip.label}
-                </button>
-              );
-            })}
+            <div
+              className="flex w-max flex-nowrap gap-1 pr-1"
+              role="group"
+              aria-label="Catalog filters"
+              data-testid="product-system-unified-filter-chips"
+            >
+              {UNIFIED_CATALOG_FILTERS.map((chip) => {
+                const active = filter === chip.id;
+                return (
+                  <button
+                    key={chip.id}
+                    type="button"
+                    data-testid={chip.testId}
+                    aria-pressed={active}
+                    onClick={() => setFilter(chip.id)}
+                    className={`shrink-0 rounded border px-2 py-0.5 text-[10px] font-bold transition-colors ${
+                      active
+                        ? "border-purple-600/50 bg-purple-950/30 text-purple-100"
+                        : "border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300"
+                    }`}
+                  >
+                    {chip.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

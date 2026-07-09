@@ -1233,6 +1233,7 @@ describe("ProductSystem design-system badges", () => {
       expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     });
     expect(screen.getByTestId("product-system-unified-row-candidate-set-action-open")).toHaveTextContent("Open");
+    fireEvent.click(screen.getByTestId("product-system-unified-row-candidate-set-action-more"));
     expect(screen.getByTestId("product-system-unified-row-candidate-set-action-settings")).toHaveTextContent("Settings");
     expect(screen.getByTestId("product-system-unified-row-candidate-set-action-dossier")).toHaveTextContent("Dossier");
 
@@ -1440,10 +1441,27 @@ describe("ProductSystem design-system badges", () => {
 
     const lettersRow = screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2");
     expect(within(lettersRow).getByRole("button", { name: "Open" })).toBeInTheDocument();
-    expect(within(lettersRow).getByRole("button", { name: "Guards" })).toBeInTheDocument();
+    fireEvent.click(within(lettersRow).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2-action-more"));
+    expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2-action-guards")).toBeInTheDocument();
 
     const currentBucket = screen.getByTestId(CATALOG_BUCKET.currentProducts);
     expect(currentBucket.className).not.toMatch(/border-l-emerald|border-l-cyan|border-l-amber/);
+  });
+
+  it("uses slim library header and single-line filter chip scroll", async () => {
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-library-header")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-catalog-overview")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-unified-filter-chips-scroll")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-reload-icon")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /Blueprint Dossier/i })).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("product-system-library-more-menu"));
+    expect(screen.getByTestId("product-system-library-blueprint-link")).toHaveTextContent("Blueprint Dossier");
   });
 
 });

@@ -120,6 +120,7 @@ import {
   Hammer,
   RefreshCw,
   ScanLine,
+  MoreHorizontal,
 } from "lucide-react";
 import {
   Popover,
@@ -3227,6 +3228,37 @@ function productSystemLoadModeToSource(
   }
 }
 
+function ProductSystemLibraryMoreMenu() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        data-testid="product-system-library-more-menu"
+        aria-label="More catalog actions"
+        aria-expanded={open}
+        onClick={() => setOpen((current) => !current)}
+        className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700"
+      >
+        <MoreHorizontal className="h-3.5 w-3.5" />
+      </button>
+      {open ? (
+        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[10rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
+          <Link
+            to="/product-system/blueprint-dossier"
+            data-testid="product-system-library-blueprint-link"
+            className="block rounded px-2 py-1 text-[11px] text-slate-200 hover:bg-slate-800"
+            onClick={() => setOpen(false)}
+          >
+            Blueprint Dossier
+          </Link>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function ProductSystemInfoPopover({
   loadMode,
   catalogCounts = {
@@ -3236,6 +3268,7 @@ function ProductSystemInfoPopover({
     sharedComponents: 0,
     archivedExperimental: 0,
   },
+  compact = false,
 }: {
   loadMode: "api" | "mock" | "empty_real" | "auth_required" | "error";
   catalogCounts?: {
@@ -3245,16 +3278,21 @@ function ProductSystemInfoPopover({
     sharedComponents: number;
     archivedExperimental: number;
   };
+  compact?: boolean;
 }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
-          aria-label="InformaÈ›ii ProductSystem"
+          className={
+            compact
+              ? "rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700"
+              : "flex items-center gap-1.5 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-lg text-[12px] font-semibold transition-colors"
+          }
+          aria-label="Informații ProductSystem"
         >
-          <Info className="w-3.5 h-3.5" /> Info
+          <Info className="w-3.5 h-3.5" /> {compact ? null : "Info"}
         </button>
       </PopoverTrigger>
       <PopoverContent
@@ -3641,75 +3679,127 @@ export default function ProductSystem() {
 
   return (
     <div className="space-y-2">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-[10px] text-slate-500">
-        <Link
-          to="/dashboard"
-          className="flex items-center gap-1 hover:text-slate-300 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
-        </Link>
-        <ChevronRight className="w-3 h-3" />
-        <span className="text-slate-300">
-          {shouldShowEditorScreen(screen, draft)
-            ? "ProductSystem / Blueprint Studio"
-            : "ProductSystem / È˜abloane"}
-        </span>
-      </div>
-
-      {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="p-1.5 bg-purple-500/10 rounded-lg shrink-0">
-            <Package className="w-5 h-5 text-purple-400" />
+      {shouldShowLibraryScreen(screen) ? (
+        <div className="space-y-1" data-testid="product-system-library-header">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <Link
+                to="/dashboard"
+                className="shrink-0 text-slate-500 hover:text-slate-300 transition-colors"
+                aria-label="Back to Dashboard"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </Link>
+              <h1 className="truncate text-[15px] font-bold leading-tight text-slate-100">Product System Catalog</h1>
+              <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+            </div>
+            <div className="flex shrink-0 items-center gap-1">
+              <button
+                onClick={loadTemplates}
+                disabled={loading}
+                aria-label="Reîncarcă"
+                data-testid="product-system-reload-icon"
+                className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+              </button>
+              <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
+              <ProductSystemLibraryMoreMenu />
+              <button
+                onClick={handleNew}
+                className="flex items-center gap-1 rounded border border-emerald-700/50 bg-emerald-700 px-2 py-1 text-[11px] font-bold text-white transition-colors hover:bg-emerald-600"
+              >
+                <Plus className="h-3.5 w-3.5" /> Șablon Nou
+              </button>
+            </div>
           </div>
-          <div className="min-w-0">
-            <h1 className="text-[16px] font-bold text-slate-100 leading-tight">
+          <p
+            data-testid="product-system-catalog-overview"
+            className="pl-6 text-[10px] leading-snug text-slate-500"
+          >
+            Design-time catalog · readonly browse · component-first Letters inactive
+          </p>
+          {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+            <p className="pl-6 text-[10px] text-amber-400/90">
+              {loadMode === "mock"
+                ? "Mod previzualizare — date mock, nu API live."
+                : loadMode === "auth_required"
+                  ? "Autentificare necesară pentru șabloane reale."
+                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
+            </p>
+          ) : null}
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-2 text-[10px] text-slate-500">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-1 hover:text-slate-300 transition-colors"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" /> Dashboard
+            </Link>
+            <ChevronRight className="w-3 h-3" />
+            <span className="text-slate-300">
               {shouldShowEditorScreen(screen, draft)
                 ? "ProductSystem / Blueprint Studio"
-                : "Product System Catalog"}
-            </h1>
-            {shouldShowEditorScreen(screen, draft) ? (
-              <p className="text-[10px] text-slate-500 mt-0.5">Editor pentru structura sablonului selectat.</p>
-            ) : null}
-            {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
-              <p className="text-[10px] text-amber-400/90 mt-0.5">
-                {loadMode === "mock"
-                  ? "Mod previzualizare — date mock, nu API live."
-                  : loadMode === "auth_required"
-                    ? "Autentificare necesara pentru sabloane reale."
-                    : "Incarcarea sabloanelor a esuat — reincarca sau verifica backend."}
-              </p>
-            ) : null}
+                : "ProductSystem / Șabloane"}
+            </span>
           </div>
-        </div>
-        <div className="flex flex-wrap items-center gap-1.5 shrink-0">
-          <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
-          <ProductSystemInfoPopover
-            loadMode={loadMode}
-            catalogCounts={catalogCounts}
-          />
-          <Link
-            to="/product-system/blueprint-dossier"
-            className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
-          >
-            <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
-          </Link>
-          <button
-            onClick={loadTemplates}
-            disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> ReÃ®ncarcÄƒ
-          </button>
-          <button
-            onClick={handleNew}
-            className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
-          >
-            <Plus className="w-3.5 h-3.5" /> È˜ablon Nou
-          </button>
-        </div>
-      </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="p-1.5 bg-purple-500/10 rounded-lg shrink-0">
+                <Package className="w-5 h-5 text-purple-400" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="text-[16px] font-bold text-slate-100 leading-tight">
+                  {shouldShowEditorScreen(screen, draft)
+                    ? "ProductSystem / Blueprint Studio"
+                    : "Product System Catalog"}
+                </h1>
+                {shouldShowEditorScreen(screen, draft) ? (
+                  <p className="text-[10px] text-slate-500 mt-0.5">Editor pentru structura șablonului selectat.</p>
+                ) : null}
+                {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+                  <p className="text-[10px] text-amber-400/90 mt-0.5">
+                    {loadMode === "mock"
+                      ? "Mod previzualizare — date mock, nu API live."
+                      : loadMode === "auth_required"
+                        ? "Autentificare necesară pentru șabloane reale."
+                        : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5 shrink-0">
+              <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+              <ProductSystemInfoPopover
+                loadMode={loadMode}
+                catalogCounts={catalogCounts}
+              />
+              <Link
+                to="/product-system/blueprint-dossier"
+                className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
+              >
+                <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
+              </Link>
+              <button
+                onClick={loadTemplates}
+                disabled={loading}
+                className="flex items-center gap-1.5 px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 rounded-lg text-[12px] font-semibold transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
+              </button>
+              <button
+                onClick={handleNew}
+                className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
+              >
+                <Plus className="w-3.5 h-3.5" /> Șablon Nou
+              </button>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Message toast */}
       {message && (
@@ -3753,7 +3843,7 @@ export default function ProductSystem() {
         </div>
       )}
 
-      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-120px)]">
+      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-108px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
           <TemplateEditor
             key={selectedId ?? (isNew ? "new" : draft.template_code)}
@@ -3787,14 +3877,7 @@ export default function ProductSystem() {
         ) : shouldShowLibraryScreen(screen) ? (
           <ProductSystemUnifiedCatalog
             summary={catalogSummary}
-            catalogOverview={
-              <p
-                data-testid="product-system-catalog-overview"
-                className="text-[10px] leading-snug text-slate-500"
-              >
-                Design-time catalog · readonly browse · component-first Letters inactive · master-detail below
-              </p>
-            }
+            catalogOverview={null}
             templates={templates}
             availabilityItems={availabilityItems}
             loading={loading}
