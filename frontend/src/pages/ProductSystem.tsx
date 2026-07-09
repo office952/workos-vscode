@@ -1546,6 +1546,30 @@ type ReturnCantSourcePathAudit = {
   note: string;
 };
 
+type ProductCompositionReadModelEntry = {
+  key: string;
+  label: string;
+  componentType: "structural" | "functional";
+  componentTemplateCode: string;
+  componentId: string;
+  requiredInLetters: boolean;
+  currentWiring: "wired" | "partial" | "missing";
+  currentSourceType:
+    | "component template"
+    | "parent aggregate"
+    | "dossier"
+    | "shared contract"
+    | "missing";
+  productTruthTarget: string;
+  formSystemFields: string[];
+  geometryDependency: string;
+  materialSource: string;
+  operationSource: string;
+  calculationReadiness: "ready" | "partial" | "blocked";
+  blockers: string[];
+  recommendation: string;
+};
+
 const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipAudit> = {
   volumetric_face: {
     componentKey: "volumetric_face",
@@ -1860,6 +1884,124 @@ const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
   },
 ];
 
+const STRUCTURAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
+  {
+    key: "face",
+    label: "FACE / FATA",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUMETRIC-FACE_v1",
+    componentId: "comp_face_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.face.*",
+    formSystemFields: ["face_finish_type", "letter_face_area_m2", "letter_perimeter_m"],
+    geometryDependency: "selected_layer_refs + face area + perimeter",
+    materialSource: "fallback / partial face material",
+    operationSource: "debitare_fata / face_cnc_cut",
+    calculationReadiness: "partial",
+    blockers: ["FACE_MATERIAL_MISSING", "SELECTED_FACE_LAYER_MISSING", "FACE_FINISH_TARGET_MISSING"],
+    recommendation: "Promote explicit face material, thickness, and confirmed perimeter onto component-owned truth.",
+  },
+  {
+    key: "back",
+    label: "BACK / SPATE",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUMETRIC-BACK_v1",
+    componentId: "comp_spate_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.back.*",
+    formSystemFields: ["backing_mode", "back_bevel_enabled"],
+    geometryDependency: "follows face geometry and area",
+    materialSource: "implicit from backing mode / parent flow",
+    operationSource: "debitare_spate / back_cut",
+    calculationReadiness: "blocked",
+    blockers: ["BACK_MATERIAL_MISSING", "BACKING_MODE_CONFIRMATION_REQUIRED"],
+    recommendation: "Make back material explicit before calling the backing component separately calculable.",
+  },
+  {
+    key: "return_cant",
+    label: "RETURN_CANT / VOLUM",
+    componentType: "structural",
+    componentTemplateCode: "TPL-VOLUM-ALUMINIU_v1",
+    componentId: "comp_lateral_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "component template",
+    productTruthTarget: "components.return_cant.*",
+    formSystemFields: ["return_depth_mm", "return_finish_type", "volum_aluminum_module_template_code", "letter_perimeter_m"],
+    geometryDependency: "depends on face confirmed perimeter",
+    materialSource: "child template profile gate only",
+    operationSource: "modelare_cant / RETURN_PROFILE_MACHINE_FORMING / RETURN_PROFILE_FACE_BONDING",
+    calculationReadiness: "blocked",
+    blockers: [
+      "RETURN_CANT_MATERIAL_MISSING",
+      "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
+      "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+    ],
+    recommendation: "Align return/cant truth container before any separate calculation or delete/move work.",
+  },
+];
+
+const FUNCTIONAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
+  {
+    key: "lighting",
+    label: "LIGHTING / LED",
+    componentType: "functional",
+    componentTemplateCode: "TPL-VOLUMETRIC-LED_v1",
+    componentId: "comp_led_litere",
+    requiredInLetters: false,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.lighting.*",
+    formSystemFields: ["lighting_system_type", "led_module_count", "selected_psu_watts"],
+    geometryDependency: "depends on face area and whole product geometry",
+    materialSource: "LED modules + PSU config",
+    operationSource: "sistem_led",
+    calculationReadiness: "partial",
+    blockers: ["LIGHTING_MODE_CONFIRMATION_REQUIRED", "LIGHTING_LED_COUNT_MISSING"],
+    recommendation: "Keep as functional boundary until zones/circuits/service-access truth is explicit.",
+  },
+  {
+    key: "finish",
+    label: "FINISH / FINISAJ",
+    componentType: "functional",
+    componentTemplateCode: "TPL-VOLUMETRIC-FINISH_v1",
+    componentId: "comp_finisaj_litere",
+    requiredInLetters: true,
+    currentWiring: "partial",
+    currentSourceType: "shared contract",
+    productTruthTarget: "components.finish.*",
+    formSystemFields: ["letter_group_finishes", "mounting_template_enabled", "mounting_template_area_m2"],
+    geometryDependency: "depends on face/return/artwork scope",
+    materialSource: "review payload + finish family rules",
+    operationSource: "finisaje",
+    calculationReadiness: "blocked",
+    blockers: ["FINISH_TARGET_MISSING", "PRINT_REQUIRED_UNKNOWN"],
+    recommendation: "Separate finish, artwork, and cant ownership before claiming finish as complete component truth.",
+  },
+  {
+    key: "mounting",
+    label: "SUPPORT / MOUNTING",
+    componentType: "functional",
+    componentTemplateCode: "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+    componentId: "comp_premount_bars",
+    requiredInLetters: false,
+    currentWiring: "partial",
+    currentSourceType: "component template",
+    productTruthTarget: "components.mounting.* / components.support.*",
+    formSystemFields: ["mounting_system", "metal_support_required", "premount_bar_length_ml"],
+    geometryDependency: "depends on width and installation strategy",
+    materialSource: "child template + derived support bridge",
+    operationSource: "structura_suport",
+    calculationReadiness: "blocked",
+    blockers: ["TRIGGER_FIELD_MISMATCH", "SUPPORT_REQUIRED_UNKNOWN"],
+    recommendation: "Do not treat derived metal_support_required as primary component truth.",
+  },
+];
+
 function ownershipFieldStateClass(sourceState: string) {
   if (sourceState.includes("missing")) {
     return "border-red-700/30 bg-red-950/20 text-red-200";
@@ -1889,6 +2031,101 @@ function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceSt
     default:
       return "border-slate-700 bg-slate-900 text-slate-300";
   }
+}
+
+function compositionWiringClass(status: ProductCompositionReadModelEntry["currentWiring"]) {
+  switch (status) {
+    case "wired":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "partial":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+function compositionReadinessClass(status: ProductCompositionReadModelEntry["calculationReadiness"]) {
+  switch (status) {
+    case "ready":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "partial":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    default:
+      return "border-red-700/40 bg-red-900/20 text-red-300";
+  }
+}
+
+function CompositionReadModelTable({
+  title,
+  entries,
+  testId,
+}: {
+  title: string;
+  entries: ProductCompositionReadModelEntry[];
+  testId: string;
+}) {
+  return (
+    <section data-testid={testId} className="mt-3 rounded-lg border border-violet-800/40 bg-violet-950/10 p-3">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-violet-100">{title}</h4>
+          <p className="mt-0.5 text-[10px] text-violet-300/80">
+            Product Template composes; Component Template owns truth. ProductAggregate stays a derived read model.
+          </p>
+        </div>
+        <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">Overall status: PARTIAL</span>
+      </div>
+
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300" data-testid={`${testId}-aggregate-boundary`}>
+        ProductAggregate is derived read model. If a row compensates for missing component truth, treat it as support/diagnostic output, not as the primary truth source.
+      </div>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+          <span>Component</span>
+          <span>Template / id</span>
+          <span>Current source</span>
+          <span>Truth target / dependencies</span>
+          <span>Status</span>
+          <span>Blockers</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {entries.map((entry) => (
+            <div key={entry.key} data-testid={`${testId}-${entry.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2">
+                <div>
+                  <p className="font-bold text-slate-100">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.componentType === "structural" ? "structural component" : "functional component"}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
+                  <p className="mt-0.5 font-mono text-[9px] text-slate-500">{entry.componentId}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionWiringClass(entry.currentWiring)}`}>{entry.currentWiring}</span>
+                  <p className="mt-1 text-[9px] text-slate-400">source: {entry.currentSourceType}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-cyan-200/85">{entry.productTruthTarget}</p>
+                  <p className="mt-0.5 text-slate-400">geometry: {entry.geometryDependency}</p>
+                  <p className="mt-0.5 text-slate-400">material: {entry.materialSource}</p>
+                  <p className="mt-0.5 text-slate-400">operation: {entry.operationSource}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionReadinessClass(entry.calculationReadiness)}`}>{entry.calculationReadiness}</span>
+                  <p className="mt-1 text-[9px] text-slate-400">required: {entry.requiredInLetters ? "yes" : "conditional"}</p>
+                </div>
+                <div>
+                  <p className="font-mono text-amber-200/85">{entry.blockers.join(", ")}</p>
+                  <p className="mt-0.5 text-slate-400">{entry.recommendation}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function ReturnCantSeparateCalculationSourcePaths({
@@ -2027,6 +2264,18 @@ function ComponentCalculationOwnershipPanel({
       >
         Product Template still carries component-owned defaults, hydrated values, or dependencies in the product-root flow. Treat this page as ownership audit only until component-owned sources are wired.
       </div>
+
+      <CompositionReadModelTable
+        title="Structural composition map"
+        entries={STRUCTURAL_COMPOSITION_READ_MODEL}
+        testId="product-system-structural-composition-map"
+      />
+
+      <CompositionReadModelTable
+        title="Functional composition map"
+        entries={FUNCTIONAL_COMPOSITION_READ_MODEL}
+        testId="product-system-functional-composition-map"
+      />
 
       {isLogoCandidate ? (
         <div

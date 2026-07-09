@@ -252,10 +252,26 @@ describe("ProductSystem design-system badges", () => {
     });
 
     const returnCantSourcePaths = screen.getByTestId("product-system-return-cant-source-paths");
+    const structuralMap = screen.getByTestId("product-system-structural-composition-map");
+    const functionalMap = screen.getByTestId("product-system-functional-composition-map");
 
     expect(screen.getByTestId("product-system-ownership-composer-badge")).toHaveTextContent("Product Template = composer");
     expect(screen.getByTestId("product-system-ownership-product-template-warning")).toHaveTextContent("Product Template still carries component-owned defaults");
     expect(screen.getByTestId("product-system-ownership-status-volumetric_return_side")).toHaveTextContent("partial_ready");
+    expect(structuralMap).toBeInTheDocument();
+    expect(functionalMap).toBeInTheDocument();
+    expect(screen.getByText("Structural composition map")).toBeInTheDocument();
+    expect(structuralMap).toHaveTextContent("FACE / FATA");
+    expect(structuralMap).toHaveTextContent("BACK / SPATE");
+    expect(structuralMap).toHaveTextContent("RETURN_CANT / VOLUM");
+    expect(structuralMap).toHaveTextContent("comp_face_litere");
+    expect(structuralMap).toHaveTextContent("comp_spate_litere");
+    expect(structuralMap).toHaveTextContent("comp_lateral_litere");
+    expect(structuralMap).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("product-system-structural-composition-map-aggregate-boundary")).toHaveTextContent("ProductAggregate is derived read model");
+    expect(functionalMap).toHaveTextContent("LIGHTING / LED");
+    expect(functionalMap).toHaveTextContent("FINISH / FINISAJ");
+    expect(functionalMap).toHaveTextContent("SUPPORT / MOUNTING");
     expect(returnCantSourcePaths).toBeInTheDocument();
     expect(screen.getByText("Separate calculation source paths")).toBeInTheDocument();
     expect(returnCantSourcePaths).toHaveTextContent("return_depth_mm");
