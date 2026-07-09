@@ -53,6 +53,9 @@ from services.intake_v6_product_system_service import (
 )
 from services.product_template_availability_service import ProductTemplateAvailabilityService
 from services.intake_v6_production_preview_service import build_v6_task_preview_response
+from services.form_system_runtime_capture_read_model_service import (
+    build_form_system_runtime_capture_read_model,
+)
 from services.return_cant_product_truth_bridge import (
     apply_return_cant_runtime_product_truth_bridge,
     clear_return_cant_runtime_product_truth,
@@ -359,6 +362,32 @@ async def create_intake_v6_workspace(
 async def get_intake_v6_workspace(db: AsyncSession, workspace_id: str) -> IntakeV6WorkspaceResponse:
     record = await _get_record_or_404(db, workspace_id)
     return _record_to_response(record)
+
+
+async def get_form_system_runtime_capture_read_model_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    workspace = await get_intake_v6_workspace(db, workspace_id)
+    payload = workspace.payload if isinstance(workspace.payload, dict) else {}
+    product_binding = payload.get("product_binding") if isinstance(payload.get("product_binding"), dict) else {}
+    read_model = build_form_system_runtime_capture_read_model(
+        payload,
+        template_code=workspace.template_code,
+    )
+    return {
+        "read_only": True,
+        "workspace_id": workspace_id,
+        "workspace_record_id": workspace.id,
+        "workspace_code": workspace.workspace_code,
+        "root_template_code": workspace.template_code,
+        "product_binding_template_code": product_binding.get("template_code"),
+        "read_model_version": "v1",
+        "fields": read_model.get("fields") or [],
+        "blockers": read_model.get("blockers") or [],
+        "downstream_write_intent": read_model.get("downstream_write_intent") or {},
+        "notes": read_model.get("notes") or [],
+    }
 
 
 async def ensure_intake_v6_workspace_for_intake_request(

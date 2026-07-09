@@ -77,6 +77,7 @@ from services.intake_v6_workspace_service import (
     create_draft_quote_for_intake_v6_workspace,
     create_intake_v6_workspace,
     ensure_intake_v6_workspace_for_intake_request,
+    get_form_system_runtime_capture_read_model_for_workspace,
     get_ai_informational_assist_candidate_for_workspace,
     get_ai_semantic_classification_candidate_for_workspace,
     get_intake_v6_workspace,
@@ -209,6 +210,14 @@ async def get_workspace_v6(
     db: AsyncSession = Depends(get_db),
 ) -> IntakeV6WorkspaceResponse:
     return await get_intake_v6_workspace(db, workspace_id)
+
+
+@router.get("/workspaces/{workspace_id}/runtime-capture-read-model")
+async def get_runtime_capture_read_model_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> dict:
+    return await get_form_system_runtime_capture_read_model_for_workspace(db, workspace_id)
 
 
 @router.post("/workspaces/{workspace_id}/svg", response_model=IntakeV6SvgUploadResponse)
