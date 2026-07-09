@@ -133,6 +133,69 @@ export function ReadonlyCardFooter({ children }: { children: ReactNode }) {
   );
 }
 
+export function blockedExposureLabel(isBlocked: boolean): "blocked" | "exposed" {
+  return isBlocked ? "blocked" : "exposed";
+}
+
+export function ComponentFirstInertGuardLabels({
+  noWorkIntakeExposure,
+  noPricingActivation,
+  noProductDefinitionActivation,
+  noProductAggregateRuntimeWiring,
+  noExecutableOperations,
+  noExecutableBom,
+  composerCatalogStatus,
+}: {
+  noWorkIntakeExposure: boolean;
+  noPricingActivation: boolean;
+  noProductDefinitionActivation: boolean;
+  noProductAggregateRuntimeWiring: boolean;
+  noExecutableOperations: boolean;
+  noExecutableBom: boolean;
+  composerCatalogStatus: string;
+}) {
+  return (
+    <div
+      data-testid="product-system-component-first-inert-guard-labels"
+      className="grid gap-2 md:grid-cols-3 text-[10px] text-slate-200"
+    >
+      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+        <p>
+          <span className="text-slate-500">Work Intake exposure:</span>{" "}
+          {blockedExposureLabel(noWorkIntakeExposure)}
+        </p>
+        <p>
+          <span className="text-slate-500">Pricing activation:</span> {blockedExposureLabel(noPricingActivation)}
+        </p>
+        <p>
+          <span className="text-slate-500">ProductDefinition runtime:</span>{" "}
+          {blockedExposureLabel(noProductDefinitionActivation)}
+        </p>
+      </div>
+      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+        <p>
+          <span className="text-slate-500">ProductAggregate runtime:</span>{" "}
+          {blockedExposureLabel(noProductAggregateRuntimeWiring)}
+        </p>
+        <p>
+          <span className="text-slate-500">Executable operations:</span> {blockedExposureLabel(noExecutableOperations)}
+        </p>
+        <p>
+          <span className="text-slate-500">Quote/Order/Execution:</span> blocked
+        </p>
+      </div>
+      <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 space-y-1">
+        <p>
+          <span className="text-slate-500">Executable BOM:</span> {blockedExposureLabel(noExecutableBom)}
+        </p>
+        <p>
+          <span className="text-slate-500">Catalog status:</span> {composerCatalogStatus}
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export function ReadonlyCardShell({
   testId,
   children,

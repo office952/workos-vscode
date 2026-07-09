@@ -62,6 +62,7 @@ import {
   truthOwnerLabel,
 } from "./ComponentFirstReadonlySettingsSheet";
 import {
+  ComponentFirstInertGuardLabels,
   ComponentFirstStatusStrip,
   ReadonlyCardFooter,
   ReadonlyCardShell,
@@ -245,6 +246,14 @@ function ComponentFirstProductComposerCard({
               >
                 Live rows: {model.foundRowCount}/{model.expectedRowCount} · {model.components.length} components · Work
                 Intake: no · Owner GO required
+              </p>
+              <p
+                data-testid="product-system-component-first-dossier-contract-summary"
+                className="mt-1 text-[10px] text-slate-400"
+              >
+                Dossier contract: {COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.length}/
+                {COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.length} · Runtime dossier rows:{" "}
+                {model.foundRowCount === 0 ? "not linked yet" : "readonly contract only"}
               </p>
               <details className="mt-2 text-[10px] text-slate-400">
                 <summary className="cursor-pointer font-semibold text-slate-300">Composer details</summary>
@@ -1147,18 +1156,15 @@ function ComponentFirstGuardsAuditPanel({
         </section>
       </details>
 
-      <div className="grid gap-2 md:grid-cols-3 text-[10px] text-slate-200">
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          Inert flags: WI={String(model.noWorkIntakeExposure)} Pricing={String(model.noPricingActivation)} PD=
-          {String(model.noProductDefinitionActivation)}
-        </div>
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          Runtime wiring: PA={String(model.noProductAggregateRuntimeWiring)} ops={String(model.noExecutableOperations)}
-        </div>
-        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          BOM={String(model.noExecutableBom)} · catalog status={model.composerCatalogStatus}
-        </div>
-      </div>
+      <ComponentFirstInertGuardLabels
+        noWorkIntakeExposure={model.noWorkIntakeExposure}
+        noPricingActivation={model.noPricingActivation}
+        noProductDefinitionActivation={model.noProductDefinitionActivation}
+        noProductAggregateRuntimeWiring={model.noProductAggregateRuntimeWiring}
+        noExecutableOperations={model.noExecutableOperations}
+        noExecutableBom={model.noExecutableBom}
+        composerCatalogStatus={model.composerCatalogStatus}
+      />
 
       {dossierAlignment.runtimeActivationLeakIssues.length > 0 ? (
         <p className="text-[10px] font-mono text-rose-200/90">

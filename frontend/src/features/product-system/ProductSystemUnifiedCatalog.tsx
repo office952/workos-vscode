@@ -30,7 +30,9 @@ export type UnifiedCatalogSummary = {
   products: number;
   components: number;
   candidateSets: number;
-  dossiers: number | null;
+  dossierContractCount: number | null;
+  componentFirstLiveRows: number | null;
+  componentFirstExpectedRows: number | null;
   blocked: number | null;
   archived: number;
 };
@@ -40,6 +42,8 @@ export function buildUnifiedCatalogSummary({
   archivedCount,
   hasComponentFirstCandidate,
   ownerDecisionRequiredCount,
+  componentFirstLiveRows = null,
+  componentFirstExpectedRows = null,
 }: {
   catalogCounts: {
     activeProducts: number;
@@ -51,12 +55,16 @@ export function buildUnifiedCatalogSummary({
   archivedCount: number;
   hasComponentFirstCandidate: boolean;
   ownerDecisionRequiredCount: number;
+  componentFirstLiveRows?: number | null;
+  componentFirstExpectedRows?: number | null;
 }): UnifiedCatalogSummary {
   return {
     products: catalogCounts.activeProducts + catalogCounts.candidateProducts,
     components: catalogCounts.internalModules + catalogCounts.sharedComponents,
     candidateSets: hasComponentFirstCandidate ? 1 : 0,
-    dossiers: hasComponentFirstCandidate ? COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.length : null,
+    dossierContractCount: hasComponentFirstCandidate ? COMPONENT_FIRST_DOSSIER_CONTRACT_FIXTURE.length : null,
+    componentFirstLiveRows: hasComponentFirstCandidate ? componentFirstLiveRows : null,
+    componentFirstExpectedRows: hasComponentFirstCandidate ? componentFirstExpectedRows : null,
     blocked: ownerDecisionRequiredCount > 0 ? ownerDecisionRequiredCount : null,
     archived: catalogCounts.archivedExperimental > 0 ? catalogCounts.archivedExperimental : archivedCount,
   };
@@ -115,7 +123,12 @@ const SUMMARY_METRICS: Array<{
   { key: "products", label: "Rădăcini produs", testId: "product-system-summary-products" },
   { key: "components", label: "Module", testId: "product-system-summary-components" },
   { key: "candidateSets", label: "Seturi comp-first", testId: "product-system-summary-candidate-sets" },
-  { key: "dossiers", label: "Dosare", testId: "product-system-summary-dossiers" },
+  { key: "dossierContractCount", label: "Dosare contract", testId: "product-system-summary-dossier-contract" },
+  {
+    key: "componentFirstLiveRows",
+    label: "Randuri live comp-first",
+    testId: "product-system-summary-component-first-live-rows",
+  },
   { key: "blocked", label: "Blocate", testId: "product-system-summary-blocked", tone: "warning" },
   { key: "archived", label: "Arhivate", testId: "product-system-summary-archived" },
 ];
@@ -126,7 +139,10 @@ function buildSummaryCompactLine(summary: UnifiedCatalogSummary): string {
     `${summary.components} module`,
     `${summary.candidateSets} comp-first`,
   ];
-  if (summary.dossiers != null) parts.push(`${summary.dossiers} dosare`);
+  if (summary.dossierContractCount != null) parts.push(`${summary.dossierContractCount} dosare contract`);
+  if (summary.componentFirstLiveRows != null && summary.componentFirstExpectedRows != null) {
+    parts.push(`${summary.componentFirstLiveRows}/${summary.componentFirstExpectedRows} randuri live`);
+  }
   if (summary.blocked != null) parts.push(`${summary.blocked} blocate`);
   parts.push(`${summary.archived} arhivate`);
   return parts.join(" · ");
@@ -156,10 +172,14 @@ function SummaryMetrics({ summary }: { summary: UnifiedCatalogSummary }) {
     <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
       {SUMMARY_METRICS.map((metric) => {
         const rawValue = summary[metric.key];
-        if (metric.key === "dossiers" && rawValue == null) return null;
+        if (metric.key === "dossierContractCount" && rawValue == null) return null;
+        if (metric.key === "componentFirstLiveRows" && summary.componentFirstExpectedRows == null) return null;
         if (metric.key === "blocked" && rawValue == null) return null;
 
-        const value = rawValue ?? 0;
+        const value =
+          metric.key === "componentFirstLiveRows" && summary.componentFirstExpectedRows != null
+            ? `${summary.componentFirstLiveRows ?? 0}/${summary.componentFirstExpectedRows}`
+            : rawValue ?? 0;
         const isWarning = metric.tone === "warning" && value > 0;
 
         return (

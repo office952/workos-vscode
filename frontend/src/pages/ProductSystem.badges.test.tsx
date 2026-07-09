@@ -1497,9 +1497,82 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-unified-filter-chips-scroll")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-reload-icon")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: /Blueprint Dossier/i })).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-library-create-template")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("product-system-library-more-menu"));
     expect(screen.getByTestId("product-system-library-blueprint-link")).toHaveTextContent("Blueprint Dossier");
+    expect(screen.getByTestId("product-system-library-create-template")).toHaveTextContent("Șablon nou");
+    expect(screen.getByTestId("product-system-library-design-time-note")).toHaveTextContent(
+      "Admin design-time only",
+    );
+  });
+
+  it("shows clarified catalog summary metrics for dossier contract vs live rows", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByTestId("product-system-summary-toggle"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-summary-dossier-contract")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-summary-dossier-contract")).toHaveTextContent("Dosare contract");
+    expect(screen.getByTestId("product-system-summary-component-first-live-rows")).toHaveTextContent("0/7");
+    expect(screen.getByTestId("product-system-summary-bar")).not.toHaveTextContent(/\b7 dosare\b/i);
+    expect(screen.getByTestId("product-system-summary-bar")).toHaveTextContent(/dosare contract/i);
+
+    fireEvent.click(screen.getByTestId("product-system-summary-toggle"));
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-summary-bar")).toHaveAttribute("data-expanded", "false");
+    });
+    expect(screen.getByTestId("product-system-summary-bar")).toHaveTextContent(/0\/7 randuri live/i);
+  });
+
+  it("shows blocked guard labels instead of confusing WI=true inert flags", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-inert-guard-labels")).toBeInTheDocument();
+    });
+
+    const guardLabels = screen.getByTestId("product-system-component-first-inert-guard-labels");
+    expect(guardLabels).toHaveTextContent("Work Intake exposure: blocked");
+    expect(guardLabels).toHaveTextContent("Pricing activation: blocked");
+    expect(guardLabels).toHaveTextContent("ProductDefinition runtime: blocked");
+    expect(guardLabels).toHaveTextContent("Quote/Order/Execution: blocked");
+    expect(guardLabels.textContent).not.toMatch(/WI=true/i);
+    expect(guardLabels.textContent).not.toMatch(/Pricing=true/i);
+    expect(guardLabels.textContent).not.toMatch(/PD=true/i);
+  });
+
+  it("separates dossier contract from live rows in component-first overview", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await openComponentFirstCandidateDetail();
+
+    expect(screen.getByTestId("product-system-component-first-completeness-count")).toHaveTextContent("Live rows: 0/7");
+    expect(screen.getByTestId("product-system-component-first-dossier-contract-summary")).toHaveTextContent(
+      "Dossier contract: 7/7",
+    );
+    expect(screen.getByTestId("product-system-component-first-dossier-contract-summary")).toHaveTextContent(
+      "Runtime dossier rows: not linked yet",
+    );
   });
 
 });

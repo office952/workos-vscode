@@ -79,7 +79,10 @@ import {
   shouldPreferAggregateDisplay,
 } from "@/features/product-system/productAggregateDisplay";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
-import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "@/features/product-system/componentFirstReadonlyCompleteness";
+import {
+  assessComponentFirstLiveCompleteness,
+  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+} from "@/features/product-system/componentFirstReadonlyCompleteness";
 import { buildComponentFirstReadonlySetModel } from "@/features/product-system/componentFirstReadonlySetModel";
 import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
 import {
@@ -3229,7 +3232,7 @@ function productSystemLoadModeToSource(
   }
 }
 
-function ProductSystemLibraryMoreMenu() {
+function ProductSystemLibraryMoreMenu({ onCreateTemplate }: { onCreateTemplate: () => void }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -3245,7 +3248,28 @@ function ProductSystemLibraryMoreMenu() {
         <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[10rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
+        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[12rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
+          <p className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-slate-500">
+            Design-time (admin)
+          </p>
+          <button
+            type="button"
+            data-testid="product-system-library-create-template"
+            onClick={() => {
+              onCreateTemplate();
+              setOpen(false);
+            }}
+            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+          >
+            Șablon nou
+          </button>
+          <p
+            data-testid="product-system-library-design-time-note"
+            className="px-2 pb-1 text-[10px] leading-snug text-slate-500"
+          >
+            Admin design-time only — not operator quoting
+          </p>
+          <div className="my-1 border-t border-slate-800" />
           <Link
             to="/product-system/blueprint-dossier"
             data-testid="product-system-library-blueprint-link"
@@ -3533,6 +3557,11 @@ export default function ProductSystem() {
     [availabilityItems],
   );
 
+  const componentFirstCompleteness = useMemo(
+    () => assessComponentFirstLiveCompleteness(templates),
+    [templates],
+  );
+
   const catalogSummary = useMemo(
     () =>
       buildUnifiedCatalogSummary({
@@ -3540,8 +3569,17 @@ export default function ProductSystem() {
         archivedCount,
         hasComponentFirstCandidate,
         ownerDecisionRequiredCount,
+        componentFirstLiveRows: hasComponentFirstCandidate ? componentFirstCompleteness.foundRowCount : null,
+        componentFirstExpectedRows: hasComponentFirstCandidate ? componentFirstCompleteness.expectedRowCount : null,
       }),
-    [catalogCounts, archivedCount, hasComponentFirstCandidate, ownerDecisionRequiredCount],
+    [
+      catalogCounts,
+      archivedCount,
+      hasComponentFirstCandidate,
+      ownerDecisionRequiredCount,
+      componentFirstCompleteness.foundRowCount,
+      componentFirstCompleteness.expectedRowCount,
+    ],
   );
 
   const editorReadOnly = useMemo(() => {
@@ -3723,13 +3761,7 @@ export default function ProductSystem() {
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </button>
               <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
-              <ProductSystemLibraryMoreMenu />
-              <button
-                onClick={handleNew}
-                className="flex items-center gap-1.5 rounded-md border border-emerald-700/50 bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
-              >
-                <Plus className="h-4 w-4" /> Șablon nou
-              </button>
+              <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} />
             </div>
           </div>
           <p
