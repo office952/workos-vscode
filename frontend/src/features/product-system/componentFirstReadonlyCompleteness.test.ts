@@ -25,6 +25,14 @@ import {
   getComponentFirstFormReadinessEntry,
   validateComponentFirstFormSystemReadinessContract,
 } from "./componentFirstReadonlyFormSystemReadiness";
+import {
+  assessComponentFirstProductTruthMapping,
+  COMPONENT_FIRST_EXPECTED_MAPPING_ENTRY_COUNT,
+  COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT,
+  getComponentFirstProductTruthMappingsForRole,
+  validateComponentFirstProductTruthMappingContract,
+  type ComponentFirstProductTruthMappingEntry,
+} from "./componentFirstReadonlyProductTruthMapping";
 
 function liveRow(
   templateCode: string,
@@ -411,5 +419,129 @@ describe("componentFirstReadonlyFormSystemReadiness", () => {
     expect(assessment.overallFormReadinessState).toBe("BLOCKED_FORM_ACTIVATION_LEAK");
     expect(assessment.runtimeFormSystemLinkState).toBe("BLOCKED_RUNTIME_FORM_ACTIVATION_LEAK");
     expect(assessment.unsafeSignals.length).toBeGreaterThan(0);
+  });
+});
+
+function productTruthMappingFor(liveRows: ComponentFirstLiveTemplateRow[]) {
+  const drift = assessComponentFirstContractDrift(liveRows);
+  const dossier = assessComponentFirstDossierAlignment(liveRows, { drift });
+  const owner = buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+  const formReadiness = assessComponentFirstFormSystemReadiness(drift.completeness, dossier, owner, {
+    drift,
+    liveTemplates: liveRows,
+  });
+  return assessComponentFirstProductTruthMapping(formReadiness, owner);
+}
+
+describe("componentFirstReadonlyProductTruthMapping", () => {
+  it("mapping contract includes expected entries for composer + 6 components", () => {
+    const validation = validateComponentFirstProductTruthMappingContract();
+    expect(COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.length).toBe(COMPONENT_FIRST_EXPECTED_MAPPING_ENTRY_COUNT);
+    expect(validation.valid).toBe(true);
+    expect(COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.some((e) => e.templateCode === COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE)).toBe(true);
+    const componentTemplates = new Set(
+      COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.filter((e) => e.truthOwner === "component_owned_truth").map((e) => e.templateCode)
+    );
+    expect(componentTemplates.size).toBe(6);
+  });
+
+  it("all entries have may_write_now=false", () => {
+    expect(COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.every((entry) => entry.mayWriteNow === false)).toBe(true);
+    expect(COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.every((entry) => entry.writePolicy === "readonly_mapping_only")).toBe(true);
+  });
+
+  it("suggested is not confirmed", () => {
+    for (const entry of COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT) {
+      expect(entry.allowedValueStates).toContain("suggested");
+      expect(entry.allowedValueStates).toContain("confirmed_later");
+      expect(entry.allowedValueStates.indexOf("suggested")).not.toBe(entry.allowedValueStates.indexOf("confirmed_later"));
+    }
+  });
+
+  it("fallback/hydrated are not confirmed", () => {
+    for (const entry of COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT) {
+      expect(entry.allowedValueStates).toContain("fallback_readonly");
+      expect(entry.allowedValueStates).toContain("hydrated_readonly");
+      expect(entry.allowedValueStates).not.toEqual(["confirmed_later"]);
+    }
+  });
+
+  it("FACE paths map to product.components.face.*", () => {
+    const faceMappings = getComponentFirstProductTruthMappingsForRole("product.components.face.");
+    expect(faceMappings.length).toBeGreaterThanOrEqual(4);
+    expect(faceMappings.every((entry) => entry.futureProductTruthPath.startsWith("product.components.face."))).toBe(true);
+  });
+
+  it("RETURN/CANT paths map to product.components.return_cant.*", () => {
+    const mappings = getComponentFirstProductTruthMappingsForRole("product.components.return_cant.");
+    expect(mappings.length).toBe(4);
+    expect(mappings.map((e) => e.fieldGroup)).toEqual(
+      expect.arrayContaining(["return_material", "return_depth", "return_finish"])
+    );
+  });
+
+  it("LED paths map to product.components.led.*", () => {
+    const mappings = getComponentFirstProductTruthMappingsForRole("product.components.led.");
+    expect(mappings.length).toBe(5);
+    expect(mappings.map((e) => e.fieldGroup)).toEqual(
+      expect.arrayContaining(["illumination_mode", "led_density", "power_supply_policy"])
+    );
+  });
+
+  it("FINISH paths map to product.components.finish.*", () => {
+    const mappings = getComponentFirstProductTruthMappingsForRole("product.components.finish.");
+    expect(mappings.length).toBe(5);
+    expect(mappings.map((e) => e.fieldGroup)).toEqual(
+      expect.arrayContaining(["stock_color", "oracal_code", "ral_code", "print_lamination_policy"])
+    );
+  });
+
+  it("MOUNTING paths map to product.components.mounting.*", () => {
+    const mappings = getComponentFirstProductTruthMappingsForRole("product.components.mounting.");
+    expect(mappings.length).toBe(4);
+    expect(mappings.map((e) => e.fieldGroup)).toEqual(
+      expect.arrayContaining(["mounting_surface", "spacer_policy", "template_drilling_policy", "site_installation_notes"])
+    );
+  });
+
+  it("0/7 live => READONLY_MAPPING_FALLBACK_ONLY", () => {
+    const assessment = productTruthMappingFor([]);
+    expect(assessment.overallMappingState).toBe("READONLY_MAPPING_FALLBACK_ONLY");
+    expect(assessment.runtimeProductTruthLinkState).toBe("READONLY_MAPPING_ONLY");
+  });
+
+  it("7/7 inactive => READONLY_MAPPING_READY", () => {
+    const assessment = productTruthMappingFor(matchingLiveSet());
+    expect(assessment.overallMappingState).toBe("READONLY_MAPPING_READY");
+    expect(assessment.mappingContractEntriesCount).toBe(COMPONENT_FIRST_EXPECTED_MAPPING_ENTRY_COUNT);
+  });
+
+  it("any write-enabled entry => BLOCKED_PRODUCT_TRUTH_WRITE_LEAK", () => {
+    const brokenContract = COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.map((entry, index) =>
+      index === 0 ? ({ ...entry, mayWriteNow: true } as ComponentFirstProductTruthMappingEntry) : entry
+    );
+    const drift = assessComponentFirstContractDrift([]);
+    const dossier = assessComponentFirstDossierAlignment([], { drift });
+    const owner = buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+    const formReadiness = assessComponentFirstFormSystemReadiness(drift.completeness, dossier, owner);
+    const assessment = assessComponentFirstProductTruthMapping(formReadiness, owner, brokenContract);
+    expect(assessment.overallMappingState).toBe("BLOCKED_PRODUCT_TRUTH_WRITE_LEAK");
+    expect(assessment.writeEnabledEntries.length).toBeGreaterThan(0);
+  });
+
+  it("unsafe state policy treating suggested as confirmed => BLOCKED_PRODUCT_TRUTH_WRITE_LEAK", () => {
+    const brokenContract: ComponentFirstProductTruthMappingEntry[] = COMPONENT_FIRST_PRODUCT_TRUTH_MAPPING_CONTRACT.map(
+      (entry, index) =>
+        index === 3
+          ? { ...entry, allowedValueStates: ["confirmed_later"] }
+          : entry
+    );
+    const drift = assessComponentFirstContractDrift([]);
+    const dossier = assessComponentFirstDossierAlignment([], { drift });
+    const owner = buildComponentFirstOwnerSummary(drift.completeness, drift, dossier);
+    const formReadiness = assessComponentFirstFormSystemReadiness(drift.completeness, dossier, owner);
+    const assessment = assessComponentFirstProductTruthMapping(formReadiness, owner, brokenContract);
+    expect(assessment.overallMappingState).toBe("BLOCKED_PRODUCT_TRUTH_WRITE_LEAK");
+    expect(assessment.unsafeStatePolicyEntries.length).toBeGreaterThan(0);
   });
 });

@@ -120,6 +120,12 @@ import {
   componentFirstFormReadinessTone,
   componentFirstFormRuntimeLinkLabel,
 } from "@/features/product-system/componentFirstReadonlyFormSystemReadiness";
+import {
+  assessComponentFirstProductTruthMapping,
+  componentFirstProductTruthMappingLabel,
+  componentFirstProductTruthMappingTone,
+  componentFirstProductTruthRuntimeLinkLabel,
+} from "@/features/product-system/componentFirstReadonlyProductTruthMapping";
 import { useProductAggregateLibrarySummaries } from "@/features/product-system/useProductAggregateLibrarySummaries";
 import {
   getInitialProductSystemScreen,
@@ -2799,6 +2805,7 @@ function ComponentFirstReadonlyStatusPanel({
     ownerSummary,
     { drift: driftAssessment, liveTemplates: templates }
   );
+  const productTruthMapping = assessComponentFirstProductTruthMapping(formReadiness, ownerSummary);
   if (!model) {
     return null;
   }
@@ -2904,6 +2911,69 @@ function ComponentFirstReadonlyStatusPanel({
             className="mt-1 text-[10px] font-mono text-rose-200/90"
           >
             Unsafe signals: {formReadiness.unsafeSignals.join(", ")}
+          </p>
+        ) : null}
+      </article>
+      <article
+        data-testid="product-system-component-first-product-truth-mapping"
+        className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
+      >
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">Product Truth mapping</p>
+        <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
+          <span
+            data-testid="product-system-component-first-product-truth-mapping-count"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300"
+          >
+            Mapping contract: {productTruthMapping.mappingContractEntriesCount}/{productTruthMapping.expectedMappingEntriesCount}
+          </span>
+          <span
+            data-testid="product-system-component-first-product-truth-runtime-link"
+            className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-400"
+          >
+            {componentFirstProductTruthRuntimeLinkLabel(productTruthMapping.runtimeProductTruthLinkState)}
+          </span>
+          <span
+            data-testid="product-system-component-first-product-truth-mapping-state"
+            className={`rounded border px-2 py-0.5 ${componentFirstProductTruthMappingTone(productTruthMapping.overallMappingState)}`}
+          >
+            State: {componentFirstProductTruthMappingLabel(productTruthMapping.overallMappingState)}
+          </span>
+        </div>
+        <p
+          data-testid="product-system-component-first-product-truth-write-policy"
+          className="mt-2 text-[10px] text-slate-300"
+        >
+          Write policy: no Product Truth write
+        </p>
+        <p
+          data-testid="product-system-component-first-product-truth-state-policy"
+          className="mt-1 text-[10px] font-mono text-slate-400"
+        >
+          State policy: suggested != confirmed; fallback/hydrated != confirmed; operator confirmation required later
+        </p>
+        <ul
+          data-testid="product-system-component-first-product-truth-compact-paths"
+          className="mt-2 space-y-0.5 text-[10px] text-slate-400"
+        >
+          {productTruthMapping.compactPathSummaries.map((summary) => (
+            <li key={summary.label}>
+              <span className="font-semibold text-slate-300">{summary.label}</span>{" "}
+              <span className="font-mono text-cyan-200/80">-&gt; {summary.pathPrefix}</span>
+            </li>
+          ))}
+        </ul>
+        <p
+          data-testid="product-system-component-first-product-truth-guard"
+          className="mt-2 text-[10px] font-mono text-cyan-200/80"
+        >
+          Guard: readonly mapping only; no confirmed Product Truth values created; no Intake V6 write path
+        </p>
+        {productTruthMapping.writeEnabledEntries.length > 0 ? (
+          <p
+            data-testid="product-system-component-first-product-truth-write-leak"
+            className="mt-1 text-[10px] font-mono text-rose-200/90"
+          >
+            Write leak entries: {productTruthMapping.writeEnabledEntries.join(", ")}
           </p>
         ) : null}
       </article>

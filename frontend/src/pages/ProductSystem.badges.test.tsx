@@ -918,4 +918,60 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-component-first-form-runtime-link")).toHaveTextContent("not linked yet");
   });
 
+  it("shows Product Truth mapping block for 0/7 fallback without write path", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
+    });
+
+    const mappingBlock = screen.getByTestId("product-system-component-first-product-truth-mapping");
+    expect(screen.getByTestId("product-system-component-first-product-truth-mapping-count")).toHaveTextContent("Mapping contract:");
+    expect(screen.getByTestId("product-system-component-first-product-truth-runtime-link")).toHaveTextContent("readonly mapping only");
+    expect(screen.getByTestId("product-system-component-first-product-truth-mapping-state")).toHaveTextContent("READONLY_MAPPING_FALLBACK_ONLY");
+    expect(screen.getByTestId("product-system-component-first-product-truth-write-policy")).toHaveTextContent("no Product Truth write");
+    expect(screen.getByTestId("product-system-component-first-product-truth-state-policy")).toHaveTextContent("suggested != confirmed");
+    expect(mappingBlock).toHaveTextContent("product.components.face.*");
+    expect(mappingBlock).toHaveTextContent("product.components.led.*");
+    expect(mappingBlock).not.toHaveTextContent("Product Truth confirmed");
+    expect(mappingBlock.querySelector("input")).toBeNull();
+    expect(mappingBlock.querySelector("select")).toBeNull();
+    expect(screen.queryByRole("button", { name: /write/i })).not.toBeInTheDocument();
+  });
+
+  it("shows Form readiness and Product Truth mapping together", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-form-system-readiness")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-component-first-product-truth-mapping")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-component-first-form-system-readiness").compareDocumentPosition(
+      screen.getByTestId("product-system-component-first-product-truth-mapping")
+    ) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("shows READONLY_MAPPING_READY when 7/7 inactive rows exist", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate, componentFirstComposerTemplate, ...componentFirstTemplates]);
+    mockAvailabilityList.mockResolvedValue({
+      items: [volumetricAvailability, componentFirstAvailability],
+      total: 2,
+    });
+
+    renderProductSystem();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-component-first-product-truth-mapping-state")).toHaveTextContent("READONLY_MAPPING_READY");
+    });
+
+    expect(screen.getByTestId("product-system-component-first-product-truth-runtime-link")).toHaveTextContent("not linked yet");
+  });
+
 });
