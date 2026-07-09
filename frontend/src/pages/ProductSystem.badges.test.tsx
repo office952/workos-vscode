@@ -254,6 +254,7 @@ describe("ProductSystem design-system badges", () => {
     const returnCantSourcePaths = screen.getByTestId("product-system-return-cant-source-paths");
     const structuralMap = screen.getByTestId("product-system-structural-composition-map");
     const functionalMap = screen.getByTestId("product-system-functional-composition-map");
+    const truthContainer = screen.getByTestId("product-system-return-cant-truth-container");
 
     expect(screen.getByTestId("product-system-ownership-composer-badge")).toHaveTextContent("Product Template = composer");
     expect(screen.getByTestId("product-system-ownership-product-template-warning")).toHaveTextContent("Product Template still carries component-owned defaults");
@@ -272,6 +273,16 @@ describe("ProductSystem design-system badges", () => {
     expect(functionalMap).toHaveTextContent("LIGHTING / LED");
     expect(functionalMap).toHaveTextContent("FINISH / FINISAJ");
     expect(functionalMap).toHaveTextContent("SUPPORT / MOUNTING");
+    expect(truthContainer).toBeInTheDocument();
+    expect(truthContainer).toHaveTextContent("components.return_cant.instances[]");
+    expect(screen.getByTestId("product-system-return-cant-face-dependency")).toHaveTextContent("components.face.confirmed_perimeter");
+    expect(screen.getByTestId("product-system-return-cant-legacy-alias")).toHaveTextContent("components.returnCant.*");
+    expect(truthContainer).toHaveTextContent("status: BLOCKED");
+    expect(truthContainer).toHaveTextContent("component_template_code");
+    expect(truthContainer).toHaveTextContent("resource_requirements_ref");
+    expect(truthContainer).toHaveTextContent("Form System capture");
+    expect(truthContainer).toHaveTextContent("root geometry context");
+    expect(screen.getByTestId("product-system-return-cant-aggregate-boundary")).toHaveTextContent("ProductAggregate is derived read model");
     expect(returnCantSourcePaths).toBeInTheDocument();
     expect(screen.getByText("Separate calculation source paths")).toBeInTheDocument();
     expect(returnCantSourcePaths).toHaveTextContent("return_depth_mm");
@@ -282,7 +293,7 @@ describe("ProductSystem design-system badges", () => {
     expect(returnCantSourcePaths).toHaveTextContent("resources / tools");
     expect(returnCantSourcePaths).toHaveTextContent("operation_resource_requirements");
     expect(screen.getByTestId("product-system-return-cant-logo-reuse-note")).toHaveTextContent("TPL-VOLUMETRIC-LOGO_v1");
-    expect(screen.getByText("perimeter_source")).toBeInTheDocument();
+    expect(truthContainer).toHaveTextContent("perimeter_source");
     expect(screen.getAllByText(/parent aggregate only/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/form system only/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/component-owned source missing/i).length).toBeGreaterThan(0);

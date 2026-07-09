@@ -1546,6 +1546,39 @@ type ReturnCantSourcePathAudit = {
   note: string;
 };
 
+type ReturnCantTruthContainerFieldAudit = {
+  key:
+    | "instance_id"
+    | "component_template_code"
+    | "component_id"
+    | "layer_group_ids"
+    | "source_face_component_id"
+    | "source_face_perimeter_ref"
+    | "perimeter_source"
+    | "confirmed_perimeter_m"
+    | "material_profile"
+    | "depth_mm"
+    | "finish_type"
+    | "color_source"
+    | "operation_modelare_cant_ref"
+    | "operation_bonding_ref"
+    | "resource_requirements_ref"
+    | "confirmation_state"
+    | "blockers";
+  label: string;
+  sourceType:
+    | "component truth"
+    | "Form System capture"
+    | "root geometry context"
+    | "parent aggregate support"
+    | "legacy alias"
+    | "component template / registry"
+    | "missing";
+  currentSource: string;
+  targetPath: string;
+  note: string;
+};
+
 type ProductCompositionReadModelEntry = {
   key: string;
   label: string;
@@ -1884,6 +1917,145 @@ const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
   },
 ];
 
+const RETURN_CANT_TRUTH_CONTAINER_FIELDS: ReturnCantTruthContainerFieldAudit[] = [
+  {
+    key: "instance_id",
+    label: "instance_id",
+    sourceType: "missing",
+    currentSource: "not stabilized; readonly rows still keyed by group/artwork source rows",
+    targetPath: "components.return_cant.instances[].instance_id",
+    note: "Container target is canonical, but stable instance ids are not yet first-class runtime truth.",
+  },
+  {
+    key: "component_template_code",
+    label: "component_template_code",
+    sourceType: "component template / registry",
+    currentSource: "TPL-VOLUM-ALUMINIU_v1",
+    targetPath: "components.return_cant.instances[].component_template_code",
+    note: "The structural boundary is already real at the child template level.",
+  },
+  {
+    key: "component_id",
+    label: "component_id",
+    sourceType: "component template / registry",
+    currentSource: "comp_lateral_litere",
+    targetPath: "components.return_cant.instances[].component_id",
+    note: "The structural component id is stable in seed, dossier, and ProductAggregate mapping.",
+  },
+  {
+    key: "layer_group_ids",
+    label: "layer_group_ids",
+    sourceType: "missing",
+    currentSource: "selected_layer_refs and layer confirmations exist, but are not mapped as component truth",
+    targetPath: "components.return_cant.instances[].layer_group_ids",
+    note: "Still blocked until layer-group selection is component-scoped.",
+  },
+  {
+    key: "source_face_component_id",
+    label: "source_face_component_id",
+    sourceType: "parent aggregate support",
+    currentSource: "implied by comp_face_litere in composition/read-model",
+    targetPath: "components.return_cant.instances[].source_face_component_id",
+    note: "The dependency owner exists conceptually, but is not yet written as explicit instance truth.",
+  },
+  {
+    key: "source_face_perimeter_ref",
+    label: "source_face_perimeter_ref",
+    sourceType: "missing",
+    currentSource: "components.face.confirmed_perimeter is target language, not yet explicit reference wiring",
+    targetPath: "components.return_cant.instances[].source_face_perimeter_ref",
+    note: "Return/cant must reference face perimeter, not invent its own perimeter source.",
+  },
+  {
+    key: "perimeter_source",
+    label: "perimeter_source",
+    sourceType: "root geometry context",
+    currentSource: "quote_geometry.letter_perimeter_m",
+    targetPath: "components.return_cant.instances[].perimeter_source",
+    note: "Current root geometry evidence is context only; dependency remains blocked until face-confirmed perimeter is explicit.",
+  },
+  {
+    key: "confirmed_perimeter_m",
+    label: "confirmed_perimeter_m",
+    sourceType: "missing",
+    currentSource: "letter_perimeter_m exists, but not as component-owned confirmed_perimeter_m for return_cant",
+    targetPath: "components.return_cant.instances[].confirmed_perimeter_m",
+    note: "This must come from the face dependency, not from aggregate hydration.",
+  },
+  {
+    key: "material_profile",
+    label: "material_profile",
+    sourceType: "component template / registry",
+    currentSource: "profile width/material gates in TPL-VOLUM-ALUMINIU_v1",
+    targetPath: "components.return_cant.instances[].material_profile",
+    note: "The material family exists in the component template, but the selected truth field is still missing.",
+  },
+  {
+    key: "depth_mm",
+    label: "depth_mm",
+    sourceType: "Form System capture",
+    currentSource: "finish_setup.return_depth_mm",
+    targetPath: "components.return_cant.instances[].depth_mm",
+    note: "Current depth is still capture/hydration, not confirmed component truth.",
+  },
+  {
+    key: "finish_type",
+    label: "finish_type",
+    sourceType: "Form System capture",
+    currentSource: "finish_setup.return_finish_type",
+    targetPath: "components.return_cant.instances[].finish_type",
+    note: "Current finish token is still capture/hydration, not a completed component-owned field.",
+  },
+  {
+    key: "color_source",
+    label: "color_source",
+    sourceType: "Form System capture",
+    currentSource: "return_oracal_code / finish_setup + reusable finish interpretation",
+    targetPath: "components.return_cant.instances[].color_source",
+    note: "Color remains coupled to finish capture and catalog interpretation.",
+  },
+  {
+    key: "operation_modelare_cant_ref",
+    label: "operation_modelare_cant_ref",
+    sourceType: "component template / registry",
+    currentSource: "RETURN_PROFILE_MACHINE_FORMING / modelare_cant",
+    targetPath: "components.return_cant.instances[].operation_modelare_cant_ref",
+    note: "Operation exists already; truth inputs are what remain incomplete.",
+  },
+  {
+    key: "operation_bonding_ref",
+    label: "operation_bonding_ref",
+    sourceType: "component template / registry",
+    currentSource: "RETURN_PROFILE_FACE_BONDING",
+    targetPath: "components.return_cant.instances[].operation_bonding_ref",
+    note: "Bonding reference exists as operation identity, not yet as instance-bound truth.",
+  },
+  {
+    key: "resource_requirements_ref",
+    label: "resource_requirements_ref",
+    sourceType: "parent aggregate support",
+    currentSource: "operation_resource_requirements remains external operational registry boundary",
+    targetPath: "components.return_cant.instances[].resource_requirements_ref",
+    note: "Read-only only; do not treat workcenter hints as component truth.",
+  },
+  {
+    key: "confirmation_state",
+    label: "confirmation_state",
+    sourceType: "missing",
+    currentSource: "workflow/global confirmations only",
+    targetPath: "components.return_cant.instances[].confirmation_state",
+    note: "No row/global confirmation can be treated as final component confirmation.",
+  },
+  {
+    key: "blockers",
+    label: "blockers",
+    sourceType: "component truth",
+    currentSource: "readonly mapper blockers",
+    targetPath: "components.return_cant.instances[].blockers[]",
+    note: "Blockers are already explicit and should stay visible until source paths are real.",
+  },
+];
+
 const STRUCTURAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
   {
     key: "face",
@@ -2031,6 +2203,84 @@ function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceSt
     default:
       return "border-slate-700 bg-slate-900 text-slate-300";
   }
+}
+
+function returnCantTruthSourceClass(sourceType: ReturnCantTruthContainerFieldAudit["sourceType"]) {
+  switch (sourceType) {
+    case "component truth":
+      return "border-emerald-700/40 bg-emerald-900/20 text-emerald-300";
+    case "Form System capture":
+      return "border-amber-700/40 bg-amber-900/20 text-amber-300";
+    case "root geometry context":
+    case "parent aggregate support":
+      return "border-slate-700 bg-slate-900 text-slate-300";
+    case "legacy alias":
+      return "border-fuchsia-700/40 bg-fuchsia-950/20 text-fuchsia-200";
+    case "component template / registry":
+      return "border-cyan-700/40 bg-cyan-950/20 text-cyan-200";
+    default:
+      return "border-red-700/40 bg-red-950/20 text-red-200";
+  }
+}
+
+function ReturnCantTruthContainerPanel() {
+  return (
+    <section
+      data-testid="product-system-return-cant-truth-container"
+      className="mt-3 rounded-lg border border-fuchsia-800/40 bg-fuchsia-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-fuchsia-100">Return/Cant truth container</h4>
+          <p className="mt-0.5 text-[10px] text-fuchsia-300/80">
+            Target readonly container alignment for return/cant. This does not write Product Truth. It only aligns the language used by Product System, the readonly mapper, and the composition model.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+          <span className="rounded border border-fuchsia-700/40 bg-fuchsia-950/30 px-1.5 py-0.5 text-fuchsia-200">target: components.return_cant.instances[]</span>
+          <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">status: BLOCKED</span>
+        </div>
+      </div>
+
+      <div className="mt-2 rounded-lg border border-cyan-800/40 bg-cyan-950/15 px-3 py-2 text-[10px] text-cyan-200" data-testid="product-system-return-cant-face-dependency">
+        FACE -&gt; RETURN_CANT dependency: target upstream is `components.face.confirmed_perimeter`. Until that dependency is explicit and confirmed, return/cant stays blocked and must not invent its own perimeter truth from aggregate/root context.
+      </div>
+
+      <div className="mt-2 rounded-lg border border-fuchsia-800/40 bg-fuchsia-950/15 px-3 py-2 text-[10px] text-fuchsia-200" data-testid="product-system-return-cant-legacy-alias">
+        Legacy alias still present: `components.returnCant.*` is diagnostic/compatibility language only. Canonical target remains `components.return_cant.instances[]`.
+      </div>
+
+      <div className="mt-2 rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2 text-[10px] text-slate-300" data-testid="product-system-return-cant-aggregate-boundary">
+        ProductAggregate is derived read model, not truth source. Parent aggregate or root geometry support rows may explain current runtime behavior, but they do not satisfy component-owned truth requirements.
+      </div>
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+          <span>Field</span>
+          <span>Source type</span>
+          <span>Current source</span>
+          <span>Target path</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {RETURN_CANT_TRUTH_CONTAINER_FIELDS.map((field) => (
+            <div key={field.key} data-testid={`product-system-return-cant-truth-field-${field.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.85fr)_minmax(0,1fr)_minmax(0,1fr)] gap-2">
+                <div>
+                  <p className="font-bold text-slate-100">{field.label}</p>
+                  <p className="mt-0.5 text-[9px] text-slate-500">{field.note}</p>
+                </div>
+                <div>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantTruthSourceClass(field.sourceType)}`}>{field.sourceType}</span>
+                </div>
+                <p className="font-mono text-slate-300">{field.currentSource}</p>
+                <p className="font-mono text-cyan-200/85">{field.targetPath}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function compositionWiringClass(status: ProductCompositionReadModelEntry["currentWiring"]) {
@@ -2352,9 +2602,12 @@ function ComponentCalculationOwnershipPanel({
               </div>
 
               {audit.componentKey === "volumetric_return_side" ? (
-                <ReturnCantSeparateCalculationSourcePaths
-                  sharedWithProductCodes={availability?.shared_with_product_codes ?? []}
-                />
+                <>
+                  <ReturnCantTruthContainerPanel />
+                  <ReturnCantSeparateCalculationSourcePaths
+                    sharedWithProductCodes={availability?.shared_with_product_codes ?? []}
+                  />
+                </>
               ) : null}
 
               <p className="mt-2 text-[10px] text-slate-400">{audit.note}</p>
