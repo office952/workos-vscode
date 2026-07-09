@@ -17,6 +17,161 @@
 
 ## HEAD before
 
+- `7ea48fb`
+
+## Files read
+
+- `docs/worklog/realignment/2026-07-09_return_cant_component_truth_container_migration_plan_v1.md`
+- `docs/worklog/realignment/2026-07-09_return_cant_component_truth_container_readonly_endpoint_alignment_v1.md`
+- `docs/worklog/realignment/2026-07-09_return_cant_component_truth_container_readonly_alignment_v1.md`
+- `frontend/src/features/product-system/returnCantReadonlyContainerModel.ts`
+- `frontend/src/pages/ProductSystem.tsx`
+- `frontend/src/pages/ProductSystem.badges.test.tsx`
+- `frontend/src/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper.ts`
+- `frontend/src/lib/intakeV6/productTruth/returnCantTruthFieldCaptureReadonlyAdapter.ts`
+- `backend/data/mini_module_registry_volumetric_v2.py`
+- `backend/services/product_aggregate_service.py`
+
+## Files touched
+
+- `frontend/src/features/product-system/returnCantReadonlyContainerModel.ts`
+- `frontend/src/pages/ProductSystem.tsx`
+- `frontend/src/pages/ProductSystem.badges.test.tsx`
+- `docs/worklog/realignment/2026-07-09_return_cant_source_face_perimeter_ref_readonly_slice_v1.md`
+
+## Current state audit
+
+- `source_face_perimeter_ref` was not explicit as a first-class readonly dependency anchor.
+- `components.face.confirmed_perimeter` already existed in readonly language and explanatory UI text.
+- `quote_geometry.letter_perimeter_m` still existed as context/evidence and was doing too much explanatory work.
+- `returnCantReadonlyContainerModel.ts` was the right insertion point because it already centralizes the stable readonly container model consumed by Product System.
+
+## source_face_perimeter_ref implementation
+
+Implemented only the first migration slice:
+
+- `source_face_perimeter_ref` is now explicitly present in the stable readonly model.
+- It now uses source type:
+  - `component dependency anchor`
+- It points explicitly to:
+  - `components.face.confirmed_perimeter`
+- It remains unresolved as value, so the note keeps readiness blocked.
+- No write behavior was added.
+
+## Canonical dependency conclusion
+
+Canonical upstream dependency remains:
+
+```text
+components.face.confirmed_perimeter
+```
+
+`source_face_perimeter_ref` now makes this dependency explicit at the `return_cant` container level.
+
+That means:
+
+- return/cant must not invent its perimeter
+- return/cant must depend on FACE perimeter truth
+- readiness remains blocked until the ref/value pair becomes real component-owned truth
+
+## Context-only root geometry conclusion
+
+`quote_geometry.letter_perimeter_m` remains context-only.
+
+It is still displayed in the readonly model, but only as:
+
+- root geometry context
+- not canonical dependency anchor
+- not `confirmed_perimeter_m`
+
+This slice keeps the downgrade explicit and avoids accidental promotion to truth.
+
+## Tests run
+
+```powershell
+Set-Location C:\Users\offic\workos_app_vs\frontend
+npm.cmd run test -- src/pages/ProductSystem.badges.test.tsx
+```
+
+Result:
+
+- `4 passed`
+
+What the focused test proves now:
+
+- `source_face_perimeter_ref` appears
+- `components.face.confirmed_perimeter` appears
+- `quote_geometry.letter_perimeter_m` appears as root geometry context
+- readiness does not become ready
+- `confirmed_perimeter_m` is not presented as migrated/confirmed value
+- no promote button exists
+- no mutation call exists
+
+## Screenshot paths
+
+- `docs/worklog/realignment/assets/2026-07-09_return_cant_source_face_perimeter_ref_readonly_slice_v1/product_system_letters_context.png`
+- `docs/worklog/realignment/assets/2026-07-09_return_cant_source_face_perimeter_ref_readonly_slice_v1/product_system_return_cant_truth_container.png`
+- `docs/worklog/realignment/assets/2026-07-09_return_cant_source_face_perimeter_ref_readonly_slice_v1/product_system_source_face_perimeter_ref.png`
+- `docs/worklog/realignment/assets/2026-07-09_return_cant_source_face_perimeter_ref_readonly_slice_v1/product_system_quote_geometry_context_only.png`
+
+## Blockers remaining
+
+- `confirmed_perimeter_m` still missing
+- `material_profile` still missing
+- `layer_group_ids` still missing
+- `confirmation_state` still missing
+- return/cant readiness remains blocked
+
+## Forbidden scope confirmation
+
+- no confirmed_perimeter_m migration
+- no material_profile migration
+- no layer_group_ids migration
+- no confirmation_state migration
+- no delete
+- no seed modified
+- no DB migration
+- no seed live
+- no Pricing
+- no ProductDefinition
+- no Product Truth writer change
+- no ProductAggregate runtime write
+- no LOGO activation
+
+## Next recommended prompt
+
+```text
+TASK — RETURN_CANT_CONFIRMED_PERIMETER_M_READONLY_SLICE_V1
+```
+
+Recommended scope:
+
+- migrate only `confirmed_perimeter_m` in readonly language
+- derive it strictly from the canonical `source_face_perimeter_ref`
+- keep `quote_geometry.letter_perimeter_m` context-only
+- no Pricing
+- no ProductDefinition
+- no writer
+- no delete
+# RETURN_CANT_SOURCE_FACE_PERIMETER_REF_READONLY_SLICE_V1
+
+## Scope
+
+- First return/cant migration slice only.
+- Read-only only.
+- No confirmed_perimeter_m migration.
+- No material_profile migration.
+- No layer_group_ids migration.
+- No confirmation_state migration.
+- No delete.
+- No Pricing.
+- No ProductDefinition.
+- No Product Truth writer.
+- No ProductAggregate runtime write.
+- No LOGO activation.
+
+## HEAD before
+
 - `3ab4b83`
 
 ## Files read
