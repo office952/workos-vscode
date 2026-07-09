@@ -41,6 +41,7 @@ from services.intake_v4_layer_role_service import (
     apply_layer_role_updates,
     build_layer_role_setup_from_path_summary,
     merge_layer_roles_after_reupload,
+    selected_layer_refs_runtime_state,
 )
 from services.intake_v4_product_system_service import (
     build_binding_response,
@@ -83,6 +84,21 @@ def _layer_setup_from_payload(raw: dict[str, Any]) -> IntakeV4LayerRoleSetup | N
     if not isinstance(setup, dict):
         return None
     return IntakeV4LayerRoleSetup.model_validate(setup)
+
+
+def _sync_selected_layer_refs(payload_raw: dict[str, Any]) -> None:
+    setup = _layer_setup_from_payload(payload_raw)
+    runtime = selected_layer_refs_runtime_state(setup)
+    svg_runtime = payload_raw.get("svg") if isinstance(payload_raw.get("svg"), dict) else {}
+    if runtime["refs"]:
+        svg_runtime["selected_layer_refs"] = [item.model_dump(mode="json") for item in runtime["refs"]]
+        payload_raw["svg"] = svg_runtime
+        return
+    svg_runtime.pop("selected_layer_refs", None)
+    if svg_runtime:
+        payload_raw["svg"] = svg_runtime
+    else:
+        payload_raw.pop("svg", None)
 
 
 def _derive_readiness_status(payload: IntakeV4WorkspacePayload) -> str:
@@ -270,6 +286,7 @@ async def upload_svg_to_intake_v4_workspace(
         "upload_status": "analyzed",
     }
     payload_raw["layer_role_setup"] = layer_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
         clear_return_cant_runtime_product_truth(payload_raw)
@@ -342,6 +359,7 @@ async def save_analysis_bundle_for_intake_v4_workspace(
     payload_raw["svg_analysis_json"] = request.svg_analysis_json
     payload_raw["layer_role_setup"] = layer_setup_dict
     payload_raw["svg_source_text"] = validation.svg_text
+    _sync_selected_layer_refs(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
         payload_raw.pop("quote_geometry", None)
@@ -379,6 +397,7 @@ async def save_layer_roles_for_intake_v4_workspace(
     updates = [item.model_dump(mode="json") for item in request.layers]
     updated_setup = apply_layer_role_updates(setup, updates)
     payload_raw["layer_role_setup"] = updated_setup.model_dump(mode="json")
+    _sync_selected_layer_refs(payload_raw)
     _reset_internal_draft_quote_confirmation(payload_raw)
     if payload_raw.get("finish_setup"):
         from services.intake_v4_pricing_preview_sync_service import apply_v4_pricing_preview_derived_state

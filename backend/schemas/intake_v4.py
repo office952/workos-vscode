@@ -78,6 +78,17 @@ class IntakeV4LayerRoleSetup(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
+class IntakeV4SelectedLayerRef(BaseModel):
+    layer_id: str = Field(min_length=1)
+    role: Literal["vector_litere", "vector_logo"]
+    source: Literal["operator_confirmed_layer_role"] = "operator_confirmed_layer_role"
+    confirmed: bool = True
+
+
+class IntakeV4SvgRuntime(BaseModel):
+    selected_layer_refs: list[IntakeV4SelectedLayerRef] = Field(default_factory=list)
+
+
 class IntakeV4LetterGroupFinish(BaseModel):
     group_key: str
     layer_name: str | None = None
@@ -214,6 +225,7 @@ class IntakeV4WorkspacePayload(BaseModel):
     source: str | None = None
     work_intake_context: dict[str, Any] = Field(default_factory=dict)
     svg_source: IntakeV4SvgSource | None = None
+    svg: IntakeV4SvgRuntime | None = None
     svg_source_text: str | None = None
     svg_analysis_json: dict[str, Any] | None = None
     path_geometry_summary: dict[str, Any] | None = None

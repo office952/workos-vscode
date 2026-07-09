@@ -172,6 +172,97 @@ def test_missing_required_truth_produces_readiness_blockers():
     assert all("Pricing" not in blocker["message"] for blocker in contract["readiness"]["blockers"])
 
 
+def test_runtime_selected_layer_refs_confirm_selected_layer_field_when_persisted():
+    payload = {
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "face-1",
+                    "layer_id": "face-1",
+                    "layer_name": "face 1",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+            "warnings": [],
+        },
+        "svg": {
+            "selected_layer_refs": [
+                {
+                    "layer_id": "face-1",
+                    "role": "vector_litere",
+                    "source": "operator_confirmed_layer_role",
+                    "confirmed": True,
+                }
+            ]
+        },
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["svg.selected_layer_group"]
+
+    assert field["source_type"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+    blocker_codes = {blocker["blocker_code"] for blocker in contract["readiness"]["blockers"]}
+    assert "SELECTED_LAYER_REFS_MISSING" not in blocker_codes
+    assert "SELECTED_LAYER_REFS_UNCONFIRMED" not in blocker_codes
+
+
+def test_runtime_missing_selected_layer_refs_stays_blocked():
+    payload = {
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "face-1",
+                    "layer_id": "face-1",
+                    "layer_name": "face 1",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+            "warnings": [],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["svg.selected_layer_group"]
+
+    assert field["state"] == "missing"
+    assert field["blocker_code"] == "SELECTED_LAYER_REFS_MISSING"
+
+
+def test_runtime_selected_layer_refs_without_stable_ids_are_ambiguous():
+    payload = {
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "face-1",
+                    "layer_name": "face 1",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+            "warnings": [],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["svg.selected_layer_group"]
+
+    assert field["state"] == "blocked"
+    assert field["blocker_code"] == "SELECTED_LAYER_REFS_AMBIGUOUS"
+
+
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():
     contract = build_form_system_contract_map(ROOT)
 

@@ -5,7 +5,9 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
+from schemas.intake_v4 import IntakeV4LayerRoleSetup
 from services.active_template_scope import is_owner_valid_active_template
+from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
 from services.template_architecture_scope import (
     STRUCTURE_PREMOUNT_TEMPLATE_CODE,
     VOLUM_ALUMINUM_TEMPLATE_CODE,
@@ -421,6 +423,44 @@ def _build_readiness(fields: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _overlay_runtime_selected_layer_field(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    setup_raw = payload_raw.get("layer_role_setup")
+    setup = IntakeV4LayerRoleSetup.model_validate(setup_raw) if isinstance(setup_raw, dict) else None
+    runtime = selected_layer_refs_runtime_state(setup)
+    persisted_svg = payload_raw.get("svg") if isinstance(payload_raw.get("svg"), dict) else {}
+    persisted_refs = persisted_svg.get("selected_layer_refs") if isinstance(persisted_svg.get("selected_layer_refs"), list) else []
+
+    for field in fields:
+        if field.get("field_key") != "svg.selected_layer_group":
+            continue
+        if runtime["status"] == "confirmed" and persisted_refs:
+            field.update(
+                {
+                    "source_type": "payload_persisted",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Persisted selected layer refs captured from confirmed layer_role_setup are available as runtime truth.",
+                }
+            )
+            return fields
+        blocker_code = runtime["blocker_code"] or "SELECTED_LAYER_REFS_MISSING"
+        field.update(
+            {
+                "source_type": "operator_confirmed",
+                "state": "blocked" if blocker_code != "SELECTED_LAYER_REFS_MISSING" else "missing",
+                "blocker_code": blocker_code,
+                "notes": "Selected layer refs runtime field is missing, unconfirmed, or ambiguous until confirmed layer refs are persisted.",
+            }
+        )
+        return fields
+    return fields
+
+
 def _linked_template_composition() -> dict[str, Any]:
     return {
         "contract_version": "linked_template_composition_v1",
@@ -473,6 +513,7 @@ def build_form_system_contract_map(
     *,
     root_type: str = ALLOWED_ROOT_TYPE,
     quote_mode: str = ALLOWED_QUOTE_MODE,
+    payload_raw: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a deterministic read-only contract map for the current owner-valid root."""
     canonical_code = _canonicalize_template_code(template_code)
@@ -488,7 +529,7 @@ def build_form_system_contract_map(
             reason=reason,
         )
 
-    fields = deepcopy(FIELDS)
+    fields = _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw)
     readiness = _build_readiness(fields)
     return {
         "contract_version": CONTRACT_VERSION,

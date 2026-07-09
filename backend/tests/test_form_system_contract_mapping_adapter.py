@@ -77,6 +77,69 @@ def test_selected_layer_remains_evidence_without_confirmation() -> None:
     assert field["blockers"] == ["SELECTED_FACE_LAYER_MISSING"]
 
 
+def test_selected_layer_runtime_overlay_reads_persisted_selected_layer_refs() -> None:
+    payload = {
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "face-1",
+                    "layer_id": "face-1",
+                    "layer_name": "face 1",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                }
+            ],
+            "warnings": [],
+        },
+        "svg": {
+            "selected_layer_refs": [
+                {
+                    "layer_id": "face-1",
+                    "role": "vector_litere",
+                    "source": "operator_confirmed_layer_role",
+                    "confirmed": True,
+                }
+            ]
+        },
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["svg.selected_layer_group"]
+
+    assert field["source"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blockers"] == []
+
+
+def test_selected_layer_runtime_overlay_missing_refs_remains_blocked() -> None:
+    payload = {
+        "layer_role_setup": {
+            "confirmation_status": "partial",
+            "layers": [
+                {
+                    "layer_key": "face-1",
+                    "layer_id": "face-1",
+                    "layer_name": "face 1",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": None,
+                    "confirmation_state": "pending",
+                }
+            ],
+            "warnings": [],
+        }
+    }
+
+    model = build_form_system_contract_readonly_mapping(ROOT, payload_raw=payload)
+    field = _by_key(model)["svg.selected_layer_group"]
+
+    assert field["state"] == "blocked"
+    assert field["blockers"] == ["SELECTED_LAYER_REFS_UNCONFIRMED"]
+
+
 def test_no_pricing_quote_or_execution_coupling() -> None:
     model = build_form_system_contract_readonly_mapping(ROOT)
 

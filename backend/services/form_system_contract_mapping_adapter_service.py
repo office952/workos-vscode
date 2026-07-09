@@ -133,9 +133,15 @@ def build_form_system_contract_readonly_mapping(
     field_specs: list[FieldSpec] | None = None,
     root_type: str = "product_template",
     quote_mode: str = "product_total",
+    payload_raw: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build a narrow read-only mapping from the active product root to explicit field contract metadata."""
-    backbone = build_form_system_contract_map(template_code, root_type=root_type, quote_mode=quote_mode)
+    backbone = build_form_system_contract_map(
+        template_code,
+        root_type=root_type,
+        quote_mode=quote_mode,
+        payload_raw=payload_raw,
+    )
     root = deepcopy(backbone["root"])
     if not root.get("allowed"):
         return {
@@ -152,6 +158,17 @@ def build_form_system_contract_readonly_mapping(
         }
 
     entries = [_field_entry(spec) for spec in (field_specs or FIELD_SPECS)]
+    backbone_fields = {field["field_key"]: field for field in backbone.get("fields") or []}
+    selected_layer_runtime = backbone_fields.get("svg.selected_layer_group")
+    if payload_raw is not None and selected_layer_runtime is not None:
+        for entry in entries:
+            if entry["field_key"] != "svg.selected_layer_group":
+                continue
+            entry["source"] = selected_layer_runtime.get("source_type") or entry["source"]
+            entry["state"] = selected_layer_runtime.get("state") or entry["state"]
+            blocker_code = selected_layer_runtime.get("blocker_code")
+            entry["blockers"] = [blocker_code] if blocker_code else []
+            break
     blockers = [
         {
             "field_key": field["field_key"],
