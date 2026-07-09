@@ -8,6 +8,10 @@ const QA_SCREENSHOTS = path.resolve(
   process.cwd(),
   "../docs/qa/product-system-playwright-readonly-smoke-v1/screenshots",
 );
+const FACE_QA_SCREENSHOTS = path.resolve(
+  process.cwd(),
+  "../docs/qa/face-component-truth-workshop-v1/screenshots",
+);
 
 const BUCKET = {
   currentProducts: "product-system-catalog-bucket-current-products",
@@ -34,10 +38,10 @@ const COMPONENT_TEMPLATE_CODES = [
   "TPL-COMP-LETTER-MOUNTING_v1",
 ] as const;
 
-async function saveScreenshot(page: Page, name: string) {
-  await mkdir(QA_SCREENSHOTS, { recursive: true });
+async function saveScreenshot(page: Page, name: string, targetDir = QA_SCREENSHOTS) {
+  await mkdir(targetDir, { recursive: true });
   await page.screenshot({
-    path: path.join(QA_SCREENSHOTS, `${name}.png`),
+    path: path.join(targetDir, `${name}.png`),
     fullPage: false,
   });
 }
@@ -111,6 +115,7 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-template-detail-overview")).toHaveText(/offerable/i);
 
     await saveScreenshot(page, "02_active_root_assertions_visible");
+    await saveScreenshot(page, "06_active_root_offerable_work_intake", FACE_QA_SCREENSHOTS);
 
     await expandBucketIfNeeded(page, BUCKET.candidateProducts, BUCKET_TOGGLE.candidateProducts);
     const logoRow = page.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1");
@@ -128,6 +133,7 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-template-detail-overview")).not.toHaveText(/Work Intake DA/i);
 
     await saveScreenshot(page, "03_logo_candidate_safe");
+    await saveScreenshot(page, "07_logo_not_work_intake_owner_go", FACE_QA_SCREENSHOTS);
 
     await expandBucketIfNeeded(page, BUCKET.componentFirstSets, BUCKET_TOGGLE.componentFirstSets);
     await page.getByTestId("product-system-unified-row-candidate-set").click();
@@ -336,6 +342,43 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
       /No Work Intake exposure/i,
     );
+    await saveScreenshot(page, "08_return_cant_still_intact", FACE_QA_SCREENSHOTS);
+
+    const faceWorkshop = page.getByTestId("product-system-face-truth-workshop");
+    await faceWorkshop.scrollIntoViewIfNeeded();
+    await expect(faceWorkshop).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("product-system-face-truth-readonly-badge")).toHaveText(/READONLY/i);
+    await expect(page.getByTestId("product-system-face-truth-not-ready-pricing-badge")).toHaveText(
+      /NOT READY FOR PRICING/i,
+    );
+    await expect(page.getByTestId("product-system-face-truth-product-truth-blocked")).toHaveText(
+      /Product Truth write blocked/i,
+    );
+    await expect(page.getByTestId("product-system-face-truth-finish-depends-badge")).toHaveText(
+      /FINISH depends on FACE boundary/i,
+    );
+    await expect(page.getByTestId("product-system-face-truth-vector-litere")).toHaveText(/Vector Litere/i);
+    await expect(page.getByTestId("product-system-face-truth-downstream-mp_face_area")).toHaveText(/mp_face_area/i);
+    await expect(page.getByTestId("product-system-face-truth-return-cant-perimeter")).toHaveText(
+      /RETURN-CANT consumes.*perimeter/i,
+    );
+    await expect(page.getByTestId("product-system-face-truth-finish-face-area")).toHaveText(
+      /FINISH consumes mp_face_area/i,
+    );
+    await expect(page.getByTestId("product-system-face-truth-ready-for-pricing")).toHaveText(/Ready for pricing: NO/i);
+    await expect(page.getByTestId("product-system-face-truth-readiness-blockers")).toBeVisible();
+    await expect(page.getByTestId("product-system-face-truth-retired-finish-paths")).toHaveText(
+      /product\.components\.finish\.oracal_code/i,
+    );
+    await expect(page.getByRole("button", { name: /^apply$/i })).toHaveCount(0);
+
+    await saveScreenshot(page, "01_face_workshop_panel", FACE_QA_SCREENSHOTS);
+    await saveScreenshot(page, "02_face_owns_does_not_own", FACE_QA_SCREENSHOTS);
+    await page.getByTestId("product-system-face-truth-geometry-source").scrollIntoViewIfNeeded();
+    await saveScreenshot(page, "03_geometry_downstream_outputs", FACE_QA_SCREENSHOTS);
+    await page.getByTestId("product-system-face-truth-readiness-blockers").scrollIntoViewIfNeeded();
+    await saveScreenshot(page, "04_owner_input_blockers", FACE_QA_SCREENSHOTS);
+    await saveScreenshot(page, "05_no_dangerous_actions", FACE_QA_SCREENSHOTS);
 
     await saveScreenshot(page, "04_component_first_guards_blocked");
 

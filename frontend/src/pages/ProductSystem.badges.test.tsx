@@ -1851,4 +1851,44 @@ describe("ProductSystem design-system badges", () => {
     );
   });
 
+  it("renders FACE Component Truth Workshop readonly panel in guards audit", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-face-truth-workshop")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-face-truth-readonly-badge")).toHaveTextContent("READONLY");
+    expect(screen.getByTestId("product-system-face-truth-not-ready-pricing-badge")).toHaveTextContent(
+      "NOT READY FOR PRICING",
+    );
+    expect(screen.getByTestId("product-system-face-truth-vector-litere")).toHaveTextContent("Vector Litere");
+    expect(screen.getByTestId("product-system-face-truth-downstream-mp_face_area")).toHaveTextContent(
+      "mp_face_area",
+    );
+    expect(screen.getByTestId("product-system-face-truth-return-cant-perimeter")).toHaveTextContent(
+      /RETURN-CANT consumes.*perimeter/i,
+    );
+    expect(screen.getByTestId("product-system-face-truth-finish-face-area")).toHaveTextContent(
+      /FINISH consumes mp_face_area/i,
+    );
+    expect(screen.getByTestId("product-system-face-truth-ready-for-pricing")).toHaveTextContent(
+      "Ready for pricing: NO",
+    );
+    expect(screen.getByTestId("product-system-face-truth-owns")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-face-truth-does-not-own")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-face-truth-readiness-blockers")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-face-truth-retired-finish-paths")).toHaveTextContent(
+      "product.components.finish.oracal_code",
+    );
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^apply$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
+  });
+
 });
