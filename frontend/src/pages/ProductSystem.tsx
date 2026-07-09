@@ -121,6 +121,7 @@ import {
   RefreshCw,
   ScanLine,
   MoreHorizontal,
+  Search,
 } from "lucide-react";
 import {
   Popover,
@@ -3365,6 +3366,7 @@ export default function ProductSystem() {
   const [saving, setSaving] = useState(false);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [catalogSearch, setCatalogSearch] = useState("");
 
   const loadTemplates = useCallback(async (): Promise<ProductTemplateEntity[]> => {
     setLoading(true);
@@ -3678,54 +3680,71 @@ export default function ProductSystem() {
   }, [draft?.id, templates, activeOwnerCount]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       {shouldShowLibraryScreen(screen) ? (
-        <div className="space-y-1" data-testid="product-system-library-header">
-          <div className="flex items-center justify-between gap-2">
+        <div className="space-y-2 rounded-xl border border-slate-800/60 bg-slate-950/20 p-3" data-testid="product-system-library-header">
+          <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <div className="flex min-w-0 items-center gap-2">
               <Link
                 to="/dashboard"
-                className="shrink-0 text-slate-500 hover:text-slate-300 transition-colors"
-                aria-label="Back to Dashboard"
+                className="shrink-0 rounded-md border border-slate-800 p-2 text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
+                aria-label="Înapoi la Dashboard"
               >
-                <ArrowLeft className="h-3.5 w-3.5" />
+                <ArrowLeft className="h-4 w-4" />
               </Link>
-              <h1 className="truncate text-[15px] font-bold leading-tight text-slate-100">Product System Catalog</h1>
-              <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="truncate text-base font-bold leading-tight text-slate-100">Product System</h1>
+                  <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+                </div>
+              </div>
             </div>
-            <div className="flex shrink-0 items-center gap-1">
+
+            <div className="flex min-w-[12rem] flex-1 items-center gap-2 rounded-md border border-slate-800/80 bg-[#0a0f18]/80 px-2.5 py-1.5 lg:max-w-md">
+              <Search className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+              <input
+                type="text"
+                value={catalogSearch}
+                onChange={(event) => setCatalogSearch(event.target.value)}
+                placeholder="Caută cod, familie, descriere…"
+                data-testid="product-system-unified-search"
+                className="w-full bg-transparent text-sm text-slate-200 outline-none placeholder:text-slate-500"
+              />
+            </div>
+
+            <div className="flex shrink-0 items-center gap-1.5">
               <button
                 onClick={loadTemplates}
                 disabled={loading}
                 aria-label="Reîncarcă"
                 data-testid="product-system-reload-icon"
-                className="rounded border border-slate-700 bg-slate-800/80 p-1.5 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
+                className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
               >
-                <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
+                <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </button>
               <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
               <ProductSystemLibraryMoreMenu />
               <button
                 onClick={handleNew}
-                className="flex items-center gap-1 rounded border border-emerald-700/50 bg-emerald-700 px-2 py-1 text-[11px] font-bold text-white transition-colors hover:bg-emerald-600"
+                className="flex items-center gap-1.5 rounded-md border border-emerald-700/50 bg-emerald-700 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-emerald-600"
               >
-                <Plus className="h-3.5 w-3.5" /> Șablon Nou
+                <Plus className="h-4 w-4" /> Șablon nou
               </button>
             </div>
           </div>
           <p
             data-testid="product-system-catalog-overview"
-            className="pl-6 text-[10px] leading-snug text-slate-500"
+            className="text-xs leading-relaxed text-slate-500"
           >
-            Design-time catalog · readonly browse · component-first Letters inactive
+            Catalog de design · inspectare readonly · setul component-first Letters rămâne inactiv
           </p>
           {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
-            <p className="pl-6 text-[10px] text-amber-400/90">
+            <p className="rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">
               {loadMode === "mock"
                 ? "Mod previzualizare — date mock, nu API live."
                 : loadMode === "auth_required"
                   ? "Autentificare necesară pentru șabloane reale."
-                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend."}
+                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend-ul."}
             </p>
           ) : null}
         </div>
@@ -3824,7 +3843,7 @@ export default function ProductSystem() {
             onClick={loadTemplates}
             className="ml-auto text-[11px] text-amber-300 hover:text-amber-200 underline"
           >
-            ReÃ®ncarcÄƒ
+            Reîncarcă
           </button>
         </div>
       )}
@@ -3838,12 +3857,12 @@ export default function ProductSystem() {
             onClick={loadTemplates}
             className="ml-auto text-[11px] text-red-300 hover:text-red-200 underline"
           >
-            ReÃ®ncarcÄƒ
+            Reîncarcă
           </button>
         </div>
       )}
 
-      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-108px)]">
+      <div className="min-h-0 min-w-0 w-full xl:max-h-[calc(100vh-132px)]">
         {shouldShowEditorScreen(screen, draft) && draft ? (
           <TemplateEditor
             key={selectedId ?? (isNew ? "new" : draft.template_code)}
@@ -3868,10 +3887,10 @@ export default function ProductSystem() {
           <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">
             <AlertTriangle className="w-8 h-8 text-amber-400 mx-auto mb-2" />
             <p className="text-[12px] text-amber-300 font-semibold">
-              LipsÄƒ sesiune / autentificare necesarÄƒ pentru API real.
+              Lipsă sesiune / autentificare necesară pentru API real.
             </p>
             <p className="text-[11px] text-amber-400/80 mt-1">
-              ProductSystem nu poate valida È™abloanele reale fÄƒrÄƒ autentificare.
+              Product System nu poate valida șabloanele reale fără autentificare.
             </p>
           </div>
         ) : shouldShowLibraryScreen(screen) ? (
@@ -3881,6 +3900,8 @@ export default function ProductSystem() {
             templates={templates}
             availabilityItems={availabilityItems}
             loading={loading}
+            search={catalogSearch}
+            onSearchChange={setCatalogSearch}
             onOpenTemplate={handleOpenEditor}
           />
         ) : null}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight, MoreHorizontal, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
 import { LETTERS_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "./componentFirstReadonlyCompleteness";
@@ -81,8 +81,8 @@ function rowActionLabels(entry: UnifiedCatalogEntry): {
 } {
   if (entry.kind === "candidate-set") {
     return {
-      open: "Open readonly",
-      settings: "Settings readonly",
+      open: "Open",
+      settings: "Settings",
       dossier: "Dossier",
       components: "Components",
       guards: "Guards",
@@ -90,8 +90,8 @@ function rowActionLabels(entry: UnifiedCatalogEntry): {
   }
   if (entry.bucket === "legacy-shared-modules") {
     return {
-      open: "Open module",
-      settings: "View parent usage",
+      open: "Open",
+      settings: "Settings",
       dossier: "Dossier",
       components: null,
       guards: "Guards",
@@ -106,63 +106,133 @@ function rowActionLabels(entry: UnifiedCatalogEntry): {
   };
 }
 
-function SummaryStrip({ summary }: { summary: UnifiedCatalogSummary }) {
+const SUMMARY_METRICS: Array<{
+  key: keyof UnifiedCatalogSummary;
+  label: string;
+  testId: string;
+  tone?: "default" | "warning";
+}> = [
+  { key: "products", label: "Rădăcini produs", testId: "product-system-summary-products" },
+  { key: "components", label: "Module", testId: "product-system-summary-components" },
+  { key: "candidateSets", label: "Seturi comp-first", testId: "product-system-summary-candidate-sets" },
+  { key: "dossiers", label: "Dosare", testId: "product-system-summary-dossiers" },
+  { key: "blocked", label: "Blocate", testId: "product-system-summary-blocked", tone: "warning" },
+  { key: "archived", label: "Arhivate", testId: "product-system-summary-archived" },
+];
+
+function buildSummaryCompactLine(summary: UnifiedCatalogSummary): string {
+  const parts = [
+    `${summary.products} rădăcini`,
+    `${summary.components} module`,
+    `${summary.candidateSets} comp-first`,
+  ];
+  if (summary.dossiers != null) parts.push(`${summary.dossiers} dosare`);
+  if (summary.blocked != null) parts.push(`${summary.blocked} blocate`);
+  parts.push(`${summary.archived} arhivate`);
+  return parts.join(" · ");
+}
+
+function filterToExpandedBuckets(filter: UnifiedCatalogFilter): UnifiedCatalogBucketId[] {
+  switch (filter) {
+    case "current-products":
+      return ["current-products"];
+    case "candidate-products":
+      return ["candidate-products"];
+    case "component-first-sets":
+      return ["component-first-sets"];
+    case "legacy-modules":
+      return ["legacy-shared-modules"];
+    case "archived":
+      return ["archived"];
+    case "blocked":
+      return UNIFIED_CATALOG_BUCKETS.map((bucket) => bucket.id);
+    default:
+      return [];
+  }
+}
+
+function SummaryMetrics({ summary }: { summary: UnifiedCatalogSummary }) {
   return (
-    <p className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-slate-500">
-      <span>
-        <span className="font-bold tabular-nums text-slate-300">{summary.products}</span> roots
-      </span>
-      <span className="text-slate-700" aria-hidden="true">
-        ·
-      </span>
-      <span>
-        <span className="font-bold tabular-nums text-slate-300">{summary.components}</span> modules
-      </span>
-      <span className="text-slate-700" aria-hidden="true">
-        ·
-      </span>
-      <span>
-        <span className="font-bold tabular-nums text-slate-300">{summary.candidateSets}</span> comp-first
-      </span>
-      {summary.dossiers != null ? (
-        <>
-          <span className="text-slate-700" aria-hidden="true">
-            ·
-          </span>
-          <span>
-            <span className="font-bold tabular-nums text-slate-300">{summary.dossiers}</span> dossiers
-          </span>
-        </>
-      ) : null}
-      {summary.blocked != null ? (
-        <>
-          <span className="text-slate-700" aria-hidden="true">
-            ·
-          </span>
-          <span className="text-amber-300/90">
-            <span className="font-bold tabular-nums">{summary.blocked}</span> blocked
-          </span>
-        </>
-      ) : null}
-      <span className="text-slate-700" aria-hidden="true">
-        ·
-      </span>
-      <span>
-        <span className="font-bold tabular-nums text-slate-300">{summary.archived}</span> archived
-      </span>
-    </p>
+    <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+      {SUMMARY_METRICS.map((metric) => {
+        const rawValue = summary[metric.key];
+        if (metric.key === "dossiers" && rawValue == null) return null;
+        if (metric.key === "blocked" && rawValue == null) return null;
+
+        const value = rawValue ?? 0;
+        const isWarning = metric.tone === "warning" && value > 0;
+
+        return (
+          <div
+            key={metric.key}
+            data-testid={metric.testId}
+            className={`rounded-md border px-2 py-1.5 ${
+              isWarning
+                ? "border-amber-800/40 bg-amber-950/15"
+                : "border-slate-800/80 bg-slate-950/40"
+            }`}
+          >
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">{metric.label}</p>
+            <p
+              className={`mt-0.5 text-base font-bold tabular-nums leading-none ${
+                isWarning ? "text-amber-200" : "text-slate-100"
+              }`}
+            >
+              {value}
+            </p>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
-function CatalogRowPrimaryAction({
+function CollapsibleSummaryBar({ summary }: { summary: UnifiedCatalogSummary }) {
+  const [expanded, setExpanded] = useState(false);
+  const compactLine = buildSummaryCompactLine(summary);
+
+  return (
+    <div data-testid="product-system-summary-bar" data-expanded={expanded ? "true" : "false"}>
+      <button
+        type="button"
+        data-testid="product-system-summary-toggle"
+        onClick={() => setExpanded((current) => !current)}
+        className="flex w-full items-center gap-2 rounded-md border border-slate-800/70 bg-slate-950/30 px-2.5 py-1.5 text-left transition-colors hover:bg-slate-900/40"
+        aria-expanded={expanded}
+      >
+        {expanded ? (
+          <ChevronDown className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+        ) : (
+          <ChevronRight className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+        )}
+        <span className="text-[11px] font-semibold text-slate-400">Statistici catalog</span>
+        {!expanded ? (
+          <span className="min-w-0 flex-1 truncate text-xs text-slate-500">{compactLine}</span>
+        ) : null}
+      </button>
+      {expanded ? <div className="mt-2"><SummaryMetrics summary={summary} /></div> : null}
+    </div>
+  );
+}
+
+function CatalogRowAction({
   label,
   testId,
   onClick,
+  variant = "secondary",
 }: {
   label: string;
   testId: string;
   onClick: () => void;
+  variant?: "primary" | "secondary" | "ghost";
 }) {
+  const className =
+    variant === "primary"
+      ? "border-purple-700/50 bg-purple-950/40 text-purple-100 hover:bg-purple-900/50"
+      : variant === "ghost"
+        ? "border-transparent bg-transparent text-slate-400 hover:border-slate-700 hover:bg-slate-900/60 hover:text-slate-200"
+        : "border-slate-700/80 bg-slate-900/50 text-slate-300 hover:border-slate-600 hover:bg-slate-800/80";
+
   return (
     <button
       type="button"
@@ -171,7 +241,7 @@ function CatalogRowPrimaryAction({
         event.stopPropagation();
         onClick();
       }}
-      className="shrink-0 rounded border border-purple-700/50 bg-purple-950/40 px-1.5 py-0.5 text-[10px] font-bold text-purple-100 hover:bg-purple-900/50"
+      className={`shrink-0 rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors ${className}`}
     >
       {label}
     </button>
@@ -204,21 +274,21 @@ function CatalogRowActionsMenu({
           event.stopPropagation();
           setOpen((current) => !current);
         }}
-        className="shrink-0 rounded border border-slate-800 bg-slate-900/60 p-0.5 text-slate-500 hover:text-slate-300"
-        aria-label="More row actions"
+        className="shrink-0 rounded-md border border-slate-800 bg-slate-900/60 p-1.5 text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
+        aria-label="Mai multe acțiuni"
         aria-expanded={open}
       >
-        <MoreHorizontal className="h-3.5 w-3.5" />
+        <MoreHorizontal className="h-4 w-4" />
       </button>
       {open ? (
         <div
-          className="absolute right-0 top-full z-20 mt-0.5 min-w-[9rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg"
+          className="absolute right-0 top-full z-20 mt-1 min-w-[10rem] rounded-lg border border-slate-800 bg-[#0f172a] p-1.5 shadow-xl"
           onClick={(event) => event.stopPropagation()}
         >
           <button
             type="button"
             data-testid={`${rowTestId}-action-settings`}
-            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            className="block w-full rounded-md px-2.5 py-1.5 text-left text-xs text-slate-200 hover:bg-slate-800"
             onClick={() => {
               onSettings();
               setOpen(false);
@@ -226,22 +296,11 @@ function CatalogRowActionsMenu({
           >
             {actions.settings}
           </button>
-          <button
-            type="button"
-            data-testid={`${rowTestId}-action-dossier`}
-            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
-            onClick={() => {
-              onDossier();
-              setOpen(false);
-            }}
-          >
-            {actions.dossier}
-          </button>
           {actions.components ? (
             <button
               type="button"
               data-testid={`${rowTestId}-action-components`}
-              className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+              className="block w-full rounded-md px-2.5 py-1.5 text-left text-xs text-slate-200 hover:bg-slate-800"
               onClick={() => {
                 onComponents();
                 setOpen(false);
@@ -253,7 +312,7 @@ function CatalogRowActionsMenu({
           <button
             type="button"
             data-testid={`${rowTestId}-action-guards`}
-            className="block w-full rounded px-2 py-1 text-left text-[11px] text-slate-200 hover:bg-slate-800"
+            className="block w-full rounded-md px-2.5 py-1.5 text-left text-xs text-slate-200 hover:bg-slate-800"
             onClick={() => {
               onGuards();
               setOpen(false);
@@ -307,32 +366,52 @@ function UnifiedCatalogRow({
       }}
       role="listitem"
       tabIndex={0}
-      className={`cursor-pointer rounded-md border px-2 py-1 transition-colors ${
+      className={`cursor-pointer rounded-xl border px-3 py-3 transition-all ${
         selected
-          ? "border-slate-600/80 bg-slate-900/70 ring-1 ring-purple-500/15"
-          : "border-slate-800/70 bg-[#111827]/60 hover:border-slate-700 hover:bg-slate-900/40"
+          ? "border-purple-500/40 bg-slate-900/80 shadow-[0_0_0_1px_rgba(168,85,247,0.12)]"
+          : "border-slate-800/70 bg-[#111827]/50 hover:border-slate-700 hover:bg-slate-900/50"
       }`}
     >
-      <div className="flex items-center gap-2">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0">
-            <p className="text-[12px] font-bold leading-tight text-slate-100">{entry.name}</p>
-            <p className="font-mono text-[9px] text-slate-600">{entry.templateCode}</p>
+      <div className="flex items-start gap-3">
+        <div className="min-w-0 flex-1 space-y-2">
+          <div>
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+              <p className="text-sm font-semibold leading-snug text-slate-100">{entry.name}</p>
+              <p className="font-mono text-[11px] text-slate-500">{entry.templateCode}</p>
+            </div>
+            {entry.metadata ? (
+              <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-slate-500">{entry.metadata}</p>
+            ) : null}
           </div>
-          <div className="mt-0.5 flex flex-wrap gap-0.5">
-            <span className="rounded border border-slate-800 bg-slate-950/80 px-1 py-px text-[9px] font-bold uppercase text-slate-500">
+          <div className="flex flex-wrap gap-1.5">
+            <span className="rounded-md border border-slate-800 bg-slate-950/80 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-slate-500">
               {entry.entityType}
             </span>
-            <span className={`rounded border px-1 py-px text-[9px] font-bold ${theme.badge}`}>{entry.lifecycleLabel}</span>
+            <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${theme.badge}`}>
+              {entry.lifecycleLabel}
+            </span>
             {entry.isBlocked ? (
-              <span className="rounded border border-amber-800/40 bg-amber-950/25 px-1 py-px text-[9px] font-bold text-amber-200/90">
+              <span className="rounded-md border border-amber-800/40 bg-amber-950/25 px-2 py-0.5 text-[10px] font-bold text-amber-200/90">
                 Owner GO
               </span>
             ) : null}
           </div>
         </div>
-        <div className="flex shrink-0 items-center gap-1" onClick={(event) => event.stopPropagation()}>
-          <CatalogRowPrimaryAction label={actions.open} testId={`${rowTestId}-action-open`} onClick={onOpen} />
+        <div className="flex shrink-0 flex-col items-end gap-1.5 sm:flex-row sm:items-center" onClick={(event) => event.stopPropagation()}>
+          <div className="flex items-center gap-1.5">
+            <CatalogRowAction
+              label={actions.open}
+              testId={`${rowTestId}-action-open`}
+              onClick={onOpen}
+              variant="primary"
+            />
+            <CatalogRowAction
+              label={actions.dossier}
+              testId={`${rowTestId}-action-dossier`}
+              onClick={onDossier}
+              variant="ghost"
+            />
+          </div>
           <CatalogRowActionsMenu
             rowTestId={rowTestId}
             actions={actions}
@@ -375,27 +454,32 @@ function CatalogBucketSection({
     <section
       data-testid={group.bucket.testId}
       data-expanded={expanded ? "true" : "false"}
-      className="overflow-hidden rounded-md border border-slate-800/70 bg-slate-950/10"
+      className={`overflow-hidden rounded-xl border ${theme.header}`}
     >
       <button
         type="button"
         data-testid={group.bucket.toggleTestId}
         onClick={onToggle}
-        className="flex w-full items-center justify-between gap-2 px-2 py-1 text-left hover:bg-slate-900/35"
+        className="flex w-full items-start justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-slate-900/25"
       >
-        <span className="flex min-w-0 items-center gap-1.5">
+        <span className="flex min-w-0 items-start gap-2.5">
           {expanded ? (
-            <ChevronDown className="h-3 w-3 shrink-0 text-slate-500" />
+            <ChevronDown className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
           ) : (
-            <ChevronRight className="h-3 w-3 shrink-0 text-slate-500" />
+            <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-slate-500" />
           )}
-          <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${theme.dot}`} aria-hidden="true" />
-          <span className="truncate text-[11px] font-bold text-slate-200">{group.bucket.label}</span>
+          <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${theme.dot}`} aria-hidden="true" />
+          <span className="min-w-0">
+            <span className="block text-sm font-semibold text-slate-100">{group.bucket.label}</span>
+            <span className="mt-0.5 block text-xs leading-relaxed text-slate-500">{group.bucket.description}</span>
+          </span>
         </span>
-        <span className="shrink-0 text-[9px] font-bold tabular-nums text-slate-500">{group.entries.length}</span>
+        <span className="shrink-0 rounded-full border border-slate-800 bg-slate-950/60 px-2 py-0.5 text-[11px] font-bold tabular-nums text-slate-400">
+          {group.entries.length}
+        </span>
       </button>
       {expanded ? (
-        <div className="space-y-1 border-t border-slate-800/60 px-1.5 py-1">
+        <div className="space-y-2 border-t border-slate-800/60 px-3 py-3">
           {group.entries.map((entry) => (
             <UnifiedCatalogRow
               key={entry.id}
@@ -421,6 +505,8 @@ type ProductSystemUnifiedCatalogProps = {
   availabilityItems: ProductTemplateAvailabilityItem[];
   summary: UnifiedCatalogSummary;
   loading: boolean;
+  search?: string;
+  onSearchChange?: (value: string) => void;
   onOpenTemplate: (template: ProductTemplateEntity) => void;
 };
 
@@ -430,10 +516,14 @@ export function ProductSystemUnifiedCatalog({
   availabilityItems,
   summary,
   loading,
+  search: searchProp,
+  onSearchChange,
   onOpenTemplate,
 }: ProductSystemUnifiedCatalogProps) {
+  const [internalSearch, setInternalSearch] = useState("");
+  const search = searchProp ?? internalSearch;
+  const setSearch = onSearchChange ?? setInternalSearch;
   const [filter, setFilter] = useState<UnifiedCatalogFilter>("all");
-  const [search, setSearch] = useState("");
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
   const [templateDetailSection, setTemplateDetailSection] = useState<UnifiedCatalogDetailSection>("overview");
   const [candidateDetailSection, setCandidateDetailSection] = useState<
@@ -469,11 +559,38 @@ export function ProductSystemUnifiedCatalog({
     if (lettersEntry) {
       setSelectedEntryId(lettersEntry.id);
       setTemplateDetailSection("overview");
+      setBucketExpanded((current) => ({ ...current, "current-products": true }));
     }
   }, [entries, loading, selectedEntryId]);
 
+  useEffect(() => {
+    const bucketsForFilter = filterToExpandedBuckets(filter);
+    if (bucketsForFilter.length === 0) return;
+    setBucketExpanded((current) => {
+      const next = { ...current };
+      for (const bucketId of bucketsForFilter) {
+        next[bucketId] = true;
+      }
+      return next;
+    });
+  }, [filter]);
+
+  useEffect(() => {
+    if (!search.trim()) return;
+    const bucketsWithMatches = new Set(filteredEntries.map((entry) => entry.bucket));
+    if (bucketsWithMatches.size === 0) return;
+    setBucketExpanded((current) => {
+      const next = { ...current };
+      bucketsWithMatches.forEach((bucketId) => {
+        next[bucketId] = true;
+      });
+      return next;
+    });
+  }, [search, filteredEntries]);
+
   const selectEntry = (entry: UnifiedCatalogEntry) => {
     setSelectedEntryId(entry.id);
+    setBucketExpanded((current) => ({ ...current, [entry.bucket]: true }));
     if (entry.kind === "template" && entry.template && entry.availability) {
       setTemplateDetailSection(defaultTemplateDetailSection(entry.isProduct));
     } else if (entry.kind === "candidate-set") {
@@ -519,39 +636,27 @@ export function ProductSystemUnifiedCatalog({
   };
 
   return (
-    <div className="space-y-2" data-testid="product-system-unified-catalog" data-layout="compact">
+    <div className="space-y-4" data-testid="product-system-unified-catalog" data-layout="comfortable">
       {catalogOverview ?? null}
 
       <section
-        data-testid="product-system-compact-toolbar"
-        className="rounded-md border border-slate-800/70 bg-slate-950/15 px-2 py-1.5"
+        data-testid="product-system-catalog-toolbar"
+        className="space-y-2 rounded-xl border border-slate-800/70 bg-slate-950/20 px-3 py-2"
       >
-        <div data-testid="product-system-summary-bar">
-          <SummaryStrip summary={summary} />
-        </div>
+        <CollapsibleSummaryBar summary={summary} />
+
         <div
+          className="min-w-0 overflow-x-auto xl:overflow-visible"
           data-testid="product-system-unified-search-filter"
-          className="mt-1 flex min-w-0 items-center gap-2"
         >
-          <div className="flex w-44 shrink-0 items-center gap-1.5 rounded border border-slate-800/80 bg-[#0a0f18]/80 px-2 py-1 sm:w-52">
-            <Search className="h-3 w-3 shrink-0 text-slate-600" />
-            <input
-              type="text"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search…"
-              data-testid="product-system-unified-search"
-              className="w-full bg-transparent text-[11px] text-slate-200 outline-none placeholder:text-slate-600"
-            />
-          </div>
           <div
-            className="min-w-0 flex-1 overflow-x-auto scrollbar-thin"
+            className="min-w-0 overflow-x-auto xl:overflow-visible"
             data-testid="product-system-unified-filter-chips-scroll"
           >
             <div
-              className="flex w-max flex-nowrap gap-1 pr-1"
+              className="flex w-max flex-nowrap gap-1.5 pr-1 xl:w-auto xl:flex-wrap"
               role="group"
-              aria-label="Catalog filters"
+              aria-label="Filtre catalog"
               data-testid="product-system-unified-filter-chips"
             >
               {UNIFIED_CATALOG_FILTERS.map((chip) => {
@@ -563,10 +668,10 @@ export function ProductSystemUnifiedCatalog({
                     data-testid={chip.testId}
                     aria-pressed={active}
                     onClick={() => setFilter(chip.id)}
-                    className={`shrink-0 rounded border px-2 py-0.5 text-[10px] font-bold transition-colors ${
+                    className={`shrink-0 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors ${
                       active
                         ? "border-purple-600/50 bg-purple-950/30 text-purple-100"
-                        : "border-slate-800 bg-slate-900/50 text-slate-500 hover:text-slate-300"
+                        : "border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700 hover:text-slate-200"
                     }`}
                   >
                     {chip.label}
@@ -578,18 +683,24 @@ export function ProductSystemUnifiedCatalog({
         </div>
       </section>
 
-      <div className="grid gap-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)] xl:items-start">
-        <section data-testid="product-system-unified-results-list" className="space-y-1" role="list">
-          <div className="flex items-center justify-between gap-2 px-0.5">
-            <h2 className="text-[10px] font-bold uppercase tracking-wide text-slate-500">Catalog buckets</h2>
-            <span className="text-[9px] font-bold tabular-nums text-slate-600">{filteredEntries.length}</span>
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,0.44fr)_minmax(0,0.56fr)] xl:items-start">
+        <section data-testid="product-system-unified-results-list" className="space-y-3" role="list">
+          <div className="flex items-end justify-between gap-3 px-1">
+            <div>
+              <h2 className="text-sm font-semibold text-slate-200">Catalog pe categorii</h2>
+              <p className="mt-0.5 text-xs text-slate-500">Selectează o intrare pentru detalii în panoul din dreapta.</p>
+            </div>
+            <span className="rounded-full border border-slate-800 bg-slate-950/60 px-2.5 py-1 text-[11px] font-bold tabular-nums text-slate-400">
+              {filteredEntries.length}
+            </span>
           </div>
           {loading ? (
-            <p className="px-0.5 text-[10px] text-slate-600">Se încarcă catalogul…</p>
+            <p className="px-1 text-sm text-slate-500">Se încarcă catalogul…</p>
           ) : bucketGroups.length === 0 ? (
-            <p className="rounded-md border border-dashed border-slate-800 px-2 py-3 text-[11px] text-slate-500">
-              Niciun rezultat pentru filtrele curente.
-            </p>
+            <div className="rounded-xl border border-dashed border-slate-800 px-4 py-8 text-center">
+              <p className="text-sm font-medium text-slate-300">Niciun rezultat</p>
+              <p className="mt-1 text-xs text-slate-500">Încearcă alt filtru sau șterge textul din căutare.</p>
+            </div>
           ) : (
             bucketGroups.map((group) => (
               <CatalogBucketSection
@@ -609,10 +720,15 @@ export function ProductSystemUnifiedCatalog({
 
         <section
           data-testid="product-system-detail-panel"
-          className="min-h-[14rem] rounded-md border border-slate-800/70 bg-slate-950/15 px-2 py-1.5 xl:sticky xl:top-2 xl:max-h-[calc(100vh-140px)] xl:overflow-y-auto"
+          className="min-h-[22rem] rounded-xl border border-slate-800/70 bg-slate-950/20 p-4 xl:sticky xl:top-3 xl:max-h-[calc(100vh-148px)] xl:overflow-y-auto"
         >
           {!selectedEntry ? (
-            <p className="py-6 text-center text-[11px] text-slate-600">Selectează o intrare pentru detail.</p>
+            <div className="flex h-full min-h-[18rem] flex-col items-center justify-center px-4 text-center">
+              <p className="text-sm font-medium text-slate-300">Nicio intrare selectată</p>
+              <p className="mt-1 max-w-xs text-xs leading-relaxed text-slate-500">
+                Alege un produs, modul sau set component-first din listă pentru a vedea context, compoziție și garduri.
+              </p>
+            </div>
           ) : selectedEntry.kind === "candidate-set" ? (
             <div data-testid="product-system-candidate-sets">
               <ComponentFirstReadonlyCandidatePanel

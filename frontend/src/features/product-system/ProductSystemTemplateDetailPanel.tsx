@@ -11,19 +11,19 @@ import type {
 } from "./productSystemUnifiedCatalogTypes";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
-  { id: "overview", label: "Overview", testId: "product-system-template-detail-tab-overview" },
-  { id: "composition", label: "Composition", testId: "product-system-template-detail-tab-composition" },
-  { id: "components", label: "Components", testId: "product-system-template-detail-tab-components" },
+  { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
+  { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
+  { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
   { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
-  { id: "guards", label: "Guards", testId: "product-system-template-detail-tab-guards" },
+  { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
 ];
 
 const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
-  { id: "overview", label: "Overview", testId: "product-system-template-detail-tab-overview" },
+  { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
-  { id: "fields", label: "Fields", testId: "product-system-template-detail-tab-fields" },
-  { id: "product-truth-paths", label: "Product Truth paths", testId: "product-system-template-detail-tab-product-truth-paths" },
-  { id: "guards", label: "Guards", testId: "product-system-template-detail-tab-guards" },
+  { id: "fields", label: "Câmpuri", testId: "product-system-template-detail-tab-fields" },
+  { id: "product-truth-paths", label: "Product Truth", testId: "product-system-template-detail-tab-product-truth-paths" },
+  { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
 ];
 
 function bucketOverviewCopy(
@@ -35,33 +35,33 @@ function bucketOverviewCopy(
 
   if (templateCode === LETTERS_TEMPLATE_CODE || bucket === "current-products") {
     return {
-      headline: "Current active root · Used today",
+      headline: "Rădăcină activă · folosită azi",
       bullets: [
-        "Offerable product root currently used in Work Intake.",
-        "Composition uses legacy shared modules — not component-first TPL-COMP-*.",
-        "Separate from component-first Letters Candidate set.",
+        "Produs ofertabil folosit în Work Intake.",
+        "Compoziția folosește module legacy partajate — nu TPL-COMP-* component-first.",
+        "Separat de setul candidate component-first Letters.",
       ],
     };
   }
 
   if (templateCode === LOGO_TEMPLATE_CODE || bucket === "candidate-products") {
     return {
-      headline: "Candidate product · Not Work Intake",
+      headline: "Produs candidate · fără Work Intake",
       bullets: [
-        "Requires owner GO before any direct root / offerable path.",
-        "Linked / analyzer composition only — no Logo activation from catalog.",
-        "Not a component-first Product Composer.",
+        "Necesită decizie owner înainte de orice cale directă ofertabilă.",
+        "Doar compoziție linked / analyzer — fără activare Logo din catalog.",
+        "Nu este un Product Composer component-first.",
       ],
     };
   }
 
   if (bucket === "legacy-shared-modules") {
     return {
-      headline: "Legacy internal module",
+      headline: "Modul intern legacy",
       bullets: [
-        "Used by parent product composition — not a standalone quoteable root.",
-        "Not a component-first TPL-COMP-* template.",
-        "Readonly readiness contract in catalog — not runtime execution.",
+        "Folosit de compoziția produsului părinte — nu e rădăcină ofertabilă standalone.",
+        "Nu este template component-first TPL-COMP-*.",
+        "Contract readonly de readiness în catalog — nu execuție runtime.",
       ],
     };
   }
@@ -96,16 +96,16 @@ export function ProductSystemTemplateDetailPanel({
   const scope = getProductTemplateScopePresentation(availability);
 
   return (
-    <div data-testid="product-system-template-detail-panel" className="space-y-1.5">
-      <div className="flex flex-wrap items-start gap-2 border-b border-slate-800/70 pb-1.5">
+    <div data-testid="product-system-template-detail-panel" className="space-y-4">
+      <div className="flex flex-wrap items-start gap-3 border-b border-slate-800/70 pb-4">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0">
-            <p className="text-[12px] font-bold text-slate-100">{template.family_name || template.template_code}</p>
-            <p className="font-mono text-[9px] text-slate-600">{template.template_code}</p>
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <p className="text-base font-semibold text-slate-100">{template.family_name || template.template_code}</p>
+            <p className="font-mono text-xs text-slate-500">{template.template_code}</p>
           </div>
           <p
             data-testid="product-system-template-detail-bucket-headline"
-            className="mt-0.5 text-[10px] font-semibold text-slate-400"
+            className="mt-1 text-sm text-slate-400"
           >
             {overview.headline}
           </p>
@@ -114,11 +114,11 @@ export function ProductSystemTemplateDetailPanel({
           domain="productSystem"
           status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
           label={scope.catalogStatusLabel}
-          className="shrink-0 text-[9px] uppercase"
+          className="shrink-0 text-[10px] uppercase"
         />
       </div>
 
-      <div className="flex flex-wrap gap-0.5" role="tablist" aria-label="Template detail sections">
+      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Secțiuni detaliu șablon">
         {sections.map((tab) => (
           <button
             key={tab.id}
@@ -127,7 +127,7 @@ export function ProductSystemTemplateDetailPanel({
             aria-selected={section === tab.id}
             data-testid={tab.testId}
             onClick={() => onSectionChange(tab.id)}
-            className={`rounded px-2 py-0.5 text-[10px] font-bold transition-colors ${
+            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
               section === tab.id
                 ? "bg-purple-950/40 text-purple-100 ring-1 ring-purple-700/30"
                 : "text-slate-500 hover:bg-slate-900/60 hover:text-slate-300"
@@ -141,31 +141,33 @@ export function ProductSystemTemplateDetailPanel({
       {section === "overview" ? (
         <section
           data-testid="product-system-template-detail-overview"
-          className="space-y-1.5 rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-200"
+          className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
         >
-          <div className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px]">
+          <div className="grid gap-2 sm:grid-cols-2">
             <p>
               <span className="text-slate-500">Work Intake:</span> {scope.workIntakeLabel}
             </p>
             <p>
-              <span className="text-slate-500">Usage:</span> {scope.usageModeLabel}
+              <span className="text-slate-500">Utilizare:</span> {scope.usageModeLabel}
             </p>
           </div>
           {availability.owner_decision_required ? (
-            <p className="text-[10px] text-amber-200/90">Owner decision required — not offerable as direct root.</p>
+            <p className="rounded-lg border border-amber-800/30 bg-amber-950/20 px-3 py-2 text-sm text-amber-200/90">
+              Necesită decizie owner — nu e ofertabil ca rădăcină directă.
+            </p>
           ) : null}
           {rowMetadata ? (
-            <p className="line-clamp-2 text-[10px] text-slate-500">{rowMetadata}</p>
+            <p className="line-clamp-3 text-sm leading-relaxed text-slate-500">{rowMetadata}</p>
           ) : null}
-          <details className="text-[10px] text-slate-400">
-            <summary className="cursor-pointer select-none text-slate-500 hover:text-slate-300">More context</summary>
-            <ul className="mt-1 space-y-0.5 pl-3">
+          <details className="text-sm text-slate-400">
+            <summary className="cursor-pointer select-none text-slate-500 hover:text-slate-300">Mai mult context</summary>
+            <ul className="mt-2 space-y-1.5 pl-4">
               {overview.bullets.map((bullet) => (
                 <li key={bullet}>{bullet}</li>
               ))}
             </ul>
             {catalogBucket === "legacy-shared-modules" ? (
-              <p className="mt-1 pl-3">Legacy shared module contract — not component-first.</p>
+              <p className="mt-2 pl-4">Contract modul legacy partajat — nu component-first.</p>
             ) : null}
           </details>
         </section>
@@ -174,20 +176,20 @@ export function ProductSystemTemplateDetailPanel({
       {section === "composition" && isProduct ? (
         <section
           data-testid="product-system-template-detail-composition"
-          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-200"
+          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
         >
           {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
-            <p className="text-slate-500">No composition modules exposed in availability.</p>
+            <p className="text-slate-500">Niciun modul de compoziție expus în availability.</p>
           ) : (
-            <ul className="space-y-0.5">
+            <ul className="space-y-2">
               {availability.composition_modules.map((module) => (
-                <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-[10px]">
+                <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-xs">
                   {module.role_label}: {module.module_template_code} · {module.status_label}
                 </li>
               ))}
               {availability.shared_component_contracts.map((contract) => (
-                <li key={contract.component_key} className="font-mono text-[10px]">
-                  {contract.display_name}: {contract.module_template_code} · legacy shared module
+                <li key={contract.component_key} className="font-mono text-xs">
+                  {contract.display_name}: {contract.module_template_code} · modul legacy partajat
                 </li>
               ))}
             </ul>
@@ -198,35 +200,35 @@ export function ProductSystemTemplateDetailPanel({
       {section === "components" && isProduct ? (
         <section
           data-testid="product-system-template-detail-components"
-          className="overflow-hidden rounded border border-slate-800/70"
+          className="overflow-hidden rounded-xl border border-slate-800/70"
         >
-          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/70 bg-slate-950/30 px-2 py-1 text-[9px] font-bold uppercase text-slate-500">
-            <span>Role</span>
-            <span>Module code</span>
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/70 bg-slate-950/30 px-4 py-2.5 text-[11px] font-bold uppercase text-slate-500">
+            <span>Rol</span>
+            <span>Cod modul</span>
             <span>Status</span>
           </div>
           {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
-            <p className="px-2 py-2 text-[10px] text-slate-500">No linked components in composition.</p>
+            <p className="px-4 py-4 text-sm text-slate-500">Nicio componentă legată în compoziție.</p>
           ) : (
             <>
               {availability.composition_modules.map((module) => (
                 <div
                   key={`${module.role_key}-${module.module_template_code}`}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/50 px-2 py-1 text-[10px] text-slate-200 last:border-b-0"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/50 px-4 py-2.5 text-sm text-slate-200 last:border-b-0"
                 >
                   <span>{module.role_label}</span>
-                  <span className="font-mono text-[9px] text-slate-400">{module.module_template_code}</span>
-                  <span className="text-[9px] text-slate-500">{module.status_label}</span>
+                  <span className="font-mono text-xs text-slate-400">{module.module_template_code}</span>
+                  <span className="text-xs text-slate-500">{module.status_label}</span>
                 </div>
               ))}
               {availability.shared_component_contracts.map((contract) => (
                 <div
                   key={contract.component_key}
-                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-2 border-b border-slate-800/50 px-2 py-1 text-[10px] text-slate-200 last:border-b-0"
+                  className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/50 px-4 py-2.5 text-sm text-slate-200 last:border-b-0"
                 >
                   <span>{contract.display_name}</span>
-                  <span className="font-mono text-[9px] text-slate-400">{contract.module_template_code}</span>
-                  <span className="text-[9px] text-slate-500">legacy module</span>
+                  <span className="font-mono text-xs text-slate-400">{contract.module_template_code}</span>
+                  <span className="text-xs text-slate-500">modul legacy</span>
                 </div>
               ))}
             </>
@@ -237,16 +239,16 @@ export function ProductSystemTemplateDetailPanel({
       {section === "dossier" ? (
         <section
           data-testid="product-system-template-detail-dossier"
-          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
+          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
         >
-          <p>Readonly readiness contract — dossier lives in template editor.</p>
+          <p>Contract readonly de readiness — dossier-ul complet trăiește în editorul de șablon.</p>
           <button
             type="button"
             data-testid="product-system-template-detail-open-editor"
             onClick={onOpenEditor}
-            className="mt-1.5 rounded border border-purple-800/40 bg-purple-950/30 px-2 py-0.5 text-[10px] font-bold text-purple-200"
+            className="mt-3 rounded-md border border-purple-800/40 bg-purple-950/30 px-3 py-1.5 text-xs font-semibold text-purple-200 transition-colors hover:bg-purple-900/30"
           >
-            Open template
+            Deschide șablonul
           </button>
         </section>
       ) : null}
@@ -254,11 +256,11 @@ export function ProductSystemTemplateDetailPanel({
       {section === "fields" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-fields"
-          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
+          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
         >
-          <p>Legacy module fields configured in Product System editor.</p>
-          <p className="mt-1 font-mono text-[10px] text-slate-500">
-            Parents:{" "}
+          <p>Câmpurile modulului legacy se configurează în editorul Product System.</p>
+          <p className="mt-2 font-mono text-xs text-slate-500">
+            Părinți:{" "}
             {(availability.parent_product_codes.length > 0
               ? availability.parent_product_codes
               : availability.parent_codes
@@ -270,28 +272,28 @@ export function ProductSystemTemplateDetailPanel({
       {section === "product-truth-paths" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-product-truth-paths"
-          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
+          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
         >
-          <p>Product Truth paths owned by parent product composition.</p>
-          <p className="mt-1 text-[10px] text-slate-500">Readonly catalog view — no Product Truth write.</p>
+          <p>Căile Product Truth sunt deținute de compoziția produsului părinte.</p>
+          <p className="mt-2 text-sm text-slate-500">Vizualizare readonly în catalog — fără scriere Product Truth.</p>
         </section>
       ) : null}
 
       {section === "guards" ? (
         <section
           data-testid="product-system-template-detail-guards"
-          className="rounded border border-slate-800/70 bg-[#0D1321]/50 px-2 py-1.5 text-[11px] text-slate-300"
+          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
         >
           <p>
             <span className="text-slate-500">Status:</span> {availability.status}
           </p>
-          <p className="mt-0.5">
-            <span className="text-slate-500">Reason:</span> {availability.status_reason}
+          <p className="mt-1">
+            <span className="text-slate-500">Motiv:</span> {availability.status_reason}
           </p>
-          <details className="mt-1 text-[10px] text-slate-500">
-            <summary className="cursor-pointer select-none hover:text-slate-400">Readiness detail</summary>
-            <p className="mt-0.5">{availability.readiness_reason}</p>
-            <p className="mt-0.5">Readonly · Not runtime · No Pricing / Quote / Order / Execution.</p>
+          <details className="mt-3 text-sm text-slate-500">
+            <summary className="cursor-pointer select-none hover:text-slate-400">Detaliu readiness</summary>
+            <p className="mt-1">{availability.readiness_reason}</p>
+            <p className="mt-1">Readonly · Nu runtime · Fără Pricing / Quote / Order / Execution.</p>
           </details>
         </section>
       ) : null}

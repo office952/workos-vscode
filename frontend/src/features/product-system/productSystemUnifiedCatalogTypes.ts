@@ -21,18 +21,19 @@ export const UNIFIED_CATALOG_FILTERS: Array<{
   label: string;
   testId: string;
 }> = [
-  { id: "all", label: "All", testId: "product-system-filter-all" },
-  { id: "current-products", label: "Current products", testId: "product-system-filter-current-products" },
-  { id: "candidate-products", label: "Candidate products", testId: "product-system-filter-candidate-products" },
-  { id: "component-first-sets", label: "Component-first sets", testId: "product-system-filter-component-first-sets" },
-  { id: "legacy-modules", label: "Legacy modules", testId: "product-system-filter-legacy-modules" },
-  { id: "archived", label: "Archived", testId: "product-system-filter-archived" },
-  { id: "blocked", label: "Blocked / Owner GO", testId: "product-system-filter-blocked" },
+  { id: "all", label: "Toate", testId: "product-system-filter-all" },
+  { id: "current-products", label: "Produse active", testId: "product-system-filter-current-products" },
+  { id: "candidate-products", label: "Produse candidate", testId: "product-system-filter-candidate-products" },
+  { id: "component-first-sets", label: "Seturi component-first", testId: "product-system-filter-component-first-sets" },
+  { id: "legacy-modules", label: "Module legacy", testId: "product-system-filter-legacy-modules" },
+  { id: "archived", label: "Arhivate", testId: "product-system-filter-archived" },
+  { id: "blocked", label: "Blocate / Owner GO", testId: "product-system-filter-blocked" },
 ];
 
 export const UNIFIED_CATALOG_BUCKETS: Array<{
   id: UnifiedCatalogBucketId;
   label: string;
+  description: string;
   testId: string;
   toggleTestId: string;
   defaultExpanded: boolean;
@@ -40,31 +41,35 @@ export const UNIFIED_CATALOG_BUCKETS: Array<{
 }> = [
   {
     id: "current-products",
-    label: "Current Products / Active Roots",
+    label: "Produse active",
+    description: "Rădăcini folosite azi în Work Intake și ofertare.",
     testId: "product-system-catalog-bucket-current-products",
     toggleTestId: "product-system-catalog-bucket-toggle-current-products",
-    defaultExpanded: true,
+    defaultExpanded: false,
     order: 1,
   },
   {
     id: "candidate-products",
-    label: "Candidate Products",
+    label: "Produse candidate",
+    description: "Necesită decizie owner înainte de expunere directă.",
     testId: "product-system-catalog-bucket-candidate-products",
     toggleTestId: "product-system-catalog-bucket-toggle-candidate-products",
-    defaultExpanded: true,
+    defaultExpanded: false,
     order: 2,
   },
   {
     id: "component-first-sets",
-    label: "Component-first Candidate Sets",
+    label: "Seturi component-first",
+    description: "Inspectare readonly — fără activare sau Work Intake.",
     testId: "product-system-catalog-bucket-component-first-sets",
     toggleTestId: "product-system-catalog-bucket-toggle-component-first-sets",
-    defaultExpanded: true,
+    defaultExpanded: false,
     order: 3,
   },
   {
     id: "legacy-shared-modules",
-    label: "Legacy Shared Modules",
+    label: "Module legacy partajate",
+    description: "Componente interne folosite de compoziția produsului părinte.",
     testId: "product-system-catalog-bucket-legacy-shared-modules",
     toggleTestId: "product-system-catalog-bucket-toggle-legacy-shared-modules",
     defaultExpanded: false,
@@ -72,7 +77,8 @@ export const UNIFIED_CATALOG_BUCKETS: Array<{
   },
   {
     id: "archived",
-    label: "Archived / Experimental",
+    label: "Arhivate / experimentale",
+    description: "Șabloane retrase din fluxul curent de ofertare.",
     testId: "product-system-catalog-bucket-archived",
     toggleTestId: "product-system-catalog-bucket-toggle-archived",
     defaultExpanded: false,
@@ -120,27 +126,33 @@ export type UnifiedCatalogBucketGroup = {
 export type UnifiedCatalogBucketTheme = {
   dot: string;
   badge: string;
+  header: string;
 };
 
 export const UNIFIED_CATALOG_BUCKET_THEMES: Record<UnifiedCatalogBucketId, UnifiedCatalogBucketTheme> = {
   "current-products": {
-    dot: "bg-emerald-400/80",
+    dot: "bg-emerald-400",
     badge: "border-emerald-800/40 bg-emerald-950/25 text-emerald-200/90",
+    header: "border-emerald-900/30 bg-emerald-950/10",
   },
   "candidate-products": {
-    dot: "bg-amber-400/80",
+    dot: "bg-amber-400",
     badge: "border-amber-800/40 bg-amber-950/25 text-amber-200/90",
+    header: "border-amber-900/30 bg-amber-950/10",
   },
   "component-first-sets": {
-    dot: "bg-cyan-400/80",
+    dot: "bg-cyan-400",
     badge: "border-cyan-800/40 bg-cyan-950/25 text-cyan-200/90",
+    header: "border-cyan-900/30 bg-cyan-950/10",
   },
   "legacy-shared-modules": {
-    dot: "bg-slate-500/80",
+    dot: "bg-slate-500",
     badge: "border-slate-700/60 bg-slate-900/60 text-slate-400",
+    header: "border-slate-800/80 bg-slate-950/20",
   },
   archived: {
-    dot: "bg-zinc-500/70",
+    dot: "bg-zinc-500",
     badge: "border-slate-700/60 bg-slate-900/60 text-slate-400",
+    header: "border-slate-800/80 bg-slate-950/20",
   },
 };

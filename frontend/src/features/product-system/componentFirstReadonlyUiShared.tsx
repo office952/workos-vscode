@@ -38,11 +38,11 @@ export function ComponentFirstStatusStrip({
   return (
     <div
       data-testid={`${testIdPrefix}-status-strip`}
-      className="sticky top-0 z-10 flex flex-wrap gap-1.5 rounded-lg border border-cyan-900/50 bg-[#0A0F1A]/95 px-2.5 py-2 text-[10px] font-bold backdrop-blur-sm"
+      className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-xl border border-cyan-900/50 bg-[#0A0F1A]/95 px-3 py-2.5 text-xs font-semibold backdrop-blur-sm"
     >
-      <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">INACTIVE</span>
-      <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">CANDIDATE</span>
-      <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">READONLY</span>
+      <span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2.5 py-1 text-cyan-200">INACTIVE</span>
+      <span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2.5 py-1 text-cyan-200">CANDIDATE</span>
+      <span className="rounded-md border border-cyan-700/40 bg-cyan-950/40 px-2.5 py-1 text-cyan-200">READONLY</span>
       <span
         data-testid={`${testIdPrefix}-not-offerable`}
         className="rounded border border-rose-700/40 bg-rose-900/20 px-2 py-0.5 text-rose-200"
@@ -150,7 +150,7 @@ export function ReadonlyCardShell({
     <article
       data-testid={testId}
       data-focused={focused ? "true" : "false"}
-      className={`group rounded-lg border border-[#1E293B] bg-[#111827] p-3 transition-colors hover:border-slate-600/50 ${focused ? "border-cyan-500/50 ring-1 ring-cyan-500/30" : ""} ${className}`}
+      className={`group rounded-xl border border-[#1E293B] bg-[#111827] p-4 transition-colors hover:border-slate-600/50 ${focused ? "border-cyan-500/50 ring-1 ring-cyan-500/30" : ""} ${className}`}
       onClick={onClick}
       onKeyDown={
         onClick

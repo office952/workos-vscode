@@ -52,6 +52,13 @@ async function openComponentFirstCandidateDetail() {
   await waitFor(() => {
     expect(screen.getByTestId("product-system-unified-catalog")).toBeInTheDocument();
   });
+  const componentFirstBucket = screen.getByTestId(CATALOG_BUCKET.componentFirstSets);
+  if (componentFirstBucket.getAttribute("data-expanded") !== "true") {
+    await expandCatalogBucketAsync(
+      CATALOG_BUCKET.componentFirstSets,
+      "product-system-catalog-bucket-toggle-component-first-sets",
+    );
+  }
   await waitFor(() => {
     expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
   });
@@ -59,6 +66,26 @@ async function openComponentFirstCandidateDetail() {
   await waitFor(() => {
     expect(screen.getByTestId("product-system-component-first-letters-set")).toBeInTheDocument();
   });
+}
+
+function expandCatalogBucket(bucketTestId: string, toggleTestId: string) {
+  const bucket = screen.getByTestId(bucketTestId);
+  if (bucket.getAttribute("data-expanded") !== "true") {
+    fireEvent.click(screen.getByTestId(toggleTestId));
+  }
+}
+
+async function expandCatalogBucketAsync(bucketTestId: string, toggleTestId: string) {
+  await waitFor(() => {
+    expect(screen.getByTestId(bucketTestId)).toBeInTheDocument();
+  });
+  const bucket = screen.getByTestId(bucketTestId);
+  if (bucket.getAttribute("data-expanded") !== "true") {
+    fireEvent.click(screen.getByTestId(toggleTestId));
+    await waitFor(() => {
+      expect(bucket).toHaveAttribute("data-expanded", "true");
+    });
+  }
 }
 
 function openCandidateGuardsReadiness() {
@@ -542,7 +569,7 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
+      expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     });
 
     const sourceBadge = document.querySelector('[data-source="db"]');
@@ -576,7 +603,7 @@ describe("ProductSystem design-system badges", () => {
       expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     });
 
-    expect(screen.getByRole("heading", { name: "Product System Catalog" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Product System" })).toBeInTheDocument();
   });
 
   it("shows the component ownership matrix with honest cant blockers and no promote CTA", async () => {
@@ -1194,6 +1221,10 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-unified-catalog")).toBeInTheDocument();
     expect(screen.getByTestId(CATALOG_BUCKET.currentProducts)).toBeInTheDocument();
     expect(screen.getByTestId(CATALOG_BUCKET.componentFirstSets)).toBeInTheDocument();
+    await expandCatalogBucketAsync(
+      CATALOG_BUCKET.componentFirstSets,
+      "product-system-catalog-bucket-toggle-component-first-sets",
+    );
     expect(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     expect(screen.queryByTestId("product-system-existing-roots")).not.toBeInTheDocument();
@@ -1229,6 +1260,10 @@ describe("ProductSystem design-system badges", () => {
   it("shows unified candidate detail with composer summary, six component rows, and readonly settings drawers", async () => {
     renderProductSystem();
 
+    await expandCatalogBucketAsync(
+      CATALOG_BUCKET.componentFirstSets,
+      "product-system-catalog-bucket-toggle-component-first-sets",
+    );
     await waitFor(() => {
       expect(screen.getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     });
@@ -1373,11 +1408,13 @@ describe("ProductSystem design-system badges", () => {
 
     const currentBucket = screen.getByTestId(CATALOG_BUCKET.currentProducts);
     expect(currentBucket).toHaveAttribute("data-expanded", "true");
+
+    const candidateBucket = screen.getByTestId(CATALOG_BUCKET.candidateProducts);
+    expandCatalogBucket(CATALOG_BUCKET.candidateProducts, "product-system-catalog-bucket-toggle-candidate-products");
+    expect(candidateBucket).toHaveAttribute("data-expanded", "true");
     expect(within(currentBucket).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(within(currentBucket).queryByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1")).not.toBeInTheDocument();
 
-    const candidateBucket = screen.getByTestId(CATALOG_BUCKET.candidateProducts);
-    expect(candidateBucket).toHaveAttribute("data-expanded", "true");
     const logoRow = within(candidateBucket).getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1");
     expect(logoRow).toHaveTextContent("Candidate product");
     expect(logoRow).toHaveTextContent("Not Work Intake");
@@ -1385,6 +1422,7 @@ describe("ProductSystem design-system badges", () => {
     expect(logoRow).not.toHaveTextContent("Used today");
 
     const componentFirstBucket = screen.getByTestId(CATALOG_BUCKET.componentFirstSets);
+    expandCatalogBucket(CATALOG_BUCKET.componentFirstSets, "product-system-catalog-bucket-toggle-component-first-sets");
     expect(componentFirstBucket).toHaveAttribute("data-expanded", "true");
     expect(within(componentFirstBucket).getByTestId("product-system-unified-row-candidate-set")).toBeInTheDocument();
     expect(within(componentFirstBucket).getByText(/NOT OFFERABLE/i)).toBeInTheDocument();
@@ -1402,21 +1440,21 @@ describe("ProductSystem design-system badges", () => {
 
     fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2"));
     expect(screen.getByTestId("product-system-template-detail-bucket-headline")).toHaveTextContent(
-      "Current active root · Used today",
+      "Rădăcină activă · folosită azi",
     );
 
     fireEvent.click(screen.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LOGO_v1"));
     expect(screen.getByTestId("product-system-template-detail-bucket-headline")).toHaveTextContent(
-      "Candidate product · Not Work Intake",
+      "Produs candidate · fără Work Intake",
     );
-    expect(screen.getByTestId("product-system-template-detail-overview")).toHaveTextContent("no Logo activation");
+    expect(screen.getByTestId("product-system-template-detail-overview")).toHaveTextContent("activare Logo");
 
     expect(screen.queryByRole("button", { name: /activate/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /create quote/i })).not.toBeInTheDocument();
   });
 
-  it("uses compact catalog layout without strong bucket border accents", async () => {
+  it("uses comfortable catalog layout with readable spacing and bucket context", async () => {
     mockTemplateList.mockResolvedValue([
       volumetricTemplate,
       logoTemplate,
@@ -1432,10 +1470,10 @@ describe("ProductSystem design-system badges", () => {
     renderProductSystem();
 
     await waitFor(() => {
-      expect(screen.getByTestId("product-system-unified-catalog")).toHaveAttribute("data-layout", "compact");
+      expect(screen.getByTestId("product-system-unified-catalog")).toHaveAttribute("data-layout", "comfortable");
     });
 
-    expect(screen.getByTestId("product-system-compact-toolbar")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-catalog-toolbar")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-summary-bar")).toBeInTheDocument();
     expect(screen.getByTestId(CATALOG_BUCKET.legacyModules)).toHaveAttribute("data-expanded", "false");
 
