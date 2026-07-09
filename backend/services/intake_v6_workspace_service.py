@@ -311,6 +311,24 @@ async def _persist_payload(
     return _record_to_response(record)
 
 
+async def _persist_payload_json_raw_for_product_truth_writer(
+    db: AsyncSession,
+    record: IntakeV6WorkspaceRecord,
+    payload_raw: dict[str, Any],
+    *,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    payload = _parse_payload(payload_raw)
+    record.payload_json = _json_dumps(payload_raw)
+    record.readiness_status = _derive_readiness_status(payload)
+    record.status = _derive_workspace_status(record.readiness_status)
+    record.updated_by_user_id = current_user.id
+    record.updated_at = _utcnow()
+    await db.commit()
+    await db.refresh(record)
+    return _record_to_response(record)
+
+
 async def create_intake_v6_workspace(
     db: AsyncSession,
     request: IntakeV6WorkspaceCreateRequest,
@@ -649,8 +667,12 @@ async def promote_product_truth_for_workspace(
     if response.get("write_performed") is not True:
         return response
 
-    payload = _parse_payload(payload_raw)
-    await _persist_payload(db, record, payload, current_user=current_user)
+    await _persist_payload_json_raw_for_product_truth_writer(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
     persisted_payload_raw = _json_loads(record.payload_json, {})
     if not isinstance(persisted_payload_raw, dict):
         persisted_payload_raw = {}

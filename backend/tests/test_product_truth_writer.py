@@ -14,6 +14,8 @@ SUCCESS_WORKSPACE_ID = "product-truth-writer-success"
 SUCCESS_WORKSPACE_CODE = "IV6-PRODUCT-TRUTH-WRITER-SUCCESS"
 MIXED_WORKSPACE_ID = "product-truth-writer-mixed"
 MIXED_WORKSPACE_CODE = "IV6-PRODUCT-TRUTH-WRITER-MIXED"
+UNKNOWN_WORKSPACE_ID = "product-truth-writer-unknown"
+UNKNOWN_WORKSPACE_CODE = "IV6-PRODUCT-TRUTH-WRITER-UNKNOWN"
 
 
 def _complete_payload() -> dict:
@@ -127,6 +129,27 @@ async def _read_payload(db_fixture, workspace_id: str) -> dict | None:
     return json.loads(payload_json) if payload_json else None
 
 
+def _flatten(value, prefix: str = "") -> dict[str, object]:
+    flattened: dict[str, object] = {}
+    if isinstance(value, dict):
+        for key, child in value.items():
+            child_prefix = f"{prefix}.{key}" if prefix else str(key)
+            flattened.update(_flatten(child, child_prefix))
+        return flattened
+    flattened[prefix] = value
+    return flattened
+
+
+def _changed_paths(before: dict, after: dict) -> list[str]:
+    before_flat = _flatten(before)
+    after_flat = _flatten(after)
+    return sorted(
+        key
+        for key in (set(before_flat) | set(after_flat))
+        if before_flat.get(key) != after_flat.get(key)
+    )
+
+
 @pytest.fixture
 def seeded_workspaces(db_fixture):
     db_fixture.run(
@@ -145,6 +168,15 @@ def seeded_workspaces(db_fixture):
             workspace_code=MIXED_WORKSPACE_CODE,
             payload=_mixed_payload(),
             status="collecting_data",
+        )
+    )
+    db_fixture.run(
+        _seed_workspace(
+            db_fixture,
+            workspace_id=UNKNOWN_WORKSPACE_ID,
+            workspace_code=UNKNOWN_WORKSPACE_CODE,
+            payload=_complete_payload(),
+            status="ready_for_quote_preview",
         )
     )
     return True
@@ -199,6 +231,7 @@ def test_writer_promotes_requested_entries_only_into_confirmed_snapshot(auth_cli
         "finish.print_required:layer_key:logo-left",
         "svg.selected_layer_refs[]:layer_id:face-1",
     }
+    changed_paths = _changed_paths(before, after)
     snapshot = after["product_truth"]["confirmed_snapshot_v1"]
     assert snapshot["metadata"]["target_path"] == "payload_json.product_truth.confirmed_snapshot_v1"
     assert snapshot["entries"]["finish"]["finish_target"]["value"] == "face"
@@ -210,6 +243,8 @@ def test_writer_promotes_requested_entries_only_into_confirmed_snapshot(auth_cli
     assert body["confirmed_snapshot_hash_before"] != body["confirmed_snapshot_hash_after"]
     assert body["return_cant_bridge_hash_before"] == body["return_cant_bridge_hash_after"]
     assert all(value is False for value in body["downstream_write_intent"].values())
+    assert changed_paths
+    assert all(path.startswith("product_truth.confirmed_snapshot_v1") for path in changed_paths)
 
 
 def test_writer_refuses_atomically_when_requested_scope_contains_blocked_entry(auth_client, seeded_workspaces, db_fixture):
@@ -265,3 +300,33 @@ def test_writer_replay_is_idempotent_and_does_not_append_audit_or_rewrite_payloa
     assert len(after_second["product_truth"]["confirmed_snapshot_v1"]["audit_trail"]) == 1
     assert second_body["payload_hash_before"] == second_body["payload_hash_after"]
     assert second_body["confirmed_snapshot_hash_before"] == second_body["confirmed_snapshot_hash_after"]
+    assert second_body["return_cant_bridge_hash_before"] == second_body["return_cant_bridge_hash_after"]
+
+
+def test_writer_refuses_unknown_requested_entry_key_without_mutation(auth_client, seeded_workspaces, db_fixture):
+    payload = _complete_payload()
+    before = db_fixture.run(_read_payload(db_fixture, UNKNOWN_WORKSPACE_ID))
+    request = _request_for(
+        UNKNOWN_WORKSPACE_CODE,
+        payload,
+        requested_entry_keys=[
+            "finish.finish_target",
+            "unknown.product.truth.key",
+        ],
+    )
+
+    response = _post(auth_client, UNKNOWN_WORKSPACE_ID, request)
+    after = db_fixture.run(_read_payload(db_fixture, UNKNOWN_WORKSPACE_ID))
+
+    assert response.status_code == 422
+    detail = response.json()["detail"]
+    assert detail["error"] == "product_truth_promotion_refused"
+    assert detail["write_performed"] is False
+    assert detail["idempotent_replay"] is False
+    assert detail["promoted_entries"] == []
+    assert [item["entry_key"] for item in detail["refused_entries"]] == ["unknown.product.truth.key"]
+    assert before == after
+    assert detail["payload_hash_before"] == detail["payload_hash_after"]
+    assert detail["confirmed_snapshot_hash_before"] == detail["confirmed_snapshot_hash_after"]
+    assert detail["return_cant_bridge_hash_before"] == detail["return_cant_bridge_hash_after"]
+    assert all(value is False for value in detail["downstream_write_intent"].values())
