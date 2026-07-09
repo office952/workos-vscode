@@ -223,6 +223,54 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByRole("button", { name: /^save$/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /write product truth/i })).toHaveCount(0);
 
+    const catalogPricePanel = page.getByTestId("product-system-return-cant-catalog-price-inputs");
+    await expect(catalogPricePanel).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-global-status")).toHaveText(
+      /NOT READY FOR PRICING/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-ready-for-pricing")).toHaveText(
+      /Ready for pricing: NO/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveText(
+      /listă completă Oracal/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_price_table")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_price_mode")).toHaveText(
+      /preț.*cod\/familie/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_selector_source")).toHaveText(
+      /selector standard RAL/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_catalog_shape")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_material_unit")).toHaveText(
+      /ml/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-known-ral_labor_unit")).toHaveText(/ml/i);
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-value-ral_minimum_rule")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    await expect(
+      page.getByTestId("product-system-return-cant-catalog-price-row-return_material_depth_compatibility"),
+    ).toBeVisible();
+    await expect(catalogPricePanel).not.toHaveText(/ORACAL-\d+/i);
+    await expect(catalogPricePanel).not.toHaveText(/\b\d+\s*lei\b/i);
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
+      /No Product Truth live write/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
+      /No Pricing activation/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
+      /No Work Intake exposure/i,
+    );
+
     await saveScreenshot(page, "04_component_first_guards_blocked");
 
     const legacyBucket = page.getByTestId(BUCKET.legacyModules);

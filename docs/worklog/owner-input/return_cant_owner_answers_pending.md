@@ -76,6 +76,58 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 ---
 
+## J. Oracal catalog source
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 14 | Oracal catalog source | Sursă listă completă? Catalog intern / import / administrabil? | | partial | Mod listă completă confirmat (#1). Sursă + format + ownership lipsă. |
+
+## K. Oracal price table
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 15 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | | pending | Mod preț pe cod/familie confirmat (#2). Unitate neconfirmată. |
+| 16 | Oracal price table | Valori preț pe cod/familie? | | pending | Fără tabel inventat. Monedă + unitate + dată efectivă lipsă. |
+
+## L. RAL selector source/list
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 17 | RAL list source | RAL Classic / Design / Effect / altă listă? | | partial | Mod selector standard confirmat (#3). Sursă/listă efectivă lipsă. |
+| 18 | RAL catalog shape | Cod simplu vs cod + nume culoare? | | pending | Doar structură propusă — fără listă inventată. |
+
+## M. RAL material price by depth
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 19 | RAL material 30 mm | Preț material/ml la 30 mm? | | pending | Unitate ml confirmată (#9). |
+| 20 | RAL material 60 mm | Preț material/ml la 60 mm? | | pending | Idem. |
+| 21 | RAL material 80 mm | Preț material/ml la 80 mm? | | pending | Idem. |
+| 22 | RAL material 100 mm | Preț material/ml la 100 mm? | | pending | Idem. |
+
+## N. RAL labor price by depth
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 23 | RAL labor 30 mm | Preț manoperă/ml la 30 mm? | | pending | Unitate ml confirmată (#10). |
+| 24 | RAL labor 60 mm | Preț manoperă/ml la 60 mm? | | pending | Idem. |
+| 25 | RAL labor 80 mm | Preț manoperă/ml la 80 mm? | | pending | Idem. |
+| 26 | RAL labor 100 mm | Preț manoperă/ml la 100 mm? | | pending | Idem. |
+
+## O. RAL minimum rule
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 27 | RAL minimum | Există minim? Valoare? Material / manoperă / total? | | pending | Fără minim inventat. |
+
+## P. Material-depth compatibility
+
+| Priority | Topic | Question | Owner answer | Status | Notes |
+|----------|-------|----------|--------------|--------|-------|
+| 28 | Compatibility | Aluminiu 0.6 mm valid pentru 30/60/80/100 mm? Excepții? | | pending | Material + adâncimi confirmate — combinații neconfirmate. |
+
+---
+
 ## Confirmat deja (workshop — nu necesită răspuns în tabel)
 
 - Variante finisaj: **Culoare Stock · Oracal · Vopsit RAL**
@@ -104,4 +156,6 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 
 ## Următorul pas
 
-Task: **RETURN-CANT catalog and pricing data v3** — owner furnizează catalog Oracal, tabel prețuri, sursă RAL, valori preț RAL, compatibilitate material/adâncime.
+Task: **RETURN-CANT catalog and price data apply** — owner furnizează sursă catalog Oracal, tabel prețuri, sursă/listă RAL, valori preț RAL pe adâncime, minim, compatibilitate material/adâncime.
+
+Contract workshop: `componentFirstReturnCantCatalogPriceInputs.ts`

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ReturnCantCatalogPriceInputsPanel } from "./ReturnCantCatalogPriceInputsPanel";
 import { ReturnCantOwnerInputsPanel } from "./ReturnCantOwnerInputsPanel";
 import {
   buildWorkshopSummary,
@@ -115,6 +116,9 @@ function ComponentWorkshopDetail({ workshop }: { workshop: ComponentTruthWorksho
           </p>
           <div className="mt-4">
             <ReturnCantOwnerInputsPanel />
+          </div>
+          <div className="mt-4">
+            <ReturnCantCatalogPriceInputsPanel />
           </div>
         </>
       ) : null}

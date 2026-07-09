@@ -1758,6 +1758,50 @@ describe("ProductSystem design-system badges", () => {
     expect(panel.textContent).not.toMatch(/\b\d+\s*lei\b/i);
   });
 
+  it("renders RETURN-CANT catalog and price inputs panel with NOT READY FOR PRICING", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-return-cant-catalog-price-inputs")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-global-status")).toHaveTextContent(
+      /NOT READY FOR PRICING/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-ready-for-pricing")).toHaveTextContent(
+      /Ready for pricing: NO/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-summary-pricing-active")).toHaveTextContent("0");
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveTextContent(
+      /listă completă Oracal/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-value-oracal_price_table")).toHaveTextContent(
+      "OWNER INPUT REQUIRED",
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-known-ral_material_unit")).toHaveTextContent(
+      /ml/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
+      "No Product Truth live write",
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
+      "No Pricing activation",
+    );
+    expect(screen.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveTextContent(
+      "No Work Intake exposure",
+    );
+    const catalogPanel = screen.getByTestId("product-system-return-cant-catalog-price-inputs");
+    expect(catalogPanel.textContent).not.toMatch(/ORACAL-\d+/i);
+    expect(catalogPanel.textContent).not.toMatch(/\b\d+\s*lei\b/i);
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /apply/i })).not.toBeInTheDocument();
+  });
+
   it("keeps legacy replacement NOT READY FOR DELETE alongside workshop panel", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
