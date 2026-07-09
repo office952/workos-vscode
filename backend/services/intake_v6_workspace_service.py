@@ -24,6 +24,7 @@ from schemas.intake_v6 import (
     IntakeV6LayerRoleSetup,
     IntakeV6LayerRoleUpdateRequest,
     IntakeV6ProductTruthWriterDryRunRequest,
+    IntakeV6ProductTruthWriterPromoteRequest,
     IntakeV6ProductSystemBindingResponse,
     IntakeV6SvgUploadResponse,
     IntakeV6TaskPreviewResponse,
@@ -65,6 +66,10 @@ from services.product_truth_writer_dry_run_service import (
     compute_payload_hash,
     compute_planner_hash,
     downstream_write_intent_is_all_false,
+)
+from services.product_truth_writer_service import (
+    promote_product_truth_snapshot,
+    proposed_mutations_match_confirmed_snapshot,
 )
 from services.return_cant_product_truth_bridge import (
     apply_return_cant_runtime_product_truth_bridge,
@@ -535,6 +540,123 @@ async def get_product_truth_writer_dry_run_for_workspace(
         actor=request.actor,
         requested_entry_keys=request.requested_entry_keys,
     )
+
+
+def _payload_without_product_truth_confirmed_snapshot(payload_raw: dict[str, Any]) -> dict[str, Any]:
+    payload_copy = copy.deepcopy(payload_raw)
+    product_truth = payload_copy.get("product_truth")
+    if not isinstance(product_truth, dict):
+        return payload_copy
+    product_truth.pop("confirmed_snapshot_v1", None)
+    if not product_truth:
+        payload_copy.pop("product_truth", None)
+    return payload_copy
+
+
+async def promote_product_truth_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: IntakeV6ProductTruthWriterPromoteRequest,
+    current_user: UserResponse,
+) -> dict[str, Any]:
+    if request.promotion_confirmed is not True:
+        raise HTTPException(status_code=422, detail={"error": "promotion_confirmed_required"})
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    current_payload_hash = compute_payload_hash(payload_raw)
+    payload_hash_without_snapshot = compute_payload_hash(
+        _payload_without_product_truth_confirmed_snapshot(payload_raw)
+    )
+    existing_snapshot = (
+        payload_raw.get("product_truth") if isinstance(payload_raw.get("product_truth"), dict) else {}
+    )
+    existing_snapshot = (
+        existing_snapshot.get("confirmed_snapshot_v1") if isinstance(existing_snapshot, dict) else {}
+    )
+    existing_planner_basis = (
+        existing_snapshot.get("planner_basis") if isinstance(existing_snapshot, dict) else {}
+    )
+    replay_basis_hash = (
+        existing_planner_basis.get("payload_hash_basis") if isinstance(existing_planner_basis, dict) else None
+    )
+    payload_hash_matches_current_basis = request.payload_hash_basis in {
+        current_payload_hash,
+        payload_hash_without_snapshot,
+    }
+    payload_hash_matches_replay_basis = bool(
+        request.payload_hash_basis and request.payload_hash_basis == replay_basis_hash
+    )
+    if request.payload_hash_basis and not payload_hash_matches_current_basis and not payload_hash_matches_replay_basis:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "payload_hash_basis_mismatch",
+                "expected_payload_hash_basis": request.payload_hash_basis,
+                "payload_hash_basis": current_payload_hash,
+                "payload_hash_basis_without_confirmed_snapshot": payload_hash_without_snapshot,
+            },
+        )
+
+    dry_run_request = IntakeV6ProductTruthWriterDryRunRequest.model_validate(
+        {
+            "dry_run_only": True,
+            "expected_workspace_code": request.expected_workspace_code,
+            "expected_root_template_code": request.expected_root_template_code,
+            "expected_product_binding_template_code": request.expected_product_binding_template_code,
+            "planner_version": request.planner_version,
+            "planner_hash": request.planner_hash,
+            "payload_hash_basis": current_payload_hash,
+            "actor": request.actor,
+            "requested_entry_keys": request.requested_entry_keys,
+        }
+    )
+    dry_run_response = await get_product_truth_writer_dry_run_for_workspace(db, workspace_id, dry_run_request)
+    downstream_write_intent = dry_run_response.get("downstream_write_intent") or {}
+    if not downstream_write_intent_is_all_false(downstream_write_intent):
+        raise HTTPException(status_code=422, detail={"error": "downstream_write_intent_not_false"})
+    if payload_hash_matches_replay_basis and not payload_hash_matches_current_basis:
+        if not proposed_mutations_match_confirmed_snapshot(
+            payload_raw,
+            dry_run_response.get("proposed_mutations") or [],
+        ):
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "error": "payload_hash_basis_mismatch",
+                    "expected_payload_hash_basis": request.payload_hash_basis,
+                    "payload_hash_basis": current_payload_hash,
+                    "payload_hash_basis_without_confirmed_snapshot": payload_hash_without_snapshot,
+                },
+            )
+
+    actor_payload = copy.deepcopy(request.actor) if isinstance(request.actor, dict) else {}
+    actor_payload.setdefault("actor_id", current_user.id)
+    actor_payload.setdefault("actor_email", current_user.email)
+    actor_payload.setdefault("actor_role", current_user.role)
+    actor_payload.setdefault("actor_label", current_user.name or current_user.email or str(current_user.id))
+
+    payload_before, response = promote_product_truth_snapshot(
+        workspace_id=workspace_id,
+        workspace_code=record.workspace_code,
+        payload_raw=payload_raw,
+        dry_run_response=dry_run_response,
+        actor=actor_payload,
+    )
+    if response.get("write_performed") is not True:
+        return response
+
+    payload = _parse_payload(payload_raw)
+    await _persist_payload(db, record, payload, current_user=current_user)
+    persisted_payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(persisted_payload_raw, dict):
+        persisted_payload_raw = {}
+    response["payload_hash_before"] = compute_payload_hash(payload_before)
+    response["payload_hash_after"] = compute_payload_hash(persisted_payload_raw)
+    return response
 
 
 async def ensure_intake_v6_workspace_for_intake_request(

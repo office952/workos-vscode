@@ -216,3 +216,15 @@ class IntakeV6ProductTruthWriterDryRunRequest(BaseModel):
     payload_hash_basis: str | None = None
     actor: dict[str, Any] = Field(default_factory=dict)
     requested_entry_keys: list[str] | None = None
+
+
+class IntakeV6ProductTruthWriterPromoteRequest(BaseModel):
+    promotion_confirmed: Literal[True]
+    expected_workspace_code: str | None = None
+    expected_root_template_code: str
+    expected_product_binding_template_code: str
+    planner_version: str
+    planner_hash: str | None = None
+    payload_hash_basis: str | None = None
+    actor: dict[str, Any] = Field(default_factory=dict)
+    requested_entry_keys: list[str] | None = None

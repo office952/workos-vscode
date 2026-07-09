@@ -202,6 +202,8 @@ def _existing_snapshot_value(payload_raw: dict[str, Any], field_key: str, identi
         if not isinstance(current, dict):
             return None
         current = current.get(identity_key)
+    if isinstance(current, dict) and "value" in current:
+        return copy.deepcopy(current.get("value"))
     return copy.deepcopy(current)
 
 
