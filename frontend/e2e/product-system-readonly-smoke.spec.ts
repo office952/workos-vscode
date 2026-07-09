@@ -239,10 +239,17 @@ test.describe("Product System readonly smoke", () => {
     await expect(page.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveText(
       /Intake V6|color registry/i,
     );
-    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveText(/8\.00 EUR\/mp/i);
-    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveText(/5\.00 EUR\/mp/i);
+    await expect(page.getByTestId("product-system-return-cant-oracal-pricing-source")).toHaveText(
+      /\/inventory\/pricing/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveText(
+      /MAT-ORACAL-651/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveText(
+      /MAT-ORACAL-641/i,
+    );
     await expect(page.getByTestId("product-system-return-cant-oracal-series-price-8500")).toHaveText(
-      /13\.00 EUR\/mp/i,
+      /MAT-ORACAL-8500/i,
     );
     await expect(page.getByTestId("product-system-return-cant-catalog-price-value-oracal_calculation_model")).toHaveText(
       /lățime rolă.*lungime folosită|mp/i,
@@ -283,7 +290,9 @@ test.describe("Product System readonly smoke", () => {
     await expect(
       page.getByTestId("product-system-return-cant-catalog-price-value-return_material_depth_compatibility"),
     ).toHaveText(/aluminiu 0\.6 mm/i);
-    await expect(catalogPricePanel).not.toHaveText(/ORACAL-\d+/i);
+    await expect(catalogPricePanel).toHaveText(/MAT-ORACAL-641/);
+    await expect(catalogPricePanel).toHaveText(/\/inventory\/pricing/i);
+    await expect(catalogPricePanel).not.toHaveText(/8\.00 EUR\/mp|5\.00 EUR\/mp|13\.00 EUR\/mp/i);
     await expect(page.getByTestId("product-system-return-cant-catalog-price-safety")).toHaveText(
       /No Product Truth live write/i,
     );

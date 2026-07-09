@@ -95,72 +95,65 @@ export const RETURN_CANT_INTAKE_V6_RAL_CATALOG_SOURCE: ReturnCantIntakeV6Catalog
     reusableReadonly: true,
   };
 
-export type ReturnCantOracalSeriesPrice = {
+export const RETURN_CANT_PRICING_SOURCE = {
+  pricingSourceRoute: "/inventory/pricing",
+  pricingSourceType: "readonly_registry_reference",
+  duplicationPolicy: "do_not_duplicate_price",
+  productSystemUse: "read-only cross-reference for RETURN-CANT workshop",
+} as const;
+
+export type ReturnCantOracalPricingRegistryReference = {
   series: "651" | "641" | "8500";
   labelRo: string;
-  price: number;
-  currency: "EUR";
+  pricingKey: string;
   unit: "mp";
-  status: "owner_confirmed";
-  source: "owner_confirmed_in_chat";
-  notesRo: string;
+  pricingSourceRoute: typeof RETURN_CANT_PRICING_SOURCE.pricingSourceRoute;
   pricingActive: false;
 };
 
-export const RETURN_CANT_ORACAL_SERIES_PRICES: ReturnCantOracalSeriesPrice[] = [
-  {
-    series: "651",
-    labelRo: "Oracal 651",
-    price: 8,
-    currency: "EUR",
-    unit: "mp",
-    status: "owner_confirmed",
-    source: "owner_confirmed_in_chat",
-    notesRo: "Preț serie owner confirmat — EUR/mp. Catalog culori: oracal651.ts.",
-    pricingActive: false,
-  },
+export const RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS: ReturnCantOracalPricingRegistryReference[] = [
   {
     series: "641",
     labelRo: "Oracal 641",
-    price: 5,
-    currency: "EUR",
+    pricingKey: "MAT-ORACAL-641",
     unit: "mp",
-    status: "owner_confirmed",
-    source: "owner_confirmed_in_chat",
-    notesRo:
-      "Preț serie owner confirmat — EUR/mp. În Intake V6 paleta 641 reutilizează seria 651.",
+    pricingSourceRoute: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
+    pricingActive: false,
+  },
+  {
+    series: "651",
+    labelRo: "Oracal 651",
+    pricingKey: "MAT-ORACAL-651",
+    unit: "mp",
+    pricingSourceRoute: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
     pricingActive: false,
   },
   {
     series: "8500",
     labelRo: "Oracal 8500",
-    price: 13,
-    currency: "EUR",
+    pricingKey: "MAT-ORACAL-8500",
     unit: "mp",
-    status: "owner_confirmed",
-    source: "owner_confirmed_in_chat",
-    notesRo: "Preț serie owner confirmat — EUR/mp. Catalog culori: oracal8500.ts.",
+    pricingSourceRoute: RETURN_CANT_PRICING_SOURCE.pricingSourceRoute,
     pricingActive: false,
   },
 ];
 
-export type ReturnCantOracalSeriesPricingSummary = {
-  confirmedOracalSeriesPriceCount: number;
-  missingOracalSeriesPriceCount: number;
-  oracalSeriesPricingReadyForKnownSeries: boolean;
+export type ReturnCantOracalPricingKeyCoverageSummary = {
+  declaredOracalPricingKeyCount: number;
+  missingOracalPricingKeyCount: number;
+  oracalKnownSeriesPricingKeysDeclared: boolean;
   oracalFullPricingReady: false;
 };
 
-export function buildOracalSeriesPricingSummary(
-  seriesPrices: ReturnCantOracalSeriesPrice[] = RETURN_CANT_ORACAL_SERIES_PRICES,
-): ReturnCantOracalSeriesPricingSummary {
-  const confirmedOracalSeriesPriceCount = seriesPrices.filter(
-    (entry) => entry.status === "owner_confirmed",
-  ).length;
+export function buildOracalPricingKeyCoverageSummary(
+  registryKeys: ReturnCantOracalPricingRegistryReference[] = RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS,
+): ReturnCantOracalPricingKeyCoverageSummary {
+  const declaredOracalPricingKeyCount = registryKeys.length;
   return {
-    confirmedOracalSeriesPriceCount,
-    missingOracalSeriesPriceCount: 0,
-    oracalSeriesPricingReadyForKnownSeries: confirmedOracalSeriesPriceCount === seriesPrices.length,
+    declaredOracalPricingKeyCount,
+    missingOracalPricingKeyCount: 0,
+    oracalKnownSeriesPricingKeysDeclared:
+      declaredOracalPricingKeyCount === registryKeys.length && registryKeys.every((entry) => entry.pricingKey.length > 0),
     oracalFullPricingReady: false,
   };
 }
@@ -278,20 +271,18 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
   },
   {
     key: "oracal_series_prices_by_series",
-    labelRo: "Prețuri Oracal pe serie (owner confirmat)",
+    labelRo: "Chei Pricing Registry Oracal pe serie (readonly)",
     category: "oracal_pricing",
     status: "owner_confirmed",
-    confirmedValue: RETURN_CANT_ORACAL_SERIES_PRICES.map(
-      (entry) => `${entry.series} = ${entry.price.toFixed(2)} EUR/mp`,
-    ),
-    unit: "eur",
+    confirmedValue: RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS.map((entry) => entry.pricingKey),
+    unit: "none",
     knownSoFarRo:
-      "Owner confirmat: 651 = 8 EUR/mp · 641 = 5 EUR/mp · 8500 = 13 EUR/mp. Calcul mp = lățime rolă × lungime folosită.",
+      "Chei readonly: MAT-ORACAL-641 · MAT-ORACAL-651 · MAT-ORACAL-8500. Prețurile EUR/mp se administrează în /inventory/pricing — fără duplicare în Product System.",
     stillMissingRo: [
       "Prețuri pe cod/familie în afara seriilor 651/641/8500",
       "Formulă runtime — neactivată în acest task",
     ],
-    ownerQuestionRo: "Confirmare prețuri Oracal pe serie.",
+    ownerQuestionRo: "Confirmare chei Pricing Registry Oracal pe serie.",
     blocks: ["pricing"],
     mustNotInvent: false,
     pricingActive: false,
@@ -301,9 +292,9 @@ export const RETURN_CANT_CATALOG_PRICE_INPUTS: ReturnCantCatalogPriceInput[] = [
     labelRo: "Tabel prețuri Oracal (complet)",
     category: "oracal_pricing",
     status: "partial_confirmed",
-    confirmedValue: "Serii 651/641/8500 confirmate — restul codurilor/seriilor pending",
+    confirmedValue: "Serii 651/641/8500 — chei registry declarate; restul codurilor/seriilor pending",
     knownSoFarRo:
-      "Owner confirmat: preț pe cod/familie. Serii 651 = 8 · 641 = 5 · 8500 = 13 EUR/mp. Tabel complet pe toate codurile oficiale — incomplet.",
+      "Chei registry pentru seriile cunoscute: MAT-ORACAL-641 · MAT-ORACAL-651 · MAT-ORACAL-8500. Valorile EUR/mp: /inventory/pricing. Tabel complet pe toate codurile oficiale — incomplet.",
     stillMissingRo: [
       "Valori preț unitar pe cod/familie în afara seriilor confirmate",
       "Mapare completă cod/familie",
@@ -473,7 +464,7 @@ export const RETURN_CANT_CATALOG_PRICE_SECTIONS: ReturnCantCatalogPriceSection[]
 
 export function computeBlockersBeforePricing(
   inputs: ReturnCantCatalogPriceInput[] = RETURN_CANT_CATALOG_PRICE_INPUTS,
-  seriesPrices: ReturnCantOracalSeriesPrice[] = RETURN_CANT_ORACAL_SERIES_PRICES,
+  registryKeys: ReturnCantOracalPricingRegistryReference[] = RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS,
 ): readonly string[] {
   const blockers: string[] = [];
 
@@ -483,7 +474,7 @@ export function computeBlockersBeforePricing(
   }
 
   const oracalPriceTable = inputs.find((i) => i.key === "oracal_price_table");
-  const oracalPricingSummary = buildOracalSeriesPricingSummary(seriesPrices);
+  const oracalPricingSummary = buildOracalPricingKeyCoverageSummary(registryKeys);
   if (oracalPriceTable?.status !== "owner_confirmed" || !oracalPricingSummary.oracalFullPricingReady) {
     blockers.push("Oracal price table for all official codes/series not complete");
   }
@@ -516,7 +507,7 @@ export type ReturnCantCatalogPriceSummary = {
   pricingActiveCount: number;
   readyForPricing: false;
   blockersBeforePricing: readonly string[];
-  oracalSeriesPricing: ReturnCantOracalSeriesPricingSummary;
+  oracalPricingKeyCoverage: ReturnCantOracalPricingKeyCoverageSummary;
 };
 
 export function catalogPriceInputStatusLabel(
@@ -568,7 +559,7 @@ export function buildReturnCantCatalogPriceSummary(
     pricingActiveCount: inputs.filter((i) => i.pricingActive).length,
     readyForPricing: false,
     blockersBeforePricing: computeBlockersBeforePricing(inputs),
-    oracalSeriesPricing: buildOracalSeriesPricingSummary(),
+    oracalPricingKeyCoverage: buildOracalPricingKeyCoverageSummary(),
   };
 }
 

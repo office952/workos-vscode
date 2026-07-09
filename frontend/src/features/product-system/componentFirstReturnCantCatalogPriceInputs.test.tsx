@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import {
-  buildOracalSeriesPricingSummary,
+  buildOracalPricingKeyCoverageSummary,
   buildReturnCantCatalogPriceSummary,
   computeBlockersBeforePricing,
   formatCatalogPriceConfirmedValue,
   RETURN_CANT_CATALOG_PRICE_INPUTS,
   RETURN_CANT_INTAKE_V6_ORACAL_CATALOG_SOURCE,
   RETURN_CANT_INTAKE_V6_RAL_CATALOG_SOURCE,
-  RETURN_CANT_ORACAL_SERIES_PRICES,
+  RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS,
+  RETURN_CANT_PRICING_SOURCE,
   RETURN_CANT_RAL_CLASSIC_REGISTRY_PATH,
   RETURN_CANT_RAL_MINIMUM,
 } from "./componentFirstReturnCantCatalogPriceInputs";
@@ -38,22 +39,37 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     expect(String(source?.knownSoFarRo)).toMatch(/ralColors\.ts/i);
   });
 
-  it("confirms Oracal series prices 651/641/8500 without inventing extra series", () => {
-    expect(RETURN_CANT_ORACAL_SERIES_PRICES).toHaveLength(3);
-    expect(RETURN_CANT_ORACAL_SERIES_PRICES.find((p) => p.series === "651")?.price).toBe(8);
-    expect(RETURN_CANT_ORACAL_SERIES_PRICES.find((p) => p.series === "641")?.price).toBe(5);
-    expect(RETURN_CANT_ORACAL_SERIES_PRICES.find((p) => p.series === "8500")?.price).toBe(13);
-    for (const entry of RETURN_CANT_ORACAL_SERIES_PRICES) {
-      expect(entry.currency).toBe("EUR");
+  it("declares Oracal Pricing Registry keys for series 651/641/8500 without numeric prices", () => {
+    expect(RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS).toHaveLength(3);
+    expect(RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS.find((p) => p.series === "651")?.pricingKey).toBe(
+      "MAT-ORACAL-651",
+    );
+    expect(RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS.find((p) => p.series === "641")?.pricingKey).toBe(
+      "MAT-ORACAL-641",
+    );
+    expect(RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS.find((p) => p.series === "8500")?.pricingKey).toBe(
+      "MAT-ORACAL-8500",
+    );
+    for (const entry of RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS) {
       expect(entry.unit).toBe("mp");
       expect(entry.pricingActive).toBe(false);
+      expect(entry.pricingSourceRoute).toBe("/inventory/pricing");
+      expect(entry).not.toHaveProperty("price");
     }
+    expect(RETURN_CANT_PRICING_SOURCE.pricingSourceRoute).toBe("/inventory/pricing");
+    expect(RETURN_CANT_PRICING_SOURCE.duplicationPolicy).toBe("do_not_duplicate_price");
 
     const seriesInput = RETURN_CANT_CATALOG_PRICE_INPUTS.find(
       (i) => i.key === "oracal_series_prices_by_series",
     );
     expect(seriesInput?.status).toBe("owner_confirmed");
-    expect(seriesInput?.confirmedValue).toEqual(["651 = 8.00 EUR/mp", "641 = 5.00 EUR/mp", "8500 = 13.00 EUR/mp"]);
+    expect(seriesInput?.confirmedValue).toEqual([
+      "MAT-ORACAL-641",
+      "MAT-ORACAL-651",
+      "MAT-ORACAL-8500",
+    ]);
+    expect(String(seriesInput?.knownSoFarRo)).toMatch(/\/inventory\/pricing/i);
+    expect(String(seriesInput?.knownSoFarRo)).not.toMatch(/8 EUR\/mp|5 EUR\/mp|13 EUR\/mp/);
   });
 
   it("confirms Oracal calculation model as roll width x used length = mp", () => {
@@ -69,17 +85,19 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     expect(widths?.confirmedValue).toEqual(["100 cm", "126 cm"]);
   });
 
-  it("keeps Oracal full price table partial while known series prices are confirmed", () => {
+  it("keeps Oracal full price table partial while known series registry keys are declared", () => {
     const mode = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "oracal_price_mode");
     const table = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "oracal_price_table");
     expect(mode?.status).toBe("owner_confirmed");
     expect(mode?.confirmedValue).toBe("preț pe cod/familie");
     expect(table?.status).toBe("partial_confirmed");
     expect(table?.stillMissingRo).toContain("Valori preț unitar pe cod/familie în afara seriilor confirmate");
+    expect(String(table?.knownSoFarRo)).toMatch(/MAT-ORACAL-651/i);
+    expect(String(table?.knownSoFarRo)).not.toMatch(/651 = 8|641 = 5|8500 = 13/);
 
-    const summary = buildOracalSeriesPricingSummary();
-    expect(summary.confirmedOracalSeriesPriceCount).toBe(3);
-    expect(summary.oracalSeriesPricingReadyForKnownSeries).toBe(true);
+    const summary = buildOracalPricingKeyCoverageSummary();
+    expect(summary.declaredOracalPricingKeyCount).toBe(3);
+    expect(summary.oracalKnownSeriesPricingKeysDeclared).toBe(true);
     expect(summary.oracalFullPricingReady).toBe(false);
   });
 
@@ -144,13 +162,13 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     for (const input of RETURN_CANT_CATALOG_PRICE_INPUTS) {
       expect(input.pricingActive).toBe(false);
     }
-    for (const entry of RETURN_CANT_ORACAL_SERIES_PRICES) {
+    for (const entry of RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS) {
       expect(entry.pricingActive).toBe(false);
     }
     const summary = buildReturnCantCatalogPriceSummary();
     expect(summary.readyForPricing).toBe(false);
     expect(summary.pricingActiveCount).toBe(0);
-    expect(summary.oracalSeriesPricing.oracalSeriesPricingReadyForKnownSeries).toBe(true);
+    expect(summary.oracalPricingKeyCoverage.oracalKnownSeriesPricingKeysDeclared).toBe(true);
   });
 
   it("computes updated blockers before pricing", () => {
@@ -166,24 +184,29 @@ describe("componentFirstReturnCantCatalogPriceInputs", () => {
     expect(blockers).not.toContain("RAL minimum scope unresolved (100 lei confirmed)");
   });
 
-  it("does not contain fake Oracal codes or RAL color codes", () => {
-    const oracalKeys = ["oracal_catalog_source", "oracal_selector_source", "oracal_price_table"];
-    for (const key of oracalKeys) {
+  it("does not contain fake Oracal color codes or RAL color codes in catalog cross-ref rows", () => {
+    const oracalCatalogKeys = ["oracal_catalog_source", "oracal_selector_source"];
+    for (const key of oracalCatalogKeys) {
       const input = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === key)!;
       const serialized = JSON.stringify(input);
-      expect(serialized).not.toMatch(/ORACAL-\d+/i);
+      expect(serialized).not.toMatch(/MAT-ORACAL-/i);
       expect(serialized).not.toMatch(/RAL\s*\d{4}/i);
     }
+
+    const table = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "oracal_price_table")!;
+    const tableSerialized = JSON.stringify(table);
+    expect(tableSerialized).toMatch(/MAT-ORACAL-641/);
+    expect(tableSerialized).not.toMatch(/8 EUR\/mp|5 EUR\/mp|13 EUR\/mp/);
   });
 
   it("formats partial Oracal price table without inventing unconfirmed unit prices", () => {
     const table = RETURN_CANT_CATALOG_PRICE_INPUTS.find((i) => i.key === "oracal_price_table")!;
-    expect(formatCatalogPriceConfirmedValue(table)).toMatch(/651\/641\/8500 confirmate/i);
+    expect(formatCatalogPriceConfirmedValue(table)).toMatch(/651\/641\/8500.*chei registry/i);
   });
 });
 
 describe("ReturnCantCatalogPriceInputsPanel", () => {
-  it("renders NOT READY FOR PRICING with Intake V6 cross-ref and Oracal series prices", () => {
+  it("renders NOT READY FOR PRICING with Intake V6 cross-ref and Oracal pricing registry keys", () => {
     render(<ReturnCantCatalogPriceInputsPanel />);
     expect(screen.getByTestId("product-system-return-cant-catalog-price-global-status")).toHaveTextContent(
       /NOT READY FOR PRICING/i,
@@ -200,10 +223,20 @@ describe("ReturnCantCatalogPriceInputsPanel", () => {
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-oracal_roll_widths")).toHaveTextContent(
       /100 cm.*126 cm/i,
     );
-    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveTextContent(/8\.00 EUR\/mp/i);
-    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveTextContent(/5\.00 EUR\/mp/i);
+    expect(screen.getByTestId("product-system-return-cant-oracal-pricing-source")).toHaveTextContent(
+      /\/inventory\/pricing/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveTextContent(
+      /MAT-ORACAL-651/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveTextContent(
+      /MAT-ORACAL-641/i,
+    );
     expect(screen.getByTestId("product-system-return-cant-oracal-series-price-8500")).toHaveTextContent(
-      /13\.00 EUR\/mp/i,
+      /MAT-ORACAL-8500/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).not.toHaveTextContent(
+      /8\.00 EUR\/mp/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_selector_source")).toHaveTextContent(
       /RAL Classic/i,

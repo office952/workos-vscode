@@ -6,7 +6,8 @@ import {
   getReturnCantCatalogPriceInputsByCategory,
   RETURN_CANT_CATALOG_PRICE_INPUTS,
   RETURN_CANT_CATALOG_PRICE_SECTIONS,
-  RETURN_CANT_ORACAL_SERIES_PRICES,
+  RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS,
+  RETURN_CANT_PRICING_SOURCE,
   type ReturnCantCatalogPriceInput,
 } from "./componentFirstReturnCantCatalogPriceInputs";
 
@@ -148,20 +149,30 @@ export function ReturnCantCatalogPriceInputsPanel() {
         data-testid="product-system-return-cant-catalog-price-oracal-series-summary"
         className="rounded-lg border border-cyan-800/30 bg-cyan-950/10 px-3 py-2.5"
       >
-        <p className="text-[10px] font-bold uppercase text-cyan-200/90">Oracal series prices (readonly)</p>
+        <p className="text-[10px] font-bold uppercase text-cyan-200/90">
+          Oracal pricing registry keys (readonly)
+        </p>
+        <p
+          data-testid="product-system-return-cant-oracal-pricing-source"
+          className="mt-2 text-[10px] text-slate-300"
+        >
+          Pricing source: {RETURN_CANT_PRICING_SOURCE.pricingSourceRoute} · pricing active: NO
+        </p>
         <ul className="mt-2 space-y-1 text-[10px] text-slate-300">
-          {RETURN_CANT_ORACAL_SERIES_PRICES.map((entry) => (
+          {RETURN_CANT_ORACAL_PRICING_REGISTRY_KEYS.map((entry) => (
             <li
               key={entry.series}
               data-testid={`product-system-return-cant-oracal-series-price-${entry.series}`}
             >
-              • {entry.series} = {entry.price.toFixed(2)} EUR/mp · pricing active: NO
+              • {entry.pricingKey} · {entry.labelRo} · {entry.unit} · source: {entry.pricingSourceRoute} ·
+              pricing active: NO
             </li>
           ))}
         </ul>
         <p className="mt-2 text-[10px] text-slate-400">
-          Known series ready: {summary.oracalSeriesPricing.oracalSeriesPricingReadyForKnownSeries ? "YES" : "NO"} ·
-          full table ready: NO
+          Known series keys declared:{" "}
+          {summary.oracalPricingKeyCoverage.oracalKnownSeriesPricingKeysDeclared ? "YES" : "NO"} · full
+          table ready: NO · prices edited in Pricing Registry only
         </p>
       </article>
 

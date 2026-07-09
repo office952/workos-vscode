@@ -1785,10 +1785,14 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-return-cant-catalog-price-known-oracal_selector_source")).toHaveTextContent(
       /Intake V6|color registry/i,
     );
-    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveTextContent(/8\.00 EUR\/mp/i);
-    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveTextContent(/5\.00 EUR\/mp/i);
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-651")).toHaveTextContent(
+      /MAT-ORACAL-651/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-oracal-series-price-641")).toHaveTextContent(
+      /MAT-ORACAL-641/i,
+    );
     expect(screen.getByTestId("product-system-return-cant-oracal-series-price-8500")).toHaveTextContent(
-      /13\.00 EUR\/mp/i,
+      /MAT-ORACAL-8500/i,
     );
     expect(screen.getByTestId("product-system-return-cant-catalog-price-value-ral_material_price_by_depth")).toHaveTextContent(
       /2\.00 EUR\/ml/i,
@@ -1812,7 +1816,9 @@ describe("ProductSystem design-system badges", () => {
       "No Work Intake exposure",
     );
     const catalogPanel = screen.getByTestId("product-system-return-cant-catalog-price-inputs");
-    expect(catalogPanel.textContent).not.toMatch(/ORACAL-\d+/i);
+    expect(catalogPanel.textContent).toMatch(/MAT-ORACAL-641/);
+    expect(catalogPanel.textContent).toMatch(/\/inventory\/pricing/i);
+    expect(catalogPanel.textContent).not.toMatch(/8\.00 EUR\/mp|5\.00 EUR\/mp|13\.00 EUR\/mp/);
     expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /apply/i })).not.toBeInTheDocument();
   });

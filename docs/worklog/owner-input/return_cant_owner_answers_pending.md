@@ -89,7 +89,7 @@ Completarea coloanei **Owner answer** este singura cale prin care valorile pot t
 | Priority | Topic | Question | Owner answer | Status | Notes |
 |----------|-------|----------|--------------|--------|-------|
 | 17 | Oracal price unit | Preț pe ml cant / mp folie / altă unitate? | **mp (din lățime rolă × lungime)** | answered | Confirmat via calculation model |
-| 18 | Oracal series prices | Prețuri pe serie 651 / 641 / 8500? | **651 = 8 EUR/mp · 641 = 5 EUR/mp · 8500 = 13 EUR/mp** | answered | Owner confirmat — fără activare pricing |
+| 18 | Oracal series prices | Prețuri pe serie 651 / 641 / 8500? | **Pricing Registry: MAT-ORACAL-641 · MAT-ORACAL-651 · MAT-ORACAL-8500 — edit in /inventory/pricing** (supersedes prior chat literals 8/5/13) | answered | Owner confirmat — fără activare pricing; Product System keys only |
 | 19 | Oracal price table complete | Valori preț pe toate codurile/seriile? | **Serii 651/641/8500 confirmate — restul pending** | partial | Fără valori inventate în afara celor confirmate |
 
 ## L. RAL selector source/list
