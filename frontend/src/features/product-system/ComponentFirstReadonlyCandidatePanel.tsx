@@ -76,6 +76,7 @@ import {
 } from "./LegacyReplacementReadinessPanel";
 import { ComponentFirstProductTruthWorkshopPanel } from "./ComponentFirstProductTruthWorkshopPanel";
 import { FaceTruthWorkshopPanel } from "./FaceTruthWorkshopPanel";
+import { FinishTruthWorkshopPanel } from "./FinishTruthWorkshopPanel";
 
 export type ComponentFirstCandidateTab =
   | "overview"
@@ -1195,6 +1196,8 @@ function ComponentFirstGuardsAuditPanel({
       <ComponentFirstProductTruthWorkshopPanel />
 
       <FaceTruthWorkshopPanel />
+
+      <FinishTruthWorkshopPanel />
 
       <LegacyReplacementReadinessPanel />
     </div>

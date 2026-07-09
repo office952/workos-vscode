@@ -1930,4 +1930,44 @@ describe("ProductSystem design-system badges", () => {
     );
   });
 
+  it("renders FINISH component truth workshop with guard badges", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-finish-truth-workshop")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-finish-truth-readonly-workshop-badge")).toHaveTextContent(
+      /READONLY WORKSHOP/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-owner-input-required-badge")).toHaveTextContent(
+      /OWNER INPUT REQUIRED/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-pricing-active-no")).toHaveTextContent(
+      /PRICING ACTIVE: NO/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-product-truth-write-no")).toHaveTextContent(
+      /PRODUCT TRUTH WRITE: NO/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-does-not-own-cant")).toHaveTextContent(
+      /FINISH DOES NOT OWN CANT/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-face-material-boundary")).toHaveTextContent(
+      /MAT-ACP-FATA-LITERE.*16 EUR\/mp/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-ral-minimum-boundary")).toHaveTextContent(
+      /100 lei.*RETURN-CANT/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-variant-row-face_oracal_641")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-finish-truth-variant-row-artwork_none_raw_plexi")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /create pricing key/i })).not.toBeInTheDocument();
+  });
+
 });
