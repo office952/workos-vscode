@@ -98,7 +98,7 @@ const LED_CODE = "TPL-COMP-LETTER-LED_v1";
 const FINISH_CODE = "TPL-COMP-LETTER-FINISH_v1";
 const MOUNTING_CODE = "TPL-COMP-LETTER-MOUNTING_v1";
 
-const FINISH_TYPE_VALUES = ["Culoare Stock", "Oracal", "Vopsit RAL"] as const;
+export const FINISH_TYPE_VALUES = ["Culoare Stock", "Oracal", "Vopsit RAL"] as const;
 
 function resolvePath(
   componentCode: string,

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { ReturnCantOwnerInputsPanel } from "./ReturnCantOwnerInputsPanel";
 import {
   buildWorkshopSummary,
   COMPONENT_FIRST_LETTERS_PRODUCT_TRUTH_WORKSHOPS,
@@ -105,12 +106,17 @@ function ComponentWorkshopDetail({ workshop }: { workshop: ComponentTruthWorksho
       <p className="text-[11px] font-bold text-slate-200">{workshop.componentLabelRo}</p>
       <p className="mt-1 text-[10px] text-slate-400">{workshop.role}</p>
       {workshop.componentShortLabel === "RETURN-CANT" ? (
-        <p
-          data-testid="product-system-truth-workshop-return-cant-finish-options"
-          className="mt-2 text-[10px] text-slate-300"
-        >
-          Variante finisaj confirmate: Culoare Stock · Oracal · Vopsit RAL
-        </p>
+        <>
+          <p
+            data-testid="product-system-truth-workshop-return-cant-finish-options"
+            className="mt-2 text-[10px] text-slate-300"
+          >
+            Variante finisaj confirmate: Culoare Stock · Oracal · Vopsit RAL
+          </p>
+          <div className="mt-4">
+            <ReturnCantOwnerInputsPanel />
+          </div>
+        </>
       ) : null}
       <div className="mt-3 overflow-x-auto">
         <table

@@ -176,6 +176,20 @@ test.describe("Product System readonly smoke", () => {
     await expect(workshop).toHaveText(/No Pricing activation/i);
     await expect(workshop).toHaveText(/No Work Intake exposure/i);
     await expect(workshop).toHaveText(/Întrebări pentru owner/i);
+    await expect(page.getByTestId("product-system-return-cant-owner-inputs")).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveText(/Confirmed so far/i);
+    await expect(page.getByTestId("product-system-return-cant-missing-before-pricing")).toHaveText(
+      /Still missing before pricing/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-missing-before-product-definition")).toHaveText(
+      /Still missing before ProductDefinition/i,
+    );
+    await expect(page.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveText(
+      /OWNER INPUT REQUIRED/i,
+    );
+    const returnCantPanel = page.getByTestId("product-system-return-cant-owner-inputs");
+    await expect(returnCantPanel).not.toHaveText(/ORACAL-\d+/i);
+    await expect(returnCantPanel).not.toHaveText(/\b\d+\s*lei\b/i);
     await expect(page.getByRole("button", { name: /^save$/i })).toHaveCount(0);
     await expect(page.getByRole("button", { name: /write product truth/i })).toHaveCount(0);
 

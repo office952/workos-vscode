@@ -1714,6 +1714,50 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
   });
 
+  it("renders RETURN-CANT owner inputs panel with confirmed and missing sections", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-return-cant-owner-inputs")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-return-cant-owner-inputs-global-status")).toHaveTextContent(
+      "OWNER INPUT REQUIRED",
+    );
+    expect(screen.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveTextContent(
+      /Confirmed so far/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveTextContent("Culoare Stock");
+    expect(screen.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveTextContent("Oracal");
+    expect(screen.getByTestId("product-system-return-cant-confirmed-so-far")).toHaveTextContent("Vopsit RAL");
+    expect(screen.getByTestId("product-system-return-cant-missing-before-pricing")).toHaveTextContent(
+      /Still missing before pricing/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-missing-before-product-definition")).toHaveTextContent(
+      /Still missing before ProductDefinition/i,
+    );
+    expect(screen.getByTestId("product-system-return-cant-owner-input-value-oracal_code_list")).toHaveTextContent(
+      "OWNER INPUT REQUIRED",
+    );
+    expect(screen.getByTestId("product-system-return-cant-owner-inputs-safety")).toHaveTextContent(
+      "No Product Truth live write",
+    );
+    expect(screen.getByTestId("product-system-return-cant-owner-inputs-safety")).toHaveTextContent(
+      "No Pricing activation",
+    );
+    expect(screen.getByTestId("product-system-return-cant-owner-inputs-safety")).toHaveTextContent(
+      "No Work Intake exposure",
+    );
+    const panel = screen.getByTestId("product-system-return-cant-owner-inputs");
+    expect(panel.textContent).not.toMatch(/ORACAL-\d+/i);
+    expect(panel.textContent).not.toMatch(/\b\d+\s*lei\b/i);
+  });
+
   it("keeps legacy replacement NOT READY FOR DELETE alongside workshop panel", async () => {
     mockTemplateList.mockResolvedValue([volumetricTemplate]);
     mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
