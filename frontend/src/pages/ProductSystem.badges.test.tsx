@@ -251,11 +251,25 @@ describe("ProductSystem design-system badges", () => {
       expect(screen.getByTestId("product-system-component-ownership-panel")).toBeInTheDocument();
     });
 
+    const returnCantSourcePaths = screen.getByTestId("product-system-return-cant-source-paths");
+
     expect(screen.getByTestId("product-system-ownership-composer-badge")).toHaveTextContent("Product Template = composer");
     expect(screen.getByTestId("product-system-ownership-product-template-warning")).toHaveTextContent("Product Template still carries component-owned defaults");
     expect(screen.getByTestId("product-system-ownership-status-volumetric_return_side")).toHaveTextContent("partial_ready");
-    expect(screen.getByText("return_depth_mm")).toBeInTheDocument();
+    expect(returnCantSourcePaths).toBeInTheDocument();
+    expect(screen.getByText("Separate calculation source paths")).toBeInTheDocument();
+    expect(returnCantSourcePaths).toHaveTextContent("return_depth_mm");
+    expect(returnCantSourcePaths).toHaveTextContent("return_finish_type");
+    expect(returnCantSourcePaths).toHaveTextContent("material cant / profil aluminiu");
+    expect(returnCantSourcePaths).toHaveTextContent("operation: modelare_cant");
+    expect(returnCantSourcePaths).toHaveTextContent("operation: bonding / lipire cant");
+    expect(returnCantSourcePaths).toHaveTextContent("resources / tools");
+    expect(returnCantSourcePaths).toHaveTextContent("operation_resource_requirements");
+    expect(screen.getByTestId("product-system-return-cant-logo-reuse-note")).toHaveTextContent("TPL-VOLUMETRIC-LOGO_v1");
     expect(screen.getByText("perimeter_source")).toBeInTheDocument();
+    expect(screen.getAllByText(/parent aggregate only/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/form system only/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/component-owned source missing/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/source not wired yet/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/component-owned source missing/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/calculation blocked until component-scoped confirmation exists/i)).toBeInTheDocument();

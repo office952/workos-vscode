@@ -1519,6 +1519,33 @@ type SharedComponentOwnershipAudit = {
   note: string;
 };
 
+type ReturnCantSourcePathAudit = {
+  key:
+    | "material_profile"
+    | "return_depth_mm"
+    | "return_finish_type"
+    | "letter_perimeter_m"
+    | "operation_modelare_cant"
+    | "operation_bonding"
+    | "finish_source"
+    | "resources_tools"
+    | "separate_calculation_readiness";
+  label: string;
+  canonicalTarget: string;
+  currentSource: string;
+  currentSourcePath: string;
+  sourceStatus:
+    | "component-owned template only"
+    | "form system only"
+    | "parent aggregate only"
+    | "separate finish component"
+    | "operation registry missing"
+    | "component-owned source missing"
+    | "blocked";
+  blocker: string;
+  note: string;
+};
+
 const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipAudit> = {
   volumetric_face: {
     componentKey: "volumetric_face",
@@ -1597,7 +1624,7 @@ const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipA
     fields: [
       {
         key: "return_depth_mm",
-        productTruthPath: "components.return_cant.return_depth_mm",
+        productTruthPath: "components.return_cant.depth_mm",
         sourceState: "component-owned fallback",
         warning: "hydrated depth is not confirmed truth",
       },
@@ -1621,7 +1648,7 @@ const SHARED_COMPONENT_OWNERSHIP_AUDIT: Record<string, SharedComponentOwnershipA
       },
       {
         key: "color_target",
-        productTruthPath: "components.return_cant.color_target",
+        productTruthPath: "components.return_cant.color_target.*",
         sourceState: "component-owned pending",
         warning: "source not wired yet for explicit RAL / Oracal / paint boundary",
       },
@@ -1740,6 +1767,99 @@ function ownershipStatusClass(status: SharedComponentOwnershipAudit["separateCal
   }
 }
 
+const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
+  {
+    key: "material_profile",
+    label: "material cant / profil aluminiu",
+    canonicalTarget: "components.return_cant.material_profile",
+    currentSource: "Component Template catalog gate",
+    currentSourcePath: "TPL-VOLUM-ALUMINIU_v1.required_materials_json[*] gate return_depth_mm",
+    sourceStatus: "component-owned source missing",
+    blocker: "RETURN_CANT_MATERIAL_MISSING",
+    note: "Profiles 30/60/80/100 mm exist in the child template catalog, but no confirmed component-owned Product Truth field exists yet.",
+  },
+  {
+    key: "return_depth_mm",
+    label: "return_depth_mm",
+    canonicalTarget: "components.return_cant.depth_mm",
+    currentSource: "Form System + legacy Product Truth alias",
+    currentSourcePath: "finish_setup.return_depth_mm; legacy components.return.depth_mm / components.returnCant.depthMm",
+    sourceStatus: "form system only",
+    blocker: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
+    note: "Depth exists today as hydrated or fallback review input, not as confirmed component-owned truth.",
+  },
+  {
+    key: "return_finish_type",
+    label: "return_finish_type",
+    canonicalTarget: "components.return_cant.finish_type",
+    currentSource: "Form System + legacy Product Truth alias",
+    currentSourcePath: "finish_setup.return_finish_type; legacy components.returnCant.finishType",
+    sourceStatus: "form system only",
+    blocker: "RETURN_CANT_FINISH_MISSING",
+    note: "Finish intent exists in review payload, but the canonical component-owned path is still not confirmed.",
+  },
+  {
+    key: "letter_perimeter_m",
+    label: "letter_perimeter_m / perimeter dependency",
+    canonicalTarget: "components.return_cant.perimeter_source -> components.face.confirmed_perimeter",
+    currentSource: "Root geometry dependency",
+    currentSourcePath: "quote_geometry.letter_perimeter_m; future dependency target components.face.confirmed_perimeter",
+    sourceStatus: "parent aggregate only",
+    blocker: "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
+    note: "Perimeter still comes from root geometry context, not from an explicit confirmed dependency owned on the component boundary.",
+  },
+  {
+    key: "operation_modelare_cant",
+    label: "operation: modelare_cant",
+    canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_MACHINE_FORMING]",
+    currentSource: "Component Template operation",
+    currentSourcePath: "child template operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    sourceStatus: "component-owned template only",
+    blocker: "RETURN_CANT_DEPTH_MISSING",
+    note: "The operation exists in the child template and registry, but separate calculation is still blocked until component-owned inputs are explicit.",
+  },
+  {
+    key: "operation_bonding",
+    label: "operation: bonding / lipire cant",
+    canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_FACE_BONDING]",
+    currentSource: "Component Template operation",
+    currentSourcePath: "child template operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    sourceStatus: "component-owned template only",
+    blocker: "RETURN_CANT_MATERIAL_MISSING",
+    note: "Bonding is already modeled as a component operation, but it still depends on missing material/profile truth and perimeter dependency confirmation.",
+  },
+  {
+    key: "finish_source",
+    label: "finish source",
+    canonicalTarget: "components.return_cant.finish_type + components.return_cant.color_target.*",
+    currentSource: "Form System + separate finish component",
+    currentSourcePath: "finish_setup.return_finish_type / return_oracal_code + TPL-VOLUMETRIC-FINISH_v1 boundary",
+    sourceStatus: "separate finish component",
+    blocker: "RETURN_CANT_FINISH_MISSING",
+    note: "Cant finish still crosses review setup and the separate finish component boundary, so it is not yet clean component-owned truth.",
+  },
+  {
+    key: "resources_tools",
+    label: "resources / tools",
+    canonicalTarget: "operation_resource_requirements + child template workcenters",
+    currentSource: "Workcenter hints only",
+    currentSourcePath: "WC_FORMING, WC_ASSEMBLY, WC_PAINT; operation_resource_requirements not surfaced in this panel",
+    sourceStatus: "operation registry missing",
+    blocker: "RETURN_CANT_OPERATION_RESOURCE_MAPPING_MISSING",
+    note: "Workcenters are present on the child template operations, but explicit machine/resource authorization is still an operational registry concern, not a component-owned truth field.",
+  },
+  {
+    key: "separate_calculation_readiness",
+    label: "separate calculation readiness",
+    canonicalTarget: "component-owned truth + confirmed dependency + explicit confirmation",
+    currentSource: "Read-only ownership audit",
+    currentSourcePath: "Product System ownership panel + return_cant readonly mapper",
+    sourceStatus: "blocked",
+    blocker: "RETURN_CANT_MATERIAL_MISSING + RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED + RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+    note: "What we can calculate today is diagnostic only. Separate calculation remains blocked until the missing component-owned fields move out of parent/root context.",
+  },
+];
+
 function ownershipFieldStateClass(sourceState: string) {
   if (sourceState.includes("missing")) {
     return "border-red-700/30 bg-red-950/20 text-red-200";
@@ -1751,6 +1871,100 @@ function ownershipFieldStateClass(sourceState: string) {
     return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
   }
   return "border-slate-700 bg-slate-900 text-slate-300";
+}
+
+function returnCantSourceStatusClass(status: ReturnCantSourcePathAudit["sourceStatus"]) {
+  switch (status) {
+    case "component-owned template only":
+      return "border-cyan-700/30 bg-cyan-950/20 text-cyan-200";
+    case "form system only":
+    case "separate finish component":
+      return "border-amber-700/30 bg-amber-950/20 text-amber-200";
+    case "parent aggregate only":
+      return "border-slate-700 bg-slate-900 text-slate-300";
+    case "operation registry missing":
+    case "component-owned source missing":
+    case "blocked":
+      return "border-red-700/30 bg-red-950/20 text-red-200";
+    default:
+      return "border-slate-700 bg-slate-900 text-slate-300";
+  }
+}
+
+function ReturnCantSeparateCalculationSourcePaths({
+  sharedWithProductCodes,
+}: {
+  sharedWithProductCodes: string[];
+}) {
+  const logoReuse = sharedWithProductCodes.includes("TPL-VOLUMETRIC-LOGO_v1");
+
+  return (
+    <section
+      data-testid="product-system-return-cant-source-paths"
+      className="mt-3 rounded-lg border border-cyan-800/40 bg-cyan-950/10 p-3"
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <h4 className="text-[11px] font-bold uppercase tracking-wide text-cyan-100">Separate calculation source paths</h4>
+          <p className="mt-0.5 text-[10px] text-cyan-300/80">
+            Read-only alignment for the return/cant component. Shows what already exists, what remains parent aggregate only, and what still has to move into Component Template truth.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Module TPL-VOLUM-ALUMINIU_v1</span>
+          <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Component comp_lateral_litere</span>
+        </div>
+      </div>
+
+      <div className="mt-2 grid gap-2 md:grid-cols-3">
+        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">We can read now</p>
+          <p className="mt-1 text-[10px] text-slate-200">Depth gate, finish token, component operations, component material variants, and workcenter hints.</p>
+        </div>
+        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Still parent aggregate only</p>
+          <p className="mt-1 text-[10px] text-slate-200">`quote_geometry.letter_perimeter_m`, linked aggregate operation traces, and global review setup hydration.</p>
+        </div>
+        <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
+          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Must move into Component Template</p>
+          <p className="mt-1 text-[10px] text-slate-200">`material_profile`, `perimeter_source`, `layer_group_ids`, and `confirmation_state`.</p>
+        </div>
+      </div>
+
+      {logoReuse ? (
+        <div className="mt-2 rounded-lg border border-amber-800/40 bg-amber-950/20 px-3 py-2 text-[10px] text-amber-200" data-testid="product-system-return-cant-logo-reuse-note">
+          Reusable component check: `TPL-VOLUMETRIC-LOGO_v1` also points at this cant component boundary, so the missing source paths should be solved once for Letters and Logo. Logo remains candidate / read-only.
+        </div>
+      ) : null}
+
+      <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
+        <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
+          <span>Source key</span>
+          <span>Canonical target</span>
+          <span>Current source path</span>
+          <span>Source status</span>
+          <span>Blocker</span>
+        </div>
+        <div className="divide-y divide-slate-800/80">
+          {RETURN_CANT_SEPARATE_SOURCE_PATHS.map((entry) => (
+            <div key={entry.key} data-testid={`product-system-return-cant-source-${entry.key}`} className="px-3 py-2 text-[10px]">
+              <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.85fr)_minmax(0,0.95fr)] gap-2">
+                <div>
+                  <p className="font-bold text-slate-100">{entry.label}</p>
+                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.currentSource}</p>
+                </div>
+                <p className="font-mono text-cyan-200/85">{entry.canonicalTarget}</p>
+                <p className="font-mono text-slate-300">{entry.currentSourcePath}</p>
+                <span className={`h-fit rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantSourceStatusClass(entry.sourceStatus)}`}>{entry.sourceStatus}</span>
+                <p className="font-mono text-amber-200/85">{entry.blocker}</p>
+              </div>
+              <p className="mt-1 text-[10px] text-slate-400">{entry.note}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
 
 function ComponentCalculationOwnershipPanel({
@@ -1887,6 +2101,12 @@ function ComponentCalculationOwnershipPanel({
                   ))}
                 </div>
               </div>
+
+              {audit.componentKey === "volumetric_return_side" ? (
+                <ReturnCantSeparateCalculationSourcePaths
+                  sharedWithProductCodes={availability?.shared_with_product_codes ?? []}
+                />
+              ) : null}
 
               <p className="mt-2 text-[10px] text-slate-400">{audit.note}</p>
             </article>
