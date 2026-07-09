@@ -12,6 +12,7 @@ import {
   getIntakeV6ProductionTaskDryRun,
   getIntakeV6ProductSystemBinding,
   getIntakeV6QuoteHandoffPreview,
+  getIntakeV6RuntimeCaptureReadModel,
   getIntakeV6TaskGenerationDryRun,
   getIntakeV6TaskPreview,
   getIntakeV6Workspace,
@@ -25,6 +26,7 @@ import {
   type IntakeV6ProductionHandoffPreviewResponse,
   type IntakeV6ProductSystemBindingResponse,
   type IntakeV6QuoteHandoffPreviewResponse,
+  type IntakeV6RuntimeCaptureReadModelResponse,
   type IntakeV6TaskGenerationDryRunResponse,
   type IntakeV6TaskPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
@@ -85,6 +87,7 @@ import IntakeV6OrderBoundTaskReadinessPanel from "../IntakeV6OrderBoundTaskReadi
 import IntakeV6QuoteCommercialSpinePanel from "../IntakeV6QuoteCommercialSpinePanel";
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
 import FormSystemBackboneAwarenessPanel from "../FormSystemBackboneAwarenessPanel";
+import FormSystemRuntimeCaptureReadModelPanel from "../FormSystemRuntimeCaptureReadModelPanel";
 import { toast } from "@/components/ui/sonner";
 import { buildProductTruthDraft } from "@/lib/intakeV6/productTruth/productTruthDraftBuilder";
 import { mapReturnCantTruthFieldsReadonly } from "@/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper";
@@ -595,6 +598,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [logicalListReadModel, setLogicalListReadModel] = useState<IntakeV6LogicalListReadModelResponse | null>(null);
   const [binding, setBinding] = useState<IntakeV6ProductSystemBindingResponse | null>(null);
   const [productDefinitionPreview, setProductDefinitionPreview] = useState<ProductDefinitionPreview | null>(null);
+  const [runtimeCaptureReadModel, setRuntimeCaptureReadModel] =
+    useState<IntakeV6RuntimeCaptureReadModelResponse | null>(null);
   const templateFormContract = templateContract.contract;
   const modularTemplateCode =
     binding?.template_code?.trim() ||
@@ -651,10 +656,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const [loadingTaskGenerationDryRun, setLoadingTaskGenerationDryRun] = useState(false);
   const [loadingOrderBoundReadiness, setLoadingOrderBoundReadiness] = useState(false);
   const [loadingBreakdown, setLoadingBreakdown] = useState(false);
+  const [loadingRuntimeCaptureReadModel, setLoadingRuntimeCaptureReadModel] = useState(false);
   const [localSheetQuoteOverride, setLocalSheetQuoteOverride] =
     useState<IntakeV6SheetFootprintOverride | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [runtimeCaptureReadModelError, setRuntimeCaptureReadModelError] = useState<string | null>(null);
   const [previewRefresh, setPreviewRefresh] = useState<ReviewPreviewRefreshState>(
     INITIAL_REVIEW_PREVIEW_REFRESH,
   );
@@ -979,6 +986,42 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       cancelled = true;
     };
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.breakdown, previewRefresh.pricedQuote]);
+
+  useEffect(() => {
+    if (!workspaceId) {
+      setRuntimeCaptureReadModel(null);
+      setRuntimeCaptureReadModelError(null);
+      setLoadingRuntimeCaptureReadModel(false);
+      return;
+    }
+    let cancelled = false;
+    const resetModel = runtimeCaptureReadModel?.workspace_id !== workspaceId;
+    if (resetModel) {
+      setRuntimeCaptureReadModel(null);
+    }
+    setRuntimeCaptureReadModelError(null);
+    setLoadingRuntimeCaptureReadModel(true);
+    void getIntakeV6RuntimeCaptureReadModel(workspaceId)
+      .then((response) => {
+        if (!cancelled) setRuntimeCaptureReadModel(response);
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          if (resetModel) {
+            setRuntimeCaptureReadModel(null);
+          }
+          setRuntimeCaptureReadModelError(
+            err instanceof Error ? err.message : "Runtime capture read model indisponibil.",
+          );
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingRuntimeCaptureReadModel(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [workspaceId, state.workspace?.updated_at]);
 
   useEffect(() => {
     if (commercialInputsDirty && commercialInputsPendingSave) return;
@@ -2107,6 +2150,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       <FormSystemBackboneAwarenessPanel
         backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
         runtimeState={backboneRuntimeState}
+      />
+
+      <FormSystemRuntimeCaptureReadModelPanel
+        model={runtimeCaptureReadModel}
+        loading={loadingRuntimeCaptureReadModel}
+        error={runtimeCaptureReadModelError}
       />
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">

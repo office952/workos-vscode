@@ -65,6 +65,36 @@ export type IntakeV6CommercialSpineStateResponse = Omit<
   v6_quote_to_order_enabled: boolean;
 };
 
+export interface IntakeV6RuntimeCaptureReadModelField {
+  field_key: string;
+  runtime_source: string;
+  product_truth_path: string;
+  state: string;
+  confirmation_rule: string;
+  blockers: string[];
+  ready_for_product_truth: boolean;
+}
+
+export interface IntakeV6RuntimeCaptureReadModelBlocker {
+  field_key: string;
+  blockers: string[];
+  state: string;
+}
+
+export interface IntakeV6RuntimeCaptureReadModelResponse {
+  read_only: boolean;
+  workspace_id: string;
+  workspace_record_id: string;
+  workspace_code: string;
+  root_template_code: string | null;
+  product_binding_template_code: string | null;
+  read_model_version: string;
+  fields: IntakeV6RuntimeCaptureReadModelField[];
+  blockers: IntakeV6RuntimeCaptureReadModelBlocker[];
+  downstream_write_intent: Record<string, boolean>;
+  notes: string[];
+}
+
 function parseIntakeV6ApiErrorMessage(status: number, raw: string): string {
   if (!raw.trim()) return `Request failed (${status})`;
   try {
@@ -277,6 +307,14 @@ export async function getIntakeV6TemplateFormContract(
 ): Promise<IntakeV4TemplateFormContractResponse> {
   return requestIntakeV6Json(
     `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/template-form-contract`,
+  );
+}
+
+export async function getIntakeV6RuntimeCaptureReadModel(
+  workspaceId: string,
+): Promise<IntakeV6RuntimeCaptureReadModelResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/runtime-capture-read-model`,
   );
 }
 
