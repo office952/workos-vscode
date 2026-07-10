@@ -14,7 +14,9 @@ import {
 import { artworkToReturnCant, patchArtworkFromReturnCant } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import { INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { AlertTriangle, Box, CheckCircle2, ImageIcon, Palette } from "lucide-react";
+import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
+import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6LayerCardCollapsedHeader from "./IntakeV6LayerCardCollapsedHeader";
 import IntakeV6LayerCardColumnHeader from "./IntakeV6LayerCardColumnHeader";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
@@ -268,6 +270,8 @@ export default function IntakeV6ArtworkFinishSection({
   rasterLayerKeys: _rasterLayerKeys,
   decisionMessages: _decisionMessages,
   highlightUnconfirmed = false,
+  backingMode,
+  onBackingChange,
 }: {
   rows: IntakeV6ArtworkFinish[];
   onChange: (rows: IntakeV6ArtworkFinish[]) => void;
@@ -279,6 +283,9 @@ export default function IntakeV6ArtworkFinishSection({
   rasterLayerKeys?: Set<string>;
   decisionMessages?: string[];
   highlightUnconfirmed?: boolean;
+  /** When Vector Litere is absent, Forex backing renders as last row in this card. */
+  backingMode?: IntakeV6BackingMode;
+  onBackingChange?: (mode: IntakeV6BackingMode) => void;
 }) {
   const sortedRows = useMemo(
     () => [...rows].sort((a, b) => a.layer_name.localeCompare(b.layer_name, "ro")),
@@ -619,6 +626,12 @@ export default function IntakeV6ArtworkFinishSection({
           );
         })}
       </div>
+
+      {backingMode && onBackingChange ? (
+        <div data-testid="intake-v6-review-backing-finish-integration">
+          <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
+        </div>
+      ) : null}
     </>
   );
 

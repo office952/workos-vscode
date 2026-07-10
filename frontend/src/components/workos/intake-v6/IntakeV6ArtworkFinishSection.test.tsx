@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import IntakeV6ArtworkFinishSection, {
   INTAKE_V6_ARTWORK_VERIFY_INSTRUCTION,
@@ -351,5 +351,32 @@ describe("IntakeV6ArtworkFinishSection", () => {
       return_depth_mm: 80,
       confirmed: false,
     });
+  });
+
+  it("renders forex backing row inside vector logo card when letters are absent", () => {
+    const onBacking = vi.fn();
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        embedded
+        backingMode="forex_10_no_bevel"
+        onBackingChange={onBacking}
+      />,
+    );
+    const logoCard = screen.getByTestId("intake-v6-artwork-finishes");
+    expect(within(logoCard).getByTestId("intake-v6-review-backing-finish-integration")).toBeInTheDocument();
+    expect(within(logoCard).getByText("Finisaj spate")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-backing-finish-block")).not.toBeInTheDocument();
+    expect(within(logoCard).getByTestId("intake-v6-backing-mode")).toHaveClass("h-7");
+    fireEvent.change(within(logoCard).getByTestId("intake-v6-backing-mode"), {
+      target: { value: "forex_10_with_bevel" },
+    });
+    expect(onBacking).toHaveBeenCalledWith("forex_10_with_bevel");
+  });
+
+  it("does not render backing row when backing props are omitted", () => {
+    render(<IntakeV6ArtworkFinishSection rows={rows} onChange={vi.fn()} embedded />);
+    expect(screen.queryByTestId("intake-v6-backing-finish-row")).not.toBeInTheDocument();
   });
 });

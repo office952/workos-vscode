@@ -16,11 +16,13 @@ import {
   patchLetterGroupFromReturnCant,
 } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import { resolveIntakeV6ReturnFinishUiOption } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
+import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 import { AlertTriangle, Box, CheckCircle2, Layers, PanelTop, Ruler } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
 import IntakeV6LayerCardCollapsedHeader from "./IntakeV6LayerCardCollapsedHeader";
 import IntakeV6LayerCardColumnHeader from "./IntakeV6LayerCardColumnHeader";
+import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 import {
@@ -63,11 +65,15 @@ export default function IntakeV6ReviewLetterGroupsSection({
   onChange,
   faceFinishOptions,
   allowedReturnDepthMm,
+  backingMode,
+  onBackingChange,
 }: {
   groups: IntakeV6LetterGroupFinish[];
   onChange: (groups: IntakeV6LetterGroupFinish[]) => void;
   faceFinishOptions?: readonly { value: string; label: string }[];
   allowedReturnDepthMm?: readonly number[];
+  backingMode?: IntakeV6BackingMode;
+  onBackingChange?: (mode: IntakeV6BackingMode) => void;
 }) {
   const effectiveFaceOptions = resolveLetterGroupFaceFinishOptions(faceFinishOptions);
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() => new Set());
@@ -105,7 +111,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
     <div className={`${v6.cardCompact} mb-3 !p-3`} data-testid="intake-v6-letter-group-face-finishes">
       <p className="mb-1 text-[10px] font-semibold text-slate-400">Vector Litere</p>
       <p className="mb-2 text-[10px] leading-snug text-slate-500" data-testid="intake-v6-face-letters-helper">
-        Față = finisaj vizibil · Cant = lateral volum.
+        Față = finisaj vizibil · Cant = lateral volum · Spate = Forex corp litere.
       </p>
 
       <div data-testid="intake-v6-letter-group-cant-finishes">
@@ -355,6 +361,12 @@ export default function IntakeV6ReviewLetterGroupsSection({
             );
           })}
         </div>
+
+        {backingMode && onBackingChange ? (
+          <div data-testid="intake-v6-review-backing-finish-integration">
+            <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
+          </div>
+        ) : null}
       </div>
     </div>
   );

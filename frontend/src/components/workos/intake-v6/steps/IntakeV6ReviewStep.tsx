@@ -1801,6 +1801,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               }}
               faceFinishOptions={templateContract.faceFinishOptions}
               allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
+              backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
+              onBackingChange={(mode) =>
+                updateForm(
+                  {
+                    backing_mode: mode,
+                    back_bevel_enabled: mode === "forex_10_with_bevel",
+                  },
+                  { domains: ["backing"] },
+                )
+              }
             />
             ) : null}
             {artworkFinishes.length > 0 ? (
@@ -1816,6 +1826,23 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   highlightUnconfirmed={highlightArtworkUnconfirmed}
                   stepOneConfirmedLayerKeys={stepOneConfirmedArtworkLayerKeys}
                   allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
+                  backingMode={
+                    effectiveLetterGroups.length === 0
+                      ? normalizeIntakeV6BackingMode(form.backing_mode)
+                      : undefined
+                  }
+                  onBackingChange={
+                    effectiveLetterGroups.length === 0
+                      ? (mode) =>
+                          updateForm(
+                            {
+                              backing_mode: mode,
+                              back_bevel_enabled: mode === "forex_10_with_bevel",
+                            },
+                            { domains: ["backing"] },
+                          )
+                      : undefined
+                  }
                   onChange={(next) => {
                     setArtworkFinishes(next);
                     syncFormFromLayerFinishes(
@@ -1826,6 +1853,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 />
               </div>
             ) : null}
+            {effectiveLetterGroups.length === 0 && artworkFinishes.length === 0 ? (
             <div data-testid="intake-v6-review-backing-finish-integration">
               <IntakeV6ReviewBackingSelect
                 embedded
@@ -1841,6 +1869,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 }
               />
             </div>
+            ) : null}
             <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
             </IntakeV6ReviewSectionShell>
           </div>

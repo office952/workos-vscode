@@ -21,11 +21,14 @@ describe("IntakeV6ReviewBackingSelect", () => {
     expect(onBacking).toHaveBeenCalledWith("forex_10_with_bevel");
   });
 
-  it("renders embedded row with finisaje field styling", () => {
+  it("renders embedded block aligned with finisaje layer cards", () => {
     render(<IntakeV6ReviewBackingSelect backingMode="forex_10_no_bevel" onBackingChange={vi.fn()} embedded />);
+    expect(screen.getByTestId("intake-v6-backing-finish-block")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-backing-finish-row")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-backing-finish-zone")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-backing-section")).not.toBeInTheDocument();
     expect(screen.getByText("Spate litere")).toBeInTheDocument();
+    expect(screen.getByText("Finisaj spate")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-backing-mode")).toHaveClass("h-7");
   });
 });

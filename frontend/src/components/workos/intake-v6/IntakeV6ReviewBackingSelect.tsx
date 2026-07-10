@@ -1,11 +1,7 @@
 import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 import { INTAKE_V6_BACKING_MODE_OPTIONS } from "@/lib/intakeV6/intakeV6BackingMode";
+import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import { v6 } from "./atoms/intakeV6Presentation";
-import {
-  REVIEW_FIELD_BLOCK_CLASS,
-  REVIEW_FIELD_LABEL_CLASS,
-  REVIEW_SELECT_CLASS,
-} from "./reviewFieldLayout";
 
 export default function IntakeV6ReviewBackingSelect({
   backingMode,
@@ -14,12 +10,12 @@ export default function IntakeV6ReviewBackingSelect({
 }: {
   backingMode: IntakeV6BackingMode;
   onBackingChange: (mode: IntakeV6BackingMode) => void;
-  /** When true, matches Finisaje panel dropdown width/label styling. */
+  /** Fallback Finisaje panel when no letter groups are present. */
   embedded?: boolean;
 }) {
   const select = (
     <select
-      className={embedded ? REVIEW_SELECT_CLASS : "w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"}
+      className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
       value={backingMode}
       onChange={(event) => onBackingChange(event.target.value as IntakeV6BackingMode)}
       data-testid="intake-v6-backing-mode"
@@ -35,13 +31,17 @@ export default function IntakeV6ReviewBackingSelect({
   if (embedded) {
     return (
       <div
-        className="mt-2 border-t border-[#2A3548]/50 pt-2"
-        data-testid="intake-v6-backing-finish-row"
+        className={`${v6.cardCompact} mt-2 !p-3`}
+        data-testid="intake-v6-backing-finish-block"
       >
-        <label className={REVIEW_FIELD_BLOCK_CLASS}>
-          <span className={REVIEW_FIELD_LABEL_CLASS}>Spate litere</span>
-          {select}
-        </label>
+        <p className="mb-1 text-[10px] font-semibold text-slate-400">Spate litere</p>
+        <p
+          className="mb-2 text-[10px] leading-snug text-slate-500"
+          data-testid="intake-v6-backing-finish-helper"
+        >
+          Material Forex pentru corpul literelor.
+        </p>
+        <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
       </div>
     );
   }

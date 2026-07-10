@@ -230,6 +230,25 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expandLetterGroupCard("a");
     expect(card).toHaveAttribute("data-layer-card-expanded", "false");
   });
+
+  it("renders forex backing row inside the vector litere card", () => {
+    const onBacking = vi.fn();
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={groups}
+        onChange={vi.fn()}
+        backingMode="forex_10_no_bevel"
+        onBackingChange={onBacking}
+      />,
+    );
+    const letterCard = screen.getByTestId("intake-v6-letter-group-face-finishes");
+    expect(within(letterCard).getByTestId("intake-v6-review-backing-finish-integration")).toBeInTheDocument();
+    expect(within(letterCard).getByText("Finisaj spate")).toBeInTheDocument();
+    fireEvent.change(within(letterCard).getByTestId("intake-v6-backing-mode"), {
+      target: { value: "forex_10_with_bevel" },
+    });
+    expect(onBacking).toHaveBeenCalledWith("forex_10_with_bevel");
+  });
 });
 
 describe("IntakeV6ReviewFaceLettersSection", () => {
