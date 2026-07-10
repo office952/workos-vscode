@@ -114,7 +114,7 @@ describe("IntakeV6OperatorWorkspaceFooter", () => {
 
     expect(screen.getByTestId("intake-v6-footer-next")).toBeEnabled();
     expect(screen.getByTestId("intake-v6-footer-issues-toggle")).toHaveTextContent(
-      "Probleme & atenționări (1)",
+      "Probleme & acțiuni necesare (1)",
     );
     expect(screen.queryByText("Verifica latimea cantului.")).not.toBeInTheDocument();
     fireEvent.click(screen.getByTestId("intake-v6-footer-issues-toggle"));

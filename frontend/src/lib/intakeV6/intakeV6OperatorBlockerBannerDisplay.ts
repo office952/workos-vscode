@@ -9,7 +9,7 @@ export const INTAKE_V6_REVIEW_DIAGNOSTIC_ANCHOR_ID = "intake-v6-review-diagnosti
 export const OPERATOR_BLOCKER_BANNER_MAX_MESSAGES = 3;
 
 const GENERIC_TECHNICAL_BLOCKER_MESSAGE =
-  "Există blocaje tehnice care trebuie verificate în Diagnostic tehnic.";
+  "Există blocaje tehnice care trebuie verificate în Detalii tehnice și diagnostic.";
 
 const RUNTIME_BLOCKER_OPERATOR_MESSAGES: Record<string, string> = {
   SELECTED_LAYER_REFS_MISSING:

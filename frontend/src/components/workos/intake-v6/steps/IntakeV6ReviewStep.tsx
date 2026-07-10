@@ -162,6 +162,10 @@ import {
 } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
 import { buildOperatorBlockerBannerDisplay } from "@/lib/intakeV6/intakeV6OperatorBlockerBannerDisplay";
 import {
+  buildReviewDiagnosticEntryCount,
+  INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE,
+} from "@/lib/intakeV6/intakeV6ReviewDiagnosticEntryCount";
+import {
   detectArtworkOnlyRequiresDecision,
   resolveArtworkOnlyReviewWarnings,
   sanitizeLetterGroupsForArtworkOnlyGuard,
@@ -684,6 +688,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const pendingAutosavePolicyRef = useRef<ReviewAutosavePolicy>("short");
   const [highlightArtworkUnconfirmed, setHighlightArtworkUnconfirmed] = useState(false);
   const [reviewTab, setReviewTab] = useState<IntakeV6ReviewTabId>("finisaje");
+  const [diagnosticSectionOpen, setDiagnosticSectionOpen] = useState(false);
   const localRevisionRef = useRef(0);
   const autosaveRequestRef = useRef(0);
   const commercialInputsSyncKeyRef = useRef<string | null>(null);
@@ -1577,6 +1582,21 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       loadingProductTruthPromotionPlanner,
     ],
   );
+  const reviewDiagnosticEntryCount = useMemo(
+    () =>
+      buildReviewDiagnosticEntryCount({
+        runtimeModel: runtimeCaptureReadModel,
+        plannerModel: productTruthPromotionPlanner,
+        backbone: modularFormContractHook.contract?.form_system_backbone ?? null,
+        runtimeState: backboneRuntimeState,
+      }),
+    [
+      runtimeCaptureReadModel,
+      productTruthPromotionPlanner,
+      modularFormContractHook.contract?.form_system_backbone,
+      backboneRuntimeState,
+    ],
+  );
   const reviewReadinessDisplay = useMemo(
     () =>
       resolveReviewReadinessDisplay(state.workspace?.readiness_status, quoteHandoffPreview, {
@@ -1648,7 +1668,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   }, []);
 
   const handleJumpToDiagnostic = useCallback(() => {
-    diagnosticRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setDiagnosticSectionOpen(true);
+    window.requestAnimationFrame(() => {
+      diagnosticRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }, []);
 
   const handleVerifyArtwork = useCallback(() => {
@@ -2251,6 +2274,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </div>
       </div>
 
+      <IntakeV6TechnicalDetailsAccordion
+        title={INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE}
+        testId="intake-v6-review-technical-details"
+        defaultOpen={false}
+        open={diagnosticSectionOpen}
+        onOpenChange={setDiagnosticSectionOpen}
+        itemCount={reviewDiagnosticEntryCount}
+        hint="Pentru verificare avansată"
+        className="mb-4 mt-2"
+      >
       <div
         ref={diagnosticRef}
         id="intake-v6-review-diagnostic-tehnic"
@@ -2273,8 +2306,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         error={productTruthPromotionPlannerError}
       />
       </div>
-
-      <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">
       {binding ? (
         <div className={`${v6.card} mb-0`} data-testid="intake-v6-review-binding">
           <h3 className={`mb-1 ${v6.sectionTitle}`}>ProductSystem</h3>

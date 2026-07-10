@@ -85,7 +85,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
             aria-expanded={issuesOpen}
           >
             <span>
-              Probleme & atenționări
+              Probleme & acțiuni necesare
               {issueCount > 0 ? ` (${issueCount})` : ""}
             </span>
             <span className="text-slate-500">{issuesOpen ? "▾" : "▸"}</span>

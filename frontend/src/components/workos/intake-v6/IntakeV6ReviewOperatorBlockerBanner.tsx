@@ -66,7 +66,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
               onClick={onJumpToDiagnostic}
               data-testid="intake-v6-review-operator-blocker-diagnostic-link"
             >
-              Vezi diagnostic tehnic
+              Vezi detalii tehnice și diagnostic
             </button>
           ) : null}
         </div>

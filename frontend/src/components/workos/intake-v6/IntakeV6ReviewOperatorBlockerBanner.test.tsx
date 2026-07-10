@@ -33,8 +33,16 @@ describe("IntakeV6ReviewOperatorBlockerBanner", () => {
     render(
       <IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} onJumpToDiagnostic={onJump} />,
     );
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-diagnostic-link")).toHaveTextContent(
+      /Detalii tehnice și diagnostic/i,
+    );
     fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-diagnostic-link"));
     expect(onJump).toHaveBeenCalledOnce();
+  });
+
+  it("remains visible independently of diagnostic collapse state", () => {
+    render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner")).toBeVisible();
   });
 
   it("renders nothing when display.show is false", () => {

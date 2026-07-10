@@ -139,7 +139,7 @@ describe("buildOperatorBlockerBannerDisplay", () => {
       },
       plannerModel: null,
     });
-    expect(display.messages.some((m) => /Diagnostic tehnic/i.test(m))).toBe(true);
+    expect(display.messages.some((m) => /Detalii tehnice și diagnostic/i.test(m))).toBe(true);
     expect(display.messages.join(" ")).not.toMatch(/UNKNOWN_BLOCKER_CODE_XYZ/);
   });
 });
