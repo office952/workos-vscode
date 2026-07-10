@@ -128,6 +128,7 @@ import {
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
 import IntakeV6ReviewTabNav, { type IntakeV6ReviewTabId } from "../IntakeV6ReviewTabNav";
+import IntakeV6ReviewOperatorBlockerBanner from "../IntakeV6ReviewOperatorBlockerBanner";
 import IntakeV6ReviewSectionShell from "../atoms/IntakeV6ReviewSectionShell";
 import {
   REVIEW_FIELD_BLOCK_CLASS,
@@ -159,6 +160,7 @@ import {
   hasUnclassifiedVectorArtworkWarning,
   resolveReviewReadinessDisplay,
 } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
+import { buildOperatorBlockerBannerDisplay } from "@/lib/intakeV6/intakeV6OperatorBlockerBannerDisplay";
 import {
   detectArtworkOnlyRequiresDecision,
   resolveArtworkOnlyReviewWarnings,
@@ -676,6 +678,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const commercialSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const artworkSectionRef = useRef<HTMLDivElement | null>(null);
   const liveCalcRef = useRef<HTMLDivElement | null>(null);
+  const diagnosticRef = useRef<HTMLDivElement | null>(null);
   const artworkHighlightTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingDirtyDomainsRef = useRef<Set<IntakeV6ReviewDirtyDomain>>(new Set());
   const pendingAutosavePolicyRef = useRef<ReviewAutosavePolicy>("short");
@@ -1554,6 +1557,26 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     loadingQuoteHandoffPreview,
     breakdown?.totals.contains_missing_prices,
   ]);
+  const operatorBlockerBannerDisplay = useMemo(
+    () =>
+      buildOperatorBlockerBannerDisplay({
+        surfacing: reviewHandoffSurfacing,
+        handoffLoading: loadingQuoteHandoffPreview && quoteHandoffPreview == null,
+        runtimeModel: runtimeCaptureReadModel,
+        runtimeLoading: loadingRuntimeCaptureReadModel,
+        plannerModel: productTruthPromotionPlanner,
+        plannerLoading: loadingProductTruthPromotionPlanner,
+      }),
+    [
+      reviewHandoffSurfacing,
+      loadingQuoteHandoffPreview,
+      quoteHandoffPreview,
+      runtimeCaptureReadModel,
+      loadingRuntimeCaptureReadModel,
+      productTruthPromotionPlanner,
+      loadingProductTruthPromotionPlanner,
+    ],
+  );
   const reviewReadinessDisplay = useMemo(
     () =>
       resolveReviewReadinessDisplay(state.workspace?.readiness_status, quoteHandoffPreview, {
@@ -1622,6 +1645,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
   const handleJumpToLiveCalc = useCallback(() => {
     liveCalcRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, []);
+
+  const handleJumpToDiagnostic = useCallback(() => {
+    diagnosticRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   const handleVerifyArtwork = useCallback(() => {
@@ -1766,6 +1793,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         templateCode={modularTemplateCode}
         pendingFinisaje={pendingConfirmationCount}
         illuminated={form.illuminated !== false}
+      />
+
+      <IntakeV6ReviewOperatorBlockerBanner
+        display={operatorBlockerBannerDisplay}
+        onJumpToDiagnostic={handleJumpToDiagnostic}
       />
 
       <div
@@ -2219,6 +2251,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </div>
       </div>
 
+      <div
+        ref={diagnosticRef}
+        id="intake-v6-review-diagnostic-tehnic"
+        data-testid="intake-v6-review-diagnostic-tehnic"
+      >
       <FormSystemBackboneAwarenessPanel
         backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
         runtimeState={backboneRuntimeState}
@@ -2235,6 +2272,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         loading={loadingProductTruthPromotionPlanner}
         error={productTruthPromotionPlannerError}
       />
+      </div>
 
       <IntakeV6TechnicalDetailsAccordion title="Detalii tehnice" testId="intake-v6-review-technical-details">
       {binding ? (
