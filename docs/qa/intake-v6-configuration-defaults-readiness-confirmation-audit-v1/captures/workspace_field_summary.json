@@ -1,0 +1,138 @@
+{
+  "workspace_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+  "workspace_code": "IV6-189D2F12",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "status": "ready_for_quote_preview",
+  "finish_setup": {
+    "confirmed": true,
+    "internal_draft_quote_confirmed": false,
+    "return_depth_mm": 60.0,
+    "return_finish_type": "white_aluminum",
+    "face_finish_type": "oracal_651"
+  },
+  "letter_group_finishes": [
+    {
+      "group_key": "pseudo:maria",
+      "return_depth_mm": 60.0,
+      "return_finish_type": "gold_aluminum",
+      "face_finish_type": "oracal_651",
+      "confirmed": false
+    },
+    {
+      "group_key": "pseudo:soare",
+      "return_depth_mm": 60.0,
+      "return_finish_type": "white_aluminum",
+      "face_finish_type": "oracal_651",
+      "confirmed": false
+    },
+    {
+      "group_key": "pseudo:ana",
+      "return_depth_mm": 60.0,
+      "return_finish_type": "white_aluminum",
+      "face_finish_type": "oracal_651",
+      "confirmed": false
+    },
+    {
+      "group_key": "pseudo:gradinita",
+      "return_depth_mm": 60.0,
+      "return_finish_type": "white_aluminum",
+      "face_finish_type": "oracal_651",
+      "confirmed": false
+    }
+  ],
+  "artwork_finishes": [
+    {
+      "layer_key": "logo-stanga",
+      "execution_type": "print_laminate",
+      "print_required": null,
+      "lamination_required": null,
+      "confirmed": false,
+      "artwork_decision": null
+    },
+    {
+      "layer_key": "logo-dreapta",
+      "execution_type": "print_laminate",
+      "print_required": null,
+      "lamination_required": null,
+      "confirmed": false,
+      "artwork_decision": null
+    }
+  ],
+  "layer_role_setup": {
+    "confirmation_status": "complete",
+    "complete": null
+  },
+  "selected_layer_refs": null,
+  "components_return_cant": {},
+  "quote_handoff": {
+    "workspace_id": "22ef834d-f2d0-453b-a7a7-118928c98a39",
+    "workspace_readiness_status": "ready_for_quote_preview",
+    "handoff_allowed": false,
+    "status_label": "QUOTE_HANDOFF_BLOCKED",
+    "blockers": [
+      "operator_confirmation_missing",
+      "unclassified_vector_artwork_requires_decision"
+    ],
+    "can_create_internal_draft_quote": false,
+    "requires_operator_confirmation": true,
+    "operator_confirmation_complete": false,
+    "fatal_blockers": [
+      "operator_confirmation_missing"
+    ],
+    "review_warnings": [
+      "unclassified_vector_artwork_requires_decision"
+    ],
+    "client_send_allowed": false,
+    "accept_allowed": false,
+    "convert_to_order_allowed": false,
+    "production_allowed": false,
+    "preview_only": true
+  },
+  "product_definition_return_cant": [
+    {
+      "component_id": "comp_face_litere",
+      "label_ro": "VIZUAL FAÈÄ",
+      "role": "faÈÄ plexi/acrilic, CNC, vinyl opÈional",
+      "mini_module_code": "debitare_fata",
+      "module_active": false,
+      "provenance": "dossier",
+      "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "component_id": "comp_lateral_litere",
+      "label_ro": "VOLUM ALUMINIU",
+      "role": "profil lateral, forming, bonding",
+      "mini_module_code": "modelare_cant",
+      "module_active": false,
+      "provenance": "dossier",
+      "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "component_id": "comp_spate_litere",
+      "label_ro": "CAPAC SPATE",
+      "role": "Forex 10 mm, CNC spate, back bevel opÈional",
+      "mini_module_code": "debitare_spate",
+      "module_active": false,
+      "provenance": "dossier",
+      "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "component_id": "comp_led_litere",
+      "label_ro": "SISTEM LED",
+      "role": "module + PSU + cablaj",
+      "mini_module_code": "sistem_led",
+      "module_active": true,
+      "provenance": "dossier",
+      "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "component_id": "comp_finisaj_litere",
+      "label_ro": "FINISAJ",
+      "role": "vopsire, sablon, packaging, QC intern",
+      "mini_module_code": "finisaje",
+      "module_active": true,
+      "provenance": "dossier",
+      "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+    }
+  ]
+}
