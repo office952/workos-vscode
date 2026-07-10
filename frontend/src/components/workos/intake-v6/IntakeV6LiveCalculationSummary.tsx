@@ -37,6 +37,16 @@ import { v6 } from "./atoms/intakeV6Presentation";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
+export const INTAKE_V6_LIVE_CALC_TITLE = "Calcul estimativ live";
+export const INTAKE_V6_LIVE_CALC_PREVIEW_HINT =
+  "Se actualizează după configurația curentă. Valoarea finală se confirmă ulterior.";
+export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Valoare estimată cu TVA";
+export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Estimare netă";
+export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = "Cost intern (referință)";
+export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
+  "Estimarea comercială necesită completarea configurației curente.";
+export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Calcul estimativ live — detalii";
+
 type LiveCalcDisplayBucket = "included" | "diagnostic" | "missing" | "legacy" | "excluded";
 
 type LogicalChildRowDisplay = {
@@ -676,6 +686,99 @@ function LiveCalcLineList({
   );
 }
 
+function LiveCalcPreviewHeader({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={compact ? "mb-1.5 min-w-0" : "mb-2"} data-testid="intake-v6-live-calc-preview-header">
+      <div className="flex items-center gap-1.5">
+        <Calculator className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+        <h3 className="text-[12px] font-medium text-slate-300">{INTAKE_V6_LIVE_CALC_TITLE}</h3>
+      </div>
+      {!compact ? (
+        <p
+          className="mt-1 text-[10px] leading-relaxed text-slate-500"
+          data-testid="intake-v6-live-calc-preview-hint"
+        >
+          {INTAKE_V6_LIVE_CALC_PREVIEW_HINT}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function LiveCalcEstimateTotalsBlock({
+  displayGrossRon,
+  displayNetRon,
+  total,
+  currency,
+  artworkOnlyBlocked,
+  emphasis = "balanced",
+}: {
+  displayGrossRon: number | null;
+  displayNetRon: number | null;
+  total: number | null;
+  currency: string;
+  artworkOnlyBlocked: boolean;
+  emphasis?: "balanced" | "compact" | "sidebar";
+}) {
+  const showCommercialEstimate =
+    !artworkOnlyBlocked && displayGrossRon != null && displayNetRon != null;
+  const grossClassName =
+    emphasis === "compact"
+      ? "text-[14px] font-semibold tabular-nums leading-none text-slate-200"
+      : emphasis === "sidebar"
+        ? "text-[16px] font-semibold tabular-nums leading-tight text-slate-200"
+        : "mt-0.5 block text-[18px] font-semibold tabular-nums leading-tight text-slate-200";
+  const containerClassName =
+    emphasis === "compact"
+      ? "min-w-0"
+      : "rounded-md border border-[#243044]/50 bg-[#101827]/50 px-2.5 py-2";
+
+  return (
+    <div className={containerClassName} data-testid="intake-v6-live-totals-summary">
+      {showCommercialEstimate ? (
+        <>
+          <span className="block text-[11px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
+          <span className={grossClassName} data-testid="intake-v6-live-offer-gross">
+            {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+          </span>
+          <div
+            className={joinClassNames(
+              "flex items-baseline justify-between gap-2 text-[11px]",
+              emphasis === "compact" ? "mt-0.5" : "mt-1.5",
+            )}
+          >
+            <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
+            <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-net">
+              {formatFaceBackPrepMoney(displayNetRon, "RON")}
+            </span>
+          </div>
+        </>
+      ) : !artworkOnlyBlocked ? (
+        <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
+          {INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+        </p>
+      ) : null}
+      <div
+        className={joinClassNames(
+          "flex items-baseline justify-between gap-2 text-[11px]",
+          showCommercialEstimate ? "mt-1.5 border-t border-[#243044]/40 pt-1.5" : "",
+        )}
+      >
+        <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
+        <span
+          className={joinClassNames(
+            "tabular-nums text-slate-300",
+            emphasis === "sidebar" ? "text-[13px] font-medium" : "text-[12px] font-medium",
+          )}
+          data-testid="intake-v6-live-material-total"
+        >
+          {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, currency)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function CantMetricsStrip({ operatorCantPerimeterM }: { operatorCantPerimeterM?: number | null }) {
   if (operatorCantPerimeterM == null || operatorCantPerimeterM <= 0) return null;
   return (
@@ -719,9 +822,9 @@ function DetailsSheet({
       </SheetTrigger>
       <SheetContent side="right" className="w-full overflow-y-auto border-[#2A3548] bg-[#0A0F1A] sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="text-left text-[13px] text-slate-100">Calcul live — detalii</SheetTitle>
+          <SheetTitle className="text-left text-[13px] text-slate-100">{INTAKE_V6_LIVE_CALC_DETAILS_TITLE}</SheetTitle>
           <SheetDescription className="mt-2 text-[10px] leading-relaxed text-slate-500">
-            Breakdown intern pe materiale, operații și consumabile. Nu este preț final comercial.
+            Breakdown pe materiale, operații și consumabile. Preview derivat — nu este ofertă finală.
           </SheetDescription>
         </SheetHeader>
         <div className="mt-4">{detailsBody}</div>
@@ -936,7 +1039,7 @@ export default function IntakeV6LiveCalculationSummary({
     return (
       <div
         className={joinClassNames(
-          "sticky top-0 z-10 rounded-md border border-[#2A3548]/90 bg-[#0A0F1A]/95 backdrop-blur-sm",
+          "sticky top-0 z-10 rounded-md border border-[#243044]/70 bg-[#0A0F1A]/95 backdrop-blur-sm",
           className,
         )}
         data-testid="intake-v6-live-calculation-summary"
@@ -944,44 +1047,42 @@ export default function IntakeV6LiveCalculationSummary({
         data-price-spine="true"
       >
         <div
-          className="flex flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2"
+          className="flex flex-wrap items-center gap-x-3 gap-y-2 px-3 py-2"
           data-testid="intake-v6-price-spine-bar"
         >
-          <Calculator className="h-4 w-4 shrink-0 text-cyan-400/80" aria-hidden />
+          <LiveCalcPreviewHeader compact />
 
-          <div className="min-w-0" data-testid="intake-v6-live-totals-summary">
-            <span className="block text-[11px] text-slate-500">Cost intern referință</span>
+          {displayGrossRon != null && displayNetRon != null && !artworkOnlyBlocked ? (
+            <div className="min-w-0 border-l border-[#243044]/60 pl-3">
+              <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
+              <span
+                className="text-[14px] font-semibold tabular-nums leading-none text-slate-200"
+                data-testid="intake-v6-live-offer-gross"
+              >
+                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+              </span>
+              <span
+                className="ml-2 text-[10px] tabular-nums text-slate-400"
+                data-testid="intake-v6-live-offer-net"
+              >
+                {INTAKE_V6_LIVE_CALC_NET_LABEL} {formatFaceBackPrepMoney(displayNetRon, "RON")}
+              </span>
+            </div>
+          ) : null}
+
+          <div className="min-w-0 border-l border-[#243044]/60 pl-3">
+            <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
             <span
-              className="text-[13px] font-semibold tabular-nums text-slate-200"
+              className="text-[12px] font-medium tabular-nums text-slate-300"
               data-testid="intake-v6-live-material-total"
             >
               {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, currency)}
             </span>
           </div>
 
-          {displayGrossRon != null && displayNetRon != null ? (
-            <div className="min-w-0 border-l border-[#243044]/70 pl-4">
-              <span className="block text-[11px] text-slate-500">
-                {hasOfficialTotals ? "Preț oficial cu TVA" : "Total cu TVA"}
-              </span>
-              <span
-                className="text-[22px] font-bold tabular-nums leading-none text-emerald-300"
-                data-testid="intake-v6-live-offer-gross"
-              >
-                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
-              </span>
-              <span
-                className="ml-2 text-[11px] tabular-nums text-cyan-200/80"
-                data-testid="intake-v6-live-offer-net"
-              >
-                net {formatFaceBackPrepMoney(displayNetRon, "RON")}
-              </span>
-            </div>
-          ) : null}
-
           {missingPrices || missingRateLabels.length > 0 ? (
             <span
-              className="inline-flex items-center gap-1 rounded border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[11px] text-amber-200"
+              className="inline-flex items-center gap-1 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-0.5 text-[10px] text-amber-200/90"
               data-testid="intake-v6-live-missing-rates-banner"
             >
               <AlertTriangle className="h-3 w-3 shrink-0" aria-hidden />
@@ -992,33 +1093,16 @@ export default function IntakeV6LiveCalculationSummary({
           ) : null}
 
           {pendingSave ? (
-            <span className="text-[11px] text-amber-200/90" data-testid="intake-v6-live-pending-save-inline">
+            <span className="text-[10px] text-amber-200/90" data-testid="intake-v6-live-pending-save-inline">
               Salvare…
             </span>
           ) : null}
 
-          <div className="ml-auto flex flex-wrap items-center gap-2">
-            {filterOptions.slice(0, 4).map((option) => (
-              <button
-                key={option.id}
-                type="button"
-                className={joinClassNames(
-                  "rounded border px-2 py-1 text-[11px] font-semibold transition",
-                  activeFilter === option.id
-                    ? "border-cyan-500/40 bg-cyan-500/15 text-cyan-200"
-                    : "border-[#2A3548] text-slate-400 hover:text-slate-200",
-                )}
-                onClick={() => setActiveFilter(option.id)}
-                data-testid={`intake-v6-live-filter-${option.id}`}
-              >
-                {option.label}
-              </button>
-            ))}
-
+          <div className="ml-auto">
             <DetailsSheet
               detailsBody={detailsBody}
               missingRateLabels={missingRateLabels}
-              triggerLabel="Detalii"
+              triggerLabel="Detalii linii"
             />
           </div>
         </div>
@@ -1030,59 +1114,26 @@ export default function IntakeV6LiveCalculationSummary({
     return (
       <aside
         className={joinClassNames(
-          "rounded-md border border-[#2A3548]/90 bg-[#0A0F1A]/90 p-2.5",
+          "rounded-md border border-[#243044]/60 bg-[#0A0F1A]/75 p-2.5",
           className,
         )}
         data-testid="intake-v6-review-calculator-panel"
         data-layout={layout}
       >
-        <div className="mb-2 flex items-center gap-1.5">
-          <Calculator className="h-3.5 w-3.5 text-cyan-400/80" aria-hidden />
-          <h3 className="text-[12px] font-semibold text-slate-100">Calcul live</h3>
-        </div>
+        <LiveCalcPreviewHeader />
 
-        <div
-          className="mb-2 rounded-md border border-[#243044]/80 bg-[#101827]/90 px-2.5 py-2"
-          data-testid="intake-v6-live-totals-summary"
-        >
-          {displayGrossRon != null && displayNetRon != null ? (
-            <>
-              <span className="block text-[11px] text-slate-500">
-                {hasOfficialTotals ? "Preț oficial cu TVA" : "Total cu TVA"}
-              </span>
-              <span
-                className="mt-0.5 block text-[24px] font-bold tabular-nums leading-none text-emerald-300"
-                data-testid="intake-v6-live-offer-gross"
-              >
-                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
-              </span>
-              <div className="mt-2 flex items-baseline justify-between gap-2 border-t border-[#243044]/60 pt-2 text-[11px]">
-                <span className="text-slate-500">Net</span>
-                <span className="tabular-nums text-cyan-200" data-testid="intake-v6-live-offer-net">
-                  {formatFaceBackPrepMoney(displayNetRon, "RON")}
-                </span>
-              </div>
-            </>
-          ) : null}
-          <div
-            className={joinClassNames(
-              "flex items-baseline justify-between gap-2",
-              displayGrossRon != null && displayNetRon != null ? "mt-1.5" : "",
-            )}
-          >
-            <span className="text-[11px] text-slate-500">Cost intern referință</span>
-            <span
-              className="text-[12px] font-semibold tabular-nums text-slate-200"
-              data-testid="intake-v6-live-material-total"
-            >
-              {totalCostLabel(total, currency)}
-            </span>
-          </div>
-        </div>
+        <LiveCalcEstimateTotalsBlock
+          displayGrossRon={displayGrossRon}
+          displayNetRon={displayNetRon}
+          total={total}
+          currency={currency}
+          artworkOnlyBlocked={artworkOnlyBlocked}
+          emphasis="balanced"
+        />
 
         {pendingSave ? (
           <p
-            className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/90"
+            className="mb-2 mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/90"
             data-testid="intake-v6-live-pending-save"
           >
             {INTAKE_V6_PENDING_SAVE_BANNER}
@@ -1091,12 +1142,12 @@ export default function IntakeV6LiveCalculationSummary({
 
         {missingPrices || missingRateLabels.length > 0 ? (
           <div
-            className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] text-amber-100/85"
+            className="mb-2 mt-2 rounded border border-amber-500/20 bg-amber-500/5 px-2 py-1.5 text-[10px] text-amber-100/80"
             data-testid="intake-v6-live-missing-rates-banner"
           >
             <span className="font-medium">Tarife lipsă</span>
             {visibleMissingRateLabels.length > 0 ? (
-              <span className="text-amber-100/75">
+              <span className="text-amber-100/70">
                 {" "}
                 — {visibleMissingRateLabels.join("; ")}
                 {hiddenMissingRateCount > 0 ? ` (+${hiddenMissingRateCount})` : ""}
@@ -1106,30 +1157,25 @@ export default function IntakeV6LiveCalculationSummary({
         ) : null}
 
         {loading ? (
-          <p className="mb-2 text-[11px] text-slate-400">Actualizez estimările…</p>
+          <p className="mb-2 mt-2 text-[11px] text-slate-400">Actualizez estimările…</p>
         ) : rows.length > 0 ? (
-          <div data-testid="intake-v6-live-materials-used">
+          <div className="mt-2" data-testid="intake-v6-live-materials-used">
             {usesLogicalList ? (
-              <p
-                className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
-                data-testid="intake-v6-logical-list-summary"
-              >
-                Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
+              <p className="mb-2 text-[10px] text-slate-500" data-testid="intake-v6-logical-list-summary">
+                Lista logică · {logicalRowCount}
+                {logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
               </p>
             ) : null}
-            {filterChips}
-            {technicalDetailsToggle}
             <LiveCalcLineList
               filteredRows={previewRows}
               activeFilter={activeFilter}
               filterTotals={filterTotals}
               currency={currency}
               logicalMode={usesLogicalList}
-              showTechnicalDetails={showTechnicalDetails}
+              showTechnicalDetails={false}
             />
-            {activeFilter !== "missing_rates" ? <DiagnosticSection rows={diagnosticRows} /> : null}
             {hiddenPreviewCount > 0 ? (
-              <p className="mt-1.5 text-[11px] text-slate-400" data-testid="intake-v6-live-preview-more">
+              <p className="mt-1.5 text-[10px] text-slate-500" data-testid="intake-v6-live-preview-more">
                 +{hiddenPreviewCount} linii în detaliu
               </p>
             ) : null}
@@ -1137,13 +1183,13 @@ export default function IntakeV6LiveCalculationSummary({
               <DetailsSheet
                 detailsBody={detailsBody}
                 missingRateLabels={missingRateLabels}
-                triggerLabel={`Detalii (${filteredRows.length} linii)`}
+                triggerLabel={`Detalii linii (${filteredRows.length})`}
                 testId="intake-v6-review-calculator-details"
               />
             </div>
           </div>
         ) : (
-          <p className="text-[11px] text-slate-400">Nu există încă breakdown live.</p>
+          <p className="mt-2 text-[11px] text-slate-400">Nu există încă breakdown live.</p>
         )}
       </aside>
     );
@@ -1160,51 +1206,19 @@ export default function IntakeV6LiveCalculationSummary({
     >
       {!hideTitle ? (
         <div className="mb-2">
-          <h3 className="text-[12px] font-bold uppercase tracking-wide text-slate-200">Calcul live</h3>
-          <p className="mt-0.5 text-[11px] text-slate-500">Materiale, consumabile și operații estimate</p>
+          <LiveCalcPreviewHeader />
+          <p className="mt-1 text-[11px] text-slate-500">Materiale, consumabile și operații estimate</p>
         </div>
       ) : null}
 
-      <div
-        className="mb-2 rounded-md border border-[#243044]/80 bg-[#101827]/90 px-2.5 py-2"
-        data-testid="intake-v6-live-totals-summary"
-      >
-        <div className="flex items-baseline justify-between gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-            Total intern
-          </span>
-          <span
-            className="text-[15px] font-bold tabular-nums text-slate-50"
-            data-testid="intake-v6-live-material-total"
-          >
-            {totalCostLabel(total, currency)}
-          </span>
-        </div>
-        {displayGrossRon != null && displayNetRon != null ? (
-          <>
-            <div className="mt-1.5 flex items-baseline justify-between gap-2 border-t border-[#243044]/60 pt-1.5">
-              <span className="text-[11px] uppercase tracking-wide text-slate-500">Total net</span>
-              <span
-                className="text-[13px] font-semibold tabular-nums text-cyan-200"
-                data-testid="intake-v6-live-offer-net"
-              >
-                {formatFaceBackPrepMoney(displayNetRon, "RON")}
-              </span>
-            </div>
-            <div className="mt-1 flex items-baseline justify-between gap-2">
-              <span className="text-[11px] uppercase tracking-wide text-slate-500">
-                {hasOfficialTotals ? "Preț oficial cu TVA" : "Total cu TVA"}
-              </span>
-              <span
-                className="text-[14px] font-bold tabular-nums text-emerald-300"
-                data-testid="intake-v6-live-offer-gross"
-              >
-                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
-              </span>
-            </div>
-          </>
-        ) : null}
-      </div>
+      <LiveCalcEstimateTotalsBlock
+        displayGrossRon={displayGrossRon}
+        displayNetRon={displayNetRon}
+        total={total}
+        currency={currency}
+        artworkOnlyBlocked={artworkOnlyBlocked}
+        emphasis="sidebar"
+      />
 
       {pendingSave ? (
         <p

@@ -6,7 +6,12 @@ import type {
   IntakeV6MaterialBreakdownResponse,
 } from "@/lib/intakeV6/intakeV6Api";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
-import IntakeV6LiveCalculationSummary from "./IntakeV6LiveCalculationSummary";
+import IntakeV6LiveCalculationSummary, {
+  INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE,
+  INTAKE_V6_LIVE_CALC_GROSS_LABEL,
+  INTAKE_V6_LIVE_CALC_PREVIEW_HINT,
+  INTAKE_V6_LIVE_CALC_TITLE,
+} from "./IntakeV6LiveCalculationSummary";
 
 afterEach(() => cleanup());
 
@@ -772,5 +777,76 @@ describe("IntakeV6LiveCalculationSummary", () => {
 
     fireEvent.click(screen.getByTestId("intake-v6-price-spine-details"));
     expect(screen.getByTestId("intake-v6-live-cant-metrics")).toHaveTextContent(/20\.88 m/);
+  });
+
+  it("shows estimative title and preview hint in right panel", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+      />,
+    );
+
+    expect(screen.getByText(INTAKE_V6_LIVE_CALC_TITLE)).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-calc-preview-hint")).toHaveTextContent(INTAKE_V6_LIVE_CALC_PREVIEW_HINT);
+  });
+
+  it("uses preview labels instead of final-price wording when dry-run totals are available", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          commercial_totals: {
+            subtotal_net: 2500,
+            total_gross: 2975,
+            vat_rate: 19,
+          },
+        }}
+      />,
+    );
+
+    expect(screen.getByText(INTAKE_V6_LIVE_CALC_GROSS_LABEL)).toBeInTheDocument();
+    expect(screen.queryByText(/Preț oficial/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Total cu TVA/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Total final/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/2[,.]?975/);
+    expect(screen.getByTestId("intake-v6-live-offer-net")).toHaveTextContent(/2[,.]?500/);
+    expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);
+  });
+
+  it("shows incomplete estimate message instead of a false gross total", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-live-estimate-unavailable")).toHaveTextContent(
+      INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE,
+    );
+    expect(screen.queryByTestId("intake-v6-live-offer-gross")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);
+  });
+
+  it("keeps filter chips and inline diagnostics out of the right panel preview", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        letterGroups={letterGroups}
+        artworkFinishes={artworkFinishes}
+      />,
+    );
+
+    expect(screen.queryByTestId("intake-v6-live-calc-filters")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-live-diagnostics")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-live-technical-toggle")).not.toBeInTheDocument();
   });
 });
