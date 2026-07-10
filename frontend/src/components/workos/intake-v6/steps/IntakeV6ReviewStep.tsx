@@ -1736,6 +1736,27 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
         </div>
       ) : null}
+      <div className="mb-4" data-testid="intake-v6-review-backing-placement">
+        <IntakeV6ReviewSectionShell
+          title="Spate / backing"
+          description="Decizie structurală a corpului literei — independentă de iluminare LED."
+          testId="intake-v6-review-section-backing"
+          compact
+        >
+          <IntakeV6ReviewBackingSelect
+            backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
+            onBackingChange={(mode) =>
+              updateForm(
+                {
+                  backing_mode: mode,
+                  back_bevel_enabled: mode === "forex_10_with_bevel",
+                },
+                { domains: ["backing"] },
+              )
+            }
+          />
+        </IntakeV6ReviewSectionShell>
+      </div>
       <div className="mb-4 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
         <IntakeV6LiveCalculationSummary
           breakdown={breakdown}
@@ -1834,8 +1855,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         {reviewTab === "iluminare" ? (
           <div data-testid="intake-v6-review-tab-panel-iluminare" className="space-y-2">
             <IntakeV6ReviewSectionShell
-              title="Iluminare & spate"
-              description="LED, consum și mod backing — aceleași token-uri compacte ca la Finisaje."
+              title="Iluminare"
+              description="LED, consum și culoare — emblemă când există artwork."
               testId="intake-v6-review-section-lighting"
               compact
             >
@@ -1893,21 +1914,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 allowedLedModulePowerW={templateContract.allowedLedModulePowerW}
                 allowedEmblemLightingModes={templateContract.allowedEmblemLightingModes}
               />
-              <div className={`${v6.cardCompact} mt-2 !p-3`}>
-                <p className="mb-2 text-[10px] font-semibold text-slate-400">Spate / backing</p>
-                <IntakeV6ReviewBackingSelect
-                  backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
-                  onBackingChange={(mode) =>
-                    updateForm(
-                      {
-                        backing_mode: mode,
-                        back_bevel_enabled: mode === "forex_10_with_bevel",
-                      },
-                      { domains: ["backing"] },
-                    )
-                  }
-                />
-              </div>
             </IntakeV6ReviewSectionShell>
           </div>
         ) : null}
