@@ -685,15 +685,6 @@ export default function IntakeV6ConfirmStep({ hook }: IntakeV6ConfirmStepProps) 
 					variant="confirm"
 				/>
 
-				{materialBreakdown?.totals.contains_missing_prices ? (
-					<p
-						className="rounded border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-[11px] text-amber-200"
-						data-testid="intake-v6-confirm-missing-rates-banner"
-					>
-						Calculul conține linii fără tarif configurat — verifică costul intern înainte de draft.
-					</p>
-				) : null}
-
 				<div className={v6.confirmStepGrid} data-testid="intake-v6-confirm-layout">
 					<div className="min-w-0 space-y-3">
 						<IntakeV6ConfirmKpiStrip

@@ -34,6 +34,8 @@ type ContextValue = {
   setHandlers: (handlers: WorkspaceHeaderStatusHandlers) => void;
   confirmFooter: ConfirmFooterState | null;
   setConfirmFooter: (state: ConfirmFooterState | null) => void;
+  openFooterIssues: () => void;
+  registerFooterIssuesOpener: (opener: (() => void) | null) => void;
 };
 
 const IntakeV6WorkspaceHeaderStatusContext = createContext<ContextValue | null>(null);
@@ -73,6 +75,15 @@ export function IntakeV6WorkspaceHeaderStatusProvider({
     () => baselineHandlersRef.current,
   );
   const [confirmFooter, setConfirmFooterState] = useState<ConfirmFooterState | null>(null);
+  const footerIssuesOpenerRef = useRef<(() => void) | null>(null);
+
+  const registerFooterIssuesOpener = useCallback((opener: (() => void) | null) => {
+    footerIssuesOpenerRef.current = opener;
+  }, []);
+
+  const openFooterIssues = useCallback(() => {
+    footerIssuesOpenerRef.current?.();
+  }, []);
 
   const setConfirmFooter = useCallback((state: ConfirmFooterState | null) => {
     setConfirmFooterState((current) =>
@@ -89,8 +100,17 @@ export function IntakeV6WorkspaceHeaderStatusProvider({
   }, []);
 
   const value = useMemo(
-    () => ({ overlay, setOverlay, handlers, setHandlers, confirmFooter, setConfirmFooter }),
-    [overlay, handlers, confirmFooter, setOverlay, setHandlers, setConfirmFooter],
+    () => ({
+      overlay,
+      setOverlay,
+      handlers,
+      setHandlers,
+      confirmFooter,
+      setConfirmFooter,
+      openFooterIssues,
+      registerFooterIssuesOpener,
+    }),
+    [overlay, handlers, confirmFooter, setOverlay, setHandlers, setConfirmFooter, openFooterIssues, registerFooterIssuesOpener],
   );
 
   return (

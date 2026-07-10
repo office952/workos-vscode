@@ -1,9 +1,11 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import { useEffect } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { IntakeV6WorkspaceHeaderStatusProvider, useIntakeV6WorkspaceHeaderStatus } from "./IntakeV6WorkspaceHeaderStatusContext";
 import type { IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
+
+const EMPTY_WARNINGS: readonly string[] = [];
 
 function baseWorkspaceState(overrides: Partial<IntakeV6WorkspaceState> = {}): IntakeV6WorkspaceState {
   return {
@@ -17,10 +19,6 @@ function baseWorkspaceState(overrides: Partial<IntakeV6WorkspaceState> = {}): In
     layerChips: [
       { layerKey: "a", displayName: "A", status: "pending" },
       { layerKey: "b", displayName: "B", status: "pending" },
-      { layerKey: "c", displayName: "C", status: "pending" },
-      { layerKey: "d", displayName: "D", status: "pending" },
-      { layerKey: "e", displayName: "E", status: "pending" },
-      { layerKey: "f", displayName: "F", status: "pending" },
     ],
     analysisRunId: 1,
     analyzerStatus: "ready",
@@ -35,25 +33,26 @@ function baseWorkspaceState(overrides: Partial<IntakeV6WorkspaceState> = {}): In
 }
 
 function OverlaySeed({
-  reviewWarnings = [],
-  layersTotal = 6,
+  reviewWarnings = EMPTY_WARNINGS,
+  secondaryWarnings = EMPTY_WARNINGS,
+  layersTotal = 2,
   layersConfirmed = 0,
 }: {
-  reviewWarnings?: string[];
+  reviewWarnings?: readonly string[];
+  secondaryWarnings?: readonly string[];
   layersTotal?: number;
   layersConfirmed?: number;
 }) {
   const { setOverlay } = useIntakeV6WorkspaceHeaderStatus();
   useEffect(() => {
-    setOverlay({ layersTotal, layersConfirmed, reviewWarnings });
-  }, [layersConfirmed, layersTotal, reviewWarnings, setOverlay]);
+    setOverlay({ layersTotal, layersConfirmed, reviewWarnings, secondaryWarnings });
+  }, [layersConfirmed, layersTotal, reviewWarnings, secondaryWarnings, setOverlay]);
   return null;
 }
 
 function renderFooter(
   overrides: Partial<Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0]> = {},
-  reviewWarnings: string[] = [],
-  overlayCounts: { layersTotal?: number; layersConfirmed?: number } = {},
+  overlay: { reviewWarnings?: string[]; secondaryWarnings?: string[]; layersTotal?: number; layersConfirmed?: number } = {},
 ) {
   const props: Parameters<typeof IntakeV6OperatorWorkspaceFooter>[0] = {
     currentStep: "layers",
@@ -72,54 +71,51 @@ function renderFooter(
 
   return render(
     <IntakeV6WorkspaceHeaderStatusProvider>
-      <OverlaySeed reviewWarnings={reviewWarnings} {...overlayCounts} />
+      <OverlaySeed {...overlay} />
       <IntakeV6OperatorWorkspaceFooter {...props} />
     </IntakeV6WorkspaceHeaderStatusProvider>,
   );
 }
 
 describe("IntakeV6OperatorWorkspaceFooter", () => {
-  it("keeps the issues drawer collapsed next to disabled Continue to Review CTA", () => {
-    renderFooter();
-
-    expect(screen.getByTestId("intake-v6-footer-next")).toBeDisabled();
-    expect(screen.getByTestId("intake-v6-footer-issues-toggle")).toHaveAttribute("aria-expanded", "false");
-    expect(screen.queryByTestId("intake-v6-footer-issues-content")).not.toBeInTheDocument();
+  afterEach(() => {
+    cleanup();
   });
 
-  it("shows the blocker only after expanding the issues drawer", () => {
-    renderFooter({
-      currentStep: "confirm",
-      footerBlocker: "Calculul live conține linii fără tarif configurat.",
-      nextDisabled: true,
-    });
+  it("shows primary disabled reason outside the collapsed drawer", () => {
+    const view = renderFooter();
+    const footer = within(view.container);
 
-    expect(screen.queryByText("Calculul live conține linii fără tarif configurat.")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("intake-v6-footer-issues-toggle"));
-    expect(screen.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent(
-      "Calculul live conține linii fără tarif configurat.",
+    expect(footer.getByTestId("intake-v6-footer-primary-action-reason")).toHaveTextContent(
+      "Confirmă rolul pentru toate straturile.",
     );
+    expect(footer.getByTestId("intake-v6-footer-issues-toggle")).toHaveAttribute("aria-expanded", "false");
   });
 
-  it("counts review warnings in the collapsed issues title", () => {
-    renderFooter(
+  it("keeps grouped issues collapsed until expanded", () => {
+    const view = renderFooter(
+      { nextDisabled: false, footerBlocker: null },
+      { reviewWarnings: ["Verifică lățimea cantului."], layersTotal: 0, layersConfirmed: 0 },
+    );
+    const footer = within(view.container);
+
+    expect(footer.queryByText("Verifică lățimea cantului.")).not.toBeInTheDocument();
+    fireEvent.click(footer.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(footer.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent("Verifică lățimea cantului.");
+  });
+
+  it("includes secondary analysis warnings in the collapsed footer groups", () => {
+    const view = renderFooter(
+      { nextDisabled: false, footerBlocker: null },
       {
-        nextDisabled: false,
-        footerBlocker: null,
-        workspaceState: baseWorkspaceState({ layerChips: [] }),
+        secondaryWarnings: ["2 straturi propuse ca Vector Litere — confirmă rolurile."],
+        layersTotal: 0,
+        layersConfirmed: 0,
       },
-      ["Verifica latimea cantului."],
-      { layersTotal: 0, layersConfirmed: 0 },
     );
+    const footer = within(view.container);
 
-    expect(screen.getByTestId("intake-v6-footer-next")).toBeEnabled();
-    expect(screen.getByTestId("intake-v6-footer-issues-toggle")).toHaveTextContent(
-      "Probleme & acțiuni necesare (1)",
-    );
-    expect(screen.queryByText("Verifica latimea cantului.")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByTestId("intake-v6-footer-issues-toggle"));
-    expect(screen.getByTestId("intake-v6-footer-issues-content")).toHaveTextContent(
-      "Verifica latimea cantului.",
-    );
+    fireEvent.click(footer.getByTestId("intake-v6-footer-issues-toggle"));
+    expect(footer.getByTestId("intake-v6-footer-group-warnings")).toHaveTextContent(/Vector Litere/i);
   });
 });

@@ -19,6 +19,7 @@ import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel"
 import IntakeV6SvgPreviewInspectDialog from "../IntakeV6SvgPreviewInspectDialog";
 import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
+import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
@@ -97,6 +98,17 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			: "semantic-layers"
 		: "empty";
 
+	const analysisWarningSummaries = useMemo(
+		() =>
+			buildIntakeV6LayersAnalysisWarningSummaries({
+				report,
+				confirmation,
+				parseWarning,
+				scopeWarnings,
+			}),
+		[report, confirmation, parseWarning, scopeWarnings],
+	);
+
 	const headerOverlay = useMemo(
 		() => ({
 			loading: analyzing,
@@ -108,6 +120,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			widthMm: report?.document.widthMm ?? quoteGeometry.width_mm,
 			heightMm: report?.document.heightMm ?? quoteGeometry.height_mm,
 			perimeterM: getFullVectorPerimeterM(geometryMetrics),
+			secondaryWarnings: analysisWarningSummaries,
 		}),
 		[
 			analyzing,
@@ -119,6 +132,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			quoteGeometry.width_mm,
 			quoteGeometry.height_mm,
 			geometryMetrics,
+			analysisWarningSummaries,
 		],
 	);
 

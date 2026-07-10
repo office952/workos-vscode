@@ -6,7 +6,9 @@ import {
   type ReviewHeaderStatusModel,
 } from "./intakeV6ReviewHeaderStatus";
 
-export type WorkspaceHeaderStatusOverlay = Partial<BuildReviewHeaderStatusInput>;
+export type WorkspaceHeaderStatusOverlay = Partial<BuildReviewHeaderStatusInput> & {
+  secondaryWarnings?: readonly string[];
+};
 
 export function buildWorkspaceHeaderStatus(
   state: IntakeV6WorkspaceState,

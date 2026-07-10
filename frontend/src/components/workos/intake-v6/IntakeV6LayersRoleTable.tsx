@@ -343,6 +343,7 @@ export default function IntakeV6LayersRoleTable({
             <LayerLegendRow
               key={layer.id}
               layer={layer}
+              report={report}
               confirmation={confirmation}
               onUpdateLayerRole={onUpdateLayerRole}
               workspaceTemplateCode={workspaceTemplateCode}

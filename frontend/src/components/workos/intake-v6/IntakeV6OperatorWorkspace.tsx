@@ -65,7 +65,11 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
         : "Flux complet";
 
   const footerBlocker =
-    state.currentStep === "review" && !canContinueFromReview ? firstBlocker : null;
+    state.currentStep === "layers" && !canContinueFromAnalyzer
+      ? firstBlocker
+      : state.currentStep === "review" && !canContinueFromReview
+        ? firstBlocker
+        : null;
 
   const promoteTemplateV2 = useCallback(async () => {
     setPromoteStatus("running");

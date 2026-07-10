@@ -233,12 +233,9 @@ describe("IntakeV6LayersOperatorPanel", () => {
     );
 
     const panel = screen.getByTestId("intake-v6-layers-warnings");
-    expect(panel).toHaveTextContent("Atenție analiză");
-    expect(panel).toHaveTextContent("Vector Litere");
-    expect(panel).toHaveTextContent("Vector Logo");
-    expect(panel).toHaveTextContent("Decizii straturi");
-    expect(panel).not.toHaveTextContent("Vector Atipic");
-    expect(panel).not.toHaveTextContent("Vector Atipic / logo");
+    expect(panel).toHaveTextContent(/observa/i);
+    expect(screen.getByTestId("intake-v6-layers-warnings-open-footer")).toBeInTheDocument();
+    expect(panel).not.toHaveTextContent("Atenție analiză");
     expect(panel).not.toHaveTextContent("stroke-only");
     expect(panel).not.toHaveTextContent("artwork candidate");
   });

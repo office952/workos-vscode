@@ -109,7 +109,11 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
 
   it("shows semantic layers mode for multi pseudo-layer SVG", () => {
     const report = analyzeSemanticFixture();
-    render(<IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />);
+    render(
+      <IntakeV6WorkspaceHeaderStatusProvider>
+        <IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />
+      </IntakeV6WorkspaceHeaderStatusProvider>,
+    );
 
     expect(screen.getByTestId("intake-v6-layers-layout")).toHaveAttribute(
       "data-intake-v6-layers-layout-mode",
@@ -118,9 +122,12 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     expect(screen.getByTestId("intake-v6-layer-table")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-layer-card-grid")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-layers-color-breakdown")).not.toBeInTheDocument();
-    expect(screen.getAllByText(/pseudo maria/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByTestId("intake-v6-layers-warnings")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-pseudo-layer-warning-group")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-layers-warnings-count")).toHaveTextContent(/observa/i);
+    expect(screen.getByTestId("intake-v6-layers-warnings-open-footer")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-pseudo-layer-warning-group")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-pseudo-layer-warning-summary")).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBeGreaterThan(0);
   });
 
   it("shows single-layer color breakdown when one structural layer is detected", () => {
@@ -235,7 +242,7 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     expect(activeCount()).toBeGreaterThan(0);
   });
 
-  it("keeps compact workspace header with single status badge", () => {
+  it("keeps compact workspace header without duplicate status badge", () => {
     const report = analyzeSemanticFixture();
     render(
       <IntakeV6WorkspaceHeaderStatusProvider>
@@ -256,24 +263,22 @@ describe("IntakeV6SvgAnalyzerStep full-width layout", () => {
     );
 
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-workspace-status-badge")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-TEST");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Straturi");
+    expect(screen.getByTestId("intake-v6-progress")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-workspace-status-badge")).not.toBeInTheDocument();
     expect(screen.queryByText("SVG ready")).not.toBeInTheDocument();
   });
 
-  it("paginates layer cards when more than four layers are detected", () => {
+  it("shows all semantic fixture layers without card pagination", () => {
     const report = analyzeSemanticFixture();
     expect(report.layers.length).toBeGreaterThan(4);
+    expect(report.layers.length).toBeLessThanOrEqual(6);
 
     render(<IntakeV6SvgAnalyzerStep hook={buildHook(report, SEMANTIC_FIXTURE) as never} />);
 
-    expect(screen.getByTestId("intake-v6-layer-card-pagination")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-layer-card-pagination-page")).toHaveTextContent("1/2");
-    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(4);
-
-    fireEvent.click(screen.getByTestId("intake-v6-layer-card-pagination-next"));
-
-    expect(screen.getByTestId("intake-v6-layer-card-pagination-page")).toHaveTextContent("2/2");
-    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(2);
+    expect(screen.queryByTestId("intake-v6-layer-card-pagination")).not.toBeInTheDocument();
+    expect(screen.getAllByTestId(/intake-v6-layer-row-/).length).toBe(report.layers.length);
   });
 
   it("exposes confirm-all and layer role controls without changing upload API", () => {
