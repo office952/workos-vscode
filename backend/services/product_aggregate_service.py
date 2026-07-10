@@ -284,6 +284,15 @@ class ProductAggregateService:
             ),
         )
 
+    async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:
+        from services.product_aggregate_workspace_composition_service import build_workspace_composed_aggregate
+
+        return await build_workspace_composed_aggregate(
+            self._db,
+            template_code=template_code,
+            workspace_id=workspace_id,
+        )
+
     async def _load_template(self, template_code: str) -> Product_templates | None:
         result = await self._db.execute(
             select(Product_templates)
