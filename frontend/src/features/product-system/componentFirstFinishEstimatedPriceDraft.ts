@@ -1,9 +1,32 @@
 /**
  * FINISH estimated price draft — readonly workshop only.
  * Authority: EVIDENCE_DRAFT_READONLY — not Pricing Registry, not active pricing.
- * Source: finish_component_truth_owner_decision_v1.md + seed evidence cross-ref only.
+ * Source: finish_component_truth_owner_decision_v1.md +
+ *         finish_owner_price_values_decision_v1.md + seed evidence cross-ref only.
  * Values from seeds are evidence_only — not owner-confirmed FINISH pricing authority.
  */
+
+export const FINISH_OWNER_PRICE_VALUES_DECISION = {
+  status: "OWNER_ACCEPTED",
+  signedDoc: "finish_owner_price_values_decision_v1.md",
+  date: "2026-07-10",
+  faceLaborKey: "FACE_VINYL_APPLICATION_LABOR",
+  artworkLaborModel: "same_as_face_evidence_only",
+  artworkPrintLamKeys: "same_as_face_evidence_only",
+  artworkPrintOnly: "visible_blocked_runtime_missing",
+  mpArtworkAreaHandoff: "blocked_until_product_system_spec",
+  seedValues: "evidence_only_no_owner_override",
+  pricingActive: false as const,
+  readyForPricing: false as const,
+} as const;
+
+/** Intake V4 runtime path — not FINISH draft authority. */
+export const FINISH_LEGACY_RUNTIME_EVIDENCE = {
+  key: "WC_VINYL_APPLICATION",
+  classification: "legacy_runtime_evidence",
+  notesRo:
+    "Intake V4 artwork print/lam application rows — not FINISH readonly draft labor authority.",
+} as const;
 
 export const FINISH_ESTIMATE_DRAFT_AUTHORITY = {
   label: "EVIDENCE_DRAFT_READONLY",
@@ -66,7 +89,11 @@ export type FinishDraftExcludedKey = {
 
 export const FINISH_ESTIMATE_CALCULATION_RULES: readonly string[] = [
   "Finish față Oracal/print = mp_face_area × evidence material/service/labor (readonly — nu activare)",
-  "Finish artwork = mp_artwork_area când geometria există (handoff runtime pending)",
+  "Finish artwork = mp_artwork_area când geometria există (ProductSystem handoff blocked)",
+  "Labor FINISH draft: FACE_VINYL_APPLICATION_LABOR evidence_only (face + artwork)",
+  "WC_VINYL_APPLICATION = legacy_runtime_evidence Intake V4 only — not FINISH draft authority",
+  "Artwork print+lam = aceleași chei evidence ca fața (owner decision 2026-07-10)",
+  "Artwork print only = vizibil blocked — fără runtime Intake V4 print_only",
   "face_material_usage_area_m2 = referință internă FACE — nu bază FINISH",
   "Material Plexiglas / MAT-ACP-FATA-LITERE = FACE — nu FINISH",
   "RETURN-CANT labor keys = exclus din FINISH",
@@ -214,28 +241,29 @@ export const FINISH_ESTIMATED_PRICE_DRAFT_ENTRIES: readonly FinishEstimateDraftE
   },
   {
     key: "artwork_print_laminate_draft",
-    labelRo: "Artwork print + laminate — evidence",
+    labelRo: "Artwork print + laminate — same keys as face (evidence)",
     variantId: "artwork_print_laminate",
     surfaceTarget: "artwork",
     category: "print_laminate",
     quantityBasis: "mp_artwork_area",
     quantityBasisStatus: "owner_confirmed_quantity_basis",
-    materialEvidenceKeys: ["MAT-VINYL-PRINT-LAMINATED"],
+    materialEvidenceKeys: ["MAT-VINYL-PRINT", "MAT-VINYL-PRINT-LAMINATED"],
     laborEvidenceKeys: ["FACE_VINYL_APPLICATION_LABOR"],
     serviceEvidenceKeys: ["LARGE_FORMAT_PRINT", "LAMINATION"],
-    evidenceMaterialEurMp: null,
+    evidenceMaterialEurMp: FINISH_EVIDENCE_REFERENCE_RATES.MAT_VINYL_PRINT,
     evidenceLaborEurMp: FINISH_EVIDENCE_REFERENCE_RATES.FACE_VINYL_APPLICATION_LABOR,
     evidenceCombinedEurMp: FINISH_EVIDENCE_REFERENCE_RATES.MAT_VINYL_PRINT_LAMINATED,
-    draftValueStatus: "source_inventory_audit_required",
-    displayValueRo: "combined 10.00 EUR/mp or split — artwork keys audit required",
+    draftValueStatus: "evidence_only",
+    displayValueRo: "combined 10.00 EUR/mp or split + labor 5.00 (evidence only)",
     pricingActive: false,
     mustNotWritePricingRegistry: true,
     activationStatus: "blocked_from_activation",
-    notesRo: "Artwork-specific print/lam keys pending inventory cross-ref audit.",
+    notesRo:
+      "Owner decision: same keys as face evidence_only. mp_artwork_area handoff + activation blocked.",
   },
   {
     key: "artwork_print_only_draft",
-    labelRo: "Artwork print only — evidence",
+    labelRo: "Artwork print only — blocked (no Intake V4 runtime)",
     variantId: "artwork_print_only",
     surfaceTarget: "artwork",
     category: "print_laminate",
@@ -248,11 +276,12 @@ export const FINISH_ESTIMATED_PRICE_DRAFT_ENTRIES: readonly FinishEstimateDraftE
     evidenceLaborEurMp: null,
     evidenceCombinedEurMp: null,
     draftValueStatus: "source_inventory_audit_required",
-    displayValueRo: "material 1.50 + print 8.50 EUR/mp (evidence only)",
+    displayValueRo: "BLOCKED — keys exist; no Intake V4 print_only handler",
     pricingActive: false,
     mustNotWritePricingRegistry: true,
     activationStatus: "blocked_from_activation",
-    notesRo: "Artwork print keys — audit required before owner price draft.",
+    notesRo:
+      "Owner decision: keep visible blocked. Canonical variant retained; future Intake V4 runtime task.",
   },
   {
     key: "artwork_translucent_8500_draft",

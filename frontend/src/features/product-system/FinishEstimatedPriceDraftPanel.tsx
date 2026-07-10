@@ -4,6 +4,8 @@ import {
   FINISH_ESTIMATE_CALCULATION_RULES,
   FINISH_ESTIMATE_DRAFT_AUTHORITY,
   FINISH_ESTIMATED_PRICE_DRAFT_ENTRIES,
+  FINISH_LEGACY_RUNTIME_EVIDENCE,
+  FINISH_OWNER_PRICE_VALUES_DECISION,
   type FinishEstimateDraftEntry,
   type FinishDraftValueStatus,
 } from "./componentFirstFinishEstimatedPriceDraft";
@@ -103,9 +105,14 @@ export function FinishEstimatedPriceDraftPanel() {
             tone="slate"
             testId="product-system-finish-estimate-not-registry-badge"
           />
+          <StatusChip
+            label="OWNER PRICE VALUES APPLIED"
+            tone="emerald"
+            testId="product-system-finish-estimate-owner-price-values-badge"
+          />
         </div>
         <p className="mt-1 text-[10px] text-slate-500">
-          Evidence cross-ref from seeds — not owner-confirmed FINISH pricing authority
+          {FINISH_OWNER_PRICE_VALUES_DECISION.signedDoc} — seeds evidence_only, activation blocked
         </p>
       </div>
 
@@ -136,6 +143,23 @@ export function FinishEstimatedPriceDraftPanel() {
           {FINISH_ESTIMATE_CALCULATION_RULES.map((rule) => (
             <li key={rule}>• {rule}</li>
           ))}
+        </ul>
+      </article>
+
+      <article
+        data-testid="product-system-finish-estimate-labor-evidence"
+        className="rounded-lg border border-amber-900/30 bg-amber-950/10 px-3 py-3"
+      >
+        <p className="text-[11px] font-bold uppercase text-amber-200">Labor evidence — owner decision</p>
+        <ul className="mt-2 space-y-2 text-[10px] text-slate-300">
+          <li data-testid="product-system-finish-estimate-face-labor-key">
+            <span className="font-mono text-cyan-200/80">FACE_VINYL_APPLICATION_LABOR</span>
+            {" · evidence_only · FINISH draft authority (face + artwork)"}
+          </li>
+          <li data-testid="product-system-finish-estimate-legacy-wc-labor">
+            <span className="font-mono text-amber-200/80">{FINISH_LEGACY_RUNTIME_EVIDENCE.key}</span>
+            {" · legacy_runtime_evidence · Intake V4 artwork path only"}
+          </li>
         </ul>
       </article>
 

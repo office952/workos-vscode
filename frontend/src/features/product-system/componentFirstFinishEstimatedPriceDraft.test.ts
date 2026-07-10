@@ -6,6 +6,8 @@ import {
   FINISH_ESTIMATE_DRAFT_SUMMARY,
   FINISH_ESTIMATED_PRICE_DRAFT_ENTRIES,
   FINISH_EVIDENCE_REFERENCE_RATES,
+  FINISH_LEGACY_RUNTIME_EVIDENCE,
+  FINISH_OWNER_PRICE_VALUES_DECISION,
   getFinishEstimateDraftByKey,
 } from "./componentFirstFinishEstimatedPriceDraft";
 
@@ -40,14 +42,28 @@ describe("componentFirstFinishEstimatedPriceDraft", () => {
     expect(split?.serviceEvidenceKeys).toEqual(expect.arrayContaining(["LARGE_FORMAT_PRINT", "LAMINATION"]));
   });
 
-  it("marks artwork print/lam rows as source_inventory_audit_required", () => {
-    expect(getFinishEstimateDraftByKey("artwork_print_laminate_draft")?.draftValueStatus).toBe(
-      "source_inventory_audit_required",
+  it("marks artwork print+lam as evidence_only after owner price values decision", () => {
+    const printLam = getFinishEstimateDraftByKey("artwork_print_laminate_draft");
+    expect(printLam?.draftValueStatus).toBe("evidence_only");
+    expect(printLam?.materialEvidenceKeys).toEqual(
+      expect.arrayContaining(["MAT-VINYL-PRINT", "MAT-VINYL-PRINT-LAMINATED"]),
     );
-    expect(getFinishEstimateDraftByKey("artwork_print_only_draft")?.draftValueStatus).toBe(
-      "source_inventory_audit_required",
-    );
-    expect(getFinishEstimateDraftByKey("artwork_print_laminate_draft")?.quantityBasis).toBe("mp_artwork_area");
+    expect(printLam?.laborEvidenceKeys).toContain("FACE_VINYL_APPLICATION_LABOR");
+    expect(printLam?.quantityBasis).toBe("mp_artwork_area");
+  });
+
+  it("keeps artwork print only blocked with runtime audit flag", () => {
+    const printOnly = getFinishEstimateDraftByKey("artwork_print_only_draft");
+    expect(printOnly?.draftValueStatus).toBe("source_inventory_audit_required");
+    expect(printOnly?.displayValueRo).toMatch(/BLOCKED/i);
+    expect(printOnly?.activationStatus).toBe("blocked_from_activation");
+  });
+
+  it("records owner price values decision metadata without activating pricing", () => {
+    expect(FINISH_OWNER_PRICE_VALUES_DECISION.status).toBe("OWNER_ACCEPTED");
+    expect(FINISH_OWNER_PRICE_VALUES_DECISION.faceLaborKey).toBe("FACE_VINYL_APPLICATION_LABOR");
+    expect(FINISH_LEGACY_RUNTIME_EVIDENCE.key).toBe("WC_VINYL_APPLICATION");
+    expect(FINISH_OWNER_PRICE_VALUES_DECISION.pricingActive).toBe(false);
   });
 
   it("marks artwork none/raw plexi as not_applicable without FACE material confusion", () => {

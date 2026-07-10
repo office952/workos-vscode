@@ -18,6 +18,8 @@ export type FinishWorkshopFieldStatus =
   | "evidence_only"
   | "draft_only"
   | "legacy_evidence"
+  | "legacy_runtime_evidence"
+  | "source_inventory_audit_required"
   | "registry_authority"
   | "owner_input_required"
   | "blocked";
@@ -384,13 +386,34 @@ export const FINISH_PRICING_EVIDENCE: readonly FinishPricingEvidenceRef[] = [
   },
   {
     evidenceKey: "artwork_print_lam_evidence",
-    labelRo: "Artwork print/lam keys",
+    labelRo: "Artwork print/lam — same keys as face (owner decision)",
     registryRoute: "/inventory/pricing",
-    materialKeys: [],
-    laborKeys: ["LARGE_FORMAT_PRINT", "LAMINATION"],
+    materialKeys: ["MAT-VINYL-PRINT", "MAT-VINYL-PRINT-LAMINATED"],
+    laborKeys: ["FACE_VINYL_APPLICATION_LABOR", "LARGE_FORMAT_PRINT", "LAMINATION"],
     evidenceLevel: "evidence_only",
     activationStatus: "blocked",
-    notesRo: "Artwork print/lam — evidence only; geometry handoff pending.",
+    notesRo:
+      "Owner price values decision: same evidence keys as face. mp_artwork_area handoff still blocked.",
+  },
+  {
+    evidenceKey: "legacy_wc_vinyl_application",
+    labelRo: "WC_VINYL_APPLICATION — legacy Intake V4 only",
+    registryRoute: "/inventory/pricing",
+    materialKeys: [],
+    laborKeys: ["WC_VINYL_APPLICATION"],
+    evidenceLevel: "legacy_runtime_evidence",
+    activationStatus: "blocked",
+    notesRo: "Not FINISH draft labor authority — Intake V4 artwork application path only.",
+  },
+  {
+    evidenceKey: "artwork_print_only_blocked",
+    labelRo: "Artwork print only — visible blocked",
+    registryRoute: "/inventory/pricing",
+    materialKeys: ["MAT-VINYL-PRINT"],
+    laborKeys: ["LARGE_FORMAT_PRINT"],
+    evidenceLevel: "source_inventory_audit_required",
+    activationStatus: "blocked",
+    notesRo: "No Intake V4 print_only runtime — canonical variant retained; future implementation.",
   },
   {
     evidenceKey: "return_cant_boundary",

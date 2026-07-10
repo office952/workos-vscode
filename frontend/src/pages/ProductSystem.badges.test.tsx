@@ -2020,6 +2020,21 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-finish-estimate-draft-safety")).toHaveTextContent(
       /No Pricing activation/i,
     );
+    expect(screen.getByTestId("product-system-finish-estimate-owner-price-values-badge")).toHaveTextContent(
+      /OWNER PRICE VALUES APPLIED/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-face-labor-key")).toHaveTextContent(
+      /FACE_VINYL_APPLICATION_LABOR/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-legacy-wc-labor")).toHaveTextContent(
+      /WC_VINYL_APPLICATION/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-draft-status-artwork_print_laminate_draft")).toHaveTextContent(
+      /EVIDENCE ONLY/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-draft-value-artwork_print_only_draft")).toHaveTextContent(
+      /BLOCKED/i,
+    );
     expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
   });
