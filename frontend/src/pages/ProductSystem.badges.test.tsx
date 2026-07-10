@@ -1981,4 +1981,47 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /create pricing key/i })).not.toBeInTheDocument();
   });
 
+  it("renders FINISH estimated price draft panel with evidence readonly authority", async () => {
+    mockTemplateList.mockResolvedValue([volumetricTemplate]);
+    mockAvailabilityList.mockResolvedValue({ items: [volumetricAvailability], total: 1 });
+
+    renderProductSystem();
+    await openComponentFirstCandidateDetail();
+    openComponentFirstTab(COMPONENT_FIRST_TAB.guardsAudit);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-finish-estimate-draft-panel")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("product-system-finish-estimate-draft-authority-badge")).toHaveTextContent(
+      /EVIDENCE DRAFT READONLY/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-not-registry-badge")).toHaveTextContent(
+      /NOT PRICING REGISTRY/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-ready-for-pricing")).toHaveTextContent(
+      "Ready for pricing: NO",
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-pricing-active-count")).toHaveTextContent(
+      "Pricing active rows: 0",
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-product-definition-bridge")).toHaveTextContent(
+      "ProductDefinition bridge: NO",
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-draft-value-face_oracal_641_draft")).toHaveTextContent(
+      /6\.50 EUR\/mp/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-draft-value-face_print_laminate_combined_draft")).toHaveTextContent(
+      /10\.00 EUR\/mp/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-excluded-return_cant_vinyl_labor_excluded")).toHaveTextContent(
+      /RETURN_CANT_VINYL_APPLICATION_LABOR/i,
+    );
+    expect(screen.getByTestId("product-system-finish-estimate-draft-safety")).toHaveTextContent(
+      /No Pricing activation/i,
+    );
+    expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
+  });
+
 });

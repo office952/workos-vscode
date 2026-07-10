@@ -18,6 +18,7 @@ import {
   type FinishWorkshopFieldStatus,
   type FinishWorkshopVariantEntry,
 } from "./componentFirstFinishTruthWorkshop";
+import { FinishEstimatedPriceDraftPanel } from "./FinishEstimatedPriceDraftPanel";
 
 function StatusChip({
   label,
@@ -346,6 +347,8 @@ export function FinishTruthWorkshopPanel() {
         </ul>
         <p className="mt-2 text-[10px] text-rose-200/90">Evidence only — not active pricing rows.</p>
       </article>
+
+      <FinishEstimatedPriceDraftPanel />
 
       <article
         data-testid="product-system-finish-truth-blockers"
