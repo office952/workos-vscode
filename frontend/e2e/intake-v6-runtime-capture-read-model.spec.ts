@@ -1,7 +1,9 @@
 import { expect, test } from "@playwright/test";
-
-const REVIEW_URL =
-  "http://127.0.0.1:3000/intake-v6/668ffeb2-5d2b-4eb6-a5c4-1a4618c6de7c/operator";
+import {
+  INTAKE_V6_RUNTIME_CAPTURE_WORKSPACE_ID,
+  assertHeaderStepLabel,
+  gotoIntakeV6Operator,
+} from "./helpers/intakeV6ThreeStepSmoke";
 
 const EXPECTED_FIELD_KEYS = [
   "svg.selected_layer_refs[]",
@@ -14,10 +16,16 @@ const EXPECTED_FIELD_KEYS = [
 
 test.describe("Intake V6 runtime capture read model smoke", () => {
   test("review shows runtime capture panel with six read-only field rows", async ({ page }) => {
-    await page.goto(REVIEW_URL, { waitUntil: "networkidle", timeout: 120_000 });
+    await gotoIntakeV6Operator(page, INTAKE_V6_RUNTIME_CAPTURE_WORKSPACE_ID);
 
     await expect(page.getByTestId("intake-v6-step-review")).toBeVisible({ timeout: 60_000 });
-    await expect(page.getByTestId("intake-v6-header-step")).toHaveText(/Review/i);
+    await assertHeaderStepLabel(page, "Configurare");
+
+    await page.getByTestId("intake-v6-review-technical-details-toggle").click();
+    await expect(page.getByTestId("intake-v6-review-technical-details")).toHaveAttribute(
+      "data-expanded",
+      "true",
+    );
 
     const panel = page.getByTestId("runtime-capture-read-model-panel");
     await expect(panel).toBeVisible();
