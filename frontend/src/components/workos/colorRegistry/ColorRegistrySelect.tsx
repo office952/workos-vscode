@@ -66,6 +66,13 @@ function seriesBadge(item: ColorRegistryItem): string | null {
   return null;
 }
 
+/** Hide series pill when the selected card label already carries the series (e.g. Oracal 651-010). */
+function showSelectedSeriesBadge(item: ColorRegistryItem): boolean {
+  if (item.system === "RAL") return false;
+  if (item.series === "651") return false;
+  return seriesBadge(item) != null;
+}
+
 export default function ColorRegistrySelect({
   label,
   valueCode,
@@ -150,7 +157,7 @@ export default function ColorRegistrySelect({
                 {colorNameLabel(selected)}
               </span>
             </span>
-            {seriesBadge(selected) ? (
+            {showSelectedSeriesBadge(selected) ? (
               <span className={colorBadgeClass} title={seriesBadge(selected) ?? undefined}>
                 {seriesBadge(selected)}
               </span>

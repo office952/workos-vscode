@@ -97,10 +97,13 @@ function LayerRoleSelect({
 function LayerStatusBadge({
   state,
   layerKey,
+  hidden = false,
 }: {
   state: LayerRoleConfirmation["layers"][number]["confirmationState"] | undefined;
   layerKey: string;
+  hidden?: boolean;
 }) {
+  if (hidden) return null;
   return (
     <IntakeV6LayerStatusIcon
       state={state}
@@ -148,6 +151,7 @@ function LayerLegendRow({
     ? resolveLayerColorHumanLabel(colorToken, report)
     : layer.paintEvidence.paintKind ?? "—";
   const RowIcon = layer.layerKind === "raster_artwork" ? Palette : Layers;
+  const hideLayerStatusIcons = confirmation.confirmationStatus === "complete";
 
   return (
     <li
@@ -177,7 +181,7 @@ function LayerLegendRow({
           </p>
           <p className="truncate text-[11px] text-slate-500">{colorLabel}</p>
         </div>
-        <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} />
+        <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} hidden={hideLayerStatusIcons} />
       </div>
       <LayerRoleSelect
         layer={layer}
@@ -222,6 +226,7 @@ function LayerCard({
     ? resolveLayerColorHumanLabel(layer.colors[0], report)
     : layer.paintEvidence.paintKind ?? "—";
   const CardIcon = layer.layerKind === "raster_artwork" ? Palette : Layers;
+  const hideLayerStatusIcons = confirmation.confirmationStatus === "complete";
   return (
     <article
       className={`rounded-md border px-3 py-3 transition outline-none focus-visible:ring-1 focus-visible:ring-cyan-400/50 ${
@@ -248,7 +253,7 @@ function LayerCard({
             {resolveLayerKindLabel(layer.layerKind)} · {colorLabel}
           </p>
         </div>
-        <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} />
+        <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} hidden={hideLayerStatusIcons} />
       </div>
       <p className="mb-2 flex items-center gap-1.5 text-[11px] text-slate-400">
         <Sparkles className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
@@ -303,6 +308,8 @@ export default function IntakeV6LayersRoleTable({
   const setFocusedLayerKey = onHoverLayerKey ?? setInternalHoveredLayerKey;
   const shouldPaginate = report.layers.length > Math.max(INTAKE_V6_CARD_PAGE_SIZE, INTAKE_V6_NO_PAGINATION_MAX_LAYERS);
   const pageCount = shouldPaginate ? Math.max(1, Math.ceil(report.layers.length / INTAKE_V6_CARD_PAGE_SIZE)) : 1;
+  const allLayersConfirmed = confirmation.confirmationStatus === "complete";
+  const hideLayerStatusIcons = allLayersConfirmed;
   const ownerRoleTaxonomyActive = useMemo(() => {
     const targetCodes = new Set(
       report.layers.map((layer) => resolveIntakeV6LayerTargetTemplate({
@@ -410,7 +417,11 @@ export default function IntakeV6LayersRoleTable({
                       <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
                       <p className="text-[11px] text-slate-500">Țintă automată Product System: {target.templateCode}</p>
                     </div>
-                    <LayerStatusBadge state={resolveLayerRow(report, confirmation, layer).entry?.confirmationState} layerKey={layerKey} />
+                    <LayerStatusBadge
+                      state={resolveLayerRow(report, confirmation, layer).entry?.confirmationState}
+                      layerKey={layerKey}
+                      hidden={hideLayerStatusIcons}
+                    />
                   </div>
                   <p className="mb-2 text-[11px] text-slate-400">Rol producție</p>
                   <LayerRoleSelect
@@ -475,7 +486,7 @@ export default function IntakeV6LayersRoleTable({
                   />
                 </td>
                 <td className="py-2">
-                  <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} />
+                  <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} hidden={hideLayerStatusIcons} />
                 </td>
               </tr>
             );

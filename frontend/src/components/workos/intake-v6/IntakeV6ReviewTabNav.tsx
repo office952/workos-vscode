@@ -14,13 +14,13 @@ export default function IntakeV6ReviewTabNav({
   onChange,
   templateCode,
   pendingFinisaje = 0,
-  illuminated = false,
 }: {
   active: IntakeV6ReviewTabId;
   onChange: (tab: IntakeV6ReviewTabId) => void;
   /** Workspace template code — drives product plugin review tabs. */
   templateCode?: string | null;
   pendingFinisaje?: number;
+  /** @deprecated LED state is shown in tab content; ON pill removed (badge noise reduction). */
   illuminated?: boolean;
 }) {
   const tabs = resolveIntakeV6ReviewTabs(templateCode);
@@ -59,14 +59,6 @@ export default function IntakeV6ReviewTabNav({
                   data-testid="intake-v6-review-tab-finisaje-pending"
                 >
                   {pendingFinisaje}
-                </span>
-              ) : null}
-              {tab.id === "iluminare" && illuminated ? (
-                <span
-                  className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-cyan-500/15 px-1 text-[11px] font-bold text-cyan-200"
-                  data-testid="intake-v6-review-tab-iluminare-active"
-                >
-                  ON
                 </span>
               ) : null}
             </span>

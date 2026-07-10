@@ -44,8 +44,11 @@ describe("intakeV6WorkspaceHeaderStatus", () => {
     expect(status.details.find((row) => row.id === "operator")?.value).toBe("Lipsește");
   });
 
-  it("hides smart banner on calm review step", () => {
+  it("hides smart banner blocker duplicate on review step", () => {
     expect(shouldShowIntakeV6SmartBanner(baseState, null)).toBe(false);
-    expect(shouldShowIntakeV6SmartBanner(baseState, "Blocaj confirmare")).toBe(true);
+    expect(shouldShowIntakeV6SmartBanner(baseState, "Blocaj confirmare")).toBe(false);
+    expect(
+      shouldShowIntakeV6SmartBanner({ ...baseState, currentStep: "confirm" } as IntakeV6WorkspaceState, "Blocaj confirmare"),
+    ).toBe(true);
   });
 });

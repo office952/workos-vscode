@@ -2,7 +2,6 @@ import type { LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnal
 import { AlertTriangle, FileWarning, Layers, Sparkles } from "lucide-react";
 import { useMemo } from "react";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
-import IntakeV6LayerStatusIcon from "./IntakeV6LayerStatusIcon";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 const PSEUDO_LAYER_HINT =
@@ -44,6 +43,7 @@ export default function IntakeV6LayersWarningsPanel({
   scopeWarnings: string[];
   onJumpToLayer?: (layerKey: string) => void;
 }) {
+  void onJumpToLayer;
   const logoLabelMap = useMemo(() => buildOperatorLogoLabelMap(report?.layers ?? []), [report]);
   const pseudoLayerGroups = useMemo(() => {
     if (!report) return [];
@@ -125,8 +125,11 @@ export default function IntakeV6LayersWarningsPanel({
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" aria-hidden />
           Atenție analiză
         </h3>
-        <span className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-amber-200">
-          {totalCount}
+        <span
+          className="rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-amber-200"
+          data-testid="intake-v6-layers-warnings-count"
+        >
+          {totalCount} {totalCount === 1 ? "observație" : "observații"}
         </span>
       </div>
 
@@ -164,22 +167,14 @@ export default function IntakeV6LayersWarningsPanel({
                 </p>
               </div>
             </div>
-            <ul className="flex flex-wrap gap-1.5">
-              {pseudoLayerGroups.map((layer) => (
-                <li key={layer.layerKey}>
-                  <button
-                    type="button"
-                    className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-100 transition hover:border-amber-400/40 hover:bg-amber-500/15"
-                    onClick={() => onJumpToLayer?.(layer.layerKey)}
-                    data-testid={`intake-v6-warning-layer-chip-${layer.layerKey}`}
-                    title={`${layer.layerName} — deschide stratul`}
-                  >
-                    <IntakeV6LayerStatusIcon state={layer.state} size="sm" />
-                    <span className="truncate">{layer.layerName}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <p
+              className="text-[11px] text-amber-100/85"
+              data-testid="intake-v6-pseudo-layer-warning-summary"
+            >
+              {pseudoLayerGroups.length}{" "}
+              {pseudoLayerGroups.length === 1 ? "strat propus" : "straturi propuse"} — confirmă rolurile în
+              Decizii straturi.
+            </p>
           </div>
         ) : null}
 
@@ -197,22 +192,14 @@ export default function IntakeV6LayersWarningsPanel({
                 </p>
               </div>
             </div>
-            <ul className="flex flex-wrap gap-1.5">
-              {atypicalVectorGroups.map((layer) => (
-                <li key={layer.layerKey}>
-                  <button
-                    type="button"
-                    className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-100 transition hover:border-amber-400/40 hover:bg-amber-500/15"
-                    onClick={() => onJumpToLayer?.(layer.layerKey)}
-                    data-testid={`intake-v6-warning-atypical-chip-${layer.layerKey}`}
-                    title={`${layer.layerName} — deschide stratul`}
-                  >
-                    <IntakeV6LayerStatusIcon state={layer.state} size="sm" />
-                    <span className="truncate">{layer.layerName}</span>
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <p
+              className="text-[11px] text-amber-100/85"
+              data-testid="intake-v6-atypical-layer-warning-summary"
+            >
+              {atypicalVectorGroups.length}{" "}
+              {atypicalVectorGroups.length === 1 ? "strat propus" : "straturi propuse"} — confirmă rolurile în
+              Decizii straturi.
+            </p>
           </div>
         ) : null}
 

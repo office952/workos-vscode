@@ -139,4 +139,18 @@ describe("ColorRegistrySelect", () => {
     expect(change).toHaveClass("h-9", "w-[4.75rem]");
     expect(change).toHaveTextContent("Schimbă");
   });
+
+  it("hides redundant 651 colored badge when Oracal code is already visible", () => {
+    render(
+      <ColorRegistrySelect
+        label="Culoare față"
+        valueCode="010"
+        filter={{ system: "ORACAL", series: "651", usageScope: "face_vinyl" }}
+        onChange={vi.fn()}
+        testId="test-651-select"
+      />,
+    );
+    expect(screen.getByTestId("test-651-select-trigger")).toHaveTextContent("Oracal 651-010");
+    expect(screen.queryByText("651 colored")).not.toBeInTheDocument();
+  });
 });

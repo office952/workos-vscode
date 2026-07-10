@@ -128,18 +128,22 @@ export default function IntakeV6LayersOperatorPanel({
           </p>
         ) : null}
 
-        <div className="flex flex-wrap items-center gap-2">
-          <AtomsBadge tone={statusTone}>
-            {analyzing ? (
-              <span className="inline-flex items-center gap-1">
-                <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                {statusLabel}
-              </span>
-            ) : (
-              statusLabel
-            )}
-          </AtomsBadge>
-        </div>
+        {report && confirmation && confirmation.confirmationStatus !== "complete" ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span data-testid="intake-v6-layers-status-badge">
+              <AtomsBadge tone={statusTone}>
+                {analyzing ? (
+                  <span className="inline-flex items-center gap-1">
+                    <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
+                    {statusLabel}
+                  </span>
+                ) : (
+                  statusLabel
+                )}
+              </AtomsBadge>
+            </span>
+          </div>
+        ) : null}
 
         {report && confirmation ? (
           <div

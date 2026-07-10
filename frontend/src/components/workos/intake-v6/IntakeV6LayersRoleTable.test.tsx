@@ -423,4 +423,25 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(logoSelect.textContent).not.toContain("Cant / volum");
     expect(logoSelect.textContent).not.toContain("Spate / backing");
   });
+
+  it("hides per-card status icons when all layers are confirmed", () => {
+    const confirmation = buildConfirmation();
+    confirmation.confirmationStatus = "complete";
+    for (const layer of confirmation.layers) {
+      layer.confirmationState = "confirmed";
+      layer.confirmedRole = layer.autoRole;
+    }
+
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={confirmation}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+      />,
+    );
+
+    expect(screen.queryByTestId("intake-v6-layer-status-icon-pseudo:maria")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-layer-status-icon-logo-stanga")).not.toBeInTheDocument();
+  });
 });

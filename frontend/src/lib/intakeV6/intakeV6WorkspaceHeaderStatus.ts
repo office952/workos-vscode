@@ -64,6 +64,7 @@ export function shouldShowIntakeV6SmartBanner(
 ): boolean {
   if (state.phase === "loading" || state.analyzerStatus === "analyzing") return true;
   if (hasUnsavedAnalysis(state)) return true;
-  if (firstBlocker && state.currentStep !== "layers") return true;
+  // Review step uses the operator blocker banner under tabs — avoid duplicate handoff strip.
+  if (firstBlocker && state.currentStep !== "layers" && state.currentStep !== "review") return true;
   return false;
 }
