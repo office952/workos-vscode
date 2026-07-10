@@ -47,6 +47,9 @@ from services.intake_v6_layer_role_service import (
     selected_layer_refs_runtime_state,
 )
 from services.intake_v4_layer_role_service import sync_selected_layer_refs_on_payload
+from services.intake_v6_layer_binding_persistence_service import (
+    persist_logo_layer_bindings_from_composition_confirmation,
+)
 from services.intake_v6_product_composition_recommendation_service import (
     apply_product_composition_recommendation,
 )
@@ -948,14 +951,22 @@ async def save_product_composition_confirmation_for_workspace(
             },
         )
 
+    confirmed_items = items if items is not None else (
+        recommendation.get("composition_items") if isinstance(recommendation, dict) else []
+    )
     payload_raw["product_composition_confirmed"] = {
         "confirmed": bool(confirmed),
         "confirmed_at": _utcnow().isoformat() if confirmed else None,
         "confirmed_by": current_user.email or current_user.name or str(current_user.id),
-        "items": items if items is not None else (recommendation.get("composition_items") if isinstance(recommendation, dict) else []),
+        "items": confirmed_items,
         "operator_note": operator_note,
         "source": "operator_confirmation_v1",
     }
+    persist_logo_layer_bindings_from_composition_confirmation(
+        payload_raw,
+        confirmed=bool(confirmed),
+        confirmed_items=confirmed_items if isinstance(confirmed_items, list) else [],
+    )
     _reset_internal_draft_quote_confirmation(payload_raw)
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
