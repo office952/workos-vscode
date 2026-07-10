@@ -10,10 +10,12 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
+from schemas.intake_v4 import IntakeV4LayerRoleSetup
 from services.form_system_runtime_capture_read_model_service import (
     DEFAULT_TEMPLATE_CODE,
     build_form_system_runtime_capture_read_model,
 )
+from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
 
 
 PLANNER_VERSION = "v1"
@@ -201,6 +203,32 @@ def _classify_selected_layer_entries(
                 )
             )
         return eligible, blocked
+
+    if not persisted_refs and isinstance(layer_role_setup, dict):
+        try:
+            setup = IntakeV4LayerRoleSetup.model_validate(layer_role_setup)
+            runtime = selected_layer_refs_runtime_state(setup)
+            if runtime["status"] == "confirmed" and runtime["refs"]:
+                for ref in runtime["refs"]:
+                    blocked.append(
+                        _entry(
+                            field_key=field["field_key"],
+                            runtime_source=field["runtime_source"],
+                            product_truth_path=field["product_truth_path"],
+                            state="suggested",
+                            value_status="derived_at_read_time",
+                            promotion_allowed=False,
+                            reason=(
+                                "Layer-role setup derives selected layer refs at read time, "
+                                "but the persisted projection is absent until the workspace is saved again."
+                            ),
+                            blockers=["SELECTED_LAYER_REFS_NOT_PERSISTED"],
+                            identity_key=f"layer_id:{ref.layer_id}",
+                        )
+                    )
+                return eligible, blocked
+        except Exception:
+            pass
 
     blocked_state = "missing"
     value_status = "missing"

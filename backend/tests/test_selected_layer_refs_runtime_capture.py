@@ -63,6 +63,59 @@ def _create_workspace(v4_client):
     return create.json()["id"]
 
 
+def test_analysis_bundle_persists_mixed_letter_and_logo_selected_layer_refs(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    svg_text = FIXTURE_SVG.read_text(encoding="utf-8")
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/analysis-bundle",
+        json={
+            "file_name": FIXTURE_SVG.name,
+            "file_size_bytes": len(svg_text.encode("utf-8")),
+            "svg_text": svg_text,
+            "svg_analysis_json": {"schemaVersion": "1.10.0", "layers": []},
+            "layer_role_setup": {
+                "confirmation_status": "complete",
+                "layers": [
+                    {
+                        "layer_key": "letter-1",
+                        "layer_id": "letter-1",
+                        "layer_name": "letter 1",
+                        "auto_role": "face",
+                        "auto_confidence": "high",
+                        "confirmed_role": "face",
+                        "confirmation_state": "confirmed",
+                    },
+                    {
+                        "layer_key": "logo-1",
+                        "layer_id": "logo-1",
+                        "layer_name": "logo 1",
+                        "auto_role": "printed_artwork",
+                        "auto_confidence": "high",
+                        "confirmed_role": "printed_artwork",
+                        "confirmation_state": "confirmed",
+                    },
+                ],
+                "warnings": [],
+            },
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    assert saved.json()["payload"]["svg"]["selected_layer_refs"] == [
+        {
+            "layer_id": "letter-1",
+            "role": "vector_litere",
+            "source": "operator_confirmed_layer_role",
+            "confirmed": True,
+        },
+        {
+            "layer_id": "logo-1",
+            "role": "vector_logo",
+            "source": "operator_confirmed_layer_role",
+            "confirmed": True,
+        },
+    ]
+
+
 def test_analysis_bundle_persists_selected_layer_refs_from_confirmed_layer_role_setup(v4_client):
     workspace_id = _create_workspace(v4_client)
     svg_text = FIXTURE_SVG.read_text(encoding="utf-8")

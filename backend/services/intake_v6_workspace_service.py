@@ -46,6 +46,7 @@ from services.intake_v6_layer_role_service import (
     merge_layer_roles_after_reupload,
     selected_layer_refs_runtime_state,
 )
+from services.intake_v4_layer_role_service import sync_selected_layer_refs_on_payload
 from services.intake_v6_product_composition_recommendation_service import (
     apply_product_composition_recommendation,
 )
@@ -110,18 +111,7 @@ def _layer_setup_from_payload(raw: dict[str, Any]) -> IntakeV6LayerRoleSetup | N
 
 
 def _sync_selected_layer_refs(payload_raw: dict[str, Any]) -> None:
-    setup = _layer_setup_from_payload(payload_raw)
-    runtime = selected_layer_refs_runtime_state(setup)
-    svg_runtime = payload_raw.get("svg") if isinstance(payload_raw.get("svg"), dict) else {}
-    if runtime["refs"]:
-        svg_runtime["selected_layer_refs"] = [item.model_dump(mode="json") for item in runtime["refs"]]
-        payload_raw["svg"] = svg_runtime
-        return
-    svg_runtime.pop("selected_layer_refs", None)
-    if svg_runtime:
-        payload_raw["svg"] = svg_runtime
-    else:
-        payload_raw.pop("svg", None)
+    sync_selected_layer_refs_on_payload(payload_raw, _layer_setup_from_payload(payload_raw))
 
 
 def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:

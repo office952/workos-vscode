@@ -97,12 +97,56 @@ def test_planner_blocks_missing_finish_target() -> None:
 def test_planner_blocks_missing_selected_layer_refs() -> None:
     payload = _complete_payload()
     payload.pop("svg")
+    payload["layer_role_setup"]["confirmation_status"] = "partial"
 
     plan = build_product_truth_promotion_plan(payload, template_code=ROOT)
     blocked = _entries_by_key(plan["blocked_entries"])
 
     assert blocked["svg.selected_layer_refs[]"][0]["promotion_allowed"] is False
-    assert blocked["svg.selected_layer_refs[]"][0]["blockers"] == ["SELECTED_LAYER_REFS_MISSING"]
+    assert blocked["svg.selected_layer_refs[]"][0]["blockers"] == ["SELECTED_LAYER_REFS_UNCONFIRMED"]
+
+
+def test_planner_blocks_read_time_derived_selected_layer_refs_when_not_persisted() -> None:
+    payload = _complete_payload()
+    payload.pop("svg")
+
+    plan = build_product_truth_promotion_plan(payload, template_code=ROOT)
+    blocked = _entries_by_key(plan["blocked_entries"])
+
+    assert blocked["svg.selected_layer_refs[]"][0]["promotion_allowed"] is False
+    assert blocked["svg.selected_layer_refs[]"][0]["value_status"] == "derived_at_read_time"
+    assert blocked["svg.selected_layer_refs[]"][0]["blockers"] == ["SELECTED_LAYER_REFS_NOT_PERSISTED"]
+    assert all(entry["field_key"] != "svg.selected_layer_refs[]" for entry in plan["eligible_entries"])
+
+
+def test_planner_promotes_persisted_vector_logo_ref() -> None:
+    payload = _complete_payload()
+    payload["layer_role_setup"]["layers"] = [
+        {
+            "layer_key": "logo-1",
+            "layer_id": "logo-1",
+            "layer_name": "logo 1",
+            "auto_role": "printed_artwork",
+            "auto_confidence": "high",
+            "confirmed_role": "printed_artwork",
+            "confirmation_state": "confirmed",
+        }
+    ]
+    payload["svg"]["selected_layer_refs"] = [
+        {
+            "layer_id": "logo-1",
+            "role": "vector_logo",
+            "source": "operator_confirmed_layer_role",
+            "confirmed": True,
+        }
+    ]
+
+    plan = build_product_truth_promotion_plan(payload, template_code=ROOT)
+    eligible = _entries_by_key(plan["eligible_entries"])
+
+    assert len(eligible["svg.selected_layer_refs[]"]) == 1
+    assert eligible["svg.selected_layer_refs[]"][0]["promotion_allowed"] is True
+    assert eligible["svg.selected_layer_refs[]"][0]["identity_key"] == "layer_id:logo-1"
 
 
 def test_planner_blocks_print_and_lamination_without_row_identity_or_explicit_boolean() -> None:
