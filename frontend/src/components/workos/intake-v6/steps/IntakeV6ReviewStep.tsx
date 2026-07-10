@@ -1736,27 +1736,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
         </div>
       ) : null}
-      <div className="mb-4" data-testid="intake-v6-review-backing-placement">
-        <IntakeV6ReviewSectionShell
-          title="Spate / backing"
-          description="Decizie structurală a corpului literei — independentă de iluminare LED."
-          testId="intake-v6-review-section-backing"
-          compact
-        >
-          <IntakeV6ReviewBackingSelect
-            backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
-            onBackingChange={(mode) =>
-              updateForm(
-                {
-                  backing_mode: mode,
-                  back_bevel_enabled: mode === "forex_10_with_bevel",
-                },
-                { domains: ["backing"] },
-              )
-            }
-          />
-        </IntakeV6ReviewSectionShell>
-      </div>
       <div className="mb-4 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
         <IntakeV6LiveCalculationSummary
           breakdown={breakdown}
@@ -1847,6 +1826,21 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 />
               </div>
             ) : null}
+            <div data-testid="intake-v6-review-backing-finish-integration">
+              <IntakeV6ReviewBackingSelect
+                embedded
+                backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
+                onBackingChange={(mode) =>
+                  updateForm(
+                    {
+                      backing_mode: mode,
+                      back_bevel_enabled: mode === "forex_10_with_bevel",
+                    },
+                    { domains: ["backing"] },
+                  )
+                }
+              />
+            </div>
             <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
             </IntakeV6ReviewSectionShell>
           </div>
