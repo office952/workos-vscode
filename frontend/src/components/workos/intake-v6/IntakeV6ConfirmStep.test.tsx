@@ -351,10 +351,12 @@ describe("IntakeV6ConfirmStep", () => {
     renderConfirmStep();
 
     await waitFor(() => {
-      expect(screen.getByTestId("intake-v6-quote-handoff-badge").textContent).toMatch(/Draft intern/i);
+      expect(screen.getByTestId("intake-v6-confirm-consolidated-status")).toBeInTheDocument();
     });
 
     expect(screen.getByTestId("intake-v6-confirm-tile-verdict")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-confirm-summary-badge")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-quote-handoff-badge")).not.toBeInTheDocument();
     expect(screen.getAllByTestId("intake-v6-create-internal-draft")).toHaveLength(1);
     expect(screen.queryByTestId("intake-v6-handoff-footer-hint")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-confirm-kpi-verdict")).not.toBeInTheDocument();
@@ -380,7 +382,9 @@ describe("IntakeV6ConfirmStep", () => {
       expect(screen.getByTestId("intake-v6-confirm-internal-draft")).toBeEnabled();
     });
 
-    expect(screen.getByTestId("intake-v6-confirm-tile-verdict")).toHaveTextContent(/Confirmare operator lipsă/i);
+    expect(screen.getByTestId("intake-v6-confirm-consolidated-observations")).toHaveTextContent(
+      /Confirmă finisajele/i,
+    );
     expect(screen.queryByTestId("intake-v6-confirm-blocker")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-create-internal-draft")).toBeDisabled();
   });
@@ -459,7 +463,10 @@ describe("IntakeV6ConfirmStep", () => {
     renderConfirmStep();
 
     await waitFor(() => {
-      expect(screen.getByTestId("intake-v6-quote-handoff-badge").textContent).toMatch(/blocat/i);
+      expect(screen.getByTestId("intake-v6-confirm-consolidated-status")).toHaveAttribute(
+        "data-status-tier",
+        "blocked",
+      );
     });
     expect(screen.getByTestId("intake-v6-create-internal-draft")).toBeDisabled();
     expect(mockedCreateQuote).not.toHaveBeenCalled();
@@ -546,5 +553,22 @@ describe("IntakeV6ConfirmStep", () => {
     });
 
     confirmSpy.mockRestore();
+  });
+
+  it("shows consolidated status panel with a single primary completion path", async () => {
+    mockedHandoff.mockResolvedValue({
+      ...handoffWithArtworkWarning,
+      operator_confirmation_complete: true,
+    });
+
+    renderConfirmStep();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-confirm-consolidated-status")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Status configurație/i)).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-confirm-summary-badge")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-confirm-tile-recap-note")).toBeInTheDocument();
   });
 });

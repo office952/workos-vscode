@@ -33,13 +33,13 @@ import {
 	hasArtworkNeedsDecisionWarning,
 	hasFinishSetupIncompleteBlocker,
 	resolveQuoteHandoffUiStatus,
-	resolveWorkspaceSummaryBadgeLabel,
 	buildReviewHandoffSurfacing,
 } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
 import {
 	resolveConfirmChecklistProgress,
 	resolveConfirmSubmitDisabledReason,
 } from "@/lib/intakeV6/intakeV6ConfirmSubmitReason";
+import { buildIntakeV6ConfirmConsolidatedStatus } from "@/lib/intakeV6/intakeV6ConfirmConsolidatedStatus";
 import { formatWorkspaceReadinessLabel } from "@/lib/intakeV6/intakeV6OperatorUiDisplay";
 import {
 	detectArtworkOnlyRequiresDecision,
@@ -47,11 +47,12 @@ import {
 	resolveArtworkOnlyReviewWarnings,
 } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { getPersistedFileHash } from "@/lib/intakeV6/intakeV6AnalysisIdentity";
-import { AtomsBadge, v6 } from "../atoms/intakeV6Presentation";
+import { v6 } from "../atoms/intakeV6Presentation";
 import IntakeV6ConfirmOperationalSummary from "../IntakeV6ConfirmOperationalSummary";
 import IntakeV6ConfirmDashboard from "../IntakeV6ConfirmDashboard";
 import IntakeV6ConfirmKpiStrip from "../IntakeV6ConfirmKpiStrip";
 import IntakeV6ConfirmHandoffPanel from "../IntakeV6ConfirmHandoffPanel";
+import IntakeV6ConfirmConsolidatedStatusPanel from "../IntakeV6ConfirmConsolidatedStatusPanel";
 import IntakeV6ModularFormAwarenessPanel from "../IntakeV6ModularFormAwarenessPanel";
 import IntakeV6PricingInputPanel from "../IntakeV6PricingInputPanel";
 import IntakeV6SvgPreviewCanvas from "../IntakeV6SvgPreviewCanvas";
@@ -266,11 +267,6 @@ export default function IntakeV6ConfirmStep({ hook }: IntakeV6ConfirmStepProps) 
 		}),
 		[confirmPreviewLoading, confirmPreviewError],
 	);
-	const summaryBadge = resolveWorkspaceSummaryBadgeLabel(
-		ws?.readiness_status,
-		handoffPreview,
-		handoffPreviewOptions,
-	);
 	const handoffUi = resolveQuoteHandoffUiStatus(handoffPreview, handoffPreviewOptions);
 
 	const handoffBlockers = handoffPreview?.blockers ?? [];
@@ -460,6 +456,52 @@ export default function IntakeV6ConfirmStep({ hook }: IntakeV6ConfirmStepProps) 
 		],
 	);
 
+	const modularPendingCount = useMemo(() => {
+		const view = modularAwareness.preview?.operatorView;
+		if (!view) return 0;
+		return [...view.productReady, ...view.mounting].filter((line) => line.state === "pending").length;
+	}, [modularAwareness.preview]);
+
+	const consolidatedStatus = useMemo(
+		() =>
+			buildIntakeV6ConfirmConsolidatedStatus({
+				loading: confirmPreviewLoading && handoffPreview == null,
+				fetchError: confirmPreviewError,
+				finishSetupIncomplete,
+				effectiveHandoffAllowed,
+				bindingBlockers,
+				allFatalBlockers,
+				artworkNeedsDecision,
+				reviewWarnings,
+				containsMissingPrices: materialBreakdown?.totals.contains_missing_prices === true,
+				operatorConfirmationComplete,
+				confirmInternalDraft,
+				confirmDraftBoundary,
+				showHandoffCheckboxes,
+				checklistProgress,
+				modularPendingCount,
+				formatBlocker: formatQuoteHandoffBlocker,
+			}),
+		[
+			confirmPreviewLoading,
+			handoffPreview,
+			confirmPreviewError,
+			finishSetupIncomplete,
+			effectiveHandoffAllowed,
+			bindingBlockers,
+			allFatalBlockers,
+			artworkNeedsDecision,
+			reviewWarnings,
+			materialBreakdown?.totals.contains_missing_prices,
+			operatorConfirmationComplete,
+			confirmInternalDraft,
+			confirmDraftBoundary,
+			showHandoffCheckboxes,
+			checklistProgress,
+			modularPendingCount,
+		],
+	);
+
 	const setHeaderOverlay = statusCtx?.setOverlay;
 	const setHeaderHandlers = statusCtx?.setHandlers;
 	const setConfirmFooter = statusCtx?.setConfirmFooter;
@@ -622,32 +664,12 @@ export default function IntakeV6ConfirmStep({ hook }: IntakeV6ConfirmStepProps) 
 	return (
 		<section data-testid="intake-v6-step-confirm">
 			<div className="space-y-3" data-testid="intake-v6-confirm-dashboard">
-				<div className="flex flex-wrap items-center justify-between gap-2">
-					<div>
-						<h2 className={v6.screenTitle}>Confirmare draft intern</h2>
-						<p className={v6.sectionDesc}>Sumar logic înainte de crearea draftului de ofertare.</p>
-					</div>
-					<div className="flex flex-wrap items-center gap-2">
-						<span data-testid="intake-v6-confirm-summary-badge">
-							<AtomsBadge
-								tone={
-									summaryBadge.tone === "ok"
-										? "ok"
-										: summaryBadge.tone === "warn"
-											? "pending"
-											: "muted"
-								}
-							>
-								{summaryBadge.label}
-							</AtomsBadge>
-						</span>
-						<span data-testid="intake-v6-quote-handoff-badge">
-							<AtomsBadge tone={handoffUi.tone === "ok" ? "ok" : "pending"}>
-								{handoffUi.label}
-							</AtomsBadge>
-						</span>
-					</div>
+				<div>
+					<h2 className={v6.screenTitle}>Confirmare draft intern</h2>
+					<p className={v6.sectionDesc}>Sumar logic înainte de crearea draftului de ofertare.</p>
 				</div>
+
+				<IntakeV6ConfirmConsolidatedStatusPanel status={consolidatedStatus} />
 
 				{confirmPreviewError ? (
 					<p className="text-[11px] text-rose-300" data-testid="intake-v6-confirm-preview-error">

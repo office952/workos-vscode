@@ -1,23 +1,18 @@
 import type { ReactNode } from "react";
 import {
-  AlertTriangle,
-  CheckCircle2,
   FileCheck,
   Layers,
   Lightbulb,
   Ruler,
 } from "lucide-react";
-import type { IntakeV6ConfirmSummaryViewModel } from "@/lib/intakeV6/intakeV6ConfirmSummary";
-import {
-  collectArtworkUndecidedWarnings,
-  formatQuoteHandoffBlocker,
-} from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
 import type {
   IntakeV6NestingPreviewResponse,
   IntakeV6QuoteHandoffPreviewResponse,
 } from "@/lib/intakeV6/intakeV6Api";
+import type { IntakeV6ConfirmSummaryViewModel } from "@/lib/intakeV6/intakeV6ConfirmSummary";
+import { collectArtworkUndecidedWarnings } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
 import { formatConfirmSummaryM, formatConfirmSummaryM2 } from "@/lib/intakeV6/intakeV6ConfirmSummary";
-import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
+import { v6 } from "./atoms/intakeV6Presentation";
 
 function NestingMiniThumb({ preview }: { preview: IntakeV6NestingPreviewResponse }) {
   const activeSheet = preview.sheets.find((sheet) => sheet.is_active_for_breakdown) ?? preview.sheets[0];
@@ -137,46 +132,22 @@ export default function IntakeV6ConfirmDashboard({
   loading?: boolean;
 }) {
   const artworkWarnings = collectArtworkUndecidedWarnings(reviewWarnings);
-  const actionCount =
-    fatalBlockers.length +
-    artworkWarnings.length +
-    (handoffPreview?.operator_confirmation_complete === false ? 1 : 0);
-  const verdictOk = actionCount === 0 && handoffPreview?.handoff_allowed === true;
   const finishLine = buildFinishSummaryLine(summary);
-  const primaryIssue = loading
-    ? null
-    : handoffPreview?.operator_confirmation_complete === false
-      ? "Confirmare operator lipsă."
-      : fatalBlockers[0]
-        ? formatQuoteHandoffBlocker(fatalBlockers[0])
-        : artworkWarnings[0] ?? null;
+  const recapNote = loading
+    ? "Verific…"
+    : fatalBlockers.length > 0 || artworkWarnings.length > 0
+      ? "Revizuiește observațiile din statusul de configurare."
+      : handoffPreview?.operator_confirmation_complete === false
+        ? "Confirmă draftul intern în secțiunea de mai jos."
+        : "Recapitulare produs și geometrie.";
 
   return (
     <div className="space-y-3" data-testid="intake-v6-confirm-dashboard-tiles">
       <div className="grid gap-3 lg:grid-cols-3">
-        <Tile icon={FileCheck} title="Verdict" testId="intake-v6-confirm-tile-verdict">
-          <div className="flex flex-wrap items-center gap-2">
-            <AtomsBadge tone={verdictOk ? "ok" : "pending"}>
-              {verdictOk ? (
-                <span className="inline-flex items-center gap-1">
-                  <CheckCircle2 className="h-3 w-3" aria-hidden />
-                  Gata draft
-                </span>
-              ) : (
-                <span className="inline-flex items-center gap-1">
-                  <AlertTriangle className="h-3 w-3" aria-hidden />
-                  {actionCount} acțiuni
-                </span>
-              )}
-            </AtomsBadge>
-          </div>
-          {loading ? (
-            <p className="text-slate-500">Verific…</p>
-          ) : primaryIssue && !verdictOk ? (
-            <p className="text-[10px] leading-relaxed text-slate-400">{primaryIssue}</p>
-          ) : verdictOk ? (
-            <p className="text-[10px] text-slate-500">Poți continua cu confirmările de mai jos.</p>
-          ) : null}
+        <Tile icon={FileCheck} title="Recapitulare" testId="intake-v6-confirm-tile-verdict">
+          <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-confirm-tile-recap-note">
+            {recapNote}
+          </p>
         </Tile>
 
         <Tile icon={Layers} title="Lucrare" testId="intake-v6-confirm-tile-work">
