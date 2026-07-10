@@ -32,33 +32,34 @@ export default function IntakeV6OperatorWorkspaceFooter({
 }) {
   const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
   const [issuesOpen, setIssuesOpen] = useState(false);
-  const confirmFooter = currentStep === "confirm" ? statusCtx?.confirmFooter : null;
-  const isConfirmStep = currentStep === "confirm";
+  const isHandoffStep = currentStep === "review" || currentStep === "confirm";
+  const confirmFooter = isHandoffStep ? statusCtx?.confirmFooter : null;
   const status = useMemo(
     () => buildWorkspaceHeaderStatus(workspaceState, statusCtx?.overlay ?? {}),
     [workspaceState, statusCtx?.overlay],
   );
 
-  const centerLabel = isConfirmStep && confirmFooter
+  const stepLabel =
+    currentStep === "layers" ? "straturi" : currentStep === "review" ? "configurare" : "configurare";
+
+  const centerLabel = isHandoffStep && confirmFooter
     ? `Confirmări ${confirmFooter.checklistDone}/${confirmFooter.checklistTotal}`
-    : `Pasul ${stepIndex + 1} din ${stepOrderLength} - ${
-        currentStep === "layers" ? "straturi" : currentStep === "review" ? "review" : "confirmare"
-      }`;
+    : `Pasul ${stepIndex + 1} din ${stepOrderLength} - ${stepLabel}`;
 
   const confirmDisabledReason =
-    isConfirmStep && confirmFooter?.disabledReason && !confirmFooter.canSubmit
+    isHandoffStep && confirmFooter?.disabledReason && !confirmFooter.canSubmit
       ? confirmFooter.disabledReason
       : null;
 
   const primaryActionReason =
-    nextDisabled || isConfirmStep
+    isHandoffStep || nextDisabled
       ? confirmDisabledReason ?? footerBlocker
       : footerBlocker;
 
   const issuesDisplay = useMemo(
     () =>
       buildIntakeV6FooterIssuesDisplay({
-        primaryActionReason: nextDisabled ? null : primaryActionReason,
+        primaryActionReason: nextDisabled && !isHandoffStep ? null : primaryActionReason,
         problemDetails: status.details.filter((row) => row.tone === "warn" || row.tone === "bad"),
         reviewWarnings: statusCtx?.overlay.reviewWarnings,
         secondaryWarnings: statusCtx?.overlay.secondaryWarnings,
@@ -67,6 +68,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
     [
       primaryActionReason,
       nextDisabled,
+      isHandoffStep,
       status.details,
       status.actions,
       statusCtx?.overlay.reviewWarnings,
@@ -99,7 +101,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
       className="sticky bottom-0 z-10 mt-auto border-t border-[#2A3548] bg-[#111827]/95 px-7 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.35)] backdrop-blur-sm"
       data-testid="intake-v6-operator-workspace-footer"
     >
-      {primaryActionReason && nextDisabled ? (
+      {primaryActionReason && (nextDisabled || isHandoffStep) ? (
         <p
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-footer-primary-action-reason"
@@ -176,7 +178,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
           {centerLabel}
         </span>
 
-        {isConfirmStep && confirmFooter ? (
+        {isHandoffStep && confirmFooter ? (
           <button
             type="button"
             className={`${v6.btnConfirm} min-w-[11rem]`}

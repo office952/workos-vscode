@@ -38,7 +38,7 @@ describe("IntakeV6Header workspace shell", () => {
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-DEMO");
     expect(screen.getByTestId("intake-v6-header-template")).toHaveTextContent("Litere volumetrice");
-    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Review");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Configurare");
 
     expect(screen.queryByText("SVG ready")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-status-bar")).not.toBeInTheDocument();
@@ -78,6 +78,6 @@ describe("IntakeV6Header workspace shell", () => {
 
     expect(screen.getByTestId("intake-v6-progress-step-layers")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-progress-step-review")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-progress-step-confirm")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-progress-step-confirm")).not.toBeInTheDocument();
   });
 });

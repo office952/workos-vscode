@@ -102,6 +102,7 @@ import {
 } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import IntakeV6ReturnCantFields from "../IntakeV6ReturnCantFields";
 import IntakeV6ReturnCantBlockedStateAwarenessPanel from "../IntakeV6ReturnCantBlockedStateAwarenessPanel";
+import IntakeV6FinalConfigurationSummary from "../IntakeV6FinalConfigurationSummary";
 import IntakeV6ProductionTaskDryRunPanel from "../IntakeV6ProductionTaskDryRunPanel";
 import type { IntakeV6ProductionTaskDryRunResponse } from "@/lib/intakeV6/productionTaskDryRunContracts";
 import {
@@ -1925,7 +1926,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               />
             </div>
             ) : null}
-            <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
             </IntakeV6ReviewSectionShell>
           </div>
         ) : null}
@@ -2225,6 +2225,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           pendingSave={localReviewEditsPending}
         error={error}
       />
+
+      <IntakeV6FinalConfigurationSummary hook={hook} />
         </div>
 
         <div
@@ -2274,6 +2276,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </div>
       </div>
 
+      {returnCantReadonlyAwareness.overall_readiness === "blocked" ? (
+        <p
+          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
+          data-testid="intake-v6-return-cant-blocked-operator-message"
+        >
+          Cantul nu poate fi calculat încă. Confirmă înălțimea și finisajul cantului.
+        </p>
+      ) : null}
+
       <IntakeV6TechnicalDetailsAccordion
         title={INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE}
         testId="intake-v6-review-technical-details"
@@ -2284,6 +2295,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         hint="Pentru verificare avansată"
         className="mb-4 mt-2"
       >
+      {returnCantReadonlyAwareness.overall_readiness === "blocked" ? (
+        <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
+      ) : null}
       <div
         ref={diagnosticRef}
         id="intake-v6-review-diagnostic-tehnic"

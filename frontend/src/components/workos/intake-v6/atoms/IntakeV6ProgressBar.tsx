@@ -1,10 +1,8 @@
 import type { IntakeV6StepId } from "@/lib/intakeV6/intakeV6Contracts";
-
-const STEPS: Array<{ id: IntakeV6StepId; label: string }> = [
-	{ id: "layers", label: "Straturi" },
-	{ id: "review", label: "Review" },
-	{ id: "confirm", label: "Confirmare" },
-];
+import {
+	INTAKE_V6_VISIBLE_PROGRESS_STEPS,
+	resolveIntakeV6VisibleProgressStep,
+} from "@/lib/intakeV6/intakeV6OperatorProgressSteps";
 
 interface IntakeV6ProgressBarProps {
 	currentStep: IntakeV6StepId;
@@ -19,7 +17,8 @@ export default function IntakeV6ProgressBar({
 	onStepClick,
 	compact = false,
 }: IntakeV6ProgressBarProps) {
-	const currentIndex = STEPS.findIndex((s) => s.id === currentStep);
+	const visibleStep = resolveIntakeV6VisibleProgressStep(currentStep);
+	const currentIndex = INTAKE_V6_VISIBLE_PROGRESS_STEPS.findIndex((s) => s.id === visibleStep);
 
 	return (
 		<nav
@@ -29,9 +28,9 @@ export default function IntakeV6ProgressBar({
 			data-testid="intake-v6-progress"
 			aria-label="Workspace steps"
 		>
-			{STEPS.map((step, index) => {
+			{INTAKE_V6_VISIBLE_PROGRESS_STEPS.map((step, index) => {
 				const done = index < currentIndex;
-				const active = step.id === currentStep;
+				const active = step.id === visibleStep;
 				const accessible = canAccessStep?.(step.id) ?? true;
 				const circleClass = compact ? "h-6 w-6 text-[11px]" : "h-9 w-9 text-[13px]";
 				return (
@@ -62,7 +61,7 @@ export default function IntakeV6ProgressBar({
 								{step.label}
 							</span>
 						</button>
-						{index < STEPS.length - 1 ? (
+						{index < INTAKE_V6_VISIBLE_PROGRESS_STEPS.length - 1 ? (
 							<div
 								className={`mx-2 h-0.5 flex-1 rounded ${compact ? "mx-1.5" : "mx-3"} ${
 									done ? "bg-emerald-500/40" : "bg-[#2A3548]"
@@ -75,5 +74,3 @@ export default function IntakeV6ProgressBar({
 		</nav>
 	);
 }
-
-

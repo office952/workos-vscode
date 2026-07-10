@@ -10,8 +10,8 @@ import { v6 } from "./intakeV6Presentation";
 
 const STEP_LABELS: Record<IntakeV6StepId, string> = {
   layers: "Straturi",
-  review: "Review",
-  confirm: "Confirmare",
+  review: "Configurare",
+  confirm: "Configurare",
 };
 
 interface IntakeV6HeaderProps {
