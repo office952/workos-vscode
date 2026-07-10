@@ -1948,6 +1948,14 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-finish-truth-owner-input-required-badge")).toHaveTextContent(
       /OWNER INPUT REQUIRED/i,
     );
+    expect(screen.getByTestId("product-system-finish-truth-awaiting-owner-chat-badge")).toHaveTextContent(
+      /AWAITING OWNER CHAT/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-owner-questions")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-finish-truth-owner-question-A")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-finish-truth-owner-question-E")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-finish-truth-boundary-reaffirmation")).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-finish-truth-logo-split-question")).toHaveTextContent(/LOGO/i);
     expect(screen.getByTestId("product-system-finish-truth-pricing-active-no")).toHaveTextContent(
       /PRICING ACTIVE: NO/i,
     );

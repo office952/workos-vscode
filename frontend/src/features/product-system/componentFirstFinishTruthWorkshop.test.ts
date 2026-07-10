@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import {
   buildFinishReadinessSummary,
+  FINISH_AWAITING_OWNER_CHAT,
+  FINISH_BOUNDARY_REAFFIRMATION,
   FINISH_COMPONENT_TEMPLATE_CODE,
   FINISH_DANGEROUS_ACTIONS,
   FINISH_DOES_NOT_OWN,
   FINISH_DOES_NOT_OWN_CANT,
   FINISH_FACE_DEPENDENCY_INPUTS,
   FINISH_IDENTITY,
+  FINISH_OWNER_QUESTIONS_PENDING,
   FINISH_OWNS,
   FINISH_QUANTITY_BASIS_QUESTIONS,
   FINISH_READINESS_SUMMARY,
@@ -72,10 +75,29 @@ describe("componentFirstFinishTruthWorkshop", () => {
 
   it("variants remain blocked — no registry activation", () => {
     const blocked = FINISH_VARIANT_ENTRIES.filter((v) => v.activationStatus === "blocked");
-    expect(blocked.length).toBeGreaterThanOrEqual(8);
+    expect(blocked.length).toBe(9);
     expect(FINISH_READINESS_SUMMARY.pricingActive).toBe(false);
     expect(FINISH_READINESS_SUMMARY.pricingRegistryWrite).toBe(false);
     expect(buildFinishReadinessSummary().blockedVariantCount).toBeGreaterThan(0);
+  });
+
+  it("all variants pending owner confirm in questions prep mode", () => {
+    expect(FINISH_VARIANT_ENTRIES.every((v) => v.ownerStatus === "owner_input_required")).toBe(true);
+    expect(getFinishVariantById("artwork_none_raw_plexi")?.ownerStatus).toBe("owner_input_required");
+  });
+
+  it("surfaces owner questions A–E awaiting chat", () => {
+    expect(FINISH_OWNER_QUESTIONS_PENDING.map((q) => q.questionId)).toEqual(["A", "B", "C", "D", "E"]);
+    expect(FINISH_OWNER_QUESTIONS_PENDING.filter((q) => q.status === "owner_input_required").length).toBeGreaterThan(
+      3,
+    );
+    expect(FINISH_AWAITING_OWNER_CHAT).toBe(true);
+  });
+
+  it("reaffirms boundary without cant or FACE material ownership", () => {
+    expect(FINISH_BOUNDARY_REAFFIRMATION.some((b) => /RETURN-CANT|cant/i.test(b))).toBe(true);
+    expect(FINISH_BOUNDARY_REAFFIRMATION.some((b) => /MAT-ACP-FATA-LITERE|FACE base/i.test(b))).toBe(true);
+    expect(FINISH_BOUNDARY_REAFFIRMATION.some((b) => /100 lei/i.test(b))).toBe(true);
   });
 
   it("lists dangerous actions that must not appear in UI", () => {

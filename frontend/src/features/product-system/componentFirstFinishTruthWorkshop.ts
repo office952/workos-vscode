@@ -263,10 +263,10 @@ export const FINISH_VARIANT_ENTRIES: readonly FinishWorkshopVariantEntry[] = [
   variantFromCanonical("artwork_none_raw_plexi", {
     labelRo: "Artwork none / raw plexi",
     quantityBasis: "none",
-    quantityBasisStatus: "owner_confirmed",
-    catalogEvidenceLevel: "owner_confirmed",
-    ownerStatus: "owner_confirmed",
-    notesRo: "Fără aplicație finish suplimentară pe artwork; substrat/scope artwork separat.",
+    quantityBasisStatus: "owner_input_required",
+    catalogEvidenceLevel: "owner_input_required",
+    ownerStatus: "owner_input_required",
+    notesRo: "Fără aplicație finish suplimentară pe artwork — owner confirmă variantă.",
     activationStatus: "blocked",
   }),
 ] as const;
@@ -318,14 +318,36 @@ export const FINISH_PRICING_EVIDENCE: readonly FinishPricingEvidenceRef[] = [
     notesRo: "Cross-ref canonical enum + Intake V6 color registry — nu Pricing Registry write.",
   },
   {
+    evidenceKey: "print_laminate_combined_material",
+    labelRo: "Print + laminare față — material combinat",
+    registryRoute: "/inventory/pricing",
+    materialKeys: ["MAT-VINYL-PRINT-LAMINATED"],
+    laborKeys: [],
+    evidenceLevel: "evidence_only",
+    activationStatus: "blocked",
+    notesRo:
+      "Seed evidence: face print+lam combined mp — separat de servicii LARGE_FORMAT_PRINT / LAMINATION dacă model split.",
+  },
+  {
+    evidenceKey: "print_laminate_services",
+    labelRo: "Print / laminare — servicii workcenter",
+    registryRoute: "/inventory/pricing",
+    materialKeys: [],
+    laborKeys: ["LARGE_FORMAT_PRINT", "LAMINATION"],
+    evidenceLevel: "evidence_only",
+    activationStatus: "blocked",
+    notesRo:
+      "Seed evidence only — owner confirmă dacă FINISH folosește material combinat sau material+servicii separate.",
+  },
+  {
     evidenceKey: "print_laminate_materials",
-    labelRo: "Print material / laminate material / services",
+    labelRo: "Print material / laminate material / services (generic pending)",
     registryRoute: "/inventory/pricing",
     materialKeys: [],
     laborKeys: [],
     evidenceLevel: "owner_input_required",
     activationStatus: "blocked",
-    notesRo: "Chei exacte print/lam în registry — pending owner confirmare sursă.",
+    notesRo: "Chei exacte artwork print/lam în registry — pending owner confirmare sursă.",
   },
   {
     evidenceKey: "return_cant_boundary",
@@ -338,6 +360,76 @@ export const FINISH_PRICING_EVIDENCE: readonly FinishPricingEvidenceRef[] = [
     notesRo: "FINISH nu folosește cant labor keys; RAL 100 lei minimum = RETURN-CANT policy.",
   },
 ] as const;
+
+export type FinishOwnerQuestion = {
+  questionId: "A" | "B" | "C" | "D" | "E";
+  topicRo: string;
+  promptRo: string;
+  currentEvidenceRo: string;
+  ownerMustAnswerRo: string;
+  status: FinishWorkshopFieldStatus;
+};
+
+export const FINISH_OWNER_QUESTIONS_PENDING: readonly FinishOwnerQuestion[] = [
+  {
+    questionId: "A",
+    topicRo: "Variante suprafață FINISH",
+    promptRo: "Confirmă cele 9 variante face/artwork din workshop.",
+    currentEvidenceRo:
+      "Canonical enum map: face_oracal_641/651/8500, face_print_laminate, artwork_print_laminate/print_only/cut_vinyl/translucent_vinyl/none_raw_plexi.",
+    ownerMustAnswerRo: "ACCEPT / REJECT / special_case per variantă — fără activare pricing.",
+    status: "owner_input_required",
+  },
+  {
+    questionId: "B",
+    topicRo: "Bază cantitate",
+    promptRo: "Confirmă regulile de cantitate pentru față, artwork, Oracal roll, print/lam.",
+    currentEvidenceRo:
+      "FACE outputs: mp_face_area, face_material_usage_area_m2. Canonical enum: mp_face_area (face), mp_artwork_area (artwork). RETURN-CANT Oracal: ml_perimeter_x_width.",
+    ownerMustAnswerRo:
+      "mp_face_area vs face_material_usage_area_m2? artwork mp basis? roll width×used length vs mp simplu?",
+    status: "owner_input_required",
+  },
+  {
+    questionId: "C",
+    topicRo: "Catalog / pricing refs",
+    promptRo: "Confirmă surse evidence pentru Oracal, print, laminare, labor.",
+    currentEvidenceRo:
+      "MAT-ORACAL-641/651/8500, MAT-VINYL-PRINT-LAMINATED, FACE_VINYL_APPLICATION_LABOR, LARGE_FORMAT_PRINT, LAMINATION — seeds only.",
+    ownerMustAnswerRo:
+      "Care chei sunt authority pentru FINISH draft vs evidence only? Labor face vs artwork separat?",
+    status: "owner_input_required",
+  },
+  {
+    questionId: "D",
+    topicRo: "Boundary FINISH vs FACE / RETURN-CANT",
+    promptRo: "Reconfirmă ce NU deține FINISH.",
+    currentEvidenceRo:
+      "FACE owner decision + canonical enum forbiddenOwners + RETURN-CANT owner inputs.",
+    ownerMustAnswerRo:
+      "ACCEPT: nu cant, nu FACE Plexiglas (MAT-ACP-FATA-LITERE), nu RAL 100 lei, nu Pricing Registry authority.",
+    status: "owner_decision",
+  },
+  {
+    questionId: "E",
+    topicRo: "Split LOGO / artwork",
+    promptRo: "Artwork / Vector Logo rămâne sub FINISH acum?",
+    currentEvidenceRo:
+      "Intake V6 artwork_instances / execution_type — geometrie artwork necomponentizată în Product System.",
+    ownerMustAnswerRo: "FINISH owns artwork finish now? Future TPL-COMP-LETTER-LOGO owns geometry later?",
+    status: "owner_input_required",
+  },
+] as const;
+
+export const FINISH_BOUNDARY_REAFFIRMATION: readonly string[] = [
+  "FINISH does not own RETURN-CANT cant finish (Stock / Oracal wrap / RAL paint)",
+  "FINISH does not own FACE base material / Plexiglas pricing (MAT-ACP-FATA-LITERE)",
+  "FINISH does not own RAL cant minimum 100 lei (RETURN-CANT commercial policy)",
+  "FINISH does not own Pricing Registry authority — evidence cross-ref only",
+  "RETURN_CANT_VINYL_APPLICATION_LABOR is RETURN-CANT only — not FINISH face vinyl labor",
+] as const;
+
+export const FINISH_AWAITING_OWNER_CHAT = true as const;
 
 export const FINISH_READINESS_BLOCKERS: readonly string[] = [
   "Owner must confirm FINISH surface variants",
