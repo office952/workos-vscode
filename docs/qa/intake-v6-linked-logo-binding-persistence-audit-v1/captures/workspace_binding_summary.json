@@ -1,0 +1,126 @@
+{
+  "layer_bindings_count": 0,
+  "layers_count": 6,
+  "logo_layers": [
+    {
+      "layer_key": "logo-stanga",
+      "confirmed_role": "printed_artwork",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "logo-dreapta",
+      "confirmed_role": "printed_artwork",
+      "confirmation_state": "confirmed"
+    }
+  ],
+  "selected_layer_refs_count": 6,
+  "vector_logo_refs": [
+    {
+      "layer_id": "logo-stanga",
+      "role": "vector_logo",
+      "source": "operator_confirmed_layer_role",
+      "confirmed": true
+    },
+    {
+      "layer_id": "logo-dreapta",
+      "role": "vector_logo",
+      "source": "operator_confirmed_layer_role",
+      "confirmed": true
+    }
+  ],
+  "artwork_finishes": [
+    {
+      "layer_key": "logo-stanga",
+      "execution_type": "print_laminate",
+      "confirmed": false
+    },
+    {
+      "layer_key": "logo-dreapta",
+      "execution_type": "print_laminate",
+      "confirmed": false
+    }
+  ],
+  "product_composition_recommendation": {
+    "status": "needs_confirmation",
+    "composition_type": "letters_plus_logo",
+    "source": "analyzer_rules_v1",
+    "recommended_templates": [
+      {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "role_in_composition": "letters",
+        "reason": "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+        "source_layer_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "confidence": "high",
+        "status": "suggested"
+      },
+      {
+        "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "role_in_composition": "logo_vector_atipic",
+        "reason": "Confirmed constructive logo/vector-atipic roles exist in SVG analysis.",
+        "source_layer_ids": [
+          "logo-stanga",
+          "logo-dreapta"
+        ],
+        "confidence": "high",
+        "status": "suggested"
+      }
+    ],
+    "composition_items": [
+      {
+        "composition_item_id": "letters",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "component_role": "volumetric_letters",
+        "source_layer_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "source_group_ids": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      },
+      {
+        "composition_item_id": "logo",
+        "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+        "component_role": "volumetric_logo",
+        "source_layer_ids": [
+          "logo-stanga",
+          "logo-dreapta"
+        ],
+        "source_group_ids": [
+          "logo-stanga",
+          "logo-dreapta"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      }
+    ],
+    "shared_modules_policy": {
+      "dedupe_common_operations": true,
+      "graphic_verification_scope": "assembly",
+      "file_preparation_scope": "assembly",
+      "light_test_scope": "assembly",
+      "packaging_scope": "assembly"
+    },
+    "blockers": [],
+    "warnings": [],
+    "generated_at": "2026-07-10T20:29:15.537960+00:00"
+  },
+  "product_composition_confirmed": {
+    "confirmed": false,
+    "confirmed_at": null,
+    "confirmed_by": null,
+    "items": []
+  }
+}
