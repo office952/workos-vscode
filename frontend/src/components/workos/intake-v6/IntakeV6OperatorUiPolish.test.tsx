@@ -138,7 +138,7 @@ describe("IntakeV6OperatorUiPolish", () => {
     );
     expect(screen.getByTestId("intake-v6-header")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-header-workspace-code")).toHaveTextContent("IV6-TEST");
-    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Review");
+    expect(screen.getByTestId("intake-v6-header-step")).toHaveTextContent("Configurare");
     expect(screen.getByTestId("intake-v6-progress")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-workspace-status-badge")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-status-bar")).not.toBeInTheDocument();

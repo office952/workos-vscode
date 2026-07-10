@@ -148,10 +148,10 @@ def test_quote_geometry_perimeter_is_evidence_only() -> None:
     assert instance["geometry"]["perimeter_source"] == "evidence_only"
     assert instance["geometry"]["evidence_perimeter_m"] == 18.5
     assert "confirmed_perimeter_m" not in instance["geometry"]
-    assert instance["confirmation_state"] == "blocked"
+    assert instance["confirmation_state"] == "confirmed"
     assert "RETURN_CANT_PERIMETER_EVIDENCE_ONLY" in instance["blockers"]
     assert "RETURN_CANT_CONFIRMED_PERIMETER_MISSING" in instance["blockers"]
-    assert "RETURN_CANT_COMPONENT_CONFIRMATION_MISSING" in instance["blockers"]
+    assert "RETURN_CANT_COMPONENT_CONFIRMATION_MISSING" not in instance["blockers"]
 
 
 def test_paint_application_emits_final_pricing_keys_by_width() -> None:

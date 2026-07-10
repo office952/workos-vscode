@@ -385,7 +385,8 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 				handoff: handoffPreview,
 				handoffOptions: handoffPreviewOptions,
 				containsMissingPrices: materialBreakdown?.totals.contains_missing_prices === true,
-				allArtworkFinishesConfirmed: !artworkNeedsDecision,
+				allArtworkProductConfigured: !artworkNeedsDecision,
+				currentStep: "confirm",
 			}),
 		[
 			handoffPreview,

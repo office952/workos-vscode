@@ -7,6 +7,6 @@ export interface IntakeV6ConfirmStepProps {
 
 export default function IntakeV6ConfirmStep({ hook }: IntakeV6ConfirmStepProps) {
 	return (
-		<IntakeV6FinalConfigurationSummary hook={hook} variant="legacyPage" defaultExpanded />
+		<IntakeV6FinalConfigurationSummary hook={hook} variant="legacyPage" defaultExpanded={false} />
 	);
 }

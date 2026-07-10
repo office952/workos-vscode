@@ -216,9 +216,9 @@ function renderSummary(hook: IntakeV6WorkspaceHook = buildHook(), withFooter = f
         <IntakeV6FinalConfigurationSummary hook={hook} />
         {withFooter ? (
           <IntakeV6OperatorWorkspaceFooter
-            currentStep="review"
-            stepIndex={1}
-            stepOrderLength={2}
+            currentStep="confirm"
+            stepIndex={2}
+            stepOrderLength={3}
             footerBlocker={null}
             nextDisabled
             nextLabel=""

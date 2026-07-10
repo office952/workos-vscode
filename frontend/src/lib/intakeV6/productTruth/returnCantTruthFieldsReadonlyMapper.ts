@@ -97,9 +97,22 @@ export interface ReturnCantTruthFieldsReadonlyModel {
   fields: ReturnCantTruthFieldReadonlyRow[]
   dependencies: ReturnCantTruthDependencyReadonlyRow[]
   blockers: string[]
+  operator_blockers: string[]
+  technical_blockers: string[]
   warnings: string[]
   overall_readiness: ReturnCantReadonlyReadiness
+  operator_readiness: ReturnCantReadonlyReadiness
 }
+
+const TECHNICAL_ONLY_BLOCKERS = new Set([
+  "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+  "RETURN_CANT_PERIMETER_MISSING",
+  "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
+  "RETURN_CANT_COMPONENT_CONFIRMATION_MISSING",
+  "RETURN_CANT_COMPONENT_CONFIRMATION_PENDING",
+  "RETURN_CANT_PERIMETER_EVIDENCE_ONLY",
+  "RETURN_CANT_CONFIRMED_PERIMETER_MISSING",
+])
 
 function lower(value: unknown): string {
   return String(value ?? "").trim().toLowerCase()
@@ -152,6 +165,14 @@ function finishRequiresPaint(finishType: string | null): boolean {
   return token.includes("paint") || token.includes("vop")
 }
 
+function hasPersistedValue(value: unknown): boolean {
+  if (value == null) return false
+  if (typeof value === "string") return value.trim().length > 0
+  if (typeof value === "number") return Number.isFinite(value)
+  if (Array.isArray(value)) return value.length > 0
+  return true
+}
+
 function readyFromClassification(classification: ReturnCantReadonlyClassification, sourceState: string): ReturnCantReadonlyReadiness {
   return classification === "component_truth_confirmed" && isConfirmedState(sourceState) ? "ready" : "blocked"
 }
@@ -197,6 +218,7 @@ function buildCanonicalFieldRow(args: {
   if (args.legacyField) {
     const sourceState = nonEmptyString(args.legacyField.sourceState) ?? "missing"
     const classification = legacyClassification(args.legacyField.sourceState as ProductTruthState | null | undefined)
+    const valueReady = hasPersistedValue(args.legacyField.value)
     return {
       field_key: args.fieldKey,
       canonical_product_truth_path: args.canonicalPath,
@@ -208,7 +230,7 @@ function buildCanonicalFieldRow(args: {
       required_for_mapper: true,
       required_for_preview_later: requiredForPreviewLater,
       blocker_if_missing: args.blocker,
-      readiness: "blocked",
+      readiness: valueReady ? "ready" : "blocked",
     }
   }
   return {
@@ -348,6 +370,25 @@ function buildConfirmationStateField(input: ReturnCantTruthFieldsReadonlyMapperI
       blocker: "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
       canonicalField,
     })
+  }
+
+  const draft = input.productTruthDraft
+  const depthLegacy = fieldFromDraft(draft?.components.returnCant.depthMm, "components.returnCant.depthMm")
+  const finishLegacy = fieldFromDraft(draft?.components.returnCant.finishType, "components.returnCant.finishType")
+  if (hasPersistedValue(depthLegacy?.value) && hasPersistedValue(finishLegacy?.value)) {
+    return {
+      field_key: "return_cant.confirmation_state",
+      canonical_product_truth_path: "components.return_cant.confirmation_state",
+      current_runtime_path: "finish_setup.return_depth_mm + return_finish_type",
+      current_value: "ready_input",
+      source_state: "confirmed",
+      classification: "component_truth_confirmed",
+      owner: "return_cant",
+      required_for_mapper: true,
+      required_for_preview_later: true,
+      blocker_if_missing: "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
+      readiness: "ready",
+    }
   }
 
   uniquePush(warnings, "GLOBAL_FINISH_CONFIRMATION_NOT_COMPONENT_TRUTH")
@@ -508,17 +549,15 @@ export function mapReturnCantTruthFieldsReadonly(
   const dependencies = [buildDependencyRow(input, warnings)]
 
   const blockers: string[] = []
-  const requiredFieldKeys = new Set([
+  const operatorFieldKeys = new Set([
     "return_cant.depth_mm",
     "return_cant.material_profile",
     "return_cant.finish_type",
     "return_cant.layer_group_ids",
-    "return_cant.confirmation_state",
-    "return_cant.perimeter_source",
   ])
 
   for (const field of fields) {
-    const isRequired = requiredFieldKeys.has(field.field_key)
+    const isRequired = operatorFieldKeys.has(field.field_key)
     const needsOracal = field.field_key === "return_cant.color_target.oracal_code" && finishRequiresOracal(finishTypeForColor)
     const needsRal = field.field_key === "return_cant.color_target.ral_code" && finishRequiresRal(finishTypeForColor)
     const needsPaint = field.field_key === "return_cant.color_target.paint_target" && finishRequiresPaint(finishTypeForColor)
@@ -534,11 +573,33 @@ export function mapReturnCantTruthFieldsReadonly(
   }
 
   const depthField = rowByKey(fields, "return_cant.depth_mm")
+  const finishField = rowByKey(fields, "return_cant.finish_type")
+  const productValuesReady = depthField.readiness === "ready" && finishField.readiness === "ready"
+
+  const operatorBlockers = blockers.filter((code) => !TECHNICAL_ONLY_BLOCKERS.has(code))
+  const technicalBlockers = blockers.filter((code) => TECHNICAL_ONLY_BLOCKERS.has(code))
+  if (productValuesReady) {
+    for (const field of fields) {
+      if (
+        field.field_key === "return_cant.confirmation_state" ||
+        field.field_key === "return_cant.perimeter_source"
+      ) {
+        uniquePush(technicalBlockers, field.blocker_if_missing)
+      }
+    }
+    for (const dependency of dependencies) {
+      if (dependency.readiness !== "ready") {
+        uniquePush(technicalBlockers, dependency.blocker_if_missing)
+      }
+    }
+  }
+
+  const dedupedOperator = [...new Set(operatorBlockers)]
+  const dedupedTechnical = [...new Set(technicalBlockers)]
+  const dedupedAll = [...new Set([...dedupedOperator, ...dedupedTechnical])]
+
   if (depthField.classification === "fallback_only") {
     uniquePush(warnings, "RETURN_DEPTH_FALLBACK_DOES_NOT_UNLOCK_READINESS")
-  }
-  if (depthField.classification === "hydrated_only") {
-    uniquePush(warnings, "RETURN_DEPTH_HYDRATED_DOES_NOT_UNLOCK_READINESS")
   }
 
   return {
@@ -548,8 +609,11 @@ export function mapReturnCantTruthFieldsReadonly(
     quote_mode: nonEmptyString(input.quoteMode) ?? QUOTE_MODE,
     fields,
     dependencies,
-    blockers,
+    blockers: dedupedAll,
+    operator_blockers: dedupedOperator,
+    technical_blockers: dedupedTechnical,
     warnings,
-    overall_readiness: blockers.length === 0 ? "ready" : "blocked",
+    overall_readiness: dedupedOperator.length === 0 ? "ready" : "blocked",
+    operator_readiness: dedupedOperator.length === 0 ? "ready" : "blocked",
   }
 }

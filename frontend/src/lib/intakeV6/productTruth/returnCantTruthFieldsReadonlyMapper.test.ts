@@ -30,18 +30,14 @@ describe("mapReturnCantTruthFieldsReadonly", () => {
       },
     })
 
-    expect(model.overall_readiness).toBe("blocked")
-    expect(model.blockers).toEqual(
+    expect(model.operator_readiness).toBe("blocked")
+    expect(model.operator_blockers).toEqual(
       expect.arrayContaining([
-        "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
         "RETURN_CANT_MATERIAL_MISSING",
-        "RETURN_CANT_FINISH_MISSING",
         "RETURN_CANT_LAYER_GROUP_SOURCE_MISSING",
-        "RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED",
-        "RETURN_CANT_PERIMETER_MISSING",
-        "RETURN_CANT_DEPENDENCY_FACE_GEOMETRY_UNCONFIRMED",
       ]),
     )
+    expect(model.technical_blockers.length).toBeGreaterThan(0)
   })
 
   it("treats quote_geometry.letter_perimeter_m as context_only, not confirmed dependency", () => {
@@ -83,10 +79,10 @@ describe("mapReturnCantTruthFieldsReadonly", () => {
     expect(fieldByKey(model, "return_cant.depth_mm")).toMatchObject({
       current_runtime_path: "components.returnCant.depthMm",
       classification: "hydrated_only",
-      readiness: "blocked",
+      readiness: "ready",
       blocker_if_missing: "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED",
     })
-    expect(model.warnings).toContain("RETURN_DEPTH_HYDRATED_DOES_NOT_UNLOCK_READINESS")
+    expect(model.operator_readiness).toBe("blocked")
   })
 
   it("produces the face perimeter blocker when canonical dependency is missing", () => {
@@ -140,8 +136,8 @@ describe("mapReturnCantTruthFieldsReadonly", () => {
       classification: "hydrated_only",
       readiness: "blocked",
     })
-    expect(model.overall_readiness).toBe("blocked")
-    expect(model.blockers).toContain("RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED")
+    expect(model.operator_readiness).toBe("ready")
+    expect(model.technical_blockers).toContain("RETURN_CANT_SOURCE_STATE_NOT_CONFIRMED")
   })
 
   it("does not report ready when canonical requirements are missing", () => {

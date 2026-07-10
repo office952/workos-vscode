@@ -32,7 +32,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
 }) {
   const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
   const [issuesOpen, setIssuesOpen] = useState(false);
-  const isHandoffStep = currentStep === "review" || currentStep === "confirm";
+  const isHandoffStep = currentStep === "confirm";
   const confirmFooter = isHandoffStep ? statusCtx?.confirmFooter : null;
   const status = useMemo(
     () => buildWorkspaceHeaderStatus(workspaceState, statusCtx?.overlay ?? {}),
@@ -40,7 +40,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
   );
 
   const stepLabel =
-    currentStep === "layers" ? "straturi" : currentStep === "review" ? "configurare" : "configurare";
+    currentStep === "layers" ? "straturi" : currentStep === "review" ? "configurare" : "confirmare";
 
   const centerLabel = isHandoffStep && confirmFooter
     ? `Confirmări ${confirmFooter.checklistDone}/${confirmFooter.checklistTotal}`

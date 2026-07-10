@@ -11,7 +11,7 @@ describe("buildReviewHeaderStatus", () => {
       layersConfirmed: 6,
       layersTotal: 6,
       artworkTotal: 2,
-      artworkConfirmed: 2,
+      artworkConfigured: 2,
       operatorConfirmationMissing: false,
       surfacing: clearSurfacing,
       widthMm: 1200,
@@ -26,15 +26,16 @@ describe("buildReviewHeaderStatus", () => {
     expect(status.details.find((row) => row.id === "pricing")?.value).toBe("OK");
   });
 
-  it("returns action count when operator confirmation is missing", () => {
+  it("returns action count when operator confirmation is missing on confirm step", () => {
     const status = buildReviewHeaderStatus({
       analysisReady: true,
       svgReady: true,
       layersConfirmed: 6,
       layersTotal: 6,
       artworkTotal: 2,
-      artworkConfirmed: 2,
+      artworkConfigured: 2,
       operatorConfirmationMissing: true,
+      currentStep: "confirm",
       surfacing: clearSurfacing,
     });
 
@@ -52,7 +53,7 @@ describe("buildReviewHeaderStatus", () => {
       layersConfirmed: 6,
       layersTotal: 6,
       artworkTotal: 0,
-      artworkConfirmed: 0,
+      artworkConfigured: 0,
       surfacing: {
         showBanner: true,
         reasons: ["Calculul live conține linii fără tarif configurat."],
@@ -66,6 +67,24 @@ describe("buildReviewHeaderStatus", () => {
     expect(status.actions.some((action) => action.id === "jump-live-calc")).toBe(true);
   });
 
+  it("does not count final confirmation on review step", () => {
+    const status = buildReviewHeaderStatus({
+      analysisReady: true,
+      svgReady: true,
+      layersConfirmed: 6,
+      layersTotal: 6,
+      artworkTotal: 2,
+      artworkConfigured: 2,
+      operatorConfirmationMissing: true,
+      currentStep: "review",
+      surfacing: clearSurfacing,
+    });
+
+    expect(status.actionCount).toBe(0);
+    expect(status.actions.some((action) => action.id === "confirm-step")).toBe(false);
+    expect(status.details.find((row) => row.id === "operator")?.value).toBe("Pas 3");
+  });
+
   it("includes layer and artwork detail rows", () => {
     const status = buildReviewHeaderStatus({
       analysisReady: true,
@@ -73,7 +92,7 @@ describe("buildReviewHeaderStatus", () => {
       layersConfirmed: 4,
       layersTotal: 6,
       artworkTotal: 2,
-      artworkConfirmed: 1,
+      artworkConfigured: 1,
       pendingConfirmationCount: 1,
       surfacing: clearSurfacing,
     });

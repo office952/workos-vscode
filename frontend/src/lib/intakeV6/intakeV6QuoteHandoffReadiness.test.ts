@@ -110,13 +110,14 @@ describe("intakeV6QuoteHandoffReadiness", () => {
         preview_only: true,
       },
       containsMissingPrices: true,
-      allArtworkFinishesConfirmed: false,
+      allArtworkProductConfigured: false,
+      currentStep: "confirm",
     });
     expect(surfacing.showBanner).toBe(true);
-    expect(surfacing.reasons.join(" ")).toMatch(/Artwork neconfirmat/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/Artwork\/logo necesită decizie/i);
     expect(surfacing.reasons.join(" ")).toMatch(/tarif/i);
-    expect(surfacing.actions.join(" ")).toMatch(/Confirm artwork/i);
-    expect(surfacing.actions.join(" ")).toMatch(/Confirmarea finală/i);
+    expect(surfacing.actions.join(" ")).toMatch(/execuția artwork/i);
+    expect(surfacing.actions.join(" ")).toMatch(/Confirmă configurația finală/i);
   });
 
   it("uses residual vector copy when artwork rows are confirmed", () => {
@@ -163,6 +164,6 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       preview_only: true,
     });
     expect(display.primary).toBe("Date tehnice pregătite pentru preview");
-    expect(display.secondary).toMatch(/Handoff ofertă necesită verificări finale/i);
+    expect(display.secondary).toMatch(/Handoff ofertă necesită Product Truth confirmat/i);
   });
 });

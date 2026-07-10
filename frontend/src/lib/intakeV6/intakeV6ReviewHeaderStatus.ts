@@ -32,12 +32,13 @@ export interface BuildReviewHeaderStatusInput {
   layersConfirmed: number;
   layersTotal: number;
   artworkTotal: number;
-  artworkConfirmed: number;
+  artworkConfigured: number;
   operatorConfirmationMissing?: boolean;
   reviewWarnings?: readonly string[];
   surfacing: ReviewHandoffSurfacing;
   pendingSave?: boolean;
   pendingConfirmationCount?: number;
+  currentStep?: "layers" | "review" | "confirm";
   widthMm?: number | null;
   heightMm?: number | null;
   perimeterM?: number | null;
@@ -69,14 +70,17 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     };
   }
 
-  const artworkAllConfirmed =
-    input.artworkTotal === 0 || input.artworkConfirmed >= input.artworkTotal;
+  const artworkAllConfigured =
+    input.artworkTotal === 0 || input.artworkConfigured >= input.artworkTotal;
   const layersAllConfirmed =
     input.layersTotal === 0 || input.layersConfirmed >= input.layersTotal;
 
+  const showFinalConfirmationPending =
+    input.currentStep === "confirm" && input.operatorConfirmationMissing === true;
+
   let actionCount = input.pendingConfirmationCount ?? 0;
   if (input.pendingSave) actionCount += 1;
-  if (input.operatorConfirmationMissing) actionCount += 1;
+  if (showFinalConfirmationPending) actionCount += 1;
 
   const hasReviewWarnings = (input.reviewWarnings?.length ?? 0) > 0;
   const surfacingReasonsExcludingOperator = input.surfacing.reasons.filter(
@@ -119,17 +123,17 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
       value:
         input.artworkTotal === 0
           ? "—"
-          : artworkAllConfirmed
-            ? "Confirmat"
+          : artworkAllConfigured
+            ? "Configurat"
             : "Necesită decizie",
       tone:
-        input.artworkTotal === 0 ? "muted" : artworkAllConfirmed ? "ok" : "warn",
+        input.artworkTotal === 0 ? "muted" : artworkAllConfigured ? "ok" : "warn",
     },
     {
       id: "operator",
-      label: "Operator confirmation",
-      value: input.operatorConfirmationMissing ? "Lipsește" : "Complet",
-      tone: input.operatorConfirmationMissing ? "warn" : "ok",
+      label: "Confirmare finală",
+      value: showFinalConfirmationPending ? "Lipsește" : input.currentStep === "confirm" ? "Complet" : "Pas 3",
+      tone: showFinalConfirmationPending ? "warn" : "muted",
     },
     {
       id: "dimensions",
@@ -146,10 +150,10 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
   ];
 
   const actions: ReviewHeaderStatusAction[] = [];
-  if (input.operatorConfirmationMissing) {
-    actions.push({ id: "confirm-step", label: "Confirmă în pasul Confirmare" });
+  if (showFinalConfirmationPending) {
+    actions.push({ id: "confirm-step", label: "Confirmă rezumatul final" });
   }
-  if (!artworkAllConfirmed && input.artworkTotal > 0) {
+  if (!artworkAllConfigured && input.artworkTotal > 0) {
     actions.push({ id: "jump-artwork", label: "Mergi la Artwork" });
   }
   if (input.containsMissingPrices) {

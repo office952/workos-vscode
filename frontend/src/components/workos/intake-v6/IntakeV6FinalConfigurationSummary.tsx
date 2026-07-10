@@ -69,8 +69,10 @@ export default function IntakeV6FinalConfigurationSummary({
 		>
 			{variant === "legacyPage" ? (
 				<div className="mb-3">
-					<h2 className={v6.screenTitle}>Confirmare draft intern</h2>
-					<p className={v6.sectionDesc}>Sumar logic înainte de crearea draftului de ofertare.</p>
+					<h2 className={v6.screenTitle}>Confirmare finală</h2>
+					<p className={v6.sectionDesc}>
+						Verifică rezumatul configurației și confirmă pentru continuare.
+					</p>
 				</div>
 			) : null}
 

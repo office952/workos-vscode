@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useLocation } from "react-router-dom";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import { promoteIntakeV6VolumetricLettersV2Template } from "@/lib/intakeV6/intakeV6Api";
 import {
+  INTAKE_V6_STEP_ORDER,
   INTAKE_V6_VISIBLE_STEP_COUNT,
   intakeV6VisibleStepIndex,
 } from "@/lib/intakeV6/intakeV6OperatorProgressSteps";
+import IntakeV6ConfirmStep from "./steps/IntakeV6ConfirmStep";
 import IntakeV6SvgAnalyzerStep from "./steps/IntakeV6SvgAnalyzerStep";
 import IntakeV6ReviewStep from "./steps/IntakeV6ReviewStep";
 import IntakeV6Header from "./atoms/IntakeV6Header";
@@ -30,41 +32,49 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
     canAccessStep,
     continueFromAnalyzer,
     canContinueFromAnalyzer,
+    canContinueFromReview,
     firstBlocker,
   } = hook;
 
-  useEffect(() => {
-    if (state.currentStep === "confirm") {
-      trySetStep("review");
-    }
-  }, [state.currentStep, trySetStep]);
-
   const visibleStepIndex = intakeV6VisibleStepIndex(state.currentStep);
+  const stepIndex = INTAKE_V6_STEP_ORDER.indexOf(state.currentStep);
 
   const goBack = () => {
-    if (state.currentStep === "review") {
-      trySetStep("layers");
-    }
+    if (stepIndex > 0) trySetStep(INTAKE_V6_STEP_ORDER[stepIndex - 1]!);
   };
 
   const goNext = () => {
     if (state.currentStep === "layers") {
       void continueFromAnalyzer();
+      return;
+    }
+    if (state.currentStep === "review" && canContinueFromReview) {
+      trySetStep("confirm");
     }
   };
 
   const nextDisabled =
-    state.currentStep === "layers" ? !canContinueFromAnalyzer : true;
+    state.currentStep === "layers"
+      ? !canContinueFromAnalyzer
+      : state.currentStep === "review"
+        ? !canContinueFromReview
+        : stepIndex >= INTAKE_V6_STEP_ORDER.length - 1;
 
   const nextLabel =
     state.currentStep === "layers"
       ? state.phase === "persisting"
         ? "Salvez..."
         : "Continuă la Configurare"
-      : "Flux complet";
+      : state.currentStep === "review"
+        ? "Continuă la Confirmare"
+        : "Flux complet";
 
   const footerBlocker =
-    state.currentStep === "layers" && !canContinueFromAnalyzer ? firstBlocker : null;
+    state.currentStep === "layers" && !canContinueFromAnalyzer
+      ? firstBlocker
+      : state.currentStep === "review" && !canContinueFromReview
+        ? firstBlocker
+        : null;
 
   const promoteTemplateV2 = useCallback(async () => {
     setPromoteStatus("running");
@@ -83,10 +93,6 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
 
   const handleStepClick = useCallback(
     (step: IntakeV6StepId) => {
-      if (step === "confirm") {
-        trySetStep("review");
-        return;
-      }
       trySetStep(step);
     },
     [trySetStep],
@@ -96,7 +102,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
     <IntakeV6WorkspaceHeaderStatusProvider
       defaultHandlers={{
         onJumpToLayers: () => trySetStep("layers"),
-        onJumpToConfirm: () => trySetStep("review"),
+        onJumpToConfirm: () => trySetStep("confirm"),
       }}
     >
     <div className={v6.page} data-testid="intake-v6-operator-workspace">
@@ -113,7 +119,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
       <main
         className={v6.main}
         data-testid="intake-v6-workspace-main"
-        data-intake-v6-step={state.currentStep === "confirm" ? "review" : state.currentStep}
+        data-intake-v6-step={state.currentStep}
       >
         {state.phase === "loading" ? (
           <div
@@ -129,13 +135,12 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
           </p>
         ) : null}
         {state.currentStep === "layers" ? <IntakeV6SvgAnalyzerStep hook={hook} /> : null}
-        {state.currentStep === "review" || state.currentStep === "confirm" ? (
-          <IntakeV6ReviewStep hook={hook} />
-        ) : null}
+        {state.currentStep === "review" ? <IntakeV6ReviewStep hook={hook} /> : null}
+        {state.currentStep === "confirm" ? <IntakeV6ConfirmStep hook={hook} /> : null}
       </main>
 
       <IntakeV6OperatorWorkspaceFooter
-        currentStep={state.currentStep === "confirm" ? "review" : state.currentStep}
+        currentStep={state.currentStep}
         stepIndex={visibleStepIndex}
         stepOrderLength={INTAKE_V6_VISIBLE_STEP_COUNT}
         footerBlocker={footerBlocker}

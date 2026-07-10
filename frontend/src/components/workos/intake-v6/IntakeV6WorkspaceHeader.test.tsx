@@ -78,6 +78,6 @@ describe("IntakeV6Header workspace shell", () => {
 
     expect(screen.getByTestId("intake-v6-progress-step-layers")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-progress-step-review")).toBeInTheDocument();
-    expect(screen.queryByTestId("intake-v6-progress-step-confirm")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-progress-step-confirm")).toBeInTheDocument();
   });
 });

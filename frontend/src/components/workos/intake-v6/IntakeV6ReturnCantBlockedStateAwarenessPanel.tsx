@@ -51,37 +51,48 @@ function formatValue(value: unknown): string {
 
 export default function IntakeV6ReturnCantBlockedStateAwarenessPanel({
   model,
+  variant = "operator",
 }: {
   model: ReturnCantTruthFieldsReadonlyModel;
+  variant?: "operator" | "technicalOnly";
 }) {
   const perimeterSource = fieldByKey(model, "return_cant.perimeter_source");
   const confirmationState = fieldByKey(model, "return_cant.confirmation_state");
   const facePerimeter = dependencyByKey(model, "face_confirmed_perimeter");
-  const visibleBlockers = model.blockers;
+  const visibleBlockers =
+    variant === "technicalOnly" ? model.technical_blockers : model.operator_blockers;
+  const isTechnicalOnly = variant === "technicalOnly";
 
   return (
     <section
-      className={`${v6.cardCompact} border-red-900/50 bg-red-950/10 text-slate-200`}
+      className={`${v6.cardCompact} ${isTechnicalOnly ? "border-slate-800 bg-slate-950/20" : "border-red-900/50 bg-red-950/10"} text-slate-200`}
       data-testid="intake-v6-return-cant-blocked-awareness"
       data-read-only="true"
+      data-variant={variant}
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-red-200/80">
+          <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${isTechnicalOnly ? "text-slate-400" : "text-red-200/80"}`}>
             Return/cant diagnostic
           </p>
           <h3 className="mt-1 text-[14px] font-semibold text-slate-100">
-            Return/cant component preview este blocat.
+            {isTechnicalOnly
+              ? "Detalii tehnice return/cant (read-only)."
+              : "Return/cant necesită valori obligatorii lipsă."}
           </h3>
           <p
             className="mt-2 max-w-[72ch] text-[11px] leading-relaxed text-slate-300"
             data-testid="intake-v6-return-cant-blocked-copy"
           >
-            Motiv: datele necesare nu sunt inca confirmate pe componenta. Acesta este diagnostic read-only, nu calcul si nu pret.
+            {isTechnicalOnly
+              ? "Diagnostic intern pentru mapare componentă și geometrie. Nu necesită confirmare operator separată când valorile produs sunt deja configurate."
+              : "Completează adâncimea și finisajul cantului. Confirmarea finală rămâne în pasul Confirmare."}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Badge tone="bad">RETURN_CANT_MAPPER_BLOCKED</Badge>
+          <Badge tone={isTechnicalOnly ? "muted" : "bad"}>
+            {isTechnicalOnly ? "TECHNICAL_ONLY" : "OPERATOR_ACTION_REQUIRED"}
+          </Badge>
           <Badge>{model.component_scope}</Badge>
           <Badge>{model.root_template}</Badge>
         </div>
@@ -96,15 +107,24 @@ export default function IntakeV6ReturnCantBlockedStateAwarenessPanel({
             Ce blocheaza acum
           </p>
           <ul className="space-y-2 text-[11px] text-slate-200">
-            <li data-testid="intake-v6-return-cant-context-only-line">
-              <span className="font-mono text-amber-200">quote_geometry.letter_perimeter_m</span> ramane context-only.
-            </li>
-            <li data-testid="intake-v6-return-cant-face-dependency-line">
-              Lipseste <span className="font-mono text-red-200">components.face.confirmed_perimeter</span> confirmed.
-            </li>
-            <li data-testid="intake-v6-return-cant-confirmation-line">
-              Lipseste <span className="font-mono text-red-200">components.return_cant.confirmation_state = confirmed</span>.
-            </li>
+            {isTechnicalOnly ? (
+              <>
+                <li data-testid="intake-v6-return-cant-context-only-line">
+                  Perimetru din quote_geometry poate rămâne context-only până la confirmarea componentei față.
+                </li>
+                <li data-testid="intake-v6-return-cant-face-dependency-line">
+                  Dependency <span className="font-mono text-slate-300">components.face.confirmed_perimeter</span> poate lipsi în runtime.
+                </li>
+                <li data-testid="intake-v6-return-cant-confirmation-line">
+                  Stare componentă: <span className="font-mono text-slate-300">{formatValue(confirmationState.current_value)}</span>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>Verifică adâncimea cantului (mm) și materialul/finisajul selectat.</li>
+                <li>Confirmarea finală se face o singură dată în pasul Confirmare.</li>
+              </>
+            )}
           </ul>
         </div>
 

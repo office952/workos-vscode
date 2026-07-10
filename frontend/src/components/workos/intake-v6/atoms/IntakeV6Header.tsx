@@ -11,7 +11,7 @@ import { v6 } from "./intakeV6Presentation";
 const STEP_LABELS: Record<IntakeV6StepId, string> = {
   layers: "Straturi",
   review: "Configurare",
-  confirm: "Configurare",
+  confirm: "Confirmare",
 };
 
 interface IntakeV6HeaderProps {

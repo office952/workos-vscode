@@ -328,23 +328,31 @@ export function buildReviewHandoffSurfacing(args: {
 	handoffOptions?: QuoteHandoffUiOptions;
 	containsMissingPrices?: boolean;
 	allArtworkFinishesConfirmed?: boolean;
+	allArtworkProductConfigured?: boolean;
+	currentStep?: "layers" | "review" | "confirm";
 }): ReviewHandoffSurfacing {
 	const handoffUi = resolveQuoteHandoffUiStatus(args.handoff, args.handoffOptions);
 	const reviewWarnings = args.handoff?.review_warnings ?? [];
 	const fatalBlockers = args.handoff?.fatal_blockers ?? args.handoff?.blockers ?? [];
 	const artworkNeedsDecision = hasArtworkNeedsDecisionWarning(reviewWarnings);
 	const vectorResidualWarning = hasUnclassifiedVectorArtworkWarning(reviewWarnings);
-	const artworkUnconfirmed = args.allArtworkFinishesConfirmed === false;
+	const artworkConfigured =
+		args.allArtworkProductConfigured ??
+		(args.allArtworkFinishesConfirmed !== false && args.allArtworkFinishesConfirmed !== undefined
+			? args.allArtworkFinishesConfirmed
+			: true);
+	const artworkUnconfigured = args.allArtworkProductConfigured === false;
 	const operatorConfirmationMissing = fatalBlockers.includes("operator_confirmation_missing");
+	const showOperatorConfirmationOnStep = args.currentStep === "confirm" && operatorConfirmationMissing;
 	const containsMissingPrices = args.containsMissingPrices === true;
 	const productTruthBlocked = fatalBlockers.some(isProductTruthBlocker);
 
 	const showBanner =
 		!handoffUi.handoffAllowed ||
 		artworkNeedsDecision ||
-		artworkUnconfirmed ||
+		artworkUnconfigured ||
 		containsMissingPrices ||
-		operatorConfirmationMissing;
+		showOperatorConfirmationOnStep;
 
 	const reasons: string[] = [];
 	if (fatalBlockers.some((code) => code === "layer_roles_incomplete" || code === "readiness_not_ready:layer_roles_incomplete")) {
@@ -352,17 +360,17 @@ export function buildReviewHandoffSurfacing(args: {
 			"Oferta rămâne blocată: rolurile layerelor/grupurilor trebuie confirmate de operator. Pricing Registry este pregătit; lipsește Product Truth confirmat.",
 		);
 	}
-	if (artworkUnconfirmed) {
-		reasons.push("Artwork/logo neconfirmat în Review: SUGGESTED nu este CONFIRMED, iar fallback/hydrated nu este confirmare operator.");
-	} else if (args.allArtworkFinishesConfirmed && vectorResidualWarning) {
+	if (artworkUnconfigured) {
+		reasons.push("Artwork/logo necesită decizie de execuție sau date obligatorii lipsă.");
+	} else if (artworkConfigured && vectorResidualWarning) {
 		reasons.push(
 			"Artwork confirmat, dar există vector rezidual neclasificat în SVG. Verifică stratul/sursa SVG.",
 		);
 	} else if (artworkNeedsDecision) {
 		reasons.push("Vector/artwork neclasificat sau neconfirmat.");
 	}
-	if (operatorConfirmationMissing) {
-		reasons.push("Confirmarea operatorului pentru draft intern lipsește încă.");
+	if (showOperatorConfirmationOnStep) {
+		reasons.push("Verifică rezumatul configurației și confirmă pentru continuare.");
 	}
 	if (containsMissingPrices) {
 		reasons.push("Calculul live conține linii fără tarif configurat.");
@@ -375,11 +383,9 @@ export function buildReviewHandoffSurfacing(args: {
 	if (productTruthBlocked) {
 		actions.push("Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.");
 	}
-	if (artworkUnconfirmed) {
-		actions.push(
-			"Apasă Confirm artwork pentru fiecare logo după ce verifici execuția print/laminare/translucid.",
-		);
-	} else if (args.allArtworkFinishesConfirmed && vectorResidualWarning) {
+	if (artworkUnconfigured) {
+		actions.push("Completează execuția artwork (ex. print/laminare) pentru fiecare logo.");
+	} else if (artworkConfigured && vectorResidualWarning) {
 		actions.push("Verifică stratul/sursa SVG pentru vectorul rezidual neclasificat.");
 	} else if (artworkNeedsDecision) {
 		actions.push("Rezolvă deciziile artwork în Review.");
@@ -387,12 +393,12 @@ export function buildReviewHandoffSurfacing(args: {
 	if (containsMissingPrices) {
 		actions.push("Verifică liniile cu tarif lipsă în Calcul live.");
 	}
-	if (operatorConfirmationMissing) {
-		actions.push("Confirmarea finală se face în pasul Confirmare.");
+	if (showOperatorConfirmationOnStep) {
+		actions.push("Confirmă configurația finală în pasul Confirmare.");
 	}
 
 	const badges: IntakeV6OperatorStateBadge[] = showBanner
-		? productTruthBlocked || artworkUnconfirmed || operatorConfirmationMissing
+		? productTruthBlocked || artworkUnconfigured || showOperatorConfirmationOnStep
 			? ["BLOCKED", "NEEDS_CONFIRMATION"]
 			: containsMissingPrices
 				? ["WARNING", "NEEDS_FORM_INPUT"]

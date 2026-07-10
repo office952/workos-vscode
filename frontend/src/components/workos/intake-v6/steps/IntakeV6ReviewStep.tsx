@@ -55,6 +55,11 @@ import {
 } from "@/lib/intakeV6/intakeV6LetterGroups";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import {
+  countConfiguredArtworkFinishes,
+  countIncompleteArtworkFinishes,
+  countIncompleteLetterGroups,
+} from "@/lib/intakeV6/intakeV6ProductFinishCompleteness";
+import {
   extractQuoteGeometryFromAnalyzer,
   readQuoteGeometryFromPayload,
   resolveQuoteGeometryForWorkspace,
@@ -102,7 +107,6 @@ import {
 } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import IntakeV6ReturnCantFields from "../IntakeV6ReturnCantFields";
 import IntakeV6ReturnCantBlockedStateAwarenessPanel from "../IntakeV6ReturnCantBlockedStateAwarenessPanel";
-import IntakeV6FinalConfigurationSummary from "../IntakeV6FinalConfigurationSummary";
 import IntakeV6ProductionTaskDryRunPanel from "../IntakeV6ProductionTaskDryRunPanel";
 import type { IntakeV6ProductionTaskDryRunResponse } from "@/lib/intakeV6/productionTaskDryRunContracts";
 import {
@@ -1547,15 +1551,17 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     fallbackDepthMm: DEFAULT_RETURN_DEPTH_MM,
   });
   const reviewHandoffSurfacing = useMemo(() => {
-    const allArtworkFinishesConfirmed =
-      artworkFinishes.length === 0 || artworkFinishes.every((row) => row.confirmed);
+    const allArtworkProductConfigured =
+      artworkFinishes.length === 0 ||
+      countIncompleteArtworkFinishes(artworkFinishes) === 0;
     return buildReviewHandoffSurfacing({
       handoff: quoteHandoffPreview,
       handoffOptions: {
         loading: loadingQuoteHandoffPreview && quoteHandoffPreview == null,
       },
       containsMissingPrices: breakdown?.totals.contains_missing_prices === true,
-      allArtworkFinishesConfirmed,
+      allArtworkProductConfigured,
+      currentStep: "review",
     });
   }, [
     artworkFinishes,
@@ -1635,14 +1641,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     artworkOnlyRequiresDecision && (!allArtworkConfirmedInStepOne || hasUnconfirmedArtwork);
 
   const pendingConfirmationCount = useMemo(() => {
-    let count = 0;
-    for (const group of effectiveLetterGroups) {
-      if (resolveLayerCardStatus(group) === "warning") count += 1;
-    }
-    for (const row of artworkFinishes) {
-      if (!row.confirmed) count += 1;
-    }
-    return count;
+    return countIncompleteLetterGroups(effectiveLetterGroups) + countIncompleteArtworkFinishes(artworkFinishes);
   }, [effectiveLetterGroups, artworkFinishes]);
 
   const layerRoleStats = useMemo(() => {
@@ -1654,8 +1653,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
   const artworkConfirmStats = useMemo(() => {
     const total = artworkFinishes.length;
-    const confirmed = artworkFinishes.filter((row) => row.confirmed).length;
-    return { total, confirmed };
+    const configured = countConfiguredArtworkFinishes(artworkFinishes);
+    return { total, configured };
   }, [artworkFinishes]);
 
   const operatorConfirmationMissing = useMemo(() => {
@@ -1712,7 +1711,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       layersConfirmed: layerRoleStats.confirmed,
       layersTotal: layerRoleStats.total,
       artworkTotal: artworkConfirmStats.total,
-      artworkConfirmed: artworkConfirmStats.confirmed,
+      artworkConfigured: artworkConfirmStats.configured,
       operatorConfirmationMissing,
       reviewWarnings: effectiveReviewWarnings,
       surfacing: reviewHandoffSurfacing,
@@ -2226,7 +2225,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         error={error}
       />
 
-      <IntakeV6FinalConfigurationSummary hook={hook} />
         </div>
 
         <div
@@ -2276,12 +2274,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </div>
       </div>
 
-      {returnCantReadonlyAwareness.overall_readiness === "blocked" ? (
+      {returnCantReadonlyAwareness.operator_readiness === "blocked" ? (
         <p
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-return-cant-blocked-operator-message"
         >
-          Cantul nu poate fi calculat încă. Confirmă înălțimea și finisajul cantului.
+          Cantul necesită valori obligatorii lipsă. Verifică adâncimea și finisajul cantului.
         </p>
       ) : null}
 
@@ -2295,8 +2293,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         hint="Pentru verificare avansată"
         className="mb-4 mt-2"
       >
-      {returnCantReadonlyAwareness.overall_readiness === "blocked" ? (
+      {returnCantReadonlyAwareness.operator_readiness === "blocked" ? (
         <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
+      ) : returnCantReadonlyAwareness.technical_blockers.length > 0 ? (
+        <IntakeV6ReturnCantBlockedStateAwarenessPanel
+          model={returnCantReadonlyAwareness}
+          variant="technicalOnly"
+        />
       ) : null}
       <div
         ref={diagnosticRef}

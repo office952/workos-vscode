@@ -225,37 +225,51 @@ def _build_instance(
     )
     geometry, geometry_blockers = _build_geometry(quote_geometry)
 
-    blockers: list[str] = []
+    operator_blockers: list[str] = []
+    technical_blockers: list[str] = []
     if not source_ref:
-        blockers.append("RETURN_CANT_SOURCE_REF_MISSING")
+        operator_blockers.append("RETURN_CANT_SOURCE_REF_MISSING")
     if not layer_group_ids:
-        blockers.append("RETURN_CANT_LAYER_GROUP_IDS_MISSING")
+        operator_blockers.append("RETURN_CANT_LAYER_GROUP_IDS_MISSING")
     if depth_mm is None:
-        blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
+        operator_blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
     if finish_variant is None:
-        blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
-    blockers.extend(finish_blockers)
-    blockers.extend(geometry_blockers)
-    blockers.append("RETURN_CANT_COMPONENT_CONFIRMATION_MISSING")
+        operator_blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
+    operator_blockers.extend(finish_blockers)
+    technical_blockers.extend(geometry_blockers)
 
     if depth_mm is not None:
         pricing_keys["material_profile_width"] = DEPTH_TO_PROFILE_KEY[depth_mm]
         if finish_variant is not None and finish_variant.get("type") == "paint_application":
             pricing_keys["ral_paint_material_by_width"] = DEPTH_TO_RAL_PAINT_MATERIAL_KEY[depth_mm]
     else:
-        blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
+        operator_blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
 
     if finish_variant is not None and finish_variant.get("type") == "vinyl_application":
         if _text(color_code) is None:
-            blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
+            operator_blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
     if finish_variant is not None and finish_variant.get("type") == "paint_application":
         if _text(color_code) is None:
-            blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
+            operator_blockers.append("RETURN_CANT_PRICING_KEYS_MISSING")
 
     instance_key = f"letter_group:{stable_key}" if source_kind == "letter_group" else f"artwork_layer:{stable_key}"
-    confirmation_state = "blocked"
-    if finish_variant is None:
+    values_complete = (
+        depth_mm is not None
+        and finish_variant is not None
+        and bool(layer_group_ids)
+        and bool(source_ref)
+        and not operator_blockers
+    )
+    if values_complete:
+        confirmation_state = "confirmed"
+    elif finish_variant is None:
         confirmation_state = "missing"
+    else:
+        confirmation_state = "blocked"
+        if depth_mm is not None and finish_variant is not None:
+            technical_blockers.append("RETURN_CANT_COMPONENT_CONFIRMATION_PENDING")
+
+    blockers = _dedupe(operator_blockers + technical_blockers)
 
     instance: dict[str, Any] = {
         "instance_key": instance_key,
@@ -263,7 +277,9 @@ def _build_instance(
         "source_ref": source_ref,
         "geometry": geometry,
         "confirmation_state": confirmation_state,
-        "blockers": _dedupe(blockers),
+        "blockers": blockers,
+        "operator_blockers": _dedupe(operator_blockers),
+        "technical_blockers": _dedupe(technical_blockers),
     }
     if layer_group_ids:
         instance["layer_group_ids"] = layer_group_ids
