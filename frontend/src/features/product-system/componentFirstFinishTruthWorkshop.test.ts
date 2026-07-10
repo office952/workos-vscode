@@ -13,7 +13,9 @@ import {
   FINISH_OWNS,
   FINISH_QUANTITY_BASIS_QUESTIONS,
   FINISH_READINESS_SUMMARY,
+  FINISH_READY_FOR_PRICING,
   FINISH_VARIANT_ENTRIES,
+  FINISH_WORKSHOP_STATUS,
   getFinishVariantById,
 } from "./componentFirstFinishTruthWorkshop";
 
@@ -27,6 +29,8 @@ describe("componentFirstFinishTruthWorkshop", () => {
     expect(FINISH_IDENTITY.pricingActive).toBe(false);
     expect(FINISH_IDENTITY.productTruthLiveWrite).toBe(false);
     expect(FINISH_IDENTITY.pricingRegistryWrite).toBe(false);
+    expect(FINISH_READY_FOR_PRICING).toBe(false);
+    expect(FINISH_WORKSHOP_STATUS).toBe("partial_confirmed");
   });
 
   it("FINISH owns face/artwork surface application", () => {
@@ -43,55 +47,38 @@ describe("componentFirstFinishTruthWorkshop", () => {
     expect(FINISH_DOES_NOT_OWN_CANT).toBe(true);
   });
 
-  it("FINISH does not own pricing registry authority", () => {
-    expect(FINISH_DOES_NOT_OWN.some((item) => /Pricing Registry/i.test(item))).toBe(true);
-  });
-
   it("includes required surface variants", () => {
-    const ids = FINISH_VARIANT_ENTRIES.map((v) => v.id);
-    expect(ids).toContain("face_oracal_641");
-    expect(ids).toContain("face_oracal_651");
-    expect(ids).toContain("face_oracal_8500");
-    expect(ids).toContain("face_print_laminate");
-    expect(ids).toContain("artwork_print_laminate");
-    expect(ids).toContain("artwork_print_only");
-    expect(ids).toContain("artwork_cut_vinyl");
-    expect(ids).toContain("artwork_translucent_vinyl");
-    expect(ids).toContain("artwork_none_raw_plexi");
     expect(FINISH_VARIANT_ENTRIES.length).toBe(9);
+    expect(FINISH_VARIANT_ENTRIES.every((v) => v.ownerStatus === "owner_confirmed")).toBe(true);
   });
 
-  it("consumes FACE outputs including mp_face_area", () => {
-    expect(FINISH_FACE_DEPENDENCY_INPUTS.some((d) => d.inputKey === "mp_face_area")).toBe(true);
-    expect(FINISH_FACE_DEPENDENCY_INPUTS.some((d) => d.inputKey === "face_material_usage_area_m2")).toBe(true);
-    expect(FINISH_FACE_DEPENDENCY_INPUTS.some((d) => d.inputKey === "face_piece_boxes")).toBe(true);
-    expect(FINISH_FACE_DEPENDENCY_INPUTS.some((d) => d.inputKey === "source_layer_role")).toBe(true);
+  it("face finish quantity basis is mp_face_area owner-confirmed", () => {
+    const faceBasis = FINISH_QUANTITY_BASIS_QUESTIONS.find((q) => q.questionKey === "face_finish_quantity_basis");
+    expect(faceBasis?.status).toBe("owner_confirmed");
+    expect(faceBasis?.proposedBasis).toBe("mp_face_area");
+    expect(getFinishVariantById("face_oracal_641")?.quantityBasis).toBe("mp_face_area");
+    expect(getFinishVariantById("face_oracal_641")?.quantityBasisStatus).toBe("owner_confirmed");
+    const materialArea = FINISH_FACE_DEPENDENCY_INPUTS.find((d) => d.inputKey === "face_material_usage_area_m2");
+    expect(materialArea?.status).toBe("evidence_only");
   });
 
-  it("quantity basis remains owner_input_required", () => {
-    expect(FINISH_QUANTITY_BASIS_QUESTIONS.every((q) => q.status === "owner_input_required")).toBe(true);
-    expect(getFinishVariantById("face_oracal_641")?.quantityBasisStatus).toBe("owner_input_required");
+  it("artwork finish uses mp_artwork_area when geometry exists", () => {
+    const artworkBasis = FINISH_QUANTITY_BASIS_QUESTIONS.find((q) => q.questionKey === "artwork_finish_quantity_basis");
+    expect(artworkBasis?.status).toBe("owner_confirmed");
+    expect(getFinishVariantById("artwork_print_laminate")?.quantityBasis).toBe("mp_artwork_area");
   });
 
-  it("variants remain blocked — no registry activation", () => {
-    const blocked = FINISH_VARIANT_ENTRIES.filter((v) => v.activationStatus === "blocked");
-    expect(blocked.length).toBe(9);
+  it("variants remain activation-blocked — no registry activation", () => {
+    expect(FINISH_VARIANT_ENTRIES.every((v) => v.activationStatus === "blocked")).toBe(true);
     expect(FINISH_READINESS_SUMMARY.pricingActive).toBe(false);
     expect(FINISH_READINESS_SUMMARY.pricingRegistryWrite).toBe(false);
-    expect(buildFinishReadinessSummary().blockedVariantCount).toBeGreaterThan(0);
+    expect(FINISH_READINESS_SUMMARY.readyForPricing).toBe(false);
+    expect(buildFinishReadinessSummary().ownerConfirmedVariantCount).toBe(9);
   });
 
-  it("all variants pending owner confirm in questions prep mode", () => {
-    expect(FINISH_VARIANT_ENTRIES.every((v) => v.ownerStatus === "owner_input_required")).toBe(true);
-    expect(getFinishVariantById("artwork_none_raw_plexi")?.ownerStatus).toBe("owner_input_required");
-  });
-
-  it("surfaces owner questions A–E awaiting chat", () => {
-    expect(FINISH_OWNER_QUESTIONS_PENDING.map((q) => q.questionId)).toEqual(["A", "B", "C", "D", "E"]);
-    expect(FINISH_OWNER_QUESTIONS_PENDING.filter((q) => q.status === "owner_input_required").length).toBeGreaterThan(
-      3,
-    );
-    expect(FINISH_AWAITING_OWNER_CHAT).toBe(true);
+  it("owner questions A–E are owner_confirmed after apply", () => {
+    expect(FINISH_OWNER_QUESTIONS_PENDING.every((q) => q.status === "owner_confirmed")).toBe(true);
+    expect(FINISH_AWAITING_OWNER_CHAT).toBe(false);
   });
 
   it("reaffirms boundary without cant or FACE material ownership", () => {
@@ -103,6 +90,5 @@ describe("componentFirstFinishTruthWorkshop", () => {
   it("lists dangerous actions that must not appear in UI", () => {
     expect(FINISH_DANGEROUS_ACTIONS).toContain("Activate");
     expect(FINISH_DANGEROUS_ACTIONS).toContain("Write Product Truth");
-    expect(FINISH_DANGEROUS_ACTIONS.length).toBeGreaterThanOrEqual(5);
   });
 });

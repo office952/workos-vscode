@@ -1945,11 +1945,14 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-finish-truth-readonly-workshop-badge")).toHaveTextContent(
       /READONLY WORKSHOP/i,
     );
-    expect(screen.getByTestId("product-system-finish-truth-owner-input-required-badge")).toHaveTextContent(
-      /OWNER INPUT REQUIRED/i,
+    expect(screen.getByTestId("product-system-finish-truth-partial-confirmed-badge")).toHaveTextContent(
+      /PARTIAL CONFIRMED/i,
     );
-    expect(screen.getByTestId("product-system-finish-truth-awaiting-owner-chat-badge")).toHaveTextContent(
-      /AWAITING OWNER CHAT/i,
+    expect(screen.getByTestId("product-system-finish-truth-owner-decisions-applied-badge")).toHaveTextContent(
+      /OWNER DECISIONS APPLIED/i,
+    );
+    expect(screen.getByTestId("product-system-finish-truth-ready-for-pricing")).toHaveTextContent(
+      /Ready for pricing: NO/i,
     );
     expect(screen.getByTestId("product-system-finish-truth-owner-questions")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-finish-truth-owner-question-A")).toBeInTheDocument();

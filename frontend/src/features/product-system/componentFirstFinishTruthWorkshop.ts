@@ -2,7 +2,7 @@
  * FINISH Component Truth Workshop v1 — readonly contract only.
  * FINISH = face/artwork surface application; consumes FACE outputs.
  * Not runtime wiring. Not Product Truth write. Not Pricing activation.
- * Basis: canonical_finish_enum_map + face_component_truth + face_price_registry_alignment owner decisions.
+ * Basis: canonical_finish_enum_map + face_component_truth + finish_component_truth_owner_decision_v1.md
  */
 
 import {
@@ -72,7 +72,10 @@ export type FinishPricingEvidenceRef = {
 
 export const FINISH_COMPONENT_TEMPLATE_CODE = "TPL-COMP-LETTER-FINISH_v1" as const;
 export const FINISH_COMPONENT_ROLE = "FINISH" as const;
-export const FINISH_WORKSHOP_STATUS = "owner_input_required" as const;
+export const FINISH_WORKSHOP_STATUS = "partial_confirmed" as const;
+export const FINISH_OWNER_DECISION_SOURCE = "finish_component_truth_owner_decision_v1" as const;
+export const FINISH_READY_FOR_PRICING = false as const;
+export const FINISH_PRODUCT_DEFINITION_BRIDGE_BLOCKED = true as const;
 
 export const FINISH_IDENTITY = {
   templateCode: FINISH_COMPONENT_TEMPLATE_CODE,
@@ -119,16 +122,16 @@ export const FINISH_FACE_DEPENDENCY_INPUTS: readonly FinishDependencyInput[] = [
     labelRo: "Arie față FINISH (mp_face_area)",
     sourceComponent: "FACE",
     status: "owner_confirmed",
-    consumerUse: "Bază cantitate propusă vinyl față / print+laminare față",
-    notesRo: "Output FACE — owner confirmă dacă mp_face_area sau face_material_usage_area_m2.",
+    consumerUse: "Bază cantitate owner-confirmed vinyl față / print+laminare față",
+    notesRo: "Owner decision: mp_face_area — visible face/application basis.",
   },
   {
     inputKey: "face_material_usage_area_m2",
     labelRo: "Arie material față (face_material_usage_area_m2)",
     sourceComponent: "FACE",
-    status: "owner_confirmed",
-    consumerUse: "Alternativă comparativă pentru bază cantitate material finish față",
-    notesRo: "Bounding/out-of-box FACE — nu arie vectorială exactă.",
+    status: "evidence_only",
+    consumerUse: "Referință internă / evidence only — nu bază cantitate FINISH",
+    notesRo: "Bounding/out-of-box FACE — nu folosit ca quantity basis FINISH.",
   },
   {
     inputKey: "face_piece_boxes",
@@ -161,9 +164,9 @@ export const FINISH_ARTWORK_DEPENDENCY_INPUTS: readonly FinishDependencyInput[] 
     inputKey: "artwork_instances",
     labelRo: "Instanțe artwork / Vector Logo",
     sourceComponent: "artwork",
-    status: "owner_input_required",
-    consumerUse: "Scope finish artwork per instanță",
-    notesRo: "Componentă LOGO viitoare poate prelua geometria — owner confirmă split.",
+    status: "owner_confirmed",
+    consumerUse: "FINISH owns artwork surface finish application for now",
+    notesRo: "Future LOGO component may own geometry later — not this slice.",
   },
   {
     inputKey: "selected_artwork_layer_refs",
@@ -171,15 +174,15 @@ export const FINISH_ARTWORK_DEPENDENCY_INPUTS: readonly FinishDependencyInput[] 
     sourceComponent: "artwork",
     status: "owner_input_required",
     consumerUse: "Geometrie artwork pentru vinyl/print/laminate",
-    notesRo: "Nu componentizat complet în Product System.",
+    notesRo: "Runtime handoff pending — blocked until artwork area source exists.",
   },
   {
     inputKey: "artwork_bounding_area",
-    labelRo: "Bază bounding/out-of-box artwork",
+    labelRo: "Bază mp_artwork_area / visible artwork area",
     sourceComponent: "artwork",
-    status: "owner_input_required",
-    consumerUse: "Bază cantitate propusă mp_artwork_area",
-    notesRo: "Regulă exactă — owner input required.",
+    status: "owner_confirmed",
+    consumerUse: "Bază cantitate finish artwork când geometria există",
+    notesRo: "Blocked until artwork geometry handoff — basis rule owner-confirmed.",
   },
 ] as const;
 
@@ -223,50 +226,91 @@ function variantFromCanonical(
 export const FINISH_VARIANT_ENTRIES: readonly FinishWorkshopVariantEntry[] = [
   variantFromCanonical("face_oracal_641", {
     labelRo: "Face Oracal 641",
-    notesRo: "Folie autocolantă 641 pe față Plexiglas — consumă mp_face_area (basis TBD).",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_face_area",
+    quantityBasisStatus: "owner_confirmed",
     catalogEvidenceLevel: "evidence_only",
+    catalogPricingRefs: ["MAT-ORACAL-641", "FACE_VINYL_APPLICATION_LABOR"],
+    blockers: ["Pricing activation blocked", "No Product Truth live write"],
+    notesRo: "Simple visible mp — no roll optimization in workshop. MAT-ORACAL-641 evidence only.",
   }),
   variantFromCanonical("face_oracal_651", {
     labelRo: "Face Oracal 651",
-    notesRo: "Folie autocolantă 651 pe față — MAT-ORACAL-651 evidence only.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_face_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "evidence_only",
+    catalogPricingRefs: ["MAT-ORACAL-651", "FACE_VINYL_APPLICATION_LABOR"],
+    blockers: ["Pricing activation blocked", "No Product Truth live write"],
+    notesRo: "MAT-ORACAL-651 evidence only — simple visible mp basis.",
   }),
   variantFromCanonical("face_oracal_8500", {
     labelRo: "Face Oracal 8500",
-    notesRo: "Folie autocolantă 8500 pe față — MAT-ORACAL-8500 evidence only.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_face_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "evidence_only",
+    catalogPricingRefs: ["MAT-ORACAL-8500", "FACE_VINYL_APPLICATION_LABOR"],
+    blockers: ["Pricing activation blocked", "No Product Truth live write"],
+    notesRo: "MAT-ORACAL-8500 evidence only — simple visible mp basis.",
   }),
   variantFromCanonical("face_print_laminate", {
     labelRo: "Face print + laminate",
-    catalogPricingRefs: [],
-    catalogEvidenceLevel: "owner_input_required",
-    notesRo: "Chei print/lam față în registry — pending confirmare sursă owner.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_face_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogPricingRefs: ["MAT-VINYL-PRINT-LAMINATED", "LARGE_FORMAT_PRINT", "LAMINATION"],
+    catalogEvidenceLevel: "evidence_only",
+    blockers: ["Pricing activation blocked", "Print/lam conceptually separable — evidence only"],
+    notesRo: "Print+lam accepted variant; material/service keys evidence only.",
   }),
   variantFromCanonical("artwork_print_laminate", {
     labelRo: "Artwork print + laminate",
-    catalogEvidenceLevel: "owner_input_required",
-    notesRo: "Vector Logo / printed_artwork — chei print/lam pending.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_artwork_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "evidence_only",
+    blockers: ["Artwork geometry handoff pending", "Pricing activation blocked"],
+    notesRo: "mp_artwork_area when geometry exists — FINISH owns artwork finish now.",
   }),
   variantFromCanonical("artwork_print_only", {
     labelRo: "Artwork print only",
-    catalogEvidenceLevel: "owner_input_required",
-    notesRo: "Chei print artwork pending confirmare registry.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_artwork_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "evidence_only",
+    catalogPricingRefs: ["LARGE_FORMAT_PRINT"],
+    blockers: ["Artwork geometry handoff pending", "Pricing activation blocked"],
+    notesRo: "PRINT evidence only — artwork visible mp basis.",
   }),
   variantFromCanonical("artwork_cut_vinyl", {
     labelRo: "Artwork cut vinyl",
-    catalogEvidenceLevel: "owner_input_required",
-    notesRo: "Familie Oracal artwork — chei exacte pending; nu cant labor keys.",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_artwork_area",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "evidence_only",
+    blockers: ["Artwork geometry handoff pending", "Pricing activation blocked"],
+    notesRo: "Oracal artwork — evidence only; not cant labor keys.",
   }),
   variantFromCanonical("artwork_translucent_vinyl", {
     labelRo: "Artwork translucent vinyl",
+    ownerStatus: "owner_confirmed",
+    quantityBasis: "mp_artwork_area",
+    quantityBasisStatus: "owner_confirmed",
     catalogEvidenceLevel: "evidence_only",
-    notesRo: "8500 typical pentru translucid; labor artwork pending.",
+    catalogPricingRefs: ["MAT-ORACAL-8500"],
+    blockers: ["Artwork geometry handoff pending", "Pricing activation blocked"],
+    notesRo: "8500 typical pentru translucid — evidence only.",
   }),
   variantFromCanonical("artwork_none_raw_plexi", {
     labelRo: "Artwork none / raw plexi",
+    ownerStatus: "owner_confirmed",
     quantityBasis: "none",
-    quantityBasisStatus: "owner_input_required",
-    catalogEvidenceLevel: "owner_input_required",
-    ownerStatus: "owner_input_required",
-    notesRo: "Fără aplicație finish suplimentară pe artwork — owner confirmă variantă.",
+    quantityBasisStatus: "owner_confirmed",
+    catalogEvidenceLevel: "owner_confirmed",
+    catalogPricingRefs: [],
+    blockers: ["Pricing activation blocked"],
+    notesRo: "No extra finish application on artwork — variant owner-confirmed.",
     activationStatus: "blocked",
   }),
 ] as const;
@@ -275,34 +319,34 @@ export const FINISH_QUANTITY_BASIS_QUESTIONS: readonly FinishQuantityBasisQuesti
   {
     questionKey: "face_finish_quantity_basis",
     labelRo: "Bază cantitate finish față",
-    proposedBasis: "mp_face_area SAU face_material_usage_area_m2",
-    status: "owner_input_required",
-    ownerQuestionRo: "Finish față: mp_face_area sau face_material_usage_area_m2?",
-    notesRo: "Nu inventa formulă finală — owner confirmă.",
+    proposedBasis: "mp_face_area",
+    status: "owner_confirmed",
+    ownerQuestionRo: "Finish față: mp_face_area (ACCEPTED)",
+    notesRo: "face_material_usage_area_m2 = internal/evidence only — not FINISH quantity basis.",
   },
   {
     questionKey: "artwork_finish_quantity_basis",
     labelRo: "Bază cantitate finish artwork",
-    proposedBasis: "mp_artwork_area / bounding artwork",
-    status: "owner_input_required",
-    ownerQuestionRo: "Finish artwork: sursă geometrie Vector Logo și bază mp?",
-    notesRo: "Componentă LOGO viitoare poate prelua — owner confirmă.",
+    proposedBasis: "mp_artwork_area / visible artwork area",
+    status: "owner_confirmed",
+    ownerQuestionRo: "Artwork: mp_artwork_area when geometry exists (ACCEPTED)",
+    notesRo: "Blocked until artwork geometry handoff — basis rule owner-confirmed.",
   },
   {
     questionKey: "oracal_roll_usage",
     labelRo: "Consum Oracal / vinyl roll",
-    proposedBasis: "roll width × used length SAU mp simplu",
-    status: "owner_input_required",
-    ownerQuestionRo: "FINISH face/artwork: roll width × used length sau mp simplu per variantă?",
-    notesRo: "RETURN-CANT Oracal folosește ml_perimeter_x_width — FINISH poate avea regulă separată.",
+    proposedBasis: "simple visible mp (no roll optimization now)",
+    status: "owner_confirmed",
+    ownerQuestionRo: "Oracal: simple mp basis in workshop — no roll width×length now (ACCEPTED)",
+    notesRo: "Roll optimization = future internal material usage topic.",
   },
   {
     questionKey: "print_laminate_roll_usage",
     labelRo: "Consum print + laminare",
-    proposedBasis: "probabil urmează aria print/roll usage",
-    status: "owner_input_required",
-    ownerQuestionRo: "Print/laminate: aceeași bază ca print area sau roll width × used length?",
-    notesRo: "Nu activa — evidence only până la owner GO.",
+    proposedBasis: "print_laminated variant accepted; print/lam separable evidence",
+    status: "owner_confirmed",
+    ownerQuestionRo: "Print+lam: variant accepted; material/service evidence only (ACCEPTED)",
+    notesRo: "MAT-VINYL-PRINT-LAMINATED or LARGE_FORMAT_PRINT + LAMINATION — evidence only.",
   },
 ] as const;
 
@@ -315,7 +359,8 @@ export const FINISH_PRICING_EVIDENCE: readonly FinishPricingEvidenceRef[] = [
     laborKeys: ["FACE_VINYL_APPLICATION_LABOR"],
     evidenceLevel: "evidence_only",
     activationStatus: "blocked",
-    notesRo: "Cross-ref canonical enum + Intake V6 color registry — nu Pricing Registry write.",
+    notesRo:
+      "Owner decision: all Oracal keys + FACE_VINYL_APPLICATION_LABOR = evidence_only — not active authority.",
   },
   {
     evidenceKey: "print_laminate_combined_material",
@@ -325,29 +370,27 @@ export const FINISH_PRICING_EVIDENCE: readonly FinishPricingEvidenceRef[] = [
     laborKeys: [],
     evidenceLevel: "evidence_only",
     activationStatus: "blocked",
-    notesRo:
-      "Seed evidence: face print+lam combined mp — separat de servicii LARGE_FORMAT_PRINT / LAMINATION dacă model split.",
+    notesRo: "Owner decision: evidence_only — print+lam conceptually separable from services.",
   },
   {
     evidenceKey: "print_laminate_services",
-    labelRo: "Print / laminare — servicii workcenter",
+    labelRo: "Print / laminare — servicii workcenter (PRINT / LAMINATION)",
     registryRoute: "/inventory/pricing",
     materialKeys: [],
     laborKeys: ["LARGE_FORMAT_PRINT", "LAMINATION"],
     evidenceLevel: "evidence_only",
     activationStatus: "blocked",
-    notesRo:
-      "Seed evidence only — owner confirmă dacă FINISH folosește material combinat sau material+servicii separate.",
+    notesRo: "Owner decision: PRINT + LAMINATION = evidence_only — not FINISH registry authority.",
   },
   {
-    evidenceKey: "print_laminate_materials",
-    labelRo: "Print material / laminate material / services (generic pending)",
+    evidenceKey: "artwork_print_lam_evidence",
+    labelRo: "Artwork print/lam keys",
     registryRoute: "/inventory/pricing",
     materialKeys: [],
-    laborKeys: [],
-    evidenceLevel: "owner_input_required",
+    laborKeys: ["LARGE_FORMAT_PRINT", "LAMINATION"],
+    evidenceLevel: "evidence_only",
     activationStatus: "blocked",
-    notesRo: "Chei exacte artwork print/lam în registry — pending owner confirmare sursă.",
+    notesRo: "Artwork print/lam — evidence only; geometry handoff pending.",
   },
   {
     evidenceKey: "return_cant_boundary",
@@ -376,48 +419,43 @@ export const FINISH_OWNER_QUESTIONS_PENDING: readonly FinishOwnerQuestion[] = [
     topicRo: "Variante suprafață FINISH",
     promptRo: "Confirmă cele 9 variante face/artwork din workshop.",
     currentEvidenceRo:
-      "Canonical enum map: face_oracal_641/651/8500, face_print_laminate, artwork_print_laminate/print_only/cut_vinyl/translucent_vinyl/none_raw_plexi.",
-    ownerMustAnswerRo: "ACCEPT / REJECT / special_case per variantă — fără activare pricing.",
-    status: "owner_input_required",
+      "Canonical enum map: 9 surface-application variants owner-ACCEPTED.",
+    ownerMustAnswerRo: "ACCEPT all 9 — recorded in finish_component_truth_owner_decision_v1.md",
+    status: "owner_confirmed",
   },
   {
     questionId: "B",
     topicRo: "Bază cantitate",
-    promptRo: "Confirmă regulile de cantitate pentru față, artwork, Oracal roll, print/lam.",
-    currentEvidenceRo:
-      "FACE outputs: mp_face_area, face_material_usage_area_m2. Canonical enum: mp_face_area (face), mp_artwork_area (artwork). RETURN-CANT Oracal: ml_perimeter_x_width.",
-    ownerMustAnswerRo:
-      "mp_face_area vs face_material_usage_area_m2? artwork mp basis? roll width×used length vs mp simplu?",
-    status: "owner_input_required",
+    promptRo: "Confirmă regulile de cantitate pentru față, artwork, Oracal, print/lam.",
+    currentEvidenceRo: "mp_face_area (face); mp_artwork_area (artwork); simple mp Oracal; print/lam separable.",
+    ownerMustAnswerRo: "ACCEPTED — see owner decision doc §3",
+    status: "owner_confirmed",
   },
   {
     questionId: "C",
     topicRo: "Catalog / pricing refs",
     promptRo: "Confirmă surse evidence pentru Oracal, print, laminare, labor.",
     currentEvidenceRo:
-      "MAT-ORACAL-641/651/8500, MAT-VINYL-PRINT-LAMINATED, FACE_VINYL_APPLICATION_LABOR, LARGE_FORMAT_PRINT, LAMINATION — seeds only.",
-    ownerMustAnswerRo:
-      "Care chei sunt authority pentru FINISH draft vs evidence only? Labor face vs artwork separat?",
-    status: "owner_input_required",
+      "MAT-ORACAL-*, MAT-VINYL-PRINT-LAMINATED, FACE_VINYL_APPLICATION_LABOR, PRINT, LAMINATION — all evidence_only.",
+    ownerMustAnswerRo: "ACCEPTED — RETURN_CANT_VINYL_APPLICATION_LABOR excluded from FINISH",
+    status: "owner_confirmed",
   },
   {
     questionId: "D",
     topicRo: "Boundary FINISH vs FACE / RETURN-CANT",
     promptRo: "Reconfirmă ce NU deține FINISH.",
     currentEvidenceRo:
-      "FACE owner decision + canonical enum forbiddenOwners + RETURN-CANT owner inputs.",
-    ownerMustAnswerRo:
-      "ACCEPT: nu cant, nu FACE Plexiglas (MAT-ACP-FATA-LITERE), nu RAL 100 lei, nu Pricing Registry authority.",
-    status: "owner_decision",
+      "FACE owner decision + RETURN-CANT owner inputs + canonical forbiddenOwners.",
+    ownerMustAnswerRo: "ACCEPTED — no cant, no FACE Plexiglas, no RAL 100 lei, no registry authority",
+    status: "owner_confirmed",
   },
   {
     questionId: "E",
     topicRo: "Split LOGO / artwork",
     promptRo: "Artwork / Vector Logo rămâne sub FINISH acum?",
-    currentEvidenceRo:
-      "Intake V6 artwork_instances / execution_type — geometrie artwork necomponentizată în Product System.",
-    ownerMustAnswerRo: "FINISH owns artwork finish now? Future TPL-COMP-LETTER-LOGO owns geometry later?",
-    status: "owner_input_required",
+    currentEvidenceRo: "Intake V6 artwork_instances — FINISH owns surface finish application now.",
+    ownerMustAnswerRo: "ACCEPTED — artwork under FINISH now; future LOGO component for geometry later",
+    status: "owner_confirmed",
   },
 ] as const;
 
@@ -429,19 +467,17 @@ export const FINISH_BOUNDARY_REAFFIRMATION: readonly string[] = [
   "RETURN_CANT_VINYL_APPLICATION_LABOR is RETURN-CANT only — not FINISH face vinyl labor",
 ] as const;
 
-export const FINISH_AWAITING_OWNER_CHAT = true as const;
+export const FINISH_AWAITING_OWNER_CHAT = false as const;
 
 export const FINISH_READINESS_BLOCKERS: readonly string[] = [
-  "Owner must confirm FINISH surface variants",
-  "Owner must confirm face quantity basis (mp_face_area vs face_material_usage_area_m2)",
-  "Owner must confirm artwork quantity basis",
-  "Owner must confirm Oracal/print/laminate catalog sources",
-  "Owner must confirm artwork under FINISH vs future LOGO component",
-  "Pricing Registry alignment needed later — no write now",
+  "Pricing activation blocked — no readyForPricing",
   "Product Truth live write blocked",
   "ProductDefinition bridge blocked",
   "Runtime Intake V6 → FACE/FINISH handoff blocked",
+  "Artwork geometry handoff pending — mp_artwork_area rule confirmed but runtime source missing",
+  "Pricing Registry alignment / draft slice needed later — no write now",
   "FACE pricing remains inactive — FINISH does not inherit active pricing",
+  "Quote/Order active pricing use blocked",
 ] as const;
 
 export const FINISH_DANGEROUS_ACTIONS: readonly string[] = [
@@ -458,13 +494,16 @@ export const FINISH_DANGEROUS_ACTIONS: readonly string[] = [
 
 export type FinishReadinessSummary = {
   workshopStatus: typeof FINISH_WORKSHOP_STATUS;
+  readyForPricing: false;
   offerable: false;
   standaloneQuoteable: false;
   workIntakeExposed: false;
   pricingActive: false;
   productTruthLiveWrite: false;
   pricingRegistryWrite: false;
+  productDefinitionBridgeBlocked: true;
   doesNotOwnCant: true;
+  ownerConfirmedVariantCount: number;
   variantCount: number;
   faceDependencyCount: number;
   artworkDependencyCount: number;
@@ -478,16 +517,22 @@ export type FinishReadinessSummary = {
 export function buildFinishReadinessSummary(): FinishReadinessSummary {
   const canonicalFinishOwnedCount = getCanonicalFinishEntriesByOwner("FINISH").length;
   const blockedVariantCount = FINISH_VARIANT_ENTRIES.filter((v) => v.activationStatus === "blocked").length;
+  const ownerConfirmedVariantCount = FINISH_VARIANT_ENTRIES.filter(
+    (v) => v.ownerStatus === "owner_confirmed",
+  ).length;
 
   return {
     workshopStatus: FINISH_WORKSHOP_STATUS,
+    readyForPricing: false,
     offerable: false,
     standaloneQuoteable: false,
     workIntakeExposed: false,
     pricingActive: false,
     productTruthLiveWrite: false,
     pricingRegistryWrite: false,
+    productDefinitionBridgeBlocked: FINISH_PRODUCT_DEFINITION_BRIDGE_BLOCKED,
     doesNotOwnCant: FINISH_DOES_NOT_OWN_CANT,
+    ownerConfirmedVariantCount,
     variantCount: FINISH_VARIANT_ENTRIES.length,
     faceDependencyCount: FINISH_FACE_DEPENDENCY_INPUTS.length,
     artworkDependencyCount: FINISH_ARTWORK_DEPENDENCY_INPUTS.length,

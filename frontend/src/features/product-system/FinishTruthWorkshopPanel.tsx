@@ -1,13 +1,13 @@
 import {
   buildFinishReadinessSummary,
   FINISH_ARTWORK_DEPENDENCY_INPUTS,
-  FINISH_AWAITING_OWNER_CHAT,
   FINISH_BOUNDARY_REAFFIRMATION,
   FINISH_COMPONENT_TEMPLATE_CODE,
   FINISH_DOES_NOT_OWN,
   FINISH_DOES_NOT_OWN_CANT,
   FINISH_FACE_DEPENDENCY_INPUTS,
   FINISH_IDENTITY,
+  FINISH_OWNER_DECISION_SOURCE,
   FINISH_OWNER_QUESTIONS_PENDING,
   FINISH_OWNS,
   FINISH_PRICING_EVIDENCE,
@@ -98,20 +98,19 @@ export function FinishTruthWorkshopPanel() {
             testId="product-system-finish-truth-readonly-workshop-badge"
           />
           <StatusChip
-            label="OWNER INPUT REQUIRED"
-            tone="amber"
-            testId="product-system-finish-truth-owner-input-required-badge"
+            label="PARTIAL CONFIRMED"
+            tone="cyan"
+            testId="product-system-finish-truth-partial-confirmed-badge"
           />
-          {FINISH_AWAITING_OWNER_CHAT ? (
-            <StatusChip
-              label="AWAITING OWNER CHAT"
-              tone="violet"
-              testId="product-system-finish-truth-awaiting-owner-chat-badge"
-            />
-          ) : null}
+          <StatusChip
+            label="OWNER DECISIONS APPLIED"
+            tone="emerald"
+            testId="product-system-finish-truth-owner-decisions-applied-badge"
+          />
         </div>
         <p className="mt-1 text-[10px] text-slate-500">
           {FINISH_COMPONENT_TEMPLATE_CODE} · role: FINISH · status: {FINISH_WORKSHOP_STATUS.replace(/_/g, " ")}
+          · source: {FINISH_OWNER_DECISION_SOURCE}
         </p>
         <p className="mt-1 text-[10px] text-fuchsia-200/80">
           Face/artwork surface application — consumes FACE outputs; does not own substrate or cant finish.
@@ -155,6 +154,8 @@ export function FinishTruthWorkshopPanel() {
         <p>No Pricing activation</p>
         <p>No Work Intake exposure</p>
         <p>No Save / Apply / Activate / Create Pricing Key / Generate Quote / Sync</p>
+        <p data-testid="product-system-finish-truth-ready-for-pricing">Ready for pricing: NO</p>
+        <p>Owner-confirmed variants: {summary.ownerConfirmedVariantCount}/{summary.variantCount}</p>
         <p data-testid="product-system-finish-truth-face-material-boundary">
           FACE 3 mm material (MAT-ACP-FATA-LITERE 16 EUR/mp) belongs to FACE — not FINISH
         </p>
@@ -271,7 +272,7 @@ export function FinishTruthWorkshopPanel() {
         data-testid="product-system-finish-truth-owner-questions"
         className="rounded-lg border border-violet-900/30 bg-violet-950/10 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase text-violet-200">Owner questions A–E — awaiting chat</p>
+        <p className="text-[11px] font-bold uppercase text-violet-200">Owner decisions A–E — applied (readonly)</p>
         <div className="mt-2 overflow-x-auto">
           <table className="min-w-full border-collapse text-left">
             <thead>
@@ -317,7 +318,7 @@ export function FinishTruthWorkshopPanel() {
           data-testid="product-system-finish-truth-logo-split-question"
           className="mt-2 text-[10px] text-amber-200/90"
         >
-          Question E: artwork / Vector Logo under FINISH now — future LOGO component may own geometry later.
+          Question E (owner-confirmed): artwork surface finish under FINISH now — future LOGO component may own geometry later.
         </p>
       </article>
 
