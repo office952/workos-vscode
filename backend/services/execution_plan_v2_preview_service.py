@@ -32,6 +32,13 @@ from schemas.product_aggregate import ProductAggregate, ProductAggregateTaskRule
 from schemas.product_definition import ProductDefinitionPreview, ProductDefinitionOperationRole
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry
 from services.execution_plan_gate_service import CANONICAL_TASK_TYPES
+from services.execution_sold_scope_reader_service import (
+    BLOCKED_MISSING_SOLD_SCOPE,
+    ExecutionSoldScopeContext,
+    include_operation_for_sold_scope,
+    include_task_rule_for_sold_scope,
+    read_execution_sold_scope,
+)
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 
 FORBIDDEN_IMPORT_SUBSTRINGS = (
@@ -153,9 +160,13 @@ def _resolve_canonical_type(
 def _build_planned_operations(
     aggregate: ProductAggregate,
     op_roles: dict[str, ProductDefinitionOperationRole],
+    *,
+    sold_scope: ExecutionSoldScopeContext,
 ) -> list[PlannedOperationPreview]:
     operations: list[PlannedOperationPreview] = []
     for idx, op in enumerate(aggregate.operations):
+        if not include_operation_for_sold_scope(op, ctx=sold_scope):
+            continue
         role = op_roles.get(op.operation_code)
         operations.append(
             PlannedOperationPreview(
@@ -178,6 +189,7 @@ def _build_planned_tasks(
     product_definition: ProductDefinitionPreview,
     *,
     owner_decision_codes: set[str],
+    sold_scope: ExecutionSoldScopeContext,
 ) -> tuple[list[PlannedTaskPreview], list[str], str | None]:
     op_roles = _operation_role_index(product_definition)
     op_by_code = {op.operation_code: op for op in aggregate.operations}
@@ -193,6 +205,8 @@ def _build_planned_tasks(
             readiness_gate_excluded = True
             continue
         if not _should_include_task_rule(rule, owner_decision_codes=owner_decision_codes):
+            continue
+        if not include_task_rule_for_sold_scope(rule, ctx=sold_scope):
             continue
 
         canonical = _resolve_canonical_type(rule)
@@ -321,6 +335,33 @@ def _build_preview_from_snapshot(
         ]
     )
 
+    sold_scope = read_execution_sold_scope(snapshot)
+    if sold_scope.block_preview:
+        return ExecutionPlanV2Preview(
+            status="blocked_missing_sold_scope",
+            order_id=order.id,
+            order_code=getattr(order, "code", None),
+            quote_id=snapshot.quote_id,
+            quote_snapshot_v2_id=snapshot.quote_snapshot_v2_id,
+            source_snapshot_code=snapshot.snapshot_code,
+            source_content_hash=snapshot.content_hash,
+            source_order_snapshot_version=snapshot.snapshot_version,
+            order_snapshot_hash=order_snapshot_hash,
+            blockers=[sold_scope.block_reason or BLOCKED_MISSING_SOLD_SCOPE],
+            provenance=provenance,
+            ignored_pricing_sources=list(IGNORED_PRICING_SOURCES),
+            message="Component subset order snapshot is missing frozen sold runtime modules.",
+        )
+
+    if sold_scope.filter_enabled:
+        provenance.append(
+            QuoteSnapshotProvenanceEntry(
+                key="execution_sold_scope_frozen",
+                source="execution_sold_scope_reader_service",
+                detail=f"mode={sold_scope.mode} sold_modules={sorted(sold_scope.sold_runtime_modules)}",
+            )
+        )
+
     if not aggregate.task_contract.task_rules:
         return ExecutionPlanV2Preview(
             status="blocked_missing_task_rules",
@@ -341,6 +382,7 @@ def _build_preview_from_snapshot(
         aggregate,
         product_definition,
         owner_decision_codes=owner_codes,
+        sold_scope=sold_scope,
     )
     if unknown_blocker is not None:
         return ExecutionPlanV2Preview(
@@ -360,7 +402,11 @@ def _build_preview_from_snapshot(
             message="One or more task rules could not be mapped to canonical task types.",
         )
 
-    operations = _build_planned_operations(aggregate, _operation_role_index(product_definition))
+    operations = _build_planned_operations(
+        aggregate,
+        _operation_role_index(product_definition),
+        sold_scope=sold_scope,
+    )
     dependencies = _build_dependencies(tasks)
     warnings = [PLANNING_MINUTES_WARNING]
     if readiness_gate_excluded and READINESS_GATE_EXCLUDED_WARNING not in warnings:
@@ -395,6 +441,9 @@ def _build_preview_from_snapshot(
             "operation_count": len(operations),
             "template_code": aggregate.template_code,
             "owner_decision_count": len(owner_codes),
+            "sold_scope_mode": sold_scope.mode,
+            "sold_scope_filter_enabled": sold_scope.filter_enabled,
+            "sold_runtime_modules_count": len(sold_scope.sold_runtime_modules),
         },
     )
 

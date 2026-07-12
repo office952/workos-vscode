@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import ast
+import json
 import uuid
 from pathlib import Path
 
@@ -35,6 +36,7 @@ from tests.test_execution_plan_v2_preview import (
     _build_order_snapshot_v2_json,
     _seed_v2_order_with_snapshot,
 )
+from tests.execution_sold_scope_fixtures import offer_scope, snapshot_with_scope
 from tests.test_quote_snapshot_v2_accept_gate import _commercial_preview, _internal_preview
 
 pytest_plugins = ["tests.test_product_aggregate_volumetric_v2"]
@@ -270,3 +272,70 @@ async def test_step9_persist_idempotent_second_call_no_extra_row(db_session):
     assert second.status == "already_exists"
     assert second.execution_plan_id == first.execution_plan_id
     assert second.execution_plan_created is False
+
+
+@pytest.mark.asyncio
+async def test_step9_legacy_full_product_persist_unchanged(db_session):
+    oid = 98400 + int(uuid.uuid4().hex[:4], 16) % 1000
+    order = await _seed_v2_order_with_snapshot(
+        db_session,
+        order_id=oid,
+        snapshot_v2_json=_build_convert_shaped_snapshot_json(
+            order_id=oid,
+            quote_snapshot_v2_id=oid,
+        ),
+    )
+    preview = await build_execution_plan_v2_preview(db_session, order.id)
+    result = await create_execution_plan_v2_from_order(db_session, order.id)
+    assert result.status == "persisted"
+    assert {t.task_key for t in preview.planned_tasks} == {"vector_prep", "cnc_face_cut", "electrical_wiring"}
+
+
+@pytest.mark.asyncio
+async def test_step9_preview_persist_parity_face_subset(db_session):
+    oid = 98500 + int(uuid.uuid4().hex[:4], 16) % 1000
+    snapshot = snapshot_with_scope(
+        offer_scope=offer_scope(runtime=["debitare_fata"]),
+        quote_id=oid,
+        quote_snapshot_v2_id=oid,
+    )
+    order = await _seed_v2_order_with_snapshot(
+        db_session,
+        order_id=oid,
+        snapshot_v2_json=snapshot.model_dump_json(),
+    )
+    preview = await build_execution_plan_v2_preview(db_session, order.id)
+    result = await create_execution_plan_v2_from_order(db_session, order.id)
+    assert result.status == "persisted"
+    row = await db_session.get(ExecutionPlan, result.execution_plan_id)
+    envelope = json.loads(row.tasks_json)
+    tasks_payload = envelope.get("planned_tasks", [])
+    preview_keys = sorted(t.task_key for t in preview.planned_tasks)
+    persist_keys = sorted(item["task_key"] for item in tasks_payload)
+    assert preview_keys == persist_keys
+    assert persist_keys == ["cnc_face_cut", "vector_prep"]
+
+
+@pytest.mark.asyncio
+async def test_step9_invalid_subset_blocks_persist(db_session):
+    oid = 98600 + int(uuid.uuid4().hex[:4], 16) % 1000
+    snapshot = snapshot_with_scope(
+        offer_scope=offer_scope(runtime=[]),
+        quote_id=oid,
+        quote_snapshot_v2_id=oid,
+    )
+    order = await _seed_v2_order_with_snapshot(
+        db_session,
+        order_id=oid,
+        snapshot_v2_json=snapshot.model_dump_json(),
+    )
+    preview = await build_execution_plan_v2_preview(db_session, order.id)
+    assert preview.status == "blocked_missing_sold_scope"
+    before = await db_session.scalar(select(func.count()).select_from(ExecutionPlan))
+    from fastapi import HTTPException
+
+    with pytest.raises(HTTPException) as exc:
+        await create_execution_plan_v2_from_order(db_session, order.id)
+    assert exc.value.status_code == 422
+    after = await db_session.scalar(select(func.count()).select_from(ExecutionPlan))
+    assert after == before

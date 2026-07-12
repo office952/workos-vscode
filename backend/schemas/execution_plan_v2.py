@@ -33,6 +33,7 @@ ExecutionPlanV2PreviewStatus = Literal[
     "blocked_legacy_order",
     "blocked_order_not_found",
     "blocked_missing_quote_snapshot_v2_id",
+    "blocked_missing_sold_scope",
 ]
 
 IGNORED_PRICING_SOURCES: list[str] = [
