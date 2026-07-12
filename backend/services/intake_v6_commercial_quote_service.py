@@ -239,6 +239,8 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 
 	requires_pricing_review = True if policy.review_warnings else False
 	quote_input = dict(pricing_preview.quote_input_payload)
+	if payload.offer_scope is not None:
+		quote_input["offer_scope"] = payload.offer_scope.model_dump(mode="json")
 	linked_modules = await _build_linked_module_lines(
 		db,
 		payload=payload,

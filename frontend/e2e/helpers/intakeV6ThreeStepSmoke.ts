@@ -8,8 +8,8 @@ export const INTAKE_V6_RUNTIME_CAPTURE_WORKSPACE_ID = "668ffeb2-5d2b-4eb6-a5c4-1
 
 export const INTAKE_V6_VISIBLE_STEP_LABELS = ["Straturi", "Configurare", "Confirmare"] as const;
 
-export function intakeV6OperatorUrl(workspaceId: string): string {
-  return `http://127.0.0.1:3000/intake-v6/${workspaceId}/operator`;
+export function intakeV6OperatorUrl(workspaceId: string, base = "http://127.0.0.1:3000"): string {
+  return `${base}/intake-v6/${workspaceId}/operator`;
 }
 
 export async function gotoIntakeV6Operator(page: Page, workspaceId: string): Promise<void> {

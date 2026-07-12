@@ -16,6 +16,7 @@ import IntakeV6LayersOperatorPanel from "../IntakeV6LayersOperatorPanel";
 import IntakeV6ArtworkOnlyDecisionPanel from "../IntakeV6ArtworkOnlyDecisionPanel";
 import IntakeV6LayersRoleTable from "../IntakeV6LayersRoleTable";
 import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
+import IntakeV6OfferScopePanel from "../IntakeV6OfferScopePanel";
 import IntakeV6SvgPreviewInspectDialog from "../IntakeV6SvgPreviewInspectDialog";
 import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
@@ -29,7 +30,7 @@ export interface IntakeV6SvgAnalyzerStepProps {
 }
 
 export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerStepProps) {
-	const { state, importSvgFile, updateLayerRole, confirmAllLayerRoles, canImportSvg, confirmProductComposition } = hook;
+	const { state, importSvgFile, updateLayerRole, confirmAllLayerRoles, canImportSvg, confirmProductComposition, saveOfferScope } = hook;
 	const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
 	const [previewInspectOpen, setPreviewInspectOpen] = useState(false);
 	const [hoveredLayerKey, setHoveredLayerKey] = useState<string | null>(null);
@@ -244,6 +245,18 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					<IntakeV6ProductCompositionPanel
 						payload={payload}
 						onConfirm={(items) => void confirmProductComposition(items)}
+					/>
+
+					<IntakeV6OfferScopePanel
+						payload={payload}
+						disabled={state.phase === "persisting"}
+						onSave={async (input) =>
+							saveOfferScope({
+								mode: input.mode,
+								soldModules: input.soldModules,
+								confirmed: input.confirmed,
+							})
+						}
 					/>
 
 					{report ? (

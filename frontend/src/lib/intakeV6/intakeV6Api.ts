@@ -247,6 +247,25 @@ export async function saveIntakeV6ProductCompositionConfirmation(
   );
 }
 
+export async function saveIntakeV6OfferScope(
+  workspaceId: string,
+  body: {
+    mode: "full_product" | "component_subset";
+    sold_modules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+    confirmed: boolean;
+    operator_note?: string | null;
+  },
+): Promise<IntakeV4WorkspaceResponse> {
+  return requestIntakeV6Json(
+    `${intakeV6ApiBase()}/workspaces/${encodeURIComponent(workspaceId)}/offer-scope`,
+    {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    },
+  );
+}
+
 export async function getIntakeV6TaskPreview(
   workspaceId: string,
   finishDraft?: Partial<IntakeV4FinishSetup>,

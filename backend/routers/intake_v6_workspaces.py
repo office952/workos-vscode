@@ -37,6 +37,7 @@ from schemas.intake_v6 import (
     IntakeV6ProductTruthWriterPromoteRequest,
     IntakeV6PricedQuoteWriteRequest,
     IntakeV6PricingInputPreviewResponse,
+    IntakeV6OfferScopeSaveRequest,
     IntakeV6ProductCompositionConfirmationRequest,
     IntakeV6ProductionHandoffPreviewResponse,
     IntakeV6ProductSystemBindingResponse,
@@ -99,6 +100,7 @@ from services.intake_v6_workspace_service import (
     save_finish_setup_for_intake_v6_workspace,
     save_internal_draft_quote_confirmation_for_workspace,
     save_layer_roles_for_intake_v6_workspace,
+    save_offer_scope_for_intake_v6_workspace,
     save_product_composition_confirmation_for_workspace,
     save_sheet_footprint_override_for_intake_v6_workspace,
     upload_svg_to_intake_v6_workspace,
@@ -298,6 +300,24 @@ async def update_finish_setup_v6(
     current_user: UserResponse = Depends(get_current_user),
 ) -> IntakeV6WorkspaceResponse:
     return await save_finish_setup_for_intake_v6_workspace(db, workspace_id, request, current_user)
+
+
+@router.put("/workspaces/{workspace_id}/offer-scope", response_model=IntakeV6WorkspaceResponse)
+async def update_offer_scope_v6(
+    workspace_id: str,
+    request: IntakeV6OfferScopeSaveRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> IntakeV6WorkspaceResponse:
+    return await save_offer_scope_for_intake_v6_workspace(
+        db,
+        workspace_id,
+        mode=request.mode,
+        sold_modules=[str(code) for code in request.sold_modules],
+        confirmed=request.confirmed,
+        operator_note=request.operator_note,
+        current_user=current_user,
+    )
 
 
 @router.put("/workspaces/{workspace_id}/product-composition-confirmation", response_model=IntakeV6WorkspaceResponse)

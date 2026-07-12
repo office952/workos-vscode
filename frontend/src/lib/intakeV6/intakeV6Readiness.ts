@@ -22,6 +22,36 @@ export function isProductCompositionConfirmed(payload: Record<string, unknown> |
   return (confirmation as Record<string, unknown>).confirmed === true;
 }
 
+export function isOfferScopeConfirmed(payload: Record<string, unknown> | undefined): boolean {
+  const scope = payload?.offer_scope;
+  const confirmation = payload?.offer_scope_confirmed;
+  if (scope == null && confirmation == null) return true;
+  if (confirmation == null || typeof confirmation !== "object" || Array.isArray(confirmation)) return false;
+  if ((confirmation as Record<string, unknown>).confirmed !== true) return false;
+  return isOfferScopeValid(payload);
+}
+
+export function isOfferScopeValid(payload: Record<string, unknown> | undefined): boolean {
+  const scope = payload?.offer_scope;
+  if (scope == null || typeof scope !== "object" || Array.isArray(scope)) {
+    return confirmationOnlyOfferScope(payload);
+  }
+  const mode = (scope as Record<string, unknown>).mode;
+  const soldModules = (scope as Record<string, unknown>).sold_modules;
+  if (mode === "full_product") return true;
+  if (mode !== "component_subset") return false;
+  if (!Array.isArray(soldModules) || soldModules.length === 0) return false;
+  return soldModules.every(
+    (code) => code === "FACE" || code === "RETURN-CANT" || code === "BACK",
+  );
+}
+
+function confirmationOnlyOfferScope(payload: Record<string, unknown> | undefined): boolean {
+  const confirmation = payload?.offer_scope_confirmed;
+  if (confirmation == null) return true;
+  return typeof confirmation === "object" && !Array.isArray(confirmation) && confirmation.confirmed === true;
+}
+
 export function canAccessIntakeV6Step(state: IntakeV6WorkspaceState, step: IntakeV6StepId): boolean {
   if (step === "layers") return true;
 
@@ -60,6 +90,13 @@ export function getIntakeV6FirstBlocker(state: IntakeV6WorkspaceState): string |
     return "Confirmă compoziția produsului propusă de analyzer.";
   }
 
+  if (readiness === "offer_scope_not_confirmed" || !isOfferScopeConfirmed(payload)) {
+    if (!isOfferScopeValid(payload)) {
+      return "Selectează cel puțin o componentă pentru scope parțial.";
+    }
+    return "Confirmă ce producem (produs complet sau componente selectate).";
+  }
+
   if (state.currentStep === "confirm" && !isFinishSetupConfirmed(payload)) {
     return "Confirmă finisajele în pasul Review.";
   }
@@ -80,6 +117,7 @@ export function isIntakeV6ReadyForQuotePreview(state: IntakeV6WorkspaceState): b
     isAnalysisReadyForReview(state) &&
     state.workspace?.readiness_status === "ready_for_quote_preview" &&
     isProductCompositionConfirmed(state.workspace?.payload) &&
+    isOfferScopeConfirmed(state.workspace?.payload) &&
     isFinishSetupConfirmed(state.workspace?.payload)
   );
 }
@@ -88,6 +126,7 @@ export function canContinueFromReviewStep(state: IntakeV6WorkspaceState): boolea
   return (
     isAnalysisReadyForReview(state) &&
     isProductCompositionConfirmed(state.workspace?.payload) &&
+    isOfferScopeConfirmed(state.workspace?.payload) &&
     isFinishSetupConfirmed(state.workspace?.payload)
   );
 }

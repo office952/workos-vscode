@@ -11,6 +11,7 @@ import pytest
 import pytest_asyncio
 from sqlalchemy import func, select
 
+from models.intake_v6_workspace import IntakeV6WorkspaceRecord
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
 from schemas.quote_snapshot_v2 import COMPONENT_SCOPE_VERSION, QUOTE_SNAPSHOT_V2_VERSION, QuoteSnapshotV2
 from services.intake_v6_quote_snapshot_v2_service import (
@@ -85,6 +86,30 @@ def allow_freeze_readiness(monkeypatch):
         "services.quote_snapshot_v2_service.compute_readiness",
         _allowed,
     )
+
+
+@pytest.mark.asyncio
+async def test_workspace_payload_offer_scope_without_quote_input(volumetric_v2_db) -> None:
+    workspace_id = await _seed_workspace(volumetric_v2_db)
+    record = await volumetric_v2_db.get(IntakeV6WorkspaceRecord, workspace_id)
+    assert record is not None
+    payload = json.loads(record.payload_json)
+    payload["offer_scope"] = {
+        "contract_version": "offer_scope_contract/v1",
+        "mode": "component_subset",
+        "sold_modules": ["FACE"],
+    }
+    record.payload_json = json.dumps(payload)
+    await volumetric_v2_db.commit()
+
+    scope = await build_frozen_component_scope(
+        volumetric_v2_db,
+        template_code=ROOT,
+        workspace_id=workspace_id,
+    )
+    assert scope is not None
+    assert scope.offer_scope_snapshot.sold_modules == ["FACE"]
+    assert scope.offer_scope_snapshot.resolved_runtime_sold_modules == ["debitare_fata"]
 
 
 @pytest.mark.asyncio

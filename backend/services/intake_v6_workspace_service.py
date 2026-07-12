@@ -117,6 +117,32 @@ def _sync_selected_layer_refs(payload_raw: dict[str, Any]) -> None:
     sync_selected_layer_refs_on_payload(payload_raw, _layer_setup_from_payload(payload_raw))
 
 
+def _offer_scope_ready(payload: IntakeV6WorkspacePayload) -> bool:
+    """Legacy workspaces without offer_scope remain valid (full product)."""
+    if payload.offer_scope is None:
+        if payload.offer_scope_confirmed is None:
+            return True
+        return isinstance(payload.offer_scope_confirmed, dict) and payload.offer_scope_confirmed.get(
+            "confirmed"
+        ) is True
+
+    confirmed = payload.offer_scope_confirmed
+    if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
+        return False
+
+    from schemas.offer_scope import OfferScopeInput
+    from services.offer_scope_resolver_service import resolve_offer_scope
+
+    resolved = resolve_offer_scope(
+        OfferScopeInput(
+            contract_version=payload.offer_scope.contract_version,
+            mode=payload.offer_scope.mode,
+            sold_modules=list(payload.offer_scope.sold_modules),
+        )
+    )
+    return not resolved.validation_errors
+
+
 def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
     if payload.svg_source is None or payload.svg_source.upload_status != "analyzed":
         return "missing_svg"
@@ -133,6 +159,8 @@ def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
         confirmed = payload.product_composition_confirmed
         if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
             return "product_composition_not_confirmed"
+    if not _offer_scope_ready(payload):
+        return "offer_scope_not_confirmed"
     if payload.finish_setup is None or not payload.finish_setup.confirmed:
         return "finish_setup_incomplete"
     if _is_logo_only_candidate_not_offerable(payload):
@@ -968,6 +996,69 @@ async def save_product_composition_confirmation_for_workspace(
         confirmed_items=confirmed_items if isinstance(confirmed_items, list) else [],
     )
     _reset_internal_draft_quote_confirmation(payload_raw)
+    payload = _parse_payload(payload_raw)
+    return await _persist_payload(db, record, payload, current_user=current_user)
+
+
+async def save_offer_scope_for_intake_v6_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    *,
+    mode: str,
+    sold_modules: list[str],
+    confirmed: bool,
+    operator_note: str | None = None,
+    current_user: UserResponse,
+) -> IntakeV6WorkspaceResponse:
+    from schemas.offer_scope import OfferScope, OfferScopeInput
+    from services.offer_scope_resolver_service import resolve_offer_scope
+
+    record = await _get_record_or_404(db, workspace_id)
+    if record.archived_at is not None:
+        raise HTTPException(status_code=400, detail={"error": "workspace_archived", "workspace_id": workspace_id})
+
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    normalized_mode = str(mode or "full_product").strip()
+    normalized_modules = [str(code).strip() for code in (sold_modules or []) if str(code).strip()]
+    if normalized_mode == "full_product":
+        scope = OfferScope(mode="full_product", sold_modules=[])
+    else:
+        scope = OfferScope(mode="component_subset", sold_modules=normalized_modules)  # type: ignore[arg-type]
+
+    resolved = resolve_offer_scope(
+        OfferScopeInput(
+            contract_version=scope.contract_version,
+            mode=scope.mode,
+            sold_modules=list(scope.sold_modules),
+        )
+    )
+    if confirmed and resolved.validation_errors:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "offer_scope_invalid",
+                "blockers": resolved.validation_errors,
+            },
+        )
+
+    payload_raw["offer_scope"] = scope.model_dump(mode="json")
+    payload_raw["offer_scope_confirmed"] = {
+        "confirmed": bool(confirmed),
+        "confirmed_at": _utcnow().isoformat() if confirmed else None,
+        "confirmed_by": current_user.email or current_user.name or str(current_user.id),
+        "operator_note": operator_note,
+        "source": "operator_offer_scope_v1",
+    }
+    _reset_internal_draft_quote_confirmation(payload_raw)
+    if payload_raw.get("finish_setup"):
+        from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
+
+        apply_v6_pricing_preview_derived_state(payload_raw)
+        apply_return_cant_runtime_product_truth_bridge(payload_raw)
+
     payload = _parse_payload(payload_raw)
     return await _persist_payload(db, record, payload, current_user=current_user)
 

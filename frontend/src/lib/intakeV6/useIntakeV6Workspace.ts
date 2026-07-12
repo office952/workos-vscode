@@ -8,7 +8,7 @@ import {
 } from "./intakeV6ApiAdapter";
 import { IntakeV6ApiError } from "./intakeV6Api";
 import type { IntakeV6FinishSetup } from "./intakeV6Api";
-import { saveIntakeV6FinishSetup, saveIntakeV6ProductCompositionConfirmation } from "./intakeV6Api";
+import { saveIntakeV6FinishSetup, saveIntakeV6OfferScope, saveIntakeV6ProductCompositionConfirmation } from "./intakeV6Api";
 import { isIntakeRequestRouteKey } from "@/lib/volumetricIntakeRoute";
 import { pickIntakeV6SvgFileFromFileList } from "./intakeV6SvgUploadFlow";
 import {
@@ -465,6 +465,40 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     [state.workspace?.id],
   );
 
+  const saveOfferScope = useCallback(
+    async (input: {
+      mode: "full_product" | "component_subset";
+      soldModules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+      confirmed: boolean;
+    }) => {
+      const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
+      if (!targetWorkspaceId) {
+        dispatch({ type: "PERSIST_ERROR", message: "Workspace V6 indisponibil." });
+        return false;
+      }
+      dispatch({ type: "PERSIST_START" });
+      try {
+        const workspace = await saveIntakeV6OfferScope(targetWorkspaceId, {
+          mode: input.mode,
+          sold_modules: input.soldModules,
+          confirmed: input.confirmed,
+        });
+        if (!mountedRef.current) return false;
+        cacheIntakeV6Workspace(workspace);
+        dispatch({ type: "PERSIST_SUCCESS", workspace });
+        return true;
+      } catch (err) {
+        if (!mountedRef.current) return false;
+        dispatch({
+          type: "PERSIST_ERROR",
+          message: err instanceof Error ? err.message : "Salvare scope ofertă eșuată.",
+        });
+        return false;
+      }
+    },
+    [state.workspace?.id],
+  );
+
   const canImportSvg = Boolean(
     activeWorkspaceId &&
       state.workspace &&
@@ -497,6 +531,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     confirmAllLayerRoles,
     continueFromAnalyzer,
     confirmProductComposition,
+    saveOfferScope,
     saveFinishSetup,
     canImportSvg,
     canContinueFromAnalyzer,
