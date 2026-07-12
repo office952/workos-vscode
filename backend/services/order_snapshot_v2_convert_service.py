@@ -157,6 +157,17 @@ def _resolve_commercial_total_amount(
     return float(total), currency
 
 
+def _component_scope_fields_from_quote(parsed: QuoteSnapshotV2) -> dict[str, Any]:
+    """Copy frozen component scope verbatim — no resolver or aggregate rebuild."""
+    return {
+        "component_scope_version": parsed.component_scope_version,
+        "offer_scope_snapshot": parsed.offer_scope_snapshot,
+        "component_instances": list(parsed.component_instances),
+        "geometry_input_snapshot": parsed.geometry_input_snapshot,
+        "product_aggregate_snapshot": parsed.product_aggregate_snapshot,
+    }
+
+
 def _build_order_snapshot_v2(
     *,
     quote: Quotes,
@@ -184,7 +195,7 @@ def _build_order_snapshot_v2(
         quote_id=quote.id,
         quote_snapshot_v2_id=record.id,
         product_definition_snapshot=parsed.product_definition_snapshot,
-        product_aggregate_snapshot=parsed.product_aggregate_snapshot,
+        **_component_scope_fields_from_quote(parsed),
         commercial_price_proposal_snapshot=parsed.commercial_price_proposal_snapshot,
         estimated_internal_cost_snapshot=parsed.estimated_internal_cost_snapshot,
         accepted_commercial_total=commercial_total,

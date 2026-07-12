@@ -16,6 +16,9 @@ from schemas.product_aggregate import ProductAggregate
 from schemas.product_definition import ProductDefinitionPreview
 from schemas.quote_snapshot_v2 import (
     QuoteSnapshotBlocker,
+    QuoteSnapshotComponentInstance,
+    QuoteSnapshotGeometryInput,
+    QuoteSnapshotOfferScope,
     QuoteSnapshotOwnerDecision,
     QuoteSnapshotProvenanceEntry,
 )
@@ -36,6 +39,10 @@ class OrderSnapshotV2(BaseModel):
     order_id: int | None = None
     quote_id: int
     quote_snapshot_v2_id: int
+    component_scope_version: str | None = None
+    offer_scope_snapshot: QuoteSnapshotOfferScope | None = None
+    component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
+    geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
     product_definition_snapshot: ProductDefinitionPreview | None = None
     product_aggregate_snapshot: ProductAggregate | None = None
     commercial_price_proposal_snapshot: CommercialPriceProposalPreview
