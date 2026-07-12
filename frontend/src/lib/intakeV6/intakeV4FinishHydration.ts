@@ -55,6 +55,7 @@ function normalizeLetterGroupForCompare(group: IntakeV4LetterGroupFinish) {
     return_depth_mm: group.return_depth_mm ?? null,
     return_oracal_code: group.return_oracal_code ?? null,
     return_oracal_name: group.return_oracal_name ?? null,
+    backing_mode: group.backing_mode ?? null,
   };
 }
 
@@ -67,6 +68,7 @@ function normalizeArtworkForCompare(row: IntakeV4ArtworkFinish) {
     return_finish_type: String(row.return_finish_type ?? "").trim(),
     return_depth_mm: row.return_depth_mm ?? null,
     return_oracal_code: row.return_oracal_code ?? null,
+    backing_mode: row.backing_mode ?? null,
   };
 }
 

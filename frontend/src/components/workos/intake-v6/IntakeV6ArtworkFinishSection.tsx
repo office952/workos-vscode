@@ -15,6 +15,7 @@ import { artworkToReturnCant, patchArtworkFromReturnCant } from "@/lib/intakeV6/
 import { INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { AlertTriangle, Box, CheckCircle2, ImageIcon, Palette } from "lucide-react";
 import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
+import { resolveLayerBackingMode } from "@/lib/intakeV6/intakeV4BackingMode";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
 import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6LayerCardCollapsedHeader from "./IntakeV6LayerCardCollapsedHeader";
@@ -40,6 +41,10 @@ import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScop
 
 export const INTAKE_V6_ARTWORK_VERIFY_INSTRUCTION =
   "Confirmă fiecare Vector Logo înainte de a continua.";
+
+function layerTestIdSuffix(key: string): string {
+  return key.replace(/[^a-zA-Z0-9_-]+/g, "-");
+}
 
 function patchRows(
   rows: IntakeV6ArtworkFinish[],
@@ -272,8 +277,7 @@ export default function IntakeV6ArtworkFinishSection({
   rasterLayerKeys: _rasterLayerKeys,
   decisionMessages: _decisionMessages,
   highlightUnconfirmed = false,
-  backingMode,
-  onBackingChange,
+  globalBackingFallback,
   soldScopeVisibility,
 }: {
   rows: IntakeV6ArtworkFinish[];
@@ -286,9 +290,8 @@ export default function IntakeV6ArtworkFinishSection({
   rasterLayerKeys?: Set<string>;
   decisionMessages?: string[];
   highlightUnconfirmed?: boolean;
-  /** When Vector Litere is absent, Forex backing renders as last row in this card. */
-  backingMode?: IntakeV6BackingMode;
-  onBackingChange?: (mode: IntakeV6BackingMode) => void;
+  /** Legacy global fallback when layer row has no explicit backing_mode yet. */
+  globalBackingFallback?: IntakeV6BackingMode;
   soldScopeVisibility?: SoldScopeFieldVisibility;
 }) {
   const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
@@ -643,16 +646,31 @@ export default function IntakeV6ArtworkFinishSection({
                   )}
                 </div>
               ) : null}
+
+              {visibility.back ? (
+                <div
+                  className="col-span-2 mt-1 px-2.5"
+                  data-testid={`intake-v6-review-backing-finish-integration-${row.layer_key}`}
+                >
+                  <IntakeV6ReviewBackingFinishRow
+                    embedded
+                    testIdSuffix={layerTestIdSuffix(row.layer_key)}
+                    backingMode={resolveLayerBackingMode(row.backing_mode, globalBackingFallback)}
+                    onBackingChange={(mode) =>
+                      onChange(
+                        patchRows(rows, row.layer_key, {
+                          backing_mode: mode,
+                          confirmed: row.confirmed,
+                        }),
+                      )
+                    }
+                  />
+                </div>
+              ) : null}
             </div>
           );
         })}
       </div>
-
-      {visibility.back && backingMode && onBackingChange ? (
-        <div data-testid="intake-v6-review-backing-finish-integration">
-          <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
-        </div>
-      ) : null}
     </>
   );
 

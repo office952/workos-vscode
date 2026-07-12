@@ -33,6 +33,7 @@ from services.intake_v4_backing_mode_service import (
     BASIS_BACKING_AREA_FACE_QUOTEABLE_FALLBACK,
     resolve_backing_mode_from_finish,
     resolve_backing_material_area_m2,
+    resolve_layer_backing_mode,
     resolve_volumetric_backing_state,
 )
 from services.volumetric_material_rate_resolver import PROFILE_DEPTH_MM_TO_VARIANT_CODE
@@ -103,6 +104,7 @@ from services.intake_v4_consumables_adhesive_wiring_service import (
 from services.intake_v4_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 from services.shared_cnc_operation_model import (
     build_volumetric_letters_cnc_operation_rows,
+    build_volumetric_letters_cnc_operation_rows_with_layer_backing,
     rows_to_schema_dicts,
 )
 from services.shared_edge_cant_rules import EdgeCantRuleInput, evaluate_edge_cant_rules, EDGE_CANT_LINEAR_UNIT
@@ -2790,11 +2792,51 @@ def build_intake_v4_material_breakdown(
     )
 
     back_bevel_enabled = back_bevel_enabled
-    cnc_preview_rows = build_volumetric_letters_cnc_operation_rows(
-        path_geom,
-        backing_mode=backing_mode,
-        configured_rate_eur_per_ml_pass=None,
-    )
+    layer_backing_specs: list[tuple[float, str]] = []
+    for group in letter_groups:
+        if not isinstance(group, dict):
+            continue
+        perimeter = _positive(group.get("perimeter_m"))
+        if perimeter is None:
+            continue
+        layer_backing_specs.append(
+            (perimeter, resolve_layer_backing_mode(group, finish if isinstance(finish, dict) else None))
+        )
+    if not layer_backing_specs and artwork_finishes:
+        back_ml = _positive(
+            path_geom.get("backing_cnc_cutting_perimeter_ml")
+            if isinstance(path_geom, dict)
+            else None
+        ) or _positive(
+            path_geom.get("back_cutting_perimeter_ml") if isinstance(path_geom, dict) else None
+        ) or _positive(
+            path_geom.get("face_cutting_perimeter_ml") if isinstance(path_geom, dict) else None
+        )
+        if back_ml is not None:
+            for artwork in artwork_finishes:
+                if not isinstance(artwork, dict):
+                    continue
+                layer_backing_specs.append(
+                    (
+                        back_ml,
+                        resolve_layer_backing_mode(
+                            artwork,
+                            finish if isinstance(finish, dict) else None,
+                        ),
+                    )
+                )
+    if layer_backing_specs:
+        cnc_preview_rows = build_volumetric_letters_cnc_operation_rows_with_layer_backing(
+            path_geom,
+            layer_backing_specs=layer_backing_specs,
+            configured_rate_eur_per_ml_pass=None,
+        )
+    else:
+        cnc_preview_rows = build_volumetric_letters_cnc_operation_rows(
+            path_geom,
+            backing_mode=backing_mode,
+            configured_rate_eur_per_ml_pass=None,
+        )
     operation_rows = [
         IntakeV4CncOperationRow.model_validate(row_dict)
         for row_dict in rows_to_schema_dicts(cnc_preview_rows)

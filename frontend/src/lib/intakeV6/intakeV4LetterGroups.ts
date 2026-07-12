@@ -4,6 +4,7 @@ import { normalizeFaceVinylRollWidthMm } from "./intakeV4FaceFinishOptions";
 import { applyNearestOracal651ToLetterGroup } from "./intakeV4NearestOracalColor";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE as INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE } from "./intakeV6ReturnFinishOptions";
 import { layerHasLetterPathGeometry } from "./intakeV6ArtworkOnlyGuard";
+import { normalizeIntakeV4BackingMode, type IntakeV4BackingMode } from "./intakeV4BackingMode";
 
 export { ALLOWED_RETURN_DEPTH_MM };
 
@@ -22,6 +23,7 @@ export interface IntakeV4LetterGroupFinish {
   return_oracal_name?: string | null;
   return_depth_mm?: number | null;
   face_vinyl_roll_width_mm?: number | null;
+  backing_mode?: IntakeV4BackingMode | null;
   confirmed: boolean;
 }
 
@@ -175,6 +177,10 @@ export function letterGroupFinishesFromPayload(
         return_depth_mm: typeof item.return_depth_mm === "number" ? item.return_depth_mm : null,
         face_vinyl_roll_width_mm:
           typeof item.face_vinyl_roll_width_mm === "number" ? item.face_vinyl_roll_width_mm : null,
+        backing_mode:
+          item.backing_mode != null
+            ? normalizeIntakeV4BackingMode(item.backing_mode)
+            : null,
         confirmed: item.confirmed === true,
       }),
     )

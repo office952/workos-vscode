@@ -2,6 +2,10 @@ import type { IntakeV4ArtworkFinish } from "@/lib/intakeV6/intakeV4ArtworkFinish
 import type { IntakeV4FinishSetup } from "@/lib/intakeV6/intakeV4Api";
 import { normalizeFaceVinylRollWidthMm } from "@/lib/intakeV6/intakeV4FaceFinishOptions";
 import type { IntakeV4LetterGroupFinish } from "@/lib/intakeV6/intakeV4LetterGroups";
+import {
+  layerFinishesHaveExplicitBacking,
+  normalizeIntakeV4BackingMode,
+} from "@/lib/intakeV6/intakeV4BackingMode";
 
 function dominantToken(values: Array<string | null | undefined>, fallback: string | undefined): string | undefined {
   const cleaned = values.map((v) => (v ?? "").trim()).filter(Boolean);
@@ -86,6 +90,20 @@ export function syncIntakeV4FinishPayloadFromLayerFinishes(
       .filter((d): d is number => d != null && Number.isFinite(d));
     if (ret) next.return_finish_type = ret;
     if (depths.length > 0) next.return_depth_mm = Math.max(...depths);
+  }
+
+  if (layerFinishesHaveExplicitBacking(letterGroups, artworkFinishes)) {
+    const globalMode = normalizeIntakeV4BackingMode(form.backing_mode);
+    next.letter_group_finishes = letterGroups.map((group) => ({
+      ...group,
+      backing_mode: group.backing_mode ?? globalMode,
+    }));
+    next.artwork_finishes = artworkFinishes.map((row) => ({
+      ...row,
+      backing_mode: row.backing_mode ?? globalMode,
+    }));
+    delete next.backing_mode;
+    delete next.back_bevel_enabled;
   }
 
   return next;

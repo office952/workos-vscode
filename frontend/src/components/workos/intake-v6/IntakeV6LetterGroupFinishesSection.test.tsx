@@ -231,23 +231,41 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expect(card).toHaveAttribute("data-layer-card-expanded", "false");
   });
 
-  it("renders forex backing row inside the vector litere card", () => {
-    const onBacking = vi.fn();
+  it("renders forex backing row inside each vector litere card", () => {
     render(
       <IntakeV6ReviewLetterGroupsSection
         groups={groups}
         onChange={vi.fn()}
-        backingMode="forex_10_no_bevel"
-        onBackingChange={onBacking}
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
       />,
     );
-    const letterCard = screen.getByTestId("intake-v6-letter-group-face-finishes");
-    expect(within(letterCard).getByTestId("intake-v6-review-backing-finish-integration")).toBeInTheDocument();
+    expandLetterGroupCard("a");
+    const letterCard = screen.getByTestId("intake-v6-letter-group-a");
+    expect(within(letterCard).getByTestId("intake-v6-review-backing-finish-integration-a")).toBeInTheDocument();
     expect(within(letterCard).getByText("Finisaj spate")).toBeInTheDocument();
-    fireEvent.change(within(letterCard).getByTestId("intake-v6-backing-mode"), {
+    expect(screen.queryByTestId("intake-v6-review-backing-finish-integration")).not.toBeInTheDocument();
+  });
+
+  it("patches per-layer backing mode on change", () => {
+    const onChange = vi.fn();
+    render(
+      <IntakeV6ReviewLetterGroupsSection
+        groups={groups}
+        onChange={onChange}
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
+      />,
+    );
+    expandLetterGroupCard("a");
+    fireEvent.change(screen.getByTestId("intake-v6-backing-mode-a"), {
       target: { value: "forex_10_with_bevel" },
     });
-    expect(onBacking).toHaveBeenCalledWith("forex_10_with_bevel");
+    const next = onChange.mock.calls.at(-1)![0] as IntakeV6LetterGroupFinish[];
+    expect(next[0]).toMatchObject({
+      group_key: "a",
+      backing_mode: "forex_10_with_bevel",
+    });
   });
 });
 

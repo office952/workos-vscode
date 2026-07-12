@@ -50,6 +50,38 @@ describe("syncIntakeV6FinishPayloadFromLayerFinishes", () => {
     expect(synced.face_vinyl_roll_width_mm).toBe(1000);
   });
 
+  it("strips global backing when any layer owns backing_mode", () => {
+    const synced = syncIntakeV6FinishPayloadFromLayerFinishes(
+      {
+        illuminated: true,
+        backing_mode: "forex_10_no_bevel",
+        back_bevel_enabled: false,
+      },
+      [
+        {
+          group_key: "g1",
+          layer_name: "G1",
+          face_finish_type: "oracal_651",
+          return_finish_type: "standard_aluminum",
+          backing_mode: "forex_10_with_bevel",
+          confirmed: false,
+        },
+        {
+          group_key: "g2",
+          layer_name: "G2",
+          face_finish_type: "oracal_651",
+          return_finish_type: "standard_aluminum",
+          confirmed: false,
+        },
+      ],
+      [],
+    );
+    expect(synced.backing_mode).toBeUndefined();
+    expect(synced.back_bevel_enabled).toBeUndefined();
+    expect(synced.letter_group_finishes?.[0]?.backing_mode).toBe("forex_10_with_bevel");
+    expect(synced.letter_group_finishes?.[1]?.backing_mode).toBe("forex_10_no_bevel");
+  });
+
   it("finishSetupIdentityKey changes when layer finish changes", () => {
     const base = finishSetupIdentityKey({
       form: { illuminated: true },

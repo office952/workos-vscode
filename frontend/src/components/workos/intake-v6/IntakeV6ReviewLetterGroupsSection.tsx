@@ -17,6 +17,7 @@ import {
 } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import { resolveIntakeV6ReturnFinishUiOption } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
+import { resolveLayerBackingMode } from "@/lib/intakeV6/intakeV4BackingMode";
 import { AlertTriangle, Box, CheckCircle2, Layers, PanelTop, Ruler } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
@@ -47,7 +48,9 @@ import {
   patchLetterGroupFinishes,
 } from "./letterGroupFinishSectionHelpers";
 
-function ZoneTitle({
+function layerTestIdSuffix(key: string): string {
+  return key.replace(/[^a-zA-Z0-9_-]+/g, "-");
+}
   icon: Icon,
   title,
 }: {
@@ -67,16 +70,14 @@ export default function IntakeV6ReviewLetterGroupsSection({
   onChange,
   faceFinishOptions,
   allowedReturnDepthMm,
-  backingMode,
-  onBackingChange,
+  globalBackingFallback,
   soldScopeVisibility,
 }: {
   groups: IntakeV6LetterGroupFinish[];
   onChange: (groups: IntakeV6LetterGroupFinish[]) => void;
   faceFinishOptions?: readonly { value: string; label: string }[];
   allowedReturnDepthMm?: readonly number[];
-  backingMode?: IntakeV6BackingMode;
-  onBackingChange?: (mode: IntakeV6BackingMode) => void;
+  globalBackingFallback?: IntakeV6BackingMode;
   soldScopeVisibility?: SoldScopeFieldVisibility;
 }) {
   const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
@@ -223,6 +224,25 @@ export default function IntakeV6ReviewLetterGroupsSection({
                     }
                   />
                 </button>
+
+                {visibility.back ? (
+                  <div
+                    className="px-2.5 pb-2"
+                    data-testid={`intake-v6-review-backing-finish-integration-${group.group_key}`}
+                  >
+                    <IntakeV6ReviewBackingFinishRow
+                      embedded
+                      testIdSuffix={layerTestIdSuffix(group.group_key)}
+                      backingMode={resolveLayerBackingMode(
+                        group.backing_mode,
+                        globalBackingFallback,
+                      )}
+                      onBackingChange={(mode) =>
+                        patchGroup(group.group_key, { backing_mode: mode, confirmed: false })
+                      }
+                    />
+                  </div>
+                ) : null}
 
                 {expanded ? (
                   <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
@@ -398,12 +418,6 @@ export default function IntakeV6ReviewLetterGroupsSection({
             );
           })}
         </div>
-
-        {visibility.back && backingMode && onBackingChange ? (
-          <div data-testid="intake-v6-review-backing-finish-integration">
-            <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
-          </div>
-        ) : null}
       </div>
     </div>
   );

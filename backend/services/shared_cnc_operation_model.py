@@ -448,6 +448,89 @@ VOLUMETRIC_REQUIRED_CNC_OPERATION_KEYS: tuple[str, ...] = (
 )
 
 
+def merge_cnc_operation_preview_rows(
+    rows: Sequence[CncOperationPreviewRow],
+) -> list[CncOperationPreviewRow]:
+    merged: dict[str, CncOperationPreviewRow] = {}
+    for row in rows:
+        existing = merged.get(row.key)
+        if existing is None:
+            merged[row.key] = row
+            continue
+        existing.quantity = round(existing.quantity + row.quantity, 4)
+        if (
+            existing.operation_equivalent_quantity is not None
+            and row.operation_equivalent_quantity is not None
+        ):
+            existing.operation_equivalent_quantity = round(
+                existing.operation_equivalent_quantity + row.operation_equivalent_quantity,
+                4,
+            )
+        elif row.operation_equivalent_quantity is not None:
+            existing.operation_equivalent_quantity = row.operation_equivalent_quantity
+        if existing.estimated_cost is not None and row.estimated_cost is not None:
+            existing.estimated_cost = round(existing.estimated_cost + row.estimated_cost, 4)
+        elif row.estimated_cost is not None:
+            existing.estimated_cost = row.estimated_cost
+    return list(merged.values())
+
+
+def _volumetric_backing_cnc_rows(
+    back_ml: float,
+    backing_mode: VolumetricBackingMode,
+    *,
+    configured_rate_eur_per_ml_pass: float | None = None,
+) -> list[CncOperationPreviewRow]:
+    if backing_mode == "none" or back_ml <= 0:
+        return []
+    geometry = {"backing_cnc_cutting_perimeter_ml": back_ml}
+    rows = build_volumetric_letters_cnc_operation_rows(
+        geometry,
+        backing_mode=backing_mode,
+        configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+    )
+    return [row for row in rows if row.key.startswith("cnc_backing_")]
+
+
+def build_volumetric_letters_cnc_operation_rows_with_layer_backing(
+    geometry: Mapping[str, Any],
+    *,
+    layer_backing_specs: Sequence[tuple[float | None, VolumetricBackingMode]] | None = None,
+    backing_mode: VolumetricBackingMode = "none",
+    configured_rate_eur_per_ml_pass: float | None = None,
+) -> list[CncOperationPreviewRow]:
+    """Face CNC once; backing CNC aggregated per layer when specs are provided."""
+    base_rows = build_volumetric_letters_cnc_operation_rows(
+        geometry,
+        backing_mode="none",
+        configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+    )
+    face_rows = [row for row in base_rows if row.key.startswith("cnc_face_")]
+
+    back_rows: list[CncOperationPreviewRow] = []
+    if layer_backing_specs:
+        for perimeter_ml, mode in layer_backing_specs:
+            if perimeter_ml is None or perimeter_ml <= 0:
+                continue
+            back_rows.extend(
+                _volumetric_backing_cnc_rows(
+                    float(perimeter_ml),
+                    mode,
+                    configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+                )
+            )
+        back_rows = merge_cnc_operation_preview_rows(back_rows)
+    elif backing_mode != "none":
+        global_rows = build_volumetric_letters_cnc_operation_rows(
+            geometry,
+            backing_mode=backing_mode,
+            configured_rate_eur_per_ml_pass=configured_rate_eur_per_ml_pass,
+        )
+        back_rows = [row for row in global_rows if row.key.startswith("cnc_backing_")]
+
+    return face_rows + back_rows
+
+
 def build_volumetric_letters_cnc_operation_rows(
     geometry: Mapping[str, Any],
     *,

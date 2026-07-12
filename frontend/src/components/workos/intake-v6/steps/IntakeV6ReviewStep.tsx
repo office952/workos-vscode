@@ -84,7 +84,6 @@ import {
   type IntakeV6ArtworkComplexityDecision,
 } from "@/lib/intakeV6/intakeV6ArtworkComplexityDisplay";
 import IntakeV6AiSemanticAssistPanel from "../IntakeV6AiSemanticAssistPanel";
-import IntakeV6ReviewBackingSelect from "../IntakeV6ReviewBackingSelect";
 import IntakeV6ReviewLightingSection from "../IntakeV6ReviewLightingSection";
 import IntakeV6ReviewSaveFooter from "../IntakeV6ReviewSaveFooter";
 import IntakeV6FaceBackPrepCostDraftPanel from "../IntakeV6FaceBackPrepCostDraftPanel";
@@ -1860,21 +1859,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 setLetterGroups(next);
                 syncFormFromLayerFinishes(
                   { letterGroups: next, artworkFinishes },
-                  { domains: ["face_finish"] },
+                  { domains: ["face_finish", "backing"] },
                 );
               }}
               faceFinishOptions={templateContract.faceFinishOptions}
               allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
-              backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
-              onBackingChange={(mode) =>
-                updateForm(
-                  {
-                    backing_mode: mode,
-                    back_bevel_enabled: mode === "forex_10_with_bevel",
-                  },
-                  { domains: ["backing"] },
-                )
-              }
+              globalBackingFallback={normalizeIntakeV6BackingMode(form.backing_mode)}
             />
             ) : null}
             {artworkFinishes.length > 0 ? (
@@ -1891,51 +1881,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   highlightUnconfirmed={highlightArtworkUnconfirmed}
                   stepOneConfirmedLayerKeys={stepOneConfirmedArtworkLayerKeys}
                   allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
-                  backingMode={
-                    effectiveLetterGroups.length === 0 && soldScopeVisibility.back
-                      ? normalizeIntakeV6BackingMode(form.backing_mode)
-                      : undefined
-                  }
-                  onBackingChange={
-                    effectiveLetterGroups.length === 0 && soldScopeVisibility.back
-                      ? (mode) =>
-                          updateForm(
-                            {
-                              backing_mode: mode,
-                              back_bevel_enabled: mode === "forex_10_with_bevel",
-                            },
-                            { domains: ["backing"] },
-                          )
-                      : undefined
-                  }
+                  globalBackingFallback={normalizeIntakeV6BackingMode(form.backing_mode)}
                   onChange={(next) => {
                     setArtworkFinishes(next);
                     syncFormFromLayerFinishes(
                       { letterGroups: effectiveLetterGroups, artworkFinishes: next },
-                      { domains: ["artwork_finish"] },
+                      { domains: ["artwork_finish", "backing"] },
                     );
                   }}
                 />
               </div>
-            ) : null}
-            {soldScopeVisibility.back &&
-            effectiveLetterGroups.length === 0 &&
-            artworkFinishes.length === 0 ? (
-            <div data-testid="intake-v6-review-backing-finish-integration">
-              <IntakeV6ReviewBackingSelect
-                embedded
-                backingMode={normalizeIntakeV6BackingMode(form.backing_mode)}
-                onBackingChange={(mode) =>
-                  updateForm(
-                    {
-                      backing_mode: mode,
-                      back_bevel_enabled: mode === "forex_10_with_bevel",
-                    },
-                    { domains: ["backing"] },
-                  )
-                }
-              />
-            </div>
             ) : null}
             </IntakeV6ReviewSectionShell>
           </div>

@@ -353,30 +353,55 @@ describe("IntakeV6ArtworkFinishSection", () => {
     });
   });
 
-  it("renders forex backing row inside vector logo card when letters are absent", () => {
-    const onBacking = vi.fn();
+  it("renders forex backing row inside each vector logo card", () => {
     render(
       <IntakeV6ArtworkFinishSection
         rows={rows}
         onChange={vi.fn()}
         embedded
-        backingMode="forex_10_no_bevel"
-        onBackingChange={onBacking}
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
       />,
     );
-    const logoCard = screen.getByTestId("intake-v6-artwork-finishes");
-    expect(within(logoCard).getByTestId("intake-v6-review-backing-finish-integration")).toBeInTheDocument();
+    expandArtworkCard("logo");
+    const logoCard = screen.getByTestId("intake-v6-artwork-logo");
+    expect(within(logoCard).getByTestId("intake-v6-review-backing-finish-integration-logo")).toBeInTheDocument();
     expect(within(logoCard).getByText("Finisaj spate")).toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-backing-finish-block")).not.toBeInTheDocument();
-    expect(within(logoCard).getByTestId("intake-v6-backing-mode")).toHaveClass("h-7");
-    fireEvent.change(within(logoCard).getByTestId("intake-v6-backing-mode"), {
-      target: { value: "forex_10_with_bevel" },
-    });
-    expect(onBacking).toHaveBeenCalledWith("forex_10_with_bevel");
+    expect(within(logoCard).getByTestId("intake-v6-backing-mode-logo")).toHaveClass("h-7");
   });
 
-  it("does not render backing row when backing props are omitted", () => {
-    render(<IntakeV6ArtworkFinishSection rows={rows} onChange={vi.fn()} embedded />);
-    expect(screen.queryByTestId("intake-v6-backing-finish-row")).not.toBeInTheDocument();
+  it("patches per-layer backing mode on artwork card", () => {
+    const onChange = vi.fn();
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={onChange}
+        embedded
+        globalBackingFallback="forex_10_no_bevel"
+        soldScopeVisibility={{ face: false, returnCant: false, back: true, lighting: false, mounting: false }}
+      />,
+    );
+    expandArtworkCard("logo");
+    fireEvent.change(screen.getByTestId("intake-v6-backing-mode-logo"), {
+      target: { value: "forex_10_with_bevel" },
+    });
+    const next = onChange.mock.calls.at(-1)![0] as IntakeV6ArtworkFinish[];
+    expect(next[0]).toMatchObject({
+      layer_key: "logo",
+      backing_mode: "forex_10_with_bevel",
+    });
+  });
+
+  it("does not render backing row when back scope is hidden", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        embedded
+        soldScopeVisibility={{ face: true, returnCant: true, back: false, lighting: true, mounting: true }}
+      />,
+    );
+    expect(screen.queryByTestId("intake-v6-backing-finish-row-logo")).not.toBeInTheDocument();
   });
 });

@@ -13,15 +13,28 @@ import {
 export default function IntakeV6ReviewBackingFinishRow({
   backingMode,
   onBackingChange,
+  embedded = false,
+  testIdSuffix,
 }: {
   backingMode: IntakeV6BackingMode;
   onBackingChange: (mode: IntakeV6BackingMode) => void;
+  embedded?: boolean;
+  testIdSuffix?: string;
 }) {
+  const rowTestId = testIdSuffix
+    ? `intake-v6-backing-finish-row-${testIdSuffix}`
+    : "intake-v6-backing-finish-row";
+  const modeTestId = testIdSuffix ? `intake-v6-backing-mode-${testIdSuffix}` : "intake-v6-backing-mode";
+
   return (
     <div
-      className="mt-1.5 overflow-hidden rounded-md border border-[#2A3548] bg-[#0A0F1A]/55"
-      style={{ borderLeftWidth: 3, borderLeftColor: "#475569" }}
-      data-testid="intake-v6-backing-finish-row"
+      className={
+        embedded
+          ? "mt-1.5"
+          : "mt-1.5 overflow-hidden rounded-md border border-[#2A3548] bg-[#0A0F1A]/55"
+      }
+      style={embedded ? undefined : { borderLeftWidth: 3, borderLeftColor: "#475569" }}
+      data-testid={rowTestId}
     >
       <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
         <div className={REVIEW_FACE_COLUMN_CLASS} data-testid="intake-v6-backing-finish-zone">
@@ -31,7 +44,7 @@ export default function IntakeV6ReviewBackingFinishRow({
               className={REVIEW_SELECT_CLASS}
               value={backingMode}
               onChange={(event) => onBackingChange(event.target.value as IntakeV6BackingMode)}
-              data-testid="intake-v6-backing-mode"
+              data-testid={modeTestId}
             >
               {INTAKE_V6_BACKING_MODE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>

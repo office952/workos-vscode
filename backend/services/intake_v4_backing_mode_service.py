@@ -30,6 +30,33 @@ def resolve_backing_mode_from_finish(finish: dict[str, Any] | None) -> Volumetri
     return normalize_backing_mode(finish.get("backing_mode"))
 
 
+def resolve_layer_backing_mode(
+    layer: dict[str, Any] | None,
+    global_finish: dict[str, Any] | None,
+) -> VolumetricBackingMode:
+    """Per-layer backing with narrow legacy fallback to global finish_setup."""
+    if isinstance(layer, dict) and layer.get("backing_mode") is not None:
+        explicit = normalize_backing_mode(layer.get("backing_mode"))
+        if explicit is not None:
+            return explicit
+    global_mode = resolve_backing_mode_from_finish(global_finish)
+    if global_mode is not None:
+        return global_mode
+    return "forex_10_no_bevel"
+
+
+def finish_has_explicit_layer_backing_modes(finish: dict[str, Any] | None) -> bool:
+    if not isinstance(finish, dict):
+        return False
+    for group in finish.get("letter_group_finishes") or []:
+        if isinstance(group, dict) and group.get("backing_mode") is not None:
+            return True
+    for artwork in finish.get("artwork_finishes") or []:
+        if isinstance(artwork, dict) and artwork.get("backing_mode") is not None:
+            return True
+    return False
+
+
 def resolve_volumetric_backing_state(
     finish: dict[str, Any] | None,
     layer_role_setup: dict[str, Any] | None,

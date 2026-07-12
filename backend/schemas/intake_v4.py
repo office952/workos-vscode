@@ -105,6 +105,7 @@ class IntakeV4LetterGroupFinish(BaseModel):
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
     face_vinyl_roll_width_mm: float | None = None
+    backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = None
     confirmed: bool = False
 
 
@@ -138,6 +139,7 @@ class IntakeV4ArtworkFinish(BaseModel):
     return_oracal_code: str | None = None
     return_oracal_name: str | None = None
     return_depth_mm: float | None = None
+    backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = None
     confirmed: bool = False
 
 

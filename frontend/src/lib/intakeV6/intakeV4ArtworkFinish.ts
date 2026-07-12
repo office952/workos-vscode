@@ -12,6 +12,7 @@ import {
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { stableLayerInstanceKey } from "@/lib/intakeV6/layerInstanceIdentity";
+import { normalizeIntakeV4BackingMode, type IntakeV4BackingMode } from "./intakeV4BackingMode";
 
 export type IntakeV4ArtworkPrintTransparency = "standard" | "translucent" | "transparent";
 
@@ -43,6 +44,7 @@ export interface IntakeV4ArtworkFinish {
   return_oracal_code?: string | null;
   return_oracal_name?: string | null;
   return_depth_mm?: number | null;
+  backing_mode?: IntakeV4BackingMode | null;
   confirmed: boolean;
 }
 
@@ -260,6 +262,10 @@ export function artworkFinishesFromPayload(
       return_oracal_name:
         typeof item.return_oracal_name === "string" ? item.return_oracal_name : null,
       return_depth_mm: typeof item.return_depth_mm === "number" ? item.return_depth_mm : null,
+      backing_mode:
+        item.backing_mode != null
+          ? normalizeIntakeV4BackingMode(item.backing_mode)
+          : null,
       confirmed: item.confirmed === true,
     }))
     .filter((row) => row.layer_key.length > 0);
