@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from data.offer_scope_canonical_map import runtime_to_canonical
 from schemas.offer_scope import OfferScope, OfferScopeInput
 from services.offer_scope_resolver_service import (
     extract_offer_scope,
@@ -21,6 +22,13 @@ def _minimal_pd() -> ProductDefinitionPreview:
             source_payload_type="template_only",
         ),
     )
+
+
+def test_runtime_to_canonical_inverse() -> None:
+    assert runtime_to_canonical("debitare_fata") == "FACE"
+    assert runtime_to_canonical("modelare_cant") == "RETURN-CANT"
+    assert runtime_to_canonical("debitare_spate") == "BACK"
+    assert runtime_to_canonical("unknown_module") is None
 
 
 def test_absent_offer_scope_uses_legacy() -> None:

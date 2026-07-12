@@ -46,3 +46,21 @@ def runtime_modules_for_canonical(canonical_sold: list[str]) -> set[str]:
     for code in canonical_sold:
         runtime.update(CANONICAL_TO_RUNTIME.get(code, frozenset()))
     return runtime
+
+
+def runtime_to_canonical(runtime_module: str) -> str | None:
+    """Reverse lookup — first matching canonical in stable priority order."""
+    if not runtime_module:
+        return None
+    matches = [
+        canonical
+        for canonical, runtimes in CANONICAL_TO_RUNTIME.items()
+        if runtime_module in runtimes
+    ]
+    if not matches:
+        return None
+    priority = ("FACE", "RETURN-CANT", "BACK", "LIGHTING", "ELECTRICAL", "FINISH", "MOUNTING")
+    for code in priority:
+        if code in matches:
+            return code
+    return matches[0]

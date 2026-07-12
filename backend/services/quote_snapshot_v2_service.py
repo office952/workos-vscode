@@ -28,8 +28,11 @@ from schemas.quote_snapshot_v2 import (
 )
 from services.commercial_price_proposal_service import CommercialPriceProposalService
 from services.estimated_internal_cost_service import EstimatedInternalCostService
-from services.product_aggregate_service import ProductAggregateService
 from services.product_definition_builder_service import ProductDefinitionBuilderService
+from services.quote_snapshot_component_scope_service import (
+    apply_component_scope_to_snapshot_fields,
+    build_frozen_component_scope,
+)
 
 SUPPORTED_TEMPLATES = frozenset({"TPL-VOLUMETRIC-LETTERS_v2"})
 
@@ -170,6 +173,8 @@ def _build_provenance(
     commercial: CommercialPriceProposalPreview,
     internal: EstimatedInternalCostPreview,
     include_aggregate: bool,
+    workspace_composed_aggregate: bool = False,
+    offer_scope_frozen: bool = False,
 ) -> list[QuoteSnapshotProvenanceEntry]:
     entries: list[QuoteSnapshotProvenanceEntry] = [
         QuoteSnapshotProvenanceEntry(
@@ -198,7 +203,19 @@ def _build_provenance(
             QuoteSnapshotProvenanceEntry(
                 key="product_aggregate",
                 source="product_aggregate_service",
-                detail="read_only=true",
+                detail=(
+                    "read_only=true workspace_composed=true"
+                    if workspace_composed_aggregate
+                    else "read_only=true"
+                ),
+            )
+        )
+    if offer_scope_frozen:
+        entries.append(
+            QuoteSnapshotProvenanceEntry(
+                key="offer_scope_snapshot",
+                source="quote_snapshot_component_scope_service",
+                detail="frozen_at_snapshot=true",
             )
         )
     if workspace_id:
@@ -271,13 +288,11 @@ class QuoteSnapshotV2Service:
         cpp_service: CommercialPriceProposalService | None = None,
         eic_service: EstimatedInternalCostService | None = None,
         pd_builder: ProductDefinitionBuilderService | None = None,
-        aggregate_svc: ProductAggregateService | None = None,
     ) -> None:
         self._db = db
         self._cpp = cpp_service or CommercialPriceProposalService(db)
         self._eic = eic_service or EstimatedInternalCostService(db)
         self._pd_builder = pd_builder or ProductDefinitionBuilderService(db)
-        self._aggregate_svc = aggregate_svc or ProductAggregateService(db)
 
     async def build_preview(
         self,
@@ -308,18 +323,46 @@ class QuoteSnapshotV2Service:
             return None
 
         pd = await self._pd_builder.build_preview(template_code, workspace_id=workspace_id)
-        aggregate = await self._aggregate_svc.build(template_code)
+        scope_bundle = await build_frozen_component_scope(
+            self._db,
+            template_code=template_code,
+            workspace_id=workspace_id,
+            quote_input=quote_input,
+        )
+        if scope_bundle is None:
+            return None
+
+        aggregate = scope_bundle.product_aggregate
+        scope_fields = apply_component_scope_to_snapshot_fields(scope_bundle)
 
         owner_decisions = _merge_owner_decisions(commercial, internal)
         blockers = _merge_blockers(commercial, internal)
         warnings = _merge_warnings(commercial, internal)
-        readiness = compute_readiness(commercial, internal)
+
+        if scope_bundle.offer_scope_snapshot.validation_errors:
+            readiness: QuoteSnapshotReadiness = "blocked_snapshot_conflict"
+            for error in scope_bundle.offer_scope_snapshot.validation_errors:
+                blockers.append(
+                    QuoteSnapshotBlocker(
+                        code=f"OFFER_SCOPE_{error}",
+                        message=f"Invalid offer_scope: {error}",
+                        source="commercial_price_proposal",
+                    )
+                )
+        else:
+            readiness = compute_readiness(commercial, internal)
+
+        if scope_bundle.scope_warnings:
+            warnings.extend(scope_bundle.scope_warnings)
+
         provenance = _build_provenance(
             workspace_id=workspace_id,
             quote_input=quote_input,
             commercial=commercial,
             internal=internal,
             include_aggregate=aggregate is not None,
+            workspace_composed_aggregate=workspace_id is not None,
+            offer_scope_frozen=True,
         )
 
         notes = [
@@ -335,7 +378,7 @@ class QuoteSnapshotV2Service:
             workspace_id=workspace_id,
             template_code=template_code,
             product_definition_snapshot=pd,
-            product_aggregate_snapshot=aggregate,
+            **scope_fields,
             commercial_price_proposal_snapshot=commercial,
             estimated_internal_cost_snapshot=internal,
             owner_decisions_snapshot=owner_decisions,

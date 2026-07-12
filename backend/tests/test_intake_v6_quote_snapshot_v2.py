@@ -6,7 +6,9 @@ from types import SimpleNamespace
 
 import pytest
 
+from schemas.quote_snapshot_v2 import FrozenComponentScope, QuoteSnapshotOfferScope
 from services import intake_v6_quote_snapshot_v2_service as snapshot_service
+from services.product_definition_builder_service import ProductDefinitionBuilderService
 from services.quote_output_composition_service import QuoteOutputCompositionService
 
 
@@ -135,10 +137,20 @@ def patch_snapshot_dependencies(monkeypatch):
     async def no_orders(_db, _quote_id):
         return 0
 
+    async def fake_component_scope(_db, **kwargs):
+        return FrozenComponentScope(
+            offer_scope_snapshot=QuoteSnapshotOfferScope(use_legacy=True, mode="full_product"),
+        )
+
+    async def fake_pd_preview(*args, **kwargs):
+        return None
+
     monkeypatch.setattr(snapshot_service, "QuotesService", FakeQuotesService)
     monkeypatch.setattr(snapshot_service, "_snapshot_count", no_snapshots)
     monkeypatch.setattr(snapshot_service, "_order_count", no_orders)
     monkeypatch.setattr(snapshot_service, "_persist_snapshot", _fake_persist)
+    monkeypatch.setattr(snapshot_service, "build_frozen_component_scope", fake_component_scope)
+    monkeypatch.setattr(ProductDefinitionBuilderService, "build_preview", fake_pd_preview)
     FakeQuotesService.quote = _quote()
 
 

@@ -21,6 +21,11 @@ from schemas.estimated_internal_cost import EstimatedInternalCostPreview, Intern
 from schemas.quote_snapshot_v2 import QUOTE_SNAPSHOT_V2_VERSION, QuoteSnapshotProvenanceEntry, QuoteSnapshotV2
 from services.intake_v6_commercial_quote_service import INTAKE_V6_LINKAGE_JSON_KEY, intake_v6_linkage_code
 from services.intake_v6_priced_quote_dry_run_service import V6_PRICED_DRY_RUN_SOURCE
+from services.product_definition_builder_service import ProductDefinitionBuilderService
+from services.quote_snapshot_component_scope_service import (
+    apply_component_scope_to_snapshot_fields,
+    build_frozen_component_scope,
+)
 from services.quotes import QuotesService
 
 QUOTE_SNAPSHOT_V2 = "QUOTE_SNAPSHOT_V2"
@@ -47,6 +52,8 @@ V6_SNAPSHOT_EXPECTED_TOTAL_MISMATCH = "V6_SNAPSHOT_EXPECTED_TOTAL_MISMATCH"
 V6_SNAPSHOT_EXPECTED_HASH_MISMATCH = "V6_SNAPSHOT_EXPECTED_HASH_MISMATCH"
 V6_SNAPSHOT_NOTES_INVALID = "V6_SNAPSHOT_NOTES_INVALID"
 V6_SNAPSHOT_AMBIGUOUS_STATE = "V6_SNAPSHOT_AMBIGUOUS_STATE"
+V6_SNAPSHOT_OFFER_SCOPE_INVALID = "V6_SNAPSHOT_OFFER_SCOPE_INVALID"
+V6_SNAPSHOT_COMPONENT_SCOPE_MISSING = "V6_SNAPSHOT_COMPONENT_SCOPE_MISSING"
 
 _TERMINAL_STATUSES = frozenset({"accepted", "rejected", "expired", "converted", "ordered"})
 
@@ -231,6 +238,8 @@ def _quote_snapshot_v2_payload(
 	write_trace: dict[str, Any],
 	created_by: str | None,
 	now: str,
+	scope_fields: dict[str, Any] | None = None,
+	product_definition_snapshot: Any = None,
 ) -> QuoteSnapshotV2:
 	commercial_lines = [
 		CommercialPriceLine(
@@ -288,6 +297,8 @@ def _quote_snapshot_v2_payload(
 		quote_id=str(getattr(quote_obj, "id", "")),
 		workspace_id=workspace_id,
 		template_code=template_code,
+		product_definition_snapshot=product_definition_snapshot,
+		**(scope_fields or {}),
 		commercial_price_proposal_snapshot=commercial_preview,
 		estimated_internal_cost_snapshot=internal_preview,
 		readiness="ready_for_owner_review",
@@ -442,6 +453,38 @@ async def create_v6_quote_snapshot_v2(
 	client_output = _client_output(quote_obj, commercial, line_items)
 	now = datetime.now(timezone.utc).isoformat()
 	template_code = (linkage or {}).get("template_code") or "TPL-VOLUMETRIC-LETTERS_v2"
+	pricing_input_trace = write_trace.get("pricing_input_trace")
+	quote_input = pricing_input_trace if isinstance(pricing_input_trace, dict) else {}
+
+	scope_bundle = await build_frozen_component_scope(
+		db,
+		template_code=template_code,
+		workspace_id=workspace_id_str,
+		quote_input=quote_input,
+	)
+	if scope_bundle is None:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[_blocker(V6_SNAPSHOT_COMPONENT_SCOPE_MISSING, "Workspace component scope could not be built for Quote Snapshot V2.")],
+		)
+	if scope_bundle.offer_scope_snapshot.validation_errors:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[
+				_blocker(
+					V6_SNAPSHOT_OFFER_SCOPE_INVALID,
+					"Invalid offer_scope cannot be frozen into Quote Snapshot V2.",
+				)
+			],
+			warnings=list(scope_bundle.offer_scope_snapshot.validation_errors),
+		)
+
+	pd_builder = ProductDefinitionBuilderService(db)
+	product_definition_snapshot = await pd_builder.build_preview(template_code, workspace_id=workspace_id_str)
+	scope_fields = apply_component_scope_to_snapshot_fields(scope_bundle)
+
 	snapshot_payload = {
 		"snapshot_version": QUOTE_SNAPSHOT_V2,
 		"snapshot_kind": V6_QUOTE_SNAPSHOT_KIND,
@@ -498,6 +541,8 @@ async def create_v6_quote_snapshot_v2(
 		write_trace=write_trace,
 		created_by=created_by,
 		now=now,
+		scope_fields=scope_fields,
+		product_definition_snapshot=product_definition_snapshot,
 	)
 	content_hash = _snapshot_hash(snapshot_payload)
 	snapshot = await _persist_snapshot(
