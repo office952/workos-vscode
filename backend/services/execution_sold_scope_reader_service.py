@@ -9,6 +9,12 @@ from dataclasses import dataclass
 
 from schemas.order_snapshot_v2 import OrderSnapshotV2
 from schemas.product_aggregate import ProductAggregateOperation, ProductAggregateTaskRule
+from services.offer_scope_led_subscope_service import (
+    led_runtime_module_bucket,
+    led_subscope_row_allowed,
+    partial_led_subscope_filter,
+    task_rule_led_subscope,
+)
 
 LINKED_SEGMENT_TRIGGER_PREFIX = "linked_segment:"
 SEGMENT_NAMESPACE_SEP = "::"
@@ -30,6 +36,7 @@ class ExecutionSoldScopeContext:
     filter_enabled: bool
     mode: str = "full_product"
     sold_runtime_modules: frozenset[str] = frozenset()
+    canonical_sold_modules: frozenset[str] = frozenset()
     linked_logo_tasks_allowed: bool = True
     block_preview: bool = False
     block_reason: str | None = None
@@ -52,11 +59,15 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
     sold_runtime = frozenset(
         module for module in (offer_scope.resolved_runtime_sold_modules or []) if _text(module)
     )
+    canonical_sold = frozenset(
+        code for code in (offer_scope.sold_modules or []) if _text(code)
+    )
     if not sold_runtime:
         return ExecutionSoldScopeContext(
             filter_enabled=True,
             mode="component_subset",
             sold_runtime_modules=frozenset(),
+            canonical_sold_modules=canonical_sold,
             linked_logo_tasks_allowed=False,
             block_preview=True,
             block_reason=BLOCKED_MISSING_SOLD_SCOPE,
@@ -66,6 +77,7 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
         filter_enabled=True,
         mode="component_subset",
         sold_runtime_modules=sold_runtime,
+        canonical_sold_modules=canonical_sold,
         linked_logo_tasks_allowed=False,
     )
 
@@ -101,7 +113,7 @@ def effective_runtime_module_for_task_rule(rule: ProductAggregateTaskRule) -> st
     priced_op = _text(rule.priced_operation)
     if priced_op in EXECUTION_PRICED_OP_RUNTIME_ALIASES:
         return EXECUTION_PRICED_OP_RUNTIME_ALIASES[priced_op]
-    mini = _text(rule.mini_module_code) or None
+    mini = led_runtime_module_bucket(_text(rule.mini_module_code) or None)
     if mini:
         return mini
     return None
@@ -111,10 +123,39 @@ def effective_runtime_module_for_operation(operation: ProductAggregateOperation)
     op_code = _text(operation.operation_code)
     if op_code in EXECUTION_PRICED_OP_RUNTIME_ALIASES:
         return EXECUTION_PRICED_OP_RUNTIME_ALIASES[op_code]
-    mini = _text(operation.mini_module_code) or None
+    mini = led_runtime_module_bucket(_text(operation.mini_module_code) or None)
     if mini:
         return mini
     return None
+
+
+def _led_subscope_allows_task_rule(
+    rule: ProductAggregateTaskRule,
+    *,
+    ctx: ExecutionSoldScopeContext,
+) -> bool:
+    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
+    if sold_led is None or "sistem_led" not in ctx.sold_runtime_modules:
+        return True
+    sub = task_rule_led_subscope(
+        priced_operation=rule.priced_operation,
+        task_name=rule.task_name,
+    )
+    return led_subscope_row_allowed(sub, sold_led_subscopes=sold_led)
+
+
+def _led_subscope_allows_operation(
+    operation: ProductAggregateOperation,
+    *,
+    ctx: ExecutionSoldScopeContext,
+) -> bool:
+    from services.offer_scope_led_subscope_service import operation_led_subscope
+
+    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
+    if sold_led is None or "sistem_led" not in ctx.sold_runtime_modules:
+        return True
+    sub = operation_led_subscope(operation.operation_code)
+    return led_subscope_row_allowed(sub, sold_led_subscopes=sold_led)
 
 
 def include_task_rule_for_sold_scope(
@@ -135,7 +176,10 @@ def include_task_rule_for_sold_scope(
     if runtime_module is None:
         return False
 
-    return runtime_module in ctx.sold_runtime_modules
+    if runtime_module not in ctx.sold_runtime_modules:
+        return False
+
+    return _led_subscope_allows_task_rule(rule, ctx=ctx)
 
 
 def include_operation_for_sold_scope(
@@ -156,4 +200,7 @@ def include_operation_for_sold_scope(
     if runtime_module is None:
         return False
 
-    return runtime_module in ctx.sold_runtime_modules
+    if runtime_module not in ctx.sold_runtime_modules:
+        return False
+
+    return _led_subscope_allows_operation(operation, ctx=ctx)

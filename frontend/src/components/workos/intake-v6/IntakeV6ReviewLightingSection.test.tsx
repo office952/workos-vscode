@@ -4,7 +4,7 @@ import IntakeV6ReviewLightingSection from "./IntakeV6ReviewLightingSection";
 
 const option = (value: string, label = value) => ({ value, label });
 
-function renderLightingSection() {
+function renderLightingSection(overrides: Partial<Parameters<typeof IntakeV6ReviewLightingSection>[0]> = {}) {
   render(
     <IntakeV6ReviewLightingSection
       illuminated
@@ -35,27 +35,38 @@ function renderLightingSection() {
       psuLabel="100W"
       psuAllocationStatus="ok"
       psuReservePercent={20}
+      selectedPsuWatts={100}
+      onSelectedPsuChange={vi.fn()}
+      allowedPsuWatts={[60, 100, 160]}
+      showLightingFields
+      showElectricalFields
       allowedLightingSystems={[option("led_modules", "Module LED")]}
       allowedLightColors={[option("neutral", "Neutral white")]}
       allowedLedModulePowerW={[option("0.75", "0.75 W / modul")]}
       allowedEmblemLightingModes={[option("area_lit", "Emblema luminoasa")]}
+      {...overrides}
     />,
   );
 }
 
-describe("IntakeV6ReviewLightingSection component question labels", () => {
-  it("renders electrical ownership and owner-approved cable defaults as display labels", () => {
+describe("IntakeV6ReviewLightingSection", () => {
+  it("renders PSU selector in Electrica subsection", () => {
     renderLightingSection();
+    expect(screen.getByTestId("intake-v6-electrical-subsection")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-selected-psu-watts")).toBeInTheDocument();
+  });
 
-    const badges = screen.getByTestId("intake-v6-electrical-component-badges");
-    expect(badges).toHaveTextContent("Component: Electrical");
-    expect(badges).toHaveTextContent("Product Truth candidate");
-    expect(badges).toHaveTextContent("Included defaults: 1 m 2x0.75 + 5 m 2x1.5");
-    expect(badges).toHaveTextContent("Commercial default: 1 m cable 2x0.75 for letters");
-    expect(badges).toHaveTextContent("Commercial default: 5 m cable 2x1.5 final feed");
-    expect(badges).toHaveTextContent("Extra cables/site details: order/execution");
-    expect(badges).toHaveTextContent("Quote blocker conditional for special electrical/site scope");
-    expect(badges).toHaveTextContent("Missing UI gap: cable routing and PSU placement");
-    expect(badges).not.toHaveTextContent(/hour|minute|ora|oră|minut/i);
+  it("hides lighting fields when only electrical scope is sold", () => {
+    renderLightingSection({ showLightingFields: false, showElectricalFields: true });
+    expect(screen.queryByTestId("intake-v6-lighting-subsection")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-led-calc-readout")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-selected-psu-watts")).toBeInTheDocument();
+  });
+
+  it("hides electrical fields when only lighting scope is sold", () => {
+    renderLightingSection({ showLightingFields: true, showElectricalFields: false });
+    expect(screen.getByTestId("intake-v6-lighting-subsection")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-electrical-subsection")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-selected-psu-watts")).not.toBeInTheDocument();
   });
 });

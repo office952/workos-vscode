@@ -233,7 +233,7 @@ async def test_invalid_subset_blocks_path_a_freeze(
     allow_freeze_readiness,
 ) -> None:
     workspace_id = await _seed_workspace(volumetric_v2_db)
-    qi = _with_offer_scope(_full_quote_input(), mode="component_subset", sold=["LIGHTING"])
+    qi = _with_offer_scope(_full_quote_input(), mode="component_subset", sold=["FINISH"])
     before = await volumetric_v2_db.scalar(select(func.count()).select_from(QuoteSnapshotV2Record))
     snapshot = await snapshot_service.freeze(
         ROOT,

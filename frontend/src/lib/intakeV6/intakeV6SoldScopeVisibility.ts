@@ -10,6 +10,8 @@ export type SoldScopeFieldVisibility = {
   face: boolean;
   returnCant: boolean;
   back: boolean;
+  lighting: boolean;
+  electrical: boolean;
 };
 
 export function resolveSoldScopeFieldVisibility(
@@ -23,6 +25,8 @@ export function resolveSoldScopeFieldVisibility(
       face: true,
       returnCant: true,
       back: true,
+      lighting: true,
+      electrical: true,
     };
   }
 
@@ -33,6 +37,8 @@ export function resolveSoldScopeFieldVisibility(
     face: sold.has("FACE"),
     returnCant: sold.has("RETURN-CANT"),
     back: sold.has("BACK"),
+    lighting: sold.has("LIGHTING"),
+    electrical: sold.has("ELECTRICAL"),
   };
 }
 
@@ -42,5 +48,7 @@ export function isSoldModuleVisible(
 ): boolean {
   if (module === "FACE") return visibility.face;
   if (module === "RETURN-CANT") return visibility.returnCant;
-  return visibility.back;
+  if (module === "BACK") return visibility.back;
+  if (module === "LIGHTING") return visibility.lighting;
+  return visibility.electrical;
 }

@@ -580,11 +580,25 @@ def _build_logo_operation_line_from_bom(
 
 
 def _operation_rule_applies(rule: InternalOperationRule, active_modules: set[str], payload: dict[str, Any]) -> bool:
+    from services.offer_scope_led_subscope_service import (
+        eic_line_led_subscope,
+        led_subscope_row_allowed,
+        partial_led_subscope_filter,
+    )
+
     module_key = rule.module_gate or rule.module_code
     if rule.always_include and rule.criticality == "optional":
         return module_key in active_modules or rule.module_code in active_modules
     if module_key not in active_modules and rule.module_code not in active_modules:
         return False
+
+    scope = payload.get("offer_scope") if isinstance(payload.get("offer_scope"), dict) else {}
+    sold_led = partial_led_subscope_filter(frozenset(scope.get("sold_modules") or []))
+    if sold_led is not None and rule.module_code == "sistem_led":
+        sub = eic_line_led_subscope(rule.line_code)
+        if not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led):
+            return False
+
     if rule.line_code.startswith("sablon_montaj"):
         if not _sablon_enabled(payload):
             return False

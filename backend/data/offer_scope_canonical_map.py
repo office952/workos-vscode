@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 # Slice 1: safe standalone subset codes (tests + resolver allow-list).
-SLICE1_ACTIVE_CANONICAL: frozenset[str] = frozenset({"FACE", "RETURN-CANT", "BACK"})
+SLICE1_ACTIVE_CANONICAL: frozenset[str] = frozenset(
+    {"FACE", "RETURN-CANT", "BACK", "LIGHTING", "ELECTRICAL"}
+)
 
 # Mapped but not safe for component_subset in V1 (whole-module buckets).
-SLICE1_DEFERRED_CANONICAL: frozenset[str] = frozenset(
-    {"LIGHTING", "ELECTRICAL", "FINISH", "MOUNTING"}
-)
+SLICE1_DEFERRED_CANONICAL: frozenset[str] = frozenset({"FINISH", "MOUNTING"})
 
 # One mapping source — runtime mini_module_code sets per canonical sold code.
 CANONICAL_TO_RUNTIME: dict[str, frozenset[str]] = {

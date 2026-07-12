@@ -170,7 +170,7 @@ async def test_deferred_module_blocks_persist(volumetric_v2_db) -> None:
             volumetric_v2_db,
             workspace_id,
             mode="component_subset",
-            sold_modules=["LIGHTING"],
+            sold_modules=["FINISH"],
             confirmed=True,
             current_user=_user(),
         )

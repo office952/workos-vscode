@@ -29,7 +29,21 @@ describe("intakeV6SoldScopeVisibility", () => {
     const visibility = resolveSoldScopeFieldVisibility({
       offer_scope: { mode: "component_subset", sold_modules: ["BACK"] },
     });
-    expect(visibility).toMatchObject({ face: false, returnCant: false, back: true });
+    expect(visibility).toMatchObject({ face: false, returnCant: false, back: true, lighting: false, electrical: false });
+  });
+
+  it("shows LIGHTING only", () => {
+    const visibility = resolveSoldScopeFieldVisibility({
+      offer_scope: { mode: "component_subset", sold_modules: ["LIGHTING"] },
+    });
+    expect(visibility).toMatchObject({ lighting: true, electrical: false });
+  });
+
+  it("shows ELECTRICAL only", () => {
+    const visibility = resolveSoldScopeFieldVisibility({
+      offer_scope: { mode: "component_subset", sold_modules: ["ELECTRICAL"] },
+    });
+    expect(visibility).toMatchObject({ lighting: false, electrical: true });
   });
 
   it("shows union for FACE + RETURN-CANT", () => {

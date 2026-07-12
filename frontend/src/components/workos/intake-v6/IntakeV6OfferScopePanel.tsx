@@ -14,6 +14,8 @@ const SLICE1_MODULES: Array<{ code: SoldModuleCode; label: string; testId: strin
   { code: "FACE", label: "Față", testId: "intake-v6-offer-scope-face" },
   { code: "RETURN-CANT", label: "Cant", testId: "intake-v6-offer-scope-cant" },
   { code: "BACK", label: "Spate", testId: "intake-v6-offer-scope-back" },
+  { code: "LIGHTING", label: "Iluminare", testId: "intake-v6-offer-scope-lighting" },
+  { code: "ELECTRICAL", label: "Electrică", testId: "intake-v6-offer-scope-electrical" },
 ];
 
 export default function IntakeV6OfferScopePanel({
@@ -175,7 +177,7 @@ export default function IntakeV6OfferScopePanel({
 
       {subsetInvalid ? (
         <p className="mt-2 text-[11px] text-amber-200" data-testid="intake-v6-offer-scope-empty-subset-error">
-          Selectează cel puțin o componentă (Față, Cant sau Spate).
+          Selectează cel puțin o componentă (Față, Cant, Spate, Iluminare sau Electrică).
         </p>
       ) : null}
 

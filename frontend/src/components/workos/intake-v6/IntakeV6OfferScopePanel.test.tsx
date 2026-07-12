@@ -11,7 +11,7 @@ describe("IntakeV6OfferScopePanel", () => {
     expect(screen.queryByTestId("intake-v6-offer-scope-subset-options")).not.toBeInTheDocument();
   });
 
-  it("shows exactly three slice-1 checkboxes in subset mode", () => {
+  it("shows slice-1 checkboxes including lighting and electrical in subset mode", () => {
     render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
 
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
@@ -19,8 +19,8 @@ describe("IntakeV6OfferScopePanel", () => {
     expect(screen.getByTestId("intake-v6-offer-scope-face")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-cant")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-back")).toBeInTheDocument();
-    expect(screen.queryByText(/Iluminare/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Electric/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-scope-lighting")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-scope-electrical")).toBeInTheDocument();
     expect(screen.queryByText(/Finisaj/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Montaj/i)).not.toBeInTheDocument();
   });

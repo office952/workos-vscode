@@ -57,6 +57,11 @@ export default function IntakeV6ReviewLightingSection({
   psuLabel,
   psuAllocationStatus,
   psuReservePercent,
+  selectedPsuWatts,
+  onSelectedPsuChange,
+  allowedPsuWatts,
+  showLightingFields = true,
+  showElectricalFields = true,
   allowedLightingSystems,
   allowedLightColors,
   allowedLedModulePowerW,
@@ -91,6 +96,11 @@ export default function IntakeV6ReviewLightingSection({
   psuLabel: string;
   psuAllocationStatus: string | null | undefined;
   psuReservePercent: number;
+  selectedPsuWatts: number | null | undefined;
+  onSelectedPsuChange: (watts: number) => void;
+  allowedPsuWatts: readonly number[];
+  showLightingFields?: boolean;
+  showElectricalFields?: boolean;
   allowedLightingSystems: readonly TemplateFormOption[];
   allowedLightColors: readonly TemplateFormOption[];
   allowedLedModulePowerW: readonly TemplateFormOption[];
@@ -99,6 +109,7 @@ export default function IntakeV6ReviewLightingSection({
 }) {
   const fallbackDensity = ledAreaDensityModulesPerSqm(returnDepthMm ?? undefined);
   const shellClass = compact ? `${v6.cardCompact} !p-3` : `${v6.card} mb-4`;
+  const showAnyLedScope = showLightingFields || showElectricalFields;
 
   return (
     <div className={shellClass} data-testid="intake-v6-review-lighting-section">
@@ -163,104 +174,166 @@ export default function IntakeV6ReviewLightingSection({
 
       {!illuminated ? (
         <p className="text-[10px] text-slate-500">Fără iluminare LED.</p>
+      ) : !showAnyLedScope ? (
+        <p className="text-[10px] text-slate-500">Iluminare / electrică nu sunt în scope-ul ofertei.</p>
       ) : (
-        <div className="space-y-2.5" data-testid="intake-v6-lighting-fields">
-          <div className="grid gap-2 sm:grid-cols-2">
-            <label className={REVIEW_FIELD_BLOCK_CLASS}>
-              <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem LED</span>
-              <select
-                className={REVIEW_SELECT_CLASS}
-                value={lightingSystemType}
-                onChange={(event) => onLightingSystemTypeChange(event.target.value)}
-                data-testid="intake-v6-lighting-system"
-              >
-                {allowedLightingSystems.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+        <div className="space-y-3" data-testid="intake-v6-lighting-fields">
+          {showLightingFields ? (
+            <section className="space-y-2.5" data-testid="intake-v6-lighting-subsection">
+              <p className="text-[11px] font-semibold text-cyan-200">Iluminare</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem LED</span>
+                  <select
+                    className={REVIEW_SELECT_CLASS}
+                    value={lightingSystemType}
+                    onChange={(event) => onLightingSystemTypeChange(event.target.value)}
+                    data-testid="intake-v6-lighting-system"
+                  >
+                    {allowedLightingSystems.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            <label className={REVIEW_FIELD_BLOCK_CLASS}>
-              <span className={REVIEW_FIELD_LABEL_CLASS}>Culoare lumina</span>
-              <select
-                className={REVIEW_SELECT_CLASS}
-                value={lightColor}
-                onChange={(event) => onLightColorChange(event.target.value)}
-                data-testid="intake-v6-light-color"
-              >
-                {allowedLightColors.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>Culoare lumina</span>
+                  <select
+                    className={REVIEW_SELECT_CLASS}
+                    value={lightColor}
+                    onChange={(event) => onLightColorChange(event.target.value)}
+                    data-testid="intake-v6-light-color"
+                  >
+                    {allowedLightColors.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
 
-            {isLedModules ? (
-              <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
-                <span className={REVIEW_FIELD_LABEL_CLASS}>Putere modul</span>
-                <select
-                  className={REVIEW_SELECT_CLASS}
-                  value={String(ledModulePowerW)}
-                  onChange={(event) =>
-                    onLedModulePowerWChange(normalizeIntakeV6LedModuleWattage(Number(event.target.value)))
-                  }
-                  data-testid="intake-v6-led-module-wattage"
-                >
-                  {allowedLedModulePowerW.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
+                {isLedModules ? (
+                  <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Putere modul</span>
+                    <select
+                      className={REVIEW_SELECT_CLASS}
+                      value={String(ledModulePowerW)}
+                      onChange={(event) =>
+                        onLedModulePowerWChange(normalizeIntakeV6LedModuleWattage(Number(event.target.value)))
+                      }
+                      data-testid="intake-v6-led-module-wattage"
+                    >
+                      {allowedLedModulePowerW.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
 
-            {showEmblemLighting ? (
-              <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
-                <span className={REVIEW_FIELD_LABEL_CLASS}>Iluminare emblemă</span>
-                <select
-                  className={REVIEW_SELECT_CLASS}
-                  value={emblemLightingMode}
-                  onChange={(event) =>
-                    onEmblemLightingChange(event.target.value as IntakeV6EmblemLightingMode)
-                  }
-                  data-testid="intake-v6-emblem-lighting-mode"
-                >
-                  {allowedEmblemLightingModes.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ) : null}
-          </div>
+                {showEmblemLighting ? (
+                  <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Iluminare emblemă</span>
+                    <select
+                      className={REVIEW_SELECT_CLASS}
+                      value={emblemLightingMode}
+                      onChange={(event) =>
+                        onEmblemLightingChange(event.target.value as IntakeV6EmblemLightingMode)
+                      }
+                      data-testid="intake-v6-emblem-lighting-mode"
+                    >
+                      {allowedEmblemLightingModes.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
+              </div>
 
-          <p className="text-[10px] text-slate-500">
-            {isLedModules ? "Module LED" : "Banda LED"} · {lightColorLabel(lightColor)} ·{" "}
-            {isLedModules
-              ? `${ledModulePowerW.toFixed(2)} W/modul`
-              : `${ledStripPowerWPerMl.toFixed(1)} W/ml`}
-            {estimatedLedWatts != null ? (
-              <>
-                {" "}
-                · consum{" "}
+              <p className="text-[10px] text-slate-500">
+                {isLedModules ? "Module LED" : "Banda LED"} · {lightColorLabel(lightColor)} ·{" "}
+                {isLedModules
+                  ? `${ledModulePowerW.toFixed(2)} W/modul`
+                  : `${ledStripPowerWPerMl.toFixed(1)} W/ml`}
+                {totalLedModuleCount != null ? (
+                  <>
+                    {" "}
+                    · module total{" "}
+                    <span className="font-medium tabular-nums text-slate-300" data-testid="intake-v6-led-total-modules-inline">
+                      {totalLedModuleCount} buc
+                    </span>
+                  </>
+                ) : null}
+              </p>
+            </section>
+          ) : null}
+
+          {!showLightingFields && totalLedModuleCount != null ? (
+            <p className="text-[10px] text-slate-500" data-testid="intake-v6-led-calc-readout">
+              Module LED (calc):{" "}
+              <span className="font-medium tabular-nums text-slate-300">{totalLedModuleCount} buc</span>
+              {estimatedLedWatts != null ? (
+                <>
+                  {" "}
+                  · consum{" "}
+                  <span className="font-medium tabular-nums text-slate-300">
+                    {estimatedLedWatts.toFixed(2)} W
+                  </span>
+                </>
+              ) : null}
+            </p>
+          ) : null}
+
+          {showElectricalFields ? (
+            <section className="space-y-2.5" data-testid="intake-v6-electrical-subsection">
+              <p className="text-[11px] font-semibold text-amber-200">Electrică</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>Sursa LED template</span>
+                  <select
+                    className={REVIEW_SELECT_CLASS}
+                    value={selectedPsuWatts ?? ""}
+                    onChange={(event) => {
+                      const raw = event.target.value;
+                      if (raw) onSelectedPsuChange(Number(raw));
+                    }}
+                    data-testid="intake-v6-selected-psu-watts"
+                  >
+                    <option value="">-</option>
+                    {allowedPsuWatts.map((watts) => (
+                      <option key={watts} value={watts}>
+                        {watts}W
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <p className="text-[10px] text-slate-500" data-testid="intake-v6-electrical-readout">
+                PSU (+{psuReservePercent}%):{" "}
                 <span className="font-medium tabular-nums text-slate-300">
-                  {estimatedLedWatts.toFixed(2)} W
+                  {requiredPsuWatts != null ? `${requiredPsuWatts.toFixed(2)} W` : "-"}
                 </span>
-              </>
-            ) : null}
-          </p>
+                {" · "}
+                surse: <span className="font-medium text-slate-300">{psuLabel}</span>
+                {psuAllocationStatus && psuAllocationStatus !== "ok" ? (
+                  <span className="text-amber-200"> · PSU: {psuAllocationStatus}</span>
+                ) : null}
+              </p>
+            </section>
+          ) : null}
 
           <IntakeV6TechnicalDetailsAccordion
             title="Detalii calcul LED"
             testId="intake-v6-led-calculation-details"
           >
             <div className="space-y-1 text-[10px] text-slate-400">
-              {isLedModules ? (
+              {showLightingFields && isLedModules ? (
                 <>
                   <p data-testid="intake-v6-led-letters-modules">
                     Module litere:{" "}
@@ -307,7 +380,7 @@ export default function IntakeV6ReviewLightingSection({
                     </strong>
                   </p>
                 </>
-              ) : (
+              ) : showLightingFields ? (
                 <>
                   <p data-testid="intake-v6-led-strip-rule">
                     Regulă bandă emblemă:{" "}
@@ -330,24 +403,28 @@ export default function IntakeV6ReviewLightingSection({
                     Banda total: <strong className="text-slate-200">{formatMl(totalLedStripLengthM)}</strong>
                   </p>
                 </>
-              )}
+              ) : null}
               <p>
                 Consum LED:{" "}
                 <strong className="text-slate-200">
                   {estimatedLedWatts != null ? `${estimatedLedWatts.toFixed(2)} W` : "-"}
                 </strong>
               </p>
-              <p>
-                PSU (+{psuReservePercent}%):{" "}
-                <strong className="text-slate-200">
-                  {requiredPsuWatts != null ? `${requiredPsuWatts.toFixed(2)} W` : "-"}
-                </strong>
-              </p>
-              <p>
-                Surse: <strong className="text-slate-200">{psuLabel}</strong>
-              </p>
-              {psuAllocationStatus && psuAllocationStatus !== "ok" ? (
-                <p className="text-amber-200">PSU: {psuAllocationStatus}</p>
+              {showElectricalFields ? (
+                <>
+                  <p>
+                    PSU (+{psuReservePercent}%):{" "}
+                    <strong className="text-slate-200">
+                      {requiredPsuWatts != null ? `${requiredPsuWatts.toFixed(2)} W` : "-"}
+                    </strong>
+                  </p>
+                  <p>
+                    Surse: <strong className="text-slate-200">{psuLabel}</strong>
+                  </p>
+                  {psuAllocationStatus && psuAllocationStatus !== "ok" ? (
+                    <p className="text-amber-200">PSU: {psuAllocationStatus}</p>
+                  ) : null}
+                </>
               ) : null}
             </div>
           </IntakeV6TechnicalDetailsAccordion>

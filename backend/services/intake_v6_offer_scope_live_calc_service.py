@@ -12,6 +12,15 @@ from schemas.intake_v4 import (
     IntakeV4MaterialBreakdownWarning,
     IntakeV4MaterialQuantityRow,
 )
+from services.offer_scope_led_subscope_service import (
+    LedSubscope,
+    commercial_line_led_subscope,
+    led_subscope_row_allowed,
+    logical_list_line_led_subscope,
+    material_led_subscope,
+    operation_led_subscope,
+    resolve_sold_led_subscopes,
+)
 from services.offer_scope_resolver_service import (
     _apply_conditional_gates,
     extract_offer_scope,
@@ -97,6 +106,10 @@ def runtime_module_for_operation_row(row: IntakeV4CncOperationRow | IntakeV4Edge
         return "modelare_cant"
     key = str(getattr(row, "key", "") or "").strip().lower()
     tpl = str(getattr(row, "tpl_operation_key", "") or "").strip().lower()
+    dossier = str(getattr(row, "dossier_operation_key", "") or "").strip().lower()
+    op_code = dossier or tpl or key
+    if operation_led_subscope(op_code) is not None:
+        return "sistem_led"
     if key.startswith("cnc_face") or tpl.startswith("cnc_face"):
         return "debitare_fata"
     if key.startswith("cnc_back") or tpl.startswith("cnc_back"):
@@ -112,17 +125,46 @@ def runtime_module_for_operation_row(row: IntakeV4CncOperationRow | IntakeV4Edge
     return None
 
 
+def _operation_led_subscope_for_row(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow) -> str | None:
+    if isinstance(row, IntakeV4EdgeCantOperationRow):
+        return None
+    for candidate in (
+        getattr(row, "dossier_operation_key", None),
+        getattr(row, "tpl_operation_key", None),
+        getattr(row, "key", None),
+    ):
+        sub = operation_led_subscope(str(candidate or ""))
+        if sub:
+            return sub
+    return None
+
+
 def _row_allowed(
     *,
     runtime_module: str | None,
     use_legacy: bool,
     active_modules: set[str],
+    sold_led_subscopes: frozenset[LedSubscope] | None = None,
+    material_key: str | None = None,
+    operation_subscope: LedSubscope | None = None,
+    line_id: str | None = None,
 ) -> bool:
     if use_legacy:
         return True
     if runtime_module is None:
         return False
-    return runtime_module in active_modules
+    if runtime_module not in active_modules:
+        return False
+    if runtime_module != "sistem_led" or sold_led_subscopes is None:
+        return True
+    row_subscope = None
+    if material_key is not None:
+        row_subscope = material_led_subscope(material_key)
+    elif operation_subscope is not None:
+        row_subscope = operation_subscope
+    elif line_id is not None:
+        row_subscope = logical_list_line_led_subscope(line_id)
+    return led_subscope_row_allowed(row_subscope, sold_led_subscopes=sold_led_subscopes)
 
 
 def _material_cost(row: IntakeV4MaterialQuantityRow) -> float:
@@ -161,6 +203,8 @@ def filter_material_breakdown_by_offer_scope(
     if use_legacy:
         return breakdown
 
+    sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
+
     material_rows = [
         row
         for row in breakdown.material_rows
@@ -168,6 +212,8 @@ def filter_material_breakdown_by_offer_scope(
             runtime_module=runtime_module_for_material_key(row.material_key),
             use_legacy=use_legacy,
             active_modules=active_modules,
+            sold_led_subscopes=sold_led_subscopes,
+            material_key=row.material_key,
         )
     ]
     consumable_rows = [
@@ -177,6 +223,8 @@ def filter_material_breakdown_by_offer_scope(
             runtime_module=runtime_module_for_material_key(row.material_key),
             use_legacy=use_legacy,
             active_modules=active_modules,
+            sold_led_subscopes=sold_led_subscopes,
+            material_key=row.material_key,
         )
     ]
     operation_rows = [
@@ -186,6 +234,8 @@ def filter_material_breakdown_by_offer_scope(
             runtime_module=runtime_module_for_operation_row(row),
             use_legacy=use_legacy,
             active_modules=active_modules,
+            sold_led_subscopes=sold_led_subscopes,
+            operation_subscope=_operation_led_subscope_for_row(row),
         )
     ]
     edge_cant_operation_rows = [
@@ -195,6 +245,7 @@ def filter_material_breakdown_by_offer_scope(
             runtime_module="modelare_cant",
             use_legacy=use_legacy,
             active_modules=active_modules,
+            sold_led_subscopes=sold_led_subscopes,
         )
     ]
 
@@ -248,11 +299,21 @@ def filter_logical_list_rows_by_offer_scope(
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
     if use_legacy:
         return rows
+    sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for row in rows:
         module_code = row.get("module_code")
-        if isinstance(module_code, str) and module_code in active_modules:
-            filtered.append(row)
+        if not isinstance(module_code, str) or module_code not in active_modules:
+            continue
+        if not _row_allowed(
+            runtime_module=module_code,
+            use_legacy=use_legacy,
+            active_modules=active_modules,
+            sold_led_subscopes=sold_led_subscopes,
+            line_id=str(row.get("line_id") or ""),
+        ):
+            continue
+        filtered.append(row)
     return filtered
 
 
@@ -265,9 +326,15 @@ def filter_commercial_line_items_by_offer_scope(
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
     if use_legacy:
         return line_items
+    sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for line in line_items:
         module_code = line.get("module_code")
-        if isinstance(module_code, str) and module_code in active_modules:
-            filtered.append(line)
+        if not isinstance(module_code, str) or module_code not in active_modules:
+            continue
+        if module_code == "sistem_led" and sold_led_subscopes is not None:
+            sub = commercial_line_led_subscope(str(line.get("code") or ""))
+            if not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+                continue
+        filtered.append(line)
     return filtered

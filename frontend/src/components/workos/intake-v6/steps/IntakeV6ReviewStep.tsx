@@ -1957,6 +1957,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 allowedLightColors={templateContract.allowedLightColors}
                 allowedLedModulePowerW={templateContract.allowedLedModulePowerW}
                 allowedEmblemLightingModes={templateContract.allowedEmblemLightingModes}
+                showLightingFields={soldScopeVisibility.lighting}
+                showElectricalFields={soldScopeVisibility.electrical}
+                selectedPsuWatts={form.selected_psu_watts}
+                onSelectedPsuChange={updateSelectedPsuWatts}
+                allowedPsuWatts={templateContract.allowedPsuWatts}
               />
             </IntakeV6ReviewSectionShell>
           </div>
@@ -2103,28 +2108,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     {templateContract.allowedMountingBarProfiles.map((profile) => (
                       <option key={profile} value={profile}>
                         {profile}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
-
-              {form.illuminated !== false ? (
-                <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Sursa LED template</span>
-                  <select
-                    className={REVIEW_SELECT_CLASS}
-                    value={form.selected_psu_watts ?? ""}
-                    onChange={(event) => {
-                      const raw = event.target.value;
-                      if (raw) updateSelectedPsuWatts(Number(raw));
-                    }}
-                    data-testid="intake-v6-selected-psu-watts"
-                  >
-                    <option value="">-</option>
-                    {templateContract.allowedPsuWatts.map((watts) => (
-                      <option key={watts} value={watts}>
-                        {watts}W
                       </option>
                     ))}
                   </select>

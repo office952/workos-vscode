@@ -1,7 +1,18 @@
 export type OfferScopeMode = "full_product" | "component_subset";
-export type SoldModuleCode = "FACE" | "RETURN-CANT" | "BACK";
+export type SoldModuleCode =
+  | "FACE"
+  | "RETURN-CANT"
+  | "BACK"
+  | "LIGHTING"
+  | "ELECTRICAL";
 
-export const SOLD_MODULE_ORDER: readonly SoldModuleCode[] = ["FACE", "RETURN-CANT", "BACK"];
+export const SOLD_MODULE_ORDER: readonly SoldModuleCode[] = [
+  "FACE",
+  "RETURN-CANT",
+  "BACK",
+  "LIGHTING",
+  "ELECTRICAL",
+];
 
 export type PersistedOfferScopeState = {
   mode: OfferScopeMode;
@@ -17,7 +28,13 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 }
 
 export function isSoldModuleCode(value: string): value is SoldModuleCode {
-  return value === "FACE" || value === "RETURN-CANT" || value === "BACK";
+  return (
+    value === "FACE" ||
+    value === "RETURN-CANT" ||
+    value === "BACK" ||
+    value === "LIGHTING" ||
+    value === "ELECTRICAL"
+  );
 }
 
 export function normalizeSoldModules(codes: readonly string[]): SoldModuleCode[] {

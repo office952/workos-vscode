@@ -92,8 +92,22 @@ def test_calc_modules_never_in_runtime_sold() -> None:
         assert calc not in result.runtime_sold_modules
 
 
-def test_deferred_lighting_rejected_in_v1() -> None:
+def test_lighting_subset_resolves() -> None:
     scope = OfferScopeInput(mode="component_subset", sold_modules=["LIGHTING"])
+    result = resolve_offer_scope(scope)
+    assert not result.validation_errors
+    assert result.runtime_sold_modules == {"sistem_led"}
+
+
+def test_electrical_subset_includes_led_count_calc() -> None:
+    scope = OfferScopeInput(mode="component_subset", sold_modules=["ELECTRICAL"])
+    result = resolve_offer_scope(scope)
+    assert not result.validation_errors
+    assert "LED_COUNT" in result.calc_modules
+
+
+def test_deferred_finish_rejected_in_v1() -> None:
+    scope = OfferScopeInput(mode="component_subset", sold_modules=["FINISH"])
     result = resolve_offer_scope(scope)
     assert any("DEFERRED_SOLD_MODULE" in e for e in result.validation_errors)
 

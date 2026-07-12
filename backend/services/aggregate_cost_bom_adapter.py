@@ -303,42 +303,92 @@ def _resolve_material_code(
     return material_code, [], None
 
 
-def _material_module_active(mat: ProductAggregateMaterial, active_modules: set[str]) -> bool:
+def _sold_led_subscopes_from_quote(quote_input: dict[str, Any] | None) -> frozenset | None:
+    if not quote_input:
+        return None
+    from services.offer_scope_led_subscope_service import resolve_sold_led_subscopes
+
+    return resolve_sold_led_subscopes(quote_input, quote_input)
+
+
+def _material_module_active(
+    mat: ProductAggregateMaterial,
+    active_modules: set[str],
+    sold_led_subscopes: frozenset | None = None,
+) -> bool:
+    from services.offer_scope_led_subscope_service import (
+        aggregate_material_led_subscope,
+        led_runtime_module_bucket,
+        led_subscope_row_allowed,
+    )
+
     if _is_aggregate_linked_logo_material(mat):
         return True
-    if mat.mini_module_code:
-        return mat.mini_module_code in active_modules
-    if mat.component_ref:
+    effective_mini = led_runtime_module_bucket(mat.mini_module_code)
+    if effective_mini:
+        if effective_mini not in active_modules:
+            return False
+    elif mat.component_ref:
         mod = DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref)
-        if mod:
-            return mod in active_modules
-    if mat.provenance == "linked_module" and mat.source_template_code:
+        if mod and mod not in active_modules:
+            return False
+    elif mat.provenance == "linked_module" and mat.source_template_code:
         if "PREMOUNT" in mat.source_template_code and "structura_suport" not in active_modules:
             return False
         if "VOLUM-ALUMINIU" in mat.source_template_code:
             return "modelare_cant" in active_modules
-    if mat.provenance == "parent":
+    elif mat.provenance == "parent":
         mod = DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
-        return mod in active_modules if mod else True
+        if mod and mod not in active_modules:
+            return False
+    elif mat.mini_module_code and mat.mini_module_code not in active_modules:
+        return False
+
+    if sold_led_subscopes is not None:
+        sub = aggregate_material_led_subscope(mat.material_code)
+        if sub is not None and not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+            return False
     return True
 
 
-def _operation_module_active(op: ProductAggregateOperation, active_modules: set[str]) -> bool:
+def _operation_module_active(
+    op: ProductAggregateOperation,
+    active_modules: set[str],
+    sold_led_subscopes: frozenset | None = None,
+) -> bool:
+    from services.offer_scope_led_subscope_service import (
+        led_runtime_module_bucket,
+        led_subscope_row_allowed,
+        operation_led_subscope,
+    )
+
     if _is_aggregate_linked_logo_operation(op):
         return True
-    if op.mini_module_code:
-        return op.mini_module_code in active_modules
-    if op.operation_code in GEOMETRY_GATE_OPERATIONS:
-        return "geometry_svg" in active_modules
-    if op.provenance == "linked_module" and op.source_template_code:
+    effective_mini = led_runtime_module_bucket(op.mini_module_code)
+    if effective_mini:
+        if effective_mini not in active_modules:
+            return False
+    elif op.operation_code in GEOMETRY_GATE_OPERATIONS:
+        if "geometry_svg" not in active_modules:
+            return False
+    elif op.provenance == "linked_module" and op.source_template_code:
         if "PREMOUNT" in (op.source_template_code or ""):
-            return "structura_suport" in active_modules
-        if "VOLUM-ALUMINIU" in (op.source_template_code or ""):
-            return "modelare_cant" in active_modules
-    if op.component_ref:
+            if "structura_suport" not in active_modules:
+                return False
+        elif "VOLUM-ALUMINIU" in (op.source_template_code or ""):
+            if "modelare_cant" not in active_modules:
+                return False
+    elif op.component_ref:
         mod = DOSSIER_COMPONENT_TO_MODULE.get(op.component_ref)
-        if mod:
-            return mod in active_modules
+        if mod and mod not in active_modules:
+            return False
+    elif op.mini_module_code and op.mini_module_code not in active_modules:
+        return False
+
+    if sold_led_subscopes is not None:
+        sub = operation_led_subscope(op.operation_code)
+        if sub is not None and not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+            return False
     return True
 
 
@@ -467,6 +517,7 @@ def _build_inventory_alignment(
     costable_materials: list[CostBomCostableMaterial],
     missing_pricing: list[CostBomMissingPricing],
     values: dict[str, Any],
+    sold_led_subscopes: frozenset | None = None,
 ) -> tuple[
     list[InventoryUsageEntry],
     list[str],
@@ -489,7 +540,7 @@ def _build_inventory_alignment(
 
     for mat in aggregate.materials:
         mod = _material_module_code(mat)
-        module_active = _material_module_active(mat, active_modules)
+        module_active = _material_module_active(mat, active_modules, sold_led_subscopes)
         resolved, _, variant_err = _resolve_material_code(mat.material_code, values)
         availability, _ = _check_material_pricing(resolved, material_rates, variant_err)
         classification, notes, owner_step = _classify_material_inventory(
@@ -868,6 +919,7 @@ class AggregateCostBomAdapter:
         values = _canonical_and_quote_input(pd, quote_input)
 
         active_modules = _active_module_codes(pd, quote_input)
+        sold_led_subscopes = _sold_led_subscopes_from_quote(quote_input)
         inactive_modules_set = _inactive_module_codes(pd)
 
         active_module_refs: list[CostBomModuleRef] = []
@@ -1007,7 +1059,7 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            if not _material_module_active(mat, active_modules):
+            if not _material_module_active(mat, active_modules, sold_led_subscopes):
                 mod = mat.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
                 skipped.append(
                     CostBomSkippedItem(
@@ -1110,7 +1162,7 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            if not _operation_module_active(op, active_modules):
+            if not _operation_module_active(op, active_modules, sold_led_subscopes):
                 skipped.append(
                     CostBomSkippedItem(
                         item_type="operation",
@@ -1191,6 +1243,7 @@ class AggregateCostBomAdapter:
             costable_materials=costable_materials,
             missing_pricing=missing_pricing,
             values=values,
+            sold_led_subscopes=sold_led_subscopes,
         )
 
         (
