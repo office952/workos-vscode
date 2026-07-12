@@ -15,6 +15,9 @@ from tests.test_aggregate_cost_bom_adapter import INVENTORY_CATALOG, SAMPLE_RATE
 
 ROOT = "TPL-VOLUMETRIC-LETTERS_v2"
 
+LOGO_INSTANCE_A = "logo_instance_001"
+LOGO_INSTANCE_B = "logo_instance_002"
+
 LOGO_MATERIAL_RATES = {
     **SAMPLE_RATES,
     "print_media": 5.0,
@@ -42,6 +45,19 @@ def _layer(key: str, name: str, role: str) -> dict:
     }
 
 
+def _artwork_finish(*, layer_key: str, layer_name: str, area_m2: float, confirmed: bool = True) -> dict:
+    return {
+        "layer_key": layer_key,
+        "layer_name": layer_name,
+        "display_name": layer_name,
+        "execution_type": "print_laminate",
+        "color_mode": "polychrome",
+        "return_depth_mm": 60,
+        "estimated_area_m2": area_m2,
+        "confirmed": confirmed,
+    }
+
+
 def gradi_payload(*, finish_confirmed: bool = True) -> dict:
     payload = {
         "analysis_ready": True,
@@ -52,8 +68,8 @@ def gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "confirmation_status": "complete",
             "layers": [
                 _layer("letters", "Litere GRADI", "face"),
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
-                _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+                _layer(LOGO_INSTANCE_A, "Logo 1", "printed_artwork"),
+                _layer(LOGO_INSTANCE_B, "Logo 2", "printed_artwork"),
             ],
             "layer_bindings": [],
             "warnings": [],
@@ -64,24 +80,18 @@ def gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "return_depth_mm": 60,
             "return_finish_type": "white_aluminum",
             "artwork_finishes": [
-                {
-                    "layer_key": "logo-stanga",
-                    "layer_name": "logo stanga",
-                    "execution_type": "print_laminate",
-                    "color_mode": "polychrome",
-                    "return_depth_mm": 60,
-                    "estimated_area_m2": 0.42,
-                    "confirmed": finish_confirmed,
-                },
-                {
-                    "layer_key": "logo-dreapta",
-                    "layer_name": "logo dreapta",
-                    "execution_type": "print_laminate",
-                    "color_mode": "polychrome",
-                    "return_depth_mm": 60,
-                    "estimated_area_m2": 0.38,
-                    "confirmed": finish_confirmed,
-                },
+                _artwork_finish(
+                    layer_key=LOGO_INSTANCE_A,
+                    layer_name="Logo 1",
+                    area_m2=0.42,
+                    confirmed=finish_confirmed,
+                ),
+                _artwork_finish(
+                    layer_key=LOGO_INSTANCE_B,
+                    layer_name="Logo 2",
+                    area_m2=0.38,
+                    confirmed=finish_confirmed,
+                ),
             ],
         },
     }

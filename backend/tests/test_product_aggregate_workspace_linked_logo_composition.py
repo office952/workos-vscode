@@ -53,8 +53,8 @@ def _gradi_payload(*, with_bindings: list[dict] | None = None, finish_confirmed:
             "confirmation_status": "complete",
             "layers": [
                 _layer("letters", "Litere GRADI", "face"),
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
-                _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+                _layer("logo_instance_001", "Logo 1", "printed_artwork"),
+                _layer("logo_instance_002", "Logo 2", "printed_artwork"),
             ],
             "layer_bindings": with_bindings or [],
             "warnings": [],
@@ -66,16 +66,16 @@ def _gradi_payload(*, with_bindings: list[dict] | None = None, finish_confirmed:
             "return_finish_type": "white_aluminum",
             "artwork_finishes": [
                 {
-                    "layer_key": "logo-stanga",
-                    "layer_name": "logo stanga",
+                    "layer_key": "logo_instance_001",
+                    "layer_name": "Logo 1",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
                     "confirmed": finish_confirmed,
                 },
                 {
-                    "layer_key": "logo-dreapta",
-                    "layer_name": "logo dreapta",
+                    "layer_key": "logo_instance_002",
+                    "layer_name": "Logo 2",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
@@ -168,10 +168,10 @@ async def test_two_confirmed_segments_produce_two_namespaced_logo_instances(aggr
 
     assert composed is not None
     logo_component_ids = [component.component_id for component in composed.components if "::" in component.component_id]
-    assert "comp_logo_face::logo-stanga" in logo_component_ids
-    assert "comp_logo_face::logo-dreapta" in logo_component_ids
-    assert "comp_logo_finish::logo-stanga" in logo_component_ids
-    assert "comp_logo_finish::logo-dreapta" in logo_component_ids
+    assert "comp_logo_face::logo_instance_001" in logo_component_ids
+    assert "comp_logo_face::logo_instance_002" in logo_component_ids
+    assert "comp_logo_finish::logo_instance_001" in logo_component_ids
+    assert "comp_logo_finish::logo_instance_002" in logo_component_ids
     assert any(warning.code == WARNING_COMPOSITION_APPLIED for warning in composed.warnings)
 
 
@@ -198,14 +198,14 @@ async def test_missing_finish_keeps_partial_logo_structure_without_materials(agg
 
     assert composed is not None
     partial_components = [
-        component for component in composed.components if component.component_id.endswith("::logo-stanga")
+        component for component in composed.components if component.component_id.endswith("::logo_instance_001")
     ]
     assert partial_components
     assert all(component.status == "partial" for component in partial_components)
     logo_materials = [
         material
         for material in composed.materials
-        if _text(material.source_template_code) == LOGO and "logo-stanga" in _text(material.component_ref)
+        if _text(material.source_template_code) == LOGO and "logo_instance_001" in _text(material.component_ref)
     ]
     assert logo_materials == []
     assert any(warning.code == WARNING_FINISH_PARTIAL for warning in composed.warnings)
@@ -224,12 +224,12 @@ async def test_confirmed_finish_includes_per_segment_logo_materials(aggregate_wo
     stanga_refs = {
         material.component_ref
         for material in composed.materials
-        if material.source_template_code == LOGO and material.component_ref and "logo-stanga" in material.component_ref
+        if material.source_template_code == LOGO and material.component_ref and "logo_instance_001" in material.component_ref
     }
     dreapta_refs = {
         material.component_ref
         for material in composed.materials
-        if material.source_template_code == LOGO and material.component_ref and "logo-dreapta" in material.component_ref
+        if material.source_template_code == LOGO and material.component_ref and "logo_instance_002" in material.component_ref
     }
     assert stanga_refs
     assert dreapta_refs
@@ -250,13 +250,13 @@ async def test_compose_uses_product_definition_not_direct_binding_reads(aggregat
         pd=pd,
         letters_aggregate=letters,
         logo_aggregates_by_segment={
-            "logo-stanga": logo,
-            "logo-dreapta": logo,
+            "logo_instance_001": logo,
+            "logo_instance_002": logo,
         },
         workspace_id=workspace_id,
     )
-    assert any(component.component_id == "comp_logo_face::logo-stanga" for component in composed.components)
-    assert any(component.component_id == "comp_logo_face::logo-dreapta" for component in composed.components)
+    assert any(component.component_id == "comp_logo_face::logo_instance_001" for component in composed.components)
+    assert any(component.component_id == "comp_logo_face::logo_instance_002" for component in composed.components)
 
 
 @pytest.mark.asyncio
@@ -282,8 +282,8 @@ async def test_task_rules_compose_per_segment(aggregate_workspace_db) -> None:
         if rule.trigger_condition and rule.trigger_condition.startswith("linked_segment:")
     ]
     segment_keys = {rule.trigger_condition.split(":", 1)[1] for rule in logo_rules}
-    assert "logo-stanga" in segment_keys
-    assert "logo-dreapta" in segment_keys
+    assert "logo_instance_001" in segment_keys
+    assert "logo_instance_002" in segment_keys
 
 
 def test_get_endpoint_without_workspace_id_unchanged(volumetric_auth_client):
@@ -313,6 +313,6 @@ def test_get_endpoint_with_workspace_id_composes_logo_segments(volumetric_auth_c
     assert response.status_code == 200
     body = response.json()
     component_ids = {component["component_id"] for component in body["components"]}
-    assert "comp_logo_face::logo-stanga" in component_ids
-    assert "comp_logo_face::logo-dreapta" in component_ids
+    assert "comp_logo_face::logo_instance_001" in component_ids
+    assert "comp_logo_face::logo_instance_002" in component_ids
     assert any(warning["code"] == WARNING_COMPOSITION_APPLIED for warning in body.get("warnings", []))

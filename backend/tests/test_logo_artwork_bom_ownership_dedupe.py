@@ -21,6 +21,8 @@ from services.template_architecture_scope import (
 )
 from tests.eic_patched_bom_builder import PatchedAggregateCostBomBuilder
 from tests.eic_workspace_logo_fixtures import (
+    LOGO_INSTANCE_A,
+    LOGO_INSTANCE_B,
     LOGO_INVENTORY,
     LOGO_MATERIAL_RATES,
     ROOT,
@@ -130,7 +132,7 @@ def _artwork_operations(bom, *, segment: str):
 async def test_per_segment_artwork_material_cardinality(ownership_bom_builder, ownership_db) -> None:
     workspace_id = await _add_workspace(ownership_db, _confirmed_bindings_payload())
     bom = await ownership_bom_builder(workspace_id=workspace_id)
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         mats = _artwork_materials(bom, segment=segment)
         assert len(mats) == 2
         assert {m.material_code for m in mats} == ARTWORK_MATS
@@ -141,7 +143,7 @@ async def test_per_segment_artwork_material_cardinality(ownership_bom_builder, o
 async def test_per_segment_artwork_operation_cardinality(ownership_bom_builder, ownership_db) -> None:
     workspace_id = await _add_workspace(ownership_db, _confirmed_bindings_payload())
     bom = await ownership_bom_builder(workspace_id=workspace_id)
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         ops = _artwork_operations(bom, segment=segment)
         assert len(ops) == 3
         assert {o.operation_code for o in ops} == ARTWORK_OPS
@@ -152,7 +154,7 @@ async def test_per_segment_artwork_operation_cardinality(ownership_bom_builder, 
 async def test_face_component_does_not_emit_artwork_rows(ownership_bom_builder, ownership_db) -> None:
     workspace_id = await _add_workspace(ownership_db, _confirmed_bindings_payload())
     bom = await ownership_bom_builder(workspace_id=workspace_id)
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         face_artwork_mats = [
             m
             for m in _logo_materials(bom, segment=segment)
@@ -184,10 +186,10 @@ async def test_two_segments_remain_independent(ownership_bom_builder, ownership_
     workspace_id = await _add_workspace(ownership_db, _confirmed_bindings_payload())
     bom = await ownership_bom_builder(workspace_id=workspace_id)
     stanga_print = [
-        m for m in _artwork_materials(bom, segment="logo-stanga") if m.material_code == "print_media"
+        m for m in _artwork_materials(bom, segment="logo_instance_001") if m.material_code == "print_media"
     ]
     dreapta_print = [
-        m for m in _artwork_materials(bom, segment="logo-dreapta") if m.material_code == "print_media"
+        m for m in _artwork_materials(bom, segment="logo_instance_002") if m.material_code == "print_media"
     ]
     assert len(stanga_print) == 1
     assert len(dreapta_print) == 1
@@ -201,8 +203,8 @@ async def test_partial_finish_emits_zero_artwork_rows(ownership_bom_builder, own
     payload["finish_setup"]["artwork_finishes"][1]["confirmed"] = False
     workspace_id = await _add_workspace(ownership_db, payload)
     bom = await ownership_bom_builder(workspace_id=workspace_id)
-    assert _artwork_materials(bom, segment="logo-stanga") == []
-    assert _artwork_operations(bom, segment="logo-stanga") == []
+    assert _artwork_materials(bom, segment="logo_instance_001") == []
+    assert _artwork_operations(bom, segment="logo_instance_001") == []
 
 
 @pytest.mark.asyncio
@@ -220,7 +222,7 @@ async def test_aggregate_matches_bom_cardinality(ownership_db) -> None:
     bom = await AggregateCostBomBuilderService(ownership_db).build_preview(ROOT, workspace_id=workspace_id)
     assert aggregate is not None
     assert bom is not None
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         agg_mats = [
             m
             for m in aggregate.materials
@@ -270,7 +272,7 @@ async def test_runtime_bom_inventory_probe_report(ownership_bom_builder, ownersh
     workspace_id = await _add_workspace(ownership_db, _confirmed_bindings_payload())
     bom = await ownership_bom_builder(workspace_id=workspace_id)
     report: list[str] = []
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         for concept in ("print_media", "laminate_media"):
             rows = [m for m in _artwork_materials(bom, segment=segment) if m.material_code == concept]
             report.append(f"segment={segment} concept={concept} count={len(rows)}")
@@ -286,7 +288,7 @@ async def test_runtime_bom_inventory_probe_report(ownership_bom_builder, ownersh
                     f"  component_ref={row.component_ref} source_template={row.source_template_code} provenance={row.provenance}"
                 )
     print("\n".join(report))
-    for segment in ("logo-stanga", "logo-dreapta"):
+    for segment in (LOGO_INSTANCE_A, LOGO_INSTANCE_B):
         assert len([m for m in _artwork_materials(bom, segment=segment) if m.material_code == "print_media"]) == 1
         assert len([m for m in _artwork_materials(bom, segment=segment) if m.material_code == "laminate_media"]) == 1
         assert len([o for o in _artwork_operations(bom, segment=segment) if o.operation_code == "logo_face_print"]) == 1

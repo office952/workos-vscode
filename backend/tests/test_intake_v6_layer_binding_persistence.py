@@ -58,8 +58,8 @@ def _gradi_payload(*, with_bindings: list[dict] | None = None) -> dict:
             "confirmation_status": "complete",
             "layers": [
                 _layer("letters", "Litere GRADI", "face"),
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
-                _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+                _layer("logo_instance_001", "Logo 1", "printed_artwork"),
+                _layer("logo_instance_002", "Logo 2", "printed_artwork"),
             ],
             "layer_bindings": with_bindings or [],
             "warnings": [],
@@ -71,16 +71,16 @@ def _gradi_payload(*, with_bindings: list[dict] | None = None) -> dict:
             "return_finish_type": "white_aluminum",
             "artwork_finishes": [
                 {
-                    "layer_key": "logo-stanga",
-                    "layer_name": "logo stanga",
+                    "layer_key": "logo_instance_001",
+                    "layer_name": "Logo 1",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
                     "confirmed": True,
                 },
                 {
-                    "layer_key": "logo-dreapta",
-                    "layer_name": "logo dreapta",
+                    "layer_key": "logo_instance_002",
+                    "layer_name": "Logo 2",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
@@ -138,7 +138,7 @@ def test_valid_logo_segments_create_one_binding_each() -> None:
 
     bindings = _bindings(payload)
     assert len(bindings) == 2
-    assert {binding["layer_key"] for binding in bindings} == {"logo-stanga", "logo-dreapta"}
+    assert {binding["layer_key"] for binding in bindings} == {"logo_instance_001", "logo_instance_002"}
 
 
 def test_two_segments_may_share_same_template_code() -> None:
@@ -187,7 +187,7 @@ def test_duplicate_segment_input_creates_single_row() -> None:
             "composition_item_id": "logo",
             "template_code": LOGO,
             "component_role": "volumetric_logo",
-            "source_layer_ids": ["logo-stanga", "logo-stanga", "logo-dreapta"],
+            "source_layer_ids": ["logo_instance_001", "logo_instance_001", "logo_instance_002"],
         }
     ]
 
@@ -195,7 +195,7 @@ def test_duplicate_segment_input_creates_single_row() -> None:
 
     bindings = _bindings(payload)
     assert len(bindings) == 2
-    assert [binding["layer_key"] for binding in bindings] == ["logo-dreapta", "logo-stanga"]
+    assert [binding["layer_key"] for binding in bindings] == ["logo_instance_001", "logo_instance_002"]
 
 
 def test_stable_ordering_is_preserved() -> None:
@@ -204,7 +204,7 @@ def test_stable_ordering_is_preserved() -> None:
 
     persist_logo_layer_bindings_from_composition_confirmation(payload, confirmed=True, confirmed_items=items)
 
-    assert [binding["layer_key"] for binding in _bindings(payload)] == ["logo-dreapta", "logo-stanga"]
+    assert [binding["layer_key"] for binding in _bindings(payload)] == ["logo_instance_001", "logo_instance_002"]
 
 
 def test_no_binding_written_before_confirmation() -> None:
@@ -272,7 +272,7 @@ def test_missing_finish_blocker_remains_independent() -> None:
         workspace_payload=payload,
         linked_template_composition=_linked_template_composition(),
     )
-    logo_stanga = next(segment for segment in linked["segments"] if segment["segment_key"] == "logo-stanga")
+    logo_stanga = next(segment for segment in linked["segments"] if segment["segment_key"] == "logo_instance_001")
     codes = [blocker["code"] for blocker in logo_stanga["product_truth_readiness"]["blockers"]]
     assert "LINKED_TEMPLATE_BINDING_MISSING" not in codes
     assert "LINKED_SEGMENT_FINISH_MISSING" in codes
@@ -282,7 +282,7 @@ def test_suggested_binding_upgrades_to_confirmed_on_reconfirm() -> None:
     payload = _gradi_payload(
         with_bindings=[
             {
-                "layer_key": "logo-stanga",
+                "layer_key": "logo_instance_001",
                 "target_template_code": LOGO,
                 "binding_status": "suggested",
                 "suggested_semantic_role": "printed_artwork",
@@ -294,8 +294,8 @@ def test_suggested_binding_upgrades_to_confirmed_on_reconfirm() -> None:
     persist_logo_layer_bindings_from_composition_confirmation(payload, confirmed=True, confirmed_items=items)
 
     bindings = {binding["layer_key"]: binding for binding in _bindings(payload)}
-    assert bindings["logo-stanga"]["binding_status"] == "confirmed"
-    assert bindings["logo-dreapta"]["binding_status"] == "confirmed"
+    assert bindings["logo_instance_001"]["binding_status"] == "confirmed"
+    assert bindings["logo_instance_002"]["binding_status"] == "confirmed"
 
 
 # --- Persistence integration tests ---
@@ -366,7 +366,7 @@ async def test_binding_survives_workspace_reload(db_session) -> None:
     reloaded = await get_intake_v6_workspace(db_session, workspace_id)
     layer_setup = reloaded.payload.get("layer_role_setup") or {}
     bindings = layer_setup.get("layer_bindings") or []
-    assert {binding["layer_key"] for binding in bindings} == {"logo-stanga", "logo-dreapta"}
+    assert {binding["layer_key"] for binding in bindings} == {"logo_instance_001", "logo_instance_002"}
     assert all(binding["binding_status"] == "confirmed" for binding in bindings)
 
 
@@ -398,9 +398,9 @@ async def test_product_definition_consumes_persisted_binding(volumetric_v2_db) -
     linked = preview.linked_template_runtime_segments
     assert linked is not None
     segments = {segment["segment_key"]: segment for segment in linked["segments"]}
-    assert segments["logo-stanga"]["binding_status"] == "confirmed"
-    assert segments["logo-dreapta"]["binding_status"] == "confirmed"
-    assert segments["logo-stanga"]["owning_template_code"] == LOGO
+    assert segments["logo_instance_001"]["binding_status"] == "confirmed"
+    assert segments["logo_instance_002"]["binding_status"] == "confirmed"
+    assert segments["logo_instance_001"]["owning_template_code"] == LOGO
     for segment in segments.values():
         codes = [blocker["code"] for blocker in segment["product_truth_readiness"]["blockers"]]
         assert "LINKED_TEMPLATE_BINDING_MISSING" not in codes
@@ -412,7 +412,7 @@ def test_recommendation_does_not_write_bindings() -> None:
         "layer_role_setup": {
             "confirmation_status": "complete",
             "layers": [
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
+                _layer("logo_instance_001", "Logo 1", "printed_artwork"),
             ],
             "layer_bindings": [],
         },

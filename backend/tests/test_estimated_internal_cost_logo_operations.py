@@ -79,7 +79,7 @@ def _letter_operation_lines(preview):
 def test_linked_logo_operation_filter_accepts_namespaced_logo_row() -> None:
     op = CostBomCostableOperation(
         operation_code="logo_face_print",
-        component_ref="comp_logo_finish::logo-stanga",
+        component_ref="comp_logo_finish::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
@@ -117,8 +117,8 @@ def test_artwork_print_uses_same_segment_area_not_letters() -> None:
     payload = {
         "finish_setup": {
             "artwork_finishes": [
-                {"layer_key": "logo-stanga", "estimated_area_m2": 0.42},
-                {"layer_key": "logo-dreapta", "estimated_area_m2": 0.38},
+                {"layer_key": "logo_instance_001", "estimated_area_m2": 0.42},
+                {"layer_key": "logo_instance_002", "estimated_area_m2": 0.38},
             ]
         },
         "quote_geometry": {"letter_face_area_m2": 3.05},
@@ -126,14 +126,14 @@ def test_artwork_print_uses_same_segment_area_not_letters() -> None:
     op = CostBomCostableOperation(
         operation_code="logo_face_print",
         formula_id="logo_area",
-        component_ref="comp_logo_finish::logo-stanga",
+        component_ref="comp_logo_finish::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
     qty, _ = _estimate_logo_operation_quantity(op, payload, payload)
     assert qty == pytest.approx(0.42)
 
-    op_dreapta = op.model_copy(update={"component_ref": "comp_logo_finish::logo-dreapta"})
+    op_dreapta = op.model_copy(update={"component_ref": "comp_logo_finish::logo_instance_002"})
     qty_dreapta, _ = _estimate_logo_operation_quantity(op_dreapta, payload, payload)
     assert qty_dreapta == pytest.approx(0.38)
 
@@ -142,7 +142,7 @@ def test_cnc_operation_does_not_use_artwork_area() -> None:
     payload = {
         "finish_setup": {
             "artwork_finishes": [
-                {"layer_key": "logo-stanga", "estimated_area_m2": 0.42},
+                {"layer_key": "logo_instance_001", "estimated_area_m2": 0.42},
             ]
         },
         "quote_geometry": {"letter_face_area_m2": 3.05},
@@ -150,7 +150,7 @@ def test_cnc_operation_does_not_use_artwork_area() -> None:
     op = CostBomCostableOperation(
         operation_code="logo_face_cnc_cut",
         formula_id="logo_area",
-        component_ref="comp_logo_face::logo-stanga",
+        component_ref="comp_logo_face::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
@@ -162,14 +162,14 @@ def test_cnc_operation_uses_segment_geometry_area_when_present() -> None:
     payload = {
         "finish_setup": {
             "artwork_finishes": [
-                {"layer_key": "logo-stanga", "estimated_area_m2": 0.42, "svg_area_m2": 0.51},
+                {"layer_key": "logo_instance_001", "estimated_area_m2": 0.42, "svg_area_m2": 0.51},
             ]
         }
     }
     op = CostBomCostableOperation(
         operation_code="logo_face_cnc_cut",
         formula_id="logo_area",
-        component_ref="comp_logo_face::logo-stanga",
+        component_ref="comp_logo_face::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
@@ -182,14 +182,14 @@ def test_led_operation_uses_segment_module_count() -> None:
     payload = {
         "finish_setup": {
             "artwork_finishes": [
-                {"layer_key": "logo-stanga", "emblem_led_module_count": 4},
+                {"layer_key": "logo_instance_001", "emblem_led_module_count": 4},
             ]
         }
     }
     op = CostBomCostableOperation(
         operation_code="logo_led_install",
         formula_id="logo_led_modules",
-        component_ref="comp_logo_lighting::logo-stanga",
+        component_ref="comp_logo_lighting::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
@@ -260,8 +260,8 @@ async def test_two_logo_segments_produce_separate_operation_lines(eic_logo_ops_s
     print_ops = [line for line in logo_ops if line.code == "operation_logo_face_print"]
     assert len(print_ops) == 2
     refs = {line.component_code for line in print_ops}
-    assert "comp_logo_finish::logo-stanga" in refs
-    assert "comp_logo_finish::logo-dreapta" in refs
+    assert "comp_logo_finish::logo_instance_001" in refs
+    assert "comp_logo_finish::logo_instance_002" in refs
 
 
 @pytest.mark.asyncio

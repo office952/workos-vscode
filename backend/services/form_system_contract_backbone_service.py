@@ -674,7 +674,7 @@ def _linked_template_composition() -> dict[str, Any]:
                         "payload.finish_setup.artwork_finishes",
                     ],
                     "expected_layer_role": "printed_artwork",
-                    "notes": "The backbone service has no workspace runtime payload. Segment keys such as logo-stanga or logo-dreapta must come from the Intake V6 workspace payload.",
+                    "notes": "The backbone service has no workspace runtime payload. Segment keys must come from stable neutral Intake V6 layer instance IDs in the workspace payload (for example logo_instance_001). Position labels are not canonical identities.",
                 },
                 "segments": [],
                 "product_truth_path": "linked_templates.logo",

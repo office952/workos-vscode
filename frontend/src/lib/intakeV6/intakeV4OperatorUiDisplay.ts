@@ -8,7 +8,10 @@ const PRINT_OPERATION_TYPES = new Set(["print_vinyl", "lamination", "vinyl_appli
 
 const ADHESIVE_MATERIAL_KEY_HINTS = ["adhesive", "adeziv"];
 
-const POSITIONAL_LOGO_PATTERN = /logo(?:\s|_|-)*(?:stanga|dreapta|centru|center|middle|left|right|sus|jos|top|bottom)/i;
+import {
+  isLogoLayerIdentity,
+  isPositionalLogoIdentity,
+} from "@/lib/intakeV6/layerInstanceIdentity";
 
 type OperatorLayerIdentity = {
   id?: string | null;
@@ -35,9 +38,7 @@ export function isPositionalLogoLayer(
   layerId: string | null | undefined,
   layerName?: string | null,
 ): boolean {
-  const id = normalizeOperatorLayerToken(layerId);
-  const name = normalizeOperatorLayerToken(layerName);
-  return POSITIONAL_LOGO_PATTERN.test(id) || POSITIONAL_LOGO_PATTERN.test(name);
+  return isPositionalLogoIdentity(layerId, layerName);
 }
 
 export function buildOperatorLogoLabelMap(
@@ -47,7 +48,7 @@ export function buildOperatorLogoLabelMap(
   let logoIndex = 0;
 
   for (const layer of layers) {
-    if (!isPositionalLogoLayer(layer.id ?? layer.layerKey, layer.name ?? layer.layerName)) {
+    if (!isLogoLayerIdentity(layer.id ?? layer.layerKey, layer.name ?? layer.layerName)) {
       continue;
     }
     logoIndex += 1;

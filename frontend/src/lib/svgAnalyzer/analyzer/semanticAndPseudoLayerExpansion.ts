@@ -5,6 +5,11 @@ import {
   letterSemanticForSolidFill,
 } from './anaMariaLetterSemantics'
 import {
+  deriveVisualPositionHint,
+  isNeutralLogoInstanceId,
+  nextNeutralLogoInstanceId,
+} from '@/lib/intakeV6/layerInstanceIdentity'
+import {
   isCorelInternalGroupId,
   isGenericLayerName,
   isLogoArtworkLayerName,
@@ -19,6 +24,7 @@ export interface LayerExpansionMeta {
   layerKind: ExpandedLayerKind
   layerOrigin: string
   roleReason: string
+  positionHint?: 'left' | 'right' | 'center' | 'top' | 'bottom' | null
 }
 
 export interface SemanticPseudoLayerExpansionResult {
@@ -99,7 +105,9 @@ function bboxOverlap(
 
 function resolveSequentialLogoName(groups: ParsedSvgDocument['groups'], groupId: string): string {
   const existingIndex = groups.findIndex((entry) => entry.id === groupId)
-  const logoGroupCount = groups.filter((entry) => entry.id.startsWith('logo-')).length
+  const logoGroupCount = groups.filter(
+    (entry) => isNeutralLogoInstanceId(entry.id) || isLogoLayerId(entry.id) || entry.id.startsWith('logo-'),
+  ).length
   const index = existingIndex >= 0 ? existingIndex + 1 : logoGroupCount + 1
   return `Logo ${index}`
 }
@@ -119,16 +127,26 @@ function assignRasterLogoLayers(
   for (const image of images) {
     const geo = geoById.get(image.elementId)
     const bbox = geo?.bbox
+    const outlineMargin = bbox ? Math.max(bbox.width, bbox.height) * 0.08 : 0
     const imageCenterX = bbox ? bbox.x + bbox.width / 2 : 0
-    const side = centerX != null && imageCenterX >= centerX ? 'right' : 'left'
-    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = resolveSequentialLogoName(newGroups, id)
+    const positionHint = deriveVisualPositionHint(imageCenterX, centerX)
 
     const imageElement = elements.find((entry) => entry.elementId === image.elementId)
     const parentLayerId = imageElement?.layerId ?? null
 
-    let group = newGroups.find((entry) => entry.id === id)
+    let group = newGroups.find((entry) => entry.elementIds.includes(image.elementId))
+    if (!group && bbox) {
+      group = newGroups.find((entry) => {
+        if (!isNeutralLogoInstanceId(entry.id) && !isLogoLayerId(entry.id)) return false
+        const memberGeo = entry.elementIds
+          .map((elementId) => geoById.get(elementId)?.bbox)
+          .find(Boolean)
+        return memberGeo ? bboxOverlap(bbox, memberGeo, outlineMargin) : false
+      })
+    }
     if (!group) {
+      const id = nextNeutralLogoInstanceId(newGroups.map((entry) => entry.id))
+      const name = resolveSequentialLogoName(newGroups, id)
       group = { id, name, elementIds: [] }
       newGroups.push(group)
       layerMeta.set(id, {
@@ -138,12 +156,13 @@ function assignRasterLogoLayers(
           layerKind === 'real'
             ? 'Named Corel logo layer preserved as printed artwork.'
             : 'Raster image isolated as printed artwork pseudo-layer.',
+        positionHint,
       })
     }
 
+    const { id, name } = group
     assignLogoGroupElement(elements, group, image.elementId, id, name)
 
-    const outlineMargin = bbox ? Math.max(bbox.width, bbox.height) * 0.08 : 0
     for (const candidate of elements) {
       if (candidate.elementId === image.elementId) continue
       if (!isLogoStrokeOutlinePath(candidate)) continue
@@ -195,24 +214,25 @@ function assignStrokeOnlyLogoLayers(
   for (const candidate of candidates) {
     const bbox = geoById.get(candidate.elementId)?.bbox
     const candidateCenterX = bbox ? bbox.x + bbox.width / 2 : null
-    const side = centerX != null && candidateCenterX != null && candidateCenterX >= centerX ? 'right' : 'left'
-    const id = side === 'left' ? 'logo-stanga' : 'logo-dreapta'
-    const name = resolveSequentialLogoName(newGroups, id)
+    const positionHint = deriveVisualPositionHint(candidateCenterX, centerX)
 
-    let group = newGroups.find((entry) => entry.id === id)
+    let group = newGroups.find((entry) => entry.elementIds.includes(candidate.elementId))
     if (!group) {
+      const id = nextNeutralLogoInstanceId(newGroups.map((entry) => entry.id))
+      const name = resolveSequentialLogoName(newGroups, id)
       group = { id, name, elementIds: [] }
       newGroups.push(group)
-    }
-    if (!layerMeta.has(id)) {
-      layerMeta.set(id, {
-        layerKind: layerKind === 'real' ? 'real' : 'pseudo',
-        layerOrigin: layerKind === 'real' ? 'corel_logo_stroke_outline' : 'stroke_vector_outline',
-        roleReason: 'Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.',
-      })
+      if (!layerMeta.has(id)) {
+        layerMeta.set(id, {
+          layerKind: layerKind === 'real' ? 'real' : 'pseudo',
+          layerOrigin: layerKind === 'real' ? 'corel_logo_stroke_outline' : 'stroke_vector_outline',
+          roleReason: 'Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.',
+          positionHint,
+        })
+      }
     }
 
-    assignLogoGroupElement(elements, group, candidate.elementId, id, name)
+    assignLogoGroupElement(elements, group, candidate.elementId, group.id, group.name)
   }
 }
 

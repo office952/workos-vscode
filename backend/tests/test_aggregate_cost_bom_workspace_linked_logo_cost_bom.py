@@ -62,8 +62,8 @@ def _gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "confirmation_status": "complete",
             "layers": [
                 _layer("letters", "Litere GRADI", "face"),
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
-                _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+                _layer("logo_instance_001", "Logo 1", "printed_artwork"),
+                _layer("logo_instance_002", "Logo 2", "printed_artwork"),
             ],
             "layer_bindings": [],
             "warnings": [],
@@ -75,16 +75,16 @@ def _gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "return_finish_type": "white_aluminum",
             "artwork_finishes": [
                 {
-                    "layer_key": "logo-stanga",
-                    "layer_name": "logo stanga",
+                    "layer_key": "logo_instance_001",
+                    "layer_name": "Logo 1",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
                     "confirmed": finish_confirmed,
                 },
                 {
-                    "layer_key": "logo-dreapta",
-                    "layer_name": "logo dreapta",
+                    "layer_key": "logo_instance_002",
+                    "layer_name": "Logo 2",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
@@ -266,11 +266,11 @@ async def test_two_logo_segments_produce_distinct_bom_rows(workspace_bom_builder
     bom = await workspace_bom_builder(workspace_id=workspace_id)
 
     logo_ids = {c.component_id for c in _logo_components(bom)}
-    assert "comp_logo_face::logo-stanga" in logo_ids
-    assert "comp_logo_face::logo-dreapta" in logo_ids
+    assert "comp_logo_face::logo_instance_001" in logo_ids
+    assert "comp_logo_face::logo_instance_002" in logo_ids
 
-    stanga = _logo_materials(bom, segment="logo-stanga")
-    dreapta = _logo_materials(bom, segment="logo-dreapta")
+    stanga = _logo_materials(bom, segment="logo_instance_001")
+    dreapta = _logo_materials(bom, segment="logo_instance_002")
     assert stanga
     assert dreapta
     stanga_refs = {m.component_ref for m in stanga}
@@ -397,8 +397,8 @@ def test_cost_bom_preview_endpoint_two_logo_segments(volumetric_auth_client, db_
     assert response.status_code == 200
     body = response.json()
     component_ids = {c["component_id"] for c in body.get("costable_components", [])}
-    assert "comp_logo_face::logo-stanga" in component_ids
-    assert "comp_logo_face::logo-dreapta" in component_ids
+    assert "comp_logo_face::logo_instance_001" in component_ids
+    assert "comp_logo_face::logo_instance_002" in component_ids
     logo_materials = [
         m for m in body.get("costable_materials", [])
         if m.get("source_template_code") == VOLUMETRIC_LOGO_TEMPLATE_CODE

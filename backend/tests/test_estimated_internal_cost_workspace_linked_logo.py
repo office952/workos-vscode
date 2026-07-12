@@ -76,8 +76,8 @@ def _gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "confirmation_status": "complete",
             "layers": [
                 _layer("letters", "Litere GRADI", "face"),
-                _layer("logo-stanga", "logo stanga", "printed_artwork"),
-                _layer("logo-dreapta", "logo dreapta", "printed_artwork"),
+                _layer("logo_instance_001", "Logo 1", "printed_artwork"),
+                _layer("logo_instance_002", "Logo 2", "printed_artwork"),
             ],
             "layer_bindings": [],
             "warnings": [],
@@ -89,8 +89,8 @@ def _gradi_payload(*, finish_confirmed: bool = True) -> dict:
             "return_finish_type": "white_aluminum",
             "artwork_finishes": [
                 {
-                    "layer_key": "logo-stanga",
-                    "layer_name": "logo stanga",
+                    "layer_key": "logo_instance_001",
+                    "layer_name": "Logo 1",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
@@ -98,8 +98,8 @@ def _gradi_payload(*, finish_confirmed: bool = True) -> dict:
                     "confirmed": finish_confirmed,
                 },
                 {
-                    "layer_key": "logo-dreapta",
-                    "layer_name": "logo dreapta",
+                    "layer_key": "logo_instance_002",
+                    "layer_name": "Logo 2",
                     "execution_type": "print_laminate",
                     "color_mode": "polychrome",
                     "return_depth_mm": 60,
@@ -312,8 +312,8 @@ async def test_two_logo_segments_produce_distinct_material_lines(eic_service, ei
     assert preview is not None
     logo_lines = _logo_material_lines(preview)
     assert logo_lines
-    stanga = [line for line in logo_lines if "logo-stanga" in (line.component_code or "")]
-    dreapta = [line for line in logo_lines if "logo-dreapta" in (line.component_code or "")]
+    stanga = [line for line in logo_lines if "logo_instance_001" in (line.component_code or "")]
+    dreapta = [line for line in logo_lines if "logo_instance_002" in (line.component_code or "")]
     assert stanga and dreapta
     assert {line.component_code for line in stanga}.isdisjoint({line.component_code for line in dreapta})
 
@@ -345,7 +345,7 @@ async def test_artwork_area_used_for_print_not_logo_face_material() -> None:
     payload = _quote_input_overlay(_confirmed_bindings_payload())
     print_mat = CostBomCostableMaterial(
         material_code="print_media",
-        component_ref="comp_logo_finish::logo-stanga",
+        component_ref="comp_logo_finish::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
         unit="mp",
@@ -354,7 +354,7 @@ async def test_artwork_area_used_for_print_not_logo_face_material() -> None:
     )
     face_mat = CostBomCostableMaterial(
         material_code="logo_face_material",
-        component_ref="comp_logo_face::logo-stanga",
+        component_ref="comp_logo_face::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
         unit="mp",
@@ -375,7 +375,7 @@ async def test_letter_area_not_used_for_logo_print() -> None:
     }
     print_mat = CostBomCostableMaterial(
         material_code="print_media",
-        component_ref="comp_logo_finish::logo-stanga",
+        component_ref="comp_logo_finish::logo_instance_001",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
         unit="mp",

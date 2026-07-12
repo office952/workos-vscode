@@ -11,6 +11,7 @@ import {
 } from "@/lib/svgArtworkContracts";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
+import { stableLayerInstanceKey } from "@/lib/intakeV6/layerInstanceIdentity";
 
 export type IntakeV4ArtworkPrintTransparency = "standard" | "translucent" | "transparent";
 
@@ -139,10 +140,15 @@ export function deriveArtworkFinishesFromAnalyzer(
     if (!isArtworkLayer(layer, role)) continue;
 
     rows.push({
-      layer_key: entry.layerKey,
+      layer_key: stableLayerInstanceKey({
+        layerId: entry.layerId ?? layer.id,
+        layerKey: entry.layerKey,
+        layerName: layer.name,
+      }),
       layer_name: getOperatorLayerLabel(layer.id, layer.name, { logoLabelMap }),
       source_layer_name: layer.name,
       original_detected_label: layer.name,
+      position_hint: null,
       execution_type: "print_laminate",
       color_mode: "polychrome",
       print_transparency: "translucent",

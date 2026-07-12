@@ -4,6 +4,13 @@ from __future__ import annotations
 
 from typing import Any
 
+from services.intake_v6_layer_identity import (
+    canonical_candidate_keys,
+    canonical_segment_key,
+    index_layers_by_identity,
+    resolve_binding_row,
+    resolve_finish_row,
+)
 from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE, VOLUMETRIC_V2_TEMPLATE_CODE
 
 LOGO_SEGMENT_ROLE = "linked_logo_segment"
@@ -276,18 +283,37 @@ def extract_linked_template_segments_from_workspace_payload(
     linked_template_code = _text(linked_logo.get("template_code"), VOLUMETRIC_LOGO_TEMPLATE_CODE)
     quote_policy = _text(linked_logo.get("quote_policy"), "no_separate_quote")
     task_policy = _text(linked_logo.get("task_merge_policy"), "emit_intent_merge_later_no_task_graph_now")
-    keys = _candidate_keys(
-        layers_by_key=layers_by_key,
-        bindings_by_key=bindings_by_key,
-        finishes_by_key=finishes_by_key,
+    keys = canonical_candidate_keys(
+        layers=_as_list(layer_role_setup.get("layers")),
+        bindings=_as_list(layer_role_setup.get("layer_bindings")),
+        finishes=_as_list(finish_setup.get("artwork_finishes")),
         linked_template_code=linked_template_code,
+        logo_layer_roles=LOGO_LAYER_ROLES,
+        is_logoish=_is_logoish,
     )
+
+    layers_by_identity = index_layers_by_identity(_as_list(layer_role_setup.get("layers")))
 
     segments: list[dict[str, Any]] = []
     for key in keys:
-        layer_index, layer = layers_by_key.get(key, (None, {}))
-        binding_index, binding = bindings_by_key.get(key, (None, {}))
-        finish_index, finish = finishes_by_key.get(key, (None, {}))
+        layer = layers_by_identity.get(key, {})
+        layer_index = None
+        for index, item in enumerate(_as_list(layer_role_setup.get("layers"))):
+            item_key = _text(_as_dict(item).get("layer_key") or _as_dict(item).get("layer_id"))
+            if item_key and canonical_segment_key(layer_key=item_key, layer=_as_dict(item)) == key:
+                layer_index = index
+                layer = _as_dict(item)
+                break
+        binding_index, binding = resolve_binding_row(
+            key=key,
+            bindings_by_key=bindings_by_key,
+            layers_by_identity=layers_by_identity,
+        )
+        finish_index, finish = resolve_finish_row(
+            key=key,
+            finishes_by_key=finishes_by_key,
+            layers_by_identity=layers_by_identity,
+        )
         binding_status = _text(binding.get("binding_status"), "missing")
         warnings: list[str] = ["linked_logo_template_is_child_only_not_root_offerable"]
         if binding_status == "suggested":
@@ -299,6 +325,7 @@ def extract_linked_template_segments_from_workspace_payload(
 
         segment = {
             "segment_key": key,
+            "instance_id": key,
             "display_name": _text(layer.get("layer_name"), _text(finish.get("layer_name"), key)),
             "parent_root_template_code": root_template_code,
             "owning_template_code": linked_template_code,

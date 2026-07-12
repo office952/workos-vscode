@@ -73,7 +73,12 @@ export function isPseudoLayerId(id: string): boolean {
 }
 
 export function isRasterArtworkLayerId(id: string): boolean {
-  return id.startsWith('raster_artwork_') || id === 'logo-stanga' || id === 'logo-dreapta'
+  return (
+    id.startsWith('raster_artwork_') ||
+    id === 'logo-stanga' ||
+    id === 'logo-dreapta' ||
+    /^logo_instance_\d{3}$/.test(id)
+  )
 }
 
 export function layerKindLabel(kind: 'real' | 'pseudo' | 'raster_artwork' | undefined): string {

@@ -110,16 +110,15 @@ def _linked_logo_segment_key(component_ref: str | None) -> str | None:
 
 
 def _artwork_finish_area_for_segment(payload: dict[str, Any], segment_key: str) -> float | None:
-    finish_setup = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
-    for row in finish_setup.get("artwork_finishes") or []:
-        if not isinstance(row, dict):
-            continue
-        if _text(row.get("layer_key")) != segment_key:
-            continue
-        for field in ("estimated_area_m2", "face_area_m2", "area_m2", "artwork_area_m2"):
-            qty = _positive_number(row.get(field))
-            if qty is not None:
-                return qty
+    from services.intake_v6_layer_identity import artwork_finish_for_segment
+
+    row = artwork_finish_for_segment(payload, segment_key)
+    if not row:
+        return None
+    for field in ("estimated_area_m2", "face_area_m2", "area_m2", "artwork_area_m2"):
+        qty = _positive_number(row.get(field))
+        if qty is not None:
+            return qty
     geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
     for box in geometry.get("artwork_boxes") or []:
         if not isinstance(box, dict):

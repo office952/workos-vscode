@@ -66,6 +66,8 @@ Two segments: 4 materials + 6 operations total.
 
 logo-stanga and logo-dreapta each retain separate namespaced refs; no cross-segment dedupe.
 
+> **Correction (2026-07-12):** Earlier examples used positional fixture names such as `logo-stanga` and `logo-dreapta`. These names are non-canonical and must be interpreted only as historical fixture labels. Canonical identity is stable and position-independent (`logo_instance_001`, etc.).
+
 ## Partial states
 
 - Missing finish → zero artwork rows
