@@ -30,8 +30,14 @@ from schemas.aggregate_cost_bom import (
     SubcontractableOperation,
 )
 from schemas.mini_module_registry import MiniModuleContract
-from schemas.product_aggregate import ProductAggregate, ProductAggregateMaterial, ProductAggregateOperation
+from schemas.product_aggregate import (
+    ProductAggregate,
+    ProductAggregateComponent,
+    ProductAggregateMaterial,
+    ProductAggregateOperation,
+)
 from schemas.product_definition import ProductDefinitionPreview
+from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
 from services.aggregate_cost_externalization_hooks import (
     MODULE_FUTURE_EXTERNALIZATION,
     OPERATION_EXTERNALIZATION_HOOKS,
@@ -88,6 +94,44 @@ CRITICAL_GEOMETRY_FOR_READY = frozenset(
         "letter_count",
     }
 )
+
+WARNING_LINKED_SEGMENT_FINISH_PARTIAL = "LINKED_SEGMENT_FINISH_PARTIAL"
+SEGMENT_NAMESPACE_SEP = "::"
+
+
+def _text(value: Any) -> str:
+    return str(value or "").strip()
+
+
+def _is_namespaced_segment_ref(value: str | None) -> bool:
+    return SEGMENT_NAMESPACE_SEP in _text(value)
+
+
+def _is_aggregate_linked_logo_component(comp: ProductAggregateComponent) -> bool:
+    if not _is_namespaced_segment_ref(comp.component_id):
+        return False
+    return _text(comp.source_template_code) == VOLUMETRIC_LOGO_TEMPLATE_CODE
+
+
+def _is_aggregate_linked_logo_material(mat: ProductAggregateMaterial) -> bool:
+    if _text(mat.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return _is_namespaced_segment_ref(mat.component_ref)
+
+
+def _is_aggregate_linked_logo_operation(op: ProductAggregateOperation) -> bool:
+    if _text(op.source_template_code) != VOLUMETRIC_LOGO_TEMPLATE_CODE:
+        return False
+    return _is_namespaced_segment_ref(op.component_ref)
+
+
+def _aggregate_has_partial_linked_logo(aggregate: ProductAggregate) -> bool:
+    if any(w.code == WARNING_LINKED_SEGMENT_FINISH_PARTIAL for w in aggregate.warnings):
+        return True
+    return any(
+        _is_aggregate_linked_logo_component(comp) and comp.status == "partial"
+        for comp in aggregate.components
+    )
 
 
 def _module_is_cost_active(state: str) -> bool:
@@ -241,6 +285,8 @@ def _resolve_material_code(
 
 
 def _material_module_active(mat: ProductAggregateMaterial, active_modules: set[str]) -> bool:
+    if _is_aggregate_linked_logo_material(mat):
+        return True
     if mat.mini_module_code:
         return mat.mini_module_code in active_modules
     if mat.component_ref:
@@ -259,6 +305,8 @@ def _material_module_active(mat: ProductAggregateMaterial, active_modules: set[s
 
 
 def _operation_module_active(op: ProductAggregateOperation, active_modules: set[str]) -> bool:
+    if _is_aggregate_linked_logo_operation(op):
+        return True
     if op.mini_module_code:
         return op.mini_module_code in active_modules
     if op.operation_code in GEOMETRY_GATE_OPERATIONS:
@@ -886,10 +934,15 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(comp.component_id)
+            if _is_aggregate_linked_logo_component(comp):
+                mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(
+                    comp.component_id.split(SEGMENT_NAMESPACE_SEP, 1)[0]
+                )
+            else:
+                mod = comp.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(comp.component_id)
             if mod in GATE_ONLY_MODULES or mod in FUTURE_MODULES:
                 continue
-            if mod and mod not in active_modules:
+            if not _is_aggregate_linked_logo_component(comp) and mod and mod not in active_modules:
                 continue
             costable_components.append(
                 CostBomCostableComponent(
@@ -1101,7 +1154,9 @@ class AggregateCostBomAdapter:
         )
 
         pricing_blockers = inventory_pricing_blockers + external_pricing_blockers
-        if pricing_blockers and bom_status == "ready":
+        if _aggregate_has_partial_linked_logo(aggregate):
+            bom_status = "partial"
+        elif pricing_blockers and bom_status == "ready":
             bom_status = "blocked"
         elif missing_inventory_materials and bom_status == "ready":
             bom_status = "blocked"
@@ -1227,7 +1282,10 @@ class AggregateCostBomBuilderService:
         pd = await pd_builder.build_preview(template_code, workspace_id=workspace_id)
         if pd is None:
             return None
-        aggregate = await aggregate_svc.build(template_code)
+        if workspace_id:
+            aggregate = await aggregate_svc.build_for_workspace(template_code, workspace_id)
+        else:
+            aggregate = await aggregate_svc.build(template_code)
         if aggregate is None:
             return None
 

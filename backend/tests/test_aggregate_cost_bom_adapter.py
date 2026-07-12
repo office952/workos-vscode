@@ -87,7 +87,10 @@ async def bom_context(volumetric_v2_db):
 
     async def _build(*, workspace_id: str | None = None, quote_input=None, rates=None, wc=None, inventory=None, external_selections=None):
         pd = await pd_builder.build_preview(TEMPLATE, workspace_id=workspace_id)
-        aggregate = await aggregate_svc.build(TEMPLATE)
+        if workspace_id:
+            aggregate = await aggregate_svc.build_for_workspace(TEMPLATE, workspace_id)
+        else:
+            aggregate = await aggregate_svc.build(TEMPLATE)
         assert pd is not None and aggregate is not None
         return adapter.build(
             product_definition=pd,
