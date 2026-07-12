@@ -142,7 +142,7 @@ def _module_is_cost_active(state: str) -> bool:
     return state in ("always_on", "active", "conditional_active")
 
 
-def _structural_active_modules(
+def _legacy_structural_active_modules(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None = None,
 ) -> set[str]:
@@ -205,6 +205,21 @@ def _structural_active_modules(
             active.discard("sistem_led")
 
     return active
+
+
+def _structural_active_modules(
+    pd: ProductDefinitionPreview,
+    quote_input: dict[str, Any] | None = None,
+) -> set[str]:
+    from services.offer_scope_resolver_service import resolve_pricing_active_modules
+
+    payload = dict(quote_input) if quote_input else {}
+    return resolve_pricing_active_modules(
+        pd=pd,
+        payload=payload,
+        quote_input=quote_input,
+        legacy_fn=_legacy_structural_active_modules,
+    )
 
 
 def _active_module_codes(

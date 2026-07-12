@@ -13,6 +13,7 @@ from schemas.ai_informational_layer import (
     AiInformationalSuggestionEnvelope,
     AiInformationalSuggestionItem,
 )
+from schemas.offer_scope import OfferScope
 
 INTAKE_V4_SCHEMA_VERSION = "1.0.0"
 PILOT_V4_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
@@ -242,6 +243,7 @@ class IntakeV4WorkspacePayload(BaseModel):
     product_truth: dict[str, Any] | None = None
     terminology_mode: str | None = None
     finish_setup: IntakeV4FinishSetup | None = None
+    offer_scope: OfferScope | None = None
     sheet_quote_override: dict[str, Any] | None = None
 
 

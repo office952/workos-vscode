@@ -154,7 +154,7 @@ def _module_is_commercial_active(state: str) -> bool:
     return state in ("always_on", "active", "conditional_active")
 
 
-def _resolve_active_commercial_modules(
+def _legacy_resolve_active_commercial_modules(
     pd: ProductDefinitionPreview,
     payload: dict[str, Any],
 ) -> set[str]:
@@ -220,6 +220,20 @@ def _resolve_active_commercial_modules(
         active.discard("sistem_led")
 
     return active
+
+
+def _resolve_active_commercial_modules(
+    pd: ProductDefinitionPreview,
+    payload: dict[str, Any],
+) -> set[str]:
+    from services.offer_scope_resolver_service import resolve_pricing_active_modules
+
+    return resolve_pricing_active_modules(
+        pd=pd,
+        payload=payload,
+        quote_input=payload,
+        legacy_fn=lambda p, qi: _legacy_resolve_active_commercial_modules(p, qi or {}),
+    )
 
 
 def _extract_quantity(payload: dict[str, Any], paths: tuple[str, ...]) -> float | int | None:
