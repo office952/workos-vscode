@@ -15,6 +15,8 @@ from schemas.execution_plan_v2_materialize import (
 )
 
 V2_ENVELOPE_SOURCE = "order_snapshot_v2"
+LINKED_SEGMENT_PREFIX = "linked_segment:"
+SEGMENT_NAMESPACE_SEP = "::"
 
 
 @dataclass
@@ -133,6 +135,20 @@ def _eligible_role_from_planned(planned: dict[str, Any]) -> str | None:
     return None
 
 
+def _linked_segment_key_from_component_ref(component_ref: Any) -> str | None:
+    ref = str(component_ref or "").strip()
+    if not ref:
+        return None
+    if ref.lower().startswith(LINKED_SEGMENT_PREFIX):
+        payload = ref[len(LINKED_SEGMENT_PREFIX) :]
+        if SEGMENT_NAMESPACE_SEP in payload:
+            return payload.split(SEGMENT_NAMESPACE_SEP, 1)[0].strip() or None
+        return payload.strip() or None
+    if SEGMENT_NAMESPACE_SEP in ref:
+        return ref.split(SEGMENT_NAMESPACE_SEP, 1)[1].strip() or None
+    return None
+
+
 def materialize_operational_tasks_from_v2_envelope(
     envelope: dict[str, Any],
     *,
@@ -209,6 +225,9 @@ def materialize_operational_tasks_from_v2_envelope(
         provenance.append("execution_plan_v2_materialize.1")
 
         eligible_role = _eligible_role_from_planned(planned)
+        source_operation_code = str(planned.get("source_operation_code") or "").strip() or None
+        source_component_code = planned.get("source_component_code")
+        linked_segment_key = _linked_segment_key_from_component_ref(source_component_code)
         operational: dict[str, Any] = {
             "task_id": task_key,
             "source_task_key": task_key,
@@ -216,7 +235,7 @@ def materialize_operational_tasks_from_v2_envelope(
             "display_name": label,
             "technical_name": technical_name,
             "process_type": str(planned.get("canonical_task_type") or "").strip(),
-            "process_id": str(planned.get("source_operation_code") or "").strip(),
+            "process_id": source_operation_code or "",
             "machine_type": _machine_type_from_planned(planned),
             "depends_on_task_ids": dep_ids,
             "sequence_index": planned.get("sequence_index"),
@@ -230,10 +249,14 @@ def materialize_operational_tasks_from_v2_envelope(
             "order_id": order_id,
             "provenance": provenance,
             "source_module_code": planned.get("source_module_code"),
-            "source_component_code": planned.get("source_component_code"),
+            "source_component_code": source_component_code,
+            "source_operation_code": source_operation_code,
+            "source_task_rule_code": planned.get("source_task_rule_code"),
             "material_inputs": planned.get("material_inputs") or [],
             "warnings": task_warnings,
         }
+        if linked_segment_key:
+            operational["linked_segment_key"] = linked_segment_key
         if eligible_role:
             operational["eligible_role_code"] = eligible_role
             operational["employee_role_requirement"] = planned.get("employee_role_requirement")
