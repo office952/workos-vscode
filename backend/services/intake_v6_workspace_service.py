@@ -264,6 +264,52 @@ def _reset_internal_draft_quote_confirmation(payload_raw: dict[str, Any]) -> Non
         payload_raw["finish_setup"] = finish
 
 
+def _read_scope_sold_modules(payload_raw: dict[str, Any]) -> set[str]:
+    scope = payload_raw.get("offer_scope")
+    if not isinstance(scope, dict):
+        return set()
+    if scope.get("mode") == "full_product":
+        return set()
+    sold = scope.get("sold_modules")
+    if not isinstance(sold, list):
+        return set()
+    return {str(code).strip() for code in sold if str(code).strip()}
+
+
+def _invalidate_finish_confirmations_for_deselected_scope(
+    payload_raw: dict[str, Any],
+    *,
+    previous_modules: set[str],
+    next_modules: set[str],
+) -> None:
+    deselected = previous_modules - next_modules
+    if not deselected:
+        return
+
+    finish = payload_raw.get("finish_setup")
+    if not isinstance(finish, dict):
+        return
+
+    if deselected.intersection({"FACE", "RETURN-CANT"}):
+        groups = finish.get("letter_group_finishes")
+        if isinstance(groups, list):
+            for group in groups:
+                if isinstance(group, dict) and group.get("confirmed") is True:
+                    group["confirmed"] = False
+
+    if "RETURN-CANT" in deselected:
+        artwork = finish.get("artwork_finishes")
+        if isinstance(artwork, list):
+            for row in artwork:
+                if isinstance(row, dict) and row.get("confirmed") is True:
+                    row["confirmed"] = False
+
+    if deselected.intersection({"FACE", "RETURN-CANT", "BACK"}):
+        finish["confirmed"] = False
+
+    payload_raw["finish_setup"] = finish
+
+
 def _record_to_response(record: IntakeV6WorkspaceRecord) -> IntakeV6WorkspaceResponse:
     return IntakeV6WorkspaceResponse(
         id=record.id,
@@ -1023,10 +1069,13 @@ async def save_offer_scope_for_intake_v6_workspace(
 
     normalized_mode = str(mode or "full_product").strip()
     normalized_modules = [str(code).strip() for code in (sold_modules or []) if str(code).strip()]
+    previous_modules = _read_scope_sold_modules(payload_raw)
     if normalized_mode == "full_product":
         scope = OfferScope(mode="full_product", sold_modules=[])
+        next_modules: set[str] = set()
     else:
         scope = OfferScope(mode="component_subset", sold_modules=normalized_modules)  # type: ignore[arg-type]
+        next_modules = set(normalized_modules)
 
     resolved = resolve_offer_scope(
         OfferScopeInput(
@@ -1052,6 +1101,12 @@ async def save_offer_scope_for_intake_v6_workspace(
         "operator_note": operator_note,
         "source": "operator_offer_scope_v1",
     }
+    if normalized_mode == "component_subset":
+        _invalidate_finish_confirmations_for_deselected_scope(
+            payload_raw,
+            previous_modules=previous_modules,
+            next_modules=next_modules,
+        )
     _reset_internal_draft_quote_confirmation(payload_raw)
     if payload_raw.get("finish_setup"):
         from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state

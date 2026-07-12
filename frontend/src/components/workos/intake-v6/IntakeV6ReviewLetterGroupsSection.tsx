@@ -40,6 +40,8 @@ import {
   layerAccentColor,
   resolveLayerCardStatus,
 } from "./letterGroupCardPresentation";
+import type { SoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
+import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 import {
   copyFirstCantSettingsToAllGroups,
   patchLetterGroupFinishes,
@@ -67,6 +69,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
   allowedReturnDepthMm,
   backingMode,
   onBackingChange,
+  soldScopeVisibility,
 }: {
   groups: IntakeV6LetterGroupFinish[];
   onChange: (groups: IntakeV6LetterGroupFinish[]) => void;
@@ -74,7 +77,9 @@ export default function IntakeV6ReviewLetterGroupsSection({
   allowedReturnDepthMm?: readonly number[];
   backingMode?: IntakeV6BackingMode;
   onBackingChange?: (mode: IntakeV6BackingMode) => void;
+  soldScopeVisibility?: SoldScopeFieldVisibility;
 }) {
+  const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
   const effectiveFaceOptions = resolveLetterGroupFaceFinishOptions(faceFinishOptions);
   const [expandedKeys, setExpandedKeys] = useState<Set<string>>(() => new Set());
   const [pageIndex, setPageIndex] = useState(0);
@@ -119,7 +124,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           Laterala literei / adâncimea volumului.
         </p>
 
-        {groups.length > 1 ? (
+        {visibility.returnCant && groups.length > 1 ? (
           <div
             className="mb-2 flex flex-wrap items-center justify-end gap-2"
             data-testid="intake-v6-cant-copy-zone"
@@ -144,7 +149,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           testId="intake-v6-review-letter-pagination"
         />
 
-        <IntakeV6LayerCardColumnHeader />
+        <IntakeV6LayerCardColumnHeader showFace={visibility.face} showCant={visibility.returnCant} />
 
         <div className="space-y-1.5">
           {paginatedGroups.map((group) => {
@@ -190,8 +195,8 @@ export default function IntakeV6ReviewLetterGroupsSection({
                     layerIcon={Layers}
                     accentColor={accent}
                     layerName={group.layer_name}
-                    faceSummary={faceSummary}
-                    cantSummary={cantSummary}
+                    faceSummary={visibility.face ? faceSummary : "—"}
+                    cantSummary={visibility.returnCant ? cantSummary : "—"}
                     faceSummaryTestId={`intake-v6-letter-group-face-summary-${group.group_key}`}
                     cantSummaryTestId={`intake-v6-letter-group-cant-summary-${group.group_key}`}
                     swatchTestId={`intake-v6-letter-group-swatch-${group.group_key}`}
@@ -221,13 +226,22 @@ export default function IntakeV6ReviewLetterGroupsSection({
 
                 {expanded ? (
                   <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
-                    <div className={REVIEW_FACE_COLUMN_CLASS}>
-                      <ZoneTitle icon={PanelTop} title="Față" />
-                    </div>
-                    <div className={REVIEW_CANT_COLUMN_CLASS}>
-                      <ZoneTitle icon={Box} title="Cant" />
-                    </div>
+                    {visibility.face ? (
+                      <div className={REVIEW_FACE_COLUMN_CLASS}>
+                        <ZoneTitle icon={PanelTop} title="Față" />
+                      </div>
+                    ) : (
+                      <div className={REVIEW_FACE_COLUMN_CLASS} />
+                    )}
+                    {visibility.returnCant ? (
+                      <div className={REVIEW_CANT_COLUMN_CLASS}>
+                        <ZoneTitle icon={Box} title="Cant" />
+                      </div>
+                    ) : (
+                      <div className={REVIEW_CANT_COLUMN_CLASS} />
+                    )}
 
+                    {visibility.face ? (
                     <div
                       className={REVIEW_FACE_COLUMN_CLASS}
                       data-testid={`intake-v6-face-letter-zone-${group.group_key}`}
@@ -260,10 +274,18 @@ export default function IntakeV6ReviewLetterGroupsSection({
                         </select>
                       </label>
                     </div>
+                    ) : (
+                      <div className={REVIEW_FACE_COLUMN_CLASS} />
+                    )}
+                    {visibility.returnCant ? (
                     <div className={REVIEW_CANT_COLUMN_CLASS}>
                       <IntakeV6ReturnCantFields {...cantFieldProps} reviewGridRow="finish" />
                     </div>
+                    ) : (
+                      <div className={REVIEW_CANT_COLUMN_CLASS} />
+                    )}
 
+                    {visibility.face ? (
                     <div className={REVIEW_FACE_COLUMN_CLASS}>
                       {showRollWidth ? (
                         <label
@@ -308,6 +330,10 @@ export default function IntakeV6ReviewLetterGroupsSection({
                         </label>
                       ) : null}
                     </div>
+                    ) : (
+                      <div className={REVIEW_FACE_COLUMN_CLASS} />
+                    )}
+                    {visibility.returnCant ? (
                     <div
                       className={REVIEW_CANT_COLUMN_CLASS}
                       data-testid={`intake-v6-cant-letter-zone-${group.group_key}`}
@@ -318,9 +344,13 @@ export default function IntakeV6ReviewLetterGroupsSection({
                         cantSettingsRowTestId={`intake-v6-cant-settings-row-${group.group_key}`}
                       />
                     </div>
+                    ) : (
+                      <div className={REVIEW_CANT_COLUMN_CLASS} />
+                    )}
 
                     {showColor || showCantColor ? (
                       <>
+                        {visibility.face ? (
                         <div
                           className={`${REVIEW_FACE_COLUMN_CLASS} ${REVIEW_COLOR_ROW_SHELL_CLASS}`}
                           data-testid={`intake-v6-face-color-row-${group.group_key}`}
@@ -345,6 +375,10 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             />
                           ) : null}
                         </div>
+                        ) : (
+                          <div className={REVIEW_FACE_COLUMN_CLASS} />
+                        )}
+                        {visibility.returnCant ? (
                         <div
                           className={`${REVIEW_CANT_COLUMN_CLASS} ${REVIEW_COLOR_ROW_SHELL_CLASS}`}
                           data-testid={`intake-v6-letter-group-cant-finishes-${group.group_key}`}
@@ -353,6 +387,9 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             <IntakeV6ReturnCantFields {...cantFieldProps} reviewGridRow="color" />
                           ) : null}
                         </div>
+                        ) : (
+                          <div className={REVIEW_CANT_COLUMN_CLASS} />
+                        )}
                       </>
                     ) : null}
                   </div>
@@ -362,7 +399,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           })}
         </div>
 
-        {backingMode && onBackingChange ? (
+        {visibility.back && backingMode && onBackingChange ? (
           <div data-testid="intake-v6-review-backing-finish-integration">
             <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
           </div>

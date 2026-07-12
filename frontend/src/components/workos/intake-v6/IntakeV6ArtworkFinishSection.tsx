@@ -35,6 +35,8 @@ import {
   INTAKE_V6_ARTWORK_LAYER_ACCENT,
   artworkExecutionLabel,
 } from "./artworkCardPresentation";
+import type { SoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
+import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 
 export const INTAKE_V6_ARTWORK_VERIFY_INSTRUCTION =
   "Confirmă fiecare Vector Logo înainte de a continua.";
@@ -272,6 +274,7 @@ export default function IntakeV6ArtworkFinishSection({
   highlightUnconfirmed = false,
   backingMode,
   onBackingChange,
+  soldScopeVisibility,
 }: {
   rows: IntakeV6ArtworkFinish[];
   onChange: (rows: IntakeV6ArtworkFinish[]) => void;
@@ -286,7 +289,9 @@ export default function IntakeV6ArtworkFinishSection({
   /** When Vector Litere is absent, Forex backing renders as last row in this card. */
   backingMode?: IntakeV6BackingMode;
   onBackingChange?: (mode: IntakeV6BackingMode) => void;
+  soldScopeVisibility?: SoldScopeFieldVisibility;
 }) {
+  const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
   const sortedRows = useMemo(
     () => [...rows].sort((a, b) => a.layer_name.localeCompare(b.layer_name, "ro")),
     [rows],
@@ -347,7 +352,7 @@ export default function IntakeV6ArtworkFinishSection({
           onPageChange={setPageIndex}
           testId="intake-v6-review-artwork-pagination"
         />
-        <IntakeV6LayerCardColumnHeader />
+        <IntakeV6LayerCardColumnHeader showFace={visibility.face} showCant={visibility.returnCant} />
         {paginatedRows.map((row, rowIndex) => {
           const faceMethod = resolveArtworkFaceMethod(row);
           const faceFinishType = artworkFaceMethodToFinishType(faceMethod);
@@ -384,8 +389,8 @@ export default function IntakeV6ArtworkFinishSection({
                   layerIconClassName="text-cyan-400/80"
                   accentColor={INTAKE_V6_ARTWORK_LAYER_ACCENT}
                   layerName={displayName}
-                  faceSummary={faceSummary}
-                  cantSummary={cantSummary}
+                  faceSummary={visibility.face ? faceSummary : "—"}
+                  cantSummary={visibility.returnCant ? cantSummary : "—"}
                   faceSummaryTestId={`intake-v6-artwork-face-summary-${row.layer_key}`}
                   cantSummaryTestId={`intake-v6-artwork-cant-summary-${row.layer_key}`}
                   expanded={expanded}
@@ -422,13 +427,22 @@ export default function IntakeV6ArtworkFinishSection({
 
               {expanded ? (
                 <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
-                  <div className={REVIEW_FACE_COLUMN_CLASS}>
-                    <ZoneTitle icon={Palette} title="Față" />
-                  </div>
-                  <div className={REVIEW_CANT_COLUMN_CLASS}>
-                    <ZoneTitle icon={Box} title="Cant" />
-                  </div>
+                  {visibility.face ? (
+                    <div className={REVIEW_FACE_COLUMN_CLASS}>
+                      <ZoneTitle icon={Palette} title="Față" />
+                    </div>
+                  ) : (
+                    <div className={REVIEW_FACE_COLUMN_CLASS} />
+                  )}
+                  {visibility.returnCant ? (
+                    <div className={REVIEW_CANT_COLUMN_CLASS}>
+                      <ZoneTitle icon={Box} title="Cant" />
+                    </div>
+                  ) : (
+                    <div className={REVIEW_CANT_COLUMN_CLASS} />
+                  )}
 
+                  {visibility.face ? (
                   <div
                     className={REVIEW_FACE_COLUMN_CLASS}
                     data-testid={`intake-v6-artwork-face-zone-${row.layer_key}`}
@@ -597,7 +611,11 @@ export default function IntakeV6ArtworkFinishSection({
                       )}
                     </div>
                   </div>
+                  ) : (
+                    <div className={REVIEW_FACE_COLUMN_CLASS} />
+                  )}
 
+                  {visibility.returnCant ? (
                   <div
                     className={REVIEW_CANT_COLUMN_CLASS}
                     data-testid={`intake-v6-artwork-cant-${row.layer_key}`}
@@ -620,6 +638,9 @@ export default function IntakeV6ArtworkFinishSection({
                       allowedReturnDepthMm={allowedReturnDepthMm}
                     />
                   </div>
+                  ) : (
+                    <div className={REVIEW_CANT_COLUMN_CLASS} />
+                  )}
                 </div>
               ) : null}
             </div>
@@ -627,7 +648,7 @@ export default function IntakeV6ArtworkFinishSection({
         })}
       </div>
 
-      {backingMode && onBackingChange ? (
+      {visibility.back && backingMode && onBackingChange ? (
         <div data-testid="intake-v6-review-backing-finish-integration">
           <IntakeV6ReviewBackingFinishRow backingMode={backingMode} onBackingChange={onBackingChange} />
         </div>

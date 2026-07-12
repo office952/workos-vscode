@@ -226,3 +226,59 @@ async def test_legacy_workspace_without_offer_scope_unchanged(volumetric_v2_db, 
 
     reloaded = await get_intake_v6_workspace(volumetric_v2_db, workspace_id)
     assert reloaded.payload.get("offer_scope") is None
+
+
+@pytest.mark.asyncio
+async def test_deselecting_sold_module_invalidates_finish_confirmations_once(
+    volumetric_v2_db,
+) -> None:
+    workspace_id = await _seed_scope_workspace(volumetric_v2_db)
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "letter_group_finishes": [
+                {
+                    "group_key": "g1",
+                    "layer_name": "A",
+                    "face_finish_type": "oracal_851",
+                    "face_oracal_code": "G001",
+                    "return_finish_type": "ral_paint",
+                    "return_oracal_code": "RAL9005",
+                    "return_depth_mm": 80,
+                    "confirmed": True,
+                }
+            ],
+            "artwork_finishes": [],
+        }
+    }
+    record = await volumetric_v2_db.get(IntakeV6WorkspaceRecord, workspace_id)
+    assert record is not None
+    merged = json.loads(record.payload_json)
+    merged.update(payload)
+    record.payload_json = json.dumps(merged)
+    await volumetric_v2_db.commit()
+
+    await save_offer_scope_for_intake_v6_workspace(
+        volumetric_v2_db,
+        workspace_id,
+        mode="component_subset",
+        sold_modules=["FACE", "RETURN-CANT"],
+        confirmed=True,
+        current_user=_user(),
+    )
+    await save_offer_scope_for_intake_v6_workspace(
+        volumetric_v2_db,
+        workspace_id,
+        mode="component_subset",
+        sold_modules=["FACE"],
+        confirmed=True,
+        current_user=_user(),
+    )
+
+    reloaded = await get_intake_v6_workspace(volumetric_v2_db, workspace_id)
+    finish = reloaded.payload["finish_setup"]
+    group = finish["letter_group_finishes"][0]
+    assert group["face_oracal_code"] == "G001"
+    assert group["return_oracal_code"] == "RAL9005"
+    assert group["confirmed"] is False
+    assert finish["confirmed"] is False

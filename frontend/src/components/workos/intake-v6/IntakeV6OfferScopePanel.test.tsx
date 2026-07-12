@@ -71,4 +71,56 @@ describe("IntakeV6OfferScopePanel", () => {
     expect(screen.getByTestId("intake-v6-offer-scope-cant")).toBeChecked();
     expect(screen.getByTestId("intake-v6-offer-scope-back")).not.toBeChecked();
   });
+
+  it("does not autosave on mount for legacy full_product workspace", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    await waitFor(() => expect(onSave).not.toHaveBeenCalled(), { timeout: 800 });
+  });
+
+  it("does not save when full_product is already selected", async () => {
+    const onSave = vi.fn(async () => true);
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "full_product", sold_modules: [] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-full"));
+    await waitFor(() => expect(onSave).not.toHaveBeenCalled(), { timeout: 800 });
+  });
+
+  it("hydrates without write-back save loop", async () => {
+    const onSave = vi.fn(async () => true);
+    const { rerender } = render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "component_subset", sold_modules: ["FACE"] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+    rerender(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "component_subset", sold_modules: ["FACE"] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+    await waitFor(() => expect(onSave).not.toHaveBeenCalled(), { timeout: 800 });
+  });
+
+  it("checkbox toggle triggers a single intentional save", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-cant"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+  });
 });

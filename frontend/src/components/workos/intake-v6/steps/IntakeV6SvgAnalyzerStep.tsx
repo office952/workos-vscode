@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import {
 	findOutOfScopeLayerWarnings,
@@ -193,6 +193,20 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		[report, confirmation, hoveredLayerKey],
 	);
 
+	const handleSaveOfferScope = useCallback(
+		(input: {
+			mode: "full_product" | "component_subset";
+			soldModules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+			confirmed: boolean;
+		}) =>
+			saveOfferScope({
+				mode: input.mode,
+				soldModules: input.soldModules,
+				confirmed: input.confirmed,
+			}),
+		[saveOfferScope],
+	);
+
 	return (
 		<section data-testid="intake-v6-svg-analyzer-step">
 			<div
@@ -250,13 +264,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					<IntakeV6OfferScopePanel
 						payload={payload}
 						disabled={state.phase === "persisting"}
-						onSave={async (input) =>
-							saveOfferScope({
-								mode: input.mode,
-								soldModules: input.soldModules,
-								confirmed: input.confirmed,
-							})
-						}
+						onSave={handleSaveOfferScope}
 					/>
 
 					{report ? (

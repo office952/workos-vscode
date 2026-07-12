@@ -56,9 +56,12 @@ import {
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import {
   countConfiguredArtworkFinishes,
-  countIncompleteArtworkFinishes,
-  countIncompleteLetterGroups,
 } from "@/lib/intakeV6/intakeV6ProductFinishCompleteness";
+import {
+  countIncompleteArtworkFinishesForScope,
+  countIncompleteLetterGroupsForScope,
+} from "@/lib/intakeV6/intakeV6SoldScopeFinishConfirmation";
+import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 import {
   extractQuoteGeometryFromAnalyzer,
   readQuoteGeometryFromPayload,
@@ -442,6 +445,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const workspaceId = state.workspace?.id;
   const { vatPct, eurToRonRate } = useCompanyCommercialSettings(Boolean(workspaceId));
   const payload = state.workspace?.payload as Record<string, unknown> | undefined;
+  const soldScopeVisibility = useMemo(() => resolveSoldScopeFieldVisibility(payload), [payload]);
   const logoOnlyCandidateNotOfferable = isLogoOnlyCandidateNotOfferableStatus(state.workspace?.readiness_status);
 
   // Template form contract — drives dynamic options for face/return finish selects
@@ -1553,7 +1557,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const reviewHandoffSurfacing = useMemo(() => {
     const allArtworkProductConfigured =
       artworkFinishes.length === 0 ||
-      countIncompleteArtworkFinishes(artworkFinishes) === 0;
+      countIncompleteArtworkFinishesForScope(artworkFinishes, soldScopeVisibility) === 0;
     return buildReviewHandoffSurfacing({
       handoff: quoteHandoffPreview,
       handoffOptions: {
@@ -1565,6 +1569,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     });
   }, [
     artworkFinishes,
+    soldScopeVisibility,
     quoteHandoffPreview,
     loadingQuoteHandoffPreview,
     breakdown?.totals.contains_missing_prices,
@@ -1641,8 +1646,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     artworkOnlyRequiresDecision && (!allArtworkConfirmedInStepOne || hasUnconfirmedArtwork);
 
   const pendingConfirmationCount = useMemo(() => {
-    return countIncompleteLetterGroups(effectiveLetterGroups) + countIncompleteArtworkFinishes(artworkFinishes);
-  }, [effectiveLetterGroups, artworkFinishes]);
+    return (
+      countIncompleteLetterGroupsForScope(effectiveLetterGroups, soldScopeVisibility) +
+      countIncompleteArtworkFinishesForScope(artworkFinishes, soldScopeVisibility)
+    );
+  }, [effectiveLetterGroups, artworkFinishes, soldScopeVisibility]);
 
   const layerRoleStats = useMemo(() => {
     const layers = state.layerRoleConfirmation?.layers ?? [];
@@ -1847,6 +1855,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             {effectiveLetterGroups.length > 0 ? (
             <IntakeV6ReviewLetterGroupsSection
               groups={effectiveLetterGroups}
+              soldScopeVisibility={soldScopeVisibility}
               onChange={(next) => {
                 setLetterGroups(next);
                 syncFormFromLayerFinishes(
@@ -1873,6 +1882,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 <IntakeV6ArtworkFinishSection
                   embedded
                   rows={artworkFinishes}
+                  soldScopeVisibility={soldScopeVisibility}
                   rasterLayerKeys={rasterLayerKeys}
                   showDecisionAlert={showArtworkDecisionAlert}
                   decisionMessages={artworkDecisionMessages}
@@ -1882,12 +1892,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   stepOneConfirmedLayerKeys={stepOneConfirmedArtworkLayerKeys}
                   allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
                   backingMode={
-                    effectiveLetterGroups.length === 0
+                    effectiveLetterGroups.length === 0 && soldScopeVisibility.back
                       ? normalizeIntakeV6BackingMode(form.backing_mode)
                       : undefined
                   }
                   onBackingChange={
-                    effectiveLetterGroups.length === 0
+                    effectiveLetterGroups.length === 0 && soldScopeVisibility.back
                       ? (mode) =>
                           updateForm(
                             {
@@ -1908,7 +1918,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 />
               </div>
             ) : null}
-            {effectiveLetterGroups.length === 0 && artworkFinishes.length === 0 ? (
+            {soldScopeVisibility.back &&
+            effectiveLetterGroups.length === 0 &&
+            artworkFinishes.length === 0 ? (
             <div data-testid="intake-v6-review-backing-finish-integration">
               <IntakeV6ReviewBackingSelect
                 embedded

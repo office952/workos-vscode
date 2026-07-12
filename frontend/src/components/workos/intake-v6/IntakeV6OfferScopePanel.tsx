@@ -1,41 +1,20 @@
 import { CheckCircle2, Package } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  isOfferScopeStateDirty,
+  normalizeSoldModules,
+  readPersistedOfferScope,
+  shouldPersistOfferScope,
+  type OfferScopeMode,
+  type SoldModuleCode,
+} from "@/lib/intakeV6/intakeV6OfferScopeState";
 import { v6 } from "./atoms/intakeV6Presentation";
-
-type OfferScopeMode = "full_product" | "component_subset";
-type SoldModuleCode = "FACE" | "RETURN-CANT" | "BACK";
 
 const SLICE1_MODULES: Array<{ code: SoldModuleCode; label: string; testId: string }> = [
   { code: "FACE", label: "Față", testId: "intake-v6-offer-scope-face" },
   { code: "RETURN-CANT", label: "Cant", testId: "intake-v6-offer-scope-cant" },
   { code: "BACK", label: "Spate", testId: "intake-v6-offer-scope-back" },
 ];
-
-function asRecord(value: unknown): Record<string, unknown> | null {
-  return typeof value === "object" && value !== null && !Array.isArray(value)
-    ? (value as Record<string, unknown>)
-    : null;
-}
-
-function readPersistedScope(payload: Record<string, unknown> | null | undefined): {
-  mode: OfferScopeMode;
-  soldModules: SoldModuleCode[];
-  confirmed: boolean;
-} {
-  const scope = asRecord(payload?.offer_scope);
-  const confirmation = asRecord(payload?.offer_scope_confirmed);
-  const mode = scope?.mode === "component_subset" ? "component_subset" : "full_product";
-  const soldModules = Array.isArray(scope?.sold_modules)
-    ? scope.sold_modules
-        .map((code) => String(code))
-        .filter((code): code is SoldModuleCode => code === "FACE" || code === "RETURN-CANT" || code === "BACK")
-    : [];
-  return {
-    mode,
-    soldModules,
-    confirmed: confirmation?.confirmed === true,
-  };
-}
 
 export default function IntakeV6OfferScopePanel({
   payload,
@@ -50,59 +29,99 @@ export default function IntakeV6OfferScopePanel({
   }) => Promise<boolean>;
   disabled?: boolean;
 }) {
-  const persisted = useMemo(() => readPersistedScope(payload), [payload]);
+  const persisted = useMemo(() => readPersistedOfferScope(payload), [payload]);
   const [mode, setMode] = useState<OfferScopeMode>(persisted.mode);
   const [soldModules, setSoldModules] = useState<SoldModuleCode[]>(persisted.soldModules);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
-  const skipAutoSaveRef = useRef(true);
+  const onSaveRef = useRef(onSave);
+  const lastPersistedSerializedRef = useRef(persisted.serialized);
+  const inFlightSerializedRef = useRef<string | null>(null);
 
   useEffect(() => {
+    onSaveRef.current = onSave;
+  }, [onSave]);
+
+  useEffect(() => {
+    if (persisted.serialized === lastPersistedSerializedRef.current) {
+      return;
+    }
+    lastPersistedSerializedRef.current = persisted.serialized;
+    inFlightSerializedRef.current = null;
     setMode(persisted.mode);
     setSoldModules(persisted.soldModules);
     setSaveError(null);
-    skipAutoSaveRef.current = true;
-  }, [persisted.mode, persisted.soldModules, persisted.confirmed]);
+  }, [persisted.mode, persisted.serialized, persisted.soldModules]);
 
-  const subsetInvalid = mode === "component_subset" && soldModules.length === 0;
-  const dirty =
-    mode !== persisted.mode ||
-    soldModules.join("|") !== persisted.soldModules.join("|") ||
-    (mode === "full_product" && !persisted.confirmed);
+  const localState = useMemo(
+    () => ({
+      mode,
+      soldModules: mode === "full_product" ? [] : normalizeSoldModules(soldModules),
+    }),
+    [mode, soldModules],
+  );
 
+  const subsetInvalid = localState.mode === "component_subset" && localState.soldModules.length === 0;
+  const dirty = isOfferScopeStateDirty(localState, persisted);
   const confirmed = persisted.confirmed && !dirty && !subsetInvalid;
 
-  useEffect(() => {
-    if (skipAutoSaveRef.current) {
-      skipAutoSaveRef.current = false;
-      return;
-    }
-    if (disabled || saving) return;
-    if (subsetInvalid) return;
+  const persistIfNeeded = useCallback(
+    async (next: { mode: OfferScopeMode; soldModules: SoldModuleCode[] }) => {
+      const normalized = {
+        mode: next.mode,
+        soldModules: next.mode === "full_product" ? [] : normalizeSoldModules(next.soldModules),
+      };
+      if (!shouldPersistOfferScope(normalized, persisted)) {
+        return true;
+      }
 
-    const timer = window.setTimeout(() => {
-      void (async () => {
-        setSaving(true);
-        setSaveError(null);
-        const ok = await onSave({
-          mode,
-          soldModules: mode === "full_product" ? [] : soldModules,
+      const serialized = serializeLocalScope(normalized.mode, normalized.soldModules);
+      if (inFlightSerializedRef.current === serialized) {
+        return true;
+      }
+
+      inFlightSerializedRef.current = serialized;
+      setSaving(true);
+      setSaveError(null);
+      try {
+        const ok = await onSaveRef.current({
+          mode: normalized.mode,
+          soldModules: normalized.soldModules,
           confirmed: true,
         });
         if (!ok) {
+          inFlightSerializedRef.current = null;
           setSaveError("Salvarea selecției a eșuat.");
         }
+        return ok;
+      } finally {
         setSaving(false);
-      })();
-    }, 350);
+      }
+    },
+    [persisted],
+  );
 
-    return () => window.clearTimeout(timer);
-  }, [disabled, mode, onSave, saving, soldModules, subsetInvalid]);
+  const selectFullProduct = () => {
+    const next = { mode: "full_product" as const, soldModules: [] as SoldModuleCode[] };
+    setMode(next.mode);
+    setSoldModules([]);
+    setSaveError(null);
+    void persistIfNeeded(next);
+  };
+
+  const selectSubsetMode = () => {
+    setMode("component_subset");
+    setSaveError(null);
+  };
 
   const toggleModule = (code: SoldModuleCode) => {
-    setSoldModules((current) =>
-      current.includes(code) ? current.filter((item) => item !== code) : [...current, code],
+    const nextModules = normalizeSoldModules(
+      soldModules.includes(code) ? soldModules.filter((item) => item !== code) : [...soldModules, code],
     );
+    setMode("component_subset");
+    setSoldModules(nextModules);
+    setSaveError(null);
+    void persistIfNeeded({ mode: "component_subset", soldModules: nextModules });
   };
 
   return (
@@ -121,11 +140,7 @@ export default function IntakeV6OfferScopePanel({
             type="radio"
             name="intake-v6-offer-scope-mode"
             checked={mode === "full_product"}
-            onChange={() => {
-              setMode("full_product");
-              setSoldModules([]);
-              setSaveError(null);
-            }}
+            onChange={selectFullProduct}
             data-testid="intake-v6-offer-scope-mode-full"
           />
           Produs complet
@@ -135,10 +150,7 @@ export default function IntakeV6OfferScopePanel({
             type="radio"
             name="intake-v6-offer-scope-mode"
             checked={mode === "component_subset"}
-            onChange={() => {
-              setMode("component_subset");
-              setSaveError(null);
-            }}
+            onChange={selectSubsetMode}
             data-testid="intake-v6-offer-scope-mode-subset"
           />
           Doar anumite componente
@@ -174,8 +186,8 @@ export default function IntakeV6OfferScopePanel({
           ? "Salvez selecția…"
           : confirmed
             ? "Selecție confirmată"
-            : dirty && !subsetInvalid
-              ? "Salvez selecția…"
+            : mode === "component_subset" && localState.soldModules.length === 0
+              ? "Selectează componentele de produs."
               : "Produs complet implicit dacă nu alegi altceva"}
       </p>
 
@@ -184,9 +196,16 @@ export default function IntakeV6OfferScopePanel({
           <CheckCircle2 className="h-3 w-3" aria-hidden />
           {mode === "full_product"
             ? "Ofertă pentru produs complet"
-            : `Componente: ${soldModules.join(", ")}`}
+            : `Componente: ${localState.soldModules.join(", ")}`}
         </p>
       ) : null}
     </section>
   );
+}
+
+function serializeLocalScope(mode: OfferScopeMode, soldModules: readonly SoldModuleCode[]): string {
+  if (mode === "full_product") {
+    return "full_product";
+  }
+  return `component_subset:${normalizeSoldModules(soldModules).join("|")}`;
 }
