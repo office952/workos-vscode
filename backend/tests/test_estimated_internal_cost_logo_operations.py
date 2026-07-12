@@ -79,7 +79,7 @@ def _letter_operation_lines(preview):
 def test_linked_logo_operation_filter_accepts_namespaced_logo_row() -> None:
     op = CostBomCostableOperation(
         operation_code="logo_face_print",
-        component_ref="comp_logo_face::logo-stanga",
+        component_ref="comp_logo_finish::logo-stanga",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
@@ -126,14 +126,14 @@ def test_artwork_print_uses_same_segment_area_not_letters() -> None:
     op = CostBomCostableOperation(
         operation_code="logo_face_print",
         formula_id="logo_area",
-        component_ref="comp_logo_face::logo-stanga",
+        component_ref="comp_logo_finish::logo-stanga",
         source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
         provenance="linked_module",
     )
     qty, _ = _estimate_logo_operation_quantity(op, payload, payload)
     assert qty == pytest.approx(0.42)
 
-    op_dreapta = op.model_copy(update={"component_ref": "comp_logo_face::logo-dreapta"})
+    op_dreapta = op.model_copy(update={"component_ref": "comp_logo_finish::logo-dreapta"})
     qty_dreapta, _ = _estimate_logo_operation_quantity(op_dreapta, payload, payload)
     assert qty_dreapta == pytest.approx(0.38)
 
@@ -258,10 +258,10 @@ async def test_two_logo_segments_produce_separate_operation_lines(eic_logo_ops_s
     assert logo_ops
 
     print_ops = [line for line in logo_ops if line.code == "operation_logo_face_print"]
-    assert len(print_ops) >= 2
+    assert len(print_ops) == 2
     refs = {line.component_code for line in print_ops}
-    assert "comp_logo_face::logo-stanga" in refs
-    assert "comp_logo_face::logo-dreapta" in refs
+    assert "comp_logo_finish::logo-stanga" in refs
+    assert "comp_logo_finish::logo-dreapta" in refs
 
 
 @pytest.mark.asyncio

@@ -17,6 +17,10 @@ from schemas.product_aggregate import (
     ProductAggregateTaskRule,
 )
 from schemas.product_definition import ProductDefinitionPreview
+from services.logo_artwork_cost_ownership import (
+    include_material_in_composed_aggregate,
+    include_operation_in_composed_aggregate,
+)
 from services.product_aggregate_service import ProductAggregateService
 from services.product_definition_builder_service import ProductDefinitionBuilderService
 
@@ -304,6 +308,28 @@ def compose_from_product_definition(
 
     materials = _dedupe_materials(materials)
     operations = _dedupe_operations(operations)
+    materials = [
+        mat
+        for mat in materials
+        if include_material_in_composed_aggregate(
+            material_code=mat.material_code,
+            component_ref=mat.component_ref,
+            provenance=mat.provenance,
+            status=mat.status,
+            source_template_code=mat.source_template_code,
+        )
+    ]
+    operations = [
+        op
+        for op in operations
+        if include_operation_in_composed_aggregate(
+            operation_code=op.operation_code,
+            component_ref=op.component_ref,
+            provenance=op.provenance,
+            status=op.status,
+            source_template_code=op.source_template_code,
+        )
+    ]
     task_rules = _dedupe_task_rules(task_rules)
 
     provenance_summary = ProductAggregateProvenanceSummary(

@@ -38,6 +38,10 @@ from schemas.product_aggregate import (
 )
 from schemas.product_definition import ProductDefinitionPreview
 from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
+from services.logo_artwork_cost_ownership import (
+    include_material_in_composed_aggregate,
+    include_operation_in_composed_aggregate,
+)
 from services.aggregate_cost_externalization_hooks import (
     MODULE_FUTURE_EXTERNALIZATION,
     OPERATION_EXTERNALIZATION_HOOKS,
@@ -969,6 +973,25 @@ class AggregateCostBomAdapter:
 
         costable_materials: list[CostBomCostableMaterial] = []
         for mat in aggregate.materials:
+            if not include_material_in_composed_aggregate(
+                material_code=mat.material_code,
+                component_ref=mat.component_ref,
+                provenance=mat.provenance,
+                status=mat.status,
+                source_template_code=mat.source_template_code,
+            ):
+                skipped.append(
+                    CostBomSkippedItem(
+                        item_type="material",
+                        item_key=mat.material_code,
+                        reason="non_canonical_logo_owner",
+                        detail=(
+                            "Excluded — mapping_only or non-canonical linked-logo ownership "
+                            f"({mat.component_ref or 'unknown'})."
+                        ),
+                    )
+                )
+                continue
             if not _material_module_active(mat, active_modules):
                 mod = mat.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
                 skipped.append(
@@ -1033,6 +1056,25 @@ class AggregateCostBomAdapter:
 
         costable_operations: list[CostBomCostableOperation] = []
         for op in aggregate.operations:
+            if not include_operation_in_composed_aggregate(
+                operation_code=op.operation_code,
+                component_ref=op.component_ref,
+                provenance=op.provenance,
+                status=op.status,
+                source_template_code=op.source_template_code,
+            ):
+                skipped.append(
+                    CostBomSkippedItem(
+                        item_type="operation",
+                        item_key=op.operation_code,
+                        reason="non_canonical_logo_owner",
+                        detail=(
+                            "Excluded — mapping_only or non-canonical linked-logo ownership "
+                            f"({op.component_ref or 'unknown'})."
+                        ),
+                    )
+                )
+                continue
             if op.operation_code in GEOMETRY_GATE_OPERATIONS or op.mini_module_code in GATE_ONLY_MODULES:
                 skipped.append(
                     CostBomSkippedItem(
