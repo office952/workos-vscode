@@ -233,7 +233,7 @@ async def test_aggregate_matches_bom_cardinality(ownership_db) -> None:
 
 
 @pytest.mark.asyncio
-async def test_eic_logo_operations_one_per_concept_and_rates_missing(ownership_db) -> None:
+async def test_eic_logo_operations_one_per_concept_print_lam_configured_application_missing(ownership_db) -> None:
     service = EstimatedInternalCostService(
         ownership_db,
         bom_builder=PatchedAggregateCostBomBuilder(
@@ -260,9 +260,15 @@ async def test_eic_logo_operations_one_per_concept_and_rates_missing(ownership_d
         if line.component_code and "::" in line.component_code and line.code.startswith("operation_logo_")
     ]
     print_ops = [line for line in logo_ops if line.code == "operation_logo_face_print"]
+    lam_ops = [line for line in logo_ops if line.code == "operation_logo_face_laminate"]
+    app_ops = [line for line in logo_ops if line.code == "operation_logo_finish_application"]
     assert len(print_ops) == 2
+    assert len(lam_ops) == 2
+    assert len(app_ops) == 2
     assert all(line.component_code.startswith(f"{CANONICAL_ARTWORK_COMPONENT}::") for line in print_ops)
-    assert all(line.subtotal is None for line in logo_ops)
+    assert all(line.internal_unit_cost == pytest.approx(35.0) for line in print_ops + lam_ops)
+    assert all(line.subtotal is not None for line in print_ops + lam_ops)
+    assert all(line.subtotal is None for line in app_ops)
     assert any(b.code == "INTERNAL_OPERATION_RULE_MISSING" for b in preview.internal_blockers)
 
 

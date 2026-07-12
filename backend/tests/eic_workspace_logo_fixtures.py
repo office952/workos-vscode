@@ -45,17 +45,31 @@ def _layer(key: str, name: str, role: str) -> dict:
     }
 
 
-def _artwork_finish(*, layer_key: str, layer_name: str, area_m2: float, confirmed: bool = True) -> dict:
-    return {
+def _artwork_finish(
+    *,
+    layer_key: str,
+    layer_name: str,
+    area_m2: float,
+    confirmed: bool = True,
+    execution_type: str = "print_laminate",
+    print_required: bool | None = None,
+    lamination_required: bool | None = None,
+) -> dict:
+    row = {
         "layer_key": layer_key,
         "layer_name": layer_name,
         "display_name": layer_name,
-        "execution_type": "print_laminate",
+        "execution_type": execution_type,
         "color_mode": "polychrome",
         "return_depth_mm": 60,
         "estimated_area_m2": area_m2,
         "confirmed": confirmed,
     }
+    if print_required is not None:
+        row["print_required"] = print_required
+    if lamination_required is not None:
+        row["lamination_required"] = lamination_required
+    return row
 
 
 def gradi_payload(*, finish_confirmed: bool = True) -> dict:
@@ -101,6 +115,27 @@ def gradi_payload(*, finish_confirmed: bool = True) -> dict:
 
 def confirmed_bindings_payload() -> dict:
     payload = gradi_payload()
+    items = payload["product_composition_recommendation"]["composition_items"]
+    persist_logo_layer_bindings_from_composition_confirmation(payload, confirmed=True, confirmed_items=items)
+    payload["product_composition_confirmed"] = {"confirmed": True, "items": items}
+    return payload
+
+
+def single_logo_bindings_payload(*, area_m2: float = 0.42, execution_type: str = "print_laminate") -> dict:
+    payload = gradi_payload()
+    payload["layer_role_setup"]["layers"] = [
+        payload["layer_role_setup"]["layers"][0],
+        _layer(LOGO_INSTANCE_A, "Logo 1", "printed_artwork"),
+    ]
+    payload["finish_setup"]["artwork_finishes"] = [
+        _artwork_finish(
+            layer_key=LOGO_INSTANCE_A,
+            layer_name="Logo 1",
+            area_m2=area_m2,
+            execution_type=execution_type,
+        )
+    ]
+    apply_product_composition_recommendation(payload)
     items = payload["product_composition_recommendation"]["composition_items"]
     persist_logo_layer_bindings_from_composition_confirmation(payload, confirmed=True, confirmed_items=items)
     payload["product_composition_confirmed"] = {"confirmed": True, "items": items}

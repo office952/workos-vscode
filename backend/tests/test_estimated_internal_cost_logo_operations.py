@@ -17,10 +17,12 @@ from services.estimated_internal_cost_service import (
     _resolve_logo_operation_internal_rate,
 )
 from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
-from tests.eic_patched_bom_builder import PatchedAggregateCostBomBuilder
+from tests.eic_patched_bom_builder import FilteredLogoBomBuilder, PatchedAggregateCostBomBuilder
 from tests.eic_workspace_logo_fixtures import (
     LOGO_INVENTORY,
     LOGO_MATERIAL_RATES,
+    LOGO_INSTANCE_A,
+    LOGO_INSTANCE_B,
     ROOT,
     add_workspace as _add_workspace,
     confirmed_bindings_payload as _confirmed_bindings_payload,
@@ -29,6 +31,7 @@ from tests.eic_workspace_logo_fixtures import (
     quote_input_overlay as _quote_input_overlay,
     seed_logo_inventory_materials as _seed_logo_inventory_materials,
     seed_logo_template,
+    single_logo_bindings_payload as _single_logo_bindings_payload,
 )
 from tests.test_product_aggregate_volumetric_v2 import _seed_volumetric_v2_fixture
 
@@ -106,8 +109,40 @@ def test_linked_logo_operation_filter_rejects_logo_template_without_namespace() 
     assert _is_linked_logo_bom_operation(op) is False
 
 
-def test_resolve_logo_operation_rate_is_missing_blocker_only() -> None:
-    rate, rule_code, source = _resolve_logo_operation_internal_rate("logo_face_print")
+def test_resolve_logo_print_rate_is_35_ron_m2() -> None:
+    op = CostBomCostableOperation(
+        operation_code="logo_face_print",
+        component_ref="comp_logo_finish::logo_instance_001",
+        source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
+        provenance="linked_module",
+    )
+    rate, rule_code, source = _resolve_logo_operation_internal_rate("logo_face_print", op=op)
+    assert rate == pytest.approx(35.0)
+    assert rule_code == "INT_LOGO_FACE_PRINT_M2"
+    assert "logo_face_print" in source
+
+
+def test_resolve_logo_laminate_rate_is_35_ron_m2() -> None:
+    op = CostBomCostableOperation(
+        operation_code="logo_face_laminate",
+        component_ref="comp_logo_finish::logo_instance_001",
+        source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
+        provenance="linked_module",
+    )
+    rate, rule_code, source = _resolve_logo_operation_internal_rate("logo_face_laminate", op=op)
+    assert rate == pytest.approx(35.0)
+    assert rule_code == "INT_LOGO_FACE_LAMINATE_M2"
+    assert "logo_face_laminate" in source
+
+
+def test_resolve_logo_application_rate_remains_missing() -> None:
+    op = CostBomCostableOperation(
+        operation_code="logo_finish_application",
+        component_ref="comp_logo_finish::logo_instance_001",
+        source_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
+        provenance="linked_module",
+    )
+    rate, rule_code, source = _resolve_logo_operation_internal_rate("logo_finish_application", op=op)
     assert rate is None
     assert rule_code == "INT_LOGO_OP_RATE_MISSING"
     assert "missing" in source
@@ -265,7 +300,7 @@ async def test_two_logo_segments_produce_separate_operation_lines(eic_logo_ops_s
 
 
 @pytest.mark.asyncio
-async def test_logo_operation_missing_rate_produces_blocker_not_zero_subtotal(
+async def test_logo_print_and_laminate_subtotals_configured_application_remains_blocker(
     eic_logo_ops_service, eic_logo_ops_db
 ) -> None:
     workspace_id = await _add_workspace(eic_logo_ops_db, _confirmed_bindings_payload())
@@ -277,12 +312,127 @@ async def test_logo_operation_missing_rate_produces_blocker_not_zero_subtotal(
     assert preview is not None
     logo_ops = _logo_operation_lines(preview)
     assert logo_ops
-    assert all(line.subtotal is None for line in logo_ops)
-    assert all(line.internal_unit_cost is None for line in logo_ops)
-    assert any(
-        b.code == "INTERNAL_OPERATION_RULE_MISSING"
-        for b in preview.internal_blockers
+
+    print_ops = [line for line in logo_ops if line.code == "operation_logo_face_print"]
+    lam_ops = [line for line in logo_ops if line.code == "operation_logo_face_laminate"]
+    app_ops = [line for line in logo_ops if line.code == "operation_logo_finish_application"]
+    assert len(print_ops) == 2
+    assert len(lam_ops) == 2
+    assert len(app_ops) == 2
+
+    for line in print_ops + lam_ops:
+        assert line.internal_unit_cost == pytest.approx(35.0)
+        assert line.subtotal is not None
+        assert line.subtotal > 0
+
+    subtotals_by_ref = {
+        (line.component_code, line.code): line.subtotal
+        for line in print_ops + lam_ops
+    }
+    assert subtotals_by_ref[("comp_logo_finish::logo_instance_001", "operation_logo_face_print")] == pytest.approx(14.70)
+    assert subtotals_by_ref[("comp_logo_finish::logo_instance_001", "operation_logo_face_laminate")] == pytest.approx(14.70)
+    assert subtotals_by_ref[("comp_logo_finish::logo_instance_002", "operation_logo_face_print")] == pytest.approx(13.30)
+    assert subtotals_by_ref[("comp_logo_finish::logo_instance_002", "operation_logo_face_laminate")] == pytest.approx(13.30)
+
+    for line in app_ops:
+        assert line.internal_unit_cost is None
+        assert line.subtotal is None
+
+    blocker_codes = {b.code for b in preview.internal_blockers}
+    assert "INTERNAL_OPERATION_RULE_MISSING" in blocker_codes
+    assert preview.status == "blocked"
+    assert preview.ready_for_quote_snapshot is False
+
+
+@pytest.mark.asyncio
+async def test_material_and_operation_lines_remain_separate(eic_logo_ops_service, eic_logo_ops_db) -> None:
+    workspace_id = await _add_workspace(eic_logo_ops_db, _confirmed_bindings_payload())
+    preview = await eic_logo_ops_service.build_preview(
+        ROOT,
+        workspace_id=workspace_id,
+        quote_input=_quote_input_overlay(_confirmed_bindings_payload()),
     )
+    assert preview is not None
+    logo_materials = [
+        line
+        for line in preview.estimated_material_lines
+        if line.component_code and "::" in line.component_code
+    ]
+    print_materials = [line for line in logo_materials if line.code == "material_print_media"]
+    lam_materials = [line for line in logo_materials if line.code == "material_laminate_media"]
+    assert len(print_materials) == 2
+    assert len(lam_materials) == 2
+    for line in print_materials:
+        assert line.internal_unit_cost == pytest.approx(5.0)
+        assert line.subtotal is not None
+    logo_ops = _logo_operation_lines(preview)
+    assert len([line for line in logo_ops if line.code == "operation_logo_face_print"]) == 2
+    assert len([line for line in logo_ops if line.code == "operation_logo_face_laminate"]) == 2
+
+
+@pytest.mark.asyncio
+async def test_print_only_partial_state_via_filtered_bom(eic_logo_ops_db) -> None:
+    service = EstimatedInternalCostService(
+        eic_logo_ops_db,
+        bom_builder=FilteredLogoBomBuilder(
+            eic_logo_ops_db,
+            material_rates=LOGO_MATERIAL_RATES,
+            inventory_catalog=LOGO_INVENTORY,
+            allowed_logo_operation_codes=frozenset({"logo_face_print"}),
+            allowed_logo_material_codes=frozenset({"print_media"}),
+        ),
+    )
+
+    async def _patched_load():
+        return LOGO_MATERIAL_RATES, {"RON": "RON"}, {"WC_CNC_ROUTING": 120.0}, LOGO_INVENTORY
+
+    service._load_pricing_context = _patched_load  # type: ignore[method-assign]
+    payload = _single_logo_bindings_payload(execution_type="print")
+    workspace_id = await _add_workspace(eic_logo_ops_db, payload)
+    preview = await service.build_preview(ROOT, workspace_id=workspace_id, quote_input=_quote_input_overlay(payload))
+    assert preview is not None
+    logo_materials = [
+        line for line in preview.estimated_material_lines if line.component_code and "::" in line.component_code
+    ]
+    logo_ops = _logo_operation_lines(preview)
+    assert len([line for line in logo_materials if line.code == "material_print_media"]) == 1
+    assert len([line for line in logo_materials if line.code == "material_laminate_media"]) == 0
+    assert len([line for line in logo_ops if line.code == "operation_logo_face_print"]) == 1
+    assert len([line for line in logo_ops if line.code == "operation_logo_face_laminate"]) == 0
+    assert len([line for line in logo_ops if line.code == "operation_logo_finish_application"]) == 0
+    print_line = next(line for line in logo_ops if line.code == "operation_logo_face_print")
+    assert print_line.subtotal == pytest.approx(14.70)
+
+
+@pytest.mark.asyncio
+async def test_application_inactive_partial_state_via_filtered_bom(eic_logo_ops_db) -> None:
+    service = EstimatedInternalCostService(
+        eic_logo_ops_db,
+        bom_builder=FilteredLogoBomBuilder(
+            eic_logo_ops_db,
+            material_rates=LOGO_MATERIAL_RATES,
+            inventory_catalog=LOGO_INVENTORY,
+            allowed_logo_operation_codes=frozenset({"logo_face_print", "logo_face_laminate"}),
+            allowed_logo_material_codes=frozenset({"print_media", "laminate_media"}),
+        ),
+    )
+
+    async def _patched_load():
+        return LOGO_MATERIAL_RATES, {"RON": "RON"}, {"WC_CNC_ROUTING": 120.0}, LOGO_INVENTORY
+
+    service._load_pricing_context = _patched_load  # type: ignore[method-assign]
+    payload = _single_logo_bindings_payload()
+    workspace_id = await _add_workspace(eic_logo_ops_db, payload)
+    preview = await service.build_preview(ROOT, workspace_id=workspace_id, quote_input=_quote_input_overlay(payload))
+    assert preview is not None
+    logo_ops = _logo_operation_lines(preview)
+    assert len([line for line in logo_ops if line.code == "operation_logo_finish_application"]) == 0
+    assert all(
+        line.subtotal == pytest.approx(14.70)
+        for line in logo_ops
+        if line.code in {"operation_logo_face_print", "operation_logo_face_laminate"}
+    )
+    assert not any(b.code == "INTERNAL_OPERATION_RULE_MISSING" for b in preview.internal_blockers)
 
 
 @pytest.mark.asyncio
@@ -350,7 +500,7 @@ def test_eic_module_has_no_binding_or_recommendation_imports() -> None:
         assert token not in source
 
 
-def test_post_eic_preview_endpoint_logo_operations_blocker_only(volumetric_auth_client, db_fixture):
+def test_post_eic_preview_endpoint_logo_print_lam_rates_and_application_blocker(volumetric_auth_client, db_fixture):
     payload = _confirmed_bindings_payload()
 
     async def _seed():
@@ -372,11 +522,16 @@ def test_post_eic_preview_endpoint_logo_operations_blocker_only(volumetric_auth_
         for line in body.get("estimated_operation_lines", [])
         if "::" in (line.get("component_code") or "")
     ]
-    assert logo_ops or any(
-        b.get("code") in ("INTERNAL_OPERATION_RULE_MISSING", "INTERNAL_GEOMETRY_MISSING")
-        for b in body.get("internal_blockers", [])
-    )
-    if logo_ops:
-        assert all(line.get("subtotal") is None for line in logo_ops)
-        assert all(line.get("internal_unit_cost") is None for line in logo_ops)
+    assert logo_ops
+    print_ops = [line for line in logo_ops if line.get("code") == "operation_logo_face_print"]
+    lam_ops = [line for line in logo_ops if line.get("code") == "operation_logo_face_laminate"]
+    app_ops = [line for line in logo_ops if line.get("code") == "operation_logo_finish_application"]
+    assert print_ops and lam_ops and app_ops
+    assert all(line.get("internal_unit_cost") == 35.0 for line in print_ops + lam_ops)
+    assert all(line.get("subtotal") is not None for line in print_ops + lam_ops)
+    assert all(line.get("internal_unit_cost") is None for line in app_ops)
+    assert all(line.get("subtotal") is None for line in app_ops)
+    assert any(b.get("code") == "INTERNAL_OPERATION_RULE_MISSING" for b in body.get("internal_blockers", []))
+    assert body.get("status") == "blocked"
+    assert body.get("ready_for_quote_snapshot") is False
     assert "commercial_price" not in body

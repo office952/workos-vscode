@@ -24,6 +24,48 @@ DEV_BRIDGE_SABLON_CNC_RON_M2 = 8.0
 
 Criticality = Literal["critical", "optional"]
 LineKind = Literal["operation", "consumable", "overhead"]
+LogoRateStatus = Literal["active", "inactive"]
+
+
+@dataclass(frozen=True)
+class LogoInternalOperationRate:
+    operation_code: str
+    unit: str
+    internal_unit_cost: float
+    currency: str
+    source: str
+    rule_code: str
+    status: LogoRateStatus = "active"
+
+
+# Owner-approved canonical internal rates for linked-logo artwork operations (EIC only).
+LOGO_ARTWORK_INTERNAL_OPERATION_RATES: tuple[LogoInternalOperationRate, ...] = (
+    LogoInternalOperationRate(
+        operation_code="logo_face_print",
+        unit="m2",
+        internal_unit_cost=35.0,
+        currency="RON",
+        source="internal_cost_rules_volumetric_v2:logo_face_print_m2",
+        rule_code="INT_LOGO_FACE_PRINT_M2",
+    ),
+    LogoInternalOperationRate(
+        operation_code="logo_face_laminate",
+        unit="m2",
+        internal_unit_cost=35.0,
+        currency="RON",
+        source="internal_cost_rules_volumetric_v2:logo_face_laminate_m2",
+        rule_code="INT_LOGO_FACE_LAMINATE_M2",
+    ),
+)
+
+LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE: dict[str, LogoInternalOperationRate] = {
+    rate.operation_code: rate for rate in LOGO_ARTWORK_INTERNAL_OPERATION_RATES
+}
+
+if len(LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE) != len(LOGO_ARTWORK_INTERNAL_OPERATION_RATES):
+    raise ValueError("Duplicate logo internal operation rate operation_code entries are forbidden.")
+if "logo_finish_application" in LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE:
+    raise ValueError("logo_finish_application must not receive a numeric internal rate in this catalog.")
 
 
 @dataclass(frozen=True)

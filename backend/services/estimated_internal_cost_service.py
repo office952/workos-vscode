@@ -447,12 +447,30 @@ def _estimate_material_quantity(
 
 def _resolve_logo_operation_internal_rate(
     operation_code: str,
+    *,
+    op: CostBomCostableOperation | None = None,
 ) -> tuple[float | None, str, str]:
-    """Return existing canonical internal rate only — no invented logo rates."""
-    template_rules = RULES_BY_TEMPLATE.get("TPL-VOLUMETRIC-LETTERS_v2") or {}
-    for rule in template_rules.get("operations", ()):
-        if rule.line_code == operation_code and rule.internal_unit_cost is not None:
-            return float(rule.internal_unit_cost), rule.rule_code, rule.source
+    """Return owner-approved logo artwork internal rate from canonical catalog only."""
+    from data.internal_cost_rules_volumetric_v2 import LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE
+    from services.logo_artwork_cost_ownership import is_canonical_logo_artwork_operation_row
+
+    if op is not None and operation_code in ARTWORK_OWNED_LOGO_OPERATION_CODES:
+        if not is_canonical_logo_artwork_operation_row(
+            operation_code=operation_code,
+            component_ref=op.component_ref,
+            provenance=op.provenance,
+            status=getattr(op, "status", None),
+            source_template_code=op.source_template_code,
+        ):
+            return (
+                None,
+                "INT_LOGO_OP_RATE_MISSING",
+                "internal_cost_rules_volumetric_v2:non_canonical_logo_owner",
+            )
+
+    rate_entry = LOGO_ARTWORK_INTERNAL_OPERATION_RATE_BY_CODE.get(operation_code)
+    if rate_entry is not None and rate_entry.status == "active":
+        return float(rate_entry.internal_unit_cost), rate_entry.rule_code, rate_entry.source
     return None, "INT_LOGO_OP_RATE_MISSING", "internal_cost_rules_volumetric_v2:logo_operation_rate_missing"
 
 
@@ -792,7 +810,7 @@ class EstimatedInternalCostService:
             if not _is_linked_logo_bom_operation(op):
                 continue
 
-            unit_cost, rule_code, source = _resolve_logo_operation_internal_rate(op.operation_code)
+            unit_cost, rule_code, source = _resolve_logo_operation_internal_rate(op.operation_code, op=op)
             quantity, op_warnings = _estimate_logo_operation_quantity(op, payload, values)
             operation_lines.append(
                 _build_logo_operation_line_from_bom(
