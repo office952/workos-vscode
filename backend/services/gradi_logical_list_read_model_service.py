@@ -20,6 +20,10 @@ from services.intake_v4_nesting_material_precision import (
     compute_roll_nesting_vinyl_area_by_layer,
 )
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
+from services.intake_v6_offer_scope_live_calc_service import (
+	filter_logical_list_rows_by_offer_scope,
+	merge_workspace_offer_scope_into_quote_input,
+)
 from services.intake_v6_priced_quote_dry_run_service import build_intake_v6_priced_quote_dry_run
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads
 from services.shared_material_color_catalog_registry import (
@@ -1276,6 +1280,12 @@ def build_gradi_logical_list_read_model_from_runtime(
 
     if artwork_prefs and not (isinstance(logo_plexi_row, dict) and logo_plexi_row.get("status") == "MATCHED"):
         response_warnings.append("LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING")
+
+    rows = filter_logical_list_rows_by_offer_scope(
+        rows,
+        payload_raw=workspace_payload,
+        quote_input=merge_workspace_offer_scope_into_quote_input(workspace_payload, {}),
+    )
 
     core_codes = {CORE_CATEGORY_MATERIALS, CORE_CATEGORY_SERVICES, CORE_CATEGORY_LABOR}
     return {

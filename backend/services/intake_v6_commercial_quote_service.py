@@ -21,6 +21,7 @@ from services.intake_v4_commercial_quote_service import (
 	client_order_production_flags_for_quote,
 )
 from services.intake_v6_internal_draft_quote_policy_service import evaluate_internal_draft_quote_policy
+from services.intake_v6_offer_scope_live_calc_service import merge_workspace_offer_scope_into_quote_input
 from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 from services.quotes import QuotesService
@@ -157,6 +158,7 @@ async def get_quote_handoff_preview_for_workspace(
 		workspace_id=workspace_id,
 		payload=payload,
 		template_code=record.template_code,
+		payload_raw=payload_raw if isinstance(payload_raw, dict) else {},
 	)
 	policy = evaluate_internal_draft_quote_policy(
 		record,
@@ -199,6 +201,7 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 		workspace_id=workspace_id,
 		payload=payload,
 		template_code=record.template_code,
+		payload_raw=payload_raw if isinstance(payload_raw, dict) else {},
 	)
 	policy = evaluate_internal_draft_quote_policy(
 		record,
@@ -238,9 +241,13 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 		)
 
 	requires_pricing_review = True if policy.review_warnings else False
-	quote_input = dict(pricing_preview.quote_input_payload)
-	if payload.offer_scope is not None:
-		quote_input["offer_scope"] = payload.offer_scope.model_dump(mode="json")
+	payload_raw = _json_loads(record.payload_json, {})
+	if not isinstance(payload_raw, dict):
+		payload_raw = {}
+	quote_input = merge_workspace_offer_scope_into_quote_input(
+		payload_raw,
+		dict(pricing_preview.quote_input_payload),
+	)
 	linked_modules = await _build_linked_module_lines(
 		db,
 		payload=payload,

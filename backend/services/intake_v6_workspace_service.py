@@ -1446,12 +1446,16 @@ async def get_pricing_input_preview_for_workspace(
     from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
 
     record = await _get_record_or_404(db, workspace_id)
-    payload = _parse_payload(_json_loads(record.payload_json, {}))
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    payload = _parse_payload(payload_raw)
     assert_v6_analysis_boundary_or_raise(payload)
     return build_v6_pricing_input_preview(
         workspace_id=workspace_id,
         payload=payload,
         template_code=record.template_code,
+        payload_raw=payload_raw,
     )
 
 

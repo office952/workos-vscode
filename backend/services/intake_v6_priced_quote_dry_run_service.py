@@ -13,6 +13,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.commercial_price_proposal_service import CommercialPriceProposalService
 from services.company_commercial_settings_service import get_default_vat_pct, get_eur_to_ron_rate
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
+from services.intake_v6_offer_scope_live_calc_service import (
+	merge_workspace_offer_scope_into_quote_input,
+)
 from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 
@@ -216,8 +219,12 @@ async def build_intake_v6_priced_quote_dry_run(
 		workspace_id=workspace_id_str,
 		payload=payload,
 		template_code=record.template_code,
+		payload_raw=payload_raw,
 	)
-	quote_input = dict(getattr(pricing_preview, "quote_input_payload", {}) or {})
+	quote_input = merge_workspace_offer_scope_into_quote_input(
+		payload_raw,
+		dict(getattr(pricing_preview, "quote_input_payload", {}) or {}),
+	)
 	settings_vat_percent = float(await get_default_vat_pct(db))
 	commercial_inputs = _read_commercial_inputs(
 		payload_raw,
