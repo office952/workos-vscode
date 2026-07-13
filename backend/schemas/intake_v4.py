@@ -1100,7 +1100,11 @@ class IntakeV4TemplateFormContractResponse(BaseModel):
     alignment_status: Literal["aligned", "partial", "blocked"] = "partial"
     template_active: bool = False
     dossier_status: str | None = None
-    dossier_source: Literal["product_blueprint_dossier", "static_contract_fallback"] = "static_contract_fallback"
+    dossier_source: Literal[
+        "product_blueprint_dossier",
+        "static_contract_fallback",
+        "canonical_template_contract",
+    ] = "static_contract_fallback"
     ui_must_not_invent_final_options: bool = True
     variant_fields: list[IntakeV4TemplateFormContractField] = Field(default_factory=list)
     canonical_rows: list[IntakeV4TemplateContractCanonicalRow] = Field(default_factory=list)

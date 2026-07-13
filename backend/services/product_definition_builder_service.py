@@ -551,10 +551,12 @@ class ProductDefinitionBuilderService:
         if aggregate is None:
             return None
 
+        stored_template_code = aggregate.template_code
+
         payload: dict[str, Any] = {}
         source_type: str = "template_only"
         if workspace_id:
-            ws_payload, ws_error = await self._load_workspace_payload(workspace_id, template_code)
+            ws_payload, ws_error = await self._load_workspace_payload(workspace_id, stored_template_code)
             if ws_error == "workspace_not_found":
                 return None
             if ws_error == "workspace_template_mismatch":
@@ -563,10 +565,10 @@ class ProductDefinitionBuilderService:
                 payload = ws_payload or {}
                 source_type = "workspace_payload"
 
-        if is_acm_boxed_mounting_standalone_root_template(template_code):
+        if is_acm_boxed_mounting_standalone_root_template(stored_template_code):
             preview = await _build_acm_standalone_product_definition_preview(
                 aggregate=aggregate,
-                template_code=template_code,
+                template_code=stored_template_code,
                 workspace_id=workspace_id,
                 payload=payload,
                 source_type=source_type,
@@ -587,7 +589,7 @@ class ProductDefinitionBuilderService:
             )
             return preview
 
-        form_contract = self._form.get_for_template(template_code)
+        form_contract = self._form.get_for_template(stored_template_code)
         if form_contract is None:
             return None
 
@@ -606,7 +608,7 @@ class ProductDefinitionBuilderService:
             analysis_ready=analysis_ready,
         )
 
-        registry_response = self._registry.get_by_template(template_code)
+        registry_response = self._registry.get_by_template(stored_template_code)
         classified_codes = {
             m.module_code
             for m in selected + optional + inactive
@@ -635,7 +637,7 @@ class ProductDefinitionBuilderService:
         linked_template_composition = backbone.get("linked_template_composition")
         if isinstance(linked_template_composition, dict):
             linked_template_runtime_segments = extract_linked_template_segments_from_workspace_payload(
-                root_template_code=template_code,
+                root_template_code=stored_template_code,
                 workspace_payload=payload,
                 linked_template_composition=linked_template_composition,
             )
@@ -741,10 +743,10 @@ class ProductDefinitionBuilderService:
         ]
 
         return ProductDefinitionPreview(
-            template_code=template_code,
+            template_code=stored_template_code,
             business_name_ro=aggregate.business_name_ro or aggregate.family_name,
             source_context=ProductDefinitionSourceContext(
-                template_code=template_code,
+                template_code=stored_template_code,
                 workspace_id=workspace_id,
                 source_payload_type=source_type,  # type: ignore[arg-type]
             ),
@@ -759,7 +761,7 @@ class ProductDefinitionBuilderService:
             geometry_inputs=geometry_inputs,
             validation=validation,
             provenance=provenance,
-            resource_hints=_build_resource_hints(self._registry, template_code),
+            resource_hints=_build_resource_hints(self._registry, stored_template_code),
             warnings=warnings,
             notes=notes,
         )

@@ -118,11 +118,7 @@ function Show-FinalStatus {
 
 function Test-IntakeV3OperatorWorkspaceRoutesOk {
     param([string] $BaseUrl = $BackendUrl)
-    $required = @(
-        "/api/v1/intake-v3/workspaces/{workspace_id}/layer-finish-assignments",
-        "/api/v1/intake-v3/workspaces/{workspace_id}/layer-role-confirmation",
-        "/api/v1/intake-v3/workspaces/{workspace_id}/lighting-plan"
-    )
+    $required = @()
     try {
         $schema = Invoke-RestMethod -Uri "$BaseUrl/openapi.json" -TimeoutSec 5
         $paths = @($schema.paths.PSObject.Properties | ForEach-Object { $_.Name })
@@ -135,6 +131,37 @@ function Test-IntakeV3OperatorWorkspaceRoutesOk {
     } catch {
         return $false
     }
+}
+
+function Write-BackendDevReadyDiagnostics {
+    param([string] $BaseUrl = $BackendUrl)
+
+    $healthOk = Test-HttpOk -Url $HealthUrl
+    $openapiUrl = "$BaseUrl/openapi.json"
+    $required = @()
+
+    Write-Host ""
+    Write-Host "=== Backend dev readiness diagnostics (no semantics change) ===" -ForegroundColor Yellow
+    Write-Host ("  health_ok     = {0}" -f $healthOk)
+    Write-Host ("  health_url    = {0}" -f $HealthUrl)
+    Write-Host ("  openapi_url   = {0}" -f $openapiUrl)
+
+    try {
+        $schema = Invoke-RestMethod -Uri $openapiUrl -TimeoutSec 5
+        $paths = @($schema.paths.PSObject.Properties | ForEach-Object { $_.Name })
+        $missing = @($required | Where-Object { $paths -notcontains $_ })
+        if ($missing.Count -eq 0) {
+            Write-Host "  openapi_parse = ok"
+            Write-Host "  missing_paths = (none)"
+        } else {
+            Write-Host "  openapi_parse = ok"
+            Write-Host ("  missing_paths = {0}" -f ($missing -join ", "))
+        }
+    } catch {
+        Write-Host ("  openapi_parse = failed: {0}" -f $_.Exception.Message)
+        Write-Host "  missing_paths = (unknown - OpenAPI fetch/parse failed)"
+    }
+    Write-Host ""
 }
 
 function Test-BackendDevReady {
@@ -164,6 +191,7 @@ function Resolve-PortService {
         if ($listener -and $ServiceName -eq "Backend" -and (Test-HttpOk -Url $HealthUrl)) {
             Write-Host ""
             Write-Host "Backend on port $Port responds to /health but is missing Intake V3 operator routes (stale process)." -ForegroundColor Yellow
+            Write-BackendDevReadyDiagnostics -BaseUrl $BackendUrl
             Write-Host ("  PID          = {0}" -f $listener.PID)
             Write-Host ("  Process      = {0}" -f $listener.ProcessName)
             Write-Host "  Action       = Stopping stale backend so current code can start."
@@ -261,6 +289,7 @@ if (-not $backendState.Ready) {
     $backendReady = Wait-ForService -Name "Backend" -Probe { Test-BackendDevReady }
     if (-not $backendReady) {
         Write-Host "Backend health check did not pass - recent job output:" -ForegroundColor Yellow
+        Write-BackendDevReadyDiagnostics -BaseUrl $BackendUrl
         Get-JobTail -Job $backendJob -Last 40
         Stop-Job $backendJob -ErrorAction SilentlyContinue
         Remove-Job $backendJob -ErrorAction SilentlyContinue

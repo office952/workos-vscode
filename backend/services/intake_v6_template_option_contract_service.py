@@ -17,6 +17,7 @@ from services.intake_v4_template_option_contract_service import (
 	_canonical_row_response,
 	_issue_response,
 	_json_loads,
+	_resolve_template_variants,
 	_variant_fields_from_dossier,
 	evaluate_v4_template_option_contract,
 	validate_finish_setup_against_dossier,
@@ -51,16 +52,9 @@ async def get_template_form_contract_for_workspace(
 		select(ProductBlueprintDossier).where(ProductBlueprintDossier.template_code == template_code)
 	)
 	dossier = dossier_result.scalar_one_or_none()
-	variants = FALLBACK_DOSSIER_VARIANTS
-	dossier_source: Literal["product_blueprint_dossier", "static_contract_fallback"] = (
-		"static_contract_fallback"
-	)
+	variants, dossier_source = _resolve_template_variants(template_code)
 	dossier_status: str | None = None
 	if dossier is not None:
-		parsed_variants = _json_loads(dossier.variants_json, [])
-		if isinstance(parsed_variants, list):
-			variants = [v for v in parsed_variants if isinstance(v, dict)]
-			dossier_source = "product_blueprint_dossier"
 		dossier_status = dossier.status
 
 	contract = evaluate_v4_template_option_contract(payload)

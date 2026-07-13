@@ -31,8 +31,15 @@ from services.intake_v4_ral_paint_rules_service import (
     RAL_PAINT_SPRAY_MATERIAL_CODE,
     estimate_intake_v4_ral_paint_spray,
 )
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
 
 TemplateOptionStatus = Literal["aligned", "partial", "missing", "provisional"]
+VariantSource = Literal[
+    "canonical_template_contract",
+    "static_contract_fallback",
+]
 
 # Dossier variant keys — source: seed_tpl_volumetric_letters_dossier._variants()
 DOSSIER_VARIANT_KEYS = frozenset(
@@ -178,6 +185,13 @@ FALLBACK_DOSSIER_VARIANTS: list[dict[str, Any]] = [
         "description": "Emblem lighting mode — area_lit or excluded.",
     },
 ]
+
+def _resolve_template_variants(template_code: str) -> tuple[list[dict[str, Any]], VariantSource]:
+    canonical = get_canonical_template_contract_service()
+    if canonical.has_canonical_contract(template_code):
+        return canonical.get_variants(template_code), "canonical_template_contract"
+    return FALLBACK_DOSSIER_VARIANTS, "static_contract_fallback"
+
 
 DOSSIER_TO_V4_FIELD: dict[str, tuple[str | None, Literal["canonical", "mapped", "adapter_only", "missing_in_v4"], str]] = {
     "back_bevel_enabled": (
@@ -787,16 +801,9 @@ async def get_template_form_contract_for_workspace(
         select(ProductBlueprintDossier).where(ProductBlueprintDossier.template_code == template_code)
     )
     dossier = dossier_result.scalar_one_or_none()
-    variants = FALLBACK_DOSSIER_VARIANTS
-    dossier_source: Literal["product_blueprint_dossier", "static_contract_fallback"] = (
-        "static_contract_fallback"
-    )
+    variants, dossier_source = _resolve_template_variants(template_code)
     dossier_status: str | None = None
     if dossier is not None:
-        parsed_variants = _json_loads(dossier.variants_json, [])
-        if isinstance(parsed_variants, list):
-            variants = [v for v in parsed_variants if isinstance(v, dict)]
-            dossier_source = "product_blueprint_dossier"
         dossier_status = dossier.status
 
     contract = evaluate_v4_template_option_contract(payload)
@@ -1077,12 +1084,7 @@ async def validate_finish_setup_against_dossier(
         )
     )
     dossier = dossier_result.scalar_one_or_none()
-    variants = FALLBACK_DOSSIER_VARIANTS
-    if dossier is not None:
-        parsed = _json_loads(dossier.variants_json, [])
-        if isinstance(parsed, list):
-            variants = [v for v in parsed if isinstance(v, dict)]
-
+    variants, _ = _resolve_template_variants(template_code)
     warnings: list[str] = []
     variant_map: dict[str, set] = {}
     for v in variants:

@@ -34,6 +34,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.quotes import Quotes
 from models.product_templates import Product_templates
 from models.product_blueprint_dossier import ProductBlueprintDossier
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
+from services.dossier_consumption_policy import (
+    DOSSIER_BEHAVIOR_FIELDS_OUTPUT_BLOCKS,
+    evaluate_dossier_consumption,
+)
 from services.output_blocks_renderer_service import OutputBlocksRendererService
 from services.quote_document_service import QuoteDocumentService
 
@@ -274,9 +281,29 @@ class QuoteOutputCompositionService:
 
         # --- Render output blocks if dossier exists ---
         sections: List[Dict[str, Any]] = []
+        canonical = get_canonical_template_contract_service()
+        uses_canonical_output = bool(
+            template_code and canonical.has_canonical_contract(template_code)
+        )
 
-        if dossier_obj and dossier_obj.output_blocks_json:
-            # Build quote context
+        should_render_output = False
+        if uses_canonical_output:
+            should_render_output = True
+        elif dossier_obj and dossier_obj.output_blocks_json:
+            output_consumption = evaluate_dossier_consumption(
+                dossier_obj,
+                canonical_template_code=template_code or dossier_obj.template_code,
+                consumer_surface="output_blocks",
+                behavior_bearing_fields=DOSSIER_BEHAVIOR_FIELDS_OUTPUT_BLOCKS,
+            )
+            if not output_consumption.consume:
+                warnings.append(
+                    f"dossier_output_blocks_not_consumed:{output_consumption.reason}"
+                )
+            else:
+                should_render_output = True
+
+        if should_render_output:
             quote_context = {
                 "quote_id": quote_id,
                 "client_name": client_name,
@@ -295,7 +322,6 @@ class QuoteOutputCompositionService:
                 render_mode="preview",
             )
 
-            # Convert rendered blocks to sections
             for block in render_result.blocks:
                 section = {
                     "section_id": block.get("block_id", ""),
@@ -307,11 +333,10 @@ class QuoteOutputCompositionService:
                 }
                 sections.append(section)
 
-            # Propagate renderer warnings/blockers
             warnings.extend(render_result.warnings)
             blockers.extend(render_result.blockers)
 
-        elif dossier_obj and not dossier_obj.output_blocks_json:
+        elif dossier_obj and not dossier_obj.output_blocks_json and not uses_canonical_output:
             warnings.append("output_blocks_json is empty in dossier")
         elif not dossier_obj and template_id:
             # Already reported as blocker above

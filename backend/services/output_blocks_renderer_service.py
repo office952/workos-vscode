@@ -34,6 +34,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.product_blueprint_dossier import ProductBlueprintDossier
 from models.product_templates import Product_templates
 from models.product_families import Product_families
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
 from services.output_blocks_contract import (
     ALLOWED_BLOCK_TYPES,
     ALLOWED_AUDIENCES,
@@ -197,7 +200,12 @@ class OutputBlocksRendererService:
             result = await self.db.execute(query)
             dossier_obj = result.scalar_one_or_none()
 
-        if not dossier_obj:
+        if not dossier_obj and not (
+            template_obj
+            and get_canonical_template_contract_service().has_canonical_contract(
+                template_obj.template_code
+            )
+        ):
             blockers.append("dossier_not_found")
             return RenderPreviewResult(
                 template_id=template_id,
@@ -208,36 +216,70 @@ class OutputBlocksRendererService:
                 blockers=blockers,
             )
 
-        actual_dossier_id = dossier_obj.id
-
-        # --- Parse output_blocks_json ---
-        raw_blocks = dossier_obj.output_blocks_json
-        if not raw_blocks:
-            warnings.append("output_blocks_json is empty in dossier")
-            return RenderPreviewResult(
-                template_id=template_id,
-                dossier_id=actual_dossier_id,
-                document_type=document_type,
-                audience=audience,
-                render_mode=render_mode,
-                blocks=[],
-                warnings=warnings,
-                blockers=blockers,
+        canonical_template_code = (
+            template_obj.template_code
+            if template_obj is not None
+            else (dossier_obj.template_code if dossier_obj is not None else "")
+        )
+        canonical = get_canonical_template_contract_service()
+        if canonical.has_canonical_contract(canonical_template_code):
+            parsed = canonical.get_output_blocks_payload(canonical_template_code)
+            actual_dossier_id = dossier_obj.id if dossier_obj else None
+            warnings.append("output_blocks_authority:canonical_template_contract")
+        else:
+            from services.dossier_consumption_policy import (
+                DOSSIER_BEHAVIOR_FIELDS_OUTPUT_BLOCKS,
+                evaluate_dossier_consumption,
             )
 
-        # Parse JSON
-        try:
-            parsed = json.loads(raw_blocks) if isinstance(raw_blocks, str) else raw_blocks
-        except (json.JSONDecodeError, TypeError):
-            blockers.append("output_blocks_json_invalid_json")
-            return RenderPreviewResult(
-                template_id=template_id,
-                dossier_id=actual_dossier_id,
-                document_type=document_type,
-                audience=audience,
-                render_mode=render_mode,
-                blockers=blockers,
+            consumption = evaluate_dossier_consumption(
+                dossier_obj,
+                canonical_template_code=canonical_template_code,
+                consumer_surface="output_blocks",
+                behavior_bearing_fields=DOSSIER_BEHAVIOR_FIELDS_OUTPUT_BLOCKS,
             )
+            if not consumption.consume:
+                warnings.append(f"dossier_consumption_blocked:{consumption.reason}")
+                return RenderPreviewResult(
+                    template_id=template_id,
+                    dossier_id=dossier_obj.id,
+                    document_type=document_type,
+                    audience=audience,
+                    render_mode=render_mode,
+                    blocks=[],
+                    warnings=warnings,
+                    blockers=blockers,
+                    trace={"dossier_consumption": consumption.to_trace_dict()},
+                )
+
+            actual_dossier_id = dossier_obj.id
+
+            raw_blocks = dossier_obj.output_blocks_json
+            if not raw_blocks:
+                warnings.append("output_blocks_json is empty in dossier")
+                return RenderPreviewResult(
+                    template_id=template_id,
+                    dossier_id=actual_dossier_id,
+                    document_type=document_type,
+                    audience=audience,
+                    render_mode=render_mode,
+                    blocks=[],
+                    warnings=warnings,
+                    blockers=blockers,
+                )
+
+            try:
+                parsed = json.loads(raw_blocks) if isinstance(raw_blocks, str) else raw_blocks
+            except (json.JSONDecodeError, TypeError):
+                blockers.append("output_blocks_json_invalid_json")
+                return RenderPreviewResult(
+                    template_id=template_id,
+                    dossier_id=actual_dossier_id,
+                    document_type=document_type,
+                    audience=audience,
+                    render_mode=render_mode,
+                    blockers=blockers,
+                )
 
         # Extract blocks list
         if isinstance(parsed, dict):

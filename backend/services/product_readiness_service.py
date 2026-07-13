@@ -10,6 +10,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.product_blueprint_dossier import ProductBlueprintDossier
 from models.inventory_materials import Inventory_materials
 from models.product_templates import Product_templates
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
 from services.volumetric_vector_readiness_policy import (
     evaluate_volumetric_vector_readiness,
 )
@@ -662,15 +665,9 @@ class ProductReadinessService:
             cost_warnings.append(
                 f"volumetric_psu_wattage_required_at_quote:{TEMPLATE_PSU_CODE}"
             )
-        if dossier is None:
-            cost_warnings.append("costengine_mapping_missing_no_dossier")
-        else:
-            cost_map = self._parse_json(dossier.costengine_mapping_json)
-            if not cost_map:
-                cost_blockers.append("costengine_mapping_missing")
+        canonical_svc = get_canonical_template_contract_service()
+        uses_canonical_contract = canonical_svc.has_canonical_contract(tpl_code)
 
-        # For templates without dossier, check if materials have formula_params
-        # (BUILD 4 templates define cost assumptions inline)
         has_formula_materials = False
         if isinstance(required_materials, list):
             for m in required_materials:
@@ -678,8 +675,19 @@ class ProductReadinessService:
                     has_formula_materials = True
                     break
 
-        if not has_formula_materials and not dossier:
-            cost_blockers.append("costengine_no_formula_or_dossier")
+        if uses_canonical_contract:
+            if not has_formula_materials:
+                cost_blockers.append("costengine_no_formula_materials")
+        elif dossier is None:
+            cost_warnings.append("costengine_mapping_missing_no_dossier")
+            if not has_formula_materials:
+                cost_blockers.append("costengine_no_formula_or_dossier")
+        else:
+            cost_map = self._parse_json(dossier.costengine_mapping_json)
+            if not cost_map:
+                cost_blockers.append("costengine_mapping_missing")
+            if not has_formula_materials and not dossier:
+                cost_blockers.append("costengine_no_formula_or_dossier")
 
         costengine = ReadinessSection(
             status=self._section_status(cost_blockers, cost_warnings),
@@ -690,7 +698,10 @@ class ProductReadinessService:
         # --- Document output readiness ---
         doc_blockers: list[str] = []
         doc_warnings: list[str] = []
-        output_blocks = self._parse_json(dossier.output_blocks_json) if dossier else None
+        if uses_canonical_contract:
+            output_blocks = canonical_svc.get_output_blocks_payload(tpl_code)
+        else:
+            output_blocks = self._parse_json(dossier.output_blocks_json) if dossier else None
         if not output_blocks:
             doc_warnings.append("output_blocks_missing")
         elif not self._has_short_description(output_blocks):
@@ -717,16 +728,17 @@ class ProductReadinessService:
         # --- Execution preparation readiness ---
         exec_blockers: list[str] = []
         exec_warnings: list[str] = []
-        task_rules = self._parse_json(dossier.task_rules_json) if dossier else None
-        if not task_rules:
-            exec_warnings.append("task_rules_missing")
-
-        # BUILD 4: Check if operations define a production chain
-        if isinstance(operations, list) and len(operations) > 0:
-            # Has operations — execution preparation is at least partial
-            pass
+        if uses_canonical_contract:
+            if not isinstance(operations, list) or len(operations) == 0:
+                exec_warnings.append("no_operations_for_execution")
         else:
-            exec_warnings.append("no_operations_for_execution")
+            task_rules = self._parse_json(dossier.task_rules_json) if dossier else None
+            if not task_rules:
+                exec_warnings.append("task_rules_missing")
+            if isinstance(operations, list) and len(operations) > 0:
+                pass
+            else:
+                exec_warnings.append("no_operations_for_execution")
 
         execution = ReadinessSection(
             status=self._section_status(exec_blockers, exec_warnings),

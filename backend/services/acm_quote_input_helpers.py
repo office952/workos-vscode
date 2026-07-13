@@ -102,8 +102,11 @@ def derive_cut_acm_quote_input(
 
 def is_acm_boxed_mounting_standalone_root_template(template_code: str | None) -> bool:
     from services.mounting_solution_service import ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    from services.template_architecture_scope import normalize_template_code
 
-    return str(template_code or "").strip() == ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    return normalize_template_code(template_code) == normalize_template_code(
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE
+    )
 
 
 def _standalone_root_configuration(payload: Mapping[str, Any]) -> Dict[str, Any] | None:

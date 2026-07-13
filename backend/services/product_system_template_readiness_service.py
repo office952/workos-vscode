@@ -339,26 +339,17 @@ class ProductSystemTemplateReadinessService:
                 )
             )
 
-        task_rules = None
-        if dossier is not None:
-            task_rules = self._parse_json(dossier.task_rules_json)
-        task_rule_count = 0
-        if isinstance(task_rules, dict):
-            task_rule_count = len(task_rules.get("rules") or task_rules.get("tasks") or [])
-        elif isinstance(task_rules, list):
-            task_rule_count = len(task_rules)
-
         code = normalize_template_code(template.template_code)
         if code in {
             normalize_template_code(TPL_VOLUMETRIC_LETTERS_V2),
             normalize_template_code(TPL_ACM_BOXED),
         }:
-            if task_rule_count == 0:
+            if not has_operations and not has_component_ops:
                 blockers.append(
                     self._blocker(
                         "MISSING_TASK_RULE",
                         "execution",
-                        "Blueprint dossier task rules are missing.",
+                        "Canonical template operations/task mapping incomplete.",
                         owner="execution",
                         source_code=context.template_code,
                         target_route="/product-system/products",
@@ -366,7 +357,7 @@ class ProductSystemTemplateReadinessService:
                 )
 
         if context.runtime_module and not context.quote_offerable:
-            if task_rule_count == 0 and code == normalize_template_code(TPL_PREMOUNT):
+            if not has_operations and not has_component_ops and code == normalize_template_code(TPL_PREMOUNT):
                 blockers.append(
                     self._blocker(
                         "MISSING_TASK_RULE",

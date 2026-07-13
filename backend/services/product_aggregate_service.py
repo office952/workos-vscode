@@ -6,7 +6,7 @@ import json
 import logging
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.product_blueprint_dossier import ProductBlueprintDossier
@@ -29,8 +29,11 @@ from schemas.product_aggregate import (
     ProductAggregateTaskContract,
     ProductAggregateTaskRule,
 )
+from services.canonical_template_contract_service import (
+    get_canonical_template_contract_service,
+)
 from services.mini_module_registry_service import get_mini_module_registry_service
-from services.template_architecture_scope import resolve_template_identity
+from services.template_architecture_scope import normalize_template_code, resolve_template_identity
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +119,7 @@ class ProductAggregateService:
             return None
 
         dossier = await self._load_dossier(template.id)
+        canonical = get_canonical_template_contract_service()
         links = await self._load_module_links(template.id)
         child_templates = await self._load_child_templates(links)
 
@@ -126,31 +130,22 @@ class ProductAggregateService:
         conflicts: list[ProductAggregateConflict] = []
         warnings: list[ProductAggregateConflict] = []
 
-        dossier_sections = {}
-        dossier_mapping: dict[str, Any] = {}
-        dossier_task_rules: list[dict[str, Any]] = []
-        if dossier:
-            dossier_sections = _json_loads(dossier.sections_json, {})
-            dossier_mapping = _json_loads(dossier.costengine_mapping_json, {})
-            task_payload = _json_loads(dossier.task_rules_json, {})
-            dossier_task_rules = task_payload.get("rules") or task_payload.get("tasks") or []
-
-        components = self._build_dossier_components(
-            dossier_sections,
+        components = self._build_template_components(
+            parent_components,
             template.template_code,
         )
         parent_direct_count = len(parent_components) if isinstance(parent_components, list) else 0
 
-        if parent_direct_count == 0 and components:
+        if parent_direct_count == 0:
             warnings.append(
                 ProductAggregateConflict(
                     code="PARENT_COMPONENTS_EMPTY",
                     severity="warning",
                     message=(
                         "Parent template has no direct components (components_json=[]); "
-                        "aggregate uses dossier and linked modules as authoritative structure."
+                        "aggregate uses linked modules only — dossier is not a behavior source."
                     ),
-                    details={"parent_components_count": 0, "dossier_components_count": len(components)},
+                    details={"parent_components_count": 0},
                 )
             )
 
@@ -173,27 +168,6 @@ class ProductAggregateService:
                 source_template_code=template.template_code,
             )
         )
-
-        for mat_code in dossier_mapping.get("material_keys") or []:
-            materials.append(
-                ProductAggregateMaterial(
-                    material_code=str(mat_code),
-                    provenance="dossier",
-                    source_template_code=template.template_code,
-                    status="mapping_only",
-                )
-            )
-
-        for op_code in dossier_mapping.get("operation_keys") or []:
-            operations.append(
-                ProductAggregateOperation(
-                    operation_code=str(op_code),
-                    provenance="dossier",
-                    source_template_code=template.template_code,
-                    priced=True,
-                    status="mapping_only",
-                )
-            )
 
         for child_code, child_row in child_templates.items():
             mini = CHILD_TEMPLATE_MINI_MODULE.get(child_code)
@@ -219,12 +193,15 @@ class ProductAggregateService:
         materials = _dedupe_materials(materials)
         operations = _dedupe_operations(operations)
 
-        form_contract = self._build_form_contract(dossier_mapping)
-        cost_contract = self._build_cost_contract(dossier_mapping, materials, operations)
-        task_contract = self._build_task_contract(dossier_task_rules)
+        if canonical.has_canonical_contract(template.template_code):
+            required_keys, optional_keys = canonical.get_form_contract_keys(template.template_code)
+            form_contract = self._build_form_contract_from_canonical(required_keys, optional_keys)
+        else:
+            form_contract = self._build_form_contract({})
+        cost_contract = self._build_cost_contract({}, materials, operations)
+        task_contract = self._build_task_contract([])
 
-        identity = dossier_sections.get("template_identity") or {}
-        business_name = identity.get("family_name") or template.family_name
+        business_name = template.family_name
 
         provenance_summary = ProductAggregateProvenanceSummary(
             parent={
@@ -233,10 +210,10 @@ class ProductAggregateService:
                 "materials": len(parent_materials) if isinstance(parent_materials, list) else 0,
             },
             dossier={
-                "components": len(components),
-                "material_keys": len(dossier_mapping.get("material_keys") or []),
-                "operation_keys": len(dossier_mapping.get("operation_keys") or []),
-                "task_rules": len(dossier_task_rules),
+                "components": 0,
+                "material_keys": 0,
+                "operation_keys": 0,
+                "task_rules": 0,
             },
             linked_modules={
                 "required": len(modules.required),
@@ -262,10 +239,29 @@ class ProductAggregateService:
         else:
             warnings.append(
                 ProductAggregateConflict(
-                    code="DOSSIER_CONSUMED",
+                    code="DOSSIER_METADATA_ONLY",
                     severity="info",
-                    message="Blueprint dossier fields were consumed by ProductAggregate builder.",
-                    details={"template_id": template.id, "dossier_id": dossier.id, "dossier_status": dossier.status},
+                    message=(
+                        "Blueprint dossier available for inspection only; "
+                        "runtime behavior uses canonical template contracts."
+                    ),
+                    details={
+                        "template_id": template.id,
+                        "dossier_id": dossier.id,
+                        "dossier_status": dossier.status,
+                        "authority": "canonical_template_contract"
+                        if canonical.has_canonical_contract(template.template_code)
+                        else "parent_template",
+                    },
+                )
+            )
+        if canonical.has_canonical_contract(template.template_code):
+            warnings.append(
+                ProductAggregateConflict(
+                    code="CANONICAL_CONTRACT_AUTHORITY",
+                    severity="info",
+                    message="ProductAggregate compiled from canonical template/component contracts.",
+                    details={"template_code": template.template_code},
                 )
             )
 
@@ -325,9 +321,10 @@ class ProductAggregateService:
         )
 
     async def _load_template(self, template_code: str) -> Product_templates | None:
+        normalized = normalize_template_code(template_code)
         result = await self._db.execute(
             select(Product_templates)
-            .where(Product_templates.template_code == template_code)
+            .where(func.upper(Product_templates.template_code) == normalized)
             .order_by(Product_templates.id.asc())
             .limit(1)
         )
@@ -362,33 +359,49 @@ class ProductAggregateService:
         rows = list(result.scalars().all())
         return {row.template_code: row for row in rows}
 
-    def _build_dossier_components(
+    def _build_template_components(
         self,
-        sections: dict[str, Any],
+        parent_components: Any,
         source_template_code: str,
     ) -> list[ProductAggregateComponent]:
-        raw = sections.get("components") or []
-        if not isinstance(raw, list):
-            return []
-        out: list[ProductAggregateComponent] = []
-        for entry in raw:
-            if not isinstance(entry, dict):
-                continue
-            comp_id = str(entry.get("id") or entry.get("component_id") or "")
-            if not comp_id:
-                continue
-            out.append(
-                ProductAggregateComponent(
-                    component_id=comp_id,
-                    label_ro=entry.get("label"),
-                    role=entry.get("role"),
-                    mini_module_code=DOSSIER_COMPONENT_MINI_MODULE.get(comp_id),
-                    provenance="dossier",
-                    source_template_code=source_template_code,
-                    status="present",
-                )
+        canonical = get_canonical_template_contract_service()
+        rows = canonical.build_components_from_template_rows(
+            parent_components,
+            source_template_code=source_template_code,
+        )
+        return [
+            ProductAggregateComponent(
+                component_id=row["component_id"],
+                label_ro=row.get("label_ro"),
+                role=row.get("role"),
+                mini_module_code=row.get("mini_module_code"),
+                provenance="parent",
+                source_template_code=source_template_code,
+                status="present",
             )
-        return out
+            for row in rows
+        ]
+
+    def _build_form_contract_from_canonical(
+        self,
+        required: list[str],
+        optional: list[str],
+    ) -> ProductAggregateFormContract:
+        geometry_keys = {"width_mm", "height_mm", "depth_mm", "letter_count", "vector_file"}
+        form_fields = [
+            ProductAggregateFormField(
+                canonical_key=key,
+                workspace_path=f"finish_setup.{key}" if key not in geometry_keys else None,
+                required=True,
+                provenance="parent",
+            )
+            for key in required
+        ]
+        return ProductAggregateFormContract(
+            required_quote_input_keys=required,
+            optional_quote_input_keys=optional,
+            form_fields=form_fields,
+        )
 
     def _build_modules(
         self,
@@ -523,7 +536,7 @@ class ProductAggregateService:
                 canonical_key=key,
                 workspace_path=f"finish_setup.{key}" if key not in {"width_mm", "height_mm", "depth_mm", "letter_count", "vector_file"} else None,
                 required=True,
-                provenance="dossier",
+                provenance="parent",
             )
             for key in required
         ]

@@ -515,12 +515,38 @@ async def preview_bom(db: AsyncSession, inputs: IntakeV5Inputs) -> BomResult:
 async def get_template_config(db: AsyncSession) -> dict[str, Any]:
     """Return the simplified V5 template contract plus pricing readiness."""
     from models.product_blueprint_dossier import ProductBlueprintDossier
+    from services.canonical_template_contract_service import (
+        get_canonical_template_contract_service,
+    )
 
     dossier = (await db.execute(
         select(ProductBlueprintDossier).where(
             ProductBlueprintDossier.template_code == TEMPLATE_CODE
         )
     )).scalar_one_or_none()
+
+    canonical = get_canonical_template_contract_service()
+    variants = canonical.get_variants(TEMPLATE_CODE)
+    required_inputs, optional_inputs = canonical.get_form_contract_keys(TEMPLATE_CODE)
+    required_inputs_set = set(required_inputs)
+    conditional_inputs: dict[str, Any] = {}
+    variant_by_key = {
+        item.get("variant_key"): item
+        for item in variants
+        if isinstance(item, dict) and item.get("variant_key")
+    }
+    form_fields = []
+    for field in FORM_FIELD_DEFINITIONS:
+        variant = variant_by_key.get(field.get("variant_key"))
+        form_fields.append({
+            **field,
+            "required": field["key"] in required_inputs_set,
+            "conditional_rule": conditional_inputs.get(field["key"]),
+            "allowed_values": variant.get("allowed_values", []) if variant else [],
+            "default_value": variant.get("default_value") if variant else None,
+            "description": variant.get("description", "") if variant else "",
+            "source": "canonical_template_contract",
+        })
 
     prices = await _load_material_prices(db)
     rates = await _load_workcenter_rates(db)
@@ -533,43 +559,20 @@ async def get_template_config(db: AsyncSession) -> dict[str, Any]:
         if code not in rates or not rates[code].get("rate")
     ]
 
-    def _loads(raw: str | None, fallback: Any) -> Any:
-        if not raw:
-            return fallback
-        try:
-            return json.loads(raw)
-        except json.JSONDecodeError:
-            return fallback
-
-    variants = _loads(dossier.variants_json if dossier else None, [])
-    costengine_mapping = _loads(dossier.costengine_mapping_json if dossier else None, {})
-    required_inputs = set(costengine_mapping.get("inputs", {}).get("required", []))
-    conditional_inputs = costengine_mapping.get("inputs", {}).get("conditional", {})
-    variant_by_key = {
-        item.get("variant_key"): item
-        for item in variants
-        if isinstance(item, dict) and item.get("variant_key")
-    }
-    form_fields = []
-    for field in FORM_FIELD_DEFINITIONS:
-        variant = variant_by_key.get(field.get("variant_key"))
-        form_fields.append({
-            **field,
-            "required": field["key"] in required_inputs,
-            "conditional_rule": conditional_inputs.get(field["key"]),
-            "allowed_values": variant.get("allowed_values", []) if variant else [],
-            "default_value": variant.get("default_value") if variant else None,
-            "description": variant.get("description", "") if variant else "",
-        })
-
     return {
         "template_code": TEMPLATE_CODE,
         "dossier_status": dossier.status if dossier else "missing",
         "dossier_version": dossier.dossier_version if dossier else None,
         "variants": variants,
-        "costengine_mapping": costengine_mapping,
+        "costengine_mapping": {
+            "inputs": {
+                "required": sorted(required_inputs_set),
+                "optional": optional_inputs,
+                "conditional": conditional_inputs,
+            }
+        },
         "form_contract": {
-            "authority": "product_system_dossier",
+            "authority": "canonical_template_contract",
             "generated_form_target": "intake-v5",
             "svg_source": "intake-v4/operator-ui",
             "fields": form_fields,
