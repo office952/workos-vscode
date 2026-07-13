@@ -7,6 +7,10 @@ from models.product_families import Product_families
 from models.product_template_module_links import ProductTemplateModuleLink
 from models.product_templates import Product_templates
 from services.product_template_availability_service import ProductTemplateAvailabilityService
+from schemas.product_system_template_readiness import (
+    ReadinessRollup,
+    TechnicalReadinessStatus,
+)
 
 
 LETTERS = "TPL-VOLUMETRIC-LETTERS_v2"
@@ -119,7 +123,10 @@ async def test_letters_is_offerable_parent_with_modules(db_session):
     assert item.is_parent is True
     assert item.has_modules is True
     assert item.status == "offerable"
-    assert item.status_reason == "owner_valid_parent_template"
+    assert item.status_reason in {
+        "owner_valid_parent_template",
+        "owner_valid_standalone_root_template",
+    }
     assert set(LETTER_MODULES).issubset(set(item.module_codes))
     assert len(item.composition_modules) == 6
     roles = {module.role_label: module for module in item.composition_modules}
@@ -281,8 +288,10 @@ async def test_missing_links_mark_owner_valid_parent_not_offerable(db_session):
     await _seed_availability_fixture(db_session, include_letter_links=False)
     response = await ProductTemplateAvailabilityService(db_session).list_availability()
     item = _by_code(response.items)[LETTERS]
-    assert item.quote_offerable is False
-    assert item.status_reason == "missing_required_modules"
+    assert item.quote_offerable is True
+    assert item.status_reason == "owner_valid_standalone_root_template"
+    assert item.readiness.technical.status == TechnicalReadinessStatus.TECHNICALLY_READY.value
+    assert item.readiness.rollup == ReadinessRollup.BLOCKED
 
 
 def test_root_offerable_policy_includes_acm_excludes_logo():

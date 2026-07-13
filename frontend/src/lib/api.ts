@@ -303,6 +303,41 @@ export interface ProductTemplateEntity {
   updated_at?: string;
 }
 
+export interface ProductSystemReadinessBlocker {
+  code: string;
+  dimension: "technical" | "pricing" | "execution" | "commercial";
+  severity: "blocking" | "warning" | "diagnostic";
+  owner: string;
+  message: string;
+  source_code?: string | null;
+  target_route?: string | null;
+}
+
+export interface ProductSystemReadinessDimension {
+  status: string;
+  blockers?: ProductSystemReadinessBlocker[];
+}
+
+export interface ProductSystemTemplateCapabilities {
+  root_offerable: boolean;
+  linked_child_offerable: boolean;
+  internal_only: boolean;
+}
+
+export interface ProductSystemTemplateReadiness {
+  technical: ProductSystemReadinessDimension;
+  pricing: ProductSystemReadinessDimension;
+  execution: ProductSystemReadinessDimension;
+  commercial: ProductSystemReadinessDimension;
+  rollup:
+    | "READY"
+    | "PARTIALLY_READY"
+    | "BLOCKED"
+    | "INTERNAL"
+    | "DEPRECATED"
+    | string;
+}
+
 export interface ProductTemplateAvailabilityItem {
   template_id: number;
   template_code: string;
@@ -342,6 +377,8 @@ export interface ProductTemplateAvailabilityItem {
   shared_with_product_codes: string[];
   composition_modules: ProductTemplateCompositionModule[];
   shared_component_contracts: SharedVolumetricComponentSummary[];
+  capabilities?: ProductSystemTemplateCapabilities | null;
+  readiness?: ProductSystemTemplateReadiness | null;
 }
 
 export interface ProductTemplateCompositionModule {

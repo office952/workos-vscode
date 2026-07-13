@@ -2,6 +2,10 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
+from schemas.product_system_template_readiness import (
+    ProductSystemTemplateCapabilities,
+    ProductSystemTemplateReadiness,
+)
 from schemas.shared_volumetric_component_contracts import SharedVolumetricComponentSummary
 
 
@@ -44,6 +48,8 @@ class ProductTemplateAvailabilityItem(BaseModel):
     shared_with_product_codes: list[str] = Field(default_factory=list)
     composition_modules: list[ProductTemplateCompositionModule] = Field(default_factory=list)
     shared_component_contracts: list[SharedVolumetricComponentSummary] = Field(default_factory=list)
+    capabilities: ProductSystemTemplateCapabilities | None = None
+    readiness: ProductSystemTemplateReadiness | None = None
 
 
 class ProductTemplateAvailabilityResponse(BaseModel):

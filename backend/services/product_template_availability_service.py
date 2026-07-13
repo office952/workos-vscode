@@ -22,6 +22,10 @@ from services.template_architecture_scope import (
     OWNER_VALID_QUOTE_RUNTIME_TEMPLATE_CODES,
     template_matches_runtime_scope,
 )
+from services.product_system_template_readiness_service import (
+    ProductSystemTemplateReadinessService,
+    TemplateAvailabilityReadinessContext,
+)
 from services.template_usage_mode_policy import is_root_offerable_template
 
 
@@ -92,19 +96,56 @@ class ProductTemplateAvailabilityService:
             if parent_code not in template_codes:
                 missing_parents_by_module[module_code].append(parent_code)
 
-        items = [
-            self._build_item(
+        readiness_service = ProductSystemTemplateReadinessService(self.db)
+        pricing_context = await readiness_service.load_pricing_context()
+        dossiers_by_template_id = await readiness_service.load_dossiers_by_template_id(
+            [int(row.id) for row in templates]
+        )
+
+        items: list[ProductTemplateAvailabilityItem] = []
+        for row in templates:
+            template_code = str(row.template_code or "").strip()
+            module_codes = sorted(set(modules_by_parent.get(template_code, [])))
+            parent_codes = sorted(set(parents_by_module.get(template_code, [])))
+            missing_module_codes = sorted(
+                set(missing_targets_by_parent.get(template_code, []))
+            )
+            missing_parent_codes = sorted(
+                set(missing_parents_by_module.get(template_code, []))
+            )
+            item = self._build_item(
                 template=row,
                 family=family_by_id.get(str(row.family_id or "")),
-                module_codes=sorted(set(modules_by_parent.get(str(row.template_code), []))),
-                parent_codes=sorted(set(parents_by_module.get(str(row.template_code), []))),
-                missing_module_codes=sorted(set(missing_targets_by_parent.get(str(row.template_code), []))),
-                missing_parent_codes=sorted(set(missing_parents_by_module.get(str(row.template_code), []))),
-                module_links=links_by_parent.get(str(row.template_code), []),
-                module_parent_counts={code: len(set(parents)) for code, parents in parents_by_module.items()},
+                module_codes=module_codes,
+                parent_codes=parent_codes,
+                missing_module_codes=missing_module_codes,
+                missing_parent_codes=missing_parent_codes,
+                module_links=links_by_parent.get(template_code, []),
+                module_parent_counts={
+                    code: len(set(parents)) for code, parents in parents_by_module.items()
+                },
             )
-            for row in templates
-        ]
+            readiness, capabilities = await readiness_service.build_readiness(
+                template=row,
+                context=TemplateAvailabilityReadinessContext(
+                    template_code=template_code,
+                    db_active=item.db_active,
+                    quote_offerable=item.quote_offerable,
+                    runtime_module=item.runtime_module,
+                    is_parent=item.is_parent,
+                    has_modules=item.has_modules,
+                    missing_module_codes=missing_module_codes,
+                    missing_parent_codes=missing_parent_codes,
+                    product_system_role=item.product_system_role,
+                    display_group=item.display_group,
+                    owner_decision_required=item.owner_decision_required,
+                ),
+                pricing_context=pricing_context,
+                dossier=dossiers_by_template_id.get(int(row.id)),
+            )
+            items.append(
+                item.model_copy(update={"readiness": readiness, "capabilities": capabilities})
+            )
 
         if offerable_only:
             items = [item for item in items if item.quote_offerable]
