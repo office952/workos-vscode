@@ -30,6 +30,7 @@ from schemas.product_aggregate import (
     ProductAggregateTaskRule,
 )
 from services.mini_module_registry_service import get_mini_module_registry_service
+from services.template_architecture_scope import resolve_template_identity
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +110,7 @@ class ProductAggregateService:
         self._db = db
 
     async def build(self, template_code: str) -> ProductAggregate | None:
+        identity = resolve_template_identity(template_code)
         template = await self._load_template(template_code)
         if template is None:
             return None
@@ -255,6 +257,32 @@ class ProductAggregateService:
                     severity="warning",
                     message="No product_blueprint_dossier row found for template.",
                     details={"template_id": template.id},
+                )
+            )
+        else:
+            warnings.append(
+                ProductAggregateConflict(
+                    code="DOSSIER_CONSUMED",
+                    severity="info",
+                    message="Blueprint dossier fields were consumed by ProductAggregate builder.",
+                    details={"template_id": template.id, "dossier_id": dossier.id, "dossier_status": dossier.status},
+                )
+            )
+
+        # Bounded traceability: requested → canonical identity (no payloads).
+        if identity.requested_template_code and identity.canonical_template_code:
+            warnings.append(
+                ProductAggregateConflict(
+                    code="TEMPLATE_IDENTITY",
+                    severity="info",
+                    message="Template identity resolution trace.",
+                    details={
+                        "requested_template_code": identity.requested_template_code,
+                        "canonical_template_code": identity.canonical_template_code,
+                        "resolution_type": identity.resolution_type,
+                        "legacy_alias_used": identity.legacy_alias_used,
+                        "resolution_source": identity.resolution_source,
+                    },
                 )
             )
 

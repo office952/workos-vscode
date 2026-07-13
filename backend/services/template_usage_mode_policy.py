@@ -94,6 +94,15 @@ _RAW_POLICIES = {
         owner_go_required=False,
         reason="Owner-approved offerable boxed ACM mounting support; standalone PS + Intake linked child.",
     ),
+    TPL_METAL_PREMOUNT_STRUCTURE_V1: TemplateUsageModePolicy(
+        template_code=TPL_METAL_PREMOUNT_STRUCTURE_V1,
+        root_offerable=True,
+        linked_child_allowed=True,
+        candidate_only=False,
+        component_only=False,
+        owner_go_required=False,
+        reason="Owner-approved offerable metal premount structure; standalone PS + linked child for mounting system.",
+    ),
 }
 
 for code in _LETTER_MODULE_CODES:

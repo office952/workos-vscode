@@ -13,6 +13,7 @@ from core.database import get_db
 from dependencies.auth import get_current_user
 from schemas.quote_snapshot_v2 import QuoteSnapshotV2
 from services.quote_snapshot_v2_service import QuoteSnapshotV2Service
+from services.template_architecture_scope import require_canonical_template_code
 
 logger = logging.getLogger(__name__)
 
@@ -60,10 +61,25 @@ async def post_quote_snapshot_v2_preview(
     Composes 7G CommercialPriceProposal + 7H EstimatedInternalCost.
     No persist, no /price, no quote update, no order/task creation.
     """
+    identity = require_canonical_template_code(template_code)
+    if identity.resolution_type == "rejected_alias":
+        raise HTTPException(
+            status_code=422,
+            detail=_error_envelope(
+                "template_identity_not_canonical",
+                requested_template_code=identity.requested_template_code,
+                canonical_template_code=identity.canonical_template_code,
+                resolution_type=identity.resolution_type,
+                legacy_alias_used=identity.legacy_alias_used,
+                resolution_source=identity.resolution_source,
+            ),
+        )
+
+    canonical = identity.canonical_template_code
     request = body or QuoteSnapshotV2PreviewRequest()
     service = QuoteSnapshotV2Service(db)
     snapshot = await service.build_preview(
-        template_code,
+        canonical,
         workspace_id=request.workspace_id,
         quote_id=request.quote_id,
         quote_input=request.quote_input,
@@ -97,10 +113,25 @@ async def post_quote_snapshot_v2_freeze(
     Returns blocked_schema_missing when no safe persistence path exists.
     Never calls /price, CostEngine, or QuoteOrchestrator.
     """
+    identity = require_canonical_template_code(template_code)
+    if identity.resolution_type == "rejected_alias":
+        raise HTTPException(
+            status_code=422,
+            detail=_error_envelope(
+                "template_identity_not_canonical",
+                requested_template_code=identity.requested_template_code,
+                canonical_template_code=identity.canonical_template_code,
+                resolution_type=identity.resolution_type,
+                legacy_alias_used=identity.legacy_alias_used,
+                resolution_source=identity.resolution_source,
+            ),
+        )
+
+    canonical = identity.canonical_template_code
     request = body or QuoteSnapshotV2FreezeRequest()
     service = QuoteSnapshotV2Service(db)
     snapshot = await service.freeze(
-        template_code,
+        canonical,
         workspace_id=request.workspace_id,
         quote_id=request.quote_id,
         quote_input=request.quote_input,

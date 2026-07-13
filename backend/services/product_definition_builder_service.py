@@ -40,6 +40,7 @@ from services.acm_quote_input_helpers import (
     is_acm_boxed_mounting_standalone_root_template,
     merge_acm_boxed_mounting_derived_fields,
 )
+from services.template_architecture_scope import resolve_template_identity
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1"})
@@ -545,6 +546,7 @@ class ProductDefinitionBuilderService:
         *,
         workspace_id: str | None = None,
     ) -> ProductDefinitionPreview | None:
+        identity = resolve_template_identity(template_code)
         aggregate = await self._aggregate_svc.build(template_code)
         if aggregate is None:
             return None
@@ -562,13 +564,28 @@ class ProductDefinitionBuilderService:
                 source_type = "workspace_payload"
 
         if is_acm_boxed_mounting_standalone_root_template(template_code):
-            return await _build_acm_standalone_product_definition_preview(
+            preview = await _build_acm_standalone_product_definition_preview(
                 aggregate=aggregate,
                 template_code=template_code,
                 workspace_id=workspace_id,
                 payload=payload,
                 source_type=source_type,
             )
+            preview.provenance.insert(
+                0,
+                ProductDefinitionProvenanceEntry(
+                    key="template_identity",
+                    source="template_architecture_scope",
+                    detail=(
+                        f"requested={identity.requested_template_code!r} "
+                        f"canonical={identity.canonical_template_code!r} "
+                        f"type={identity.resolution_type} "
+                        f"alias={identity.legacy_alias_used} "
+                        f"src={identity.resolution_source}"
+                    ),
+                ),
+            )
+            return preview
 
         form_contract = self._form.get_for_template(template_code)
         if form_contract is None:
@@ -682,6 +699,17 @@ class ProductDefinitionBuilderService:
         )
 
         provenance = [
+            ProductDefinitionProvenanceEntry(
+                key="template_identity",
+                source="template_architecture_scope",
+                detail=(
+                    f"requested={identity.requested_template_code!r} "
+                    f"canonical={identity.canonical_template_code!r} "
+                    f"type={identity.resolution_type} "
+                    f"alias={identity.legacy_alias_used} "
+                    f"src={identity.resolution_source}"
+                ),
+            ),
             ProductDefinitionProvenanceEntry(
                 key="form_contract",
                 source="intake_v6_modular_form_contract",
