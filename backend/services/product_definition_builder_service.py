@@ -29,6 +29,11 @@ from services.linked_template_runtime_segment_extraction_service import (
     extract_linked_template_segments_from_workspace_payload,
 )
 from services.mini_module_registry_service import MiniModuleRegistryService, get_mini_module_registry_service
+from services.mounting_solution_service import (
+    is_structura_suport_active,
+    legacy_mounting_system_from_solution,
+    resolve_effective_mounting_solution,
+)
 from services.product_aggregate_service import ProductAggregateService
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
@@ -113,6 +118,9 @@ def _resolve_module_state(
     if code in ("debitare_fata", "debitare_spate", "modelare_cant"):
         return "always_on" if analysis_ready else "pending"
     if code == "structura_suport":
+        if is_structura_suport_active(finish):
+            return "active"
+        mounting_system = _read_string(finish.get("mounting_system"))
         if not mounting_system:
             return "pending"
         return "active" if mounting_system in BAR_MOUNTING else "inactive"
@@ -166,7 +174,9 @@ def _collect_missing_fields(
     return missing
 
 
-def _derive_metal_support_required(mounting_system: str | None) -> bool | None:
+def _derive_metal_support_required(mounting_system: str | None, finish: dict[str, Any] | None = None) -> bool | None:
+    if isinstance(finish, dict) and is_structura_suport_active(finish):
+        return True
     if not mounting_system:
         return None
     return mounting_system in BAR_MOUNTING
@@ -182,7 +192,10 @@ def _build_canonical_values(
     for binding in bindings:
         if binding.field_role == "derived_quote_input":
             if binding.canonical_key == "metal_support_required":
-                derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")))
+                derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")), finish)
+                if derived is None and isinstance(finish, dict):
+                    solution = resolve_effective_mounting_solution(finish)
+                    derived = legacy_mounting_system_from_solution(solution) is not None and is_structura_suport_active(finish)
                 if derived is not None:
                     values[binding.canonical_key] = derived
             continue

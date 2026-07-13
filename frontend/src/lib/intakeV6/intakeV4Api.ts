@@ -209,6 +209,10 @@ export interface IntakeV4FinishSetup {
     | "to_be_decided"
     | null;
   site_installation_included?: boolean | null;
+  mounting_solution?: {
+    template_code: string;
+    configuration?: Record<string, unknown>;
+  } | null;
   emblem_lighting_mode?: "excluded" | "area_lit" | "needs_decision";
   letter_led_module_count?: number | null;
   emblem_led_module_count?: number | null;

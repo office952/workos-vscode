@@ -536,10 +536,26 @@ def _patch_quote_input_from_v4_geometry(
             patched["mounting_template_area_m2"] = setup.mounting_template_area_m2
         if setup.mounting_template_material_type:
             patched["mounting_template_material_type"] = setup.mounting_template_material_type
-        if setup.mounting_system:
+        if setup.mounting_solution is not None:
+            patched["mounting_solution"] = setup.mounting_solution.model_dump(mode="json")
+            solution = setup.mounting_solution
+            config = solution.configuration if isinstance(solution.configuration, dict) else {}
+            bar_material = str(config.get("bar_material") or "steel").strip().lower()
+            patched["bar_material"] = bar_material
+            if config.get("mounting_bar_profile"):
+                patched["mounting_bar_profile"] = config["mounting_bar_profile"]
+            if config.get("bar_count") is not None:
+                patched["mounting_bar_count"] = config["bar_count"]
+            patched["metal_support_required"] = True
+            from services.mounting_solution_service import legacy_mounting_system_from_solution
+
+            legacy_ms = legacy_mounting_system_from_solution(solution.model_dump(mode="json"))
+            if legacy_ms:
+                patched["mounting_system"] = legacy_ms
+        elif setup.mounting_system:
             patched["mounting_system"] = setup.mounting_system
-        if setup.mounting_bar_profile:
-            patched["mounting_bar_profile"] = setup.mounting_bar_profile
+            if setup.mounting_bar_profile:
+                patched["mounting_bar_profile"] = setup.mounting_bar_profile
         if setup.mounting_scope is not None:
             patched["mounting_scope"] = setup.mounting_scope
         if setup.site_installation_included is not None:

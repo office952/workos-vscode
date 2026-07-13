@@ -190,7 +190,11 @@ def _legacy_structural_active_modules(
                 merged_finish[key] = quote_input[key]
 
         mounting = merged_finish.get("mounting_system")
-        if mounting:
+        from services.mounting_solution_service import is_structura_suport_active
+
+        if is_structura_suport_active(merged_finish):
+            active.add("structura_suport")
+        elif mounting:
             if mounting in BAR_MOUNTING:
                 active.add("structura_suport")
             else:

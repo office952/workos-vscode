@@ -26,6 +26,13 @@ from services.intake_v4_internal_draft_quote_policy_service import (
 )
 from services.intake_v4_pricing_input_service import build_v4_pricing_input_preview
 from services.intake_v4_workspace_service import _get_record_or_404, _json_loads, _parse_payload
+from services.mounting_solution_service import (
+    METAL_PREMOUNT_TEMPLATE_CODE,
+    build_linked_module_input_from_solution,
+    is_mounting_solution_composition_active,
+    legacy_mounting_system_from_solution,
+    resolve_effective_mounting_solution,
+)
 from services.quotes import QuotesService
 
 logger = logging.getLogger(__name__)
@@ -73,31 +80,54 @@ async def _build_linked_module_lines(
     quote_input: dict[str, Any],
 ) -> list[dict[str, Any]]:
     setup = payload.finish_setup
-    mounting_system = str(setup.mounting_system or "").strip() if setup else ""
-    if mounting_system not in METAL_SUPPORT_MOUNTING_SYSTEMS:
-        return []
+    finish_dict = setup.model_dump(mode="json") if setup else {}
+    if not is_mounting_solution_composition_active(finish_dict):
+        mounting_system = str(setup.mounting_system or "").strip() if setup else ""
+        if mounting_system not in METAL_SUPPORT_MOUNTING_SYSTEMS:
+            return []
+    else:
+        mounting_system = legacy_mounting_system_from_solution(resolve_effective_mounting_solution(finish_dict)) or ""
 
-    result = await db.execute(
-        select(ProductTemplateModuleLink).where(
-            ProductTemplateModuleLink.parent_template_code == payload.product_binding.template_code,
-            ProductTemplateModuleLink.trigger_field == "metal_support_required",
-            ProductTemplateModuleLink.active.is_(True),
+    solution = resolve_effective_mounting_solution(finish_dict)
+    if solution and is_mounting_solution_composition_active(finish_dict):
+        result = await db.execute(
+            select(ProductTemplateModuleLink).where(
+                ProductTemplateModuleLink.parent_template_code == payload.product_binding.template_code,
+                ProductTemplateModuleLink.module_template_code == solution["template_code"],
+                ProductTemplateModuleLink.active.is_(True),
+            )
         )
-    )
-    links = result.scalars().all()
+        links = result.scalars().all()
+    else:
+        result = await db.execute(
+            select(ProductTemplateModuleLink).where(
+                ProductTemplateModuleLink.parent_template_code == payload.product_binding.template_code,
+                ProductTemplateModuleLink.trigger_field == "metal_support_required",
+                ProductTemplateModuleLink.active.is_(True),
+            )
+        )
+        links = result.scalars().all()
+
     modules: list[dict[str, Any]] = []
     width_mm = quote_input.get("width_mm")
     support_material = "aluminum" if mounting_system == "aluminum_bars" else "steel"
     for link in links:
         defaults = _json_field(link.default_values_json, {})
-        module_input = dict(defaults if isinstance(defaults, dict) else {})
-        if width_mm is not None:
-            premount_length_ml = round(float(width_mm) / 1000.0, 4)
-            module_input["premount_bar_length_ml"] = premount_length_ml
-            module_input["mounting_bar_length_m"] = premount_length_ml
-            module_input["letter_perimeter_m"] = premount_length_ml
-        module_input["bar_material"] = support_material
-        module_input["mounting_bar_profile"] = quote_input.get("mounting_bar_profile") or module_input.get("mounting_bar_profile")
+        if solution and is_mounting_solution_composition_active(finish_dict):
+            module_input = build_linked_module_input_from_solution(
+                solution=solution,
+                quote_input=quote_input,
+                defaults=defaults if isinstance(defaults, dict) else {},
+            )
+        else:
+            module_input = dict(defaults if isinstance(defaults, dict) else {})
+            if width_mm is not None:
+                premount_length_ml = round(float(width_mm) / 1000.0, 4)
+                module_input["premount_bar_length_ml"] = premount_length_ml
+                module_input["mounting_bar_length_m"] = premount_length_ml
+                module_input["letter_perimeter_m"] = premount_length_ml
+            module_input["bar_material"] = support_material
+            module_input["mounting_bar_profile"] = quote_input.get("mounting_bar_profile") or module_input.get("mounting_bar_profile")
         modules.append(
             {
                 "parent_template_code": link.parent_template_code,

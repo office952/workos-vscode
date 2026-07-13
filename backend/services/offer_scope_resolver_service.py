@@ -96,9 +96,21 @@ def _apply_conditional_gates(
                 merged_finish[key] = quote_input[key]
 
     if "structura_suport" in active:
-        mounting = merged_finish.get("mounting_system") or payload.get("mounting_system")
-        if mounting not in BAR_MOUNTING:
-            active.discard("structura_suport")
+        from services.mounting_solution_service import is_structura_suport_active
+
+        finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+        merged_finish = dict(finish)
+        if quote_input:
+            qi_finish = quote_input.get("finish_setup")
+            if isinstance(qi_finish, dict):
+                merged_finish.update(qi_finish)
+            for key in ("mounting_system",):
+                if key in quote_input and key not in merged_finish:
+                    merged_finish[key] = quote_input[key]
+        if not is_structura_suport_active(merged_finish):
+            mounting = merged_finish.get("mounting_system") or payload.get("mounting_system")
+            if mounting not in BAR_MOUNTING:
+                active.discard("structura_suport")
 
     if "sistem_led" in active:
         illuminated = merged_finish.get("illuminated")

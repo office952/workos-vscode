@@ -71,6 +71,21 @@ import {
   type MountingScopeV1,
 } from "@/lib/intakeV6/mountingScope";
 import {
+  buildMountingSolutionPatch,
+  hydrateMountingSolutionFromLegacy,
+  isMountingSolutionCompositionActive,
+  legacyMountingBarProfile,
+  legacyMountingSystemLabel,
+  METAL_PREMOUNT_TEMPLATE_CODE,
+  MOUNTING_SOLUTION_OPTIONS,
+  mountingSolutionSelectorValue,
+  normalizeMetalMountingConfiguration,
+  prepareMountingSolutionForSave,
+  readMountingSolution,
+  resolveEffectiveMountingSolution,
+  type MountingSolutionSelectorValue,
+} from "@/lib/intakeV6/mountingSolution";
+import {
   extractQuoteGeometryFromAnalyzer,
   readQuoteGeometryFromPayload,
   resolveQuoteGeometryForWorkspace,
@@ -261,6 +276,7 @@ function buildFinishSetupSyncSignature(finish: IntakeV6FinishSetup): string {
     mounting_template_material_type: finish.mounting_template_material_type ?? "forex",
     mounting_system: finish.mounting_system ?? "direct_wall",
     mounting_bar_profile: finish.mounting_bar_profile ?? "30x30x1.5",
+    mounting_solution: finish.mounting_solution ?? null,
     mounting_scope: normalizeMountingScope(finish.mounting_scope, finish as Record<string, unknown>),
     site_installation_included:
       finish.site_installation_included === true
@@ -379,6 +395,7 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
     mounting_system: normalizeIntakeV6MountingSystem(setup.mounting_system),
     mounting_bar_profile:
       typeof setup.mounting_bar_profile === "string" ? setup.mounting_bar_profile : "30x30x1.5",
+    mounting_solution: resolveEffectiveMountingSolution(setup),
     ...hydrateMountingScopeFromFinishSetup(setup),
     emblem_lighting_mode: normalizeEmblemLightingMode(setup.emblem_lighting_mode),
     letter_led_module_count:
@@ -1346,7 +1363,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     setSaving(true);
     setError(null);
     try {
-      const body = buildCurrentFinishBody(confirmed, commercialInputsOverride, finishState);
+      const preparedState = prepareMountingSolutionForSave(
+        finishState as unknown as Record<string, unknown>,
+      ) as IntakeV6FinishSetup;
+      const body = buildCurrentFinishBody(confirmed, commercialInputsOverride, preparedState);
       const pendingDomains = new Set(pendingDirtyDomainsRef.current);
       const workspace = await saveFinishSetup(body);
       if (
@@ -1459,8 +1479,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const totalLedModuleCount = isLedModules
     ? form.total_led_module_count ?? form.led_module_count ?? ledModuleCount
     : null;
-  const mountingUsesBars =
-    form.mounting_system === "steel_bars" || form.mounting_system === "aluminum_bars";
+  const mountingUsesBars = isMountingSolutionCompositionActive(form as Record<string, unknown>);
+  const selectedMountingSolutionValue = mountingSolutionSelectorValue(form as Record<string, unknown>);
+  const selectedMountingSolution = resolveEffectiveMountingSolution(form as Record<string, unknown>);
+  const metalMountingConfiguration = normalizeMetalMountingConfiguration(
+    selectedMountingSolution?.configuration,
+  );
+  const legacyMountingSystemDisplay = legacyMountingSystemLabel(form as Record<string, unknown>);
+  const legacyMountingProfileDisplay = legacyMountingBarProfile(form as Record<string, unknown>);
   const mountingScope = normalizeMountingScope(form.mounting_scope, form as Record<string, unknown>);
   const mountingPrepActive = isMountingPreparationActive(mountingScope);
   const siteInstallationSectionActive = isSiteInstallationSectionActive(mountingScope);
@@ -2150,16 +2176,129 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               ) : null}
 
               <div
-                className="sm:col-span-2 rounded border border-amber-900/40 bg-amber-950/20 px-3 py-2"
-                data-testid="intake-v6-mounting-solution-deferred-note"
+                className="sm:col-span-2 rounded border border-cyan-900/50 bg-cyan-950/20 px-3 py-3"
+                data-testid="intake-v6-mounting-solution-panel"
               >
-                <p className="text-[10px] font-semibold text-amber-200">Soluție structură / bare / ACM</p>
-                <p className="mt-1 text-[10px] text-slate-400">
-                  Bare metalice și suport ACM casetat sunt soluții Product System separat ofertabile
-                  (ex. TPL-METAL-PREMOUNT-STRUCTURE_v1). Intake V6 nu mai scrie aici adevăr tehnic
-                  local — selectarea soluției urmează într-un slice Product System dedicat.
+                <div className="mb-2 flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-[11px] font-semibold text-cyan-300">Soluție de pregătire</p>
+                    <p className="text-[10px] text-slate-400">
+                      Referință Product System — fără adevăr tehnic duplicat în Intake.
+                    </p>
+                  </div>
+                  {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ? (
+                    <Link
+                      to={`/product-system?template=${encodeURIComponent(METAL_PREMOUNT_TEMPLATE_CODE)}`}
+                      className="rounded border border-cyan-800/50 px-2 py-1 text-[10px] text-cyan-300 hover:bg-cyan-900/30"
+                    >
+                      Product System
+                    </Link>
+                  ) : null}
+                </div>
+
+                <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>Soluție</span>
+                  <select
+                    className={REVIEW_SELECT_CLASS}
+                    value={selectedMountingSolutionValue}
+                    disabled={!mountingPrepActive}
+                    onChange={(event) => {
+                      const value = event.target.value as MountingSolutionSelectorValue;
+                      const currentConfig =
+                        readMountingSolution(form as Record<string, unknown>)?.configuration ??
+                        hydrateMountingSolutionFromLegacy(form as Record<string, unknown>)?.configuration;
+                      updateForm(buildMountingSolutionPatch(value, currentConfig) as Partial<IntakeV6FinishSetup>, {
+                        domains: ["mounting"],
+                      });
+                    }}
+                    data-testid="intake-v6-mounting-solution-selector"
+                  >
+                    {MOUNTING_SOLUTION_OPTIONS.map((option) => (
+                      <option key={option.value || "none"} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Material bară (PS)</span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={String(metalMountingConfiguration.bar_material ?? "steel")}
+                        disabled={!mountingPrepActive}
+                        onChange={(event) =>
+                          updateForm(
+                            buildMountingSolutionPatch(METAL_PREMOUNT_TEMPLATE_CODE, {
+                              ...metalMountingConfiguration,
+                              bar_material: event.target.value,
+                            }) as Partial<IntakeV6FinishSetup>,
+                            { domains: ["mounting"] },
+                          )
+                        }
+                        data-testid="intake-v6-mounting-solution-bar-material"
+                      >
+                        <option value="steel">Oțel</option>
+                        <option value="aluminum">Aluminiu</option>
+                      </select>
+                    </label>
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Profil (PS)</span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={String(metalMountingConfiguration.mounting_bar_profile ?? "30x30x1.5")}
+                        disabled={!mountingPrepActive}
+                        onChange={(event) =>
+                          updateForm(
+                            buildMountingSolutionPatch(METAL_PREMOUNT_TEMPLATE_CODE, {
+                              ...metalMountingConfiguration,
+                              mounting_bar_profile: event.target.value,
+                            }) as Partial<IntakeV6FinishSetup>,
+                            { domains: ["mounting"] },
+                          )
+                        }
+                        data-testid="intake-v6-mounting-solution-bar-profile"
+                      >
+                        <option value="30x30x1.5">30x30x1.5</option>
+                      </select>
+                    </label>
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Număr bare (PS)</span>
+                      <input
+                        type="number"
+                        min={1}
+                        step={1}
+                        className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                        value={Number(metalMountingConfiguration.bar_count ?? 2)}
+                        disabled={!mountingPrepActive}
+                        onChange={(event) =>
+                          updateForm(
+                            buildMountingSolutionPatch(METAL_PREMOUNT_TEMPLATE_CODE, {
+                              ...metalMountingConfiguration,
+                              bar_count: Number(event.target.value),
+                            }) as Partial<IntakeV6FinishSetup>,
+                            { domains: ["mounting"] },
+                          )
+                        }
+                        data-testid="intake-v6-mounting-solution-bar-count"
+                      />
+                    </label>
+                    <p
+                      className="sm:col-span-3 text-[10px] text-cyan-200/80"
+                      data-testid="intake-v6-mounting-solution-template-identity"
+                    >
+                      Template: {METAL_PREMOUNT_TEMPLATE_CODE}
+                    </p>
+                  </div>
+                ) : null}
+
+                <p className="mt-2 text-[10px] text-slate-500" data-testid="intake-v6-mounting-acm-deferred-note">
+                  ACM casetat: DEFERRED_PENDING_OWNER_TEMPLATE_DECISION — fără referință temporară.
                 </p>
-                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem montaj (legacy, read-only)</span>
                     <p
@@ -2167,8 +2306,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       data-testid="intake-v6-mounting-system-readonly"
                     >
                       {templateContract.allowedMountingSystems.find(
-                        (option) => option.value === (form.mounting_system ?? "direct_wall"),
-                      )?.label ?? form.mounting_system ?? "direct_wall"}
+                        (option) => option.value === legacyMountingSystemDisplay,
+                      )?.label ?? legacyMountingSystemDisplay}
                     </p>
                   </div>
                   {mountingUsesBars ? (
@@ -2178,7 +2317,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
                         data-testid="intake-v6-mounting-bar-profile-readonly"
                       >
-                        {form.mounting_bar_profile ?? "30x30x1.5"}
+                        {legacyMountingProfileDisplay}
                       </p>
                     </div>
                   ) : null}

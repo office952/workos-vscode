@@ -1024,7 +1024,7 @@ def evaluate_v4_template_option_contract(
                 option_key="mounting_template_area_m2",
             )
         )
-    if mounting_prep_active and not setup.mounting_system:
+    if mounting_prep_active and not setup.mounting_system and not setup.mounting_solution:
         result.warnings.append(
             _issue(
                 "discovered_option_not_canonicalized",
@@ -1034,7 +1034,12 @@ def evaluate_v4_template_option_contract(
                 option_key="mounting_system",
             )
         )
-    elif mounting_prep_active and setup.mounting_system in {"steel_bars", "aluminum_bars"} and not setup.mounting_bar_profile:
+    elif (
+        mounting_prep_active
+        and setup.mounting_solution is None
+        and setup.mounting_system in {"steel_bars", "aluminum_bars"}
+        and not setup.mounting_bar_profile
+    ):
         result.warnings.append(
             _issue(
                 "template_material_intent_missing",

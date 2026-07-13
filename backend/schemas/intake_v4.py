@@ -159,6 +159,11 @@ class IntakeV4CommercialInputs(BaseModel):
     manual_adjustment_ron: float = 0.0
 
 
+class IntakeV4MountingSolution(BaseModel):
+    template_code: str = Field(min_length=1)
+    configuration: dict[str, Any] = Field(default_factory=dict)
+
+
 class IntakeV4FinishSetup(BaseModel):
     face_finish_type: str | None = None
     face_vinyl_roll_width_mm: float | None = None
@@ -203,6 +208,7 @@ class IntakeV4FinishSetup(BaseModel):
         | None
     ) = None
     site_installation_included: bool | None = None
+    mounting_solution: IntakeV4MountingSolution | None = None
     mounting_system: Literal["direct_wall", "steel_bars", "aluminum_bars", "acm_panel"] | None = None
     mounting_bar_profile: str | None = None
     support_type: str | None = None

@@ -1,0 +1,27 @@
+{
+  "task": "PRODUCT_SYSTEM_MOUNTING_SOLUTION_INTAKE_REFERENCE_V1",
+  "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T11:18:21.537Z",
+  "playwright_attempts": 2,
+  "playwright_status": "partial",
+  "playwright_note": "Selection + live calc captured; reload persistence blocked on stale :8000 process without mounting_solution schema reload",
+  "scenarios": [
+    {
+      "name": "metal_solution_selected",
+      "screenshot": "01_metal_solution_selected.png",
+      "mounting_scope": "preparation_only",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": true,
+      "template_identity_visible": true
+    },
+    {
+      "name": "linked_child_preview",
+      "screenshot": "02_linked_child_preview.png",
+      "mounting_scope": "preparation_only",
+      "mounting_solution": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "selector_enabled": true,
+      "template_identity_visible": true
+    }
+  ]
+}

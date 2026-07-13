@@ -11,6 +11,7 @@ from services.intake_v4_backing_mode_service import (
     resolve_backing_mode_from_finish,
 )
 from services.mounting_scope_service import hydrate_mounting_scope_fields
+from services.mounting_solution_service import hydrate_mounting_solution_fields
 
 INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
 
@@ -218,7 +219,13 @@ def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, A
         return setup
     filtered: dict[str, Any] = {}
     for key, value in updates.items():
-        if value is not None or key in {"backing_mode", "back_bevel_enabled"}:
+        if value is not None or key in {
+            "backing_mode",
+            "back_bevel_enabled",
+            "mounting_system",
+            "mounting_bar_profile",
+            "mounting_solution",
+        }:
             filtered[key] = value
     return setup.model_copy(update=filtered)
 
@@ -276,6 +283,7 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
             updates["selected_psu_watts"] = max(psu_values)
 
     updates.update(hydrate_mounting_scope_fields(setup.model_dump(mode="json")))
+    updates.update(hydrate_mounting_solution_fields(setup.model_dump(mode="json")))
 
     if not groups and not artwork:
         return _apply_finish_setup_updates(setup, updates)

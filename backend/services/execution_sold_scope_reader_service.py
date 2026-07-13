@@ -28,6 +28,7 @@ FILE_PREPARATION_TASK_TYPE = "file_preparation"
 # Execution-only alias — not a component registry extension.
 EXECUTION_PRICED_OP_RUNTIME_ALIASES: dict[str, str] = {
     "return_face_bonding": "modelare_cant",
+    "mounting_template_cnc_cut": "finisaje",
 }
 
 BLOCKED_MISSING_SOLD_SCOPE = "blocked_missing_sold_scope"
