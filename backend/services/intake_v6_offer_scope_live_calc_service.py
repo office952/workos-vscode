@@ -22,6 +22,7 @@ from services.offer_scope_led_subscope_service import (
     resolve_sold_led_subscopes,
 )
 from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+from services.mounting_scope_service import is_mounting_preparation_active
 from services.offer_scope_resolver_service import (
     _apply_conditional_gates,
     extract_offer_scope,
@@ -69,6 +70,46 @@ def resolve_live_calc_scope(
         quote_input=quote_input,
     )
     return False, active
+
+
+def _merged_mounting_context(
+    payload_raw: dict[str, Any],
+    quote_input: dict[str, Any] | None,
+) -> dict[str, Any]:
+    ctx: dict[str, Any] = {}
+    finish = payload_raw.get("finish_setup")
+    if isinstance(finish, dict):
+        ctx.update(finish)
+    if isinstance(quote_input, dict):
+        for key in ("mounting_scope", "site_installation_included", "mounting_template_enabled"):
+            if quote_input.get(key) is not None:
+                ctx[key] = quote_input.get(key)
+    return ctx
+
+
+def _is_mounting_prep_material_key(material_key: str) -> bool:
+    key = str(material_key or "").strip().lower()
+    if key == "mounting_accessories_percent":
+        return True
+    if "sablon" in key or key.startswith("mounting_template"):
+        return True
+    if key.startswith("premount_bar") or "premount" in key:
+        return True
+    return False
+
+
+def _is_mounting_prep_operation_row(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow) -> bool:
+    if isinstance(row, IntakeV4EdgeCantOperationRow):
+        return False
+    for candidate in (
+        getattr(row, "dossier_operation_key", None),
+        getattr(row, "tpl_operation_key", None),
+        getattr(row, "key", None),
+    ):
+        code = str(candidate or "").strip().lower()
+        if "mounting_template" in code or code.startswith("sablon_montaj"):
+            return True
+    return False
 
 
 def runtime_module_for_material_key(material_key: str) -> str | None:
@@ -212,16 +253,16 @@ def filter_material_breakdown_by_offer_scope(
     quote_input: dict[str, Any] | None = None,
 ) -> IntakeV4MaterialBreakdownResponse:
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
-    if use_legacy:
-        return breakdown
+    mounting_ctx = _merged_mounting_context(payload_raw, quote_input)
+    mounting_prep_active = is_mounting_preparation_active(mounting_ctx)
 
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
     mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
 
-    material_rows = [
-        row
-        for row in breakdown.material_rows
-        if _row_allowed(
+    def _material_allowed(row: IntakeV4MaterialQuantityRow) -> bool:
+        if not mounting_prep_active and _is_mounting_prep_material_key(row.material_key):
+            return False
+        return _row_allowed(
             runtime_module=runtime_module_for_material_key(row.material_key),
             use_legacy=use_legacy,
             active_modules=active_modules,
@@ -229,23 +270,11 @@ def filter_material_breakdown_by_offer_scope(
             mount_decision=mount_decision,
             material_key=row.material_key,
         )
-    ]
-    consumable_rows = [
-        row
-        for row in breakdown.consumable_rows
-        if _row_allowed(
-            runtime_module=runtime_module_for_material_key(row.material_key),
-            use_legacy=use_legacy,
-            active_modules=active_modules,
-            sold_led_subscopes=sold_led_subscopes,
-            mount_decision=mount_decision,
-            material_key=row.material_key,
-        )
-    ]
-    operation_rows = [
-        row
-        for row in breakdown.operation_rows
-        if _row_allowed(
+
+    def _operation_allowed(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow) -> bool:
+        if not mounting_prep_active and _is_mounting_prep_operation_row(row):
+            return False
+        return _row_allowed(
             runtime_module=runtime_module_for_operation_row(row),
             use_legacy=use_legacy,
             active_modules=active_modules,
@@ -259,7 +288,10 @@ def filter_material_breakdown_by_offer_scope(
                 or ""
             ),
         )
-    ]
+
+    material_rows = [row for row in breakdown.material_rows if _material_allowed(row)]
+    consumable_rows = [row for row in breakdown.consumable_rows if _material_allowed(row)]
+    operation_rows = [row for row in breakdown.operation_rows if _operation_allowed(row)]
     edge_cant_operation_rows = [
         row
         for row in breakdown.edge_cant_operation_rows

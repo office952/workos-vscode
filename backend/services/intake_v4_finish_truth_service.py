@@ -10,6 +10,7 @@ from services.intake_v4_backing_mode_service import (
     finish_has_explicit_layer_backing_modes,
     resolve_backing_mode_from_finish,
 )
+from services.mounting_scope_service import hydrate_mounting_scope_fields
 
 INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
 
@@ -274,6 +275,8 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
         if psu_values:
             updates["selected_psu_watts"] = max(psu_values)
 
+    updates.update(hydrate_mounting_scope_fields(setup.model_dump(mode="json")))
+
     if not groups and not artwork:
         return _apply_finish_setup_updates(setup, updates)
 
@@ -304,7 +307,15 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
 
 
 ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
-MountingScopeValue = Literal["no_mounting", "mounting_included", "mounting_external", "to_be_decided"]
+MountingScopeValue = Literal[
+    "none",
+    "preparation_only",
+    "preparation_and_site_installation",
+    "no_mounting",
+    "mounting_included",
+    "mounting_external",
+    "to_be_decided",
+]
 
 _ARTWORK_RUNTIME_BLOCKER_BY_FIELD: dict[ArtworkRuntimeBooleanField, str] = {
     "print_required": "PRINT_REQUIRED_UNKNOWN",

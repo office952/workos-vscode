@@ -540,6 +540,10 @@ def _patch_quote_input_from_v4_geometry(
             patched["mounting_system"] = setup.mounting_system
         if setup.mounting_bar_profile:
             patched["mounting_bar_profile"] = setup.mounting_bar_profile
+        if setup.mounting_scope is not None:
+            patched["mounting_scope"] = setup.mounting_scope
+        if setup.site_installation_included is not None:
+            patched["site_installation_included"] = bool(setup.site_installation_included)
         if setup.letter_group_finishes:
             _apply_letter_group_finish_handoff(patched, setup)
             group_return_perimeter = _letter_group_return_perimeter_m(setup)

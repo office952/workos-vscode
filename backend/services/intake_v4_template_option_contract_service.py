@@ -1002,7 +1002,10 @@ def evaluate_v4_template_option_contract(
                 option_key="back_bevel_enabled",
             )
         )
-    if setup.mounting_template_enabled is None:
+    from services.mounting_scope_service import is_mounting_preparation_active
+
+    mounting_prep_active = is_mounting_preparation_active(setup.model_dump(mode="json"))
+    if mounting_prep_active and setup.mounting_template_enabled is None:
         result.warnings.append(
             _issue(
                 "discovered_option_not_canonicalized",
@@ -1012,7 +1015,7 @@ def evaluate_v4_template_option_contract(
                 option_key="mounting_template_enabled",
             )
         )
-    elif setup.mounting_template_enabled and setup.mounting_template_area_m2 is None:
+    elif mounting_prep_active and setup.mounting_template_enabled and setup.mounting_template_area_m2 is None:
         result.warnings.append(
             _issue(
                 "template_material_intent_missing",
@@ -1021,7 +1024,7 @@ def evaluate_v4_template_option_contract(
                 option_key="mounting_template_area_m2",
             )
         )
-    if not setup.mounting_system:
+    if mounting_prep_active and not setup.mounting_system:
         result.warnings.append(
             _issue(
                 "discovered_option_not_canonicalized",
@@ -1031,7 +1034,7 @@ def evaluate_v4_template_option_contract(
                 option_key="mounting_system",
             )
         )
-    elif setup.mounting_system in {"steel_bars", "aluminum_bars"} and not setup.mounting_bar_profile:
+    elif mounting_prep_active and setup.mounting_system in {"steel_bars", "aluminum_bars"} and not setup.mounting_bar_profile:
         result.warnings.append(
             _issue(
                 "template_material_intent_missing",

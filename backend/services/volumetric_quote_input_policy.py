@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Mapping
 
+from services.mounting_scope_service import is_mounting_preparation_active
 from services.volumetric_material_rate_resolver import is_volumetric_template_code
 
 WARNING_CAPTURED_NOT_PRICED = "captured_option_not_priced"
@@ -69,8 +70,16 @@ def normalize_mounting_template_enabled(
     raw: Any,
     *,
     mounting_system: Any = None,
+    mounting_scope: Any = None,
+    quote_input: Mapping[str, Any] | None = None,
 ) -> bool:
     """Default true when legacy forex_template or unset — preserves baseline sablon cost."""
+    ctx = quote_input or {}
+    if not is_mounting_preparation_active(
+        ctx,
+        mounting_scope=mounting_scope if mounting_scope is not None else ctx.get("mounting_scope"),
+    ):
+        return False
     if raw is not None:
         if isinstance(raw, bool):
             return raw
@@ -100,6 +109,8 @@ def normalize_mounting_template_material_type(qi: Mapping[str, Any]) -> str:
     if not normalize_mounting_template_enabled(
         qi.get("mounting_template_enabled"),
         mounting_system=qi.get("mounting_system"),
+        mounting_scope=qi.get("mounting_scope"),
+        quote_input=qi,
     ):
         return "none"
     return "forex"

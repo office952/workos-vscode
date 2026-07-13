@@ -63,6 +63,14 @@ import {
 } from "@/lib/intakeV6/intakeV6SoldScopeFinishConfirmation";
 import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 import {
+  hydrateMountingScopeFromFinishSetup,
+  isMountingPreparationActive,
+  isSiteInstallationSectionActive,
+  MOUNTING_SCOPE_OPTIONS,
+  normalizeMountingScope,
+  type MountingScopeV1,
+} from "@/lib/intakeV6/mountingScope";
+import {
   extractQuoteGeometryFromAnalyzer,
   readQuoteGeometryFromPayload,
   resolveQuoteGeometryForWorkspace,
@@ -253,6 +261,13 @@ function buildFinishSetupSyncSignature(finish: IntakeV6FinishSetup): string {
     mounting_template_material_type: finish.mounting_template_material_type ?? "forex",
     mounting_system: finish.mounting_system ?? "direct_wall",
     mounting_bar_profile: finish.mounting_bar_profile ?? "30x30x1.5",
+    mounting_scope: normalizeMountingScope(finish.mounting_scope, finish as Record<string, unknown>),
+    site_installation_included:
+      finish.site_installation_included === true
+        ? true
+        : finish.site_installation_included === false
+          ? false
+          : null,
     emblem_lighting_mode: normalizeEmblemLightingMode(finish.emblem_lighting_mode),
     letter_led_module_count: finish.letter_led_module_count ?? null,
     emblem_led_module_count: finish.emblem_led_module_count ?? null,
@@ -288,6 +303,8 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
       mounting_template_material_type: "forex",
       mounting_system: "direct_wall",
       mounting_bar_profile: "30x30x1.5",
+      mounting_scope: "preparation_only",
+      site_installation_included: null,
       emblem_lighting_mode: "area_lit",
       confirmed: false,
     };
@@ -362,6 +379,7 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
     mounting_system: normalizeIntakeV6MountingSystem(setup.mounting_system),
     mounting_bar_profile:
       typeof setup.mounting_bar_profile === "string" ? setup.mounting_bar_profile : "30x30x1.5",
+    ...hydrateMountingScopeFromFinishSetup(setup),
     emblem_lighting_mode: normalizeEmblemLightingMode(setup.emblem_lighting_mode),
     letter_led_module_count:
       typeof setup.letter_led_module_count === "number" ? setup.letter_led_module_count : undefined,
@@ -1285,22 +1303,23 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   function buildCurrentFinishBody(
     confirmed = true,
     commercialInputsOverride?: IntakeV6OfferCommercialInputs,
+    formSource: IntakeV6FinishSetup = form,
   ): IntakeV6FinishSetup {
     return syncLighting(
       syncIntakeV6FinishPayloadFromLayerFinishes(
         {
-          ...form,
+          ...formSource,
           face_vinyl_roll_width_mm: normalizeFaceVinylRollWidthMm(
-            form.face_finish_type,
-            form.face_vinyl_roll_width_mm,
+            formSource.face_finish_type,
+            formSource.face_vinyl_roll_width_mm,
           ),
           mounting_template_area_m2:
-            form.mounting_template_enabled !== false
+            formSource.mounting_template_enabled !== false
               ? resolveMountingTemplateAreaM2(
-                  form.mounting_template_area_m2,
+                  formSource.mounting_template_area_m2,
                   mountingTemplateAreaFallbackM2,
                 )
-              : form.mounting_template_area_m2,
+              : formSource.mounting_template_area_m2,
           letter_group_finishes: letterGroups,
           artwork_finishes: artworkFinishes,
           artwork_complexity_decisions: artworkComplexityDecisions,
@@ -1315,17 +1334,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     );
   }
 
-  function updateSelectedPsuWatts(watts: number) {
-    updateForm(
-      {
-        selected_psu_watts: watts,
-        psu_configuration: [watts],
-      },
-      { domains: ["lighting"] },
-    );
-  }
-
-  async function saveCurrentFinish(
+  async function persistFinishSetupState(
+    finishState: IntakeV6FinishSetup,
     confirmed = true,
     commercialInputsOverride?: IntakeV6OfferCommercialInputs,
   ) {
@@ -1336,7 +1346,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     setSaving(true);
     setError(null);
     try {
-      const body = buildCurrentFinishBody(confirmed, commercialInputsOverride);
+      const body = buildCurrentFinishBody(confirmed, commercialInputsOverride, finishState);
       const pendingDomains = new Set(pendingDirtyDomainsRef.current);
       const workspace = await saveFinishSetup(body);
       if (
@@ -1354,6 +1364,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           nextFinish.commercial_inputs,
         );
         const nextSettingsVatCommercialInputs = { ...nextCommercialInputs, vatPercent: vatPct };
+        setPayload(nextPayload);
         if (buildFinishSetupSyncSignature(syncedNextForm) !== buildFinishSetupSyncSignature(form)) {
           setForm(syncedNextForm);
         }
@@ -1372,7 +1383,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         }
         pendingDirtyDomainsRef.current.clear();
         pendingAutosavePolicyRef.current = "short";
-        bumpPreviewRefresh(pendingDomains.size > 0 ? pendingDomains : ["lighting", "face_finish", "artwork_finish", "backing", "mounting", "template", "commercial_preview"]);
+        bumpPreviewRefresh(
+          pendingDomains.size > 0
+            ? pendingDomains
+            : ["lighting", "face_finish", "artwork_finish", "backing", "mounting", "template", "commercial_preview"],
+        );
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : "Salvare finisaje esuata.";
@@ -1383,6 +1398,23 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         setSaving(false);
       }
     }
+  }
+
+  function updateSelectedPsuWatts(watts: number) {
+    updateForm(
+      {
+        selected_psu_watts: watts,
+        psu_configuration: [watts],
+      },
+      { domains: ["lighting"] },
+    );
+  }
+
+  async function saveCurrentFinish(
+    confirmed = true,
+    commercialInputsOverride?: IntakeV6OfferCommercialInputs,
+  ) {
+    await persistFinishSetupState(form, confirmed, commercialInputsOverride);
   }
 
   useEffect(() => {
@@ -1429,6 +1461,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     : null;
   const mountingUsesBars =
     form.mounting_system === "steel_bars" || form.mounting_system === "aluminum_bars";
+  const mountingScope = normalizeMountingScope(form.mounting_scope, form as Record<string, unknown>);
+  const mountingPrepActive = isMountingPreparationActive(mountingScope);
+  const siteInstallationSectionActive = isSiteInstallationSectionActive(mountingScope);
 
   const artworkOnlyRequiresDecision = useMemo(
     () =>
@@ -1972,17 +2007,60 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <div data-testid="intake-v6-review-tab-panel-montaj">
             <IntakeV6ReviewSectionShell
               title="Montaj & template"
-              description="Șablon, sistem de prindere și opțiuni legate de producție."
+              description="Scope comercial montaj, pregătire în atelier și montaj la locație."
               testId="intake-v6-review-section-montaj"
               compact
             >
             <div className={`${v6.cardCompact} !p-3`}>
+              <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
+                <span className={REVIEW_FIELD_LABEL_CLASS}>Scope comercial montaj</span>
+                <select
+                  className={REVIEW_SELECT_CLASS}
+                  value={mountingScope}
+                  onChange={(event) => {
+                    const nextScope = event.target.value as MountingScopeV1;
+                    markLocalFinishChanged(["mounting"]);
+                    setForm((prev) => {
+                      const next = syncLighting({
+                        ...prev,
+                        mounting_scope: nextScope,
+                        site_installation_included:
+                          nextScope === "preparation_and_site_installation"
+                            ? prev.site_installation_included ?? true
+                            : prev.site_installation_included,
+                        confirmed: false,
+                      });
+                      void persistFinishSetupState(next, true);
+                      return next;
+                    });
+                  }}
+                  data-testid="intake-v6-mounting-scope"
+                >
+                  {MOUNTING_SCOPE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div
+                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${mountingPrepActive ? "" : "opacity-60"}`}
+                data-testid="intake-v6-mounting-prep-section"
+              >
+                <p className="mb-2 text-[11px] font-semibold text-slate-200">Pregătire</p>
+                {!mountingPrepActive ? (
+                  <p className="mb-2 text-[10px] text-slate-400" data-testid="intake-v6-mounting-prep-readonly-note">
+                    Pregătirea este inactivă — valorile persistate rămân salvate.
+                  </p>
+                ) : null}
             <div className="grid gap-2 sm:grid-cols-2">
               <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-cyan-400"
                   checked={form.mounting_template_enabled !== false}
+                  disabled={!mountingPrepActive}
                   onChange={(event) =>
                     updateForm(
                       {
@@ -2011,8 +2089,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         type="number"
                         min={mountingTemplateAreaFallbackM2 ?? 0}
                         step="0.01"
-                        className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-[11px] outline-none"
+                        className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
                         value={form.mounting_template_area_m2 ?? ""}
+                        disabled={!mountingPrepActive}
                         placeholder={
                           mountingTemplateAreaFallbackM2 != null
                             ? String(mountingTemplateAreaFallbackM2)
@@ -2048,6 +2127,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={form.mounting_template_material_type ?? "forex"}
+                      disabled={!mountingPrepActive}
                       onChange={(event) =>
                         updateForm(
                           {
@@ -2069,51 +2149,41 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </>
               ) : null}
 
-              <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem montaj</span>
-                <select
-                  className={REVIEW_SELECT_CLASS}
-                  value={form.mounting_system ?? "direct_wall"}
-                  onChange={(event) =>
-                    updateForm(
-                      {
-                        mounting_system: event.target.value as IntakeV6MountingSystem,
-                      },
-                      { domains: ["mounting"] },
-                    )
-                  }
-                  data-testid="intake-v6-mounting-system"
-                >
-                  {templateContract.allowedMountingSystems.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              {mountingUsesBars ? (
-                <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Profil bare</span>
-                  <select
-                    className={REVIEW_SELECT_CLASS}
-                    value={form.mounting_bar_profile ?? "30x30x1.5"}
-                      onChange={(event) =>
-                        updateForm(
-                          { mounting_bar_profile: event.target.value },
-                          { domains: ["mounting"] },
-                        )
-                      }
-                    data-testid="intake-v6-mounting-bar-profile"
-                  >
-                    {templateContract.allowedMountingBarProfiles.map((profile) => (
-                      <option key={profile} value={profile}>
-                        {profile}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-              ) : null}
+              <div
+                className="sm:col-span-2 rounded border border-amber-900/40 bg-amber-950/20 px-3 py-2"
+                data-testid="intake-v6-mounting-solution-deferred-note"
+              >
+                <p className="text-[10px] font-semibold text-amber-200">Soluție structură / bare / ACM</p>
+                <p className="mt-1 text-[10px] text-slate-400">
+                  Bare metalice și suport ACM casetat sunt soluții Product System separat ofertabile
+                  (ex. TPL-METAL-PREMOUNT-STRUCTURE_v1). Intake V6 nu mai scrie aici adevăr tehnic
+                  local — selectarea soluției urmează într-un slice Product System dedicat.
+                </p>
+                <div className="mt-2 grid gap-2 sm:grid-cols-2">
+                  <div className={REVIEW_FIELD_BLOCK_CLASS}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem montaj (legacy, read-only)</span>
+                    <p
+                      className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
+                      data-testid="intake-v6-mounting-system-readonly"
+                    >
+                      {templateContract.allowedMountingSystems.find(
+                        (option) => option.value === (form.mounting_system ?? "direct_wall"),
+                      )?.label ?? form.mounting_system ?? "direct_wall"}
+                    </p>
+                  </div>
+                  {mountingUsesBars ? (
+                    <div className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Profil bare (legacy, read-only)</span>
+                      <p
+                        className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
+                        data-testid="intake-v6-mounting-bar-profile-readonly"
+                      >
+                        {form.mounting_bar_profile ?? "30x30x1.5"}
+                      </p>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
 
               {volumAluminumModuleLinks.length > 0 ? (
                 <div className="sm:col-span-2 rounded border border-cyan-900/50 bg-cyan-950/20 px-3 py-3">
@@ -2144,6 +2214,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={selectedVolumAluminumModuleCode}
+                      disabled={!mountingPrepActive}
                       onChange={(event) =>
                         updateForm(
                           {
@@ -2164,6 +2235,35 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </div>
               ) : null}
             </div>
+              </div>
+
+              <div
+                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${siteInstallationSectionActive ? "" : "opacity-60"}`}
+                data-testid="intake-v6-mounting-site-section"
+              >
+                <p className="mb-2 text-[11px] font-semibold text-slate-200">Montaj la locație</p>
+                {!siteInstallationSectionActive ? (
+                  <p className="text-[10px] text-slate-400" data-testid="intake-v6-mounting-site-inactive-note">
+                    Disponibil când scope-ul include montaj la locație.
+                  </p>
+                ) : (
+                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-cyan-400"
+                      checked={form.site_installation_included !== false}
+                      onChange={(event) =>
+                        updateForm(
+                          { site_installation_included: event.target.checked },
+                          { domains: ["mounting"] },
+                        )
+                      }
+                      data-testid="intake-v6-site-installation-included"
+                    />
+                    Montaj la locație inclus în ofertă
+                  </label>
+                )}
+              </div>
             </div>
             </IntakeV6ReviewSectionShell>
           </div>

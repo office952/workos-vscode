@@ -91,6 +91,14 @@ function normalizeFinishFormForCompare(form: IntakeV4FinishSetup) {
     ),
     return_finish_type: String(form.return_finish_type ?? "").trim(),
     return_depth_mm: form.return_depth_mm ?? null,
+    mounting_scope: form.mounting_scope ?? null,
+    site_installation_included: form.site_installation_included ?? null,
+    mounting_template_enabled: form.mounting_template_enabled ?? null,
+    mounting_template_area_m2: form.mounting_template_area_m2 ?? null,
+    mounting_template_material_type: form.mounting_template_material_type ?? null,
+    mounting_system: form.mounting_system ?? null,
+    mounting_bar_profile: form.mounting_bar_profile ?? null,
+    volum_aluminum_module_template_code: form.volum_aluminum_module_template_code ?? null,
     confirmed: form.confirmed === true,
   };
 }

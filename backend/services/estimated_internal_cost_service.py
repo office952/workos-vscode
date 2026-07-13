@@ -384,7 +384,11 @@ def _extract_quantity(payload: dict[str, Any], values: dict[str, Any], paths: tu
 
 
 def _sablon_enabled(payload: dict[str, Any]) -> bool:
+    from services.mounting_scope_service import is_mounting_preparation_active
+
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if not is_mounting_preparation_active(finish):
+        return False
     enabled = _read_bool(finish.get("mounting_template_enabled"))
     if enabled is None:
         enabled = _read_bool(payload.get("mounting_template_enabled"))

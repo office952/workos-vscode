@@ -199,6 +199,16 @@ export interface IntakeV4FinishSetup {
   mounting_template_material_type?: "forex" | "paper" | null;
   mounting_system?: "direct_wall" | "steel_bars" | "aluminum_bars" | "acm_panel" | null;
   mounting_bar_profile?: string | null;
+  mounting_scope?:
+    | "none"
+    | "preparation_only"
+    | "preparation_and_site_installation"
+    | "no_mounting"
+    | "mounting_included"
+    | "mounting_external"
+    | "to_be_decided"
+    | null;
+  site_installation_included?: boolean | null;
   emblem_lighting_mode?: "excluded" | "area_lit" | "needs_decision";
   letter_led_module_count?: number | null;
   emblem_led_module_count?: number | null;

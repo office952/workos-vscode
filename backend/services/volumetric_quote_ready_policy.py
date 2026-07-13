@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, Mapping, Optional
 
+from services.mounting_scope_service import is_mounting_preparation_active
 from services.volumetric_quote_input_policy import (
     WARNING_ACM_SEPARATE_TEMPLATE,
     WARNING_MOUNTING_BAR_PROFILE_PRICE_MISSING,
@@ -135,12 +136,15 @@ def _collect_geometry_blockers(
     ):
         blockers.append(f"{WARNING_PRODUCTION_METADATA_MISSING}:paint_ral_code")
     if normalize_mounting_template_enabled(
-        qi.get("mounting_template_enabled"), mounting_system=qi.get("mounting_system")
+        qi.get("mounting_template_enabled"),
+        mounting_system=qi.get("mounting_system"),
+        mounting_scope=qi.get("mounting_scope"),
+        quote_input=qi,
     ):
         if not _positive_number(qi.get("mounting_template_area_m2")):
             blockers.append("quote_input_missing:mounting_template_area_m2")
     mount = normalize_mounting_system(qi.get("mounting_system"))
-    if mount in ("steel_bars", "aluminum_bars"):
+    if is_mounting_preparation_active(qi) and mount in ("steel_bars", "aluminum_bars"):
         if not str(qi.get("mounting_bar_profile") or "").strip():
             blockers.append("quote_input_missing:mounting_bar_profile")
         if not _positive_number(qi.get("mounting_bar_count")):

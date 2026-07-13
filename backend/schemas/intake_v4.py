@@ -190,7 +190,19 @@ class IntakeV4FinishSetup(BaseModel):
     mounting_template_enabled: bool | None = None
     mounting_template_area_m2: float | None = None
     mounting_template_material_type: Literal["forex", "paper"] | None = None
-    mounting_scope: Literal["no_mounting", "mounting_included", "mounting_external", "to_be_decided"] | None = None
+    mounting_scope: (
+        Literal[
+            "none",
+            "preparation_only",
+            "preparation_and_site_installation",
+            "no_mounting",
+            "mounting_included",
+            "mounting_external",
+            "to_be_decided",
+        ]
+        | None
+    ) = None
+    site_installation_included: bool | None = None
     mounting_system: Literal["direct_wall", "steel_bars", "aluminum_bars", "acm_panel"] | None = None
     mounting_bar_profile: str | None = None
     support_type: str | None = None

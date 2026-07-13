@@ -216,7 +216,8 @@ def test_save_finish_setup_persists_mounting_scope_runtime_field(v4_client):
     assert saved.status_code == 200, saved.text
     finish = saved.json()["payload"]["finish_setup"]
 
-    assert finish["mounting_scope"] == "mounting_included"
+    assert finish["mounting_scope"] == "preparation_and_site_installation"
+    assert finish["site_installation_included"] is True
 
 
 def test_save_finish_setup_without_mounting_scope_keeps_field_absent_even_with_mounting_system_and_support_type(v4_client):
@@ -234,7 +235,7 @@ def test_save_finish_setup_without_mounting_scope_keeps_field_absent_even_with_m
     assert saved.status_code == 200, saved.text
     finish = saved.json()["payload"]["finish_setup"]
 
-    assert finish.get("mounting_scope") is None
+    assert finish.get("mounting_scope") == "none"
 
 
 def test_save_finish_setup_persists_support_type_runtime_field(v4_client):

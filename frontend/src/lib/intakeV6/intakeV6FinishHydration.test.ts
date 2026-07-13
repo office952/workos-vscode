@@ -166,6 +166,27 @@ describe("intakeV6FinishHydration", () => {
     ).toBe(true);
   });
 
+  it("detects pending save when mounting scope diverges from payload", () => {
+    expect(
+      isIntakeV6SelectorStatePendingSave(
+        {
+          backing_mode: "forex_10_with_bevel",
+          emblem_lighting_mode: "area_lit",
+          return_finish_type: "white_aluminum",
+          illuminated: true,
+          lighting_system_type: "led_modules",
+          light_color: "warm",
+          led_module_power_w: 1.44,
+          mounting_scope: "preparation_and_site_installation",
+          confirmed: true,
+        },
+        payload,
+        letterGroups,
+        artworkFinishes,
+      ),
+    ).toBe(true);
+  });
+
   it("keeps the legacy compat refetch key stable for non-ReviewStep callers", () => {
     expect(
       intakeV6PersistedReviewRefetchKey({

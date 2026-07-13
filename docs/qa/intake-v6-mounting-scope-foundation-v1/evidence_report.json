@@ -1,0 +1,44 @@
+{
+  "task": "INTAKE_V6_MOUNTING_SCOPE_FOUNDATION_V1",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T10:46:56.869Z",
+  "scope_correction": {
+    "product_system_modularity": true,
+    "local_mounting_system_editable": false,
+    "mounting_solution_template_blocked": "TPL-METAL-PREMOUNT-STRUCTURE_v1 picker deferred; TPL-COMP-LETTER-MOUNTING_v1 inert; ACM template missing"
+  },
+  "scenarios": [
+    {
+      "name": "mounting_none",
+      "screenshot": "01_mounting_none.png",
+      "mounting_scope": "none",
+      "prep_section_active": false,
+      "site_section_active": false,
+      "prep_readonly": true
+    },
+    {
+      "name": "preparation_only",
+      "screenshot": "02_preparation_only.png",
+      "mounting_scope": "preparation_only",
+      "prep_section_active": true,
+      "site_section_active": false,
+      "prep_readonly": false
+    },
+    {
+      "name": "preparation_and_site_installation",
+      "screenshot": "03_preparation_and_site_installation.png",
+      "mounting_scope": "preparation_and_site_installation",
+      "prep_section_active": true,
+      "site_section_active": true,
+      "prep_readonly": false
+    },
+    {
+      "name": "reload_preserved",
+      "screenshot": "04_reload_preserved.png",
+      "mounting_scope": "preparation_only",
+      "prep_section_active": true,
+      "site_section_active": false,
+      "prep_readonly": false
+    }
+  ]
+}
