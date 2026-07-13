@@ -54,12 +54,18 @@ def _is_linked_neutral(instance_id: str) -> bool:
     return SEGMENT_NAMESPACE_SEP in instance_id
 
 
-def _build_offer_scope_snapshot(scope_input: Any, resolved: Any) -> QuoteSnapshotOfferScope:
+def _build_offer_scope_snapshot(scope_input: Any, resolved: Any, payload_raw: dict[str, Any] | None = None) -> QuoteSnapshotOfferScope:
     sold_modules: list[str] = []
     if scope_input is not None:
         sold_modules = list(scope_input.sold_modules)
 
     runtime_sorted = sorted(resolved.runtime_sold_modules) if resolved.runtime_sold_modules else []
+
+    dependency_confirmations: list[str] = []
+    if isinstance(payload_raw, dict):
+        from services.sold_scope_dependency_validator_service import _read_dependency_confirmations
+
+        dependency_confirmations = sorted(_read_dependency_confirmations(payload_raw))
 
     return QuoteSnapshotOfferScope(
         contract_version=OFFER_SCOPE_CONTRACT_VERSION,
@@ -69,6 +75,7 @@ def _build_offer_scope_snapshot(scope_input: Any, resolved: Any) -> QuoteSnapsho
         use_legacy=resolved.use_legacy,
         resolver_contract_version=OFFER_SCOPE_CONTRACT_VERSION,
         validation_errors=list(resolved.validation_errors),
+        dependency_confirmations=dependency_confirmations,
     )
 
 
@@ -188,7 +195,7 @@ async def build_frozen_component_scope(
 
     scope_input = extract_offer_scope(workspace_payload, quote_input)
     resolved = resolve_offer_scope(scope_input)
-    offer_scope_snapshot = _build_offer_scope_snapshot(scope_input, resolved)
+    offer_scope_snapshot = _build_offer_scope_snapshot(scope_input, resolved, workspace_payload)
 
     from services.sold_scope_dependency_validator_service import validate_sold_graph_from_payload
 

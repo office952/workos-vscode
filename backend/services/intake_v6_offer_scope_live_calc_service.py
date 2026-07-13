@@ -15,12 +15,13 @@ from schemas.intake_v4 import (
 from services.offer_scope_led_subscope_service import (
     LedSubscope,
     commercial_line_led_subscope,
-    led_subscope_row_allowed,
+    led_consumer_row_allowed,
     logical_list_line_led_subscope,
     material_led_subscope,
     operation_led_subscope,
     resolve_sold_led_subscopes,
 )
+from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
 from services.offer_scope_resolver_service import (
     _apply_conditional_gates,
     extract_offer_scope,
@@ -145,9 +146,12 @@ def _row_allowed(
     use_legacy: bool,
     active_modules: set[str],
     sold_led_subscopes: frozenset[LedSubscope] | None = None,
+    mount_decision: Any | None = None,
     material_key: str | None = None,
     operation_subscope: LedSubscope | None = None,
+    operation_code: str | None = None,
     line_id: str | None = None,
+    commercial_line_code: str | None = None,
 ) -> bool:
     if use_legacy:
         return True
@@ -164,7 +168,15 @@ def _row_allowed(
         row_subscope = operation_subscope
     elif line_id is not None:
         row_subscope = logical_list_line_led_subscope(line_id)
-    return led_subscope_row_allowed(row_subscope, sold_led_subscopes=sold_led_subscopes)
+    return led_consumer_row_allowed(
+        row_subscope=row_subscope,
+        sold_led_subscopes=sold_led_subscopes,
+        material_key=material_key,
+        operation_code=operation_code,
+        line_id=line_id,
+        commercial_line_code=commercial_line_code,
+        mount_decision=mount_decision,
+    )
 
 
 def _material_cost(row: IntakeV4MaterialQuantityRow) -> float:
@@ -204,6 +216,7 @@ def filter_material_breakdown_by_offer_scope(
         return breakdown
 
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
+    mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
 
     material_rows = [
         row
@@ -213,6 +226,7 @@ def filter_material_breakdown_by_offer_scope(
             use_legacy=use_legacy,
             active_modules=active_modules,
             sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
             material_key=row.material_key,
         )
     ]
@@ -224,6 +238,7 @@ def filter_material_breakdown_by_offer_scope(
             use_legacy=use_legacy,
             active_modules=active_modules,
             sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
             material_key=row.material_key,
         )
     ]
@@ -235,7 +250,14 @@ def filter_material_breakdown_by_offer_scope(
             use_legacy=use_legacy,
             active_modules=active_modules,
             sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
             operation_subscope=_operation_led_subscope_for_row(row),
+            operation_code=str(
+                getattr(row, "dossier_operation_key", None)
+                or getattr(row, "tpl_operation_key", None)
+                or getattr(row, "key", None)
+                or ""
+            ),
         )
     ]
     edge_cant_operation_rows = [
@@ -300,6 +322,7 @@ def filter_logical_list_rows_by_offer_scope(
     if use_legacy:
         return rows
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
+    mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for row in rows:
         module_code = row.get("module_code")
@@ -310,6 +333,7 @@ def filter_logical_list_rows_by_offer_scope(
             use_legacy=use_legacy,
             active_modules=active_modules,
             sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
             line_id=str(row.get("line_id") or ""),
         ):
             continue
@@ -327,6 +351,7 @@ def filter_commercial_line_items_by_offer_scope(
     if use_legacy:
         return line_items
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
+    mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for line in line_items:
         module_code = line.get("module_code")
@@ -334,7 +359,12 @@ def filter_commercial_line_items_by_offer_scope(
             continue
         if module_code == "sistem_led" and sold_led_subscopes is not None:
             sub = commercial_line_led_subscope(str(line.get("code") or ""))
-            if not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+            if not led_consumer_row_allowed(
+                row_subscope=sub,
+                sold_led_subscopes=sold_led_subscopes,
+                commercial_line_code=str(line.get("code") or ""),
+                mount_decision=mount_decision,
+            ):
                 continue
         filtered.append(line)
     return filtered

@@ -76,6 +76,7 @@ def _offer_scope(*, mode: str, sold: list[str]) -> dict:
 def _with_offer_scope(base: dict, *, mode: str, sold: list[str]) -> dict:
     out = copy.deepcopy(base)
     out["offer_scope"] = _offer_scope(mode=mode, sold=sold)
+    out["product_binding"] = {"template_code": TEMPLATE}
     return out
 
 
@@ -149,7 +150,7 @@ async def test_lighting_only_bom_excludes_psu(bom_context) -> None:
     assert "MAT-LED-MODULE" in codes
     assert not any(code.startswith("MAT-LED-PSU") for code in codes)
     ops = _operation_codes(bom)
-    assert "led_install_letters" in ops
+    assert "led_install_letters" not in ops
     assert "electrical_letters" not in ops
 
 
@@ -179,7 +180,7 @@ async def test_combined_bom_without_duplication(bom_context) -> None:
     assert codes.count("MAT-LED-MODULE") <= 1
     assert sum(1 for code in codes if code.startswith("MAT-LED-PSU")) <= 1
     ops = _operation_codes(bom)
-    assert "led_install_letters" in ops
+    assert "led_install_letters" not in ops
     assert "electrical_letters" in ops
 
 
@@ -191,7 +192,7 @@ async def test_lighting_only_eic_cpp(volumetric_v2_db) -> None:
     assert eic is not None and cpp is not None
     eic_codes = {line.code for line in eic.estimated_operation_lines}
     cpp_codes = {line.code for line in cpp.commercial_price_lines}
-    assert "sistem_led_install" in eic_codes
+    assert "sistem_led_install" not in eic_codes
     assert "sistem_led_module" in cpp_codes
     assert "sursa_led" not in eic_codes
     assert "sursa_led" not in cpp_codes
@@ -349,7 +350,7 @@ def test_execution_lighting_tasks_only() -> None:
             offer_scope=offer_scope(sold=["LIGHTING"], runtime=["sistem_led"]),
         )
     )
-    assert include_task_rule_for_sold_scope(_rule("led_installation"), ctx=ctx)
+    assert not include_task_rule_for_sold_scope(_rule("led_installation"), ctx=ctx)
     assert not include_task_rule_for_sold_scope(_rule("electrical_wiring"), ctx=ctx)
 
 
@@ -374,5 +375,5 @@ def test_execution_combined_union() -> None:
         for rule in sold_scope_dossier_aggregate().task_contract.task_rules
         if include_task_rule_for_sold_scope(rule, ctx=ctx)
     }
-    assert "led_installation" in included
+    assert "led_installation" not in included
     assert "electrical_wiring" in included

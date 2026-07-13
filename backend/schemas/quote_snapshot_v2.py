@@ -65,6 +65,7 @@ class QuoteSnapshotOfferScope(BaseModel):
     use_legacy: bool = True
     resolver_contract_version: str = OFFER_SCOPE_CONTRACT_VERSION
     validation_errors: list[str] = Field(default_factory=list)
+    dependency_confirmations: list[str] = Field(default_factory=list)
 
 
 class QuoteSnapshotComponentInstance(BaseModel):

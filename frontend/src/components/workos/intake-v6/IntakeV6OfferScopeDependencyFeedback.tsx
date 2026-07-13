@@ -1,7 +1,9 @@
 import {
   CODE_ELECTRICAL_LOAD_NOT_SOLD,
+  CODE_LED_INSTALLATION_BY_US,
   CODE_LED_MOUNT_SURFACE_NOT_SOLD,
   firstDependencyBlockerMessage,
+  readDependencyConfirmations,
   type SoldScopeDependencyValidation,
 } from "@/lib/intakeV6/intakeV6OfferScopeDependency";
 
@@ -9,10 +11,12 @@ export default function IntakeV6OfferScopeDependencyFeedback({
   validation,
   onConfirmCode,
   confirmingCode,
+  dependencyConfirmations,
 }: {
   validation: SoldScopeDependencyValidation | null;
   onConfirmCode: (code: string) => void;
   confirmingCode: string | null;
+  dependencyConfirmations?: Set<string>;
 }) {
   if (!validation) {
     return null;
@@ -23,11 +27,15 @@ export default function IntakeV6OfferScopeDependencyFeedback({
     validation.confirmations_required.length > 0 ||
     validation.warnings.length > 0;
 
-  if (!hasIssues) {
+  const showInstallByUsPrompt =
+    dependencyConfirmations?.has(CODE_LED_MOUNT_SURFACE_NOT_SOLD) &&
+    !dependencyConfirmations.has(CODE_LED_INSTALLATION_BY_US);
+
+  if (!hasIssues && !showInstallByUsPrompt) {
     return null;
   }
 
-  const primary = firstDependencyBlockerMessage(validation);
+  const primary = hasIssues ? firstDependencyBlockerMessage(validation) : null;
 
   return (
     <div
@@ -72,6 +80,24 @@ export default function IntakeV6OfferScopeDependencyFeedback({
         <p className="text-[10px] text-emerald-300" data-testid="intake-v6-offer-scope-dependency-mount-satisfied">
           Suport montaj LED: satisfăcut
         </p>
+      ) : null}
+
+      {dependencyConfirmations?.has(CODE_LED_MOUNT_SURFACE_NOT_SOLD) &&
+      !dependencyConfirmations.has(CODE_LED_INSTALLATION_BY_US) ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[10px] text-slate-300">
+            Suportul LED este extern. Confirmă dacă atelierul montează modulele LED.
+          </p>
+          <button
+            type="button"
+            className="rounded border border-emerald-500/40 px-2 py-1 text-[10px] text-emerald-200 hover:bg-emerald-500/10"
+            data-testid={`intake-v6-offer-scope-dependency-confirm-${CODE_LED_INSTALLATION_BY_US}`}
+            disabled={confirmingCode === CODE_LED_INSTALLATION_BY_US}
+            onClick={() => onConfirmCode(CODE_LED_INSTALLATION_BY_US)}
+          >
+            {confirmingCode === CODE_LED_INSTALLATION_BY_US ? "Confirm…" : "Montaj de noi"}
+          </button>
+        </div>
       ) : null}
     </div>
   );

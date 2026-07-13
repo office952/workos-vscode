@@ -87,6 +87,13 @@ export default function IntakeV6OfferScopePanel({
     if (persisted.serialized === hydratingSerializedRef.current) {
       return;
     }
+    const pending = latestIntentRef.current;
+    if (pending) {
+      const pendingSerialized = serializeIntent(normalizeIntent(pending));
+      if (pendingSerialized !== persisted.serialized) {
+        return;
+      }
+    }
     hydratingSerializedRef.current = persisted.serialized;
     acknowledgedSerializedRef.current = persisted.serialized;
     setAcknowledgedSerialized(persisted.serialized);
@@ -294,6 +301,7 @@ export default function IntakeV6OfferScopePanel({
         validation={dependencyValidation}
         onConfirmCode={handleConfirmDependency}
         confirmingCode={confirmingDependencyCode}
+        dependencyConfirmations={readDependencyConfirmations(payload)}
       />
 
       {saveError ? <p className="mt-2 text-[11px] text-rose-300">{saveError}</p> : null}

@@ -1,0 +1,393 @@
+{
+  "workspace": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "workspace_code": "IR-MRI01769",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T07:59:51.677Z",
+  "ui_driven": true,
+  "direct_api_used": false,
+  "spec": "frontend/e2e/dependency-consumer-adhesive-gating-v1.spec.ts",
+  "total_put_requests": 20,
+  "put_records": [
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "RETURN-CANT"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "RETURN-CANT",
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "confirmed": true,
+      "dependency_confirmation_codes": [
+        "LED_MOUNT_SURFACE_NOT_SOLD"
+      ]
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "confirmed": true,
+      "dependency_confirmation_codes": [
+        "LED_INSTALLATION_BY_US"
+      ]
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING"
+      ],
+      "confirmed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "01_back_lighting_valid.png",
+      "scenario": "BACK+LIGHTING",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [],
+      "put_count_for_action": 2,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "BACK",
+        "LIGHTING"
+      ]
+    },
+    {
+      "file": "02_face_cant_lighting_valid.png",
+      "scenario": "FACE+RETURN-CANT+LIGHTING",
+      "sold_modules": [
+        "FACE",
+        "RETURN-CANT",
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [],
+      "put_count_for_action": 4,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "FACE",
+        "RETURN-CANT",
+        "LIGHTING"
+      ]
+    },
+    {
+      "file": "06_lighting_electrical_no_mount.png",
+      "scenario": "LIGHTING+ELECTRICAL no mount",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "dependency_confirmations": [
+        "LED_MOUNT_SURFACE_NOT_SOLD"
+      ],
+      "put_count_for_action": 3,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ]
+    },
+    {
+      "file": "03_lighting_only_unconfirmed.png",
+      "scenario": "LIGHTING unconfirmed",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [
+        "LED_MOUNT_SURFACE_NOT_SOLD"
+      ],
+      "put_count_for_action": 1,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "LIGHTING"
+      ]
+    },
+    {
+      "file": "04_lighting_external_mount_confirmed.png",
+      "scenario": "LIGHTING external mount confirmed",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [
+        "LED_INSTALLATION_BY_US"
+      ],
+      "put_count_for_action": 1,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": true,
+      "userClicks": [
+        "confirm-mount"
+      ]
+    },
+    {
+      "file": "05_lighting_external_install_by_us.png",
+      "scenario": "LIGHTING external + install by us",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [],
+      "put_count_for_action": 1,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "confirm-install"
+      ]
+    },
+    {
+      "file": "07_electrical_only.png",
+      "scenario": "ELECTRICAL only",
+      "sold_modules": [
+        "ELECTRICAL"
+      ],
+      "dependency_confirmations": [
+        "ELECTRICAL_LOAD_NOT_SOLD"
+      ],
+      "put_count_for_action": 2,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "ELECTRICAL"
+      ]
+    },
+    {
+      "file": "08_back_only.png",
+      "scenario": "BACK only",
+      "sold_modules": [
+        "BACK"
+      ],
+      "dependency_confirmations": [],
+      "put_count_for_action": 2,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "BACK"
+      ]
+    },
+    {
+      "file": "09_full_product_regression.png",
+      "scenario": "full_product",
+      "sold_modules": [],
+      "dependency_confirmations": [],
+      "put_count_for_action": 1,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "mode-full"
+      ]
+    },
+    {
+      "file": "10_empty_to_back_lighting_transition.png",
+      "scenario": "empty→BACK→LIGHTING transition",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING"
+      ],
+      "dependency_confirmations": [],
+      "put_count_for_action": 2,
+      "mountSatisfiedVisible": false,
+      "installByUsPromptVisible": false,
+      "userClicks": [
+        "subset",
+        "BACK",
+        "LIGHTING"
+      ]
+    }
+  ],
+  "scenarios_verified": [
+    "BACK+LIGHTING mount satisfied",
+    "FACE+RETURN-CANT+LIGHTING mount satisfied",
+    "LIGHTING only unconfirmed",
+    "External mount confirmed",
+    "External mount + install by us",
+    "LIGHTING+ELECTRICAL no mount",
+    "ELECTRICAL only",
+    "BACK only",
+    "full_product regression",
+    "empty→BACK→LIGHTING transition + reload"
+  ],
+  "runtime_qa_status": "PASS",
+  "runtime_qa_verdict": "PASS",
+  "runtime_qa_notes": "Playwright UI evidence captured on IR-MRI01769; 10 screenshots; 20 offer-scope PUTs; 21.6s wall time.",
+  "playwright": {
+    "command": "cd frontend && 1=1; npx playwright test e2e/dependency-consumer-adhesive-gating-v1.spec.ts",
+    "passed": 1,
+    "failed": 0,
+    "duration_seconds": 21.6,
+    "finished_at": "2026-07-13T07:59:51.677Z"
+  },
+  "backend_tests": {
+    "command": "pytest tests/test_lighting_mount_consumer_gating.py tests/test_sold_scope_dependency_matrix.py tests/test_intake_v6_lighting_electrical_scope.py tests/test_execution_sold_scope_reader.py -q",
+    "passed": 121,
+    "failed": 0
+  },
+  "frontend_tests": {
+    "command": "vitest run intakeV6OfferScopeDependency.test.ts intakeV6Readiness.test.ts IntakeV6OfferScopePanel.test.tsx",
+    "passed": 28,
+    "failed": 0
+  },
+  "frontend_build": "PASS",
+  "consumer_decision_verified": {
+    "BACK+LIGHTING": {
+      "include_led_modules": true,
+      "include_led_adhesive": true,
+      "include_led_install": true
+    },
+    "FACE+RETURN-CANT+LIGHTING": {
+      "include_led_adhesive": true,
+      "include_led_install": true
+    },
+    "LIGHTING only unconfirmed": {
+      "include_led_modules": true,
+      "include_led_adhesive": false,
+      "include_led_install": false
+    },
+    "LIGHTING external confirmed": {
+      "include_led_modules": true,
+      "include_led_adhesive": false,
+      "installation_by_us": false
+    },
+    "LIGHTING external + install by us": {
+      "include_led_adhesive": true,
+      "include_led_install": true
+    },
+    "LIGHTING+ELECTRICAL no mount": {
+      "led_install_gated": true,
+      "electrical_independent": true
+    },
+    "ELECTRICAL only": {
+      "lighting_consumers": false
+    },
+    "BACK only": {
+      "lighting_consumers": false
+    },
+    "full_product": {
+      "use_legacy": true,
+      "all_consumers": true
+    }
+  },
+  "flake_fix": {
+    "classification": "APPLICATION_DEFECT",
+    "root_cause": "Hydrate effect overwrote in-flight checkbox state when partial PUT response arrived before next toggle; e2e batched toggles waited for single PUT.",
+    "fix": "IntakeV6OfferScopePanel hydrate skips when latestIntentRef differs from persisted serialized scope; Playwright helpers serialize one PUT per scope control (validator pattern)."
+  },
+  "mount_ownership": {
+    "LED_MOUNT_SURFACE_NOT_SOLD": "physical support only (existent/client-supplied)",
+    "LED_INSTALLATION_BY_US": "workshop performs adhesive + install on external surface",
+    "sold_BACK_or_FACE+CANT": "implicit installation_by_us"
+  }
+}

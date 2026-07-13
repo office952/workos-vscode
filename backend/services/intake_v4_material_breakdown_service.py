@@ -2618,6 +2618,11 @@ def build_intake_v4_material_breakdown(
             if led_count:
                 led_count_int = int(led_count)
 
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+
+    mount_decision = resolve_lighting_mount_consumers(payload_raw, payload_raw)
+    include_led_adhesive = mount_decision.include_led_adhesive if mount_decision else True
+
     append_volumetric_adhesive_and_wiring_consumables(
         geom_sources=geom_sources,
         letter_return_ml=(cant_total_ml if raw_vector_total_applied else cant_letter_ml),
@@ -2627,6 +2632,7 @@ def build_intake_v4_material_breakdown(
         led_module_count=led_count_int,
         consumable_rows=consumable_rows,
         warnings=warnings,
+        include_led_adhesive=include_led_adhesive,
     )
 
     if illuminated:

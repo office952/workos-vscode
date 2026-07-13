@@ -234,6 +234,7 @@ def append_volumetric_adhesive_and_wiring_consumables(
     led_module_count: int | None,
     consumable_rows: list[IntakeV4MaterialQuantityRow],
     warnings: list[IntakeV4MaterialBreakdownWarning],
+    include_led_adhesive: bool = True,
 ) -> None:
     segment_count = resolve_real_letter_or_segment_count(geom_sources)
     if segment_count is None or segment_count <= 0:
@@ -251,7 +252,8 @@ def append_volumetric_adhesive_and_wiring_consumables(
         return
 
     if led_module_count is not None and led_module_count > 0:
-        consumable_rows.append(build_adhesive_led_modules_row(led_module_count))
+        if include_led_adhesive:
+            consumable_rows.append(build_adhesive_led_modules_row(led_module_count))
 
     consumable_rows.append(build_wire_letters_myyup_row(segment_count))
     consumable_rows.append(build_wire_supply_myyup_row())

@@ -311,15 +311,24 @@ def _sold_led_subscopes_from_quote(quote_input: dict[str, Any] | None) -> frozen
     return resolve_sold_led_subscopes(quote_input, quote_input)
 
 
+def _mount_consumer_from_quote(quote_input: dict[str, Any] | None):
+    if not quote_input:
+        return None
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
+
+    return resolve_lighting_mount_consumers(quote_input, quote_input)
+
+
 def _material_module_active(
     mat: ProductAggregateMaterial,
     active_modules: set[str],
     sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
 ) -> bool:
     from services.offer_scope_led_subscope_service import (
         aggregate_material_led_subscope,
+        led_consumer_row_allowed,
         led_runtime_module_bucket,
-        led_subscope_row_allowed,
     )
 
     if _is_aggregate_linked_logo_material(mat):
@@ -346,7 +355,12 @@ def _material_module_active(
 
     if sold_led_subscopes is not None:
         sub = aggregate_material_led_subscope(mat.material_code)
-        if sub is not None and not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+        if sub is not None and not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led_subscopes,
+            material_key=str(mat.material_code or ""),
+            mount_decision=mount_decision,
+        ):
             return False
     return True
 
@@ -355,10 +369,11 @@ def _operation_module_active(
     op: ProductAggregateOperation,
     active_modules: set[str],
     sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
 ) -> bool:
     from services.offer_scope_led_subscope_service import (
+        led_consumer_row_allowed,
         led_runtime_module_bucket,
-        led_subscope_row_allowed,
         operation_led_subscope,
     )
 
@@ -387,7 +402,12 @@ def _operation_module_active(
 
     if sold_led_subscopes is not None:
         sub = operation_led_subscope(op.operation_code)
-        if sub is not None and not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led_subscopes):
+        if sub is not None and not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led_subscopes,
+            operation_code=op.operation_code,
+            mount_decision=mount_decision,
+        ):
             return False
     return True
 
@@ -518,6 +538,7 @@ def _build_inventory_alignment(
     missing_pricing: list[CostBomMissingPricing],
     values: dict[str, Any],
     sold_led_subscopes: frozenset | None = None,
+    mount_decision=None,
 ) -> tuple[
     list[InventoryUsageEntry],
     list[str],
@@ -540,7 +561,7 @@ def _build_inventory_alignment(
 
     for mat in aggregate.materials:
         mod = _material_module_code(mat)
-        module_active = _material_module_active(mat, active_modules, sold_led_subscopes)
+        module_active = _material_module_active(mat, active_modules, sold_led_subscopes, mount_decision)
         resolved, _, variant_err = _resolve_material_code(mat.material_code, values)
         availability, _ = _check_material_pricing(resolved, material_rates, variant_err)
         classification, notes, owner_step = _classify_material_inventory(
@@ -920,6 +941,7 @@ class AggregateCostBomAdapter:
 
         active_modules = _active_module_codes(pd, quote_input)
         sold_led_subscopes = _sold_led_subscopes_from_quote(quote_input)
+        mount_decision = _mount_consumer_from_quote(quote_input)
         inactive_modules_set = _inactive_module_codes(pd)
 
         active_module_refs: list[CostBomModuleRef] = []
@@ -1059,7 +1081,7 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            if not _material_module_active(mat, active_modules, sold_led_subscopes):
+            if not _material_module_active(mat, active_modules, sold_led_subscopes, mount_decision):
                 mod = mat.mini_module_code or DOSSIER_COMPONENT_TO_MODULE.get(mat.component_ref or "")
                 skipped.append(
                     CostBomSkippedItem(
@@ -1162,7 +1184,7 @@ class AggregateCostBomAdapter:
                     )
                 )
                 continue
-            if not _operation_module_active(op, active_modules, sold_led_subscopes):
+            if not _operation_module_active(op, active_modules, sold_led_subscopes, mount_decision):
                 skipped.append(
                     CostBomSkippedItem(
                         item_type="operation",
@@ -1244,6 +1266,7 @@ class AggregateCostBomAdapter:
             missing_pricing=missing_pricing,
             values=values,
             sold_led_subscopes=sold_led_subscopes,
+            mount_decision=mount_decision,
         )
 
         (

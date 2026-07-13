@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from services.offer_scope_resolver_service import extract_offer_scope, resolve_offer_scope
 
@@ -163,3 +163,54 @@ def led_subscope_row_allowed(
     if row_subscope is None:
         return True
     return row_subscope in sold_led_subscopes
+
+
+def led_consumer_row_allowed(
+    *,
+    row_subscope: LedSubscope | None,
+    sold_led_subscopes: frozenset[LedSubscope] | None,
+    material_key: str | None = None,
+    operation_code: str | None = None,
+    line_id: str | None = None,
+    eic_line_code: str | None = None,
+    commercial_line_code: str | None = None,
+    priced_operation: str | None = None,
+    task_name: str | None = None,
+    mount_decision: Any | None = None,
+) -> bool:
+    """Combine LIGHTING/ELECTRICAL subscope filter with mount consumer gating."""
+    from services.lighting_mount_consumer_service import (
+        LightingMountConsumerDecision,
+        lighting_mount_commercial_line_allowed,
+        lighting_mount_eic_line_allowed,
+        lighting_mount_logical_line_allowed,
+        lighting_mount_material_allowed,
+        lighting_mount_operation_allowed,
+        lighting_mount_task_allowed,
+    )
+
+    if not led_subscope_row_allowed(row_subscope, sold_led_subscopes=sold_led_subscopes):
+        return False
+    if mount_decision is None or (
+        isinstance(mount_decision, LightingMountConsumerDecision) and mount_decision.use_legacy
+    ):
+        return True
+    if material_key is not None and not lighting_mount_material_allowed(material_key, decision=mount_decision):
+        return False
+    if operation_code is not None and not lighting_mount_operation_allowed(operation_code, decision=mount_decision):
+        return False
+    if line_id is not None and not lighting_mount_logical_line_allowed(line_id, decision=mount_decision):
+        return False
+    if eic_line_code is not None and not lighting_mount_eic_line_allowed(eic_line_code, decision=mount_decision):
+        return False
+    if commercial_line_code is not None and not lighting_mount_commercial_line_allowed(
+        commercial_line_code, decision=mount_decision
+    ):
+        return False
+    if (priced_operation is not None or task_name is not None) and not lighting_mount_task_allowed(
+        priced_operation=priced_operation,
+        task_name=task_name,
+        decision=mount_decision,
+    ):
+        return False
+    return True

@@ -10,10 +10,14 @@ from dataclasses import dataclass
 from schemas.order_snapshot_v2 import OrderSnapshotV2
 from schemas.product_aggregate import ProductAggregateOperation, ProductAggregateTaskRule
 from services.offer_scope_led_subscope_service import (
+    led_consumer_row_allowed,
     led_runtime_module_bucket,
-    led_subscope_row_allowed,
     partial_led_subscope_filter,
     task_rule_led_subscope,
+)
+from services.lighting_mount_consumer_service import (
+    LightingMountConsumerDecision,
+    resolve_lighting_mount_consumers_from_snapshot,
 )
 
 LINKED_SEGMENT_TRIGGER_PREFIX = "linked_segment:"
@@ -40,6 +44,7 @@ class ExecutionSoldScopeContext:
     linked_logo_tasks_allowed: bool = True
     block_preview: bool = False
     block_reason: str | None = None
+    lighting_mount_consumer: LightingMountConsumerDecision | None = None
 
 
 def _text(value: str | None) -> str:
@@ -50,10 +55,15 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
     """Read frozen order scope — never calls offer_scope resolver."""
     offer_scope = snapshot.offer_scope_snapshot
     if offer_scope is None or offer_scope.use_legacy or offer_scope.mode == "full_product":
+        mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
+            mode="full_product",
+            canonical_sold_modules=frozenset(),
+        )
         return ExecutionSoldScopeContext(
             filter_enabled=False,
             mode="full_product" if offer_scope is None else offer_scope.mode,
             linked_logo_tasks_allowed=True,
+            lighting_mount_consumer=mount_consumer,
         )
 
     sold_runtime = frozenset(
@@ -61,6 +71,16 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
     )
     canonical_sold = frozenset(
         code for code in (offer_scope.sold_modules or []) if _text(code)
+    )
+    confirmations = frozenset(
+        str(code).strip()
+        for code in (getattr(offer_scope, "dependency_confirmations", None) or [])
+        if str(code).strip()
+    )
+    mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
+        mode=offer_scope.mode,
+        canonical_sold_modules=canonical_sold,
+        dependency_confirmations=confirmations,
     )
     if not sold_runtime:
         return ExecutionSoldScopeContext(
@@ -71,6 +91,7 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
             linked_logo_tasks_allowed=False,
             block_preview=True,
             block_reason=BLOCKED_MISSING_SOLD_SCOPE,
+            lighting_mount_consumer=mount_consumer,
         )
 
     return ExecutionSoldScopeContext(
@@ -79,6 +100,7 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
         sold_runtime_modules=sold_runtime,
         canonical_sold_modules=canonical_sold,
         linked_logo_tasks_allowed=False,
+        lighting_mount_consumer=mount_consumer,
     )
 
 
@@ -134,14 +156,20 @@ def _led_subscope_allows_task_rule(
     *,
     ctx: ExecutionSoldScopeContext,
 ) -> bool:
-    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
-    if sold_led is None or "sistem_led" not in ctx.sold_runtime_modules:
+    if "sistem_led" not in ctx.sold_runtime_modules:
         return True
+    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
     sub = task_rule_led_subscope(
         priced_operation=rule.priced_operation,
         task_name=rule.task_name,
     )
-    return led_subscope_row_allowed(sub, sold_led_subscopes=sold_led)
+    return led_consumer_row_allowed(
+        row_subscope=sub,
+        sold_led_subscopes=sold_led,
+        priced_operation=rule.priced_operation,
+        task_name=rule.task_name,
+        mount_decision=ctx.lighting_mount_consumer,
+    )
 
 
 def _led_subscope_allows_operation(
@@ -151,11 +179,16 @@ def _led_subscope_allows_operation(
 ) -> bool:
     from services.offer_scope_led_subscope_service import operation_led_subscope
 
-    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
-    if sold_led is None or "sistem_led" not in ctx.sold_runtime_modules:
+    if "sistem_led" not in ctx.sold_runtime_modules:
         return True
+    sold_led = partial_led_subscope_filter(ctx.canonical_sold_modules)
     sub = operation_led_subscope(operation.operation_code)
-    return led_subscope_row_allowed(sub, sold_led_subscopes=sold_led)
+    return led_consumer_row_allowed(
+        row_subscope=sub,
+        sold_led_subscopes=sold_led,
+        operation_code=operation.operation_code,
+        mount_decision=ctx.lighting_mount_consumer,
+    )
 
 
 def include_task_rule_for_sold_scope(

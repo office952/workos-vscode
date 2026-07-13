@@ -275,9 +275,10 @@ def _sablon_material(payload: dict[str, Any]) -> str | None:
 
 
 def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payload: dict[str, Any]) -> bool:
+    from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
     from services.offer_scope_led_subscope_service import (
         commercial_line_led_subscope,
-        led_subscope_row_allowed,
+        led_consumer_row_allowed,
         partial_led_subscope_filter,
     )
 
@@ -290,9 +291,15 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
 
     scope = payload.get("offer_scope") if isinstance(payload.get("offer_scope"), dict) else {}
     sold_led = partial_led_subscope_filter(frozenset(scope.get("sold_modules") or []))
+    mount_decision = resolve_lighting_mount_consumers(payload, payload)
     if sold_led is not None and rule.module_code == "sistem_led":
         sub = commercial_line_led_subscope(rule.line_code)
-        if not led_subscope_row_allowed(sub, sold_led_subscopes=sold_led):
+        if not led_consumer_row_allowed(
+            row_subscope=sub,
+            sold_led_subscopes=sold_led,
+            commercial_line_code=rule.line_code,
+            mount_decision=mount_decision,
+        ):
             return False
 
     if rule.line_code.startswith("sablon_montaj"):
