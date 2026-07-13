@@ -7,6 +7,14 @@ function getStatusText() {
   return screen.getByTestId("intake-v6-offer-scope-status").textContent ?? "";
 }
 
+function selectSubsetMode() {
+  fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+}
+
+function expandAdvancedLedOptions() {
+  fireEvent.click(screen.getByTestId("intake-v6-offer-scope-advanced-toggle"));
+}
+
 describe("IntakeV6OfferScopePanel", () => {
   it("renders full product as default", () => {
     render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
@@ -15,14 +23,22 @@ describe("IntakeV6OfferScopePanel", () => {
     expect(screen.queryByTestId("intake-v6-offer-scope-subset-options")).not.toBeInTheDocument();
   });
 
-  it("shows slice-1 checkboxes including lighting and electrical in subset mode", () => {
+  it("shows primary modules and system LED bundle with advanced split in subset mode", () => {
     render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
 
     expect(screen.getByTestId("intake-v6-offer-scope-face")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-cant")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-back")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-scope-system-led")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-scope-advanced-toggle")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-offer-scope-lighting")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-offer-scope-electrical")).not.toBeInTheDocument();
+
+    expandAdvancedLedOptions();
+
+    expect(screen.getByTestId("intake-v6-offer-scope-advanced-options")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-lighting")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-offer-scope-electrical")).toBeInTheDocument();
     expect(screen.queryByText(/Finisaj/i)).not.toBeInTheDocument();
@@ -43,7 +59,7 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-face"));
 
     await waitFor(() =>
@@ -123,7 +139,7 @@ describe("IntakeV6OfferScopePanel", () => {
   it("checkbox toggle triggers a single intentional save", async () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-cant"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
   });
@@ -132,7 +148,8 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
+    expandAdvancedLedOptions();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
 
@@ -157,7 +174,8 @@ describe("IntakeV6OfferScopePanel", () => {
     );
 
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
+    expandAdvancedLedOptions();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     expect(onSave.mock.calls[0]?.[0]).toEqual({
@@ -193,6 +211,8 @@ describe("IntakeV6OfferScopePanel", () => {
       />,
     );
 
+    expect(screen.getByTestId("intake-v6-offer-scope-system-led")).toBeChecked();
+    expandAdvancedLedOptions();
     expect(screen.getByTestId("intake-v6-offer-scope-lighting")).toBeChecked();
     expect(screen.getByTestId("intake-v6-offer-scope-electrical")).toBeChecked();
     expect(screen.getByText(/Componente: LIGHTING, ELECTRICAL/i)).toBeInTheDocument();
@@ -202,7 +222,8 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
+    expandAdvancedLedOptions();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
 
@@ -219,7 +240,7 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
@@ -231,7 +252,7 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => false);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
@@ -243,7 +264,7 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     const { rerender } = render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
 
@@ -271,7 +292,7 @@ describe("IntakeV6OfferScopePanel", () => {
     );
 
     const { rerender } = render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
     await waitFor(() => expect(getStatusText()).toContain("Salvez selecția"));
 
@@ -285,7 +306,8 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
+    expandAdvancedLedOptions();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
@@ -302,7 +324,7 @@ describe("IntakeV6OfferScopePanel", () => {
     );
 
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
     await waitFor(() => expect(getStatusText()).toContain("Salvez selecția"));
 
@@ -317,7 +339,7 @@ describe("IntakeV6OfferScopePanel", () => {
     });
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
 
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
@@ -329,13 +351,14 @@ describe("IntakeV6OfferScopePanel", () => {
     const onSave = vi.fn(async () => true);
     render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
 
-    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    selectSubsetMode();
     expect(screen.getByTestId("intake-v6-offer-scope-empty-subset-error")).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
     await waitFor(() => expect(getStatusText()).toContain("Selecție confirmată"));
 
+    expandAdvancedLedOptions();
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(2));
     await waitFor(() =>
@@ -346,5 +369,143 @@ describe("IntakeV6OfferScopePanel", () => {
       }),
     );
     await waitFor(() => expect(getStatusText()).toContain("Selecție confirmată"));
+  });
+
+  it("bundle selection writes LIGHTING and ELECTRICAL without SYSTEM_LED code", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    selectSubsetMode();
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-system-led"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["LIGHTING", "ELECTRICAL"],
+        confirmed: true,
+      }),
+    );
+    expect(onSave.mock.calls.every((call) => !call[0].soldModules.includes("SYSTEM_LED" as never))).toBe(true);
+  });
+
+  it("bundle deselection removes LIGHTING and ELECTRICAL", async () => {
+    const onSave = vi.fn(async () => true);
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: {
+            mode: "component_subset",
+            sold_modules: ["FACE", "LIGHTING", "ELECTRICAL"],
+          },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-system-led"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["FACE"],
+        confirmed: true,
+      }),
+    );
+  });
+
+  it("advanced LIGHTING only keeps bundle unchecked and partial", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    selectSubsetMode();
+    expandAdvancedLedOptions();
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["LIGHTING"],
+        confirmed: true,
+      }),
+    );
+    expect(screen.getByTestId("intake-v6-offer-scope-system-led")).not.toBeChecked();
+    expect((screen.getByTestId("intake-v6-offer-scope-system-led") as HTMLInputElement).indeterminate).toBe(true);
+  });
+
+  it("advanced ELECTRICAL only keeps bundle unchecked and partial", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    selectSubsetMode();
+    expandAdvancedLedOptions();
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["ELECTRICAL"],
+        confirmed: true,
+      }),
+    );
+    expect(screen.getByTestId("intake-v6-offer-scope-system-led")).not.toBeChecked();
+    expect((screen.getByTestId("intake-v6-offer-scope-system-led") as HTMLInputElement).indeterminate).toBe(true);
+  });
+
+  it("combined advanced selection reflects bundle selected", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    selectSubsetMode();
+    expandAdvancedLedOptions();
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
+
+    await waitFor(() => expect(screen.getByTestId("intake-v6-offer-scope-system-led")).toBeChecked());
+    expect((screen.getByTestId("intake-v6-offer-scope-system-led") as HTMLInputElement).indeterminate).toBe(false);
+  });
+
+  it("bundle toggle from partial adds both modules in one save intent", async () => {
+    const onSave = vi.fn(async () => true);
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "component_subset", sold_modules: ["LIGHTING"] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-system-led"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["LIGHTING", "ELECTRICAL"],
+        confirmed: true,
+      }),
+    );
+  });
+
+  it("shows dependency feedback for lighting-only scope", async () => {
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "component_subset", sold_modules: ["LIGHTING"] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={vi.fn(async () => true)}
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-offer-scope-dependency-feedback")).toBeInTheDocument();
+  });
+
+  it("full product mode hides bundle and advanced controls", () => {
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
+
+    expect(screen.queryByTestId("intake-v6-offer-scope-system-led")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-offer-scope-advanced-toggle")).not.toBeInTheDocument();
   });
 });

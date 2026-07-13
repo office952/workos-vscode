@@ -1,0 +1,388 @@
+{
+  "task": "INTAKE_V6_SYSTEM_LED_COMMERCIAL_BUNDLE_UI_V1",
+  "workspace_code": "IR-MRI01769",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T09:11:51.295Z",
+  "ui_driven": true,
+  "direct_api_used": false,
+  "system_led_persisted": false,
+  "put_records": [
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "ELECTRICAL",
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "BACK",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "RETURN-CANT",
+        "BACK",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "RETURN-CANT",
+        "BACK",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "RETURN-CANT",
+        "BACK"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "RETURN-CANT",
+        "BACK",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "FACE",
+        "RETURN-CANT",
+        "BACK",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    }
+  ],
+  "put_log": [
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"draft\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice"
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    },
+    {
+      "status": 200,
+      "body": "{\"id\":\"b00a3a0c-5a3d-4d0b-a95e-582bb542dde1\",\"workspace_code\":\"IV6-2C56AB1E\",\"title\":\"SC NEVERMIND SRL — test\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"status\":\"ready_for_quote_preview\",\"payload\":{\"schema_version\":\"1.0.0\",\"client\":{\"client_name\":\"SC NEVERMIND SRL\",\"job_title\":\"test\",\"width_mm\":null,\"height_mm\":null},\"product_binding\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":1,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\""
+    }
+  ],
+  "network_summary": {
+    "offer_scope_put_count": 18,
+    "all_http_200": true
+  },
+  "sequential_transitions": 10,
+  "soak_seconds": 60,
+  "screenshots": [
+    {
+      "file": "01_subset_bundle_ui_default.png",
+      "soldScope": "subset-default",
+      "systemLedBundleChecked": false,
+      "systemLedBundlePartial": false,
+      "advancedOpen": false,
+      "lightingChecked": false,
+      "electricalChecked": false,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "mode-subset"
+      ],
+      "putCountDelta": 0,
+      "submittedSoldModules": []
+    },
+    {
+      "file": "02_system_led_bundle_selected.png",
+      "soldScope": "LIGHTING+ELECTRICAL",
+      "systemLedBundleChecked": true,
+      "systemLedBundlePartial": false,
+      "advancedOpen": false,
+      "lightingChecked": false,
+      "electricalChecked": false,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "system-led"
+      ],
+      "putCountDelta": 1,
+      "submittedSoldModules": [
+        "ELECTRICAL",
+        "LIGHTING"
+      ]
+    },
+    {
+      "file": "03_system_led_bundle_deselected.png",
+      "soldScope": "FACE-only",
+      "systemLedBundleChecked": false,
+      "systemLedBundlePartial": false,
+      "advancedOpen": false,
+      "lightingChecked": false,
+      "electricalChecked": false,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "face",
+        "system-led-deselect"
+      ],
+      "putCountDelta": 1,
+      "submittedSoldModules": [
+        "FACE"
+      ]
+    },
+    {
+      "file": "04_advanced_lighting_only.png",
+      "soldScope": "FACE+LIGHTING",
+      "systemLedBundleChecked": false,
+      "systemLedBundlePartial": true,
+      "advancedOpen": true,
+      "lightingChecked": true,
+      "electricalChecked": false,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "advanced-lighting"
+      ],
+      "putCountDelta": 1,
+      "submittedSoldModules": [
+        "FACE",
+        "LIGHTING"
+      ]
+    },
+    {
+      "file": "05_advanced_electrical_only.png",
+      "soldScope": "FACE+ELECTRICAL",
+      "systemLedBundleChecked": false,
+      "systemLedBundlePartial": true,
+      "advancedOpen": true,
+      "lightingChecked": false,
+      "electricalChecked": true,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "advanced-electrical-only"
+      ],
+      "putCountDelta": 2,
+      "submittedSoldModules": [
+        "FACE",
+        "ELECTRICAL"
+      ]
+    },
+    {
+      "file": "06_advanced_both_reflects_bundle.png",
+      "soldScope": "FACE+LIGHTING+ELECTRICAL",
+      "systemLedBundleChecked": true,
+      "systemLedBundlePartial": false,
+      "advancedOpen": true,
+      "lightingChecked": true,
+      "electricalChecked": true,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "advanced-lighting",
+        "advanced-electrical"
+      ],
+      "putCountDelta": 1,
+      "submittedSoldModules": [
+        "FACE",
+        "LIGHTING",
+        "ELECTRICAL"
+      ]
+    },
+    {
+      "file": "07_full_product_regression.png",
+      "soldScope": "full_product",
+      "systemLedBundleChecked": false,
+      "systemLedBundlePartial": false,
+      "advancedOpen": false,
+      "lightingChecked": false,
+      "electricalChecked": false,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "mode-full"
+      ],
+      "putCountDelta": 1,
+      "submittedSoldModules": []
+    },
+    {
+      "file": "08_reload_hydrates_bundle_state.png",
+      "soldScope": "LIGHTING+ELECTRICAL-reload",
+      "systemLedBundleChecked": true,
+      "systemLedBundlePartial": false,
+      "advancedOpen": true,
+      "lightingChecked": true,
+      "electricalChecked": true,
+      "materialTotal": null,
+      "materialRows": [],
+      "userClicks": [
+        "reload"
+      ],
+      "putCountDelta": 0,
+      "submittedSoldModules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ]
+    }
+  ]
+}

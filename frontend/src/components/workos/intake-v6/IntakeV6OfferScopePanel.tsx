@@ -15,13 +15,31 @@ import {
 import IntakeV6OfferScopeDependencyFeedback from "./IntakeV6OfferScopeDependencyFeedback";
 import { v6 } from "./atoms/intakeV6Presentation";
 
-const SLICE1_MODULES: Array<{ code: SoldModuleCode; label: string; testId: string }> = [
+const PRIMARY_MODULES: Array<{ code: SoldModuleCode; label: string; testId: string }> = [
   { code: "FACE", label: "Față", testId: "intake-v6-offer-scope-face" },
   { code: "RETURN-CANT", label: "Cant", testId: "intake-v6-offer-scope-cant" },
   { code: "BACK", label: "Spate", testId: "intake-v6-offer-scope-back" },
+];
+
+const ADVANCED_LED_MODULES: Array<{ code: SoldModuleCode; label: string; testId: string }> = [
   { code: "LIGHTING", label: "Iluminare", testId: "intake-v6-offer-scope-lighting" },
   { code: "ELECTRICAL", label: "Electrică", testId: "intake-v6-offer-scope-electrical" },
 ];
+
+const SYSTEM_LED_BUNDLE = {
+  label: "Sistem LED complet",
+  testId: "intake-v6-offer-scope-system-led",
+};
+
+function isSystemLedSelected(modules: readonly SoldModuleCode[]): boolean {
+  return modules.includes("LIGHTING") && modules.includes("ELECTRICAL");
+}
+
+function isSystemLedPartial(modules: readonly SoldModuleCode[]): boolean {
+  const hasLighting = modules.includes("LIGHTING");
+  const hasElectrical = modules.includes("ELECTRICAL");
+  return (hasLighting || hasElectrical) && !isSystemLedSelected(modules);
+}
 
 type OfferScopeIntent = {
   mode: OfferScopeMode;
@@ -66,6 +84,8 @@ export default function IntakeV6OfferScopePanel({
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [confirmingDependencyCode, setConfirmingDependencyCode] = useState<string | null>(null);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const systemLedBundleRef = useRef<HTMLInputElement>(null);
   const [acknowledgedSerialized, setAcknowledgedSerialized] = useState(persisted.serialized);
   const onSaveRef = useRef(onSave);
   const soldModulesRef = useRef(soldModules);
@@ -250,17 +270,44 @@ export default function IntakeV6OfferScopePanel({
     setSaveError(null);
   };
 
+  const applySubsetModules = useCallback(
+    (nextModules: SoldModuleCode[]) => {
+      setMode("component_subset");
+      setSoldModules(nextModules);
+      setSaveError(null);
+      schedulePersist({ mode: "component_subset", soldModules: nextModules });
+    },
+    [schedulePersist],
+  );
+
   const toggleModule = (code: SoldModuleCode) => {
     const nextModules = normalizeSoldModules(
       soldModulesRef.current.includes(code)
         ? soldModulesRef.current.filter((item) => item !== code)
         : [...soldModulesRef.current, code],
     );
-    setMode("component_subset");
-    setSoldModules(nextModules);
-    setSaveError(null);
-    schedulePersist({ mode: "component_subset", soldModules: nextModules });
+    applySubsetModules(nextModules);
   };
+
+  const toggleSystemLedBundle = () => {
+    const current = soldModulesRef.current;
+    const nextModules = isSystemLedSelected(current)
+      ? normalizeSoldModules(current.filter((item) => item !== "LIGHTING" && item !== "ELECTRICAL"))
+      : normalizeSoldModules([...current, "LIGHTING", "ELECTRICAL"]);
+    applySubsetModules(nextModules);
+  };
+
+  useEffect(() => {
+    if (systemLedBundleRef.current) {
+      systemLedBundleRef.current.indeterminate = isSystemLedPartial(soldModules);
+    }
+  }, [soldModules]);
+
+  useEffect(() => {
+    if (isSystemLedPartial(soldModules)) {
+      setAdvancedOpen(true);
+    }
+  }, [soldModules]);
 
   return (
     <section
@@ -296,24 +343,63 @@ export default function IntakeV6OfferScopePanel({
       </fieldset>
 
       {mode === "component_subset" ? (
-        <div className="mt-3 flex flex-wrap gap-3" data-testid="intake-v6-offer-scope-subset-options">
-          {SLICE1_MODULES.map((item) => (
-            <label key={item.code} className="flex items-center gap-2 text-[11px] text-slate-200">
+        <div className="mt-3 space-y-2" data-testid="intake-v6-offer-scope-subset-options">
+          <div className="flex flex-wrap gap-3">
+            {PRIMARY_MODULES.map((item) => (
+              <label key={item.code} className="flex items-center gap-2 text-[11px] text-slate-200">
+                <input
+                  type="checkbox"
+                  checked={soldModules.includes(item.code)}
+                  onChange={() => toggleModule(item.code)}
+                  data-testid={item.testId}
+                />
+                {item.label}
+              </label>
+            ))}
+            <label className="flex items-center gap-2 text-[11px] text-slate-200">
               <input
+                ref={systemLedBundleRef}
                 type="checkbox"
-                checked={soldModules.includes(item.code)}
-                onChange={() => toggleModule(item.code)}
-                data-testid={item.testId}
+                checked={isSystemLedSelected(soldModules)}
+                onChange={toggleSystemLedBundle}
+                data-testid={SYSTEM_LED_BUNDLE.testId}
               />
-              {item.label}
+              {SYSTEM_LED_BUNDLE.label}
             </label>
-          ))}
+          </div>
+          <button
+            type="button"
+            className="text-[10px] text-violet-300 hover:text-violet-200"
+            aria-expanded={advancedOpen}
+            data-testid="intake-v6-offer-scope-advanced-toggle"
+            onClick={() => setAdvancedOpen((open) => !open)}
+          >
+            Configurare avansată {advancedOpen ? "▾" : "▸"}
+          </button>
+          {advancedOpen ? (
+            <div
+              className="flex flex-wrap gap-3 pl-2"
+              data-testid="intake-v6-offer-scope-advanced-options"
+            >
+              {ADVANCED_LED_MODULES.map((item) => (
+                <label key={item.code} className="flex items-center gap-2 text-[11px] text-slate-200">
+                  <input
+                    type="checkbox"
+                    checked={soldModules.includes(item.code)}
+                    onChange={() => toggleModule(item.code)}
+                    data-testid={item.testId}
+                  />
+                  {item.label}
+                </label>
+              ))}
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       {subsetInvalid ? (
         <p className="mt-2 text-[11px] text-amber-200" data-testid="intake-v6-offer-scope-empty-subset-error">
-          Selectează cel puțin o componentă (Față, Cant, Spate, Iluminare sau Electrică).
+          Selectează cel puțin o componentă (Față, Cant, Spate sau Sistem LED complet).
         </p>
       ) : null}
 
