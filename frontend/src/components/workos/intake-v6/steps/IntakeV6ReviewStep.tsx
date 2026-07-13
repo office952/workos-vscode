@@ -77,7 +77,7 @@ import {
   legacyMountingBarProfile,
   legacyMountingSystemLabel,
   ACM_BOXED_MOUNTING_TEMPLATE_CODE,
-  ACM_CASSETTED_QUOTE_INPUT_FIELDS,
+  ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS,
   METAL_PREMOUNT_TEMPLATE_CODE,
   MOUNTING_SOLUTION_OPTIONS,
   mountingSolutionSelectorValue,
@@ -2307,7 +2307,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
                 {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
                   <div className="mt-3 grid gap-2 sm:grid-cols-3">
-                    {ACM_CASSETTED_QUOTE_INPUT_FIELDS.filter((field) =>
+                    {ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS.filter((field) =>
                       [
                         "panel_width_mm",
                         "panel_height_mm",

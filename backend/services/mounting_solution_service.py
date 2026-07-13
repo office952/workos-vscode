@@ -68,7 +68,7 @@ def normalize_acm_mounting_configuration(config: Mapping[str, Any] | None) -> di
         thickness = int(round(float(merged.get("acm_thickness_mm") or 3)))
     except (TypeError, ValueError):
         thickness = 3
-    merged["acm_thickness_mm"] = thickness if thickness in (3, 4) else 3
+    merged["acm_thickness_mm"] = 3
     fold_sides = str(merged.get("fold_sides") or "all").strip().lower()
     if fold_sides not in {"all", "top_bottom", "left_right"}:
         fold_sides = "all"

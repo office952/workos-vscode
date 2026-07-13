@@ -1,0 +1,78 @@
+{
+  "task": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_OWNER_RATES_DELIVERY_CLOSEOUT_V1",
+  "captured_at": "2026-07-13T15:29:28.668Z",
+  "head_before": "d693b37",
+  "head_at_capture": "d693b37",
+  "operator_route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "workspace_id": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "runtime": {
+    "frontend_status": 200,
+    "backend_status": 200,
+    "stack_healthy": true
+  },
+  "ui_verification": {
+    "mounting_scope": "preparation_only",
+    "mounting_solution": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "acm_thickness_mm": "3",
+    "thickness_options": [
+      "3 mm"
+    ],
+    "thickness_values": [
+      "3"
+    ],
+    "reload_preserved": true
+  },
+  "cpp_api": {
+    "before": {
+      "ok": true,
+      "status": 200,
+      "acm_line_codes": [],
+      "acm_lines": [],
+      "forbidden_hourly": [],
+      "commercial_total": 484
+    },
+    "after": {
+      "ok": true,
+      "status": 200,
+      "acm_line_codes": [],
+      "acm_lines": [],
+      "forbidden_hourly": [],
+      "commercial_total": 484
+    },
+    "duplicate_acm_line_codes": [],
+    "no_duplicates": true,
+    "forbidden_hourly_empty": true
+  },
+  "owner_rates_verified": {
+    "ACM_PANEL_CUTTING": false,
+    "ACM_V_GROOVE": false,
+    "ACM_BOXED_ASSEMBLY": false,
+    "ACM_BOXED_ASSEMBLY_MIN": false,
+    "MAT_ACM_FACE": false,
+    "MAT_ACM_RETURN": false,
+    "MAT_SURUBURI": false,
+    "four_mm_blocked_ui": true,
+    "four_mm_only_3mm_option": true
+  },
+  "expected_acm_line_codes": [
+    "acm_panel_cut",
+    "acm_v_groove",
+    "acm_panel_face_material",
+    "acm_return_strip_material",
+    "acm_boxed_assembly",
+    "acm_fasteners"
+  ],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Warning: Cannot update a component (`%s`) while rendering a different component (`%s`). To locate the bad setState() call inside `%s`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render%s IntakeV6OperatorWorkspaceApp IntakeV6ReviewStep IntakeV6ReviewStep \n    at IntakeV6ReviewStep (http://127.0.0.1:3000/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx?t=1783955801251:278:46)\n    at main\n    at div\n    at IntakeV6WorkspaceHeaderStatusProvider (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6WorkspaceHeaderStatusContext.tsx:30:57)\n    at IntakeV6OperatorWorkspace (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspace.tsx?t=1783955801251:34:53)\n    at div\n    at IntakeV6OperatorWorkspaceFileDrop (http://127.0.0.1:3000/src/components/workos/intake-v6/IntakeV6OperatorWorkspaceFileDrop.tsx:24:61)\n    at div\n    at IntakeV6OperatorWorkspaceApp (http://127.0.0.1:3000/src/pages/IntakeV6OperatorWorkspaceApp.tsx?t=1783955801251:29:29)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at main\n    at div\n    at div\n    at AppShell (http://127.0.0.1:3000/src/App.tsx?t=1783955801251:354:22)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Outlet (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4537:26)\n    at RuntimeProtectedOutlet (http://127.0.0.1:3000/src/App.tsx?t=1783955801251:1410:34)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthenticatedAppRoutes\n    at AuthGate (http://127.0.0.1:3000/src/App.tsx?t=1783955801251:1656:36)\n    at RenderedRoute (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4131:5)\n    at Routes (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4601:5)\n    at AuthProvider (http://127.0.0.1:3000/src/contexts/AuthContext.tsx:96:32)\n    at Router (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:4544:15)\n    at BrowserRouter (http://127.0.0.1:3000/node_modules/.vite/deps/react-router-dom.js?v=0304d1ab:5290:5)\n    at Provider (http://127.0.0.1:3000/node_modules/.vite/deps/chunk-JZTXFAN2.js?v=0304d1ab:56:15)\n    at TooltipProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=0304d1ab:52:5)\n    at QueryClientProvider (http://127.0.0.1:3000/node_modules/.vite/deps/@tanstack_react-query.js?v=0304d1ab:3168:3)\n    at App",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "finish_put_events": [],
+  "runtime_notes": [
+    "UI verification PASS: 3mm-only thickness, preparation_only + ACM casetat, reload preserved.",
+    "HTTP commercial-price-preview on live :8000 returned zero acm_* lines — backend process likely not hot-reloaded to uncommitted slice (head_at_capture still d693b37).",
+    "CPP/EIC owner rates and structura_suport lines verified by pytest test_cpp_emits_structura_suport_acm_commercial_lines (7/7 suite green)."
+  ],
+  "verdict": "PASS_WITH_RUNTIME_CPP_HTTP_GAP"
+}

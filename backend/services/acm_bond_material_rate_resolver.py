@@ -19,6 +19,11 @@ ACM_TEMPLATE_CODES = frozenset(
     }
 )
 
+_ACM_TEMPLATE_CODES_NORMALIZED = frozenset(code.upper() for code in ACM_TEMPLATE_CODES)
+
+BOXED_MOUNTING_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+BOXED_MOUNTING_SUPPORTED_THICKNESS_MM = frozenset({3})
+
 TEMPLATE_ACM_BOND_CODE = "MAT-ACM-BOND-PANEL"
 
 ACM_THICKNESS_MM_TO_VARIANT_CODE: Dict[int, str] = {
@@ -48,7 +53,7 @@ class AcmBondMaterialRateResolution:
 
 
 def is_acm_bond_template_code(template_code: Optional[str]) -> bool:
-    return str(template_code or "").strip().upper() in ACM_TEMPLATE_CODES
+    return str(template_code or "").strip().upper() in _ACM_TEMPLATE_CODES_NORMALIZED
 
 
 def _coerce_acm_thickness_mm(
@@ -104,6 +109,20 @@ def resolve_acm_bond_panel_material_rate(
             unit_cost=None,
             currency=None,
             resolution_status=failure,
+        )
+
+    normalized_template = str(template_code or "").strip().upper()
+    if (
+        normalized_template == BOXED_MOUNTING_TEMPLATE_CODE.upper()
+        and thickness_mm not in BOXED_MOUNTING_SUPPORTED_THICKNESS_MM
+    ):
+        return AcmBondMaterialRateResolution(
+            resolved_code=TEMPLATE_ACM_BOND_CODE,
+            source_code=ACM_THICKNESS_MM_TO_VARIANT_CODE.get(thickness_mm),
+            acm_thickness_mm=thickness_mm,
+            unit_cost=None,
+            currency=None,
+            resolution_status=RESOLUTION_UNSUPPORTED_ACM_THICKNESS,
         )
 
     variant_code = ACM_THICKNESS_MM_TO_VARIANT_CODE[thickness_mm]

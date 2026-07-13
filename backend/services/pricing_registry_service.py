@@ -54,6 +54,9 @@ TEMPLATE_MATERIAL_VARIANT_EXPANSION: Dict[str, Dict[str, List[str]]] = {
     "TPL-ACM-CASSETTED-PANEL": {
         "MAT-ACM-BOND-PANEL": sorted(ACM_THICKNESS_MM_TO_VARIANT_CODE.values()),
     },
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": {
+        "MAT-ACM-BOND-PANEL": ["MAT-ACM-BOND-3MM"],
+    },
     "TPL-CUT-ACM-LETTERS": {
         "MAT-ACM-BOND-PANEL": sorted(ACM_THICKNESS_MM_TO_VARIANT_CODE.values()),
     },

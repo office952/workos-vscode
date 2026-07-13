@@ -117,7 +117,9 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
 
     if "svg_source" not in out and _read_string(out.get("vector_file")):
         out["svg_source"] = {"file_name": out.get("vector_file")}
-    return out
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
+    return merge_acm_boxed_mounting_derived_fields(out)
 
 
 def _payload_from_sources(
@@ -325,6 +327,12 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
     if rule.material_gate_path and not _material_gate_matches(payload, rule):
         return False
 
+    if rule.line_code.startswith("acm_"):
+        from services.acm_quote_input_helpers import is_acm_boxed_mounting_payload
+
+        if not is_acm_boxed_mounting_payload(payload):
+            return False
+
     return True
 
 
@@ -346,12 +354,18 @@ def _build_line(
 
     unit_price = rule.documented_unit_price
     if quantity is None and unit_price is not None:
-        if basis_type == "piece" or basis_type == "fixed":
+        if basis_type in ("piece", "fixed", "set"):
             quantity = 1.0
 
     subtotal = None
     if unit_price is not None and quantity is not None and basis_type not in ("unknown",):
         subtotal = round(float(quantity) * float(unit_price), 4)
+
+    if rule.pricing_rule_code == "ACM_BOXED_ASSEMBLY_M2_MIN" and unit_price is not None and quantity is not None:
+        from data.commercial_rules_volumetric_v2 import ACM_BOXED_ASSEMBLY_MIN_EUR
+
+        subtotal = round(max(float(quantity) * float(unit_price), ACM_BOXED_ASSEMBLY_MIN_EUR), 4)
+        warnings.append(f"minimum_charge_applied={ACM_BOXED_ASSEMBLY_MIN_EUR}EUR")
 
     if basis_type == "unknown":
         owner_required = True

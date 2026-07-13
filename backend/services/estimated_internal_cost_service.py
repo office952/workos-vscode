@@ -249,7 +249,9 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         out["client"] = merged_client
     if "svg_source" not in out and _read_string(out.get("vector_file")):
         out["svg_source"] = {"file_name": out.get("vector_file")}
-    return out
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
+    return merge_acm_boxed_mounting_derived_fields(out)
 
 
 def _payload_from_sources(
@@ -439,6 +441,15 @@ def _estimate_material_quantity(
             values,
             ("finish_setup.mounting_template_area_m2", "mounting_template_area_m2"),
         ), warnings
+    if mat.source_template_code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" and "ACM-BOND" in code:
+        component_ref = _text(mat.component_ref)
+        if component_ref == "comp_casetted_returns":
+            qty = _extract_quantity(payload, values, ("return_strip_area_m2",))
+            return qty, warnings
+        qty = _extract_quantity(payload, values, ("panel_area_m2",))
+        return qty, warnings
+    if "SURUBURI" in code and mat.source_template_code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1":
+        return 1, warnings
     if "PROFIL-LATERAL" in code or unit == "ml":
         return _extract_quantity(
             payload,
@@ -823,9 +834,12 @@ class EstimatedInternalCostService:
 
             unit_cost = mat.unit_cost
             subtotal = round(float(quantity) * float(unit_cost), 4) if quantity is not None else None
+            line_code = f"material_{resolved}"
+            if mat.component_ref:
+                line_code = f"{line_code}_{mat.component_ref}"
             material_lines.append(
                 EstimatedInternalCostLine(
-                    code=f"material_{resolved}",
+                    code=line_code,
                     label=mat.label or resolved,
                     module_code=mat.mini_module_code,
                     component_code=mat.component_ref,
@@ -969,7 +983,16 @@ class EstimatedInternalCostService:
             for hint_rule in rules["capacity"]:
                 if hint_rule.module_code and hint_rule.module_code not in active_modules:
                     continue
-                result = resolve_formula(hint_rule.formula_id, hint_rule.formula_params, values)
+                if hint_rule.code.startswith("acm_"):
+                    from services.acm_quote_input_helpers import is_acm_boxed_mounting_payload
+
+                    if not is_acm_boxed_mounting_payload(payload):
+                        continue
+                capacity_values = dict(values)
+                capacity_values.setdefault("quantity", payload.get("quantity") or 1)
+                if hint_rule.code.startswith("acm_"):
+                    capacity_values["letter_count"] = int(payload.get("quantity") or 1)
+                result = resolve_formula(hint_rule.formula_id, hint_rule.formula_params, capacity_values)
                 if result.resolved and result.value is not None:
                     capacity_hints.append(
                         CapacityHint(

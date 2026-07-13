@@ -31,6 +31,7 @@ ACM_OPERATION_CODES = (
     "CUT_ACM_PANEL",
     "V_GROOVE_ROUTER",
     "FOLD_CASSETTE",
+    "ACM_BOXED_ASSEMBLY",
     "MOUNT_ACM_PANEL",
 )
 ACM_COMPONENT_IDS = (
@@ -47,23 +48,93 @@ def _json_dumps(value: Any) -> str:
 def _flatten_operations(components: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ops: list[dict[str, Any]] = []
     for component in components:
+        cid = component.get("component_id")
         for op in component.get("operations") or []:
             if isinstance(op, dict):
-                ops.append(op)
+                flat = dict(op)
+                if cid and not flat.get("component_ref"):
+                    flat["component_ref"] = cid
+                ops.append(flat)
     return ops
+
+
+def _boxed_mounting_components() -> list[dict[str, Any]]:
+    """Boxed-mounting slice — owner commercial rates on dedicated workcenters."""
+    import copy
+
+    components = copy.deepcopy(CASSETTED_COMPONENTS)
+    by_id = {comp["component_id"]: comp for comp in components}
+
+    face = by_id["comp_acm_panel_face"]
+    for op in face.get("operations") or []:
+        if op.get("code") == "CUT_ACM_PANEL":
+            op["workcenter"] = "ACM_PANEL_CUTTING"
+            op["calculation_type"] = "formula_based"
+            op["formula_id"] = "perimeter_based_time"
+            op["formula_params"] = {
+                "perimeter_quote_input_key": "panel_perimeter_m",
+                "minutes_per_meter": 1.0,
+                "passes": 1,
+            }
+            op["requires_quote_input"] = [
+                "panel_width_mm",
+                "panel_height_mm",
+                "panel_perimeter_m",
+                "acm_thickness_mm",
+            ]
+            op.pop("estimated_minutes", None)
+
+    returns = by_id["comp_casetted_returns"]
+    for op in returns.get("operations") or []:
+        if op.get("code") == "V_GROOVE_ROUTER":
+            op["workcenter"] = "ACM_V_GROOVE"
+        elif op.get("code") == "FOLD_CASSETTE":
+            op["quote_priced"] = False
+
+    fasteners = by_id["comp_mounting_fasteners"]
+    mount_ops = fasteners.get("operations") or []
+    priced_assembly = {
+        "code": "ACM_BOXED_ASSEMBLY",
+        "name": "Asamblare suport ACM casetat (comercial)",
+        "workcenter": "ACM_BOXED_ASSEMBLY",
+        "sequence": 4,
+        "component_ref": "comp_mounting_fasteners",
+        "calculation_type": "formula_based",
+        "formula_id": "area_from_quote_input",
+        "formula_params": {"area_quote_input_key": "panel_area_m2"},
+        "requires_quote_input": ["panel_area_m2"],
+    }
+    updated_mount_ops: list[dict[str, Any]] = []
+    for op in mount_ops:
+        if op.get("code") == "MOUNT_ACM_PANEL":
+            op = dict(op)
+            op["quote_priced"] = False
+            op["sequence"] = 5
+            updated_mount_ops.append(priced_assembly)
+            updated_mount_ops.append(op)
+        else:
+            updated_mount_ops.append(op)
+    if not any(op.get("code") == "ACM_BOXED_ASSEMBLY" for op in updated_mount_ops):
+        updated_mount_ops.insert(0, priced_assembly)
+    fasteners["operations"] = updated_mount_ops
+    return components
 
 
 def _flatten_materials(components: list[dict[str, Any]]) -> list[dict[str, Any]]:
     mats: list[dict[str, Any]] = []
     for component in components:
+        cid = component.get("component_id")
         for mat in component.get("materials") or []:
             if isinstance(mat, dict):
-                mats.append(mat)
+                flat = dict(mat)
+                if cid:
+                    flat["component_ref"] = cid
+                mats.append(flat)
     return mats
 
 
 def _template_payload() -> dict[str, Any]:
-    components = CASSETTED_COMPONENTS
+    components = _boxed_mounting_components()
     operations = _flatten_operations(components)
     materials = _flatten_materials(components)
     return {
@@ -111,7 +182,7 @@ def _dossier_payload(template_id: int) -> dict[str, Any]:
         "dossier_version": 1,
         "status": "approved",
         "sections_json": _json_dumps(sections),
-        "variants_json": _json_dumps({"acm_thickness_mm": [3, 4], "fold_sides": ["all", "top_bottom", "left_right"]}),
+        "variants_json": _json_dumps({"acm_thickness_mm": [3], "fold_sides": ["all", "top_bottom", "left_right"]}),
         "layers_json": _json_dumps({"layers": ["acm_boxed_mounting_support"]}),
         "task_rules_json": _json_dumps(
             {
@@ -136,6 +207,13 @@ def _dossier_payload(template_id: int) -> dict[str, Any]:
                         "trigger_condition": "return_depth_mm > 0",
                         "required_or_optional": "required",
                         "priced_operation": "FOLD_CASSETTE",
+                    },
+                    {
+                        "task_name": "acm_boxed_assembly",
+                        "task_type": "casette_assembly",
+                        "trigger_condition": "always",
+                        "required_or_optional": "required",
+                        "priced_operation": "ACM_BOXED_ASSEMBLY",
                     },
                     {
                         "task_name": "mount_acm_panel",

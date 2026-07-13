@@ -80,7 +80,8 @@ def _dedupe_materials(items: list[ProductAggregateMaterial]) -> list[ProductAggr
     seen: set[str] = set()
     out: list[ProductAggregateMaterial] = []
     for item in items:
-        key = f"{item.material_code}|{item.source_template_code}|{item.provenance}"
+        component_ref = str(item.component_ref or "").strip()
+        key = f"{item.material_code}|{item.source_template_code}|{component_ref}|{item.provenance}"
         if key in seen:
             continue
         seen.add(key)
@@ -92,7 +93,8 @@ def _dedupe_operations(items: list[ProductAggregateOperation]) -> list[ProductAg
     seen: set[str] = set()
     out: list[ProductAggregateOperation] = []
     for item in items:
-        key = f"{item.operation_code}|{item.source_template_code}|{item.provenance}"
+        component_ref = str(item.component_ref or "").strip()
+        key = f"{item.operation_code}|{item.source_template_code}|{component_ref}|{item.provenance}"
         if key in seen:
             continue
         seen.add(key)

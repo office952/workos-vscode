@@ -84,6 +84,12 @@ from seeds.seed_acm_bond_materials import seed_acm_bond_materials  # noqa: E402
 from seeds.seed_acm_owner_confirmed_prices import (  # noqa: E402
     seed_acm_owner_confirmed_prices,
 )
+from seeds.seed_acm_boxed_mounting_owner_rates import (  # noqa: E402
+    seed_acm_boxed_mounting_owner_rates,
+)
+from seeds.seed_tpl_acm_boxed_mounting_support_v1 import (  # noqa: E402
+    seed_tpl_acm_boxed_mounting_support_v1,
+)
 from scripts.seed_acm_template_pack import seed_acm_template_pack  # noqa: E402
 from seeds.seed_cost_engine_template_currency import (  # noqa: E402
     seed_cost_engine_template_base_currency,
@@ -121,7 +127,9 @@ SEED_PIPELINE: List[Tuple[str, Any]] = [
     ("volumetric_workcenter_rates", seed_volumetric_operations_and_rates),
     ("acm_bond_materials", seed_acm_bond_materials),
     ("acm_owner_confirmed_prices", seed_acm_owner_confirmed_prices),
+    ("acm_boxed_mounting_owner_rates", seed_acm_boxed_mounting_owner_rates),
     ("acm_template_pack", seed_acm_template_pack),
+    ("tpl_acm_boxed_mounting_support_v1", seed_tpl_acm_boxed_mounting_support_v1),
     ("volumetric_owner_confirmed_prices", seed_volumetric_owner_confirmed_prices),
     ("cost_engine_template_base_currency", seed_cost_engine_template_base_currency),
     ("active_template_scope", seed_active_template_scope),

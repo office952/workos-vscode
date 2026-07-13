@@ -227,8 +227,111 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
     ),
 )
 
+# Owner-confirmed ACM boxed mounting commercial lines (structura_suport) — EUR/lm and EUR/mp.
+ACM_BOXED_PANEL_CUT_EUR_LM = 1.5
+ACM_BOXED_V_GROOVE_EUR_LM = 3.0
+ACM_BOXED_ASSEMBLY_EUR_M2 = 15.0
+ACM_BOXED_ASSEMBLY_MIN_EUR = 20.0
+ACM_BOXED_MAT_ACM_EUR_M2 = 15.0
+ACM_BOXED_SURUBURI_EUR_SET = 5.0
+
+ACM_STRUCTURA_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
+    CommercialRuleDefinition(
+        line_code="acm_panel_cut",
+        label="Debitare panou ACM",
+        module_code="structura_suport",
+        component_code="comp_acm_panel_face",
+        pricing_rule_code="ACM_BOXED_PANEL_CUT_LM",
+        basis_type="ml",
+        quantity_paths=("panel_perimeter_m",),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:acm_panel_cut_owner_eur_lm",
+        documented_unit_price=ACM_BOXED_PANEL_CUT_EUR_LM,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+    ),
+    CommercialRuleDefinition(
+        line_code="acm_v_groove",
+        label="Frezare V-groove ACM",
+        module_code="structura_suport",
+        component_code="comp_casetted_returns",
+        pricing_rule_code="ACM_BOXED_V_GROOVE_LM",
+        basis_type="ml",
+        quantity_paths=("fold_length_m",),
+        unit="ml",
+        source="commercial_rules_volumetric_v2:acm_v_groove_owner_eur_lm",
+        documented_unit_price=ACM_BOXED_V_GROOVE_EUR_LM,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+    ),
+    CommercialRuleDefinition(
+        line_code="acm_panel_face_material",
+        label="Material ACM față panou",
+        module_code="structura_suport",
+        component_code="comp_acm_panel_face",
+        pricing_rule_code="ACM_BOXED_MAT_FACE_M2",
+        basis_type="m2",
+        quantity_paths=("panel_area_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:acm_mat_face_owner_eur_m2",
+        documented_unit_price=ACM_BOXED_MAT_ACM_EUR_M2,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+    ),
+    CommercialRuleDefinition(
+        line_code="acm_return_strip_material",
+        label="Material ACM canturi / întoarceri",
+        module_code="structura_suport",
+        component_code="comp_casetted_returns",
+        pricing_rule_code="ACM_BOXED_MAT_RETURN_M2",
+        basis_type="m2",
+        quantity_paths=("return_strip_area_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:acm_mat_return_owner_eur_m2",
+        documented_unit_price=ACM_BOXED_MAT_ACM_EUR_M2,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+    ),
+    CommercialRuleDefinition(
+        line_code="acm_boxed_assembly",
+        label="Asamblare suport ACM casetat",
+        module_code="structura_suport",
+        component_code="comp_mounting_fasteners",
+        pricing_rule_code="ACM_BOXED_ASSEMBLY_M2_MIN",
+        basis_type="m2",
+        quantity_paths=("panel_area_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:acm_assembly_owner_eur_m2_min",
+        documented_unit_price=ACM_BOXED_ASSEMBLY_EUR_M2,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+        warnings=(
+            f"Minimum commercial charge {ACM_BOXED_ASSEMBLY_MIN_EUR} EUR/product when area × rate is lower.",
+        ),
+    ),
+    CommercialRuleDefinition(
+        line_code="acm_fasteners",
+        label="Suruburi / prinderi standard ACM",
+        module_code="structura_suport",
+        component_code="comp_mounting_fasteners",
+        pricing_rule_code="ACM_BOXED_SURUBURI_SET",
+        basis_type="set",
+        quantity_paths=(),
+        unit="set",
+        source="commercial_rules_volumetric_v2:acm_suruburi_owner_eur_set",
+        documented_unit_price=ACM_BOXED_SURUBURI_EUR_SET,
+        documented_unit_price_currency="EUR",
+        module_gate="structura_suport",
+    ),
+)
+
+VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM: tuple[CommercialRuleDefinition, ...] = (
+    *VOLUMETRIC_V2_COMMERCIAL_RULES,
+    *ACM_STRUCTURA_COMMERCIAL_RULES,
+)
+
 RULES_BY_TEMPLATE: dict[str, tuple[CommercialRuleDefinition, ...]] = {
-    PILOT_TEMPLATE: VOLUMETRIC_V2_COMMERCIAL_RULES,
+    PILOT_TEMPLATE: VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM,
 }
 
 CRITICAL_MODULE_CODES = frozenset(

@@ -6,7 +6,7 @@ import {
   type MountingScopeV1,
 } from "@/lib/intakeV6/mountingScope";
 import {
-  ACM_CASSETTED_QUOTE_INPUT_FIELDS,
+  ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS,
   deriveAcmCasettedQuoteInput,
   TPL_ACM_BOXED_MOUNTING_SUPPORT,
 } from "@/lib/acmQuoteInput";
@@ -93,7 +93,7 @@ export function normalizeAcmMountingConfiguration(
     merged[key] = Number.isFinite(value) ? value : DEFAULT_ACM_MOUNTING_CONFIGURATION[key];
   }
   const thickness = Number(merged.acm_thickness_mm ?? 3);
-  merged.acm_thickness_mm = thickness === 4 ? 4 : 3;
+  merged.acm_thickness_mm = 3;
   const foldSides = String(merged.fold_sides ?? "all").trim().toLowerCase();
   merged.fold_sides = ["all", "top_bottom", "left_right"].includes(foldSides) ? foldSides : "all";
   const angle = Number(merged.v_groove_angle_deg ?? 135);
@@ -251,4 +251,4 @@ export function isMountingSolutionSelectorDisabled(scope: MountingScopeV1): bool
   return !isMountingPreparationActive(scope);
 }
 
-export { ACM_CASSETTED_QUOTE_INPUT_FIELDS };
+export { ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS };

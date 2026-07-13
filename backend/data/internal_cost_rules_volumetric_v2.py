@@ -331,6 +331,47 @@ VOLUMETRIC_V2_CAPACITY_HINT_RULES: tuple[CapacityHintRule, ...] = (
         module_code="modelare_cant",
         purpose="sanity_check",
     ),
+    CapacityHintRule(
+        code="acm_cut_panel_capacity",
+        label="Debitare panou ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 15, "min_minutes": 15},
+        source="internal_cost_rules_volumetric_v2:acm_cut_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_v_groove_capacity",
+        label="Frezare V-groove ACM — timp intern (EIC)",
+        formula_id="perimeter_based_time",
+        formula_params={
+            "perimeter_quote_input_key": "fold_length_m",
+            "minutes_per_meter": 2.5,
+            "passes": 1,
+            "min_minutes": 0,
+        },
+        source="internal_cost_rules_volumetric_v2:acm_v_groove_minutes_per_meter",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_fold_capacity",
+        label="Casetare / pliere ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 45, "min_minutes": 45},
+        source="internal_cost_rules_volumetric_v2:acm_fold_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
+    CapacityHintRule(
+        code="acm_mount_prep_capacity",
+        label="Pregătire montaj ACM — timp intern (EIC)",
+        formula_id="count_based_time",
+        formula_params={"minutes_per_unit": 30, "min_minutes": 30},
+        source="internal_cost_rules_volumetric_v2:acm_mount_fixed_minutes",
+        module_code="structura_suport",
+        purpose="capacity",
+    ),
 )
 
 RULES_BY_TEMPLATE: dict[str, dict[str, tuple]] = {

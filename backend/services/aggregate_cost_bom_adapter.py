@@ -429,11 +429,22 @@ def _check_material_pricing(
     return "available", float(rate)
 
 
-def _check_workcenter_pricing(workcenter: str | None, workcenter_rates: dict[str, float]) -> str:
+def _check_workcenter_pricing(workcenter: str | None, workcenter_rates: dict[str, Any]) -> str:
     if not workcenter:
         return "missing"
     rate = workcenter_rates.get(workcenter)
-    if rate is None or rate <= 0:
+    if rate is None:
+        return "missing"
+    if isinstance(rate, dict):
+        basis = str(rate.get("rate_basis") or "per_hour")
+        if basis == "per_hour":
+            value = rate.get("rate_per_hour")
+        else:
+            value = rate.get("rate_per_linear_meter")
+        if value is None or float(value) <= 0:
+            return "missing"
+        return "available"
+    if float(rate) <= 0:
         return "missing"
     return "available"
 
