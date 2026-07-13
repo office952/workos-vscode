@@ -3,6 +3,10 @@ import { describe, expect, it, vi } from "vitest";
 
 import IntakeV6OfferScopePanel from "./IntakeV6OfferScopePanel";
 
+function getStatusText() {
+  return screen.getByTestId("intake-v6-offer-scope-status").textContent ?? "";
+}
+
 describe("IntakeV6OfferScopePanel", () => {
   it("renders full product as default", () => {
     render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
@@ -209,5 +213,138 @@ describe("IntakeV6OfferScopePanel", () => {
         confirmed: true,
       }),
     );
+  });
+
+  it("HTTP 200 clears saving", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+    expect(getStatusText()).toContain("Selecție confirmată");
+  });
+
+  it("HTTP error clears saving and shows error", async () => {
+    const onSave = vi.fn(async () => false);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+    expect(screen.getByText(/Salvarea selecției a eșuat/i)).toBeInTheDocument();
+  });
+
+  it("refetch after response does not re-enable saving", async () => {
+    const onSave = vi.fn(async () => true);
+    const { rerender } = render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+
+    rerender(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: { mode: "component_subset", sold_modules: ["BACK"] },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={onSave}
+      />,
+    );
+
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+    expect(onSave).toHaveBeenCalledTimes(1);
+  });
+
+  it("rerender does not preserve stale saving", async () => {
+    const resolvers: Array<(value: boolean) => void> = [];
+    const onSave = vi.fn(
+      () =>
+        new Promise<boolean>((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    const { rerender } = render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+    await waitFor(() => expect(getStatusText()).toContain("Salvez selecția"));
+
+    rerender(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    resolvers[0]?.(true);
+
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+  });
+
+  it("one action creates one PUT", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getStatusText()).toContain("Selecție confirmată"));
+  });
+
+  it("in-flight guard clears on success", async () => {
+    const resolvers: Array<(value: boolean) => void> = [];
+    const onSave = vi.fn(
+      () =>
+        new Promise<boolean>((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+    await waitFor(() => expect(getStatusText()).toContain("Salvez selecția"));
+
+    resolvers[0]?.(true);
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+    expect(getStatusText()).toContain("Selecție confirmată");
+  });
+
+  it("in-flight guard clears on error", async () => {
+    const onSave = vi.fn(async () => {
+      throw new Error("network");
+    });
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getStatusText()).not.toContain("Salvez selecția"));
+    expect(screen.getByText(/Salvarea selecției a eșuat/i)).toBeInTheDocument();
+  });
+
+  it("empty to BACK to LIGHTING remains stable", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    expect(screen.getByTestId("intake-v6-offer-scope-empty-subset-error")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-back"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(getStatusText()).toContain("Selecție confirmată"));
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["BACK", "LIGHTING"],
+        confirmed: true,
+      }),
+    );
+    await waitFor(() => expect(getStatusText()).toContain("Selecție confirmată"));
   });
 });

@@ -71,6 +71,7 @@ export default function IntakeV6OfferScopePanel({
   const soldModulesRef = useRef(soldModules);
   const latestIntentRef = useRef<OfferScopeIntent | null>(null);
   const persistChainRef = useRef<Promise<void>>(Promise.resolve());
+  const persistInFlightRef = useRef(false);
   const acknowledgedSerializedRef = useRef(persisted.serialized);
   const hydratingSerializedRef = useRef(persisted.serialized);
   const enqueuePersistRef = useRef<(next: OfferScopeIntent) => void>(() => undefined);
@@ -123,18 +124,24 @@ export default function IntakeV6OfferScopePanel({
 
   const dependencyValidation = useMemo(() => {
     const confirmations = readDependencyConfirmations(payload);
-    if (!dirty && localSerialized === acknowledgedSerialized) {
-      return readPersistedDependencyValidation(payload) ?? previewSoldScopeDependencyValidation({
-        mode: localState.mode,
-        soldModules: localState.soldModules,
-        dependencyConfirmations: confirmations,
-      });
-    }
-    return previewSoldScopeDependencyValidation({
+    const preview = previewSoldScopeDependencyValidation({
       mode: localState.mode,
       soldModules: localState.soldModules,
       dependencyConfirmations: confirmations,
     });
+    if (!dirty && localSerialized === acknowledgedSerialized) {
+      const persisted = readPersistedDependencyValidation(payload);
+      if (persisted) {
+        return {
+          ...persisted,
+          satisfied_capabilities:
+            persisted.satisfied_capabilities.length > 0
+              ? persisted.satisfied_capabilities
+              : preview.satisfied_capabilities,
+        };
+      }
+    }
+    return preview;
   }, [acknowledgedSerialized, dirty, localSerialized, localState.mode, localState.soldModules, payload]);
 
   const handleConfirmDependency = useCallback(
@@ -171,6 +178,11 @@ export default function IntakeV6OfferScopePanel({
       return;
     }
 
+    if (persistInFlightRef.current) {
+      return;
+    }
+
+    persistInFlightRef.current = true;
     setSaving(true);
     setSaveError(null);
     try {
@@ -181,23 +193,29 @@ export default function IntakeV6OfferScopePanel({
       });
       if (ok) {
         acknowledgedSerializedRef.current = serialized;
+        hydratingSerializedRef.current = serialized;
         setAcknowledgedSerialized(serialized);
         if (latestIntentRef.current && serializeIntent(normalizeIntent(latestIntentRef.current)) === serialized) {
           latestIntentRef.current = null;
         }
+
+        const trailing = latestIntentRef.current;
+        if (
+          trailing &&
+          canPersistIntent(normalizeIntent(trailing), acknowledgedSerializedRef.current)
+        ) {
+          queueMicrotask(() => {
+            enqueuePersistRef.current(trailing);
+          });
+        }
       } else {
         setSaveError("Salvarea selecției a eșuat.");
       }
+    } catch {
+      setSaveError("Salvarea selecției a eșuat.");
     } finally {
+      persistInFlightRef.current = false;
       setSaving(false);
-    }
-
-    const trailing = latestIntentRef.current;
-    if (
-      trailing &&
-      canPersistIntent(normalizeIntent(trailing), acknowledgedSerializedRef.current)
-    ) {
-      enqueuePersistRef.current(trailing);
     }
   }, []);
 
@@ -207,6 +225,8 @@ export default function IntakeV6OfferScopePanel({
       persistChainRef.current = persistChainRef.current
         .then(() => flushPersistQueue())
         .catch(() => {
+          persistInFlightRef.current = false;
+          setSaving(false);
           setSaveError("Salvarea selecției a eșuat.");
         });
     },

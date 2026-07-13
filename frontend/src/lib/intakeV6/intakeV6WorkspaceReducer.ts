@@ -219,6 +219,7 @@ export function intakeV6WorkspaceReducer(
       return { ...state, phase: "persisting", error: null };
     case "PERSIST_SUCCESS": {
       const persistedHash = getPersistedFileHash(action.workspace.payload);
+      const preservedStep = state.currentStep;
       const next = applyHydratedWorkspace(
         {
           ...state,
@@ -231,10 +232,7 @@ export function intakeV6WorkspaceReducer(
         action.workspace,
         { preserveLocalAnalyzer: false },
       );
-      if (state.currentStep === "review" || state.currentStep === "confirm") {
-        return { ...next, currentStep: state.currentStep, unsavedAnalysis: false };
-      }
-      return { ...next, unsavedAnalysis: false };
+      return { ...next, currentStep: preservedStep, unsavedAnalysis: false };
     }
     case "FINISH_SETUP_PERSIST_SUCCESS":
       return applyFinishSetupPersistedWorkspace(

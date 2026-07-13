@@ -31,7 +31,9 @@ export default function IntakeV6OfferScopeDependencyFeedback({
     dependencyConfirmations?.has(CODE_LED_MOUNT_SURFACE_NOT_SOLD) &&
     !dependencyConfirmations.has(CODE_LED_INSTALLATION_BY_US);
 
-  if (!hasIssues && !showInstallByUsPrompt) {
+  const showSatisfiedCapabilities = validation.satisfied_capabilities.length > 0;
+
+  if (!hasIssues && !showInstallByUsPrompt && !showSatisfiedCapabilities) {
     return null;
   }
 

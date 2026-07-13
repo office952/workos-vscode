@@ -485,12 +485,10 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
           confirmed: input.confirmed,
           dependency_confirmation_codes: input.dependencyConfirmationCodes,
         });
-        if (!mountedRef.current) return false;
         cacheIntakeV6Workspace(workspace);
         dispatch({ type: "PERSIST_SUCCESS", workspace });
         return true;
       } catch (err) {
-        if (!mountedRef.current) return false;
         dispatch({
           type: "PERSIST_ERROR",
           message: err instanceof Error ? err.message : "Salvare scope ofertă eșuată.",

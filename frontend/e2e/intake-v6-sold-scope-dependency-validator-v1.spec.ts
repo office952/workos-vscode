@@ -289,7 +289,7 @@ test.describe("Intake V6 sold scope dependency validator evidence", () => {
     expect(notes[4]?.mountSatisfiedVisible).toBe(true);
     expect(notes[5]?.confirmButtons).toContain("ELECTRICAL_LOAD_NOT_SOLD");
     expect(notes[7]?.confirmButtons).toContain("LED_MOUNT_SURFACE_NOT_SOLD");
-    expect(notes[7]?.confirmButtons).toContain("ELECTRICAL_LOAD_NOT_SOLD");
+    expect(notes[7]?.confirmButtons).not.toContain("ELECTRICAL_LOAD_NOT_SOLD");
     expect(notes[8]?.dependencyFeedbackVisible || notes[8]?.mountHintVisible).toBeTruthy();
   });
 });
