@@ -312,6 +312,30 @@ def list_v4_handoff_issue_codes(
     if setup is None or not setup.internal_draft_quote_confirmed:
         issues.append("operator_confirmation_missing")
 
+    from services.intake_v6_canonical_readiness_service import list_runtime_capture_fatal_blocker_codes
+
+    template_code = (
+        payload.product_binding.template_code
+        if payload.product_binding and payload.product_binding.template_code
+        else "TPL-VOLUMETRIC-LETTERS_v2"
+    )
+    for code in list_runtime_capture_fatal_blocker_codes(payload.model_dump(mode="json"), template_code=template_code):
+        token = f"runtime_capture:{code}"
+        if token not in issues:
+            issues.append(token)
+
+    if pricing_preview is not None:
+        if not getattr(pricing_preview, "is_ready_for_quote", True):
+            if "pricing_adapter_not_ready" not in issues:
+                issues.append("pricing_adapter_not_ready")
+        for code in list(getattr(pricing_preview, "adapter_blockers", []) or []):
+            token = str(code).strip()
+            if not token:
+                continue
+            prefixed = token if token.startswith(("runtime_capture:", "canonical_")) else f"pricing_adapter:{token}"
+            if prefixed not in issues:
+                issues.append(prefixed)
+
     return issues
 
 

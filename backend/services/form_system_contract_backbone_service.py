@@ -11,6 +11,7 @@ from services.intake_v4_finish_truth_service import (
     artwork_finish_runtime_boolean_state,
     mounting_scope_runtime_state,
     support_type_runtime_state,
+    mounting_solution_runtime_state,
 )
 from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
 from services.template_architecture_scope import (
@@ -393,17 +394,30 @@ FIELDS: list[dict[str, Any]] = [
         "requires_operator_confirmation": True,
     },
     {
+        "field_key": "mounting.mounting_solution",
+        "operator_label": "Soluție montaj canonică",
+        "owning_component": "mounting_support",
+        "component_template_code": STRUCTURE_PREMOUNT_TEMPLATE_CODE,
+        "source_type": "operator_confirmed",
+        "state": "missing",
+        "product_truth_path": "components.mounting.solution",
+        "required_for": ["quote_preview", "priced_quote", "order_snapshot", "product_definition", "execution_later"],
+        "blocker_code": "MOUNTING_SOLUTION_MISSING",
+        "notes": "Canonical mounting_solution must be persisted when mounting preparation is active; legacy mounting_system and support_type are compatibility-only.",
+        "requires_operator_confirmation": True,
+    },
+    {
         "field_key": "support.support_type",
-        "operator_label": "Tip suport tehnic",
+        "operator_label": "Tip suport tehnic (legacy)",
         "owning_component": "mounting_support",
         "component_template_code": STRUCTURE_PREMOUNT_TEMPLATE_CODE,
         "source_type": "operator_confirmed",
         "state": "missing",
         "product_truth_path": "components.support.supportType",
-        "required_for": ["quote_preview", "priced_quote", "order_snapshot", "product_definition", "execution_later"],
-        "blocker_code": "SUPPORT_TYPE_MISSING",
-        "notes": "Support type must be captured explicitly from operator finish setup; support_required, mounting_system, mounting_scope, and SVG evidence are separate signals.",
-        "requires_operator_confirmation": True,
+        "required_for": [],
+        "blocker_code": None,
+        "notes": "Legacy compatibility field only; canonical mounting_solution owns mounting truth when preparation is active.",
+        "requires_operator_confirmation": False,
     },
     {
         "field_key": "readiness.product_truth_blockers",
@@ -619,6 +633,51 @@ def _overlay_runtime_mounting_scope_field(
     return fields
 
 
+def _overlay_runtime_mounting_solution_field(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    runtime = mounting_solution_runtime_state(finish_setup)
+
+    for field in fields:
+        if field.get("field_key") != "mounting.mounting_solution":
+            continue
+        if runtime["status"] == "not_required":
+            field.update(
+                {
+                    "source_type": "not_applicable",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Mounting preparation is inactive; canonical mounting_solution is not required for readiness.",
+                }
+            )
+            return fields
+        if runtime["status"] == "confirmed":
+            field.update(
+                {
+                    "source_type": "payload_persisted",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Persisted finish_setup.mounting_solution is canonical mounting truth.",
+                }
+            )
+            return fields
+        blocker_code = runtime.get("blocker_code") or "MOUNTING_SOLUTION_MISSING"
+        field.update(
+            {
+                "source_type": "operator_confirmed",
+                "state": "missing" if runtime["status"] == "missing" else "blocked",
+                "blocker_code": blocker_code,
+                "notes": "Canonical mounting_solution must be persisted when mounting preparation is active; legacy mounting_system cannot override.",
+            }
+        )
+        return fields
+    return fields
+
+
 def _overlay_runtime_support_type_field(
     fields: list[dict[str, Any]],
     payload_raw: dict[str, Any] | None,
@@ -626,6 +685,21 @@ def _overlay_runtime_support_type_field(
     if not isinstance(payload_raw, dict):
         return fields
     finish_setup = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    mounting_runtime = mounting_solution_runtime_state(finish_setup)
+    if mounting_runtime["status"] in {"confirmed", "not_required"}:
+        for field in fields:
+            if field.get("field_key") != "support.support_type":
+                continue
+            field.update(
+                {
+                    "source_type": "legacy_compatibility",
+                    "state": "confirmed",
+                    "blocker_code": None,
+                    "notes": "Legacy support_type is read-only compatibility; canonical mounting_solution satisfies mounting readiness.",
+                }
+            )
+            return fields
+
     runtime = support_type_runtime_state(finish_setup)
 
     for field in fields:
@@ -723,9 +797,12 @@ def build_form_system_contract_map(
 
     fields = _overlay_runtime_finish_target_field(
         _overlay_runtime_support_type_field(
-            _overlay_runtime_mounting_scope_field(
-                _overlay_runtime_artwork_finish_boolean_fields(
-                    _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+            _overlay_runtime_mounting_solution_field(
+                _overlay_runtime_mounting_scope_field(
+                    _overlay_runtime_artwork_finish_boolean_fields(
+                        _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+                        payload_raw,
+                    ),
                     payload_raw,
                 ),
                 payload_raw,

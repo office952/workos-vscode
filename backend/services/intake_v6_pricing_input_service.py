@@ -31,9 +31,18 @@ def build_v6_pricing_input_preview(
 		dict(getattr(preview, "quote_input_payload", {}) or {}),
 	)
 	if hasattr(preview, "model_copy"):
-		return preview.model_copy(update={"quote_input_payload": quote_input})
-	if isinstance(preview, dict):
+		preview = preview.model_copy(update={"quote_input_payload": quote_input})
+	elif isinstance(preview, dict):
 		updated = dict(preview)
 		updated["quote_input_payload"] = quote_input
-		return updated
+		preview = updated
+
+	from services.intake_v6_canonical_readiness_service import apply_readiness_spine_to_pricing_preview
+
+	if hasattr(preview, "model_copy"):
+		return apply_readiness_spine_to_pricing_preview(
+			preview,
+			payload=raw,
+			template_code=template_code,
+		)
 	return preview

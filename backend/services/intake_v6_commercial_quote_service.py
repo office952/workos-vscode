@@ -20,6 +20,10 @@ from services.intake_v4_commercial_quote_service import (
 	build_v4_quote_snapshot_payload,
 	client_order_production_flags_for_quote,
 )
+from services.intake_v6_canonical_readiness_service import (
+	collect_canonical_readiness_findings,
+	merge_policy_findings,
+)
 from services.intake_v6_internal_draft_quote_policy_service import evaluate_internal_draft_quote_policy
 from services.intake_v6_offer_scope_live_calc_service import merge_workspace_offer_scope_into_quote_input
 from services.intake_v6_pricing_input_service import build_v6_pricing_input_preview
@@ -160,6 +164,11 @@ async def get_quote_handoff_preview_for_workspace(
 		template_code=record.template_code,
 		payload_raw=payload_raw if isinstance(payload_raw, dict) else {},
 	)
+	canonical_findings = await collect_canonical_readiness_findings(
+		db,
+		workspace_id=workspace_id,
+		template_code=record.template_code,
+	)
 	policy = evaluate_internal_draft_quote_policy(
 		record,
 		payload,
@@ -167,22 +176,23 @@ async def get_quote_handoff_preview_for_workspace(
 		client_analysis_hash=client_analysis_hash,
 		include_hash_sync=bool(client_analysis_hash),
 	)
-	legacy_blockers = [*policy.fatal_blockers, *policy.review_warnings]
+	merged = merge_policy_findings(policy=policy, findings=canonical_findings)
+	legacy_blockers = [*merged["fatal_blockers"], *merged["review_warnings"]]
 	return IntakeV6QuoteHandoffPreviewResponse(
 		workspace_id=workspace_id,
 		workspace_readiness_status=record.readiness_status,
-		handoff_allowed=policy.can_create_internal_draft_quote,
-		status_label=policy.status_label,
+		handoff_allowed=merged["can_create_internal_draft_quote"],
+		status_label=merged["status_label"],
 		blockers=legacy_blockers,
-		can_create_internal_draft_quote=policy.can_create_internal_draft_quote,
+		can_create_internal_draft_quote=merged["can_create_internal_draft_quote"],
 		requires_operator_confirmation=policy.requires_operator_confirmation,
 		operator_confirmation_complete=policy.operator_confirmation_complete,
-		fatal_blockers=policy.fatal_blockers,
-		review_warnings=policy.review_warnings,
-		client_send_allowed=policy.client_send_allowed,
-		accept_allowed=policy.accept_allowed,
-		convert_to_order_allowed=policy.convert_to_order_allowed,
-		production_allowed=policy.production_allowed,
+		fatal_blockers=merged["fatal_blockers"],
+		review_warnings=merged["review_warnings"],
+		client_send_allowed=merged["client_send_allowed"],
+		accept_allowed=merged["accept_allowed"],
+		convert_to_order_allowed=merged["convert_to_order_allowed"],
+		production_allowed=merged["production_allowed"],
 		preview_only=True,
 	)
 
@@ -210,6 +220,12 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 		client_analysis_hash=request.client_analysis_hash,
 		include_hash_sync=True,
 	)
+	canonical_findings = await collect_canonical_readiness_findings(
+		db,
+		workspace_id=workspace_id,
+		template_code=record.template_code,
+	)
+	merged = merge_policy_findings(policy=policy, findings=canonical_findings)
 
 	if not request.confirm_internal_draft_quote:
 		_raise_blocked(
@@ -225,11 +241,11 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 			["operator_confirmation_missing"],
 		)
 
-	if policy.fatal_blockers:
+	if merged["fatal_blockers"]:
 		_raise_blocked(
 			"INTERNAL_DRAFT_QUOTE_BLOCKED",
 			"Workspace V6 is not ready for internal draft quote creation.",
-			policy.fatal_blockers,
+			merged["fatal_blockers"],
 		)
 
 	existing = await check_existing_quote_for_intake_v6_workspace(db, workspace_id)
@@ -240,7 +256,7 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 			["DUPLICATE_QUOTE_FOR_WORKSPACE"],
 		)
 
-	requires_pricing_review = True if policy.review_warnings else False
+	requires_pricing_review = True if merged["review_warnings"] else False
 	payload_raw = _json_loads(record.payload_json, {})
 	if not isinstance(payload_raw, dict):
 		payload_raw = {}
@@ -268,7 +284,7 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 		pricing_preview=pricing_preview,
 		current_user=current_user,
 		decision_reason=request.decision_reason,
-		review_warnings=policy.review_warnings,
+		review_warnings=merged["review_warnings"],
 		source_module="intake_v6",
 		linked_modules=linked_modules,
 	)
@@ -301,7 +317,7 @@ async def create_guarded_draft_quote_from_intake_v6_workspace(
 	if quote_obj is None:
 		_raise_blocked("QUOTE_PERSISTENCE_FAILED", "Quote persistence returned no object.")
 
-	downstream = client_order_production_flags_for_quote(review_warnings=policy.review_warnings)
+	downstream = client_order_production_flags_for_quote(review_warnings=merged["review_warnings"])
 	return IntakeV6CreateDraftQuoteResponse(
 		quote_created=True,
 		quote_id=quote_obj.id,

@@ -13,6 +13,17 @@ WORKSPACE_ID = "runtime-capture-read-model-workspace"
 WORKSPACE_CODE = "IV6-RUNTIME-CAPTURE-READ-MODEL"
 
 
+def _canonical_mounting_solution() -> dict:
+    return {
+        "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+        "configuration": {
+            "bar_count": 2,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "steel",
+        },
+    }
+
+
 def _complete_payload() -> dict:
     return {
         "product_binding": {"template_code": ROOT},
@@ -58,6 +69,7 @@ def _complete_payload() -> dict:
             ],
             "mounting_scope": "mounting_included",
             "mounting_system": "steel_bars",
+            "mounting_solution": _canonical_mounting_solution(),
             "support_type": "steel_frame",
             "support_required": "yes",
         },
@@ -114,7 +126,7 @@ def test_endpoint_returns_read_only_runtime_capture_read_model(auth_client, runt
         "finish.print_required",
         "finish.lamination_required",
         "mounting.mounting_scope",
-        "support.support_type",
+        "mounting.mounting_solution",
     }
 
 
@@ -133,8 +145,8 @@ def test_endpoint_missing_fields_remain_blocked_without_fallback(auth_client, db
     payload.pop("svg")
     payload["finish_setup"].pop("finish_target")
     payload["finish_setup"]["artwork_finishes"] = [{"layer_key": "logo-left"}]
-    payload["finish_setup"].pop("mounting_scope")
-    payload["finish_setup"].pop("support_type")
+    payload["finish_setup"].pop("mounting_solution")
+    payload["finish_setup"]["support_type"] = "steel_frame"
     payload["finish_setup"]["support_source"] = "detected_svg"
 
     async def _seed():
@@ -164,10 +176,8 @@ def test_endpoint_missing_fields_remain_blocked_without_fallback(auth_client, db
     assert fields["finish.finish_target"]["blockers"] == ["FINISH_TARGET_MISSING"]
     assert fields["finish.print_required"]["blockers"] == ["PRINT_REQUIRED_UNKNOWN"]
     assert fields["finish.lamination_required"]["blockers"] == ["LAMINATION_REQUIRED_UNKNOWN"]
-    assert fields["mounting.mounting_scope"]["blockers"] == ["MOUNTING_SCOPE_MISSING"]
-    assert fields["support.support_type"]["blockers"] == ["SUPPORT_TYPE_MISSING"]
-    assert fields["mounting.mounting_scope"]["ready_for_product_truth"] is False
-    assert fields["support.support_type"]["ready_for_product_truth"] is False
+    assert fields["mounting.mounting_solution"]["blockers"] == ["MOUNTING_SOLUTION_MISSING"]
+    assert fields["mounting.mounting_solution"]["ready_for_product_truth"] is False
 
 
 def test_endpoint_is_read_only_and_has_no_pricing_quote_or_execution_coupling(auth_client, runtime_capture_workspace):

@@ -10,8 +10,12 @@ from services.intake_v4_backing_mode_service import (
     finish_has_explicit_layer_backing_modes,
     resolve_backing_mode_from_finish,
 )
-from services.mounting_scope_service import hydrate_mounting_scope_fields
-from services.mounting_solution_service import hydrate_mounting_solution_fields
+from services.mounting_scope_service import hydrate_mounting_scope_fields, is_mounting_preparation_active
+from services.mounting_solution_service import (
+    ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES,
+    hydrate_mounting_solution_fields,
+    read_mounting_solution,
+)
 
 INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
 
@@ -429,6 +433,73 @@ def mounting_scope_runtime_state(
         "status": "confirmed",
         "blocker_code": None,
         "value": mounting_scope,
+        "source_path": source_path,
+    }
+
+
+def mounting_solution_runtime_state(
+    setup: IntakeV4FinishSetup | dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Canonical mounting truth — legacy mounting_system/support_type do not satisfy this gate."""
+    source_path = "finish_setup.mounting_solution"
+    finish_dict: dict[str, Any] | None
+    if setup is None:
+        finish_dict = None
+    elif isinstance(setup, dict):
+        finish_dict = setup
+    else:
+        finish_dict = setup.model_dump(mode="json")
+
+    if not is_mounting_preparation_active(finish_dict):
+        return {
+            "status": "not_required",
+            "blocker_code": None,
+            "value": None,
+            "source_path": source_path,
+        }
+
+    if setup is None:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    normalized_setup = setup
+    if isinstance(setup, dict):
+        normalized_setup = IntakeV4FinishSetup.model_validate(setup)
+
+    if normalized_setup.confirmed is not True:
+        return {
+            "status": "unconfirmed",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    solution = read_mounting_solution(normalized_setup.model_dump(mode="json"))
+    if not solution:
+        return {
+            "status": "missing",
+            "blocker_code": "MOUNTING_SOLUTION_MISSING",
+            "value": None,
+            "source_path": source_path,
+        }
+
+    template_code = str(solution.get("template_code") or "").strip()
+    if template_code not in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
+        return {
+            "status": "blocked",
+            "blocker_code": "MOUNTING_SOLUTION_INVALID",
+            "value": solution,
+            "source_path": source_path,
+        }
+
+    return {
+        "status": "confirmed",
+        "blocker_code": None,
+        "value": solution,
         "source_path": source_path,
     }
 

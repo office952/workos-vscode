@@ -508,23 +508,16 @@ def build_product_truth_promotion_plan(
         eligible_entries.extend(eligible)
         blocked_entries.extend(blocked)
 
-    field = fields_by_key.get("support.support_type")
+    field = fields_by_key.get("mounting.mounting_solution")
     if field is not None:
-        suggested_reason = None
-        suggested_state = None
-        if not _string(finish_setup.get("support_type")):
-            support_source = _string(finish_setup.get("support_source"))
-            support_required = _string(finish_setup.get("support_required"))
-            mounting_system = _string(finish_setup.get("mounting_system"))
-            if support_source or support_required or mounting_system:
-                suggested_state = "suggested"
-                suggested_reason = "Support type must be explicitly persisted and confirmed; mounting/support/SVG evidence cannot be promoted as canonical support truth."
+        solution_raw = finish_setup.get("mounting_solution")
+        solution_template = ""
+        if isinstance(solution_raw, dict):
+            solution_template = _string(solution_raw.get("template_code"))
         eligible, blocked = _classify_scalar_entry(
             field,
-            raw_value=_string(finish_setup.get("support_type")),
+            raw_value=solution_template or None,
             explicit_confirmed=finish_confirmed,
-            suggested_state=suggested_state,
-            suggested_reason=suggested_reason,
         )
         eligible_entries.extend(eligible)
         blocked_entries.extend(blocked)

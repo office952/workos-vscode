@@ -8,8 +8,13 @@ from typing import Any
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from schemas.intake_v4 import IntakeV4PricingInputPreviewResponse
+from services.form_system_runtime_capture_read_model_service import (
+    build_form_system_runtime_capture_read_model,
+)
 from services.intake_v4_internal_draft_quote_policy_service import resolve_internal_draft_quote_status_label
 from services.product_definition_builder_service import ProductDefinitionBuilderService
+
+DEFAULT_ROOT_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
 
 
 @dataclass(frozen=True)
@@ -37,6 +42,61 @@ def dedupe_codes(codes: list[str]) -> list[str]:
         seen.add(token)
         ordered.append(token)
     return ordered
+
+
+def _payload_to_dict(payload: Any) -> dict[str, Any]:
+    if isinstance(payload, dict):
+        return payload
+    model_dump = getattr(payload, "model_dump", None)
+    if callable(model_dump):
+        return model_dump(mode="json")
+    return {}
+
+
+def list_runtime_capture_fatal_blocker_codes(
+    payload: dict[str, Any] | Any,
+    *,
+    template_code: str | None = None,
+) -> list[str]:
+    """Collect active runtime capture blocker codes from the effective read model."""
+    payload_raw = _payload_to_dict(payload)
+    read_model = build_form_system_runtime_capture_read_model(
+        payload_raw,
+        template_code=template_code or DEFAULT_ROOT_TEMPLATE_CODE,
+    )
+    codes: list[str] = []
+    for blocker_group in read_model.get("blockers") or []:
+        if not isinstance(blocker_group, dict):
+            continue
+        for code in blocker_group.get("blockers") or []:
+            token = str(code).strip()
+            if token:
+                codes.append(token)
+    return dedupe_codes(codes)
+
+
+def resolve_workspace_readiness_with_capture_blockers(
+    base_status: str,
+    *,
+    capture_blockers: list[str],
+) -> str:
+    if capture_blockers:
+        return "runtime_capture_blocked"
+    return base_status
+
+
+def apply_readiness_spine_to_pricing_preview(
+    preview: IntakeV4PricingInputPreviewResponse,
+    *,
+    payload: dict[str, Any] | Any,
+    template_code: str | None = None,
+) -> IntakeV4PricingInputPreviewResponse:
+    capture_blockers = list_runtime_capture_fatal_blocker_codes(payload, template_code=template_code)
+    findings = IntakeV6CanonicalReadinessFindings(
+        fatal_blockers=[f"runtime_capture:{code}" for code in capture_blockers],
+        review_warnings=[],
+    )
+    return enrich_pricing_preview_with_canonical_findings(preview, findings)
 
 
 async def collect_canonical_readiness_findings(

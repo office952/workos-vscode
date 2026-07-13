@@ -172,7 +172,25 @@ def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
         return "finish_setup_incomplete"
     if _is_logo_only_candidate_not_offerable(payload):
         return "logo_only_candidate_not_offerable"
-    return "ready_for_quote_preview"
+
+    from services.intake_v6_canonical_readiness_service import (
+        list_runtime_capture_fatal_blocker_codes,
+        resolve_workspace_readiness_with_capture_blockers,
+    )
+
+    template_code = (
+        payload.product_binding.template_code
+        if payload.product_binding and payload.product_binding.template_code
+        else None
+    )
+    capture_blockers = list_runtime_capture_fatal_blocker_codes(
+        payload.model_dump(mode="json"),
+        template_code=template_code,
+    )
+    return resolve_workspace_readiness_with_capture_blockers(
+        "ready_for_quote_preview",
+        capture_blockers=capture_blockers,
+    )
 
 
 def _logo_constructive_model_confirmed(payload: IntakeV6WorkspacePayload) -> bool:

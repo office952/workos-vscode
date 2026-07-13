@@ -56,11 +56,11 @@ FIELD_SPECS: list[dict[str, str]] = [
         "confirmation_rule": "Explicit persisted finish_setup.mounting_scope and finish_setup.confirmed=true; no fallback from mounting_system or support_type.",
     },
     {
-        "field_key": "support.support_type",
-        "adapter_field_key": "support.support_type",
-        "runtime_source": "finish_setup.support_type",
-        "product_truth_path": "components.support.supportType",
-        "confirmation_rule": "Explicit persisted finish_setup.support_type and finish_setup.confirmed=true; no fallback from support_required, mounting_system, mounting_scope, or SVG evidence.",
+        "field_key": "mounting.mounting_solution",
+        "adapter_field_key": "mounting.mounting_solution",
+        "runtime_source": "finish_setup.mounting_solution",
+        "product_truth_path": "components.mounting.solution",
+        "confirmation_rule": "Explicit persisted finish_setup.mounting_solution when mounting preparation is active; legacy mounting_system and support_type do not satisfy this gate.",
     },
 ]
 

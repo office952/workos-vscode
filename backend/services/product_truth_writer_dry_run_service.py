@@ -135,6 +135,8 @@ def _source_path_for_entry(field_key: str, identity_key: str | None) -> str:
         return "payload.finish_setup.finish_target"
     if field_key == "mounting.mounting_scope":
         return "payload.finish_setup.mounting_scope"
+    if field_key == "mounting.mounting_solution":
+        return "payload.finish_setup.mounting_solution"
     if field_key == "support.support_type":
         return "payload.finish_setup.support_type"
     if field_key in {"finish.print_required", "finish.lamination_required"}:
@@ -175,6 +177,8 @@ def _value_for_entry(payload_raw: dict[str, Any], entry: dict[str, Any]) -> Any:
         return finish_setup.get("finish_target")
     if field_key == "mounting.mounting_scope":
         return finish_setup.get("mounting_scope")
+    if field_key == "mounting.mounting_solution":
+        return finish_setup.get("mounting_solution")
     if field_key == "support.support_type":
         return finish_setup.get("support_type")
     if field_key in {"finish.print_required", "finish.lamination_required"}:

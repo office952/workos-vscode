@@ -424,6 +424,60 @@ def test_runtime_mounting_scope_unconfirmed_does_not_unlock_backbone_field():
     assert field["blocker_code"] == "MOUNTING_SCOPE_MISSING"
 
 
+def test_runtime_mounting_solution_confirmed_for_canonical_acm_payload():
+    payload = {
+        "finish_setup": {
+            "mounting_scope": "mounting_included",
+            "mounting_solution": {
+                "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                "configuration": {
+                    "panel_width_mm": 1000,
+                    "panel_height_mm": 600,
+                    "acm_thickness_mm": 3,
+                    "return_depth_mm": 60,
+                    "rear_lip_mm": 25,
+                    "fold_sides": "all",
+                    "v_groove_angle_deg": 135,
+                    "frame_clearance_mm": 0,
+                },
+            },
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["mounting.mounting_solution"]
+
+    assert field["source_type"] == "payload_persisted"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+
+
+def test_runtime_support_type_legacy_confirmed_when_canonical_mounting_solution_present():
+    payload = {
+        "finish_setup": {
+            "support_type": "steel_frame",
+            "mounting_scope": "mounting_included",
+            "mounting_solution": {
+                "template_code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+                "configuration": {
+                    "bar_count": 2,
+                    "mounting_bar_profile": "30x30x1.5",
+                    "bar_material": "steel",
+                },
+            },
+            "confirmed": True,
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    field = _fields_by_key(contract)["support.support_type"]
+
+    assert field["source_type"] == "legacy_compatibility"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
+
+
 def test_runtime_support_type_confirms_backbone_field_when_persisted_and_confirmed():
     payload = {
         "finish_setup": {
@@ -462,7 +516,7 @@ def test_runtime_support_type_missing_stays_blocked_without_support_required_mou
     assert field["blocker_code"] == "SUPPORT_TYPE_MISSING"
 
 
-def test_runtime_support_type_unconfirmed_does_not_unlock_backbone_field():
+def test_runtime_support_type_unconfirmed_without_mounting_prep_stays_legacy_compatible():
     payload = {
         "finish_setup": {
             "support_type": "steel_frame",
@@ -474,9 +528,9 @@ def test_runtime_support_type_unconfirmed_does_not_unlock_backbone_field():
     contract = build_form_system_contract_map(ROOT, payload_raw=payload)
     field = _fields_by_key(contract)["support.support_type"]
 
-    assert field["source_type"] == "operator_confirmed"
-    assert field["state"] == "blocked"
-    assert field["blocker_code"] == "SUPPORT_TYPE_MISSING"
+    assert field["source_type"] == "legacy_compatibility"
+    assert field["state"] == "confirmed"
+    assert field["blocker_code"] is None
 
 
 def test_no_downstream_write_or_pricing_quote_order_execution_leakage():

@@ -3,7 +3,21 @@ from __future__ import annotations
 from services.product_truth_promotion_planner_service import build_product_truth_promotion_plan
 
 
+from services.mounting_solution_service import METAL_PREMOUNT_TEMPLATE_CODE
+
+
 ROOT = "TPL-VOLUMETRIC-LETTERS_v2"
+
+
+def _canonical_mounting_solution() -> dict:
+    return {
+        "template_code": METAL_PREMOUNT_TEMPLATE_CODE,
+        "configuration": {
+            "bar_count": 2,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "steel",
+        },
+    }
 
 
 def _complete_payload() -> dict:
@@ -50,6 +64,7 @@ def _complete_payload() -> dict:
             ],
             "mounting_scope": "mounting_included",
             "mounting_system": "steel_bars",
+            "mounting_solution": _canonical_mounting_solution(),
             "support_type": "steel_frame",
             "support_required": "yes",
         },
@@ -75,7 +90,7 @@ def test_planner_marks_all_confirmed_runtime_capture_entries_eligible() -> None:
         "finish.print_required",
         "finish.lamination_required",
         "mounting.mounting_scope",
-        "support.support_type",
+        "mounting.mounting_solution",
     }
     assert len(eligible["svg.selected_layer_refs[]"]) == 1
     assert len(eligible["finish.print_required"]) == 2
@@ -182,17 +197,17 @@ def test_planner_does_not_fall_back_mounting_scope_from_mounting_system() -> Non
     assert blocked["mounting.mounting_scope"][0]["blockers"] == ["MOUNTING_SCOPE_MISSING"]
 
 
-def test_planner_does_not_fall_back_support_type_from_support_or_mounting_evidence() -> None:
+def test_planner_does_not_fall_back_mounting_solution_from_legacy_mounting_system() -> None:
     payload = _complete_payload()
-    payload["finish_setup"].pop("support_type")
+    payload["finish_setup"].pop("mounting_solution")
+    payload["finish_setup"]["support_type"] = "steel_frame"
     payload["finish_setup"]["support_source"] = "detected_svg"
 
     plan = build_product_truth_promotion_plan(payload, template_code=ROOT)
     blocked = _entries_by_key(plan["blocked_entries"])
 
-    assert blocked["support.support_type"][0]["promotion_allowed"] is False
-    assert blocked["support.support_type"][0]["state"] == "suggested"
-    assert blocked["support.support_type"][0]["blockers"] == ["SUPPORT_TYPE_MISSING"]
+    assert blocked["mounting.mounting_solution"][0]["promotion_allowed"] is False
+    assert blocked["mounting.mounting_solution"][0]["blockers"] == ["MOUNTING_SOLUTION_MISSING"]
 
 
 def test_planner_keeps_hydrated_and_suggested_states_blocked() -> None:
@@ -211,7 +226,7 @@ def test_planner_keeps_hydrated_and_suggested_states_blocked() -> None:
     assert blocked["finish.finish_target"][0]["state"] == "hydrated"
     assert any(entry["state"] == "hydrated" for entry in blocked["finish.print_required"])
     assert blocked["mounting.mounting_scope"][0]["state"] == "hydrated"
-    assert blocked["support.support_type"][0]["state"] == "hydrated"
+    assert blocked["mounting.mounting_solution"][0]["state"] == "hydrated"
 
 
 def test_planner_has_no_downstream_write_intent() -> None:

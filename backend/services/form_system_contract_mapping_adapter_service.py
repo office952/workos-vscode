@@ -43,14 +43,14 @@ FIELD_SPECS: list[FieldSpec] = [
         "notes": "Existing UI zones imply target by area, but the canonical finish target is not a first-class confirmed field yet.",
     },
     {
-        "field_key": "support.support_type",
+        "field_key": "mounting.mounting_solution",
         "owner": "mounting_support",
         "source": "operator_confirmed",
         "state": "blocked",
-        "product_truth_path": "components.support.supportType",
+        "product_truth_path": "components.mounting.solution",
         "confirmation_required": True,
-        "blockers": ["SUPPORT_TYPE_MISSING"],
-        "notes": "Support type is canonical only as an explicit finish_setup.support_type field; it must not be inferred from support_required, mounting_system, mounting_scope, or SVG evidence.",
+        "blockers": ["MOUNTING_SOLUTION_MISSING"],
+        "notes": "Canonical mounting_solution is required when mounting preparation is active; legacy mounting_system and support_type are compatibility-only.",
     },
     {
         "field_key": "mounting.mounting_scope",
@@ -170,7 +170,12 @@ def build_form_system_contract_readonly_mapping(
             entry["blockers"] = [blocker_code] if blocker_code else []
             break
     if payload_raw is not None:
-        for field_key in ("finish.print_required", "finish.lamination_required", "mounting.mounting_scope", "support.support_type"):
+        for field_key in (
+            "finish.print_required",
+            "finish.lamination_required",
+            "mounting.mounting_scope",
+            "mounting.mounting_solution",
+        ):
             runtime_field = backbone_fields.get(field_key)
             if runtime_field is None:
                 continue
