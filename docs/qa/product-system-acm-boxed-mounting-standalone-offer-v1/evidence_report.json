@@ -1,7 +1,39 @@
 {
-  "task": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_STANDALONE_OFFER_FLOW_V1",
-  "captured_at": "2026-07-13T19:01:00.000Z",
+  "task": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_STANDALONE_RUNTIME_QA_CLOSEOUT_V1",
+  "build": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_STANDALONE_OFFER_FLOW_V1",
+  "captured_at": "2026-07-13T19:20:00.000+03:00",
+  "head": "2dc8ac0",
   "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "product_system_route": "http://localhost:3000/product-system",
+  "runtime_stack": {
+    "backend_script": "scripts/dev-backend.ps1",
+    "backend_port": 8000,
+    "backend_listeners_after_cleanup": 1,
+    "frontend_port": 3000,
+    "frontend_extra_ports": [],
+    "note": "Cleared orphaned :8000 zombie listeners (6 stale LISTENING PIDs) and orphaned python processes before starting one fresh backend."
+  },
+  "openapi_proof": {
+    "openapi_ok": true,
+    "template_availability": true,
+    "quote_snapshot_v2": true,
+    "product_definition": true,
+    "acm_template_reference_in_openapi_text": false,
+    "live_api_acm": {
+      "endpoint": "/api/v1/product-system/template-availability?offerable_only=true",
+      "quote_offerable": true,
+      "status": "offerable",
+      "status_reason": "owner_valid_standalone_root_template",
+      "product_system_role": "offerable_product",
+      "display_group": "active_products"
+    },
+    "thickness_contract": {
+      "allowed_mm": [3],
+      "blocked_mm": [4],
+      "blocked_resolution_status": "unsupported_acm_thickness_mm",
+      "proof_source": "backend pytest test_four_mm_blocked_standalone_material_resolution"
+    }
+  },
   "backend_pytest": {
     "command": "pytest tests/test_acm_boxed_mounting_standalone_offer_v1.py tests/test_acm_boxed_mounting_owner_rates_cpp_v1.py -q",
     "result": "16 passed",
@@ -24,8 +56,14 @@
   "playwright": {
     "spec": "frontend/e2e/product-system-acm-boxed-mounting-standalone-offer-v1.spec.ts",
     "attempts": 2,
-    "result": "PARTIAL",
-    "note": "Catalog screenshot captured; ACM row not in current-products until single fresh backend on :8000 (multiple stale listeners observed during integration)"
+    "result": "FAIL",
+    "attempt_1": "Catalog loaded; ACM row absent in current-products (stale multi-listener :8000 served pre-change availability: quote_offerable=false, runtime_module_only).",
+    "attempt_2": "Redirected to login/landing (127.0.0.1 URL); product-system-unified-catalog not visible within 60s.",
+    "readonly_smoke_probe": "product-system-readonly-smoke reached unified catalog on localhost but candidate-products bucket missing (environment/UI drift).",
+    "screenshots_manual": [
+      "01_product_system_catalog_loaded.png",
+      "03_acm_standalone_detail_panel.png"
+    ]
   },
   "verification_chain": "standalone quote_input → PD → Aggregate → BOM → EIC → CPP → Quote snapshot",
   "cpp_contract": {
@@ -34,5 +72,7 @@
     "thickness_mm_allowed": [3],
     "thickness_mm_blocked": [4]
   },
-  "verdict": "PASS_BACKEND_PARTIAL_E2E"
+  "application_code_edits": false,
+  "verdict": "PARTIAL_PASS_BACKEND_API_FAIL_E2E",
+  "standalone_shipping_skipped": true
 }
