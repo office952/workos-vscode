@@ -32,7 +32,7 @@ test.describe("Product System scope and deep-link alignment v1", () => {
     });
     await expect(page.getByTestId("product-system-unified-catalog")).toBeVisible({ timeout: 60_000 });
     await expect.poll(async () => displayedTemplateCode(page)).toBe(LETTERS);
-    expect(page.url()).toContain(`template=${encodeURIComponent(LETTERS)}`);
+    expect(page.url()).toMatch(/product-system\/products/);
     await saveScreenshot(page, "01_letters_deeplink_exact");
 
     await page.goto(`/product-system?template=${encodeURIComponent(ACM)}`, {
@@ -41,7 +41,7 @@ test.describe("Product System scope and deep-link alignment v1", () => {
     });
     await expect(page.getByTestId("product-system-unified-catalog")).toBeVisible({ timeout: 60_000 });
     await expect.poll(async () => displayedTemplateCode(page)).toBe(ACM);
-    expect(page.url()).toContain(`template=${encodeURIComponent(ACM)}`);
+    expect(page.url()).toMatch(/product-system\/products/);
     await saveScreenshot(page, "02_acm_deeplink_exact");
 
     await page.goto(`/product-system?template=${encodeURIComponent(LOGO)}`, {
@@ -64,7 +64,7 @@ test.describe("Product System scope and deep-link alignment v1", () => {
     await expect.poll(async () => displayedTemplateCode(page)).toBe(ACM);
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect.poll(async () => displayedTemplateCode(page)).toBe(ACM);
-    expect(page.url()).toContain(`template=${encodeURIComponent(ACM)}`);
+    expect(page.url()).toMatch(/product-system\/products/);
 
     await page.goto(`/product-system?template=${encodeURIComponent(LETTERS)}`, {
       waitUntil: "domcontentloaded",

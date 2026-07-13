@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
   productTemplateAvailabilityApi,
@@ -90,6 +90,11 @@ import {
   ProductSystemUnifiedCatalog,
 } from "@/features/product-system/ProductSystemUnifiedCatalog";
 import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
+import {
+  buildProductSystemProductDetailPath,
+  resolveRequestedTemplateCode,
+} from "@/features/product-system/productSystemRouteSync";
+import { useProductSystemShell } from "@/features/product-system/ProductSystemShellContext";
 import {
   getInitialProductSystemScreen,
   isTemplateEditableForQuote,
@@ -3233,7 +3238,14 @@ function productSystemLoadModeToSource(
   }
 }
 
-function ProductSystemLibraryMoreMenu({ onCreateTemplate }: { onCreateTemplate: () => void }) {
+function ProductSystemLibraryMoreMenu({
+  onCreateTemplate,
+  readOnly = false,
+}: {
+  onCreateTemplate: () => void;
+  readOnly?: boolean;
+}) {
+  if (readOnly) return null;
   const [open, setOpen] = useState(false);
 
   return (
@@ -3376,8 +3388,14 @@ function ProductSystemInfoPopover({
 // ============================================================
 export default function ProductSystem() {
   type TemplateLoadMode = "api" | "mock" | "empty_real" | "auth_required" | "error";
+  const navigate = useNavigate();
+  const { templateCode: routeTemplateCode } = useParams<{ templateCode?: string }>();
   const [searchParams, setSearchParams] = useSearchParams();
-  const requestedTemplateCode = parseRequestedTemplateCode(searchParams.get("template"));
+  const { operatorReadOnly, shellMode } = useProductSystemShell();
+  const requestedTemplateCode = resolveRequestedTemplateCode({
+    pathTemplateCode: routeTemplateCode,
+    queryTemplateCode: searchParams.get("template"),
+  });
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
   const [availabilityItems, setAvailabilityItems] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [families, setFamilies] = useState<ProductFamily[]>([]);
@@ -3397,6 +3415,14 @@ export default function ProductSystem() {
 
   const handleRequestedTemplateCodeChange = useCallback(
     (templateCode: string | null) => {
+      if (shellMode) {
+        if (templateCode) {
+          navigate(buildProductSystemProductDetailPath(templateCode), { replace: false });
+        } else {
+          navigate("/product-system/products", { replace: false });
+        }
+        return;
+      }
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);
@@ -3410,7 +3436,7 @@ export default function ProductSystem() {
         { replace: false },
       );
     },
-    [setSearchParams],
+    [navigate, setSearchParams, shellMode],
   );
 
   const loadTemplates = useCallback(async (): Promise<ProductTemplateEntity[]> => {
@@ -3604,10 +3630,11 @@ export default function ProductSystem() {
   );
 
   const editorReadOnly = useMemo(() => {
+    if (operatorReadOnly) return true;
     if (isNew || !selectedId) return false;
     const entity = templates.find((t) => t.id === selectedId);
     return entity ? !isTemplateEditableForQuote(entity) : false;
-  }, [isNew, selectedId, templates]);
+  }, [isNew, operatorReadOnly, selectedId, templates]);
 
   const handleBackToLibrary = useCallback(() => {
     setScreen("library");
@@ -3618,15 +3645,17 @@ export default function ProductSystem() {
   }, []);
 
   const handleOpenEditor = useCallback((t: ProductTemplateEntity) => {
+    if (operatorReadOnly) return;
     recordTemplateOpened(t.id);
     setSelectedId(t.id);
     setDraft(entityToDraft(t));
     setIsNew(false);
     setScreen("editor");
     setPickerOpen(false);
-  }, []);
+  }, [operatorReadOnly]);
 
   const handleNew = () => {
+    if (operatorReadOnly) return;
     setSelectedId(null);
     setDraft(emptyDraft());
     setIsNew(true);
@@ -3739,21 +3768,36 @@ export default function ProductSystem() {
   }, [draft?.id, templates, activeOwnerCount]);
 
   return (
-    <div className="space-y-4">
+    <div
+      className="space-y-4"
+      data-testid="product-system-products-page"
+      data-canonical-template-code={routeTemplateCode ?? undefined}
+    >
       {shouldShowLibraryScreen(screen) ? (
         <div className="space-y-2 rounded-xl border border-slate-800/60 bg-slate-950/20 p-3" data-testid="product-system-library-header">
           <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <div className="flex min-w-0 items-center gap-2">
-              <Link
-                to="/dashboard"
-                className="shrink-0 rounded-md border border-slate-800 p-2 text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
-                aria-label="Înapoi la Dashboard"
-              >
-                <ArrowLeft className="h-4 w-4" />
-              </Link>
+              {!shellMode ? (
+                <Link
+                  to="/dashboard"
+                  className="shrink-0 rounded-md border border-slate-800 p-2 text-slate-500 transition-colors hover:border-slate-700 hover:text-slate-300"
+                  aria-label="Înapoi la Dashboard"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              ) : null}
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h1 className="truncate text-base font-bold leading-tight text-slate-100">Product System</h1>
+                  {shellMode ? (
+                    <h2
+                      className="truncate text-sm font-semibold leading-tight text-slate-200"
+                      data-testid="product-system-products-title"
+                    >
+                      Products
+                    </h2>
+                  ) : (
+                    <h1 className="truncate text-base font-bold leading-tight text-slate-100">Product System</h1>
+                  )}
                   <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
                 </div>
               </div>
@@ -3782,7 +3826,7 @@ export default function ProductSystem() {
                 <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
               </button>
               <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
-              <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} />
+              <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} readOnly={operatorReadOnly} />
             </div>
           </div>
           <p
@@ -3849,12 +3893,14 @@ export default function ProductSystem() {
                 loadMode={loadMode}
                 catalogCounts={catalogCounts}
               />
-              <Link
-                to="/product-system/blueprint-dossier"
-                className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
-              >
-                <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
-              </Link>
+              {!operatorReadOnly ? (
+                <Link
+                  to="/product-system/blueprint-dossier"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 rounded-lg text-[12px] font-bold transition-colors"
+                >
+                  <Layers className="w-3.5 h-3.5" /> Blueprint Dossier
+                </Link>
+              ) : null}
               <button
                 onClick={loadTemplates}
                 disabled={loading}
@@ -3862,12 +3908,14 @@ export default function ProductSystem() {
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} /> Reîncarcă
               </button>
+              {!operatorReadOnly ? (
               <button
                 onClick={handleNew}
                 className="flex items-center gap-1.5 px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[12px] font-bold transition-colors shadow-lg shadow-emerald-900/20"
               >
                 <Plus className="w-3.5 h-3.5" /> Șablon Nou
               </button>
+              ) : null}
             </div>
           </div>
         </>

@@ -1,0 +1,106 @@
+{
+  "task_id": "PRODUCT_SYSTEM_UI_SHELL_NAVIGATION_V1",
+  "head_before": "89aa5ad",
+  "verdict": "PASS_WITH_RBAC_GRANULARITY_DEFERRED",
+  "timestamp": "2026-07-13",
+  "rbac": {
+    "new_roles": false,
+    "new_permissions": false,
+    "backend_rbac_changed": false,
+    "advanced_gate_permission": "view:governance",
+    "advanced_visible_for_admin": true,
+    "operator_read_only_gate": "view:governance absent",
+    "granularity_note": "Product System template edit visibility uses existing admin governance permission; no Product-System-specific RBAC codes."
+  },
+  "canonical_routes": {
+    "default": "/product-system/products",
+    "product_detail": "/product-system/products/:templateCode",
+    "legacy_redirects": {
+      "/product-system": "/product-system/products (preserve query)",
+      "/products": "/product-system/products",
+      "/templates": "/product-system/products",
+      "/inventory/productsystem-pricing-preview": "/inventory/pricing"
+    }
+  },
+  "route_matrix": [
+    { "route": "/product-system", "behavior": "redirect to products", "nav_visible": false },
+    { "route": "/product-system/products", "behavior": "catalog + shell", "nav_visible": true },
+    { "route": "/product-system/products/:templateCode", "behavior": "catalog + detail", "nav_visible": true },
+    { "route": "/product-system/components", "behavior": "planned section", "nav_visible": true },
+    { "route": "/product-system/resources", "behavior": "planned section", "nav_visible": true },
+    { "route": "/product-system/operations", "behavior": "planned section", "nav_visible": true },
+    { "route": "/product-system/dependencies", "behavior": "planned section", "nav_visible": true },
+    { "route": "/product-system/validation", "behavior": "planned section", "nav_visible": true },
+    { "route": "/product-system/advanced", "behavior": "planned section", "nav_visible": "admin only" },
+    { "route": "/product-system/blueprint-dossier", "behavior": "preserved direct route", "nav_visible": false },
+    { "route": "/product-system/dossier-completion", "behavior": "preserved direct route", "nav_visible": false },
+    { "route": "/product-system/output-blocks-preview", "behavior": "preserved direct route", "nav_visible": false },
+    { "route": "/inventory/pricing", "behavior": "pricing authority", "nav_visible": "contextual link only" }
+  ],
+  "role_visibility_matrix": {
+    "admin": {
+      "shell_nav": ["Products", "Components", "Resources", "Operations", "Dependencies", "Validation", "Advanced"],
+      "edit_actions": "existing admin-only UI when view:governance",
+      "pricing_link": true
+    },
+    "manager": {
+      "shell_nav": ["Products", "Components", "Resources", "Operations", "Dependencies", "Validation"],
+      "edit_actions": "hidden (operatorReadOnly)",
+      "pricing_link": true
+    },
+    "operator": {
+      "shell_nav": ["Products", "Components", "Resources", "Operations", "Dependencies", "Validation"],
+      "edit_actions": "hidden",
+      "pricing_link": true
+    }
+  },
+  "legacy_route_matrix": {
+    "removed_from_normal_nav": [
+      "blueprint-dossier",
+      "dossier-completion",
+      "output-blocks-preview",
+      "productsystem-pricing-preview"
+    ],
+    "routes_not_deleted": true
+  },
+  "deep_link_results": {
+    "letters": { "entry": "/product-system?template=TPL-VOLUMETRIC-LETTERS_v2", "pass": true },
+    "acm": { "entry": "/product-system?template=TPL-ACM-BOXED-MOUNTING-SUPPORT_v1", "pass": true },
+    "logo_archived": { "behavior": "unavailable_message", "pass": true },
+    "unknown": { "behavior": "unavailable_message", "pass": true },
+    "canonical_path": { "entry": "/product-system/products/TPL-VOLUMETRIC-LETTERS_v2", "pass": true },
+    "history_refresh": "pass"
+  },
+  "tests": {
+    "vitest": [
+      "productSystemRouteSync.test.ts",
+      "productSystemShellNavigation.test.ts",
+      "productSystemNavigation.test.ts",
+      "activeTemplateScope.test.ts"
+    ],
+    "playwright": [
+      "product-system-ui-shell-navigation-v1.spec.ts",
+      "product-system-scope-deeplink-alignment-v1.spec.ts"
+    ]
+  },
+  "screenshots": [
+    "01_operator_products_shell.png",
+    "02_canonical_navigation.png",
+    "03_product_detail_canonical_route.png",
+    "04_advanced_visibility_or_deferred.png",
+    "05_pricing_registry_deeplink.png"
+  ],
+  "files_changed": [
+    "frontend/src/App.tsx",
+    "frontend/src/pages/ProductSystem.tsx",
+    "frontend/src/features/product-system/ProductSystemLayout.tsx",
+    "frontend/src/features/product-system/ProductSystemShellContext.tsx",
+    "frontend/src/features/product-system/ProductSystemIndexRedirect.tsx",
+    "frontend/src/features/product-system/ProductSystemPlannedSectionPage.tsx",
+    "frontend/src/features/product-system/productSystemShellConfig.ts",
+    "frontend/src/features/product-system/productSystemRouteSync.ts",
+    "frontend/e2e/product-system-ui-shell-navigation-v1.spec.ts",
+    "frontend/e2e/product-system-scope-deeplink-alignment-v1.spec.ts"
+  ],
+  "next_slice": "PRODUCT_SYSTEM_READINESS_API_TRUTH_V1"
+}

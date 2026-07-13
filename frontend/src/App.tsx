@@ -54,6 +54,9 @@ import Colaboratori from "./pages/Colaboratori";
 import Utilaje from "./pages/Utilaje";
 import SettingsPage from "./pages/Settings";
 import ProductSystem from "./pages/ProductSystem";
+import ProductSystemLayout from "./features/product-system/ProductSystemLayout";
+import ProductSystemIndexRedirect from "./features/product-system/ProductSystemIndexRedirect";
+import ProductSystemPlannedSectionPage from "./features/product-system/ProductSystemPlannedSectionPage";
 import Clients from "./pages/Clients";
 import ClientWorkspace from "./pages/ClientWorkspace";
 import DocumentCenter from "./pages/DocumentCenter";
@@ -165,7 +168,7 @@ const navSections: NavSection[] = [
     items: [
       { to: "/inventory", label: "Inventar & OC", icon: Warehouse },
       { to: "/inventory/pricing", label: "Pricing", icon: BarChart3 },
-      { to: "/product-system", label: "Product System", icon: Package },
+      { to: "/product-system/products", label: "Product System", icon: Package },
       { to: "/colaboratori", label: "Colaboratori", icon: Handshake },
       { to: "/utilaje", label: "Utilaje", icon: Cog },
       { to: "/reports", label: "Rapoarte", icon: BarChart3 },
@@ -280,7 +283,11 @@ function AppShell() {
                   <NavLink
                     key={item.to}
                     to={item.to}
-                    end={item.to === "/inventory"}
+                    end={
+                      item.to === "/inventory" || item.to === "/product-system/products"
+                        ? false
+                        : true
+                    }
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
                         isActive
@@ -382,14 +389,22 @@ function AppShell() {
               <Route path="/inventory/material-price-registry" element={<Navigate to="/inventory/pricing" replace />} />
               <Route path="/inventory/commercial-markup-policy" element={<Navigate to="/inventory/pricing" replace />} />
               <Route path="/inventory/productsystem-pricing-preview" element={<Navigate to="/inventory/pricing" replace />} />
-              <Route
-                path="/product-system"
-                element={
+              <Route path="/product-system" element={
                   <ErrorBoundary fallbackTitle="Eroare în ProductSystem">
-                    <ProductSystem />
+                    <ProductSystemLayout />
                   </ErrorBoundary>
                 }
-              />
+              >
+                <Route index element={<ProductSystemIndexRedirect />} />
+                <Route path="products" element={<ProductSystem />} />
+                <Route path="products/:templateCode" element={<ProductSystem />} />
+                <Route path="components" element={<ProductSystemPlannedSectionPage section="components" />} />
+                <Route path="resources" element={<ProductSystemPlannedSectionPage section="resources" />} />
+                <Route path="operations" element={<ProductSystemPlannedSectionPage section="operations" />} />
+                <Route path="dependencies" element={<ProductSystemPlannedSectionPage section="dependencies" />} />
+                <Route path="validation" element={<ProductSystemPlannedSectionPage section="validation" />} />
+                <Route path="advanced" element={<ProductSystemPlannedSectionPage section="advanced" />} />
+              </Route>
               <Route
                 path="/product-system/blueprint-dossier"
                 element={
@@ -420,8 +435,8 @@ function AppShell() {
                   </ErrorBoundary>
                 }
               />
-              <Route path="/products" element={<Navigate to="/product-system" replace />} />
-              <Route path="/templates" element={<Navigate to="/product-system" replace />} />
+              <Route path="/products" element={<Navigate to="/product-system/products" replace />} />
+              <Route path="/templates" element={<Navigate to="/product-system/products" replace />} />
               <Route path="/personal" element={<Navigate to="/employees" replace />} />
               <Route path="/employees" element={<Employees />} />
               <Route path="/employees-records" element={<EmployeesRecords />} />
