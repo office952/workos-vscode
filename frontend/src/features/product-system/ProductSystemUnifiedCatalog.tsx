@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ChevronDown, ChevronRight, MoreHorizontal } from "lucide-react";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
+import { normalizeTemplateCode } from "@/lib/activeTemplateScope";
 import { LETTERS_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
 import { COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE } from "./componentFirstReadonlyCompleteness";
 import { ComponentFirstReadonlyCandidatePanel } from "./ComponentFirstReadonlyCandidatePanel";
@@ -15,6 +16,11 @@ import {
   defaultTemplateDetailSection,
   ProductSystemTemplateDetailPanel,
 } from "./ProductSystemTemplateDetailPanel";
+import {
+  resolveTemplateQuerySelection,
+  selectedTemplateCodeFromEntry,
+  TEMPLATE_UNAVAILABLE_MESSAGE,
+} from "./productSystemTemplateQuerySync";
 import {
   UNIFIED_CATALOG_BUCKETS,
   UNIFIED_CATALOG_BUCKET_THEMES,
@@ -568,6 +574,8 @@ type ProductSystemUnifiedCatalogProps = {
   loading: boolean;
   search?: string;
   onSearchChange?: (value: string) => void;
+  requestedTemplateCode?: string | null;
+  onRequestedTemplateCodeChange?: (templateCode: string | null) => void;
   onOpenTemplate: (template: ProductTemplateEntity) => void;
 };
 
@@ -579,6 +587,8 @@ export function ProductSystemUnifiedCatalog({
   loading,
   search: searchProp,
   onSearchChange,
+  requestedTemplateCode = null,
+  onRequestedTemplateCodeChange,
   onOpenTemplate,
 }: ProductSystemUnifiedCatalogProps) {
   const [internalSearch, setInternalSearch] = useState("");
@@ -586,11 +596,14 @@ export function ProductSystemUnifiedCatalog({
   const setSearch = onSearchChange ?? setInternalSearch;
   const [filter, setFilter] = useState<UnifiedCatalogFilter>("all");
   const [selectedEntryId, setSelectedEntryId] = useState<string | null>(null);
+  const [templateQueryMessage, setTemplateQueryMessage] = useState<string | null>(null);
   const [templateDetailSection, setTemplateDetailSection] = useState<UnifiedCatalogDetailSection>("overview");
   const [candidateDetailSection, setCandidateDetailSection] = useState<
     "overview" | "components" | "dossier" | "guards-audit"
   >("overview");
   const [bucketExpanded, setBucketExpanded] = useState(initialBucketExpandedState);
+  const appliedQueryRef = useRef<string | null>(null);
+  const skipDefaultSelectRef = useRef(false);
 
   const entries = useMemo(
     () => buildUnifiedCatalogEntries({ templates, availabilityItems }),
@@ -612,8 +625,63 @@ export function ProductSystemUnifiedCatalog({
     entries.find((entry) => entry.id === selectedEntryId) ??
     null;
 
+  const normalizedRequestedCode = useMemo(
+    () => normalizeTemplateCode(requestedTemplateCode),
+    [requestedTemplateCode],
+  );
+
+  useEffect(() => {
+    if (loading || entries.length === 0) return;
+
+    if (!normalizedRequestedCode) {
+      appliedQueryRef.current = null;
+      setTemplateQueryMessage(null);
+      skipDefaultSelectRef.current = false;
+      return;
+    }
+
+    if (
+      appliedQueryRef.current === normalizedRequestedCode &&
+      selectedEntry &&
+      selectedEntry.kind === "template" &&
+      normalizeTemplateCode(selectedEntry.templateCode) === normalizedRequestedCode
+    ) {
+      return;
+    }
+
+    const resolution = resolveTemplateQuerySelection(
+      normalizedRequestedCode,
+      entries,
+      availabilityItems,
+    );
+
+    if (resolution.kind === "matched") {
+      setSelectedEntryId(resolution.entryId);
+      setTemplateDetailSection("overview");
+      setTemplateQueryMessage(null);
+      setBucketExpanded((current) => ({ ...current, [resolution.bucket]: true }));
+      skipDefaultSelectRef.current = true;
+      appliedQueryRef.current = normalizedRequestedCode;
+      return;
+    }
+
+    if (resolution.kind === "unavailable") {
+      setSelectedEntryId(null);
+      setTemplateQueryMessage(TEMPLATE_UNAVAILABLE_MESSAGE);
+      skipDefaultSelectRef.current = true;
+      appliedQueryRef.current = normalizedRequestedCode;
+    }
+  }, [
+    availabilityItems,
+    entries,
+    loading,
+    normalizedRequestedCode,
+    selectedEntry,
+  ]);
+
   useEffect(() => {
     if (selectedEntryId || loading || entries.length === 0) return;
+    if (skipDefaultSelectRef.current || normalizedRequestedCode) return;
     const lettersEntry = entries.find(
       (entry) => entry.templateCode === LETTERS_TEMPLATE_CODE && entry.bucket === "current-products",
     );
@@ -622,7 +690,7 @@ export function ProductSystemUnifiedCatalog({
       setTemplateDetailSection("overview");
       setBucketExpanded((current) => ({ ...current, "current-products": true }));
     }
-  }, [entries, loading, selectedEntryId]);
+  }, [entries, loading, normalizedRequestedCode, selectedEntryId]);
 
   useEffect(() => {
     const bucketsForFilter = filterToExpandedBuckets(filter);
@@ -651,11 +719,16 @@ export function ProductSystemUnifiedCatalog({
 
   const selectEntry = (entry: UnifiedCatalogEntry) => {
     setSelectedEntryId(entry.id);
+    setTemplateQueryMessage(null);
     setBucketExpanded((current) => ({ ...current, [entry.bucket]: true }));
     if (entry.kind === "template" && entry.template && entry.availability) {
       setTemplateDetailSection(defaultTemplateDetailSection(entry.isProduct));
     } else if (entry.kind === "candidate-set") {
       setCandidateDetailSection("overview");
+    }
+    const nextCode = selectedTemplateCodeFromEntry(entry);
+    if (onRequestedTemplateCodeChange) {
+      onRequestedTemplateCodeChange(nextCode);
     }
   };
 
@@ -701,8 +774,7 @@ export function ProductSystemUnifiedCatalog({
     const faceEntry =
       legacyEntries.find((entry) => entry.templateCode === "TPL-VOLUMETRIC-FACE_v1") ?? legacyEntries[0];
     if (!faceEntry) return;
-    setSelectedEntryId(faceEntry.id);
-    setBucketExpanded((current) => ({ ...current, "legacy-shared-modules": true }));
+    selectEntry(faceEntry);
     setTemplateDetailSection("guards");
   };
 
@@ -796,7 +868,20 @@ export function ProductSystemUnifiedCatalog({
           data-testid="product-system-detail-panel"
           className="min-h-[22rem] rounded-xl border border-slate-800/70 bg-slate-950/20 p-4 xl:sticky xl:top-3 xl:max-h-[calc(100vh-148px)] xl:overflow-y-auto"
         >
-          {!selectedEntry ? (
+          {templateQueryMessage ? (
+            <div
+              data-testid="product-system-template-query-unavailable"
+              className="flex h-full min-h-[18rem] flex-col items-center justify-center px-4 text-center"
+            >
+              <p className="text-sm font-medium text-amber-200">{templateQueryMessage}</p>
+              {normalizedRequestedCode ? (
+                <p className="mt-2 font-mono text-xs text-slate-500">{normalizedRequestedCode}</p>
+              ) : null}
+              <p className="mt-3 max-w-sm text-xs leading-relaxed text-slate-500">
+                Selectează un produs activ din catalog sau verifică codul template-ului solicitat.
+              </p>
+            </div>
+          ) : !selectedEntry ? (
             <div className="flex h-full min-h-[18rem] flex-col items-center justify-center px-4 text-center">
               <p className="text-sm font-medium text-slate-300">Nicio intrare selectată</p>
               <p className="mt-1 max-w-xs text-xs leading-relaxed text-slate-500">

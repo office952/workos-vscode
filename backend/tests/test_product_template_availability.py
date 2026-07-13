@@ -283,3 +283,12 @@ async def test_missing_links_mark_owner_valid_parent_not_offerable(db_session):
     item = _by_code(response.items)[LETTERS]
     assert item.quote_offerable is False
     assert item.status_reason == "missing_required_modules"
+
+
+def test_root_offerable_policy_includes_acm_excludes_logo():
+    from services.template_usage_mode_policy import ROOT_OFFERABLE_TEMPLATE_CODES
+
+    normalized = {code.strip().upper() for code in ROOT_OFFERABLE_TEMPLATE_CODES}
+    assert "TPL-VOLUMETRIC-LETTERS_V2" in normalized
+    assert "TPL-ACM-BOXED-MOUNTING-SUPPORT_V1" in normalized
+    assert "TPL-VOLUMETRIC-LOGO_V1" not in normalized

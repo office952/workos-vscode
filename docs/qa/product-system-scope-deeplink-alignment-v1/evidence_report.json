@@ -1,0 +1,45 @@
+{
+  "task_id": "PRODUCT_SYSTEM_SCOPE_DEEPLINK_ALIGNMENT_V1",
+  "head_before": "9219610",
+  "verdict": "PASS",
+  "timestamp": "2026-07-13",
+  "root_cause": "ProductSystemUnifiedCatalog auto-selected TPL-VOLUMETRIC-LETTERS_v2 on load; ProductSystem.tsx had no ?template= handler",
+  "frontend_scope": {
+    "owner_valid_codes": [
+      "TPL-VOLUMETRIC-LETTERS_v2",
+      "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+    ],
+    "backend_parity": true
+  },
+  "deep_link_results": {
+    "letters": { "requested": "TPL-VOLUMETRIC-LETTERS_v2", "displayed": "TPL-VOLUMETRIC-LETTERS_v2", "pass": true },
+    "acm": { "requested": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1", "displayed": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1", "pass": true },
+    "logo_archived": { "requested": "TPL-VOLUMETRIC-LOGO_v1", "behavior": "unavailable_message", "pass": true },
+    "unknown": { "requested": "TPL-DOES-NOT-EXIST", "behavior": "unavailable_message", "pass": true }
+  },
+  "history": { "back_forward": "pass", "refresh_acm": "pass" },
+  "intake_links_verified": [
+    { "source": "IntakeV6ReviewStep.tsx", "pattern": "/product-system?template=", "encoding": "encodeURIComponent", "codes": "mounting_solution, module_template_code" }
+  ],
+  "tests": {
+    "frontend_vitest": "17/17 pass",
+    "backend_pytest": "test_root_offerable_policy_includes_acm_excludes_logo",
+    "playwright": "product-system-scope-deeplink-alignment-v1.spec.ts pass"
+  },
+  "screenshots": [
+    "01_letters_deeplink_exact.png",
+    "02_acm_deeplink_exact.png",
+    "03_archived_template_explicit_state.png",
+    "04_history_refresh_preserved.png"
+  ],
+  "files_changed": [
+    "frontend/src/lib/activeTemplateScope.ts",
+    "frontend/src/lib/activeTemplateScope.test.ts",
+    "frontend/src/features/product-system/productSystemTemplateQuerySync.ts",
+    "frontend/src/features/product-system/ProductSystemUnifiedCatalog.tsx",
+    "frontend/src/pages/ProductSystem.tsx",
+    "frontend/src/features/product-system/productSystemNavigation.test.ts",
+    "frontend/e2e/product-system-scope-deeplink-alignment-v1.spec.ts",
+    "backend/tests/test_product_template_availability.py"
+  ]
+}

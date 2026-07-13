@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState, useCallback, useMemo, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
   productTemplateAvailabilityApi,
@@ -89,6 +89,7 @@ import {
   buildUnifiedCatalogSummary,
   ProductSystemUnifiedCatalog,
 } from "@/features/product-system/ProductSystemUnifiedCatalog";
+import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
 import {
   getInitialProductSystemScreen,
   isTemplateEditableForQuote,
@@ -3375,6 +3376,8 @@ function ProductSystemInfoPopover({
 // ============================================================
 export default function ProductSystem() {
   type TemplateLoadMode = "api" | "mock" | "empty_real" | "auth_required" | "error";
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTemplateCode = parseRequestedTemplateCode(searchParams.get("template"));
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
   const [availabilityItems, setAvailabilityItems] = useState<ProductTemplateAvailabilityItem[]>([]);
   const [families, setFamilies] = useState<ProductFamily[]>([]);
@@ -3391,6 +3394,24 @@ export default function ProductSystem() {
   const [pickerOpen, setPickerOpen] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [catalogSearch, setCatalogSearch] = useState("");
+
+  const handleRequestedTemplateCodeChange = useCallback(
+    (templateCode: string | null) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (templateCode) {
+            next.set("template", templateCode);
+          } else {
+            next.delete("template");
+          }
+          return next;
+        },
+        { replace: false },
+      );
+    },
+    [setSearchParams],
+  );
 
   const loadTemplates = useCallback(async (): Promise<ProductTemplateEntity[]> => {
     setLoading(true);
@@ -3934,6 +3955,8 @@ export default function ProductSystem() {
             loading={loading}
             search={catalogSearch}
             onSearchChange={setCatalogSearch}
+            requestedTemplateCode={requestedTemplateCode}
+            onRequestedTemplateCodeChange={handleRequestedTemplateCodeChange}
             onOpenTemplate={handleOpenEditor}
           />
         ) : null}
