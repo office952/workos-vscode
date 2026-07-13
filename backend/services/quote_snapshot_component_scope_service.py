@@ -190,6 +190,19 @@ async def build_frozen_component_scope(
     resolved = resolve_offer_scope(scope_input)
     offer_scope_snapshot = _build_offer_scope_snapshot(scope_input, resolved)
 
+    from services.sold_scope_dependency_validator_service import validate_sold_graph_from_payload
+
+    dependency = validate_sold_graph_from_payload(workspace_payload)
+    if not dependency.valid_for_confirmation:
+        extra_errors = [issue.code for issue in dependency.blockers]
+        extra_errors.extend(issue.code for issue in dependency.confirmations_required)
+        if extra_errors:
+            offer_scope_snapshot = offer_scope_snapshot.model_copy(
+                update={
+                    "validation_errors": list(offer_scope_snapshot.validation_errors or []) + extra_errors,
+                }
+            )
+
     if workspace_id:
         aggregate = await aggregate_svc.build_for_workspace(template_code, workspace_id)
     else:

@@ -198,11 +198,13 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			mode: "full_product" | "component_subset";
 			soldModules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
 			confirmed: boolean;
+			dependencyConfirmationCodes?: string[];
 		}) =>
 			saveOfferScope({
 				mode: input.mode,
 				soldModules: input.soldModules,
 				confirmed: input.confirmed,
+				dependencyConfirmationCodes: input.dependencyConfirmationCodes,
 			}),
 		[saveOfferScope],
 	);

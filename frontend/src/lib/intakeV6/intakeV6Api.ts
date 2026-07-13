@@ -254,6 +254,7 @@ export async function saveIntakeV6OfferScope(
     sold_modules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
     confirmed: boolean;
     operator_note?: string | null;
+    dependency_confirmation_codes?: string[];
   },
 ): Promise<IntakeV4WorkspaceResponse> {
   return requestIntakeV6Json(

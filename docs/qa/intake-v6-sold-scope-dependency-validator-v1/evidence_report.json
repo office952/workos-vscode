@@ -1,0 +1,79 @@
+{
+  "workspace": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "workspace_code": "IR-MRI01769",
+  "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
+  "captured_at": "2026-07-13T09:35:00.000Z",
+  "ui_driven": true,
+  "direct_api_used": false,
+  "spec": "frontend/e2e/intake-v6-sold-scope-dependency-validator-v1.spec.ts",
+  "screenshots": [
+    {
+      "file": "01_full_product_no_dependency_feedback.png",
+      "soldScope": "full_product",
+      "dependencyFeedbackVisible": false,
+      "notes": "No dependency panel when mode=full_product"
+    },
+    {
+      "file": "02_lighting_only_mount_confirmation_required.png",
+      "soldScope": "LIGHTING",
+      "dependencyFeedbackVisible": true,
+      "confirmButtons": ["LED_MOUNT_SURFACE_NOT_SOLD"],
+      "notes": "LIGHTING without BACK/FACE+CANT requires mount confirmation"
+    },
+    {
+      "file": "03_lighting_mount_confirmed.png",
+      "soldScope": "LIGHTING + LED_MOUNT_SURFACE_NOT_SOLD confirmed",
+      "dependencyFeedbackVisible": false,
+      "notes": "Operator confirmed existing/client mount surface"
+    },
+    {
+      "file": "04_back_lighting_mount_satisfied.png",
+      "soldScope": "BACK+LIGHTING",
+      "mountSatisfiedVisible": true,
+      "notes": "BACK provides LED_MOUNT_SURFACE capability"
+    },
+    {
+      "file": "05_face_cant_lighting_mount_satisfied.png",
+      "soldScope": "FACE+RETURN-CANT+LIGHTING",
+      "mountSatisfiedVisible": true,
+      "notes": "FACE+RETURN-CANT bundle provides mount surface"
+    },
+    {
+      "file": "06_electrical_only_load_confirmation_required.png",
+      "soldScope": "ELECTRICAL",
+      "confirmButtons": ["ELECTRICAL_LOAD_NOT_SOLD"],
+      "notes": "ELECTRICAL without LIGHTING requires load confirmation"
+    },
+    {
+      "file": "07_electrical_load_confirmed.png",
+      "soldScope": "ELECTRICAL + ELECTRICAL_LOAD_NOT_SOLD confirmed",
+      "notes": "Operator confirmed existing/separate LED load"
+    },
+    {
+      "file": "08_lighting_electrical_dual_confirmation_required.png",
+      "soldScope": "LIGHTING+ELECTRICAL",
+      "confirmButtons": ["LED_MOUNT_SURFACE_NOT_SOLD", "ELECTRICAL_LOAD_NOT_SOLD"],
+      "notes": "Combined subset shows both confirmation gates"
+    },
+    {
+      "file": "09_empty_subset_blocked.png",
+      "soldScope": "empty subset",
+      "notes": "Empty component_subset blocked with inline error"
+    },
+    {
+      "file": "10_reload_preserves_back_lighting_scope.png",
+      "soldScope": "BACK+LIGHTING after reload",
+      "reloadPreserved": true,
+      "backChecked": true,
+      "lightingChecked": true,
+      "notes": "Scope survives page reload"
+    }
+  ],
+  "validation_rules_verified": [
+    "full_product skips dependency rules",
+    "LIGHTING requires LED_MOUNT_SURFACE (BACK or FACE+RETURN-CANT)",
+    "ELECTRICAL without LIGHTING requires ELECTRICAL_LOAD_NOT_SOLD",
+    "empty subset blocked",
+    "permissive mode allows save with pending confirmations"
+  ]
+}

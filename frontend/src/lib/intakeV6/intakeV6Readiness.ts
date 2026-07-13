@@ -5,6 +5,11 @@ import {
   isAnalysisReadyForReview,
   isLayerRoleSetupComplete,
 } from "./intakeV6AnalysisIdentity";
+import {
+  firstDependencyBlockerMessage,
+  isOfferScopeDependencyReady,
+  readPersistedDependencyValidation,
+} from "./intakeV6OfferScopeDependency";
 
 export function isFinishSetupConfirmed(payload: Record<string, unknown> | undefined): boolean {
   const finish = payload?.finish_setup;
@@ -28,7 +33,7 @@ export function isOfferScopeConfirmed(payload: Record<string, unknown> | undefin
   if (scope == null && confirmation == null) return true;
   if (confirmation == null || typeof confirmation !== "object" || Array.isArray(confirmation)) return false;
   if ((confirmation as Record<string, unknown>).confirmed !== true) return false;
-  return isOfferScopeValid(payload);
+  return isOfferScopeValid(payload) && isOfferScopeDependencyReady(payload);
 }
 
 export function isOfferScopeValid(payload: Record<string, unknown> | undefined): boolean {
@@ -98,6 +103,10 @@ export function getIntakeV6FirstBlocker(state: IntakeV6WorkspaceState): string |
   if (readiness === "offer_scope_not_confirmed" || !isOfferScopeConfirmed(payload)) {
     if (!isOfferScopeValid(payload)) {
       return "Selectează cel puțin o componentă pentru scope parțial.";
+    }
+    const dependencyMessage = firstDependencyBlockerMessage(readPersistedDependencyValidation(payload));
+    if (dependencyMessage) {
+      return dependencyMessage;
     }
     return "Confirmă ce producem (produs complet sau componente selectate).";
   }

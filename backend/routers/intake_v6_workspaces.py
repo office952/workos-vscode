@@ -316,6 +316,7 @@ async def update_offer_scope_v6(
         sold_modules=[str(code) for code in request.sold_modules],
         confirmed=request.confirmed,
         operator_note=request.operator_note,
+        dependency_confirmation_codes=[str(code) for code in request.dependency_confirmation_codes],
         current_user=current_user,
     )
 

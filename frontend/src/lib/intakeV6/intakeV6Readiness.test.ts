@@ -94,4 +94,44 @@ describe("intakeV6Readiness boundary", () => {
     expect(isOfferScopeValid(payload)).toBe(true);
     expect(isOfferScopeConfirmed(payload)).toBe(true);
   });
+
+  it("blocks offer scope when dependency confirmations are pending", () => {
+    const payload = {
+      offer_scope: {
+        contract_version: "offer_scope_contract/v1",
+        mode: "component_subset",
+        sold_modules: ["LIGHTING"],
+      },
+      offer_scope_confirmed: { confirmed: true },
+      offer_scope_dependency_validation: {
+        valid: false,
+        valid_for_save: true,
+        valid_for_confirmation: false,
+        blockers: [],
+        confirmations_required: [
+          {
+            severity: "confirmation_required",
+            code: "LED_MOUNT_SURFACE_NOT_SOLD",
+            message: "Iluminarea necesita un suport de montaj.",
+          },
+        ],
+        warnings: [],
+        satisfied_capabilities: [],
+        missing_capabilities: ["LED_MOUNT_SURFACE"],
+        resolved_calc_modules: [],
+      },
+    };
+    expect(isOfferScopeConfirmed(payload)).toBe(false);
+    expect(getIntakeV6FirstBlocker({
+      ...initialIntakeV6WorkspaceState,
+      workspace: {
+        ...syncedWorkspace,
+        readiness_status: "offer_scope_not_confirmed",
+        payload: {
+          ...syncedWorkspace.payload,
+          ...payload,
+        },
+      },
+    })).toMatch(/suport de montaj/i);
+  });
 });

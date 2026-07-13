@@ -7,6 +7,12 @@ import {
   type OfferScopeMode,
   type SoldModuleCode,
 } from "@/lib/intakeV6/intakeV6OfferScopeState";
+import {
+  previewSoldScopeDependencyValidation,
+  readDependencyConfirmations,
+  readPersistedDependencyValidation,
+} from "@/lib/intakeV6/intakeV6OfferScopeDependency";
+import IntakeV6OfferScopeDependencyFeedback from "./IntakeV6OfferScopeDependencyFeedback";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 const SLICE1_MODULES: Array<{ code: SoldModuleCode; label: string; testId: string }> = [
@@ -50,6 +56,7 @@ export default function IntakeV6OfferScopePanel({
     mode: OfferScopeMode;
     soldModules: SoldModuleCode[];
     confirmed: boolean;
+    dependencyConfirmationCodes?: string[];
   }) => Promise<boolean>;
   disabled?: boolean;
 }) {
@@ -58,6 +65,7 @@ export default function IntakeV6OfferScopePanel({
   const [soldModules, setSoldModules] = useState<SoldModuleCode[]>(persisted.soldModules);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [confirmingDependencyCode, setConfirmingDependencyCode] = useState<string | null>(null);
   const [acknowledgedSerialized, setAcknowledgedSerialized] = useState(persisted.serialized);
   const onSaveRef = useRef(onSave);
   const soldModulesRef = useRef(soldModules);
@@ -105,6 +113,43 @@ export default function IntakeV6OfferScopePanel({
   const dirty = localSerialized !== acknowledgedSerialized;
   const confirmed =
     !dirty && !subsetInvalid && (persisted.confirmed || localSerialized === acknowledgedSerialized);
+
+  const dependencyValidation = useMemo(() => {
+    const confirmations = readDependencyConfirmations(payload);
+    if (!dirty && localSerialized === acknowledgedSerialized) {
+      return readPersistedDependencyValidation(payload) ?? previewSoldScopeDependencyValidation({
+        mode: localState.mode,
+        soldModules: localState.soldModules,
+        dependencyConfirmations: confirmations,
+      });
+    }
+    return previewSoldScopeDependencyValidation({
+      mode: localState.mode,
+      soldModules: localState.soldModules,
+      dependencyConfirmations: confirmations,
+    });
+  }, [acknowledgedSerialized, dirty, localSerialized, localState.mode, localState.soldModules, payload]);
+
+  const handleConfirmDependency = useCallback(
+    async (code: string) => {
+      setConfirmingDependencyCode(code);
+      setSaveError(null);
+      try {
+        const ok = await onSaveRef.current({
+          mode: localState.mode,
+          soldModules: localState.soldModules,
+          confirmed: true,
+          dependencyConfirmationCodes: [code],
+        });
+        if (!ok) {
+          setSaveError("Confirmarea dependenței a eșuat.");
+        }
+      } finally {
+        setConfirmingDependencyCode(null);
+      }
+    },
+    [localState.mode, localState.soldModules],
+  );
 
   const flushPersistQueue = useCallback(async () => {
     const intent = latestIntentRef.current;
@@ -244,6 +289,12 @@ export default function IntakeV6OfferScopePanel({
           Selectează cel puțin o componentă (Față, Cant, Spate, Iluminare sau Electrică).
         </p>
       ) : null}
+
+      <IntakeV6OfferScopeDependencyFeedback
+        validation={dependencyValidation}
+        onConfirmCode={handleConfirmDependency}
+        confirmingCode={confirmingDependencyCode}
+      />
 
       {saveError ? <p className="mt-2 text-[11px] text-rose-300">{saveError}</p> : null}
 

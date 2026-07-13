@@ -140,7 +140,14 @@ def _offer_scope_ready(payload: IntakeV6WorkspacePayload) -> bool:
             sold_modules=list(payload.offer_scope.sold_modules),
         )
     )
-    return not resolved.validation_errors
+    if resolved.validation_errors:
+        return False
+
+    from services.sold_scope_dependency_validator_service import validate_sold_graph_from_payload
+
+    payload_raw = payload.model_dump(mode="json")
+    dependency = validate_sold_graph_from_payload(payload_raw if isinstance(payload_raw, dict) else None)
+    return dependency.valid_for_confirmation
 
 
 def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
@@ -1054,10 +1061,16 @@ async def save_offer_scope_for_intake_v6_workspace(
     sold_modules: list[str],
     confirmed: bool,
     operator_note: str | None = None,
+    dependency_confirmation_codes: list[str] | None = None,
     current_user: UserResponse,
 ) -> IntakeV6WorkspaceResponse:
     from schemas.offer_scope import OfferScope, OfferScopeInput
     from services.offer_scope_resolver_service import resolve_offer_scope
+    from services.sold_scope_dependency_validator_service import (
+        merge_dependency_confirmations,
+        sync_offer_scope_dependency_validation,
+        validate_sold_graph,
+    )
 
     record = await _get_record_or_404(db, workspace_id)
     if record.archived_at is not None:
@@ -1070,6 +1083,9 @@ async def save_offer_scope_for_intake_v6_workspace(
     normalized_mode = str(mode or "full_product").strip()
     normalized_modules = [str(code).strip() for code in (sold_modules or []) if str(code).strip()]
     previous_modules = _read_scope_sold_modules(payload_raw)
+    sold_modules_changed = set(previous_modules) != set(normalized_modules) or (
+        payload_raw.get("offer_scope", {}).get("mode") != normalized_mode
+    )
     if normalized_mode == "full_product":
         scope = OfferScope(mode="full_product", sold_modules=[])
         next_modules: set[str] = set()
@@ -1093,6 +1109,35 @@ async def save_offer_scope_for_intake_v6_workspace(
             },
         )
 
+    merge_dependency_confirmations(
+        payload_raw,
+        new_codes=dependency_confirmation_codes,
+        sold_modules_changed=sold_modules_changed,
+    )
+
+    template_code = None
+    product_binding = payload_raw.get("product_binding")
+    if isinstance(product_binding, dict):
+        template_code = product_binding.get("template_code")
+
+    from services.sold_scope_dependency_validator_service import _read_dependency_confirmations
+
+    dependency = validate_sold_graph(
+        mode=scope.mode,
+        sold_modules=list(scope.sold_modules),
+        template_code=str(template_code) if template_code else None,
+        dependency_confirmations=_read_dependency_confirmations(payload_raw),
+    )
+
+    if confirmed and not dependency.valid_for_save:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "offer_scope_dependency_invalid",
+                "dependency_validation": dependency.model_dump(mode="json"),
+            },
+        )
+
     payload_raw["offer_scope"] = scope.model_dump(mode="json")
     payload_raw["offer_scope_confirmed"] = {
         "confirmed": bool(confirmed),
@@ -1100,7 +1145,13 @@ async def save_offer_scope_for_intake_v6_workspace(
         "confirmed_by": current_user.email or current_user.name or str(current_user.id),
         "operator_note": operator_note,
         "source": "operator_offer_scope_v1",
+        "dependency_confirmations": (
+            payload_raw.get("offer_scope_confirmed", {}).get("dependency_confirmations", [])
+            if isinstance(payload_raw.get("offer_scope_confirmed"), dict)
+            else []
+        ),
     }
+    sync_offer_scope_dependency_validation(payload_raw)
     if normalized_mode == "component_subset":
         _invalidate_finish_confirmations_for_deselected_scope(
             payload_raw,

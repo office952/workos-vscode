@@ -470,6 +470,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
       mode: "full_product" | "component_subset";
       soldModules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
       confirmed: boolean;
+      dependencyConfirmationCodes?: string[];
     }) => {
       const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;
       if (!targetWorkspaceId) {
@@ -482,6 +483,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
           mode: input.mode,
           sold_modules: input.soldModules,
           confirmed: input.confirmed,
+          dependency_confirmation_codes: input.dependencyConfirmationCodes,
         });
         if (!mountedRef.current) return false;
         cacheIntakeV6Workspace(workspace);

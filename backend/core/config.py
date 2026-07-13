@@ -105,6 +105,10 @@ class Settings(BaseSettings):
     # Activated: 2026-05-09 Phase 8 Controlled Activation.
     gate_writer_strict: bool = True
 
+    # Intake V6 — sold scope dependency validation strict mode (env OFFER_SCOPE_DEPENDENCY_STRICT).
+    # Default permissive: save allowed with confirmation-required warnings visible.
+    offer_scope_dependency_strict: bool = False
+
     class Config:
         case_sensitive = False
         extra = "ignore"

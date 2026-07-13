@@ -14,6 +14,7 @@ from schemas.ai_informational_layer import (
     AiInformationalSuggestionItem,
 )
 from schemas.offer_scope import CanonicalSoldModule, OfferScope, OfferScopeMode
+from schemas.sold_scope_dependency import SoldScopeDependencyValidationResult
 
 INTAKE_V4_SCHEMA_VERSION = "1.0.0"
 PILOT_V4_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
@@ -247,6 +248,7 @@ class IntakeV4WorkspacePayload(BaseModel):
     finish_setup: IntakeV4FinishSetup | None = None
     offer_scope: OfferScope | None = None
     offer_scope_confirmed: dict[str, Any] | None = None
+    offer_scope_dependency_validation: SoldScopeDependencyValidationResult | None = None
     sheet_quote_override: dict[str, Any] | None = None
 
 
@@ -283,6 +285,7 @@ class IntakeV4OfferScopeSaveRequest(BaseModel):
     sold_modules: list[CanonicalSoldModule] = Field(default_factory=list)
     confirmed: bool = True
     operator_note: str | None = None
+    dependency_confirmation_codes: list[str] = Field(default_factory=list)
 
 
 class IntakeV4WorkspaceResponse(BaseModel):
