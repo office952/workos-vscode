@@ -6,6 +6,10 @@ from collections import Counter
 from typing import Any, Literal
 
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
+from services.intake_v4_backing_mode_service import (
+    finish_has_explicit_layer_backing_modes,
+    resolve_backing_mode_from_finish,
+)
 
 INTAKE_V4_DEFAULT_RETURN_FINISH_TYPE = "white_aluminum"
 
@@ -188,16 +192,82 @@ def _dominant_token(values: list[str | None], fallback: str | None) -> str | Non
     return Counter(cleaned).most_common(1)[0][0]
 
 
+def dump_intake_v4_finish_setup_for_persist(setup: IntakeV4FinishSetup) -> dict[str, Any]:
+    """JSON dict for workspace persist — omit trimmed global backing mirror keys."""
+    dumped = setup.model_dump(mode="json")
+    finish_dict = setup.model_dump(mode="json")
+    if finish_has_explicit_layer_backing_modes(finish_dict):
+        dumped.pop("backing_mode", None)
+        dumped.pop("back_bevel_enabled", None)
+    return dumped
+
+
+def strip_global_backing_mirror_from_finish_dict(finish: dict[str, Any] | None) -> None:
+    """In-place removal of legacy global backing mirror when per-layer backing exists."""
+    if not isinstance(finish, dict):
+        return
+    if finish_has_explicit_layer_backing_modes(finish):
+        finish.pop("backing_mode", None)
+        finish.pop("back_bevel_enabled", None)
+
+
+def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, Any]) -> IntakeV4FinishSetup:
+    """Apply normalize updates; allow explicit null for trimmed global mirror fields."""
+    if not updates:
+        return setup
+    filtered: dict[str, Any] = {}
+    for key, value in updates.items():
+        if value is not None or key in {"backing_mode", "back_bevel_enabled"}:
+            filtered[key] = value
+    return setup.model_copy(update=filtered)
+
+
+def _trim_global_backing_mirror_from_layers(
+    setup: IntakeV4FinishSetup,
+    groups: list[IntakeV4LetterGroupFinish],
+    artwork: list[IntakeV4ArtworkFinish],
+    updates: dict[str, Any],
+) -> None:
+    """Per-layer backing is authoritative — hydrate missing rows, drop global mirror."""
+    finish_dict = setup.model_dump(mode="json")
+    if not finish_has_explicit_layer_backing_modes(finish_dict):
+        return
+
+    global_mode = resolve_backing_mode_from_finish(finish_dict) or "forex_10_no_bevel"
+
+    if groups:
+        updates["letter_group_finishes"] = [
+            group.model_copy(update={"backing_mode": global_mode})
+            if group.backing_mode is None
+            else group
+            for group in groups
+        ]
+    if artwork:
+        updates["artwork_finishes"] = [
+            row.model_copy(update={"backing_mode": global_mode})
+            if row.backing_mode is None
+            else row
+            for row in artwork
+        ]
+
+    updates["backing_mode"] = None
+    updates["back_bevel_enabled"] = None
+
+
 def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4FinishSetup:
     """Sync job-level finish fields from per-layer truth when groups/artwork exist."""
     groups = list(setup.letter_group_finishes or [])
     artwork = list(setup.artwork_finishes or [])
     updates: dict[str, Any] = {}
 
-    if setup.backing_mode == "forex_10_with_bevel":
-        updates["back_bevel_enabled"] = True
-    elif setup.backing_mode in {"none", "forex_10_no_bevel"}:
-        updates["back_bevel_enabled"] = False
+    finish_dict = setup.model_dump(mode="json")
+    has_explicit_layer_backing = finish_has_explicit_layer_backing_modes(finish_dict)
+
+    if not has_explicit_layer_backing or not (groups or artwork):
+        if setup.backing_mode == "forex_10_with_bevel":
+            updates["back_bevel_enabled"] = True
+        elif setup.backing_mode in {"none", "forex_10_no_bevel"}:
+            updates["back_bevel_enabled"] = False
 
     if setup.selected_psu_watts is None and setup.psu_configuration:
         psu_values = [int(w) for w in setup.psu_configuration if isinstance(w, int) and w > 0]
@@ -205,7 +275,7 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
             updates["selected_psu_watts"] = max(psu_values)
 
     if not groups and not artwork:
-        return setup.model_copy(update=updates) if updates else setup
+        return _apply_finish_setup_updates(setup, updates)
 
     if groups:
         updates["face_finish_type"] = _dominant_token(
@@ -228,7 +298,9 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
         if depths:
             updates["return_depth_mm"] = max(float(d) for d in depths)
 
-    return setup.model_copy(update={k: v for k, v in updates.items() if v is not None})
+    _trim_global_backing_mirror_from_layers(setup, groups, artwork, updates)
+
+    return _apply_finish_setup_updates(setup, updates)
 
 
 ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]

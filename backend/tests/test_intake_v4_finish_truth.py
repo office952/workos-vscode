@@ -5,6 +5,7 @@ from __future__ import annotations
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
 from services.intake_v4_finish_truth_service import (
     any_letter_group_face_vinyl_required,
+    dump_intake_v4_finish_setup_for_persist,
     format_intake_v4_return_finish_operator_label,
     mounting_scope_runtime_state,
     normalize_intake_v4_finish_setup,
@@ -207,3 +208,108 @@ def test_format_return_finish_operator_labels():
     assert format_intake_v4_return_finish_operator_label("white_aluminum") == "Alb"
     assert format_intake_v4_return_finish_operator_label("standard_aluminum") == "Argintiu"
     assert format_intake_v4_return_finish_operator_label(None) == "Alb"
+
+
+def test_normalize_preserves_legacy_global_backing_when_layers_have_none():
+    setup = IntakeV4FinishSetup(
+        backing_mode="forex_10_with_bevel",
+        back_bevel_enabled=True,
+        letter_group_finishes=[
+            IntakeV4LetterGroupFinish(
+                group_key="a",
+                layer_name="A",
+                face_finish_type="oracal_651",
+                return_finish_type="standard_aluminum",
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.backing_mode == "forex_10_with_bevel"
+    assert normalized.back_bevel_enabled is True
+    assert normalized.letter_group_finishes[0].backing_mode is None
+
+
+def test_normalize_strips_global_backing_mirror_when_layer_explicit():
+    setup = IntakeV4FinishSetup(
+        backing_mode="forex_10_no_bevel",
+        back_bevel_enabled=False,
+        letter_group_finishes=[
+            IntakeV4LetterGroupFinish(
+                group_key="a",
+                layer_name="A",
+                face_finish_type="oracal_651",
+                return_finish_type="standard_aluminum",
+                backing_mode="forex_10_with_bevel",
+            ),
+            IntakeV4LetterGroupFinish(
+                group_key="b",
+                layer_name="B",
+                face_finish_type="oracal_651",
+                return_finish_type="standard_aluminum",
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    dumped = normalized.model_dump(mode="json")
+    assert dumped.get("backing_mode") is None
+    assert dumped.get("back_bevel_enabled") is None
+    assert normalized.letter_group_finishes[0].backing_mode == "forex_10_with_bevel"
+    assert normalized.letter_group_finishes[1].backing_mode == "forex_10_no_bevel"
+
+
+def test_normalize_mixed_layers_keep_independent_backing_values():
+    setup = IntakeV4FinishSetup(
+        backing_mode="forex_10_no_bevel",
+        letter_group_finishes=[
+            IntakeV4LetterGroupFinish(
+                group_key="a",
+                layer_name="A",
+                backing_mode="forex_10_no_bevel",
+            ),
+            IntakeV4LetterGroupFinish(
+                group_key="b",
+                layer_name="B",
+                backing_mode="forex_10_with_bevel",
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.letter_group_finishes[0].backing_mode == "forex_10_no_bevel"
+    assert normalized.letter_group_finishes[1].backing_mode == "forex_10_with_bevel"
+    assert normalized.model_dump(mode="json").get("backing_mode") is None
+
+
+def test_normalize_artwork_explicit_backing_strips_global_mirror():
+    setup = IntakeV4FinishSetup(
+        backing_mode="forex_10_with_bevel",
+        artwork_finishes=[
+            IntakeV4ArtworkFinish(
+                layer_key="logo",
+                layer_name="Logo",
+                execution_type="needs_decision",
+                backing_mode="forex_10_no_bevel",
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.model_dump(mode="json").get("backing_mode") is None
+    assert normalized.artwork_finishes[0].backing_mode == "forex_10_no_bevel"
+
+
+def test_dump_for_persist_omits_global_mirror_keys():
+    setup = IntakeV4FinishSetup(
+        backing_mode="forex_10_no_bevel",
+        back_bevel_enabled=False,
+        letter_group_finishes=[
+            IntakeV4LetterGroupFinish(
+                group_key="a",
+                layer_name="A",
+                backing_mode="forex_10_with_bevel",
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    dumped = dump_intake_v4_finish_setup_for_persist(normalized)
+    assert "backing_mode" not in dumped
+    assert "back_bevel_enabled" not in dumped
+    assert dumped["letter_group_finishes"][0]["backing_mode"] == "forex_10_with_bevel"

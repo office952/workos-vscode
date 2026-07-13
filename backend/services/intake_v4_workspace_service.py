@@ -160,6 +160,24 @@ async def _persist_payload(
     return _record_to_response(record)
 
 
+async def _persist_payload_json_raw(
+    db: AsyncSession,
+    record: IntakeV4WorkspaceRecord,
+    payload_raw: dict[str, Any],
+    *,
+    current_user: UserResponse,
+) -> IntakeV4WorkspaceResponse:
+    payload = _parse_payload(payload_raw)
+    record.payload_json = _json_dumps(payload_raw)
+    record.readiness_status = _derive_readiness_status(payload)
+    record.status = _derive_workspace_status(record.readiness_status)
+    record.updated_by_user_id = current_user.id
+    record.updated_at = _utcnow()
+    await db.commit()
+    await db.refresh(record)
+    return _record_to_response(record)
+
+
 async def create_intake_v4_workspace(
     db: AsyncSession,
     request: IntakeV4WorkspaceCreateRequest,
@@ -448,7 +466,11 @@ async def save_finish_setup_for_intake_v4_workspace(
 
     assert_v4_analysis_boundary_or_raise(payload)
 
-    from services.intake_v4_finish_truth_service import normalize_intake_v4_finish_setup
+    from services.intake_v4_finish_truth_service import (
+        dump_intake_v4_finish_setup_for_persist,
+        normalize_intake_v4_finish_setup,
+        strip_global_backing_mirror_from_finish_dict,
+    )
 
     normalized = normalize_intake_v4_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
@@ -459,16 +481,21 @@ async def save_finish_setup_for_intake_v4_workspace(
     template_code = record.template_code or "TPL-VOLUMETRIC-LETTERS"
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
-    payload_raw["finish_setup"] = normalized.model_dump(mode="json")
+    payload_raw["finish_setup"] = dump_intake_v4_finish_setup_for_persist(normalized)
     if dossier_warnings:
         payload_raw.setdefault("_dossier_validation_warnings", [])
         payload_raw["_dossier_validation_warnings"] = dossier_warnings
     from services.intake_v4_pricing_preview_sync_service import apply_v4_pricing_preview_derived_state
 
     apply_v4_pricing_preview_derived_state(payload_raw)
+    strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
     apply_return_cant_runtime_product_truth_bridge(payload_raw)
-    payload = _parse_payload(payload_raw)
-    return await _persist_payload(db, record, payload, current_user=current_user)
+    return await _persist_payload_json_raw(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
 
 
 async def save_sheet_footprint_override_for_intake_v4_workspace(

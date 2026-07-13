@@ -1220,6 +1220,10 @@ async def save_finish_setup_for_intake_v6_workspace(
     assert_v6_analysis_boundary_or_raise(payload)
 
     from services.intake_v6_finish_truth_service import normalize_intake_v6_finish_setup
+    from services.intake_v4_finish_truth_service import (
+        dump_intake_v4_finish_setup_for_persist,
+        strip_global_backing_mirror_from_finish_dict,
+    )
 
     normalized = normalize_intake_v6_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
@@ -1230,7 +1234,7 @@ async def save_finish_setup_for_intake_v6_workspace(
     template_code = record.template_code or "TPL-VOLUMETRIC-LETTERS"
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
-    payload_raw["finish_setup"] = normalized.model_dump(mode="json")
+    payload_raw["finish_setup"] = dump_intake_v4_finish_setup_for_persist(normalized)
     if payload_raw.get("layer_role_setup"):
         apply_product_composition_recommendation(payload_raw)
     if dossier_warnings:
@@ -1239,9 +1243,14 @@ async def save_finish_setup_for_intake_v6_workspace(
     from services.intake_v6_pricing_preview_sync_service import apply_v6_pricing_preview_derived_state
 
     apply_v6_pricing_preview_derived_state(payload_raw)
+    strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
     apply_return_cant_runtime_product_truth_bridge(payload_raw)
-    payload = _parse_payload(payload_raw)
-    return await _persist_payload(db, record, payload, current_user=current_user)
+    return await _persist_payload_json_raw_for_product_truth_writer(
+        db,
+        record,
+        payload_raw,
+        current_user=current_user,
+    )
 
 
 async def save_sheet_footprint_override_for_intake_v6_workspace(

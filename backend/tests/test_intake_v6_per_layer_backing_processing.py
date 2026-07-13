@@ -300,6 +300,23 @@ class TestMaterialBreakdownPerLayerBacking:
         assert any(row.material_key == "forex_backing" for row in result.material_rows)
         assert "cnc_backing_cutting_forex_10mm" in {row.key for row in result.operation_rows}
 
+    def test_global_mirror_stripped_payload_unchanged_for_calc(self):
+        payload_with_global = _payload(
+            backing_mode="forex_10_no_bevel",
+            letter_group_finishes=[
+                _group("litere-a", perimeter_m=6.0, backing_mode="forex_10_no_bevel"),
+                _group("litere-b", perimeter_m=4.0, backing_mode="forex_10_with_bevel"),
+            ],
+        )
+        payload_trimmed = copy.deepcopy(payload_with_global)
+        finish = payload_trimmed["finish_setup"]
+        finish.pop("backing_mode", None)
+        finish.pop("back_bevel_enabled", None)
+        ops_global = _operation_quantities(payload_with_global)
+        ops_trimmed = _operation_quantities(payload_trimmed)
+        assert ops_global == ops_trimmed
+        assert ops_trimmed.get("cnc_backing_bevel_forex_10mm") == pytest.approx(8.0, rel=1e-3)
+
 
 class TestMergeCncRows:
     def test_merge_sums_equivalent_quantities(self):
