@@ -63,6 +63,11 @@ def test_normalize_acm_configuration_merges_defaults() -> None:
     assert config["fold_sides"] == "all"
 
 
+def test_normalize_acm_configuration_preserves_four_mm_for_explicit_block() -> None:
+    config = normalize_acm_mounting_configuration({"acm_thickness_mm": 4})
+    assert config["acm_thickness_mm"] == 4
+
+
 def test_build_linked_module_input_acm_branch() -> None:
     module_input = build_linked_module_input_from_solution(
         solution={

@@ -9,6 +9,7 @@ export const TPL_CUT_ACM_LETTERS = "TPL-CUT-ACM-LETTERS";
 export const ACM_THICKNESS_OPTIONS = [3, 4] as const;
 /** Boxed mounting intake — 4 mm deferred until owner price. */
 export const ACM_BOXED_MOUNTING_THICKNESS_OPTIONS = [3] as const;
+export const ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM = ACM_BOXED_MOUNTING_THICKNESS_OPTIONS;
 export const ACM_FOLD_SIDES_OPTIONS = [
   { value: "all", label: "Toate laturile" },
   { value: "top_bottom", label: "Sus + jos" },

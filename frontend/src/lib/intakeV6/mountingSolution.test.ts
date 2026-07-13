@@ -113,4 +113,9 @@ describe("mountingSolution", () => {
     expect(config.panel_area_m2).toBe(2);
     expect(config.fold_length_m).toBe(6);
   });
+
+  it("preserves 4 mm thickness for explicit resolver block (no silent coerce to 3)", () => {
+    const config = normalizeAcmMountingConfiguration({ acm_thickness_mm: 4 });
+    expect(config.acm_thickness_mm).toBe(4);
+  });
 });

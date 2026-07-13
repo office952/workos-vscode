@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from schemas.intake_v4 import IntakeV4MountingSolution
+from services.acm_bond_material_rate_resolver import BOXED_MOUNTING_SUPPORTED_THICKNESS_MM
 from services.acm_quote_input_helpers import derive_acm_casetted_quote_input
 from services.mounting_scope_service import is_mounting_preparation_active, normalize_mounting_scope
 
@@ -68,7 +69,11 @@ def normalize_acm_mounting_configuration(config: Mapping[str, Any] | None) -> di
         thickness = int(round(float(merged.get("acm_thickness_mm") or 3)))
     except (TypeError, ValueError):
         thickness = 3
-    merged["acm_thickness_mm"] = 3
+    if thickness in BOXED_MOUNTING_SUPPORTED_THICKNESS_MM:
+        merged["acm_thickness_mm"] = thickness
+    else:
+        # Preserve unsupported thickness (e.g. 4 mm) — boxed resolver blocks explicitly.
+        merged["acm_thickness_mm"] = thickness
     fold_sides = str(merged.get("fold_sides") or "all").strip().lower()
     if fold_sides not in {"all", "top_bottom", "left_right"}:
         fold_sides = "all"

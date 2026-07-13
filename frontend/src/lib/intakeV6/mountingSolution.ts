@@ -7,6 +7,7 @@ import {
 } from "@/lib/intakeV6/mountingScope";
 import {
   ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS,
+  ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM,
   deriveAcmCasettedQuoteInput,
   TPL_ACM_BOXED_MOUNTING_SUPPORT,
 } from "@/lib/acmQuoteInput";
@@ -92,8 +93,18 @@ export function normalizeAcmMountingConfiguration(
     const value = Number(merged[key] ?? DEFAULT_ACM_MOUNTING_CONFIGURATION[key]);
     merged[key] = Number.isFinite(value) ? value : DEFAULT_ACM_MOUNTING_CONFIGURATION[key];
   }
-  const thickness = Number(merged.acm_thickness_mm ?? 3);
-  merged.acm_thickness_mm = 3;
+  const thickness = Math.round(Number(merged.acm_thickness_mm ?? 3));
+  if (
+    Number.isFinite(thickness) &&
+    ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM.includes(
+      thickness as (typeof ACM_BOXED_MOUNTING_SUPPORTED_THICKNESS_MM)[number],
+    )
+  ) {
+    merged.acm_thickness_mm = thickness;
+  } else {
+    // Preserve unsupported thickness (e.g. 4 mm) — resolver blocks; do not coerce to 3.
+    merged.acm_thickness_mm = Number.isFinite(thickness) ? thickness : 3;
+  }
   const foldSides = String(merged.fold_sides ?? "all").trim().toLowerCase();
   merged.fold_sides = ["all", "top_bottom", "left_right"].includes(foldSides) ? foldSides : "all";
   const angle = Number(merged.v_groove_angle_deg ?? 135);

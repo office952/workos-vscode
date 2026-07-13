@@ -14,11 +14,11 @@ const ACM = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 const LETTERS = "TPL-VOLUMETRIC-LETTERS_v2";
 const WORKSPACE_ID = "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1";
 const OPERATOR_URL = "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator";
-const CPP_URL = `http://127.0.0.1:8000/api/v1/product-system/commercial-price-preview/${LETTERS}`;
+const CPP_URL = process.env.CPP_URL ?? `http://127.0.0.1:8000/api/v1/product-system/commercial-price-preview/${LETTERS}`;
 
 const ACM_QUOTE_INPUT = {
   analysis_ready: true,
-  client: { width_mm: 1200, height_mm: 800 },
+  client: { width_mm: 400, height_mm: 300 },
   quote_geometry: {
     letter_count: 3,
     letter_perimeter_m: 8.0,
@@ -29,8 +29,8 @@ const ACM_QUOTE_INPUT = {
     mounting_solution: {
       template_code: ACM,
       configuration: {
-        panel_width_mm: 1200,
-        panel_height_mm: 800,
+        panel_width_mm: 400,
+        panel_height_mm: 300,
         acm_thickness_mm: 3,
         return_depth_mm: 60,
         rear_lip_mm: 25,
@@ -133,8 +133,8 @@ async function main() {
       nodes.map((node) => node.getAttribute("value")),
     );
 
-    await page.getByTestId("intake-v6-mounting-acm-panel_width_mm").fill("1200");
-    await page.getByTestId("intake-v6-mounting-acm-panel_height_mm").fill("800");
+    await page.getByTestId("intake-v6-mounting-acm-panel_width_mm").fill("400");
+    await page.getByTestId("intake-v6-mounting-acm-panel_height_mm").fill("300");
     await page.getByTestId("intake-v6-mounting-acm-return_depth_mm").fill("60");
     await page.getByTestId("intake-v6-mounting-acm-rear_lip_mm").fill("25");
     await page.waitForTimeout(1500);

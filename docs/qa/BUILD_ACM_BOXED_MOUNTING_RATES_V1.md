@@ -48,10 +48,11 @@ cd backend
 ## Results (closeout 2026-07-13)
 
 - `pytest tests/test_acm_boxed_mounting_owner_rates_cpp_v1.py -q` → **7 passed**
-- `pytest tests/test_acm_boxed_mounting_template_v1.py tests/test_mounting_solution_intake_reference.py -k "not test_api_save" -q` → **19 passed**
-- `vitest run src/lib/intakeV6/mountingSolution.test.ts src/lib/acmQuoteInput.test.ts` → **12 passed**
-- Runtime UI (IR-MRI01769): 3 mm only, preparation_only + ACM casetat, reload preserved — see `docs/qa/product-system-acm-boxed-mounting-owner-rates-cpp-v1/evidence_report.json`
-- Runtime HTTP CPP on live :8000 returned **no ACM lines** (server likely on pre-reload code); CPP/EIC correctness proven by targeted pytest against seeded DB.
+- `pytest tests/test_acm_boxed_mounting_template_v1.py tests/test_mounting_solution_intake_reference.py -k "not test_api_save and not test_seed_creates" -q` → **20 passed**
+- `vitest run src/lib/intakeV6/mountingSolution.test.ts src/lib/acmQuoteInput.test.ts` → **13 passed**
+- Check 9: 4 mm preserved in normalization (explicit resolver block; no silent coerce to 3 mm)
+- Runtime UI (IR-MRI01769): 3 mm only, preparation_only + ACM casetat, panel 400×300 mm, reload preserved
+- Runtime CPP HTTP: **6 `acm_*` lines**, `acm_boxed_assembly` subtotal **20 EUR** (min charge at 400×300) — **PASS**
 
 ## Evidence
 
