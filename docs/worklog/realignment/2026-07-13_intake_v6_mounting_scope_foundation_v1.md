@@ -1,7 +1,8 @@
 # Worklog — INTAKE_V6_MOUNTING_SCOPE_FOUNDATION_V1
 
 **Date:** 2026-07-13  
-**HEAD:** 620f019  
+**Accepted HEAD:** 620f019  
+**Delivery HEAD:** b4124a5 (`6bdfb48` + `b4124a5`)  
 **Task:** INTAKE_V6_MOUNTING_SCOPE_FOUNDATION_V1
 
 ## Owner decision applied
