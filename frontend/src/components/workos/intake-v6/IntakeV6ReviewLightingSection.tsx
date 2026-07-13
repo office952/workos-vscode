@@ -110,13 +110,17 @@ export default function IntakeV6ReviewLightingSection({
   const fallbackDensity = ledAreaDensityModulesPerSqm(returnDepthMm ?? undefined);
   const shellClass = compact ? `${v6.cardCompact} !p-3` : `${v6.card} mb-4`;
   const showAnyLedScope = showLightingFields || showElectricalFields;
+  const canEditLedMaster = showLightingFields;
+  const showOperatorFields =
+    (showLightingFields && illuminated) ||
+    (showElectricalFields && (!showLightingFields || illuminated));
 
   return (
     <div className={shellClass} data-testid="intake-v6-review-lighting-section">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
           <p className={compact ? v6.zoneTitle : v6.sectionTitle}>Iluminare LED</p>
-          {illuminated && ledDisplayPerimeterM != null ? (
+          {canEditLedMaster && illuminated && ledDisplayPerimeterM != null ? (
             <p className="mt-0.5 text-[10px] text-slate-500">
               Perimetru litere:{" "}
               <span className="font-semibold tabular-nums text-slate-300" data-testid="intake-v6-led-letters-perimeter">
@@ -125,58 +129,62 @@ export default function IntakeV6ReviewLightingSection({
             </p>
           ) : null}
         </div>
-        <label
-          className={[
-            "group flex min-w-[180px] cursor-pointer items-center gap-2 rounded border px-2.5 py-1.5 transition",
-            illuminated
-              ? "border-cyan-400/60 bg-cyan-400/10 text-cyan-50"
-              : "border-[#2A3548] bg-[#0A0F1A] text-slate-400 hover:border-cyan-400/30 hover:text-slate-200",
-          ].join(" ")}
-        >
-          <input
-            type="checkbox"
-            className="sr-only"
-            checked={illuminated}
-            onChange={(event) => onIlluminatedChange(event.target.checked)}
-            data-testid="intake-v6-illuminated"
-          />
-          <span
+        {canEditLedMaster ? (
+          <label
             className={[
-              "flex h-7 w-7 shrink-0 items-center justify-center rounded border transition",
+              "group flex min-w-[180px] cursor-pointer items-center gap-2 rounded border px-2.5 py-1.5 transition",
               illuminated
-                ? "border-cyan-300/70 bg-cyan-300 text-slate-950"
-                : "border-slate-600 bg-slate-900 text-slate-500 group-hover:text-cyan-200",
+                ? "border-cyan-400/60 bg-cyan-400/10 text-cyan-50"
+                : "border-[#2A3548] bg-[#0A0F1A] text-slate-400 hover:border-cyan-400/30 hover:text-slate-200",
             ].join(" ")}
           >
-            {illuminated ? <Lightbulb className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
-          </span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-[10px] font-semibold">
-              {illuminated ? "LED activ" : "LED oprit"}
-            </span>
-          </span>
-          <span
-            aria-hidden="true"
-            className={[
-              "relative h-4 w-8 rounded-full border transition",
-              illuminated ? "border-cyan-300 bg-cyan-300/80" : "border-slate-600 bg-slate-800",
-            ].join(" ")}
-          >
+            <input
+              type="checkbox"
+              className="sr-only"
+              checked={illuminated}
+              onChange={(event) => onIlluminatedChange(event.target.checked)}
+              data-testid="intake-v6-illuminated"
+            />
             <span
               className={[
-                "absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white transition",
-                illuminated ? "left-4" : "left-0.5",
+                "flex h-7 w-7 shrink-0 items-center justify-center rounded border transition",
+                illuminated
+                  ? "border-cyan-300/70 bg-cyan-300 text-slate-950"
+                  : "border-slate-600 bg-slate-900 text-slate-500 group-hover:text-cyan-200",
               ].join(" ")}
-            />
-          </span>
-        </label>
+            >
+              {illuminated ? <Lightbulb className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-[10px] font-semibold">
+                {illuminated ? "LED activ" : "LED oprit"}
+              </span>
+            </span>
+            <span
+              aria-hidden="true"
+              className={[
+                "relative h-4 w-8 rounded-full border transition",
+                illuminated ? "border-cyan-300 bg-cyan-300/80" : "border-slate-600 bg-slate-800",
+              ].join(" ")}
+            >
+              <span
+                className={[
+                  "absolute top-0.5 h-2.5 w-2.5 rounded-full bg-white transition",
+                  illuminated ? "left-4" : "left-0.5",
+                ].join(" ")}
+              />
+            </span>
+          </label>
+        ) : showElectricalFields ? (
+          <p className="text-[10px] text-slate-500" data-testid="intake-v6-led-master-readonly">
+            Iluminare neinclusă în ofertă
+          </p>
+        ) : null}
       </div>
 
-      {!illuminated ? (
-        <p className="text-[10px] text-slate-500">Fără iluminare LED.</p>
-      ) : !showAnyLedScope ? (
+      {!showAnyLedScope ? (
         <p className="text-[10px] text-slate-500">Iluminare / electrică nu sunt în scope-ul ofertei.</p>
-      ) : (
+      ) : showOperatorFields ? (
         <div className="space-y-3" data-testid="intake-v6-lighting-fields">
           {showLightingFields ? (
             <section className="space-y-2.5" data-testid="intake-v6-lighting-subsection">
@@ -271,22 +279,6 @@ export default function IntakeV6ReviewLightingSection({
                 ) : null}
               </p>
             </section>
-          ) : null}
-
-          {!showLightingFields && totalLedModuleCount != null ? (
-            <p className="text-[10px] text-slate-500" data-testid="intake-v6-led-calc-readout">
-              Module LED (calc):{" "}
-              <span className="font-medium tabular-nums text-slate-300">{totalLedModuleCount} buc</span>
-              {estimatedLedWatts != null ? (
-                <>
-                  {" "}
-                  · consum{" "}
-                  <span className="font-medium tabular-nums text-slate-300">
-                    {estimatedLedWatts.toFixed(2)} W
-                  </span>
-                </>
-              ) : null}
-            </p>
           ) : null}
 
           {showElectricalFields ? (
@@ -429,7 +421,9 @@ export default function IntakeV6ReviewLightingSection({
             </div>
           </IntakeV6TechnicalDetailsAccordion>
         </div>
-      )}
+      ) : showLightingFields && !illuminated ? (
+        <p className="text-[10px] text-slate-500">Fără iluminare LED.</p>
+      ) : null}
     </div>
   );
 }

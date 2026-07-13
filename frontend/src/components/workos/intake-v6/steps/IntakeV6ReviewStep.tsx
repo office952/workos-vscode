@@ -1906,9 +1906,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             >
               <IntakeV6ReviewLightingSection
                 illuminated={form.illuminated !== false}
-                onIlluminatedChange={(value) =>
-                  updateForm({ illuminated: value }, { domains: ["lighting"] })
-                }
+                onIlluminatedChange={(value) => {
+                  if (!soldScopeVisibility.lighting) return;
+                  updateForm({ illuminated: value }, { domains: ["lighting"] });
+                }}
                 lightingSystemType={form.lighting_system_type ?? "led_modules"}
                 onLightingSystemTypeChange={(value) =>
                   updateForm(
