@@ -1,0 +1,38 @@
+{
+  "task": "PRODUCT_SYSTEM_ACM_BOXED_MOUNTING_STANDALONE_OFFER_FLOW_V1",
+  "captured_at": "2026-07-13T19:01:00.000Z",
+  "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "backend_pytest": {
+    "command": "pytest tests/test_acm_boxed_mounting_standalone_offer_v1.py tests/test_acm_boxed_mounting_owner_rates_cpp_v1.py -q",
+    "result": "16 passed",
+    "cases": [
+      "standalone_root_template_policy",
+      "availability_marks_acm_root_offerable",
+      "product_definition_standalone_root_builds",
+      "standalone_payload_derivation_and_detection",
+      "four_mm_blocked_standalone_material_resolution",
+      "standalone_cpp_emits_six_acm_lines_with_assembly_min",
+      "standalone_eic_capacity_hints",
+      "standalone_aggregate_face_and_return_materials",
+      "standalone_quote_snapshot_v2_preview"
+    ]
+  },
+  "frontend_vitest": {
+    "command": "vitest run src/lib/acmQuoteInput.test.ts src/lib/intakeV6/mountingSolution.test.ts",
+    "result": "15 passed"
+  },
+  "playwright": {
+    "spec": "frontend/e2e/product-system-acm-boxed-mounting-standalone-offer-v1.spec.ts",
+    "attempts": 2,
+    "result": "PARTIAL",
+    "note": "Catalog screenshot captured; ACM row not in current-products until single fresh backend on :8000 (multiple stale listeners observed during integration)"
+  },
+  "verification_chain": "standalone quote_input → PD → Aggregate → BOM → EIC → CPP → Quote snapshot",
+  "cpp_contract": {
+    "acm_line_count": 6,
+    "assembly_min_eur": 20,
+    "thickness_mm_allowed": [3],
+    "thickness_mm_blocked": [4]
+  },
+  "verdict": "PASS_BACKEND_PARTIAL_E2E"
+}
