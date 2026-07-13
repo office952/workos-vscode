@@ -169,7 +169,20 @@ function Resolve-PortService {
             Write-Host "  Action       = Stopping stale backend so current code can start."
             Write-Host ""
             Stop-Process -Id $listener.PID -Force -ErrorAction SilentlyContinue
-            Start-Sleep -Seconds 2
+            # Wait for the port to actually be released.
+            foreach ($i in 1..20) {
+                Start-Sleep -Milliseconds 250
+                if (-not (Get-PortListener -Port $Port)) {
+                    break
+                }
+            }
+            if (Get-PortListener -Port $Port) {
+                Write-Host ""
+                Write-Host "BLOCKER: Port $Port remained occupied after stopping stale backend." -ForegroundColor Red
+                Write-Host "  Action       = Stop the remaining listener manually, then re-run .\\scripts\\start-dev.ps1" -ForegroundColor Red
+                Write-Host ""
+                exit 1
+            }
             return [PSCustomObject]@{
                 Port = $Port
                 Occupied = $false
@@ -206,6 +219,25 @@ Show-WorkOsLocalDevSummary
 $backendState = Resolve-PortService -Port 8000 -ServiceName "Backend" -HealthProbe { Test-BackendDevReady }
 $frontendState = Resolve-PortService -Port 3000 -ServiceName "Frontend" -HealthProbe { Test-HttpOk -Url $FrontendUrl }
 
+$PSNativeCommandUseErrorActionPreference = $false
+
+$ProgressPreference = "SilentlyContinue"
+
+function Get-JobTail {
+    param(
+        [Parameter(Mandatory = $true)] $Job,
+        [int] $Last = 40
+    )
+    try {
+        $output = @(Receive-Job $Job -Keep -ErrorAction Continue 2>&1)
+        if ($output.Count -gt 0) {
+            $output | Select-Object -Last $Last
+        }
+    } catch {
+        Write-Host ("(failed to receive job output: {0})" -f $_) -ForegroundColor DarkGray
+    }
+}
+
 $backendJob = $null
 if (-not $backendState.Ready) {
     $BackendVenvPython = Get-WorkOsBackendVenvPython -BackendDir $BackendDir
@@ -221,14 +253,15 @@ if (-not $backendState.Ready) {
         $env:JWT_SECRET_KEY = $LocalJwtSecret
         $env:DEBUG = "true"
         $env:ALLOWED_ORIGINS = $AllowedOrigins
-        & .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+        # Uvicorn logs to stderr by default; merge streams so callers don't treat normal INFO as NativeCommandError.
+        & .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload 2>&1
     } -ArgumentList $BackendDir, $DatabaseUrl, $LocalJwtSecret, $env:ALLOWED_ORIGINS
 
     Write-Host "Backend job started (id=$($backendJob.Id)). Waiting for /health..." -ForegroundColor DarkGray
     $backendReady = Wait-ForService -Name "Backend" -Probe { Test-BackendDevReady }
     if (-not $backendReady) {
         Write-Host "Backend health check did not pass - recent job output:" -ForegroundColor Yellow
-        Receive-Job $backendJob -Keep | Select-Object -Last 40
+        Get-JobTail -Job $backendJob -Last 40
         Stop-Job $backendJob -ErrorAction SilentlyContinue
         Remove-Job $backendJob -ErrorAction SilentlyContinue
         exit 1
@@ -288,7 +321,8 @@ Show-FinalStatus -BackendReady $backendReady -FrontendReady $frontendReady -Prod
 Write-Host "Streaming frontend logs (Ctrl+C stops frontend + backend job if started here)..." -ForegroundColor DarkGray
 try {
     while ($true) {
-        Receive-Job $frontendJob -Keep | ForEach-Object { Write-Host $_ }
+        # Same stderr-handling rule as backend: do not treat normal native output as terminating errors.
+        Receive-Job $frontendJob -Keep -ErrorAction Continue 2>&1 | ForEach-Object { Write-Host $_ }
         if ($frontendJob.State -eq "Completed" -or $frontendJob.State -eq "Failed") {
             break
         }
