@@ -42,7 +42,12 @@ export function isOfferScopeValid(payload: Record<string, unknown> | undefined):
   if (mode !== "component_subset") return false;
   if (!Array.isArray(soldModules) || soldModules.length === 0) return false;
   return soldModules.every(
-    (code) => code === "FACE" || code === "RETURN-CANT" || code === "BACK",
+    (code) =>
+      code === "FACE" ||
+      code === "RETURN-CANT" ||
+      code === "BACK" ||
+      code === "LIGHTING" ||
+      code === "ELECTRICAL",
   );
 }
 

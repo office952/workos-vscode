@@ -468,7 +468,7 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
   const saveOfferScope = useCallback(
     async (input: {
       mode: "full_product" | "component_subset";
-      soldModules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+      soldModules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
       confirmed: boolean;
     }) => {
       const targetWorkspaceId = workspaceIdRef.current ?? state.workspace?.id;

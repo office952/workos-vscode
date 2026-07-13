@@ -196,7 +196,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 	const handleSaveOfferScope = useCallback(
 		(input: {
 			mode: "full_product" | "component_subset";
-			soldModules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+			soldModules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
 			confirmed: boolean;
 		}) =>
 			saveOfferScope({

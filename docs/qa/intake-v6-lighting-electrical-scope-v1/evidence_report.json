@@ -1,0 +1,169 @@
+{
+  "workspace": "b00a3a0c-5a3d-4d0b-a95e-582bb542dde1",
+  "workspace_code": "IR-MRI01769",
+  "route": "http://127.0.0.1:3000/intake-v6/b00a3a0c-5a3d-4d0b-a95e-582bb542dde1/operator",
+  "captured_at": "2026-07-13T05:00:19.647Z",
+  "ui_driven": true,
+  "direct_api_used": false,
+  "put_records": [
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "component_subset",
+      "sold_modules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "confirmed": true
+    },
+    {
+      "mode": "full_product",
+      "sold_modules": [],
+      "confirmed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "01_full_product_iluminare_electrica.png",
+      "soldScope": "full_product",
+      "lightingSubsection": true,
+      "electricalSubsection": true,
+      "psuOnMontaj": false,
+      "materialTotal": "728,76 EUR",
+      "materialRows": [
+        "Plexiglas 3 mm2.0642 m233,03 EUR",
+        "Forex 10 mm2.0642 m235,59 EUR",
+        "Vinil fata Oracal 6510.2973 m21,93 EUR",
+        "Material print Orafol0.8004 m21,44 EUR",
+        "Material laminare Orafol0.8004 m29,60 EUR",
+        "Cant / volum31.6382 m113,90 EUR",
+        "Module LED144 buc86,40 EUR",
+        "Sursa LED 12V1 buc24,00 EUR",
+        "Adeziv lipire cant pe fete litere53.4944 ml6,29 EUR",
+        "Adeziv suplimentar module LED28.8 ml3,39 EUR",
+        "Cablu electric MYYUP 2 x 0.7519 ml7,08 EUR",
+        "Cablu electric MYYUP 2 x 1.5 alimentare 220V5 ml3,82 EUR"
+      ],
+      "userClicks": [
+        "mode-full"
+      ],
+      "putCount": 1,
+      "submittedSoldModules": [],
+      "reloadPreserved": true
+    },
+    {
+      "file": "02_lighting_only_scope.png",
+      "soldScope": "LIGHTING",
+      "lightingSubsection": true,
+      "electricalSubsection": false,
+      "psuOnMontaj": false,
+      "materialTotal": "89,79 EUR",
+      "materialRows": [
+        "Module LED144 buc86,40 EUR",
+        "Adeziv suplimentar module LED28.8 ml3,39 EUR"
+      ],
+      "userClicks": [
+        "mode-subset",
+        "LIGHTING"
+      ],
+      "putCount": 1,
+      "submittedSoldModules": [
+        "LIGHTING"
+      ],
+      "reloadPreserved": true
+    },
+    {
+      "file": "03_electrical_only_scope.png",
+      "soldScope": "ELECTRICAL",
+      "lightingSubsection": false,
+      "electricalSubsection": true,
+      "psuOnMontaj": false,
+      "materialTotal": "34,90 EUR",
+      "materialRows": [
+        "Sursa LED 12V1 buc24,00 EUR",
+        "Cablu electric MYYUP 2 x 0.7519 ml7,08 EUR",
+        "Cablu electric MYYUP 2 x 1.5 alimentare 220V5 ml3,82 EUR"
+      ],
+      "userClicks": [
+        "mode-subset",
+        "ELECTRICAL"
+      ],
+      "putCount": 1,
+      "submittedSoldModules": [
+        "ELECTRICAL"
+      ],
+      "reloadPreserved": true
+    },
+    {
+      "file": "04_lighting_electrical_combined.png",
+      "soldScope": "LIGHTING+ELECTRICAL",
+      "lightingSubsection": true,
+      "electricalSubsection": true,
+      "psuOnMontaj": false,
+      "materialTotal": "124,69 EUR",
+      "materialRows": [
+        "Module LED144 buc86,40 EUR",
+        "Sursa LED 12V1 buc24,00 EUR",
+        "Adeziv suplimentar module LED28.8 ml3,39 EUR",
+        "Cablu electric MYYUP 2 x 0.7519 ml7,08 EUR",
+        "Cablu electric MYYUP 2 x 1.5 alimentare 220V5 ml3,82 EUR"
+      ],
+      "userClicks": [
+        "mode-subset",
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "putCount": 1,
+      "submittedSoldModules": [
+        "LIGHTING",
+        "ELECTRICAL"
+      ],
+      "reloadPreserved": true
+    },
+    {
+      "file": "05_montaj_without_psu_selector.png",
+      "soldScope": "full_product (Montaj tab)",
+      "lightingSubsection": false,
+      "electricalSubsection": false,
+      "psuOnMontaj": false,
+      "materialTotal": "728,76 EUR",
+      "materialRows": [
+        "Plexiglas 3 mm2.0642 m233,03 EUR",
+        "Forex 10 mm2.0642 m235,59 EUR",
+        "Vinil fata Oracal 6510.2973 m21,93 EUR",
+        "Material print Orafol0.8004 m21,44 EUR",
+        "Material laminare Orafol0.8004 m29,60 EUR",
+        "Cant / volum31.6382 m113,90 EUR",
+        "Module LED144 buc86,40 EUR",
+        "Sursa LED 12V1 buc24,00 EUR",
+        "Adeziv lipire cant pe fete litere53.4944 ml6,29 EUR",
+        "Adeziv suplimentar module LED28.8 ml3,39 EUR",
+        "Cablu electric MYYUP 2 x 0.7519 ml7,08 EUR",
+        "Cablu electric MYYUP 2 x 1.5 alimentare 220V5 ml3,82 EUR"
+      ],
+      "userClicks": [
+        "mode-full"
+      ],
+      "putCount": 5,
+      "submittedSoldModules": [],
+      "reloadPreserved": true
+    }
+  ]
+}

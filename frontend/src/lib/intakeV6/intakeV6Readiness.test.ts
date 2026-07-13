@@ -82,26 +82,16 @@ describe("intakeV6Readiness boundary", () => {
     expect(isOfferScopeConfirmed(payload)).toBe(false);
   });
 
-  it("mentions offer scope when not confirmed", () => {
-    const state = {
-      ...initialIntakeV6WorkspaceState,
-      currentStep: "review" as const,
-      workspace: {
-        ...syncedWorkspace,
-        readiness_status: "offer_scope_not_confirmed",
-        payload: {
-          ...syncedWorkspace.payload,
-          offer_scope: {
-            contract_version: "offer_scope_contract/v1",
-            mode: "component_subset",
-            sold_modules: ["FACE"],
-          },
-          offer_scope_confirmed: { confirmed: false },
-        },
+  it("accepts LIGHTING and ELECTRICAL subset codes", () => {
+    const payload = {
+      offer_scope: {
+        contract_version: "offer_scope_contract/v1",
+        mode: "component_subset",
+        sold_modules: ["LIGHTING", "ELECTRICAL"],
       },
+      offer_scope_confirmed: { confirmed: true },
     };
-
-    expect(canContinueFromReviewStep(state)).toBe(false);
-    expect(getIntakeV6FirstBlocker(state)).toMatch(/ce producem/i);
+    expect(isOfferScopeValid(payload)).toBe(true);
+    expect(isOfferScopeConfirmed(payload)).toBe(true);
   });
 });

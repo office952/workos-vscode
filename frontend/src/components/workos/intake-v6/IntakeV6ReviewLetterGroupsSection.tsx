@@ -51,6 +51,8 @@ import {
 function layerTestIdSuffix(key: string): string {
   return key.replace(/[^a-zA-Z0-9_-]+/g, "-");
 }
+
+function ZoneTitle({
   icon: Icon,
   title,
 }: {

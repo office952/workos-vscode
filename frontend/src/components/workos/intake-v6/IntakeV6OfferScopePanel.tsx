@@ -1,10 +1,9 @@
 import { CheckCircle2, Package } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  isOfferScopeStateDirty,
   normalizeSoldModules,
   readPersistedOfferScope,
-  shouldPersistOfferScope,
+  serializeOfferScopeState,
   type OfferScopeMode,
   type SoldModuleCode,
 } from "@/lib/intakeV6/intakeV6OfferScopeState";
@@ -17,6 +16,29 @@ const SLICE1_MODULES: Array<{ code: SoldModuleCode; label: string; testId: strin
   { code: "LIGHTING", label: "Iluminare", testId: "intake-v6-offer-scope-lighting" },
   { code: "ELECTRICAL", label: "Electrică", testId: "intake-v6-offer-scope-electrical" },
 ];
+
+type OfferScopeIntent = {
+  mode: OfferScopeMode;
+  soldModules: SoldModuleCode[];
+};
+
+function normalizeIntent(next: OfferScopeIntent): OfferScopeIntent {
+  return {
+    mode: next.mode,
+    soldModules: next.mode === "full_product" ? [] : normalizeSoldModules(next.soldModules),
+  };
+}
+
+function serializeIntent(intent: OfferScopeIntent): string {
+  return serializeOfferScopeState(intent.mode, intent.soldModules);
+}
+
+function canPersistIntent(intent: OfferScopeIntent, acknowledgedSerialized: string): boolean {
+  if (intent.mode === "component_subset" && intent.soldModules.length === 0) {
+    return false;
+  }
+  return serializeIntent(intent) !== acknowledgedSerialized;
+}
 
 export default function IntakeV6OfferScopePanel({
   payload,
@@ -36,20 +58,31 @@ export default function IntakeV6OfferScopePanel({
   const [soldModules, setSoldModules] = useState<SoldModuleCode[]>(persisted.soldModules);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
+  const [acknowledgedSerialized, setAcknowledgedSerialized] = useState(persisted.serialized);
   const onSaveRef = useRef(onSave);
-  const lastPersistedSerializedRef = useRef(persisted.serialized);
-  const inFlightSerializedRef = useRef<string | null>(null);
+  const soldModulesRef = useRef(soldModules);
+  const latestIntentRef = useRef<OfferScopeIntent | null>(null);
+  const persistChainRef = useRef<Promise<void>>(Promise.resolve());
+  const acknowledgedSerializedRef = useRef(persisted.serialized);
+  const hydratingSerializedRef = useRef(persisted.serialized);
+  const enqueuePersistRef = useRef<(next: OfferScopeIntent) => void>(() => undefined);
 
   useEffect(() => {
     onSaveRef.current = onSave;
   }, [onSave]);
 
   useEffect(() => {
-    if (persisted.serialized === lastPersistedSerializedRef.current) {
+    soldModulesRef.current = soldModules;
+  }, [soldModules]);
+
+  useEffect(() => {
+    if (persisted.serialized === hydratingSerializedRef.current) {
       return;
     }
-    lastPersistedSerializedRef.current = persisted.serialized;
-    inFlightSerializedRef.current = null;
+    hydratingSerializedRef.current = persisted.serialized;
+    acknowledgedSerializedRef.current = persisted.serialized;
+    setAcknowledgedSerialized(persisted.serialized);
+    latestIntentRef.current = null;
     setMode(persisted.mode);
     setSoldModules(persisted.soldModules);
     setSaveError(null);
@@ -63,52 +96,81 @@ export default function IntakeV6OfferScopePanel({
     [mode, soldModules],
   );
 
-  const subsetInvalid = localState.mode === "component_subset" && localState.soldModules.length === 0;
-  const dirty = isOfferScopeStateDirty(localState, persisted);
-  const confirmed = persisted.confirmed && !dirty && !subsetInvalid;
-
-  const persistIfNeeded = useCallback(
-    async (next: { mode: OfferScopeMode; soldModules: SoldModuleCode[] }) => {
-      const normalized = {
-        mode: next.mode,
-        soldModules: next.mode === "full_product" ? [] : normalizeSoldModules(next.soldModules),
-      };
-      if (!shouldPersistOfferScope(normalized, persisted)) {
-        return true;
-      }
-
-      const serialized = serializeLocalScope(normalized.mode, normalized.soldModules);
-      if (inFlightSerializedRef.current === serialized) {
-        return true;
-      }
-
-      inFlightSerializedRef.current = serialized;
-      setSaving(true);
-      setSaveError(null);
-      try {
-        const ok = await onSaveRef.current({
-          mode: normalized.mode,
-          soldModules: normalized.soldModules,
-          confirmed: true,
-        });
-        if (!ok) {
-          inFlightSerializedRef.current = null;
-          setSaveError("Salvarea selecției a eșuat.");
-        }
-        return ok;
-      } finally {
-        setSaving(false);
-      }
-    },
-    [persisted],
+  const localSerialized = useMemo(
+    () => serializeOfferScopeState(localState.mode, localState.soldModules),
+    [localState.mode, localState.soldModules],
   );
 
+  const subsetInvalid = localState.mode === "component_subset" && localState.soldModules.length === 0;
+  const dirty = localSerialized !== acknowledgedSerialized;
+  const confirmed =
+    !dirty && !subsetInvalid && (persisted.confirmed || localSerialized === acknowledgedSerialized);
+
+  const flushPersistQueue = useCallback(async () => {
+    const intent = latestIntentRef.current;
+    if (!intent) {
+      return;
+    }
+
+    const normalized = normalizeIntent(intent);
+    const serialized = serializeIntent(normalized);
+    if (!canPersistIntent(normalized, acknowledgedSerializedRef.current)) {
+      latestIntentRef.current = null;
+      return;
+    }
+
+    setSaving(true);
+    setSaveError(null);
+    try {
+      const ok = await onSaveRef.current({
+        mode: normalized.mode,
+        soldModules: normalized.soldModules,
+        confirmed: true,
+      });
+      if (ok) {
+        acknowledgedSerializedRef.current = serialized;
+        setAcknowledgedSerialized(serialized);
+        if (latestIntentRef.current && serializeIntent(normalizeIntent(latestIntentRef.current)) === serialized) {
+          latestIntentRef.current = null;
+        }
+      } else {
+        setSaveError("Salvarea selecției a eșuat.");
+      }
+    } finally {
+      setSaving(false);
+    }
+
+    const trailing = latestIntentRef.current;
+    if (
+      trailing &&
+      canPersistIntent(normalizeIntent(trailing), acknowledgedSerializedRef.current)
+    ) {
+      enqueuePersistRef.current(trailing);
+    }
+  }, []);
+
+  const schedulePersist = useCallback(
+    (next: OfferScopeIntent) => {
+      latestIntentRef.current = normalizeIntent(next);
+      persistChainRef.current = persistChainRef.current
+        .then(() => flushPersistQueue())
+        .catch(() => {
+          setSaveError("Salvarea selecției a eșuat.");
+        });
+    },
+    [flushPersistQueue],
+  );
+
+  useEffect(() => {
+    enqueuePersistRef.current = schedulePersist;
+  }, [schedulePersist]);
+
   const selectFullProduct = () => {
-    const next = { mode: "full_product" as const, soldModules: [] as SoldModuleCode[] };
+    const next: OfferScopeIntent = { mode: "full_product", soldModules: [] };
     setMode(next.mode);
     setSoldModules([]);
     setSaveError(null);
-    void persistIfNeeded(next);
+    schedulePersist(next);
   };
 
   const selectSubsetMode = () => {
@@ -118,12 +180,14 @@ export default function IntakeV6OfferScopePanel({
 
   const toggleModule = (code: SoldModuleCode) => {
     const nextModules = normalizeSoldModules(
-      soldModules.includes(code) ? soldModules.filter((item) => item !== code) : [...soldModules, code],
+      soldModulesRef.current.includes(code)
+        ? soldModulesRef.current.filter((item) => item !== code)
+        : [...soldModulesRef.current, code],
     );
     setMode("component_subset");
     setSoldModules(nextModules);
     setSaveError(null);
-    void persistIfNeeded({ mode: "component_subset", soldModules: nextModules });
+    schedulePersist({ mode: "component_subset", soldModules: nextModules });
   };
 
   return (
@@ -203,11 +267,4 @@ export default function IntakeV6OfferScopePanel({
       ) : null}
     </section>
   );
-}
-
-function serializeLocalScope(mode: OfferScopeMode, soldModules: readonly SoldModuleCode[]): string {
-  if (mode === "full_product") {
-    return "full_product";
-  }
-  return `component_subset:${normalizeSoldModules(soldModules).join("|")}`;
 }

@@ -251,7 +251,7 @@ export async function saveIntakeV6OfferScope(
   workspaceId: string,
   body: {
     mode: "full_product" | "component_subset";
-    sold_modules: Array<"FACE" | "RETURN-CANT" | "BACK">;
+    sold_modules: Array<"FACE" | "RETURN-CANT" | "BACK" | "LIGHTING" | "ELECTRICAL">;
     confirmed: boolean;
     operator_note?: string | null;
   },

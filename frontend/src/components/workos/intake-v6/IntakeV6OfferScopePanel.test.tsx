@@ -123,4 +123,91 @@ describe("IntakeV6OfferScopePanel", () => {
     fireEvent.click(screen.getByTestId("intake-v6-offer-scope-cant"));
     await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
   });
+
+  it("rapid sequential toggles preserve latest state with one PUT per final intent", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
+
+    await waitFor(() => expect(onSave).toHaveBeenCalled());
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["LIGHTING", "ELECTRICAL"],
+        confirmed: true,
+      }),
+    );
+    expect(onSave.mock.calls.length).toBeLessThanOrEqual(2);
+  });
+
+  it("queues trailing intent while save is in flight and never restores older scope", async () => {
+    const resolvers: Array<(value: boolean) => void> = [];
+    const onSave = vi.fn(
+      () =>
+        new Promise<boolean>((resolve) => {
+          resolvers.push(resolve);
+        }),
+    );
+
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(1));
+    expect(onSave.mock.calls[0]?.[0]).toEqual({
+      mode: "component_subset",
+      soldModules: ["LIGHTING"],
+      confirmed: true,
+    });
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
+    expect(onSave).toHaveBeenCalledTimes(1);
+
+    resolvers[0]?.(true);
+    await waitFor(() => expect(onSave).toHaveBeenCalledTimes(2));
+    expect(onSave.mock.calls[1]?.[0]).toEqual({
+      mode: "component_subset",
+      soldModules: ["LIGHTING", "ELECTRICAL"],
+      confirmed: true,
+    });
+  });
+
+  it("reload preserves persisted LIGHTING and ELECTRICAL combination", () => {
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          offer_scope: {
+            contract_version: "offer_scope_contract/v1",
+            mode: "component_subset",
+            sold_modules: ["ELECTRICAL", "LIGHTING"],
+          },
+          offer_scope_confirmed: { confirmed: true },
+        }}
+        onSave={vi.fn(async () => true)}
+      />,
+    );
+
+    expect(screen.getByTestId("intake-v6-offer-scope-lighting")).toBeChecked();
+    expect(screen.getByTestId("intake-v6-offer-scope-electrical")).toBeChecked();
+    expect(screen.getByText(/Componente: LIGHTING, ELECTRICAL/i)).toBeInTheDocument();
+  });
+
+  it("serializes LIGHTING and ELECTRICAL combinations deterministically", async () => {
+    const onSave = vi.fn(async () => true);
+    render(<IntakeV6OfferScopePanel payload={{}} onSave={onSave} />);
+
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-mode-subset"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-electrical"));
+    fireEvent.click(screen.getByTestId("intake-v6-offer-scope-lighting"));
+
+    await waitFor(() =>
+      expect(onSave).toHaveBeenLastCalledWith({
+        mode: "component_subset",
+        soldModules: ["LIGHTING", "ELECTRICAL"],
+        confirmed: true,
+      }),
+    );
+  });
 });
