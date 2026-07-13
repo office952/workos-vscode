@@ -206,6 +206,12 @@ def _legacy_resolve_active_commercial_modules(
         if _module_is_commercial_active(mod.state):
             active.add(code)
 
+    from services.acm_quote_input_helpers import is_acm_boxed_mounting_standalone_root_template
+
+    if is_acm_boxed_mounting_standalone_root_template(pd.template_code):
+        active.add("structura_suport")
+        return active
+
     mounting = _read_string(finish.get("mounting_system") or payload.get("mounting_system"))
     from services.mounting_solution_service import is_structura_suport_active
 

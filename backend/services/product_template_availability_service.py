@@ -22,6 +22,7 @@ from services.template_architecture_scope import (
     OWNER_VALID_QUOTE_RUNTIME_TEMPLATE_CODES,
     template_matches_runtime_scope,
 )
+from services.template_usage_mode_policy import is_root_offerable_template
 
 
 # Catalog metadata for the current Product System composition view.
@@ -145,6 +146,7 @@ class ProductTemplateAvailabilityService:
             template_code,
             OWNER_VALID_QUOTE_RUNTIME_TEMPLATE_CODES,
         )
+        standalone_root_offerable = is_root_offerable_template(template_code) and owner_valid and db_active
 
         status = "not_offerable"
         status_reason = "no_offer_contract"
@@ -156,6 +158,10 @@ class ProductTemplateAvailabilityService:
         elif missing_parent_codes or missing_module_codes:
             status = "not_offerable"
             status_reason = "missing_required_modules"
+        elif standalone_root_offerable:
+            status = "offerable"
+            status_reason = "owner_valid_standalone_root_template"
+            quote_offerable = True
         elif runtime_module:
             status = "runtime_module"
             status_reason = "runtime_module_only"
@@ -272,7 +278,7 @@ class ProductTemplateAvailabilityService:
         missing_module_codes: list[str],
         missing_parent_codes: list[str],
     ) -> dict[str, object]:
-        if quote_offerable and is_parent and has_modules and db_active:
+        if quote_offerable and db_active:
             return {
                 "product_system_role": "offerable_product",
                 "display_group": "active_products",
@@ -283,7 +289,7 @@ class ProductTemplateAvailabilityService:
                 "ui_description": "Poate fi ales ca produs initial in Work Intake.",
             }
 
-        if runtime_module and parent_codes and db_active:
+        if runtime_module and parent_codes and db_active and not quote_offerable:
             if len(parent_codes) > 1:
                 return {
                     "product_system_role": "shared_component",

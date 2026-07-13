@@ -332,6 +332,7 @@ VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM: tuple[CommercialRuleDefinition, ...] = 
 
 RULES_BY_TEMPLATE: dict[str, tuple[CommercialRuleDefinition, ...]] = {
     PILOT_TEMPLATE: VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM,
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": ACM_STRUCTURA_COMMERCIAL_RULES,
 }
 
 CRITICAL_MODULE_CODES = frozenset(
@@ -341,6 +342,7 @@ CRITICAL_MODULE_CODES = frozenset(
         "debitare_spate",
         "sistem_led",
         "finisaje",
+        "structura_suport",
     }
 )
 

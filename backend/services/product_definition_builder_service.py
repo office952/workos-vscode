@@ -35,6 +35,11 @@ from services.mounting_solution_service import (
     resolve_effective_mounting_solution,
 )
 from services.product_aggregate_service import ProductAggregateService
+from services.acm_quote_input_helpers import (
+    ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS,
+    is_acm_boxed_mounting_standalone_root_template,
+    merge_acm_boxed_mounting_derived_fields,
+)
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1"})
@@ -397,6 +402,128 @@ def _compute_readiness(
     return "ready"
 
 
+def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str, Any]:
+    merged = merge_acm_boxed_mounting_derived_fields(payload)
+    values: dict[str, Any] = {}
+    for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS:
+        if key in merged and merged[key] is not None:
+            values[key] = merged[key]
+    for key, value in merged.items():
+        if key not in values and value is not None:
+            values[key] = value
+    return values
+
+
+def _build_acm_standalone_geometry_inputs(canonical_values: dict[str, Any]) -> dict[str, Any]:
+    geometry: dict[str, Any] = {}
+    for key in (
+        "panel_width_mm",
+        "panel_height_mm",
+        "panel_area_m2",
+        "panel_perimeter_m",
+        "fold_length_m",
+        "return_strip_area_m2",
+        "acm_thickness_mm",
+        "return_depth_mm",
+    ):
+        if key in canonical_values:
+            geometry[key] = canonical_values[key]
+    return geometry
+
+
+async def _build_acm_standalone_product_definition_preview(
+    *,
+    aggregate: ProductAggregate,
+    template_code: str,
+    workspace_id: str | None,
+    payload: dict[str, Any],
+    source_type: str,
+) -> ProductDefinitionPreview:
+    active_modules = {"structura_suport"}
+    structura_ref = ProductDefinitionModuleRef(
+        module_code="structura_suport",
+        module_name="Structura suport ACM casetat",
+        activation_kind="always_on",
+        state="active",
+        activation_reason="Standalone boxed ACM mounting root template.",
+        missing_fields=[],
+    )
+
+    canonical_values = _build_acm_standalone_canonical_values(payload) if payload else {}
+    geometry_inputs = _build_acm_standalone_geometry_inputs(canonical_values)
+    has_payload = source_type == "workspace_payload" or bool(canonical_values)
+
+    missing_required = [
+        key
+        for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS
+        if key not in canonical_values or canonical_values[key] in (None, "")
+    ]
+    if has_payload and canonical_values.get("acm_thickness_mm") == 4:
+        missing_required.append("acm_thickness_mm_unsupported_4mm")
+
+    validation = ProductDefinitionValidation(
+        readiness_status=_compute_readiness(
+            missing_required=sorted(set(missing_required)),
+            invalid_combinations=[],
+            unresolved_warnings=[],
+            has_payload=has_payload,
+        ),
+        missing_required_fields=sorted(set(missing_required)),
+        invalid_combinations=[],
+        unresolved_warnings=[],
+    )
+
+    warnings = [f"{w.code}: {w.message}" for w in aggregate.warnings if hasattr(w, "code")]
+
+    provenance = [
+        ProductDefinitionProvenanceEntry(
+            key="product_aggregate",
+            source="product_aggregate_service",
+            detail=f"standalone_root=true components={len(aggregate.components)} operations={len(aggregate.operations)}",
+        ),
+        ProductDefinitionProvenanceEntry(
+            key="standalone_root_contract",
+            source="acm_quote_input_helpers",
+            detail="boxed_mounting_standalone_root_v1",
+        ),
+    ]
+    if workspace_id:
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="workspace_payload",
+                source="intake_v6_workspaces.payload_json",
+                detail=f"workspace_id={workspace_id} read_only=true",
+            )
+        )
+
+    return ProductDefinitionPreview(
+        template_code=template_code,
+        business_name_ro=aggregate.business_name_ro or aggregate.family_name,
+        source_context=ProductDefinitionSourceContext(
+            template_code=template_code,
+            workspace_id=workspace_id,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+        ),
+        selected_modules=[structura_ref],
+        optional_modules=[],
+        inactive_modules=[],
+        components=_build_components(aggregate, active_modules),
+        material_roles=_build_material_roles(aggregate, active_modules),
+        operation_roles=_build_operation_roles(aggregate, active_modules),
+        linked_template_runtime_segments=None,
+        canonical_values=canonical_values,
+        geometry_inputs=geometry_inputs,
+        validation=validation,
+        provenance=provenance,
+        resource_hints=ProductDefinitionResourceHints(),
+        warnings=warnings,
+        notes=[
+            "Read-only ProductDefinition preview — standalone boxed ACM mounting root.",
+            "Reuses linked-child aggregate/BOM truth; no Intake V6 modular form contract.",
+        ],
+    )
+
+
 class ProductDefinitionBuilderService:
     """Build read-only ProductDefinition preview from contracts + optional workspace payload."""
 
@@ -418,10 +545,6 @@ class ProductDefinitionBuilderService:
         *,
         workspace_id: str | None = None,
     ) -> ProductDefinitionPreview | None:
-        form_contract = self._form.get_for_template(template_code)
-        if form_contract is None:
-            return None
-
         aggregate = await self._aggregate_svc.build(template_code)
         if aggregate is None:
             return None
@@ -437,6 +560,19 @@ class ProductDefinitionBuilderService:
             else:
                 payload = ws_payload or {}
                 source_type = "workspace_payload"
+
+        if is_acm_boxed_mounting_standalone_root_template(template_code):
+            return await _build_acm_standalone_product_definition_preview(
+                aggregate=aggregate,
+                template_code=template_code,
+                workspace_id=workspace_id,
+                payload=payload,
+                source_type=source_type,
+            )
+
+        form_contract = self._form.get_for_template(template_code)
+        if form_contract is None:
+            return None
 
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
         quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}

@@ -3,6 +3,7 @@ import {
   LETTERS_TEMPLATE_CODE,
   LOGO_TEMPLATE_CODE,
 } from "@/lib/productTemplateScopePresentation";
+import { TPL_ACM_BOXED_MOUNTING_SUPPORT } from "@/lib/acmQuoteInput";
 import {
   COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
   COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES,
@@ -150,6 +151,17 @@ function enrichEntryPresentation(
       metadata:
         availability.ui_description ||
         "Logo volumetric candidate — linked/analyzer composition only. No direct root / no Logo activation.",
+    };
+  }
+
+  if (code === normalizeCode(TPL_ACM_BOXED_MOUNTING_SUPPORT)) {
+    return {
+      ...entry,
+      entityType: "Standalone mounting root",
+      lifecycleLabel: "Offerable · Product System standalone + Intake linked child",
+      metadata:
+        availability.ui_description ||
+        "Boxed ACM mounting support — standalone Product System quote root and Intake linked child.",
     };
   }
 

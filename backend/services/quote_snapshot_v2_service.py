@@ -34,7 +34,12 @@ from services.quote_snapshot_component_scope_service import (
     build_frozen_component_scope,
 )
 
-SUPPORTED_TEMPLATES = frozenset({"TPL-VOLUMETRIC-LETTERS_v2"})
+SUPPORTED_TEMPLATES = frozenset(
+    {
+        "TPL-VOLUMETRIC-LETTERS_v2",
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    }
+)
 
 PERSISTENCE_AVAILABLE = True
 

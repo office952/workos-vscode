@@ -374,12 +374,22 @@ VOLUMETRIC_V2_CAPACITY_HINT_RULES: tuple[CapacityHintRule, ...] = (
     ),
 )
 
+ACM_STANDALONE_CAPACITY_HINT_RULES: tuple[CapacityHintRule, ...] = tuple(
+    rule for rule in VOLUMETRIC_V2_CAPACITY_HINT_RULES if rule.code.startswith("acm_")
+)
+
 RULES_BY_TEMPLATE: dict[str, dict[str, tuple]] = {
     PILOT_TEMPLATE: {
         "operations": VOLUMETRIC_V2_OPERATION_RULES,
         "consumables": VOLUMETRIC_V2_CONSUMABLE_RULES,
         "overhead": VOLUMETRIC_V2_OVERHEAD_RULES,
         "capacity": VOLUMETRIC_V2_CAPACITY_HINT_RULES,
+    },
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": {
+        "operations": (),
+        "consumables": (),
+        "overhead": (),
+        "capacity": ACM_STANDALONE_CAPACITY_HINT_RULES,
     },
 }
 

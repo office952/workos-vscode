@@ -4,6 +4,14 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping, Optional, Tuple
 
+ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS: tuple[str, ...] = (
+    "panel_width_mm",
+    "panel_height_mm",
+    "acm_thickness_mm",
+    "return_depth_mm",
+    "fold_sides",
+)
+
 
 def _fold_length_mm(
     width_mm: float, height_mm: float, fold_sides: str
@@ -92,6 +100,40 @@ def derive_cut_acm_quote_input(
     return out, warnings, blockers
 
 
+def is_acm_boxed_mounting_standalone_root_template(template_code: str | None) -> bool:
+    from services.mounting_solution_service import ACM_BOXED_MOUNTING_TEMPLATE_CODE
+
+    return str(template_code or "").strip() == ACM_BOXED_MOUNTING_TEMPLATE_CODE
+
+
+def _standalone_root_configuration(payload: Mapping[str, Any]) -> Dict[str, Any] | None:
+    from services.mounting_solution_service import (
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        normalize_acm_mounting_configuration,
+    )
+
+    if not is_acm_boxed_mounting_standalone_root_template(
+        payload.get("template_code") or payload.get("product_id")
+    ):
+        if payload.get("panel_width_mm") is None or payload.get("panel_height_mm") is None:
+            return None
+        if payload.get("finish_setup") or payload.get("mounting_solution"):
+            return None
+        return normalize_acm_mounting_configuration(payload)
+
+    config = normalize_acm_mounting_configuration(payload)
+    client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
+    if config.get("panel_width_mm") in (None, 0) and client.get("width_mm") is not None:
+        config["panel_width_mm"] = client["width_mm"]
+    if config.get("panel_height_mm") in (None, 0) and client.get("height_mm") is not None:
+        config["panel_height_mm"] = client["height_mm"]
+    if config.get("panel_width_mm") in (None, 0) or config.get("panel_height_mm") in (None, 0):
+        return None
+    out = dict(config)
+    out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
+    return out
+
+
 def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[str, Any]:
     """Merge derived ACM boxed mounting geometry into a quote/CPP/EIC payload."""
     from services.mounting_solution_service import (
@@ -101,6 +143,13 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
     )
 
     out: Dict[str, Any] = dict(payload)
+    standalone_config = _standalone_root_configuration(payload)
+    if standalone_config is not None:
+        derived, _warnings, _blockers = derive_acm_casetted_quote_input(standalone_config)
+        out.update(derived)
+        out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
+        return out
+
     finish = out.get("finish_setup") if isinstance(out.get("finish_setup"), dict) else {}
     solution = read_mounting_solution(finish) or read_mounting_solution(out)
     if not solution or solution.get("template_code") != ACM_BOXED_MOUNTING_TEMPLATE_CODE:
@@ -125,6 +174,8 @@ def is_acm_boxed_mounting_payload(payload: Mapping[str, Any] | None) -> bool:
 
     if not isinstance(payload, Mapping):
         return False
+    if _standalone_root_configuration(payload) is not None:
+        return True
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
     solution = read_mounting_solution(finish) or read_mounting_solution(payload)
     return bool(
