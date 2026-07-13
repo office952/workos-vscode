@@ -383,6 +383,7 @@ const TEMPLATE_HUMAN_LABELS: Record<string, string> = {
   "TPL-VOLUMETRIC-LETTERS": "Litere volumetrice (Product 001)",
   "TPL-VOLUMETRIC-LETTERS_v2": "Litere volumetrice (Product 001)",
   "TPL-ACM-CASSETTED-PANEL": "Panou ACM casetat",
+  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "Suport ACM casetat premontaj",
   "TPL-CUT-ACM-LETTERS": "Litere ACM tăiate",
 };
 

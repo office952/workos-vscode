@@ -3,6 +3,7 @@
  */
 
 export const TPL_ACM_CASSETTED_PANEL = "TPL-ACM-CASSETTED-PANEL";
+export const TPL_ACM_BOXED_MOUNTING_SUPPORT = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 export const TPL_CUT_ACM_LETTERS = "TPL-CUT-ACM-LETTERS";
 
 export const ACM_THICKNESS_OPTIONS = [3, 4] as const;
@@ -129,6 +130,31 @@ function foldLengthMm(
   return null;
 }
 
+export function deriveAcmCasettedQuoteInput(raw: Record<string, unknown>): {
+  payload: Record<string, unknown>;
+  warnings: string[];
+  blockers: string[];
+} {
+  const stringValues: Record<string, string> = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (value != null && value !== "") {
+      stringValues[key] = String(value);
+    }
+  }
+  const payload = buildAcmCasettedQuoteInputPayload(stringValues) as Record<string, unknown>;
+  const warnings: string[] = [];
+  const blockers: string[] = [];
+  const w = Number(raw.panel_width_mm);
+  const h = Number(raw.panel_height_mm);
+  if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) {
+    blockers.push("missing_panel_dimensions");
+  }
+  const rearLip = Number(raw.rear_lip_mm ?? 0);
+  const lipWarning = rearLipWarning(rearLip);
+  if (lipWarning) warnings.push(lipWarning);
+  return { payload, warnings, blockers };
+}
+
 export function rearLipWarning(rearLipMm: number): string | null {
   if (rearLipMm > 0 && rearLipMm < 25) {
     return "rear_lip_mm sub 25 mm — verificare obligatorie pentru casetare cu două pliuri";
@@ -204,6 +230,8 @@ export function buildCutAcmQuoteInputPayload(
 
 export function isAcmTemplateCode(code: string | null | undefined): boolean {
   return (
-    code === TPL_ACM_CASSETTED_PANEL || code === TPL_CUT_ACM_LETTERS
+    code === TPL_ACM_CASSETTED_PANEL ||
+    code === TPL_ACM_BOXED_MOUNTING_SUPPORT ||
+    code === TPL_CUT_ACM_LETTERS
   );
 }

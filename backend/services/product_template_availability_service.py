@@ -35,6 +35,7 @@ ROLE_METADATA_BY_MODULE_CODE: dict[str, tuple[str, str, str, int]] = {
     "TPL-VOLUMETRIC-LED_v1": ("lighting", "LED / iluminare", "Sistem de iluminare al produsului.", 40),
     "TPL-VOLUMETRIC-FINISH_v1": ("finishes", "Finisaje", "Folie, print, laminare sau finisaje vizuale.", 50),
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": ("mounting_structure", "Structura montaj", "Structura suport/montaj, optionala dupa caz.", 60),
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": ("acm_boxed_mounting", "Suport ACM casetat", "Panou ACM casetat pentru premontaj, optional din Intake.", 65),
     "TPL-VOLUMETRIC-LOGO-FACE_v1": ("logo_front_face", "Fata logo", "Fata vizuala pentru logo volumetric.", 10),
     "TPL-VOLUMETRIC-LOGO-RETURN_v1": ("logo_return", "Return / cant logo", "Cant/return lateral pentru logo.", 20),
     "TPL-VOLUMETRIC-LOGO-BACK_v1": ("logo_back", "Spate logo", "Spate/inchidere logo.", 30),

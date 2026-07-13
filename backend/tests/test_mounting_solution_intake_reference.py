@@ -165,8 +165,12 @@ def test_sablon_task_maps_to_finisaje_runtime_module() -> None:
 
 
 def test_acm_not_available_in_allowed_templates() -> None:
-    from services.mounting_solution_service import ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES
+    from services.mounting_solution_service import (
+        ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES,
+    )
 
+    assert ACM_BOXED_MOUNTING_TEMPLATE_CODE in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES
     assert "TPL-ACM-CASSETTED-PANEL" not in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES
 
 

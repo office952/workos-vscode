@@ -20,6 +20,7 @@ TPL_VOLUMETRIC_LOGO_V1 = "TPL-VOLUMETRIC-LOGO_v1"
 TPL_METAL_PREMOUNT_STRUCTURE_V1 = "TPL-METAL-PREMOUNT-STRUCTURE_v1"
 TPL_VOLUM_ALUMINIU_V1 = "TPL-VOLUM-ALUMINIU_v1"
 TPL_ACM_CASSETTED_PANEL = "TPL-ACM-CASSETTED-PANEL"
+TPL_ACM_BOXED_MOUNTING_SUPPORT_V1 = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
 
 _LETTER_MODULE_CODES = (
     TPL_METAL_PREMOUNT_STRUCTURE_V1,
@@ -83,6 +84,15 @@ _RAW_POLICIES = {
         component_only=False,
         owner_go_required=True,
         reason="Future ACP/ACM candidate template; not active as Work Intake root or linked child today.",
+    ),
+    TPL_ACM_BOXED_MOUNTING_SUPPORT_V1: TemplateUsageModePolicy(
+        template_code=TPL_ACM_BOXED_MOUNTING_SUPPORT_V1,
+        root_offerable=True,
+        linked_child_allowed=True,
+        candidate_only=False,
+        component_only=False,
+        owner_go_required=False,
+        reason="Owner-approved offerable boxed ACM mounting support; standalone PS + Intake linked child.",
     ),
 }
 

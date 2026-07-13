@@ -482,6 +482,7 @@ TEMPLATE_MODULE_INDEX: dict[str, list[str]] = {
 CHILD_TEMPLATE_TO_MODULE: dict[str, str] = {
     "TPL-VOLUM-ALUMINIU_v1": "modelare_cant",
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": "structura_suport",
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "structura_suport",
 }
 
 DOSSIER_COMPONENT_TO_MODULE: dict[str, str] = {

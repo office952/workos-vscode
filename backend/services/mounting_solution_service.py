@@ -5,16 +5,32 @@ from __future__ import annotations
 from typing import Any, Mapping
 
 from schemas.intake_v4 import IntakeV4MountingSolution
+from services.acm_quote_input_helpers import derive_acm_casetted_quote_input
 from services.mounting_scope_service import is_mounting_preparation_active, normalize_mounting_scope
 
 METAL_PREMOUNT_TEMPLATE_CODE = "TPL-METAL-PREMOUNT-STRUCTURE_v1"
-ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES = frozenset({METAL_PREMOUNT_TEMPLATE_CODE})
+ACM_BOXED_MOUNTING_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES = frozenset(
+    {METAL_PREMOUNT_TEMPLATE_CODE, ACM_BOXED_MOUNTING_TEMPLATE_CODE}
+)
 BAR_MOUNTING_LEGACY = frozenset({"steel_bars", "aluminum_bars"})
+ACM_PANEL_LEGACY = "acm_panel"
 
 DEFAULT_METAL_MOUNTING_CONFIGURATION: dict[str, Any] = {
     "bar_count": 2,
     "mounting_bar_profile": "30x30x1.5",
     "bar_material": "steel",
+}
+
+DEFAULT_ACM_MOUNTING_CONFIGURATION: dict[str, Any] = {
+    "panel_width_mm": 1000,
+    "panel_height_mm": 600,
+    "acm_thickness_mm": 3,
+    "return_depth_mm": 60,
+    "rear_lip_mm": 25,
+    "fold_sides": "all",
+    "v_groove_angle_deg": 135,
+    "frame_clearance_mm": 0,
 }
 
 
@@ -39,6 +55,43 @@ def read_mounting_solution(setup: Mapping[str, Any] | None) -> dict[str, Any] | 
     }
 
 
+def normalize_acm_mounting_configuration(config: Mapping[str, Any] | None) -> dict[str, Any]:
+    merged = dict(DEFAULT_ACM_MOUNTING_CONFIGURATION)
+    if isinstance(config, Mapping):
+        merged.update(_coerce_configuration(config))
+    for key in ("panel_width_mm", "panel_height_mm", "return_depth_mm", "rear_lip_mm", "frame_clearance_mm"):
+        try:
+            merged[key] = float(merged.get(key) or DEFAULT_ACM_MOUNTING_CONFIGURATION[key])
+        except (TypeError, ValueError):
+            merged[key] = DEFAULT_ACM_MOUNTING_CONFIGURATION[key]
+    try:
+        thickness = int(round(float(merged.get("acm_thickness_mm") or 3)))
+    except (TypeError, ValueError):
+        thickness = 3
+    merged["acm_thickness_mm"] = thickness if thickness in (3, 4) else 3
+    fold_sides = str(merged.get("fold_sides") or "all").strip().lower()
+    if fold_sides not in {"all", "top_bottom", "left_right"}:
+        fold_sides = "all"
+    merged["fold_sides"] = fold_sides
+    try:
+        merged["v_groove_angle_deg"] = float(merged.get("v_groove_angle_deg") or 135)
+    except (TypeError, ValueError):
+        merged["v_groove_angle_deg"] = 135
+    return merged
+
+
+def normalize_solution_configuration(
+    template_code: str,
+    config: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    code = str(template_code or "").strip()
+    if code == METAL_PREMOUNT_TEMPLATE_CODE:
+        return normalize_metal_mounting_configuration(config)
+    if code == ACM_BOXED_MOUNTING_TEMPLATE_CODE:
+        return normalize_acm_mounting_configuration(config)
+    return _coerce_configuration(config)
+
+
 def hydrate_mounting_solution_from_legacy(setup: Mapping[str, Any] | None) -> dict[str, Any] | None:
     existing = read_mounting_solution(setup)
     if existing:
@@ -46,6 +99,11 @@ def hydrate_mounting_solution_from_legacy(setup: Mapping[str, Any] | None) -> di
     if not isinstance(setup, Mapping):
         return None
     mounting_system = str(setup.get("mounting_system") or "").strip()
+    if mounting_system == ACM_PANEL_LEGACY:
+        return {
+            "template_code": ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+            "configuration": normalize_acm_mounting_configuration({}),
+        }
     if mounting_system not in BAR_MOUNTING_LEGACY:
         return None
     bar_material = "aluminum" if mounting_system == "aluminum_bars" else "steel"
@@ -99,10 +157,13 @@ def is_structura_suport_active(setup: Mapping[str, Any] | None) -> bool:
 def legacy_mounting_system_from_solution(solution: Mapping[str, Any] | None) -> str | None:
     if not isinstance(solution, Mapping):
         return None
-    if str(solution.get("template_code") or "").strip() != METAL_PREMOUNT_TEMPLATE_CODE:
-        return None
-    config = normalize_metal_mounting_configuration(_coerce_configuration(solution.get("configuration")))
-    return "aluminum_bars" if config["bar_material"] == "aluminum" else "steel_bars"
+    template_code = str(solution.get("template_code") or "").strip()
+    if template_code == METAL_PREMOUNT_TEMPLATE_CODE:
+        config = normalize_metal_mounting_configuration(_coerce_configuration(solution.get("configuration")))
+        return "aluminum_bars" if config["bar_material"] == "aluminum" else "steel_bars"
+    if template_code == ACM_BOXED_MOUNTING_TEMPLATE_CODE:
+        return ACM_PANEL_LEGACY
+    return None
 
 
 def hydrate_mounting_solution_fields(setup: Mapping[str, Any]) -> dict[str, Any]:
@@ -118,9 +179,10 @@ def hydrate_mounting_solution_fields(setup: Mapping[str, Any]) -> dict[str, Any]
             updates["mounting_solution"] = IntakeV4MountingSolution.model_validate(hydrated)
 
     if solution and str(solution.get("template_code") or "").strip() in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
+        template_code = str(solution["template_code"]).strip()
         normalized_solution = {
-            "template_code": str(solution["template_code"]).strip(),
-            "configuration": normalize_metal_mounting_configuration(solution.get("configuration")),
+            "template_code": template_code,
+            "configuration": normalize_solution_configuration(template_code, solution.get("configuration")),
         }
         updates["mounting_solution"] = IntakeV4MountingSolution.model_validate(normalized_solution)
         updates["mounting_system"] = None
@@ -136,6 +198,19 @@ def build_linked_module_input_from_solution(
     defaults: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
     module_input = dict(defaults if isinstance(defaults, Mapping) else {})
+    template_code = str(solution.get("template_code") or "").strip()
+
+    if template_code == ACM_BOXED_MOUNTING_TEMPLATE_CODE:
+        config = normalize_acm_mounting_configuration(_coerce_configuration(solution.get("configuration")))
+        if config.get("panel_width_mm") in (None, 0) and quote_input.get("width_mm") is not None:
+            config["panel_width_mm"] = quote_input["width_mm"]
+        if config.get("panel_height_mm") in (None, 0) and quote_input.get("height_mm") is not None:
+            config["panel_height_mm"] = quote_input["height_mm"]
+        module_input.update(config)
+        derived, _warnings, _blockers = derive_acm_casetted_quote_input(module_input)
+        module_input.update(derived)
+        return module_input
+
     config = normalize_metal_mounting_configuration(_coerce_configuration(solution.get("configuration")))
     module_input.update(config)
     width_mm = quote_input.get("width_mm")

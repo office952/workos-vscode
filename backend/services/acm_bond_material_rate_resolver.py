@@ -14,6 +14,7 @@ from typing import Any, Dict, Mapping, Optional
 ACM_TEMPLATE_CODES = frozenset(
     {
         "TPL-ACM-CASSETTED-PANEL",
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
         "TPL-CUT-ACM-LETTERS",
     }
 )

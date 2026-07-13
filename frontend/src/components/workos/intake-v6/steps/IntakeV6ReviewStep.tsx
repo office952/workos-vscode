@@ -76,9 +76,12 @@ import {
   isMountingSolutionCompositionActive,
   legacyMountingBarProfile,
   legacyMountingSystemLabel,
+  ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+  ACM_CASSETTED_QUOTE_INPUT_FIELDS,
   METAL_PREMOUNT_TEMPLATE_CODE,
   MOUNTING_SOLUTION_OPTIONS,
   mountingSolutionSelectorValue,
+  normalizeAcmMountingConfiguration,
   normalizeMetalMountingConfiguration,
   prepareMountingSolutionForSave,
   readMountingSolution,
@@ -1483,7 +1486,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const selectedMountingSolutionValue = mountingSolutionSelectorValue(form as Record<string, unknown>);
   const selectedMountingSolution = resolveEffectiveMountingSolution(form as Record<string, unknown>);
   const metalMountingConfiguration = normalizeMetalMountingConfiguration(
-    selectedMountingSolution?.configuration,
+    selectedMountingSolution?.template_code === METAL_PREMOUNT_TEMPLATE_CODE
+      ? selectedMountingSolution.configuration
+      : undefined,
+  );
+  const acmMountingConfiguration = normalizeAcmMountingConfiguration(
+    selectedMountingSolution?.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE
+      ? selectedMountingSolution.configuration
+      : undefined,
   );
   const legacyMountingSystemDisplay = legacyMountingSystemLabel(form as Record<string, unknown>);
   const legacyMountingProfileDisplay = legacyMountingBarProfile(form as Record<string, unknown>);
@@ -2186,9 +2196,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       Referință Product System — fără adevăr tehnic duplicat în Intake.
                     </p>
                   </div>
-                  {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ? (
+                  {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
+                  selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
                     <Link
-                      to={`/product-system?template=${encodeURIComponent(METAL_PREMOUNT_TEMPLATE_CODE)}`}
+                      to={`/product-system?template=${encodeURIComponent(selectedMountingSolutionValue)}`}
                       className="rounded border border-cyan-800/50 px-2 py-1 text-[10px] text-cyan-300 hover:bg-cyan-900/30"
                     >
                       Product System
@@ -2294,9 +2305,99 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </div>
                 ) : null}
 
-                <p className="mt-2 text-[10px] text-slate-500" data-testid="intake-v6-mounting-acm-deferred-note">
-                  ACM casetat: DEFERRED_PENDING_OWNER_TEMPLATE_DECISION — fără referință temporară.
-                </p>
+                {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    {ACM_CASSETTED_QUOTE_INPUT_FIELDS.filter((field) =>
+                      [
+                        "panel_width_mm",
+                        "panel_height_mm",
+                        "acm_thickness_mm",
+                        "return_depth_mm",
+                        "rear_lip_mm",
+                        "fold_sides",
+                        "v_groove_angle_deg",
+                        "frame_clearance_mm",
+                      ].includes(field.key),
+                    ).map((field) => (
+                      <label key={field.key} className={REVIEW_FIELD_BLOCK_CLASS}>
+                        <span className={REVIEW_FIELD_LABEL_CLASS}>
+                          {field.label}
+                          {field.unit ? ` (${field.unit})` : ""}
+                        </span>
+                        {field.selectOptions ? (
+                          <select
+                            className={REVIEW_SELECT_CLASS}
+                            value={String(acmMountingConfiguration[field.key] ?? field.placeholder)}
+                            disabled={!mountingPrepActive}
+                            onChange={(event) =>
+                              updateForm(
+                                buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
+                                  ...acmMountingConfiguration,
+                                  [field.key]: event.target.value,
+                                }) as Partial<IntakeV6FinishSetup>,
+                                { domains: ["mounting"] },
+                              )
+                            }
+                            data-testid={`intake-v6-mounting-acm-${field.key}`}
+                          >
+                            {field.selectOptions.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        ) : field.numberOptions ? (
+                          <select
+                            className={REVIEW_SELECT_CLASS}
+                            value={String(acmMountingConfiguration[field.key] ?? field.placeholder)}
+                            disabled={!mountingPrepActive}
+                            onChange={(event) =>
+                              updateForm(
+                                buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
+                                  ...acmMountingConfiguration,
+                                  [field.key]: Number(event.target.value),
+                                }) as Partial<IntakeV6FinishSetup>,
+                                { domains: ["mounting"] },
+                              )
+                            }
+                            data-testid={`intake-v6-mounting-acm-${field.key}`}
+                          >
+                            {field.numberOptions.map((option) => (
+                              <option key={option} value={option}>
+                                {option} mm
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <input
+                            type="number"
+                            min={field.min ?? 0}
+                            step={field.key.includes("_mm") ? 1 : 0.1}
+                            className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                            value={Number(acmMountingConfiguration[field.key] ?? field.placeholder)}
+                            disabled={!mountingPrepActive}
+                            onChange={(event) =>
+                              updateForm(
+                                buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
+                                  ...acmMountingConfiguration,
+                                  [field.key]: Number(event.target.value),
+                                }) as Partial<IntakeV6FinishSetup>,
+                                { domains: ["mounting"] },
+                              )
+                            }
+                            data-testid={`intake-v6-mounting-acm-${field.key}`}
+                          />
+                        )}
+                      </label>
+                    ))}
+                    <p
+                      className="sm:col-span-3 text-[10px] text-cyan-200/80"
+                      data-testid="intake-v6-mounting-solution-template-identity"
+                    >
+                      Template: {ACM_BOXED_MOUNTING_TEMPLATE_CODE}
+                    </p>
+                  </div>
+                ) : null}
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className={REVIEW_FIELD_BLOCK_CLASS}>
