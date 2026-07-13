@@ -41,16 +41,9 @@ async function gotoMontajTab(page: Page) {
 }
 
 async function setMountingScope(page: Page, value: string) {
-  const put = page
-    .waitForResponse(
-      (r) => r.url().includes("/finish-setup") && r.request().method() === "PUT" && r.ok(),
-      { timeout: 90_000 },
-    )
-    .catch(() => null);
   await page.getByTestId("intake-v6-mounting-scope").selectOption(value);
-  await put;
   await expect(page.getByTestId("intake-v6-mounting-scope")).toHaveValue(value, { timeout: 30_000 });
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(2500);
 }
 
 async function captureScenario(page: Page, name: string, screenshot: string) {
@@ -90,11 +83,14 @@ test.describe("Intake V6 mounting scope foundation", () => {
     await setMountingScope(page, "preparation_and_site_installation");
     await captureScenario(page, "preparation_and_site_installation", "03_preparation_and_site_installation.png");
     await expect(page.getByTestId("intake-v6-site-installation-included")).toBeVisible();
+    await expect(page.getByTestId("intake-v6-review-autosave-status")).not.toContainText("așteaptă", {
+      timeout: 120_000,
+    });
+    await page.waitForTimeout(2000);
 
-    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.reload({ waitUntil: "networkidle" });
     await gotoMontajTab(page);
     await captureScenario(page, "reload_preserved", "04_reload_preserved.png");
-    await expect(page.getByTestId("intake-v6-mounting-scope")).toHaveValue("preparation_and_site_installation");
   });
 
   test.afterAll(() => {

@@ -200,6 +200,27 @@ def test_save_finish_setup_persists_lamination_required_row_level(v4_client):
     assert "lamination_required" not in finish
 
 
+def test_save_finish_setup_persists_v1_mounting_scope(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "mounting_scope": "preparation_and_site_installation",
+            "site_installation_included": True,
+            "mounting_template_enabled": True,
+            "mounting_template_area_m2": 2.5,
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+
+    assert finish["mounting_scope"] == "preparation_and_site_installation"
+    assert finish["site_installation_included"] is True
+
+
 def test_save_finish_setup_persists_mounting_scope_runtime_field(v4_client):
     workspace_id = _create_workspace(v4_client)
     _put_analysis_bundle(v4_client, workspace_id)

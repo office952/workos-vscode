@@ -140,6 +140,29 @@ def test_live_calc_filters_mounting_accessories_when_scope_none() -> None:
     assert filtered.consumable_rows == []
 
 
+def test_normalize_persists_site_install_scope_with_prep_signals() -> None:
+    setup = IntakeV4FinishSetup.model_validate(
+        {
+            "mounting_scope": "preparation_and_site_installation",
+            "mounting_template_enabled": True,
+            "mounting_template_area_m2": 2.5,
+            "confirmed": True,
+            "letter_group_finishes": [
+                {
+                    "group_key": "a",
+                    "layer_name": "A",
+                    "face_finish_type": "oracal_651",
+                    "return_finish_type": "white_aluminum",
+                    "return_depth_mm": 60,
+                }
+            ],
+        }
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.mounting_scope == "preparation_and_site_installation"
+    assert normalized.site_installation_included is True
+
+
 def test_mounting_prep_material_key_detection() -> None:
     assert _is_mounting_prep_material_key("mounting_accessories_percent") is True
     assert _is_mounting_prep_material_key("plexiglas_face") is False

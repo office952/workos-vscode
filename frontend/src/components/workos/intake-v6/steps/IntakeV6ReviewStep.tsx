@@ -2019,7 +2019,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   value={mountingScope}
                   onChange={(event) => {
                     const nextScope = event.target.value as MountingScopeV1;
-                    markLocalFinishChanged(["mounting"]);
                     setForm((prev) => {
                       const next = syncLighting({
                         ...prev,
@@ -2030,6 +2029,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                             : prev.site_installation_included,
                         confirmed: false,
                       });
+                      pendingDirtyDomainsRef.current.add("mounting");
                       void persistFinishSetupState(next, true);
                       return next;
                     });

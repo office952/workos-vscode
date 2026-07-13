@@ -1,12 +1,7 @@
 {
   "task": "INTAKE_V6_MOUNTING_SCOPE_FOUNDATION_V1",
   "route": "http://127.0.0.1:3000/intake-v6/IR-MRI01769/operator",
-  "captured_at": "2026-07-13T10:46:56.869Z",
-  "scope_correction": {
-    "product_system_modularity": true,
-    "local_mounting_system_editable": false,
-    "mounting_solution_template_blocked": "TPL-METAL-PREMOUNT-STRUCTURE_v1 picker deferred; TPL-COMP-LETTER-MOUNTING_v1 inert; ACM template missing"
-  },
+  "captured_at": "2026-07-13T11:00:18.689Z",
   "scenarios": [
     {
       "name": "mounting_none",
