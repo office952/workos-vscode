@@ -1,0 +1,16 @@
+{
+  "card_rollup": "single badge via product-system-canonical-card-readiness-rollup",
+  "rollup_labels": {
+    "READY": "Pregatit",
+    "BLOCKED": "Blocat",
+    "PARTIALLY_READY": "Partial",
+    "INTERNAL": "Intern",
+    "DEPRECATED": "Depreciat"
+  },
+  "blocker_display": "count only on BLOCKED/PARTIALLY_READY; no raw codes on card",
+  "readiness_api": {
+    "consumed_when_present": true,
+    "fallback_when_null": "legacy availability fields via resolveCatalogRollup",
+    "runtime_note": "dev.db returned readiness=null on template-availability during QA; UI fallback active"
+  }
+}

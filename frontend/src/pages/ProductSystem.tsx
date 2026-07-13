@@ -85,10 +85,7 @@ import {
 } from "@/features/product-system/componentFirstReadonlyCompleteness";
 import { buildComponentFirstReadonlySetModel } from "@/features/product-system/componentFirstReadonlySetModel";
 import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
-import {
-  buildUnifiedCatalogSummary,
-  ProductSystemUnifiedCatalog,
-} from "@/features/product-system/ProductSystemUnifiedCatalog";
+import { ProductSystemCanonicalCatalog } from "@/features/product-system/ProductSystemCanonicalCatalog";
 import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
 import {
   buildProductSystemProductDetailPath,
@@ -3609,26 +3606,6 @@ export default function ProductSystem() {
     [templates],
   );
 
-  const catalogSummary = useMemo(
-    () =>
-      buildUnifiedCatalogSummary({
-        catalogCounts,
-        archivedCount,
-        hasComponentFirstCandidate,
-        ownerDecisionRequiredCount,
-        componentFirstLiveRows: hasComponentFirstCandidate ? componentFirstCompleteness.foundRowCount : null,
-        componentFirstExpectedRows: hasComponentFirstCandidate ? componentFirstCompleteness.expectedRowCount : null,
-      }),
-    [
-      catalogCounts,
-      archivedCount,
-      hasComponentFirstCandidate,
-      ownerDecisionRequiredCount,
-      componentFirstCompleteness.foundRowCount,
-      componentFirstCompleteness.expectedRowCount,
-    ],
-  );
-
   const editorReadOnly = useMemo(() => {
     if (operatorReadOnly) return true;
     if (isNew || !selectedId) return false;
@@ -3995,9 +3972,7 @@ export default function ProductSystem() {
             </p>
           </div>
         ) : shouldShowLibraryScreen(screen) ? (
-          <ProductSystemUnifiedCatalog
-            summary={catalogSummary}
-            catalogOverview={null}
+          <ProductSystemCanonicalCatalog
             templates={templates}
             availabilityItems={availabilityItems}
             loading={loading}

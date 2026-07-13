@@ -1,0 +1,13 @@
+{
+  "removed_from_operator_ui": [
+    "current-products",
+    "candidate-products",
+    "component-first-sets",
+    "legacy-shared-modules",
+    "archived"
+  ],
+  "backend_bucket_fields": "preserved on ProductTemplateAvailabilityItem.display_group and unified builder",
+  "unified_catalog_component": "ProductSystemUnifiedCatalog retained but unmounted from ProductSystem library screen",
+  "removal_condition": "Remove buildUnifiedCatalogEntries bucket IA when no tests/consumers depend on bucket ids for primary navigation",
+  "deep_link_builder": "buildUnifiedCatalogEntries still used internally for detail panel bucket copy compatibility"
+}
