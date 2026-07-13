@@ -1387,7 +1387,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           nextFinish.commercial_inputs,
         );
         const nextSettingsVatCommercialInputs = { ...nextCommercialInputs, vatPercent: vatPct };
-        setPayload(nextPayload);
         if (buildFinishSetupSyncSignature(syncedNextForm) !== buildFinishSetupSyncSignature(form)) {
           setForm(syncedNextForm);
         }

@@ -15,7 +15,9 @@ vi.mock("@/lib/intakeV6/intakeV6Api", () => ({
   getIntakeV6ProductionHandoffPreview: vi.fn(),
   getIntakeV6ProductionTaskDryRun: vi.fn(),
   getIntakeV6ProductSystemBinding: vi.fn(),
+  getIntakeV6ProductTruthPromotionPlanner: vi.fn(),
   getIntakeV6QuoteHandoffPreview: vi.fn(),
+  getIntakeV6RuntimeCaptureReadModel: vi.fn(),
   getIntakeV6TaskGenerationDryRun: vi.fn(),
   getIntakeV6TaskPreview: vi.fn(),
   getIntakeV6Workspace: vi.fn(),
@@ -142,13 +144,15 @@ import {
   getIntakeV6ProductionHandoffPreview,
   getIntakeV6ProductionTaskDryRun,
   getIntakeV6ProductSystemBinding,
+  getIntakeV6ProductTruthPromotionPlanner,
   getIntakeV6QuoteHandoffPreview,
+  getIntakeV6RuntimeCaptureReadModel,
   getIntakeV6TaskGenerationDryRun,
   getIntakeV6TaskPreview,
   getIntakeV6Workspace,
 } from "@/lib/intakeV6/intakeV6Api";
-import { getPreOrderTechnicalPreview } from "@/lib/intakeV6/preOrderTechnicalPreviewApi";
 import { getProductDefinitionPreview } from "@/api/productDefinitionPreview";
+import { toast } from "@/components/ui/sonner";
 
 const mockedAiAssist = vi.mocked(getIntakeV6AiInformationalAssistCandidate);
 const mockedLogicalList = vi.mocked(getIntakeV6LogicalListReadModel);
@@ -159,11 +163,12 @@ const mockedPricingPreview = vi.mocked(getIntakeV6PricingInputPreview);
 const mockedProductionHandoff = vi.mocked(getIntakeV6ProductionHandoffPreview);
 const mockedProductionDryRun = vi.mocked(getIntakeV6ProductionTaskDryRun);
 const mockedBinding = vi.mocked(getIntakeV6ProductSystemBinding);
+const mockedPromotionPlanner = vi.mocked(getIntakeV6ProductTruthPromotionPlanner);
 const mockedQuoteHandoff = vi.mocked(getIntakeV6QuoteHandoffPreview);
+const mockedRuntimeCapture = vi.mocked(getIntakeV6RuntimeCaptureReadModel);
 const mockedTaskGeneration = vi.mocked(getIntakeV6TaskGenerationDryRun);
 const mockedTaskPreview = vi.mocked(getIntakeV6TaskPreview);
 const mockedWorkspace = vi.mocked(getIntakeV6Workspace);
-const mockedPreOrder = vi.mocked(getPreOrderTechnicalPreview);
 const mockedProductDefinitionPreview = vi.mocked(getProductDefinitionPreview);
 
 function buildWorkspacePayload(overrides?: Record<string, unknown>) {
@@ -274,6 +279,21 @@ beforeEach(() => {
     module_links: [],
     blockers: [],
   } as never);
+  mockedPromotionPlanner.mockResolvedValue({
+    workspace_id: "ws",
+    blockers: [],
+    blocked_entries: [],
+    ready_entries: [],
+    warnings: [],
+  } as never);
+  mockedRuntimeCapture.mockResolvedValue({
+    read_only: true,
+    workspace_id: "ws",
+    fields: [],
+    blockers: [],
+    downstream_write_intent: {},
+    notes: [],
+  } as never);
   mockedBreakdown.mockResolvedValue({
     workspace_id: "ws",
     template_code: "TPL-VOLUMETRIC-LETTERS",
@@ -341,7 +361,6 @@ beforeEach(() => {
   mockedOrderBound.mockResolvedValue(null as never);
   mockedQuoteHandoff.mockResolvedValue(null as never);
   mockedWorkspace.mockResolvedValue({ payload: buildWorkspacePayload() } as never);
-  mockedPreOrder.mockResolvedValue(null as never);
   mockedProductDefinitionPreview.mockResolvedValue({
     template_code: "TPL-VOLUMETRIC-LETTERS_v2",
     linked_template_runtime_segments: {
@@ -474,6 +493,23 @@ describe("IntakeV6ReviewStep commercial settings regression", () => {
 
     await waitFor(() => expect(screen.getByTestId("mock-intake-v6-artwork-only-decision-panel")).toBeInTheDocument());
     expect(screen.getByTestId("mock-intake-v6-artwork-finish-section")).toBeInTheDocument();
+  });
+
+  it("completes autosave without ReferenceError and refreshes preview once", async () => {
+    const { saveFinishSetup } = renderReviewStepHarness();
+
+    await waitFor(() => expect(screen.getByTestId("intake-v6-offer-markup")).toHaveValue(35));
+
+    fireEvent.change(screen.getByTestId("intake-v6-offer-markup"), { target: { value: "42" } });
+    fireEvent.blur(screen.getByTestId("intake-v6-offer-markup"));
+
+    await waitFor(() => expect(saveFinishSetup).toHaveBeenCalledTimes(1), { timeout: 3000 });
+
+    expect(toast.error).not.toHaveBeenCalled();
+    expect(screen.queryByText(/setPayload is not defined/i)).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.getByTestId("intake-v6-offer-markup")).toHaveValue(42));
+    await waitFor(() => expect(mockedBreakdown).toHaveBeenCalled(), { timeout: 3000 });
+    expect(mockedBreakdown).toHaveBeenCalledTimes(1);
   });
 
   it("persists markup 35 -> 50 and does not reset it after blur/save", async () => {
