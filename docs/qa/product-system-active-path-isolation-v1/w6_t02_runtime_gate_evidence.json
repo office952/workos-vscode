@@ -1,0 +1,52 @@
+{
+  "gate": "W6-T02",
+  "timestamp_utc": "2026-07-14T23:46:21.489234+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "gate_order_id": 23099,
+  "read_only": true,
+  "checks": {
+    "task_truth": {
+      "status_code": 200,
+      "contract_version": "operator_task_truth/v1",
+      "task_count": 13,
+      "samples": [
+        {
+          "bucket": "root",
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "display_label": "Vector Prep",
+          "component_label": "Produs principal",
+          "component_role": "root_product",
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "is_startable": false,
+          "identity_source": "frozen_task_identity/v1"
+        },
+        {
+          "bucket": "mounting",
+          "task_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+          "display_label": "Cut Acm Panel",
+          "component_label": "Panou montaj",
+          "component_role": "mounting_panel",
+          "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+          "is_startable": false,
+          "identity_source": "frozen_task_identity/v1"
+        },
+        {
+          "bucket": "logo",
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+          "display_label": "Vinyl Application",
+          "component_label": "Logo segment (logo_instance_001)",
+          "component_role": "root_product",
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+          "is_startable": false,
+          "identity_source": "frozen_task_identity/v1"
+        }
+      ],
+      "raw_key_not_primary_label": true
+    },
+    "refresh_stable": {
+      "first_count": 13,
+      "second_count": 13,
+      "root_task_id_stable": true
+    }
+  }
+}

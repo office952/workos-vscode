@@ -12,7 +12,7 @@
 
 **Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
 
-**Last updated:** 2026-07-15 (W6-T01 operator task truth read model)
+**Last updated:** 2026-07-15 (W6-T02 task identity component presentation)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 implementation** — W6-T01 COMPLETE |
+| Phase | **Wave 6 implementation** — W6-T02 COMPLETE |
 
-| Implementation hold | **Lifted for W6-T02 presentation** |
+| Implementation hold | **Lifted for W6-T03 blocker visibility** |
 
 | Active task | None |
 
-| Next task | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** (not auto-started) |
+| Next task | **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** (not auto-started) |
 
 
 
@@ -268,7 +268,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Proof:** Frozen identity + readiness + production-release + owner decisions composed; role-safe internal cost; 13/13 tests + runtime order `23099` on `:8001`.
 
-**Next:** W6-T02 task identity presentation (desktop UI).
+**Next:** W6-T03 production blocker visibility.
+
+## Wave 6 implementation (W6-T02)
+
+**Verdict:** `W6_TASK_IDENTITY_UI_PASS_COMMITTED`
+
+**Presentation:** `FLAT_LIST_WITH_COMPONENT_BADGES` on ExecutionDetail, OperatorView, blueprint panel.
+
+**Proof:** Canonical task-truth fetch; component labels visible; raw keys diagnostic-only; 32 backend + 22 frontend tests; 6 screenshots; runtime order `23099`.
+
+**Debt:** Blueprint adapter for materials/workers; owner-decision UI → W6-T03.
 
 ## Wave 4 exit (W4-INT-02)
 
@@ -286,5 +296,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** (not auto-started).
+Next allowed task: **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** (not auto-started).
 

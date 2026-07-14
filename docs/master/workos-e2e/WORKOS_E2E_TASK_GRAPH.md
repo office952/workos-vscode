@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** W6-T02 authorized (not started)  
+**Active task:** W6-T03 authorized (not started)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,8 +271,8 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | `W6-T01 COMPLETE` — W6-T02 authorized |
-| Next | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** |
+| Wave 6 | `W6-T02 COMPLETE` — W6-T03 authorized |
+| Next | **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** |
 
 ## W6-INT-01 — Operator execution truth and blocker visibility gate
 
@@ -299,7 +299,19 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Tests | 13 truth + 42 W5 regression pass |
 | Runtime | Order `23099` on `:8001` — 13 tasks |
 | ShopFloor | `REDUCED_PROJECTION_FROM_CANONICAL_MODEL` |
-| Next | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** |
+| Next | **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** |
+
+## W6-T02 — Task identity and component presentation
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W6_TASK_IDENTITY_UI_PASS_COMMITTED` |
+| Presentation | `FLAT_LIST_WITH_COMPONENT_BADGES` |
+| Canonical source | `operator_task_truth/v1` |
+| Tests | 32 backend + 22 frontend pass |
+| Runtime | Order `23099` on `:8001` |
+| Next | **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 
