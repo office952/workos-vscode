@@ -154,10 +154,12 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 | Field | Value |
 |-------|-------|
-| Status | **READY** |
-| Issues | TE2E-025 |
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W3_GRAPH_COST_ADAPTER_PASS_COMMITTED` |
+| Issues | TE2E-025 (structural scope slice) |
 | Upstream | W3-D010, W2-T02 |
-| Delivers | Cost BOM active scope from `composition_graph` |
+| Delivers | `GraphCostProjection`; 7B/7H/7G workspace structural scope from `composition_graph` |
+| Runtime | IR-MRJS4VIK Case B verified |
 | Next | W3-T02 |
 
 ## W3-T02 — V6 commercial spine alignment

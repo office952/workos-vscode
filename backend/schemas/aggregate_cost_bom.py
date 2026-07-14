@@ -6,6 +6,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from schemas.graph_cost_projection import GraphCostProjection
+
 from schemas.product_definition import ProductDefinitionSourceContext
 
 COST_BOM_PREVIEW_VERSION = "1.1.0"
@@ -228,3 +230,4 @@ class AggregateExpandedCostBom(BaseModel):
     reseller_requirements: list[ResellerRequirement] = Field(default_factory=list)
     subcontractable_operations: list[SubcontractableOperation] = Field(default_factory=list)
     cost_line_classification: list[CostLineClassificationEntry] = Field(default_factory=list)
+    graph_cost_projection: GraphCostProjection | None = None

@@ -229,8 +229,19 @@ def _structural_active_modules(
 def _active_module_codes(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None = None,
-) -> set[str]:
-    return _structural_active_modules(pd, quote_input)
+    aggregate: ProductAggregate | None = None,
+) -> tuple[set[str], Any | None]:
+    if aggregate is not None and aggregate.composition_graph is not None:
+        from services.product_aggregate_graph_cost_projection_service import resolve_cost_active_modules
+
+        active, projection = resolve_cost_active_modules(
+            pd=pd,
+            aggregate=aggregate,
+            quote_input=quote_input,
+        )
+        if projection is not None:
+            return active, projection
+    return _structural_active_modules(pd, quote_input), None
 
 
 def _inactive_module_codes(pd: ProductDefinitionPreview) -> set[str]:
@@ -954,7 +965,7 @@ class AggregateCostBomAdapter:
         inventory_catalog = inventory_catalog or {}
         values = _canonical_and_quote_input(pd, quote_input)
 
-        active_modules = _active_module_codes(pd, quote_input)
+        active_modules, graph_cost_projection = _active_module_codes(pd, quote_input, aggregate)
         sold_led_subscopes = _sold_led_subscopes_from_quote(quote_input)
         mount_decision = _mount_consumer_from_quote(quote_input)
         inactive_modules_set = _inactive_module_codes(pd)
@@ -1309,6 +1320,18 @@ class AggregateCostBomAdapter:
         elif missing_inventory_materials and bom_status == "ready":
             bom_status = "blocked"
 
+        if graph_cost_projection is not None:
+            provenance_graph = CostBomProvenanceEntry(
+                key="graph_cost_projection",
+                source="product_aggregate_graph_cost_projection_service",
+                detail=(
+                    f"authority={graph_cost_projection.structural_authority} "
+                    f"modules={','.join(graph_cost_projection.active_mini_module_codes)}"
+                ),
+            )
+        else:
+            provenance_graph = None
+
         provenance = [
             CostBomProvenanceEntry(
                 key="product_definition_preview",
@@ -1334,6 +1357,13 @@ class AggregateCostBomAdapter:
                 detail="Step 7B.1 inventory alignment + externalization readiness hooks (read-only).",
             ),
         ]
+        if provenance_graph is not None:
+            provenance.insert(1, provenance_graph)
+        if graph_cost_projection is not None and graph_cost_projection.compatibility_note:
+            warnings.append(graph_cost_projection.compatibility_note)
+        for blocker in graph_cost_projection.blockers if graph_cost_projection else []:
+            if blocker.startswith("UPSTREAM_TRUTH_MISSING:"):
+                warnings.append(blocker)
 
         legacy_note = (
             "Parent template row has minimal BOM (components_json=[]). "
@@ -1379,6 +1409,7 @@ class AggregateCostBomAdapter:
             reseller_requirements=reseller_requirements,
             subcontractable_operations=subcontractable_operations,
             cost_line_classification=cost_line_classification,
+            graph_cost_projection=graph_cost_projection,
         )
 
     def _resolve_bom_status(

@@ -248,6 +248,30 @@ def _resolve_active_commercial_modules(
     )
 
 
+async def _resolve_commercial_modules_for_preview(
+    *,
+    db: AsyncSession,
+    pd: ProductDefinitionPreview,
+    payload: dict[str, Any],
+    template_code: str,
+    workspace_id: str | None,
+    quote_input: dict[str, Any] | None,
+) -> set[str]:
+    if workspace_id and pd.source_context.source_payload_type == "workspace_payload":
+        from services.product_aggregate_graph_cost_projection_service import resolve_cost_active_modules
+        from services.product_aggregate_service import ProductAggregateService
+
+        aggregate = await ProductAggregateService(db).build_for_workspace(template_code, workspace_id)
+        if aggregate and aggregate.composition_graph is not None:
+            active, _ = resolve_cost_active_modules(
+                pd=pd,
+                aggregate=aggregate,
+                quote_input=quote_input or payload,
+            )
+            return active
+    return _resolve_active_commercial_modules(pd, payload)
+
+
 def _extract_quantity(payload: dict[str, Any], paths: tuple[str, ...]) -> float | int | None:
     for path in paths:
         value = _get_by_path(payload, path)
@@ -503,7 +527,14 @@ class CommercialPriceProposalService:
 
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
-        active_modules = _resolve_active_commercial_modules(pd, payload)
+        active_modules = await _resolve_commercial_modules_for_preview(
+            db=self._db,
+            pd=pd,
+            payload=payload,
+            template_code=template_code,
+            workspace_id=workspace_id,
+            quote_input=quote_input,
+        )
         rules = RULES_BY_TEMPLATE[template_code]
 
         lines: list[CommercialPriceLine] = []

@@ -783,7 +783,6 @@ class EstimatedInternalCostService:
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
         values = _merged_values(pd, payload)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
-        active_modules = _resolve_active_modules(pd, payload)
 
         bom = await self._bom_builder.build_preview(
             template_code,
@@ -792,6 +791,13 @@ class EstimatedInternalCostService:
         )
         if bom is None:
             return None
+
+        if bom.graph_cost_projection is not None:
+            active_modules = {
+                m.module_code for m in bom.active_modules if m.included_in_cost_bom
+            }
+        else:
+            active_modules = _resolve_active_modules(pd, payload)
 
         rules = RULES_BY_TEMPLATE[template_code]
         material_lines: list[EstimatedInternalCostLine] = []

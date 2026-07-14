@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `d309bd8` (W3-D010 decision docs)
+**Accepted HEAD:** `6779820` (W3-T01 graph-to-cost adapter)
 
-**Last updated:** 2026-07-14 (W3-D010 decision — Wave 3 implementation ready)
+**Last updated:** 2026-07-14 (W3-T01 graph-to-cost projection — Wave 3 spine step 1)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 3 READY FOR IMPLEMENTATION** (D-010 resolved) |
+| Phase | **Wave 3 IN PROGRESS** (W3-T01 complete) |
 
-| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T01+) |
+| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T02+) |
 
 | Active task | None |
 
-| Next task | **`W3-T01`** — graph-to-cost module projection adapter |
+| Next task | **`W3-T02`** — V6 commercial spine alignment (7G official) |
 
 
 
