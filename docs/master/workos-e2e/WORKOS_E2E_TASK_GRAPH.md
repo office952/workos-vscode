@@ -194,7 +194,19 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Verdict | `W3_INT_01B_PASS_WITH_NONBLOCKING_RUNTIME_DEBT_OPEN_WAVE_4_GATE` |
 | Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
 | Live proof | `POST snapshot-v2` → `QSN2-2026-0001`; read-back stable; idempotent reject |
-| Wave 4 | `OPEN_WAVE_4_INTEGRATION_GATE` |
+| Wave 4 | `W4_INT_01_COMPLETE` — handoff gate inspected |
+
+## W4-INT-01 — Frozen snapshot → Offer/Order handoff contract gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY` |
+| Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
+| Snapshot | `QSN2-2026-0001` hash verified on `:8001` |
+| Finding | Offer path live-reprices; Order V2 convert consumes frozen snapshot |
+| Authorization | `BLOCKED_ACTIVE_OFFER_AUTHORITY` |
+| Next | **W4-T01** — Snapshot-authoritative Intake V6 Offer consumer |
 
 ## W3-INT-01 — Wave 3 internal-cost + snapshot persistence exit gate
 

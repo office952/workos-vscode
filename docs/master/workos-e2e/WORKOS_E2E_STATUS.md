@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `56f1ecf` (W3-INT-01B live snapshot gate complete)
+**Accepted HEAD:** `a4428fd` (W4-INT-01 offer/order handoff gate)
 
-**Last updated:** 2026-07-15 (W3-INT-01B live snapshot + runtime ownership gate)
+**Last updated:** 2026-07-15 (W4-INT-01 frozen snapshot → Offer/Order handoff contract gate)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 3 COMPLETE** (`W3-INT-01B` live snapshot proof) |
+| Phase | **Wave 4 integration gate COMPLETE** (`W4-INT-01` handoff contract inspection) |
 
-| Implementation hold | **Lifted — Wave 4 integration gate open** |
+| Implementation hold | **Offer authority fix required before Wave 4 implementation** |
 
 | Active task | None |
 
-| Next task | **Wave 4 integration gate (W4-T01)** |
+| Next task | **W4-T01 — Snapshot-authoritative Intake V6 Offer consumer** |
 
 
 
@@ -198,7 +198,9 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Wave 4 integration gate (W4-T01)**.
+Next allowed task: **W4-T01 — Snapshot-authoritative Intake V6 Offer consumer**.
 
-**W3-INT-01B:** Verdict `W3_INT_01B_PASS_WITH_NONBLOCKING_RUNTIME_DEBT_OPEN_WAVE_4_GATE`. Live snapshot `QSN2-2026-0001` on workspace `80570a4a-a806-4305-a39c-b34a72092694`; ghost `:8000` PID 4392 remains non-authoritative; trusted backend `:8001`.
+**W4-INT-01:** Verdict `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY`. Frozen snapshot `QSN2-2026-0001` hash-verified on `:8001`; Order V2 convert path is canonical; active Offer path (`handoff-to-offer` / `priced-quote/write`) still live-reprices via dry-run. Implementation authorization: `BLOCKED_ACTIVE_OFFER_AUTHORITY` until W4-T01 lands.
+
+**W3-INT-01B:** Live snapshot proof on trusted `:8001`; ghost `:8000` PID 4392 remains non-authoritative.
 
