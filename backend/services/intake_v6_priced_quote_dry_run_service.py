@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from services.commercial_price_proposal_service import CommercialPriceProposalService
 from services.company_commercial_settings_service import get_default_vat_pct, get_eur_to_ron_rate
+from services.estimated_internal_cost_service import EstimatedInternalCostService
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
 from services.intake_v6_offer_scope_live_calc_service import (
 	merge_workspace_offer_scope_into_quote_input,
@@ -24,6 +25,8 @@ V6_PRICED_DRY_RUN_READY = "V6_PRICED_DRY_RUN_READY"
 V6_PRICED_DRY_RUN_BLOCKED = "V6_PRICED_DRY_RUN_BLOCKED"
 V6_PRICED_DRY_RUN_SOURCE_MISSING = "V6_PRICED_DRY_RUN_SOURCE_MISSING"
 V6_PRICED_DRY_RUN_ZERO_TOTAL = "V6_PRICED_DRY_RUN_ZERO_TOTAL"
+V6_OFFICIAL_COMMERCIAL_AUTHORITY = "commercial_price_proposal_7g"
+TD_W3_V6_DIAG_COST_PLUS = "TD-W3-V6-DIAG-COST-PLUS-001"
 
 # Optional/future commercial owner decisions — surfaced as warnings, not dry-run blockers.
 V6_OPTIONAL_COMMERCIAL_OWNER_DECISION_CODES = frozenset(
@@ -153,6 +156,39 @@ def _material_trace(material_breakdown: Any | None, material_warning: str | None
 	}
 
 
+def _estimated_internal_cost_trace(preview: Any | None) -> dict[str, Any]:
+	if preview is None:
+		return {"available": False}
+	return {
+		"available": True,
+		"source": getattr(preview, "source", None),
+		"status": getattr(preview, "status", None),
+		"estimated_total_internal_cost": getattr(preview, "estimated_total_internal_cost", None),
+		"estimated_material_cost": getattr(preview, "estimated_material_cost", None),
+		"estimated_operation_cost": getattr(preview, "estimated_operation_cost", None),
+		"currency": getattr(preview, "currency", None),
+		"blockers": [
+			{"code": b.code, "message": b.message, "module_code": b.module_code}
+			for b in getattr(preview, "internal_blockers", []) or []
+		],
+		"provenance": [
+			entry.model_dump(mode="json")
+			for entry in (getattr(preview, "provenance", []) or [])
+		],
+	}
+
+
+def _official_totals_from_7g(*, subtotal: float, vat_rate: float) -> dict[str, Any]:
+	vat_amount = _round_money(subtotal * vat_rate / 100)
+	return {
+		"subtotal_net": _round_money(subtotal),
+		"vat_rate": vat_rate,
+		"vat_amount": vat_amount,
+		"total_gross": _round_money(subtotal + vat_amount),
+		"currency": "RON",
+	}
+
+
 def _pricing_trace(pricing_preview: Any) -> dict[str, Any]:
 	quote_input = getattr(pricing_preview, "quote_input_payload", {}) or {}
 	return {
@@ -266,6 +302,12 @@ async def build_intake_v6_priced_quote_dry_run(
 		quote_input=quote_input,
 		currency="RON",
 	)
+	internal_preview = await EstimatedInternalCostService(db).build_preview(
+		record.template_code,
+		workspace_id=workspace_id_str,
+		quote_input=quote_input,
+		currency="RON",
+	)
 	if commercial_preview is None:
 		blockers.append(
 			_blocker(
@@ -314,43 +356,45 @@ async def build_intake_v6_priced_quote_dry_run(
 
 	internal_totals = getattr(getattr(material_breakdown, "totals", None), "estimated_cost_total", None)
 	internal_cost_total = _positive_number(internal_totals)
-	eur_to_ron_rate = float(await get_eur_to_ron_rate(db))
+	eic_internal_total = _positive_number(
+		getattr(internal_preview, "estimated_total_internal_cost", None) if internal_preview else None
+	)
 
-	if internal_cost_total is not None:
-		cost_plus_totals = _build_cost_plus_totals(
-			internal_cost_total=internal_cost_total,
-			eur_to_ron_rate=eur_to_ron_rate,
-			commercial_inputs=commercial_inputs,
-		)
-		totals = {
-			"subtotal_net": cost_plus_totals["subtotal_net"],
-			"vat_rate": cost_plus_totals["vat_rate"],
-			"vat_amount": cost_plus_totals["vat_amount"],
-			"total_gross": cost_plus_totals["total_gross"],
-			"currency": "RON",
-		}
-		warnings.append("official_v6_pricing_uses_cost_plus_from_material_breakdown")
-	elif subtotal is None:
+	pricing_authority: str | None = None
+	diagnostic_cost_plus: dict[str, Any] | None = None
+
+	if blockers:
+		totals = _empty_totals(vat_rate=vat_rate)
+	elif subtotal is None or subtotal <= 0:
 		blockers.append(
 			_blocker(
 				V6_PRICED_DRY_RUN_ZERO_TOTAL,
-				"Backend dry-run produced zero totals; this cannot be treated as official V6 quote price.",
+				"CommercialPriceProposal produced no official subtotal; V6 cannot expose a synthetic commercial total.",
 			)
 		)
 		totals = _empty_totals(vat_rate=vat_rate)
 	else:
-		vat_amount = _round_money(subtotal * float(vat_rate or 0) / 100)
-		totals = {
-			"subtotal_net": _round_money(subtotal),
-			"vat_rate": float(vat_rate or 0),
-			"vat_amount": vat_amount,
-			"total_gross": _round_money(subtotal + vat_amount),
-			"currency": "RON",
-		}
+		totals = _official_totals_from_7g(subtotal=subtotal, vat_rate=float(vat_rate or 0))
+		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
+
+	if internal_cost_total is not None or eic_internal_total is not None:
+		eur_to_ron_rate = float(await get_eur_to_ron_rate(db))
+		diagnostic_base = internal_cost_total if internal_cost_total is not None else eic_internal_total
+		if diagnostic_base is not None:
+			diagnostic_cost_plus = _build_cost_plus_totals(
+				internal_cost_total=diagnostic_base,
+				eur_to_ron_rate=eur_to_ron_rate,
+				commercial_inputs=commercial_inputs,
+			)
+			diagnostic_cost_plus["diagnostic_only"] = True
+			diagnostic_cost_plus["td_id"] = TD_W3_V6_DIAG_COST_PLUS
+			diagnostic_cost_plus["canonical_authority"] = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	pricing_status = V6_PRICED_DRY_RUN_BLOCKED if blockers else V6_PRICED_DRY_RUN_READY
 	return {
 		"pricing_status": pricing_status,
+		"pricing_authority": pricing_authority,
+		"commercial_authority_status": "ready" if pricing_authority else "blocked",
 		"workspace_id": workspace_id_str,
 		"workspace_code": record.workspace_code,
 		"intake_code": getattr(payload, "intake_request_code", None),
@@ -363,6 +407,8 @@ async def build_intake_v6_priced_quote_dry_run(
 		"commercial_totals": totals,
 		"commercial_line_items": line_items,
 		"internal_cost_trace": _material_trace(material_breakdown, material_warning),
+		"estimated_internal_cost_trace": _estimated_internal_cost_trace(internal_preview),
+		"diagnostic_cost_plus_trace": diagnostic_cost_plus,
 		"pricing_input_trace": _pricing_trace(pricing_preview),
 		"commercial_proposal_trace": {
 			"available": commercial_preview is not None,
@@ -378,12 +424,8 @@ async def build_intake_v6_priced_quote_dry_run(
 				entry.model_dump(mode="json")
 				for entry in (getattr(commercial_preview, "provenance", []) or [])
 			],
-			"cost_plus_inputs": {
-				"commercial_inputs": commercial_inputs,
-				"internal_cost_total": internal_cost_total,
-				"internal_cost_currency": getattr(getattr(material_breakdown, "totals", None), "currency", None),
-				"eur_to_ron_rate": eur_to_ron_rate,
-			},
+			"official_authority": pricing_authority,
+			"diagnostic_cost_plus_td": TD_W3_V6_DIAG_COST_PLUS if diagnostic_cost_plus else None,
 		},
 		"warnings": list(dict.fromkeys(str(warning) for warning in warnings)),
 		"blockers": blockers,

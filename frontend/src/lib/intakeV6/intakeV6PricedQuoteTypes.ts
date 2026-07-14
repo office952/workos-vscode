@@ -13,6 +13,8 @@ export type IntakeV6PricedQuoteBlocker = {
 
 export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_status: "V6_PRICED_DRY_RUN_READY" | "V6_PRICED_DRY_RUN_BLOCKED" | string;
+  pricing_authority?: string | null;
+  commercial_authority_status?: "ready" | "blocked" | string | null;
   workspace_id: string;
   workspace_code?: string | null;
   intake_code?: string | null;
@@ -21,6 +23,10 @@ export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_mode?: string;
   commercial_totals: IntakeV6CommercialTotals;
   commercial_line_items?: Array<Record<string, unknown>>;
+  internal_cost_trace?: Record<string, unknown>;
+  estimated_internal_cost_trace?: Record<string, unknown>;
+  diagnostic_cost_plus_trace?: Record<string, unknown> | null;
+  commercial_proposal_trace?: Record<string, unknown>;
   warnings?: string[];
   blockers?: IntakeV6PricedQuoteBlocker[];
   dry_run_only?: boolean;

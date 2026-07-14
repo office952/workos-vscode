@@ -20,6 +20,10 @@ import {
   buildIntakeV6OfferModel,
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
+import {
+  intakeV6HasOfficialCommercialTotals,
+  intakeV6OfficialPricingBlockerMessage,
+} from "@/lib/intakeV6/intakeV6OfficialPricing";
 import type { IntakeV6FaceBackPrepCostDraftResponse } from "@/lib/intakeV6/useIntakeV6FaceBackPrepCostDraft";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
 import {
@@ -711,6 +715,7 @@ function LiveCalcEstimateTotalsBlock({
   total,
   currency,
   artworkOnlyBlocked,
+  officialPricingBlocker = null,
   emphasis = "balanced",
 }: {
   displayGrossRon: number | null;
@@ -718,6 +723,7 @@ function LiveCalcEstimateTotalsBlock({
   total: number | null;
   currency: string;
   artworkOnlyBlocked: boolean;
+  officialPricingBlocker?: string | null;
   emphasis?: "balanced" | "compact" | "sidebar";
 }) {
   const showCommercialEstimate =
@@ -754,8 +760,8 @@ function LiveCalcEstimateTotalsBlock({
           </div>
         </>
       ) : !artworkOnlyBlocked ? (
-        <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
-          {INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+        <p className="text-[11px] leading-relaxed text-amber-200/90" data-testid="intake-v6-live-estimate-unavailable">
+          {officialPricingBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
         </p>
       ) : null}
       <div
@@ -912,12 +918,10 @@ export default function IntakeV6LiveCalculationSummary({
         })
       : null;
   const officialTotals = officialPricing?.commercial_totals ?? null;
-  const hasOfficialTotals =
-    officialPricing?.pricing_status === "V6_PRICED_DRY_RUN_READY" &&
-    officialTotals?.subtotal_net != null &&
-    officialTotals?.total_gross != null;
-  const displayGrossRon = hasOfficialTotals ? officialTotals.total_gross : offerModel?.totalGross ?? null;
-  const displayNetRon = hasOfficialTotals ? officialTotals.subtotal_net : offerModel?.subtotalNet ?? null;
+  const hasOfficialTotals = intakeV6HasOfficialCommercialTotals(officialPricing);
+  const officialPricingBlocker = intakeV6OfficialPricingBlockerMessage(officialPricing);
+  const displayGrossRon = hasOfficialTotals ? officialTotals?.total_gross ?? null : null;
+  const displayNetRon = hasOfficialTotals ? officialTotals?.subtotal_net ?? null : null;
   const includedRows = useMemo(() => rows.filter((row) => row.displayBucket === "included"), [rows]);
   const diagnosticRows = useMemo(() => rows.filter((row) => row.displayBucket !== "included"), [rows]);
   const filteredRows = useMemo(() => {
@@ -1128,6 +1132,7 @@ export default function IntakeV6LiveCalculationSummary({
           total={total}
           currency={currency}
           artworkOnlyBlocked={artworkOnlyBlocked}
+          officialPricingBlocker={officialPricingBlocker}
           emphasis="balanced"
         />
 
@@ -1217,6 +1222,7 @@ export default function IntakeV6LiveCalculationSummary({
         total={total}
         currency={currency}
         artworkOnlyBlocked={artworkOnlyBlocked}
+        officialPricingBlocker={officialPricingBlocker}
         emphasis="sidebar"
       />
 

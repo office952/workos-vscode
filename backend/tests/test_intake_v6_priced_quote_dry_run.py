@@ -34,6 +34,16 @@ class FakeCommercialPriceProposalService:
         return self.preview
 
 
+class FakeEstimatedInternalCostService:
+    preview = None
+
+    def __init__(self, db) -> None:
+        self.db = db
+
+    async def build_preview(self, template_code, *, workspace_id=None, quote_input=None, currency="RON"):
+        return self.preview
+
+
 def _record() -> SimpleNamespace:
     return SimpleNamespace(
         id="workspace-v6",
@@ -132,13 +142,28 @@ def patch_dry_run_dependencies(monkeypatch):
     async def fake_vat(_db):
         return 19.0
 
+    async def fake_eur(_db):
+        return 5.0
+
     monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
     monkeypatch.setattr(dry_run, "_parse_payload", fake_parse_payload)
     monkeypatch.setattr(dry_run, "build_v6_pricing_input_preview", lambda **_kwargs: _pricing_preview())
     monkeypatch.setattr(dry_run, "get_material_breakdown_for_workspace", fake_material_breakdown)
     monkeypatch.setattr(dry_run, "get_default_vat_pct", fake_vat)
+    monkeypatch.setattr(dry_run, "get_eur_to_ron_rate", fake_eur)
     monkeypatch.setattr(dry_run, "CommercialPriceProposalService", FakeCommercialPriceProposalService)
+    monkeypatch.setattr(dry_run, "EstimatedInternalCostService", FakeEstimatedInternalCostService)
     FakeCommercialPriceProposalService.preview = _commercial_preview()
+    FakeEstimatedInternalCostService.preview = SimpleNamespace(
+        source="estimated_internal_cost",
+        status="partial",
+        estimated_total_internal_cost=782.38,
+        estimated_material_cost=600.0,
+        estimated_operation_cost=182.38,
+        currency="RON",
+        internal_blockers=[],
+        provenance=[],
+    )
 
 
 @pytest.mark.asyncio
@@ -156,6 +181,11 @@ async def test_dry_run_returns_non_zero_totals_when_backend_pricing_available() 
     assert result["commercial_totals"]["currency"] == "RON"
     assert result["commercial_line_items"]
     assert result["internal_cost_trace"]["estimated_cost_total"] == 782.38
+    assert result["pricing_authority"] == dry_run.V6_OFFICIAL_COMMERCIAL_AUTHORITY
+    assert result["estimated_internal_cost_trace"]["available"] is True
+    assert result["diagnostic_cost_plus_trace"] is not None
+    assert result["diagnostic_cost_plus_trace"]["diagnostic_only"] is True
+    assert "official_v6_pricing_uses_cost_plus" not in " ".join(result.get("warnings") or [])
     assert result["dry_run_only"] is True
 
 
@@ -219,6 +249,29 @@ async def test_dry_run_does_not_copy_frontend_preview_totals() -> None:
     assert result["pricing_input_trace"]["is_ready_for_quote"] is True
     assert result["commercial_totals"]["total_gross"] == 1190.0
     assert result["commercial_totals"]["total_gross"] != 999999.0
+
+
+@pytest.mark.asyncio
+async def test_dry_run_does_not_use_cost_plus_when_7g_blocked() -> None:
+    FakeCommercialPriceProposalService.preview = _commercial_preview(subtotal=None, status="partial")
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_BLOCKED
+    assert result["pricing_authority"] is None
+    assert result["commercial_totals"]["total_gross"] is None
+    assert result["diagnostic_cost_plus_trace"] is not None
+    assert result["diagnostic_cost_plus_trace"]["total_gross"] is not None
+    assert "official_v6_pricing_uses_cost_plus" not in " ".join(result.get("warnings") or [])
+
+
+@pytest.mark.asyncio
+async def test_dry_run_7g_official_total_differs_from_diagnostic_cost_plus() -> None:
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_READY
+    assert result["commercial_totals"]["total_gross"] == 1190.0
+    assert result["diagnostic_cost_plus_trace"]["total_gross"] != 1190.0
 
 
 def test_dry_run_service_does_not_call_v4_draft_builder() -> None:

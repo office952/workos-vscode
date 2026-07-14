@@ -164,9 +164,14 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## W3-T02 — V6 commercial spine alignment
 
-| Issues | TE2E-025 |
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W3_V6_7G_SPINE_PASS_COMMITTED` |
+| Issues | TE2E-025 (V6 parallel authority slice) |
 | Upstream | W3-T01 |
-| Delivers | Official V6 dry-run/write uses 7G total, not cost-plus override |
+| Delivers | V6 dry-run official total from 7G; 7H separate; cost-plus diagnostic only |
+| Runtime | IR-MRJS4VIK — 1888.68 RON official vs 5926.91 diagnostic |
 | Next | W3-T03 |
 
 ## W3-T03 — Snapshot unify + pricing registry

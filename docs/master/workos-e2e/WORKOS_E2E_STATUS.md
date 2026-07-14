@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `6779820` (W3-T01 graph-to-cost adapter)
+**Accepted HEAD:** `dd41087` (W3-T02 V6 7G commercial spine)
 
-**Last updated:** 2026-07-14 (W3-T01 graph-to-cost projection — Wave 3 spine step 1)
+**Last updated:** 2026-07-14 (W3-T02 V6 official 7G commercial pricing spine)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 3 IN PROGRESS** (W3-T01 complete) |
+| Phase | **Wave 3 IN PROGRESS** (W3-T02 complete) |
 
-| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T02+) |
+| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T03+) |
 
 | Active task | None |
 
-| Next task | **`W3-T02`** — V6 commercial spine alignment (7G official) |
+| Next task | **`W3-T03`** — Snapshot unify + pricing registry completeness |
 
 
 
@@ -70,9 +70,9 @@
 
 
 
-1. V6 cost-plus vs 7G commercial authority — **Wave 3 W3-T02** (implementation)
+1. V6 cost-plus vs 7G commercial authority — **addressed on V6 dry-run path (W3-T02)**; snapshot/registry remain W3-T03
 
-2. Graph-to-cost adapter — **Wave 3 W3-T01**
+2. Graph-to-cost adapter — **W3-T01 COMPLETE**
 
 3. `volum_aluminum_module_template_code` Intake persistence — prerequisite **`W2-PREREQUISITE-VOLUM-TRUTH`**
 
@@ -127,6 +127,10 @@
 - [x] `W2-INT-01` — PD/Aggregate integration gate PASS WITH NONBLOCKING DEBT
 
 - [x] `W3-D010` — Cost authority decision (`PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS`)
+
+- [x] `W3-T01` — Graph-to-cost module projection adapter (`3eae7c4`)
+
+- [x] `W3-T02` — V6 official 7G commercial pricing spine (dry-run + UI authority)
 
 
 
@@ -188,9 +192,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **`W3-T01`** — graph-to-cost module projection adapter.
+Next allowed task: **`W3-T03`** — snapshot unify + pricing registry completeness.
 
-
-
-**W3-D010:** Structural authority = Aggregate `composition_graph`; internal = 7H; commercial = 7G; CostEngine = domain engine under 7H only. Retire V6 cost-plus as official commercial path.
+**W3-T02:** Official V6 commercial total = 7G only; cost-plus diagnostic trace retained as TD-W3-V6-DIAG-COST-PLUS-001.
 
