@@ -55,8 +55,10 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 | Field | Value |
 |-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
 | Upstream | W1-L-FINISH |
 | Issues | TE2E-006 |
+| Delivers | `product_truth.return_cant` → review canonicalRuntime; save normalization; runtime capture overlay |
 | Next | W1-INT-02 |
 
 ### W1-INT-02 — Wave 1 integration gate

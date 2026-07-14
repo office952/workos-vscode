@@ -127,6 +127,7 @@ import ProductTruthPromotionPlannerPanel from "../ProductTruthPromotionPlannerPa
 import { toast } from "@/components/ui/sonner";
 import { buildProductTruthDraft } from "@/lib/intakeV6/productTruth/productTruthDraftBuilder";
 import { mapReturnCantTruthFieldsReadonly } from "@/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper";
+import { buildReturnCantCanonicalRuntimeFromPayload } from "@/lib/intakeV6/productTruth/returnCantCanonicalRuntimeFromProductTruth";
 import { useTemplateFormContract } from "@/lib/intakeV6/useTemplateFormContract";
 import {
   globalFinishSetupToReturnCant,
@@ -1576,8 +1577,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             confirmed: quoteGeometry.confirmed,
           }
         : null,
+      canonicalRuntime: buildReturnCantCanonicalRuntimeFromPayload(payload),
     });
-  }, [analysisReady, artworkFinishes, effectiveLetterGroups, form, quoteGeometry, state.layerRoleConfirmation, state.workspace?.workspace_code, svgSourcePayload, workspaceId]);
+  }, [analysisReady, artworkFinishes, effectiveLetterGroups, form, payload, quoteGeometry, state.layerRoleConfirmation, state.workspace?.workspace_code, svgSourcePayload, workspaceId]);
   const modularAttentionWarnings = useMemo(
     () => resolveModuleActivationAttentionWarnings(modularAwareness.preview),
     [modularAwareness.preview],

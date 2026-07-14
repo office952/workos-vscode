@@ -3,18 +3,18 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Worktree:** `C:\w\psiso`  
 **Branch:** `feature/product-system-active-path-isolation-v1`  
-**Accepted HEAD:** `bee4cfe` (post W1-L-SPINE); W1-L-FINISH commit pending  
-**Last updated:** 2026-07-14 (W1-L-FINISH committed)
+**Accepted HEAD:** `72bb8d0` (W1-L-CANT)  
+**Last updated:** 2026-07-14 (W1-L-CANT committed)
 
 ## Program phase
 
 | Field | Value |
 |-------|-------|
-| Phase | **Wave 1 in progress — W1-L-FINISH complete; next W1-L-CANT** |
+| Phase | **Wave 1 in progress — W1-L-CANT complete; next W1-INT-02** |
 | Implementation hold | **Lifted for Wave 1 only** (D-016, P-001 YES) |
-| Implementation started | **YES** — `W1-L-SPINE`, `W1-L-FINISH` |
+| Implementation started | **YES** — `W1-L-SPINE`, `W1-L-FINISH`, `W1-L-CANT` |
 | Active task | None (between lanes) |
-| Next task | `W1-L-CANT` — cant/return finish contract |
+| Next task | `W1-INT-02` — Wave 1 integration gate |
 
 ## Maturity snapshot
 
@@ -30,7 +30,7 @@
 
 ## Blockers (program-level)
 
-1. Cant/return contract — **W1-L-CANT** (TE2E-006)
+1. Wave 1 integration gate — **W1-INT-02**
 2. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
 3. Frontend legacy support/montaj banner copy (TE2E-005 adjacency) — deferred W6
 
@@ -77,8 +77,10 @@ TE2E-010 (+ P2/P3) — see `WORKOS_E2E_ISSUE_REGISTRY.md`
 
 **Closed by W1-L-FINISH:** TE2E-003
 
+**Closed by W1-L-CANT:** TE2E-006
+
 ## Next step
 
-Next allowed implementation task: `W1-L-CANT` (cant/return finish contract).
+Next allowed implementation task: `W1-INT-02` (Wave 1 integration gate).
 
-**W1-L-FINISH:** finish truth hydrated at save — `finish_target`, artwork `print_required`/`lamination_required`; live IR-MRJS4VIK capture/pricing aligned.
+**W1-L-CANT:** cant/return contract aligned — `product_truth.return_cant` drives review readonly runtime; save normalization clears stale method-dependent fields; IR-MRJS4VIK operator cant banner cleared.

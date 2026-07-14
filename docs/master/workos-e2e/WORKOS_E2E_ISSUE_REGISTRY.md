@@ -21,7 +21,7 @@
 | TE2E-003 | Finish truth not persisted | Defect | P1 | Intake V6 | — | PD, capture | CONFIRMED UI gap | Intake finish | **fixed** | W1-L-FINISH | finish_setup persistence tests | step 2 review | capture JSON | PD02, MASTER 02 | W1-L-FINISH |
 | TE2E-004 | Autosave setPayload crash | Defect | P1 | Intake V6 | — | — | CONFIRMED orphan call | Intake Review | **closed** | F-001 | commercialSettings test | step 2 | F001 supporting | — | `fe6c6f7` |
 | TE2E-005 | Step 2 diagnostic overload | UX | P2 | Intake V6 | TE2E-001,002 | operator confusion | CONFIRMED multi-channel | Frontend Intake | open | W6-T01 | UI snapshot tests | step 2 | `03-intake-step2-configurare.png` | MASTER 07,08 | — |
-| TE2E-006 | Cant finish incomplete | Defect | P2 | Intake V6 | — | confirm path | PARTIAL contract | Intake finish | open | W1-T03 | cant finish tests | step 2 | runtime | PD02 | — |
+| TE2E-006 | Cant finish incomplete | Defect | P2 | Intake V6 | — | confirm path | CONFIRMED review mapper gap | Intake finish | **fixed** | W1-L-CANT | cant finish tests | step 3 review | `w1-l-cant-review-step-after.png` | PD02 | W1-L-CANT |
 | TE2E-007 | Residual unclassified vector | Defect | P2 | Intake V6 | — | layer setup | CONFIRMED fixture | Intake analyzer | open | W1-T04 | analyzer fixture test | step 1 | `02-intake-step1-layers.png` | — | — |
 | TE2E-008 | Missing pricing rates (20/21) | Defect | P2 | Calcul | — | estimate gap | CONFIRMED registry | Pricing | open | W3-T02 | pricing registry test | step 2 rail | `04-intake-step2-preview-rail.png` | MASTER 10 | — |
 | TE2E-009 | Cant/volum label drift | Terminology | P3 | Calcul | — | operator terms | CONFIRMED label | Frontend | open | W6-T02 | label snapshot | step 2 rail | preview rail | — | — |

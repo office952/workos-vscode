@@ -14,6 +14,7 @@ from services.intake_v4_finish_truth_service import (
     mounting_solution_runtime_state,
 )
 from services.intake_v4_layer_role_service import selected_layer_refs_runtime_state
+from services.return_cant_runtime_state import return_cant_runtime_state
 from services.template_architecture_scope import (
     STRUCTURE_PREMOUNT_TEMPLATE_CODE,
     VOLUM_ALUMINUM_TEMPLATE_CODE,
@@ -678,6 +679,59 @@ def _overlay_runtime_mounting_solution_field(
     return fields
 
 
+def _overlay_runtime_return_cant_fields(
+    fields: list[dict[str, Any]],
+    payload_raw: dict[str, Any] | None,
+) -> list[dict[str, Any]]:
+    if not isinstance(payload_raw, dict):
+        return fields
+    runtime = return_cant_runtime_state(payload_raw)
+    depth_runtime = runtime
+    for field in fields:
+        key = field.get("field_key")
+        if key == "return.depth_mm":
+            if runtime["status"] == "confirmed" and runtime.get("depth_mm") is not None:
+                field.update(
+                    {
+                        "source_type": "payload_persisted",
+                        "state": "confirmed",
+                        "blocker_code": None,
+                        "notes": "Persisted return_cant instances carry confirmed depth_mm via product_truth bridge.",
+                    }
+                )
+            else:
+                blocker = runtime.get("blocker_code") or "RETURN_CANT_HEIGHT_CONFIRMATION_REQUIRED"
+                field.update(
+                    {
+                        "source_type": "payload_persisted",
+                        "state": "blocked",
+                        "blocker_code": blocker,
+                        "notes": "Return/cant depth remains blocked until product_truth return_cant instances are confirmed.",
+                    }
+                )
+        if key == "return.material":
+            if runtime["status"] == "confirmed" and runtime.get("material_profile"):
+                field.update(
+                    {
+                        "source_type": "payload_persisted",
+                        "state": "confirmed",
+                        "blocker_code": None,
+                        "notes": "Persisted return_cant material_profile is structural truth from product_truth bridge.",
+                    }
+                )
+            else:
+                blocker = runtime.get("blocker_code") or "RETURN_CANT_MATERIAL_MISSING"
+                field.update(
+                    {
+                        "source_type": "payload_persisted",
+                        "state": "blocked" if runtime["status"] != "missing" else "missing",
+                        "blocker_code": blocker,
+                        "notes": "Return/cant material profile remains blocked until product_truth return_cant instances are confirmed.",
+                    }
+                )
+    return fields
+
+
 def _overlay_runtime_support_type_field(
     fields: list[dict[str, Any]],
     payload_raw: dict[str, Any] | None,
@@ -796,11 +850,14 @@ def build_form_system_contract_map(
         )
 
     fields = _overlay_runtime_finish_target_field(
-        _overlay_runtime_support_type_field(
-            _overlay_runtime_mounting_solution_field(
-                _overlay_runtime_mounting_scope_field(
-                    _overlay_runtime_artwork_finish_boolean_fields(
-                        _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+        _overlay_runtime_return_cant_fields(
+            _overlay_runtime_support_type_field(
+                _overlay_runtime_mounting_solution_field(
+                    _overlay_runtime_mounting_scope_field(
+                        _overlay_runtime_artwork_finish_boolean_fields(
+                            _overlay_runtime_selected_layer_field(deepcopy(FIELDS), payload_raw),
+                            payload_raw,
+                        ),
                         payload_raw,
                     ),
                     payload_raw,

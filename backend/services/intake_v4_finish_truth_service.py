@@ -466,7 +466,10 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
         updates,
     )
 
-    return _apply_finish_setup_updates(merged_setup, updates)
+    merged_setup = _apply_finish_setup_updates(merged_setup, updates)
+    from services.return_cant_finish_truth_service import normalize_return_cant_finish_setup
+
+    return normalize_return_cant_finish_setup(merged_setup)
 
 
 ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
