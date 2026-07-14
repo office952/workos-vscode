@@ -8,7 +8,7 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** TBD post W4-INT-02 gate commits (starting `bd2d414`)
+**Accepted HEAD:** `c2678b0` (W4-INT-02 frozen snapshot Offer/Order integration gate)
 
 **Last updated:** 2026-07-15 (W4-INT-02 frozen snapshot Offer/Order integration gate)
 
