@@ -1,7 +1,7 @@
 """Quote Snapshot V2 for backend-priced Intake V6 quotes.
 
-Creates an immutable quote output snapshot from persisted quote totals only.
-No quote total rewrite, no order, no downstream production/execution entities.
+Freezes canonical dual snapshot (7G + 7H) via QuoteSnapshotV2Service at snapshot time.
+Validates persisted quote totals against live 7G authority — no synthetic CPP from quote lines.
 """
 
 from __future__ import annotations
@@ -16,15 +16,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.orders import Orders
 from models.quote_snapshot_v2 import QuoteSnapshotV2Record
-from schemas.commercial_price_proposal import CommercialPriceLine, CommercialPriceProposalPreview, CommercialProvenanceEntry
-from schemas.estimated_internal_cost import EstimatedInternalCostPreview, InternalProvenanceEntry
-from schemas.quote_snapshot_v2 import QUOTE_SNAPSHOT_V2_VERSION, QuoteSnapshotProvenanceEntry, QuoteSnapshotV2
+from schemas.quote_snapshot_v2 import QUOTE_SNAPSHOT_V2_VERSION, QuoteSnapshotV2
 from services.intake_v6_commercial_quote_service import INTAKE_V6_LINKAGE_JSON_KEY, intake_v6_linkage_code
-from services.intake_v6_priced_quote_dry_run_service import V6_PRICED_DRY_RUN_SOURCE
-from services.product_definition_builder_service import ProductDefinitionBuilderService
-from services.quote_snapshot_component_scope_service import (
-    apply_component_scope_to_snapshot_fields,
-    build_frozen_component_scope,
+from services.intake_v6_priced_quote_dry_run_service import (
+	V6_OFFICIAL_COMMERCIAL_AUTHORITY,
+	V6_PRICED_DRY_RUN_READY,
+	V6_PRICED_DRY_RUN_SOURCE,
+	build_intake_v6_priced_quote_dry_run,
+	resolve_intake_v6_canonical_quote_input,
+)
+from services.quote_snapshot_v2_service import (
+	FREEZE_ALLOWED_READINESS,
+	HARD_BLOCKED_READINESS,
+	QuoteSnapshotV2Service,
 )
 from services.quotes import QuotesService
 
@@ -54,7 +58,14 @@ V6_SNAPSHOT_NOTES_INVALID = "V6_SNAPSHOT_NOTES_INVALID"
 V6_SNAPSHOT_AMBIGUOUS_STATE = "V6_SNAPSHOT_AMBIGUOUS_STATE"
 V6_SNAPSHOT_OFFER_SCOPE_INVALID = "V6_SNAPSHOT_OFFER_SCOPE_INVALID"
 V6_SNAPSHOT_COMPONENT_SCOPE_MISSING = "V6_SNAPSHOT_COMPONENT_SCOPE_MISSING"
+V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED = "V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED"
+V6_SNAPSHOT_COMMERCIAL_AUTHORITY_BLOCKED = "V6_SNAPSHOT_COMMERCIAL_AUTHORITY_BLOCKED"
+V6_SNAPSHOT_COMMERCIAL_TOTAL_MISMATCH = "V6_SNAPSHOT_COMMERCIAL_TOTAL_MISMATCH"
+V6_SNAPSHOT_READINESS_BLOCKED = "V6_SNAPSHOT_READINESS_BLOCKED"
+V6_SNAPSHOT_SYNTHETIC_CPP_FORBIDDEN = "V6_SNAPSHOT_SYNTHETIC_CPP_FORBIDDEN"
+V6_SNAPSHOT_DRY_RUN_REPRICE_BLOCKED = "V6_SNAPSHOT_DRY_RUN_REPRICE_BLOCKED"
 
+_SYNTHETIC_CPP_PRICING_RULE = "V6_BACKEND_PRICED_QUOTE_LINE"
 _TERMINAL_STATUSES = frozenset({"accepted", "rejected", "expired", "converted", "ordered"})
 
 
@@ -68,6 +79,7 @@ def _blocked(
 	quote_code: str | None = None,
 	blockers: list[dict[str, str]],
 	warnings: list[str] | None = None,
+	readiness: str | None = None,
 ) -> dict[str, Any]:
 	return {
 		"status": V6_QUOTE_SNAPSHOT_V2_BLOCKED,
@@ -81,6 +93,7 @@ def _blocked(
 		"client_output": {},
 		"blockers": blockers,
 		"warnings": warnings or [],
+		"readiness": readiness,
 		"can_accept_quote": False,
 		"can_create_order": False,
 		"order_snapshot_required": True,
@@ -203,7 +216,7 @@ def _client_output(quote_obj: Any, commercial: dict[str, Any], line_items: list[
 		"currency": commercial["currency"],
 		"validity": getattr(quote_obj, "valid_until", None) or "Valabilitatea se confirma comercial inainte de acceptare.",
 		"terms": ["Snapshot Quote V2 - oferta oficiala inghetata backend."],
-		"notes": ["Preturile sunt generate din totalurile persistate ale ofertei, nu din preview frontend."],
+		"notes": ["Preturile comerciale provin din 7G; costul intern din 7H — nu din linii de oferta sintetizate."],
 		"generated_from": QUOTE_SNAPSHOT_V2,
 	}
 
@@ -211,6 +224,109 @@ def _client_output(quote_obj: Any, commercial: dict[str, Any], line_items: list[
 def _snapshot_hash(payload: dict[str, Any]) -> str:
 	encoded = json.dumps(payload, sort_keys=True, default=str).encode("utf-8")
 	return hashlib.sha256(encoded).hexdigest()
+
+
+def _apply_v6_commercial_first_readiness(snapshot: QuoteSnapshotV2) -> QuoteSnapshotV2:
+	"""Commercial snapshot may freeze when 7G is ready even if 7H is blocked."""
+	commercial = snapshot.commercial_price_proposal_snapshot
+	if (
+		snapshot.readiness == "blocked_missing_internal"
+		and commercial.status != "blocked"
+		and _positive(commercial.commercial_total) is not None
+	):
+		snapshot.readiness = "partial_with_owner_decisions"
+		warning = "V6 commercial snapshot frozen with incomplete internal cost (7H blocked separately)."
+		if warning not in snapshot.warnings_snapshot:
+			snapshot.warnings_snapshot.append(warning)
+	return snapshot
+
+
+def _validate_canonical_snapshot(
+	snapshot: QuoteSnapshotV2,
+	*,
+	quote_grand_total: float,
+	quote_total_before_vat: float | None = None,
+) -> list[dict[str, str]]:
+	blockers: list[dict[str, str]] = []
+	commercial = snapshot.commercial_price_proposal_snapshot
+
+	if commercial.status == "blocked":
+		blockers.append(
+			_blocker(
+				V6_SNAPSHOT_COMMERCIAL_AUTHORITY_BLOCKED,
+				"7G commercial proposal is blocked; snapshot cannot claim official commercial truth.",
+			)
+		)
+
+	for line in commercial.commercial_price_lines:
+		if line.pricing_rule_code == _SYNTHETIC_CPP_PRICING_RULE:
+			blockers.append(
+				_blocker(
+					V6_SNAPSHOT_SYNTHETIC_CPP_FORBIDDEN,
+					"Synthetic CPP from quote-line reconstruction is forbidden for V6 snapshots.",
+				)
+			)
+			break
+
+	cpp_net = commercial.subtotal_commercial if commercial.subtotal_commercial is not None else commercial.commercial_total
+	quote_net = quote_total_before_vat if quote_total_before_vat is not None else quote_grand_total
+	if cpp_net is None or abs(_money(cpp_net) - _money(quote_net)) > 0.01:
+		blockers.append(
+			_blocker(
+				V6_SNAPSHOT_COMMERCIAL_TOTAL_MISMATCH,
+				"7G commercial subtotal does not match persisted quote commercial totals.",
+			)
+		)
+
+	if snapshot.readiness in HARD_BLOCKED_READINESS:
+		blockers.append(
+			_blocker(
+				V6_SNAPSHOT_READINESS_BLOCKED,
+				f"Snapshot readiness {snapshot.readiness} is hard-blocked for V6 freeze.",
+			)
+		)
+	elif snapshot.readiness not in FREEZE_ALLOWED_READINESS:
+		blockers.append(
+			_blocker(
+				V6_SNAPSHOT_READINESS_BLOCKED,
+				f"Snapshot readiness {snapshot.readiness} is not allowed for V6 freeze.",
+			)
+		)
+
+	return blockers
+
+
+def _enrich_v6_provenance(snapshot: QuoteSnapshotV2, *, write_trace: dict[str, Any]) -> None:
+	from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry
+
+	snapshot.provenance.append(
+		QuoteSnapshotProvenanceEntry(
+			key="intake_v6_priced_quote_write_v1",
+			source="intake_v6_priced_quote_write_service",
+			detail=f"pricing_hash={write_trace.get('pricing_hash')}",
+		)
+	)
+	snapshot.provenance.append(
+		QuoteSnapshotProvenanceEntry(
+			key="v6_official_commercial_authority",
+			source="commercial_price_proposal_7g",
+			detail=V6_OFFICIAL_COMMERCIAL_AUTHORITY,
+		)
+	)
+	snapshot.provenance.append(
+		QuoteSnapshotProvenanceEntry(
+			key="no_order_no_execution_no_inventory",
+			source="intake_v6_quote_snapshot_v2_service",
+			detail="snapshot_only=true",
+		)
+	)
+	snapshot.notes.extend(
+		[
+			"Quote Snapshot V2 frozen via canonical QuoteSnapshotV2Service compose (7G + 7H).",
+			"Commercial total validated against persisted quote; no quote-line CPP synthesis.",
+			"Does not create order, execution plan, execution tasks, inventory movement, or task aggregates.",
+		]
+	)
 
 
 async def _snapshot_count(db: AsyncSession, quote_id: int) -> int:
@@ -228,109 +344,6 @@ async def _next_snapshot_number(db: AsyncSession) -> int:
 	return int(result.scalar() or 0) + 1
 
 
-def _quote_snapshot_v2_payload(
-	*,
-	quote_obj: Any,
-	workspace_id: str,
-	template_code: str,
-	commercial: dict[str, Any],
-	line_items: list[dict[str, Any]],
-	write_trace: dict[str, Any],
-	created_by: str | None,
-	now: str,
-	scope_fields: dict[str, Any] | None = None,
-	product_definition_snapshot: Any = None,
-) -> QuoteSnapshotV2:
-	commercial_lines = [
-		CommercialPriceLine(
-			code=str(line.get("source_component") or line.get("name") or "v6_quote_line"),
-			label=str(line.get("name") or line.get("description") or "V6 quote line"),
-			component_code=line.get("source_component"),
-			basis_type="unknown",
-			quantity=line.get("quantity"),
-			unit=line.get("unit"),
-			commercial_unit_price=line.get("unit_price"),
-			subtotal=line.get("total"),
-			pricing_rule_code="V6_BACKEND_PRICED_QUOTE_LINE",
-			source=V6_PRICED_DRY_RUN_SOURCE,
-		)
-		for line in line_items
-	]
-	commercial_preview = CommercialPriceProposalPreview(
-		template_code=template_code,
-		status="ready",
-		commercial_price_lines=commercial_lines,
-		subtotal_commercial=commercial["total_before_vat"],
-		commercial_total=commercial["grand_total"],
-		currency=commercial["currency"],
-		provenance=[
-			CommercialProvenanceEntry(
-				key="intake_v6_priced_quote_write_v1",
-				source="intake_v6_priced_quote_write_service",
-				detail="official quote totals already persisted; snapshot reuses quote columns",
-			)
-		],
-		confidence="high",
-		quote_ready_for_commercial_review=True,
-		notes=["Commercial snapshot built from persisted Intake V6 backend-priced quote totals."],
-	)
-	internal_summary = write_trace.get("internal_cost_trace_summary") if isinstance(write_trace.get("internal_cost_trace_summary"), dict) else {}
-	internal_total = internal_summary.get("estimated_cost_total")
-	internal_preview = EstimatedInternalCostPreview(
-		template_code=template_code,
-		status="ready" if internal_total is not None else "partial",
-		estimated_total_internal_cost=internal_total,
-		currency=str(internal_summary.get("currency") or "EUR"),
-		provenance=[
-			InternalProvenanceEntry(
-				key="intake_v6_priced_quote_write_v1.internal_cost_trace_summary",
-				source="intake_v6_priced_quote_write_service",
-				detail="internal cost trace captured at priced quote write time",
-			)
-		],
-		completeness=1.0 if internal_total is not None else 0.5,
-		confidence="medium",
-		ready_for_quote_snapshot=True,
-		notes=["Internal cost snapshot copied from Intake V6 priced write trace; no CostEngine call."],
-	)
-	return QuoteSnapshotV2(
-		quote_id=str(getattr(quote_obj, "id", "")),
-		workspace_id=workspace_id,
-		template_code=template_code,
-		product_definition_snapshot=product_definition_snapshot,
-		**(scope_fields or {}),
-		commercial_price_proposal_snapshot=commercial_preview,
-		estimated_internal_cost_snapshot=internal_preview,
-		readiness="ready_for_owner_review",
-		frozen_at=now,
-		frozen_by=created_by,
-		version=1,
-		provenance=[
-			QuoteSnapshotProvenanceEntry(
-				key="quote_snapshot_v2",
-				source="intake_v6_quote_snapshot_v2_service",
-				detail="persisted_from_backend_priced_v6_quote=true",
-			),
-			QuoteSnapshotProvenanceEntry(
-				key="no_order_no_execution_no_inventory",
-				source="intake_v6_quote_snapshot_v2_service",
-				detail="snapshot_only=true",
-			),
-		],
-		persist_status="persisted",
-		notes=[
-			"Quote Snapshot V2 frozen from persisted Intake V6 backend-priced quote totals.",
-			"Does not create order, execution plan, execution tasks, inventory movement, or product/task aggregates.",
-		],
-		input_summary={
-			"quote_code": getattr(quote_obj, "code", None),
-			"workspace_id": workspace_id,
-			"commercial_total": commercial["grand_total"],
-			"source": V6_PRICED_DRY_RUN_SOURCE,
-		},
-	)
-
-
 async def _persist_snapshot(
 	db: AsyncSession,
 	*,
@@ -343,7 +356,8 @@ async def _persist_snapshot(
 	quote_snapshot_v2: QuoteSnapshotV2,
 ) -> QuoteSnapshotV2Record:
 	number = await _next_snapshot_number(db)
-	now_year = datetime.now(timezone.utc).year
+	now = datetime.now(timezone.utc)
+	now_year = now.year
 	snapshot_code = f"QSN2-{now_year}-{number:04d}"
 	snapshot_json = quote_snapshot_v2.model_dump_json()
 	v2_content_hash = hashlib.sha256(snapshot_json.encode()).hexdigest()[:32]
@@ -355,8 +369,8 @@ async def _persist_snapshot(
 		workspace_id=snapshot_payload["v6_linkage"].get("workspace_id"),
 		template_code=snapshot_payload["v6_linkage"].get("template_code") or "TPL-VOLUMETRIC-LETTERS_v2",
 		status="frozen",
-		readiness="ready_for_owner_review",
-		frozen_at=datetime.now(timezone.utc),
+		readiness=quote_snapshot_v2.readiness,
+		frozen_at=now,
 		frozen_by=created_by,
 		snapshot_json=snapshot_json,
 		content_hash=v2_content_hash,
@@ -452,23 +466,65 @@ async def create_v6_quote_snapshot_v2(
 
 	client_output = _client_output(quote_obj, commercial, line_items)
 	now = datetime.now(timezone.utc).isoformat()
-	template_code = (linkage or {}).get("template_code") or "TPL-VOLUMETRIC-LETTERS_v2"
-	pricing_input_trace = write_trace.get("pricing_input_trace")
-	quote_input = pricing_input_trace if isinstance(pricing_input_trace, dict) else {}
 
-	scope_bundle = await build_frozen_component_scope(
-		db,
-		template_code=template_code,
-		workspace_id=workspace_id_str,
-		quote_input=quote_input,
-	)
-	if scope_bundle is None:
+	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="snapshot_v2")
+	if dry_run.get("pricing_status") != V6_PRICED_DRY_RUN_READY:
 		return _blocked(
 			quote_id=quote_id,
 			quote_code=quote_code,
-			blockers=[_blocker(V6_SNAPSHOT_COMPONENT_SCOPE_MISSING, "Workspace component scope could not be built for Quote Snapshot V2.")],
+			blockers=[
+				_blocker(
+					V6_SNAPSHOT_DRY_RUN_REPRICE_BLOCKED,
+					"Live V6 dry-run is blocked; snapshot cannot freeze stale or unverified commercial truth.",
+				),
+				*[
+					_blocker(str(b.get("code") or "DRY_RUN_BLOCKER"), str(b.get("message") or ""))
+					for b in dry_run.get("blockers") or []
+					if isinstance(b, dict)
+				],
+			],
+			warnings=list(dry_run.get("warnings") or []),
 		)
-	if scope_bundle.offer_scope_snapshot.validation_errors:
+	dry_totals = dry_run.get("commercial_totals") if isinstance(dry_run.get("commercial_totals"), dict) else {}
+	dry_gross = _positive(dry_totals.get("total_gross"))
+	if dry_gross is None or abs(_money(dry_gross) - commercial["grand_total"]) > 0.01:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[
+				_blocker(
+					V6_SNAPSHOT_COMMERCIAL_TOTAL_MISMATCH,
+					"Live 7G dry-run gross does not match persisted quote grand total.",
+				)
+			],
+		)
+
+	resolved = await resolve_intake_v6_canonical_quote_input(db, workspace_id_str)
+	if resolved is None:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[_blocker(V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED, "V6 canonical quote_input could not be resolved.")],
+		)
+	template_code, quote_input = resolved
+
+	canonical_service = QuoteSnapshotV2Service(db)
+	quote_snapshot_v2 = await canonical_service.build_preview(
+		template_code,
+		workspace_id=workspace_id_str,
+		quote_id=str(quote_id),
+		quote_input=quote_input,
+		currency=commercial["currency"],
+		requested_by=created_by,
+	)
+	if quote_snapshot_v2 is None:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[_blocker(V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED, "Canonical Quote Snapshot V2 preview could not be composed.")],
+		)
+
+	if quote_snapshot_v2.offer_scope_snapshot and quote_snapshot_v2.offer_scope_snapshot.validation_errors:
 		return _blocked(
 			quote_id=quote_id,
 			quote_code=quote_code,
@@ -478,16 +534,35 @@ async def create_v6_quote_snapshot_v2(
 					"Invalid offer_scope cannot be frozen into Quote Snapshot V2.",
 				)
 			],
-			warnings=list(scope_bundle.offer_scope_snapshot.validation_errors),
+			warnings=list(quote_snapshot_v2.offer_scope_snapshot.validation_errors),
 		)
 
-	pd_builder = ProductDefinitionBuilderService(db)
-	product_definition_snapshot = await pd_builder.build_preview(template_code, workspace_id=workspace_id_str)
-	scope_fields = apply_component_scope_to_snapshot_fields(scope_bundle)
+	quote_snapshot_v2 = _apply_v6_commercial_first_readiness(quote_snapshot_v2)
+	validation_blockers = _validate_canonical_snapshot(
+		quote_snapshot_v2,
+		quote_grand_total=commercial["grand_total"],
+		quote_total_before_vat=commercial["total_before_vat"],
+	)
+	if validation_blockers:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=validation_blockers,
+			warnings=list(quote_snapshot_v2.warnings_snapshot),
+			readiness=quote_snapshot_v2.readiness,
+		)
+
+	quote_snapshot_v2.frozen_at = now
+	quote_snapshot_v2.frozen_by = created_by
+	quote_snapshot_v2.persist_status = "persisted"
+	_enrich_v6_provenance(quote_snapshot_v2, write_trace=write_trace)
+
+	can_accept = quote_snapshot_v2.readiness in FREEZE_ALLOWED_READINESS
 
 	snapshot_payload = {
 		"snapshot_version": QUOTE_SNAPSHOT_V2,
 		"snapshot_kind": V6_QUOTE_SNAPSHOT_KIND,
+		"readiness": quote_snapshot_v2.readiness,
 		"quote": {
 			"quote_id": int(getattr(quote_obj, "id", quote_id)),
 			"quote_code": quote_code,
@@ -516,9 +591,11 @@ async def create_v6_quote_snapshot_v2(
 			"commercial_proposal_trace": write_trace.get("commercial_proposal_trace"),
 			"internal_cost_trace_summary": write_trace.get("internal_cost_trace_summary"),
 			"quote_write_trace": write_trace,
+			"estimated_internal_cost_snapshot_status": quote_snapshot_v2.estimated_internal_cost_snapshot.status,
+			"commercial_price_proposal_snapshot_status": quote_snapshot_v2.commercial_price_proposal_snapshot.status,
 		},
 		"gates": {
-			"can_accept_quote": True,
+			"can_accept_quote": can_accept,
 			"can_create_order": False,
 			"order_snapshot_required": True,
 			"product_aggregate_created": False,
@@ -528,22 +605,11 @@ async def create_v6_quote_snapshot_v2(
 		"audit": {
 			"created_by": created_by,
 			"created_at": now,
-			"source": "backend_quote_snapshot_v2_service",
+			"source": "intake_v6_quote_snapshot_v2_service",
+			"canonical_compose": "quote_snapshot_v2_service",
 			"immutable_after_create": True,
 		},
 	}
-	quote_snapshot_v2 = _quote_snapshot_v2_payload(
-		quote_obj=quote_obj,
-		workspace_id=workspace_id_str,
-		template_code=template_code,
-		commercial=commercial,
-		line_items=line_items,
-		write_trace=write_trace,
-		created_by=created_by,
-		now=now,
-		scope_fields=scope_fields,
-		product_definition_snapshot=product_definition_snapshot,
-	)
 	content_hash = _snapshot_hash(snapshot_payload)
 	snapshot = await _persist_snapshot(
 		db,
@@ -564,15 +630,16 @@ async def create_v6_quote_snapshot_v2(
 		"snapshot_code": snapshot.snapshot_code,
 		"snapshot_version": QUOTE_SNAPSHOT_V2,
 		"snapshot_kind": V6_QUOTE_SNAPSHOT_KIND,
+		"readiness": quote_snapshot_v2.readiness,
 		"content_hash": content_hash,
 		"commercial": commercial,
 		"line_items": line_items,
 		"v6_linkage": snapshot_payload["v6_linkage"],
 		"client_output": client_output,
 		"internal_trace": snapshot_payload["internal_trace"],
-		"blockers": [],
-		"warnings": [],
-		"can_accept_quote": True,
+		"blockers": list(quote_snapshot_v2.blockers_snapshot),
+		"warnings": list(quote_snapshot_v2.warnings_snapshot),
+		"can_accept_quote": can_accept,
 		"can_create_order": False,
 		"order_snapshot_required": True,
 		"quote_snapshot_created": True,

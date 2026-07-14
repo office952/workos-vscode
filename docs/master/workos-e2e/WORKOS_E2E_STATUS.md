@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `dd41087` (W3-T02 V6 7G commercial spine)
+**Accepted HEAD:** `2c3d538` (W3-T02 V6 7G commercial spine + UI gate)
 
-**Last updated:** 2026-07-14 (W3-T02 V6 official 7G commercial pricing spine)
+**Last updated:** 2026-07-14 (W3-T02 UI commercial authority gate — live pass)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 3 IN PROGRESS** (W3-T02 complete) |
+| Phase | **Wave 3 IN PROGRESS** (W3-T03 snapshot unify complete) |
 
-| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T03+) |
+| Implementation hold | **Lifted for Wave 3 spine** |
 
 | Active task | None |
 
-| Next task | **`W3-T03`** — Snapshot unify + pricing registry completeness |
+| Next task | **Wave 3 exit gate / W4 blocked** until volum prerequisite closed |
 
 
 
@@ -130,7 +130,9 @@
 
 - [x] `W3-T01` — Graph-to-cost module projection adapter (`3eae7c4`)
 
-- [x] `W3-T02` — V6 official 7G commercial pricing spine (dry-run + UI authority)
+- [x] `W3-T02` — V6 official 7G commercial pricing spine (dry-run + UI authority gate)
+
+- [x] `W3-T03` — V6 canonical 7G/7H snapshot unification (no synthetic CPP)
 
 
 
@@ -192,7 +194,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **`W3-T03`** — snapshot unify + pricing registry completeness.
+Next allowed task: **Wave 3 exit review** — W4 remains blocked until `W2-PREREQUISITE-VOLUM-TRUTH` and full Wave 3 registry closure.
 
-**W3-T02:** Official V6 commercial total = 7G only; cost-plus diagnostic trace retained as TD-W3-V6-DIAG-COST-PLUS-001.
+**W3-T03:** V6 snapshot authority = `QuoteSnapshotV2Service` via `intake_v6_quote_snapshot_v2_service`; synthetic CPP removed; 7G/7H frozen separately; commercial-first partial readiness when 7H blocked.
 

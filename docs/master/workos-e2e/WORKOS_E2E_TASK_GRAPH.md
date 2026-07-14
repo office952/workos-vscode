@@ -167,19 +167,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Field | Value |
 |-------|-------|
 | Status | **COMPLETE** (2026-07-14) |
-| Verdict | `W3_V6_7G_SPINE_PASS_COMMITTED` |
+| Verdict | `W3_V6_7G_SPINE_PASS_COMMITTED` + `W3_T02_UI_LIVE_PASS_WITH_NONBLOCKING_UX_DEBT` |
 | Issues | TE2E-025 (V6 parallel authority slice) |
 | Upstream | W3-T01 |
-| Delivers | V6 dry-run official total from 7G; 7H separate; cost-plus diagnostic only |
-| Runtime | IR-MRJS4VIK — 1888.68 RON official vs 5926.91 diagnostic |
+| Delivers | V6 dry-run official total from 7G; 7H separate; cost-plus diagnostic only; live UI gate |
+| Runtime | IR-MRJS4VIK — UI 1888.68 RON official; 5926.91 not shown; handoff aligned |
+| Evidence | `docs/qa/product-system-active-path-isolation-v1/w3-t02-ui-gate-evidence/` |
 | Next | W3-T03 |
 
 ## W3-T03 — Snapshot unify + pricing registry
 
-| Issues | TE2E-025, TE2E-008 |
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W3_SNAPSHOT_UNIFY_PASS_COMMITTED` |
+| Issues | TE2E-025 (parallel snapshot authority), TE2E-008 |
 | Upstream | W3-T02 |
-| Delivers | V6 snapshot = live 7G+7H semantics; tariff blockers |
-| Next | W4-T01 |
+| Delivers | V6 snapshot via canonical 7G+7H compose; synthetic CPP removed; graph frozen; commercial-first partial when 7H blocked |
+| Runtime | IR-MRJS4VIK — 7G ready 1888.68 gross; 7H blocked; volum null nonblocking for Case B |
+| Next | Wave 3 exit gate; W4-T01 blocked |
 
 ---
 

@@ -227,6 +227,30 @@ def _commercial_line_items(commercial_preview: Any) -> list[dict[str, Any]]:
 	return items
 
 
+async def resolve_intake_v6_canonical_quote_input(
+	db: AsyncSession,
+	workspace_id: str | int,
+) -> tuple[str, dict[str, Any]] | None:
+	"""Rebuild full V6 quote_input for canonical 7G/7H compose — same path as priced dry-run."""
+	workspace_id_str = str(workspace_id)
+	record = await _get_record_or_404(db, workspace_id_str)
+	payload_raw = _json_loads(record.payload_json, {})
+	if not isinstance(payload_raw, dict):
+		payload_raw = {}
+	payload = _parse_payload(payload_raw)
+	pricing_preview = build_v6_pricing_input_preview(
+		workspace_id=workspace_id_str,
+		payload=payload,
+		template_code=record.template_code,
+		payload_raw=payload_raw,
+	)
+	quote_input = merge_workspace_offer_scope_into_quote_input(
+		payload_raw,
+		dict(getattr(pricing_preview, "quote_input_payload", {}) or {}),
+	)
+	return record.template_code, quote_input
+
+
 async def build_intake_v6_priced_quote_dry_run(
 	db: AsyncSession,
 	workspace_id: str | int,

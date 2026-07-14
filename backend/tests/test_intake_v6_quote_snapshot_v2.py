@@ -6,10 +6,12 @@ from types import SimpleNamespace
 
 import pytest
 
-from schemas.quote_snapshot_v2 import FrozenComponentScope, QuoteSnapshotOfferScope
+from schemas.commercial_price_proposal import CommercialPriceLine, CommercialPriceProposalPreview
+from schemas.estimated_internal_cost import EstimatedInternalCostPreview
+from schemas.quote_snapshot_v2 import QuoteSnapshotOfferScope, QuoteSnapshotV2
 from services import intake_v6_quote_snapshot_v2_service as snapshot_service
-from services.product_definition_builder_service import ProductDefinitionBuilderService
 from services.quote_output_composition_service import QuoteOutputCompositionService
+from services.quote_snapshot_v2_service import QuoteSnapshotV2Service
 
 
 class FakeDb:
@@ -113,6 +115,52 @@ def _quote(**overrides):
     return SimpleNamespace(**data)
 
 
+def _canonical_snapshot(**overrides):
+	commercial = CommercialPriceProposalPreview(
+		template_code="TPL-VOLUMETRIC-LETTERS_v2",
+		status="ready",
+		commercial_price_lines=[
+			CommercialPriceLine(
+				code="MOD-FACE",
+				label="Debitare fata",
+				basis_type="m2",
+				quantity=1.25,
+				unit="m2",
+				commercial_unit_price=800.0,
+				subtotal=1000.0,
+				pricing_rule_code="COMM-7G-RULE",
+				source="commercial_price_proposal",
+			)
+		],
+		subtotal_commercial=1000.0,
+		commercial_total=1190.0,
+		currency="RON",
+		quote_ready_for_commercial_review=True,
+	)
+	internal = EstimatedInternalCostPreview(
+		template_code="TPL-VOLUMETRIC-LETTERS_v2",
+		status="ready",
+		estimated_total_internal_cost=782.38,
+		currency="EUR",
+		ready_for_quote_snapshot=True,
+	)
+	data = {
+		"quote_id": "6",
+		"workspace_id": "workspace-v6",
+		"template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+		"offer_scope_snapshot": QuoteSnapshotOfferScope(use_legacy=True, mode="full_product"),
+		"commercial_price_proposal_snapshot": commercial,
+		"estimated_internal_cost_snapshot": internal,
+		"readiness": "ready_for_owner_review",
+		"provenance": [],
+		"warnings_snapshot": [],
+		"blockers_snapshot": [],
+		"notes": [],
+	}
+	data.update(overrides)
+	return QuoteSnapshotV2(**data)
+
+
 async def _fake_persist(
     db,
     *,
@@ -129,29 +177,41 @@ async def _fake_persist(
     return SimpleNamespace(id=101, snapshot_code="QS2-2026-0001")
 
 
+_preview_holder: dict[str, QuoteSnapshotV2 | None] = {"snapshot": None}
+
+
 @pytest.fixture(autouse=True)
 def patch_snapshot_dependencies(monkeypatch):
-    async def no_snapshots(_db, _quote_id):
-        return 0
+	async def no_snapshots(_db, _quote_id):
+		return 0
 
-    async def no_orders(_db, _quote_id):
-        return 0
+	async def no_orders(_db, _quote_id):
+		return 0
 
-    async def fake_component_scope(_db, **kwargs):
-        return FrozenComponentScope(
-            offer_scope_snapshot=QuoteSnapshotOfferScope(use_legacy=True, mode="full_product"),
-        )
+	_preview_holder["snapshot"] = _canonical_snapshot()
 
-    async def fake_pd_preview(*args, **kwargs):
-        return None
+	async def fake_build_preview(self, template_code, **kwargs):
+		return _preview_holder["snapshot"]
 
-    monkeypatch.setattr(snapshot_service, "QuotesService", FakeQuotesService)
-    monkeypatch.setattr(snapshot_service, "_snapshot_count", no_snapshots)
-    monkeypatch.setattr(snapshot_service, "_order_count", no_orders)
-    monkeypatch.setattr(snapshot_service, "_persist_snapshot", _fake_persist)
-    monkeypatch.setattr(snapshot_service, "build_frozen_component_scope", fake_component_scope)
-    monkeypatch.setattr(ProductDefinitionBuilderService, "build_preview", fake_pd_preview)
-    FakeQuotesService.quote = _quote()
+	async def fake_dry_run(_db, _workspace_id, **kwargs):
+		return {
+			"pricing_status": "V6_PRICED_DRY_RUN_READY",
+			"commercial_totals": {"total_gross": 1190.0},
+			"warnings": [],
+			"blockers": [],
+		}
+
+	async def fake_resolve(_db, _workspace_id):
+		return ("TPL-VOLUMETRIC-LETTERS_v2", {"is_ready_for_quote": True})
+
+	monkeypatch.setattr(snapshot_service, "QuotesService", FakeQuotesService)
+	monkeypatch.setattr(snapshot_service, "_snapshot_count", no_snapshots)
+	monkeypatch.setattr(snapshot_service, "_order_count", no_orders)
+	monkeypatch.setattr(snapshot_service, "_persist_snapshot", _fake_persist)
+	monkeypatch.setattr(QuoteSnapshotV2Service, "build_preview", fake_build_preview)
+	monkeypatch.setattr(snapshot_service, "build_intake_v6_priced_quote_dry_run", fake_dry_run)
+	monkeypatch.setattr(snapshot_service, "resolve_intake_v6_canonical_quote_input", fake_resolve)
+	FakeQuotesService.quote = _quote()
 
 
 async def _create(**kwargs):
@@ -183,6 +243,8 @@ async def test_successful_snapshot_creation_freezes_persisted_quote_totals_and_l
     assert result["v6_linkage"]["template_code"] == "TPL-VOLUMETRIC-LETTERS_v2"
     assert result["v6_linkage"]["no_v4_v2_commercial_truth"] is True
     assert result["v6_linkage"]["frontend_preview_not_used"] is True
+    assert result["readiness"] == "ready_for_owner_review"
+    assert result["internal_trace"]["commercial_price_proposal_snapshot_status"] == "ready"
 
 
 @pytest.mark.asyncio
@@ -427,12 +489,12 @@ def test_snapshot_service_does_not_call_v4_frontend_order_or_execution_paths() -
         "QuoteOrchestrator",
         "offerModel",
         "create_order(",
-        "ProductAggregate",
         "TaskGraph",
         "ExecutionPlan",
         "Employee Mobile",
         "writes_quote_totals",
         "update_quote",
+        "_quote_snapshot_v2_payload",
     )
     for token in forbidden:
         assert token not in source
