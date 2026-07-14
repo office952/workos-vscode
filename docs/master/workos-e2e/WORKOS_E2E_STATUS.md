@@ -8,7 +8,7 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** TBD post W5-INT-01 gate commit (starting `314492b`)
+**Accepted HEAD:** `bf8a037` (W5-INT-01 accepted snapshot Order/Execution contract gate)
 
 **Last updated:** 2026-07-15 (W5-INT-01 accepted snapshot Order/Execution contract gate)
 
