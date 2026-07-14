@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `d396f46` (W4-T01 snapshot-authoritative Offer consumer)
+**Accepted HEAD:** `d6c003e` (W4-T01B snapshot-authoritative pricing review)
 
-**Last updated:** 2026-07-15 (W4-T01 snapshot-authoritative Offer consumer)
+**Last updated:** 2026-07-15 (W4-T01B snapshot-authoritative pricing review)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 4 implementation IN PROGRESS** (`W4-T01` Offer consumer committed) |
+| Phase | **Wave 4 implementation IN PROGRESS** (`W4-T01B` pricing review committed) |
 
-| Implementation hold | **Lifted for W4-T01B pricing review alignment** |
+| Implementation hold | **Lifted for W4-INT-02 post-implementation gate** |
 
 | Active task | None |
 
-| Next task | **W4-T01B — Snapshot-authoritative pricing review alignment** |
+| Next task | **W4-INT-02 — Post-implementation Wave 4 gate** |
 
 
 

@@ -206,7 +206,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Snapshot | `QSN2-2026-0001` hash verified on `:8001` |
 | Finding | Offer path live-reprices; Order V2 convert consumes frozen snapshot |
 | Authorization | `BLOCKED_ACTIVE_OFFER_AUTHORITY` |
-| Next | **W4-T01B** — pricing review snapshot alignment |
+| Next | **W4-INT-02** — Post-implementation Wave 4 gate |
+
+## W4-T01B — Snapshot-authoritative pricing review alignment
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W4_PRICING_REVIEW_SNAPSHOT_PASS_COMMITTED` |
+| Delivers | Pricing review + spine read model from frozen snapshot; column drift detection |
+| Runtime | Quote `1` review gross `2649.99` from `quote_snapshot_v2` (read-only) |
+| Next | **W4-INT-02** |
 
 ## W4-T01 — Snapshot-authoritative Intake V6 Offer consumer
 
