@@ -28,6 +28,17 @@ from schemas.product_definition import (
     ProductDefinitionSourceContext,
 )
 from services.execution_plan_v2_persist_service import create_execution_plan_v2_from_order
+
+
+def _task_rule_keys(tasks) -> set[str]:
+    return {
+        str(t.source_task_rule_code or t.task_key.split(":")[-1]).strip()
+        for t in tasks
+    }
+
+
+def _task_rule_key_from_planned_dict(item: dict) -> str:
+    return str(item.get("source_task_rule_code") or str(item.get("task_key", "")).split(":")[-1]).strip()
 from services.execution_plan_v2_preview_service import (
     FORBIDDEN_IMPORT_SUBSTRINGS,
     build_execution_plan_v2_preview,
@@ -163,14 +174,15 @@ async def test_step9_preview_skips_readiness_gate_not_blocking(db_session):
     assert preview.execution_tasks_created is False
     assert preview.template_code == TEMPLATE
     assert preview.order_code == order.code
-    task_keys = {task.task_key for task in preview.planned_tasks}
+    task_keys = _task_rule_keys(preview.planned_tasks)
     assert "vector_file_verification" not in task_keys
     assert "vector_prep" in task_keys
 
 
 @pytest.mark.asyncio
 async def test_step9_preview_endpoint_no_execution_plan_write(db_fixture, db_session, auth_client):
-    order = await _seed_v2_order_with_snapshot(db_session)
+    oid = 98600 + int(uuid.uuid4().hex[:6], 16) % 100000
+    order = await _seed_v2_order_with_snapshot(db_session, order_id=oid)
     plans_before = await db_session.scalar(select(func.count()).select_from(ExecutionPlan))
     resp = auth_client.post(f"/api/v1/execution/plan-v2/preview/{order.id}")
     assert resp.status_code == 200, resp.text
@@ -288,7 +300,7 @@ async def test_step9_legacy_full_product_persist_unchanged(db_session):
     preview = await build_execution_plan_v2_preview(db_session, order.id)
     result = await create_execution_plan_v2_from_order(db_session, order.id)
     assert result.status == "persisted"
-    assert {t.task_key for t in preview.planned_tasks} == {"vector_prep", "cnc_face_cut", "electrical_wiring"}
+    assert _task_rule_keys(preview.planned_tasks) == {"vector_prep", "cnc_face_cut", "electrical_wiring"}
 
 
 @pytest.mark.asyncio
@@ -310,8 +322,8 @@ async def test_step9_preview_persist_parity_face_subset(db_session):
     row = await db_session.get(ExecutionPlan, result.execution_plan_id)
     envelope = json.loads(row.tasks_json)
     tasks_payload = envelope.get("planned_tasks", [])
-    preview_keys = sorted(t.task_key for t in preview.planned_tasks)
-    persist_keys = sorted(item["task_key"] for item in tasks_payload)
+    preview_keys = sorted(_task_rule_keys(preview.planned_tasks))
+    persist_keys = sorted(_task_rule_key_from_planned_dict(item) for item in tasks_payload)
     assert preview_keys == persist_keys
     assert persist_keys == ["cnc_face_cut", "vector_prep"]
 

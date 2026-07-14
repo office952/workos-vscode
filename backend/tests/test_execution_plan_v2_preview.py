@@ -490,7 +490,7 @@ async def test_planned_tasks_deterministic_when_task_rules_exist(db_session):
     first = await build_execution_plan_v2_preview(db_session, order.id)
     second = await build_execution_plan_v2_preview(db_session, order.id)
     assert first.model_dump() == second.model_dump()
-    assert [t.task_key for t in first.planned_tasks] == ["cnc_face_cut", "electrical_wiring"]
+    assert [t.source_task_rule_code for t in first.planned_tasks] == ["cnc_face_cut", "electrical_wiring"]
 
 
 @pytest.mark.asyncio
@@ -560,6 +560,14 @@ def _module_codes(tasks) -> set[str]:
     return {t.source_module_code for t in tasks if t.source_module_code}
 
 
+def _task_rule_keys(tasks) -> set[str]:
+    """Rule codes — stable across frozen deterministic task_key prefixes."""
+    return {
+        str(t.source_task_rule_code or t.task_key.split(":")[-1]).strip()
+        for t in tasks
+    }
+
+
 def _task_keys(tasks) -> set[str]:
     return {t.task_key for t in tasks}
 
@@ -578,7 +586,7 @@ async def test_sold_scope_legacy_order_unchanged(db_session):
     order = await _seed_v2_order_with_snapshot(db_session)
     preview = await build_execution_plan_v2_preview(db_session, order.id)
     assert preview.status == "partial_missing_planning_minutes"
-    assert _task_keys(preview.planned_tasks) == {"cnc_face_cut", "electrical_wiring"}
+    assert _task_rule_keys(preview.planned_tasks) == {"cnc_face_cut", "electrical_wiring"}
 
 
 @pytest.mark.asyncio
@@ -589,7 +597,7 @@ async def test_sold_scope_explicit_full_product_unchanged(db_session):
     )
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    assert _task_keys(preview.planned_tasks) == {"cnc_face_cut", "electrical_wiring"}
+    assert _task_rule_keys(preview.planned_tasks) == {"cnc_face_cut", "electrical_wiring"}
 
 
 @pytest.mark.asyncio
@@ -599,7 +607,7 @@ async def test_sold_scope_face_only_filters_tasks_and_operations(db_session):
     )
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    keys = _task_keys(preview.planned_tasks)
+    keys = _task_rule_keys(preview.planned_tasks)
     assert keys == {"vector_prep", "cnc_face_cut"}
     op_codes = _operation_codes(preview.planned_operations)
     assert "vector_prep" in op_codes
@@ -615,7 +623,7 @@ async def test_sold_scope_return_cant_only(db_session):
     )
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    keys = _task_keys(preview.planned_tasks)
+    keys = _task_rule_keys(preview.planned_tasks)
     assert keys == {"vector_prep", "return_profile_forming", "return_face_bonding"}
 
 
@@ -626,7 +634,7 @@ async def test_sold_scope_back_only(db_session):
     )
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    keys = _task_keys(preview.planned_tasks)
+    keys = _task_rule_keys(preview.planned_tasks)
     assert keys == {"vector_prep", "cnc_back_cut"}
 
 
@@ -637,7 +645,7 @@ async def test_sold_scope_face_plus_return_cant_union(db_session):
     )
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    keys = _task_keys(preview.planned_tasks)
+    keys = _task_rule_keys(preview.planned_tasks)
     assert keys == {
         "vector_prep",
         "cnc_face_cut",
@@ -651,7 +659,7 @@ async def test_sold_scope_linked_logo_full_product_preserved(db_session):
     snapshot = snapshot_with_scope(offer_scope=None)
     order = await _seed_v2_order_with_snapshot(db_session, snapshot_v2_json=snapshot.model_dump_json())
     preview = await build_execution_plan_v2_preview(db_session, order.id)
-    assert "linked_logo_apply" in _task_keys(preview.planned_tasks)
+    assert "linked_logo_apply" in _task_rule_keys(preview.planned_tasks)
     assert "logo_vinyl" in _operation_codes(preview.planned_operations)
 
 

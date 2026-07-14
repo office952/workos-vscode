@@ -39,6 +39,11 @@ from services.execution_sold_scope_reader_service import (
     include_task_rule_for_sold_scope,
     read_execution_sold_scope,
 )
+from services.execution_plan_v2_frozen_task_identity_service import (
+    build_frozen_task_identity,
+    collect_effective_task_rules,
+    mark_shared_operations,
+)
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 
 FORBIDDEN_IMPORT_SUBSTRINGS = (
@@ -185,6 +190,7 @@ def _build_planned_operations(
 
 
 def _build_planned_tasks(
+    snapshot: OrderSnapshotV2,
     aggregate: ProductAggregate,
     product_definition: ProductDefinitionPreview,
     *,
@@ -192,15 +198,21 @@ def _build_planned_tasks(
     sold_scope: ExecutionSoldScopeContext,
 ) -> tuple[list[PlannedTaskPreview], list[str], str | None]:
     op_roles = _operation_role_index(product_definition)
-    op_by_code = {op.operation_code: op for op in aggregate.operations}
+    op_by_code = {
+        str(op.operation_code or "").strip().lower(): op for op in aggregate.operations
+    }
     tasks: list[PlannedTaskPreview] = []
     blockers: list[str] = []
     readiness_gate_excluded = False
 
-    rules = list(aggregate.task_contract.task_rules or [])
-    rules.sort(key=lambda rule: (rule.sequence if rule.sequence is not None else 9999, rule.task_name))
+    effective_rules = collect_effective_task_rules(
+        aggregate,
+        graph=aggregate.composition_graph,
+    )
+    frozen_identities: list = []
 
-    for rule in rules:
+    for effective in effective_rules:
+        rule = effective.rule
         if _is_readiness_gate_rule(rule):
             readiness_gate_excluded = True
             continue
@@ -215,7 +227,7 @@ def _build_planned_tasks(
             continue
 
         priced_op = (rule.priced_operation or "").strip()
-        agg_op = op_by_code.get(priced_op) if priced_op else None
+        agg_op = op_by_code.get(priced_op.lower()) if priced_op else None
         role = op_roles.get(priced_op) if priced_op else None
 
         label = rule.task_name.replace("_", " ").strip().title()
@@ -233,9 +245,23 @@ def _build_planned_tasks(
         if workcenter:
             machine_req = PlannedTaskMachineRequirement(workcenter=workcenter)
 
+        frozen_identity = build_frozen_task_identity(
+            snapshot=snapshot,
+            effective=effective,
+            aggregate=aggregate,
+            agg_op=agg_op,
+        )
+        frozen_identities.append(frozen_identity)
+
+        task_provenance = ["product_aggregate_snapshot.task_contract.task_rules"]
+        if effective.origin == "composition_graph_operation":
+            task_provenance.append("product_aggregate_snapshot.composition_graph.operations")
+        elif effective.origin == "linked_segment_task_rule":
+            task_provenance.append("product_aggregate_snapshot.linked_segment_task_rules")
+
         tasks.append(
             PlannedTaskPreview(
-                task_key=rule.task_name,
+                task_key=frozen_identity.deterministic_task_key,
                 label=label,
                 canonical_task_type=canonical,
                 source_module_code=rule.mini_module_code,
@@ -247,9 +273,17 @@ def _build_planned_tasks(
                 planning_minutes_source=None,
                 machine_requirement=machine_req,
                 warnings=[PLANNING_MINUTES_WARNING],
-                provenance=["product_aggregate_snapshot.task_contract.task_rules"],
+                provenance=task_provenance,
+                frozen_identity=frozen_identity,
             )
         )
+
+    frozen_identities = mark_shared_operations(frozen_identities)
+    identity_by_key = {ident.deterministic_task_key: ident for ident in frozen_identities}
+    for task in tasks:
+        ident = identity_by_key.get(task.task_key)
+        if ident is not None:
+            task.frozen_identity = ident
 
     tasks.sort(key=lambda item: (item.sequence_index if item.sequence_index is not None else 9999, item.task_key))
 
@@ -379,6 +413,7 @@ def _build_preview_from_snapshot(
         )
 
     tasks, task_blockers, unknown_blocker, readiness_gate_excluded = _build_planned_tasks(
+        snapshot,
         aggregate,
         product_definition,
         owner_decision_codes=owner_codes,

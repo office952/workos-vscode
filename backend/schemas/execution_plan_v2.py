@@ -7,6 +7,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from schemas.quote_snapshot_v2 import QuoteSnapshotProvenanceEntry
+from schemas.execution_plan_v2_frozen_task_identity import FrozenTaskIdentity
 
 EXECUTION_PLAN_V2_SOURCE = "order_snapshot_v2"
 EXECUTION_PLAN_V2_PLAN_SOURCE = "order_snapshot_v2"
@@ -87,6 +88,7 @@ class PlannedTaskPreview(BaseModel):
     planning_minutes_source: str | None = None
     warnings: list[str] = Field(default_factory=list)
     provenance: list[str] = Field(default_factory=list)
+    frozen_identity: FrozenTaskIdentity | None = None
 
 
 class PlannedOperationPreview(BaseModel):

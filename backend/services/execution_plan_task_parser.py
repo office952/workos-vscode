@@ -228,6 +228,12 @@ def materialize_operational_tasks_from_v2_envelope(
         source_operation_code = str(planned.get("source_operation_code") or "").strip() or None
         source_component_code = planned.get("source_component_code")
         linked_segment_key = _linked_segment_key_from_component_ref(source_component_code)
+        frozen_identity = planned.get("frozen_identity")
+        if isinstance(frozen_identity, dict):
+            segment_from_identity = frozen_identity.get("source_segment_key")
+            if segment_from_identity and not linked_segment_key:
+                linked_segment_key = str(segment_from_identity).strip() or None
+
         operational: dict[str, Any] = {
             "task_id": task_key,
             "source_task_key": task_key,
@@ -255,6 +261,21 @@ def materialize_operational_tasks_from_v2_envelope(
             "material_inputs": planned.get("material_inputs") or [],
             "warnings": task_warnings,
         }
+        if frozen_identity:
+            operational["frozen_identity"] = frozen_identity
+            if isinstance(frozen_identity, dict):
+                for field in (
+                    "source_graph_node_id",
+                    "source_component_role",
+                    "source_template_code",
+                    "source_component_instance_id",
+                    "operation_scope",
+                    "identity_classification",
+                    "deterministic_task_key",
+                ):
+                    value = frozen_identity.get(field)
+                    if value is not None:
+                        operational[field] = value
         if linked_segment_key:
             operational["linked_segment_key"] = linked_segment_key
         if eligible_role:
