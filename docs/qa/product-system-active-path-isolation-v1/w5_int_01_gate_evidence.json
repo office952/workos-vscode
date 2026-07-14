@@ -1,0 +1,367 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+  "quote_id": 1,
+  "snapshot_code": "QSN2-2026-0001",
+  "before": {
+    "quote": {
+      "id": 1,
+      "code": "Q-V6-IV6-195E885C-1784065849",
+      "status": "priced",
+      "grand_total": 2649.99,
+      "accepted_snapshot_v2_id": null,
+      "offer_stamp": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+        "quote_id": 1,
+        "stamped_at": "2026-07-14T22:05:12.338262+00:00",
+        "stamped_by": "w4-t01-gate@local",
+        "pricing_source": "quote_snapshot_v2",
+        "commercial_authority": "commercial_price_proposal_7g",
+        "internal_cost_status": "blocked",
+        "owner_decision_codes": [
+          "AMBALARE_COMMERCIAL_RULE",
+          "MONTAJ_COMMERCIAL_RULE",
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "OVERHEAD_ALLOCATION_PENDING"
+        ],
+        "written_total_gross": 2649.99,
+        "written_subtotal_net": 2190.07,
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      },
+      "accept_decision": null,
+      "convert_decision": null
+    },
+    "snapshot": {
+      "id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions",
+      "status": "frozen"
+    },
+    "orders": 0,
+    "execution_plans": 0
+  },
+  "http_spine": {
+    "status": 200,
+    "body": {
+      "quote_exists": true,
+      "is_v6_quote": true,
+      "quote_id": 1,
+      "quote_code": "Q-V6-IV6-195E885C-1784065849",
+      "quote_status": "priced",
+      "intake_code": "IV6-80570a4a-a806-4305-a39c-b34a72092694",
+      "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "requires_pricing_review": false,
+      "pricing_review": {
+        "completed": false,
+        "completed_at": null,
+        "completed_by_user_id": null
+      },
+      "owner_approval": {
+        "exists": false,
+        "valid": false,
+        "stale": false,
+        "approved_at": null,
+        "approved_by_user_id": null
+      },
+      "snapshot_v2": {
+        "exists": true,
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "status": "frozen",
+        "readiness": "partial_with_owner_decisions",
+        "accept_allowed": true
+      },
+      "snapshot_authoritative_offer": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+        "quote_id": 1,
+        "stamped_at": "2026-07-14T22:05:12.338262+00:00",
+        "stamped_by": "w4-t01-gate@local",
+        "pricing_source": "quote_snapshot_v2",
+        "commercial_authority": "commercial_price_proposal_7g",
+        "internal_cost_status": "blocked",
+        "owner_decision_codes": [
+          "AMBALARE_COMMERCIAL_RULE",
+          "MONTAJ_COMMERCIAL_RULE",
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "OVERHEAD_ALLOCATION_PENDING"
+        ],
+        "written_total_gross": 2649.99,
+        "written_subtotal_net": 2190.07,
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      },
+      "pricing_review_read_model": {
+        "authority_source": "quote_snapshot_v2",
+        "pre_freeze": false,
+        "column_policy": "SNAPSHOT_READ_DIRECT_COLUMNS_VALIDATION_ONLY",
+        "pre_freeze_policy": null,
+        "commercial_totals": {
+          "subtotal_net": 2190.07,
+          "vat_amount": 459.92,
+          "vat_rate": 21.0,
+          "total_gross": 2649.99,
+          "currency": "RON",
+          "pricing_totals_source": "quote_snapshot_v2"
+        },
+        "snapshot_v2": {
+          "snapshot_id": 1,
+          "snapshot_code": "QSN2-2026-0001",
+          "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+          "readiness": "partial_with_owner_decisions",
+          "status": "frozen"
+        },
+        "offer_stamp_present": true,
+        "column_drift": [],
+        "column_drift_blocked": false,
+        "internal_cost": {
+          "available": true,
+          "status": "blocked",
+          "estimated_total_internal_cost": 1560.3836,
+          "currency": "RON",
+          "visibility": "restricted",
+          "execution_blocked": true,
+          "offer_and_order_allowed": true
+        },
+        "owner_decision_codes": [
+          "AMBALARE_COMMERCIAL_RULE",
+          "MONTAJ_COMMERCIAL_RULE",
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "OVERHEAD_ALLOCATION_PENDING"
+        ],
+        "live_dry_run_used": false
+      },
+      "quote_accepted": false,
+      "quote_commercial_totals": {
+        "available": true,
+        "grand_total": 2649.99,
+        "subtotal_net": 2190.07,
+        "vat_amount": 459.92,
+        "vat_rate": 21.0,
+        "currency": "RON",
+        "blocker": null,
+        "pricing_totals_source": "quote_snapshot_v2",
+        "column_drift": []
+      },
+      "v6_order_conversion": {
+        "available": false,
+        "converted": false,
+        "order_id": null,
+        "order_code": null,
+        "blocked_reasons": [
+          "PRICING_REVIEW_REQUIRED",
+          "OWNER_APPROVAL_REQUIRED",
+          "QUOTE_NOT_ACCEPTED"
+        ]
+      },
+      "creates_execution_tasks": false,
+      "writes_execution_plan": false,
+      "stock_consumption": false,
+      "owner_approval_persisted": false,
+      "v6_quote_to_order_enabled": true
+    }
+  },
+  "service_spine": {
+    "quote_exists": true,
+    "is_v6_quote": true,
+    "quote_id": 1,
+    "quote_code": "Q-V6-IV6-195E885C-1784065849",
+    "quote_status": "priced",
+    "intake_code": "IV6-80570a4a-a806-4305-a39c-b34a72092694",
+    "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+    "requires_pricing_review": false,
+    "pricing_review": {
+      "completed": false,
+      "completed_at": null,
+      "completed_by_user_id": null
+    },
+    "owner_approval": {
+      "exists": false,
+      "valid": false,
+      "stale": false,
+      "approved_at": null,
+      "approved_by_user_id": null
+    },
+    "snapshot_v2": {
+      "exists": true,
+      "snapshot_id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "status": "frozen",
+      "readiness": "partial_with_owner_decisions",
+      "accept_allowed": true
+    },
+    "snapshot_authoritative_offer": {
+      "snapshot_id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions",
+      "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "quote_id": 1,
+      "stamped_at": "2026-07-14T22:05:12.338262+00:00",
+      "stamped_by": "w4-t01-gate@local",
+      "pricing_source": "quote_snapshot_v2",
+      "commercial_authority": "commercial_price_proposal_7g",
+      "internal_cost_status": "blocked",
+      "owner_decision_codes": [
+        "AMBALARE_COMMERCIAL_RULE",
+        "MONTAJ_COMMERCIAL_RULE",
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_AMBALARE_RULE",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE",
+        "OVERHEAD_ALLOCATION_PENDING"
+      ],
+      "written_total_gross": 2649.99,
+      "written_subtotal_net": 2190.07,
+      "live_dry_run_used": false,
+      "no_reprice_policy": true
+    },
+    "pricing_review_read_model": {
+      "authority_source": "quote_snapshot_v2",
+      "pre_freeze": false,
+      "column_policy": "SNAPSHOT_READ_DIRECT_COLUMNS_VALIDATION_ONLY",
+      "pre_freeze_policy": null,
+      "commercial_totals": {
+        "subtotal_net": 2190.07,
+        "vat_amount": 459.92,
+        "vat_rate": 21.0,
+        "total_gross": 2649.99,
+        "currency": "RON",
+        "pricing_totals_source": "quote_snapshot_v2"
+      },
+      "snapshot_v2": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "status": "frozen"
+      },
+      "offer_stamp_present": true,
+      "column_drift": [],
+      "column_drift_blocked": false,
+      "internal_cost": {
+        "available": true,
+        "status": "blocked",
+        "estimated_total_internal_cost": 1560.3836,
+        "currency": "RON",
+        "visibility": "restricted",
+        "execution_blocked": true,
+        "offer_and_order_allowed": true
+      },
+      "owner_decision_codes": [
+        "AMBALARE_COMMERCIAL_RULE",
+        "MONTAJ_COMMERCIAL_RULE",
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_AMBALARE_RULE",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE",
+        "OVERHEAD_ALLOCATION_PENDING"
+      ],
+      "live_dry_run_used": false
+    },
+    "quote_accepted": false,
+    "quote_commercial_totals": {
+      "available": true,
+      "grand_total": 2649.99,
+      "subtotal_net": 2190.07,
+      "vat_amount": 459.92,
+      "vat_rate": 21.0,
+      "currency": "RON",
+      "blocker": null,
+      "pricing_totals_source": "quote_snapshot_v2",
+      "column_drift": []
+    },
+    "v6_order_conversion": {
+      "available": false,
+      "converted": false,
+      "order_id": null,
+      "order_code": null,
+      "blocked_reasons": [
+        "PRICING_REVIEW_REQUIRED",
+        "OWNER_APPROVAL_REQUIRED",
+        "QUOTE_NOT_ACCEPTED"
+      ]
+    },
+    "creates_execution_tasks": false,
+    "writes_execution_plan": false,
+    "stock_consumption": false,
+    "owner_approval_persisted": false,
+    "v6_quote_to_order_enabled": true
+  },
+  "after": {
+    "quote": {
+      "id": 1,
+      "code": "Q-V6-IV6-195E885C-1784065849",
+      "status": "priced",
+      "grand_total": 2649.99,
+      "accepted_snapshot_v2_id": null,
+      "offer_stamp": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+        "quote_id": 1,
+        "stamped_at": "2026-07-14T22:05:12.338262+00:00",
+        "stamped_by": "w4-t01-gate@local",
+        "pricing_source": "quote_snapshot_v2",
+        "commercial_authority": "commercial_price_proposal_7g",
+        "internal_cost_status": "blocked",
+        "owner_decision_codes": [
+          "AMBALARE_COMMERCIAL_RULE",
+          "MONTAJ_COMMERCIAL_RULE",
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "OVERHEAD_ALLOCATION_PENDING"
+        ],
+        "written_total_gross": 2649.99,
+        "written_subtotal_net": 2190.07,
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      },
+      "accept_decision": null,
+      "convert_decision": null
+    },
+    "snapshot": {
+      "id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions",
+      "status": "frozen"
+    },
+    "orders": 0,
+    "execution_plans": 0
+  },
+  "pass_checks": {
+    "http_spine_ok": true,
+    "pricing_review_authority": true,
+    "frozen_gross": true,
+    "offer_stamp_present": true,
+    "live_dry_run_false": true,
+    "quote_not_accepted": true,
+    "no_orders": true,
+    "no_execution_plans": true,
+    "fixture_unchanged": true
+  },
+  "pass": true
+}

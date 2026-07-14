@@ -196,6 +196,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Live proof | `POST snapshot-v2` → `QSN2-2026-0001`; read-back stable; idempotent reject |
 | Wave 4 | `W4_INT_01_COMPLETE` — handoff gate inspected |
 
+## W5-INT-01 — Accepted snapshot → Order → Execution contract gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W5_INT_01_PASS_WITH_OWNER_POLICY_PREREQUISITE` |
+| Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
+| Acceptance | `CANONICAL_SNAPSHOT_ACCEPTANCE` |
+| Order | `CANONICAL_FROZEN_ORDER_PATH` |
+| OrderSnapshotV2 | `ORDER_SNAPSHOT_COMPLETE_WITH_EXECUTION_ADAPTER` |
+| ExecutionPlan | `CANONICAL_ORDER_SNAPSHOT_CONSUMER` |
+| Owner policy | `ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED` |
+| Tests | 164 passed / 0 failed |
+| Authorization | `READY_FOR_W5_T01_EXECUTION_RELEASE_GUARD` |
+| Next | **W5-T01** |
+
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 
 | Field | Value |

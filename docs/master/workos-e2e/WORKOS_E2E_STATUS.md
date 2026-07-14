@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `c2678b0` (W4-INT-02 frozen snapshot Offer/Order integration gate)
+**Accepted HEAD:** TBD post W5-INT-01 gate commit (starting `314492b`)
 
-**Last updated:** 2026-07-15 (W4-INT-02 frozen snapshot Offer/Order integration gate)
+**Last updated:** 2026-07-15 (W5-INT-01 accepted snapshot Order/Execution contract gate)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 4 COMPLETE** (`W4-INT-02` integration gate PASS with nonblocking presentation debt) |
+| Phase | **Wave 5 contract gate COMPLETE** (`W5-INT-01` PASS with owner-policy prerequisite) |
 
-| Implementation hold | **Lifted for Wave 5 integration gate** |
+| Implementation hold | **Lifted for W5-T01 execution release guard** |
 
 | Active task | None |
 
-| Next task | **W5-INT-01 — Wave 5 integration gate** (when scheduled) |
+| Next task | **W5-T01 — Execution owner-decision production-release guard** |
 
 
 
@@ -194,6 +194,18 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
+## Wave 5 contract gate (W5-INT-01)
+
+
+
+**Verdict:** `W5_INT_01_PASS_WITH_OWNER_POLICY_PREREQUISITE`
+
+**Authorization:** `READY_FOR_W5_T01_EXECUTION_RELEASE_GUARD`
+
+**Proof:** Acceptance binds `accepted_snapshot_v2_id`; frozen Order convert copies QuoteSnapshotV2 without rebuild; ExecutionPlan V2 consumes `snapshot_v2_json` only; 164/164 focused pytest pass; canonical fixture unchanged.
+
+**Prerequisite:** Owner-decision production-release policy not yet enforced at execution task start.
+
 ## Wave 4 exit (W4-INT-02)
 
 
@@ -210,5 +222,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Wave 5 integration gate** (acceptance → order → execution handoff), after owner schedules W5 entry.
+Next allowed task: **W5-T01 — Execution owner-decision production-release guard**.
 
