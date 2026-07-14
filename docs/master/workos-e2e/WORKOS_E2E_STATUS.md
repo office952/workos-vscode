@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `b994c25` (W5-T02 docs + evidence)
+**Accepted HEAD:** `4224022` (W5-T03 application) — docs commit pending
 
-**Application baseline:** `136df46` (W5-T02 frozen task identity)
+**Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
 
-**Last updated:** 2026-07-15 (W5-T02 frozen component graph task identity)
+**Last updated:** 2026-07-15 (W5-T03 planning/readiness adapter hardening)
 
 
 
@@ -24,7 +24,7 @@
 
 |-------|-------|
 
-| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T02` COMPLETE) |
+| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T03` COMPLETE) |
 
 | Implementation hold | **Lifted — W5-INT-02 next** |
 
@@ -225,6 +225,16 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 **Contract:** `frozen_task_identity/v1` — deterministic `{graph_node_id}:{task_rule_code}` keys with `FrozenTaskIdentity` on planned/materialized tasks.
 
 **Proof:** Graph-bound mounting/premount/volum tasks; linked-segment logo identity; 175/175 focused pytest; runtime order `21099` on `:8001`; W5-T01 guard preserved; snapshot immutable.
+
+**Next:** W5-T03.
+
+## Wave 5 implementation (W5-T03)
+
+**Verdict:** `W5_PLANNING_ADAPTER_PASS_COMMITTED`
+
+**Adapter:** `order_snapshot_v2_planning_readiness/v1` — V2 preparation input from frozen `canonical_values`; legacy path isolated; fail-closed on corrupt snapshot.
+
+**Proof:** `load_order_quote_input` replaced; 103/103 focused pytest; runtime order `22099` on `:8001`; W5-T01 guard + W5-T02 identity preserved.
 
 **Next:** W5-INT-02.
 

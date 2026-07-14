@@ -236,10 +236,26 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Task keys | `{source_graph_node_id}:{task_rule_code}` |
 | Graph consumption | `composition_graph` + `component_instances` |
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
-| `load_order_quote_input` | `KEEP_READ_ONLY_FOR_W5_T03` |
+| `load_order_quote_input` | `REPLACE_WITH_ORDER_SNAPSHOT_V2_ADAPTER_NOW` |
 | Owner-decision scope | `ORDER_SCOPE_ONLY` |
 | Tests | 175 passed / 0 failed |
 | Runtime | Order `21099` on `:8001` |
+| Next | **W5-T03** |
+
+## W5-T03 — OrderSnapshotV2 planning/readiness adapter
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W5_PLANNING_ADAPTER_PASS_COMMITTED` |
+| Adapter | `order_snapshot_v2_planning_readiness/v1` |
+| V2 authority | `FROZEN_ORDER_SNAPSHOT_V2` |
+| Legacy path | `LEGACY_ORDER_INPUT` (isolated) |
+| Fail-closed | Missing/corrupt `snapshot_v2_json` |
+| `load_order_quote_input` | `REPLACE_WITH_ORDER_SNAPSHOT_V2_ADAPTER_NOW` |
+| Employee Mobile | `MOBILE_USES_SHARED_TASK_START_GATE` |
+| Tests | 103 passed / 0 failed |
+| Runtime | Order `22099` on `:8001` |
 | Next | **W5-INT-02** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate

@@ -1,0 +1,41 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "fixture": {
+    "order_id": 22099,
+    "snapshot_hash": 3089886872458143734,
+    "authority_one": "FROZEN_ORDER_SNAPSHOT_V2",
+    "authority_two": "FROZEN_ORDER_SNAPSHOT_V2",
+    "readiness_deterministic": true,
+    "mounting_material_type": "forex",
+    "legacy_line_items_ignored": true,
+    "contract_authority": "FROZEN_ORDER_SNAPSHOT_V2",
+    "snapshot_unchanged": true
+  },
+  "http": {
+    "production_release_status": {
+      "status_code": 200,
+      "body": {
+        "release_status": "RELEASE_ALLOWED",
+        "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+        "order_id": 22099,
+        "blockers": [],
+        "frozen_decision_codes": [],
+        "nonblocking_decision_codes": [],
+        "message": "No frozen owner decisions on order."
+      }
+    },
+    "plan_preview": {
+      "status_code": 200,
+      "task_count": 2
+    }
+  },
+  "pass_checks": {
+    "frozen_authority": true,
+    "deterministic_reads": true,
+    "legacy_ignored": true,
+    "snapshot_unchanged": true,
+    "release_status_live": true,
+    "preview_http_ok": true
+  },
+  "pass": true
+}
