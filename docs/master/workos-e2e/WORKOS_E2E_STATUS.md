@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `bf8a037` (W5-INT-01 accepted snapshot Order/Execution contract gate)
+**Accepted HEAD:** `a64e06b` (W5-T01 execution release guard)
 
-**Last updated:** 2026-07-15 (W5-INT-01 accepted snapshot Order/Execution contract gate)
+**Last updated:** 2026-07-15 (W5-T01 execution owner-decision production release guard)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 5 contract gate COMPLETE** (`W5-INT-01` PASS with owner-policy prerequisite) |
+| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T01` COMPLETE) |
 
-| Implementation hold | **Lifted for W5-T01 execution release guard** |
+| Implementation hold | **Lifted — W5-T02 / W5-INT-02 next** |
 
 | Active task | None |
 
-| Next task | **W5-T01 — Execution owner-decision production-release guard** |
+| Next task | **W5-INT-02 — Post-implementation gate** (then W5-T02 task identity) |
 
 
 
@@ -206,6 +206,16 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Prerequisite:** Owner-decision production-release policy not yet enforced at execution task start.
 
+## Wave 5 implementation (W5-T01)
+
+**Verdict:** `W5_EXECUTION_RELEASE_GUARD_PASS_COMMITTED`
+
+**Policy:** `ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED`
+
+**Proof:** Shared `assert_production_release_allowed` wired into `assert_task_startable`; operational resolutions in `orders.readiness_snapshot.owner_decision_resolutions_v1`; frozen `snapshot_v2_json` immutable; 19/19 focused guard tests + 87/87 guard+regression; runtime gate order `29991` on `:8001`.
+
+**Next:** W5-INT-02 post-implementation gate.
+
 ## Wave 4 exit (W4-INT-02)
 
 
@@ -222,5 +232,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W5-T01 — Execution owner-decision production-release guard**.
+Next allowed task: **W5-INT-02 — Post-implementation gate** (Wave 5).
 

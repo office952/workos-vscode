@@ -210,7 +210,21 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Owner policy | `ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED` |
 | Tests | 164 passed / 0 failed |
 | Authorization | `READY_FOR_W5_T01_EXECUTION_RELEASE_GUARD` |
-| Next | **W5-T01** |
+| Next | **W5-INT-02** |
+
+## W5-T01 — Execution owner-decision production release guard
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W5_EXECUTION_RELEASE_GUARD_PASS_COMMITTED` |
+| Policy | `ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED` |
+| Guard hook | `assert_task_startable` → `assert_production_release_allowed` |
+| Resolution store | `orders.readiness_snapshot.owner_decision_resolutions_v1` |
+| Routes | GET production-release-status; POST owner-decision resolve |
+| Tests | 19 guard + 68 regression = 87 passed |
+| Runtime | Order `29991` on `:8001` — block → resolve → start |
+| Next | **W5-INT-02** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 

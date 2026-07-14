@@ -1,0 +1,137 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "fixture": {
+    "order_id": 29991,
+    "snapshot_v2_json_hash": -9189376829628228350,
+    "readiness_snapshot": {
+      "source": "w5_t01_runtime_gate_fixture",
+      "execution_plan_created": false,
+      "no_execution_plan_created": true
+    }
+  },
+  "timestamp": "2026-07-14T22:37:59.354619+00:00",
+  "steps": {
+    "production_release_status_before": {
+      "status_code": 200,
+      "body": {
+        "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+        "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+        "order_id": 29991,
+        "blockers": [
+          {
+            "code": "INTERNAL_SABLON_FOREX_COST",
+            "label": "Cost \u0219ablon Forex \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+            "scope": "order",
+            "required_action": "resolve_owner_decision",
+            "acknowledgement_sufficient": false,
+            "requires_resolution": true,
+            "operational_status": "unresolved",
+            "frozen_classification": "production_blocking"
+          }
+        ],
+        "frozen_decision_codes": [
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "nonblocking_decision_codes": [
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "message": "Produc\u021bia este blocat\u0103 de decizii owner nerezolvate."
+      }
+    },
+    "start_blocked": {
+      "status_code": 409,
+      "body": {
+        "detail": {
+          "code": "production_release_blocked",
+          "error": "production_release_blocked",
+          "message": "Produc\u021bia este blocat\u0103 de decizii owner nerezolvate.",
+          "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+          "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+          "blockers": [
+            {
+              "code": "INTERNAL_SABLON_FOREX_COST",
+              "label": "Cost \u0219ablon Forex \u2014 decizie owner necesar\u0103 \u00eenainte de produc\u021bie",
+              "scope": "order",
+              "required_action": "resolve_owner_decision",
+              "acknowledgement_sufficient": false,
+              "requires_resolution": true,
+              "operational_status": "unresolved",
+              "frozen_classification": "production_blocking"
+            }
+          ],
+          "frozen_decision_codes": [
+            "INTERNAL_SABLON_FOREX_COST",
+            "INTERNAL_AMBALARE_RULE"
+          ],
+          "nonblocking_decision_codes": [
+            "INTERNAL_AMBALARE_RULE"
+          ]
+        }
+      }
+    },
+    "resolve_forex": {
+      "status_code": 200,
+      "body": {
+        "order_id": 29991,
+        "code": "INTERNAL_SABLON_FOREX_COST",
+        "operational_status": "resolved",
+        "release_status": "RELEASE_ALLOWED",
+        "idempotent": false,
+        "audit_event_id": "odr-7b557a932500"
+      }
+    },
+    "start_after_resolve": {
+      "status_code": 200,
+      "body": {
+        "id": 1,
+        "order_id": 29991,
+        "order_code": "ORD-W5T01-GATE",
+        "tasks": [
+          {
+            "session_id": "ws-301873877f60",
+            "task_id": "T-W5T01",
+            "started_at": "2026-07-14T22:38:00.057247+00:00",
+            "ended_at": null
+          }
+        ],
+        "materials": [],
+        "total_actual_time_minutes": 0.0
+      }
+    },
+    "production_release_status_after": {
+      "status_code": 200,
+      "body": {
+        "release_status": "RELEASE_ALLOWED",
+        "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+        "order_id": 29991,
+        "blockers": [],
+        "frozen_decision_codes": [
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "nonblocking_decision_codes": [
+          "INTERNAL_AMBALARE_RULE"
+        ],
+        "message": "Production release allowed."
+      }
+    }
+  },
+  "final_state": {
+    "snapshot_v2_json_hash": -9189376829628228350,
+    "snapshot_unchanged": true,
+    "resolution_present": true,
+    "audit_history_len": 1
+  },
+  "pass_checks": {
+    "status_endpoint_live": true,
+    "blocked_before_resolve": true,
+    "resolve_ok": true,
+    "start_allowed_after_resolve": true,
+    "release_allowed_after": true,
+    "snapshot_unchanged": true,
+    "resolution_separate": true,
+    "audit_preserved": true
+  },
+  "pass": true
+}
