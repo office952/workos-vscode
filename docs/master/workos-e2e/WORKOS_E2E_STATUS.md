@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `da381c1` (W5-INT-02 close + W6-INT-01 gate pending commit)
+**Accepted HEAD:** `71fe531` (W6-INT-01 gate)
 
 **Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
 
-**Last updated:** 2026-07-15 (W6-INT-01 operator truth UI contract gate)
+**Last updated:** 2026-07-15 (W6-T01 operator task truth read model)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 gate PASS** — implementation authorized with backend prerequisite |
+| Phase | **Wave 6 implementation** — W6-T01 COMPLETE |
 
-| Implementation hold | **Lifted for W6-T01 only** (read model first) |
+| Implementation hold | **Lifted for W6-T02 presentation** |
 
 | Active task | None |
 
-| Next task | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** (not auto-started) |
+| Next task | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** (not auto-started) |
 
 
 
@@ -260,6 +260,16 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Wave 7:** `KEEP_WAVE_7_BLOCKED_WAVE_6`
 
+## Wave 6 implementation (W6-T01)
+
+**Verdict:** `W6_OPERATOR_READ_MODEL_PASS_COMMITTED`
+
+**Contract:** `operator_task_truth/v1` — `GET /api/v1/operator/orders/{order_id}/task-truth`
+
+**Proof:** Frozen identity + readiness + production-release + owner decisions composed; role-safe internal cost; 13/13 tests + runtime order `23099` on `:8001`.
+
+**Next:** W6-T02 task identity presentation (desktop UI).
+
 ## Wave 4 exit (W4-INT-02)
 
 
@@ -276,5 +286,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** (backend read model; implementation not auto-started).
+Next allowed task: **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** (not auto-started).
 

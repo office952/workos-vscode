@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** W6-T01 authorized (not started)  
+**Active task:** W6-T02 authorized (not started)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,8 +271,8 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | `OPEN_WAVE_6_IMPLEMENTATION` (W6-T01 authorized) |
-| Next | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** |
+| Wave 6 | `W6-T01 COMPLETE` — W6-T02 authorized |
+| Next | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** |
 
 ## W6-INT-01 — Operator execution truth and blocker visibility gate
 
@@ -287,6 +287,19 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Authorization | `READY_WITH_BACKEND_READ_MODEL_PREREQUISITE` |
 | First task | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** |
 | Wave 7 | `KEEP_WAVE_7_BLOCKED_WAVE_6` |
+
+## W6-T01 — Operator task truth read model
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W6_OPERATOR_READ_MODEL_PASS_COMMITTED` |
+| Contract | `operator_task_truth/v1` |
+| Endpoint | `GET /api/v1/operator/orders/{order_id}/task-truth` |
+| Tests | 13 truth + 42 W5 regression pass |
+| Runtime | Order `23099` on `:8001` — 13 tasks |
+| ShopFloor | `REDUCED_PROJECTION_FROM_CANONICAL_MODEL` |
+| Next | **W6-T02-TASK-IDENTITY-AND-COMPONENT-PRESENTATION** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 
