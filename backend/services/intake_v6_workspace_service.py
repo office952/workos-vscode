@@ -1253,6 +1253,18 @@ async def save_finish_setup_for_intake_v6_workspace(
     dossier_warnings = await validate_finish_setup_against_dossier(db, template_code, normalized)
 
     payload_raw["finish_setup"] = dump_intake_v4_finish_setup_for_persist(normalized)
+    from services.intake_v6_volum_aluminum_module_truth_service import (
+        apply_volum_aluminum_module_truth_to_workspace_payload,
+    )
+
+    await apply_volum_aluminum_module_truth_to_workspace_payload(
+        db,
+        template_code=template_code,
+        payload_raw=payload_raw,
+    )
+    if payload_raw.get("finish_setup", {}).get("volum_aluminum_module_template_code"):
+        code = payload_raw["finish_setup"]["volum_aluminum_module_template_code"]
+        normalized = normalized.model_copy(update={"volum_aluminum_module_template_code": code})
     if payload_raw.get("layer_role_setup"):
         apply_product_composition_recommendation(payload_raw)
     if dossier_warnings:

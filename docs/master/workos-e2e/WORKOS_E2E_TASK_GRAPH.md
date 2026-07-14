@@ -175,6 +175,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Evidence | `docs/qa/product-system-active-path-isolation-v1/w3-t02-ui-gate-evidence/` |
 | Next | W3-T03 |
 
+## W2-PREREQUISITE-VOLUM-TRUTH — Volum aluminum module technical truth
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W3_VOLUM_TRUTH_PASS_COMMITTED` |
+| Classification | `COMPONENT_OPTION_INPUT_RESOLVED_TO_TEMPLATE` |
+| Delivers | Product System unique-link resolution on Intake save; cant applicability; stale clearing; UI gated on cant not mounting |
+| Runtime | IR-MRJS4VIK — applicable; unique link `TPL-VOLUM-ALUMINIU_v1`; PD volum no longer missing when persisted |
+| Next | Wave 3 exit gate (live snapshot POST) |
+
 ## W3-T03 — Snapshot unify + pricing registry
 
 | Field | Value |

@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **Wave 3 exit gate / W4 blocked** until volum prerequisite closed |
+| Next task | **Wave 3 exit gate** (live snapshot POST still required) |
 
 
 
@@ -74,7 +74,7 @@
 
 2. Graph-to-cost adapter — **W3-T01 COMPLETE**
 
-3. `volum_aluminum_module_template_code` Intake persistence — prerequisite **`W2-PREREQUISITE-VOLUM-TRUTH`**
+3. `volum_aluminum_module_template_code` — **`W2-PREREQUISITE-VOLUM-TRUTH` COMPLETE** (Product System unique-link resolution on save)
 
 
 
@@ -133,6 +133,8 @@
 - [x] `W3-T02` — V6 official 7G commercial pricing spine (dry-run + UI authority gate)
 
 - [x] `W3-T03` — V6 canonical 7G/7H snapshot unification (no synthetic CPP)
+
+- [x] `W2-PREREQUISITE-VOLUM-TRUTH` — volum aluminum module technical truth (Product System resolution + Intake persist)
 
 
 

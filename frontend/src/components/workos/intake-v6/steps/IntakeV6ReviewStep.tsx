@@ -127,6 +127,7 @@ import ProductTruthPromotionPlannerPanel from "../ProductTruthPromotionPlannerPa
 import { toast } from "@/components/ui/sonner";
 import { buildProductTruthDraft } from "@/lib/intakeV6/productTruth/productTruthDraftBuilder";
 import { mapReturnCantTruthFieldsReadonly } from "@/lib/intakeV6/productTruth/returnCantTruthFieldsReadonlyMapper";
+import { isVolumAluminumModuleApplicable } from "@/lib/intakeV6/intakeV6VolumAluminumModule";
 import { buildReturnCantCanonicalRuntimeFromPayload } from "@/lib/intakeV6/productTruth/returnCantCanonicalRuntimeFromProductTruth";
 import { useTemplateFormContract } from "@/lib/intakeV6/useTemplateFormContract";
 import {
@@ -1499,6 +1500,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const legacyMountingProfileDisplay = legacyMountingBarProfile(form as Record<string, unknown>);
   const mountingScope = normalizeMountingScope(form.mounting_scope, form as Record<string, unknown>);
   const mountingPrepActive = isMountingPreparationActive(mountingScope);
+  const volumModuleApplicable = isVolumAluminumModuleApplicable(
+    modularTemplateCode,
+    form as unknown as Record<string, unknown>,
+  );
   const siteInstallationSectionActive = isSiteInstallationSectionActive(mountingScope);
 
   const artworkOnlyRequiresDecision = useMemo(
@@ -2455,7 +2460,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={selectedVolumAluminumModuleCode}
-                      disabled={!mountingPrepActive}
+                      disabled={!volumModuleApplicable}
                       onChange={(event) =>
                         updateForm(
                           {
