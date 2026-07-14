@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `a4428fd` (W4-INT-01 offer/order handoff gate)
+**Accepted HEAD:** `d396f46` (W4-T01 snapshot-authoritative Offer consumer)
 
-**Last updated:** 2026-07-15 (W4-INT-01 frozen snapshot → Offer/Order handoff contract gate)
+**Last updated:** 2026-07-15 (W4-T01 snapshot-authoritative Offer consumer)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 4 integration gate COMPLETE** (`W4-INT-01` handoff contract inspection) |
+| Phase | **Wave 4 implementation IN PROGRESS** (`W4-T01` Offer consumer committed) |
 
-| Implementation hold | **Offer authority fix required before Wave 4 implementation** |
+| Implementation hold | **Lifted for W4-T01B pricing review alignment** |
 
 | Active task | None |
 
-| Next task | **W4-T01 — Snapshot-authoritative Intake V6 Offer consumer** |
+| Next task | **W4-T01B — Snapshot-authoritative pricing review alignment** |
 
 
 
@@ -198,9 +198,9 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W4-T01 — Snapshot-authoritative Intake V6 Offer consumer**.
+Next allowed task: **W4-T01B — Snapshot-authoritative pricing review alignment**.
 
-**W4-INT-01:** Verdict `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY`. Frozen snapshot `QSN2-2026-0001` hash-verified on `:8001`; Order V2 convert path is canonical; active Offer path (`handoff-to-offer` / `priced-quote/write`) still live-reprices via dry-run. Implementation authorization: `BLOCKED_ACTIVE_OFFER_AUTHORITY` until W4-T01 lands.
+**W4-T01:** Verdict `W4_OFFER_SNAPSHOT_CONSUMER_PASS_COMMITTED`. Offer handoff consumes frozen `QSN2-2026-0001`; live dry-run blocked post-snapshot; idempotent handoff proven on canonical fixture.
 
-**W3-INT-01B:** Live snapshot proof on trusted `:8001`; ghost `:8000` PID 4392 remains non-authoritative.
+**W4-INT-01:** Verdict `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY` (resolved by W4-T01).
 

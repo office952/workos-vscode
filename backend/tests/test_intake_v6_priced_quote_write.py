@@ -9,6 +9,11 @@ import pytest
 from services import intake_v6_priced_quote_write_service as write_service
 
 
+class FakeScalarResult:
+    def scalar(self) -> int:
+        return 0
+
+
 class FakeDb:
     def __init__(self) -> None:
         self.add_called = False
@@ -19,6 +24,9 @@ class FakeDb:
 
     async def commit(self) -> None:
         self.commit_called = True
+
+    async def execute(self, _query) -> FakeScalarResult:
+        return FakeScalarResult()
 
 
 class FakeQuotesService:

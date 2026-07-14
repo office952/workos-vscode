@@ -1,0 +1,668 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+  "quote_id": 1,
+  "snapshot_code": "QSN2-2026-0001",
+  "before": {
+    "quote": {
+      "id": 1,
+      "code": "Q-V6-IV6-195E885C-1784065849",
+      "status": "priced",
+      "grand_total": 2649.99,
+      "offer_stamp": null
+    },
+    "snapshot": {
+      "id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions"
+    },
+    "orders": 0
+  },
+  "commercial_spine_status": 200,
+  "commercial_spine": {
+    "quote_exists": true,
+    "is_v6_quote": true,
+    "quote_id": 1,
+    "quote_code": "Q-V6-IV6-195E885C-1784065849",
+    "quote_status": "priced",
+    "intake_code": "IV6-80570a4a-a806-4305-a39c-b34a72092694",
+    "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+    "requires_pricing_review": false,
+    "pricing_review": {
+      "completed": false,
+      "completed_at": null,
+      "completed_by_user_id": null
+    },
+    "owner_approval": {
+      "exists": false,
+      "valid": false,
+      "stale": false,
+      "approved_at": null,
+      "approved_by_user_id": null
+    },
+    "snapshot_v2": {
+      "exists": true,
+      "snapshot_id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "status": "frozen",
+      "readiness": "partial_with_owner_decisions",
+      "accept_allowed": true
+    },
+    "quote_accepted": false,
+    "quote_commercial_totals": {
+      "available": true,
+      "grand_total": 2649.99,
+      "blocker": null,
+      "pricing_totals_source": "quote_columns"
+    },
+    "v6_order_conversion": {
+      "available": false,
+      "converted": false,
+      "order_id": null,
+      "order_code": null,
+      "blocked_reasons": [
+        "PRICING_REVIEW_REQUIRED",
+        "OWNER_APPROVAL_REQUIRED",
+        "QUOTE_NOT_ACCEPTED"
+      ]
+    },
+    "creates_execution_tasks": false,
+    "writes_execution_plan": false,
+    "stock_consumption": false,
+    "owner_approval_persisted": false,
+    "v6_quote_to_order_enabled": true
+  },
+  "service": {
+    "handoff_first": {
+      "status": "V6_OFFER_FROM_SNAPSHOT_WRITTEN",
+      "quote_created": false,
+      "quote_id": 1,
+      "quote_code": "Q-V6-IV6-195E885C-1784065849",
+      "quote_status": "priced",
+      "source_workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "commercial_totals": {
+        "subtotal_net": 2190.07,
+        "discount": 0.0,
+        "total_before_vat": 2190.07,
+        "vat": 459.92,
+        "vat_rate": 21.0,
+        "total_gross": 2649.99,
+        "currency": "RON",
+        "pricing_totals_source": "quote_snapshot_v2"
+      },
+      "line_items": [
+        {
+          "description": "Debitare fa\u021b\u0103 litere",
+          "name": "Debitare fa\u021b\u0103 litere",
+          "quantity": 20.9727,
+          "unit": "ml",
+          "unit_price": 25.0,
+          "total": 524.32,
+          "source_component": "comp_face_litere",
+          "module_code": "debitare_fata",
+          "component_code": "comp_face_litere",
+          "pricing_rule_code": "VOL_V2_FACE_CNC_ML",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Modelare cant aluminiu",
+          "name": "Modelare cant aluminiu",
+          "quantity": 20.9727,
+          "unit": "ml",
+          "unit_price": 30.0,
+          "total": 629.18,
+          "source_component": "comp_lateral_litere",
+          "module_code": "modelare_cant",
+          "component_code": "comp_lateral_litere",
+          "pricing_rule_code": "VOL_V2_RETURN_PROFILE_ML",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Technical inputs: letter_perimeter_m, return_depth_mm \u2014 not minutes."
+          ]
+        },
+        {
+          "description": "Debitare spate litere",
+          "name": "Debitare spate litere",
+          "quantity": 1.2638,
+          "unit": "m2",
+          "unit_price": 20.0,
+          "total": 25.28,
+          "source_component": "comp_spate_litere",
+          "module_code": "debitare_spate",
+          "component_code": "comp_spate_litere",
+          "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Step 8 dev bridge: interim m\u00b2 basis until owner formalizes ml vs m\u00b2 in Pricing Registry."
+          ]
+        },
+        {
+          "description": "Sistem LED \u2014 module",
+          "name": "Sistem LED \u2014 module",
+          "quantity": 144,
+          "unit": "buc",
+          "unit_price": 5.0,
+          "total": 720.0,
+          "source_component": "comp_led_litere",
+          "module_code": "sistem_led",
+          "component_code": "comp_led_litere",
+          "pricing_rule_code": "VOL_V2_LED_MODULE_PIECE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Surs\u0103 LED (PSU)",
+          "name": "Surs\u0103 LED (PSU)",
+          "quantity": 1.0,
+          "unit": "buc",
+          "unit_price": 150.0,
+          "total": 150.0,
+          "source_component": "comp_led_litere",
+          "module_code": "sistem_led",
+          "component_code": "comp_led_litere",
+          "pricing_rule_code": "VOL_V2_LED_PSU_PIECE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Commercial sells one PSU unit; selected_psu_watts is reference only."
+          ]
+        },
+        {
+          "description": "Finisaje \u2014 colantare / vopsire",
+          "name": "Finisaje \u2014 colantare / vopsire",
+          "quantity": 1.2638,
+          "unit": "m2",
+          "unit_price": 35.0,
+          "total": 44.23,
+          "source_component": "comp_finisaj_litere",
+          "module_code": "finisaje",
+          "component_code": "comp_finisaj_litere",
+          "pricing_rule_code": "VOL_V2_FINISH_M2_OR_MINIMUM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Unconfirmed finish groups may require owner review before numeric pricing.",
+            "Finish groups not confirmed \u2014 numeric commercial price deferred."
+          ]
+        },
+        {
+          "description": "\u0218ablon montaj \u2014 Forex",
+          "name": "\u0218ablon montaj \u2014 Forex",
+          "quantity": 3.0523,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 45.78,
+          "source_component": "comp_finisaj_litere",
+          "module_code": "finisaje",
+          "component_code": "comp_finisaj_litere",
+          "pricing_rule_code": "VOL_V2_SABLON_FOREX_DEV_BRIDGE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Step 8 dev bridge: interim Forex sablon price until owner approves in 7I."
+          ]
+        },
+        {
+          "description": "Debitare panou ACM",
+          "name": "Debitare panou ACM",
+          "quantity": 3.2,
+          "unit": "ml",
+          "unit_price": 1.5,
+          "total": 4.8,
+          "source_component": "comp_acm_panel_face",
+          "module_code": "structura_suport",
+          "component_code": "comp_acm_panel_face",
+          "pricing_rule_code": "ACM_BOXED_PANEL_CUT_LM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Frezare V-groove ACM",
+          "name": "Frezare V-groove ACM",
+          "quantity": 3.2,
+          "unit": "ml",
+          "unit_price": 3.0,
+          "total": 9.6,
+          "source_component": "comp_casetted_returns",
+          "module_code": "structura_suport",
+          "component_code": "comp_casetted_returns",
+          "pricing_rule_code": "ACM_BOXED_V_GROOVE_LM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Material ACM fa\u021b\u0103 panou",
+          "name": "Material ACM fa\u021b\u0103 panou",
+          "quantity": 0.6,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 9.0,
+          "source_component": "comp_acm_panel_face",
+          "module_code": "structura_suport",
+          "component_code": "comp_acm_panel_face",
+          "pricing_rule_code": "ACM_BOXED_MAT_FACE_M2",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Material ACM canturi / \u00eentoarceri",
+          "name": "Material ACM canturi / \u00eentoarceri",
+          "quantity": 0.192,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 2.88,
+          "source_component": "comp_casetted_returns",
+          "module_code": "structura_suport",
+          "component_code": "comp_casetted_returns",
+          "pricing_rule_code": "ACM_BOXED_MAT_RETURN_M2",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Asamblare suport ACM casetat",
+          "name": "Asamblare suport ACM casetat",
+          "quantity": 0.6,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 20.0,
+          "source_component": "comp_mounting_fasteners",
+          "module_code": "structura_suport",
+          "component_code": "comp_mounting_fasteners",
+          "pricing_rule_code": "ACM_BOXED_ASSEMBLY_M2_MIN",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Minimum commercial charge 20.0 EUR/product when area \u00d7 rate is lower.",
+            "minimum_charge_applied=20.0EUR"
+          ]
+        },
+        {
+          "description": "Suruburi / prinderi standard ACM",
+          "name": "Suruburi / prinderi standard ACM",
+          "quantity": 1.0,
+          "unit": "set",
+          "unit_price": 5.0,
+          "total": 5.0,
+          "source_component": "comp_mounting_fasteners",
+          "module_code": "structura_suport",
+          "component_code": "comp_mounting_fasteners",
+          "pricing_rule_code": "ACM_BOXED_SURUBURI_SET",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        }
+      ],
+      "pricing_trace": {
+        "pricing_source": "quote_snapshot_v2",
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      },
+      "blockers": [],
+      "warnings": [
+        "TRIGGER_FIELD_MISMATCH for structura_suport is documented \u2014 canonical intake trigger is mounting_system.",
+        "TRIGGER_FIELD_MISMATCH for structura_suport \u2014 canonical intake is finish_setup.mounting_system",
+        "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+        "DOSSIER_METADATA_ONLY: Blueprint dossier available for inspection only; runtime behavior uses canonical template contracts.",
+        "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+        "TEMPLATE_IDENTITY: Template identity resolution trace.",
+        "ORPHAN_FIELD: finish_setup.illuminated \u2014 UI gate only; maps to lighting_system_type indirectly",
+        "ORPHAN_FIELD: finish_setup.commercial_inputs \u2014 quote commercial layer, not product module (READONLY_EXPLANATORY)",
+        "ORPHAN_FIELD: finish_setup.artwork_complexity_decisions \u2014 artwork path, FUTURE_RESERVED_STEP_6 for emblem modules",
+        "ORPHAN_FIELD: finish_setup.emblem_lighting_mode \u2014 FUTURE electrica_logo OPEN QUESTION",
+        "EXPLICIT_COMPOSITION_GRAPH_APPLIED: ProductAggregate compiled from explicit ProductDefinition composition graph without registry trigger re-inference.",
+        "TD-W3-GRAPH-COST-001: legacy mounting_system/support_type cannot override graph structural scope."
+      ],
+      "can_create_quote_snapshot": false,
+      "commercial_authority_source": "quote_snapshot_v2",
+      "snapshot_v2": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "status": "frozen",
+        "quote_id": 1,
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694"
+      },
+      "snapshot_authoritative_offer": true,
+      "next_route": "/quotes/Q-V6-IV6-195E885C-1784065849"
+    },
+    "handoff_second": {
+      "status": "V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT",
+      "quote_created": false,
+      "quote_id": 1,
+      "quote_code": "Q-V6-IV6-195E885C-1784065849",
+      "quote_status": "priced",
+      "source_workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "commercial_totals": {
+        "subtotal_net": 2190.07,
+        "discount": 0.0,
+        "total_before_vat": 2190.07,
+        "vat": 459.92,
+        "vat_rate": 21.0,
+        "total_gross": 2649.99,
+        "currency": "RON",
+        "pricing_totals_source": "quote_snapshot_v2"
+      },
+      "line_items": [
+        {
+          "description": "Debitare fa\u021b\u0103 litere",
+          "name": "Debitare fa\u021b\u0103 litere",
+          "quantity": 20.9727,
+          "unit": "ml",
+          "unit_price": 25.0,
+          "total": 524.32,
+          "source_component": "comp_face_litere",
+          "module_code": "debitare_fata",
+          "component_code": "comp_face_litere",
+          "pricing_rule_code": "VOL_V2_FACE_CNC_ML",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Modelare cant aluminiu",
+          "name": "Modelare cant aluminiu",
+          "quantity": 20.9727,
+          "unit": "ml",
+          "unit_price": 30.0,
+          "total": 629.18,
+          "source_component": "comp_lateral_litere",
+          "module_code": "modelare_cant",
+          "component_code": "comp_lateral_litere",
+          "pricing_rule_code": "VOL_V2_RETURN_PROFILE_ML",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Technical inputs: letter_perimeter_m, return_depth_mm \u2014 not minutes."
+          ]
+        },
+        {
+          "description": "Debitare spate litere",
+          "name": "Debitare spate litere",
+          "quantity": 1.2638,
+          "unit": "m2",
+          "unit_price": 20.0,
+          "total": 25.28,
+          "source_component": "comp_spate_litere",
+          "module_code": "debitare_spate",
+          "component_code": "comp_spate_litere",
+          "pricing_rule_code": "VOL_V2_BACK_CNC_M2_DEV_BRIDGE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Step 8 dev bridge: interim m\u00b2 basis until owner formalizes ml vs m\u00b2 in Pricing Registry."
+          ]
+        },
+        {
+          "description": "Sistem LED \u2014 module",
+          "name": "Sistem LED \u2014 module",
+          "quantity": 144,
+          "unit": "buc",
+          "unit_price": 5.0,
+          "total": 720.0,
+          "source_component": "comp_led_litere",
+          "module_code": "sistem_led",
+          "component_code": "comp_led_litere",
+          "pricing_rule_code": "VOL_V2_LED_MODULE_PIECE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Surs\u0103 LED (PSU)",
+          "name": "Surs\u0103 LED (PSU)",
+          "quantity": 1.0,
+          "unit": "buc",
+          "unit_price": 150.0,
+          "total": 150.0,
+          "source_component": "comp_led_litere",
+          "module_code": "sistem_led",
+          "component_code": "comp_led_litere",
+          "pricing_rule_code": "VOL_V2_LED_PSU_PIECE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Commercial sells one PSU unit; selected_psu_watts is reference only."
+          ]
+        },
+        {
+          "description": "Finisaje \u2014 colantare / vopsire",
+          "name": "Finisaje \u2014 colantare / vopsire",
+          "quantity": 1.2638,
+          "unit": "m2",
+          "unit_price": 35.0,
+          "total": 44.23,
+          "source_component": "comp_finisaj_litere",
+          "module_code": "finisaje",
+          "component_code": "comp_finisaj_litere",
+          "pricing_rule_code": "VOL_V2_FINISH_M2_OR_MINIMUM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Unconfirmed finish groups may require owner review before numeric pricing.",
+            "Finish groups not confirmed \u2014 numeric commercial price deferred."
+          ]
+        },
+        {
+          "description": "\u0218ablon montaj \u2014 Forex",
+          "name": "\u0218ablon montaj \u2014 Forex",
+          "quantity": 3.0523,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 45.78,
+          "source_component": "comp_finisaj_litere",
+          "module_code": "finisaje",
+          "component_code": "comp_finisaj_litere",
+          "pricing_rule_code": "VOL_V2_SABLON_FOREX_DEV_BRIDGE",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Step 8 dev bridge: interim Forex sablon price until owner approves in 7I."
+          ]
+        },
+        {
+          "description": "Debitare panou ACM",
+          "name": "Debitare panou ACM",
+          "quantity": 3.2,
+          "unit": "ml",
+          "unit_price": 1.5,
+          "total": 4.8,
+          "source_component": "comp_acm_panel_face",
+          "module_code": "structura_suport",
+          "component_code": "comp_acm_panel_face",
+          "pricing_rule_code": "ACM_BOXED_PANEL_CUT_LM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Frezare V-groove ACM",
+          "name": "Frezare V-groove ACM",
+          "quantity": 3.2,
+          "unit": "ml",
+          "unit_price": 3.0,
+          "total": 9.6,
+          "source_component": "comp_casetted_returns",
+          "module_code": "structura_suport",
+          "component_code": "comp_casetted_returns",
+          "pricing_rule_code": "ACM_BOXED_V_GROOVE_LM",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Material ACM fa\u021b\u0103 panou",
+          "name": "Material ACM fa\u021b\u0103 panou",
+          "quantity": 0.6,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 9.0,
+          "source_component": "comp_acm_panel_face",
+          "module_code": "structura_suport",
+          "component_code": "comp_acm_panel_face",
+          "pricing_rule_code": "ACM_BOXED_MAT_FACE_M2",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Material ACM canturi / \u00eentoarceri",
+          "name": "Material ACM canturi / \u00eentoarceri",
+          "quantity": 0.192,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 2.88,
+          "source_component": "comp_casetted_returns",
+          "module_code": "structura_suport",
+          "component_code": "comp_casetted_returns",
+          "pricing_rule_code": "ACM_BOXED_MAT_RETURN_M2",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        },
+        {
+          "description": "Asamblare suport ACM casetat",
+          "name": "Asamblare suport ACM casetat",
+          "quantity": 0.6,
+          "unit": "m2",
+          "unit_price": 15.0,
+          "total": 20.0,
+          "source_component": "comp_mounting_fasteners",
+          "module_code": "structura_suport",
+          "component_code": "comp_mounting_fasteners",
+          "pricing_rule_code": "ACM_BOXED_ASSEMBLY_M2_MIN",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": [
+            "Minimum commercial charge 20.0 EUR/product when area \u00d7 rate is lower.",
+            "minimum_charge_applied=20.0EUR"
+          ]
+        },
+        {
+          "description": "Suruburi / prinderi standard ACM",
+          "name": "Suruburi / prinderi standard ACM",
+          "quantity": 1.0,
+          "unit": "set",
+          "unit_price": 5.0,
+          "total": 5.0,
+          "source_component": "comp_mounting_fasteners",
+          "module_code": "structura_suport",
+          "component_code": "comp_mounting_fasteners",
+          "pricing_rule_code": "ACM_BOXED_SURUBURI_SET",
+          "pricing_source": "quote_snapshot_v2",
+          "client_visible": true,
+          "warnings": []
+        }
+      ],
+      "pricing_trace": {
+        "pricing_source": "quote_snapshot_v2",
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      },
+      "blockers": [],
+      "warnings": [
+        "TRIGGER_FIELD_MISMATCH for structura_suport is documented \u2014 canonical intake trigger is mounting_system.",
+        "TRIGGER_FIELD_MISMATCH for structura_suport \u2014 canonical intake is finish_setup.mounting_system",
+        "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+        "DOSSIER_METADATA_ONLY: Blueprint dossier available for inspection only; runtime behavior uses canonical template contracts.",
+        "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+        "TEMPLATE_IDENTITY: Template identity resolution trace.",
+        "ORPHAN_FIELD: finish_setup.illuminated \u2014 UI gate only; maps to lighting_system_type indirectly",
+        "ORPHAN_FIELD: finish_setup.commercial_inputs \u2014 quote commercial layer, not product module (READONLY_EXPLANATORY)",
+        "ORPHAN_FIELD: finish_setup.artwork_complexity_decisions \u2014 artwork path, FUTURE_RESERVED_STEP_6 for emblem modules",
+        "ORPHAN_FIELD: finish_setup.emblem_lighting_mode \u2014 FUTURE electrica_logo OPEN QUESTION",
+        "EXPLICIT_COMPOSITION_GRAPH_APPLIED: ProductAggregate compiled from explicit ProductDefinition composition graph without registry trigger re-inference.",
+        "TD-W3-GRAPH-COST-001: legacy mounting_system/support_type cannot override graph structural scope."
+      ],
+      "can_create_quote_snapshot": false,
+      "commercial_authority_source": "quote_snapshot_v2",
+      "snapshot_v2": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "status": "frozen",
+        "quote_id": 1,
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694"
+      },
+      "snapshot_authoritative_offer": true,
+      "next_route": "/quotes/Q-V6-IV6-195E885C-1784065849"
+    },
+    "priced_write_blocked": {
+      "status": "V6_PRICED_QUOTE_WRITE_BLOCKED",
+      "quote_id": 1,
+      "quote_code": null,
+      "commercial_totals": null,
+      "line_items": [],
+      "blockers": [
+        {
+          "code": "V6_PRICED_QUOTE_WRITE_SNAPSHOT_ALREADY_FROZEN",
+          "message": "Frozen Quote Snapshot V2 exists; priced-quote/write cannot reprice. Use handoff-to-offer with snapshot authority."
+        }
+      ],
+      "warnings": [],
+      "can_create_quote_snapshot": false,
+      "can_accept_quote": false,
+      "quote_snapshot_created": false,
+      "order_created": false
+    }
+  },
+  "after": {
+    "quote": {
+      "id": 1,
+      "code": "Q-V6-IV6-195E885C-1784065849",
+      "status": "priced",
+      "grand_total": 2649.99,
+      "offer_stamp": {
+        "snapshot_id": 1,
+        "snapshot_code": "QSN2-2026-0001",
+        "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+        "readiness": "partial_with_owner_decisions",
+        "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+        "quote_id": 1,
+        "stamped_at": "2026-07-14T22:05:12.338262+00:00",
+        "stamped_by": "w4-t01-gate@local",
+        "pricing_source": "quote_snapshot_v2",
+        "commercial_authority": "commercial_price_proposal_7g",
+        "internal_cost_status": "blocked",
+        "owner_decision_codes": [
+          "AMBALARE_COMMERCIAL_RULE",
+          "MONTAJ_COMMERCIAL_RULE",
+          "INTERNAL_SABLON_FOREX_COST",
+          "INTERNAL_AMBALARE_RULE",
+          "INTERNAL_MONTAJ_RULE",
+          "INTERNAL_CONSUMABLES_RULE",
+          "OVERHEAD_ALLOCATION_PENDING"
+        ],
+        "written_total_gross": 2649.99,
+        "written_subtotal_net": 2190.07,
+        "live_dry_run_used": false,
+        "no_reprice_policy": true
+      }
+    },
+    "snapshot": {
+      "id": 1,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions"
+    },
+    "orders": 0
+  },
+  "pass": true
+}

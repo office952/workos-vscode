@@ -206,7 +206,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Snapshot | `QSN2-2026-0001` hash verified on `:8001` |
 | Finding | Offer path live-reprices; Order V2 convert consumes frozen snapshot |
 | Authorization | `BLOCKED_ACTIVE_OFFER_AUTHORITY` |
-| Next | **W4-T01** — Snapshot-authoritative Intake V6 Offer consumer |
+| Next | **W4-T01B** — pricing review snapshot alignment |
+
+## W4-T01 — Snapshot-authoritative Intake V6 Offer consumer
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W4_OFFER_SNAPSHOT_CONSUMER_PASS_COMMITTED` |
+| Delivers | Snapshot-authoritative handoff; priced-write blocked post-freeze |
+| Runtime | Quote `1` handoff idempotent; snapshot hash stable |
+| Next | **W4-T01B** |
 
 ## W3-INT-01 — Wave 3 internal-cost + snapshot persistence exit gate
 
