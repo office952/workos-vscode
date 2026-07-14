@@ -241,6 +241,26 @@ export default function IntakeV6QuoteCommercialSpinePanel({
   const snapshotExists = snapshotV2.exists === true;
   const snapshotAcceptAllowed = snapshotV2.accept_allowed === true;
   const snapshotAuthoritativeOffer = state?.snapshot_authoritative_offer ?? null;
+  const pricingReviewReadModel = state?.pricing_review_read_model ?? null;
+  const snapshotCommercialTotals =
+    pricingReviewReadModel &&
+    typeof pricingReviewReadModel === "object" &&
+    pricingReviewReadModel.commercial_totals &&
+    typeof pricingReviewReadModel.commercial_totals === "object"
+      ? (pricingReviewReadModel.commercial_totals as Record<string, unknown>)
+      : null;
+  const snapshotAuthorityGross =
+    typeof snapshotCommercialTotals?.total_gross === "number"
+      ? snapshotCommercialTotals.total_gross
+      : null;
+  const snapshotAuthorityCurrency =
+    typeof snapshotCommercialTotals?.currency === "string"
+      ? snapshotCommercialTotals.currency
+      : "RON";
+  const columnDriftBlocked = pricingReviewReadModel?.column_drift_blocked === true;
+  const internalCostReview = pricingReviewReadModel?.internal_cost as
+    | Record<string, unknown>
+    | undefined;
   const accepted = state?.quote_accepted === true;
   const converted = state?.v6_order_conversion?.converted === true;
   const convertBlockers = readBlockedReasons(state?.v6_order_conversion?.blocked_reasons);
@@ -268,15 +288,20 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     dryRunReady,
   });
 
-  const heroTotal = quoteTotalsAvailable
-    ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
-    : dryRunReady
-      ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
-      : "Nepretuit";
+  const heroTotal =
+    snapshotExists && snapshotAuthorityGross != null
+      ? formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)
+      : quoteTotalsAvailable
+        ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
+        : dryRunReady
+          ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
+          : "Nepretuit";
 
   const heroHint = snapshotExists
     ? snapshotAuthoritativeOffer
-      ? "Oferta proiectata din snapshot V2 inghetat. Continua cu review si accept."
+      ? columnDriftBlocked
+        ? "Snapshot V2 inghetat — proiectia pe quote nu mai corespunde. Re-trimite oferta din snapshot."
+        : "Oferta si review folosesc snapshot V2 inghetat. Continua cu review si accept."
       : "Snapshot V2 inghetat — trimiterea in ofertare foloseste snapshot-ul, nu dry-run live."
     : quoteTotalsAvailable
       ? "Total oficial pe quote. Continuă cu snapshot și review."
@@ -319,6 +344,42 @@ export default function IntakeV6QuoteCommercialSpinePanel({
       </div>
 
       <WorkflowStepper steps={workflowSteps} />
+
+      {snapshotExists && pricingReviewReadModel ? (
+        <div
+          className="mb-4 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3"
+          data-testid="intake-v6-pricing-review-authority"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[11px] text-slate-300">
+              Sursa review:{" "}
+              <strong data-testid="intake-v6-pricing-review-source">
+                {pricingReviewReadModel.authority_source === "quote_snapshot_v2"
+                  ? "Snapshot V2 inghetat"
+                  : "Previzualizare pre-freeze"}
+              </strong>
+            </p>
+            {snapshotAuthorityGross != null ? (
+              <p className="text-[11px] text-slate-200" data-testid="intake-v6-pricing-review-gross">
+                Total client: {formatMoney(snapshotAuthorityGross, snapshotAuthorityCurrency)}
+              </p>
+            ) : null}
+          </div>
+          {internalCostReview?.available === true ? (
+            <p className="mt-2 text-[11px] text-amber-200/90" data-testid="intake-v6-internal-cost-review">
+              Cost intern:{" "}
+              {internalCostReview.execution_blocked === true
+                ? "partial / blocat pentru executie"
+                : "disponibil"}
+            </p>
+          ) : null}
+          {columnDriftBlocked ? (
+            <p className="mt-2 text-[11px] text-rose-300" data-testid="intake-v6-column-drift-blocker">
+              Proiectia pe quote nu corespunde snapshot-ului inghetat. Re-trimite oferta din snapshot inainte de review.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       {loading && !state ? (
         <p className="mb-3 text-[12px] text-slate-400">Încarc starea comercială…</p>
