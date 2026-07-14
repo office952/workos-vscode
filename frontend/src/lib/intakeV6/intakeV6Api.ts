@@ -61,6 +61,7 @@ export type IntakeV6CommercialSpineStateResponse = Omit<
 > & {
   is_v6_quote: boolean;
   snapshot_v2?: Record<string, unknown>;
+  snapshot_authoritative_offer?: Record<string, unknown> | null;
   v6_order_conversion: Record<string, unknown>;
   v6_quote_to_order_enabled: boolean;
 };

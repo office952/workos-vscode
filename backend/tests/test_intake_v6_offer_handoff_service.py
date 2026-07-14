@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 
@@ -57,6 +58,11 @@ async def test_handoff_creates_quote_then_writes_backend_priced_totals(monkeypat
         "write_intake_v6_priced_quote_totals",
         fake_write,
     )
+    monkeypatch.setattr(
+        handoff_service,
+        "has_frozen_quote_snapshot_v2",
+        AsyncMock(return_value=False),
+    )
 
     current_user = SimpleNamespace(id="u1", email="ops@example.com", name="Ops")
 
@@ -109,6 +115,11 @@ async def test_handoff_reuses_existing_quote_when_present(monkeypatch) -> None:
         handoff_service,
         "write_intake_v6_priced_quote_totals",
         fake_write,
+    )
+    monkeypatch.setattr(
+        handoff_service,
+        "has_frozen_quote_snapshot_v2",
+        AsyncMock(return_value=False),
     )
 
     current_user = SimpleNamespace(id="u1", email="ops@example.com", name="Ops")

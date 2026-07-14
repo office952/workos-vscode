@@ -58,7 +58,10 @@ from services.intake_v6_commercial_quote_service import (
 )
 from services.intake_v6_material_breakdown_service import get_material_breakdown_for_workspace
 from services.intake_v6_production_handoff_preview_service import build_intake_v6_production_handoff_preview
-from services.intake_v6_task_generation_dry_run_service import build_intake_v6_task_generation_dry_run
+from services.intake_v6_snapshot_authoritative_offer_service import (
+    INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY,
+    V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+)
 from services.intake_v6_workspace_service import _get_record_or_404, _json_loads, _parse_payload
 from services.order_execution_snapshot_mapper import resolve_canonical_task_type
 from services.order_currency_conversion_service import convert_quote_totals_to_order_base
@@ -1048,6 +1051,20 @@ async def get_v6_commercial_spine_state(
     pricing_completed = is_pricing_review_completed(linkage) if linkage else False
     snapshot_record = await _resolve_snapshot_for_v6_pricing_review(db, quote, linkage) if is_v6 and linkage else None
     snapshot_info = _snapshot_state(snapshot_record)
+    offer_stamp = None
+    pricing_totals_source = "quote_columns"
+    if isinstance(linkage, dict):
+        raw_stamp = linkage.get(INTAKE_V6_SNAPSHOT_AUTHORITATIVE_OFFER_JSON_KEY)
+        if isinstance(raw_stamp, dict):
+            offer_stamp = raw_stamp
+            pricing_totals_source = V6_SNAPSHOT_OFFER_PRICING_SOURCE
+
+    quote_totals = quote_commercial_totals_summary(quote)
+    if pricing_totals_source == V6_SNAPSHOT_OFFER_PRICING_SOURCE:
+        quote_totals = {
+            **quote_totals,
+            "pricing_totals_source": V6_SNAPSHOT_OFFER_PRICING_SOURCE,
+        }
 
     convert_blockers: list[str] = []
     if not snapshot_info["exists"]:
@@ -1083,8 +1100,9 @@ async def get_v6_commercial_spine_state(
             "approved_by_user_id": (linkage.get(OWNER_APPROVAL_JSON_KEY) or {}).get("approved_by_user_id") if linkage else None,
         },
         "snapshot_v2": snapshot_info,
+        "snapshot_authoritative_offer": offer_stamp,
         "quote_accepted": is_v4_accept_completed(linkage, quote.status),
-        "quote_commercial_totals": quote_commercial_totals_summary(quote),
+        "quote_commercial_totals": quote_totals,
         "v6_order_conversion": {
             "available": is_v6 and len(convert_blockers) == 0,
             "converted": existing_order is not None or is_v4_convert_completed(linkage),

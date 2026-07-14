@@ -91,7 +91,13 @@ export type IntakeV6OfferHandoffRequest = {
 };
 
 export type IntakeV6OfferHandoffResponse = {
-  status: "V6_PRICED_QUOTE_WRITTEN" | "V6_PRICED_QUOTE_WRITE_BLOCKED" | string;
+  status:
+    | "V6_PRICED_QUOTE_WRITTEN"
+    | "V6_PRICED_QUOTE_WRITE_BLOCKED"
+    | "V6_OFFER_FROM_SNAPSHOT_WRITTEN"
+    | "V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT"
+    | "V6_OFFER_FROM_SNAPSHOT_BLOCKED"
+    | string;
   quote_created: boolean;
   quote_id: number;
   quote_code: string;
@@ -111,6 +117,9 @@ export type IntakeV6OfferHandoffResponse = {
   blockers?: IntakeV6PricedQuoteBlocker[];
   warnings?: string[];
   can_create_quote_snapshot?: boolean;
+  commercial_authority_source?: string | null;
+  snapshot_v2?: Record<string, unknown> | null;
+  snapshot_authoritative_offer?: boolean;
   next_route?: string;
 };
 

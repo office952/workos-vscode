@@ -219,7 +219,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
   const dryRunReady = dryRun?.pricing_status === "V6_PRICED_DRY_RUN_READY";
   const dryRunTotals = dryRun?.commercial_totals;
-  const expectedTotalGross = dryRunTotals?.total_gross ?? null;
+  const dryRunExpectedGross = dryRunTotals?.total_gross ?? null;
   const dryRunBlockers = useMemo(() => readBlockerCodes(dryRun), [dryRun]);
 
   if (!intakeCode) {
@@ -240,9 +240,23 @@ export default function IntakeV6QuoteCommercialSpinePanel({
   const snapshotV2 = state?.snapshot_v2 ?? {};
   const snapshotExists = snapshotV2.exists === true;
   const snapshotAcceptAllowed = snapshotV2.accept_allowed === true;
+  const snapshotAuthoritativeOffer = state?.snapshot_authoritative_offer ?? null;
   const accepted = state?.quote_accepted === true;
   const converted = state?.v6_order_conversion?.converted === true;
   const convertBlockers = readBlockedReasons(state?.v6_order_conversion?.blocked_reasons);
+
+  const offerHandoffExpectedGross =
+    snapshotExists && quoteTotalsAvailable
+      ? (state?.quote_commercial_totals?.grand_total as number | null | undefined) ?? null
+      : dryRunExpectedGross;
+  const offerHandoffReady = snapshotExists
+    ? quoteTotalsAvailable && offerHandoffExpectedGross != null
+    : dryRunReady && offerHandoffExpectedGross != null;
+  const offerHandoffSuccessStatuses = new Set([
+    "V6_PRICED_QUOTE_WRITTEN",
+    "V6_OFFER_FROM_SNAPSHOT_WRITTEN",
+    "V6_OFFER_FROM_SNAPSHOT_IDEMPOTENT",
+  ]);
 
   const workflowSteps = buildWorkflowSteps({
     quoteTotalsAvailable,
@@ -257,14 +271,18 @@ export default function IntakeV6QuoteCommercialSpinePanel({
   const heroTotal = quoteTotalsAvailable
     ? formatMoney(state?.quote_commercial_totals?.grand_total as number | null | undefined)
     : dryRunReady
-      ? formatMoney(expectedTotalGross, dryRunTotals?.currency)
+      ? formatMoney(dryRunExpectedGross, dryRunTotals?.currency)
       : "Nepretuit";
 
-  const heroHint = quoteTotalsAvailable
-    ? "Total oficial pe quote. Continuă cu snapshot și review."
-    : dryRunReady
-      ? "Previzualizare backend pregătită. Scrie totalurile pe ofertă."
-      : "Completează workspace-ul V6 sau rezolvă blockerele de mai jos.";
+  const heroHint = snapshotExists
+    ? snapshotAuthoritativeOffer
+      ? "Oferta proiectata din snapshot V2 inghetat. Continua cu review si accept."
+      : "Snapshot V2 inghetat — trimiterea in ofertare foloseste snapshot-ul, nu dry-run live."
+    : quoteTotalsAvailable
+      ? "Total oficial pe quote. Continuă cu snapshot și review."
+      : dryRunReady
+        ? "Previzualizare backend pregătită. Scrie totalurile pe ofertă."
+        : "Completează workspace-ul V6 sau rezolvă blockerele de mai jos.";
 
   const primaryAction = resolvePrimarySpineAction({
     quoteTotalsAvailable,
@@ -360,8 +378,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                 className={v6.btnPrimary}
                 disabled={
                   !!busyAction ||
-                  !dryRunReady ||
-                  expectedTotalGross == null ||
+                  !offerHandoffReady ||
                   !clientAnalysisHash
                 }
                 data-testid="intake-v6-handoff-to-offer"
@@ -369,11 +386,11 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                   void runAction("handoff", async () => {
                     const result = await handoffIntakeV6ToOffer(workspaceId, {
                       client_analysis_hash: clientAnalysisHash,
-                      expected_total_gross: expectedTotalGross as number,
-                      expected_pricing_hash: dryRun?.pricing_hash ?? undefined,
+                      expected_total_gross: offerHandoffExpectedGross as number,
+                      expected_pricing_hash: snapshotExists ? undefined : dryRun?.pricing_hash ?? undefined,
                       operator_confirmation: true,
                     });
-                    if (result.status !== "V6_PRICED_QUOTE_WRITTEN") {
+                    if (!offerHandoffSuccessStatuses.has(result.status)) {
                       const blockerCodes = (result.blockers ?? []).map((item) => item.code).join(", ");
                       throw new Error(
                         blockerCodes
@@ -394,13 +411,13 @@ export default function IntakeV6QuoteCommercialSpinePanel({
               <button
                 type="button"
                 className={primaryAction === "write" ? v6.btnPrimary : v6.btnGhost}
-                disabled={!!busyAction || !dryRunReady || quoteTotalsAvailable || expectedTotalGross == null}
+                disabled={!!busyAction || !dryRunReady || quoteTotalsAvailable || dryRunExpectedGross == null}
                 data-testid="intake-v6-write-priced-quote"
                 onClick={() =>
                   void runAction("write", async () => {
                     const result = await writeIntakeV6PricedQuote(workspaceId, {
                       quote_id: quoteId,
-                      expected_total_gross: expectedTotalGross as number,
+                      expected_total_gross: dryRunExpectedGross as number,
                       expected_pricing_hash: dryRun?.pricing_hash ?? undefined,
                       operator_confirmation: true,
                     });
