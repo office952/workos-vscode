@@ -61,6 +61,10 @@ from services.volumetric_material_rate_resolver import (
     TEMPLATE_PROFILE_CODE,
     TEMPLATE_PSU_CODE,
 )
+from services.acm_bond_material_rate_resolver import (
+    ACM_THICKNESS_MM_TO_VARIANT_CODE,
+    TEMPLATE_ACM_BOND_CODE,
+)
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1", "comp_flat_legacy"})
@@ -259,25 +263,28 @@ def _canonical_and_quote_input(
     pd: ProductDefinitionPreview,
     quote_input: dict[str, Any] | None,
 ) -> dict[str, Any]:
+    from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
     merged = dict(pd.canonical_values)
     if not quote_input:
         return merged
+    coalesced = merge_acm_boxed_mounting_derived_fields(quote_input)
     merged.update(
         {
             k: v
-            for k, v in quote_input.items()
+            for k, v in coalesced.items()
             if v is not None and v != "" and not isinstance(v, dict)
         }
     )
-    finish = quote_input.get("finish_setup") if isinstance(quote_input.get("finish_setup"), dict) else {}
+    finish = coalesced.get("finish_setup") if isinstance(coalesced.get("finish_setup"), dict) else {}
     for key, value in finish.items():
         if value is not None and value != "":
             merged[key] = value
-    geometry = quote_input.get("quote_geometry") if isinstance(quote_input.get("quote_geometry"), dict) else {}
+    geometry = coalesced.get("quote_geometry") if isinstance(coalesced.get("quote_geometry"), dict) else {}
     for key, value in geometry.items():
         if value is not None and value != "":
             merged[key] = value
-    client = quote_input.get("client") if isinstance(quote_input.get("client"), dict) else {}
+    client = coalesced.get("client") if isinstance(coalesced.get("client"), dict) else {}
     for key, value in client.items():
         if value is not None and value != "":
             merged[key] = value
@@ -314,6 +321,19 @@ def _resolve_material_code(
         if not variant:
             return material_code, ["return_depth_mm"], "unsupported_return_depth_mm"
         return variant, ["return_depth_mm"], None
+
+    if material_code == TEMPLATE_ACM_BOND_CODE:
+        thickness_raw = values.get("acm_thickness_mm")
+        if thickness_raw is None or thickness_raw == "":
+            return material_code, ["acm_thickness_mm"], "missing_acm_thickness_mm"
+        try:
+            thickness = int(round(float(thickness_raw)))
+        except (TypeError, ValueError):
+            return material_code, ["acm_thickness_mm"], "unsupported_acm_thickness_mm"
+        variant = ACM_THICKNESS_MM_TO_VARIANT_CODE.get(thickness)
+        if not variant:
+            return material_code, ["acm_thickness_mm"], "unsupported_acm_thickness_mm"
+        return variant, ["acm_thickness_mm"], None
 
     return material_code, [], None
 
@@ -533,6 +553,12 @@ def _classify_material_inventory(
             return (
                 "USED_BY_ACTIVE_TEMPLATE",
                 "Profile material requires return_depth_mm variant selection.",
+                None,
+            )
+        if mat.material_code == TEMPLATE_ACM_BOND_CODE:
+            return (
+                "USED_BY_ACTIVE_TEMPLATE",
+                "ACM bond panel requires acm_thickness_mm variant selection.",
                 None,
             )
     in_inventory = _inventory_has_code(resolved, inventory_catalog) or _inventory_has_code(
