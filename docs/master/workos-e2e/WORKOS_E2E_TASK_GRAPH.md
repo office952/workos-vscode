@@ -196,17 +196,30 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Live proof | `POST snapshot-v2` → `QSN2-2026-0001`; read-back stable; idempotent reject |
 | Wave 4 | `W4_INT_01_COMPLETE` — handoff gate inspected |
 
+## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W4_INT_02_PASS_WITH_NONBLOCKING_PRESENTATION_DEBT_CLOSE_WAVE_4` |
+| Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
+| Snapshot | `QSN2-2026-0001` — gross `2649.99 RON`; hash stable |
+| Authority | Offer + pricing review snapshot-bound; priced-write blocked; legacy convert guarded |
+| Presentation | `MOVE_RICH_PRESENTATION_TO_WAVE_6` (basic partial 7H strip sufficient for Wave 4) |
+| Tests | 92 passed / 2 failed (`PREEXISTING_FIXTURE_DEBT`) |
+| Next | **Wave 5 integration gate** |
+
 ## W4-INT-01 — Frozen snapshot → Offer/Order handoff contract gate
 
 | Field | Value |
 |-------|-------|
 | Status | **COMPLETE** (2026-07-15) |
-| Verdict | `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY` |
+| Verdict | `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY` (resolved by W4-T01 + W4-INT-02) |
 | Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
 | Snapshot | `QSN2-2026-0001` hash verified on `:8001` |
-| Finding | Offer path live-reprices; Order V2 convert consumes frozen snapshot |
-| Authorization | `BLOCKED_ACTIVE_OFFER_AUTHORITY` |
-| Next | **W4-INT-02** — Post-implementation Wave 4 gate |
+| Finding | Offer path live-reprices (fixed W4-T01); Order V2 convert consumes frozen snapshot |
+| Authorization | `BLOCKED_ACTIVE_OFFER_AUTHORITY` → closed at W4-INT-02 |
+| Next | **W4-INT-02** (complete) |
 
 ## W4-T01B — Snapshot-authoritative pricing review alignment
 

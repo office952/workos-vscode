@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `d6c003e` (W4-T01B snapshot-authoritative pricing review)
+**Accepted HEAD:** TBD post W4-INT-02 gate commits (starting `bd2d414`)
 
-**Last updated:** 2026-07-15 (W4-T01B snapshot-authoritative pricing review)
+**Last updated:** 2026-07-15 (W4-INT-02 frozen snapshot Offer/Order integration gate)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 4 implementation IN PROGRESS** (`W4-T01B` pricing review committed) |
+| Phase | **Wave 4 COMPLETE** (`W4-INT-02` integration gate PASS with nonblocking presentation debt) |
 
-| Implementation hold | **Lifted for W4-INT-02 post-implementation gate** |
+| Implementation hold | **Lifted for Wave 5 integration gate** |
 
 | Active task | None |
 
-| Next task | **W4-INT-02 — Post-implementation Wave 4 gate** |
+| Next task | **W5-INT-01 — Wave 5 integration gate** (when scheduled) |
 
 
 
@@ -194,13 +194,21 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
+## Wave 4 exit (W4-INT-02)
+
+
+
+**Verdict:** `W4_INT_02_PASS_WITH_NONBLOCKING_PRESENTATION_DEBT_CLOSE_WAVE_4`
+
+**Wave 5:** `OPEN_WAVE_5_INTEGRATION_GATE`
+
+**Proof:** Canonical fixture `QSN2-2026-0001` — frozen gross `2649.99 RON`; Offer stamp + pricing review read model from `quote_snapshot_v2`; priced-write blocked; legacy order convert guarded when `accepted_snapshot_v2_id` set; 92/94 focused pytest pass (2 preexisting fixture debt).
+
+**Debt:** Ghost `:8000` listener; rich owner-decision UI deferred to Wave 6 (`MOVE_RICH_PRESENTATION_TO_WAVE_6`).
+
 ## Next step
 
 
 
-Next allowed task: **W4-T01B — Snapshot-authoritative pricing review alignment**.
-
-**W4-T01:** Verdict `W4_OFFER_SNAPSHOT_CONSUMER_PASS_COMMITTED`. Offer handoff consumes frozen `QSN2-2026-0001`; live dry-run blocked post-snapshot; idempotent handoff proven on canonical fixture.
-
-**W4-INT-01:** Verdict `W4_INT_01_BLOCKED_ACTIVE_OFFER_AUTHORITY` (resolved by W4-T01).
+Next allowed task: **Wave 5 integration gate** (acceptance → order → execution handoff), after owner schedules W5 entry.
 
