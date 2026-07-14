@@ -14,6 +14,7 @@ from schemas.intake_v6_modular_form import IntakeFormFieldBinding, IntakeModuleF
 from schemas.product_aggregate import ProductAggregate, ProductAggregateComponent
 from schemas.product_definition import (
     ProductDefinitionComponentRole,
+    ProductDefinitionComposition,
     ProductDefinitionMaterialRole,
     ProductDefinitionModuleRef,
     ProductDefinitionOperationRole,
@@ -24,6 +25,11 @@ from schemas.product_definition import (
     ProductDefinitionValidation,
     ReadinessStatus,
 )
+from services.product_definition_composition_contract import (
+    build_product_definition_composition,
+    metal_support_required_from_composition,
+    structura_suport_active_from_composition,
+)
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
 from services.linked_template_runtime_segment_extraction_service import (
     extract_linked_template_segments_from_workspace_payload,
@@ -32,7 +38,7 @@ from services.mini_module_registry_service import MiniModuleRegistryService, get
 from services.mounting_solution_service import (
     is_structura_suport_active,
     legacy_mounting_system_from_solution,
-    resolve_effective_mounting_solution,
+    read_mounting_solution,
 )
 from services.product_aggregate_service import ProductAggregateService
 from services.acm_quote_input_helpers import (
@@ -112,6 +118,7 @@ def _resolve_module_state(
     quote_geometry: dict[str, Any],
     svg_source: dict[str, Any],
     analysis_ready: bool,
+    composition: ProductDefinitionComposition | None = None,
 ) -> str:
     mounting_system = _read_string(finish.get("mounting_system"))
 
@@ -124,6 +131,8 @@ def _resolve_module_state(
     if code in ("debitare_fata", "debitare_spate", "modelare_cant"):
         return "always_on" if analysis_ready else "pending"
     if code == "structura_suport":
+        if composition is not None:
+            return "active" if structura_suport_active_from_composition(composition) else "inactive"
         if is_structura_suport_active(finish):
             return "active"
         mounting_system = _read_string(finish.get("mounting_system"))
@@ -150,6 +159,55 @@ def _resolve_module_state(
     return "pending"
 
 
+def _resolve_letter_face_area_m2(quote_geometry: dict[str, Any]) -> Any:
+    if quote_geometry.get("letter_face_area_m2") is not None:
+        return quote_geometry["letter_face_area_m2"]
+    if quote_geometry.get("face_area_m2") is not None:
+        return quote_geometry["face_area_m2"]
+    return None
+
+
+def _resolve_dimension_mm(
+    key: str,
+    *,
+    quote_geometry: dict[str, Any],
+    client: dict[str, Any],
+) -> Any:
+    geom_val = quote_geometry.get(key)
+    if geom_val is not None and geom_val != "":
+        return geom_val
+    client_val = client.get(key)
+    if client_val is not None and client_val != "":
+        return client_val
+    return None
+
+
+def _resolve_binding_value(
+    canonical_key: str,
+    *,
+    finish: dict[str, Any],
+    quote_geometry: dict[str, Any],
+    client: dict[str, Any],
+    svg_source: dict[str, Any],
+) -> Any:
+    if canonical_key == "vector_file":
+        return _read_string(svg_source.get("file_name"))
+    if canonical_key in ("width_mm", "height_mm"):
+        return _resolve_dimension_mm(canonical_key, quote_geometry=quote_geometry, client=client)
+    if canonical_key == "letter_face_area_m2":
+        return _resolve_letter_face_area_m2(quote_geometry)
+    finish_val = finish.get(canonical_key)
+    if finish_val is not None and finish_val != "":
+        return finish_val
+    geom_val = quote_geometry.get(canonical_key)
+    if geom_val is not None and geom_val != "":
+        return geom_val
+    client_val = client.get(canonical_key)
+    if client_val is not None and client_val != "":
+        return client_val
+    return None
+
+
 def _collect_missing_fields(
     module: IntakeModuleFormSection,
     state: str,
@@ -164,18 +222,13 @@ def _collect_missing_fields(
 
     missing: list[str] = []
     for field_key in module.required_form_fields:
-        if field_key == "vector_file":
-            if not _read_string(svg_source.get("file_name")):
-                missing.append(field_key)
-            continue
-        finish_val = finish.get(field_key)
-        geom_val = quote_geometry.get(field_key)
-        client_val = client.get(field_key)
-        has_value = any(
-            v is not None and v != ""
-            for v in (finish_val, geom_val, client_val)
-        )
-        if not has_value:
+        if _resolve_binding_value(
+            field_key,
+            finish=finish,
+            quote_geometry=quote_geometry,
+            client=client,
+            svg_source=svg_source,
+        ) is None:
             missing.append(field_key)
     return missing
 
@@ -191,17 +244,21 @@ def _derive_metal_support_required(mounting_system: str | None, finish: dict[str
 def _build_canonical_values(
     bindings: list[IntakeFormFieldBinding],
     payload: dict[str, Any],
+    *,
+    composition: ProductDefinitionComposition | None = None,
 ) -> dict[str, Any]:
     values: dict[str, Any] = {}
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
+    client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
+    svg_source = payload.get("svg_source") if isinstance(payload.get("svg_source"), dict) else {}
 
     for binding in bindings:
         if binding.field_role == "derived_quote_input":
             if binding.canonical_key == "metal_support_required":
-                derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")), finish)
-                if derived is None and isinstance(finish, dict):
-                    solution = resolve_effective_mounting_solution(finish)
-                    derived = legacy_mounting_system_from_solution(solution) is not None and is_structura_suport_active(finish)
+                derived = metal_support_required_from_composition(composition, finish=finish)
+                if derived is None:
+                    derived = _derive_metal_support_required(_read_string(finish.get("mounting_system")), finish)
                 if derived is not None:
                     values[binding.canonical_key] = derived
             continue
@@ -209,6 +266,30 @@ def _build_canonical_values(
         val = _get_by_path(payload, binding.workspace_path)
         if val is not None and val != "":
             values[binding.canonical_key] = val
+
+    for binding in bindings:
+        if binding.field_role == "derived_quote_input":
+            continue
+        if binding.canonical_key in values:
+            continue
+        resolved = _resolve_binding_value(
+            binding.canonical_key,
+            finish=finish,
+            quote_geometry=quote_geometry,
+            client=client,
+            svg_source=svg_source,
+        )
+        if resolved is not None and resolved != "":
+            values[binding.canonical_key] = resolved
+
+    if "mounting_system" not in values:
+        explicit_mounting = _read_string(finish.get("mounting_system"))
+        if explicit_mounting:
+            values["mounting_system"] = explicit_mounting
+        else:
+            projected = legacy_mounting_system_from_solution(read_mounting_solution(finish))
+            if projected:
+                values["mounting_system"] = projected
 
     return values
 
@@ -238,6 +319,7 @@ def _classify_modules(
     svg_source: dict[str, Any],
     client: dict[str, Any],
     analysis_ready: bool,
+    composition: ProductDefinitionComposition | None = None,
 ) -> tuple[list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef]]:
     selected: list[ProductDefinitionModuleRef] = []
     optional: list[ProductDefinitionModuleRef] = []
@@ -250,6 +332,7 @@ def _classify_modules(
             quote_geometry=quote_geometry,
             svg_source=svg_source,
             analysis_ready=analysis_ready,
+            composition=composition,
         )
         missing = _collect_missing_fields(
             module,
@@ -522,6 +605,12 @@ async def _build_acm_standalone_product_definition_preview(
             "Read-only ProductDefinition preview — standalone boxed ACM mounting root.",
             "Reuses linked-child aggregate/BOM truth; no Intake V6 modular form contract.",
         ],
+        composition=build_product_definition_composition(
+            root_template_code=template_code,
+            payload=payload,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+            standalone_root=True,
+        ),
     )
 
 
@@ -599,6 +688,12 @@ class ProductDefinitionBuilderService:
         client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
         analysis_ready = bool(payload.get("analysis_ready")) or _has_geometry_basics(payload)
 
+        composition = build_product_definition_composition(
+            root_template_code=stored_template_code,
+            payload=payload,
+            source_payload_type=source_type,  # type: ignore[arg-type]
+        )
+
         selected, optional, inactive = _classify_modules(
             form_contract.modules,
             finish=finish,
@@ -606,6 +701,7 @@ class ProductDefinitionBuilderService:
             svg_source=svg_source,
             client=client,
             analysis_ready=analysis_ready,
+            composition=composition,
         )
 
         registry_response = self._registry.get_by_template(stored_template_code)
@@ -627,9 +723,9 @@ class ProductDefinitionBuilderService:
                         missing_fields=[],
                     )
                 )
-        active_modules = _active_module_codes(selected)
+        active_modules = _active_module_codes(selected) | set(composition.active_module_codes)
 
-        canonical_values = _build_canonical_values(form_contract.field_bindings, payload)
+        canonical_values = _build_canonical_values(form_contract.field_bindings, payload, composition=composition)
         geometry_inputs = _build_geometry_inputs(canonical_values)
 
         linked_template_runtime_segments = None
@@ -681,6 +777,12 @@ class ProductDefinitionBuilderService:
             warnings.append(msg)
             unresolved_warnings.append(msg)
 
+        for code in composition.blockers:
+            invalid_combinations.append(code)
+        for code in composition.warnings:
+            warnings.append(code)
+            unresolved_warnings.append(code)
+
         for w in form_contract.orphan_fields_audit:
             warnings.append(f"ORPHAN_FIELD: {w}")
 
@@ -727,6 +829,11 @@ class ProductDefinitionBuilderService:
                 source="product_aggregate_service",
                 detail=f"components={len(aggregate.components)} operations={len(aggregate.operations)}",
             ),
+            ProductDefinitionProvenanceEntry(
+                key="composition_contract",
+                source="product_definition_composition_contract",
+                detail=f"mode={composition.composition_mode} nodes={len(composition.nodes)} edges={len(composition.edges)}",
+            ),
         ]
         if workspace_id:
             provenance.append(
@@ -764,6 +871,7 @@ class ProductDefinitionBuilderService:
             resource_hints=_build_resource_hints(self._registry, stored_template_code),
             warnings=warnings,
             notes=notes,
+            composition=composition,
         )
 
     async def _load_workspace_payload(

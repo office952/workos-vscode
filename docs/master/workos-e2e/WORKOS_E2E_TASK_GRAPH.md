@@ -108,10 +108,13 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## W2-T01 — PD composition resume
 
-| Issues | TE2E-010 (partial) |
-| Upstream | W1-INT-02 PASS (Wave 1 integration gate) |
-| Files | `product_definition_composition_contract.py`, builder service |
-| Forbidden | Offer/Order changes |
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W2_PD_COMPOSITION_PASS_COMMITTED` |
+| Issues | TE2E-010 (partial — composition logic) |
+| Upstream | W1-INT-02 PASS |
+| Delivers | Cases A–D graph; canonical geometry/mounting enrichment; TD-W2-PD-001 |
 | Next | W2-T02 |
 
 ---
