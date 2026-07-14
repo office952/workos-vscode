@@ -114,8 +114,8 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Verdict | `W2_INT_01_PASS_WITH_NONBLOCKING_DEBT_CLOSE_WAVE_2` |
 | Proof | 62/62 spine tests; IR-MRJS4VIK live Case B; 8 preexisting logo test failures |
 | Closes | **Wave 2** |
-| Blocks Wave 3 | D-010 cost authority |
-| Next | W3-D010-COST-AUTHORITY-DECISION |
+| Blocks Wave 3 | ~~D-010~~ resolved |
+| Next | W3-T01 |
 
 ## W2-T02 — Aggregate explicit graph consumption
 
@@ -140,12 +140,39 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ---
 
-## W3-T01 — Cost authority alignment
+## W3-D010 — Cost authority decision
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W3_D010_DECISION_COMPLETE_READY_FOR_IMPLEMENTATION` |
+| Decision | `PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS` |
+| Resolves | TE2E-025 (authority — implementation in W3-T01+) |
+| Next | W3-T01 |
+
+## W3-T01 — Graph-to-cost module projection
+
+| Field | Value |
+|-------|-------|
+| Status | **READY** |
+| Issues | TE2E-025 |
+| Upstream | W3-D010, W2-T02 |
+| Delivers | Cost BOM active scope from `composition_graph` |
+| Next | W3-T02 |
+
+## W3-T02 — V6 commercial spine alignment
 
 | Issues | TE2E-025 |
-| Upstream | W2-T02 |
-| Decision required | Single traceable graph owner (D-010) |
-| Next | W3-T02
+| Upstream | W3-T01 |
+| Delivers | Official V6 dry-run/write uses 7G total, not cost-plus override |
+| Next | W3-T03 |
+
+## W3-T03 — Snapshot unify + pricing registry
+
+| Issues | TE2E-025, TE2E-008 |
+| Upstream | W3-T02 |
+| Delivers | V6 snapshot = live 7G+7H semantics; tariff blockers |
+| Next | W4-T01 |
 
 ---
 
@@ -165,9 +192,9 @@ F-001 (closed)
     ↓
 W1-L-SPINE → W1-INT-01 → W1-L-FINISH → W1-L-CANT → W1-INT-02
     ↓
-W2-T01 → W2-T02 → W2-T03
+W2-T01 → W2-T02 → W2-INT-01
     ↓
-W3-T01 (owner D-010) → W3-T02
+W3-D010 → W3-T01 (graph adapter) → W3-T02 (V6 spine) → W3-T03 (snapshot/registry)
     ↓
 W4-T01 → W4-T02
     ↓

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `96bea36` (W2-T02 / W2-INT-01 gate)
+**Accepted HEAD:** `d309bd8` (W3-D010 decision docs)
 
-**Last updated:** 2026-07-14 (W2-INT-01 PASS WITH NONBLOCKING DEBT — Wave 2 COMPLETE)
+**Last updated:** 2026-07-14 (W3-D010 decision — Wave 3 implementation ready)
 
 
 
@@ -22,15 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 2 COMPLETE** |
+| Phase | **Wave 3 READY FOR IMPLEMENTATION** (D-010 resolved) |
 
-| Implementation hold | **Lifted for Waves 1–2** (Wave 3 blocked on D-010) |
-
-| Implementation started | **YES** — Waves 1–2 complete |
+| Implementation hold | **Lifted for Wave 3 spine** (serialized tasks W3-T01+) |
 
 | Active task | None |
 
-| Next task | **`W3-D010-COST-AUTHORITY-DECISION`** (owner) |
+| Next task | **`W3-T01`** — graph-to-cost module projection adapter |
 
 
 
@@ -60,6 +58,8 @@
 
 | Wave 2 integration gate | **PASS WITH NONBLOCKING DEBT** (`W2-INT-01`) |
 
+| Wave 3 cost authority (D-010) | **DECIDED** — `PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS` |
+
 | Same-scenario E2E proof | NOT_PROVEN |
 
 | Operator UI coherence | BLOCKED (logic first — Wave 6) |
@@ -70,11 +70,11 @@
 
 
 
-1. Cost authority consolidation — **Wave 3** (`D-010` owner decision required)
+1. V6 cost-plus vs 7G commercial authority — **Wave 3 W3-T02** (implementation)
 
-2. `volum_aluminum_module_template_code` Intake persistence — blocks Cost, not graph
+2. Graph-to-cost adapter — **Wave 3 W3-T01**
 
-3. Logo linked-segment graph unification — nonblocking Wave 2 debt
+3. `volum_aluminum_module_template_code` Intake persistence — prerequisite **`W2-PREREQUISITE-VOLUM-TRUTH`**
 
 
 
@@ -125,6 +125,8 @@
 - [x] `W2-T02` — Aggregate explicit composition graph consumption
 
 - [x] `W2-INT-01` — PD/Aggregate integration gate PASS WITH NONBLOCKING DEBT
+
+- [x] `W3-D010` — Cost authority decision (`PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS`)
 
 
 
@@ -186,9 +188,9 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **`W3-D010-COST-AUTHORITY-DECISION`** — owner must resolve Cost graph authority before Wave 3 implementation.
+Next allowed task: **`W3-T01`** — graph-to-cost module projection adapter.
 
 
 
-**W2-INT-01:** Volumetric mounting spine is singular (PD → explicit graph → Aggregate). Logo test debt and Cost adapter are nonblocking to Wave 2 closure; Wave 3 remains blocked on D-010.
+**W3-D010:** Structural authority = Aggregate `composition_graph`; internal = 7H; commercial = 7G; CostEngine = domain engine under 7H only. Retire V6 cost-plus as official commercial path.
 

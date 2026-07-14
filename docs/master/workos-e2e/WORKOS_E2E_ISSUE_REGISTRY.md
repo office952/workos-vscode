@@ -36,7 +36,7 @@
 | TE2E-022 | Order freeze unproven same-scenario | Risk | P2 | Comandă | TE2E-013 | freeze boundary | NOT_PROVEN runtime | Order | open | W4-T02 | snapshot immutability test | `/orders/:id` | `21-orders-list-empty.png` | MASTER 10 | — |
 | TE2E-023 | Execution session gate | Risk | P3 | Execuție | — | runtime proof | CONFIRMED auth race | Auth shell | open | W5-T03 | auth navigation test | `/execution` | session gate | MASTER 11 | — |
 | TE2E-024 | Execution typography dense | UX | P3 | Execuție | — | readability | CONFIRMED code | Execution UI | open | W6-T07 | typography audit | `/execution` | code only | MASTER 06 | — |
-| TE2E-025 | Dual pricing path 7G/7H vs CostEngine | Risk | P2 | Calcul | — | cost authority | CONFIRMED parallel | Pricing/Cost | open | W3-T01 | cost trace test | API routers | — | MASTER 10 | — |
+| TE2E-025 | Dual pricing path 7G/7H vs CostEngine | Risk | P2 | Calcul | — | cost authority | CONFIRMED parallel | Pricing/Cost | **planned** | W3-T01–T03 | cost trace test | API routers | — | MASTER 10 | D-010 decided |
 | TE2E-026 | structura_suport terminology | Terminology | P3 | Aggregate | — | term drift | CONFIRMED module_code | Aggregate | open | W6-T02 | terminology matrix | aggregate API | aggregate JSON | MASTER 09 | — |
 | TE2E-027 | ARCH Figma not auditable | Risk | P2 | Cross-cutting | — | architecture gap | CONFIRMED no export | PD UX | open | W0-T02 | Figma MASTER created | — | — | ARCH→MASTER | — |
 

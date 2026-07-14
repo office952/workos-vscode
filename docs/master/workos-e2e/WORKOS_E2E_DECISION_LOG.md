@@ -14,7 +14,7 @@
 | D-007 | 2026-07-14 | **Wave 6 UI cleanup after logic** (Waves 1–5) | Warnings are symptoms not fixes | UI policy | ACTIVE |
 | D-008 | 2026-07-14 | **F-001 CLOSED** at `fe6c6f7` | Autosave setPayload removed | Intake Review | CLOSED |
 | D-009 | 2026-07-14 | **No seed/DB for final E2E** without explicit owner GO | Audit hold respected | Acceptance | ACTIVE |
-| D-010 | 2026-07-14 | **Cost authority consolidation** deferred to Wave 3 | Dual path CostEngine vs 7G/7H (TE2E-025) | Calcul | PLANNED |
+| D-010 | 2026-07-14 | **Cost authority: `PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS`** — `composition_graph` is structural truth; **7H** owns internal cost; **7G** owns commercial price; **CostEngine** is domain engine for 7H/BOM only; retire V6 cost-plus override and dual snapshot wrappers | W3-D010 decision; TE2E-025 | Calcul, Offer, Wave 3 | **ACTIVE** |
 | D-011 | 2026-07-14 | **PD operator page paused** until Intake handoff safe | TE2E-010 | Product Definition | PAUSED |
 | D-012 | 2026-07-14 | **ALL_STAGES_INSPECTED interpreted as addressed, not fully proven** | Coverage gap honesty | Audits | ACTIVE |
 | D-013 | 2026-07-14 | First implementation task after approval | Earliest canonical divergence | Roadmap | **SUPERSEDED by D-016** — use W1-L-SPINE |
