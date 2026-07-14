@@ -4,6 +4,7 @@ Operator Tasks router — lightweight endpoints for Shop Floor + Operator View.
 Provides:
   GET  /api/v1/operator/tasks                              → all tasks from execution plans, enriched
   GET  /api/v1/operator/tasks/mine                         → tasks for a specific operator (query param)
+  GET  /api/v1/operator/orders/{order_id}/task-truth          → canonical operator task truth (W6-T01)
   GET  /api/v1/operator/orders/{order_id}/production-blueprint → read-only order task blueprint
   POST /api/v1/operator/task-action                        → start / pause / complete / block a task
 """
@@ -23,6 +24,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.permissions import has_permission, require_permission, resolve_effective_role
+from schemas.operator_task_truth import OperatorTaskTruthResponse
 from schemas.auth import UserResponse
 from models.execution_plan import ExecutionPlan
 from services.execution_plan_operational_readiness_service import (
@@ -35,6 +37,7 @@ from services.material_procurement_status_service import (
     update_material_procurement_status,
 )
 from services.order_production_blueprint_service import get_order_production_blueprint
+from services.operator_task_truth_service import build_operator_task_truth
 from services.volumetric_execution_dispatch import (
     extract_order_snapshot_context,
     resolve_execution_task_display_name,
@@ -677,6 +680,20 @@ async def perform_task_action(
 
     else:
         raise HTTPException(status_code=400, detail=f"Unknown action: {req.action}")
+
+
+@router.get(
+    "/orders/{order_id}/task-truth",
+    response_model=OperatorTaskTruthResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def get_operator_task_truth_endpoint(
+    order_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> OperatorTaskTruthResponse:
+    """Canonical operator execution task truth — frozen identity + readiness + release."""
+    return await build_operator_task_truth(db, order_id, current_user=current_user)
 
 
 @router.get(
