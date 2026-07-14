@@ -23,6 +23,7 @@
 | D-016 | 2026-07-14 | **Controlled implementation operating model** — `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md` | Serialize Wave 1 spine; coordinator gates; W1-L-SPINE first task | Waves 1–7 | ACTIVE |
 | D-017 | 2026-07-14 | **`mounting_system` is read-only compatibility projection** from canonical `mounting_solution` in Product Definition preview (TD-W2-PD-001) | Legacy module bindings still key off `mounting_system`; canonical mounting_solution wins for composition | Product Definition, W2-T02 removal | ACTIVE |
 | D-018 | 2026-07-14 | **Product Aggregate workspace builds consume explicit PD `composition_graph`** — registry module links are stripped when absent from graph | Eliminates parallel authority from trigger_field inference on workspace path | Product Aggregate, Cost handoff | ACTIVE |
+| D-019 | 2026-07-14 | **Wave 2 closed with nonblocking debt** — volumetric mounting spine is singular (PD → graph → Aggregate); logo segment adapter and Cost module-state path remain | W2-INT-01 integration gate | Waves 2–3 | ACTIVE |
 
 ## Resolved owner decisions
 

@@ -106,6 +106,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Waves 2–7 (unchanged IDs — see operating model §10)
 
+## W2-INT-01 — PD/Aggregate integration gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PASS WITH NONBLOCKING DEBT** (2026-07-14) |
+| Verdict | `W2_INT_01_PASS_WITH_NONBLOCKING_DEBT_CLOSE_WAVE_2` |
+| Proof | 62/62 spine tests; IR-MRJS4VIK live Case B; 8 preexisting logo test failures |
+| Closes | **Wave 2** |
+| Blocks Wave 3 | D-010 cost authority |
+| Next | W3-D010-COST-AUTHORITY-DECISION |
+
 ## W2-T02 — Aggregate explicit graph consumption
 
 | Field | Value |
@@ -114,7 +125,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Verdict | `W2_AGGREGATE_GRAPH_PASS_COMMITTED` |
 | Upstream | W2-T01 |
 | Delivers | `composition_graph` on Aggregate; no registry trigger re-inference |
-| Next | W2-INT-01 |
+| Next | W2-INT-01 (complete) |
 
 ## W2-T01 — PD composition resume
 

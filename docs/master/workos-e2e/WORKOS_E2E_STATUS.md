@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** W2-T01 commit on `feature/product-system-active-path-isolation-v1`  
+**Accepted HEAD:** `96bea36` (W2-T02 / W2-INT-01 gate)
 
-**Last updated:** 2026-07-14 (W2-T01 PASS — PD composition contract)
+**Last updated:** 2026-07-14 (W2-INT-01 PASS WITH NONBLOCKING DEBT — Wave 2 COMPLETE)
 
 
 
@@ -22,15 +22,15 @@
 
 |-------|-------|
 
-| Phase | **Wave 2 IN PROGRESS** (W2-T01 complete) |
+| Phase | **Wave 2 COMPLETE** |
 
-| Implementation hold | **Lifted for Waves 1–2** (D-016, P-001 YES) |
+| Implementation hold | **Lifted for Waves 1–2** (Wave 3 blocked on D-010) |
 
-| Implementation started | **YES** — Wave 1 complete; W2-T01 complete |
+| Implementation started | **YES** — Waves 1–2 complete |
 
-| Active task | None (between W2 lanes) |
+| Active task | None |
 
-| Next task | `W2-INT-01` candidate gate or `W2-T03` |
+| Next task | **`W3-D010-COST-AUTHORITY-DECISION`** (owner) |
 
 
 
@@ -58,6 +58,8 @@
 
 | Wave 2 Aggregate explicit graph | **PASS** (`W2-T02`) |
 
+| Wave 2 integration gate | **PASS WITH NONBLOCKING DEBT** (`W2-INT-01`) |
+
 | Same-scenario E2E proof | NOT_PROVEN |
 
 | Operator UI coherence | BLOCKED (logic first — Wave 6) |
@@ -68,9 +70,11 @@
 
 
 
-1. `volum_aluminum_module_template_code` Intake persistence on IR-MRJS4VIK — **NONBLOCKING_EXPLICIT_BLOCKER**
+1. Cost authority consolidation — **Wave 3** (`D-010` owner decision required)
 
-2. W2-INT-01 integration gate — coordinator scheduling
+2. `volum_aluminum_module_template_code` Intake persistence — blocks Cost, not graph
+
+3. Logo linked-segment graph unification — nonblocking Wave 2 debt
 
 
 
@@ -120,9 +124,11 @@
 
 - [x] `W2-T02` — Aggregate explicit composition graph consumption
 
+- [x] `W2-INT-01` — PD/Aggregate integration gate PASS WITH NONBLOCKING DEBT
 
 
-## Completed (Wave 2 partial)
+
+## Completed (Wave 2)
 
 
 
@@ -180,9 +186,9 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed implementation task: **`W2-INT-01`** integration gate candidate, or **`W2-T03`** PD operator surface.
+Next allowed task: **`W3-D010-COST-AUTHORITY-DECISION`** — owner must resolve Cost graph authority before Wave 3 implementation.
 
 
 
-**W2-T02:** Aggregate consumes explicit PD graph on IR-MRJS4VIK Case B; registry trigger re-inference removed for workspace builds.
+**W2-INT-01:** Volumetric mounting spine is singular (PD → explicit graph → Aggregate). Logo test debt and Cost adapter are nonblocking to Wave 2 closure; Wave 3 remains blocked on D-010.
 
