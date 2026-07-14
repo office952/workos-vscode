@@ -1,0 +1,184 @@
+{
+  "gate": "W6-INT-01",
+  "timestamp_utc": "2026-07-14T23:26:53.574591+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "gate_order_id": 23099,
+  "probes": {
+    "production_release_status": {
+      "status_code": 200,
+      "release_status": "RELEASE_ALLOWED",
+      "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+      "blockers": [],
+      "frozen_decision_codes": [
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE",
+        "INTERNAL_AMBALARE_RULE"
+      ],
+      "nonblocking_decision_codes": ["INTERNAL_AMBALARE_RULE"],
+      "message": "Production release allowed.",
+      "ui_surface": "NONE — API-only; no frontend client"
+    },
+    "execution_plan": {
+      "status_code": 200,
+      "task_count": 13,
+      "sample_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "frozen_identity_on_plan": {
+        "contract_version": true,
+        "deterministic_task_key": true,
+        "source_component_role": true,
+        "source_template_code": true,
+        "source_graph_node_id": true,
+        "source_segment_key": true,
+        "identity_classification": true
+      },
+      "mounting_role": "mounting_panel",
+      "logo_segment": "logo_instance_001"
+    },
+    "operator_tasks": {
+      "status_code": 200,
+      "gate_order_task_count": 13,
+      "sample_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "fields_present": {
+        "task_id": true,
+        "display_name": true,
+        "process_type": true,
+        "status": true,
+        "block_reason": true,
+        "is_startable": false,
+        "frozen_identity": false,
+        "readiness_label": false
+      }
+    },
+    "production_blueprint": {
+      "status_code": 200,
+      "task_count": 13,
+      "sample_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "fields_present": {
+        "task_id": true,
+        "name": true,
+        "status": true,
+        "is_startable": true,
+        "readiness_label": true,
+        "blocking_reasons": true,
+        "frozen_identity": false
+      },
+      "startable_assigned_count": 0
+    },
+    "blocked_start_attempt": {
+      "attempted": true,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "status_code": 409,
+      "detail_keys": [
+        "detail"
+      ],
+      "error": {
+        "code": "task_not_ready",
+        "error": "task_not_ready",
+        "message": "A\u0219teapt\u0103 preg\u0103tirea fi\u0219ierelor/vectorilor \u2014 finalizeaz\u0103 vector_prep \u00eenainte de CNC.",
+        "readiness_status": "waiting_file",
+        "readiness_label": "A\u0219teapt\u0103 preg\u0103tire fi\u0219iere/vectori",
+        "blocking_task_ids": [
+          "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep"
+        ],
+        "readiness_reasons": [
+          {
+            "code": "vector_prep_not_done",
+            "label": "Preg\u0103tire vector nefinalizat\u0103",
+            "blocking": true,
+            "responsible_domain": "instrumentation",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "depends_on_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "task_name": "Vector Prep",
+            "missing_item": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "message": "Finalizeaz\u0103 vector_prep \u00eenainte de debitare CNC / execu\u021bie fizic\u0103."
+          }
+        ],
+        "blocking_reasons": [
+          {
+            "code": "vector_prep_not_done",
+            "label": "Preg\u0103tire vector nefinalizat\u0103",
+            "blocking": true,
+            "responsible_domain": "instrumentation",
+            "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "depends_on_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "task_name": "Vector Prep",
+            "missing_item": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "message": "Finalizeaz\u0103 vector_prep \u00eenainte de debitare CNC / execu\u021bie fizic\u0103."
+          }
+        ]
+      }
+    }
+  },
+  "tests": {
+    "backend_focused": { "passed": 71, "failed": 0, "skipped": 0, "collection_errors": 0 },
+    "frontend_focused": {
+      "passed": 5,
+      "failed": 9,
+      "skipped": 0,
+      "collection_errors": 0,
+      "failure_class": "PREEXISTING_UI_FIXTURE_DEBT",
+      "files": [
+        "OperatorView.badges.test.tsx",
+        "ShopFloor.badges.test.tsx",
+        "OperatorView.live.test.tsx"
+      ]
+    },
+    "combined_gate": { "passed": 76, "failed": 9, "skipped": 0, "collection_errors": 0, "result": "PARTIAL" }
+  },
+  "screenshots": [
+    {
+      "file": "w6_int_01_screenshot_01_execution_detail_23099.png",
+      "url": "http://127.0.0.1:3000/execution/23099",
+      "section": "ExecutionDetail — observability + task table header",
+      "order_id": 23099,
+      "role": "admin (dev bypass)",
+      "backend": "GET /api/v1/execution/plan/23099, production-blueprint",
+      "defect": "CURRENT_W6_CONTRACT_DEFECT — raw task_id labels; no component role badges",
+      "expected": "Operator-friendly component-grouped task identity",
+      "actual": "Deterministic keys in TASK column"
+    },
+    {
+      "file": "w6_int_01_screenshot_03_execution_tasks_23099.png",
+      "url": "http://127.0.0.1:3000/execution/23099",
+      "section": "Profitability + operational tasks",
+      "order_id": 23099,
+      "backend": "order profitability read model",
+      "defect": "PARTIAL — accepted revenue vs internal cost separated; execution blockers not linked",
+      "expected": "Client price separate from partial 7H internal cost",
+      "actual": "1500 RON revenue / 620 RON internal — READ-ONLY panel"
+    },
+    {
+      "file": "w6_int_01_screenshot_05_operator_blueprint_readiness.png",
+      "url": "http://127.0.0.1:3000/operator",
+      "section": "Blueprint execuție — taskuri + readiness",
+      "order_id": 23099,
+      "backend": "GET /api/v1/operator/orders/23099/production-blueprint",
+      "defect": "CURRENT_W6_CONTRACT_DEFECT — readiness visible; frozen_identity absent; raw task_id sublabel",
+      "expected": "Structured readiness before Start",
+      "actual": "Readiness labels + blocking task names for CNC chain"
+    },
+    {
+      "file": "w6_int_01_screenshot_04_shop_floor.png",
+      "url": "http://127.0.0.1:3000/shop-floor",
+      "section": "Shop Floor — Live",
+      "backend": "GET /api/v1/operator/tasks + /api/v1/machines",
+      "defect": "LEGACY_UI_DEBT — machine-centric; no task/component identity",
+      "expected": "Read-only floor status",
+      "actual": "All idle; 0 blocked jobs"
+    },
+    {
+      "file": "w6_int_01_screenshot_06_mounting_logo_tasks_23099.png",
+      "url": "http://127.0.0.1:3000/execution/23099",
+      "section": "Poarta Generare Plan (legacy gate)",
+      "order_id": 23099,
+      "backend": "GET gate evaluation endpoint",
+      "defect": "LEGACY_UI_DEBT — snapshot_line_items gate noise on V2 order",
+      "expected": "V2 orders should not show legacy plan-generation blockers as operator truth",
+      "actual": "4 blockers from legacy gate spec"
+    }
+  ],
+  "verdict": "W6_INT_01_PASS_WITH_BACKEND_PREREQUISITE",
+  "implementation_authorization": "READY_WITH_BACKEND_READ_MODEL_PREREQUISITE",
+  "first_w6_task": "W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL"
+}

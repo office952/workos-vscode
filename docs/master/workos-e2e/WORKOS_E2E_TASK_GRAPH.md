@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** None (hold — orchestration model pending owner approval)  
+**Active task:** W6-T01 authorized (not started)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,8 +271,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | `OPEN_WAVE_6_INTEGRATION_GATE` |
-| Next | **Wave 6 integration gate** |
+| Wave 6 | `OPEN_WAVE_6_IMPLEMENTATION` (W6-T01 authorized) |
+| Next | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** |
+
+## W6-INT-01 — Operator execution truth and blocker visibility gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W6_INT_01_PASS_WITH_BACKEND_PREREQUISITE` |
+| Runtime | Order `23099` on `:8001`; frontend `:3000` |
+| Tests | 76 passed / 9 failed (frontend fixture debt) |
+| Read model | `BACKEND_FIELDS_EXIST_HTTP_SCHEMA_DROPS_THEM` |
+| UI | 6 screenshots; blueprint readiness partial; no production-release UI |
+| Authorization | `READY_WITH_BACKEND_READ_MODEL_PREREQUISITE` |
+| First task | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** |
+| Wave 7 | `KEEP_WAVE_7_BLOCKED_WAVE_6` |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 

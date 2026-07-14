@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `a561c19` (W5-INT-02 docs + Wave 5 close)
+**Accepted HEAD:** `da381c1` (W5-INT-02 close + W6-INT-01 gate pending commit)
 
 **Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
 
-**Last updated:** 2026-07-15 (W5-INT-02 Wave 5 integration gate — **Wave 5 CLOSED**)
+**Last updated:** 2026-07-15 (W6-INT-01 operator truth UI contract gate)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 5 COMPLETE** — Wave 6 gate OPEN |
+| Phase | **Wave 6 gate PASS** — implementation authorized with backend prerequisite |
 
-| Implementation hold | **Lifted for Wave 6 integration gate** |
+| Implementation hold | **Lifted for W6-T01 only** (read model first) |
 
 | Active task | None |
 
-| Next task | **Wave 6 integration gate** (no auto-start) |
+| Next task | **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** (not auto-started) |
 
 
 
@@ -64,7 +64,7 @@
 
 | Same-scenario E2E proof | NOT_PROVEN |
 
-| Operator UI coherence | BLOCKED (logic first — Wave 6) |
+| Operator UI coherence | **GATE PASS** — backend read-model prerequisite before UI (`W6-INT-01`) |
 
 
 
@@ -248,6 +248,18 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Wave 6:** `OPEN_WAVE_6_INTEGRATION_GATE`
 
+## Wave 6 contract gate (W6-INT-01)
+
+**Verdict:** `W6_INT_01_PASS_WITH_BACKEND_PREREQUISITE`
+
+**Proof:** Gate order `23099` on `:8001`; 6 UI screenshots; API probe shows `frozen_identity` on plan only; blueprint readiness partial; production-release API-only; 76/85 focused tests (9 frontend fixture debt).
+
+**Authorization:** `READY_WITH_BACKEND_READ_MODEL_PREREQUISITE` → **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL**
+
+**Debt:** No production-release UI; no manager resolution UI; raw task keys; legacy plan gate noise on V2 orders; logo label mapping.
+
+**Wave 7:** `KEEP_WAVE_7_BLOCKED_WAVE_6`
+
 ## Wave 4 exit (W4-INT-02)
 
 
@@ -264,5 +276,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Wave 6 integration gate** (implementation not auto-started).
+Next allowed task: **W6-T01_OPERATOR_TASK_TRUTH_READ_MODEL** (backend read model; implementation not auto-started).
 
