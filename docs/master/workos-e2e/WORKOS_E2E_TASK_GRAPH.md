@@ -184,7 +184,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Classification | `COMPONENT_OPTION_INPUT_RESOLVED_TO_TEMPLATE` |
 | Delivers | Product System unique-link resolution on Intake save; cant applicability; stale clearing; UI gated on cant not mounting |
 | Runtime | IR-MRJS4VIK — applicable; unique link `TPL-VOLUM-ALUMINIU_v1`; PD volum no longer missing when persisted |
-| Next | W3-INT-01 (complete) |
+| Next | W3-INT-01B (complete) |
+
+## W3-INT-01B — Live snapshot + runtime ownership gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W3_INT_01B_PASS_WITH_NONBLOCKING_RUNTIME_DEBT_OPEN_WAVE_4_GATE` |
+| Runtime | `ISOLATED_TRUSTED_BACKEND_8001_GHOST_8000_NONAUTHORITATIVE` |
+| Live proof | `POST snapshot-v2` → `QSN2-2026-0001`; read-back stable; idempotent reject |
+| Wave 4 | `OPEN_WAVE_4_INTEGRATION_GATE` |
 
 ## W3-INT-01 — Wave 3 internal-cost + snapshot persistence exit gate
 
