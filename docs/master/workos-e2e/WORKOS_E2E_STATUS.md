@@ -1,86 +1,89 @@
-# WorkOS E2E — Master Program Status
-
-**Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
-**Worktree:** `C:\w\psiso`  
-**Branch:** `feature/product-system-active-path-isolation-v1`  
-**Accepted HEAD:** `72bb8d0` (W1-L-CANT)  
-**Last updated:** 2026-07-14 (W1-L-CANT committed)
-
-## Program phase
-
-| Field | Value |
-|-------|-------|
-| Phase | **Wave 1 in progress — W1-L-CANT complete; next W1-INT-02** |
-| Implementation hold | **Lifted for Wave 1 only** (D-016, P-001 YES) |
-| Implementation started | **YES** — `W1-L-SPINE`, `W1-L-FINISH`, `W1-L-CANT` |
-| Active task | None (between lanes) |
-| Next task | `W1-INT-02` — Wave 1 integration gate |
-
-## Maturity snapshot
-
-| Dimension | Status |
-|-----------|--------|
-| Connected-flow audits | Complete (shallow + TRUE E2E) |
-| Master dossier | Created |
-| Canonical issue registry | Consolidated (TE2E-001–027) |
-| Figma MASTER 00–13 | **14/14 polished — P-002 YES WITH POLISH** |
-| Implementation operating model | **`WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md` — READY_FOR_WAVE_1** |
-| Same-scenario E2E proof | NOT_PROVEN |
-| Operator UI coherence | BLOCKED (logic first) |
-
-## Blockers (program-level)
-
-1. Wave 1 integration gate — **W1-INT-02**
-2. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
-3. Frontend legacy support/montaj banner copy (TE2E-005 adjacency) — deferred W6
-
-## Completed (Wave 0)
-
-- [x] Master dossier and 8 companion canonical documents
-- [x] Document index with supersession rules
-- [x] Issue registry consolidation
-- [x] Implementation roadmap (Waves 0–7)
-- [x] Task graph (Wave 1 entry tasks)
-- [x] Acceptance plan skeleton
-- [x] Agent operating contract
-- [x] F-001 closed at `fe6c6f7`
-- [x] Figma MASTER 00–13 physical pages created (nodes `14:2`–`14:15`)
-- [x] Implementation operating model (`WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`)
-- [x] Task graph and roadmap orchestration alignment
-
-## Figma MASTER node registry
-
-| Page | Node ID | Review |
-|------|---------|--------|
-| MASTER 00 — WorkOS E2E Map | `14:2` | Agent PASS |
-| MASTER 01 — System Ownership | `14:3` | Agent PASS |
-| MASTER 02 — Product Truth Lifecycle | `14:4` | Agent PASS |
-| MASTER 03 — Decision Ownership | `14:5` | Agent PASS |
-| MASTER 04 — State Machines | `14:6` | Agent PASS |
-| MASTER 05 — Contract Handoffs | `14:7` | APPROVE (polished) |
-| MASTER 06 — Operator Navigation | `14:8` | APPROVE (polished) |
-| MASTER 07 — Admin and Advanced Surfaces | `14:9` | APPROVE (polished) |
-| MASTER 08 — Warning and Diagnostic Destinations | `14:10` | APPROVE_WITH_NOTE |
-| MASTER 09 — Product Composition A–D | `14:11` | APPROVE_WITH_NOTE |
-| MASTER 10 — Cost and Commercial Truth | `14:12` | APPROVE (polished) |
-| MASTER 11 — Execution Truth | `14:13` | APPROVE (polished) |
-| MASTER 12 — Implementation Roadmap | `14:14` | APPROVE_WITH_NOTE |
-| MASTER 13 — Final Acceptance Map | `14:15` | APPROVE (polished) |
-
-**Owner approval state:** P-002 **YES WITH POLISH** (D-015) | P-001 **YES** (Wave 1 hold lifted)
-
-## Open P1 issues (19 open total)
-
-TE2E-010 (+ P2/P3) — see `WORKOS_E2E_ISSUE_REGISTRY.md`
-
-**Closed by W1-L-SPINE:** TE2E-001, TE2E-002, TE2E-014, TE2E-015
-
-**Closed by W1-L-FINISH:** TE2E-003
-
-**Closed by W1-L-CANT:** TE2E-006
-
-## Next step
-
-Next allowed implementation task: `W1-INT-02` (Wave 1 integration gate).
-
-**W1-L-CANT:** cant/return contract aligned — `product_truth.return_cant` drives review readonly runtime; save normalization clears stale method-dependent fields; IR-MRJS4VIK operator cant banner cleared.
+# WorkOS E2E — Master Program Status
+
+**Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
+**Worktree:** `C:\w\psiso`  
+**Branch:** `feature/product-system-active-path-isolation-v1`  
+**Accepted HEAD:** `6637aa2` (W1-INT-02 gate)  
+**Last updated:** 2026-07-14 (W1-INT-02 PASS — Wave 2 OPEN)
+
+## Program phase
+
+| Field | Value |
+|-------|-------|
+| Phase | **Wave 1 COMPLETE — Wave 2 OPEN** |
+| Implementation hold | **Lifted for Waves 1–2** (D-016, P-001 YES) |
+| Implementation started | **YES** — Wave 1 lanes complete |
+| Active task | None (between waves) |
+| Next task | `W2-T01` — PD composition contract resume |
+
+## Maturity snapshot
+
+| Dimension | Status |
+|-----------|--------|
+| Connected-flow audits | Complete (shallow + TRUE E2E) |
+| Master dossier | Created |
+| Canonical issue registry | Consolidated (TE2E-001–027) |
+| Figma MASTER 00–13 | **14/14 polished — P-002 YES WITH POLISH** |
+| Implementation operating model | **`WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md` — READY_FOR_WAVE_1** |
+| Wave 1 Intake truth integration | **PASS** (`W1-INT-02`) |
+| Same-scenario E2E proof | NOT_PROVEN |
+| Operator UI coherence | BLOCKED (logic first — Wave 6) |
+
+## Blockers (program-level)
+
+1. PD composition / geometry derivation — **Wave 2** (`W2-T01`)
+2. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
+3. Frontend legacy support/montaj banner copy (TE2E-005 adjacency) — deferred W6
+
+## Completed (Wave 0)
+
+- [x] Master dossier and 8 companion canonical documents
+- [x] Document index with supersession rules
+- [x] Issue registry consolidation
+- [x] Implementation roadmap (Waves 0–7)
+- [x] Task graph (Wave 1 entry tasks)
+- [x] Acceptance plan skeleton
+- [x] Agent operating contract
+- [x] F-001 closed at `fe6c6f7`
+- [x] Figma MASTER 00–13 physical pages created (nodes `14:2`–`14:15`)
+- [x] Implementation operating model (`WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`)
+- [x] Task graph and roadmap orchestration alignment
+
+## Completed (Wave 1)
+
+- [x] `W1-L-SPINE` — mounting/readiness/handoff spine (`bee4cfe`)
+- [x] `W1-INT-01` — fresh runtime gate PASS
+- [x] `W1-L-FINISH` — finish truth persistence (`911616d`)
+- [x] `W1-L-CANT` — cant/return contract (`6637aa2`)
+- [x] `W1-INT-02` — integration gate PASS — Wave 2 OPEN
+
+## Figma MASTER node registry
+
+| Page | Node ID | Review |
+|------|---------|--------|
+| MASTER 00 — WorkOS E2E Map | `14:2` | Agent PASS |
+| MASTER 01 — System Ownership | `14:3` | Agent PASS |
+| MASTER 02 — Product Truth Lifecycle | `14:4` | Agent PASS |
+| MASTER 03 — Decision Ownership | `14:5` | Agent PASS |
+| MASTER 04 — State Machines | `14:6` | Agent PASS |
+| MASTER 05 — Contract Handoffs | `14:7` | APPROVE (polished) |
+| MASTER 06 — Operator Navigation | `14:8` | APPROVE (polished) |
+| MASTER 07 — Admin and Advanced Surfaces | `14:9` | APPROVE (polished) |
+| MASTER 08 — Warning and Diagnostic Destinations | `14:10` | APPROVE_WITH_NOTE |
+| MASTER 09 — Product Composition A–D | `14:11` | APPROVE_WITH_NOTE |
+| MASTER 10 — Cost and Commercial Truth | `14:12` | APPROVE (polished) |
+| MASTER 11 — Execution Truth | `14:13` | APPROVE (polished) |
+| MASTER 12 — Implementation Roadmap | `14:14` | APPROVE_WITH_NOTE |
+| MASTER 13 — Final Acceptance Map | `14:15` | APPROVE (polished) |
+
+**Owner approval state:** P-002 **YES WITH POLISH** (D-015) | P-001 **YES** (Wave 1 hold lifted)
+
+## Wave 1 issues closed
+
+TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-INT-02`
+
+## Next step
+
+Next allowed implementation task: **`W2-T01`** — Resume PD composition contract (Cases A–D).
+
+**W1-INT-02:** IR-MRJS4VIK live trace coherent — mounting/finish/cant singular; handoff fail-closed on PD/confirmation blockers; pricing/capture spine green.

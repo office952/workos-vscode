@@ -65,8 +65,12 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 | Field | Value |
 |-------|-------|
-| Proof | IR-MRJS4VIK step 2–3; handoff preview; opens Wave 2 |
-| Issues closed | TE2E-001, 002, 003, 006, 014, 015 (minimum) |
+| Status | **COMPLETE — PASS** (2026-07-14) |
+| Verdict | `W1_INT_02_PASS_WITH_NONBLOCKING_DEBT_OPEN_WAVE_2` |
+| Proof | IR-MRJS4VIK step 2–3; API trace; 3 UI screenshots |
+| Issues verified | TE2E-001, 002, 003, 006, 014, 015 |
+| Opens | **Wave 2** |
+| Next | W2-T01 |
 
 ### W1-L-VECTOR — Residual vector analyzer edge (optional)
 
