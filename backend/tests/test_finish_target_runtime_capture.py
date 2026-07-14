@@ -109,6 +109,8 @@ def test_save_finish_setup_persists_finish_target_runtime_field(v4_client):
         json={
             "face_finish_type": "oracal_8500",
             "finish_target": "face",
+            "return_finish_type": "none",
+            "backing_mode": "none",
             "confirmed": True,
         },
     )
@@ -118,7 +120,7 @@ def test_save_finish_setup_persists_finish_target_runtime_field(v4_client):
     assert "finishTarget" not in finish
 
 
-def test_save_finish_setup_without_finish_target_keeps_field_absent(v4_client):
+def test_save_finish_setup_hydrates_finish_target_from_active_face_finish(v4_client):
     workspace_id = _create_workspace(v4_client)
     _put_analysis_bundle(v4_client, workspace_id)
 
@@ -126,6 +128,27 @@ def test_save_finish_setup_without_finish_target_keeps_field_absent(v4_client):
         f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
         json={
             "face_finish_type": "oracal_8500",
+            "return_finish_type": "none",
+            "backing_mode": "none",
+            "confirmed": True,
+        },
+    )
+    assert saved.status_code == 200, saved.text
+    finish = saved.json()["payload"]["finish_setup"]
+    assert finish["finish_target"] == "face"
+    assert "finishTarget" not in finish
+
+
+def test_save_finish_setup_without_active_finish_zones_keeps_finish_target_absent(v4_client):
+    workspace_id = _create_workspace(v4_client)
+    _put_analysis_bundle(v4_client, workspace_id)
+
+    saved = v4_client.put(
+        f"/api/v1/intake-v4/workspaces/{workspace_id}/finish-setup",
+        json={
+            "face_finish_type": "none",
+            "return_finish_type": "none",
+            "backing_mode": "none",
             "confirmed": True,
         },
     )

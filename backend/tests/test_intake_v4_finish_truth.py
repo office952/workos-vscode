@@ -5,6 +5,9 @@ from __future__ import annotations
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
 from services.intake_v4_finish_truth_service import (
     any_letter_group_face_vinyl_required,
+    derive_artwork_lamination_required_from_execution,
+    derive_artwork_print_required_from_execution,
+    derive_finish_target_from_zones,
     dump_intake_v4_finish_setup_for_persist,
     format_intake_v4_return_finish_operator_label,
     mounting_scope_runtime_state,
@@ -313,3 +316,92 @@ def test_dump_for_persist_omits_global_mirror_keys():
     assert "backing_mode" not in dumped
     assert "back_bevel_enabled" not in dumped
     assert dumped["letter_group_finishes"][0]["backing_mode"] == "forex_10_with_bevel"
+
+
+def test_normalize_hydrates_finish_target_from_active_face_zone():
+    setup = IntakeV4FinishSetup(
+        face_finish_type="oracal_651",
+        return_finish_type="none",
+        backing_mode="none",
+        confirmed=True,
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.finish_target == "face"
+
+
+def test_normalize_hydrates_artwork_booleans_from_execution_type():
+    setup = IntakeV4FinishSetup(
+        confirmed=True,
+        artwork_finishes=[
+            IntakeV4ArtworkFinish(
+                layer_key="logo-left",
+                execution_type="print_laminate",
+                print_required=None,
+                lamination_required=None,
+            ),
+            IntakeV4ArtworkFinish(
+                layer_key="logo-right",
+                execution_type="cut_vinyl",
+                print_required=True,
+                lamination_required=True,
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.artwork_finishes[0].print_required is True
+    assert normalized.artwork_finishes[0].lamination_required is True
+    assert normalized.artwork_finishes[1].print_required is False
+    assert normalized.artwork_finishes[1].lamination_required is False
+
+
+def test_normalize_clears_stale_artwork_booleans_when_execution_undecided():
+    setup = IntakeV4FinishSetup(
+        confirmed=True,
+        artwork_finishes=[
+            IntakeV4ArtworkFinish(
+                layer_key="logo-left",
+                execution_type="needs_decision",
+                print_required=True,
+                lamination_required=True,
+            ),
+        ],
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.artwork_finishes[0].print_required is None
+    assert normalized.artwork_finishes[0].lamination_required is None
+
+
+def test_normalize_finish_target_all_when_face_and_artwork_active():
+    setup = IntakeV4FinishSetup(
+        face_finish_type="oracal_651",
+        return_finish_type="standard_aluminum",
+        letter_group_finishes=[
+            IntakeV4LetterGroupFinish(
+                group_key="a",
+                layer_name="A",
+                face_finish_type="oracal_651",
+                return_finish_type="standard_aluminum",
+            ),
+        ],
+        artwork_finishes=[
+            IntakeV4ArtworkFinish(
+                layer_key="logo",
+                execution_type="print_laminate",
+            ),
+        ],
+        confirmed=True,
+    )
+    normalized = normalize_intake_v4_finish_setup(setup)
+    assert normalized.finish_target == "all"
+
+
+def test_derive_artwork_print_and_lamination_from_execution_tokens():
+    assert derive_artwork_print_required_from_execution("print_laminate") is True
+    assert derive_artwork_lamination_required_from_execution("print_laminate") is True
+    assert derive_artwork_print_required_from_execution("cut_vinyl") is False
+    assert derive_artwork_lamination_required_from_execution("cut_vinyl") is False
+    assert derive_artwork_print_required_from_execution("needs_decision") is None
+
+
+def test_derive_finish_target_from_zones_returns_none_without_active_zones():
+    assert derive_finish_target_from_zones({"face_finish_type": "none", "return_finish_type": "none"}) is None

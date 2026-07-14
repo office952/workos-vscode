@@ -29,7 +29,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 | Field | Value |
 |-------|-------|
-| Status | **COMPLETE** (W1-INT-01 PASS) |
+| Status | **COMPLETE** (W1-INT-01 LIVE PASS — 2026-07-14) |
 | Replaces | Legacy W1-T01 (scope expanded) |
 | Root cause cluster | TE2E-001, 002, 014, 015 — shared readiness spine |
 | Owner | Intake / FormSystem |
@@ -44,9 +44,11 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 | Field | Value |
 |-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
 | Upstream | W1-INT-01 PASS |
 | Issues | TE2E-003 |
 | Collision | HIGH — shares finish_setup |
+| Delivers | hydrate `finish_target` + artwork booleans at save; capture/readiness/handoff alignment |
 | Next | W1-L-CANT |
 
 ### W1-L-CANT — Cant/return finish contract

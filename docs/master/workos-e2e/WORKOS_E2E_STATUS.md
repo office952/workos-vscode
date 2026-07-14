@@ -3,18 +3,18 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Worktree:** `C:\w\psiso`  
 **Branch:** `feature/product-system-active-path-isolation-v1`  
-**Accepted HEAD:** `fe6c6f7`  
-**Last updated:** 2026-07-14 (W1-L-SPINE committed)
+**Accepted HEAD:** `bee4cfe` (post W1-L-SPINE); W1-L-FINISH commit pending  
+**Last updated:** 2026-07-14 (W1-L-FINISH committed)
 
 ## Program phase
 
 | Field | Value |
 |-------|-------|
-| Phase | **Wave 1 in progress — W1-L-SPINE complete; W1-INT-01 PASS** |
+| Phase | **Wave 1 in progress — W1-L-FINISH complete; next W1-L-CANT** |
 | Implementation hold | **Lifted for Wave 1 only** (D-016, P-001 YES) |
-| Implementation started | **YES** — `W1-L-SPINE` |
-| Active task | `W1-L-SPINE` — **COMPLETE** |
-| Next task | `W1-L-FINISH` — blocked until W1-INT-01 gate evaluated (PASS) |
+| Implementation started | **YES** — `W1-L-SPINE`, `W1-L-FINISH` |
+| Active task | None (between lanes) |
+| Next task | `W1-L-CANT` — cant/return finish contract |
 
 ## Maturity snapshot
 
@@ -30,10 +30,9 @@
 
 ## Blockers (program-level)
 
-1. Intake finish persistence — **W1-L-FINISH** (TE2E-003)
-2. Cant/return contract — **W1-L-CANT** (TE2E-006)
-3. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
-4. Frontend legacy support/montaj banner copy (TE2E-005 adjacency) — deferred W6
+1. Cant/return contract — **W1-L-CANT** (TE2E-006)
+2. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
+3. Frontend legacy support/montaj banner copy (TE2E-005 adjacency) — deferred W6
 
 ## Completed (Wave 0)
 
@@ -72,10 +71,14 @@
 
 ## Open P1 issues (19 open total)
 
-TE2E-003, 010 (+ P2/P3) — see `WORKOS_E2E_ISSUE_REGISTRY.md`
+TE2E-010 (+ P2/P3) — see `WORKOS_E2E_ISSUE_REGISTRY.md`
 
 **Closed by W1-L-SPINE:** TE2E-001, TE2E-002, TE2E-014, TE2E-015
 
+**Closed by W1-L-FINISH:** TE2E-003
+
 ## Next step
 
-Evaluate W1-INT-01 integration evidence; next allowed implementation task: `W1-L-FINISH` (finish persistence lane).
+Next allowed implementation task: `W1-L-CANT` (cant/return finish contract).
+
+**W1-L-FINISH:** finish truth hydrated at save — `finish_target`, artwork `print_required`/`lamination_required`; live IR-MRJS4VIK capture/pricing aligned.

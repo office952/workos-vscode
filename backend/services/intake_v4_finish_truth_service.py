@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
-from typing import Any, Literal
+from typing import Any, Literal, Mapping
 
 from schemas.intake_v4 import IntakeV4ArtworkFinish, IntakeV4FinishSetup, IntakeV4LetterGroupFinish
 from services.intake_v4_backing_mode_service import (
@@ -58,6 +58,19 @@ _FACE_PRINT_LAMINATE = frozenset(
 _PRINT_ARTWORK_EXECUTION = frozenset(
     {"print_laminate", "print_translucent", "printed_vinyl", "printed_laminated_vinyl", "printed_vinyl_on_face"}
 )
+_LAMINATION_ARTWORK_EXECUTION = frozenset(
+    {"print_laminate", "print_on_vinyl_laminated", "printed_laminated_vinyl"}
+)
+_NON_PRINT_ARTWORK_EXECUTION = frozenset(
+    {
+        "vinyl_cut",
+        "cut_vinyl",
+        "ignore",
+        "none_raw_plexi",
+        "translucent_vinyl",
+    }
+)
+_FINISH_TARGET_VALUES = frozenset({"face", "cant", "artwork", "back", "all"})
 
 
 def _token(value: str | None, default: str) -> str:
@@ -95,6 +108,135 @@ def face_finish_is_print_laminate(face_finish: str) -> bool:
 
 def artwork_print_execution(execution_type: str | None) -> bool:
     return _token(execution_type, "needs_decision") in _PRINT_ARTWORK_EXECUTION
+
+
+def _is_finish_type_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized not in {"none", "no_finish"}
+
+
+def _is_return_finish_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized not in {
+        "none",
+        "no_return",
+        "without_return",
+        "unspecified",
+    }
+
+
+def _is_backing_mode_active(token: str | None) -> bool:
+    normalized = str(token or "").strip().lower()
+    return bool(normalized) and normalized != "none"
+
+
+def _artwork_row_has_decisive_execution(row: IntakeV4ArtworkFinish) -> bool:
+    execution = str(row.execution_type or "needs_decision").strip().lower()
+    return execution not in {"", "needs_decision", "ignore"}
+
+
+def derive_artwork_print_required_from_execution(execution_type: str | None) -> bool | None:
+    """Map operator execution_type to canonical row-level print_required at persist."""
+    token = str(execution_type or "").strip().lower()
+    if not token or token == "needs_decision":
+        return None
+    if token in _PRINT_ARTWORK_EXECUTION or token in {"print", "print_on_vinyl_laminated"}:
+        return True
+    if token in _NON_PRINT_ARTWORK_EXECUTION:
+        return False
+    return None
+
+
+def derive_artwork_lamination_required_from_execution(execution_type: str | None) -> bool | None:
+    """Map operator execution_type to canonical row-level lamination_required at persist."""
+    token = str(execution_type or "").strip().lower()
+    if not token or token == "needs_decision":
+        return None
+    if token in _LAMINATION_ARTWORK_EXECUTION:
+        return True
+    if token in _NON_PRINT_ARTWORK_EXECUTION or token in {
+        "print",
+        "print_translucent",
+        "printed_vinyl",
+        "printed_vinyl_on_face",
+    }:
+        return False
+    return None
+
+
+def hydrate_artwork_finish_boolean_fields(
+    artwork: list[IntakeV4ArtworkFinish],
+) -> list[IntakeV4ArtworkFinish]:
+    """Persist explicit booleans from operator execution_type; clear stale values when undecided."""
+    hydrated: list[IntakeV4ArtworkFinish] = []
+    for row in artwork:
+        derived_print = derive_artwork_print_required_from_execution(row.execution_type)
+        derived_lamination = derive_artwork_lamination_required_from_execution(row.execution_type)
+        hydrated.append(
+            row.model_copy(
+                update={
+                    "print_required": derived_print,
+                    "lamination_required": derived_lamination,
+                }
+            )
+        )
+    return hydrated
+
+
+def derive_finish_target_from_zones(setup: Mapping[str, Any]) -> str | None:
+    """Derive finish_target from active finish zones implied by operator layer selections."""
+    groups = setup.get("letter_group_finishes") if isinstance(setup.get("letter_group_finishes"), list) else []
+    artwork = setup.get("artwork_finishes") if isinstance(setup.get("artwork_finishes"), list) else []
+
+    face_active = _is_finish_type_active(setup.get("face_finish_type"))
+    cant_active = _is_return_finish_active(setup.get("return_finish_type"))
+    back_active = _is_backing_mode_active(setup.get("backing_mode"))
+
+    for group in groups:
+        if not isinstance(group, Mapping):
+            continue
+        if _is_finish_type_active(group.get("face_finish_type")):
+            face_active = True
+        if _is_return_finish_active(group.get("return_finish_type")):
+            cant_active = True
+        if _is_backing_mode_active(group.get("backing_mode")):
+            back_active = True
+
+    artwork_active = False
+    for row in artwork:
+        if not isinstance(row, Mapping):
+            continue
+        if _is_return_finish_active(row.get("return_finish_type")):
+            cant_active = True
+        if _is_backing_mode_active(row.get("backing_mode")):
+            back_active = True
+        execution = str(row.get("execution_type") or "needs_decision").strip().lower()
+        if execution not in {"", "needs_decision", "ignore"}:
+            artwork_active = True
+
+    zones: list[str] = []
+    if face_active:
+        zones.append("face")
+    if cant_active:
+        zones.append("cant")
+    if artwork_active:
+        zones.append("artwork")
+    if back_active:
+        zones.append("back")
+
+    if not zones:
+        return None
+    if len(zones) == 1:
+        return zones[0]
+    return "all"
+
+
+def hydrate_finish_target_fields(setup: Mapping[str, Any]) -> dict[str, Any]:
+    """Persist finish_target from active finish zones when operator setup implies a target."""
+    derived = derive_finish_target_from_zones(setup)
+    if derived in _FINISH_TARGET_VALUES:
+        return {"finish_target": derived}
+    return {"finish_target": None}
 
 
 def any_letter_group_face_vinyl_required(
@@ -229,6 +371,7 @@ def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, A
             "mounting_system",
             "mounting_bar_profile",
             "mounting_solution",
+            "finish_target",
         }:
             filtered[key] = value
     return setup.model_copy(update=filtered)
@@ -289,9 +432,6 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
     updates.update(hydrate_mounting_scope_fields(setup.model_dump(mode="json")))
     updates.update(hydrate_mounting_solution_fields(setup.model_dump(mode="json")))
 
-    if not groups and not artwork:
-        return _apply_finish_setup_updates(setup, updates)
-
     if groups:
         updates["face_finish_type"] = _dominant_token(
             [g.face_finish_type for g in groups],
@@ -313,9 +453,20 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
         if depths:
             updates["return_depth_mm"] = max(float(d) for d in depths)
 
-    _trim_global_backing_mirror_from_layers(setup, groups, artwork, updates)
+    if artwork:
+        updates["artwork_finishes"] = hydrate_artwork_finish_boolean_fields(artwork)
 
-    return _apply_finish_setup_updates(setup, updates)
+    merged_setup = _apply_finish_setup_updates(setup, updates)
+    updates.update(hydrate_finish_target_fields(merged_setup.model_dump(mode="json")))
+
+    _trim_global_backing_mirror_from_layers(
+        merged_setup,
+        list(merged_setup.letter_group_finishes or []),
+        list(merged_setup.artwork_finishes or []),
+        updates,
+    )
+
+    return _apply_finish_setup_updates(merged_setup, updates)
 
 
 ArtworkRuntimeBooleanField = Literal["print_required", "lamination_required"]
