@@ -258,6 +258,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Runtime | Order `22099` on `:8001` |
 | Next | **W5-INT-02** |
 
+## W5-INT-02 — Frozen order → execution runtime E2E gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W5_INT_02_PASS_WITH_NONBLOCKING_LOGO_UI_DEBT_CLOSE_WAVE_5` |
+| Wave 5 | **CLOSED** |
+| Runtime | Order `23099` on `:8001` PID `26888` |
+| Tests | 226 passed / 0 failed |
+| Task identity | `TASK_IDENTITY_COMPLETE_WITH_LOGO_DEBT` |
+| Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
+| ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
+| Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
+| Wave 6 | `OPEN_WAVE_6_INTEGRATION_GATE` |
+| Next | **Wave 6 integration gate** |
+
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 
 | Field | Value |

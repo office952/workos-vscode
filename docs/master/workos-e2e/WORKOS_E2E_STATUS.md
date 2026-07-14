@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `4224022` (W5-T03 application) — docs commit pending
+**Accepted HEAD:** `a561c19` (W5-INT-02 docs + Wave 5 close)
 
 **Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
 
-**Last updated:** 2026-07-15 (W5-T03 planning/readiness adapter hardening)
+**Last updated:** 2026-07-15 (W5-INT-02 Wave 5 integration gate — **Wave 5 CLOSED**)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T03` COMPLETE) |
+| Phase | **Wave 5 COMPLETE** — Wave 6 gate OPEN |
 
-| Implementation hold | **Lifted — W5-INT-02 next** |
+| Implementation hold | **Lifted for Wave 6 integration gate** |
 
 | Active task | None |
 
-| Next task | **W5-INT-02 — Post-implementation gate** |
+| Next task | **Wave 6 integration gate** (no auto-start) |
 
 
 
@@ -238,6 +238,16 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Next:** W5-INT-02.
 
+## Wave 5 exit (W5-INT-02)
+
+**Verdict:** `W5_INT_02_PASS_WITH_NONBLOCKING_LOGO_UI_DEBT_CLOSE_WAVE_5`
+
+**Proof:** Full runtime chain on order `23099` — preview → persist → materialize → guard → resolve → start → reality; 226/226 integration pytest; snapshot immutable; no V2 legacy fallback.
+
+**Debt:** Logo partial identity; operator blocker UI deferred to Wave 6.
+
+**Wave 6:** `OPEN_WAVE_6_INTEGRATION_GATE`
+
 ## Wave 4 exit (W4-INT-02)
 
 
@@ -254,5 +264,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W5-INT-02 — Post-implementation gate** (Wave 5).
+Next allowed task: **Wave 6 integration gate** (implementation not auto-started).
 
