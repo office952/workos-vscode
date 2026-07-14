@@ -52,19 +52,20 @@ import { operationalRegistryApi, type OperationResourceMapping } from "@/api/ope
 import { OperationRegistryMappingBadge } from "@/features/operational-registry/OperationRegistryMappingBadge";
 import RealityQualityBadge from "@/components/workos/RealityQualityBadge";
 import {
-  fetchOrderProductionBlueprint,
-  type ProductionBlueprintTask,
-} from "@/api/operatorProductionBlueprint";
+  fetchOperatorTaskTruth,
+  type OperatorTaskTruthTask,
+} from "@/api/operatorTaskTruth";
 import {
   operationalReadinessBadgeClasses,
   operationalReadinessLabel,
 } from "@/lib/executionOperationalReadinessDisplay";
 import { ProfitabilityAnalysisPanel } from "@/components/execution/ProfitabilityAnalysisPanel";
-
-type BlueprintTaskReadiness = Pick<
-  ProductionBlueprintTask,
-  "is_startable" | "readiness_label" | "readiness_reasons" | "blocking_reasons"
->;
+import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
+import {
+  indexOperatorTaskTruth,
+  taskTruthReadinessFromRuntime,
+  type TaskTruthReadiness,
+} from "@/lib/operatorTaskPresentation";
 
 // Human-readable labels for plan-generation failure codes coming from the
 // backend. We keep the raw code visible alongside so the operator (and QA)
@@ -235,8 +236,8 @@ export default function ExecutionDetail() {
   const [realityActionError, setRealityActionError] =
     useState<RealityActionError | null>(null);
   const [realityActionAt, setRealityActionAt] = useState<string | null>(null);
-  const [blueprintReadinessByTaskId, setBlueprintReadinessByTaskId] = useState<
-    Record<string, BlueprintTaskReadiness>
+  const [taskTruthByTaskId, setTaskTruthByTaskId] = useState<
+    Record<string, OperatorTaskTruthTask>
   >({});
   const [overrideReasonByTaskId, setOverrideReasonByTaskId] = useState<
     Record<string, string>
@@ -292,19 +293,10 @@ export default function ExecutionDetail() {
           setPlan(null);
         }
         try {
-          const blueprint = await fetchOrderProductionBlueprint(parsedId);
-          const readinessMap: Record<string, BlueprintTaskReadiness> = {};
-          for (const task of blueprint.tasks) {
-            readinessMap[task.task_id] = {
-              is_startable: task.is_startable,
-              readiness_label: task.readiness_label,
-              readiness_reasons: task.readiness_reasons,
-              blocking_reasons: task.blocking_reasons,
-            };
-          }
-          setBlueprintReadinessByTaskId(readinessMap);
+          const truth = await fetchOperatorTaskTruth(parsedId);
+          setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
         } catch {
-          setBlueprintReadinessByTaskId({});
+          setTaskTruthByTaskId({});
         }
         await loadRealityOnly(parsedId);
       } else {
@@ -783,7 +775,7 @@ export default function ExecutionDetail() {
                 actionInFlightTaskId={realityActionTaskId}
                 actionError={realityActionError}
                 lastActionAt={realityActionAt}
-                readinessByTaskId={blueprintReadinessByTaskId}
+                taskTruthByTaskId={taskTruthByTaskId}
                 overrideReasonByTaskId={overrideReasonByTaskId}
                 onOverrideReasonChange={(taskId, reason) => {
                   setOverrideReasonByTaskId((prev) => ({
@@ -1034,7 +1026,7 @@ interface RealityCapturePanelProps {
   actionInFlightTaskId: string | null;
   actionError: RealityActionError | null;
   lastActionAt: string | null;
-  readinessByTaskId: Record<string, BlueprintTaskReadiness>;
+  taskTruthByTaskId: Record<string, OperatorTaskTruthTask>;
   overrideReasonByTaskId: Record<string, string>;
   onOverrideReasonChange: (taskId: string, reason: string) => void;
   onStartTask: (
@@ -1054,7 +1046,7 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
     actionInFlightTaskId,
     actionError,
     lastActionAt,
-    readinessByTaskId,
+    taskTruthByTaskId,
     overrideReasonByTaskId,
     onOverrideReasonChange,
     onStartTask,
@@ -1190,12 +1182,17 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
               );
               const actualMin = computeActualMinutes(observation);
               const inFlight = actionInFlightTaskId === t.task_id;
-              const readiness = readinessByTaskId[t.task_id];
+              const truth = taskTruthByTaskId[t.task_id];
+              const readiness: TaskTruthReadiness | undefined = truth
+                ? taskTruthReadinessFromRuntime(truth.runtime)
+                : undefined;
               const startBlockedByReadiness =
                 status === "not_started" && readiness?.is_startable === false;
               const readinessMessage =
-                readiness?.readiness_reasons?.[0]?.message ||
-                readiness?.blocking_reasons?.[0]?.message ||
+                (readiness?.readiness_reasons?.[0] as { message?: string } | undefined)
+                  ?.message ||
+                (readiness?.blocking_reasons?.[0] as { message?: string } | undefined)
+                  ?.message ||
                 readiness?.readiness_label;
               const overrideReason = overrideReasonByTaskId[t.task_id] ?? "";
               const canOverrideStart =
@@ -1219,11 +1216,14 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                   key={t.task_id}
                   className="border-t border-[#1F2A44] hover:bg-[#111827]/40"
                 >
-                  <td className="px-3 py-2 font-mono text-slate-200">
-                    {t.task_id}
-                    <div className="text-[10px] text-slate-500 font-sans">
-                      {t.name}
-                    </div>
+                  <td className="px-3 py-2">
+                    <OperatorTaskIdentityPresentation
+                      truth={truth}
+                      fallbackOperationName={t.name}
+                      fallbackTaskId={t.task_id}
+                      showDiagnostics
+                      testId={`execution-task-identity-${t.task_id}`}
+                    />
                   </td>
                   <td className="px-3 py-2 text-slate-300">
                     <code className="text-[11px] text-slate-400">

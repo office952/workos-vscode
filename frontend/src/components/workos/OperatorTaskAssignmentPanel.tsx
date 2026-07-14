@@ -6,11 +6,14 @@ import {
   updateExecutionPlanTaskInstructions,
 } from "@/api/executionTaskAssignment";
 import type { OperatorTask } from "@/lib/mockData";
+import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
+import type { OperatorTaskTruthTask } from "@/api/operatorTaskTruth";
 
 type Props = {
   tasks: OperatorTask[];
   wired: boolean;
   onAssigned: () => Promise<void> | void;
+  taskTruthByTaskId?: Record<string, OperatorTaskTruthTask>;
 };
 
 function extractOrderId(task: OperatorTask): number {
@@ -18,7 +21,7 @@ function extractOrderId(task: OperatorTask): number {
   return match ? parseInt(match[1], 10) : 0;
 }
 
-export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned }: Props) {
+export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, taskTruthByTaskId = {} }: Props) {
   const [employees, setEmployees] = useState<Array<{ id: number; name: string }>>([]);
   const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [selection, setSelection] = useState<Record<string, string>>({});
@@ -146,9 +149,15 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned }
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <div className="min-w-0 flex-1">
-                    <p className="text-[12px] font-semibold text-slate-100 truncate">{task.operationName}</p>
-                    <p className="text-[10px] text-slate-500">
-                      {task.jobId} · {task.id} · {task.status} · {assignedLabel}
+                    <OperatorTaskIdentityPresentation
+                      truth={taskTruthByTaskId[task.id]}
+                      fallbackOperationName={task.operationName}
+                      fallbackTaskId={task.id}
+                      compact
+                      testId={`operator-assignment-task-identity-${task.id}`}
+                    />
+                    <p className="text-[10px] text-slate-500 mt-1">
+                      {task.jobId} · {task.status} · {assignedLabel}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

@@ -30,7 +30,10 @@ import { OperationPoolPreviewPanel } from "@/features/operational-registry/Opera
 import OperatorTaskAssignmentPanel from "@/components/workos/OperatorTaskAssignmentPanel";
 import OperatorClarificationRequestsPanel from "@/components/workos/OperatorClarificationRequestsPanel";
 import OperatorProductionBlueprintPanel from "@/components/workos/OperatorProductionBlueprintPanel";
+import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
 import { useAuth } from "@/contexts/AuthContext";
+import { useOperatorTaskTruth } from "@/hooks/useOperatorTaskTruth";
+import { resolveTaskTruth } from "@/lib/operatorTaskPresentation";
 
 function ExecutionTaskStatusBadge({ status }: { status: OperatorTask["status"] }) {
   return (
@@ -100,6 +103,19 @@ export default function OperatorView() {
     [tasks]
   );
   const defaultBlueprintOrderId = currentTask ? extractOrderId(currentTask) : blueprintOrderIds[0] ?? null;
+  const isWired = source === "db" || source === "empty";
+  const [blueprintTruthOrderId, setBlueprintTruthOrderId] = useState<number | null>(
+    defaultBlueprintOrderId,
+  );
+  useEffect(() => {
+    setBlueprintTruthOrderId(defaultBlueprintOrderId);
+  }, [defaultBlueprintOrderId]);
+  const { tasksById: taskTruthByTaskId } = useOperatorTaskTruth(
+    isWired ? blueprintTruthOrderId : null,
+  );
+
+  const resolveTruthForTask = (task: OperatorTask) =>
+    resolveTaskTruth(taskTruthByTaskId, task.id);
 
   // Calculate average variance
   const tasksWithActual = tasks.filter((t) => t.actualDurationMin !== null && t.actualDurationMin > 0);
@@ -112,7 +128,6 @@ export default function OperatorView() {
       )
     : 0;
 
-  const isWired = source === "db" || source === "empty";
   const isMockSource = source === "mock";
   const registryAvailable = registrySource === "db" && registryEmployees.length > 0;
   const selectedEmployee = registryEmployees.find((e) => e.id === selectedEmployeeId) ?? null;
@@ -308,11 +323,14 @@ export default function OperatorView() {
             tasks={tasks}
             wired={isWired}
             onAssigned={refresh}
+            taskTruthByTaskId={taskTruthByTaskId}
           />
           <OperatorClarificationRequestsPanel />
           <OperatorProductionBlueprintPanel
             orderIds={blueprintOrderIds}
             defaultOrderId={defaultBlueprintOrderId}
+            taskTruthByTaskId={taskTruthByTaskId}
+            onSelectedOrderIdChange={setBlueprintTruthOrderId}
           />
         </>
       )}
@@ -366,14 +384,21 @@ export default function OperatorView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h2 className="text-[20px] font-bold text-slate-100">{currentTask.operationName}</h2>
+              <h2 className="text-[20px] font-bold text-slate-100">
+                {resolveTruthForTask(currentTask)?.identity.display_label || currentTask.operationName}
+              </h2>
+              <OperatorTaskIdentityPresentation
+                truth={resolveTruthForTask(currentTask)}
+                fallbackOperationName={currentTask.operationName}
+                fallbackTaskId={currentTask.id}
+                compact
+                testId="operator-current-task-identity"
+              />
               <p className="text-[13px] text-slate-400 mt-1">
                 {currentTask.client} — {currentTask.product}
               </p>
               <div className="flex items-center gap-3 mt-2 text-[12px] text-slate-500">
                 <span className="font-mono text-blue-400">{currentTask.jobId}</span>
-                <span>·</span>
-                <span className="font-mono">{currentTask.id}</span>
               </div>
 
               {/* Machine */}
@@ -639,7 +664,13 @@ export default function OperatorView() {
               <span className="text-[12px] font-mono text-slate-600 w-5">{idx + 1}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-semibold text-slate-200">{task.operationName}</span>
+                  <OperatorTaskIdentityPresentation
+                    truth={resolveTruthForTask(task)}
+                    fallbackOperationName={task.operationName}
+                    fallbackTaskId={task.id}
+                    compact
+                    testId={`operator-next-task-identity-${task.id}`}
+                  />
                   <ExecutionTaskStatusBadge status={task.status} />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-0.5">
@@ -710,12 +741,15 @@ export default function OperatorView() {
                     {/* Content */}
                     <div className="flex items-center gap-3">
                       <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className={`text-[12px] font-semibold ${isActive ? "text-emerald-400" : "text-slate-300"}`}>
-                            {task.operationName}
-                          </span>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <OperatorTaskIdentityPresentation
+                            truth={resolveTruthForTask(task)}
+                            fallbackOperationName={task.operationName}
+                            fallbackTaskId={task.id}
+                            compact
+                            testId={`operator-timeline-task-identity-${task.id}`}
+                          />
                           <ExecutionTaskStatusBadge status={task.status} />
-                          <span className="text-[10px] text-slate-500 font-mono">{task.id}</span>
                         </div>
                         <p className="text-[11px] text-slate-500 mt-0.5">
                           {task.machineName} · {task.employeeName || task.assignee || "—"} · {task.plannedDurationMin}min

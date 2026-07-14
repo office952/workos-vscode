@@ -4,6 +4,10 @@ import {
   patchMaterialProcurementStatus,
   type ProductionBlueprintDTO,
 } from "@/api/operatorProductionBlueprint";
+import type { OperatorTaskTruthTask } from "@/api/operatorTaskTruth";
+import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
+import { taskTruthStartableFromBackend } from "@/api/operatorTaskTruth";
+import { firstReadinessMessage, taskTruthReadinessFromRuntime } from "@/lib/operatorTaskPresentation";
 import { SectionHeader } from "@/components/workos/SharedComponents";
 import { StatusBadge } from "@/components/workos/design-system";
 import { Loader2, RefreshCw, Users } from "lucide-react";
@@ -73,11 +77,15 @@ function PreparationGroupSection({
 interface OperatorProductionBlueprintPanelProps {
   orderIds: number[];
   defaultOrderId?: number | null;
+  taskTruthByTaskId?: Record<string, OperatorTaskTruthTask>;
+  onSelectedOrderIdChange?: (orderId: number | null) => void;
 }
 
 export default function OperatorProductionBlueprintPanel({
   orderIds,
   defaultOrderId = null,
+  taskTruthByTaskId = {},
+  onSelectedOrderIdChange,
 }: OperatorProductionBlueprintPanelProps) {
   const sortedOrderIds = [...new Set(orderIds.filter((id) => id > 0))].sort((a, b) => a - b);
   const initialOrderId = defaultOrderId && sortedOrderIds.includes(defaultOrderId)
@@ -115,6 +123,10 @@ export default function OperatorProductionBlueprintPanel({
   useEffect(() => {
     void load();
   }, [load]);
+
+  useEffect(() => {
+    onSelectedOrderIdChange?.(selectedOrderId);
+  }, [onSelectedOrderIdChange, selectedOrderId]);
 
   useEffect(() => {
     if (collapsed || selectedOrderId == null) return;
@@ -475,20 +487,36 @@ export default function OperatorProductionBlueprintPanel({
           <div className="space-y-2">
             <h3 className="text-[12px] font-semibold text-slate-300">Taskuri</h3>
             <ul className="space-y-2" data-testid="operator-blueprint-task-list">
-              {blueprint.tasks.map((task) => (
+              {blueprint.tasks.map((task) => {
+                const truth = taskTruthByTaskId[task.task_id];
+                const readiness = truth
+                  ? taskTruthReadinessFromRuntime(truth.runtime)
+                  : null;
+                const startableFromTruth = truth
+                  ? taskTruthStartableFromBackend(truth)
+                  : task.is_startable;
+                const readinessMessage = readiness
+                  ? firstReadinessMessage(readiness)
+                  : task.readiness_reasons?.[0]?.message ||
+                    task.blocking_reasons?.[0]?.message ||
+                    task.readiness_label;
+                return (
                 <li
                   key={task.task_id}
                   className="rounded-lg border border-[#243044] bg-[#0A1020]/60 px-3 py-2.5"
                   data-testid={`operator-blueprint-task-${task.task_id}`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="text-[13px] font-medium text-slate-100 truncate">
-                        {task.name}
-                      </p>
-                      <p className="text-[10px] text-slate-500">{task.task_id}</p>
+                    <div className="min-w-0 flex-1">
+                      <OperatorTaskIdentityPresentation
+                        truth={truth}
+                        fallbackOperationName={task.name}
+                        fallbackTaskId={task.task_id}
+                        readiness={readiness}
+                        testId={`operator-blueprint-task-identity-${task.task_id}`}
+                      />
                       {task.preparation_domain ? (
-                        <p className="text-[10px] text-slate-500">
+                        <p className="text-[10px] text-slate-500 mt-1">
                           Domeniu: {PREPARATION_DOMAIN_LABELS[task.preparation_domain] || task.preparation_domain}
                         </p>
                       ) : null}
@@ -514,12 +542,9 @@ export default function OperatorProductionBlueprintPanel({
                     {task.block_reason ? (
                       <span className="col-span-2 text-amber-300/90">Blocat: {task.block_reason}</span>
                     ) : null}
-                    {task.readiness_label && task.is_startable === false ? (
-                      <span className="col-span-2 text-amber-300/90">
-                        Readiness: {task.readiness_label}
-                        {(task.readiness_reasons?.[0]?.message ||
-                          task.blocking_reasons?.[0]?.message) &&
-                          ` — ${task.readiness_reasons?.[0]?.message || task.blocking_reasons?.[0]?.message}`}
+                    {startableFromTruth === false && readinessMessage ? (
+                      <span className="col-span-2 text-amber-300/90" data-testid={`operator-blueprint-readiness-${task.task_id}`}>
+                        Readiness: {readinessMessage}
                       </span>
                     ) : null}
                     {(task.blocking_tasks?.length ?? 0) > 0 ? (
@@ -553,7 +578,8 @@ export default function OperatorProductionBlueprintPanel({
                     ) : null}
                   </div>
                 </li>
-              ))}
+              );
+              })}
             </ul>
           </div>
         </>
