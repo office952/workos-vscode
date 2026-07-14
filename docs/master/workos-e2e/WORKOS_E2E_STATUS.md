@@ -30,7 +30,7 @@
 
 | Active task | None (between W2 lanes) |
 
-| Next task | `W2-T02` — Aggregate handoff without re-inference |
+| Next task | `W2-INT-01` candidate gate or `W2-T03` |
 
 
 
@@ -56,6 +56,8 @@
 
 | Wave 2 PD composition contract | **PASS** (`W2-T01`) |
 
+| Wave 2 Aggregate explicit graph | **PASS** (`W2-T02`) |
+
 | Same-scenario E2E proof | NOT_PROVEN |
 
 | Operator UI coherence | BLOCKED (logic first — Wave 6) |
@@ -66,11 +68,9 @@
 
 
 
-1. Aggregate composition consumer alignment — **Wave 2** (`W2-T02`)
+1. `volum_aluminum_module_template_code` Intake persistence on IR-MRJS4VIK — **NONBLOCKING_EXPLICIT_BLOCKER**
 
-2. `volum_aluminum_module_template_code` Intake persistence gap on IR-MRJS4VIK — operator/Intake follow-up
-
-3. No frozen commercial spine fixture for final acceptance (TE2E-013) — Wave 7
+2. W2-INT-01 integration gate — coordinator scheduling
 
 
 
@@ -117,6 +117,8 @@
 - [x] `W1-INT-02` — integration gate PASS — Wave 2 OPEN
 
 - [x] `W2-T01` — PD composition contract Cases A–D + canonical enrichment
+
+- [x] `W2-T02` — Aggregate explicit composition graph consumption
 
 
 
@@ -178,9 +180,9 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed implementation task: **`W2-T02`** — Aggregate handoff without re-inference.
+Next allowed implementation task: **`W2-INT-01`** integration gate candidate, or **`W2-T03`** PD operator surface.
 
 
 
-**W2-T01:** IR-MRJS4VIK Case B composition confirmed; geometry/mounting compatibility enrichment; sole remaining PD blocker is `volum_aluminum_module_template_code` (Intake persistence).
+**W2-T02:** Aggregate consumes explicit PD graph on IR-MRJS4VIK Case B; registry trigger re-inference removed for workspace builds.
 

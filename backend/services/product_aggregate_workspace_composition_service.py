@@ -21,6 +21,10 @@ from services.logo_artwork_cost_ownership import (
     include_material_in_composed_aggregate,
     include_operation_in_composed_aggregate,
 )
+from services.product_aggregate_explicit_composition_service import (
+    apply_explicit_composition_graph,
+    explicit_child_template_codes,
+)
 from services.product_aggregate_service import ProductAggregateService
 from services.product_definition_builder_service import ProductDefinitionBuilderService
 
@@ -368,7 +372,7 @@ async def build_workspace_composed_aggregate(
     template_code: str,
     workspace_id: str,
 ) -> ProductAggregate | None:
-    """Build workspace-aware aggregate: ProductDefinition compiler + letters/logo merge."""
+    """Build workspace-aware aggregate: explicit PD composition graph + optional logo merge."""
     pd_builder = ProductDefinitionBuilderService(db)
     pd = await pd_builder.build_preview(template_code, workspace_id=workspace_id)
     if pd is None:
@@ -378,6 +382,19 @@ async def build_workspace_composed_aggregate(
     letters_aggregate = await aggregate_svc.build(template_code)
     if letters_aggregate is None:
         return None
+
+    if pd.composition is not None:
+        child_codes = explicit_child_template_codes(pd.composition)
+        child_aggregates_by_template: dict[str, ProductAggregate] = {}
+        for child_code in child_codes:
+            child_aggregate = await aggregate_svc.build(child_code)
+            if child_aggregate is not None:
+                child_aggregates_by_template[child_code] = child_aggregate
+        letters_aggregate = apply_explicit_composition_graph(
+            pd=pd,
+            base_aggregate=letters_aggregate,
+            child_aggregates_by_template=child_aggregates_by_template,
+        )
 
     segments = _confirmed_linked_segments(pd)
     if not segments:

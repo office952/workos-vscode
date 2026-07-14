@@ -106,6 +106,16 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Waves 2–7 (unchanged IDs — see operating model §10)
 
+## W2-T02 — Aggregate explicit graph consumption
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-14) |
+| Verdict | `W2_AGGREGATE_GRAPH_PASS_COMMITTED` |
+| Upstream | W2-T01 |
+| Delivers | `composition_graph` on Aggregate; no registry trigger re-inference |
+| Next | W2-INT-01 |
+
 ## W2-T01 — PD composition resume
 
 | Field | Value |

@@ -22,6 +22,7 @@
 | D-015 | 2026-07-14 | **Figma MASTER 05–13 polished; P-002 YES WITH POLISH** | Owner approved canonical visual direction with nonblocking notes on 08, 09, 12 | Figma, Wave 1 entry | CLOSED |
 | D-016 | 2026-07-14 | **Controlled implementation operating model** — `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md` | Serialize Wave 1 spine; coordinator gates; W1-L-SPINE first task | Waves 1–7 | ACTIVE |
 | D-017 | 2026-07-14 | **`mounting_system` is read-only compatibility projection** from canonical `mounting_solution` in Product Definition preview (TD-W2-PD-001) | Legacy module bindings still key off `mounting_system`; canonical mounting_solution wins for composition | Product Definition, W2-T02 removal | ACTIVE |
+| D-018 | 2026-07-14 | **Product Aggregate workspace builds consume explicit PD `composition_graph`** — registry module links are stripped when absent from graph | Eliminates parallel authority from trigger_field inference on workspace path | Product Aggregate, Cost handoff | ACTIVE |
 
 ## Resolved owner decisions
 

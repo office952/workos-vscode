@@ -153,6 +153,58 @@ class ProductAggregateMiniModuleRegistrySummary(BaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+class ProductAggregateCompositionNode(BaseModel):
+    """Explicit graph node compiled from ProductDefinition composition — no re-inference."""
+
+    node_id: str
+    template_code: str
+    node_role: str
+    module_code: str
+    module_role: str
+    parent_node_id: str | None = None
+    activation_source: str
+    inherited_inputs: dict[str, Any] = Field(default_factory=dict)
+    locally_owned_inputs: dict[str, Any] = Field(default_factory=dict)
+    unresolved_inputs: list[str] = Field(default_factory=list)
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    provenance: str = "product_definition_composition"
+
+
+class ProductAggregateCompositionEdge(BaseModel):
+    """Explicit graph edge compiled from ProductDefinition composition."""
+
+    edge_id: str
+    parent_template_code: str
+    parent_node_id: str
+    child_template_code: str
+    child_node_id: str
+    child_role: str
+    relation_type: str
+    dependency_role: str | None = None
+    inherited_inputs: dict[str, Any] = Field(default_factory=dict)
+    locally_owned_inputs: dict[str, Any] = Field(default_factory=dict)
+    blockers: list[str] = Field(default_factory=list)
+    provenance: str = "product_definition_composition"
+
+
+class ProductAggregateCompositionGraph(BaseModel):
+    """Frozen explicit composition graph consumed by Aggregate — authoritative structure."""
+
+    composed_graph_version: str
+    composition_mode: str
+    root_template_code: str
+    solution_status: str
+    compatibility_status: str
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    active_child_template_codes: list[str] = Field(default_factory=list)
+    nodes: list[ProductAggregateCompositionNode] = Field(default_factory=list)
+    edges: list[ProductAggregateCompositionEdge] = Field(default_factory=list)
+    frozen_mounting_solution: dict[str, Any] | None = None
+    compiler: str = "product_aggregate_explicit_composition"
+
+
 class ProductAggregate(BaseModel):
     aggregate_version: str = AGGREGATE_VERSION
     template_code: str
@@ -175,3 +227,4 @@ class ProductAggregate(BaseModel):
         default_factory=ProductAggregateProvenanceSummary
     )
     mini_module_registry: ProductAggregateMiniModuleRegistrySummary | None = None
+    composition_graph: ProductAggregateCompositionGraph | None = None
