@@ -191,6 +191,13 @@ async def assert_task_startable(
     override_user_role: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Raise HTTP 409 when task cannot start; return readiness + optional override metadata."""
+    from services.execution_owner_decision_production_release_service import (
+        assert_production_release_allowed,
+    )
+
+    # Production-release guard runs before readiness; override cannot bypass owner decisions.
+    await assert_production_release_allowed(db, order_id)
+
     _plan_task, readiness, _quote_input = await evaluate_task_start_readiness(
         db,
         order_id=order_id,
