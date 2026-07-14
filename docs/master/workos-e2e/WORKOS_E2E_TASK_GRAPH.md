@@ -224,6 +224,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Routes | GET production-release-status; POST owner-decision resolve |
 | Tests | 19 guard + 68 regression = 87 passed |
 | Runtime | Order `29991` on `:8001` — block → resolve → start |
+| Next | **W5-T02** |
+
+## W5-T02 — Frozen component graph → execution task identity
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W5_TASK_IDENTITY_PASS_COMMITTED` |
+| Contract | `frozen_task_identity/v1` |
+| Task keys | `{source_graph_node_id}:{task_rule_code}` |
+| Graph consumption | `composition_graph` + `component_instances` |
+| Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
+| `load_order_quote_input` | `KEEP_READ_ONLY_FOR_W5_T03` |
+| Owner-decision scope | `ORDER_SCOPE_ONLY` |
+| Tests | 175 passed / 0 failed |
+| Runtime | Order `21099` on `:8001` |
 | Next | **W5-INT-02** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate

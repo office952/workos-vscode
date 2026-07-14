@@ -1,0 +1,1290 @@
+{
+  "base": "http://127.0.0.1:8001",
+  "fixture": {
+    "order_id": 21099,
+    "snapshot_hash": 8863360257626327197,
+    "preview_keys_one": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel"
+    ],
+    "preview_keys_two": [
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+      "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel"
+    ],
+    "mounting_tasks": [
+      {
+        "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+        "label": "Cut Acm Panel",
+        "canonical_task_type": "cnc_routing",
+        "source_module_code": "structura_suport",
+        "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::cut_acm_panel",
+        "source_operation_code": "CUT_ACM_PANEL",
+        "source_task_rule_code": "cut_acm_panel",
+        "sequence_index": 21,
+        "depends_on_task_keys": [
+          "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply"
+        ],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_CNC",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules",
+          "product_aggregate_snapshot.composition_graph.operations"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+          "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_role": "mounting_panel",
+          "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_module_code": "structura_suport",
+          "source_operation_code": "CUT_ACM_PANEL",
+          "source_task_rule_code": "cut_acm_panel",
+          "operation_scope": "COMPONENT_LOCAL",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": false,
+          "task_rule_origin": "composition_graph_operation",
+          "provenance": [
+            "origin=composition_graph_operation",
+            "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-IDENTITY-001",
+            "snapshot_hash=identityhashidentityhashidentityha"
+          ]
+        }
+      },
+      {
+        "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+        "label": "Mount Acm Panel",
+        "canonical_task_type": "installation_prep",
+        "source_module_code": "structura_suport",
+        "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::mount_acm_panel",
+        "source_operation_code": "MOUNT_ACM_PANEL",
+        "source_task_rule_code": "mount_acm_panel",
+        "sequence_index": 22,
+        "depends_on_task_keys": [
+          "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel"
+        ],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_CNC",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules",
+          "product_aggregate_snapshot.composition_graph.operations"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+          "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_role": "mounting_panel",
+          "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_module_code": "structura_suport",
+          "source_operation_code": "MOUNT_ACM_PANEL",
+          "source_task_rule_code": "mount_acm_panel",
+          "operation_scope": "COMPONENT_LOCAL",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": false,
+          "task_rule_origin": "composition_graph_operation",
+          "provenance": [
+            "origin=composition_graph_operation",
+            "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-IDENTITY-001",
+            "snapshot_hash=identityhashidentityhashidentityha"
+          ]
+        }
+      }
+    ],
+    "root_tasks": [
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "label": "Vector Prep",
+        "canonical_task_type": "file_preparation",
+        "source_module_code": null,
+        "source_component_code": null,
+        "source_operation_code": "vector_prep",
+        "source_task_rule_code": "vector_prep",
+        "sequence_index": 1,
+        "depends_on_task_keys": [],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_PREPRESS",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_component_role": "root_product",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": null,
+          "source_module_code": null,
+          "source_operation_code": "vector_prep",
+          "source_task_rule_code": "vector_prep",
+          "operation_scope": "ROOT_PRODUCT",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": true,
+          "task_rule_origin": "dossier_task_rule",
+          "provenance": [
+            "origin=dossier_task_rule",
+            "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-IDENTITY-001",
+            "snapshot_hash=identityhashidentityhashidentityha"
+          ]
+        }
+      },
+      {
+        "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "label": "Face CNC Cut",
+        "canonical_task_type": "cnc_routing",
+        "source_module_code": "debitare_fata",
+        "source_component_code": null,
+        "source_operation_code": "face_cnc_cut",
+        "source_task_rule_code": "cnc_face_cut",
+        "sequence_index": 2,
+        "depends_on_task_keys": [
+          "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep"
+        ],
+        "material_inputs": [],
+        "machine_requirement": {
+          "workcenter": "WC_CNC",
+          "machine_type": null
+        },
+        "employee_role_requirement": null,
+        "external_service_requirement": null,
+        "estimated_minutes": null,
+        "planning_minutes_source": null,
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "provenance": [
+          "product_aggregate_snapshot.task_contract.task_rules"
+        ],
+        "frozen_identity": {
+          "contract_version": "frozen_task_identity/v1",
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+          "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+          "source_component_role": "root_product",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "source_component_instance_id": null,
+          "source_segment_key": null,
+          "parent_graph_node_id": null,
+          "source_module_code": "debitare_fata",
+          "source_operation_code": "face_cnc_cut",
+          "source_task_rule_code": "cnc_face_cut",
+          "operation_scope": "ROOT_PRODUCT",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "shared_operation": true,
+          "task_rule_origin": "dossier_task_rule",
+          "provenance": [
+            "origin=dossier_task_rule",
+            "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+            "execution_plan_v2_frozen_task_identity_service",
+            "order_snapshot=OSN2-IDENTITY-001",
+            "snapshot_hash=identityhashidentityhashidentityha"
+          ]
+        }
+      }
+    ]
+  },
+  "timestamp": "2026-07-14T22:55:53.551364+00:00",
+  "steps": {
+    "http_preview": {
+      "status_code": 200,
+      "body": {
+        "status": "partial_missing_planning_minutes",
+        "order_id": 21099,
+        "order_code": "ORD-W5T02-GATE",
+        "quote_id": 21000,
+        "quote_snapshot_v2_id": 21000,
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "source": "order_snapshot_v2",
+        "source_snapshot_code": "OSN2-IDENTITY-001",
+        "source_content_hash": "identityhashidentityhashidentityha",
+        "source_order_snapshot_version": "1.0.0",
+        "order_snapshot_hash": "0073bca31605e01b9bfd8dc13d587851",
+        "planned_operations": [
+          {
+            "operation_code": "vector_prep",
+            "label": "Vector Prep",
+            "workcenter": "WC_PREPRESS",
+            "component_ref": null,
+            "sequence_index": 0,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "face_cnc_cut",
+            "label": "Face CNC Cut",
+            "workcenter": "WC_CNC",
+            "component_ref": null,
+            "sequence_index": 1,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "side_forming",
+            "label": "Side Forming",
+            "workcenter": "WC_FORMING",
+            "component_ref": null,
+            "sequence_index": 2,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "return_face_bonding",
+            "label": "Return Face Bonding",
+            "workcenter": "WC_ASSEMBLY",
+            "component_ref": null,
+            "sequence_index": 3,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "back_cut",
+            "label": "Back Cut",
+            "workcenter": "WC_CNC",
+            "component_ref": null,
+            "sequence_index": 4,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "vinyl_application",
+            "label": "Vinyl Application",
+            "workcenter": "WC_VINYL",
+            "component_ref": null,
+            "sequence_index": 5,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "painting",
+            "label": "Painting",
+            "workcenter": "WC_PAINT",
+            "component_ref": null,
+            "sequence_index": 6,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "led_install_letters",
+            "label": "LED Install",
+            "workcenter": "WC_LED",
+            "component_ref": null,
+            "sequence_index": 7,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "electrical_letters",
+            "label": "Electrical",
+            "workcenter": "WC_ELECTRICAL",
+            "component_ref": null,
+            "sequence_index": 8,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "mounting_template_cnc_cut",
+            "label": "Mounting Template",
+            "workcenter": "WC_CNC",
+            "component_ref": null,
+            "sequence_index": 9,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "logo_vinyl",
+            "label": "Logo Vinyl",
+            "workcenter": "WC_VINYL",
+            "component_ref": "linked_segment:logo_instance_001::comp_face",
+            "sequence_index": 10,
+            "source_template_code": null,
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "CUT_ACM_PANEL",
+            "label": "Cut Acm Panel",
+            "workcenter": "WC_CNC",
+            "component_ref": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::cut_acm_panel",
+            "sequence_index": 11,
+            "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          },
+          {
+            "operation_code": "MOUNT_ACM_PANEL",
+            "label": "Mount Acm Panel",
+            "workcenter": "WC_CNC",
+            "component_ref": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::mount_acm_panel",
+            "sequence_index": 12,
+            "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "priced": true,
+            "provenance": [
+              "product_aggregate_snapshot.operations"
+            ]
+          }
+        ],
+        "planned_tasks": [
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+            "label": "Vector Prep",
+            "canonical_task_type": "file_preparation",
+            "source_module_code": null,
+            "source_component_code": null,
+            "source_operation_code": "vector_prep",
+            "source_task_rule_code": "vector_prep",
+            "sequence_index": 1,
+            "depends_on_task_keys": [],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_PREPRESS",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": null,
+              "source_operation_code": "vector_prep",
+              "source_task_rule_code": "vector_prep",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+            "label": "Face CNC Cut",
+            "canonical_task_type": "cnc_routing",
+            "source_module_code": "debitare_fata",
+            "source_component_code": null,
+            "source_operation_code": "face_cnc_cut",
+            "source_task_rule_code": "cnc_face_cut",
+            "sequence_index": 2,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_CNC",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "debitare_fata",
+              "source_operation_code": "face_cnc_cut",
+              "source_task_rule_code": "cnc_face_cut",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+            "label": "Side Forming",
+            "canonical_task_type": "edge_bending",
+            "source_module_code": "modelare_cant",
+            "source_component_code": null,
+            "source_operation_code": "side_forming",
+            "source_task_rule_code": "return_profile_forming",
+            "sequence_index": 3,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_FORMING",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "modelare_cant",
+              "source_operation_code": "side_forming",
+              "source_task_rule_code": "return_profile_forming",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+            "label": "Return Face Bonding",
+            "canonical_task_type": "volumetric_letter_assembly",
+            "source_module_code": "asamblare",
+            "source_component_code": null,
+            "source_operation_code": "return_face_bonding",
+            "source_task_rule_code": "return_face_bonding",
+            "sequence_index": 4,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_ASSEMBLY",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "asamblare",
+              "source_operation_code": "return_face_bonding",
+              "source_task_rule_code": "return_face_bonding",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+            "label": "Back Cut",
+            "canonical_task_type": "cnc_routing",
+            "source_module_code": "debitare_spate",
+            "source_component_code": null,
+            "source_operation_code": "back_cut",
+            "source_task_rule_code": "cnc_back_cut",
+            "sequence_index": 5,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_CNC",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "debitare_spate",
+              "source_operation_code": "back_cut",
+              "source_task_rule_code": "cnc_back_cut",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+            "label": "Vinyl Application",
+            "canonical_task_type": "vinyl_cutting",
+            "source_module_code": "colantare_fata",
+            "source_component_code": null,
+            "source_operation_code": "vinyl_application",
+            "source_task_rule_code": "vinyl_application",
+            "sequence_index": 6,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_VINYL",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "colantare_fata",
+              "source_operation_code": "vinyl_application",
+              "source_task_rule_code": "vinyl_application",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": false,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+            "label": "Painting",
+            "canonical_task_type": "volumetric_letter_assembly",
+            "source_module_code": "finisaje",
+            "source_component_code": null,
+            "source_operation_code": "painting",
+            "source_task_rule_code": "painting",
+            "sequence_index": 7,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_PAINT",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "finisaje",
+              "source_operation_code": "painting",
+              "source_task_rule_code": "painting",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+            "label": "LED Install",
+            "canonical_task_type": "led_assembly",
+            "source_module_code": "sistem_led",
+            "source_component_code": null,
+            "source_operation_code": "led_install_letters",
+            "source_task_rule_code": "led_installation",
+            "sequence_index": 8,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_LED",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "sistem_led",
+              "source_operation_code": "led_install_letters",
+              "source_task_rule_code": "led_installation",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+            "label": "Electrical",
+            "canonical_task_type": "led_wiring",
+            "source_module_code": "electrica_litere",
+            "source_component_code": null,
+            "source_operation_code": "electrical_letters",
+            "source_task_rule_code": "electrical_wiring",
+            "sequence_index": 9,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_ELECTRICAL",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "electrica_litere",
+              "source_operation_code": "electrical_letters",
+              "source_task_rule_code": "electrical_wiring",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+            "label": "Mounting Template",
+            "canonical_task_type": "cnc_routing",
+            "source_module_code": "sablon_montaj",
+            "source_component_code": null,
+            "source_operation_code": "mounting_template_cnc_cut",
+            "source_task_rule_code": "mounting_template",
+            "sequence_index": 10,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_CNC",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": null,
+              "source_module_code": "sablon_montaj",
+              "source_operation_code": "mounting_template_cnc_cut",
+              "source_task_rule_code": "mounting_template",
+              "operation_scope": "ROOT_PRODUCT",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": true,
+              "task_rule_origin": "dossier_task_rule",
+              "provenance": [
+                "origin=dossier_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+            "label": "Vinyl Application",
+            "canonical_task_type": "vinyl_cutting",
+            "source_module_code": "colantare_fata",
+            "source_component_code": null,
+            "source_operation_code": "vinyl_application",
+            "source_task_rule_code": "linked_logo_apply",
+            "sequence_index": 11,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_VINYL",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules",
+              "product_aggregate_snapshot.linked_segment_task_rules"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+              "source_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_role": "root_product",
+              "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+              "source_component_instance_id": null,
+              "source_segment_key": "logo_instance_001",
+              "parent_graph_node_id": null,
+              "source_module_code": "colantare_fata",
+              "source_operation_code": "vinyl_application",
+              "source_task_rule_code": "linked_logo_apply",
+              "operation_scope": "COMPONENT_LOCAL",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": false,
+              "task_rule_origin": "linked_segment_task_rule",
+              "provenance": [
+                "origin=linked_segment_task_rule",
+                "graph_node=node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+            "label": "Cut Acm Panel",
+            "canonical_task_type": "cnc_routing",
+            "source_module_code": "structura_suport",
+            "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::cut_acm_panel",
+            "source_operation_code": "CUT_ACM_PANEL",
+            "source_task_rule_code": "cut_acm_panel",
+            "sequence_index": 21,
+            "depends_on_task_keys": [
+              "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_CNC",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules",
+              "product_aggregate_snapshot.composition_graph.operations"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+              "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+              "source_component_role": "mounting_panel",
+              "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_module_code": "structura_suport",
+              "source_operation_code": "CUT_ACM_PANEL",
+              "source_task_rule_code": "cut_acm_panel",
+              "operation_scope": "COMPONENT_LOCAL",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": false,
+              "task_rule_origin": "composition_graph_operation",
+              "provenance": [
+                "origin=composition_graph_operation",
+                "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          },
+          {
+            "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+            "label": "Mount Acm Panel",
+            "canonical_task_type": "installation_prep",
+            "source_module_code": "structura_suport",
+            "source_component_code": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1::mount_acm_panel",
+            "source_operation_code": "MOUNT_ACM_PANEL",
+            "source_task_rule_code": "mount_acm_panel",
+            "sequence_index": 22,
+            "depends_on_task_keys": [
+              "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel"
+            ],
+            "material_inputs": [],
+            "machine_requirement": {
+              "workcenter": "WC_CNC",
+              "machine_type": null
+            },
+            "employee_role_requirement": null,
+            "external_service_requirement": null,
+            "estimated_minutes": null,
+            "planning_minutes_source": null,
+            "warnings": [
+              "PLANNING_MINUTES_SOURCE_REQUIRED"
+            ],
+            "provenance": [
+              "product_aggregate_snapshot.task_contract.task_rules",
+              "product_aggregate_snapshot.composition_graph.operations"
+            ],
+            "frozen_identity": {
+              "contract_version": "frozen_task_identity/v1",
+              "deterministic_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+              "source_graph_node_id": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+              "source_component_role": "mounting_panel",
+              "source_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+              "source_component_instance_id": null,
+              "source_segment_key": null,
+              "parent_graph_node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+              "source_module_code": "structura_suport",
+              "source_operation_code": "MOUNT_ACM_PANEL",
+              "source_task_rule_code": "mount_acm_panel",
+              "operation_scope": "COMPONENT_LOCAL",
+              "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+              "shared_operation": false,
+              "task_rule_origin": "composition_graph_operation",
+              "provenance": [
+                "origin=composition_graph_operation",
+                "graph_node=node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                "execution_plan_v2_frozen_task_identity_service",
+                "order_snapshot=OSN2-IDENTITY-001",
+                "snapshot_hash=identityhashidentityhashidentityha"
+              ]
+            }
+          }
+        ],
+        "dependencies": [
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:painting"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring"
+          },
+          {
+            "task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template"
+          },
+          {
+            "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+            "depends_on_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:seg:logo_instance_001:linked_logo_apply"
+          },
+          {
+            "task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+            "depends_on_task_key": "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel"
+          }
+        ],
+        "material_readiness_inputs": [],
+        "machine_requirements": [
+          {
+            "workcenter": "WC_ASSEMBLY",
+            "operation_codes": [
+              "return_face_bonding"
+            ]
+          },
+          {
+            "workcenter": "WC_CNC",
+            "operation_codes": [
+              "CUT_ACM_PANEL",
+              "MOUNT_ACM_PANEL",
+              "back_cut",
+              "face_cnc_cut",
+              "mounting_template_cnc_cut"
+            ]
+          },
+          {
+            "workcenter": "WC_ELECTRICAL",
+            "operation_codes": [
+              "electrical_letters"
+            ]
+          },
+          {
+            "workcenter": "WC_FORMING",
+            "operation_codes": [
+              "side_forming"
+            ]
+          },
+          {
+            "workcenter": "WC_LED",
+            "operation_codes": [
+              "led_install_letters"
+            ]
+          },
+          {
+            "workcenter": "WC_PAINT",
+            "operation_codes": [
+              "painting"
+            ]
+          },
+          {
+            "workcenter": "WC_PREPRESS",
+            "operation_codes": [
+              "vector_prep"
+            ]
+          },
+          {
+            "workcenter": "WC_VINYL",
+            "operation_codes": [
+              "vinyl_application"
+            ]
+          }
+        ],
+        "employee_role_requirements": [],
+        "external_service_requirements": [],
+        "ignored_pricing_sources": [
+          "commercial_price_proposal_snapshot",
+          "estimated_internal_cost_snapshot",
+          "order.total_amount",
+          "quote.grand_total",
+          "quotes.line_items",
+          "orders.snapshot_line_items",
+          "cost_result",
+          "workcenter_rates"
+        ],
+        "warnings": [
+          "PLANNING_MINUTES_SOURCE_REQUIRED"
+        ],
+        "blockers": [],
+        "provenance": [
+          {
+            "key": "order_snapshot_v2",
+            "source": "order_snapshot_v2",
+            "detail": "OrderSnapshotV2 frozen payload"
+          },
+          {
+            "key": "execution_plan_v2_preview_service",
+            "source": "execution_plan_v2_preview_service",
+            "detail": "Read-only preview \u2014 not persisted"
+          },
+          {
+            "key": "product_definition_snapshot",
+            "source": "product_definition_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          },
+          {
+            "key": "product_aggregate_snapshot",
+            "source": "product_aggregate_snapshot",
+            "detail": "template=TPL-VOLUMETRIC-LETTERS_v2"
+          }
+        ],
+        "execution_plan_created": false,
+        "execution_tasks_created": false,
+        "persist_status": "not_persisted",
+        "no_write": true,
+        "message": "ExecutionPlan V2 preview built from OrderSnapshotV2 technical snapshots only.",
+        "input_summary": {
+          "task_count": 13,
+          "operation_count": 13,
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "owner_decision_count": 0,
+          "sold_scope_mode": "full_product",
+          "sold_scope_filter_enabled": false,
+          "sold_runtime_modules_count": 0
+        }
+      }
+    },
+    "production_release_status": {
+      "status_code": 200,
+      "body": {
+        "release_status": "RELEASE_ALLOWED",
+        "policy": "ORDER_AND_PLAN_ALLOWED_TASK_START_BLOCKED",
+        "order_id": 21099,
+        "blockers": [],
+        "frozen_decision_codes": [],
+        "nonblocking_decision_codes": [],
+        "message": "No frozen owner decisions on order."
+      }
+    }
+  },
+  "final_state": {
+    "snapshot_hash": 8863360257626327197,
+    "snapshot_code": "OSN2-IDENTITY-001",
+    "content_hash": "identityhashidentityhashidentityha",
+    "snapshot_unchanged": true
+  },
+  "pass_checks": {
+    "preview_http_ok": true,
+    "preview_keys_stable": true,
+    "http_keys_match_service": true,
+    "mounting_identity_present": true,
+    "no_legacy_name_only_keys": true,
+    "snapshot_unchanged": true,
+    "release_status_live": true
+  },
+  "pass": true
+}

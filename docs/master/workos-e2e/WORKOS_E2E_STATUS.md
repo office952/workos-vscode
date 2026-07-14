@@ -8,9 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `a64e06b` (W5-T01 execution release guard)
+**Accepted HEAD:** `b994c25` (W5-T02 docs + evidence)
 
-**Last updated:** 2026-07-15 (W5-T01 execution owner-decision production release guard)
+**Application baseline:** `136df46` (W5-T02 frozen task identity)
+
+**Last updated:** 2026-07-15 (W5-T02 frozen component graph task identity)
 
 
 
@@ -22,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T01` COMPLETE) |
+| Phase | **Wave 5 implementation IN PROGRESS** (`W5-T02` COMPLETE) |
 
-| Implementation hold | **Lifted — W5-T02 / W5-INT-02 next** |
+| Implementation hold | **Lifted — W5-INT-02 next** |
 
 | Active task | None |
 
-| Next task | **W5-INT-02 — Post-implementation gate** (then W5-T02 task identity) |
+| Next task | **W5-INT-02 — Post-implementation gate** |
 
 
 
@@ -215,6 +217,16 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 **Proof:** Shared `assert_production_release_allowed` wired into `assert_task_startable`; operational resolutions in `orders.readiness_snapshot.owner_decision_resolutions_v1`; frozen `snapshot_v2_json` immutable; 19/19 focused guard tests + 87/87 guard+regression; runtime gate order `29991` on `:8001`.
 
 **Next:** W5-INT-02 post-implementation gate.
+
+## Wave 5 implementation (W5-T02)
+
+**Verdict:** `W5_TASK_IDENTITY_PASS_COMMITTED`
+
+**Contract:** `frozen_task_identity/v1` — deterministic `{graph_node_id}:{task_rule_code}` keys with `FrozenTaskIdentity` on planned/materialized tasks.
+
+**Proof:** Graph-bound mounting/premount/volum tasks; linked-segment logo identity; 175/175 focused pytest; runtime order `21099` on `:8001`; W5-T01 guard preserved; snapshot immutable.
+
+**Next:** W5-INT-02.
 
 ## Wave 4 exit (W4-INT-02)
 
