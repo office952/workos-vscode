@@ -184,7 +184,17 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Classification | `COMPONENT_OPTION_INPUT_RESOLVED_TO_TEMPLATE` |
 | Delivers | Product System unique-link resolution on Intake save; cant applicability; stale clearing; UI gated on cant not mounting |
 | Runtime | IR-MRJS4VIK — applicable; unique link `TPL-VOLUM-ALUMINIU_v1`; PD volum no longer missing when persisted |
-| Next | Wave 3 exit gate (live snapshot POST) |
+| Next | W3-INT-01 (complete) |
+
+## W3-INT-01 — Wave 3 internal-cost + snapshot persistence exit gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE WITH NONBLOCKING DEBT** (2026-07-15) |
+| Verdict | `W3_INT_01_PASS_WITH_NONBLOCKING_DEBT_CLOSE_WAVE_3` |
+| Delivers | ACM bond alias→variant mapping in 7B/7H BOM path; pytest snapshot persistence/idempotency proof |
+| Debt | Orphan `:8000` listener PID 4392; no live snapshot POST (zero priced quotes in dev.db) |
+| Wave 4 | `OPEN_WAVE_4_INTEGRATION_GATE` after runtime cleanup + one live POST smoke |
 
 ## W3-T03 — Snapshot unify + pricing registry
 
@@ -196,7 +206,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Upstream | W3-T02 |
 | Delivers | V6 snapshot via canonical 7G+7H compose; synthetic CPP removed; graph frozen; commercial-first partial when 7H blocked |
 | Runtime | IR-MRJS4VIK — 7G ready 1888.68 gross; 7H blocked; volum null nonblocking for Case B |
-| Next | Wave 3 exit gate; W4-T01 blocked |
+| Next | W3-INT-01 (complete) |
 
 ---
 

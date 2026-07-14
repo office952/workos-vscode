@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `2c3d538` (W3-T02 V6 7G commercial spine + UI gate)
+**Accepted HEAD:** `dab6b7e` (W2-PREREQUISITE-VOLUM-TRUTH + W3-INT-01 ACM BOM mapping fix pending commit)
 
-**Last updated:** 2026-07-14 (W3-T02 UI commercial authority gate — live pass)
+**Last updated:** 2026-07-15 (W3-INT-01 Wave 3 exit gate — PASS WITH NONBLOCKING DEBT)
 
 
 
@@ -22,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 3 IN PROGRESS** (W3-T03 snapshot unify complete) |
+| Phase | **Wave 3 COMPLETE WITH NONBLOCKING DEBT** (`W3-INT-01`) |
 
-| Implementation hold | **Lifted for Wave 3 spine** |
+| Implementation hold | **Lifted for Wave 4 integration gate** |
 
 | Active task | None |
 
-| Next task | **Wave 3 exit gate** (live snapshot POST still required) |
+| Next task | **Wave 4 integration gate** (after `:8000` runtime cleanup + live snapshot POST smoke) |
 
 
 
@@ -136,6 +136,8 @@
 
 - [x] `W2-PREREQUISITE-VOLUM-TRUTH` — volum aluminum module technical truth (Product System resolution + Intake persist)
 
+- [x] `W3-INT-01` — Wave 3 internal-cost + snapshot persistence exit gate (ACM bond BOM mapping fix; pytest persistence proof; runtime ghost listener debt)
+
 
 
 ## Completed (Wave 2)
@@ -196,7 +198,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Wave 3 exit review** — W4 remains blocked until `W2-PREREQUISITE-VOLUM-TRUTH` and full Wave 3 registry closure.
+Next allowed task: **Wave 4 integration gate** — clear `:8000` ghost listener, run one live V6 snapshot POST on a priced quote, then open W4-T01.
 
-**W3-T03:** V6 snapshot authority = `QuoteSnapshotV2Service` via `intake_v6_quote_snapshot_v2_service`; synthetic CPP removed; 7G/7H frozen separately; commercial-first partial readiness when 7H blocked.
+**W3-INT-01:** Verdict `W3_INT_01_PASS_WITH_NONBLOCKING_DEBT_CLOSE_WAVE_3`. ACM bond alias mapping defect fixed in 7B/7H BOM path; snapshot idempotency/read-back proven via focused pytest; live POST deferred (no priced quote + orphan `:8000` socket).
 
