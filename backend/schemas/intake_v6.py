@@ -177,6 +177,8 @@ class IntakeV6CommercialSpineStateResponse(BaseModel):
     pricing_review: dict[str, Any] = Field(default_factory=dict)
     owner_approval: dict[str, Any] = Field(default_factory=dict)
     snapshot_v2: dict[str, Any] = Field(default_factory=dict)
+    snapshot_authoritative_offer: dict[str, Any] | None = None
+    pricing_review_read_model: dict[str, Any] | None = None
     quote_accepted: bool = False
     quote_commercial_totals: dict[str, Any] = Field(default_factory=dict)
     v6_order_conversion: dict[str, Any] = Field(default_factory=dict)
