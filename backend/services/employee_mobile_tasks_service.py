@@ -1092,6 +1092,9 @@ async def list_available_tasks(db: AsyncSession, employee_id: int) -> List[dict]
         row["is_available_for_claim"] = True
         row["can_claim"] = bool(row.get("claimable"))
         row["can_start_from_available"] = bool(row.get("can_start"))
+    from services.parity_observe.mobile_available import observe_mobile_available_tasks
+
+    await observe_mobile_available_tasks(db, employee_id, available)
     return available
 
 
