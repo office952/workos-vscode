@@ -455,6 +455,20 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | OWNER-DECISION-01 | **COMPLETE** |
 | Next | **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** |
 
+## APP-AUTH-02C — External HTTP runtime closure
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_02C_EXTERNAL_HTTP_PASS_CLOSE_APP_AUTH_02B` |
+| Starting HEAD | `59449bc` |
+| Backend process | `CANONICAL_BACKEND_PROCESS` on :8001 |
+| JWT fix | `Set-WorkOsJwtEnv` in canonical scripts |
+| External HTTP | PASS (JWT bearer, order 95084 excluded, log proven) |
+| APP-AUTH-02B | **CLOSED** |
+| APP-AUTH-02C | **COMPLETE** |
+| Next | **OWNER-DECISION-03** |
+
 ## APP-AUTH-02B — Available projection runtime closure
 
 | Field | Value |

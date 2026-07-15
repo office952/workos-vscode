@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** APP-AUTH-02B on branch (after OWNER-DECISION-02 @ `b38f6a6`)
 
-**Last updated:** 2026-07-15 (APP-AUTH-02B available projection closure — **PASS**)
+**Last updated:** 2026-07-15 (APP-AUTH-02C external HTTP gate — **PASS**, APP-AUTH-02B **CLOSED**)
 
 
 
@@ -472,7 +472,21 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_02b_available_projection_runtime_closure_v1.md`
 
-**APP-AUTH-02B:** **COMPLETE**
+**APP-AUTH-02B:** **CLOSED**
+
+## APP-AUTH-02C — External HTTP runtime closure
+
+**Verdict:** `APP_AUTH_02C_EXTERNAL_HTTP_PASS_CLOSE_APP_AUTH_02B`
+
+**Scope:** Trusted `:8001` authenticated external HTTP for available projection; canonical JWT env in startup scripts.
+
+**Root cause:** `BACKEND_ENVIRONMENT_MISSING` on stale manual `:8001` (no `JWT_ALGORITHM`).
+
+**Proof:** External `GET .../tasks/available` 200; valid order visible; corrupt excluded; log `ORDER_SNAPSHOT_V2_CORRUPT`; assigned corrupt → 422.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_02c_external_http_runtime_closure_v1.md`
+
+**APP-AUTH-02C:** **COMPLETE**
 
 **Next:** **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** — PROD-ARCH-01 **BLOCAT**
 
