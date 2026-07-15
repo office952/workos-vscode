@@ -18,6 +18,7 @@ from models.execution_plan import ExecutionPlan
 from schemas.execution_task_collaboration_read import (
     EXECUTION_TASK_COLLABORATION_READ_VERSION,
     ActualWorkerRead,
+    OperationCompletionSource,
     OptionalPrincipalRead,
     OrderTaskCollaborationReadResponse,
     PrincipalSource,
@@ -28,6 +29,8 @@ from services.execution_plan_task_parser import operational_tasks_only
 from services.material_procurement_status_service import split_reality_task_entries
 from services.order_production_blueprint_service import blueprint_status_bucket
 from services.task_work_session_service import (
+    SESSION_STATUS_COMPLETED,
+    SESSION_STATUS_ENDED,
     aggregate_task_work_metrics,
     compute_duration_minutes,
     derive_task_status_from_sessions,
@@ -39,7 +42,8 @@ from services.task_work_session_service import (
 READ_MODEL_NOTES = [
     "optional_principal is assigned_employee_id compatibility — not participation proof",
     "actual_workers are derived only from existing sessions with employee_id",
-    "stop session is not modeled as operation complete; operation_completed uses existing derive",
+    "operation_completed uses explicit per-session completion signals only",
+    "legacy_or_derived_task_status may show done while operation_completed is false",
     "no invite-before-start, help lifecycle, or quantity progress in FLEX-01",
 ]
 
@@ -70,6 +74,56 @@ def _parse_json(raw: Any) -> list[Any]:
             return []
         return parsed if isinstance(parsed, list) else []
     return []
+
+
+def _session_explicitly_completed(entry: dict[str, Any]) -> bool:
+    status = str(entry.get("status") or "").strip().lower()
+    if status == SESSION_STATUS_COMPLETED:
+        return True
+    if _normalize_employee_id(entry.get("completed_by_employee_id")) is not None:
+        return True
+    return False
+
+
+def _session_stopped_without_completion(entry: dict[str, Any]) -> bool:
+    if not entry.get("ended_at"):
+        return False
+    status = str(entry.get("status") or "").strip().lower()
+    if status == SESSION_STATUS_ENDED:
+        return True
+    if status and status != SESSION_STATUS_COMPLETED:
+        return True
+    if status == "" and not _session_explicitly_completed(entry):
+        return True
+    return False
+
+
+def derive_operation_completion_truth(
+    sessions: list[dict[str, Any]],
+) -> tuple[bool | None, OperationCompletionSource]:
+    """Read-only operation completion — explicit session signals, not legacy derive."""
+    if not sessions:
+        return False, "no_sessions"
+
+    if any(is_session_active(entry) for entry in sessions if isinstance(entry, dict)):
+        return False, "active_sessions_remain"
+
+    closed_sessions = [
+        entry for entry in sessions if isinstance(entry, dict) and entry.get("ended_at")
+    ]
+    if not closed_sessions:
+        return False, "no_sessions"
+
+    if len(closed_sessions) != len(sessions):
+        return None, "unknown"
+
+    if any(_session_stopped_without_completion(entry) for entry in closed_sessions):
+        return False, "session_stop_without_explicit_completion"
+
+    if all(_session_explicitly_completed(entry) for entry in closed_sessions):
+        return True, "all_sessions_explicitly_completed"
+
+    return None, "unknown"
 
 
 def _resolve_principal_source(raw: Any) -> PrincipalSource:
@@ -198,10 +252,19 @@ def project_task_collaboration_read(
         worker for worker in actual_workers if not worker.has_active_session
     ]
 
+    all_sessions_closed = (
+        len(task_sessions) > 0
+        and not any(is_session_active(entry) for entry in task_sessions)
+    )
+
     display_name = (
         plan_task.get("display_name")
         or plan_task.get("name")
         or None
+    )
+
+    operation_completed, operation_completion_source = derive_operation_completion_truth(
+        task_sessions
     )
 
     return TaskCollaborationRead(
@@ -213,12 +276,14 @@ def project_task_collaboration_read(
         completed_session_workers=completed_session_workers,
         has_multiple_actual_workers=len(actual_workers) > 1,
         aggregate_session_time_minutes=float(metrics.get("total_logged_minutes") or 0.0),
-        all_sessions_closed=len(task_sessions) > 0 and len(active_workers) == 0,
+        all_sessions_closed=all_sessions_closed,
         active_sessions_count=len(active_workers),
         total_sessions_count=len(task_sessions),
+        legacy_or_derived_task_status=status_key,
         operation_status=status_key,
         operation_status_display=status_display,
-        operation_completed=derived_status == "done",
+        operation_completed=operation_completed,
+        operation_completion_source=operation_completion_source,
         derived_session_status=derived_status,
         collaboration_capability="BACKEND_MULTI_SESSION_CAPABLE",
         ui_collaboration_capability="CURRENTLY_INDIVIDUAL_UI",

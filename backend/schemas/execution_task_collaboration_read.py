@@ -25,6 +25,14 @@ CollaborationCapability = Literal[
     "BACKEND_MULTI_SESSION_CAPABLE",
 ]
 
+OperationCompletionSource = Literal[
+    "no_sessions",
+    "active_sessions_remain",
+    "all_sessions_explicitly_completed",
+    "session_stop_without_explicit_completion",
+    "unknown",
+]
+
 
 class OptionalPrincipalRead(BaseModel):
     """Optional coordinator hint from execution plan — not proof of work started."""
@@ -74,9 +82,11 @@ class TaskCollaborationRead(BaseModel):
     all_sessions_closed: bool = False
     active_sessions_count: int = 0
     total_sessions_count: int = 0
+    legacy_or_derived_task_status: str
     operation_status: str
     operation_status_display: str | None = None
-    operation_completed: bool = False
+    operation_completed: bool | None = False
+    operation_completion_source: OperationCompletionSource = "no_sessions"
     derived_session_status: str
     collaboration_capability: CollaborationCapability = "BACKEND_MULTI_SESSION_CAPABLE"
     ui_collaboration_capability: CollaborationCapability = "CURRENTLY_INDIVIDUAL_UI"

@@ -14,6 +14,7 @@ from schemas.auth import UserResponse
 from services.execution_reality_service import ExecutionRealityService
 from services.execution_task_collaboration_read_service import (
     build_order_task_collaboration_read,
+    derive_operation_completion_truth,
     project_task_collaboration_read,
 )
 from services.task_work_session_service import build_work_session_observation
@@ -261,7 +262,7 @@ class TestScenarioGActiveAndClosedSessions:
 
 
 class TestScenarioHAllSessionsStopped:
-    def test_all_sessions_stopped(self):
+    def test_all_sessions_stopped_without_explicit_completion(self):
         body = _project(
             assigned_employee_id=10,
             sessions=[
@@ -284,11 +285,14 @@ class TestScenarioHAllSessionsStopped:
         assert body["active_workers"] == []
         assert len(body["actual_workers"]) == 2
         assert body["all_sessions_closed"] is True
-        assert body["operation_completed"] is True
+        assert body["operation_completed"] is False
+        assert body["operation_completion_source"] == "session_stop_without_explicit_completion"
+        assert body["derived_session_status"] == "done"
+        assert body["legacy_or_derived_task_status"] == "done"
 
 
 class TestScenarioIOperationCompleteWithSessions:
-    def test_operation_complete_with_sessions(self):
+    def test_operation_complete_with_explicit_session_completion(self):
         body = _project(
             assigned_employee_id=10,
             sessions=[
@@ -303,8 +307,150 @@ class TestScenarioIOperationCompleteWithSessions:
             ],
         )
         assert body["operation_completed"] is True
+        assert body["operation_completion_source"] == "all_sessions_explicitly_completed"
         assert body["derived_session_status"] == "done"
         assert body["all_sessions_closed"] is True
+
+
+class TestScenario3OneStoppedSessionNotComplete:
+    def test_one_stopped_session_operation_not_complete(self):
+        body = _project(
+            assigned_employee_id=10,
+            sessions=[
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=10,
+                    employee_name="Principal Ten",
+                    started_at="2026-07-15T08:00:00+00:00",
+                    ended_at="2026-07-15T08:30:00+00:00",
+                ),
+            ],
+        )
+        assert body["all_sessions_closed"] is True
+        assert body["operation_completed"] is False
+        assert body["operation_completion_source"] == "session_stop_without_explicit_completion"
+
+
+class TestScenario4MultipleStoppedSessionsNotComplete:
+    def test_multiple_stopped_sessions_operation_not_complete(self):
+        body = _project(
+            assigned_employee_id=10,
+            sessions=[
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=10,
+                    employee_name="Principal Ten",
+                    started_at="2026-07-15T08:00:00+00:00",
+                    ended_at="2026-07-15T08:30:00+00:00",
+                ),
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=20,
+                    employee_name="Worker Twenty",
+                    started_at="2026-07-15T08:10:00+00:00",
+                    ended_at="2026-07-15T08:40:00+00:00",
+                ),
+            ],
+        )
+        assert body["all_sessions_closed"] is True
+        assert body["has_multiple_actual_workers"] is True
+        assert body["operation_completed"] is False
+
+
+class TestScenario6LegacyStatusSeparated:
+    def test_legacy_done_does_not_imply_operation_completed(self):
+        body = _project(
+            assigned_employee_id=10,
+            sessions=[
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=10,
+                    employee_name="Principal Ten",
+                    started_at="2026-07-15T08:00:00+00:00",
+                    ended_at="2026-07-15T08:30:00+00:00",
+                ),
+            ],
+        )
+        assert body["legacy_or_derived_task_status"] == "done"
+        assert body["operation_completed"] is False
+
+
+class TestScenario7HelperStopDoesNotCompleteOperation:
+    def test_helper_stopped_principal_still_active(self):
+        body = _project(
+            assigned_employee_id=10,
+            sessions=[
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=10,
+                    employee_name="Principal Ten",
+                    started_at="2026-07-15T08:00:00+00:00",
+                ),
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=20,
+                    employee_name="Worker Twenty",
+                    started_at="2026-07-15T08:10:00+00:00",
+                    ended_at="2026-07-15T08:40:00+00:00",
+                    role="helper",
+                ),
+            ],
+        )
+        assert body["operation_completed"] is False
+        assert body["operation_completion_source"] == "active_sessions_remain"
+
+
+def test_derive_operation_completion_truth_blocker_cases():
+    stopped = _session(
+        task_id="T-FLEX-01",
+        employee_id=10,
+        employee_name="Principal Ten",
+        started_at="2026-07-15T08:00:00+00:00",
+        ended_at="2026-07-15T08:30:00+00:00",
+    )
+    completed, source = derive_operation_completion_truth([stopped])
+    assert completed is False
+    assert source == "session_stop_without_explicit_completion"
+
+    explicit = _session(
+        task_id="T-FLEX-01",
+        employee_id=10,
+        employee_name="Principal Ten",
+        started_at="2026-07-15T08:00:00+00:00",
+        ended_at="2026-07-15T08:30:00+00:00",
+        completed_by_employee_id=10,
+    )
+    completed, source = derive_operation_completion_truth([explicit])
+    assert completed is True
+    assert source == "all_sessions_explicitly_completed"
+
+
+class TestScenario5ExplicitOperationCompleteAllWorkers:
+    def test_all_workers_explicitly_completed(self):
+        body = _project(
+            assigned_employee_id=10,
+            sessions=[
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=10,
+                    employee_name="Principal Ten",
+                    started_at="2026-07-15T08:00:00+00:00",
+                    ended_at="2026-07-15T08:30:00+00:00",
+                    completed_by_employee_id=10,
+                ),
+                _session(
+                    task_id="T-FLEX-01",
+                    employee_id=20,
+                    employee_name="Worker Twenty",
+                    started_at="2026-07-15T08:10:00+00:00",
+                    ended_at="2026-07-15T08:40:00+00:00",
+                    completed_by_employee_id=20,
+                    role="helper",
+                ),
+            ],
+        )
+        assert body["operation_completed"] is True
+        assert body["operation_completion_source"] == "all_sessions_explicitly_completed"
 
 
 class TestScenarioJBackwardCompatibility:
@@ -393,6 +539,8 @@ def test_task_collaboration_read_endpoint(flex_order_fixture):
     assert body["order_id"] == order_id
     assert len(body["tasks"]) == 1
     assert body["tasks"][0]["task_id"] == "T-FLEX-DB"
+    assert "legacy_or_derived_task_status" in body["tasks"][0]
+    assert "operation_completion_source" in body["tasks"][0]
 
 
 def test_mobile_claim_behavior_unchanged_after_read_model(db_fixture, db_session):

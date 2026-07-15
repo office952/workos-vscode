@@ -1167,7 +1167,19 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_flex_01_execution_collaboration_read_model_foundation.md`
 
-**FLEX-01:** **COMPLETE**
+**FLEX-01:** **COMPLETE** (semantics corrected by FLEX-01A — see below)
 
-**Next:** **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (blocked until owner GO)
+**Next:** **OWNER REVIEW FLEX-01A** then **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO)
+
+## FLEX-01A — Operation completion semantics and live runtime verification
+
+**Verdict:** `FLEX_01A_OPERATION_COMPLETION_SEMANTICS_AND_LIVE_RUNTIME_PARTIAL`
+
+**Fix:** `operation_completed` decoupled from legacy `derive_task_status_from_sessions`; uses explicit per-session completion only. `legacy_or_derived_task_status` separated.
+
+**Runtime:** Live HTTP PASS on fresh backend; canonical :8001 ghost listeners prevent OpenAPI route verification.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_flex_01a_operation_completion_semantics_and_live_runtime_verification.md`
+
+**FLEX-01A:** **PARTIAL** (semantics complete; :8001 runtime blocked by ghost listeners)
 
