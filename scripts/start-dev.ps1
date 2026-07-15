@@ -2,12 +2,13 @@
 # Requires: Node.js 20+, Python 3.11+ on PATH, pnpm (or use npx pnpm@8.10.0)
 #
 # Idempotent startup:
-#   - Detects port 8000 / 3000 occupancy before launching
+#   - Detects port 8001 / 3000 occupancy before launching
 #   - Reuses processes that already serve WorkOS health endpoints
 #   - Refuses to start when ports are held by unknown/unhealthy processes
 #   - Waits for backend /health and frontend before reporting ready
 
 $ErrorActionPreference = "Stop"
+. "$PSScriptRoot\_workos-dev-contract.ps1"
 $Root = Split-Path -Parent $PSScriptRoot
 $BackendDir = Join-Path $Root "backend"
 $FrontendDir = Join-Path $Root "frontend"
@@ -15,14 +16,13 @@ $DevDbPath = Join-Path $BackendDir "dev.db"
 $DatabaseUrl = "sqlite+aiosqlite:///" + ($DevDbPath -replace "\\", "/")
 
 $LocalJwtSecret = "local-dev-secret-not-for-production"
-$BackendUrl = "http://127.0.0.1:8000"
-$FrontendUrl = "http://127.0.0.1:3000"
-$HealthUrl = "$BackendUrl/health"
-$ProductSystemUrl = "$FrontendUrl/product-system"
-$PricingUrl = "$FrontendUrl/inventory/pricing"
+$ProductSystemPath = "/product-system"
+$PricingPath = "/inventory/pricing"
 
 function Set-WorkOsLocalDevEnv {
     param([string] $ProjectRoot)
+    Initialize-WorkOsDevPortContract
+    Clear-WorkOsParityEnv
     $env:APP_ENV = "development"
     $env:ENVIRONMENT = "development"
     Remove-Item Env:DEPLOYMENT_ENVIRONMENT -ErrorAction SilentlyContinue
@@ -31,9 +31,13 @@ function Set-WorkOsLocalDevEnv {
     $env:DEBUG = "true"
     $env:ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
     $env:VITE_ENABLE_DEV_AUTH = "true"
+    $env:BACKEND_PORT = [string](Get-WorkOsBackendPort)
+    Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
 }
 
 function Show-WorkOsLocalDevSummary {
+    $backendUrl = Get-WorkOsBackendUrl
+    $frontendUrl = Get-WorkOsFrontendUrl
     Write-Host ""
     Write-Host "=== Local dev configuration (safe summary) ===" -ForegroundColor Cyan
     Write-Host ("  APP_ENV                  = {0}" -f $env:APP_ENV)
@@ -45,11 +49,13 @@ function Show-WorkOsLocalDevSummary {
     Write-Host ("  JWT_EXPIRE_MINUTES       = {0}" -f $env:JWT_EXPIRE_MINUTES)
     Write-Host ("  DEBUG                    = {0}" -f $env:DEBUG)
     Write-Host ("  VITE_ENABLE_DEV_AUTH     = {0}" -f $env:VITE_ENABLE_DEV_AUTH)
-    Write-Host "  Backend                  = $BackendUrl"
-    Write-Host "  Frontend                 = $FrontendUrl"
-    Write-Host "  Health                   = $HealthUrl"
-    Write-Host "  ProductSystem            = $ProductSystemUrl"
-    Write-Host "  Pricing                  = $PricingUrl"
+    Write-Host ("  BACKEND_PORT             = {0}" -f $env:BACKEND_PORT)
+    Write-Host ("  Vite proxy (/api)        = {0}" -f (Get-WorkOsViteProxyTarget))
+    Write-Host ("  Backend                  = {0}" -f $backendUrl)
+    Write-Host ("  Frontend                 = {0}" -f $frontendUrl)
+    Write-Host ("  Health                   = {0}/health" -f $backendUrl)
+    Write-Host ("  ProductSystem            = {0}{1}" -f $frontendUrl, $ProductSystemPath)
+    Write-Host ("  Pricing                  = {0}{1}" -f $frontendUrl, $PricingPath)
     Write-Host ""
 }
 
@@ -119,7 +125,7 @@ function Show-FinalStatus {
 }
 
 function Test-IntakeV3OperatorWorkspaceRoutesOk {
-    param([string] $BaseUrl = $BackendUrl)
+    param([string] $BaseUrl = $(Get-WorkOsBackendUrl))
     $required = @()
     try {
         $schema = Invoke-RestMethod -Uri "$BaseUrl/openapi.json" -TimeoutSec 5
@@ -136,16 +142,17 @@ function Test-IntakeV3OperatorWorkspaceRoutesOk {
 }
 
 function Write-BackendDevReadyDiagnostics {
-    param([string] $BaseUrl = $BackendUrl)
+    param([string] $BaseUrl = $(Get-WorkOsBackendUrl))
 
-    $healthOk = Test-HttpOk -Url $HealthUrl
+    $healthUrl = "$BaseUrl/health"
+    $healthOk = Test-HttpOk -Url $healthUrl
     $openapiUrl = "$BaseUrl/openapi.json"
     $required = @()
 
     Write-Host ""
     Write-Host "=== Backend dev readiness diagnostics (no semantics change) ===" -ForegroundColor Yellow
     Write-Host ("  health_ok     = {0}" -f $healthOk)
-    Write-Host ("  health_url    = {0}" -f $HealthUrl)
+    Write-Host ("  health_url    = {0}" -f $healthUrl)
     Write-Host ("  openapi_url   = {0}" -f $openapiUrl)
 
     try {
@@ -167,7 +174,8 @@ function Write-BackendDevReadyDiagnostics {
 }
 
 function Test-BackendDevReady {
-    if (-not (Test-HttpOk -Url $HealthUrl)) {
+    $healthUrl = "$(Get-WorkOsBackendUrl)/health"
+    if (-not (Test-HttpOk -Url $healthUrl)) {
         return $false
     }
     return (Test-IntakeV3OperatorWorkspaceRoutesOk)
@@ -177,7 +185,8 @@ function Resolve-PortService {
     param(
         [int] $Port,
         [string] $ServiceName,
-        [scriptblock] $HealthProbe
+        [scriptblock] $HealthProbe,
+        [string] $ProjectRoot
     )
     $listener = Get-PortListener -Port $Port
     if (-not $listener) {
@@ -189,52 +198,60 @@ function Resolve-PortService {
         }
     }
     $ready = & $HealthProbe
-    if (-not $ready) {
-        if ($listener -and $ServiceName -eq "Backend" -and (Test-HttpOk -Url $HealthUrl)) {
-            Write-Host ""
-            Write-Host "Backend on port $Port responds to /health but is missing Intake V3 operator routes (stale process)." -ForegroundColor Yellow
-            Write-BackendDevReadyDiagnostics -BaseUrl $BackendUrl
-            Write-Host ("  PID          = {0}" -f $listener.PID)
-            Write-Host ("  Process      = {0}" -f $listener.ProcessName)
-            Write-Host "  Action       = Stopping stale backend so current code can start."
-            Write-Host ""
-            Stop-Process -Id $listener.PID -Force -ErrorAction SilentlyContinue
-            # Wait for the port to actually be released.
-            foreach ($i in 1..20) {
-                Start-Sleep -Milliseconds 250
-                if (-not (Get-PortListener -Port $Port)) {
-                    break
-                }
-            }
-            if (Get-PortListener -Port $Port) {
-                Write-Host ""
-                Write-Host "BLOCKER: Port $Port remained occupied after stopping stale backend." -ForegroundColor Red
-                Write-Host "  Action       = Stop the remaining listener manually, then re-run .\\scripts\\start-dev.ps1" -ForegroundColor Red
-                Write-Host ""
-                exit 1
-            }
-            return [PSCustomObject]@{
-                Port = $Port
-                Occupied = $false
-                Ready = $false
-                Listener = $null
-            }
+    if ($ready) {
+        Write-Host "$ServiceName already running on port $Port (PID=$($listener.PID), $($listener.ProcessName))" -ForegroundColor DarkGray
+        return [PSCustomObject]@{
+            Port = $Port
+            Occupied = $true
+            Ready = $true
+            Listener = $listener
         }
+    }
+
+    $isStale = $false
+    if ($ServiceName -eq "Backend") {
+        $isStale = Test-WorkOsBackendListenerStale -ProcessId $listener.PID -ProjectRoot $ProjectRoot -ExpectedPort $Port
+    } elseif ($ServiceName -eq "Frontend") {
+        $isStale = Test-WorkOsFrontendListenerStale -ProcessId $listener.PID -ProjectRoot $ProjectRoot -ExpectedPort $Port
+    }
+
+    if ($isStale) {
         Write-Host ""
-        Write-Host "BLOCKER: Port $Port is occupied but $ServiceName is not healthy." -ForegroundColor Red
+        Write-Host "$ServiceName on port $Port is occupied by a stale WorkOS listener." -ForegroundColor Yellow
         Write-Host ("  PID          = {0}" -f $listener.PID)
         Write-Host ("  Process      = {0}" -f $listener.ProcessName)
-        Write-Host "  Action       = Stop that process manually, then re-run .\scripts\start-dev.ps1"
+        Write-Host "  Action       = Stopping stale listener so canonical stack can start."
         Write-Host ""
-        exit 1
+        Stop-Process -Id $listener.PID -Force -ErrorAction SilentlyContinue
+        foreach ($i in 1..20) {
+            Start-Sleep -Milliseconds 250
+            if (-not (Get-PortListener -Port $Port)) {
+                break
+            }
+        }
+        if (Get-PortListener -Port $Port) {
+            Write-Host ""
+            Write-Host "BLOCKER: Port $Port remained occupied after stopping stale $ServiceName." -ForegroundColor Red
+            Write-Host "  Action       = Stop the remaining listener manually, then re-run .\scripts\start-dev.ps1" -ForegroundColor Red
+            Write-Host ""
+            exit 1
+        }
+        return [PSCustomObject]@{
+            Port = $Port
+            Occupied = $false
+            Ready = $false
+            Listener = $null
+        }
     }
-    Write-Host "$ServiceName already running on port $Port (PID=$($listener.PID), $($listener.ProcessName))" -ForegroundColor DarkGray
-    return [PSCustomObject]@{
-        Port = $Port
-        Occupied = $true
-        Ready = $true
-        Listener = $listener
-    }
+
+    Write-Host ""
+    Write-Host "BLOCKER: Port $Port is occupied but $ServiceName is not healthy and process could not be classified as stale WorkOS." -ForegroundColor Red
+    Write-Host ("  PID          = {0}" -f $listener.PID)
+    Write-Host ("  Process      = {0}" -f $listener.ProcessName)
+    Write-Host ("  CommandLine  = {0}" -f (Get-WorkOsProcessCommandLine -ProcessId $listener.PID))
+    Write-Host "  Action       = Stop that process manually, then re-run .\scripts\start-dev.ps1"
+    Write-Host ""
+    exit 1
 }
 
 . "$PSScriptRoot\_workos-python.ps1"
@@ -246,8 +263,16 @@ Write-Host "=== WorkOS dev ===" -ForegroundColor Cyan
 Write-Host "Root: $Root"
 Show-WorkOsLocalDevSummary
 
-$backendState = Resolve-PortService -Port 8000 -ServiceName "Backend" -HealthProbe { Test-BackendDevReady }
-$frontendState = Resolve-PortService -Port 3000 -ServiceName "Frontend" -HealthProbe { Test-HttpOk -Url $FrontendUrl }
+$BackendPort = Get-WorkOsBackendPort
+$FrontendPort = Get-WorkOsFrontendPort
+$BackendUrl = Get-WorkOsBackendUrl
+$FrontendUrl = Get-WorkOsFrontendUrl
+$HealthUrl = "$BackendUrl/health"
+$ProductSystemUrl = "$FrontendUrl$ProductSystemPath"
+$PricingUrl = "$FrontendUrl$PricingPath"
+
+$backendState = Resolve-PortService -Port $BackendPort -ServiceName "Backend" -HealthProbe { Test-BackendDevReady } -ProjectRoot $Root
+$frontendState = Resolve-PortService -Port $FrontendPort -ServiceName "Frontend" -HealthProbe { Test-HttpOk -Url $FrontendUrl } -ProjectRoot $Root
 
 $PSNativeCommandUseErrorActionPreference = $false
 
@@ -274,7 +299,7 @@ if (-not $backendState.Ready) {
     Install-WorkOsBackendRequirements -BackendDir $BackendDir
 
     $backendJob = Start-Job -ScriptBlock {
-        param($BackendDir, $DatabaseUrl, $LocalJwtSecret, $AllowedOrigins)
+        param($BackendDir, $DatabaseUrl, $LocalJwtSecret, $AllowedOrigins, $BackendPort)
         Set-Location $BackendDir
         $env:APP_ENV = "development"
         $env:ENVIRONMENT = "development"
@@ -285,9 +310,8 @@ if (-not $backendState.Ready) {
         $env:JWT_EXPIRE_MINUTES = "60"
         $env:DEBUG = "true"
         $env:ALLOWED_ORIGINS = $AllowedOrigins
-        # Uvicorn logs to stderr by default; merge streams so callers don't treat normal INFO as NativeCommandError.
-        & .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload 2>&1
-    } -ArgumentList $BackendDir, $DatabaseUrl, $LocalJwtSecret, $env:ALLOWED_ORIGINS
+        & .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port $BackendPort --reload 2>&1
+    } -ArgumentList $BackendDir, $DatabaseUrl, $LocalJwtSecret, $env:ALLOWED_ORIGINS, $BackendPort
 
     Write-Host "Backend job started (id=$($backendJob.Id)). Waiting for /health..." -ForegroundColor DarkGray
     $backendReady = Wait-ForService -Name "Backend" -Probe { Test-BackendDevReady }
@@ -329,10 +353,13 @@ if (-not (Test-Path "node_modules")) {
 Write-Host "Starting frontend (Ctrl+C stops frontend; backend job will be stopped if started here)..." -ForegroundColor Green
 
 $frontendJob = Start-Job -ScriptBlock {
-    param($FrontendDir)
+    param($FrontendDir, $BackendPort, $FrontendPort)
     Set-Location $FrontendDir
-    npx --yes pnpm@8.10.0 run dev --host 127.0.0.1 --port 3000
-} -ArgumentList $FrontendDir
+    $env:BACKEND_PORT = [string]$BackendPort
+    $env:VITE_ENABLE_DEV_AUTH = "true"
+    Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
+    npx --yes pnpm@8.10.0 run dev --host 127.0.0.1 --port $FrontendPort
+} -ArgumentList $FrontendDir, $BackendPort, $FrontendPort
 
 $frontendReady = Wait-ForService -Name "Frontend" -Probe { Test-HttpOk -Url $FrontendUrl }
 if (-not $frontendReady) {

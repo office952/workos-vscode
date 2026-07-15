@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # WorkOS local dev — bash/WSL/Linux/macOS
 #
-# Starts backend (uvicorn :8000) and frontend (vite :3000) from repo root.
-# Native Windows: use scripts/start-dev.ps1 instead (idempotent port checks).
+# Starts backend (uvicorn :8001) and frontend (vite :3000) from repo root.
+# Native Windows: use scripts/dev.ps1 or npm run dev:stack (idempotent port checks).
 #
 # Requires: Python 3.11+, Node 20+, pnpm (or npx pnpm@8.10.0)
 
@@ -20,6 +20,8 @@ export JWT_SECRET_KEY="local-dev-secret-not-for-production"
 export DEBUG=true
 export ALLOWED_ORIGINS="http://localhost:3000,http://127.0.0.1:3000"
 export VITE_ENABLE_DEV_AUTH=true
+export BACKEND_PORT="${BACKEND_PORT:-8001}"
+export VITE_PORT="${VITE_PORT:-3000}"
 
 PY="${WORKOS_PYTHON:-python3}"
 if ! command -v "$PY" >/dev/null 2>&1; then
@@ -28,8 +30,9 @@ fi
 
 echo "=== WorkOS dev (bash) ==="
 echo "Root:     $ROOT"
-echo "Backend:  http://127.0.0.1:8000"
-echo "Frontend: http://127.0.0.1:3000"
+echo "Backend:  http://127.0.0.1:${BACKEND_PORT}"
+echo "Frontend: http://127.0.0.1:${VITE_PORT}"
+echo "Vite proxy /api -> http://127.0.0.1:${BACKEND_PORT}"
 echo ""
 
 cd "$BACKEND_DIR"
@@ -47,7 +50,7 @@ cleanup() {
 }
 trap cleanup EXIT INT TERM
 
-python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload &
+python -m uvicorn main:app --host 127.0.0.1 --port "${BACKEND_PORT}" --reload &
 BACKEND_PID=$!
 
 cd "$FRONTEND_DIR"
@@ -60,7 +63,7 @@ if [ ! -d node_modules ]; then
 fi
 
 if command -v pnpm >/dev/null 2>&1; then
-  exec pnpm run dev --host 127.0.0.1 --port 3000
+  exec pnpm run dev --host 127.0.0.1 --port "${VITE_PORT}"
 else
-  exec npx --yes pnpm@8.10.0 run dev --host 127.0.0.1 --port 3000
+  exec npx --yes pnpm@8.10.0 run dev --host 127.0.0.1 --port "${VITE_PORT}"
 fi

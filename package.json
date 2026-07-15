@@ -4,6 +4,9 @@
   "packageManager": "pnpm@8.10.0",
   "scripts": {
     "dev:stack": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1",
+    "dev:backend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-backend.ps1",
+    "dev:frontend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-frontend.ps1",
+    "test:startup-contract": "node --test scripts/canonical_startup_contract.test.mjs",
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint --quiet ./src",
