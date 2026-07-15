@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** OWNER-DECISION-03 on branch (after APP-AUTH-02C @ `6acadc0`)
+**Accepted HEAD:** MODULE-AUTH-01 on branch (after MODULE-INT-01 @ `276fb83`)
 
-**Last updated:** 2026-07-15 (MODULE-INT-01 module chain audit — **BLOCKED static/demo**)
+**Last updated:** 2026-07-15 (MODULE-AUTH-01 module chain purpose gate — **0/16 CONFIRMATE**)
 
 
 
@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **MODULE-INT-01** — audit `/modules` COMPLETE |
+| Active task | **MODULE-AUTH-01** — gate scop pagină `/modules` documentat |
 
-| Next task | **MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE** (MODULE-ARCH-01 **BLOCAT**) |
+| Next task | **OWNER_DECISION_REQUIRED** — confirmare M1–M16 (MODULE-RUNTIME-01 **BLOCAT**) |
 
 
 
@@ -574,7 +574,27 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MODULE-INT-01:** **COMPLETE**
 
-**Next:** **MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE**
+**Next:** **MODULE-AUTH-01** — OWNER_DECISION_REQUIRED
+
+## MODULE-AUTH-01 — Decizii scop și autoritate pagină Module Chain
+
+**Verdict:** `MODULE_AUTHORITIES_PARTIAL_REMAIN_BLOCKED`
+
+**Scope:** Gate decizii M1–M16 post MODULE-INT-01 — fără cod, UI, backend, DB.
+
+**Decizii:** 16 documentate · **0 CONFIRMATE** · 16 AMÂNATE · 1 termen handoff NECESITA CONFIRMARE UMANA
+
+**Recomandare principală:** M1-A Architecture Reference + M15-A fără program runtime acum.
+
+**Ancestry gate:** PASS (`631f062` → `276fb83`); Starting-HEAD discrepancy = `REPORTING_ERROR_ONLY`.
+
+**Debt:** Module Chain purpose unset; static/live mixed; MODULE-RUNTIME-01 **BLOCAT** până la confirmări.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_module_auth_01_canonical_module_chain_purpose_authority_decisions_v1.md`
+
+**MODULE-AUTH-01:** **COMPLETE** (gate documentat)
+
+**Next:** **OWNER_DECISION_REQUIRED** → apoi **MODULE-PLAN-01** — MODULE-ARCH-01 **BLOCAT**
 
 ## APP-INT-01 — Audit E2E angajați, competențe, utilaje, execuție, pontaj
 

@@ -2,8 +2,24 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE` (after MODULE-INT-01 audit)  
+**Active task:** `OWNER_DECISION_REQUIRED` (after MODULE-AUTH-01 gate)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
+
+## MODULE-AUTH-01 — Canonical module chain purpose authority decisions
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MODULE_AUTHORITIES_PARTIAL_REMAIN_BLOCKED` |
+| Audit bază | MODULE-INT-01 @ `276fb83` |
+| Ancestry | `631f062` → `276fb83` PASS |
+| Decisions total | 16 |
+| Confirmed | 0 |
+| Recommended | M1-A Architecture Reference; M2-C Harta arhitecturală; M9-A health honest |
+| MODULE-RUNTIME-01 | **BLOCKED** |
+| MODULE-ARCH-01 | **BLOCKED** |
+| MODULE-AUTH-01 | **COMPLETE** |
+| Next | **OWNER_DECISION_REQUIRED** → **MODULE-PLAN-01** |
 
 ## MODULE-INT-01 — AUDIT_E2E_COMPOUND_ENGINEERING_MODULE_CHAIN_V1
 
@@ -14,8 +30,8 @@
 | Route | `/modules` (Module Chain) |
 | Proof | 7 screenshots; public health + diagnostics trace; DB entity checks |
 | Debt | module-chain/governance duplicate authorities; static event stream; labels-only snapshots; health UI contradiction |
-| Blocks | MODULE-ARCH-01 until MODULE-RUNTIME-01 closure |
-| Next | MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE |
+| Blocks | MODULE-ARCH-01; MODULE-RUNTIME-01 until MODULE-AUTH-01 owner confirmations |
+| Next | MODULE-AUTH-01 (closed) |
 
 ## Orchestration rule
 
