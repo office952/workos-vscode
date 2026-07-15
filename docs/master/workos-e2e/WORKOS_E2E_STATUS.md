@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `090997e` (W7-INT-01) — pending MOBILE-INT-01 gate commit
+**Accepted HEAD:** `5010e4e` (MOBILE-INT-01) — MOBILE-T01 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-INT-01 Employee Mobile contract gate — **entry gate PASS with backend prerequisite**)
+**Last updated:** 2026-07-15 (MOBILE-T01 canonical mobile task read model — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL** (authorized after MOBILE-INT-01) |
+| Next task | **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL** |
 
 
 
@@ -346,5 +346,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Program status:** `MOBILE_ENTRY_GATE_PASS_IMPLEMENTATION_AUTHORIZED_WITH_PREREQUISITE`
 
-Next allowed task: **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL**. Frozen-spine desktop program remains complete.
+Next allowed task: **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL**. Frozen-spine desktop program remains complete.
+
+## MOBILE-T01 — Canonical mobile task read model
+
+**Verdict:** `MOBILE_TASK_READ_MODEL_PASS_COMMITTED`
+
+**Delivered:** `employee_mobile_task_truth/v1`; shared V2 envelope parser adoption; frozen identity + readiness + production-release fields on mobile projections; fail-closed V2 errors; legacy explicit branch.
+
+**Proof:** 63 focused backend + 10 frontend tests; runtime order `23099` returns V2 tasks (13 plan / 5 assigned / 7 available for Sandu); `mobile_t01_gate_evidence.json`.
+
+**Entry-gate tests:** `test_start_assigned_task`, `test_employee_mobile_start_flow_still_works` → `FIXED_BY_CANONICAL_ADAPTER`.
+
+**Next:** **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL**
 

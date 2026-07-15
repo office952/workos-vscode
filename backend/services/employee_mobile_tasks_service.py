@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 from fastapi import HTTPException
+from models.orders import Orders
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,20 +28,18 @@ from services.preparation_domain_service import derive_preparation_domain
 from services.operational_registry_service import OperationalRegistryService
 from services.execution_task_assignment_service import assign_plan_task, clear_plan_task_assignment
 from services.operator_employee_guard import OperatorEmployeeGuard
-from services.material_procurement_status_service import (
-    build_procurement_enriched_context,
-    split_reality_task_entries,
-)
+from services.material_procurement_status_service import build_procurement_enriched_context
 from services.task_readiness_service import (
     build_readiness_context,
     employee_safe_readiness_payload,
     evaluate_all_task_readiness,
     evaluate_task_readiness,
 )
-from services.volumetric_execution_dispatch import (
-    extract_order_snapshot_context,
-    resolve_execution_task_display_name,
+from services.execution_owner_decision_production_release_service import (
+    evaluate_production_release,
 )
+from services.execution_plan_v2_guard_service import order_has_v2_snapshot_fields
+from services.volumetric_execution_dispatch import extract_order_snapshot_context
 
 
 def _parse_json(val: Any) -> list:
@@ -157,7 +156,7 @@ def _task_owned_by_other(reality_task: dict, employee_id: int) -> bool:
 
 async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, dict]]:
     plans_sql = text(
-        "SELECT ep.order_id, ep.order_code, ep.tasks_json "
+        "SELECT ep.id, ep.order_id, ep.order_code, ep.tasks_json "
         "FROM execution_plan ep ORDER BY ep.order_id ASC"
     )
     plans = list((await db.execute(plans_sql)).mappings())
@@ -169,12 +168,13 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
 
     orders_sql = text(
         "SELECT o.id, o.code, o.status, o.client_name, o.quote_code, o.snapshot_line_items, "
-        "q.intake_code "
+        "o.quote_snapshot_v2_id, o.snapshot_v2_json, q.intake_code "
         "FROM orders o "
         "LEFT JOIN quotes q ON q.id = o.quote_id "
         "WHERE o.id IN (SELECT DISTINCT order_id FROM execution_plan)"
     )
     orders_map: Dict[int, dict] = {}
+    orders_models: Dict[int, Orders] = {}
     for row in (await db.execute(orders_sql)).mappings():
         order_id = int(row["id"])
         snapshot = _parse_json_object(row.get("snapshot_line_items"))
@@ -193,6 +193,16 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
             "quote_code": ctx.get("quote_code") or str(row.get("quote_code") or ""),
             "intake_code": ctx.get("intake_code") or "",
         }
+        orders_models[order_id] = Orders(
+            id=order_id,
+            code=row.get("code"),
+            client_name=row.get("client_name"),
+            quote_code=row.get("quote_code"),
+            status=row.get("status"),
+            quote_snapshot_v2_id=row.get("quote_snapshot_v2_id"),
+            snapshot_v2_json=row.get("snapshot_v2_json"),
+            snapshot_line_items=row.get("snapshot_line_items"),
+        )
 
     order_work_files: Dict[int, List[dict]] = {}
     for order_id, info in orders_map.items():
@@ -203,10 +213,44 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
         )
 
     enriched: List[dict] = []
+    from schemas.execution_plan_v2_frozen_task_identity import FROZEN_TASK_IDENTITY_VERSION
+    from services.employee_mobile_task_truth_service import (
+        _identity_to_mobile_fields,
+        _production_blocker_summary,
+        resolve_operational_plan_tasks,
+    )
+
     for plan in plans:
         order_id = int(plan["order_id"])
         order_code = plan["order_code"] or ""
         order_info = orders_map.get(order_id, {})
+        order_model = orders_models.get(order_id)
+        resolved = resolve_operational_plan_tasks(
+            plan.get("tasks_json"),
+            order_id=order_id,
+            order=order_model,
+            execution_plan_id=int(plan["id"]) if plan.get("id") is not None else None,
+            fail_closed=order_model is not None and order_has_v2_snapshot_fields(order_model),
+        )
+        plan_tasks = resolved.tasks
+        canonical_v2 = resolved.canonical_v2
+        legacy_mode = resolved.legacy_mode
+        release_eval = (
+            evaluate_production_release(order_model) if order_model is not None else None
+        )
+        production_release_blocked = (
+            release_eval.release_status != "RELEASE_ALLOWED" if release_eval else False
+        )
+        blocking_owner_codes = (
+            [str(item.code) for item in release_eval.blockers if item.code]
+            if release_eval and production_release_blocked
+            else []
+        )
+        readiness_authority = (
+            "FROZEN_ORDER_SNAPSHOT_V2" if canonical_v2 else "LEGACY_READ_MODEL_EXPLICIT"
+        )
+        task_identity_version = FROZEN_TASK_IDENTITY_VERSION if canonical_v2 else None
+
         reality_tasks = reality_map.get(order_id, [])
         reality_by_task: Dict[str, List[dict]] = {}
         for rt in reality_tasks:
@@ -217,7 +261,7 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
                 continue
             reality_by_task.setdefault(task_key, []).append(rt)
 
-        for plan_task in _parse_json(plan.get("tasks_json")):
+        for plan_task in plan_tasks:
             if not isinstance(plan_task, dict):
                 continue
             task_id = str(plan_task.get("task_id") or "")
@@ -229,13 +273,12 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
 
             process_id = str(plan_task.get("process_id") or "")
             process_type = str(plan_task.get("process_type") or "")
-            display_name = plan_task.get("display_name") or plan_task.get("name") or ""
-            if not display_name or ":" in str(display_name):
-                display_name = resolve_execution_task_display_name(
-                    process_id=process_id or str(display_name).split(":")[-1],
-                    process_type=process_type,
-                    product_id=order_info.get("product_template") or None,
-                )
+            identity_fields = _identity_to_mobile_fields(
+                plan_task,
+                order_info=order_info,
+                canonical_v2=canonical_v2,
+            )
+            display_name = identity_fields.display_label
 
             instructions = str(plan_task.get("instructions") or "").strip()
             description = str(plan_task.get("description") or plan_task.get("notes") or "").strip()
@@ -249,12 +292,20 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
             order_documents = order_work_files.get(order_id, [])
             documents = merge_production_documents(task_documents, order_documents)
 
+            assigned_employee_id = _normalize_employee_id(plan_task.get("assigned_employee_id"))
+            operational_startable = False
+            readiness_label = None
+            readiness_status = None
+            safe_reasons: list = []
+
             enriched.append(
                 {
+                    "contract_version": "employee_mobile_task_truth/v1",
                     "task_id": task_id,
                     "order_id": order_id,
                     "order_code": order_code,
                     "title": display_name,
+                    "display_label": display_name,
                     "description": description,
                     "instructions": instructions,
                     "status": status,
@@ -262,7 +313,7 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
                     "process_type": process_type,
                     "machine_type": plan_task.get("machine_type") or "",
                     "estimated_time_minutes": plan_task.get("estimated_time_minutes") or 0,
-                    "assigned_employee_id": _normalize_employee_id(plan_task.get("assigned_employee_id")),
+                    "assigned_employee_id": assigned_employee_id,
                     "employee_id": _normalize_employee_id(rt.get("employee_id")),
                     "employee_name": rt.get("employee_name"),
                     "client": order_info.get("client", ""),
@@ -288,13 +339,44 @@ async def _load_enriched_tasks(db: AsyncSession) -> Tuple[List[dict], Dict[int, 
                                 and _normalize_employee_id(session.get("employee_id"))
                                 not in (
                                     None,
-                                    _normalize_employee_id(plan_task.get("assigned_employee_id")),
+                                    assigned_employee_id,
                                     _normalize_employee_id(rt.get("employee_id")),
                                 )
                             ]
                         ),
                     ),
                     "documents": documents,
+                    "deterministic_task_key": identity_fields.deterministic_task_key,
+                    "component_label": identity_fields.component_label,
+                    "component_role": identity_fields.component_role,
+                    "operation_label": identity_fields.operation_label,
+                    "logo_segment_label": identity_fields.logo_segment_label,
+                    "identity_source": identity_fields.identity_source,
+                    "identity_classification": identity_fields.identity_classification,
+                    "execution_plan_id": resolved.execution_plan_id,
+                    "plan_sequence": plan_task.get("sequence_index"),
+                    "legacy_mode": legacy_mode,
+                    "legacy_fallback_active": legacy_mode,
+                    "task_identity_version": task_identity_version,
+                    "readiness_authority": readiness_authority,
+                    "release_authority": "execution_owner_decision_production_release_service",
+                    "execution_source": "execution_plan_v2_operational_tasks"
+                    if canonical_v2
+                    else "legacy_execution_plan_list",
+                    "production_release_blocked": production_release_blocked,
+                    "production_blocker_summary": _production_blocker_summary(
+                        production_release_blocked,
+                        blocking_owner_codes,
+                    ),
+                    "is_startable": operational_startable,
+                    "readiness_label": readiness_label,
+                    "readiness_status": readiness_status,
+                    "readiness_reasons": safe_reasons,
+                    "can_start": False,
+                    "can_complete": status == "in_progress",
+                    "is_assigned_to_current_employee": False,
+                    "is_available_for_claim": False,
+                    "assignment_source": "execution_plan",
                 }
             )
 
@@ -305,15 +387,33 @@ async def _load_plan_and_reality_tasks(
     db: AsyncSession,
     order_id: int,
 ) -> Tuple[List[dict], List[dict]]:
-    plan_sql = text("SELECT tasks_json FROM execution_plan WHERE order_id = :oid LIMIT 1")
+    plan_sql = text(
+        "SELECT ep.id, ep.tasks_json, o.quote_snapshot_v2_id, o.snapshot_v2_json "
+        "FROM execution_plan ep "
+        "LEFT JOIN orders o ON o.id = ep.order_id "
+        "WHERE ep.order_id = :oid LIMIT 1"
+    )
     plan_row = (await db.execute(plan_sql, {"oid": order_id})).mappings().first()
-    plan_tasks = [
-        pt for pt in _parse_json(plan_row.get("tasks_json") if plan_row else []) if isinstance(pt, dict)
-    ]
+    from services.employee_mobile_task_truth_service import resolve_operational_plan_tasks
+
+    order_model: Orders | None = None
+    if plan_row is not None:
+        order_model = Orders(
+            id=order_id,
+            quote_snapshot_v2_id=plan_row.get("quote_snapshot_v2_id"),
+            snapshot_v2_json=plan_row.get("snapshot_v2_json"),
+        )
+    resolved = resolve_operational_plan_tasks(
+        plan_row.get("tasks_json") if plan_row else None,
+        order_id=order_id,
+        order=order_model,
+        execution_plan_id=int(plan_row["id"]) if plan_row and plan_row.get("id") else None,
+        fail_closed=order_model is not None and order_has_v2_snapshot_fields(order_model),
+    )
+    plan_tasks = resolved.tasks
     reality_sql = text("SELECT tasks_json FROM execution_reality WHERE order_id = :oid LIMIT 1")
     reality_row = (await db.execute(reality_sql, {"oid": order_id})).mappings().first()
     raw_reality = _parse_json(reality_row.get("tasks_json") if reality_row else [])
-    reality_tasks, _ = split_reality_task_entries(raw_reality)
     return plan_tasks, raw_reality
 
 
@@ -371,6 +471,12 @@ async def _attach_readiness_to_tasks(
                 )
             if readiness:
                 task.update(employee_safe_readiness_payload(readiness))
+            task["can_start"] = bool(
+                task.get("is_startable")
+                and not task.get("production_release_blocked")
+                and task.get("status") in ("assigned", "paused")
+            )
+            task["can_complete"] = task.get("status") == "in_progress"
 
 
 async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
@@ -429,6 +535,10 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
         task["clarification_request"] = open_req if open_req else None
 
     await _attach_readiness_to_tasks(db, owned, employee_id)
+    for task in owned:
+        task["is_assigned_to_current_employee"] = True
+        task["is_available_for_claim"] = False
+        task["can_claim"] = False
     return owned
 
 
@@ -468,12 +578,32 @@ async def _get_task_context(
     elif rt and _task_owned_by_other(rt, employee_id):
         raise HTTPException(status_code=403, detail={"error": "task_owned_by_other_employee"})
 
-    plan_sql = text("SELECT tasks_json FROM execution_plan WHERE order_id = :oid LIMIT 1")
+    plan_sql = text(
+        "SELECT ep.id, ep.tasks_json, o.quote_snapshot_v2_id, o.snapshot_v2_json "
+        "FROM execution_plan ep "
+        "LEFT JOIN orders o ON o.id = ep.order_id "
+        "WHERE ep.order_id = :oid LIMIT 1"
+    )
     plan_row = (await db.execute(plan_sql, {"oid": order_id})).mappings().first()
+    from services.employee_mobile_task_truth_service import resolve_operational_plan_tasks
+
+    order_model: Orders | None = None
+    if plan_row is not None:
+        order_model = Orders(
+            id=order_id,
+            quote_snapshot_v2_id=plan_row.get("quote_snapshot_v2_id"),
+            snapshot_v2_json=plan_row.get("snapshot_v2_json"),
+        )
+    resolved = resolve_operational_plan_tasks(
+        plan_row.get("tasks_json") if plan_row else None,
+        order_id=order_id,
+        order=order_model,
+        fail_closed=order_model is not None and order_has_v2_snapshot_fields(order_model),
+    )
     plan_lookup = {
-        pt.get("task_id"): pt
-        for pt in _parse_json(plan_row.get("tasks_json") if plan_row else [])
-        if isinstance(pt, dict)
+        str(pt.get("task_id")): pt
+        for pt in resolved.tasks
+        if isinstance(pt, dict) and pt.get("task_id")
     }
     return match, rt, plan_lookup.get(task_id, {}), task_sessions
 
@@ -884,6 +1014,10 @@ async def list_available_tasks(db: AsyncSession, employee_id: int) -> List[dict]
         available.append(row)
 
     await _attach_readiness_to_tasks(db, available, employee_id, for_available_pool=True)
+    for row in available:
+        row["is_assigned_to_current_employee"] = False
+        row["is_available_for_claim"] = True
+        row["can_claim"] = bool(row.get("claimable"))
     return available
 
 

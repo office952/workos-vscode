@@ -14,6 +14,8 @@ from services.employee_mobile_order_blueprint_service import get_employee_my_ord
 from services.employee_mobile_production_documents_service import (
     download_order_work_file_for_employee,
 )
+from schemas.employee_mobile_task_truth import EmployeeMobileTaskTruthResponse
+from services.employee_mobile_task_truth_service import build_employee_mobile_task_truth
 from services.employee_mobile_tasks_service import (
     block_my_task,
     claim_my_task,
@@ -181,6 +183,20 @@ class EmployeeMobileOrderBlueprintResponse(BaseModel):
     summary: EmployeeMobileOrderBlueprintSummary
     current_task_id: Optional[str] = None
     tasks: List[EmployeeMobileOrderBlueprintTask]
+
+
+@router.get("/tasks/truth", response_model=EmployeeMobileTaskTruthResponse)
+async def get_my_tasks_truth(
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Canonical employee-safe task truth projection (employee_mobile_task_truth/v1)."""
+    return await build_employee_mobile_task_truth(
+        db,
+        employee_id=ctx.employee.id,
+        employee_name=str(ctx.employee.name or ""),
+        category="all",
+    )
 
 
 @router.get("/tasks", response_model=List[EmployeeMobileTaskResponse])

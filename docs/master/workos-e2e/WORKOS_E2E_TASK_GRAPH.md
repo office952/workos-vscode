@@ -343,7 +343,24 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Tests | 82 pass / 2 fail (preexisting fixture debt) |
 | Screenshots | 9 @ 390×844 |
 | Authorization | `READY_WITH_BACKEND_ADAPTER_PREREQUISITE` |
-| Next | **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL** |
+| Next | **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL** |
+
+## MOBILE-T01 — Canonical mobile task read model
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_TASK_READ_MODEL_PASS_COMMITTED` |
+| Contract | `employee_mobile_task_truth/v1` |
+| Parser | `WRAP_EXISTING_CANONICAL_PARSER` |
+| Identity | `FULL_CANONICAL_IDENTITY_WITH_LOGO_DEBT` |
+| V2 envelope | PASS — `operational_tasks[]` via shared parser |
+| Fail-closed | PASS — structured MOBILE_V2_* errors |
+| Legacy | `LEGACY_MOBILE_TASK_ADAPTER` explicit branch |
+| Runtime | Order `23099` — 13 plan tasks; Sandu assigned subset non-empty |
+| Tests | 63 backend + 10 frontend focused pass |
+| Entry-gate fixes | `FIXED_BY_CANONICAL_ADAPTER` (2 tests) |
+| Next | **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL** |
 
 ## W6-INT-02 — Operator truth + resolution integration gate
 

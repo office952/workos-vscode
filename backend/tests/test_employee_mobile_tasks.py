@@ -277,6 +277,8 @@ def test_start_assigned_task(db_fixture, db_session):
 
     async def _setup():
         emp = await _seed_employee(db_session, user_id=user_id, name="Starter")
+        await _seed_active_order(db_session, order_id=201)
+        await _seed_print_eligibility(db_session, emp.id)
         await _seed_plan_with_assigned_task(
             db_session,
             order_id=201,
