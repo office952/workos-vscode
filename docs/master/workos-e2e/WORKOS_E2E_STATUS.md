@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `5010e4e` (MOBILE-INT-01) — MOBILE-T01 implementation committed on branch
+**Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T01 canonical mobile task read model — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T02 assigned/available task list + detail — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL** |
+| Next task | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
 
 
 
@@ -346,7 +346,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Program status:** `MOBILE_ENTRY_GATE_PASS_IMPLEMENTATION_AUTHORIZED_WITH_PREREQUISITE`
 
-Next allowed task: **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL**. Frozen-spine desktop program remains complete.
+Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine desktop program remains complete.
 
 ## MOBILE-T01 — Canonical mobile task read model
 
@@ -358,5 +358,15 @@ Next allowed task: **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL**. Froze
 
 **Entry-gate tests:** `test_start_assigned_task`, `test_employee_mobile_start_flow_still_works` → `FIXED_BY_CANONICAL_ADAPTER`.
 
-**Next:** **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL**
+**Next:** **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**
+
+## MOBILE-T02 — Assigned / available task list and detail
+
+**Verdict:** `MOBILE_TASK_LIST_DETAIL_PASS_COMMITTED`
+
+**Delivered:** Single `employee_mobile_task_truth/v1` consumer via `EmployeeMobileV2TaskTruthProvider`; list sections Sarcinile mele / În lucru / Disponibile / Finalizate; task cards and detail panels with backend identity, readiness, production block; distinct error vs empty states.
+
+**Proof:** 10 truth backend + 18 frontend tests; runtime Sandu order `23099` assigned 5 / available 7; 12 screenshots @ 390×844.
+
+**Next:** **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**
 

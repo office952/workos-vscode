@@ -360,7 +360,24 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Runtime | Order `23099` — 13 plan tasks; Sandu assigned subset non-empty |
 | Tests | 63 backend + 10 frontend focused pass |
 | Entry-gate fixes | `FIXED_BY_CANONICAL_ADAPTER` (2 tests) |
-| Next | **MOBILE-T02-ASSIGNED-AVAILABLE-TASK-LIST-AND-DETAIL** |
+| Next | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
+
+## MOBILE-T02 — Assigned / available task list and detail
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_TASK_LIST_DETAIL_PASS_COMMITTED` |
+| Canonical frontend source | `employee_mobile_task_truth/v1` via `EmployeeMobileV2TaskTruthProvider` |
+| List IA | Sarcinile mele / În lucru / Disponibile / Finalizate |
+| Identity | Root, mounting, logo friendly labels from backend |
+| Readiness / production | Backend fields rendered; no frontend authority |
+| Claim | `CLAIM_PRESENTATION_ONLY_DEFER_TO_MOBILE_T06` |
+| Start | `START_VISIBILITY_ONLY` |
+| Runtime | Sandu @ order 23099 — assigned 5, available 7 |
+| Tests | 10 truth backend + 18 frontend focused pass |
+| Screenshots | 12 @ 390×844 |
+| Next | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
 
 ## W6-INT-02 — Operator truth + resolution integration gate
 
