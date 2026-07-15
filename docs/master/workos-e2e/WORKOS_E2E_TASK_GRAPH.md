@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** W6-INT-02 authorized (not started)  
+**Active task:** None — Wave 6 closed  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,8 +271,9 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | `W6-T04 COMPLETE` — W6-INT-02 authorized |
-| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
+| Wave 6 | **CLOSED** — W6-INT-02 PASS |
+| Wave 7 | `OPEN_WAVE_7_INTEGRATION_GATE` (not auto-started) |
+| Next | **Wave 7 integration gate** |
 
 ## W6-INT-01 — Operator execution truth and blocker visibility gate
 
@@ -311,7 +312,20 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Canonical source | `operator_task_truth/v1` |
 | Tests | 32 backend + 22 frontend pass |
 | Runtime | Order `23099` on `:8001` |
-| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
+| Next | **W6-INT-02** (complete) |
+
+## W6-INT-02 — Operator truth + resolution integration gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W6_INT_02_PASS_WITH_NONBLOCKING_UI_DEBT_CLOSE_WAVE_6` |
+| Wave 6 | **CLOSED** |
+| Tests | 78 pass (32 backend + 30 frontend + 16 W5 guard) |
+| Runtime | `23150` partial→full; `23099` comparison; snapshot hash stable |
+| Task identity | `TASK_IDENTITY_UI_COMPLETE_WITH_LOGO_LABEL_DEBT` |
+| OperatorView | `ALIGNED_WITH_MANUAL_REFRESH_DEBT` |
+| Wave 7 | `OPEN_WAVE_7_INTEGRATION_GATE` |
 
 ## W6-T04 — Manager owner-decision operational resolution UI
 

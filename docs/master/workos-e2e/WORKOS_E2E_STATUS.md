@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `b41d885` (W6-T03 docs) — application baseline follows W6-T04 commit
+**Accepted HEAD:** `4977988` (W6-T04 docs) — application baseline `b565b8d`
 
-**Application baseline:** W6-T04 manager owner-decision resolution UI commit (see Wave 6 W6-T04 section)
+**Application baseline:** W6-T04 manager owner-decision resolution UI (`b565b8d`)
 
-**Last updated:** 2026-07-15 (W6-T04 manager resolution UI)
+**Last updated:** 2026-07-15 (W6-INT-02 Wave 6 integration gate — **CLOSED**)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 implementation** — W6-T04 COMPLETE |
+| Phase | **Wave 6 CLOSED** — W6-INT-02 integration gate PASS |
 
-| Implementation hold | **Lifted for W6-INT-02 post-implementation gate** |
+| Implementation hold | **Lifted for Wave 7 gate planning** |
 
 | Active task | None |
 
-| Next task | **W6-INT-02-POST-IMPLEMENTATION-GATE** (not auto-started) |
+| Next task | **W7 integration gate** (not auto-started) |
 
 
 
@@ -316,5 +316,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W6-INT-02-POST-IMPLEMENTATION-GATE** (not auto-started).
+Next allowed task: **Wave 7 integration gate** (not auto-started). Wave 6 is **CLOSED**.
 
