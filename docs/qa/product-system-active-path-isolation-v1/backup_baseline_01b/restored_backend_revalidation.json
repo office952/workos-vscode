@@ -1,0 +1,17 @@
+{
+  "port": 8021,
+  "working_directory": "C:\\w\\wrt\\b01\\repository\\backend",
+  "database_url_sanitized": "sqlite+aiosqlite:///C:/w/wrt/b01/database/dev.db",
+  "source_db_referenced": false,
+  "health": {
+    "status": "healthy"
+  },
+  "read_endpoint": {
+    "path": "/api/v1/operational-registry/employees",
+    "status": 200,
+    "employee_total": 8
+  },
+  "parity_flags": "0 0 0",
+  "parity_flags_all_false": true,
+  "classification": "PASS"
+}

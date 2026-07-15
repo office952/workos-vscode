@@ -1,0 +1,52 @@
+{
+  "verdict": "BACKUP_BASELINE_01B_FRONTEND_RESTORE_PASS",
+  "domains": [
+    {
+      "domain": "Safety checkpoint",
+      "result": "PASS"
+    },
+    {
+      "domain": "Dependency resolution (Method A)",
+      "result": "PASS"
+    },
+    {
+      "domain": "Restored backend 8021",
+      "result": "PASS"
+    },
+    {
+      "domain": "Frontend build",
+      "result": "BUILD_PASS"
+    },
+    {
+      "domain": "Frontend runtime 3021",
+      "result": "PASS"
+    },
+    {
+      "domain": "API target 8021",
+      "result": "PASS"
+    },
+    {
+      "domain": "Representative route /modules",
+      "result": "PASS"
+    },
+    {
+      "domain": "Source node_modules invariance",
+      "result": "PASS"
+    },
+    {
+      "domain": "Source business DB invariance",
+      "result": "PASS"
+    },
+    {
+      "domain": "Cleanup",
+      "result": "PASS"
+    },
+    {
+      "domain": "Visual screenshot",
+      "result": "PARTIAL",
+      "note": "Playwright chromium not installed; HTTP verification PASS"
+    }
+  ],
+  "backup_closure": "FULL",
+  "next_task": "APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN"
+}

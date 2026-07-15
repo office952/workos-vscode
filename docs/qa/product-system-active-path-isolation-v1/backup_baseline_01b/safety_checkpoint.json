@@ -1,0 +1,59 @@
+{
+  "recorded_at": "2026-07-15T10:36:30.393058+00:00",
+  "source_head": "682235aaffb6dc2d8eab8d84079c4dbae9d64722",
+  "source_branch": "feature/product-system-active-path-isolation-v1",
+  "source_git_status_short_lines": 256,
+  "source_node_modules": {
+    "exists": true,
+    "top_level_dirs": 59,
+    "top_level_files": 1
+  },
+  "restored_frontend_path": "C:\\w\\wrt\\b01\\repository\\frontend",
+  "restored_node_modules": {
+    "exists": false,
+    "top_level_dirs": 0
+  },
+  "prior_deleted_node_modules_path": "C:\\w\\wrt\\b01\\repository\\frontend\\node_modules",
+  "backup_folder_exists": true,
+  "restored_db_exists": true,
+  "source_db_path": "C:\\w\\psiso\\backend\\dev.db",
+  "restored_db_path": "C:\\w\\wrt\\b01\\database\\dev.db",
+  "ports": {
+    "3000": {
+      "listening": true,
+      "pids": [
+        22836
+      ]
+    },
+    "3021": {
+      "listening": false,
+      "pids": []
+    },
+    "8001": {
+      "listening": true,
+      "pids": [
+        4984,
+        26172,
+        36680
+      ]
+    },
+    "8021": {
+      "listening": false,
+      "pids": []
+    }
+  },
+  "backend_8021_health": {
+    "ok": false,
+    "error": "<urlopen error [WinError 10061] No connection could be made because the target machine actively refused it>"
+  },
+  "backend_8001_health": {
+    "ok": true,
+    "status": 200,
+    "body_preview": "{\"status\":\"healthy\"}"
+  },
+  "frontend_3000": {
+    "ok": true,
+    "status": 200,
+    "body_preview": "<!doctype html>\r\n<html lang=\"ro\">\r\n  <head>\n    <script type=\"module\">import { injectIntoGlobalHook } from \"/@react-refr"
+  }
+}

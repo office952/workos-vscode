@@ -518,11 +518,37 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **BACKUP-BASELINE-01B-RESTORE-CLOSURE** (was blocked pending backup; partial restore — frontend deferred)
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
+
+## BACKUP-BASELINE-01B — Isolated frontend restore closure
+
+**Verdict:** `BACKUP_BASELINE_01B_FRONTEND_RESTORE_PASS`
+
+**Starting HEAD:** `682235a`
+
+**Scope:** Close deferred frontend restore only — Method A offline `pnpm install` in `C:\w\wrt\b01\repository\frontend`; build + runtime on `:3021`; API proxy to `:8021`. No source code or source `node_modules` changes.
+
+| Check | Result |
+|-------|--------|
+| Dependency method | OFFLINE_INSTALL (frozen-lockfile, prefer-offline) |
+| Frontend build | **BUILD_PASS** |
+| Frontend runtime `:3021` | **PASS** (`/`, `/modules`, `/governance`) |
+| API target | **8021** (employees via proxy) |
+| Source `node_modules` | unchanged |
+| Source business DB | unchanged |
+| Backup closure | **FULL** |
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/backup_baseline_01b/*.json`
+
+**Worklog:** `docs/worklog/backup/2026-07-15_backup_baseline_01b_isolated_frontend_restore_closure_v1.md`
+
+**BACKUP-BASELINE-01B:** **COMPLETE**
+
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 ## BACKUP-BASELINE-01 — Full local backup + restore verification
 
-**Verdict:** `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL`
+**Verdict:** `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL` → **closed by 01B**
 
 **Starting HEAD:** `deb5d69`
 
@@ -537,25 +563,23 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 | Repository + `.git` | **PASS** (dirty worktree preserved) |
 | SQLite DB backup | **PASS** (`sqlite3` backup API; integrity ok) |
 | DB restore (isolated) | **PASS** (counts match) |
-| Backend restore `:8021` | **PASS** (prior evidence) |
-| Frontend restore `:3021` | **NOT_EXECUTED_SAFE_DEFERRED** |
+| Backend restore `:8021` | **PASS** |
+| Frontend restore `:3021` | **PASS** (01B closure) |
 | Manifest + SHA-256 | **PASS** |
-| Source `C:\w\psiso` intact | **PASS** (business counts unchanged; `oidc_states` ephemeral +1) |
+| Source `C:\w\psiso` intact | **PASS** |
 | Source `node_modules` | **YES** |
-
-**Blocked until closure:** `APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN` · `PROD-ARCH-01` · `MOBILE-INT-02`
 
 **Evidence:** `docs/qa/product-system-active-path-isolation-v1/backup_baseline_01/*.json`
 
 **Worklog:** `docs/worklog/backup/2026-07-15_backup_baseline_01_full_local_application_backup_restore_v1.md`
 
-**BACKUP-BASELINE-01:** **COMPLETE** (backup PASS; restore PARTIAL — frontend deferred by design)
+**BACKUP-BASELINE-01:** **COMPLETE** (backup PASS; restore closed in 01B)
 
-**Next:** **BACKUP-BASELINE-01B-RESTORE-CLOSURE**
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 ## Safety / backup checkpoint
 
-Normal roadmap tasks (`APP-AUTH-06C`, `PROD-ARCH-01`, `MOBILE-INT-02`) remain **blocked** until **BACKUP-BASELINE-01B** closes isolated frontend restore. Backup folder is authoritative; not in git.
+Backup baseline **FULL** (01 + 01B). Roadmap may proceed to **APP-AUTH-06C**; `PROD-ARCH-01` and `MOBILE-INT-02` remain blocked per prior gates. Backup artifact outside worktree — not in git.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

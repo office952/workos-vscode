@@ -1,0 +1,20 @@
+{
+  "frontend_port": 3021,
+  "backend_port": 8021,
+  "environment_variables": {
+    "VITE_PORT": "3021",
+    "BACKEND_PORT": "8021",
+    "APP_ENV": "development",
+    "ENVIRONMENT": "development",
+    "DATABASE_URL": "sqlite+aiosqlite:///C:/w/wrt/b01/database/dev.db",
+    "JWT_SECRET_KEY": "[local-dev placeholder \u2014 not recorded]",
+    "JWT_ALGORITHM": "HS256",
+    "ALLOWED_ORIGINS": "http://127.0.0.1:3021,http://localhost:3021",
+    "PARITY_OBSERVE_ENABLED": "(unset/false)",
+    "COMPETENCE_PARITY_ENABLED": "(unset/false)"
+  },
+  "api_proxy_target": "http://localhost:8021",
+  "config_file_modified_in_restore": false,
+  "restored_only_env_file": null,
+  "classification": "PASS"
+}

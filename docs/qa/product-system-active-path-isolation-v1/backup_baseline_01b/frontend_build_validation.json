@@ -1,0 +1,9 @@
+{
+  "command": "npx --yes pnpm@8.10.0 run build",
+  "working_directory": "C:\\w\\wrt\\b01\\repository\\frontend",
+  "exit_code": 0,
+  "output_artifact": "C:\\w\\wrt\\b01\\repository\\frontend\\dist\\index.html",
+  "dist_present": true,
+  "dist_bytes": 4462173,
+  "classification": "BUILD_PASS"
+}

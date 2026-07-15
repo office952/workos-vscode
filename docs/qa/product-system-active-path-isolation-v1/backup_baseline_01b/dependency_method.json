@@ -1,0 +1,12 @@
+{
+  "method": "OFFLINE_INSTALL",
+  "method_label": "Method A \u2014 offline/frozen pnpm install in restored folder",
+  "command": "npx --yes pnpm@8.10.0 install --frozen-lockfile --prefer-offline",
+  "working_directory": "C:\\w\\wrt\\b01\\repository\\frontend",
+  "target_node_modules": "C:\\w\\wrt\\b01\\repository\\frontend\\node_modules",
+  "exit_code": 0,
+  "retry_count": 0,
+  "junction_used": false,
+  "source_node_modules_touched": false,
+  "classification": "PASS"
+}

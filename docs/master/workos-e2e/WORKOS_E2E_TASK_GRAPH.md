@@ -524,35 +524,45 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **BACKUP-BASELINE-01B-RESTORE-CLOSURE** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
+
+## BACKUP-BASELINE-01B — Isolated frontend restore closure
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `BACKUP_BASELINE_01B_FRONTEND_RESTORE_PASS` |
+| Starting HEAD | `682235a` |
+| Restore root | `C:\w\wrt\b01` |
+| Dependency method | OFFLINE_INSTALL |
+| Frontend build | **BUILD_PASS** |
+| Frontend runtime | **PASS** (`:3021`) |
+| API target | **8021** |
+| Backup closure | **FULL** |
+| BACKUP-BASELINE-01B | **COMPLETE** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## BACKUP-BASELINE-01 — Full local backup + restore verification
 
 | Field | Value |
 |-------|-------|
 | Status | **COMPLETE** (2026-07-15) |
-| Verdict | `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL` |
+| Verdict | `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL` (closed by 01B) |
 | Starting HEAD | `deb5d69` |
 | Backup ID | `workos_full_backup_20260715_125751_deb5d69` |
 | Backup root | `C:\w\workos_backups\workos_full_backup_20260715_125751_deb5d69` |
-| Repository | PASS (`.git` + dirty patches) |
-| Database | PASS (SQLite backup API) |
+| Repository | PASS |
+| Database | PASS |
 | DB restore isolated | PASS |
 | Backend restore `:8021` | PASS |
-| Frontend restore `:3021` | **NOT_EXECUTED_SAFE_DEFERRED** |
-| Checksums | PASS (SHA-256) |
-| Source intact | PASS |
-| Parity flags | ALL_FALSE |
-| Implementation authorized | **NO** |
-| APP-AUTH-06C | **BLOCKED** pending 01B |
-| PROD-ARCH-01 | **BLOCKED** |
-| MOBILE-INT-02 | **BLOCKED** |
+| Frontend restore `:3021` | PASS (01B) |
+| Checksums | PASS |
 | BACKUP-BASELINE-01 | **COMPLETE** |
-| Next | **BACKUP-BASELINE-01B-RESTORE-CLOSURE** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## Safety / backup checkpoint
 
-Backup artifact lives outside worktree. Frontend isolated restore deferred — not a backup failure. Roadmap unblocks after **BACKUP-BASELINE-01B**.
+Backup baseline FULL (01 + 01B). Proceed to APP-AUTH-06C; PROD-ARCH-01 / MOBILE-INT-02 remain blocked per prior owner gates.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 
