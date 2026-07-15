@@ -406,8 +406,9 @@ Unificare sau remediere UI — **NU AUTORIZATĂ** în această sesiune.
 2. **Split API path** — `/api` proxy vs direct `:8001` (MEDIUM).
 3. **Module/Governance duplication** — GOV-MODULE-AUTH-01 pending.
 4. **Parity signal interpretation** — APP-AUTH-06C următor.
-5. **Sandu competence drift** — CONFIRMATION_REQUIRED (observe, nu fix).
-6. **Frontend TS debt** — `validate:frontend` încă FAIL (program-level).
+5. **Sandu competence drift** — CONFIRMATION_REQUIRED (observe, nu fix); **PAUSED** pending OWNER-DECISION-06 operational flexibility contract.
+6. **Staffing/collaboration debt** — PROD-FLEX-INT-01: claim OK; help/join/quantity progress missing; D6 contradicted (active session blocks available pool).
+7. **Frontend TS debt** — `validate:frontend` încă FAIL (program-level).
 
 ---
 
@@ -492,7 +493,9 @@ Roadmap principal **realiniat**:
 4. ~~APP-AUTH-06C~~ — parity signal interpretation plan — **PASS**
 5. ~~OWNER-DECISION-05~~ — authority policy — **PASS**
 6. ~~APP-AUTH-06F~~ — Sandu reconciliation plan — **PASS**
-7. **APP-AUTH-06G** — Sandu evidence collection (**NEXT**)
+7. ~~PROD-FLEX-INT-01~~ — Operational claim/collaboration flexibility audit — **PASS**
+8. **OWNER-DECISION-06** — Operational flexibility and collaboration contract (**NEXT**)
+9. **APP-AUTH-06G** — Sandu evidence collection (**PAUSED** until OD-06)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -502,12 +505,9 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**OWNER-DECISION-05** — `PARITY_SIGNAL_AUTHORITY_AND_SANDU_RECONCILIATION` — **COMPLETE**
+**PROD-FLEX-INT-01** — Operational flexibility audit — **COMPLETE** (`PROD_FLEX_INT_01_AUDIT_READY_FOR_OWNER_DECISIONS`)
 
-- S1–S6, S8–S15 policy confirmed; S7 operations 7/7 reviewed, per-operation deferred to APP-AUTH-06F.
-- Sandu behavior **unchanged**; parity **observe-only**.
-
-**Current position (2026-07-15):** Authority rules confirmed; next = APP-AUTH-06F reconciliation plan (plan only, no DB).
+**Current position (2026-07-15):** Claim/assign proven; collaboration/help/quantity gaps documented; D1–D24 package ready. Next = **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT**. APP-AUTH-06G **paused** until general contract confirmed.
 
 ---
 

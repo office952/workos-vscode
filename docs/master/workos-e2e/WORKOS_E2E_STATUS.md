@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `c8f723a` (OWNER-DECISION-05)
+**Accepted HEAD:** `5930efc` (APP-AUTH-06F)
 
-**Last updated:** 2026-07-15 (APP-AUTH-06F — Sandu reconciliation plan **COMPLETE**)
+**Last updated:** 2026-07-15 (PROD-FLEX-INT-01 — operational flexibility audit **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **APP-AUTH-06F** — Sandu reconciliation plan (**COMPLETE**) |
+| Active task | **PROD-FLEX-INT-01** — operational claim/collaboration audit (**COMPLETE**) |
 
-| Next task | **APP-AUTH-06G-SANDU-EVIDENCE-COLLECTION** (UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT** (APP-AUTH-06G **PAUSED** pending OD-06; UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -1075,4 +1075,29 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 **MOBILE-T03:** **COMPLETE**
 
 **Next:** **MOBILE-T04-START-ACTION-WIRING**
+
+## PROD-FLEX-INT-01 — Operational task claim and collaboration flexibility audit
+
+**Verdict:** `PROD_FLEX_INT_01_AUDIT_READY_FOR_OWNER_DECISIONS`
+
+**Scope:** Read-only audit — Product System, Execution Plan, READY, eligibility, claim, assignment, participants, help, sessions, progress, UI, hardcoding, 40-letter scenario, D1–D24.
+
+**Key findings:**
+
+- Product System: **0** employee IDs; staffing cardinality **not modeled**
+- Claim + manager assign: **IMPLEMENTED** (MOBILE-T06)
+- Help request: **NOT_IMPLEMENTED**
+- Multi-participant: **PARTIAL** (reality sessions yes; mobile join blocked)
+- Quantity progress (40 litere): **NOT_IMPLEMENTED**
+- D6 **contradicted** today — active session hides task from available pool
+
+**Staffing/collaboration debt:** single `assigned_employee_id`; no `progress_unit`; no help/join API; Shop Floor mock risk; Sandu track **pause recommended** until OWNER-DECISION-06.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_prod_flex_int_01_operational_task_claim_collaboration_flexibility_audit_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/prod_flex_int_01/` (19 JSON)
+
+**PROD-FLEX-INT-01:** **COMPLETE**
+
+**Next:** **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT**
 

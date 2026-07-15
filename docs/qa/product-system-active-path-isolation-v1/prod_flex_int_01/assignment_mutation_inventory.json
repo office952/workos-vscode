@@ -1,0 +1,50 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "mutation_endpoints": [
+    {
+      "endpoint": "PATCH /api/v1/execution/plan/{order_id}/tasks/{task_id}/assign",
+      "service": "assign_plan_task",
+      "action": "manager_assign",
+      "authority": "execution.task_assign permission",
+      "history": "assignment_source + assignment_updated_at on task dict",
+      "conflict": "409 task_already_assigned without allow_reassign",
+      "after_start": "BLOCKED if reality ended_at on merged legacy view"
+    },
+    {
+      "endpoint": "POST /api/v1/employee-mobile/tasks/{task_id}/claim",
+      "service": "claim_my_task → assign_plan_task",
+      "action": "employee_claim",
+      "authority": "employee_mobile self",
+      "history": "assignment_source=employee_claim",
+      "conflict": "409 via assign lock",
+      "after_start": "same as manager"
+    },
+    {
+      "endpoint": "POST /api/v1/employee-mobile/tasks/{task_id}/start-from-available",
+      "service": "start_available_task",
+      "action": "claim_and_start",
+      "authority": "employee_mobile self",
+      "history": "assignment_source=start_from_available",
+      "conflict": "rollback clear_plan_task_assignment on start failure",
+      "after_start": "reassign blocked when task completed"
+    },
+    {
+      "endpoint": "internal clear_plan_task_assignment",
+      "service": "execution_task_assignment_service",
+      "action": "rollback_unassign",
+      "authority": "failed start only",
+      "history": "none",
+      "conflict": "N/A",
+      "after_start": "NOT_EXPOSED_TO_OPERATORS"
+    }
+  ],
+  "parallel_mutation_paths": 3,
+  "who_can_assign": ["manager/operator with execution.task_assign", "eligible employee self-claim"],
+  "reassignment_after_start": "NOT_SUPPORTED — completed check on reality merged entry",
+  "unassignment": "NOT_IMPLEMENTED for operators",
+  "reassignment_reason_field": false,
+  "mobile_admin_conflict": "MITIGATED_BY_LOCK — last write wins per task with 409",
+  "assignment_changes_eligibility": false,
+  "assignment_means_exclusive_execution": "MOBILE_LIST_YES — task_belongs_to_employee uses assignee; runtime sessions can differ"
+}

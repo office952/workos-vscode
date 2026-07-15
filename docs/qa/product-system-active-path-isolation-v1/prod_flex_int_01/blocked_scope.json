@@ -1,0 +1,30 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "forbidden_in_this_audit": [
+    "code changes",
+    "DB changes",
+    "Product System mutations",
+    "Execution Plan mutations",
+    "task mutations",
+    "Sandu reconciliation implementation",
+    "eligibility enforcement changes",
+    "claim implementation",
+    "help request implementation",
+    "multi-participant implementation",
+    "migrations",
+    "seeds",
+    "mocks"
+  ],
+  "out_of_scope_implementation": [
+    "PROD-FLEX-INT-02 runtime probe",
+    "PROD-FLEX-ARCH-01 architecture plan",
+    "APP-AUTH-06G Sandu evidence collection"
+  ],
+  "paused_parallel_tracks": {
+    "sandu_reconciliation": "PAUSE_RECOMMENDED until OWNER-DECISION-06 operational flexibility contract confirmed",
+    "ui_truth_01b_01e": "PAUSED per session ledger",
+    "parity_enforcement": "observe-only — unchanged"
+  },
+  "verdict": "AUDIT_SCOPE_RESPECTED"
+}

@@ -1,0 +1,18 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "progress_owner": "OPERATION_TASK_LEVEL — not per employee quantity",
+  "quantitative_progress": false,
+  "progress_unit_field": false,
+  "forty_letters_model": "NOT_SUPPORTED — cannot represent 17/40 letters",
+  "boolean_only": true,
+  "derived_from": "derive_task_status_from_sessions + blueprint task counts",
+  "blueprint_progress_percent": "order_production_blueprint_service — done/total_tasks not units",
+  "my_progress_percent": "employee_mobile_order_blueprint_service — session-derived heuristic",
+  "complete_any_participant": "ANY active session holder can complete_my_task",
+  "operation_complete_separate": "PARTIAL — per-employee complete; global done when all sessions ended",
+  "quality_control_separate": "NOT_IN_RUNTIME — QC as separate plan task",
+  "first_finisher_closes_all_risk": "YES when sole session — NO when helpers active (test_partial_complete)",
+  "aggregate_from_contributions": false,
+  "verdict": "TASK_BOOLEAN_PROGRESS_ONLY — quantity progress missing"
+}

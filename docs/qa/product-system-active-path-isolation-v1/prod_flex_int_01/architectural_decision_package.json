@@ -1,0 +1,37 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "package": "D1-D24",
+  "decisions": [
+    { "id": "D1", "statement": "Taskurile devin READY independent de assignment", "current_state": "PARTIAL", "evidence": "operator evaluate_all_task_readiness without employee_id → eligible", "owner_recommendation": "CONFIRM" },
+    { "id": "D2", "statement": "Eligibility determina cine poate vedea/prelua", "current_state": "IMPLEMENTED", "evidence": "list_available_tasks + registry", "owner_recommendation": "CONFIRM" },
+    { "id": "D3", "statement": "Eligible nu inseamna assigned", "current_state": "IMPLEMENTED", "evidence": "separate pools", "owner_recommendation": "CONFIRM" },
+    { "id": "D4", "statement": "Default self-claim sau manual assign, nu auto-dispatch", "current_state": "IMPLEMENTED", "evidence": "no auto-dispatch service found", "owner_recommendation": "CONFIRM" },
+    { "id": "D5", "statement": "Manager poate atribui manual", "current_state": "IMPLEMENTED", "evidence": "PATCH assign endpoint", "owner_recommendation": "CONFIRM" },
+    { "id": "D6", "statement": "Claimul nu blocheaza participanti suplimentari", "current_state": "CONTRADICTED", "evidence": "_has_active_session_by_other in available pool", "owner_recommendation": "CONFIRM_WITH_FIX_PATH" },
+    { "id": "D7", "statement": "Operator principal optional", "current_state": "PARTIAL", "evidence": "assignee optional but mobile assigned start expects ownership", "owner_recommendation": "CONFIRM" },
+    { "id": "D8", "statement": "Operatia poate avea 0..N participanti", "current_state": "PARTIAL", "evidence": "multi-session backend; plan 0..1", "owner_recommendation": "CONFIRM" },
+    { "id": "D9", "statement": "Cererea de ajutor adauga participanti", "current_state": "NOT_IMPLEMENTED", "evidence": "help_request_inventory", "owner_recommendation": "CONFIRM" },
+    { "id": "D10", "statement": "Ajutorul nu reasigneaza automat", "current_state": "N/A", "evidence": "no help flow", "owner_recommendation": "CONFIRM" },
+    { "id": "D11", "statement": "Fiecare participant are sesiune proprie", "current_state": "IMPLEMENTED", "evidence": "task_work_session_service", "owner_recommendation": "CONFIRM" },
+    { "id": "D12", "statement": "Stop own work != Complete operation", "current_state": "PARTIAL", "evidence": "mobile only complete; operator end-task can end session", "owner_recommendation": "CONFIRM" },
+    { "id": "D13", "statement": "Progresul apartine operatiei", "current_state": "NOT_IMPLEMENTED", "evidence": "boolean task + session time only", "owner_recommendation": "CONFIRM" },
+    { "id": "D14", "statement": "Product System fara employee IDs", "current_state": "CONFIRMED", "evidence": "product_system_staffing_inventory count 0", "owner_recommendation": "CONFIRM" },
+    { "id": "D15", "statement": "Product System poate declara paralelizare si unitate progres", "current_state": "NOT_IMPLEMENTED", "evidence": "no fields in compiler", "owner_recommendation": "CONFIRM" },
+    { "id": "D16", "statement": "Numar recomandat nu blocheaza executia", "current_state": "N/A", "evidence": "field absent", "owner_recommendation": "CONFIRM" },
+    { "id": "D17", "statement": "Minim blocheaza doar reguli operationale reale", "current_state": "N/A", "evidence": "field absent", "owner_recommendation": "CONFIRM" },
+    { "id": "D18", "statement": "Numar concret participanti = runtime", "current_state": "PARTIAL", "evidence": "participants_count derived", "owner_recommendation": "CONFIRM" },
+    { "id": "D19", "statement": "Disponibilitate/incarcare nu in Product System", "current_state": "CONFIRMED", "evidence": "no workload model", "owner_recommendation": "CONFIRM" },
+    { "id": "D20", "statement": "Persoane intra/ies fara refacere Execution Plan", "current_state": "PARTIAL", "evidence": "sessions mutate reality only; assignee sticky", "owner_recommendation": "CONFIRM" },
+    { "id": "D21", "statement": "Snapshot ingheata cerinta nu echipa", "current_state": "CONFIRMED", "evidence": "MOBILE-T06 frozen identity proof", "owner_recommendation": "CONFIRM" },
+    { "id": "D22", "statement": "Completare operatie separata de contributie", "current_state": "PARTIAL", "evidence": "per-employee complete vs global done", "owner_recommendation": "CONFIRM" },
+    { "id": "D23", "statement": "Nu hardcodam persoane/echipe", "current_state": "PARTIAL", "evidence": "seed explicit names; PS clean", "owner_recommendation": "CONFIRM" },
+    { "id": "D24", "statement": "Nu auto-dispatch inainte de claim/participare corecte", "current_state": "CONFIRMED", "evidence": "no dispatch motor", "owner_recommendation": "CONFIRM" }
+  ],
+  "summary": {
+    "confirm_as_is_or_target": 18,
+    "needs_implementation": 6,
+    "contradicted_today": 1
+  },
+  "recommended_owner_gate": "OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT"
+}

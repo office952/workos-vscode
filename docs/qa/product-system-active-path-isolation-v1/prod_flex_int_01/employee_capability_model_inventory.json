@@ -1,0 +1,46 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "audited_at": "2026-07-15",
+  "starting_head": "5930efc",
+  "canonical_employee_model": {
+    "primary_post": {
+      "field": "Employees.role / functie",
+      "source": "models/employees.py + HR UI",
+      "runtime_authority": "PARTIAL",
+      "note": "Registry panel uses operational authorizations; legacy JSON skills coexist"
+    },
+    "primary_skills": {
+      "canonical": "EmployeeSkillAuthorization.skill_code via OperationalRegistryService",
+      "legacy": "Employees.skills JSON array",
+      "authority_per_owner_decision_05": "registry canonical; legacy transitional"
+    },
+    "permitted_machines": {
+      "canonical": "EmployeeResourceAuthorization + machines registry",
+      "legacy": "Employees.authorized_machines JSON"
+    },
+    "permitted_workcenters": {
+      "field": "EmployeeWorkcenterAuthorization.workcenter_code",
+      "ui": "/employees + EmployeeOperationalPanel"
+    }
+  },
+  "ui_surfaces": [
+    {
+      "route": "/employees",
+      "component": "Employees.tsx + EmployeeOperationalPanel",
+      "can_configure": ["skills", "workcenters", "resources", "explicit_operation_mappings"],
+      "demo_risk": "LOW — loads operational registry API"
+    },
+    {
+      "route": "/employees-records/:employeeId",
+      "component": "EmployeeProfile.tsx",
+      "can_configure": ["HR fields", "skills display"],
+      "demo_risk": "MEDIUM — usePersonalDemoModule for records list"
+    }
+  ],
+  "verdict": "SUFFICIENT_FOR_ELIGIBILITY_INPUT",
+  "gaps": [
+    "Duplicate skills authority (registry vs legacy JSON)",
+    "No unified post_principal field separate from role/functie",
+    "Availability/workload not modeled"
+  ]
+}

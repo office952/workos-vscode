@@ -1,0 +1,111 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "authority_matrix": [
+    {
+      "information": "permite_colaborare",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "IMPLICIT via multi-session",
+      "execution_reality": "SESSION_ROLE_HELPER"
+    },
+    {
+      "information": "permite_paralelizare",
+      "product_system": "DOC_ONLY",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "NOT_ENFORCED",
+      "execution_reality": "ALLOWED_IF_STARTED"
+    },
+    {
+      "information": "unitate_progres",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "NOT_MODELED",
+      "execution_reality": "NOT_MODELED"
+    },
+    {
+      "information": "minim_oameni_pornire",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "DEFAULT_1_IMPLICIT",
+      "execution_reality": "NOT_ENFORCED"
+    },
+    {
+      "information": "numar_recomandat",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "NOT_MODELED",
+      "execution_reality": "NOT_MODELED"
+    },
+    {
+      "information": "limita_utila",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "SHOULD_BE_RUNTIME",
+      "execution_reality": "NOT_MODELED"
+    },
+    {
+      "information": "echipa_obligatorie",
+      "product_system": "NOT_MODELED",
+      "execution_plan": "NOT_MODELED",
+      "runtime": "NOT_MODELED",
+      "execution_reality": "NOT_MODELED"
+    },
+    {
+      "information": "cantitate_operationala",
+      "product_system": "QUOTE_GEOMETRY_ONLY",
+      "execution_plan": "NOT_ON_TASK",
+      "runtime": "NOT_MODELED",
+      "execution_reality": "NOT_MODELED"
+    },
+    {
+      "information": "oameni_eligibili",
+      "product_system": "NOT_DECIDED",
+      "execution_plan": "NOT_STORED",
+      "runtime": "operational_registry_service.get_eligible_employees_for_operation",
+      "execution_reality": "NOT_STORED"
+    },
+    {
+      "information": "oameni_disponibili",
+      "product_system": "NOT_OWNED",
+      "execution_plan": "NOT_OWNED",
+      "runtime": "BLOCKED — no workload model",
+      "execution_reality": "NOT_OWNED"
+    },
+    {
+      "information": "oameni_atribuiti",
+      "product_system": "NOT_OWNED",
+      "execution_plan": "assigned_employee_id x1",
+      "runtime": "assign/claim",
+      "execution_reality": "NOT_STORED"
+    },
+    {
+      "information": "participanti_activi",
+      "product_system": "NOT_OWNED",
+      "execution_plan": "NOT_STORED",
+      "runtime": "DERIVED",
+      "execution_reality": "active_workers + participants_count"
+    },
+    {
+      "information": "contributii",
+      "product_system": "NOT_OWNED",
+      "execution_plan": "NOT_OWNED",
+      "runtime": "NOT_MODELED",
+      "execution_reality": "duration_minutes per session only"
+    },
+    {
+      "information": "sesiuni",
+      "product_system": "NOT_OWNED",
+      "execution_plan": "NOT_OWNED",
+      "runtime": "start/end APIs",
+      "execution_reality": "tasks_json sessions CANONICAL"
+    }
+  ],
+  "target_model_assessment": {
+    "collaboration_mode_INDIVIDUAL_OR_TEAM": "NOT_IN_CODE — proposed default reasonable",
+    "minimum_people_blocks_start": "NOT_TODAY — would need real safety rules only",
+    "recommended_people_display_only": "ALIGNED_WITH_OWNER_TRUTH",
+    "maximum_useful_people_runtime": "NOT_IMPLEMENTED — workcenter capacity not wired"
+  },
+  "verdict": "PEOPLE_COUNT_RUNTIME_AUTHORITY_CORRECTLY_ABSENT_FROM_PRODUCT_SYSTEM"
+}

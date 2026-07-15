@@ -1,0 +1,22 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "verdict": "PROD_FLEX_INT_01_AUDIT_READY_FOR_OWNER_DECISIONS",
+  "recommended_next": "OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT",
+  "alternatives": [
+    {
+      "gate": "PROD-FLEX-INT-02-RUNTIME-CLAIM-AND-COLLABORATION-PROBE",
+      "when": "Owner wants live HTTP proof of join/blocker paths before contract sign-off"
+    },
+    {
+      "gate": "PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-AND-PARTICIPATION-PLAN",
+      "when": "After OWNER-DECISION-06 confirms D1-D24"
+    },
+    {
+      "gate": "APP-AUTH-06G-SANDU-EVIDENCE-COLLECTION",
+      "when": "Defer until general operational contract decided — avoids Sandu-specific premature fixes"
+    }
+  ],
+  "owner_decision_required": true,
+  "do_not_implement_automatically": true
+}

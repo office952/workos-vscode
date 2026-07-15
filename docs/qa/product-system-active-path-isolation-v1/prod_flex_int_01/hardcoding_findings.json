@@ -1,0 +1,69 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "counts": {
+    "employee_ids_in_product_system": 0,
+    "named_employees_runtime_rules": 1,
+    "named_employees_seed_registry": 12,
+    "fixed_worker_counts": 0
+  },
+  "findings": [
+    {
+      "file": "backend/services/dev_employee_mobile_sandu_fixture_service.py",
+      "hardcoded_value": "Putaru Sandu, SANDU_USER_ID, SANDU_TASK_IDS",
+      "runtime_path": "dev fixture only when env allows",
+      "impact": "LOW outside dev",
+      "classification": "TEST_ONLY"
+    },
+    {
+      "file": "backend/seeds/seed_operational_workforce_registry.py",
+      "hardcoded_value": "authorized_employee_names per operation",
+      "runtime_path": "seed → operation_employee_authorizations",
+      "impact": "MEDIUM if seed treated as production truth",
+      "classification": "SEED_NOT_RUNTIME_AUTHORITY"
+    },
+    {
+      "file": "backend/services/parity_observe/sandu.py",
+      "hardcoded_value": "Sandu observe report",
+      "runtime_path": "parity observe-only in-memory",
+      "impact": "NONE on mutations",
+      "classification": "TEST_ONLY"
+    },
+    {
+      "file": "execution_plan.tasks_json",
+      "hardcoded_value": "assigned_employee_id single field",
+      "runtime_path": "all assign/claim paths",
+      "impact": "HIGH for collaboration semantics",
+      "classification": "ARCHITECTURAL_RIGIDITY"
+    },
+    {
+      "file": "employee_mobile_tasks_service.start_my_task",
+      "hardcoded_value": "role=primary, session_type=work always",
+      "runtime_path": "mobile start",
+      "impact": "MEDIUM — helpers not startable from mobile",
+      "classification": "RUNTIME_HARDCODE"
+    },
+    {
+      "file": "employee_mobile_tasks_service.list_available_tasks",
+      "hardcoded_value": "_has_active_session_by_other gate",
+      "runtime_path": "available pool",
+      "impact": "HIGH — blocks target help/join flow",
+      "classification": "ARCHITECTURAL_RIGIDITY"
+    },
+    {
+      "file": "frontend/src/hooks/useShopFloorData.ts",
+      "hardcoded_value": "mockData fallback",
+      "runtime_path": "shop floor UI on API fail",
+      "impact": "HIGH visibility risk",
+      "classification": "LEGACY_DEBT"
+    },
+    {
+      "file": "docs/architecture/product-system/VOLUMETRIC_LETTERS_MACHINE_ASSIGNMENT.md",
+      "hardcoded_value": "fixed operator role names per task",
+      "runtime_path": "documentation reference",
+      "impact": "LOW",
+      "classification": "SAFE_CONFIG"
+    }
+  ],
+  "verdict": "NO_PRODUCT_SYSTEM_PERSON_HARDCODING — runtime rigidities in assignment/session join"
+}

@@ -1,0 +1,64 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "employee_ids_in_product_system": 0,
+  "named_employees_in_product_system": 0,
+  "fixed_worker_counts_in_product_system": 0,
+  "contains_nominal_persons": false,
+  "decides_concrete_workers": false,
+  "inspected_areas": [
+    "product_definition_builder_service.py",
+    "execution_plan_v2_materialize_service.py",
+    "execution_plan_task_parser.py",
+    "mini_module_registry_volumetric_v2.py",
+    "backend/data/*"
+  ],
+  "findings": {
+    "operation_roles": "ProductDefinitionOperationRole — operation_code + module binding; no employee_id",
+    "task_templates": "process_id, process_type, machine_type, depends_on_task_ids — no staffing cardinality",
+    "parallel_support": "DOCUMENTED_ONLY — VOLUMETRIC_LETTERS_MACHINE_ASSIGNMENT.md lists parallelizable hints; no structured parallelizable field in compiler output",
+    "progress_unit": "NOT_IN_PRODUCT_SYSTEM — no progress_unit or quantity_target in materialized operational_tasks",
+    "collaboration_mode": "NOT_IN_PRODUCT_SYSTEM"
+  },
+  "mandatory_table": [
+    {
+      "file_model": "product_definition_builder_service._build_operation_roles",
+      "field_rule": "operation_code + module required_operation_roles",
+      "dynamic": true,
+      "hardcoded": false,
+      "correct_authority": true,
+      "risk": "LOW"
+    },
+    {
+      "file_model": "mini_module_registry_volumetric_v2",
+      "field_rule": "required_operation_roles[] per module",
+      "dynamic": true,
+      "hardcoded": false,
+      "correct_authority": true,
+      "risk": "LOW — role codes not people"
+    },
+    {
+      "file_model": "VOLUMETRIC_LETTERS_MACHINE_ASSIGNMENT.md",
+      "field_rule": "operator role labels per task (e.g. letter_bender_operator)",
+      "dynamic": false,
+      "hardcoded": true,
+      "correct_authority": "DOC_REFERENCE",
+      "risk": "MEDIUM — doc may drift from runtime registry"
+    },
+    {
+      "file_model": "frozen order snapshot / quote_input",
+      "field_rule": "geometry, modules, finish — no people",
+      "dynamic": true,
+      "hardcoded": false,
+      "correct_authority": true,
+      "risk": "LOW"
+    }
+  ],
+  "snapshot_frozen_contains": {
+    "requirements_only": true,
+    "people_count": false,
+    "concrete_persons": false,
+    "assigned_employee_id": false
+  },
+  "verdict": "PRODUCT_SYSTEM_STAFFING_CLEAN — defines operations/skills/machines only"
+}

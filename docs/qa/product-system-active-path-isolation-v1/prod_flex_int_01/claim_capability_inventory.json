@@ -1,0 +1,19 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "overall": "IMPLEMENTED",
+  "detail": {
+    "claim": "IMPLEMENTED",
+    "self_assign": "IMPLEMENTED",
+    "manager_assign": "IMPLEMENTED",
+    "concurrency": "IMPLEMENTED",
+    "unclaim": "NOT_IMPLEMENTED",
+    "claim_as_participation_blocker": "CONTRADICTORY_WITH_TARGET_D6"
+  },
+  "evidence": [
+    "backend/services/execution_task_assignment_service.py",
+    "backend/services/employee_mobile_tasks_service.claim_my_task",
+    "backend/tests/test_employee_mobile_claim_concurrency.py",
+    "backend/routers/employee_mobile_tasks.py"
+  ]
+}

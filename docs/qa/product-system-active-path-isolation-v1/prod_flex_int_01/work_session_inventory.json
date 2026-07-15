@@ -1,0 +1,61 @@
+{
+  "task": "PROD-FLEX-INT-01",
+  "starting_head": "5930efc",
+  "canonical_storage": "execution_reality.tasks_json — list of session observations per task_id",
+  "sessions_per_operation": "0..N",
+  "active_simultaneous": "MULTIPLE_ALLOWED — test_task_work_sessions.py",
+  "different_employees": true,
+  "one_employee_multiple_sessions_same_task": "BLOCKED — task_already_started duplicate same employee",
+  "start_creates": {
+    "session": true,
+    "assignment": "ONLY via start-from-available or pre-assign",
+    "operation": false
+  },
+  "stop_closes": {
+    "own_session_only": "PARTIAL — end_task with employee_id scopes close",
+    "all_sessions": false,
+    "operation": "ONLY when no active sessions remain → derive_task_status_from_sessions done"
+  },
+  "complete_closes": {
+    "session": true,
+    "task": "WHEN all sessions ended",
+    "operation": "SAME — no separate operation entity"
+  },
+  "mobile_actions": ["start", "complete", "pause", "resume", "block", "unblock"],
+  "stop_own_work_without_complete": "NOT_IN_MOBILE — complete always sets completed_by_employee_id",
+  "operator_end_task_api": "POST /api/v1/execution/reality/end-task — can end without completion_fields",
+  "attendance_link": "SEPARATE — EmployeeAttendanceEvent not auto from every session",
+  "double_pontaj_risk": "MEDIUM — parallel sessions logged; attendance integration incomplete",
+  "t06_policy": "MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA",
+  "action_table": [
+    {
+      "action": "start_my_task",
+      "modifies": "new session role=primary",
+      "employee_scope": "self",
+      "operation_scope": "in_progress if first active",
+      "risk": "LOW"
+    },
+    {
+      "action": "complete_my_task",
+      "modifies": "end session + completed_by_employee_id",
+      "employee_scope": "self",
+      "operation_scope": "done only if no other active sessions",
+      "risk": "MEDIUM — first finisher may close task when alone"
+    },
+    {
+      "action": "pause_my_task",
+      "modifies": "paused_at on own session",
+      "employee_scope": "self",
+      "operation_scope": "paused if self-only active",
+      "risk": "LOW"
+    },
+    {
+      "action": "execution/reality/end-task no completion",
+      "modifies": "SESSION_STATUS_ENDED",
+      "employee_scope": "optional employee_id",
+      "operation_scope": "may stay in_progress",
+      "risk": "LOW — not exposed mobile"
+    }
+  ],
+  "verdict": "MULTI_SESSION_BACKEND_YES — MOBILE_INDIVIDUAL_COMPLETE_SEMANTICS"
+}
