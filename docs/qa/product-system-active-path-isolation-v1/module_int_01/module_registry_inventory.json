@@ -1,0 +1,93 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "route": "/modules",
+  "page_classification": "HYBRID",
+  "compound_engineering_in_code": "ABSENT",
+  "registries": [
+    {
+      "name": "MODULE_DEFINITIONS",
+      "location": "frontend/src/hooks/useModuleChainData.ts",
+      "type": "STATIC_CODE",
+      "module_count": 8,
+      "runtime_backed": false,
+      "notes": "Hardcoded OC/WI/PS/CE/QT/OR/WO/TK cards; status enriched only from health API mapping."
+    },
+    {
+      "name": "CONTRACT_HANDOFFS",
+      "location": "frontend/src/hooks/useModuleChainData.ts",
+      "type": "STATIC_CODE",
+      "handoff_count": 7,
+      "runtime_backed": false,
+      "versioned": false
+    },
+    {
+      "name": "REFERENCE_EVENTS",
+      "location": "frontend/src/pages/ModuleChain.tsx",
+      "type": "STATIC_DEMO",
+      "event_count": 10,
+      "labeled_reference": true
+    },
+    {
+      "name": "mini_module_registry",
+      "location": "backend/data/mini_module_registry_volumetric_v2.py",
+      "type": "ACTIVE_CANONICAL",
+      "scope": "ProductSystem volumetric v2 composition",
+      "consumed_by_module_chain_page": false,
+      "endpoint": "/api/v1/product-system/mini-modules"
+    },
+    {
+      "name": "agent_authority_registry",
+      "location": "frontend/src/canonical/agent_authority_registry.json",
+      "type": "CONFIG_ONLY",
+      "consumed_by": "/governance",
+      "consumed_by_module_chain_page": false
+    },
+    {
+      "name": "governanceData",
+      "location": "frontend/src/lib/governanceData.ts",
+      "type": "STATIC_CODE",
+      "consumed_by": "/governance",
+      "consumed_by_module_chain_page": false
+    },
+    {
+      "name": "mockData.moduleChain",
+      "location": "frontend/src/lib/mockData.ts",
+      "type": "DEMO",
+      "consumed_by_module_chain_page": false,
+      "dead_duplicate": true
+    },
+    {
+      "name": "event_store",
+      "location": null,
+      "type": "ABSENT"
+    },
+    {
+      "name": "contract_registry",
+      "location": null,
+      "type": "ABSENT",
+      "partial_substitute": "intake_v4_template_option_contract_service.collect_template_contract_handoff_issues"
+    },
+    {
+      "name": "snapshot_registry",
+      "location": null,
+      "type": "ABSENT",
+      "partial_substitute": "quote_snapshot_v2, order snapshot_v2_json on Orders model"
+    },
+    {
+      "name": "governance_violations_table",
+      "location": null,
+      "type": "ABSENT"
+    }
+  ],
+  "modules": [
+    {"code": "OC", "ui_name": "Operational Core", "runtime_module": "NOT_PROVEN", "classification": "UI_ONLY"},
+    {"code": "WI", "ui_name": "Work Intake", "runtime_module": "LEGACY_LABEL", "classification": "MISNAMED"},
+    {"code": "PS", "ui_name": "ProductSystem", "runtime_module": "CONFIRMED_CODE", "classification": "CONFIRMED_CODE"},
+    {"code": "CE", "ui_name": "CostEngine", "runtime_module": "CONFIRMED_CODE", "classification": "CONFIRMED_CODE"},
+    {"code": "QT", "ui_name": "Quotes", "runtime_module": "CONFIRMED_CODE", "classification": "MISNAMED"},
+    {"code": "OR", "ui_name": "Orders", "runtime_module": "CONFIRMED_CODE", "classification": "MISNAMED"},
+    {"code": "WO", "ui_name": "WorkOS", "runtime_module": "PARTIAL", "classification": "MISNAMED"},
+    {"code": "TK", "ui_name": "Tasks", "runtime_module": "CONFIRMED_CODE", "classification": "PARTIAL"}
+  ]
+}

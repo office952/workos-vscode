@@ -1,0 +1,38 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "summary": {
+    "rules_displayed": 28,
+    "enforced": 0,
+    "partial": 6,
+    "ui_only": 22,
+    "documented_only": 22,
+    "contradicted": 0,
+    "not_proven": 0
+  },
+  "matrix": [
+    {"rule": "cost in OC→WI", "ui": true, "backend_enforcement": "NOT_ON_HANDOFF", "test": "NONE for module chain", "runtime_proof": false, "status": "UI_ONLY"},
+    {"rule": "preț in OC→WI", "ui": true, "backend_enforcement": "NOT_ON_HANDOFF", "test": "NONE", "runtime_proof": false, "status": "UI_ONLY"},
+    {"rule": "configurație finală in OC→WI", "ui": true, "backend_enforcement": "NOT_ON_HANDOFF", "test": "NONE", "status": "UI_ONLY"},
+    {"rule": "cost_total in WI→PS", "ui": true, "backend_enforcement": "PARTIAL — intake/commercial boundary tests elsewhere", "test": "test_intake_v4_commercial_quote", "status": "PARTIAL"},
+    {"rule": "preț_final in WI→PS", "ui": true, "backend_enforcement": "PARTIAL", "test": "intake commercial tests", "status": "PARTIAL"},
+    {"rule": "discount in WI→PS", "ui": true, "backend_enforcement": "PARTIAL", "test": "CPP/commercial tests", "status": "PARTIAL"},
+    {"rule": "marjă in PS→CE", "ui": true, "backend_enforcement": "PARTIAL — cost preview boundary", "test": "estimated_internal_cost tests", "status": "PARTIAL"},
+    {"rule": "preț client in PS→CE", "ui": true, "backend_enforcement": "PARTIAL", "test": "product_system_cost_bom_preview router docs", "status": "PARTIAL"},
+    {"rule": "preț_final_client in CE→QT", "ui": true, "backend_enforcement": "PARTIAL — CPP forbidden hourly", "test": "test_commercial_price_proposal_preview", "status": "PARTIAL"},
+    {"rule": "TVA in CE→QT", "ui": true, "backend_enforcement": "NOT_CENTRAL", "test": "NONE module chain", "status": "UI_ONLY"},
+    {"rule": "recalcul cost in QT→OR", "ui": true, "backend_enforcement": "PARTIAL — frozen snapshot convert", "test": "order_snapshot_v2 tests", "status": "PARTIAL"},
+    {"rule": "reconfigurare produs in QT→OR", "ui": true, "backend_enforcement": "PARTIAL — snapshot immutability", "test": "w5_int_02 tests", "status": "PARTIAL"},
+    {"rule": "schimbare configurație in OR→WO", "ui": true, "backend_enforcement": "PARTIAL — plan from frozen snapshot", "test": "execution_plan_v2 tests", "status": "PARTIAL"},
+    {"rule": "schimbare preț in OR→WO", "ui": true, "backend_enforcement": "PARTIAL", "test": "frozen order tests", "status": "PARTIAL"},
+    {"rule": "redefinire order in WO→TK", "ui": true, "backend_enforcement": "NOT_CENTRAL", "test": "NONE module chain", "status": "UI_ONLY"},
+    {"rule": "redefinire produs in WO→TK", "ui": true, "backend_enforcement": "NOT_CENTRAL", "test": "NONE", "status": "UI_ONLY"},
+    {"rule": "cost in WO→TK", "ui": true, "backend_enforcement": "PARTIAL — operator blueprint forbidden fields test", "test": "test_operator_production_blueprint", "status": "PARTIAL"}
+  ],
+  "violation_handling": {
+    "request_rejected": "PARTIAL — only at specific service boundaries, not module-chain governance layer",
+    "field_ignored": "UNKNOWN",
+    "logged": "NOT_PROVEN central",
+    "violation_event": "ABSENT"
+  }
+}

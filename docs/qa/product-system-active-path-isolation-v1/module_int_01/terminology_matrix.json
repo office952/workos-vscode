@@ -1,0 +1,20 @@
+{
+  "audit_task": "MODULE-INT-01",
+  "generated_at": "2026-07-15T08:45:00Z",
+  "matrix": [
+    {"concept": "Work Intake", "terms_found": ["WI", "Work Intake", "Work Intake nav", "Intake V6", "/intake"], "canonical": "Intake / Cerere", "impact": "HIGH — chain uses legacy WI"},
+    {"concept": "Product Definition", "terms_found": ["product_definition payload text", "Product Definition builder service"], "canonical": "Product Definition", "impact": "HIGH — missing from displayed chain"},
+    {"concept": "ProductSystem", "terms_found": ["ProductSystem", "Product System", "product-system routes"], "canonical": "Product System", "impact": "MEDIUM — spacing inconsistency"},
+    {"concept": "Offer", "terms_found": ["Quotes", "Oferte", "Ofertă", "QT"], "canonical": "Oferta", "impact": "HIGH — English Quotes on chain page"},
+    {"concept": "Order", "terms_found": ["Orders", "Comenzi", "Comanda", "OR"], "canonical": "Comanda", "impact": "HIGH"},
+    {"concept": "Execution orchestration", "terms_found": ["WorkOS module card", "WorkOS platform", "ExecutionPlan", "Execuție nav"], "canonical": "Execution Plan", "impact": "CRITICAL — WO collapses platform+plan"},
+    {"concept": "Execution reality", "terms_found": ["ExecutionReality", "Tasks module", "Employee Mobile"], "canonical": "ExecutionReality", "impact": "HIGH — Tasks mislabeled as terminal truth"},
+    {"concept": "Operational Core", "terms_found": ["OC", "Operational Core", "Inventar & OC nav"], "canonical": "UNDEFINED — needs owner decision", "impact": "HIGH — conceptual card only"},
+    {"concept": "Compound Engineering", "terms_found": [".compound-engineering/ research folders", "audit prompt only"], "canonical": "NOT A RUNTIME MODULE", "impact": "CRITICAL — hypothesis not implemented"},
+    {"concept": "Module Chain", "terms_found": ["Module Chain nav", "ModuleChain.tsx"], "canonical": "Architecture observability (current)", "impact": "MEDIUM"},
+    {"concept": "Event Stream", "terms_found": ["Event Stream — Cross-Module (Referință)"], "canonical": "Runtime event feed (aspirational)", "impact": "HIGH — labeled reference not live"},
+    {"concept": "Snapshot Point", "terms_found": ["Snapshot Points section"], "canonical": "Versioned immutable snapshot registry (aspirational)", "impact": "HIGH — labels only"}
+  ],
+  "legacy_count": 6,
+  "misnamed_count": 5
+}

@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** OWNER-DECISION-03 on branch (after APP-AUTH-02C @ `6acadc0`)
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-03 authority gate — **0/22 CONFIRMATE**)
+**Last updated:** 2026-07-15 (MODULE-INT-01 module chain audit — **BLOCKED static/demo**)
 
 
 
@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **OWNER-DECISION-03** — gate documentat; așteaptă confirmări owner |
+| Active task | **MODULE-INT-01** — audit `/modules` COMPLETE |
 
-| Next task | **OWNER_DECISION_REQUIRED** — confirmare explicită A1–A22 (PROD-ARCH-01 **BLOCAT**) |
+| Next task | **MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE** (MODULE-ARCH-01 **BLOCAT**) |
 
 
 
@@ -553,6 +553,28 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 **APP-AUTH-01:** **COMPLETE** (gate documentat)
 
 **Next:** **APP-AUTH-02** — PROD-ARCH-01 **BLOCAT**
+
+## MODULE-INT-01 — Audit E2E Compound Engineering / Module Chain
+
+**Verdict:** `MODULE_CHAIN_AUDIT_BLOCKED_STATIC_DEMO_DATA`
+
+**Scope:** Read-only audit `/modules` — UI, frontend, backend, persistence, runtime @ :8001/:3000.
+
+**Route classification:** HYBRID (aggregate health live; handoffs/events/snapshots static).
+
+**Compound Engineering:** DOCUMENTED — not a runtime control plane on this page.
+
+**Key findings:** 7/7 handoffs hardcoded; 10/10 events static (Referință); snapshot cards labels-only; per-module green health misleading while aggregate WARNING (`execution_anchor_order_14` missing); global `2 critical` from mockData unrelated.
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/module_int_01/` (10 JSON + 7 screenshots)
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_module_int_01_audit_e2e_compound_engineering_module_chain_v1.md`
+
+**Debt registered:** module-chain/governance duplicate authorities; event/snapshot observability closure required before MODULE-ARCH-01.
+
+**MODULE-INT-01:** **COMPLETE**
+
+**Next:** **MODULE-RUNTIME-01-EVENT-SNAPSHOT-HEALTH-CLOSURE**
 
 ## APP-INT-01 — Audit E2E angajați, competențe, utilaje, execuție, pontaj
 
