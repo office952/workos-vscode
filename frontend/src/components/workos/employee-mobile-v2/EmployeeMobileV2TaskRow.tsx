@@ -2,7 +2,11 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import type { EmployeeMobileOrderBlueprintTask } from "@/api/employeeMobileOrderBlueprint";
+import EmployeeMobileV2BlockerBadges from "@/components/workos/employee-mobile-v2/EmployeeMobileV2BlockerBadges";
 import EmployeeMobileV2StatusIndicator from "@/components/workos/employee-mobile-v2/EmployeeMobileV2StatusIndicator";
+import {
+  buildEmployeeMobileV2BlockerPresentation,
+} from "@/lib/employeeMobileV2BlockerPresentation";
 import {
   buildEmployeeMobileV2TaskPath,
   emV2TaskRowClass,
@@ -18,16 +22,6 @@ import {
 } from "@/lib/employeeMobileV2TaskTruth";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
 import { cn } from "@/lib/utils";
-
-function productionBlockLine(task: EmployeeMobileTaskDTO): string | null {
-  if (!task.production_release_blocked) return null;
-  const summary = task.production_blocker_summary?.trim();
-  if (summary) {
-    const short = summary.length > 72 ? `${summary.slice(0, 70)}…` : summary;
-    return `Producție blocată — ${short}`;
-  }
-  return "Producție blocată — necesită rezolvare de către manager";
-}
 
 export default function EmployeeMobileV2TaskRow({
   task,
@@ -45,6 +39,10 @@ export default function EmployeeMobileV2TaskRow({
     () => resolveEmployeeMobileV2StatusPresentation(task, blueprintTask),
     [task, blueprintTask],
   );
+  const blockerPresentation = useMemo(
+    () => buildEmployeeMobileV2BlockerPresentation(task),
+    [task],
+  );
 
   const title = resolveTaskDisplayTitle(task);
   const componentLine = resolveTaskComponentLine(task);
@@ -52,7 +50,6 @@ export default function EmployeeMobileV2TaskRow({
   const orderLine = [task.order_code || `Comandă #${task.order_id}`, task.client]
     .filter(Boolean)
     .join(" · ");
-  const productionLine = productionBlockLine(task);
 
   const contextLine = useMemo(() => buildTaskRowContextLine(task), [task]);
   const secondaryLine = contextLine;
@@ -61,6 +58,10 @@ export default function EmployeeMobileV2TaskRow({
     () => suppressDuplicateWaitingDetail(presentation, secondaryLine),
     [presentation, secondaryLine],
   );
+
+  const shortReason =
+    blockerPresentation.shortReason ||
+    (blockerPresentation.showManagerEscalation ? "Necesită manager" : null);
 
   return (
     <button
@@ -95,15 +96,28 @@ export default function EmployeeMobileV2TaskRow({
         {operationLine ? (
           <span className="mt-0.5 block text-[11px] text-slate-600 line-clamp-1">{operationLine}</span>
         ) : null}
-        {productionLine ? (
+        <EmployeeMobileV2BlockerBadges
+          presentation={blockerPresentation}
+          compact
+          testIdPrefix={`${testIdPrefix}-${task.task_id}`}
+        />
+        {shortReason ? (
           <span
-            className="mt-1 block text-[11px] text-rose-300/90 line-clamp-2"
-            data-testid={`${testIdPrefix}-${task.task_id}-production-block`}
+            className="mt-0.5 block text-[11px] text-slate-500 line-clamp-2"
+            data-testid={`${testIdPrefix}-${task.task_id}-short-reason`}
           >
-            {productionLine}
+            {shortReason}
           </span>
         ) : secondaryLine ? (
           <span className="mt-0.5 block text-[12px] text-slate-500 line-clamp-2">{secondaryLine}</span>
+        ) : null}
+        {blockerPresentation.showManagerEscalation ? (
+          <span
+            className="mt-0.5 block text-[11px] text-rose-300/80 line-clamp-2"
+            data-testid={`${testIdPrefix}-${task.task_id}-manager-escalation`}
+          >
+            Necesită rezolvare de către manager
+          </span>
         ) : null}
       </span>
       <EmployeeMobileV2StatusIndicator

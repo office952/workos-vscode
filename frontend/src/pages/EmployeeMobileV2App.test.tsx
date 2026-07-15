@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import EmployeeMobileV2App from "./EmployeeMobileV2App";
 import { buildTruthResponseFromSections } from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskTruthPanels";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
+import { BLOCKER_FIXTURE_TASKS } from "@/lib/employeeMobileV2BlockerFixtures";
 
 const authMock = vi.hoisted(() => ({
   user: {
@@ -443,7 +444,7 @@ describe("EmployeeMobileV2App", () => {
       expect(screen.getByTestId("employee-mobile-v2-upcoming-list")).toBeInTheDocument();
     });
     const row = screen.getByTestId("employee-mobile-v2-task-row-T-006");
-    expect(row.textContent).toMatch(/Așteaptă: Debitare spate Forex/);
+    expect(row.textContent).toMatch(/Debitare spate Forex/);
     expect(screen.getByTestId("employee-mobile-v2-task-row-T-006-status").textContent).not.toMatch(
       /Debitare spate Forex.*Debitare spate Forex/,
     );
@@ -726,6 +727,119 @@ describe("EmployeeMobileV2App", () => {
       expect(
         screen.getByTestId("employee-mobile-v2-available-details-T-003-99905"),
       ).toBeInTheDocument();
+    });
+  });
+
+  describe("MOBILE-T03 blocker and readiness visibility", () => {
+    it("shows production block badge and manager escalation on list card", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(truthFor([BLOCKER_FIXTURE_TASKS.productionBlocked], []));
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth")) {
+          return jsonResponse([BLOCKER_FIXTURE_TASKS.productionBlocked]);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks");
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("employee-mobile-v2-task-row-fixture-production-blocked-production-badge"),
+        ).toHaveTextContent("Producție blocată");
+      });
+      expect(
+        screen.getByTestId("employee-mobile-v2-task-row-fixture-production-blocked-manager-escalation"),
+      ).toHaveTextContent("Necesită rezolvare de către manager");
+    });
+
+    it("shows structured detail sections with manager escalation and disabled start", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/orders/23099/tasks/fixture-production-blocked")) {
+          return jsonResponse(BLOCKER_FIXTURE_TASKS.productionBlocked);
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(truthFor([BLOCKER_FIXTURE_TASKS.productionBlocked], []));
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth")) {
+          return jsonResponse([BLOCKER_FIXTURE_TASKS.productionBlocked]);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks/fixture-production-blocked?orderId=23099");
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
+      });
+      expect(screen.getByTestId("employee-mobile-v2-detail-startable")).toHaveTextContent("Nu");
+      expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toHaveTextContent(
+        /manager în WorkOS desktop/,
+      );
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-work-room-start-blocked")).toBeDisabled();
+      });
+    });
+
+    it("shows ready state without production block", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(truthFor([BLOCKER_FIXTURE_TASKS.readyAssigned], []));
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth")) {
+          return jsonResponse([BLOCKER_FIXTURE_TASKS.readyAssigned]);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks");
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("employee-mobile-v2-task-row-fixture-ready-readiness-badge"),
+        ).toHaveTextContent("Pregătit");
+      });
+      expect(
+        screen.queryByTestId("employee-mobile-v2-task-row-fixture-ready-production-badge"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("maps contract error distinctly from valid empty tasks", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(
+            { detail: { code: "MOBILE_V2_TASK_ENVELOPE_MISSING", message: "missing" } },
+            409,
+          );
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks");
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toBeInTheDocument();
+      });
+      expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toHaveTextContent(
+        /Planul de execuție V2/,
+      );
+    });
+
+    it("maps employee-link error distinctly", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse({ detail: { code: "employee_link_missing", message: "x" } }, 403);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks");
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toBeInTheDocument();
+      });
+      expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toHaveTextContent(/profil de angajat/);
     });
   });
 });

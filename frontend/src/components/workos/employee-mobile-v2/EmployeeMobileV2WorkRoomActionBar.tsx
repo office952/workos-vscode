@@ -25,6 +25,7 @@ import {
   composeBlockedReason,
   type BlockReasonCategoryId,
 } from "@/lib/employeeMobileShopFloorPresentation";
+import { buildEmployeeMobileV2BlockerPresentation } from "@/lib/employeeMobileV2BlockerPresentation";
 import { emV2Controls, emV2SecondaryButtonClass } from "@/lib/employeeMobileV2DesignTokens";
 import { cn } from "@/lib/utils";
 
@@ -64,7 +65,10 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     }
   };
 
+  const blockerPresentation = buildEmployeeMobileV2BlockerPresentation(task);
   const canStart = task.status === "assigned" && task.is_startable === true;
+  const showDisabledStart =
+    task.status === "assigned" && task.is_startable !== true && task.status !== "in_progress";
   const canComplete = task.status === "in_progress";
   const canPause = task.status === "in_progress";
   const canResume = task.status === "paused";
@@ -173,6 +177,23 @@ export default function EmployeeMobileV2WorkRoomActionBar({
             </span>
           )}
         </button>
+      ) : showDisabledStart ? (
+        <div className="space-y-2" data-testid={`${testIdPrefix}-start-disabled`}>
+          <button
+            type="button"
+            className={cn(primaryButtonClass(), "opacity-50 cursor-not-allowed")}
+            disabled
+            data-testid={`${testIdPrefix}-start-blocked`}
+          >
+            <span className="inline-flex items-center justify-center gap-2">
+              <PlayCircle className="w-4 h-4" aria-hidden />
+              Încep task
+            </span>
+          </button>
+          <p className="text-xs text-slate-500 leading-snug">
+            {blockerPresentation.canStartExplanation}
+          </p>
+        </div>
       ) : null}
 
       {canComplete ? (

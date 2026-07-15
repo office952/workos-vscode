@@ -13,11 +13,15 @@ const ERROR_MESSAGES: Record<string, string> = {
   task_not_accessible_to_employee: "Taskul nu este disponibil pentru tine.",
   production_release_blocked: "Producția este blocată — rezolvare pe desktop.",
   task_not_ready: "Taskul nu este încă pregătit.",
+  order_not_found: "Comanda nu a fost găsită.",
+  task_not_found: "Taskul nu a fost găsit.",
+  invalid_task_state: "Starea taskului nu permite această acțiune.",
   network_error: "Nu am putut contacta serverul. Verifică conexiunea.",
 };
 
 export function mapMobileTaskErrorMessage(err: unknown): string {
   const error = err as EmployeeMobileTaskError;
+  if (isNetworkError(err)) return ERROR_MESSAGES.network_error;
   const code = error?.code?.trim();
   if (code && ERROR_MESSAGES[code]) return ERROR_MESSAGES[code];
   if (error instanceof Error && error.message.trim()) return error.message.trim();

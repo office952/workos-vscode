@@ -1,5 +1,12 @@
+import { useMemo } from "react";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import type { EmployeeMobileTruthTaskNested } from "@/lib/employeeMobileV2TaskTruth";
+import EmployeeMobileV2BlockerBadges from "@/components/workos/employee-mobile-v2/EmployeeMobileV2BlockerBadges";
+import {
+  buildEmployeeMobileV2BlockerPresentation,
+  categorySectionLabel,
+  type EmV2BlockerCategory,
+} from "@/lib/employeeMobileV2BlockerPresentation";
 import {
   resolveTaskComponentLine,
   resolveTaskDisplayTitle,
@@ -18,17 +25,48 @@ function DetailRow({ label, value, testId }: { label: string; value: string; tes
   );
 }
 
+function BlockerCategorySection({
+  category,
+  items,
+}: {
+  category: EmV2BlockerCategory;
+  items: Array<{ label: string; detail?: string; code?: string }>;
+}) {
+  if (items.length === 0) return null;
+  return (
+    <ul className="mt-2 space-y-1.5 text-sm text-slate-300">
+      {items.map((item, index) => (
+        <li key={`${item.code || item.label}-${index}`} className="break-words">
+          <span className="font-medium text-slate-200">{item.label}</span>
+          {item.detail && item.detail !== item.label ? (
+            <span className="block text-[13px] text-slate-500 mt-0.5">{item.detail}</span>
+          ) : null}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function EmployeeMobileV2TaskTruthPanels({ task }: { task: EmployeeMobileTaskDTO }) {
+  const blockerPresentation = useMemo(
+    () => buildEmployeeMobileV2BlockerPresentation(task),
+    [task],
+  );
+
   const title = resolveTaskDisplayTitle(task);
   const component = resolveTaskComponentLine(task);
   const operation = resolveTaskOperationLine(task);
   const orderLabel = task.order_code || `Comandă #${task.order_id}`;
-  const readinessLabel = task.readiness_label?.trim() || "—";
-  const blockingTasks = task.blocking_tasks ?? [];
-  const productionBlocked = Boolean(task.production_release_blocked);
-  const productionSummary =
-    task.production_blocker_summary?.trim() ||
-    (productionBlocked ? "Necesită rezolvare de către manager" : null);
+
+  const assignmentLabel = task.is_assigned_to_current_employee
+    ? "Atribuit ție"
+    : task.is_available_for_claim
+      ? task.can_claim || task.claimable
+        ? "Disponibil de preluat"
+        : "Vizibil, dar nu poate fi preluat"
+      : task.employee_name
+        ? `Atribuit lui ${task.employee_name}`
+        : "Neatribuit";
 
   return (
     <div className="mt-4 space-y-3" data-testid="employee-mobile-v2-task-truth-panels">
@@ -40,79 +78,152 @@ export default function EmployeeMobileV2TaskTruthPanels({ task }: { task: Employ
           <DetailRow label="Operație" value={operation ?? "—"} testId="employee-mobile-v2-detail-operation" />
           <DetailRow label="Comandă" value={orderLabel} testId="employee-mobile-v2-detail-order" />
         </dl>
-        <details className="mt-3 text-[11px] text-slate-600">
-          <summary className="cursor-pointer">ID diagnostic</summary>
-          <p className="mt-1 font-mono break-all">{task.task_id}</p>
-        </details>
+        <EmployeeMobileV2BlockerBadges
+          presentation={blockerPresentation}
+          testIdPrefix="employee-mobile-v2-detail"
+        />
       </section>
 
-      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-state">
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Stare</p>
-        <dl className="space-y-1.5">
-          <DetailRow label="Status" value={task.status} />
-          <DetailRow
-            label="Atribuire"
-            value={
-              task.is_assigned_to_current_employee
-                ? "Atribuit ție"
-                : task.is_available_for_claim
-                  ? "Disponibil de preluat"
-                  : "Neatribuit"
-            }
-          />
-          <DetailRow
-            label="Poți începe"
-            value={task.is_startable ? "Da" : "Nu"}
-            testId="employee-mobile-v2-detail-startable"
-          />
-          <DetailRow
-            label="Poți prelua"
-            value={task.can_claim || task.claimable ? "Da" : "Nu"}
-            testId="employee-mobile-v2-detail-claimable"
-          />
-        </dl>
-      </section>
-
-      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-readiness">
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Pregătire</p>
-        <p className="text-sm font-medium text-slate-200" data-testid="employee-mobile-v2-detail-readiness-label">
-          {readinessLabel}
+      <section
+        className={cn(emV2Surface.panel, "p-4")}
+        data-testid="employee-mobile-v2-detail-can-start"
+      >
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          Poate începe?
         </p>
-        {task.material_warning ? (
-          <p className="mt-2 text-[13px] text-amber-200/90">{task.material_warning}</p>
-        ) : null}
-        {task.dependency_warning ? (
-          <p className="mt-2 text-[13px] text-amber-200/90">{task.dependency_warning}</p>
+        <p
+          className={cn(
+            "text-sm font-medium",
+            blockerPresentation.canStartFromBackend ? "text-emerald-300" : "text-rose-300",
+          )}
+          data-testid="employee-mobile-v2-detail-startable"
+        >
+          {blockerPresentation.canStartFromBackend ? "Da" : "Nu"}
+        </p>
+        <p className="mt-2 text-[13px] text-slate-400 leading-snug">
+          {blockerPresentation.canStartExplanation}
+        </p>
+        {blockerPresentation.activeSessionLabel ? (
+          <p
+            className="mt-2 text-[13px] text-sky-300/90"
+            data-testid="employee-mobile-v2-detail-active-session"
+          >
+            {blockerPresentation.activeSessionLabel}
+          </p>
         ) : null}
       </section>
 
       <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-production">
-        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Producție</p>
-        {productionBlocked ? (
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          {categorySectionLabel("productie")}
+        </p>
+        {blockerPresentation.showProductionBadge ? (
           <>
             <p className="text-sm font-medium text-rose-300">Producție blocată</p>
-            {productionSummary ? (
-              <p className="mt-2 text-[13px] text-slate-400 leading-snug">{productionSummary}</p>
+            {task.production_blocker_summary ? (
+              <p className="mt-2 text-[13px] text-slate-400 leading-snug">
+                {task.production_blocker_summary}
+              </p>
             ) : null}
-            <p className="mt-2 text-[12px] text-slate-500">Necesită rezolvare de către manager (desktop).</p>
+            <BlockerCategorySection
+              category="productie"
+              items={blockerPresentation.categories.productie}
+            />
+            <p
+              className="mt-3 text-[12px] text-amber-200/90 leading-snug"
+              data-testid="employee-mobile-v2-detail-manager-escalation"
+            >
+              {blockerPresentation.managerEscalationText}
+            </p>
           </>
         ) : (
           <p className="text-sm text-emerald-300/90">Producție permisă</p>
         )}
       </section>
 
-      {blockingTasks.length > 0 ? (
-        <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-dependencies">
-          <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">Dependențe</p>
-          <ul className="space-y-1 text-sm text-slate-300">
-            {blockingTasks.map((blocker) => (
-              <li key={blocker.task_id} className="break-words">
-                {blocker.name || blocker.task_id}
-              </li>
-            ))}
-          </ul>
+      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-readiness">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          {categorySectionLabel("pregatire")}
+        </p>
+        <p className="text-sm font-medium text-slate-200" data-testid="employee-mobile-v2-detail-readiness-label">
+          {task.readiness_label?.trim() || blockerPresentation.primaryLabel}
+        </p>
+        <BlockerCategorySection
+          category="pregatire"
+          items={blockerPresentation.categories.pregatire}
+        />
+        {(task.blocking_tasks ?? []).length > 0 ? (
+          <div className="mt-3" data-testid="employee-mobile-v2-detail-dependencies">
+            <p className="text-[11px] uppercase tracking-wide text-slate-600 mb-1">Predecesori</p>
+            <ul className="space-y-1 text-sm text-slate-300">
+              {task.blocking_tasks?.map((blocker) => (
+                <li key={blocker.task_id} className="break-words">
+                  {blocker.name || blocker.task_id}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+      </section>
+
+      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-materials">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          {categorySectionLabel("materiale")}
+        </p>
+        {blockerPresentation.categories.materiale.length > 0 ? (
+          <BlockerCategorySection
+            category="materiale"
+            items={blockerPresentation.categories.materiale}
+          />
+        ) : (
+          <p className="text-sm text-slate-500">Fără blocaje materiale raportate.</p>
+        )}
+      </section>
+
+      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-allocation">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+          {categorySectionLabel("alocare")}
+        </p>
+        <dl className="space-y-1.5">
+          <DetailRow label="Stare" value={assignmentLabel} />
+          <DetailRow
+            label="Poți prelua"
+            value={task.can_claim || task.claimable ? "Da" : "Nu"}
+            testId="employee-mobile-v2-detail-claimable"
+          />
+        </dl>
+        <BlockerCategorySection
+          category="alocare"
+          items={blockerPresentation.categories.alocare}
+        />
+      </section>
+
+      {blockerPresentation.categories.stare_task.length > 0 ? (
+        <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-state">
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-slate-500 mb-2">
+            {categorySectionLabel("stare_task")}
+          </p>
+          <BlockerCategorySection
+            category="stare_task"
+            items={blockerPresentation.categories.stare_task}
+          />
         </section>
       ) : null}
+
+      <section className={cn(emV2Surface.panel, "p-4")} data-testid="employee-mobile-v2-detail-diagnostic">
+        <details>
+          <summary className="cursor-pointer text-[12px] font-semibold uppercase tracking-wide text-slate-500">
+            Diagnostic
+          </summary>
+          <ul className="mt-2 space-y-1 font-mono text-[11px] text-slate-500 break-all">
+            {blockerPresentation.diagnosticCodes.map((code) => (
+              <li key={code}>{code}</li>
+            ))}
+            <li>task_id:{task.task_id}</li>
+            <li>status:{task.status}</li>
+          </ul>
+        </details>
+      </section>
     </div>
   );
 }

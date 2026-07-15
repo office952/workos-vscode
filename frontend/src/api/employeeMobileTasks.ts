@@ -89,6 +89,7 @@ export interface EmployeeMobileTaskDTO {
   blocking_task_ids?: string[];
   blocking_tasks?: Array<{ task_id: string; name: string }>;
   dependency_warning?: string | null;
+  material_warning?: string | null;
   active_helper_count?: number;
   preparation_domain?: string | null;
   eligibility_reason?: string | null;
