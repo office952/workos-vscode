@@ -1,0 +1,167 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "trusted_runtime": {
+    "backend": "http://127.0.0.1:8001",
+    "frontend": "http://127.0.0.1:3000",
+    "backend_startup": "scripts/dev-backend.ps1 with BACKEND_PORT=8001",
+    "process": "CANONICAL_BACKEND_PROCESS"
+  },
+  "total_scenarios": 14,
+  "scenarios": [
+    {
+      "id": "RP01_aligned_employee",
+      "name": "Angajat aliniat",
+      "endpoint": "GET /api/v1/operational-registry/employees/{id}/authorizations",
+      "identity": "employee with matching registry and legacy (if any)",
+      "data": "seed operational workforce fixture",
+      "operational_result": "authorizations returned; eligibility passes",
+      "canonical_shadow": "same skill/resource sets",
+      "expected_discrepancy": "none",
+      "cleanup": "no DB writes; read-only proof"
+    },
+    {
+      "id": "RP02_sandu",
+      "name": "Sandu reconciliation probe",
+      "endpoint": "GET /api/v1/entities/employees/4 + registry authorizations + override inventory",
+      "identity": "employee_id=4 Putaru Sandu",
+      "data": "APP-AUTH-02 discrepancy_inventory DISC-COMP-001",
+      "operational_result": "eligible via explicit mappings for assembly etc.",
+      "canonical_shadow": "ineligible without SK_ASSEMBLY in registry",
+      "expected_discrepancy": "COMPETENCE_PARITY_DIFFERENCE + ELIGIBILITY_PARITY_DIFFERENCE + EXPLICIT_MAPPING_USED",
+      "cleanup": "no mutation; export report JSON only"
+    },
+    {
+      "id": "RP03_explicit_mapping_operation",
+      "name": "Operatie cu mapare explicita",
+      "endpoint": "check_employee_operation_eligibility(employee, operation)",
+      "identity": "Sandu + operation assembly",
+      "data": "operation_employee_authorizations row",
+      "operational_result": "eligible=true hybrid",
+      "canonical_shadow": "eligible=false strict competence",
+      "expected_discrepancy": "EXPLICIT_MAPPING_USED ADAUGARE_FARA_COMPETENTA",
+      "cleanup": "observe only"
+    },
+    {
+      "id": "RP04_operation_without_authorization",
+      "name": "Operatie fara autorizare",
+      "endpoint": "GET /api/v1/employee-mobile/tasks/available",
+      "identity": "employee without resource authorization for CNC",
+      "data": "CNC operation requirement MCH-CNC-*",
+      "operational_result": "task may appear or not per current hybrid rules",
+      "canonical_shadow": "AUTHORIZATION_PARITY_DIFFERENCE MISSING_AUTHORIZATION",
+      "expected_discrepancy": "AUTHORIZATION + ELIGIBILITY events",
+      "cleanup": "no assign/start"
+    },
+    {
+      "id": "RP05_cnc_4020",
+      "name": "CNC 4020",
+      "endpoint": "GET /api/v1/machines + GET /api/v1/operational-registry/resources",
+      "identity": "MCH-CNC-4020",
+      "data": "machine_reconciliation_matrix APP-AUTH-02",
+      "operational_result": "machine visible on /utilaje",
+      "canonical_shadow": "registry resource alignment",
+      "expected_discrepancy": "RESOURCE_PARITY_DIFFERENCE METADATA_DIFF at most",
+      "cleanup": "read-only"
+    },
+    {
+      "id": "RP06_employee_without_account",
+      "name": "Angajat fara cont",
+      "endpoint": "GET /api/v1/entities/employees",
+      "identity": "employees.user_id null (7 of 8)",
+      "data": "discrepancy_inventory counts",
+      "operational_result": "employee exists; Mobile may not authenticate",
+      "canonical_shadow": "NO_USER_LINK identity discrepancy",
+      "expected_discrepancy": "EMPLOYEE_IDENTITY_PARITY_DIFFERENCE",
+      "cleanup": "read-only"
+    },
+    {
+      "id": "RP07_mobile_available",
+      "name": "Mobile available",
+      "endpoint": "GET /api/v1/employee-mobile/tasks/available",
+      "identity": "JWT linked user -> employee",
+      "data": "commercial e2e seed + APP-AUTH-02B fixture",
+      "operational_result": "200 task list unchanged",
+      "canonical_shadow": "per-task eligibility shadow",
+      "expected_discrepancy": "ELIGIBILITY_PARITY_DIFFERENCE per divergent task",
+      "cleanup": "no claim/start"
+    },
+    {
+      "id": "RP08_mobile_assigned",
+      "name": "Mobile assigned",
+      "endpoint": "GET /api/v1/employee-mobile/tasks/assigned",
+      "identity": "same JWT employee",
+      "data": "active assignments count=7 baseline",
+      "operational_result": "assigned list unchanged",
+      "canonical_shadow": "assignment + eligibility parity",
+      "expected_discrepancy": "ASSIGNMENT or ELIGIBILITY if drift",
+      "cleanup": "no complete"
+    },
+    {
+      "id": "RP09_operator",
+      "name": "Operator surface",
+      "endpoint": "GET /api/v1/operator/tasks",
+      "identity": "operator employee guard selection",
+      "data": "execution_surface_matrix",
+      "operational_result": "operator task list",
+      "canonical_shadow": "Mobile truth diff",
+      "expected_discrepancy": "EXECUTION_SURFACE_PARITY_DIFFERENCE if sets differ",
+      "cleanup": "no start/pause"
+    },
+    {
+      "id": "RP10_tablet",
+      "name": "Tablet surface",
+      "endpoint": "frontend /tablet + operator tasks underlying",
+      "identity": "DEMO_OPERATORS",
+      "data": "execution_surface_matrix tablet row",
+      "operational_result": "demo tasks displayed",
+      "canonical_shadow": "registry employees",
+      "expected_discrepancy": "EXECUTION_SURFACE_PARITY_DIFFERENCE DEMO_DATA_ACTIVE",
+      "cleanup": "UI read-only"
+    },
+    {
+      "id": "RP11_shop_floor",
+      "name": "Shop Floor surface",
+      "endpoint": "GET /api/v1/machines + operator tasks via useShopFloorData",
+      "identity": "shop floor projection",
+      "data": "mockData fallback path",
+      "operational_result": "projection renders",
+      "canonical_shadow": "API-only path",
+      "expected_discrepancy": "LEGACY_FALLBACK_USED if mock active",
+      "cleanup": "read-only"
+    },
+    {
+      "id": "RP12_start_complete",
+      "name": "Start/Complete",
+      "endpoint": "ExecutionRealityService start_task / end_task (observe hook)",
+      "identity": "employee with active assigned task",
+      "data": "active_sessions=3 baseline",
+      "operational_result": "Start/Complete behavior unchanged",
+      "canonical_shadow": "session vs assignment vs eligibility",
+      "expected_discrepancy": "SESSION_AUTHORITY_DIFFERENCE if mismatch",
+      "cleanup": "use test fixture; rollback session in test DB only"
+    },
+    {
+      "id": "RP13_attendance_separate",
+      "name": "Pontaj separat",
+      "endpoint": "attendance read + execution_reality sessions",
+      "identity": "employee with attendance record",
+      "data": "attendance_records_month=0 baseline",
+      "operational_result": "no automatic pontaj correction",
+      "canonical_shadow": "ATTENDANCE_EXECUTION_DIFFERENCE informative",
+      "expected_discrepancy": "informative only",
+      "cleanup": "read-only"
+    },
+    {
+      "id": "RP14_cleanup_contract",
+      "name": "Proof cleanup contract",
+      "endpoint": "n/a",
+      "identity": "n/a",
+      "data": "all proofs above",
+      "operational_result": "runtime state identical pre/post observe-only run",
+      "canonical_shadow": "events logged only",
+      "expected_discrepancy": "n/a",
+      "cleanup": "verify no assigned_employee_id mutation; no registry writes; no legacy JSON writes"
+    }
+  ]
+}

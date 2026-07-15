@@ -518,7 +518,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN**
+**Next:** **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION**
+
+## APP-AUTH-03 — Plan instrumentare paritate runtime
+
+**Verdict:** `APP_AUTH_03_PARITY_INSTRUMENTATION_PLAN_READY`
+
+**Starting HEAD:** `3a9c9ea`
+
+**Scope:** Plan instrumentare OBSERVE_ONLY registry vs legacy — fără cod, DB, UI, migrări, activare runtime.
+
+**Parity domains:** 12 (P1–P12) · **Consumers:** 18 · **Writers:** 14 · **Events:** 12 · **Metrics:** 20 · **Flags:** 16
+
+**Test plan:** 32 scenarii · **Runtime proof:** 14 probe · **Rollout:** P0–P7 · **Gates:** I1–I8
+
+**Sandu flow:** READY · **Persistence migration:** NOT_AUTHORIZED · **Legacy freeze:** NOT_AUTHORIZED
+
+**Implementare autorizată:** **PLAN_ONLY** · **PROD-ARCH-01:** **BLOCAT** · **MOBILE-INT-02:** **BLOCAT** · **MODULE-RUNTIME-01:** **DEFERRED**
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_03/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_03_runtime_parity_instrumentation_plan_v1.md`
+
+**Authority debt:** 22/22 CONFIRMATE (politică); paritate runtime plan READY → foundation APP-AUTH-04
+
+**APP-AUTH-03:** **COMPLETE** (plan)
+
+**Next:** **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION**
 
 ## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
 

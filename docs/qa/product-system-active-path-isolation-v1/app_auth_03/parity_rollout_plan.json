@@ -1,0 +1,124 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "execution_authorized": "PLAN_ONLY — nu executa rollout",
+  "phases": [
+    {
+      "phase": "P0",
+      "name": "Contract si teste",
+      "description": "Defineste contracte evenimente, metrici, flags, teste — fara runtime activ",
+      "gates": ["I1"],
+      "deliverables": [
+        "parity_event_contracts.json",
+        "parity_metrics_catalog.json",
+        "parity_feature_flags.json",
+        "parity_test_plan.json",
+        "contract unit tests (APP-AUTH-04)"
+      ],
+      "runtime_active": false,
+      "persistence": "none",
+      "owner_go_required": false
+    },
+    {
+      "phase": "P1",
+      "name": "Loguri locale structurate",
+      "description": "Dev/test structured logs; subset Sandu; subset operatii",
+      "gates": ["I2"],
+      "flags_enabled": [
+        "parity_observe_enabled",
+        "competence_parity_enabled",
+        "authorization_parity_enabled",
+        "legacy_fallback_tracking_enabled",
+        "explicit_mapping_tracking_enabled",
+        "parity_sandu_report_enabled"
+      ],
+      "consumers": ["CONS-ELIGIBILITY-ENDPOINT", "CONS-SANDU-REPORT", "CONS-EMPLOYEES-PAGE"],
+      "runtime_active": true,
+      "environments": ["dev", "test"],
+      "persistence": "structured logs only (Option A)",
+      "owner_go_required": "I2 dev/test observe"
+    },
+    {
+      "phase": "P2",
+      "name": "Citire in umbra limitata",
+      "description": "Employee Mobile available + eligibilitate shadow; fara schimbare rezultat",
+      "gates": ["I3"],
+      "flags_enabled": ["eligibility_shadow_enabled"],
+      "consumers": ["CONS-MOBILE-AVAILABLE", "CONS-ELIGIBILITY-ENDPOINT"],
+      "runtime_active": true,
+      "environments": ["dev", "test", "controlled staging"],
+      "persistence": "structured logs",
+      "safeguards": ["timeout", "circuit_breaker", "sampling"],
+      "owner_go_required": "I3 subset observe-only"
+    },
+    {
+      "phase": "P3",
+      "name": "Extindere consumatori",
+      "description": "Operator, Tablet, Shop Floor, assignment writer observation",
+      "gates": ["I3 sustained"],
+      "flags_enabled": [
+        "execution_surface_parity_enabled",
+        "parity_assignment_session_enabled",
+        "parity_workcenter_resource_enabled"
+      ],
+      "consumers": [
+        "CONS-OPERATOR-TASKS",
+        "CONS-TABLET",
+        "CONS-SHOP-FLOOR",
+        "CONS-ASSIGNMENT-SERVICE",
+        "CONS-MOBILE-ASSIGNED"
+      ],
+      "runtime_active": true,
+      "persistence": "structured logs",
+      "owner_go_required": "performance sign-off"
+    },
+    {
+      "phase": "P4",
+      "name": "Proiectie manager",
+      "description": "Raport manager + persistenta discreante — numai dupa GO owner",
+      "gates": ["I4", "I5"],
+      "flags_enabled": ["parity_persistence_enabled", "parity_manager_projection_enabled"],
+      "persistence": "Option B dedicated table (requires migration)",
+      "route_conceptual": "/admin/operational-parity (NOT /modules)",
+      "owner_go_required": "I4 migration + I5 access model"
+    },
+    {
+      "phase": "P5",
+      "name": "Paritate sustinuta",
+      "description": "Perioada observare; praguri alertare; confirmari owner",
+      "gates": ["I3 sustained", "I6"],
+      "activities": [
+        "Sandu reconciliation confirmations",
+        "discrepancy aging review",
+        "threshold tuning owner decisions"
+      ],
+      "persistence": "dedicated table + metrics",
+      "owner_go_required": "observation period duration + alert thresholds"
+    },
+    {
+      "phase": "P6",
+      "name": "Plan reconciliere",
+      "description": "Wave reconciliation plan execution — fara migrare automata",
+      "gates": ["I6", "I7 prep"],
+      "activities": [
+        "human-confirmed competence fixes",
+        "authorization fixes",
+        "mapping reclassification"
+      ],
+      "owner_go_required": "per-wave human confirmation"
+    },
+    {
+      "phase": "P7",
+      "name": "GO migrare separat",
+      "description": "Date migration + legacy freeze — GO separat A22 follow-on",
+      "gates": ["I7", "I8"],
+      "not_authorized_in_app_auth_03": true,
+      "owner_go_required": "explicit migration GO"
+    }
+  ],
+  "persistence_phases": {
+    "phase_without_migration": "P0-P3 use Option A structured logs",
+    "phase_with_dedicated_persistence": "P4+ requires Option B after Gate I4 GO",
+    "option_c_observability": "evaluate existing observability authority before P4"
+  }
+}

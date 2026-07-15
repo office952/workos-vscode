@@ -524,7 +524,35 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN** |
+| Next | **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION** |
+
+## APP-AUTH-03 — Runtime parity instrumentation plan
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_03_PARITY_INSTRUMENTATION_PLAN_READY` |
+| Starting HEAD | `3a9c9ea` |
+| Parity domains | 12 (P1–P12) |
+| Consumers inventoried | 18 |
+| Writers inventoried | 14 |
+| Event contracts | 12 |
+| Metrics | 20 |
+| Feature flags | 16 |
+| Test scenarios | 32 |
+| Runtime proof scenarios | 14 |
+| Rollout phases | 8 (P0–P7) |
+| Implementation gates | 8 (I1–I8) |
+| Execution mode | OBSERVE_ONLY (plan) |
+| Sandu confirmation flow | **READY** |
+| Persistence migration | **NOT_AUTHORIZED** |
+| Legacy freeze | **NOT_AUTHORIZED** |
+| Implementation authorized | **PLAN_ONLY** |
+| PROD-ARCH-01 | **BLOCKED** |
+| MOBILE-INT-02 | **BLOCKED** |
+| MODULE-RUNTIME-01 | **DEFERRED** |
+| APP-AUTH-03 | **COMPLETE** |
+| Next | **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION** |
 
 ## APP-AUTH-02C — External HTTP runtime closure
 

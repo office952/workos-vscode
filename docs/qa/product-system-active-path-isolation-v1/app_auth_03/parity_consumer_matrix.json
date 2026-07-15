@@ -1,0 +1,239 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "inventory_date": "2026-07-15",
+  "total_consumers": 18,
+  "read_parity_order": [
+    "read_operational_result",
+    "compute_canonical_shadow",
+    "compare",
+    "emit_discrepancy_event",
+    "return_operational_result_unchanged",
+    "track_fallback_if_used"
+  ],
+  "consumers": [
+    {
+      "id": "CONS-EMPLOYEES-PAGE",
+      "surface": "/employees",
+      "layer": "frontend",
+      "files": ["frontend/src/pages/Employees.tsx", "frontend/src/features/operational-registry/EmployeeOperationalPanel.tsx"],
+      "api_reads": [
+        "GET /api/v1/entities/employees",
+        "GET /api/v1/operational-registry/employees/{id}/authorizations",
+        "GET /api/v1/operational-registry/catalog"
+      ],
+      "operational_sources": ["entities employees", "registry authorizations", "legacy skills JSON on entity"],
+      "canonical_sources": ["employee_skill_authorizations", "skills catalog"],
+      "parity_domains": ["P1", "P2", "P3", "P6"],
+      "legacy_risk": "employees.skills JSON displayed alongside registry",
+      "priority": "P1"
+    },
+    {
+      "id": "CONS-UTILAJE-PAGE",
+      "surface": "/utilaje",
+      "layer": "frontend",
+      "files": ["frontend/src/pages/Utilaje.tsx", "frontend/src/features/operational-registry/RegistryResourceEditor.tsx"],
+      "api_reads": [
+        "GET /api/v1/machines",
+        "GET /api/v1/operational-registry/resources",
+        "GET /api/v1/operational-registry/machines"
+      ],
+      "operational_sources": ["machines API", "registry resources", "mockData fallback"],
+      "canonical_sources": ["MachineRegistry", "operational-registry resources"],
+      "parity_domains": ["P4", "P5"],
+      "legacy_risk": "mockData silent fallback on API fail",
+      "priority": "P1"
+    },
+    {
+      "id": "CONS-MOBILE-AVAILABLE",
+      "surface": "Employee Mobile available tasks",
+      "layer": "backend",
+      "files": ["backend/services/employee_mobile_tasks_service.py"],
+      "api_reads": ["GET /api/v1/employee-mobile/tasks/available"],
+      "operational_sources": ["employee_mobile_task_truth", "registry eligibility", "frozen operational tasks"],
+      "canonical_sources": ["OperationalRegistryService.check_employee_operation_eligibility"],
+      "parity_domains": ["P2", "P3", "P7", "P8"],
+      "legacy_risk": "indirect legacy via hybrid explicit lists",
+      "priority": "P0"
+    },
+    {
+      "id": "CONS-MOBILE-ASSIGNED",
+      "surface": "Employee Mobile assigned tasks",
+      "layer": "backend",
+      "files": ["backend/services/employee_mobile_tasks_service.py"],
+      "api_reads": ["GET /api/v1/employee-mobile/tasks/assigned"],
+      "operational_sources": ["assignment service", "ExecutionReality", "registry eligibility"],
+      "canonical_sources": ["assign_plan_task authority", "canonical eligibility shadow"],
+      "parity_domains": ["P7", "P8", "P9", "P10"],
+      "legacy_risk": "low — truth path canonical",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-MOBILE-CLAIM-START",
+      "surface": "Employee Mobile claim/start-from-available",
+      "layer": "backend",
+      "files": ["backend/services/employee_mobile_tasks_service.py"],
+      "api_reads": ["POST claim", "POST start-from-available"],
+      "operational_sources": ["registry eligibility", "assign_plan_task", "ExecutionRealityService.start_task"],
+      "canonical_sources": ["same + shadow eligibility"],
+      "parity_domains": ["P7", "P9", "P10"],
+      "legacy_risk": "explicit mapping bypass",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-OPERATOR-TASKS",
+      "surface": "/operator",
+      "layer": "fullstack",
+      "files": ["frontend/src/pages/OperatorView.tsx", "backend/routers/operator_tasks.py", "backend/services/operator_task_truth_service.py"],
+      "api_reads": ["GET /api/v1/operator/tasks"],
+      "operational_sources": ["operator task truth", "OperatorEmployeeGuard", "ExecutionReality"],
+      "canonical_sources": ["registry employee_id", "assignment service"],
+      "parity_domains": ["P1", "P8", "P10"],
+      "legacy_risk": "mockData fallback if API fail; operator_name legacy field",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-OPERATOR-ELIGIBILITY-FE",
+      "surface": "/operator eligibility UI",
+      "layer": "frontend",
+      "files": ["frontend/src/lib/operatorEmployeeEligibility.ts", "frontend/src/features/operational-registry/operationEligibility.ts"],
+      "operational_sources": ["client-side eligibility projection"],
+      "canonical_sources": ["registry mapping rules mirror"],
+      "parity_domains": ["P7", "P8"],
+      "legacy_risk": "client calculation may diverge from backend",
+      "priority": "P3"
+    },
+    {
+      "id": "CONS-TABLET",
+      "surface": "/tablet",
+      "layer": "frontend",
+      "files": ["frontend/src/pages/TabletView.tsx", "frontend/src/lib/workstationRouting.ts"],
+      "operational_sources": ["operator tasks", "DEMO_OPERATORS", "generateDemoTasks"],
+      "canonical_sources": ["future kiosk over canonical services"],
+      "parity_domains": ["P1", "P8"],
+      "legacy_risk": "PARALLEL authority — demo operators",
+      "priority": "P3"
+    },
+    {
+      "id": "CONS-SHOP-FLOOR",
+      "surface": "/shop-floor",
+      "layer": "frontend",
+      "files": ["frontend/src/hooks/useShopFloorData.ts", "frontend/src/pages/ShopFloor.tsx"],
+      "api_reads": ["GET /api/v1/machines", "GET /api/v1/operator/tasks"],
+      "operational_sources": ["machines", "operator tasks", "mockData silent fallback"],
+      "canonical_sources": ["registry projection fail-closed target"],
+      "parity_domains": ["P5", "P8"],
+      "legacy_risk": "ACTIVE_SILENT_FALLBACK",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-ELIGIBILITY-ENDPOINT",
+      "surface": "operation eligibility check",
+      "layer": "backend",
+      "files": ["backend/services/operational_registry_service.py", "backend/routers/operational_registry.py"],
+      "api_reads": ["internal check_employee_operation_eligibility"],
+      "operational_sources": ["hybrid/skill/explicit modes"],
+      "canonical_sources": ["canonical-only simulation (strict skill+auth rules)"],
+      "parity_domains": ["P2", "P3", "P7"],
+      "legacy_risk": "hybrid explicit list bypass",
+      "priority": "P0"
+    },
+    {
+      "id": "CONS-ASSIGNMENT-SERVICE",
+      "surface": "assignment service",
+      "layer": "backend",
+      "files": ["backend/services/execution_task_assignment_service.py", "backend/routers/execution.py"],
+      "api_reads": ["POST assign plan task"],
+      "operational_sources": ["tasks_json assigned_employee_id writes"],
+      "canonical_sources": ["single canonical assign_plan_task"],
+      "parity_domains": ["P9"],
+      "legacy_risk": "non-canonical direct JSON writers",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-EXECUTION-REALITY-START",
+      "surface": "ExecutionReality start guard",
+      "layer": "backend",
+      "files": ["backend/services/execution_reality_service.py", "backend/services/employee_mobile_tasks_service.py"],
+      "operational_sources": ["start_task", "readiness gates"],
+      "canonical_sources": ["ExecutionRealityService canonical path"],
+      "parity_domains": ["P10", "P7"],
+      "legacy_risk": "direct tasks_json mutation",
+      "priority": "P2"
+    },
+    {
+      "id": "CONS-PERSONAL-PAGE",
+      "surface": "/personal",
+      "layer": "frontend",
+      "files": ["frontend/src/pages/Personal.tsx", "frontend/src/hooks/usePersonalData.ts"],
+      "operational_sources": ["entities employees skills JSON"],
+      "canonical_sources": ["registry authorizations"],
+      "parity_domains": ["P2"],
+      "legacy_risk": "legacy skills display",
+      "priority": "P3"
+    },
+    {
+      "id": "CONS-PRODUCT-SYSTEM-MAPPING",
+      "surface": "/product-system operation mapping panel",
+      "layer": "frontend",
+      "files": ["frontend/src/features/operational-registry/TemplateOperationMappingPanel.tsx"],
+      "operational_sources": ["registry operation mappings"],
+      "canonical_sources": ["operation_resource_requirements", "required_skill_codes"],
+      "parity_domains": ["P2", "P4", "P5"],
+      "legacy_risk": "low — registry editor",
+      "priority": "P3"
+    },
+    {
+      "id": "CONS-OPERATOR-EMPLOYEES-HOOK",
+      "surface": "useOperatorEmployees",
+      "layer": "frontend",
+      "files": ["frontend/src/hooks/useOperatorEmployees.ts"],
+      "operational_sources": ["operator tasks + mapping resolution"],
+      "canonical_sources": ["registry operation resolution"],
+      "parity_domains": ["P7", "P8"],
+      "legacy_risk": "client-side resolution",
+      "priority": "P3"
+    },
+    {
+      "id": "CONS-REGISTRY-CATALOG-API",
+      "surface": "operational-registry catalog",
+      "layer": "backend",
+      "files": ["backend/routers/operational_registry.py", "backend/services/operational_registry_service.py"],
+      "api_reads": ["GET /api/v1/operational-registry/catalog"],
+      "operational_sources": ["skills, workcenters, resources catalog"],
+      "canonical_sources": ["same — canonical read"],
+      "parity_domains": ["P2", "P4", "P5"],
+      "legacy_risk": "consumers may still read legacy elsewhere",
+      "priority": "P1"
+    },
+    {
+      "id": "CONS-ATTENDANCE-READ",
+      "surface": "pontaj read paths",
+      "layer": "backend",
+      "files": ["backend/models/employees.py", "attendance routers if present"],
+      "operational_sources": ["attendance records"],
+      "canonical_sources": ["attendance separate from execution"],
+      "parity_domains": ["P11"],
+      "legacy_risk": "actor vs employee mismatch",
+      "priority": "P4"
+    },
+    {
+      "id": "CONS-SANDU-REPORT",
+      "surface": "Sandu reconciliation report",
+      "layer": "planned",
+      "files": ["ReconciliationReportService (planned)"],
+      "operational_sources": ["all domains aggregated for employee_id=4"],
+      "canonical_sources": ["registry + legacy + runtime snapshots"],
+      "parity_domains": ["P12"],
+      "legacy_risk": "n/a — report only",
+      "priority": "P1"
+    }
+  ],
+  "excluded_consumers": [
+    {
+      "id": "CONS-MODULES-PAGE",
+      "surface": "/modules",
+      "reason": "Module Chain pista separata — MODULE-INT-01 pe pauza; fara conectare la paritate"
+    }
+  ]
+}

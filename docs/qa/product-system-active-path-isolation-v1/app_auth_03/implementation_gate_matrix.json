@@ -1,0 +1,126 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "gates": [
+    {
+      "gate": "I1",
+      "name": "Contract",
+      "requirements": [
+        "parity_event_contracts versioned",
+        "parity_metrics_catalog complete",
+        "parity_feature_flags defined",
+        "confidentiality model defined",
+        "fingerprint/dedup spec"
+      ],
+      "blocks": ["P1+ runtime instrumentation"],
+      "owner_go_required": false,
+      "migration_required": false,
+      "implementation_task": "APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION"
+    },
+    {
+      "gate": "I2",
+      "name": "Instrumentare dev/test",
+      "requirements": [
+        "OBSERVE_ONLY evaluators wired behind flags",
+        "structured logs only",
+        "zero operational result mutation",
+        "unit tests for contracts pass"
+      ],
+      "blocks": ["P2+ shadow reads in any environment"],
+      "owner_go_required": "dev/test activation approval",
+      "migration_required": false
+    },
+    {
+      "gate": "I3",
+      "name": "Runtime observe-only",
+      "requirements": [
+        "subset consumers instrumented",
+        "performance budget met (timeout/circuit breaker)",
+        "zero operational changes verified by runtime proof",
+        "Sandu subset events emitted correctly"
+      ],
+      "blocks": ["P3 consumer expansion", "staging/production observe"],
+      "owner_go_required": "controlled subset GO",
+      "migration_required": false
+    },
+    {
+      "gate": "I4",
+      "name": "Persistenta discrepante",
+      "requirements": [
+        "dedicated discrepancy table schema approved",
+        "retention policy owner-approved",
+        "dedup index + resolution_status lifecycle"
+      ],
+      "blocks": ["P4 manager projection", "parity_persistence_enabled"],
+      "owner_go_required": "YES — explicit persistence GO",
+      "migration_required": true,
+      "not_authorized_now": true
+    },
+    {
+      "gate": "I5",
+      "name": "Raport manager",
+      "requirements": [
+        "access control manager/HR/technical defined",
+        "conceptual route /admin/operational-parity (not /modules)",
+        "drill-down employee/operation/machine",
+        "no HR secrets leakage"
+      ],
+      "blocks": ["parity_manager_projection_enabled"],
+      "owner_go_required": "YES — manager access approval",
+      "migration_required": false,
+      "depends_on": ["I4"]
+    },
+    {
+      "gate": "I6",
+      "name": "Reconciliere Sandu",
+      "requirements": [
+        "sandu_confirmation_flow all steps completable",
+        "human confirmations recorded",
+        "no auto data mutation",
+        "impact simulation reviewed"
+      ],
+      "blocks": ["P6 reconciliation execution"],
+      "owner_go_required": "YES — Sandu + manager sign-off",
+      "migration_required": false
+    },
+    {
+      "gate": "I7",
+      "name": "Freeze legacy writes",
+      "requirements": [
+        "sustained parity observation period complete",
+        "parity metrics within owner thresholds",
+        "all critical discrepancies acknowledged",
+        "writer inventory shows legacy writes only via approved paths"
+      ],
+      "blocks": ["employees.skills JSON writes", "non-canonical assignment writers"],
+      "owner_go_required": "YES — legacy freeze GO",
+      "migration_required": false,
+      "depends_on": ["I3 sustained", "I5 or log-based interim"]
+    },
+    {
+      "gate": "I8",
+      "name": "Migrare",
+      "requirements": [
+        "reconciliation waves executed with human approval",
+        "canonical source switch plan approved",
+        "rollback plan exists"
+      ],
+      "blocks": ["data migration", "ENFORCE_CANONICAL mode"],
+      "owner_go_required": "YES — separate migration GO (A22 follow-on)",
+      "migration_required": true,
+      "not_authorized_now": true
+    }
+  ],
+  "gate_separation_rule": "Nu combina gate-urile — fiecare GO separat",
+  "blocked_implementations": [
+    "PROD-ARCH-01",
+    "MOBILE-INT-02",
+    "MODULE-RUNTIME-01",
+    "MODULE-ARCH-01",
+    "migration",
+    "legacy freeze",
+    "source switch",
+    "COMPARE_AND_WARN",
+    "ENFORCE_CANONICAL"
+  ]
+}

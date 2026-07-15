@@ -1,0 +1,140 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "status": "READY",
+  "employee_scope": {
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu",
+    "reconciliation_required": true,
+    "individual_competencies_validated": false
+  },
+  "flow_steps": [
+    {
+      "step": 1,
+      "name": "Generare fisa",
+      "actor": "ReconciliationReportService",
+      "input": "P1-P12 parity scan for employee_id=4",
+      "output": "sandu_reconciliation_sheet.json",
+      "automation": "automated generation",
+      "mutation": false
+    },
+    {
+      "step": 2,
+      "name": "Confirmare owner/manager",
+      "actor": "owner / production manager",
+      "input": "fisa discrepante + impact operatii",
+      "output": "manager_acknowledgement record",
+      "decisions": [
+        "accepta observatia",
+        "solicita clarificare",
+        "amana"
+      ],
+      "mutation": false
+    },
+    {
+      "step": 3,
+      "name": "Validare responsabil tehnic",
+      "actor": "technical lead",
+      "input": "dovezi tehnice: registry vs legacy vs runtime",
+      "output": "technical_validation record",
+      "checks": [
+        "competente registry corecte?",
+        "autorizari lipsa confirmate?",
+        "mapari explicite justificate?"
+      ],
+      "mutation": false
+    },
+    {
+      "step": 4,
+      "name": "Confirmare practica Sandu",
+      "actor": "Putaru Sandu + manager",
+      "input": "lista operatii reale executate vs registru",
+      "output": "practical_confirmation record",
+      "classification_options": [
+        "autonom",
+        "asistat",
+        "nu_executa"
+      ],
+      "mutation": false
+    },
+    {
+      "step": 5,
+      "name": "Clasificare autonom/asistat/nu executa",
+      "actor": "owner + HR + technical",
+      "input": "practical confirmation",
+      "output": "capability_classification per operation family",
+      "note": "maparile explicite nu reprezinta automat competenta (A8)",
+      "mutation": false
+    },
+    {
+      "step": 6,
+      "name": "Validare autorizare",
+      "actor": "technical lead + manager",
+      "input": "resource/workcenter authorizations needed",
+      "output": "authorization_validation record",
+      "separate_from_competence": true,
+      "mutation": false
+    },
+    {
+      "step": 7,
+      "name": "Aprobare rezultat",
+      "actor": "owner",
+      "input": "all prior confirmations",
+      "output": "reconciliation_approval_status",
+      "options": ["approved", "partial", "rejected", "deferred"],
+      "mutation": false
+    },
+    {
+      "step": 8,
+      "name": "Plan de reconciliere",
+      "actor": "owner + technical",
+      "input": "approved discrepancies",
+      "output": "reconciliation_wave_plan (per APP-AUTH-02 waves)",
+      "waves_reference": "docs/qa/product-system-active-path-isolation-v1/app_auth_02/reconciliation_waves.json",
+      "mutation": false
+    },
+    {
+      "step": 9,
+      "name": "Simulare impact",
+      "actor": "EligibilityShadowEvaluator + manager review",
+      "input": "proposed canonical values",
+      "output": "impact_simulation report",
+      "shows": [
+        "operatii disponibile inainte/dupa",
+        "taskuri afectate",
+        "suprafete afectate"
+      ],
+      "mutation": false
+    },
+    {
+      "step": 10,
+      "name": "GO separat pentru modificarea datelor",
+      "actor": "owner",
+      "input": "simulation + approval",
+      "output": "data_change_go / no_go",
+      "gate": "I8",
+      "mutation": "only after explicit GO — outside OBSERVE_ONLY"
+    }
+  ],
+  "report_sections": [
+    "competente_registry",
+    "competente_legacy",
+    "autorizari",
+    "centre",
+    "utilaje",
+    "mapari",
+    "taskuri_disponibile",
+    "taskuri_alocate",
+    "sesiuni",
+    "pontaj",
+    "utilizator",
+    "decizii_umane_lipsa"
+  ],
+  "known_open_items": [
+    "DISC-COMP-001 competence conflict registry vs legacy",
+    "7 overrides without registry competence",
+    "montaj_led CRITICAL explicit mapping",
+    "no user account linked"
+  ],
+  "auto_verdict": false
+}

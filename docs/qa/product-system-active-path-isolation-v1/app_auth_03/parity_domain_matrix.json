@@ -1,0 +1,483 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "starting_head": "3a9c9ea",
+  "execution_mode_authorized": "OBSERVE_ONLY",
+  "domains": [
+    {
+      "id": "P1",
+      "name": "Identitate angajat",
+      "status": "READY",
+      "canonical_sources": [
+        "employees.id",
+        "employees.user_id",
+        "EmployeeRecord (HR one-to-one)",
+        "session actor (JWT / operator guard)"
+      ],
+      "transitional_sources": [
+        "employees.name/email fallback",
+        "operator_name legacy field",
+        "DEMO_OPERATORS (tablet)"
+      ],
+      "comparisons": [
+        "employees.id vs session actor",
+        "employees.user_id vs auth user",
+        "EmployeeRecord presence vs employees row",
+        "pontaj actor vs operational employee",
+        "Employee Mobile identity vs registry"
+      ],
+      "detections": [
+        "angajat_fara_utilizator",
+        "utilizator_legat_la_mai_multi_angajati",
+        "angajat_legat_la_mai_multi_utilizatori",
+        "hr_record_lipsa",
+        "hr_record_duplicat",
+        "nume_email_fallback",
+        "actor_diferit_de_angajat"
+      ],
+      "evaluator_component": "EmployeeIdentityParityEvaluator",
+      "event_types": ["EMPLOYEE_IDENTITY_PARITY_DIFFERENCE"],
+      "evidence_refs": [
+        "docs/qa/product-system-active-path-isolation-v1/app_auth_02/discrepancy_inventory.json",
+        "docs/qa/product-system-active-path-isolation-v1/app_auth_02/employee_reconciliation_matrix.json"
+      ],
+      "runtime_baseline": {
+        "employees": 8,
+        "users_linked": 1,
+        "employees_without_user": 7
+      }
+    },
+    {
+      "id": "P2",
+      "name": "Competente",
+      "status": "READY",
+      "canonical_sources": [
+        "skills catalog (foundation / operational-registry catalog)",
+        "employee_skill_authorizations",
+        "operation mapping required_skill_codes"
+      ],
+      "transitional_sources": [
+        "employees.skills JSON",
+        "frontend mockData operator skills",
+        "/employees displayed list"
+      ],
+      "comparisons": [
+        "registry skill_codes vs legacy JSON",
+        "registry vs /employees UI list",
+        "required_skill_codes vs employee competences",
+        "explicit mapping vs competence"
+      ],
+      "detections": [
+        "competenta_doar_in_registry",
+        "competenta_doar_in_legacy",
+        "diferente_cod",
+        "diferente_denumire",
+        "competente_amestecate_cu_roluri",
+        "competente_amestecate_cu_autorizari",
+        "operatii_fara_cerinta",
+        "angajati_eligibili_fara_competenta"
+      ],
+      "evaluator_component": "CompetenceParityEvaluator",
+      "event_types": ["COMPETENCE_PARITY_DIFFERENCE"],
+      "runtime_baseline": {
+        "competence_catalog": 15,
+        "employee_competence_relations": 30,
+        "employees_with_legacy_skills": 8,
+        "registry_legacy_competence_conflicts": 1
+      }
+    },
+    {
+      "id": "P3",
+      "name": "Autorizari",
+      "status": "READY",
+      "canonical_sources": [
+        "employee_resource_authorizations",
+        "employee_workcenter_authorizations",
+        "operation_employee_authorizations",
+        "operation mapping authorization_mode"
+      ],
+      "transitional_sources": [
+        "employees.skills JSON used as proxy",
+        "explicit mappings without registry authorization",
+        "hybrid mode skill_match bypass"
+      ],
+      "comparisons": [
+        "employee-resource vs legacy",
+        "workcenter authorization vs operation requirement",
+        "explicit list vs competence",
+        "machine concrete vs authorization"
+      ],
+      "detections": [
+        "operare_fara_autorizare_dovedita",
+        "autorizare_expirata",
+        "autorizare_pe_tip_folosita_ca_exacta",
+        "competenta_folosita_drept_autorizare",
+        "mapare_ocolesc_autorizare",
+        "utilaj_absent_sau_inactiv"
+      ],
+      "evaluator_component": "AuthorizationParityEvaluator",
+      "event_types": ["AUTHORIZATION_PARITY_DIFFERENCE"],
+      "runtime_baseline": {
+        "employee_resource_authorizations": 16,
+        "explicit_operation_overrides": 39,
+        "overrides_without_authorization": 6
+      }
+    },
+    {
+      "id": "P4",
+      "name": "Centre de lucru",
+      "status": "READY",
+      "canonical_sources": [
+        "operational-registry workcenter catalog",
+        "operation mapping allowed_workcenter_codes",
+        "employee_workcenter_authorizations"
+      ],
+      "transitional_sources": [
+        "machine_type constants",
+        "frontend mockData workcenters",
+        "operations treated as centers"
+      ],
+      "comparisons": [
+        "catalog center vs operation center",
+        "machine vs center identity",
+        "employee workcenter vs operation requirement"
+      ],
+      "detections": [
+        "acelasi_concept_doua_coduri",
+        "utilaj_tratat_drept_centru",
+        "operatie_tratata_drept_centru",
+        "centru_fara_utilaje",
+        "centru_fara_operatii",
+        "centru_fara_angajati_eligibili"
+      ],
+      "explicit_concepts": [
+        "WC_CNC",
+        "WC_CNC_ROUTING",
+        "CNC router",
+        "Modelare cant",
+        "Asamblare",
+        "Print",
+        "Laminare",
+        "Laser",
+        "Sudura"
+      ],
+      "evaluator_component": "WorkcenterParityEvaluator",
+      "event_types": ["WORKCENTER_PARITY_DIFFERENCE"],
+      "runtime_baseline": { "workcenters": 14 }
+    },
+    {
+      "id": "P5",
+      "name": "Utilaje si resurse",
+      "status": "READY",
+      "canonical_sources": [
+        "machines table / MachineRegistry",
+        "operational-registry resources catalog",
+        "operation_resource_requirements",
+        "employee_resource_authorizations"
+      ],
+      "transitional_sources": [
+        "mockData machine specs",
+        "frontend Utilaje fallback",
+        "Shop Floor projection"
+      ],
+      "comparisons": [
+        "machines.id/code vs registry resource_code",
+        "metadata across /utilaje and registry",
+        "authorization resource vs task machine_type"
+      ],
+      "detections": [
+        "cod_inexistent",
+        "id_diferit_acelasi_utilaj",
+        "metadata_diferita",
+        "tip_lipsa",
+        "specificatie_mock",
+        "resursa_inactiva_folosita",
+        "autorizare_pe_alta_resursa",
+        "task_fara_resursa_concreta_obligatorie"
+      ],
+      "evaluator_component": "ResourceParityEvaluator",
+      "event_types": ["RESOURCE_PARITY_DIFFERENCE"],
+      "runtime_baseline": {
+        "machines_resources": 14,
+        "cnc_4020_status": "IDENTITY_ALIGNED_METADATA_PARTIAL"
+      }
+    },
+    {
+      "id": "P6",
+      "name": "Mapari explicite",
+      "status": "READY",
+      "canonical_sources": [
+        "operation_employee_authorizations",
+        "operation mapping rules"
+      ],
+      "transitional_sources": [
+        "hybrid explicit+skill paths",
+        "legacy eligibility exceptions"
+      ],
+      "classifications": [
+        "SELECTIE_DINTRE_ELIGIBILI",
+        "RESTRANGERE_ELIGIBILITATE",
+        "COMPATIBILITATE_TRANZITORIE",
+        "ADAUGARE_FARA_COMPETENTA",
+        "ADAUGARE_FARA_AUTORIZARE",
+        "SCOP_NECUNOSCUT"
+      ],
+      "evaluator_component": "ExplicitMappingUsageTracker",
+      "event_types": ["EXPLICIT_MAPPING_USED"],
+      "runtime_baseline": {
+        "explicit_operation_overrides": 39,
+        "overrides_without_competence": 7,
+        "overrides_without_authorization": 6
+      }
+    },
+    {
+      "id": "P7",
+      "name": "Eligibilitate",
+      "status": "READY",
+      "canonical_sources": [
+        "OperationalRegistryService.check_employee_operation_eligibility (canonical rules)",
+        "operation mapping + authorizations"
+      ],
+      "transitional_sources": [
+        "hybrid explicit list",
+        "legacy JSON indirect",
+        "frontend operatorEmployeeEligibility"
+      ],
+      "shadow_outcomes": [
+        "ALINIAT_ELIGIBIL",
+        "ALINIAT_NEELIGIBIL",
+        "OPERATIONAL_ELIGIBIL_CANONIC_NEELIGIBIL",
+        "OPERATIONAL_NEELIGIBIL_CANONIC_ELIGIBIL",
+        "NECALCULABIL_DATE_LIPSA",
+        "EXCEPTIE_TRANZITORIE",
+        "AUTORIZARE_LIPSA",
+        "CERINTA_OPERATIE_LIPSA"
+      ],
+      "evaluator_component": "EligibilityShadowEvaluator",
+      "event_types": ["ELIGIBILITY_PARITY_DIFFERENCE"],
+      "constraint": "Citirea in umbra nu modifica lista operationala returnata angajatului"
+    },
+    {
+      "id": "P8",
+      "name": "Suprafete de executie",
+      "status": "READY",
+      "surfaces": [
+        "Employee Mobile available",
+        "Employee Mobile assigned",
+        "/operator",
+        "/tablet",
+        "/shop-floor"
+      ],
+      "dimensions": [
+        "taskuri_citite",
+        "readiness",
+        "alocare",
+        "Start",
+        "Complete",
+        "sursa_competente",
+        "sursa_autorizari",
+        "fallback",
+        "date_demo"
+      ],
+      "evaluator_component": "ExecutionSurfaceParityEvaluator",
+      "event_types": ["EXECUTION_SURFACE_PARITY_DIFFERENCE"],
+      "module_chain_excluded": true
+    },
+    {
+      "id": "P9",
+      "name": "Alocare",
+      "status": "READY",
+      "canonical_writer": "execution_task_assignment_service.assign_plan_task",
+      "observed_fields": [
+        "writer",
+        "sursa",
+        "actor",
+        "angajat",
+        "valoare_anterioara",
+        "valoare_noua",
+        "timestamp",
+        "operatie",
+        "abatere_serviciu_canonic"
+      ],
+      "evaluator_component": "AssignmentWriterObserver",
+      "event_types": ["ASSIGNMENT_WRITER_OUTSIDE_AUTHORITY"],
+      "runtime_baseline": { "active_assignments": 7 }
+    },
+    {
+      "id": "P10",
+      "name": "Sesiuni si ExecutionReality",
+      "status": "READY",
+      "canonical_sources": [
+        "ExecutionRealityService.start_task / end_task",
+        "execution_reality.tasks_json sessions"
+      ],
+      "transitional_sources": [
+        "direct tasks_json mutation paths",
+        "legacy plan task identity"
+      ],
+      "evaluator_component": "SessionParityEvaluator",
+      "event_types": ["SESSION_AUTHORITY_DIFFERENCE"],
+      "runtime_baseline": { "active_sessions": 3 }
+    },
+    {
+      "id": "P11",
+      "name": "Pontaj",
+      "status": "READY",
+      "constraint": "Separare stricta — doar comparatii informative, fara corectie automata",
+      "comparisons": [
+        "prezenta_vs_sesiune_activa",
+        "absenta_vs_Start",
+        "program_vs_sesiune",
+        "total_pontaj_vs_total_productie",
+        "actor_vs_angajat"
+      ],
+      "evaluator_component": "AttendanceComparisonObserver",
+      "event_types": ["ATTENDANCE_EXECUTION_DIFFERENCE"]
+    },
+    {
+      "id": "P12",
+      "name": "Sandu reconciliere",
+      "status": "READY",
+      "employee_id": 4,
+      "employee_name": "Putaru Sandu",
+      "evaluator_component": "ReconciliationReportService",
+      "report_sections": [
+        "competente_registry",
+        "competente_legacy",
+        "autorizari",
+        "centre",
+        "utilaje",
+        "mapari",
+        "taskuri_disponibile",
+        "taskuri_alocate",
+        "sesiuni",
+        "pontaj",
+        "utilizator",
+        "decizii_umane_lipsa"
+      ],
+      "constraint": "Nu completeaza automat verdictul — fisa de reconciliere pentru decizie umana"
+    }
+  ],
+  "architecture_components": [
+    {
+      "component": "ParityReadService",
+      "responsibility": "Orchestreaza citirea operationala + citirea canonica in umbra + comparatie",
+      "inputs": ["consumer_context", "employee_id", "operation_code", "resource_code"],
+      "outputs": ["operational_result", "canonical_shadow_result", "discrepancy_events"],
+      "persistence": "none (phase 1)",
+      "consumers": ["all parity evaluators", "ParityEventPublisher"]
+    },
+    {
+      "component": "CompetenceParityEvaluator",
+      "responsibility": "P2 — compara competente registry vs legacy vs UI",
+      "inputs": ["employee_id", "skill catalog", "legacy JSON", "operation requirements"],
+      "outputs": ["COMPETENCE_PARITY_DIFFERENCE events", "P2 metrics"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "ReconciliationReportService"]
+    },
+    {
+      "component": "AuthorizationParityEvaluator",
+      "responsibility": "P3 — compara autorizari angajat-resursa/centru vs cerinte operatie",
+      "inputs": ["employee_id", "operation_code", "resource_code", "explicit mappings"],
+      "outputs": ["AUTHORIZATION_PARITY_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "EligibilityShadowEvaluator"]
+    },
+    {
+      "component": "WorkcenterParityEvaluator",
+      "responsibility": "P4 — aliniere concepte centru de lucru",
+      "inputs": ["workcenter catalog", "operations", "machines", "frontend constants"],
+      "outputs": ["WORKCENTER_PARITY_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher"]
+    },
+    {
+      "component": "ResourceParityEvaluator",
+      "responsibility": "P5 — paritate utilaje/resurse",
+      "inputs": ["machines", "registry resources", "authorizations", "mock specs"],
+      "outputs": ["RESOURCE_PARITY_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher"]
+    },
+    {
+      "component": "ExplicitMappingUsageTracker",
+      "responsibility": "P6 — observa folosirea maparilor explicite si le clasifica",
+      "inputs": ["operation_employee_authorizations", "eligibility decisions", "task context"],
+      "outputs": ["EXPLICIT_MAPPING_USED events", "classification"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "ReconciliationReportService"]
+    },
+    {
+      "component": "EligibilityShadowEvaluator",
+      "responsibility": "P7 — calculeaza eligibilitate canonica in umbra",
+      "inputs": ["operational eligibility result", "canonical rules", "mapping mode"],
+      "outputs": ["ELIGIBILITY_PARITY_DIFFERENCE events", "shadow outcome code"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "ExecutionSurfaceParityEvaluator"]
+    },
+    {
+      "component": "LegacyFallbackUsageTracker",
+      "responsibility": "Masura citiri/scrieri legacy si fallback-uri active",
+      "inputs": ["consumer_id", "read path", "fallback trigger"],
+      "outputs": ["LEGACY_FALLBACK_USED events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "ParityMetricsProjection"]
+    },
+    {
+      "component": "ExecutionSurfaceParityEvaluator",
+      "responsibility": "P8 — compara rezultate intre Mobile/Operator/Tablet/Shop Floor",
+      "inputs": ["surface_id", "employee_id", "operation_code", "task snapshots"],
+      "outputs": ["EXECUTION_SURFACE_PARITY_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher"]
+    },
+    {
+      "component": "AssignmentWriterObserver",
+      "responsibility": "P9 — observa scrieri de alocare si abateri de la serviciul canonic",
+      "inputs": ["writer_id", "before/after assigned_employee_id", "actor"],
+      "outputs": ["ASSIGNMENT_WRITER_OUTSIDE_AUTHORITY events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher"]
+    },
+    {
+      "component": "SessionParityEvaluator",
+      "responsibility": "P10 — compara sesiuni ExecutionReality vs alocare/eligibilitate",
+      "inputs": ["session record", "employee_id", "operation", "surface"],
+      "outputs": ["SESSION_AUTHORITY_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher"]
+    },
+    {
+      "component": "AttendanceComparisonObserver",
+      "responsibility": "P11 — comparatii informative pontaj vs executie",
+      "inputs": ["attendance records", "active sessions", "Start events"],
+      "outputs": ["ATTENDANCE_EXECUTION_DIFFERENCE events"],
+      "persistence": "structured logs phase 1",
+      "consumers": ["ParityEventPublisher", "ReconciliationReportService"]
+    },
+    {
+      "component": "ParityEventPublisher",
+      "responsibility": "Emite evenimente versionate, deduplicate, cu fingerprint",
+      "inputs": ["raw discrepancy", "severity rules"],
+      "outputs": ["versioned parity events", "dedup state"],
+      "persistence": "logs phase 1; dedicated table phase 4+",
+      "consumers": ["ParityMetricsProjection", "ReconciliationReportService"]
+    },
+    {
+      "component": "ParityMetricsProjection",
+      "responsibility": "Agrega metrici de paritate cu cardinalitate controlata",
+      "inputs": ["parity events stream"],
+      "outputs": ["counters", "gauges", "histograms"],
+      "persistence": "metrics backend / structured logs",
+      "consumers": ["manager projection (future)", "alerting (owner thresholds)"]
+    },
+    {
+      "component": "ReconciliationReportService",
+      "responsibility": "P12 — genereaza fisa Sandu si rapoarte manager",
+      "inputs": ["all domain evaluators output", "employee scope"],
+      "outputs": ["reconciliation report JSON", "pending human decisions"],
+      "persistence": "report artifact phase 1; DB phase 4+",
+      "consumers": ["manager (future route)", "Sandu confirmation flow"]
+    }
+  ]
+}

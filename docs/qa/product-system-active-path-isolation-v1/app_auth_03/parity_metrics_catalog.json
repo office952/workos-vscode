@@ -1,0 +1,167 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "alert_thresholds": "OWNER_DECISION_REQUIRED — praguri nu sunt setate in acest plan",
+  "metrics": [
+    {
+      "metric": "parity_employees_compared_total",
+      "definition": "Numar angajati pentru care s-a rulat cel putin o comparatie de identitate/competenta/autorizare",
+      "source": "EmployeeIdentityParityEvaluator + CompetenceParityEvaluator",
+      "cardinality": "low — per employee_id label",
+      "retention": "30d logs / 1y after persistence GO",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_employees_with_drift_total",
+      "definition": "Angajati cu cel putin o discrepanta deschisa in orice domeniu P1-P12",
+      "source": "ParityMetricsProjection aggregate",
+      "cardinality": "low",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_competence_registry_only_total",
+      "definition": "Competente prezente doar in registry, absente din JSON legacy",
+      "source": "CompetenceParityEvaluator REGISTRY_ONLY events",
+      "cardinality": "medium — per skill_code",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_competence_legacy_only_total",
+      "definition": "Competente prezente doar in JSON legacy, absente din registry",
+      "source": "CompetenceParityEvaluator LEGACY_ONLY events",
+      "cardinality": "medium",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_authorization_missing_total",
+      "definition": "Cazuri unde operatia necesita autorizare dar angajatul nu o are in sursa canonica",
+      "source": "AuthorizationParityEvaluator",
+      "cardinality": "medium — per employee+operation+resource",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_explicit_mapping_used_total",
+      "definition": "Numar utilizari ale maparilor explicite operation-employee in decizii de eligibilitate",
+      "source": "ExplicitMappingUsageTracker",
+      "cardinality": "medium",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_mapping_without_competence_total",
+      "definition": "Mapari explicite clasificate ADAUGARE_FARA_COMPETENTA",
+      "source": "ExplicitMappingUsageTracker",
+      "cardinality": "low",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_mapping_without_authorization_total",
+      "definition": "Mapari explicite clasificate ADAUGARE_FARA_AUTORIZARE",
+      "source": "ExplicitMappingUsageTracker",
+      "cardinality": "low",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_operations_incomplete_requirements_total",
+      "definition": "Operatii fara cerinta completa (competenta/autorizare/resursa) in mapping canonic",
+      "source": "CompetenceParityEvaluator + AuthorizationParityEvaluator",
+      "cardinality": "low — per operation_code",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_eligibility_different_total",
+      "definition": "Cazuri ELIGIBILITY_PARITY_DIFFERENCE unde rezultatul operational difera de cel canonic simulat",
+      "source": "EligibilityShadowEvaluator",
+      "cardinality": "medium",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_legacy_fallback_used_total",
+      "definition": "Total citiri/scrieri care au activat fallback legacy sau mockData",
+      "source": "LegacyFallbackUsageTracker",
+      "cardinality": "medium — per consumer_id",
+      "retention": "14d logs / 90d aggregated",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_legacy_reads_per_consumer",
+      "definition": "Citiri legacy grupate pe consumator (employees, utilaje, mobile, operator, etc.)",
+      "source": "LegacyFallbackUsageTracker",
+      "cardinality": "low — bounded consumer list",
+      "retention": "14d / 90d",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_legacy_writes_per_writer",
+      "definition": "Scrieri legacy grupate pe writer (entities, seed, direct JSON)",
+      "source": "AssignmentWriterObserver + LegacyFallbackUsageTracker",
+      "cardinality": "low",
+      "retention": "14d / 90d",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_surfaces_different_results_total",
+      "definition": "Diferente intre suprafete de executie pentru aceeasi identitate+operatie",
+      "source": "ExecutionSurfaceParityEvaluator",
+      "cardinality": "medium — per surface pair",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_incompatible_sessions_total",
+      "definition": "Sesiuni cu nealiniere fata de alocare/eligibilitate/autorizare",
+      "source": "SessionParityEvaluator",
+      "cardinality": "medium",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_sandu_discrepancies_open",
+      "definition": "Discrepante deschise in fisa Sandu (employee_id=4)",
+      "source": "ReconciliationReportService",
+      "cardinality": "low — single employee scope",
+      "retention": "until reconciled",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_discrepancies_unresolved_total",
+      "definition": "Toate discrepantele cu resolution_status=open|acknowledged",
+      "source": "ParityEventPublisher",
+      "cardinality": "bounded by dedup",
+      "retention": "30d / 1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_discrepancies_resolved_total",
+      "definition": "Discrepante inchise reconciled|wont_fix",
+      "source": "ParityEventPublisher",
+      "cardinality": "bounded",
+      "retention": "1y",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_discrepancy_mean_age_hours",
+      "definition": "Varsta medie a discrepantelor deschise (now - first_seen)",
+      "source": "ParityMetricsProjection histogram",
+      "cardinality": "single gauge + histogram",
+      "retention": "30d rolling",
+      "alert_threshold": "OWNER_DECISION"
+    },
+    {
+      "metric": "parity_max_active_risk_score",
+      "definition": "Cel mai mare scor de severitate activ (CRITICAL=5..INFORMATIONAL=1) pe discrepante deschise",
+      "source": "ParityMetricsProjection",
+      "cardinality": "single gauge",
+      "retention": "30d rolling",
+      "alert_threshold": "OWNER_DECISION"
+    }
+  ]
+}

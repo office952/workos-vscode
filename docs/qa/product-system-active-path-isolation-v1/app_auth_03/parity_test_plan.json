@@ -1,0 +1,265 @@
+{
+  "task": "APP-AUTH-03",
+  "version": "v1",
+  "observe_only": true,
+  "mutation_policy": "NO_OPERATIONAL_MUTATION in all planned tests",
+  "total_scenarios": 32,
+  "matrix": [
+    {
+      "test": "T01_registry_equals_legacy",
+      "fixture": "employee with aligned registry and JSON skills",
+      "operational_source": "hybrid eligibility",
+      "canonical_source": "registry only rules",
+      "expected_result": "no discrepancy events; ALINIAT_ELIGIBIL",
+      "mutation": false
+    },
+    {
+      "test": "T02_registry_only_competence",
+      "fixture": "employee SK_PRINT_OPERATOR registry only",
+      "operational_source": "registry authorizations",
+      "canonical_source": "registry",
+      "expected_result": "COMPETENCE_PARITY_DIFFERENCE REGISTRY_ONLY if legacy read attempted",
+      "mutation": false
+    },
+    {
+      "test": "T03_legacy_only_competence",
+      "fixture": "Sandu employees.skills JSON (5 legacy codes)",
+      "operational_source": "legacy JSON",
+      "canonical_source": "registry SK_PRINT_OPERATOR",
+      "expected_result": "COMPETENCE_PARITY_DIFFERENCE LEGACY_ONLY + HIGH severity",
+      "mutation": false
+    },
+    {
+      "test": "T04_competence_conflict",
+      "fixture": "DISC-COMP-001 Sandu",
+      "operational_source": "registry vs JSON",
+      "canonical_source": "registry",
+      "expected_result": "discrepancy fingerprint stable; no eligibility change",
+      "mutation": false
+    },
+    {
+      "test": "T05_mapping_without_competence",
+      "fixture": "Sandu assembly explicit override",
+      "operational_source": "hybrid explicit list",
+      "canonical_source": "skill requirement SK_ASSEMBLY",
+      "expected_result": "EXPLICIT_MAPPING_USED ADAUGARE_FARA_COMPETENTA",
+      "mutation": false
+    },
+    {
+      "test": "T06_mapping_without_authorization",
+      "fixture": "override without resource auth",
+      "operational_source": "explicit mapping",
+      "canonical_source": "employee_resource_authorizations",
+      "expected_result": "EXPLICIT_MAPPING_USED ADAUGARE_FARA_AUTORIZARE",
+      "mutation": false
+    },
+    {
+      "test": "T07_expired_authorization",
+      "fixture": "authorization with valid_until in past",
+      "operational_source": "registry auth row",
+      "canonical_source": "active auth check",
+      "expected_result": "AUTHORIZATION_PARITY_DIFFERENCE EXPIRED",
+      "mutation": false
+    },
+    {
+      "test": "T08_missing_operation_requirement",
+      "fixture": "operation without required_skill_codes",
+      "operational_source": "mapping incomplete",
+      "canonical_source": "full requirement spec",
+      "expected_result": "ELIGIBILITY_PARITY_DIFFERENCE CERINTA_OPERATIE_LIPSA",
+      "mutation": false
+    },
+    {
+      "test": "T09_employee_without_user",
+      "fixture": "7 employees without user_id",
+      "operational_source": "employees table",
+      "canonical_source": "user link expectation",
+      "expected_result": "EMPLOYEE_IDENTITY_PARITY_DIFFERENCE NO_USER_LINK",
+      "mutation": false
+    },
+    {
+      "test": "T10_sandu_full_reconciliation",
+      "fixture": "employee_id=4 full domain scan",
+      "operational_source": "runtime :8001 snapshot",
+      "canonical_source": "registry canonical rules",
+      "expected_result": "ReconciliationReportService fisa with open discrepancies; no auto verdict",
+      "mutation": false
+    },
+    {
+      "test": "T11_cnc_4020_resource_alignment",
+      "fixture": "MCH-CNC-4020 across machines/registry/utilaje",
+      "operational_source": "machines + registry",
+      "canonical_source": "MachineRegistry",
+      "expected_result": "RESOURCE_PARITY_DIFFERENCE METADATA_DIFF at most; identity aligned",
+      "mutation": false
+    },
+    {
+      "test": "T12_mobile_available_projection",
+      "fixture": "commercial e2e seed employee JWT",
+      "operational_source": "GET tasks/available",
+      "canonical_source": "shadow eligibility per task",
+      "expected_result": "operational list unchanged; shadow events emitted",
+      "mutation": false
+    },
+    {
+      "test": "T13_mobile_assigned_projection",
+      "fixture": "assigned tasks for linked user",
+      "operational_source": "GET tasks/assigned",
+      "canonical_source": "assignment + eligibility shadow",
+      "expected_result": "no response mutation; ASSIGNMENT events if non-canonical writer detected",
+      "mutation": false
+    },
+    {
+      "test": "T14_operator_tasks_surface",
+      "fixture": "operator session with registry employee_id",
+      "operational_source": "GET /operator/tasks",
+      "canonical_source": "Mobile truth for same employee",
+      "expected_result": "EXECUTION_SURFACE_PARITY_DIFFERENCE if task sets differ",
+      "mutation": false
+    },
+    {
+      "test": "T15_tablet_demo_surface",
+      "fixture": "tablet DEMO_OPERATORS",
+      "operational_source": "demo tasks",
+      "canonical_source": "registry employees",
+      "expected_result": "EXECUTION_SURFACE_PARITY_DIFFERENCE DEMO_DATA_ACTIVE informational",
+      "mutation": false
+    },
+    {
+      "test": "T16_shop_floor_silent_fallback",
+      "fixture": "machines API fail + mockData",
+      "operational_source": "mockData",
+      "canonical_source": "machines API",
+      "expected_result": "LEGACY_FALLBACK_USED SILENT_FALLBACK MEDIUM",
+      "mutation": false
+    },
+    {
+      "test": "T17_start_guard_eligibility",
+      "fixture": "ineligible employee start attempt",
+      "operational_source": "operational block/allow as today",
+      "canonical_source": "shadow canonical deny",
+      "expected_result": "operational behavior unchanged; ELIGIBILITY_PARITY_DIFFERENCE logged",
+      "mutation": false
+    },
+    {
+      "test": "T18_complete_session",
+      "fixture": "active ExecutionReality session",
+      "operational_source": "ExecutionRealityService",
+      "canonical_source": "session vs assignment parity",
+      "expected_result": "SESSION_AUTHORITY_DIFFERENCE if mismatch; Complete unchanged",
+      "mutation": false
+    },
+    {
+      "test": "T19_attendance_separate",
+      "fixture": "pontaj record + active session",
+      "operational_source": "attendance table",
+      "canonical_source": "execution session",
+      "expected_result": "ATTENDANCE_EXECUTION_DIFFERENCE informative only",
+      "mutation": false
+    },
+    {
+      "test": "T20_fingerprint_stability",
+      "fixture": "repeat Sandu competence diff",
+      "operational_source": "same inputs twice",
+      "canonical_source": "same",
+      "expected_result": "same fingerprint; occurrence_count increments",
+      "mutation": false
+    },
+    {
+      "test": "T21_deduplication_window",
+      "fixture": "rapid repeated eligibility checks",
+      "operational_source": "same employee+operation",
+      "canonical_source": "same",
+      "expected_result": "anti-spam suppresses duplicate events within 60s",
+      "mutation": false
+    },
+    {
+      "test": "T22_feature_flags_off",
+      "fixture": "all parity flags false",
+      "operational_source": "any consumer",
+      "canonical_source": "n/a",
+      "expected_result": "zero parity events; zero latency added",
+      "mutation": false
+    },
+    {
+      "test": "T23_feature_flags_partial",
+      "fixture": "competence_parity_enabled only",
+      "operational_source": "employees page read",
+      "canonical_source": "registry",
+      "expected_result": "only P2 events; other domains silent",
+      "mutation": false
+    },
+    {
+      "test": "T24_timeout_degradation",
+      "fixture": "shadow eval exceeds timeout budget",
+      "operational_source": "operational path",
+      "canonical_source": "shadow skipped",
+      "expected_result": "circuit breaker; operational response unaffected",
+      "mutation": false
+    },
+    {
+      "test": "T25_confidentiality_employee_view",
+      "fixture": "employee role JWT",
+      "operational_source": "parity events",
+      "canonical_source": "redaction policy",
+      "expected_result": "no colleague comparisons; no HR secrets in metadata_safe",
+      "mutation": false
+    },
+    {
+      "test": "T26_confidentiality_manager_view",
+      "fixture": "manager role",
+      "operational_source": "manager projection",
+      "canonical_source": "full discrepancy summary",
+      "expected_result": "sees discrepancies + impact; no raw HR contract details",
+      "mutation": false
+    },
+    {
+      "test": "T27_workcenter_explicit_concepts",
+      "fixture": "WC_CNC, Print, Laminare, Sudura mappings",
+      "operational_source": "catalog + operations",
+      "canonical_source": "registry workcenters",
+      "expected_result": "WORKCENTER_PARITY_DIFFERENCE for duplicate concepts",
+      "mutation": false
+    },
+    {
+      "test": "T28_montaj_led_critical",
+      "fixture": "montaj_led explicit without competence",
+      "operational_source": "hybrid eligibility",
+      "canonical_source": "strict competence required",
+      "expected_result": "CRITICAL ELIGIBILITY + EXPLICIT_MAPPING events",
+      "mutation": false
+    },
+    {
+      "test": "T29_non_canonical_assignment_writer",
+      "fixture": "direct tasks_json assign",
+      "operational_source": "legacy writer",
+      "canonical_source": "assign_plan_task",
+      "expected_result": "ASSIGNMENT_WRITER_OUTSIDE_AUTHORITY HIGH",
+      "mutation": false
+    },
+    {
+      "test": "T30_registry_catalog_parity",
+      "fixture": "GET operational-registry/catalog",
+      "operational_source": "catalog API",
+      "canonical_source": "foundation skills + registry tables",
+      "expected_result": "no consumer mutation; catalog drift events if any",
+      "mutation": false
+    },
+    {
+      "test": "T31_resolution_lifecycle",
+      "fixture": "open -> acknowledged -> reconciled",
+      "operational_source": "persistence phase mock",
+      "canonical_source": "event contract",
+      "expected_result": "fingerprint close on reconcile; reopen on value change",
+      "mutation": false
+    },
+    {
+      "test": "T32_observe_only_no_block",
+      "fixture": "CRITICAL discrepancy during Start",
+      "operational_source": "operational Start proceeds as today",
+      "canonical_source": "shadow says deny",
+      "expected_result": "event emitted; Start NOT blocked in OBSERVE_ONLY",
+      "mutation": false
+    }
+  ]
+}
