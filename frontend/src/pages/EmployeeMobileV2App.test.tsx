@@ -6,6 +6,7 @@ import { buildTruthResponseFromSections } from "@/components/workos/employee-mob
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import { BLOCKER_FIXTURE_TASKS } from "@/lib/employeeMobileV2BlockerFixtures";
 import { START_FIXTURE_TASKS } from "@/lib/employeeMobileV2StartFixtures";
+import { RUNTIME_FIXTURE_TASKS } from "@/lib/employeeMobileV2RuntimeFixtures";
 
 const authMock = vi.hoisted(() => ({
   user: {
@@ -117,7 +118,20 @@ function mockOrderTaskDetail(task: EmployeeMobileTaskDTO) {
     if (url.includes("/start") && init?.method === "PATCH") {
       return jsonResponse({ status: "ok", action: "start", task_id: task.task_id, order_id: task.order_id });
     }
-    if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth") && !url.includes("/start")) {
+    if (url.includes("/complete") && init?.method === "PATCH") {
+      return jsonResponse({
+        status: "ok",
+        action: "complete",
+        task_id: task.task_id,
+        order_id: task.order_id,
+      });
+    }
+    if (
+      url.includes("/api/v1/employee-mobile/tasks") &&
+      !url.includes("/truth") &&
+      !url.includes("/start") &&
+      !url.includes("/complete")
+    ) {
       return jsonResponse(task.is_assigned_to_current_employee !== false ? [task] : []);
     }
     return jsonResponse({}, 404);
@@ -125,10 +139,14 @@ function mockOrderTaskDetail(task: EmployeeMobileTaskDTO) {
 }
 
 async function waitForWorkRoomReady() {
-  await waitFor(() => {
-    expect(screen.queryByTestId("employee-mobile-v2-work-room-loading")).not.toBeInTheDocument();
-    expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
-  });
+  await waitFor(
+    () => {
+      expect(screen.queryByTestId("employee-mobile-v2-work-room-loading")).not.toBeInTheDocument();
+      expect(screen.getByTestId("employee-mobile-v2-work-room")).toBeInTheDocument();
+      expect(screen.getByTestId("employee-mobile-v2-task-truth-panels")).toBeInTheDocument();
+    },
+    { timeout: 5000 },
+  );
 }
 
 function truthFor(assigned: EmployeeMobileTaskDTO[], available: EmployeeMobileTaskDTO[] = sampleAvailableTasks) {
@@ -714,8 +732,12 @@ describe("EmployeeMobileV2App", () => {
 
     mockFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
-      if (url.includes("/orders/99905/tasks/T-003")) {
+      const previewPath = `/orders/99905/tasks/${encodeURIComponent("T-003")}`;
+      if (url.includes(previewPath)) {
         return jsonResponse(previewT003);
+      }
+      if (url.includes("/orders/99905/my-blueprint")) {
+        return jsonResponse({ order_id: 99905, order_label: "ORD-99905", summary: {}, tasks: [] });
       }
       if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
         return jsonResponse(truthFor([ownedT003], [previewT003]));
@@ -723,7 +745,12 @@ describe("EmployeeMobileV2App", () => {
       if (url.includes("/start-from-available") && init?.method === "POST") {
         return jsonResponse({ status: "ok" });
       }
-      if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/start") && !url.includes("/truth")) {
+      if (
+        url.includes("/api/v1/employee-mobile/tasks") &&
+        !url.includes("/truth") &&
+        !url.includes("/start") &&
+        !url.includes("/complete")
+      ) {
         return jsonResponse([ownedT003]);
       }
       return jsonResponse({}, 404);
@@ -735,13 +762,13 @@ describe("EmployeeMobileV2App", () => {
         "data-preview-only",
         "true",
       );
+      expect(screen.getByTestId("employee-mobile-v2-work-room-context")).toHaveTextContent(
+        "ORD-99905",
+      );
+      expect(screen.getByTestId("employee-mobile-v2-work-room-preview-instructions")).toHaveTextContent(
+        "Colantezi fețele din plexiglas",
+      );
     });
-    expect(screen.getByTestId("employee-mobile-v2-work-room-context")).toHaveTextContent(
-      "ORD-99905",
-    );
-    expect(screen.getByTestId("employee-mobile-v2-work-room-preview-instructions")).toHaveTextContent(
-      "Colantezi fețele din plexiglas",
-    );
     expect(screen.queryByText("nu pe cant")).not.toBeInTheDocument();
     expect(screen.getByTestId("employee-mobile-v2-available-preview-start")).toBeInTheDocument();
     expect(mockFetch).not.toHaveBeenCalledWith(
@@ -813,12 +840,14 @@ describe("EmployeeMobileV2App", () => {
       mockFetch.mockImplementation(mockOrderTaskDetail(BLOCKER_FIXTURE_TASKS.productionBlocked));
 
       renderV2("/employee-app-v2/tasks/fixture-production-blocked?orderId=23099");
-      await waitForWorkRoomReady();
-      expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
-      expect(screen.getByTestId("employee-mobile-v2-detail-startable")).toHaveTextContent("Nu");
-      expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toHaveTextContent(
-        /manager în WorkOS desktop/,
-      );
+      await waitFor(() => {
+        expect(screen.queryByTestId("employee-mobile-v2-work-room-loading")).not.toBeInTheDocument();
+        expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
+        expect(screen.getByTestId("employee-mobile-v2-detail-startable")).toHaveTextContent("Nu");
+        expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toHaveTextContent(
+          /manager în WorkOS desktop/,
+        );
+      });
       await waitFor(() => {
         expect(screen.getByTestId("employee-mobile-v2-work-room-start-blocked")).toBeDisabled();
       });
@@ -948,6 +977,76 @@ describe("EmployeeMobileV2App", () => {
         expect(screen.getByTestId("employee-mobile-v2-work-room-start-blocked")).toBeDisabled();
       });
       expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toBeInTheDocument();
+    });
+  });
+
+  describe("MOBILE-T05 in-progress session and complete", () => {
+    it("shows active session panel and complete from can_complete capability", async () => {
+      mockFetch.mockImplementation(mockOrderTaskDetail(RUNTIME_FIXTURE_TASKS.inProgress));
+
+      renderV2("/employee-app-v2/tasks/fixture-runtime-in-progress?orderId=23099");
+      await waitForWorkRoomReady();
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-active-session")).toBeInTheDocument();
+        expect(screen.getByTestId("employee-mobile-v2-active-session-started-at")).toBeInTheDocument();
+        expect(screen.getByTestId("employee-mobile-v2-work-room-complete")).toBeInTheDocument();
+      });
+      expect(screen.queryByTestId("employee-mobile-v2-work-room-pause")).not.toBeInTheDocument();
+    });
+
+    it("complete requires confirmation and calls PATCH complete with order_id only", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        const task = RUNTIME_FIXTURE_TASKS.inProgress;
+        const detailPath = `/orders/${task.order_id}/tasks/${encodeURIComponent(task.task_id)}`;
+        if (url.includes(detailPath)) {
+          return jsonResponse(task);
+        }
+        if (url.includes(`/orders/${task.order_id}/my-blueprint`)) {
+          return jsonResponse({ order_id: task.order_id, summary: {}, tasks: [] });
+        }
+        if (url.includes("/complete") && init?.method === "PATCH") {
+          return jsonResponse({
+            status: "ok",
+            action: "complete",
+            task_id: task.task_id,
+            order_id: task.order_id,
+          });
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(truthFor([task], []));
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth") && !url.includes("/complete")) {
+          return jsonResponse([task]);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks/fixture-runtime-in-progress?orderId=23099");
+      await waitForWorkRoomReady();
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-work-room-complete")).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId("employee-mobile-v2-work-room-complete"));
+      expect(screen.getByTestId("employee-mobile-v2-work-room-complete-confirm")).toBeInTheDocument();
+      fireEvent.click(screen.getByTestId("employee-mobile-v2-work-room-complete-confirm-confirm"));
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining("/api/v1/employee-mobile/tasks/fixture-runtime-in-progress/complete"),
+          expect.objectContaining({
+            method: "PATCH",
+            body: JSON.stringify({ order_id: 23099 }),
+          }),
+        );
+      });
+    });
+
+    it("does not show complete when can_complete is false", async () => {
+      mockFetch.mockImplementation(mockOrderTaskDetail(RUNTIME_FIXTURE_TASKS.noSession));
+
+      renderV2("/employee-app-v2/tasks/fixture-runtime-no-session?orderId=23099");
+      await waitForWorkRoomReady();
+      expect(screen.queryByTestId("employee-mobile-v2-work-room-complete")).not.toBeInTheDocument();
     });
   });
 });

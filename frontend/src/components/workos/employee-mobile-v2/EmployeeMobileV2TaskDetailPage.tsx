@@ -11,6 +11,7 @@ import {
   EmployeeMobileErrorState,
   EmployeeMobileLoadingState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
+import EmployeeMobileV2ActiveSessionPanel from "@/components/workos/employee-mobile-v2/EmployeeMobileV2ActiveSessionPanel";
 import EmployeeMobileV2AvailablePreviewActionBar from "@/components/workos/employee-mobile-v2/EmployeeMobileV2AvailablePreviewActionBar";
 import EmployeeMobileV2PageHeader from "@/components/workos/employee-mobile-v2/EmployeeMobileV2PageHeader";
 import EmployeeMobileV2StatusIndicator from "@/components/workos/employee-mobile-v2/EmployeeMobileV2StatusIndicator";
@@ -189,6 +190,8 @@ export default function EmployeeMobileV2TaskDetailPage() {
         </div>
 
         <EmployeeMobileV2TaskTruthPanels task={task} />
+
+        <EmployeeMobileV2ActiveSessionPanel task={task} />
 
         {isPreview && instructionLines.length > 0 ? (
           <section
