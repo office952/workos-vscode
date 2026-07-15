@@ -510,12 +510,16 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 |-------|-------|
 | Status | **COMPLETE** (2026-07-15) |
 | Verdict | `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED` |
-| Starting HEAD | `6acadc0` |
+| Starting HEAD | `276fb83` |
 | Decisions total | 22 |
 | Confirmed | 0 |
 | Deferred | 22 |
 | Sandu | NECESITA CONFIRMARE UMANA |
 | Tablet | NECESITA CONFIRMARE UMANA (A/B/C/D) |
+| MODULE-INT-01 impact | **ZERO** — separate track on pause |
+| MODULE-RUNTIME-01 | **DEFERRED** |
+| MODULE-ARCH-01 | **BLOCKED** |
+| Authority debt | 0/22 CONFIRMATE; 4 duplicate; migrare NO |
 | Available contract | Dovedit tehnic; acceptare owner AMÂNATĂ |
 | Migration authorized | **NO** |
 | Implementation authorized | **NO** |

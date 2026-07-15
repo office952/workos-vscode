@@ -494,9 +494,19 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Verdict:** `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED`
 
+**Starting HEAD:** `276fb83` (post MODULE-INT-01; lanț APP-AUTH neschimbat)
+
 **Scope:** Gate decizii autoritate operațională A1–A22 — fără cod, DB, UI, migrări, reconciliere Sandu automată.
 
 **Decizii:** 22 documentate · **0 CONFIRMATE** · 20 AMÂNATE · 2 NECESITA CONFIRMARE UMANA (Sandu, Tablet)
+
+**Impact MODULE-INT-01:** **ZERO** — `/modules` pe pauză; nu sursă de adevăr pentru acest gate. MODULE-RUNTIME-01 **DEFERRED**; MODULE-ARCH-01 **BLOCKED**.
+
+**Authority debt:** 0/22 confirmate; 4 duplicate majore; migrare **NO**; PROD-ARCH-01 **BLOCAT**
+
+**Employee/competence/authorization debt:** JSON legacy 8/8 angajați; Sandu 7 fără competență registry; 6 fără autorizare; `montaj_led` CRITIC
+
+**Execution surface debt:** Tablet A/B/C/D neales; Shop Floor mock silent; Mobile/Operator parțial canonice
 
 **Hartă autoritate:** identitate angajat, HR, competențe, autorizări, centre, utilaje, readiness, alocare, sesiuni, suprafețe — tabele în worklog.
 
