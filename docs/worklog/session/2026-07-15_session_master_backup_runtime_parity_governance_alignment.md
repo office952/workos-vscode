@@ -491,7 +491,8 @@ Roadmap principal **realiniat**:
 3. ~~UI-TRUTH foundation (01A)~~ — **PASS**; banner branch **paused**
 4. ~~APP-AUTH-06C~~ — parity signal interpretation plan — **PASS**
 5. ~~OWNER-DECISION-05~~ — authority policy — **PASS**
-6. **APP-AUTH-06F** — Sandu competence/mapping reconciliation **plan** (**NEXT**)
+6. ~~APP-AUTH-06F~~ — Sandu reconciliation plan — **PASS**
+7. **APP-AUTH-06G** — Sandu evidence collection (**NEXT**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 

@@ -1,0 +1,12 @@
+{
+  "task": "APP-AUTH-06F",
+  "levels": [
+    {"code": "INCEPATOR", "meaning": "Assist or work under direct supervision", "evidence_examples": ["supervised completions", "training log", "manager attestation"]},
+    {"code": "OPERATIONAL", "meaning": "Independent normal work within defined limits", "evidence_examples": ["repeated unsupervised completions", "QC pass record", "peer review"]},
+    {"code": "AVANSAT", "meaning": "Complex cases, troubleshoot, guide others", "evidence_examples": ["mentoring record", "complex job ownership"]},
+    {"code": "SPECIALIST", "meaning": "Owns standards, training, exceptional cases", "evidence_examples": ["training authority", "procedure ownership"]}
+  ],
+  "required_metadata_when_confirmed": ["level", "evidence", "valid_from", "reviewer", "optional_expiry"],
+  "automatic_assignment": false,
+  "owner_must_confirm_per_operation": true
+}

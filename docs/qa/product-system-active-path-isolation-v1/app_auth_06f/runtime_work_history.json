@@ -1,0 +1,38 @@
+{
+  "task": "APP-AUTH-06F",
+  "employee_ref": "E4_SANDU",
+  "source": "read_only dev.db execution_reality",
+  "limitations": [
+    "execution_reality stores task completion without canonical operation_code per reviewed op",
+    "Sample rows are test/fixture completions (T05B) not production operation proof",
+    "Cannot equate completion with competence or authorization"
+  ],
+  "rows": [
+    {
+      "order_ref": "ORD-92350",
+      "execution_id": 3,
+      "task_ref": "T-M05B-CONC-COMPLETE",
+      "operation": "UNRESOLVED_OPERATION_CODE",
+      "date": "2026-06-12",
+      "role": "completed_by",
+      "completed": true,
+      "supervised": "UNKNOWN",
+      "resource_used": "UNKNOWN",
+      "evidence_confidence": "LOW_FIXTURE"
+    },
+    {
+      "order_ref": "ORD-92400",
+      "execution_id": 4,
+      "task_ref": "T05B-related",
+      "operation": "UNRESOLVED_OPERATION_CODE",
+      "date": "UNKNOWN",
+      "role": "completed_by",
+      "completed": true,
+      "supervised": "UNKNOWN",
+      "resource_used": "UNKNOWN",
+      "evidence_confidence": "LOW_FIXTURE"
+    }
+  ],
+  "operations_with_runtime_history": 0,
+  "summary": "No operation-specific production history proven for any of the seven reviewed operations"
+}

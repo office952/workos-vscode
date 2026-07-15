@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `6f19de1` (APP-AUTH-06C)
+**Accepted HEAD:** `c8f723a` (OWNER-DECISION-05)
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-05 — parity authority decisions **COMPLETE**)
+**Last updated:** 2026-07-15 (APP-AUTH-06F — Sandu reconciliation plan **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **OWNER-DECISION-05** — parity authority + Sandu policy (**COMPLETE**) |
+| Active task | **APP-AUTH-06F** — Sandu reconciliation plan (**COMPLETE**) |
 
-| Next task | **APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN** (UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **APP-AUTH-06G-SANDU-EVIDENCE-COLLECTION** (UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -682,7 +682,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-only**. Authority policy **OWNER-DECISION-05 CONFIRMED** (registry canonical; mapping=routing; S7 deferred). Sandu **unchanged**. Next: **APP-AUTH-06F** plan. UI-TRUTH-01B–01E **PAUSED**. Enforcement/persistence/third consumer **NOT AUTHORIZED**.
+Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-only**. OD-05 policy **CONFIRMED**. APP-AUTH-06F Sandu plan **COMPLETE** — 7/7 ops prepared, **0** auto-confirmed. Next: **APP-AUTH-06G** evidence collection. UI-TRUTH paused. No enforcement/persistence/DB.
 
 ## APP-AUTH-06C — Parity signal interpretation plan
 
@@ -735,9 +735,30 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **OWNER-DECISION-05:** **COMPLETE**
 
-**Authority debt:** S1–S6/S8–S15 **CONFIRMED**; S7 per-operation → APP-AUTH-06F; enforcement/persistence/third consumer = **NOT AUTHORIZED**
+**Next:** **APP-AUTH-06F** (closed)
 
-**Next:** **APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN**
+## APP-AUTH-06F — Sandu competence and mapping reconciliation plan
+
+**Verdict:** `APP_AUTH_06F_SANDU_RECONCILIATION_PLAN_READY_FOR_OWNER_REVIEW`
+
+**Starting HEAD:** `c8f723a`
+
+| Check | Result |
+|-------|--------|
+| Operations identified | **7/7** |
+| Auto-confirmed | **0** |
+| Competence requirements proven | **7/7** runtime |
+| Runtime op history proven | **0/7** |
+| Authorizations missing | **5** |
+| Owner package | **7/7 MORE_EVIDENCE_REQUIRED** |
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_06f_sandu_competence_mapping_reconciliation_plan_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_06f/`
+
+**APP-AUTH-06F:** **COMPLETE**
+
+**Next:** **APP-AUTH-06G-SANDU-EVIDENCE-COLLECTION**
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

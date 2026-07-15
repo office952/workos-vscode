@@ -1,0 +1,72 @@
+{
+  "task": "APP-AUTH-06F",
+  "employee_ref": "E4_SANDU",
+  "owner_decisions_prepared": 7,
+  "operations_automatically_confirmed": 0,
+  "package": [
+    {
+      "operation": "volumetric_letter_assembly",
+      "evidence_summary": "Registry SK_PRINT only; legacy SK_ASSEMBLY; explicit mapping; pilot divergence; no op-specific completion history",
+      "competence_proposal": "MORE_EVIDENCE_REQUIRED — legacy supports SK_ASSEMBLY but not confirmed",
+      "authorization_status": "AUTHORIZATION_MISSING for WA-ASSEMBLY",
+      "mapping_status": "ROUTING_PREFERENCE per S3:B — not competence",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "medium"
+    },
+    {
+      "operation": "vinyl_cutting",
+      "evidence_summary": "Legacy SK_VINYL_APPLICATOR; registry gap; pilot eligible operationally",
+      "competence_proposal": "TRAINED_BUT_UNDOCUMENTED possible if supervisor confirms",
+      "authorization_status": "AUTHORIZATION_MISSING",
+      "mapping_status": "ROUTING_PREFERENCE",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "medium"
+    },
+    {
+      "operation": "led_assembly",
+      "evidence_summary": "Electrical skill in legacy only; safety-sensitive; montaj_led mapping",
+      "competence_proposal": "AUTHORIZATION_REQUIRED + competence review",
+      "authorization_status": "AUTHORIZATION_MISSING",
+      "mapping_status": "ROUTING_PREFERENCE",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "medium"
+    },
+    {
+      "operation": "led_wiring",
+      "evidence_summary": "Shares montaj_led with led_assembly",
+      "competence_proposal": "Same decision bundle as led_assembly",
+      "authorization_status": "AUTHORIZATION_MISSING",
+      "mapping_status": "SHARED_POLICY_WITH_LED_ASSEMBLY",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "medium"
+    },
+    {
+      "operation": "installation_prep",
+      "evidence_summary": "Legacy SK_FIELD_INSTALLER; partial authorization signal in APP-AUTH-02; field team operation",
+      "competence_proposal": "MORE_EVIDENCE_REQUIRED — team/supervision context needed",
+      "authorization_status": "PARTIAL",
+      "mapping_status": "ROUTING_PREFERENCE",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "low"
+    },
+    {
+      "operation": "packaging",
+      "evidence_summary": "Mapping exists; no pilot; legacy assembly skill only",
+      "competence_proposal": "MORE_EVIDENCE_REQUIRED",
+      "authorization_status": "AUTHORIZATION_MISSING",
+      "mapping_status": "ROUTING_PREFERENCE",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "low"
+    },
+    {
+      "operation": "quality_control",
+      "evidence_summary": "Mapping exists; no pilot; assembly skill required",
+      "competence_proposal": "MORE_EVIDENCE_REQUIRED",
+      "authorization_status": "AUTHORIZATION_MISSING",
+      "mapping_status": "ROUTING_PREFERENCE",
+      "proposed_owner_choice": "MORE_EVIDENCE_REQUIRED",
+      "confidence": "low"
+    }
+  ],
+  "note": "proposed_owner_choice is preparatory only — NOT confirmed"
+}

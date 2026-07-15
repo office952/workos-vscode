@@ -1,0 +1,19 @@
+{
+  "task": "APP-AUTH-06F",
+  "future_plan_may_propose": [
+    "add structured competence with level and evidence",
+    "add resource authorization for WA-ASSEMBLY / electrical bench",
+    "retain routing mapping without eligibility authority",
+    "create audited temporary exception per S9",
+    "remove invalid explicit mapping after owner confirmation",
+    "mark legacy JSON field as reviewed/migrated reference"
+  ],
+  "forbidden_in_future_plan_without_go": [
+    "bulk sync legacy JSON to registry",
+    "automatic promotion from legacy skills",
+    "delete historical legacy evidence",
+    "change eligibility behavior without separate build",
+    "immediate DB writes from this plan"
+  ],
+  "requires_separate_go": true
+}

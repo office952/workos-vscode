@@ -1,0 +1,12 @@
+{
+  "task": "APP-AUTH-06F",
+  "options": [
+    {"option": "A", "name": "OWNER-DECISION-06-SANDU-OPERATION-COMPETENCE-REVIEW", "benefit": "Owner answers GQ-01..06 with prepared package", "risk": "May stall if supervisor evidence unavailable", "prerequisite": "Owner available for operation-by-operation review"},
+    {"option": "B", "name": "APP-AUTH-06G-SANDU-EVIDENCE-COLLECTION", "benefit": "Gather supervisor/training/practical proof before owner locks decisions", "risk": "Delays owner closure", "prerequisite": "Identified evidence gaps in 06F"},
+    {"option": "C", "name": "APP-AUTH-06H-OPERATION-IDENTITY-ALIAS-AUDIT", "benefit": "Only if identity uncertain", "risk": "N/A", "prerequisite": "NOT_NEEDED — 7/7 identity proven"},
+    {"option": "D", "name": "Data correction", "benefit": "None", "risk": "Forbidden", "prerequisite": "BLOCKED"}
+  ],
+  "recommended_next_gate": "B",
+  "recommendation_rationale": "Runtime work history does not prove any of the seven operations; supervisor/practical evidence explicitly absent; all seven remain MORE_EVIDENCE_REQUIRED. Collect evidence (06G) then OWNER-DECISION-06.",
+  "alternate_if_owner_ready": "A — if owner can answer GQ-01..06 immediately without additional collection task"
+}

@@ -1,0 +1,15 @@
+{
+  "task": "APP-AUTH-06F",
+  "risks": [
+    {"risk": "false_promotion_of_competence", "severity": "HIGH", "mitigation": "S7 not auto-confirmed; S8 levels require evidence"},
+    {"risk": "unsafe_machine_access", "severity": "HIGH", "mitigation": "S4:A authorization mandatory for controlled resources; electrical NOT_ALLOWED without contract"},
+    {"risk": "removal_of_legitimate_capability", "severity": "HIGH", "mitigation": "S6:A behavior unchanged; S11 separate correction plan"},
+    {"risk": "mapping_as_hidden_authorization", "severity": "HIGH", "mitigation": "S3:B routing only; hybrid observe-only"},
+    {"risk": "stale_legacy_evidence", "severity": "MEDIUM", "mitigation": "S2:A transitional; require practical confirmation"},
+    {"risk": "incomplete_runtime_history", "severity": "MEDIUM", "mitigation": "0/7 ops with proven completion history"},
+    {"risk": "supervised_work_as_independent", "severity": "HIGH", "mitigation": "GQ-01/GQ-03 supervisor questions"},
+    {"risk": "collaboration_as_ownership", "severity": "MEDIUM", "mitigation": "field_installation team context"},
+    {"risk": "overfitting_policy_to_sandu", "severity": "MEDIUM", "mitigation": "S14 separate audit for other employees"},
+    {"risk": "premature_db_correction", "severity": "HIGH", "mitigation": "blocked_scope; correction plan boundary"}
+  ]
+}
