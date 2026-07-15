@@ -1,0 +1,192 @@
+{
+  "task": "APP-AUTH-06",
+  "source": "app_auth_03/parity_consumer_matrix.json",
+  "inventoried_total": 18,
+  "connected_count": 2,
+  "remaining_unwired": 16,
+  "excluded_definitive_count": 5,
+  "reclassified": [
+    [
+      "CONS-SANDU-REPORT",
+      "observe_helper_not_request_consumer"
+    ]
+  ],
+  "app_auth_05_count_correction": {
+    "incorrect_figure": 14,
+    "correct_remaining_unwired": 16,
+    "explanation": "18 inventoried consumers minus 2 connected equals 16 remaining. The APP-AUTH-05 '14 unwired' figure conflated writers (14) or subtracted Sandu helper and Tablet exclusion incorrectly."
+  },
+  "matrix": [
+    {
+      "consumer": "CONS-EMPLOYEES-PAGE",
+      "surface": "/employees",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-UTILAJE-PAGE",
+      "surface": "/utilaje",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-MOBILE-AVAILABLE",
+      "surface": "Employee Mobile available tasks",
+      "inventoried": true,
+      "connected": true,
+      "excluded": false,
+      "remains_candidate": false,
+      "reason": "APP-AUTH-05 observe-only wiring"
+    },
+    {
+      "consumer": "CONS-MOBILE-ASSIGNED",
+      "surface": "Employee Mobile assigned tasks",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-MOBILE-CLAIM-START",
+      "surface": "Employee Mobile claim/start-from-available",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+    },
+    {
+      "consumer": "CONS-OPERATOR-TASKS",
+      "surface": "/operator",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-OPERATOR-ELIGIBILITY-FE",
+      "surface": "/operator eligibility UI",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-TABLET",
+      "surface": "/tablet",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "Parallel demo authority A19 \u2014 kiosk track separate"
+    },
+    {
+      "consumer": "CONS-SHOP-FLOOR",
+      "surface": "/shop-floor",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-ELIGIBILITY-ENDPOINT",
+      "surface": "operation eligibility check",
+      "inventoried": true,
+      "connected": true,
+      "excluded": false,
+      "remains_candidate": false,
+      "reason": "APP-AUTH-05 observe-only wiring"
+    },
+    {
+      "consumer": "CONS-ASSIGNMENT-SERVICE",
+      "surface": "assignment service",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+    },
+    {
+      "consumer": "CONS-EXECUTION-REALITY-START",
+      "surface": "ExecutionReality start guard",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "Writer/session mutation surface \u2014 needs separate audit before observe"
+    },
+    {
+      "consumer": "CONS-PERSONAL-PAGE",
+      "surface": "/personal",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-PRODUCT-SYSTEM-MAPPING",
+      "surface": "/product-system operation mapping panel",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-OPERATOR-EMPLOYEES-HOOK",
+      "surface": "useOperatorEmployees",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-REGISTRY-CATALOG-API",
+      "surface": "operational-registry catalog",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": true,
+      "reason": "Inventoried APP-AUTH-03; not wired in APP-AUTH-05"
+    },
+    {
+      "consumer": "CONS-ATTENDANCE-READ",
+      "surface": "pontaj read paths",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "P11 attendance domain \u2014 separate audit"
+    },
+    {
+      "consumer": "CONS-SANDU-REPORT",
+      "surface": "Sandu reconciliation report",
+      "inventoried": true,
+      "connected": false,
+      "excluded": false,
+      "remains_candidate": false,
+      "reason": "observe_helper_not_request_consumer"
+    },
+    {
+      "consumer": "CONS-MODULES-PAGE",
+      "surface": "/modules",
+      "inventoried": true,
+      "connected": false,
+      "excluded": true,
+      "remains_candidate": false,
+      "reason": "Module Chain pista separata \u2014 MODULE-INT-01 pe pauza; fara conectare la paritate"
+    }
+  ]
+}

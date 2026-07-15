@@ -1,0 +1,15 @@
+{
+  "prohibited_fields_absent_in_pilot_log": true,
+  "allowed_metadata_keys": [
+    "comparison_result",
+    "consumer",
+    "domain",
+    "employee_id",
+    "event_type",
+    "fingerprint",
+    "metadata",
+    "operation_code",
+    "timestamp"
+  ],
+  "verdict": "PASS"
+}

@@ -1,0 +1,10 @@
+{
+  "flags_off_available_hash_stable": true,
+  "flags_off_eligibility_hash_stable": true,
+  "flags_on_available_hash_stable": true,
+  "flags_on_eligibility_hash_stable": true,
+  "flags_off_vs_on_available_hash_match": true,
+  "flags_off_vs_on_eligibility_hash_match": true,
+  "status_invariance": true,
+  "trusted_backend_unchanged_after_pilot": true
+}

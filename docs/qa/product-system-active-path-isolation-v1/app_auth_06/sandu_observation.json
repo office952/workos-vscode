@@ -1,0 +1,42 @@
+{
+  "observed": true,
+  "mutations_performed": false,
+  "reconciliation_status": "confirmation_required",
+  "domains_with_signal": [
+    "competence"
+  ],
+  "fingerprints": [
+    "parity_fp_v1:1b8d59931088929ae16f30ad31efdf9deae7eeca8fd62a3ca27f044b29847294"
+  ],
+  "comparison_result": "value_conflict",
+  "explicit_mapping_operations": [
+    {
+      "operation_code": "assembly",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "colantare",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "field_installation",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "montaj_led",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "packaging",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "quality_control",
+      "explicit_override": true
+    },
+    {
+      "operation_code": "welding",
+      "explicit_override": true
+    }
+  ]
+}

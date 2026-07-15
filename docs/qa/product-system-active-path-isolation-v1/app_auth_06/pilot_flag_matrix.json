@@ -1,0 +1,17 @@
+{
+  "pilot_flags": {
+    "APP_ENV": "development",
+    "ENVIRONMENT": "development",
+    "DATABASE_URL": "sqlite+aiosqlite:///C:/w/psiso/backend/dev.db",
+    "JWT_SECRET_KEY": "local-dev-secret-not-for-production",
+    "PARITY_OBSERVE_ENABLED": "true",
+    "COMPETENCE_PARITY_ENABLED": "true",
+    "EXPLICIT_MAPPING_TRACKING_ENABLED": "true",
+    "ELIGIBILITY_SHADOW_ENABLED": "true",
+    "LEGACY_FALLBACK_TRACKING_ENABLED": "true",
+    "PARITY_EVENT_EMISSION_ENABLED": "true",
+    "PARITY_PERSISTENCE_ENABLED": "false",
+    "PARITY_MANAGER_PROJECTION_ENABLED": "false"
+  },
+  "trusted_flags": "ALL_FALSE"
+}

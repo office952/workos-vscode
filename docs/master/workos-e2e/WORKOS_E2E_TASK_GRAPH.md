@@ -524,7 +524,32 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
+| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
+
+## APP-AUTH-06 — Parity observation pilot
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_06_PARITY_PILOT_PASS_READY_FOR_OWNER_REVIEW` |
+| Starting HEAD | `64aba64` |
+| Pilot mode | OBSERVE_ONLY_DEV_TEST |
+| Pilot port | 8011 |
+| Inventoried consumers | 18 |
+| Connected | 2 |
+| Remaining unwired | 16 |
+| HTTP requests/consumer | 20 |
+| Observation events | 420 |
+| False positives | 0 |
+| Response invariance | **PASS** |
+| Confidentiality | **PASS** |
+| Performance | **PASS** |
+| Third consumer | CONS-REGISTRY-CATALOG-API (CONNECT_NEXT, not wired) |
+| DB writes | 0 |
+| Enforcement | **NOT AUTHORIZED** |
+| Persistence | **NOT AUTHORIZED** |
+| APP-AUTH-06 | **COMPLETE** |
+| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
 
 ## APP-AUTH-05 — Parity observe-only dev/test integration
 
@@ -551,7 +576,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-INT-02 | **BLOCKED** |
 | MODULE-RUNTIME-01 | **DEFERRED** |
 | APP-AUTH-05 | **COMPLETE** |
-| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
+| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
 
 ## APP-AUTH-04 — Parity contract and test foundation
 
@@ -579,7 +604,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-INT-02 | **BLOCKED** |
 | MODULE-RUNTIME-01 | **DEFERRED** |
 | APP-AUTH-04 | **COMPLETE** |
-| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
+| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
 
 ## APP-AUTH-03 — Runtime parity instrumentation plan
 

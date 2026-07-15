@@ -518,9 +518,35 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
+**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
 
-## APP-AUTH-05 — Parity observe-only dev/test integration (Gate I2)
+## APP-AUTH-06 — Parity observation pilot (Gate I2 pilot)
+
+**Verdict:** `APP_AUTH_06_PARITY_PILOT_PASS_READY_FOR_OWNER_REVIEW`
+
+**Starting HEAD:** `64aba64`
+
+**Scope:** Controlled observe-only pilot on `:8011`; trusted `:8001` remains flags-off; signal quality, fingerprint stability, confidentiality, performance.
+
+**Consumer reconciliation:** 18 inventoried · 2 connected · 16 remaining (corrects APP-AUTH-05 “14” error)
+
+**Pilot:** 20 HTTP requests/consumer · 420 observation events · 0 false positives · 0 DB writes
+
+**Invariance:** response hash + status **PASS** · Sandu read-only **PASS**
+
+**Third consumer:** `CONS-REGISTRY-CATALOG-API` — **CONNECT_NEXT** (not wired)
+
+**Tests:** 74 focused PASS · 119 regression PASS
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_06/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_06_parity_observation_pilot_v1.md`
+
+**Authority debt:** Gate I2 pilot **PASS**; enforcement/persistence = **NOT AUTHORIZED**
+
+**APP-AUTH-06:** **COMPLETE**
+
+**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
 
 **Verdict:** `APP_AUTH_05_OBSERVE_ONLY_DEV_TEST_PASS_COMMITTED`
 
@@ -540,11 +566,11 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_05_parity_observe_only_dev_test_integration_v1.md`
 
-**Authority debt:** Gate I2 **PASS**; enforcement/persistence/source switch = **NOT AUTHORIZED**
+**Authority debt:** Gate I2 pilot **PASS**; owner review = OWNER-DECISION-04; enforcement/persistence = **NOT AUTHORIZED**
 
 **APP-AUTH-05:** **COMPLETE**
 
-**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
+**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
 
 **Verdict:** `APP_AUTH_04_PARITY_FOUNDATION_PASS_COMMITTED`
 
@@ -568,7 +594,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **APP-AUTH-04:** **COMPLETE**
 
-**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
+**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
 
 ## APP-AUTH-03 — Plan instrumentare paritate runtime
 
