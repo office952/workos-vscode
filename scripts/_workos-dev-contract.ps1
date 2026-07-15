@@ -70,12 +70,33 @@ function Test-WorkOsBackendListenerCanonical {
     )
     $cmd = Get-WorkOsProcessCommandLine -ProcessId $ProcessId
     if (-not $cmd) { return $false }
-    $rootNorm = ($ProjectRoot -replace '\\', '/').ToLowerInvariant()
     $cmdLower = $cmd.ToLowerInvariant()
     if ($cmdLower -notmatch 'uvicorn') { return $false }
+    if ($cmdLower -notmatch 'main:app') { return $false }
     if ($cmdLower -notmatch "--port\s+$ExpectedPort\b") { return $false }
-    if ($cmdLower -notmatch [regex]::Escape($rootNorm)) { return $false }
-    return $true
+
+    $backendDir = Join-Path $ProjectRoot "backend"
+    $expectedVenvPython = Join-Path $backendDir ".venv\Scripts\python.exe"
+    $exe = $null
+    $proc = Get-Process -Id $ProcessId -ErrorAction SilentlyContinue
+    if ($proc) { $exe = $proc.Path }
+    if ($exe -and (Test-Path -LiteralPath $expectedVenvPython)) {
+        try {
+            $expectedResolved = (Resolve-Path -LiteralPath $expectedVenvPython).Path
+            $exeResolved = (Resolve-Path -LiteralPath $exe -ErrorAction SilentlyContinue).Path
+            if ($exeResolved -and $exeResolved -eq $expectedResolved) {
+                return $true
+            }
+        } catch {
+            # Fall through to path-prefix check.
+        }
+    }
+    if ($exe) {
+        $rootNorm = ($ProjectRoot -replace '\\', '/').ToLowerInvariant()
+        $exeNorm = ($exe -replace '\\', '/').ToLowerInvariant()
+        return $exeNorm.StartsWith($rootNorm)
+    }
+    return $false
 }
 
 function Test-WorkOsFrontendListenerCanonical {

@@ -9,6 +9,7 @@
 
 $ErrorActionPreference = "Stop"
 . "$PSScriptRoot\_workos-dev-contract.ps1"
+. "$PSScriptRoot\_workos-dev-backend-freshness.ps1"
 $Root = Split-Path -Parent $PSScriptRoot
 $BackendDir = Join-Path $Root "backend"
 $FrontendDir = Join-Path $Root "frontend"
@@ -125,60 +126,98 @@ function Show-FinalStatus {
 }
 
 function Test-IntakeV3OperatorWorkspaceRoutesOk {
-    param([string] $BaseUrl = $(Get-WorkOsBackendUrl))
-    $required = @()
-    try {
-        $schema = Invoke-RestMethod -Uri "$BaseUrl/openapi.json" -TimeoutSec 5
-        $paths = @($schema.paths.PSObject.Properties | ForEach-Object { $_.Name })
-        foreach ($path in $required) {
-            if ($paths -notcontains $path) {
-                return $false
-            }
-        }
-        return $true
-    } catch {
-        return $false
-    }
+    param(
+        [string] $BaseUrl = $(Get-WorkOsBackendUrl),
+        [string] $ProjectRoot = $(Split-Path -Parent $PSScriptRoot)
+    )
+    $evaluation = Test-WorkOsBackendDevReadyEvaluation -ProjectRoot $ProjectRoot -ScriptsRoot $PSScriptRoot
+    return $evaluation.Ready
 }
 
 function Write-BackendDevReadyDiagnostics {
-    param([string] $BaseUrl = $(Get-WorkOsBackendUrl))
+    param(
+        [string] $BaseUrl = $(Get-WorkOsBackendUrl),
+        [string] $ProjectRoot = $(Split-Path -Parent $PSScriptRoot)
+    )
 
-    $healthUrl = "$BaseUrl/health"
-    $healthOk = Test-HttpOk -Url $healthUrl
-    $openapiUrl = "$BaseUrl/openapi.json"
-    $required = @()
-
-    Write-Host ""
-    Write-Host "=== Backend dev readiness diagnostics (no semantics change) ===" -ForegroundColor Yellow
-    Write-Host ("  health_ok     = {0}" -f $healthOk)
-    Write-Host ("  health_url    = {0}" -f $healthUrl)
-    Write-Host ("  openapi_url   = {0}" -f $openapiUrl)
-
-    try {
-        $schema = Invoke-RestMethod -Uri $openapiUrl -TimeoutSec 5
-        $paths = @($schema.paths.PSObject.Properties | ForEach-Object { $_.Name })
-        $missing = @($required | Where-Object { $paths -notcontains $_ })
-        if ($missing.Count -eq 0) {
-            Write-Host "  openapi_parse = ok"
-            Write-Host "  missing_paths = (none)"
-        } else {
-            Write-Host "  openapi_parse = ok"
-            Write-Host ("  missing_paths = {0}" -f ($missing -join ", "))
-        }
-    } catch {
-        Write-Host ("  openapi_parse = failed: {0}" -f $_.Exception.Message)
-        Write-Host "  missing_paths = (unknown - OpenAPI fetch/parse failed)"
-    }
-    Write-Host ""
+    $evaluation = Test-WorkOsBackendDevReadyEvaluation -ProjectRoot $ProjectRoot -ScriptsRoot $PSScriptRoot
+    Write-WorkOsBackendFreshnessDiagnostics -Evaluation $evaluation
 }
 
 function Test-BackendDevReady {
-    $healthUrl = "$(Get-WorkOsBackendUrl)/health"
-    if (-not (Test-HttpOk -Url $healthUrl)) {
-        return $false
+    param([string] $ProjectRoot = $(Split-Path -Parent $PSScriptRoot))
+    return (Test-WorkOsBackendDevReady -ProjectRoot $ProjectRoot -ScriptsRoot $PSScriptRoot)
+}
+
+function Resolve-WorkOsBackendPortService {
+    param(
+        [int] $Port,
+        [string] $ProjectRoot
+    )
+
+    $evaluation = Get-WorkOsBackendFreshnessClassification -ProjectRoot $ProjectRoot -Port $Port -ScriptsRoot $PSScriptRoot
+
+    if ($evaluation.Classification -eq "backend_absent") {
+        return [PSCustomObject]@{
+            Port = $Port
+            Occupied = $false
+            Ready = $false
+            Listener = $null
+            Freshness = $evaluation
+        }
     }
-    return (Test-IntakeV3OperatorWorkspaceRoutesOk)
+
+    if ($evaluation.Ready) {
+        $listenerPid = if ($evaluation.Listeners.Count -gt 0) { $evaluation.Listeners[0].OwningProcess } else { 0 }
+        Write-Host "Backend already running on port $Port (freshness=$($evaluation.Classification), PID=$listenerPid)" -ForegroundColor DarkGray
+        return [PSCustomObject]@{
+            Port = $Port
+            Occupied = $true
+            Ready = $true
+            Listener = [PSCustomObject]@{
+                Port = $Port
+                PID = $listenerPid
+                ProcessName = "uvicorn"
+            }
+            Freshness = $evaluation
+        }
+    }
+
+    if ($evaluation.RecommendedAction -eq "controlled_stop") {
+        Write-Host ""
+        Write-Host "Backend on port $Port failed freshness guard ($($evaluation.Classification))." -ForegroundColor Yellow
+        Write-WorkOsBackendFreshnessDiagnostics -Evaluation $evaluation
+        $tree = Get-WorkOsBackendProcessTreeSnapshot -Port $Port -ProjectRoot $ProjectRoot -ExpectedPort $Port
+        $stopIds = if ($evaluation.StopProcessIds.Count -gt 0) { $evaluation.StopProcessIds } else { @(Get-WorkOsBackendStopTargetProcessIds -Tree $tree) }
+        Write-Host "  Action       = Controlled stop of same-worktree stale backend process tree"
+        Write-Host ("  Stop targets = {0}" -f ($stopIds -join ", "))
+        Write-Host ""
+        $stopResult = Stop-WorkOsBackendProcessTreeControlled -Tree $tree -ProcessIds $stopIds -Port $Port
+        if (-not $stopResult.PortReleased) {
+            Write-Host ""
+            Write-Host "BLOCKER: Port $Port remained occupied after controlled stale-backend stop." -ForegroundColor Red
+            foreach ($remaining in @($stopResult.RemainingListeners)) {
+                Write-Host ("  Remaining PID = {0} alive={1}" -f $remaining.OwningProcess, $remaining.ProcessAlive)
+            }
+            Write-Host "  Action       = Stop remaining listeners manually, then re-run .\scripts\start-dev.ps1" -ForegroundColor Red
+            Write-Host ""
+            exit 1
+        }
+        return [PSCustomObject]@{
+            Port = $Port
+            Occupied = $false
+            Ready = $false
+            Listener = $null
+            Freshness = $evaluation
+        }
+    }
+
+    Write-Host ""
+    Write-Host "BLOCKER: Port $Port backend failed freshness guard ($($evaluation.Classification))." -ForegroundColor Red
+    Write-WorkOsBackendFreshnessDiagnostics -Evaluation $evaluation
+    Write-Host "  Action       = Resolve the reported process ownership manually; foreign/other-worktree processes are never stopped automatically." -ForegroundColor Red
+    Write-Host ""
+    exit 1
 }
 
 function Resolve-PortService {
@@ -271,7 +310,7 @@ $HealthUrl = "$BackendUrl/health"
 $ProductSystemUrl = "$FrontendUrl$ProductSystemPath"
 $PricingUrl = "$FrontendUrl$PricingPath"
 
-$backendState = Resolve-PortService -Port $BackendPort -ServiceName "Backend" -HealthProbe { Test-BackendDevReady } -ProjectRoot $Root
+$backendState = Resolve-WorkOsBackendPortService -Port $BackendPort -ProjectRoot $Root
 $frontendState = Resolve-PortService -Port $FrontendPort -ServiceName "Frontend" -HealthProbe { Test-HttpOk -Url $FrontendUrl } -ProjectRoot $Root
 
 $PSNativeCommandUseErrorActionPreference = $false
@@ -313,11 +352,11 @@ if (-not $backendState.Ready) {
         & .\.venv\Scripts\python.exe -m uvicorn main:app --host 127.0.0.1 --port $BackendPort --reload 2>&1
     } -ArgumentList $BackendDir, $DatabaseUrl, $LocalJwtSecret, $env:ALLOWED_ORIGINS, $BackendPort
 
-    Write-Host "Backend job started (id=$($backendJob.Id)). Waiting for /health..." -ForegroundColor DarkGray
-    $backendReady = Wait-ForService -Name "Backend" -Probe { Test-BackendDevReady }
+    Write-Host "Backend job started (id=$($backendJob.Id)). Waiting for backend freshness..." -ForegroundColor DarkGray
+    $backendReady = Wait-ForService -Name "Backend" -Probe { Test-BackendDevReady -ProjectRoot $Root }
     if (-not $backendReady) {
         Write-Host "Backend health check did not pass - recent job output:" -ForegroundColor Yellow
-        Write-BackendDevReadyDiagnostics -BaseUrl $BackendUrl
+        Write-BackendDevReadyDiagnostics -BaseUrl $BackendUrl -ProjectRoot $Root
         Get-JobTail -Job $backendJob -Last 40
         Stop-Job $backendJob -ErrorAction SilentlyContinue
         Remove-Job $backendJob -ErrorAction SilentlyContinue

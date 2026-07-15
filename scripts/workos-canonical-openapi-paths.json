@@ -1,0 +1,11 @@
+{
+  "manifest_version": 1,
+  "description": "Canonical OpenAPI path templates required for WorkOS dev backend freshness on HEAD 3535378+.",
+  "required_paths": [
+    "/api/v1/operator/orders/{order_id}/task-collaboration-read",
+    "/api/v1/operator/orders/{order_id}/task-truth",
+    "/api/v1/operator/tasks",
+    "/api/v1/execution/plan/{order_id}",
+    "/api/v1/intake-v6/workspaces"
+  ]
+}
