@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `71fe531` (W6-INT-01 gate)
+**Accepted HEAD:** `dccc445` (W6-T02 docs) — application baseline follows W6-T03 commit
 
-**Application baseline:** `4224022` (W5-T03 planning/readiness adapter)
+**Application baseline:** W6-T03 production blocker visibility commit (see Wave 6 W6-T03 section)
 
-**Last updated:** 2026-07-15 (W6-T02 task identity component presentation)
+**Last updated:** 2026-07-15 (W6-T03 production blocker visibility)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 implementation** — W6-T02 COMPLETE |
+| Phase | **Wave 6 implementation** — W6-T03 COMPLETE |
 
-| Implementation hold | **Lifted for W6-T03 blocker visibility** |
+| Implementation hold | **Lifted for W6-T04 manager resolution UI** |
 
 | Active task | None |
 
-| Next task | **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** (not auto-started) |
+| Next task | **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** (not auto-started) |
 
 
 
@@ -268,7 +268,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Proof:** Frozen identity + readiness + production-release + owner decisions composed; role-safe internal cost; 13/13 tests + runtime order `23099` on `:8001`.
 
-**Next:** W6-T03 production blocker visibility.
+**Next:** W6-T04 manager owner-decision resolution UI.
+
+## Wave 6 implementation (W6-T03)
+
+**Verdict:** `W6_BLOCKER_VISIBILITY_PASS_COMMITTED`
+
+**Presentation:** Order release strip + owner-decision details; task `Blocat pentru productie` vs runtime readiness; structured 409 parsing.
+
+**Proof:** 32 backend + 21 frontend tests; blocked fixture `23150`; allowed `23099`; 8 screenshots; runtime evidence JSON.
+
+**Debt:** Manager resolution UI → W6-T04; ShopFloor summary deferred.
 
 ## Wave 6 implementation (W6-T02)
 
@@ -278,7 +288,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Proof:** Canonical task-truth fetch; component labels visible; raw keys diagnostic-only; 32 backend + 22 frontend tests; 6 screenshots; runtime order `23099`.
 
-**Debt:** Blueprint adapter for materials/workers; owner-decision UI → W6-T03.
+**Debt:** Blueprint adapter for materials/workers; manager resolution UI → W6-T04.
 
 ## Wave 4 exit (W4-INT-02)
 
@@ -296,5 +306,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W6-T03-PRODUCTION-BLOCKER-VISIBILITY** (not auto-started).
+Next allowed task: **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** (not auto-started).
 

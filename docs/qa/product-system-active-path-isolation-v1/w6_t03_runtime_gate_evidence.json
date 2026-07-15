@@ -1,0 +1,37 @@
+{
+  "gate": "W6-T03",
+  "timestamp_utc": "2026-07-14T23:58:22.293313+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "blocked_order_id": 23150,
+  "allowed_order_id": 23099,
+  "db_mutations": [
+    "seed_blocked_fixture_order_23150"
+  ],
+  "checks": {
+    "blocked_truth": {
+      "status_code": 200,
+      "production_release_blocked": true,
+      "production_release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
+      "blocking_count": 3,
+      "nonblocking_count": 1,
+      "task_is_startable": false,
+      "task_production_release_blocked": true
+    },
+    "allowed_truth": {
+      "status_code": 200,
+      "production_release_blocked": false,
+      "production_release_status": "RELEASE_ALLOWED"
+    },
+    "structured_start_rejection": {
+      "attempted": true,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+      "status_code": 409,
+      "code": "production_release_blocked",
+      "blocker_count": 3
+    },
+    "refresh_stable": {
+      "first_blocked": true,
+      "second_blocked": true
+    }
+  }
+}
