@@ -1,0 +1,8 @@
+{
+  "dev_auth_enabled": true,
+  "vite_enable_dev_auth": "true",
+  "dev_bypass_probe_status": 200,
+  "unauthenticated_probe_status": 200,
+  "classification": "PASS",
+  "notes": "Session invalidation after restart may require dev re-login in browser; API dev bypass works server-side"
+}

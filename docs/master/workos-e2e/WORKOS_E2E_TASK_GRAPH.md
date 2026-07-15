@@ -526,6 +526,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | OWNER-DECISION-03 | **COMPLETE** |
 | Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
+## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `RUNTIME_RECOVERY_02_PASS_INTAKE_RESTORED_OTHER_GAPS_FOUND` |
+| Starting HEAD | `0373215` |
+| Frontend | **UP** `:3000` (`BACKEND_PORT=8001`) |
+| Backend | **UP** `:8001` (worktree `.venv`) |
+| Intake | **RESTORED** (proxy `intake_requests` 200) |
+| Root cause | `WRONG_PROXY_TARGET` (Vite default `:8000`) |
+| Routes | 10 checked / 10 healthy |
+| Banner truth | **MISLEADING** |
+| Parity flags | **ALL_FALSE** |
+| Business writes | **0** |
+| Code changed | **NO** |
+| RUNTIME-RECOVERY-02 | **COMPLETE** |
+| Next | **RETURN_TO_OWNER_DECISION_04_CONFIRMATION** |
+
 ## BACKUP-BASELINE-01B — Isolated frontend restore closure
 
 | Field | Value |
@@ -562,7 +581,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Safety / backup checkpoint
 
-Backup baseline FULL (01 + 01B). Proceed to APP-AUTH-06C; PROD-ARCH-01 / MOBILE-INT-02 remain blocked per prior owner gates.
+Backup baseline FULL (01 + 01B). Source runtime RECOVERED (RUNTIME-RECOVERY-02). Runtime debt: banner truth + launcher `:8000` vs `:8001` alignment. Next: RETURN_TO_OWNER_DECISION_04_CONFIRMATION (not auto APP-AUTH-06C). PROD-ARCH-01 / MOBILE-INT-02 remain blocked per prior owner gates.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

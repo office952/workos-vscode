@@ -1,0 +1,11 @@
+{
+  "component": "frontend/src/components/workos/EnvironmentBanner.tsx",
+  "health_check_real": false,
+  "endpoint_used": null,
+  "fallback": false,
+  "static_auth_based": true,
+  "rule": "authState === authenticated => LIVE / DB",
+  "can_show_green_when_operational_api_fails": true,
+  "classification": "MISLEADING",
+  "aligned_with_intake_error_banner": false
+}

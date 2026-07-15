@@ -1,0 +1,22 @@
+{
+  "url": "http://127.0.0.1:3000/intake",
+  "expected": [
+    "no Source Error strip",
+    "no Network Error message",
+    "intake counters from backend or real empty state",
+    "Cerere Noua enabled when canMutateIntake",
+    "Network tab shows /api/v1/entities/intake_requests 200 via :3000 proxy to :8001",
+    "banner should not contradict route (known debt: banner auth-only)"
+  ],
+  "automated_proxy_status": 200,
+  "classification": "PARTIAL",
+  "reason": "Browser screenshot requires owner session; proxy/API chain verified",
+  "owner_verification_steps": [
+    "Open http://127.0.0.1:3000/intake",
+    "Sign in via dev auth if prompted",
+    "Confirm no red Source Error / Network Error",
+    "DevTools Network: intake_requests returns 200",
+    "Confirm counters match DB row count"
+  ],
+  "observed_endpoint": "http://127.0.0.1:3000/api/v1/entities/intake_requests?sort=-created_at&limit=500"
+}

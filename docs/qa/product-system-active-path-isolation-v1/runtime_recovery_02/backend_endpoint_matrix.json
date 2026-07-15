@@ -1,0 +1,54 @@
+{
+  "backend_base": "http://127.0.0.1:8001",
+  "results": [
+    {
+      "endpoint": "/health",
+      "status": 200,
+      "body_summary": "{\"status\":\"healthy\"}",
+      "auth_required": false,
+      "error": null
+    },
+    {
+      "endpoint": "/api/v1/system/health",
+      "status": 200,
+      "body_summary": "{\"status\":\"warning\",\"service\":\"workos\",\"generated_at\":\"2026-07-15T11:03:15.557311+00:00\",\"checks\":{}}",
+      "auth_required": false,
+      "error": null
+    },
+    {
+      "endpoint": "/docs",
+      "status": 200,
+      "body_summary": "\n    <!DOCTYPE html>\n    <html>\n    <head>\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <link type=\"text/css\" rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css\">\n    <link...",
+      "auth_required": false,
+      "error": null
+    },
+    {
+      "endpoint": "/api/v1/entities/intake_requests?limit=5",
+      "status": 200,
+      "body_summary": "{\"items\":[{\"id\":4,\"code\":\"IR-MRLAOFB2\",\"client_id\":1,\"client_name\":\"SC CLIENT NOU SRL\",\"contact_person\":\"Calin\",\"channel\":\"email\",\"product_family\":\"\",\"description\":\"test\",\"dimensions\":\"—\",\"quantity\":1,\"status\":\"new\",\"assigned_to\":\"—\",\"notes...",
+      "auth_required": true,
+      "error": null
+    },
+    {
+      "endpoint": "/api/v1/operational-registry/employees",
+      "status": 200,
+      "body_summary": "{\"items\":[{\"id\":1,\"name\":\"Calin Cimpean\",\"role\":\"Grafician / Operator\",\"department\":\"Atelier\",\"status\":\"active\",\"employee_type\":\"productive\",\"user_id\":null,\"salary_amount\":8500.0,\"salary_currency\":\"RON\",\"salary_period\":\"monthly\",\"skill_code...",
+      "auth_required": true,
+      "error": null
+    },
+    {
+      "endpoint": "/api/v1/entities/orders?limit=3",
+      "status": 200,
+      "body_summary": "{\"items\":[{\"id\":92400,\"code\":\"ORD-92400\",\"quote_id\":2,\"quote_code\":\"QT-92400\",\"client_id\":null,\"client_name\":\"T06 Probe\",\"contact_person\":null,\"status\":\"in_production\",\"product_summary\":null,\"total_amount\":null,\"locked_at\":null,\"promised_de...",
+      "auth_required": true,
+      "error": null
+    },
+    {
+      "endpoint": "/api/v1/system/version",
+      "status": 200,
+      "body_summary": "{\"app_name\":\"WorkOS\",\"release_version\":\"BUILD_25\",\"release_label\":\"workos-staging-release-BUILD_25\",\"environment\":\"staging\",\"release_scope\":\"/workspace/app\",\"build_time\":\"2026-05-25T18:04:09Z\",\"build_number\":null,\"git_commit\":null,\"release_...",
+      "auth_required": false,
+      "error": null
+    }
+  ]
+}

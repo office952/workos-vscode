@@ -1,0 +1,16 @@
+{
+  "requested_url": "http://127.0.0.1:3000/api/v1/entities/intake_requests?sort=-created_at&limit=500",
+  "method": "GET",
+  "status": 200,
+  "browser_network_error": null,
+  "cors": "same-origin via Vite proxy",
+  "auth": "dev bypass bearer / session cookie",
+  "timeout": false,
+  "connection_refused": false,
+  "response_body_summary": "{\"items\":[{\"id\":4,\"code\":\"IR-MRLAOFB2\",\"client_id\":1,\"client_name\":\"SC CLIENT NOU SRL\",\"contact_person\":\"Calin\",\"channel\":\"email\",\"product_family\":\"\",\"description\":\"test\",\"dimensions\":\"—\",\"quantity\":1,\"status\":\"new\",\"assigned_to\":\"—\",\"notes...",
+  "frontend_stack": "dataStore.loadIntakes -> api.intakesApi.list -> web-sdk client.entities.intake_requests.query",
+  "hook_component": "useBackendData -> WorkIntake.tsx",
+  "pre_recovery_classification": "WRONG_PROXY_TARGET",
+  "pre_recovery_notes": "Default Vite proxy BACKEND_PORT=8000 while trusted backend on 8001; nothing listening on 8000 => axios Network Error",
+  "post_recovery_classification": "HEALTHY"
+}

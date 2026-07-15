@@ -1,0 +1,11 @@
+{
+  "database_path": "C:\\w\\psiso\\backend\\dev.db",
+  "exists": true,
+  "backend_database_url": "sqlite+aiosqlite:///C:/w/psiso/backend/dev.db",
+  "integrity": "ok",
+  "intake_requests_count": 4,
+  "orders_count": 6,
+  "employees_count": 8,
+  "connection": "ok",
+  "classification": "CORRECT"
+}

@@ -520,6 +520,41 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
+## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
+
+**Verdict:** `RUNTIME_RECOVERY_02_PASS_INTAKE_RESTORED_OTHER_GAPS_FOUND`
+
+**Starting HEAD:** `0373215`
+
+**Scope:** Post-backup/restore runtime recovery on source worktree — process inventory, backend/frontend connectivity, `/intake` trace, route sweep, DB/auth read-only validation. No code, DB, or business-logic changes.
+
+| Check | Result |
+|-------|--------|
+| Frontend `:3000` | **UP** (canonical vite + `BACKEND_PORT=8001`) |
+| Backend `:8001` | **UP** (worktree `.venv` uvicorn) |
+| Intake proxy chain | **RESTORED** (`intake_requests` 200) |
+| Root cause | **WRONG_PROXY_TARGET** — Vite proxy default `:8000` while backend on `:8001` |
+| Route sweep | **10/10 HEALTHY** |
+| Source DB | **CORRECT** (`backend/dev.db`, integrity ok) |
+| Auth | **PASS** (dev bypass) |
+| Parity flags | **ALL_FALSE** |
+| Banner truth | **MISLEADING** (auth-only LIVE/DB) |
+| Business DB writes | **0** |
+
+**Runtime recovery debt (remaining):**
+
+1. `EnvironmentBanner` — no operational API health probe (MISLEADING vs route errors)
+2. `dev.ps1` / `start-dev.ps1` default backend `:8000` vs trusted stack `:8001`
+3. Dual API path: web-sdk proxy vs `getAPIBaseURL()` direct `:8001`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/runtime_recovery_02/*.json`
+
+**Worklog:** `docs/worklog/runtime/2026-07-15_runtime_recovery_02_full_application_connectivity_route_health_audit_v1.md`
+
+**RUNTIME-RECOVERY-02:** **COMPLETE**
+
+**Next:** **RETURN_TO_OWNER_DECISION_04_CONFIRMATION** (do not auto-start APP-AUTH-06C)
+
 ## BACKUP-BASELINE-01B — Isolated frontend restore closure
 
 **Verdict:** `BACKUP_BASELINE_01B_FRONTEND_RESTORE_PASS`
@@ -579,7 +614,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL** (01 + 01B). Roadmap may proceed to **APP-AUTH-06C**; `PROD-ARCH-01` and `MOBILE-INT-02` remain blocked per prior gates. Backup artifact outside worktree — not in git.
+Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02). Remaining runtime debt: banner truth + launcher port alignment (see RUNTIME-RECOVERY-02). Roadmap: **RETURN_TO_OWNER_DECISION_04_CONFIRMATION** before APP-AUTH-06C; `PROD-ARCH-01` and `MOBILE-INT-02` remain blocked per prior gates. Backup artifact outside worktree — not in git.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

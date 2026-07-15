@@ -1,0 +1,47 @@
+{
+  "sources": [
+    {
+      "source": "vite.config.ts",
+      "variable": "BACKEND_PORT",
+      "sanitized_value": "8001 (set at frontend process start)",
+      "active": true,
+      "expected": "8001"
+    },
+    {
+      "source": "vite.config.ts",
+      "variable": "proxy /api target",
+      "sanitized_value": "http://localhost:8001",
+      "active": true,
+      "expected": "http://localhost:8001"
+    },
+    {
+      "source": "config.ts",
+      "variable": "DEV_LOCAL_CONFIG.API_BASE_URL",
+      "sanitized_value": "http://127.0.0.1:8001",
+      "active": true,
+      "expected": "http://127.0.0.1:8001"
+    },
+    {
+      "source": "api.ts",
+      "variable": "web-sdk createClient",
+      "sanitized_value": "same-origin /api via Vite proxy (not getAPIBaseURL)",
+      "active": true,
+      "expected": "proxy to 8001"
+    },
+    {
+      "source": "dev.ps1",
+      "variable": "VITE_API_BASE_URL",
+      "sanitized_value": "http://127.0.0.1:8000 (only if dev.ps1 used)",
+      "active": false,
+      "expected": "must not contradict 8001 trusted stack"
+    },
+    {
+      "source": "backup restore 01B",
+      "variable": "BACKEND_PORT",
+      "sanitized_value": "8021 during restore test — leak risk",
+      "active": false,
+      "expected": "must not remain on source :3000"
+    }
+  ],
+  "active_api_target": "http://127.0.0.1:3000/api -> http://localhost:8001"
+}
