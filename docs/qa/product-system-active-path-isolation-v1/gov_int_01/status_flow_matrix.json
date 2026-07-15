@@ -1,0 +1,138 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "PARTIAL",
+  "note": "Documentation samples — not live state machines wired to page",
+  "domains": [
+    {
+      "domain": "Intake/WI",
+      "ui_statuses": [
+        "new",
+        "in_review",
+        "needs_info",
+        "ready_for_quote",
+        "blocked",
+        "cancelled"
+      ],
+      "backend_statuses": [
+        "ready_for_quote",
+        "ready_for_quote_preview (V4/V6 workspace)"
+      ],
+      "enforcement": "PARTIAL — intake_v3/v6 readiness services",
+      "conflict": "V6 uses different readiness path than static WI flow"
+    },
+    {
+      "domain": "Product System",
+      "ui_statuses": [
+        "unresolved",
+        "resolving",
+        "resolved",
+        "invalid_configuration"
+      ],
+      "backend_statuses": "product aggregate / template activation — not identical enum",
+      "enforcement": "PARTIAL",
+      "conflict": "STATIC sample"
+    },
+    {
+      "domain": "CostEngine",
+      "ui_statuses": [
+        "pending",
+        "calculating",
+        "calculated",
+        "failed"
+      ],
+      "backend_statuses": "cost run statuses in services",
+      "enforcement": "PARTIAL",
+      "conflict": "Absent from Boundary Map"
+    },
+    {
+      "domain": "Quotes/QT",
+      "ui_statuses": [
+        "draft",
+        "priced",
+        "sent",
+        "viewed",
+        "negotiating",
+        "accepted",
+        "rejected",
+        "expired"
+      ],
+      "backend_statuses": "quotes.status string column",
+      "enforcement": "PARTIAL"
+    },
+    {
+      "domain": "Orders/OR",
+      "ui_statuses": [
+        "created",
+        "confirmed",
+        "locked",
+        "in_execution",
+        "completed",
+        "cancelled"
+      ],
+      "backend_statuses": "orders.status",
+      "enforcement": "PARTIAL"
+    },
+    {
+      "domain": "WorkOS/WO",
+      "ui_statuses": [
+        "pending",
+        "scheduled",
+        "in_progress",
+        "blocked",
+        "partial_done",
+        "done"
+      ],
+      "backend_statuses": "execution plan / operation statuses differ",
+      "enforcement": "NOT_PROVEN on page"
+    },
+    {
+      "domain": "Tasks/TK",
+      "ui_statuses": [
+        "created",
+        "assigned",
+        "in_progress",
+        "blocked",
+        "done",
+        "cancelled"
+      ],
+      "backend_statuses": "employee mobile task statuses",
+      "enforcement": "PARTIAL — APP-AUTH chain"
+    },
+    {
+      "domain": "OC",
+      "ui_statuses": [
+        "active",
+        "inactive",
+        "deprecated"
+      ],
+      "backend_statuses": "NOT_PROVEN as entity status machine",
+      "enforcement": "DOCUMENTED_ONLY"
+    },
+    {
+      "domain": "Product Definition",
+      "ui_statuses": "NOT_SHOWN in governance status flows",
+      "backend_statuses": "PD composition states exist",
+      "enforcement": "OMITTED",
+      "conflict": "Gap vs canonical intake flow"
+    },
+    {
+      "domain": "ExecutionReality",
+      "ui_statuses": "NOT_SHOWN",
+      "enforcement": "NOT_PROVEN"
+    }
+  ],
+  "cross_module_events": {
+    "source": "governanceData.systemEvents — static",
+    "overlap_with_modules": "Same event names in useModuleChainData REFERENCE_EVENTS",
+    "enforcement": "DOCUMENTED_ONLY on page"
+  },
+  "invalid_patterns": {
+    "listed": true,
+    "indexed_in_search": false,
+    "runtime_enforced_via_page": false
+  }
+}

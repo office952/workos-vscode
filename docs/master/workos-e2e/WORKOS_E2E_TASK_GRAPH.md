@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `OWNER_DECISION_REQUIRED` (after MODULE-AUTH-01 gate)  
+**Active task:** `GOV-MODULE-AUTH-01` (after GOV-INT-01 gate)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## MODULE-AUTH-01 — Canonical module chain purpose authority decisions
@@ -19,7 +19,26 @@
 | MODULE-RUNTIME-01 | **BLOCKED** |
 | MODULE-ARCH-01 | **BLOCKED** |
 | MODULE-AUTH-01 | **COMPLETE** |
-| Next | **OWNER_DECISION_REQUIRED** → **MODULE-PLAN-01** |
+| Next | **GOV-INT-01** (closed) → **GOV-MODULE-AUTH-01** |
+
+## GOV-INT-01 — AUDIT_E2E_SYSTEM_GOVERNANCE_ALL_TABS_AND_MODULE_CHAIN_OVERLAP_V1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `GOVERNANCE_AUDIT_BLOCKED_STATIC_DUPLICATION` |
+| Routes | `/governance` (primary), `/modules` (comparison) |
+| Starting HEAD | `1e9d32e` |
+| Tabs audited | 8/8 |
+| Canonical docs claimed | 25 (hardcoded) |
+| Canonical docs found | 1 JSON |
+| Classification | LOCAL_DEFINITION_VIEW + DOCUMENTATION_AGGREGATOR — not control plane |
+| Core answer | B — duplicated documentation surfaces |
+| Contradictions | Boundary Map Quotes calculează vs Modules CE owns cost; OC placement |
+| Proof | 14 JSON matrices + 10 screenshots |
+| MODULE-PLAN-01 | **BLOCKED_PENDING_GOV_INT_01** |
+| Implementation | **NOT AUTHORIZED** |
+| Next | **GOV-MODULE-AUTH-01** |
 
 ## MODULE-INT-01 — AUDIT_E2E_COMPOUND_ENGINEERING_MODULE_CHAIN_V1
 

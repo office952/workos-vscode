@@ -1,0 +1,89 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "HYBRID",
+  "classification_labels": [
+    "LOCAL_DEFINITION_VIEW",
+    "DOCUMENTATION_AGGREGATOR",
+    "STATIC_REFERENCE"
+  ],
+  "not_classification": [
+    "CANONICAL_GOVERNANCE_REFERENCE",
+    "GOVERNANCE_CONTROL_PLANE",
+    "GOVERNANCE_POLICY_VIEW_WITH_RUNTIME_ENFORCEMENT"
+  ],
+  "core_question_answer": "B — two duplicated documentation surfaces",
+  "route": "/governance",
+  "route_file": "frontend/src/App.tsx",
+  "page_component": "frontend/src/pages/Governance.tsx",
+  "tab_registry": "inline tabs array Governance.tsx",
+  "data_hook": null,
+  "backend_calls": [],
+  "frontend_only_sources": 2,
+  "document_sources_loaded": 0,
+  "runtime_sources_on_page": 0,
+  "refresh_behavior": "none",
+  "tabs_audited": 8,
+  "page_elements": [
+    {
+      "element": "25 canonical docs badge",
+      "source": "hardcoded Governance.tsx:1580",
+      "live": false,
+      "static": true,
+      "canonical_claim": true,
+      "proven_authority": false
+    },
+    {
+      "element": "Read-only disclaimer",
+      "source": "Governance.tsx banner",
+      "live": false,
+      "static": true,
+      "canonical_claim": false,
+      "proven_authority": true
+    },
+    {
+      "element": "EnvironmentBanner LIVE/DB",
+      "source": "EnvironmentBanner.tsx (global layout)",
+      "live": true,
+      "static": false,
+      "canonical_claim": false,
+      "proven_authority": true,
+      "note": "App-wide backend connectivity — not governance corpus"
+    },
+    {
+      "element": "8 tab panels",
+      "source": "governanceData.ts + agent_authority_registry.json",
+      "live": false,
+      "static": true,
+      "canonical_claim": true,
+      "proven_authority": false
+    },
+    {
+      "element": "Search + filters",
+      "source": "buildSearchIndex() client-side",
+      "live": false,
+      "static": true,
+      "canonical_claim": false,
+      "proven_authority": false
+    }
+  ],
+  "search": {
+    "searchable_data_source": "buildSearchIndex() in-memory",
+    "tab_scope": "all indexed tabs; invalidPatterns not indexed",
+    "document_scope": "none — no filesystem docs loaded",
+    "backend_query": false,
+    "case_sensitive": false,
+    "hidden_results": "invalidPatterns, archived docs (none loaded)",
+    "stale_documents": "not detectable — no doc loader",
+    "direct_navigation": true,
+    "false_authority_risk": "HIGH — search navigates to static rules presented as canonical"
+  },
+  "separate_runtime_governance": {
+    "note": "Quote snapshot governance API exists elsewhere",
+    "api": "frontend/src/api/quoteOutputSnapshotGovernance.ts",
+    "not_consumed_by_governance_page": true
+  }
+}

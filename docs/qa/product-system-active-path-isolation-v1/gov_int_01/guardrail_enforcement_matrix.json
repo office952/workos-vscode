@@ -1,0 +1,91 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "DOCUMENTED_ONLY",
+  "rows": [
+    {
+      "guardrail": "G01",
+      "domain": "Boundary roles",
+      "documented": true,
+      "enforced": "DOCUMENTED_ONLY",
+      "tested": false,
+      "runtime_proof": "DOCUMENTED_ONLY",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "G02",
+      "domain": "No hidden fallback",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "G03",
+      "domain": "No architectural workaround",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "G06",
+      "domain": "UI reflects truth",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "G07",
+      "domain": "Gates are real",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "G09",
+      "domain": "Inventory is OC",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "Order snapshot frozen",
+      "domain": "Orders guard",
+      "documented": true,
+      "enforced": "ENFORCED",
+      "tested": true,
+      "runtime_proof": "ENFORCED",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "UI does not calculate cost",
+      "domain": "UI guard",
+      "documented": true,
+      "enforced": "PARTIAL",
+      "tested": true,
+      "runtime_proof": "PARTIAL",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    },
+    {
+      "guardrail": "No employee authorization bypass",
+      "domain": "Mobile",
+      "documented": true,
+      "enforced": "ENFORCED",
+      "tested": true,
+      "runtime_proof": "ENFORCED",
+      "gap": "Page does not enforce — rules exist in code elsewhere or not at all"
+    }
+  ]
+}

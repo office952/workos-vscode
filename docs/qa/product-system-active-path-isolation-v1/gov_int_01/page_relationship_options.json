@@ -1,0 +1,43 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "principal_idea_recommendation": "Candidate 4 — Owner decision required before any unification; interim treat both as NON-CANONICAL documentation surfaces",
+  "shared_source_required": true,
+  "pages_to_keep": "Both temporarily — label as reference-only",
+  "page_to_retire": "NONE until owner decisions",
+  "models": {
+    "A_separate_legitimate_views": {
+      "benefits": "Clear policy vs architecture separation if single source",
+      "risks": "Currently NO shared source — drift proven",
+      "recommended_status": "NOT_VALID_YET"
+    },
+    "B_one_page_tabs": {
+      "benefits": "Single navigation",
+      "risks": "Would merge contradictory flows without owner decisions",
+      "recommended_status": "BLOCKED — user direction: no merge now"
+    },
+    "C_governance_source_modules_projection": {
+      "benefits": "Policy owns definitions",
+      "risks": "Governance is NOT current source — static TS",
+      "recommended_status": "NOT_VALID"
+    },
+    "D_modules_source_governance_policy": {
+      "benefits": "Modules closer to module chain",
+      "risks": "Also static/demo hybrid per MODULE-INT-01",
+      "recommended_status": "PARTIAL — neither is canonical alone"
+    },
+    "E_independent_static_pages": {
+      "benefits": "No merge cost",
+      "risks": "HIGH drift — proven duplicate/contradiction",
+      "recommended_status": "CURRENT_DE_FACTO — unacceptable long-term"
+    },
+    "F_retire_one": {
+      "benefits": "Reduces confusion",
+      "risks": "Cannot choose without GOV-MODULE-AUTH-01 owner decisions",
+      "recommended_status": "BLOCKED"
+    }
+  }
+}

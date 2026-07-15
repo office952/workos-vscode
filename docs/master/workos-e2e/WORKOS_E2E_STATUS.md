@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** MODULE-AUTH-01 on branch (after MODULE-INT-01 @ `276fb83`)
+**Accepted HEAD:** GOV-INT-01 on branch (after MODULE-AUTH-01 @ `1e9d32e`)
 
-**Last updated:** 2026-07-15 (MODULE-AUTH-01 module chain purpose gate — **0/16 CONFIRMATE**)
+**Last updated:** 2026-07-15 (GOV-INT-01 governance audit — **25 docs claim NOT_PROVEN**)
 
 
 
@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **MODULE-AUTH-01** — gate scop pagină `/modules` documentat |
+| Active task | **GOV-INT-01** — audit E2E `/governance` vs `/modules` documentat |
 
-| Next task | **OWNER_DECISION_REQUIRED** — confirmare M1–M16 (MODULE-RUNTIME-01 **BLOCAT**) |
+| Next task | **GOV-MODULE-AUTH-01** — scop canonic + decizii unificare (MODULE-PLAN-01 **BLOCAT**) |
 
 
 
@@ -594,7 +594,37 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MODULE-AUTH-01:** **COMPLETE** (gate documentat)
 
-**Next:** **OWNER_DECISION_REQUIRED** → apoi **MODULE-PLAN-01** — MODULE-ARCH-01 **BLOCAT**
+**Next:** **GOV-INT-01** (closed) — MODULE-PLAN-01 **BLOCAT_PENDING_GOV_INT_01**
+
+## GOV-INT-01 — Audit E2E System Governance (all tabs) + Module Chain overlap
+
+**Verdict:** `GOVERNANCE_AUDIT_BLOCKED_STATIC_DUPLICATION`
+
+**Scope:** Read-only audit `/governance` (8 tabs) vs `/modules` — UI, frontend, sources, runtime @ :8001/:3000. **Fără implementare.**
+
+**Route classification:** HYBRID → **LOCAL_DEFINITION_VIEW + DOCUMENTATION_AGGREGATOR + STATIC_REFERENCE** (not governance control plane).
+
+**Core answer:** **B** — two duplicated documentation surfaces (with **contradictory** boundary flow vs module chain).
+
+**Key findings:**
+
+- **0** backend endpoints consumed by `/governance`; all content from `governanceData.ts` + `agent_authority_registry.json`
+- **"25 canonical docs"** badge **hardcoded** — `docs/canonical/` **empty**; only **1** JSON registry loadable
+- Boundary Map **CONTRADICTED**: Templates→Quotes calculează… vs Modules Golden Rule **Quotes nu calculează cost**; omits Intake, Product Definition, CostEngine
+- Status Flows / events / guardrails: **documentation samples** — overlap with `/modules` static arrays, **no shared source file**
+- Guardrails / UI Truth Rules: **DOCUMENTED_ONLY** on page; partial enforcement elsewhere in codebase
+- Product Catalog: **STATIC** marketing nomenclator — not Product System template registry
+- Global **LIVE/DB** banner (`EnvironmentBanner`) creates **false authority** against page disclaimer
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/gov_int_01/` (14 JSON + 10 screenshots)
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_gov_int_01_audit_e2e_system_governance_all_tabs_module_overlap_v1.md`
+
+**Debt:** Governance/Module Chain duplicate + contradictory truths; shared versioned architecture source required before unification; MODULE-PLAN-01 remains blocked.
+
+**GOV-INT-01:** **COMPLETE**
+
+**Next:** **GOV-MODULE-AUTH-01** — **MODULE-PLAN-01** `BLOCKED_PENDING_GOV_INT_01`
 
 ## APP-INT-01 — Audit E2E angajați, competențe, utilaje, execuție, pontaj
 

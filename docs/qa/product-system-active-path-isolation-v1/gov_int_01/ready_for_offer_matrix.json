@@ -1,0 +1,23 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "classification": "PARTIAL",
+  "legacy_terminology": true,
+  "label": "Ready for Quotes (should be Ready for Offer in RO UI elsewhere)",
+  "entity_evaluated": "Template / Blueprint Studio (gateLevels) — NOT intake entity on this tab",
+  "runtime_services": [
+    "intake_v3_readiness_service",
+    "intake_v6_canonical_readiness_service",
+    "volumetric_quote_ready_policy",
+    "product_readiness schemas"
+  ],
+  "backend_endpoints": "Intake readiness via workspace APIs — not consumed by /governance",
+  "relation_intake_v6": "Real readiness at intake handoff — differs from template-only gate doc",
+  "relation_cost_engine": "Cost not part of Ready for Quotes gate on page; CE runs after PS in real chain",
+  "enforcement": "PARTIAL — tests exist; page is DOCUMENTED_ONLY",
+  "can_appear_ready_while_pd_incomplete": "YES — possible if only template gate shown",
+  "e2e_trace": "IR-MRJS4VIK / volumetric fixtures — readiness enforced in backend not on governance page"
+}

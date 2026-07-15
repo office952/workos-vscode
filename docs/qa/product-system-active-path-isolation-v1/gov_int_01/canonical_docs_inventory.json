@@ -1,0 +1,232 @@
+{
+  "task": "GOV-INT-01",
+  "audit_date": "2026-07-15",
+  "starting_head": "1e9d32e",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "claimed_count": 25,
+  "found_loadable_count": 1,
+  "current_count": 1,
+  "stale_count": 0,
+  "conflicting_count": 1,
+  "count_hardcoded": true,
+  "count_calculated": false,
+  "all_loaded_successfully": false,
+  "archived_included": false,
+  "multiple_versions_same_truth": false,
+  "freshness_ui": false,
+  "stale_can_remain_canonical_silently": true,
+  "official_authority_hierarchy": "NOT_PROVEN on this page",
+  "documents": [
+    {
+      "doc": "agent_authority_registry",
+      "path": "frontend/src/canonical/agent_authority_registry.json",
+      "title": "Agent Authority Registry v1.0.0",
+      "modified": "2026-03-09 (registry updatedAt)",
+      "status": "LOADED",
+      "classification": "reference",
+      "consumed_by_tab": [
+        "Agent Authority",
+        "Search"
+      ],
+      "current": true,
+      "superseded": false,
+      "conflict": "canonicalSource points to missing .md"
+    }
+  ],
+  "inline_typescript_bundles": [
+    {
+      "bundle": "governanceData.ts",
+      "comment_claim": "Extracted from canonical .md files",
+      "actual": "hardcoded arrays — no .md loader",
+      "tabs": [
+        "Boundary Map",
+        "Status Flows",
+        "Source of Truth",
+        "Ready for Quotes",
+        "Guardrails",
+        "Product Catalog",
+        "UI Truth Rules"
+      ]
+    }
+  ],
+  "missing_referenced": [
+    {
+      "path": "docs/canonical/canonical__agent_authority_map.md",
+      "status": "MISSING",
+      "referenced_by": [
+        "agent_authority_registry.json",
+        "governanceData.ts"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #2 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #3 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #4 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #5 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #6 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #7 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #8 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #9 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #10 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #11 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #12 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #13 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #14 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #15 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #16 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #17 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #18 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #19 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #20 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #21 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #22 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #23 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #24 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    },
+    {
+      "path": "docs/canonical/ (implied doc #25 — badge only)",
+      "status": "NOT_FOUND",
+      "referenced_by": [
+        "25 canonical docs badge"
+      ]
+    }
+  ],
+  "verdict": "25 canonical docs claim is NOT_PROVEN and MISLEADING"
+}
