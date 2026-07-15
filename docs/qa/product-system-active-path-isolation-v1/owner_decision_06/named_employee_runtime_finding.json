@@ -1,0 +1,85 @@
+{
+  "task": "OWNER-DECISION-06",
+  "prior_audit_claim": "Named employees in runtime rules: 1",
+  "integrity_verdict": "UNDER_SPECIFIED_IN_PRIOR_FOOTER — person count was directionally right but file/path/classification were not explicit enough",
+  "primary_person": "Putaru Sandu",
+  "production_mutation_impact": false,
+  "findings": [
+    {
+      "id": "NE-01",
+      "name_or_id": "Putaru Sandu",
+      "identifier_type": "display_name_string",
+      "file": "backend/services/dev_employee_mobile_sandu_fixture_service.py",
+      "lines": "38-41",
+      "constants": ["SANDU_USER_ID", "SANDU_EMAIL", "SANDU_NAME", "SANDU_EMPLOYEE_NAME"],
+      "logic": "Dev-only fixture seeds/links User + Employee rows and assigns demo tasks when env allows apply",
+      "classification": "DEV_FIXTURE_TEST_ONLY",
+      "affects_production": false,
+      "affects_eligibility_claim_assignment": false,
+      "notes": "This is what PROD-FLEX-INT-01 footer likely counted as the single named runtime reference"
+    },
+    {
+      "id": "NE-02",
+      "name_or_id": "employee_id = 4 (Sandu in local dev DB convention)",
+      "identifier_type": "hardcoded_employee_id",
+      "file": "backend/services/parity_observe/sandu.py",
+      "lines": "18-19",
+      "constants": ["SANDU_EMPLOYEE_ID = 4"],
+      "logic": "build_sandu_observe_report loads employee 4 for in-memory parity reconciliation sheet",
+      "classification": "OBSERVE_ONLY_HELPER",
+      "affects_production": false,
+      "affects_eligibility_claim_assignment": false,
+      "notes": "Gated by parity_observe_is_enabled(); no mutations; display_name resolved from DB row"
+    },
+    {
+      "id": "NE-03",
+      "name_or_id": "Putaru Sandu + 11 other seed names across operation groups",
+      "identifier_type": "authorized_employee_names arrays",
+      "file": "backend/seeds/seed_operational_workforce_registry.py",
+      "lines": "71, 278-494",
+      "logic": "Seed maps names to operation_employee_authorizations explicit IDs at seed time",
+      "classification": "SEED_DATA_NOT_RUNTIME_RULE",
+      "affects_production": "only_after_seed_run",
+      "affects_eligibility_claim_assignment": "via explicit mapping table, not inline if-name checks",
+      "notes": "Separate from audit footer count of 1; audit also reported named_employees_seed_registry: 12 groups"
+    },
+    {
+      "id": "NE-04",
+      "name_or_id": "Putaru Sandu",
+      "identifier_type": "probe_constant",
+      "file": "backend/scripts/mobile_t01_runtime_gate_proof.py",
+      "lines": "32",
+      "constants": ["GATE_EMPLOYEE_NAME"],
+      "logic": "QA gate script lookup by name for live probes",
+      "classification": "QA_SCRIPT_HELPER",
+      "affects_production": false,
+      "affects_eligibility_claim_assignment": false
+    },
+    {
+      "id": "NE-05",
+      "name_or_id": "Putaru Sandu",
+      "identifier_type": "probe_constant",
+      "file": "backend/scripts/mobile_int_01_runtime_gate_proof.py",
+      "lines": "34",
+      "logic": "Links dev-bypass admin to Sandu employee for mobile API probes",
+      "classification": "QA_SCRIPT_HELPER",
+      "affects_production": false,
+      "affects_eligibility_claim_assignment": false
+    }
+  ],
+  "absent_patterns_confirmed": [
+    "No if employee == Sandu in eligibility services",
+    "No if employee == Sandu in claim/assignment services",
+    "No Sandu references in backend/routers production paths",
+    "No named employee checks in task_readiness_service"
+  ],
+  "owner_policy_alignment": {
+    "D23": "Any nominal reference must be classified — done above",
+    "sandu_reconciliation": "PAUSED until general contract; SK_PRINT_OPERATOR is test data per owner"
+  },
+  "final_classification_summary": {
+    "named_person_in_operational_rule_logic": 0,
+    "named_person_in_dev_observe_seed_script_paths": 5,
+    "audit_footer_count_1_meant": "one canonical person (Putaru Sandu) in non-seed service hardcoding, not a complete inventory"
+  }
+}

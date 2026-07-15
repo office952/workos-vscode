@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `5930efc` (APP-AUTH-06F)
+**Accepted HEAD:** `02b5981` (PROD-FLEX-INT-01)
 
-**Last updated:** 2026-07-15 (PROD-FLEX-INT-01 — operational flexibility audit **COMPLETE**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-06 — operational flexibility contract **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-INT-01** — operational claim/collaboration audit (**COMPLETE**) |
+| Active task | **OWNER-DECISION-06** — operational flexibility contract (**COMPLETE**) |
 
-| Next task | **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT** (APP-AUTH-06G **PAUSED** pending OD-06; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -1099,5 +1099,29 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **PROD-FLEX-INT-01:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT**
+**Next:** **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT** (closed below)
+
+## OWNER-DECISION-06 — Operational flexibility and collaboration contract
+
+**Verdict:** `OWNER_OPERATIONAL_FLEXIBILITY_CONTRACT_CONFIRMED_READY_FOR_ARCH_PLAN`
+
+**Scope:** Owner decision gate — D1–D24 + integrity check on prior audit (named employee NE-*, 21/21 JSON reconciliation).
+
+**Confirmed:** READY without assignment · eligible≠assigned · no auto-dispatch · principal optional · participants 0..N · help adds participant · progress on operation · PS forbids employee IDs · Sandu **PAUSED**.
+
+**D6 debt:** `_has_active_session_by_other` — target contract confirmed; guard removal deferred to arch plan.
+
+**Complete authority:** B (principal or manager). **Quantity progress:** MIXED.
+
+**Named employee preserved:** Putaru Sandu — `dev_employee_mobile_sandu_fixture_service.py` (DEV_FIXTURE); `parity_observe/sandu.py` id=4 (OBSERVE_ONLY).
+
+**Prior audit JSON:** 21 required, 21 delivered — prior footer “19” was reporting error.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_06_operational_flexibility_collaboration_contract_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/owner_decision_06/`
+
+**OWNER-DECISION-06:** **COMPLETE**
+
+**Next:** **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN**
 

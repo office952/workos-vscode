@@ -1,0 +1,24 @@
+{
+  "task": "OWNER-DECISION-06",
+  "required_fields": {
+    "operation_code": "REQUIRED_NOW",
+    "primary_competence": "REQUIRED_NOW",
+    "required_workcenter_or_machine": "REQUIRED_NOW",
+    "parallelizable": "USEFUL_NEXT",
+    "collaboration_mode": "USEFUL_NEXT"
+  },
+  "optional_fields": {
+    "supporting_competences": "USEFUL_LATER",
+    "progress_unit": "REQUIRED_NOW for quantity-capable operations",
+    "minimum_people": "USEFUL_LATER — only real safety/heavy rules",
+    "recommended_people": "USEFUL_LATER — advisory",
+    "maximum_useful_people": "PREMATURE until runtime capacity model",
+    "staffing_rule_inputs": "PREMATURE"
+  },
+  "rejected": {
+    "assigned_employee_default": "REJECTED",
+    "fixed_team_list": "REJECTED",
+    "headcount_for_all_operations": "REJECTED"
+  },
+  "owner_status": "CONFIRMED"
+}

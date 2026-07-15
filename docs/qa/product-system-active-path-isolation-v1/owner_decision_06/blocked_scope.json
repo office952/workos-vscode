@@ -1,0 +1,28 @@
+{
+  "task": "OWNER-DECISION-06",
+  "blocked": [
+    "collaboration implementation",
+    "assigned_employee_id schema change",
+    "DB migrations",
+    "participant tables",
+    "help request tables",
+    "quantity progress tables",
+    "UI Mobile changes",
+    "UI Operator changes",
+    "auto-dispatch",
+    "availability engine",
+    "workload engine",
+    "ranking",
+    "manager projection",
+    "parity persistence",
+    "parity enforcement",
+    "third parity consumer",
+    "Sandu DB correction",
+    "APP-AUTH-07",
+    "PROD-ARCH-01 legacy",
+    "MOBILE-INT-02",
+    "UI-TRUTH-01B-01E",
+    "removal of _has_active_session_by_other in this gate"
+  ],
+  "owner_status": "CONFIRMED"
+}

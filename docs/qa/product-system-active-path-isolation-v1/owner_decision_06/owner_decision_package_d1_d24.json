@@ -1,0 +1,44 @@
+{
+  "task": "OWNER-DECISION-06",
+  "starting_head": "02b5981",
+  "prior_audit": "PROD-FLEX-INT-01 @ 02b5981",
+  "owner_authorization": "explicit_direction_in_conversation_2026-07-15",
+  "decisions": [
+    { "id": "D1", "proposed": "READY independent of assignment", "owner_status": "CONFIRMED", "notes": "Operator already eligible without assignee; exceptions reserved for explicit locks", "implementation_implication": "Align mobile vocabulary; optional reserved-operation exceptions later" },
+    { "id": "D2", "proposed": "Eligibility determines visibility", "owner_status": "CONFIRMED", "notes": "Filter not assign; availability layer later", "implementation_implication": "Expand pool taxonomy; no auto-dispatch" },
+    { "id": "D3", "proposed": "Eligible != assigned != claimed != participating", "owner_status": "CONFIRMED", "notes": "Four distinct runtime concepts", "implementation_implication": "Document and expose separately in truth APIs" },
+    { "id": "D4", "proposed": "No aggressive auto-dispatch", "owner_status": "CONFIRMED", "notes": "Default READY→ELIGIBLE→self-claim or manual assign", "implementation_implication": "Reject dispatch motor for now" },
+    { "id": "D5", "proposed": "Manual assignment remains", "owner_status": "CONFIRMED", "notes": "Does not exclude help", "implementation_implication": "Keep PATCH assign; extend semantics not replace" },
+    { "id": "D6", "proposed": "Claim does not block collaboration", "owner_status": "CONFIRMED_TARGET_CURRENT_DEBT", "notes": "_has_active_session_by_other contradicts target; guard not removed in this gate", "implementation_implication": "PROD-FLEX-ARCH-01 must plan separate help/join pools" },
+    { "id": "D7", "proposed": "Principal operator optional", "owner_status": "CONFIRMED", "notes": "Coordinator not exclusive owner", "implementation_implication": "Decouple assignee from exclusive execution" },
+    { "id": "D8", "proposed": "Participants 0..N", "owner_status": "CONFIRMED", "notes": "Reality sessions already partial", "implementation_implication": "First-class participant model in runtime only" },
+    { "id": "D9", "proposed": "Help request adds participants", "owner_status": "CONFIRMED_CONTRACT_MINIM", "notes": "Minimal fields defined; not TaskClarificationRequest", "implementation_implication": "New operational help entity in arch plan" },
+    { "id": "D10", "proposed": "Help does not reassign", "owner_status": "CONFIRMED", "notes": "Runtime participation only", "implementation_implication": "No assign_plan_task on help accept" },
+    { "id": "D11", "proposed": "Own session per participant", "owner_status": "CONFIRMED", "notes": "Backend foundation exists", "implementation_implication": "Mobile/helper start path" },
+    { "id": "D12", "proposed": "Stop own work != complete operation", "owner_status": "CONFIRMED", "notes": "Mobile gap today", "implementation_implication": "Add end-session-without-complete in arch plan" },
+    { "id": "D13", "proposed": "Progress belongs to operation", "owner_status": "CONFIRMED", "notes": "Not principal-owned", "implementation_implication": "Aggregate progress record separate from sessions" },
+    { "id": "D14", "proposed": "Product System forbids employee IDs", "owner_status": "CONFIRMED", "notes": "Audit proved 0", "implementation_implication": "Guard in PS compilers" },
+    { "id": "D15", "proposed": "PS may declare parallelizable/progress_unit/collaboration_mode", "owner_status": "CONFIRMED_TARGET_NOT_IMPLEMENTATION", "notes": "Declares possibility not headcount", "implementation_implication": "Schema extension in later build" },
+    { "id": "D16", "proposed": "recommended_people non-blocking", "owner_status": "CONFIRMED", "notes": "Display/advisory only", "implementation_implication": "Never gate Start" },
+    { "id": "D17", "proposed": "minimum_people only for real rules", "owner_status": "CONFIRMED", "notes": "Safety/heavy lift exceptions", "implementation_implication": "Rare explicit PS fields" },
+    { "id": "D18", "proposed": "Concrete participant count is runtime", "owner_status": "CONFIRMED", "notes": "PS describes requirement only", "implementation_implication": "Runtime capacity joins later" },
+    { "id": "D19", "proposed": "Availability/workload runtime only", "owner_status": "CONFIRMED", "notes": "Not in PS or snapshot", "implementation_implication": "Future workload engine blocked until foundation" },
+    { "id": "D20", "proposed": "Entry/exit without plan recompile", "owner_status": "CONFIRMED", "notes": "Reality-only mutations", "implementation_implication": "Participant changes must not touch frozen spine" },
+    { "id": "D21", "proposed": "Snapshot freezes requirement not team", "owner_status": "CONFIRMED", "notes": "MOBILE-T06 aligned", "implementation_implication": "Keep assignee out of frozen identity" },
+    { "id": "D22", "proposed": "Operation complete separate from contribution", "owner_status": "CONFIRMED", "notes": "Helper ending session must not complete op", "implementation_implication": "Separate complete-operation action" },
+    { "id": "D23", "proposed": "No hardcoded people/teams; classify findings", "owner_status": "CONFIRMED", "notes": "See named_employee_runtime_finding.json", "implementation_implication": "Remove/classify debt in dedicated tasks" },
+    { "id": "D24", "proposed": "No auto-dispatch before foundation", "owner_status": "CONFIRMED", "notes": "Foundation = claim, participants, help, sessions, progress", "implementation_implication": "PROD-FLEX-ARCH-01 before any dispatch" }
+  ],
+  "summary": {
+    "total": 24,
+    "confirmed": 23,
+    "confirmed_target_current_debt": 1,
+    "deferred": 0,
+    "owner_confirmation_required": 0
+  },
+  "supplemental_decisions": {
+    "complete_authority": { "choice": "B", "label": "Principal or manager may complete operation", "owner_status": "CONFIRMED" },
+    "quantity_progress": { "choice": "MIXED", "label": "Quantity when natural unit exists; status/percent otherwise", "owner_status": "CONFIRMED" },
+    "operational_roles": { "choice": "PRINCIPAL_HELPER", "owner_status": "CONFIRMED" }
+  }
+}

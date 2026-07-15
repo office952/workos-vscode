@@ -1,0 +1,24 @@
+{
+  "task": "OWNER-DECISION-06",
+  "owns": [
+    "task graph",
+    "depends_on_task_ids",
+    "process_type / machine_type on operational task",
+    "assigned_employee_id as principal coordinator (0..1)",
+    "assignment_source / assignment_updated_at metadata",
+    "readiness inputs (frozen operational requirement)"
+  ],
+  "does_not_own": [
+    "concrete participants list",
+    "help requests",
+    "work sessions",
+    "quantity progress runtime",
+    "eligible employee enumeration storage"
+  ],
+  "mutability": {
+    "frozen_identity": "task_id, dependencies, snapshot-linked requirement",
+    "runtime_mutable": "assigned_employee_id only among plan fields"
+  },
+  "snapshot_rule": "Frozen technical snapshot does not contain concrete team",
+  "owner_status": "CONFIRMED"
+}

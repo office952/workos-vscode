@@ -1,0 +1,25 @@
+{
+  "task": "OWNER-DECISION-06",
+  "stop_own_work": {
+    "definition": "Closes authenticated employee session only",
+    "closes_operation": false,
+    "owner_status": "CONFIRMED",
+    "current": "PARTIAL — operator end-task without completion_fields; mobile lacks dedicated action"
+  },
+  "complete_contribution": {
+    "definition": "Participant ends own session; may record partial contribution",
+    "closes_operation": false,
+    "owner_status": "CONFIRMED"
+  },
+  "complete_operation": {
+    "definition": "Operation marked done when progress requirement satisfied and policy allows",
+    "authority": "B — principal operator OR manager",
+    "helper_may_complete_operation": false,
+    "owner_status": "CONFIRMED",
+    "current": "PARTIAL — any session holder can complete_my_task; global done when all sessions ended"
+  },
+  "verification": {
+    "before_complete_operation": ["progress requirement met", "policy on active sessions per arch plan"],
+    "owner_status": "CONFIRMED"
+  }
+}

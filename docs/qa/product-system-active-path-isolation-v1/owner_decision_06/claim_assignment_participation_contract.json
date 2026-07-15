@@ -1,0 +1,32 @@
+{
+  "task": "OWNER-DECISION-06",
+  "claim": {
+    "definition": "Eligible employee takes unassigned or open task as principal coordinator",
+    "owner_status": "CONFIRMED",
+    "current": "IMPLEMENTED MOBILE-T06",
+    "target_debt": "Must not imply exclusive execution (D6)"
+  },
+  "assignment": {
+    "definition": "Manager designates principal operator via execution_plan.tasks_json assigned_employee_id",
+    "owner_status": "CONFIRMED",
+    "current": "IMPLEMENTED",
+    "does_not_exclude_help": true
+  },
+  "participation": {
+    "definition": "Employee effectively working on operation via runtime session",
+    "owner_status": "CONFIRMED",
+    "current": "PARTIAL backend only",
+    "participant_without_assignee": true
+  },
+  "session": {
+    "definition": "Individual work interval with start/end/time in execution_reality",
+    "owner_status": "CONFIRMED",
+    "current": "IMPLEMENTED backend; mobile primary-only"
+  },
+  "distinction_table": [
+    { "state": "CLAIM", "sets_assignee": true, "starts_session": false, "adds_participant": false },
+    { "state": "ASSIGN", "sets_assignee": true, "starts_session": false, "adds_participant": false },
+    { "state": "START", "sets_assignee": "sometimes via start-from-available", "starts_session": true, "adds_participant": true },
+    { "state": "HELP_ACCEPT", "sets_assignee": false, "starts_session": true, "adds_participant": true }
+  ]
+}

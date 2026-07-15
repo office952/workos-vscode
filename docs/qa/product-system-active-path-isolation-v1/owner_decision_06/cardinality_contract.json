@@ -1,0 +1,19 @@
+{
+  "task": "OWNER-DECISION-06",
+  "target_cardinalities": [
+    { "relation": "Operation → principal operator", "cardinality": "0..1", "owner_status": "CONFIRMED" },
+    { "relation": "Operation → participants", "cardinality": "0..N", "owner_status": "CONFIRMED" },
+    { "relation": "Participant → active sessions on operation", "cardinality": "0..1 initial policy", "owner_status": "CONFIRMED", "note": "No duplicate active session same employee same task" },
+    { "relation": "Operation → work sessions", "cardinality": "0..N", "owner_status": "CONFIRMED" },
+    { "relation": "Operation → help requests", "cardinality": "0..N", "owner_status": "CONFIRMED" },
+    { "relation": "Operation → progress record", "cardinality": "0..1 current aggregate", "owner_status": "CONFIRMED" },
+    { "relation": "Employee → eligible tasks", "cardinality": "0..N", "owner_status": "CONFIRMED" },
+    { "relation": "Task → eligible employees", "cardinality": "0..N", "owner_status": "CONFIRMED" }
+  ],
+  "current_vs_target_gaps": {
+    "plan_assignee": "0..1 today — remains principal coordinator not participant ceiling",
+    "reality_sessions": "0..N today — target confirmed",
+    "help_requests": "0 today — target 0..N"
+  },
+  "implementation_note": "Cardinalities are contract only — no DB schema in this gate"
+}

@@ -406,9 +406,10 @@ Unificare sau remediere UI — **NU AUTORIZATĂ** în această sesiune.
 2. **Split API path** — `/api` proxy vs direct `:8001` (MEDIUM).
 3. **Module/Governance duplication** — GOV-MODULE-AUTH-01 pending.
 4. **Parity signal interpretation** — APP-AUTH-06C următor.
-5. **Sandu competence drift** — CONFIRMATION_REQUIRED (observe, nu fix); **PAUSED** pending OWNER-DECISION-06 operational flexibility contract.
-6. **Staffing/collaboration debt** — PROD-FLEX-INT-01: claim OK; help/join/quantity progress missing; D6 contradicted (active session blocks available pool).
-7. **Frontend TS debt** — `validate:frontend` încă FAIL (program-level).
+5. **Sandu competence drift** — CONFIRMATION_REQUIRED (observe, nu fix); **PAUSED** until PROD-FLEX-ARCH-01 + explicit GO.
+6. **Staffing/collaboration debt** — OWNER-DECISION-06 confirmed contract; D6 current debt documented; implementation blocked until PROD-FLEX-ARCH-01.
+7. **Prior audit integrity** — named employee NE-* documented; prod_flex_int_01 has 21/21 JSON (not 19).
+8. **Frontend TS debt** — `validate:frontend` încă FAIL (program-level).
 
 ---
 
@@ -494,8 +495,9 @@ Roadmap principal **realiniat**:
 5. ~~OWNER-DECISION-05~~ — authority policy — **PASS**
 6. ~~APP-AUTH-06F~~ — Sandu reconciliation plan — **PASS**
 7. ~~PROD-FLEX-INT-01~~ — Operational claim/collaboration flexibility audit — **PASS**
-8. **OWNER-DECISION-06** — Operational flexibility and collaboration contract (**NEXT**)
-9. **APP-AUTH-06G** — Sandu evidence collection (**PAUSED** until OD-06)
+8. ~~OWNER-DECISION-06~~ — Operational flexibility and collaboration contract — **PASS**
+9. **PROD-FLEX-ARCH-01** — Flexible task claim/participation/progress plan (**NEXT**)
+10. **APP-AUTH-06G** — Sandu evidence collection (**PAUSED** until arch plan)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -505,9 +507,9 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**PROD-FLEX-INT-01** — Operational flexibility audit — **COMPLETE** (`PROD_FLEX_INT_01_AUDIT_READY_FOR_OWNER_DECISIONS`)
+**OWNER-DECISION-06** — Operational flexibility contract — **COMPLETE** (`OWNER_OPERATIONAL_FLEXIBILITY_CONTRACT_CONFIRMED_READY_FOR_ARCH_PLAN`)
 
-**Current position (2026-07-15):** Claim/assign proven; collaboration/help/quantity gaps documented; D1–D24 package ready. Next = **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT**. APP-AUTH-06G **paused** until general contract confirmed.
+**Current position (2026-07-15):** D1–D24 confirmed; NE-* Sandu finding preserved (Putaru Sandu dev fixture + observe id=4); prior audit 21/21 JSON reconciled (footer 19 was typo). Next = **PROD-FLEX-ARCH-01**. APP-AUTH-06G **paused**.
 
 ---
 

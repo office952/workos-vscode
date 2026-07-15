@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `PROD-FLEX-INT-01` **COMPLETE** — next **OWNER-DECISION-06**  
+**Active task:** `OWNER-DECISION-06` **COMPLETE** — next **PROD-FLEX-ARCH-01**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -1119,7 +1119,24 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Worklog | `docs/worklog/realignment/2026-07-15_prod_flex_int_01_operational_task_claim_collaboration_flexibility_audit_v1.md` |
 | Evidence | `docs/qa/product-system-active-path-isolation-v1/prod_flex_int_01/` |
 | PROD-FLEX-INT-01 | **COMPLETE** |
-| Next | **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT** |
+| Next | **OWNER-DECISION-06-OPERATIONAL-FLEXIBILITY-AND-COLLABORATION-CONTRACT** (closed) |
+
+## OWNER-DECISION-06 — Operational flexibility and collaboration contract
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_OPERATIONAL_FLEXIBILITY_CONTRACT_CONFIRMED_READY_FOR_ARCH_PLAN` |
+| Starting HEAD | `02b5981` |
+| Decisions | D1–D24 confirmed (D6 target + current debt) |
+| Complete authority | B |
+| Quantity progress | MIXED |
+| Roles | PRINCIPAL + HELPER |
+| Sandu 06G | **PAUSED** |
+| Integrity | NE-* named employee documented; 21/21 JSON reconciled |
+| Worklog | `docs/worklog/realignment/2026-07-15_owner_decision_06_operational_flexibility_collaboration_contract_v1.md` |
+| OWNER-DECISION-06 | **COMPLETE** |
+| Next | **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN** |
 
 ---
 
