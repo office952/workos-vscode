@@ -258,7 +258,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Debt:** No production-release UI; no manager resolution UI; raw task keys; legacy plan gate noise on V2 orders; logo label mapping.
 
-**Wave 7:** `KEEP_WAVE_7_BLOCKED_WAVE_6`
+**Wave 7:** `OPEN_WAVE_7_INTEGRATION_GATE` (not auto-started)
+
+## Wave 6 exit (W6-INT-02)
+
+**Verdict:** `W6_INT_02_PASS_WITH_NONBLOCKING_UI_DEBT_CLOSE_WAVE_6`
+
+**Seams proven:** task-truth → identity UI → blocker visibility → manager resolution → refresh → startability; snapshot immutable; operator read-only.
+
+**Proof:** 78 tests; runtime `23150` partial→full; comparison `23099`; 16 screenshots; `w6_int_02_gate_evidence.json`.
+
+**Debt:** OperatorView manual refresh; full audit timeline → Wave 7; ShopFloor deferred.
 
 ## Wave 6 implementation (W6-T01)
 
