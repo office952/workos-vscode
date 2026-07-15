@@ -372,14 +372,14 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | List IA | Sarcinile mele / În lucru / Disponibile / Finalizate |
 | Identity | Root, mounting, logo friendly labels from backend |
 | Readiness / production | Backend fields rendered; no frontend authority |
-| Claim | `CLAIM_PRESENTATION_ONLY_DEFER_TO_MOBILE_T06` |
+| Claim | `CLAIM_ONLY_CANONICAL_KEEP_SECONDARY` (T06) |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
 | Screenshots | 12 @ 390×844 |
 | T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
 | MOBILE-T02 | **COMPLETE** |
-| Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
+| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
 
 ## MOBILE-T05 — In-progress session and complete
 
@@ -403,7 +403,26 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Session ID | `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY` |
 | T05B tests | 6 concurrency + 49 mobile backend regression |
 | Live probe | order `92350` @ :8001 |
-| Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
+| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
+
+## MOBILE-T06 — Claim and assignment policy
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_CLAIM_ASSIGNMENT_PASS_COMMITTED` |
+| Policy | `MIXED_MANAGER_ASSIGNMENT_AND_EMPLOYEE_SELF_CLAIM` |
+| Storage | `execution_plan.tasks_json.assigned_employee_id` |
+| Claim-only | `CLAIM_ONLY_CANONICAL_KEEP_SECONDARY` |
+| Claim-and-start | `TRANSACTIONAL_ASSIGN_AND_START_ROLLBACK` |
+| Claim UX | `START_FROM_AVAILABLE_PRIMARY_CLAIM_SECONDARY` |
+| Audit | `ASSIGNMENT_AUDIT_REFERENCE_SUFFICIENT` |
+| Concurrency | claim + start-from-available PASS |
+| Tests | 47 backend + 12 frontend |
+| Live probe | order `92400` @ :8001 |
+| Screenshots | 10 @ 390×844 |
+| MOBILE-T06 | **COMPLETE** |
+| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
 
 ## MOBILE-T05B — Complete concurrency and event integrity
 

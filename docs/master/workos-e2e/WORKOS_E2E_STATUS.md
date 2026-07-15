@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
+**Accepted HEAD:** `7860daa` (MOBILE-T05B) — MOBILE-T06 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T05B concurrent Complete closure — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T06 claim and assignment policy — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
+| Next task | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
 
 
 
@@ -400,7 +400,23 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T05B:** **COMPLETE**
 
-**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
+**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** (closed)
+
+## MOBILE-T06 — Claim and assignment policy
+
+**Verdict:** `MOBILE_CLAIM_ASSIGNMENT_PASS_COMMITTED`
+
+**Delivered:** Mixed manager assign + employee self-claim; atomic claim-only (secondary) and claim-and-start (primary); assignment lock + conflict/idempotency; `assignment_source` / `assignment_updated_at` metadata; background truth refresh preserves action feedback; secondary claim UI bound to `can_claim`.
+
+**Policy:** `MIXED_MANAGER_ASSIGNMENT_AND_EMPLOYEE_SELF_CLAIM` · Claim-only `CLAIM_ONLY_CANONICAL_KEEP_SECONDARY` · Rollback `TRANSACTIONAL_ASSIGN_AND_START_ROLLBACK` · Audit `ASSIGNMENT_AUDIT_REFERENCE_SUFFICIENT`
+
+**Proof:** 47 focused backend + 12 frontend tests; live probe order `92400` @ :8001; 10 screenshots @ 390×844.
+
+**Concurrency:** claim 1 owner / controlled loser; start-from-available 1 session / 1 conflict.
+
+**MOBILE-T06:** **COMPLETE**
+
+**Next:** **MOBILE-INT-02-POST-IMPLEMENTATION-GATE**
 
 ## MOBILE-T04 — Canonical start action wiring
 

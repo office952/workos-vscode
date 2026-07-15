@@ -1,0 +1,47 @@
+{
+  "task": "MOBILE-T06",
+  "generated_at": "2026-07-15T03:50:51.057523+00:00",
+  "backend_url": "http://127.0.0.1:8001",
+  "checks": {
+    "claim_only": {
+      "available_status": 200,
+      "claim_status": 200,
+      "claim_body": {
+        "status": "ok",
+        "action": "claim",
+        "task_id": "T-M06-CLAIM-POLICY",
+        "order_id": 92400,
+        "assigned_employee_id": 4,
+        "assigned_employee_name": "Putaru Sandu",
+        "already_claimed": false
+      },
+      "my_tasks_status": 200
+    },
+    "post_claim": {
+      "assigned_employee_id": 4,
+      "active_sessions": 0
+    },
+    "start_from_available": {
+      "status": 200,
+      "body": {
+        "status": "ok",
+        "action": "start",
+        "task_id": "T-M06-CLAIM-POLICY",
+        "timestamp": "2026-07-15T03:50:51.592730+00:00"
+      },
+      "assigned_employee_id": 4,
+      "active_sessions": 1
+    }
+  },
+  "employee_link": {
+    "employee_id": 4,
+    "employee_name": "Putaru Sandu"
+  },
+  "fixture": {
+    "order_id": 92400,
+    "task_id": "T-M06-CLAIM-POLICY",
+    "employee_id": 4
+  },
+  "pass": true,
+  "failures": []
+}
