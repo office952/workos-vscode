@@ -8,11 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `dccc445` (W6-T02 docs) — application baseline follows W6-T03 commit
+**Accepted HEAD:** `b41d885` (W6-T03 docs) — application baseline follows W6-T04 commit
 
-**Application baseline:** W6-T03 production blocker visibility commit (see Wave 6 W6-T03 section)
+**Application baseline:** W6-T04 manager owner-decision resolution UI commit (see Wave 6 W6-T04 section)
 
-**Last updated:** 2026-07-15 (W6-T03 production blocker visibility)
+**Last updated:** 2026-07-15 (W6-T04 manager resolution UI)
 
 
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 implementation** — W6-T03 COMPLETE |
+| Phase | **Wave 6 implementation** — W6-T04 COMPLETE |
 
-| Implementation hold | **Lifted for W6-T04 manager resolution UI** |
+| Implementation hold | **Lifted for W6-INT-02 post-implementation gate** |
 
 | Active task | None |
 
-| Next task | **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** (not auto-started) |
+| Next task | **W6-INT-02-POST-IMPLEMENTATION-GATE** (not auto-started) |
 
 
 
@@ -268,7 +268,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Proof:** Frozen identity + readiness + production-release + owner decisions composed; role-safe internal cost; 13/13 tests + runtime order `23099` on `:8001`.
 
-**Next:** W6-T04 manager owner-decision resolution UI.
+**Next:** W6-INT-02 post-implementation gate.
+
+## Wave 6 implementation (W6-T04)
+
+**Verdict:** `W6_MANAGER_RESOLUTION_UI_PASS_COMMITTED`
+
+**Mutation surface:** ExecutionDetail only — `OperatorOwnerDecisionResolutionForm` via canonical resolve endpoint.
+
+**Proof:** 32 backend + 11 frontend tests; blocked fixture `23150` partial→full resolution; snapshot hash stable; 13 screenshots; runtime evidence JSON.
+
+**Debt:** Full audit timeline → Wave 7; OperatorView auto-refresh deferred; ShopFloor deferred.
 
 ## Wave 6 implementation (W6-T03)
 
@@ -306,5 +316,5 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** (not auto-started).
+Next allowed task: **W6-INT-02-POST-IMPLEMENTATION-GATE** (not auto-started).
 

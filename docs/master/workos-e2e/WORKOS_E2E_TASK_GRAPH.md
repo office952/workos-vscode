@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** W6-T04 authorized (not started)  
+**Active task:** W6-INT-02 authorized (not started)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,8 +271,8 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | `W6-T03 COMPLETE` — W6-T04 authorized |
-| Next | **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** |
+| Wave 6 | `W6-T04 COMPLETE` — W6-INT-02 authorized |
+| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
 
 ## W6-INT-01 — Operator execution truth and blocker visibility gate
 
@@ -311,7 +311,21 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Canonical source | `operator_task_truth/v1` |
 | Tests | 32 backend + 22 frontend pass |
 | Runtime | Order `23099` on `:8001` |
-| Next | **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** |
+| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
+
+## W6-T04 — Manager owner-decision operational resolution UI
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W6_MANAGER_RESOLUTION_UI_PASS_COMMITTED` |
+| Mutation endpoint | `POST /api/v1/execution/orders/{order_id}/owner-decisions/{code}/resolve` |
+| Mutation surface | `ExecutionDetail` only |
+| OperatorView | `READ_ONLY_MANUAL_REFRESH` |
+| Note policy | `BACKEND_NOTE_REQUIRED` |
+| Tests | 32 backend + 11 frontend pass |
+| Runtime | Blocked `23150` partial→full on `:8001`; snapshot hash stable |
+| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
 
 ## W6-T03 — Production blocker visibility
 
@@ -320,11 +334,11 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Status | **COMPLETE** (2026-07-15) |
 | Verdict | `W6_BLOCKER_VISIBILITY_PASS_COMMITTED` |
 | Canonical source | `operator_task_truth/v1` |
-| Manager resolution | `VISIBILITY_ONLY_MANAGER_UI_NEXT` |
+| Manager resolution | `COMPLETE_W6_T04` |
 | ShopFloor | `SHOPFLOOR_NO_MUTATION_VISIBILITY_DEFERRED` |
 | Tests | 32 backend + 21 frontend pass |
 | Runtime | Blocked `23150`; allowed `23099` on `:8001` |
-| Next | **W6-T04-MANAGER-OWNER-DECISION-RESOLUTION-UI** |
+| Next | **W6-INT-02-POST-IMPLEMENTATION-GATE** |
 
 ## W4-INT-02 — Frozen snapshot Offer/Order E2E integration gate
 
