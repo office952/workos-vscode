@@ -1,0 +1,274 @@
+{
+  "eligibility": [
+    {
+      "employee": {
+        "id": 3,
+        "label": "Florin CNC"
+      },
+      "authorizations_status": 200,
+      "authorizations": {
+        "id": 3,
+        "name": "Florin CNC",
+        "role": "Operator CNC",
+        "department": "CNC",
+        "status": "active",
+        "employee_type": "productive",
+        "user_id": null,
+        "salary_amount": 8000.0,
+        "salary_currency": "RON",
+        "salary_period": "monthly",
+        "skill_codes": [
+          "SK_CNC_OPERATOR",
+          "SK_CNC_PREP",
+          "SK_LETTER_CANT_OPERATOR"
+        ],
+        "workcenter_codes": [
+          "WC_CNC_ROUTING",
+          "WC_LETTER_FORMING"
+        ],
+        "resource_codes": [
+          "MCH-CNC-4020",
+          "MCH-CNC-CANT-LITERE"
+        ]
+      },
+      "checks": [
+        {
+          "operation": {
+            "code": "cnc_cutting",
+            "label": "CNC"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "cant_modelare",
+            "label": "Modelare cant litere"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "montaj_led",
+            "label": "Montaj electric"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "employee": {
+        "id": 4,
+        "label": "Putaru Sandu"
+      },
+      "authorizations_status": 200,
+      "authorizations": {
+        "id": 4,
+        "name": "Putaru Sandu",
+        "role": "Lăcătuș / Montator",
+        "department": "Producție",
+        "status": "active",
+        "employee_type": "productive",
+        "user_id": "dev-admin-user-00000000",
+        "salary_amount": 8000.0,
+        "salary_currency": "RON",
+        "salary_period": "monthly",
+        "skill_codes": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "workcenter_codes": [
+          "WC_PRINT"
+        ],
+        "resource_codes": [
+          "MCH-EPSON-60800"
+        ]
+      },
+      "checks": [
+        {
+          "operation": {
+            "code": "cnc_cutting",
+            "label": "CNC"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "cant_modelare",
+            "label": "Modelare cant litere"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "montaj_led",
+            "label": "Montaj electric"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    },
+    {
+      "employee": {
+        "id": 5,
+        "label": "Vali Colantator"
+      },
+      "authorizations_status": 200,
+      "authorizations": {
+        "id": 5,
+        "name": "Vali Colantator",
+        "role": "Colantator / Montator",
+        "department": "Producție",
+        "status": "active",
+        "employee_type": "productive",
+        "user_id": null,
+        "salary_amount": 5000.0,
+        "salary_currency": "RON",
+        "salary_period": "monthly",
+        "skill_codes": [
+          "SK_ASSEMBLY",
+          "SK_ELECTRICIAN",
+          "SK_FIELD_INSTALLER",
+          "SK_VINYL_APPLICATOR"
+        ],
+        "workcenter_codes": [
+          "WC_ASSEMBLY",
+          "WC_FIELD_INSTALLATION",
+          "WC_LED_ASSEMBLY",
+          "WC_VINYL_APPLICATION"
+        ],
+        "resource_codes": [
+          "MCH-RIGID-FILM-LAMINATOR",
+          "WA-ASSEMBLY-01",
+          "WA-ASSEMBLY-02"
+        ]
+      },
+      "checks": [
+        {
+          "operation": {
+            "code": "cnc_cutting",
+            "label": "CNC"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "cant_modelare",
+            "label": "Modelare cant litere"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        },
+        {
+          "operation": {
+            "code": "montaj_led",
+            "label": "Montaj electric"
+          },
+          "status": 404,
+          "result": {
+            "detail": "Not Found"
+          }
+        }
+      ]
+    }
+  ],
+  "attendance": {
+    "status": 200,
+    "count": 0
+  },
+  "registry_vs_legacy": [
+    {
+      "employee_id": 3,
+      "registry_skills": [
+        "SK_CNC_OPERATOR",
+        "SK_CNC_PREP",
+        "SK_LETTER_CANT_OPERATOR"
+      ],
+      "legacy_skills": [
+        "SK_CNC_OPERATOR",
+        "SK_CNC_PREP",
+        "SK_LETTER_CANT_OPERATOR"
+      ],
+      "match": true,
+      "registry_resources": [
+        "MCH-CNC-4020",
+        "MCH-CNC-CANT-LITERE"
+      ],
+      "legacy_machines": [
+        "MCH-CNC-4020",
+        "MCH-CNC-CANT-LITERE"
+      ]
+    },
+    {
+      "employee_id": 4,
+      "registry_skills": [
+        "SK_PRINT_OPERATOR"
+      ],
+      "legacy_skills": [
+        "SK_ASSEMBLY",
+        "SK_ELECTRICIAN",
+        "SK_FIELD_INSTALLER",
+        "SK_LOCKSMITH",
+        "SK_VINYL_APPLICATOR"
+      ],
+      "match": false,
+      "registry_resources": [
+        "MCH-EPSON-60800"
+      ],
+      "legacy_machines": [
+        "MCH-WELD-STEEL",
+        "MCH-WELD-ALU",
+        "WA-WELD-TABLE",
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ]
+    },
+    {
+      "employee_id": 5,
+      "registry_skills": [
+        "SK_ASSEMBLY",
+        "SK_ELECTRICIAN",
+        "SK_FIELD_INSTALLER",
+        "SK_VINYL_APPLICATOR"
+      ],
+      "legacy_skills": [
+        "SK_ASSEMBLY",
+        "SK_ELECTRICIAN",
+        "SK_FIELD_INSTALLER",
+        "SK_VINYL_APPLICATOR"
+      ],
+      "match": true,
+      "registry_resources": [
+        "MCH-RIGID-FILM-LAMINATOR",
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02"
+      ],
+      "legacy_machines": [
+        "WA-ASSEMBLY-01",
+        "WA-ASSEMBLY-02",
+        "MCH-RIGID-FILM-LAMINATOR"
+      ]
+    }
+  ]
+}

@@ -380,9 +380,11 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Scor potrivire / încărcare | `OWNER_DECISION_GATE_DOCUMENTED` — D10/D13 **AMANAT** |
 | Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` — gate D20 **AMANAT** |
 | Realocare inteligentă | `OWNER_DECISION_GATE_DOCUMENTED` — D18/D19 **AMANAT** |
-| Angajați (nivel/atribuție) | `OWNER_DECISION_GATE_DOCUMENTED` — D3–D5 **AMANAT** |
-| Utilaje (capacitate) | `OWNER_DECISION_GATE_DOCUMENTED` + **NECESITA DATE** — D12 |
+| Angajați (nivel/atribuție) | `APP_INT_01_DUPLICATE_SKILLS_LEGACY_JSON` — registry vs employees.skills |
+| Utilaje (capacitate) | `APP_INT_01_MACHINES_CANONICAL_MOCK_SPECS` — DB + mock enrich |
 | ExecutionReality colaborativ | `PARTIAL` — sesiuni există; contribuții/loturi gate D21/D23 **AMANAT** |
+| Pontaj | `ATTENDANCE_CANONICAL_SEPARATE_FROM_ER` — APP-INT-01 |
+| Mobile/Operator/Tablet | `APP_INT_01_PARALLEL_SURFACES` — același plan, autorități diferite |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -451,9 +453,30 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **PROD-ARCH-01** — **BLOCAT** (confirmare owner) |
+| Next | **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS** |
 
-## MOBILE-T06 — Claim and assignment policy
+## APP-INT-01 — Audit E2E workforce surfaces
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_E2E_AUDIT_PASS_READY_FOR_AUTHORITY_DECISIONS` |
+| Routes audited | 8 (+ Employee Mobile v2) |
+| Runtime employees | 8 |
+| Runtime operations | 18 |
+| Runtime machines | 14 |
+| Duplicate authorities | 10 |
+| Employee model | DUPLICATE (registry + legacy JSON) |
+| Skills authority | DUPLICATE |
+| Machines authority | CANONICAL (`machines`) |
+| Attendance | CANONICAL separate from ExecutionReality |
+| Availability / workload | BLOCKED (missing) |
+| Screenshots | 8 |
+| Tests targeted | 53 pass |
+| APP-INT-01 | **COMPLETE** |
+| Next | **APP-AUTH-01** — PROD-ARCH-01 **BLOCAT** |
+
+## OWNER-DECISION-01 — Gate decizii owner distribuire inteligentă
 
 | Field | Value |
 |-------|-------|

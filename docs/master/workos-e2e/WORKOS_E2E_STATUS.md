@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `746ab23` (PROD-INT-02) — OWNER-DECISION-01 gate docs on branch
+**Accepted HEAD:** `72d9b57` (OWNER-DECISION-01) — APP-INT-01 audit on branch
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-01 gate — **PARTIAL, 0 CONFIRMAT**)
+**Last updated:** 2026-07-15 (APP-INT-01 E2E audit angajați/utilaje/execuție — **PASS authority decisions**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **PROD-ARCH-01** — **BLOCAT** (așteaptă confirmare owner 24 decizii; MOBILE-INT-02 **BLOCAT**) |
+| Next task | **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS** (PROD-ARCH-01 **BLOCAT** până la autoritate canonică) |
 
 
 
@@ -434,7 +434,27 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **PROD-INT-02:** **COMPLETE** (audit)
 
-**Next:** **OWNER-DECISION-01** (closed) → confirmare owner
+**Next:** **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS**
+
+## APP-INT-01 — Audit E2E angajați, competențe, utilaje, execuție, pontaj
+
+**Verdict:** `APP_E2E_AUDIT_PASS_READY_FOR_AUTHORITY_DECISIONS`
+
+**Scope:** Audit read-only — 8 rute + Employee Mobile v2; runtime :8001/:3000.
+
+**Runtime:** 8 angajați · 18 operații plan · 14 utilaje/resurse · 0 evenimente pontaj luna curentă.
+
+**Findings:** Autorități duplicate (**10**) — registry vs JSON legacy, explicit override vs competență, HR demo vs operational, mock shop-floor/tablet.
+
+**Sandu drift:** registry `SK_PRINT_OPERATOR` vs legacy skills montaj; eligibil montaj_led via explicit list.
+
+**Screenshots:** 8 în `docs/qa/product-system-active-path-isolation-v1/app_int_01_screenshots/`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_int_01_audit_e2e_angajati_competente_utilaje_executie_pontaj_v1.md`
+
+**APP-INT-01:** **COMPLETE**
+
+**Next:** **APP-AUTH-01** — PROD-ARCH-01 **BLOCAT**
 
 ## OWNER-DECISION-01 — Gate distribuire inteligentă și participare operațională
 
