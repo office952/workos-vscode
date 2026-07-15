@@ -498,8 +498,9 @@ Roadmap principal **realiniat**:
 8. ~~OWNER-DECISION-06~~ — Operational flexibility contract — **PASS**
 9. ~~PROD-FLEX-ARCH-01~~ — Flexible execution architecture plan — **PASS**
 10. ~~OWNER-DECISION-07~~ — Flexible execution implementation gate — **PASS**
-11. **FLEX-01** — Execution collaboration read-model foundation (**NEXT**)
-12. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
+11. ~~FLEX-01~~ — Execution collaboration read-model foundation — **PASS**
+12. **PROD-FLEX-ARCH-02** — Participant persistence boundary (**NEXT — owner GO**)
+13. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -509,9 +510,9 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**OWNER-DECISION-07** — Flexible execution implementation gate — **COMPLETE** (`OWNER_FLEX_EXECUTION_GATE_CONFIRMED_FLEX_01_ONLY`)
+**FLEX-01** — Execution collaboration read model — **COMPLETE** (`FLEX_01_EXECUTION_COLLABORATION_READ_MODEL_FOUNDATION_COMPLETE`)
 
-**Current position (2026-07-15):** FLEX-01 **AUTHORIZED** (read models only); FLEX-02–09 **BLOCKED**; `participants_json` **DEFERRED**; Option B participant projection (assignee + sessions). Next = **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION**. Sandu **PAUSED**.
+**Current position (2026-07-15):** Read-only collaboration projection live in code/tests. FLEX-02+ still blocked. Next = **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO). Sandu **PAUSED**.
 
 ---
 

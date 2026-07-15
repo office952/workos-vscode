@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `39d24db` (PROD-FLEX-ARCH-01)
+**Accepted HEAD:** `695c78c` (OWNER-DECISION-07)
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-07 — flexible execution implementation gate **COMPLETE**)
+**Last updated:** 2026-07-15 (FLEX-01 — execution collaboration read model **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **OWNER-DECISION-07** — flexible execution implementation gate (**COMPLETE**) |
+| Active task | **FLEX-01** — execution collaboration read model (**COMPLETE**) |
 
-| Next task | **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO required; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -1157,5 +1157,17 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **OWNER-DECISION-07:** **COMPLETE**
 
-**Next:** **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION**
+**Next:** **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION** (closed below)
+
+## FLEX-01 — Execution collaboration read model foundation
+
+**Verdict:** `FLEX_01_EXECUTION_COLLABORATION_READ_MODEL_FOUNDATION_COMPLETE`
+
+**Scope:** Read-only Option B projection — optional principal from `assigned_employee_id`, actual workers from sessions. New schema + service + `GET /api/v1/operator/orders/{order_id}/task-collaboration-read`. No DB, UI, or behavior change.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_flex_01_execution_collaboration_read_model_foundation.md`
+
+**FLEX-01:** **COMPLETE**
+
+**Next:** **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (blocked until owner GO)
 

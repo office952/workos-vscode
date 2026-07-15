@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `OWNER-DECISION-07` **COMPLETE** — next **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION**  
+**Active task:** `FLEX-01` **COMPLETE** — next **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO)  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -1170,7 +1170,21 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Sandu 06G | **PAUSED** |
 | Worklog | `docs/worklog/realignment/2026-07-15_owner_decision_07_flexible_execution_implementation_gate_v1.md` |
 | OWNER-DECISION-07 | **COMPLETE** |
-| Next | **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION** |
+| Next | **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION** (closed) |
+
+## FLEX-01 — Execution collaboration read model foundation
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `FLEX_01_EXECUTION_COLLABORATION_READ_MODEL_FOUNDATION_COMPLETE` |
+| Starting HEAD | `695c78c` |
+| Read model | Option B — assignee + sessions |
+| Endpoint | `GET /api/v1/operator/orders/{order_id}/task-collaboration-read` |
+| DB / UI | NO changes |
+| Worklog | `docs/worklog/realignment/2026-07-15_flex_01_execution_collaboration_read_model_foundation.md` |
+| FLEX-01 | **COMPLETE** |
+| Next | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO) |
 
 ---
 
