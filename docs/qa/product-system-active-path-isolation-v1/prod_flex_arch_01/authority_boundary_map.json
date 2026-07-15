@@ -1,0 +1,27 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "starting_head": "25e4233",
+  "concepts": [
+    { "concept": "operation_definition", "current_authority": "Product System / module registry", "target_authority": "Product System", "writer": "product_definition_builder, compilers", "consumers": ["execution_plan_materialize", "registry mapping"] },
+    { "concept": "task_graph", "current_authority": "Execution Plan tasks_json", "target_authority": "Execution Plan frozen operational layer", "writer": "plan materialize", "consumers": ["readiness", "operator truth", "mobile truth"] },
+    { "concept": "READY", "current_authority": "task_readiness_service (computed)", "target_authority": "task_readiness_service", "writer": "none (derived)", "consumers": ["operator", "mobile", "start gate"] },
+    { "concept": "eligibility", "current_authority": "operational_registry_service", "target_authority": "Operational Registry", "writer": "HR/registry admin", "consumers": ["list_available_tasks", "start guard", "operator eligible list"] },
+    { "concept": "claim", "current_authority": "employee_mobile_tasks_service → assign_plan_task", "target_authority": "Runtime allocation service", "writer": "employee self-claim", "consumers": ["mobile truth", "plan assignee field"] },
+    { "concept": "assignment", "current_authority": "execution_task_assignment_service", "target_authority": "Runtime allocation service", "writer": "manager PATCH assign", "consumers": ["plan", "mobile", "operator"] },
+    { "concept": "principal_operator", "current_authority": "assigned_employee_id + first primary session", "target_authority": "assigned_employee_id optional + participant role PRINCIPAL", "writer": "claim/assign + participation join", "consumers": ["mobile my tasks", "operator", "complete authority"] },
+    { "concept": "participants", "current_authority": "DERIVED from execution_reality sessions", "target_authority": "Execution Reality participant projection/records", "writer": "join/leave/help accept", "consumers": ["blueprint active_workers", "mobile", "operator"] },
+    { "concept": "help_request", "current_authority": "NOT_IMPLEMENTED", "target_authority": "Execution Reality / dedicated help store", "writer": "principal participant", "consumers": ["mobile help pool", "operator"] },
+    { "concept": "work_session", "current_authority": "execution_reality.tasks_json sessions", "target_authority": "Execution Reality", "writer": "start/stop session APIs", "consumers": ["time rollup", "attendance boundary", "status derive"] },
+    { "concept": "attendance", "current_authority": "EmployeeAttendanceEvent separate", "target_authority": "HR attendance module", "writer": "attendance endpoints", "consumers": ["reports — not quote/cost"] },
+    { "concept": "contribution", "current_authority": "IMPLICIT session duration only", "target_authority": "session + optional quantity contribution events", "writer": "progress update per policy", "consumers": ["audit", "progress aggregate"] },
+    { "concept": "progress", "current_authority": "DERIVED task boolean + blueprint task-count %", "target_authority": "Operation progress aggregate on Execution Reality", "writer": "progress update API", "consumers": ["mobile", "operator", "complete gate"] },
+    { "concept": "completion", "current_authority": "end_task with completion_fields / all sessions ended", "target_authority": "Separate OPERATION_COMPLETED event", "writer": "principal or manager", "consumers": ["readiness downstream", "blueprint"] },
+    { "concept": "audit_events", "current_authority": "assignment_source metadata + session rows", "target_authority": "append-only operation event log (extend existing patterns)", "writer": "all runtime mutations", "consumers": ["execution detail timeline", "operator"] }
+  ],
+  "overlap_resolutions": [
+    "assigned_employee_id = principal coordinator hint only; not participant list",
+    "sessions ≠ participants but sessions prove participation while active",
+    "TaskClarificationRequest ≠ help request — separate domain",
+    "attendance ≠ work session time"
+  ]
+}

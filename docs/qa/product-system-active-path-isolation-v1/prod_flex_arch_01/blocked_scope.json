@@ -1,0 +1,7 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "blocked_in_this_gate": ["all implementation", "DB migrations", "endpoint creation", "UI changes", "guard removal", "Sandu", "parity", "auto-dispatch"],
+  "blocked_until_owner_gate": ["FLEX-04+ persistence shape", "normalized tables"],
+  "sandu": "PAUSED",
+  "app_auth_06g": "PAUSED"
+}

@@ -1,0 +1,19 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "model": "MIXED",
+  "repetitive": {
+    "fields": ["progress_unit", "quantity_total", "quantity_completed"],
+    "example": "litera — 40 total — 17 completed — 23 remaining",
+    "frozen_at": "quantity_total + progress_unit copied to plan/reality requirement snapshot at materialize or first start",
+    "writers": ["authorized participants per policy", "principal confirm optional for large increments"],
+    "helpers_may_increment": true,
+    "cap": "quantity_completed <= quantity_total",
+    "audit": "OPERATION_PROGRESS_UPDATED events with employee_id + delta"
+  },
+  "non_repetitive": {
+    "fields": ["status", "optional_percent", "milestones_optional"],
+    "when": "no natural progress_unit in PS"
+  },
+  "forty_of_forty": "operation complete allowed when quantity_completed == quantity_total OR manager override with reason",
+  "storage_recommendation": "execution_reality operation_progress object per task_id — see db_change_decision"
+}

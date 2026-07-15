@@ -1,0 +1,17 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "note": "Conceptual — some exist today (claim, assign, start, complete)",
+  "endpoints": [
+    { "method": "POST", "path": "/tasks/{id}/claim", "status": "EXISTS", "actor": "eligible employee", "idempotency": "same employee ok" },
+    { "method": "PATCH", "path": "/execution/plan/{order}/tasks/{id}/assign", "status": "EXISTS", "actor": "manager", "permission": "execution.task_assign" },
+    { "method": "POST", "path": "/tasks/{id}/participants/join", "status": "NEW", "actor": "eligible helper", "validation": "help open or direct join policy" },
+    { "method": "POST", "path": "/tasks/{id}/participants/{eid}/leave", "status": "NEW", "actor": "self or manager" },
+    { "method": "POST", "path": "/tasks/{id}/help-requests", "status": "NEW", "actor": "principal participant" },
+    { "method": "POST", "path": "/help-requests/{id}/accept", "status": "NEW", "actor": "eligible helper" },
+    { "method": "POST", "path": "/tasks/{id}/sessions/start", "status": "PARTIAL_EXISTS as PATCH start", "actor": "participant" },
+    { "method": "POST", "path": "/tasks/{id}/sessions/stop", "status": "NEW", "actor": "participant", "note": "not complete" },
+    { "method": "POST", "path": "/tasks/{id}/progress", "status": "NEW", "actor": "participant per policy" },
+    { "method": "POST", "path": "/tasks/{id}/complete", "status": "PARTIAL_EXISTS", "actor": "principal or manager", "note": "split from session complete" }
+  ],
+  "consolidation_option": "Single employee-mobile router namespace under /api/v1/employee-mobile/tasks/{id}/..."
+}

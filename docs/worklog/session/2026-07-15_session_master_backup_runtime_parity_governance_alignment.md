@@ -407,7 +407,7 @@ Unificare sau remediere UI — **NU AUTORIZATĂ** în această sesiune.
 3. **Module/Governance duplication** — GOV-MODULE-AUTH-01 pending.
 4. **Parity signal interpretation** — APP-AUTH-06C următor.
 5. **Sandu competence drift** — CONFIRMATION_REQUIRED (observe, nu fix); **PAUSED** until PROD-FLEX-ARCH-01 + explicit GO.
-6. **Staffing/collaboration debt** — OWNER-DECISION-06 confirmed contract; D6 current debt documented; implementation blocked until PROD-FLEX-ARCH-01.
+6. **Staffing/collaboration debt** — ARCH plan complete: split pools, help, progress, 9 waves; implementation gated on OWNER-DECISION-07.
 7. **Prior audit integrity** — named employee NE-* documented; prod_flex_int_01 has 21/21 JSON (not 19).
 8. **Frontend TS debt** — `validate:frontend` încă FAIL (program-level).
 
@@ -495,9 +495,10 @@ Roadmap principal **realiniat**:
 5. ~~OWNER-DECISION-05~~ — authority policy — **PASS**
 6. ~~APP-AUTH-06F~~ — Sandu reconciliation plan — **PASS**
 7. ~~PROD-FLEX-INT-01~~ — Operational claim/collaboration flexibility audit — **PASS**
-8. ~~OWNER-DECISION-06~~ — Operational flexibility and collaboration contract — **PASS**
-9. **PROD-FLEX-ARCH-01** — Flexible task claim/participation/progress plan (**NEXT**)
-10. **APP-AUTH-06G** — Sandu evidence collection (**PAUSED** until arch plan)
+8. ~~OWNER-DECISION-06~~ — Operational flexibility contract — **PASS**
+9. ~~PROD-FLEX-ARCH-01~~ — Flexible execution architecture plan — **PASS**
+10. **OWNER-DECISION-07** — Flexible execution implementation gate (**NEXT**)
+11. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -507,9 +508,9 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**OWNER-DECISION-06** — Operational flexibility contract — **COMPLETE** (`OWNER_OPERATIONAL_FLEXIBILITY_CONTRACT_CONFIRMED_READY_FOR_ARCH_PLAN`)
+**PROD-FLEX-ARCH-01** — Flexible execution architecture plan — **COMPLETE** (`PROD_FLEX_ARCH_01_PLAN_READY_REQUIRES_DB_DECISION`)
 
-**Current position (2026-07-15):** D1–D24 confirmed; NE-* Sandu finding preserved (Putaru Sandu dev fixture + observe id=4); prior audit 21/21 JSON reconciled (footer 19 was typo). Next = **PROD-FLEX-ARCH-01**. APP-AUTH-06G **paused**.
+**Current position (2026-07-15):** 9-wave plan FLEX-01…09; Option A assignee; split pools; JSON-first reality extension. Next = **OWNER-DECISION-07** implementation gate. Sandu **PAUSED**.
 
 ---
 

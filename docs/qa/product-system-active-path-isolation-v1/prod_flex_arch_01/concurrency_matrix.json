@@ -1,0 +1,15 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "races": [
+    { "race": "double_claim", "guard": "asyncio lock + FOR UPDATE assign_plan_task", "boundary": "per order_id+task_id", "result": "409 second claimant" },
+    { "race": "double_helper_join", "guard": "idempotent join + unique active participant per employee", "result": "200 already_joined" },
+    { "race": "duplicate_active_session", "guard": "task_already_started same employee", "result": "409 or already_started" },
+    { "race": "progress_update_race", "guard": "optimistic version on progress object", "result": "retry or 409" },
+    { "race": "complete_with_active_sessions", "guard": "policy A block + C manager override", "result": "409 or forced close with audit" },
+    { "race": "reassign_during_active_session", "guard": "manager only; audit REASSIGNED", "result": "old principal session policy explicit" },
+    { "race": "help_accept_after_closed", "guard": "status check OPEN", "result": "409 help_not_open" },
+    { "race": "leave_after_completion", "guard": "no-op idempotent", "result": "200 already_left" },
+    { "race": "stale_mobile_truth", "guard": "truth refetch after mutation", "result": "UI refresh pattern from MOBILE-T06" },
+    { "race": "two_managers_assign", "guard": "same assign lock", "result": "409 or last wins per lock order" }
+  ]
+}

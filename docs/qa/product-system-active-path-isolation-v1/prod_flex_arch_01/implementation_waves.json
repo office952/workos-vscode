@@ -1,0 +1,65 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "wave_count": 9,
+  "waves": [
+    {
+      "id": "FLEX-01",
+      "name": "Contract and read models",
+      "objective": "Terminology, truth projections, pool taxonomy — no writes",
+      "code_boundary": "schemas + projection services only",
+      "db_boundary": "NONE",
+      "tests": "projection unit tests",
+      "rollback": "N/A read-only"
+    },
+    {
+      "id": "FLEX-02",
+      "name": "Principal/helper participation foundation",
+      "objective": "participants_json + join/leave backend",
+      "code_boundary": "execution_reality extension + services",
+      "db_boundary": "JSON columns only — no migration",
+      "forbidden": "help UI, quantity"
+    },
+    {
+      "id": "FLEX-03",
+      "name": "Join/leave and own session stop",
+      "objective": "sessions/stop distinct from complete",
+      "tests": "concurrency + partial complete regression",
+      "ui": "none"
+    },
+    {
+      "id": "FLEX-04",
+      "name": "Help request backend",
+      "objective": "help CRUD + accept → join",
+      "db_boundary": "help_requests_json or table per owner gate"
+    },
+    {
+      "id": "FLEX-05",
+      "name": "Employee Mobile helper flow",
+      "objective": "Split pools; claim vs join UX",
+      "depends": "FLEX-03, FLEX-04"
+    },
+    {
+      "id": "FLEX-06",
+      "name": "Mixed progress foundation",
+      "objective": "status first; quantity for letter assembly pilot",
+      "db_boundary": "operation_progress_json"
+    },
+    {
+      "id": "FLEX-07",
+      "name": "Complete authority and session guards",
+      "objective": "OPERATION_COMPLETED split; policy A+C"
+    },
+    {
+      "id": "FLEX-08",
+      "name": "Operator and Execution Detail visibility",
+      "objective": "participants, progress, help, timeline"
+    },
+    {
+      "id": "FLEX-09",
+      "name": "Product System collaboration metadata",
+      "objective": "parallelizable, collaboration_mode, progress_unit compile",
+      "optional": true
+    }
+  ],
+  "commit_boundary": "One wave per isolated commit with BUILD doc"
+}

@@ -1,0 +1,19 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "scenario": "Asamblare 40 litere",
+  "initial": { "ready": true, "quantity_total": 40, "progress_unit": "litera", "eligible": 10, "principal": null, "participants_active": 0 },
+  "steps": [
+    { "step": 1, "action": "Sandu claim", "endpoint": "POST .../claim", "writer": "assign_plan_task", "event": "TASK_CLAIMED", "guard": "assign lock", "failure": "409 already claimed" },
+    { "step": 2, "action": "Sandu start own work", "endpoint": "POST .../sessions/start", "writer": "ExecutionRealityService", "event": "WORK_SESSION_STARTED", "ui": "mobile in_progress" },
+    { "step": 3, "action": "Request 3 helpers", "endpoint": "POST .../help-requests", "writer": "help service", "event": "HELP_REQUESTED", "ui": "help pool visible" },
+    { "step": 4, "action": "3 colleagues accept", "endpoint": "POST .../help-requests/{id}/accept", "writer": "join helper", "event": "HELP_ACCEPTED + PARTICIPANT_JOINED", "guard": "eligibility" },
+    { "step": 5, "action": "Each starts session", "endpoint": "POST .../sessions/start", "event": "WORK_SESSION_STARTED x3", "note": "4 active sessions max useful" },
+    { "step": 6, "action": "Progress 17/40", "endpoint": "POST .../progress", "writer": "progress service", "event": "OPERATION_PROGRESS_UPDATED", "guard": "cap at total" },
+    { "step": 7, "action": "2 helpers leave", "endpoint": "POST .../participants/{id}/leave + sessions/stop", "event": "PARTICIPANT_LEFT + WORK_SESSION_STOPPED", "progress": "17 unchanged" },
+    { "step": 8, "action": "2 new helpers join", "endpoint": "help accept or direct join", "event": "PARTICIPANT_JOINED" },
+    { "step": 9, "action": "Progress 40/40", "endpoint": "POST .../progress", "event": "OPERATION_PROGRESS_UPDATED" },
+    { "step": 10, "action": "Sandu or manager complete", "endpoint": "POST .../complete", "authority": "principal or manager", "event": "OPERATION_COMPLETED", "guard": "active session policy A+C" },
+    { "step": 11, "action": "Time preserved", "writer": "sessions duration rollup", "plan": "frozen unchanged" },
+    { "step": 12, "action": "Frozen plan verify", "assertion": "tasks_json identity/deps unchanged; assignee may exist but not in order snapshot" }
+  ]
+}

@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `OWNER-DECISION-06` **COMPLETE** — next **PROD-FLEX-ARCH-01**  
+**Active task:** `PROD-FLEX-ARCH-01` **COMPLETE** — next **OWNER-DECISION-07**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -1136,7 +1136,23 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Integrity | NE-* named employee documented; 21/21 JSON reconciled |
 | Worklog | `docs/worklog/realignment/2026-07-15_owner_decision_06_operational_flexibility_collaboration_contract_v1.md` |
 | OWNER-DECISION-06 | **COMPLETE** |
-| Next | **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN** |
+| Next | **PROD-FLEX-ARCH-01** (closed) |
+
+## PROD-FLEX-ARCH-01 — Flexible execution architecture plan
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `PROD_FLEX_ARCH_01_PLAN_READY_REQUIRES_DB_DECISION` |
+| Starting HEAD | `25e4233` |
+| assigned_employee_id | Option A — optional principal |
+| Participation | Hybrid sessions → participants_json |
+| Pools | Split principal claim vs helper join |
+| Waves | FLEX-01 … FLEX-09 (9) |
+| DB MVP | 0 migrations — JSON extension |
+| Worklog | `docs/worklog/architecture/2026-07-15_prod_flex_arch_01_flexible_task_claim_participation_progress_plan_v1.md` |
+| PROD-FLEX-ARCH-01 | **COMPLETE** |
+| Next | **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE** |
 
 ---
 

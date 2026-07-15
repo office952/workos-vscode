@@ -1,0 +1,28 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "canonical_store": "execution_reality row per order",
+  "exists_today": {
+    "sessions": "tasks_json[] multi-session per task_id",
+    "roles": "primary/helper on session",
+    "metrics": "participants_count, active_workers derived",
+    "time": "duration_minutes per session"
+  },
+  "missing_today": [
+    "explicit participant records with join/leave",
+    "help_requests",
+    "operation_progress aggregate",
+    "OPERATION_COMPLETED distinct event",
+    "contribution quantity per employee"
+  ],
+  "target_extension": {
+    "approach": "Extend ExecutionReality JSON envelope — avoid parallel model",
+    "suggested_shape": {
+      "tasks_json": "sessions (unchanged semantics)",
+      "participants_json": "optional per-task participant list",
+      "help_requests_json": "optional",
+      "operation_progress_json": "optional per task_id",
+      "events_json": "append-only operational events"
+    }
+  },
+  "do_not": "Move participation into execution_plan or product system"
+}

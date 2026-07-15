@@ -1,0 +1,32 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "actions": {
+    "start_own_work": {
+      "preconditions": ["participant active or becomes active", "eligibility ok", "readiness startable"],
+      "creates": "work session for actor only",
+      "does_not": ["close other sessions", "auto-update progress", "change assignee for helper"]
+    },
+    "pause_own_work": {
+      "status": "KEEP_EXISTING — already in mobile",
+      "scope": "own session only"
+    },
+    "stop_own_work": {
+      "closes": "own session without completion_fields",
+      "operation_status": "unchanged unless last active session and policy says otherwise",
+      "participant": "may remain active or transition to left per LEAVE policy"
+    },
+    "complete_operation": {
+      "authority": "PRINCIPAL or MANAGER",
+      "preconditions": ["progress requirement met", "active session policy satisfied"],
+      "emits": "OPERATION_COMPLETED",
+      "session_policy": "A + C — block if foreign active sessions unless manager override"
+    }
+  },
+  "active_session_policy_at_complete": {
+    "recommendation": "A_plus_C",
+    "A": "Reject complete while unrelated active sessions exist",
+    "C": "Manager override with reason audit",
+    "not_B_initially": "Auto-close all sessions risks silent time loss"
+  },
+  "mobile_gap": "Add stop endpoint distinct from complete — maps to end_task without completion_fields"
+}

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `02b5981` (PROD-FLEX-INT-01)
+**Accepted HEAD:** `25e4233` (OWNER-DECISION-06)
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-06 — operational flexibility contract **COMPLETE**)
+**Last updated:** 2026-07-15 (PROD-FLEX-ARCH-01 — flexible execution arch plan **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **OWNER-DECISION-06** — operational flexibility contract (**COMPLETE**) |
+| Active task | **PROD-FLEX-ARCH-01** — flexible claim/participation/progress plan (**COMPLETE**) |
 
-| Next task | **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -1123,5 +1123,21 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **OWNER-DECISION-06:** **COMPLETE**
 
-**Next:** **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN**
+**Next:** **PROD-FLEX-ARCH-01-FLEXIBLE-TASK-CLAIM-PARTICIPATION-AND-PROGRESS-PLAN** (closed below)
+
+## PROD-FLEX-ARCH-01 — Flexible task claim, participation and progress plan
+
+**Verdict:** `PROD_FLEX_ARCH_01_PLAN_READY_REQUIRES_DB_DECISION`
+
+**Scope:** Architecture plan only — 9 waves FLEX-01…09; Option A `assigned_employee_id`; hybrid participation; split pools; help contract; MIXED progress; 40-letter flow.
+
+**Key decisions:** JSON extension on Execution Reality first (0 MVP migrations); do not remove `_has_active_session_by_other` until helper pool ships; TaskClarificationRequest ≠ help.
+
+**Worklog:** `docs/worklog/architecture/2026-07-15_prod_flex_arch_01_flexible_task_claim_participation_progress_plan_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/prod_flex_arch_01/` (23 JSON)
+
+**PROD-FLEX-ARCH-01:** **COMPLETE**
+
+**Next:** **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE**
 

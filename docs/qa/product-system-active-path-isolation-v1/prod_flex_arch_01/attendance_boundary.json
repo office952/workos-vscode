@@ -1,0 +1,15 @@
+{
+  "task": "PROD-FLEX-ARCH-01",
+  "separation": {
+    "attendance": "EmployeeAttendanceEvent — general presence at work",
+    "work_session": "execution_reality session — time on specific operation"
+  },
+  "validations_planned": [
+    "Reject session start if employee marked absent (optional soft warning first)",
+    "Warn on overlapping active sessions same employee different tasks",
+    "Allow helper temporary sessions without attendance mutation",
+    "No commercial hourly cost from session duration in this program"
+  ],
+  "no_hr_changes": true,
+  "no_payroll": true
+}
