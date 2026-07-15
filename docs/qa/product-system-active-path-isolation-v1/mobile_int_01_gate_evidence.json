@@ -1,0 +1,108 @@
+{
+  "task": "MOBILE-INT-01",
+  "base_url": "http://127.0.0.1:8001",
+  "timestamp": "2026-07-15T00:58:21.501810+00:00",
+  "setup": {
+    "employee_link": {
+      "employee_id": 4,
+      "employee_name": "Putaru Sandu",
+      "prior_user_id": "dev-admin-user-00000000",
+      "linked_user_id": "dev-admin-user-00000000"
+    },
+    "allowed_assignments": {
+      "order_id": 23099,
+      "assigned": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming"
+      ],
+      "plan_format": "v2_envelope",
+      "operational_count": 13
+    },
+    "blocked_fixture": {
+      "order_id": 23150,
+      "order_code": "ORD-W6T03-BLOCK-GATE",
+      "owner_codes": [
+        "INTERNAL_SABLON_FOREX_COST",
+        "INTERNAL_MONTAJ_RULE",
+        "INTERNAL_CONSUMABLES_RULE",
+        "INTERNAL_AMBALARE_RULE"
+      ],
+      "canonical_order_23099_touched": false
+    },
+    "blocked_assignments": {
+      "order_id": 23150,
+      "assigned": [
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+        "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring"
+      ],
+      "plan_format": "v2_envelope",
+      "operational_count": 2
+    },
+    "parser_probe": {
+      "allowed": {
+        "order_id": 23099,
+        "parser_format": "v2_envelope",
+        "operational_tasks_count": 13,
+        "legacy_list_visible_to_mobile_loader": 0,
+        "mobile_loader_gap": true
+      },
+      "blocked": {
+        "order_id": 23150,
+        "parser_format": "v2_envelope",
+        "operational_tasks_count": 2,
+        "legacy_list_visible_to_mobile_loader": 0,
+        "mobile_loader_gap": true
+      }
+    }
+  },
+  "probes": {
+    "auth_me": {
+      "status_code": 200,
+      "body": {
+        "id": "dev-admin-user-00000000",
+        "email": "dev@localhost",
+        "name": "Dev Admin",
+        "role": "admin",
+        "last_login": "2026-07-15T03:58:22.255258"
+      }
+    },
+    "my_tasks": {
+      "status_code": 200,
+      "count": 0,
+      "sample": []
+    },
+    "available_tasks": {
+      "status_code": 200,
+      "count": 0
+    },
+    "identity_compare": {
+      "samples": [],
+      "truth_has_frozen_identity": false,
+      "truth_has_component_labels": false,
+      "mobile_exposes_component_label": false,
+      "classification": "PARTIAL_IDENTITY_NEEDS_ADAPTER"
+    },
+    "blocked_order_truth": {
+      "order_id": 23150,
+      "startable_count": 0,
+      "production_release": null
+    }
+  },
+  "classifications": {
+    "task_identity": "PARTIAL_IDENTITY_NEEDS_ADAPTER",
+    "mobile_read_model": "REDUCED_PROJECTION_FROM_CANONICAL_TRUTH",
+    "readiness": "FULL_SHARED_GATE",
+    "production_release": "FULL_SHARED_GATE_PYTEST",
+    "assignment_authority": "EMPLOYEE_SELF_CLAIM_ALLOWED",
+    "owner_decisions": "MOBILE_READONLY_BLOCKERS_DESKTOP_RESOLUTION",
+    "offline": "ONLINE_ONLY_EXPLICIT",
+    "auth_employee_mapping": "AUTH_EMPLOYEE_MAPPING_CANONICAL",
+    "frontend_authority": "NO",
+    "implementation_authorization": "READY_WITH_BACKEND_ADAPTER_PREREQUISITE",
+    "first_task": "MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL",
+    "verdict": "MOBILE_INT_01_PASS_WITH_BACKEND_PREREQUISITE"
+  },
+  "pytest_production_guard": "PASS",
+  "pytest_note": "test_execution_owner_decision_production_release_guard.py::test_employee_mobile_start_route_guarded passed in focused gate run"
+}

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `1586c16` (W6-INT-02 docs) — application baseline `b565b8d`
+**Accepted HEAD:** `090997e` (W7-INT-01) — pending MOBILE-INT-01 gate commit
 
-**Last updated:** 2026-07-15 (W7-INT-01 frozen-spine integration gate — **Wave 7 CLOSED**)
+**Last updated:** 2026-07-15 (MOBILE-INT-01 Employee Mobile contract gate — **entry gate PASS with backend prerequisite**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **Employee Mobile final phase** (not auto-started) |
+| Next task | **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL** (authorized after MOBILE-INT-01) |
 
 
 
@@ -334,7 +334,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Employee Mobile final phase** (not auto-started). **Frozen-spine program gate complete.**
+## MOBILE-INT-01 — Employee Mobile contract and scope gate
 
-**Program status:** `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING`
+**Verdict:** `MOBILE_INT_01_PASS_WITH_BACKEND_PREREQUISITE`
+
+**Finding:** Mobile task loader uses legacy `tasks_json` list parser; frozen-spine orders use V2 envelope (`operational_tasks[]`). Runtime mobile API returns 0 tasks on `23099` despite 13 materialized operational tasks.
+
+**Authorization:** `READY_WITH_BACKEND_ADAPTER_PREREQUISITE` → **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL**
+
+**Proof:** 82 focused tests (2 preexisting fixture debt); production guard pytest PASS; 9 mobile screenshots; `mobile_int_01_gate_evidence.json`.
+
+**Program status:** `MOBILE_ENTRY_GATE_PASS_IMPLEMENTATION_AUTHORIZED_WITH_PREREQUISITE`
+
+Next allowed task: **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL**. Frozen-spine desktop program remains complete.
 

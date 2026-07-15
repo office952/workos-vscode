@@ -326,6 +326,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Tests | 179 pass (2 preexisting debt) |
 | Program | `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING` |
 
+## MOBILE-INT-01 — Employee Mobile existing contract gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_INT_01_PASS_WITH_BACKEND_PREREQUISITE` |
+| Active route | `/employee-app-v2/*` |
+| Legacy route | `/employee-app/*` (parallel, not removed) |
+| Task identity | `PARTIAL_IDENTITY_NEEDS_ADAPTER` |
+| Read model | `REDUCED_PROJECTION_FROM_CANONICAL_TRUTH` |
+| Loader gap | V2 `operational_tasks[]` not consumed by mobile service |
+| Production guard | `FULL_SHARED_GATE_PYTEST` |
+| Assignment | `EMPLOYEE_SELF_CLAIM_ALLOWED` |
+| Owner decisions | `MOBILE_READONLY_BLOCKERS_DESKTOP_RESOLUTION` |
+| Tests | 82 pass / 2 fail (preexisting fixture debt) |
+| Screenshots | 9 @ 390×844 |
+| Authorization | `READY_WITH_BACKEND_ADAPTER_PREREQUISITE` |
+| Next | **MOBILE-T01_CANONICAL_MOBILE_TASK_READ_MODEL** |
+
 ## W6-INT-02 — Operator truth + resolution integration gate
 
 | Field | Value |
