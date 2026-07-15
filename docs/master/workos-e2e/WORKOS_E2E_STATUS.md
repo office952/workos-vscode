@@ -8,11 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `4977988` (W6-T04 docs) — application baseline `b565b8d`
+**Accepted HEAD:** `1586c16` (W6-INT-02 docs) — application baseline `b565b8d`
 
-**Application baseline:** W6-T04 manager owner-decision resolution UI (`b565b8d`)
-
-**Last updated:** 2026-07-15 (W6-INT-02 Wave 6 integration gate — **CLOSED**)
+**Last updated:** 2026-07-15 (W7-INT-01 frozen-spine integration gate — **Wave 7 CLOSED**)
 
 
 
@@ -24,13 +22,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 6 CLOSED** — W6-INT-02 integration gate PASS |
+| Phase | **Wave 7 CLOSED** — frozen-spine program gate PASS |
 
-| Implementation hold | **Lifted for Wave 7 gate planning** |
+| Implementation hold | **Lifted — mobile final phase pending** |
 
 | Active task | None |
 
-| Next task | **W7 integration gate** (not auto-started) |
+| Next task | **Employee Mobile final phase** (not auto-started) |
 
 
 
@@ -258,7 +256,17 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 **Debt:** No production-release UI; no manager resolution UI; raw task keys; legacy plan gate noise on V2 orders; logo label mapping.
 
-**Wave 7:** `OPEN_WAVE_7_INTEGRATION_GATE` (not auto-started)
+**Wave 7:** `CLOSED` — `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING`
+
+## Wave 7 exit (W7-INT-01)
+
+**Verdict:** `W7_INT_01_PASS_WITH_NONBLOCKING_POST_PROGRAM_DEBT`
+
+**Scenario:** `SINGLE_SCENARIO_WITH_CONTROLLED_STAGE_FIXTURES` — QSN2/quote 1 frozen spine + order `23099` live execution→reality chain.
+
+**Proof:** 179 gate tests (159 backend + 20 frontend; 2 preexisting output_composition debt); runtime evidence JSON; 13 screenshots; QSN2 hash immutable.
+
+**Program:** Frozen-spine desktop operator path complete; Employee Mobile UI deferred.
 
 ## Wave 6 exit (W6-INT-02)
 
@@ -326,5 +334,7 @@ TE2E-001, TE2E-002, TE2E-003, TE2E-006, TE2E-014, TE2E-015 — verified at `W1-I
 
 
 
-Next allowed task: **Wave 7 integration gate** (not auto-started). Wave 6 is **CLOSED**.
+Next allowed task: **Employee Mobile final phase** (not auto-started). **Frozen-spine program gate complete.**
+
+**Program status:** `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING`
 

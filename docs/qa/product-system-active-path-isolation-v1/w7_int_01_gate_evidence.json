@@ -1,0 +1,207 @@
+{
+  "gate": "W7-INT-01",
+  "timestamp_utc": "2026-07-15T00:43:50.807921+00:00",
+  "base_url": "http://127.0.0.1:8001",
+  "runtime_ownership": {
+    "backend_port": 8001,
+    "frontend_port": 3000,
+    "backend_pid": 26888,
+    "frontend_pid": 30548,
+    "port_8000": "NON_AUTHORITATIVE"
+  },
+  "scenario_strategy": "SINGLE_SCENARIO_WITH_CONTROLLED_STAGE_FIXTURES",
+  "scenario_ids": {
+    "intake_workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+    "quote_id": 1,
+    "quote_snapshot_v2_code": "QSN2-2026-0001",
+    "execution_order_id": 23099,
+    "execution_order_code": "ORD-W5INT02-GATE"
+  },
+  "authority_trace": [
+    {
+      "stage": "Intake V6",
+      "producer": "intake_v6 workspace",
+      "consumer": "7H/7G/snapshot builders",
+      "canonical_authority": "workspace persisted truth",
+      "operational_authority": "n/a",
+      "legacy_fallback": "LEGACY_ISOLATED",
+      "result": "frozen artifact QSN2 via workspace 80570a4a-a806-4305-a39c-b34a72092694"
+    },
+    {
+      "stage": "QuoteSnapshotV2",
+      "producer": "snapshot freeze service",
+      "consumer": "Offer/review/acceptance",
+      "canonical_authority": "quote_snapshots_v2",
+      "operational_authority": "n/a",
+      "legacy_fallback": "none on V2 path",
+      "result": "QSN2-2026-0001"
+    },
+    {
+      "stage": "OrderSnapshotV2",
+      "producer": "convert_accepted_quote_snapshot_v2",
+      "consumer": "ExecutionPlanV2 preview/persist",
+      "canonical_authority": "orders.snapshot_v2_json",
+      "operational_authority": "readiness_snapshot",
+      "legacy_fallback": "snapshot_line_items READ_ONLY_PROJECTION",
+      "result": "order 23099 gate fixture"
+    },
+    {
+      "stage": "ExecutionPlanV2",
+      "producer": "build_execution_plan_v2_preview",
+      "consumer": "materialize + operator surfaces",
+      "canonical_authority": "OrderSnapshotV2 only",
+      "operational_authority": "execution_plan row",
+      "legacy_fallback": "LEGACY_ISOLATED old plan service",
+      "result": "13 frozen task keys on 23099"
+    },
+    {
+      "stage": "Operator task truth",
+      "producer": "operator_task_truth_service",
+      "consumer": "ExecutionDetail/OperatorView",
+      "canonical_authority": "operator_task_truth/v1",
+      "operational_authority": "owner_decision_resolutions_v1",
+      "legacy_fallback": "explicit legacy_order flag",
+      "result": "HTTP read model"
+    },
+    {
+      "stage": "Production release",
+      "producer": "execution_owner_decision_production_release_service",
+      "consumer": "task start gate",
+      "canonical_authority": "frozen owner_decisions + operational resolutions",
+      "operational_authority": "readiness_snapshot",
+      "legacy_fallback": "none",
+      "result": "partial\u2192full unlock"
+    },
+    {
+      "stage": "ExecutionReality",
+      "producer": "execution_reality_service",
+      "consumer": "reconciliation UI",
+      "canonical_authority": "reality.tasks_json events",
+      "operational_authority": "n/a",
+      "legacy_fallback": "LEGACY_ISOLATED",
+      "result": "same task_id reference"
+    }
+  ],
+  "checks": {
+    "qsn2_frozen_spine_readonly": {
+      "quote_id": 1,
+      "quote_status": "priced",
+      "grand_total": 2649.99,
+      "accepted_snapshot_v2_id": null,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions",
+      "snapshot_status": "frozen",
+      "offer_stamp_pricing_source": "quote_snapshot_v2",
+      "live_dry_run_used": false,
+      "intake_workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "mutated": false
+    },
+    "w5_execution_runtime_chain": {
+      "subprocess_exit_code": 0,
+      "pass": true,
+      "pass_checks": {
+        "preview_keys_stable": true,
+        "http_preview_ok": true,
+        "http_keys_match_service": true,
+        "readiness_frozen_authority": true,
+        "mounting_identity_present": true,
+        "persist_first_ok": true,
+        "persist_idempotent": true,
+        "materialize_ok": true,
+        "release_status_live": true,
+        "start_blocked_409": true,
+        "start_blocked_code": true,
+        "partial_resolve_still_blocked": true,
+        "multi_blocker_proven": true,
+        "start_allowed_after_resolve": true,
+        "start_retry_ok": true,
+        "reality_recorded": true,
+        "snapshot_unchanged": true,
+        "resolutions_operational": true,
+        "nonblocking_not_in_blockers": true
+      },
+      "steps_summary": {
+        "http_preview": {
+          "status_code": 200
+        },
+        "http_persist_first": {
+          "status_code": 201
+        },
+        "http_persist_second": {
+          "status_code": 200
+        },
+        "http_materialize": {
+          "status_code": 201
+        },
+        "production_release_before": {
+          "status_code": 200
+        },
+        "start_blocked": {
+          "status_code": 409
+        },
+        "resolve_one_blocker": {
+          "status_code": 200
+        },
+        "start_after_partial_resolve": {
+          "status_code": 409
+        },
+        "resolve_internal_montaj_rule": {
+          "status_code": 200
+        },
+        "resolve_internal_consumables_rule": {
+          "status_code": 200
+        },
+        "start_after_full_resolve": {
+          "status_code": 200
+        },
+        "start_retry_idempotent": {
+          "status_code": 409
+        },
+        "reality_get": {
+          "status_code": 200
+        }
+      }
+    },
+    "qsn2_after_execution_run": {
+      "quote_id": 1,
+      "quote_status": "priced",
+      "grand_total": 2649.99,
+      "accepted_snapshot_v2_id": null,
+      "snapshot_code": "QSN2-2026-0001",
+      "content_hash": "ea108de2d104b9323390de7c1a0354e0",
+      "readiness": "partial_with_owner_decisions",
+      "snapshot_status": "frozen",
+      "offer_stamp_pricing_source": "quote_snapshot_v2",
+      "live_dry_run_used": false,
+      "intake_workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "mutated": false,
+      "hash_unchanged": true,
+      "grand_total_unchanged": true
+    },
+    "order_snapshot_v2": {
+      "order_id": 23099,
+      "quote_snapshot_v2_id": 23099,
+      "snapshot_hash": "52bae4b0614b2692",
+      "snapshot_unchanged_vs_w5": true
+    },
+    "operator_task_truth_post_chain": {
+      "contract_version": "operator_task_truth/v1",
+      "task_count": 13,
+      "roles": [
+        "mounting_panel",
+        "root_product"
+      ],
+      "logo_segment_key": "logo_instance_001",
+      "startable_count": 0,
+      "production_release_status": "RELEASE_ALLOWED",
+      "production_release_blocked": false
+    },
+    "intake_v6_spine_http": {
+      "status_code": 200,
+      "has_snapshot": true
+    }
+  },
+  "passed": true,
+  "failed_checks": []
+}

@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** None — Wave 6 closed  
+**Active task:** None — Wave 7 closed; program gate complete  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## Orchestration rule
@@ -271,9 +271,9 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Logo | `PARTIAL_IDENTITY_NONBLOCKING` |
 | ExecutionReality | `EXECUTION_EVENT_IDENTITY_REFERENCE_SUFFICIENT` |
 | Operator UI | `SUFFICIENT_BACKEND_GATE_WAVE_6_UI` |
-| Wave 6 | **CLOSED** — W6-INT-02 PASS |
-| Wave 7 | `OPEN_WAVE_7_INTEGRATION_GATE` (not auto-started) |
-| Next | **Wave 7 integration gate** |
+| Wave 7 | **CLOSED** — W7-INT-01 PASS |
+| Program | `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING` |
+| Next | **Employee Mobile final phase** (not auto-started) |
 
 ## W6-INT-01 — Operator execution truth and blocker visibility gate
 
@@ -313,6 +313,18 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Tests | 32 backend + 22 frontend pass |
 | Runtime | Order `23099` on `:8001` |
 | Next | **W6-INT-02** (complete) |
+
+## W7-INT-01 — Full frozen-spine E2E integration gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `W7_INT_01_PASS_WITH_NONBLOCKING_POST_PROGRAM_DEBT` |
+| Scenario | `SINGLE_SCENARIO_WITH_CONTROLLED_STAGE_FIXTURES` |
+| Upstream | QSN2 / quote `1` read-only |
+| Execution | Order `23099` → ExecutionReality |
+| Tests | 179 pass (2 preexisting debt) |
+| Program | `FROZEN_SPINE_COMPLETE_MOBILE_FINAL_PHASE_PENDING` |
 
 ## W6-INT-02 — Operator truth + resolution integration gate
 
