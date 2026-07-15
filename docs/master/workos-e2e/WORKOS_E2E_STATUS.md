@@ -518,7 +518,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION**
+**Next:** **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION**
+
+## APP-AUTH-04 — Parity contract and test foundation (Gate I1)
+
+**Verdict:** `APP_AUTH_04_PARITY_FOUNDATION_PASS_COMMITTED`
+
+**Starting HEAD:** `893009e`
+
+**Scope:** Contracte versionate + enums + fingerprint + comparatoare pure + 16 flags false + teste — fără wiring runtime.
+
+**Location:** `backend/parity/` (izolat de `schemas/` și `services/`)
+
+**Contracts:** parity_result/v1 · parity_event/v1 · reconciliation_sheet/v1 · 20 metrici catalog
+
+**Tests:** 52 focused PASS · 116 regression PASS · import isolation PASS · runtime invariance PASS
+
+**Operational imports:** **0** · **Endpoints:** **0** · **DB:** **0** · **Frontend:** **0** · **Runtime activation:** **NO**
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_04/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_04_parity_contract_test_foundation_v1.md`
+
+**Authority debt:** Gate I1 **PASS**; paritate runtime wiring = APP-AUTH-05
+
+**APP-AUTH-04:** **COMPLETE**
+
+**Next:** **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION**
 
 ## APP-AUTH-03 — Plan instrumentare paritate runtime
 

@@ -524,7 +524,35 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **APP-AUTH-04-PARITY-CONTRACT-AND-TEST-FOUNDATION** |
+| Next | **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION** |
+
+## APP-AUTH-04 — Parity contract and test foundation
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_04_PARITY_FOUNDATION_PASS_COMMITTED` |
+| Starting HEAD | `893009e` |
+| Gate | **I1 PASS** |
+| Package | `backend/parity/` |
+| Contracts | 3 versioned + 20 metrics |
+| Domains | 12 |
+| Event types | 12 |
+| Feature flags | 16 (all default false) |
+| Pure comparators | 8 |
+| Focused tests | 52 PASS |
+| Regression tests | 116 PASS |
+| Import isolation | **PASS** (0 operational imports) |
+| Runtime invariance | **PASS** |
+| Endpoints added | 0 |
+| DB migrations | 0 |
+| Frontend changed | 0 |
+| Runtime activation | **NO** |
+| PROD-ARCH-01 | **BLOCKED** |
+| MOBILE-INT-02 | **BLOCKED** |
+| MODULE-RUNTIME-01 | **DEFERRED** |
+| APP-AUTH-04 | **COMPLETE** |
+| Next | **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION** |
 
 ## APP-AUTH-03 — Runtime parity instrumentation plan
 

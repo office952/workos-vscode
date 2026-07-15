@@ -1,0 +1,27 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "module": "backend/parity/flags.py",
+  "all_default_false": true,
+  "flags": {
+    "parity_observe_enabled": false,
+    "competence_parity_enabled": false,
+    "authorization_parity_enabled": false,
+    "workcenter_parity_enabled": false,
+    "resource_parity_enabled": false,
+    "explicit_mapping_tracking_enabled": false,
+    "eligibility_shadow_enabled": false,
+    "execution_surface_parity_enabled": false,
+    "assignment_writer_parity_enabled": false,
+    "session_parity_enabled": false,
+    "attendance_comparison_enabled": false,
+    "legacy_fallback_tracking_enabled": false,
+    "parity_event_emission_enabled": false,
+    "parity_metrics_enabled": false,
+    "parity_persistence_enabled": false,
+    "parity_manager_projection_enabled": false
+  },
+  "master_flag_activates_subflags": false,
+  "core_settings_contains_parity_flags": false,
+  "env_example_sets_true": false
+}

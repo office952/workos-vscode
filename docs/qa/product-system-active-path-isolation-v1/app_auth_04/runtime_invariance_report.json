@@ -1,0 +1,24 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "verdict": "PASS",
+  "trusted_runtime": {
+    "backend": "http://127.0.0.1:8001",
+    "frontend": "http://127.0.0.1:3000"
+  },
+  "method": "read_only_http_probes",
+  "flags_active": false,
+  "runtime_activation": "NO",
+  "db_writes": false,
+  "parity_events_emitted": false,
+  "parity_metrics_emitted": false,
+  "probes": [
+    {"probe": "employees", "path": "/api/v1/entities/employees", "status": 200, "parity_markers": [], "changed_by_parity": false},
+    {"probe": "machines", "path": "/api/v1/machines", "status": 200, "parity_markers": [], "changed_by_parity": false},
+    {"probe": "registry_catalog", "path": "/api/v1/operational-registry/catalog", "status": 200, "parity_markers": [], "changed_by_parity": false},
+    {"probe": "mobile_available", "path": "/api/v1/employee-mobile/tasks/available", "status": 403, "note": "pre-existing auth fixture — not parity", "parity_markers": [], "changed_by_parity": false},
+    {"probe": "mobile_assigned", "path": "/api/v1/employee-mobile/tasks/assigned", "status": 404, "note": "pre-existing auth fixture — not parity", "parity_markers": [], "changed_by_parity": false},
+    {"probe": "operator_tasks", "path": "/api/v1/operator/tasks", "status": 200, "parity_markers": [], "changed_by_parity": false}
+  ],
+  "sandu_data_changed": false
+}

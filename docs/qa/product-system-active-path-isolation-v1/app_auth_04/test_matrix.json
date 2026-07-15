@@ -1,0 +1,26 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "focused_tests": [
+    {"file": "tests/test_parity_contracts.py", "categories": ["contracts", "enums", "metrics", "reconciliation"]},
+    {"file": "tests/test_parity_fingerprint.py", "categories": ["fingerprint", "determinism", "golden"]},
+    {"file": "tests/test_parity_normalization.py", "categories": ["normalization"]},
+    {"file": "tests/test_parity_comparators.py", "categories": ["comparators", "severity"]},
+    {"file": "tests/test_parity_flags.py", "categories": ["feature_flags"]},
+    {"file": "tests/test_parity_confidentiality.py", "categories": ["confidentiality"]},
+    {"file": "tests/test_parity_import_isolation.py", "categories": ["isolation", "no_endpoints"]}
+  ],
+  "regression_tests": [
+    {"file": "tests/test_operational_authorization_foundation.py", "area": "registry"},
+    {"file": "tests/test_employee_mobile_task_truth.py", "area": "mobile_truth"},
+    {"file": "tests/test_employee_mobile_tasks.py", "area": "mobile_tasks"},
+    {"file": "tests/test_operator_task_truth.py", "area": "operator_truth"},
+    {"file": "tests/test_execution_task_assignment.py", "area": "assignment"},
+    {"file": "tests/test_execution_reality_capture.py", "area": "execution_reality"},
+    {"file": "tests/test_employee_attendance_events.py", "area": "attendance"},
+    {"file": "tests/test_s30_gate_runtime_wiring.py", "area": "settings_config"}
+  ],
+  "total_focused": 52,
+  "total_regression": 116,
+  "total_combined": 168
+}

@@ -1,0 +1,26 @@
+{
+  "task": "APP-AUTH-04",
+  "version": "v1",
+  "verdict": "PASS",
+  "method": "AST import scan + core/config grep + router scan",
+  "operational_backend_files_scanned": 9,
+  "frontend_files_scanned": 3,
+  "parity_imports_found": 0,
+  "operational_imports": 0,
+  "parity_router_registered": false,
+  "core_settings_parity_flags": false,
+  "scanned_files": [
+    "services/employee_mobile_tasks_service.py",
+    "services/operator_task_truth_service.py",
+    "services/execution_task_assignment_service.py",
+    "services/execution_reality_service.py",
+    "services/employee_attendance_service.py",
+    "routers/operator_tasks.py",
+    "routers/employee_mobile_tasks.py",
+    "routers/execution.py",
+    "main.py",
+    "frontend/src/hooks/useShopFloorData.ts",
+    "frontend/src/pages/TabletView.tsx",
+    "frontend/src/pages/OperatorView.tsx"
+  ]
+}
