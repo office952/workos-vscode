@@ -524,7 +524,30 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
+
+## OWNER-DECISION-04 — Parity pilot owner review
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_PARITY_PILOT_APPROVED_REMAIN_TWO_CONSUMERS` (recommended) |
+| Starting HEAD | `0b5997f` |
+| Inventory classification | `REPORTING_AMBIGUITY_CORRECTED` |
+| Primary universe | 18 |
+| Connected | 2 |
+| Candidates | 9 |
+| Excluded | 6 (+1 outside universe) |
+| Performance claim | `NON_COMPARABLE_ENVIRONMENTS` |
+| Signal quality | Useful (P1=A recommended) |
+| Duplicate volume | Acceptable ephemeral (P2=A) |
+| Two-consumer limit | Freeze (P5=A) |
+| Third consumer | DEFER catalog audit |
+| Persistence | **NOT AUTHORIZED** |
+| Manager projection | **NOT AUTHORIZED** |
+| Production flags | ALL_FALSE confirmed |
+| Owner confirm pending | P1–P10 |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## APP-AUTH-06 — Parity observation pilot
 
@@ -549,7 +572,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Enforcement | **NOT AUTHORIZED** |
 | Persistence | **NOT AUTHORIZED** |
 | APP-AUTH-06 | **COMPLETE** |
-| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## APP-AUTH-05 — Parity observe-only dev/test integration
 
@@ -576,7 +599,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-INT-02 | **BLOCKED** |
 | MODULE-RUNTIME-01 | **DEFERRED** |
 | APP-AUTH-05 | **COMPLETE** |
-| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## APP-AUTH-04 — Parity contract and test foundation
 
@@ -604,7 +627,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-INT-02 | **BLOCKED** |
 | MODULE-RUNTIME-01 | **DEFERRED** |
 | APP-AUTH-04 | **COMPLETE** |
-| Next | **OWNER-DECISION-04-PARITY-PILOT-REVIEW** |
+| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
 ## APP-AUTH-03 — Runtime parity instrumentation plan
 

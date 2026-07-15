@@ -518,9 +518,35 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
-## APP-AUTH-06 — Parity observation pilot (Gate I2 pilot)
+## OWNER-DECISION-04 — Parity pilot owner review
+
+**Verdict:** `OWNER_PARITY_PILOT_APPROVED_REMAIN_TWO_CONSUMERS` (recommended; owner confirmation pending)
+
+**Starting HEAD:** `0b5997f`
+
+**Scope:** Decision/docs gate — consumer inventory normalization, performance claim correction, signal interpretation, owner decision package. No code.
+
+**Inventory:** 18 primary · 2 connected · 9 candidates · 6 excluded · 1 helper · 1 outside-universe (`REPORTING_AMBIGUITY_CORRECTED`)
+
+**Performance claim:** `NON_COMPARABLE_ENVIRONMENTS` — do not cite −78% as improvement
+
+**Pilot signal:** Useful (P1=A) · Duplicates acceptable ephemeral (P2=A) · Freeze two consumers (P5=A)
+
+**Third consumer:** `CONS-REGISTRY-CATALOG-API` **DEFER** (audit before plan)
+
+**Blocked:** persistence · enforcement · source switch · third-consumer wiring · manager UI · production flags
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/owner_decision_04/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_04_parity_pilot_review_v1.md`
+
+**Authority debt:** Gate I2 pilot reviewed; signal interpretation = APP-AUTH-06C; enforcement/persistence = **NOT AUTHORIZED**
+
+**OWNER-DECISION-04:** **COMPLETE** (package ready; explicit owner confirm pending)
+
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 **Verdict:** `APP_AUTH_06_PARITY_PILOT_PASS_READY_FOR_OWNER_REVIEW`
 
@@ -528,7 +554,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Scope:** Controlled observe-only pilot on `:8011`; trusted `:8001` remains flags-off; signal quality, fingerprint stability, confidentiality, performance.
 
-**Consumer reconciliation:** 18 inventoried · 2 connected · 16 remaining (corrects APP-AUTH-05 “14” error)
+**Consumer reconciliation:** 18 inventoried · 2 connected · 9 candidates · 6 excluded · 1 helper (`REPORTING_AMBIGUITY_CORRECTED`)
 
 **Pilot:** 20 HTTP requests/consumer · 420 observation events · 0 false positives · 0 DB writes
 
@@ -546,7 +572,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **APP-AUTH-06:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 **Verdict:** `APP_AUTH_05_OBSERVE_ONLY_DEV_TEST_PASS_COMMITTED`
 
@@ -566,11 +592,11 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_05_parity_observe_only_dev_test_integration_v1.md`
 
-**Authority debt:** Gate I2 pilot **PASS**; owner review = OWNER-DECISION-04; enforcement/persistence = **NOT AUTHORIZED**
+**Authority debt:** Gate I2 pilot reviewed (OWNER-DECISION-04); signal interpretation = APP-AUTH-06C; enforcement/persistence = **NOT AUTHORIZED**
 
 **APP-AUTH-05:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 **Verdict:** `APP_AUTH_04_PARITY_FOUNDATION_PASS_COMMITTED`
 
@@ -594,7 +620,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **APP-AUTH-04:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-04-PARITY-PILOT-REVIEW**
+**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
 ## APP-AUTH-03 — Plan instrumentare paritate runtime
 

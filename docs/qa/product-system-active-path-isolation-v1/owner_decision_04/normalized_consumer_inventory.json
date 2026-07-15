@@ -1,0 +1,64 @@
+{
+  "task": "OWNER-DECISION-04",
+  "inventory_classification": "REPORTING_AMBIGUITY_CORRECTED",
+  "source_authority": "app_auth_03/parity_consumer_matrix.json",
+  "equations": {
+    "primary_universe": "18 = CONNECTED(2) + UNCONNECTED_CANDIDATES(9) + EXCLUDED(6) + RECLASSIFIED_HELPERS(1)",
+    "documented_surfaces_total": "19 = PRIMARY_UNIVERSE(18) + EXCLUDED_OUTSIDE_UNIVERSE(1)"
+  },
+  "counts": {
+    "total_unique_primary_universe": 18,
+    "total_documented_surfaces": 19,
+    "request_consumers": 17,
+    "helpers": 1,
+    "connected": 2,
+    "unconnected_candidates": 9,
+    "excluded_within_universe": 6,
+    "excluded_outside_universe": 1,
+    "reclassified_helpers": 1
+  },
+  "resolutions": {
+    "CONS-MODULES-PAGE": {
+      "belongs_to_18": false,
+      "category": "EXCLUDED_OUTSIDE_UNIVERSE",
+      "reason": "Listed in excluded_consumers[], not in consumers[] array"
+    },
+    "CONS-SANDU-REPORT": {
+      "belongs_to_request_consumer_universe": false,
+      "category": "RECLASSIFIED_HELPER",
+      "reason": "In-memory observe helper only; not wired to request path"
+    },
+    "six_excluded_in_16_remaining_error": {
+      "included_in_incorrect_16_remaining": true,
+      "correct_treatment": "Excluded consumers are terminal; must not be counted as remaining candidates",
+      "eligible_future_candidates": 9
+    },
+    "app_auth_05_14_figure": {
+      "status": "REPORTING_AMBIGUITY_CORRECTED",
+      "incorrect": 14,
+      "likely_confusion": "14 writers from parity_writer_matrix.json or ad-hoc subtraction",
+      "correct_unconnected_math": "18 inventoried - 2 connected = 16 non-connected, but only 9 are eligible candidates"
+    }
+  },
+  "matrix": [
+    {"consumer_id": "CONS-MOBILE-AVAILABLE", "unique": true, "request_consumer": true, "helper": false, "connected": true, "candidate": false, "excluded": false, "reason": "APP-AUTH-05 wired"},
+    {"consumer_id": "CONS-ELIGIBILITY-ENDPOINT", "unique": true, "request_consumer": true, "helper": false, "connected": true, "candidate": false, "excluded": false, "reason": "APP-AUTH-05 wired"},
+    {"consumer_id": "CONS-SANDU-REPORT", "unique": true, "request_consumer": false, "helper": true, "connected": false, "candidate": false, "excluded": false, "reason": "Observe helper; read-only in-process report"},
+    {"consumer_id": "CONS-EMPLOYEES-PAGE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-UTILAJE-PAGE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-MOBILE-ASSIGNED", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-OPERATOR-TASKS", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate; needs separate audit"},
+    {"consumer_id": "CONS-OPERATOR-ELIGIBILITY-FE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-SHOP-FLOOR", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate; high fallback risk"},
+    {"consumer_id": "CONS-PERSONAL-PAGE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate; HR display risk"},
+    {"consumer_id": "CONS-PRODUCT-SYSTEM-MAPPING", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-OPERATOR-EMPLOYEES-HOOK", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate"},
+    {"consumer_id": "CONS-REGISTRY-CATALOG-API", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": true, "excluded": false, "reason": "Eligible future candidate; deferred pending audit"},
+    {"consumer_id": "CONS-MOBILE-CLAIM-START", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Writer/session mutation surface"},
+    {"consumer_id": "CONS-TABLET", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Parallel demo authority A19"},
+    {"consumer_id": "CONS-ASSIGNMENT-SERVICE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Assignment writer P9"},
+    {"consumer_id": "CONS-EXECUTION-REALITY-START", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Execution session writer P10"},
+    {"consumer_id": "CONS-ATTENDANCE-READ", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Attendance domain P11 separate audit"},
+    {"consumer_id": "CONS-MODULES-PAGE", "unique": true, "request_consumer": true, "helper": false, "connected": false, "candidate": false, "excluded": true, "reason": "Outside primary 18; module chain separate track"}
+  ]
+}

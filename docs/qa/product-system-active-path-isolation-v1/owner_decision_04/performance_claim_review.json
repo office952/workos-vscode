@@ -1,0 +1,30 @@
+{
+  "task": "OWNER-DECISION-04",
+  "prior_claim": {
+    "source": "app_auth_06/latency_summary.json",
+    "reported_delta_percent": -78.21,
+    "flags_off_environment": "http://127.0.0.1:8001 trusted backend, flags ALL_FALSE",
+    "flags_on_environment": "http://127.0.0.1:8011 isolated pilot process, flags ON"
+  },
+  "classification": "NON_COMPARABLE_ENVIRONMENTS",
+  "observed_safe_statement": "No performance regression was detected that would block continued observe-only piloting on the isolated process.",
+  "not_proven_statement": "Parity improved latency by 78.21%. That delta is not a valid controlled comparison.",
+  "why_non_comparable": [
+    "Different processes and ports (8001 vs 8011)",
+    "Different warm-up and cache states",
+    "First-request cold-cache inflation on trusted backend flags-off batch",
+    "No alternating A/B within the same process",
+    "No query-count pairing under identical fixture timing"
+  ],
+  "future_valid_benchmark_method": {
+    "same_process_type": "single uvicorn instance, toggle flags between batches",
+    "same_fixture_set": "fixed employee/order seed; identical operation codes",
+    "warm_up": "discard first N requests per phase",
+    "alternation": "flags-off batch then flags-on batch, repeated M cycles",
+    "minimum_sample_size": 20 requests per consumer per phase per cycle",
+    "metrics": ["p50_ms", "p95_ms", "max_ms", "query_count_delta", "response_hash"],
+    "conditions": ["document PID", "document hardware", "document DB path", "no concurrent pilot"]
+  },
+  "repeat_performance_pilot_for_owner_decision": false,
+  "owner_decision_impact": "Performance is not a blocker for remaining at two consumers with ephemeral logs."
+}
