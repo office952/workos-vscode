@@ -72,8 +72,10 @@ class ExecutionRealityService:
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
-    async def _get_row(self, order_id: int) -> Optional[ExecutionReality]:
+    async def _get_row(self, order_id: int, *, for_update: bool = False) -> Optional[ExecutionReality]:
         stmt = select(ExecutionReality).where(ExecutionReality.order_id == order_id)
+        if for_update:
+            stmt = stmt.with_for_update()
         res = await self.db.execute(stmt)
         return res.scalar_one_or_none()
 
@@ -242,7 +244,7 @@ class ExecutionRealityService:
             raise RealityInputError("task_id_invalid")
         ended_at = _iso_utc(timestamp)
 
-        row = await self._get_row(order_id)
+        row = await self._get_row(order_id, for_update=True)
         if row is None:
             raise RealityInputError("reality_not_initialised", str(order_id))
 
@@ -282,6 +284,23 @@ class ExecutionRealityService:
             matched = True
             break
         if not matched:
+            if is_completion and employee_id is not None:
+                for t in tasks:
+                    if t.get("task_id") != task_id:
+                        continue
+                    if not t.get("ended_at"):
+                        continue
+                    try:
+                        completed_by = int(t.get("completed_by_employee_id") or 0)
+                    except (TypeError, ValueError):
+                        completed_by = 0
+                    try:
+                        entry_employee = int(t.get("employee_id") or 0)
+                    except (TypeError, ValueError):
+                        entry_employee = 0
+                    if completed_by == employee_id or entry_employee == employee_id:
+                        await self.db.refresh(row)
+                        return row
             raise RealityInputError("task_not_started", task_id)
 
         row.tasks_json = json.dumps(tasks)

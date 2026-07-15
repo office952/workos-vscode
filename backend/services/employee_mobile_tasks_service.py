@@ -753,8 +753,11 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
     task, rt, _, task_sessions = await _get_task_context(
         db, order_id=order_id, task_id=task_id, employee_id=employee_id
     )
-    my_session = active_session_for_employee(task_sessions, employee_id)
     status = derive_task_status_for_employee(task_sessions, employee_id)
+    if status == "done":
+        return {"status": "ok", "action": "complete", "task_id": task_id, "already_completed": True}
+
+    my_session = active_session_for_employee(task_sessions, employee_id)
     if not my_session or not my_session.get("started_at"):
         raise HTTPException(
             status_code=422,
@@ -764,8 +767,6 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
         raise HTTPException(status_code=409, detail={"error": "task_is_blocked"})
     if my_session.get("paused_at") and not my_session.get("resumed_at"):
         raise HTTPException(status_code=409, detail={"error": "task_is_paused"})
-    if status == "done":
-        return {"status": "ok", "action": "complete", "task_id": task_id, "already_completed": True}
 
     emp_sql = text("SELECT name FROM employees WHERE id = :eid LIMIT 1")
     emp_row = (await db.execute(emp_sql, {"eid": employee_id})).first()
@@ -785,6 +786,17 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
             },
         )
     except RealityInputError as exc:
+        if exc.code == "task_not_started":
+            _, _, _, task_sessions_after = await _get_task_context(
+                db, order_id=order_id, task_id=task_id, employee_id=employee_id
+            )
+            if derive_task_status_for_employee(task_sessions_after, employee_id) == "done":
+                return {
+                    "status": "ok",
+                    "action": "complete",
+                    "task_id": task_id,
+                    "already_completed": True,
+                }
         raise HTTPException(status_code=422, detail={"error": exc.code, "detail": exc.detail})
 
     return {"status": "ok", "action": "complete", "task_id": task_id, "timestamp": now_iso}
