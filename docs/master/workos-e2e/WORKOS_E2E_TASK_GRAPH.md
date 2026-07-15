@@ -384,7 +384,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Utilaje (capacitate) | `APP_AUTH_01_MACHINES_CANONICAL` — `machines` + resource_kind |
 | Pontaj | `ATTENDANCE_CANONICAL_SEPARATE` — confirmat recomandat |
 | Mobile/Operator/Tablet | `APP_AUTH_01_EXECUTION_SURFACES` — Mobile/Operator canonic; Tablet transitional |
-| Authority debt | `10 duplicate truths` → reconciliere planificată Wave R0–R10 |
+| Authority debt | `10 duplicate truths` → reconciliere planificată; **0 owner confirmations** on data reconciliation |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -453,7 +453,24 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **OWNER-DECISION-02-DATA-RECONCILIATION** |
+| Next | **APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE** |
+
+## OWNER-DECISION-02 — Owner data reconciliation gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_DATA_RECONCILIATION_PARTIAL_REMAIN_BLOCKED` |
+| Audit bază | APP-AUTH-02 @ `b6081c0` |
+| Decisions total | 9 |
+| Confirmed | 0 |
+| Deferred | 9 |
+| Severity (DISC rows) | 1 CRIT / 14 HIGH / 4 MED / 0 LOW / 1 INFO = 20 |
+| Available test | `FIXTURE_STATE_BLEED` + projection defect |
+| Sandu | Confirmare umană recomandată (Varianta A) |
+| Implementation authorized | **NO** |
+| OWNER-DECISION-02 | **COMPLETE** |
+| Next | **APP-AUTH-02B** — PROD-ARCH-01 **BLOCAT** |
 
 ## APP-AUTH-02 — Data discrepancy and reconciliation plan
 

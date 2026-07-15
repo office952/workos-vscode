@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `357838e` (APP-AUTH-01) — APP-AUTH-02 reconciliation plan on branch
+**Accepted HEAD:** `b6081c0` (APP-AUTH-02) — OWNER-DECISION-02 gate on branch
 
-**Last updated:** 2026-07-15 (APP-AUTH-02 inventar discrepanțe — **OWNER-DECISION-02 next**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-02 reconciliere date — **0 CONFIRMATE**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **OWNER-DECISION-02-DATA-RECONCILIATION** (PROD-ARCH-01 **BLOCAT**) |
+| Next task | **APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE** (PROD-ARCH-01 **BLOCAT**) |
 
 
 
@@ -434,7 +434,29 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **PROD-INT-02:** **COMPLETE** (audit)
 
-**Next:** **OWNER-DECISION-02-DATA-RECONCILIATION**
+**Next:** **APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE**
+
+## OWNER-DECISION-02 — Decizii owner reconciliere date
+
+**Verdict:** `OWNER_DATA_RECONCILIATION_PARTIAL_REMAIN_BLOCKED`
+
+**Scope:** Gate decizii post APP-AUTH-02 — fără cod, DB, UI, migrări.
+
+**Decizii:** 9 documentate · **0 CONFIRMATE** · 9 AMÂNATE
+
+**Severitate clarificată:** 20 rânduri DISC (1 CRITICAL, 14 HIGH, 4 MEDIUM, 0 LOW, 1 INFO) — cei 7 angajați aliniați **nu** sunt 7 discrepanțe LOW
+
+**Test available:** `FIXTURE_STATE_BLEED` + `AVAILABLE_PROJECTION_DEFECT` secundar — izolat PASS, suite FAIL
+
+**Prioritate owner:** O3 Sandu + O4 exceptii montaj_led
+
+**Implementare autorizată:** **NO**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_02_data_reconciliation_v1.md`
+
+**OWNER-DECISION-02:** **COMPLETE** (gate documentat)
+
+**Next:** **APP-AUTH-02B** — PROD-ARCH-01 **BLOCAT**
 
 ## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
 
