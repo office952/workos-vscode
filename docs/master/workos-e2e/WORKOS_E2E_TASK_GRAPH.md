@@ -453,7 +453,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE** |
+| Next | **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** |
+
+## APP-AUTH-02B — Available projection runtime closure
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_02B_AVAILABLE_PROJECTION_PASS_COMMITTED` |
+| Starting HEAD | `b38f6a6` |
+| Root cause | `FIXTURE_STATE_BLEED` + `AVAILABLE_PROJECTION_GLOBAL_FAILURE_DEFECT` |
+| Corruption contract | `ORDER_LOCAL_FAIL_CLOSED` |
+| Corrupt order (evidence) | 24009 |
+| Sandu | **Unchanged** |
+| Combined suite | 76 PASS |
+| APP-AUTH-02B | **COMPLETE** |
+| Next | **OWNER-DECISION-03** — PROD-ARCH-01 **BLOCAT** |
 
 ## OWNER-DECISION-02 — Owner data reconciliation gate
 
@@ -470,7 +485,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Sandu | Confirmare umană recomandată (Varianta A) |
 | Implementation authorized | **NO** |
 | OWNER-DECISION-02 | **COMPLETE** |
-| Next | **APP-AUTH-02B** — PROD-ARCH-01 **BLOCAT** |
+| Next | **OWNER-DECISION-03** — PROD-ARCH-01 **BLOCAT** |
 
 ## APP-AUTH-02 — Data discrepancy and reconciliation plan
 

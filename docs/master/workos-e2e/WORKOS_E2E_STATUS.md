@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `b6081c0` (APP-AUTH-02) — OWNER-DECISION-02 gate on branch
+**Accepted HEAD:** APP-AUTH-02B on branch (after OWNER-DECISION-02 @ `b38f6a6`)
 
-**Last updated:** 2026-07-15 (OWNER-DECISION-02 reconciliere date — **0 CONFIRMATE**)
+**Last updated:** 2026-07-15 (APP-AUTH-02B available projection closure — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **APP-AUTH-02B-AVAILABLE-PROJECTION-RUNTIME-CLOSURE** (PROD-ARCH-01 **BLOCAT**) |
+| Next task | **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** (PROD-ARCH-01 **BLOCAT**) |
 
 
 
@@ -457,6 +457,24 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 **OWNER-DECISION-02:** **COMPLETE** (gate documentat)
 
 **Next:** **APP-AUTH-02B** — PROD-ARCH-01 **BLOCAT**
+
+## APP-AUTH-02B — Available projection runtime closure
+
+**Verdict:** `APP_AUTH_02B_AVAILABLE_PROJECTION_PASS_COMMITTED`
+
+**Scope:** Fixture isolation + order-local fail-closed for available-task projection when unrelated `OrderSnapshotV2` is corrupt — fără Sandu, migrări, distribuție.
+
+**Root cause:** `FIXTURE_STATE_BLEED` (order `24009` leaked from operator truth corrupt test) + `AVAILABLE_PROJECTION_GLOBAL_FAILURE_DEFECT`.
+
+**Contract:** `ORDER_LOCAL_FAIL_CLOSED` — corrupt orders excluded from available pool; valid orders preserved; assigned tasks still fail closed per order; diagnostics in backend logs.
+
+**Tests:** Combined APP-AUTH-02 suite **76/76 PASS** (3× repeat + reversed order).
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_02b_available_projection_runtime_closure_v1.md`
+
+**APP-AUTH-02B:** **COMPLETE**
+
+**Next:** **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** — PROD-ARCH-01 **BLOCAT**
 
 ## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
 
