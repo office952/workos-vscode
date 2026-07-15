@@ -291,6 +291,33 @@ If the owner is fatigued by architecture: **UI-TRUTH-01B** delivers trust on eve
 
 ---
 
+## 28. OWNER-DECISION-08 — Corrected sign-off (2026-07-15)
+
+**Task:** OWNER-DECISION-08-PROD-FLEX-ARCH-02-CORRECTED-SIGN-OFF  
+**Starting HEAD:** `43668f9`  
+**Verdict:** `OWNER_DECISION_08_PROD_FLEX_ARCH_02_CORRECTED_SIGN_OFF_COMPLETE`
+
+**Architecture:** ACCEPTED WITH CORRECTIONS. **FLEX-02 NOT AUTHORIZED.**
+
+**Binding corrections applied across decision-log, plan, risk-register, canonical STATUS/TASK_GRAPH:**
+
+| Decision | Outcome |
+|----------|---------|
+| P7 | HELPER-only membership; no persisted PRINCIPAL row |
+| P8 | JOIN = membership only (no session/claim/assignee/progress/complete) |
+| P9 | LEAVE = own HELPER membership; own session stop only if future contract |
+| P10 | Migration NOT AUTHORIZED by architecture sign-off |
+| P11 | FLEX-02 NOT AUTHORIZED; architecture acceptance ≠ implementation GO |
+| P12 | Bounded FLEX-02 slice description only — requires separate GO |
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_08_prod_flex_arch_02_corrected_sign_off.md`
+
+**Readiness:** `ARCHITECTURE_ACCEPTED_IMPLEMENTATION_BLOCKED`
+
+**Next:** Await explicit FLEX-02 kickoff GO (separate P11=YES + P10=YES). No implementation authorized by this sign-off.
+
+---
+
 ## DELIVERY FOOTER
 
 ```

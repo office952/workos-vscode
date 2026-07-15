@@ -2,8 +2,8 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Accepted HEAD:** `e92d135`  
-**Active task:** `PROD-FLEX-ARCH-02` **COMPLETE** (plan only) — owner P1–P12 pending; **FLEX-02 BLOCKED**  
+**Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 complete)
+**Active task:** `OWNER-DECISION-08` **COMPLETE** — architecture **ACCEPTED WITH CORRECTIONS**; **FLEX-02 BLOCKED**  
 **Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
@@ -1238,17 +1238,22 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **COMPLETE** (2026-07-15) — plan only |
-| Verdict | `PROD_FLEX_ARCH_02_PARTICIPANT_PERSISTENCE_BOUNDARY_READY` |
-| Starting HEAD | `eaa3025` |
-| Readiness | `READY_FOR_OWNER_DECISION_NOW` |
-| Recommended boundary | Hybrid normalized — participants table (FLEX-02) + help table (FLEX-04) + sessions unchanged |
+| Status | **COMPLETE** (2026-07-15) — architecture accepted with corrections |
+| Verdict | `OWNER_DECISION_08_PROD_FLEX_ARCH_02_CORRECTED_SIGN_OFF_COMPLETE` |
+| Starting HEAD | `43668f9` |
+| Architecture | **ACCEPTED WITH CORRECTIONS** — OPTION 5 hybrid |
+| Readiness | `ARCHITECTURE_ACCEPTED_IMPLEMENTATION_BLOCKED` |
+| Membership | **HELPER-only** at FLEX-02; no PRINCIPAL row (P7) |
+| JOIN / LEAVE | Membership only / own membership only (P8, P9) |
+| Recommended boundary | Hybrid normalized — participants table (FLEX-02, HELPER-only) + help table (FLEX-04) + sessions unchanged |
 | participants_json | **DEFERRED / NOT CANONICAL** |
-| FLEX-02 | **BLOCKED** until owner P1–P11 sign-off |
-| Migration | **NOT AUTHORIZED** in ARCH-02 |
+| FLEX-02 | **BLOCKED** until separate owner GO (P11=YES) |
+| Migration | **NOT AUTHORIZED** (P10=NO) |
+| Participant writes | **NOT AUTHORIZED** |
 | Worklog | `docs/worklog/realignment/2026-07-15_prod_flex_arch_02_participant_persistence_boundary.md` |
+| Owner sign-off | `docs/worklog/realignment/2026-07-15_owner_decision_08_prod_flex_arch_02_corrected_sign_off.md` |
 | PROD-FLEX-ARCH-02 | **COMPLETE** |
-| Next | Owner GO on `decision-log.md` P1–P12 |
+| Next | Await explicit FLEX-02 kickoff GO — or unpause UI-TRUTH-01B / APP-AUTH-06G |
 
 ---
 

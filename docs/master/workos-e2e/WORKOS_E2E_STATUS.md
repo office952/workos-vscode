@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `e92d135` (RUNTIME-FRESHNESS-04B + WORKOS-ROADMAP-REALIGNMENT-01 closure)
+**Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 — corrected participant persistence sign-off)
 
-**Last updated:** 2026-07-15 (roadmap realignment **COMPLETE**; runtime tooling lane **CLOSED**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-08 — architecture **ACCEPTED WITH CORRECTIONS**; FLEX-02 **BLOCKED**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-ARCH-02** — participant persistence boundary (**COMPLETE** — plan only; owner decision pending) |
+| Active task | **OWNER-DECISION-08** — PROD-FLEX-ARCH-02 corrected sign-off (**COMPLETE**) |
 
-| Next task | **Owner GO on P1–P12** (`decision-log.md`) then **FLEX-02** (blocked until sign-off; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **Await separate FLEX-02 GO** (P11=YES + P10=YES at kickoff); alternates: APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1245,23 +1245,31 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 ## PROD-FLEX-ARCH-02 — Participant persistence boundary
 
-**Verdict:** `PROD_FLEX_ARCH_02_PARTICIPANT_PERSISTENCE_BOUNDARY_READY`
+**Verdict:** `PROD_FLEX_ARCH_02_PARTICIPANT_PERSISTENCE_BOUNDARY_READY` → **OWNER-DECISION-08 COMPLETE**
+
+**Architecture:** **ACCEPTED WITH CORRECTIONS** (OPTION 5 hybrid; HELPER-only membership; no PRINCIPAL row)
 
 **Scope:** Plan/docs only — persistence boundary decision. No code, DB, migration, UI, or participant writes.
 
-**Readiness:** `READY_FOR_OWNER_DECISION_NOW`
+**Readiness:** `ARCHITECTURE_ACCEPTED_IMPLEMENTATION_BLOCKED`
 
-**Recommended boundary:** Hybrid normalized model — `execution_task_participants` (FLEX-02) + `execution_task_help_requests` (FLEX-04) + sessions unchanged + audit events supplement. **No `participants_json`.**
+**Recommended boundary:** Hybrid normalized model — `execution_task_participants` (FLEX-02, HELPER-only) + `execution_task_help_requests` (FLEX-04) + sessions unchanged + audit events supplement. **No `participants_json`.**
+
+**Binding corrections (OWNER-DECISION-08):** P7 HELPER-only; P8 JOIN membership only; P9 LEAVE own membership only; P11 NO — architecture ≠ FLEX-02 GO.
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_prod_flex_arch_02_participant_persistence_boundary.md`
+
+**Owner sign-off worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_08_prod_flex_arch_02_corrected_sign_off.md`
 
 **Plan:** `.compound-engineering/prod-flex-arch-02-participant-persistence-boundary/plan.md`
 
 **Decision log:** `.compound-engineering/prod-flex-arch-02-participant-persistence-boundary/decision-log.md`
 
-**PROD-FLEX-ARCH-02:** **COMPLETE** (plan only)
+**PROD-FLEX-ARCH-02:** **COMPLETE** (architecture accepted)
 
-**FLEX-02:** **BLOCKED** until owner P1–P11 sign-off
+**FLEX-02:** **BLOCKED** until separate owner GO (P11=YES)
 
-**Next:** Owner review `decision-log.md` — then scoped FLEX-02 build if GO granted
+**Migration / writes / UI:** **NOT AUTHORIZED**
+
+**Next:** Await explicit FLEX-02 kickoff GO — or unpause UI-TRUTH-01B / APP-AUTH-06G
 

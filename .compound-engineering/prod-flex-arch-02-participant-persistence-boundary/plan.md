@@ -5,7 +5,7 @@
 **Starting HEAD:** `eaa3025` (WORKOS-ROADMAP-REALIGNMENT-01 closure)  
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 **Created:** 2026-07-15  
-**Artifact type:** Owner decision package (not implementation-ready code plan)
+**Artifact type:** Owner decision package — architecture **ACCEPTED WITH CORRECTIONS** (OWNER-DECISION-08); implementation **NOT AUTHORIZED**
 
 ---
 
@@ -27,9 +27,23 @@ Define whether WorkOS needs persistent participant/help representation beyond `a
 
 ---
 
+## Owner Sign-off Status (OWNER-DECISION-08)
+
+**Architecture:** ACCEPTED WITH CORRECTIONS  
+**Implementation:** NOT AUTHORIZED  
+**FLEX-02:** BLOCKED until separate owner GO (P11=YES + P10=YES at FLEX-02 kickoff)
+
+Binding corrections:
+- **P7:** HELPER-only membership in FLEX-02; no persisted PRINCIPAL row
+- **P8:** JOIN = membership only (no session, claim, assignee change, progress, complete)
+- **P9:** LEAVE = own HELPER membership close; own session stop only if future contract says so
+- **P11:** NO — architecture acceptance does not authorize FLEX-02
+
+Full P1–P12: `decision-log.md`
+
 ## Readiness Classification
 
-**`READY_FOR_OWNER_DECISION_NOW`**
+**`ARCHITECTURE_ACCEPTED_IMPLEMENTATION_BLOCKED`** (was `READY_FOR_OWNER_DECISION_NOW` — owner sign-off complete)
 
 | Prerequisite | Status |
 |--------------|--------|
@@ -37,7 +51,7 @@ Define whether WorkOS needs persistent participant/help representation beyond `a
 | Frozen task identity | **Satisfied** — `frozen_task_identity/v1`, `(order_id, task_id)` join stable |
 | FLEX-01 read model | **Satisfied** — Option B baseline |
 | Help lifecycle design (ARCH-01) | **Specified** — contracts exist; implementation deferred to FLEX-04 |
-| Participant write authorization | **Not satisfied** — intentionally blocked until this decision |
+| Participant write authorization | **Not satisfied** — blocked until separate FLEX-02 GO (P11=YES) |
 
 **Not blocked by:** materialization, task identity, or help-lifecycle design completeness.
 
@@ -93,7 +107,7 @@ Order (orders.id)
 | Represent helper before first session | No | Membership or help-accept row |
 | Help invitation/request lifecycle | No | Normalized help entity (FLEX-04) |
 | Accepted/declined/cancelled help states | No | Help entity |
-| Persistent PRINCIPAL/HELPER roles | Partial | Membership row with role |
+| Persistent HELPER membership (principal via assignee only) | Partial | HELPER membership row only (OWNER-DECISION-08 P7) |
 | Prevent duplicate active joins | Partial | DB unique constraint + idempotent join |
 | Query active helpers without session | No | Membership query |
 | Split principal vs helper pools (D6) | No | Membership + pool semantics (FLEX-03) |
@@ -114,7 +128,7 @@ Order (orders.id)
 
 ### OPTION 2 — Minimal normalized membership
 
-Conceptual fields (analysis only — not finalized): `order_id`, `task_id`, `employee_id`, `role`, `status`, `joined_at`, `left_at`, `source`, `created_by`.
+Conceptual fields (analysis only — not finalized): `order_id`, `task_id`, `employee_id`, `role` (**HELPER only at FLEX-02**), `status`, `joined_at`, `left_at`, `source`, `created_by`.
 
 | Dimension | Assessment |
 |-----------|------------|
@@ -144,11 +158,11 @@ Persist help request → acceptance creates HELPER membership.
 ### OPTION 5 — Hybrid normalized model (recommended boundary)
 
 Separate:
-- **Intended/authorized participant relationship** → normalized membership table (FLEX-02/03).
-- **Actual work sessions** → unchanged `execution_reality.tasks_json`.
-- **Optional principal** → unchanged `assigned_employee_id` on plan.
-- **Help lifecycle** → normalized help table (FLEX-04).
-- **Audit timeline** → append-only events (non-authoritative for queries).
+- **Intended/authorized HELPER membership** → normalized `execution_task_participants` (FLEX-02) — **HELPER role only**
+- **Optional principal** → unchanged `assigned_employee_id` on plan (**no PRINCIPAL membership row**)
+- **Actual work sessions** → unchanged `execution_reality.tasks_json`
+- **Help lifecycle** → normalized help table (FLEX-04 only — not FLEX-02)
+- **Audit timeline** → append-only events (non-authoritative for queries)
 
 No JSON blob authority. No `participants_json`.
 
@@ -162,18 +176,23 @@ No JSON blob authority. No `participants_json`.
 
 ## Recommended Boundary
 
-**Adopt OPTION 5 (hybrid normalized model) pending owner P1–P12 confirmation.**
+**OPTION 5 (hybrid normalized model) — ACCEPTED WITH CORRECTIONS (OWNER-DECISION-08).**
 
 ```text
-FLEX-02/03: execution_task_participants (normalized membership on order_id + task_id)
-FLEX-04:     execution_task_help_requests (normalized) → accept activates HELPER membership
+FLEX-02:     execution_task_participants — HELPER membership only on (order_id, task_id)
+FLEX-03:     join/leave semantics, split pools (after FLEX-02 GO; separate scope)
+FLEX-04:     execution_task_help_requests — not in FLEX-02 scope
 Always:      sessions in execution_reality.tasks_json = work/time authority
-Always:      assigned_employee_id on plan = optional principal hint only
-Audit:       append operational events (PARTICIPANT_JOINED, HELP_ACCEPTED, etc.) — supplement only
+Always:      assigned_employee_id on plan = optional principal/coordinator only
+Audit:       append operational events — supplement only
 Rollback:    feature flags; FLEX-01 read adapters remain fallback
 ```
 
-**Explicitly reject:** `participants_json` as canonical write authority; sessions-only for collaboration writes; defer-all.
+**JOIN (binding):** create/reactivate HELPER membership only — must not start session, claim, change assignee, mark progress, or complete operation.
+
+**LEAVE (binding):** close actor's own HELPER membership — must not stop other workers' sessions, change principal, or complete operation; own session stop only if future endpoint contract explicitly includes it.
+
+**Explicitly reject:** `participants_json`; persisted PRINCIPAL membership row; sessions-only for collaboration writes; implicit FLEX-02 GO from architecture acceptance.
 
 ---
 
@@ -183,7 +202,7 @@ Rollback:    feature flags; FLEX-01 read adapters remain fallback
 |-------|-----------|
 | Optional principal | `execution_plan.operational_tasks[].assigned_employee_id` |
 | Actual work/time | `execution_reality` work sessions |
-| Participation membership (future) | Normalized `execution_task_participants` |
+| Participation membership (future) | Normalized `execution_task_participants` — **HELPER only** |
 | Help lifecycle (future) | Normalized `execution_task_help_requests` |
 | Collaboration read (now) | FLEX-01 projection — no write authority |
 | Eligibility | `operational_registry_service` — independent of participation |
@@ -236,15 +255,15 @@ Historical participation queryable separately from sessions via membership table
 ## Roadmap Dependencies
 
 ```text
-PROD-FLEX-ARCH-02 (this plan) → Owner GO
-  → FLEX-02 participant membership writes
-  → FLEX-03 join/leave, split pools, stop≠complete exposure
-  → FLEX-04 help CRUD + accept→join
+PROD-FLEX-ARCH-02 (architecture accepted) → FLEX-02 BLOCKED
+  → [Separate owner GO: P11=YES + P10=YES] → bounded FLEX-02 technical slice (P12)
+  → FLEX-03 split pools / D6 (separate; not in FLEX-02 slice)
+  → FLEX-04 help CRUD + accept→join (separate; not in FLEX-02 slice)
   → FLEX-05 Mobile helper UI (first major owner-visible collaboration)
   → FLEX-08 Operator visibility
 ```
 
-**FLEX-02 does not create owner-visible value before FLEX-05.** ARCH-02 is the correct bounded next step.
+**Architecture acceptance does not authorize FLEX-02.** Confirming P1–P4 does not grant implementation GO.
 
 **Alternate lanes (paused):** APP-AUTH-06G, UI-TRUTH-01B — higher immediate trust/evidence value if owner redirects.
 
@@ -252,7 +271,20 @@ PROD-FLEX-ARCH-02 (this plan) → Owner GO
 
 ## Owner Decision Table (P1–P12)
 
-See `decision-log.md` for compact owner-facing table with recommended defaults.
+See `decision-log.md` — **signed** (OWNER-DECISION-08). Architecture accepted; implementation blocked.
+
+---
+
+## Future Bounded FLEX-02 Slice (P12 — not authorized until separate GO)
+
+When and only when owner sets P11=YES and P10=YES at FLEX-02 kickoff:
+
+- `execution_task_participants` table — **HELPER membership only**
+- Join/leave **membership** contract (not session, claim, assignment, pool, or UI)
+- No help table (FLEX-04)
+- No UI / Mobile changes
+- No `_has_active_session_by_other` changes
+- No session, assignment, or claim behavior changes
 
 ---
 
@@ -275,5 +307,5 @@ No code, DB, migration, seeds, UI, participant writes, FLEX-02 start, runtime to
 - [x] Readiness classification assigned
 - [x] Owner decision table P1–P12 produced
 - [x] Plan + decision-log + worklog written
-- [ ] Owner GO on persistence shape (external to this artifact)
-- [ ] FLEX-02 implementation (blocked until GO)
+- [x] Owner sign-off recorded (OWNER-DECISION-08)
+- [ ] FLEX-02 implementation (blocked — requires separate P11=YES + P10=YES)
