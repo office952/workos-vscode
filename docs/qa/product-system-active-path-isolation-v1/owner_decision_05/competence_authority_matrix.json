@@ -1,0 +1,82 @@
+{
+  "task": "OWNER-DECISION-05",
+  "domains": [
+    {
+      "domain": "employee_identity",
+      "current_authority": "Shared employee registry table",
+      "proposed_authority": "Registry employee record",
+      "owner_status": "CONFIRMED_STABLE",
+      "enforcement_status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "competence",
+      "current_authority": "UNRESOLVED dual-source (registry vs legacy JSON)",
+      "proposed_authority": "Registry competence table (S1:A)",
+      "owner_status": "CONFIRMED",
+      "enforcement_status": "DEFERRED — S5:D observe-only"
+    },
+    {
+      "domain": "competence_level",
+      "current_authority": "Registry supports levels; not populated for Sandu",
+      "proposed_authority": "Required on confirmed competences (S8)",
+      "owner_status": "CONFIRMED_CONTRACT",
+      "enforcement_status": "NOT_AUTHORIZED"
+    },
+    {
+      "domain": "legacy_skills",
+      "current_authority": "Legacy JSON still influences hybrid eligibility",
+      "proposed_authority": "Transitional evidence only (S2:A)",
+      "owner_status": "CONFIRMED",
+      "enforcement_status": "NO_SILENT_AUTHORITY"
+    },
+    {
+      "domain": "explicit_mapping",
+      "current_authority": "Hybrid mode treats mapping as eligibility path",
+      "proposed_authority": "Routing preference only; exception via S3:C contract (S3:B)",
+      "owner_status": "CONFIRMED",
+      "enforcement_status": "DEFERRED"
+    },
+    {
+      "domain": "resource_authorization",
+      "current_authority": "Partial registry checks",
+      "proposed_authority": "Mandatory for controlled resources (S4:A)",
+      "owner_status": "CONFIRMED",
+      "enforcement_status": "DEFERRED"
+    },
+    {
+      "domain": "operation_requirements",
+      "current_authority": "Registry required_skill_codes per operation",
+      "proposed_authority": "Registry operation requirements remain canonical reference",
+      "owner_status": "CONFIRMED",
+      "enforcement_status": "OBSERVE_ONLY"
+    },
+    {
+      "domain": "eligibility",
+      "current_authority": "Operational hybrid projection (explicit OR skill)",
+      "proposed_authority": "Observe-only now (S5:D); future fail-closed + audited exceptions (A+C)",
+      "owner_status": "CONFIRMED_TRANSITIONAL",
+      "enforcement_status": "NOT_AUTHORIZED"
+    },
+    {
+      "domain": "temporary_exceptions",
+      "current_authority": "Implicit via explicit list without audit fields",
+      "proposed_authority": "S9 contract required before exception grants eligibility",
+      "owner_status": "CONFIRMED_CONTRACT",
+      "enforcement_status": "NOT_IMPLEMENTED"
+    },
+    {
+      "domain": "assignment",
+      "current_authority": "Assignment services unchanged by parity",
+      "proposed_authority": "Unchanged during transition",
+      "owner_status": "CONFIRMED_NO_CHANGE",
+      "enforcement_status": "NOT_APPLICABLE"
+    },
+    {
+      "domain": "execution_session",
+      "current_authority": "ExecutionReality writers excluded from parity",
+      "proposed_authority": "Unchanged; separate audit track",
+      "owner_status": "CONFIRMED_NO_CHANGE",
+      "enforcement_status": "NOT_APPLICABLE"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "task": "OWNER-DECISION-05",
+  "package_id": "OD-PARITY-AUTHORITY-05",
+  "confirmation_date": "2026-07-15",
+  "starting_head": "6f19de1",
+  "upstream": "APP-AUTH-06C @ 6f19de1",
+  "status": "OWNER_CONFIRMED_EXPLICIT",
+  "verdict": "OWNER_AUTHORITY_DECISIONS_CONFIRMED_READY_FOR_SANDU_PLAN",
+  "decisions_total": 15,
+  "decisions_confirmed": 14,
+  "decisions_deferred": 1,
+  "deferred_decision": "S7 per-operation owner classifications — reviewed 7/7, confirmations deferred to APP-AUTH-06F human review",
+  "owner_response_package": {
+    "S1": {"choice": "A", "confirmed": true, "summary": "Registry is canonical competence authority"},
+    "S2": {"choice": "A", "confirmed": true, "summary": "Legacy skills are transitional evidence only"},
+    "S3": {"choice": "B", "confirmed": true, "summary": "Explicit mapping is routing preference, not competence; C for controlled exceptions only"},
+    "S4": {"choice": "A", "confirmed": true, "summary": "Authorization mandatory for controlled machine/resource operations"},
+    "S5": {"choice": "D", "confirmed": true, "future_target": "A + C", "summary": "Observe-only until migration complete; future fail-closed with audited exceptions"},
+    "S6": {"choice": "A", "confirmed": true, "summary": "Sandu operational behavior unchanged until human operation review"},
+    "S7": {"choice": "REVIEWED_DEFERRED", "confirmed": false, "summary": "7/7 operations inspected; per-operation decisions pending human review in APP-AUTH-06F"},
+    "S8": {"choice": "CONFIRM", "confirmed": true, "summary": "Confirmed competences require levels INCEPATOR/OPERATIONAL/AVANSAT/SPECIALIST with evidence metadata"},
+    "S9": {"choice": "CONFIRM", "confirmed": true, "summary": "Temporary exception contract confirmed; implementation not authorized"},
+    "S10": {"choice": "A", "confirmed": true, "summary": "Parity remains observe-only with two consumers"},
+    "S11": {"choice": "A", "confirmed": true, "summary": "Separate correction plan after operation-level decisions; no immediate DB change"},
+    "S12": {"choice": "CONFIRM", "confirmed": true, "summary": "Target policy: structured competence + authorization + mapping preference + explicit exception"},
+    "S13": {"choice": "A", "confirmed": true, "summary": "Observe-only transition until exit criteria met"},
+    "S14": {"choice": "CONFIRM", "confirmed": true, "summary": "Broader employee review requires separate audit; no rollout from absence of drift"},
+    "S15": {"choice": "A", "confirmed": true, "summary": "Next task APP-AUTH-06F Sandu reconciliation plan"}
+  },
+  "amendments": [
+    "Choosing S1:A does not authorize immediate registry cleanup or enforcement",
+    "S3:B default; S3:C only for operations with full exception contract",
+    "S5:D is transitional observe-only; not permanent hybrid eligibility authority",
+    "S6:A forbids automatic promote/remove/disable for Sandu",
+    "S7 operation matrix entries are inspection status only — not competence confirmations",
+    "S8/S9 document contracts only — no data writes authorized",
+    "No migration, source switch, third consumer, persistence, or enforcement authorized"
+  ],
+  "next_task": "APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN",
+  "implementation_authorized": false
+}

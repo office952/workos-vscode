@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `APP-AUTH-06C` **COMPLETE** — next **OWNER-DECISION-05**  
+**Active task:** `OWNER-DECISION-05` **COMPLETE** — next **APP-AUTH-06F**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -696,7 +696,19 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Third consumer readiness | **NOT_READY** |
 | Persistence / enforcement | **NOT AUTHORIZED** |
 | APP-AUTH-06C | **COMPLETE** |
-| Next | **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION** |
+| Next | **OWNER-DECISION-05** (closed) |
+
+## OWNER-DECISION-05 — Parity signal authority and Sandu reconciliation
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_AUTHORITY_DECISIONS_CONFIRMED_READY_FOR_SANDU_PLAN` |
+| Starting HEAD | `6f19de1` |
+| Decisions confirmed | 14/15 |
+| Sandu behavior | **UNCHANGED** |
+| OWNER-DECISION-05 | **COMPLETE** |
+| Next | **APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN** |
 
 ## APP-AUTH-05 — Parity observe-only dev/test integration
 

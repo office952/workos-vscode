@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `b123173` (SESSION-LEDGER-01)
+**Accepted HEAD:** `6f19de1` (APP-AUTH-06C)
 
-**Last updated:** 2026-07-15 (APP-AUTH-06C — parity signal interpretation plan **COMPLETE**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-05 — parity authority decisions **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **APP-AUTH-06C** — parity signal interpretation plan (**COMPLETE**) |
+| Active task | **OWNER-DECISION-05** — parity authority + Sandu policy (**COMPLETE**) |
 
-| Next task | **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION** (UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN** (UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -682,7 +682,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-only** — 16 fingerprints interpreted; **2** unique problem groups (Sandu). **Authority debt:** signal interpretation plan complete; owner Sandu/competence reconciliation = **OWNER-DECISION-05**; enforcement/persistence = **NOT AUTHORIZED**. UI-TRUTH-01A complete; 01B–01E **PAUSED**. Next: **OWNER-DECISION-05**. `PROD-ARCH-01` / `MOBILE-INT-02` blocked.
+Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-only**. Authority policy **OWNER-DECISION-05 CONFIRMED** (registry canonical; mapping=routing; S7 deferred). Sandu **unchanged**. Next: **APP-AUTH-06F** plan. UI-TRUTH-01B–01E **PAUSED**. Enforcement/persistence/third consumer **NOT AUTHORIZED**.
 
 ## APP-AUTH-06C — Parity signal interpretation plan
 
@@ -708,7 +708,36 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **APP-AUTH-06C:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION**
+**Next:** **OWNER-DECISION-05** (closed)
+
+## OWNER-DECISION-05 — Parity signal authority and Sandu reconciliation
+
+**Verdict:** `OWNER_AUTHORITY_DECISIONS_CONFIRMED_READY_FOR_SANDU_PLAN`
+
+**Starting HEAD:** `6f19de1`
+
+| Check | Result |
+|-------|--------|
+| Decisions confirmed | **14/15** (S7 per-operation deferred) |
+| S1 competence authority | **Registry canonical** |
+| S2 legacy skills | **Transitional evidence** |
+| S3 mapping | **Routing preference** |
+| S4 authorization | **Mandatory controlled resources** |
+| S5 eligibility | **Observe-only; future fail-closed + exceptions** |
+| S6 Sandu behavior | **UNCHANGED** |
+| S7 operations reviewed | **7/7** (deferred confirmations) |
+| S10 parity | **Observe-only, 2 consumers** |
+| Data correction | **NOT AUTHORIZED** |
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_05_parity_signal_authority_sandu_reconciliation_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/owner_decision_05/`
+
+**OWNER-DECISION-05:** **COMPLETE**
+
+**Authority debt:** S1–S6/S8–S15 **CONFIRMED**; S7 per-operation → APP-AUTH-06F; enforcement/persistence/third consumer = **NOT AUTHORIZED**
+
+**Next:** **APP-AUTH-06F-SANDU-COMPETENCE-AND-MAPPING-RECONCILIATION-PLAN**
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 
