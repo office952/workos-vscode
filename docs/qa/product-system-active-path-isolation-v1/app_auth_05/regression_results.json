@@ -1,0 +1,33 @@
+{
+  "task": "APP-AUTH-05",
+  "focused_parity_suite": {
+    "files": [
+      "tests/test_parity_contracts.py",
+      "tests/test_parity_comparators.py",
+      "tests/test_parity_fingerprint.py",
+      "tests/test_parity_confidentiality.py",
+      "tests/test_parity_normalization.py",
+      "tests/test_parity_flags.py",
+      "tests/test_parity_import_isolation.py",
+      "tests/test_parity_observe_integration.py"
+    ],
+    "passed": 65,
+    "failed": 0,
+    "verdict": "PASS"
+  },
+  "regression_suite": {
+    "files": [
+      "tests/test_employee_mobile_task_truth.py",
+      "tests/test_employee_mobile_tasks.py",
+      "tests/test_operational_authorization_foundation.py",
+      "tests/test_execution_task_assignment.py",
+      "tests/test_operator_task_truth.py",
+      "tests/test_execution_reality_capture.py",
+      "tests/test_employee_attendance_events.py",
+      "tests/test_system_health.py"
+    ],
+    "passed": 119,
+    "failed": 0,
+    "verdict": "PASS"
+  }
+}

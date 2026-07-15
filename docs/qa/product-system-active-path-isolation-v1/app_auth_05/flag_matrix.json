@@ -1,0 +1,43 @@
+{
+  "task": "APP-AUTH-05",
+  "total_flags": 16,
+  "defaults_all_false": true,
+  "master_flag": "parity_observe_enabled",
+  "activation_rule": "parity_observe_enabled AND domain_subflag",
+  "probe_b_subset_enabled": [
+    "parity_observe_enabled",
+    "competence_parity_enabled",
+    "explicit_mapping_tracking_enabled",
+    "eligibility_shadow_enabled",
+    "legacy_fallback_tracking_enabled",
+    "parity_event_emission_enabled"
+  ],
+  "unused_in_app_auth_05": [
+    "parity_persistence_enabled",
+    "parity_manager_projection_enabled",
+    "authorization_parity_enabled",
+    "workcenter_parity_enabled",
+    "resource_parity_enabled",
+    "execution_surface_parity_enabled",
+    "assignment_writer_parity_enabled",
+    "session_parity_enabled",
+    "attendance_comparison_enabled",
+    "parity_metrics_enabled"
+  ],
+  "environment_behavior": {
+    "test": "PARITY_* env overrides honored after cache reset",
+    "development": "PARITY_* env overrides honored",
+    "staging": "forced false via model_construct",
+    "production": "forced false; startup PARITY_RUNTIME_FLAGS_GUARD BLOCKED if raw env requests true"
+  },
+  "documented_env_vars": [
+    "PARITY_OBSERVE_ENABLED",
+    "COMPETENCE_PARITY_ENABLED",
+    "AUTHORIZATION_PARITY_ENABLED",
+    "EXPLICIT_MAPPING_TRACKING_ENABLED",
+    "ELIGIBILITY_SHADOW_ENABLED",
+    "LEGACY_FALLBACK_TRACKING_ENABLED",
+    "PARITY_EVENT_EMISSION_ENABLED",
+    "PARITY_METRICS_ENABLED"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "task": "APP-AUTH-05",
+  "generated_at": "2026-07-15T09:42:19.862323+00:00",
+  "probe_a_flags_off": {
+    "probe": "flags_off",
+    "timestamp": "2026-07-15T09:42:18.395693+00:00",
+    "base_url": "http://127.0.0.1:8001",
+    "available": {
+      "endpoint": "/api/v1/employee-mobile/tasks/available",
+      "status_code": 200,
+      "response_hash": "d3ef4dcef4b3172aa091bdfb9ef67ff492f8848d0cdacdd76d40a30e3bfb44da",
+      "latency_ms": 486.05,
+      "item_count": 7
+    },
+    "eligibility": {
+      "endpoint": "/api/v1/operational-registry/operation-mappings/print/eligible-employees",
+      "status_code": 200,
+      "response_hash": "c6269e99ba1915e7f6c470d81624904adc68a168fa99ea6ef832b54238b9adc6",
+      "latency_ms": 70.02,
+      "total": 3
+    },
+    "sandu": {
+      "observed": false,
+      "skipped": "flags_off_http_server"
+    },
+    "parity_observation_count": 0,
+    "parity_log_sample": []
+  },
+  "probe_b_flags_on_http": {
+    "probe": "flags_on",
+    "timestamp": "2026-07-15T09:42:19.134392+00:00",
+    "base_url": "http://127.0.0.1:8001",
+    "available": {
+      "endpoint": "/api/v1/employee-mobile/tasks/available",
+      "status_code": 200,
+      "response_hash": "d3ef4dcef4b3172aa091bdfb9ef67ff492f8848d0cdacdd76d40a30e3bfb44da",
+      "latency_ms": 335.94,
+      "item_count": 7
+    },
+    "eligibility": {
+      "endpoint": "/api/v1/operational-registry/operation-mappings/print/eligible-employees",
+      "status_code": 200,
+      "response_hash": "c6269e99ba1915e7f6c470d81624904adc68a168fa99ea6ef832b54238b9adc6",
+      "latency_ms": 129.84,
+      "total": 3
+    },
+    "sandu": {
+      "observed": false,
+      "skipped": "flags_off_http_server"
+    },
+    "parity_observation_count": 0,
+    "parity_log_sample": []
+  },
+  "probe_b_flags_on_in_process": {
+    "mode": "in_process_flags_on",
+    "employee_id": 4,
+    "available_response_hash_unchanged": true,
+    "eligibility_response_hash_unchanged": true,
+    "parity_observation_count": 36,
+    "sandu_observed": true,
+    "sandu_mutations": false
+  },
+  "response_invariance": {
+    "available_hash_stable_in_process": true,
+    "eligibility_hash_stable_in_process": true,
+    "http_probe_a_available_status": 200,
+    "http_probe_a_eligibility_status": 200
+  },
+  "final_backend_flags": "ALL_FALSE",
+  "db_writes": 0,
+  "endpoints_added": 0
+}

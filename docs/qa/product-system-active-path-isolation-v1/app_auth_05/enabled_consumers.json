@@ -1,0 +1,24 @@
+{
+  "task": "APP-AUTH-05",
+  "connected_count": 2,
+  "consumers": [
+    {
+      "name": "Employee Mobile available",
+      "status": "CONNECTED",
+      "consumer_key": "employee_mobile_available",
+      "response_mutation": false
+    },
+    {
+      "name": "Eligibility endpoint",
+      "status": "CONNECTED",
+      "consumer_key": "operational_registry_eligible_employees",
+      "response_mutation": false
+    }
+  ],
+  "other_operational_consumers_connected": 0,
+  "sandu": {
+    "status": "OBSERVE_HELPER_ONLY",
+    "wired_to_request_path": false,
+    "runtime_proof": "in_process_flags_on"
+  }
+}

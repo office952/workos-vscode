@@ -1,0 +1,28 @@
+{
+  "task": "APP-AUTH-05",
+  "confidentiality": {
+    "prohibited_fields_absent": true,
+    "uses_fingerprint_not_full_payload": true,
+    "metadata_sanitized": true,
+    "verdict": "PASS"
+  },
+  "sample_fields": [
+    "event_type",
+    "contract_version",
+    "fingerprint",
+    "domain",
+    "severity",
+    "comparison_result",
+    "employee_id",
+    "operation_code",
+    "canonical_source",
+    "transitional_source",
+    "projection_scope",
+    "consumer",
+    "timestamp",
+    "metadata"
+  ],
+  "in_process_probe_observation_count": 36,
+  "flags_off_observation_count": 0,
+  "note": "Full samples captured in runtime_probe_report.json probe_b_flags_on_in_process; logs omit HR payloads and secrets by contract."
+}

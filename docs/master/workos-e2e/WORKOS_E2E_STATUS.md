@@ -518,9 +518,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION**
+**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
 
-## APP-AUTH-04 — Parity contract and test foundation (Gate I1)
+## APP-AUTH-05 — Parity observe-only dev/test integration (Gate I2)
+
+**Verdict:** `APP_AUTH_05_OBSERVE_ONLY_DEV_TEST_PASS_COMMITTED`
+
+**Starting HEAD:** `f4a8769`
+
+**Scope:** OBSERVE_ONLY wiring on Employee Mobile available + eligibility endpoint; Sandu in-memory report; dev/test flags only.
+
+**Adapter:** `backend/services/parity_observe/` · **Consumers connected:** 2 · **Other consumers:** 0
+
+**Flags:** 16 default false · **Production guard:** PASS (`PARITY_RUNTIME_FLAGS_GUARD`)
+
+**Operational response changed:** **NO** · **Status codes changed:** **NO** · **DB writes:** 0 · **Endpoints:** 0 · **Frontend:** 0
+
+**Tests:** 65 focused PASS · 119 regression PASS · runtime probe PASS (`:8001`)
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_05/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_05_parity_observe_only_dev_test_integration_v1.md`
+
+**Authority debt:** Gate I2 **PASS**; enforcement/persistence/source switch = **NOT AUTHORIZED**
+
+**APP-AUTH-05:** **COMPLETE**
+
+**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
 
 **Verdict:** `APP_AUTH_04_PARITY_FOUNDATION_PASS_COMMITTED`
 
@@ -540,11 +564,11 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_04_parity_contract_test_foundation_v1.md`
 
-**Authority debt:** Gate I1 **PASS**; paritate runtime wiring = APP-AUTH-05
+**Authority debt:** Gate I1 **PASS**; observe-only wiring = APP-AUTH-05 (**COMPLETE**)
 
 **APP-AUTH-04:** **COMPLETE**
 
-**Next:** **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION**
+**Next:** **APP-AUTH-06-PARITY-OBSERVATION-PILOT**
 
 ## APP-AUTH-03 — Plan instrumentare paritate runtime
 

@@ -524,7 +524,34 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION** |
+| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
+
+## APP-AUTH-05 — Parity observe-only dev/test integration
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_05_OBSERVE_ONLY_DEV_TEST_PASS_COMMITTED` |
+| Starting HEAD | `f4a8769` |
+| Gate | **I2 PASS** |
+| Mode | OBSERVE_ONLY |
+| Adapter | `backend/services/parity_observe/` |
+| Consumers connected | 2 (Mobile available, eligibility endpoint) |
+| Sandu | observe helper only; no mutations |
+| Feature flags | 16 default false |
+| Production guard | **PASS** |
+| Source switch | **NO** |
+| DB writes | 0 |
+| Endpoints added | 0 |
+| Frontend changed | 0 |
+| Focused tests | 65 PASS |
+| Regression tests | 119 PASS |
+| Runtime proof | **PASS** (`:8001`) |
+| PROD-ARCH-01 | **BLOCKED** |
+| MOBILE-INT-02 | **BLOCKED** |
+| MODULE-RUNTIME-01 | **DEFERRED** |
+| APP-AUTH-05 | **COMPLETE** |
+| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
 
 ## APP-AUTH-04 — Parity contract and test foundation
 
@@ -552,7 +579,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-INT-02 | **BLOCKED** |
 | MODULE-RUNTIME-01 | **DEFERRED** |
 | APP-AUTH-04 | **COMPLETE** |
-| Next | **APP-AUTH-05-PARITY-OBSERVE-ONLY-DEV-TEST-INTEGRATION** |
+| Next | **APP-AUTH-06-PARITY-OBSERVATION-PILOT** |
 
 ## APP-AUTH-03 — Runtime parity instrumentation plan
 

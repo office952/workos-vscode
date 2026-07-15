@@ -1,0 +1,21 @@
+{
+  "task": "APP-AUTH-05",
+  "parity_package_imports_operational": false,
+  "allowed_adapter_imports": [
+    "backend/services/employee_mobile_tasks_service.py -> services.parity_observe.mobile_available",
+    "backend/routers/operational_registry.py -> services.parity_observe.eligibility_endpoint"
+  ],
+  "operational_surfaces_without_parity_import": [
+    "operator_task_truth_service.py",
+    "execution_task_assignment_service.py",
+    "execution_reality_service.py",
+    "employee_attendance_service.py",
+    "operator_tasks.py",
+    "execution.py",
+    "main.py"
+  ],
+  "frontend_parity_references": 0,
+  "new_endpoints": 0,
+  "new_routers": 0,
+  "verdict": "PASS"
+}

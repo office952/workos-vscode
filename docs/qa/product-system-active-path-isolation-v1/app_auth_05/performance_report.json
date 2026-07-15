@@ -1,0 +1,28 @@
+{
+  "task": "APP-AUTH-05",
+  "scope": "dev_test_only_no_production_sla",
+  "http_probe_base_url": "http://127.0.0.1:8001",
+  "measurements": [
+    {
+      "endpoint": "/api/v1/employee-mobile/tasks/available",
+      "flags_off_latency_ms": 486.05,
+      "flags_on_http_latency_ms": 335.94,
+      "item_count": 7,
+      "verdict": "PASS_dev_test"
+    },
+    {
+      "endpoint": "/api/v1/operational-registry/operation-mappings/print/eligible-employees",
+      "flags_off_latency_ms": 70.02,
+      "flags_on_http_latency_ms": 129.84,
+      "total_employees": 3,
+      "verdict": "PASS_dev_test"
+    },
+    {
+      "mode": "in_process_flags_on",
+      "parity_observation_count": 36,
+      "comparator_isolated": true,
+      "verdict": "PASS_dev_test"
+    }
+  ],
+  "blocked_performance": false
+}
