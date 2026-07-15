@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** APP-AUTH-02B on branch (after OWNER-DECISION-02 @ `b38f6a6`)
+**Accepted HEAD:** OWNER-DECISION-03 on branch (after APP-AUTH-02C @ `6acadc0`)
 
-**Last updated:** 2026-07-15 (APP-AUTH-02C external HTTP gate — **PASS**, APP-AUTH-02B **CLOSED**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-03 authority gate — **0/22 CONFIRMATE**)
 
 
 
@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | None |
+| Active task | **OWNER-DECISION-03** — gate documentat; așteaptă confirmări owner |
 
-| Next task | **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** (PROD-ARCH-01 **BLOCAT**) |
+| Next task | **OWNER_DECISION_REQUIRED** — confirmare explicită A1–A22 (PROD-ARCH-01 **BLOCAT**) |
 
 
 
@@ -488,7 +488,29 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **APP-AUTH-02C:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** — PROD-ARCH-01 **BLOCAT**
+**Next:** **OWNER-DECISION-03** — PROD-ARCH-01 **BLOCAT**
+
+## OWNER-DECISION-03 — Confirmarea autorităților operaționale
+
+**Verdict:** `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED`
+
+**Scope:** Gate decizii autoritate operațională A1–A22 — fără cod, DB, UI, migrări, reconciliere Sandu automată.
+
+**Decizii:** 22 documentate · **0 CONFIRMATE** · 20 AMÂNATE · 2 NECESITA CONFIRMARE UMANA (Sandu, Tablet)
+
+**Hartă autoritate:** identitate angajat, HR, competențe, autorizări, centre, utilaje, readiness, alocare, sesiuni, suprafețe — tabele în worklog.
+
+**Sandu:** fișă confirmare goală; 7 mapping fără competență; 6 fără autorizare; `montaj_led` CRITIC.
+
+**Contract Available:** dovedit APP-AUTH-02B/C; acceptare owner **AMÂNATĂ**.
+
+**Implementare autorizată:** **NO** · **Migrare autorizată:** **NO**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_03_operational_authority_confirmation_v1.md`
+
+**OWNER-DECISION-03:** **COMPLETE** (gate documentat)
+
+**Next:** **OWNER_DECISION_REQUIRED** — apoi **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN** după confirmări — PROD-ARCH-01 **BLOCAT**
 
 ## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
 

@@ -380,11 +380,13 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Scor potrivire / încărcare | `OWNER_DECISION_GATE_DOCUMENTED` — D10/D13 **AMANAT** |
 | Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` — gate D20 **AMANAT** |
 | Realocare inteligentă | `OWNER_DECISION_GATE_DOCUMENTED` — D18/D19 **AMANAT** |
-| Angajați (nivel/atribuție) | `APP_AUTH_01_DEFERRED` — competențe: registry canonic, JSON transitional |
-| Utilaje (capacitate) | `APP_AUTH_01_MACHINES_CANONICAL` — `machines` + resource_kind |
-| Pontaj | `ATTENDANCE_CANONICAL_SEPARATE` — confirmat recomandat |
-| Mobile/Operator/Tablet | `APP_AUTH_01_EXECUTION_SURFACES` — Mobile/Operator canonic; Tablet transitional |
-| Authority debt | `10 duplicate truths` → reconciliere planificată; **0 owner confirmations** on data reconciliation |
+| Angajați (nivel/atribuție) | `OWNER_DECISION_03_DEFERRED` — A1/A3/A4/A5 **AMANAT**; Sandu **NECESITA CONFIRMARE UMANA** |
+| Competențe / autorizări | `OWNER_DECISION_03_DEFERRED` — registry țintă recomandat; 7 Sandu fără competență; 6 fără autorizare; JSON legacy transitional |
+| Utilaje (capacitate) | `OWNER_DECISION_03_DEFERRED` — A10/A11 **AMANAT**; MCH-CNC-4020 identitate OK |
+| Pontaj | `OWNER_DECISION_03_DEFERRED` — A17 **AMANAT**; separat sesiuni (confirmat recomandat) |
+| Mobile/Operator/Tablet/Shop Floor | `OWNER_DECISION_03_DEFERRED` — A16 **AMANAT**; Tablet **NECESITA CONFIRMARE UMANA**; Shop Floor mock silent debt |
+| Authority debt | Hartă A1–A22 documentată; **0/22 CONFIRMATE**; PROD-ARCH-01 **BLOCAT** |
+| Execution surface debt | `/tablet` paralel demo; `/shop-floor` mock fallback; `/operator` mock on API fail — fără disable până la A16/A20 |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -453,7 +455,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **OWNER-DECISION-03-OPERATIONAL-AUTHORITY-CONFIRMATION** |
+| Next | **OWNER-DECISION-03** (closed) |
+
+## OWNER-DECISION-03 — Operational authority confirmation gate
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED` |
+| Starting HEAD | `6acadc0` |
+| Decisions total | 22 |
+| Confirmed | 0 |
+| Deferred | 22 |
+| Sandu | NECESITA CONFIRMARE UMANA |
+| Tablet | NECESITA CONFIRMARE UMANA (A/B/C/D) |
+| Available contract | Dovedit tehnic; acceptare owner AMÂNATĂ |
+| Migration authorized | **NO** |
+| Implementation authorized | **NO** |
+| OWNER-DECISION-03 | **COMPLETE** |
+| Next | **OWNER_DECISION_REQUIRED** → **APP-AUTH-03** — PROD-ARCH-01 **BLOCAT** |
 
 ## APP-AUTH-02C — External HTTP runtime closure
 
@@ -467,7 +487,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | External HTTP | PASS (JWT bearer, order 95084 excluded, log proven) |
 | APP-AUTH-02B | **CLOSED** |
 | APP-AUTH-02C | **COMPLETE** |
-| Next | **OWNER-DECISION-03** |
+| Next | **OWNER-DECISION-03** (closed) |
 
 ## APP-AUTH-02B — Available projection runtime closure
 
