@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `7860daa` (MOBILE-T05B) — MOBILE-T06 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T06 claim and assignment policy — **PASS**)
+**Last updated:** 2026-07-15 (PROD-INT-02 distribuție inteligentă audit — **PASS owner decisions**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
+| Next task | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** (MOBILE-INT-02 **BLOCAT**) |
 
 
 
@@ -416,7 +416,25 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T06:** **COMPLETE**
 
-**Next:** **MOBILE-INT-02-POST-IMPLEMENTATION-GATE**
+**Next:** **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** — **BLOCAT** (așteaptă PROD-INT-02 owner + model colaborativ)
+
+## PROD-INT-02 — Eligibilitate, distribuire inteligentă, alocare automată (audit)
+
+**Verdict:** `PROD_ROUTING_AUDIT_PASS_READY_FOR_OWNER_DECISIONS`
+
+**Scope:** Audit logic exclusiv — fără cod, DB, UI, migrări.
+
+**Concluzii:** Motor distribuție inteligentă **lipsă**; fundații PARTIAL (registru competențe, readiness, MOBILE-T06 individual). 22 decizii owner obligatorii.
+
+**MOBILE-T06:** `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` — nu politică universală.
+
+**MOBILE-INT-02:** **BLOCAT**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_prod_int_02_eligibilitate_distribuire_inteligenta_alocare_automata_v1.md`
+
+**PROD-INT-02:** **COMPLETE** (audit)
+
+**Next:** **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1**
 
 ## MOBILE-T04 — Canonical start action wiring
 

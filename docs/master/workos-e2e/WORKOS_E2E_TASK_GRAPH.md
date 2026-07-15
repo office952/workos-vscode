@@ -372,14 +372,21 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | List IA | Sarcinile mele / În lucru / Disponibile / Finalizate |
 | Identity | Root, mounting, logo friendly labels from backend |
 | Readiness / production | Backend fields rendered; no frontend authority |
-| Claim | `CLAIM_ONLY_CANONICAL_KEEP_SECONDARY` (T06) |
+| Claim (T06) | `CLAIM_ONLY_CANONICAL_KEEP_SECONDARY` — doar execuție individuală |
+| MOBILE-T06 policy scope | `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` |
+| MOBILE-INT-02 | **BLOCAT** — post owner distribuție |
+| Distribuție inteligentă | PROD-INT-02 audit PASS; motor **NEIMPLEMENTAT** |
+| Mod colaborativ / lot / echipă | `MOBILE_FUTURE_ENHANCEMENT` |
+| Scor potrivire / încărcare | `OWNER_DECISION_REQUIRED` |
+| Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` |
+| Realocare inteligentă | `OWNER_DECISION_REQUIRED` |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
 | Screenshots | 12 @ 390×844 |
 | T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
 | MOBILE-T02 | **COMPLETE** |
-| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
+| Next | **MOBILE-T03** (closed) |
 
 ## MOBILE-T05 — In-progress session and complete
 
@@ -403,7 +410,23 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Session ID | `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY` |
 | T05B tests | 6 concurrency + 49 mobile backend regression |
 | Live probe | order `92350` @ :8001 |
-| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
+| Next | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** |
+
+## PROD-INT-02 — Distribuție inteligentă (audit)
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `PROD_ROUTING_AUDIT_PASS_READY_FOR_OWNER_DECISIONS` |
+| Scope | Audit logic — fără implementare |
+| MOBILE-T06 | `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` |
+| MOBILE-INT-02 | **BLOCAT** |
+| Eligibilitate | PARTIAL |
+| Încărcare / scor / realocare | INSUFICIENT |
+| ExecutionReality | PARTIAL_PENTRU_DISTRIBUIRE_INTELIGENTA |
+| Owner decisions | 22 |
+| PROD-INT-02 | **COMPLETE** |
+| Next | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** |
 
 ## MOBILE-T06 — Claim and assignment policy
 
@@ -421,8 +444,10 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Tests | 47 backend + 12 frontend |
 | Live probe | order `92400` @ :8001 |
 | Screenshots | 10 @ 390×844 |
+| Scope | `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` |
 | MOBILE-T06 | **COMPLETE** |
-| Next | **MOBILE-INT-02-POST-IMPLEMENTATION-GATE** |
+| MOBILE-INT-02 | **BLOCAT** |
+| Next | **PROD-INT-02** (closed) → **OWNER_DECISION_GATE** |
 
 ## MOBILE-T05B — Complete concurrency and event integrity
 
