@@ -376,10 +376,13 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | MOBILE-T06 policy scope | `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` |
 | MOBILE-INT-02 | **BLOCAT** — post owner distribuție |
 | Distribuție inteligentă | PROD-INT-02 audit PASS; motor **NEIMPLEMENTAT** |
-| Mod colaborativ / lot / echipă | `MOBILE_FUTURE_ENHANCEMENT` |
-| Scor potrivire / încărcare | `OWNER_DECISION_REQUIRED` |
-| Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` |
-| Realocare inteligentă | `OWNER_DECISION_REQUIRED` |
+| Mod colaborativ / lot / echipă | `MOBILE_FUTURE_ENHANCEMENT` — gate D1/D21 **AMANAT** |
+| Scor potrivire / încărcare | `OWNER_DECISION_GATE_DOCUMENTED` — D10/D13 **AMANAT** |
+| Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` — gate D20 **AMANAT** |
+| Realocare inteligentă | `OWNER_DECISION_GATE_DOCUMENTED` — D18/D19 **AMANAT** |
+| Angajați (nivel/atribuție) | `OWNER_DECISION_GATE_DOCUMENTED` — D3–D5 **AMANAT** |
+| Utilaje (capacitate) | `OWNER_DECISION_GATE_DOCUMENTED` + **NECESITA DATE** — D12 |
+| ExecutionReality colaborativ | `PARTIAL` — sesiuni există; contribuții/loturi gate D21/D23 **AMANAT** |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -410,7 +413,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Session ID | `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY` |
 | T05B tests | 6 concurrency + 49 mobile backend regression |
 | Live probe | order `92350` @ :8001 |
-| Next | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** |
+| Next | **OWNER-DECISION-01** (closed) |
 
 ## PROD-INT-02 — Distribuție inteligentă (audit)
 
@@ -426,7 +429,29 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | ExecutionReality | PARTIAL_PENTRU_DISTRIBUIRE_INTELIGENTA |
 | Owner decisions | 22 |
 | PROD-INT-02 | **COMPLETE** |
-| Next | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** |
+| Next | **OWNER-DECISION-01** (closed) |
+
+## OWNER-DECISION-01 — Gate decizii owner distribuire inteligentă
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `OWNER_DECISIONS_PARTIAL_REMAIN_BLOCKED` |
+| Audit bază | PROD-INT-02 @ `746ab23` |
+| Decizii totale | 24 |
+| Confirmate | 0 |
+| Amanate | 20 |
+| Necesită date | 4 (D9, D12, D14, D15) |
+| Implementare autorizată | **NO** |
+| MOBILE-T04 | `VALID_INDIVIDUAL` |
+| MOBILE-T05 | `VALID_INDIVIDUAL` / colaborativ `NECESITA_REMODELARE` |
+| MOBILE-T06 | `VALID_INDIVIDUAL` — nu motor universal |
+| MOBILE-INT-02 | **BLOCAT** |
+| Moduri de lucru | AMANAT (5 propuse) |
+| Eligibilitate / disponibilitate / încărcare | AMANAT |
+| Alocare automată / realocare / ajutor | AMANAT |
+| OWNER-DECISION-01 | **COMPLETE** |
+| Next | **PROD-ARCH-01** — **BLOCAT** (confirmare owner) |
 
 ## MOBILE-T06 — Claim and assignment policy
 
@@ -447,7 +472,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Scope | `MOBILE_T06_COMPATIBIL_NUMAI_CU_EXECUTIE_INDIVIDUALA` |
 | MOBILE-T06 | **COMPLETE** |
 | MOBILE-INT-02 | **BLOCAT** |
-| Next | **PROD-INT-02** (closed) → **OWNER_DECISION_GATE** |
+| Next | **PROD-INT-02** (closed) → **OWNER-DECISION-01** (closed) |
 
 ## MOBILE-T05B — Complete concurrency and event integrity
 

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `7860daa` (MOBILE-T05B) — MOBILE-T06 implementation committed on branch
+**Accepted HEAD:** `746ab23` (PROD-INT-02) — OWNER-DECISION-01 gate docs on branch
 
-**Last updated:** 2026-07-15 (PROD-INT-02 distribuție inteligentă audit — **PASS owner decisions**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-01 gate — **PARTIAL, 0 CONFIRMAT**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1** (MOBILE-INT-02 **BLOCAT**) |
+| Next task | **PROD-ARCH-01** — **BLOCAT** (așteaptă confirmare owner 24 decizii; MOBILE-INT-02 **BLOCAT**) |
 
 
 
@@ -434,7 +434,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **PROD-INT-02:** **COMPLETE** (audit)
 
-**Next:** **OWNER_DECISION_GATE_DISTRIBUIRE_INTELIGENTA_V1**
+**Next:** **OWNER-DECISION-01** (closed) → confirmare owner
+
+## OWNER-DECISION-01 — Gate distribuire inteligentă și participare operațională
+
+**Verdict:** `OWNER_DECISIONS_PARTIAL_REMAIN_BLOCKED`
+
+**Scope:** Gate decizii owner exclusiv — fără cod, DB, UI, migrări, endpointuri.
+
+**Decizii totale:** 24 (22 audit + închidere operație + MOBILE-T04/T05/T06)
+
+**Confirmate:** 0 · **Amanate:** 20 · **Necesită date:** 4 · **Respinse:** 0
+
+**Implementare autorizată:** **NO**
+
+**MOBILE-T04:** `VALID_INDIVIDUAL` — acțiuni colaborative **FUTURE**
+
+**MOBILE-T05:** `VALID_INDIVIDUAL` — Complete colaborativ **NECESITA_REMODELARE**
+
+**MOBILE-T06:** `VALID_INDIVIDUAL` — nu motor universal colaborativ
+
+**MOBILE-INT-02:** **BLOCAT**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_01_distribuire_inteligenta_participare_operationala_v1.md`
+
+**OWNER-DECISION-01:** **COMPLETE** (gate documentat)
+
+**Next:** **PROD-ARCH-01_CANONICAL_WORKFORCE_ROUTING_AND_COLLABORATIVE_EXECUTION_CONTRACT** — **BLOCAT** până la confirmare owner
 
 ## MOBILE-T04 — Canonical start action wiring
 
