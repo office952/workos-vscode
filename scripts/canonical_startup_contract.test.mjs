@@ -144,10 +144,93 @@ test('scenario A backend absent classification exists', () => {
   assert.match(freshness, /RecommendedAction = "start"/);
 });
 
-test('scenario B current canonical backend reuse classification exists', () => {
+test('scenario B reuse requires proven same_worktree ownership', () => {
   const freshness = read(FRESHNESS_PATH);
   assert.match(freshness, /current_and_ready/);
   assert.match(freshness, /RecommendedAction = "reuse"/);
+  assert.match(freshness, /\$ownerships\s+-contains\s+"same_worktree"/);
+  assert.match(freshness, /proven same-worktree ownership/);
+  assert.doesNotMatch(freshness, /Backend fresh: health OK and canonical OpenAPI routes present/);
+  assert.doesNotMatch(freshness, /WorkOS uvicorn tree/);
+});
+
+test('04B scenario 1 ambiguous all-uvicorn with valid routes blocks reuse', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /ambiguous_process_tree/);
+  assert.match(freshness, /RecommendedAction = "block"/);
+  assert.match(freshness, /spawn_worker_missing_worktree_proof/);
+  assert.match(freshness, /uvicorn_reloader_missing_worktree_proof/);
+  assert.doesNotMatch(freshness, /allUvicornAmbiguous/);
+  assert.doesNotMatch(
+    freshness,
+    /\$ownerships\s+-contains\s+"ambiguous"[\s\S]{0,1200}Ready = \$true/s,
+  );
+});
+
+test('04B scenario 2 ambiguous ownership never triggers controlled stop', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /if\s*\(\$ownerships\s+-contains\s+"ambiguous"\)/);
+  assert.match(freshness, /canonical_routes_missing[\s\S]*if\s*\(\$ownerships\s+-contains\s+"same_worktree"\)/);
+  assert.match(freshness, /health_failed[\s\S]*\$canStopStale = \(\$ownerships\s+-contains\s+"same_worktree"\)/);
+});
+
+test('04B scenario 3 proven same-worktree with valid routes reuses', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /if\s*\(\$ownerships\s+-contains\s+"same_worktree"\)[\s\S]*Ready = \$true/s);
+});
+
+test('04B scenario 4 proven same-worktree with missing routes controlled stop', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /canonical_routes_missing/);
+  assert.match(freshness, /if\s*\(\$ownerships\s+-contains\s+"same_worktree"\)[\s\S]*controlled_stop/s);
+});
+
+test('04B scenario 5 other worktree with valid routes blocks without stop', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /other_worktree/);
+  assert.match(freshness, /RecommendedAction = "block"/);
+  assert.doesNotMatch(freshness, /other_worktree[\s\S]{0,200}Ready = \$true/s);
+});
+
+test('04B scenario 6 foreign process with valid routes blocks without stop', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /if\s*\(\$ownerships\s+-contains\s+"foreign_process"\)/);
+  assert.match(freshness, /Classification = "foreign_process"/);
+  assert.match(freshness, /RecommendedAction = "block"/);
+  assert.match(freshness, /Foreign process detected on port \$Port/);
+  assert.doesNotMatch(
+    freshness,
+    /if\s*\(\$ownerships\s+-contains\s+"foreign_process"\)[\s\S]{0,300}Test-WorkOsBackendHttpHealth/s,
+  );
+});
+
+test('04B scenario 7 ghost worker controlled stop only for same-worktree nodes', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /Get-WorkOsOrphanSpawnWorkersForGhostParent/);
+  assert.match(freshness, /\$node\.Ownership -eq 'same_worktree'/);
+  assert.doesNotMatch(freshness, /Ownership -eq 'same_worktree' -or \$node\.Role -in @\('uvicorn_reloader', 'uvicorn_spawn_worker'\)/);
+});
+
+test('04B scenario 8 ghost worker without proof blocks not stops', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /Unable to prove process ownership for all listeners/);
+  assert.match(freshness, /Health and OpenAPI passed but same-worktree ownership is not proven/);
+});
+
+test('04B parent lineage proves canonical venv startup without ambiguous reuse', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.match(freshness, /Test-WorkOsBackendProcessParentLineageProof/);
+  assert.match(freshness, /parent_lineage_project_venv/);
+  assert.match(freshness, /Test-WorkOsBackendCommandLineReferencesProjectVenv/);
+});
+
+test('04B OpenAPI freshness does not override ambiguous ownership', () => {
+  const freshness = read(FRESHNESS_PATH);
+  assert.doesNotMatch(freshness, /onlyWorkOsUvicornTree/);
+  assert.doesNotMatch(
+    freshness,
+    /Test-WorkOsBackendOpenApiRoutes[\s\S]{0,2000}Ready = \$true[\s\S]{0,200}\$ownerships\s+-notcontains\s+"same_worktree"/s,
+  );
 });
 
 test('scenario C stale but healthy routes missing triggers controlled stop', () => {

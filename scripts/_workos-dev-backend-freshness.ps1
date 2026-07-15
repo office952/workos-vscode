@@ -148,6 +148,80 @@ function Test-WorkOsPathUnderProjectRoot {
     return $candidateNorm.ToLowerInvariant().StartsWith($rootPrefix)
 }
 
+function Test-WorkOsBackendCommandLineReferencesProjectVenv {
+    param(
+        [string] $CommandLine,
+        [string] $ProjectRoot
+    )
+    if ([string]::IsNullOrWhiteSpace($CommandLine)) { return $false }
+    $backendDirNorm = ((Join-Path $ProjectRoot "backend") -replace '\\', '/').ToLowerInvariant()
+    $cmdNorm = ($CommandLine -replace '\\', '/').ToLowerInvariant()
+    return $cmdNorm.Contains("$backendDirNorm/.venv/scripts/python.exe")
+}
+
+function Test-WorkOsBackendProcessParentLineageProof {
+    param(
+        [int] $ProcessId,
+        [string] $ProjectRoot,
+        [int] $MaxDepth = 10
+    )
+
+    $rootNorm = ($ProjectRoot -replace '\\', '/').ToLowerInvariant()
+    $current = $ProcessId
+    for ($depth = 0; $depth -lt $MaxDepth; $depth++) {
+        $proc = Get-CimInstance Win32_Process -Filter "ProcessId=$current" -ErrorAction SilentlyContinue
+        if (-not $proc) { return $false }
+        $parentId = [int]$proc.ParentProcessId
+        if ($parentId -le 0 -or $parentId -eq $current) { return $false }
+        $parentProc = Get-CimInstance Win32_Process -Filter "ProcessId=$parentId" -ErrorAction SilentlyContinue
+        if (-not $parentProc) { return $false }
+        $parentCmd = [string]$parentProc.CommandLine
+        if (Test-WorkOsBackendCommandLineReferencesProjectVenv -CommandLine $parentCmd -ProjectRoot $ProjectRoot) {
+            return $true
+        }
+        if (-not [string]::IsNullOrWhiteSpace($parentCmd)) {
+            $parentCmdNorm = ($parentCmd -replace '\\', '/').ToLowerInvariant()
+            if ($parentCmdNorm.Contains($rootNorm) -and (
+                $parentCmdNorm -match 'dev-backend\.ps1' -or
+                $parentCmdNorm -match 'start-dev\.ps1' -or
+                $parentCmdNorm -match 'scripts/dev\.ps1'
+            )) {
+                return $true
+            }
+        }
+        $current = $parentId
+    }
+    return $false
+}
+
+function Get-WorkOsSpawnWorkerParentProcessIdFromCommandLine {
+    param([string] $CommandLine)
+    if (-not $CommandLine) { return $null }
+    if ($CommandLine -match 'spawn_main\(parent_pid=(\d+)') {
+        return [int]$Matches[1]
+    }
+    return $null
+}
+
+function Resolve-WorkOsBackendSpawnWorkerOwnershipFromParent {
+    param(
+        [object] $Node,
+        [object[]] $ProcessNodes
+    )
+    if ($Node.Ownership -ne 'ambiguous' -or $Node.Role -ne 'uvicorn_spawn_worker') {
+        return $Node
+    }
+    $parentPid = Get-WorkOsSpawnWorkerParentProcessIdFromCommandLine -CommandLine $Node.CommandLine
+    if (-not $parentPid) { return $Node }
+    $parentNode = @($ProcessNodes | Where-Object { $_.ProcessId -eq $parentPid })[0]
+    if ($parentNode -and $parentNode.Ownership -eq 'same_worktree') {
+        $Node.Ownership = 'same_worktree'
+        $Node.WorktreePath = $parentNode.WorktreePath
+        $Node.Evidence += 'spawn_worker_inherits_proven_parent'
+    }
+    return $Node
+}
+
 function Get-WorkOsSpawnChildProcesses {
     param([int] $ParentProcessId)
 
@@ -246,6 +320,11 @@ function Get-WorkOsBackendProcessOwnership {
         }
         $result.Ownership = "ambiguous"
         $result.Evidence += "spawn_worker_missing_worktree_proof"
+        if (Test-WorkOsBackendProcessParentLineageProof -ProcessId $ProcessId -ProjectRoot $ProjectRoot) {
+            $result.Ownership = "same_worktree"
+            $result.WorktreePath = $ProjectRoot
+            $result.Evidence += "parent_lineage_project_venv"
+        }
         return $result
     }
 
@@ -280,6 +359,17 @@ function Get-WorkOsBackendProcessOwnership {
         }
         $result.Ownership = "ambiguous"
         $result.Evidence += "uvicorn_reloader_missing_worktree_proof"
+        if (Test-WorkOsBackendCommandLineReferencesProjectVenv -CommandLine $cmd -ProjectRoot $ProjectRoot) {
+            $result.Ownership = "same_worktree"
+            $result.WorktreePath = $ProjectRoot
+            $result.Evidence += "reloader_command_line_project_venv"
+            return $result
+        }
+        if (Test-WorkOsBackendProcessParentLineageProof -ProcessId $ProcessId -ProjectRoot $ProjectRoot) {
+            $result.Ownership = "same_worktree"
+            $result.WorktreePath = $ProjectRoot
+            $result.Evidence += "parent_lineage_project_venv"
+        }
         return $result
     }
 
@@ -336,6 +426,10 @@ function Get-WorkOsBackendProcessTreeSnapshot {
                 }
             }
         }
+    }
+
+    for ($i = 0; $i -lt $processNodes.Count; $i++) {
+        $processNodes[$i] = Resolve-WorkOsBackendSpawnWorkerOwnershipFromParent -Node $processNodes[$i] -ProcessNodes $processNodes
     }
 
     return [PSCustomObject]@{
@@ -492,18 +586,10 @@ function Get-WorkOsBackendFreshnessClassification {
     }
 
     if ($ownerships -contains "ambiguous") {
-        $allUvicornAmbiguous = @(
-            $tree.ProcessNodes | Where-Object {
-                $cmd = $_.CommandLine
-                $null -ne $cmd -and ($cmd -match "uvicorn" -or $cmd -match "spawn_main")
-            }
-        )
-        if ($allUvicornAmbiguous.Count -ne $tree.ProcessNodes.Count) {
-            $evaluation.Classification = "ambiguous_process_tree"
-            $evaluation.RecommendedAction = "block"
-            $evaluation.Diagnostics += "Unable to prove process ownership for all listeners"
-            return $evaluation
-        }
+        $evaluation.Classification = "ambiguous_process_tree"
+        $evaluation.RecommendedAction = "block"
+        $evaluation.Diagnostics += "Unable to prove process ownership for all listeners"
+        return $evaluation
     }
 
     $distinctSameWorktreeRoots = @(
@@ -551,13 +637,7 @@ function Get-WorkOsBackendFreshnessClassification {
     $evaluation.Health = $health
     if (-not $health.Ok) {
         $evaluation.Classification = "health_failed"
-        $canStopStale = (
-            ($ownerships -contains "same_worktree") -or
-            (@($tree.ProcessNodes | Where-Object {
-                $_.Role -in @('uvicorn_reloader', 'uvicorn_spawn_worker') -and
-                $_.Ownership -notin @('foreign_process', 'other_worktree')
-            }).Count -gt 0)
-        )
+        $canStopStale = ($ownerships -contains "same_worktree")
         $evaluation.RecommendedAction = if ($canStopStale) { "controlled_stop" } else { "block" }
         $evaluation.Diagnostics += "Health probe failed: $($health.Error)"
         if ($evaluation.RecommendedAction -eq "controlled_stop") {
@@ -579,33 +659,27 @@ function Get-WorkOsBackendFreshnessClassification {
 
     if (-not $openapi.Ok) {
         $evaluation.Classification = "canonical_routes_missing"
-        $evaluation.RecommendedAction = "controlled_stop"
+        if ($ownerships -contains "same_worktree") {
+            $evaluation.RecommendedAction = "controlled_stop"
+            $evaluation.StopProcessIds = @(Get-WorkOsBackendStopTargetProcessIds -Tree $tree)
+        } else {
+            $evaluation.RecommendedAction = "block"
+        }
         $evaluation.Diagnostics += $openapi.Message
-        $evaluation.StopProcessIds = @(Get-WorkOsBackendStopTargetProcessIds -Tree $tree)
         return $evaluation
     }
 
-    $onlyWorkOsUvicornTree = (
-        ($tree.ProcessNodes.Count -gt 0) -and
-        (@($tree.ProcessNodes | Where-Object {
-            $_.Role -notin @('uvicorn_reloader', 'uvicorn_spawn_worker')
-        }).Count -eq 0)
-    )
-    $hasProvenOtherWorktree = (@($tree.ProcessNodes | Where-Object { $_.Ownership -eq 'other_worktree' }).Count -gt 0)
-    $hasProvenForeign = (@($tree.ProcessNodes | Where-Object { $_.Ownership -eq 'foreign_process' }).Count -gt 0)
-
-    if ($onlyWorkOsUvicornTree -and -not $hasProvenOtherWorktree -and -not $hasProvenForeign) {
+    if ($ownerships -contains "same_worktree") {
         $evaluation.Classification = "current_and_ready"
         $evaluation.RecommendedAction = "reuse"
         $evaluation.Ready = $true
-        $evaluation.Diagnostics += "Backend fresh: health OK, canonical OpenAPI routes present, WorkOS uvicorn tree"
+        $evaluation.Diagnostics += "Backend fresh: health OK, canonical OpenAPI routes present, proven same-worktree ownership"
         return $evaluation
     }
 
-    $evaluation.Classification = "current_and_ready"
-    $evaluation.RecommendedAction = "reuse"
-    $evaluation.Ready = $true
-    $evaluation.Diagnostics += "Backend fresh: health OK and canonical OpenAPI routes present"
+    $evaluation.Classification = "ambiguous_process_tree"
+    $evaluation.RecommendedAction = "block"
+    $evaluation.Diagnostics += "Health and OpenAPI passed but same-worktree ownership is not proven"
     return $evaluation
 }
 
@@ -616,25 +690,34 @@ function Get-WorkOsBackendStopTargetProcessIds {
     foreach ($node in $Tree.ProcessNodes) {
         if (-not $node.Alive) { continue }
         if ($node.Ownership -eq 'foreign_process' -or $node.Ownership -eq 'other_worktree') { continue }
-        if ($node.Ownership -eq 'same_worktree' -or $node.Role -in @('uvicorn_reloader', 'uvicorn_spawn_worker')) {
+        if ($node.Ownership -eq 'same_worktree') {
             [void]$targets.Add([int]$node.ProcessId)
         }
     }
     foreach ($ghost in $Tree.GhostParents) {
         foreach ($worker in $ghost.OrphanWorkers) {
-            if ($worker.ProcessId -gt 0) {
+            $node = @($Tree.ProcessNodes | Where-Object { $_.ProcessId -eq $worker.ProcessId })[0]
+            if ($node -and $node.Ownership -eq 'same_worktree' -and $node.Alive) {
                 [void]$targets.Add([int]$worker.ProcessId)
             }
         }
-        if ($ghost.GhostParentProcessId -gt 0 -and (Get-Process -Id $ghost.GhostParentProcessId -ErrorAction SilentlyContinue)) {
-            [void]$targets.Add([int]$ghost.GhostParentProcessId)
+        if ($ghost.GhostParentProcessId -gt 0) {
+            $parentNode = @($Tree.ProcessNodes | Where-Object { $_.ProcessId -eq $ghost.GhostParentProcessId })[0]
+            if ($parentNode -and $parentNode.Ownership -eq 'same_worktree' -and $parentNode.Alive) {
+                [void]$targets.Add([int]$ghost.GhostParentProcessId)
+            }
         }
     }
     foreach ($listener in $Tree.Listeners) {
-        if ($listener.ProcessAlive) {
+        if (-not $listener.ProcessAlive) { continue }
+        $listenerNode = @($Tree.ProcessNodes | Where-Object { $_.ProcessId -eq $listener.OwningProcess })[0]
+        if ($listenerNode -and $listenerNode.Ownership -eq 'same_worktree') {
             [void]$targets.Add([int]$listener.OwningProcess)
             foreach ($child in @(Get-WorkOsSpawnChildProcesses -ParentProcessId ([int]$listener.OwningProcess))) {
-                [void]$targets.Add([int]$child.ProcessId)
+                $childNode = @($Tree.ProcessNodes | Where-Object { $_.ProcessId -eq $child.ProcessId })[0]
+                if ($childNode -and $childNode.Ownership -eq 'same_worktree') {
+                    [void]$targets.Add([int]$child.ProcessId)
+                }
             }
         }
     }

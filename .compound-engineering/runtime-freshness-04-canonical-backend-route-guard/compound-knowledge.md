@@ -1,4 +1,31 @@
-# RUNTIME-FRESHNESS-04A — Canonical backend freshness guard (compound knowledge)
+# RUNTIME-FRESHNESS-04 — Canonical backend freshness guard (compound knowledge)
+
+## 04B correction (ambiguous fail-closed)
+
+**Owner review:** 04A `APPROVE_WITH_EXPLICIT_LIMITATION` — ambiguous all-uvicorn trees could reuse when health + OpenAPI passed.
+
+**04B rule:** OpenAPI freshness ≠ process ownership. Decision matrix:
+
+| Ownership | Freshness | Action |
+|-----------|-----------|--------|
+| `same_worktree` | fresh | reuse |
+| `same_worktree` | stale routes | controlled_stop |
+| `other_worktree` | any | BLOCK, no stop |
+| `foreign_process` | any | BLOCK, no stop |
+| `ambiguous` | any | BLOCK, no stop, no reuse |
+
+Removed: `allUvicornAmbiguous` bypass, `onlyWorkOsUvicornTree` reuse, health-only fallback reuse.
+
+## Parent-lineage proof (Windows uvicorn reload)
+
+- Reload listener PID often shows **system-python** executable; venv proof is on **parent chain**.
+- `Test-WorkOsBackendProcessParentLineageProof` walks ancestors for:
+  - `backend/.venv/Scripts/python.exe` under `ProjectRoot` in parent cmdline, or
+  - `dev-backend.ps1` / `start-dev.ps1` / `dev.ps1` under `ProjectRoot`.
+- Evidence tag: `parent_lineage_project_venv`.
+- Spawn workers inherit proven parent via `spawn_worker_inherits_proven_parent`.
+
+**Limitation:** Lineage trusts canonical launcher ancestry under `ProjectRoot`; listener executable alone is insufficient on Windows reload.
 
 ## Original ghost-worker root cause (FLEX-01B)
 
@@ -39,10 +66,10 @@ Health-only readiness is **rejected**. Missing manifest routes fail closed (or t
 | `canonical_routes_missing` / stale same-worktree | `controlled_stop` → start |
 | `other_worktree` | block, no stop |
 | `foreign_process` | block, no stop |
-| `ambiguous_process_tree` (non-uvicorn or mixed) | block, no stop |
+| `ambiguous_process_tree` | block, no stop, no reuse |
 | `multiple_listeners` (unresolved mixed ownership) | block, no stop |
 
-**Same-worktree proof:** venv path under project root, `uvicorn main:app` on expected port, parent/child spawn tree. Spawn workers may be `ambiguous` when cmdline lacks root; full uvicorn-only tree without foreign/other-worktree proof may reuse (see limitation).
+**Same-worktree proof:** venv executable path under project root, venv path in parent cmdline (lineage), or canonical launcher script under `ProjectRoot`. Reuse requires `$ownerships -contains "same_worktree"`.
 
 **Never:** kill-all, foreign kill, other-worktree kill.
 
@@ -72,16 +99,20 @@ No infinite restart loop.
 
 ## Known limitations
 
-- **System-python uvicorn:** When interpreter is global Python (not `.venv` under project root) but tree is exclusively uvicorn reloader/worker and routes+health pass, guard classifies `current_and_ready` / reuse. Worktree path is not cryptographically proven; mitigated by OpenAPI route freshness and foreign/other-worktree blockers.
-- Runtime proof is on canonical worktree only; foreign/other-worktree scenarios exercised via contract tests, not live hostile processes.
+- **Parent-lineage on Windows reload:** Listener may show global `python.exe`; proof is via ancestor venv/launcher cmdline under `ProjectRoot`, not listener `Get-Process.Path` alone.
+- Runtime proof is on canonical worktree only; foreign/other-worktree/ambiguous scenarios exercised via contract tests.
 
-## Files changed (04A)
+## Files changed (04A + 04B)
 
-- `scripts/_workos-dev-backend-freshness.ps1` (new)
-- `scripts/workos-canonical-openapi-paths.json` (new)
-- `scripts/_workos-dev-contract.ps1`
-- `scripts/start-dev.ps1`
+- `scripts/_workos-dev-backend-freshness.ps1`
+- `scripts/workos-canonical-openapi-paths.json` (04A only)
+- `scripts/_workos-dev-contract.ps1` (04A only)
+- `scripts/start-dev.ps1` (04A only)
 - `scripts/canonical_startup_contract.test.mjs`
+
+## Accepted HEAD
+
+`c2ceaf9` (04A); 04B commit follows.
 
 ## Test commands
 
@@ -93,10 +124,4 @@ cd backend; .\.venv\Scripts\python.exe -m pytest tests/test_task_work_sessions.p
 
 ## Forbidden scope
 
-- No backend application code, routers, schemas, services
-- No frontend, DB, migrations, seeds, Product System, snapshots, FLEX-02
-- No fingerprint endpoint, no generic kill-all
-
-## Accepted HEAD
-
-`3535378` (plan ready); implementation commit follows on `feature/product-system-active-path-isolation-v1`.
+- No backend application code; no DB/migrations; no FLEX-02; no fingerprint endpoint; no kill-all
