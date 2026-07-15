@@ -26,6 +26,7 @@ from schemas.execution_task_collaboration_read import (
     WorkerSessionRead,
 )
 from services.execution_plan_task_parser import operational_tasks_only
+from services.execution_task_membership_service import list_order_memberships_by_task
 from services.material_procurement_status_service import split_reality_task_entries
 from services.order_production_blueprint_service import blueprint_status_bucket
 from services.task_work_session_service import (
@@ -42,9 +43,10 @@ from services.task_work_session_service import (
 READ_MODEL_NOTES = [
     "optional_principal is assigned_employee_id compatibility — not participation proof",
     "actual_workers are derived only from existing sessions with employee_id",
+    "helper_memberships are HELPER authorization rows — not work proof",
     "operation_completed uses explicit per-session completion signals only",
     "legacy_or_derived_task_status may show done while operation_completed is false",
-    "no invite-before-start, help lifecycle, or quantity progress in FLEX-01",
+    "no invite-before-start, help lifecycle, or quantity progress in Phase 1",
 ]
 
 
@@ -178,9 +180,17 @@ def project_task_collaboration_read(
     plan_task: dict[str, Any],
     sessions: list[dict[str, Any]],
     employee_names: dict[int, str] | None = None,
+    helper_memberships: list[Any] | None = None,
 ) -> TaskCollaborationRead:
-    """Pure read projection for one operational task (Option B)."""
+    """Pure read projection for one operational task (Option B + Phase 1 membership)."""
     names = employee_names or {}
+    memberships = list(helper_memberships or [])
+    authorized_helper_count = sum(
+        1
+        for m in memberships
+        if getattr(m, "status", None) == "active"
+        or (isinstance(m, dict) and m.get("status") == "active")
+    )
     assigned_employee_id = _normalize_employee_id(plan_task.get("assigned_employee_id"))
     principal_source = _resolve_principal_source(plan_task.get("assignment_source"))
 
@@ -287,6 +297,8 @@ def project_task_collaboration_read(
         derived_session_status=derived_status,
         collaboration_capability="BACKEND_MULTI_SESSION_CAPABLE",
         ui_collaboration_capability="CURRENTLY_INDIVIDUAL_UI",
+        helper_memberships=memberships,
+        authorized_helper_count=authorized_helper_count,
     )
 
 
@@ -324,6 +336,8 @@ async def build_order_task_collaboration_read(
             if key:
                 reality_sessions_by_task.setdefault(key, []).append(entry)
 
+    memberships_by_task = await list_order_memberships_by_task(db, order_id)
+
     projections: list[TaskCollaborationRead] = []
     for plan_task in operational_tasks_only(plan.tasks_json):
         if not isinstance(plan_task, dict):
@@ -338,6 +352,7 @@ async def build_order_task_collaboration_read(
                 plan_task=plan_task,
                 sessions=task_sessions,
                 employee_names=employee_names,
+                helper_memberships=memberships_by_task.get(task_id, []),
             )
         )
 

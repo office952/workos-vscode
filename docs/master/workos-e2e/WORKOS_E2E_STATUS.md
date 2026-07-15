@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 — corrected participant persistence sign-off)
+**Accepted HEAD:** pending Phase 1 implementation commits
 
-**Last updated:** 2026-07-15 (PROD-FLEX-COLLABORATION-PHASE-1 plan **READY FOR OWNER REVIEW**; implementation **BLOCKED**)
+**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-1 **IMPLEMENTATION COMPLETE**; help/pools/UI still deferred)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-1** — implementation plan (**READY FOR OWNER REVIEW**) |
+| Active task | **PROD-FLEX-COLLABORATION-PHASE-1** — membership foundation (**COMPLETE**) |
 
-| Next task | **Owner review Phase 1 GO** (`decision-log.md` G1–G12); implementation **BLOCKED** until signed |
+| Next task | **Phase 2** (help + pools + helper session verbs) — not authorized; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1275,19 +1275,19 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 ## PROD-FLEX-COLLABORATION-PHASE-1 — Implementation plan
 
-**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_1_PLAN_READY`
+**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_1_COMPLETE`
 
-**Status:** **PHASE-1 PLAN READY FOR OWNER REVIEW** — not implementation started
+**Status:** **COMPLETE** (2026-07-16) — HELPER membership foundation shipped
 
-**Recommended Phase 1:** Collaboration Membership Foundation — `execution_task_participants` + join/leave API + read v1.1 + tests + runtime proof
+**Delivered:** `execution_task_participants` + join/leave API + collaboration read v1.1 + tests + runtime on order 23099
 
 **Deferred:** Help table, split pools, helper session start, UI/Mobile (Phases 2–3)
 
-**Implementation / migration / writes:** **NOT AUTHORIZED** until owner G1–G4 sign-off
+**Still forbidden without new GO:** help persistence, pool/`_has_active_session_by_other` changes, session/assignment/claim behavior changes, UI, Mobile UX
 
 **Plan:** `.compound-engineering/prod-flex-collaboration-phase-1/plan.md`
 
-**Decision log:** `.compound-engineering/prod-flex-collaboration-phase-1/decision-log.md`
+**Implementation worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_1_implementation.md`
 
-**Worklog:** `docs/worklog/realignment/2026-07-15_prod_flex_collaboration_phase_1_plan.md`
+**BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md`
 

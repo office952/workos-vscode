@@ -6,6 +6,10 @@
     "/api/v1/operator/orders/{order_id}/task-truth",
     "/api/v1/operator/tasks",
     "/api/v1/execution/plan/{order_id}",
-    "/api/v1/intake-v6/workspaces"
+    "/api/v1/intake-v6/workspaces",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/join",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/join",
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/leave"
   ]
 }

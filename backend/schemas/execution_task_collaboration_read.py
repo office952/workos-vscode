@@ -1,7 +1,8 @@
-"""Read-only execution task collaboration projection (FLEX-01).
+"""Execution task collaboration projection (FLEX-01 + Phase 1 membership).
 
 Option B: optional principal from assigned_employee_id; actual workers from sessions.
-No participant persistence; no write semantics.
+Phase 1 additive: helper_memberships from execution_task_participants (HELPER only).
+Membership is authorization intent — not work proof.
 """
 
 from __future__ import annotations
@@ -10,7 +11,9 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-EXECUTION_TASK_COLLABORATION_READ_VERSION = "execution_task_collaboration_read/v1"
+from schemas.execution_task_membership import HelperMembershipRead
+
+EXECUTION_TASK_COLLABORATION_READ_VERSION = "execution_task_collaboration_read/v1.1"
 
 PrincipalSource = Literal[
     "execution_plan",
@@ -90,6 +93,9 @@ class TaskCollaborationRead(BaseModel):
     derived_session_status: str
     collaboration_capability: CollaborationCapability = "BACKEND_MULTI_SESSION_CAPABLE"
     ui_collaboration_capability: CollaborationCapability = "CURRENTLY_INDIVIDUAL_UI"
+    # Phase 1 additive — HELPER membership authorization (not session-derived).
+    helper_memberships: list[HelperMembershipRead] = Field(default_factory=list)
+    authorized_helper_count: int = 0
 
 
 class OrderTaskCollaborationReadResponse(BaseModel):
