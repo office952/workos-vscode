@@ -3,8 +3,7 @@ import {
   fetchEmployeeMobileOrderBlueprint,
   type EmployeeMobileOrderBlueprintDTO,
 } from "@/api/employeeMobileOrderBlueprint";
-import { useEmployeeMobileV2AvailableTasks } from "@/hooks/useEmployeeMobileV2AvailableTasks";
-import { useEmployeeMobileV2Tasks } from "@/hooks/useEmployeeMobileV2Tasks";
+import { useEmployeeMobileV2TaskTruthContext } from "@/contexts/EmployeeMobileV2TaskTruthContext";
 import EmployeeMobileV2AvailableTasksSection from "@/components/workos/employee-mobile-v2/EmployeeMobileV2AvailableTasksSection";
 import EmployeeMobileV2PageHeader from "@/components/workos/employee-mobile-v2/EmployeeMobileV2PageHeader";
 import { EmployeeMobileV2TasksMiniSummary } from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskGroup";
@@ -27,19 +26,60 @@ import {
 } from "@/lib/employeeMobileV2TaskGrouping";
 import { cn } from "@/lib/utils";
 
+function TaskTruthErrorState({
+  message,
+  errorCode,
+  employeeLinkMissing,
+  contractError,
+}: {
+  message: string;
+  errorCode: string | null;
+  employeeLinkMissing: boolean;
+  contractError: boolean;
+}) {
+  const hint = employeeLinkMissing
+    ? "Legătura cont–angajat se face din birou."
+    : contractError
+      ? "Datele taskurilor nu respectă contractul V2."
+      : "Reîncearcă sau contactează biroul dacă problema persistă.";
+
+  return (
+    <div data-testid="employee-mobile-v2-tasks-error">
+      <EmployeeMobileErrorState message={message} testId="employee-mobile-v2-tasks-error-message" />
+      <p className="mt-2 px-1 text-[12px] text-slate-500 leading-snug">{hint}</p>
+      {errorCode ? (
+        <details className="mt-2 px-1 text-[11px] text-slate-600">
+          <summary className="cursor-pointer">Detalii diagnostic</summary>
+          <p className="mt-1 font-mono break-all">{errorCode}</p>
+        </details>
+      ) : null}
+    </div>
+  );
+}
+
 export default function EmployeeMobileV2TasksPage() {
-  const { tasks, loading, error, reload: reloadMyTasks } = useEmployeeMobileV2Tasks();
   const {
-    tasks: availableTasks,
-    loading: availableLoading,
-    error: availableError,
-    reload: reloadAvailableTasks,
-  } = useEmployeeMobileV2AvailableTasks();
+    view,
+    loading,
+    error,
+    errorCode,
+    employeeLinkMissing,
+    contractError,
+    reload,
+  } = useEmployeeMobileV2TaskTruthContext();
   const [blueprint, setBlueprint] = useState<EmployeeMobileOrderBlueprintDTO | null>(null);
+
+  const tasks = view?.assignedTasks ?? [];
+  const availableTasks = view?.availableTasks ?? [];
+  const inProgressTasks = view?.inProgressTasks ?? [];
 
   const activeMyTasks = useMemo(
     () => sortActiveMyTasks(filterActiveMyTasks(tasks)),
     [tasks],
+  );
+  const assignedNotInProgress = useMemo(
+    () => activeMyTasks.filter((task) => task.status !== "in_progress"),
+    [activeMyTasks],
   );
   const recentDoneTasks = useMemo(() => filterRecentDoneTasks(tasks), [tasks]);
 
@@ -105,9 +145,8 @@ export default function EmployeeMobileV2TasksPage() {
     [tasks, currentStep.index, currentStep.total],
   );
 
-  const reloadAfterClaim = useCallback(async () => {
-    await Promise.all([reloadMyTasks(), reloadAvailableTasks()]);
-  }, [reloadMyTasks, reloadAvailableTasks]);
+  const hasAssignedContent =
+    inProgressTasks.length > 0 || assignedNotInProgress.length > 0 || recentDoneTasks.length > 0;
 
   return (
     <div data-testid="employee-mobile-v2-tasks">
@@ -129,41 +168,65 @@ export default function EmployeeMobileV2TasksPage() {
       ) : null}
 
       {!loading && error ? (
-        <EmployeeMobileErrorState message={error} testId="employee-mobile-v2-tasks-error" />
+        <TaskTruthErrorState
+          message={error}
+          errorCode={errorCode}
+          employeeLinkMissing={employeeLinkMissing}
+          contractError={contractError}
+        />
       ) : null}
 
-      {!loading && !error && activeMyTasks.length === 0 ? (
+      {!loading && !error && !hasAssignedContent && availableTasks.length === 0 ? (
         <EmployeeMobileEmptyState
-          message="Nu ai taskuri active acum."
-          hint="Când îți sunt atribuite taskuri, le vei vedea aici."
+          message="Nu ai sarcini acum."
+          hint="Când îți sunt atribuite sau disponibile taskuri, le vei vedea aici."
           testId="employee-mobile-v2-tasks-empty"
         />
       ) : null}
 
-      {!loading && !error && activeMyTasks.length > 0 ? (
-        <div className="mb-5 space-y-2" data-testid="employee-mobile-v2-tasks-list">
-          {activeMyTasks.map((task) => (
-            <EmployeeMobileV2TaskRow
-              key={`${task.order_id}-${task.task_id}`}
-              task={task}
-              blueprintTask={blueprintById.get(task.task_id) ?? null}
-              highlighted={task.status === "in_progress"}
-              testIdPrefix="employee-mobile-v2-task-row"
-            />
-          ))}
-        </div>
+      {!loading && !error && inProgressTasks.length > 0 ? (
+        <section className="mb-5" data-testid="employee-mobile-v2-in-progress-section">
+          <h3 className={cn(emV2SectionLabelClass(), "mb-2")}>În lucru</h3>
+          <div className="space-y-2" data-testid="employee-mobile-v2-in-progress-list">
+            {inProgressTasks.map((task) => (
+              <EmployeeMobileV2TaskRow
+                key={`progress-${task.order_id}-${task.task_id}`}
+                task={task}
+                blueprintTask={blueprintById.get(task.task_id) ?? null}
+                highlighted
+                testIdPrefix="employee-mobile-v2-in-progress-row"
+              />
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {!loading && !error && assignedNotInProgress.length > 0 ? (
+        <section className="mb-5" data-testid="employee-mobile-v2-assigned-section">
+          <h3 className={cn(emV2SectionLabelClass(), "mb-2")}>Sarcinile mele</h3>
+          <div className="space-y-2" data-testid="employee-mobile-v2-tasks-list">
+            {assignedNotInProgress.map((task) => (
+              <EmployeeMobileV2TaskRow
+                key={`${task.order_id}-${task.task_id}`}
+                task={task}
+                blueprintTask={blueprintById.get(task.task_id) ?? null}
+                testIdPrefix="employee-mobile-v2-task-row"
+              />
+            ))}
+          </div>
+        </section>
       ) : null}
 
       <EmployeeMobileV2AvailableTasksSection
         tasks={availableTasks}
-        loading={availableLoading}
-        error={availableError}
-        onStarted={reloadAfterClaim}
+        loading={loading}
+        error={error}
+        onStarted={reload}
       />
 
       {!loading && !error && recentDoneTasks.length > 0 ? (
         <section className="mt-5" data-testid="employee-mobile-v2-recent-done-section">
-          <h3 className={cn(emV2SectionLabelClass(), "mb-2")}>Finalizate recent</h3>
+          <h3 className={cn(emV2SectionLabelClass(), "mb-2")}>Finalizate</h3>
           <div className="space-y-2" data-testid="employee-mobile-v2-recent-done-list">
             {recentDoneTasks.map((task) => (
               <EmployeeMobileV2TaskRow

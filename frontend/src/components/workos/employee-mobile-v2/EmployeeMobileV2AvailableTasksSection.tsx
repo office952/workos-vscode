@@ -20,6 +20,10 @@ import {
   partitionAvailableTasks,
   resolveAvailableTaskWaitingLabel,
 } from "@/lib/employeeMobileV2AvailableTasks";
+import {
+  resolveTaskComponentLine,
+  resolveTaskDisplayTitle,
+} from "@/lib/employeeMobileV2TaskTruth";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
 import { cn } from "@/lib/utils";
 
@@ -37,6 +41,8 @@ function AvailableTaskCard({
   onPreview: (task: EmployeeMobileTaskDTO) => void;
 }) {
   const presentation = resolveEmployeeMobileV2StatusPresentation(task);
+  const title = resolveTaskDisplayTitle(task);
+  const componentLine = resolveTaskComponentLine(task);
   const orderLine = [task.order_code || `Comandă ${task.order_id}`, task.client]
     .filter(Boolean)
     .join(" · ");
@@ -51,8 +57,11 @@ function AvailableTaskCard({
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-[15px] font-medium text-slate-100 leading-snug line-clamp-2">
-            {task.title || task.task_id}
+            {title}
           </p>
+          {componentLine ? (
+            <p className="mt-0.5 text-[12px] text-slate-400 line-clamp-1">{componentLine}</p>
+          ) : null}
           {orderLine ? (
             <p className="mt-0.5 text-[12px] text-slate-500 line-clamp-2">{orderLine}</p>
           ) : null}
@@ -139,9 +148,9 @@ export default function EmployeeMobileV2AvailableTasksSection({
   return (
     <section className="mt-6" data-testid="employee-mobile-v2-available-tasks">
       <header className="mb-3">
-        <h2 className="text-[17px] font-semibold text-slate-100">Taskuri disponibile</h2>
+        <h2 className="text-[17px] font-semibold text-slate-100">Disponibile</h2>
         <p className="mt-1 text-[13px] text-slate-500 leading-snug">
-          Taskuri eligibile pentru rolul tău — începe doar cele pregătite acum.
+          Taskuri pe care le poți prelua — eligibilitatea vine din backend.
         </p>
       </header>
 

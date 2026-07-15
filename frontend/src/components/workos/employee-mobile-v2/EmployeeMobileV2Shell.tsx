@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { Home, ListTodo, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { EmployeeMobileV2TaskTruthProvider } from "@/contexts/EmployeeMobileV2TaskTruthContext";
 import { formatOperationalPanelSubtitle } from "@/lib/employeeMobileUiHelpers";
 import { v2Effects, v2Motion } from "@/lib/employeeMobileV2Effects";
 import { cn } from "@/lib/utils";
@@ -112,9 +113,11 @@ export function EmployeeMobileV2Layout() {
       data-testid="employee-mobile-v2-shell"
     >
       <div className="flex-1 px-4 pt-[calc(0.75rem+env(safe-area-inset-top,0px))] pb-[calc(5rem+env(safe-area-inset-bottom,0px))]">
-        <div key={location.pathname} className={v2Motion.pageEnter}>
-          <Outlet />
-        </div>
+        <EmployeeMobileV2TaskTruthProvider>
+          <div key={location.pathname} className={v2Motion.pageEnter}>
+            <Outlet />
+          </div>
+        </EmployeeMobileV2TaskTruthProvider>
       </div>
       <EmployeeMobileV2BottomNav />
     </div>

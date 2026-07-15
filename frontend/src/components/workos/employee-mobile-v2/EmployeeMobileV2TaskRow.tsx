@@ -11,8 +11,23 @@ import {
   buildTaskRowContextLine,
   suppressDuplicateWaitingDetail,
 } from "@/lib/employeeMobileV2TaskGrouping";
+import {
+  resolveTaskComponentLine,
+  resolveTaskDisplayTitle,
+  resolveTaskOperationLine,
+} from "@/lib/employeeMobileV2TaskTruth";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
 import { cn } from "@/lib/utils";
+
+function productionBlockLine(task: EmployeeMobileTaskDTO): string | null {
+  if (!task.production_release_blocked) return null;
+  const summary = task.production_blocker_summary?.trim();
+  if (summary) {
+    const short = summary.length > 72 ? `${summary.slice(0, 70)}…` : summary;
+    return `Producție blocată — ${short}`;
+  }
+  return "Producție blocată — necesită rezolvare de către manager";
+}
 
 export default function EmployeeMobileV2TaskRow({
   task,
@@ -31,8 +46,15 @@ export default function EmployeeMobileV2TaskRow({
     [task, blueprintTask],
   );
 
-  const contextLine = useMemo(() => buildTaskRowContextLine(task), [task]);
+  const title = resolveTaskDisplayTitle(task);
+  const componentLine = resolveTaskComponentLine(task);
+  const operationLine = resolveTaskOperationLine(task);
+  const orderLine = [task.order_code || `Comandă #${task.order_id}`, task.client]
+    .filter(Boolean)
+    .join(" · ");
+  const productionLine = productionBlockLine(task);
 
+  const contextLine = useMemo(() => buildTaskRowContextLine(task), [task]);
   const secondaryLine = contextLine;
 
   const rowPresentation = useMemo(
@@ -48,13 +70,40 @@ export default function EmployeeMobileV2TaskRow({
       data-testid={`${testIdPrefix}-${task.task_id}`}
     >
       <span className="min-w-0 flex-1 text-left">
-        <span className="block text-[15px] font-medium text-slate-100 leading-snug line-clamp-2">
-          {task.title || task.task_id}
+        <span
+          className="block text-[15px] font-medium text-slate-100 leading-snug line-clamp-2"
+          data-testid={`${testIdPrefix}-${task.task_id}-title`}
+        >
+          {title}
         </span>
-        {secondaryLine ? (
-          <span className="mt-0.5 block text-[12px] text-slate-500 line-clamp-2">
-            {secondaryLine}
+        {componentLine ? (
+          <span
+            className="mt-0.5 block text-[12px] text-slate-400 line-clamp-1"
+            data-testid={`${testIdPrefix}-${task.task_id}-component`}
+          >
+            {componentLine}
           </span>
+        ) : null}
+        {orderLine ? (
+          <span
+            className="mt-0.5 block text-[12px] text-slate-500 line-clamp-2"
+            data-testid={`${testIdPrefix}-${task.task_id}-order`}
+          >
+            {orderLine}
+          </span>
+        ) : null}
+        {operationLine ? (
+          <span className="mt-0.5 block text-[11px] text-slate-600 line-clamp-1">{operationLine}</span>
+        ) : null}
+        {productionLine ? (
+          <span
+            className="mt-1 block text-[11px] text-rose-300/90 line-clamp-2"
+            data-testid={`${testIdPrefix}-${task.task_id}-production-block`}
+          >
+            {productionLine}
+          </span>
+        ) : secondaryLine ? (
+          <span className="mt-0.5 block text-[12px] text-slate-500 line-clamp-2">{secondaryLine}</span>
         ) : null}
       </span>
       <EmployeeMobileV2StatusIndicator

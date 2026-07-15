@@ -6,10 +6,8 @@ export interface AvailableTasksPartition {
 }
 
 function planSequenceOf(task: EmployeeMobileTaskDTO): number {
-  const seq = (task as EmployeeMobileTaskDTO & { plan_sequence?: number }).plan_sequence;
+  const seq = task.plan_sequence;
   if (typeof seq === "number" && Number.isFinite(seq)) return seq;
-  const match = /^T-(\d+)$/i.exec(String(task.task_id || ""));
-  if (match) return Number.parseInt(match[1], 10);
   return 9999;
 }
 
