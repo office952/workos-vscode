@@ -25,6 +25,8 @@ from tests.test_employee_mobile_tasks import (
     _seed_print_eligibility,
     _user,
 )
+from tests.test_execution_plan_v2_frozen_task_identity import _seed_v2_order_with_snapshot
+from tests.test_operator_task_truth import _delete_truth_order_fixture
 
 ROOT_NODE = "node:root_product:TPL-VOLUMETRIC-LETTERS_v2"
 MOUNTING_NODE = "node:mounting_panel:TPL-ACM-CASSETTED-PANEL_v2"
@@ -109,6 +111,36 @@ async def _seed_v2_order(
             snapshot_version=2,
             tasks_json=tasks_json,
             total_estimated_time_minutes=60,
+        )
+    )
+    await db_session.commit()
+
+
+async def _seed_corrupt_v2_available_order(db_session, *, order_id: int) -> None:
+    """Unassigned print task on a V2 order with invalid snapshot_v2_json."""
+    await _seed_v2_order_with_snapshot(
+        db_session,
+        order_id=order_id,
+        snapshot_v2_json="{not-valid-json",
+    )
+    db_session.add(
+        ExecutionPlan(
+            order_id=order_id,
+            order_code=f"ORD-{order_id}",
+            snapshot_version=1,
+            tasks_json=json.dumps(
+                [
+                    {
+                        "task_id": "T-CORRUPT-AVAIL",
+                        "name": "Corrupt print",
+                        "process_type": "print",
+                        "process_id": "print",
+                        "machine_type": "PRINTER",
+                        "estimated_time_minutes": 1,
+                    }
+                ]
+            ),
+            total_estimated_time_minutes=1,
         )
     )
     await db_session.commit()
@@ -268,6 +300,113 @@ async def test_available_projection_filters_canonically(db_session):
         assert scoped[0].get("claimable") is True
     finally:
         await _delete_order_execution_fixture(db_session, order_id=order_id)
+
+
+@pytest.mark.asyncio
+async def test_available_projection_excludes_corrupt_unrelated_order(db_session):
+    valid_order_id = 23500 + int(uuid.uuid4().hex[:4], 16) % 500
+    corrupt_order_id = 23550 + int(uuid.uuid4().hex[:4], 16) % 500
+    user_id = f"v2-iso-{uuid.uuid4().hex[:6]}"
+    task_id = f"{ROOT_NODE}:vector_prep"
+
+    emp = await _seed_employee(db_session, user_id=user_id, name="Isolation Claimer")
+    await _seed_print_eligibility(db_session, emp.id)
+    operational = [
+        _frozen_operational_task(
+            task_id,
+            process_override={"process_type": "print", "process_id": "print"},
+        )
+    ]
+    await _seed_v2_order(
+        db_session,
+        order_id=valid_order_id,
+        tasks_json=_v2_envelope(operational=operational),
+    )
+    await _seed_corrupt_v2_available_order(db_session, order_id=corrupt_order_id)
+    try:
+        rows = await list_available_tasks(db_session, emp.id)
+        valid = [r for r in rows if r["order_id"] == valid_order_id]
+        corrupt = [r for r in rows if r["order_id"] == corrupt_order_id]
+        assert len(valid) == 1
+        assert valid[0]["task_id"] == task_id
+        assert valid[0]["is_available_for_claim"] is True
+        assert corrupt == []
+    finally:
+        await _delete_order_execution_fixture(db_session, order_id=valid_order_id)
+        await _delete_truth_order_fixture(db_session, order_id=corrupt_order_id)
+
+
+@pytest.mark.asyncio
+async def test_available_projection_survives_corrupt_fixture_predecessor(db_session):
+    """Regression: corrupt operator-truth fixture must not break available projection."""
+    corrupt_order_id = 24009
+    valid_order_id = 23600 + int(uuid.uuid4().hex[:4], 16) % 500
+    user_id = f"v2-seq-{uuid.uuid4().hex[:6]}"
+    task_id = f"{ROOT_NODE}:vector_prep"
+
+    await _seed_corrupt_v2_available_order(db_session, order_id=corrupt_order_id)
+    emp = await _seed_employee(db_session, user_id=user_id, name="Sequence Claimer")
+    await _seed_print_eligibility(db_session, emp.id)
+    await _seed_v2_order(
+        db_session,
+        order_id=valid_order_id,
+        tasks_json=_v2_envelope(
+            operational=[
+                _frozen_operational_task(
+                    task_id,
+                    process_override={"process_type": "print", "process_id": "print"},
+                )
+            ]
+        ),
+    )
+    try:
+        rows = await list_available_tasks(db_session, emp.id)
+        scoped = [r for r in rows if r["order_id"] == valid_order_id]
+        assert len(scoped) == 1
+        assert scoped[0]["task_id"] == task_id
+    finally:
+        await _delete_truth_order_fixture(db_session, order_id=corrupt_order_id)
+        await _delete_order_execution_fixture(db_session, order_id=valid_order_id)
+
+
+def test_available_endpoint_excludes_corrupt_unrelated_order(db_fixture, db_session):
+    valid_order_id = 23700 + int(uuid.uuid4().hex[:4], 16) % 500
+    corrupt_order_id = 23750 + int(uuid.uuid4().hex[:4], 16) % 500
+    user_id = f"v2-http-{uuid.uuid4().hex[:6]}"
+    task_id = f"{ROOT_NODE}:vector_prep"
+
+    async def _setup():
+        emp = await _seed_employee(db_session, user_id=user_id, name="HTTP Isolation")
+        await _seed_print_eligibility(db_session, emp.id)
+        await _seed_v2_order(
+            db_session,
+            order_id=valid_order_id,
+            tasks_json=_v2_envelope(
+                operational=[
+                    _frozen_operational_task(
+                        task_id,
+                        process_override={"process_type": "print", "process_id": "print"},
+                    )
+                ]
+            ),
+        )
+        await _seed_corrupt_v2_available_order(db_session, order_id=corrupt_order_id)
+
+    db_fixture.run(_setup())
+    client = _client_for(db_fixture, _user(user_id, "employee_mobile"))
+    try:
+        response = client.get("/api/v1/employee-mobile/tasks/available")
+        assert response.status_code == 200, response.text
+        rows = response.json()
+        valid = [r for r in rows if r["order_id"] == valid_order_id]
+        corrupt = [r for r in rows if r["order_id"] == corrupt_order_id]
+        assert len(valid) == 1
+        assert valid[0]["task_id"] == task_id
+        assert corrupt == []
+    finally:
+        db_fixture.run(_delete_truth_order_fixture(db_session, order_id=corrupt_order_id))
+        db_fixture.run(_delete_order_execution_fixture(db_session, order_id=valid_order_id))
+        _cleanup_overrides()
 
 
 def test_v2_list_endpoint_non_empty(db_fixture, db_session):

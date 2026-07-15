@@ -37,9 +37,28 @@ from tests.test_execution_plan_v2_frozen_task_identity import (
 from core.database import get_db
 from dependencies.auth import get_current_user
 from main import app
-from tests.test_employee_mobile_tasks import _cleanup_overrides, _client_for, _user
+from tests.test_employee_mobile_tasks import _cleanup_overrides, _client_for, _delete_order_execution_fixture, _user
 
 TRUTH_OID_BASE = 24000
+
+
+async def _delete_truth_order_fixture(db_session, *, order_id: int) -> None:
+    """Remove operator truth order rows so shared pytest DB does not bleed."""
+    from sqlalchemy import delete, select
+    from models.quote_snapshot_v2 import QuoteSnapshotV2Record
+
+    order = (
+        await db_session.execute(select(Orders).where(Orders.id == order_id))
+    ).scalar_one_or_none()
+    qsn_id = order.quote_snapshot_v2_id if order else None
+
+    await db_session.execute(delete(ExecutionPlan).where(ExecutionPlan.order_id == order_id))
+    await db_session.execute(delete(Orders).where(Orders.id == order_id))
+    if qsn_id is not None:
+        await db_session.execute(
+            delete(QuoteSnapshotV2Record).where(QuoteSnapshotV2Record.id == qsn_id)
+        )
+    await db_session.commit()
 
 
 @pytest.fixture
@@ -247,35 +266,38 @@ async def test_legacy_order_explicit_classification(truth_client, db_session):
 @pytest.mark.asyncio
 async def test_corrupt_v2_snapshot_fail_closed(truth_client, db_session):
     order_id = TRUTH_OID_BASE + 9
-    await _seed_v2_order_with_snapshot(
-        db_session,
-        order_id=order_id,
-        snapshot_v2_json="{not-valid-json",
-    )
-    db_session.add(
-        ExecutionPlan(
+    try:
+        await _seed_v2_order_with_snapshot(
+            db_session,
             order_id=order_id,
-            order_code=f"ORD-{order_id}",
-            snapshot_version=1,
-            tasks_json=json.dumps(
-                [
-                    {
-                        "task_id": "T-CORRUPT",
-                        "name": "Task",
-                        "process_type": "print",
-                        "machine_type": "PRINTER",
-                        "estimated_time_minutes": 1,
-                    }
-                ]
-            ),
-            total_estimated_time_minutes=1,
+            snapshot_v2_json="{not-valid-json",
         )
-    )
-    await db_session.commit()
-    res = truth_client.get(f"/api/v1/operator/orders/{order_id}/task-truth")
-    assert res.status_code == 422
-    detail = res.json()["detail"]
-    assert detail["error"] == "ORDER_SNAPSHOT_V2_CORRUPT"
+        db_session.add(
+            ExecutionPlan(
+                order_id=order_id,
+                order_code=f"ORD-{order_id}",
+                snapshot_version=1,
+                tasks_json=json.dumps(
+                    [
+                        {
+                            "task_id": "T-CORRUPT",
+                            "name": "Task",
+                            "process_type": "print",
+                            "machine_type": "PRINTER",
+                            "estimated_time_minutes": 1,
+                        }
+                    ]
+                ),
+                total_estimated_time_minutes=1,
+            )
+        )
+        await db_session.commit()
+        res = truth_client.get(f"/api/v1/operator/orders/{order_id}/task-truth")
+        assert res.status_code == 422
+        detail = res.json()["detail"]
+        assert detail["error"] == "ORDER_SNAPSHOT_V2_CORRUPT"
+    finally:
+        await _delete_truth_order_fixture(db_session, order_id=order_id)
 
 
 @pytest.mark.asyncio

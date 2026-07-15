@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -40,6 +41,24 @@ from services.execution_owner_decision_production_release_service import (
 )
 from services.execution_plan_v2_guard_service import order_has_v2_snapshot_fields
 from services.volumetric_execution_dispatch import extract_order_snapshot_context
+
+logger = logging.getLogger(__name__)
+
+_ORDER_SNAPSHOT_READINESS_BLOCK_ERRORS = frozenset(
+    {"ORDER_SNAPSHOT_V2_CORRUPT", "ORDER_SNAPSHOT_V2_MISSING"}
+)
+
+
+def _planning_readiness_order_block_detail(exc: HTTPException) -> Optional[dict[str, Any]]:
+    """Return structured fail-closed detail when snapshot readiness blocks an order."""
+    if exc.status_code != 422:
+        return None
+    detail = exc.detail
+    if not isinstance(detail, dict):
+        return None
+    if detail.get("error") not in _ORDER_SNAPSHOT_READINESS_BLOCK_ERRORS:
+        return None
+    return detail
 
 
 def _parse_json(val: Any) -> list:
@@ -423,60 +442,96 @@ async def _attach_readiness_to_tasks(
     employee_id: int,
     *,
     for_available_pool: bool = False,
-) -> None:
-    """Attach readiness payload. For available pool, skip assignment gate (matches start-from-available)."""
+) -> List[dict]:
+    """Attach readiness payload.
+
+    For the available pool, orders blocked by corrupt/missing V2 snapshot readiness
+    input are excluded locally (ORDER_LOCAL_FAIL_CLOSED) so unrelated valid tasks
+    remain visible. Assigned-task projections still fail closed per order.
+    """
     by_order: Dict[int, List[dict]] = {}
     for task in tasks:
         by_order.setdefault(int(task["order_id"]), []).append(task)
 
     readiness_employee_id: Optional[int] = None if for_available_pool else employee_id
+    excluded_task_keys: set[int] = set()
+    projection_exclusions: List[dict] = []
 
     for order_id, order_tasks in by_order.items():
-        plan_tasks, raw_reality = await _load_plan_and_reality_tasks(db, order_id)
-        plan_sequence: Dict[str, int] = {}
-        for idx, pt in enumerate(plan_tasks):
-            if isinstance(pt, dict) and pt.get("task_id"):
-                plan_sequence[str(pt["task_id"])] = idx
-        product_template = None
-        _enriched, material_by_task, _ = await build_procurement_enriched_context(
-            db,
-            order_id=order_id,
-            plan_tasks=plan_tasks,
-            product_context=product_template,
-        )
-        from services.task_start_gate_service import load_order_quote_input
-
-        quote_input = await load_order_quote_input(db, order_id)
-        readiness_map = evaluate_all_task_readiness(
-            plan_tasks,
-            raw_reality,
-            employee_id=readiness_employee_id,
-            material_by_task=material_by_task,
-            quote_input=quote_input,
-        )
-        plan_by_id = {str(pt.get("task_id")): pt for pt in plan_tasks if pt.get("task_id")}
-        for task in order_tasks:
-            tid = str(task["task_id"])
-            task["plan_sequence"] = plan_sequence.get(tid, 9999)
-            plan_task = plan_by_id.get(tid, {})
-            readiness = readiness_map.get(tid)
-            if readiness is None and plan_task:
-                context = build_readiness_context(plan_tasks, raw_reality)
-                readiness = evaluate_task_readiness(
-                    plan_task,
-                    context,
-                    employee_id=readiness_employee_id,
-                    material_by_task=material_by_task,
-                    quote_input=quote_input,
-                )
-            if readiness:
-                task.update(employee_safe_readiness_payload(readiness))
-            task["can_start"] = bool(
-                task.get("is_startable")
-                and not task.get("production_release_blocked")
-                and task.get("status") in ("assigned", "paused")
+        try:
+            plan_tasks, raw_reality = await _load_plan_and_reality_tasks(db, order_id)
+            plan_sequence: Dict[str, int] = {}
+            for idx, pt in enumerate(plan_tasks):
+                if isinstance(pt, dict) and pt.get("task_id"):
+                    plan_sequence[str(pt["task_id"])] = idx
+            product_template = None
+            _enriched, material_by_task, _ = await build_procurement_enriched_context(
+                db,
+                order_id=order_id,
+                plan_tasks=plan_tasks,
+                product_context=product_template,
             )
-            task["can_complete"] = task.get("status") == "in_progress"
+            from services.task_start_gate_service import load_order_quote_input
+
+            quote_input = await load_order_quote_input(db, order_id)
+            readiness_map = evaluate_all_task_readiness(
+                plan_tasks,
+                raw_reality,
+                employee_id=readiness_employee_id,
+                material_by_task=material_by_task,
+                quote_input=quote_input,
+            )
+            plan_by_id = {str(pt.get("task_id")): pt for pt in plan_tasks if pt.get("task_id")}
+            for task in order_tasks:
+                tid = str(task["task_id"])
+                task["plan_sequence"] = plan_sequence.get(tid, 9999)
+                plan_task = plan_by_id.get(tid, {})
+                readiness = readiness_map.get(tid)
+                if readiness is None and plan_task:
+                    context = build_readiness_context(plan_tasks, raw_reality)
+                    readiness = evaluate_task_readiness(
+                        plan_task,
+                        context,
+                        employee_id=readiness_employee_id,
+                        material_by_task=material_by_task,
+                        quote_input=quote_input,
+                    )
+                if readiness:
+                    task.update(employee_safe_readiness_payload(readiness))
+                task["can_start"] = bool(
+                    task.get("is_startable")
+                    and not task.get("production_release_blocked")
+                    and task.get("status") in ("assigned", "paused")
+                )
+                task["can_complete"] = task.get("status") == "in_progress"
+        except HTTPException as exc:
+            block_detail = _planning_readiness_order_block_detail(exc)
+            if for_available_pool and block_detail is not None:
+                excluded_task_keys.update(id(task) for task in order_tasks)
+                exclusion = {
+                    "code": block_detail.get("error"),
+                    "order_id": order_id,
+                    "excluded_task_count": len(order_tasks),
+                    "projection_scope": "available",
+                    "operator_safe_message": (
+                        "Order planning snapshot unavailable; tasks excluded from available pool."
+                    ),
+                }
+                projection_exclusions.append(exclusion)
+                logger.warning(
+                    "employee_mobile available projection excluded order "
+                    "order_id=%s code=%s excluded_task_count=%s",
+                    order_id,
+                    block_detail.get("error"),
+                    len(order_tasks),
+                )
+                continue
+            raise
+
+    if excluded_task_keys:
+        tasks[:] = [task for task in tasks if id(task) not in excluded_task_keys]
+
+    return projection_exclusions
 
 
 async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
@@ -1026,7 +1081,12 @@ async def list_available_tasks(db: AsyncSession, employee_id: int) -> List[dict]
         row["claimable"] = True
         available.append(row)
 
-    await _attach_readiness_to_tasks(db, available, employee_id, for_available_pool=True)
+    await _attach_readiness_to_tasks(
+        db,
+        available,
+        employee_id,
+        for_available_pool=True,
+    )
     for row in available:
         row["is_assigned_to_current_employee"] = False
         row["is_available_for_claim"] = True
