@@ -15,12 +15,14 @@ $env:APP_ENV = "development"
 $env:ENVIRONMENT = "development"
 Remove-Item Env:DEPLOYMENT_ENVIRONMENT -ErrorAction SilentlyContinue
 $env:DATABASE_URL = $DatabaseUrl
-$env:JWT_SECRET_KEY = "local-dev-secret-not-for-production"
+Set-WorkOsJwtEnv
 $env:DEBUG = "true"
 $env:ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
+
+$BackendPort = if ($env:BACKEND_PORT) { [int]$env:BACKEND_PORT } else { 8000 }
 
 $venvPython = Get-WorkOsBackendVenvPython -BackendDir $BackendDir
 Install-WorkOsBackendRequirements -BackendDir $BackendDir
 
 Set-Location $BackendDir
-& $venvPython -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+& $venvPython -m uvicorn main:app --host 127.0.0.1 --port $BackendPort --reload

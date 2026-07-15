@@ -15,7 +15,7 @@ $env:APP_ENV = "development"
 $env:ENVIRONMENT = "development"
 Remove-Item Env:DEPLOYMENT_ENVIRONMENT -ErrorAction SilentlyContinue
 $env:DATABASE_URL = $DatabaseUrl
-$env:JWT_SECRET_KEY = "local-dev-secret-not-for-production"
+Set-WorkOsJwtEnv
 $env:DEBUG = "true"
 
 $venvPython = Get-WorkOsBackendVenvPython -BackendDir $BackendDir

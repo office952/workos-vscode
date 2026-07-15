@@ -27,7 +27,7 @@ function Set-WorkOsLocalDevEnv {
     $env:ENVIRONMENT = "development"
     Remove-Item Env:DEPLOYMENT_ENVIRONMENT -ErrorAction SilentlyContinue
     $env:DATABASE_URL = $DatabaseUrl
-    $env:JWT_SECRET_KEY = $LocalJwtSecret
+    Set-WorkOsJwtEnv
     $env:DEBUG = "true"
     $env:ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
     $env:VITE_ENABLE_DEV_AUTH = "true"
@@ -41,6 +41,8 @@ function Show-WorkOsLocalDevSummary {
     Write-Host "  DEPLOYMENT_ENVIRONMENT   = (unset)"
     Write-Host "  DATABASE_URL             = sqlite+aiosqlite:///<backend>/dev.db"
     Write-Host "  JWT_SECRET_KEY           = [local placeholder, not for deploy]"
+    Write-Host ("  JWT_ALGORITHM            = {0}" -f $env:JWT_ALGORITHM)
+    Write-Host ("  JWT_EXPIRE_MINUTES       = {0}" -f $env:JWT_EXPIRE_MINUTES)
     Write-Host ("  DEBUG                    = {0}" -f $env:DEBUG)
     Write-Host ("  VITE_ENABLE_DEV_AUTH     = {0}" -f $env:VITE_ENABLE_DEV_AUTH)
     Write-Host "  Backend                  = $BackendUrl"
@@ -235,10 +237,10 @@ function Resolve-PortService {
     }
 }
 
+. "$PSScriptRoot\_workos-python.ps1"
+
 Set-WorkOsLocalDevEnv -ProjectRoot $Root
 Require-Command node
-
-. "$PSScriptRoot\_workos-python.ps1"
 
 Write-Host "=== WorkOS dev ===" -ForegroundColor Cyan
 Write-Host "Root: $Root"
@@ -279,6 +281,8 @@ if (-not $backendState.Ready) {
         Remove-Item Env:DEPLOYMENT_ENVIRONMENT -ErrorAction SilentlyContinue
         $env:DATABASE_URL = $DatabaseUrl
         $env:JWT_SECRET_KEY = $LocalJwtSecret
+        $env:JWT_ALGORITHM = "HS256"
+        $env:JWT_EXPIRE_MINUTES = "60"
         $env:DEBUG = "true"
         $env:ALLOWED_ORIGINS = $AllowedOrigins
         # Uvicorn logs to stderr by default; merge streams so callers don't treat normal INFO as NativeCommandError.
