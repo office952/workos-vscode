@@ -5,6 +5,7 @@ import EmployeeMobileV2App from "./EmployeeMobileV2App";
 import { buildTruthResponseFromSections } from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskTruthPanels";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import { BLOCKER_FIXTURE_TASKS } from "@/lib/employeeMobileV2BlockerFixtures";
+import { START_FIXTURE_TASKS } from "@/lib/employeeMobileV2StartFixtures";
 
 const authMock = vi.hoisted(() => ({
   user: {
@@ -75,9 +76,60 @@ const sampleAvailableTasks = [
     status: "assigned",
     client: "Client Nou",
     is_startable: true,
+    is_available_for_claim: true,
+    can_start_from_available: true,
+    can_start: true,
     claimable: true,
   },
 ];
+
+function mockOrderTaskDetail(task: EmployeeMobileTaskDTO) {
+  return async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const detailPath = `/orders/${task.order_id}/tasks/${encodeURIComponent(task.task_id)}`;
+    if (url.includes(detailPath)) {
+      return jsonResponse(task);
+    }
+    if (url.includes(`/orders/${task.order_id}/my-blueprint`)) {
+      return jsonResponse({
+        order_id: task.order_id,
+        order_label: task.order_code ?? `ORD-${task.order_id}`,
+        summary: {
+          total_tasks: 1,
+          my_tasks: 1,
+          my_done: 0,
+          overall_progress_percent: 0,
+          my_progress_percent: 0,
+          blocked: 0,
+          in_progress: 0,
+        },
+        tasks: [],
+      });
+    }
+    if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+      const assigned = task.is_assigned_to_current_employee !== false ? [task] : [];
+      const available = task.is_available_for_claim ? [task] : [];
+      return jsonResponse(truthFor(assigned, available));
+    }
+    if (url.includes("/start-from-available") && init?.method === "POST") {
+      return jsonResponse({ status: "ok", action: "start", task_id: task.task_id, order_id: task.order_id });
+    }
+    if (url.includes("/start") && init?.method === "PATCH") {
+      return jsonResponse({ status: "ok", action: "start", task_id: task.task_id, order_id: task.order_id });
+    }
+    if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth") && !url.includes("/start")) {
+      return jsonResponse(task.is_assigned_to_current_employee !== false ? [task] : []);
+    }
+    return jsonResponse({}, 404);
+  };
+}
+
+async function waitForWorkRoomReady() {
+  await waitFor(() => {
+    expect(screen.queryByTestId("employee-mobile-v2-work-room-loading")).not.toBeInTheDocument();
+    expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
+  });
+}
 
 function truthFor(assigned: EmployeeMobileTaskDTO[], available: EmployeeMobileTaskDTO[] = sampleAvailableTasks) {
   return buildTruthResponseFromSections(assigned, available);
@@ -205,7 +257,7 @@ describe("EmployeeMobileV2App", () => {
     expect(screen.queryByText("Preiau taskul")).not.toBeInTheDocument();
     expect(screen.getByTestId("employee-mobile-v2-available-startable-list")).toBeInTheDocument();
     expect(screen.getByTestId("employee-mobile-v2-available-start-T-AVAIL")).toHaveTextContent(
-      "Încep lucrul",
+      "Preia și pornește",
     );
 
     fireEvent.click(screen.getByTestId("employee-mobile-v2-available-start-T-AVAIL"));
@@ -711,6 +763,9 @@ describe("EmployeeMobileV2App", () => {
               title: "Colantare fețe litere",
               status: "assigned",
               is_startable: true,
+              is_available_for_claim: true,
+              can_start_from_available: true,
+              can_start: true,
               claimable: true,
             },
           ]),
@@ -755,24 +810,11 @@ describe("EmployeeMobileV2App", () => {
     });
 
     it("shows structured detail sections with manager escalation and disabled start", async () => {
-      mockFetch.mockImplementation(async (input: RequestInfo | URL) => {
-        const url = String(input);
-        if (url.includes("/api/v1/employee-mobile/orders/23099/tasks/fixture-production-blocked")) {
-          return jsonResponse(BLOCKER_FIXTURE_TASKS.productionBlocked);
-        }
-        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
-          return jsonResponse(truthFor([BLOCKER_FIXTURE_TASKS.productionBlocked], []));
-        }
-        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth")) {
-          return jsonResponse([BLOCKER_FIXTURE_TASKS.productionBlocked]);
-        }
-        return jsonResponse({}, 404);
-      });
+      mockFetch.mockImplementation(mockOrderTaskDetail(BLOCKER_FIXTURE_TASKS.productionBlocked));
 
       renderV2("/employee-app-v2/tasks/fixture-production-blocked?orderId=23099");
-      await waitFor(() => {
-        expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
-      });
+      await waitForWorkRoomReady();
+      expect(screen.getByTestId("employee-mobile-v2-detail-can-start")).toBeInTheDocument();
       expect(screen.getByTestId("employee-mobile-v2-detail-startable")).toHaveTextContent("Nu");
       expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toHaveTextContent(
         /manager în WorkOS desktop/,
@@ -840,6 +882,72 @@ describe("EmployeeMobileV2App", () => {
         expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toBeInTheDocument();
       });
       expect(screen.getByTestId("employee-mobile-v2-tasks-error")).toHaveTextContent(/profil de angajat/);
+    });
+  });
+
+  describe("MOBILE-T04 canonical start action", () => {
+    it("assigned detail Start calls PATCH start with order_id only", async () => {
+      mockFetch.mockImplementation(mockOrderTaskDetail(START_FIXTURE_TASKS.readyAssigned));
+
+      renderV2("/employee-app-v2/tasks/fixture-start-ready?orderId=23099");
+      await waitForWorkRoomReady();
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-work-room-start")).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId("employee-mobile-v2-work-room-start"));
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining("/api/v1/employee-mobile/tasks/fixture-start-ready/start"),
+          expect.objectContaining({
+            method: "PATCH",
+            body: JSON.stringify({ order_id: 23099 }),
+          }),
+        );
+      });
+    });
+
+    it("available start calls POST start-from-available atomically", async () => {
+      mockFetch.mockImplementation(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = String(input);
+        if (url.includes("/api/v1/employee-mobile/tasks/truth")) {
+          return jsonResponse(truthFor([], [START_FIXTURE_TASKS.availableStartable]));
+        }
+        if (url.includes("/start-from-available") && init?.method === "POST") {
+          return jsonResponse({
+            status: "ok",
+            action: "start",
+            task_id: "fixture-start-available",
+            order_id: 23099,
+          });
+        }
+        if (url.includes("/api/v1/employee-mobile/tasks") && !url.includes("/truth")) {
+          return jsonResponse([]);
+        }
+        return jsonResponse({}, 404);
+      });
+
+      renderV2("/employee-app-v2/tasks");
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-available-start-fixture-start-available")).toBeInTheDocument();
+      });
+      fireEvent.click(screen.getByTestId("employee-mobile-v2-available-start-fixture-start-available"));
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith(
+          expect.stringContaining("/api/v1/employee-mobile/tasks/fixture-start-available/start-from-available"),
+          expect.objectContaining({ method: "POST" }),
+        );
+      });
+    });
+
+    it("disabled start shows backend reason for production-blocked task", async () => {
+      mockFetch.mockImplementation(mockOrderTaskDetail(START_FIXTURE_TASKS.productionBlocked));
+
+      renderV2("/employee-app-v2/tasks/fixture-production-blocked?orderId=23099");
+      await waitForWorkRoomReady();
+      await waitFor(() => {
+        expect(screen.getByTestId("employee-mobile-v2-work-room-start-blocked")).toBeDisabled();
+      });
+      expect(screen.getByTestId("employee-mobile-v2-detail-manager-escalation")).toBeInTheDocument();
     });
   });
 });

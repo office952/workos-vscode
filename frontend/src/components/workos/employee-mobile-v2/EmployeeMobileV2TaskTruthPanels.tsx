@@ -262,6 +262,7 @@ export function flatTaskToTruthNested(task: EmployeeMobileTaskDTO): EmployeeMobi
       production_release_blocked: Boolean(task.production_release_blocked),
       production_blocker_summary: task.production_blocker_summary,
       can_start: Boolean(task.can_start),
+      can_start_from_available: Boolean(task.can_start_from_available),
       can_complete: Boolean(task.can_complete),
     },
     order_id: task.order_id,

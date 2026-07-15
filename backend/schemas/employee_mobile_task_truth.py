@@ -57,6 +57,7 @@ class EmployeeMobileTaskReadiness(BaseModel):
     production_release_blocked: bool = False
     production_blocker_summary: str | None = None
     can_start: bool = False
+    can_start_from_available: bool = False
     can_complete: bool = False
 
 

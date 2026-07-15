@@ -1,16 +1,13 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  mapEmployeeMobileStartFromAvailableError,
-  startEmployeeMobileTaskFromAvailable,
-  type EmployeeMobileTaskDTO,
-} from "@/api/employeeMobileTasks";
+import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import EmployeeMobileV2StatusIndicator from "@/components/workos/employee-mobile-v2/EmployeeMobileV2StatusIndicator";
 import {
   EmployeeMobileEmptyState,
   EmployeeMobileErrorState,
   EmployeeMobileLoadingState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
+import { useEmployeeMobileV2StartAction } from "@/hooks/useEmployeeMobileV2StartAction";
 import {
   emV2PrimaryButtonClass,
   emV2Surface,
@@ -25,18 +22,19 @@ import {
   resolveTaskDisplayTitle,
 } from "@/lib/employeeMobileV2TaskTruth";
 import { resolveEmployeeMobileV2StatusPresentation } from "@/lib/employeeMobileV2Status";
+import { AVAILABLE_START_LABEL, START_PENDING_LABEL } from "@/lib/employeeMobileV2StartAction";
 import { cn } from "@/lib/utils";
 
 function AvailableTaskCard({
   task,
   mode,
-  startingId,
+  isPending,
   onStart,
   onPreview,
 }: {
   task: EmployeeMobileTaskDTO;
   mode: "startable" | "waiting";
-  startingId: string | null;
+  isPending: boolean;
   onStart: (task: EmployeeMobileTaskDTO) => void;
   onPreview: (task: EmployeeMobileTaskDTO) => void;
 }) {
@@ -46,7 +44,6 @@ function AvailableTaskCard({
   const orderLine = [task.order_code || `Comandă ${task.order_id}`, task.client]
     .filter(Boolean)
     .join(" · ");
-  const isStarting = startingId === `${task.order_id}:${task.task_id}`;
   const waitingLabel = resolveAvailableTaskWaitingLabel(task);
 
   return (
@@ -96,11 +93,11 @@ function AvailableTaskCard({
           <button
             type="button"
             className={cn(emV2PrimaryButtonClass(), "w-full")}
-            disabled={isStarting}
+            disabled={isPending}
             onClick={() => onStart(task)}
             data-testid={`employee-mobile-v2-available-start-${task.task_id}`}
           >
-            {isStarting ? "Se pornește…" : "Încep lucrul"}
+            {isPending ? START_PENDING_LABEL : AVAILABLE_START_LABEL}
           </button>
         </div>
       ) : null}
@@ -120,22 +117,18 @@ export default function EmployeeMobileV2AvailableTasksSection({
   onStarted: () => void | Promise<void>;
 }) {
   const navigate = useNavigate();
-  const [startingId, setStartingId] = useState<string | null>(null);
-  const [startError, setStartError] = useState<string | null>(null);
+  const { startTask, isPending, error: startError } = useEmployeeMobileV2StartAction();
 
   const { startable, waiting } = useMemo(() => partitionAvailableTasks(tasks), [tasks]);
 
   async function handleStart(task: EmployeeMobileTaskDTO) {
-    setStartingId(`${task.order_id}:${task.task_id}`);
-    setStartError(null);
     try {
-      await startEmployeeMobileTaskFromAvailable(task.task_id, task.order_id);
-      await onStarted();
-      navigate(buildEmployeeMobileV2TaskPath(task.task_id, task.order_id));
-    } catch (err) {
-      setStartError(mapEmployeeMobileStartFromAvailableError(err));
-    } finally {
-      setStartingId(null);
+      await startTask(task, async () => {
+        await onStarted();
+        navigate(buildEmployeeMobileV2TaskPath(task.task_id, task.order_id));
+      });
+    } catch {
+      // error surfaced via hook state
     }
   }
 
@@ -201,7 +194,7 @@ export default function EmployeeMobileV2AvailableTasksSection({
                     key={`start-${task.order_id}-${task.task_id}`}
                     task={task}
                     mode="startable"
-                    startingId={startingId}
+                    isPending={isPending(task)}
                     onStart={(t) => void handleStart(t)}
                     onPreview={handlePreview}
                   />
@@ -219,7 +212,7 @@ export default function EmployeeMobileV2AvailableTasksSection({
                     key={`wait-${task.order_id}-${task.task_id}`}
                     task={task}
                     mode="waiting"
-                    startingId={startingId}
+                    isPending={false}
                     onStart={() => {}}
                     onPreview={handlePreview}
                   />

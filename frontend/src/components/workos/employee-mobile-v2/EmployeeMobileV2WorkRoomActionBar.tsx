@@ -12,7 +12,6 @@ import {
   completeEmployeeMobileTask,
   pauseEmployeeMobileTask,
   resumeEmployeeMobileTask,
-  startEmployeeMobileTask,
   unblockEmployeeMobileTask,
   type EmployeeMobileTaskDTO,
 } from "@/api/employeeMobileTasks";
@@ -20,12 +19,21 @@ import {
   EmployeeMobileErrorState,
   EmployeeMobileSuccessState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
+import { useEmployeeMobileV2StartAction } from "@/hooks/useEmployeeMobileV2StartAction";
 import {
   BLOCK_REASON_CATEGORIES,
   composeBlockedReason,
   type BlockReasonCategoryId,
 } from "@/lib/employeeMobileShopFloorPresentation";
 import { buildEmployeeMobileV2BlockerPresentation } from "@/lib/employeeMobileV2BlockerPresentation";
+import {
+  canShowAssignedStart,
+  canShowAvailableStart,
+  ASSIGNED_START_LABEL,
+  AVAILABLE_START_LABEL,
+  START_PENDING_LABEL,
+  mapEmployeeMobileStartError,
+} from "@/lib/employeeMobileV2StartAction";
 import { emV2Controls, emV2SecondaryButtonClass } from "@/lib/employeeMobileV2DesignTokens";
 import { cn } from "@/lib/utils";
 
@@ -46,6 +54,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
   const [blockReason, setBlockReason] = useState("");
   const [blockCategory, setBlockCategory] = useState<BlockReasonCategoryId | "">("");
   const [showBlockForm, setShowBlockForm] = useState(false);
+  const { startTask, isPending } = useEmployeeMobileV2StartAction();
 
   const runAction = async (action: () => Promise<unknown>, successMessage: string) => {
     setActionLoading(true);
@@ -66,16 +75,37 @@ export default function EmployeeMobileV2WorkRoomActionBar({
   };
 
   const blockerPresentation = buildEmployeeMobileV2BlockerPresentation(task);
-  const canStart = task.status === "assigned" && task.is_startable === true;
+  const canStartAssigned = canShowAssignedStart(task);
+  const canStartAvailable = canShowAvailableStart(task);
+  const startPending = isPending(task) || actionLoading;
   const showDisabledStart =
-    task.status === "assigned" && task.is_startable !== true && task.status !== "in_progress";
+    !canStartAssigned &&
+    !canStartAvailable &&
+    task.status !== "in_progress" &&
+    task.status !== "done" &&
+    (task.is_assigned_to_current_employee || task.is_available_for_claim);
   const canComplete = task.status === "in_progress";
   const canPause = task.status === "in_progress";
   const canResume = task.status === "paused";
   const canUnblock = task.status === "blocked";
+  const startLabel = canStartAvailable ? AVAILABLE_START_LABEL : ASSIGNED_START_LABEL;
 
   const primaryButtonClass = (destructive = false) =>
     cn(emV2Controls.primaryAction, destructive && "bg-red-900/70 hover:bg-red-900/85");
+
+  const handleStart = async () => {
+    setActionError(null);
+    setActionSuccess(null);
+    try {
+      await startTask(task, async () => {
+        setActionSuccess(canStartAvailable ? "Task preluat și pornit." : "Task pornit.");
+        onStartSuccess?.();
+        await onActionComplete();
+      });
+    } catch (err) {
+      setActionError(mapEmployeeMobileStartError(err));
+    }
+  };
 
   const blockForm = showBlockForm ? (
     <div
@@ -152,28 +182,23 @@ export default function EmployeeMobileV2WorkRoomActionBar({
         />
       ) : null}
 
-      {canStart ? (
+      {canStartAssigned || canStartAvailable ? (
         <button
           type="button"
           className={primaryButtonClass()}
-          disabled={actionLoading}
-          onClick={() =>
-            runAction(async () => {
-              await startEmployeeMobileTask(task.task_id, task.order_id);
-              onStartSuccess?.();
-            }, "Task pornit.")
-          }
+          disabled={startPending}
+          onClick={() => void handleStart()}
           data-testid={`${testIdPrefix}-start`}
         >
-          {actionLoading ? (
+          {startPending ? (
             <span className="inline-flex items-center justify-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
-              Se pornește…
+              {START_PENDING_LABEL}
             </span>
           ) : (
             <span className="inline-flex items-center justify-center gap-2">
               <Play className="w-4 h-4" aria-hidden />
-              Încep task
+              {startLabel}
             </span>
           )}
         </button>
@@ -187,7 +212,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           >
             <span className="inline-flex items-center justify-center gap-2">
               <PlayCircle className="w-4 h-4" aria-hidden />
-              Încep task
+              {startLabel}
             </span>
           </button>
           <p className="text-xs text-slate-500 leading-snug">

@@ -36,6 +36,7 @@ export interface EmployeeMobileTruthTaskNested {
     production_release_blocked: boolean;
     production_blocker_summary?: string | null;
     can_start: boolean;
+    can_start_from_available?: boolean;
     can_complete: boolean;
   };
   authority?: {
@@ -153,6 +154,7 @@ export function truthTaskToDto(
     dependency_warning: ready.dependency_warning ?? undefined,
     material_warning: ready.material_warning ?? undefined,
     can_start: ready.can_start,
+    can_start_from_available: ready.can_start_from_available,
     can_complete: ready.can_complete,
     access_mode: task.access_mode ?? undefined,
     preview_only: task.preview_only,

@@ -57,6 +57,7 @@ export interface EmployeeMobileTaskDTO {
   is_available_for_claim?: boolean;
   can_claim?: boolean;
   can_start?: boolean;
+  can_start_from_available?: boolean;
   can_complete?: boolean;
   assignment_source?: string | null;
   documents?: Array<{

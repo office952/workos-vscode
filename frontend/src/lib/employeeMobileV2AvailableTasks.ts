@@ -21,7 +21,7 @@ export function sortAvailableTasksByPlan(tasks: EmployeeMobileTaskDTO[]): Employ
 }
 
 export function isAvailableTaskStartable(task: EmployeeMobileTaskDTO): boolean {
-  return task.is_startable === true;
+  return task.can_start_from_available === true || task.can_start === true;
 }
 
 export function partitionAvailableTasks(tasks: EmployeeMobileTaskDTO[]): AvailableTasksPartition {

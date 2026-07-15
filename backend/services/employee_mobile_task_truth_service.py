@@ -272,6 +272,7 @@ def project_truth_task_to_mobile_dict(task: EmployeeMobileTruthTask) -> dict[str
         "production_release_blocked": ready.production_release_blocked,
         "production_blocker_summary": ready.production_blocker_summary,
         "can_start": ready.can_start,
+        "can_start_from_available": ready.can_start_from_available,
         "can_complete": ready.can_complete,
         "task_identity_version": auth.task_identity_version,
         "readiness_authority": auth.readiness_authority,
@@ -385,6 +386,7 @@ async def build_employee_mobile_task_truth(
                     production_release_blocked=bool(row.get("production_release_blocked")),
                     production_blocker_summary=row.get("production_blocker_summary"),
                     can_start=bool(row.get("can_start")),
+                    can_start_from_available=bool(row.get("can_start_from_available")),
                     can_complete=bool(row.get("can_complete")),
                 ),
                 authority=EmployeeMobileTaskAuthority(

@@ -539,6 +539,7 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
         task["is_assigned_to_current_employee"] = True
         task["is_available_for_claim"] = False
         task["can_claim"] = False
+        task["can_start_from_available"] = False
     return owned
 
 
@@ -1018,6 +1019,7 @@ async def list_available_tasks(db: AsyncSession, employee_id: int) -> List[dict]
         row["is_assigned_to_current_employee"] = False
         row["is_available_for_claim"] = True
         row["can_claim"] = bool(row.get("claimable"))
+        row["can_start_from_available"] = bool(row.get("can_start"))
     return available
 
 
