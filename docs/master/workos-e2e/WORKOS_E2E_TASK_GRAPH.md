@@ -509,22 +509,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Field | Value |
 |-------|-------|
 | Status | **COMPLETE** (2026-07-15) |
-| Verdict | `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED` |
+| Verdict | `OWNER_OPERATIONAL_AUTHORITIES_CONFIRMED` |
+| Owner decision | 2026-07-15 — 22/22 CONFIRMATE |
 | Starting HEAD | `276fb83` |
 | Decisions total | 22 |
-| Confirmed | 0 |
-| Deferred | 22 |
-| Sandu | NECESITA CONFIRMARE UMANA |
-| Tablet | NECESITA CONFIRMARE UMANA (A/B/C/D) |
-| MODULE-INT-01 impact | **ZERO** — separate track on pause |
-| MODULE-RUNTIME-01 | **DEFERRED** |
-| MODULE-ARCH-01 | **BLOCKED** |
-| Authority debt | 0/22 CONFIRMATE; 4 duplicate; migrare NO |
-| Available contract | Dovedit tehnic; acceptare owner AMÂNATĂ |
-| Migration authorized | **NO** |
+| Confirmed | **22** |
+| Deferred | 0 |
+| Sandu | Proces A6:A confirmat; capabilități individuale în curs |
+| Tablet | **A** — mod chiosc explicit |
+| Migration authorized | **NO** (A22:A) |
+| Distribuire inteligentă | **NEAUTORIZATĂ** |
+| Execuție colaborativă | **NEAUTORIZATĂ** |
 | Implementation authorized | **NO** |
+| PROD-ARCH-01 | **BLOCKED** |
+| MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **OWNER_DECISION_REQUIRED** → **APP-AUTH-03** — PROD-ARCH-01 **BLOCAT** |
+| Next | **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN** |
 
 ## APP-AUTH-02C — External HTTP runtime closure
 

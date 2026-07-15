@@ -492,35 +492,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## OWNER-DECISION-03 — Confirmarea autorităților operaționale
 
-**Verdict:** `OWNER_OPERATIONAL_AUTHORITIES_PARTIAL_REMAIN_BLOCKED`
+**Verdict:** `OWNER_OPERATIONAL_AUTHORITIES_CONFIRMED`
 
-**Starting HEAD:** `276fb83` (post MODULE-INT-01; lanț APP-AUTH neschimbat)
+**Owner decision:** 2026-07-15 — **22/22 CONFIRMATE** (A1:A, A5:A, A6:A, A16 Tablet:A, A22:A; fără excepții)
 
-**Scope:** Gate decizii autoritate operațională A1–A22 — fără cod, DB, UI, migrări, reconciliere Sandu automată.
+**Starting HEAD:** `276fb83`
 
-**Decizii:** 22 documentate · **0 CONFIRMATE** · 20 AMÂNATE · 2 NECESITA CONFIRMARE UMANA (Sandu, Tablet)
+**Scope:** Gate decizii autoritate operațională A1–A22 — fără cod, DB, UI, migrări.
 
-**Impact MODULE-INT-01:** **ZERO** — `/modules` pe pauză; nu sursă de adevăr pentru acest gate. MODULE-RUNTIME-01 **DEFERRED**; MODULE-ARCH-01 **BLOCKED**.
+**Neautorizat explicit:** distribuire inteligentă · execuție colaborativă · migrare date
 
-**Authority debt:** 0/22 confirmate; 4 duplicate majore; migrare **NO**; PROD-ARCH-01 **BLOCAT**
+**Authority debt:** **22/22 CONFIRMATE** (politică); paritate runtime = APP-AUTH-03
 
-**Employee/competence/authorization debt:** JSON legacy 8/8 angajați; Sandu 7 fără competență registry; 6 fără autorizare; `montaj_led` CRITIC
+**Sandu:** proces A6:A confirmat; capabilități individuale **în curs** (fișă goală)
 
-**Execution surface debt:** Tablet A/B/C/D neales; Shop Floor mock silent; Mobile/Operator parțial canonice
+**Tablet:** **A** — mod chiosc explicit; fără autoritate paralelă
 
-**Hartă autoritate:** identitate angajat, HR, competențe, autorizări, centre, utilaje, readiness, alocare, sesiuni, suprafețe — tabele în worklog.
+**Contract Available:** ORDER_LOCAL_FAIL_CLOSED **CONFIRMAT**
 
-**Sandu:** fișă confirmare goală; 7 mapping fără competență; 6 fără autorizare; `montaj_led` CRITIC.
+**Migrare autorizată:** **NO** (A22:A — doar instrumentare + plan)
 
-**Contract Available:** dovedit APP-AUTH-02B/C; acceptare owner **AMÂNATĂ**.
-
-**Implementare autorizată:** **NO** · **Migrare autorizată:** **NO**
+**Implementare autorizată:** **NO** · **PROD-ARCH-01:** **BLOCAT** · **MOBILE-INT-02:** **BLOCAT**
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_03_operational_authority_confirmation_v1.md`
 
-**OWNER-DECISION-03:** **COMPLETE** (gate documentat)
+**OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **OWNER_DECISION_REQUIRED** — apoi **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN** după confirmări — PROD-ARCH-01 **BLOCAT**
+**Next:** **APP-AUTH-03-RUNTIME-PARITY-INSTRUMENTATION-PLAN**
 
 ## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
 
