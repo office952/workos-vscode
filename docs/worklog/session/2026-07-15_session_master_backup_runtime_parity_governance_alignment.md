@@ -499,8 +499,12 @@ Roadmap principal **realiniat**:
 9. ~~PROD-FLEX-ARCH-01~~ — Flexible execution architecture plan — **PASS**
 10. ~~OWNER-DECISION-07~~ — Flexible execution implementation gate — **PASS**
 11. ~~FLEX-01~~ — Execution collaboration read-model foundation — **PASS**
-12. **PROD-FLEX-ARCH-02** — Participant persistence boundary (**NEXT — owner GO**)
-13. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
+12. ~~FLEX-01A~~ — Operation completion semantics — **PASS**
+13. ~~FLEX-01B~~ — Canonical :8001 runtime recovery — **PASS**
+14. ~~RUNTIME-FRESHNESS-04A/04B~~ — Backend freshness guard — **PASS**; runtime tooling lane **CLOSED** at `e92d135`
+15. ~~WORKOS-ROADMAP-REALIGNMENT-01~~ — Post-backup roadmap checkpoint — **PASS**
+16. **PROD-FLEX-ARCH-02** — Participant persistence boundary (**NEXT — plan/docs only; owner GO**)
+17. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -510,9 +514,11 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**FLEX-01** — Execution collaboration read model — **COMPLETE** (`FLEX_01_EXECUTION_COLLABORATION_READ_MODEL_FOUNDATION_COMPLETE`)
+**WORKOS-ROADMAP-REALIGNMENT-01** — Post-backup roadmap checkpoint — **COMPLETE** (`WORKOS_ROADMAP_REALIGNMENT_01_COMPLETE`)
 
-**Current position (2026-07-15):** Read-only collaboration projection live in code/tests. FLEX-02+ still blocked. Next = **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO). Sandu **PAUSED**.
+**Accepted HEAD:** `e92d135`
+
+**Current position (2026-07-15):** FLEX-01/01A/01B complete. Runtime tooling **CLOSED**. FLEX was a justified parallel detour — not the new main roadmap. FLEX-02 implementation **NOT AUTHORIZED**. Participant persistence **NOT AUTHORIZED**. Next = **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO). APP-AUTH-06G and UI-TRUTH-01B–01E **PAUSED**.
 
 ---
 

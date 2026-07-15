@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `695c78c` (OWNER-DECISION-07)
+**Accepted HEAD:** `e92d135` (RUNTIME-FRESHNESS-04B + WORKOS-ROADMAP-REALIGNMENT-01 closure)
 
-**Last updated:** 2026-07-15 (FLEX-01 — execution collaboration read model **COMPLETE**)
+**Last updated:** 2026-07-15 (roadmap realignment **COMPLETE**; runtime tooling lane **CLOSED**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,11 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **FLEX-01** — execution collaboration read model (**COMPLETE**) |
+| Active task | **WORKOS-ROADMAP-REALIGNMENT-01** — post-backup roadmap checkpoint (**COMPLETE**) |
 
-| Next task | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO required; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** — plan/docs only (owner GO required; **FLEX-02 NOT AUTHORIZED**; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+
+| Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
 
 
@@ -1181,5 +1183,63 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_flex_01a_operation_completion_semantics_and_live_runtime_verification.md`
 
-**FLEX-01A:** **PARTIAL** (semantics complete; :8001 runtime blocked by ghost listeners)
+**FLEX-01A:** **COMPLETE** (semantics complete; runtime closure via FLEX-01B + RUNTIME-FRESHNESS-04)
+
+## FLEX-01B — Canonical :8001 runtime recovery
+
+**Verdict:** `FLEX_01B_CANONICAL_8001_RUNTIME_RECOVERY_COMPLETE`
+
+**Scope:** Ghost uvicorn listener recovery on canonical `:8001`; live verification of collaboration-read endpoint.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_flex_01b_canonical_8001_runtime_recovery_and_live_verification.md`
+
+**FLEX-01B:** **COMPLETE**
+
+## RUNTIME-FRESHNESS-04 — Canonical backend freshness guard
+
+**Verdict:** `RUNTIME_FRESHNESS_04_CANONICAL_BACKEND_FRESHNESS_GUARD_PLAN_COMPLETE`
+
+**Scope:** Plan for health + OpenAPI manifest + process-ownership freshness contract.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_runtime_freshness_04a_canonical_backend_freshness_guard_implementation.md` (plan phase)
+
+**RUNTIME-FRESHNESS-04:** **PLAN COMPLETE**
+
+## RUNTIME-FRESHNESS-04A — Canonical backend freshness guard implementation
+
+**Verdict:** `RUNTIME_FRESHNESS_04A_CANONICAL_BACKEND_FRESHNESS_GUARD_COMPLETE` (superseded by 04B ambiguous fail-closed correction)
+
+**Scope:** Dev tooling — reject stale canonical backend reuse; OpenAPI manifest 5/5 routes.
+
+**RUNTIME-FRESHNESS-04A:** **COMPLETE** after 04B
+
+## RUNTIME-FRESHNESS-04B — Ambiguous process fail-closed correction
+
+**Verdict:** `RUNTIME_FRESHNESS_04B_AMBIGUOUS_PROCESS_FAIL_CLOSED_COMPLETE`
+
+**Scope:** Dev tooling — block ambiguous/other-worktree reuse; parent-lineage proof on Windows uvicorn reload.
+
+**Accepted HEAD:** `e92d135`
+
+**Runtime tooling lane:** **CLOSED**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_runtime_freshness_04b_ambiguous_process_fail_closed_correction.md`
+
+**RUNTIME-FRESHNESS-04B:** **COMPLETE**
+
+## WORKOS-ROADMAP-REALIGNMENT-01 — Post-backup roadmap checkpoint
+
+**Verdict:** `WORKOS_ROADMAP_REALIGNMENT_01_COMPLETE`
+
+**Scope:** Read-only realignment after backup, FLEX foundation, and runtime freshness. No implementation.
+
+**Conclusions:** FLEX was a justified parallel foundation detour, not the new main roadmap; **FLEX-02 implementation NOT authorized**; participant persistence **NOT AUTHORIZED**; next bounded step is **PROD-FLEX-ARCH-02** (plan/docs only); runtime tooling **CLOSED**.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_workos_roadmap_realignment_01_after_backup_and_flex_foundation.md`
+
+**Plan:** `.compound-engineering/workos-roadmap-realignment-01/plan.md`
+
+**WORKOS-ROADMAP-REALIGNMENT-01:** **COMPLETE**
+
+**Next:** **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO)
 

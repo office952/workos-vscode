@@ -2,7 +2,9 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `FLEX-01` **COMPLETE** — next **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO)  
+**Accepted HEAD:** `e92d135`  
+**Active task:** `WORKOS-ROADMAP-REALIGNMENT-01` **COMPLETE** — next **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO; **FLEX-02 NOT AUTHORIZED**)  
+**Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -1184,7 +1186,53 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | DB / UI | NO changes |
 | Worklog | `docs/worklog/realignment/2026-07-15_flex_01_execution_collaboration_read_model_foundation.md` |
 | FLEX-01 | **COMPLETE** |
-| Next | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (owner GO) |
+| Next | **FLEX-01A** (closed) |
+
+## FLEX-01A — Operation completion semantics
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `FLEX_01A_OPERATION_COMPLETION_SEMANTICS_COMPLETE` |
+| Starting HEAD | `34cc288` |
+| DB / UI | NO changes |
+| FLEX-01A | **COMPLETE** |
+| Next | **FLEX-01B** (closed) |
+
+## FLEX-01B — Canonical :8001 runtime recovery
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `FLEX_01B_CANONICAL_8001_RUNTIME_RECOVERY_COMPLETE` |
+| FLEX-01B | **COMPLETE** |
+| Next | **RUNTIME-FRESHNESS-04** (closed) |
+
+## RUNTIME-FRESHNESS-04A / 04B — Canonical backend freshness guard
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `RUNTIME_FRESHNESS_04B_AMBIGUOUS_PROCESS_FAIL_CLOSED_COMPLETE` |
+| Accepted HEAD | `e92d135` |
+| Runtime tooling lane | **CLOSED** |
+| RUNTIME-FRESHNESS-04A | **COMPLETE** after 04B |
+| RUNTIME-FRESHNESS-04B | **COMPLETE** |
+| Next | **WORKOS-ROADMAP-REALIGNMENT-01** (closed) |
+
+## WORKOS-ROADMAP-REALIGNMENT-01 — Post-backup roadmap checkpoint
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `WORKOS_ROADMAP_REALIGNMENT_01_COMPLETE` |
+| Starting HEAD | `e92d135` |
+| FLEX-02 | **BLOCKED / NOT AUTHORIZED** |
+| Participant persistence | **NOT AUTHORIZED** |
+| FLEX detour | Justified parallel foundation; does not replace canonical product roadmap |
+| Worklog | `docs/worklog/realignment/2026-07-15_workos_roadmap_realignment_01_after_backup_and_flex_foundation.md` |
+| WORKOS-ROADMAP-REALIGNMENT-01 | **COMPLETE** |
+| Next | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO) |
 
 ---
 
