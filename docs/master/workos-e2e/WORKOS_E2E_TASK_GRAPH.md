@@ -379,7 +379,22 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Screenshots | 12 @ 390×844 |
 | T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
 | MOBILE-T02 | **COMPLETE** |
-| Next | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
+| Next | **MOBILE-T04-START-ACTION-WIRING** |
+
+## MOBILE-T03 — Blocker and readiness visibility
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_BLOCKER_READINESS_PASS_COMMITTED` |
+| Canonical source | `employee_mobile_task_truth/v1` |
+| Presentation | `employeeMobileV2BlockerPresentation.ts` (DISPLAY_ONLY) |
+| Policy | `MOBILE_READONLY_BLOCKERS_DESKTOP_RESOLUTION` |
+| Start | `START_DISABLED_WITH_BACKEND_REASON` |
+| Tests | 35 focused backend + 38 frontend |
+| Screenshots | 13 @ 390×844 |
+| MOBILE-T03 | **COMPLETE** |
+| Next | **MOBILE-T04-START-ACTION-WIRING** |
 
 ## MOBILE-T02B — Available task fixture isolation
 

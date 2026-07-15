@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T02 assigned/available task list + detail — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T03 blocker/readiness visibility — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
+| Next task | **MOBILE-T04-START-ACTION-WIRING** |
 
 
 
@@ -372,5 +372,19 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T02:** **COMPLETE**
 
-**Next:** **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**
+**Next:** **MOBILE-T04-START-ACTION-WIRING**
+
+## MOBILE-T03 — Blocker and readiness visibility
+
+**Verdict:** `MOBILE_BLOCKER_READINESS_PASS_COMMITTED`
+
+**Delivered:** Display-only blocker taxonomy (Producție/Pregătire/Materiale/Alocare/Stare task); list badges + detail sections (Poate începe?, manager escalation); disabled Start with backend reason; structured error mapping; deterministic fixtures.
+
+**Proof:** 35 focused backend + 38 frontend tests; runtime Sandu order `23099`; 13 screenshots @ 390×844.
+
+**Start boundary:** `START_DISABLED_WITH_BACKEND_REASON`
+
+**MOBILE-T03:** **COMPLETE**
+
+**Next:** **MOBILE-T04-START-ACTION-WIRING**
 
