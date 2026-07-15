@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { CheckCircle2, Loader2, Play, PlayCircle } from "lucide-react";
+import { CheckCircle2, Hand, Loader2, Play, PlayCircle } from "lucide-react";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
 import {
   EmployeeMobileErrorState,
   EmployeeMobileSuccessState,
 } from "@/components/workos/employee-mobile/EmployeeMobileStates";
 import EmployeeMobileV2CompleteConfirmDialog from "@/components/workos/employee-mobile-v2/EmployeeMobileV2CompleteConfirmDialog";
+import { useEmployeeMobileV2ClaimAction } from "@/hooks/useEmployeeMobileV2ClaimAction";
 import { useEmployeeMobileV2RuntimeAction } from "@/hooks/useEmployeeMobileV2RuntimeAction";
 import { useEmployeeMobileV2StartAction } from "@/hooks/useEmployeeMobileV2StartAction";
 import { buildEmployeeMobileV2BlockerPresentation } from "@/lib/employeeMobileV2BlockerPresentation";
+import {
+  canShowClaimOnly,
+  CLAIM_ONLY_LABEL,
+  CLAIM_PENDING_LABEL,
+} from "@/lib/employeeMobileV2ClaimAction";
 import { emV2Controls } from "@/lib/employeeMobileV2DesignTokens";
 import {
   canShowAssignedStart,
@@ -49,14 +55,22 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     error: runtimeError,
     clearError: clearRuntimeError,
   } = useEmployeeMobileV2RuntimeAction();
+  const {
+    claimTask,
+    isPending: claimIsPending,
+    error: claimError,
+    clearError: clearClaimError,
+  } = useEmployeeMobileV2ClaimAction();
 
   const blockerPresentation = buildEmployeeMobileV2BlockerPresentation(task);
   const canStartAssigned = canShowAssignedStart(task);
   const canStartAvailable = canShowAvailableStart(task);
+  const canClaimOnly = canShowClaimOnly(task);
   const canComplete = canShowComplete(task);
   const startPending = startIsPending(task);
   const completePending = completeIsPending(task);
-  const actionError = runtimeError || startError;
+  const claimPending = claimIsPending(task);
+  const actionError = runtimeError || startError || claimError;
   const showDisabledStart =
     !canStartAssigned &&
     !canStartAvailable &&
@@ -68,6 +82,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
   const handleStart = async () => {
     clearRuntimeError();
     clearStartError();
+    clearClaimError();
     setActionSuccess(null);
     try {
       await startTask(task, async () => {
@@ -80,9 +95,25 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     }
   };
 
+  const handleClaim = async () => {
+    clearStartError();
+    clearRuntimeError();
+    clearClaimError();
+    setActionSuccess(null);
+    try {
+      await claimTask(task, async () => {
+        setActionSuccess("Task preluat.");
+        await onActionComplete();
+      });
+    } catch {
+      // surfaced via claim hook
+    }
+  };
+
   const handleCompleteConfirm = async () => {
     clearStartError();
     clearRuntimeError();
+    clearClaimError();
     setActionSuccess(null);
     try {
       await completeTask(task, async () => {
@@ -112,7 +143,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           <button
             type="button"
             className={emV2Controls.primaryAction}
-            disabled={startPending || completePending}
+            disabled={startPending || completePending || claimPending}
             onClick={() => void handleStart()}
             data-testid={`${testIdPrefix}-start`}
           >
@@ -147,11 +178,33 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           </div>
         ) : null}
 
+        {canClaimOnly ? (
+          <button
+            type="button"
+            className={emV2Controls.secondaryAction}
+            disabled={claimPending || startPending || completePending}
+            onClick={() => void handleClaim()}
+            data-testid={`${testIdPrefix}-claim`}
+          >
+            {claimPending ? (
+              <span className="inline-flex items-center justify-center gap-2">
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+                {CLAIM_PENDING_LABEL}
+              </span>
+            ) : (
+              <span className="inline-flex items-center justify-center gap-2">
+                <Hand className="w-4 h-4" aria-hidden />
+                {CLAIM_ONLY_LABEL}
+              </span>
+            )}
+          </button>
+        ) : null}
+
         {canComplete ? (
           <button
             type="button"
             className={emV2Controls.primaryAction}
-            disabled={completePending || startPending}
+            disabled={completePending || startPending || claimPending}
             onClick={() => {
               clearStartError();
               clearRuntimeError();

@@ -90,6 +90,11 @@ export default function EmployeeMobileV2TaskDetailPage() {
     await loadBlueprint();
   }, [reload, loadBlueprint]);
 
+  const refreshAfterAction = useCallback(async () => {
+    await reload({ background: true });
+    await loadBlueprint();
+  }, [reload, loadBlueprint]);
+
   const missingMessage = useMemo(() => {
     if (orderIdFilter != null) {
       return EMPLOYEE_MOBILE_TASK_NOT_ACCESSIBLE_MESSAGE;
@@ -306,7 +311,7 @@ export default function EmployeeMobileV2TaskDetailPage() {
               variant="footer"
               visualVariant="v2"
             />
-            <EmployeeMobileV2WorkRoomActionBar task={task} onActionComplete={refresh} />
+            <EmployeeMobileV2WorkRoomActionBar task={task} onActionComplete={refreshAfterAction} />
           </>
         )}
       </div>

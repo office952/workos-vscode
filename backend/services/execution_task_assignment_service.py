@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
+from weakref import WeakValueDictionary
 
 from fastapi import HTTPException
 from models.employees import Employees
@@ -52,12 +55,36 @@ def _load_plan_operational_tasks(raw: str) -> tuple[list[dict[str, Any]], Parsed
     return tasks, parsed
 
 
+def _normalize_employee_id(value: Any) -> Optional[int]:
+    if value is None:
+        return None
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return None
+    return parsed if parsed > 0 else None
+
+
+_assign_locks: "WeakValueDictionary[tuple[int, str], asyncio.Lock]" = WeakValueDictionary()
+
+
+def _assignment_lock(order_id: int, task_id: str) -> asyncio.Lock:
+    key = (order_id, task_id.strip())
+    lock = _assign_locks.get(key)
+    if lock is None:
+        lock = asyncio.Lock()
+        _assign_locks[key] = lock
+    return lock
+
+
 async def assign_plan_task(
     db: AsyncSession,
     *,
     order_id: int,
     task_id: str,
     assigned_employee_id: int,
+    allow_reassign: bool = False,
+    assignment_source: str | None = None,
 ) -> dict:
     if not isinstance(order_id, int) or order_id <= 0:
         raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
@@ -74,52 +101,84 @@ async def assign_plan_task(
     if emp.status != "active":
         raise HTTPException(status_code=422, detail={"error": "employee_not_active"})
 
-    plan = (
-        await db.execute(select(ExecutionPlan).where(ExecutionPlan.order_id == order_id))
-    ).scalar_one_or_none()
-    if plan is None:
-        raise HTTPException(status_code=404, detail={"error": "plan_not_found"})
-
-    assert_operational_mutation_allowed(plan)
-
-    reality = (
-        await db.execute(select(ExecutionReality).where(ExecutionReality.order_id == order_id))
-    ).scalar_one_or_none()
-    reality_lookup = _reality_task_lookup(reality.tasks_json if reality else None)
-
-    tasks, parsed = _load_plan_operational_tasks(plan.tasks_json)
-    updated_task: Optional[dict] = None
-    for entry in tasks:
-        if not isinstance(entry, dict):
-            continue
-        if str(entry.get("task_id")) != task_id:
-            continue
-        rt = reality_lookup.get(task_id, {})
-        if rt.get("ended_at"):
-            raise HTTPException(
-                status_code=409,
-                detail={"error": "task_already_completed", "detail": "Task finalizat — reassign interzis."},
+    async with _assignment_lock(order_id, task_id):
+        plan = (
+            await db.execute(
+                select(ExecutionPlan)
+                .where(ExecutionPlan.order_id == order_id)
+                .order_by(ExecutionPlan.id.desc())
+                .limit(1)
+                .with_for_update()
             )
-        entry["assigned_employee_id"] = assigned_employee_id
-        updated_task = dict(entry)
-        break
+        ).scalar_one_or_none()
+        if plan is None:
+            raise HTTPException(status_code=404, detail={"error": "plan_not_found"})
 
-    if updated_task is None:
-        raise HTTPException(status_code=404, detail={"error": "task_not_found_in_plan"})
+        assert_operational_mutation_allowed(plan)
 
-    plan.tasks_json = serialize_operational_tasks_to_plan_json(parsed, tasks)
-    await db.commit()
-    await db.refresh(plan)
+        reality = (
+            await db.execute(select(ExecutionReality).where(ExecutionReality.order_id == order_id))
+        ).scalar_one_or_none()
+        reality_lookup = _reality_task_lookup(reality.tasks_json if reality else None)
 
-    return {
-        "plan_id": plan.id,
-        "order_id": plan.order_id,
-        "order_code": plan.order_code,
-        "task_id": task_id,
-        "assigned_employee_id": assigned_employee_id,
-        "assigned_employee_name": emp.name,
-        "task": updated_task,
-    }
+        tasks, parsed = _load_plan_operational_tasks(plan.tasks_json)
+        updated_task: Optional[dict] = None
+        for entry in tasks:
+            if not isinstance(entry, dict):
+                continue
+            if str(entry.get("task_id")) != task_id:
+                continue
+            rt = reality_lookup.get(task_id, {})
+            if rt.get("ended_at"):
+                raise HTTPException(
+                    status_code=409,
+                    detail={"error": "task_already_completed", "detail": "Task finalizat — reassign interzis."},
+                )
+            existing_assignee = _normalize_employee_id(entry.get("assigned_employee_id"))
+            if existing_assignee is not None and existing_assignee != assigned_employee_id:
+                if not allow_reassign:
+                    raise HTTPException(
+                        status_code=409,
+                        detail={
+                            "error": "task_already_assigned",
+                            "message": "Taskul este deja preluat de alt coleg.",
+                        },
+                    )
+            if existing_assignee == assigned_employee_id:
+                await db.refresh(plan)
+                return {
+                    "plan_id": plan.id,
+                    "order_id": plan.order_id,
+                    "order_code": plan.order_code,
+                    "task_id": task_id,
+                    "assigned_employee_id": assigned_employee_id,
+                    "assigned_employee_name": emp.name,
+                    "task": dict(entry),
+                    "already_assigned": True,
+                }
+            entry["assigned_employee_id"] = assigned_employee_id
+            entry["assignment_updated_at"] = datetime.now(timezone.utc).isoformat()
+            if assignment_source:
+                entry["assignment_source"] = assignment_source
+            updated_task = dict(entry)
+            break
+
+        if updated_task is None:
+            raise HTTPException(status_code=404, detail={"error": "task_not_found_in_plan"})
+
+        plan.tasks_json = serialize_operational_tasks_to_plan_json(parsed, tasks)
+        await db.commit()
+        await db.refresh(plan)
+
+        return {
+            "plan_id": plan.id,
+            "order_id": plan.order_id,
+            "order_code": plan.order_code,
+            "task_id": task_id,
+            "assigned_employee_id": assigned_employee_id,
+            "assigned_employee_name": emp.name,
+            "task": updated_task,
+        }
 
 
 async def clear_plan_task_assignment(

@@ -29,19 +29,26 @@ export function useEmployeeMobileV2TaskTruth(): EmployeeMobileV2TaskTruthState {
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
 
-  const reload = useCallback(async () => {
-    setLoading(true);
+  const reload = useCallback(async (options?: { background?: boolean }) => {
+    const background = options?.background === true;
+    if (!background) {
+      setLoading(true);
+    }
     setError(null);
     setErrorCode(null);
     try {
       const response = (await fetchEmployeeMobileTaskTruth()) as EmployeeMobileTaskTruthResponse;
       setView(buildEmployeeMobileV2TaskTruthView(response));
     } catch (err) {
-      setView(null);
+      if (!background) {
+        setView(null);
+      }
       setError(mapMobileTaskErrorMessage(err));
       setErrorCode((err as { code?: string })?.code ?? null);
     } finally {
-      setLoading(false);
+      if (!background) {
+        setLoading(false);
+      }
     }
   }, []);
 

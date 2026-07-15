@@ -76,10 +76,19 @@ export function useEmployeeMobileV2TaskDetail(
   const loading = truthLoading || (orderId != null && taskId ? fetchLoading : false);
   const error = truthError || fetchError;
 
-  const reload = useCallback(async () => {
-    await reloadTruth();
+  const reload = useCallback(async (options?: { background?: boolean }) => {
+    await reloadTruth(options);
     if (taskId && orderId != null) {
-      await loadFromEndpoint();
+      if (options?.background) {
+        try {
+          const row = await fetchEmployeeMobileTaskByOrder(orderId, taskId);
+          setFetchedTask(row);
+        } catch {
+          // preserve action feedback on background refresh failure
+        }
+      } else {
+        await loadFromEndpoint();
+      }
     }
   }, [reloadTruth, taskId, orderId, loadFromEndpoint]);
 

@@ -1127,15 +1127,6 @@ async def claim_my_task(
         )
 
     assigned_id = _normalize_employee_id(match.get("assigned_employee_id"))
-    if assigned_id == employee_id:
-        return {
-            "status": "ok",
-            "action": "claim",
-            "task_id": task_id,
-            "order_id": order_id,
-            "assigned_employee_id": employee_id,
-            "already_claimed": True,
-        }
     if assigned_id is not None and assigned_id != employee_id:
         raise HTTPException(
             status_code=409,
@@ -1167,6 +1158,7 @@ async def claim_my_task(
         order_id=order_id,
         task_id=task_id,
         assigned_employee_id=employee_id,
+        assignment_source="employee_claim",
     )
     return {
         "status": "ok",
@@ -1175,7 +1167,7 @@ async def claim_my_task(
         "order_id": order_id,
         "assigned_employee_id": employee_id,
         "assigned_employee_name": result.get("assigned_employee_name"),
-        "already_claimed": False,
+        "already_claimed": bool(result.get("already_assigned")),
     }
 
 
@@ -1271,6 +1263,7 @@ async def start_available_task(
         order_id=order_id,
         task_id=task_id,
         assigned_employee_id=employee_id,
+        assignment_source="start_from_available",
     )
     try:
         return await start_my_task(
