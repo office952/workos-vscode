@@ -379,7 +379,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Screenshots | 12 @ 390×844 |
 | T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
 | MOBILE-T02 | **COMPLETE** |
-| Next | **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE** |
+| Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
+
+## MOBILE-T05 — In-progress session and complete
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_SESSION_COMPLETE_PASS_COMMITTED` |
+| Complete | `CANONICAL_EXECUTIONREALITY_COMPLETE` |
+| Pause/resume | `DEFER_PAUSE_RESUME_KEEP_COMPLETE_ONLY` |
+| Block/unblock | `DEFER_BLOCK_UNBLOCK` |
+| Session contract | `MOBILE_SESSION_CAPABILITY_ADAPTER_REQUIRED` |
+| Runtime client | `employeeMobileV2RuntimeAction.ts` + `useEmployeeMobileV2RuntimeAction` |
+| Elapsed display | `BACKEND_START_TIME_CLIENT_DISPLAY` |
+| Confirmation | `CONFIRMATION_DIALOG` |
+| Tests | 43 backend + 40 frontend |
+| Screenshots | 13 @ 390×844 |
+| MOBILE-T05 | **COMPLETE** |
+| Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
 
 ## MOBILE-T04 — Canonical start action wiring
 

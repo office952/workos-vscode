@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T04 canonical start action — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T05 in-progress session and complete — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE** |
+| Next task | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
 
 
 
@@ -372,7 +372,21 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T02:** **COMPLETE**
 
-**Next:** **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE**
+**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
+
+## MOBILE-T05 — In-progress session and complete
+
+**Verdict:** `MOBILE_SESSION_COMPLETE_PASS_COMMITTED`
+
+**Delivered:** Active session panel (start time, orientative elapsed); shared runtime Complete client/hook; confirmation dialog; backend `can_complete` gate; pause/resume/block removed from v2 UI (compatibility-only backend); historical session on done tasks.
+
+**Proof:** 43 focused backend + 40 frontend tests; routed fixtures on :8001/:3000; 13 screenshots @ 390×844.
+
+**Classifications:** Complete `CANONICAL_EXECUTIONREALITY_COMPLETE` · Pause/resume `DEFER_PAUSE_RESUME_KEEP_COMPLETE_ONLY` · Block `DEFER_BLOCK_UNBLOCK`
+
+**MOBILE-T05:** **COMPLETE**
+
+**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
 
 ## MOBILE-T04 — Canonical start action wiring
 
@@ -386,7 +400,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T04:** **COMPLETE**
 
-**Next:** **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE**
+**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
 
 ## MOBILE-T03 — Blocker and readiness visibility
 
