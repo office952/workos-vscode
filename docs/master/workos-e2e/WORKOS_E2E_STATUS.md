@@ -368,5 +368,9 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Proof:** 10 truth backend + 18 frontend tests; runtime Sandu order `23099` assigned 5 / available 7; 12 screenshots @ 390×844.
 
+**T02B closure:** `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` — available-task fixture bleed fixed; 35 backend regression green.
+
+**MOBILE-T02:** **COMPLETE**
+
 **Next:** **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**
 

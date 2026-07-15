@@ -377,7 +377,18 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
 | Screenshots | 12 @ 390×844 |
+| T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
+| MOBILE-T02 | **COMPLETE** |
 | Next | **MOBILE-T03-BLOCKER-READINESS-VISIBILITY** |
+
+## MOBILE-T02B — Available task fixture isolation
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
+| Classification | `FIXTURE_STATE_BLEED` + `STALE_LEGACY_EXPECTATION` |
+| Regression | 35 backend + 18 frontend — 0 failed |
 
 ## W6-INT-02 — Operator truth + resolution integration gate
 
