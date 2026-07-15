@@ -1,0 +1,77 @@
+{
+  "task": "UI-TRUTH-01",
+  "tasks": [
+    {
+      "id": "UI-TRUTH-01A",
+      "title": "Runtime truth contract and frontend types/hook",
+      "files": [
+        "frontend/src/types/runtimeStatus.ts",
+        "frontend/src/hooks/useRuntimeHealth.ts",
+        "frontend/src/hooks/useRuntimeHealth.test.ts"
+      ],
+      "change": "Define segment types, health→backend mapper, public health fetch on same-origin /api, poll/abort/stale",
+      "tests": "useRuntimeHealth.test.ts",
+      "visual_verification": "none",
+      "risks": "Duplicate poll if not shared later with ModuleChain",
+      "dependency": "none",
+      "commit_boundary": "feat(ui-truth): runtime health hook and status types"
+    },
+    {
+      "id": "UI-TRUTH-01B",
+      "title": "Banner rendering and Romanian terminology",
+      "files": [
+        "frontend/src/components/workos/EnvironmentBanner.tsx",
+        "frontend/src/components/workos/RuntimeStatusSummary.tsx"
+      ],
+      "change": "Replace LIVE/DB with four segments; Romanian labels; color/icon per segment",
+      "tests": "EnvironmentBanner.test.tsx happy/warning/unauth/mock",
+      "visual_verification": "intake + orders screenshots healthy/warning",
+      "risks": "Layout overflow on narrow screens",
+      "dependency": "UI-TRUTH-01A",
+      "commit_boundary": "feat(ui-truth): honest runtime status banner segments"
+    },
+    {
+      "id": "UI-TRUTH-01C",
+      "title": "Failure, stale, retry, and drill-down states",
+      "files": [
+        "frontend/src/components/workos/RuntimeStatusDetails.tsx",
+        "frontend/src/components/workos/EnvironmentBanner.tsx"
+      ],
+      "change": "Manual refresh, stale threshold, diagnostics-gated DB segment, unauthorized message",
+      "tests": "timeout, retry, diagnostics 403, stale",
+      "visual_verification": "backend down + db unknown screenshots",
+      "risks": "Accidental diagnostics leak — must redact",
+      "dependency": "UI-TRUTH-01B",
+      "commit_boundary": "feat(ui-truth): banner failure retry and authorized drill-down"
+    },
+    {
+      "id": "UI-TRUTH-01D",
+      "title": "Tests and route regression",
+      "files": [
+        "frontend/src/components/workos/EnvironmentBanner.test.tsx"
+      ],
+      "change": "Full scenario matrix; integration mocks for proxy failure",
+      "tests": "25 planned cases",
+      "visual_verification": "n/a",
+      "risks": "Flaky timer tests — use fake timers",
+      "dependency": "UI-TRUTH-01C",
+      "commit_boundary": "test(ui-truth): environment banner operational truth coverage"
+    },
+    {
+      "id": "UI-TRUTH-01E",
+      "title": "Runtime and visual verification",
+      "files": [
+        "docs/qa/product-system-active-path-isolation-v1/ui_truth_01/runtime_verification.json"
+      ],
+      "change": "Live stack proof on canonical npm run dev:stack; capture screenshots",
+      "tests": "targeted vitest green",
+      "visual_verification": "7 states per visual_acceptance_checklist.json",
+      "risks": "Environment-specific health warning baseline",
+      "dependency": "UI-TRUTH-01D",
+      "commit_boundary": "docs(ui-truth): runtime verification evidence UI-TRUTH-01"
+    }
+  ],
+  "implementation_tasks_count": 5,
+  "first_implementation_task_after_go": "UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK",
+  "implementation_authorized": false
+}

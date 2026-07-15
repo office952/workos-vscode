@@ -1,0 +1,99 @@
+{
+  "task": "UI-TRUTH-01",
+  "banner_purpose_decision": "Option C — combined summary with separated truths",
+  "banner_represents": [
+    "Frontend shell loaded (implicit INCARCAT when banner renders)",
+    "Session state (independent segment)",
+    "Backend reachability and aggregate health (from real HTTP probe)",
+    "Database connectivity (only when proven — else NECUNOSCUTA)",
+    "Environment/mode (local/test/staging/prod/demo)",
+    "Last successful operational check timestamp"
+  ],
+  "banner_must_not_represent": [
+    "Authentication success as backend availability",
+    "Backend HTTP 200 as automatic DB confirmation when checks empty",
+    "LIVE or DB connected without proof",
+    "Full diagnostics payload to unauthorized users",
+    "Route-level business errors as global all-clear",
+    "Parity or governance state"
+  ],
+  "canonical_truth_sources": [
+    {
+      "truth": "frontend_loaded",
+      "source": "React mount",
+      "endpoint_hook": "EnvironmentBanner render",
+      "public_auth": "n/a",
+      "refresh": "n/a"
+    },
+    {
+      "truth": "authenticated_session",
+      "source": "AuthContext",
+      "endpoint_hook": "authApi.getCurrentUser via getAPIBaseURL (existing — do not change in UI-TRUTH-01)",
+      "public_auth": "credentials include",
+      "refresh": "focus/visibility silent refresh (existing AuthContext)"
+    },
+    {
+      "truth": "backend_reachable",
+      "source": "same-origin health fetch",
+      "endpoint_hook": "GET /api/v1/system/health",
+      "public_auth": "public",
+      "refresh": "useRuntimeHealth polling"
+    },
+    {
+      "truth": "backend_aggregate_status",
+      "source": "health.status field",
+      "endpoint_hook": "GET /api/v1/system/health",
+      "public_auth": "public",
+      "refresh": "useRuntimeHealth polling"
+    },
+    {
+      "truth": "db_connectivity",
+      "source": "diagnostics checks.database.status ONLY when authorized",
+      "endpoint_hook": "GET /api/v1/system/diagnostics (gated)",
+      "public_auth": "system.diagnostics.read",
+      "refresh": "same hook, skip when unauthorized",
+      "fallback": "NECUNOSCUTA"
+    },
+    {
+      "truth": "diagnostics_availability",
+      "source": "diagnostics fetch result 200 vs 401/403",
+      "endpoint_hook": "GET /api/v1/system/diagnostics",
+      "public_auth": "admin permission",
+      "refresh": "on drill-down open or authorized poll"
+    },
+    {
+      "truth": "environment_mode",
+      "source": "import.meta.env + /api/v1/system/version.environment",
+      "endpoint_hook": "version fetch + Vite MODE",
+      "public_auth": "version public",
+      "refresh": "on load + health poll cadence"
+    },
+    {
+      "truth": "mock_demo_mode",
+      "source": "isMockEnabled()",
+      "endpoint_hook": "mockGuard",
+      "public_auth": "n/a",
+      "refresh": "static per build"
+    },
+    {
+      "truth": "last_successful_check",
+      "source": "health.generated_at or client lastOkAt",
+      "endpoint_hook": "useRuntimeHealth",
+      "public_auth": "public",
+      "refresh": "each successful health response"
+    }
+  ],
+  "rules": [
+    "auth_state cannot prove backend health",
+    "backend HTTP response cannot automatically prove DB health unless checks.database confirmed via authorized diagnostics",
+    "checks:{} on public health → DB NECUNOSCUTA",
+    "diagnostics details must not be exposed without authorization",
+    "route errors must not be hidden by a global green operational badge"
+  ],
+  "split_api_path_decision": {
+    "banner_health_path": "same-origin /api/v1/system/health",
+    "rationale": "Represents real browser proxy chain used by web-sdk Intake path",
+    "direct_8001": "diagnostic only — not primary banner truth; document debt, do not refactor clients in UI-TRUTH-01",
+    "auth_path_note": "Auth currently uses getAPIBaseURL direct :8001 in dev — segment separation must not infer backend from auth"
+  }
+}

@@ -3,6 +3,9 @@
   "modified_in_this_task": false,
   "rule": "authState === authenticated → LIVE / DB",
   "problem": "Does not verify operational API health or data availability",
-  "classification": "OPEN_DEBT",
-  "next_task": "UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN"
+  "classification": "PLAN_COMPLETE_IMPLEMENTATION_PENDING",
+  "plan_task": "UI-TRUTH-01",
+  "plan_verdict": "UI_TRUTH_01_PLAN_READY_FOR_OWNER_GO",
+  "plan_worklog": "docs/worklog/runtime/2026-07-15_ui_truth_01_environment_banner_operational_health_truth_plan_v1.md",
+  "next_task": "OWNER_GO_REQUIRED → UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK"
 }

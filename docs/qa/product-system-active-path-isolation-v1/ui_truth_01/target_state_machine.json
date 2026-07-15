@@ -1,0 +1,75 @@
+{
+  "task": "UI-TRUTH-01",
+  "segments": {
+    "frontend": {
+      "states": ["INCARCAT", "EROARE"],
+      "default": "INCARCAT",
+      "transitions": {
+        "INCARCAT": ["EROARE"],
+        "EROARE": ["INCARCAT"]
+      }
+    },
+    "session": {
+      "states": ["AUTENTIFICAT", "NEAUTENTIFICAT", "EXPIRAT", "NECUNOSCUT", "SE_VERIFICA"],
+      "mapping_from_authState": {
+        "loading": "SE_VERIFICA",
+        "authenticated": "AUTENTIFICAT",
+        "unauthenticated": "NEAUTENTIFICAT",
+        "auth_config_missing": "NEAUTENTIFICAT",
+        "dev_auth_enabled": "AUTENTIFICAT"
+      },
+      "expired_rule": "401 on subsequent auth refresh → EXPIRAT (distinct from NEAUTENTIFICAT initial)"
+    },
+    "backend": {
+      "states": ["DISPONIBIL", "AVERTISMENT", "CRITIC", "INDISPONIBIL", "SE_VERIFICA"],
+      "mapping_from_health": {
+        "fetch_pending": "SE_VERIFICA",
+        "fetch_error_timeout": "INDISPONIBIL",
+        "status_ok": "DISPONIBIL",
+        "status_warning": "AVERTISMENT",
+        "status_fail": "CRITIC",
+        "status_degraded": "AVERTISMENT"
+      }
+    },
+    "database": {
+      "states": ["CONFIRMATA", "AVERTISMENT", "INDISPONIBILA", "NECUNOSCUTA", "SE_VERIFICA"],
+      "mapping_rules": [
+        "Public health with checks:{} → NECUNOSCUTA (not SE_VERIFICA after first health response)",
+        "Unauthorized diagnostics → NECUNOSCUTA",
+        "Authorized diagnostics database ok → CONFIRMATA",
+        "Authorized diagnostics database fail → INDISPONIBILA",
+        "Authorized diagnostics database warning/unknown → AVERTISMENT or NECUNOSCUTA per check status"
+      ]
+    },
+    "environment": {
+      "states": ["LOCAL", "TEST", "STAGING", "PRODUCTIE", "DEMO", "NECUNOSCUT"],
+      "mapping": {
+        "import.meta.env.DEV": "LOCAL",
+        "isMockEnabled": "DEMO",
+        "version.environment_staging": "STAGING",
+        "version.environment_production": "PRODUCTIE",
+        "version.environment_test": "TEST"
+      }
+    }
+  },
+  "composite_display_rules": [
+    "Render four labeled segments: Sesiune · Backend · Baza de date · Mediu",
+    "No segment may infer another",
+    "Worst backend state drives backend segment only — not session color",
+    "Mock/demo overrides environment segment to MOD DEMO / DATE DEMONSTRATIVE",
+    "Never render opaque LIVE/DB combined state"
+  ],
+  "color_icon_semantics": {
+    "neutral_unknown": { "color": "slate", "icon": "HelpCircle or Loader2", "aria": "stare necunoscută sau în verificare" },
+    "success": { "color": "emerald", "icon": "CheckCircle2", "aria": "confirmat sănătos" },
+    "warning": { "color": "amber", "icon": "AlertTriangle", "aria": "degradat sau avertisment" },
+    "critical": { "color": "red", "icon": "XCircle", "aria": "indisponibil sau critic" },
+    "auth_segment": { "note": "Shield icon — never reuse Database icon for session" }
+  },
+  "accessibility": [
+    "Each segment has visible Romanian text — not color-only",
+    "aria-label on strip: Stare runtime: ...",
+    "Tooltip summarizes segments + last check time",
+    "Contrast meets existing WorkOS dark shell tokens"
+  ]
+}

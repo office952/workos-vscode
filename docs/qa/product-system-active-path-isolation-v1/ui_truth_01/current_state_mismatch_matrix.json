@@ -1,0 +1,82 @@
+{
+  "task": "UI-TRUTH-01",
+  "matrix": [
+    {
+      "situation": "auth_valid_backend_healthy",
+      "auth_probe": "GET /api/v1/auth/me → 200 (dev admin in canonical stack)",
+      "health_probe": "GET /api/v1/system/health → status ok|warning (live: warning)",
+      "current_banner": "LIVE / DB — green — Sursa de date: backend live",
+      "actual_truth": "Session authenticated; backend reachable via proxy; aggregate health warning (anchor order 14); DB not exposed on public health (checks: {})",
+      "mismatch": true,
+      "mismatch_reason": "Banner claims live DB from auth alone; ignores health warning and cannot reflect DB"
+    },
+    {
+      "situation": "auth_valid_backend_down",
+      "auth_probe": "Auth may still resolve if direct :8001 auth path up while proxy broken, or auth fails",
+      "health_probe": "GET /api/v1/system/health → network error or non-200",
+      "current_banner": "LIVE / DB green if authState still authenticated",
+      "actual_truth": "Operational API path through /api may be down; routes show Network Error",
+      "mismatch": true,
+      "mismatch_reason": "RUNTIME-RECOVERY-02: route Network Error while banner green"
+    },
+    {
+      "situation": "auth_valid_backend_warning",
+      "auth_probe": "200 authenticated",
+      "health_probe": "status warning (observed live 2026-07-15)",
+      "current_banner": "LIVE / DB green",
+      "actual_truth": "Backend reachable but degraded (execution_anchor_order_14 warning in diagnostics)",
+      "mismatch": true,
+      "mismatch_reason": "No warning surface on global banner"
+    },
+    {
+      "situation": "auth_invalid_backend_healthy",
+      "auth_probe": "401/unauthenticated",
+      "health_probe": "200 with status field",
+      "current_banner": "DEV / NO AUTH amber",
+      "actual_truth": "Backend health may be fine; session missing",
+      "mismatch": false,
+      "mismatch_reason": "Banner does not falsely claim backend down, but conflates no-session with dev mode labeling"
+    },
+    {
+      "situation": "frontend_offline_api_failure",
+      "auth_probe": "timeout or error",
+      "health_probe": "fetch fails",
+      "current_banner": "May show LIVE/DB if auth cached authenticated, or DEV/NO AUTH on unauthenticated",
+      "actual_truth": "No operational connectivity",
+      "mismatch": true,
+      "mismatch_reason": "No health fetch; stale auth state can mislead"
+    },
+    {
+      "situation": "diagnostics_unauthorized",
+      "auth_probe": "unauthenticated or viewer without system.diagnostics.read",
+      "health_probe": "public health 200 minimal",
+      "current_banner": "Not applicable — banner never calls diagnostics",
+      "actual_truth": "DB detail only in diagnostics; public health checks: {}",
+      "mismatch": true,
+      "mismatch_reason": "If implemented naively from auth, would leak or falsely confirm DB; current banner falsely confirms via LIVE/DB"
+    },
+    {
+      "situation": "mock_demo_active",
+      "auth_probe": "any",
+      "health_probe": "any",
+      "current_banner": "DEV / MOCK amber",
+      "actual_truth": "Demonstrative data; not production backend truth",
+      "mismatch": false,
+      "mismatch_reason": "Mock path labeled, but copy still English-heavy (DEV/MOCK)"
+    },
+    {
+      "situation": "module_chain_vs_banner",
+      "auth_probe": "authenticated",
+      "health_probe": "Module Chain shows WARNING badge + Live Health from same /api health",
+      "current_banner": "LIVE / DB green",
+      "actual_truth": "Same health source disagrees with banner optimism",
+      "mismatch": true,
+      "mismatch_reason": "MODULE-INT-01 health UI contradiction debt"
+    }
+  ],
+  "summary": {
+    "auth_used_as_health": true,
+    "mismatch_count": 6,
+    "classification": "MISLEADING"
+  }
+}

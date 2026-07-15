@@ -1,0 +1,71 @@
+{
+  "task": "UI-TRUTH-01",
+  "owner_paths": [
+    "http://127.0.0.1:3000/intake",
+    "http://127.0.0.1:3000/orders",
+    "http://127.0.0.1:3000/modules"
+  ],
+  "states": [
+    {
+      "id": "healthy_backend",
+      "setup": "npm run dev:stack; health status ok",
+      "label": "Local · Backend disponibil · DB neverificată",
+      "icon": "emerald Check on backend segment",
+      "color": "neutral/env + emerald backend",
+      "tooltip": "Ultima verificare + segment breakdown",
+      "timestamp": "visible generated_at",
+      "route_behavior": "intake loads normally",
+      "screenshot": "ui_truth_01_healthy_backend_intake.png"
+    },
+    {
+      "id": "warning_backend",
+      "setup": "live stack (anchor warning seeded or default dev db)",
+      "label": "Local · Backend cu avertisment · DB neverificată",
+      "icon": "AlertTriangle on backend",
+      "color": "amber backend segment",
+      "route_behavior": "modules page may also show WARNING — must not contradict",
+      "screenshot": "ui_truth_01_warning_backend_modules.png"
+    },
+    {
+      "id": "backend_unavailable",
+      "setup": "stop backend or block proxy target",
+      "label": "Local · Backend indisponibil · DB necunoscută",
+      "icon": "XCircle / WifiOff",
+      "color": "red backend segment — never full green strip",
+      "route_behavior": "route Network Error visible; banner not green LIVE",
+      "screenshot": "ui_truth_01_backend_down_intake.png"
+    },
+    {
+      "id": "session_expired",
+      "setup": "invalidate session cookie / 401 on auth refresh",
+      "label": "Sesiune expirată · Backend … · DB …",
+      "icon": "Shield warning",
+      "route_behavior": "protected routes gate",
+      "screenshot": "ui_truth_01_session_expired.png"
+    },
+    {
+      "id": "mock_demo",
+      "setup": "VITE_ENABLE_MOCK_DATA=true rebuild",
+      "label": "Mod demo · Date demonstrative",
+      "icon": "distinct demo badge",
+      "color": "not emerald LIVE",
+      "screenshot": "ui_truth_01_mock_demo.png"
+    },
+    {
+      "id": "db_unknown",
+      "setup": "default public health only",
+      "label": "DB neverificată or DB necunoscută",
+      "icon": "HelpCircle on DB segment",
+      "screenshot": "ui_truth_01_db_unknown.png"
+    },
+    {
+      "id": "route_level_error",
+      "setup": "backend up; single route fails (e.g. bad id)",
+      "label": "Banner aggregate backend disponibil if health ok",
+      "route_behavior": "page error banner visible alongside global strip",
+      "screenshot": "ui_truth_01_route_error_orders.png"
+    }
+  ],
+  "visual_states_planned_count": 7,
+  "desktop_mobile": "Verify 1280px and 390px widths — segments wrap without overlap"
+}

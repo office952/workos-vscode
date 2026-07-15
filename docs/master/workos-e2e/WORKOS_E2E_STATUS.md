@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** GOV-INT-01 on branch (after MODULE-AUTH-01 @ `1e9d32e`)
 
-**Last updated:** 2026-07-15 (GOV-INT-01 governance audit — **25 docs claim NOT_PROVEN**)
+**Last updated:** 2026-07-15 (UI-TRUTH-01 banner operational health truth plan — **PLAN COMPLETE**)
 
 
 
@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **GOV-INT-01** — audit E2E `/governance` vs `/modules` documentat |
+| Active task | **UI-TRUTH-01** — environment banner operational health truth plan (**COMPLETE — plan only**) |
 
-| Next task | **GOV-MODULE-AUTH-01** — scop canonic + decizii unificare (MODULE-PLAN-01 **BLOCAT**) |
+| Next task | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK** (APP-AUTH-06C **BLOCKED**) |
 
 
 
@@ -544,7 +544,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Owner command:** `npm run dev:stack`
 
-**Open debt:** Banner truth (UI-TRUTH-01); split API path (documented MEDIUM)
+**Open debt:** Split API path (documented MEDIUM); banner **implementation** pending owner GO
 
 **Evidence:** `docs/qa/product-system-active-path-isolation-v1/runtime_config_03/*.json`
 
@@ -552,7 +552,37 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **RUNTIME-CONFIG-03:** **COMPLETE**
 
-**Next:** **UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN**
+**Next:** **OWNER_GO_REQUIRED** → UI-TRUTH-01A implementation
+
+## UI-TRUTH-01 — Environment banner operational health truth plan
+
+**Verdict:** `UI_TRUTH_01_PLAN_READY_FOR_OWNER_GO`
+
+**Starting HEAD:** `6eea3e3`
+
+**Scope:** Plan + evidence only. No code, backend, DB, or UI changes.
+
+| Check | Result |
+|-------|--------|
+| Current banner | **MISLEADING** — auth → LIVE/DB |
+| Banner purpose | **Option C** — Sesiune / Backend / DB / Mediu separated |
+| Health source (planned) | same-origin `GET /api/v1/system/health` |
+| DB segment | **NECUNOSCUTA** unless authorized diagnostics |
+| Backend changes | **NO** |
+| New endpoint | **NO** |
+| Implementation authorized | **NO** |
+| Tests planned | **25** |
+| Visual states planned | **7** |
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/ui_truth_01/*.json`
+
+**Worklog:** `docs/worklog/runtime/2026-07-15_ui_truth_01_environment_banner_operational_health_truth_plan_v1.md`
+
+**UI-TRUTH-01:** **COMPLETE** (plan)
+
+**Next:** **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK**
+
+**APP-AUTH-06C:** **BLOCKED** until UI-TRUTH-01 implementation + runtime verification (01E)
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
@@ -648,7 +678,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02) and **startup aligned** (RUNTIME-CONFIG-03). Owner P1–P10 **CONFIRMED**. Remaining debt: banner truth (UI-TRUTH-01), split API path. Next: **UI-TRUTH-01** then **APP-AUTH-06C**. `PROD-ARCH-01` / `MOBILE-INT-02` remain blocked.
+Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02) and **startup aligned** (RUNTIME-CONFIG-03). Owner P1–P10 **CONFIRMED**. Banner truth **plan complete** (UI-TRUTH-01); implementation awaits owner GO. Remaining debt: split API path. Next: **UI-TRUTH-01A** then **APP-AUTH-06C** (blocked). `PROD-ARCH-01` / `MOBILE-INT-02` remain blocked.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

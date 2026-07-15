@@ -1,0 +1,65 @@
+{
+  "task": "UI-TRUTH-01",
+  "component_tests": {
+    "file": "frontend/src/components/workos/EnvironmentBanner.test.tsx",
+    "scenarios": [
+      "auth_valid_backend_healthy",
+      "auth_valid_backend_warning",
+      "auth_valid_backend_unavailable",
+      "auth_invalid_backend_healthy",
+      "health_loading",
+      "health_timeout",
+      "health_empty_checks_db_unknown",
+      "diagnostics_authorized_db_confirmed",
+      "diagnostics_unauthorized_db_unknown",
+      "mock_demo_mode",
+      "stale_health_response",
+      "retry_after_failure",
+      "unmount_cleanup_abort"
+    ],
+    "count": 13
+  },
+  "hook_tests": {
+    "file": "frontend/src/hooks/useRuntimeHealth.test.ts",
+    "scenarios": [
+      "successful_fetch_sets_status",
+      "fetch_error_sets_unavailable",
+      "polling_interval",
+      "manual_refetch",
+      "abort_on_unmount"
+    ],
+    "count": 5
+  },
+  "integration_tests": {
+    "scenarios": [
+      "app_shell_renders_banner",
+      "same_origin_api_health_mocked",
+      "proxy_failure_simulated",
+      "backend_warning_aggregate",
+      "route_error_banner_independent",
+      "no_false_live_db_label",
+      "no_secret_leakage_in_dom"
+    ],
+    "count": 7
+  },
+  "regression_routes": [
+    "/intake",
+    "/orders",
+    "/execution",
+    "/product-system",
+    "/modules",
+    "/governance",
+    "login/session flows"
+  ],
+  "backend_tests": {
+    "run_unchanged": [
+      "backend/tests/test_system_health.py",
+      "backend/tests/test_security_release_audit_fix_10_health_diagnostics.py"
+    ]
+  },
+  "commands": [
+    "cd frontend && npx --yes pnpm@8.10.0 exec vitest run src/components/workos/EnvironmentBanner.test.tsx",
+    "cd frontend && npx --yes pnpm@8.10.0 exec vitest run src/hooks/useRuntimeHealth.test.ts"
+  ],
+  "tests_planned_count": 25
+}

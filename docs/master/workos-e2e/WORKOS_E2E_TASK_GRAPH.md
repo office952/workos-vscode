@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `GOV-MODULE-AUTH-01` (after GOV-INT-01 gate)  
+**Active task:** `UI-TRUTH-01` plan **COMPLETE** — await **OWNER_GO** for UI-TRUTH-01A  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## MODULE-AUTH-01 — Canonical module chain purpose authority decisions
@@ -539,7 +539,23 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Restart cycles | **2/2 PASS** |
 | Owner command | `npm run dev:stack` |
 | RUNTIME-CONFIG-03 | **COMPLETE** |
-| Next | **UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN** |
+| Next | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A** |
+
+## UI-TRUTH-01 — ENVIRONMENT_BANNER_OPERATIONAL_HEALTH_TRUTH_PLAN_V1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) — plan only |
+| Verdict | `UI_TRUTH_01_PLAN_READY_FOR_OWNER_GO` |
+| Starting HEAD | `6eea3e3` |
+| Current banner | **MISLEADING** (auth → LIVE/DB) |
+| Target model | AUTH_BACKEND_DB_ENV_SEPARATED (Option C) |
+| Health path | same-origin `/api/v1/system/health` |
+| Backend changes | **NO** |
+| Implementation authorized | **NO** |
+| APP-AUTH-06C | **BLOCKED** until 01A–01E complete |
+| UI-TRUTH-01 | **COMPLETE** (plan) |
+| Next | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK** |
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
@@ -596,7 +612,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Safety / backup checkpoint
 
-Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CONFIG-03). Owner P1–P10 CONFIRMED. Next: UI-TRUTH-01 → APP-AUTH-06C. PROD-ARCH-01 / MOBILE-INT-02 blocked.
+Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CONFIG-03). UI-TRUTH-01 plan COMPLETE. Owner GO required → UI-TRUTH-01A → APP-AUTH-06C (blocked). PROD-ARCH-01 / MOBILE-INT-02 blocked.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 
