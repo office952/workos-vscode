@@ -325,6 +325,18 @@ export default function ExecutionDetail() {
     }
   }, [isValidId, parsedId, order_id, loadRealityOnly]);
 
+  const refreshTaskTruth = useCallback(async () => {
+    if (!isValidId) return;
+    try {
+      const truth = await fetchOperatorTaskTruth(parsedId);
+      setTaskTruthResponse(truth);
+      setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
+    } catch {
+      setTaskTruthResponse(null);
+      setTaskTruthByTaskId({});
+    }
+  }, [isValidId, parsedId]);
+
   useEffect(() => {
     void load();
   }, [load]);
@@ -786,7 +798,12 @@ export default function ExecutionDetail() {
                   onOpenDetails={() => setOwnerDetailsOpen(true)}
                 />
                 {ownerDetailsOpen ? (
-                  <OperatorOwnerDecisionDetailsPanel truth={taskTruthResponse} defaultOpen />
+                  <OperatorOwnerDecisionDetailsPanel
+                    truth={taskTruthResponse}
+                    defaultOpen
+                    orderId={parsedId}
+                    onResolved={refreshTaskTruth}
+                  />
                 ) : null}
               </div>
             )}

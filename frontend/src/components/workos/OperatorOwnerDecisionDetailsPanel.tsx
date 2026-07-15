@@ -9,18 +9,29 @@ import {
 } from "@/lib/operatorProductionBlockerPresentation";
 import { ChevronDown, ChevronRight } from "lucide-react";
 
+import { OperatorOwnerDecisionResolutionForm } from "@/components/workos/OperatorOwnerDecisionResolutionForm";
+
 type Props = {
   truth: OperatorTaskTruthResponse | null;
   defaultOpen?: boolean;
   testId?: string;
+  /** Required on ExecutionDetail mutation surface. */
+  orderId?: number;
+  onResolved?: () => Promise<void>;
 };
 
 function DecisionRow({
   item,
   showResolverMeta,
+  orderId,
+  onResolved,
+  enableResolutionMutation,
 }: {
   item: OwnerDecisionSummaryItem;
   showResolverMeta: boolean;
+  orderId?: number;
+  onResolved?: () => Promise<void>;
+  enableResolutionMutation: boolean;
 }) {
   return (
     <li
@@ -65,6 +76,13 @@ function DecisionRow({
       <p className="text-[9px] text-slate-600 font-mono" data-testid={`owner-decision-code-${item.code}`}>
         {item.code}
       </p>
+      {enableResolutionMutation && orderId && onResolved ? (
+        <OperatorOwnerDecisionResolutionForm
+          orderId={orderId}
+          item={item}
+          onResolved={onResolved}
+        />
+      ) : null}
     </li>
   );
 }
@@ -73,12 +91,16 @@ export function OperatorOwnerDecisionDetailsPanel({
   truth,
   defaultOpen = false,
   testId,
+  orderId,
+  onResolved,
 }: Props) {
   const [open, setOpen] = useState(defaultOpen);
   if (!truth || truth.owner_decisions_summary.length === 0) return null;
 
   const { blocking, nonblocking } = splitOwnerDecisions(truth.owner_decisions_summary);
   const showResolverMeta = truth.role_capabilities.can_resolve_owner_decisions;
+  const enableResolutionMutation =
+    Boolean(orderId && onResolved) && truth.role_capabilities.can_resolve_owner_decisions;
 
   return (
     <section
@@ -107,7 +129,14 @@ export function OperatorOwnerDecisionDetailsPanel({
               <h4 className="text-[11px] font-semibold text-red-300 mb-1.5">Blocante productie</h4>
               <ul className="space-y-2">
                 {blocking.map((item) => (
-                  <DecisionRow key={item.code} item={item} showResolverMeta={showResolverMeta} />
+                  <DecisionRow
+                    key={item.code}
+                    item={item}
+                    showResolverMeta={showResolverMeta}
+                    orderId={orderId}
+                    onResolved={onResolved}
+                    enableResolutionMutation={enableResolutionMutation}
+                  />
                 ))}
               </ul>
             </div>
@@ -120,7 +149,14 @@ export function OperatorOwnerDecisionDetailsPanel({
               </h4>
               <ul className="space-y-2">
                 {nonblocking.map((item) => (
-                  <DecisionRow key={item.code} item={item} showResolverMeta={showResolverMeta} />
+                  <DecisionRow
+                    key={item.code}
+                    item={item}
+                    showResolverMeta={showResolverMeta}
+                    orderId={orderId}
+                    onResolved={onResolved}
+                    enableResolutionMutation={false}
+                  />
                 ))}
               </ul>
             </div>
