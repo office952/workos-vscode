@@ -3,7 +3,7 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `e92d135`  
-**Active task:** `WORKOS-ROADMAP-REALIGNMENT-01` **COMPLETE** — next **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO; **FLEX-02 NOT AUTHORIZED**)  
+**Active task:** `PROD-FLEX-ARCH-02` **COMPLETE** (plan only) — owner P1–P12 pending; **FLEX-02 BLOCKED**  
 **Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
@@ -1232,7 +1232,23 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | FLEX detour | Justified parallel foundation; does not replace canonical product roadmap |
 | Worklog | `docs/worklog/realignment/2026-07-15_workos_roadmap_realignment_01_after_backup_and_flex_foundation.md` |
 | WORKOS-ROADMAP-REALIGNMENT-01 | **COMPLETE** |
-| Next | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO) |
+| Next | **PROD-FLEX-ARCH-02** (closed) |
+
+## PROD-FLEX-ARCH-02 — Participant persistence boundary
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) — plan only |
+| Verdict | `PROD_FLEX_ARCH_02_PARTICIPANT_PERSISTENCE_BOUNDARY_READY` |
+| Starting HEAD | `eaa3025` |
+| Readiness | `READY_FOR_OWNER_DECISION_NOW` |
+| Recommended boundary | Hybrid normalized — participants table (FLEX-02) + help table (FLEX-04) + sessions unchanged |
+| participants_json | **DEFERRED / NOT CANONICAL** |
+| FLEX-02 | **BLOCKED** until owner P1–P11 sign-off |
+| Migration | **NOT AUTHORIZED** in ARCH-02 |
+| Worklog | `docs/worklog/realignment/2026-07-15_prod_flex_arch_02_participant_persistence_boundary.md` |
+| PROD-FLEX-ARCH-02 | **COMPLETE** |
+| Next | Owner GO on `decision-log.md` P1–P12 |
 
 ---
 

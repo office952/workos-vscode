@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **WORKOS-ROADMAP-REALIGNMENT-01** — post-backup roadmap checkpoint (**COMPLETE**) |
+| Active task | **PROD-FLEX-ARCH-02** — participant persistence boundary (**COMPLETE** — plan only; owner decision pending) |
 
-| Next task | **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** — plan/docs only (owner GO required; **FLEX-02 NOT AUTHORIZED**; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **Owner GO on P1–P12** (`decision-log.md`) then **FLEX-02** (blocked until sign-off; APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1241,5 +1241,27 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **WORKOS-ROADMAP-REALIGNMENT-01:** **COMPLETE**
 
-**Next:** **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (plan/docs only; owner GO)
+**Next:** **PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY** (closed below)
+
+## PROD-FLEX-ARCH-02 — Participant persistence boundary
+
+**Verdict:** `PROD_FLEX_ARCH_02_PARTICIPANT_PERSISTENCE_BOUNDARY_READY`
+
+**Scope:** Plan/docs only — persistence boundary decision. No code, DB, migration, UI, or participant writes.
+
+**Readiness:** `READY_FOR_OWNER_DECISION_NOW`
+
+**Recommended boundary:** Hybrid normalized model — `execution_task_participants` (FLEX-02) + `execution_task_help_requests` (FLEX-04) + sessions unchanged + audit events supplement. **No `participants_json`.**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_prod_flex_arch_02_participant_persistence_boundary.md`
+
+**Plan:** `.compound-engineering/prod-flex-arch-02-participant-persistence-boundary/plan.md`
+
+**Decision log:** `.compound-engineering/prod-flex-arch-02-participant-persistence-boundary/decision-log.md`
+
+**PROD-FLEX-ARCH-02:** **COMPLETE** (plan only)
+
+**FLEX-02:** **BLOCKED** until owner P1–P11 sign-off
+
+**Next:** Owner review `decision-log.md` — then scoped FLEX-02 build if GO granted
 
