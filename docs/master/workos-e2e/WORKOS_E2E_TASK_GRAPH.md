@@ -380,11 +380,11 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Scor potrivire / încărcare | `OWNER_DECISION_GATE_DOCUMENTED` — D10/D13 **AMANAT** |
 | Cerere ajutor UI | `MOBILE_FUTURE_ENHANCEMENT` — gate D20 **AMANAT** |
 | Realocare inteligentă | `OWNER_DECISION_GATE_DOCUMENTED` — D18/D19 **AMANAT** |
-| Angajați (nivel/atribuție) | `APP_INT_01_DUPLICATE_SKILLS_LEGACY_JSON` — registry vs employees.skills |
-| Utilaje (capacitate) | `APP_INT_01_MACHINES_CANONICAL_MOCK_SPECS` — DB + mock enrich |
-| ExecutionReality colaborativ | `PARTIAL` — sesiuni există; contribuții/loturi gate D21/D23 **AMANAT** |
-| Pontaj | `ATTENDANCE_CANONICAL_SEPARATE_FROM_ER` — APP-INT-01 |
-| Mobile/Operator/Tablet | `APP_INT_01_PARALLEL_SURFACES` — același plan, autorități diferite |
+| Angajați (nivel/atribuție) | `APP_AUTH_01_DEFERRED` — competențe: registry canonic, JSON transitional |
+| Utilaje (capacitate) | `APP_AUTH_01_MACHINES_CANONICAL` — `machines` + resource_kind |
+| Pontaj | `ATTENDANCE_CANONICAL_SEPARATE` — confirmat recomandat |
+| Mobile/Operator/Tablet | `APP_AUTH_01_EXECUTION_SURFACES` — Mobile/Operator canonic; Tablet transitional |
+| Authority debt | `10 duplicate truths` → APP-AUTH-02 reconciliation |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -453,7 +453,26 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS** |
+| Next | **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN** |
+
+## APP-AUTH-01 — Canonical authority decisions
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_DECISIONS_REQUIRE_DATA_RECONCILIATION` |
+| Audit bază | APP-INT-01 @ `bfe20c6` |
+| Decisions total | 28 |
+| Confirmed | 0 |
+| Deferred | 24 |
+| Data required | 3 |
+| Runtime proof required | 1 |
+| Sandu case | `LEGACY_OVERRIDE_REQUIRES_RECONCILIATION` |
+| CNC 4020 | Aligned on MCH-CNC-4020 |
+| Duplicate truths (current) | 10 |
+| Implementation authorized | **NO** |
+| APP-AUTH-01 | **COMPLETE** |
+| Next | **APP-AUTH-02** — PROD-ARCH-01 **BLOCAT** |
 
 ## APP-INT-01 — Audit E2E workforce surfaces
 

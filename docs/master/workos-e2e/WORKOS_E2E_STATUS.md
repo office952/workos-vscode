@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `72d9b57` (OWNER-DECISION-01) — APP-INT-01 audit on branch
+**Accepted HEAD:** `bfe20c6` (APP-INT-01) — APP-AUTH-01 authority gate on branch
 
-**Last updated:** 2026-07-15 (APP-INT-01 E2E audit angajați/utilaje/execuție — **PASS authority decisions**)
+**Last updated:** 2026-07-15 (APP-AUTH-01 decizii autoritate — **DATA reconciliation required**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS** (PROD-ARCH-01 **BLOCAT** până la autoritate canonică) |
+| Next task | **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN** (PROD-ARCH-01 **BLOCAT**) |
 
 
 
@@ -434,7 +434,27 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **PROD-INT-02:** **COMPLETE** (audit)
 
-**Next:** **APP-AUTH-01-CANONICAL_AUTHORITY_DECISIONS**
+**Next:** **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN**
+
+## APP-AUTH-01 — Decizii canonice de autoritate
+
+**Verdict:** `APP_AUTH_DECISIONS_REQUIRE_DATA_RECONCILIATION`
+
+**Scope:** Gate decizii autoritate post APP-INT-01 — fără cod, DB, UI.
+
+**Decizii:** 28 documentate · **0 CONFIRMED** · 24 DEFERRED · 3 DATA_REQUIRED · 1 RUNTIME_PROOF_REQUIRED
+
+**Caz Sandu:** `LEGACY_OVERRIDE_REQUIRES_RECONCILIATION` — montaj_led eligibil via explicit list fără competență registry
+
+**Caz CNC 4020:** aliniat pe `MCH-CNC-4020` across registry/utilaje/mapping
+
+**Implementare autorizată:** **NO**
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_01_canonical_authority_decisions_v1.md`
+
+**APP-AUTH-01:** **COMPLETE** (gate documentat)
+
+**Next:** **APP-AUTH-02** — PROD-ARCH-01 **BLOCAT**
 
 ## APP-INT-01 — Audit E2E angajați, competențe, utilaje, execuție, pontaj
 
