@@ -53,8 +53,12 @@ import { OperationRegistryMappingBadge } from "@/features/operational-registry/O
 import RealityQualityBadge from "@/components/workos/RealityQualityBadge";
 import {
   fetchOperatorTaskTruth,
+  type OperatorTaskTruthResponse,
   type OperatorTaskTruthTask,
 } from "@/api/operatorTaskTruth";
+import { OperatorProductionReleaseSummary } from "@/components/workos/OperatorProductionReleaseSummary";
+import { OperatorOwnerDecisionDetailsPanel } from "@/components/workos/OperatorOwnerDecisionDetailsPanel";
+import { OperatorStructuredActionError } from "@/components/workos/OperatorStructuredActionError";
 import {
   operationalReadinessBadgeClasses,
   operationalReadinessLabel,
@@ -99,6 +103,10 @@ const REALITY_ERROR_LABELS: Record<string, string> = {
   task_missing_start: "Task-ul nu are timestamp de start — stare inconsistentă.",
   order_not_found: "Comanda nu a fost găsită.",
   task_not_ready: "Task-ul nu este pregătit pentru start — verifică readiness.",
+  production_release_blocked:
+    "Pornire blocată — decizii owner de producție nerezolvate la nivel de comandă.",
+  ORDER_SNAPSHOT_V2_MISSING: "Snapshot V2 lipsă pentru această comandă.",
+  ORDER_SNAPSHOT_V2_CORRUPT: "Snapshot V2 corupt — contactați administratorul.",
   unknown: "Eroare necunoscută la înregistrarea realității.",
 };
 
@@ -239,6 +247,10 @@ export default function ExecutionDetail() {
   const [taskTruthByTaskId, setTaskTruthByTaskId] = useState<
     Record<string, OperatorTaskTruthTask>
   >({});
+  const [taskTruthResponse, setTaskTruthResponse] = useState<OperatorTaskTruthResponse | null>(
+    null,
+  );
+  const [ownerDetailsOpen, setOwnerDetailsOpen] = useState(false);
   const [overrideReasonByTaskId, setOverrideReasonByTaskId] = useState<
     Record<string, string>
   >({});
@@ -294,8 +306,10 @@ export default function ExecutionDetail() {
         }
         try {
           const truth = await fetchOperatorTaskTruth(parsedId);
+          setTaskTruthResponse(truth);
           setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
         } catch {
+          setTaskTruthResponse(null);
           setTaskTruthByTaskId({});
         }
         await loadRealityOnly(parsedId);
@@ -766,6 +780,18 @@ export default function ExecutionDetail() {
             )}
 
             {obs.has_plan && plan && (
+              <div className="space-y-3">
+                <OperatorProductionReleaseSummary
+                  truth={taskTruthResponse}
+                  onOpenDetails={() => setOwnerDetailsOpen(true)}
+                />
+                {ownerDetailsOpen ? (
+                  <OperatorOwnerDecisionDetailsPanel truth={taskTruthResponse} defaultOpen />
+                ) : null}
+              </div>
+            )}
+
+            {obs.has_plan && plan && (
               <RealityCapturePanel
                 orderId={parsedId}
                 plan={plan}
@@ -802,6 +828,13 @@ export default function ExecutionDetail() {
                     // Refetch backend truth — no optimistic UI.
                     await loadRealityOnly(parsedId);
                     await load(); // observability may flip has_reality=true
+                    try {
+                      const truth = await fetchOperatorTaskTruth(parsedId);
+                      setTaskTruthResponse(truth);
+                      setTaskTruthByTaskId(indexOperatorTaskTruth(truth.tasks));
+                    } catch {
+                      /* keep prior truth */
+                    }
                   } catch (e) {
                     if (e instanceof RealityActionError) {
                       setRealityActionError(e);
@@ -1128,38 +1161,19 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
       )}
 
       {actionError && (
-        <div
-          role="alert"
-          className="bg-red-900/20 border border-red-800/60 rounded-md px-3 py-2 space-y-1"
-        >
-          <div className="flex items-center gap-2">
-            <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-            <p className="text-[12px] font-semibold text-red-200">
-              {REALITY_ERROR_LABELS[actionError.code] ??
-                REALITY_ERROR_LABELS.unknown}
-            </p>
-          </div>
-          <div className="text-[11px] text-red-300/80 pl-6 space-y-0.5">
-            <p>
-              <span className="text-red-400">HTTP {actionError.httpStatus}</span>{" "}
-              <span className="text-slate-500">·</span>{" "}
-              <code className="text-red-300">{actionError.rawCode}</code>
-            </p>
-            {actionError.detail && (
-              <p>
-                Detaliu:{" "}
-                <code className="text-red-300">{actionError.detail}</code>
-              </p>
-            )}
-            {actionError.message &&
-              actionError.message !== actionError.rawCode && (
-                <p className="text-slate-400">
-                  Mesaj backend:{" "}
-                  <code className="text-slate-300">{actionError.message}</code>
-                </p>
-              )}
-          </div>
-        </div>
+        <OperatorStructuredActionError
+          error={{
+            code: actionError.rawCode,
+            rawCode: actionError.rawCode,
+            httpStatus: actionError.httpStatus,
+            message: actionError.message,
+            detail: actionError.detail,
+            blockers: actionError.blockers,
+            readinessLabel: actionError.readinessLabel,
+            raw: actionError.raw,
+          }}
+          testId="execution-structured-start-error"
+        />
       )}
 
       <div className="bg-[#0D1321] border border-[#1F2A44] rounded-md overflow-hidden">

@@ -165,7 +165,7 @@ describe("OperatorTaskIdentityPresentation", () => {
         })}
       />,
     );
-    expect(screen.getByText("Nepregătit")).toBeTruthy();
+    expect(screen.getByText("Nepregatit")).toBeTruthy();
     expect(screen.getByTestId("operator-task-readiness-reason")).toHaveTextContent(
       "Materiale lipsă",
     );
@@ -182,5 +182,28 @@ describe("OperatorTaskIdentityPresentation", () => {
     expect(screen.getByTestId("operator-task-diagnostic-key")).toHaveTextContent(
       "legacy-task-id",
     );
+  });
+
+  it("shows production block badge separately from operational readiness", () => {
+    render(
+      <OperatorTaskIdentityPresentation
+        truth={buildTask({
+          runtime: {
+            is_startable: false,
+            is_blocked: false,
+            production_release_blocked: true,
+            blocking_owner_decision_codes: [
+              "INTERNAL_SABLON_FOREX_COST",
+              "INTERNAL_MONTAJ_RULE",
+            ],
+            readiness_reasons: [{ message: "Depinde de CNC" }],
+          },
+        })}
+      />,
+    );
+    expect(screen.getByTestId("operator-task-production-blocked-badge")).toHaveTextContent(
+      /Blocat pentru productie/i,
+    );
+    expect(screen.queryByTestId("operator-task-readiness-reason")).toBeNull();
   });
 });

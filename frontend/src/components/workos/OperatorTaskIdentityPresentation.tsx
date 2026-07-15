@@ -71,6 +71,9 @@ export function OperatorTaskIdentityPresentation({
   const legacy = isLegacyTaskIdentity(identity);
   const partialLogo = isPartialLogoIdentity(identity);
   const readinessMessage = firstReadinessMessage(readiness);
+  const productionBlocked = runtime.production_release_blocked === true;
+  const operationalNotReady =
+    !productionBlocked && (readiness.is_blocked || readiness.is_startable === false);
 
   return (
     <div data-testid={testId} className="space-y-1 min-w-0">
@@ -83,11 +86,19 @@ export function OperatorTaskIdentityPresentation({
         </p>
         {legacy ? <RoleBadge label="Legacy" tone="legacy" /> : null}
         {partialLogo && !legacy ? <RoleBadge label="Logo parțial" tone="partial" /> : null}
-        {readiness.is_blocked || readiness.is_startable === false ? (
-          <span className="inline-flex px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-amber-900/30 text-amber-200 border-amber-700/60">
-            {readiness.is_startable ? "Blocat" : "Nepregătit"}
+        {productionBlocked ? (
+          <span
+            className="inline-flex px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-red-900/35 text-red-200 border-red-700/60"
+            data-testid="operator-task-production-blocked-badge"
+          >
+            Blocat pentru productie
           </span>
-        ) : readiness.is_startable ? (
+        ) : null}
+        {operationalNotReady ? (
+          <span className="inline-flex px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-amber-900/30 text-amber-200 border-amber-700/60">
+            {readiness.is_blocked ? "Blocat operational" : "Nepregatit"}
+          </span>
+        ) : !productionBlocked && readiness.is_startable ? (
           <span className="inline-flex px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-emerald-900/30 text-emerald-200 border-emerald-700/60">
             Pornibil
           </span>
@@ -131,7 +142,13 @@ export function OperatorTaskIdentityPresentation({
               <span className="text-slate-400">{identity.logo_segment_key}</span>
             </p>
           ) : null}
-          {readinessMessage ? (
+          {productionBlocked && (runtime.blocking_owner_decision_codes?.length ?? 0) > 0 ? (
+            <p className="text-red-300/90" data-testid="operator-task-production-blocker-summary">
+              {runtime.blocking_owner_decision_codes.length} decizie(i) owner nerezolvata(e) la nivel
+              de comanda
+            </p>
+          ) : null}
+          {readinessMessage && !productionBlocked ? (
             <p className="text-amber-300/90" data-testid="operator-task-readiness-reason">
               {readinessMessage}
             </p>

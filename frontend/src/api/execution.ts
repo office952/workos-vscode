@@ -207,6 +207,10 @@ export type RealityActionErrorCode =
   | 'task_not_started'
   | 'task_missing_start'
   | 'order_not_found'
+  | 'task_not_ready'
+  | 'production_release_blocked'
+  | 'ORDER_SNAPSHOT_V2_MISSING'
+  | 'ORDER_SNAPSHOT_V2_CORRUPT'
   | 'unknown';
 
 export class RealityActionError extends Error {
@@ -215,6 +219,8 @@ export class RealityActionError extends Error {
   httpStatus: number;
   detail: string | null;
   raw: unknown;
+  blockers: Array<Record<string, unknown>>;
+  readinessLabel: string | null;
 
   constructor(
     code: RealityActionErrorCode,
@@ -223,6 +229,8 @@ export class RealityActionError extends Error {
     message: string,
     detail: string | null,
     raw: unknown,
+    blockers: Array<Record<string, unknown>> = [],
+    readinessLabel: string | null = null,
   ) {
     super(message);
     this.name = 'RealityActionError';
@@ -231,6 +239,8 @@ export class RealityActionError extends Error {
     this.httpStatus = httpStatus;
     this.detail = detail;
     this.raw = raw;
+    this.blockers = blockers;
+    this.readinessLabel = readinessLabel;
   }
 }
 
@@ -249,6 +259,10 @@ const KNOWN_REALITY_CODES: RealityActionErrorCode[] = [
   'task_not_started',
   'task_missing_start',
   'order_not_found',
+  'task_not_ready',
+  'production_release_blocked',
+  'ORDER_SNAPSHOT_V2_MISSING',
+  'ORDER_SNAPSHOT_V2_CORRUPT',
 ];
 
 async function parseRealityActionError(
@@ -270,16 +284,15 @@ async function parseRealityActionError(
   let code: RealityActionErrorCode = 'unknown';
   let detail: string | null = null;
   let message = `POST ${op} failed: ${res.status} ${res.statusText}`;
+  let blockers: Array<Record<string, unknown>> = [];
+  let readinessLabel: string | null = null;
 
   if (envelope && typeof envelope === 'object') {
     const rec = envelope as Record<string, unknown>;
-    // Router wraps reality service errors as:
-    //   { error: "reality_input_invalid", code: "<real_code>", detail: "..." }
-    // For order_not_found the router returns { error: "order_not_found" }.
     const err = typeof rec.error === 'string' ? rec.error : null;
     const innerCode = typeof rec.code === 'string' ? rec.code : null;
     const candidate =
-      err === 'reality_input_invalid' && innerCode ? innerCode : err;
+      err === 'reality_input_invalid' && innerCode ? innerCode : innerCode || err;
     if (candidate) {
       rawCode = candidate;
       if ((KNOWN_REALITY_CODES as string[]).includes(candidate)) {
@@ -292,9 +305,26 @@ async function parseRealityActionError(
     if (typeof rec.message === 'string') {
       message = rec.message;
     }
+    if (Array.isArray(rec.blockers)) {
+      blockers = rec.blockers.filter((b) => b && typeof b === 'object') as Array<
+        Record<string, unknown>
+      >;
+    }
+    if (typeof rec.readiness_label === 'string') {
+      readinessLabel = rec.readiness_label;
+    }
   }
 
-  return new RealityActionError(code, rawCode, res.status, message, detail, body);
+  return new RealityActionError(
+    code,
+    rawCode,
+    res.status,
+    message,
+    detail,
+    body,
+    blockers,
+    readinessLabel,
+  );
 }
 
 /**

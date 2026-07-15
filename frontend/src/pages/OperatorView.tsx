@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useOperatorData } from "@/hooks/useOperatorData";
 import { useOperatorEmployees } from "@/hooks/useOperatorEmployees";
 import { useMaterialsCapture } from "@/hooks/useMaterialsCapture";
@@ -31,9 +32,12 @@ import OperatorTaskAssignmentPanel from "@/components/workos/OperatorTaskAssignm
 import OperatorClarificationRequestsPanel from "@/components/workos/OperatorClarificationRequestsPanel";
 import OperatorProductionBlueprintPanel from "@/components/workos/OperatorProductionBlueprintPanel";
 import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
+import { OperatorProductionReleaseSummary } from "@/components/workos/OperatorProductionReleaseSummary";
+import { OperatorOwnerDecisionDetailsPanel } from "@/components/workos/OperatorOwnerDecisionDetailsPanel";
+import { OperatorStructuredActionError } from "@/components/workos/OperatorStructuredActionError";
 import { useAuth } from "@/contexts/AuthContext";
 import { useOperatorTaskTruth } from "@/hooks/useOperatorTaskTruth";
-import { resolveTaskTruth } from "@/lib/operatorTaskPresentation";
+import { resolveTaskTruth, taskTruthReadinessFromRuntime } from "@/lib/operatorTaskPresentation";
 
 function ExecutionTaskStatusBadge({ status }: { status: OperatorTask["status"] }) {
   return (
@@ -70,7 +74,14 @@ function EligibilityBadge({ status }: { status: OperatorEmployeeOption["eligibil
 }
 
 export default function OperatorView() {
-  const { tasks, loading, source, error, performAction, refresh } = useOperatorData();
+  const [searchParams] = useSearchParams();
+  const orderIdFromUrl = useMemo(() => {
+    const raw = searchParams.get("orderId");
+    if (!raw) return null;
+    const parsed = Number.parseInt(raw, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }, [searchParams]);
+  const { tasks, loading, source, error, performAction, refresh, lastActionError } = useOperatorData();
   const { user } = useAuth();
   const canAssignTasks = user?.role === "admin" || user?.role === "manager" || user?.role === "operator";
   const startCandidate = useMemo(
@@ -86,6 +97,9 @@ export default function OperatorView() {
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
   const [actionLoading, setActionLoading] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [structuredActionError, setStructuredActionError] = useState<
+    import("@/lib/operatorProductionBlockerPresentation").StructuredActionError | null
+  >(null);
   const {
     materials,
     fetchMaterials,
@@ -102,7 +116,12 @@ export default function OperatorView() {
     () => [...new Set(tasks.map((t) => extractOrderId(t)).filter((id) => id > 0))],
     [tasks]
   );
-  const defaultBlueprintOrderId = currentTask ? extractOrderId(currentTask) : blueprintOrderIds[0] ?? null;
+  const defaultBlueprintOrderId =
+    orderIdFromUrl && blueprintOrderIds.includes(orderIdFromUrl)
+      ? orderIdFromUrl
+      : currentTask
+        ? extractOrderId(currentTask)
+        : blueprintOrderIds[0] ?? null;
   const isWired = source === "db" || source === "empty";
   const [blueprintTruthOrderId, setBlueprintTruthOrderId] = useState<number | null>(
     defaultBlueprintOrderId,
@@ -110,12 +129,36 @@ export default function OperatorView() {
   useEffect(() => {
     setBlueprintTruthOrderId(defaultBlueprintOrderId);
   }, [defaultBlueprintOrderId]);
-  const { tasksById: taskTruthByTaskId } = useOperatorTaskTruth(
-    isWired ? blueprintTruthOrderId : null,
-  );
+  const [ownerDetailsOpen, setOwnerDetailsOpen] = useState(false);
+  const { data: taskTruthResponse, tasksById: taskTruthByTaskId, refresh: refreshTaskTruth } =
+    useOperatorTaskTruth(isWired ? blueprintTruthOrderId : null);
 
   const resolveTruthForTask = (task: OperatorTask) =>
     resolveTaskTruth(taskTruthByTaskId, task.id);
+
+  const isTaskStartable = (task: OperatorTask): boolean | null => {
+    const truth = resolveTruthForTask(task);
+    if (!truth) return null;
+    return truth.runtime.is_startable !== false;
+  };
+
+  const taskStartBlockReason = (task: OperatorTask): string | null => {
+    const truth = resolveTruthForTask(task);
+    if (!truth) return null;
+    if (truth.runtime.production_release_blocked) {
+      const count = truth.runtime.blocking_owner_decision_codes?.length ?? 0;
+      return count > 0
+        ? `${count} decizie(i) owner nerezolvata(e) la nivel de comanda`
+        : "Productie blocata la nivel de comanda";
+    }
+    const readiness = taskTruthReadinessFromRuntime(truth.runtime);
+    return (
+      (readiness.readiness_reasons?.[0] as { message?: string } | undefined)?.message ||
+      (readiness.blocking_reasons?.[0] as { message?: string } | undefined)?.message ||
+      readiness.readiness_label ||
+      null
+    );
+  };
 
   // Calculate average variance
   const tasksWithActual = tasks.filter((t) => t.actualDurationMin !== null && t.actualDurationMin > 0);
@@ -181,8 +224,9 @@ export default function OperatorView() {
 
     setActionLoading(`${task.id}-${action}`);
     setActionError(null);
+    setStructuredActionError(null);
     try {
-      const success = await performAction(
+      const result = await performAction(
         orderId,
         task.id,
         action,
@@ -190,8 +234,13 @@ export default function OperatorView() {
         employeeForStart ?? null,
         operatorNameForStart ?? null
       );
-      if (!success) {
-        setActionError(`Acțiunea "${action}" a eșuat. Verificați starea task-ului.`);
+      if (result.success) {
+        await refreshTaskTruth();
+      } else {
+        setStructuredActionError(result.actionError);
+        if (!result.actionError) {
+          setActionError(`Acțiunea "${action}" a eșuat. Verificați starea task-ului.`);
+        }
       }
     } catch {
       setActionError(`Eroare la executarea acțiunii "${action}".`);
@@ -316,6 +365,18 @@ export default function OperatorView() {
           )}
         </div>
       )}
+
+      {canAssignTasks && isWired && blueprintTruthOrderId ? (
+        <div className="space-y-3">
+          <OperatorProductionReleaseSummary
+            truth={taskTruthResponse}
+            onOpenDetails={() => setOwnerDetailsOpen(true)}
+          />
+          {ownerDetailsOpen ? (
+            <OperatorOwnerDecisionDetailsPanel truth={taskTruthResponse} defaultOpen />
+          ) : null}
+        </div>
+      ) : null}
 
       {canAssignTasks && isWired && (
         <>
@@ -488,11 +549,20 @@ export default function OperatorView() {
 
           {/* Action Buttons — WIRED when source === "db" */}
           {/* Error message display */}
-          {actionError && (
+          {actionError && !lastActionError ? (
             <div className="mt-4 px-3 py-2 bg-red-900/30 border border-red-700/50 rounded-lg">
               <p className="text-[12px] text-red-300">{actionError}</p>
             </div>
-          )}
+          ) : null}
+          {lastActionError || structuredActionError ? (
+            <div className="mt-4">
+              <OperatorStructuredActionError
+                error={structuredActionError ?? lastActionError}
+                taskLabel={currentTask.operationName}
+                testId="operator-structured-start-error"
+              />
+            </div>
+          ) : null}
           <div className="flex items-center gap-3 mt-5 pt-4 border-t border-[#2A3548]">
             {/* Show Pause only when task is in_progress (not paused/blocked) */}
             {currentTask.status === "in_progress" && (
@@ -682,13 +752,16 @@ export default function OperatorView() {
                 disabled={
                   !isWired ||
                   actionLoading !== null ||
-                  (registryAvailable && !selectedEmployee)
+                  (registryAvailable && !selectedEmployee) ||
+                  isTaskStartable(task) === false
                 }
                 onClick={() => handleAction(task, "start")}
                 title={
                   registryAvailable && !selectedEmployee
                     ? "Selectați angajat din registry"
-                    : undefined
+                    : isTaskStartable(task) === false
+                      ? taskStartBlockReason(task) || "Task nepregatit"
+                      : undefined
                 }
                 className={`flex items-center gap-1 px-3 py-1.5 rounded text-[11px] font-semibold transition-colors ${
                   isWired && (!registryAvailable || selectedEmployee)
