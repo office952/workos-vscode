@@ -1,0 +1,61 @@
+[
+  {
+    "suprafata": "Employee Mobile v2",
+    "autoritati_citite": [
+      "employee_mobile_task_truth",
+      "registry eligibility",
+      "assignment service",
+      "ExecutionReality"
+    ],
+    "scrieri": [
+      "claim",
+      "start-from-available",
+      "complete"
+    ],
+    "fallback": "none on truth",
+    "conflict": "registry vs legacy JSON indirect",
+    "tranzitie": "Canonic individual — păstrează servicii"
+  },
+  {
+    "suprafata": "/operator",
+    "autoritati_citite": [
+      "/operator/tasks",
+      "OperatorEmployeeGuard",
+      "ExecutionReality"
+    ],
+    "scrieri": [
+      "start",
+      "pause",
+      "complete",
+      "manager assign"
+    ],
+    "fallback": "mockData if API fail",
+    "conflict": "operator_name legacy field",
+    "tranzitie": "Canonic desktop — aliniere la assignment service"
+  },
+  {
+    "suprafata": "/tablet",
+    "autoritati_citite": [
+      "operator tasks",
+      "workstationRouting demo",
+      "DEMO_OPERATORS"
+    ],
+    "scrieri": [
+      "via operator performAction"
+    ],
+    "fallback": "generateDemoTasks, DEMO_OPERATORS",
+    "conflict": "PARALLEL authority",
+    "tranzitie": "Transitional wrapper sau retire"
+  },
+  {
+    "suprafata": "/shop-floor",
+    "autoritati_citite": [
+      "/machines",
+      "/operator/tasks"
+    ],
+    "scrieri": "none",
+    "fallback": "mockData silent",
+    "conflict": "ACTIVE_SILENT_FALLBACK risk",
+    "tranzitie": "Proiecție fail-closed în prod"
+  }
+]

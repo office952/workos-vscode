@@ -384,7 +384,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Utilaje (capacitate) | `APP_AUTH_01_MACHINES_CANONICAL` — `machines` + resource_kind |
 | Pontaj | `ATTENDANCE_CANONICAL_SEPARATE` — confirmat recomandat |
 | Mobile/Operator/Tablet | `APP_AUTH_01_EXECUTION_SURFACES` — Mobile/Operator canonic; Tablet transitional |
-| Authority debt | `10 duplicate truths` → APP-AUTH-02 reconciliation |
+| Authority debt | `10 duplicate truths` → reconciliere planificată Wave R0–R10 |
 | Start | `START_VISIBILITY_ONLY` |
 | Runtime | Sandu @ order 23099 — assigned 5, available 7 |
 | Tests | 10 truth backend + 18 frontend focused pass |
@@ -453,7 +453,25 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Eligibilitate / disponibilitate / încărcare | AMANAT |
 | Alocare automată / realocare / ajutor | AMANAT |
 | OWNER-DECISION-01 | **COMPLETE** |
-| Next | **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN** |
+| Next | **OWNER-DECISION-02-DATA-RECONCILIATION** |
+
+## APP-AUTH-02 — Data discrepancy and reconciliation plan
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_02_RECONCILIATION_PLAN_READY_FOR_OWNER` |
+| Audit bază | APP-INT-01 @ `bfe20c6` · APP-AUTH-01 @ `357838e` |
+| Discrepancies | 20 (1 CRITICAL, 14 HIGH, 4 MEDIUM, 1 INFO) |
+| Explicit overrides | 39 (7 fără competență — Sandu) |
+| Sandu | `LEGACY_OVERRIDE_REQUIRES_RECONCILIATION` |
+| CNC 4020 | `IDENTITY_ALIGNED_METADATA_PARTIAL` |
+| Reconciliation waves | 11 (R0–R10) |
+| Owner decisions | 6 |
+| Tests targeted | 73 pass / 1 fail |
+| Implementation authorized | **NO** |
+| APP-AUTH-02 | **COMPLETE** |
+| Next | **OWNER-DECISION-02** — PROD-ARCH-01 **BLOCAT** |
 
 ## APP-AUTH-01 — Canonical authority decisions
 

@@ -1,0 +1,435 @@
+{
+  "sandu_package": {
+    "employee_id": 4,
+    "user_id": "dev-admin-user-00000000",
+    "registry_competences": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "legacy_competences": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LOCKSMITH",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "workcenters": [
+      "WC_PRINT"
+    ],
+    "machines_registry": [
+      "MCH-EPSON-60800"
+    ],
+    "machines_legacy": [
+      "MCH-WELD-ALU",
+      "MCH-WELD-STEEL",
+      "WA-ASSEMBLY-01",
+      "WA-ASSEMBLY-02",
+      "WA-WELD-TABLE"
+    ],
+    "operation_overrides": [
+      {
+        "operation_code": "assembly",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_ASSEMBLY"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "colantare",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_VINYL_APPLICATOR"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "field_installation",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": true,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_FIELD_INSTALLER"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_COMPETENCE",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "montaj_led",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_ELECTRICIAN"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "packaging",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_ASSEMBLY"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "print",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": true,
+        "legacy_competence_match": null,
+        "authorization_match": true,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITH_VALID_COMPETENCE",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "print_roll",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": true,
+        "legacy_competence_match": null,
+        "authorization_match": true,
+        "explicit_override": false,
+        "required_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "NARROWING_ONLY",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "quality_control",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_ASSEMBLY"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      },
+      {
+        "operation_code": "welding",
+        "employee_id": 4,
+        "employee_name": "Putaru Sandu",
+        "registry_competence_match": false,
+        "legacy_competence_match": null,
+        "authorization_match": false,
+        "explicit_override": true,
+        "required_skills": [
+          "SK_LOCKSMITH"
+        ],
+        "employee_skills": [
+          "SK_PRINT_OPERATOR"
+        ],
+        "source": "operation_employee_authorizations + hybrid mode",
+        "reason": null,
+        "approver": null,
+        "valid_from": null,
+        "valid_until": null,
+        "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+        "tasks_assigned_sample": []
+      }
+    ],
+    "montaj_led": {
+      "operation_code": "montaj_led",
+      "employee_id": 4,
+      "employee_name": "Putaru Sandu",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": [
+        "SK_ELECTRICIAN"
+      ],
+      "employee_skills": [
+        "SK_PRINT_OPERATOR"
+      ],
+      "source": "operation_employee_authorizations + hybrid mode",
+      "reason": null,
+      "approver": null,
+      "valid_from": null,
+      "valid_until": null,
+      "classification": "ADDITIVE_WITHOUT_AUTHORIZATION",
+      "tasks_assigned_sample": []
+    },
+    "assigned_tasks": [],
+    "classification": "LEGACY_OVERRIDE_REQUIRES_RECONCILIATION",
+    "montaj_led_answers": {
+      "de_ce_eligibil": "Listă explicită operation_employee_authorizations + mod hybrid (explicit OR skill)",
+      "override_additive": true,
+      "serviciu": "OperationalRegistryService.get_eligible_employees_for_operation / check_employee_operation_eligibility",
+      "ocoleste_competenta": true,
+      "ocoleste_autorizare": false,
+      "vizibil_employees_ui": "Registry panel arată SK_PRINT; form legacy arată alte competențe",
+      "approver_reason_expiration": null,
+      "tasks_dependente": []
+    }
+  },
+  "decisions": [
+    {
+      "id": "OD-01",
+      "titlu": "Confirmare competențe Sandu (id=4)",
+      "inregistrari": [
+        "SK_PRINT vs locksmith/montaj/electrician"
+      ],
+      "optiuni": [
+        "Registry canonic (montaj)",
+        "Registry canonic (print)",
+        "Excepții formale per operație"
+      ],
+      "recomandare": "Restaurare registry aliniat la rol real Lăcătuș/Montator",
+      "decizie_text": "CONFIRM competențe canonice Sandu: [...]"
+    },
+    {
+      "id": "OD-02",
+      "titlu": "Politică override explicit montaj_led",
+      "inregistrari": [
+        "Sandu explicit fără SK_ELECTRICIAN"
+      ],
+      "optiuni": [
+        "Eliminare din listă",
+        "Exceptie temporară auditată",
+        "Păstrare legacy"
+      ],
+      "recomandare": "Exceptie formală sau eliminare până la reconciliere competențe",
+      "decizie_text": "CONFIRM override policy: [...]"
+    },
+    {
+      "id": "OD-03",
+      "titlu": "SK_COMMERCIAL_TECH taxonomie",
+      "inregistrari": [
+        "Chirila Cristian"
+      ],
+      "optiuni": [
+        "Mutare la Rol",
+        "Păstrare competență",
+        "Eliminare din eligibilitate"
+      ],
+      "recomandare": "Clasificare Rol, nu Competență"
+    },
+    {
+      "id": "OD-04",
+      "titlu": "Migrare JSON skills",
+      "inregistrari": [
+        "1 angajați cu conflict"
+      ],
+      "optiuni": [
+        "ONE_TIME_MIGRATION",
+        "READ_ONLY_FALLBACK",
+        "BLOCK"
+      ],
+      "recomandare": "Migrare după reconciliere Sandu + raport"
+    },
+    {
+      "id": "OD-05",
+      "titlu": "Tablet transition",
+      "inregistrari": [
+        "DEMO_OPERATORS",
+        "workstationRouting"
+      ],
+      "optiuni": [
+        "Retire",
+        "Kiosk wrapper",
+        "Parity cu Operator"
+      ],
+      "recomandare": "Transitional până la paritate servicii"
+    },
+    {
+      "id": "OD-06",
+      "titlu": "Shop Floor mock fallback",
+      "inregistrari": [
+        "/shop-floor"
+      ],
+      "optiuni": [
+        "Fail-closed",
+        "Explicit demo badge obligatoriu"
+      ],
+      "recomandare": "Fail-closed în runtime producție"
+    }
+  ],
+  "taxonomy": [
+    {
+      "cod_actual": "SK_LETTER_MODELING",
+      "denumire_actuala": "Modelare cant litere",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_ASSEMBLY",
+      "denumire_actuala": "Asamblare",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_ELECTRICIAN",
+      "denumire_actuala": "Electrician",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_FIELD_INSTALLER",
+      "denumire_actuala": "Montator",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_LOCKSMITH",
+      "denumire_actuala": "Lăcătuș",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_VINYL_APPLICATOR",
+      "denumire_actuala": "Colantator",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_COMMERCIAL_TECH",
+      "denumire_actuala": "Director comercial / tehnic",
+      "clasificare_reala": "ROL",
+      "catalog_tinta_propus": "roluri_organizatie",
+      "migrare_necesara": true,
+      "confirmare": "OWNER_CONFIRMATION_REQUIRED"
+    },
+    {
+      "cod_actual": "SK_PRINT_OPERATOR",
+      "denumire_actuala": "Operator print",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "SK_CNC_OPERATOR",
+      "denumire_actuala": "CNC",
+      "clasificare_reala": "COMPETENTA",
+      "catalog_tinta_propus": "catalog_competente",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "WC_METAL_FAB",
+      "denumire_actuala": "Sudare",
+      "clasificare_reala": "CENTRU_DE_LUCRU",
+      "catalog_tinta_propus": "catalog_workcenters",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    },
+    {
+      "cod_actual": "WC_LAMINATE",
+      "denumire_actuala": "Laminare",
+      "clasificare_reala": "CENTRU_DE_LUCRU",
+      "catalog_tinta_propus": "catalog_workcenters",
+      "migrare_necesara": false,
+      "confirmare": "SAFE_MIGRATION_CANDIDATE"
+    }
+  ]
+}

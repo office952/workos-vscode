@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `bfe20c6` (APP-INT-01) — APP-AUTH-01 authority gate on branch
+**Accepted HEAD:** `357838e` (APP-AUTH-01) — APP-AUTH-02 reconciliation plan on branch
 
-**Last updated:** 2026-07-15 (APP-AUTH-01 decizii autoritate — **DATA reconciliation required**)
+**Last updated:** 2026-07-15 (APP-AUTH-02 inventar discrepanțe — **OWNER-DECISION-02 next**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN** (PROD-ARCH-01 **BLOCAT**) |
+| Next task | **OWNER-DECISION-02-DATA-RECONCILIATION** (PROD-ARCH-01 **BLOCAT**) |
 
 
 
@@ -434,7 +434,29 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **PROD-INT-02:** **COMPLETE** (audit)
 
-**Next:** **APP-AUTH-02-DATA-DISCREPANCY-AND-RECONCILIATION-PLAN**
+**Next:** **OWNER-DECISION-02-DATA-RECONCILIATION**
+
+## APP-AUTH-02 — Inventar discrepanțe și plan reconciliere
+
+**Verdict:** `APP_AUTH_02_RECONCILIATION_PLAN_READY_FOR_OWNER`
+
+**Scope:** Audit read-only + plan — fără cod, DB, UI, migrări.
+
+**Runtime:** 8 angajați · 20 discrepanțe · 39 override explicit · 10 autorități duplicate · 6 decizii owner.
+
+**Sandu:** `LEGACY_OVERRIDE_REQUIRES_RECONCILIATION` — 7 override fără competență; montaj_led CRITICAL.
+
+**CNC 4020:** `IDENTITY_ALIGNED_METADATA_PARTIAL`
+
+**Tests:** 73 pass / 1 fail (`test_available_projection_filters_canonically` — nefixat).
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_02/*.json`
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_02_data_discrepancy_reconciliation_plan_v1.md`
+
+**APP-AUTH-02:** **COMPLETE** (plan)
+
+**Next:** **OWNER-DECISION-02** — PROD-ARCH-01 **BLOCAT**
 
 ## APP-AUTH-01 — Decizii canonice de autoritate
 

@@ -1,0 +1,338 @@
+[
+  {
+    "angajat_id": 1,
+    "nume": "Calin Cimpean",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Grafician / Operator",
+    "competente_registry": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "competente_legacy": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "centre_autorizate": [
+      "WC_CUT",
+      "WC_LAMINATE",
+      "WC_PRINT"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-CUTTER-PLOTTER",
+      "MCH-EPSON-60800",
+      "MCH-LAMINATOR-XPRO"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-CUTTER-PLOTTER",
+      "MCH-EPSON-60800",
+      "MCH-LAMINATOR-XPRO"
+    ],
+    "override_operatii": [
+      "cutter_plotter",
+      "laminare",
+      "prepress",
+      "print",
+      "print_roll"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 2,
+    "nume": "Octavian Dumitru",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Grafician / Operator",
+    "competente_registry": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "competente_legacy": [
+      "SK_CUTTER_OPERATOR",
+      "SK_GRAPHIC_DESIGN",
+      "SK_LAMINATOR_OPERATOR",
+      "SK_PRINT_OPERATOR",
+      "SK_QUOTING"
+    ],
+    "centre_autorizate": [
+      "WC_CUT",
+      "WC_LAMINATE",
+      "WC_PRINT"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-CUTTER-PLOTTER",
+      "MCH-EPSON-60800",
+      "MCH-LAMINATOR-XPRO"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-CUTTER-PLOTTER",
+      "MCH-EPSON-60800",
+      "MCH-LAMINATOR-XPRO"
+    ],
+    "override_operatii": [
+      "cutter_plotter",
+      "laminare",
+      "prepress",
+      "print",
+      "print_roll"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 3,
+    "nume": "Florin CNC",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Operator CNC",
+    "competente_registry": [
+      "SK_CNC_OPERATOR",
+      "SK_CNC_PREP",
+      "SK_LETTER_CANT_OPERATOR"
+    ],
+    "competente_legacy": [
+      "SK_CNC_OPERATOR",
+      "SK_CNC_PREP",
+      "SK_LETTER_CANT_OPERATOR"
+    ],
+    "centre_autorizate": [
+      "WC_CNC_ROUTING",
+      "WC_LETTER_FORMING"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-CNC-4020",
+      "MCH-CNC-CANT-LITERE"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-CNC-4020",
+      "MCH-CNC-CANT-LITERE"
+    ],
+    "override_operatii": [
+      "cant_modelare",
+      "cnc_cutting"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 4,
+    "nume": "Putaru Sandu",
+    "user_id": "dev-admin-user-00000000",
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Lăcătuș / Montator",
+    "competente_registry": [
+      "SK_PRINT_OPERATOR"
+    ],
+    "competente_legacy": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LOCKSMITH",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "centre_autorizate": [
+      "WC_PRINT"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-EPSON-60800"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-WELD-ALU",
+      "MCH-WELD-STEEL",
+      "WA-ASSEMBLY-01",
+      "WA-ASSEMBLY-02",
+      "WA-WELD-TABLE"
+    ],
+    "override_operatii": [
+      "assembly",
+      "colantare",
+      "field_installation",
+      "montaj_led",
+      "packaging",
+      "print",
+      "print_roll",
+      "quality_control",
+      "welding"
+    ],
+    "discrepante_skills": true,
+    "discrepante_machines": true,
+    "risc": "CRITICAL"
+  },
+  {
+    "angajat_id": 5,
+    "nume": "Vali Colantator",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Colantator / Montator",
+    "competente_registry": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "competente_legacy": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "centre_autorizate": [
+      "WC_ASSEMBLY",
+      "WC_FIELD_INSTALLATION",
+      "WC_LED_ASSEMBLY",
+      "WC_VINYL_APPLICATION"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-RIGID-FILM-LAMINATOR",
+      "WA-ASSEMBLY-01",
+      "WA-ASSEMBLY-02"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-RIGID-FILM-LAMINATOR",
+      "WA-ASSEMBLY-01",
+      "WA-ASSEMBLY-02"
+    ],
+    "override_operatii": [
+      "assembly",
+      "colantare",
+      "field_installation",
+      "montaj_led",
+      "packaging",
+      "quality_control"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 6,
+    "nume": "Costi Modelator",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Modelator / Colantator",
+    "competente_registry": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "competente_legacy": [
+      "SK_ASSEMBLY",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_LETTER_MODELING",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "centre_autorizate": [
+      "WC_ASSEMBLY",
+      "WC_LED_ASSEMBLY",
+      "WC_LETTER_FORMING",
+      "WC_VINYL_APPLICATION"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-CNC-CANT-LITERE",
+      "WA-ASSEMBLY-01"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-CNC-CANT-LITERE",
+      "WA-ASSEMBLY-01"
+    ],
+    "override_operatii": [
+      "assembly",
+      "cant_modelare",
+      "colantare",
+      "field_installation",
+      "montaj_led",
+      "packaging",
+      "quality_control"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 7,
+    "nume": "Andrei Goghi",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Producție / CNC",
+    "competente_registry": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "competente_legacy": [
+      "SK_ASSEMBLY",
+      "SK_CNC_OPERATOR",
+      "SK_ELECTRICIAN",
+      "SK_FIELD_INSTALLER",
+      "SK_VINYL_APPLICATOR"
+    ],
+    "centre_autorizate": [
+      "WC_ASSEMBLY",
+      "WC_CNC_ROUTING",
+      "WC_FIELD_INSTALLATION",
+      "WC_LED_ASSEMBLY"
+    ],
+    "utilaje_autorizate_registry": [
+      "MCH-CNC-4020",
+      "WA-ASSEMBLY-02"
+    ],
+    "utilaje_autorizate_legacy": [
+      "MCH-CNC-4020",
+      "WA-ASSEMBLY-02"
+    ],
+    "override_operatii": [
+      "assembly",
+      "cnc_cutting",
+      "colantare",
+      "field_installation",
+      "montaj_led",
+      "packaging",
+      "quality_control"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  },
+  {
+    "angajat_id": 8,
+    "nume": "Chirila Cristian",
+    "user_id": null,
+    "hr_record": "DERIVAT_DEMO",
+    "rol": "Direct comercial / tehnic",
+    "competente_registry": [
+      "SK_COMMERCIAL_TECH",
+      "SK_QUOTING"
+    ],
+    "competente_legacy": [
+      "SK_COMMERCIAL_TECH",
+      "SK_QUOTING"
+    ],
+    "centre_autorizate": [],
+    "utilaje_autorizate_registry": [],
+    "utilaje_autorizate_legacy": [],
+    "override_operatii": [
+      "prepress"
+    ],
+    "discrepante_skills": false,
+    "discrepante_machines": false,
+    "risc": "LOW"
+  }
+]
