@@ -17,6 +17,7 @@ from services.employee_mobile_tasks_service import _load_enriched_tasks, list_av
 from tests.test_employee_mobile_tasks import (
     _cleanup_overrides,
     _client_for,
+    _delete_order_execution_fixture,
     _seed_active_order,
     _seed_employee,
     _seed_plan_unassigned_task,
@@ -182,24 +183,27 @@ async def test_load_enriched_tasks_v2_returns_non_empty(db_session):
         ),
         _frozen_operational_task(task_id=logo_id, logo_segment="logo_instance_001"),
     ]
-    await _seed_v2_order(
-        db_session,
-        order_id=order_id,
-        tasks_json=_v2_envelope(operational=operational),
-    )
-    enriched, _ = await _load_enriched_tasks(db_session)
-    order_tasks = [t for t in enriched if t["order_id"] == order_id]
-    assert len(order_tasks) == 3
-    root = next(t for t in order_tasks if t["task_id"] == task_id)
-    assert root["contract_version"] == "employee_mobile_task_truth/v1"
-    assert root["legacy_mode"] is False
-    assert root["deterministic_task_key"] == task_id
-    assert root["component_role"] == "root_product"
-    assert root["identity_source"] == "frozen_task_identity/v1"
-    mounting = next(t for t in order_tasks if t["task_id"] == mounting_id)
-    assert mounting["component_role"] == "mounting_panel"
-    logo = next(t for t in order_tasks if t["task_id"] == logo_id)
-    assert logo["logo_segment_label"] is not None
+    try:
+        await _seed_v2_order(
+            db_session,
+            order_id=order_id,
+            tasks_json=_v2_envelope(operational=operational),
+        )
+        enriched, _ = await _load_enriched_tasks(db_session)
+        order_tasks = [t for t in enriched if t["order_id"] == order_id]
+        assert len(order_tasks) == 3
+        root = next(t for t in order_tasks if t["task_id"] == task_id)
+        assert root["contract_version"] == "employee_mobile_task_truth/v1"
+        assert root["legacy_mode"] is False
+        assert root["deterministic_task_key"] == task_id
+        assert root["component_role"] == "root_product"
+        assert root["identity_source"] == "frozen_task_identity/v1"
+        mounting = next(t for t in order_tasks if t["task_id"] == mounting_id)
+        assert mounting["component_role"] == "mounting_panel"
+        logo = next(t for t in order_tasks if t["task_id"] == logo_id)
+        assert logo["logo_segment_label"] is not None
+    finally:
+        await _delete_order_execution_fixture(db_session, order_id=order_id)
 
 
 @pytest.mark.asyncio
@@ -255,12 +259,15 @@ async def test_available_projection_filters_canonically(db_session):
         return emp.id
 
     emp_id = await _setup()
-    rows = await list_available_tasks(db_session, emp_id)
-    scoped = [r for r in rows if r["order_id"] == order_id]
-    assert len(scoped) == 1
-    assert scoped[0]["task_id"] == task_id
-    assert scoped[0]["is_available_for_claim"] is True
-    assert scoped[0].get("claimable") is True
+    try:
+        rows = await list_available_tasks(db_session, emp_id)
+        scoped = [r for r in rows if r["order_id"] == order_id]
+        assert len(scoped) == 1
+        assert scoped[0]["task_id"] == task_id
+        assert scoped[0]["is_available_for_claim"] is True
+        assert scoped[0].get("claimable") is True
+    finally:
+        await _delete_order_execution_fixture(db_session, order_id=order_id)
 
 
 def test_v2_list_endpoint_non_empty(db_fixture, db_session):
