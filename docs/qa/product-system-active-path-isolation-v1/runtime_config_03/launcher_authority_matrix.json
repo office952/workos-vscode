@@ -1,0 +1,14 @@
+{
+  "recommended_owner_command": "npm run dev:stack",
+  "recommended_owner_command_windows": ".\\scripts\\dev.ps1",
+  "authority": "scripts/dev.ps1 delegates to scripts/start-dev.ps1 with shared _workos-dev-contract.ps1",
+  "split_launchers": {
+    "backend": "npm run dev:backend",
+    "frontend": "npm run dev:frontend"
+  },
+  "canonical_launcher_count": 5,
+  "legacy_launcher_count": 1,
+  "restore_only_count": 1,
+  "test_only_count": 1,
+  "canonical_using_8000_default": 0
+}

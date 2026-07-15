@@ -1,75 +1,75 @@
 {
   "task": "OWNER-DECISION-04",
-  "status": "RECOMMENDED_PENDING_EXPLICIT_OWNER_CONFIRMATION",
-  "verdict_recommendation": "OWNER_PARITY_PILOT_APPROVED_REMAIN_TWO_CONSUMERS",
-  "next_task_recommendation": "APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN",
+  "status": "OWNER_CONFIRMED_EXPLICIT",
+  "verdict": "OWNER_PARITY_PILOT_CONFIRMED_REMAIN_TWO_CONSUMERS",
+  "confirmation_date": "2026-07-15",
+  "confirmation_source": "owner_chat_explicit_ok",
+  "next_task_sequence": ["RUNTIME-CONFIG-03", "UI-TRUTH-01", "APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN"],
+  "next_task_immediate": "RUNTIME-CONFIG-03",
+  "app_auth_06c_blocked_until": ["RUNTIME-CONFIG-03", "UI-TRUTH-01"],
   "decisions": {
     "P1_signal_quality": {
-      "recommended": "A",
-      "label": "Useful signal for continued observe-only evaluation",
-      "rationale": "16 stable fingerprints; 0 false positives in tested scenarios; known Sandu drift surfaced",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "Parity signal useful only for observe-only evaluation",
+      "owner_confirmed": true
     },
     "P2_duplicate_volume": {
-      "recommended": "A",
-      "label": "Acceptable for ephemeral dev/test logs",
-      "rationale": "404/420 duplicates are request repetition; fingerprint grouping works; persistence forbidden",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "Duplicate volume acceptable only for ephemeral dev/test logs",
+      "owner_confirmed": true
     },
     "P3_actionable_classification": {
-      "recommended": "REFINED",
-      "label": "ACTIONABLE split into CONFIRMATION_REQUIRED and POLICY_DECISION",
-      "rationale": "11 unique actionable patterns; not synonymous with DEFECT_PROVEN",
-      "owner_confirmed": false
+      "choice": "CONFIRMED",
+      "label": "ACTIONABLE split into CONFIRMATION_REQUIRED, TECHNICAL_INVESTIGATION, EXPECTED_TRANSITION, POLICY_DECISION, DEFECT_PROVEN, INSUFFICIENT_DATA",
+      "owner_confirmed": true
     },
     "P4_sandu": {
-      "recommended": "A",
-      "label": "Keep observing read-only",
-      "rationale": "Accurately exposes registry/legacy conflict; no reconciliation or enforcement",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "Sandu read-only observe; no reconciliation, competence, authorization, mapping, or eligibility changes",
+      "owner_confirmed": true
     },
     "P5_two_consumer_limit": {
-      "recommended": "A",
-      "label": "Freeze pilot at two request consumers",
-      "rationale": "Avoid rollout by accumulation; interpret 16 fingerprints before expansion",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "Pilot frozen at two request consumers: Employee Mobile available ops + eligibility endpoint",
+      "owner_confirmed": true
     },
     "P6_third_consumer": {
-      "recommended": "DEFER",
-      "label": "CONS-REGISTRY-CATALOG-API needs separate audit before plan",
-      "audit_findings": {
-        "new_boundary": "Unclear — catalog is canonical source, risk of self-comparison or restating registry already consumed by eligibility/mobile",
-        "expected_fingerprints": "Likely low or circular unless compared against legacy catalog consumers",
-        "confidentiality": "Low HR risk",
-        "actionability": "Uncertain without boundary definition",
-        "volume": "Low read volume; admin/operator config path",
-        "recommendation_override": "Do not auto-accept APP-AUTH-06 CONNECT_NEXT"
-      },
-      "owner_confirmed": false
+      "choice": "DEFER",
+      "label": "CONS-REGISTRY-CATALOG-API not connected now; separate audit if revisited",
+      "owner_confirmed": true
     },
     "P7_observation_storage": {
-      "recommended": "A",
-      "label": "Ephemeral logs and test evidence only",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "No parity persistence",
+      "owner_confirmed": true
     },
     "P8_manager_visibility": {
-      "recommended": "A",
-      "label": "No manager projection yet",
-      "rationale": "Signal interpretation not mature enough for manager UI",
-      "owner_confirmed": false
+      "choice": "A",
+      "label": "No manager projection",
+      "owner_confirmed": true
     },
     "P9_production_use": {
-      "recommended": "CONFIRM",
-      "label": "All production/staging parity flags remain false",
-      "owner_confirmed": false
+      "choice": "CONFIRMED",
+      "label": "All production and staging parity flags remain false",
+      "owner_confirmed": true
     },
     "P10_next_gate": {
-      "recommended": "A",
-      "label": "Signal interpretation plan before any third consumer",
-      "next_task": "APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN",
-      "owner_confirmed": false
+      "choice": "AMENDED_CONFIRMED",
+      "label": "Sequence: RUNTIME-CONFIG-03 → UI-TRUTH-01 → APP-AUTH-06C",
+      "owner_confirmed": true
     }
   },
+  "owner_amendments_confirmed": [
+    "no_enforcement",
+    "no_source_switch",
+    "no_migration",
+    "no_third_consumer",
+    "no_eligibility_modification",
+    "no_sandu_data_modification",
+    "no_production_parity_extension",
+    "no_persistence",
+    "no_manager_ui"
+  ],
   "blocked_scope": [
     "third_consumer_wiring",
     "production_flags",
@@ -82,11 +82,5 @@
     "PROD-ARCH-01",
     "MOBILE-INT-02"
   ],
-  "app_auth_07_authorization": {
-    "plan_only": false,
-    "authorized": false,
-    "reason": "Third consumer deferred; 06C signal interpretation precedes any APP-AUTH-07 plan"
-  },
-  "owner_amendments": null,
-  "explicit_owner_response_required": true
+  "explicit_owner_response_required": false
 }

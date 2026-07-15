@@ -1,0 +1,7 @@
+{
+  "database_path": "C:\\w\\psiso\\backend\\dev.db",
+  "before": { "integrity": "ok", "intake_requests": 4, "orders": 6, "employees": 8 },
+  "after": { "integrity": "ok", "intake_requests": 4, "orders": 6, "employees": 8 },
+  "business_writes": 0,
+  "classification": "PASS"
+}

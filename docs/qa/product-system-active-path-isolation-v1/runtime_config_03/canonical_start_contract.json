@@ -1,0 +1,15 @@
+{
+  "contract_name": "WORKOS LOCAL DEVELOPMENT CONTRACT",
+  "backend": "127.0.0.1:8001",
+  "frontend": "127.0.0.1:3000",
+  "frontend_api": "same-origin /api",
+  "vite_proxy": "http://127.0.0.1:8001",
+  "database": "C:\\w\\psiso\\backend\\dev.db",
+  "database_url": "sqlite+aiosqlite:///C:/w/psiso/backend/dev.db",
+  "parity": "ALL_FALSE implicit (Clear-WorkOsParityEnv in canonical launchers)",
+  "override": {
+    "BACKEND_PORT": "explicit env for restore/test (e.g. 8021)",
+    "VITE_PORT": "explicit env optional"
+  },
+  "implementation_source": "scripts/_workos-dev-contract.ps1"
+}

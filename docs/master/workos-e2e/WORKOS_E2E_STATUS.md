@@ -520,6 +520,40 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
 
+## RUNTIME-CONFIG-03 — Canonical startup port alignment
+
+**Verdict:** `RUNTIME_CONFIG_03_CANONICAL_STARTUP_ALIGNMENT_PASS`
+
+**Starting HEAD:** `757d6fd`
+
+**Scope:** Permanent alignment of canonical launchers and Vite proxy to backend **8001** / frontend **3000**. Owner P1–P10 confirmed. No business logic, parity, DB, or banner changes.
+
+| Check | Result |
+|-------|--------|
+| Owner P1–P10 | **CONFIRMED** (explicit chat) |
+| Vite proxy default | **8001** (`127.0.0.1`) |
+| Canonical launchers | **aligned** (`dev.ps1`, `start-dev.ps1`, `dev-backend`, `dev-frontend`) |
+| Manual BACKEND_PORT | **NOT required** |
+| Restart cycles | **2/2 PASS** |
+| Intake proxy | **200** |
+| Routes | **10/10 HEALTHY** |
+| DB invariance | **PASS** (0 writes) |
+| Parity | **ALL_FALSE** |
+| Startup tests | **11/11 PASS** |
+| Frontend build | **PASS** |
+
+**Owner command:** `npm run dev:stack`
+
+**Open debt:** Banner truth (UI-TRUTH-01); split API path (documented MEDIUM)
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/runtime_config_03/*.json`
+
+**Worklog:** `docs/worklog/runtime/2026-07-15_runtime_config_03_canonical_startup_port_alignment_restart_proof_v1.md`
+
+**RUNTIME-CONFIG-03:** **COMPLETE**
+
+**Next:** **UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN**
+
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
 **Verdict:** `RUNTIME_RECOVERY_02_PASS_INTAKE_RESTORED_OTHER_GAPS_FOUND`
@@ -614,7 +648,7 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02). Remaining runtime debt: banner truth + launcher port alignment (see RUNTIME-RECOVERY-02). Roadmap: **RETURN_TO_OWNER_DECISION_04_CONFIRMATION** before APP-AUTH-06C; `PROD-ARCH-01` and `MOBILE-INT-02` remain blocked per prior gates. Backup artifact outside worktree — not in git.
+Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02) and **startup aligned** (RUNTIME-CONFIG-03). Owner P1–P10 **CONFIRMED**. Remaining debt: banner truth (UI-TRUTH-01), split API path. Next: **UI-TRUTH-01** then **APP-AUTH-06C**. `PROD-ARCH-01` / `MOBILE-INT-02` remain blocked.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

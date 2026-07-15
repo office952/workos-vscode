@@ -1,0 +1,8 @@
+{
+  "component": "frontend/src/components/workos/EnvironmentBanner.tsx",
+  "modified_in_this_task": false,
+  "rule": "authState === authenticated → LIVE / DB",
+  "problem": "Does not verify operational API health or data availability",
+  "classification": "OPEN_DEBT",
+  "next_task": "UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN"
+}

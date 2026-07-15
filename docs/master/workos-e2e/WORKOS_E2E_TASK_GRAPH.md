@@ -526,6 +526,21 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | OWNER-DECISION-03 | **COMPLETE** |
 | Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
 
+## RUNTIME-CONFIG-03 — Canonical startup port alignment
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `RUNTIME_CONFIG_03_CANONICAL_STARTUP_ALIGNMENT_PASS` |
+| Starting HEAD | `757d6fd` |
+| Owner P1–P10 | **CONFIRMED** |
+| Canonical ports | backend **8001**, frontend **3000** |
+| Manual BACKEND_PORT | **NO** |
+| Restart cycles | **2/2 PASS** |
+| Owner command | `npm run dev:stack` |
+| RUNTIME-CONFIG-03 | **COMPLETE** |
+| Next | **UI-TRUTH-01-ENVIRONMENT-BANNER-OPERATIONAL-HEALTH-TRUTH-PLAN** |
+
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
 | Field | Value |
@@ -581,14 +596,16 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Safety / backup checkpoint
 
-Backup baseline FULL (01 + 01B). Source runtime RECOVERED (RUNTIME-RECOVERY-02). Runtime debt: banner truth + launcher `:8000` vs `:8001` alignment. Next: RETURN_TO_OWNER_DECISION_04_CONFIRMATION (not auto APP-AUTH-06C). PROD-ARCH-01 / MOBILE-INT-02 remain blocked per prior owner gates.
+Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CONFIG-03). Owner P1–P10 CONFIRMED. Next: UI-TRUTH-01 → APP-AUTH-06C. PROD-ARCH-01 / MOBILE-INT-02 blocked.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 
 | Field | Value |
 |-------|-------|
 | Status | **COMPLETE** (2026-07-15) |
-| Verdict | `OWNER_PARITY_PILOT_APPROVED_REMAIN_TWO_CONSUMERS` (recommended) |
+| Verdict | `OWNER_PARITY_PILOT_CONFIRMED_REMAIN_TWO_CONSUMERS` |
+| Owner P1–P10 | **CONFIRMED** (explicit chat 2026-07-15) |
+| P10 sequence | RUNTIME-CONFIG-03 → UI-TRUTH-01 → APP-AUTH-06C |
 | Starting HEAD | `0b5997f` |
 | Inventory classification | `REPORTING_AMBIGUITY_CORRECTED` |
 | Primary universe | 18 |
@@ -603,8 +620,8 @@ Backup baseline FULL (01 + 01B). Source runtime RECOVERED (RUNTIME-RECOVERY-02).
 | Persistence | **NOT AUTHORIZED** |
 | Manager projection | **NOT AUTHORIZED** |
 | Production flags | ALL_FALSE confirmed |
-| Owner confirm pending | P1–P10 |
-| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
+| Owner confirm pending | **NO — P1–P10 confirmed** |
+| Next | **UI-TRUTH-01** (then APP-AUTH-06C) |
 
 ## APP-AUTH-06 — Parity observation pilot
 

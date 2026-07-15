@@ -1,0 +1,12 @@
+{
+  "master_flag": false,
+  "domain_flags": false,
+  "persistence": false,
+  "manager_projection": false,
+  "parity_logging_on_canonical_backend": false,
+  "source_switch": false,
+  "enforcement": false,
+  "mechanism": "Clear-WorkOsParityEnv in canonical launchers",
+  "classification": "PASS",
+  "parity_flags": "ALL_FALSE"
+}

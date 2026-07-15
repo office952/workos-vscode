@@ -3,8 +3,9 @@
 **Date:** 2026-07-15  
 **Task:** OWNER-DECISION-04-PARITY-PILOT-OWNER-REVIEW-V1  
 **Starting HEAD:** `0b5997f`  
-**Verdict:** `OWNER_PARITY_PILOT_APPROVED_REMAIN_TWO_CONSUMERS` (recommended; pending explicit owner confirmation)  
-**Next:** `APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN`
+**Verdict:** `OWNER_PARITY_PILOT_CONFIRMED_REMAIN_TWO_CONSUMERS`  
+**Owner confirmation:** **EXPLICIT** (2026-07-15 chat)  
+**Next sequence:** RUNTIME-CONFIG-03 → UI-TRUTH-01 → APP-AUTH-06C
 
 ## Scope
 
@@ -40,22 +41,22 @@ Decision and documentation gate only. No code, DB, endpoints, UI, persistence, e
 - **Not proven:** “Parity improved latency 78.21%” — compared `:8001` flags-off vs `:8011` flags-on in different processes.
 - Repeat performance pilot **not required** for this owner decision.
 
-## Owner decisions (recommended)
+## Owner decisions (confirmed 2026-07-15)
 
-| ID | Recommendation | Summary |
-|----|----------------|---------|
-| P1 | **A** | Signal useful for observe-only continuation |
+| ID | Choice | Summary |
+|----|--------|---------|
+| P1 | **A** | Signal useful for observe-only evaluation |
 | P2 | **A** | Duplicate volume acceptable ephemeral |
-| P3 | Refined | ACTIONABLE → CONFIRMATION_REQUIRED / POLICY_DECISION |
-| P4 | **A** | Sandu remains read-only observe |
-| P5 | **A** | Freeze at two request consumers |
-| P6 | **DEFER** | Catalog consumer needs separate audit |
+| P3 | **CONFIRMED** | ACTIONABLE → 6-way split (CONFIRMATION_REQUIRED … INSUFFICIENT_DATA) |
+| P4 | **A** | Sandu read-only observe |
+| P5 | **A** | Freeze two request consumers |
+| P6 | **DEFER** | Catalog consumer separate audit |
 | P7 | **A** | No persistence |
 | P8 | **A** | No manager projection |
-| P9 | **CONFIRM** | Production flags remain false |
-| P10 | **A** | Next: signal interpretation plan (06C) |
+| P9 | **CONFIRMED** | Production/staging parity flags false |
+| P10 | **AMENDED** | RUNTIME-CONFIG-03 → UI-TRUTH-01 → APP-AUTH-06C |
 
-**Explicit owner confirmation:** not yet recorded in this commit.
+**Explicit owner confirmation:** recorded in `owner_decision_package.json` and `runtime_config_03/owner_decision_04_confirmation.json`.
 
 ## Signal interpretation summary
 
