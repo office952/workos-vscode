@@ -8,9 +8,11 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** GOV-INT-01 on branch (after MODULE-AUTH-01 @ `1e9d32e`)
+**Accepted HEAD:** `88c1383` (UI-TRUTH-01A docs)
 
-**Last updated:** 2026-07-15 (UI-TRUTH-01 banner operational health truth plan — **PLAN COMPLETE**)
+**Last updated:** 2026-07-15 (SESSION-LEDGER-01 — roadmap realigned)
+
+**Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
 
 
@@ -26,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **UI-TRUTH-01A** — runtime truth contract + health hook (**COMPLETE**) |
+| Active task | **SESSION-LEDGER-01** — session master consolidation (**COMPLETE**) |
 
-| Next task | **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** (APP-AUTH-06C **BLOCKED**) |
+| Next task | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** (UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
