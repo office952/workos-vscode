@@ -396,7 +396,28 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Confirmation | `CONFIRMATION_DIALOG` |
 | Tests | 43 backend + 40 frontend |
 | Screenshots | 13 @ 390×844 |
-| MOBILE-T05 | **COMPLETE** |
+| MOBILE-T05 | **COMPLETE** (T05B concurrency closed) |
+| MOBILE-T05B | **COMPLETE** (2026-07-15) |
+| T05B verdict | `MOBILE_T05B_CONCURRENCY_PASS_CLOSE_MOBILE_T05` |
+| Concurrency | `CONCURRENT_COMPLETE_IDEMPOTENT` |
+| Session ID | `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY` |
+| T05B tests | 6 concurrency + 49 mobile backend regression |
+| Live probe | order `92350` @ :8001 |
+| Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
+
+## MOBILE-T05B — Complete concurrency and event integrity
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_T05B_CONCURRENCY_PASS_CLOSE_MOBILE_T05` |
+| Classification | `CONCURRENT_COMPLETE_IDEMPOTENT` |
+| Locking | `ExecutionRealityService.end_task(for_update=True)` |
+| Idempotency | `already_completed` before active-session gate |
+| Session ID gap | `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY` |
+| Tests | 6 focused + 49 mobile backend + 40 frontend |
+| Live evidence | `mobile_t05b_concurrency_evidence.json` |
+| MOBILE-T05B | **COMPLETE** |
 | Next | **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY** |
 
 ## MOBILE-T04 — Canonical start action wiring

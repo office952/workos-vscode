@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T05 in-progress session and complete — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T05B concurrent Complete closure — **PASS**)
 
 
 
@@ -384,7 +384,21 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **Classifications:** Complete `CANONICAL_EXECUTIONREALITY_COMPLETE` · Pause/resume `DEFER_PAUSE_RESUME_KEEP_COMPLETE_ONLY` · Block `DEFER_BLOCK_UNBLOCK`
 
-**MOBILE-T05:** **COMPLETE**
+**MOBILE-T05:** **COMPLETE** (includes T05B concurrency closure)
+
+**Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
+
+## MOBILE-T05B — Complete concurrency and event integrity
+
+**Verdict:** `MOBILE_T05B_CONCURRENCY_PASS_CLOSE_MOBILE_T05`
+
+**Proof:** Real concurrent overlap on :8001; 6 focused backend concurrency tests; 49 mobile regression backend + 40 frontend; isolated fixture order `92350`.
+
+**Classification:** `CONCURRENT_COMPLETE_IDEMPOTENT` · Active session ID `SESSION_ID_NOT_REQUIRED_ENDPOINT_RESOLVES_CANONICALLY`
+
+**Backend fix:** `FOR UPDATE` on `end_task`; idempotent completed-session return; `already_completed` before active-session gate.
+
+**MOBILE-T05B:** **COMPLETE**
 
 **Next:** **MOBILE-T06-CLAIM-AND-ASSIGNMENT-POLICY**
 
