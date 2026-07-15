@@ -1,0 +1,22 @@
+{
+  "task": "UI-TRUTH-01A",
+  "suites": [
+    {
+      "name": "runtimeHealth.test.ts",
+      "passed": 26,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "useRuntimeHealth.test.ts",
+      "passed": 15,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "total_passed": 41,
+  "total_failed": 0,
+  "minimum_required": 25,
+  "frontend_build": "PASS",
+  "command": "npx --yes pnpm@8.10.0 exec vitest run src/lib/runtimeHealth.test.ts src/hooks/useRuntimeHealth.test.ts"
+}

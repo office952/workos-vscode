@@ -1,0 +1,31 @@
+{
+  "task": "UI-TRUTH-01A",
+  "stack": "npm run dev:stack",
+  "probes": [
+    {
+      "url": "http://127.0.0.1:3000/api/v1/system/health",
+      "status_code": 200,
+      "raw_status": "warning",
+      "checks": {},
+      "normalized_backend": "warning",
+      "normalized_database": "unknown"
+    },
+    {
+      "url": "http://127.0.0.1:3000/api/v1/system/version",
+      "status_code": 200,
+      "raw_environment": "staging",
+      "normalized_environment_dev_runtime": "local",
+      "note": "import.meta.env.DEV maps dev shell to local; version raw preserved in rawValue"
+    },
+    {
+      "url": "http://127.0.0.1:3000/intake",
+      "status_code": 200
+    }
+  ],
+  "hook_urls": {
+    "health": "/api/v1/system/health",
+    "version": "/api/v1/system/version",
+    "direct_8001_used": false
+  },
+  "timestamp": "2026-07-15T11:31:10.991063+00:00"
+}

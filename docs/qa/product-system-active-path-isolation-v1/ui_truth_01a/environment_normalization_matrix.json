@@ -1,0 +1,17 @@
+{
+  "task": "UI-TRUTH-01A",
+  "endpoint": "/api/v1/system/version",
+  "normalizer": "normalizeVersionEnvironment",
+  "mappings": [
+    { "raw": "development", "state": "local" },
+    { "raw": "dev", "state": "local" },
+    { "raw": "local", "state": "local" },
+    { "raw": "test", "state": "test" },
+    { "raw": "staging", "state": "staging" },
+    { "raw": "production", "state": "production" },
+    { "raw": "demo", "state": "demo" },
+    { "raw": "unknown_value", "state": "unknown" },
+    { "mockMode": true, "state": "demo", "note": "VITE_ENABLE_MOCK_DATA — does not imply backend healthy" }
+  ],
+  "no_hostname_inference": true
+}

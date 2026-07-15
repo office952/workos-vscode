@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `UI-TRUTH-01` plan **COMPLETE** — await **OWNER_GO** for UI-TRUTH-01A  
+**Active task:** `UI-TRUTH-01A` **COMPLETE** — next **UI-TRUTH-01B**  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
 
 ## MODULE-AUTH-01 — Canonical module chain purpose authority decisions
@@ -539,7 +539,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Restart cycles | **2/2 PASS** |
 | Owner command | `npm run dev:stack` |
 | RUNTIME-CONFIG-03 | **COMPLETE** |
-| Next | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A** |
+| Next | **UI-TRUTH-01B** |
 
 ## UI-TRUTH-01 — ENVIRONMENT_BANNER_OPERATIONAL_HEALTH_TRUTH_PLAN_V1
 
@@ -555,7 +555,23 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Implementation authorized | **NO** |
 | APP-AUTH-06C | **BLOCKED** until 01A–01E complete |
 | UI-TRUTH-01 | **COMPLETE** (plan) |
-| Next | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK** |
+| UI-TRUTH-01A | **COMPLETE** (2026-07-15) |
+| Verdict | `UI_TRUTH_01A_RUNTIME_TRUTH_FOUNDATION_PASS` |
+| Hook | `useRuntimeHealth` — same-origin `/api`, 45s poll, 120s stale |
+| Banner visual | **UNCHANGED** |
+| Tests | **41/41 PASS** |
+| Next | **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** |
+
+## UI-TRUTH-01A — RUNTIME_TRUTH_CONTRACT_AND_HEALTH_HOOK_V1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Starting HEAD | `92f19fe` |
+| Owner GO | **YES** |
+| Files | `runtimeStatus.ts`, `runtimeHealth.ts`, `useRuntimeHealth.ts` + tests |
+| Implementation authorized | UI-TRUTH-01A ONLY |
+| APP-AUTH-06C | **BLOCKED** |
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
@@ -612,7 +628,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 
 ## Safety / backup checkpoint
 
-Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CONFIG-03). UI-TRUTH-01 plan COMPLETE. Owner GO required → UI-TRUTH-01A → APP-AUTH-06C (blocked). PROD-ARCH-01 / MOBILE-INT-02 blocked.
+Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CONFIG-03). UI-TRUTH-01A hook foundation COMPLETE. Next: UI-TRUTH-01B banner rendering. APP-AUTH-06C blocked. PROD-ARCH-01 / MOBILE-INT-02 blocked.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

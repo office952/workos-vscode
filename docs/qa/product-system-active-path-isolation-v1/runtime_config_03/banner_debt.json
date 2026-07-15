@@ -1,11 +1,14 @@
 {
   "component": "frontend/src/components/workos/EnvironmentBanner.tsx",
-  "modified_in_this_task": false,
+  "modified_in_ui_truth_01a": false,
   "rule": "authState === authenticated → LIVE / DB",
   "problem": "Does not verify operational API health or data availability",
-  "classification": "PLAN_COMPLETE_IMPLEMENTATION_PENDING",
+  "classification": "FOUNDATION_COMPLETE_BANNER_RENDER_PENDING_01B",
   "plan_task": "UI-TRUTH-01",
   "plan_verdict": "UI_TRUTH_01_PLAN_READY_FOR_OWNER_GO",
+  "ui_truth_01a_verdict": "UI_TRUTH_01A_RUNTIME_TRUTH_FOUNDATION_PASS",
+  "hook": "frontend/src/hooks/useRuntimeHealth.ts",
   "plan_worklog": "docs/worklog/runtime/2026-07-15_ui_truth_01_environment_banner_operational_health_truth_plan_v1.md",
-  "next_task": "OWNER_GO_REQUIRED → UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK"
+  "implementation_worklog": "docs/worklog/runtime/2026-07-15_ui_truth_01a_runtime_truth_contract_health_hook_v1.md",
+  "next_task": "UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY"
 }

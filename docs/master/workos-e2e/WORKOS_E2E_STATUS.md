@@ -26,9 +26,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **UI-TRUTH-01** — environment banner operational health truth plan (**COMPLETE — plan only**) |
+| Active task | **UI-TRUTH-01A** — runtime truth contract + health hook (**COMPLETE**) |
 
-| Next task | **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK** (APP-AUTH-06C **BLOCKED**) |
+| Next task | **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** (APP-AUTH-06C **BLOCKED**) |
 
 
 
@@ -580,9 +580,11 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **UI-TRUTH-01:** **COMPLETE** (plan)
 
-**Next:** **OWNER_GO_REQUIRED** → **UI-TRUTH-01A-RUNTIME-TRUTH-CONTRACT-AND-HEALTH-HOOK**
+**UI-TRUTH-01A:** **COMPLETE** — `UI_TRUTH_01A_RUNTIME_TRUTH_FOUNDATION_PASS`
 
-**APP-AUTH-06C:** **BLOCKED** until UI-TRUTH-01 implementation + runtime verification (01E)
+**Next:** **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY**
+
+**APP-AUTH-06C:** **BLOCKED** until UI-TRUTH-01B + 01E runtime verification
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 

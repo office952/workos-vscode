@@ -1,0 +1,14 @@
+{
+  "task": "UI-TRUTH-01A",
+  "kinds": [
+    "NETWORK_ERROR",
+    "TIMEOUT",
+    "HTTP_ERROR",
+    "MALFORMED_RESPONSE",
+    "UNAUTHORIZED_DIAGNOSTICS",
+    "ABORTED",
+    "UNKNOWN"
+  ],
+  "no_raw_bodies": true,
+  "timeout_distinct_from": ["HTTP warning", "unauthorized diagnostics", "network unavailable"]
+}

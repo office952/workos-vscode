@@ -1,0 +1,7 @@
+{
+  "task": "UI-TRUTH-01A",
+  "poll_interval_ms": 45000,
+  "stale_threshold_ms": 120000,
+  "stale_behavior": "snapshot retained; backend.state becomes stale; snapshot.stale true",
+  "visibility_trigger": "refresh when tab visible and age >= poll interval or snapshot.stale"
+}
