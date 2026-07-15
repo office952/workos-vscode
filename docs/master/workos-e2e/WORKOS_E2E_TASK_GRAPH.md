@@ -379,7 +379,23 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Screenshots | 12 @ 390×844 |
 | T02B closure | `MOBILE_T02B_TEST_BASELINE_PASS_CLOSE_MOBILE_T02` |
 | MOBILE-T02 | **COMPLETE** |
-| Next | **MOBILE-T04-START-ACTION-WIRING** |
+| Next | **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE** |
+
+## MOBILE-T04 — Canonical start action wiring
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `MOBILE_START_ACTION_PASS_COMMITTED` |
+| Assigned start | `CANONICAL_ASSIGNED_START` |
+| Available start | `CANONICAL_ATOMIC_CLAIM_AND_START` |
+| Action client | `employeeMobileV2StartAction.ts` + `useEmployeeMobileV2StartAction` |
+| Capability | `MOBILE_START_CAPABILITY_PRESENT` (`can_start`, `can_start_from_available`) |
+| Mutation strategy | `DETAIL_PRIMARY_CARD_SHORTCUT` |
+| Tests | 37 backend + 32 frontend |
+| Screenshots | 14 @ 390×844 |
+| MOBILE-T04 | **COMPLETE** |
+| Next | **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE** |
 
 ## MOBILE-T03 — Blocker and readiness visibility
 

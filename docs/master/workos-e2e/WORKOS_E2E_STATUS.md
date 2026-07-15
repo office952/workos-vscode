@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `e9fcb86` (MOBILE-T01) — MOBILE-T02 implementation committed on branch
 
-**Last updated:** 2026-07-15 (MOBILE-T03 blocker/readiness visibility — **PASS**)
+**Last updated:** 2026-07-15 (MOBILE-T04 canonical start action — **PASS**)
 
 
 
@@ -28,7 +28,7 @@
 
 | Active task | None |
 
-| Next task | **MOBILE-T04-START-ACTION-WIRING** |
+| Next task | **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE** |
 
 
 
@@ -372,7 +372,21 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **MOBILE-T02:** **COMPLETE**
 
-**Next:** **MOBILE-T04-START-ACTION-WIRING**
+**Next:** **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE**
+
+## MOBILE-T04 — Canonical start action wiring
+
+**Verdict:** `MOBILE_START_ACTION_PASS_COMMITTED`
+
+**Delivered:** Shared start action client/hook; assigned PATCH + available POST start-from-available; backend `can_start_from_available`; structured errors; pending state; truth refetch; no frontend mutation authority.
+
+**Proof:** 37 focused backend + 32 frontend tests; runtime Sandu order `23099` + routed fixtures; 14 screenshots @ 390×844.
+
+**Start modes:** Assigned `CANONICAL_ASSIGNED_START` · Available `CANONICAL_ATOMIC_CLAIM_AND_START`
+
+**MOBILE-T04:** **COMPLETE**
+
+**Next:** **MOBILE-T05-IN-PROGRESS-SESSION-AND-COMPLETE**
 
 ## MOBILE-T03 — Blocker and readiness visibility
 
