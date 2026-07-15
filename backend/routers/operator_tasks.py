@@ -26,22 +26,32 @@ from core.database import get_db
 from dependencies.auth import get_current_user
 from dependencies.permissions import has_permission, require_permission, resolve_effective_role
 from schemas.execution_task_collaboration_read import OrderTaskCollaborationReadResponse
+from schemas.execution_task_membership import (
+    MembershipActionResponse,
+    TaskMembershipListResponse,
+)
 from schemas.operator_task_truth import OperatorTaskTruthResponse
 from schemas.auth import UserResponse
 from models.execution_plan import ExecutionPlan
+from services.employee_mobile_identity import resolve_employee_for_user
 from services.execution_plan_operational_readiness_service import (
     evaluate_execution_plan_operational_readiness,
     readiness_result_to_api_fields,
 )
 from services.execution_plan_task_parser import operational_tasks_only
+from services.execution_task_collaboration_read_service import (
+    build_order_task_collaboration_read,
+)
+from services.execution_task_membership_service import (
+    join_helper_membership,
+    leave_helper_membership,
+    list_task_memberships,
+)
 from services.material_procurement_status_service import (
     PROCUREMENT_STATUSES,
     update_material_procurement_status,
 )
 from services.order_production_blueprint_service import get_order_production_blueprint
-from services.execution_task_collaboration_read_service import (
-    build_order_task_collaboration_read,
-)
 from services.operator_task_truth_service import build_operator_task_truth
 from services.volumetric_execution_dispatch import (
     extract_order_snapshot_context,
@@ -712,6 +722,64 @@ async def get_order_task_collaboration_read_endpoint(
 ) -> OrderTaskCollaborationReadResponse:
     """Read-only collaboration projection — optional principal + session-derived workers."""
     return await build_order_task_collaboration_read(db, order_id)
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/join",
+    response_model=MembershipActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_collaboration_join(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> MembershipActionResponse:
+    """HELPER membership join for the operator's linked employee — membership only."""
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await join_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=resolved.id,
+        joined_by_employee_id=resolved.id,
+        join_source="self_join",
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    response_model=MembershipActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_collaboration_leave(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> MembershipActionResponse:
+    """Close the operator-linked employee's own HELPER membership."""
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await leave_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=resolved.id,
+    )
+
+
+@router.get(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/memberships",
+    response_model=TaskMembershipListResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_collaboration_memberships(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> TaskMembershipListResponse:
+    """List HELPER memberships for a task (active + historical)."""
+    return await list_task_memberships(db, order_id=order_id, task_id=task_id)
 
 
 @router.get(

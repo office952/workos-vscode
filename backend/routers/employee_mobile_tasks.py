@@ -29,6 +29,11 @@ from services.employee_mobile_tasks_service import (
     start_my_task,
     unblock_my_task,
 )
+from services.execution_task_membership_service import (
+    join_helper_membership,
+    leave_helper_membership,
+)
+from schemas.execution_task_membership import MembershipActionResponse
 from services.task_clarification_request_service import create_clarification_request
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -414,6 +419,46 @@ async def resume_task(
     return await resume_my_task(
         db,
         order_id=body.order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/join",
+    response_model=MembershipActionResponse,
+)
+async def employee_collaboration_join(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> MembershipActionResponse:
+    """Self HELPER membership join — does not start a session or claim the task."""
+    return await join_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=ctx.employee.id,
+        joined_by_employee_id=ctx.employee.id,
+        join_source="self_join",
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    response_model=MembershipActionResponse,
+)
+async def employee_collaboration_leave(
+    order_id: int,
+    task_id: str,
+    ctx: EmployeeMobileContext = Depends(require_employee_self_user),
+    db: AsyncSession = Depends(get_db),
+) -> MembershipActionResponse:
+    """Close own HELPER membership — does not stop sessions."""
+    return await leave_helper_membership(
+        db,
+        order_id=order_id,
         task_id=task_id,
         employee_id=ctx.employee.id,
     )
