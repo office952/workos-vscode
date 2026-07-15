@@ -1,0 +1,53 @@
+{
+  "task": "APP-AUTH-06C",
+  "unique_fingerprints": 16,
+  "unique_problem_groups": 2,
+  "note": "16 fingerprints != 16 independent business problems. Eleven discrepancy patterns collapse to two actionable owner clusters plus one non-problem alignment cluster.",
+  "groups": [
+    {
+      "group_id": "RCG-01",
+      "root_cause": "registry_legacy_competence_value_conflict",
+      "fingerprints": ["1b8d5993"],
+      "employees": ["E4_SANDU"],
+      "operations": [],
+      "evidence": ["app_auth_02/owner_decision_package.json", "app_auth_02/employee_reconciliation_matrix.json", "owner_decision_04/unique_fingerprint_interpretation.json"],
+      "confidence": "high",
+      "unique_problem": true
+    },
+    {
+      "group_id": "RCG-02",
+      "root_cause": "hybrid_explicit_mapping_without_registry_competence",
+      "fingerprints": ["830f4323", "b99d3923", "1ec1a240", "757a2fc1", "3a92d452", "03708dc9", "4c1eeaf5", "1bb7cc71", "1be32d24", "1786a41e"],
+      "employees": ["E4_SANDU"],
+      "operations": ["volumetric_letter_assembly", "vinyl_cutting", "led_assembly", "led_wiring", "installation_prep"],
+      "registry_operations": ["assembly", "colantare", "montaj_led", "field_installation"],
+      "evidence": ["app_auth_02/owner_decision_package.json operation_overrides", "app_auth_06/sandu_observation.json", "operational_catalog SUGGESTED_OPERATION_ALIASES"],
+      "confidence": "high",
+      "unique_problem": true,
+      "sub_patterns": {
+        "eligibility_divergence": 5,
+        "explicit_mapping_missing_competence": 5
+      }
+    },
+    {
+      "group_id": "RCG-03",
+      "root_cause": "dual_source_baseline_aligned_employees",
+      "fingerprints": ["5b5190f1", "a318c09b", "93e81c6f", "7542aad2"],
+      "employees": ["E1", "E2"],
+      "operations": ["print"],
+      "evidence": ["app_auth_02/employee_reconciliation_matrix.json", "app_auth_06/observation_summary.json"],
+      "confidence": "high",
+      "unique_problem": false
+    },
+    {
+      "group_id": "RCG-04",
+      "root_cause": "partial_alignment_on_print_probe_despite_broader_drift",
+      "fingerprints": ["83c881d5"],
+      "employees": ["E4_SANDU"],
+      "operations": ["print"],
+      "evidence": ["owner_decision_04/unique_fingerprint_interpretation.json", "app_auth_02/owner_decision_package.json print override"],
+      "confidence": "medium",
+      "unique_problem": false
+    }
+  ]
+}

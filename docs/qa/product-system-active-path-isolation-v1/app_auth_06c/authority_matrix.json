@@ -1,0 +1,60 @@
+{
+  "task": "APP-AUTH-06C",
+  "note": "Does not override OWNER-DECISION-03 A1-A22 confirmations. Documents current runtime sources only.",
+  "domains": [
+    {
+      "domain": "competence",
+      "current_source_a": "Operational registry employee_competences table",
+      "current_source_b": "Legacy employee JSON skills blob",
+      "runtime_writer": "Registry UI/admin paths + legacy form persistence (dual)",
+      "current_authority": "UNRESOLVED_FOR_SANDU",
+      "owner_confirmed": false,
+      "interpretation_impact": "Drives value_conflict fingerprint 1b8d5993"
+    },
+    {
+      "domain": "authorization",
+      "current_source_a": "Registry resource/workcenter authorizations",
+      "current_source_b": "Legacy machine/workcenter lists",
+      "runtime_writer": "Registry services + legacy HR form",
+      "current_authority": "PARTIAL — resource auth checked separately from competence",
+      "owner_confirmed": "A6 transitional policy referenced; not fully closed",
+      "interpretation_impact": "field_installation authorization_match true but competence absent"
+    },
+    {
+      "domain": "operation_mapping",
+      "current_source_a": "operation_employee_authorizations explicit list",
+      "current_source_b": "Skill-based eligibility via required_skill_codes",
+      "runtime_writer": "OperationalRegistryService hybrid mode",
+      "current_authority": "POLICY_UNRESOLVED",
+      "owner_confirmed": false,
+      "interpretation_impact": "5 POLICY_DECISION fingerprints on explicit_mapping domain"
+    },
+    {
+      "domain": "eligibility",
+      "current_source_a": "Operational available projection / hybrid eligibility",
+      "current_source_b": "Canonical comparator eligibility from registry competence path",
+      "runtime_writer": "Employee mobile available + eligibility endpoint (observe consumers)",
+      "current_authority": "OBSERVE_ONLY — no enforcement",
+      "owner_confirmed": "P5 freeze two consumers",
+      "interpretation_impact": "5 CONFIRMATION_REQUIRED eligibility fingerprints"
+    },
+    {
+      "domain": "employee_identity",
+      "current_source_a": "Registry employee_id",
+      "current_source_b": "Legacy HR record / user linkage",
+      "runtime_writer": "Shared employee table",
+      "current_authority": "STABLE_FOR_PILOT",
+      "owner_confirmed": true,
+      "interpretation_impact": "Low — identity consistent across sources in pilot"
+    },
+    {
+      "domain": "resource_capability",
+      "current_source_a": "Registry machines/workcenters",
+      "current_source_b": "Legacy authorized machines",
+      "runtime_writer": "Registry + legacy lists",
+      "current_authority": "UNRESOLVED_FOR_SANDU_MACHINES",
+      "owner_confirmed": false,
+      "interpretation_impact": "Secondary to pilot fingerprints; noted in APP-AUTH-02 machine matrix"
+    }
+  ]
+}

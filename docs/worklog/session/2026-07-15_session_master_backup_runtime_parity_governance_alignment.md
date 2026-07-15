@@ -489,7 +489,8 @@ Roadmap principal **realiniat**:
 1. ~~Backup + restore~~ — **FULL PASS**
 2. ~~Runtime stabil + startup canonic~~ — **PASS**
 3. ~~UI-TRUTH foundation (01A)~~ — **PASS**; banner branch **paused**
-4. **APP-AUTH-06C** — parity signal interpretation plan (**NEXT**)
+4. ~~APP-AUTH-06C~~ — parity signal interpretation plan — **PASS**
+5. **OWNER-DECISION-05** — Sandu/competence authority reconciliation (**NEXT**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -499,11 +500,14 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**APP-AUTH-06C** — `PARITY_SIGNAL_INTERPRETATION_PLAN`
+**OWNER-DECISION-05** — `PARITY_SIGNAL_AUTHORITY_AND_SANDU_RECONCILIATION`
 
-- Docs/plan only la start (conform pattern APP-AUTH-03).
-- Nu porni automat după acest ledger.
+- Decision/docs gate only — answers Q1–Q8 from APP-AUTH-06C.
+- Nu porni automat după 06C.
 - Nu conecta UI-TRUTH-01B fără GO separat.
+- APP-AUTH-06C **COMPLETE** @ *(06c commit)*.
+
+**Current position (2026-07-15):** APP-AUTH-06C interpretation plan delivered; awaiting owner decisions before any data/policy implementation.
 
 ---
 

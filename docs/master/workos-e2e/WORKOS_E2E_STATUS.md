@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `88c1383` (UI-TRUTH-01A docs)
+**Accepted HEAD:** `b123173` (SESSION-LEDGER-01)
 
-**Last updated:** 2026-07-15 (SESSION-LEDGER-01 — roadmap realigned)
+**Last updated:** 2026-07-15 (APP-AUTH-06C — parity signal interpretation plan **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **SESSION-LEDGER-01** — session master consolidation (**COMPLETE**) |
+| Active task | **APP-AUTH-06C** — parity signal interpretation plan (**COMPLETE**) |
 
-| Next task | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** (UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION** (UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -682,7 +682,33 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 ## Safety / backup checkpoint
 
-Backup baseline **FULL** (01 + 01B). Source runtime **RECOVERED** (RUNTIME-RECOVERY-02) and **startup aligned** (RUNTIME-CONFIG-03). Owner P1–P10 **CONFIRMED**. Banner truth **plan complete** (UI-TRUTH-01); implementation awaits owner GO. Remaining debt: split API path. Next: **UI-TRUTH-01A** then **APP-AUTH-06C** (blocked). `PROD-ARCH-01` / `MOBILE-INT-02` remain blocked.
+Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-only** — 16 fingerprints interpreted; **2** unique problem groups (Sandu). **Authority debt:** signal interpretation plan complete; owner Sandu/competence reconciliation = **OWNER-DECISION-05**; enforcement/persistence = **NOT AUTHORIZED**. UI-TRUTH-01A complete; 01B–01E **PAUSED**. Next: **OWNER-DECISION-05**. `PROD-ARCH-01` / `MOBILE-INT-02` blocked.
+
+## APP-AUTH-06C — Parity signal interpretation plan
+
+**Verdict:** `APP_AUTH_06C_SIGNAL_INTERPRETATION_PLAN_READY_FOR_OWNER_DECISIONS`
+
+**Starting HEAD:** `b123173`
+
+**Scope:** Plan/interpretation only — 16 fingerprints, 4 root-cause groups, 2 unique problem groups, Sandu 7-mapping analysis.
+
+| Check | Result |
+|-------|--------|
+| Fingerprints inventoried | **16/16** |
+| Unique problem groups | **2** (Sandu competence + hybrid mapping policy) |
+| Classifications | CR=6 · PD=5 · ET=5 · TI=0 · DP=0 · ID=0 |
+| Third consumer readiness | **NOT_READY** |
+| Persistence / enforcement | **NOT AUTHORIZED** |
+| Source authority invented | **NO** |
+| Automatic remediation | **NO** |
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_app_auth_06c_parity_signal_interpretation_plan_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/app_auth_06c/`
+
+**APP-AUTH-06C:** **COMPLETE**
+
+**Next:** **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION**
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

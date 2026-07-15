@@ -2,7 +2,7 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Active task:** `SESSION-LEDGER-01` **COMPLETE** — next **APP-AUTH-06C**  
+**Active task:** `APP-AUTH-06C` **COMPLETE** — next **OWNER-DECISION-05**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
 **First task after P-001:** `W1-L-SPINE` — `INTAKE_V6_CANONICAL_READINESS_TRUTH_SPINE_V1`
@@ -680,7 +680,23 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Enforcement | **NOT AUTHORIZED** |
 | Persistence | **NOT AUTHORIZED** |
 | APP-AUTH-06 | **COMPLETE** |
-| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
+| Next | **APP-AUTH-06C** (closed) |
+
+## APP-AUTH-06C — Parity signal interpretation plan
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `APP_AUTH_06C_SIGNAL_INTERPRETATION_PLAN_READY_FOR_OWNER_DECISIONS` |
+| Starting HEAD | `b123173` |
+| Fingerprints | 16 inventoried / 16 expected |
+| Root-cause groups | 4 |
+| Unique problem groups | 2 |
+| Sandu mappings analyzed | 7 |
+| Third consumer readiness | **NOT_READY** |
+| Persistence / enforcement | **NOT AUTHORIZED** |
+| APP-AUTH-06C | **COMPLETE** |
+| Next | **OWNER-DECISION-05-PARITY-SIGNAL-AUTHORITY-AND-SANDU-RECONCILIATION** |
 
 ## APP-AUTH-05 — Parity observe-only dev/test integration
 

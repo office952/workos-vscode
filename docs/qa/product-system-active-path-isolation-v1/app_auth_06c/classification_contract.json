@@ -1,0 +1,87 @@
+{
+  "task": "APP-AUTH-06C",
+  "version": "owner_p3_refined_v1",
+  "categories": {
+    "CONFIRMATION_REQUIRED": {
+      "use_when": [
+        "evidence shows a real mismatch between sources",
+        "canonical truth is not yet owner-confirmed",
+        "human confirmation is required before any remediation"
+      ],
+      "do_not_use_when": [
+        "both sources are intentionally transitional and documented",
+        "behavior is proven code defect against accepted authority"
+      ],
+      "enforcement": "FORBIDDEN",
+      "examples_in_pilot": ["registry vs legacy competence for Sandu", "operational eligible while canonical ineligible"]
+    },
+    "TECHNICAL_INVESTIGATION": {
+      "use_when": [
+        "behavior may come from code, fixture, query, or comparator",
+        "business truth alone cannot resolve classification",
+        "response invariance or projection path is suspect"
+      ],
+      "do_not_use_when": [
+        "data/policy mismatch is already documented with stable evidence"
+      ],
+      "enforcement": "FORBIDDEN",
+      "examples_in_pilot": []
+    },
+    "EXPECTED_TRANSITION": {
+      "use_when": [
+        "dual-source coexistence is intentional during migration",
+        "mismatch is known and no immediate correction is justified",
+        "sources align on the probed dimension"
+      ],
+      "do_not_use_when": [
+        "owner has not accepted transitional policy for the entity",
+        "mismatch hides unsafe eligibility expansion"
+      ],
+      "enforcement": "NOT_APPLICABLE",
+      "examples_in_pilot": ["E1/E2 aligned print probes", "Sandu print probe alignment"]
+    },
+    "POLICY_DECISION": {
+      "use_when": [
+        "both data states are technically possible",
+        "owner must choose authority or rule",
+        "explicit mapping/hybrid mode creates eligibility without registry competence"
+      ],
+      "do_not_use_when": [
+        "one source is already owner-confirmed canonical"
+      ],
+      "enforcement": "PREMATURE",
+      "examples_in_pilot": ["missing_required_competence on explicit_mapping domain"]
+    },
+    "DEFECT_PROVEN": {
+      "use_when": [
+        "code/runtime behavior contradicts an accepted authority",
+        "evidence is complete",
+        "no owner decision is missing"
+      ],
+      "do_not_use_when": [
+        "authority itself is unresolved",
+        "fixture/seed state is the disputed truth"
+      ],
+      "enforcement": "PREMATURE",
+      "examples_in_pilot": []
+    },
+    "INSUFFICIENT_DATA": {
+      "use_when": [
+        "one or more required sources are absent",
+        "classification would otherwise overstate certainty"
+      ],
+      "do_not_use_when": [
+        "all comparator inputs were present in pilot scenario"
+      ],
+      "enforcement": "NOT_APPLICABLE",
+      "examples_in_pilot": []
+    }
+  },
+  "decision_tree": [
+    {"step": 1, "question": "Are all required comparator inputs present?", "yes": "step 2", "no": "INSUFFICIENT_DATA"},
+    {"step": 2, "question": "Do sources match on the probed dimension?", "yes": "EXPECTED_TRANSITION", "no": "step 3"},
+    {"step": 3, "question": "Is accepted canonical authority already owner-confirmed for this domain?", "yes": "step 4", "no": "step 5"},
+    {"step": 4, "question": "Does runtime contradict accepted authority with complete evidence?", "yes": "DEFECT_PROVEN", "no": "TECHNICAL_INVESTIGATION"},
+    {"step": 5, "question": "Is mismatch caused by explicit policy choice (mapping/hybrid/transition)?", "yes": "POLICY_DECISION", "no": "CONFIRMATION_REQUIRED"}
+  ]
+}

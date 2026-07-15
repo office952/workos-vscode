@@ -1,0 +1,158 @@
+{
+  "task": "APP-AUTH-06C",
+  "employee_ref": "E4_SANDU",
+  "employee_id": 4,
+  "accepted_facts": {
+    "registry_competences": ["SK_PRINT_OPERATOR"],
+    "legacy_competences": ["SK_ASSEMBLY", "SK_ELECTRICIAN", "SK_FIELD_INSTALLER", "SK_LOCKSMITH", "SK_VINYL_APPLICATOR"],
+    "explicit_mappings_count": 7,
+    "pilot_operations_probed": 5,
+    "parity_mode": "observe_only_read_only",
+    "automatic_change_forbidden": true
+  },
+  "pilot_operations": [
+    {
+      "operation_code": "volumetric_letter_assembly",
+      "registry_operation_code": "assembly",
+      "registry_competence": ["SK_PRINT_OPERATOR"],
+      "legacy_competence": ["SK_ASSEMBLY"],
+      "mapping": {"explicit_override": true, "classification": "ADDITIVE_WITHOUT_AUTHORIZATION"},
+      "resource_authorization": false,
+      "operational_eligibility": true,
+      "canonical_eligibility": false,
+      "observed_fingerprints": ["830f4323", "03708dc9"],
+      "proposed_interpretation": "Hybrid explicit mapping exposes assembly tasks without registry SK_ASSEMBLY; legacy still claims assembly skill.",
+      "owner_question": "Should assembly eligibility require registry competence, explicit mapping only, or legacy skill during transition?"
+    },
+    {
+      "operation_code": "vinyl_cutting",
+      "registry_operation_code": "colantare",
+      "registry_competence": ["SK_PRINT_OPERATOR"],
+      "legacy_competence": ["SK_VINYL_APPLICATOR"],
+      "mapping": {"explicit_override": true, "classification": "ADDITIVE_WITHOUT_AUTHORIZATION"},
+      "resource_authorization": false,
+      "operational_eligibility": true,
+      "canonical_eligibility": false,
+      "observed_fingerprints": ["b99d3923", "4c1eeaf5"],
+      "proposed_interpretation": "Colantare visible via explicit list while registry lacks SK_VINYL_APPLICATOR.",
+      "owner_question": "Is explicit mapping for colantare transitional evidence of real capability or stale seed/demo data?"
+    },
+    {
+      "operation_code": "led_assembly",
+      "registry_operation_code": "montaj_led",
+      "registry_competence": ["SK_PRINT_OPERATOR"],
+      "legacy_competence": ["SK_ELECTRICIAN"],
+      "mapping": {"explicit_override": true, "classification": "ADDITIVE_WITHOUT_AUTHORIZATION"},
+      "resource_authorization": false,
+      "operational_eligibility": true,
+      "canonical_eligibility": false,
+      "observed_fingerprints": ["1ec1a240", "1bb7cc71"],
+      "proposed_interpretation": "Montaj LED eligibility bypasses registry electrician competence; OWNER-DECISION-02 O4 still unresolved.",
+      "owner_question": "Confirm montaj_led override policy: remove, audited exception, or restore registry competence?"
+    },
+    {
+      "operation_code": "led_wiring",
+      "registry_operation_code": "montaj_led",
+      "registry_competence": ["SK_PRINT_OPERATOR"],
+      "legacy_competence": ["SK_ELECTRICIAN"],
+      "mapping": {"explicit_override": true, "classification": "ADDITIVE_WITHOUT_AUTHORIZATION"},
+      "resource_authorization": false,
+      "operational_eligibility": true,
+      "canonical_eligibility": false,
+      "observed_fingerprints": ["757a2fc1", "1be32d24"],
+      "proposed_interpretation": "Same registry operation as led_assembly; duplicate legitimate fingerprints for distinct task aliases.",
+      "owner_question": "Should led_wiring and led_assembly share one policy decision for montaj_led?"
+    },
+    {
+      "operation_code": "installation_prep",
+      "registry_operation_code": "field_installation",
+      "registry_competence": ["SK_PRINT_OPERATOR"],
+      "legacy_competence": ["SK_FIELD_INSTALLER"],
+      "mapping": {"explicit_override": true, "classification": "ADDITIVE_WITHOUT_COMPETENCE"},
+      "resource_authorization": true,
+      "operational_eligibility": true,
+      "canonical_eligibility": false,
+      "observed_fingerprints": ["3a92d452", "1786a41e"],
+      "proposed_interpretation": "Authorization evidence partial (true) but registry competence absent; hybrid still exposes prep tasks.",
+      "owner_question": "Does resource authorization alone justify installation_prep visibility without SK_FIELD_INSTALLER?"
+    }
+  ],
+  "all_seven_mappings_app_auth_02": [
+    {
+      "operation_code": "assembly",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_ASSEMBLY"],
+      "pilot_probed": true,
+      "pilot_alias": "volumetric_letter_assembly"
+    },
+    {
+      "operation_code": "colantare",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_VINYL_APPLICATOR"],
+      "pilot_probed": true,
+      "pilot_alias": "vinyl_cutting"
+    },
+    {
+      "operation_code": "field_installation",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": true,
+      "explicit_override": true,
+      "required_skills": ["SK_FIELD_INSTALLER"],
+      "pilot_probed": true,
+      "pilot_alias": "installation_prep"
+    },
+    {
+      "operation_code": "montaj_led",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_ELECTRICIAN"],
+      "pilot_probed": true,
+      "pilot_alias": "led_assembly, led_wiring"
+    },
+    {
+      "operation_code": "packaging",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_ASSEMBLY"],
+      "pilot_probed": false,
+      "note": "Not in mobile pilot batch; same policy family as assembly"
+    },
+    {
+      "operation_code": "quality_control",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_ASSEMBLY"],
+      "pilot_probed": false,
+      "note": "Not in mobile pilot batch; same policy family"
+    },
+    {
+      "operation_code": "welding",
+      "registry_competence_match": false,
+      "legacy_competence_match": null,
+      "authorization_match": false,
+      "explicit_override": true,
+      "required_skills": ["SK_LOCKSMITH"],
+      "pilot_probed": false,
+      "note": "Not in mobile pilot batch; aligns with locksmith legacy skill"
+    }
+  ],
+  "aligned_operations_not_in_conflict": [
+    {"operation_code": "print", "registry_competence_match": true, "authorization_match": true, "fingerprint": "83c881d5"},
+    {"operation_code": "print_roll", "registry_competence_match": true, "authorization_match": true, "explicit_override": false}
+  ],
+  "operations_analyzed_count": 7,
+  "pilot_operations_analyzed_count": 5
+}

@@ -1,0 +1,25 @@
+{
+  "task": "APP-AUTH-06C",
+  "candidate": "CONS-REGISTRY-CATALOG-API",
+  "readiness": "NOT_READY",
+  "rationale": [
+    "Signal interpretation for current two consumers not owner-closed",
+    "Sandu authority questions Q1-Q7 unresolved",
+    "Third consumer P6 explicitly DEFER until separate audit",
+    "Catalog endpoint likely re-reads same registry contracts — low incremental truth"
+  ],
+  "evaluation": {
+    "observes_new_boundary": "UNCLEAR — mostly catalog view over existing registry data",
+    "another_view_over_registry": true,
+    "could_self_compare": true,
+    "adds_owner_actionable_evidence": "LOW until Q1-Q2 decided",
+    "increases_duplicate_volume_without_new_truth": "HIGH risk"
+  },
+  "allowed_states": {
+    "NOT_READY": true,
+    "READY_FOR_SEPARATE_AUDIT": false,
+    "READY_FOR_PLAN": false,
+    "NOT_NEEDED": false
+  },
+  "connect_in_this_task": false
+}

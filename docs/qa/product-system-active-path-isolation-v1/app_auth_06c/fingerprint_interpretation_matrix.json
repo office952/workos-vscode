@@ -1,0 +1,29 @@
+{
+  "task": "APP-AUTH-06C",
+  "interpretations": [
+    {"fingerprint_short": "1b8d5993", "meaning": "Registry lists only SK_PRINT_OPERATOR for Sandu; legacy JSON still carries assembly/electrician/field/vinyl/locksmith skills. Parity exposes unresolved dual-source competence truth.", "evidence": ["app_auth_02 owner_decision_package", "employee_reconciliation_matrix E4", "app_auth_06 observation_summary value_conflict"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "OWNER_CONFIRMATION"},
+    {"fingerprint_short": "830f4323", "meaning": "Sandu appears operationally eligible for volumetric assembly via explicit mapping/hybrid path while canonical registry competence path says ineligible.", "evidence": ["pilot eligibility consumer", "assembly override ADDITIVE_WITHOUT_AUTHORIZATION"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "b99d3923", "meaning": "Same hybrid eligibility divergence for vinyl_cutting/colantare family.", "evidence": ["colantare override", "operational_catalog alias vinyl_cutting->colantare"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "1ec1a240", "meaning": "LED assembly task visible operationally; canonical registry lacks SK_ELECTRICIAN for Sandu.", "evidence": ["montaj_led override", "OWNER-DECISION-02 montaj_led question still open"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "OWNER_CONFIRMATION"},
+    {"fingerprint_short": "757a2fc1", "meaning": "LED wiring shares montaj_led registry operation; same competence/policy divergence as led_assembly.", "evidence": ["montaj_led override", "operational_catalog led_wiring->montaj_led"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "3a92d452", "meaning": "Installation prep visible operationally; registry competence absent though authorization_match true for field_installation.", "evidence": ["field_installation override ADDITIVE_WITHOUT_COMPETENCE", "seed product_system_aliases installation_prep"], "final_proposed_class": "CONFIRMATION_REQUIRED", "confidence": "high", "required_next_action": "OWNER_CONFIRMATION"},
+    {"fingerprint_short": "03708dc9", "meaning": "Explicit mapping grants assembly eligibility without registry SK_ASSEMBLY — policy question whether hybrid explicit OR skill is transitional allowance.", "evidence": ["explicit_mapping comparator", "A6 transitional policy referenced in APP-AUTH-03"], "final_proposed_class": "POLICY_DECISION", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "4c1eeaf5", "meaning": "Explicit mapping for colantare without SK_VINYL_APPLICATOR in registry.", "evidence": ["colantare override"], "final_proposed_class": "POLICY_DECISION", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "1bb7cc71", "meaning": "Explicit mapping for montaj_led without SK_ELECTRICIAN in registry.", "evidence": ["montaj_led override"], "final_proposed_class": "POLICY_DECISION", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "1be32d24", "meaning": "LED wiring explicit mapping gap — same policy family as montaj_led.", "evidence": ["montaj_led override"], "final_proposed_class": "POLICY_DECISION", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "1786a41e", "meaning": "Field installation explicit mapping without registry SK_FIELD_INSTALLER despite partial authorization evidence.", "evidence": ["field_installation override"], "final_proposed_class": "POLICY_DECISION", "confidence": "high", "required_next_action": "SOURCE_AUTHORITY_DECISION"},
+    {"fingerprint_short": "5b5190f1", "meaning": "Employee 1 competence sources align on print eligibility probe — healthy baseline control.", "evidence": ["employee_reconciliation_matrix E1 LOW risk"], "final_proposed_class": "EXPECTED_TRANSITION", "confidence": "high", "required_next_action": "NO_ACTION_EXPECTED"},
+    {"fingerprint_short": "a318c09b", "meaning": "Employee 2 competence sources align on print probe.", "evidence": ["employee_reconciliation_matrix E2 LOW risk"], "final_proposed_class": "EXPECTED_TRANSITION", "confidence": "high", "required_next_action": "NO_ACTION_EXPECTED"},
+    {"fingerprint_short": "93e81c6f", "meaning": "Employee 1 eligibility aligned on print operation.", "evidence": ["observation_summary match type"], "final_proposed_class": "EXPECTED_TRANSITION", "confidence": "high", "required_next_action": "KEEP_OBSERVING"},
+    {"fingerprint_short": "7542aad2", "meaning": "Employee 2 eligibility aligned on print operation.", "evidence": ["observation_summary match type"], "final_proposed_class": "EXPECTED_TRANSITION", "confidence": "high", "required_next_action": "KEEP_OBSERVING"},
+    {"fingerprint_short": "83c881d5", "meaning": "Sandu print probe aligns because registry SK_PRINT_OPERATOR matches print override; does not resolve broader competence drift.", "evidence": ["print override ADDITIVE_WITH_VALID_COMPETENCE", "1b8d5993 conflict still present"], "final_proposed_class": "EXPECTED_TRANSITION", "confidence": "medium", "required_next_action": "KEEP_OBSERVING"}
+  ],
+  "classification_totals": {
+    "CONFIRMATION_REQUIRED": 6,
+    "TECHNICAL_INVESTIGATION": 0,
+    "EXPECTED_TRANSITION": 5,
+    "POLICY_DECISION": 5,
+    "DEFECT_PROVEN": 0,
+    "INSUFFICIENT_DATA": 0
+  }
+}

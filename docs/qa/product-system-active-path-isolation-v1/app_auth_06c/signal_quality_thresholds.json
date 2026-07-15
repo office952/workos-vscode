@@ -1,0 +1,16 @@
+{
+  "task": "APP-AUTH-06C",
+  "dimensions": [
+    {"quality_dimension": "deterministic", "pass_condition": "Same inputs produce stable fingerprint across repeated requests", "current_status": "PASS", "evidence": "fingerprint_stability.json http_hash_stable_flags_on/off"},
+    {"quality_dimension": "source_complete", "pass_condition": "All comparator inputs available for probed entity", "current_status": "PASS_FOR_PILOT_FIXTURE", "evidence": "0 INSUFFICIENT_DATA classifications"},
+    {"quality_dimension": "explainable", "pass_condition": "Owner can trace fingerprint to domain/employee/operation/sources", "current_status": "PASS", "evidence": "fingerprint_inventory + sandu_operation_interpretation"},
+    {"quality_dimension": "low_false_positive_risk", "pass_condition": "Pilot reports 0 identified false positives", "current_status": "PASS_IN_TESTED_SCENARIOS", "evidence": "observation_summary false_positives=0"},
+    {"quality_dimension": "tied_to_known_domain", "pass_condition": "Event maps to competence/eligibility/explicit_mapping contract", "current_status": "PASS", "evidence": "app_auth_04 comparators"},
+    {"quality_dimension": "no_confidential_payload", "pass_condition": "Logs use sanitized refs; no HR secrets in parity events", "current_status": "PASS", "evidence": "app_auth_06/confidentiality_audit.json"},
+    {"quality_dimension": "owner_actionable", "pass_condition": "Classification yields explicit owner next step", "current_status": "PARTIAL", "evidence": "11 patterns need owner/policy answers; 5 are baseline controls"},
+    {"quality_dimension": "stable_fingerprint", "pass_condition": "Fingerprint stable across flags-off/on with unchanged fixture", "current_status": "PASS", "evidence": "fingerprint_stability.json"},
+    {"quality_dimension": "operationally_invariant", "pass_condition": "HTTP responses unchanged when parity enabled", "current_status": "PASS", "evidence": "app_auth_06/response_invariance.json"}
+  ],
+  "overall_signal_usefulness": "USEFUL_FOR_OBSERVE_ONLY_OWNER_DECISIONS",
+  "owner_p1_alignment": "CONFIRMED"
+}

@@ -1,0 +1,63 @@
+{
+  "task": "APP-AUTH-06C",
+  "package_id": "OD-PARITY-06C-01",
+  "questions": [
+    {
+      "id": "Q1",
+      "question": "For Sandu, which source is authoritative for operational competence during transition?",
+      "options": ["Registry only", "Legacy JSON only", "Per-operation formal exceptions", "Dual-source with documented transition"],
+      "evidence_gap": "Registry shows print; legacy shows production skills; role label says Lăcătuș/Montator",
+      "blocks": ["workforce migration", "automatic remediation"]
+    },
+    {
+      "id": "Q2",
+      "question": "Does explicit operation mapping permit eligibility without registry competence?",
+      "options": ["Never", "Only with audited exception", "Yes during hybrid transition", "Case-by-case owner list"],
+      "evidence_gap": "Hybrid mode currently exposes 7 mappings for Sandu",
+      "blocks": ["enforcement", "manager projection"]
+    },
+    {
+      "id": "Q3",
+      "question": "Is resource authorization mandatory for all mapped operations?",
+      "options": ["Yes always", "No when competence sufficient", "Only for field_installation family", "Undecided"],
+      "evidence_gap": "field_installation has authorization_match true without competence",
+      "blocks": ["policy closure for installation_prep"]
+    },
+    {
+      "id": "Q4",
+      "question": "Are legacy skills transitional evidence or deprecated data for Sandu?",
+      "options": ["Transitional truth", "Deprecated", "Mixed — requires field audit", "Unknown"],
+      "evidence_gap": "No practical_confirmation record from Sandu flow step 4",
+      "blocks": ["migration authorization"]
+    },
+    {
+      "id": "Q5",
+      "question": "Should canonical eligibility fail closed when registry competence is absent?",
+      "options": ["Yes", "No if explicit mapping exists", "Only in production", "Observe-only does not decide"],
+      "evidence_gap": "Comparator already reports ineligible on canonical path while operational path eligible",
+      "blocks": ["APP-AUTH-07 enforcement planning"]
+    },
+    {
+      "id": "Q6",
+      "question": "Which discrepancies may remain expected during transition?",
+      "options": ["All Sandu mappings", "Only print-aligned operations", "None — reconcile before mobile reliance", "Explicit list owner-approved"],
+      "evidence_gap": "P3 categories defined but per-operation acceptance not confirmed",
+      "blocks": ["EXPECTED_TRANSITION reclassification"]
+    },
+    {
+      "id": "Q7",
+      "question": "What evidence is required before any data correction?",
+      "options": ["Owner + technical + practical Sandu confirmation", "Registry edit only", "Legacy JSON restore only", "No correction authorized"],
+      "evidence_gap": "APP-AUTH-03 sandu_confirmation_flow steps 2-7 not executed",
+      "blocks": ["migration", "source switch"]
+    },
+    {
+      "id": "Q8",
+      "question": "Should parity remain limited to observation after interpretation?",
+      "options": ["Yes — owner decisions first", "Extend observe with third consumer", "Begin persistence", "Begin enforcement"],
+      "default_from_p1_p7": "Yes — observation only until owner closes Q1-Q7",
+      "blocks": ["APP-AUTH-07", "persistence", "enforcement"]
+    }
+  ],
+  "owner_must_not_be_answered_by_plan": true
+}
