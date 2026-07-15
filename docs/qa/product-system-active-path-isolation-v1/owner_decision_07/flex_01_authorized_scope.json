@@ -1,0 +1,39 @@
+{
+  "task": "OWNER-DECISION-07",
+  "wave": "FLEX-01",
+  "status": "AUTHORIZED",
+  "authorized": {
+    "backend_read_model": [
+      "Romanian operational terminology contracts",
+      "Derive optional principal from assigned_employee_id",
+      "Derive active/historical workers from execution_reality sessions",
+      "Expose separated read-only projection fields (additive API only)",
+      "Compatibility adapters — no write paths"
+    ],
+    "frontend": "NO visual rollout unless existing tests require; default UNCHANGED",
+    "tests": [
+      "principal != participant",
+      "assigned != started",
+      "multiple sessions project multiple workers",
+      "session stop != operation complete in read contract",
+      "no snapshot mutation",
+      "no DB migration",
+      "backward compatibility"
+    ]
+  },
+  "forbidden_in_flex_01": [
+    "new write endpoints",
+    "DB changes",
+    "migrations",
+    "JSON field additions to persistence",
+    "participant tables",
+    "help tables",
+    "progress tables",
+    "claim logic changes",
+    "_has_active_session_by_other changes",
+    "help behavior",
+    "progress writes",
+    "mobile UI rollout",
+    "operator pool changes"
+  ]
+}

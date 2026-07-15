@@ -1,0 +1,20 @@
+{
+  "task": "OWNER-DECISION-07",
+  "applies_to": "FLEX-01 implementation task",
+  "stack": {
+    "start": "npm run dev:stack",
+    "frontend": 3000,
+    "backend": 8001
+  },
+  "gates": [
+    "Intake PASS",
+    "Employees page PASS",
+    "Mobile current individual flow PASS",
+    "Operator current pool PASS",
+    "existing assignment PASS",
+    "Execution Reality sessions PASS"
+  ],
+  "db_writes": "explicit test fixture only or zero when feasible",
+  "parity_flags": "ALL_FALSE on normal backend",
+  "ui_visual": "UNCHANGED unless separate explicit GO"
+}

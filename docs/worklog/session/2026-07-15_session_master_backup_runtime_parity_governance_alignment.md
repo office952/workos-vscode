@@ -497,8 +497,9 @@ Roadmap principal **realiniat**:
 7. ~~PROD-FLEX-INT-01~~ — Operational claim/collaboration flexibility audit — **PASS**
 8. ~~OWNER-DECISION-06~~ — Operational flexibility contract — **PASS**
 9. ~~PROD-FLEX-ARCH-01~~ — Flexible execution architecture plan — **PASS**
-10. **OWNER-DECISION-07** — Flexible execution implementation gate (**NEXT**)
-11. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
+10. ~~OWNER-DECISION-07~~ — Flexible execution implementation gate — **PASS**
+11. **FLEX-01** — Execution collaboration read-model foundation (**NEXT**)
+12. **APP-AUTH-06G** — Sandu evidence (**PAUSED**)
 
 Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
@@ -508,9 +509,9 @@ Module/Governance rămân pe pistă separată (GOV-MODULE-AUTH-01 neexecutat).
 
 ## 26. Urmatorul task
 
-**PROD-FLEX-ARCH-01** — Flexible execution architecture plan — **COMPLETE** (`PROD_FLEX_ARCH_01_PLAN_READY_REQUIRES_DB_DECISION`)
+**OWNER-DECISION-07** — Flexible execution implementation gate — **COMPLETE** (`OWNER_FLEX_EXECUTION_GATE_CONFIRMED_FLEX_01_ONLY`)
 
-**Current position (2026-07-15):** 9-wave plan FLEX-01…09; Option A assignee; split pools; JSON-first reality extension. Next = **OWNER-DECISION-07** implementation gate. Sandu **PAUSED**.
+**Current position (2026-07-15):** FLEX-01 **AUTHORIZED** (read models only); FLEX-02–09 **BLOCKED**; `participants_json` **DEFERRED**; Option B participant projection (assignee + sessions). Next = **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION**. Sandu **PAUSED**.
 
 ---
 

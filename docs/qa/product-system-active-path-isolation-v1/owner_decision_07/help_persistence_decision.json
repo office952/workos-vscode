@@ -1,0 +1,10 @@
+{
+  "task": "OWNER-DECISION-07",
+  "flex_01": "NO help persistence",
+  "flex_04_when_authorized": "NORMALIZED_RECORD_LIKELY",
+  "json_embedded_rejected_for_help": {
+    "reason": "high concurrency, weak lifecycle querying, audit weakness"
+  },
+  "event_only_alone": "insufficient as sole store",
+  "requirements_when_implemented": ["actor", "task", "status", "timestamps", "idempotency", "audit", "acceptance linkage to HELPER join without reassign"]
+}

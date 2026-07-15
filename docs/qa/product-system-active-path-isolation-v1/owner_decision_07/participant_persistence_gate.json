@@ -1,0 +1,14 @@
+{
+  "task": "OWNER-DECISION-07",
+  "flex_02_status": "BLOCKED",
+  "participant_writes": "NOT_AUTHORIZED",
+  "required_before_flex_02": "PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY",
+  "options_to_compare_at_arch_02": [
+    "normalized participant/allocation record",
+    "event-derived participation with projection",
+    "JSON extension (only if explicitly re-approved)",
+    "extension of existing execution_reality session structures only"
+  ],
+  "owner_principle": "Neither large schema now nor JSON blob for all runtime truth",
+  "auto_start_arch_02": false
+}

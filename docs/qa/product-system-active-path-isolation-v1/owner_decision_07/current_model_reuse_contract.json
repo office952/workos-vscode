@@ -1,0 +1,21 @@
+{
+  "task": "OWNER-DECISION-07",
+  "reuse_confirmed": true,
+  "sources": {
+    "employee_registry": "/employees + OperationalRegistryService",
+    "competences": "EmployeeSkillAuthorization + legacy transitional",
+    "workcenters": "EmployeeWorkcenterAuthorization",
+    "machines_resources": "EmployeeResourceAuthorization + machines registry",
+    "eligibility": "operational_registry_service.check_employee_operation_eligibility + get_eligible_employees_for_operation",
+    "assigned_employee_id": "execution_plan.tasks_json",
+    "sessions": "execution_reality.tasks_json",
+    "readiness": "task_readiness_service",
+    "claim": "employee_mobile_tasks_service.claim_my_task + MOBILE-T06"
+  },
+  "must_not_create": [
+    "parallel employee capability registry",
+    "duplicate eligibility engine",
+    "new assignment storage",
+    "Product System employee fields"
+  ]
+}

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `25e4233` (OWNER-DECISION-06)
+**Accepted HEAD:** `39d24db` (PROD-FLEX-ARCH-01)
 
-**Last updated:** 2026-07-15 (PROD-FLEX-ARCH-01 — flexible execution arch plan **COMPLETE**)
+**Last updated:** 2026-07-15 (OWNER-DECISION-07 — flexible execution implementation gate **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-ARCH-01** — flexible claim/participation/progress plan (**COMPLETE**) |
+| Active task | **OWNER-DECISION-07** — flexible execution implementation gate (**COMPLETE**) |
 
-| Next task | **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
+| Next task | **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION** (APP-AUTH-06G **PAUSED**; UI-TRUTH-01B–01E **PAUSED**) |
 
 
 
@@ -1091,7 +1091,7 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 - Quantity progress (40 litere): **NOT_IMPLEMENTED**
 - D6 **contradicted** today — active session hides task from available pool
 
-**Staffing/collaboration debt:** single `assigned_employee_id`; no `progress_unit`; no help/join API; Shop Floor mock risk; Sandu track **pause recommended** until OWNER-DECISION-06.
+**Staffing/collaboration debt:** single `assigned_employee_id`; no `progress_unit`; no help/join API; `_has_active_session_by_other` blocks helper join; `participants_json` **DEFERRED** (not canonical); FLEX-02+ blocked pending persistence gates; Sandu **PAUSED**.
 
 **Worklog:** `docs/worklog/realignment/2026-07-15_prod_flex_int_01_operational_task_claim_collaboration_flexibility_audit_v1.md`
 
@@ -1139,5 +1139,23 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **PROD-FLEX-ARCH-01:** **COMPLETE**
 
-**Next:** **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE**
+**Next:** **OWNER-DECISION-07-FLEXIBLE-EXECUTION-IMPLEMENTATION-GATE** (closed below)
+
+## OWNER-DECISION-07 — Flexible execution implementation gate
+
+**Verdict:** `OWNER_FLEX_EXECUTION_GATE_CONFIRMED_FLEX_01_ONLY`
+
+**Scope:** Owner decision / docs only — implementation gate for FLEX waves. No code, DB, migrations, or UI.
+
+**G1–G10:** 10/10 confirmed. **FLEX-01 ONLY** authorized (read models, contracts, adapters). **FLEX-02–09 blocked.**
+
+**Key gates:** `participants_json` → **DEFERRED** (not auto-accepted as persistence). Participant read model Option B (principal from `assigned_employee_id` + workers from sessions). FLEX-02 blocked until `PROD-FLEX-ARCH-02-PARTICIPANT-PERSISTENCE-BOUNDARY`. Help → normalized when FLEX-04. Quantity progress blocked until FLEX-06 gate.
+
+**Worklog:** `docs/worklog/realignment/2026-07-15_owner_decision_07_flexible_execution_implementation_gate_v1.md`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/owner_decision_07/` (14 JSON)
+
+**OWNER-DECISION-07:** **COMPLETE**
+
+**Next:** **FLEX-01-EXECUTION-COLLABORATION-READ-MODEL-FOUNDATION**
 

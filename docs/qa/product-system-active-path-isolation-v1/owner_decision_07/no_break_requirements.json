@@ -1,0 +1,20 @@
+{
+  "task": "OWNER-DECISION-07",
+  "flex_01_must_not_change": [
+    "Employee Mobile claim",
+    "Employee Mobile Start/Complete behavior",
+    "Operator available pools",
+    "eligibility output semantics",
+    "existing assignment mutations",
+    "existing order snapshots",
+    "existing execution plans",
+    "current database rows/schema",
+    "existing API response fields except additive backward-compatible read projections",
+    "parity flags",
+    "Product System",
+    "_has_active_session_by_other guard"
+  ],
+  "additive_only": true,
+  "snapshot_mutation": "FORBIDDEN",
+  "auto_dispatch": "FORBIDDEN"
+}
