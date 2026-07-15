@@ -3,7 +3,7 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 complete)
-**Active task:** `OWNER-DECISION-08` **COMPLETE** — architecture **ACCEPTED WITH CORRECTIONS**; **FLEX-02 BLOCKED**  
+**Active task:** `PROD-FLEX-COLLABORATION-PHASE-1` **PLAN READY FOR OWNER REVIEW** — implementation **BLOCKED**  
 **Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
@@ -1255,7 +1255,21 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | PROD-FLEX-ARCH-02 | **COMPLETE** |
 | Next | Await explicit FLEX-02 kickoff GO — or unpause UI-TRUTH-01B / APP-AUTH-06G |
 
----
+## PROD-FLEX-COLLABORATION-PHASE-1 — Implementation plan
+
+| Field | Value |
+|-------|-------|
+| Status | **PLAN READY FOR OWNER REVIEW** (2026-07-15) |
+| Verdict | `PROD_FLEX_COLLABORATION_PHASE_1_PLAN_READY` |
+| Starting HEAD | `361b8f7` |
+| Phase 1 scope | Membership table + join/leave API + read v1.1 |
+| Deferred | Help, pools, session start, UI/Mobile |
+| Implementation | **NOT AUTHORIZED** |
+| Migration | **NOT AUTHORIZED** |
+| Worklog | `docs/worklog/realignment/2026-07-15_prod_flex_collaboration_phase_1_plan.md` |
+| Plan | `.compound-engineering/prod-flex-collaboration-phase-1/plan.md` |
+| Next | Owner GO on G1–G12 in `decision-log.md` |
+
 
 ## Dependency graph (ASCII)
 
