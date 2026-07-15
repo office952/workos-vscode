@@ -524,7 +524,35 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | PROD-ARCH-01 | **BLOCKED** |
 | MOBILE-INT-02 | **BLOCKED** |
 | OWNER-DECISION-03 | **COMPLETE** |
-| Next | **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN** |
+| Next | **BACKUP-BASELINE-01B-RESTORE-CLOSURE** |
+
+## BACKUP-BASELINE-01 — Full local backup + restore verification
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE** (2026-07-15) |
+| Verdict | `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL` |
+| Starting HEAD | `deb5d69` |
+| Backup ID | `workos_full_backup_20260715_125751_deb5d69` |
+| Backup root | `C:\w\workos_backups\workos_full_backup_20260715_125751_deb5d69` |
+| Repository | PASS (`.git` + dirty patches) |
+| Database | PASS (SQLite backup API) |
+| DB restore isolated | PASS |
+| Backend restore `:8021` | PASS |
+| Frontend restore `:3021` | **NOT_EXECUTED_SAFE_DEFERRED** |
+| Checksums | PASS (SHA-256) |
+| Source intact | PASS |
+| Parity flags | ALL_FALSE |
+| Implementation authorized | **NO** |
+| APP-AUTH-06C | **BLOCKED** pending 01B |
+| PROD-ARCH-01 | **BLOCKED** |
+| MOBILE-INT-02 | **BLOCKED** |
+| BACKUP-BASELINE-01 | **COMPLETE** |
+| Next | **BACKUP-BASELINE-01B-RESTORE-CLOSURE** |
+
+## Safety / backup checkpoint
+
+Backup artifact lives outside worktree. Frontend isolated restore deferred — not a backup failure. Roadmap unblocks after **BACKUP-BASELINE-01B**.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

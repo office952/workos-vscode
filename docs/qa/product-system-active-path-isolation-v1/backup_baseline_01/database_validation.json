@@ -1,0 +1,11 @@
+{
+  "engine": "sqlite",
+  "backup_method": "sqlite3.Connection.backup API",
+  "integrity_check": "ok",
+  "backup_size_bytes": 2174976,
+  "checksum_recorded": "010f3b1a6e63ac9441061e1b38b7f4e819ada8c331a59fe615bf67ee914ac0c2",
+  "checksum_verified": "010f3b1a6e63ac9441061e1b38b7f4e819ada8c331a59fe615bf67ee914ac0c2",
+  "checksum_match": true,
+  "classification": "DATABASE_BACKUP_PASS",
+  "verified": true
+}

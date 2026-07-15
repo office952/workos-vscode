@@ -1,0 +1,33 @@
+{
+  "port": 8021,
+  "pid": 29612,
+  "startup": "PASS",
+  "checks": {
+    "health": {
+      "body": {
+        "status": "healthy"
+      },
+      "status": 200
+    },
+    "employees": {
+      "count": 8,
+      "status": 200
+    },
+    "parity_flags": {
+      "raw": {},
+      "all_false": []
+    },
+    "orders": {
+      "count": 1,
+      "status": 200
+    },
+    "machines": {
+      "count": 14,
+      "status": 200
+    },
+    "docs": {
+      "status": 200
+    }
+  },
+  "classification": "PASS"
+}

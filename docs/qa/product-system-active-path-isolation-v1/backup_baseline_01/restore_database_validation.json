@@ -1,0 +1,8 @@
+{
+  "restore_db_path": "C:\\w\\wrt\\b01\\database\\dev.db",
+  "integrity_check": "ok",
+  "table_count": 51,
+  "counts_match_backup": true,
+  "isolated_from_source": true,
+  "classification": "PASS"
+}

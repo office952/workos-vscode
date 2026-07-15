@@ -1,0 +1,15 @@
+{
+  "expected_head": "deb5d6942865448114bcad634a738eefc3bda19e",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "head_match": true,
+  "git_dir_present": true,
+  "classification": "PASS",
+  "dirty": true,
+  "branch_match": true,
+  "status_short_line_count": 256,
+  "head": "deb5d6942865448114bcad634a738eefc3bda19e",
+  "patches_present": {
+    "unstaged": true,
+    "staged": true
+  }
+}

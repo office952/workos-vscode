@@ -1,0 +1,20 @@
+{
+  "backup_id": "workos_full_backup_20260715_125751_deb5d69",
+  "recorded_at": "2026-07-15T10:33:50.858874+00:00",
+  "source_worktree": "C:\\w\\psiso",
+  "dirty": true,
+  "git_status_short_lines": 256,
+  "path": "C:\\w\\workos_backups\\workos_full_backup_20260715_125751_deb5d69\\repository\\psiso",
+  "git_dir_present": true,
+  "head_recorded": "deb5d6942865448114bcad634a738eefc3bda19e",
+  "head_live_in_backup_copy": "deb5d6942865448114bcad634a738eefc3bda19e",
+  "head_matches_deb5d69": true,
+  "branch_recorded": "feature/product-system-active-path-isolation-v1",
+  "branch_live_in_backup_copy": "feature/product-system-active-path-isolation-v1",
+  "file_count": 5680,
+  "frontend_present": true,
+  "backend_present": true,
+  "node_modules_excluded": true,
+  "venv_excluded": true,
+  "classification": "PASS"
+}

@@ -518,7 +518,44 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **OWNER-DECISION-03:** **COMPLETE** (decizii confirmate)
 
-**Next:** **APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN**
+**Next:** **BACKUP-BASELINE-01B-RESTORE-CLOSURE** (was blocked pending backup; partial restore — frontend deferred)
+
+## BACKUP-BASELINE-01 — Full local backup + restore verification
+
+**Verdict:** `BACKUP_BASELINE_01_BACKUP_PASS_RESTORE_PARTIAL`
+
+**Starting HEAD:** `deb5d69`
+
+**Scope:** Safety baseline — full local backup outside worktree; isolated DB restore; manifest/checksums; source integrity. No application logic, schema, or business data changes.
+
+**Backup ID:** `workos_full_backup_20260715_125751_deb5d69`  
+**Backup root:** `C:\w\workos_backups\workos_full_backup_20260715_125751_deb5d69`  
+**Restore DB (isolated):** `C:\w\wrt\b01\database\dev.db`
+
+| Domain | Status |
+|--------|--------|
+| Repository + `.git` | **PASS** (dirty worktree preserved) |
+| SQLite DB backup | **PASS** (`sqlite3` backup API; integrity ok) |
+| DB restore (isolated) | **PASS** (counts match) |
+| Backend restore `:8021` | **PASS** (prior evidence) |
+| Frontend restore `:3021` | **NOT_EXECUTED_SAFE_DEFERRED** |
+| Manifest + SHA-256 | **PASS** |
+| Source `C:\w\psiso` intact | **PASS** (business counts unchanged; `oidc_states` ephemeral +1) |
+| Source `node_modules` | **YES** |
+
+**Blocked until closure:** `APP-AUTH-06C-PARITY-SIGNAL-INTERPRETATION-PLAN` · `PROD-ARCH-01` · `MOBILE-INT-02`
+
+**Evidence:** `docs/qa/product-system-active-path-isolation-v1/backup_baseline_01/*.json`
+
+**Worklog:** `docs/worklog/backup/2026-07-15_backup_baseline_01_full_local_application_backup_restore_v1.md`
+
+**BACKUP-BASELINE-01:** **COMPLETE** (backup PASS; restore PARTIAL — frontend deferred by design)
+
+**Next:** **BACKUP-BASELINE-01B-RESTORE-CLOSURE**
+
+## Safety / backup checkpoint
+
+Normal roadmap tasks (`APP-AUTH-06C`, `PROD-ARCH-01`, `MOBILE-INT-02`) remain **blocked** until **BACKUP-BASELINE-01B** closes isolated frontend restore. Backup folder is authoritative; not in git.
 
 ## OWNER-DECISION-04 — Parity pilot owner review
 

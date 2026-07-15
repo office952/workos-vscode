@@ -1,0 +1,21 @@
+{
+  "backend_port": 8001,
+  "frontend_port": 3000,
+  "source_intact": {
+    "worktree": "C:\\w\\psiso",
+    "head": "deb5d6942865448114bcad634a738eefc3bda19e",
+    "branch": "feature/product-system-active-path-isolation-v1",
+    "git_dir_present": true,
+    "source_node_modules_present": true,
+    "source_db_size_bytes": 2174976,
+    "business_table_counts_unchanged": true,
+    "business_table_diffs": {},
+    "ephemeral_oidc_states_delta": true,
+    "oidc_states_before": 0,
+    "oidc_states_after": 1,
+    "classification": "PASS"
+  },
+  "parity_flags_all_false": true,
+  "note": "Source restart not re-probed in closure pass; business DB counts verified read-only",
+  "classification": "PASS"
+}
