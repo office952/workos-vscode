@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `2dfe2e1` (Phase 2 complete)
+**Accepted HEAD:** `17af5f6` (Phase 2 implemented; **closure CORRECTION_REQUIRED**)
 
-**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 **COMPLETE**)
+**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 **CORRECTION_REQUIRED**; Phase 3 plan **BLOCKED**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-2** — **COMPLETE** |
+| Active task | **PROD-FLEX-COLLABORATION-PHASE-2-CORRECTION** — plan (**READY FOR OWNER GO**) |
 
-| Next task | **Phase 3 UI/Mobile consumers** (separate GO) or unpause UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
+| Next task | **Owner GO** on correction G1–G5; Phase 3 UI **BLOCKED** until re-close; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1291,23 +1291,23 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md`
 
-## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation + closure
 
-**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE`
+**Verdict (implementation):** `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE` (code shipped at `17af5f6`)
 
-**Status:** **PHASE-2 COMPLETE** — backend help + pools + helper work authority shipped
+**Verdict (closure audit):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_REQUIRED`
 
-**Delivered:** help lifecycle (broadcast OPEN / targeted), accept→membership, ajutor pool, capability flags, helper session start/stop, scoped claim guards, collab read v1.2, s58 migration
+**Status:** Phase 2 **not accepted** for Phase 3 — correction plan ready for owner GO
 
-**Deferred:** Operator/Mobile UI, quotas, leave+stop combo, orphan Alembic merge (Phase 3 / separate GOs)
+**Blocking findings:** cancel actor unused (any route-eligible employee may cancel); helper session start / completion→help-close multiprocess races; completion→help partial (split commits + runtime never ran real complete)
 
-**Migration:** `s58_create_execution_task_help_requests` (explicit; orphan s50 untouched)
+**Correction plan:** `.compound-engineering/prod-flex-collaboration-phase-2-correction/plan.md`
 
-**Plan:** `.compound-engineering/prod-flex-collaboration-phase-2/plan.md`
+**Decision log:** `.compound-engineering/prod-flex-collaboration-phase-2-correction/decision-log.md`
 
-**Decision log:** `.compound-engineering/prod-flex-collaboration-phase-2/decision-log.md`
+**Closure:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md`
 
-**Implementation worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_implementation.md`
+**Phase 3:** **BLOCKED** — do not plan/implement UI until correction re-closes
 
-**BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_2.md`
+**Prior plan / BUILD / worklog:** Phase 2 plan + `BUILD_PROD_FLEX_COLLAB_PHASE_2.md` + implementation worklog remain historical
 
