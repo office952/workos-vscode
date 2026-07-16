@@ -117,6 +117,8 @@ export default function IntakeV6FinalConfigurationSummary({
 							showHandoffCheckboxes={handoff.showHandoffCheckboxes}
 							canResolveInternalDraftConfirmation={handoff.canResolveInternalDraftConfirmation}
 							savingInternalConfirmation={handoff.savingInternalConfirmation}
+							confirmationHydrationPending={handoff.confirmationHydrationPending}
+							confirmationLoadError={handoff.confirmPreviewError}
 							allFatalBlockers={handoff.allFatalBlockers}
 							showBlockerList={handoff.allFatalBlockers.length > 0}
 							resultMessage={

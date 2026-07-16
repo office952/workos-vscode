@@ -1,0 +1,152 @@
+{
+  "task": "WORKOS-GRADI-CURAT-STEP3-CONFIRMATION-LIVE-ELIGIBILITY-VERIFICATION-V1",
+  "date": "2026-07-16",
+  "starting_head": "da2e0b5000f94ceda0fc9c2ec348bf23fc04425d",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "verdict": "GRADI_CURAT_STEP3_CONFIRMATION_LIVE_PARTIAL",
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "operator_url": "http://127.0.0.1:3000/intake-v6/11891d68-c4c8-4719-acc5-f8fcb22a44af/operator",
+  "runtime": {
+    "backend": "http://127.0.0.1:8001",
+    "frontend": "http://127.0.0.1:3000",
+    "listeners": [
+      {"port": 8001, "pid": 30500, "process": "python"},
+      {"port": 3000, "pid": 27124, "process": "node"}
+    ],
+    "reused_healthy_stack": true,
+    "restart": false,
+    "duplicate_listeners_created": false
+  },
+  "quote_creation": false,
+  "order_creation": false,
+  "handoff_to_offer_post": false,
+  "create_draft_post": false,
+  "pricing_changes": false,
+  "registry_changes": false,
+  "product_code_changes": false,
+  "before_confirmation": {
+    "internal_draft_quote_confirmed": false,
+    "operator_confirmation_complete": false,
+    "requires_operator_confirmation": true,
+    "fatal_blockers": ["operator_confirmation_missing"],
+    "review_warnings": [
+      "canonical_unresolved_warning:TRIGGER_FIELD_MISMATCH: structura_suport link=metal_support_required intake=finish_setup.mounting_system",
+      "canonical_unresolved_warning:TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow."
+    ],
+    "diagnostic_warnings": [
+      "canonical_unresolved_warning:DOSSIER_METADATA_ONLY: ...",
+      "canonical_unresolved_warning:CANONICAL_CONTRACT_AUTHORITY: ...",
+      "canonical_unresolved_warning:TEMPLATE_IDENTITY: ..."
+    ],
+    "can_create_internal_draft_quote": false,
+    "handoff_allowed": false,
+    "accept_allowed": false,
+    "convert_to_order_allowed": false,
+    "production_allowed": false,
+    "pricing_status": "V6_PRICED_DRY_RUN_READY",
+    "net_ron": 3513.56,
+    "vat_ron": 737.85,
+    "gross_ron": 4251.41,
+    "quote_id": null,
+    "screenshot": "docs/qa/gradi-curat-e2e/screenshots/step3-before-confirm.png"
+  },
+  "step3_ui_action": {
+    "control_testid": "intake-v6-confirm-internal-draft",
+    "label": "Confirm finisajele și datele de ofertare pentru draft intern",
+    "path": "Step 3 Confirmare → expand Rezumat configuratie → checkbox",
+    "method": "browser click on real UI checkbox",
+    "expected_request": "PUT /api/v1/intake-v6/workspaces/{id}/internal-draft-quote-confirmation",
+    "expected_body": {"confirmed": true}
+  },
+  "after_confirmation": {
+    "internal_draft_quote_confirmed": true,
+    "operator_confirmation_complete": true,
+    "fatal_blockers": [],
+    "can_create_internal_draft_quote": true,
+    "handoff_allowed": true,
+    "accept_allowed": false,
+    "convert_to_order_allowed": false,
+    "production_allowed": false,
+    "review_warnings_count": 2,
+    "diagnostic_warnings_count": 3,
+    "pricing_unchanged": true,
+    "quote_id": null,
+    "screenshot": "docs/qa/gradi-curat-e2e/screenshots/step3-after-confirm.png"
+  },
+  "reload_proof": {
+    "backend_persisted_confirmed": true,
+    "backend_can_create_internal_draft_quote": true,
+    "backend_fatal_blockers_empty": true,
+    "ui_checkbox_checked_after_hard_reload": false,
+    "ui_local_state_defect": {
+      "code": "STEP3_CONFIRM_UI_LOCAL_STATE_NOT_HYDRATED_AFTER_RELOAD",
+      "file": "frontend/src/lib/intakeV6/useIntakeV6FinalHandoff.ts",
+      "detail": "confirmInternalDraft = useState(false) and is never initialized from handoffPreview.operator_confirmation_complete or finish_setup.internal_draft_quote_confirmed after reload. Backend eligibility remains true; UI checkbox and CTAs that AND local confirmInternalDraft incorrectly appear incomplete.",
+      "implementation": "NOT_DONE — requires explicit owner GO"
+    },
+    "autosync_stuck": false
+  },
+  "reset_proof": {
+    "method": "PUT identical finish-setup body (server forces internal_draft_quote_confirmed=false)",
+    "safe_reversible": true,
+    "product_truth_fields_changed": false,
+    "after_reset": {
+      "internal_draft_quote_confirmed": false,
+      "fatal_blockers": ["operator_confirmation_missing"],
+      "can_create_internal_draft_quote": false,
+      "net_ron": 3513.56,
+      "vat_ron": 737.85,
+      "gross_ron": 4251.41
+    }
+  },
+  "restoration_and_reconfirm": {
+    "finish_setup_restored_via_identical_put": true,
+    "ui_reconfirm_checkbox": true,
+    "final_confirmed": true,
+    "final_can_create": true,
+    "final_accept_allowed": false,
+    "final_quote_id": null
+  },
+  "owner_configuration_final": {
+    "letter_groups": 4,
+    "artwork_logos": 2,
+    "illuminated": true,
+    "light_color": "cool",
+    "lighting_system_type": "led_modules",
+    "return_depth_mm": 60,
+    "return_finish_type": "white_aluminum",
+    "backing_mode": "forex_10_no_bevel",
+    "mounting_solution_kind": "installation_template",
+    "mounting_scope": "preparation_and_site_installation",
+    "site_installation_included": true,
+    "montaj_line_count": 1,
+    "notes": "Face vinyl absent for letters; logo print+laminate present; no ACM/common panel claimed in this verification snapshot"
+  },
+  "commercial_non_regression": {
+    "net_ron": 3513.56,
+    "vat_ron": 737.85,
+    "gross_ron": 4251.41,
+    "pricing_status": "V6_PRICED_DRY_RUN_READY",
+    "montaj_lines": 1,
+    "logo_lines_present": true
+  },
+  "readiness_channels_final": {
+    "fatal_blockers": [],
+    "review_warnings": ["TRIGGER_FIELD_MISMATCH x2"],
+    "diagnostic_warnings": ["DOSSIER_METADATA_ONLY", "CANONICAL_CONTRACT_AUTHORITY", "TEMPLATE_IDENTITY"],
+    "quote_eligibility": true,
+    "order_execution_sensitive_via_trigger": true
+  },
+  "tests": {
+    "backend_channel_split": {"passed": 7, "failed": 0},
+    "frontend_confirm_related": {"passed": 11, "failed": 0},
+    "backend_v4_confirmation_policy_suite": {
+      "passed": 20,
+      "failed": 5,
+      "note": "Pre-existing fixture failures (PRINT_REQUIRED_UNKNOWN / LAMINATION_REQUIRED_UNKNOWN); not introduced by this verification"
+    }
+  },
+  "commit": false,
+  "push": false,
+  "pr": false
+}

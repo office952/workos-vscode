@@ -55,6 +55,12 @@ import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
 import { isAnalysisReadyForReview } from "@/lib/intakeV6/intakeV6AnalysisIdentity";
 import type { IntakeV6ConfirmSummaryViewModel } from "@/lib/intakeV6/intakeV6ConfirmSummary";
+import {
+	reconcileLocalConfirmationWithPersisted,
+	resolveInternalDraftConfirmationHydration,
+	restoreConfirmationAfterFailedPut,
+	shouldApplyConfirmationSnapshot,
+} from "@/lib/intakeV6/intakeV6InternalDraftConfirmationHydration";
 
 const EMPTY_REVIEW_WARNINGS: string[] = [];
 
@@ -104,6 +110,8 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 	const [confirmDraftBoundary, setConfirmDraftBoundary] = useState(false);
 	const [confirmInternalDraft, setConfirmInternalDraft] = useState(false);
 	const [savingInternalConfirmation, setSavingInternalConfirmation] = useState(false);
+	const confirmationFetchGenRef = useRef(0);
+	const savingInternalConfirmationRef = useRef(false);
 	const [submitting, setSubmitting] = useState(false);
 	const [submittingPricedQuote, setSubmittingPricedQuote] = useState(false);
 	const [error, setError] = useState<string | null>(null);
@@ -149,8 +157,13 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 	});
 
 	useEffect(() => {
+		savingInternalConfirmationRef.current = savingInternalConfirmation;
+	}, [savingInternalConfirmation]);
+
+	useEffect(() => {
 		if (!ws?.id) return;
 		let cancelled = false;
+		const fetchGeneration = ++confirmationFetchGenRef.current;
 		setConfirmPreviewLoading(true);
 		setConfirmPreviewError(null);
 		void Promise.all([
@@ -170,12 +183,22 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 				handoffResponse,
 			]) => {
 				if (cancelled) return;
+				if (fetchGeneration !== confirmationFetchGenRef.current) return;
 				setBinding(bindingResponse);
 				setMaterialBreakdown(breakdownResponse);
 				setNestingPreview(nestingResponse);
 				setPricingPreview(pricingResponse);
 				setPricedQuoteDryRun(pricedQuoteDryRunResponse);
 				setHandoffPreview(handoffResponse);
+				if (
+					shouldApplyConfirmationSnapshot({
+						saving: savingInternalConfirmationRef.current,
+						responseGeneration: fetchGeneration,
+						latestGeneration: confirmationFetchGenRef.current,
+					})
+				) {
+					setConfirmInternalDraft(handoffResponse.operator_confirmation_complete === true);
+				}
 			})
 			.catch((err) => {
 				if (!cancelled) {
@@ -195,6 +218,44 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 			cancelled = true;
 		};
 	}, [ws?.id, ws?.updated_at, clientAnalysisHash]);
+
+	const confirmationHydration = useMemo(
+		() =>
+			resolveInternalDraftConfirmationHydration({
+				hasFinishSetup: finishSetup != null,
+				finishSetupConfirmed: finishSetup?.internal_draft_quote_confirmed,
+				hasHandoffPreview: handoffPreview != null,
+				handoffOperatorComplete: handoffPreview?.operator_confirmation_complete,
+				previewLoading: confirmPreviewLoading,
+				saving: savingInternalConfirmation,
+			}),
+		[
+			finishSetup,
+			finishSetup?.internal_draft_quote_confirmed,
+			handoffPreview,
+			handoffPreview?.operator_confirmation_complete,
+			confirmPreviewLoading,
+			savingInternalConfirmation,
+		],
+	);
+
+	// Reconcile local checkbox with persisted truth after load/remount/upstream reset.
+	useEffect(() => {
+		if (!confirmationHydration.resolved) return;
+		setConfirmInternalDraft((local) =>
+			reconcileLocalConfirmationWithPersisted({
+				saving: savingInternalConfirmation,
+				localConfirmed: local,
+				persistedConfirmed: confirmationHydration.confirmed,
+				hydrationResolved: confirmationHydration.resolved,
+			}),
+		);
+	}, [
+		confirmationHydration.resolved,
+		confirmationHydration.confirmed,
+		savingInternalConfirmation,
+		ws?.updated_at,
+	]);
 
 	useEffect(() => {
 		const nextCommercialInputs = resolveCommercialInputs(persistedCommercialInputs, pricingPreview);
@@ -283,14 +344,25 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 	const finishSetupIncomplete = hasFinishSetupIncompleteBlocker(fatalBlockers, ws?.readiness_status);
 	const artworkNeedsDecision =
 		hasArtworkNeedsDecisionWarning(reviewWarnings) || artworkOnlyBlocked;
-	const operatorConfirmationComplete = handoffPreview?.operator_confirmation_complete ?? false;
+	// Prefer hydrated persisted truth so finish_setup confirmation is visible before handoff preview lands.
+	// While saving, keep optimistic local checked state (handoff may still be pre-PUT until refresh).
+	const operatorConfirmationComplete = savingInternalConfirmation
+		? confirmInternalDraft
+		: confirmationHydration.resolved
+			? confirmationHydration.confirmed
+			: false;
+	const confirmationHydrationPending = !confirmationHydration.resolved;
 	const quoteGeometry = payload?.quote_geometry as
 		| { width_mm?: number; height_mm?: number; letter_perimeter_m?: number }
 		| undefined;
 
 	const canShowHandoffSection = isReadyForQuotePreview || !finishSetupIncomplete;
 	const canResolveInternalDraftConfirmation =
-		canShowHandoffSection && bindingBlockers.length === 0 && !finishSetupIncomplete;
+		canShowHandoffSection &&
+		bindingBlockers.length === 0 &&
+		!finishSetupIncomplete &&
+		confirmationHydration.resolved &&
+		!confirmationHydration.disableInteraction;
 	const canShowBoundaryCheckboxes =
 		canShowHandoffSection &&
 		handoffUi.handoffAllowed &&
@@ -347,32 +419,27 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 	const canCreatePricedQuote = createPricedQuoteDisabledReason == null;
 
 	async function handleInternalDraftConfirmation(checked: boolean) {
-		if (!ws?.id || finishSetupIncomplete) return;
+		if (!ws?.id || finishSetupIncomplete || confirmationHydrationPending) return;
+		const previousPersisted = restoreConfirmationAfterFailedPut({
+			hasHandoffPreview: handoffPreview != null,
+			handoffOperatorComplete: handoffPreview?.operator_confirmation_complete,
+			hasFinishSetup: finishSetup != null,
+			finishSetupConfirmed: finishSetup?.internal_draft_quote_confirmed,
+		});
 		setConfirmInternalDraft(checked);
-		if (!checked) {
-			setSavingInternalConfirmation(true);
-			try {
-				await saveIntakeV6InternalDraftQuoteConfirmation(ws.id, { confirmed: false });
-				const refreshed = await getIntakeV6QuoteHandoffPreview(ws.id, clientAnalysisHash ?? undefined);
-				setHandoffPreview(refreshed);
-			} catch (err) {
-				setError(err instanceof Error ? err.message : "Salvare confirmare draft intern esuata.");
-				setConfirmInternalDraft(false);
-			} finally {
-				setSavingInternalConfirmation(false);
-			}
-			return;
-		}
 		setSavingInternalConfirmation(true);
+		savingInternalConfirmationRef.current = true;
 		setError(null);
 		try {
-			await saveIntakeV6InternalDraftQuoteConfirmation(ws.id, { confirmed: true });
+			await saveIntakeV6InternalDraftQuoteConfirmation(ws.id, { confirmed: checked });
 			const refreshed = await getIntakeV6QuoteHandoffPreview(ws.id, clientAnalysisHash ?? undefined);
 			setHandoffPreview(refreshed);
+			setConfirmInternalDraft(refreshed.operator_confirmation_complete === true);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Salvare confirmare draft intern esuata.");
-			setConfirmInternalDraft(false);
+			setConfirmInternalDraft(previousPersisted);
 		} finally {
+			savingInternalConfirmationRef.current = false;
 			setSavingInternalConfirmation(false);
 		}
 	}
@@ -705,6 +772,7 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		reviewWarnings,
 		finishSetupIncomplete,
 		operatorConfirmationComplete,
+		confirmationHydrationPending,
 		quoteGeometry,
 		canShowHandoffSection,
 		canResolveInternalDraftConfirmation,

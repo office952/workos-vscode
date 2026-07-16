@@ -43,6 +43,8 @@ export default function IntakeV6ConfirmHandoffPanel({
   showHandoffCheckboxes,
   canResolveInternalDraftConfirmation,
   savingInternalConfirmation,
+  confirmationHydrationPending = false,
+  confirmationLoadError = null,
   resultMessage,
   errorMessage,
   onInternalDraftChange,
@@ -55,6 +57,10 @@ export default function IntakeV6ConfirmHandoffPanel({
   showHandoffCheckboxes: boolean;
   canResolveInternalDraftConfirmation: boolean;
   savingInternalConfirmation: boolean;
+  /** True while persisted confirmation truth has not been resolved yet. */
+  confirmationHydrationPending?: boolean;
+  /** Load failure for confirmation / handoff preview (do not assume unchecked). */
+  confirmationLoadError?: string | null;
   allFatalBlockers: string[];
   showBlockerList: boolean;
   resultMessage: string | null;
@@ -63,6 +69,14 @@ export default function IntakeV6ConfirmHandoffPanel({
   onInternalDraftChange: (checked: boolean) => void;
   onDraftBoundaryChange: (checked: boolean) => void;
 }) {
+  const confirmationSettled = !confirmationHydrationPending;
+  const confirmationChecked =
+    confirmationSettled && confirmInternalDraft && operatorConfirmationComplete;
+  const confirmationDisabled =
+    confirmationHydrationPending ||
+    savingInternalConfirmation ||
+    !canResolveInternalDraftConfirmation;
+
   return (
     <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-quote-handoff">
       <h3 className={`mb-2 ${v6.sectionTitle}`}>Confirmare finală</h3>
@@ -78,8 +92,8 @@ export default function IntakeV6ConfirmHandoffPanel({
           testId="intake-v6-confirm-checklist-finish"
         />
         <ChecklistControlRow
-          done={operatorConfirmationComplete && confirmInternalDraft}
-          warning={!operatorConfirmationComplete}
+          done={confirmationChecked}
+          warning={confirmationSettled && !operatorConfirmationComplete}
           label="Confirm finisajele și datele de ofertare pentru draft intern"
           testId="intake-v6-confirm-checklist-operator"
           control={
@@ -91,12 +105,17 @@ export default function IntakeV6ConfirmHandoffPanel({
                 <input
                   type="checkbox"
                   className="mt-0.5"
-                  checked={confirmInternalDraft && operatorConfirmationComplete}
-                  disabled={savingInternalConfirmation || !canResolveInternalDraftConfirmation}
+                  checked={confirmationChecked}
+                  disabled={confirmationDisabled}
+                  aria-busy={confirmationHydrationPending || undefined}
                   onChange={(event) => onInternalDraftChange(event.target.checked)}
                   data-testid="intake-v6-confirm-internal-draft"
                 />
-                <span>Confirm finisajele și datele de ofertare pentru draft intern</span>
+                <span>
+                  {confirmationHydrationPending
+                    ? "Se verifică confirmarea persistată…"
+                    : "Confirm finisajele și datele de ofertare pentru draft intern"}
+                </span>
               </label>
             ) : undefined
           }
@@ -125,6 +144,12 @@ export default function IntakeV6ConfirmHandoffPanel({
       {finishSetupIncomplete ? (
         <p className="mb-3 text-[11px] text-amber-200" data-testid="intake-v6-finish-setup-incomplete">
           Finalizează finisajele în Review înainte de draft.
+        </p>
+      ) : null}
+
+      {confirmationLoadError ? (
+        <p className="mb-3 text-[11px] text-amber-200" data-testid="intake-v6-confirmation-load-error">
+          Starea de confirmare nu a putut fi verificată. Reîncarcă sau revino pe acest pas.
         </p>
       ) : null}
 
