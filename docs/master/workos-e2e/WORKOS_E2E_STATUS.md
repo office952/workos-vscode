@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `7e58579` (Phase 2 integrity correction COMPLETE)  
 
-**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2-INTEGRITY-CORRECTION **COMPLETE**; Phase 3 planning **READY**)
+**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-3 **PLAN READY FOR OWNER REVIEW**; implementation not started)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-2** — integrity correction **COMPLETE**; Phase 3 UI planning unlocked |
+| Active task | **PROD-FLEX-COLLABORATION-PHASE-3** — plan **READY FOR OWNER REVIEW** |
 
-| Next task | **Phase 3 UI planning** (Operator / Mobile capability consumers) — not implementation in prior correction task; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
+| Next task | Owner GO (G1–G6) then Phase 3 implementation; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1299,7 +1299,7 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Verdict (integrity correction):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_COMPLETE`
 
-**Status:** Phase 2 **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** — safe to plan Phase 3 UI
+**Status:** Phase 2 **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** — Phase 3 plan ready for owner review
 
 **Correction worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md`
 
@@ -1307,7 +1307,13 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Runtime evidence:** `docs/qa/_phase2_correction_runtime_evidence.json`
 
-**Phase 3:** **READY** for planning (UI implementation not started here)
+**Phase 3:** **PLAN READY FOR OWNER REVIEW** — implementation not started
+
+**Phase 3 plan:** `.compound-engineering/prod-flex-collaboration-phase-3/plan.md`
+
+**Phase 3 decision log:** `.compound-engineering/prod-flex-collaboration-phase-3/decision-log.md`
+
+**Phase 3 worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_3_plan.md`
 
 **Prior closure (superseded):** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md`
 

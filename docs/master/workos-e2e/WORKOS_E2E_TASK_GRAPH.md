@@ -1283,8 +1283,9 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Starting HEAD (correction) | `e400c42` |
 | Correction plan | `.compound-engineering/prod-flex-collaboration-phase-2-correction/plan.md` |
 | Correction worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md` |
-| Phase 3 | **READY** for planning |
-| Next | Phase 3 UI plan (capability consumers) — separate GO |
+| Phase 3 | **PLAN READY FOR OWNER REVIEW** |
+| Phase 3 plan | `.compound-engineering/prod-flex-collaboration-phase-3/plan.md` |
+| Next | Owner G1–G6 then Phase 3 implementation GO |
 
 
 ## Dependency graph (ASCII)
