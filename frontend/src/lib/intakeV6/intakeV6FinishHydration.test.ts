@@ -195,4 +195,50 @@ describe("intakeV6FinishHydration", () => {
       }),
     ).toBe("2026-06-24T12:00:00Z:2");
   });
+
+  it("documents stuck autosync when payload confirmed lags local form confirmed=true", () => {
+    const stalePayload = {
+      finish_setup: {
+        ...payload.finish_setup,
+        confirmed: false,
+      },
+    } as Record<string, unknown>;
+    expect(
+      isIntakeV6SelectorStatePendingSave(
+        {
+          backing_mode: "forex_10_with_bevel",
+          emblem_lighting_mode: "area_lit",
+          return_finish_type: "white_aluminum",
+          illuminated: true,
+          lighting_system_type: "led_modules",
+          light_color: "warm",
+          led_module_power_w: 1.44,
+          confirmed: true,
+        },
+        stalePayload,
+        letterGroups,
+        artworkFinishes,
+      ),
+    ).toBe(true);
+  });
+
+  it("clears pending when local mirrors match expected remount/HMR baselines", () => {
+    const form = {
+      backing_mode: "forex_10_with_bevel",
+      emblem_lighting_mode: "area_lit",
+      return_finish_type: "white_aluminum",
+      illuminated: true,
+      lighting_system_type: "led_modules",
+      light_color: "warm",
+      led_module_power_w: 1.44,
+      confirmed: true,
+    };
+    expect(
+      isIntakeV6SelectorStatePendingSave(form, payload, letterGroups, artworkFinishes, {
+        expectedForm: form,
+        expectedLetterGroups: letterGroups,
+        expectedArtworkFinishes: artworkFinishes,
+      }),
+    ).toBe(false);
+  });
 });

@@ -588,29 +588,47 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       fallbackDepthMm: finish.return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM,
     });
 
+  const finishDepthMm =
+    finishFromPayload(payload).return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM;
+  const expectedLetterGroups = useMemo(
+    () =>
+      mergeLetterGroupFinishes(
+        deriveLetterGroupsFromAnalyzer(
+          state.analyzerReport as SvgAnalysisCoreReport | null,
+          state.layerRoleConfirmation,
+          finishDepthMm,
+        ),
+        letterGroupFinishesFromPayload(payload),
+      ),
+    [payload, state.analyzerReport, state.layerRoleConfirmation, finishDepthMm],
+  );
+  const expectedArtworkFinishes = useMemo(
+    () =>
+      mergeArtworkFinishes(
+        deriveArtworkFinishesFromAnalyzer(
+          state.analyzerReport as SvgAnalysisCoreReport | null,
+          state.layerRoleConfirmation,
+          finishDepthMm,
+        ),
+        artworkFinishesFromPayload(payload),
+      ),
+    [payload, state.analyzerReport, state.layerRoleConfirmation, finishDepthMm],
+  );
+  const expectedHydratedForm = useMemo(
+    () =>
+      syncLighting(
+        applyMountingTemplateMinimumArea(finishFromPayload(payload), mountingTemplateAreaFallbackM2),
+      ),
+    // syncLighting closes over letterPerimeterM / emblemOutboxAreaM2 / quoteGeometry
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [payload, mountingTemplateAreaFallbackM2, letterPerimeterM, emblemOutboxAreaM2, quoteGeometry],
+  );
+
   const [form, setForm] = useState<IntakeV6FinishSetup>(() =>
     syncLighting(applyMountingTemplateMinimumArea(finishFromPayload(payload), mountingTemplateAreaFallbackM2)),
   );
-  const [letterGroups, setLetterGroups] = useState<IntakeV6LetterGroupFinish[]>(() =>
-    mergeLetterGroupFinishes(
-      deriveLetterGroupsFromAnalyzer(
-        state.analyzerReport as SvgAnalysisCoreReport | null,
-        state.layerRoleConfirmation,
-        finishFromPayload(payload).return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM,
-      ),
-      letterGroupFinishesFromPayload(payload),
-    ),
-  );
-  const [artworkFinishes, setArtworkFinishes] = useState<IntakeV6ArtworkFinish[]>(() =>
-    mergeArtworkFinishes(
-      deriveArtworkFinishesFromAnalyzer(
-        state.analyzerReport as SvgAnalysisCoreReport | null,
-        state.layerRoleConfirmation,
-        finishFromPayload(payload).return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM,
-      ),
-      artworkFinishesFromPayload(payload),
-    ),
-  );
+  const [letterGroups, setLetterGroups] = useState<IntakeV6LetterGroupFinish[]>(() => expectedLetterGroups);
+  const [artworkFinishes, setArtworkFinishes] = useState<IntakeV6ArtworkFinish[]>(() => expectedArtworkFinishes);
   const artworkComplexityReport = useMemo(
     () => artworkComplexityFromReport(state.analyzerReport as SvgAnalysisCoreReport | null),
     [state.analyzerReport],
@@ -745,8 +763,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const commercialInputsSyncKeyRef = useRef<string | null>(null);
 
   const selectorPendingSave = useMemo(
-    () => isIntakeV6SelectorStatePendingSave(form, payload, letterGroups, artworkFinishes),
-    [form, payload, letterGroups, artworkFinishes],
+    () =>
+      isIntakeV6SelectorStatePendingSave(form, payload, letterGroups, artworkFinishes, {
+        expectedForm: expectedHydratedForm,
+        expectedLetterGroups,
+        expectedArtworkFinishes,
+      }),
+    [form, payload, letterGroups, artworkFinishes, expectedHydratedForm, expectedLetterGroups, expectedArtworkFinishes],
   );
 
   const autosaveIdentityKey = useMemo(
@@ -1384,30 +1407,39 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) {
         const nextFinish = finishFromPayload(workspace.payload as Record<string, unknown>);
         const nextPayload = workspace.payload as Record<string, unknown>;
-        const syncedNextForm = syncLighting(nextFinish);
-        const nextLetterGroups = letterGroupFinishesFromPayload(nextPayload);
-        const nextArtworkFinishes = artworkFinishesFromPayload(nextPayload);
+        const nextDepth = nextFinish.return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM;
+        const syncedNextForm = syncLighting(
+          applyMountingTemplateMinimumArea(nextFinish, mountingTemplateAreaFallbackM2),
+        );
+        const nextLetterGroups = mergeLetterGroupFinishes(
+          deriveLetterGroupsFromAnalyzer(
+            state.analyzerReport as SvgAnalysisCoreReport | null,
+            state.layerRoleConfirmation,
+            nextDepth,
+          ),
+          letterGroupFinishesFromPayload(nextPayload),
+        );
+        const nextArtworkFinishes = mergeArtworkFinishes(
+          deriveArtworkFinishesFromAnalyzer(
+            state.analyzerReport as SvgAnalysisCoreReport | null,
+            state.layerRoleConfirmation,
+            nextDepth,
+          ),
+          artworkFinishesFromPayload(nextPayload),
+        );
         const nextCommercialInputs = resolveIntakeV6OfferCommercialDefaults(
           pricingPreview,
           nextFinish.commercial_inputs,
         );
         const nextSettingsVatCommercialInputs = { ...nextCommercialInputs, vatPercent: vatPct };
-        if (buildFinishSetupSyncSignature(syncedNextForm) !== buildFinishSetupSyncSignature(form)) {
-          setForm(syncedNextForm);
-        }
-        if (buildJsonSignature(nextLetterGroups) !== buildJsonSignature(letterGroups)) {
-          setLetterGroups(nextLetterGroups);
-        }
-        if (buildJsonSignature(nextArtworkFinishes) !== buildJsonSignature(artworkFinishes)) {
-          setArtworkFinishes(nextArtworkFinishes);
-        }
-        if (
-          buildJsonSignature(serializeIntakeV6OfferCommercialInputs(commercialInputs)) !==
-          buildJsonSignature(serializeIntakeV6OfferCommercialInputs(nextSettingsVatCommercialInputs))
-        ) {
-          setCommercialInputsDirty(false);
-          setCommercialInputs(nextSettingsVatCommercialInputs);
-        }
+        // Always mirror server finish state after a successful persist. Pending-save uses a
+        // fuller compare than buildFinishSetupSyncSignature; skipping setForm here leaves
+        // "Sincronizare automata in asteptare" stuck across remount/HMR.
+        setForm(syncedNextForm);
+        setLetterGroups(nextLetterGroups);
+        setArtworkFinishes(nextArtworkFinishes);
+        setCommercialInputsDirty(false);
+        setCommercialInputs(nextSettingsVatCommercialInputs);
         pendingDirtyDomainsRef.current.clear();
         pendingAutosavePolicyRef.current = "short";
         bumpPreviewRefresh(

@@ -87,7 +87,7 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       "finish_setup_not_confirmed",
     ]);
     expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toMatch(/Artwork\/logo neconfirmat/i);
+    expect(warnings[0]).toMatch(/Perimetru vector rezidual|Vector Logo/i);
     expect(hasArtworkNeedsDecisionWarning(["unclassified_vector_artwork_requires_decision"])).toBe(true);
   });
 
@@ -114,9 +114,9 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       currentStep: "confirm",
     });
     expect(surfacing.showBanner).toBe(true);
-    expect(surfacing.reasons.join(" ")).toMatch(/Artwork\/logo necesită decizie/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/Vector Logo necesită decizie/i);
     expect(surfacing.reasons.join(" ")).toMatch(/tarif/i);
-    expect(surfacing.actions.join(" ")).toMatch(/execuția artwork/i);
+    expect(surfacing.actions.join(" ")).toMatch(/execuția Vector Logo|Vector Logo/i);
     expect(surfacing.actions.join(" ")).toMatch(/Confirmă configurația finală/i);
   });
 
@@ -141,9 +141,10 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       allArtworkFinishesConfirmed: true,
     });
     expect(surfacing.showBanner).toBe(true);
-    expect(surfacing.reasons.join(" ")).toMatch(/Artwork\/logo neconfirmat/i);
-    expect(surfacing.reasons.join(" ")).toMatch(/perimetru/i);
-    expect(surfacing.actions.join(" ")).toMatch(/Confirmă finisajele/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/Perimetru vector rezidual|Vector Logo/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/perimetru|SVG/i);
+    expect(surfacing.actions.join(" ")).toMatch(/Vector Logo/i);
+    expect(surfacing.actions.join(" ")).not.toMatch(/Logo 1\/2/);
   });
 
   it("aligns review readiness copy when workspace is ready but handoff is blocked", () => {
@@ -165,5 +166,31 @@ describe("intakeV6QuoteHandoffReadiness", () => {
     });
     expect(display.primary).toBe("Date tehnice pregătite pentru preview");
     expect(display.secondary).toMatch(/Handoff ofertă necesită Product Truth confirmat/i);
+  });
+
+  it("does not hardcode Logo 1/2 in residual copy for N Vector Logos", () => {
+    const surfacing = buildReviewHandoffSurfacing({
+      handoff: {
+        workspace_id: "ws",
+        handoff_allowed: true,
+        can_create_internal_draft_quote: true,
+        status_label: "READY_FOR_INTERNAL_DRAFT_REVIEW",
+        blockers: [],
+        fatal_blockers: [],
+        review_warnings: ["unclassified_vector_artwork_requires_decision"],
+        requires_operator_confirmation: true,
+        operator_confirmation_complete: true,
+        client_send_allowed: false,
+        accept_allowed: false,
+        convert_to_order_allowed: false,
+        production_allowed: false,
+        preview_only: true,
+      },
+      allArtworkProductConfigured: true,
+    });
+    const text = `${surfacing.reasons.join(" ")} ${surfacing.actions.join(" ")}`;
+    expect(text).not.toMatch(/Logo 1\/2/);
+    expect(text).not.toMatch(/logo_instance_001/);
+    expect(text).toMatch(/Vector Logo/i);
   });
 });

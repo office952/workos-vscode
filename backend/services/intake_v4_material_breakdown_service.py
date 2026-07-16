@@ -2407,18 +2407,39 @@ def build_intake_v4_material_breakdown(
             )
         )
         if residual_ml is not None and residual_ml > RAW_VECTOR_TOTAL_MIN_DELTA_M:
-            warnings.append(
-                _warn(
-                    "unclassified_vector_artwork_requires_decision",
-                    (
-                        f"Vector neclasificat detectat in SVG (~{residual_ml:.2f} m). "
-                        "Operatorul trebuie sa confirme ce reprezinta, metoda de productie "
-                        "si fisierul/grafica pentru handoff productie."
-                    ),
-                    source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
-                    severity="warning",
-                )
+            # Align with handoff residual policy: classified Vector Logo rows with
+            # decided execution already explain perimeter — do not reopen a false
+            # "neclasificat / confirm artwork" readiness warning.
+            from services.intake_v4_internal_draft_quote_policy_service import (
+                has_unclassified_vector_artwork,
             )
+
+            if has_unclassified_vector_artwork(payload):
+                warnings.append(
+                    _warn(
+                        "unclassified_vector_artwork_requires_decision",
+                        (
+                            f"Perimetru vector rezidual (~{residual_ml:.2f} m) fără Vector Logo "
+                            "eligibil. Verifică clasificarea pe fiecare layer Vector Logo "
+                            "și execuția (print/laminare) în Review."
+                        ),
+                        source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
+                        severity="warning",
+                    )
+                )
+            else:
+                warnings.append(
+                    _warn(
+                        "vector_logo_perimeter_reconciled",
+                        (
+                            f"Perimetru SVG reconciliat cu Vector Logo clasificate "
+                            f"(~{residual_ml:.2f} m în diagnostic tehnic). "
+                            "Nu blochează Confirmarea."
+                        ),
+                        source="path_geometry_summary.perimeter_mm_approx|finish_setup.artwork_finishes",
+                        severity="info",
+                    )
+                )
 
     _append_return_material_rows(
         letter_return_ml=cant_letter_ml,

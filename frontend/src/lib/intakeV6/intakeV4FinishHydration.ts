@@ -133,23 +133,34 @@ export function isIntakeV4SelectorStatePendingSave(
   payload: Record<string, unknown> | undefined,
   letterGroups: IntakeV4LetterGroupFinish[] = [],
   artworkFinishes: IntakeV4ArtworkFinish[] = [],
+  options?: {
+    /** Hydrated form baseline (e.g. syncLighting + mounting template) — remount/HMR safe. */
+    expectedForm?: IntakeV4FinishSetup;
+    /** Merged letter baseline matching Review local init (derive+payload). */
+    expectedLetterGroups?: IntakeV4LetterGroupFinish[];
+    /** Merged artwork baseline matching Review local init (derive+payload). */
+    expectedArtworkFinishes?: IntakeV4ArtworkFinish[];
+  },
 ): boolean {
   const setup = readFinishSetupFromPayload(payload);
   if (!setup) return true;
   if (setup.confirmed !== true) return true;
 
-  const savedForm = normalizeFinishFormForCompare(setup);
+  const baselineForm = options?.expectedForm ?? setup;
+  const savedForm = normalizeFinishFormForCompare(baselineForm);
   const currentForm = normalizeFinishFormForCompare(form);
   if (JSON.stringify(savedForm) !== JSON.stringify(currentForm)) {
     return true;
   }
 
-  const savedLetterGroups = letterGroupFinishesFromPayload(payload);
+  const savedLetterGroups =
+    options?.expectedLetterGroups ?? letterGroupFinishesFromPayload(payload);
   if (!layerFinishesEqual(letterGroups, savedLetterGroups, normalizeLetterGroupForCompare)) {
     return true;
   }
 
-  const savedArtworkFinishes = artworkFinishesFromPayload(payload);
+  const savedArtworkFinishes =
+    options?.expectedArtworkFinishes ?? artworkFinishesFromPayload(payload);
   if (!layerFinishesEqual(artworkFinishes, savedArtworkFinishes, normalizeArtworkForCompare)) {
     return true;
   }

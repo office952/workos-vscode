@@ -50,7 +50,7 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return `Artwork execution undecided on ${layerKey}.`;
 	}
 	if (code === "unclassified_vector_artwork_requires_decision") {
-		return "Artwork/logo neconfirmat: confirmă finisajele pe Logo/litere — protecția de perimetru rămâne activă.";
+		return "Perimetru vector rezidual: verifică fiecare Vector Logo cu execuție nedecisă — protecția de perimetru rămâne activă.";
 	}
 	if (code === "artwork_only_requires_decision") {
 		return "Nu există straturi de litere volumetrice confirmate. Artwork/policromie necesită decizie operator. Template-ul curent este Litere volumetrice; fișierul încărcat pare artwork-only.";
@@ -373,13 +373,13 @@ export function buildReviewHandoffSurfacing(args: {
 		);
 	}
 	if (artworkUnconfigured) {
-		reasons.push("Artwork/logo necesită decizie de execuție sau date obligatorii lipsă.");
+		reasons.push("Vector Logo necesită decizie de execuție sau date obligatorii lipsă.");
 	} else if (artworkConfigured && vectorResidualWarning) {
 		reasons.push(
-			"Artwork/logo neconfirmat în finisaje — există diferență de perimetru față de SVG. Confirmă Logo 1/2 (și literele) în Review.",
+			"Perimetru vector rezidual față de SVG — verifică Vector Logo-urile cu execuție nedecisă (și literele) în Review.",
 		);
 	} else if (artworkNeedsDecision) {
-		reasons.push("Artwork/logo neconfirmat sau fără decizie de execuție.");
+		reasons.push("Vector Logo neconfirmat sau fără decizie de execuție.");
 	}
 	if (showOperatorConfirmationOnStep) {
 		reasons.push("Verifică rezumatul configurației și confirmă pentru continuare.");
@@ -396,11 +396,13 @@ export function buildReviewHandoffSurfacing(args: {
 		actions.push("Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.");
 	}
 	if (artworkUnconfigured) {
-		actions.push("Completează execuția artwork (ex. print/laminare) pentru fiecare logo.");
+		actions.push("Completează execuția Vector Logo (ex. print/laminare) pentru fiecare layer logo clasificat.");
 	} else if (artworkConfigured && vectorResidualWarning) {
-		actions.push("Confirmă finisajele pe Logo 1/2 (și litere) pentru a include perimetrul confirmat.");
+		actions.push(
+			"Rezolvă Vector Logo-urile incomplete (execuție nedecisă); logo-urile valide rămân separate, ca literele.",
+		);
 	} else if (artworkNeedsDecision) {
-		actions.push("Rezolvă deciziile artwork în Review.");
+		actions.push("Rezolvă deciziile Vector Logo în Review.");
 	}
 	if (containsMissingPrices) {
 		actions.push("Verifică liniile cu tarif lipsă în Calcul live.");

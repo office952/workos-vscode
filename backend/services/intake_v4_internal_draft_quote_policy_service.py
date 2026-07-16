@@ -55,11 +55,15 @@ def _raw_vector_total_perimeter_m(payload: IntakeV4WorkspacePayload) -> float | 
     return round(max(candidates), 4) if candidates else None
 
 
-def _is_operator_confirmed_artwork_row(row: Any) -> bool:
-    if not getattr(row, "confirmed", False):
-        return False
+def _is_artwork_row_perimeter_eligible(row: Any) -> bool:
+    """True when a Vector Logo row may contribute perimeter like a letter group.
+
+    Product-configured logos (execution decided) count even when legacy finish
+    ``confirmed=false``. Incomplete rows (needs_decision / blank) are excluded
+    individually so one incomplete logo does not drop all others.
+    """
     execution = str(getattr(row, "execution_type", None) or "needs_decision").strip().lower()
-    return execution != "needs_decision"
+    return bool(execution) and execution != "needs_decision"
 
 
 def _artwork_row_perimeter_m(row: Any, analysis: dict[str, Any]) -> float | None:
@@ -92,13 +96,14 @@ def _operator_confirmed_artwork_perimeter_m(payload: IntakeV4WorkspacePayload) -
     if setup is None or not setup.artwork_finishes:
         return None
 
-    artwork_rows = setup.artwork_finishes
-    if not all(_is_operator_confirmed_artwork_row(row) for row in artwork_rows):
+    artwork_rows = list(setup.artwork_finishes)
+    eligible_rows = [row for row in artwork_rows if _is_artwork_row_perimeter_eligible(row)]
+    if not eligible_rows:
         return None
 
     analysis = payload.svg_analysis_json if isinstance(payload.svg_analysis_json, dict) else {}
     row_perimeters: list[float] = []
-    for row in artwork_rows:
+    for row in eligible_rows:
         perimeter = _artwork_row_perimeter_m(row, analysis)
         if perimeter is None:
             row_perimeters = []
@@ -107,10 +112,12 @@ def _operator_confirmed_artwork_perimeter_m(payload: IntakeV4WorkspacePayload) -
     if row_perimeters:
         return round(sum(row_perimeters), 4)
 
-    quote_geom = payload.quote_geometry if isinstance(payload.quote_geometry, dict) else {}
-    aggregate = _positive_float(quote_geom.get("artwork_return_perimeter_ml"))
-    if aggregate is not None:
-        return round(aggregate, 4)
+    # Aggregate fallback only when every Vector Logo row is eligible (none incomplete).
+    if len(eligible_rows) == len(artwork_rows):
+        quote_geom = payload.quote_geometry if isinstance(payload.quote_geometry, dict) else {}
+        aggregate = _positive_float(quote_geom.get("artwork_return_perimeter_ml"))
+        if aggregate is not None:
+            return round(aggregate, 4)
     return None
 
 
