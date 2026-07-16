@@ -1,0 +1,315 @@
+{
+  "source_path": "C:/Users/offic/Desktop/fisiere-teste-svg/gradi-curat.svg",
+  "sha256": "593C4D439157B83CAB16C33D69CAF0AB426144D583FB1999FA7D1676D5AB6CF1",
+  "size_bytes": 27173,
+  "layers": [
+    {
+      "id": "pseudo:maria",
+      "name": "pseudo maria (blue)"
+    },
+    {
+      "id": "pseudo:soare",
+      "name": "pseudo soare (red)"
+    },
+    {
+      "id": "pseudo:ana",
+      "name": "pseudo ana (green)"
+    },
+    {
+      "id": "pseudo:gradinita",
+      "name": "pseudo gradinita (orange)"
+    },
+    {
+      "id": "logo_instance_001",
+      "name": "Logo 1"
+    },
+    {
+      "id": "logo_instance_002",
+      "name": "Logo 2"
+    }
+  ],
+  "layer_role_confirmation": [
+    {
+      "layerKey": "pseudo:maria",
+      "layerName": "pseudo maria (blue)",
+      "autoRole": "face",
+      "autoConfidence": "high"
+    },
+    {
+      "layerKey": "pseudo:soare",
+      "layerName": "pseudo soare (red)",
+      "autoRole": "face",
+      "autoConfidence": "high"
+    },
+    {
+      "layerKey": "pseudo:ana",
+      "layerName": "pseudo ana (green)",
+      "autoRole": "face",
+      "autoConfidence": "high"
+    },
+    {
+      "layerKey": "pseudo:gradinita",
+      "layerName": "pseudo gradinita (orange)",
+      "autoRole": "face",
+      "autoConfidence": "high"
+    },
+    {
+      "layerKey": "logo_instance_001",
+      "layerName": "Logo 1",
+      "autoRole": "printed_artwork",
+      "autoConfidence": "high"
+    },
+    {
+      "layerKey": "logo_instance_002",
+      "layerName": "Logo 2",
+      "autoRole": "printed_artwork",
+      "autoConfidence": "high"
+    }
+  ],
+  "letter_groups": [
+    {
+      "group_key": "pseudo:maria",
+      "layer_name": "pseudo maria (blue)",
+      "perimeter_m": 5.910236468431474,
+      "face_area_m2": 0.2810428213145777,
+      "element_count": 1,
+      "source_fill_color": "#00a0e3",
+      "face_finish_type": "none",
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false,
+      "face_vinyl_roll_width_mm": null
+    },
+    {
+      "group_key": "pseudo:soare",
+      "layer_name": "pseudo soare (red)",
+      "perimeter_m": 6.957517973492544,
+      "face_area_m2": 0.30711595361734,
+      "element_count": 1,
+      "source_fill_color": "#e31e24",
+      "face_finish_type": "none",
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false,
+      "face_vinyl_roll_width_mm": null
+    },
+    {
+      "group_key": "pseudo:ana",
+      "layer_name": "pseudo ana (green)",
+      "perimeter_m": 3.7726241622195955,
+      "face_area_m2": 0.19636109107249675,
+      "element_count": 1,
+      "source_fill_color": "#009846",
+      "face_finish_type": "none",
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false,
+      "face_vinyl_roll_width_mm": null
+    },
+    {
+      "group_key": "pseudo:gradinita",
+      "layer_name": "pseudo gradinita (orange)",
+      "perimeter_m": 10.106838616130982,
+      "face_area_m2": 0.47924238995360924,
+      "element_count": 1,
+      "source_fill_color": "#ef7f1a",
+      "face_finish_type": "none",
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false,
+      "face_vinyl_roll_width_mm": null
+    }
+  ],
+  "artwork_rows": [
+    {
+      "layer_key": "logo_instance_001",
+      "layer_name": "Logo 1",
+      "source_layer_name": "Logo 1",
+      "original_detected_label": "Logo 1",
+      "position_hint": null,
+      "execution_type": "print_laminate",
+      "color_mode": "polychrome",
+      "print_transparency": "translucent",
+      "face_personalization_method": "print_laminate",
+      "estimated_area_m2": 0.4002298565185999,
+      "element_count": 1,
+      "distinct_fill_count": 1,
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false
+    },
+    {
+      "layer_key": "logo_instance_002",
+      "layer_name": "Logo 2",
+      "source_layer_name": "Logo 2",
+      "original_detected_label": "Logo 2",
+      "position_hint": null,
+      "execution_type": "print_laminate",
+      "color_mode": "polychrome",
+      "print_transparency": "translucent",
+      "face_personalization_method": "print_laminate",
+      "estimated_area_m2": 0.4002298565186002,
+      "element_count": 1,
+      "distinct_fill_count": 1,
+      "return_finish_type": "white_aluminum",
+      "return_depth_mm": 60,
+      "confirmed": false
+    }
+  ],
+  "target_templates": [
+    {
+      "layerId": "pseudo:maria",
+      "layerName": "pseudo maria (blue)",
+      "autoRole": "face",
+      "templateCode": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "layerId": "pseudo:soare",
+      "layerName": "pseudo soare (red)",
+      "autoRole": "face",
+      "templateCode": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "layerId": "pseudo:ana",
+      "layerName": "pseudo ana (green)",
+      "autoRole": "face",
+      "templateCode": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "layerId": "pseudo:gradinita",
+      "layerName": "pseudo gradinita (orange)",
+      "autoRole": "face",
+      "templateCode": "TPL-VOLUMETRIC-LETTERS_v2"
+    },
+    {
+      "layerId": "logo_instance_001",
+      "layerName": "Logo 1",
+      "autoRole": "printed_artwork",
+      "templateCode": "TPL-VOLUMETRIC-LOGO_v1"
+    },
+    {
+      "layerId": "logo_instance_002",
+      "layerName": "Logo 2",
+      "autoRole": "printed_artwork",
+      "templateCode": "TPL-VOLUMETRIC-LOGO_v1"
+    }
+  ],
+  "unique_templates": [
+    "TPL-VOLUMETRIC-LETTERS_v2",
+    "TPL-VOLUMETRIC-LOGO_v1"
+  ],
+  "parts_item_count": 21,
+  "parts_bounds_sample": [
+    {
+      "id": "split_pseudo_maria_blue__1_2",
+      "name": "pseudo maria (blue)_02",
+      "bounds": {
+        "xMm": -22.19002471323787,
+        "yMm": 0,
+        "rightMm": 352.40436962948195,
+        "bottomMm": 235.96365118640207,
+        "widthMm": 374.5943943427198,
+        "heightMm": 235.96365118640207,
+        "boundingAreaSqm": 0.08839066100306708
+      }
+    },
+    {
+      "id": "split_pseudo_maria_blue__1_4",
+      "name": "pseudo maria (blue)_04",
+      "bounds": {
+        "xMm": 156.46771393229363,
+        "yMm": -50.30264169711301,
+        "rightMm": 399.47133714565564,
+        "bottomMm": 185.66071587982347,
+        "widthMm": 243.003623213362,
+        "heightMm": 235.9633575769365,
+        "boundingAreaSqm": 0.05733995083678568
+      }
+    },
+    {
+      "id": "split_pseudo_maria_blue__1_1",
+      "name": "pseudo maria (blue)_01",
+      "bounds": {
+        "xMm": 270.4763673018323,
+        "yMm": 0,
+        "rightMm": 549.3386124210203,
+        "bottomMm": 235.96365118640207,
+        "widthMm": 278.86224511918806,
+        "heightMm": 235.96365118640207,
+        "boundingAreaSqm": 0.06580135353636105
+      }
+    },
+    {
+      "id": "split_pseudo_maria_blue__1_3",
+      "name": "pseudo maria (blue)_03",
+      "bounds": {
+        "xMm": 1672.7501837355287,
+        "yMm": 364.0495082548484,
+        "rightMm": 1927.60134036589,
+        "bottomMm": 600.0132573110725,
+        "widthMm": 254.8511566303614,
+        "heightMm": 235.96374905622412,
+        "boundingAreaSqm": 0.06013563436981507
+      }
+    },
+    {
+      "id": "split_pseudo_soare_red__2_4",
+      "name": "pseudo soare (red)_04",
+      "bounds": {
+        "xMm": 156.47113937605909,
+        "yMm": -50.30264169711301,
+        "rightMm": 399.4745668497774,
+        "bottomMm": 185.66071587982347,
+        "widthMm": 243.0034274737183,
+        "heightMm": 235.9633575769365,
+        "boundingAreaSqm": 0.05733990464940214
+      }
+    },
+    {
+      "id": "split_pseudo_soare_red__2_1",
+      "name": "pseudo soare (red)_01",
+      "bounds": {
+        "xMm": 205.3204142183599,
+        "yMm": -102.45698042406092,
+        "rightMm": 484.17942963342625,
+        "bottomMm": 133.50667076234117,
+        "widthMm": 278.8590154150663,
+        "heightMm": 235.9636511864021,
+        "boundingAreaSqm": 0.06580059144358424
+      }
+    },
+    {
+      "id": "split_pseudo_soare_red__2_2",
+      "name": "pseudo soare (red)_02",
+      "bounds": {
+        "xMm": 211.97233240159386,
+        "yMm": -1.0224575801120423e-14,
+        "rightMm": 465.7253896305417,
+        "bottomMm": 235.9633575769365,
+        "widthMm": 253.75305722894785,
+        "heightMm": 235.9633575769365,
+        "boundingAreaSqm": 0.05987642337915505
+      }
+    },
+    {
+      "id": "split_pseudo_soare_red__2_5",
+      "name": "pseudo soare (red)_05",
+      "bounds": {
+        "xMm": 222.13073056288954,
+        "yMm": -61.17294494271182,
+        "rightMm": 439.4341300317209,
+        "bottomMm": 174.7906083738684,
+        "widthMm": 217.30339946883134,
+        "heightMm": 235.9635533165802,
+        "boundingAreaSqm": 0.05127568228643771
+      }
+    }
+  ],
+  "product_interpretation": {
+    "letters_only": false,
+    "logo_only": false,
+    "composition_letters_plus_logo": true,
+    "recommended_root_template": "TPL-VOLUMETRIC-LETTERS_v2",
+    "recommended_note": "Letters root with linked volumetric logo composition candidate; do not force logo-only or ACM."
+  }
+}

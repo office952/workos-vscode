@@ -1,0 +1,19 @@
+{
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "svg_source": null,
+  "quote_geometry_keys": null,
+  "quote_geometry": null,
+  "product_composition_recommendation": null,
+  "layer_role_setup": null,
+  "response_top_keys": [
+    "id",
+    "workspace_code",
+    "title",
+    "template_code",
+    "status",
+    "payload",
+    "readiness_status",
+    "created_at",
+    "updated_at"
+  ]
+}

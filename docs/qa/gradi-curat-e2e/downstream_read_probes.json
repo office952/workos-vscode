@@ -1,0 +1,27 @@
+[
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/product-system-binding",
+    "status_code": 200,
+    "snippet": "{\"workspace_id\":\"11891d68-c4c8-4719-acc5-f8fcb22a44af\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"template_id\":8,\"template_label\":\"Litere volumetrice\",\"product_family\":\"litere_volumetrice\",\"product_family_name\":\"Litere volumetrice\",\"operation_count\":14,\"component_count\":5,\"template_active\":true,\"module_links\":[{\"module_template_id\":9,\"module_template_code\":\"TPL-METAL-PREMOUNT-STRUCTURE_v1\",\"module_template_label\":\"Structuri metalice premontaj\",\"relation_type\":\"optional_addon\",\"trigger_field\":\"metal_support_required\",\"trigger_value\":true,\"input_mapping\":{\"width_mm\":\"premount_bar_length_ml\",\"s"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/task-preview",
+    "status_code": 200,
+    "snippet": "{\"workspace_id\":\"11891d68-c4c8-4719-acc5-f8fcb22a44af\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"items\":[{\"operation_code\":\"graphic_vector_preflight\",\"label\":\"Verificare grafic\u0103 / vectorizare\",\"workcenter\":\"graphics_workstation\",\"sequence\":1,\"component_ref\":null,\"active\":true,\"inactive_reason\":null,\"source\":\"operation_catalog\",\"depends_on\":[],\"required_skill\":[\"graphic_design\",\"vector_preflight\"],\"active_reason\":\"vector_asset_or_analysis_present\",\"operator_instruction\":\"Verific\u0103 SVG, straturi \u0219i preg\u0103tire pentru model produc\u021bie.\"},{\"operation_code\":\"confirmed_production_model\",\"label\":\"Conf"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/material-breakdown",
+    "status_code": 200,
+    "snippet": "{\"workspace_id\":\"11891d68-c4c8-4719-acc5-f8fcb22a44af\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"breakdown_scope\":\"quote_material_cost_estimate\",\"costing_purpose\":\"quote_material_cost_estimate\",\"consumption_mode\":\"quote_estimate_not_stock\",\"policy_version\":\"intake_v6_quote_material_cost_estimate_v1\",\"quote_waste_percent_default\":20.0,\"includes_nesting\":true,\"includes_consumables\":true,\"includes_pricing_hints\":true,\"stock_consumption\":false,\"nesting_rows\":[{\"material_key\":\"nesting_sheet_sheet_3000x2000\",\"display_name\":\"sheet_3000x2000\",\"nesting_kind\":\"sheet\",\"config_id\":\"sheet_3000x2000\",\"so"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/commercial-price-proposal",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  },
+  {
+    "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/estimated-internal-cost",
+    "status_code": 404,
+    "snippet": "{\"detail\":\"Not Found\"}"
+  }
+]

@@ -1,0 +1,172 @@
+[
+  {
+    "step": "RUNTIME_HEALTH",
+    "ts": "2026-07-16T08:55:30.813405+00:00",
+    "status": "PASS",
+    "http": {
+      "method": "GET",
+      "path": "/docs",
+      "status_code": 200
+    },
+    "note": "backend docs reachable"
+  },
+  {
+    "step": "A0_WORKSPACE_CREATE",
+    "ts": "2026-07-16T08:55:30.827291+00:00",
+    "status": "PASS",
+    "identity": {
+      "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af"
+    },
+    "input": {
+      "title": "GRADI-CURAT-E2E-DIAG-20260716085530",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "analyzer_mode": "analyzer_first",
+      "client_name": "Gradi Curat E2E Diagnostic",
+      "source": "gradi_curat_e2e_diagnostic_v1"
+    },
+    "expected": "201/200 workspace",
+    "actual": {
+      "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+      "status_code": 201
+    },
+    "http": {
+      "method": "POST",
+      "path": "/api/v1/intake-v6/workspaces",
+      "status_code": 201,
+      "body_keys": [
+        "id",
+        "workspace_code",
+        "title",
+        "template_code",
+        "status",
+        "payload",
+        "readiness_status",
+        "created_at",
+        "updated_at"
+      ],
+      "error_text": null
+    },
+    "persisted": true,
+    "manual_intervention": false,
+    "note": "root template letters v2; composition logos expected via analysis"
+  },
+  {
+    "step": "A_SVG_FILE_TO_ANALYZER_INGESTION",
+    "ts": "2026-07-16T08:55:30.888815+00:00",
+    "status": "PASS",
+    "identity": {
+      "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+      "svg_sha256": "593C4D439157B83CAB16C33D69CAF0AB426144D583FB1999FA7D1676D5AB6CF1"
+    },
+    "route": "/api/v1/intake-v6/workspaces/{id}/analysis-bundle",
+    "input": {
+      "file_name": "gradi-curat.svg",
+      "sha256": "593C4D439157B83CAB16C33D69CAF0AB426144D583FB1999FA7D1676D5AB6CF1",
+      "size": 27173
+    },
+    "expected": "persisted svg_source + analysis + quote_geometry",
+    "actual": {
+      "svg_source": null,
+      "has_quote_geometry": false,
+      "composition_present": false
+    },
+    "http": {
+      "method": "PUT",
+      "path": "/api/v1/intake-v6/workspaces/11891d68-c4c8-4719-acc5-f8fcb22a44af/analysis-bundle",
+      "status_code": 200
+    },
+    "persisted": true,
+    "manual_intervention": false
+  },
+  {
+    "step": "B_SVG_GEOMETRY_TO_INTAKE_V6_FIELDS",
+    "ts": "2026-07-16T08:55:30.897387+00:00",
+    "status": "PASS",
+    "identity": {
+      "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af"
+    },
+    "route": "/pricing-input-preview",
+    "input": "workspace after analysis-bundle",
+    "expected": "vector_file + letter_* geometry mapped",
+    "actual": {
+      "quote_input_keys": [
+        "intake_schema_version",
+        "template_code",
+        "support_mode",
+        "letter_count",
+        "cut_contour_count",
+        "inner_hole_count",
+        "width_mm",
+        "height_mm",
+        "depth_mm",
+        "face_finish_type",
+        "face_vinyl_enabled",
+        "face_vinyl_roll_width_mm",
+        "return_finish_type",
+        "return_depth_mm",
+        "return_wrapped",
+        "return_painted",
+        "backing_material",
+        "backing_thickness_mm",
+        "inventory_mutation_allowed",
+        "operation_flags",
+        "readiness_status",
+        "can_create_quote",
+        "letter_perimeter_m",
+        "total_letter_perimeter_ml",
+        "return_material_perimeter_ml",
+        "face_cutting_perimeter_ml",
+        "cutting_perimeter_ml",
+        "hole_perimeter_ml",
+        "face_area_m2",
+        "letter_face_area_m2",
+        "artwork_area_m2",
+        "real_letters_count",
+        "inner_holes_count",
+        "cutting_contours_count",
+        "material_piece_count",
+        "back_bevel_enabled",
+        "vector_file",
+        "backing_present",
+        "backing_mode",
+        "back_material",
+        "cnc_cutting_perimeter_ml",
+        "bevel_perimeter_ml",
+        "raw_vector_total_perimeter_ml",
+        "vector_total_perimeter_source",
+        "intake_source",
+        "geometry_calculation_quality",
+        "canonical_readiness"
+      ],
+      "vector_file": "gradi-curat.svg",
+      "letter_count": 19,
+      "letter_perimeter_m": 21.1675,
+      "letter_face_area_m2": 1.2638,
+      "width_mm": 5086.99,
+      "height_mm": 600.03,
+      "preview_top_keys": [
+        "workspace_id",
+        "template_code",
+        "is_ready_for_quote",
+        "adapter_status",
+        "adapter_blockers",
+        "adapter_warnings",
+        "quote_input_payload",
+        "operation_flags",
+        "production_counts",
+        "finish_summary",
+        "readiness_status",
+        "requires_grouped_finish_review",
+        "preview_only"
+      ]
+    },
+    "http": {
+      "method": "GET",
+      "status_code": 200
+    },
+    "persisted": false,
+    "manual_intervention": false,
+    "note": "preview is read model; finish_setup still required for commercial readiness"
+  }
+]

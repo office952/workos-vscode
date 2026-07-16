@@ -1,0 +1,42 @@
+{
+  "handoff": "C_INTAKE_V6_TO_PRODUCT_DEFINITION",
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "workspace_readiness_status": "finish_setup_incomplete",
+  "classification": "OWNER_DECISION",
+  "secondary_classification": "INTAKE_CONTRACT",
+  "exact_blocker": "finish_setup is null after SVG analysis + letters_plus_logo composition confirmation; commercial-ready ProductDefinition / quote adapter cannot proceed without operator-owned finish and lighting/mounting truths.",
+  "adapter_blockers": [
+    "MISSING_LIGHTING_ILLUMINATION_MODE",
+    "MISSING_LED_SYSTEM",
+    "MISSING_LED_LIGHT_COLOR",
+    "MISSING_LED_MODULE_POWER",
+    "MISSING_LED_MODULE_COUNT",
+    "MISSING_PSU_PLAN",
+    "UNCONFIRMED_LIGHTING_PLAN",
+    "runtime_capture:FINISH_TARGET_MISSING",
+    "runtime_capture:PRINT_REQUIRED_UNKNOWN",
+    "runtime_capture:LAMINATION_REQUIRED_UNKNOWN",
+    "runtime_capture:MOUNTING_SCOPE_MISSING"
+  ],
+  "pd_module_missing_fields_observed": [
+    "return_depth_mm",
+    "return_finish_type",
+    "face_finish_type",
+    "backing_mode",
+    "mounting_system"
+  ],
+  "owner_decision_fork": {
+    "illumination": "illuminated vs non-illuminated (drives LED/PSU blockers)",
+    "letter_finishes": "per-group face/return finishes for maria/soare/ana/gradinita",
+    "logo_execution": "print/laminate/transparency for Logo 1 and Logo 2",
+    "mounting": "mounting_system / scope — ACM must NOT be silently added",
+    "composition": "already confirmed letters_plus_logo — do not reopen unless owner rejects"
+  },
+  "why_not_patched": "Inventing finish_setup or lighting would fake same-scenario continuity and hide the first real commercial handoff gap.",
+  "what_already_works": [
+    "SVG validates and analyzes",
+    "geometry maps into Intake V6 quote_input",
+    "letters+logo composition recommendation and confirmation",
+    "ProductDefinition preview can bind workspace_payload (incomplete modules)"
+  ]
+}

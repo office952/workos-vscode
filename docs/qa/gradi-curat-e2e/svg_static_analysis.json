@@ -1,0 +1,130 @@
+{
+  "path": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
+  "filename": "gradi-curat.svg",
+  "size_bytes": 27173,
+  "sha256": "593C4D439157B83CAB16C33D69CAF0AB426144D583FB1999FA7D1676D5AB6CF1",
+  "mtime": "2026-07-01T21:07:39.313669",
+  "original_unchanged": true,
+  "xml_valid": true,
+  "parse_error": null,
+  "tag": "{http://www.w3.org/2000/svg}svg",
+  "attrib": {
+    "{http://www.w3.org/XML/1998/namespace}space": "preserve",
+    "width": "508.699cm",
+    "height": "60.003cm",
+    "version": "1.1",
+    "shape-rendering": "geometricPrecision",
+    "text-rendering": "geometricPrecision",
+    "image-rendering": "optimizeQuality",
+    "fill-rule": "evenodd",
+    "clip-rule": "evenodd",
+    "viewBox": "0 0 519.77114 61.30898"
+  },
+  "width": "508.699cm",
+  "height": "60.003cm",
+  "viewBox": "0 0 519.77114 61.30898",
+  "xmlns_default": "http://www.w3.org/2000/svg",
+  "namespaces": [
+    "default=http://www.w3.org/2000/svg",
+    "xlink=http://www.w3.org/1999/xlink",
+    "xodm=http://www.corel.com/coreldraw/odm/2003"
+  ],
+  "element_counts": {
+    "g": 1,
+    "metadata": 1,
+    "path": 6,
+    "svg": 1
+  },
+  "path_count": 6,
+  "rect": 0,
+  "circle": 0,
+  "ellipse": 0,
+  "polygon": 0,
+  "polyline": 0,
+  "line": 0,
+  "text_nodes": 0,
+  "image": 0,
+  "use": 0,
+  "group_g": 1,
+  "clipPath": 0,
+  "mask": 0,
+  "transforms_count": 0,
+  "nested_transform_pairs": 0,
+  "style_blocks": 0,
+  "has_css_style": false,
+  "hidden_elements_est": 0,
+  "clip_or_mask": 0,
+  "images": [],
+  "uses_sample": [],
+  "fonts_text_sample": [],
+  "external_refs": [],
+  "open_paths_est": 0,
+  "closed_paths_est": 6,
+  "stroke_only_paths_est": 2,
+  "fill_paths_est": 4,
+  "duplicate_ids": [],
+  "duplicate_id_count": 0,
+  "units_on_root": [
+    {
+      "raw": "508.699cm",
+      "number": "508.699",
+      "unit": "cm"
+    },
+    {
+      "raw": "60.003cm",
+      "number": "60.003",
+      "unit": "cm"
+    }
+  ],
+  "viewBox_parts": [
+    "0",
+    "0",
+    "519.77114",
+    "61.30898"
+  ],
+  "path_samples": [
+    "M170.93002 37.19735l4.32512 0c0.67966,0 1.18248,0.41954 1.49922,1.26442 0.09304,0.17117 0.67967,1.45917 1.75955,3.85752 ",
+    "M305.70913 37.19735l17.31928 0c0.47478,0 0.92185,0.20089 1.33624,0.60266 0.54011,0.5907 0.80537,1.34677 0.80537,2.26853l",
+    "M89.83133 37.19735l3.99453 0c0.81032,0 1.48999,0.42535 2.0347,1.28186 0.14418,0.25418 0.32565,0.644 0.54472,1.17594 0.03",
+    "M161.76277 0.00137l14.60952 0c0.72652,0 1.27553,0.42535 1.64835,1.28186 0.12571,0.3191 0.1907,0.67954 0.1907,1.06935l0 3",
+    "M68.18249 0.00901l-59.97779 0 0 5.31188c-0.3642,-0.20936 -0.73722,-0.3192 -1.11758,-0.3192 -3.90916,0 -7.07811,11.48515 "
+  ],
+  "unsupported_or_unusual_elements": [],
+  "geometry_truth": {
+    "width": {
+      "value": "508.699cm",
+      "class": "directly_declared"
+    },
+    "height": {
+      "value": "60.003cm",
+      "class": "directly_declared"
+    },
+    "viewBox": {
+      "value": "0 0 519.77114 61.30898",
+      "class": "directly_declared"
+    },
+    "physical_mm": {
+      "value": {"width_mm": 5086.99, "height_mm": 600.03},
+      "class": "safely_derived",
+      "note": "Derived from declared root width/height in cm (508.699cm x 60.003cm). ViewBox units remain unitless SVG user units."
+    },
+    "total_path_length": {
+      "value": null,
+      "class": "unavailable"
+    },
+    "closed_shape_area": {
+      "value": null,
+      "class": "unavailable"
+    },
+    "separate_shapes_letters": {
+      "value": 6,
+      "class": "estimated",
+      "note": "path element count only; not letter segmentation"
+    }
+  },
+  "production_vector_usable_without_modification": {
+    "likely": true,
+    "notes": []
+  },
+  "head_snippet": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\r\n<!-- Creator: CorelDRAW 2020 (64-Bit) -->\r\n<svg xmlns=\"http://www.w3.org/2000/svg\" xml:space=\"preserve\" width=\"508.699cm\" height=\"60.003cm\" version=\"1.1\" shape-rendering=\"geometricPrecision\" text-rendering=\"geometricPrecision\" image-rendering=\"optimizeQuality\""
+}

@@ -1,0 +1,44 @@
+{
+  "selected_root_template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "composition": "letters_plus_logo (confirmed)",
+  "linked_logo_template": "TPL-VOLUMETRIC-LOGO_v1",
+  "acm_mounting": "NOT inferred / NOT added",
+  "fields": {
+    "derivable_from_svg": [
+      {"field": "vector_file", "value": "gradi-curat.svg", "class": "directly_declared"},
+      {"field": "width_mm", "value": 5086.99, "class": "safely_derived_from_cm"},
+      {"field": "height_mm", "value": 600.03, "class": "safely_derived_from_cm"},
+      {"field": "letter_count / real_letters_count", "value": 19, "class": "safely_derived"},
+      {"field": "letter_perimeter_m", "value": 21.1675, "class": "safely_derived"},
+      {"field": "letter_face_area_m2", "value": 1.2638, "class": "safely_derived"},
+      {"field": "artwork_area_m2", "value": 0.8005, "class": "safely_derived"},
+      {"field": "cut_contour_count", "value": 28, "class": "safely_derived"},
+      {"field": "inner_hole_count", "value": 8, "class": "safely_derived"},
+      {"field": "layer roles (face x4, printed_artwork x2)", "class": "safely_derived_then_operator_confirmable"},
+      {"field": "composition letters_plus_logo", "class": "safely_derived_then_confirmed"}
+    ],
+    "requires_operator_input": [
+      "face_finish_type / oracal or ral per letter group",
+      "return_finish_type / return_depth_mm",
+      "backing_mode confirmation (preview defaulted forex_10_no_bevel — must be operator-owned)",
+      "logo print/laminate/transparency confirmation",
+      "finish_target runtime capture",
+      "quantity (if not default 1)",
+      "client/job metadata as required by intake shell"
+    ],
+    "requires_owner_or_product_decision": [
+      "illuminated yes/no (drives entire LED/PSU blocker set)",
+      "warm/cool light + LED module power/count/PSU if illuminated",
+      "mounting_system / mounting scope (ACM only if explicitly sold)",
+      "installation / location commercial scope",
+      "whether linked logo is sold as volumetric logo module vs printed artwork only"
+    ],
+    "missing_or_incomplete_in_current_intake_without_finish_setup": [
+      "finish_setup object itself",
+      "illumination mode",
+      "LED plan",
+      "print_required / lamination_required runtime captures",
+      "mounting_scope runtime capture"
+    ]
+  }
+}

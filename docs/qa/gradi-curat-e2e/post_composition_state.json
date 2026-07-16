@@ -1,0 +1,198 @@
+{
+  "workspace": {
+    "id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+    "workspace_code": "IV6-5A24B7B0",
+    "title": "GRADI-CURAT-E2E-DIAG-20260716085530",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "status": "collecting_data",
+    "readiness_status": "finish_setup_incomplete",
+    "created_at": "2026-07-16T08:55:30.817407",
+    "updated_at": "2026-07-16T08:59:19.562894",
+    "payload_summary": {
+      "svg_source": {
+        "file_name": "gradi-curat.svg",
+        "file_size_bytes": 27173,
+        "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+        "upload_status": "analyzed"
+      },
+      "quote_geometry": {
+        "letter_perimeter_m": 21.1675,
+        "total_letter_perimeter_ml": 21.1675,
+        "return_material_perimeter_ml": 21.1675,
+        "face_cutting_perimeter_ml": 24.6488,
+        "cutting_perimeter_ml": 24.6488,
+        "hole_perimeter_ml": 3.4812,
+        "face_area_m2": 1.2638,
+        "artwork_area_m2": 0.8005,
+        "artwork_boxes": [
+          {
+            "layer_key": "logo_instance_001",
+            "layer_name": "Logo 1",
+            "width_mm": 667.2126344054284,
+            "height_mm": 599.8535337617757,
+            "area_m2": 0.4002
+          },
+          {
+            "layer_key": "logo_instance_002",
+            "layer_name": "Logo 2",
+            "width_mm": 667.2126344054288,
+            "height_mm": 599.8535337617757,
+            "area_m2": 0.4002
+          }
+        ],
+        "letter_count": 19,
+        "real_letters_count": 19,
+        "inner_holes_count": 8,
+        "cutting_contours_count": 28,
+        "material_piece_count": 19,
+        "part_classification_confidence": "high",
+        "part_classification_warnings": [],
+        "primary_letters_layer_key": "pseudo:maria",
+        "width_mm": 5086.99,
+        "height_mm": 600.03,
+        "geometry_source": "nest2_face_parts_outer",
+        "confirmed": true
+      },
+      "layer_role_setup_status": "complete",
+      "layer_roles": [
+        {
+          "layer_key": "pseudo:maria",
+          "layer_name": "pseudo maria (blue)",
+          "confirmed_role": "face",
+          "auto_role": "face"
+        },
+        {
+          "layer_key": "pseudo:soare",
+          "layer_name": "pseudo soare (red)",
+          "confirmed_role": "face",
+          "auto_role": "face"
+        },
+        {
+          "layer_key": "pseudo:ana",
+          "layer_name": "pseudo ana (green)",
+          "confirmed_role": "face",
+          "auto_role": "face"
+        },
+        {
+          "layer_key": "pseudo:gradinita",
+          "layer_name": "pseudo gradinita (orange)",
+          "confirmed_role": "face",
+          "auto_role": "face"
+        },
+        {
+          "layer_key": "logo_instance_001",
+          "layer_name": "Logo 1",
+          "confirmed_role": "printed_artwork",
+          "auto_role": "printed_artwork"
+        },
+        {
+          "layer_key": "logo_instance_002",
+          "layer_name": "Logo 2",
+          "confirmed_role": "printed_artwork",
+          "auto_role": "printed_artwork"
+        }
+      ],
+      "product_composition_recommendation_status": "needs_confirmation",
+      "product_composition_type": "letters_plus_logo",
+      "product_composition_confirmed": {
+        "confirmed": true,
+        "confirmed_at": "2026-07-16T08:59:19.556301+00:00",
+        "confirmed_by": "dev@localhost",
+        "items": [
+          {
+            "composition_item_id": "letters",
+            "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+            "component_role": "volumetric_letters",
+            "source_layer_ids": [
+              "pseudo:maria",
+              "pseudo:soare",
+              "pseudo:ana",
+              "pseudo:gradinita"
+            ],
+            "source_group_ids": [
+              "pseudo:maria",
+              "pseudo:soare",
+              "pseudo:ana",
+              "pseudo:gradinita"
+            ],
+            "shared_module_policy": "dedupe_common_operations",
+            "status": "suggested"
+          },
+          {
+            "composition_item_id": "logo",
+            "template_code": "TPL-VOLUMETRIC-LOGO_v1",
+            "component_role": "volumetric_logo",
+            "source_layer_ids": [
+              "logo_instance_001",
+              "logo_instance_002"
+            ],
+            "source_group_ids": [
+              "logo_instance_001",
+              "logo_instance_002"
+            ],
+            "shared_module_policy": "dedupe_common_operations",
+            "status": "suggested"
+          }
+        ],
+        "operator_note": "gradi-curat e2e diagnostic confirm letters_plus_logo",
+        "source": "operator_confirmation_v1"
+      },
+      "finish_setup": null,
+      "product_truth": null
+    }
+  },
+  "pricing_preview_blockers": {
+    "is_ready_for_quote": false,
+    "adapter_status": "blocked",
+    "adapter_blockers": [
+      "MISSING_LIGHTING_ILLUMINATION_MODE",
+      "MISSING_LED_SYSTEM",
+      "MISSING_LED_LIGHT_COLOR",
+      "MISSING_LED_MODULE_POWER",
+      "MISSING_LED_MODULE_COUNT",
+      "MISSING_PSU_PLAN",
+      "UNCONFIRMED_LIGHTING_PLAN",
+      "runtime_capture:FINISH_TARGET_MISSING",
+      "runtime_capture:PRINT_REQUIRED_UNKNOWN",
+      "runtime_capture:LAMINATION_REQUIRED_UNKNOWN",
+      "runtime_capture:MOUNTING_SCOPE_MISSING"
+    ],
+    "readiness_status": "blocked_for_quote",
+    "canonical_fatal": [
+      "runtime_capture:FINISH_TARGET_MISSING",
+      "runtime_capture:PRINT_REQUIRED_UNKNOWN",
+      "runtime_capture:LAMINATION_REQUIRED_UNKNOWN",
+      "runtime_capture:MOUNTING_SCOPE_MISSING"
+    ]
+  },
+  "pd_hits": [
+    {
+      "path": "/api/v1/product-system/product-definition/TPL-VOLUMETRIC-LETTERS_v2",
+      "status": 200,
+      "snip": "{\"preview_version\":\"1.0.0\",\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"business_name_ro\":\"Litere volumetrice\",\"source_context\":{\"template_code\":\"TPL-VOLUMETRIC-LETTERS_v2\",\"workspace_id\":null,\"quote_id\":null,\"source_payload_type\":\"template_only\"},\"selected_modules\":[],\"optional_modules\":[{\"module_c"
+    },
+    {
+      "path": "/api/v1/product-definitions/TPL-VOLUMETRIC-LETTERS_v2",
+      "status": 404,
+      "snip": "{\"detail\":\"Not Found\"}"
+    },
+    {
+      "path": "/api/v1/product-definition/TPL-VOLUMETRIC-LETTERS_v2",
+      "status": 404,
+      "snip": "{\"detail\":\"Not Found\"}"
+    }
+  ],
+  "form_contract_status": 200,
+  "form_contract_snip": null,
+  "form_contract_keys": [
+    "summary",
+    "modules",
+    "field_bindings",
+    "form_system_backbone",
+    "trigger_alignments",
+    "valid_combinations",
+    "invalid_combinations",
+    "orphan_fields_audit",
+    "notes"
+  ]
+}
