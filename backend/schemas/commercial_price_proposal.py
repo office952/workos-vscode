@@ -37,6 +37,10 @@ class CommercialPriceLine(BaseModel):
     source: str
     owner_decision_required: bool = False
     warnings: list[str] = Field(default_factory=list)
+    # Linked-child provenance (logo segments under letters root). Optional for letter lines.
+    segment_key: str | None = None
+    layer_identity: str | None = None
+    linked_template_code: str | None = None
 
 
 class CommercialMinimumApplied(BaseModel):

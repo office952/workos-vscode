@@ -29,6 +29,7 @@ V6_OFFICIAL_COMMERCIAL_AUTHORITY = "commercial_price_proposal_7g"
 TD_W3_V6_DIAG_COST_PLUS = "TD-W3-V6-DIAG-COST-PLUS-001"
 
 # Optional/future commercial owner decisions — surfaced as warnings, not dry-run blockers.
+# Montaj is removed from this set at runtime when site installation is commercially required.
 V6_OPTIONAL_COMMERCIAL_OWNER_DECISION_CODES = frozenset(
 	{
 		"AMBALARE_COMMERCIAL_RULE",
@@ -222,9 +223,75 @@ def _commercial_line_items(commercial_preview: Any) -> list[dict[str, Any]]:
 				"source": line.source,
 				"owner_decision_required": line.owner_decision_required,
 				"warnings": list(line.warnings or []),
+				"segment_key": getattr(line, "segment_key", None),
+				"layer_identity": getattr(line, "layer_identity", None),
+				"linked_template_code": getattr(line, "linked_template_code", None),
 			}
 		)
 	return items
+
+
+def _optional_commercial_owner_codes(payload_raw: dict[str, Any], commercial_preview: Any) -> frozenset[str]:
+	"""Packaging stays optional; montaj is optional only when site install is not required."""
+	from services.commercial_price_proposal_service import _site_install_commercially_required
+
+	codes = {"AMBALARE_COMMERCIAL_RULE"}
+	site_required = False
+	if commercial_preview is not None:
+		summary = getattr(commercial_preview, "input_summary", None) or {}
+		if isinstance(summary, dict) and summary.get("site_install_required") is True:
+			site_required = True
+	if not site_required:
+		site_required = _site_install_commercially_required(payload_raw if isinstance(payload_raw, dict) else {})
+	if not site_required:
+		codes.add("MONTAJ_COMMERCIAL_RULE")
+	return frozenset(codes)
+
+
+def _enrich_quote_input_linked_logo_geometry(
+	payload_raw: dict[str, Any],
+	quote_input: dict[str, Any],
+) -> dict[str, Any]:
+	"""Copy linked-logo geometry/finish fields omitted by the pricing-input adapter."""
+	out = dict(quote_input or {})
+	raw_geometry = payload_raw.get("quote_geometry") if isinstance(payload_raw.get("quote_geometry"), dict) else {}
+	geometry = dict(out.get("quote_geometry") or {})
+	for key in (
+		"artwork_boxes",
+		"artwork_return_layers",
+		"artwork_area_m2",
+		"artwork_piece_count",
+		"artwork_return_perimeter_ml",
+	):
+		if (key not in geometry or geometry.get(key) in (None, [], {})) and key in raw_geometry:
+			geometry[key] = raw_geometry[key]
+	if geometry:
+		out["quote_geometry"] = geometry
+
+	raw_finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else {}
+	finish = dict(out.get("finish_setup") or {})
+	for key in (
+		"artwork_finishes",
+		"letter_led_module_count",
+		"emblem_led_module_count",
+		"emblem_lighting_mode",
+		"mounting_solution",
+		"mounting_scope",
+		"site_installation_included",
+		"light_color",
+		"led_module_count",
+		"total_led_module_count",
+	):
+		if (key not in finish or finish.get(key) in (None, [], {})) and key in raw_finish:
+			finish[key] = raw_finish[key]
+	letter_led = _positive_number(finish.get("letter_led_module_count"))
+	emblem_led = _positive_number(finish.get("emblem_led_module_count"))
+	total_led = _positive_number(finish.get("led_module_count") or finish.get("total_led_module_count"))
+	if letter_led is None and total_led is not None and emblem_led is not None and total_led >= emblem_led:
+		finish["letter_led_module_count"] = round(total_led - emblem_led, 4)
+	if finish:
+		out["finish_setup"] = finish
+	return out
 
 
 async def resolve_intake_v6_canonical_quote_input(
@@ -248,6 +315,7 @@ async def resolve_intake_v6_canonical_quote_input(
 		payload_raw,
 		dict(getattr(pricing_preview, "quote_input_payload", {}) or {}),
 	)
+	quote_input = _enrich_quote_input_linked_logo_geometry(payload_raw, quote_input)
 	return record.template_code, quote_input
 
 
@@ -285,6 +353,7 @@ async def build_intake_v6_priced_quote_dry_run(
 		payload_raw,
 		dict(getattr(pricing_preview, "quote_input_payload", {}) or {}),
 	)
+	quote_input = _enrich_quote_input_linked_logo_geometry(payload_raw, quote_input)
 	settings_vat_percent = float(await get_default_vat_pct(db))
 	commercial_inputs = _read_commercial_inputs(
 		payload_raw,
@@ -347,7 +416,8 @@ async def build_intake_v6_priced_quote_dry_run(
 		for blocker in commercial_preview.commercial_blockers:
 			blockers.append(_blocker(blocker.code, blocker.message))
 		for decision in commercial_preview.unknown_owner_decisions:
-			if decision.code in V6_OPTIONAL_COMMERCIAL_OWNER_DECISION_CODES:
+			optional_codes = _optional_commercial_owner_codes(payload_raw, commercial_preview)
+			if decision.code in optional_codes:
 				warnings.append(
 					decision.detail
 					or f"Optional owner commercial decision pending for {decision.label}."

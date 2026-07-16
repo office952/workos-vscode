@@ -27,6 +27,7 @@ from schemas.commercial_price_proposal import (
 )
 from schemas.product_definition import ProductDefinitionPreview
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
+from services.linked_logo_commercial_price_service import build_linked_logo_commercial_lines
 from services.product_definition_builder_service import (
     ProductDefinitionBuilderService,
     _classify_modules,
@@ -90,9 +91,16 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         "selected_psu_watts",
         "required_psu_watts",
         "led_module_count",
+        "letter_led_module_count",
+        "emblem_led_module_count",
+        "emblem_lighting_mode",
         "face_finish_type",
         "backing_mode",
         "letter_group_finishes",
+        "artwork_finishes",
+        "mounting_solution",
+        "mounting_scope",
+        "site_installation_included",
     ):
         if key in out and key not in merged_finish:
             merged_finish[key] = out[key]
@@ -101,7 +109,7 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
 
     geometry = out.get("quote_geometry") if isinstance(out.get("quote_geometry"), dict) else {}
     merged_geometry = dict(geometry)
-    for key in ("letter_count", "letter_face_area_m2", "letter_perimeter_m", "depth_mm"):
+    for key in ("letter_count", "letter_face_area_m2", "letter_perimeter_m", "depth_mm", "artwork_boxes", "artwork_return_layers", "artwork_area_m2", "artwork_piece_count"):
         if key in out and key not in merged_geometry:
             merged_geometry[key] = out[key]
     if merged_geometry:
@@ -149,6 +157,42 @@ def _payload_from_sources(
                     payload.setdefault("svg_source", {})["file_name"] = value
                 else:
                     payload[key] = value
+
+    # Enrich geometry/finish from ProductDefinition workspace projection when quote_input
+    # adapter omitted linked-logo fields (artwork boxes, letter/emblem LED splits).
+    geometry = payload.setdefault("quote_geometry", {})
+    if isinstance(geometry, dict) and isinstance(pd.geometry_inputs, dict):
+        for key, value in pd.geometry_inputs.items():
+            if key not in geometry or geometry.get(key) in (None, [], {}):
+                geometry[key] = value
+    finish = payload.setdefault("finish_setup", {})
+    if isinstance(finish, dict) and isinstance(pd.canonical_values, dict):
+        for key, value in pd.canonical_values.items():
+            if key.startswith("finish_setup."):
+                short = key.split(".", 1)[1]
+                if short not in finish or finish.get(short) in (None, [], {}):
+                    finish[short] = value
+            elif key in (
+                "letter_led_module_count",
+                "emblem_led_module_count",
+                "emblem_lighting_mode",
+                "artwork_finishes",
+                "mounting_solution",
+                "mounting_scope",
+                "site_installation_included",
+                "led_module_count",
+                "light_color",
+            ):
+                if key not in finish or finish.get(key) in (None, [], {}):
+                    finish[key] = value
+
+    if isinstance(finish, dict):
+        letter_led = _positive_number(finish.get("letter_led_module_count"))
+        emblem_led = _positive_number(finish.get("emblem_led_module_count"))
+        total_led = _positive_number(finish.get("led_module_count") or finish.get("total_led_module_count"))
+        if letter_led is None and total_led is not None and emblem_led is not None and total_led >= emblem_led:
+            finish["letter_led_module_count"] = round(total_led - emblem_led, 4)
+
     return payload
 
 
@@ -314,6 +358,22 @@ def _sablon_material(payload: dict[str, Any]) -> str | None:
     )
 
 
+def _site_install_commercially_required(payload: dict[str, Any]) -> bool:
+    """True when commercial montaj must be present (G5 / installation_template)."""
+    from services.mounting_scope_service import is_site_installation_active
+    from services.mounting_solution_service import is_installation_template_solution
+
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    if is_site_installation_active(finish):
+        return True
+    if is_site_installation_active(payload):
+        return True
+    solution = finish.get("mounting_solution")
+    if solution is None:
+        solution = payload.get("mounting_solution")
+    return is_installation_template_solution(solution)
+
+
 def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payload: dict[str, Any]) -> bool:
     from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
     from services.offer_scope_led_subscope_service import (
@@ -362,6 +422,12 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
 
         if not is_acm_boxed_mounting_payload(payload):
             return False
+
+    if rule.line_code == "montaj":
+        # Always surface when site install is commercially required; otherwise keep legacy
+        # optional include via finisaje module gate above.
+        if _site_install_commercially_required(payload):
+            return True
 
     return True
 
@@ -466,6 +532,7 @@ def _compute_status(
     forbidden_hourly: list[str],
     missing_geometry: list[str],
     has_payload: bool,
+    site_install_required: bool = False,
 ) -> tuple[CommercialProposalStatus, bool, str]:
     if forbidden_hourly:
         return "blocked", False, "low"
@@ -485,7 +552,27 @@ def _compute_status(
     if not has_payload:
         return "partial", False, "medium"
 
-    optional_line_codes = frozenset({"ambalare", "montaj"})
+    optional_line_codes = {"ambalare"}
+    if not site_install_required:
+        optional_line_codes.add("montaj")
+
+    # Linked-logo owner-pending tariffs keep proposal partial (fail closed).
+    logo_pending = [
+        line
+        for line in lines
+        if line.segment_key
+        and line.owner_decision_required
+        and line.commercial_unit_price is None
+        and line.quantity is not None
+    ]
+    if logo_pending:
+        return "partial", False, "medium"
+
+    if site_install_required:
+        montaj = next((line for line in lines if line.code == "montaj"), None)
+        if montaj is None or montaj.commercial_unit_price is None:
+            return "partial", False, "medium"
+
     critical_lines = [
         line
         for line in lines
@@ -576,6 +663,13 @@ class CommercialPriceProposalService:
                     )
                 )
 
+        logo_lines, logo_owner_decisions = build_linked_logo_commercial_lines(
+            payload=payload,
+            pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
+        )
+        lines.extend(logo_lines)
+        owner_decisions.extend(logo_owner_decisions)
+
         missing_geometry = _missing_critical_geometry(payload, active_modules) if has_payload else []
         if missing_geometry:
             blockers.append(
@@ -592,6 +686,7 @@ class CommercialPriceProposalService:
             if mounting == "direct_wall":
                 warnings.append("structura_suport correctly inactive for direct_wall mounting.")
 
+        site_install_required = _site_install_commercially_required(payload)
         forbidden_hourly = scan_forbidden_hourly_usage(lines)
         status, quote_ready, confidence = _compute_status(
             lines=lines,
@@ -600,6 +695,7 @@ class CommercialPriceProposalService:
             forbidden_hourly=forbidden_hourly,
             missing_geometry=missing_geometry,
             has_payload=has_payload,
+            site_install_required=site_install_required,
         )
 
         subtotals = [line.subtotal for line in lines if line.subtotal is not None]
@@ -622,6 +718,14 @@ class CommercialPriceProposalService:
                 detail=f"modules={','.join(sorted(active_modules))}",
             ),
         ]
+        if logo_lines:
+            provenance.append(
+                CommercialProvenanceEntry(
+                    key="linked_logo_commercial",
+                    source="linked_logo_commercial_price_service",
+                    detail=f"segments={len({line.segment_key for line in logo_lines if line.segment_key})}",
+                )
+            )
         if quote_input:
             provenance.append(
                 CommercialProvenanceEntry(
@@ -657,5 +761,9 @@ class CommercialPriceProposalService:
                 "has_payload": has_payload,
                 "active_modules": sorted(active_modules),
                 "workspace_id": workspace_id,
+                "linked_logo_segments": sorted(
+                    {line.segment_key for line in logo_lines if line.segment_key}
+                ),
+                "site_install_required": site_install_required,
             },
         )
