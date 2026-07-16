@@ -48,8 +48,13 @@
 - Visual Mobile V2: `/employee-app-v2/tasks` — **Ajutor solicitat** + **Acceptă**
 - Flag: local `frontend/.env.local` (`VITE_FEATURE_FLEX_COLLAB_UI=true`, gitignored)
 
+### Review findings
+- **F1 (blocking, fixed in `35977c2`):** helper Stop was shown for any `can_stop_own_session` including principals — now gated on `visible_as_helper`.
+- **F2 (deferred):** collab-read `can_accept_help` does not re-check operation eligibility (Operator UI does not expose Accept).
+- **F3 (deferred):** blueprint schema fields added; blueprint service may still default them until a later thin pass.
+
 ### Blockers
-- None for thin-projection scope. Full two-browser distinct auth actors limited by single `WORKOS_DEV_AUTH_USER_ID`; helper accept/start/stop proven via operator collaboration APIs + Mobile UI discovery under flag.
+- None remaining for thin-projection scope after F1 fix.
 
 ### Remaining
 - Optional thin `/operator` mirror (deferred — Execution is primary).
