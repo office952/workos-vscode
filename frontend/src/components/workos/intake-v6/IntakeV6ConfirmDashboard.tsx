@@ -98,7 +98,7 @@ function buildFinishSummaryLine(summary: IntakeV6ConfirmSummaryViewModel): strin
     parts.push(`Față ${summary.finish.letterFaceLabel}`);
   }
   if (summary.finish.artworkRows.length > 0) {
-    parts.push(`${summary.finish.artworkRows.length} artwork`);
+    parts.push(`${summary.finish.artworkRows.length} Vector Logo`);
   }
   if (summary.finish.vinylFace && summary.finish.vinylFace !== "—") {
     parts.push(summary.finish.vinylFace);

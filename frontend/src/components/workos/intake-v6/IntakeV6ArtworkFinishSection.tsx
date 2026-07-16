@@ -178,9 +178,7 @@ function inferPositionHint(row: IntakeV6ArtworkFinish): string | null {
 
 function genericArtworkDisplayName(row: IntakeV6ArtworkFinish, index: number): string {
   if (row.display_name?.trim()) return row.display_name.trim();
-  const source = `${row.layer_key} ${row.layer_name ?? ""}`.toLowerCase();
-  if (/logo|emblem|sigla/.test(source)) return `Logo ${index + 1}`;
-  return `Artwork ${index + 1}`;
+  return `Vector Logo ${index + 1}`;
 }
 
 function artworkTooltip(row: IntakeV6ArtworkFinish, displayName: string, stepOneConfirmed: boolean): string {
@@ -231,7 +229,7 @@ function ArtworkAlerts({
               onClick={onVerifyArtwork}
               data-testid="intake-v6-artwork-verify-cta"
             >
-              Verifică artwork
+              Verifică Vector Logo
             </button>
           ) : null}
         </div>
@@ -241,7 +239,7 @@ function ArtworkAlerts({
           className="rounded border border-slate-600/60 bg-slate-800/40 px-3 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-artwork-residual-vector-notice"
         >
-          Există artwork/logo neconfirmat (diferență de perimetru) — confirmă finisajele înainte de Confirmare.
+          Există Vector Logo neconfirmat (diferență de perimetru) — confirmă finisajele înainte de Confirmare.
         </div>
       ) : null}
     </div>

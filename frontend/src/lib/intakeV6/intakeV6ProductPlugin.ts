@@ -27,7 +27,7 @@ const VOLUMETRIC_LETTERS_REVIEW_TABS: IntakeV6ReviewTabDefinition[] = [
   {
     id: "finisaje",
     label: "Finisaje",
-    hint: "Față · cant · artwork",
+    hint: "Față · cant · Vector Logo",
     icon: Layers,
     moduleCodes: ["face", "cant", "artwork"],
   },

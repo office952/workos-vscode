@@ -279,7 +279,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
       />,
     );
     expect(screen.getByTestId("intake-v6-artwork-residual-vector-notice")).toHaveTextContent(
-      /artwork\/logo neconfirmat/i,
+      /Vector Logo neconfirmat/i,
     );
   });
 
@@ -310,8 +310,8 @@ describe("IntakeV6ArtworkFinishSection", () => {
         stepOneConfirmedLayerKeys={new Set(["logo-dreapta", "logo-stanga"])}
       />,
     );
-    expect(screen.getByTestId("intake-v6-artwork-header-logo-dreapta")).toHaveTextContent("Logo 1");
-    expect(screen.getByTestId("intake-v6-artwork-header-logo-stanga")).toHaveTextContent("Logo 2");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo-dreapta")).toHaveTextContent("Vector Logo 1");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo-stanga")).toHaveTextContent("Vector Logo 2");
     expect(screen.getByTestId("intake-v6-artwork-logo-dreapta")).toHaveAttribute(
       "title",
       expect.stringContaining("source: logo-dreapta"),

@@ -1948,6 +1948,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
       <IntakeV6ReviewOperatorBlockerBanner
         display={operatorBlockerBannerDisplay}
+        nextStepGuidance={reviewHandoffSurfacing.nextStepGuidance}
         onJumpToDiagnostic={handleJumpToDiagnostic}
       />
 
@@ -1968,7 +1969,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             ) : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
-              description="Față, cant și artwork — același card compact pe strat."
+              description="Față, cant și Vector Logo — același card compact pe strat."
               testId="intake-v6-review-section-face-letters"
               compact
             >

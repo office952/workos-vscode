@@ -100,7 +100,7 @@ describe("buildReviewHeaderStatus", () => {
     expect(status.details.find((row) => row.id === "layers")?.value).toBe("4/6 confirmate");
     expect(status.details.find((row) => row.id === "artwork")?.value).toBe("Necesită decizie");
     expect(status.actions.some((action) => action.id === "jump-artwork")).toBe(true);
-    expect(status.actions.some((action) => action.label === "Mergi la Artwork")).toBe(true);
+    expect(status.actions.some((action) => action.label === "Mergi la Vector Logo")).toBe(true);
     expect(status.actions.some((action) => action.id === "jump-layers")).toBe(true);
     expect(status.actions.some((action) => action.label === "Mergi la Straturi")).toBe(true);
   });

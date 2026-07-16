@@ -119,7 +119,7 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     },
     {
       id: "artwork",
-      label: "Artwork",
+      label: "Vector Logo",
       value:
         input.artworkTotal === 0
           ? "—"
@@ -154,7 +154,7 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     actions.push({ id: "confirm-step", label: "Confirmă rezumatul final" });
   }
   if (!artworkAllConfigured && input.artworkTotal > 0) {
-    actions.push({ id: "jump-artwork", label: "Mergi la Artwork" });
+    actions.push({ id: "jump-artwork", label: "Mergi la Vector Logo" });
   }
   if (input.containsMissingPrices) {
     actions.push({ id: "jump-live-calc", label: "Vezi Calcul Live" });

@@ -4,10 +4,13 @@ import type { OperatorBlockerBannerDisplay } from "@/lib/intakeV6/intakeV6Operat
 
 export default function IntakeV6ReviewOperatorBlockerBanner({
   display,
+  nextStepGuidance = null,
   onJumpToDiagnostic,
   onFocusTarget,
 }: {
   display: OperatorBlockerBannerDisplay;
+  /** Neutral guidance when the only pending gate is a future step (e.g. Step 3 confirmation). */
+  nextStepGuidance?: string | null;
   onJumpToDiagnostic?: () => void;
   onFocusTarget?: (targetId: string) => void;
 }) {
@@ -25,7 +28,16 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
   }
 
   if (!display.show) {
-    return null;
+    if (!nextStepGuidance) return null;
+    return (
+      <p
+        className="mb-3 rounded-md border border-[#2A3548]/80 bg-[#0A0F1A]/50 px-3 py-2 text-[12px] text-slate-300"
+        data-testid="intake-v6-review-next-step-guidance"
+        role="status"
+      >
+        {nextStepGuidance}
+      </p>
+    );
   }
 
   const blocked = display.severity === "blocked";
