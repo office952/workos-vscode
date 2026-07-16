@@ -956,11 +956,15 @@ async def block_my_task(
 
 
 async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, employee_id: int) -> dict:
+    from services.execution_task_help_service import close_open_help_for_task
+
     task, rt, _, task_sessions = await _get_task_context(
         db, order_id=order_id, task_id=task_id, employee_id=employee_id
     )
     status = derive_task_status_for_employee(task_sessions, employee_id)
     if status == "done":
+        # Idempotent complete: still reconcile OPEN help (retry-safe closer).
+        await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
         return {"status": "ok", "action": "complete", "task_id": task_id, "already_completed": True}
 
     my_session = active_session_for_employee(task_sessions, employee_id)
@@ -997,6 +1001,7 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
                 db, order_id=order_id, task_id=task_id, employee_id=employee_id
             )
             if derive_task_status_for_employee(task_sessions_after, employee_id) == "done":
+                await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
                 return {
                     "status": "ok",
                     "action": "complete",
@@ -1004,8 +1009,6 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
                     "already_completed": True,
                 }
         raise HTTPException(status_code=422, detail={"error": exc.code, "detail": exc.detail})
-
-    from services.execution_task_help_service import close_open_help_for_task
 
     await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
     return {"status": "ok", "action": "complete", "task_id": task_id, "timestamp": now_iso}

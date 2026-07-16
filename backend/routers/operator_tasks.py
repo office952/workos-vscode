@@ -534,17 +534,60 @@ async def perform_task_action(
                 completion_fields["completed_by_employee_name"] = guard_result.employee_name
 
         svc = ExecutionRealityService(db)
+        from services.execution_task_help_service import close_open_help_for_task
+        from services.task_work_session_service import SESSION_STATUS_COMPLETED
+
+        async def _task_has_explicit_completion(task_id: str) -> bool:
+            """True only when reality shows a prior explicit complete (not helper stop)."""
+            row = (
+                await db.execute(
+                    sa_select(ExecutionReality).where(
+                        ExecutionReality.order_id == req.order_id
+                    )
+                )
+            ).scalar_one_or_none()
+            if row is None:
+                return False
+            for entry in _parse_json(row.tasks_json):
+                if not isinstance(entry, dict) or entry.get("task_id") != task_id:
+                    continue
+                if not entry.get("ended_at"):
+                    continue
+                if entry.get("completed_by_employee_id") is not None:
+                    return True
+                if str(entry.get("status") or "") == SESSION_STATUS_COMPLETED:
+                    return True
+            return False
+
         try:
             await svc.end_task(
                 order_id=req.order_id,
                 task_id=req.task_id,
                 timestamp=now_iso,
                 completion_fields=completion_fields or None,
+                employee_id=req.employee_id,
             )
         except RealityInputError as e:
+            # Idempotent complete only when prior explicit completion exists.
+            # Never treat "never started" as success (closes help falsely).
+            if e.code == "task_not_started" and await _task_has_explicit_completion(
+                req.task_id
+            ):
+                await close_open_help_for_task(
+                    db, order_id=req.order_id, task_id=req.task_id
+                )
+                return {
+                    "status": "ok",
+                    "action": "complete",
+                    "task_id": req.task_id,
+                    "timestamp": now_iso,
+                    "already_completed": True,
+                    "completion_notes": req.completion_notes,
+                    "completed_by_employee_id": completion_fields.get(
+                        "completed_by_employee_id"
+                    ),
+                }
             raise HTTPException(status_code=422, detail={"error": e.code, "detail": e.detail})
-
-        from services.execution_task_help_service import close_open_help_for_task
 
         await close_open_help_for_task(db, order_id=req.order_id, task_id=req.task_id)
 
