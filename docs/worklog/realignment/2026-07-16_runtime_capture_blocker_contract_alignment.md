@@ -75,4 +75,4 @@ Not production proof.
 
 ## Commit
 
-`fix(intake): normalize runtime capture blocker contract`
+`1363e18` — `fix(intake): normalize runtime capture blocker contract`
