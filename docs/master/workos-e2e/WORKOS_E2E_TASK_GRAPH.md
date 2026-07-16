@@ -2,10 +2,11 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Accepted HEAD:** post-job actuals V1 COMPLETE (see STATUS)  
-**Active task:** **WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1** — **COMPLETE**  
-**Recommended next:** same-scenario Intake→completed-job owner proof, or HR labor-money authority (separate GO)  
-**Reentry plan:** `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md`  
+**Accepted HEAD:** `0b97f7d` (POST-JOB V1 ACCEPTED with nonblocking limitations)  
+**Active task:** **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW** — implementation **NOT STARTED**  
+**Recommended next:** `WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1` (owner G1–G4)  
+**Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
+**Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
 **Post-job worklog:** `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md`  
 
 
@@ -1295,17 +1296,32 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **PLAN READY FOR OWNER REVIEW** |
+| Status | **CLOSED** into post-job phase |
 | Verdict | `WORKOS_POST_FLEX_ROADMAP_REENTRY_PLAN_READY` |
-| Recommended next phase | `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1` |
 | Plan | `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md` |
-| Decision log | `.compound-engineering/workos-post-flex-roadmap-reentry/decision-log.md` |
-| Worklog | `docs/worklog/realignment/2026-07-16_workos_post_flex_roadmap_reentry.md` |
+
+## POST-JOB ACTUALS V1
+
+| Field | Value |
+|-------|-------|
+| Implementation | **COMPLETE** |
+| Independent closure | **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** |
+| Status stamp | **POST-JOB V1 ACCEPTED** |
+| Closure worklog | `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md` |
+| Implementation worklog | `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md` |
+
+## SAME-SCENARIO REQUEST → POST-JOB E2E V1
+
+| Field | Value |
+|-------|-------|
+| Status | **PLAN READY FOR OWNER REVIEW** |
+| Verdict | `WORKOS_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_PLAN_READY` |
+| Scenario | `TPL-VOLUMETRIC-LETTERS_v2` (new local real flow; not 23099) |
+| Plan | `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md` |
+| Decision log | `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/decision-log.md` |
+| Worklog | `docs/worklog/realignment/2026-07-16_workos_same_scenario_e2e_plan.md` |
 | Owner gates | G1–G4 before `/ce-work` |
-| Implementation | **COMPLETE** @ 2026-07-16 |
-| Remains paused | FLEX polish; UI-TRUTH; APP-AUTH-06G; PS as primary; capacity; Mobile V1; ShopFloor |
-| Post-job worklog | `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md` |
-| Verdict | `WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1_COMPLETE` |
+| Implementation | **NOT STARTED** |
 
 ## Dependency graph (ASCII)
 

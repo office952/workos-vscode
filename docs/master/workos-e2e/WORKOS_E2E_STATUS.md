@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `31c37de` (WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1 COMPLETE)  
+**Accepted HEAD:** `0b97f7d` (post-job V1 ACCEPTED with nonblocking limitations + JSX compile fix)  
 
-**Last updated:** 2026-07-16 (**WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1** COMPLETE)
+**Last updated:** 2026-07-16 (**POST-JOB V1 ACCEPTED** · **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1** — **COMPLETE** |
+| Active task | **SAME-SCENARIO E2E PLAN** — **READY FOR OWNER REVIEW** (implementation not started) |
 
-| Next task | Owner verify `/execution/23099` post-job truth; follow-on: same-scenario E2E proof or HR labor-money authority; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | Owner G1–G4 then `/ce-work` for `WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1`; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1339,9 +1339,11 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 ## WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1 — COMPLETE
 
-**Verdict:** `WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1_COMPLETE`
+**Verdict (implementation):** `WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1_COMPLETE`
 
-**Status:** **COMPLETE** (ACCEPT with known monetary gaps: labor money excluded by G2; machine usage not captured)
+**Independent closure verdict:** `WORKOS_POST_JOB_V1_ACCEPT_WITH_NONBLOCKING_LIMITATIONS`
+
+**Status stamp:** **POST-JOB V1 ACCEPTED** (with nonblocking limitations)
 
 **API:** `GET /api/v1/execution/{order_id}/post-job-truth` + extended profitability coverage fields
 
@@ -1349,7 +1351,29 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Worklog:** `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md`
 
+**Closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`
+
 **Runtime proof:** order `23099` — see `docs/qa/_post_job_runtime_proof_v2.json`
 
-**Not started / out of scope:** HR labor money; `/operator` mirror; FLEX reopen; Product System redesign; migration
+**Limitations:** catalog `unit_cost_at_read` (labeled); labor money excluded; machine/qty not_captured; local temp SKU residue documented; ship with `0b97f7d` compile fix
+
+**Out of scope:** HR labor money; `/operator` mirror; FLEX reopen; Product System redesign; migration
+
+## WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1 — PLAN READY FOR OWNER REVIEW
+
+**Verdict:** `WORKOS_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_PLAN_READY`
+
+**Status stamp:** **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW**
+
+**Implementation:** **NOT STARTED**
+
+**Scenario:** `TPL-VOLUMETRIC-LETTERS_v2` via new local real flow (not order `23099`)
+
+**Plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`
+
+**Decision log:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/decision-log.md`
+
+**Worklog:** `docs/worklog/realignment/2026-07-16_workos_same_scenario_e2e_plan.md`
+
+**Owner gates before `/ce-work`:** G1–G4 (see decision log)
 
