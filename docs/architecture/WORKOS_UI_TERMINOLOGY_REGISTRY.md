@@ -42,7 +42,7 @@ Status legend: **R** = RECOMMENDED · **G** = OWNER_GATED · **A** = already use
 
 | term_id | internal_term | display_label_ro | technical_alias | translation_key | context | status | forbidden_variants | notes |
 |---------|---------------|------------------|-----------------|-----------------|---------|--------|--------------------|-------|
-| term.product_system | Product System | Sistem produs | Product System | nav.product_system | navigation | G | Sistem Produse (unapproved) | Nav currently EN |
+| term.product_system | Product System | Catalog produse | Product System | nav.product_system | navigation | APPROVED | Sistem Produse | OD-TERM-01 owner-approved display (UI not applied yet) |
 | term.product_family | Product Family | Familie produs | Product Family | system.product_family | systems | R | | |
 | term.product_template | Product Template | Șablon produs | Product Template | system.product_template | systems | R | | Keep `TPL-*` EN |
 | term.dossier | Template Dossier | Dossier șablon | Dossier | system.dossier | technical | G | Dosar tehnic as BOM | OD-01: metadata only |
@@ -52,24 +52,24 @@ Status legend: **R** = RECOMMENDED · **G** = OWNER_GATED · **A** = already use
 | term.sold_scope | Sold Scope | Domeniu vândut | Sold Scope / offer_scope | system.sold_scope | business | R | | API keeps `offer_scope` |
 | term.form_system | Form System | Sistem formular | Form System | system.form_system | systems | R | | |
 | term.intake_v6 | Intake V6 | Intake V6 | Intake V6 | system.intake_v6 | systems | R | | Version label may stay |
-| term.workspace | Workspace | Spațiu de lucru | Workspace | system.workspace | business | G | | UUID stays EN |
-| term.product_definition | ProductDefinition | Definiție produs | ProductDefinition / PD | system.product_definition | technical | G | | PD OK in debug |
-| term.product_aggregate | ProductAggregate | Agregat tehnic | ProductAggregate | system.product_aggregate | technical | G | Fișă de lucru | |
+| term.workspace | Workspace | Spațiu de lucru | Workspace | system.workspace | business | APPROVED | | OD-TERM-07; UUID stays EN |
+| term.product_definition | ProductDefinition | Definiție produs | ProductDefinition / PD | system.product_definition | technical | APPROVED | | OD-TERM-05; PD debug OK |
+| term.product_aggregate | ProductAggregate | Structura tehnică a produsului | ProductAggregate / BOM | system.product_aggregate | technical | APPROVED | Fișă de lucru | OD-TERM-06 |
 | term.readiness | Readiness | Pregătire | Readiness | status.readiness | statuses | R | | |
 | term.missing_fields | Missing Fields | Câmpuri lipsă | Missing Fields | fields.missing | fields | R | | |
-| term.work_intake | Work Intake | Preluare lucrare | Work Intake | nav.work_intake | navigation | G | | Nav currently EN |
+| term.work_intake | Work Intake | Preluare lucrare | Work Intake | nav.work_intake | navigation | APPROVED | | OD-TERM-02; UI not applied yet |
 | term.quote | Quote | Ofertă | Quote | nav.quotes | navigation | A | | Nav RO |
 | term.order | Order | Comandă | Order | nav.orders | navigation | A | | |
 | term.execution_plan | ExecutionPlan | Plan de execuție | ExecutionPlan | system.execution_plan | systems | R | | ≠ reality |
 | term.execution_reality | Execution Reality | Realitate execuție | Execution Reality | system.execution_reality | systems | R | | |
 | term.workcenter | Workcenter | Centru de lucru | Workcenter / WC | system.workcenter | technical | R | | WC in debug |
 | term.inventory | Inventory | Inventar | Inventory | nav.inventory | navigation | A | | Nav “Inventar & OC” |
-| term.pricing | Pricing | Tarife | Pricing | nav.pricing | navigation | G | Prețuri registru alt. | Not commercial SoT |
+| term.pricing | Pricing | Tarife | Pricing | nav.pricing | navigation | APPROVED | | OD-TERM-04; not commercial SoT |
 | term.machines | Machines | Utilaje | Machines | nav.utilaje | navigation | A | | |
 | term.employees | Employees | Angajați | Employees | nav.employees | navigation | A | | |
 | term.attendance | Attendance | Pontaj | Attendance | nav.attendance | navigation | A | | |
-| term.module_chain | Module Chain | Harta sistemelor | Module Chain | system_map.title | navigation | G | Lanț module as primary | Primary RO = Harta; alias Module Chain |
-| term.governance | Governance | Guvernanța sistemului | System Governance | governance.title | navigation | G | | |
+| term.module_chain | Module Chain | Harta sistemelor | Module Chain | system_map.title | navigation | APPROVED | | OD-TERM-08; technical route stays `/modules` |
+| term.governance | Governance | Guvernanța sistemului | System Governance | governance.title | navigation | APPROVED | | OD-TERM-09; route stays `/governance` |
 | term.documentation_center | Documentation Center | Centrul de documentație | Documentation Center | docs.center.title | navigation | R | | Route planned `/documentation` |
 | term.source_of_truth | Source of Truth | Sursă de adevăr | Source of Truth | governance.source_of_truth | technical | R | | |
 | term.boundary | Boundary | Limită | Boundary | governance.boundary | technical | R | | |
@@ -85,26 +85,32 @@ Status legend: **R** = RECOMMENDED · **G** = OWNER_GATED · **A** = already use
 | term.continue | Continue | Continuă | Continue | action.continue | actions | R | | |
 | term.back | Back | Înapoi | Back | action.back | actions | R | | |
 | term.cancel | Cancel | Anulează | Cancel | action.cancel | actions | R | | |
-| term.control_tower | Control Tower | Control Tower | Control Tower | nav.control_tower | navigation | G | | Brand EN candidate |
-| term.shop_floor | Shop Floor | Shop Floor | Shop Floor | nav.shop_floor | navigation | G | | Brand EN candidate |
+| term.control_tower | Control Tower | Control Tower | Control Tower | nav.control_tower | navigation | APPROVED | | OD-TERM-03 brand EN |
+| term.shop_floor | Shop Floor | Shop Floor | Shop Floor | nav.shop_floor | navigation | APPROVED | | OD-TERM-03 brand EN |
 
 ---
 
-## 3. Owner decisions (ambiguous only)
+## 3. Owner decisions — APPROVED DISPLAY DIRECTION (2026-07-16)
 
-| ID | Issue | Variants | Recommendation | Impact | Blocks | Proposed answer |
-|----|-------|----------|----------------|--------|--------|-----------------|
-| OD-TERM-01 | Product System nav label | Product System / Sistem produs / Sistem Produse | **Sistem produs**; forbid Sistem Produse | Nav + PS chrome | UI polish waves | A: Sistem produs |
-| OD-TERM-02 | Work Intake nav label | Work Intake / Preluare lucrare | **Preluare lucrare** | Comercial nav | Intake polish | A: Preluare lucrare |
-| OD-TERM-03 | Keep Control Tower / Shop Floor EN | EN vs RO | Keep EN as **brand** aliases | Ops nav | Cosmetic only | A: keep EN brand |
-| OD-TERM-04 | Pricing label | Pricing / Tarife / Prețuri registru | **Tarife** | Resurse nav | Pricing polish | A: Tarife |
-| OD-TERM-05 | ProductDefinition UI | Definiție produs / PD / ProductDefinition | Operator: **Definiție produs**; debug: PD | Embed panels | Wave 3 | A: Definiție produs |
-| OD-TERM-06 | ProductAggregate UI | Agregat tehnic / Aggregate / BOM | **Agregat tehnic**; forbid Fișă de lucru | Embed panels | Wave 3 | A: Agregat tehnic |
-| OD-TERM-07 | Workspace operator term | Spațiu de lucru / Workspace | **Spațiu de lucru** | Intake | Wave 2 | A: Spațiu de lucru |
-| OD-TERM-08 | Module Chain secondary alias | Module Chain / Lanț module | Primary **Harta sistemelor**; alias **Module Chain** | `/modules` honesty | W0-B4 | A: as recommended |
-| OD-TERM-09 | Governance secondary alias | Governance / System Governance | Primary **Guvernanța sistemului**; alias **System Governance** | `/governance` honesty | W0-B5 | A: as recommended |
-| OD-TERM-10 | Locale fallback | RO-only vs RO→EN tech | Fallback: RO registry → technical EN | i18n | G-W0-I18N | A: RO→EN tech |
-| OD-TERM-11 | Debug/operator language split | Same RO vs EN debug | Operator RO; debug panels may show EN technical | All pages | None | A: split allowed |
+Recorded under `GO_W0_B2_DOCUMENTATION_INDEX_READ_MODEL`.  
+**Display-language only. UI labels not applied in application code in this build.**  
+Technical routes/IDs unchanged (e.g. `/modules`, `ModuleChain`, `product_system`).
+
+Plain-language pack: [`WORKOS_UI_TERMINOLOGY_OWNER_DECISION_PACK.md`](./WORKOS_UI_TERMINOLOGY_OWNER_DECISION_PACK.md)
+
+| ID | Approved display_label_ro | technical_alias | Notes |
+|----|---------------------------|-----------------|-------|
+| OD-TERM-01 | Catalog produse | Product System | Not Sistem Produse |
+| OD-TERM-02 | Preluare lucrare | Work Intake | |
+| OD-TERM-03 | Control Tower / Shop Floor | (same EN brands) | Keep English |
+| OD-TERM-04 | Tarife | Pricing | |
+| OD-TERM-05 | Definiție produs | ProductDefinition / PD | PD debug OK |
+| OD-TERM-06 | Structura tehnică a produsului | ProductAggregate / BOM | Forbid Fișă de lucru |
+| OD-TERM-07 | Spațiu de lucru | Workspace | |
+| OD-TERM-08 | Harta sistemelor | Module Chain | Route remains `/modules` |
+| OD-TERM-09 | Guvernanța sistemului | System Governance | Route remains `/governance` |
+| OD-TERM-10 | (policy) Romanian primary; safe Romanian fallback for missing operator strings; technical EN only in debug/admin | — | Softens earlier “EN tech as last resort for operators” |
+| OD-TERM-11 | Operator UI Romanian; API/IDs/logs/debug may stay technical English | — | |
 
 Resolved without OD (already consistent RO nav): Ofertă, Comandă, Execuție, Inventar, Utilaje, Angajați, Pontaj, Setări, Clienți.
 

@@ -185,6 +185,9 @@ PERMISSION_MATRIX: dict[str, List[str]] = {
     # System diagnostics
     "system.diagnostics.read": ["admin"],
 
+    # Documentation index (W0-B2 read-only; not a filesystem browser)
+    "system.documentation_read": ["admin"],
+
     # Integrations
     "integrations.smartbill.view": ["admin"],
     "integrations.smartbill.update": ["admin"],

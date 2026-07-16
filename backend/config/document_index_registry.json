@@ -1,0 +1,287 @@
+{
+  "metadata_version": "workos_truth_metadata/v1",
+  "index_version": "workos_documentation_index/v1",
+  "description": "Controlled Hybrid document index for W0-B2. Path membership does not imply canonical authority.",
+  "allowlisted_prefixes": [
+    "docs/architecture/",
+    "docs/plans/",
+    "docs/worklog/realignment/"
+  ],
+  "allowlisted_exact_paths": [
+    "AGENTS.md"
+  ],
+  "allowed_extensions": [".md"],
+  "excluded_name_substrings": [
+    ".env",
+    "credentials",
+    "secret",
+    ".pem",
+    ".key",
+    "node_modules",
+    ".venv",
+    "__pycache__",
+    ".git/",
+    ".db",
+    ".sqlite",
+    ".zip",
+    ".bak"
+  ],
+  "entries": [
+    {
+      "document_id": "workos-wave0-foundation-plan",
+      "title": "WorkOS Wave 0 Foundation and Truth Pages Plan",
+      "path": "docs/plans/2026-07-16-workos-wave-0-foundation-truth-pages-plan.md",
+      "category": "PLAN",
+      "authority": "DIRECTION_ONLY",
+      "status": "DIRECTION_ONLY",
+      "owner": "wave0",
+      "visibility_class": "ADMIN_ONLY",
+      "last_validated_at": "2026-07-16T22:00:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_truth_metadata/v1", "workos_documentation_index/v1"],
+      "worklog_refs": [
+        "docs/worklog/realignment/2026-07-16_workos_wave_0_b2_documentation_index_read_model.md"
+      ],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "Wave 0 sequencing authority for truth pages",
+      "display": {
+        "display_label_ro": "Plan Wave 0 — fundații",
+        "technical_alias": "Wave 0 Foundation Plan",
+        "translation_key": "docs.wave0_plan.title"
+      }
+    },
+    {
+      "document_id": "workos-truth-metadata-contract",
+      "title": "WorkOS Truth Metadata Contract",
+      "path": "docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md",
+      "category": "CONTRACTS",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "wave0",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": "2026-07-16T21:00:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_truth_metadata/v1"],
+      "code_refs": ["backend/schemas/truth_metadata/"],
+      "test_refs": ["backend/tests/test_truth_metadata_contract.py"],
+      "drift_status": "ALIGNED",
+      "reason_for_inclusion": "W0-B1 executable claim/document schemas",
+      "display": {
+        "display_label_ro": "Contract metadate adevăr",
+        "technical_alias": "Truth Metadata Contract",
+        "translation_key": "docs.truth_metadata_contract.title"
+      }
+    },
+    {
+      "document_id": "workos-page-completion-foundation",
+      "title": "WorkOS Page Completion Foundation",
+      "path": "docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md",
+      "category": "CONTRACTS",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "wave0",
+      "visibility_class": "ADMIN_ONLY",
+      "last_validated_at": "2026-07-16T22:10:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_page_completion_foundation/v1"],
+      "drift_status": "ALIGNED",
+      "reason_for_inclusion": "W0-B3 shared DoD / Figma / Doc Impact Gate policies",
+      "display": {
+        "display_label_ro": "Fundamente finalizare pagini",
+        "technical_alias": "Page Completion Foundation",
+        "translation_key": "docs.page_completion_foundation.title"
+      }
+    },
+    {
+      "document_id": "workos-ui-terminology-registry",
+      "title": "WorkOS UI Terminology Registry",
+      "path": "docs/architecture/WORKOS_UI_TERMINOLOGY_REGISTRY.md",
+      "category": "TERMINOLOGY",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "wave0",
+      "visibility_class": "ADMIN_ONLY",
+      "last_validated_at": "2026-07-16T22:20:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_ui_terminology_registry/v1"],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "Romanian-first terminology model + OD-TERM decisions",
+      "display": {
+        "display_label_ro": "Registru terminologie UI",
+        "technical_alias": "UI Terminology Registry",
+        "translation_key": "docs.terminology_registry.title"
+      }
+    },
+    {
+      "document_id": "workos-ui-terminology-owner-decision-pack",
+      "title": "WorkOS UI Terminology Owner Decision Pack",
+      "path": "docs/architecture/WORKOS_UI_TERMINOLOGY_OWNER_DECISION_PACK.md",
+      "category": "OWNER_DECISIONS",
+      "authority": "RECENT_EVIDENCE",
+      "status": "RECENT_EVIDENCE",
+      "owner": "owner",
+      "visibility_class": "ADMIN_ONLY",
+      "last_validated_at": "2026-07-16T22:18:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_ui_terminology_registry/v1"],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "Plain-language OD-TERM-01…11 pack",
+      "display": {
+        "display_label_ro": "Pachet decizii terminologie (owner)",
+        "technical_alias": "Terminology Owner Decision Pack",
+        "translation_key": "docs.terminology_owner_pack.title"
+      }
+    },
+    {
+      "document_id": "workos-canonical-documentation-authority-policy",
+      "title": "WorkOS Canonical Documentation Authority Policy",
+      "path": "docs/architecture/WORKOS_CANONICAL_DOCUMENTATION_AUTHORITY_POLICY.md",
+      "category": "ARCHITECTURE",
+      "authority": "OWNER_REVIEW_REQUIRED",
+      "status": "OWNER_REVIEW_REQUIRED",
+      "owner": "unknown",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": null,
+      "systems": ["governance"],
+      "pages": ["governance"],
+      "routes": ["/governance"],
+      "contracts": [],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "Document authority ladder reference (not auto-canonical)",
+      "display": {
+        "display_label_ro": "Politică autoritate documentație",
+        "technical_alias": "Canonical Documentation Authority Policy",
+        "translation_key": "docs.canonical_authority_policy.title"
+      }
+    },
+    {
+      "document_id": "product-truth-confirmation-policy",
+      "title": "Product Truth Confirmation Policy",
+      "path": "docs/architecture/product-system/PRODUCT_TRUTH_CONFIRMATION_POLICY.md",
+      "category": "ARCHITECTURE",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "product_system",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": null,
+      "systems": ["product_system", "intake_v6"],
+      "pages": ["product_system_catalog", "intake_v6_operator"],
+      "routes": ["/product-system/products", "/intake-v6"],
+      "contracts": ["product_truth"],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "ProductDefinition / product truth boundary support",
+      "display": {
+        "display_label_ro": "Politică confirmare adevăr produs",
+        "technical_alias": "Product Truth Confirmation Policy",
+        "translation_key": "docs.product_truth_confirmation.title"
+      }
+    },
+    {
+      "document_id": "commercial-preview-boundary-contract",
+      "title": "Commercial Preview Boundary Contract",
+      "path": "docs/architecture/product-system/COMMERCIAL_PREVIEW_BOUNDARY_CONTRACT.md",
+      "category": "CONTRACTS",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "commercial",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": null,
+      "systems": ["pricing", "quote", "intake_v6"],
+      "pages": ["inventory_pricing", "quotes"],
+      "routes": ["/inventory/pricing", "/quotes"],
+      "contracts": ["commercial_preview_boundary"],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "Pricing registry separation from commercial quote truth",
+      "display": {
+        "display_label_ro": "Limită previzualizare comercială",
+        "technical_alias": "Commercial Preview Boundary",
+        "translation_key": "docs.commercial_preview_boundary.title"
+      }
+    },
+    {
+      "document_id": "pre-order-execution-plan-preview-boundary",
+      "title": "Pre-Order Execution Plan Preview Boundary Contract",
+      "path": "docs/architecture/product-system/PRE_ORDER_EXECUTION_PLAN_PREVIEW_BOUNDARY_CONTRACT.md",
+      "category": "CONTRACTS",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "execution",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": null,
+      "systems": ["execution_plan", "order", "product_aggregate"],
+      "pages": ["execution", "orders"],
+      "routes": ["/execution", "/orders"],
+      "contracts": ["pre_order_execution_plan_preview"],
+      "drift_status": "NOT_VALIDATED",
+      "reason_for_inclusion": "ExecutionPlan preview boundary",
+      "display": {
+        "display_label_ro": "Limită previzualizare plan de execuție",
+        "technical_alias": "Pre-Order EP Preview Boundary",
+        "translation_key": "docs.ep_preview_boundary.title"
+      }
+    },
+    {
+      "document_id": "workos-documentation-index-read-model",
+      "title": "WorkOS Documentation Index Read Model",
+      "path": "docs/architecture/WORKOS_DOCUMENTATION_INDEX_READ_MODEL.md",
+      "category": "CONTRACTS",
+      "authority": "SUPPORTING_CURRENT",
+      "status": "SUPPORTING_CURRENT",
+      "owner": "wave0",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": "2026-07-16T22:30:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_documentation_index/v1"],
+      "code_refs": [
+        "backend/services/documentation_index_service.py",
+        "backend/config/document_index_registry.json"
+      ],
+      "api_refs": [
+        "GET /api/v1/system/documentation",
+        "GET /api/v1/system/documentation/{document_id}"
+      ],
+      "test_refs": ["backend/tests/test_documentation_index.py"],
+      "drift_status": "ALIGNED",
+      "reason_for_inclusion": "W0-B2 technical contract for documentation index",
+      "display": {
+        "display_label_ro": "Index documentație (read model)",
+        "technical_alias": "Documentation Index Read Model",
+        "translation_key": "docs.documentation_index.title"
+      }
+    },
+    {
+      "document_id": "agents-md",
+      "title": "AGENTS.md — WorkOS agent guide",
+      "path": "AGENTS.md",
+      "category": "ARCHITECTURE",
+      "authority": "REFERENCE",
+      "status": "REFERENCE",
+      "owner": "engineering",
+      "visibility_class": "INTERNAL_TECHNICAL",
+      "last_validated_at": "2026-07-16T22:10:00+00:00",
+      "systems": ["wave0_foundation"],
+      "pages": [],
+      "routes": [],
+      "contracts": ["workos_page_completion_foundation/v1"],
+      "drift_status": "ALIGNED",
+      "reason_for_inclusion": "Implementation route / agent discipline pointer to foundation",
+      "display": {
+        "display_label_ro": "Ghid agenți WorkOS",
+        "technical_alias": "AGENTS.md",
+        "translation_key": "docs.agents_md.title"
+      }
+    }
+  ]
+}
