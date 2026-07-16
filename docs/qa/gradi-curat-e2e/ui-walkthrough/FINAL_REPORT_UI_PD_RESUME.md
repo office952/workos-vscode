@@ -112,7 +112,7 @@ Docs/evidence + worklog only.
 ## 24. Commit
 
 Docs/evidence only: YES  
-Hash: *(after commit)*
+Hash: `161624f505f293261744f21a6eee5f0ae27932d7`
 
 ## 25. Push/PR
 
