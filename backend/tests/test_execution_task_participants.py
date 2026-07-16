@@ -445,7 +445,7 @@ def test_m14_read_includes_helper_memberships(membership_fixture):
             employee_id=fx["helper_id"],
         )
         payload = await build_order_task_collaboration_read(fx["db_session"], fx["order_id"])
-        assert payload.contract_version == "execution_task_collaboration_read/v1.1"
+        assert payload.contract_version == "execution_task_collaboration_read/v1.2"
         task = next(t for t in payload.tasks if t.task_id == fx["task_id"])
         assert task.authorized_helper_count == 1
         assert len(task.helper_memberships) == 1

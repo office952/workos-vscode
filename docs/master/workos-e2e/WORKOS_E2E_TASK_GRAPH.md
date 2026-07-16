@@ -1271,22 +1271,20 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | BUILD | `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md` |
 | Next | Phase 2 GO (help/pools) or unpause UI-TRUTH-01B / APP-AUTH-06G |
 
-## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation plan
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation
 
 | Field | Value |
 |-------|-------|
-| Status | **PLAN READY FOR OWNER REVIEW** (2026-07-16) |
-| Verdict | `PROD_FLEX_COLLABORATION_PHASE_2_PLAN_READY` |
-| Starting HEAD | `18398c1` |
-| Phase 2 scope | Broadcast OPEN help + split pools + helper work + scoped guards |
-| Help model | Broadcast OPEN; membership-as-acceptance; no singular `accepted_by` |
+| Status | **COMPLETE** (2026-07-16) |
+| Verdict | `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE` |
+| Starting HEAD | `f23dc74` |
+| Delivered | Help lifecycle + pools + helper sessions + capabilities + read v1.2 |
 | Deferred | UI/Mobile UX, quotas, leave+stop, orphan s50 merge |
-| Implementation | **NOT AUTHORIZED** |
-| Migration | **NOT AUTHORIZED** (`s58` planned off `s57`) |
-| Worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_plan.md` |
-| Plan | `.compound-engineering/prod-flex-collaboration-phase-2/plan.md` |
-| Decision log | `.compound-engineering/prod-flex-collaboration-phase-2/decision-log.md` |
-| Next | Owner GO on G1–G8 in `decision-log.md` |
+| Implementation | **SHIPPED** (Phase 2 backend only) |
+| Migration | `s58_create_execution_task_help_requests` |
+| Worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_implementation.md` |
+| BUILD | `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_2.md` |
+| Next | Phase 3 UI/Mobile consumers (separate GO) |
 
 
 ## Dependency graph (ASCII)

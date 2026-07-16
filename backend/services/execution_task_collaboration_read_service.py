@@ -44,9 +44,10 @@ READ_MODEL_NOTES = [
     "optional_principal is assigned_employee_id compatibility — not participation proof",
     "actual_workers are derived only from existing sessions with employee_id",
     "helper_memberships are HELPER authorization rows — not work proof",
+    "open_help_requests are OPEN help need signals — acceptance is membership, not session",
     "operation_completed uses explicit per-session completion signals only",
     "legacy_or_derived_task_status may show done while operation_completed is false",
-    "no invite-before-start, help lifecycle, or quantity progress in Phase 1",
+    "viewer-scoped capability fields are null on order-wide projection unless filled by consumer",
 ]
 
 
@@ -181,10 +182,12 @@ def project_task_collaboration_read(
     sessions: list[dict[str, Any]],
     employee_names: dict[int, str] | None = None,
     helper_memberships: list[Any] | None = None,
+    open_help_requests: list[Any] | None = None,
 ) -> TaskCollaborationRead:
-    """Pure read projection for one operational task (Option B + Phase 1 membership)."""
+    """Pure read projection for one operational task (Option B + Phase 1/2)."""
     names = employee_names or {}
     memberships = list(helper_memberships or [])
+    help_reqs = list(open_help_requests or [])
     authorized_helper_count = sum(
         1
         for m in memberships
@@ -299,6 +302,8 @@ def project_task_collaboration_read(
         ui_collaboration_capability="CURRENTLY_INDIVIDUAL_UI",
         helper_memberships=memberships,
         authorized_helper_count=authorized_helper_count,
+        open_help_requests=help_reqs,
+        has_open_help=len(help_reqs) > 0,
     )
 
 
@@ -338,6 +343,31 @@ async def build_order_task_collaboration_read(
 
     memberships_by_task = await list_order_memberships_by_task(db, order_id)
 
+    help_by_task: dict[str, list] = {}
+    try:
+        from models.execution_task_help_request import ExecutionTaskHelpRequest
+        from schemas.execution_task_help import HELP_STATUS_OPEN
+        from services.execution_task_help_service import _serialize as _serialize_help
+        from services.flex_membership_flags import is_collab_phase2_enabled
+
+        if is_collab_phase2_enabled():
+            help_rows = list(
+                (
+                    await db.execute(
+                        select(ExecutionTaskHelpRequest).where(
+                            ExecutionTaskHelpRequest.order_id == order_id,
+                            ExecutionTaskHelpRequest.status == HELP_STATUS_OPEN,
+                        )
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            for hr in help_rows:
+                help_by_task.setdefault(str(hr.task_id), []).append(_serialize_help(hr))
+    except Exception:
+        help_by_task = {}
+
     projections: list[TaskCollaborationRead] = []
     for plan_task in operational_tasks_only(plan.tasks_json):
         if not isinstance(plan_task, dict):
@@ -353,6 +383,7 @@ async def build_order_task_collaboration_read(
                 sessions=task_sessions,
                 employee_names=employee_names,
                 helper_memberships=memberships_by_task.get(task_id, []),
+                open_help_requests=help_by_task.get(task_id, []),
             )
         )
 

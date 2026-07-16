@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `18398c1` (Phase 1 complete; Phase 2 plan ready)
+**Accepted HEAD:** (Phase 2 complete — see latest feat(execution) collaboration commits)
 
-**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 plan **READY FOR OWNER REVIEW**; implementation **BLOCKED**)
+**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 **COMPLETE**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-2** — plan (**READY FOR OWNER REVIEW**) |
+| Active task | **PROD-FLEX-COLLABORATION-PHASE-2** — **COMPLETE** |
 
-| Next task | **Owner review Phase 2 GO** (`decision-log.md` G1–G8); implementation **BLOCKED** until signed; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
+| Next task | **Phase 3 UI/Mobile consumers** (separate GO) or unpause UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1291,23 +1291,23 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md`
 
-## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation plan
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation
 
-**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_2_PLAN_READY`
+**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE`
 
-**Status:** **PHASE-2 PLAN READY FOR OWNER REVIEW** — implementation not started
+**Status:** **PHASE-2 COMPLETE** — backend help + pools + helper work authority shipped
 
-**Recommended Phase 2:** Collaboration Work Authority — broadcast OPEN help + split pools + helper session start/stop + scoped guards + capability flags (backend only)
-
-**Help model lock:** Broadcast OPEN; membership-as-acceptance; no singular `accepted_by`; no acceptance child table / quota in Phase 2
+**Delivered:** help lifecycle (broadcast OPEN / targeted), accept→membership, ajutor pool, capability flags, helper session start/stop, scoped claim guards, collab read v1.2, s58 migration
 
 **Deferred:** Operator/Mobile UI, quotas, leave+stop combo, orphan Alembic merge (Phase 3 / separate GOs)
 
-**Implementation / migration / writes:** **NOT AUTHORIZED** until owner G1–G8 sign-off
+**Migration:** `s58_create_execution_task_help_requests` (explicit; orphan s50 untouched)
 
 **Plan:** `.compound-engineering/prod-flex-collaboration-phase-2/plan.md`
 
 **Decision log:** `.compound-engineering/prod-flex-collaboration-phase-2/decision-log.md`
 
-**Worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_plan.md`
+**Implementation worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_implementation.md`
+
+**BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_2.md`
 

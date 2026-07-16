@@ -9,7 +9,23 @@
     "/api/v1/intake-v6/workspaces",
     "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/join",
     "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    "/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept",
+    "/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline",
+    "/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel",
+    "/api/v1/operator/orders/{order_id}/collaboration/help-requests/{help_request_id}/close",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/manager-add",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start",
+    "/api/v1/operator/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop",
     "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/join",
-    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/leave"
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/leave",
+    "/api/v1/employee-mobile/tasks/help-opportunities",
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    "/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept",
+    "/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline",
+    "/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel",
+    "/api/v1/employee-mobile/orders/{order_id}/collaboration/help-requests/{help_request_id}/close",
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start",
+    "/api/v1/employee-mobile/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop"
   ]
 }

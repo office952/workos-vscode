@@ -519,7 +519,7 @@ def test_build_order_task_collaboration_read_integration(flex_order_fixture):
             },
         )
         payload = await build_order_task_collaboration_read(db_session, order_id)
-        assert payload.contract_version == "execution_task_collaboration_read/v1.1"
+        assert payload.contract_version == "execution_task_collaboration_read/v1.2"
         task = next(item for item in payload.tasks if item.task_id == "T-FLEX-DB")
         assert task.optional_principal.optional_principal_employee_id == primary_id
         assert task.has_multiple_actual_workers is True
@@ -535,7 +535,7 @@ def test_task_collaboration_read_endpoint(flex_order_fixture):
     response = client.get(f"/api/v1/operator/orders/{order_id}/task-collaboration-read")
     assert response.status_code == 200, response.text
     body = response.json()
-    assert body["contract_version"] == "execution_task_collaboration_read/v1.1"
+    assert body["contract_version"] == "execution_task_collaboration_read/v1.2"
     assert body["order_id"] == order_id
     assert len(body["tasks"]) == 1
     assert body["tasks"][0]["task_id"] == "T-FLEX-DB"

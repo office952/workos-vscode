@@ -12,8 +12,9 @@ from typing import Any, Literal
 from pydantic import BaseModel, Field
 
 from schemas.execution_task_membership import HelperMembershipRead
+from schemas.execution_task_help import HelpRequestRead
 
-EXECUTION_TASK_COLLABORATION_READ_VERSION = "execution_task_collaboration_read/v1.1"
+EXECUTION_TASK_COLLABORATION_READ_VERSION = "execution_task_collaboration_read/v1.2"
 
 PrincipalSource = Literal[
     "execution_plan",
@@ -96,6 +97,17 @@ class TaskCollaborationRead(BaseModel):
     # Phase 1 additive — HELPER membership authorization (not session-derived).
     helper_memberships: list[HelperMembershipRead] = Field(default_factory=list)
     authorized_helper_count: int = 0
+    # Phase 2 additive — help + capability truth (viewer-agnostic order projection).
+    open_help_requests: list[HelpRequestRead] = Field(default_factory=list)
+    has_open_help: bool = False
+    # Viewer-scoped capabilities are filled when viewer_employee_id is supplied.
+    visible_as_principal: bool | None = None
+    visible_as_helper: bool | None = None
+    can_view_help: bool | None = None
+    can_accept_help: bool | None = None
+    can_start_helper_work: bool | None = None
+    can_stop_own_session: bool | None = None
+    can_complete_operation: bool | None = None
 
 
 class OrderTaskCollaborationReadResponse(BaseModel):

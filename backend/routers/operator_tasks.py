@@ -47,6 +47,21 @@ from services.execution_task_membership_service import (
     leave_helper_membership,
     list_task_memberships,
 )
+from services.execution_task_help_service import (
+    accept_help_request,
+    cancel_help_request,
+    close_help_request,
+    create_help_request,
+    decline_help_request,
+    list_help_requests_for_task,
+)
+from schemas.execution_task_help import (
+    HelpActionResponse,
+    HelpRequestCreateBody,
+    HelpRequestListResponse,
+    ManagerAddMembershipBody,
+)
+from services.helper_work_session_service import start_helper_session, stop_helper_session
 from services.material_procurement_status_service import (
     PROCUREMENT_STATUSES,
     update_material_procurement_status,
@@ -529,6 +544,10 @@ async def perform_task_action(
         except RealityInputError as e:
             raise HTTPException(status_code=422, detail={"error": e.code, "detail": e.detail})
 
+        from services.execution_task_help_service import close_open_help_for_task
+
+        await close_open_help_for_task(db, order_id=req.order_id, task_id=req.task_id)
+
         return {
             "status": "ok",
             "action": "complete",
@@ -780,6 +799,184 @@ async def operator_collaboration_memberships(
 ) -> TaskMembershipListResponse:
     """List HELPER memberships for a task (active + historical)."""
     return await list_task_memberships(db, order_id=order_id, task_id=task_id)
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    response_model=HelpActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_create_help_request(
+    order_id: int,
+    task_id: str,
+    body: HelpRequestCreateBody,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> HelpActionResponse:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await create_help_request(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        requested_by_employee_id=resolved.id,
+        body=body,
+    )
+
+
+@router.get(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/help-requests",
+    response_model=HelpRequestListResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_list_help_requests(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+) -> HelpRequestListResponse:
+    return await list_help_requests_for_task(db, order_id=order_id, task_id=task_id)
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/accept",
+    response_model=HelpActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_accept_help(
+    order_id: int,
+    help_request_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> HelpActionResponse:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await accept_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        employee_id=resolved.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/decline",
+    response_model=HelpActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_decline_help(
+    order_id: int,
+    help_request_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> HelpActionResponse:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await decline_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        employee_id=resolved.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/cancel",
+    response_model=HelpActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_cancel_help(
+    order_id: int,
+    help_request_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> HelpActionResponse:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await cancel_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        actor_employee_id=resolved.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/collaboration/help-requests/{help_request_id}/close",
+    response_model=HelpActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_close_help(
+    order_id: int,
+    help_request_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> HelpActionResponse:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await close_help_request(
+        db,
+        order_id=order_id,
+        help_request_id=help_request_id,
+        actor_employee_id=resolved.id,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/manager-add",
+    response_model=MembershipActionResponse,
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_manager_add_membership(
+    order_id: int,
+    task_id: str,
+    body: ManagerAddMembershipBody,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> MembershipActionResponse:
+    """Invite HELPER membership without a help request."""
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await join_helper_membership(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=body.employee_id,
+        joined_by_employee_id=resolved.id,
+        join_source="manager_add",
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/start",
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_helper_session_start(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> Dict[str, Any]:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await start_helper_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=resolved.id,
+        employee_name=resolved.name,
+    )
+
+
+@router.post(
+    "/orders/{order_id}/tasks/{task_id}/collaboration/helper-session/stop",
+    dependencies=[Depends(require_permission("execution.production_blueprint"))],
+)
+async def operator_helper_session_stop(
+    order_id: int,
+    task_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> Dict[str, Any]:
+    resolved = await resolve_employee_for_user(db, current_user)
+    return await stop_helper_session(
+        db,
+        order_id=order_id,
+        task_id=task_id,
+        employee_id=resolved.id,
+    )
 
 
 @router.get(
