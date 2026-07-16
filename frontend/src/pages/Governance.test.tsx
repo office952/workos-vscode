@@ -2,35 +2,97 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import Governance from "@/pages/Governance";
 
-vi.mock("@/api/documentationIndex", () => ({
-  fetchDocumentationIndex: vi.fn(async () => ({
-    state: "ok" as const,
-    data: {
-      index_version: "workos_documentation_index/v1",
-      count: 2,
-      items: [
-        {
-          document_id: "doc.page_completion_foundation",
-          title: "Page Completion Foundation",
-          authority: "SUPPORTING_CURRENT",
-          status: "CURRENT",
-          last_validated_at: null,
-          drift_status: "ALIGNED",
-          technical_id: "doc.page_completion_foundation",
-        },
-        {
-          document_id: "doc.truth_metadata",
-          title: "Truth Metadata Contract",
-          authority: "SUPPORTING_CURRENT",
-          status: "CURRENT",
-          last_validated_at: null,
-          drift_status: "NOT_VALIDATED",
-          technical_id: "doc.truth_metadata",
-        },
-      ],
+const mockIndexItems = [
+  {
+    document_id: "doc.page_completion_foundation",
+    title: "Page Completion Foundation",
+    path: "docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md",
+    category: "CONTRACTS",
+    authority: "SUPPORTING_CURRENT",
+    status: "CURRENT",
+    last_validated_at: null,
+    drift_status: "ALIGNED",
+    related_systems: ["wave0_foundation"],
+    related_pages: ["/governance"],
+    technical_id: "doc.page_completion_foundation",
+    display: {
+      display_label_ro: "Fundamente completare pagină",
+      description_ro: "Contract de completare a paginilor de adevăr.",
     },
-  })),
-}));
+  },
+  {
+    document_id: "doc.truth_metadata",
+    title: "Truth Metadata Contract",
+    path: "docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md",
+    category: "CONTRACTS",
+    authority: "SUPPORTING_CURRENT",
+    status: "STALE",
+    last_validated_at: null,
+    drift_status: "DOCUMENTATION_DRIFT",
+    related_systems: ["wave0_foundation"],
+    related_pages: [],
+    technical_id: "doc.truth_metadata",
+  },
+  {
+    document_id: "doc.superseded_example",
+    title: "Superseded Example",
+    path: "docs/plans/example-superseded.md",
+    category: "PLAN",
+    authority: "HISTORICAL",
+    status: "SUPERSEDED",
+    last_validated_at: "2026-01-01T00:00:00Z",
+    drift_status: "ALIGNED",
+    related_systems: [],
+    related_pages: [],
+    technical_id: "doc.superseded_example",
+  },
+  {
+    document_id: "doc.owner_review",
+    title: "Owner Review Doc",
+    path: "docs/architecture/OWNER_REVIEW.md",
+    category: "POLICY",
+    authority: "OWNER_REVIEW_REQUIRED",
+    status: "OWNER_REVIEW_REQUIRED",
+    last_validated_at: null,
+    drift_status: "NOT_VALIDATED",
+    related_systems: ["governance"],
+    related_pages: ["/governance"],
+    technical_id: "doc.owner_review",
+  },
+];
+
+vi.mock("@/api/documentationIndex", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/api/documentationIndex")>();
+  return {
+    ...actual,
+    fetchDocumentationIndex: vi.fn(async () => ({
+      state: "ok" as const,
+      data: {
+        index_version: "workos_documentation_index/v1",
+        count: mockIndexItems.length,
+        items: mockIndexItems,
+      },
+    })),
+    fetchDocumentationDetail: vi.fn(async (documentId: string) => ({
+      state: "ok" as const,
+      data: {
+        technical_id: documentId,
+        reason_for_inclusion: "Allowlisted for Governance slice",
+        file_exists: true,
+        content_markdown: `# ${documentId}\n\nRead-only fixture content.`,
+        index_version: "workos_documentation_index/v1",
+        document: {
+          document_id: documentId,
+          title: documentId,
+          path: "docs/architecture/fixture.md",
+          category: "CONTRACTS",
+          authority: "SUPPORTING_CURRENT",
+          status: "CURRENT",
+        },
+      },
+    })),
+  };
+});
 
 const TAB_IDS = [
   "ownership",
@@ -94,7 +156,28 @@ describe("Governance tab completion", () => {
     render(<Governance />);
     expect(screen.getByTestId("governance-ownership")).toBeInTheDocument();
     await waitFor(() => {
-      expect(screen.getByTestId("governance-docs-ok")).toHaveTextContent("2 documente indexate");
+      expect(screen.getByTestId("governance-docs-ok")).toHaveTextContent("4 documente indexate");
     });
+  });
+
+  it("shows Important Documents section from B2 index on Surse de adevăr", async () => {
+    render(<Governance />);
+    fireEvent.click(screen.getByTestId("governance-tab-truth"));
+    const section = await screen.findByTestId("governance-important-documents");
+    expect(section).toBeInTheDocument();
+    expect(within(section).getByTestId("important-docs-list")).toBeInTheDocument();
+    expect(within(section).getByTestId("important-doc-doc.page_completion_foundation")).toBeInTheDocument();
+    expect(within(section).getByTestId("doc-flag-stale")).toBeInTheDocument();
+    expect(within(section).getByTestId("doc-flag-superseded")).toBeInTheDocument();
+    expect(within(section).getByTestId("doc-flag-owner-review")).toBeInTheDocument();
+    expect(within(section).getAllByText("SUPPORTING_CURRENT").length).toBeGreaterThan(0);
+    expect(within(section).getByText(/docs\/architecture\/WORKOS_PAGE_COMPLETION_FOUNDATION\.md/)).toBeInTheDocument();
+
+    fireEvent.click(within(section).getByTestId("important-doc-open-doc.page_completion_foundation"));
+    const reader = await screen.findByTestId("important-docs-reader");
+    await waitFor(() => {
+      expect(reader).toHaveTextContent("Read-only fixture content");
+    });
+    expect(reader).toHaveTextContent(/Fără editare/);
   });
 });

@@ -22,6 +22,7 @@ import {
   fetchDocumentationIndex,
   type DocumentationIndexFetchResult,
 } from "@/api/documentationIndex";
+import { ImportantDocumentsSection } from "@/components/workos/ImportantDocumentsSection";
 import { SectionHeader } from "@/components/workos/SharedComponents";
 import {
   Shield,
@@ -1105,7 +1106,11 @@ function AgentAuthorityView() {
 }
 
 // --- SOURCE OF TRUTH TAB ---
-function TruthHierarchyView() {
+function TruthHierarchyView({
+  docsResult,
+}: {
+  docsResult: DocumentationIndexFetchResult | null;
+}) {
   return (
     <div className="space-y-4" data-testid="governance-panel-truth">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.truth} />
@@ -1157,6 +1162,8 @@ function TruthHierarchyView() {
           Dacă codul și runtime-ul contrazic .md → QA Alignment investighează, Nucleu arbitrează dacă e nevoie.
         </p>
       </div>
+
+      <ImportantDocumentsSection docsResult={docsResult} />
     </div>
   );
 }
@@ -1819,7 +1826,7 @@ export default function Governance() {
       case "agents":
         return <AgentAuthorityView />;
       case "truth":
-        return <TruthHierarchyView />;
+        return <TruthHierarchyView docsResult={docsResult} />;
       case "gates":
         return <GateView />;
       case "guardrails":
