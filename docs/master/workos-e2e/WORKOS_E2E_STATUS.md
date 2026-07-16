@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `17af5f6` (Phase 2 implemented; **closure CORRECTION_REQUIRED**)
+**Accepted HEAD:** _(set after correction commits — see Phase 2 correction section)_  
 
-**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 **CORRECTION_REQUIRED**; Phase 3 plan **BLOCKED**)
+**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2-INTEGRITY-CORRECTION **COMPLETE**; Phase 3 planning **READY**)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-2-CORRECTION** — plan (**READY FOR OWNER GO**) |
+| Active task | **PROD-FLEX-COLLABORATION-PHASE-2** — integrity correction **COMPLETE**; Phase 3 UI planning unlocked |
 
-| Next task | **Owner GO** on correction G1–G5; Phase 3 UI **BLOCKED** until re-close; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
+| Next task | **Phase 3 UI planning** (Operator / Mobile capability consumers) — not implementation in prior correction task; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1291,23 +1291,23 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **BUILD:** `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md`
 
-## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation + closure
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation + correction
 
 **Verdict (implementation):** `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE` (code shipped at `17af5f6`)
 
-**Verdict (closure audit):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_REQUIRED`
+**Verdict (closure audit):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_REQUIRED` (historical)
 
-**Status:** Phase 2 **not accepted** for Phase 3 — correction plan ready for owner GO
+**Verdict (integrity correction):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_COMPLETE`
 
-**Blocking findings:** cancel actor unused (any route-eligible employee may cancel); helper session start / completion→help-close multiprocess races; completion→help partial (split commits + runtime never ran real complete)
+**Status:** Phase 2 **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** — safe to plan Phase 3 UI
+
+**Correction worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md`
 
 **Correction plan:** `.compound-engineering/prod-flex-collaboration-phase-2-correction/plan.md`
 
-**Decision log:** `.compound-engineering/prod-flex-collaboration-phase-2-correction/decision-log.md`
+**Runtime evidence:** `docs/qa/_phase2_correction_runtime_evidence.json`
 
-**Closure:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md`
+**Phase 3:** **READY** for planning (UI implementation not started here)
 
-**Phase 3:** **BLOCKED** — do not plan/implement UI until correction re-closes
-
-**Prior plan / BUILD / worklog:** Phase 2 plan + `BUILD_PROD_FLEX_COLLAB_PHASE_2.md` + implementation worklog remain historical
+**Prior closure (superseded):** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md`
 

@@ -1271,20 +1271,20 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | BUILD | `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md` |
 | Next | Phase 2 GO (help/pools) or unpause UI-TRUTH-01B / APP-AUTH-06G |
 
-## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation + closure
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation + correction
 
 | Field | Value |
 |-------|-------|
-| Status | **CORRECTION REQUIRED** (2026-07-16 closure) |
+| Status | **CORRECTION COMPLETE** (2026-07-16) |
 | Implementation verdict | `PROD_FLEX_COLLABORATION_PHASE_2_COMPLETE` (shipped) |
-| Closure verdict | `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_REQUIRED` |
-| Starting HEAD (impl) | `f23dc74` |
-| Closure HEAD | `17af5f6` |
-| Blocking | Cancel auth open; multiprocess session/close races; completion→help partial proof |
+| Closure verdict (historical) | `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_REQUIRED` |
+| Correction verdict | `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_COMPLETE` |
+| Acceptance | `ACCEPT_WITH_NONBLOCKING_LIMITATIONS` |
+| Starting HEAD (correction) | `e400c42` |
 | Correction plan | `.compound-engineering/prod-flex-collaboration-phase-2-correction/plan.md` |
-| Closure | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md` |
-| Phase 3 | **BLOCKED** |
-| Next | Owner GO on correction G1–G5 |
+| Correction worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md` |
+| Phase 3 | **READY** for planning |
+| Next | Phase 3 UI plan (capability consumers) — separate GO |
 
 
 ## Dependency graph (ASCII)

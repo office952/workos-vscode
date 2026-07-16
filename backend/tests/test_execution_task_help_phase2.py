@@ -842,3 +842,367 @@ def test_r3_claim_pool_still_guards_other_session(db_fixture, db_session):
 
     db_fixture.run(_check())
     _cleanup_overrides()
+
+
+async def _assign_principal(db_session, *, order_id: int, task_id: str, employee_id: int) -> None:
+    import json as _json
+
+    plan = (
+        await db_session.execute(
+            select(ExecutionPlan)
+            .where(ExecutionPlan.order_id == order_id)
+            .order_by(ExecutionPlan.id.desc())
+            .limit(1)
+        )
+    ).scalar_one()
+    tasks = _json.loads(plan.tasks_json or "[]")
+    for entry in tasks:
+        if isinstance(entry, dict) and str(entry.get("task_id")) == task_id:
+            entry["assigned_employee_id"] = employee_id
+    plan.tasks_json = _json.dumps(tasks)
+    await db_session.commit()
+
+
+def test_c1_cancel_requester_only(phase2_fixture):
+    fx = phase2_fixture
+
+    async def _run():
+        created = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(),
+        )
+        hid = created.help_request.help_request_id
+        await accept_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            help_request_id=hid,
+            employee_id=fx["helper1_id"],
+        )
+        # Helper (member) cannot cancel
+        with pytest.raises(HTTPException) as exc_helper:
+            await cancel_help_request(
+                fx["db_session"],
+                order_id=fx["order_id"],
+                help_request_id=hid,
+                actor_employee_id=fx["helper1_id"],
+            )
+        assert exc_helper.value.status_code == 403
+        assert exc_helper.value.detail["error"] == "help_cancel_forbidden"
+        # Unrelated cannot cancel
+        with pytest.raises(HTTPException) as exc_other:
+            await cancel_help_request(
+                fx["db_session"],
+                order_id=fx["order_id"],
+                help_request_id=hid,
+                actor_employee_id=fx["ineligible_id"],
+            )
+        assert exc_other.value.detail["error"] == "help_cancel_forbidden"
+        # Requester can cancel; memberships remain
+        cancelled = await cancel_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            help_request_id=hid,
+            actor_employee_id=fx["principal_id"],
+        )
+        assert cancelled.help_request.status == "CANCELLED"
+        mem = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskParticipant).where(
+                    ExecutionTaskParticipant.order_id == fx["order_id"],
+                    ExecutionTaskParticipant.employee_id == fx["helper1_id"],
+                )
+            )
+        ).scalar_one()
+        assert mem.status == "active"
+
+    fx["db_fixture"].run(_run())
+
+
+def test_c1b_targeted_helper_declines_not_cancels(phase2_fixture):
+    fx = phase2_fixture
+
+    async def _run():
+        created = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(targeted_employee_id=fx["helper1_id"]),
+        )
+        hid = created.help_request.help_request_id
+        with pytest.raises(HTTPException) as exc:
+            await cancel_help_request(
+                fx["db_session"],
+                order_id=fx["order_id"],
+                help_request_id=hid,
+                actor_employee_id=fx["helper1_id"],
+            )
+        assert exc.value.detail["error"] == "help_cancel_forbidden"
+        declined = await decline_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            help_request_id=hid,
+            employee_id=fx["helper1_id"],
+        )
+        assert declined.help_request.status == "DECLINED"
+
+    fx["db_fixture"].run(_run())
+
+
+def test_c2_mobile_complete_closes_open_help(phase2_fixture):
+    fx = phase2_fixture
+
+    async def _run():
+        from services.employee_mobile_tasks_service import complete_my_task
+
+        await _assign_principal(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            employee_id=fx["principal_id"],
+        )
+        created = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(),
+        )
+        hid = created.help_request.help_request_id
+        await accept_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            help_request_id=hid,
+            employee_id=fx["helper1_id"],
+        )
+        svc = ExecutionRealityService(fx["db_session"])
+        now = datetime.now(timezone.utc).isoformat()
+        await svc.start_task(
+            fx["order_id"],
+            f"ORD-{fx['order_id']}",
+            fx["task_id"],
+            now,
+            initial_fields={
+                "employee_id": fx["principal_id"],
+                "employee_name": "Principal",
+                "role": "primary",
+            },
+        )
+        result = await complete_my_task(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            employee_id=fx["principal_id"],
+        )
+        assert result["action"] == "complete"
+        help_row = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskHelpRequest).where(ExecutionTaskHelpRequest.id == hid)
+            )
+        ).scalar_one()
+        assert help_row.status == "CLOSED"
+        mem = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskParticipant).where(
+                    ExecutionTaskParticipant.employee_id == fx["helper1_id"],
+                    ExecutionTaskParticipant.order_id == fx["order_id"],
+                )
+            )
+        ).scalar_one()
+        assert mem.status == "active"
+
+        # Leftover OPEN after complete must still close on already_completed retry
+        again = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(reason="leftover after complete"),
+        )
+        retry = await complete_my_task(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            employee_id=fx["principal_id"],
+        )
+        assert retry.get("already_completed") is True
+        leftover = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskHelpRequest).where(
+                    ExecutionTaskHelpRequest.id == again.help_request.help_request_id
+                )
+            )
+        ).scalar_one()
+        assert leftover.status == "CLOSED"
+
+    fx["db_fixture"].run(_run())
+
+
+def test_c3_orm_open_unique_declared():
+    from models.execution_task_help_request import ExecutionTaskHelpRequest
+
+    names = {ix.name for ix in ExecutionTaskHelpRequest.__table__.indexes}
+    assert "uq_execution_task_help_open_per_task" in names
+
+
+def test_c3b_create_all_enforces_open_unique(db_fixture, db_session):
+    """Partial unique index from ORM create_all must reject a second OPEN row."""
+
+    async def _run():
+        # Ensure table exists via metadata (fixture DB already create_all'd).
+        order_id = _unique_order_id()
+        task_id = f"task-open-unique-{uuid.uuid4().hex[:8]}"
+        emp = await _seed_employee(
+            db_session, user_id=f"u-ou-{uuid.uuid4().hex[:8]}", name="OU Emp"
+        )
+        await db_session.execute(
+            text(
+                "INSERT INTO execution_task_help_requests "
+                "(order_id, task_id, requested_by_employee_id, status, created_at, updated_at) "
+                "VALUES (:oid, :tid, :eid, 'OPEN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+            ),
+            {"oid": order_id, "tid": task_id, "eid": emp.id},
+        )
+        await db_session.commit()
+        with pytest.raises(Exception):
+            await db_session.execute(
+                text(
+                    "INSERT INTO execution_task_help_requests "
+                    "(order_id, task_id, requested_by_employee_id, status, created_at, updated_at) "
+                    "VALUES (:oid, :tid, :eid, 'OPEN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)"
+                ),
+                {"oid": order_id, "tid": task_id, "eid": emp.id},
+            )
+            await db_session.commit()
+        await db_session.rollback()
+
+    db_fixture.run(_run())
+
+
+def test_c2b_operator_complete_closes_and_rejects_never_started(phase2_fixture, auth_client):
+    """Real operator complete closes OPEN help; never-started does not fake success."""
+    fx = phase2_fixture
+
+    async def _prep():
+        await _assign_principal(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            employee_id=fx["principal_id"],
+        )
+        created = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(reason="operator complete proof"),
+        )
+        return created.help_request.help_request_id
+
+    hid = fx["db_fixture"].run(_prep())
+
+    # Never-started complete must remain 422 and leave help OPEN
+    never = auth_client.post(
+        "/api/v1/operator/task-action",
+        json={
+            "order_id": fx["order_id"],
+            "task_id": fx["task_id"],
+            "action": "complete",
+            "employee_id": fx["principal_id"],
+        },
+    )
+    assert never.status_code == 422, never.text
+    assert never.json()["detail"]["error"] in {
+        "task_not_started",
+        "reality_not_initialised",
+    }
+
+    async def _check_still_open():
+        row = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskHelpRequest).where(ExecutionTaskHelpRequest.id == hid)
+            )
+        ).scalar_one()
+        assert row.status == "OPEN"
+
+    fx["db_fixture"].run(_check_still_open())
+
+    async def _start():
+        svc = ExecutionRealityService(fx["db_session"])
+        now = datetime.now(timezone.utc).isoformat()
+        await svc.start_task(
+            fx["order_id"],
+            f"ORD-{fx['order_id']}",
+            fx["task_id"],
+            now,
+            initial_fields={
+                "employee_id": fx["principal_id"],
+                "employee_name": "Principal",
+                "role": "primary",
+            },
+        )
+
+    fx["db_fixture"].run(_start())
+
+    done = auth_client.post(
+        "/api/v1/operator/task-action",
+        json={
+            "order_id": fx["order_id"],
+            "task_id": fx["task_id"],
+            "action": "complete",
+            "employee_id": fx["principal_id"],
+            "completion_notes": "operator complete closes help",
+        },
+    )
+    assert done.status_code == 200, done.text
+    assert done.json().get("already_completed") is not True
+
+    async def _check_closed():
+        row = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskHelpRequest).where(ExecutionTaskHelpRequest.id == hid)
+            )
+        ).scalar_one()
+        assert row.status == "CLOSED"
+
+    fx["db_fixture"].run(_check_closed())
+
+    # Leftover OPEN + already_completed retry closes help
+    async def _leftover():
+        again = await create_help_request(
+            fx["db_session"],
+            order_id=fx["order_id"],
+            task_id=fx["task_id"],
+            requested_by_employee_id=fx["principal_id"],
+            body=HelpRequestCreateBody(reason="leftover for operator retry"),
+        )
+        return again.help_request.help_request_id
+
+    leftover_id = fx["db_fixture"].run(_leftover())
+    retry = auth_client.post(
+        "/api/v1/operator/task-action",
+        json={
+            "order_id": fx["order_id"],
+            "task_id": fx["task_id"],
+            "action": "complete",
+            "employee_id": fx["principal_id"],
+        },
+    )
+    assert retry.status_code == 200, retry.text
+    # Either explicit already_completed or silent idempotent end_task success.
+    assert retry.json().get("action") == "complete"
+
+    async def _check_leftover_closed():
+        row = (
+            await fx["db_session"].execute(
+                select(ExecutionTaskHelpRequest).where(
+                    ExecutionTaskHelpRequest.id == leftover_id
+                )
+            )
+        ).scalar_one()
+        assert row.status == "CLOSED"
+
+    fx["db_fixture"].run(_check_leftover_closed())
