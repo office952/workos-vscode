@@ -3,8 +3,8 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **NONE** — W7-T01 / Build 1 **PROVEN_V1**  
-**Recommended next:** **W7-T02** reconciliation breadth (or planning-minutes completeness) — not started  
+**Active task:** **NONE** — W7-T02 **PROVEN_V1**  
+**Recommended next:** **W7-T03** owner sign-off checklist (not started)  
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
 **Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
@@ -1115,7 +1115,25 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Lineage | IR `IR-BUILD1-1784237119` → WS `e1b8d1e8-…` → Quote `3` / `QSN2-2026-0002` → Order `92402` → Plan `8` (18 tasks) → Reality (session closed; `vector_prep` Finalizat) → Post-Job OK |
 | Handoff fix | `ad25fa9` — ProductAggregate `task_rules_json` → `task_contract` |
 | Evidence | `docs/qa/same-scenario-e2e-2026-07-16/` · commit `91d8a3f` |
-| Next | W7-T02 (not started) |
+| Next | W7-T02 (active — Option A) |
+
+---
+
+## W7-T02 — Post-Job reconciliation breadth V1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_V1** (2026-07-17) |
+| Verdict | `W7_T02_RECONCILIATION_BREADTH_PASS` |
+| Title | Post-Job reconciliation breadth V1 |
+| Depends | W7-T01 — PROVEN_V1 |
+| Host | `post-job-truth` + `PostJobTruthPanel` only |
+| Scenarios | A `92402` matched=1 · B `92402` missing_actual=17 · C `92403` variance=1 (75 min) |
+| UI | Plan vs execuție — operations + summary RO |
+| Evidence | `docs/qa/w7-t02-reconciliation-2026-07-17/` |
+| Freeze | commercial total unchanged on `92403`; Build 1 untouched |
+| Residuals | TE2E-028 still open (planning-minute source zeros; stock G3; labor $; fixture origin; templates) |
+| Worklog | `docs/worklog/realignment/2026-07-17_w7_t02_reconciliation_breadth.md` |
 
 ---
 

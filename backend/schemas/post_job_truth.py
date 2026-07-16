@@ -140,6 +140,14 @@ class ReconciliationVariance(BaseModel):
     data_completeness: DataPresence
 
 
+ReconciliationOpState = Literal[
+    "matched",
+    "partial",
+    "missing_actual",
+    "variance",
+]
+
+
 class OperationReconciliationRow(BaseModel):
     task_id: str
     task_name: str | None = None
@@ -148,12 +156,27 @@ class OperationReconciliationRow(BaseModel):
     planned_minutes: PresenceValue
     actual_minutes: PresenceValue
     variance_minutes: PresenceValue
+    planned_quantity: PresenceValue
+    actual_quantity: PresenceValue
+    quantity_variance: PresenceValue
+    reconciliation_state: ReconciliationOpState
     completeness: DataPresence
+
+
+class ReconciliationSummary(BaseModel):
+    """Compact operation reconciliation counts for operator UI."""
+
+    matched_count: int = 0
+    partial_count: int = 0
+    missing_actual_count: int = 0
+    variance_count: int = 0
+    operations_total: int = 0
 
 
 class ReconciliationBlock(BaseModel):
     variances: list[ReconciliationVariance] = Field(default_factory=list)
     operations: list[OperationReconciliationRow] = Field(default_factory=list)
+    summary: ReconciliationSummary = Field(default_factory=ReconciliationSummary)
 
 
 class ProfitabilityCoverage(BaseModel):

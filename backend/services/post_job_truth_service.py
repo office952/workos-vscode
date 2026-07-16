@@ -24,6 +24,8 @@ from models.orders import Orders
 from models.stock_movements import StockMovement
 from schemas.order_snapshot_v2 import OrderSnapshotV2
 from schemas.post_job_truth import (
+    ReconciliationOpState,
+    ReconciliationSummary,
     LaborActuals,
     LaborSessionRow,
     MachineActualItem,
@@ -831,6 +833,11 @@ class PostJobTruthService:
         if plan is not None and plan.tasks_json:
             plan_tasks = list(parse_tasks_json_raw(plan.tasks_json).operational_tasks)
         sessions = self._parse_reality_sessions(reality)
+        qty_not_captured = self._pv(
+            None,
+            "not_captured",
+            note="produced_quantity_field_absent_in_runtime",
+        )
         for task in plan_tasks:
             if not isinstance(task, dict):
                 continue
@@ -844,26 +851,48 @@ class PostJobTruthService:
                 planned_f = float(planned_min) if planned_min is not None else None
             except (TypeError, ValueError):
                 planned_f = None
-            actual_f = float(metrics["total_logged_minutes"])
-            actual_presence = "present" if task_sessions else "not_captured"
-            if reality is None:
+
+            has_active = any(is_session_active(s) for s in task_sessions)
+            if reality is None or not task_sessions:
                 actual_presence = "not_captured"
                 actual_f_val: float | None = None
+                actual_status: str | None = None if reality is None else "assigned"
             else:
-                actual_f_val = actual_f
+                actual_f_val = float(metrics["total_logged_minutes"])
+                if has_active:
+                    actual_presence = "partial"
+                elif actual_f_val == 0.0:
+                    actual_presence = "zero"
+                else:
+                    actual_presence = "present"
+                actual_status = derive_task_status_from_sessions(task_sessions)
+
             var_val = None
             var_presence = "missing"
-            if planned_f is not None and actual_f_val is not None:
+            if (
+                planned_f is not None
+                and actual_f_val is not None
+                and actual_presence in ("present", "zero", "partial")
+            ):
                 var_val = round(actual_f_val - planned_f, 4)
                 var_presence = "present"
+            elif actual_presence in ("not_captured", "missing", "excluded"):
+                var_presence = actual_presence  # type: ignore[assignment]
+
+            recon_state = self._classify_operation_state(
+                actual_presence=actual_presence,
+                actual_status=actual_status,
+                planned_minutes=planned_f,
+                actual_minutes=actual_f_val,
+                has_active_session=has_active,
+            )
+
             operations.append(
                 OperationReconciliationRow(
                     task_id=task_id,
                     task_name=str(task.get("name") or task.get("task_name") or "") or None,
                     planned_status="planned",
-                    actual_status=derive_task_status_from_sessions(task_sessions)
-                    if reality is not None
-                    else None,
+                    actual_status=actual_status,
                     planned_minutes=self._pv(
                         planned_f,
                         "present" if planned_f is not None else "missing",
@@ -873,6 +902,10 @@ class PostJobTruthService:
                         actual_f_val, actual_presence, unit="min", source="sessions"
                     ),
                     variance_minutes=self._pv(var_val, var_presence, unit="min"),
+                    planned_quantity=qty_not_captured,
+                    actual_quantity=qty_not_captured,
+                    quantity_variance=qty_not_captured,
+                    reconciliation_state=recon_state,
                     completeness=actual_presence,  # type: ignore[arg-type]
                 )
             )
@@ -894,7 +927,40 @@ class PostJobTruthService:
                 )
             )
 
-        return ReconciliationBlock(variances=variances, operations=operations)
+        summary = ReconciliationSummary(
+            matched_count=sum(1 for o in operations if o.reconciliation_state == "matched"),
+            partial_count=sum(1 for o in operations if o.reconciliation_state == "partial"),
+            missing_actual_count=sum(
+                1 for o in operations if o.reconciliation_state == "missing_actual"
+            ),
+            variance_count=sum(1 for o in operations if o.reconciliation_state == "variance"),
+            operations_total=len(operations),
+        )
+        return ReconciliationBlock(
+            variances=variances, operations=operations, summary=summary
+        )
+
+    def _classify_operation_state(
+        self,
+        *,
+        actual_presence: str,
+        actual_status: str | None,
+        planned_minutes: float | None,
+        actual_minutes: float | None,
+        has_active_session: bool,
+    ) -> ReconciliationOpState:
+        if actual_presence == "not_captured" or actual_status in (None, "assigned"):
+            return "missing_actual"
+        if has_active_session or actual_status in ("in_progress", "paused", "blocked"):
+            return "partial"
+        if (
+            planned_minutes is not None
+            and actual_minutes is not None
+            and actual_presence in ("present", "zero", "partial")
+            and abs(actual_minutes - planned_minutes) > 1e-6
+        ):
+            return "variance"
+        return "matched"
 
     def _build_profitability(
         self,

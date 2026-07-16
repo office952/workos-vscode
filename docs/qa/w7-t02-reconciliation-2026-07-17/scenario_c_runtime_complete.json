@@ -1,0 +1,75 @@
+{
+  "order_id": 92403,
+  "workspace_id": "5caafdf0-f3d2-49fe-8513-637cbe1e7b73",
+  "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+  "target_operation": {
+    "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+    "task_name": "PregÄƒtire vector / font",
+    "planned_status": "planned",
+    "actual_status": "done",
+    "planned_minutes": {
+      "value": 0.0,
+      "presence": "present",
+      "unit": "min",
+      "source": null,
+      "note": null
+    },
+    "actual_minutes": {
+      "value": 75.0,
+      "presence": "present",
+      "unit": "min",
+      "source": "sessions",
+      "note": null
+    },
+    "variance_minutes": {
+      "value": 75.0,
+      "presence": "present",
+      "unit": "min",
+      "source": null,
+      "note": null
+    },
+    "planned_quantity": {
+      "value": null,
+      "presence": "not_captured",
+      "unit": null,
+      "source": null,
+      "note": "produced_quantity_field_absent_in_runtime"
+    },
+    "actual_quantity": {
+      "value": null,
+      "presence": "not_captured",
+      "unit": null,
+      "source": null,
+      "note": "produced_quantity_field_absent_in_runtime"
+    },
+    "quantity_variance": {
+      "value": null,
+      "presence": "not_captured",
+      "unit": null,
+      "source": null,
+      "note": "produced_quantity_field_absent_in_runtime"
+    },
+    "reconciliation_state": "variance",
+    "completeness": "present"
+  },
+  "summary": {
+    "matched_count": 0,
+    "partial_count": 0,
+    "missing_actual_count": 17,
+    "variance_count": 1,
+    "operations_total": 18
+  },
+  "freeze": {
+    "before": null,
+    "after": null,
+    "unchanged": true
+  },
+  "build1_92402_summary": {
+    "matched_count": 1,
+    "partial_count": 0,
+    "missing_actual_count": 17,
+    "variance_count": 0,
+    "operations_total": 18
+  },
+  "scenario_c_pass": true
+}

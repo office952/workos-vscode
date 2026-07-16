@@ -7,9 +7,17 @@ import { ClipboardList, Info } from "lucide-react";
 import {
   fetchPostJobTruth,
   formatPresenceValue,
+  formatPresenceValueRo,
   PostJobTruthNotFoundError,
   type PostJobTruthResponse,
 } from "@/api/postJobTruth";
+
+const RECON_STATE_RO: Record<string, string> = {
+  matched: "potrivit",
+  partial: "parțial",
+  missing_actual: "fără actual",
+  variance: "varianță",
+};
 
 interface PostJobTruthPanelProps {
   orderId: number;
@@ -176,7 +184,7 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
 
             <div data-testid="post-job-reconciliation">
               <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1.5">
-                Plan vs actual
+                Plan vs actual (agregat)
               </p>
               <div className="overflow-x-auto">
                 <table className="w-full text-[11px]">
@@ -219,6 +227,98 @@ export function PostJobTruthPanel({ orderId }: PostJobTruthPanelProps) {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <div data-testid="post-job-operations">
+              <p className="text-[12px] font-semibold text-slate-200 mb-1.5">
+                Plan vs execuție
+              </p>
+              {data.reconciliation.summary && (
+                <div
+                  className="flex flex-wrap gap-2 mb-2 text-[10px]"
+                  data-testid="post-job-operations-summary"
+                >
+                  <span className="px-1.5 py-0.5 rounded border border-emerald-800/50 text-emerald-300">
+                    potrivit: {data.reconciliation.summary.matched_count}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded border border-amber-800/50 text-amber-300">
+                    parțial: {data.reconciliation.summary.partial_count}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-300">
+                    fără actual: {data.reconciliation.summary.missing_actual_count}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded border border-sky-800/50 text-sky-300">
+                    varianță: {data.reconciliation.summary.variance_count}
+                  </span>
+                  <span className="text-slate-500">
+                    total: {data.reconciliation.summary.operations_total}
+                  </span>
+                </div>
+              )}
+              {data.reconciliation.operations.length === 0 ? (
+                <p className="text-[11px] text-slate-500">Nicio operație planificată</p>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[11px]">
+                    <thead>
+                      <tr className="text-slate-500 text-left">
+                        <th className="py-1 pr-2">Operație</th>
+                        <th className="py-1 pr-2">Status plan</th>
+                        <th className="py-1 pr-2">Status execuție</th>
+                        <th className="py-1 pr-2">Min. plan</th>
+                        <th className="py-1 pr-2">Min. efective</th>
+                        <th className="py-1 pr-2">Diferență</th>
+                        <th className="py-1 pr-2">Cant. plan</th>
+                        <th className="py-1 pr-2">Cant. efectivă</th>
+                        <th className="py-1">Stare</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.reconciliation.operations.map((op) => (
+                        <tr
+                          key={op.task_id}
+                          className="border-t border-[#1F2A44]"
+                          data-testid={`post-job-op-${op.task_id}`}
+                        >
+                          <td className="py-1.5 pr-2 text-slate-200">
+                            {op.task_name ?? op.task_id}
+                          </td>
+                          <td className="py-1.5 pr-2 text-slate-400">
+                            {op.planned_status ?? "—"}
+                          </td>
+                          <td className="py-1.5 pr-2 text-slate-300">
+                            {op.actual_status ?? "—"}
+                          </td>
+                          <td className="py-1.5 pr-2 tabular-nums text-slate-300">
+                            {formatPresenceValueRo(op.planned_minutes)}
+                          </td>
+                          <td className="py-1.5 pr-2 tabular-nums text-slate-300">
+                            {formatPresenceValueRo(op.actual_minutes)}
+                          </td>
+                          <td className="py-1.5 pr-2 tabular-nums text-slate-300">
+                            {formatPresenceValueRo(op.variance_minutes)}
+                          </td>
+                          <td className="py-1.5 pr-2 tabular-nums text-slate-400">
+                            {formatPresenceValueRo(op.planned_quantity)}
+                          </td>
+                          <td className="py-1.5 pr-2 tabular-nums text-slate-400">
+                            {formatPresenceValueRo(op.actual_quantity)}
+                          </td>
+                          <td className="py-1.5">
+                            <span
+                              className="inline-block px-1.5 py-0.5 text-[9px] font-semibold rounded border border-slate-600 text-slate-300"
+                              data-testid={`post-job-op-state-${op.task_id}`}
+                            >
+                              {RECON_STATE_RO[op.reconciliation_state] ??
+                                op.reconciliation_state}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             <div data-testid="post-job-materials">

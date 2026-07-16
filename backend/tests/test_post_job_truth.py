@@ -378,3 +378,180 @@ async def test_reversed_deduction_excluded_from_actual_cost(db_session, auth_cli
     profit = _get_profit(auth_client, order.id).json()
     assert profit["actual_materials_total"] is None
     assert profit["known_actual_cost"] is None
+
+
+async def _seed_multi_task_breadth(
+    db_session,
+    *,
+    order_id: int,
+    mode: str,
+) -> Orders:
+    """mode: partial | variance | matched"""
+    order = await _seed_v2_order_with_snapshot(db_session, order_id=order_id)
+    plan = ExecutionPlan(
+        order_id=order.id,
+        order_code=order.code,
+        snapshot_version=1,
+        tasks_json=json.dumps(
+            [
+                {
+                    "task_id": "task_alpha",
+                    "name": "Alpha",
+                    "estimated_time_minutes": 30,
+                },
+                {
+                    "task_id": "task_beta",
+                    "name": "Beta",
+                    "estimated_time_minutes": 20,
+                },
+                {
+                    "task_id": "task_gamma",
+                    "name": "Gamma",
+                    "estimated_time_minutes": 15,
+                },
+            ]
+        ),
+        total_estimated_time_minutes=65.0,
+    )
+    db_session.add(plan)
+
+    if mode == "partial":
+        sessions = [
+            {
+                "session_id": "ws-alpha-1",
+                "task_id": "task_alpha",
+                "employee_id": 11,
+                "employee_name": "Primary",
+                "role": "primary",
+                "started_at": "2026-07-17T08:00:00+00:00",
+                "ended_at": "2026-07-17T08:30:00+00:00",
+                "duration_minutes": 30,
+            }
+        ]
+        total_actual = 30.0
+    elif mode == "variance":
+        sessions = [
+            {
+                "session_id": "ws-alpha-var",
+                "task_id": "task_alpha",
+                "employee_id": 11,
+                "employee_name": "Primary",
+                "role": "primary",
+                "started_at": "2026-07-17T08:00:00+00:00",
+                "ended_at": "2026-07-17T09:15:00+00:00",
+                "duration_minutes": 75,
+            }
+        ]
+        total_actual = 75.0
+    else:  # matched
+        sessions = [
+            {
+                "session_id": "ws-alpha-m",
+                "task_id": "task_alpha",
+                "employee_id": 11,
+                "role": "primary",
+                "started_at": "2026-07-17T08:00:00+00:00",
+                "ended_at": "2026-07-17T08:30:00+00:00",
+                "duration_minutes": 30,
+            },
+            {
+                "session_id": "ws-beta-m",
+                "task_id": "task_beta",
+                "employee_id": 11,
+                "role": "primary",
+                "started_at": "2026-07-17T09:00:00+00:00",
+                "ended_at": "2026-07-17T09:20:00+00:00",
+                "duration_minutes": 20,
+            },
+            {
+                "session_id": "ws-gamma-m",
+                "task_id": "task_gamma",
+                "employee_id": 11,
+                "role": "primary",
+                "started_at": "2026-07-17T10:00:00+00:00",
+                "ended_at": "2026-07-17T10:15:00+00:00",
+                "duration_minutes": 15,
+            },
+        ]
+        total_actual = 65.0
+
+    reality = ExecutionReality(
+        order_id=order.id,
+        order_code=order.code,
+        tasks_json=json.dumps(sessions),
+        materials_json="[]",
+        total_actual_time_minutes=total_actual,
+    )
+    db_session.add(reality)
+    await db_session.commit()
+    await db_session.refresh(order)
+    return order
+
+
+@pytest.mark.asyncio
+async def test_w7_t02_partial_missing_actuals_not_zero(db_session, auth_client):
+    order = await _seed_multi_task_breadth(
+        db_session, order_id=_OID_BASE + 20, mode="partial"
+    )
+    before_snap = order.snapshot_v2_json
+    plan = (
+        await db_session.execute(
+            select(ExecutionPlan).where(ExecutionPlan.order_id == order.id)
+        )
+    ).scalar_one()
+    before_plan_tasks = plan.tasks_json
+
+    body = _get_truth(auth_client, order.id).json()
+    ops = {o["task_id"]: o for o in body["reconciliation"]["operations"]}
+    assert ops["task_alpha"]["reconciliation_state"] in ("matched", "variance")
+    assert ops["task_beta"]["reconciliation_state"] == "missing_actual"
+    assert ops["task_beta"]["actual_minutes"]["presence"] == "not_captured"
+    assert ops["task_beta"]["actual_minutes"]["value"] is None
+    assert ops["task_gamma"]["reconciliation_state"] == "missing_actual"
+    summary = body["reconciliation"]["summary"]
+    assert summary["operations_total"] == 3
+    assert summary["missing_actual_count"] == 2
+    assert summary["matched_count"] + summary["variance_count"] == 1
+
+    refreshed = await db_session.get(Orders, order.id)
+    assert refreshed.snapshot_v2_json == before_snap
+    plan2 = (
+        await db_session.execute(
+            select(ExecutionPlan).where(ExecutionPlan.order_id == order.id)
+        )
+    ).scalar_one()
+    assert plan2.tasks_json == before_plan_tasks
+
+
+@pytest.mark.asyncio
+async def test_w7_t02_measurable_minute_variance(db_session, auth_client):
+    order = await _seed_multi_task_breadth(
+        db_session, order_id=_OID_BASE + 21, mode="variance"
+    )
+    body = _get_truth(auth_client, order.id).json()
+    alpha = next(
+        o for o in body["reconciliation"]["operations"] if o["task_id"] == "task_alpha"
+    )
+    assert alpha["planned_minutes"]["value"] == 30
+    assert alpha["actual_minutes"]["value"] == 75
+    assert alpha["variance_minutes"]["value"] == 45
+    assert alpha["variance_minutes"]["presence"] == "present"
+    assert alpha["reconciliation_state"] == "variance"
+    assert body["reconciliation"]["summary"]["variance_count"] >= 1
+
+
+@pytest.mark.asyncio
+async def test_w7_t02_matched_operations_summary(db_session, auth_client):
+    order = await _seed_multi_task_breadth(
+        db_session, order_id=_OID_BASE + 22, mode="matched"
+    )
+    body = _get_truth(auth_client, order.id).json()
+    summary = body["reconciliation"]["summary"]
+    assert summary["operations_total"] == 3
+    assert summary["matched_count"] == 3
+    assert summary["missing_actual_count"] == 0
+    assert summary["variance_count"] == 0
+    for op in body["reconciliation"]["operations"]:
+        assert op["reconciliation_state"] == "matched"
+        assert op["planned_quantity"]["presence"] == "not_captured"
+        assert op["actual_quantity"]["presence"] == "not_captured"

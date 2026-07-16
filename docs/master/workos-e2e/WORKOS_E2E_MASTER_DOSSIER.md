@@ -67,7 +67,7 @@ All 20 gates in `WORKOS_E2E_ACCEPTANCE_PLAN.md` green + owner sign-off.
 | 8 | Comandă | `/orders` | Empty UI OK |
 | 9 | Plan de execuție | APIs + code | **PROVEN_V1** same-scenario (plan `8` / 18 tasks on order `92402`) |
 | 10 | Execuție efectivă | `/execution` | **PROVEN_V1** partial (session closed; `vector_prep` Finalizat) |
-| 11 | Reconciliere | `/execution/reality-review` + post-job | **PROVEN_V1** post-job read on `92402`; broader W7-T02 open |
+| 11 | Reconciliere | `/execution/:id` Post-Job | **PROVEN_V1** W7-T02 breadth (matched/partial/variance on `92402`/`92403`) |
 
 Product System runs parallel as **configuration authority**, not required operator stop.
 

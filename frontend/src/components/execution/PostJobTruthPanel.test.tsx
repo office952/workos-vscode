@@ -121,7 +121,43 @@ function sampleTruth(
           explanation_code: "minutes_plan_vs_closed_sessions",
         },
       ],
-      operations: [],
+      operations: [
+        {
+          task_id: "t1",
+          task_name: "CNC Face",
+          planned_status: "planned",
+          planned_minutes: { value: 40, presence: "present", unit: "min" },
+          actual_minutes: { value: 90, presence: "present", unit: "min" },
+          variance_minutes: { value: 50, presence: "present", unit: "min" },
+          planned_quantity: { value: null, presence: "not_captured" },
+          actual_quantity: { value: null, presence: "not_captured" },
+          quantity_variance: { value: null, presence: "not_captured" },
+          actual_status: "done",
+          reconciliation_state: "variance",
+          completeness: "present",
+        },
+        {
+          task_id: "t2",
+          task_name: "Prep",
+          planned_status: "planned",
+          planned_minutes: { value: 20, presence: "present", unit: "min" },
+          actual_minutes: { value: null, presence: "not_captured" },
+          variance_minutes: { value: null, presence: "not_captured" },
+          planned_quantity: { value: null, presence: "not_captured" },
+          actual_quantity: { value: null, presence: "not_captured" },
+          quantity_variance: { value: null, presence: "not_captured" },
+          actual_status: "assigned",
+          reconciliation_state: "missing_actual",
+          completeness: "not_captured",
+        },
+      ],
+      summary: {
+        matched_count: 0,
+        partial_count: 0,
+        missing_actual_count: 1,
+        variance_count: 1,
+        operations_total: 2,
+      },
     },
     profitability: {
       revenue_net: { value: 1500, presence: "present" },
@@ -197,6 +233,17 @@ describe("PostJobTruthPanel", () => {
     expect(screen.getByText(/labor monetary cost not included/i)).toBeTruthy();
     expect(screen.getByTestId("post-job-machines")).toHaveTextContent(
       "not_captured",
+    );
+    expect(screen.getByTestId("post-job-operations")).toHaveTextContent(
+      "Plan vs execuție",
+    );
+    expect(screen.getByTestId("post-job-operations-summary")).toHaveTextContent(
+      "varianță: 1",
+    );
+    expect(screen.getByTestId("post-job-op-state-t1")).toHaveTextContent("varianță");
+    expect(screen.getByTestId("post-job-op-t2")).toHaveTextContent("neînregistrat");
+    expect(screen.getByTestId("post-job-op-state-t2")).toHaveTextContent(
+      "fără actual",
     );
   });
 

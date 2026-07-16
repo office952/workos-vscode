@@ -199,8 +199,8 @@ export const HONESTY_HANDOFFS: HonestyHandoff[] = [
     fromLabel: "Plan de execuție",
     toLabel: "Execuție",
     status: "proven_v1",
-    source: "SAME_SCENARIO… · reality + post-job 92402",
-    note: "Sesiune închisă; vector_prep Finalizat; post-job OK — limite TE2E-028",
+    source: "W7-T02 Post-Job reconciliation breadth · 92402/92403",
+    note: "Plan vs execuție: matched + missing_actual + minute variance; PostJobTruth only",
   },
 ];
 
@@ -372,6 +372,13 @@ export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
     title: "Build 1 lineage evidence pack",
     status: "CURRENT",
     source: "docs/qa/same-scenario-e2e-2026-07-16/ · 4da68ed→ad25fa9→91d8a3f",
+  },
+  {
+    id: "ev.w7_t02_reconciliation",
+    kind: "document",
+    title: "W7-T02 Post-Job reconciliation breadth PROVEN_V1",
+    status: "CURRENT",
+    source: "docs/qa/w7-t02-reconciliation-2026-07-17/ · orders 92402/92403",
   },
   {
     id: "ev.worklog_b45",

@@ -108,10 +108,27 @@
 | Task ID | Title | Issues | Depends | Status |
 |---------|-------|--------|---------|--------|
 | W7-T01 | Controlled same-scenario seed + full spine test | TE2E-013 | Owner GO + Waves 1–6 | **COMPLETE — PROVEN_V1** (2026-07-17; `DETERMINISTIC_LOCAL_SCENARIO`; commits `4da68ed`→`ad25fa9`→`91d8a3f`) |
-| W7-T02 | Reconciliation proof | — | W7-T01 | **NEXT / not started** |
+| W7-T02 | Post-Job reconciliation breadth V1 | TE2E-028 (partial) | W7-T01 — PROVEN_V1 | **COMPLETE — PROVEN_V1** (2026-07-17; Option A; orders `92402`/`92403`) |
 | W7-T03 | Owner sign-off checklist | All P1 + accepted P2 | W7-T02 | open |
 
 **Build 1 closure:** same-scenario Request→Post-Job proven on IR `IR-BUILD1-1784237119` / order `92402`. Residual limitations tracked as TE2E-028. Do not treat as universal template proof.
+
+### W7-T02 — Binding Definition of Done (owner Option A)
+
+**Title:** Post-Job reconciliation breadth V1  
+**Dependency:** W7-T01 — PROVEN_V1  
+**Host:** extend existing `GET /api/v1/execution/{order_id}/post-job-truth` + `PostJobTruthPanel` only (no parallel reconciler).
+
+**Scope (must prove):**
+1. Completed / matched execution (Build 1 order `92402` read-only regression)
+2. Partial / incomplete execution — missing actuals explicit
+3. Measurable variance (preferred: planned vs actual minutes)
+4. `reconciliation.operations[]` visible in Romanian operator UI
+5. Quote / Order / ExecutionPlan freeze proof
+
+**Exclusions:** labor $ inputs · forced inventory eligibility · stock reservation · Logo · extra templates · new reconciliation engine · commercial recalculation · plan regeneration · mutating Build 1 records
+
+**PASS only if** all three scenario states are proven via tests + local runtime, with honest presence/partial states and frozen upstream truth.
 
 ---
 

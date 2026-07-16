@@ -29,7 +29,7 @@ Local task PASS **never** automatically opens the next wave.
 | 7 | Offer and Order same graph | Snapshot diff = empty |
 | 8 | Order snapshot immutable | PATCH rejected post-freeze |
 | 9 | Execution consumes frozen truth | tasks from snapshot only |
-| 10 | Actuals reconcile to plan | reconciliation record |
+| 10 | Actuals reconcile to plan | W7-T02 — completed + partial + measurable variance on PostJobTruth; operations UI; freeze |
 | 11 | One clear primary action per operator page | UX audit pass |
 | 12 | Warnings actionable | each maps to correction route |
 | 13 | Diagnostics off operator path | MASTER 07/08 parity |

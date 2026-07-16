@@ -86,6 +86,9 @@ describe("ModuleChain tab completion", () => {
     expect(screen.getByTestId("evidence-ev.same_scenario_build1")).toHaveTextContent(
       "Same-scenario E2E PROVEN_V1"
     );
+    expect(screen.getByTestId("evidence-ev.w7_t02_reconciliation")).toHaveTextContent(
+      "W7-T02"
+    );
     expect(screen.queryByText("Live Health")).not.toBeInTheDocument();
   });
 });

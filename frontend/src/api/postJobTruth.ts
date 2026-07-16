@@ -110,11 +110,28 @@ export interface PostJobTruthResponse {
     operations: Array<{
       task_id: string;
       task_name: string | null;
+      planned_status: string | null;
       planned_minutes: PresenceValue;
       actual_minutes: PresenceValue;
       variance_minutes: PresenceValue;
+      planned_quantity: PresenceValue;
+      actual_quantity: PresenceValue;
+      quantity_variance: PresenceValue;
       actual_status: string | null;
+      reconciliation_state:
+        | "matched"
+        | "partial"
+        | "missing_actual"
+        | "variance";
+      completeness: DataPresence;
     }>;
+    summary: {
+      matched_count: number;
+      partial_count: number;
+      missing_actual_count: number;
+      variance_count: number;
+      operations_total: number;
+    };
   };
   profitability: {
     revenue_net: PresenceValue;
@@ -175,6 +192,50 @@ export async function fetchPostJobTruth(
     );
   }
   return res.json() as Promise<PostJobTruthResponse>;
+}
+
+/** Romanian operator labels for presence — values still come from backend. */
+export function formatPresenceValueRo(
+  pv: PresenceValue | null | undefined,
+  opts?: { money?: boolean; currency?: string | null },
+): string {
+  if (!pv) return "—";
+  const labels: Record<string, string> = {
+    missing: "lipsă",
+    not_captured: "neînregistrat",
+    excluded: "exclus",
+    not_applicable: "nu se aplică",
+    still_active: "încă activ",
+    partial: "parțial",
+    zero: "0",
+    present: "prezent",
+    complete: "complet",
+  };
+  if (
+    pv.presence === "missing" ||
+    pv.presence === "not_captured" ||
+    pv.presence === "excluded" ||
+    pv.presence === "not_applicable"
+  ) {
+    return labels[pv.presence] ?? pv.presence;
+  }
+  if (pv.presence === "still_active") {
+    return pv.value == null ? labels.still_active : String(pv.value);
+  }
+  if (pv.presence === "partial" && (pv.value === null || pv.value === undefined)) {
+    return labels.partial;
+  }
+  if (pv.value === null || pv.value === undefined) {
+    return labels[pv.presence] ?? pv.presence;
+  }
+  if (opts?.money && typeof pv.value === "number") {
+    const unit = opts.currency?.trim() || pv.unit || "RON";
+    return `${pv.value.toFixed(2)} ${unit}`;
+  }
+  if (typeof pv.value === "number" && pv.unit) {
+    return `${pv.value} ${pv.unit}`;
+  }
+  return String(pv.value);
 }
 
 export function formatPresenceValue(

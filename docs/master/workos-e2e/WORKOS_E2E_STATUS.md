@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **NONE** — Build 1 same-scenario proof **PROVEN_V1** / truth promoted |
+| Active task | **NONE** — W7-T02 **PROVEN_V1** |
 
-| Next task | Roadmap: **W7-T02** reconciliation breadth (or planning-minutes completeness) — **not started**; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | Roadmap: **W7-T03** owner sign-off checklist — **not started**; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1400,4 +1400,24 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 **Issue:** TE2E-013 **closed** · consolidated residual: TE2E-028
 
 **Local data retention:** IR / workspace / quote `3` / order `92402` / plan `8` kept for truth verification — do not delete in this promotion
+
+## W7-T02 — Post-Job reconciliation breadth V1 — PROVEN_V1
+
+**Verdict:** `W7_T02_RECONCILIATION_BREADTH_PASS`
+
+**Owner DoD:** Option A (completed + partial + measurable variance; operations UI; freeze)
+
+| Scenario | Order | Result |
+|----------|-------|--------|
+| A completed/match | `92402` (Build 1 RO) | matched=1 |
+| B partial/missing | `92402` (Build 1 RO) | missing_actual=17 · minutes `not_captured` |
+| C minute variance | `92403` · IR-W7T02-1784238040 · plan `9` | variance=1 · 0→75 min |
+
+**UI:** `/execution/:orderId` — **Plan vs execuție** (`PostJobTruthPanel`)
+
+**Evidence:** `docs/qa/w7-t02-reconciliation-2026-07-17/`
+
+**TE2E-028:** remains open (planning-minute source; stock G3; labor $; fixture; templates)
+
+**Next:** W7-T03 — not started
 

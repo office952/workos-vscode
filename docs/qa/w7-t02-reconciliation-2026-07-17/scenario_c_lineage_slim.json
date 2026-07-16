@@ -1,0 +1,22 @@
+{
+  "label": "W7-T02 SCENARIO C MINUTE VARIANCE DISPOSABLE",
+  "qualification": "DETERMINISTIC_LOCAL_SCENARIO",
+  "intake_request_code": "IR-W7T02-1784238040",
+  "workspace_id": "5caafdf0-f3d2-49fe-8513-637cbe1e7b73",
+  "quote_id": 4,
+  "snapshot_code": "QSN2-2026-0003",
+  "order_id": 92403,
+  "plan_id": 9,
+  "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+  "actual_minutes": 75,
+  "planned_minutes": 0,
+  "variance_minutes": 75,
+  "reconciliation_state": "variance",
+  "build1_order_untouched": 92402,
+  "freeze_commercial_unchanged": true,
+  "see_also": [
+    "scenario_c_runtime_complete.json",
+    "scenarios_ab_c_summary.json",
+    "01_execution_92403_plan_vs_executie.png"
+  ]
+}
