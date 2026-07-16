@@ -81,6 +81,12 @@ export interface IntakeV6RuntimeCaptureReadModelBlocker {
   field_key: string;
   blockers: string[];
   state: string;
+  /** Additive fail-closed / backbone compatibility fields (optional). */
+  blocker_code?: string | null;
+  message?: string | null;
+  severity?: string | null;
+  blocks?: string[];
+  owning_component?: string | null;
 }
 
 export interface IntakeV6RuntimeCaptureReadModelResponse {

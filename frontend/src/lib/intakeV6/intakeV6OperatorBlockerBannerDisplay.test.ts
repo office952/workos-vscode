@@ -286,7 +286,7 @@ describe("asBlockerCodeList / collectRuntimeBlockerCodes resilience", () => {
     expect(codes).toEqual(["SELECTED_LAYER_REFS_MISSING"]);
   });
 
-  it("does not white-screen Logo fail-closed runtime models and keeps surfacing usable", () => {
+  it("does not white-screen legacy unnormalized Logo fail-closed rows", () => {
     const logoFailClosedRuntime = {
       ...runtimeWithSelectedLayerRefs,
       root_template_code: "TPL-VOLUMETRIC-LOGO_v1",
@@ -318,5 +318,34 @@ describe("asBlockerCodeList / collectRuntimeBlockerCodes resilience", () => {
     expect(display.show).toBe(true);
     expect(display.messages.join(" ")).toMatch(/Logo-only candidate/i);
     expect(display.messages.join(" ")).toMatch(/neofertabil/i);
+  });
+
+  it("reads normalized Logo fail-closed blockers[] once without inventing duplicates", () => {
+    const normalizedLogoRuntime: IntakeV6RuntimeCaptureReadModelResponse = {
+      ...runtimeWithSelectedLayerRefs,
+      root_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      product_binding_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      fields: [],
+      blockers: [
+        {
+          field_key: "root",
+          blockers: ["LOGO_NOT_OFFERABLE"],
+          state: "blocked",
+          blocker_code: "LOGO_NOT_OFFERABLE",
+          severity: "blocked",
+          message: "TPL-VOLUMETRIC-LOGO_v1 remains candidate-only",
+          blocks: ["quote_preview"],
+        },
+      ],
+    };
+
+    expect(collectRuntimeBlockerCodes(normalizedLogoRuntime)).toEqual(["LOGO_NOT_OFFERABLE"]);
+    const display = buildOperatorBlockerBannerDisplay({
+      surfacing: clearSurfacing,
+      runtimeModel: normalizedLogoRuntime,
+      plannerModel: null,
+    });
+    expect(display.show).toBe(true);
+    expect(display.messages.filter((m) => m.includes("LOGO_NOT_OFFERABLE")).length).toBe(1);
   });
 });

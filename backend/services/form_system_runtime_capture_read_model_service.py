@@ -102,6 +102,65 @@ def _fail_closed_field(spec: dict[str, str], blocker: str) -> dict[str, Any]:
     }
 
 
+def _normalize_runtime_capture_blocker_rows(raw_blockers: Any) -> list[dict[str, Any]]:
+    """Normalize fail-closed backbone rows into the field-level blocker contract.
+
+    Canonical row shape:
+      { "field_key": str, "blockers": [str, ...], "state": str }
+
+    Backbone fail-closed rows historically used blocker_code / severity / blocks /
+    message without nested blockers[]. Those fields are preserved additively so
+    LOGO_NOT_OFFERABLE (and similar root blockers) keep their meaning while
+    frontend collectors that read blockers[] stay consistent.
+    """
+    if not isinstance(raw_blockers, list):
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for row in raw_blockers:
+        if not isinstance(row, dict):
+            continue
+
+        codes: list[str] = []
+        existing = row.get("blockers")
+        if isinstance(existing, list):
+            for item in existing:
+                code = str(item or "").strip()
+                if code and code not in codes:
+                    codes.append(code)
+
+        blocker_code = str(row.get("blocker_code") or "").strip()
+        if blocker_code and blocker_code not in codes:
+            codes.append(blocker_code)
+
+        if not codes:
+            continue
+
+        state = str(row.get("state") or row.get("severity") or "blocked").strip() or "blocked"
+        field_key = row.get("field_key")
+        out: dict[str, Any] = {
+            "field_key": str(field_key).strip() if field_key not in (None, "") else "root",
+            "blockers": codes,
+            "state": state,
+        }
+
+        # Additive compatibility — do not drop backbone semantics.
+        if blocker_code:
+            out["blocker_code"] = blocker_code
+        if row.get("message") is not None:
+            out["message"] = row.get("message")
+        if row.get("severity") is not None:
+            out["severity"] = row.get("severity")
+        if isinstance(row.get("blocks"), list):
+            out["blocks"] = list(row["blocks"])
+        if row.get("owning_component") is not None:
+            out["owning_component"] = row.get("owning_component")
+
+        normalized.append(out)
+
+    return normalized
+
+
 def build_form_system_runtime_capture_read_model(
     payload: dict[str, Any] | Any,
     *,
@@ -126,7 +185,7 @@ def build_form_system_runtime_capture_read_model(
             "read_only": True,
             "root": root,
             "fields": [],
-            "blockers": list(mapping.get("blockers") or []),
+            "blockers": _normalize_runtime_capture_blocker_rows(mapping.get("blockers") or []),
             "downstream_write_intent": _downstream_write_intent(),
             "notes": [
                 "Fail-closed runtime capture read model response.",

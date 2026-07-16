@@ -195,3 +195,75 @@ def test_endpoint_missing_workspace_returns_404(auth_client):
     response = _get(auth_client, "missing-runtime-capture-read-model-workspace")
 
     assert response.status_code == 404
+
+
+def test_endpoint_logo_fail_closed_uses_normalized_blockers_contract(auth_client, db_fixture):
+    workspace_id = "runtime-capture-logo-fail-closed"
+    workspace_code = "IV6-RUNTIME-CAPTURE-LOGO-FC"
+    logo = "TPL-VOLUMETRIC-LOGO_v1"
+    payload = {
+        "product_binding": {
+            "template_code": logo,
+            "template_label": "Logo volumetric",
+            "product_family": "litere_volumetrice",
+        },
+        "svg_source": {
+            "file_name": "logo.svg",
+            "file_hash": "d" * 64,
+            "file_size_bytes": 100,
+            "upload_status": "analyzed",
+        },
+    }
+
+    async def _seed():
+        async with db_fixture.session_maker() as session:
+            await session.execute(delete(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.id == workspace_id))
+            await session.execute(
+                delete(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.workspace_code == workspace_code)
+            )
+            session.add(
+                IntakeV6WorkspaceRecord(
+                    id=workspace_id,
+                    workspace_code=workspace_code,
+                    title="Runtime capture Logo fail-closed",
+                    template_code=logo,
+                    status="collecting_data",
+                    payload_json=json.dumps(payload),
+                    readiness_status="logo_only_candidate_not_offerable",
+                    created_by_user_id="test-user-id",
+                    updated_by_user_id="test-user-id",
+                )
+            )
+            await session.commit()
+
+    db_fixture.run(_seed())
+
+    # HTTP CONTRACT PROOF — runtime-capture normalized blockers[]
+    response = _get(auth_client, workspace_id)
+    assert response.status_code == 200, response.text
+    body = response.json()
+
+    assert body["root_template_code"] == logo
+    assert body["fields"] == []
+    assert len(body["blockers"]) == 1
+    row = body["blockers"][0]
+    assert row["field_key"] == "root"
+    assert row["blockers"] == ["LOGO_NOT_OFFERABLE"]
+    assert row["blockers"].count("LOGO_NOT_OFFERABLE") == 1
+    assert row["state"] == "blocked"
+    assert row["blocker_code"] == "LOGO_NOT_OFFERABLE"
+    assert row["severity"] == "blocked"
+    assert isinstance(row.get("message"), str) and row["message"]
+    assert "quote_preview" in (row.get("blocks") or [])
+
+    # Readiness / handoff unchanged by blocker-shape normalization
+    workspace = auth_client.get(f"/api/v1/intake-v6/workspaces/{workspace_id}")
+    assert workspace.status_code == 200, workspace.text
+    assert workspace.json()["readiness_status"] == "logo_only_candidate_not_offerable"
+
+    handoff = auth_client.get(f"/api/v1/intake-v6/workspaces/{workspace_id}/quote-handoff-preview")
+    assert handoff.status_code == 200, handoff.text
+    handoff_body = handoff.json()
+    assert handoff_body["workspace_readiness_status"] == "logo_only_candidate_not_offerable"
+    assert handoff_body["handoff_allowed"] is False
+    assert handoff_body["can_create_internal_draft_quote"] is False

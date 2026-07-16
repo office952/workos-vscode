@@ -176,3 +176,77 @@ def test_read_model_has_no_pricing_quote_or_execution_coupling() -> None:
     assert "quote_write': true" not in serialized
     assert "order_write': true" not in serialized
     assert "execution_runtime_write': true" not in serialized
+
+
+def test_logo_fail_closed_blockers_use_canonical_blockers_array() -> None:
+    model = build_form_system_runtime_capture_read_model(
+        {"product_binding": {"template_code": "TPL-VOLUMETRIC-LOGO_v1"}},
+        template_code="TPL-VOLUMETRIC-LOGO_v1",
+    )
+
+    assert model["root"]["allowed"] is False
+    assert model["fields"] == []
+    assert len(model["blockers"]) == 1
+    row = model["blockers"][0]
+    assert row["field_key"] == "root"
+    assert row["blockers"] == ["LOGO_NOT_OFFERABLE"]
+    assert row["state"] == "blocked"
+    # Additive backbone meaning preserved (not duplicated inside blockers[]).
+    assert row["blocker_code"] == "LOGO_NOT_OFFERABLE"
+    assert row["severity"] == "blocked"
+    assert isinstance(row.get("message"), str) and "candidate-only" in row["message"].lower()
+    assert "quote_preview" in (row.get("blocks") or [])
+    assert row["blockers"].count("LOGO_NOT_OFFERABLE") == 1
+
+
+def test_normalize_preserves_existing_field_shaped_blocker_rows() -> None:
+    from services.form_system_runtime_capture_read_model_service import (
+        _normalize_runtime_capture_blocker_rows,
+    )
+
+    rows = _normalize_runtime_capture_blocker_rows(
+        [
+            {
+                "field_key": "finish.finish_target",
+                "blockers": ["FINISH_TARGET_MISSING"],
+                "state": "blocked",
+            },
+            {
+                "blocker_code": "LOGO_NOT_OFFERABLE",
+                "severity": "blocked",
+                "message": "candidate-only",
+                "blocks": ["quote_preview"],
+            },
+            {
+                "field_key": "broken",
+                "blockers": "not-an-array",
+                "blocker_code": "ROOT_NOT_OWNER_VALID",
+                "severity": "blocked",
+            },
+            {"severity": "blocked"},  # no codes → dropped
+        ]
+    )
+
+    assert rows == [
+        {
+            "field_key": "finish.finish_target",
+            "blockers": ["FINISH_TARGET_MISSING"],
+            "state": "blocked",
+        },
+        {
+            "field_key": "root",
+            "blockers": ["LOGO_NOT_OFFERABLE"],
+            "state": "blocked",
+            "blocker_code": "LOGO_NOT_OFFERABLE",
+            "message": "candidate-only",
+            "severity": "blocked",
+            "blocks": ["quote_preview"],
+        },
+        {
+            "field_key": "broken",
+            "blockers": ["ROOT_NOT_OWNER_VALID"],
+            "state": "blocked",
+            "blocker_code": "ROOT_NOT_OWNER_VALID",
+            "severity": "blocked",
+        },
+    ]
