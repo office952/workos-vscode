@@ -33,6 +33,7 @@ import {
 import {
   buildArtworkCantSummaryLine,
   buildArtworkFaceSummaryLine,
+  buildSpateSummaryLine,
   INTAKE_V6_ARTWORK_LAYER_ACCENT,
   artworkExecutionLabel,
 } from "./artworkCardPresentation";
@@ -243,7 +244,7 @@ function ArtworkAlerts({
           className="rounded border border-slate-600/60 bg-slate-800/40 px-3 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-artwork-residual-vector-notice"
         >
-          Există vector rezidual neclasificat — verifică stratul înainte de confirmare.
+          Există artwork/logo neconfirmat (diferență de perimetru) — confirmă finisajele înainte de Confirmare.
         </div>
       ) : null}
     </div>
@@ -369,6 +370,8 @@ export default function IntakeV6ArtworkFinishSection({
           const tooltip = artworkTooltip(row, displayName, stepOneConfirmed);
           const faceSummary = buildArtworkFaceSummaryLine(row);
           const cantSummary = buildArtworkCantSummaryLine(row);
+          const resolvedBacking = resolveLayerBackingMode(row.backing_mode, globalBackingFallback);
+          const spateSummary = visibility.back ? buildSpateSummaryLine(resolvedBacking) : "—";
           const expanded = expandedKeys.has(row.layer_key);
 
           return (
@@ -394,8 +397,10 @@ export default function IntakeV6ArtworkFinishSection({
                   layerName={displayName}
                   faceSummary={visibility.face ? faceSummary : "—"}
                   cantSummary={visibility.returnCant ? cantSummary : "—"}
+                  spateSummary={spateSummary}
                   faceSummaryTestId={`intake-v6-artwork-face-summary-${row.layer_key}`}
                   cantSummaryTestId={`intake-v6-artwork-cant-summary-${row.layer_key}`}
+                  spateSummaryTestId={`intake-v6-artwork-spate-summary-${row.layer_key}`}
                   expanded={expanded}
                   status={
                     row.confirmed ? (
@@ -429,6 +434,7 @@ export default function IntakeV6ArtworkFinishSection({
               </button>
 
               {expanded ? (
+                <>
                 <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
                   {visibility.face ? (
                     <div className={REVIEW_FACE_COLUMN_CLASS}>
@@ -645,27 +651,28 @@ export default function IntakeV6ArtworkFinishSection({
                     <div className={REVIEW_CANT_COLUMN_CLASS} />
                   )}
                 </div>
-              ) : null}
 
-              {visibility.back ? (
-                <div
-                  className="col-span-2 mt-1 px-2.5"
-                  data-testid={`intake-v6-review-backing-finish-integration-${row.layer_key}`}
-                >
-                  <IntakeV6ReviewBackingFinishRow
-                    embedded
-                    testIdSuffix={layerTestIdSuffix(row.layer_key)}
-                    backingMode={resolveLayerBackingMode(row.backing_mode, globalBackingFallback)}
-                    onBackingChange={(mode) =>
-                      onChange(
-                        patchRows(rows, row.layer_key, {
-                          backing_mode: mode,
-                          confirmed: row.confirmed,
-                        }),
-                      )
-                    }
-                  />
-                </div>
+                  {visibility.back ? (
+                    <div
+                      className="col-span-2 mt-1 px-2.5 pb-2"
+                      data-testid={`intake-v6-review-backing-finish-integration-${row.layer_key}`}
+                    >
+                      <IntakeV6ReviewBackingFinishRow
+                        embedded
+                        testIdSuffix={layerTestIdSuffix(row.layer_key)}
+                        backingMode={resolvedBacking}
+                        onBackingChange={(mode) =>
+                          onChange(
+                            patchRows(rows, row.layer_key, {
+                              backing_mode: mode,
+                              confirmed: row.confirmed,
+                            }),
+                          )
+                        }
+                      />
+                    </div>
+                  ) : null}
+                </>
               ) : null}
             </div>
           );

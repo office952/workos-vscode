@@ -14,11 +14,20 @@ import {
 
 export const METAL_PREMOUNT_TEMPLATE_CODE = "TPL-METAL-PREMOUNT-STRUCTURE_v1";
 export const ACM_BOXED_MOUNTING_TEMPLATE_CODE = TPL_ACM_BOXED_MOUNTING_SUPPORT;
+export const INSTALLATION_TEMPLATE_KIND = "installation_template" as const;
+export const PRODUCT_SYSTEM_TEMPLATE_KIND = "product_system_template" as const;
 
-export type MountingSolutionRef = {
-  template_code: string;
-  configuration: Record<string, unknown>;
-};
+export type MountingSolutionRef =
+  | {
+      kind?: typeof PRODUCT_SYSTEM_TEMPLATE_KIND;
+      template_code: string;
+      configuration: Record<string, unknown>;
+    }
+  | {
+      kind: typeof INSTALLATION_TEMPLATE_KIND;
+      template_code: null;
+      configuration: Record<string, unknown>;
+    };
 
 export type MountingSolutionSelectorValue =
   | ""
@@ -29,7 +38,7 @@ export const MOUNTING_SOLUTION_OPTIONS: ReadonlyArray<{
   value: MountingSolutionSelectorValue;
   label: string;
 }> = [
-  { value: "", label: "Fără soluție suplimentară" },
+  { value: "", label: "Fără soluție suplimentară (șablon montaj)" },
   {
     value: METAL_PREMOUNT_TEMPLATE_CODE,
     label: "Structură metalică pentru premontaj",
@@ -59,6 +68,26 @@ export const DEFAULT_ACM_MOUNTING_CONFIGURATION: Readonly<Record<string, unknown
 
 const BAR_MOUNTING_LEGACY = new Set(["steel_bars", "aluminum_bars"]);
 const ACM_PANEL_LEGACY = "acm_panel";
+
+export function isInstallationTemplateSolution(
+  solution: MountingSolutionRef | Record<string, unknown> | null | undefined,
+): boolean {
+  if (!solution || typeof solution !== "object") return false;
+  return String((solution as { kind?: unknown }).kind ?? "").trim() === INSTALLATION_TEMPLATE_KIND;
+}
+
+export function isMountingTemplateFieldsComplete(
+  setup: Record<string, unknown> | null | undefined,
+): boolean {
+  if (!setup) return false;
+  if (setup.mounting_template_enabled !== true) return false;
+  const area = Number(setup.mounting_template_area_m2);
+  if (!Number.isFinite(area) || area <= 0) return false;
+  const material = String(setup.mounting_template_material_type ?? "")
+    .trim()
+    .toLowerCase();
+  return material === "forex" || material === "paper";
+}
 
 export function normalizeMetalMountingConfiguration(
   config: Record<string, unknown> | null | undefined,
@@ -102,7 +131,6 @@ export function normalizeAcmMountingConfiguration(
   ) {
     merged.acm_thickness_mm = thickness;
   } else {
-    // Preserve unsupported thickness (e.g. 4 mm) — resolver blocks; do not coerce to 3.
     merged.acm_thickness_mm = Number.isFinite(thickness) ? thickness : 3;
   }
   const foldSides = String(merged.fold_sides ?? "all").trim().toLowerCase();
@@ -133,15 +161,32 @@ export function readMountingSolution(
   if (!setup) return null;
   const raw = setup.mounting_solution;
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
-  const templateCode = String((raw as MountingSolutionRef).template_code ?? "").trim();
+  const record = raw as Record<string, unknown>;
+  if (String(record.kind ?? "").trim() === INSTALLATION_TEMPLATE_KIND) {
+    return {
+      kind: INSTALLATION_TEMPLATE_KIND,
+      template_code: null,
+      configuration:
+        record.configuration &&
+        typeof record.configuration === "object" &&
+        !Array.isArray(record.configuration)
+          ? { ...(record.configuration as Record<string, unknown>) }
+          : {},
+    };
+  }
+  const templateCode = String(record.template_code ?? "").trim();
   if (!templateCode) return null;
   const configuration =
-    (raw as MountingSolutionRef).configuration &&
-    typeof (raw as MountingSolutionRef).configuration === "object" &&
-    !Array.isArray((raw as MountingSolutionRef).configuration)
-      ? { ...(raw as MountingSolutionRef).configuration }
+    record.configuration &&
+    typeof record.configuration === "object" &&
+    !Array.isArray(record.configuration)
+      ? { ...(record.configuration as Record<string, unknown>) }
       : {};
-  return { template_code: templateCode, configuration };
+  return {
+    kind: PRODUCT_SYSTEM_TEMPLATE_KIND,
+    template_code: templateCode,
+    configuration,
+  };
 }
 
 export function hydrateMountingSolutionFromLegacy(
@@ -152,12 +197,14 @@ export function hydrateMountingSolutionFromLegacy(
   const mountingSystem = String(setup.mounting_system ?? "").trim();
   if (mountingSystem === ACM_PANEL_LEGACY) {
     return {
+      kind: PRODUCT_SYSTEM_TEMPLATE_KIND,
       template_code: ACM_BOXED_MOUNTING_TEMPLATE_CODE,
       configuration: normalizeAcmMountingConfiguration({}),
     };
   }
   if (!BAR_MOUNTING_LEGACY.has(mountingSystem)) return null;
   return {
+    kind: PRODUCT_SYSTEM_TEMPLATE_KIND,
     template_code: METAL_PREMOUNT_TEMPLATE_CODE,
     configuration: normalizeMetalMountingConfiguration({
       bar_material: mountingSystem === "aluminum_bars" ? "aluminum" : "steel",
@@ -186,7 +233,8 @@ export function isMountingSolutionCompositionActive(
   const { mounting_scope } = hydrateMountingScopeFromFinishSetup(setup);
   if (!isMountingPreparationActive(mounting_scope)) return false;
   const solution = resolveEffectiveMountingSolution(setup);
-  return solution ? isAllowedMountingSolutionTemplate(solution.template_code) : false;
+  if (!solution || isInstallationTemplateSolution(solution)) return false;
+  return isAllowedMountingSolutionTemplate(solution.template_code);
 }
 
 export function mountingSolutionSelectorValue(
@@ -194,6 +242,7 @@ export function mountingSolutionSelectorValue(
 ): MountingSolutionSelectorValue {
   const solution = resolveEffectiveMountingSolution(setup);
   if (!solution) return "";
+  if (isInstallationTemplateSolution(solution)) return "";
   if (isAllowedMountingSolutionTemplate(solution.template_code)) {
     return solution.template_code as MountingSolutionSelectorValue;
   }
@@ -204,6 +253,9 @@ export function legacyMountingSystemLabel(
   setup: Record<string, unknown> | null | undefined,
 ): string {
   const solution = resolveEffectiveMountingSolution(setup);
+  if (isInstallationTemplateSolution(solution)) {
+    return "direct_wall";
+  }
   if (solution?.template_code === METAL_PREMOUNT_TEMPLATE_CODE) {
     const config = normalizeMetalMountingConfiguration(solution.configuration);
     return config.bar_material === "aluminum" ? "aluminum_bars" : "steel_bars";
@@ -218,7 +270,7 @@ export function legacyMountingBarProfile(
   setup: Record<string, unknown> | null | undefined,
 ): string {
   const solution = resolveEffectiveMountingSolution(setup);
-  if (solution?.template_code === METAL_PREMOUNT_TEMPLATE_CODE) {
+  if (solution && !isInstallationTemplateSolution(solution) && solution.template_code === METAL_PREMOUNT_TEMPLATE_CODE) {
     return String(
       normalizeMetalMountingConfiguration(solution.configuration).mounting_bar_profile ?? "30x30x1.5",
     );
@@ -232,13 +284,18 @@ export function buildMountingSolutionPatch(
 ): Pick<Record<string, unknown>, "mounting_solution" | "mounting_system" | "mounting_bar_profile"> {
   if (!selectorValue) {
     return {
-      mounting_solution: null,
+      mounting_solution: {
+        kind: INSTALLATION_TEMPLATE_KIND,
+        template_code: null,
+        configuration: {},
+      },
       mounting_system: null,
       mounting_bar_profile: null,
     };
   }
   return {
     mounting_solution: {
+      kind: PRODUCT_SYSTEM_TEMPLATE_KIND,
       template_code: selectorValue,
       configuration: normalizeMountingSolutionConfiguration(selectorValue, configuration),
     },

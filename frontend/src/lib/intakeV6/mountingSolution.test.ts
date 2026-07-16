@@ -96,10 +96,30 @@ describe("mountingSolution", () => {
     expect(prepared.mounting_bar_profile).toBeUndefined();
   });
 
-  it("buildMountingSolutionPatch clears canonical reference for none", () => {
+  it("buildMountingSolutionPatch writes installation_template sentinel for empty selector", () => {
     const patch = buildMountingSolutionPatch("");
-    expect(patch.mounting_solution).toBeNull();
+    expect(patch.mounting_solution).toEqual({
+      kind: "installation_template",
+      template_code: null,
+      configuration: {},
+    });
     expect(patch.mounting_system).toBeNull();
+  });
+
+  it("installation_template is not composition-active (no ACM/metal child)", () => {
+    const setup = {
+      mounting_scope: "preparation_only",
+      mounting_template_enabled: true,
+      mounting_template_area_m2: 3,
+      mounting_template_material_type: "forex",
+      mounting_solution: {
+        kind: "installation_template",
+        template_code: null,
+        configuration: {},
+      },
+    };
+    expect(isMountingSolutionCompositionActive(setup)).toBe(false);
+    expect(mountingSolutionSelectorValue(setup)).toBe("");
   });
 
   it("buildMountingSolutionPatch normalizes ACM configuration", () => {

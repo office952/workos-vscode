@@ -14,6 +14,8 @@ ACM_BOXED_MOUNTING_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
 ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES = frozenset(
     {METAL_PREMOUNT_TEMPLATE_CODE, ACM_BOXED_MOUNTING_TEMPLATE_CODE}
 )
+INSTALLATION_TEMPLATE_KIND = "installation_template"
+PRODUCT_SYSTEM_TEMPLATE_KIND = "product_system_template"
 BAR_MOUNTING_LEGACY = frozenset({"steel_bars", "aluminum_bars"})
 ACM_PANEL_LEGACY = "acm_panel"
 
@@ -41,16 +43,46 @@ def _coerce_configuration(raw: Any) -> dict[str, Any]:
     return dict(raw)
 
 
+def is_installation_template_solution(solution: Mapping[str, Any] | None) -> bool:
+    if not isinstance(solution, Mapping):
+        return False
+    return str(solution.get("kind") or "").strip() == INSTALLATION_TEMPLATE_KIND
+
+
+def is_mounting_template_fields_complete(setup: Mapping[str, Any] | None) -> bool:
+    """Installation-template sentinel is readiness-complete only with template fields filled."""
+    if not isinstance(setup, Mapping):
+        return False
+    if setup.get("mounting_template_enabled") is not True:
+        return False
+    try:
+        area = float(setup.get("mounting_template_area_m2"))
+    except (TypeError, ValueError):
+        return False
+    if area <= 0:
+        return False
+    material = str(setup.get("mounting_template_material_type") or "").strip().lower()
+    return material in {"forex", "paper"}
+
+
 def read_mounting_solution(setup: Mapping[str, Any] | None) -> dict[str, Any] | None:
     if not isinstance(setup, Mapping):
         return None
     raw = setup.get("mounting_solution")
     if not isinstance(raw, dict):
         return None
+    kind = str(raw.get("kind") or "").strip()
+    if kind == INSTALLATION_TEMPLATE_KIND:
+        return {
+            "kind": INSTALLATION_TEMPLATE_KIND,
+            "template_code": None,
+            "configuration": _coerce_configuration(raw.get("configuration")),
+        }
     template_code = str(raw.get("template_code") or "").strip()
     if not template_code:
         return None
     return {
+        "kind": PRODUCT_SYSTEM_TEMPLATE_KIND,
         "template_code": template_code,
         "configuration": _coerce_configuration(raw.get("configuration")),
     }
@@ -106,6 +138,7 @@ def hydrate_mounting_solution_from_legacy(setup: Mapping[str, Any] | None) -> di
     mounting_system = str(setup.get("mounting_system") or "").strip()
     if mounting_system == ACM_PANEL_LEGACY:
         return {
+            "kind": PRODUCT_SYSTEM_TEMPLATE_KIND,
             "template_code": ACM_BOXED_MOUNTING_TEMPLATE_CODE,
             "configuration": normalize_acm_mounting_configuration({}),
         }
@@ -114,6 +147,7 @@ def hydrate_mounting_solution_from_legacy(setup: Mapping[str, Any] | None) -> di
     bar_material = "aluminum" if mounting_system == "aluminum_bars" else "steel"
     profile = str(setup.get("mounting_bar_profile") or DEFAULT_METAL_MOUNTING_CONFIGURATION["mounting_bar_profile"]).strip()
     return {
+        "kind": PRODUCT_SYSTEM_TEMPLATE_KIND,
         "template_code": METAL_PREMOUNT_TEMPLATE_CODE,
         "configuration": {
             **DEFAULT_METAL_MOUNTING_CONFIGURATION,
@@ -145,12 +179,13 @@ def normalize_metal_mounting_configuration(config: Mapping[str, Any] | None) -> 
 
 
 def is_mounting_solution_composition_active(setup: Mapping[str, Any] | None) -> bool:
+    """True only for Product System ACM/metal support children — not installation_template."""
     if not isinstance(setup, Mapping):
         return False
     if not is_mounting_preparation_active(setup):
         return False
     solution = resolve_effective_mounting_solution(setup)
-    if not solution:
+    if not solution or is_installation_template_solution(solution):
         return False
     return str(solution.get("template_code") or "").strip() in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES
 
@@ -162,6 +197,8 @@ def is_structura_suport_active(setup: Mapping[str, Any] | None) -> bool:
 def legacy_mounting_system_from_solution(solution: Mapping[str, Any] | None) -> str | None:
     if not isinstance(solution, Mapping):
         return None
+    if is_installation_template_solution(solution):
+        return "direct_wall"
     template_code = str(solution.get("template_code") or "").strip()
     if template_code == METAL_PREMOUNT_TEMPLATE_CODE:
         config = normalize_metal_mounting_configuration(_coerce_configuration(solution.get("configuration")))
@@ -183,9 +220,22 @@ def hydrate_mounting_solution_fields(setup: Mapping[str, Any]) -> dict[str, Any]
             solution = hydrated
             updates["mounting_solution"] = IntakeV4MountingSolution.model_validate(hydrated)
 
+    if solution and is_installation_template_solution(solution):
+        updates["mounting_solution"] = IntakeV4MountingSolution.model_validate(
+            {
+                "kind": INSTALLATION_TEMPLATE_KIND,
+                "template_code": None,
+                "configuration": _coerce_configuration(solution.get("configuration")),
+            }
+        )
+        updates["mounting_system"] = None
+        updates["mounting_bar_profile"] = None
+        return updates
+
     if solution and str(solution.get("template_code") or "").strip() in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
         template_code = str(solution["template_code"]).strip()
         normalized_solution = {
+            "kind": PRODUCT_SYSTEM_TEMPLATE_KIND,
             "template_code": template_code,
             "configuration": normalize_solution_configuration(template_code, solution.get("configuration")),
         }
@@ -202,6 +252,8 @@ def build_linked_module_input_from_solution(
     quote_input: Mapping[str, Any],
     defaults: Mapping[str, Any] | None,
 ) -> dict[str, Any]:
+    if is_installation_template_solution(solution):
+        return dict(defaults if isinstance(defaults, Mapping) else {})
     module_input = dict(defaults if isinstance(defaults, Mapping) else {})
     template_code = str(solution.get("template_code") or "").strip()
 

@@ -279,7 +279,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
       />,
     );
     expect(screen.getByTestId("intake-v6-artwork-residual-vector-notice")).toHaveTextContent(
-      /vector rezidual neclasificat/i,
+      /artwork\/logo neconfirmat/i,
     );
   });
 

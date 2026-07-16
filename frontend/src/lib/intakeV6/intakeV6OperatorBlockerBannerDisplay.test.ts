@@ -115,10 +115,39 @@ describe("buildOperatorBlockerBannerDisplay", () => {
       runtimeModel: runtimeWithSelectedLayerRefs,
       plannerModel: plannerWithBlockers,
     });
+    expect(display.messages.length).toBeGreaterThan(0);
     expect(display.messages.length).toBeLessThanOrEqual(OPERATOR_BLOCKER_BANNER_MAX_MESSAGES);
+    expect(display.summaryTitle).toMatch(/probleme blochează Confirmarea|problemă blochează Confirmarea/i);
   });
 
-  it("uses generic technical message for unknown runtime codes", () => {
+  it("maps MOUNTING_SOLUTION_MISSING to specific operator copy", () => {
+    const display = buildOperatorBlockerBannerDisplay({
+      surfacing: clearSurfacing,
+      runtimeModel: {
+        ...runtimeWithSelectedLayerRefs,
+        fields: [
+          {
+            ...runtimeWithSelectedLayerRefs.fields[0],
+            blockers: ["MOUNTING_SOLUTION_MISSING"],
+          },
+        ],
+        blockers: [
+          {
+            field_key: "mounting.mounting_solution",
+            blockers: ["MOUNTING_SOLUTION_MISSING"],
+            state: "blocked",
+          },
+        ],
+      },
+      plannerModel: null,
+    });
+    expect(display.show).toBe(true);
+    expect(display.severity).toBe("blocked");
+    expect(display.messages.join(" ")).toMatch(/Soluția de montaj lipsește/i);
+    expect(display.messages.join(" ")).not.toMatch(/Există blocaje tehnice/i);
+  });
+
+  it("shows exact code for unknown runtime blockers instead of generic panel", () => {
     const display = buildOperatorBlockerBannerDisplay({
       surfacing: clearSurfacing,
       runtimeModel: {
@@ -139,7 +168,25 @@ describe("buildOperatorBlockerBannerDisplay", () => {
       },
       plannerModel: null,
     });
-    expect(display.messages.some((m) => /Detalii tehnice și diagnostic/i.test(m))).toBe(true);
-    expect(display.messages.join(" ")).not.toMatch(/UNKNOWN_BLOCKER_CODE_XYZ/);
+    expect(display.messages.join(" ")).toMatch(/UNKNOWN_BLOCKER_CODE_XYZ/);
+    expect(display.messages.join(" ")).not.toMatch(/Există blocaje tehnice/i);
+  });
+
+  it("treats missing-tariff flag without rows as diagnostic warning", () => {
+    const display = buildOperatorBlockerBannerDisplay({
+      surfacing: {
+        showBanner: true,
+        reasons: ["Calculul live conține linii fără tarif configurat."],
+        actions: ["Verifică liniile cu tarif lipsă în Calcul live."],
+      },
+      runtimeModel: null,
+      plannerModel: null,
+      missingPriceFlagWithoutRows: true,
+      missingPriceLineKeys: [],
+    });
+    expect(display.warningCount).toBeGreaterThanOrEqual(1);
+    expect(display.blockerCount).toBe(0);
+    expect(display.severity).toBe("attention");
+    expect(display.messages.join(" ")).toMatch(/diagnostic/i);
   });
 });

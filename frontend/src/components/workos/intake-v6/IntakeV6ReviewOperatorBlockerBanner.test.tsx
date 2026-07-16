@@ -9,22 +9,39 @@ afterEach(() => cleanup());
 const blockedDisplay: OperatorBlockerBannerDisplay = {
   show: true,
   loading: false,
+  summaryTitle: "1 problemă blochează Confirmarea",
+  blockerCount: 1,
+  warningCount: 0,
   messages: [
     "Referințele straturilor selectate lipsesc. Verifică selecția straturilor în Pasul 1.",
+  ],
+  issues: [
+    {
+      id: "tech-SELECTED_LAYER_REFS_MISSING",
+      severity: "blocker",
+      code: "SELECTED_LAYER_REFS_MISSING",
+      message: "Referințele straturilor selectate lipsesc. Verifică selecția straturilor în Pasul 1.",
+      action: "Rezolvă câmpul marcat în Review / Pasul 1.",
+      focusTarget: null,
+    },
   ],
   severity: "blocked",
   hasTechnicalBlockers: true,
 };
 
 describe("IntakeV6ReviewOperatorBlockerBanner", () => {
-  it("renders operator messages without raw codes", () => {
+  it("renders compact summary title", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-title")).toHaveTextContent(
+      /1 problemă blochează Confirmarea/i,
+    );
+  });
+
+  it("expands to show issue details without raw-only generic panel", () => {
+    render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
+    fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-banner-toggle"));
     expect(screen.getByTestId("intake-v6-review-operator-blocker-messages")).toHaveTextContent(
       /Referințele straturilor selectate lipsesc/i,
-    );
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-messages")).not.toHaveTextContent(
-      /SELECTED_LAYER_REFS_MISSING/,
     );
   });
 
@@ -33,22 +50,14 @@ describe("IntakeV6ReviewOperatorBlockerBanner", () => {
     render(
       <IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} onJumpToDiagnostic={onJump} />,
     );
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-diagnostic-link")).toHaveTextContent(
-      /Detalii tehnice și diagnostic/i,
-    );
     fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-diagnostic-link"));
     expect(onJump).toHaveBeenCalledOnce();
-  });
-
-  it("remains visible independently of diagnostic collapse state", () => {
-    render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner")).toBeVisible();
   });
 
   it("renders nothing when display.show is false", () => {
     render(
       <IntakeV6ReviewOperatorBlockerBanner
-        display={{ ...blockedDisplay, show: false, messages: [] }}
+        display={{ ...blockedDisplay, show: false, messages: [], issues: [] }}
       />,
     );
     expect(screen.queryByTestId("intake-v6-review-operator-blocker-banner")).not.toBeInTheDocument();

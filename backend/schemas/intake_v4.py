@@ -160,8 +160,35 @@ class IntakeV4CommercialInputs(BaseModel):
 
 
 class IntakeV4MountingSolution(BaseModel):
-    template_code: str = Field(min_length=1)
+    """Canonical mounting solution or installation-template-only sentinel.
+
+    Product System support children use ``kind=product_system_template`` (or omit kind)
+    with a non-empty ``template_code``. Installation template without ACM/metal uses
+    ``kind=installation_template`` and ``template_code=None``.
+    """
+
+    kind: Literal["product_system_template", "installation_template"] | None = None
+    template_code: str | None = None
     configuration: dict[str, Any] = Field(default_factory=dict)
+
+    @model_validator(mode="after")
+    def _validate_mounting_solution_shape(self) -> IntakeV4MountingSolution:
+        kind = (self.kind or "").strip() or None
+        code = (self.template_code or "").strip() or None
+        if kind == "installation_template":
+            if code:
+                raise ValueError(
+                    "installation_template mounting_solution must not set template_code"
+                )
+            self.template_code = None
+            self.kind = "installation_template"
+            return self
+        if not code:
+            raise ValueError("product_system_template mounting_solution requires template_code")
+        self.template_code = code
+        if kind is None:
+            self.kind = "product_system_template"
+        return self
 
 
 class IntakeV4FinishSetup(BaseModel):

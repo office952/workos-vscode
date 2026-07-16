@@ -46,6 +46,8 @@ export function buildArtworkCantSummaryLine(row: IntakeV6ArtworkFinish): string 
   return `${cantFinish} · ${depth}`;
 }
 
+export { buildSpateSummaryLine } from "./letterGroupCardPresentation";
+
 export function buildArtworkSummaryLine(row: IntakeV6ArtworkFinish): string {
   return `${buildArtworkFaceSummaryLine(row)} · ${buildArtworkCantSummaryLine(row)}`;
 }

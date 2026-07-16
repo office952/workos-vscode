@@ -14,6 +14,8 @@ from services.mounting_scope_service import hydrate_mounting_scope_fields, is_mo
 from services.mounting_solution_service import (
     ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES,
     hydrate_mounting_solution_fields,
+    is_installation_template_solution,
+    is_mounting_template_fields_complete,
     read_mounting_solution,
 )
 
@@ -638,6 +640,22 @@ def mounting_solution_runtime_state(
             "status": "missing",
             "blocker_code": "MOUNTING_SOLUTION_MISSING",
             "value": None,
+            "source_path": source_path,
+        }
+
+    if is_installation_template_solution(solution):
+        finish_map = normalized_setup.model_dump(mode="json")
+        if not is_mounting_template_fields_complete(finish_map):
+            return {
+                "status": "incomplete",
+                "blocker_code": "MOUNTING_SOLUTION_MISSING",
+                "value": solution,
+                "source_path": source_path,
+            }
+        return {
+            "status": "confirmed",
+            "blocker_code": None,
+            "value": solution,
             "source_path": source_path,
         }
 

@@ -103,13 +103,14 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     render(<IntakeV6LetterGroupFinishesSection groups={groups} onChange={vi.fn()} />);
     expect(screen.getByTestId("intake-v6-letter-group-header-a")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-letter-group-swatch-a")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-layer-card-column-header")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-letter-group-face-summary-a")).toHaveClass("truncate");
     expect(screen.getByTestId("intake-v6-letter-group-cant-summary-a")).toHaveClass("truncate");
+    expect(screen.getByTestId("intake-v6-letter-group-spate-summary-a")).toHaveClass("truncate");
     expect(screen.getByTestId("intake-v6-letter-group-a")).toHaveAttribute(
       "data-layer-card-expanded",
       "false",
     );
+    expect(screen.queryByTestId("intake-v6-backing-mode-a")).not.toBeInTheDocument();
   });
 
   it("does not repeat cant helper text inside each layer card", () => {

@@ -4,6 +4,7 @@ import {
   INTAKE_V6_RETURN_FINISH_UI_OPTIONS,
   resolveIntakeV6ReturnFinishUiOption,
 } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
+import { backingModeLabel, type IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 
 export function layerAccentColor(fill: string | null | undefined): string {
   const raw = fill?.trim();
@@ -43,6 +44,12 @@ export function buildCantSummaryLine(group: IntakeV6LetterGroupFinish): string {
   const finish = cantFinishLabel(group.return_finish_type);
   const depth = group.return_depth_mm != null ? `${group.return_depth_mm} mm` : "— mm";
   return `${finish} · ${depth}`;
+}
+
+export function buildSpateSummaryLine(
+  backingMode: IntakeV6BackingMode | string | null | undefined,
+): string {
+  return backingModeLabel(backingMode);
 }
 
 export type LayerCardStatus = "ok" | "warning" | null;

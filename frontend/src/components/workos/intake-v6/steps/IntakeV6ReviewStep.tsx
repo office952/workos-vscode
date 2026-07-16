@@ -1659,6 +1659,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         runtimeLoading: loadingRuntimeCaptureReadModel,
         plannerModel: productTruthPromotionPlanner,
         plannerLoading: loadingProductTruthPromotionPlanner,
+        missingPriceFlagWithoutRows: breakdown?.totals.contains_missing_prices === true,
+        missingPriceLineKeys: [],
       }),
     [
       reviewHandoffSurfacing,
@@ -1668,6 +1670,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       loadingRuntimeCaptureReadModel,
       productTruthPromotionPlanner,
       loadingProductTruthPromotionPlanner,
+      breakdown?.totals.contains_missing_prices,
     ],
   );
   const reviewDiagnosticEntryCount = useMemo(

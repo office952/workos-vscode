@@ -6,11 +6,6 @@ import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
 
 export const INTAKE_V6_REVIEW_DIAGNOSTIC_ANCHOR_ID = "intake-v6-review-diagnostic-tehnic";
 
-export const OPERATOR_BLOCKER_BANNER_MAX_MESSAGES = 3;
-
-const GENERIC_TECHNICAL_BLOCKER_MESSAGE =
-  "Există blocaje tehnice care trebuie verificate în Detalii tehnice și diagnostic.";
-
 const RUNTIME_BLOCKER_OPERATOR_MESSAGES: Record<string, string> = {
   SELECTED_LAYER_REFS_MISSING:
     "Referințele straturilor selectate lipsesc. Verifică selecția straturilor în Pasul 1.",
@@ -24,15 +19,34 @@ const RUNTIME_BLOCKER_OPERATOR_MESSAGES: Record<string, string> = {
     "Product Truth incomplet. Verifică câmpurile obligatorii înainte de confirmare.",
   LAYER_ROLES_INCOMPLETE:
     "Rolurile straturilor trebuie confirmate în Pasul 1.",
+  MOUNTING_SOLUTION_MISSING:
+    "Soluția de montaj lipsește. Alege șablon montaj (fără ACM/metal) sau o structură Product System în tab-ul Montaj.",
+  MOUNTING_SOLUTION_INVALID:
+    "Soluția de montaj selectată nu este validă. Alege metal, ACM casetat sau șablon montaj.",
 };
 
 export type OperatorBlockerBannerSeverity = "blocked" | "attention";
 
+export type OperatorBlockerBannerIssue = {
+  id: string;
+  severity: "blocker" | "warning";
+  code: string | null;
+  message: string;
+  action: string | null;
+  focusTarget: string | null;
+};
+
 export type OperatorBlockerBannerDisplay = {
   show: boolean;
   loading: boolean;
-  messages: string[];
+  /** Compact title e.g. "2 probleme blochează Confirmarea · 1 avertisment" */
+  summaryTitle: string;
+  blockerCount: number;
+  warningCount: number;
   severity: OperatorBlockerBannerSeverity;
+  issues: OperatorBlockerBannerIssue[];
+  /** @deprecated prefer issues — kept for transitional callers */
+  messages: string[];
   hasTechnicalBlockers: boolean;
 };
 
@@ -43,12 +57,24 @@ export type OperatorBlockerBannerInput = {
   runtimeLoading?: boolean;
   plannerModel?: IntakeV6ProductTruthPromotionPlannerResponse | null;
   plannerLoading?: boolean;
+  /** When true with empty missing-line keys, surface diagnostic inconsistency (not critical). */
+  missingPriceFlagWithoutRows?: boolean;
+  missingPriceLineKeys?: string[];
 };
 
 function mapRuntimeBlockerCode(code: string): string {
   const trimmed = code.trim();
   if (!trimmed) return "";
-  return RUNTIME_BLOCKER_OPERATOR_MESSAGES[trimmed] ?? "";
+  if (RUNTIME_BLOCKER_OPERATOR_MESSAGES[trimmed]) {
+    return RUNTIME_BLOCKER_OPERATOR_MESSAGES[trimmed];
+  }
+  if (trimmed.startsWith("runtime_capture:")) {
+    const inner = trimmed.slice("runtime_capture:".length);
+    if (RUNTIME_BLOCKER_OPERATOR_MESSAGES[inner]) {
+      return RUNTIME_BLOCKER_OPERATOR_MESSAGES[inner];
+    }
+  }
+  return "";
 }
 
 function collectRuntimeBlockerCodes(
@@ -87,13 +113,26 @@ function collectPlannerBlockerCodes(
   return [...codes];
 }
 
-function pushUniqueMessage(messages: string[], seen: Set<string>, message: string): boolean {
-  const normalized = message.trim();
-  if (!normalized || seen.has(normalized)) return false;
-  if (messages.length >= OPERATOR_BLOCKER_BANNER_MAX_MESSAGES) return false;
-  seen.add(normalized);
-  messages.push(normalized);
-  return true;
+function focusForCode(code: string): string | null {
+  if (code.includes("MOUNTING")) return "intake-v6-mounting-solution-selector";
+  if (code.includes("LAYER_ROLES") || code.includes("SELECTED_LAYER")) return null;
+  return INTAKE_V6_REVIEW_DIAGNOSTIC_ANCHOR_ID;
+}
+
+function buildSummaryTitle(blockerCount: number, warningCount: number): string {
+  const parts: string[] = [];
+  if (blockerCount === 1) {
+    parts.push("1 problemă blochează Confirmarea");
+  } else if (blockerCount > 1) {
+    parts.push(`${blockerCount} probleme blochează Confirmarea`);
+  }
+  if (warningCount === 1) {
+    parts.push("1 avertisment");
+  } else if (warningCount > 1) {
+    parts.push(`${warningCount} avertismente`);
+  }
+  if (parts.length === 0) return "Verifică starea secțiunii Review";
+  return parts.join(" · ");
 }
 
 export function buildOperatorBlockerBannerDisplay(
@@ -105,61 +144,116 @@ export function buildOperatorBlockerBannerDisplay(
     runtimeModel = null,
     runtimeLoading = false,
     plannerModel = null,
-    plannerLoading = false,
+    missingPriceFlagWithoutRows = false,
+    missingPriceLineKeys = [],
   } = input;
 
-  const messages: string[] = [];
+  const issues: OperatorBlockerBannerIssue[] = [];
   const seen = new Set<string>();
 
-  if (surfacing.showBanner) {
-    for (const reason of surfacing.reasons) {
-      if (!pushUniqueMessage(messages, seen, reason)) break;
-    }
-  }
+  const pushIssue = (issue: OperatorBlockerBannerIssue) => {
+    const key = `${issue.severity}:${issue.code ?? ""}:${issue.message}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    issues.push(issue);
+  };
 
   const runtimeCodes = collectRuntimeBlockerCodes(runtimeModel);
   const plannerCodes = collectPlannerBlockerCodes(plannerModel);
   const technicalCodes = [...new Set([...runtimeCodes, ...plannerCodes])];
-  let mappedTechnicalCount = 0;
 
   for (const code of technicalCodes) {
     const mapped = mapRuntimeBlockerCode(code);
-    if (mapped && pushUniqueMessage(messages, seen, mapped)) {
-      mappedTechnicalCount += 1;
+    if (!mapped) {
+      // Prefer exact code text over generic fallback when unmapped.
+      pushIssue({
+        id: `tech-${code}`,
+        severity: "blocker",
+        code,
+        message: `Blocaj tehnic: ${code}`,
+        action: "Deschide Detalii tehnice și diagnostic.",
+        focusTarget: focusForCode(code),
+      });
+      continue;
     }
-    if (messages.length >= OPERATOR_BLOCKER_BANNER_MAX_MESSAGES) break;
+    pushIssue({
+      id: `tech-${code}`,
+      severity: "blocker",
+      code,
+      message: mapped,
+      action: code.includes("MOUNTING")
+        ? "Completează Montaj: șablon + soluție (sentinel sau ACM/metal)."
+        : "Rezolvă câmpul marcat în Review / Pasul 1.",
+      focusTarget: focusForCode(code),
+    });
   }
 
-  const hasUnmappedTechnical = technicalCodes.some((code) => !mapRuntimeBlockerCode(code));
-  if (
-    technicalCodes.length > 0 &&
-    mappedTechnicalCount === 0 &&
-    messages.length < OPERATOR_BLOCKER_BANNER_MAX_MESSAGES
-  ) {
-    pushUniqueMessage(messages, seen, GENERIC_TECHNICAL_BLOCKER_MESSAGE);
-  } else if (
-    hasUnmappedTechnical &&
-    mappedTechnicalCount > 0 &&
-    messages.length < OPERATOR_BLOCKER_BANNER_MAX_MESSAGES &&
-    !seen.has(GENERIC_TECHNICAL_BLOCKER_MESSAGE)
-  ) {
-    pushUniqueMessage(messages, seen, GENERIC_TECHNICAL_BLOCKER_MESSAGE);
+  if (surfacing.showBanner) {
+    const actions = surfacing.actions ?? [];
+    surfacing.reasons.forEach((reason, index) => {
+      const isMissingTariff = /fără tarif|fara tarif/i.test(reason);
+      const isResidual = /neconfirmat|neclasificat|vector|artwork/i.test(reason);
+      const severity: "blocker" | "warning" =
+        isMissingTariff || isResidual || /avertisment|atenț/i.test(reason)
+          ? "warning"
+          : "blocker";
+      // Missing-tariff with no concrete lines → diagnostic warning, not critical.
+      if (isMissingTariff && missingPriceFlagWithoutRows && missingPriceLineKeys.length === 0) {
+        pushIssue({
+          id: `surf-tariff-diag-${index}`,
+          severity: "warning",
+          code: "contains_missing_prices_inconsistent",
+          message:
+            "Semnal tarif lipsă fără linii neprețuite identificate — verificare diagnostică (nu blochează ca tarif lipsă real).",
+          action: "Verifică Calcul live; corectarea numerică este în auditul de pricing.",
+          focusTarget: "intake-v6-live-calculation-summary",
+        });
+        return;
+      }
+      if (isMissingTariff && missingPriceLineKeys.length > 0) {
+        pushIssue({
+          id: `surf-tariff-${index}`,
+          severity: "warning",
+          code: "contains_missing_prices",
+          message: `Linii fără tarif: ${missingPriceLineKeys.slice(0, 5).join(", ")}`,
+          action: actions[index] ?? "Verifică liniile cu tarif lipsă în Calcul live.",
+          focusTarget: "intake-v6-live-calculation-summary",
+        });
+        return;
+      }
+      pushIssue({
+        id: `surf-${index}`,
+        severity,
+        code: isResidual ? "unclassified_vector_artwork_requires_decision" : null,
+        message: reason,
+        action: actions[index] ?? null,
+        focusTarget: isResidual ? "intake-v6-artwork-finishes" : null,
+      });
+    });
   }
 
-  const hasTechnicalBlockers = technicalCodes.length > 0;
-  const show = messages.length > 0;
+  const blockerCount = issues.filter((i) => i.severity === "blocker").length;
+  const warningCount = issues.filter((i) => i.severity === "warning").length;
+  const show = issues.length > 0;
   const loading =
     !show &&
     ((handoffLoading && !surfacing.showBanner && surfacing.reasons.length === 0) ||
       (runtimeLoading && runtimeModel == null));
   const severity: OperatorBlockerBannerSeverity =
-    hasTechnicalBlockers || surfacing.showBanner ? "blocked" : "attention";
+    blockerCount > 0 ? "blocked" : "attention";
 
   return {
     show,
     loading: loading && !show,
-    messages,
+    summaryTitle: buildSummaryTitle(blockerCount, warningCount),
+    blockerCount,
+    warningCount,
     severity,
-    hasTechnicalBlockers,
+    issues,
+    messages: issues.map((i) => i.message),
+    hasTechnicalBlockers: technicalCodes.length > 0,
   };
 }
+
+/** @deprecated — generic fallback removed; kept only for test migration detection */
+export const OPERATOR_BLOCKER_BANNER_MAX_MESSAGES = 99;

@@ -6,6 +6,7 @@ import {
   REVIEW_LAYER_CARD_FACE_SUMMARY_CLASS,
   REVIEW_LAYER_CARD_HEADER_GRID,
   REVIEW_LAYER_CARD_NAME_CLASS,
+  REVIEW_LAYER_CARD_SPATE_SUMMARY_CLASS,
 } from "./layerCardCollapsedLayout";
 
 export default function IntakeV6LayerCardCollapsedHeader({
@@ -14,8 +15,10 @@ export default function IntakeV6LayerCardCollapsedHeader({
   layerName,
   faceSummary,
   cantSummary,
+  spateSummary,
   faceSummaryTestId,
   cantSummaryTestId,
+  spateSummaryTestId,
   swatchTestId,
   status,
   expanded,
@@ -27,15 +30,18 @@ export default function IntakeV6LayerCardCollapsedHeader({
   layerName: string;
   faceSummary: string;
   cantSummary: string;
+  spateSummary?: string;
   faceSummaryTestId?: string;
   cantSummaryTestId?: string;
+  spateSummaryTestId?: string;
   swatchTestId?: string;
   status: ReactNode;
   expanded: boolean;
+  headerTestId?: string;
   layerIconClassName?: string;
 }) {
   return (
-    <div className={`${REVIEW_LAYER_CARD_HEADER_GRID} px-2.5 py-1.5`}>
+    <div className={`${REVIEW_LAYER_CARD_HEADER_GRID} px-2.5 py-1.5`} data-testid={headerTestId}>
       <LayerIcon className={`h-3.5 w-3.5 shrink-0 ${layerIconClassName}`} aria-hidden />
       <span
         className="h-3.5 w-3.5 shrink-0 rounded-sm border border-slate-600/80"
@@ -49,6 +55,7 @@ export default function IntakeV6LayerCardCollapsedHeader({
         data-testid={faceSummaryTestId}
         title={faceSummary}
       >
+        <span className="mr-1 text-slate-600">Față:</span>
         {faceSummary}
       </p>
       <p
@@ -56,7 +63,16 @@ export default function IntakeV6LayerCardCollapsedHeader({
         data-testid={cantSummaryTestId}
         title={cantSummary}
       >
+        <span className="mr-1 text-slate-600">Cant:</span>
         {cantSummary}
+      </p>
+      <p
+        className={REVIEW_LAYER_CARD_SPATE_SUMMARY_CLASS}
+        data-testid={spateSummaryTestId}
+        title={spateSummary ?? "—"}
+      >
+        <span className="mr-1 text-slate-600">Spate:</span>
+        {spateSummary ?? "—"}
       </p>
       <span className="flex shrink-0 justify-end">{status}</span>
       <ChevronDown

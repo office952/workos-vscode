@@ -87,7 +87,7 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       "finish_setup_not_confirmed",
     ]);
     expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toMatch(/Vector neclasificat/);
+    expect(warnings[0]).toMatch(/Artwork\/logo neconfirmat/i);
     expect(hasArtworkNeedsDecisionWarning(["unclassified_vector_artwork_requires_decision"])).toBe(true);
   });
 
@@ -141,9 +141,9 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       allArtworkFinishesConfirmed: true,
     });
     expect(surfacing.showBanner).toBe(true);
-    expect(surfacing.reasons.join(" ")).toMatch(/Artwork confirmat/i);
-    expect(surfacing.reasons.join(" ")).toMatch(/vector rezidual/i);
-    expect(surfacing.actions.join(" ")).toMatch(/stratul\/sursa SVG/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/Artwork\/logo neconfirmat/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/perimetru/i);
+    expect(surfacing.actions.join(" ")).toMatch(/Confirmă finisajele/i);
   });
 
   it("aligns review readiness copy when workspace is ready but handoff is blocked", () => {

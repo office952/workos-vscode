@@ -19,6 +19,7 @@ from services.mounting_solution_service import (
     METAL_PREMOUNT_TEMPLATE_CODE,
     build_linked_module_input_from_solution,
     hydrate_mounting_solution_from_legacy,
+    is_installation_template_solution,
     legacy_mounting_system_from_solution,
     normalize_solution_configuration,
     read_mounting_solution,
@@ -146,16 +147,26 @@ def freeze_mounting_resolution(
     resolved: dict[str, Any] | None = None
 
     if canonical:
-        template_code = _read_string(canonical.get("template_code"))
-        if template_code:
+        if is_installation_template_solution(canonical):
             resolved = {
-                "template_code": template_code,
-                "configuration": normalize_solution_configuration(
-                    template_code,
-                    canonical.get("configuration"),
-                ),
+                "kind": "installation_template",
+                "template_code": None,
+                "configuration": dict(canonical.get("configuration") or {})
+                if isinstance(canonical.get("configuration"), dict)
+                else {},
             }
             activation_source = "canonical_mounting_solution"
+        else:
+            template_code = _read_string(canonical.get("template_code"))
+            if template_code:
+                resolved = {
+                    "template_code": template_code,
+                    "configuration": normalize_solution_configuration(
+                        template_code,
+                        canonical.get("configuration"),
+                    ),
+                }
+                activation_source = "canonical_mounting_solution"
     else:
         hydrated = hydrate_mounting_solution_from_legacy(setup)
         if hydrated:

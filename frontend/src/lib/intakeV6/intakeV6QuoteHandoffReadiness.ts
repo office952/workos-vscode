@@ -50,7 +50,7 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return `Artwork execution undecided on ${layerKey}.`;
 	}
 	if (code === "unclassified_vector_artwork_requires_decision") {
-		return "Vector neclasificat detectat: confirmă ce reprezintă, metoda de producție și fișierul/grafica pentru producție.";
+		return "Artwork/logo neconfirmat: confirmă finisajele pe Logo/litere — protecția de perimetru rămâne activă.";
 	}
 	if (code === "artwork_only_requires_decision") {
 		return "Nu există straturi de litere volumetrice confirmate. Artwork/policromie necesită decizie operator. Template-ul curent este Litere volumetrice; fișierul încărcat pare artwork-only.";
@@ -364,10 +364,10 @@ export function buildReviewHandoffSurfacing(args: {
 		reasons.push("Artwork/logo necesită decizie de execuție sau date obligatorii lipsă.");
 	} else if (artworkConfigured && vectorResidualWarning) {
 		reasons.push(
-			"Artwork confirmat, dar există vector rezidual neclasificat în SVG. Verifică stratul/sursa SVG.",
+			"Artwork/logo neconfirmat în finisaje — există diferență de perimetru față de SVG. Confirmă Logo 1/2 (și literele) în Review.",
 		);
 	} else if (artworkNeedsDecision) {
-		reasons.push("Vector/artwork neclasificat sau neconfirmat.");
+		reasons.push("Artwork/logo neconfirmat sau fără decizie de execuție.");
 	}
 	if (showOperatorConfirmationOnStep) {
 		reasons.push("Verifică rezumatul configurației și confirmă pentru continuare.");
@@ -386,7 +386,7 @@ export function buildReviewHandoffSurfacing(args: {
 	if (artworkUnconfigured) {
 		actions.push("Completează execuția artwork (ex. print/laminare) pentru fiecare logo.");
 	} else if (artworkConfigured && vectorResidualWarning) {
-		actions.push("Verifică stratul/sursa SVG pentru vectorul rezidual neclasificat.");
+		actions.push("Confirmă finisajele pe Logo 1/2 (și litere) pentru a include perimetrul confirmat.");
 	} else if (artworkNeedsDecision) {
 		actions.push("Rezolvă deciziile artwork în Review.");
 	}
