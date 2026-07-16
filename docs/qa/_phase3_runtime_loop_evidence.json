@@ -1,0 +1,110 @@
+{
+  "verdict": "PHASE3_RUNTIME_LOOP_PASS",
+  "base": "http://127.0.0.1:8001",
+  "order_id": 23099,
+  "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+  "fixture_policy": "existing_local_order_23099_temporary_help_cleaned",
+  "persistent_seed": false,
+  "steps": [
+    {
+      "step": "baseline",
+      "order_id": 23099,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "can_request_help": true,
+      "can_cancel_help": true,
+      "can_complete_operation": true,
+      "visible_as_principal": true,
+      "has_open_help": true,
+      "operation_completed": false,
+      "contract": "execution_task_collaboration_read/v1.2"
+    },
+    {
+      "step": "list_help",
+      "status": 200
+    },
+    {
+      "step": "cleanup_cancel",
+      "status": 200,
+      "help_id": 21
+    },
+    {
+      "step": "pre_stop_own_if_any",
+      "status": 409,
+      "note": "may 403/409 if no session"
+    },
+    {
+      "step": "create_broadcast",
+      "status": 200,
+      "help_id": 23
+    },
+    {
+      "step": "after_create_caps",
+      "has_open_help": true,
+      "can_cancel_help": true,
+      "can_request_help": true,
+      "open_count": 1
+    },
+    {
+      "step": "accept_help",
+      "status": 200,
+      "body": {
+        "ok": true,
+        "membership_id": 1
+      }
+    },
+    {
+      "step": "membership_truth",
+      "authorized_helper_count": 3,
+      "helpers": [
+        {
+          "id": 2,
+          "status": "active",
+          "name": "Octavian Dumitru"
+        },
+        {
+          "id": 3,
+          "status": "active",
+          "name": "Florin CNC"
+        },
+        {
+          "id": 4,
+          "status": "active",
+          "name": "Putaru Sandu"
+        }
+      ],
+      "active_workers_before": []
+    },
+    {
+      "step": "helper_session_start",
+      "status": 200,
+      "body": {
+        "ok": true
+      }
+    },
+    {
+      "step": "active_workers_after_start",
+      "active_workers": [
+        4
+      ],
+      "can_stop_own_session": true,
+      "operation_completed": false
+    },
+    {
+      "step": "helper_session_stop",
+      "status": 200,
+      "operation_completed": false
+    },
+    {
+      "step": "final_truth",
+      "operation_completed": false,
+      "has_open_help": true,
+      "active_workers": [],
+      "can_complete_operation": true
+    },
+    {
+      "step": "final_cleanup_cancel",
+      "status": 200,
+      "help_id": 23
+    }
+  ]
+}
