@@ -38,6 +38,15 @@
 
 One-GO authorization: whole phase, not per-endpoint. **IMPLEMENTARE = GO.**
 
+## Implementation stamp (2026-07-17)
+
+| Item | Value |
+|------|--------|
+| Code fix | `ad25fa9` — dossier `task_rules_json` → ProductAggregate `task_contract` |
+| Live lineage | `IR-BUILD1-1784237119` → quote `3` / `QSN2-2026-0002` → order `92402` → plan `8` → post-job |
+| Evidence | `docs/qa/same-scenario-e2e-2026-07-16/` · `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` |
+| Explicit gaps | planning minutes partial; stock optional (G3); labor $ excluded |
+
 ## Remains paused after GO
 
 FLEX polish; `/operator` mirror; UI-TRUTH; APP-AUTH-06G; PS isolation as primary; capacity; Mobile V1; ShopFloor; HR labor money product; machine telemetry platform

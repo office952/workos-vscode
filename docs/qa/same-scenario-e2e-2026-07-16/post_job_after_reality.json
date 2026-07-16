@@ -1,0 +1,905 @@
+﻿{
+    "contract_version":  "post_job_truth_v1",
+    "order_id":  92402,
+    "order_code":  "ORD-IV6-V2-1784237123-3",
+    "baseline":  {
+                     "revenue_net":  {
+                                         "value":  3549.1286,
+                                         "presence":  "present",
+                                         "unit":  "RON",
+                                         "source":  "order_snapshot_v2.accepted_commercial_total",
+                                         "note":  null
+                                     },
+                     "planned_internal_cost":  {
+                                                   "value":  1560.3836,
+                                                   "presence":  "present",
+                                                   "unit":  "RON",
+                                                   "source":  "order_snapshot_v2.estimated_internal_total",
+                                                   "note":  null
+                                               },
+                     "currency":  "RON",
+                     "revenue_source":  "order_snapshot_v2",
+                     "has_snapshot_v2":  true,
+                     "snapshot_version":  1
+                 },
+    "labor":  {
+                  "closed_minutes_total":  {
+                                               "value":  0.0,
+                                               "presence":  "zero",
+                                               "unit":  "min",
+                                               "source":  "execution_reality.sessions",
+                                               "note":  null
+                                           },
+                  "open_session_count":  0,
+                  "session_count":  1,
+                  "planned_minutes_total":  {
+                                                "value":  0.0,
+                                                "presence":  "zero",
+                                                "unit":  "min",
+                                                "source":  "execution_plan",
+                                                "note":  null
+                                            },
+                  "variance_minutes":  {
+                                           "value":  0.0,
+                                           "presence":  "present",
+                                           "unit":  "min",
+                                           "source":  "reconciliation",
+                                           "note":  null
+                                       },
+                  "sessions":  [
+                                   {
+                                       "session_id":  "ws-9baa15f096fa",
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+                                       "employee_id":  null,
+                                       "employee_name":  null,
+                                       "role":  null,
+                                       "session_type":  null,
+                                       "started_at":  "2026-07-16T21:25:46.649918+00:00",
+                                       "ended_at":  "2026-07-16T21:25:47.859376+00:00",
+                                       "actual_minutes":  0.0,
+                                       "status":  "ended",
+                                       "completeness":  "complete"
+                                   }
+                               ],
+                  "monetary_cost":  {
+                                        "value":  null,
+                                        "presence":  "excluded",
+                                        "unit":  null,
+                                        "source":  "hr_rate_not_authorized",
+                                        "note":  "labor_money_out_of_scope_g2"
+                                    },
+                  "completeness":  "complete"
+              },
+    "materials":  {
+                      "lines":  [
+
+                                ],
+                      "observed_row_count":  0,
+                      "deducted_movement_count":  0,
+                      "known_actual_cost_total":  {
+                                                      "value":  null,
+                                                      "presence":  "not_captured",
+                                                      "unit":  null,
+                                                      "source":  "stock_movements",
+                                                      "note":  null
+                                                  },
+                      "valuation_method":  null,
+                      "completeness":  "not_captured"
+                  },
+    "machines":  {
+                     "items":  [
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "PREPRESS",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "CNC_ROUTER",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "CNC_ROUTER",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "RETURN_PROFILE_MACHINE_FORMING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "RETURN_PROFILE_FACE_BONDING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:painting",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "WC_PAINT",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "FACE_VINYL_APPLICATION_LABOR",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "LED_ASSEMBLY",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "ELECTRICAL_WIRING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "CNC_ROUTER",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_internal_check",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "QC_INSPECTION",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "PACKAGING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "ACM_PANEL_CUTTING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:fold_cassette",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "ASSEMBLY",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "ASSEMBLY",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:v_groove_router",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "ACM_V_GROOVE",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:return_profile_face_bonding",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "WC_ASSEMBLY",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   },
+                                   {
+                                       "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:return_profile_machine_forming",
+                                       "planned_machine_id":  null,
+                                       "planned_machine_type":  "WC_FORMING",
+                                       "status":  "not_captured",
+                                       "note":  "plan_assigned_only_no_runtime_usage_log"
+                                   }
+                               ],
+                     "completeness":  "not_captured",
+                     "note":  "machine_usage_not_logged_in_execution_reality"
+                 },
+    "quantity":  {
+                     "tasks_planned":  {
+                                           "value":  18,
+                                           "presence":  "present",
+                                           "unit":  null,
+                                           "source":  "execution_plan.operational_tasks",
+                                           "note":  null
+                                       },
+                     "tasks_completed":  {
+                                             "value":  1,
+                                             "presence":  "present",
+                                             "unit":  null,
+                                             "source":  "execution_reality.sessions_derived_status",
+                                             "note":  null
+                                         },
+                     "progress_percent":  {
+                                              "value":  5.5556,
+                                              "presence":  "present",
+                                              "unit":  "%",
+                                              "source":  null,
+                                              "note":  null
+                                          },
+                     "completed_quantity":  {
+                                                "value":  null,
+                                                "presence":  "not_captured",
+                                                "unit":  null,
+                                                "source":  null,
+                                                "note":  "produced_quantity_field_absent_in_runtime"
+                                            },
+                     "completeness":  "partial"
+                 },
+    "reconciliation":  {
+                           "variances":  [
+                                             {
+                                                 "dimension":  "labor_minutes",
+                                                 "planned_value":  0.0,
+                                                 "actual_value":  0.0,
+                                                 "absolute_variance":  0.0,
+                                                 "percentage_variance":  null,
+                                                 "unit":  "min",
+                                                 "source":  "plan_vs_sessions",
+                                                 "status":  "present",
+                                                 "explanation_code":  "minutes_plan_vs_closed_sessions",
+                                                 "data_completeness":  "present"
+                                             },
+                                             {
+                                                 "dimension":  "known_material_cost_vs_planned_internal",
+                                                 "planned_value":  1560.3836,
+                                                 "actual_value":  null,
+                                                 "absolute_variance":  null,
+                                                 "percentage_variance":  null,
+                                                 "unit":  "RON",
+                                                 "source":  "snapshot_vs_stock_deduction",
+                                                 "status":  "not_captured",
+                                                 "explanation_code":  "material_known_cost_only_vs_full_planned_internal",
+                                                 "data_completeness":  "not_captured"
+                                             },
+                                             {
+                                                 "dimension":  "task_completion_count",
+                                                 "planned_value":  18,
+                                                 "actual_value":  1,
+                                                 "absolute_variance":  -17.0,
+                                                 "percentage_variance":  -94.4444,
+                                                 "unit":  "tasks",
+                                                 "source":  "plan_vs_session_status",
+                                                 "status":  "present",
+                                                 "explanation_code":  "tasks_planned_vs_done",
+                                                 "data_completeness":  "present"
+                                             },
+                                             {
+                                                 "dimension":  "machine_usage",
+                                                 "planned_value":  18,
+                                                 "actual_value":  null,
+                                                 "absolute_variance":  null,
+                                                 "percentage_variance":  null,
+                                                 "unit":  "machines",
+                                                 "source":  "plan_machine_hints",
+                                                 "status":  "not_captured",
+                                                 "explanation_code":  "machine_usage_not_logged",
+                                                 "data_completeness":  "not_captured"
+                                             }
+                                         ],
+                           "operations":  [
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+                                                  "task_name":  "PregÃÆtire vector / font",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "done",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "present",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "present"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+                                                  "task_name":  "TÃÆiere CNC faÃâºÃÆ litere",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_back_cut",
+                                                  "task_name":  "TÃÆiere CNC spate Forex 10 mm",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+                                                  "task_name":  "Modelare cant profil Ã¢â¬â utilaj (EUR/ml serviciu)",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_face_bonding",
+                                                  "task_name":  "Lipire cant pe faÃâºÃÆ (EUR/ml serviciu)",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:painting",
+                                                  "task_name":  "Vopsire RAL â serviciu perimetru",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vinyl_application",
+                                                  "task_name":  "ManoperÃÆ aplicare folie feÃâºe litere",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:led_installation",
+                                                  "task_name":  "Montaj LED per modul",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+                                                  "task_name":  "Cablaj electric litere",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:mounting_template",
+                                                  "task_name":  "CNC debitare Ãâ¢ablon montaj Forex 3 mm (serviciu separat)",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_internal_check",
+                                                  "task_name":  "Control calitate",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:packaging",
+                                                  "task_name":  "Ambalare + Ãâ¢ablon",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:cut_acm_panel",
+                                                  "task_name":  "Debitare panou ACM la dimensiune",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:fold_cassette",
+                                                  "task_name":  "Casetare / pliere manualÄ",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:mount_acm_panel",
+                                                  "task_name":  "Montaj panou ACM pe structurÄ / premontaj",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:mounting_panel:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1:v_groove_router",
+                                                  "task_name":  "Frezare V-groove (135Â°) pe lungimea pliului",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:return_profile_face_bonding",
+                                                  "task_name":  "Lipire cant profil pe faÈÄ litere",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              },
+                                              {
+                                                  "task_id":  "node:volum_aluminum:TPL-VOLUM-ALUMINIU_v1:return_profile_machine_forming",
+                                                  "task_name":  "Modelare cant profil litere â utilaj",
+                                                  "planned_status":  "planned",
+                                                  "actual_status":  "assigned",
+                                                  "planned_minutes":  {
+                                                                          "value":  0.0,
+                                                                          "presence":  "present",
+                                                                          "unit":  "min",
+                                                                          "source":  null,
+                                                                          "note":  null
+                                                                      },
+                                                  "actual_minutes":  {
+                                                                         "value":  0.0,
+                                                                         "presence":  "not_captured",
+                                                                         "unit":  "min",
+                                                                         "source":  "sessions",
+                                                                         "note":  null
+                                                                     },
+                                                  "variance_minutes":  {
+                                                                           "value":  0.0,
+                                                                           "presence":  "present",
+                                                                           "unit":  "min",
+                                                                           "source":  null,
+                                                                           "note":  null
+                                                                       },
+                                                  "completeness":  "not_captured"
+                                              }
+                                          ]
+                       },
+    "profitability":  {
+                          "revenue_net":  {
+                                              "value":  3549.1286,
+                                              "presence":  "present",
+                                              "unit":  "RON",
+                                              "source":  "order_snapshot_v2.accepted_commercial_total",
+                                              "note":  null
+                                          },
+                          "planned_internal_cost":  {
+                                                        "value":  1560.3836,
+                                                        "presence":  "present",
+                                                        "unit":  "RON",
+                                                        "source":  "order_snapshot_v2.estimated_internal_total",
+                                                        "note":  null
+                                                    },
+                          "known_actual_cost":  {
+                                                    "value":  null,
+                                                    "presence":  "not_captured",
+                                                    "unit":  "RON",
+                                                    "source":  null,
+                                                    "note":  null
+                                                },
+                          "known_actual_margin":  {
+                                                      "value":  null,
+                                                      "presence":  "missing",
+                                                      "unit":  "RON",
+                                                      "source":  null,
+                                                      "note":  "materials_only_known_margin"
+                                                  },
+                          "known_actual_margin_percent":  {
+                                                              "value":  null,
+                                                              "presence":  "missing",
+                                                              "unit":  "%",
+                                                              "source":  null,
+                                                              "note":  "materials_only"
+                                                          },
+                          "cost_coverage_status":  "INCOMPLETE",
+                          "profitability_status":  "INCOMPLETE",
+                          "included_cost_components":  [
+
+                                                       ],
+                          "excluded_cost_components":  [
+                                                           "labor_money",
+                                                           "machine_money"
+                                                       ],
+                          "missing_actual_components":  [
+                                                            "labor_money",
+                                                            "machine_money",
+                                                            "materials"
+                                                        ],
+                          "wording":  [
+                                          "Partial profitability â labor monetary cost not included",
+                                          "Cost coverage incomplete until all monetary inputs are known",
+                                          "Do not treat known margin as final profit",
+                                          "Machine cost not available"
+                                      ],
+                          "false_final_profit_forbidden":  true
+                      },
+    "missing_data":  [
+                         {
+                             "code":  "material_deduction_missing",
+                             "dimension":  "materials",
+                             "message":  "No stock deduction recorded; material actual cost unknown",
+                             "blocking_for_complete_profitability":  true
+                         },
+                         {
+                             "code":  "labor_money_excluded",
+                             "dimension":  "labor",
+                             "message":  "Labor monetary cost excluded (minutes-only; HR rates not authorized)",
+                             "blocking_for_complete_profitability":  true
+                         },
+                         {
+                             "code":  "machine_usage_not_captured",
+                             "dimension":  "machines",
+                             "message":  "Machine/utilaj usage is not logged; machine cost unavailable",
+                             "blocking_for_complete_profitability":  true
+                         },
+                         {
+                             "code":  "produced_quantity_not_captured",
+                             "dimension":  "quantity",
+                             "message":  "Produced quantity field absent; task completion used instead",
+                             "blocking_for_complete_profitability":  false
+                         }
+                     ],
+    "sources":  {
+                    "revenue":  "order_snapshot_v2",
+                    "planned_cost":  "order_snapshot_v2.estimated_internal_total",
+                    "labor_minutes":  "execution_reality.tasks_json_sessions",
+                    "material_actuals":  "stock_movements.consumption",
+                    "material_valuation":  null,
+                    "machine_usage":  "not_captured_in_runtime",
+                    "quantity":  "task_completion_from_sessions"
+                },
+    "retroactive_change_allowed":  false,
+    "write_back_performed":  false
+}
