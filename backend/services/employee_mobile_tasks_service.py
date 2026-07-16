@@ -15,7 +15,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from services.employee_mobile_production_documents_service import load_intake_work_files_for_order
 from services.production_document_handoff_service import merge_production_documents
 from services.execution_reality_service import ExecutionRealityService, RealityInputError
+from services.flex_membership_flags import is_collab_phase2_enabled
 from services.task_work_session_service import (
+    ROLE_HELPER,
     active_session_for_employee,
     aggregate_task_work_metrics,
     derive_task_status_for_employee,
@@ -164,6 +166,31 @@ def task_belongs_to_employee(
         return True
     planned_assignee = _normalize_employee_id(plan_task.get("assigned_employee_id"))
     if planned_assignee == employee_id:
+        return True
+    return False
+
+
+def employee_has_principal_authority(
+    *,
+    assigned_employee_id: Any,
+    completed_by_employee_id: Any,
+    sessions: List[dict],
+    employee_id: int,
+) -> bool:
+    """Principal claim/complete truth — helper/assist sessions never grant this."""
+    if _normalize_employee_id(assigned_employee_id) == employee_id:
+        return True
+    if _normalize_employee_id(completed_by_employee_id) == employee_id:
+        return True
+    for entry in sessions:
+        if not isinstance(entry, dict):
+            continue
+        if _normalize_employee_id(entry.get("employee_id")) != employee_id:
+            continue
+        role = str(entry.get("role") or "").strip().lower()
+        if role == ROLE_HELPER:
+            continue
+        # Legacy / primary work sessions (missing role treated as principal work).
         return True
     return False
 
@@ -536,17 +563,44 @@ async def _attach_readiness_to_tasks(
 
 async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
     from services.task_clarification_request_service import get_open_clarification_map
+    from services.execution_task_membership_service import (
+        list_active_helper_memberships_for_employee,
+    )
 
     enriched, _ = await _load_enriched_tasks(db)
+    membership_keys: set[tuple[int, str]] = set()
+    if is_collab_phase2_enabled():
+        for row in await list_active_helper_memberships_for_employee(
+            db, employee_id=employee_id
+        ):
+            membership_keys.add((int(row.order_id), str(row.task_id)))
+
     owned: List[dict] = []
+    seen: set[tuple[int, str]] = set()
     for task in enriched:
-        plan_task = {"assigned_employee_id": task.get("assigned_employee_id")}
-        reality_task = {
-            "employee_id": task.get("employee_id"),
-            "completed_by_employee_id": task.get("completed_by_employee_id"),
-        }
-        if task_belongs_to_employee(plan_task, reality_task, employee_id):
-            owned.append(task)
+        key = (int(task["order_id"]), str(task["task_id"]))
+        is_helper_member = key in membership_keys
+        # Do not use merged reality employee_id alone — helper sessions pollute it.
+        is_principal = (
+            _normalize_employee_id(task.get("assigned_employee_id")) == employee_id
+            or _normalize_employee_id(task.get("completed_by_employee_id")) == employee_id
+        )
+        if not is_principal and not is_helper_member:
+            # Legacy principal work: own non-helper session reflected on enriched row.
+            if (
+                _normalize_employee_id(task.get("employee_id")) == employee_id
+                and str(task.get("role") or "").strip().lower() != ROLE_HELPER
+            ):
+                is_principal = True
+        if not is_principal and not is_helper_member:
+            continue
+        if key in seen:
+            continue
+        seen.add(key)
+        task = dict(task)
+        task["visible_as_principal"] = bool(is_principal)
+        task["visible_as_helper"] = bool(is_helper_member)
+        owned.append(task)
 
     if owned:
         order_ids = sorted({int(task["order_id"]) for task in owned})
@@ -564,6 +618,14 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
             order_id = int(task["order_id"])
             task_id = str(task["task_id"])
             task_sessions = sessions_for_task(reality_by_order.get(order_id, []), task_id)
+            # Upgrade principal from own non-helper sessions (claim/start path).
+            if employee_has_principal_authority(
+                assigned_employee_id=task.get("assigned_employee_id"),
+                completed_by_employee_id=task.get("completed_by_employee_id"),
+                sessions=task_sessions,
+                employee_id=employee_id,
+            ):
+                task["visible_as_principal"] = True
             task["status"] = derive_task_status_for_employee(task_sessions, employee_id)
             my_active = active_session_for_employee(task_sessions, employee_id)
             rt = my_active if my_active else merge_reality_fields_for_task(task_sessions)
@@ -578,6 +640,12 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
                 metrics["active_workers"],
                 viewer_employee_id=employee_id,
             )
+            task["can_stop_own_session"] = my_active is not None
+            task["can_complete_operation"] = bool(task.get("visible_as_principal"))
+            key = (order_id, task_id)
+            task["can_start_helper_work"] = (
+                key in membership_keys and my_active is None
+            )
 
     open_map = await get_open_clarification_map(
         db,
@@ -591,11 +659,89 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
 
     await _attach_readiness_to_tasks(db, owned, employee_id)
     for task in owned:
-        task["is_assigned_to_current_employee"] = True
+        is_principal = bool(task.get("visible_as_principal"))
+        task["is_assigned_to_current_employee"] = is_principal
         task["is_available_for_claim"] = False
         task["can_claim"] = False
         task["can_start_from_available"] = False
+        # Helper-only visibility: never grant principal claim/complete via list flags.
+        if not is_principal:
+            task["can_complete_operation"] = False
+            task["can_claim"] = False
+            key = (int(task["order_id"]), str(task["task_id"]))
+            # Membership authorizes helper work; own active session blocks re-start.
+            task["can_start_helper_work"] = bool(
+                key in membership_keys and not task.get("can_stop_own_session")
+            )
     return owned
+
+
+async def list_help_opportunity_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
+    """Ajutor pool: OPEN help + eligible; bypasses other-session claim guard."""
+    from models.execution_task_help_request import ExecutionTaskHelpRequest
+    from schemas.execution_task_help import HELP_STATUS_OPEN
+    from services.operational_registry_service import OperationalRegistryService
+    from sqlalchemy import select
+
+    if not is_collab_phase2_enabled():
+        return []
+
+    open_rows = list(
+        (
+            await db.execute(
+                select(ExecutionTaskHelpRequest).where(
+                    ExecutionTaskHelpRequest.status == HELP_STATUS_OPEN
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    if not open_rows:
+        return []
+
+    enriched, _ = await _load_enriched_tasks(db)
+    by_key = {
+        (int(t["order_id"]), str(t["task_id"])): t for t in enriched
+    }
+    registry = OperationalRegistryService(db)
+    results: List[dict] = []
+    for help_row in open_rows:
+        key = (int(help_row.order_id), str(help_row.task_id))
+        task = by_key.get(key)
+        if task is None:
+            continue
+        if not _is_order_active_for_claim(str(task.get("order_status") or "")):
+            continue
+        targeted = help_row.targeted_employee_id
+        if targeted is not None and int(targeted) != int(employee_id):
+            continue
+        process_type = str(
+            task.get("process_type")
+            or task.get("process_id")
+            or task.get("source_operation_code")
+            or ""
+        ).strip()
+        machine_type = str(task.get("machine_type") or "").strip() or None
+        if not process_type:
+            continue
+        eligibility = await registry.check_employee_operation_eligibility(
+            employee_id, process_type, machine_type=machine_type
+        )
+        if not eligibility.get("eligible"):
+            continue
+        item = dict(task)
+        item["pool"] = "ajutor_solicitat"
+        item["help_request_id"] = int(help_row.id)
+        item["can_view_help"] = True
+        item["can_accept_help"] = True
+        item["can_start_helper_work"] = False
+        item["can_claim"] = False
+        item["can_complete_operation"] = False
+        item["visible_as_helper"] = True
+        item["visible_as_principal"] = False
+        results.append(item)
+    return results
 
 
 async def _get_task_context(
@@ -613,26 +759,31 @@ async def _get_task_context(
     if match is None:
         raise HTTPException(status_code=404, detail={"error": "task_not_found"})
 
-    plan_task = {"assigned_employee_id": match.get("assigned_employee_id")}
-    reality_task = {
-        "employee_id": match.get("employee_id"),
-        "completed_by_employee_id": match.get("completed_by_employee_id"),
-    }
-    if not task_belongs_to_employee(plan_task, reality_task, employee_id):
-        raise HTTPException(status_code=403, detail={"error": "task_not_assigned_to_employee"})
-
     reality_sql = text(
         "SELECT tasks_json FROM execution_reality WHERE order_id = :oid LIMIT 1"
     )
     row = (await db.execute(reality_sql, {"oid": order_id})).mappings().first()
     all_tasks = _parse_json(row.get("tasks_json") if row else [])
     task_sessions = sessions_for_task(all_tasks, task_id)
+
+    # Helper/assist sessions must not unlock principal complete/start paths.
+    if not employee_has_principal_authority(
+        assigned_employee_id=match.get("assigned_employee_id"),
+        completed_by_employee_id=match.get("completed_by_employee_id"),
+        sessions=task_sessions,
+        employee_id=employee_id,
+    ):
+        raise HTTPException(status_code=403, detail={"error": "task_not_assigned_to_employee"})
+
     rt = merge_reality_fields_for_task(task_sessions)
     my_active = active_session_for_employee(task_sessions, employee_id)
     if my_active:
         rt = my_active
     elif rt and _task_owned_by_other(rt, employee_id):
-        raise HTTPException(status_code=403, detail={"error": "task_owned_by_other_employee"})
+        # Helper/assist ownership of the merged row must not block the principal.
+        owner_role = str(rt.get("role") or "").strip().lower()
+        if owner_role != ROLE_HELPER:
+            raise HTTPException(status_code=403, detail={"error": "task_owned_by_other_employee"})
 
     plan_sql = text(
         "SELECT ep.id, ep.tasks_json, o.quote_snapshot_v2_id, o.snapshot_v2_json "
@@ -854,6 +1005,9 @@ async def complete_my_task(db: AsyncSession, *, order_id: int, task_id: str, emp
                 }
         raise HTTPException(status_code=422, detail={"error": exc.code, "detail": exc.detail})
 
+    from services.execution_task_help_service import close_open_help_for_task
+
+    await close_open_help_for_task(db, order_id=order_id, task_id=task_id)
     return {"status": "ok", "action": "complete", "task_id": task_id, "timestamp": now_iso}
 
 
