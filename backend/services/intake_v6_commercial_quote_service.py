@@ -189,6 +189,7 @@ async def get_quote_handoff_preview_for_workspace(
 		operator_confirmation_complete=policy.operator_confirmation_complete,
 		fatal_blockers=merged["fatal_blockers"],
 		review_warnings=merged["review_warnings"],
+		diagnostic_warnings=merged.get("diagnostic_warnings") or [],
 		client_send_allowed=merged["client_send_allowed"],
 		accept_allowed=merged["accept_allowed"],
 		convert_to_order_allowed=merged["convert_to_order_allowed"],

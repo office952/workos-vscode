@@ -1,0 +1,265 @@
+{
+  "task": "WORKOS-GRADI-CURAT-DOSSIER-AND-TRIGGER-TRUTH-AUDIT-V1",
+  "date": "2026-07-16",
+  "starting_head": "c6302b9e30eb04a4a80aa82f16ce76c0ecb4dd84",
+  "branch": "feature/product-system-active-path-isolation-v1",
+  "worktree": "C:\\w\\psiso",
+  "mode": "docs_only_read_only_audit",
+  "implementation": false,
+  "workspace_writes": false,
+  "db_writes": false,
+  "commit": false,
+  "push": false,
+  "pr": false,
+  "workspace_id": "11891d68-c4c8-4719-acc5-f8fcb22a44af",
+  "operator_route": "http://127.0.0.1:3000/intake-v6/11891d68-c4c8-4719-acc5-f8fcb22a44af/operator",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "verdict": {
+    "classification": "READY_FOR_QUOTE_BUT_NOT_EXECUTION",
+    "can_operator_confirm_and_continue": "YES_FOR_QUOTE_ONLY",
+    "first_coherent_blocker": "UI_SEVERITY_MAPPING",
+    "proof_token": "GRADI_CURAT_DOSSIER_TRIGGER_TRUTH_PROVEN",
+    "dossier_metadata_class": "INFORMATIONAL_METADATA_WARNING"
+  },
+  "commercial_non_regression": {
+    "dry_run_status": "V6_PRICED_DRY_RUN_READY",
+    "net_ron": 3513.56,
+    "vat_ron": 737.85,
+    "gross_ron": 4251.41,
+    "vat_rate": 0.21,
+    "site_install_lines": 1,
+    "logo_commercial_lines_present": true,
+    "quote_exists": false
+  },
+  "live_handoff_inventory": {
+    "endpoint": "GET /api/v1/intake-v6/workspaces/{id}/quote-handoff-preview",
+    "fatal_blockers": [
+      "operator_confirmation_missing"
+    ],
+    "review_warnings": [
+      {
+        "index": 1,
+        "code_family": "TRIGGER_FIELD_MISMATCH",
+        "prefix": "canonical_unresolved_warning:",
+        "source": "intake_v6_modular_form_contract_service.TRIGGER_ALIGNMENTS",
+        "file": "backend/services/intake_v6_modular_form_contract_service.py",
+        "aggregate_severity": null,
+        "handoff_bucket": "review_warnings",
+        "blocks_quote_draft": false,
+        "blocks_priced_offer_after_confirm": false,
+        "blocks_offer_accept": true,
+        "blocks_order_convert": true,
+        "blocks_execution": true,
+        "summary": "structura_suport link=metal_support_required intake=finish_setup.mounting_system"
+      },
+      {
+        "index": 2,
+        "code_family": "TRIGGER_FIELD_MISMATCH",
+        "prefix": "canonical_unresolved_warning:",
+        "source": "product_aggregate_service.TRIGGER_FIELD_MISMATCHES + _build_modules",
+        "file": "backend/services/product_aggregate_service.py",
+        "aggregate_severity": "warning",
+        "handoff_bucket": "review_warnings",
+        "blocks_quote_draft": false,
+        "blocks_priced_offer_after_confirm": false,
+        "blocks_offer_accept": true,
+        "blocks_order_convert": true,
+        "blocks_execution": true,
+        "map": {
+          "link_trigger_field": "metal_support_required",
+          "intake_field_candidate": "mounting_system"
+        }
+      },
+      {
+        "index": 3,
+        "code_family": "DOSSIER_METADATA_ONLY",
+        "prefix": "canonical_unresolved_warning:",
+        "source": "product_aggregate_service when dossier row exists",
+        "file": "backend/services/product_aggregate_service.py",
+        "lines": "240-256",
+        "aggregate_severity": "info",
+        "handoff_bucket": "review_warnings",
+        "blocks_quote_draft": false,
+        "blocks_priced_offer_after_confirm": false,
+        "blocks_offer_accept": true,
+        "blocks_order_convert": true,
+        "blocks_execution": true,
+        "intended": "never_block_any_stage_stay_visible_diagnostic"
+      },
+      {
+        "index": 4,
+        "code_family": "CANONICAL_CONTRACT_AUTHORITY",
+        "prefix": "canonical_unresolved_warning:",
+        "source": "product_aggregate_service when canonical contract exists",
+        "file": "backend/services/product_aggregate_service.py",
+        "lines": "258-266",
+        "aggregate_severity": "info",
+        "handoff_bucket": "review_warnings",
+        "blocks_quote_draft": false,
+        "blocks_priced_offer_after_confirm": false,
+        "blocks_offer_accept": true,
+        "blocks_order_convert": true,
+        "blocks_execution": true,
+        "intended": "never_block_any_stage_stay_visible_diagnostic"
+      },
+      {
+        "index": 5,
+        "code_family": "TEMPLATE_IDENTITY",
+        "prefix": "canonical_unresolved_warning:",
+        "source": "product_aggregate_service identity resolution trace",
+        "file": "backend/services/product_aggregate_service.py",
+        "lines": "269-282",
+        "aggregate_severity": "info",
+        "handoff_bucket": "review_warnings",
+        "blocks_quote_draft": false,
+        "blocks_priced_offer_after_confirm": false,
+        "blocks_offer_accept": true,
+        "blocks_order_convert": true,
+        "blocks_execution": true,
+        "intended": "never_block_any_stage_stay_visible_diagnostic"
+      }
+    ]
+  },
+  "stage_matrix_current_runtime": {
+    "operator_confirmation_missing": {
+      "quote_draft": "BLOCK",
+      "priced_offer": "BLOCK",
+      "offer_accept": "BLOCK",
+      "order_convert": "BLOCK",
+      "execution_plan": "BLOCK"
+    },
+    "TRIGGER_FIELD_MISMATCH": {
+      "quote_draft": "ALLOW",
+      "priced_offer": "ALLOW_AFTER_OPERATOR_CONFIRM",
+      "offer_accept": "BLOCK",
+      "order_convert": "BLOCK",
+      "execution_plan": "BLOCK"
+    },
+    "DOSSIER_METADATA_ONLY": {
+      "quote_draft": "ALLOW",
+      "priced_offer": "ALLOW_AFTER_OPERATOR_CONFIRM",
+      "offer_accept": "BLOCK",
+      "order_convert": "BLOCK",
+      "execution_plan": "BLOCK"
+    },
+    "CANONICAL_CONTRACT_AUTHORITY": {
+      "quote_draft": "ALLOW",
+      "priced_offer": "ALLOW_AFTER_OPERATOR_CONFIRM",
+      "offer_accept": "BLOCK",
+      "order_convert": "BLOCK",
+      "execution_plan": "BLOCK"
+    },
+    "TEMPLATE_IDENTITY": {
+      "quote_draft": "ALLOW",
+      "priced_offer": "ALLOW_AFTER_OPERATOR_CONFIRM",
+      "offer_accept": "BLOCK",
+      "order_convert": "BLOCK",
+      "execution_plan": "BLOCK"
+    }
+  },
+  "dossier_truth": {
+    "template": "TPL-VOLUMETRIC-LETTERS_v2",
+    "scope": "root_only",
+    "dossier_version": 3,
+    "dossier_status": "approved",
+    "class": "INFORMATIONAL_METADATA_WARNING",
+    "runtime_authority": "canonical_template_contracts",
+    "per_vector_logo_child": false
+  },
+  "trigger_mismatch_truth": {
+    "module_code": "structura_suport",
+    "link_trigger_field": "metal_support_required",
+    "canonical_intake_field": "finish_setup.mounting_system",
+    "cause": "legacy_alias_renamed_intake_field",
+    "equivalent_truth_present": true,
+    "equivalent_fields": [
+      "mounting_solution.kind=installation_template",
+      "mounting_scope=preparation_and_site_installation"
+    ],
+    "commercial_site_install_ok": true,
+    "production_impact_on_current_composition": "none_for_commercial_outcome"
+  },
+  "root_vs_linked_child": {
+    "all_five_review_codes_owned_by": "root_volumetric_letters",
+    "vector_logo_separate_dossier_trigger_codes": false
+  },
+  "severity_mapping_defect": {
+    "name": "UI_SEVERITY_MAPPING",
+    "lift_path": [
+      "ProductAggregateConflict (info|warning)",
+      "PD validation.unresolved_warnings (no severity filter)",
+      "collect_canonical_readiness_findings → canonical_unresolved_warning:*",
+      "merge_policy_findings → review_warnings",
+      "client_order_production_flags_for_quote → accept/convert/production false if any review_warnings"
+    ],
+    "promoted_to_fatal_blockers": false,
+    "promoted_to_order_execution_blockers_via_review": true,
+    "key_files": [
+      "backend/services/product_aggregate_service.py",
+      "backend/services/product_definition_builder_service.py",
+      "backend/services/intake_v6_canonical_readiness_service.py",
+      "backend/services/intake_v4_internal_draft_quote_policy_service.py",
+      "backend/services/intake_v6_commercial_quote_service.py"
+    ],
+    "downgrade_for_quote_already_allow": [
+      "TRIGGER_FIELD_MISMATCH",
+      "DOSSIER_METADATA_ONLY",
+      "CANONICAL_CONTRACT_AUTHORITY",
+      "TEMPLATE_IDENTITY"
+    ],
+    "should_stop_blocking_order_execution_immediately": [
+      "DOSSIER_METADATA_ONLY",
+      "CANONICAL_CONTRACT_AUTHORITY",
+      "TEMPLATE_IDENTITY"
+    ],
+    "remain_order_execution_sensitive_until_resolved": [
+      "TRIGGER_FIELD_MISMATCH"
+    ]
+  },
+  "proofs": {
+    "commercial_pricing_complete": true,
+    "only_step3_quote_fatal": "operator_confirmation_missing",
+    "quote_create_safe_after_operator_confirm": true,
+    "dossier_trigger_invalidate_commercial_truth": false,
+    "execution_must_remain_gated_where_operational_truth_incomplete": true,
+    "current_execution_block_is_over_broad": true
+  },
+  "correction_boundary_next_phase": {
+    "authorized_by_this_audit": false,
+    "name": "UI_SEVERITY_MAPPING_readiness_channel_split",
+    "keep_diagnostics": true,
+    "delete_diagnostics": false,
+    "global_all_warnings_nonblocking": false,
+    "bypass_pd_pa": false,
+    "auto_confirm": false,
+    "change_pricing": false
+  },
+  "owner_gates_open": {
+    "G1_quote_after_confirm_despite_diagnostics": "recommended_YES",
+    "G2_order_execution_blockers": "recommended_TRIGGER_ONLY",
+    "G3_info_traces_visible_nonblocking": "recommended_YES"
+  },
+  "forbidden_held": [
+    "suppress_or_delete_diagnostics",
+    "global_all_warnings_nonblocking",
+    "bypass_product_definition_or_aggregate",
+    "auto_confirm_or_remove_step3_gate",
+    "dossier_rewrite",
+    "pricing_registry_costengine_changes",
+    "workspace_db_writes",
+    "quote_order_creation_in_audit",
+    "commit_push_pr_until_owner_review"
+  ],
+  "artifacts": [
+    ".compound-engineering/gradi-curat-dossier-trigger-truth-audit/plan.md",
+    ".compound-engineering/gradi-curat-dossier-trigger-truth-audit/decision-log.md",
+    "docs/worklog/realignment/2026-07-16_gradi_curat_dossier_trigger_truth_audit.md",
+    "docs/qa/gradi-curat-e2e/dossier-trigger-truth-evidence.json"
+  ],
+  "roadmap": {
+    "score": "8/10",
+    "position": "post_commercial_pre_accept_hygiene",
+    "directia_stabilita_pct": 90
+  }
+}

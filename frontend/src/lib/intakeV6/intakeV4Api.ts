@@ -1175,6 +1175,8 @@ export interface IntakeV4QuoteHandoffPreviewResponse {
   operator_confirmation_complete: boolean;
   fatal_blockers: string[];
   review_warnings: string[];
+  /** Aggregate info traces — visible technical diagnostics; do not gate accept/convert/production. */
+  diagnostic_warnings?: string[];
   client_send_allowed: boolean;
   accept_allowed: boolean;
   convert_to_order_allowed: boolean;

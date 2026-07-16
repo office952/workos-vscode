@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any
+from dataclasses import dataclass, field
+from typing import Any, Literal
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,20 +16,70 @@ from services.product_definition_builder_service import ProductDefinitionBuilder
 
 DEFAULT_ROOT_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
 
+# Aggregate severity=info traces: visible diagnostics, never gate Quote/accept/Order/Execution.
+NONBLOCKING_DIAGNOSTIC_WARNING_CODES = frozenset(
+    {
+        "DOSSIER_METADATA_ONLY",
+        "CANONICAL_CONTRACT_AUTHORITY",
+        "TEMPLATE_IDENTITY",
+    }
+)
+
+CanonicalWarningChannel = Literal["diagnostic", "review"]
+
 
 @dataclass(frozen=True)
 class IntakeV6CanonicalReadinessFindings:
     fatal_blockers: list[str]
     review_warnings: list[str]
+    diagnostic_warnings: list[str] = field(default_factory=list)
 
 
 def findings_summary(findings: IntakeV6CanonicalReadinessFindings) -> dict[str, Any]:
     return {
         "fatal_blockers": list(findings.fatal_blockers),
         "review_warnings": list(findings.review_warnings),
+        "diagnostic_warnings": list(findings.diagnostic_warnings),
         "fatal_count": len(findings.fatal_blockers),
         "warning_count": len(findings.review_warnings),
+        "diagnostic_count": len(findings.diagnostic_warnings),
     }
+
+
+def _warning_code_token(warning: str) -> str:
+    """Extract the leading CODE from `CODE: message` or prefixed canonical strings."""
+    token = str(warning or "").strip()
+    prefix = "canonical_unresolved_warning:"
+    if token.startswith(prefix):
+        token = token[len(prefix) :].strip()
+    if not token:
+        return ""
+    return token.split(":", 1)[0].strip()
+
+
+def classify_canonical_unresolved_warning(warning: str) -> CanonicalWarningChannel:
+    """Route Aggregate info traces to diagnostics; keep TRIGGER and other codes on review."""
+    code = _warning_code_token(warning)
+    if code in NONBLOCKING_DIAGNOSTIC_WARNING_CODES:
+        return "diagnostic"
+    return "review"
+
+
+def partition_canonical_unresolved_warnings(
+    warnings: list[str],
+) -> tuple[list[str], list[str]]:
+    """Return (review_warnings, diagnostic_warnings) without dropping any code."""
+    review: list[str] = []
+    diagnostic: list[str] = []
+    for warning in warnings:
+        token = str(warning).strip()
+        if not token:
+            continue
+        if classify_canonical_unresolved_warning(token) == "diagnostic":
+            diagnostic.append(token)
+        else:
+            review.append(token)
+    return review, diagnostic
 
 
 def dedupe_codes(codes: list[str]) -> list[str]:
@@ -95,6 +145,7 @@ def apply_readiness_spine_to_pricing_preview(
     findings = IntakeV6CanonicalReadinessFindings(
         fatal_blockers=[f"runtime_capture:{code}" for code in capture_blockers],
         review_warnings=[],
+        diagnostic_warnings=[],
     )
     return enrich_pricing_preview_with_canonical_findings(preview, findings)
 
@@ -113,30 +164,50 @@ async def collect_canonical_readiness_findings(
         return IntakeV6CanonicalReadinessFindings(
             fatal_blockers=["product_definition_preview_unavailable"],
             review_warnings=[],
+            diagnostic_warnings=[],
         )
 
     fatal: list[str] = []
-    review: list[str] = []
-    for field in list(preview.validation.missing_required_fields or []):
-        fatal.append(f"canonical_missing_required_field:{field}")
+    prefixed_warnings: list[str] = []
+    for missing_field in list(preview.validation.missing_required_fields or []):
+        fatal.append(f"canonical_missing_required_field:{missing_field}")
     for issue in list(preview.validation.invalid_combinations or []):
         fatal.append(f"canonical_invalid_combination:{issue}")
     for warning in list(preview.validation.unresolved_warnings or []):
-        review.append(f"canonical_unresolved_warning:{warning}")
+        prefixed_warnings.append(f"canonical_unresolved_warning:{warning}")
+    review, diagnostic = partition_canonical_unresolved_warnings(prefixed_warnings)
     return IntakeV6CanonicalReadinessFindings(
         fatal_blockers=fatal,
         review_warnings=review,
+        diagnostic_warnings=diagnostic,
     )
 
 
 def merge_policy_findings(*, policy: Any, findings: IntakeV6CanonicalReadinessFindings) -> dict[str, Any]:
     fatal_blockers = dedupe_codes([*policy.fatal_blockers, *findings.fatal_blockers])
-    review_warnings = dedupe_codes([*policy.review_warnings, *findings.review_warnings])
+    # Policy review warnings stay on the gating channel; Aggregate info is already partitioned
+    # into findings.diagnostic_warnings by collect_canonical_readiness_findings.
+    policy_review, policy_diagnostic = partition_canonical_unresolved_warnings(
+        list(policy.review_warnings or [])
+    )
+    findings_review, findings_diagnostic = partition_canonical_unresolved_warnings(
+        list(findings.review_warnings or [])
+    )
+    review_warnings = dedupe_codes([*policy_review, *findings_review])
+    diagnostic_warnings = dedupe_codes(
+        [
+            *policy_diagnostic,
+            *findings_diagnostic,
+            *list(findings.diagnostic_warnings or []),
+        ]
+    )
     can_create = not fatal_blockers
     has_review_only_warnings = bool(review_warnings)
     return {
         "fatal_blockers": fatal_blockers,
         "review_warnings": review_warnings,
+        "diagnostic_warnings": diagnostic_warnings,
+        # Legacy blockers = fatal + gating review only (diagnostics stay out of blocker inflation).
         "blockers": [*fatal_blockers, *review_warnings],
         "can_create_internal_draft_quote": can_create,
         "client_send_allowed": not has_review_only_warnings and can_create,
@@ -152,6 +223,7 @@ def enrich_pricing_preview_with_canonical_findings(
     findings: IntakeV6CanonicalReadinessFindings,
 ) -> IntakeV4PricingInputPreviewResponse:
     adapter_blockers = dedupe_codes([*list(preview.adapter_blockers or []), *findings.fatal_blockers])
+    # Diagnostics stay visible in payload but must not flip adapter_status to review_required.
     adapter_warnings = dedupe_codes([*list(preview.adapter_warnings or []), *findings.review_warnings])
     is_ready_for_quote = bool(preview.is_ready_for_quote) and not adapter_blockers
     adapter_status = preview.adapter_status
@@ -165,6 +237,7 @@ def enrich_pricing_preview_with_canonical_findings(
     quote_input_payload["canonical_readiness"] = {
         "fatal_blockers": list(findings.fatal_blockers),
         "review_warnings": list(findings.review_warnings),
+        "diagnostic_warnings": list(findings.diagnostic_warnings),
     }
 
     return preview.model_copy(

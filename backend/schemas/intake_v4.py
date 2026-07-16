@@ -909,6 +909,8 @@ class IntakeV4QuoteHandoffPreviewResponse(BaseModel):
     operator_confirmation_complete: bool = False
     fatal_blockers: list[str] = Field(default_factory=list)
     review_warnings: list[str] = Field(default_factory=list)
+    # Aggregate info traces (dossier/authority/identity) — visible, never gate accept/convert/production.
+    diagnostic_warnings: list[str] = Field(default_factory=list)
     client_send_allowed: bool = False
     accept_allowed: bool = False
     convert_to_order_allowed: bool = False
