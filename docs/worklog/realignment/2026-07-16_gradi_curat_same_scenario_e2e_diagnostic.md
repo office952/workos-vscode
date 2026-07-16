@@ -98,3 +98,7 @@ No quote/order/execution/inventory writes.
 
 - Score: **8/10** (correct stop at first commercial truth gap; SVG path proven)
 - Cat sunt in directia stabilita: **78/100%**
+
+## Commit
+
+- Docs/evidence only: `dc14fbf6be2d1a291a0ae0c18a25546ffcd1a866`
