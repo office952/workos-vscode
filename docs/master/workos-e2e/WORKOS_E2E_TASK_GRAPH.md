@@ -3,7 +3,8 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 complete)
-**Active task:** `PROD-FLEX-COLLABORATION-PHASE-1` **COMPLETE** — HELPER membership foundation; Phase 2 **NOT AUTHORIZED**  
+**Active task:** `PROD-FLEX-COLLABORATION-PHASE-2` **PLAN READY FOR OWNER REVIEW** — implementation **BLOCKED** until G1–G8  
+
 **Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
 **UI-TRUTH-01B–01E:** **PAUSED** (owner decision 2026-07-15)  
@@ -1269,6 +1270,23 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_1_implementation.md` |
 | BUILD | `docs/qa/BUILD_PROD_FLEX_COLLAB_PHASE_1.md` |
 | Next | Phase 2 GO (help/pools) or unpause UI-TRUTH-01B / APP-AUTH-06G |
+
+## PROD-FLEX-COLLABORATION-PHASE-2 — Implementation plan
+
+| Field | Value |
+|-------|-------|
+| Status | **PLAN READY FOR OWNER REVIEW** (2026-07-16) |
+| Verdict | `PROD_FLEX_COLLABORATION_PHASE_2_PLAN_READY` |
+| Starting HEAD | `18398c1` |
+| Phase 2 scope | Broadcast OPEN help + split pools + helper work + scoped guards |
+| Help model | Broadcast OPEN; membership-as-acceptance; no singular `accepted_by` |
+| Deferred | UI/Mobile UX, quotas, leave+stop, orphan s50 merge |
+| Implementation | **NOT AUTHORIZED** |
+| Migration | **NOT AUTHORIZED** (`s58` planned off `s57`) |
+| Worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_plan.md` |
+| Plan | `.compound-engineering/prod-flex-collaboration-phase-2/plan.md` |
+| Decision log | `.compound-engineering/prod-flex-collaboration-phase-2/decision-log.md` |
+| Next | Owner GO on G1–G8 in `decision-log.md` |
 
 
 ## Dependency graph (ASCII)
