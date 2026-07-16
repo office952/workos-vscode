@@ -64,6 +64,7 @@ import {
   operationalReadinessLabel,
 } from "@/lib/executionOperationalReadinessDisplay";
 import { ProfitabilityAnalysisPanel } from "@/components/execution/ProfitabilityAnalysisPanel";
+import { PostJobTruthPanel } from "@/components/execution/PostJobTruthPanel";
 import { OperatorTaskIdentityPresentation } from "@/components/workos/OperatorTaskIdentityPresentation";
 import {
   indexOperatorTaskTruth,
@@ -663,8 +664,6 @@ export default function ExecutionDetail() {
         </div>
       )}
 
-      {obs && isValidId && (
-        <ProfitabilityAnalysisPanel orderId={parsedId} />
       )}
 
       {/* Acțiuni operaționale — Sprint #30 plan-generation gate. The button
@@ -927,6 +926,15 @@ export default function ExecutionDetail() {
             )}
           </div>
         </section>
+      )}
+
+      {/* Post-job truth — actuals, reconciliation, profitability coverage */}
+      {obs && isValidId && (
+        <PostJobTruthPanel orderId={parsedId} />
+      )}
+
+      {obs && isValidId && (
+        <ProfitabilityAnalysisPanel orderId={parsedId} />
       )}
 
       {/* BUILD 18 — Reality Quality Badge (Data Quality & Invalid Reality Marker) */}
