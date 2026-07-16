@@ -366,6 +366,8 @@ For non-trivial work:
 
 6. Document env/fixture steps when E2E or DB seed is required.
 
+7. For page finalization and docs impact, follow **`docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md`** (DoD, Figma policy, Documentation Impact Gate, Romanian-first, status vocabularies). Terminology: **`docs/architecture/WORKOS_UI_TERMINOLOGY_REGISTRY.md`**. Truth metadata schemas: **`docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md`**. Do not declare a page `FINAL` without owner verification per that foundation.
+
 
 
 QA doc template: purpose, context, files changed, commands + results, boundary, next steps.

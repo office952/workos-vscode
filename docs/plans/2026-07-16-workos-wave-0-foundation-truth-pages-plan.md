@@ -3,9 +3,9 @@
 > **DIRECTION APPROVED IN PRINCIPLE** · **NOT CANONICAL** · **NOT IMPLEMENTATION AUTHORIZATION**  
 > Date: 2026-07-16 · Branch `feature/product-system-active-path-isolation-v1` · HEAD `e4ff30e`  
 > Source: Cursor Plan Mode artifact + owner consolidation brief  
-> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1_TRUTH_METADATA_CONTRACT** (executed)  
-> **W0-B1 status: IMPLEMENTED** — schemas `backend/schemas/truth_metadata/` · tests PASS  
-> Next gate required: **GO for W0-B3_SHARED_FOUNDATION_POLICIES** (not granted)
+> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1**, **GO_W0_B3_SHARED_FOUNDATION_POLICIES** (executed)  
+> **W0-B1 status: IMPLEMENTED** · **W0-B3 status: IMPLEMENTED** — `docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md`  
+> Next gate required: **GO for W0-B2_DOCUMENTATION_INDEX_READ_MODEL** (not granted)
 
 ---
 
@@ -41,8 +41,8 @@
 
 ### Implementation recommendation
 
-**W0-B1 DONE (2026-07-16)** under `GO_W0_B1_TRUTH_METADATA_CONTRACT`.  
-Next: owner review → separate GO for **W0-B3** (shared foundation policies). Do **not** start B2–B8 without GO.
+**W0-B1 DONE** · **W0-B3 DONE (2026-07-16)** under `GO_W0_B3_SHARED_FOUNDATION_POLICIES`.  
+Next: owner review → separate GO for **W0-B2**. Do **not** start B2/B4–B8 without GO.
 
 ---
 
@@ -281,7 +281,12 @@ Categories (index): architecture, systems, pages, contracts, Figma, roadmap, own
 
 ---
 
-## 8. Shared foundation policies (W0-B3 — section, not separate docs)
+## 8. Shared foundation policies (W0-B3)
+
+**Binding artifacts (implemented):**  
+`docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md` · `docs/architecture/WORKOS_UI_TERMINOLOGY_REGISTRY.md`  
+
+Summary retained below for plan continuity; **if conflict, foundation docs win**.
 
 ### 8.1 Documentation Impact Gate (permanent)
 
@@ -409,7 +414,7 @@ Route/endpoint inventory · document indexing · broken refs · terminology scan
 | Build | Objective | UI? | Depends |
 |-------|-----------|-----|---------|
 | **W0-B1** | Truth Metadata Contract (claims, documents, systems, pages, edges, Figma, evidence, status, drift) | No UI rebuild; no backend index yet | G-W0-B1 |
-| **W0-B3** | Shared foundation policies: DoD, Figma policy, Doc Impact Gate, status vocab, RO terminology, i18n prep | Docs/templates only | G-W0-B3; after B1 schema known |
+| **W0-B3** | Shared foundation policies: DoD, Figma policy, Doc Impact Gate, status vocab, RO terminology, i18n prep | Docs/templates only | **DONE** — `WORKOS_PAGE_COMPLETION_FOUNDATION.md` + terminology registry |
 | **W0-B2** | Documentation index + read model: allowlisted discovery, metadata, relationships, safe RO API, HEAD/freshness | No rich portal | G-W0-B2; after B1 |
 | **W0-B4** | Harta sistemelor honesty baseline | Minimal honesty UI | G-W0-B4; after B1 (+ B2 if edges from index) |
 | **W0-B5** | Guvernanța honesty baseline | Minimal honesty UI | G-W0-B5; parallel with B4 |
@@ -496,7 +501,7 @@ Incomplete Wave 0 maps must stay labeled PARTIAL — never pretend Wave 8 comple
 | **G-W0-PLAN-CONSOLIDATION** | Consolidated plan accepted for review | **GRANTED** (this task) |
 | **G-W0-B1-TRUTH-CONTRACT** | Implement W0-B1 metadata contract artifacts | **GRANTED + IMPLEMENTED** (2026-07-16) |
 | **G-W0-B2-DOC-READ-MODEL** | Doc index / RO API | OPEN |
-| **G-W0-B3-POLICIES** | Enforce DoD/Figma/DocGate/term in process | OPEN |
+| **G-W0-B3-POLICIES** | Enforce DoD/Figma/DocGate/term in process | **GRANTED + IMPLEMENTED** — foundation + terminology registry |
 | **G-W0-B4-SYSTEM-MAP** | Harta honesty baseline | OPEN |
 | **G-W0-B5-GOVERNANCE** | Guvernanță honesty baseline | OPEN |
 | **G-W0-B6-DOCUMENTATION-CENTER** | Route + minimal center | OPEN |
