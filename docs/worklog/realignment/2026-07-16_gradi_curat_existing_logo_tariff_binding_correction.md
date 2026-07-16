@@ -78,7 +78,7 @@ Pre/post `GET /api/v1/pricing/registry`: 50 items; LARGE_FORMAT_PRINT / LAMINATI
 
 ## Review findings
 
-See session review: hourly false-positive on `workcenter_rates` substring fixed with word-boundary scan + source label `pricing_registry:operation:…`.
+Independent review flagged silent FX bootstrap (`DEFAULT_EUR_TO_RON_RATE=5.0`). Fixed: logo binding reads persisted `company_commercial_settings.eur_to_ron_rate` and fails closed when NULL (does not invent diagnostic FX). Also: stricter registry `status==active AND is_active`, blank currency fail-closed, stale CPP notes updated, hourly scan word-boundary.
 
 ## Files changed
 
