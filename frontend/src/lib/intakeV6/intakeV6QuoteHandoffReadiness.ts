@@ -126,10 +126,22 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return "Preț comercial Forex sablon necesită aprobare owner.";
 	}
 	if (code.startsWith("AMBALARE_COMMERCIAL_RULE")) {
-		return "Regula comercială ambalare nu este definită de owner.";
+		return "Regula comercială ambalare nu este definită de owner (deferred — nonblocking).";
 	}
 	if (code.startsWith("MONTAJ_COMMERCIAL_RULE")) {
-		return "Regula comercială montaj nu este definită (opțional/viitor).";
+		return "Lipsește tariful comercial pentru montaj șantier (obligatoriu când instalarea este inclusă).";
+	}
+	if (code === "LOGO_PRINT_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru print logo volumetric (fail-closed până la configurare owner).";
+	}
+	if (code === "LOGO_LAMINATE_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru laminare logo volumetric (fail-closed până la configurare owner).";
+	}
+	if (code === "LOGO_APPLICATION_COMMERCIAL_RULE") {
+		return "Lipsește tariful comercial pentru aplicare folie logo (fail-closed până la configurare owner).";
+	}
+	if (code === "V6_PRICED_DRY_RUN_COMMERCIAL_REVIEW_NOT_READY") {
+		return "CommercialPriceProposal este parțial — completează tarifele comerciale lipsă înainte de Confirmare.";
 	}
 	if (code === "PRICING_REVIEW_INCOMPLETE" || code === "PRICING_REVIEW_REQUIRED") {
 		return "Review preț necesar înainte de aprobare owner sau conversie.";

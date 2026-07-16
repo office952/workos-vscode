@@ -235,6 +235,10 @@ def _operation_cost(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow)
 
 
 def _is_price_missing_material(row: IntakeV4MaterialQuantityRow) -> bool:
+    # Informational-only rows (e.g. led_total_watts) are not priced tariffs.
+    price_source = str(getattr(row, "price_source", "") or "").strip().lower()
+    if price_source in {"informational_only", "informational", "info_only"}:
+        return False
     if row.quantity and row.quantity > 0 and row.estimated_cost is None and row.material_cost is None:
         return True
     return False

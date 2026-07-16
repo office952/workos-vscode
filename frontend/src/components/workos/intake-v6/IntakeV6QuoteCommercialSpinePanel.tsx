@@ -62,7 +62,7 @@ function readBlockerCodes(dryRun: IntakeV6PricedQuoteDryRunResponse | null): str
 }
 
 function formatMoney(value: number | null | undefined, currency = "RON"): string {
-  if (value == null || Number.isNaN(value)) return "—";
+  if (value == null || typeof value !== "number" || Number.isNaN(value)) return "—";
   return `${value.toLocaleString("ro-RO", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currency}`;
 }
 
@@ -413,7 +413,12 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             {!quoteTotalsAvailable && dryRunReady ? (
               <p className="mb-3 text-[11px] text-slate-300">
                 Total propus:{" "}
-                <strong data-testid="intake-v6-dry-run-total">{formatMoney(expectedTotalGross, dryRunTotals?.currency)}</strong>
+                <strong data-testid="intake-v6-dry-run-total">
+                  {formatMoney(
+                    dryRunExpectedGross,
+                    typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON",
+                  )}
+                </strong>
               </p>
             ) : null}
 
@@ -423,6 +428,39 @@ export default function IntakeV6QuoteCommercialSpinePanel({
                   <li key={code}>• {formatQuoteHandoffBlocker(code)}</li>
                 ))}
               </ul>
+            ) : null}
+
+            {Array.isArray(dryRun?.commercial_line_items) && dryRun.commercial_line_items.length > 0 ? (
+              <details className="mb-3" data-testid="intake-v6-commercial-line-provenance">
+                <summary className="cursor-pointer text-[11px] text-slate-300">
+                  Linii comerciale ({dryRun.commercial_line_items.length})
+                </summary>
+                <ul className="mt-2 max-h-40 space-y-1 overflow-y-auto text-[11px] text-slate-400">
+                  {dryRun.commercial_line_items.map((raw, index) => {
+                    const line = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
+                    const code = String(line.code ?? `line-${index}`);
+                    const label = String(line.label ?? code);
+                    const segment = typeof line.segment_key === "string" ? line.segment_key : null;
+                    const subtotal = typeof line.subtotal === "number" ? line.subtotal : null;
+                    const unitPrice = line.commercial_unit_price;
+                    const missing =
+                      line.owner_decision_required === true &&
+                      (unitPrice == null || subtotal == null);
+                    const money =
+                      subtotal != null
+                        ? formatMoney(subtotal, typeof dryRunTotals?.currency === "string" ? dryRunTotals.currency : "RON")
+                        : "tarif lipsă";
+                    return (
+                      <li key={code}>
+                        {missing ? "⚠ " : "• "}
+                        {label}
+                        {segment ? ` [${segment}]` : ""}
+                        {` — ${money}`}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </details>
             ) : null}
 
             {!quoteTotalsAvailable && !pricingDone ? (
