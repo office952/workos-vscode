@@ -46,6 +46,7 @@ class ExecutionTaskParticipant(Base):
     left_at = Column(DateTime(timezone=True), nullable=True)
     joined_by_employee_id = Column(Integer, nullable=True)
     join_source = Column(String(32), nullable=True)
+    source_help_request_id = Column(Integer, nullable=True, index=True)
     execution_plan_id = Column(Integer, nullable=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now, nullable=False)
     updated_at = Column(
