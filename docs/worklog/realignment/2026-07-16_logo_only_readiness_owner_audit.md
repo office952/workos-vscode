@@ -1,113 +1,86 @@
-# 2026-07-16 — Logo-only readiness owner audit
+# 2026-07-16 — Logo-only readiness owner audit + alignment
 
-## Scope
+## Owner decision (binding)
 
-Audit untracked `backend/tests/test_intake_v6_logo_only_readiness.py`.  
-No production changes. No seed/DB mutation. No test commit without owner GO.
+`TPL-VOLUMETRIC-LOGO_v1` remains:
 
-## Gate
+- `candidate_only = true`
+- `root_offerable = false`
+- `owner_go_required = true`
 
-- HEAD: `1351d541377f73fcfb80b4e808750fe4dee1f4a5`
-- branch: `feature/product-system-active-path-isolation-v1`
-- test status: **untracked**
+A Logo-only / root Logo workspace must **not** report `ready_for_quote_preview`.  
+Confirmed constructive-model data may make the candidate technically complete, but readiness must stay explicitly non-offerable until a separate owner GO activates a valid root product path.
 
-## Classification (agent)
+No Logo root activation. Offerability policy unchanged.
 
-`OWNER_PRODUCT_DECISION_REQUIRED`
+## Runtime correction
 
-(Secondary: third case is stale vs capture-blocker spine → would need `CORRECT_TEST_ONLY` if package is kept.)
+`backend/services/intake_v6_workspace_service.py` — `_is_logo_only_candidate_not_offerable`:
 
-## Test intent
+| Before | After |
+|--------|-------|
+| `composition_type == "logo_only"` → cleared guard (`False`) | → keep non-offerable (`True`) |
+| `TPL-VOLUMETRIC-LOGO_v1` root binding with confirmed artwork → could reach `ready_for_quote_preview` | → always `logo_only_candidate_not_offerable` |
+| Structural logo-only cleared when all artwork rows confirmed (`_logo_constructive_model_confirmed`) | → constructive confirmation no longer clears the boundary |
+| Helper `_logo_constructive_model_confirmed` | removed (unused) |
 
-Unit tests of private helper `_derive_readiness_status` (no HTTP, no DB):
+Letters + artwork still skip the logo-only guard (`face` role present) and continue through the canonical capture-blocker spine.
 
-| Case | Binding | Layers / finishes | Expected readiness |
-|------|---------|-------------------|--------------------|
-| 1 | `TPL-VOLUMETRIC-LETTERS_v2` | only `printed_artwork`; artwork **unconfirmed** | `logo_only_candidate_not_offerable` |
-| 2 | `TPL-VOLUMETRIC-LOGO_v1` | only `printed_artwork`; artwork **confirmed** | `ready_for_quote_preview` |
-| 3 | `TPL-VOLUMETRIC-LETTERS_v2` | face + artwork confirmed | `ready_for_quote_preview` |
+## Statuses before / after
 
-**“Logo-only readiness” in product terms:** workspace has artwork/logo layers but no letter (`face`) roles — treated as logo-only candidate until artwork finishes are confirmed (“constructive model”).
+| Scenario | Before | After | Offerable |
+|----------|--------|-------|-----------|
+| Logo-only, artwork unconfirmed | `logo_only_candidate_not_offerable` | `logo_only_candidate_not_offerable` | No |
+| Logo root / logo-only, artwork confirmed | `ready_for_quote_preview` | `logo_only_candidate_not_offerable` | No |
+| Letters + artwork (no full capture) | `runtime_capture_blocked` | `runtime_capture_blocked` | Per letters policy / capture |
 
-## Runtime evidence
+UI already maps `logo_only_candidate_not_offerable` (header + commercial guard). No frontend change required.
 
-Tracked in `backend/services/intake_v6_workspace_service.py`:
+## Test correction
 
-- `_is_logo_only_candidate_not_offerable` → returns `logo_only_candidate_not_offerable` when no letter roles, has logo/artwork roles, artwork finish rows exist, and **not** all artwork finishes confirmed.
-- Once `_logo_constructive_model_confirmed` is true, that guard clears and readiness proceeds to capture-blocker merge (`intake_v6_canonical_readiness_service`).
-- UI already surfaces the status (`intake-v6-header-logo-only-guard`, Review commercial guards).
-- Template policy (`template_usage_mode_policy.py`): `TPL-VOLUMETRIC-LOGO_v1` is **`root_offerable=False`**, **`candidate_only=True`**, **`owner_go_required=True`**.
-- Frontend active scope: `isOwnerValidActiveTemplate("TPL-VOLUMETRIC-LOGO_v1") === false`.
-- Quote create still gated by `quote_offerable` / `_resolve_offerable_template_code_or_raise` (separate from readiness string).
+`backend/tests/test_intake_v6_logo_only_readiness.py`:
 
-## Boundary analysis
+1. Keep unique guard: unconfirmed logo-only → `logo_only_candidate_not_offerable`
+2. Correct case 2: Logo root + confirmed artwork → `logo_only_candidate_not_offerable` (not quote-ready)
+3. Replace stale case 3: letters + artwork must **not** use logo-only guard; expect `runtime_capture_blocked` (capture authoritative; no duplicate of full spine green path)
 
-| Question | Answer |
-|----------|--------|
-| Active Product System root path? | **No** — Logo is linked child / candidate, not owner-valid root |
-| Bypass PD/Aggregate? | Test does not exercise PD/Aggregate; only readiness helper |
-| Accidentally activate broader family? | Case 2 readiness=`ready_for_quote_preview` on LOGO root binding **looks** offerable at readiness layer while policy forbids root offer — soft conflict |
-| ACM/Logo scope guards? | Does not activate ACM; Logo root activation still blocked at availability/quote layer |
-| Regression guard for existing behavior? | **Case 1 yes**; Case 2 documents constructive-model escape; Case 3 stale |
+No DB/seed mutation.
 
-## Isolated test result
+## Tests run
 
 ```text
-npx/pytest: tests/test_intake_v6_logo_only_readiness.py
-2 passed, 1 failed
-FAILED test_letters_with_artwork_can_still_be_quote_ready_when_confirmed
-  expected ready_for_quote_preview
-  got runtime_capture_blocked
+pytest tests/test_intake_v6_logo_only_readiness.py \
+       tests/test_intake_v6_canonical_readiness_spine.py \
+       tests/test_intake_v6_readiness_severity_channel_split.py \
+       tests/test_product_template_availability.py::test_root_offerable_policy_includes_acm_excludes_logo \
+       tests/test_commercial_price_proposal_linked_logo.py::test_linked_logo_template_not_root_offerable
+→ 22 passed
 ```
 
-No DB/seed used.
+Also: logo + letters policy selectors → passed.  
+Pre-existing unrelated failure: `test_internal_modules_remain_component_only_non_root` (metal premount) — out of scope.
 
-## Duplicate / conflict
+## Runtime verification
 
-- No other backend test asserts `logo_only_candidate_not_offerable` (unique coverage for case 1).
-- Case 3 overlaps intent of `test_intake_v6_canonical_readiness_spine.py` and is **outdated** after capture-blocker merge.
-- Case 2 vs contracts: UI inventory / availability say logo-only stays not-offerable; runtime clears status when finishes confirmed — **truth conflict for owner**.
+Service-level (no safe seeded HTTP workspace for Logo-only):
 
-## Owner-friendly decision
+| Fixture | Readiness | `root_offerable` |
+|---------|-----------|------------------|
+| Logo root, artwork unconfirmed | `logo_only_candidate_not_offerable` | false |
+| Logo root, artwork confirmed | `logo_only_candidate_not_offerable` | false |
+| Letters binding + logo_only composition, confirmed | `logo_only_candidate_not_offerable` | true (letters) but readiness blocks commercial CTA via status |
 
-### Ce testeaza
+Expected UI guard: existing Logo-only commercial guard / “neofertabil comercial”.
 
-Daca readiness blocheaza logo-only pana la confirmarea finish-urilor artwork, si ce status iese dupa confirmare (inclusiv pe binding `TPL-VOLUMETRIC-LOGO_v1`).
+## Impact Harta sistemelor (`/modules`)
 
-### Ce produs/flow ar activa
+`NO NEW SYSTEM PATH` — corrected status inside existing Intake V6 / Product System candidate boundary. No modules handoff update.
 
-Nu activeaza un template nou in Product System. Documenteaza / blocheaza path-ul Intake V6 „doar logo” (candidate). Cazul 2 sugereaza ca dupa confirmare constructive model, readiness poate deveni `ready_for_quote_preview` pe root Logo — **fara** a face Logo `root_offerable` in policy.
+## Impact Guvernanta sistemului (`/governance`)
 
-### Este deja comportament real?
-
-Da pentru helper-ul `_derive_readiness_status` (cazurile 1–2 trec).  
-Nu pentru cazul 3 (acum `runtime_capture_blocked`).  
-Ofertabilitatea reala Logo root ramane blocata de availability/policy.
-
-### Ce se intampla daca il pastram
-
-Pastram un regression guard util (cazul 1), dar comitem un suite care **esueaza** (cazul 3) si care **normalizeaza** readiness quote-ready pe LOGO_v1 (cazul 2) fara decizie de produs.
-
-### Ce se intampla daca il stergem
-
-Pierdem singura acoperire explicita pentru `logo_only_candidate_not_offerable`. Riscul: regresii pe guard-ul logo-only.
-
-### Recomandarea agentului
-
-`DECIDEM PRODUSUL MAI INTAI` — apoi:
-
-1. Daca Logo root **nu** poate fi quote-ready: pastreaza cazul 1; rescrie cazul 2 sa astepte `logo_only_candidate_not_offerable` sau alt status non-offerable; sterge/corecteaza cazul 3 pentru capture blockers (`CORRECT_TEST_ONLY`).
-2. Daca constructive model **permite** readiness quote-ready pe LOGO (oferta tot blocata la availability): pastreaza 1+2; corecteaza doar cazul 3.
-3. Pana la decizie: **`PARCAM`** — nu comite testul.
-
-**Owner answer:** `PASTRAM SI COMITEM` · `CORECTAM DOAR TESTUL` · `PARCAM` · `STERGEM` · `DECIDEM PRODUSUL MAI INTAI`
-
-## Impact
-
-- `/modules`: **FUTURE PATH OWNER GATE** (nu e sistem produs nou; implica path candidate Logo)
-- `/governance`: nu actualiza pana la decizia owner — afecteaza potential activation boundary / owner GO pe Logo
+`NO UPDATE REQUIRED` — Governance already documents Logo candidate-only / root non-offerable / owner GO. Runtime now matches that boundary at readiness.
 
 ## Commit
 
-`NO TEST COMMIT — WAITING FOR OWNER DECISION`  
-Docs-only audit commit optional for this worklog.
+Isolated: readiness helper + Logo readiness tests + this worklog.  
+Message: `fix(intake): keep logo readiness candidate-only`

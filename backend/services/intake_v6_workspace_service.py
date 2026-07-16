@@ -193,20 +193,28 @@ def _derive_readiness_status(payload: IntakeV6WorkspacePayload) -> str:
     )
 
 
-def _logo_constructive_model_confirmed(payload: IntakeV6WorkspacePayload) -> bool:
-    finish = payload.finish_setup
-    if finish is None:
-        return False
-    artwork_rows = finish.artwork_finishes or []
-    if not artwork_rows:
-        return False
-    return all(getattr(row, "confirmed", False) is True for row in artwork_rows)
-
-
 def _is_logo_only_candidate_not_offerable(payload: IntakeV6WorkspacePayload) -> bool:
+    """Logo remains candidate-only / non-offerable until a separate owner GO.
+
+    Confirmed artwork may make a Logo candidate technically complete, but must not
+    surface ready_for_quote_preview on a Logo-only or Logo-root workspace.
+    """
+    from services.template_usage_mode_policy import (
+        TPL_VOLUMETRIC_LOGO_V1,
+        normalize_template_code,
+    )
+
     recommendation = payload.product_composition_recommendation
     if isinstance(recommendation, dict) and recommendation.get("composition_type") == "logo_only":
-        return False
+        return True
+
+    template_code = (
+        payload.product_binding.template_code
+        if payload.product_binding and payload.product_binding.template_code
+        else None
+    )
+    if normalize_template_code(template_code) == normalize_template_code(TPL_VOLUMETRIC_LOGO_V1):
+        return True
 
     setup = payload.layer_role_setup
     finish = payload.finish_setup
@@ -231,7 +239,8 @@ def _is_logo_only_candidate_not_offerable(payload: IntakeV6WorkspacePayload) -> 
 
     letter_rows = finish.letter_group_finishes or []
     artwork_rows = finish.artwork_finishes or []
-    return len(letter_rows) == 0 and len(artwork_rows) > 0 and not _logo_constructive_model_confirmed(payload)
+    # Constructive-model confirmation does not clear the candidate/non-offerable boundary.
+    return len(letter_rows) == 0 and len(artwork_rows) > 0
 
 
 def _derive_workspace_status(readiness_status: str) -> str:
