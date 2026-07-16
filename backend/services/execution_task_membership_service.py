@@ -219,6 +219,8 @@ async def join_helper_membership(
     employee_id: int,
     joined_by_employee_id: int | None = None,
     join_source: str = "self_join",
+    source_help_request_id: int | None = None,
+    skip_eligibility: bool = False,
 ) -> MembershipActionResponse:
     """Create or reactivate HELPER membership. No session/assignment/claim side effects."""
     _assert_writes_enabled()
@@ -256,7 +258,8 @@ async def join_helper_membership(
     plan = await _load_latest_plan(db, order_id)
     _require_v2_materialized(plan)
     plan_task = _find_operational_task(plan, task_id)
-    await _assert_eligible(db, employee_id=employee_id, plan_task=plan_task)
+    if not skip_eligibility:
+        await _assert_eligible(db, employee_id=employee_id, plan_task=plan_task)
 
     lock = await _lock_for(order_id, task_id)
     async with lock:
@@ -270,6 +273,13 @@ async def join_helper_membership(
         actor = joined_by_employee_id if joined_by_employee_id is not None else employee_id
 
         if existing is not None and existing.status == MEMBERSHIP_STATUS_ACTIVE:
+            if source_help_request_id is not None and getattr(
+                existing, "source_help_request_id", None
+            ) is None:
+                existing.source_help_request_id = source_help_request_id
+                existing.updated_at = now
+                await db.commit()
+                await db.refresh(existing)
             name = await _employee_name(db, employee_id)
             return MembershipActionResponse(
                 action="join",
@@ -290,6 +300,8 @@ async def join_helper_membership(
             existing.join_source = join_source
             existing.execution_plan_id = plan.id
             existing.updated_at = now
+            if source_help_request_id is not None:
+                existing.source_help_request_id = source_help_request_id
             await db.commit()
             await db.refresh(existing)
             name = await _employee_name(db, employee_id)
@@ -312,6 +324,7 @@ async def join_helper_membership(
             left_at=None,
             joined_by_employee_id=actor,
             join_source=join_source,
+            source_help_request_id=source_help_request_id,
             execution_plan_id=plan.id,
             created_at=now,
             updated_at=now,
@@ -338,6 +351,8 @@ async def join_helper_membership(
                 raced.join_source = join_source
                 raced.execution_plan_id = plan.id
                 raced.updated_at = _utcnow()
+                if source_help_request_id is not None:
+                    raced.source_help_request_id = source_help_request_id
                 await db.commit()
                 await db.refresh(raced)
                 name = await _employee_name(db, employee_id)
@@ -503,3 +518,43 @@ async def list_order_memberships_by_task(
             key=lambda m: (0 if m.status == MEMBERSHIP_STATUS_ACTIVE else 1, m.joined_at),
         )
     return by_task
+
+
+async def list_active_helper_memberships_for_employee(
+    db: AsyncSession,
+    *,
+    employee_id: int,
+) -> list[ExecutionTaskParticipant]:
+    """Active HELPER memberships for pool/visibility (Phase 2)."""
+    return list(
+        (
+            await db.execute(
+                select(ExecutionTaskParticipant).where(
+                    ExecutionTaskParticipant.employee_id == employee_id,
+                    ExecutionTaskParticipant.status == MEMBERSHIP_STATUS_ACTIVE,
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+
+
+async def employee_has_active_helper_membership(
+    db: AsyncSession,
+    *,
+    order_id: int,
+    task_id: str,
+    employee_id: int,
+) -> bool:
+    row = (
+        await db.execute(
+            select(ExecutionTaskParticipant.id).where(
+                ExecutionTaskParticipant.order_id == order_id,
+                ExecutionTaskParticipant.task_id == task_id,
+                ExecutionTaskParticipant.employee_id == employee_id,
+                ExecutionTaskParticipant.status == MEMBERSHIP_STATUS_ACTIVE,
+            )
+        )
+    ).scalar_one_or_none()
+    return row is not None
