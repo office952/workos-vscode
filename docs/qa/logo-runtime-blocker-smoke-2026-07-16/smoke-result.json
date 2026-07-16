@@ -1,0 +1,42 @@
+{
+  "label": "LOCAL LIVE STACK CONTRACT PROOF",
+  "verdict": "LIVE_RUNTIME_BLOCKER_SMOKE_PASS",
+  "backend": "http://127.0.0.1:8001",
+  "frontend": "http://127.0.0.1:3000",
+  "workspace_id": "logo-runtime-blocker-smoke-2026-07-16",
+  "url": "http://127.0.0.1:3000/intake-v6/logo-runtime-blocker-smoke-2026-07-16/operator?step=review",
+  "api": {
+    "runtime_capture": {
+      "field_key": "root",
+      "blockers": ["LOGO_NOT_OFFERABLE"],
+      "state": "blocked",
+      "blocker_code": "LOGO_NOT_OFFERABLE",
+      "severity": "blocked",
+      "message": "TPL-VOLUMETRIC-LOGO_v1 remains candidate-only and is not Work Intake offerable.",
+      "blocks": ["quote_preview", "priced_quote", "order_snapshot", "product_definition"],
+      "logo_code_count_in_blockers": 1
+    },
+    "readiness_status": "logo_only_candidate_not_offerable",
+    "handoff_allowed": false,
+    "can_create_internal_draft_quote": false,
+    "quote_offerable": false,
+    "root_offerable": false
+  },
+  "ui": {
+    "mounted": true,
+    "step": "Configurare",
+    "logo_only_guard_visible": true,
+    "neofertabil_visible": true,
+    "ready_for_quote_preview_visible": false,
+    "LOGO_NOT_OFFERABLE_visible_count": 1,
+    "white_screen": false,
+    "screenshot": "docs/qa/logo-runtime-blocker-smoke-2026-07-16/01_operator_configurare.png",
+    "note": "Technical code appears once under Product Truth Promotion Planner BLOCKERS SUMMARY. Runtime Capture diagnostic header badge may show field-count zero when fields[] is empty; API top-level blockers[] is normalized and non-empty."
+  },
+  "console": {
+    "pageerrors": [],
+    "blockers_not_iterable": false,
+    "codes_not_iterable": false
+  },
+  "cleanup": "workspace deleted after evidence capture"
+}

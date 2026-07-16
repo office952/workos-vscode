@@ -76,3 +76,24 @@ Not production proof.
 ## Commit
 
 `1363e18` — `fix(intake): normalize runtime capture blocker contract`
+
+---
+
+## LOCAL LIVE STACK CONTRACT PROOF (follow-up smoke)
+
+| Item | Value |
+|------|--------|
+| Ports | frontend `127.0.0.1:3000` · backend `127.0.0.1:8001` |
+| Workspace | `logo-runtime-blocker-smoke-2026-07-16` (deleted after) |
+| Endpoint | `GET /api/v1/intake-v6/workspaces/{id}/runtime-capture-read-model` |
+| Live JSON | `blockers: ["LOGO_NOT_OFFERABLE"]` once; additive `blocker_code` / `severity` / `message` / `blocks` present |
+| Readiness | `logo_only_candidate_not_offerable` |
+| Handoff | `handoff_allowed=false`, `can_create_internal_draft_quote=false` |
+| Offerability | `quote_offerable=false`, `root_offerable=false` |
+| UI | Configurare mounted; Logo-only guard visible; `LOGO_NOT_OFFERABLE` once in planner BLOCKERS SUMMARY; no white-screen |
+| Console | `pageerrors: []` — no `blockers is not iterable` |
+| Evidence | `docs/qa/logo-runtime-blocker-smoke-2026-07-16/` |
+| `/modules` | **NO IMPACT** |
+| `/governance` | **NO UPDATE REQUIRED** |
+
+No product/code change in this smoke.
