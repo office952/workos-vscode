@@ -2,8 +2,11 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Accepted HEAD:** `41ba14f` (OWNER-DECISION-08 complete)
-**Active task:** `PROD-FLEX-COLLABORATION-PHASE-2` **PLAN READY FOR OWNER REVIEW** — implementation **BLOCKED** until G1–G8  
+**Accepted HEAD:** `0cd82d9` (PROD-FLEX-COLLABORATION-PHASE-3 COMPLETE; FLEX lane CLOSED)  
+**Active task:** **POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW** — next impl **BLOCKED** until owner G1–G4 + `/ce-work`  
+**Recommended next:** `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1`  
+**Reentry plan:** `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md`  
+
 
 **Runtime tooling lane:** **CLOSED**  
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)  
@@ -1283,10 +1286,23 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Starting HEAD (correction) | `e400c42` |
 | Correction plan | `.compound-engineering/prod-flex-collaboration-phase-2-correction/plan.md` |
 | Correction worklog | `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md` |
-| Phase 3 | **PLAN READY FOR OWNER REVIEW** |
+| Phase 3 | **COMPLETE** @ `0cd82d9` — FLEX lane **CLOSED** |
 | Phase 3 plan | `.compound-engineering/prod-flex-collaboration-phase-3/plan.md` |
-| Next | Owner G1–G6 then Phase 3 implementation GO |
+| Next | **POST-FLEX ROADMAP REENTRY** (plan ready) |
 
+## POST-FLEX ROADMAP REENTRY
+
+| Field | Value |
+|-------|-------|
+| Status | **PLAN READY FOR OWNER REVIEW** |
+| Verdict | `WORKOS_POST_FLEX_ROADMAP_REENTRY_PLAN_READY` |
+| Recommended next phase | `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1` |
+| Plan | `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md` |
+| Decision log | `.compound-engineering/workos-post-flex-roadmap-reentry/decision-log.md` |
+| Worklog | `docs/worklog/realignment/2026-07-16_workos_post_flex_roadmap_reentry.md` |
+| Owner gates | G1–G4 before `/ce-work` |
+| Implementation | **NOT STARTED** |
+| Remains paused | FLEX polish; UI-TRUTH; APP-AUTH-06G; PS as primary; capacity; Mobile V1; ShopFloor |
 
 ## Dependency graph (ASCII)
 

@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `7e58579` (Phase 2 integrity correction COMPLETE)  
+**Accepted HEAD:** `0cd82d9` (PROD-FLEX-COLLABORATION-PHASE-3 COMPLETE; FLEX lane CLOSED)  
 
-**Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-3 **PLAN READY FOR OWNER REVIEW**; implementation not started)
+**Last updated:** 2026-07-16 (**POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW** — next impl not started)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **PROD-FLEX-COLLABORATION-PHASE-3** — plan **READY FOR OWNER REVIEW** |
+| Active task | **POST-FLEX ROADMAP REENTRY** — plan **READY FOR OWNER REVIEW** |
 
-| Next task | Owner GO (G1–G6) then Phase 3 implementation; alternates: UI-TRUTH-01B / APP-AUTH-06G **PAUSED** |
+| Next task | Owner GO (G1–G4) then `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1` via `/ce-work`; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1299,7 +1299,7 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Verdict (integrity correction):** `PROD_FLEX_COLLABORATION_PHASE_2_CORRECTION_COMPLETE`
 
-**Status:** Phase 2 **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** — Phase 3 plan ready for owner review
+**Status:** Phase 2 **ACCEPT_WITH_NONBLOCKING_LIMITATIONS** — Phase 3 shipped; FLEX lane CLOSED
 
 **Correction worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_integrity_correction.md`
 
@@ -1307,13 +1307,35 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Runtime evidence:** `docs/qa/_phase2_correction_runtime_evidence.json`
 
-**Phase 3:** **PLAN READY FOR OWNER REVIEW** — implementation not started
-
-**Phase 3 plan:** `.compound-engineering/prod-flex-collaboration-phase-3/plan.md`
-
-**Phase 3 decision log:** `.compound-engineering/prod-flex-collaboration-phase-3/decision-log.md`
-
-**Phase 3 worklog:** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_3_plan.md`
-
 **Prior closure (superseded):** `docs/worklog/realignment/2026-07-16_prod_flex_collaboration_phase_2_closure.md`
+
+## PROD-FLEX-COLLABORATION-PHASE-3 — COMPLETE
+
+**Verdict:** `PROD_FLEX_COLLABORATION_PHASE_3_COMPLETE`
+
+**Status:** **COMPLETE** @ `0cd82d9` (ACCEPT_WITH_NONBLOCKING_LIMITATIONS) — FLEX collaboration lane **CLOSED**
+
+**Plan:** `.compound-engineering/prod-flex-collaboration-phase-3/plan.md`
+
+**Decision log:** `.compound-engineering/prod-flex-collaboration-phase-3/decision-log.md`
+
+**Deferred without new GO:** FLEX polish; `/operator` collab mirror; F2/F3 projection polish; quantity-progress FLEX-06+
+
+## POST-FLEX ROADMAP REENTRY — PLAN READY FOR OWNER REVIEW
+
+**Verdict:** `WORKOS_POST_FLEX_ROADMAP_REENTRY_PLAN_READY`
+
+**Status stamp:** **POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW**
+
+**Recommended next phase (implementation not started):** `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1`
+
+**Plan:** `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md`
+
+**Decision log:** `.compound-engineering/workos-post-flex-roadmap-reentry/decision-log.md`
+
+**Worklog:** `docs/worklog/realignment/2026-07-16_workos_post_flex_roadmap_reentry.md`
+
+**Owner gates before `/ce-work`:** G1–G4 (see decision log)
+
+**Not started:** backend/frontend/DB/runtime for post-job actuals
 
