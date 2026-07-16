@@ -3,9 +3,9 @@
 > **DIRECTION APPROVED IN PRINCIPLE** · **NOT CANONICAL** · **NOT IMPLEMENTATION AUTHORIZATION**  
 > Date: 2026-07-16 · Branch `feature/product-system-active-path-isolation-v1` · HEAD `e4ff30e`  
 > Source: Cursor Plan Mode artifact + owner consolidation brief  
-> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1**, **GO_W0_B3**, **GO_W0_B2_DOCUMENTATION_INDEX_READ_MODEL** (executed)  
-> **W0-B1 / B3 / B2 status: IMPLEMENTED** — index: `docs/architecture/WORKOS_DOCUMENTATION_INDEX_READ_MODEL.md`  
-> Next gate required: **GO for W0-B4 and/or W0-B5 honesty baseline** (not granted)
+> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1**, **GO_W0_B3**, **GO_W0_B2_DOCUMENTATION_INDEX_READ_MODEL**, **GO_W0_B4_B5_TRUTH_PAGES_HONESTY_BASELINE** (executed)  
+> **W0-B1 / B3 / B2 / B4∥B5 status: IMPLEMENTED** — honesty: `docs/worklog/realignment/2026-07-16_workos_wave_0_b4_b5_truth_pages_honesty_baseline.md`  
+> Next gate required: **owner visual review** → then optional **GO for W0-B6** Documentation Center (not granted; do not auto-start)
 
 ---
 
@@ -41,8 +41,8 @@
 
 ### Implementation recommendation
 
-**W0-B1 / B3 / B2 DONE (2026-07-16).**  
-Next: owner review → separate GO for **W0-B4 and/or W0-B5**. Do **not** start B4–B8 without GO.
+**W0-B1 / B3 / B2 / B4∥B5 DONE (2026-07-16).**  
+Next: owner visual review of `/modules` + `/governance` → optional corrections → separate GO for **W0-B6** only. Do **not** start B6–B8 without GO.
 
 ---
 
@@ -502,8 +502,8 @@ Incomplete Wave 0 maps must stay labeled PARTIAL — never pretend Wave 8 comple
 | **G-W0-B1-TRUTH-CONTRACT** | Implement W0-B1 metadata contract artifacts | **GRANTED + IMPLEMENTED** (2026-07-16) |
 | **G-W0-B2-DOC-READ-MODEL** | Doc index / RO API | **GRANTED + IMPLEMENTED** (2026-07-16) |
 | **G-W0-B3-POLICIES** | Enforce DoD/Figma/DocGate/term in process | **GRANTED + IMPLEMENTED** — foundation + terminology registry |
-| **G-W0-B4-SYSTEM-MAP** | Harta honesty baseline | OPEN |
-| **G-W0-B5-GOVERNANCE** | Guvernanță honesty baseline | OPEN |
+| **G-W0-B4-SYSTEM-MAP** | Harta honesty baseline | DONE (GO_W0_B4_B5 · 2026-07-16) |
+| **G-W0-B5-GOVERNANCE** | Guvernanță honesty baseline | DONE (GO_W0_B4_B5 · 2026-07-16) |
 | **G-W0-B6-DOCUMENTATION-CENTER** | Route + minimal center | OPEN |
 | **G-W0-B7-FIGMA** | Truth-page Figma edits | OPEN |
 | **G-W0-I18N** | i18n framework / mass string move | OPEN |

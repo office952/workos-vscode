@@ -167,13 +167,12 @@ function buildModulesFromHealth(
 
   return MODULE_DEFINITIONS.map((def) => {
     const statuses = moduleStatuses[def.id] || [];
-    let moduleStatus: "active" | "processing" | "error" | "idle" = "active";
+    let moduleStatus: "active" | "processing" | "error" | "idle" = "idle";
     const counts = { ok: 0, warning: 0, error: 0 };
 
     if (statuses.length === 0) {
-      // No health checks map to this module — mark as active (no issues detected)
-      moduleStatus = "active";
-      counts.ok = 1;
+      // Honesty baseline: no mapped check ⇒ idle / neverificat (never default green)
+      moduleStatus = "idle";
     } else {
       for (const s of statuses) {
         if (s === "ok") counts.ok++;

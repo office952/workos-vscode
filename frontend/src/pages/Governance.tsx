@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import {
   boundaryLayers,
   agents,
@@ -11,6 +11,15 @@ import {
   invalidPatterns,
   productCatalog,
 } from "@/lib/governanceData";
+import {
+  HONESTY_OWNERSHIP_ROWS,
+  HONESTY_SEPARATION_RULES,
+  HONESTY_OWNER_GATES,
+} from "@/lib/truthPagesHonestyBaseline";
+import {
+  fetchDocumentationIndex,
+  type DocumentationIndexFetchResult,
+} from "@/api/documentationIndex";
 import { SectionHeader } from "@/components/workos/SharedComponents";
 import {
   Shield,
@@ -38,9 +47,19 @@ import {
   FileSpreadsheet,
 } from "lucide-react";
 
-type Tab = "boundaries" | "agents" | "truth" | "gates" | "guardrails" | "ui-rules" | "status-flows" | "products";
+type Tab =
+  | "ownership"
+  | "boundaries"
+  | "agents"
+  | "truth"
+  | "gates"
+  | "guardrails"
+  | "ui-rules"
+  | "status-flows"
+  | "products";
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+  { id: "ownership", label: "Cine deține adevărul", icon: <Shield className="w-3.5 h-3.5" /> },
   { id: "boundaries", label: "Boundary Map", icon: <Layers className="w-3.5 h-3.5" /> },
   { id: "status-flows", label: "Status Flows", icon: <Activity className="w-3.5 h-3.5" /> },
   { id: "agents", label: "Agent Authority", icon: <Users className="w-3.5 h-3.5" /> },
@@ -1530,14 +1549,194 @@ function ProductCatalogView() {
   );
 }
 
+// --- HONESTY BASELINE (W0-B5) ---
+function OwnershipHonestyView({
+  docsResult,
+}: {
+  docsResult: DocumentationIndexFetchResult | null;
+}) {
+  const openQuestions = [
+    {
+      label: "OWNER REVIEW REQUIRED",
+      detail: "Termeni și ownership încă parțiale pe limite resursă (Utilaje / Angajați / Pontaj).",
+    },
+    {
+      label: "NOT VALIDATED",
+      detail: "Unele reguli din tab-urile legacy rămân referință locală — nu sunt revalidate prin index B2.",
+    },
+    {
+      label: "STALE",
+      detail: "Numărul vechi de documente „canonice” din UI a fost eliminat — nu era dovedit de indexul B2.",
+    },
+  ];
+
+  return (
+    <div className="space-y-4" data-testid="governance-ownership-baseline">
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-ownership">
+        <SectionHeader title="Cine deține adevărul" icon={<Eye className="w-4 h-4 text-amber-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Matrice mică, doar domenii cu sursă. Nu inventăm ownership.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[12px]">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+                <th className="py-2 pr-3 font-medium">Domeniu</th>
+                <th className="py-2 pr-3 font-medium">Owner</th>
+                <th className="py-2 pr-3 font-medium">Authority</th>
+                <th className="py-2 pr-3 font-medium">Status</th>
+                <th className="py-2 font-medium">Sursă</th>
+              </tr>
+            </thead>
+            <tbody>
+              {HONESTY_OWNERSHIP_ROWS.map((row) => (
+                <tr key={row.domainRo} className="border-b border-[#1E293B]/60 align-top">
+                  <td className="py-2 pr-3">
+                    <p className="text-slate-200 font-medium">{row.domainRo}</p>
+                    <p className="text-[10px] text-slate-500">{row.technicalAlias}</p>
+                  </td>
+                  <td className="py-2 pr-3 text-slate-300">{row.owner}</td>
+                  <td className="py-2 pr-3">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-300">
+                      {row.authority}
+                    </span>
+                  </td>
+                  <td className="py-2 pr-3">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded border border-amber-800/50 text-amber-300 bg-amber-900/20">
+                      {row.status}
+                    </span>
+                  </td>
+                  <td className="py-2 text-slate-400 text-[11px]">{row.source}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-rules">
+        <SectionHeader title="Reguli de separare" icon={<Ban className="w-4 h-4 text-red-400" />} />
+        <div className="space-y-2 mt-2">
+          {HONESTY_SEPARATION_RULES.map((rule) => (
+            <div key={rule.ruleRo} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+              <p className="text-[13px] text-slate-200 mb-1">{rule.ruleRo}</p>
+              <div className="flex flex-wrap gap-2 text-[10px]">
+                <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+                  Status: {rule.status}
+                </span>
+                <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400 flex items-center gap-1">
+                  <BookOpen className="w-3 h-3" />
+                  {rule.source}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-owner-gates">
+        <SectionHeader title="Owner gates" icon={<Lock className="w-4 h-4 text-amber-400" />} />
+        <p className="text-[11px] text-slate-500 mb-2">
+          Listă read-only — nu este motor de aprobare.
+        </p>
+        <ul className="space-y-1.5">
+          {HONESTY_OWNER_GATES.map((gate) => (
+            <li
+              key={gate}
+              className="flex items-start gap-2 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
+              {gate}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-doc-authority">
+        <SectionHeader title="Autoritate documente (index)" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
+        {docsResult === null && (
+          <p className="text-[12px] text-slate-400">Se încarcă indexul de documentație...</p>
+        )}
+        {docsResult?.state === "forbidden" && (
+          <p className="text-[12px] text-amber-300" data-testid="governance-docs-forbidden">
+            Indexul B2 necesită permisiunea <code className="text-amber-200">system.documentation_read</code>{" "}
+            (admin). Etichetele de onestitate de mai sus rămân vizibile; detalii tehnice index = restricționate.
+          </p>
+        )}
+        {docsResult?.state === "unavailable" && (
+          <p className="text-[12px] text-red-300" data-testid="governance-docs-unavailable">
+            Index documentație indisponibil: {docsResult.message}. Nu afișăm un număr canonic inventat.
+          </p>
+        )}
+        {docsResult?.state === "empty" && (
+          <p className="text-[12px] text-slate-400">Index gol — fără documente listate.</p>
+        )}
+        {docsResult?.state === "ok" && (
+          <div data-testid="governance-docs-ok">
+            <p className="text-[11px] text-slate-500 mb-2">
+              {docsResult.data.count} documente indexate (count din API — nu un badge „canonical” inventat).
+              Versiune: {docsResult.data.index_version}
+            </p>
+            <div className="space-y-1.5 max-h-64 overflow-y-auto">
+              {docsResult.data.items.slice(0, 12).map((doc) => (
+                <div
+                  key={doc.document_id}
+                  className="flex flex-wrap items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                >
+                  <span className="text-slate-200 font-medium">{doc.title || doc.document_id}</span>
+                  <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+                    {doc.authority}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded border border-amber-800/40 text-amber-300/90">
+                    {doc.status}
+                  </span>
+                  {doc.drift_status && doc.drift_status !== "ALIGNED" && (
+                    <span className="px-1.5 py-0.5 rounded border border-amber-800/40 text-amber-300">
+                      {doc.drift_status}
+                    </span>
+                  )}
+                  <span className="text-slate-500 ml-auto font-mono text-[10px]">{doc.technical_id}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-open-questions">
+        <SectionHeader title="Întrebări deschise / review" icon={<AlertTriangle className="w-4 h-4 text-amber-400" />} />
+        <div className="space-y-2 mt-2">
+          {openQuestions.map((q) => (
+            <div key={q.label} className="bg-amber-900/10 border border-amber-800/30 rounded-lg p-3">
+              <p className="text-[11px] font-semibold text-amber-300 mb-0.5">{q.label}</p>
+              <p className="text-[12px] text-slate-300">{q.detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 // --- MAIN PAGE ---
 const defaultFilters: SearchFilters = { severity: "all", module: "all", itemType: "all" };
 
 export default function Governance() {
-  const [activeTab, setActiveTab] = useState<Tab>("boundaries");
+  const [activeTab, setActiveTab] = useState<Tab>("ownership");
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState<SearchFilters>(defaultFilters);
   const [showFilters, setShowFilters] = useState(false);
+  const [docsResult, setDocsResult] = useState<DocumentationIndexFetchResult | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchDocumentationIndex().then((result) => {
+      if (!cancelled) setDocsResult(result);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const activeFilterCount = (filters.severity !== "all" ? 1 : 0) + (filters.module !== "all" ? 1 : 0) + (filters.itemType !== "all" ? 1 : 0);
   const searchResults = useMemo(() => filterResults(searchQuery, filters), [searchQuery, filters]);
@@ -1558,26 +1757,39 @@ export default function Governance() {
 
   const renderTab = () => {
     switch (activeTab) {
-      case "boundaries": return <BoundaryMapView />;
-      case "status-flows": return <StatusFlowsView />;
-      case "agents": return <AgentAuthorityView />;
-      case "truth": return <TruthHierarchyView />;
-      case "gates": return <GateView />;
-      case "guardrails": return <GuardrailsView />;
-      case "products": return <ProductCatalogView />;
-      case "ui-rules": return <UITruthRulesView />;
+      case "ownership":
+        return <OwnershipHonestyView docsResult={docsResult} />;
+      case "boundaries":
+        return <BoundaryMapView />;
+      case "status-flows":
+        return <StatusFlowsView />;
+      case "agents":
+        return <AgentAuthorityView />;
+      case "truth":
+        return <TruthHierarchyView />;
+      case "gates":
+        return <GateView />;
+      case "guardrails":
+        return <GuardrailsView />;
+      case "products":
+        return <ProductCatalogView />;
+      case "ui-rules":
+        return <UITruthRulesView />;
     }
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-page">
       {/* Header + Search */}
       <div className="flex items-center justify-between gap-4">
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Shield className="w-5 h-5 text-amber-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">System Governance</h1>
-          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
-            25 canonical docs
+          <h1 className="text-[18px] font-bold text-slate-100">Guvernanța sistemului</h1>
+          <span className="text-[11px] text-slate-500" data-testid="governance-alias">
+            System Governance
+          </span>
+          <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded border border-slate-700 ml-1">
+            read-only
           </span>
         </div>
 
@@ -1631,10 +1843,14 @@ export default function Governance() {
         </div>
       </div>
 
-      <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
+      <div
+        className="flex items-start gap-2 px-3 py-2.5 bg-amber-900/15 border border-amber-800/40 rounded-lg"
+        data-testid="governance-honesty-banner"
+      >
         <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-        <p className="text-[11px] text-amber-300/90">
-          Pagină de guvernanță bazată pe definiții canonice locale (read-only). Nu reprezintă stare operațională live din backend.
+        <p className="text-[12px] text-amber-200/95 leading-relaxed">
+          Această pagină afișează reguli și responsabilități din surse controlate. Nu permite modificarea politicilor
+          și nu înlocuiește documentele aprobate.
         </p>
       </div>
 

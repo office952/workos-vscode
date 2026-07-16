@@ -68,8 +68,8 @@ Status legend: **R** = RECOMMENDED · **G** = OWNER_GATED · **A** = already use
 | term.machines | Machines | Utilaje | Machines | nav.utilaje | navigation | A | | |
 | term.employees | Employees | Angajați | Employees | nav.employees | navigation | A | | |
 | term.attendance | Attendance | Pontaj | Attendance | nav.attendance | navigation | A | | |
-| term.module_chain | Module Chain | Harta sistemelor | Module Chain | system_map.title | navigation | APPROVED | | OD-TERM-08; technical route stays `/modules` |
-| term.governance | Governance | Guvernanța sistemului | System Governance | governance.title | navigation | APPROVED | | OD-TERM-09; route stays `/governance` |
+| term.module_chain | Module Chain | Harta sistemelor | Module Chain | system_map.title | navigation | APPROVED | | OD-TERM-08; UI applied W0-B4 on `/modules` + sidebar; route stays `/modules` |
+| term.governance | Governance | Guvernanța sistemului | System Governance | governance.title | navigation | APPROVED | | OD-TERM-09; UI applied W0-B5 on `/governance` + sidebar; route stays `/governance` |
 | term.documentation_center | Documentation Center | Centrul de documentație | Documentation Center | docs.center.title | navigation | R | | Route planned `/documentation` |
 | term.source_of_truth | Source of Truth | Sursă de adevăr | Source of Truth | governance.source_of_truth | technical | R | | |
 | term.boundary | Boundary | Limită | Boundary | governance.boundary | technical | R | | |

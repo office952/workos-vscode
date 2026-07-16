@@ -181,8 +181,8 @@ const navSections: NavSection[] = [
   {
     title: "Sistem",
     items: [
-      { to: "/modules", label: "Module Chain", icon: GitBranch },
-      { to: "/governance", label: "Governance", icon: Shield },
+      { to: "/modules", label: "Harta sistemelor", icon: GitBranch },
+      { to: "/governance", label: "Guvernanța sistemului", icon: Shield },
       { to: "/settings", label: "Setări", icon: Settings },
     ],
   },
