@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { CheckCircle2, Hand, Loader2, Play, PlayCircle } from "lucide-react";
+import { CheckCircle2, Hand, Loader2, Play, PlayCircle, Square } from "lucide-react";
 import type { EmployeeMobileTaskDTO } from "@/api/employeeMobileTasks";
+import {
+  CollaborationApiError,
+  startMobileHelperSession,
+  stopMobileHelperSession,
+} from "@/api/collaboration";
 import {
   EmployeeMobileErrorState,
   EmployeeMobileSuccessState,
@@ -28,6 +33,7 @@ import {
   COMPLETE_LABEL,
   COMPLETE_PENDING_LABEL,
 } from "@/lib/employeeMobileV2RuntimeAction";
+import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
 import { cn } from "@/lib/utils";
 
 export default function EmployeeMobileV2WorkRoomActionBar({
@@ -43,6 +49,8 @@ export default function EmployeeMobileV2WorkRoomActionBar({
 }) {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [showCompleteConfirm, setShowCompleteConfirm] = useState(false);
+  const [helperBusy, setHelperBusy] = useState(false);
+  const [helperError, setHelperError] = useState<string | null>(null);
   const {
     startTask,
     isPending: startIsPending,
@@ -62,18 +70,30 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     clearError: clearClaimError,
   } = useEmployeeMobileV2ClaimAction();
 
+  const collabUi = isFlexCollabUiEnabled();
   const blockerPresentation = buildEmployeeMobileV2BlockerPresentation(task);
-  const canStartAssigned = canShowAssignedStart(task);
-  const canStartAvailable = canShowAvailableStart(task);
-  const canClaimOnly = canShowClaimOnly(task);
-  const canComplete = canShowComplete(task);
+  const canStartHelper = collabUi && task.can_start_helper_work === true;
+  const canStopOwn = collabUi && task.can_stop_own_session === true;
+  // Helper path: do not use principal start/complete when helper caps drive the UI.
+  const helperOnly =
+    collabUi &&
+    task.visible_as_helper === true &&
+    task.visible_as_principal !== true;
+  const canStartAssigned = !helperOnly && canShowAssignedStart(task);
+  const canStartAvailable = !helperOnly && canShowAvailableStart(task);
+  const canClaimOnly = !helperOnly && canShowClaimOnly(task);
+  const canComplete =
+    !helperOnly &&
+    canShowComplete(task) &&
+    (task.can_complete_operation !== false || !collabUi);
   const startPending = startIsPending(task);
   const completePending = completeIsPending(task);
   const claimPending = claimIsPending(task);
-  const actionError = runtimeError || startError || claimError;
+  const actionError = runtimeError || startError || claimError || helperError;
   const showDisabledStart =
     !canStartAssigned &&
     !canStartAvailable &&
+    !canStartHelper &&
     task.status !== "in_progress" &&
     task.status !== "done" &&
     (task.is_assigned_to_current_employee || task.is_available_for_claim);
@@ -83,6 +103,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     clearRuntimeError();
     clearStartError();
     clearClaimError();
+    setHelperError(null);
     setActionSuccess(null);
     try {
       await startTask(task, async () => {
@@ -95,10 +116,60 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     }
   };
 
+  const handleHelperStart = async () => {
+    clearStartError();
+    clearRuntimeError();
+    clearClaimError();
+    setHelperError(null);
+    setActionSuccess(null);
+    setHelperBusy(true);
+    try {
+      await startMobileHelperSession(task.order_id, task.task_id);
+      setActionSuccess("Sesiune helper pornită.");
+      onStartSuccess?.();
+      await onActionComplete();
+    } catch (e) {
+      if (e instanceof CollaborationApiError) {
+        setHelperError(`${e.code}: ${e.message}`);
+      } else if (e instanceof Error) {
+        setHelperError(e.message);
+      } else {
+        setHelperError("Nu am putut porni sesiunea helper.");
+      }
+    } finally {
+      setHelperBusy(false);
+    }
+  };
+
+  const handleHelperStop = async () => {
+    clearStartError();
+    clearRuntimeError();
+    clearClaimError();
+    setHelperError(null);
+    setActionSuccess(null);
+    setHelperBusy(true);
+    try {
+      await stopMobileHelperSession(task.order_id, task.task_id);
+      setActionSuccess("Sesiune helper oprită. Operația rămâne incompletă.");
+      await onActionComplete();
+    } catch (e) {
+      if (e instanceof CollaborationApiError) {
+        setHelperError(`${e.code}: ${e.message}`);
+      } else if (e instanceof Error) {
+        setHelperError(e.message);
+      } else {
+        setHelperError("Nu am putut opri sesiunea helper.");
+      }
+    } finally {
+      setHelperBusy(false);
+    }
+  };
+
   const handleClaim = async () => {
     clearStartError();
     clearRuntimeError();
     clearClaimError();
+    setHelperError(null);
     setActionSuccess(null);
     try {
       await claimTask(task, async () => {
@@ -114,6 +185,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
     clearStartError();
     clearRuntimeError();
     clearClaimError();
+    setHelperError(null);
     setActionSuccess(null);
     try {
       await completeTask(task, async () => {
@@ -139,11 +211,59 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           />
         ) : null}
 
+        {helperOnly ? (
+          <p
+            className="text-[12px] text-slate-500 leading-snug"
+            data-testid={`${testIdPrefix}-helper-role-note`}
+          >
+            Rol helper: poți porni/opri doar sesiunea ta. Finalizarea rămâne la
+            principal.
+          </p>
+        ) : null}
+
+        {canStartHelper ? (
+          <button
+            type="button"
+            className={emV2Controls.primaryAction}
+            disabled={helperBusy || startPending || completePending}
+            onClick={() => void handleHelperStart()}
+            data-testid={`${testIdPrefix}-helper-start`}
+          >
+            <span className="inline-flex items-center justify-center gap-2">
+              {helperBusy ? (
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+              ) : (
+                <Play className="w-4 h-4" aria-hidden />
+              )}
+              Pornește ajutorul
+            </span>
+          </button>
+        ) : null}
+
+        {canStopOwn ? (
+          <button
+            type="button"
+            className={emV2Controls.secondaryAction}
+            disabled={helperBusy || startPending || completePending}
+            onClick={() => void handleHelperStop()}
+            data-testid={`${testIdPrefix}-helper-stop`}
+          >
+            <span className="inline-flex items-center justify-center gap-2">
+              {helperBusy ? (
+                <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
+              ) : (
+                <Square className="w-4 h-4" aria-hidden />
+              )}
+              Oprește sesiunea mea
+            </span>
+          </button>
+        ) : null}
+
         {canStartAssigned || canStartAvailable ? (
           <button
             type="button"
             className={emV2Controls.primaryAction}
-            disabled={startPending || completePending || claimPending}
+            disabled={startPending || completePending || claimPending || helperBusy}
             onClick={() => void handleStart()}
             data-testid={`${testIdPrefix}-start`}
           >
@@ -182,7 +302,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           <button
             type="button"
             className={emV2Controls.secondaryAction}
-            disabled={claimPending || startPending || completePending}
+            disabled={claimPending || startPending || completePending || helperBusy}
             onClick={() => void handleClaim()}
             data-testid={`${testIdPrefix}-claim`}
           >
@@ -204,7 +324,7 @@ export default function EmployeeMobileV2WorkRoomActionBar({
           <button
             type="button"
             className={emV2Controls.primaryAction}
-            disabled={completePending || startPending || claimPending}
+            disabled={completePending || startPending || claimPending || helperBusy}
             onClick={() => {
               clearStartError();
               clearRuntimeError();

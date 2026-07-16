@@ -5,7 +5,9 @@ import {
 } from "@/api/employeeMobileOrderBlueprint";
 import { useEmployeeMobileV2TaskTruthContext } from "@/contexts/EmployeeMobileV2TaskTruthContext";
 import EmployeeMobileV2AvailableTasksSection from "@/components/workos/employee-mobile-v2/EmployeeMobileV2AvailableTasksSection";
+import EmployeeMobileV2HelpOpportunitiesSection from "@/components/workos/employee-mobile-v2/EmployeeMobileV2HelpOpportunitiesSection";
 import EmployeeMobileV2PageHeader from "@/components/workos/employee-mobile-v2/EmployeeMobileV2PageHeader";
+import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
 import { EmployeeMobileV2TasksMiniSummary } from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskGroup";
 import EmployeeMobileV2TaskRow from "@/components/workos/employee-mobile-v2/EmployeeMobileV2TaskRow";
 import {
@@ -215,6 +217,12 @@ export default function EmployeeMobileV2TasksPage() {
             ))}
           </div>
         </section>
+      ) : null}
+
+      {isFlexCollabUiEnabled() ? (
+        <div className="mb-5">
+          <EmployeeMobileV2HelpOpportunitiesSection onAccepted={reload} />
+        </div>
       ) : null}
 
       <EmployeeMobileV2AvailableTasksSection
