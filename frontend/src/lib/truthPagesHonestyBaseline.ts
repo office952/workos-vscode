@@ -319,3 +319,145 @@ export function coverageLabelRo(coverage: HonestyCoverage): string {
   if (coverage === "partial") return "ACOPERIRE PARȚIALĂ";
   return "NEVALIDAT";
 }
+
+/** Compact evidence rows for ModuleChain evidence tab — not a Documentation Center. */
+export interface HonestyEvidenceItem {
+  id: string;
+  kind: "document" | "api" | "worklog" | "figma" | "test";
+  title: string;
+  status: "CURRENT" | "PARTIAL" | "REFERINȚĂ" | "INDEXED";
+  source: string;
+}
+
+export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
+  {
+    id: "ev.page_completion",
+    kind: "document",
+    title: "Page Completion Foundation",
+    status: "CURRENT",
+    source: "docs/architecture/WORKOS_PAGE_COMPLETION_FOUNDATION.md",
+  },
+  {
+    id: "ev.truth_metadata",
+    kind: "document",
+    title: "Truth Metadata Contract",
+    status: "CURRENT",
+    source: "docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md",
+  },
+  {
+    id: "ev.doc_index",
+    kind: "api",
+    title: "Documentation index (B2)",
+    status: "INDEXED",
+    source: "GET /api/v1/system/documentation",
+  },
+  {
+    id: "ev.health",
+    kind: "api",
+    title: "Runtime health checks",
+    status: "PARTIAL",
+    source: "GET /api/v1/system/health",
+  },
+  {
+    id: "ev.worklog_b45",
+    kind: "worklog",
+    title: "Truth pages honesty baseline",
+    status: "CURRENT",
+    source: "docs/worklog/realignment/2026-07-16_workos_wave_0_b4_b5_truth_pages_honesty_baseline.md",
+  },
+  {
+    id: "ev.figma",
+    kind: "figma",
+    title: "Figma MASTER (UX reference)",
+    status: "REFERINȚĂ",
+    source: "Figma MASTER — W0-B7 for full capture",
+  },
+];
+
+/** ModuleChain local tab IDs — technical, not operator-facing. */
+export type ModuleChainTabId = "system_map" | "handoffs" | "runtime" | "evidence";
+
+export const MODULE_CHAIN_TABS: { id: ModuleChainTabId; labelRo: string }[] = [
+  { id: "system_map", labelRo: "Harta sistemelor" },
+  { id: "handoffs", labelRo: "Contracte și transferuri" },
+  { id: "runtime", labelRo: "Stare runtime" },
+  { id: "evidence", labelRo: "Surse și dovezi" },
+];
+
+/**
+ * Governance tab honesty meta — technical tab IDs must match Governance.tsx `Tab` union.
+ * Visible labels only; IDs unchanged from B4/B5.
+ */
+export type GovernanceTabHonestyStatus =
+  | "HONESTY_BASELINE"
+  | "REFERINȚĂ"
+  | "PARTIAL"
+  | "STALE_HINT"
+  | "OWNER_REVIEW";
+
+export interface GovernanceTabHonestyMeta {
+  tabId: string;
+  status: GovernanceTabHonestyStatus;
+  source: string;
+  noteRo: string;
+}
+
+export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = {
+  ownership: {
+    tabId: "ownership",
+    status: "HONESTY_BASELINE",
+    source: "W0-B5 · OD-TERM · Page Completion Foundation",
+    noteRo: "Matrice mică de ownership — nu inventează domenii fără sursă.",
+  },
+  boundaries: {
+    tabId: "boundaries",
+    status: "REFERINȚĂ",
+    source: "governanceData.boundaryLayers (static local)",
+    noteRo: "Hartă de limite din date locale — acoperire parțială, nu grafic canonic complet.",
+  },
+  "status-flows": {
+    tabId: "status-flows",
+    status: "STALE_HINT",
+    source: "governanceData.moduleStatusFlows (static)",
+    noteRo:
+      "Fluxuri de stare pe modul — pot contrazice vocabularul B3 (page/runtime/doc/Figma). Nu le reinterpretăm silent.",
+  },
+  agents: {
+    tabId: "agents",
+    status: "REFERINȚĂ",
+    source: "governanceData.agents (static)",
+    noteRo: "Autoritate agenți — read-only; nu este motor de permisiuni.",
+  },
+  truth: {
+    tabId: "truth",
+    status: "PARTIAL",
+    source: "governanceData.truthHierarchy + Truth Metadata Contract",
+    noteRo: "Ierarhie SoT — runtime nu definește arhitectura; UI nu e sursă de adevăr.",
+  },
+  gates: {
+    tabId: "gates",
+    status: "REFERINȚĂ",
+    source: "governanceData.gateLevels (static)",
+    noteRo:
+      "Nu este readiness operațional live din Product System / Quotes. Referință de gate logic — nu control de ofertare.",
+  },
+  guardrails: {
+    tabId: "guardrails",
+    status: "PARTIAL",
+    source: "governanceData.guardrails + Wave 0 owner gates",
+    noteRo: "Reguli de protecție — doar cele cu sursă; fără editor de politici.",
+  },
+  products: {
+    tabId: "products",
+    status: "REFERINȚĂ",
+    source: "governanceData.productCatalog (static local)",
+    noteRo:
+      "Nu înlocuiește Catalog produse (Product System). Nomenclator local de referință — nu UI operațional.",
+  },
+  "ui-rules": {
+    tabId: "ui-rules",
+    status: "PARTIAL",
+    source: "governanceData.uiTruthRules + Terminology Registry",
+    noteRo: "Reguli UI/adevăr — RO primary; ID-uri tehnice stabile; fără framework i18n.",
+  },
+};

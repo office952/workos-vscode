@@ -3,9 +3,9 @@
 > **DIRECTION APPROVED IN PRINCIPLE** · **NOT CANONICAL** · **NOT IMPLEMENTATION AUTHORIZATION**  
 > Date: 2026-07-16 · Branch `feature/product-system-active-path-isolation-v1` · HEAD `e4ff30e`  
 > Source: Cursor Plan Mode artifact + owner consolidation brief  
-> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1**, **GO_W0_B3**, **GO_W0_B2_DOCUMENTATION_INDEX_READ_MODEL**, **GO_W0_B4_B5_TRUTH_PAGES_HONESTY_BASELINE** (executed)  
-> **W0-B1 / B3 / B2 / B4∥B5 status: IMPLEMENTED** — honesty: `docs/worklog/realignment/2026-07-16_workos_wave_0_b4_b5_truth_pages_honesty_baseline.md`  
-> Next gate required: **owner visual review** → then optional **GO for W0-B6** Documentation Center (not granted; do not auto-start)
+> Gates granted: **G-W0-PLAN-CONSOLIDATION**, **GO_W0_B1**, **GO_W0_B3**, **GO_W0_B2_DOCUMENTATION_INDEX_READ_MODEL**, **GO_W0_B4_B5_TRUTH_PAGES_HONESTY_BASELINE**, **GO_W0_B4_1_B5_1_TRUTH_PAGES_TAB_COMPLETION** (executed)  
+> **W0-B1 / B3 / B2 / B4∥B5 / B4.1∥B5.1 status: IMPLEMENTED** — tabs: `docs/worklog/realignment/2026-07-16_workos_wave_0_b4_1_b5_1_truth_pages_tab_completion.md`  
+> Next gate required: **owner visual review (tab-by-tab)** → then optional **GO for W0-B6** Documentation Center (not granted; do not auto-start)
 
 ---
 
@@ -41,8 +41,8 @@
 
 ### Implementation recommendation
 
-**W0-B1 / B3 / B2 / B4∥B5 DONE (2026-07-16).**  
-Next: owner visual review of `/modules` + `/governance` → optional corrections → separate GO for **W0-B6** only. Do **not** start B6–B8 without GO.
+**W0-B1 / B3 / B2 / B4∥B5 / B4.1∥B5.1 DONE (2026-07-16).**  
+Next: owner visual review of **every tab** on `/modules` + `/governance` → optional corrections → separate GO for **W0-B6** only. Do **not** start B6–B8 without GO.
 
 ---
 

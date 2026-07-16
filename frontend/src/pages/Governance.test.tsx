@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import Governance from "@/pages/Governance";
 
 vi.mock("@/api/documentationIndex", () => ({
@@ -32,35 +32,69 @@ vi.mock("@/api/documentationIndex", () => ({
   })),
 }));
 
-describe("Governance honesty baseline", () => {
+const TAB_IDS = [
+  "ownership",
+  "boundaries",
+  "status-flows",
+  "agents",
+  "truth",
+  "gates",
+  "guardrails",
+  "products",
+  "ui-rules",
+] as const;
+
+describe("Governance tab completion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("shows Romanian title with secondary alias and removes unsupported canonical count", async () => {
+  it("keeps title, route identity labels, and removes unsupported canonical count", () => {
     render(<Governance />);
     expect(screen.getByRole("heading", { name: "Guvernanța sistemului" })).toBeInTheDocument();
     expect(screen.getByTestId("governance-alias")).toHaveTextContent("System Governance");
     expect(screen.queryByText("25 canonical docs")).not.toBeInTheDocument();
-    expect(screen.getByTestId("governance-honesty-banner")).toHaveTextContent(
-      /nu permite modificarea politicilor/i
-    );
   });
 
-  it("shows ownership, rules, owner gates, and review uncertainty", async () => {
+  it("discovers every real tab by stable technical id and can select each", () => {
     render(<Governance />);
-    expect(screen.getByTestId("governance-ownership")).toHaveTextContent("Cine deține adevărul");
-    expect(screen.getByTestId("governance-rules")).toHaveTextContent("Reguli de separare");
-    expect(screen.getByTestId("governance-owner-gates")).toHaveTextContent("Owner gates");
-    expect(screen.getByTestId("governance-open-questions")).toHaveTextContent("OWNER REVIEW REQUIRED");
-    expect(screen.getByText(/UI-ul nu calculează costul comercial/i)).toBeInTheDocument();
+    for (const id of TAB_IDS) {
+      const tab = screen.getByTestId(`governance-tab-${id}`);
+      expect(tab).toBeInTheDocument();
+      fireEvent.click(tab);
+      expect(tab).toHaveAttribute("aria-selected", "true");
+      expect(screen.getByTestId(`governance-tab-honesty-${id}`)).toBeInTheDocument();
+    }
+  });
+
+  it("marks Ready for Quotes tab as reference, not live readiness", () => {
+    render(<Governance />);
+    fireEvent.click(screen.getByTestId("governance-tab-gates"));
+    const panel = screen.getByTestId("governance-panel-gates");
+    expect(within(panel).getByTestId("governance-tab-honesty-gates")).toHaveTextContent("REFERINȚĂ");
+    expect(panel).toHaveTextContent(/Nu este readiness operațional live/i);
+  });
+
+  it("marks Product Catalog as reference and status-flows conflict visible", () => {
+    render(<Governance />);
+    fireEvent.click(screen.getByTestId("governance-tab-products"));
+    expect(screen.getByTestId("governance-tab-honesty-products")).toHaveTextContent("REFERINȚĂ");
+    expect(screen.getByTestId("governance-panel-products")).toHaveTextContent(/Nu înlocuiește Catalog produse/i);
+
+    fireEvent.click(screen.getByTestId("governance-tab-status-flows"));
+    expect(screen.getByTestId("governance-tab-honesty-status-flows")).toHaveTextContent("STALE_HINT");
+  });
+
+  it("remains read-only", () => {
+    render(<Governance />);
+    expect(screen.queryByRole("button", { name: /salvează|edit|save|approve/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps ownership baseline content on default tab", async () => {
+    render(<Governance />);
+    expect(screen.getByTestId("governance-ownership")).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByTestId("governance-docs-ok")).toHaveTextContent("2 documente indexate");
     });
-  });
-
-  it("remains read-only (no edit/save controls on honesty baseline)", () => {
-    render(<Governance />);
-    expect(screen.queryByRole("button", { name: /salvează|edit|save|approve/i })).not.toBeInTheDocument();
   });
 });

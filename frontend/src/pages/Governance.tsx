@@ -15,6 +15,8 @@ import {
   HONESTY_OWNERSHIP_ROWS,
   HONESTY_SEPARATION_RULES,
   HONESTY_OWNER_GATES,
+  GOVERNANCE_TAB_HONESTY,
+  type GovernanceTabHonestyMeta,
 } from "@/lib/truthPagesHonestyBaseline";
 import {
   fetchDocumentationIndex,
@@ -60,15 +62,42 @@ type Tab =
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "ownership", label: "Cine deține adevărul", icon: <Shield className="w-3.5 h-3.5" /> },
-  { id: "boundaries", label: "Boundary Map", icon: <Layers className="w-3.5 h-3.5" /> },
-  { id: "status-flows", label: "Status Flows", icon: <Activity className="w-3.5 h-3.5" /> },
-  { id: "agents", label: "Agent Authority", icon: <Users className="w-3.5 h-3.5" /> },
-  { id: "truth", label: "Source of Truth", icon: <Eye className="w-3.5 h-3.5" /> },
-  { id: "gates", label: "Ready for Quotes", icon: <Lock className="w-3.5 h-3.5" /> },
-  { id: "guardrails", label: "Guardrails", icon: <Shield className="w-3.5 h-3.5" /> },
-  { id: "products", label: "Product Catalog", icon: <Package className="w-3.5 h-3.5" /> },
-  { id: "ui-rules", label: "UI Truth Rules", icon: <BookOpen className="w-3.5 h-3.5" /> },
+  { id: "boundaries", label: "Harta limitelor", icon: <Layers className="w-3.5 h-3.5" /> },
+  { id: "status-flows", label: "Fluxuri de stare", icon: <Activity className="w-3.5 h-3.5" /> },
+  { id: "agents", label: "Autoritatea agenților", icon: <Users className="w-3.5 h-3.5" /> },
+  { id: "truth", label: "Surse de adevăr", icon: <Eye className="w-3.5 h-3.5" /> },
+  { id: "gates", label: "Pregătit pentru ofertare", icon: <Lock className="w-3.5 h-3.5" /> },
+  { id: "guardrails", label: "Reguli de protecție", icon: <Shield className="w-3.5 h-3.5" /> },
+  { id: "products", label: "Catalog produse (referință)", icon: <Package className="w-3.5 h-3.5" /> },
+  { id: "ui-rules", label: "Reguli de adevăr UI", icon: <BookOpen className="w-3.5 h-3.5" /> },
 ];
+
+function TabHonestyBanner({ meta }: { meta: GovernanceTabHonestyMeta }) {
+  const tone =
+    meta.status === "HONESTY_BASELINE"
+      ? "border-blue-800/40 bg-blue-900/15 text-blue-200/95"
+      : meta.status === "STALE_HINT" || meta.status === "OWNER_REVIEW"
+        ? "border-amber-800/40 bg-amber-900/15 text-amber-200/95"
+        : "border-slate-600/50 bg-slate-800/40 text-slate-300";
+  return (
+    <div
+      className={`flex items-start gap-2 px-3 py-2 rounded-lg border text-[11px] leading-relaxed ${tone}`}
+      data-testid={`governance-tab-honesty-${meta.tabId}`}
+    >
+      <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0 opacity-80" />
+      <div>
+        <p className="font-semibold mb-0.5">
+          {meta.status} · read-only
+        </p>
+        <p>{meta.noteRo}</p>
+        <p className="mt-1 text-[10px] opacity-80 flex items-center gap-1">
+          <BookOpen className="w-3 h-3" />
+          Sursă: {meta.source}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 // --- HIGHLIGHT HELPER ---
 function HighlightText({ text, query }: { text: string; query: string }) {
@@ -831,10 +860,13 @@ function BoundaryMapView() {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-boundaries">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.boundaries} />
       {/* Flow visualization */}
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6">
-        <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-4">Canonical Flow</p>
+        <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-4">
+          Flux de referință (nu acoperire canonică completă)
+        </p>
         <div className="flex items-center gap-0 overflow-x-auto pb-2">
           {boundaryLayers.map((layer, idx) => (
             <div key={layer.id} className="flex items-center shrink-0">
@@ -939,7 +971,8 @@ function AgentAuthorityView() {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-agents">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.agents} />
       {/* Agent Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
         {agents.map((agent) => (
@@ -1074,11 +1107,13 @@ function AgentAuthorityView() {
 // --- SOURCE OF TRUTH TAB ---
 function TruthHierarchyView() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-truth">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.truth} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
         <SectionHeader title="Ierarhia Surselor de Adevăr" icon={<Eye className="w-4 h-4 text-blue-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
-          Când două surse se contrazic, sursa cu nivel mai mic câștigă. Adevărul se definește sus, se traduce mai jos, se verifică mai jos — nu se reinventează invers.
+          Când două surse se contrazic, sursa cu nivel mai mic câștigă. Runtime confirmă comportament — nu definește arhitectura.
+          UI-ul nu devine sursă de adevăr.
         </p>
 
         <div className="space-y-2">
@@ -1129,11 +1164,16 @@ function TruthHierarchyView() {
 // --- READY FOR QUOTES GATE TAB ---
 function GateView() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-gates">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.gates} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
-        <SectionHeader title="Ready for Quotes — Gate Logic" icon={<Lock className="w-4 h-4 text-emerald-400" />} />
+        <SectionHeader
+          title="Pregătit pentru ofertare — logică de gate (referință)"
+          icon={<Lock className="w-4 h-4 text-amber-400" />}
+        />
         <p className="text-[11px] text-slate-500 mb-4">
-          Ready for Quotes este un gate real de business care decide dacă un Template poate fi predat către Quotes. Nu este badge decorativ.
+          Model static de gate din date locale. Nu este readiness operațional live din Catalog produse / Quotes și nu
+          controlează ofertarea din această pagină.
         </p>
 
         {/* Gate flow */}
@@ -1231,7 +1271,8 @@ function GuardrailsView() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-guardrails">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.guardrails} />
       {/* Filter */}
       <div className="flex items-center gap-2 flex-wrap">
         {categories.map((cat) => (
@@ -1274,7 +1315,8 @@ function GuardrailsView() {
 // --- UI TRUTH RULES TAB ---
 function UITruthRulesView() {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-ui-rules">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY["ui-rules"]} />
       {uiTruthRules.map((rule) => (
         <div key={rule.id} className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
           <div className="flex items-center gap-2 mb-3">
@@ -1327,7 +1369,12 @@ function StatusFlowsView() {
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-status-flows">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY["status-flows"]} />
+      <p className="text-[11px] text-slate-500 px-1">
+        Tipuri distincte: stare modul (aici) ≠ stare pagină (B3) ≠ stare runtime (health) ≠ stare document ≠ stare Figma.
+        Conflicturile nu sunt migrate automat.
+      </p>
       {/* Module selector */}
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-2">
         {moduleStatusFlows.map((mod) => (
@@ -1463,13 +1510,18 @@ function ProductCatalogView() {
   const totalProducts = productCatalog.reduce((sum, cat) => sum + cat.products.length, 0);
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="governance-panel-products">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.products} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
-        <div className="flex items-center justify-between mb-4">
-          <SectionHeader title="Nomenclator Produse — RC Publimedia" icon={<Package className="w-4 h-4 text-blue-400" />} />
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
+          <SectionHeader title="Nomenclator local (referință)" icon={<Package className="w-4 h-4 text-blue-400" />} />
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-slate-400">{productCatalog.length} categorii</span>
-            <span className="text-[11px] text-slate-400">{totalProducts} produse</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
+              REFERINȚĂ
+            </span>
+            <span className="text-[11px] text-slate-400">
+              {productCatalog.length} categorii / {totalProducts} rânduri (static)
+            </span>
           </div>
         </div>
 
@@ -1572,6 +1624,7 @@ function OwnershipHonestyView({
 
   return (
     <div className="space-y-4" data-testid="governance-ownership-baseline">
+      <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.ownership} />
       <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-ownership">
         <SectionHeader title="Cine deține adevărul" icon={<Eye className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-3">
@@ -1902,6 +1955,10 @@ export default function Governance() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={activeTab === tab.id}
+              data-testid={`governance-tab-${tab.id}`}
               onClick={() => setActiveTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id

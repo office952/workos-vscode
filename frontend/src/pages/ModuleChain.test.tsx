@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import ModuleChain from "@/pages/ModuleChain";
 
 vi.mock("@/hooks/useModuleChainData", () => ({
@@ -36,7 +36,7 @@ vi.mock("@/hooks/useModuleChainData", () => ({
   }),
 }));
 
-describe("ModuleChain honesty baseline", () => {
+describe("ModuleChain tab completion", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -47,22 +47,38 @@ describe("ModuleChain honesty baseline", () => {
     expect(screen.getByTestId("module-chain-alias")).toHaveTextContent("Module Chain");
   });
 
-  it("keeps architecture and runtime sections separate with partial banner", () => {
+  it("renders expected technical tab set", () => {
     render(<ModuleChain />);
-    expect(screen.getByTestId("module-chain-honesty-banner")).toHaveTextContent(
-      /proiecție read-only|acoperirea este parțială/i
-    );
-    expect(screen.getByTestId("module-chain-architecture")).toHaveTextContent("Structura sistemelor");
+    expect(screen.getByTestId("module-chain-tab-system_map")).toBeInTheDocument();
+    expect(screen.getByTestId("module-chain-tab-handoffs")).toBeInTheDocument();
+    expect(screen.getByTestId("module-chain-tab-runtime")).toBeInTheDocument();
+    expect(screen.getByTestId("module-chain-tab-evidence")).toBeInTheDocument();
+  });
+
+  it("keeps map separate from runtime and shows neverified on runtime tab", () => {
+    render(<ModuleChain />);
+    expect(screen.getByTestId("module-chain-architecture")).toBeInTheDocument();
+    expect(screen.queryByTestId("module-chain-runtime")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("module-chain-tab-runtime"));
     expect(screen.getByTestId("module-chain-runtime")).toHaveTextContent("Stare runtime");
-    expect(screen.getByTestId("arch-node-work_intake")).toHaveTextContent("Preluare lucrare");
+    expect(screen.queryByTestId("module-chain-architecture")).not.toBeInTheDocument();
     expect(screen.getByText("INDISPONIBIL")).toBeInTheDocument();
     expect(screen.getByTestId("module-chain-runtime-error")).toBeInTheDocument();
     expect(screen.getByText("Neverificat")).toBeInTheDocument();
   });
 
-  it("shows sourced handoffs and does not claim Live Health as architecture truth", () => {
+  it("separates handoffs and evidence from the map tab", () => {
     render(<ModuleChain />);
+    expect(screen.queryByTestId("module-chain-handoffs")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("module-chain-tab-handoffs"));
     expect(screen.getByTestId("handoff-work_intake-product_system")).toHaveTextContent("Sursă:");
+    expect(screen.getByText("REFERINȚĂ")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("module-chain-tab-evidence"));
+    expect(screen.getByTestId("module-chain-evidence")).toHaveTextContent("Surse și dovezi");
+    expect(screen.getByTestId("evidence-ev.health")).toBeInTheDocument();
     expect(screen.queryByText("Live Health")).not.toBeInTheDocument();
   });
 });
