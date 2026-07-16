@@ -421,12 +421,4 @@ Not ready for:
 
 ## Source Note
 
-Requested downstream files were not present at these exact paths:
-
-- `docs/export/chatgpt-sources/06_DOWNSTREAM_SYSTEMS_AND_EXECUTION_ROADMAP.md`
-- `docs/export/chatgpt-sources/08_FORBIDDEN_SCOPE_AND_GUARDS.md`
-
-Equivalent recent export files were used:
-
-- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/06_DOWNSTREAM_SYSTEMS_AND_EXECUTION_ROADMAP.md`
-- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/08_FORBIDDEN_SCOPE_AND_GUARDS.md`
+Historical ChatGPT export packs under `docs/export/chatgpt-sources*` were session handoffs, not canonical sources. They were removed from the repository on 2026-07-16 (deferred cleanup). Downstream / forbidden-scope intent for this contract is owned by the tracked architecture docs in `docs/architecture/product-system/` and related realignment worklogs — not by raw conversation exports.

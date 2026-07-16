@@ -47,7 +47,7 @@ Observed:
 - HEAD: `a1a1fef`.
 - No staged files from this audit at gate time.
 - Dirty/untracked repository state exists and was not reverted.
-- Known untracked report `WORKOS_STEP1_LAYER_ROLE_OWNER_TAXONOMY_2026-07-06.md` remains intentionally untracked.
+- Root session note `WORKOS_STEP1_LAYER_ROLE_OWNER_TAXONOMY_2026-07-06.md` was absorbed into `docs/worklog/realignment/2026-07-06_intake_v6_layer_role_taxonomy_logic_v1.md` and removed on 2026-07-16.
 - No code/runtime/backend mutation was made during this audit.
 
 ## Sources Read
@@ -79,10 +79,10 @@ Code surfaces:
 - `backend/services/linked_template_runtime_segment_extraction_service.py`
 
 Missing requested docs / alternate evidence:
-- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/*.md` was not found.
+- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/*.md` was not found at audit time.
 - `GRADI_LOGICAL_LIST_TRACE_V1.md` was not found.
 - `GRADI_STEP2_LOGICAL_LIST_GAP_CHECK_V1.md` was not found.
-- Alternate export pack exists under `docs/export/workos_chatgpt_sources_pack_2026-07-04_1328` and was used as available context.
+- Alternate ChatGPT export packs under `docs/export/` were session context only; removed from the repository on 2026-07-16 (deferred cleanup). Canonical ownership remains in `docs/architecture/` and `docs/worklog/realignment/`.
 
 ## UI Runtime Verification
 

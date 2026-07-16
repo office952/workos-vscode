@@ -59,3 +59,15 @@ Artifact fix additions:
 The implementation keeps the current V6 shell and does not rewrite ProductDefinition/Form System. It produces ProductDefinition-ready composition payload metadata for downstream work.
 
 Secondary legacy terminology remains visible in finish-related UI/data, for example `artwork` / `Policrom`. This is not the primary Product Truth composition label and is not the constructive logo/vector blocker, but it should be cleaned in a separate terminology pass if owner wants the UI fully purged.
+
+## Absorbed session evidence (2026-07-06 root notes; removed 2026-07-16)
+
+From `WORKOS_GRADI_CURAT_ANALYZER_DIRECT_TEST_2026-07-06.md` (targeted analyzer validation, HEAD `b7035fe`):
+
+- Direct `gradi-curat.svg` analyzer path validated with fixture isolation; related surfaces included `semanticAndPseudoLayerExpansion.ts` and logo-flow Vitest coverage.
+- Session was diagnostic / test-wiring; no archive commit of the root note itself.
+
+From `WORKOS_LINKED_SEGMENT_PRODUCT_DEFINITION_SUMMARY_TO_REVIEW_2026-07-06.md` (frontend micro-slice, verdict PARTIAL):
+
+- Read-only Product Definition linked-segment summary was wired into Review via `IntakeV6ProductCompositionPanel` / `IntakeV6ReviewStep`.
+- Clean commit of that micro-slice was blocked at the time by an unrelated commercial VAT assertion in `IntakeV6ReviewStep.commercialSettings.test.tsx` (see deferred-cleanup preserved VAT note).

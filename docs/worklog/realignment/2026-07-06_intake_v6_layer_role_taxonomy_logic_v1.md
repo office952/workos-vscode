@@ -19,7 +19,7 @@ Controlled implementation + documentation for owner-facing layer role taxonomy i
   - `frontend/src/components/workos/intake-v6/IntakeV6ArtworkFinishSection.test.tsx`
   - `frontend/src/components/workos/intake-v6/IntakeV6ConfirmOperationalSummary.tsx`
   - `frontend/src/components/workos/intake-v6/IntakeV6OperatorWorkSummary.tsx`
-  - `WORKOS_STEP1_LAYER_ROLE_OWNER_TAXONOMY_2026-07-06.md`
+  - `WORKOS_STEP1_LAYER_ROLE_OWNER_TAXONOMY_2026-07-06.md` (root session note; absorbed below and removed 2026-07-16)
 
 ## Owner Decision
 
@@ -27,6 +27,8 @@ Only two owner-facing roles for volumetric letters + logo context:
 
 - Vector Litere
 - Vector Logo
+
+Absorbed from root session note `WORKOS_STEP1_LAYER_ROLE_OWNER_TAXONOMY_2026-07-06.md` (2026-07-06): operator dropdown taxonomy for Letters+Logo is exactly those two roles; global fallback / `Vector Atipic` / stroke-only labels must not leak into the owner-facing options.
 
 ## Runtime Context
 

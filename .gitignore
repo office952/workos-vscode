@@ -111,3 +111,14 @@ fisiere-teste/
 
 # Local DB path inventory (machine-specific; do not commit)
 /database_candidates/
+
+# Root session scratch notes from 2026-07-06 dirty-lane work (decisions live in docs/worklog)
+/WORKOS_*_2026-07-06.md
+
+# Duplicate external-review handoff of TRUE E2E audit (canonical under docs/qa/)
+/workos-true-e2e-audit-review-package*/
+
+# ChatGPT conversation export packs (not canonical architecture)
+/docs/export/chatgpt-sources/
+/docs/export/workos_chatgpt_sources_pack_*/
+/docs/export/chatgpt-sources-workos-implementation-*/

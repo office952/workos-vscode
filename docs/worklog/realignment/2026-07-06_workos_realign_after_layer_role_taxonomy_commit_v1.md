@@ -45,8 +45,8 @@ Read or inspected:
 - `backend/services/letter_group_finish_readiness_service.py`
 - `backend/services/linked_template_runtime_segment_extraction_service.py`
 
-Requested but not found:
-- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/*.md`
+Requested but not found at audit time:
+- `docs/export/chatgpt-sources-workos-implementation-2026-07-04/*.md` (ChatGPT export packs later removed 2026-07-16; not canonical)
 - `GRADI_LOGICAL_LIST_TRACE_V1.md`
 - `GRADI_STEP2_LOGICAL_LIST_GAP_CHECK_V1.md`
 
