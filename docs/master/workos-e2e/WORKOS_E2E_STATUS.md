@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `0cd82d9` (PROD-FLEX-COLLABORATION-PHASE-3 COMPLETE; FLEX lane CLOSED)  
+**Accepted HEAD:** `5bc8cd5` (post-FLEX reentry plan stamped; implementation of post-job actuals in progress → COMPLETE this stamp)  
 
-**Last updated:** 2026-07-16 (**POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW** — next impl not started)
+**Last updated:** 2026-07-16 (**WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1** shipped — see section below)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **POST-FLEX ROADMAP REENTRY** — plan **READY FOR OWNER REVIEW** |
+| Active task | **WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1** — **COMPLETE** |
 
-| Next task | Owner GO (G1–G4) then `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1` via `/ce-work`; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | Owner verify `/execution/23099` post-job truth; follow-on: same-scenario E2E proof or HR labor-money authority; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1323,9 +1323,9 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 ## POST-FLEX ROADMAP REENTRY — PLAN READY FOR OWNER REVIEW
 
-**Verdict:** `WORKOS_POST_FLEX_ROADMAP_REENTRY_PLAN_READY`
+**Verdict:** `WORKOS_POST_FLEX_ROADMAP_REENTRY_PLAN_READY` → owner G1–G4 **YES** 2026-07-16
 
-**Status stamp:** **POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW**
+**Status stamp:** **POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW** (historical) → implementation authorized
 
 **Recommended next phase (implementation not started):** `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1`
 
@@ -1335,7 +1335,21 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Worklog:** `docs/worklog/realignment/2026-07-16_workos_post_flex_roadmap_reentry.md`
 
-**Owner gates before `/ce-work`:** G1–G4 (see decision log)
+**Owner gates before `/ce-work`:** G1–G4 (see decision log) — **ALL YES**
 
-**Not started:** backend/frontend/DB/runtime for post-job actuals
+## WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1 — COMPLETE
+
+**Verdict:** `WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1_COMPLETE`
+
+**Status:** **COMPLETE** (ACCEPT with known monetary gaps: labor money excluded by G2; machine usage not captured)
+
+**API:** `GET /api/v1/execution/{order_id}/post-job-truth` + extended profitability coverage fields
+
+**UI:** `/execution/:orderId` — `PostJobTruthPanel`
+
+**Worklog:** `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md`
+
+**Runtime proof:** order `23099` — see `docs/qa/_post_job_runtime_proof_v2.json`
+
+**Not started / out of scope:** HR labor money; `/operator` mirror; FLEX reopen; Product System redesign; migration
 

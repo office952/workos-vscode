@@ -2,10 +2,11 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Accepted HEAD:** `0cd82d9` (PROD-FLEX-COLLABORATION-PHASE-3 COMPLETE; FLEX lane CLOSED)  
-**Active task:** **POST-FLEX ROADMAP REENTRY PLAN READY FOR OWNER REVIEW** — next impl **BLOCKED** until owner G1–G4 + `/ce-work`  
-**Recommended next:** `WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1`  
+**Accepted HEAD:** post-job actuals V1 COMPLETE (see STATUS)  
+**Active task:** **WORKOS-POST-JOB-ACTUALS-RECONCILIATION-AND-PROFITABILITY-TRUTH-V1** — **COMPLETE**  
+**Recommended next:** same-scenario Intake→completed-job owner proof, or HR labor-money authority (separate GO)  
 **Reentry plan:** `.compound-engineering/workos-post-flex-roadmap-reentry/plan.md`  
+**Post-job worklog:** `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md`  
 
 
 **Runtime tooling lane:** **CLOSED**  
@@ -1301,8 +1302,10 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 | Decision log | `.compound-engineering/workos-post-flex-roadmap-reentry/decision-log.md` |
 | Worklog | `docs/worklog/realignment/2026-07-16_workos_post_flex_roadmap_reentry.md` |
 | Owner gates | G1–G4 before `/ce-work` |
-| Implementation | **NOT STARTED** |
+| Implementation | **COMPLETE** @ 2026-07-16 |
 | Remains paused | FLEX polish; UI-TRUTH; APP-AUTH-06G; PS as primary; capacity; Mobile V1; ShopFloor |
+| Post-job worklog | `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md` |
+| Verdict | `WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1_COMPLETE` |
 
 ## Dependency graph (ASCII)
 

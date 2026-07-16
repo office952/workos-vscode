@@ -29,10 +29,10 @@ Decisions below are **planning-time**. Implementation GO decisions (G1–G4) rem
 
 | ID | Question | Status | Notes |
 |----|----------|--------|-------|
-| **G1** | Approve post-job actuals phase as next (vs Product System or APP-AUTH)? | **OPEN** | Default recommendation: Yes |
-| **G2** | Labor money out of scope — minutes-only labor actuals OK? | **OPEN** | Default recommendation: Yes (money waits for HR authority) |
-| **G3** | Material actuals require real stock deduction on fixture order — authorize temporary local deduction/cleanup? | **OPEN** | Prefer existing order `23099` or safer local order; no new canonical seed |
-| **G4** | Primary surface remains `/execution/:orderId` only (no `/operator` mirror)? | **OPEN** | Default recommendation: Yes |
+| **G1** | Approve post-job actuals phase as next (vs Product System or APP-AUTH)? | **YES** | Owner GO 2026-07-16 — implement phase |
+| **G2** | Labor money out of scope — minutes-only labor actuals OK? | **YES** | Minutes-only; no HR money; partial profitability wording required |
+| **G3** | Material actuals require real stock deduction on fixture order — authorize temporary local deduction/cleanup? | **YES** | Local fixture only; real deduction path; cleanup where supported |
+| **G4** | Primary surface remains `/execution/:orderId` only (no `/operator` mirror)? | **YES** | Execution only |
 
 One-GO authorization: owner approves **the whole phase** (not per-endpoint). G1–G4 are phase-level gates only.
 
