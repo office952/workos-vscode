@@ -197,7 +197,21 @@ def _expand_logo_task_rules(
     segment_key: str,
 ) -> list[ProductAggregateTaskRule]:
     expanded: list[ProductAggregateTaskRule] = []
-    for rule in logo_aggregate.task_contract.task_rules:
+    source_rules = list(logo_aggregate.task_contract.task_rules)
+    if not source_rules:
+        # Parent logo aggregate historically had empty task_contract (dossier not compiled).
+        # Emit a minimal per-segment rule so linked composition remains execution-traceable.
+        source_rules = [
+            ProductAggregateTaskRule(
+                task_name="logo_linked_segment",
+                task_type="linked_child_work",
+                priced_operation="logo_face_cnc_cut",
+                sequence=1,
+                trigger_condition="linked_segment",
+                provenance="linked_module",
+            )
+        ]
+    for rule in source_rules:
         expanded.append(
             rule.model_copy(
                 update={

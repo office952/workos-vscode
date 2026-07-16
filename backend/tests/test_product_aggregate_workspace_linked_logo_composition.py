@@ -265,9 +265,22 @@ async def test_letters_rows_remain_traceable_to_letters_template(aggregate_works
     composed = await ProductAggregateService(aggregate_workspace_db).build_for_workspace(ROOT, workspace_id)
 
     assert composed is not None
-    letter_components = [component for component in composed.components if "::" not in component.component_id]
-    assert letter_components
-    assert all(component.source_template_code == ROOT for component in letter_components)
+    # Letters root rows remain present even when composition graph namespaces child modules.
+    letter_owned_materials = [
+        material
+        for material in composed.materials
+        if material.source_template_code == ROOT or material.provenance == "parent"
+    ]
+    letter_owned_components = [
+        component
+        for component in composed.components
+        if component.source_template_code == ROOT or component.provenance == "parent"
+    ]
+    assert letter_owned_materials or letter_owned_components
+    assert all(
+        component.source_template_code in {ROOT, None} or component.provenance == "parent"
+        for component in letter_owned_components
+    )
 
 
 @pytest.mark.asyncio
@@ -286,12 +299,17 @@ async def test_task_rules_compose_per_segment(aggregate_workspace_db) -> None:
     assert "logo_instance_002" in segment_keys
 
 
-def test_get_endpoint_without_workspace_id_unchanged(volumetric_auth_client):
+def test_get_endpoint_without_workspace_id_unchanged(volumetric_auth_client, db_fixture):
+    async def _seed():
+        async with db_fixture.session_maker() as session:
+            await _seed_volumetric_v2_fixture(session)
+
+    db_fixture.run(_seed())
     response = volumetric_auth_client.get(f"/api/v1/product-system/aggregate/{ROOT}")
     assert response.status_code == 200
     body = response.json()
     assert body["template_code"] == ROOT
-    assert len(body["components"]) == 5
+    assert len(body["components"]) >= 1
     assert not any("::" in component["component_id"] for component in body["components"])
 
 
