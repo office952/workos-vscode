@@ -183,6 +183,8 @@ class EmployeeMobileOrderBlueprintTask(BaseModel):
     can_start_helper_work: bool = False
     can_stop_own_session: bool = False
     can_complete_operation: bool = False
+    can_request_help: bool = False
+    can_cancel_help: bool = False
     eligibility_reason: str = ""
     active_helper_count: int = 0
     stage_label: str

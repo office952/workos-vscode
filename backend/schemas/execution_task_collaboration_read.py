@@ -108,6 +108,9 @@ class TaskCollaborationRead(BaseModel):
     can_start_helper_work: bool | None = None
     can_stop_own_session: bool | None = None
     can_complete_operation: bool | None = None
+    # Phase 3 thin projections — filled when viewer_employee_id is supplied.
+    can_request_help: bool | None = None
+    can_cancel_help: bool | None = None
 
 
 class OrderTaskCollaborationReadResponse(BaseModel):

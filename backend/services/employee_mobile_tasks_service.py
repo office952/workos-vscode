@@ -658,20 +658,52 @@ async def list_my_tasks(db: AsyncSession, employee_id: int) -> List[dict]:
         task["clarification_request"] = open_req if open_req else None
 
     await _attach_readiness_to_tasks(db, owned, employee_id)
+    open_help_requester_keys: set[tuple[int, str]] = set()
+    if is_collab_phase2_enabled() and owned:
+        from models.execution_task_help_request import ExecutionTaskHelpRequest
+        from schemas.execution_task_help import HELP_STATUS_OPEN
+        from sqlalchemy import select
+
+        owned_order_ids = sorted({int(t["order_id"]) for t in owned})
+        help_rows = list(
+            (
+                await db.execute(
+                    select(ExecutionTaskHelpRequest).where(
+                        ExecutionTaskHelpRequest.order_id.in_(owned_order_ids),
+                        ExecutionTaskHelpRequest.status == HELP_STATUS_OPEN,
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+        for hr in help_rows:
+            if int(hr.requested_by_employee_id) == int(employee_id):
+                open_help_requester_keys.add((int(hr.order_id), str(hr.task_id)))
+
     for task in owned:
         is_principal = bool(task.get("visible_as_principal"))
         task["is_assigned_to_current_employee"] = is_principal
         task["is_available_for_claim"] = False
         task["can_claim"] = False
         task["can_start_from_available"] = False
+        task_key = (int(task["order_id"]), str(task["task_id"]))
+        task["can_request_help"] = bool(
+            is_collab_phase2_enabled()
+            and is_principal
+            and task.get("status") != "done"
+        )
+        task["can_cancel_help"] = bool(
+            is_collab_phase2_enabled() and task_key in open_help_requester_keys
+        )
         # Helper-only visibility: never grant principal claim/complete via list flags.
         if not is_principal:
             task["can_complete_operation"] = False
             task["can_claim"] = False
-            key = (int(task["order_id"]), str(task["task_id"]))
+            task["can_request_help"] = False
             # Membership authorizes helper work; own active session blocks re-start.
             task["can_start_helper_work"] = bool(
-                key in membership_keys and not task.get("can_stop_own_session")
+                task_key in membership_keys and not task.get("can_stop_own_session")
             )
     return owned
 
@@ -733,6 +765,11 @@ async def list_help_opportunity_tasks(db: AsyncSession, employee_id: int) -> Lis
         item = dict(task)
         item["pool"] = "ajutor_solicitat"
         item["help_request_id"] = int(help_row.id)
+        item["targeted_employee_id"] = (
+            int(help_row.targeted_employee_id)
+            if help_row.targeted_employee_id is not None
+            else None
+        )
         item["can_view_help"] = True
         item["can_accept_help"] = True
         item["can_start_helper_work"] = False

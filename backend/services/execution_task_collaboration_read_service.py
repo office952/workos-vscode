@@ -47,7 +47,7 @@ READ_MODEL_NOTES = [
     "open_help_requests are OPEN help need signals — acceptance is membership, not session",
     "operation_completed uses explicit per-session completion signals only",
     "legacy_or_derived_task_status may show done while operation_completed is false",
-    "viewer-scoped capability fields are null on order-wide projection unless filled by consumer",
+    "viewer-scoped capability fields require viewer_employee_id query param",
 ]
 
 
@@ -307,9 +307,83 @@ def project_task_collaboration_read(
     )
 
 
+def apply_viewer_collaboration_capabilities(
+    task: TaskCollaborationRead,
+    *,
+    viewer_employee_id: int,
+    sessions: list[dict[str, Any]],
+    phase2_enabled: bool,
+) -> TaskCollaborationRead:
+    """Fill viewer-scoped capability fields on a task collaboration projection."""
+    from services.task_work_session_service import (
+        ROLE_HELPER,
+        active_session_for_employee,
+    )
+
+    vid = int(viewer_employee_id)
+    principal_id = task.optional_principal.optional_principal_employee_id
+    active_helper_ids = {
+        int(m.employee_id)
+        for m in task.helper_memberships
+        if getattr(m, "status", None) == "active"
+    }
+    is_helper = vid in active_helper_ids
+    is_principal = principal_id is not None and int(principal_id) == vid
+    if not is_principal:
+        for entry in sessions:
+            if not isinstance(entry, dict):
+                continue
+            try:
+                entry_eid = int(entry.get("employee_id") or 0)
+            except (TypeError, ValueError):
+                continue
+            if entry_eid != vid:
+                continue
+            role = str(entry.get("role") or "").strip().lower()
+            if role == ROLE_HELPER:
+                continue
+            is_principal = True
+            break
+
+    my_active = active_session_for_employee(sessions, vid)
+    open_helps = list(task.open_help_requests or [])
+    has_open = bool(task.has_open_help and open_helps)
+
+    can_cancel = False
+    if phase2_enabled and has_open:
+        for hr in open_helps:
+            requester = getattr(hr, "requested_by_employee_id", None)
+            if requester is not None and int(requester) == vid:
+                can_cancel = True
+                break
+
+    can_accept = False
+    if phase2_enabled and has_open and not is_helper:
+        for hr in open_helps:
+            targeted = getattr(hr, "targeted_employee_id", None)
+            if targeted is None or int(targeted) == vid:
+                can_accept = True
+                break
+
+    task.visible_as_principal = bool(is_principal)
+    task.visible_as_helper = bool(is_helper)
+    task.can_view_help = bool(phase2_enabled and (has_open or is_helper or is_principal))
+    task.can_accept_help = bool(can_accept)
+    task.can_start_helper_work = bool(phase2_enabled and is_helper and my_active is None)
+    task.can_stop_own_session = my_active is not None
+    task.can_complete_operation = bool(is_principal)
+    task.can_request_help = bool(
+        phase2_enabled and is_principal and not task.operation_completed
+    )
+    task.can_cancel_help = bool(can_cancel)
+    return task
+
+
 async def build_order_task_collaboration_read(
     db: AsyncSession,
     order_id: int,
+    *,
+    viewer_employee_id: int | None = None,
 ) -> OrderTaskCollaborationReadResponse:
     if not isinstance(order_id, int) or order_id <= 0:
         raise HTTPException(status_code=422, detail={"error": "order_id_invalid"})
@@ -344,13 +418,15 @@ async def build_order_task_collaboration_read(
     memberships_by_task = await list_order_memberships_by_task(db, order_id)
 
     help_by_task: dict[str, list] = {}
+    phase2_enabled = False
     try:
         from models.execution_task_help_request import ExecutionTaskHelpRequest
         from schemas.execution_task_help import HELP_STATUS_OPEN
         from services.execution_task_help_service import _serialize as _serialize_help
         from services.flex_membership_flags import is_collab_phase2_enabled
 
-        if is_collab_phase2_enabled():
+        phase2_enabled = bool(is_collab_phase2_enabled())
+        if phase2_enabled:
             help_rows = list(
                 (
                     await db.execute(
@@ -376,16 +452,22 @@ async def build_order_task_collaboration_read(
         if not task_id:
             continue
         task_sessions = reality_sessions_by_task.get(task_id, [])
-        projections.append(
-            project_task_collaboration_read(
-                task_id=task_id,
-                plan_task=plan_task,
-                sessions=task_sessions,
-                employee_names=employee_names,
-                helper_memberships=memberships_by_task.get(task_id, []),
-                open_help_requests=help_by_task.get(task_id, []),
-            )
+        projected = project_task_collaboration_read(
+            task_id=task_id,
+            plan_task=plan_task,
+            sessions=task_sessions,
+            employee_names=employee_names,
+            helper_memberships=memberships_by_task.get(task_id, []),
+            open_help_requests=help_by_task.get(task_id, []),
         )
+        if viewer_employee_id is not None:
+            projected = apply_viewer_collaboration_capabilities(
+                projected,
+                viewer_employee_id=int(viewer_employee_id),
+                sessions=task_sessions,
+                phase2_enabled=phase2_enabled,
+            )
+        projections.append(projected)
 
     return OrderTaskCollaborationReadResponse(
         contract_version=EXECUTION_TASK_COLLABORATION_READ_VERSION,

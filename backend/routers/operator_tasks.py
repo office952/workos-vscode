@@ -781,9 +781,24 @@ async def get_operator_task_truth_endpoint(
 async def get_order_task_collaboration_read_endpoint(
     order_id: int,
     db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+    viewer_employee_id: int | None = None,
 ) -> OrderTaskCollaborationReadResponse:
-    """Read-only collaboration projection — optional principal + session-derived workers."""
-    return await build_order_task_collaboration_read(db, order_id)
+    """Read-only collaboration projection — optional principal + session-derived workers.
+
+    When viewer_employee_id is omitted, resolves the caller's linked employee so
+    Phase 3 capability fields are filled for the authenticated operator.
+    """
+    resolved_viewer: int | None = viewer_employee_id
+    if resolved_viewer is None:
+        try:
+            resolved = await resolve_employee_for_user(db, current_user)
+            resolved_viewer = int(resolved.id)
+        except Exception:
+            resolved_viewer = None
+    return await build_order_task_collaboration_read(
+        db, order_id, viewer_employee_id=resolved_viewer
+    )
 
 
 @router.post(
