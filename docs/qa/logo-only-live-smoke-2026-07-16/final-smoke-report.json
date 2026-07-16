@@ -1,0 +1,45 @@
+{
+  "label": "LOCAL LIVE STACK PROOF",
+  "a": {
+    "apiReadiness": "logo_only_candidate_not_offerable",
+    "artwork": false,
+    "ui": {
+      "kids": 3,
+      "hasGuard": true,
+      "guardText": "TPL-VOLUMETRIC-LOGO_v1 candidate/read-only · root comercial neofertabil fara owner GO · nu creeaza quote/order/execution. Context UI existent: Logo volumetric shell.",
+      "template": "Logo-only candidate",
+      "code": "IV6-LOGO-LIVE-SMOKE-20260716",
+      "handoffBlocked": false,
+      "readyPreview": false,
+      "neofertabil": true
+    },
+    "screenshot": "C:\\w\\psiso\\docs\\qa\\logo-only-live-smoke-2026-07-16\\05_scenario_a_guard.png",
+    "pageerror": null
+  },
+  "b": {
+    "apiReadiness": "logo_only_candidate_not_offerable",
+    "artwork": true,
+    "ui": {
+      "kids": 3,
+      "hasGuard": true,
+      "guardText": "TPL-VOLUMETRIC-LOGO_v1 candidate/read-only · root comercial neofertabil fara owner GO · nu creeaza quote/order/execution. Context UI existent: Logo volumetric shell.",
+      "template": "Logo-only candidate",
+      "code": "IV6-LOGO-LIVE-SMOKE-20260716",
+      "handoffBlocked": false,
+      "readyPreview": false,
+      "neofertabil": true
+    },
+    "screenshot": "C:\\w\\psiso\\docs\\qa\\logo-only-live-smoke-2026-07-16\\06_scenario_b_guard.png",
+    "pageerror": null
+  },
+  "handoff": {
+    "readiness": "logo_only_candidate_not_offerable",
+    "handoff_allowed": false,
+    "can_create": false
+  },
+  "logo": {
+    "quote_offerable": false,
+    "root_offerable": false
+  },
+  "crash": "row.blockers is not iterable @ intakeV6OperatorBlockerBannerDisplay.ts"
+}

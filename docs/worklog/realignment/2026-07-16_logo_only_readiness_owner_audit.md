@@ -110,4 +110,34 @@ Tests: `tests/test_intake_v6_logo_only_readiness_http.py` + prior unit/spine/off
 
 `/modules`: **NO IMPACT** · `/governance`: **NO UPDATE REQUIRED**
 
-Commit: `test(intake): prove logo candidate readiness over http`
+Commit: `test(intake): prove logo candidate readiness over http`  
+Hash: `56985899ea64e0562bfa44156916335a9919ce74`
+
+---
+
+## Local live UI smoke (follow-up)
+
+Label: **LOCAL LIVE STACK PROOF** (not production).
+
+| Item | Value |
+|------|--------|
+| Backend | `http://127.0.0.1:8001` (canonical `npm run dev:backend`; AGENTS :8000 note differs — workspace contract uses 8001) |
+| Frontend | `http://127.0.0.1:3000` |
+| Workspace | `logo-only-live-smoke-2026-07-16` / `IV6-LOGO-LIVE-SMOKE-20260716` |
+| Operator URL | `http://127.0.0.1:3000/intake-v6/logo-only-live-smoke-2026-07-16/operator` |
+| Binding | `TPL-VOLUMETRIC-LOGO_v1` (candidate; not root-activated) |
+
+| Scenario | API readiness | UI guard | Offerable |
+|----------|---------------|----------|-----------|
+| A artwork unconfirmed | `logo_only_candidate_not_offerable` | Logo-only header + orange banner; template title `Logo-only candidate` | handoff/draft false |
+| B artwork confirmed | `logo_only_candidate_not_offerable` | same guard remains; no `ready_for_quote_preview` | availability `quote_offerable=false`, `root_offerable=false` |
+
+API cross-check: `PUT .../finish-setup`, `GET .../workspaces/{id}`, `GET .../quote-handoff-preview`, `GET /api/v1/product-system/template-availability`.
+
+Screenshots: `docs/qa/logo-only-live-smoke-2026-07-16/05_scenario_a_guard.png`, `06_scenario_b_guard.png`, `final-smoke-report.json`.
+
+Cleanup: workspace row deleted from local `backend/dev.db` (GET → 404). Logo template seed rows remain in local DB (existing candidate seed; not root offerable).
+
+Known secondary UI defect (not readiness lie): after Configurare settles, Review can white-screen with `TypeError: row.blockers is not iterable` in `intakeV6OperatorBlockerBannerDisplay.ts` (`collectRuntimeBlockerCodes`). Propose defensive `Array.isArray` before iterating — out of this smoke’s implementation scope unless owner asks.
+
+`/modules`: **NO IMPACT** · `/governance`: **NO UPDATE REQUIRED**
