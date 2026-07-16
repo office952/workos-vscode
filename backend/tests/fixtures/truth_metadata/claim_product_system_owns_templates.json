@@ -1,0 +1,48 @@
+{
+  "fixture_class": "TEST_FIXTURE",
+  "canonicality": "NOT_CANONICAL_TRUTH",
+  "is_test_fixture": true,
+  "metadata_version": "workos_truth_metadata/v1",
+  "claim_id": "fixture.claim.product_system.owns_templates",
+  "subject_type": "SYSTEM",
+  "subject_id": "product_system",
+  "claim_type": "OWNS",
+  "claim_text": "Product System owns product template definitions (TEST FIXTURE — not production truth).",
+  "display_label_ro": "Sistem produs deține șabloanele",
+  "technical_alias": "Product System owns templates",
+  "translation_key": "truth.claim.product_system.owns_templates",
+  "description_ro": "Exemplu de test — nu este claim canonic de producție.",
+  "authority": {
+    "authority_type": "CODE_CONTRACT",
+    "authority_reference": "docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md",
+    "authority_rank": 120
+  },
+  "owner_type": "SYSTEM_OWNER",
+  "owner_reference": "product_system_owner_fixture",
+  "status": "CURRENT",
+  "valid_from": "2026-07-16T00:00:00Z",
+  "last_validated_at": "2026-07-16T12:00:00Z",
+  "validated_against": "HEAD:fixture",
+  "evidence_refs": [
+    {
+      "evidence_id": "ev.fixture.ps.code",
+      "evidence_type": "CODE",
+      "reference": "frontend/src/features/product-system/ProductSystem.tsx",
+      "is_test_fixture": true
+    }
+  ],
+  "document_path": "docs/architecture/WORKOS_TRUTH_METADATA_CONTRACT.md",
+  "code_refs": ["frontend/src/features/product-system/ProductSystem.tsx"],
+  "runtime_refs": [],
+  "test_refs": ["tests/test_truth_metadata_contract.py"],
+  "figma_refs": [],
+  "related_systems": ["product_system"],
+  "related_pages": ["product_system_catalog"],
+  "related_contracts": ["workos_truth_metadata/v1"],
+  "supersedes": [],
+  "superseded_by": null,
+  "drift_status": "ALIGNED",
+  "drift_reason": null,
+  "owner_decision_required": false,
+  "visibility_class": "INTERNAL_TECHNICAL"
+}

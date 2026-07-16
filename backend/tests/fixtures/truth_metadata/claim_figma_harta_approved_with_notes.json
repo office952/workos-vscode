@@ -1,0 +1,50 @@
+{
+  "fixture_class": "TEST_FIXTURE",
+  "canonicality": "NOT_CANONICAL_TRUTH",
+  "is_test_fixture": true,
+  "metadata_version": "workos_truth_metadata/v1",
+  "claim_id": "fixture.claim.figma.harta_master_notes",
+  "subject_type": "FIGMA_NODE",
+  "subject_id": "911Q6oRKcEursrRoT4Qj0h:14:14",
+  "claim_type": "FIGMA_MAPPING",
+  "claim_text": "MASTER node 14:14 is APPROVED_WITH_NOTES for roadmap map (TEST FIXTURE mapping example).",
+  "display_label_ro": "Nod Figma MASTER pentru hartă (exemplu)",
+  "technical_alias": "MASTER 12 node 14:14",
+  "translation_key": "truth.claim.figma.harta_master",
+  "authority": {
+    "authority_type": "FIGMA_APPROVED",
+    "authority_reference": "docs/qa/workos-e2e-figma-master-maps-v1/FIGMA_MASTER_FINAL_REVIEW.md",
+    "authority_rank": 80
+  },
+  "owner_type": "DOC_OWNER",
+  "owner_reference": "figma_master_review_fixture",
+  "status": "PARTIAL",
+  "last_validated_at": "2026-07-14T00:00:00Z",
+  "evidence_refs": [
+    {
+      "evidence_id": "ev.fixture.figma.master",
+      "evidence_type": "FIGMA",
+      "reference": "docs/qa/workos-e2e-figma-master-maps-v1/FIGMA_MASTER_FINAL_REVIEW.md",
+      "is_test_fixture": true
+    }
+  ],
+  "figma_refs": [
+    {
+      "figma_file_key": "911Q6oRKcEursrRoT4Qj0h",
+      "figma_file_name": "WorkOS E2E Figma MASTER",
+      "figma_page_name": "MASTER",
+      "figma_node_id": "14:14",
+      "figma_flow_name": "MASTER_12_roadmap",
+      "figma_flow_status": "APPROVED_WITH_NOTES",
+      "figma_approval_status": "APPROVED_WITH_NOTES",
+      "figma_last_reviewed_at": "2026-07-14T00:00:00Z",
+      "runtime_route": "/modules",
+      "runtime_component": "ModuleChain",
+      "drift_type": "NONE",
+      "owner_decision_required": false
+    }
+  ],
+  "related_pages": ["modules"],
+  "drift_status": "ALIGNED",
+  "visibility_class": "ADMIN_ONLY"
+}
