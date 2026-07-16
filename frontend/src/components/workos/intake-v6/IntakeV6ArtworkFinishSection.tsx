@@ -13,21 +13,18 @@ import {
 } from "@/lib/intakeV6/intakeV6FaceFinishOptions";
 import { artworkToReturnCant, patchArtworkFromReturnCant } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import { INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
-import { AlertTriangle, Box, CheckCircle2, ImageIcon, Palette } from "lucide-react";
+import { AlertTriangle, Box, CheckCircle2, ImageIcon, Layers, Palette } from "lucide-react";
 import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 import { resolveLayerBackingMode } from "@/lib/intakeV6/intakeV4BackingMode";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
 import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
-import IntakeV6LayerCardCollapsedHeader from "./IntakeV6LayerCardCollapsedHeader";
+import IntakeV6LayerCardShell from "./IntakeV6LayerCardShell";
 import IntakeV6LayerCardColumnHeader from "./IntakeV6LayerCardColumnHeader";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 import {
-  REVIEW_CANT_COLUMN_CLASS,
-  REVIEW_FACE_COLUMN_CLASS,
   REVIEW_FIELD_BLOCK_CLASS,
   REVIEW_FIELD_LABEL_CLASS,
-  REVIEW_LAYER_CARD_GRID_CLASS,
   REVIEW_SELECT_CLASS,
 } from "./reviewFieldLayout";
 import {
@@ -375,149 +372,118 @@ export default function IntakeV6ArtworkFinishSection({
           const expanded = expandedKeys.has(row.layer_key);
 
           return (
-            <div
+            <IntakeV6LayerCardShell
               key={row.layer_key}
-              className="overflow-hidden rounded-md border border-[#2A3548] bg-[#0A0F1A]/55"
-              style={{ borderLeftWidth: 3, borderLeftColor: INTAKE_V6_ARTWORK_LAYER_ACCENT }}
-              data-testid={`intake-v6-artwork-${row.layer_key}`}
-              data-layer-card-expanded={expanded ? "true" : "false"}
-              title={tooltip}
-            >
-              <button
-                type="button"
-                className="min-h-[40px] w-full min-w-0 text-left transition hover:bg-[#111827]/40"
-                onClick={() => toggleExpanded(row.layer_key)}
-                data-testid={`intake-v6-artwork-header-${row.layer_key}`}
-                aria-expanded={expanded}
-              >
-                <IntakeV6LayerCardCollapsedHeader
-                  layerIcon={ImageIcon}
-                  layerIconClassName="text-cyan-400/80"
-                  accentColor={INTAKE_V6_ARTWORK_LAYER_ACCENT}
-                  layerName={displayName}
-                  faceSummary={visibility.face ? faceSummary : "—"}
-                  cantSummary={visibility.returnCant ? cantSummary : "—"}
-                  spateSummary={spateSummary}
-                  faceSummaryTestId={`intake-v6-artwork-face-summary-${row.layer_key}`}
-                  cantSummaryTestId={`intake-v6-artwork-cant-summary-${row.layer_key}`}
-                  spateSummaryTestId={`intake-v6-artwork-spate-summary-${row.layer_key}`}
-                  expanded={expanded}
-                  status={
-                    row.confirmed ? (
-                      <span data-testid={`intake-v6-artwork-confirmed-${row.layer_key}`}>
-                        <AtomsBadge tone="ok">
-                          <span className="inline-flex items-center gap-0.5">
-                            <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                            OK
-                          </span>
-                        </AtomsBadge>
+              cardTestId={`intake-v6-artwork-${row.layer_key}`}
+              headerTestId={`intake-v6-artwork-header-${row.layer_key}`}
+              expanded={expanded}
+              onToggle={() => toggleExpanded(row.layer_key)}
+              accentColor={INTAKE_V6_ARTWORK_LAYER_ACCENT}
+              layerIcon={ImageIcon}
+              layerIconClassName="text-cyan-400/80"
+              layerName={displayName}
+              faceSummary={visibility.face ? faceSummary : "—"}
+              cantSummary={visibility.returnCant ? cantSummary : "—"}
+              spateSummary={spateSummary}
+              faceSummaryTestId={`intake-v6-artwork-face-summary-${row.layer_key}`}
+              cantSummaryTestId={`intake-v6-artwork-cant-summary-${row.layer_key}`}
+              spateSummaryTestId={`intake-v6-artwork-spate-summary-${row.layer_key}`}
+              cardTitle={tooltip}
+              status={
+                row.confirmed ? (
+                  <span data-testid={`intake-v6-artwork-confirmed-${row.layer_key}`}>
+                    <AtomsBadge tone="ok">
+                      <span className="inline-flex items-center gap-0.5">
+                        <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
+                        OK
                       </span>
-                    ) : stepOneConfirmed ? (
-                      <span data-testid={`intake-v6-artwork-step1-badge-${row.layer_key}`}>
-                        <AtomsBadge tone="ok">
-                          <span className="inline-flex items-center gap-0.5">
-                            <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                            Confirmat in Pasul 1
-                          </span>
-                        </AtomsBadge>
+                    </AtomsBadge>
+                  </span>
+                ) : stepOneConfirmed ? (
+                  <span data-testid={`intake-v6-artwork-step1-badge-${row.layer_key}`}>
+                    <AtomsBadge tone="ok">
+                      <span className="inline-flex items-center gap-0.5">
+                        <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
+                        Confirmat in Pasul 1
                       </span>
-                    ) : (
-                      <AtomsBadge tone="pending">
-                        <span className="inline-flex items-center gap-0.5">
-                          <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
-                          Lipsă
-                        </span>
-                      </AtomsBadge>
-                    )
-                  }
-                />
-              </button>
-
-              {expanded ? (
+                    </AtomsBadge>
+                  </span>
+                ) : (
+                  <AtomsBadge tone="pending">
+                    <span className="inline-flex items-center gap-0.5">
+                      <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
+                      Lipsă
+                    </span>
+                  </AtomsBadge>
+                )
+              }
+              expandedChildren={
                 <>
-                <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
                   {visibility.face ? (
-                    <div className={REVIEW_FACE_COLUMN_CLASS}>
+                    <section data-testid={`intake-v6-artwork-face-zone-${row.layer_key}`}>
                       <ZoneTitle icon={Palette} title="Față" />
-                    </div>
-                  ) : (
-                    <div className={REVIEW_FACE_COLUMN_CLASS} />
-                  )}
-                  {visibility.returnCant ? (
-                    <div className={REVIEW_CANT_COLUMN_CLASS}>
-                      <ZoneTitle icon={Box} title="Cant" />
-                    </div>
-                  ) : (
-                    <div className={REVIEW_CANT_COLUMN_CLASS} />
-                  )}
-
-                  {visibility.face ? (
-                  <div
-                    className={REVIEW_FACE_COLUMN_CLASS}
-                    data-testid={`intake-v6-artwork-face-zone-${row.layer_key}`}
-                  >
-                    <div className={`${REVIEW_FIELD_BLOCK_CLASS} space-y-2 text-[11px]`}>
-                      <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                        <span className={REVIEW_FIELD_LABEL_CLASS}>Metodă personalizare față</span>
-                        <select
-                          className={REVIEW_SELECT_CLASS}
-                          value={resolveArtworkFaceMethod(row)}
-                          onChange={(event) => {
-                            const nextMethod = event.target.value as ArtworkFaceMethod;
-                            const nextFinishType = artworkFaceMethodToFinishType(nextMethod);
-                            const defaultRollWidth = faceFinishDefaultRollWidthMm(nextFinishType);
-                            setLocalRollWidths((current) => ({
-                              ...current,
-                              [row.layer_key]: defaultRollWidth,
-                            }));
-                            onChange(
-                              patchRows(
-                                rows,
-                                row.layer_key,
-                                patchArtworkFaceMethod(nextMethod),
-                              ),
-                            );
-                          }}
-                          data-testid={`intake-v6-artwork-face-method-${row.layer_key}`}
-                        >
-                          {ARTWORK_FACE_METHOD_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <p
-                        className="text-[10px] leading-relaxed text-slate-500"
-                        data-testid={`intake-v6-artwork-face-material-${row.layer_key}`}
-                      >
-                        Material față: {artworkFaceMaterialLabel(row, faceMethod)}
-                      </p>
-                      <p
-                        className="text-[10px] leading-relaxed text-slate-500"
-                        data-testid={`intake-v6-artwork-symbolic-color-note-${row.layer_key}`}
-                      >
-                        Pata de culoare este un indicator simbolic, nu randare print/logo.
-                      </p>
-                      <p
-                        className="text-[10px] leading-relaxed text-slate-500"
-                        data-testid={`intake-v6-artwork-source-metadata-${row.layer_key}`}
-                      >
-                        {artworkMetadataLine(row, stepOneConfirmed)}
-                      </p>
-                      {showRollWidth ? (
+                      <div className={`${REVIEW_FIELD_BLOCK_CLASS} space-y-2 text-[11px]`}>
                         <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                          <span className={REVIEW_FIELD_LABEL_CLASS}>Rolă (mm)</span>
+                          <span className={REVIEW_FIELD_LABEL_CLASS}>Metodă personalizare față</span>
                           <select
                             className={REVIEW_SELECT_CLASS}
-                            value={selectedRollWidth ?? ""}
+                            value={resolveArtworkFaceMethod(row)}
                             onChange={(event) => {
-                              const raw = event.target.value;
-                                const value = raw ? Number(raw) : null;
+                              const nextMethod = event.target.value as ArtworkFaceMethod;
+                              const nextFinishType = artworkFaceMethodToFinishType(nextMethod);
+                              const defaultRollWidth = faceFinishDefaultRollWidthMm(nextFinishType);
                               setLocalRollWidths((current) => ({
                                 ...current,
-                                  [row.layer_key]: value,
+                                [row.layer_key]: defaultRollWidth,
                               }));
+                              onChange(
+                                patchRows(
+                                  rows,
+                                  row.layer_key,
+                                  patchArtworkFaceMethod(nextMethod),
+                                ),
+                              );
+                            }}
+                            data-testid={`intake-v6-artwork-face-method-${row.layer_key}`}
+                          >
+                            {ARTWORK_FACE_METHOD_OPTIONS.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <p
+                          className="text-[10px] leading-relaxed text-slate-500"
+                          data-testid={`intake-v6-artwork-face-material-${row.layer_key}`}
+                        >
+                          Material față: {artworkFaceMaterialLabel(row, faceMethod)}
+                        </p>
+                        <p
+                          className="text-[10px] leading-relaxed text-slate-500"
+                          data-testid={`intake-v6-artwork-symbolic-color-note-${row.layer_key}`}
+                        >
+                          Pata de culoare este un indicator simbolic, nu randare print/logo.
+                        </p>
+                        <p
+                          className="text-[10px] leading-relaxed text-slate-500"
+                          data-testid={`intake-v6-artwork-source-metadata-${row.layer_key}`}
+                        >
+                          {artworkMetadataLine(row, stepOneConfirmed)}
+                        </p>
+                        {showRollWidth ? (
+                          <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                            <span className={REVIEW_FIELD_LABEL_CLASS}>Rolă (mm)</span>
+                            <select
+                              className={REVIEW_SELECT_CLASS}
+                              value={selectedRollWidth ?? ""}
+                              onChange={(event) => {
+                                const raw = event.target.value;
+                                const value = raw ? Number(raw) : null;
+                                setLocalRollWidths((current) => ({
+                                  ...current,
+                                  [row.layer_key]: value,
+                                }));
                                 if (faceMethod === "print_laminate") {
                                   onChange(
                                     patchRows(rows, row.layer_key, {
@@ -537,126 +503,125 @@ export default function IntakeV6ArtworkFinishSection({
                                     }),
                                   );
                                 }
-                            }}
-                            data-testid={`intake-v6-artwork-roll-width-${row.layer_key}`}
-                          >
-                            <option value="">—</option>
-                            {rollWidthOptions.map((option) => (
-                              <option key={option.value} value={option.value}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                          {faceMethod === "print_laminate" ? (
-                            <span
-                              className="text-[10px] leading-relaxed text-slate-500"
-                              data-testid={`intake-v6-artwork-roll-retraction-${row.layer_key}`}
+                              }}
+                              data-testid={`intake-v6-artwork-roll-width-${row.layer_key}`}
                             >
-                              Rola print/laminare: {PRINT_LAMINATION_ROLL_WIDTHS_MM.join(" / ")} mm. Util dupa retragere: {PRINT_LAMINATION_ROLL_WIDTHS_MM.map((width) => width - PRINT_LAMINATION_TOTAL_RETRACTION_MM).join(" / ")} mm ({PRINT_LAMINATION_SIDE_RETRACTION_MM} + {PRINT_LAMINATION_SIDE_RETRACTION_MM} mm).
-                            </span>
-                          ) : null}
-                        </label>
-                      ) : null}
-                      {showFaceColor ? (
-                        <ColorRegistrySelect
-                          reviewAlign
-                          label="Culoare Oracal față"
-                          valueCode={row.face_oracal_code ?? null}
-                          filter={{
-                            system: "ORACAL",
-                            series: oracalColorPaletteSeriesForV6Face(faceFinishType),
-                            usageScope: "face_vinyl",
-                          }}
-                          onChange={(item) =>
-                            onChange(
-                              patchRows(rows, row.layer_key, {
-                                face_oracal_code: item?.code ?? null,
-                                face_oracal_name: item?.name ?? null,
-                                confirmed: false,
-                              }),
-                            )
-                          }
-                          testId={`intake-v6-artwork-face-color-${row.layer_key}`}
-                        />
-                      ) : null}
-                      <p
-                        className="sr-only"
-                        data-testid={`intake-v6-artwork-execution-${row.layer_key}`}
-                      >
-                        {artworkExecutionLabel(row)}
-                      </p>
-                      {stepOneConfirmed && !row.confirmed ? (
-                        <p
-                          className="inline-flex h-8 items-center rounded border border-emerald-500/30 bg-emerald-500/10 px-2.5 text-[10px] font-semibold text-emerald-200"
-                          data-testid={`intake-v6-artwork-step1-confirmed-${row.layer_key}`}
-                        >
-                          Vector Logo confirmat in Pasul 1
-                        </p>
-                      ) : (
-                        <button
-                          type="button"
-                          className={`inline-flex h-8 items-center gap-1.5 rounded border px-2.5 text-[10px] font-semibold ${
-                            row.confirmed
-                              ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
-                              : "border-sky-500/40 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25"
-                          }`}
-                          onClick={() => {
-                            if (!row.confirmed) {
-                              onChange(patchRows(rows, row.layer_key, { confirmed: true }));
+                              <option value="">—</option>
+                              {rollWidthOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                            {faceMethod === "print_laminate" ? (
+                              <span
+                                className="text-[10px] leading-relaxed text-slate-500"
+                                data-testid={`intake-v6-artwork-roll-retraction-${row.layer_key}`}
+                              >
+                                Rola print/laminare: {PRINT_LAMINATION_ROLL_WIDTHS_MM.join(" / ")} mm. Util dupa
+                                retragere:{" "}
+                                {PRINT_LAMINATION_ROLL_WIDTHS_MM.map(
+                                  (width) => width - PRINT_LAMINATION_TOTAL_RETRACTION_MM,
+                                ).join(" / ")}{" "}
+                                mm ({PRINT_LAMINATION_SIDE_RETRACTION_MM} + {PRINT_LAMINATION_SIDE_RETRACTION_MM}{" "}
+                                mm).
+                              </span>
+                            ) : null}
+                          </label>
+                        ) : null}
+                        {showFaceColor ? (
+                          <ColorRegistrySelect
+                            reviewAlign
+                            label="Culoare Oracal față"
+                            valueCode={row.face_oracal_code ?? null}
+                            filter={{
+                              system: "ORACAL",
+                              series: oracalColorPaletteSeriesForV6Face(faceFinishType),
+                              usageScope: "face_vinyl",
+                            }}
+                            onChange={(item) =>
+                              onChange(
+                                patchRows(rows, row.layer_key, {
+                                  face_oracal_code: item?.code ?? null,
+                                  face_oracal_name: item?.name ?? null,
+                                  confirmed: false,
+                                }),
+                              )
                             }
-                          }}
-                          disabled={row.confirmed}
-                          data-testid={`intake-v6-artwork-confirm-${row.layer_key}`}
+                            testId={`intake-v6-artwork-face-color-${row.layer_key}`}
+                          />
+                        ) : null}
+                        <p
+                          className="sr-only"
+                          data-testid={`intake-v6-artwork-execution-${row.layer_key}`}
                         >
-                          {row.confirmed ? (
-                            <>
-                              <CheckCircle2 className="h-3 w-3" aria-hidden />
-                              {INTAKE_V6_OWNER_ROLE_LABEL_LOGO} confirmat
-                            </>
-                          ) : (
-                            `Confirm ${INTAKE_V6_OWNER_ROLE_LABEL_LOGO.toLowerCase()}`
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  ) : (
-                    <div className={REVIEW_FACE_COLUMN_CLASS} />
-                  )}
+                          {artworkExecutionLabel(row)}
+                        </p>
+                        {stepOneConfirmed && !row.confirmed ? (
+                          <p
+                            className="inline-flex h-8 items-center rounded border border-emerald-500/30 bg-emerald-500/10 px-2.5 text-[10px] font-semibold text-emerald-200"
+                            data-testid={`intake-v6-artwork-step1-confirmed-${row.layer_key}`}
+                          >
+                            Vector Logo confirmat in Pasul 1
+                          </p>
+                        ) : (
+                          <button
+                            type="button"
+                            className={`inline-flex h-8 items-center gap-1.5 rounded border px-2.5 text-[10px] font-semibold ${
+                              row.confirmed
+                                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
+                                : "border-sky-500/40 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25"
+                            }`}
+                            onClick={() => {
+                              if (!row.confirmed) {
+                                onChange(patchRows(rows, row.layer_key, { confirmed: true }));
+                              }
+                            }}
+                            disabled={row.confirmed}
+                            data-testid={`intake-v6-artwork-confirm-${row.layer_key}`}
+                          >
+                            {row.confirmed ? (
+                              <>
+                                <CheckCircle2 className="h-3 w-3" aria-hidden />
+                                {INTAKE_V6_OWNER_ROLE_LABEL_LOGO} confirmat
+                              </>
+                            ) : (
+                              `Confirm ${INTAKE_V6_OWNER_ROLE_LABEL_LOGO.toLowerCase()}`
+                            )}
+                          </button>
+                        )}
+                      </div>
+                    </section>
+                  ) : null}
 
                   {visibility.returnCant ? (
-                  <div
-                    className={REVIEW_CANT_COLUMN_CLASS}
-                    data-testid={`intake-v6-artwork-cant-${row.layer_key}`}
-                  >
-                    <IntakeV6ReturnCantFields
-                      layout="review"
-                      compact
-                      idPrefix={`v6-artwork-${row.layer_key}`}
-                      returnCant={artworkToReturnCant(row)}
-                      onReturnChange={(cant) => {
-                        const cantPatch = patchArtworkFromReturnCant(cant);
-                        onChange(
-                          patchRows(rows, row.layer_key, {
-                            ...cantPatch,
-                            confirmed: row.confirmed,
-                          }),
-                        );
-                      }}
-                      testIdPrefix={`intake-v6-artwork-return-${row.layer_key}`}
-                      allowedReturnDepthMm={allowedReturnDepthMm}
-                    />
-                  </div>
-                  ) : (
-                    <div className={REVIEW_CANT_COLUMN_CLASS} />
-                  )}
-                </div>
+                    <section data-testid={`intake-v6-artwork-cant-${row.layer_key}`}>
+                      <ZoneTitle icon={Box} title="Cant" />
+                      <IntakeV6ReturnCantFields
+                        layout="review"
+                        compact
+                        idPrefix={`v6-artwork-${row.layer_key}`}
+                        returnCant={artworkToReturnCant(row)}
+                        onReturnChange={(cant) => {
+                          const cantPatch = patchArtworkFromReturnCant(cant);
+                          onChange(
+                            patchRows(rows, row.layer_key, {
+                              ...cantPatch,
+                              confirmed: row.confirmed,
+                            }),
+                          );
+                        }}
+                        testIdPrefix={`intake-v6-artwork-return-${row.layer_key}`}
+                        allowedReturnDepthMm={allowedReturnDepthMm}
+                      />
+                    </section>
+                  ) : null}
 
                   {visibility.back ? (
-                    <div
-                      className="col-span-2 mt-1 px-2.5 pb-2"
+                    <section
                       data-testid={`intake-v6-review-backing-finish-integration-${row.layer_key}`}
                     >
+                      <ZoneTitle icon={Layers} title="Spate" />
                       <IntakeV6ReviewBackingFinishRow
                         embedded
                         testIdSuffix={layerTestIdSuffix(row.layer_key)}
@@ -670,11 +635,11 @@ export default function IntakeV6ArtworkFinishSection({
                           )
                         }
                       />
-                    </div>
+                    </section>
                   ) : null}
                 </>
-              ) : null}
-            </div>
+              }
+            />
           );
         })}
       </div>

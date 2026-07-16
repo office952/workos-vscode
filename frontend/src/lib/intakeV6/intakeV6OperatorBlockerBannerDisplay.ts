@@ -257,3 +257,38 @@ export function buildOperatorBlockerBannerDisplay(
 
 /** @deprecated — generic fallback removed; kept only for test migration detection */
 export const OPERATOR_BLOCKER_BANNER_MAX_MESSAGES = 99;
+
+type BreakdownPriceRow = {
+  material_key?: string | null;
+  key?: string | null;
+  unit_price?: number | null;
+  estimated_cost?: number | null;
+  material_cost?: number | null;
+};
+
+/**
+ * Concrete line keys with no unit/estimated price.
+ * Used so `contains_missing_prices` only becomes "diagnostic inconsistent"
+ * when the flag is true AND this list is empty (plan: empty-hit + flag).
+ */
+export function collectMissingPriceLineKeysFromBreakdown(breakdown: {
+  material_rows?: BreakdownPriceRow[] | null;
+  consumable_rows?: BreakdownPriceRow[] | null;
+  operation_rows?: BreakdownPriceRow[] | null;
+  edge_cant_operation_rows?: BreakdownPriceRow[] | null;
+} | null | undefined): string[] {
+  if (!breakdown) return [];
+  const keys: string[] = [];
+  const consider = (row: BreakdownPriceRow) => {
+    const key = row.material_key ?? row.key ?? null;
+    if (!key) return;
+    const unit = row.unit_price;
+    const cost = row.estimated_cost ?? row.material_cost;
+    if (unit == null && cost == null) keys.push(key);
+  };
+  for (const row of breakdown.material_rows ?? []) consider(row);
+  for (const row of breakdown.consumable_rows ?? []) consider(row);
+  for (const row of breakdown.operation_rows ?? []) consider(row);
+  for (const row of breakdown.edge_cant_operation_rows ?? []) consider(row);
+  return [...new Set(keys)];
+}

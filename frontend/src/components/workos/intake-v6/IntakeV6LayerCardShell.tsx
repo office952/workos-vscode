@@ -25,6 +25,7 @@ export default function IntakeV6LayerCardShell({
   swatchTestId,
   status,
   statusAttr,
+  cardTitle,
   expandedChildren,
 }: {
   cardTestId: string;
@@ -44,6 +45,7 @@ export default function IntakeV6LayerCardShell({
   swatchTestId?: string;
   status: ReactNode;
   statusAttr?: "ok" | "warning" | null;
+  cardTitle?: string;
   expandedChildren: ReactNode;
 }) {
   return (
@@ -52,6 +54,7 @@ export default function IntakeV6LayerCardShell({
       style={{ borderLeftWidth: 3, borderLeftColor: accentColor }}
       data-testid={cardTestId}
       data-layer-card-expanded={expanded ? "true" : "false"}
+      title={cardTitle}
       {...(statusAttr ? { "data-layer-card-status": statusAttr } : {})}
     >
       <button

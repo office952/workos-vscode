@@ -195,7 +195,10 @@ import {
   hasUnclassifiedVectorArtworkWarning,
   resolveReviewReadinessDisplay,
 } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
-import { buildOperatorBlockerBannerDisplay } from "@/lib/intakeV6/intakeV6OperatorBlockerBannerDisplay";
+import {
+  buildOperatorBlockerBannerDisplay,
+  collectMissingPriceLineKeysFromBreakdown,
+} from "@/lib/intakeV6/intakeV6OperatorBlockerBannerDisplay";
 import {
   buildReviewDiagnosticEntryCount,
   INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE,
@@ -1650,6 +1653,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     loadingQuoteHandoffPreview,
     breakdown?.totals.contains_missing_prices,
   ]);
+  const missingPriceLineKeys = useMemo(
+    () => collectMissingPriceLineKeysFromBreakdown(breakdown),
+    [breakdown],
+  );
   const operatorBlockerBannerDisplay = useMemo(
     () =>
       buildOperatorBlockerBannerDisplay({
@@ -1659,8 +1666,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         runtimeLoading: loadingRuntimeCaptureReadModel,
         plannerModel: productTruthPromotionPlanner,
         plannerLoading: loadingProductTruthPromotionPlanner,
-        missingPriceFlagWithoutRows: breakdown?.totals.contains_missing_prices === true,
-        missingPriceLineKeys: [],
+        missingPriceFlagWithoutRows:
+          breakdown?.totals.contains_missing_prices === true && missingPriceLineKeys.length === 0,
+        missingPriceLineKeys,
       }),
     [
       reviewHandoffSurfacing,
@@ -1671,6 +1679,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       productTruthPromotionPlanner,
       loadingProductTruthPromotionPlanner,
       breakdown?.totals.contains_missing_prices,
+      missingPriceLineKeys,
     ],
   );
   const reviewDiagnosticEntryCount = useMemo(

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildOperatorBlockerBannerDisplay,
+  collectMissingPriceLineKeysFromBreakdown,
   OPERATOR_BLOCKER_BANNER_MAX_MESSAGES,
 } from "./intakeV6OperatorBlockerBannerDisplay";
 import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
@@ -188,5 +189,34 @@ describe("buildOperatorBlockerBannerDisplay", () => {
     expect(display.blockerCount).toBe(0);
     expect(display.severity).toBe("attention");
     expect(display.messages.join(" ")).toMatch(/diagnostic/i);
+  });
+
+  it("lists concrete missing-price line keys when provided", () => {
+    const display = buildOperatorBlockerBannerDisplay({
+      surfacing: {
+        showBanner: true,
+        reasons: ["Calculul live conține linii fără tarif configurat."],
+        actions: ["Verifică liniile cu tarif lipsă în Calcul live."],
+      },
+      runtimeModel: null,
+      plannerModel: null,
+      missingPriceFlagWithoutRows: false,
+      missingPriceLineKeys: ["forex_backing", "led_psu"],
+    });
+    expect(display.messages.join(" ")).toMatch(/forex_backing/);
+    expect(display.messages.join(" ")).not.toMatch(/diagnostic/i);
+    expect(display.severity).toBe("attention");
+  });
+
+  it("collectMissingPriceLineKeysFromBreakdown returns only unpriced rows", () => {
+    const keys = collectMissingPriceLineKeysFromBreakdown({
+      material_rows: [
+        { material_key: "plexiglas_face", unit_price: 10, estimated_cost: 20 },
+        { material_key: "mystery", unit_price: null, estimated_cost: null },
+      ],
+      operation_rows: [{ key: "cnc_x", unit_price: null, estimated_cost: null }],
+      consumable_rows: [],
+    });
+    expect(keys).toEqual(["mystery", "cnc_x"]);
   });
 });

@@ -353,6 +353,42 @@ describe("IntakeV6ArtworkFinishSection", () => {
     });
   });
 
+  it("hides Forex select when logo card is collapsed and shows Spate summary", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        embedded
+        globalBackingFallback="forex_10_no_bevel"
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-artwork-spate-summary-logo")).toHaveTextContent(/Forex 10 mm/i);
+    expect(screen.queryByTestId("intake-v6-backing-mode-logo")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-artwork-logo")).toHaveAttribute(
+      "data-layer-card-expanded",
+      "false",
+    );
+  });
+
+  it("expands logo card in Față → Cant → Spate stack order", () => {
+    render(
+      <IntakeV6ArtworkFinishSection
+        rows={rows}
+        onChange={vi.fn()}
+        embedded
+        globalBackingFallback="forex_10_no_bevel"
+      />,
+    );
+    expandArtworkCard("logo");
+    const expanded = screen.getByTestId("intake-v6-artwork-logo-expanded");
+    const face = within(expanded).getByTestId("intake-v6-artwork-face-zone-logo");
+    const cant = within(expanded).getByTestId("intake-v6-artwork-cant-logo");
+    const spate = within(expanded).getByTestId("intake-v6-review-backing-finish-integration-logo");
+    expect(face.compareDocumentPosition(cant) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(cant.compareDocumentPosition(spate) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(within(expanded).getByTestId("intake-v6-backing-mode-logo")).toBeInTheDocument();
+  });
+
   it("renders forex backing row inside each vector logo card", () => {
     render(
       <IntakeV6ArtworkFinishSection
