@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `5bc8cd5` (post-FLEX reentry plan stamped; implementation of post-job actuals in progress → COMPLETE this stamp)  
+**Accepted HEAD:** `31c37de` (WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1 COMPLETE)  
 
-**Last updated:** 2026-07-16 (**WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1** shipped — see section below)
+**Last updated:** 2026-07-16 (**WORKOS_POST_JOB_ACTUALS_RECONCILIATION_PROFITABILITY_V1** COMPLETE)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
