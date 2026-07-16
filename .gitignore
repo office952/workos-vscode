@@ -101,3 +101,13 @@ tmp_*.txt
 tmp_*.json
 fisiere-teste/
 .vscode/
+
+# Root-only local review leftovers (never source under docs/ or frontend/)
+/_review_*
+
+# Root-only reproducible readiness/export handoff packs (sources live under docs/qa/)
+/_export_*/
+/workos_systems_readiness_audit_*_MANIFEST.md
+
+# Local DB path inventory (machine-specific; do not commit)
+/database_candidates/

@@ -57,7 +57,7 @@ when running from repo root context.
 - **Engine:** SQLAlchemy + aiosqlite (async)
 - **State:** snapshot of local dev at export time; may contain fixture data (e.g. order 88002, plan id=2 per recent audits)
 
-24 backup/forensic DB files existed in source but were **excluded** — see `database_candidates/`.
+24 backup/forensic DB files existed in source but were **excluded** from export ZIPs (patterns `dev.backup-*`, `dev.FORENSIC-*`; local inventory folder removed in repo cleanup 2026-07-16).
 
 ## Dev vs production
 

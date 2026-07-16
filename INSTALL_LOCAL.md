@@ -143,7 +143,7 @@ Invoke-WebRequest http://127.0.0.1:3000 -UseBasicParsing
 
 - **Included:** `backend/dev.db` (canonical local SQLite used by `scripts/dev.ps1`).
 - **Usage:** `DATABASE_URL=sqlite+aiosqlite:///./dev.db` when cwd is `backend/`.
-- **Excluded from ZIP:** 24 backup/forensic DB files — see `database_candidates/EXCLUDED_DB_FILES.txt`.
+- **Excluded from ZIP:** 24 backup/forensic DB files (`dev.backup-*`, `dev.FORENSIC-*`; local inventory folder removed in repo cleanup 2026-07-16).
 - **Do not** run reset, seed, or migration destructive steps without **owner GO**.
 - Local dev boot may use `Base.metadata.create_all`; Alembic under `backend/alembic/` is for staged schema evolution.
 

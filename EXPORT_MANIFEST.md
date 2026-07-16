@@ -19,7 +19,7 @@
 | `frontend/` | Yes (excl. `node_modules`, `dist`, `build`, `coverage`) |
 | `docs/` | Yes (full tree on disk, incl. untracked worklogs) |
 | `scripts/` | Yes |
-| `database_candidates/` | Yes (excluded DB inventory only) |
+| (local DB inventory) | No longer shipped — was excluded-DB path list only; removed in repo cleanup 2026-07-16 |
 | Root config files | Yes (at export root, not `root-files/` subfolder) |
 
 ## Folders / artifacts excluded
@@ -46,11 +46,11 @@
 ### Excluded (24 files)
 
 Pattern: `backend/dev.backup-*`, `backend/dev.FORENSIC-*`  
-Full list: `database_candidates/EXCLUDED_DB_FILES.txt`
+Full list historically lived in a local `database_candidates/` inventory (removed 2026-07-16; patterns above remain authoritative).
 
 ## File counts and size
 
-- **Staging file count:** 2,720 files (before ZIP; includes 4 export docs + database_candidates)
+- **Staging file count:** 2,720 files (before ZIP; includes 4 export docs + former local DB inventory)
 - **ZIP size:** 15413858 bytes (14.7 MB)
 
 ## Working tree status at export

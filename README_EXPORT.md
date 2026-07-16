@@ -27,7 +27,7 @@
 - `scripts/` — Windows dev launchers (`dev.ps1`, `start-dev.ps1`, `dev-backend.ps1`, etc.)
 - Root config: `package.json`, `pnpm-lock.yaml`, `README.md`, `AGENTS.md`, `.gitignore`, `.env.example`, `.env.development.example`, `RUN_LOCAL.md`, `start_app.sh`
 - **Dev database:** `backend/dev.db` (~9.0 MB SQLite)
-- `database_candidates/` — manifest of **excluded** backup/forensic DB files (24 files in source repo)
+- (historical) local `database_candidates/` inventory of **excluded** backup/forensic DB files — removed in repo cleanup 2026-07-16
 - Install/export docs: this file, `INSTALL_LOCAL.md`, `ENVIRONMENT_NOTES.md`, `EXPORT_MANIFEST.md`
 
 ## What this archive does NOT contain
@@ -40,7 +40,7 @@
 - `*.log`, `*.pyc`
 - Real secrets (`.env` files with production keys — only `.env.example` templates included)
 - Old repo at `C:\Users\offic\workos`
-- 24 backup/forensic SQLite files (`dev.backup-*`, `dev.FORENSIC-*`) — listed in `database_candidates/`
+- 24 backup/forensic SQLite files (`dev.backup-*`, `dev.FORENSIC-*`) — excluded from export; not tracked in git
 
 ## Important notes
 
