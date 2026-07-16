@@ -8,9 +8,9 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** `0b97f7d` (post-job V1 ACCEPTED with nonblocking limitations + JSX compile fix)  
+**Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion follows)  
 
-**Last updated:** 2026-07-16 (**POST-JOB V1 ACCEPTED** · **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW**)
+**Last updated:** 2026-07-17 (**SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1** · Build 1 closed)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 7 CLOSED** — frozen-spine program gate PASS |
+| Phase | **Wave 7** — same-scenario spine **PROVEN_V1** (bounded); W7-T02+ still open |
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **SAME-SCENARIO E2E PLAN** — **READY FOR OWNER REVIEW** (implementation not started) |
+| Active task | **NONE** — Build 1 same-scenario proof **PROVEN_V1** / truth promoted |
 
-| Next task | Owner G1–G4 then `/ce-work` for `WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1`; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | Roadmap: **W7-T02** reconciliation breadth (or planning-minutes completeness) — **not started**; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -64,7 +64,7 @@
 
 | Wave 3 cost authority (D-010) | **DECIDED** — `PRODUCT_AGGREGATE_COST_GRAPH_WITH_7G_7H_ADAPTERS` |
 
-| Same-scenario E2E proof | NOT_PROVEN |
+| Same-scenario E2E proof | **PROVEN_V1** (`SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1`) |
 
 | Operator UI coherence | **GATE PASS** — backend read-model prerequisite before UI (`W6-INT-01`) |
 
@@ -1359,21 +1359,45 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Out of scope:** HR labor money; `/operator` mirror; FLEX reopen; Product System redesign; migration
 
-## WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1 — PLAN READY FOR OWNER REVIEW
+## WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1 — PROVEN_V1
 
-**Verdict:** `WORKOS_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_PLAN_READY`
+**Verdict:** `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1`
 
-**Status stamp:** **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW**
+**Status stamp:** **PROVEN_V1** (2026-07-17)
 
-**Implementation:** **NOT STARTED**
+**Qualification:** `DETERMINISTIC_LOCAL_SCENARIO` — fixture product/configuration payload cloned into a **new** Intake Request; downstream stages are one continuous fresh walkthrough (not stitched to order `23099`). Proves system continuity, not organic customer-origin capture.
 
-**Scenario:** `TPL-VOLUMETRIC-LETTERS_v2` via new local real flow (not order `23099`)
+**Scenario:** `TPL-VOLUMETRIC-LETTERS_v2` · no Logo root
 
-**Plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`
+| Stage | ID |
+|-------|-----|
+| Intake Request | `IR-BUILD1-1784237119` |
+| Workspace | `e1b8d1e8-0197-4723-882a-037c41c64d35` |
+| Quote | `3` |
+| Quote Snapshot V2 | `QSN2-2026-0002` |
+| Order | `92402` |
+| Execution Plan | `8` |
+| Tasks | `18` |
+| Runtime | one session closed |
+| Visible completed task | `vector_prep` — Finalizat |
+| Post-Job | completed successfully |
 
-**Decision log:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/decision-log.md`
+**Commit chain:** `4da68ed` (plan + owner GO) → `ad25fa9` (ProductAggregate `task_rules_json` → `task_contract`) → `91d8a3f` (live evidence + Build 1 worklog)
 
-**Worklog:** `docs/worklog/realignment/2026-07-16_workos_same_scenario_e2e_plan.md`
+**ProductAggregate handoff correction (`ad25fa9`):** dossier had `task_rules`; live aggregate did not compile them → Plan V2 received zero rules. Fix compiles into `task_contract`; Plan V2 materialized 18 tasks for order `92402`. Real **ProductAggregate → ExecutionPlan V2** handoff fix (not fixture-only).
 
-**Owner gates before `/ce-work`:** G1–G4 (see decision log)
+**Evidence:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/` · `docs/worklog/realignment/2026-07-17_same_scenario_e2e_build1.md`
+
+**Plan / decision log:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/`
+
+**Explicit remaining limitations (not simulated away):**
+- Planning minutes still partial (`PLANNING_MINUTES_SOURCE_REQUIRED`)
+- Stock deduction not forced when ineligible (G3)
+- Labor money excluded from profitability
+- Deterministic fixture origin (see qualification)
+- Not universal proof for all product templates / not production customer proof
+
+**Issue:** TE2E-013 **closed** · consolidated residual: TE2E-028
+
+**Local data retention:** IR / workspace / quote `3` / order `92402` / plan `8` kept for truth verification — do not delete in this promotion
 

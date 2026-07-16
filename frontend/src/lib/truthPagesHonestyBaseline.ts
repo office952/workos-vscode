@@ -19,7 +19,8 @@ export interface HonestyHandoff {
   toId: string;
   fromLabel: string;
   toLabel: string;
-  status: "baseline" | "nevalidat";
+  /** baseline = architectural baseline; partial = known gap; proven_v1 = same-scenario spine proof */
+  status: "baseline" | "partial" | "proven_v1" | "nevalidat";
   source: string;
   note: string;
 }
@@ -67,7 +68,7 @@ export const HONESTY_ARCHITECTURE_NODES: HonestyArchitectureNode[] = [
     labelRo: "Structura tehnică a produsului",
     technicalAlias: "ProductAggregate",
     coverage: "partial",
-    note: "Agregat tehnic / BOM — panouri, nu SoT comercial",
+    note: "Agregat tehnic / BOM — task_contract compile proven pe Letters (ad25fa9); nu SoT comercial",
   },
   {
     id: "quotes",
@@ -88,14 +89,14 @@ export const HONESTY_ARCHITECTURE_NODES: HonestyArchitectureNode[] = [
     labelRo: "Plan de execuție",
     technicalAlias: "ExecutionPlan",
     coverage: "partial",
-    note: "Plan din snapshot — materializare controlată",
+    note: "PROVEN_V1 same-scenario — plan 8 / 18 taskuri (order 92402); nu universal",
   },
   {
     id: "execution_reality",
     labelRo: "Execuție",
     technicalAlias: "Execution Reality",
     coverage: "partial",
-    note: "Realitate operațională",
+    note: "PROVEN_V1 same-scenario — sesiune închisă + post-job; acoperire parțială",
   },
 ];
 
@@ -143,63 +144,63 @@ export const HONESTY_HANDOFFS: HonestyHandoff[] = [
     toId: "product_system",
     fromLabel: "Preluare lucrare",
     toLabel: "Catalog produse",
-    status: "baseline",
-    source: "Wave 0 plan / Page Completion Foundation",
-    note: "Selecție șablon / context produs",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · IR-BUILD1-1784237119",
+    note: "Selecție șablon pe IR fresh Letters — DETERMINISTIC_LOCAL_SCENARIO",
   },
   {
     fromId: "product_system",
     toId: "product_definition",
     fromLabel: "Catalog produse",
     toLabel: "Definiție produs",
-    status: "baseline",
-    source: "Product truth / PD contracts",
-    note: "Compile din șablon + valori spațiu de lucru",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · workspace e1b8d1e8-…",
+    note: "Compile PD pe același IR → downstream continuous",
   },
   {
     fromId: "product_definition",
     toId: "product_aggregate",
     fromLabel: "Definiție produs",
     toLabel: "Structura tehnică a produsului",
-    status: "baseline",
-    source: "ProductAggregate composition",
-    note: "Compoziție tehnică",
+    status: "proven_v1",
+    source: "SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1 · ad25fa9 task_contract",
+    note: "Compoziție tehnică + task_rules_json → task_contract (handoff real PA→Plan V2)",
   },
   {
     fromId: "product_aggregate",
     toId: "quotes",
     fromLabel: "Structura tehnică a produsului",
     toLabel: "Oferte",
-    status: "partial",
-    source: "Sold-scope / commercial freeze",
-    note: "Consum comercial — acoperire validată pe pilot",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · QSN2-2026-0002 / quote 3",
+    note: "Linia comercială continuous pe Letters deterministic local — nu universal",
   },
   {
     fromId: "quotes",
     toId: "orders",
     fromLabel: "Oferte",
     toLabel: "Comenzi",
-    status: "baseline",
-    source: "Quote → Order freeze",
-    note: "Îngheț snapshot",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · order 92402 from snapshot freeze",
+    note: "Îngheț snapshot observat pe același scenariu (TE2E-022 immutability gate rămâne)",
   },
   {
     fromId: "orders",
     toId: "execution_plan",
     fromLabel: "Comenzi",
     toLabel: "Plan de execuție",
-    status: "partial",
-    source: "EP filter / planning readiness",
-    note: "Plan din comandă înghețată",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · plan 8 / 18 tasks",
+    note: "Plan V2 materializat din task_contract agregat (nu zero rules)",
   },
   {
     fromId: "execution_plan",
     toId: "execution_reality",
     fromLabel: "Plan de execuție",
     toLabel: "Execuție",
-    status: "partial",
-    source: "Execution reality capture",
-    note: "Consum plan → realitate",
+    status: "proven_v1",
+    source: "SAME_SCENARIO… · reality + post-job 92402",
+    note: "Sesiune închisă; vector_prep Finalizat; post-job OK — limite TE2E-028",
   },
 ];
 
@@ -226,7 +227,7 @@ export const HONESTY_OWNERSHIP_ROWS: HonestyOwnershipRow[] = [
     owner: "Aggregate composition",
     authority: "CODE_CONTRACT",
     status: "PARTIAL",
-    source: "OD-TERM-06 · Aggregate contracts",
+    source: "OD-TERM-06 · Aggregate contracts · task_contract compile (ad25fa9)",
   },
   {
     domainRo: "Tarife",
@@ -357,6 +358,20 @@ export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
     title: "Runtime health checks",
     status: "PARTIAL",
     source: "GET /api/v1/system/health",
+  },
+  {
+    id: "ev.same_scenario_build1",
+    kind: "document",
+    title: "Same-scenario E2E PROVEN_V1 (Build 1)",
+    status: "CURRENT",
+    source: "docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md",
+  },
+  {
+    id: "ev.same_scenario_evidence",
+    kind: "test",
+    title: "Build 1 lineage evidence pack",
+    status: "CURRENT",
+    source: "docs/qa/same-scenario-e2e-2026-07-16/ · 4da68ed→ad25fa9→91d8a3f",
   },
   {
     id: "ev.worklog_b45",

@@ -75,10 +75,17 @@ describe("ModuleChain tab completion", () => {
     fireEvent.click(screen.getByTestId("module-chain-tab-handoffs"));
     expect(screen.getByTestId("handoff-work_intake-product_system")).toHaveTextContent("Sursă:");
     expect(screen.getByText("REFERINȚĂ")).toBeInTheDocument();
+    expect(screen.getByTestId("handoff-orders-execution_plan")).toHaveTextContent("PROVEN_V1");
+    expect(screen.getByTestId("handoff-product_definition-product_aggregate")).toHaveTextContent(
+      "task_contract"
+    );
 
     fireEvent.click(screen.getByTestId("module-chain-tab-evidence"));
     expect(screen.getByTestId("module-chain-evidence")).toHaveTextContent("Surse și dovezi");
     expect(screen.getByTestId("evidence-ev.health")).toBeInTheDocument();
+    expect(screen.getByTestId("evidence-ev.same_scenario_build1")).toHaveTextContent(
+      "Same-scenario E2E PROVEN_V1"
+    );
     expect(screen.queryByText("Live Health")).not.toBeInTheDocument();
   });
 });

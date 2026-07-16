@@ -60,7 +60,7 @@ Aligns with program canonical chain: Intake V6 → ProductDefinition → Product
 3. **Intake:** finish truth not written (TE2E-003)
 4. **Handoff:** policy does not merge capture (TE2E-014, 015)
 5. **Calcul:** dual authority CostEngine vs 7G/7H (TE2E-025)
-6. **Commercial spine:** no same-scenario proof (TE2E-013)
+6. **Commercial spine:** same-scenario Request→Post-Job **PROVEN_V1** on Letters `DETERMINISTIC_LOCAL_SCENARIO` (TE2E-013 **closed**; residuals TE2E-028) — IR `IR-BUILD1-1784237119` → order `92402` → plan `8`
 
 ---
 

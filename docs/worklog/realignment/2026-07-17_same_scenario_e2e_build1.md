@@ -17,9 +17,9 @@ BUILD: `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md`
 
 ## Impact
 
-- `/modules`: evidence/status update expected (not auto-edited in this commit)  
-- `/governance`: NO UPDATE REQUIRED  
+- `/modules`: promoted in truth-closure commit — handoffs `PROVEN_V1` + evidence pack refs  
+- `/governance`: NO OWNERSHIP OR POLICY CHANGE  
 
 ## Cleanup
 
-Disposable scenario left in local DB for inspection (`IR-BUILD1-*` / order `92402`). Delete locally when no longer needed. No permanent seed.
+Disposable scenario left in local DB for inspection (`IR-BUILD1-*` / order `92402`). **Retained** through truth promotion for projection verification. Later controlled cleanup only — no silent delete. No permanent seed.

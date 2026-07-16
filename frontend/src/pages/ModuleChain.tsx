@@ -205,12 +205,18 @@ export default function ModuleChain() {
                     <span className="text-[13px] font-bold text-blue-400">{h.toLabel}</span>
                     <span
                       className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${
-                        h.status === "baseline"
-                          ? "bg-emerald-900/30 text-emerald-300 border-emerald-700"
-                          : "bg-amber-900/30 text-amber-300 border-amber-700"
+                        h.status === "proven_v1"
+                          ? "bg-emerald-900/40 text-emerald-200 border-emerald-600"
+                          : h.status === "baseline"
+                            ? "bg-emerald-900/30 text-emerald-300 border-emerald-700"
+                            : "bg-amber-900/30 text-amber-300 border-amber-700"
                       }`}
                     >
-                      {h.status === "baseline" ? "BASELINE" : "ACOPERIRE PARȚIALĂ"}
+                      {h.status === "proven_v1"
+                        ? "PROVEN_V1"
+                        : h.status === "baseline"
+                          ? "BASELINE"
+                          : "ACOPERIRE PARȚIALĂ"}
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-400">{h.note}</p>

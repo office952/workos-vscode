@@ -2,10 +2,11 @@
 
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
-**Accepted HEAD:** `0b97f7d` (POST-JOB V1 ACCEPTED with nonblocking limitations)  
-**Active task:** **SAME-SCENARIO E2E PLAN READY FOR OWNER REVIEW** — implementation **NOT STARTED**  
-**Recommended next:** `WORKOS-SAME-SCENARIO-REQUEST-TO-POST-JOB-E2E-TRUTH-V1` (owner G1–G4)  
+**Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
+**Active task:** **NONE** — W7-T01 / Build 1 **PROVEN_V1**  
+**Recommended next:** **W7-T02** reconciliation breadth (or planning-minutes completeness) — not started  
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
+**Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
 **Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
 **Post-job worklog:** `docs/worklog/realignment/2026-07-16_workos_post_job_actuals_reconciliation_profitability_v1.md`  
 
@@ -1104,10 +1105,17 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 ## W7-T01 — Final same-scenario E2E
 
-| Issues | TE2E-013, 022 |
-| Upstream | Waves 1–6 + **owner GO on seed** |
-| Proof | Full ID chain in ACCEPTANCE_PLAN |
-| Forbidden without GO | DB seed, migration |
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_V1** (2026-07-17) |
+| Verdict | `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
+| Issues | TE2E-013 **closed**; TE2E-022 partial (freeze observed; immutability gate open); TE2E-028 residual limitations |
+| Upstream | Waves 1–6 + owner GO (`4da68ed`) |
+| Qualification | `DETERMINISTIC_LOCAL_SCENARIO` |
+| Lineage | IR `IR-BUILD1-1784237119` → WS `e1b8d1e8-…` → Quote `3` / `QSN2-2026-0002` → Order `92402` → Plan `8` (18 tasks) → Reality (session closed; `vector_prep` Finalizat) → Post-Job OK |
+| Handoff fix | `ad25fa9` — ProductAggregate `task_rules_json` → `task_contract` |
+| Evidence | `docs/qa/same-scenario-e2e-2026-07-16/` · commit `91d8a3f` |
+| Next | W7-T02 (not started) |
 
 ---
 
@@ -1314,14 +1322,16 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **PLAN READY FOR OWNER REVIEW** |
-| Verdict | `WORKOS_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_PLAN_READY` |
-| Scenario | `TPL-VOLUMETRIC-LETTERS_v2` (new local real flow; not 23099) |
+| Status | **PROVEN_V1** (Build 1 complete) |
+| Verdict | `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
+| Scenario | `TPL-VOLUMETRIC-LETTERS_v2` · `DETERMINISTIC_LOCAL_SCENARIO` · not order `23099` |
 | Plan | `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md` |
 | Decision log | `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/decision-log.md` |
-| Worklog | `docs/worklog/realignment/2026-07-16_workos_same_scenario_e2e_plan.md` |
-| Owner gates | G1–G4 before `/ce-work` |
-| Implementation | **NOT STARTED** |
+| Worklog (plan) | `docs/worklog/realignment/2026-07-16_workos_same_scenario_e2e_plan.md` |
+| Worklog (execution) | `docs/worklog/realignment/2026-07-17_same_scenario_e2e_build1.md` |
+| BUILD | `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` |
+| Commits | `4da68ed` → `ad25fa9` → `91d8a3f` |
+| Implementation | **COMPLETE (bounded)** |
 
 ## Dependency graph (ASCII)
 

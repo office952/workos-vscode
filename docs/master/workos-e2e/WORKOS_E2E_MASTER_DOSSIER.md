@@ -27,7 +27,7 @@ WorkOS is an operational ERP for volumetric signage production: commercial intak
 | Intake V6 operator path | **Functional but canonically broken** at Step 2 |
 | Product System catalog | Operational (readonly) |
 | Product Definition | **Paused** — Figma + API only |
-| Commercial spine (Offer→Order→Execution) | **Unproven** same-scenario |
+| Commercial spine (Offer→Order→Execution) | **PROVEN_V1** same-scenario Letters (`DETERMINISTIC_LOCAL_SCENARIO`; not universal) |
 | Operator UI coherence | **Poor** on Intake Step 2 (debug overload) |
 | Documentation | **Fragmented** until this master program |
 
@@ -35,9 +35,9 @@ WorkOS is an operational ERP for volumetric signage production: commercial intak
 
 1. TE2E-001/002/014/015 — mounting/readiness/handoff split
 2. TE2E-003 — finish truth persistence
-3. TE2E-013 — no E2E spine proof
+3. TE2E-013 — **closed** (`SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1`; residuals TE2E-028)
 4. TE2E-025 — dual cost authority
-5. Owner approval pending for Wave 1
+5. Owner approval pending for Wave 1 (historical — Wave 1 complete; retained for audit trail)
 
 ### Target state
 
@@ -65,9 +65,9 @@ All 20 gates in `WORKOS_E2E_ACCEPTANCE_PLAN.md` green + owner sign-off.
 | 6 | Calcul | Intake step 2 rail | PARTIAL (20/21) |
 | 7 | Ofertă | `/quotes` | Empty UI OK; debug banner |
 | 8 | Comandă | `/orders` | Empty UI OK |
-| 9 | Plan de execuție | APIs + code | NOT_PROVEN |
-| 10 | Execuție efectivă | `/execution` | API empty; UI partial |
-| 11 | Reconciliere | `/execution/reality-review` | NOT_PROVEN |
+| 9 | Plan de execuție | APIs + code | **PROVEN_V1** same-scenario (plan `8` / 18 tasks on order `92402`) |
+| 10 | Execuție efectivă | `/execution` | **PROVEN_V1** partial (session closed; `vector_prep` Finalizat) |
+| 11 | Reconciliere | `/execution/reality-review` + post-job | **PROVEN_V1** post-job read on `92402`; broader W7-T02 open |
 
 Product System runs parallel as **configuration authority**, not required operator stop.
 
@@ -104,9 +104,9 @@ See `WORKOS_E2E_SYSTEM_MAP.md` for full matrix.
 | Aggregate modules | structura_suport, volum | Aggregate API | API OK |
 | Cost lines | 20/21 preview | Calcul | gap |
 | Offer | quote snapshot | Ofertă | NOT_CREATED |
-| Order freeze | order snapshot v2 | Comandă | NOT_PROVEN |
-| Execution tasks | from frozen ops | Execution | NOT_PROVEN |
-| Actuals | shop floor capture | Execution | NOT_PROVEN |
+| Order freeze | order snapshot v2 | Comandă | **PROVEN_V1** observed (`92402` from `QSN2-2026-0002`; TE2E-022 immutability gate still open) |
+| Execution tasks | from frozen ops | Execution | **PROVEN_V1** (18 tasks on plan `8`) |
+| Actuals | shop floor capture | Execution | **PROVEN_V1** partial (one closed session) |
 
 ---
 
@@ -210,7 +210,7 @@ Baseline note (TRUE E2E era): P1 originally included TE2E-001, 002, 003, 010, 01
 | Risk | Class | Evidence |
 |------|-------|----------|
 | Dual cost path | CONFIRMED code | TE2E-025 |
-| Same-scenario spine | NOT_PROVEN | TE2E-013 |
+| Same-scenario spine | **PROVEN_V1** (Letters deterministic local; IR-BUILD1→92402) | TE2E-013 closed; TE2E-028 residuals |
 | Order freeze immutability | STRONG_INFERENCE | code only |
 | ARCH Figma drift | NOT_AUDITED | TE2E-027 |
 | Session gate on /execution | CONFIRMED intermittent | TE2E-023 |

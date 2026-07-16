@@ -105,11 +105,13 @@
 
 ## Wave 7 — Final E2E acceptance
 
-| Task ID | Title | Issues | Depends |
-|---------|-------|--------|---------|
-| W7-T01 | Controlled same-scenario seed + full spine test | TE2E-013 | Owner GO + Waves 1–6 |
-| W7-T02 | Reconciliation proof | — | W7-T01 |
-| W7-T03 | Owner sign-off checklist | All P1 + accepted P2 | W7-T02 |
+| Task ID | Title | Issues | Depends | Status |
+|---------|-------|--------|---------|--------|
+| W7-T01 | Controlled same-scenario seed + full spine test | TE2E-013 | Owner GO + Waves 1–6 | **COMPLETE — PROVEN_V1** (2026-07-17; `DETERMINISTIC_LOCAL_SCENARIO`; commits `4da68ed`→`ad25fa9`→`91d8a3f`) |
+| W7-T02 | Reconciliation proof | — | W7-T01 | **NEXT / not started** |
+| W7-T03 | Owner sign-off checklist | All P1 + accepted P2 | W7-T02 | open |
+
+**Build 1 closure:** same-scenario Request→Post-Job proven on IR `IR-BUILD1-1784237119` / order `92402`. Residual limitations tracked as TE2E-028. Do not treat as universal template proof.
 
 ---
 

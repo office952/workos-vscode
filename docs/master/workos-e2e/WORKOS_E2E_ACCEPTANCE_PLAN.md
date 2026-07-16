@@ -37,7 +37,7 @@ Local task PASS **never** automatically opens the next wave.
 | 15 | Figma matches runtime | MASTER frames ↔ screenshots |
 | 16 | All P1 issues closed | ISSUE_REGISTRY |
 | 17 | Required P2 closed or accepted | owner sign-off list |
-| 18 | Final same-scenario E2E passes | W7-T01 |
+| 18 | Final same-scenario E2E passes | W7-T01 — **PROVEN_V1** 2026-07-17 (`IR-BUILD1-1784237119`→`92402`; `DETERMINISTIC_LOCAL_SCENARIO`; residuals TE2E-028) |
 | 19 | Documentation consolidated | DOCUMENT_INDEX canonical only |
 | 20 | Owner signs off | written approval in DECISION_LOG |
 
@@ -45,7 +45,21 @@ Local task PASS **never** automatically opens the next wave.
 
 ## Same-scenario acceptance (Wave 7)
 
-**Baseline fixture (existing):**
+**Status:** `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` (Build 1, 2026-07-17)
+
+**Proven lineage (disposable local reference — retain for verification):**
+
+| Field | Value |
+|-------|-------|
+| Qualification | `DETERMINISTIC_LOCAL_SCENARIO` |
+| Request | `IR-BUILD1-1784237119` |
+| Workspace | `e1b8d1e8-0197-4723-882a-037c41c64d35` |
+| Quote / Snapshot | `3` / `QSN2-2026-0002` |
+| Order / Plan | `92402` / `8` (18 tasks) |
+| Reality / Post-Job | session closed; `vector_prep` Finalizat; post-job OK |
+| Evidence | `docs/qa/same-scenario-e2e-2026-07-16/` · commits `4da68ed`→`ad25fa9`→`91d8a3f` |
+
+**Historical baseline fixture (pre-Build-1 planning reference):**
 
 | Field | Value |
 |-------|-------|
