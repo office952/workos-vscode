@@ -8,7 +8,7 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** _(set after correction commits — see Phase 2 correction section)_  
+**Accepted HEAD:** `7e58579` (Phase 2 integrity correction COMPLETE)  
 
 **Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2-INTEGRITY-CORRECTION **COMPLETE**; Phase 3 planning **READY**)
 
