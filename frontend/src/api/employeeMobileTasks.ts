@@ -59,6 +59,16 @@ export interface EmployeeMobileTaskDTO {
   can_start?: boolean;
   can_start_from_available?: boolean;
   can_complete?: boolean;
+  /** Phase 3 collaboration capabilities — backend truth only. */
+  visible_as_principal?: boolean;
+  visible_as_helper?: boolean;
+  can_view_help?: boolean;
+  can_accept_help?: boolean;
+  can_start_helper_work?: boolean;
+  can_stop_own_session?: boolean;
+  can_complete_operation?: boolean;
+  can_request_help?: boolean;
+  can_cancel_help?: boolean;
   assignment_source?: string | null;
   documents?: Array<{
     id?: string;

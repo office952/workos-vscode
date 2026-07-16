@@ -70,6 +70,12 @@ import {
   taskTruthReadinessFromRuntime,
   type TaskTruthReadiness,
 } from "@/lib/operatorTaskPresentation";
+import {
+  fetchOrderTaskCollaborationRead,
+  type OrderTaskCollaborationReadDTO,
+} from "@/api/collaboration";
+import OperatorTaskCollaborationPanel from "@/components/workos/collaboration/OperatorTaskCollaborationPanel";
+import { isFlexCollabUiEnabled } from "@/lib/flexCollabUiFlag";
 
 // Human-readable labels for plan-generation failure codes coming from the
 // backend. We keep the raw code visible alongside so the operator (and QA)
@@ -1104,6 +1110,26 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
   } = props;
 
   const [registryMappings, setRegistryMappings] = useState<OperationResourceMapping[]>([]);
+  const collabUiEnabled = isFlexCollabUiEnabled();
+  const [collabRead, setCollabRead] = useState<OrderTaskCollaborationReadDTO | null>(null);
+  const [collabError, setCollabError] = useState<string | null>(null);
+
+  const reloadCollab = useCallback(async () => {
+    if (!collabUiEnabled) {
+      setCollabRead(null);
+      setCollabError(null);
+      return;
+    }
+    try {
+      const payload = await fetchOrderTaskCollaborationRead(orderId);
+      setCollabRead(payload);
+      setCollabError(null);
+    } catch (e) {
+      setCollabError(
+        e instanceof Error ? e.message : "Nu am putut încărca colaborarea.",
+      );
+    }
+  }, [collabUiEnabled, orderId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -1119,6 +1145,10 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    void reloadCollab();
+  }, [reloadCollab, lastActionAt]);
 
   const totalActual =
     reality && Number.isFinite(reality.total_actual_time_minutes)
@@ -1214,6 +1244,12 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
               const actualMin = computeActualMinutes(observation);
               const inFlight = actionInFlightTaskId === t.task_id;
               const truth = taskTruthByTaskId[t.task_id];
+              const collabTask = collabRead?.tasks.find(
+                (item) => item.task_id === t.task_id,
+              );
+              const completeBlockedByCollab =
+                collabUiEnabled &&
+                collabTask?.can_complete_operation === false;
               const readiness: TaskTruthReadiness | undefined = truth
                 ? taskTruthReadinessFromRuntime(truth.runtime)
                 : undefined;
@@ -1350,8 +1386,17 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                       <button
                         type="button"
                         onClick={() => void onEndTask(t.task_id)}
-                        disabled={inFlight || status !== "in_progress"}
+                        disabled={
+                          inFlight ||
+                          status !== "in_progress" ||
+                          completeBlockedByCollab
+                        }
                         className="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold rounded bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 disabled:text-slate-500 text-white transition-colors"
+                        title={
+                          completeBlockedByCollab
+                            ? "Complete permis doar când can_complete_operation este true"
+                            : undefined
+                        }
                       >
                         <CheckCircle2
                           className={`w-3 h-3 ${inFlight && status === "in_progress" ? "animate-pulse" : ""}`}
@@ -1397,6 +1442,45 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
         Acțiunile sunt executate pe backend. După fiecare acțiune, UI-ul
         reîncarcă realitatea — nu există optimistic success.
       </p>
+
+      {collabUiEnabled ? (
+        <div
+          className="space-y-2 pt-2 border-t border-[#2A3548]"
+          data-testid="execution-collaboration-section"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <h4 className="text-[12px] font-bold text-slate-300 uppercase tracking-wide">
+              Colaborare flex (ajutor / helpers / sesiuni)
+            </h4>
+            <button
+              type="button"
+              className="text-[10px] text-slate-400 hover:text-slate-200 underline"
+              onClick={() => void reloadCollab()}
+            >
+              Reîncarcă colaborarea
+            </button>
+          </div>
+          {collabError ? (
+            <p className="text-[11px] text-rose-300" role="alert">
+              {collabError}
+            </p>
+          ) : null}
+          {(collabRead?.tasks || []).map((task) => (
+            <OperatorTaskCollaborationPanel
+              key={task.task_id}
+              orderId={orderId}
+              task={task}
+              onChanged={reloadCollab}
+              testIdPrefix="execution-collab"
+            />
+          ))}
+          {collabRead && collabRead.tasks.length === 0 ? (
+            <p className="text-[11px] text-slate-500">
+              Niciun task operațional în proiecția de colaborare.
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }
