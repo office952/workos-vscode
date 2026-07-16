@@ -202,6 +202,20 @@ async def test_aggregate_includes_dossier_components(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
+async def test_aggregate_compiles_dossier_task_rules_for_execution_plan(volumetric_v2_db):
+    service = ProductAggregateService(volumetric_v2_db)
+    aggregate = await service.build(TEMPLATE_CODE)
+    assert aggregate is not None
+    rule_names = {r.task_name for r in aggregate.task_contract.task_rules}
+    assert "cnc_face_cut" in rule_names
+    assert "electrical_wiring" in rule_names
+    assert aggregate.provenance_summary.dossier["task_rules"] == 2
+    priced = {r.priced_operation for r in aggregate.task_contract.task_rules}
+    assert "face_cnc_cut" in priced
+    assert "electrical_letters" in priced
+
+
+@pytest.mark.asyncio
 async def test_aggregate_includes_required_linked_module(volumetric_v2_db):
     service = ProductAggregateService(volumetric_v2_db)
     aggregate = await service.build(TEMPLATE_CODE)

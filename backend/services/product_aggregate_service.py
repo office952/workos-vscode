@@ -199,7 +199,8 @@ class ProductAggregateService:
         else:
             form_contract = self._build_form_contract({})
         cost_contract = self._build_cost_contract({}, materials, operations)
-        task_contract = self._build_task_contract([])
+        dossier_task_rules = self._extract_dossier_task_rules(dossier)
+        task_contract = self._build_task_contract(dossier_task_rules)
 
         business_name = template.family_name
 
@@ -213,7 +214,7 @@ class ProductAggregateService:
                 "components": 0,
                 "material_keys": 0,
                 "operation_keys": 0,
-                "task_rules": 0,
+                "task_rules": len(dossier_task_rules),
             },
             linked_modules={
                 "required": len(modules.required),
@@ -242,13 +243,14 @@ class ProductAggregateService:
                     code="DOSSIER_METADATA_ONLY",
                     severity="info",
                     message=(
-                        "Blueprint dossier available for inspection only; "
-                        "runtime behavior uses canonical template contracts."
+                        "Blueprint dossier is metadata for BOM/ops; "
+                        "task_rules_json is consumed into task_contract for ExecutionPlan V2."
                     ),
                     details={
                         "template_id": template.id,
                         "dossier_id": dossier.id,
                         "dossier_status": dossier.status,
+                        "task_rules_count": len(dossier_task_rules),
                         "authority": "canonical_template_contract"
                         if canonical.has_canonical_contract(template.template_code)
                         else "parent_template",
@@ -577,6 +579,30 @@ class ProductAggregateService:
             notes=notes,
         )
 
+    def _extract_dossier_task_rules(
+        self, dossier: ProductBlueprintDossier | None
+    ) -> list[dict[str, Any]]:
+        """Load dossier task_rules_json for ExecutionPlan V2 (bounded dossier consume)."""
+        if dossier is None:
+            return []
+        raw = getattr(dossier, "task_rules_json", None)
+        if raw is None or raw == "":
+            return []
+        if isinstance(raw, (list, dict)):
+            data = raw
+        elif isinstance(raw, str):
+            data = _json_loads(raw, None)
+        else:
+            return []
+        if isinstance(data, list):
+            return [item for item in data if isinstance(item, dict)]
+        if isinstance(data, dict):
+            for key in ("rules", "items"):
+                items = data.get(key)
+                if isinstance(items, list):
+                    return [item for item in items if isinstance(item, dict)]
+        return []
+
     def _build_task_contract(self, rules: list[dict[str, Any]]) -> ProductAggregateTaskContract:
         task_rules: list[ProductAggregateTaskRule] = []
         for rule in rules:
@@ -609,9 +635,16 @@ class ProductAggregateService:
                     mini_module_code=mini,
                 )
             )
+        notes = (
+            [
+                "task_contract.task_rules compiled from product_blueprint_dossier.task_rules_json for ExecutionPlan V2.",
+            ]
+            if task_rules
+            else [
+                "No dossier task_rules_json available; ExecutionPlan V2 will block on empty task_contract.",
+            ]
+        )
         return ProductAggregateTaskContract(
             task_rules=task_rules,
-            notes=[
-                "Task preview currently uses V3 catalog — not this contract (Step 9).",
-            ],
+            notes=notes,
         )
