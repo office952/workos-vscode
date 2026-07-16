@@ -16,6 +16,7 @@ from sqlalchemy import select
 
 from core.database import db_manager
 import models  # noqa: F401
+from data.commercial_rules_volumetric_v2 import SITE_INSTALLATION_STANDARD_EUR
 from models.product_templates import Product_templates
 from models.workcenter_rates import Workcenter_rates
 from seeds.seed_build4_templates import (
@@ -248,6 +249,25 @@ OWNER_VOLUMETRIC_LABOR_WORKCENTERS: List[_WorkcenterRow] = [
         "notes": (
             "Owner-defined: 10 EUR/mp (excluding TVA). "
             "TPL-VOLUMETRIC-LETTERS operation packaging_letters; quantity from letter_face_area_m2. "
+            + TVA_RATE_NOTE
+        ),
+    },
+    {
+        "code": "SITE_INSTALLATION_STANDARD",
+        "label": "Montaj standard la locatie",
+        "rate_basis": "per_piece",
+        "rate_per_linear_meter": float(SITE_INSTALLATION_STANDARD_EUR),
+        "currency": "EUR",
+        "status": "active",
+        "notes": (
+            "Owner-confirmed commercial tariff SITE_INSTALLATION_STANDARD: "
+            "200 EUR + TVA fixed once per job / installation location "
+            "(not per letter, not per logo). Includes standard crew, up to one normal working day, "
+            "ladder-accessible mounting, standard fixings/consumables, simple electrical to an "
+            "existing supply point, and travel within Bucharest. Excludes nacelle/scaffold/crane, "
+            "permits, night/weekend, complex/new electrical, facade repair, existing-sign removal, "
+            "special access fees, and work beyond one day. Travel outside Bucharest is priced "
+            "separately in a later phase — do not auto-add distance lines. "
             + TVA_RATE_NOTE
         ),
     },

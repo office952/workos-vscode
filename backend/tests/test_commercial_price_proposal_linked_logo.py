@@ -371,6 +371,19 @@ async def test_missing_logo_tariff_fails_closed(cpp_service: CommercialPriceProp
 # --- 21–22. installation required / packaging deferred ---
 @pytest.mark.asyncio
 async def test_installation_commercial_line_when_included(cpp_service: CommercialPriceProposalService, logo_seeded_db):
+    from sqlalchemy import select
+
+    from models.workcenter_rates import Workcenter_rates
+
+    existing = (
+        await logo_seeded_db.execute(
+            select(Workcenter_rates).where(Workcenter_rates.code == "SITE_INSTALLATION_STANDARD").limit(1)
+        )
+    ).scalar_one_or_none()
+    if existing is not None:
+        await logo_seeded_db.delete(existing)
+        await logo_seeded_db.commit()
+
     payload = _two_logo_quote_input(site_install=True)
     record = await _persist_workspace(logo_seeded_db, payload)
     preview = await cpp_service.build_preview(ROOT, workspace_id=record.id, quote_input=payload)

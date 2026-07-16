@@ -434,14 +434,26 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
     return True
 
 
-def _build_line(
+async def _build_line(
+    db: AsyncSession,
     rule: CommercialRuleDefinition,
     payload: dict[str, Any],
 ) -> CommercialPriceLine:
+    from services.linked_logo_commercial_price_service import (
+        _load_registry_operation_rate,
+        _normalize_unit_price_to_cpp_ron,
+    )
+
     quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
     warnings = list(rule.warnings)
     owner_required = rule.owner_decision_required
     basis_type = rule.basis_type
+    source = rule.source
+    registry_pricing_code = (rule.registry_pricing_code or "").strip().upper() or None
+    source_currency = rule.documented_unit_price_currency
+    cpp_currency: str | None = None
+    fx_rate: float | None = None
+    fx_source: str | None = None
 
     if rule.line_code == "finisaje_colantare_vopsire":
         groups = _get_by_path(payload, "finish_setup.letter_group_finishes")
@@ -451,6 +463,48 @@ def _build_line(
             warnings.append("Finish groups empty — owner review recommended.")
 
     unit_price = rule.documented_unit_price
+    if unit_price is not None and source_currency:
+        cpp_currency = "RON" if str(source_currency).upper() == "RON" else None
+
+    if registry_pricing_code:
+        resolved = await _load_registry_operation_rate(db, registry_pricing_code)
+        if resolved is None:
+            unit_price = None
+            owner_required = True
+            warnings.append(
+                f"registry_lookup_missed:{registry_pricing_code};configure_at=/inventory/pricing"
+            )
+            source = f"{rule.source}:registry_unresolved"
+        else:
+            ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
+                db,
+                unit_price=resolved.unit_price_source,
+                source_currency=resolved.source_currency,
+            )
+            if ron_price is None:
+                unit_price = None
+                owner_required = True
+                warnings.append(
+                    f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                )
+                source = f"{rule.source}:currency_gate_blocked"
+                source_currency = resolved.source_currency
+                cpp_currency = None
+            else:
+                unit_price = ron_price
+                owner_required = False
+                source_currency = resolved.source_currency
+                cpp_currency = "RON"
+                source = (
+                    f"pricing_registry:operation:{resolved.pricing_code}"
+                    f":{resolved.source_currency}->{cpp_currency}"
+                )
+                warnings.append(
+                    f"registry_bound={resolved.pricing_code};"
+                    f"source_unit_price={resolved.unit_price_source};"
+                    f"rate_basis={resolved.rate_basis}"
+                )
+
     if quantity is None and unit_price is not None:
         if basis_type in ("piece", "fixed", "set"):
             quantity = 1.0
@@ -479,9 +533,14 @@ def _build_line(
         commercial_unit_price=unit_price,
         subtotal=subtotal,
         pricing_rule_code=rule.pricing_rule_code,
-        source=rule.source,
+        source=source,
         owner_decision_required=owner_required,
         warnings=warnings,
+        registry_pricing_code=registry_pricing_code,
+        source_currency=source_currency,
+        cpp_currency=cpp_currency,
+        currency_conversion_rate=fx_rate,
+        currency_conversion_source=fx_source,
     )
 
 
@@ -648,7 +707,7 @@ class CommercialPriceProposalService:
         for rule in rules:
             if not _rule_applies(rule, active_modules, payload):
                 continue
-            line = _build_line(rule, payload)
+            line = await _build_line(self._db, rule, payload)
             lines.append(line)
             if line.owner_decision_required and rule.owner_decision_code:
                 owner_decisions.append(
@@ -746,7 +805,10 @@ class CommercialPriceProposalService:
             "Does not call /price, CostEngine, or QuoteOrchestrator.",
             "Linked-logo print/laminate/application may bind to existing Pricing Registry "
             "operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) "
-            "with company_commercial_settings EUR→RON conversion; montaj remains fail-closed.",
+            "with company_commercial_settings EUR→RON conversion.",
+            "Site installation (montaj) binds once per job to SITE_INSTALLATION_STANDARD "
+            "(200 EUR fixed / locatie) via the same EUR→RON path; travel outside Bucharest "
+            "is not auto-added. Fail closed if the rate or FX is unavailable.",
             "Hourly commercial basis is forbidden.",
         ]
 

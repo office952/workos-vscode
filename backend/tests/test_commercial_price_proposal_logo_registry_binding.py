@@ -264,6 +264,16 @@ async def test_currency_gate_fails_closed_without_canonical_rate(logo_binding_db
 
 @pytest.mark.asyncio
 async def test_site_install_remains_exact_blocker(cpp_service, logo_binding_db):
+    # Fail-closed characterization: without SITE_INSTALLATION_STANDARD row, montaj stays pending.
+    existing = (
+        await logo_binding_db.execute(
+            select(Workcenter_rates).where(Workcenter_rates.code == "SITE_INSTALLATION_STANDARD").limit(1)
+        )
+    ).scalar_one_or_none()
+    if existing is not None:
+        await logo_binding_db.delete(existing)
+        await logo_binding_db.commit()
+
     payload = _two_logo_quote_input(site_install=True)
     record = await _persist_workspace(logo_binding_db, payload)
     preview = await cpp_service.build_preview(ROOT, workspace_id=record.id, quote_input=payload)
@@ -271,6 +281,7 @@ async def test_site_install_remains_exact_blocker(cpp_service, logo_binding_db):
     montaj = next(line for line in preview.commercial_price_lines if line.code == "montaj")
     assert montaj.commercial_unit_price is None
     assert montaj.owner_decision_required is True
+    assert montaj.registry_pricing_code == "SITE_INSTALLATION_STANDARD"
     assert any(d.code == "MONTAJ_COMMERCIAL_RULE" for d in preview.unknown_owner_decisions)
     assert preview.quote_ready_for_commercial_review is False
     assert preview.status in {"partial", "blocked"}

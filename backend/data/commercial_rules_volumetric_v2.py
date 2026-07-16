@@ -222,22 +222,29 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         label="Montaj șantier",
         module_code="finisaje",
         component_code=None,
-        pricing_rule_code="VOL_V2_SITE_MOUNT_FUTURE",
+        pricing_rule_code="VOL_V2_SITE_INSTALLATION_STANDARD",
         basis_type="fixed",
         quantity_paths=(),
         unit="locatie",
-        source="commercial_rules_volumetric_v2:site_mount_future_optional",
+        source="commercial_rules_volumetric_v2:site_installation_standard",
         criticality="optional",
         owner_decision_required=True,
         owner_decision_code="MONTAJ_COMMERCIAL_RULE",
         owner_decision_detail=(
-            "Site installation was selected but no owner-confirmed commercial șantier tariff exists "
-            "in Pricing Registry. Configure at /inventory/pricing. Confirmare remains disabled. "
-            "Do not use internal labor minutes or employee cost as commercial montaj price."
+            "Site installation was selected but SITE_INSTALLATION_STANDARD is missing or unusable "
+            "in Pricing Registry. Configure 200 EUR fixed per locatie/job at /inventory/pricing. "
+            "Travel outside Bucharest is not included and must be priced separately later. "
+            "Confirmare remains disabled. Do not use internal labor minutes or hourly rates."
         ),
+        registry_pricing_code="SITE_INSTALLATION_STANDARD",
         always_include=False,
     ),
 )
+
+# Owner-confirmed commercial tariff: standard site installation (M1 Bucharest base / M2 same base).
+# Fixed once per job/location — not per letter, not per logo. Travel outside Bucharest is out of scope.
+SITE_INSTALLATION_STANDARD_CODE = "SITE_INSTALLATION_STANDARD"
+SITE_INSTALLATION_STANDARD_EUR = 200.0
 
 # Owner-confirmed ACM boxed mounting commercial lines (structura_suport) — EUR/lm and EUR/mp.
 ACM_BOXED_PANEL_CUT_EUR_LM = 1.5

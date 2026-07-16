@@ -1,6 +1,7 @@
 ---
 title: Logo commercial finish binds existing Pricing Registry rates
 date: 2026-07-16
+last_updated: 2026-07-16
 problem_type: pricing-binding
 component: commercial-price-proposal
 tags: [logo, pricing-registry, currency, cpp, gradi-curat]
@@ -21,7 +22,7 @@ Rule catalog had no `registry_pricing_code` mapping; CPP never looked up `workce
 1. Map logo finish rules to existing registry codes (mapping only — no duplicate tariffs).
 2. Resolve active `per_square_meter` rows from `workcenter_rates`; reject `SVC-LAMINATION-SERVICE`.
 3. Convert EUR→RON via persisted `company_commercial_settings.eur_to_ron_rate` (fail closed if NULL — do not bootstrap diagnostic 5.0 in this path).
-4. Keep montaj fail-closed (`MONTAJ_COMMERCIAL_RULE`).
+4. Site installation (`montaj`) now binds once per job to `SITE_INSTALLATION_STANDARD` (200 EUR fixed / locatie) via the same EUR→RON fail-closed path — see [site-installation-standard-registry-binding.md](./site-installation-standard-registry-binding.md). Travel outside Bucharest remains a separate future line.
 5. Word-boundary forbidden-hourly scan.
 
 ## Prevention
