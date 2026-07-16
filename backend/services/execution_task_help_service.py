@@ -460,6 +460,19 @@ async def _close_like(
         ).scalar_one_or_none()
         if row is None:
             raise HTTPException(status_code=404, detail={"error": "help_request_not_found"})
+
+        # Requester-only cancel — decline remains the targeted "no" path.
+        # Auth runs before the terminal short-circuit so unauthorized actors
+        # do not receive a success response on already-closed rows.
+        if action == "cancel" and int(row.requested_by_employee_id) != int(actor_employee_id):
+            raise HTTPException(
+                status_code=403,
+                detail={
+                    "error": "help_cancel_forbidden",
+                    "message": "Only the employee who requested help may cancel it.",
+                },
+            )
+
         if row.status != HELP_STATUS_OPEN:
             # Idempotent: already terminal
             return HelpActionResponse(action=action, help_request=_serialize(row))  # type: ignore[arg-type]
@@ -479,30 +492,43 @@ async def close_open_help_for_task(
     order_id: int,
     task_id: str,
 ) -> int:
-    """Auto-close remaining OPEN help when operation is explicitly completed. Returns count closed."""
+    """Auto-close remaining OPEN help when operation is explicitly completed. Returns count closed.
+
+    Idempotent. Serialized with accept via task-scoped lock + FOR UPDATE.
+    Ordered after completion commit in callers (RealityService commits internally).
+    """
     if not is_collab_phase2_enabled():
         return 0
     task_id = str(task_id or "").strip()
-    rows = list(
-        (
-            await db.execute(
-                select(ExecutionTaskHelpRequest).where(
-                    ExecutionTaskHelpRequest.order_id == order_id,
-                    ExecutionTaskHelpRequest.task_id == task_id,
-                    ExecutionTaskHelpRequest.status == HELP_STATUS_OPEN,
+    if not task_id:
+        return 0
+
+    lock = await _lock_for(order_id, task_id)
+    async with lock:
+        rows = list(
+            (
+                await db.execute(
+                    select(ExecutionTaskHelpRequest)
+                    .where(
+                        ExecutionTaskHelpRequest.order_id == order_id,
+                        ExecutionTaskHelpRequest.task_id == task_id,
+                        ExecutionTaskHelpRequest.status == HELP_STATUS_OPEN,
+                    )
+                    .with_for_update()
                 )
             )
-        ).scalars().all()
-    )
-    if not rows:
-        return 0
-    now = _utcnow()
-    for row in rows:
-        row.status = HELP_STATUS_CLOSED
-        row.closed_at = now
-        row.updated_at = now
-    await db.commit()
-    return len(rows)
+            .scalars()
+            .all()
+        )
+        if not rows:
+            return 0
+        now = _utcnow()
+        for row in rows:
+            row.status = HELP_STATUS_CLOSED
+            row.closed_at = now
+            row.updated_at = now
+        await db.commit()
+        return len(rows)
 
 
 async def list_help_requests_for_task(

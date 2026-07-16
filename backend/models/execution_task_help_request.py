@@ -7,14 +7,24 @@ No singular accepted_by authority. Do not reuse TaskClarificationRequest.
 from datetime import datetime
 
 from core.database import Base
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Index, Integer, String, text
 
 
 class ExecutionTaskHelpRequest(Base):
     """One help-need row; at most one OPEN per (order_id, task_id) via partial unique index."""
 
     __tablename__ = "execution_task_help_requests"
-    __table_args__ = ({"extend_existing": True},)
+    __table_args__ = (
+        Index(
+            "uq_execution_task_help_open_per_task",
+            "order_id",
+            "task_id",
+            unique=True,
+            sqlite_where=text("status = 'OPEN'"),
+            postgresql_where=text("status = 'OPEN'"),
+        ),
+        {"extend_existing": True},
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     order_id = Column(Integer, nullable=False, index=True)

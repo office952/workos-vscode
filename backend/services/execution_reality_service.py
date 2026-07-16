@@ -79,8 +79,10 @@ class ExecutionRealityService:
         res = await self.db.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def _get_or_create_row(self, order_id: int, order_code: str) -> ExecutionReality:
-        row = await self._get_row(order_id)
+    async def _get_or_create_row(
+        self, order_id: int, order_code: str, *, for_update: bool = False
+    ) -> ExecutionReality:
+        row = await self._get_row(order_id, for_update=for_update)
         if row is not None:
             return row
         row = ExecutionReality(
@@ -90,7 +92,19 @@ class ExecutionRealityService:
             total_actual_time_minutes=0.0,
         )
         self.db.add(row)
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except Exception:
+            # Concurrent insert of the same order_id — load the winner.
+            await self.db.rollback()
+            existing = await self._get_row(order_id, for_update=for_update)
+            if existing is None:
+                raise
+            return existing
+        if for_update:
+            locked = await self._get_row(order_id, for_update=True)
+            if locked is not None:
+                return locked
         return row
 
     @staticmethod
@@ -147,7 +161,8 @@ class ExecutionRealityService:
             raise RealityInputError("task_id_invalid")
         started_at = _iso_utc(timestamp)
 
-        row = await self._get_or_create_row(order_id, order_code)
+        # Serialize session append against concurrent starts (helper + principal).
+        row = await self._get_or_create_row(order_id, order_code, for_update=True)
         tasks = self._parse_tasks(row.tasks_json)
 
         employee_id = None
@@ -298,7 +313,15 @@ class ExecutionRealityService:
                         entry_employee = int(t.get("employee_id") or 0)
                     except (TypeError, ValueError):
                         entry_employee = 0
-                    if completed_by == employee_id or entry_employee == employee_id:
+                    # Explicit complete only — helper STOP (status=ended) must not
+                    # count as idempotent completion for the same employee.
+                    if completed_by == employee_id:
+                        await self.db.refresh(row)
+                        return row
+                    if (
+                        entry_employee == employee_id
+                        and str(t.get("status") or "") == SESSION_STATUS_COMPLETED
+                    ):
                         await self.db.refresh(row)
                         return row
             raise RealityInputError("task_not_started", task_id)
