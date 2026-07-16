@@ -80,7 +80,34 @@ Expected UI guard: existing Logo-only commercial guard / “neofertabil comercia
 
 `NO UPDATE REQUIRED` — Governance already documents Logo candidate-only / root non-offerable / owner GO. Runtime now matches that boundary at readiness.
 
-## Commit
+## Commit (readiness alignment)
 
 Isolated: readiness helper + Logo readiness tests + this worklog.  
-Message: `fix(intake): keep logo readiness candidate-only`
+Message: `fix(intake): keep logo readiness candidate-only`  
+Hash: `9a4e0dc3bbf77b7dc75daad9b885c1afb3701367`
+
+---
+
+## HTTP test runtime proof (follow-up)
+
+Label: **HTTP TEST RUNTIME PROOF** (TestClient + isolated SQLite; not live production stack).
+
+| Item | Value |
+|------|--------|
+| Write route | `PUT /api/v1/intake-v6/workspaces/{id}/finish-setup` |
+| Read routes | `GET /api/v1/intake-v6/workspaces/{id}` · `GET .../quote-handoff-preview` |
+| Fixture | Disposable `IntakeV6WorkspaceRecord` in pytest DB; Logo row via `seed_tpl_volumetric_logo_v1` (test DB only) |
+| Isolation | Session-scoped `IsolatedDBFixture`; workspace id `logo-only-http-readiness-ws` |
+
+| Scenario | HTTP | Readiness | Offerable |
+|----------|------|-----------|-----------|
+| A artwork unconfirmed | 200 finish-setup + GET | `logo_only_candidate_not_offerable` | handoff/draft false; policy `root_offerable=false` |
+| B artwork confirmed | 200 finish-setup + GET | `logo_only_candidate_not_offerable` (not `ready_for_quote_preview`) | same + availability `quote_offerable=false` |
+
+Limitations: no live :8000 browser proof; finish-setup requires disposable Logo template seed in test DB (does not activate root offerability).
+
+Tests: `tests/test_intake_v6_logo_only_readiness_http.py` + prior unit/spine/offerability suite → pass.
+
+`/modules`: **NO IMPACT** · `/governance`: **NO UPDATE REQUIRED**
+
+Commit: `test(intake): prove logo candidate readiness over http`
