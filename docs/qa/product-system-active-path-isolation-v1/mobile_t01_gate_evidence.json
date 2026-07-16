@@ -1,6 +1,6 @@
 {
   "task": "MOBILE-T01",
-  "generated_at": "2026-07-15T01:11:00.988712+00:00",
+  "generated_at": "2026-07-15T01:33:32.661937+00:00",
   "backend_url": "http://127.0.0.1:8001",
   "order_id": 23099,
   "employee_id": 4,
@@ -216,14 +216,6 @@
     "employee_name": "Putaru Sandu",
     "prior_user_id": "dev-admin-user-00000000",
     "linked_user_id": "dev-admin-user-00000000"
-  },
-  "assignment": {
-    "order_id": 23099,
-    "assigned": [
-      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
-      "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut"
-    ],
-    "mutation": "plan_assignment_only"
   },
   "verdict": "PASS",
   "failed_checks": []

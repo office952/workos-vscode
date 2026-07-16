@@ -1,7 +1,7 @@
 {
   "task": "MOBILE-INT-01",
   "base_url": "http://127.0.0.1:8001",
-  "timestamp": "2026-07-15T00:58:21.501810+00:00",
+  "timestamp": "2026-07-15T01:26:57.920960+00:00",
   "setup": {
     "employee_link": {
       "employee_id": 4,
@@ -64,29 +64,262 @@
         "email": "dev@localhost",
         "name": "Dev Admin",
         "role": "admin",
-        "last_login": "2026-07-15T03:58:22.255258"
+        "last_login": "2026-07-15T04:26:59.638244"
       }
     },
     "my_tasks": {
       "status_code": 200,
-      "count": 0,
-      "sample": []
+      "count": 5,
+      "sample": [
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "order_id": 23099,
+          "order_code": "ORD-W5INT02-GATE",
+          "title": "Vector Prep",
+          "description": "",
+          "instructions": "",
+          "status": "in_progress",
+          "process_type": "file_preparation",
+          "machine_type": "WC_PREPRESS",
+          "estimated_time_minutes": 0.0,
+          "assigned_employee_id": 4,
+          "employee_id": null,
+          "employee_name": null,
+          "client": "W5-INT-02 Gate Fixture",
+          "product": "",
+          "quote_code": "QT-W5INT02-GATE",
+          "intake_code": "",
+          "order_status": "locked",
+          "started_at": "2026-07-15T00:46:02.098000+00:00",
+          "completed_at": null,
+          "blocked_at": null,
+          "blocked_reason": null,
+          "documents": [],
+          "clarification_request": null,
+          "readiness_status": "in_progress",
+          "readiness_label": "\u00cen lucru",
+          "is_startable": false,
+          "readiness_reasons": [],
+          "blocking_task_ids": [],
+          "blocking_tasks": [],
+          "dependency_warning": null,
+          "preparation_domain": null,
+          "eligibility_reason": null,
+          "claimable": null,
+          "access_mode": null,
+          "preview_only": null,
+          "contract_version": "employee_mobile_task_truth/v1",
+          "display_label": "Vector Prep",
+          "process_id": "vector_prep",
+          "completed_by_employee_id": null,
+          "active_helper_count": 0,
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "component_label": "Produs principal",
+          "component_role": "root_product",
+          "operation_label": "vector_prep",
+          "logo_segment_label": null,
+          "identity_source": "frozen_task_identity/v1",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "execution_plan_id": 4,
+          "plan_sequence": 0,
+          "legacy_mode": false,
+          "legacy_fallback_active": false,
+          "task_identity_version": "frozen_task_identity/v1",
+          "readiness_authority": "FROZEN_ORDER_SNAPSHOT_V2",
+          "release_authority": "execution_owner_decision_production_release_service",
+          "execution_source": "execution_plan_v2_operational_tasks",
+          "production_release_blocked": true,
+          "production_blocker_summary": "Productie blocata (INTERNAL_SABLON_FOREX_COST, INTERNAL_MONTAJ_RULE, INTERNAL_CONSUMABLES_RULE). Rezolvare pe desktop.",
+          "can_start": false,
+          "can_complete": true,
+          "is_assigned_to_current_employee": true,
+          "is_available_for_claim": false,
+          "assignment_source": "execution_plan",
+          "blocking_reasons": [],
+          "material_warning": null,
+          "can_claim": false
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+          "order_id": 23099,
+          "order_code": "ORD-W5INT02-GATE",
+          "title": "Face CNC Cut",
+          "description": "",
+          "instructions": "",
+          "status": "assigned",
+          "process_type": "cnc_routing",
+          "machine_type": "WC_CNC",
+          "estimated_time_minutes": 0.0,
+          "assigned_employee_id": 4,
+          "employee_id": null,
+          "employee_name": null,
+          "client": "W5-INT-02 Gate Fixture",
+          "product": "",
+          "quote_code": "QT-W5INT02-GATE",
+          "intake_code": "",
+          "order_status": "locked",
+          "started_at": null,
+          "completed_at": null,
+          "blocked_at": null,
+          "blocked_reason": null,
+          "documents": [],
+          "clarification_request": null,
+          "readiness_status": "waiting_file",
+          "readiness_label": "A\u0219teapt\u0103 preg\u0103tire fi\u0219iere/vectori",
+          "is_startable": false,
+          "readiness_reasons": [
+            {
+              "code": "vector_prep_not_done",
+              "label": "Preg\u0103tire vector nefinalizat\u0103",
+              "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "depends_on_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "task_name": "Vector Prep",
+              "material_code": null,
+              "material_name": null,
+              "status": null,
+              "missing_item": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "message": "Finalizeaz\u0103 vector_prep \u00eenainte de debitare CNC / execu\u021bie fizic\u0103."
+            }
+          ],
+          "blocking_task_ids": [
+            "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep"
+          ],
+          "blocking_tasks": [
+            {
+              "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "name": "Vector Prep"
+            }
+          ],
+          "dependency_warning": null,
+          "preparation_domain": null,
+          "eligibility_reason": null,
+          "claimable": null,
+          "access_mode": null,
+          "preview_only": null,
+          "contract_version": "employee_mobile_task_truth/v1",
+          "display_label": "Face CNC Cut",
+          "process_id": "face_cnc_cut",
+          "completed_by_employee_id": null,
+          "active_helper_count": 0,
+          "deterministic_task_key": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+          "component_label": "Produs principal",
+          "component_role": "root_product",
+          "operation_label": "face_cnc_cut",
+          "logo_segment_label": null,
+          "identity_source": "frozen_task_identity/v1",
+          "identity_classification": "FULL_FROZEN_COMPONENT_IDENTITY",
+          "execution_plan_id": 4,
+          "plan_sequence": 1,
+          "legacy_mode": false,
+          "legacy_fallback_active": false,
+          "task_identity_version": "frozen_task_identity/v1",
+          "readiness_authority": "FROZEN_ORDER_SNAPSHOT_V2",
+          "release_authority": "execution_owner_decision_production_release_service",
+          "execution_source": "execution_plan_v2_operational_tasks",
+          "production_release_blocked": true,
+          "production_blocker_summary": "Productie blocata (INTERNAL_SABLON_FOREX_COST, INTERNAL_MONTAJ_RULE, INTERNAL_CONSUMABLES_RULE). Rezolvare pe desktop.",
+          "can_start": false,
+          "can_complete": false,
+          "is_assigned_to_current_employee": true,
+          "is_available_for_claim": false,
+          "assignment_source": "execution_plan",
+          "blocking_reasons": [
+            {
+              "code": "vector_prep_not_done",
+              "label": "Preg\u0103tire vector nefinalizat\u0103",
+              "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "depends_on_task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "task_name": "Vector Prep",
+              "material_code": null,
+              "material_name": null,
+              "status": null,
+              "missing_item": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+              "message": "Finalizeaz\u0103 vector_prep \u00eenainte de debitare CNC / execu\u021bie fizic\u0103."
+            }
+          ],
+          "material_warning": null,
+          "can_claim": false
+        }
+      ]
     },
     "available_tasks": {
       "status_code": 200,
-      "count": 0
+      "count": 7
     },
     "identity_compare": {
-      "samples": [],
-      "truth_has_frozen_identity": false,
-      "truth_has_component_labels": false,
-      "mobile_exposes_component_label": false,
+      "samples": [
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+          "mobile_title": "Vector Prep",
+          "truth_display_label": "Vector Prep",
+          "truth_component_label": "Produs principal",
+          "truth_identity_source": "frozen_task_identity/v1",
+          "mobile_is_startable": false,
+          "truth_is_startable": null
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+          "mobile_title": "Face CNC Cut",
+          "truth_display_label": "Face CNC Cut",
+          "truth_component_label": "Produs principal",
+          "truth_identity_source": "frozen_task_identity/v1",
+          "mobile_is_startable": false,
+          "truth_is_startable": null
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:return_profile_forming",
+          "mobile_title": "Side Forming",
+          "truth_display_label": "Side Forming",
+          "truth_component_label": "Produs principal",
+          "truth_identity_source": "frozen_task_identity/v1",
+          "mobile_is_startable": false,
+          "truth_is_startable": null
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:cnc_face_cut",
+          "mobile_title": "Face CNC Cut",
+          "truth_display_label": "Face CNC Cut",
+          "truth_component_label": "Produs principal",
+          "truth_identity_source": "frozen_task_identity/v1",
+          "mobile_is_startable": true,
+          "truth_is_startable": null
+        },
+        {
+          "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:electrical_wiring",
+          "mobile_title": "Electrical Wiring",
+          "truth_display_label": "Electrical",
+          "truth_component_label": "Produs principal",
+          "truth_identity_source": "frozen_task_identity/v1",
+          "mobile_is_startable": false,
+          "truth_is_startable": null
+        }
+      ],
+      "truth_has_frozen_identity": true,
+      "truth_has_component_labels": true,
+      "mobile_exposes_component_label": true,
       "classification": "PARTIAL_IDENTITY_NEEDS_ADAPTER"
+    },
+    "task_detail": {
+      "status_code": 200,
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "order_id": 23099,
+      "is_startable": false,
+      "readiness_status": "in_progress"
     },
     "blocked_order_truth": {
       "order_id": 23150,
       "startable_count": 0,
       "production_release": null
+    },
+    "production_guard_start": {
+      "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
+      "order_id": 23150,
+      "status_code": 404,
+      "detail": {
+        "detail": {
+          "error": "task_not_found"
+        }
+      }
     }
   },
   "classifications": {

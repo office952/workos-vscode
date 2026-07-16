@@ -3,7 +3,7 @@
   "trusted_backend_pid": 26888,
   "fixture": {
     "order_id": 23099,
-    "snapshot_hash": 8905240710079073093,
+    "snapshot_hash": 6038447723591789912,
     "snapshot_code": "OSN2-INT02-GATE",
     "preview_keys_one": [
       "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
@@ -146,7 +146,7 @@
     "readiness_authority": "FROZEN_ORDER_SNAPSHOT_V2",
     "legacy_line_items_present": true
   },
-  "timestamp": "2026-07-14T23:11:29.630471+00:00",
+  "timestamp": "2026-07-15T00:43:55.782033+00:00",
   "steps": {
     "http_preview": {
       "status_code": 200,
@@ -171,7 +171,7 @@
       "body": {
         "status": "persisted",
         "persist_status": "persisted",
-        "execution_plan_id": 2,
+        "execution_plan_id": 4,
         "order_id": 23099,
         "order_code": "ORD-W5INT02-GATE",
         "quote_id": 23099,
@@ -231,7 +231,7 @@
       "body": {
         "status": "already_exists",
         "persist_status": "already_exists",
-        "execution_plan_id": 2,
+        "execution_plan_id": 4,
         "order_id": 23099,
         "order_code": "ORD-W5INT02-GATE",
         "quote_id": 23099,
@@ -287,7 +287,7 @@
       "body": {
         "status": "materialized",
         "order_id": 23099,
-        "execution_plan_id": 2,
+        "execution_plan_id": 4,
         "execution_tasks_created": true,
         "operational_tasks_count": 13,
         "operational_tasks_version": "v2.materialize.1",
@@ -492,7 +492,7 @@
         "operational_status": "resolved",
         "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
         "idempotent": false,
-        "audit_event_id": "odr-f2df690e56be"
+        "audit_event_id": "odr-b3e8ee434af9"
       }
     },
     "start_after_partial_resolve": {
@@ -546,7 +546,7 @@
         "operational_status": "resolved",
         "release_status": "RELEASE_BLOCKED_OWNER_DECISIONS",
         "idempotent": false,
-        "audit_event_id": "odr-c751c6076e6a"
+        "audit_event_id": "odr-a39c21f8420f"
       }
     },
     "resolve_internal_consumables_rule": {
@@ -557,7 +557,7 @@
         "operational_status": "resolved",
         "release_status": "RELEASE_ALLOWED",
         "idempotent": false,
-        "audit_event_id": "odr-897b8a246f5b"
+        "audit_event_id": "odr-2e83b6939e65"
       }
     },
     "start_after_full_resolve": {
@@ -568,9 +568,9 @@
         "order_code": "ORD-W5INT02-GATE",
         "tasks": [
           {
-            "session_id": "ws-b316e2445c4b",
+            "session_id": "ws-331588cd5b0f",
             "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
-            "started_at": "2026-07-14T23:11:30.169908+00:00",
+            "started_at": "2026-07-15T00:43:56.372860+00:00",
             "ended_at": null
           }
         ],
@@ -601,9 +601,9 @@
         "order_code": "ORD-W5INT02-GATE",
         "tasks": [
           {
-            "session_id": "ws-b316e2445c4b",
+            "session_id": "ws-331588cd5b0f",
             "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:vector_prep",
-            "started_at": "2026-07-14T23:11:30.169908+00:00",
+            "started_at": "2026-07-15T00:43:56.372860+00:00",
             "ended_at": null
           }
         ],
@@ -618,7 +618,7 @@
     "operational_tasks_count": 13
   },
   "final_state": {
-    "snapshot_hash": 8905240710079073093,
+    "snapshot_hash": 6038447723591789912,
     "snapshot_unchanged": true,
     "resolutions_in_operational_store": true
   },
