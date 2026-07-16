@@ -664,8 +664,6 @@ export default function ExecutionDetail() {
         </div>
       )}
 
-      )}
-
       {/* Acțiuni operaționale — Sprint #30 plan-generation gate. The button
           appears ONLY when the backend reports has_plan=false; it forwards
           the structured error code from the backend (snapshot_incomplete,
