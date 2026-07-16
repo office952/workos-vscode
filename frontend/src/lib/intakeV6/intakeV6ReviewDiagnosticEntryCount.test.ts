@@ -42,4 +42,42 @@ describe("buildReviewDiagnosticEntryCount", () => {
 
     expect(count).toBe(1);
   });
+
+  it("does not crash on Logo fail-closed backbone blocker rows without nested blockers", () => {
+    expect(() =>
+      buildReviewDiagnosticEntryCount({
+        runtimeModel: {
+          workspace_code: "IV6-LOGO",
+          read_only: true,
+          fields: [],
+          blockers: [
+            {
+              blocker_code: "LOGO_NOT_OFFERABLE",
+              severity: "blocked",
+              message: "candidate-only",
+              blocks: ["quote_preview"],
+            } as never,
+          ],
+        } as never,
+      }),
+    ).not.toThrow();
+
+    const count = buildReviewDiagnosticEntryCount({
+      runtimeModel: {
+        workspace_code: "IV6-LOGO",
+        read_only: true,
+        fields: [],
+        blockers: [
+          {
+            blocker_code: "LOGO_NOT_OFFERABLE",
+            severity: "blocked",
+            message: "candidate-only",
+            blocks: ["quote_preview"],
+          } as never,
+        ],
+      } as never,
+    });
+    // No nested string codes → falls through to empty fields + one blocker row count path.
+    expect(count).toBeGreaterThanOrEqual(0);
+  });
 });

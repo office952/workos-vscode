@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  asBlockerCodeList,
   buildOperatorBlockerBannerDisplay,
   collectMissingPriceLineKeysFromBreakdown,
+  collectRuntimeBlockerCodes,
   OPERATOR_BLOCKER_BANNER_MAX_MESSAGES,
 } from "./intakeV6OperatorBlockerBannerDisplay";
 import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
@@ -218,5 +220,103 @@ describe("buildOperatorBlockerBannerDisplay", () => {
       consumable_rows: [],
     });
     expect(keys).toEqual(["mystery", "cnc_x"]);
+  });
+});
+
+describe("asBlockerCodeList / collectRuntimeBlockerCodes resilience", () => {
+  it("keeps valid string blocker arrays", () => {
+    expect(asBlockerCodeList(["SELECTED_LAYER_REFS_MISSING", "  MOUNTING_SOLUTION_MISSING  "])).toEqual([
+      "SELECTED_LAYER_REFS_MISSING",
+      "MOUNTING_SOLUTION_MISSING",
+    ]);
+    expect(collectRuntimeBlockerCodes(runtimeWithSelectedLayerRefs)).toEqual(["SELECTED_LAYER_REFS_MISSING"]);
+  });
+
+  it("treats missing and null blockers as empty", () => {
+    expect(asBlockerCodeList(undefined)).toEqual([]);
+    expect(asBlockerCodeList(null)).toEqual([]);
+    expect(
+      collectRuntimeBlockerCodes({
+        ...runtimeWithSelectedLayerRefs,
+        fields: [
+          {
+            ...runtimeWithSelectedLayerRefs.fields[0],
+            blockers: undefined as unknown as string[],
+          },
+        ],
+        blockers: [
+          {
+            field_key: "svg.selected_layer_refs[]",
+            blockers: null as unknown as string[],
+            state: "blocked",
+          },
+        ],
+      }),
+    ).toEqual([]);
+  });
+
+  it("ignores invalid non-array blockers without inventing codes", () => {
+    expect(asBlockerCodeList("SELECTED_LAYER_REFS_MISSING")).toEqual([]);
+    expect(asBlockerCodeList({ code: "X" })).toEqual([]);
+    expect(asBlockerCodeList(12)).toEqual([]);
+  });
+
+  it("keeps valid rows when mixed with partial/backbone-shaped rows", () => {
+    const codes = collectRuntimeBlockerCodes({
+      ...runtimeWithSelectedLayerRefs,
+      blockers: [
+        {
+          field_key: "svg.selected_layer_refs[]",
+          blockers: ["SELECTED_LAYER_REFS_MISSING"],
+          state: "blocked",
+        },
+        // Fail-closed Logo/backbone shape: blocker_code present, nested blockers absent.
+        {
+          field_key: "root",
+          blocker_code: "LOGO_NOT_OFFERABLE",
+          state: "blocked",
+        } as unknown as IntakeV6RuntimeCaptureReadModelResponse["blockers"][number],
+        {
+          field_key: "broken",
+          blockers: "not-an-array" as unknown as string[],
+          state: "blocked",
+        },
+      ],
+    });
+    expect(codes).toEqual(["SELECTED_LAYER_REFS_MISSING"]);
+  });
+
+  it("does not white-screen Logo fail-closed runtime models and keeps surfacing usable", () => {
+    const logoFailClosedRuntime = {
+      ...runtimeWithSelectedLayerRefs,
+      root_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      product_binding_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+      fields: [],
+      blockers: [
+        {
+          field_key: null,
+          owning_component: null,
+          blocker_code: "LOGO_NOT_OFFERABLE",
+          state: "blocked",
+          message: "TPL-VOLUMETRIC-LOGO_v1 remains candidate-only",
+        },
+      ],
+    } as unknown as IntakeV6RuntimeCaptureReadModelResponse;
+
+    expect(() => collectRuntimeBlockerCodes(logoFailClosedRuntime)).not.toThrow();
+    expect(collectRuntimeBlockerCodes(logoFailClosedRuntime)).toEqual([]);
+
+    const display = buildOperatorBlockerBannerDisplay({
+      surfacing: {
+        showBanner: true,
+        reasons: ["Logo-only candidate · root comercial neofertabil fara owner GO"],
+        actions: ["Nu crea quote/order/execution fără owner GO."],
+      },
+      runtimeModel: logoFailClosedRuntime,
+      plannerModel: null,
+    });
+    expect(display.show).toBe(true);
+    expect(display.messages.join(" ")).toMatch(/Logo-only candidate/i);
+    expect(display.messages.join(" ")).toMatch(/neofertabil/i);
   });
 });

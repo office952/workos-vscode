@@ -5,6 +5,7 @@ import type {
 } from "./intakeV6Api";
 import type { FormSystemBackboneContract } from "./intakeV6ModularFormContractTypes";
 import type { FormSystemRuntimeStateOverlayInput } from "./formSystemBackboneRuntimeStateOverlay";
+import { asBlockerCodeList } from "./intakeV6OperatorBlockerBannerDisplay";
 
 export const INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE = "Detalii tehnice și diagnostic";
 
@@ -15,10 +16,9 @@ export type ReviewDiagnosticEntryCountInput = {
   runtimeState?: FormSystemRuntimeStateOverlayInput | null;
 };
 
-function addCodes(target: Set<string>, codes: readonly string[]): void {
-  for (const code of codes) {
-    const trimmed = code.trim();
-    if (trimmed) target.add(trimmed);
+function addCodes(target: Set<string>, codes: unknown): void {
+  for (const code of asBlockerCodeList(codes)) {
+    target.add(code);
   }
 }
 

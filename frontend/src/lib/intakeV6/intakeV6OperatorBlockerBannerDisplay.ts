@@ -77,19 +77,36 @@ function mapRuntimeBlockerCode(code: string): string {
   return "";
 }
 
-function collectRuntimeBlockerCodes(
+/** Runtime/API may omit or reshape nested blocker lists (e.g. backbone fail-closed rows). */
+export function asBlockerCodeList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  const codes: string[] = [];
+  for (const item of value) {
+    if (typeof item === "string" && item.trim()) {
+      codes.push(item.trim());
+    }
+  }
+  return codes;
+}
+
+function asObjectList(value: unknown): Record<string, unknown>[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is Record<string, unknown> => !!item && typeof item === "object");
+}
+
+export function collectRuntimeBlockerCodes(
   model: IntakeV6RuntimeCaptureReadModelResponse | null | undefined,
 ): string[] {
   if (!model) return [];
   const codes = new Set<string>();
-  for (const field of model.fields) {
-    for (const code of field.blockers) {
-      if (code.trim()) codes.add(code.trim());
+  for (const field of asObjectList(model.fields)) {
+    for (const code of asBlockerCodeList(field.blockers)) {
+      codes.add(code);
     }
   }
-  for (const row of model.blockers) {
-    for (const code of row.blockers) {
-      if (code.trim()) codes.add(code.trim());
+  for (const row of asObjectList(model.blockers)) {
+    for (const code of asBlockerCodeList(row.blockers)) {
+      codes.add(code);
     }
   }
   return [...codes];
@@ -100,14 +117,14 @@ function collectPlannerBlockerCodes(
 ): string[] {
   if (!model) return [];
   const codes = new Set<string>();
-  for (const row of model.blockers) {
-    for (const code of row.blockers) {
-      if (code.trim()) codes.add(code.trim());
+  for (const row of asObjectList(model.blockers)) {
+    for (const code of asBlockerCodeList(row.blockers)) {
+      codes.add(code);
     }
   }
-  for (const entry of model.blocked_entries) {
-    for (const code of entry.blockers) {
-      if (code.trim()) codes.add(code.trim());
+  for (const entry of asObjectList(model.blocked_entries)) {
+    for (const code of asBlockerCodeList(entry.blockers)) {
+      codes.add(code);
     }
   }
   return [...codes];

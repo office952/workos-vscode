@@ -1,0 +1,22 @@
+{
+  "url": "http://127.0.0.1:3000/intake-v6/logo-blocker-banner-smoke-2026-07-16/operator",
+  "workspaceId": "logo-blocker-banner-smoke-2026-07-16",
+  "initial": {
+    "kids": 3,
+    "hasGuard": true,
+    "guardText": "TPL-VOLUMETRIC-LOGO_v1 candidate/read-only · root comercial neofertabil fara owner GO · nu creeaza quote/order/execution. Context UI existent: Logo volumetric shell.",
+    "template": "Logo-only candidate",
+    "code": "IV6-LOGO-BANNER-SMOKE",
+    "step": "review",
+    "whiteScreen": false,
+    "neofertabil": true,
+    "logoOnly": true,
+    "interactive": true
+  },
+  "afterHold": {
+    "kids": 3,
+    "hasGuard": true,
+    "whiteScreen": false
+  },
+  "pageerrors": []
+}
