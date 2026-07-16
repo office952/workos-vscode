@@ -72,13 +72,16 @@ export default function EmployeeMobileV2WorkRoomActionBar({
 
   const collabUi = isFlexCollabUiEnabled();
   const blockerPresentation = buildEmployeeMobileV2BlockerPresentation(task);
-  const canStartHelper = collabUi && task.can_start_helper_work === true;
-  const canStopOwn = collabUi && task.can_stop_own_session === true;
-  // Helper path: do not use principal start/complete when helper caps drive the UI.
   const helperOnly =
     collabUi &&
     task.visible_as_helper === true &&
     task.visible_as_principal !== true;
+  const canStartHelper = collabUi && helperOnly && task.can_start_helper_work === true;
+  // Stop is helper-session only — never surface for principal-only active work.
+  const canStopOwn =
+    collabUi &&
+    task.visible_as_helper === true &&
+    task.can_stop_own_session === true;
   const canStartAssigned = !helperOnly && canShowAssignedStart(task);
   const canStartAvailable = !helperOnly && canShowAvailableStart(task);
   const canClaimOnly = !helperOnly && canShowClaimOnly(task);

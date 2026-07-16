@@ -100,4 +100,21 @@ describe("EmployeeMobileV2WorkRoomActionBar helper collaboration", () => {
     );
     expect(screen.getByTestId("employee-mobile-v2-work-room-helper-stop")).toBeInTheDocument();
   });
+
+  it("does not show helper stop for principal-only active session", () => {
+    render(
+      <EmployeeMobileV2WorkRoomActionBar
+        task={helperTask({
+          visible_as_helper: false,
+          visible_as_principal: true,
+          can_start_helper_work: false,
+          can_stop_own_session: true,
+          can_complete_operation: true,
+          status: "in_progress",
+        })}
+        onActionComplete={async () => undefined}
+      />,
+    );
+    expect(screen.queryByTestId("employee-mobile-v2-work-room-helper-stop")).not.toBeInTheDocument();
+  });
 });
