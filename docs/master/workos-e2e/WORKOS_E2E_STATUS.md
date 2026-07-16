@@ -8,7 +8,7 @@
 
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 
-**Accepted HEAD:** (Phase 2 complete — see latest feat(execution) collaboration commits)
+**Accepted HEAD:** `2dfe2e1` (Phase 2 complete)
 
 **Last updated:** 2026-07-16 (PROD-FLEX-COLLABORATION-PHASE-2 **COMPLETE**)
 

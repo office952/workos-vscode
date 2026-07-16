@@ -63,7 +63,10 @@ No Operator UI, no Mobile UX, no Product System, no snapshots, no pricing, no or
 
 ## Commits
 
-(see git log after commit series)
+1. `63b8951` feat(execution): add collaboration help persistence (s58)
+2. `ff0fe0c` feat(execution): implement help lifecycle into helper membership
+3. `08671b7` feat(execution): add help pools and principal-safe capability flags
+4. `2dfe2e1` feat(execution): ship helper sessions, collab read v1.2, and Phase 2 proof
 
 ## Verdict
 
