@@ -1,7 +1,9 @@
 """Read-only CommercialPriceProposal preview builder (Step 7G).
 
 Answers: "What commercial price do we propose for the product on commercial rules?"
-Does NOT use CostEngine, QuoteOrchestrator, workcenter_rates, or hourly basis.
+Does NOT use CostEngine, QuoteOrchestrator, or hourly basis.
+Linked-logo finish lines may map to existing Pricing Registry operation rates
+(workcenter_rates) plus company EUR→RON settings — never invent finish tariffs.
 """
 
 from __future__ import annotations
@@ -484,6 +486,8 @@ def _build_line(
 
 
 def scan_forbidden_hourly_usage(lines: list[CommercialPriceLine]) -> list[str]:
+    import re
+
     hits: list[str] = []
     for line in lines:
         haystack = " ".join(
@@ -496,7 +500,8 @@ def scan_forbidden_hourly_usage(lines: list[CommercialPriceLine]) -> list[str]:
             ]
         ).lower()
         for token in FORBIDDEN_HOURLY_TOKENS:
-            if token in haystack:
+            # Word-boundary match so "workcenter_rates" does not trip "workcenter_rate".
+            if re.search(rf"(?<![a-z0-9_]){re.escape(token)}(?![a-z0-9_])", haystack):
                 hits.append(f"{line.code}:{token}")
     return hits
 
@@ -663,7 +668,8 @@ class CommercialPriceProposalService:
                     )
                 )
 
-        logo_lines, logo_owner_decisions = build_linked_logo_commercial_lines(
+        logo_lines, logo_owner_decisions = await build_linked_logo_commercial_lines(
+            db=self._db,
             payload=payload,
             pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
         )
@@ -737,8 +743,11 @@ class CommercialPriceProposalService:
 
         notes = [
             "Read-only CommercialPriceProposal preview — Step 7G.",
-            "Does not call /price, CostEngine, QuoteOrchestrator, or workcenter_rates.",
-            "Numeric RON totals deferred until owner commercial price registry (Step 7I).",
+            "Does not call /price, CostEngine, or QuoteOrchestrator.",
+            "Linked-logo print/laminate/application may bind to existing Pricing Registry "
+            "operation rates (LARGE_FORMAT_PRINT / LAMINATION / FACE_VINYL_APPLICATION_LABOR) "
+            "with company_commercial_settings EUR→RON conversion; montaj remains fail-closed.",
+            "Hourly commercial basis is forbidden.",
         ]
 
         return CommercialPriceProposalPreview(

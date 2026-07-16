@@ -33,6 +33,8 @@ class CommercialRuleDefinition:
     owner_decision_detail: str | None = None
     documented_unit_price: float | None = None
     documented_unit_price_currency: str | None = None
+    # Mapping-only: existing Pricing Registry / workcenter_rates code (not a duplicate tariff).
+    registry_pricing_code: str | None = None
     material_gate_path: str | None = None
     material_gate_value: str | None = None
     module_gate: str | None = None
@@ -228,7 +230,11 @@ VOLUMETRIC_V2_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
         criticality="optional",
         owner_decision_required=True,
         owner_decision_code="MONTAJ_COMMERCIAL_RULE",
-        owner_decision_detail="Site mounting commercial rule is future/optional — not in Step 7G numeric scope.",
+        owner_decision_detail=(
+            "Site installation was selected but no owner-confirmed commercial șantier tariff exists "
+            "in Pricing Registry. Configure at /inventory/pricing. Confirmare remains disabled. "
+            "Do not use internal labor minutes or employee cost as commercial montaj price."
+        ),
         always_include=False,
     ),
 )
@@ -392,12 +398,16 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="m2",
         quantity_paths=(),
         unit="m2",
-        source="commercial_rules_volumetric_v2:logo_print_m2_owner_pending",
+        source="commercial_rules_volumetric_v2:logo_print_maps_LARGE_FORMAT_PRINT",
         criticality="critical",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="LOGO_PRINT_COMMERCIAL_RULE",
-        owner_decision_detail="Commercial print tariff for volumetric logo face is not owner-configured.",
+        owner_decision_detail=(
+            "Logo print maps to existing registry LARGE_FORMAT_PRINT; "
+            "fail-closed if registry row inactive/missing or EUR→RON conversion unavailable."
+        ),
         documented_unit_price=None,
+        registry_pricing_code="LARGE_FORMAT_PRINT",
     ),
     CommercialRuleDefinition(
         line_code="logo_laminate",
@@ -408,12 +418,16 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="m2",
         quantity_paths=(),
         unit="m2",
-        source="commercial_rules_volumetric_v2:logo_laminate_m2_owner_pending",
+        source="commercial_rules_volumetric_v2:logo_laminate_maps_LAMINATION",
         criticality="critical",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="LOGO_LAMINATE_COMMERCIAL_RULE",
-        owner_decision_detail="Commercial laminate tariff for volumetric logo face is not owner-configured.",
+        owner_decision_detail=(
+            "Logo laminate maps to existing registry LAMINATION "
+            "(not SVC-LAMINATION-SERVICE stub); fail-closed if unavailable."
+        ),
         documented_unit_price=None,
+        registry_pricing_code="LAMINATION",
     ),
     CommercialRuleDefinition(
         line_code="logo_application",
@@ -424,12 +438,16 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
         basis_type="m2",
         quantity_paths=(),
         unit="m2",
-        source="commercial_rules_volumetric_v2:logo_application_m2_owner_pending",
+        source="commercial_rules_volumetric_v2:logo_application_maps_FACE_VINYL_APPLICATION_LABOR",
         criticality="critical",
-        owner_decision_required=True,
+        owner_decision_required=False,
         owner_decision_code="LOGO_APPLICATION_COMMERCIAL_RULE",
-        owner_decision_detail="Commercial application tariff for volumetric logo foil is not owner-configured.",
+        owner_decision_detail=(
+            "Logo application maps to existing registry FACE_VINYL_APPLICATION_LABOR; "
+            "fail-closed if unavailable."
+        ),
         documented_unit_price=None,
+        registry_pricing_code="FACE_VINYL_APPLICATION_LABOR",
     ),
     CommercialRuleDefinition(
         line_code="logo_led_modules",

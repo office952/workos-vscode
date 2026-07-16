@@ -2,16 +2,35 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from data.commercial_rules_volumetric_v2 import (
     LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES,
     CommercialRuleDefinition,
 )
+from models.workcenter_rates import Workcenter_rates
 from schemas.commercial_price_proposal import CommercialOwnerDecision, CommercialPriceLine
 from services.template_architecture_scope import VOLUMETRIC_LOGO_TEMPLATE_CODE
 
 SEGMENT_SEP = "::"
+
+# Incomplete material stub — never treat as commercial laminate tariff.
+FORBIDDEN_LAMINATION_STUB_CODE = "SVC-LAMINATION-SERVICE"
+CURRENCY_CONVERSION_SOURCE = "company_commercial_settings.eur_to_ron_rate"
+
+
+@dataclass(frozen=True)
+class _ResolvedRegistryRate:
+    pricing_code: str
+    unit_price_source: float
+    source_currency: str
+    rate_basis: str
+    status: str
+    label: str
 
 
 def _as_dict(value: Any) -> dict[str, Any]:
@@ -49,7 +68,6 @@ def _linked_logo_segments(pd_linked: Any, payload: dict[str, Any]) -> list[dict[
     if segments:
         return sorted(segments, key=lambda segment: _text(segment.get("segment_key")))
 
-    # Fallback: geometry/artwork identity when PD linked block absent in quote_input-only previews.
     geometry = _as_dict(payload.get("quote_geometry"))
     boxes = _as_list(geometry.get("artwork_boxes"))
     out: list[dict[str, Any]] = []
@@ -111,7 +129,6 @@ def _segment_perimeter_ml(payload: dict[str, Any], segment_key: str) -> float | 
     peri = _positive(ret.get("return_perimeter_ml"))
     if peri is not None:
         return peri
-    # Approximate from bbox when return layer missing: 2*(w+h)/1000
     box = _box_for_segment(payload, segment_key)
     width = _positive(box.get("width_mm"))
     height = _positive(box.get("height_mm"))
@@ -129,7 +146,6 @@ def _logo_illumination_active(payload: dict[str, Any]) -> bool:
         return False
     lighting = _text(finish.get("lighting_system_type")).lower()
     if lighting in {"none", "off", ""}:
-        # Prefer explicit emblem mode when lighting_system_type absent.
         return mode in {"area_lit", "front_lit", "needs_decision"} or bool(
             _positive(finish.get("emblem_led_module_count"))
         )
@@ -146,7 +162,6 @@ def _segment_led_modules(payload: dict[str, Any], segment_key: str, segment_keys
     areas = {key: _segment_area_m2(payload, key) or 0.0 for key in segment_keys}
     total_area = sum(areas.values())
     if total_area <= 0:
-        # Equal split when areas unavailable.
         return round(emblem_total / max(len(segment_keys), 1), 4)
     share = areas.get(segment_key, 0.0) / total_area
     return round(emblem_total * share, 4)
@@ -195,14 +210,106 @@ def _quantity_for_rule(
     return None
 
 
+async def _load_registry_operation_rate(
+    db: AsyncSession,
+    pricing_code: str,
+) -> _ResolvedRegistryRate | None:
+    """Read existing workcenter_rates row — never invent prices or use forbidden stubs."""
+    code = _text(pricing_code).upper()
+    if not code or code == FORBIDDEN_LAMINATION_STUB_CODE:
+        return None
+    row = (
+        await db.execute(select(Workcenter_rates).where(Workcenter_rates.code == code).limit(1))
+    ).scalar_one_or_none()
+    if row is None:
+        return None
+    status = _text(row.status).lower() or "missing_price"
+    if status != "active" or not bool(row.is_active):
+        return None
+    basis = _text(row.rate_basis).lower() or "per_hour"
+    # Square-meter commercial ops store the mp rate in rate_per_linear_meter column historically.
+    amount = _positive(row.rate_per_linear_meter)
+    if basis == "per_hour":
+        # Commercial logo finish must never use hourly rates.
+        return None
+    if amount is None:
+        return None
+    currency = _text(row.currency).upper()
+    if not currency:
+        return None
+    return _ResolvedRegistryRate(
+        pricing_code=code,
+        unit_price_source=float(amount),
+        source_currency=currency,
+        rate_basis=basis,
+        status=status,
+        label=_text(row.label) or code,
+    )
+
+
+async def _canonical_eur_to_ron_rate(db: AsyncSession) -> tuple[float | None, str | None]:
+    """Read persisted company FX without inventing/bootstrapping a diagnostic rate.
+
+    Unlike get_eur_to_ron_rate(), this path fails closed when eur_to_ron_rate is NULL.
+    It does not write DEFAULT_EUR_TO_RON_RATE into the commercial logo binding path.
+    """
+    from models.company_commercial_settings import CompanyCommercialSettings
+
+    row = (
+        await db.execute(
+            select(CompanyCommercialSettings).order_by(CompanyCommercialSettings.id.asc()).limit(1)
+        )
+    ).scalar_one_or_none()
+    if row is None:
+        return None, "company_commercial_settings_row_missing"
+    rate = getattr(row, "eur_to_ron_rate", None)
+    if rate is None:
+        return None, "eur_to_ron_rate_unset"
+    try:
+        value = float(rate)
+    except (TypeError, ValueError):
+        return None, "eur_to_ron_rate_invalid"
+    if value <= 0:
+        return None, "eur_to_ron_rate_invalid"
+    return value, None
+
+
+async def _normalize_unit_price_to_cpp_ron(
+    db: AsyncSession,
+    *,
+    unit_price: float,
+    source_currency: str,
+) -> tuple[float | None, float | None, str | None, str | None]:
+    """Canonical EUR→RON via persisted company settings. Fail closed if unset."""
+    currency = _text(source_currency).upper()
+    if not currency:
+        return None, None, None, "source_currency_missing"
+    if currency == "RON":
+        return float(unit_price), 1.0, "identity", None
+    if currency != "EUR":
+        return None, None, None, f"unsupported_source_currency={currency}"
+    rate, err = await _canonical_eur_to_ron_rate(db)
+    if rate is None:
+        return None, None, None, f"currency_conversion_unavailable:{err or 'unknown'}"
+    return round(float(unit_price) * rate, 6), rate, CURRENCY_CONVERSION_SOURCE, None
+
+
 def _build_segment_line(
     rule: CommercialRuleDefinition,
     *,
     quantity: float | None,
     segment_key: str,
     display_name: str,
+    unit_price: float | None,
+    owner_decision_required: bool,
+    warnings: list[str],
+    source: str,
+    registry_pricing_code: str | None = None,
+    source_currency: str | None = None,
+    cpp_currency: str | None = None,
+    currency_conversion_rate: float | None = None,
+    currency_conversion_source: str | None = None,
 ) -> CommercialPriceLine:
-    unit_price = rule.documented_unit_price
     subtotal = None
     if unit_price is not None and quantity is not None and rule.basis_type not in ("unknown",):
         subtotal = round(float(quantity) * float(unit_price), 4)
@@ -220,17 +327,23 @@ def _build_segment_line(
         commercial_unit_price=unit_price,
         subtotal=subtotal,
         pricing_rule_code=rule.pricing_rule_code,
-        source=rule.source,
-        owner_decision_required=rule.owner_decision_required or unit_price is None,
-        warnings=list(rule.warnings),
+        source=source,
+        owner_decision_required=owner_decision_required,
+        warnings=warnings,
         segment_key=segment_key,
         layer_identity=segment_key,
         linked_template_code=VOLUMETRIC_LOGO_TEMPLATE_CODE,
+        registry_pricing_code=registry_pricing_code,
+        source_currency=source_currency,
+        cpp_currency=cpp_currency,
+        currency_conversion_rate=currency_conversion_rate,
+        currency_conversion_source=currency_conversion_source,
     )
 
 
-def build_linked_logo_commercial_lines(
+async def build_linked_logo_commercial_lines(
     *,
+    db: AsyncSession,
     payload: dict[str, Any],
     pd_linked_segments: Any,
 ) -> tuple[list[CommercialPriceLine], list[CommercialOwnerDecision]]:
@@ -243,6 +356,7 @@ def build_linked_logo_commercial_lines(
     lines: list[CommercialPriceLine] = []
     owner_decisions: list[CommercialOwnerDecision] = []
     seen_owner: set[str] = set()
+    registry_cache: dict[str, _ResolvedRegistryRate | None] = {}
 
     for segment in segments:
         segment_key = _text(segment.get("segment_key"))
@@ -262,16 +376,75 @@ def build_linked_logo_commercial_lines(
                 "logo_application",
                 "logo_led_modules",
             }:
-                # Dimension not applicable for this logo instance.
                 continue
-            if quantity is None and rule.documented_unit_price is not None:
-                # Geometry missing for a priced body rule — still emit fail-visible line.
-                pass
+
+            warnings = list(rule.warnings)
+            unit_price = rule.documented_unit_price
+            owner_required = bool(rule.owner_decision_required) or unit_price is None
+            source = rule.source
+            registry_code: str | None = None
+            source_currency: str | None = rule.documented_unit_price_currency
+            cpp_currency: str | None = "RON" if unit_price is not None else None
+            fx_rate: float | None = None
+            fx_source: str | None = None
+
+            mapped_code = _text(rule.registry_pricing_code).upper() or None
+            if mapped_code:
+                registry_code = mapped_code
+                if mapped_code not in registry_cache:
+                    registry_cache[mapped_code] = await _load_registry_operation_rate(db, mapped_code)
+                resolved = registry_cache[mapped_code]
+                if resolved is None:
+                    unit_price = None
+                    owner_required = True
+                    warnings.append(
+                        f"registry_lookup_missed:{mapped_code};configure_at=/inventory/pricing"
+                    )
+                    source = f"{rule.source}:registry_unresolved"
+                else:
+                    ron_price, fx_rate, fx_source, fx_error = await _normalize_unit_price_to_cpp_ron(
+                        db,
+                        unit_price=resolved.unit_price_source,
+                        source_currency=resolved.source_currency,
+                    )
+                    if ron_price is None:
+                        unit_price = None
+                        owner_required = True
+                        warnings.append(
+                            f"BLOCKED_BY_CANONICAL_CURRENCY_CONVERSION:{fx_error or 'unknown'}"
+                        )
+                        source = f"{rule.source}:currency_gate_blocked"
+                        source_currency = resolved.source_currency
+                        cpp_currency = None
+                    else:
+                        unit_price = ron_price
+                        owner_required = False
+                        source_currency = resolved.source_currency
+                        cpp_currency = "RON"
+                        source = (
+                            f"pricing_registry:operation:{resolved.pricing_code}"
+                            f":{resolved.source_currency}->{cpp_currency}"
+                        )
+                        warnings.append(
+                            f"registry_bound={resolved.pricing_code};"
+                            f"source_unit_price={resolved.unit_price_source};"
+                            f"rate_basis={resolved.rate_basis}"
+                        )
+
             line = _build_segment_line(
                 rule,
                 quantity=quantity,
                 segment_key=segment_key,
                 display_name=display_name,
+                unit_price=unit_price,
+                owner_decision_required=owner_required,
+                warnings=warnings,
+                source=source,
+                registry_pricing_code=registry_code,
+                source_currency=source_currency,
+                cpp_currency=cpp_currency,
+                currency_conversion_rate=fx_rate,
+                currency_conversion_source=fx_source,
             )
             lines.append(line)
             if line.owner_decision_required and rule.owner_decision_code:

@@ -75,11 +75,15 @@ Workspace `11891d68-c4c8-4719-acc5-f8fcb22a44af` dry-run after seed+code:
 
 ## Remaining blocker
 
-Owner must configure commercial tariffs for logo print/laminate/application and site-install montaj before commercial ready.
+**Pricing Registry UI audit (2026-07-16)** proved print/laminate/application owner rates already exist under letters ops (`LARGE_FORMAT_PRINT`, `LAMINATION`, `FACE_VINYL_APPLICATION_LABOR`) — CPP fails closed due to **binding/lookup defect**, not missing owner prices. See `docs/qa/gradi-curat-e2e/pricing-registry-ui-audit-2026-07-16.md`.
+
+Only **site-install montaj** is `TRUE_OWNER_TARIFF_MISSING` (T1). Do not ask owner for new print/laminate/application values.
 
 ## Next step
 
-Owner configure missing commercial tariffs → same-workspace dry-run should reach commercial ready without inventing prices in code.
+1. Bind logo CPP finish lines to existing registry rates (engineering).
+2. Owner defines T1 site-install commercial tariff only.
+3. Same-workspace dry-run → commercial ready without inventing duplicate tariffs.
 
 ## Commits
 

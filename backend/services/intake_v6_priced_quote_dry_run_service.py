@@ -226,6 +226,11 @@ def _commercial_line_items(commercial_preview: Any) -> list[dict[str, Any]]:
 				"segment_key": getattr(line, "segment_key", None),
 				"layer_identity": getattr(line, "layer_identity", None),
 				"linked_template_code": getattr(line, "linked_template_code", None),
+				"registry_pricing_code": getattr(line, "registry_pricing_code", None),
+				"source_currency": getattr(line, "source_currency", None),
+				"cpp_currency": getattr(line, "cpp_currency", None),
+				"currency_conversion_rate": getattr(line, "currency_conversion_rate", None),
+				"currency_conversion_source": getattr(line, "currency_conversion_source", None),
 			}
 		)
 	return items

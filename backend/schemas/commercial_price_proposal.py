@@ -41,6 +41,12 @@ class CommercialPriceLine(BaseModel):
     segment_key: str | None = None
     layer_identity: str | None = None
     linked_template_code: str | None = None
+    # Registry reuse provenance (mapping to existing workcenter_rates / Pricing Registry).
+    registry_pricing_code: str | None = None
+    source_currency: str | None = None
+    cpp_currency: str | None = None
+    currency_conversion_rate: float | None = None
+    currency_conversion_source: str | None = None
 
 
 class CommercialMinimumApplied(BaseModel):
