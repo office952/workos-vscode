@@ -8,6 +8,9 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `39d2314` |
+| Feature commit | `c6f7841` |
+| Worklog commit | `18c6d77` |
+| End HEAD | `18c6d77` |
 | Initial | `CPP_MODULAR_ELECTRICAL_SUPPORT_WIRING_IN_PROGRESS` |
 | Final | `CABLE_INPUT_WIRING_COMPLETE_TEMPLATE_GUARDED` |
 
