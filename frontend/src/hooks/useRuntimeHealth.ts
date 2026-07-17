@@ -61,6 +61,8 @@ export function useRuntimeHealth(options: UseRuntimeHealthOptions = {}): UseRunt
   const mountedRef = useRef(true);
   const abortRef = useRef<AbortController | null>(null);
   const versionLoadedRef = useRef(false);
+  /** After 401/403, stop re-hitting diagnostics on every poll (no forbidden loop). */
+  const diagnosticsForbiddenRef = useRef(false);
 
   const applySnapshot = useCallback(
     (updater: (current: RuntimeTruthSnapshot) => RuntimeTruthSnapshot) => {
@@ -129,10 +131,30 @@ export function useRuntimeHealth(options: UseRuntimeHealthOptions = {}): UseRunt
           versionLoadedRef.current = true;
         }
 
-        if (fetchDiagnostics) {
+        if (fetchDiagnostics && !diagnosticsForbiddenRef.current) {
           const diagnosticsPart = await fetchDiagnosticsBoundary(fetchOptions);
           if (!mountedRef.current || generation !== requestGenerationRef.current) return;
-          nextSnapshot = mergeRuntimeTruthSnapshot(nextSnapshot, diagnosticsPart);
+          if (diagnosticsPart.diagnostics.authorized === false) {
+            diagnosticsForbiddenRef.current = true;
+            // 403 must not overwrite public-health DB segment or appear as backend failure.
+            nextSnapshot = mergeRuntimeTruthSnapshot(nextSnapshot, {
+              diagnostics: diagnosticsPart.diagnostics,
+            });
+          } else if (diagnosticsPart.diagnostics.available === false && diagnosticsPart.diagnostics.authorized == null) {
+            nextSnapshot = mergeRuntimeTruthSnapshot(nextSnapshot, {
+              diagnostics: diagnosticsPart.diagnostics,
+            });
+          } else {
+            nextSnapshot = mergeRuntimeTruthSnapshot(nextSnapshot, diagnosticsPart);
+          }
+        } else if (fetchDiagnostics && diagnosticsForbiddenRef.current) {
+          nextSnapshot = mergeRuntimeTruthSnapshot(nextSnapshot, {
+            diagnostics: {
+              authorized: false,
+              available: false,
+              httpStatus: snapshotRef.current.diagnostics.httpStatus ?? 403,
+            },
+          });
         }
 
         applySnapshot(() => nextSnapshot);

@@ -79,6 +79,8 @@ import LogoutCallbackPage from "./pages/LogoutCallbackPage";
 import LoginGate from "./components/LoginGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { productionAlerts } from "./lib/mockData";
+import { isMockEnabled } from "./lib/mockGuard";
+import { resolveShellCriticalCount } from "./lib/shellAlertTruth";
 import VersionBadge from "./components/system/VersionBadge";
 import EnvironmentBanner from "./components/workos/EnvironmentBanner";
 import { personalNavItems } from "./lib/personalNavigation";
@@ -248,7 +250,8 @@ function UserMenu() {
 function AppShell() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const criticalAlerts = productionAlerts.filter((a) => a.severity === "critical" && !a.resolvedAt).length;
+  // UI-TRUTH-01C: never show mock "N critical" as real incidents.
+  const criticalAlerts = resolveShellCriticalCount(isMockEnabled(), productionAlerts);
 
   return (
     <div

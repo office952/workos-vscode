@@ -76,6 +76,40 @@ describe("buildRuntimeStatusSummary", () => {
     expect(view.technicalStrip).toContain("status=warning");
   });
 
+  it("stale snapshot is warning with Stare învechită, never positive", () => {
+    const view = buildRuntimeStatusSummary({
+      snapshot: snap({
+        backend: {
+          state: "stale",
+          rawStatus: "ok",
+          lastSuccessfulAt: "2026-07-17T03:00:00.000Z",
+        },
+        database: { state: "unknown", source: "none" },
+        environment: { state: "local" },
+        stale: true,
+      }),
+    });
+    expect(view.severity).toBe("warning");
+    expect(view.staleLabel).toBe("Stare învechită");
+    expect(view.isStale).toBe(true);
+    expect(view.mainText).toContain("stare învechită");
+  });
+
+  it("403 diagnostics message is distinct from backend unavailable", () => {
+    const view = buildRuntimeStatusSummary({
+      snapshot: snap({
+        backend: { state: "healthy", rawStatus: "ok" },
+        database: { state: "unknown", source: "none" },
+        environment: { state: "local" },
+        diagnostics: { authorized: false, available: false, httpStatus: 403 },
+      }),
+    });
+    expect(view.severity).not.toBe("critical");
+    expect(view.diagnosticsMessage).toContain("Nu ai permisiune pentru diagnostice detaliate");
+    expect(view.mainText).toContain("Backend disponibil");
+    expect(view.showRetry).toBe(false);
+  });
+
   it("backend unavailable → critical, no DB verified claim", () => {
     const view = buildRuntimeStatusSummary({
       snapshot: snap({

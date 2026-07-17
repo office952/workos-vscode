@@ -62,10 +62,13 @@ export interface RuntimeTruthSnapshot {
     state: EnvironmentTruthState;
     rawValue?: string;
     mockMode?: boolean;
+    serviceVersion?: string | null;
   };
   diagnostics: {
     authorized: boolean | null;
     available: boolean | null;
+    /** HTTP status from last diagnostics probe when known (e.g. 403). */
+    httpStatus?: number | null;
   };
   stale: boolean;
 }

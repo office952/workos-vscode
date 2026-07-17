@@ -166,33 +166,41 @@ export function normalizeVersionEnvironment(
     return { state: "demo", rawValue: "mock", mockMode: true };
   }
 
+  const serviceVersion =
+    payload && typeof payload === "object"
+      ? ((payload as VersionPayload).release_version ??
+          (payload as VersionPayload).app_name ??
+          null)
+      : null;
+
   if (options?.devMode ?? import.meta.env.DEV) {
     if (!payload || typeof payload !== "object") {
-      return { state: "local", rawValue: "development" };
+      return { state: "local", rawValue: "development", serviceVersion };
     }
     const envRaw = (payload as VersionPayload).environment;
     if (envRaw == null || String(envRaw).trim() === "") {
-      return { state: "local", rawValue: "development" };
+      return { state: "local", rawValue: "development", serviceVersion };
     }
     const mapped = mapVersionEnvironmentValue(String(envRaw));
     if (mapped === "unknown") {
-      return { state: "local", rawValue: String(envRaw) };
+      return { state: "local", rawValue: String(envRaw), serviceVersion };
     }
-    return { state: mapped, rawValue: String(envRaw) };
+    return { state: mapped, rawValue: String(envRaw), serviceVersion };
   }
 
   if (!payload || typeof payload !== "object") {
-    return { state: "unknown" };
+    return { state: "unknown", serviceVersion };
   }
 
   const envRaw = (payload as VersionPayload).environment;
   if (envRaw == null || String(envRaw).trim() === "") {
-    return { state: "unknown" };
+    return { state: "unknown", serviceVersion };
   }
 
   return {
     state: mapVersionEnvironmentValue(String(envRaw)),
     rawValue: String(envRaw),
+    serviceVersion,
   };
 }
 
@@ -213,21 +221,21 @@ export function normalizeDiagnosticsBoundary(
   if (httpStatus === 401 || httpStatus === 403) {
     return {
       database: { state: "unknown", source: "none" },
-      diagnostics: { authorized: false, available: false },
+      diagnostics: { authorized: false, available: false, httpStatus },
     };
   }
 
   if (httpStatus == null || httpStatus < 200 || httpStatus >= 300) {
     return {
       database: { state: "unknown", source: "none" },
-      diagnostics: { authorized: null, available: false },
+      diagnostics: { authorized: null, available: false, httpStatus },
     };
   }
 
   if (!payload || typeof payload !== "object") {
     return {
       database: { state: "unknown", source: "none" },
-      diagnostics: { authorized: true, available: false },
+      diagnostics: { authorized: true, available: false, httpStatus },
     };
   }
 
@@ -236,7 +244,7 @@ export function normalizeDiagnosticsBoundary(
   if (!databaseCheck?.status) {
     return {
       database: { state: "unknown", source: "diagnostics" },
-      diagnostics: { authorized: true, available: true },
+      diagnostics: { authorized: true, available: true, httpStatus },
     };
   }
 
@@ -245,7 +253,7 @@ export function normalizeDiagnosticsBoundary(
       state: mapRawDatabaseCheckStatus(databaseCheck.status),
       source: "diagnostics",
     },
-    diagnostics: { authorized: true, available: true },
+    diagnostics: { authorized: true, available: true, httpStatus },
   };
 }
 

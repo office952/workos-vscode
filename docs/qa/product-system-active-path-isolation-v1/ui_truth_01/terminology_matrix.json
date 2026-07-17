@@ -110,9 +110,45 @@
       "current_text": "(none)",
       "target_text": "Baza de date indisponibilă",
       "condition": "diagnostics/health database check fail — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Reverifică starea",
+      "condition": "manual refresh action — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Stare învechită",
+      "condition": "stale snapshot badge — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Reîncearcă",
+      "condition": "retry after health failure — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Detalii stare sistem",
+      "condition": "runtime details drill-down — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "Detalii disponibile doar utilizatorilor autorizați",
+      "target_text": "Nu ai permisiune pentru diagnostice detaliate. Starea publică a backend-ului rămâne valabilă.",
+      "condition": "diagnostics 403 explanation — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "Live",
+      "target_text": "Date disponibile",
+      "condition": "Dashboard stats source db — not runtime health — UI-TRUTH-01C"
+    },
+    {
+      "current_text": "N critical",
+      "target_text": "(hidden unless VITE_ENABLE_MOCK_DATA)",
+      "condition": "shell mock critical badge — UI-TRUTH-01C"
     }
   ],
   "compact_format": "Mediu · Backend · DB — e.g. Local · Backend disponibil · DB neverificată",
   "forbidden_labels": ["LIVE", "LIVE / DB", "DB connected", "backend live without health proof", "green-only meaning"],
-  "ui_truth_01b_note": "01B CORE uses these targets via RuntimeStatusSummary; public health empty checks → DB neverificată (not confirmed)."
+  "ui_truth_01b_note": "01B CORE uses these targets via RuntimeStatusSummary; public health empty checks → DB neverificată (not confirmed).",
+  "ui_truth_01c_note": "01C adds refresh/stale/retry/details + diagnostics 403 + Dashboard Live rename + hide mock critical."
 }

@@ -27,6 +27,15 @@ export interface RuntimeStatusSummaryView {
   technicalStrip: string | null;
   accessibleDescription: string;
   sessionNote: string | null;
+  /** UI-TRUTH-01C */
+  staleLabel: string | null;
+  lastKnownText: string | null;
+  refreshLabel: string;
+  retryLabel: string;
+  detailsTitle: string;
+  diagnosticsMessage: string | null;
+  showRetry: boolean;
+  isStale: boolean;
 }
 
 export interface BuildRuntimeStatusSummaryInput {
@@ -66,6 +75,16 @@ export const RUNTIME_BANNER_LABELS = {
   sessionAuthNeeded: "Autentificare necesară pentru API protejat",
   technicalDetails: "Detalii tehnice",
   loadingMain: "Se verifică",
+  staleState: "Stare învechită",
+  refreshAction: "Reverifică starea",
+  retryAction: "Reîncearcă",
+  detailsTitle: "Detalii stare sistem",
+  diagnosticsRestricted: "Diagnostice restricționate",
+  diagnosticsForbiddenDetail:
+    "Nu ai permisiune pentru diagnostice detaliate. Starea publică a backend-ului rămâne valabilă.",
+  diagnosticsUnavailable: "Diagnostice indisponibile",
+  lastKnownPrefix: "Ultima stare cunoscută",
+  dbNeverVerifiedAlt: "Baza de date neverificată",
 } as const;
 
 const FORBIDDEN_MAIN_PATTERNS = ["LIVE / DB", "LIVE/DB", "Sursa de date: backend live"];
@@ -170,10 +189,13 @@ function deriveSeverity(
   if (isLoading && snapshot.backend.state === "checking") return "neutral";
   if (snapshot.environment.state === "demo") return "warning";
 
-  const backend = snapshot.stale ? "stale" : snapshot.backend.state;
-  if (backend === "unavailable" || backend === "critical") return "critical";
-  if (backend === "warning" || backend === "stale" || backend === "unknown") return "warning";
-  if (backend === "checking") return "neutral";
+  // Unavailable/critical always win over stale (stale must never become healthy/positive).
+  if (snapshot.backend.state === "unavailable" || snapshot.backend.state === "critical") {
+    return "critical";
+  }
+  if (snapshot.stale || snapshot.backend.state === "stale") return "warning";
+  if (snapshot.backend.state === "warning" || snapshot.backend.state === "unknown") return "warning";
+  if (snapshot.backend.state === "checking") return "neutral";
 
   // healthy backend
   if (snapshot.database.state === "confirmed") return "positive";
@@ -225,6 +247,9 @@ export function buildRuntimeStatusSummary(
   const isLoading = Boolean(input.isLoading);
   const { snapshot } = input;
 
+  const serviceVersion =
+    input.serviceVersion ?? snapshot.environment.serviceVersion ?? null;
+
   if (snapshot.environment.state === "demo" || snapshot.environment.mockMode) {
     const view: RuntimeStatusSummaryView = {
       mainText: RUNTIME_BANNER_LABELS.demoMain,
@@ -234,9 +259,17 @@ export function buildRuntimeStatusSummary(
       databaseLabel: "",
       isLoading: false,
       freshnessText: null,
-      technicalStrip: buildTechnicalStrip(input),
+      technicalStrip: buildTechnicalStrip({ ...input, serviceVersion }),
       accessibleDescription: RUNTIME_BANNER_LABELS.demoMain,
       sessionNote: sessionNote(input.sessionState),
+      staleLabel: null,
+      lastKnownText: null,
+      refreshLabel: RUNTIME_BANNER_LABELS.refreshAction,
+      retryLabel: RUNTIME_BANNER_LABELS.retryAction,
+      detailsTitle: RUNTIME_BANNER_LABELS.detailsTitle,
+      diagnosticsMessage: null,
+      showRetry: false,
+      isStale: false,
     };
     assertNoForbiddenBannerText(view.mainText);
     return view;
@@ -261,6 +294,34 @@ export function buildRuntimeStatusSummary(
 
   const severity = deriveSeverity(snapshot, isLoading);
   const note = sessionNote(input.sessionState);
+  const staleLabel = snapshot.stale ? RUNTIME_BANNER_LABELS.staleState : null;
+
+  const lastKnownChecked = formatCheckedAt(snapshot.backend.lastSuccessfulAt);
+  const lastKnownText =
+    snapshot.backend.state === "unavailable" && lastKnownChecked
+      ? `${RUNTIME_BANNER_LABELS.lastKnownPrefix}: ${lastKnownChecked}`
+      : null;
+
+  let diagnosticsMessage: string | null = null;
+  if (snapshot.diagnostics.authorized === false) {
+    diagnosticsMessage = RUNTIME_BANNER_LABELS.diagnosticsForbiddenDetail;
+  } else if (snapshot.diagnostics.available === false && snapshot.diagnostics.authorized === true) {
+    diagnosticsMessage = RUNTIME_BANNER_LABELS.diagnosticsUnavailable;
+  } else if (
+    snapshot.diagnostics.available === false &&
+    snapshot.diagnostics.authorized == null &&
+    snapshot.diagnostics.httpStatus != null &&
+    snapshot.diagnostics.httpStatus >= 500
+  ) {
+    diagnosticsMessage = RUNTIME_BANNER_LABELS.diagnosticsUnavailable;
+  }
+
+  const showRetry =
+    !isLoading &&
+    (snapshot.backend.state === "unavailable" ||
+      input.lastError === "NETWORK_ERROR" ||
+      input.lastError === "TIMEOUT" ||
+      input.lastError === "HTTP_ERROR");
 
   const view: RuntimeStatusSummaryView = {
     mainText,
@@ -270,9 +331,17 @@ export function buildRuntimeStatusSummary(
     databaseLabel: database,
     isLoading,
     freshnessText,
-    technicalStrip: buildTechnicalStrip(input),
-    accessibleDescription: note ? `${mainText}. ${note}` : mainText,
+    technicalStrip: buildTechnicalStrip({ ...input, serviceVersion }),
+    accessibleDescription: [mainText, staleLabel, note, diagnosticsMessage].filter(Boolean).join(". "),
     sessionNote: note,
+    staleLabel,
+    lastKnownText,
+    refreshLabel: RUNTIME_BANNER_LABELS.refreshAction,
+    retryLabel: RUNTIME_BANNER_LABELS.retryAction,
+    detailsTitle: RUNTIME_BANNER_LABELS.detailsTitle,
+    diagnosticsMessage,
+    showRetry,
+    isStale: snapshot.stale,
   };
 
   assertNoForbiddenBannerText(view.mainText);

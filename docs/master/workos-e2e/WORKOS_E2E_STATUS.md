@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **CURRENT_TRUTH_CONTROL_CENTER_V1 = COMPLETE — PROVEN_CURRENT** (`/modules` + `/governance`) |
+| Active task | **UI-TRUTH-01C = COMPLETE — PROVEN_V1** (stale / refresh / retry / details / Dashboard cleanup) |
 
-| Next task | Owner roadmap pick; **UI-TRUTH-01C remains PAUSED** (not cancelled); FLEX-02 / TE2E-028 alternate |
+| Next task | Owner roadmap pick; FLEX-02 / TE2E-028 alternate (do not auto-start) |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1472,7 +1472,7 @@ NEXT ROADMAP = GO
 
 **Deferred (out of CORE):** header green `Live` connection badge; mock `N critical`; nav RO pass; Post-Job EN title; ModuleChain poller share (01C/01E).
 
-**Next after 01B:** Control Center V1 completed; **UI-TRUTH-01C remains PAUSED**.
+**Next after 01B:** Control Center V1 completed; then UI-TRUTH-01C COMPLETE — PROVEN_V1.
 
 ---
 
@@ -1481,7 +1481,7 @@ NEXT ROADMAP = GO
 **Date:** 2026-07-17  
 **Audit baseline:** `1adb363`  
 **Pages:** `/modules` · `/governance`  
-**UI-TRUTH-01C:** remains **PAUSED**
+**UI-TRUTH-01C:** **COMPLETE — PROVEN_V1** (after Control Center)
 
 | Item | Result |
 |------|--------|
@@ -1496,5 +1496,30 @@ NEXT ROADMAP = GO
 
 **Known partial/neverified:** public health `checks:{}`; Pontaj NEVERIFICAT; PD without dedicated page; template breadth / TE2E-028 residual.
 
-**Next:** Owner roadmap pick only — do not auto-start UI-TRUTH-01C.
+**Next after Control Center:** UI-TRUTH-01C COMPLETE — PROVEN_V1.
+
+---
+
+## UI-TRUTH-01C — COMPLETE — PROVEN_V1
+
+**Date:** 2026-07-17  
+**Canonical title:** Failure, stale, retry, and drill-down states  
+**Depends:** UI-TRUTH-01B · Control Center V1
+
+| Item | Result |
+|------|--------|
+| Manual refresh | `Reverifică starea` on EnvironmentBanner |
+| Stale UX | `Stare învechită` badge + severity never positive-as-fresh |
+| Retry | `Reîncearcă` when unavailable |
+| Drill-down | `RuntimeStatusDetails` (no raw JSON primary) |
+| Diagnostics | Existing `/api/v1/system/diagnostics`; 403 distinct RO message; stop-loop after forbidden |
+| Dashboard | `Live` → `Date disponibile` |
+| Shell | Mock `N critical` hidden unless `VITE_ENABLE_MOCK_DATA` |
+| Modules poller | KEEP unchanged; public Neverificat vs banner diagnostics DB is scoped, not contradictory |
+| Tests | useRuntimeHealth + Summary + Banner + Details + shellAlertTruth + Dashboard — 42 passed |
+| Build | frontend PASS |
+
+**Not claimed:** modules poller unified · universal DB diagnostics · alerts backend · all UI-truth waves done.
+
+**Next:** Owner roadmap pick only.
 

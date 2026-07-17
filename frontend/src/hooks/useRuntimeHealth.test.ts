@@ -259,6 +259,39 @@ describe("useRuntimeHealth", () => {
     expect(result.current.snapshot.backend.state).toBe("healthy");
     expect(result.current.snapshot.diagnostics.authorized).toBe(false);
     expect(result.current.snapshot.database.state).toBe("unknown");
+    expect(result.current.snapshot.diagnostics.httpStatus).toBe(403);
+  });
+
+  it("stops re-fetching diagnostics after 403 (no forbidden poll loop)", async () => {
+    const fetchFn = vi.fn(async (url: string) => {
+      if (url === RUNTIME_HEALTH_URL) {
+        return jsonResponse({ status: "ok", checks: {}, generated_at: FIXED_HEALTH_TS });
+      }
+      if (url === RUNTIME_VERSION_URL) return jsonResponse({ environment: "staging" });
+      if (url === "/api/v1/system/diagnostics") return jsonResponse({ detail: "forbidden" }, 403);
+      throw new Error(url);
+    });
+
+    const { result } = renderHook(() =>
+      useRuntimeHealth(baseHookOptions({ fetchFn, fetchDiagnostics: true, pollIntervalMs: 60_000 })),
+    );
+    await waitForLoaded(result);
+
+    const diagCallsAfterLoad = fetchFn.mock.calls.filter(
+      ([u]) => u === "/api/v1/system/diagnostics",
+    ).length;
+    expect(diagCallsAfterLoad).toBe(1);
+
+    await act(async () => {
+      await result.current.refresh();
+    });
+
+    const diagCallsAfterRefresh = fetchFn.mock.calls.filter(
+      ([u]) => u === "/api/v1/system/diagnostics",
+    ).length;
+    expect(diagCallsAfterRefresh).toBe(1);
+    expect(result.current.snapshot.diagnostics.authorized).toBe(false);
+    expect(result.current.lastError).toBeNull();
   });
 
   it("diagnostics authorized with DB ok confirms database", async () => {
