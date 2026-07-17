@@ -88,6 +88,14 @@ function ariaLivePolitely(severity: BannerSeverity, isLoading: boolean): "polite
 function compactChipLabel(view: RuntimeStatusSummaryView): string {
   if (view.isLoading) return "Se verifică";
   if (view.severity === "critical") return "Stare sistem";
+  if (view.environmentLabel === "Mod demo") return "Mod demo";
+  if (view.severity === "positive") {
+    const env = view.environmentLabel || "Sistem";
+    return `${env} · Sistem disponibil`;
+  }
+  if (view.severity === "warning") {
+    return "Stare sistem: necesită verificare";
+  }
   return view.environmentLabel || "Stare sistem";
 }
 
@@ -142,7 +150,7 @@ export function EnvironmentBannerView({
         title={view.accessibleDescription}
         aria-expanded={detailsOpen}
         aria-controls="runtime-status-details-panel"
-        className={`inline-flex max-w-[220px] items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium transition-colors hover:brightness-110 ${severityClasses(view.severity)}`}
+        className={`inline-flex max-w-[280px] items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium transition-colors hover:brightness-110 ${severityClasses(view.severity)}`}
         data-testid="environment-banner-details-toggle"
       >
         <SeverityIcon severity={view.severity} isLoading={busy} />
@@ -253,7 +261,7 @@ export function EnvironmentBannerView({
               className="text-violet-300 hover:text-violet-200"
               data-testid="environment-banner-control-center-link"
             >
-              Control Center
+              Deschide Control Center
             </Link>
           </div>
         </div>

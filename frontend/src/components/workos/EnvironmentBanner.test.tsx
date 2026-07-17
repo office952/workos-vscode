@@ -40,7 +40,7 @@ describe("EnvironmentBanner", () => {
     });
   });
 
-  it("wires hook with diagnostics and shows compact chip without LIVE/DB", () => {
+  it("wires hook with diagnostics and shows compact warning chip without LIVE/DB", () => {
     renderBanner();
     expect(mockUseRuntimeHealth).toHaveBeenCalledWith(
       expect.objectContaining({ fetchDiagnostics: true }),
@@ -49,7 +49,7 @@ describe("EnvironmentBanner", () => {
     expect(banner).toHaveAttribute("data-presentation", "compact");
     expect(banner).toHaveAttribute("data-severity", "warning");
     const main = screen.getByTestId("environment-banner-main");
-    expect(main.textContent).toBe("Local");
+    expect(main.textContent).toBe("Stare sistem: necesită verificare");
     expect(main.textContent).not.toMatch(/LIVE/);
     expect(banner).toHaveAttribute(
       "aria-label",
@@ -57,7 +57,30 @@ describe("EnvironmentBanner", () => {
     );
   });
 
-  it("does not render a full-width persistent strip for staging/warning", () => {
+  it("healthy staging shows compact available chip, not full-width strip", () => {
+    mockUseRuntimeHealth.mockReturnValue({
+      snapshot: {
+        ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
+        backend: { state: "healthy", rawStatus: "ok", checkedAt: "2026-07-17T04:00:00.000Z" },
+        database: { state: "confirmed", source: "diagnostics" },
+        environment: { state: "staging", rawValue: "staging" },
+        diagnostics: { authorized: true, available: true, httpStatus: 200 },
+      },
+      isLoading: false,
+      isRefreshing: false,
+      refresh: mockRefresh,
+      lastError: null,
+    });
+    renderBanner();
+    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "positive");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent(
+      "Staging · Sistem disponibil",
+    );
+    expect(screen.queryByTestId("environment-banner-critical-strip")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("environment-banner-tech")).not.toBeInTheDocument();
+  });
+
+  it("staging with unverified DB stays warning compact, not critical", () => {
     mockUseRuntimeHealth.mockReturnValue({
       snapshot: {
         ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
@@ -72,12 +95,14 @@ describe("EnvironmentBanner", () => {
       lastError: null,
     });
     renderBanner();
-    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent("Staging");
+    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "warning");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent(
+      "Stare sistem: necesită verificare",
+    );
     expect(screen.queryByTestId("environment-banner-critical-strip")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("environment-banner-tech")).not.toBeInTheDocument();
   });
 
-  it("exposes refresh action and opens details with 403 explanation", () => {
+  it("exposes refresh, details toggle, and Control Center link", () => {
     renderBanner();
     const refresh = screen.getByTestId("environment-banner-refresh");
     expect(refresh).toHaveAccessibleName("Reverifică starea");
@@ -93,13 +118,12 @@ describe("EnvironmentBanner", () => {
     expect(screen.getByTestId("runtime-details-diagnostics-message")).toHaveTextContent(
       "Nu ai permisiune pentru diagnostice detaliate",
     );
-    expect(screen.getByTestId("environment-banner-control-center-link")).toHaveAttribute(
-      "href",
-      "/modules",
-    );
+    const cc = screen.getByTestId("environment-banner-control-center-link");
+    expect(cc).toHaveAttribute("href", "/modules");
+    expect(cc).toHaveTextContent("Deschide Control Center");
   });
 
-  it("shows stale label, retry wording, and critical strip when unavailable", () => {
+  it("shows critical strip for unavailable and keeps chip after dismiss", () => {
     mockUseRuntimeHealth.mockReturnValue({
       snapshot: {
         ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
@@ -123,10 +147,16 @@ describe("EnvironmentBanner", () => {
     expect(screen.getByTestId("environment-banner-refresh")).toHaveAccessibleName("Reîncearcă");
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "critical");
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-stale", "true");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent("Stare sistem");
     expect(screen.getByTestId("environment-banner-critical-strip")).toBeInTheDocument();
     expect(screen.getByTestId("environment-banner-critical-text").textContent).toMatch(
       /Backend/i,
     );
+
+    fireEvent.click(screen.getByTestId("environment-banner-critical-dismiss"));
+    expect(screen.queryByTestId("environment-banner-critical-strip")).not.toBeInTheDocument();
+    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "critical");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent("Stare sistem");
   });
 
   it("authenticated alone with checking snapshot is not positive", () => {

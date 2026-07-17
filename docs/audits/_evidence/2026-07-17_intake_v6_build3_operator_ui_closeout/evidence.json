@@ -1,5 +1,5 @@
 {
-  "started_at": "2026-07-17T11:32:09.483Z",
+  "started_at": "2026-07-17T11:42:23.547Z",
   "build": "BUILD3_OPERATOR_UI_CLOSEOUT",
   "svg": {
     "path": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
@@ -11,25 +11,34 @@
     "landing": {
       "presentation": "compact",
       "in_topbar": true,
-      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\06_system_status\\landing_compact.png"
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\01_runtime_status\\landing_compact.png",
+      "chip_text": "Stare sistem: necesită verificare",
+      "severity": "warning"
     },
-    "details_accessible": true
+    "details_accessible": true,
+    "control_center_link": true,
+    "control_center_text": "Deschide Control Center"
   },
   "scenarios": {
     "full_product": {
       "id": "full_product",
-      "folder": "01_full_product",
+      "folder": "02_full_product",
       "errors": [],
-      "workspace_id": "4d00bf12-8a21-441a-8b53-1be836d786d3",
-      "url": "http://127.0.0.1:3000/intake-v6/4d00bf12-8a21-441a-8b53-1be836d786d3/operator",
+      "workspace_id": "b4502ac6-ce5e-4f96-b67f-5a3cb55388db",
+      "url": "http://127.0.0.1:3000/intake-v6/b4502ac6-ce5e-4f96-b67f-5a3cb55388db/operator",
       "system_status": {
         "presentation": "compact",
         "severity": "warning",
-        "chip_text": "Staging",
+        "chip_text": "Stare sistem: necesită verificare",
         "in_topbar": true,
         "full_width_strip_absent": true
       },
       "review_scope_summary": "Scope ofertă\n\nMod: Produs complet\n\nComponente active: Față, Cant, Spate, Iluminare, Electrică\n\nToate componentele produsului sunt în scope.",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
       "probes": {
         "upload_method": "UI file input",
         "file_name": "gradi-curat.svg",
@@ -110,18 +119,23 @@
     },
     "face_only": {
       "id": "face_only",
-      "folder": "02_face_only",
+      "folder": "03_face_only",
       "errors": [],
-      "workspace_id": "1e287dc6-7eae-49ef-8b81-7b4b1a1ed063",
-      "url": "http://127.0.0.1:3000/intake-v6/1e287dc6-7eae-49ef-8b81-7b4b1a1ed063/operator",
+      "workspace_id": "9e3743be-ee44-41c5-9d93-0cb5803c5ff3",
+      "url": "http://127.0.0.1:3000/intake-v6/9e3743be-ee44-41c5-9d93-0cb5803c5ff3/operator",
       "system_status": {
         "presentation": "compact",
         "severity": "warning",
-        "chip_text": "Staging",
+        "chip_text": "Stare sistem: necesită verificare",
         "in_topbar": true,
         "full_width_strip_absent": true
       },
       "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față\n\nNu sunt incluse: Cant, Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
       "probes": {
         "upload_method": "UI file input",
         "file_name": "gradi-curat.svg",
@@ -163,18 +177,23 @@
     },
     "cant_only": {
       "id": "cant_only",
-      "folder": "03_cant_only",
+      "folder": "04_cant_only",
       "errors": [],
-      "workspace_id": "33761248-5a40-45b8-9aed-15de4922d9ca",
-      "url": "http://127.0.0.1:3000/intake-v6/33761248-5a40-45b8-9aed-15de4922d9ca/operator",
+      "workspace_id": "ada11273-2f45-426b-822f-7e691c7e0bb3",
+      "url": "http://127.0.0.1:3000/intake-v6/ada11273-2f45-426b-822f-7e691c7e0bb3/operator",
       "system_status": {
         "presentation": "compact",
         "severity": "warning",
-        "chip_text": "Staging",
+        "chip_text": "Stare sistem: necesită verificare",
         "in_topbar": true,
         "full_width_strip_absent": true
       },
       "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Cant\n\nNu sunt incluse: Față, Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
       "probes": {
         "upload_method": "UI file input",
         "file_name": "gradi-curat.svg",
@@ -218,18 +237,23 @@
     },
     "face_cant": {
       "id": "face_cant",
-      "folder": "04_face_cant",
+      "folder": "05_face_cant",
       "errors": [],
-      "workspace_id": "e9167aa3-50f9-460c-a58f-eb124869dc52",
-      "url": "http://127.0.0.1:3000/intake-v6/e9167aa3-50f9-460c-a58f-eb124869dc52/operator",
+      "workspace_id": "101b0cb3-96e2-48bb-9fd2-9fa13e1bc20d",
+      "url": "http://127.0.0.1:3000/intake-v6/101b0cb3-96e2-48bb-9fd2-9fa13e1bc20d/operator",
       "system_status": {
         "presentation": "compact",
         "severity": "warning",
-        "chip_text": "Staging",
+        "chip_text": "Stare sistem: necesită verificare",
         "in_topbar": true,
         "full_width_strip_absent": true
       },
       "review_scope_summary": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față, Cant\n\nNu sunt incluse: Spate, Iluminare, Electrică",
+      "sticky_footer": {
+        "workspace_sticky": true,
+        "save_relative": true,
+        "save_present": true
+      },
       "probes": {
         "upload_method": "UI file input",
         "file_name": "gradi-curat.svg",
@@ -291,7 +315,7 @@
       "h": 900,
       "noHScroll": true,
       "bannerInTopbar": true,
-      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\05_responsive\\desktop.png",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\desktop.png",
       "verdict": "PASS"
     },
     {
@@ -300,7 +324,7 @@
       "h": 800,
       "noHScroll": true,
       "bannerInTopbar": true,
-      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\05_responsive\\laptop.png",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\laptop.png",
       "verdict": "PASS"
     },
     {
@@ -309,7 +333,7 @@
       "h": 768,
       "noHScroll": true,
       "bannerInTopbar": true,
-      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\05_responsive\\small_laptop.png",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\small_laptop.png",
       "verdict": "PASS"
     },
     {
@@ -318,11 +342,11 @@
       "h": 1024,
       "noHScroll": true,
       "bannerInTopbar": true,
-      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\05_responsive\\tablet.png",
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_operator_ui_closeout\\07_responsive\\tablet.png",
       "verdict": "PASS"
     }
   ],
   "errors": [],
   "verdict": "BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS",
-  "finished_at": "2026-07-17T11:34:51.085Z"
+  "finished_at": "2026-07-17T11:45:11.366Z"
 }

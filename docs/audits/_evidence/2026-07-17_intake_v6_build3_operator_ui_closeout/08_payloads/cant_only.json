@@ -1,0 +1,34 @@
+{
+  "workspaceId": "ada11273-2f45-426b-822f-7e691c7e0bb3",
+  "probes": {
+    "upload_method": "UI file input",
+    "file_name": "gradi-curat.svg",
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+    "layers_count": 6,
+    "colors_count": null,
+    "contours": null,
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "offer_scope": {
+      "contract_version": "offer_scope_contract/v1",
+      "mode": "component_subset",
+      "sold_modules": [
+        "RETURN-CANT"
+      ]
+    },
+    "consumable_keys": [],
+    "aggregate_materials": [
+      "MAT-PROFIL-LATERAL-LITERE",
+      "MAT-PROFIL-LATERAL-LITERE-30MM",
+      "MAT-PROFIL-LATERAL-LITERE-60MM",
+      "MAT-PROFIL-LATERAL-LITERE-80MM",
+      "MAT-PROFIL-LATERAL-LITERE-100MM",
+      "MAT-ORACAL-651",
+      "MAT-VOPSEA-RAL"
+    ],
+    "cpp_codes": [
+      "modelare_cant_aluminiu"
+    ],
+    "pd_ok": true
+  }
+}

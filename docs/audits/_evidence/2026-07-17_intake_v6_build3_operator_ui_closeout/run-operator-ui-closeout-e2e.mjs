@@ -22,28 +22,28 @@ const TEMPLATE = "TPL-VOLUMETRIC-LETTERS_v2";
 const SCENARIOS = [
   {
     id: "full_product",
-    folder: "01_full_product",
+    folder: "02_full_product",
     preset: "intake-v6-offer-scope-preset-full",
     mode: "full_product",
     sold: [],
   },
   {
     id: "face_only",
-    folder: "02_face_only",
+    folder: "03_face_only",
     preset: "intake-v6-offer-scope-preset-face",
     mode: "component_subset",
     sold: ["FACE"],
   },
   {
     id: "cant_only",
-    folder: "03_cant_only",
+    folder: "04_cant_only",
     preset: "intake-v6-offer-scope-preset-cant",
     mode: "component_subset",
     sold: ["RETURN-CANT"],
   },
   {
     id: "face_cant",
-    folder: "04_face_cant",
+    folder: "05_face_cant",
     preset: "intake-v6-offer-scope-preset-face-cant",
     mode: "component_subset",
     sold: ["FACE", "RETURN-CANT"],
@@ -309,7 +309,7 @@ async function runScenario(browser, scenario) {
           return Boolean(parent) && rect.width < window.innerWidth * 0.5;
         }).catch(() => false)),
     };
-    await shot(page, "06_system_status", `${scenario.id}_status`);
+    await shot(page, "01_runtime_status", `${scenario.id}_status`);
 
     // Ensure layers step
     await page
@@ -330,6 +330,23 @@ async function runScenario(browser, scenario) {
       .catch(() => "");
     result.review_scope_summary = scopeSummary;
     await shot(page, folder, "07_live_calc");
+
+    // Sticky footer authority proof (Review): workspace sticky, save non-sticky
+    const stickyProof = await page.evaluate(() => {
+      const ws = document.querySelector('[data-testid="intake-v6-operator-workspace-footer"]');
+      const save = document.querySelector('[data-testid="intake-v6-review-save-footer"]');
+      const wsClass = ws?.className || "";
+      const saveClass = save?.className || "";
+      return {
+        workspace_sticky: wsClass.includes("sticky") && wsClass.includes("bottom-0"),
+        save_relative: saveClass.includes("relative") && !saveClass.includes("sticky"),
+        save_present: Boolean(save),
+      };
+    });
+    result.sticky_footer = stickyProof;
+    if (scenario.id === "full_product") {
+      await shot(page, "06_sticky_footer", "review_footers");
+    }
 
     // Save
     await page
@@ -352,8 +369,10 @@ async function runScenario(browser, scenario) {
 
     const probes = await probeApis(workspaceId);
     result.probes = probes;
+    const payloadDir = path.join(EVIDENCE, "08_payloads");
+    fs.mkdirSync(payloadDir, { recursive: true });
     fs.writeFileSync(
-      path.join(EVIDENCE, "07_payloads", `${scenario.id}.json`),
+      path.join(payloadDir, `${scenario.id}.json`),
       JSON.stringify({ workspaceId, probes }, null, 2),
     );
     result.isolation = assertIsolation(scenario.id, probes);
@@ -404,13 +423,32 @@ async function main() {
         .getAttribute("data-presentation")
         .catch(() => null),
       in_topbar: (await page.locator('[data-testid="workos-desktop-topbar"] [data-testid="environment-banner"]').count()) > 0,
-      screenshot: await shot(page, "06_system_status", "landing_compact"),
+      screenshot: await shot(page, "01_runtime_status", "landing_compact"),
+      chip_text: await page
+        .locator('[data-testid="environment-banner-main"]')
+        .innerText()
+        .catch(() => null),
+      severity: await page
+        .locator('[data-testid="environment-banner"]')
+        .getAttribute("data-severity")
+        .catch(() => null),
     };
-    // Open details
+    // Open details + Control Center link
     await page.locator('[data-testid="environment-banner-details-toggle"]').click().catch(() => {});
     await page.waitForTimeout(500);
-    evidence.system_status.details_accessible = (await page.locator('[data-testid="runtime-status-details"], [data-testid="environment-banner-details-panel"]').count()) > 0;
-    await shot(page, "06_system_status", "details_open");
+    evidence.system_status.details_accessible =
+      (await page
+        .locator(
+          '[data-testid="runtime-status-details"], [data-testid="environment-banner-details-panel"]',
+        )
+        .count()) > 0;
+    evidence.system_status.control_center_link =
+      (await page.locator('[data-testid="environment-banner-control-center-link"]').count()) > 0;
+    evidence.system_status.control_center_text = await page
+      .locator('[data-testid="environment-banner-control-center-link"]')
+      .innerText()
+      .catch(() => null);
+    await shot(page, "01_runtime_status", "details_open");
     await ctx.close();
     log("system_status", evidence.system_status.landing);
 
@@ -450,10 +488,14 @@ async function main() {
           h,
           noHScroll,
           bannerInTopbar,
-          screenshot: await shot(rpage, "05_responsive", name),
+          screenshot: await shot(rpage, "07_responsive", name),
           verdict: noHScroll && bannerInTopbar ? "PASS" : "FAIL",
         });
-        log(`responsive_${name}`, { noHScroll, bannerInTopbar, verdict: noHScroll && bannerInTopbar ? "PASS" : "FAIL" });
+        log(`responsive_${name}`, {
+          noHScroll,
+          bannerInTopbar,
+          verdict: noHScroll && bannerInTopbar ? "PASS" : "FAIL",
+        });
       }
       await rctx.close();
     }
@@ -463,19 +505,31 @@ async function main() {
 
   const scenarioFails = Object.values(evidence.scenarios).filter((s) => s.verdict !== "PASS").length;
   const responsiveFails = evidence.responsive.filter((r) => r.verdict !== "PASS").length;
+  const stickyFails = Object.values(evidence.scenarios).filter(
+    (s) => s.sticky_footer && (!s.sticky_footer.workspace_sticky || !s.sticky_footer.save_relative),
+  ).length;
   const statusOk =
     evidence.system_status.landing?.presentation === "compact" &&
     evidence.system_status.landing?.in_topbar === true &&
-    evidence.system_status.details_accessible === true;
+    evidence.system_status.details_accessible === true &&
+    evidence.system_status.control_center_link === true;
 
-  if (scenarioFails === 0 && responsiveFails === 0 && statusOk) {
+  if (scenarioFails === 0 && responsiveFails === 0 && stickyFails === 0 && statusOk) {
     evidence.verdict = "BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS";
   } else if (!statusOk) {
-    evidence.verdict = "SYSTEM_STATUS_PRESENTATION_FAILED";
+    evidence.verdict = "RUNTIME_STATUS_PRESENTATION_FAILED";
+  } else if (stickyFails > 0) {
+    evidence.verdict = "STICKY_LAYOUT_FAILED";
   } else if (responsiveFails > 0) {
     evidence.verdict = "UI_RESPONSIVE_FAILED";
   } else if (evidence.scenarios.full_product?.verdict !== "PASS") {
     evidence.verdict = "FULL_PRODUCT_UI_REGRESSION";
+  } else if (
+    Object.values(evidence.scenarios).some(
+      (s) => s.upload_ok === false || s.probes?.file_name !== "gradi-curat.svg",
+    )
+  ) {
+    evidence.verdict = "REAL_SVG_UI_PROOF_FAILED";
   } else {
     evidence.verdict = "SUBSET_UI_REGRESSION";
   }

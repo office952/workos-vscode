@@ -1,101 +1,91 @@
-# Build 3 — Operator UI closeout and multi-agent visual review
+# Build 3 — Operator UI closeout (compact runtime status + sticky layout)
 
 | Field | Value |
 |-------|-------|
-| Task | BUILD 3 OPERATOR UI CLOSEOUT AND MULTI-AGENT VISUAL REVIEW |
+| Task | BUILD 3 UI CLOSEOUT — COMPACT RUNTIME STATUS + STICKY LAYOUT CORRECTION |
 | Date | 2026-07-17 |
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| Start HEAD | `7beb357` (Build 3 worklog) |
-| End HEAD | `f96ad0b` (operator UI closeout); tip `a88cfa6` |
+| Start HEAD | `ce63b76` |
+| End HEAD | *(filled after commit)* |
+| Feature commit (prior closeout) | `f96ad0b` |
 | Verdict | `BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS` |
 
-## Owner request
+## Root cause
 
-Remove the persistent full-width red/staging system banner from the primary Intake V6 operator work area. Keep status accessible via compact indicator. Validate four modular scenarios with **real UI upload** of:
+App-shell `EnvironmentBanner` previously occupied a full-width strip under the topbar. Staging/environment context was visually dominant. Severity already came from backend/DB truth (`deriveSeverity`) — staging ≠ critical — but presentation treated informational states like a persistent alert band.
 
-`C:/Users/offic/Desktop/fisiere-teste-svg/gradi-curat.svg`
+## Runtime severity map (unchanged meaning)
 
-## Agents
+| Backend / DB truth | Banner severity | Presentation |
+|--------------------|-----------------|--------------|
+| loading/checking | neutral | Compact chip „Se verifică” |
+| healthy + DB confirmed | positive | Compact „{Env} · Sistem disponibil” |
+| warning / unknown / DB unverified / stale / demo | warning | Compact amber „Stare sistem: necesită verificare” (demo: „Mod demo”) |
+| unavailable / critical | critical | Red chip „Stare sistem” + dismissible critical strip + details |
 
-| Agent | Role |
-|-------|------|
-| A | Runtime UI truth |
-| B | UI/UX reviewer guidance |
-| C | System-status banner owner |
-| D | Modular UI contract |
-| E | Live calculation panel |
-| F | Responsive |
-| G | Regression |
-| H | Adversarial UI |
-| Writer | Single implementation |
-| Fix | E2E locator strict-mode (duplicate svg-input) |
+No `if staging then hide`. No severity remapping.
 
-## UI reviewer — TOP 5
+## Chosen presentation
 
-1. **Mandatory:** Full-width `EnvironmentBanner` under topbar consumes vertical space and dominates with staging/warning chrome.
-2. Technical strip always visible for non-critical states.
-3. Review autosave footer `sticky bottom-0` competes with workspace footer.
-4. Scope summary must remain visible after banner removal.
-5. Live calc panel must stay usable at 1440/1280/768.
+1. Compact chip in `workos-desktop-topbar` (`data-presentation="compact"`).
+2. Expandable `RuntimeStatusDetails` panel.
+3. Link „Deschide Control Center” → `/modules`.
+4. Critical: visible strip with „Detalii stare sistem” + „Ascunde”; chip remains critical after collapse.
 
-### Mandatory fix
+## Sticky analysis
 
-- Persistent full-width system banner → compact topbar chip.
+- `IntakeV6OperatorWorkspaceFooter`: sole `sticky bottom-0 z-10` authority.
+- `IntakeV6ReviewSaveFooter`: `relative z-0 mb-20` (already corrected in `f96ad0b`).
+- Runtime E2E confirmed: `workspace_sticky=true`, `save_relative=true`.
+- Live calc: `lg:sticky lg:top-4` shell — opposite edge, no footer fight.
 
-### Optional (done, low risk)
+## Calculator analysis
 
-- Review save footer no longer sticky (avoids overlap).
-- Control Center link in details panel.
+Desktop right panel remains readable; not covered by footer. Values unchanged (no CPP/formula edits).
 
-### Do not touch
+## Real SVG path
 
-- Formulas, CPP, active scope, SVG analyzer logic, PD/Aggregate filters.
+`C:/Users/offic/Desktop/fisiere-teste-svg/gradi-curat.svg`  
+Upload: UI `data-testid="intake-v6-svg-input"` only.  
+Hash: `593c4d43…6cf1` · layers 6 · ~5087×600 mm.
 
-## Synthesis / strategy
+## Workspaces (this pass)
 
-Root cause: App-shell `EnvironmentBanner` always mounted between topbar and `<main>` (`App.tsx`). Staging only labels text; red/`critical` comes from backend unavailable — but warning/staging still used a full-width strip.
+| Scenario | Workspace ID |
+|----------|--------------|
+| Full product | `b4502ac6-ce5e-4f96-b67f-5a3cb55388db` |
+| FACE | `9e3743be-ee44-41c5-9d93-0cb5803c5ff3` |
+| CANT | `ada11273-2f45-426b-822f-7e691c7e0bb3` |
+| FACE+CANT | `101b0cb3-96e2-48bb-9fd2-9fa13e1bc20d` |
 
-**Chosen presentation:** compact chip inside `workos-desktop-topbar` (`data-presentation="compact"`), expandable details panel, critical one-line dismissible strip only when severity is critical. Technical details only inside expanded panel. Health hooks unchanged.
+## Tests
 
-## Files changed
-
-- `frontend/src/components/workos/EnvironmentBanner.tsx`
-- `frontend/src/components/workos/EnvironmentBanner.test.tsx`
-- `frontend/src/App.tsx`
-- `frontend/src/components/workos/intake-v6/IntakeV6ReviewSaveFooter.tsx`
-- Evidence + worklog under `docs/audits/_evidence/2026-07-17_intake_v6_build3_operator_ui_closeout/`
-
-## Four-scenario UI proof (real SVG upload)
-
-| Scenario | Workspace | Verdict |
-|----------|-----------|---------|
-| Full product | `4d00bf12-8a21-441a-8b53-1be836d786d3` | PASS |
-| FACE only | `1e287dc6-7eae-49ef-8b81-7b4b1a1ed063` | PASS |
-| CANT only | `33761248-5a40-45b8-9aed-15de4922d9ca` | PASS |
-| FACE+CANT | `e9167aa3-50f9-460c-a58f-eb124869dc52` | PASS |
-
-Upload method: UI `data-testid="intake-v6-svg-input"` (operator panel). SVG hash `593c4d43…6cf1`.
-
-Isolation: adhesive present on full / FACE+CANT; absent on FACE-only / CANT-only.
-
-## System status proof
-
-- Compact chip in topbar: PASS
-- Staging shows as chip label, not full-width strip: PASS
-- Details accessible via chip click: PASS
-- Responsive 1440 / 1280 / 1024 / 768: PASS
+- Vitest `EnvironmentBanner`: 7 passed (healthy / warning / critical dismiss / Control Center / staging≠critical).
+- Pytest Build 1/2/3: 37 passed.
+- Playwright closeout E2E: PASS four scenarios + responsive 1440/1280/1024/768.
 
 ## Adversarial + fix pass
 
-- Not CSS-only hide — component remounted into topbar, presentation attribute `compact`.
-- Critical strip still rendered for unavailable backend; dismissible without deleting health.
-- E2E fix: duplicate `intake-v6-svg-input` nodes → prefer layers operator panel `.first()`.
+- Not CSS-only hide — remount + compact presentation + label matrix.
+- Staging remains warning when DB unverified; not forced healthy; not critical.
+- Critical strip dismissible; chip severity persists.
+- Fix pass: `mkdirSync` for `08_payloads` before write (ENOENT false FAIL).
+- Sticky already correct — no second sticky change.
+
+## Files changed (this pass)
+
+- `frontend/src/components/workos/EnvironmentBanner.tsx`
+- `frontend/src/components/workos/EnvironmentBanner.test.tsx`
+- Evidence + e2e under `docs/audits/_evidence/2026-07-17_intake_v6_build3_operator_ui_closeout/`
+- This worklog
+
+Prior closeout (`f96ad0b`): `App.tsx`, `IntakeV6ReviewSaveFooter.tsx`.
 
 ## Exclusions
 
-No schema/migration/seed, no formula/price/CPP/PD/Aggregate/active-scope changes, no Build 4.
+No schema/migration/seed · no PD/Aggregate/CPP/formula/price/active-scope · no Build 4.
 
 ## Next step
 
-Owner visual review. **STOP — do not start Build 4.**
+Owner visual review. **STOP.**
