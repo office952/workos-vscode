@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-FORM_CONTRACT_VERSION = "1.2.0-generic-renderer-pilot"
+FORM_CONTRACT_VERSION = "1.3.0-full-product-composition"
 
 SupportedFieldType = Literal[
     "text",
@@ -88,8 +88,19 @@ class IntakeFormFieldBinding(BaseModel):
     notes: list[str] = Field(default_factory=list)
 
 
+RenderAdapterId = Literal[
+    "specialized_letter_groups",
+    "generic_fields",
+    "specialized_montaj",
+    "specialized_lighting",
+    "metadata_only",
+]
+
+UiTabId = Literal["finisaje", "iluminare", "montaj"]
+
+
 class IntakeRenderSection(BaseModel):
-    """Ordered UI section for generic Intake contract rendering."""
+    """Ordered UI section for Intake contract composition (Build 2 full-product)."""
 
     section_key: str
     title_ro: str
@@ -99,6 +110,25 @@ class IntakeRenderSection(BaseModel):
     field_keys: list[str] = Field(default_factory=list)
     visibility: IntakeVisibilityRule | None = None
     pilot_role: str | None = None
+    # Build 2 additive composition metadata — does not change golden field writes.
+    ui_tab_id: UiTabId | None = None
+    renderer: RenderAdapterId | None = None
+    component_owners: list[str] = Field(default_factory=list)
+    tab_label_ro: str | None = None
+    tab_hint_ro: str | None = None
+    drives_review_tab: bool = False
+
+
+class FullProductCompositionSpec(BaseModel):
+    """Full-product composition authority for Letters — no subset activation."""
+
+    mode: Literal["full_product_only"] = "full_product_only"
+    composition_authority: bool = True
+    subset_activation_enabled: bool = False
+    ui_tab_ids: list[str] = Field(default_factory=list)
+    component_owners: list[str] = Field(default_factory=list)
+    interface_candidates: list[dict[str, Any]] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
 
 
 class IntakeModuleFormSection(BaseModel):
@@ -142,6 +172,8 @@ class IntakeV6ModularFormContractSummary(BaseModel):
     # When true, runtime_authority_scope must describe the bounded surface.
     runtime_authority: bool = False
     runtime_authority_scope: str | None = None
+    # Build 2: Review tab order / section registry consumed from this contract.
+    composition_authority: bool = False
     warnings: list[str] = Field(default_factory=list)
 
 
@@ -158,4 +190,5 @@ class IntakeV6ModularFormContract(BaseModel):
     valid_combinations: list[str] = Field(default_factory=list)
     invalid_combinations: list[str] = Field(default_factory=list)
     orphan_fields_audit: list[str] = Field(default_factory=list)
+    full_product_composition: FullProductCompositionSpec | None = None
     notes: list[str] = Field(default_factory=list)

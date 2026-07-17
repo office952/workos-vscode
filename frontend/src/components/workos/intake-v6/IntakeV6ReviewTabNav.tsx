@@ -1,5 +1,6 @@
 import {
   resolveIntakeV6ReviewTabs,
+  type IntakeV6ReviewTabDefinition,
   type IntakeV6ReviewTabId,
 } from "@/lib/intakeV6/intakeV6ProductPlugin";
 
@@ -14,16 +15,21 @@ export default function IntakeV6ReviewTabNav({
   onChange,
   templateCode,
   pendingFinisaje = 0,
+  tabs: tabsOverride = null,
+  compositionAuthority = false,
 }: {
   active: IntakeV6ReviewTabId;
   onChange: (tab: IntakeV6ReviewTabId) => void;
-  /** Workspace template code — drives product plugin review tabs. */
+  /** Workspace template code — drives product plugin review tabs (fallback). */
   templateCode?: string | null;
   pendingFinisaje?: number;
+  /** Build 2: tabs composed from modular form contract when present. */
+  tabs?: IntakeV6ReviewTabDefinition[] | null;
+  compositionAuthority?: boolean;
   /** @deprecated LED state is shown in tab content; ON pill removed (badge noise reduction). */
   illuminated?: boolean;
 }) {
-  const tabs = resolveIntakeV6ReviewTabs(templateCode);
+  const tabs = tabsOverride?.length ? tabsOverride : resolveIntakeV6ReviewTabs(templateCode);
 
   return (
     <div
@@ -31,6 +37,7 @@ export default function IntakeV6ReviewTabNav({
       role="tablist"
       aria-label="Secțiuni review"
       data-testid="intake-v6-review-tabs"
+      data-composition-authority={compositionAuthority ? "contract" : "plugin-fallback"}
     >
       {tabs.map((tab) => {
         const selected = active === tab.id;

@@ -31,8 +31,9 @@ function makeLettersContract(
   return {
     summary: {
       template_code: "TPL-VOLUMETRIC-LETTERS_v2",
-      contract_version: "1.2.0-generic-renderer-pilot",
+      contract_version: "1.3.0-full-product-composition",
       runtime_authority: false,
+      composition_authority: true,
       runtime_authority_scope: "selected_sections:finisaje_fields,iluminare,montaj_template",
     },
     modules: [],

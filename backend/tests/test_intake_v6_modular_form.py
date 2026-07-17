@@ -21,7 +21,7 @@ def test_form_contract_exists_for_volumetric_v2(form_service: IntakeV6ModularFor
     contract = form_service.get_for_template(TEMPLATE)
     assert contract is not None
     assert contract.summary.template_code == TEMPLATE
-    assert contract.summary.active_module_count == 7
+    assert contract.summary.active_module_count == 9
     assert contract.form_system_backbone is not None
     assert contract.form_system_backbone["root"]["canonical_code"] == TEMPLATE
     assert contract.form_system_backbone["linked_template_composition"]["linked_templates"][0]["composition_role"] == "linked_logo_segment"
@@ -90,14 +90,23 @@ def test_letters_canonical_form_contract_version_runtime_authority_and_field_key
 ):
     contract = form_service.get_for_template(TEMPLATE)
     assert contract is not None
-    assert contract.summary.contract_version == "1.2.0-generic-renderer-pilot"
+    assert contract.summary.contract_version == "1.3.0-full-product-composition"
     assert contract.summary.runtime_authority is False
+    assert contract.summary.composition_authority is True
     assert contract.summary.runtime_authority_scope == (
         "selected_sections:finisaje_fields,iluminare,montaj_template"
     )
     assert any("selected_sections" in note.lower() for note in contract.notes)
     section_keys = {section.section_key for section in contract.render_sections}
-    assert section_keys == {"finisaje_fields", "iluminare", "montaj_template"}
+    assert {
+        "finisaje_fields",
+        "iluminare",
+        "montaj_template",
+        "montaj_system",
+        "geometry_svg",
+        "packaging_logistics",
+        "interface_face_cant",
+    }.issubset(section_keys)
     assert "finish_setup.lighting_system_type" in contract.writable_workspace_paths
     lighting = next(f for f in contract.field_bindings if f.canonical_key == "lighting_system_type")
     assert lighting.field_type == "select"
@@ -182,14 +191,17 @@ def test_form_contract_endpoint_200(form_auth_client):
     response = form_auth_client.get(f"/api/v1/intake-v6/form-contract/{TEMPLATE}")
     assert response.status_code == 200
     body = response.json()
-    assert body["summary"]["active_module_count"] == 7
-    assert body["summary"]["contract_version"] == "1.2.0-generic-renderer-pilot"
+    assert body["summary"]["active_module_count"] == 9
+    assert body["summary"]["contract_version"] == "1.3.0-full-product-composition"
     assert body["summary"]["runtime_authority"] is False
+    assert body["summary"]["composition_authority"] is True
     assert body["summary"]["runtime_authority_scope"] == (
         "selected_sections:finisaje_fields,iluminare,montaj_template"
     )
     assert len(body["field_bindings"]) >= 20
-    assert len(body["render_sections"]) == 3
+    assert len(body["render_sections"]) >= 7
+    assert body["full_product_composition"]["subset_activation_enabled"] is False
+    assert body["full_product_composition"]["ui_tab_ids"] == ["finisaje", "iluminare", "montaj"]
     assert "finish_setup.mounting_template_enabled" in body["writable_workspace_paths"]
     assert body["form_system_backbone"]["read_only"] is True
     assert body["form_system_backbone"]["root"]["canonical_code"] == TEMPLATE

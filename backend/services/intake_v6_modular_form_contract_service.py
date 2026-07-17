@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from schemas.intake_v6_modular_form import (
     ActivationKind,
+    FullProductCompositionSpec,
     IntakeFormFieldBinding,
     IntakeFormOption,
     IntakeModuleFormSection,
@@ -24,13 +25,26 @@ _GEOM = "quote_geometry"
 _CLIENT = "client"
 _SVG = "svg_source"
 
-# Scoped runtime authority — Letters pilot sections (generic renderer).
+# Scoped runtime authority — Letters pilot generic field writes (unchanged in Build 2).
 _LETTERS_RUNTIME_AUTHORITY_SCOPE = "selected_sections:finisaje_fields,iluminare,montaj_template"
 _LETTERS_RUNTIME_AUTHORITY_NOTE = (
-    "runtime_authority=false; runtime_authority_scope=selected_sections:finisaje_fields,iluminare,montaj_template — "
-    "Product System owns render_sections + field metadata for the Letters pilot; "
-    "letter-group layout, analyzer geometry, mounting_scope/solution remain Intake frontend temporarily."
+    "runtime_authority=false; composition_authority=true; "
+    "runtime_authority_scope=selected_sections:finisaje_fields,iluminare,montaj_template — "
+    "Product System owns full-product Review tab order + section registry; "
+    "generic field writes remain allowlisted; letter-group/montaj specialized adapters preserve golden UI; "
+    "subset activation disabled; FACE+CANT adhesive interface is metadata-only target."
 )
+
+_FACE_CANT_INTERFACE_CANDIDATE = {
+    "interface_id": "RETURN_FACE_BONDING",
+    "components": ["FACE", "CANT"],
+    "material_code": "MAT-ADEZIV-CANT-LITERE",
+    "operation_codes": ["RETURN_PROFILE_FACE_BONDING", "return_face_bonding"],
+    "current_owner": "modelare_cant",
+    "target_owner": "interface:FACE+CANT",
+    "build2_behavior": "full_product_output_unchanged",
+    "build3_isolation": "cant_only_must_silence_adhesive_and_bonding",
+}
 
 _OPTION_LABELS_RO: dict[str, dict[str, str]] = {
     "face_finish_type": {
@@ -107,9 +121,9 @@ def _enrich_binding(binding: IntakeFormFieldBinding) -> IntakeFormFieldBinding:
 LETTERS_RENDER_SECTIONS: list[IntakeRenderSection] = [
     IntakeRenderSection(
         section_key="finisaje_fields",
-        title_ro="Finisaje (câmpuri contract)",
+        title_ro="Finisaje",
         order=10,
-        description_ro="Finisaj față, cant și spate — metadate Product System; layout pe grup litere rămâne adapter specializat.",
+        description_ro="Față · cant · spate / Vector Logo — adapter specializat pe grupuri litere (golden UI).",
         module_codes=["debitare_fata", "modelare_cant", "debitare_spate"],
         field_keys=[
             "face_finish_type",
@@ -118,15 +132,27 @@ LETTERS_RENDER_SECTIONS: list[IntakeRenderSection] = [
             "backing_mode",
         ],
         pilot_role="adapted_specialized",
+        ui_tab_id="finisaje",
+        renderer="specialized_letter_groups",
+        component_owners=["FACE", "CANT", "BACK", "SURFACE_FINISH"],
+        tab_label_ro="Finisaje",
+        tab_hint_ro="Față · cant · Vector Logo",
+        drives_review_tab=True,
     ),
     IntakeRenderSection(
         section_key="iluminare",
         title_ro="Iluminare",
         order=20,
-        description_ro="Tip iluminare și PSU — randate generic din contract.",
+        description_ro="Tip iluminare și PSU — câmpuri generice + adapter iluminare specializat.",
         module_codes=["sistem_led"],
         field_keys=["lighting_system_type", "selected_psu_watts"],
         pilot_role="generic_renderer",
+        ui_tab_id="iluminare",
+        renderer="specialized_lighting",
+        component_owners=["LIGHTING", "ELECTRICAL"],
+        tab_label_ro="Iluminare",
+        tab_hint_ro="LED · backing",
+        drives_review_tab=True,
     ),
     IntakeRenderSection(
         section_key="montaj_template",
@@ -136,6 +162,61 @@ LETTERS_RENDER_SECTIONS: list[IntakeRenderSection] = [
         module_codes=["sablon_montaj"],
         field_keys=["mounting_template_enabled", "mounting_template_area_m2"],
         pilot_role="generic_renderer",
+        ui_tab_id="montaj",
+        renderer="generic_fields",
+        component_owners=["INSTALLATION_TEMPLATE"],
+        tab_label_ro="Montaj",
+        tab_hint_ro="Șablon · sistem",
+        drives_review_tab=True,
+    ),
+    IntakeRenderSection(
+        section_key="montaj_system",
+        title_ro="Sistem montaj",
+        order=31,
+        description_ro="Sistem / scope montaj — adapter specializat golden (nu câmpuri generice noi).",
+        module_codes=["finisaje", "structura_suport"],
+        field_keys=["mounting_system"],
+        pilot_role="adapted_specialized",
+        ui_tab_id="montaj",
+        renderer="specialized_montaj",
+        component_owners=["MOUNTING", "STRUCTURE_SUPPORT"],
+        drives_review_tab=False,
+    ),
+    IntakeRenderSection(
+        section_key="geometry_svg",
+        title_ro="Geometrie SVG",
+        order=5,
+        description_ro="Facts SVG (layere, culori, contururi, dimensiuni) — consumate din analyzer; fără redesign classifier.",
+        module_codes=["geometry_svg"],
+        field_keys=["vector_file", "width_mm", "height_mm", "letter_count", "letter_perimeter_m", "letter_face_area_m2"],
+        pilot_role="readonly_geometry",
+        renderer="metadata_only",
+        component_owners=["GEOMETRY_SVG"],
+        drives_review_tab=False,
+    ),
+    IntakeRenderSection(
+        section_key="packaging_logistics",
+        title_ro="Ambalare / logistică",
+        order=40,
+        description_ro="Comportament full-product golden (always-on / pending) — fără sold packaging în Build 2.",
+        module_codes=["ambalare_livrare_montaj"],
+        field_keys=[],
+        pilot_role="composition_metadata",
+        renderer="metadata_only",
+        component_owners=["PACKAGING_LOGISTICS"],
+        drives_review_tab=False,
+    ),
+    IntakeRenderSection(
+        section_key="interface_face_cant",
+        title_ro="Interfață FACE+CANT (candidat)",
+        order=50,
+        description_ro="Target ownership pentru adeziv/bonding — metadata Build 2; output full-product neschimbat.",
+        module_codes=["modelare_cant", "debitare_fata"],
+        field_keys=[],
+        pilot_role="composition_metadata",
+        renderer="metadata_only",
+        component_owners=["FACE", "CANT", "INTERFACE_FACE_CANT"],
+        drives_review_tab=False,
     ),
 ]
 
@@ -600,6 +681,29 @@ class IntakeV6ModularFormContractService:
         )
 
         enriched_bindings = [_enrich_binding(b) for b in VOLUMETRIC_FIELD_BINDINGS]
+        tab_driving = [s for s in LETTERS_RENDER_SECTIONS if s.drives_review_tab and s.ui_tab_id]
+        ui_tab_ids: list[str] = []
+        for section in sorted(tab_driving, key=lambda s: s.order):
+            if section.ui_tab_id and section.ui_tab_id not in ui_tab_ids:
+                ui_tab_ids.append(section.ui_tab_id)
+        component_owners: list[str] = []
+        for section in LETTERS_RENDER_SECTIONS:
+            for owner in section.component_owners:
+                if owner not in component_owners:
+                    component_owners.append(owner)
+        composition = FullProductCompositionSpec(
+            mode="full_product_only",
+            composition_authority=True,
+            subset_activation_enabled=False,
+            ui_tab_ids=ui_tab_ids,
+            component_owners=component_owners,
+            interface_candidates=[_FACE_CANT_INTERFACE_CANDIDATE],
+            notes=[
+                "Build 2: Review tabs composed from render_sections (drives_review_tab).",
+                "Specialized adapters preserve golden Finisaje/Iluminare/Montaj UI.",
+                "Subset request modes remain disabled until Build 3 owner GO.",
+            ],
+        )
         return IntakeV6ModularFormContract(
             summary=IntakeV6ModularFormContractSummary(
                 template_code=canonical_template_code,
@@ -608,6 +712,7 @@ class IntakeV6ModularFormContractService:
                 field_binding_count=len(enriched_bindings),
                 runtime_authority=False,
                 runtime_authority_scope=_LETTERS_RUNTIME_AUTHORITY_SCOPE,
+                composition_authority=True,
                 warnings=warnings,
             ),
             modules=modules,
@@ -619,14 +724,16 @@ class IntakeV6ModularFormContractService:
             valid_combinations=VALID_COMBINATIONS,
             invalid_combinations=INVALID_COMBINATIONS,
             orphan_fields_audit=ORPHAN_FIELDS_AUDIT,
+            full_product_composition=composition,
             notes=[
                 _LETTERS_RUNTIME_AUTHORITY_NOTE,
-                "render_sections drive the generic Intake renderer for the Letters pilot only.",
-                "writable_workspace_paths is the allowlist for generic nested writes.",
+                "render_sections drive Review tab composition + generic field sections for Letters full-product.",
+                "writable_workspace_paths is the allowlist for generic nested writes (unchanged vs Build 1).",
                 "Does not mutate workspace payload server-side; Intake hydrates/saves answers.",
                 "ProductDefinition consumes field_bindings / product_definition_keys as compiler inputs.",
                 "ProductAggregate emits non-monetary commercial measurements; CPP 7G alone prices.",
                 "Other templates remain unsupported by this scoped contract.",
+                "No second Intake; no parallel catalog; no subset activation in Build 2.",
             ],
         )
 

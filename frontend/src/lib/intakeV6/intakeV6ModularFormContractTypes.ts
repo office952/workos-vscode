@@ -63,6 +63,15 @@ export interface IntakeV6ModularFormFieldBinding {
   notes?: string[];
 }
 
+export type IntakeV6RenderAdapterId =
+  | "specialized_letter_groups"
+  | "generic_fields"
+  | "specialized_montaj"
+  | "specialized_lighting"
+  | "metadata_only";
+
+export type IntakeV6UiTabId = "finisaje" | "iluminare" | "montaj";
+
 export interface IntakeV6RenderSection {
   section_key: string;
   title_ro: string;
@@ -72,6 +81,22 @@ export interface IntakeV6RenderSection {
   field_keys?: string[];
   visibility?: IntakeV6VisibilityRule | null;
   pilot_role?: string | null;
+  ui_tab_id?: IntakeV6UiTabId | null;
+  renderer?: IntakeV6RenderAdapterId | null;
+  component_owners?: string[];
+  tab_label_ro?: string | null;
+  tab_hint_ro?: string | null;
+  drives_review_tab?: boolean;
+}
+
+export interface IntakeV6FullProductComposition {
+  mode?: "full_product_only";
+  composition_authority?: boolean;
+  subset_activation_enabled?: boolean;
+  ui_tab_ids?: string[];
+  component_owners?: string[];
+  interface_candidates?: Array<Record<string, unknown>>;
+  notes?: string[];
 }
 
 export interface IntakeV6ModularFormModuleSection {
@@ -111,6 +136,8 @@ export interface IntakeV6ModularFormContractSummary {
   runtime_authority?: boolean;
   /** Bounded surface, e.g. review_labels — not full dynamic form generation. */
   runtime_authority_scope?: string | null;
+  /** Build 2: Review tab order / section registry consumed from this contract. */
+  composition_authority?: boolean;
   warnings?: string[];
 }
 
@@ -194,5 +221,6 @@ export interface IntakeV6ModularFormContractResponse {
   valid_combinations?: string[];
   invalid_combinations?: string[];
   orphan_fields_audit?: string[];
+  full_product_composition?: IntakeV6FullProductComposition | null;
   notes?: string[];
 }

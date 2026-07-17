@@ -213,6 +213,10 @@ import { resolveLayerCardStatus } from "../letterGroupCardPresentation";
 import { useIntakeV6WorkspaceHeaderStatus } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { resolveLettersCanonicalFieldLabels } from "@/lib/intakeV6/lettersCanonicalFormContract";
+import {
+  contractCompositionProvenance,
+  resolveReviewTabsFromModularContract,
+} from "@/lib/intakeV6/resolveReviewTabsFromModularContract";
 import { isContractRendererEnabled } from "@/lib/intakeV6/contractRenderer/isContractRendererEnabled";
 import {
   finishSetupKeyFromPath,
@@ -719,6 +723,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   );
   const contractRendererEnabled = isContractRendererEnabled(modularTemplateCode);
   const modularFormContract = modularFormContractHook.contract;
+  const contractComposedReviewTabs = useMemo(
+    () => resolveReviewTabsFromModularContract(modularFormContract),
+    [modularFormContract],
+  );
+  const compositionProvenance = useMemo(
+    () => contractCompositionProvenance(modularFormContract),
+    [modularFormContract],
+  );
   const contractValueRoot = useMemo(
     () => ({ finish_setup: form as unknown as Record<string, unknown> }),
     [form],
@@ -2012,9 +2024,24 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         active={reviewTab}
         onChange={setReviewTab}
         templateCode={modularTemplateCode}
+        tabs={contractComposedReviewTabs}
+        compositionAuthority={compositionProvenance.compositionAuthority}
         pendingFinisaje={pendingConfirmationCount}
         illuminated={form.illuminated !== false}
       />
+      <div
+        className="sr-only"
+        data-testid="intake-v6-full-product-composition"
+        data-composition-authority={
+          compositionProvenance.compositionAuthority ? "true" : "false"
+        }
+        data-subset-activation={
+          compositionProvenance.subsetActivationEnabled ? "true" : "false"
+        }
+        data-section-keys={compositionProvenance.sectionKeys.join(",")}
+      >
+        Full-product composition from modular form contract
+      </div>
 
       <IntakeV6ReviewOperatorBlockerBanner
         display={operatorBlockerBannerDisplay}
