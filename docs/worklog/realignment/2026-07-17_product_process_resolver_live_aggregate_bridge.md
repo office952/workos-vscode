@@ -6,7 +6,7 @@
 | Date | 2026-07-17 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `baec7a9` |
-| End HEAD | (see commit) |
+| End HEAD | `96343cd` (`feat(product-system): bridge process resolver into live aggregate compile`) |
 | Initial | `PRODUCT_PROCESS_LIVE_AGGREGATE_BRIDGE_IN_PROGRESS` |
 | Final | `PRODUCT_PROCESS_LIVE_AGGREGATE_BRIDGE_COMPLETE_WITH_GUARDS` |
 
