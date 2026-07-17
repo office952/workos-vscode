@@ -8,9 +8,9 @@
 | Remote | `https://github.com/office952/workos-vscode.git` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `163f35f` |
-| End HEAD | *(filled after commit)* |
+| End HEAD | `9d56b19` |
 | Mode | IMPLEMENTATION WITH OWNER GO — Build 1 only |
-| Commit | exact-path isolated |
+| Commit | `9d56b19` — exact-path isolated |
 
 ## Objective
 
