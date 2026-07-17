@@ -1,12 +1,19 @@
 """Read frozen sold scope from OrderSnapshotV2 for Execution Plan V2 filtering.
 
-Uses offer_scope_snapshot fields only — no resolver rerun, no aggregate rebuild.
+Primary: enriched active_scope_snapshot (compiled ActiveScopeResult).
+Fallback: thin offer_scope_snapshot + legacy RETURN-CANT hardcode.
+Never re-resolves offer_scope, never rebuilds aggregate, never rereads Intake workspace.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 
+from schemas.active_scope_snapshot import (
+    ACTIVE_SCOPE_SNAPSHOT_VERSION,
+    KNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSIONS,
+    QuoteSnapshotActiveScope,
+)
 from schemas.order_snapshot_v2 import OrderSnapshotV2
 from schemas.product_aggregate import ProductAggregateOperation, ProductAggregateTaskRule
 from services.offer_scope_led_subscope_service import (
@@ -32,6 +39,9 @@ EXECUTION_PRICED_OP_RUNTIME_ALIASES: dict[str, str] = {
 }
 
 BLOCKED_MISSING_SOLD_SCOPE = "blocked_missing_sold_scope"
+LEGACY_SCOPE_FALLBACK = "legacy_scope_fallback"
+ENRICHED_SCOPE = "enriched"
+UNKNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSION = "unknown_active_scope_snapshot_version"
 
 
 @dataclass(frozen=True)
@@ -46,15 +56,36 @@ class ExecutionSoldScopeContext:
     block_preview: bool = False
     block_reason: str | None = None
     lighting_mount_consumer: LightingMountConsumerDecision | None = None
+    composition_excluded_operations: frozenset[str] = frozenset()
+    scope_compatibility_mode: str = LEGACY_SCOPE_FALLBACK
+    active_scope_snapshot_version: str | None = None
 
 
 def _text(value: str | None) -> str:
     return str(value or "").strip()
 
 
+def _enriched_usable(active: QuoteSnapshotActiveScope | None) -> bool:
+    if active is None:
+        return False
+    version = _text(active.active_scope_snapshot_version)
+    if version not in KNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSIONS:
+        return False
+    if active.compatibility_mode != ENRICHED_SCOPE:
+        return False
+    compiled = active.compiled
+    if compiled is None or compiled.use_legacy_full_product:
+        return False
+    if compiled.errors:
+        return False
+    return True
+
+
 def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeContext:
-    """Read frozen order scope — never calls offer_scope resolver."""
+    """Read frozen order scope — never calls offer_scope resolver or live workspace."""
     offer_scope = snapshot.offer_scope_snapshot
+    active = getattr(snapshot, "active_scope_snapshot", None)
+
     if offer_scope is None or offer_scope.use_legacy or offer_scope.mode == "full_product":
         mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
             mode="full_product",
@@ -65,24 +96,101 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
             mode="full_product" if offer_scope is None else offer_scope.mode,
             linked_logo_tasks_allowed=True,
             lighting_mount_consumer=mount_consumer,
+            scope_compatibility_mode=LEGACY_SCOPE_FALLBACK,
+            active_scope_snapshot_version=(
+                active.active_scope_snapshot_version if active is not None else None
+            ),
         )
 
+    confirmations = frozenset(
+        str(code).strip()
+        for code in (getattr(offer_scope, "dependency_confirmations", None) or [])
+        if str(code).strip()
+    )
+
+    # --- Primary: enriched compiled freeze ---
+    if _enriched_usable(active):
+        assert active is not None
+        compiled = active.compiled
+        sold_runtime = frozenset(
+            m for m in (compiled.execution_scope_modules or []) if _text(m)
+        )
+        canonical_sold = frozenset(
+            c for c in (compiled.sold_module_codes or []) if _text(c)
+        )
+        exclusions = frozenset(
+            op for op in (compiled.composition_excluded_operations or []) if _text(op)
+        )
+        mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
+            mode=compiled.mode,
+            canonical_sold_modules=canonical_sold,
+            dependency_confirmations=confirmations,
+        )
+        if not sold_runtime:
+            return ExecutionSoldScopeContext(
+                filter_enabled=True,
+                mode="component_subset",
+                sold_runtime_modules=frozenset(),
+                canonical_sold_modules=canonical_sold,
+                linked_logo_tasks_allowed=False,
+                block_preview=True,
+                block_reason=BLOCKED_MISSING_SOLD_SCOPE,
+                lighting_mount_consumer=mount_consumer,
+                composition_excluded_operations=exclusions,
+                scope_compatibility_mode=ENRICHED_SCOPE,
+                active_scope_snapshot_version=active.active_scope_snapshot_version,
+            )
+        return ExecutionSoldScopeContext(
+            filter_enabled=True,
+            mode="component_subset",
+            sold_runtime_modules=sold_runtime,
+            canonical_sold_modules=canonical_sold,
+            linked_logo_tasks_allowed=False,
+            lighting_mount_consumer=mount_consumer,
+            composition_excluded_operations=exclusions,
+            scope_compatibility_mode=ENRICHED_SCOPE,
+            active_scope_snapshot_version=active.active_scope_snapshot_version
+            or ACTIVE_SCOPE_SNAPSHOT_VERSION,
+        )
+
+    # Unknown enriched version present → fail closed (do not silently drop exclusions).
+    if active is not None:
+        version = _text(active.active_scope_snapshot_version)
+        if version and version not in KNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSIONS:
+            canonical_sold = frozenset(
+                code for code in (offer_scope.sold_modules or []) if _text(code)
+            )
+            mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
+                mode=offer_scope.mode,
+                canonical_sold_modules=canonical_sold,
+                dependency_confirmations=confirmations,
+            )
+            return ExecutionSoldScopeContext(
+                filter_enabled=True,
+                mode="component_subset",
+                sold_runtime_modules=frozenset(),
+                canonical_sold_modules=canonical_sold,
+                linked_logo_tasks_allowed=False,
+                block_preview=True,
+                block_reason=UNKNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSION,
+                lighting_mount_consumer=mount_consumer,
+                scope_compatibility_mode=UNKNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSION,
+                active_scope_snapshot_version=version,
+            )
+
+    # --- Legacy thin offer_scope fallback ---
     sold_runtime = frozenset(
         module for module in (offer_scope.resolved_runtime_sold_modules or []) if _text(module)
     )
     canonical_sold = frozenset(
         code for code in (offer_scope.sold_modules or []) if _text(code)
     )
-    confirmations = frozenset(
-        str(code).strip()
-        for code in (getattr(offer_scope, "dependency_confirmations", None) or [])
-        if str(code).strip()
-    )
     mount_consumer = resolve_lighting_mount_consumers_from_snapshot(
         mode=offer_scope.mode,
         canonical_sold_modules=canonical_sold,
         dependency_confirmations=confirmations,
     )
+
     if not sold_runtime:
         return ExecutionSoldScopeContext(
             filter_enabled=True,
@@ -93,6 +201,10 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
             block_preview=True,
             block_reason=BLOCKED_MISSING_SOLD_SCOPE,
             lighting_mount_consumer=mount_consumer,
+            scope_compatibility_mode=LEGACY_SCOPE_FALLBACK,
+            active_scope_snapshot_version=(
+                active.active_scope_snapshot_version if active is not None else None
+            ),
         )
 
     return ExecutionSoldScopeContext(
@@ -102,6 +214,10 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
         canonical_sold_modules=canonical_sold,
         linked_logo_tasks_allowed=False,
         lighting_mount_consumer=mount_consumer,
+        scope_compatibility_mode=LEGACY_SCOPE_FALLBACK,
+        active_scope_snapshot_version=(
+            active.active_scope_snapshot_version if active is not None else None
+        ),
     )
 
 
@@ -192,12 +308,28 @@ def _led_subscope_allows_operation(
     )
 
 
-def _is_return_only_composition_exclusion(
+def _is_composition_excluded(*, priced_or_op_code: str, ctx: ExecutionSoldScopeContext) -> bool:
+    code = _text(priced_or_op_code)
+    if not code:
+        return False
+    # Primary: frozen exclusions from enriched ActiveScopeResult
+    if ctx.scope_compatibility_mode == ENRICHED_SCOPE and ctx.composition_excluded_operations:
+        return code in ctx.composition_excluded_operations
+    # Legacy fallback only — RETURN-CANT hardcode for thin snapshots
+    return _is_return_only_composition_exclusion_legacy(
+        priced_or_op_code=code,
+        ctx=ctx,
+    )
+
+
+def _is_return_only_composition_exclusion_legacy(
     *,
     priced_or_op_code: str,
     ctx: ExecutionSoldScopeContext,
 ) -> bool:
-    """Face↔return bonding is composition-only — not part of RETURN-CANT sold alone."""
+    """LEGACY_FALLBACK: Face↔return bonding not part of RETURN-CANT sold alone."""
+    if ctx.scope_compatibility_mode == ENRICHED_SCOPE:
+        return False
     if ctx.canonical_sold_modules != frozenset({"RETURN-CANT"}):
         return False
     return _text(priced_or_op_code) == "return_face_bonding"
@@ -217,7 +349,7 @@ def include_task_rule_for_sold_scope(
     if is_vector_prep_task_rule(rule):
         return True
 
-    if _is_return_only_composition_exclusion(
+    if _is_composition_excluded(
         priced_or_op_code=_text(rule.priced_operation),
         ctx=ctx,
     ):
@@ -247,7 +379,7 @@ def include_operation_for_sold_scope(
     if is_vector_prep_operation(operation):
         return True
 
-    if _is_return_only_composition_exclusion(
+    if _is_composition_excluded(
         priced_or_op_code=_text(operation.operation_code),
         ctx=ctx,
     ):

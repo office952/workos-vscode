@@ -10,6 +10,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from schemas.active_scope_snapshot import QuoteSnapshotActiveScope
 from schemas.commercial_price_proposal import CommercialPriceProposalPreview
 from schemas.estimated_internal_cost import EstimatedInternalCostPreview
 from schemas.offer_scope import OFFER_SCOPE_CONTRACT_VERSION, OfferScopeMode
@@ -89,6 +90,7 @@ class FrozenComponentScope(BaseModel):
 
     product_aggregate: ProductAggregate | None = None
     offer_scope_snapshot: QuoteSnapshotOfferScope
+    active_scope_snapshot: QuoteSnapshotActiveScope | None = None
     component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
     geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
     scope_warnings: list[str] = Field(default_factory=list)
@@ -105,6 +107,7 @@ class QuoteSnapshotV2(BaseModel):
     template_code: str
     component_scope_version: str | None = None
     offer_scope_snapshot: QuoteSnapshotOfferScope | None = None
+    active_scope_snapshot: QuoteSnapshotActiveScope | None = None
     component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
     geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
     product_definition_snapshot: ProductDefinitionPreview | None = None

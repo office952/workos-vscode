@@ -14,6 +14,7 @@ from schemas.commercial_price_proposal import CommercialPriceProposalPreview
 from schemas.estimated_internal_cost import EstimatedInternalCostPreview
 from schemas.product_aggregate import ProductAggregate
 from schemas.product_definition import ProductDefinitionPreview
+from schemas.active_scope_snapshot import QuoteSnapshotActiveScope
 from schemas.quote_snapshot_v2 import (
     QuoteSnapshotBlocker,
     QuoteSnapshotComponentInstance,
@@ -41,6 +42,7 @@ class OrderSnapshotV2(BaseModel):
     quote_snapshot_v2_id: int
     component_scope_version: str | None = None
     offer_scope_snapshot: QuoteSnapshotOfferScope | None = None
+    active_scope_snapshot: QuoteSnapshotActiveScope | None = None
     component_instances: list[QuoteSnapshotComponentInstance] = Field(default_factory=list)
     geometry_input_snapshot: QuoteSnapshotGeometryInput | None = None
     product_definition_snapshot: ProductDefinitionPreview | None = None

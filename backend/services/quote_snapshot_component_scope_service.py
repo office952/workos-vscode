@@ -1,12 +1,13 @@
 """Shared Quote Snapshot component-scope freeze helper.
 
 Single entry point for both QuoteSnapshotV2Service and Intake V6 official snapshot paths.
-Does not reprice — only freezes workspace aggregate, offer_scope, and component identity.
+Does not reprice — freezes workspace aggregate, offer_scope, and compiled ActiveScopeResult.
 """
 
 from __future__ import annotations
 
 import hashlib
+from datetime import datetime, timezone
 from typing import Any
 
 from sqlalchemy import select
@@ -14,6 +15,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from data.offer_scope_canonical_map import runtime_to_canonical
 from models.intake_v6_workspace import IntakeV6WorkspaceRecord
+from schemas.active_scope_snapshot import (
+    ACTIVE_SCOPE_SNAPSHOT_VERSION,
+    QuoteSnapshotActiveScope,
+)
 from schemas.offer_scope import OFFER_SCOPE_CONTRACT_VERSION
 from schemas.product_aggregate import ProductAggregate
 from schemas.quote_snapshot_v2 import (
@@ -23,6 +28,11 @@ from schemas.quote_snapshot_v2 import (
     QuoteSnapshotComponentInstance,
     QuoteSnapshotGeometryInput,
     QuoteSnapshotOfferScope,
+)
+from services.active_scope_resolver_service import compile_active_scope
+from services.active_scope_semantic_compare import (
+    ActiveScopePreviewFreezeMismatch,
+    assert_preview_freeze_semantic_match,
 )
 from services.offer_scope_resolver_service import (
     extract_offer_scope,
@@ -38,6 +48,12 @@ from services.product_aggregate_workspace_composition_service import SEGMENT_NAM
 from services.product_definition_builder_service import ProductDefinitionBuilderService
 
 SCOPE_WARNING_UNMAPPED_COMPONENT = "COMPONENT_INSTANCE_CANONICAL_UNMAPPED"
+SCOPE_ERROR_PREVIEW_FREEZE_MISMATCH = "ACTIVE_SCOPE_PREVIEW_FREEZE_MISMATCH"
+SCOPE_ERROR_INTENT_SOURCE_MISMATCH = "ACTIVE_SCOPE_INTENT_SOURCE_MISMATCH"
+SCOPE_ERROR_SOLD_COMPILED_MISMATCH = "ACTIVE_SCOPE_SOLD_COMPILED_MISMATCH"
+
+# Letters Slice 1 only — do not stamp Letters resolver onto ACM/other freezes.
+LETTERS_ACTIVE_SCOPE_TEMPLATE = "TPL-VOLUMETRIC-LETTERS_v2"
 
 
 def _text(value: Any) -> str:
@@ -58,12 +74,21 @@ def _is_linked_neutral(instance_id: str) -> bool:
     return SEGMENT_NAMESPACE_SEP in instance_id
 
 
-def _build_offer_scope_snapshot(scope_input: Any, resolved: Any, payload_raw: dict[str, Any] | None = None) -> QuoteSnapshotOfferScope:
+def _build_offer_scope_snapshot(
+    scope_input: Any,
+    resolved: Any,
+    payload_raw: dict[str, Any] | None = None,
+    *,
+    gated_runtime_modules: list[str] | None = None,
+) -> QuoteSnapshotOfferScope:
     sold_modules: list[str] = []
     if scope_input is not None:
         sold_modules = list(scope_input.sold_modules)
 
-    runtime_sorted = sorted(resolved.runtime_sold_modules) if resolved.runtime_sold_modules else []
+    if gated_runtime_modules is not None:
+        runtime_sorted = sorted(gated_runtime_modules)
+    else:
+        runtime_sorted = sorted(resolved.runtime_sold_modules) if resolved.runtime_sold_modules else []
 
     dependency_confirmations: list[str] = []
     if isinstance(payload_raw, dict):
@@ -167,6 +192,100 @@ def _build_geometry_snapshot(
     )
 
 
+def _intent_source_mismatch_errors(
+    workspace_payload: dict[str, Any],
+    quote_input: dict[str, Any] | None,
+) -> list[str]:
+    """Fail closed when workspace and quote_input disagree on persisted offer_scope intent."""
+    ws_scope = extract_offer_scope(workspace_payload, None)
+    qi_scope = extract_offer_scope({}, quote_input) if quote_input else None
+    if ws_scope is None or qi_scope is None:
+        return []
+    ws_sold = sorted(ws_scope.sold_modules or [])
+    qi_sold = sorted(qi_scope.sold_modules or [])
+    if ws_scope.mode != qi_scope.mode or ws_sold != qi_sold:
+        return [
+            SCOPE_ERROR_INTENT_SOURCE_MISMATCH,
+            f"workspace mode={ws_scope.mode} sold={ws_sold}",
+            f"quote_input mode={qi_scope.mode} sold={qi_sold}",
+        ]
+    return []
+
+
+def _build_active_scope_snapshot(
+    *,
+    template_code: str,
+    workspace_id: str | None,
+    workspace_payload: dict[str, Any],
+    quote_input: dict[str, Any] | None,
+) -> QuoteSnapshotActiveScope | None:
+    """Compile Letters Slice 1 active scope and freeze it. Non-Letters → None (thin offer_scope only)."""
+    if template_code != LETTERS_ACTIVE_SCOPE_TEMPLATE:
+        return None
+
+    intent_errors = _intent_source_mismatch_errors(workspace_payload, quote_input)
+    compiled = compile_active_scope(
+        template_code=template_code,
+        payload=workspace_payload,
+        quote_input=quote_input,
+    )
+    if intent_errors:
+        compiled = compiled.model_copy(
+            update={"errors": list(compiled.errors or []) + intent_errors}
+        )
+
+    # Same compiler inputs as Quote preview for this workspace/quote_input pair.
+    preview = compile_active_scope(
+        template_code=template_code,
+        payload=workspace_payload,
+        quote_input=quote_input,
+    )
+    if not intent_errors:
+        try:
+            assert_preview_freeze_semantic_match(preview, compiled)
+        except ActiveScopePreviewFreezeMismatch as exc:
+            compiled = compiled.model_copy(
+                update={
+                    "errors": list(compiled.errors or [])
+                    + [SCOPE_ERROR_PREVIEW_FREEZE_MISMATCH]
+                    + list(exc.diffs),
+                }
+            )
+        if not compiled.use_legacy_full_product and not compiled.errors:
+            scope_input = extract_offer_scope(workspace_payload, quote_input)
+            sold = sorted((scope_input.sold_modules if scope_input else []) or [])
+            if sold != sorted(compiled.sold_module_codes or []):
+                compiled = compiled.model_copy(
+                    update={
+                        "errors": list(compiled.errors or [])
+                        + [
+                            SCOPE_ERROR_SOLD_COMPILED_MISMATCH,
+                            f"offer_scope.sold_modules={sold}",
+                            f"compiled.sold_module_codes={sorted(compiled.sold_module_codes or [])}",
+                        ],
+                    }
+                )
+
+    return QuoteSnapshotActiveScope(
+        active_scope_snapshot_version=ACTIVE_SCOPE_SNAPSHOT_VERSION,
+        compatibility_mode="enriched",
+        source_workspace_id=workspace_id,
+        source_template_code=template_code,
+        source_offer_scope_version=OFFER_SCOPE_CONTRACT_VERSION,
+        resolver_version=compiled.resolver_version,
+        active_scope_contract_version=compiled.contract_version,
+        compiled_at=datetime.now(timezone.utc).isoformat(),
+        compiled=compiled,
+        warnings=list(compiled.warnings or []),
+        provenance={
+            "source": "compile_active_scope",
+            "workspace_required_after_freeze": False,
+            "letters_slice1_only": True,
+            **dict(compiled.provenance or {}),
+        },
+    )
+
+
 async def build_frozen_component_scope(
     db: AsyncSession,
     *,
@@ -185,8 +304,10 @@ async def build_frozen_component_scope(
         ws_payload, ws_error = await pd_builder._load_workspace_payload(workspace_id, template_code)
         if ws_error == "workspace_not_found":
             return None
-        if ws_error != "workspace_template_mismatch":
-            workspace_payload = ws_payload or {}
+        if ws_error == "workspace_template_mismatch":
+            # Fail closed — do not compile from empty payload while hashing a mismatched workspace.
+            return None
+        workspace_payload = ws_payload or {}
 
         record_result = await db.execute(
             select(IntakeV6WorkspaceRecord.payload_json).where(
@@ -199,7 +320,30 @@ async def build_frozen_component_scope(
 
     scope_input = extract_offer_scope(workspace_payload, quote_input)
     resolved = resolve_offer_scope(scope_input)
-    offer_scope_snapshot = _build_offer_scope_snapshot(scope_input, resolved, workspace_payload)
+
+    active_scope_snapshot = _build_active_scope_snapshot(
+        template_code=template_code,
+        workspace_id=workspace_id,
+        workspace_payload=workspace_payload,
+        quote_input=quote_input,
+    )
+    compiled = active_scope_snapshot.compiled if active_scope_snapshot is not None else None
+
+    gated_runtime: list[str] | None = None
+    if (
+        compiled is not None
+        and not compiled.use_legacy_full_product
+        and not compiled.errors
+    ):
+        # Prefer gated commercial runtime (not ungated resolve_offer_scope list).
+        gated_runtime = list(compiled.commercial_scope_modules)
+
+    offer_scope_snapshot = _build_offer_scope_snapshot(
+        scope_input,
+        resolved,
+        workspace_payload,
+        gated_runtime_modules=gated_runtime,
+    )
 
     from services.sold_scope_dependency_validator_service import validate_sold_graph_from_payload
 
@@ -214,6 +358,14 @@ async def build_frozen_component_scope(
                 }
             )
 
+    if compiled is not None and compiled.errors:
+        offer_scope_snapshot = offer_scope_snapshot.model_copy(
+            update={
+                "validation_errors": list(offer_scope_snapshot.validation_errors or [])
+                + [e for e in compiled.errors if e not in (offer_scope_snapshot.validation_errors or [])],
+            }
+        )
+
     if workspace_id:
         aggregate = await aggregate_svc.build_for_workspace(template_code, workspace_id)
     else:
@@ -223,8 +375,6 @@ async def build_frozen_component_scope(
         return None
 
     # TE2E-028B: resolve formula duration from freeze-time product facts.
-    # Workspace composition may already have resolved from ProductDefinition;
-    # re-apply only when freeze payload supplies duration inputs (or no workspace).
     duration_facts = collect_planning_duration_facts(merged_payload)
     duration_input_keys = {"letter_count", "letter_perimeter_m", "cnc_cutting_perimeter_ml"}
     if not workspace_id:
@@ -241,6 +391,7 @@ async def build_frozen_component_scope(
     return FrozenComponentScope(
         product_aggregate=aggregate,
         offer_scope_snapshot=offer_scope_snapshot,
+        active_scope_snapshot=active_scope_snapshot,
         component_instances=component_instances,
         geometry_input_snapshot=geometry_input_snapshot,
         scope_warnings=scope_warnings,
@@ -254,6 +405,7 @@ def apply_component_scope_to_snapshot_fields(
     return {
         "component_scope_version": COMPONENT_SCOPE_VERSION,
         "offer_scope_snapshot": scope.offer_scope_snapshot,
+        "active_scope_snapshot": scope.active_scope_snapshot,
         "component_instances": scope.component_instances,
         "geometry_input_snapshot": scope.geometry_input_snapshot,
         "product_aggregate_snapshot": scope.product_aggregate,

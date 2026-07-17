@@ -162,6 +162,7 @@ def _component_scope_fields_from_quote(parsed: QuoteSnapshotV2) -> dict[str, Any
     return {
         "component_scope_version": parsed.component_scope_version,
         "offer_scope_snapshot": parsed.offer_scope_snapshot,
+        "active_scope_snapshot": parsed.active_scope_snapshot,
         "component_instances": list(parsed.component_instances),
         "geometry_input_snapshot": parsed.geometry_input_snapshot,
         "product_aggregate_snapshot": parsed.product_aggregate_snapshot,
