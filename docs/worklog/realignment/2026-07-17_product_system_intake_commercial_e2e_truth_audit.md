@@ -85,7 +85,111 @@ Do not stage unrelated dirty-tree files.
 
 ## Implementation section — LETTERS_CANONICAL_PRODUCT_SLICE_V1
 
-*(Filled during implementation.)*
+**Audit commit:** `10926d2` — `docs(product): approve letters canonical product slice`  
+**HEAD baseline before impl:** `bbffb19` → after audit `10926d2`
+
+### Owner decision
+
+```text
+APPROVED BUILD = LETTERS_CANONICAL_PRODUCT_SLICE_V1
+TEMPLATE = TPL-VOLUMETRIC-LETTERS_v2
+MODULES + GOVERNANCE = MANDATORY DOD
+```
+
+### Field matrix (canonical Letters)
+
+| Field | Product System contract | Intake UI | Workspace path | ProductDefinition output | Aggregate technical use | Aggregate commercial use | CPP use | Execution use | Decision |
+|---|---|---|---|---|---|---|---|---|---|
+| vector_file | binding + file | SVG analyzer | svg_source.file_name | vector_file | ops/geometry readiness | — | readiness gate | — | CANONICAL |
+| width_mm | binding number/mm | geometry cards | client.width_mm | dimensions.width_mm | form/ops | — | — | duration facts | CANONICAL |
+| height_mm | binding number/mm | geometry cards | client.height_mm | dimensions.height_mm | form/ops | — | — | — | CANONICAL |
+| letter_count | binding count | geometry / litere | quote_geometry.letter_count | quantity | ops | — | — | formula minutes | CANONICAL |
+| letter_perimeter_m | binding m | analyzer metrics | quote_geometry.letter_perimeter_m | letter_perimeter_m | ops | cm.debitare_fata / modelare_cant | qty ml | — | CANONICAL |
+| letter_face_area_m2 | binding m2 | analyzer metrics | quote_geometry.letter_face_area_m2 | letter_face_area_m2 | ops | cm.debitare_spate / finisaje | qty m2 | — | CANONICAL |
+| face_finish_type | binding enum | Review letter groups (contract label) | finish_setup.face_finish_type | layers/face | components | selector/material gates | material gates | — | CANONICAL |
+| return_depth_mm | binding mm | ReturnCantFields (contract label) | finish_setup.return_depth_mm | return_depth_mm | ops | diagnostic | warnings | — | CANONICAL |
+| return_finish_type | binding enum | ReturnCantFields (contract label) | finish_setup.return_finish_type | return_finish_type | components | — | — | — | CANONICAL |
+| volum_aluminum_module_template_code | binding | Review module select | finish_setup.… | linked_modules | modules.required | — | — | — | CANONICAL |
+| backing_mode | binding enum | Review backing (contract label) | finish_setup.backing_mode | backing_mode | components | — | — | — | CANONICAL |
+| back_bevel_enabled | binding bool | Review backing | finish_setup.back_bevel_enabled | back_bevel_enabled | components | — | — | — | CANONICAL |
+| lighting_system_type | binding enum | Lighting section (contract label) | finish_setup.lighting_system_type | lighting_system_type | modules LED | module gate | module gate | — | CANONICAL |
+| led_module_count | binding count | Lighting | finish_setup.led_module_count | led_module_count | components | cm.sistem_led_module | qty buc | — | CANONICAL |
+| selected_psu_watts | binding | Lighting | finish_setup.selected_psu_watts | selected_psu_watts | components | cm.sistem_led_psu (fixed) | piece/fixed | — | CANONICAL |
+| mounting_system | binding enum | Review montaj (contract label) | finish_setup.mounting_system | mounting_system | module activation | — | — | — | CANONICAL |
+| mounting_template_enabled | binding | Review șablon | finish_setup.mounting_template_enabled | mounting_template_enabled | materials | gates sablon lines | gates | — | CANONICAL |
+| mounting_template_area_m2 | binding m2 | Review | finish_setup.mounting_template_area_m2 | mounting_template_area_m2 | materials | cm.sablon_* | qty m2 | — | CANONICAL |
+| letter_group_finishes | binding | Review groups | finish_setup.letter_group_finishes | letter_group_finishes | finish graph | finisaje line warnings | finisaje | — | CANONICAL |
+| metal_support_required | derived binding | not operator field | quote_input (derived) | metal_support_required | module trigger compat | — | — | — | DERIVE_ONCE |
+| premount_bar_length_ml | derived | display/compat | quote_input | premount length | ops/materials | structura lines | qty when applicable | — | DERIVE_ONCE |
+| bar_material | derived | display/compat | quote_input | bar_material | materials | selector | selector | — | DERIVE_ONCE |
+
+**Trigger alignment:** operator `mounting_system` → derived `metal_support_required` once in PD; module-link DB trigger remains compat (`TRIGGER_FIELD_MISMATCH` documented). No schema migration.
+
+### Parallel model (before → after)
+
+| Area | Before | After (Letters) |
+|---|---|---|
+| Form labels/required | MIXED hardcoded + contract awareness | Product System contract runtime authority (template-gated) |
+| Commercial qty | CPP reconstructed from workspace paths | Aggregate `commercial_measurements` preferred; workspace = explicit COMPATIBILITY |
+| Minutes | Operational only | Unchanged — never in commercial measurements |
+
+### Contract / code anchors
+
+- Form contract version: `1.1.0-letters-canonical`, `runtime_authority=true`
+- Measurement contract: `letters_commercial_measurement_v1`
+- Aggregate field: `ProductAggregate.commercial_measurements`
+- CPP: prefers measurement qty; warns `quantity_source=…`
+- Template key case: CPP resolves uppercased canonical → declared `TPL-VOLUMETRIC-LETTERS_v2` rules key
+
+### Intake renderer (Letters-gated)
+
+- `resolveLettersCanonicalFieldLabels` + Review wiring for face/cant/spate/lighting/mounting labels from contract
+- Section shells remain React composition (COMPATIBILITY_TEMPORARY) — not a global Intake rewrite
+- Other templates unchanged / unsupported by runtime_authority
+
+### Tests run (targeted)
+
+```text
+pytest tests/test_letters_commercial_measurement_contract.py
+pytest tests/test_letters_cpp_measurement_consumption.py
+pytest tests/test_intake_v6_modular_form.py
+pytest tests/test_commercial_price_proposal_preview.py
+pytest tests/test_legacy_quote_price_isolation.py
+vitest: lettersCanonicalFormContract, currentTruthControlCenter, ModuleChain, Governance.presentTruth
+```
+
+### Master status
+
+```text
+LETTERS_CANONICAL_PRODUCT_SLICE_V1 = COMPLETE — PROVEN_CURRENT (Letters-scoped)
+SCOPE = TPL-VOLUMETRIC-LETTERS_v2
+PRODUCT SYSTEM GLOBAL COVERAGE = PARTIAL
+INTAKE V6 GLOBAL PRODUCT CONTRACT = PARTIAL
+AGGREGATE → CPP GLOBAL COVERAGE = PARTIAL
+```
+
+### Owner conclusion (post-impl)
+
+```text
+LETTERS PRODUCT SYSTEM CONTRACT = CANONICAL
+LETTERS INTAKE FORM SOURCE = PRODUCT SYSTEM (labels/required; section chrome transitional)
+PRODUCT DEFINITION = ACTIVE COMPILER
+PRODUCT AGGREGATE TECHNICAL TRUTH = CANONICAL
+PRODUCT AGGREGATE COMMERCIAL MEASUREMENTS = CANONICAL
+CPP 7G MONETARY AUTHORITY = PRESERVED
+COMMERCIAL BASELINE = PRESERVED (read-only lineage unchanged)
+MINUTES → COMMERCIAL PRICE = NO
+MODULES PRESENT TRUTH = UPDATED
+GOVERNANCE PRESENT TRUTH = UPDATED
+GLOBAL PRODUCT SYSTEM COVERAGE = PARTIAL
+```
+
+### Remaining limitations
+
+- Other templates: PARTIAL / NEVERIFICAT
+- Intake section ordering still JSX (not fully dynamic module-section generator)
+- Full live Quote→Order→Plan write for a brand-new customer workspace deferred to labeled local fixture policy; Aggregate→CPP write path proven in isolated pytest workspace
+- Baseline records 8/9/10/11 and 92402/92403/972901/972910 not mutated
 
 ---
 

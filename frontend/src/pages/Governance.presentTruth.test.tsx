@@ -78,7 +78,10 @@ describe("Governance present-truth control center", () => {
     fireEvent.click(screen.getByTestId("governance-tab-guardrails"));
     const panel = screen.getByTestId("governance-panel-guardrails");
     expect(within(panel).getByTestId("guardrail-G01")).toHaveTextContent(
-      "Pricing calculează comercial"
+      "CPP 7G calculează banii"
+    );
+    expect(within(panel).getByTestId("guardrail-G01")).toHaveTextContent(
+      "măsurători non-monetare"
     );
     expect(within(panel).getByTestId("guardrail-G01")).not.toHaveTextContent("Quotes calculează");
     expect(within(panel).getByTestId("guardrail-G13")).toHaveTextContent(

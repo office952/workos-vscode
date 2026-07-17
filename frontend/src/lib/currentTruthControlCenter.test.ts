@@ -15,6 +15,7 @@ import {
 describe("Current Truth Control Center shared projection", () => {
   it("defines one canonical active spine", () => {
     expect(CANONICAL_SPINE_LABELS_RO).toEqual([
+      "Catalog produse",
       "Intake V6",
       "ProductDefinition",
       "ProductAggregate",
@@ -25,7 +26,27 @@ describe("Current Truth Control Center shared projection", () => {
       "Execution Reality",
       "Post-Job",
     ]);
-    expect(PRESENT_SYSTEMS.map((s) => s.spineOrder)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    expect(PRESENT_SYSTEMS.map((s) => s.spineOrder)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  });
+
+  it("scopes Letters canonical slice without global Product System overclaim", () => {
+    const ps = PRESENT_SYSTEMS.find((s) => s.id === "product_system");
+    expect(ps?.status).toBe("PARTIAL");
+    expect(ps?.limitationRo).toMatch(/Letters/);
+    expect(ps?.limitationRo).toMatch(/PARTIAL/);
+    expect(ps?.limitationRo).toMatch(/Nu deține tarife/);
+
+    const handoffs = PRESENT_HANDOFFS.map((h) => h.id);
+    expect(handoffs).toContain("h.ps_intake");
+    expect(handoffs).toContain("h.pa_cpp");
+    expect(handoffs).toContain("h.pa_plan");
+
+    const paCpp = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_cpp");
+    expect(paCpp?.outputContractRo).toMatch(/non-monetare/);
+    expect(paCpp?.outputContractRo).toMatch(/fără minute/i);
+
+    const paPlan = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_plan");
+    expect(paPlan?.outputContractRo).toMatch(/minute planificate/);
   });
 
   it("keeps ownership aligned with spine system ids", () => {
@@ -64,8 +85,9 @@ describe("Current Truth Control Center shared projection", () => {
   it("keeps G01 rewritten and G13 present with enforcement class", () => {
     const g01 = PRESENT_GUARDRAILS.find((g) => g.id === "G01");
     const g13 = PRESENT_GUARDRAILS.find((g) => g.id === "G13");
-    expect(g01?.requirementRo).toMatch(/Pricing calculează comercial/);
-    expect(g01?.requirementRo).toMatch(/Quote\/Order îngheață/);
+    expect(g01?.requirementRo).toMatch(/CPP 7G calculează banii/);
+    expect(g01?.requirementRo).toMatch(/măsurători non-monetare/);
+    expect(g01?.requirementRo).toMatch(/minute operaționale/);
     expect(g01?.requirementRo).not.toMatch(/Quotes calculează/);
     expect(g13?.titleRo).toBe("UTF-8 end-to-end pentru textul operator");
     expect(g13?.status).toBe("PARTIAL APLICAT");
