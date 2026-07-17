@@ -6,7 +6,19 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-FORM_CONTRACT_VERSION = "1.1.0-letters-canonical"
+FORM_CONTRACT_VERSION = "1.2.0-generic-renderer-pilot"
+
+SupportedFieldType = Literal[
+    "text",
+    "number",
+    "integer",
+    "boolean",
+    "select",
+    "multiselect",
+    "readonly",
+]
+
+VisibilityKind = Literal["always", "equals", "not_equals", "in_set", "truthy", "falsy"]
 
 OperationalStatus = Literal[
     "ACTIVE_OPERATIONAL",
@@ -30,6 +42,22 @@ FieldRole = Literal[
 ActivationKind = Literal["always_on", "required_module", "optional_addon", "conditional_gate"]
 
 
+class IntakeFormOption(BaseModel):
+    """One selectable value for generic select/multiselect rendering."""
+
+    value: str
+    label_ro: str
+
+
+class IntakeVisibilityRule(BaseModel):
+    """Bounded visibility rule — no arbitrary expressions."""
+
+    kind: VisibilityKind = "always"
+    workspace_path: str | None = None
+    value: Any = None
+    values: list[Any] | None = None
+
+
 class IntakeFormFieldBinding(BaseModel):
     """One Intake V6 field with operational destination."""
 
@@ -40,7 +68,13 @@ class IntakeFormFieldBinding(BaseModel):
     field_type: str | None = None
     unit: str | None = None
     option_values: list[str] | None = None
+    options: list[IntakeFormOption] | None = None
     visibility_rule: str | None = None
+    visibility: IntakeVisibilityRule | None = None
+    min_value: float | None = None
+    max_value: float | None = None
+    read_only: bool = False
+    display_mode: str | None = None
     decision: str | None = None
     consumers: list[str] = Field(default_factory=list)
     field_role: FieldRole = "module_configuration"
@@ -52,6 +86,19 @@ class IntakeFormFieldBinding(BaseModel):
     derived_from: str | None = None
     derivation_rule: str | None = None
     notes: list[str] = Field(default_factory=list)
+
+
+class IntakeRenderSection(BaseModel):
+    """Ordered UI section for generic Intake contract rendering."""
+
+    section_key: str
+    title_ro: str
+    order: int
+    description_ro: str | None = None
+    module_codes: list[str] = Field(default_factory=list)
+    field_keys: list[str] = Field(default_factory=list)
+    visibility: IntakeVisibilityRule | None = None
+    pilot_role: str | None = None
 
 
 class IntakeModuleFormSection(BaseModel):
@@ -104,6 +151,8 @@ class IntakeV6ModularFormContract(BaseModel):
     summary: IntakeV6ModularFormContractSummary
     modules: list[IntakeModuleFormSection] = Field(default_factory=list)
     field_bindings: list[IntakeFormFieldBinding] = Field(default_factory=list)
+    render_sections: list[IntakeRenderSection] = Field(default_factory=list)
+    writable_workspace_paths: list[str] = Field(default_factory=list)
     form_system_backbone: dict[str, Any] | None = None
     trigger_alignments: list[TriggerFieldAlignment] = Field(default_factory=list)
     valid_combinations: list[str] = Field(default_factory=list)

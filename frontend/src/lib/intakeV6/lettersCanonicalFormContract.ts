@@ -36,6 +36,9 @@ export function isLettersCanonicalTemplate(templateCode: string | null | undefin
   );
 }
 
+/** @deprecated Prefer isContractRendererEnabled — kept as compatibility alias for Review label gate. */
+export { isContractRendererEnabled } from "./contractRenderer/isContractRendererEnabled";
+
 export function bindMapFromContract(
   contract: IntakeV6ModularFormContractResponse | null | undefined,
 ): LettersCanonicalBindMap {

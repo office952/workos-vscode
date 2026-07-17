@@ -68,6 +68,7 @@ export default function IntakeV6ReviewLightingSection({
   allowedEmblemLightingModes,
   compact = true,
   lightingSystemLabel,
+  hideContractManagedFields = false,
 }: {
   illuminated: boolean;
   onIlluminatedChange: (value: boolean) => void;
@@ -108,6 +109,8 @@ export default function IntakeV6ReviewLightingSection({
   allowedEmblemLightingModes: readonly TemplateFormOption[];
   compact?: boolean;
   lightingSystemLabel?: string;
+  /** When Product System generic renderer owns lighting_system_type / PSU selects. */
+  hideContractManagedFields?: boolean;
 }) {
   const fallbackDensity = ledAreaDensityModulesPerSqm(returnDepthMm ?? undefined);
   const shellClass = compact ? `${v6.cardCompact} !p-3` : `${v6.card} mb-4`;
@@ -192,23 +195,25 @@ export default function IntakeV6ReviewLightingSection({
             <section className="space-y-2.5" data-testid="intake-v6-lighting-subsection">
               <p className="text-[11px] font-semibold text-cyan-200">Iluminare</p>
               <div className="grid gap-2 sm:grid-cols-2">
-                <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>
-                    {lightingSystemLabel ?? "Sistem LED"}
-                  </span>
-                  <select
-                    className={REVIEW_SELECT_CLASS}
-                    value={lightingSystemType}
-                    onChange={(event) => onLightingSystemTypeChange(event.target.value)}
-                    data-testid="intake-v6-lighting-system"
-                  >
-                    {allowedLightingSystems.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                {!hideContractManagedFields ? (
+                  <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>
+                      {lightingSystemLabel ?? "Sistem LED"}
+                    </span>
+                    <select
+                      className={REVIEW_SELECT_CLASS}
+                      value={lightingSystemType}
+                      onChange={(event) => onLightingSystemTypeChange(event.target.value)}
+                      data-testid="intake-v6-lighting-system"
+                    >
+                      {allowedLightingSystems.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
 
                 <label className={REVIEW_FIELD_BLOCK_CLASS}>
                   <span className={REVIEW_FIELD_LABEL_CLASS}>Culoare lumina</span>
@@ -289,25 +294,27 @@ export default function IntakeV6ReviewLightingSection({
             <section className="space-y-2.5" data-testid="intake-v6-electrical-subsection">
               <p className="text-[11px] font-semibold text-amber-200">Electrică</p>
               <div className="grid gap-2 sm:grid-cols-2">
-                <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Sursa LED template</span>
-                  <select
-                    className={REVIEW_SELECT_CLASS}
-                    value={selectedPsuWatts ?? ""}
-                    onChange={(event) => {
-                      const raw = event.target.value;
-                      if (raw) onSelectedPsuChange(Number(raw));
-                    }}
-                    data-testid="intake-v6-selected-psu-watts"
-                  >
-                    <option value="">-</option>
-                    {allowedPsuWatts.map((watts) => (
-                      <option key={watts} value={watts}>
-                        {watts}W
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                {!hideContractManagedFields ? (
+                  <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sursa LED template</span>
+                    <select
+                      className={REVIEW_SELECT_CLASS}
+                      value={selectedPsuWatts ?? ""}
+                      onChange={(event) => {
+                        const raw = event.target.value;
+                        if (raw) onSelectedPsuChange(Number(raw));
+                      }}
+                      data-testid="intake-v6-selected-psu-watts"
+                    >
+                      <option value="">-</option>
+                      {allowedPsuWatts.map((watts) => (
+                        <option key={watts} value={watts}>
+                          {watts}W
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
               </div>
 
               <p className="text-[10px] text-slate-500" data-testid="intake-v6-electrical-readout">

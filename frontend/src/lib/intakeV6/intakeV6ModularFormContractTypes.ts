@@ -23,6 +23,18 @@ export type IntakeV6ModularFieldRole =
   | "derived_quote_input"
   | "readonly_computed";
 
+export interface IntakeV6FormOption {
+  value: string;
+  label_ro: string;
+}
+
+export interface IntakeV6VisibilityRule {
+  kind?: "always" | "equals" | "not_equals" | "in_set" | "truthy" | "falsy" | null;
+  workspace_path?: string | null;
+  value?: unknown;
+  values?: unknown[] | null;
+}
+
 export interface IntakeV6ModularFormFieldBinding {
   canonical_key: string;
   workspace_path: string;
@@ -31,7 +43,13 @@ export interface IntakeV6ModularFormFieldBinding {
   field_type?: string | null;
   unit?: string | null;
   option_values?: string[] | null;
+  options?: IntakeV6FormOption[] | null;
   visibility_rule?: string | null;
+  visibility?: IntakeV6VisibilityRule | null;
+  min_value?: number | null;
+  max_value?: number | null;
+  read_only?: boolean;
+  display_mode?: string | null;
   decision?: string | null;
   consumers?: string[];
   field_role?: IntakeV6ModularFieldRole;
@@ -43,6 +61,17 @@ export interface IntakeV6ModularFormFieldBinding {
   derived_from?: string | null;
   derivation_rule?: string | null;
   notes?: string[];
+}
+
+export interface IntakeV6RenderSection {
+  section_key: string;
+  title_ro: string;
+  order: number;
+  description_ro?: string | null;
+  module_codes?: string[];
+  field_keys?: string[];
+  visibility?: IntakeV6VisibilityRule | null;
+  pilot_role?: string | null;
 }
 
 export interface IntakeV6ModularFormModuleSection {
@@ -158,6 +187,8 @@ export interface IntakeV6ModularFormContractResponse {
   summary: IntakeV6ModularFormContractSummary;
   modules: IntakeV6ModularFormModuleSection[];
   field_bindings: IntakeV6ModularFormFieldBinding[];
+  render_sections?: IntakeV6RenderSection[];
+  writable_workspace_paths?: string[];
   form_system_backbone?: FormSystemBackboneContract | null;
   trigger_alignments: IntakeV6ModularTriggerAlignment[];
   valid_combinations?: string[];

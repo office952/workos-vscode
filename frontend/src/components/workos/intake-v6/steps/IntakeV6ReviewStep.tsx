@@ -213,6 +213,12 @@ import { resolveLayerCardStatus } from "../letterGroupCardPresentation";
 import { useIntakeV6WorkspaceHeaderStatus } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { resolveLettersCanonicalFieldLabels } from "@/lib/intakeV6/lettersCanonicalFormContract";
+import { isContractRendererEnabled } from "@/lib/intakeV6/contractRenderer/isContractRendererEnabled";
+import {
+  finishSetupKeyFromPath,
+  setByWorkspacePath,
+} from "@/lib/intakeV6/contractRenderer/workspacePathAccess";
+import IntakeContractSectionRenderer from "../contractRenderer/IntakeContractSectionRenderer";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
 import { layerRoleConfirmationToV6Setup } from "@/lib/intakeV6/intakeV6LayerRoleBridge";
 import { resolveModuleActivationAttentionWarnings } from "@/lib/intakeV6/intakeV6ModuleActivationPreview";
@@ -710,6 +716,61 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         modularFormContractHook.contract,
       ),
     [modularTemplateCode, modularFormContractHook.contract],
+  );
+  const contractRendererEnabled = isContractRendererEnabled(modularTemplateCode);
+  const modularFormContract = modularFormContractHook.contract;
+  const contractValueRoot = useMemo(
+    () => ({ finish_setup: form as unknown as Record<string, unknown> }),
+    [form],
+  );
+  const handleContractFieldChange = useCallback(
+    (workspacePath: string, value: unknown) => {
+      const allowlist = modularFormContract?.writable_workspace_paths ?? [];
+      const written = setByWorkspacePath(contractValueRoot, workspacePath, value, allowlist);
+      if (!written.ok) {
+        return;
+      }
+      const finishKey = finishSetupKeyFromPath(workspacePath);
+      if (!finishKey) {
+        return;
+      }
+      const nextFinish = (written.next.finish_setup ?? {}) as Record<string, unknown>;
+      const domain =
+        finishKey.startsWith("mounting_")
+          ? (["mounting"] as IntakeV6ReviewDirtyDomain[])
+          : finishKey.startsWith("lighting_") || finishKey.includes("psu")
+            ? (["lighting"] as IntakeV6ReviewDirtyDomain[])
+            : (["face_finish"] as IntakeV6ReviewDirtyDomain[]);
+      updateForm(
+        { [finishKey]: nextFinish[finishKey] } as Partial<IntakeV6FinishSetup>,
+        { domains: domain },
+      );
+    },
+    [contractValueRoot, modularFormContract?.writable_workspace_paths, updateForm],
+  );
+  const renderSectionByKey = useCallback(
+    (sectionKey: string) => {
+      if (!contractRendererEnabled || !modularFormContract) return null;
+      const section = (modularFormContract.render_sections ?? []).find(
+        (item) => item.section_key === sectionKey,
+      );
+      if (!section) return null;
+      return (
+        <IntakeContractSectionRenderer
+          key={section.section_key}
+          section={section}
+          contract={modularFormContract}
+          valueRoot={contractValueRoot}
+          onFieldChange={handleContractFieldChange}
+        />
+      );
+    },
+    [
+      contractRendererEnabled,
+      modularFormContract,
+      contractValueRoot,
+      handleContractFieldChange,
+    ],
   );
   const backboneRuntimeState = useMemo(
     () => ({
@@ -1976,6 +2037,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 variant="review"
               />
             ) : null}
+            {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
               description="Față, cant și Vector Logo — același card compact pe strat."
@@ -2030,6 +2092,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
         {reviewTab === "iluminare" ? (
           <div data-testid="intake-v6-review-tab-panel-iluminare" className="space-y-2">
+            {renderSectionByKey("iluminare")}
             <IntakeV6ReviewSectionShell
               title="Iluminare"
               description="LED, consum și culoare — emblemă când există artwork."
@@ -2096,13 +2159,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 onSelectedPsuChange={updateSelectedPsuWatts}
                 allowedPsuWatts={templateContract.allowedPsuWatts}
                 lightingSystemLabel={lettersCanonicalFieldLabels?.lighting_system_type}
+                hideContractManagedFields={contractRendererEnabled}
               />
             </IntakeV6ReviewSectionShell>
           </div>
         ) : null}
 
         {reviewTab === "montaj" ? (
-          <div data-testid="intake-v6-review-tab-panel-montaj">
+          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-2">
+            {renderSectionByKey("montaj_template")}
             <IntakeV6ReviewSectionShell
               title="Montaj & template"
               description="Scope comercial montaj, pregătire în atelier și montaj la locație."
@@ -2153,6 +2218,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </p>
                 ) : null}
             <div className="grid gap-2 sm:grid-cols-2">
+              {!contractRendererEnabled ? (
               <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
                 <input
                   type="checkbox"
@@ -2177,9 +2243,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 />
                 Șablon montaj
               </label>
+              ) : null}
 
               {form.mounting_template_enabled !== false ? (
                 <>
+                  {!contractRendererEnabled ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>Arie șablon montaj</span>
                     <div className="flex overflow-hidden rounded border border-[#2A3548] bg-[#0A0F1A] focus-within:border-cyan-400/60">
@@ -2219,6 +2287,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       </span>
                     </div>
                   </label>
+                  ) : null}
 
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>Material șablon</span>

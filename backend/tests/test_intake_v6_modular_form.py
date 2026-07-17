@@ -90,10 +90,19 @@ def test_letters_canonical_form_contract_version_runtime_authority_and_field_key
 ):
     contract = form_service.get_for_template(TEMPLATE)
     assert contract is not None
-    assert contract.summary.contract_version == "1.1.0-letters-canonical"
+    assert contract.summary.contract_version == "1.2.0-generic-renderer-pilot"
     assert contract.summary.runtime_authority is False
-    assert contract.summary.runtime_authority_scope == "review_labels"
-    assert any("runtime_authority_scope=review_labels" in note.lower() for note in contract.notes)
+    assert contract.summary.runtime_authority_scope == (
+        "selected_sections:finisaje_fields,iluminare,montaj_template"
+    )
+    assert any("selected_sections" in note.lower() for note in contract.notes)
+    section_keys = {section.section_key for section in contract.render_sections}
+    assert section_keys == {"finisaje_fields", "iluminare", "montaj_template"}
+    assert "finish_setup.lighting_system_type" in contract.writable_workspace_paths
+    lighting = next(f for f in contract.field_bindings if f.canonical_key == "lighting_system_type")
+    assert lighting.field_type == "select"
+    assert lighting.options
+    assert all(opt.label_ro for opt in lighting.options)
 
     keys = {binding.canonical_key for binding in contract.field_bindings}
     for expected_key in (
@@ -107,12 +116,13 @@ def test_letters_canonical_form_contract_version_runtime_authority_and_field_key
         assert expected_key in keys
 
     face_binding = next(f for f in contract.field_bindings if f.canonical_key == "face_finish_type")
-    assert face_binding.field_type == "enum"
+    assert face_binding.field_type == "select"
     assert face_binding.option_values
+    assert face_binding.options
     assert "debitare_fata" in face_binding.consumers
 
     depth_binding = next(f for f in contract.field_bindings if f.canonical_key == "return_depth_mm")
-    assert depth_binding.field_type == "number"
+    assert depth_binding.field_type == "select"
     assert depth_binding.unit == "mm"
 
 
@@ -173,10 +183,14 @@ def test_form_contract_endpoint_200(form_auth_client):
     assert response.status_code == 200
     body = response.json()
     assert body["summary"]["active_module_count"] == 7
-    assert body["summary"]["contract_version"] == "1.1.0-letters-canonical"
+    assert body["summary"]["contract_version"] == "1.2.0-generic-renderer-pilot"
     assert body["summary"]["runtime_authority"] is False
-    assert body["summary"]["runtime_authority_scope"] == "review_labels"
+    assert body["summary"]["runtime_authority_scope"] == (
+        "selected_sections:finisaje_fields,iluminare,montaj_template"
+    )
     assert len(body["field_bindings"]) >= 20
+    assert len(body["render_sections"]) == 3
+    assert "finish_setup.mounting_template_enabled" in body["writable_workspace_paths"]
     assert body["form_system_backbone"]["read_only"] is True
     assert body["form_system_backbone"]["root"]["canonical_code"] == TEMPLATE
 

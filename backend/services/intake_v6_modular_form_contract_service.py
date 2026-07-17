@@ -5,7 +5,10 @@ from __future__ import annotations
 from schemas.intake_v6_modular_form import (
     ActivationKind,
     IntakeFormFieldBinding,
+    IntakeFormOption,
     IntakeModuleFormSection,
+    IntakeRenderSection,
+    IntakeVisibilityRule,
     IntakeV6ModularFormContract,
     IntakeV6ModularFormContractSummary,
     TriggerFieldAlignment,
@@ -21,13 +24,131 @@ _GEOM = "quote_geometry"
 _CLIENT = "client"
 _SVG = "svg_source"
 
-# Scoped runtime authority — Letters Review labels only (not full form generation).
-_LETTERS_RUNTIME_AUTHORITY_SCOPE = "review_labels"
+# Scoped runtime authority — Letters pilot sections (generic renderer).
+_LETTERS_RUNTIME_AUTHORITY_SCOPE = "selected_sections:finisaje_fields,iluminare,montaj_template"
 _LETTERS_RUNTIME_AUTHORITY_NOTE = (
-    "runtime_authority=false; runtime_authority_scope=review_labels — "
-    "Product System owns field metadata and Review label_ro for TPL-VOLUMETRIC-LETTERS_v2; "
-    "section structure, options, visibility, validation, and save remain Intake frontend."
+    "runtime_authority=false; runtime_authority_scope=selected_sections:finisaje_fields,iluminare,montaj_template — "
+    "Product System owns render_sections + field metadata for the Letters pilot; "
+    "letter-group layout, analyzer geometry, mounting_scope/solution remain Intake frontend temporarily."
 )
+
+_OPTION_LABELS_RO: dict[str, dict[str, str]] = {
+    "face_finish_type": {
+        "none": "Fără finisaj",
+        "oracal_651": "Oracal 651",
+        "oracal_641": "Oracal 641",
+        "oracal_8500": "Oracal 8500",
+        "printed_vinyl": "Vinil printat",
+        "printed_laminated_vinyl": "Vinil printat laminat",
+        "print_laminate": "Print + laminat",
+        "colored_plexiglas": "Plexiglas colorat",
+        "plexiglas_clear": "Plexiglas transparent",
+    },
+    "return_finish_type": {
+        "white_aluminum": "Aluminiu alb",
+        "black_aluminum": "Aluminiu negru",
+        "gold_aluminum": "Aluminiu auriu",
+        "mirror_silver": "Oglindă argintie",
+        "ral_paint": "Vopsire RAL",
+        "oracal_wrapped": "Îmbrăcat Oracal",
+        "ral": "Vopsire RAL",
+    },
+    "backing_mode": {
+        "forex_10_no_bevel": "Forex 10 mm fără bevel",
+        "forex_10_with_bevel": "Forex 10 mm cu bevel",
+        "closed_back": "Spate închis",
+    },
+    "lighting_system_type": {
+        "none": "Fără iluminare",
+        "led_modules": "Module LED",
+        "led_strip": "Bandă LED",
+        "front_lit": "Iluminare față",
+        "back_lit": "Iluminare spate",
+    },
+}
+
+
+def _options_for(canonical_key: str, option_values: list[str] | None) -> list[IntakeFormOption] | None:
+    if not option_values:
+        return None
+    labels = _OPTION_LABELS_RO.get(canonical_key, {})
+    return [
+        IntakeFormOption(value=value, label_ro=labels.get(value, value.replace("_", " ")))
+        for value in option_values
+    ]
+
+
+def _enrich_binding(binding: IntakeFormFieldBinding) -> IntakeFormFieldBinding:
+    """Normalize field_type and attach structured options/visibility for generic renderer."""
+    data = binding.model_dump()
+    field_type = data.get("field_type")
+    if field_type == "enum":
+        data["field_type"] = "select"
+    # Number fields with discrete option_values render as select (e.g. return depth).
+    if field_type == "number" and data.get("option_values"):
+        data["field_type"] = "select"
+    if data.get("options") is None and data.get("option_values"):
+        opts = _options_for(binding.canonical_key, binding.option_values) or [
+            IntakeFormOption(value=str(v), label_ro=str(v)) for v in (binding.option_values or [])
+        ]
+        data["options"] = [opt.model_dump() for opt in opts]
+    if data.get("visibility") is None and binding.visibility_rule:
+        raw = binding.visibility_rule.strip()
+        if "=" in raw and not raw.startswith("in:"):
+            path_key, expected = raw.split("=", 1)
+            data["visibility"] = IntakeVisibilityRule(
+                kind="equals",
+                workspace_path=f"{_FINISH}.{path_key.strip()}",
+                value=expected.strip(),
+            ).model_dump()
+    return IntakeFormFieldBinding.model_validate(data)
+
+
+LETTERS_RENDER_SECTIONS: list[IntakeRenderSection] = [
+    IntakeRenderSection(
+        section_key="finisaje_fields",
+        title_ro="Finisaje (câmpuri contract)",
+        order=10,
+        description_ro="Finisaj față, cant și spate — metadate Product System; layout pe grup litere rămâne adapter specializat.",
+        module_codes=["debitare_fata", "modelare_cant", "debitare_spate"],
+        field_keys=[
+            "face_finish_type",
+            "return_finish_type",
+            "return_depth_mm",
+            "backing_mode",
+        ],
+        pilot_role="adapted_specialized",
+    ),
+    IntakeRenderSection(
+        section_key="iluminare",
+        title_ro="Iluminare",
+        order=20,
+        description_ro="Tip iluminare și PSU — randate generic din contract.",
+        module_codes=["sistem_led"],
+        field_keys=["lighting_system_type", "selected_psu_watts"],
+        pilot_role="generic_renderer",
+    ),
+    IntakeRenderSection(
+        section_key="montaj_template",
+        title_ro="Șablon montaj",
+        order=30,
+        description_ro="Activare și arie șablon — randate generic din contract.",
+        module_codes=["finisaje"],
+        field_keys=["mounting_template_enabled", "mounting_template_area_m2"],
+        pilot_role="generic_renderer",
+    ),
+]
+
+PILOT_WRITABLE_PATHS = [
+    f"{_FINISH}.face_finish_type",
+    f"{_FINISH}.return_finish_type",
+    f"{_FINISH}.return_depth_mm",
+    f"{_FINISH}.backing_mode",
+    f"{_FINISH}.lighting_system_type",
+    f"{_FINISH}.selected_psu_watts",
+    f"{_FINISH}.mounting_template_enabled",
+    f"{_FINISH}.mounting_template_area_m2",
+]
 
 VOLUMETRIC_FIELD_BINDINGS: list[IntakeFormFieldBinding] = [
     IntakeFormFieldBinding(
@@ -237,16 +358,24 @@ VOLUMETRIC_FIELD_BINDINGS: list[IntakeFormFieldBinding] = [
         workspace_path=f"{_FINISH}.led_module_count",
         label_ro="Număr module LED",
         required=False,
+        field_type="readonly",
+        unit="buc",
+        read_only=True,
         field_role="module_configuration",
         module_codes=["sistem_led"],
         product_definition_keys=["led_module_count"],
         cost_engine_step="Step 7",
+        notes=["Derived / analyzer-owned — display only in generic renderer."],
     ),
     IntakeFormFieldBinding(
         canonical_key="selected_psu_watts",
         workspace_path=f"{_FINISH}.selected_psu_watts",
         label_ro="PSU selectat",
         required=False,
+        field_type="select",
+        unit="W",
+        option_values=["60", "100", "150", "200", "250", "300"],
+        decision="operator_select",
         field_role="module_configuration",
         module_codes=["sistem_led"],
         product_definition_keys=["selected_psu_watts"],
@@ -271,6 +400,8 @@ VOLUMETRIC_FIELD_BINDINGS: list[IntakeFormFieldBinding] = [
         workspace_path=f"{_FINISH}.mounting_template_enabled",
         label_ro="Șablon montaj activ",
         required=False,
+        field_type="boolean",
+        decision="operator_toggle",
         field_role="module_activation",
         module_codes=["finisaje"],
         product_definition_keys=["mounting_template_enabled"],
@@ -281,6 +412,14 @@ VOLUMETRIC_FIELD_BINDINGS: list[IntakeFormFieldBinding] = [
         workspace_path=f"{_FINISH}.mounting_template_area_m2",
         label_ro="Suprafață șablon montaj",
         required=False,
+        field_type="number",
+        unit="m2",
+        min_value=0,
+        visibility=IntakeVisibilityRule(
+            kind="truthy",
+            workspace_path=f"{_FINISH}.mounting_template_enabled",
+        ),
+        decision="operator_input",
         field_role="module_configuration",
         module_codes=["finisaje"],
         product_definition_keys=["mounting_template_area_m2"],
@@ -460,18 +599,21 @@ class IntakeV6ModularFormContractService:
             "TRIGGER_FIELD_MISMATCH for structura_suport is documented — canonical intake trigger is mounting_system."
         )
 
+        enriched_bindings = [_enrich_binding(b) for b in VOLUMETRIC_FIELD_BINDINGS]
         return IntakeV6ModularFormContract(
             summary=IntakeV6ModularFormContractSummary(
                 template_code=canonical_template_code,
                 registry_version=REGISTRY_VERSION,
                 active_module_count=len(active_modules),
-                field_binding_count=len(VOLUMETRIC_FIELD_BINDINGS),
+                field_binding_count=len(enriched_bindings),
                 runtime_authority=False,
                 runtime_authority_scope=_LETTERS_RUNTIME_AUTHORITY_SCOPE,
                 warnings=warnings,
             ),
             modules=modules,
-            field_bindings=VOLUMETRIC_FIELD_BINDINGS,
+            field_bindings=enriched_bindings,
+            render_sections=LETTERS_RENDER_SECTIONS,
+            writable_workspace_paths=list(PILOT_WRITABLE_PATHS),
             form_system_backbone=backbone,
             trigger_alignments=TRIGGER_ALIGNMENTS,
             valid_combinations=VALID_COMBINATIONS,
@@ -479,7 +621,9 @@ class IntakeV6ModularFormContractService:
             orphan_fields_audit=ORPHAN_FIELDS_AUDIT,
             notes=[
                 _LETTERS_RUNTIME_AUTHORITY_NOTE,
-                "Does not mutate workspace payload; Intake hydrates/saves answers separately.",
+                "render_sections drive the generic Intake renderer for the Letters pilot only.",
+                "writable_workspace_paths is the allowlist for generic nested writes.",
+                "Does not mutate workspace payload server-side; Intake hydrates/saves answers.",
                 "ProductDefinition consumes field_bindings / product_definition_keys as compiler inputs.",
                 "ProductAggregate emits non-monetary commercial measurements; CPP 7G alone prices.",
                 "Other templates remain unsupported by this scoped contract.",
