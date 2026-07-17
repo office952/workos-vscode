@@ -34,7 +34,7 @@ Recorded audit facts accepted by owner:
 
 ## 1. Verdict
 
-`LEGACY_PRICING_PATH_REACHABLE`
+`LEGACY_PRICING_PATH_REACHABLE` → **follow-on isolation build: `LEGACY_PRICING_PATH_ISOLATED`** (see worklog implementation section)
 
 **Active Intake V6 → Quote Snapshot V2 → Order Snapshot V2 spine:** operational planned/actual minutes do **not** influence customer commercial price. Differential tests pass; Post-Job write-back remains false; TE2E-028A introduced no commercial edge.
 

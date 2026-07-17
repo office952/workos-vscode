@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT** |
+| Active task | **LEGACY COMMERCIAL PRICING PATH = ISOLATED — PROVEN_CURRENT** (after TE2E-028A UI closed) |
 
-| Next task | Owner roadmap pick; TE2E-028 residuals remain open (stock G3 / labor $ / fixture / Letters breadth); FLEX-02 alternate |
+| Next task | Owner roadmap pick; TE2E-028B **not started**; TE2E-028 residuals remain open (formula duration / stock G3 / labor $ / fixture / Letters breadth) |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 

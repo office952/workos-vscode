@@ -61,6 +61,62 @@ TE2E-028B = NOT STARTED
 Audit commit: `test(pricing): prove time isolation and flag legacy route`  
 (Implementation follows in the same worklog section below.)
 
-## Next
+## Implementation — Legacy commercial pricing path isolation
 
-Legacy commercial pricing path isolation (this build). Do not start TE2E-028B.
+### Consumer research (summary)
+
+| Consumer | Runtime active | Operator reachable | External integration | Test only | Action |
+|----------|---------------:|-------------------:|---------------------:|----------:|--------|
+| QuoteWizard `priceQuote` | was yes | `/quotes` modal | no evidence | no | Disabled + retired banner |
+| VolumetricLettersQuoteFlow `priceQuote` | was yes | Intake quote tab / wizard | no | no | Commercial button retired |
+| QuoteRevisionDialog `priceExistingQuote` | was yes | Quotes revision | no | no | Submit blocked |
+| `POST /entities/quotes/price` | was yes | via FE | **none found** | yes | HTTP 410, excluded from OpenAPI |
+| `POST /entities/quotes/{id}/price` | was yes | revision FE | **none found** | yes | HTTP 410, excluded from OpenAPI |
+| CostEngine / simulate-cost | yes (internal) | Product System / preliminary | no | no | Preserved — not customer authority |
+| QuoteOrchestrator module | present | only via retired routes | no | yes | Unreachable as commercial authority |
+
+No external/production webhook or third-party caller found in repo configs.
+
+### Strategy
+
+Preferred transitional isolation: routes remain registered for explicit **410 Gone** (no calculation, no write), `include_in_schema=False` (absent from OpenAPI). Frontend clients refuse to call. No automatic 7G adapter.
+
+### Backend
+
+- `services/legacy_quote_price_retirement.py`
+- `routers/quotes.py` — `price_quote` / `price_existing_draft_quote` raise retirement only
+
+### Frontend
+
+- `lib/legacyQuotePriceRetirement.ts` + `LegacyQuotePriceRetiredBanner`
+- `api/quotes.ts` — `priceQuote` / `priceExistingQuote` throw 410 locally (no fetch)
+- QuoteWizard / VolumetricLettersQuoteFlow / QuoteRevisionDialog disabled commercial actions
+- Control Center limitation text updated
+
+### Tests
+
+- `test_legacy_quote_price_isolation.py` + retired rewrites of legacy `/price` suites
+- Vitest `quotes.legacyPriceRetirement.test.ts`
+- Time-isolation + TE2E-028A + CPP + profitability remain green
+
+### Runtime
+
+- OpenAPI: `/api/v1/entities/quotes/price` absent
+- POST legacy price → **410** `legacy_quote_price_retired`, `financial_write=false`
+- 7G unchanged
+
+### Modules / Governance
+
+- Modules: STATUS/LIMITATION update (7G active; legacy hourly not authoritative)
+- Governance: POLICY ENFORCEMENT IMPROVEMENT (route + FE + tests)
+
+### Status
+
+`LEGACY COMMERCIAL PRICING PATH = ISOLATED — PROVEN_CURRENT`  
+TE2E-028B = **not started**
+
+### Commits
+
+1. `test(pricing): prove time isolation and flag legacy route` (`45d1d57`)
+2. `fix(pricing): isolate legacy hourly quote path` (this implementation)
+3. docs/evidence commit if needed
