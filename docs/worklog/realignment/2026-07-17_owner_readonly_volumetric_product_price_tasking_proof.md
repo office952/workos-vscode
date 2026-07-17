@@ -8,6 +8,9 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `1177db8` |
+| Feature commit | `258eaa3` |
+| Worklog commit | `995dc73` |
+| End HEAD | `995dc73` |
 | Initial | `OWNER_READ_ONLY_PRODUCT_PRICE_TASKING_PROOF_IN_PROGRESS` |
 | Final | `OWNER_READ_ONLY_PRODUCT_PRICE_TASKING_PROOF_COMPLETE_WITH_GUARDS` |
 
