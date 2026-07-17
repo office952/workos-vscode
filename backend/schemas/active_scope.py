@@ -45,6 +45,8 @@ class ActiveScopeResult(BaseModel):
     commercial_scope_modules: list[str] = Field(default_factory=list)
     execution_scope_modules: list[str] = Field(default_factory=list)
     composition_excluded_operations: list[str] = Field(default_factory=list)
+    # Build 3: interface FACE+CANT materials (e.g. adhesive) silenced when interface inactive.
+    composition_excluded_materials: list[str] = Field(default_factory=list)
     dependencies: list[ActiveScopeDependency] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     errors: list[str] = Field(default_factory=list)

@@ -12,6 +12,12 @@ import {
   readDependencyConfirmations,
   readPersistedDependencyValidation,
 } from "@/lib/intakeV6/intakeV6OfferScopeDependency";
+import {
+  describeOfferScopeSummary,
+  OFFER_SCOPE_PRESETS,
+  resolveActiveOfferScopePreset,
+  type OfferScopePreset,
+} from "@/lib/intakeV6/intakeV6OfferScopePresets";
 import IntakeV6OfferScopeDependencyFeedback from "./IntakeV6OfferScopeDependencyFeedback";
 import { v6 } from "./atoms/intakeV6Presentation";
 
@@ -280,6 +286,24 @@ export default function IntakeV6OfferScopePanel({
     [schedulePersist],
   );
 
+  const applyPreset = useCallback(
+    (preset: OfferScopePreset) => {
+      if (preset.mode === "full_product") {
+        const next: OfferScopeIntent = { mode: "full_product", soldModules: [] };
+        setMode(next.mode);
+        setSoldModules([]);
+        setSaveError(null);
+        schedulePersist(next);
+        return;
+      }
+      applySubsetModules(preset.soldModules);
+    },
+    [applySubsetModules, schedulePersist],
+  );
+
+  const activePreset = resolveActiveOfferScopePreset(localState.mode, localState.soldModules);
+  const scopeSummary = describeOfferScopeSummary(localState.mode, localState.soldModules);
+
   const toggleModule = (code: SoldModuleCode) => {
     const nextModules = normalizeSoldModules(
       soldModulesRef.current.includes(code)
@@ -318,6 +342,34 @@ export default function IntakeV6OfferScopePanel({
         <Package className="h-3.5 w-3.5 text-violet-300" aria-hidden />
         Ce producem?
       </p>
+
+      <div
+        className="mt-3 flex flex-wrap gap-2"
+        data-testid="intake-v6-offer-scope-presets"
+        role="group"
+        aria-label="Preseturi scope"
+      >
+        {OFFER_SCOPE_PRESETS.map((preset) => {
+          const selected = activePreset === preset.id;
+          return (
+            <button
+              key={preset.id}
+              type="button"
+              disabled={disabled || saving}
+              onClick={() => applyPreset(preset)}
+              data-testid={preset.testId}
+              aria-pressed={selected}
+              className={
+                selected
+                  ? "rounded border border-violet-400/50 bg-violet-500/20 px-2.5 py-1 text-[11px] text-violet-100"
+                  : "rounded border border-slate-600/70 bg-slate-950/40 px-2.5 py-1 text-[11px] text-slate-300 hover:border-slate-500"
+              }
+            >
+              {preset.labelRo}
+            </button>
+          );
+        })}
+      </div>
 
       <fieldset className="mt-3 space-y-2" disabled={disabled || saving}>
         <label className="flex items-center gap-2 text-[11px] text-slate-200">
@@ -430,6 +482,25 @@ export default function IntakeV6OfferScopePanel({
             : `Componente: ${localState.soldModules.join(", ")}`}
         </p>
       ) : null}
+
+      <div
+        className="mt-2 space-y-0.5 rounded border border-slate-700/50 bg-slate-950/30 px-2 py-1.5 text-[10px] text-slate-400"
+        data-testid="intake-v6-offer-scope-summary"
+      >
+        <p data-testid="intake-v6-offer-scope-summary-mode">
+          Mod: {scopeSummary.requestModeLabelRo}
+        </p>
+        {scopeSummary.activeLabelsRo.length > 0 ? (
+          <p data-testid="intake-v6-offer-scope-summary-active">
+            Componente active: {scopeSummary.activeLabelsRo.join(", ")}
+          </p>
+        ) : null}
+        {scopeSummary.excludedLabelsRo.length > 0 ? (
+          <p data-testid="intake-v6-offer-scope-summary-excluded">
+            Nu sunt incluse: {scopeSummary.excludedLabelsRo.join(", ")}
+          </p>
+        ) : null}
+      </div>
     </section>
   );
 }

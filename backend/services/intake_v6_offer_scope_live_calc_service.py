@@ -23,6 +23,7 @@ from services.offer_scope_led_subscope_service import (
 )
 from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
 from services.mounting_scope_service import is_mounting_preparation_active
+from services.active_scope_resolver_service import compile_active_scope
 from services.offer_scope_resolver_service import (
     _apply_conditional_gates,
     extract_offer_scope,
@@ -70,6 +71,25 @@ def resolve_live_calc_scope(
         quote_input=quote_input,
     )
     return False, active
+
+
+def resolve_composition_excluded_materials(
+    payload_raw: dict[str, Any],
+    quote_input: dict[str, Any] | None = None,
+) -> frozenset[str]:
+    """FACE+CANT interface materials silenced when interface is inactive."""
+    compiled = compile_active_scope(
+        template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        payload=payload_raw,
+        quote_input=quote_input,
+    )
+    if compiled.use_legacy_full_product or compiled.errors:
+        return frozenset()
+    return frozenset(
+        str(code).strip().lower()
+        for code in (compiled.composition_excluded_materials or [])
+        if str(code).strip()
+    )
 
 
 def _merged_mounting_context(
@@ -257,6 +277,7 @@ def filter_material_breakdown_by_offer_scope(
     quote_input: dict[str, Any] | None = None,
 ) -> IntakeV4MaterialBreakdownResponse:
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
+    excluded_materials = resolve_composition_excluded_materials(payload_raw, quote_input)
     mounting_ctx = _merged_mounting_context(payload_raw, quote_input)
     mounting_prep_active = is_mounting_preparation_active(mounting_ctx)
 
@@ -264,6 +285,10 @@ def filter_material_breakdown_by_offer_scope(
     mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
 
     def _material_allowed(row: IntakeV4MaterialQuantityRow) -> bool:
+        key = str(row.material_key or "").strip().lower()
+        mat_code = str(getattr(row, "material_code", None) or "").strip().lower()
+        if key in excluded_materials or mat_code in excluded_materials:
+            return False
         if not mounting_prep_active and _is_mounting_prep_material_key(row.material_key):
             return False
         return _row_allowed(
@@ -278,6 +303,17 @@ def filter_material_breakdown_by_offer_scope(
     def _operation_allowed(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow) -> bool:
         if not mounting_prep_active and _is_mounting_prep_operation_row(row):
             return False
+        op_code = str(
+            getattr(row, "dossier_operation_key", None)
+            or getattr(row, "tpl_operation_key", None)
+            or getattr(row, "key", None)
+            or ""
+        )
+        # FACE+CANT interface ops — silence when adhesive/bonding interface inactive.
+        if not use_legacy and excluded_materials:
+            lowered = op_code.lower()
+            if "bonding" in lowered or "return_face_bonding" in lowered:
+                return False
         return _row_allowed(
             runtime_module=runtime_module_for_operation_row(row),
             use_legacy=use_legacy,
@@ -285,12 +321,7 @@ def filter_material_breakdown_by_offer_scope(
             sold_led_subscopes=sold_led_subscopes,
             mount_decision=mount_decision,
             operation_subscope=_operation_led_subscope_for_row(row),
-            operation_code=str(
-                getattr(row, "dossier_operation_key", None)
-                or getattr(row, "tpl_operation_key", None)
-                or getattr(row, "key", None)
-                or ""
-            ),
+            operation_code=op_code,
         )
 
     material_rows = [row for row in breakdown.material_rows if _material_allowed(row)]

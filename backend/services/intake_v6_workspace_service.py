@@ -1110,8 +1110,10 @@ async def save_offer_scope_for_intake_v6_workspace(
     normalized_mode = str(mode or "full_product").strip()
     normalized_modules = [str(code).strip() for code in (sold_modules or []) if str(code).strip()]
     previous_modules = _read_scope_sold_modules(payload_raw)
+    previous_scope = payload_raw.get("offer_scope")
+    previous_mode = previous_scope.get("mode") if isinstance(previous_scope, dict) else None
     sold_modules_changed = set(previous_modules) != set(normalized_modules) or (
-        payload_raw.get("offer_scope", {}).get("mode") != normalized_mode
+        previous_mode != normalized_mode
     )
     if normalized_mode == "full_product":
         scope = OfferScope(mode="full_product", sold_modules=[])

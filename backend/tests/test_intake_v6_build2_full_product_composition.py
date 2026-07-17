@@ -43,8 +43,9 @@ def test_build2_full_product_composition_authority(form_service: IntakeV6Modular
     assert contract is not None
     assert contract.summary.composition_authority is True
     assert contract.full_product_composition is not None
-    assert contract.full_product_composition.mode == "full_product_only"
-    assert contract.full_product_composition.subset_activation_enabled is False
+    # Build 3 flips subset activation; composition authority + golden tabs remain.
+    assert contract.full_product_composition.mode == "subset_activation"
+    assert contract.full_product_composition.subset_activation_enabled is True
     assert contract.full_product_composition.ui_tab_ids == ["finisaje", "iluminare", "montaj"]
     assert "FACE" in contract.full_product_composition.component_owners
     assert "CANT" in contract.full_product_composition.component_owners

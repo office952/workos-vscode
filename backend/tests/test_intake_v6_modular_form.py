@@ -90,7 +90,7 @@ def test_letters_canonical_form_contract_version_runtime_authority_and_field_key
 ):
     contract = form_service.get_for_template(TEMPLATE)
     assert contract is not None
-    assert contract.summary.contract_version == "1.3.0-full-product-composition"
+    assert contract.summary.contract_version == "1.4.0-subset-activation"
     assert contract.summary.runtime_authority is False
     assert contract.summary.composition_authority is True
     assert contract.summary.runtime_authority_scope == (
@@ -192,7 +192,7 @@ def test_form_contract_endpoint_200(form_auth_client):
     assert response.status_code == 200
     body = response.json()
     assert body["summary"]["active_module_count"] == 9
-    assert body["summary"]["contract_version"] == "1.3.0-full-product-composition"
+    assert body["summary"]["contract_version"] == "1.4.0-subset-activation"
     assert body["summary"]["runtime_authority"] is False
     assert body["summary"]["composition_authority"] is True
     assert body["summary"]["runtime_authority_scope"] == (
@@ -200,7 +200,7 @@ def test_form_contract_endpoint_200(form_auth_client):
     )
     assert len(body["field_bindings"]) >= 20
     assert len(body["render_sections"]) >= 7
-    assert body["full_product_composition"]["subset_activation_enabled"] is False
+    assert body["full_product_composition"]["subset_activation_enabled"] is True
     assert body["full_product_composition"]["ui_tab_ids"] == ["finisaje", "iluminare", "montaj"]
     assert "finish_setup.mounting_template_enabled" in body["writable_workspace_paths"]
     assert body["form_system_backbone"]["read_only"] is True

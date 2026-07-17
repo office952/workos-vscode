@@ -44,6 +44,8 @@ def test_return_cant_only_active_modules() -> None:
     assert set(result.commercial_scope_modules) == {"modelare_cant"}
     assert "return_face_bonding" in result.composition_excluded_operations
     assert "return_face_bonding" in COMPOSITION_ONLY_EXECUTION_OPS
+    assert "MAT-ADEZIV-CANT-LITERE" in result.composition_excluded_materials
+    assert "adhesive_return_to_face" in result.composition_excluded_materials
 
 
 def test_face_only_active_modules() -> None:

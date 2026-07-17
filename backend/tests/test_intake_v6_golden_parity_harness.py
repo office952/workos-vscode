@@ -381,10 +381,23 @@ def test_historical_vs_fixture_geometry_drift_guard():
     assert abs(fixture_perimeter - live_perimeter) > 1e-4
 
 
-# Spec-only marker for Build 3 — must not fail Build 1.
-@pytest.mark.skip(reason="Build 3 cant-only isolation — not in Build 1 scope")
 def test_spec_build3_cant_only_silences_adhesive():
-    assert False, "implement in Build 3"
+    """Build 3 — CANT-only must silence FACE+CANT interface adhesive."""
+    from services.active_scope_resolver_service import compile_active_scope
+
+    result = compile_active_scope(
+        template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        payload={
+            "offer_scope": {
+                "contract_version": "offer_scope_contract/v1",
+                "mode": "component_subset",
+                "sold_modules": ["RETURN-CANT"],
+            }
+        },
+    )
+    assert "MAT-ADEZIV-CANT-LITERE" in result.composition_excluded_materials
+    assert "adhesive_return_to_face" in result.composition_excluded_materials
+    assert "return_face_bonding" in result.composition_excluded_operations
 
 
 def test_build3_cant_only_spec_documented():

@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-FORM_CONTRACT_VERSION = "1.3.0-full-product-composition"
+FORM_CONTRACT_VERSION = "1.4.0-subset-activation"
 
 SupportedFieldType = Literal[
     "text",
@@ -120,9 +120,9 @@ class IntakeRenderSection(BaseModel):
 
 
 class FullProductCompositionSpec(BaseModel):
-    """Full-product composition authority for Letters — no subset activation."""
+    """Full-product composition authority for Letters — Build 3 enables subset activation."""
 
-    mode: Literal["full_product_only"] = "full_product_only"
+    mode: Literal["full_product_only", "subset_activation"] = "full_product_only"
     composition_authority: bool = True
     subset_activation_enabled: bool = False
     ui_tab_ids: list[str] = Field(default_factory=list)

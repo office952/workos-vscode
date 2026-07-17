@@ -32,7 +32,8 @@ _LETTERS_RUNTIME_AUTHORITY_NOTE = (
     "runtime_authority_scope=selected_sections:finisaje_fields,iluminare,montaj_template — "
     "Product System owns full-product Review tab order + section registry; "
     "generic field writes remain allowlisted; letter-group/montaj specialized adapters preserve golden UI; "
-    "subset activation disabled; FACE+CANT adhesive interface is metadata-only target."
+    "subset activation enabled for FACE / CANT / FACE+CANT; "
+    "inactive modules are silent; FACE+CANT interface owns adhesive/bonding once."
 )
 
 _FACE_CANT_INTERFACE_CANDIDATE = {
@@ -42,8 +43,11 @@ _FACE_CANT_INTERFACE_CANDIDATE = {
     "operation_codes": ["RETURN_PROFILE_FACE_BONDING", "return_face_bonding"],
     "current_owner": "modelare_cant",
     "target_owner": "interface:FACE+CANT",
+    "owner": "interface_face_cant",
+    "requires": ["FACE", "RETURN-CANT"],
     "build2_behavior": "full_product_output_unchanged",
-    "build3_isolation": "cant_only_must_silence_adhesive_and_bonding",
+    "build3_isolation": "cant_only_and_face_only_silence_adhesive_and_bonding",
+    "build3_activation": "face_plus_cant_emits_adhesive_exactly_once",
 }
 
 _OPTION_LABELS_RO: dict[str, dict[str, str]] = {
@@ -692,16 +696,17 @@ class IntakeV6ModularFormContractService:
                 if owner not in component_owners:
                     component_owners.append(owner)
         composition = FullProductCompositionSpec(
-            mode="full_product_only",
+            mode="subset_activation",
             composition_authority=True,
-            subset_activation_enabled=False,
+            subset_activation_enabled=True,
             ui_tab_ids=ui_tab_ids,
             component_owners=component_owners,
             interface_candidates=[_FACE_CANT_INTERFACE_CANDIDATE],
             notes=[
                 "Build 2: Review tabs composed from render_sections (drives_review_tab).",
                 "Specialized adapters preserve golden Finisaje/Iluminare/Montaj UI.",
-                "Subset request modes remain disabled until Build 3 owner GO.",
+                "Build 3: subset activation real — FACE / CANT / FACE+CANT / full product.",
+                "Inactive value policy: Option A — ignore downstream (no silent purge).",
             ],
         )
         return IntakeV6ModularFormContract(

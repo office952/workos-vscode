@@ -165,11 +165,22 @@ def filter_aggregate_by_active_scope(
         return enrich_identity_components_for_modules(aggregate, legacy_mods | {"geometry_svg"})
 
     allowed = scope.active_set()
+    sold_set = set(scope.sold_module_codes)
     composition_excluded = set(scope.composition_excluded_operations) | set(
         COMPOSITION_ONLY_EXECUTION_OPS
-        if set(scope.sold_module_codes) == {"RETURN-CANT"}
+        if sold_set == {"RETURN-CANT"}
+        or ("RETURN-CANT" in sold_set and "FACE" not in sold_set)
         else ()
     )
+    composition_excluded_materials = {
+        str(code).strip().upper()
+        for code in (scope.composition_excluded_materials or [])
+        if str(code).strip()
+    } | {
+        str(code).strip().lower()
+        for code in (scope.composition_excluded_materials or [])
+        if str(code).strip()
+    }
 
     components: list[ProductAggregateComponent] = []
     for comp in aggregate.components:
@@ -185,6 +196,12 @@ def filter_aggregate_by_active_scope(
 
     materials: list[ProductAggregateMaterial] = []
     for mat in aggregate.materials:
+        mat_code = str(mat.material_code or "").strip()
+        if mat_code and (
+            mat_code.upper() in composition_excluded_materials
+            or mat_code.lower() in composition_excluded_materials
+        ):
+            continue
         mod = _module_for_material(mat)
         if mod is None:
             continue
@@ -206,9 +223,10 @@ def filter_aggregate_by_active_scope(
             continue
         if mod not in allowed:
             continue
-        # Bonding ops historically tagged asamblare — exclude for return-only.
+        # Bonding ops historically tagged asamblare — exclude unless FACE+CANT interface.
         if (
-            set(scope.sold_module_codes) == {"RETURN-CANT"}
+            "FACE" not in sold_set
+            and "RETURN-CANT" in sold_set
             and (op.mini_module_code == "asamblare" or "bonding" in (op.operation_code or "").lower())
         ):
             continue

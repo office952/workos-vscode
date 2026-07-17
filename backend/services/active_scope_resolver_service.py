@@ -68,6 +68,27 @@ RETURN_ONLY_COMPOSITION_EXCLUSIONS: frozenset[str] = frozenset(
     }
 )
 
+# FACE+CANT interface materials — emit only when both FACE and RETURN-CANT are sold
+# (or full-product legacy). Material codes + live-calc row keys.
+INTERFACE_FACE_CANT_MATERIALS: frozenset[str] = frozenset(
+    {
+        "MAT-ADEZIV-CANT-LITERE",
+        "adhesive_return_to_face",
+    }
+)
+
+
+def _interface_face_cant_active(sold: list[str] | set[str]) -> bool:
+    sold_set = set(sold)
+    return "FACE" in sold_set and "RETURN-CANT" in sold_set
+
+
+def _composition_excluded_materials_for_sold(sold: list[str]) -> list[str]:
+    """Silence interface materials unless FACE+CANT interface is active."""
+    if _interface_face_cant_active(sold):
+        return []
+    return sorted(INTERFACE_FACE_CANT_MATERIALS)
+
 
 def _calc_runtime_modules(calc_modules: list[str]) -> set[str]:
     out: set[str] = set()
@@ -108,7 +129,25 @@ def _dependency_rows(
                 code="return_face_bonding",
                 dependency_class="composition_only",
                 reason="Face-to-return bonding belongs to complete volumetric letters, not return sold alone.",
-                required_by=["full_product"],
+                required_by=["full_product", "FACE+RETURN-CANT"],
+            )
+        )
+    if not _interface_face_cant_active(sold_set) and "RETURN-CANT" in sold_set:
+        rows.append(
+            ActiveScopeDependency(
+                code="MAT-ADEZIV-CANT-LITERE",
+                dependency_class="composition_only",
+                reason="Return-to-face adhesive belongs to FACE+CANT interface, not RETURN-CANT alone.",
+                required_by=["FACE", "RETURN-CANT"],
+            )
+        )
+    if _interface_face_cant_active(sold_set):
+        rows.append(
+            ActiveScopeDependency(
+                code="RETURN_FACE_BONDING",
+                dependency_class="composition_only",
+                reason="FACE+CANT interface activates return-face bonding and adhesive once.",
+                required_by=["FACE", "RETURN-CANT"],
             )
         )
     for code in sorted(active):
@@ -165,6 +204,7 @@ def compile_active_scope(
             commercial_scope_modules=[],
             execution_scope_modules=[],
             composition_excluded_operations=[],
+            composition_excluded_materials=[],
             dependencies=[],
             warnings=["ACTIVE_SCOPE_LEGACY_FULL_PRODUCT"],
             errors=list(resolved.validation_errors),
@@ -202,6 +242,12 @@ def compile_active_scope(
     composition_excluded: list[str] = []
     if set(sold) == {"RETURN-CANT"}:
         composition_excluded = sorted(RETURN_ONLY_COMPOSITION_EXCLUSIONS)
+    # Bonding is composition-only unless FACE+CANT interface is active.
+    elif not _interface_face_cant_active(sold) and "RETURN-CANT" in set(sold):
+        # RETURN-CANT with other modules but without FACE — still exclude bonding.
+        composition_excluded = sorted(RETURN_ONLY_COMPOSITION_EXCLUSIONS)
+
+    composition_excluded_materials = _composition_excluded_materials_for_sold(sold)
 
     commercial = sorted(gated)  # calc modules never commercial
     execution = sorted(gated | (calc_runtime & {"geometry_svg"}))
@@ -217,6 +263,7 @@ def compile_active_scope(
         commercial_scope_modules=commercial,
         execution_scope_modules=execution,
         composition_excluded_operations=composition_excluded,
+        composition_excluded_materials=composition_excluded_materials,
         dependencies=_dependency_rows(sold=sold, calc_modules=calc, active=gated),
         warnings=[],
         errors=[],
@@ -225,6 +272,7 @@ def compile_active_scope(
             "sold_runtime_before_gates": sorted(sold_runtime),
             "sold_runtime_after_gates": sorted(gated),
             "calc_runtime": sorted(calc_runtime),
+            "interface_face_cant_active": _interface_face_cant_active(sold),
         },
     )
 
@@ -266,6 +314,7 @@ def active_modules_for_aggregate(
 # Re-export helpers used by existing call sites that migrate gradually.
 __all__ = [
     "COMPOSITION_ONLY_EXECUTION_OPS",
+    "INTERFACE_FACE_CANT_MATERIALS",
     "LETTERS_RUNTIME_MODULES",
     "active_modules_for_aggregate",
     "compile_active_scope",

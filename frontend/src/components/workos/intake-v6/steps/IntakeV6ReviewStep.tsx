@@ -163,6 +163,7 @@ import {
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
 import IntakeV6ReviewTabNav, { type IntakeV6ReviewTabId } from "../IntakeV6ReviewTabNav";
+import IntakeV6OfferScopeReviewSummary from "../IntakeV6OfferScopeReviewSummary";
 import IntakeV6ReviewOperatorBlockerBanner from "../IntakeV6ReviewOperatorBlockerBanner";
 import IntakeV6ReviewSectionShell from "../atoms/IntakeV6ReviewSectionShell";
 import {
@@ -2020,6 +2021,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         data-testid="intake-v6-review-layout"
       >
         <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
+      <div className="mb-3">
+        <IntakeV6OfferScopeReviewSummary payload={payload} />
+      </div>
       <IntakeV6ReviewTabNav
         active={reviewTab}
         onChange={setReviewTab}
