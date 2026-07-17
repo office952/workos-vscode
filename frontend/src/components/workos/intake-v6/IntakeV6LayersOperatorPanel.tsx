@@ -109,6 +109,7 @@ export default function IntakeV6LayersOperatorPanel({
           ) : null}
 
           <IntakeV6Nest2SvgUploader
+            inputTestId="intake-v6-svg-input"
             busy={analyzing}
             disabled={!canImportSvg}
             label="Încarcă SVG"

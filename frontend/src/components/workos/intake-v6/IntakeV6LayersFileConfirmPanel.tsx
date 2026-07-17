@@ -103,6 +103,7 @@ export default function IntakeV6LayersFileConfirmPanel({
               busyLabel="Analizez..."
               buttonClassName={v6.btnGhost}
               buttonTestId="intake-v6-change-svg-file"
+              inputTestId="intake-v6-svg-input-change"
               onFileSelected={(file) => void onImportFile(file)}
             />
           </div>
@@ -120,6 +121,7 @@ export default function IntakeV6LayersFileConfirmPanel({
             label="Încarcă SVG"
             busyLabel="Analizez..."
             buttonClassName={v6.btnPrimary}
+            inputTestId="intake-v6-svg-input-preview"
             onFileSelected={(file) => void onImportFile(file)}
           />
         </div>

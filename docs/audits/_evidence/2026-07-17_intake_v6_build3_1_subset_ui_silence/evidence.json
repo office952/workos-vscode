@@ -1,0 +1,258 @@
+{
+  "started_at": "2026-07-17T12:14:37.467Z",
+  "build": "BUILD3_1_SUBSET_UI_SILENCE",
+  "svg": {
+    "path": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
+    "hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "scenarios": {
+    "full_product": {
+      "id": "full_product",
+      "folder": "01_full",
+      "errors": [],
+      "workspace_id": "50c51bee-d199-4198-9257-e577d622f65a",
+      "tabs": [
+        "finisaje",
+        "iluminare",
+        "montaj"
+      ],
+      "tabs_pass": true,
+      "body_has_iluminare_tab": true,
+      "body_has_montaj_tab": true,
+      "mounting_blocker_ui": false,
+      "confirm_hint": "Rezumat configuratie\nConfigurație: Produs complet · 5 componente · 3 decizii lipsă",
+      "confirm_scope": "Scope ofertă\n\nMod: Produs complet\n\nComponente active: Față, Cant, Spate, Iluminare, Electrică\n\nToate componentele produsului sunt în scope.",
+      "confirm_full_product_ish": false,
+      "probes": {
+        "file_name": "gradi-curat.svg",
+        "offer_scope": null,
+        "readiness": "runtime_capture_blocked",
+        "has_mounting_fatal": true,
+        "has_adhesive": true,
+        "adhesive_count": 1,
+        "cpp_codes": [
+          "debitare_fata",
+          "modelare_cant_aluminiu",
+          "debitare_spate",
+          "sistem_led_module",
+          "sursa_led",
+          "finisaje_colantare_vopsire",
+          "sablon_montaj_forex",
+          "ambalare",
+          "logo_face_cnc::logo_instance_001",
+          "logo_return_cant::logo_instance_001",
+          "logo_back_cnc::logo_instance_001",
+          "logo_print::logo_instance_001",
+          "logo_laminate::logo_instance_001",
+          "logo_application::logo_instance_001",
+          "logo_led_modules::logo_instance_001",
+          "logo_face_cnc::logo_instance_002",
+          "logo_return_cant::logo_instance_002",
+          "logo_back_cnc::logo_instance_002",
+          "logo_print::logo_instance_002",
+          "logo_laminate::logo_instance_002",
+          "logo_application::logo_instance_002",
+          "logo_led_modules::logo_instance_002"
+        ],
+        "fatals": [
+          "readiness_not_ready:runtime_capture_blocked",
+          "operator_confirmation_missing",
+          "runtime_capture:MOUNTING_SOLUTION_MISSING",
+          "pricing_adapter_not_ready"
+        ]
+      },
+      "tabs_after_refresh": [
+        "finisaje",
+        "iluminare",
+        "montaj"
+      ],
+      "refresh_tabs_pass": true,
+      "verdict": "PASS"
+    },
+    "face_only": {
+      "id": "face_only",
+      "folder": "02_face",
+      "errors": [],
+      "workspace_id": "49f68a3c-4b9a-4336-9804-2a8f3b189580",
+      "tabs": [
+        "finisaje"
+      ],
+      "tabs_pass": true,
+      "body_has_iluminare_tab": false,
+      "body_has_montaj_tab": false,
+      "mounting_blocker_ui": false,
+      "confirm_hint": "Rezumat configuratie\nConfigurație: Doar față · 1 componente active · 2 decizii lipsă",
+      "confirm_scope": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față\n\nNu sunt incluse: Cant, Spate, Iluminare, Electrică",
+      "confirm_full_product_ish": false,
+      "probes": {
+        "file_name": "gradi-curat.svg",
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "FACE"
+          ]
+        },
+        "readiness": "ready_for_quote_preview",
+        "has_mounting_fatal": false,
+        "has_adhesive": false,
+        "adhesive_count": 0,
+        "cpp_codes": [
+          "debitare_fata"
+        ],
+        "fatals": [
+          "operator_confirmation_missing"
+        ]
+      },
+      "tabs_after_refresh": [
+        "finisaje"
+      ],
+      "refresh_tabs_pass": true,
+      "verdict": "PASS"
+    },
+    "cant_only": {
+      "id": "cant_only",
+      "folder": "03_cant",
+      "errors": [],
+      "workspace_id": "7d6931bf-282e-4358-9def-24c95680a49e",
+      "tabs": [
+        "finisaje"
+      ],
+      "tabs_pass": true,
+      "body_has_iluminare_tab": false,
+      "body_has_montaj_tab": false,
+      "mounting_blocker_ui": false,
+      "confirm_hint": "Rezumat configuratie\nConfigurație: Doar cant · 1 componente active · 1 decizii lipsă",
+      "confirm_scope": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Cant\n\nNu sunt incluse: Față, Spate, Iluminare, Electrică",
+      "confirm_full_product_ish": false,
+      "probes": {
+        "file_name": "gradi-curat.svg",
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "RETURN-CANT"
+          ]
+        },
+        "readiness": "ready_for_quote_preview",
+        "has_mounting_fatal": false,
+        "has_adhesive": false,
+        "adhesive_count": 0,
+        "cpp_codes": [
+          "modelare_cant_aluminiu"
+        ],
+        "fatals": [
+          "operator_confirmation_missing"
+        ]
+      },
+      "tabs_after_refresh": [
+        "finisaje"
+      ],
+      "refresh_tabs_pass": true,
+      "verdict": "PASS"
+    },
+    "face_cant": {
+      "id": "face_cant",
+      "folder": "04_face_cant",
+      "errors": [],
+      "workspace_id": "ae170557-240c-465a-a5fa-cf467f7c44f1",
+      "tabs": [
+        "finisaje"
+      ],
+      "tabs_pass": true,
+      "body_has_iluminare_tab": false,
+      "body_has_montaj_tab": false,
+      "mounting_blocker_ui": false,
+      "confirm_hint": "Rezumat configuratie\nConfigurație: Față + cant · 2 componente active · 2 decizii lipsă",
+      "confirm_scope": "Scope ofertă\n\nMod: Subset componente\n\nComponente active: Față, Cant\n\nNu sunt incluse: Spate, Iluminare, Electrică",
+      "confirm_full_product_ish": false,
+      "probes": {
+        "file_name": "gradi-curat.svg",
+        "offer_scope": {
+          "contract_version": "offer_scope_contract/v1",
+          "mode": "component_subset",
+          "sold_modules": [
+            "FACE",
+            "RETURN-CANT"
+          ]
+        },
+        "readiness": "ready_for_quote_preview",
+        "has_mounting_fatal": false,
+        "has_adhesive": true,
+        "adhesive_count": 1,
+        "cpp_codes": [
+          "debitare_fata",
+          "modelare_cant_aluminiu"
+        ],
+        "fatals": [
+          "operator_confirmation_missing"
+        ]
+      },
+      "tabs_after_refresh": [
+        "finisaje"
+      ],
+      "refresh_tabs_pass": true,
+      "verdict": "PASS"
+    }
+  },
+  "scope_switch": {
+    "full_tabs": [
+      "finisaje",
+      "iluminare",
+      "montaj"
+    ],
+    "cant_tabs": [
+      "finisaje"
+    ],
+    "pass": true
+  },
+  "responsive": [
+    {
+      "name": "desktop",
+      "w": 1440,
+      "h": 900,
+      "noHScroll": true,
+      "tabs": [
+        "finisaje"
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_1_subset_ui_silence\\06_responsive\\desktop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "laptop",
+      "w": 1280,
+      "h": 800,
+      "noHScroll": true,
+      "tabs": [
+        "finisaje"
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_1_subset_ui_silence\\06_responsive\\laptop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "small_laptop",
+      "w": 1024,
+      "h": 768,
+      "noHScroll": true,
+      "tabs": [
+        "finisaje"
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_1_subset_ui_silence\\06_responsive\\small_laptop.png",
+      "verdict": "PASS"
+    },
+    {
+      "name": "tablet",
+      "w": 768,
+      "h": 1024,
+      "noHScroll": true,
+      "tabs": [
+        "finisaje"
+      ],
+      "screenshot": "C:\\w\\psiso\\docs\\audits\\_evidence\\2026-07-17_intake_v6_build3_1_subset_ui_silence\\06_responsive\\tablet.png",
+      "verdict": "PASS"
+    }
+  ],
+  "errors": [],
+  "verdict": "BUILD3_1_SUBSET_UI_ALIGNMENT_COMPLETE_WITH_GUARDS",
+  "finished_at": "2026-07-17T12:17:54.159Z"
+}

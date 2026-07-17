@@ -114,6 +114,7 @@ def list_runtime_capture_fatal_blocker_codes(
         payload_raw,
         template_code=template_code or DEFAULT_ROOT_TEMPLATE_CODE,
     )
+    # Subset filtering is applied inside the read model (Build 3.1).
     codes: list[str] = []
     for blocker_group in read_model.get("blockers") or []:
         if not isinstance(blocker_group, dict):

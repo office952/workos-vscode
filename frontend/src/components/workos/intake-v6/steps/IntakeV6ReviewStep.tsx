@@ -61,7 +61,12 @@ import {
   countIncompleteArtworkFinishesForScope,
   countIncompleteLetterGroupsForScope,
 } from "@/lib/intakeV6/intakeV6SoldScopeFinishConfirmation";
-import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
+import {
+  filterReviewTabsBySoldScope,
+  resolveActiveReviewTabForScope,
+  resolveSoldScopeFieldVisibility,
+} from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
+import { resolveIntakeV6ReviewTabs } from "@/lib/intakeV6/intakeV6ProductPlugin";
 import {
   hydrateMountingScopeFromFinishSetup,
   isMountingPreparationActive,
@@ -728,6 +733,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     () => resolveReviewTabsFromModularContract(modularFormContract),
     [modularFormContract],
   );
+  const scopedReviewTabs = useMemo(() => {
+    const base =
+      contractComposedReviewTabs ?? resolveIntakeV6ReviewTabs(modularTemplateCode);
+    return filterReviewTabsBySoldScope(base, soldScopeVisibility) ?? base;
+  }, [contractComposedReviewTabs, modularTemplateCode, soldScopeVisibility]);
   const compositionProvenance = useMemo(
     () => contractCompositionProvenance(modularFormContract),
     [modularFormContract],
@@ -840,6 +850,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const pendingAutosavePolicyRef = useRef<ReviewAutosavePolicy>("short");
   const [highlightArtworkUnconfirmed, setHighlightArtworkUnconfirmed] = useState(false);
   const [reviewTab, setReviewTab] = useState<IntakeV6ReviewTabId>("finisaje");
+  useEffect(() => {
+    const next = resolveActiveReviewTabForScope(reviewTab, scopedReviewTabs);
+    if (next !== reviewTab) {
+      setReviewTab(next);
+    }
+  }, [reviewTab, scopedReviewTabs]);
   const [diagnosticSectionOpen, setDiagnosticSectionOpen] = useState(false);
   const localRevisionRef = useRef(0);
   const autosaveRequestRef = useRef(0);
@@ -2028,7 +2044,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         active={reviewTab}
         onChange={setReviewTab}
         templateCode={modularTemplateCode}
-        tabs={contractComposedReviewTabs}
+        tabs={scopedReviewTabs}
         compositionAuthority={compositionProvenance.compositionAuthority}
         pendingFinisaje={pendingConfirmationCount}
         illuminated={form.illuminated !== false}

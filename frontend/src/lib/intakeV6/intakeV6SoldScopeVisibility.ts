@@ -3,6 +3,7 @@ import {
   type OfferScopeMode,
   type SoldModuleCode,
 } from "./intakeV6OfferScopeState";
+import type { IntakeV6ReviewTabDefinition, IntakeV6ReviewTabId } from "./intakeV6ProductPlugin";
 
 export type SoldScopeFieldVisibility = {
   mode: OfferScopeMode;
@@ -13,6 +14,43 @@ export type SoldScopeFieldVisibility = {
   lighting: boolean;
   electrical: boolean;
 };
+
+/**
+ * Build 3.1 — Configurare tabs visible only when at least one owner is in active sold scope.
+ * Montaj / Iluminare stay full-product (or lighting/electrical sold) only.
+ */
+export function filterReviewTabsBySoldScope(
+  tabs: IntakeV6ReviewTabDefinition[] | null | undefined,
+  visibility: SoldScopeFieldVisibility,
+): IntakeV6ReviewTabDefinition[] | null {
+  if (!tabs || tabs.length === 0) return tabs ?? null;
+
+  const keep = (id: IntakeV6ReviewTabId): boolean => {
+    if (id === "finisaje") {
+      return visibility.face || visibility.returnCant || visibility.back;
+    }
+    if (id === "iluminare") {
+      return visibility.lighting || visibility.electrical;
+    }
+    if (id === "montaj") {
+      // Slice-1 sold modules never include mounting; tab is full-product only.
+      return visibility.mode === "full_product";
+    }
+    return false;
+  };
+
+  const filtered = tabs.filter((tab) => keep(tab.id));
+  return filtered.length > 0 ? filtered : null;
+}
+
+export function resolveActiveReviewTabForScope(
+  current: IntakeV6ReviewTabId,
+  tabs: IntakeV6ReviewTabDefinition[] | null | undefined,
+): IntakeV6ReviewTabId {
+  const ids = (tabs ?? []).map((tab) => tab.id);
+  if (ids.includes(current)) return current;
+  return ids[0] ?? "finisaje";
+}
 
 export function resolveSoldScopeFieldVisibility(
   payload: Record<string, unknown> | null | undefined,

@@ -7,6 +7,7 @@ import IntakeV6ConfirmHandoffPanel from "./IntakeV6ConfirmHandoffPanel";
 import IntakeV6ConfirmOperationalSummary from "./IntakeV6ConfirmOperationalSummary";
 import IntakeV6ModularFormAwarenessPanel from "./IntakeV6ModularFormAwarenessPanel";
 import IntakeV6LiveCalculationSummary from "./IntakeV6LiveCalculationSummary";
+import IntakeV6OfferScopeReviewSummary from "./IntakeV6OfferScopeReviewSummary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 
 export interface IntakeV6FinalConfigurationSummaryProps {
@@ -75,6 +76,12 @@ export default function IntakeV6FinalConfigurationSummary({
 					</p>
 				</div>
 			) : null}
+
+			<div className="mb-3">
+				<IntakeV6OfferScopeReviewSummary
+					payload={handoff.ws?.payload as Record<string, unknown> | null | undefined}
+				/>
+			</div>
 
 			<IntakeV6TechnicalDetailsAccordion
 				title="Rezumat configuratie"

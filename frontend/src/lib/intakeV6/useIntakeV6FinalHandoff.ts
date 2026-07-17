@@ -61,6 +61,13 @@ import {
 	restoreConfirmationAfterFailedPut,
 	shouldApplyConfirmationSnapshot,
 } from "@/lib/intakeV6/intakeV6InternalDraftConfirmationHydration";
+import { readPersistedOfferScope } from "@/lib/intakeV6/intakeV6OfferScopeState";
+import {
+	describeOfferScopeSummary,
+	resolveActiveOfferScopePreset,
+	OFFER_SCOPE_PRESETS,
+} from "@/lib/intakeV6/intakeV6OfferScopePresets";
+import { resolveSoldScopeFieldVisibility } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 
 const EMPTY_REVIEW_WARNINGS: string[] = [];
 
@@ -512,11 +519,29 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		],
 	);
 
+	const soldScopeVisibility = useMemo(
+		() => resolveSoldScopeFieldVisibility(payload as Record<string, unknown> | undefined),
+		[payload],
+	);
+
 	const modularPendingCount = useMemo(() => {
 		const view = modularAwareness.preview?.operatorView;
 		if (!view) return 0;
-		return [...view.productReady, ...view.mounting].filter((line) => line.state === "pending").length;
-	}, [modularAwareness.preview]);
+		const lines = [...view.productReady, ...view.mounting];
+		return lines.filter((line) => {
+			if (line.state !== "pending") return false;
+			if (soldScopeVisibility.mode === "full_product") return true;
+			if (line.key === "debitare_fata") return soldScopeVisibility.face;
+			if (line.key === "modelare_cant") return soldScopeVisibility.returnCant;
+			if (line.key === "debitare_spate") return soldScopeVisibility.back;
+			if (line.key === "sistem_led") return soldScopeVisibility.lighting || soldScopeVisibility.electrical;
+			if (line.key === "finisaje") {
+				return soldScopeVisibility.face || soldScopeVisibility.returnCant;
+			}
+			// Mounting / packaging responsibilities stay silent on Slice-1 subsets.
+			return false;
+		}).length;
+	}, [modularAwareness.preview, soldScopeVisibility]);
 
 	const consolidatedStatus = useMemo(
 		(): IntakeV6ConfirmConsolidatedStatusDisplay =>
@@ -563,18 +588,35 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		(artworkNeedsDecision ? 1 : 0) +
 		(!operatorConfirmationComplete ? 1 : 0);
 
+	const offerScopeSummary = useMemo(() => {
+		const persisted = readPersistedOfferScope(payload as Record<string, unknown> | undefined);
+		return describeOfferScopeSummary(persisted.mode, persisted.soldModules);
+	}, [payload]);
+
 	const compactStatusHint = useMemo(() => {
-		const productLabel = binding?.template_label ?? ws?.template_code ?? "—";
-		const componentLabel = `${binding?.component_count ?? layerCount} componente`;
+		const persisted = readPersistedOfferScope(payload as Record<string, unknown> | undefined);
+		const presetId = resolveActiveOfferScopePreset(persisted.mode, persisted.soldModules);
+		const presetLabel =
+			OFFER_SCOPE_PRESETS.find((preset) => preset.id === presetId)?.labelRo ??
+			offerScopeSummary.requestModeLabelRo;
+		const scopeLabel =
+			persisted.mode === "full_product"
+				? `Configurație: ${presetLabel}`
+				: `Configurație: ${presetLabel}`;
+		const activeCount = offerScopeSummary.activeLabelsRo.length;
+		const componentLabel =
+			persisted.mode === "full_product"
+				? `${binding?.component_count ?? layerCount} componente`
+				: `${activeCount} componente active`;
 		const decisionsLabel =
 			missingDecisionCount === 0
 				? "fără decizii lipsă"
 				: `${missingDecisionCount} decizii lipsă`;
-		return `${productLabel} · ${componentLabel} · ${decisionsLabel}`;
+		return `${scopeLabel} · ${componentLabel} · ${decisionsLabel}`;
 	}, [
-		binding?.template_label,
+		payload,
+		offerScopeSummary,
 		binding?.component_count,
-		ws?.template_code,
 		layerCount,
 		missingDecisionCount,
 	]);

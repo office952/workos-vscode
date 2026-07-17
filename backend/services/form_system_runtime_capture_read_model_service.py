@@ -214,6 +214,18 @@ def build_form_system_runtime_capture_read_model(
             }
         )
 
+    # Build 3.1 — drop capture blockers for modules outside offer_scope sold set.
+    from services.intake_v6_subset_capture_filter import inactive_module_capture_codes_for_payload
+
+    inactive = inactive_module_capture_codes_for_payload(payload_raw)
+    if inactive:
+        for field in fields:
+            field["blockers"] = [code for code in field["blockers"] if code not in inactive]
+            if not field["blockers"] and field.get("state") == "blocked":
+                # Field was only blocked by out-of-scope module requirements.
+                field["state"] = "not_applicable"
+                field["ready_for_product_truth"] = False
+
     blockers = [
         {
             "field_key": field["field_key"],

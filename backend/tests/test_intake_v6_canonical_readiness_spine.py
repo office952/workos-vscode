@@ -93,6 +93,29 @@ def test_missing_canonical_mounting_truth_still_blocks_when_prep_active() -> Non
     assert "MOUNTING_SOLUTION_MISSING" in blockers
 
 
+def test_cant_only_subset_does_not_surface_mounting_capture_blocker() -> None:
+    raw = _base_payload()
+    raw["offer_scope"] = {
+        "contract_version": "offer_scope_contract/v1",
+        "mode": "component_subset",
+        "sold_modules": ["RETURN-CANT"],
+    }
+    raw["finish_setup"]["mounting_scope"] = "preparation_only"
+    blockers = list_runtime_capture_fatal_blocker_codes(raw, template_code=ROOT)
+    assert "MOUNTING_SOLUTION_MISSING" not in blockers
+
+
+def test_face_only_subset_does_not_surface_mounting_capture_blocker() -> None:
+    raw = _base_payload()
+    raw["offer_scope"] = {
+        "contract_version": "offer_scope_contract/v1",
+        "mode": "component_subset",
+        "sold_modules": ["FACE"],
+    }
+    blockers = list_runtime_capture_fatal_blocker_codes(raw, template_code=ROOT)
+    assert "MOUNTING_SOLUTION_MISSING" not in blockers
+
+
 def test_legacy_only_support_type_does_not_clear_mounting_blocker() -> None:
     raw = _base_payload()
     raw["finish_setup"]["support_type"] = "steel_frame"
