@@ -35,22 +35,27 @@ Sensitive stages may remain:
 ## Commands
 
 ```powershell
-# Local / CI entry
-.\scripts\template-lifecycle.ps1 validate
-.\scripts\template-lifecycle.ps1 inspect TPL-VOLUMETRIC-LETTERS_v2
-.\scripts\template-lifecycle.ps1 impact TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
-
-# Direct CLI
-cd backend
-.\.venv\Scripts\python.exe scripts\template_lifecycle_cli.py inspect TPL-VOLUMETRIC-LETTERS_v2
-.\.venv\Scripts\python.exe scripts\template_lifecycle_cli.py validate
+# Canonical cross-platform entry (Node → Python CLI → same service as API/UI)
+npm run template-lifecycle:validate
+npm run template-lifecycle:inspect -- TPL-VOLUMETRIC-LETTERS_v2
+node scripts/template-lifecycle.mjs impact TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
 ```
 
-Root npm alias:
+Optional Windows wrapper: `.\scripts\template-lifecycle.ps1 validate`
+
+## CI adoption status
+
+**Real CI pipeline files were not found** (no GitHub Actions / Buildkite / GitLab / Azure / Jenkins in-repo).
+
+Required CI gate adoption is **not completed**. Local gate ready:
 
 ```text
-npm run template-lifecycle:validate
+npm run template-lifecycle:validate   # exit 0 pass / exit 2 required BLOCKED
 ```
+
+When a real pipeline is introduced, wire that single command — do not duplicate readiness rules in YAML.
+
+Baseline note: `TPL-METAL-PREMOUNT-STRUCTURE_v1` currently fails all-active validate and must be resolved under a separate GO before a required CI gate can stay green.
 
 ## API (GET-only)
 

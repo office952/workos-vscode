@@ -45,6 +45,53 @@ def _print_json(payload: object) -> None:
     sys.stdout.buffer.write((text + "\n").encode("utf-8", errors="replace"))
 
 
+def _print_ci_summary(result: object) -> None:
+    """Human-readable CI summary (same payload as JSON; no duplicate rules)."""
+    data = result.model_dump(mode="json") if hasattr(result, "model_dump") else dict(result)  # type: ignore[arg-type]
+    items = list(data.get("items") or [])
+    pass_n = sum(1 for i in items if i.get("lifecycle_status") in {"PASS", "WIRED", "VALIDATED"})
+    owner_n = sum(1 for i in items if i.get("lifecycle_status") == "OWNER_GATE_REQUIRED")
+    blocked_n = sum(1 for i in items if i.get("lifecycle_status") == "BLOCKED")
+    lines = [
+        "Template Lifecycle Validation",
+        f"Validated: {data.get('checked', 0)}",
+        f"Pass-like: {pass_n}",
+        f"Owner gate required: {owner_n}",
+        f"Blocked: {blocked_n}",
+        "",
+    ]
+    if data.get("ok"):
+        lines.append("All required lifecycle gates passed.")
+        remaining_gates = sorted(
+            {
+                w
+                for i in items
+                for w in (i.get("warning_codes") or [])
+                if w.endswith("_OWNER_GATE") or w in {"CPP_OWNER_GATE", "NO_PARALLEL_TASKING"}
+            }
+        )
+        if remaining_gates:
+            lines.append(f"Owner gates / warnings remain: {', '.join(remaining_gates)}")
+        lines.append("Exit code: 0")
+    else:
+        lines.append("BLOCKED")
+        for reason in data.get("fail_reasons") or []:
+            lines.append(f"- {reason}")
+        for item in items:
+            if item.get("lifecycle_status") != "BLOCKED" and not item.get("blocking_codes"):
+                continue
+            lines.append(item.get("template_code") or "?")
+            for code in item.get("blocking_codes") or []:
+                lines.append(f"- {code}")
+        lines.append("Exit code: 2")
+    text = "\n".join(lines) + "\n"
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[attr-defined]
+    except Exception:
+        pass
+    sys.stdout.buffer.write(text.encode("utf-8", errors="replace"))
+
+
 async def _run(args: argparse.Namespace) -> int:
     from core.database import db_manager
     from services.template_lifecycle_control_service import TemplateLifecycleControlService
@@ -66,7 +113,10 @@ async def _run(args: argparse.Namespace) -> int:
         if args.command == "validate":
             codes = list(args.template) if args.template else None
             result = await service.validate(template_codes=codes, active_only=not args.all)
-            _print_json(result.model_dump(mode="json"))
+            if getattr(args, "ci", False):
+                _print_ci_summary(result)
+            else:
+                _print_json(result.model_dump(mode="json"))
             return 0 if result.ok else 2
         raise SystemExit(f"Unknown command: {args.command}")
 
@@ -101,6 +151,11 @@ def main() -> int:
         "--all",
         action="store_true",
         help="Include all db_active templates (not only offerable roots).",
+    )
+    validate_p.add_argument(
+        "--ci",
+        action="store_true",
+        help="Print human-readable CI summary (same rules/service; exit 2 on required BLOCKED).",
     )
 
     args = parser.parse_args()

@@ -38,9 +38,9 @@ switch ($Command) {
   }
   "validate" {
     if ($TemplateCode) {
-      & $py $script validate --template $TemplateCode
+      & $py $script validate --ci --template $TemplateCode
     } else {
-      & $py $script validate
+      & $py $script validate --ci
     }
   }
 }

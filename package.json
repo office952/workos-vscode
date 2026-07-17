@@ -24,8 +24,9 @@
     "test:e2e:workintake-finish": "playwright test e2e/work-intake-v2-to-quote-finish-display.spec.ts",
     "validate:color-registry": "node scripts/validate-color-registry-import.mjs src/lib/colorRegistry/import/color-registry-import.template.csv",
     "generate:color-registry": "node scripts/generate-color-registry.mjs",
-    "template-lifecycle:validate": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/template-lifecycle.ps1 validate",
-    "template-lifecycle:inspect": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/template-lifecycle.ps1 inspect"
+    "template-lifecycle:validate": "node scripts/template-lifecycle.mjs validate --ci",
+    "template-lifecycle:inspect": "node scripts/template-lifecycle.mjs inspect",
+    "template-lifecycle:validate:json": "node scripts/template-lifecycle.mjs validate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

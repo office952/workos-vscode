@@ -60,6 +60,8 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 
 | `npm run test:e2e:workintake-finish` | Playwright finish-display smoke |
 
+| `npm run template-lifecycle:validate` | Template lifecycle gate (local; exit 2 on required BLOCKED) |
+
 
 
 ### Validation truth
@@ -79,6 +81,8 @@ Root scripts use **`npx pnpm@8.10.0`** — global `pnpm` is not required. Backen
 | Full `test:backend` | Known failures exist | Prefer targeted pytest files |
 
 | E2E finish smoke | Passes when seeded + stack live | See E2E section |
+
+| `template-lifecycle:validate` | Local gate ready; **no real CI pipeline in-repo yet** | Run before template-affecting work; currently fails on Metal Premount baseline until dedicated GO |
 
 
 
