@@ -6,6 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
+from schemas.commercial_measurement_contract import CommercialMeasurementBundle
 from schemas.mini_module_registry import MiniModuleRegistryRef, REGISTRY_VERSION as MINI_MODULE_REGISTRY_VERSION
 
 ProvenanceValue = Literal[
@@ -236,3 +237,5 @@ class ProductAggregate(BaseModel):
     )
     mini_module_registry: ProductAggregateMiniModuleRegistrySummary | None = None
     composition_graph: ProductAggregateCompositionGraph | None = None
+    # LETTERS_CANONICAL_PRODUCT_SLICE_V1 — non-monetary commercial measurements for CPP 7G.
+    commercial_measurements: CommercialMeasurementBundle | None = None

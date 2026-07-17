@@ -25,6 +25,9 @@ from services.product_aggregate_explicit_composition_service import (
     apply_explicit_composition_graph,
     explicit_child_template_codes,
 )
+from services.letters_commercial_measurement_service import (
+    build_letters_commercial_measurements,
+)
 from services.product_aggregate_planning_duration_service import (
     apply_planning_duration_resolution,
     collect_planning_duration_facts,
@@ -396,6 +399,30 @@ def _apply_planning_duration_from_pd(
     return apply_planning_duration_resolution(aggregate, facts)
 
 
+def _quote_input_from_pd(pd: ProductDefinitionPreview) -> dict[str, Any]:
+    """Project PD canonical facts into the quote_input shape used by commercial rules."""
+    from services.commercial_price_proposal_service import _payload_from_sources
+
+    return _payload_from_sources(pd=pd, quote_input=None)
+
+
+def _attach_commercial_measurements(
+    aggregate: ProductAggregate,
+    pd: ProductDefinitionPreview,
+) -> ProductAggregate:
+    """LETTERS_CANONICAL_PRODUCT_SLICE_V1: non-monetary measurements for CPP 7G."""
+    quote_input = _quote_input_from_pd(pd)
+    bundle = build_letters_commercial_measurements(
+        template_code=aggregate.template_code,
+        pd=pd,
+        quote_input=quote_input,
+        active_modules=None,
+    )
+    if bundle is None:
+        return aggregate
+    return aggregate.model_copy(update={"commercial_measurements": bundle})
+
+
 async def build_workspace_composed_aggregate(
     db: AsyncSession,
     *,
@@ -428,7 +455,8 @@ async def build_workspace_composed_aggregate(
 
     segments = _confirmed_linked_segments(pd)
     if not segments:
-        return _apply_planning_duration_from_pd(letters_aggregate, pd)
+        resolved = _apply_planning_duration_from_pd(letters_aggregate, pd)
+        return _attach_commercial_measurements(resolved, pd)
 
     logo_aggregates_by_segment: dict[str, ProductAggregate] = {}
     for segment in segments:
@@ -448,4 +476,5 @@ async def build_workspace_composed_aggregate(
         logo_aggregates_by_segment=logo_aggregates_by_segment,
         workspace_id=workspace_id,
     )
-    return _apply_planning_duration_from_pd(composed, pd)
+    resolved = _apply_planning_duration_from_pd(composed, pd)
+    return _attach_commercial_measurements(resolved, pd)

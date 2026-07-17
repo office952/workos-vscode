@@ -54,6 +54,19 @@ CRITICAL_GEOMETRY_KEYS = frozenset(
 SUPPORTED_TEMPLATES = frozenset(RULES_BY_TEMPLATE.keys())
 
 
+def _rules_template_key(template_code: str) -> str | None:
+    """Map canonical/uppercased codes to RULES_BY_TEMPLATE keys (preserve declared casing)."""
+    if template_code in RULES_BY_TEMPLATE:
+        return template_code
+    needle = str(template_code or "").strip().upper()
+    if not needle:
+        return None
+    for key in RULES_BY_TEMPLATE:
+        if key.upper() == needle:
+            return key
+    return None
+
+
 def _get_by_path(root: Any, path: str) -> Any:
     if not path:
         return None
@@ -438,14 +451,25 @@ async def _build_line(
     db: AsyncSession,
     rule: CommercialRuleDefinition,
     payload: dict[str, Any],
+    *,
+    measurement_qty: float | None = None,
+    measurement_source: str | None = None,
 ) -> CommercialPriceLine:
     from services.linked_logo_commercial_price_service import (
         _load_registry_operation_rate,
         _normalize_unit_price_to_cpp_ron,
     )
 
-    quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
     warnings = list(rule.warnings)
+    # LETTERS_CANONICAL_PRODUCT_SLICE_V1: prefer Aggregate commercial measurements.
+    if measurement_qty is not None:
+        quantity = float(measurement_qty)
+        source_prefix = measurement_source or "product_aggregate.commercial_measurements"
+        warnings.append(f"quantity_source={source_prefix}")
+    else:
+        quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
+        if quantity is not None:
+            warnings.append("quantity_source=COMPATIBILITY_WORKSPACE_PATH")
     owner_required = rule.owner_decision_required
     basis_type = rule.basis_type
     source = rule.source
@@ -669,10 +693,11 @@ class CommercialPriceProposalService:
         quote_input: dict[str, Any] | None = None,
         currency: str = "RON",
     ) -> CommercialPriceProposalPreview | None:
-        if template_code not in SUPPORTED_TEMPLATES:
+        rules_key = _rules_template_key(template_code)
+        if rules_key is None:
             return None
 
-        pd = await self._pd_builder.build_preview(template_code, workspace_id=workspace_id)
+        pd = await self._pd_builder.build_preview(rules_key, workspace_id=workspace_id)
         if pd is None:
             return None
 
@@ -682,11 +707,11 @@ class CommercialPriceProposalService:
             db=self._db,
             pd=pd,
             payload=payload,
-            template_code=template_code,
+            template_code=rules_key,
             workspace_id=workspace_id,
             quote_input=quote_input,
         )
-        rules = RULES_BY_TEMPLATE[template_code]
+        rules = RULES_BY_TEMPLATE[rules_key]
 
         lines: list[CommercialPriceLine] = []
         blockers: list[CommercialBlocker] = []
@@ -704,10 +729,51 @@ class CommercialPriceProposalService:
                     )
                 )
 
+        # Canonical Letters measurements from ProductAggregate (non-monetary).
+        measurement_by_line: dict[str, float] = {}
+        measurement_diag: list[str] = []
+        if workspace_id:
+            from services.letters_commercial_measurement_service import (
+                build_letters_commercial_measurements,
+                measurement_quantity_by_line_code,
+            )
+            from services.product_aggregate_service import ProductAggregateService
+
+            aggregate = await ProductAggregateService(self._db).build_for_workspace(
+                template_code, workspace_id
+            )
+            bundle = getattr(aggregate, "commercial_measurements", None) if aggregate else None
+            if bundle is None:
+                bundle = build_letters_commercial_measurements(
+                    template_code=template_code,
+                    pd=pd,
+                    quote_input=payload,
+                    active_modules=active_modules,
+                )
+                measurement_diag.append("measurements_built_inline_for_cpp")
+            if bundle is not None:
+                for rule in rules:
+                    qty, src = measurement_quantity_by_line_code(bundle, rule.line_code)
+                    if qty is not None:
+                        measurement_by_line[rule.line_code] = qty
+                measurement_diag.extend(list(bundle.diagnostics or []))
+
         for rule in rules:
             if not _rule_applies(rule, active_modules, payload):
                 continue
-            line = await _build_line(self._db, rule, payload)
+            m_qty = measurement_by_line.get(rule.line_code)
+            m_src = (
+                "product_aggregate.commercial_measurements"
+                if m_qty is not None
+                else None
+            )
+            line = await _build_line(
+                self._db,
+                rule,
+                payload,
+                measurement_qty=m_qty,
+                measurement_source=m_src,
+            )
             lines.append(line)
             if line.owner_decision_required and rule.owner_decision_code:
                 owner_decisions.append(
@@ -813,7 +879,7 @@ class CommercialPriceProposalService:
         ]
 
         return CommercialPriceProposalPreview(
-            template_code=template_code,
+            template_code=rules_key,
             source=COMMERCIAL_PRICE_PROPOSAL_SOURCE,
             status=status,
             commercial_price_lines=lines,
