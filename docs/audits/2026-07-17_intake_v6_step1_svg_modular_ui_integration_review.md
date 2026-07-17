@@ -301,3 +301,25 @@ Awareness **9/10** · Direction **88/100%** (backend modular path solid; UI inte
 ### Next safe step
 
 **Option 1 — OWNER REVIEW OF UNIFIED INTAKE SVG UI**
+
+---
+
+## SVG CARD UX RESTORE (post owner screenshot)
+
+| Field | Value |
+|-------|-------|
+| GO | `RESTORE_EXISTING_SVG_CARD_UX_WITH_ACP` |
+| Verdict | **`EXISTING_SVG_CARD_UX_RESTORED_WITH_ACP`** |
+| Dual-flow class after | **`SINGLE_VISUAL_FLOW`** — ACP uses the same card model as layers |
+| Screenshots | `docs/audits/screenshots/2026-07-17_intake_v6_svg_card_ux_restore/` |
+
+### Delta vs SMALL UI UNIFICATION
+
+- Assignment summary (**Rezumat asocieri**) removed from Step 1 primary surface.
+- ACP is no longer an Alucobond candidate-list / Confirmă selecția / embedded-casing panel; it is **`Panou ACP — contur exterior`** in the layer card grid.
+- Composition recommendation SoT extended to honor `svg_component_bindings` / `svg_support_selection` for support without requiring a layer role.
+- Owner-facing composition label: **Panou Alucobond casetat**.
+
+### Runtime re-proof
+
+Workspace `IV6-4DD49A26` + `LITERE-VOLUMETRICE-ACP.svg` on FE `:3000` / BE `:8001`: layer cards + ACP card same grid; no Rezumat asocieri; no permanent 21-candidate list; composition `letters_plus_logo_plus_support` after association. See worklog § SVG CARD UX RESTORE.

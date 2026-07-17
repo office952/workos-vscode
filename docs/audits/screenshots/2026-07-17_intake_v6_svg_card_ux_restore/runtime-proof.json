@@ -1,0 +1,38 @@
+{
+  "started_at": "2026-07-17T17:44:10.241Z",
+  "workspace_id": "9c05851e-3230-4a97-821b-e52293ada844",
+  "checks": {
+    "composition_summary_pre": "Litere volumetrice + logo volumetric + Panou Alucobond casetat",
+    "composition_includes_acp_pre": true,
+    "ui_shows_acp_filename": true,
+    "no_rezumat_asocieri": true,
+    "no_confirma_selectia": true,
+    "no_standalone_contur_suport_panel": true,
+    "acp_card_present": true,
+    "acp_card_title": true,
+    "acp_card_in_grid": true,
+    "no_permanent_candidate_list": true,
+    "layer_cards_in_grid": 3,
+    "assignment_panel_absent": true,
+    "acp_associated_ui": true,
+    "composition_summary": "Litere volumetrice + logo volumetric + Panou Alucobond casetat",
+    "composition_includes_acp_ui": true,
+    "api_composition_type": "letters_plus_logo_plus_support",
+    "api_composition_includes_support": true,
+    "api_has_support_binding": true,
+    "api_svg_file": "gradi-curat.svg",
+    "picker_still_closed_after_details": true,
+    "composition_includes_acp": true
+  },
+  "screenshots": [
+    "C:\\w\\psiso\\docs\\audits\\screenshots\\2026-07-17_intake_v6_svg_card_ux_restore\\01_page_after_acp_upload.png",
+    "C:\\w\\psiso\\docs\\audits\\screenshots\\2026-07-17_intake_v6_svg_card_ux_restore\\02_cards_grid_with_acp.png",
+    "C:\\w\\psiso\\docs\\audits\\screenshots\\2026-07-17_intake_v6_svg_card_ux_restore\\03_acp_associated.png",
+    "C:\\w\\psiso\\docs\\audits\\screenshots\\2026-07-17_intake_v6_svg_card_ux_restore\\04_composition_after_acp.png",
+    "C:\\w\\psiso\\docs\\audits\\screenshots\\2026-07-17_intake_v6_svg_card_ux_restore\\05_acp_details_no_candidate_list.png"
+  ],
+  "errors": [],
+  "verdict": "EXISTING_SVG_CARD_UX_RESTORED_WITH_ACP",
+  "failing_checks": [],
+  "finished_at": "2026-07-17T17:44:26.219Z"
+}

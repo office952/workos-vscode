@@ -87,3 +87,47 @@
 ### Next safe step
 
 **Option 1 — OWNER REVIEW OF UNIFIED INTAKE SVG UI**
+
+---
+
+## SVG CARD UX RESTORE
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-07-17 |
+| GO | `RESTORE_EXISTING_SVG_CARD_UX_WITH_ACP` |
+| Verdict | **`EXISTING_SVG_CARD_UX_RESTORED_WITH_ACP`** |
+| Screenshots | `docs/audits/screenshots/2026-07-17_intake_v6_svg_card_ux_restore/` |
+| Runtime proof | `docs/audits/screenshots/2026-07-17_intake_v6_svg_card_ux_restore/runtime-proof.json` |
+
+### What changed
+
+- `IntakeV6SupportContourGeometryCard` is the canonical layer-like ACP card (`Panou ACP — contur exterior`) in the same grid as Layer verde/portocaliu/logo.
+- Removed `IntakeV6SvgComponentAssignmentPanel` from Step 1 (no **Rezumat asocieri** primary UI).
+- No permanent Alucobond candidate list; no **Confirmă selecția**; no embedded casing UI; no standalone Contur suport panel.
+- Geometry picker stays under **Detalii tehnice → Schimbă geometria** only.
+- Composition recommendation reads `svg_component_bindings` / `svg_support_selection` so ACP activates without a `support_panel` layer role.
+- Product composition labels use **Panou Alucobond casetat**.
+
+### Runtime (FE `:3000` / BE `:8001`)
+
+| Check | Result |
+|-------|--------|
+| Workspace | `IV6-4DD49A26` / `9c05851e-3230-4a97-821b-e52293ada844` |
+| Fixture | `LITERE-VOLUMETRICE-ACP.svg` |
+| No Rezumat asocieri | PASS |
+| No permanent candidate list | PASS |
+| No standalone Contur suport panel | PASS |
+| ACP card in layer grid | PASS |
+| Composition includes ACP after association | PASS (`letters_plus_logo_plus_support` / UI label) |
+
+### Tests
+
+| Gate | Result |
+|------|--------|
+| BE composition + binding | 17 PASS |
+| FE SupportContour card + SvgAnalyzerStep + bindings | 17 PASS |
+
+### Next safe step
+
+**Option 1 — OWNER VISUAL ACCEPT OF RESTORED SVG CARD UX**
