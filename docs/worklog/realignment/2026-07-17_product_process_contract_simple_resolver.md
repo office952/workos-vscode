@@ -6,7 +6,7 @@
 | Date | 2026-07-17 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `ea923c1` |
-| End HEAD | (see commit) |
+| End HEAD | `6fe5c50` (`feat(product-system): add modular process contract resolver`) |
 | Initial | `PRODUCT_PROCESS_CONTRACT_BUILD_IN_PROGRESS` |
 | Final | `PRODUCT_PROCESS_CONTRACT_AND_RESOLVER_COMPLETE_WITH_GUARDS` |
 
