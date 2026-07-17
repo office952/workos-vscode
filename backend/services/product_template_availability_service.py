@@ -12,6 +12,7 @@ from schemas.product_template_availability import (
     ProductTemplateAvailabilityItem,
     ProductTemplateCompositionModule,
     ProductTemplateAvailabilityResponse,
+    SvgBindableComponent,
 )
 from data.shared_volumetric_component_contracts import get_shared_volumetric_component_summaries_for_template
 from services.active_template_scope import (
@@ -27,6 +28,7 @@ from services.product_system_template_readiness_service import (
     TemplateAvailabilityReadinessContext,
 )
 from services.template_usage_mode_policy import is_root_offerable_template
+from services.svg_component_binding_service import get_svg_bindable_components
 
 
 # Catalog metadata for the current Product System composition view.
@@ -40,7 +42,12 @@ ROLE_METADATA_BY_MODULE_CODE: dict[str, tuple[str, str, str, int]] = {
     "TPL-VOLUMETRIC-LED_v1": ("lighting", "LED / iluminare", "Sistem de iluminare al produsului.", 40),
     "TPL-VOLUMETRIC-FINISH_v1": ("finishes", "Finisaje", "Folie, print, laminare sau finisaje vizuale.", 50),
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": ("mounting_structure", "Structura montaj", "Structura suport/montaj, optionala dupa caz.", 60),
-    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": ("acm_boxed_mounting", "Suport ACM casetat", "Panou ACM casetat pentru premontaj, optional din Intake.", 65),
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": (
+        "acm_boxed_mounting",
+        "Panou Alucobond casetat",
+        "Componentă opțională: Contur suport (closed contour) → panou Alucobond casetat.",
+        65,
+    ),
     "TPL-VOLUMETRIC-LOGO-FACE_v1": ("logo_front_face", "Fata logo", "Fata vizuala pentru logo volumetric.", 10),
     "TPL-VOLUMETRIC-LOGO-RETURN_v1": ("logo_return", "Return / cant logo", "Cant/return lateral pentru logo.", 20),
     "TPL-VOLUMETRIC-LOGO-BACK_v1": ("logo_back", "Spate logo", "Spate/inchidere logo.", 30),
@@ -259,6 +266,10 @@ class ProductTemplateAvailabilityService:
                 module_links=module_links,
                 module_parent_counts=module_parent_counts,
             ),
+            svg_bindable_components=[
+                SvgBindableComponent.model_validate(item)
+                for item in get_svg_bindable_components(template_code)
+            ],
             shared_component_contracts=get_shared_volumetric_component_summaries_for_template(template_code),
         )
 

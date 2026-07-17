@@ -381,6 +381,39 @@ export function ProductSystemTemplateDetailPanel({
               ))}
             </ul>
           )}
+          {(availability.svg_bindable_components ?? []).length > 0 ? (
+            <div
+              className="mt-3 space-y-2 border-t border-slate-800/70 pt-3"
+              data-testid="product-system-svg-bindable-components"
+            >
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                Componente SVG-bindable
+              </p>
+              <p className="text-[11px] text-slate-500">
+                Authority Product System — rol geometric → componentă (Intake consumă ulterior).
+              </p>
+              <ul className="space-y-2">
+                {(availability.svg_bindable_components ?? []).map((bindable) => (
+                  <li
+                    key={bindable.component_template_code}
+                    className="rounded border border-slate-800/80 bg-slate-950/40 px-2 py-1.5 font-mono text-[11px] text-slate-200"
+                    data-testid={`product-system-svg-bindable-${bindable.component_template_code}`}
+                  >
+                    <div className="font-sans text-[12px] font-medium text-slate-100">{bindable.owner_label}</div>
+                    <div className="truncate text-slate-400">{bindable.component_template_code}</div>
+                    <div className="mt-0.5 text-[10px] text-slate-500">
+                      {(bindable.accepted_geometry_roles.length
+                        ? bindable.accepted_geometry_roles.join(", ")
+                        : "fără rol SVG")}{" "}
+                      · {bindable.selection_mode} · {bindable.cardinality}
+                      {bindable.required ? " · required" : " · optional"}
+                      {bindable.active_by_default ? " · active default" : " · inactive default"}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
           {modularity ? <ModularityHonestySection templateCode={template.template_code} /> : null}
         </section>
       ) : null}

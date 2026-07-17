@@ -10,13 +10,22 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from data.product_system.svg_component_binding_contract import (
+    ACM_BOXED_SUPPORT,
+    STALE_BOND_CASETAT,
+)
+
 LETTERS_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2"
 LOGO_TEMPLATE_CODE = "TPL-VOLUMETRIC-LOGO_v1"
-SUPPORT_TEMPLATE_PENDING_CODE = "TPL-BOND-CASETAT"
+# Legacy string-only placeholder — never new-selection authority.
+SUPPORT_TEMPLATE_LEGACY_CODE = STALE_BOND_CASETAT
+SUPPORT_TEMPLATE_PENDING_CODE = STALE_BOND_CASETAT  # alias for older imports/tests
+SUPPORT_TEMPLATE_LIVE_CODE = ACM_BOXED_SUPPORT
 
 PRODUCT_COMPOSITION_SOURCE = "analyzer_rules_v1"
 PRODUCT_COMPOSITION_NOT_CONFIRMED = "PRODUCT_COMPOSITION_NOT_CONFIRMED"
 SUPPORT_TEMPLATE_PENDING = "SUPPORT_TEMPLATE_PENDING"
+SUPPORT_TEMPLATE_LEGACY_REDIRECT = "SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM"
 
 LETTER_ROLES = {"face", "letter_face", "vector_letters", "volumetric_letters"}
 LOGO_ROLES = {"logo", "printed_artwork", "constructive_vector", "volumetric_logo", "logo_face"}
@@ -214,29 +223,37 @@ def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[st
         )
 
     if support_layers:
+        # Live authority is ACM boxed support. TPL-BOND-CASETAT remains a
+        # legacy string-only alias (not seeded, not new-selection authority).
         recommended_templates.append(
             _template_item(
-                template_code=SUPPORT_TEMPLATE_PENDING_CODE,
+                template_code=SUPPORT_TEMPLATE_LIVE_CODE,
                 role="support_panel",
-                reason="Support/background/cassette role detected; active support template is pending confirmation.",
+                reason=(
+                    "Support/background contour detected; maps to live optional component "
+                    f"{SUPPORT_TEMPLATE_LIVE_CODE} (legacy alias {SUPPORT_TEMPLATE_LEGACY_CODE} is not authority)."
+                ),
                 source_layer_ids=support_layers,
                 confidence="medium",
-                status="pending_template",
+                status="available_optional",
             )
         )
         composition_items.append(
             _composition_item(
                 item_id="support",
-                template_code=SUPPORT_TEMPLATE_PENDING_CODE,
+                template_code=SUPPORT_TEMPLATE_LIVE_CODE,
                 component_role="support_panel",
                 source_layer_ids=support_layers,
-                status="pending_template",
+                status="available_optional",
             )
         )
         warnings.append(
             {
-                "code": SUPPORT_TEMPLATE_PENDING,
-                "message": "Suport/fundal detectat, template suport pending; nu se absoarbe in letters/logo.",
+                "code": SUPPORT_TEMPLATE_LEGACY_REDIRECT,
+                "message": (
+                    "Suport/fundal detectat; authority live este Panou Alucobond casetat "
+                    f"({SUPPORT_TEMPLATE_LIVE_CODE}). {SUPPORT_TEMPLATE_LEGACY_CODE} este legacy/deprecated."
+                ),
             }
         )
 

@@ -1,7 +1,8 @@
 from services.intake_v6_product_composition_recommendation_service import (
     LETTERS_TEMPLATE_CODE,
     LOGO_TEMPLATE_CODE,
-    SUPPORT_TEMPLATE_PENDING,
+    SUPPORT_TEMPLATE_LEGACY_REDIRECT,
+    SUPPORT_TEMPLATE_LIVE_CODE,
     build_layer_role_review,
     build_product_composition_recommendation,
 )
@@ -71,7 +72,7 @@ def test_recommends_letters_plus_logo_for_gradi_mixed_roles() -> None:
     assert logo_item["source_layer_ids"] == ["logo-stanga", "logo-dreapta"]
 
 
-def test_support_role_is_explicit_pending_template_not_absorbed() -> None:
+def test_support_role_maps_to_live_acm_not_stale_bond() -> None:
     payload = _payload(
         "complex.svg",
         [
@@ -84,8 +85,11 @@ def test_support_role_is_explicit_pending_template_not_absorbed() -> None:
     recommendation = build_product_composition_recommendation(payload)
 
     assert recommendation["composition_type"] == "letters_plus_logo_plus_support"
-    assert any(item["component_role"] == "support_panel" for item in recommendation["composition_items"])
-    assert [warning["code"] for warning in recommendation["warnings"]] == [SUPPORT_TEMPLATE_PENDING]
+    support = next(item for item in recommendation["composition_items"] if item["component_role"] == "support_panel")
+    assert support["template_code"] == SUPPORT_TEMPLATE_LIVE_CODE
+    assert support["status"] == "available_optional"
+    assert support["template_code"] != "TPL-BOND-CASETAT"
+    assert [warning["code"] for warning in recommendation["warnings"]] == [SUPPORT_TEMPLATE_LEGACY_REDIRECT]
 
 
 def test_logo_svg_generated_side_label_is_neutral_for_operator() -> None:

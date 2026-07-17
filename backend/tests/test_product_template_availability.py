@@ -301,3 +301,21 @@ def test_root_offerable_policy_includes_acm_excludes_logo():
     assert "TPL-VOLUMETRIC-LETTERS_V2" in normalized
     assert "TPL-ACM-BOXED-MOUNTING-SUPPORT_V1" in normalized
     assert "TPL-VOLUMETRIC-LOGO_V1" not in normalized
+
+
+@pytest.mark.asyncio
+async def test_letters_availability_exposes_svg_bindable_components(db_session):
+    await _seed_availability_fixture(db_session)
+    response = await ProductTemplateAvailabilityService(db_session).list_availability()
+    item = _by_code(response.items)[LETTERS]
+    by_code = {c.component_template_code: c for c in item.svg_bindable_components}
+    assert "TPL-VOLUMETRIC-FACE_v1" in by_code
+    assert "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" in by_code
+    acm = by_code["TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"]
+    assert acm.owner_label == "Panou Alucobond casetat"
+    assert acm.accepted_geometry_roles == ["SUPPORT_CONTOUR"]
+    assert acm.selection_mode == "CLOSED_CONTOUR"
+    assert acm.cardinality == "MAX_ONE"
+    assert acm.required is False
+    assert acm.active_by_default is False
+    assert "TPL-BOND-CASETAT" not in by_code

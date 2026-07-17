@@ -376,9 +376,29 @@ export interface ProductTemplateAvailabilityItem {
   child_module_codes: string[];
   shared_with_product_codes: string[];
   composition_modules: ProductTemplateCompositionModule[];
+  /** Product System SVG-bindable components (optional; Intake consumes later). */
+  svg_bindable_components?: SvgBindableComponent[];
   shared_component_contracts: SharedVolumetricComponentSummary[];
   capabilities?: ProductSystemTemplateCapabilities | null;
   readiness?: ProductSystemTemplateReadiness | null;
+}
+
+export interface SvgBindableComponent {
+  component_template_code: string;
+  process_component_code?: string | null;
+  owner_label: string;
+  accepted_geometry_roles: string[];
+  selection_mode: string;
+  cardinality: string;
+  required: boolean;
+  available: boolean;
+  active: boolean;
+  active_by_default: boolean;
+  technical_role?: string | null;
+  guards?: string[];
+  product_definition_targets?: string[];
+  capabilities?: string[];
+  svg_binding?: Record<string, unknown>;
 }
 
 export interface ProductTemplateCompositionModule {
