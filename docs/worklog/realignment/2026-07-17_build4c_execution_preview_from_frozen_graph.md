@@ -8,7 +8,7 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `8c98dae` |
-| End HEAD | see commit `feat(execution): preview task graph from frozen modular snapshot` |
+| End HEAD | `46bfc9b` (`feat(execution): preview task graph from frozen modular snapshot`) |
 | Initial | `BUILD4C_IN_PROGRESS` |
 | Final | `BUILD4C_EXECUTION_PREVIEW_COMPLETE_WITH_GUARDS` |
 
