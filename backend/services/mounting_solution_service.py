@@ -114,6 +114,29 @@ def normalize_acm_mounting_configuration(config: Mapping[str, Any] | None) -> di
         merged["v_groove_angle_deg"] = float(merged.get("v_groove_angle_deg") or 135)
     except (TypeError, ValueError):
         merged["v_groove_angle_deg"] = 135
+    # Optional SVG panel confirmation fields (typed; no commercial authority).
+    for key in (
+        "fold_count",
+        "finished_depth_mm",
+        "svg_support_element_id",
+        "geometry_hash",
+        "contour_id",
+        "panel_area_mm2",
+        "panel_perimeter_mm",
+        "internal_frame_enabled",
+    ):
+        if key in merged:
+            continue
+        if isinstance(config, Mapping) and key in config:
+            merged[key] = config[key]
+    if "fold_count" in merged:
+        try:
+            fc = int(merged["fold_count"])
+            merged["fold_count"] = 2 if fc == 2 else 1 if fc == 1 else merged["fold_count"]
+        except (TypeError, ValueError):
+            pass
+    if "internal_frame_enabled" in merged:
+        merged["internal_frame_enabled"] = bool(merged["internal_frame_enabled"])
     return merged
 
 

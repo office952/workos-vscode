@@ -22,18 +22,30 @@ import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
+import IntakeV6AlucobondContourPanel from "../IntakeV6AlucobondContourPanel";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
+import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 
 export interface IntakeV6SvgAnalyzerStepProps {
 	hook: IntakeV6WorkspaceHook;
 }
 
 export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerStepProps) {
-	const { state, importSvgFile, updateLayerRole, confirmAllLayerRoles, canImportSvg, confirmProductComposition, saveOfferScope } = hook;
+	const {
+		state,
+		importSvgFile,
+		updateLayerRole,
+		confirmAllLayerRoles,
+		canImportSvg,
+		confirmProductComposition,
+		saveOfferScope,
+		saveFinishSetup,
+	} = hook;
 	const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
 	const [previewInspectOpen, setPreviewInspectOpen] = useState(false);
 	const [hoveredLayerKey, setHoveredLayerKey] = useState<string | null>(null);
+	const [selectedContourId, setSelectedContourId] = useState<string | null>(null);
 	const analyzing = state.analyzerStatus === "analyzing";
 	const report = state.analyzerReport;
 	const confirmation = state.layerRoleConfirmation;
@@ -193,6 +205,20 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		[report, confirmation, hoveredLayerKey],
 	);
 
+	const contourOverlay = useMemo(() => {
+		const cand = report?.closedContourCandidates?.candidates.find(
+			(c) => c.contour_id === selectedContourId,
+		);
+		if (!cand) return null;
+		return {
+			contour_id: cand.contour_id,
+			mode: "selected" as const,
+			bbox: cand.bbox,
+			overlay_d: cand.overlay_d,
+			overlay_points: cand.overlay_points,
+		};
+	}, [report, selectedContourId]);
+
 	const handleSaveOfferScope = useCallback(
 		(input: {
 			mode: "full_product" | "component_subset";
@@ -229,6 +255,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						onImportFile={handleImport}
 						onOpenInspect={() => setPreviewInspectOpen(true)}
 						highlightedLayer={highlightedLayer}
+						contourOverlay={contourOverlay}
 					/>
 
 					{showLayerDecisions && artworkOnlyRequiresDecision && report && confirmation ? (
@@ -256,6 +283,34 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 								onHoverLayerKey={setHoveredLayerKey}
 							/>
 						</div>
+					) : null}
+
+					{report?.closedContourCandidates ? (
+						<IntakeV6AlucobondContourPanel
+							report={report}
+							finishSetup={
+								(payload?.finish_setup as Record<string, unknown> | undefined) ?? null
+							}
+							svgSourceHash={state.localFileHash}
+							disabled={state.phase === "persisting"}
+							onSelectedContourIdChange={setSelectedContourId}
+							onPersist={async (patch) => {
+								const prev =
+									(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
+								const next: IntakeV6FinishSetup = {
+									...(prev as IntakeV6FinishSetup),
+									svg_support_selection: patch.svg_support_selection,
+								} as IntakeV6FinishSetup;
+								if (patch.mounting_solution) {
+									(next as Record<string, unknown>).mounting_solution = patch.mounting_solution;
+								}
+								if (patch.power_supply_service_corner !== undefined) {
+									(next as Record<string, unknown>).power_supply_service_corner =
+										patch.power_supply_service_corner;
+								}
+								await saveFinishSetup(next);
+							}}
+						/>
 					) : null}
 
 					<IntakeV6ProductCompositionPanel
@@ -321,6 +376,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					report={report}
 					confirmation={confirmation}
 					onUpdateLayerRole={updateLayerRole}
+					contourOverlay={contourOverlay}
 				/>
 			) : null}
 

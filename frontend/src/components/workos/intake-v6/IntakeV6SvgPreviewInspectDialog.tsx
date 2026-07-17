@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { resolveSvgPreviewLayerHighlightTarget } from "@/lib/intakeV6/intakeV6SvgPreviewLayerHighlight";
+import type { SvgPreviewContourOverlayTarget } from "@/lib/intakeV6/intakeV6SvgPreviewContourOverlay";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +22,7 @@ export default function IntakeV6SvgPreviewInspectDialog({
   report,
   confirmation,
   onUpdateLayerRole,
+  contourOverlay = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -30,6 +32,7 @@ export default function IntakeV6SvgPreviewInspectDialog({
   report: SvgAnalysisCoreReport;
   confirmation: LayerRoleConfirmation;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
+  contourOverlay?: SvgPreviewContourOverlayTarget | null;
 }) {
   const [hoveredLayerKey, setHoveredLayerKey] = useState<string | null>(null);
 
@@ -65,6 +68,7 @@ export default function IntakeV6SvgPreviewInspectDialog({
               testId="intake-v6-preview-inspect-canvas"
               variant="large"
               highlightedLayer={highlightedLayer}
+              contourOverlay={contourOverlay}
             />
           </div>
 

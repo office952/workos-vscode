@@ -10,6 +10,7 @@ import { parseSvg } from './parseSvg'
 import { expandSemanticAndPseudoLayers } from './semanticAndPseudoLayerExpansion'
 import { extractParts } from '../part-extractor'
 import { buildNestingReport } from '../nesting'
+import { detectClosedContourCandidates } from '../closed-contour/closedContourCandidates'
 import type { ParsedSvgDocument, SvgAnalysisReport } from './types'
 
 export interface AnalyzeOptions {
@@ -54,8 +55,19 @@ export function analyzeSvgString(source: string, fileName: string, fileSizeBytes
   const partsReport = extractParts(coreReport, layerExpandedDoc)
   const nestingReport = buildNestingReport(partsReport)
   const artworkComplexity = buildArtworkComplexityReport(layerExpandedDoc, geometry, layers)
+  const closedContourCandidates = detectClosedContourCandidates(layerExpandedDoc, geometry)
 
   const report = buildOfficialAnalysisJson(coreReport, partsReport, nestingReport, artworkComplexity)
+  report.closedContourCandidates = closedContourCandidates
+  if (closedContourCandidates.unit_ambiguity) {
+    report.warnings.push({
+      code: 'SVG_UNIT_AMBIGUITY_PANEL_SCALE',
+      severity: 'warning',
+      message:
+        'Unitățile fizice SVG sunt ambigue pentru panou; candidatul folosește corecție viewBox-as-mm (guard).',
+      scope: 'document',
+    })
+  }
 
   return {
     parsed: layerExpandedDoc,

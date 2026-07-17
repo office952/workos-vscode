@@ -7,6 +7,7 @@ import { v6 } from "./atoms/intakeV6Presentation";
 import type { IntakeV6GeometryMetricDisplay } from "@/lib/intakeV6/intakeV6GeometryMetricDisplay";
 import type { IntakeV6QuoteGeometry } from "@/lib/intakeV6/intakeV6QuoteGeometry";
 import type { SvgPreviewLayerHighlightTarget } from "@/lib/intakeV6/intakeV6SvgPreviewLayerHighlight";
+import type { SvgPreviewContourOverlayTarget } from "@/lib/intakeV6/intakeV6SvgPreviewContourOverlay";
 
 export default function IntakeV6LayersFileConfirmPanel({
   fileName,
@@ -20,6 +21,7 @@ export default function IntakeV6LayersFileConfirmPanel({
   onImportFile,
   onOpenInspect,
   highlightedLayer = null,
+  contourOverlay = null,
 }: {
   fileName?: string | null;
   previewSource?: string | null;
@@ -32,6 +34,7 @@ export default function IntakeV6LayersFileConfirmPanel({
   onImportFile: (file: File) => void | Promise<void>;
   onOpenInspect: () => void;
   highlightedLayer?: SvgPreviewLayerHighlightTarget | null;
+  contourOverlay?: SvgPreviewContourOverlayTarget | null;
 }) {
   const hasPreview = Boolean(previewSource);
 
@@ -73,6 +76,7 @@ export default function IntakeV6LayersFileConfirmPanel({
             missingExternalRasterMessage="Preview incomplet: SVG-ul face referire la imagini externe care nu sunt incluse în fișier."
             variant="thumb"
             highlightedLayer={highlightedLayer}
+            contourOverlay={contourOverlay}
           />
           {report ? (
             <div className="mt-2">

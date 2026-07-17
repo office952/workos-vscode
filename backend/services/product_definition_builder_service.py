@@ -319,6 +319,33 @@ def _build_canonical_values(
             if projected:
                 values["mounting_system"] = projected
 
+    # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
+    selection = finish.get("svg_support_selection")
+    if isinstance(selection, dict) and selection.get("schema") == "svg_support_selection_v1":
+        status = str(selection.get("status") or "").strip()
+        role = str(selection.get("role") or "").strip()
+        if status == "confirmed" and role == "ALUCOBOND_CASED_PANEL":
+            values["svg_support_selection"] = selection
+            if selection.get("svg_support_element_id"):
+                values["svg_support_element_id"] = selection.get("svg_support_element_id")
+            geom = selection.get("panel_geometry")
+            if isinstance(geom, dict):
+                values["panel_geometry"] = geom
+            casing = selection.get("casing_profile")
+            if isinstance(casing, dict):
+                values["casing_profile"] = casing
+            if selection.get("service_corner"):
+                values["service_corner"] = selection.get("service_corner")
+            values["internal_frame_enabled"] = bool(selection.get("internal_frame_enabled"))
+            values["support_type"] = "alucobond_cased"
+        elif status == "reconfirm_required":
+            values["svg_support_selection"] = {
+                "status": "reconfirm_required",
+                "schema": "svg_support_selection_v1",
+                "contour_id": selection.get("contour_id"),
+                "geometry_hash": selection.get("geometry_hash"),
+            }
+
     return values
 
 

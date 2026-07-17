@@ -210,9 +210,12 @@ export interface IntakeV4FinishSetup {
     | null;
   site_installation_included?: boolean | null;
   mounting_solution?: {
-    template_code: string;
+    kind?: string;
+    template_code: string | null;
     configuration?: Record<string, unknown>;
   } | null;
+  /** Operator-confirmed SVG closed-contour support selection (Alucobond panel etc.). */
+  svg_support_selection?: Record<string, unknown> | null;
   /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
   mains_cable_length_m?: number | null;
   power_supply_service_corner?:

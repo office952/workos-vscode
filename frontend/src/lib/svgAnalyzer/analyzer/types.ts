@@ -1,4 +1,5 @@
 import type { ArtworkComplexityReport } from './artworkComplexityAssessment'
+import type { ClosedContourDetectionReport } from '../closed-contour/closedContourTypes'
 import type { SvgPartExtractionReport } from '../part-extractor/partTypes'
 import type { NestingReport } from '../nesting/nestingTypes'
 import type {
@@ -271,6 +272,8 @@ export interface SvgAnalysisJson {
   sourceFileName: string
   sourceFileSize: number
   artworkComplexity?: ArtworkComplexityReport
+  /** Operator panel candidates — propose only; never auto-confirm product role. */
+  closedContourCandidates?: ClosedContourDetectionReport
   file: SvgAnalysisFile
   document: SvgAnalysisDocument
   geometry: SvgAnalysisGeometry

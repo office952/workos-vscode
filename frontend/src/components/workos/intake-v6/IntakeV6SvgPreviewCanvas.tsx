@@ -4,6 +4,11 @@ import {
   clearSvgPreviewLayerHighlight,
   type SvgPreviewLayerHighlightTarget,
 } from "@/lib/intakeV6/intakeV6SvgPreviewLayerHighlight";
+import {
+  applySvgPreviewContourOverlay,
+  clearSvgPreviewContourOverlay,
+  type SvgPreviewContourOverlayTarget,
+} from "@/lib/intakeV6/intakeV6SvgPreviewContourOverlay";
 
 interface IntakeV6SvgPreviewCanvasProps {
   source: string;
@@ -13,6 +18,8 @@ interface IntakeV6SvgPreviewCanvasProps {
   /** Larger preview for Step 1 full-width layout. */
   variant?: "default" | "large" | "compact" | "thumb";
   highlightedLayer?: SvgPreviewLayerHighlightTarget | null;
+  /** Closed-contour overlay (preview DOM only; never mutates SVG source). */
+  contourOverlay?: SvgPreviewContourOverlayTarget | null;
 }
 
 const PREVIEW_HIGHLIGHT_STYLE_ID = "intake-v6-svg-preview-highlight-styles";
@@ -48,6 +55,7 @@ export default function IntakeV6SvgPreviewCanvas({
   missingExternalRasterMessage,
   variant = "default",
   highlightedLayer = null,
+  contourOverlay = null,
 }: IntakeV6SvgPreviewCanvasProps) {
   const canvasRef = useRef<HTMLDivElement | null>(null);
   const placeholderMessage =
@@ -72,8 +80,12 @@ export default function IntakeV6SvgPreviewCanvas({
     const svg = canvasRef.current?.querySelector("svg");
     if (!(svg instanceof SVGSVGElement)) return;
     applySvgPreviewLayerHighlight(svg, highlightedLayer);
-    return () => clearSvgPreviewLayerHighlight(svg);
-  }, [source, highlightedLayer]);
+    applySvgPreviewContourOverlay(svg, contourOverlay);
+    return () => {
+      clearSvgPreviewContourOverlay(svg);
+      clearSvgPreviewLayerHighlight(svg);
+    };
+  }, [source, highlightedLayer, contourOverlay]);
 
   return (
     <div className={isLarge ? "min-w-0" : "mb-3"} data-testid={testId}>
