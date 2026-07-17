@@ -161,7 +161,8 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     inputRo: "ProductDefinition / graf compilat",
     outputRo: "Aggregate + task_contract",
     consumerRo: "ExecutionPlan, Pricing / Commercial",
-    limitationRo: "Probat pe Letters; nu este universal pentru toate șabloanele.",
+    limitationRo:
+      "Probat pe Letters; TE2E-028B rezolvă minute formula (count_based_time → vector_prep) în Aggregate; nu este universal pentru toate șabloanele/operațiile.",
     verifyRoute: "/product-system",
     spineOrder: 3,
   },
@@ -219,7 +220,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Plan / task-uri planificate",
     consumerRo: "Execution Reality",
     limitationRo:
-      "Materializare completă nu e universală pe toate șabloanele; minute planificate statice provin din operațiile agregatului (TE2E-028A), restul pot rămâne fără sursă.",
+      "Materializare completă nu e universală pe toate șabloanele; consumă minute Aggregate (TE2E-028A static + TE2E-028B formula Letters-only); restul pot rămâne fără sursă.",
     verifyRoute: "/execution",
     spineOrder: 7,
   },
@@ -248,7 +249,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Reconciliere matched / missing / variance (read-only)",
     consumerRo: "Operator review / învățare",
     limitationRo:
-      "Fără write-back comercial; TE2E-028A minute planificate statice PROVEN; TE2E-028 rămâne deschis (stoc G3 / labor $ / fixture / Letters breadth).",
+      "Fără write-back comercial; TE2E-028A static + TE2E-028B formula Letters PROVEN; TE2E-028 rămâne deschis (stoc G3 / labor $ / fixture / Letters breadth).",
     verifyRoute: "/execution",
     spineOrder: 9,
   },
@@ -820,6 +821,17 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
       "Minute planificate statice (ex. Control calitate=15 min) supraviețuiesc aggregate→preview→plan→Post-Job; UI /execution/972901 verificat (Plan vs execuție); missing actual rămâne explicit; fără write-back; TE2E-028 rămâne deschis",
     stillCurrentRuntime: true,
     source: "docs/qa/te2e-028a-planning-minutes-2026-07-17/",
+  },
+  {
+    id: "ev.te2e_028b",
+    title: "TE2E-028B Formula planning-duration authority",
+    category: "Dovadă curentă",
+    evidenceType: "qa",
+    date: "2026-07-17",
+    provesRo:
+      "Letters vector_prep: count_based_time rezolvat în ProductAggregate (5 litere → 10 min); Plan/Post-Job consumă proveniența formula; UI /execution/972910 Plan vs execuție; comercial 1888 neschimbat; CostEngine/EIC nu sunt autoritate Plan; TE2E-028 rămâne deschis pe residuals",
+    stillCurrentRuntime: true,
+    source: "docs/worklog/realignment/2026-07-17_te2e_028b_formula_planning_duration_authority_audit.md",
   },
   {
     id: "ev.legacy_quote_price_isolated",

@@ -60,22 +60,51 @@ FORBIDDEN_IMPORT_SUBSTRINGS = (
 def resolve_planning_minutes_from_aggregate_op(
     agg_op: ProductAggregateOperation | None,
 ) -> tuple[float | None, str | None]:
-    """TE2E-028A: map authorized aggregate op minutes into plan preview.
+    """TE2E-028A/B: map authorized aggregate op minutes into plan preview.
 
-    Accepts template-configured static minutes (including explicit 0).
-    Rejects formula_based placeholders with 0 — those are not a planning source.
-    Does not invent minutes when absent.
+    CONTRACT RULE (consumer only — does not evaluate formulas):
+    - static mode / calculation_type static → configured minutes + static source
+    - formula mode with resolved minutes → Aggregate provenance (incl. formula id)
+    - formula_based seed placeholder 0 without resolved formula → reject (null)
+    - missing minutes → null
+    Explicit 0 is accepted only when Aggregate emitted minutes with provenance.
     """
-    if agg_op is None or agg_op.estimated_minutes is None:
+    if agg_op is None:
+        return None, None
+
+    mode = (getattr(agg_op, "planning_duration_mode", None) or "").strip().lower()
+    status = (getattr(agg_op, "planning_duration_status", None) or "").strip().lower()
+    emitted_source = getattr(agg_op, "planning_minutes_source", None)
+    if isinstance(emitted_source, str):
+        emitted_source = emitted_source.strip() or None
+    else:
+        emitted_source = None
+
+    if agg_op.estimated_minutes is None:
         return None, None
     try:
         minutes = float(agg_op.estimated_minutes)
     except (TypeError, ValueError):
         return None, None
+
+    # TE2E-028B: Aggregate-resolved formula duration (including explicit zero).
+    if mode == "formula" and status == "resolved" and emitted_source:
+        return minutes, emitted_source
+
     calc = (agg_op.calculation_type or "").strip().lower()
-    if calc == "formula_based" and minutes == 0.0:
+    # Reject commercial/quantity placeholders that were never resolved.
+    if calc == "formula_based" and minutes == 0.0 and mode != "formula":
         return None, None
-    return minutes, PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
+    if mode == "formula" and status != "resolved":
+        return None, None
+
+    if mode == "static" or calc == "static":
+        return minutes, emitted_source or PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
+
+    # Resolved non-placeholder minutes already on Aggregate (legacy path).
+    if minutes == 0.0 and calc == "formula_based":
+        return None, None
+    return minutes, emitted_source or PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
 
 
 class ExecutionPlanV2PreviewOrderNotFound(Exception):

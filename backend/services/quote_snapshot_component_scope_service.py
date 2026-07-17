@@ -29,6 +29,10 @@ from services.offer_scope_resolver_service import (
     merge_scope_payload,
     resolve_offer_scope,
 )
+from services.product_aggregate_planning_duration_service import (
+    apply_planning_duration_resolution,
+    collect_planning_duration_facts,
+)
 from services.product_aggregate_service import ProductAggregateService
 from services.product_aggregate_workspace_composition_service import SEGMENT_NAMESPACE_SEP
 from services.product_definition_builder_service import ProductDefinitionBuilderService
@@ -217,6 +221,16 @@ async def build_frozen_component_scope(
 
     if aggregate is None:
         return None
+
+    # TE2E-028B: resolve formula duration from freeze-time product facts.
+    # Workspace composition may already have resolved from ProductDefinition;
+    # re-apply only when freeze payload supplies duration inputs (or no workspace).
+    duration_facts = collect_planning_duration_facts(merged_payload)
+    duration_input_keys = {"letter_count", "letter_perimeter_m", "cnc_cutting_perimeter_ml"}
+    if not workspace_id:
+        aggregate = apply_planning_duration_resolution(aggregate, duration_facts)
+    elif duration_input_keys.intersection(duration_facts.keys()):
+        aggregate = apply_planning_duration_resolution(aggregate, duration_facts)
 
     component_instances, scope_warnings = _derive_component_instances(aggregate, offer_scope_snapshot)
     geometry_input_snapshot = _build_geometry_snapshot(

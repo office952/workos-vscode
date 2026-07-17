@@ -25,6 +25,10 @@ from services.product_aggregate_explicit_composition_service import (
     apply_explicit_composition_graph,
     explicit_child_template_codes,
 )
+from services.product_aggregate_planning_duration_service import (
+    apply_planning_duration_resolution,
+    collect_planning_duration_facts,
+)
 from services.product_aggregate_service import ProductAggregateService
 from services.product_definition_builder_service import ProductDefinitionBuilderService
 
@@ -380,6 +384,18 @@ def compose_from_product_definition(
     )
 
 
+def _apply_planning_duration_from_pd(
+    aggregate: ProductAggregate,
+    pd: ProductDefinitionPreview,
+) -> ProductAggregate:
+    """TE2E-028B: resolve operational minutes from ProductDefinition facts."""
+    facts = collect_planning_duration_facts(
+        getattr(pd, "geometry_inputs", None),
+        getattr(pd, "canonical_values", None),
+    )
+    return apply_planning_duration_resolution(aggregate, facts)
+
+
 async def build_workspace_composed_aggregate(
     db: AsyncSession,
     *,
@@ -412,7 +428,7 @@ async def build_workspace_composed_aggregate(
 
     segments = _confirmed_linked_segments(pd)
     if not segments:
-        return letters_aggregate
+        return _apply_planning_duration_from_pd(letters_aggregate, pd)
 
     logo_aggregates_by_segment: dict[str, ProductAggregate] = {}
     for segment in segments:
@@ -426,9 +442,10 @@ async def build_workspace_composed_aggregate(
         if logo_aggregate is not None:
             logo_aggregates_by_segment[segment_key] = logo_aggregate
 
-    return compose_from_product_definition(
+    composed = compose_from_product_definition(
         pd=pd,
         letters_aggregate=letters_aggregate,
         logo_aggregates_by_segment=logo_aggregates_by_segment,
         workspace_id=workspace_id,
     )
+    return _apply_planning_duration_from_pd(composed, pd)

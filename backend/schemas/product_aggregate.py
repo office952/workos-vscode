@@ -58,6 +58,11 @@ class ProductAggregateOperation(BaseModel):
     # TE2E-028A: optional template-configured planning minutes (not formula invent).
     estimated_minutes: float | None = None
     calculation_type: str | None = None
+    # TE2E-028B: contract-driven planning duration (operational only; JSON fields).
+    planning_duration_mode: str | None = None  # static | formula | none
+    planning_duration_formula_id: str | None = None
+    planning_duration_status: str | None = None
+    planning_minutes_source: str | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None

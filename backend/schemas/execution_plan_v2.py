@@ -19,6 +19,10 @@ TOTAL_ESTIMATED_TIME_SOURCE_NOT_AVAILABLE = "not_available_in_v2_preview"
 PLANNING_MINUTES_SOURCE_AGGREGATE_OPS = (
     "product_aggregate_snapshot.operations.estimated_minutes"
 )
+# TE2E-028B — Aggregate-resolved formula duration (suffix :{formula_id}).
+PLANNING_MINUTES_SOURCE_AGGREGATE_FORMULA_PREFIX = (
+    "product_aggregate_snapshot.operations.estimated_minutes.formula"
+)
 READINESS_GATE_TASK_TYPE = "READINESS_GATE"
 READINESS_GATE_EXCLUDED_WARNING = "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
 
