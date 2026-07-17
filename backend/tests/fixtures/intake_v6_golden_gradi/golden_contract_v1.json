@@ -1,0 +1,62 @@
+{
+  "identity": {
+    "contract_id": "intake_v6_golden_gradi",
+    "contract_version": "intake_v6_golden_gradi_v1",
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_family": "volumetric_letters",
+    "historical_workspace_id": "4888fddb-5d9f-46cb-9bcc-5dd3ed1263b1",
+    "historical_display_code": "IV6-C8066690",
+    "historical_workspace_policy": "read_only_never_mutate"
+  },
+  "owner": "product_system_parity_harness",
+  "source": {
+    "svg_file": "gradi-curat.svg",
+    "svg_origin": "P-Media CorelDRAW export",
+    "desktop_path_reference": "C:/Users/offic/Desktop/fisiere-teste-svg/gradi-curat.svg",
+    "file_size_bytes": 27173,
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1",
+    "analyzer_path": "frontend/src/lib/svgAnalyzer (nest2)",
+    "analysis_schema_version": "1.11.0"
+  },
+  "fixtures": {
+    "svg_analysis_json": "svg_analysis_json.json",
+    "layer_role_setup": "layer_role_setup.json",
+    "quote_geometry_expect": "quote_geometry.expect.json",
+    "svg_facts_expect": "svg_facts.expect.json",
+    "workspace_payload": "workspace_payload.golden.json",
+    "ownership_map": "ownership_map.json",
+    "aggregate_fingerprint": "aggregate_fingerprint.expect.json",
+    "pd_fingerprint": "pd_fingerprint.expect.json",
+    "cpp_fingerprint": "cpp_fingerprint.expect.json",
+    "review_contract": "review_contract.expect.json"
+  },
+  "interface_candidates": [
+    {
+      "interface_id": "RETURN_FACE_BONDING",
+      "components": ["FACE", "CANT"],
+      "material_code": "MAT-ADEZIV-CANT-LITERE",
+      "operation_codes": ["RETURN_PROFILE_FACE_BONDING", "return_face_bonding"],
+      "current_owner": "modelare_cant",
+      "target_owner": "interface:FACE+CANT",
+      "build1": "document_and_assert_full_product_still_emits",
+      "build3": "cant_only_isolation"
+    }
+  ],
+  "settings_provenance_min": {
+    "fields": ["owner", "source", "confirmed", "contract_version", "consumers"],
+    "schema_change": "forbidden_in_build1",
+    "storage": "additive_metadata_only"
+  },
+  "parity_law": "same_svg_plus_same_operator_choices_equals_same_ui_values_formulas_quantities_materials_ops_pd_aggregate_cpp",
+  "allowed_differences": ["additive_provenance", "contract_metadata", "test_fixtures", "diagnostic_read_models"],
+  "forbidden_in_build1": [
+    "formula_change",
+    "price_change",
+    "schema_change",
+    "migration",
+    "subset_ui",
+    "svg_classifier_redesign",
+    "acm_activation",
+    "gates_a_d_implementation"
+  ]
+}

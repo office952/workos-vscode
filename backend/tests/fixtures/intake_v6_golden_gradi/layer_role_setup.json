@@ -1,0 +1,60 @@
+{
+  "confirmation_status": "complete",
+  "layers": [
+    {
+      "layer_key": "pseudo:maria",
+      "layer_id": "pseudo:maria",
+      "layer_name": "pseudo maria (blue)",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "face",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "pseudo:soare",
+      "layer_id": "pseudo:soare",
+      "layer_name": "pseudo soare (red)",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "face",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "pseudo:ana",
+      "layer_id": "pseudo:ana",
+      "layer_name": "pseudo ana (green)",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "face",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "pseudo:gradinita",
+      "layer_id": "pseudo:gradinita",
+      "layer_name": "pseudo gradinita (orange)",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "face",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "logo_instance_001",
+      "layer_id": "logo_instance_001",
+      "layer_name": "Logo 1",
+      "auto_role": "printed_artwork",
+      "auto_confidence": "high",
+      "confirmed_role": "printed_artwork",
+      "confirmation_state": "confirmed"
+    },
+    {
+      "layer_key": "logo_instance_002",
+      "layer_id": "logo_instance_002",
+      "layer_name": "Logo 2",
+      "auto_role": "printed_artwork",
+      "auto_confidence": "high",
+      "confirmed_role": "printed_artwork",
+      "confirmation_state": "confirmed"
+    }
+  ],
+  "warnings": []
+}

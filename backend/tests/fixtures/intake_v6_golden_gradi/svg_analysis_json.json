@@ -1,0 +1,2678 @@
+{
+  "schemaName": "svg-analyzer-analysis",
+  "schemaVersion": "1.11.0",
+  "engineVersion": "1.11.0",
+  "createdAt": "2026-07-16T08:51:47.878Z",
+  "sourceFileName": "gradi-curat.svg",
+  "sourceFileSize": 27173,
+  "file": {
+    "name": "gradi-curat.svg",
+    "sizeBytes": 27173,
+    "detectedUnits": "cm",
+    "conversionConfidence": "high",
+    "physicalSizeSource": "svg width/height"
+  },
+  "document": {
+    "widthMm": 5086.99,
+    "heightMm": 600.03,
+    "viewBox": "0 0 519.77114 61.30898",
+    "viewBoxWidth": 519.77114,
+    "viewBoxHeight": 61.30898,
+    "scaleX": 9.7869804776002,
+    "scaleY": 9.786983896975615,
+    "mmPerViewBoxUnit": 9.786982187287908,
+    "boundingAreaSqm": 3.0523466097,
+    "filledAreaSqm": null,
+    "areaConfidence": "low",
+    "areaEstimated": true
+  },
+  "geometry": {
+    "perimeterMm": 31638.22602641309,
+    "perimeterMl": 31.63822602641309,
+    "perimeterConfidence": "medium",
+    "pathElementCount": 6,
+    "subPathCount": 36,
+    "closedSubPathCount": 36,
+    "openSubPathCount": 0,
+    "shapeCount": 6,
+    "transformCount": 0
+  },
+  "layers": [
+    {
+      "id": "pseudo:maria",
+      "name": "pseudo maria (blue)",
+      "layerKind": "pseudo",
+      "layerOrigin": "solid_fill_cluster",
+      "roleReason": "Pseudo-layer generated from solid vector fill color cluster.",
+      "autoRole": "face",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "high",
+          "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#00a0e3"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 8,
+      "closedSubPathCount": 8,
+      "openSubPathCount": 0,
+      "widthMm": 1191.0418692345704,
+      "heightMm": 235.96384692604587,
+      "boundingAreaSqm": 0.2810428213145777,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 5910.236468431474,
+      "perimeterMl": 5.910236468431474,
+      "colors": [
+        "#00a0e3"
+      ],
+      "warnings": [
+        {
+          "code": "PSEUDO_LAYER_SOLID_FILL",
+          "severity": "warning",
+          "message": "Pseudo-layer generated from solid vector fills — confirm face role for volumetric letters.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "pseudo:soare",
+      "name": "pseudo soare (red)",
+      "layerKind": "pseudo",
+      "layerOrigin": "solid_fill_cluster",
+      "roleReason": "Pseudo-layer generated from solid vector fill color cluster.",
+      "autoRole": "face",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "high",
+          "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#e31e24"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 8,
+      "closedSubPathCount": 8,
+      "openSubPathCount": 0,
+      "widthMm": 1301.538170436737,
+      "heightMm": 235.96384692604587,
+      "boundingAreaSqm": 0.30711595361734,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 6957.517973492543,
+      "perimeterMl": 6.957517973492544,
+      "colors": [
+        "#e31e24"
+      ],
+      "warnings": [
+        {
+          "code": "PSEUDO_LAYER_SOLID_FILL",
+          "severity": "warning",
+          "message": "Pseudo-layer generated from solid vector fills — confirm face role for volumetric letters.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "pseudo:ana",
+      "name": "pseudo ana (green)",
+      "layerKind": "pseudo",
+      "layerOrigin": "solid_fill_cluster",
+      "roleReason": "Pseudo-layer generated from solid vector fill color cluster.",
+      "autoRole": "face",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "high",
+          "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#009846"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 5,
+      "closedSubPathCount": 5,
+      "openSubPathCount": 0,
+      "widthMm": 832.1663469828533,
+      "heightMm": 235.96374905622417,
+      "boundingAreaSqm": 0.19636109107249675,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 3772.6241622195953,
+      "perimeterMl": 3.7726241622195955,
+      "colors": [
+        "#009846"
+      ],
+      "warnings": [
+        {
+          "code": "PSEUDO_LAYER_SOLID_FILL",
+          "severity": "warning",
+          "message": "Pseudo-layer generated from solid vector fills — confirm face role for volumetric letters.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "pseudo:gradinita",
+      "name": "pseudo gradinita (orange)",
+      "layerKind": "pseudo",
+      "layerOrigin": "solid_fill_cluster",
+      "roleReason": "Pseudo-layer generated from solid vector fill color cluster.",
+      "autoRole": "face",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "face",
+          "confidence": "high",
+          "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [
+          "#ef7f1a"
+        ],
+        "strokes": [],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "cnc_cut",
+      "roleGuess": "face",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 13,
+      "closedSubPathCount": 13,
+      "openSubPathCount": 0,
+      "widthMm": 2030.9966966420711,
+      "heightMm": 235.9641405355115,
+      "boundingAreaSqm": 0.47924238995360924,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 10106.838616130983,
+      "perimeterMl": 10.106838616130982,
+      "colors": [
+        "#ef7f1a"
+      ],
+      "warnings": [
+        {
+          "code": "PSEUDO_LAYER_SOLID_FILL",
+          "severity": "warning",
+          "message": "Pseudo-layer generated from solid vector fills — confirm face role for volumetric letters.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "logo_instance_001",
+      "name": "Logo 1",
+      "layerKind": "pseudo",
+      "layerOrigin": "stroke_vector_outline",
+      "roleReason": "Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.",
+      "autoRole": "printed_artwork",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "printed_artwork",
+          "confidence": "high",
+          "reason": "Raster artwork layer — print on vinyl."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [],
+        "strokes": [
+          "#2b2a29"
+        ],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "print_vinyl",
+      "roleGuess": "printed_artwork",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 1,
+      "closedSubPathCount": 1,
+      "openSubPathCount": 0,
+      "widthMm": 667.2126344054284,
+      "heightMm": 599.8535337617757,
+      "boundingAreaSqm": 0.4002298565185999,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 2445.504403069246,
+      "perimeterMl": 2.445504403069246,
+      "colors": [
+        "#2b2a29"
+      ],
+      "warnings": [
+        {
+          "code": "STROKE_ONLY_VECTOR_LAYER",
+          "severity": "warning",
+          "message": "Stroke-only vector isolated as logo/artwork candidate - confirm what it represents and how it goes to production.",
+          "scope": "layer"
+        }
+      ]
+    },
+    {
+      "id": "logo_instance_002",
+      "name": "Logo 2",
+      "layerKind": "pseudo",
+      "layerOrigin": "stroke_vector_outline",
+      "roleReason": "Stroke-only vector isolated as logo/artwork candidate; operator must confirm production intent.",
+      "autoRole": "printed_artwork",
+      "autoConfidence": "high",
+      "autoRoleCandidates": [
+        {
+          "role": "printed_artwork",
+          "confidence": "high",
+          "reason": "Raster artwork layer — print on vinyl."
+        }
+      ],
+      "paintEvidence": {
+        "fills": [],
+        "strokes": [
+          "#2b2a29"
+        ],
+        "gradientRefs": [],
+        "hasGradient": false,
+        "hasPattern": false,
+        "hasImage": false,
+        "isMulticolor": false,
+        "fillCount": 1,
+        "textElementCount": 0,
+        "paintKind": "solid"
+      },
+      "productionHint": "print_vinyl",
+      "roleGuess": "printed_artwork",
+      "elementCount": 1,
+      "pathElementCount": 1,
+      "subPathCount": 1,
+      "closedSubPathCount": 1,
+      "openSubPathCount": 0,
+      "widthMm": 667.2126344054288,
+      "heightMm": 599.8535337617757,
+      "boundingAreaSqm": 0.4002298565186002,
+      "filledAreaSqm": null,
+      "areaConfidence": "low",
+      "perimeterMm": 2445.504403069246,
+      "perimeterMl": 2.445504403069246,
+      "colors": [
+        "#2b2a29"
+      ],
+      "warnings": [
+        {
+          "code": "STROKE_ONLY_VECTOR_LAYER",
+          "severity": "warning",
+          "message": "Stroke-only vector isolated as logo/artwork candidate - confirm what it represents and how it goes to production.",
+          "scope": "layer"
+        }
+      ]
+    }
+  ],
+  "layerRoleConfirmation": {
+    "schemaVersion": "layer_role_confirmation_v1",
+    "confirmationStatus": "missing",
+    "layers": [
+      {
+        "layerKey": "pseudo:maria",
+        "layerId": "pseudo:maria",
+        "layerName": "pseudo maria (blue)",
+        "autoRole": "face",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "high",
+            "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#00a0e3"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      },
+      {
+        "layerKey": "pseudo:soare",
+        "layerId": "pseudo:soare",
+        "layerName": "pseudo soare (red)",
+        "autoRole": "face",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "high",
+            "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#e31e24"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      },
+      {
+        "layerKey": "pseudo:ana",
+        "layerId": "pseudo:ana",
+        "layerName": "pseudo ana (green)",
+        "autoRole": "face",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "high",
+            "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#009846"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      },
+      {
+        "layerKey": "pseudo:gradinita",
+        "layerId": "pseudo:gradinita",
+        "layerName": "pseudo gradinita (orange)",
+        "autoRole": "face",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "face",
+            "confidence": "high",
+            "reason": "Pseudo-layer from solid vector fill — volumetric letter geometry candidate."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [
+            "#ef7f1a"
+          ],
+          "strokes": [],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "cnc_cut"
+      },
+      {
+        "layerKey": "logo_instance_001",
+        "layerId": "logo_instance_001",
+        "layerName": "Logo 1",
+        "autoRole": "printed_artwork",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "printed_artwork",
+            "confidence": "high",
+            "reason": "Raster artwork layer — print on vinyl."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [],
+          "strokes": [
+            "#2b2a29"
+          ],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "print_vinyl"
+      },
+      {
+        "layerKey": "logo_instance_002",
+        "layerId": "logo_instance_002",
+        "layerName": "Logo 2",
+        "autoRole": "printed_artwork",
+        "autoConfidence": "high",
+        "autoRoleCandidates": [
+          {
+            "role": "printed_artwork",
+            "confidence": "high",
+            "reason": "Raster artwork layer — print on vinyl."
+          }
+        ],
+        "confirmedRole": null,
+        "confirmationState": "pending",
+        "operatorNote": null,
+        "plexiInserts10mm": false,
+        "returnDepthMm": null,
+        "returnDepth2Mm": null,
+        "illuminationCarcassDepthMm": null,
+        "paintEvidence": {
+          "fills": [],
+          "strokes": [
+            "#2b2a29"
+          ],
+          "gradientRefs": [],
+          "hasGradient": false,
+          "hasPattern": false,
+          "hasImage": false,
+          "isMulticolor": false,
+          "fillCount": 1,
+          "textElementCount": 0,
+          "paintKind": "solid"
+        },
+        "productionHint": "print_vinyl"
+      }
+    ]
+  },
+  "colors": {
+    "unique": [
+      "#00a0e3",
+      "#e31e24",
+      "#009846",
+      "#ef7f1a",
+      "#2b2a29"
+    ],
+    "dominant": [
+      "#2b2a29",
+      "#00a0e3",
+      "#e31e24",
+      "#009846",
+      "#ef7f1a"
+    ],
+    "fills": [
+      "#00a0e3",
+      "#e31e24",
+      "#009846",
+      "#ef7f1a"
+    ],
+    "strokes": [
+      "#2b2a29"
+    ],
+    "byLayer": {
+      "unassigned": [],
+      "pseudo maria (blue)": [
+        "#00a0e3"
+      ],
+      "pseudo soare (red)": [
+        "#e31e24"
+      ],
+      "pseudo ana (green)": [
+        "#009846"
+      ],
+      "pseudo gradinita (orange)": [
+        "#ef7f1a"
+      ],
+      "Logo 1": [
+        "#2b2a29"
+      ],
+      "Logo 2": [
+        "#2b2a29"
+      ]
+    }
+  },
+  "warnings": [
+    {
+      "code": "FILLED_AREA_NOT_AVAILABLE",
+      "severity": "warning",
+      "message": "Element types present (e.g. <path>) do not support geometric area calculation. Use boundingAreaSqm as reference.",
+      "scope": "document"
+    },
+    {
+      "code": "PERIMETER_CONFIDENCE_MEDIUM",
+      "severity": "warning",
+      "message": "Perimeter should be validated against CAD reference for high confidence.",
+      "scope": "benchmark"
+    }
+  ],
+  "confidence": {
+    "dimensions": "high",
+    "perimeter": "medium",
+    "area": "low",
+    "layers": "high",
+    "colors": "high"
+  },
+  "parts": {
+    "strategy": "subpath-shape-grouping",
+    "fallbackStrategy": "layer-as-part",
+    "extractionMode": "split-preferred",
+    "count": 21,
+    "nestableCount": 21,
+    "totalBoundingAreaSqm": 1.9699489161585326,
+    "totalPerimeterMm": 30327.483284132173,
+    "totalPerimeterMl": 30.327483284132175,
+    "items": [
+      {
+        "id": "split_pseudo_maria_blue__1_2",
+        "name": "pseudo maria (blue)_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          6,
+          2,
+          12
+        ],
+        "contourCount": 3,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "pseudo:maria",
+          "layerName": "pseudo maria (blue)",
+          "elementIds": [
+            "el-1",
+            "el-2"
+          ],
+          "pathElementCount": 2,
+          "subPathCount": 3
+        },
+        "bounds": {
+          "xMm": -22.19002471323787,
+          "yMm": 0,
+          "rightMm": 352.40436962948195,
+          "bottomMm": 235.96365118640207,
+          "widthMm": 374.5943943427198,
+          "heightMm": 235.96365118640207,
+          "boundingAreaSqm": 0.08839066100306708
+        },
+        "geometry": {
+          "outerPerimeterMm": 1186.8051368102715,
+          "outerPerimeterMl": 1.1868051368102714,
+          "innerPerimeterMm": 288.06708425014006,
+          "innerPerimeterMl": 0.28806708425014005,
+          "fragmentPerimeterMm": 288.06253477286975,
+          "fragmentPerimeterMl": 0.28806253477286975,
+          "totalContourPerimeterMm": 1474.8722210604114,
+          "totalContourPerimeterMl": 1.4748722210604115,
+          "perimeterMm": 1186.8051368102715,
+          "perimeterMl": 1.1868051368102714,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 3,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#00a0e3"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_maria_blue__1_4",
+        "name": "pseudo maria (blue)_04",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          3,
+          5
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "pseudo:maria",
+          "layerName": "pseudo maria (blue)",
+          "elementIds": [
+            "el-1"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": 156.46771393229363,
+          "yMm": -50.30264169711301,
+          "rightMm": 399.47133714565564,
+          "bottomMm": 185.66071587982347,
+          "widthMm": 243.003623213362,
+          "heightMm": 235.9633575769365,
+          "boundingAreaSqm": 0.05733995083678568
+        },
+        "geometry": {
+          "outerPerimeterMm": 1028.1032054001632,
+          "outerPerimeterMl": 1.0281032054001633,
+          "innerPerimeterMm": 567.5125495975509,
+          "innerPerimeterMl": 0.5675125495975509,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1595.6157549977142,
+          "totalContourPerimeterMl": 1.5956157549977144,
+          "perimeterMm": 1028.1032054001632,
+          "perimeterMl": 1.0281032054001633,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#00a0e3"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_maria_blue__1_1",
+        "name": "pseudo maria (blue)_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          1
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:maria",
+          "layerName": "pseudo maria (blue)",
+          "elementIds": [
+            "el-1"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 270.4763673018323,
+          "yMm": 0,
+          "rightMm": 549.3386124210203,
+          "bottomMm": 235.96365118640207,
+          "widthMm": 278.86224511918806,
+          "heightMm": 235.96365118640207,
+          "boundingAreaSqm": 0.06580135353636105
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7426162772886,
+          "outerPerimeterMl": 0.8987426162772886,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 898.7426162772886,
+          "totalContourPerimeterMl": 0.8987426162772886,
+          "perimeterMm": 898.7426162772886,
+          "perimeterMl": 0.8987426162772886,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#00a0e3"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_maria_blue__1_3",
+        "name": "pseudo maria (blue)_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          0
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:maria",
+          "layerName": "pseudo maria (blue)",
+          "elementIds": [
+            "el-1"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 1672.7501837355287,
+          "yMm": 364.0495082548484,
+          "rightMm": 1927.60134036589,
+          "bottomMm": 600.0132573110725,
+          "widthMm": 254.8511566303614,
+          "heightMm": 235.96374905622412,
+          "boundingAreaSqm": 0.06013563436981507
+        },
+        "geometry": {
+          "outerPerimeterMm": 1558.939034026691,
+          "outerPerimeterMl": 1.5589390340266909,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1558.939034026691,
+          "totalContourPerimeterMl": 1.5589390340266909,
+          "perimeterMm": 1558.939034026691,
+          "perimeterMl": 1.5589390340266909,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#00a0e3"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_soare_red__2_4",
+        "name": "pseudo soare (red)_04",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          13
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "pseudo:soare",
+          "layerName": "pseudo soare (red)",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 156.47113937605909,
+          "yMm": -50.30264169711301,
+          "rightMm": 399.4745668497774,
+          "bottomMm": 185.66071587982347,
+          "widthMm": 243.0034274737183,
+          "heightMm": 235.9633575769365,
+          "boundingAreaSqm": 0.05733990464940214
+        },
+        "geometry": {
+          "outerPerimeterMm": 1028.0968097340894,
+          "outerPerimeterMl": 1.0280968097340895,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1028.0968097340894,
+          "totalContourPerimeterMl": 1.0280968097340895,
+          "perimeterMm": 1028.0968097340894,
+          "perimeterMl": 1.0280968097340895,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#e31e24"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_soare_red__2_1",
+        "name": "pseudo soare (red)_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          11
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:soare",
+          "layerName": "pseudo soare (red)",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 205.3204142183599,
+          "yMm": -102.45698042406092,
+          "rightMm": 484.17942963342625,
+          "bottomMm": 133.50667076234117,
+          "widthMm": 278.8590154150663,
+          "heightMm": 235.9636511864021,
+          "boundingAreaSqm": 0.06580059144358424
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7372483168617,
+          "outerPerimeterMl": 0.8987372483168617,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 898.7372483168617,
+          "totalContourPerimeterMl": 0.8987372483168617,
+          "perimeterMm": 898.7372483168617,
+          "perimeterMl": 0.8987372483168617,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#e31e24"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_soare_red__2_2",
+        "name": "pseudo soare (red)_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          9
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:soare",
+          "layerName": "pseudo soare (red)",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 211.97233240159386,
+          "yMm": -1.0224575801120423e-14,
+          "rightMm": 465.7253896305417,
+          "bottomMm": 235.9633575769365,
+          "widthMm": 253.75305722894785,
+          "heightMm": 235.9633575769365,
+          "boundingAreaSqm": 0.05987642337915505
+        },
+        "geometry": {
+          "outerPerimeterMm": 819.343562166427,
+          "outerPerimeterMl": 0.819343562166427,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 819.343562166427,
+          "totalContourPerimeterMl": 0.819343562166427,
+          "perimeterMm": 819.343562166427,
+          "perimeterMl": 0.819343562166427,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#e31e24"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_soare_red__2_5",
+        "name": "pseudo soare (red)_05",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          15
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:soare",
+          "layerName": "pseudo soare (red)",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 222.13073056288954,
+          "yMm": -61.17294494271182,
+          "rightMm": 439.4341300317209,
+          "bottomMm": 174.7906083738684,
+          "widthMm": 217.30339946883134,
+          "heightMm": 235.9635533165802,
+          "boundingAreaSqm": 0.05127568228643771
+        },
+        "geometry": {
+          "outerPerimeterMm": 1445.0611417372486,
+          "outerPerimeterMl": 1.4450611417372485,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1445.0611417372486,
+          "totalContourPerimeterMl": 1.4450611417372485,
+          "perimeterMm": 1445.0611417372486,
+          "perimeterMl": 1.4450611417372485,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#e31e24"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_soare_red__2_3",
+        "name": "pseudo soare (red)_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          8
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:soare",
+          "layerName": "pseudo soare (red)",
+          "elementIds": [
+            "el-2"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 2939.2031974686984,
+          "yMm": 364.0495082548482,
+          "rightMm": 3182.4331935800524,
+          "bottomMm": 600.0129637016065,
+          "widthMm": 243.229996111354,
+          "heightMm": 235.9634554467583,
+          "boundingAreaSqm": 0.05739339035073668
+        },
+        "geometry": {
+          "outerPerimeterMm": 1607.9931424923925,
+          "outerPerimeterMl": 1.6079931424923926,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1607.9931424923925,
+          "totalContourPerimeterMl": 1.6079931424923926,
+          "perimeterMm": 1607.9931424923925,
+          "perimeterMl": 1.6079931424923926,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#e31e24"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_ana_green__3_3",
+        "name": "pseudo ana (green)_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          18
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:ana",
+          "layerName": "pseudo ana (green)",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 156.33549180294332,
+          "yMm": -50.30254382729113,
+          "rightMm": 399.29360554913444,
+          "bottomMm": 185.66091161946719,
+          "widthMm": 242.95811374619112,
+          "heightMm": 235.9634554467583,
+          "boundingAreaSqm": 0.0573292360483778
+        },
+        "geometry": {
+          "outerPerimeterMm": 1384.618738366193,
+          "outerPerimeterMl": 1.384618738366193,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1384.618738366193,
+          "totalContourPerimeterMl": 1.384618738366193,
+          "perimeterMm": 1384.618738366193,
+          "perimeterMl": 1.384618738366193,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_ana_green__3_1",
+        "name": "pseudo ana (green)_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          19
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:ana",
+          "layerName": "pseudo ana (green)",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 239.62907175518518,
+          "yMm": 0,
+          "rightMm": 518.491414744195,
+          "bottomMm": 235.96365118640207,
+          "widthMm": 278.86234298900985,
+          "heightMm": 235.96365118640207,
+          "boundingAreaSqm": 0.06580137663008154
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7407902072862,
+          "outerPerimeterMl": 0.8987407902072861,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 898.7407902072862,
+          "totalContourPerimeterMl": 0.8987407902072861,
+          "perimeterMm": 898.7407902072862,
+          "perimeterMl": 0.8987407902072861,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_ana_green__3_2",
+        "name": "pseudo ana (green)_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          16
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:ana",
+          "layerName": "pseudo ana (green)",
+          "elementIds": [
+            "el-3"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 759.4309634142577,
+          "yMm": 364.04980186431385,
+          "rightMm": 1038.2931106636242,
+          "bottomMm": 600.013453050716,
+          "widthMm": 278.86214724936656,
+          "heightMm": 235.9636511864021,
+          "boundingAreaSqm": 0.06580133044264062
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7424489807594,
+          "outerPerimeterMl": 0.8987424489807594,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 898.7424489807594,
+          "totalContourPerimeterMl": 0.8987424489807594,
+          "perimeterMm": 898.7424489807594,
+          "perimeterMl": 0.8987424489807594,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#009846"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_3",
+        "name": "pseudo gradinita (orange)_03",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          31,
+          7
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4",
+            "el-1"
+          ],
+          "pathElementCount": 2,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": 85.70890928624269,
+          "yMm": -0.00019573964378126756,
+          "rightMm": 330.1237174611897,
+          "bottomMm": 235.96345544675833,
+          "widthMm": 244.414808174947,
+          "heightMm": 235.9636511864021,
+          "boundingAreaSqm": 0.05767301054098458
+        },
+        "geometry": {
+          "outerPerimeterMm": 933.280731968988,
+          "outerPerimeterMl": 0.933280731968988,
+          "innerPerimeterMm": 288.06708425014006,
+          "innerPerimeterMl": 0.28806708425014005,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1221.3478162191282,
+          "totalContourPerimeterMl": 1.2213478162191282,
+          "perimeterMm": 933.280731968988,
+          "perimeterMl": 0.933280731968988,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_5",
+        "name": "pseudo gradinita (orange)_05",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          29,
+          27,
+          30,
+          23
+        ],
+        "contourCount": 4,
+        "outerContourCount": 1,
+        "innerContourCount": 3,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 4
+        },
+        "bounds": {
+          "xMm": 97.5986245964694,
+          "yMm": -0.0001957396437383479,
+          "rightMm": 340.5565426030168,
+          "bottomMm": 235.9632597071146,
+          "widthMm": 242.9579180065474,
+          "heightMm": 235.96345544675833,
+          "boundingAreaSqm": 0.05732918986097511
+        },
+        "geometry": {
+          "outerPerimeterMm": 1384.6184688311644,
+          "outerPerimeterMl": 1.3846184688311645,
+          "innerPerimeterMm": 1410.6292400296136,
+          "innerPerimeterMl": 1.4106292400296137,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 2795.2477088607775,
+          "totalContourPerimeterMl": 2.7952477088607774,
+          "perimeterMm": 1384.6184688311644,
+          "perimeterMl": 1.3846184688311645,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 4,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_7",
+        "name": "pseudo gradinita (orange)_07",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          26,
+          14
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4",
+            "el-2"
+          ],
+          "pathElementCount": 2,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": 156.47446695000292,
+          "yMm": -50.3023480876474,
+          "rightMm": 396.4682995313083,
+          "bottomMm": 185.6612052289329,
+          "widthMm": 239.99383258130536,
+          "heightMm": 235.9635533165803,
+          "boundingAreaSqm": 0.056629797509949294
+        },
+        "geometry": {
+          "outerPerimeterMm": 854.8985762881441,
+          "outerPerimeterMl": 0.8548985762881441,
+          "innerPerimeterMm": 359.45245106064453,
+          "innerPerimeterMl": 0.35945245106064455,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1214.3510273487886,
+          "totalContourPerimeterMl": 1.2143510273487887,
+          "perimeterMm": 854.8985762881441,
+          "perimeterMl": 0.8548985762881441,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_2",
+        "name": "pseudo gradinita (orange)_02",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          32
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 169.54899432382263,
+          "yMm": 0,
+          "rightMm": 448.407911869067,
+          "bottomMm": 235.96365118640207,
+          "widthMm": 278.85891754524437,
+          "heightMm": 235.96365118640207,
+          "boundingAreaSqm": 0.0658005683498637
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7383858035888,
+          "outerPerimeterMl": 0.8987383858035888,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 898.7383858035888,
+          "totalContourPerimeterMl": 0.8987383858035888,
+          "perimeterMm": 898.7383858035888,
+          "perimeterMl": 0.8987383858035888,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_4",
+        "name": "pseudo gradinita (orange)_04",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          22
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 198.48127106588294,
+          "yMm": -0.0002936094655933964,
+          "rightMm": 441.4847964094232,
+          "bottomMm": 235.9630639674709,
+          "widthMm": 243.00352534354028,
+          "heightMm": 235.9633575769365,
+          "boundingAreaSqm": 0.05733992774309394
+        },
+        "geometry": {
+          "outerPerimeterMm": 1028.0966920518772,
+          "outerPerimeterMl": 1.0280966920518773,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1028.0966920518772,
+          "totalContourPerimeterMl": 1.0280966920518773,
+          "perimeterMm": 1028.0966920518772,
+          "perimeterMl": 1.0280966920518773,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_1",
+        "name": "pseudo gradinita (orange)_01",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "compound-shape",
+        "sourceSubPathIndexes": [
+          24,
+          28
+        ],
+        "contourCount": 2,
+        "outerContourCount": 1,
+        "innerContourCount": 1,
+        "splitConfidence": "medium",
+        "groupingReason": "bbox-containment",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 2
+        },
+        "bounds": {
+          "xMm": 204.26772641429514,
+          "yMm": -61.17265133324621,
+          "rightMm": 483.1299715334833,
+          "bottomMm": 174.79099985315588,
+          "widthMm": 278.8622451191882,
+          "heightMm": 235.9636511864021,
+          "boundingAreaSqm": 0.06580135353636109
+        },
+        "geometry": {
+          "outerPerimeterMm": 898.7426971901128,
+          "outerPerimeterMl": 0.8987426971901128,
+          "innerPerimeterMm": 567.5164189070172,
+          "innerPerimeterMl": 0.5675164189070172,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1466.2591160971301,
+          "totalContourPerimeterMl": 1.46625911609713,
+          "perimeterMm": 898.7426971901128,
+          "perimeterMl": 0.8987426971901128,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 2,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "split_pseudo_gradinita_orange__4_6",
+        "name": "pseudo gradinita (orange)_06",
+        "partExtractionMethod": "subpath-shape-grouping",
+        "shapeKind": "single-contour",
+        "sourceSubPathIndexes": [
+          21
+        ],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "medium",
+        "groupingReason": "single-subpath",
+        "source": {
+          "layerId": "pseudo:gradinita",
+          "layerName": "pseudo gradinita (orange)",
+          "elementIds": [
+            "el-4"
+          ],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": 1504.1572797015808,
+          "yMm": 0.013212425952756814,
+          "rightMm": 1744.151210152709,
+          "bottomMm": 235.976765742533,
+          "widthMm": 239.9939304511281,
+          "heightMm": 235.96355331658023,
+          "boundingAreaSqm": 0.05662982060366042
+        },
+        "geometry": {
+          "outerPerimeterMm": 1515.229478226337,
+          "outerPerimeterMl": 1.5152294782263371,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 1515.229478226337,
+          "totalContourPerimeterMl": 1.5152294782263371,
+          "perimeterMm": 1515.229478226337,
+          "perimeterMl": 1.5152294782263371,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#ef7f1a"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "bounding-box",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": []
+      },
+      {
+        "id": "part_logo_1_001",
+        "name": "Logo 1",
+        "partExtractionMethod": "layer-as-part",
+        "shapeKind": "unknown",
+        "sourceSubPathIndexes": [],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "low",
+        "groupingReason": "print-zone",
+        "source": {
+          "layerId": "logo_instance_001",
+          "layerName": "Logo 1",
+          "elementIds": [],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": null,
+          "yMm": null,
+          "rightMm": null,
+          "bottomMm": null,
+          "widthMm": 667.2126344054284,
+          "heightMm": 599.8535337617757,
+          "boundingAreaSqm": 0.4002298565185999
+        },
+        "geometry": {
+          "outerPerimeterMm": 2445.504403069246,
+          "outerPerimeterMl": 2.445504403069246,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 2445.504403069246,
+          "totalContourPerimeterMl": 2.445504403069246,
+          "perimeterMm": 2445.504403069246,
+          "perimeterMl": 2.445504403069246,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#2b2a29"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "print-area-bbox",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": [
+          {
+            "code": "PART_FILLED_AREA_NOT_AVAILABLE",
+            "severity": "info",
+            "message": "Filled area is not calculated for this part. Bounding area is available.",
+            "scope": "part",
+            "targetId": "part_logo_1_001"
+          },
+          {
+            "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+            "severity": "info",
+            "message": "Print zone — entire layer nests as one piece on vinyl.",
+            "scope": "part",
+            "targetId": "part_logo_1_001"
+          }
+        ]
+      },
+      {
+        "id": "part_logo_2_002",
+        "name": "Logo 2",
+        "partExtractionMethod": "layer-as-part",
+        "shapeKind": "unknown",
+        "sourceSubPathIndexes": [],
+        "contourCount": 1,
+        "outerContourCount": 1,
+        "innerContourCount": 0,
+        "splitConfidence": "low",
+        "groupingReason": "print-zone",
+        "source": {
+          "layerId": "logo_instance_002",
+          "layerName": "Logo 2",
+          "elementIds": [],
+          "pathElementCount": 1,
+          "subPathCount": 1
+        },
+        "bounds": {
+          "xMm": null,
+          "yMm": null,
+          "rightMm": null,
+          "bottomMm": null,
+          "widthMm": 667.2126344054288,
+          "heightMm": 599.8535337617757,
+          "boundingAreaSqm": 0.4002298565186002
+        },
+        "geometry": {
+          "outerPerimeterMm": 2445.504403069246,
+          "outerPerimeterMl": 2.445504403069246,
+          "innerPerimeterMm": 0,
+          "innerPerimeterMl": 0,
+          "fragmentPerimeterMm": 0,
+          "fragmentPerimeterMl": 0,
+          "totalContourPerimeterMm": 2445.504403069246,
+          "totalContourPerimeterMl": 2.445504403069246,
+          "perimeterMm": 2445.504403069246,
+          "perimeterMl": 2.445504403069246,
+          "filledAreaSqm": null,
+          "closedSubPathCount": 1,
+          "openSubPathCount": 0
+        },
+        "colors": [
+          "#2b2a29"
+        ],
+        "quantity": 1,
+        "canNest": true,
+        "nestingMethod": "print-area-bbox",
+        "confidence": {
+          "bounds": "high",
+          "perimeter": "medium",
+          "area": "low",
+          "source": "high"
+        },
+        "warnings": [
+          {
+            "code": "PART_FILLED_AREA_NOT_AVAILABLE",
+            "severity": "info",
+            "message": "Filled area is not calculated for this part. Bounding area is available.",
+            "scope": "part",
+            "targetId": "part_logo_2_002"
+          },
+          {
+            "code": "PART_PRINT_ZONE_WHOLE_VINYL",
+            "severity": "info",
+            "message": "Print zone — entire layer nests as one piece on vinyl.",
+            "scope": "part",
+            "targetId": "part_logo_2_002"
+          }
+        ]
+      }
+    ],
+    "warnings": [
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-1_sp_6"
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Subpath containment is ambiguous; nearest container chosen.",
+        "scope": "part",
+        "targetId": "el-1_sp_6",
+        "details": {
+          "candidateCount": 2
+        }
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Contained subpath kept as separate outer contour due geometric ambiguity.",
+        "scope": "part",
+        "targetId": "el-1_sp_3"
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Contained subpath kept as separate outer contour due geometric ambiguity.",
+        "scope": "part",
+        "targetId": "el-3_sp_21"
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Contained subpath kept as separate outer contour due geometric ambiguity.",
+        "scope": "part",
+        "targetId": "el-4_sp_23"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-4_sp_28"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-4_sp_29"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-4_sp_31"
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Subpath containment is ambiguous; nearest container chosen.",
+        "scope": "part",
+        "targetId": "el-4_sp_31",
+        "details": {
+          "candidateCount": 4
+        }
+      },
+      {
+        "code": "SUBPATH_CONTAINMENT_AMBIGUOUS",
+        "severity": "warning",
+        "message": "Contained subpath kept as separate outer contour due geometric ambiguity.",
+        "scope": "part",
+        "targetId": "el-4_sp_34"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Subpath assigned as inner contour by containment.",
+        "scope": "part",
+        "targetId": "el-4_sp_24"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Detached contour assigned as letter hole by nearest-parent fallback.",
+        "scope": "part",
+        "targetId": "el-1_sp_8"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Cross-layer hole promoted by compound-path even-odd containment.",
+        "scope": "part",
+        "targetId": "el-1_sp_5"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Cross-layer hole promoted by compound-path even-odd containment.",
+        "scope": "part",
+        "targetId": "el-2_sp_11"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Detached contour assigned as letter hole by nearest-parent fallback.",
+        "scope": "part",
+        "targetId": "el-2_sp_13"
+      },
+      {
+        "code": "SUBPATH_AS_INNER_CONTOUR",
+        "severity": "info",
+        "message": "Detached contour assigned as letter hole by nearest-parent fallback.",
+        "scope": "part",
+        "targetId": "el-2_sp_15"
+      },
+      {
+        "code": "PART_SPLIT_PERIMETER_MISMATCH",
+        "severity": "warning",
+        "message": "Split perimeter audit indicates differences between outer/total contour and document perimeter.",
+        "scope": "parts",
+        "details": {
+          "documentPerimeterMm": 31638.22602641309,
+          "partsOuterPerimeterMm": 26010.472415180528,
+          "partsTotalContourPerimeterMm": 30327.483284132173,
+          "deltaOuterVsDocumentMm": 5627.7536112325615,
+          "deltaTotalVsDocumentMm": 1310.742742280916,
+          "explanation": "Document perimeter includes all contours; geometry.perimeterMm currently stores outer perimeter while totalContourPerimeterMm captures inner/fragment paths."
+        }
+      }
+    ],
+    "splitDiagnostics": {
+      "enabled": true,
+      "pathElementCount": 6,
+      "subPathCount": 36,
+      "groupsCreated": 21,
+      "fallbackUsed": false,
+      "confidence": "medium",
+      "notes": [
+        "geometry.perimeterMm stores outer perimeter for backward compatibility.",
+        "geometry.totalContourPerimeterMm includes outer + inner + fragment contours."
+      ],
+      "subPathDiagnostics": [
+        {
+          "subPathIndex": 0,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 1672.7501837355287,
+            "y": 364.0495082548484,
+            "width": 254.85115663036143,
+            "height": 235.96374905622406
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_3",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 1,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 270.4763673018323,
+            "y": 0,
+            "width": 278.8622451191881,
+            "height": 235.96365118640207
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 2,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.19002471323787,
+            "y": 50.302348087647395,
+            "width": 83.56516870793907,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_2",
+          "classification": "fragment",
+          "reason": "Fragment overlaps parent geometry and contributes to outer bounds."
+        },
+        {
+          "subPathIndex": 3,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 156.46771393229363,
+            "y": -50.30264169711301,
+            "width": 243.00362321336198,
+            "height": 235.9633575769365
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_4",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 4,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 30.301573419883965,
+            "y": 61.17265133324621,
+            "width": 137.79072647518274,
+            "height": 53.31155150077282
+          },
+          "assignedGroupId": "split_logo_1_5_1",
+          "classification": "inner",
+          "reason": "Cross-layer hole promoted by compound-path even-odd containment."
+        },
+        {
+          "subPathIndex": 5,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 224.1392150473646,
+            "y": -61.17265133324621,
+            "width": 57.36443869435062,
+            "height": 235.96345544675836
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_4",
+          "classification": "inner",
+          "reason": "Centroid inside parent fill with low area ratio (letter hole)."
+        },
+        {
+          "subPathIndex": 6,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": 73.54212451029383,
+            "y": 0,
+            "width": 278.8622451191881,
+            "height": 235.96365118640207
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_2",
+          "classification": "outer",
+          "reason": "Outer contour with attached fragments."
+        },
+        {
+          "subPathIndex": 7,
+          "layerName": "pseudo maria (blue)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.190122583059743,
+            "y": 50.302348087647395,
+            "width": 83.568300542239,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_3",
+          "classification": "inner",
+          "reason": "Detached contour assigned as letter hole by nearest-parent fallback."
+        },
+        {
+          "subPathIndex": 8,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 2939.2031974686984,
+            "y": 364.0495082548482,
+            "width": 243.2299961113539,
+            "height": 235.96345544675833
+          },
+          "assignedGroupId": "split_pseudo_soare_red__2_3",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 9,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 211.97233240159386,
+            "y": -1.0224575801120423e-14,
+            "width": 253.75305722894788,
+            "height": 235.9633575769365
+          },
+          "assignedGroupId": "split_pseudo_soare_red__2_2",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 10,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": -30.84729554664714,
+            "y": 61.17245559360245,
+            "width": 157.3848520330643,
+            "height": 113.79216532355589
+          },
+          "assignedGroupId": "split_logo_1_5_1",
+          "classification": "inner",
+          "reason": "Cross-layer hole promoted by compound-path even-odd containment."
+        },
+        {
+          "subPathIndex": 11,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 205.3204142183599,
+            "y": -102.45698042406092,
+            "width": 278.8590154150663,
+            "height": 235.9636511864021
+          },
+          "assignedGroupId": "split_pseudo_soare_red__2_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 12,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.189926843416,
+            "y": 50.302348087647395,
+            "width": 83.568300542239,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "split_pseudo_maria_blue__1_2",
+          "classification": "inner",
+          "reason": "Detached contour assigned as letter hole by nearest-parent fallback."
+        },
+        {
+          "subPathIndex": 13,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 156.47113937605909,
+            "y": -50.30264169711301,
+            "width": 243.00342747371826,
+            "height": 235.9633575769365
+          },
+          "assignedGroupId": "split_pseudo_soare_red__2_4",
+          "classification": "outer",
+          "reason": "Outer contour with attached fragments."
+        },
+        {
+          "subPathIndex": 14,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 30.304705254183894,
+            "y": 61.17265133324621,
+            "width": 137.7908243450046,
+            "height": 53.31155150077282
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_7",
+          "classification": "inner",
+          "reason": "Detached contour assigned as letter hole by nearest-parent fallback."
+        },
+        {
+          "subPathIndex": 15,
+          "layerName": "pseudo soare (red)",
+          "closed": true,
+          "bboxMm": {
+            "x": 222.13073056288954,
+            "y": -61.17294494271182,
+            "width": 217.30339946883134,
+            "height": 235.96355331658023
+          },
+          "assignedGroupId": "split_pseudo_soare_red__2_5",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 16,
+          "layerName": "pseudo ana (green)",
+          "closed": true,
+          "bboxMm": {
+            "x": 759.4309634142577,
+            "y": 364.04980186431385,
+            "width": 278.86214724936656,
+            "height": 235.96365118640213
+          },
+          "assignedGroupId": "split_pseudo_ana_green__3_2",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 17,
+          "layerName": "pseudo ana (green)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.189926843416,
+            "y": 50.302348087647395,
+            "width": 83.568300542239,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "el-3_sp_21",
+          "classification": "fragment",
+          "reason": "Fragment overlaps parent geometry and contributes to outer bounds."
+        },
+        {
+          "subPathIndex": 18,
+          "layerName": "pseudo ana (green)",
+          "closed": true,
+          "bboxMm": {
+            "x": 156.33549180294332,
+            "y": -50.30254382729113,
+            "width": 242.95811374619112,
+            "height": 235.96345544675833
+          },
+          "assignedGroupId": "split_pseudo_ana_green__3_3",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 19,
+          "layerName": "pseudo ana (green)",
+          "closed": true,
+          "bboxMm": {
+            "x": 239.62907175518518,
+            "y": 0,
+            "width": 278.8623429890099,
+            "height": 235.96365118640207
+          },
+          "assignedGroupId": "split_pseudo_ana_green__3_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 20,
+          "layerName": "pseudo ana (green)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.19002471323787,
+            "y": 50.302348087647395,
+            "width": 83.568300542239,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "el-3_sp_18",
+          "classification": "fragment",
+          "reason": "Fragment overlaps parent geometry and contributes to outer bounds."
+        },
+        {
+          "subPathIndex": 21,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 1504.1572797015808,
+            "y": 0.013212425952756814,
+            "width": 239.99393045112805,
+            "height": 235.96355331658023
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_6",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 22,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 198.48127106588294,
+            "y": -0.0002936094655933964,
+            "width": 243.00352534354025,
+            "height": 235.9633575769365
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_4",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 23,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 30.301573419883965,
+            "y": 61.17265133324621,
+            "width": 137.79072647518274,
+            "height": 53.31164937059469
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_5",
+          "classification": "inner",
+          "reason": "Centroid inside parent fill with low area ratio (letter hole)."
+        },
+        {
+          "subPathIndex": 24,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 204.26772641429514,
+            "y": -61.17265133324621,
+            "width": 278.8622451191881,
+            "height": 235.96365118640207
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 25,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.190024713237875,
+            "y": 50.302348087647395,
+            "width": 83.568300542239,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "el-4_sp_34",
+          "classification": "fragment",
+          "reason": "Fragment overlaps parent geometry and contributes to outer bounds."
+        },
+        {
+          "subPathIndex": 26,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 156.47446695000292,
+            "y": -50.3023480876474,
+            "width": 239.99383258130536,
+            "height": 235.9635533165803
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_7",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 27,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 31.351129389648715,
+            "y": 61.17265133324619,
+            "width": 143.80649081624296,
+            "height": 113.79216532355589
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_5",
+          "classification": "inner",
+          "reason": "Centroid inside parent fill with low area ratio (letter hole)."
+        },
+        {
+          "subPathIndex": 28,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 221.76910157106911,
+            "y": -61.17265133324621,
+            "width": 57.367668398472404,
+            "height": 235.96345544675836
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_1",
+          "classification": "inner",
+          "reason": "Contained with low area ratio relative to parent."
+        },
+        {
+          "subPathIndex": 29,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 97.5986245964694,
+            "y": -0.0001957396437383479,
+            "width": 242.95791800654737,
+            "height": 235.96345544675833
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_5",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 30,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 267.0149074418323,
+            "y": 0,
+            "width": 57.367668398472404,
+            "height": 235.96345544675836
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_5",
+          "classification": "inner",
+          "reason": "Contained with low area ratio relative to parent."
+        },
+        {
+          "subPathIndex": 31,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 85.70890928624269,
+            "y": -0.00019573964378126756,
+            "width": 244.41480817494704,
+            "height": 235.9636511864021
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_3",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 32,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": 169.54899432382263,
+            "y": 0,
+            "width": 278.85891754524437,
+            "height": 235.96365118640207
+          },
+          "assignedGroupId": "split_pseudo_gradinita_orange__4_2",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 33,
+          "layerName": "pseudo gradinita (orange)",
+          "closed": true,
+          "bboxMm": {
+            "x": -22.18679500911607,
+            "y": 50.302348087647395,
+            "width": 83.5650708381172,
+            "height": 93.32200699009014
+          },
+          "assignedGroupId": "el-4_sp_26",
+          "classification": "fragment",
+          "reason": "Fragment overlaps parent geometry and contributes to outer bounds."
+        },
+        {
+          "subPathIndex": 34,
+          "layerName": "Logo 1",
+          "closed": true,
+          "bboxMm": {
+            "x": 0.08818070950748975,
+            "y": 0.08808283968559451,
+            "width": 667.2126344054284,
+            "height": 599.8535337617757
+          },
+          "assignedGroupId": "split_logo_1_5_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        },
+        {
+          "subPathIndex": 35,
+          "layerName": "Logo 2",
+          "closed": true,
+          "bboxMm": {
+            "x": 4419.690073531393,
+            "y": 0.08808283968559451,
+            "width": 667.2126344054288,
+            "height": 599.8535337617757
+          },
+          "assignedGroupId": "split_logo_2_6_1",
+          "classification": "outer",
+          "reason": "Outer contour root."
+        }
+      ],
+      "layerChildSummary": [
+        {
+          "layerName": "pseudo maria (blue)",
+          "childPartsCount": 4,
+          "childPartIds": [
+            "split_pseudo_maria_blue__1_2",
+            "split_pseudo_maria_blue__1_4",
+            "split_pseudo_maria_blue__1_1",
+            "split_pseudo_maria_blue__1_3"
+          ]
+        },
+        {
+          "layerName": "pseudo soare (red)",
+          "childPartsCount": 5,
+          "childPartIds": [
+            "split_pseudo_soare_red__2_4",
+            "split_pseudo_soare_red__2_1",
+            "split_pseudo_soare_red__2_2",
+            "split_pseudo_soare_red__2_5",
+            "split_pseudo_soare_red__2_3"
+          ]
+        },
+        {
+          "layerName": "pseudo ana (green)",
+          "childPartsCount": 3,
+          "childPartIds": [
+            "split_pseudo_ana_green__3_3",
+            "split_pseudo_ana_green__3_1",
+            "split_pseudo_ana_green__3_2"
+          ]
+        },
+        {
+          "layerName": "pseudo gradinita (orange)",
+          "childPartsCount": 7,
+          "childPartIds": [
+            "split_pseudo_gradinita_orange__4_3",
+            "split_pseudo_gradinita_orange__4_5",
+            "split_pseudo_gradinita_orange__4_7",
+            "split_pseudo_gradinita_orange__4_2",
+            "split_pseudo_gradinita_orange__4_4",
+            "split_pseudo_gradinita_orange__4_1",
+            "split_pseudo_gradinita_orange__4_6"
+          ]
+        },
+        {
+          "layerName": "Logo 1",
+          "childPartsCount": 1,
+          "childPartIds": [
+            "part_logo_1_001"
+          ]
+        },
+        {
+          "layerName": "Logo 2",
+          "childPartsCount": 1,
+          "childPartIds": [
+            "part_logo_2_002"
+          ]
+        }
+      ]
+    }
+  }
+}

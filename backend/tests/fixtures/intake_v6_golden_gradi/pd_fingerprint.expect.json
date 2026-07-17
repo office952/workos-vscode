@@ -1,0 +1,27 @@
+{
+  "contract_version": "intake_v6_golden_pd_v1",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "selected_module_codes": [
+    "ambalare_livrare_montaj",
+    "debitare_fata",
+    "debitare_spate",
+    "finisaje",
+    "geometry_svg",
+    "modelare_cant",
+    "sablon_montaj",
+    "sistem_led"
+  ],
+  "geometry_inputs": {
+    "vector_file": "gradi-curat.svg",
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "letter_count": 19,
+    "letter_perimeter_m": 21.1675,
+    "letter_face_area_m2": 1.2638
+  },
+  "notes": [
+    "selected_module_codes frozen at Build 1 HEAD (includes packaging/finish/sablon always-on/pending composition).",
+    "Geometry inputs match analysis-bundle fixture rebuild (21.1675 ml). Live historical WS may show drifted perimeter if payload was re-saved — do not mutate that WS."
+  ],
+  "must_not_activate_in_build1": ["acm_panel", "sold_finish_module", "sold_mounting_module"]
+}

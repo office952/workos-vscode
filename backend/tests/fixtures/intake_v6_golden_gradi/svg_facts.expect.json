@@ -1,0 +1,50 @@
+{
+  "contract_version": "intake_v6_golden_svg_facts_v1",
+  "source": {
+    "file_name": "gradi-curat.svg",
+    "file_size_bytes": 27173,
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "report": {
+    "schemaVersion": "1.11.0",
+    "layers_count": 6,
+    "colors_unique_count": 5,
+    "colors_unique": [
+      "#00a0e3",
+      "#e31e24",
+      "#009846",
+      "#ef7f1a",
+      "#2b2a29"
+    ],
+    "closed_subpath_count": 36,
+    "subpath_count": 36,
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "width_mm_ui_rounded": 5087,
+    "height_mm_ui_rounded": 600,
+    "dim_tolerance_mm": 1.0,
+    "auto_role_buckets": {
+      "face": 4,
+      "printed_artwork": 2
+    },
+    "forbidden_auto_roles": [
+      "support_panel"
+    ],
+    "acm_declared": false,
+    "layer_ids": [
+      "pseudo:maria",
+      "pseudo:soare",
+      "pseudo:ana",
+      "pseudo:gradinita",
+      "logo_instance_001",
+      "logo_instance_002"
+    ]
+  },
+  "operator_confirm": {
+    "confirmation_status": "complete",
+    "confirmed_role_buckets": {
+      "face": 4,
+      "printed_artwork": 2
+    }
+  }
+}

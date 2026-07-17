@@ -1,0 +1,38 @@
+{
+  "letter_perimeter_m": 21.1675,
+  "total_letter_perimeter_ml": 21.1675,
+  "return_material_perimeter_ml": 21.1675,
+  "face_cutting_perimeter_ml": 24.6488,
+  "cutting_perimeter_ml": 24.6488,
+  "hole_perimeter_ml": 3.4812,
+  "face_area_m2": 1.2638,
+  "artwork_area_m2": 0.8005,
+  "artwork_boxes": [
+    {
+      "layer_key": "logo_instance_001",
+      "layer_name": "Logo 1",
+      "width_mm": 667.2126344054284,
+      "height_mm": 599.8535337617757,
+      "area_m2": 0.4002
+    },
+    {
+      "layer_key": "logo_instance_002",
+      "layer_name": "Logo 2",
+      "width_mm": 667.2126344054288,
+      "height_mm": 599.8535337617757,
+      "area_m2": 0.4002
+    }
+  ],
+  "letter_count": 19,
+  "real_letters_count": 19,
+  "inner_holes_count": 8,
+  "cutting_contours_count": 28,
+  "material_piece_count": 19,
+  "part_classification_confidence": "high",
+  "part_classification_warnings": [],
+  "primary_letters_layer_key": "pseudo:maria",
+  "width_mm": 5086.99,
+  "height_mm": 600.03,
+  "geometry_source": "nest2_face_parts_outer",
+  "confirmed": true
+}

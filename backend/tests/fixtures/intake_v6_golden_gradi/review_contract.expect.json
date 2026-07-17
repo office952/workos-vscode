@@ -1,0 +1,29 @@
+{
+  "contract_version": "intake_v6_golden_review_v1",
+  "file_identity": {
+    "file_name": "gradi-curat.svg",
+    "file_size_bytes": 27173,
+    "file_hash": "593c4d439157b83cab16c33d69caf0ab426144d583fb1999fa7d1676d5ab6cf1"
+  },
+  "layers_confirmed": "complete",
+  "layer_count": 6,
+  "composition_confirmed": true,
+  "geometry": {
+    "width_mm": 5086.99,
+    "height_mm": 600.03,
+    "letter_count": 19,
+    "letter_perimeter_m": 21.1675,
+    "face_area_m2": 1.2638
+  },
+  "operator_intent": {
+    "illuminated": true,
+    "return_depth_mm": 60,
+    "face_finish_type": "none",
+    "backing_mode": "forex_10_no_bevel",
+    "mounting_template_enabled": true
+  },
+  "cpp_boundary": {
+    "intake_is_money_authority": false,
+    "dry_run_required": true
+  }
+}
