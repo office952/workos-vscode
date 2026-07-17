@@ -114,6 +114,7 @@ export type UnifiedCatalogDetailSection =
   | "composition"
   | "components"
   | "dossier"
+  | "lifecycle"
   | "fields"
   | "product-truth-paths"
   | "guards";

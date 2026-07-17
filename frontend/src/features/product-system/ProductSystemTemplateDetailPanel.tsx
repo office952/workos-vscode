@@ -17,18 +17,21 @@ import type {
 } from "./productSystemUnifiedCatalogTypes";
 import { LegacyReplacementReadinessPanel } from "./LegacyReplacementReadinessPanel";
 import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
+import { TemplateLifecycleReadinessPanel } from "./TemplateLifecycleReadinessPanel";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
   { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
   { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
+  { id: "lifecycle", label: "Lifecycle", testId: "product-system-template-detail-tab-lifecycle" },
   { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
 ];
 
 const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
+  { id: "lifecycle", label: "Lifecycle", testId: "product-system-template-detail-tab-lifecycle" },
   { id: "fields", label: "Câmpuri", testId: "product-system-template-detail-tab-fields" },
   { id: "product-truth-paths", label: "Product Truth", testId: "product-system-template-detail-tab-product-truth-paths" },
   { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
@@ -507,6 +510,10 @@ export function ProductSystemTemplateDetailPanel({
             ) : null}
           </div>
         </section>
+      ) : null}
+
+      {section === "lifecycle" ? (
+        <TemplateLifecycleReadinessPanel templateCode={template.template_code} />
       ) : null}
 
       {section === "fields" && !isProduct ? (
