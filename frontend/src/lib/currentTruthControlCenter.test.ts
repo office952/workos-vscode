@@ -29,12 +29,17 @@ describe("Current Truth Control Center shared projection", () => {
     expect(PRESENT_SYSTEMS.map((s) => s.spineOrder)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   });
 
-  it("scopes Letters canonical slice without global Product System overclaim", () => {
+  it("scopes Letters+Logo+ACM without global Product System overclaim", () => {
     const ps = PRESENT_SYSTEMS.find((s) => s.id === "product_system");
     expect(ps?.status).toBe("PARTIAL");
-    expect(ps?.limitationRo).toMatch(/pilot/i);
-    expect(ps?.limitationRo).toMatch(/contract-driven|CONFIRMAT/);
+    expect(ps?.limitationRo).toMatch(/Litere \+ Logo \+ ACM|Letters/i);
+    expect(ps?.limitationRo).toMatch(/MIXED|STORAGE_MIXED|NOT PROVEN/);
     expect(ps?.limitationRo).toMatch(/Nu deține tarife/);
+    expect(ps?.limitationRo).toMatch(/Fără produse tip print textil|colantări auto/);
+    expect(ps?.limitationRo).not.toMatch(/TPL-BANNER|ACTIVE STABILIZATION.*banner/i);
+
+    const pricing = PRESENT_SYSTEMS.find((s) => s.id === "pricing_commercial");
+    expect(pricing?.verifyRoute).toBe("/inventory/pricing");
 
     const intake = PRESENT_SYSTEMS.find((s) => s.id === "intake_v6");
     expect(intake?.limitationRo).toMatch(/renderer generic|generic/i);
@@ -57,6 +62,22 @@ describe("Current Truth Control Center shared projection", () => {
 
     const paPlan = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_plan");
     expect(paPlan?.outputContractRo).toMatch(/minute planificate/);
+  });
+
+  it("keeps ownership for Family/Template/Component/Module/Capability distinct", () => {
+    for (const id of [
+      "product_family",
+      "product_template",
+      "component_template",
+      "mini_module",
+      "capability",
+      "dossier",
+    ]) {
+      const row = ownershipForSystem(id);
+      expect(row, id).toBeTruthy();
+    }
+    expect(ownershipForSystem("component_template")?.enforcementRo).toMatch(/STORAGE_MIXED/);
+    expect(ownershipForSystem("capability")?.semanticOwnershipRo).toMatch(/UI/);
   });
 
   it("keeps ownership aligned with spine system ids", () => {

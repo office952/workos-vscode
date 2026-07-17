@@ -62,7 +62,6 @@ import ClientWorkspace from "./pages/ClientWorkspace";
 import DocumentCenter from "./pages/DocumentCenter";
 import { TabletStationSelector, TabletStationQueue, TabletTaskDetail } from "./pages/TabletMode";
 const BlueprintDossierStudio = lazy(() => import("./pages/BlueprintDossierStudio"));
-const DossierCompletionDashboard = lazy(() => import("./pages/DossierCompletionDashboard"));
 const OutputBlocksPreview = lazy(() => import("./pages/OutputBlocksPreview"));
 import ErrorBoundary from "./components/ErrorBoundary";
 import ExecutionDashboard from "./pages/ExecutionDashboard";
@@ -418,16 +417,12 @@ function AppShell() {
                   </ErrorBoundary>
                 }
               />
+              {/* Legacy Dossier completion → single canonical Blueprint Dossier */}
               <Route
                 path="/product-system/dossier-completion"
-                element={
-                  <ErrorBoundary fallbackTitle="Eroare în Dossier Completion Dashboard">
-                    <Suspense fallback={<div className="flex items-center justify-center py-20"><div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-500" /></div>}>
-                      <DossierCompletionDashboard />
-                    </Suspense>
-                  </ErrorBoundary>
-                }
+                element={<Navigate to="/product-system/blueprint-dossier" replace />}
               />
+              <Route path="/pricing" element={<Navigate to="/inventory/pricing" replace />} />
               <Route
                 path="/product-system/output-blocks-preview"
                 element={

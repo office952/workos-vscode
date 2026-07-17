@@ -13,15 +13,19 @@ import {
 } from "lucide-react";
 import { useModuleChainData } from "@/hooks/useModuleChainData";
 import {
+  CANONICAL_CONCEPTS,
+  CANONICAL_ROUTES,
   CANONICAL_SPINE_LABELS_RO,
   MODULE_CHAIN_TABS,
   PRESENT_EVIDENCE,
   PRESENT_HANDOFFS,
   PRESENT_SUPPORT_SYSTEMS,
   PRESENT_SYSTEMS,
+  STABILIZATION_PRODUCTS,
   presentStatusBadgeClass,
   type ModuleChainTabId,
 } from "@/lib/currentTruthControlCenter";
+import { Link } from "react-router-dom";
 
 function runtimeLabelRo(
   aggregateStatus: string,
@@ -215,6 +219,84 @@ export default function ModuleChain() {
               <SystemCard key={system.id} system={system} testIdPrefix="support-node" />
             ))}
           </div>
+
+          <div className="border-t border-[#1E293B] pt-4 space-y-3" data-testid="canonical-concept-map">
+            <SectionHeader title="Vocabular Product System (distinct)" icon={<BookOpen className="w-4 h-4 text-violet-400" />} />
+            <p className="text-[11px] text-slate-500">
+              Familie ≠ Șablon produs ≠ Componentă ≠ Mini-modul ≠ Capability. Scope stabilizare doar Litere + Logo + ACM.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {CANONICAL_CONCEPTS.map((concept) => (
+                <div
+                  key={concept.id}
+                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+                  data-testid={`concept-node-${concept.id}`}
+                >
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <div>
+                      <p className="text-[13px] font-bold text-slate-100">{concept.nameRo}</p>
+                      <p className="text-[10px] text-slate-500">{concept.technicalName}</p>
+                    </div>
+                    <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border border-violet-700/50 text-violet-300 whitespace-nowrap">
+                      {concept.status}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mb-1">{concept.definitionRo}</p>
+                  <p className="text-[10px] text-slate-500">Owner: {concept.ownerRo}</p>
+                  <p className="text-[10px] text-amber-400/90 mt-1">{concept.notRo}</p>
+                  <Link
+                    to={concept.verifyRoute}
+                    className="inline-flex items-center gap-1 text-[10px] text-blue-400 hover:text-blue-300 mt-2"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    {concept.verifyRoute}
+                  </Link>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-[#1E293B] pt-4 space-y-2" data-testid="stabilization-scope">
+            <p className="text-[11px] font-semibold text-slate-400">Scope stabilizare activ</p>
+            <div className="space-y-2">
+              {STABILIZATION_PRODUCTS.map((product) => (
+                <div
+                  key={product.id}
+                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                  data-testid={`stabilization-${product.id}`}
+                >
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <span className="font-bold text-slate-100">{product.familyLabelRo}</span>
+                    <code className="text-[10px] text-slate-400">{product.templateCode}</code>
+                    <span
+                      className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass(
+                        product.usageStatus === "ACTIVE" ? "CONFIRMAT" : "PARTIAL"
+                      )}`}
+                    >
+                      {product.usageStatus}
+                    </span>
+                  </div>
+                  <p className="text-slate-400">{product.limitationRo}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="border-t border-[#1E293B] pt-3 flex flex-wrap gap-3 text-[11px]"
+            data-testid="canonical-route-links"
+          >
+            <Link to={CANONICAL_ROUTES.inventory} className="text-blue-400 hover:text-blue-300 inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> Inventory {CANONICAL_ROUTES.inventory}
+            </Link>
+            <Link to={CANONICAL_ROUTES.pricing} className="text-blue-400 hover:text-blue-300 inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> Pricing {CANONICAL_ROUTES.pricing}
+            </Link>
+            <Link to={CANONICAL_ROUTES.dossier} className="text-blue-400 hover:text-blue-300 inline-flex items-center gap-1">
+              <ExternalLink className="w-3 h-3" /> Dossier {CANONICAL_ROUTES.dossier}
+            </Link>
+          </div>
+
           <p
             className="text-[11px] text-slate-500 border border-slate-700/60 rounded-md px-3 py-2"
             data-testid="legacy-spine-notice"

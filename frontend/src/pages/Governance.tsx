@@ -19,6 +19,7 @@ import {
   PRESENT_GATES,
   PRESENT_GUARDRAILS,
   PRESENT_OWNERSHIP_ROWS,
+  SETTINGS_OWNERSHIP_ROWS,
   governanceStatusBadgeClass,
   presentStatusBadgeClass,
 } from "@/lib/currentTruthControlCenter";
@@ -1582,6 +1583,43 @@ function OwnershipHonestyView({
                       {row.status}
                     </span>
                   </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-settings-ownership">
+        <SectionHeader title="Clasificare setări (Litere / Logo / ACM)" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Vizibilitate ownership — fără mutare setări în acest build. Conflictele rămân explicite.
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-[12px]">
+            <thead>
+              <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
+                <th className="py-2 pr-3 font-medium">Setare</th>
+                <th className="py-2 pr-3 font-medium">Categorie</th>
+                <th className="py-2 pr-3 font-medium">Owner actual</th>
+                <th className="py-2 pr-3 font-medium">Sursă runtime</th>
+                <th className="py-2 pr-3 font-medium">Consumer</th>
+                <th className="py-2 font-medium">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {SETTINGS_OWNERSHIP_ROWS.map((row) => (
+                <tr
+                  key={row.setting}
+                  className="border-b border-[#1E293B]/60 align-top"
+                  data-testid={`settings-ownership-${row.setting}`}
+                >
+                  <td className="py-2 pr-3 text-slate-200 font-medium">{row.setting}</td>
+                  <td className="py-2 pr-3 text-slate-400">{row.category}</td>
+                  <td className="py-2 pr-3 text-slate-300 text-[11px]">{row.currentOwnerRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.runtimeSourceRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.consumerRo}</td>
+                  <td className="py-2 text-amber-300/90 text-[11px]">{row.statusRo}</td>
                 </tr>
               ))}
             </tbody>

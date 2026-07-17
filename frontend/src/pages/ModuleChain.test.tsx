@@ -1,7 +1,16 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import ModuleChain from "@/pages/ModuleChain";
 import { CANONICAL_SPINE_LABELS_RO } from "@/lib/currentTruthControlCenter";
+
+function renderModuleChain() {
+  return render(
+    <MemoryRouter>
+      <ModuleChain />
+    </MemoryRouter>
+  );
+}
 
 vi.mock("@/hooks/useModuleChainData", () => ({
   useModuleChainData: () => ({
@@ -33,16 +42,18 @@ describe("ModuleChain present-truth control center", () => {
   });
 
   it("shows Romanian title with secondary technical alias", () => {
-    render(<ModuleChain />);
+    renderModuleChain();
     expect(screen.getByRole("heading", { name: "Harta sistemelor" })).toBeInTheDocument();
     expect(screen.getByTestId("module-chain-alias")).toHaveTextContent("Module Chain");
   });
 
   it("renders one canonical spine and demotes legacy OC→TK", () => {
-    render(<ModuleChain />);
+    renderModuleChain();
     expect(screen.getByTestId("canonical-spine-label")).toHaveTextContent(
       CANONICAL_SPINE_LABELS_RO.join(" → ")
     );
+    expect(screen.getByTestId("arch-node-product_system")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("arch-node-product_system")).toHaveTextContent("Letters");
     expect(screen.getByTestId("arch-node-intake_v6")).toHaveTextContent("CONFIRMAT");
     expect(screen.getByTestId("arch-node-post_job")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("legacy-spine-notice")).toHaveTextContent(
@@ -52,8 +63,25 @@ describe("ModuleChain present-truth control center", () => {
     expect(screen.queryByText("Operational Core")).not.toBeInTheDocument();
   });
 
+  it("distinguishes concepts and canonical Inventory/Pricing/Dossier routes", () => {
+    renderModuleChain();
+    expect(screen.getByTestId("concept-node-product_family")).toHaveTextContent("Product Family");
+    expect(screen.getByTestId("concept-node-component_template")).toHaveTextContent("STORAGE_MIXED");
+    expect(screen.getByTestId("concept-node-mini_module")).toHaveTextContent("Mini-Module");
+    expect(screen.getByTestId("concept-node-capability")).toHaveTextContent("interacțiune UI");
+    expect(screen.getByTestId("stabilization-letters")).toBeInTheDocument();
+    expect(screen.getByTestId("stabilization-logo")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("stabilization-acm")).toBeInTheDocument();
+    expect(screen.queryByTestId("stabilization-banner")).not.toBeInTheDocument();
+    const routes = screen.getByTestId("canonical-route-links");
+    expect(routes).toHaveTextContent("/inventory");
+    expect(routes).toHaveTextContent("/inventory/pricing");
+    expect(routes).toHaveTextContent("/product-system/blueprint-dossier");
+    expect(routes).not.toHaveTextContent("/product-system/dossier-completion");
+  });
+
   it("keeps handoffs present-only and evidence historical", () => {
-    render(<ModuleChain />);
+    renderModuleChain();
     fireEvent.click(screen.getByTestId("module-chain-tab-handoffs"));
     expect(screen.getByTestId("handoff-intake_v6-product_definition")).toBeInTheDocument();
     expect(screen.getByTestId("handoff-execution_reality-post_job")).toBeInTheDocument();
@@ -71,7 +99,7 @@ describe("ModuleChain present-truth control center", () => {
   });
 
   it("shows honest runtime unavailable without LIVE claim", () => {
-    render(<ModuleChain />);
+    renderModuleChain();
     fireEvent.click(screen.getByTestId("module-chain-tab-runtime"));
     expect(screen.getByTestId("module-chain-runtime")).toHaveTextContent("Stare runtime");
     expect(screen.getByTestId("module-chain-runtime-aggregate")).toHaveTextContent("INDISPONIBIL");
