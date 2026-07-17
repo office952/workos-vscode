@@ -22,7 +22,6 @@ import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
-import IntakeV6SvgComponentAssignmentPanel from "../IntakeV6SvgComponentAssignmentPanel";
 import IntakeV6SupportContourGeometryCard from "../IntakeV6SupportContourGeometryCard";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
@@ -35,6 +34,7 @@ import {
 	layerRoleBindingsSyncKey,
 	readSvgComponentBindings,
 } from "@/lib/intakeV6/svgComponentBindings";
+import { readSvgSupportSelection } from "@/lib/svgAnalyzer";
 
 export interface IntakeV6SvgAnalyzerStepProps {
 	hook: IntakeV6WorkspaceHook;
@@ -54,6 +54,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 	const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
 	const [previewInspectOpen, setPreviewInspectOpen] = useState(false);
 	const [hoveredLayerKey, setHoveredLayerKey] = useState<string | null>(null);
+	const [hoveredAcpCard, setHoveredAcpCard] = useState(false);
 	const [selectedContourId, setSelectedContourId] = useState<string | null>(null);
 	const analyzing = state.analyzerStatus === "analyzing";
 	const report = state.analyzerReport;
@@ -85,8 +86,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 	const resolvedTemplateCode = templateCode || INTAKE_V6_LETTERS_TEMPLATE_CODE;
 	const finishSetup =
 		(payload?.finish_setup as Record<string, unknown> | undefined) ?? null;
-	const { bindables, loadError: bindableLoadError, usingLegacyFallback } =
-		useIntakeV6SvgBindables(resolvedTemplateCode);
+	const { bindables } = useIntakeV6SvgBindables(resolvedTemplateCode);
 	const componentBindings = useMemo(
 		() => readSvgComponentBindings(finishSetup),
 		[finishSetup],
@@ -297,6 +297,18 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		};
 	}, [report, selectedContourId]);
 
+	useEffect(() => {
+		const selection = readSvgSupportSelection(finishSetup ?? undefined);
+		if (
+			selection.contour_id &&
+			(selection.status === "confirmed" ||
+				selection.status === "draft" ||
+				selection.status === "reconfirm_required")
+		) {
+			setSelectedContourId(selection.contour_id);
+		}
+	}, [finishSetup]);
+
 	const handleSaveOfferScope = useCallback(
 		(input: {
 			mode: "full_product" | "component_subset";
@@ -358,7 +370,10 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 								onUpdateLayerRole={updateLayerRole}
 								layout="cards"
 								hoveredLayerKey={hoveredLayerKey}
-								onHoverLayerKey={setHoveredLayerKey}
+								onHoverLayerKey={(key) => {
+									setHoveredLayerKey(key);
+									if (key) setHoveredAcpCard(false);
+								}}
 								workspaceTemplateCode={resolvedTemplateCode}
 								bindables={bindables}
 								componentBindings={componentBindings}
@@ -370,18 +385,17 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 											finishSetup={finishSetup}
 											svgSourceHash={state.localFileHash}
 											disabled={state.phase === "persisting"}
+											focused={hoveredAcpCard}
+											onFocus={() => {
+												setHoveredLayerKey(null);
+												setHoveredAcpCard(true);
+											}}
+											onBlur={() => setHoveredAcpCard(false)}
 											onSelectedContourIdChange={setSelectedContourId}
 											onPersist={persistFinishPatch}
 										/>
 									) : null
 								}
-							/>
-							<IntakeV6SvgComponentAssignmentPanel
-								templateCode={resolvedTemplateCode}
-								bindables={bindables}
-								finishSetup={finishSetup}
-								loadError={bindableLoadError}
-								usingLegacyFallback={usingLegacyFallback}
 							/>
 						</div>
 					) : null}

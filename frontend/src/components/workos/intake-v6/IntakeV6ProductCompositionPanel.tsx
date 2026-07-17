@@ -43,16 +43,24 @@ function isConfirmed(payload: Record<string, unknown> | null | undefined): boole
   return raw?.confirmed === true;
 }
 
-function roleLabel(role: string | undefined): string {
+function roleLabel(role: string | undefined, templateCode?: string): string {
   if (role === "volumetric_letters") return "Litere volumetrice";
   if (role === "volumetric_logo") return "Logo volumetric";
-  if (role === "support_panel") return "Fundal / suport";
+  if (role === "support_panel") {
+    if (templateCode === "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1") {
+      return "Panou Alucobond casetat";
+    }
+    return "Fundal / suport";
+  }
   return role || "Componenta";
 }
 
 function compositionLabel(type: string | undefined): string {
   if (type === "letters_plus_logo") return "Litere volumetrice + logo volumetric";
-  if (type === "letters_plus_logo_plus_support") return "Litere volumetrice + logo volumetric + suport";
+  if (type === "letters_plus_logo_plus_support") {
+    return "Litere volumetrice + logo volumetric + Panou Alucobond casetat";
+  }
+  if (type === "letters_plus_support") return "Litere volumetrice + Panou Alucobond casetat";
   if (type === "logo_only") return "Logo volumetric";
   if (type === "letters_only") return "Litere volumetrice";
   return "Compozitie produs";
@@ -136,8 +144,13 @@ export default function IntakeV6ProductCompositionPanel({
       <div className={`mt-3 grid gap-2 ${compact ? "" : "sm:grid-cols-2"}`}>
         {items.map((item) => (
           <div key={item.composition_item_id ?? item.template_code} className="rounded border border-[#2A3548]/80 bg-[#0A0F1A]/60 p-2.5">
-            <p className="text-[11px] font-semibold text-slate-100">{roleLabel(item.component_role)}</p>
-            <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{item.template_code}</p>
+            <p className="text-[11px] font-semibold text-slate-100">
+              {roleLabel(item.component_role, item.template_code)}
+            </p>
+            <details className="mt-0.5">
+              <summary className="cursor-pointer text-[10px] text-slate-500">Detalii tehnice</summary>
+              <p className="mt-0.5 font-mono text-[10px] text-slate-500">{item.template_code}</p>
+            </details>
             {item.source_layer_ids?.length ? (
               <p className="mt-1 text-[10px] text-slate-500">
                 Straturi: {item.source_layer_ids.map((layerId) => sourceLayerLabels.get(layerId) ?? layerId).join(", ")}

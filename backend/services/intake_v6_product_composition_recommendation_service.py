@@ -174,12 +174,43 @@ def _composition_item(*, item_id: str, template_code: str, component_role: str, 
     }
 
 
+def _support_geometry_ids_from_bindings(payload: dict[str, Any]) -> list[str] | None:
+    """Project active SUPPORT_CONTOUR / ACM binding into composition (UI card association)."""
+    finish = _as_dict(payload.get("finish_setup"))
+    for raw in _as_list(finish.get("svg_component_bindings")):
+        binding = _as_dict(raw)
+        code = _text(binding.get("component_template_code"))
+        status = _text(binding.get("status")).upper()
+        if code == STALE_BOND_CASETAT:
+            continue
+        if code != SUPPORT_TEMPLATE_LIVE_CODE:
+            continue
+        if status not in {"CONFIRMED", "DRAFT", "RECONFIRM_REQUIRED"}:
+            continue
+        geom = _as_dict(binding.get("selected_geometry"))
+        element_ids = [_text(item) for item in _as_list(geom.get("element_ids")) if _text(item)]
+        if element_ids:
+            return element_ids
+        contour_id = _text(binding.get("svg_support_element_id"))
+        return [contour_id] if contour_id else ["svg_support_contour"]
+
+    selection = _as_dict(finish.get("svg_support_selection"))
+    sel_status = _lower(selection.get("status"))
+    sel_role = _text(selection.get("role")).upper()
+    if sel_status in {"confirmed", "draft", "reconfirm_required"} and sel_role == "ALUCOBOND_CASED_PANEL":
+        contour_id = _text(selection.get("contour_id") or selection.get("svg_support_element_id"))
+        return [contour_id] if contour_id else ["svg_support_contour"]
+    return None
+
+
 def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[str, Any]:
     review = _role_review(payload)
     roles = review["roles"]
     letter_layers = [role["layer_id"] for role in roles if role.get("operator_role") == "volumetric_letters" and role.get("status") != "ignored"]
     logo_layers = [role["layer_id"] for role in roles if role.get("operator_role") == "volumetric_logo" and role.get("status") != "ignored"]
     support_layers = [role["layer_id"] for role in roles if role.get("operator_role") == "support_panel" and role.get("status") != "ignored"]
+    support_from_binding = _support_geometry_ids_from_bindings(payload)
+    support_source_ids = support_layers or (support_from_binding or [])
 
     recommended_templates: list[dict[str, Any]] = []
     composition_items: list[dict[str, Any]] = []
@@ -222,19 +253,26 @@ def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[st
             )
         )
 
-    if support_layers:
-        # Live authority is ACM boxed support. TPL-BOND-CASETAT remains a
-        # legacy string-only alias (not seeded, not new-selection authority).
+    if support_source_ids:
+        # Live authority is ACM boxed support. Binding SoT (svg_component_bindings /
+        # svg_support_selection) can activate ACP without a support_panel layer role.
+        # TPL-BOND-CASETAT remains a legacy string-only alias (not new-selection authority).
+        reason = (
+            "Support/background contour associated via SVG component binding; maps to live optional component "
+            f"{SUPPORT_TEMPLATE_LIVE_CODE}."
+            if support_from_binding and not support_layers
+            else (
+                "Support/background contour detected; maps to live optional component "
+                f"{SUPPORT_TEMPLATE_LIVE_CODE} (legacy alias {SUPPORT_TEMPLATE_LEGACY_CODE} is not authority)."
+            )
+        )
         recommended_templates.append(
             _template_item(
                 template_code=SUPPORT_TEMPLATE_LIVE_CODE,
                 role="support_panel",
-                reason=(
-                    "Support/background contour detected; maps to live optional component "
-                    f"{SUPPORT_TEMPLATE_LIVE_CODE} (legacy alias {SUPPORT_TEMPLATE_LEGACY_CODE} is not authority)."
-                ),
-                source_layer_ids=support_layers,
-                confidence="medium",
+                reason=reason,
+                source_layer_ids=support_source_ids,
+                confidence="medium" if support_layers else "high",
                 status="available_optional",
             )
         )
@@ -243,19 +281,20 @@ def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[st
                 item_id="support",
                 template_code=SUPPORT_TEMPLATE_LIVE_CODE,
                 component_role="support_panel",
-                source_layer_ids=support_layers,
+                source_layer_ids=support_source_ids,
                 status="available_optional",
             )
         )
-        warnings.append(
-            {
-                "code": SUPPORT_TEMPLATE_LEGACY_REDIRECT,
-                "message": (
-                    "Suport/fundal detectat; authority live este Panou Alucobond casetat "
-                    f"({SUPPORT_TEMPLATE_LIVE_CODE}). {SUPPORT_TEMPLATE_LEGACY_CODE} este legacy/deprecated."
-                ),
-            }
-        )
+        if support_layers:
+            warnings.append(
+                {
+                    "code": SUPPORT_TEMPLATE_LEGACY_REDIRECT,
+                    "message": (
+                        "Suport/fundal detectat; authority live este Panou Alucobond casetat "
+                        f"({SUPPORT_TEMPLATE_LIVE_CODE}). {SUPPORT_TEMPLATE_LEGACY_CODE} este legacy/deprecated."
+                    ),
+                }
+            )
 
     if not recommended_templates:
         blockers.append(
@@ -265,15 +304,18 @@ def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[st
             }
         )
 
-    if letter_layers and logo_layers and support_layers:
+    has_support = bool(support_source_ids)
+    if letter_layers and logo_layers and has_support:
         composition_type = "letters_plus_logo_plus_support"
     elif letter_layers and logo_layers:
         composition_type = "letters_plus_logo"
     elif logo_layers:
         composition_type = "logo_only"
+    elif letter_layers and has_support:
+        composition_type = "letters_plus_support"
     elif letter_layers:
         composition_type = "letters_only"
-    elif support_layers:
+    elif has_support:
         composition_type = "support_only_pending"
     else:
         composition_type = "undetermined"

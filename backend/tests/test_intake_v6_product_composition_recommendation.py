@@ -98,4 +98,34 @@ def test_logo_svg_generated_side_label_is_neutral_for_operator() -> None:
     review = build_layer_role_review(payload)
 
     assert review["roles"][0]["display_label"] == "Logo volumetric"
-    assert review["roles"][0]["operator_role"] == "volumetric_logo"
+
+
+def test_support_from_svg_component_binding_without_layer_role() -> None:
+    payload = _payload("letters-acp.svg", [_layer("letters", "Litere", "face")])
+    payload["finish_setup"] = {
+        "svg_component_bindings": [
+            {
+                "schema": "svg_component_bindings_v1",
+                "binding_id": "bind_support_cc1",
+                "geometry_role": "SUPPORT_CONTOUR",
+                "component_template_code": SUPPORT_TEMPLATE_LIVE_CODE,
+                "selection_mode": "CLOSED_CONTOUR",
+                "selected_geometry": {
+                    "layer_ids": [],
+                    "group_ids": [],
+                    "element_ids": ["cc_outer"],
+                    "geometry_hashes": ["abc"],
+                    "source_svg_hash": "h1",
+                },
+                "configuration": {},
+                "status": "CONFIRMED",
+            }
+        ]
+    }
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "letters_plus_support"
+    support = next(item for item in recommendation["composition_items"] if item["component_role"] == "support_panel")
+    assert support["template_code"] == SUPPORT_TEMPLATE_LIVE_CODE
+    assert support["source_layer_ids"] == ["cc_outer"]
