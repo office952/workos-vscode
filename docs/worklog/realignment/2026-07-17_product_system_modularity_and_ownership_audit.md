@@ -81,6 +81,33 @@ Follow-on build: `CANONICAL_PRODUCT_MODEL_AND_NAVIGATION_TRUTH` (concept/nav onl
 
 ---
 
-## Commit
+## Commit — audit
 
-Approved docs-only audit commit (exact paths).
+`0fa9156` — `docs(product): approve canonical modularity model`
+
+---
+
+## Follow-on — Canonical product model and navigation truth
+
+**Build:** concept + navigation normalization only (no schema/seed/templates/renderer/7I).
+
+### Delivered
+
+- Canonical dictionary: `frontend/src/lib/productSystemCanonicalModel.ts`
+- Stabilization scope: Letters / Logo / ACM only (Logo+ACM marked PARTIAL)
+- Component representation inventory (BOM / child TPL / GHOST FACE_* / inactive TPL-COMP-*)
+- Mini-module scope rows (no false-generic)
+- Capability = UI interaction types (do not activate modules)
+- Settings ownership matrix + conflicts (dual markup, triple finishes)
+- Canonical Dossier: `/product-system/blueprint-dossier`
+- Legacy redirect: `/product-system/dossier-completion` → canonical
+- Pricing redirect: `/pricing` → `/inventory/pricing`
+- `/modules` vocabulary section + route links
+- `/governance` ownership rows + settings matrix + owner gates
+
+### Remaining owner gates
+
+- `component_templates` table migration
+- Option catalog unification
+- Mini-module multi-template registry
+- Renderer expansion / Pricing Registry 7I (still paused)
