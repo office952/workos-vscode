@@ -8,6 +8,8 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | HEAD before | `dbb9186` |
+| Tooling commit | `19d46c6` |
+| HEAD after | `19d46c6` |
 | Start | `CURSOR_SVG_VECTOR_TOOLING_INSTALLATION_IN_PROGRESS` |
 | Final | `CURSOR_SVG_VECTOR_TOOLING_INSTALLED_WITH_GUARDS` |
 
