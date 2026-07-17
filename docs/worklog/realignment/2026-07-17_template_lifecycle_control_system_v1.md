@@ -30,7 +30,23 @@
 - Logo candidate root blocked until owner GO
 - Diff-aware CI validation deferred to V2
 
-## Runtime proof targets
+## Runtime proof (2026-07-17)
 
-- `TPL-VOLUMETRIC-LETTERS_v2`
-- `TPL-VOLUMETRIC-LOGO_v1` (genericity)
+Backend `http://127.0.0.1:8001` after restart with new router.
+
+| Template | Endpoint | Score | lifecycle_status | Notes |
+|----------|----------|-------|------------------|-------|
+| TPL-VOLUMETRIC-LETTERS_v2 | GET .../lifecycle-readiness | 100 | OWNER_GATE_REQUIRED | 17 stages; 0 BLOCKED; CPP/task gates open; activation_eligible true |
+| TPL-VOLUMETRIC-LOGO_v1 | GET .../lifecycle-readiness | 82 | BLOCKED | PRODUCT_DEFINITION_PREVIEW_NULL (genericity) |
+| both | GET .../template-lifecycle/validate | ok=true | failed=0 | CI gate green for listed codes |
+
+CLI:
+
+```text
+python scripts/template_lifecycle_cli.py validate --template TPL-VOLUMETRIC-LETTERS_v2 --template TPL-VOLUMETRIC-LOGO_v1
+→ ok=true, checked=2, failed=0
+```
+
+UI route: Product System → template detail → tab **Lifecycle** (`data-testid=product-system-lifecycle-readiness`).
+
+Pytest: `tests/test_template_lifecycle_control.py` → 8 passed.

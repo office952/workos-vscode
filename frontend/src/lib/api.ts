@@ -1071,6 +1071,87 @@ export const productTemplateAvailabilityApi = {
   },
 };
 
+/** Template Lifecycle Control System V1 — read-only derived readiness. */
+export type TemplateLifecycleIssue = {
+  code: string;
+  severity: 'blocking' | 'warning' | 'diagnostic';
+  message: string;
+  evidence?: string[];
+};
+
+export type TemplateLifecycleStageResult = {
+  stage: string;
+  owner_label: string;
+  authority: string;
+  required: boolean;
+  status: string;
+  evidence: string[];
+  warnings: TemplateLifecycleIssue[];
+  blockers: TemplateLifecycleIssue[];
+  owner_gate?: string | null;
+  affected_files?: string[];
+  affected_tests?: string[];
+  runtime_proof?: string[];
+};
+
+export type TemplateLifecycleOwnerGate = {
+  code: string;
+  label: string;
+  status: string;
+  reason: string;
+  stage?: string | null;
+};
+
+export type TemplateLifecycleLegacyConflict = {
+  code: string;
+  classification: string;
+  message: string;
+  evidence?: string[];
+};
+
+export type TemplateLifecycleImpactSummary = {
+  changed: string;
+  affected_product_templates?: string[];
+  affected_intake?: string[];
+  affected_product_definition?: string[];
+  affected_product_aggregate?: string[];
+  cpp?: string[];
+  tasking?: string[];
+  notes?: string[];
+};
+
+export type TemplateLifecycleReadiness = {
+  schema_version: string;
+  template_code: string;
+  version?: string | null;
+  family_id?: string | null;
+  family_name?: string | null;
+  template_status: string;
+  lifecycle_status: string;
+  readiness_score: number;
+  activation_eligible: boolean;
+  stages: TemplateLifecycleStageResult[];
+  owner_gates: TemplateLifecycleOwnerGate[];
+  impact_summary?: TemplateLifecycleImpactSummary | null;
+  legacy_conflicts?: TemplateLifecycleLegacyConflict[];
+  stage_counts?: Record<string, number>;
+  derived_from?: string[];
+};
+
+export const productTemplateLifecycleApi = {
+  readiness: async (templateCode: string): Promise<TemplateLifecycleReadiness> => {
+    const { getAPIBaseURL } = await import('./config');
+    const response = await fetch(
+      `${getAPIBaseURL()}/api/v1/product-system/templates/${encodeURIComponent(templateCode)}/lifecycle-readiness`,
+      { credentials: 'include' },
+    );
+    if (!response.ok) {
+      throw new Error(`Template lifecycle readiness failed (${response.status}).`);
+    }
+    return (await response.json()) as TemplateLifecycleReadiness;
+  },
+};
+
 // Shortcut helpers
 export const listIntakes = () => intakesApi.list();
 export const getIntake = (id: number) => intakesApi.get(id);
