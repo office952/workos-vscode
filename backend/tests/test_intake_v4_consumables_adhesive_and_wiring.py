@@ -28,7 +28,7 @@ from services.intake_v4_material_breakdown_service import build_intake_v4_materi
 def _pbl_payload(*, illuminated: bool = True) -> dict:
     return {
         "schema_version": "1.0.0",
-        "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS"},
+            "product_binding": {"template_code": "TPL-VOLUMETRIC-LETTERS_v2"},
         "svg_analysis_json": {
             "schemaVersion": "1.10.0",
             "geometry": {
@@ -137,7 +137,7 @@ class TestPblIlluminatedConsumables:
 
     def test_adhesive_pricing_owner_ron_rate(self):
         row = build_adhesive_return_to_face_row(10.0)
-        assert row.unit_price == 0.1
+        assert row.unit_price == pytest.approx(owner_ron_to_eur(30.0 / 50.0))
         assert row.price_source == "intake_v4_owner_consumable_adhesive"
         assert row.estimated_cost == round(20.0 * owner_ron_to_eur(30.0 / 50.0), 2)
 
@@ -152,7 +152,7 @@ class TestPblIlluminatedConsumables:
 
     def test_wire_075_unit_price_display(self):
         row = build_wire_letters_myyup_row(10)
-        assert row.unit_price == 0.4
+        assert row.unit_price == pytest.approx(owner_ron_to_eur(WIRE_LETTERS_PRICE_RON_PER_ML))
         assert row.estimated_cost == round(10 * owner_ron_to_eur(WIRE_LETTERS_PRICE_RON_PER_ML), 2)
 
     def test_adds_wire_supply_row_five_ml(self):
@@ -188,9 +188,12 @@ class TestPblIlluminatedConsumables:
 
     def test_wire_supply_has_owner_price(self):
         row = build_wire_supply_myyup_row()
-        assert row.unit_price == 0.8
-        assert row.estimated_cost == 3.82
+        assert row.unit_price == pytest.approx(owner_ron_to_eur(WIRE_SUPPLY_PRICE_RON_PER_ML))
+        assert row.estimated_cost == round(
+            WIRE_SUPPLY_ML_PER_JOB * owner_ron_to_eur(WIRE_SUPPLY_PRICE_RON_PER_ML), 2
+        )
         assert row.price_source == "intake_v4_owner_consumable_wire_supply"
+        assert row.quantity_source == "job_supply_fixed_5.0ml"
 
 
 class TestNonIlluminated:

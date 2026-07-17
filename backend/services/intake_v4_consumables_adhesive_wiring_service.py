@@ -22,13 +22,23 @@ WIRE_LETTERS_ML_PER_SEGMENT = 1.0
 WIRE_LETTERS_PRICE_RON_PER_ML = 1.9
 
 # Wire MYYUP 2×1.5 — job supply 220V
+# Legacy commercial default when typed mains_cable_length_m is absent.
 WIRE_SUPPLY_ML_PER_JOB = 5.0
 WIRE_SUPPLY_PRICE_RON_PER_ML = 3.9
+
+# Typed operator lengths (process + commercial) — same allow-list as modular process contract.
+ALLOWED_MAINS_CABLE_LENGTHS_M = frozenset(
+    {2.5, 5.0, 7.5, 10.0, 12.5, 15.0, 17.5, 20.0, 22.5, 25.0}
+)
 
 BASIS_ADHESIVE_RETURN_TO_FACE = "adhesive_return_to_face_ml_per_ml_cant"
 BASIS_ADHESIVE_LED_MODULES = "adhesive_led_modules_ml_per_module"
 BASIS_WIRE_LETTERS_PER_SEGMENT = "wire_letters_myyup_2x075_per_segment"
 BASIS_WIRE_SUPPLY_PER_JOB = "wire_supply_myyup_2x15_per_job"
+BASIS_WIRE_SUPPLY_TYPED_LENGTH = "wire_supply_myyup_2x15_typed_mains_cable_length_m"
+
+QTY_SOURCE_LEGACY_FIXED = f"job_supply_fixed_{WIRE_SUPPLY_ML_PER_JOB}ml"
+QTY_SOURCE_TYPED = "typed_mains_cable_length_m"
 
 PRICE_SOURCE_ADHESIVE = "intake_v4_owner_consumable_adhesive"
 PRICE_SOURCE_WIRE_LETTERS = "intake_v4_owner_consumable_wire_letters"
@@ -193,27 +203,135 @@ def build_wire_letters_myyup_row(segment_count: int) -> IntakeV4MaterialQuantity
     )
 
 
-def build_wire_supply_myyup_row() -> IntakeV4MaterialQuantityRow:
-    quantity_ml = WIRE_SUPPLY_ML_PER_JOB
+def _as_dict(value: Any) -> dict[str, Any]:
+    if isinstance(value, dict):
+        return value
+    return {}
+
+
+def resolve_support_type_for_commercial(finish: dict[str, Any] | None) -> str:
+    """Map finish_setup mounting fields → support_type for commercial isolation (not process DAG)."""
+    finish = finish or {}
+    explicit = finish.get("support_type") or finish.get("process_support_type")
+    if explicit is not None and str(explicit).strip():
+        raw = str(explicit).strip().lower()
+        if raw in {"metal_bars", "metal", "bars", "bare_metalice"}:
+            return "metal_bars"
+        if raw in {"alucobond_cased", "alucobond", "acm_cased", "alucobond_cased_panel"}:
+            return "alucobond_cased"
+        if raw in {"none", "no_support", "fara_suport"}:
+            return "none"
+
+    sol = _as_dict(finish.get("mounting_solution"))
+    if sol:
+        kind = str(sol.get("kind") or "").strip().lower()
+        template = str(sol.get("template_code") or "").strip().upper()
+        if any(tok in template for tok in ("ACM", "ALUCOBOND")) or kind in {
+            "acm",
+            "acm_panel",
+            "cased_panel",
+            "alucobond_cased",
+        }:
+            return "alucobond_cased"
+        if any(tok in template for tok in ("PREMOUNT", "METAL-PREMOUNT", "METAL_PREMOUNT")) or kind in {
+            "metal_bars",
+            "premount",
+            "bars",
+        }:
+            return "metal_bars"
+        if kind in {"none", "direct", "direct_wall", "installation_template", "no_support"}:
+            return "none"
+
+    mounting = str(finish.get("mounting_system") or "").strip().lower()
+    if mounting in {"steel_bars", "aluminum_bars", "aluminium_bars", "metal_bars", "bars"}:
+        return "metal_bars"
+    if mounting in {"acm_panel", "alucobond_cased"} or "alucobond" in mounting:
+        return "alucobond_cased"
+    if mounting in {"none", "no_support", "direct_wall", "ridicare", "pickup"}:
+        return "none"
+    return "none"
+
+
+def resolve_mains_cable_commercial_quantity(
+    *,
+    finish: dict[str, Any] | None,
+    support_type: str | None = None,
+) -> tuple[float | None, str, str, list[str]]:
+    """
+    Resolve commercial mains cable quantity (ml == m for this UOM).
+
+    Precedence:
+    1. Valid typed finish_setup.mains_cable_length_m → quantity = length (typed wins)
+    2. Invalid typed → skip line (do not invent 5 m)
+    3. Missing typed → legacy WIRE_SUPPLY_ML_PER_JOB (5.0) for illuminated volumetric path
+
+    No-support: typed length counts as explicit inclusion; missing typed keeps legacy default
+    for historical payloads (observable via quantity_source).
+    """
+    warnings: list[str] = []
+    finish = finish or {}
+    support = support_type or resolve_support_type_for_commercial(finish)
+
+    raw = finish.get("mains_cable_length_m")
+    if raw is None or raw == "":
+        raw = finish.get("mains_cable_length")
+
+    if raw is not None and raw != "":
+        try:
+            length = float(raw)
+        except (TypeError, ValueError):
+            warnings.append("invalid_mains_cable_length_commercial_skipped")
+            return None, BASIS_WIRE_SUPPLY_TYPED_LENGTH, "typed_mains_cable_length_invalid", warnings
+        if length not in ALLOWED_MAINS_CABLE_LENGTHS_M:
+            warnings.append("invalid_mains_cable_length_commercial_skipped")
+            return None, BASIS_WIRE_SUPPLY_TYPED_LENGTH, "typed_mains_cable_length_invalid", warnings
+        return (
+            length,
+            BASIS_WIRE_SUPPLY_TYPED_LENGTH,
+            QTY_SOURCE_TYPED,
+            warnings,
+        )
+
+    # Legacy default — volumetric illuminated path only (caller gates illumination).
+    warnings.append("legacy_wire_supply_default_5ml")
+    if support == "none":
+        warnings.append("legacy_wire_supply_on_no_support_default")
+    return (
+        WIRE_SUPPLY_ML_PER_JOB,
+        BASIS_WIRE_SUPPLY_PER_JOB,
+        QTY_SOURCE_LEGACY_FIXED,
+        warnings,
+    )
+
+
+def build_wire_supply_myyup_row(
+    *,
+    quantity_ml: float | None = None,
+    quantity_basis: str | None = None,
+    quantity_source: str | None = None,
+) -> IntakeV4MaterialQuantityRow:
+    qty = WIRE_SUPPLY_ML_PER_JOB if quantity_ml is None else float(quantity_ml)
+    basis = quantity_basis or BASIS_WIRE_SUPPLY_PER_JOB
+    source = quantity_source or QTY_SOURCE_LEGACY_FIXED
     unit_eur_precise = owner_ron_to_eur(WIRE_SUPPLY_PRICE_RON_PER_ML)
-    estimated_cost = round(quantity_ml * unit_eur_precise, 2)
+    estimated_cost = round(qty * unit_eur_precise, 2)
 
     return IntakeV4MaterialQuantityRow(
         material_key="wire_supply_myyup_2x15",
         display_name="Cablu electric MYYUP 2 x 1.5 alimentare 220V",
         material_name="Cablu electric MYYUP 2 x 1.5 alimentare 220V",
         category="consumable",
-        quantity=quantity_ml,
-        base_quantity=quantity_ml,
-        priced_quantity=quantity_ml,
+        quantity=qty,
+        base_quantity=qty,
+        priced_quantity=qty,
         unit="ml",
-        quantity_basis=BASIS_WIRE_SUPPLY_PER_JOB,
-        quantity_source=f"job_supply_fixed_{WIRE_SUPPLY_ML_PER_JOB}ml",
+        quantity_basis=basis,
+        quantity_source=source,
         quantity_quality="calculated",
         confidence="estimate_formula",
         consumption_mode="quote_estimate",
         waste_percent=None,
-        quantity_with_waste=quantity_ml,
+        quantity_with_waste=qty,
         registry_code=MATERIAL_CODE_WIRE_SUPPLY,
         material_code=MATERIAL_CODE_WIRE_SUPPLY,
         unit_price=unit_eur_precise,
@@ -235,6 +353,7 @@ def append_volumetric_adhesive_and_wiring_consumables(
     consumable_rows: list[IntakeV4MaterialQuantityRow],
     warnings: list[IntakeV4MaterialBreakdownWarning],
     include_led_adhesive: bool = True,
+    finish_setup: dict[str, Any] | None = None,
 ) -> None:
     segment_count = resolve_real_letter_or_segment_count(geom_sources)
     if segment_count is None or segment_count <= 0:
@@ -256,4 +375,47 @@ def append_volumetric_adhesive_and_wiring_consumables(
             consumable_rows.append(build_adhesive_led_modules_row(led_module_count))
 
     consumable_rows.append(build_wire_letters_myyup_row(segment_count))
-    consumable_rows.append(build_wire_supply_myyup_row())
+
+    support_type = resolve_support_type_for_commercial(finish_setup)
+    cable_qty, cable_basis, cable_source, cable_warn_codes = resolve_mains_cable_commercial_quantity(
+        finish=finish_setup,
+        support_type=support_type,
+    )
+    for code in cable_warn_codes:
+        warnings.append(
+            IntakeV4MaterialBreakdownWarning(
+                code=code.upper(),
+                severity="info" if code.startswith("legacy_") else "warning",
+                message=(
+                    f"{code}; support_type={support_type}; "
+                    f"quantity_source={cable_source}; "
+                    f"mains_cable_length_m={(finish_setup or {}).get('mains_cable_length_m')}"
+                ),
+                source="typed_mains_cable_commercial",
+            )
+        )
+
+    # Cable channel: process-only on metal_bars — no commercial formula/SKU yet (guard).
+    if support_type == "metal_bars":
+        warnings.append(
+            IntakeV4MaterialBreakdownWarning(
+                code="CABLE_CHANNEL_COMMERCIAL_FORMULA_GUARDED",
+                severity="info",
+                message=(
+                    "cable_channel_commercial_formula_missing; "
+                    f"support_type={support_type}; pricing_status=guarded_no_invented_quantity"
+                ),
+                source="cable_channel_commercial_guard",
+            )
+        )
+
+    if cable_qty is None:
+        return
+
+    consumable_rows.append(
+        build_wire_supply_myyup_row(
+            quantity_ml=cable_qty,
+            quantity_basis=cable_basis,
+            quantity_source=cable_source,
+        )
+    )

@@ -2715,7 +2715,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         ))}
                       </select>
                       <p className="mt-1 text-[10px] text-slate-500">
-                        Pas 2.5 m · 2.5–25 · proces tipizat (nu preț)
+                        Pas 2.5 m · 2.5–25 · proces + cantitate live materials (backend)
                       </p>
                     </label>
                     {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (

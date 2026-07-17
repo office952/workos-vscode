@@ -2654,6 +2654,7 @@ def build_intake_v4_material_breakdown(
         consumable_rows=consumable_rows,
         warnings=warnings,
         include_led_adhesive=include_led_adhesive,
+        finish_setup=finish if isinstance(finish, dict) else None,
     )
 
     if illuminated:
