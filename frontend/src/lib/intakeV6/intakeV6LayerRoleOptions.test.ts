@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { getIntakeV6RoleOptionsForLayer, normalizeIntakeV6OwnerSelectableRole } from "./intakeV6LayerRoleOptions";
+import {
+  getIntakeV6RoleOptionsForLayer,
+  INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS,
+  normalizeIntakeV6OwnerSelectableRole,
+} from "./intakeV6LayerRoleOptions";
 
 describe("getIntakeV6RoleOptionsForLayer", () => {
   it("returns the two owner-approved roles for volumetric letters layers", () => {
@@ -38,6 +42,20 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
     ]);
     expect(result.secondaryOptions).toEqual([]);
     expect(result.fallbackOptions).toEqual([]);
+  });
+
+  it("exposes Contur suport in owner layer dropdown options", () => {
+    expect(INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((o) => o.value)).toEqual([
+      "face",
+      "printed_artwork",
+      "support_panel",
+    ]);
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "support_panel" },
+        confirmedRole: "support_panel",
+      }),
+    ).toBe("support_panel");
   });
 
   it("keeps a safe grouped fallback for unknown layers", () => {

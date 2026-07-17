@@ -119,14 +119,21 @@ function LayerComponentBindingSummary({
   const bound = (bindings ?? []).find(
     (b) => b.component_template_code === bindable.component_template_code,
   );
-  const includesLayer = bound?.selected_geometry.layer_ids.includes(layerKey) ?? false;
+  const isSupport = bound?.geometry_role === "SUPPORT_CONTOUR" || selectedRole === "support_panel";
+  const includesGeometry = isSupport
+    ? Boolean(
+        bound &&
+          (bound.selected_geometry.element_ids.length > 0 ||
+            bound.selected_geometry.geometry_hashes.length > 0),
+      )
+    : (bound?.selected_geometry.layer_ids.includes(layerKey) ?? false);
   const statusLabel = !bound
     ? "Neasociat"
-    : bound.status === "CONFIRMED" && includesLayer
+    : bound.status === "CONFIRMED" && includesGeometry
       ? "Confirmat"
       : bound.status === "RECONFIRM_REQUIRED"
         ? "Necesită reconfirmare"
-        : includesLayer
+        : includesGeometry
           ? "Selectat"
           : "Sugerat";
   const guarded = Boolean(bindable.guards?.length);

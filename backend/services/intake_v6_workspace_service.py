@@ -1225,6 +1225,52 @@ async def get_task_preview_for_workspace(
     )
 
 
+def _binding_geometry_role(raw: Any) -> str:
+    if isinstance(raw, dict):
+        return str(raw.get("geometry_role") or "").strip().upper()
+    return str(getattr(raw, "geometry_role", "") or "").strip().upper()
+
+
+def is_early_svg_component_association(request: IntakeV6FinishSetup) -> bool:
+    """Step-1 Contur suport / SUPPORT_CONTOUR may persist before layer roles are complete.
+
+    Derived closed-contour geometry is canonical via svg_component_bindings — it must not
+    be forced through a fake legacy layer role. Full confirmed FinishSetup still requires
+    complete layer roles.
+    """
+    if bool(getattr(request, "confirmed", False)):
+        return False
+    bindings = list(getattr(request, "svg_component_bindings", None) or [])
+    if any(_binding_geometry_role(item) == "SUPPORT_CONTOUR" for item in bindings):
+        return True
+    selection = getattr(request, "svg_support_selection", None)
+    if isinstance(selection, dict):
+        status = str(selection.get("status") or "").strip().lower()
+        role = str(selection.get("role") or "").strip().upper()
+        if status in {"confirmed", "draft", "reconfirm_required"} and role == "ALUCOBOND_CASED_PANEL":
+            return True
+    return False
+
+
+def _assert_early_svg_association_preconditions(payload_raw: dict[str, Any]) -> None:
+    """Lightweight gate for Step-1 support association — does not require complete layer roles."""
+    blockers: list[str] = []
+    svg_source = payload_raw.get("svg_source") if isinstance(payload_raw.get("svg_source"), dict) else {}
+    if not str(svg_source.get("file_hash") or "").strip() and not payload_raw.get("svg_analysis_json"):
+        blockers.append("missing_svg_analysis")
+    if _layer_setup_from_payload(payload_raw) is None:
+        blockers.append("missing_layer_role_setup")
+    if blockers:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "error": "early_svg_association_blocked",
+                "message": "SVG analysis and layer_role_setup must exist before Contur suport association.",
+                "blockers": blockers,
+            },
+        )
+
+
 async def save_finish_setup_for_intake_v6_workspace(
     db: AsyncSession,
     workspace_id: str,
@@ -1240,13 +1286,22 @@ async def save_finish_setup_for_intake_v6_workspace(
         payload_raw = {}
 
     setup = _layer_setup_from_payload(payload_raw)
-    if setup is None or setup.confirmation_status != "complete":
+    roles_complete = setup is not None and setup.confirmation_status == "complete"
+    early_svg_association = is_early_svg_component_association(request)
+
+    if setup is None:
+        raise HTTPException(status_code=422, detail={"error": "layer_roles_incomplete"})
+    if not roles_complete and not early_svg_association:
         raise HTTPException(status_code=422, detail={"error": "layer_roles_incomplete"})
 
     payload = _parse_payload(payload_raw)
     from services.intake_v6_analysis_boundary_service import assert_v6_analysis_boundary_or_raise
 
-    assert_v6_analysis_boundary_or_raise(payload)
+    if early_svg_association and not roles_complete:
+        # early_svg_component_association: skip full analysis-boundary layer_roles gate
+        _assert_early_svg_association_preconditions(payload_raw)
+    else:
+        assert_v6_analysis_boundary_or_raise(payload)
 
     from services.intake_v6_finish_truth_service import normalize_intake_v6_finish_setup
     from services.intake_v4_finish_truth_service import (
@@ -1259,8 +1314,29 @@ async def save_finish_setup_for_intake_v6_workspace(
     )
     from schemas.intake_v4 import IntakeV4FinishSetup
 
+    # Merge early association into existing finish_setup so sparse Step-1 patches do not wipe Review fields.
+    if early_svg_association and not roles_complete:
+        existing_finish = payload_raw.get("finish_setup")
+        req_dump = request.model_dump(mode="json")
+        if isinstance(existing_finish, dict) and existing_finish:
+            merged = dict(existing_finish)
+            for key in (
+                "svg_component_bindings",
+                "svg_support_selection",
+                "mounting_solution",
+                "power_supply_service_corner",
+            ):
+                if req_dump.get(key) is not None:
+                    merged[key] = req_dump[key]
+            merged["confirmed"] = False
+            merged["internal_draft_quote_confirmed"] = False
+            request = IntakeV6FinishSetup.model_validate(merged)
+
     normalized = normalize_intake_v6_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
+    if early_svg_association and not roles_complete:
+        # Never mark finish confirmed via early Contur suport association.
+        normalized = normalized.model_copy(update={"confirmed": False})
 
     finish_doc = normalized.model_dump(mode="json")
     binding_blockers = validate_bindings_for_new_selection(finish_doc.get("svg_component_bindings") or [])

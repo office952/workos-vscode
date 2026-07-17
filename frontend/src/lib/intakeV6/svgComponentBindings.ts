@@ -228,6 +228,9 @@ export function bindableForOwnerLayerRole(
   if (role === "printed_artwork" || role === "logo") {
     return findBindableByGeometryRole(bindables, "LOGO_VECTOR_SET");
   }
+  if (role === "support_panel") {
+    return findBindableByGeometryRole(bindables, "SUPPORT_CONTOUR");
+  }
   return undefined;
 }
 

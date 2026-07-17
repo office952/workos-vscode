@@ -400,8 +400,8 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(logoSelect.querySelector("optgroup")).toBeNull();
     const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
     const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
-    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo"]);
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
     expect(new Set(letterOptions).size).toBe(letterOptions.length);
     expect(new Set(logoOptions).size).toBe(logoOptions.length);
     expect(lettersSelect.textContent).not.toContain("Vinil aplicat");
@@ -432,8 +432,8 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
     const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
 
-    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo"]);
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
     expect(logoSelect.querySelector("optgroup")).toBeNull();
     expect(logoSelect.textContent).not.toContain("Vector Atipic");
     expect(logoSelect.textContent).not.toContain("Cant / volum");
@@ -454,7 +454,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
 
     expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(logoSelect.selectedOptions[0]?.textContent).toBe("Vector Logo");
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo"]);
+    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
     expect(logoSelect.textContent).not.toContain("Vinil aplicat");
     expect(logoSelect.textContent).not.toContain("Ignora strat");
     expect(logoSelect.textContent).not.toContain("De confirmat");

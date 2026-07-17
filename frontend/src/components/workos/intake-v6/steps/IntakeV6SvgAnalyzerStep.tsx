@@ -22,7 +22,6 @@ import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
-import IntakeV6SupportContourGeometryCard from "../IntakeV6SupportContourGeometryCard";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
@@ -34,7 +33,13 @@ import {
 	layerRoleBindingsSyncKey,
 	readSvgComponentBindings,
 } from "@/lib/intakeV6/svgComponentBindings";
-import { readSvgSupportSelection } from "@/lib/svgAnalyzer";
+import {
+	buildAssociatePrimarySupportContourPatch,
+	buildClearSupportContourPatch,
+	resolvePrimaryClosedContourCandidate,
+} from "@/lib/intakeV6/associatePrimarySupportContour";
+import { applyLayerRoleSelection, readSvgSupportSelection } from "@/lib/svgAnalyzer";
+import type { LayerAutoRole } from "@/lib/svgAnalyzer";
 
 export interface IntakeV6SvgAnalyzerStepProps {
 	hook: IntakeV6WorkspaceHook;
@@ -54,8 +59,8 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 	const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
 	const [previewInspectOpen, setPreviewInspectOpen] = useState(false);
 	const [hoveredLayerKey, setHoveredLayerKey] = useState<string | null>(null);
-	const [hoveredAcpCard, setHoveredAcpCard] = useState(false);
 	const [selectedContourId, setSelectedContourId] = useState<string | null>(null);
+	const [supportAssociateError, setSupportAssociateError] = useState<string | null>(null);
 	const analyzing = state.analyzerStatus === "analyzing";
 	const report = state.analyzerReport;
 	const confirmation = state.layerRoleConfirmation;
@@ -103,7 +108,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			svg_component_bindings?: ReturnType<typeof readSvgComponentBindings>;
 			mounting_solution?: Record<string, unknown> | null;
 			power_supply_service_corner?: string | null;
-		}) => {
+		}): Promise<boolean> => {
 			const prev =
 				(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
 			const next: IntakeV6FinishSetup = {
@@ -124,9 +129,110 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				(next as Record<string, unknown>).power_supply_service_corner =
 					patch.power_supply_service_corner;
 			}
-			await saveFinishSetup(next);
+			const saved = await saveFinishSetup(next);
+			if (!saved) {
+				setSupportAssociateError(
+					state.error ||
+						"Salvarea Contur suport / ACP a eșuat (FinishSetup). Verifică Probleme și avertizări.",
+				);
+				return false;
+			}
+			setSupportAssociateError(null);
+			return true;
 		},
-		[payload?.finish_setup, saveFinishSetup],
+		[payload?.finish_setup, saveFinishSetup, state.error],
+	);
+
+	const handleUpdateLayerRole = useCallback(
+		(layerKey: string, role: LayerAutoRole) => {
+			if (!confirmation) {
+				updateLayerRole(layerKey, role);
+				return;
+			}
+			const nextConfirmation = applyLayerRoleSelection(confirmation, layerKey, role);
+			updateLayerRole(layerKey, role);
+			setSupportAssociateError(null);
+
+			const letterLogoBindings = buildLayerRoleComponentBindings({
+				confirmation: nextConfirmation,
+				bindables,
+				sourceSvgHash: state.localFileHash,
+				previous: componentBindings,
+			});
+
+			if (role === "support_panel") {
+				if (!report?.closedContourCandidates?.candidate_count) {
+					setSupportAssociateError(
+						"Contur suport necesită candidați closed-contour din analiza SVG. Reîncarcă fișierul SVG, apoi alege din nou Contur suport pe cardul contur negru.",
+					);
+					return;
+				}
+				const { patch, contourId, blockers } = buildAssociatePrimarySupportContourPatch({
+					report,
+					finishSetup,
+					svgSourceHash: state.localFileHash,
+				});
+				if (blockers.length || !patch) {
+					setSupportAssociateError(
+						blockers.join(" ") ||
+							"Nu s-a putut asocia Panou Alucobond casetat. Verifică geometria conturului.",
+					);
+					return;
+				}
+				// Merge letter/logo sync + support binding in one FinishSetup write (avoid race wipe).
+				const mergedBindings = [
+					...letterLogoBindings.filter((b) => b.geometry_role !== "SUPPORT_CONTOUR"),
+					...patch.svg_component_bindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR"),
+				];
+				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(mergedBindings);
+				if (contourId) setSelectedContourId(contourId);
+				void persistFinishPatch({
+					...patch,
+					svg_component_bindings: mergedBindings,
+				});
+				return;
+			}
+
+			const othersKeepSupport = nextConfirmation.layers.some(
+				(layer) =>
+					layer.layerKey !== layerKey &&
+					layer.confirmedRole === "support_panel" &&
+					layer.confirmationState !== "ignored",
+			);
+			const currentWasSupport =
+				confirmation.layers.find((layer) => layer.layerKey === layerKey)?.confirmedRole ===
+				"support_panel";
+			if (currentWasSupport && !othersKeepSupport) {
+				const cleared = buildClearSupportContourPatch({
+					finishSetup,
+					componentTemplateCode: supportComp?.component_template_code,
+				});
+				const mergedBindings = [
+					...letterLogoBindings.filter((b) => b.geometry_role !== "SUPPORT_CONTOUR"),
+					...cleared.svg_component_bindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR"),
+				];
+				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(mergedBindings);
+				void persistFinishPatch({
+					...cleared,
+					svg_component_bindings: mergedBindings,
+				});
+				return;
+			}
+
+			lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(letterLogoBindings);
+			void persistFinishPatch({ svg_component_bindings: letterLogoBindings });
+		},
+		[
+			updateLayerRole,
+			report,
+			finishSetup,
+			state.localFileHash,
+			confirmation,
+			bindables,
+			componentBindings,
+			supportComp?.component_template_code,
+			persistFinishPatch,
+		],
 	);
 
 	/** Auto-sync letter/logo bindings when layer roles change — no second confirm button. */
@@ -138,11 +244,17 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			sourceSvgHash: state.localFileHash,
 			previous: componentBindings,
 		});
-		const nextKey = layerRoleBindingsSyncKey(next);
+		// Never drop SUPPORT_CONTOUR / ACP while syncing letter/logo roles.
+		const supportKept = componentBindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR");
+		const merged = [
+			...next.filter((b) => b.geometry_role !== "SUPPORT_CONTOUR"),
+			...supportKept,
+		];
+		const nextKey = layerRoleBindingsSyncKey(merged);
 		const prevKey = layerRoleBindingsSyncKey(componentBindings);
 		if (nextKey === prevKey || nextKey === lastSyncedLayerBindingsKey.current) return;
 		lastSyncedLayerBindingsKey.current = nextKey;
-		void persistFinishPatch({ svg_component_bindings: next });
+		void persistFinishPatch({ svg_component_bindings: merged });
 	}, [
 		confirmation,
 		bindables,
@@ -352,7 +464,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						<IntakeV6ArtworkOnlyDecisionPanel
 							report={report}
 							confirmation={confirmation}
-							onUpdateLayerRole={(layerKey, role) => updateLayerRole(layerKey, role)}
+							onUpdateLayerRole={handleUpdateLayerRole}
 							onRequestReload={() => {
 								document
 									.querySelector('[data-testid="intake-v6-nest2-uploader"] button')
@@ -364,38 +476,48 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 
 					{showLayerDecisions ? (
 						<div className={`${v6.cardCompact} min-w-0`} data-testid="intake-v6-layers-decision-band">
+							{supportComp && report?.closedContourCandidates?.candidate_count ? (
+								<p
+									className="mb-2 text-[11px] text-cyan-200/90"
+									data-testid="intake-v6-contur-suport-hint"
+								>
+									Pentru panoul exterior ACP: pe cardul <span className="font-semibold">contur negru</span>{" "}
+									alege rolul <span className="font-semibold">Contur suport</span> — apare{" "}
+									<span className="font-semibold">Panou Alucobond casetat</span> în Compoziție produs
+									propusă.
+								</p>
+							) : null}
+							{supportAssociateError ? (
+								<p
+									className="mb-2 rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1.5 text-[11px] text-amber-100"
+									data-testid="intake-v6-contur-suport-error"
+								>
+									{supportAssociateError}
+								</p>
+							) : null}
 							<IntakeV6LayersRoleTable
 								report={report!}
 								confirmation={confirmation!}
-								onUpdateLayerRole={updateLayerRole}
+								onUpdateLayerRole={handleUpdateLayerRole}
 								layout="cards"
 								hoveredLayerKey={hoveredLayerKey}
 								onHoverLayerKey={(key) => {
 									setHoveredLayerKey(key);
-									if (key) setHoveredAcpCard(false);
+									if (!key || !confirmation || !report) return;
+									const entry = confirmation.layers.find(
+										(layer) => layer.layerKey === key,
+									);
+									if (entry?.confirmedRole === "support_panel") {
+										const sel = readSvgSupportSelection(finishSetup);
+										const primary = resolvePrimaryClosedContourCandidate(
+											report.closedContourCandidates?.candidates,
+										);
+										setSelectedContourId(sel.contour_id ?? primary?.contour_id ?? null);
+									}
 								}}
 								workspaceTemplateCode={resolvedTemplateCode}
 								bindables={bindables}
 								componentBindings={componentBindings}
-								trailingCards={
-									supportComp && report ? (
-										<IntakeV6SupportContourGeometryCard
-											supportComp={supportComp}
-											report={report}
-											finishSetup={finishSetup}
-											svgSourceHash={state.localFileHash}
-											disabled={state.phase === "persisting"}
-											focused={hoveredAcpCard}
-											onFocus={() => {
-												setHoveredLayerKey(null);
-												setHoveredAcpCard(true);
-											}}
-											onBlur={() => setHoveredAcpCard(false)}
-											onSelectedContourIdChange={setSelectedContourId}
-											onPersist={persistFinishPatch}
-										/>
-									) : null
-								}
 							/>
 						</div>
 					) : null}
@@ -462,7 +584,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					missingExternalRaster={missingExternalRaster}
 					report={report}
 					confirmation={confirmation}
-					onUpdateLayerRole={updateLayerRole}
+					onUpdateLayerRole={handleUpdateLayerRole}
 					contourOverlay={contourOverlay}
 				/>
 			) : null}

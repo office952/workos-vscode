@@ -25,16 +25,86 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return typeof value === "object" && value !== null && !Array.isArray(value) ? value as Record<string, unknown> : null;
 }
 
+const ACM_SUPPORT_TEMPLATE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
+
+/** Project live ACP binding into composition UI when server recommendation lags. */
+function supportItemFromFinishSetup(
+  payload: Record<string, unknown> | null | undefined,
+): CompositionItem | null {
+  const finish = asRecord(payload?.finish_setup);
+  if (!finish) return null;
+  const bindings = Array.isArray(finish.svg_component_bindings) ? finish.svg_component_bindings : [];
+  for (const raw of bindings) {
+    const binding = asRecord(raw);
+    if (!binding) continue;
+    if (String(binding.component_template_code ?? "") !== ACM_SUPPORT_TEMPLATE) continue;
+    const status = String(binding.status ?? "").toUpperCase();
+    if (!["CONFIRMED", "DRAFT", "RECONFIRM_REQUIRED"].includes(status)) continue;
+    const geom = asRecord(binding.selected_geometry);
+    const elementIds = Array.isArray(geom?.element_ids)
+      ? geom.element_ids.map((id) => String(id)).filter(Boolean)
+      : [];
+    return {
+      composition_item_id: "support",
+      template_code: ACM_SUPPORT_TEMPLATE,
+      component_role: "support_panel",
+      source_layer_ids: elementIds.length ? elementIds : ["svg_support_contour"],
+      status: "available_optional",
+    };
+  }
+  const selection = asRecord(finish.svg_support_selection);
+  if (
+    selection &&
+    ["confirmed", "draft", "reconfirm_required"].includes(String(selection.status ?? "").toLowerCase()) &&
+    String(selection.role ?? "") === "ALUCOBOND_CASED_PANEL"
+  ) {
+    const contourId = String(selection.contour_id ?? selection.svg_support_element_id ?? "").trim();
+    return {
+      composition_item_id: "support",
+      template_code: ACM_SUPPORT_TEMPLATE,
+      component_role: "support_panel",
+      source_layer_ids: contourId ? [contourId] : ["svg_support_contour"],
+      status: "available_optional",
+    };
+  }
+  return null;
+}
+
 function readRecommendation(payload: Record<string, unknown> | null | undefined): CompositionRecommendation | null {
   const raw = asRecord(payload?.product_composition_recommendation);
   if (!raw) return null;
+  const items = Array.isArray(raw.composition_items)
+    ? (raw.composition_items.map((item) => asRecord(item) ?? {}) as CompositionItem[])
+    : [];
+  const supportFromBinding = supportItemFromFinishSetup(payload);
+  const hasSupport = items.some(
+    (item) =>
+      item.component_role === "support_panel" ||
+      item.template_code === ACM_SUPPORT_TEMPLATE,
+  );
+  const mergedItems =
+    supportFromBinding && !hasSupport ? [...items, supportFromBinding] : items;
+  let compositionType =
+    typeof raw.composition_type === "string" ? raw.composition_type : undefined;
+  if (supportFromBinding && !hasSupport) {
+    const hasLetters = mergedItems.some((item) => item.component_role === "volumetric_letters");
+    const hasLogo = mergedItems.some((item) => item.component_role === "volumetric_logo");
+    if (hasLetters && hasLogo) compositionType = "letters_plus_logo_plus_support";
+    else if (hasLetters) compositionType = "letters_plus_support";
+  }
   return {
     status: typeof raw.status === "string" ? raw.status : undefined,
-    composition_type: typeof raw.composition_type === "string" ? raw.composition_type : undefined,
-    composition_items: Array.isArray(raw.composition_items) ? raw.composition_items.map((item) => asRecord(item) ?? {}) as CompositionItem[] : [],
-    recommended_templates: Array.isArray(raw.recommended_templates) ? raw.recommended_templates.filter(Boolean) as Array<Record<string, unknown>> : [],
-    warnings: Array.isArray(raw.warnings) ? raw.warnings.filter(Boolean) as Array<Record<string, unknown>> : [],
-    blockers: Array.isArray(raw.blockers) ? raw.blockers.filter(Boolean) as Array<Record<string, unknown>> : [],
+    composition_type: compositionType,
+    composition_items: mergedItems,
+    recommended_templates: Array.isArray(raw.recommended_templates)
+      ? (raw.recommended_templates.filter(Boolean) as Array<Record<string, unknown>>)
+      : [],
+    warnings: Array.isArray(raw.warnings)
+      ? (raw.warnings.filter(Boolean) as Array<Record<string, unknown>>)
+      : [],
+    blockers: Array.isArray(raw.blockers)
+      ? (raw.blockers.filter(Boolean) as Array<Record<string, unknown>>)
+      : [],
   };
 }
 
