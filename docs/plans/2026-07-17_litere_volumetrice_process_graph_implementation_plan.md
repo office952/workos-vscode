@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | Date | 2026-07-17 |
-| Status | PARTIALLY DELIVERED — contract+resolver+live bridge+Intake typed field wiring done; CPP/persistence still gated |
-| Depends on | Owner review of Intake field wiring before CPP / persistence GO |
+| Status | PARTIALLY DELIVERED — process path + typed Intake fields + typed cable qty on live materials; channel/template commercial gaps guarded; persistence still gated |
+| Depends on | Owner review of CPP electrical input wiring before channel formula / persistence GO |
 | Pilot product | Litere volumetrice luminoase / `TPL-VOLUMETRIC-LETTERS_v2` |
 | Out of scope | Build 4B, 4C.1, 4D, Intake UI rewrite, CPP redesign, schema/migration unless gate forces |
 
