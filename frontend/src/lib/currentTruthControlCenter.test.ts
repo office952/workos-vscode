@@ -32,12 +32,12 @@ describe("Current Truth Control Center shared projection", () => {
   it("scopes Letters canonical slice without global Product System overclaim", () => {
     const ps = PRESENT_SYSTEMS.find((s) => s.id === "product_system");
     expect(ps?.status).toBe("PARTIAL");
-    expect(ps?.limitationRo).toMatch(/review_labels/);
-    expect(ps?.limitationRo).toMatch(/MIXED/);
+    expect(ps?.limitationRo).toMatch(/pilot/i);
+    expect(ps?.limitationRo).toMatch(/contract-driven|CONFIRMAT/);
     expect(ps?.limitationRo).toMatch(/Nu deține tarife/);
 
     const intake = PRESENT_SYSTEMS.find((s) => s.id === "intake_v6");
-    expect(intake?.limitationRo).toMatch(/review_labels/);
+    expect(intake?.limitationRo).toMatch(/renderer generic|generic/i);
     expect(intake?.limitationRo).toMatch(/MIXED/);
 
     const handoffs = PRESENT_HANDOFFS.map((h) => h.id);
@@ -47,7 +47,7 @@ describe("Current Truth Control Center shared projection", () => {
 
     const psIntake = PRESENT_HANDOFFS.find((h) => h.id === "h.ps_intake");
     expect(psIntake?.status).toBe("PARTIAL");
-    expect(psIntake?.outputContractRo).toMatch(/nu generare completă/i);
+    expect(psIntake?.outputContractRo).toMatch(/render_sections|writable_workspace_paths/i);
 
     const paCpp = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_cpp");
     expect(paCpp?.status).toBe("PARTIAL");

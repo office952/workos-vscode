@@ -136,7 +136,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Contract formular + module consumabile de Intake / PD / Aggregate",
     consumerRo: "Intake V6, ProductDefinition, ProductAggregate",
     limitationRo:
-      "Letters: metadate câmp + etichete Review (scope=review_labels) CONFIRMAT. Structură/comportament formular = MIXED (frontend). Generare dinamică completă formular = PARTIAL. Alte șabloane = PARTIAL / NEVERIFICAT. Nu deține tarife și nu calculează preț.",
+      "Letters pilot: render_sections Iluminare + Șablon montaj + câmpuri Finisaje (fără layout pe grup) = contract-driven CONFIRMAT. Layout pe grup litere / analyzer / mounting_scope = frontend temporar. Alte șabloane = PARTIAL / NEVERIFICAT. Nu deține tarife.",
     verifyRoute: "/product-system",
     spineOrder: 1,
   },
@@ -151,7 +151,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Workspace + răspunsuri operator / selecție șablon",
     consumerRo: "ProductDefinition",
     limitationRo:
-      "Letters: etichete Review din contract Product System (scope=review_labels). Structură secțiuni, opțiuni, vizibilitate, validare, hydration/save = frontend / MIXED. Nu calculează total comercial autoritar.",
+      "Letters: renderer generic (fără logică de produs) pentru secțiuni pilot; etichete/opțiuni/required din contract. Layout pe grup litere + analyzer rămân MIXED. Alte șabloane neschimbate. Nu calculează total comercial autoritar.",
     verifyRoute: "/intake-v6",
     spineOrder: 2,
   },
@@ -315,10 +315,11 @@ export const PRESENT_HANDOFFS: PresentHandoff[] = [
     consumerId: "intake_v6",
     consumerRo: "Intake V6",
     outputContractRo:
-      "Metadate câmp Letters + etichete Review (label_ro); versiune contract/template — nu generare completă de secțiuni",
-    enforcementRo: "GET form-contract + lettersCanonicalFormContract (template-gated review_labels)",
+      "render_sections + field metadata (tip/opțiuni/required/visibility) pentru pilot Letters; writable_workspace_paths allowlist",
+    enforcementRo: "GET form-contract + isContractRendererEnabled + IntakeContractSectionRenderer",
     status: "PARTIAL",
-    verificationRo: "UI /product-system · /intake-v6 · runtime_authority_scope=review_labels",
+    verificationRo:
+      "UI /intake-v6 · runtime_authority_scope=selected_sections:finisaje_fields,iluminare,montaj_template",
   },
   {
     id: "h.intake_pd",
@@ -897,9 +898,9 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
     evidenceType: "qa",
     date: "2026-07-17",
     provesRo:
-      "PARTIAL: metadate + etichete Review Letters din Product System; Aggregate măsurători → CPP 7G cu fallback explicit; baseline 29 linii 3549.1286 / 4294.45 read-only; structură formular rămâne MIXED; E2E Quote→Order→Plan nou = NOT PROVEN; alte șabloane PARTIAL",
+      "PARTIAL + renderer pilot: render_sections Iluminare/Montaj șablon (+ Finisaje fără layout grup) din Product System; Aggregate măsurători → CPP cu fallback; baseline freeze 3549.1286/4294.45; layout grup/analyzer MIXED; Quote→Order→Plan nou NOT PROVEN",
     stillCurrentRuntime: true,
-    source: "docs/worklog/realignment/2026-07-17_product_system_intake_commercial_e2e_truth_audit.md",
+    source: "docs/worklog/realignment/2026-07-17_intake_v6_generic_contract_renderer_letters_pilot.md",
   },
   {
     id: "ev.e2e_truth_audit",
