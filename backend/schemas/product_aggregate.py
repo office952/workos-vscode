@@ -55,6 +55,9 @@ class ProductAggregateOperation(BaseModel):
     component_ref: str | None = None
     formula_id: str | None = None
     priced: bool = True
+    # TE2E-028A: optional template-configured planning minutes (not formula invent).
+    estimated_minutes: float | None = None
+    calculation_type: str | None = None
     provenance: ProvenanceValue = "missing"
     source_template_code: str | None = None
     mini_module_code: str | None = None

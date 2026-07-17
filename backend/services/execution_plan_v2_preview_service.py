@@ -15,6 +15,8 @@ from models.orders import Orders
 from schemas.execution_plan_v2 import (
     EXECUTION_PLAN_V2_SOURCE,
     IGNORED_PRICING_SOURCES,
+    PLANNING_MINUTES_SOURCE_AGGREGATE_OPS,
+    PLANNING_MINUTES_WARNING,
     READINESS_GATE_EXCLUDED_WARNING,
     READINESS_GATE_TASK_TYPE,
     EmployeeRoleRequirementSummary,
@@ -27,6 +29,7 @@ from schemas.execution_plan_v2 import (
     PlannedTaskMachineRequirement,
     PlannedTaskPreview,
 )
+from schemas.product_aggregate import ProductAggregateOperation
 from schemas.order_snapshot_v2 import ORDER_SNAPSHOT_V2_VERSION, OrderSnapshotV2
 from schemas.product_aggregate import ProductAggregate, ProductAggregateTaskRule
 from schemas.product_definition import ProductDefinitionPreview, ProductDefinitionOperationRole
@@ -53,7 +56,26 @@ FORBIDDEN_IMPORT_SUBSTRINGS = (
     "product_system_execution_output",
 )
 
-PLANNING_MINUTES_WARNING = "PLANNING_MINUTES_SOURCE_REQUIRED"
+
+def resolve_planning_minutes_from_aggregate_op(
+    agg_op: ProductAggregateOperation | None,
+) -> tuple[float | None, str | None]:
+    """TE2E-028A: map authorized aggregate op minutes into plan preview.
+
+    Accepts template-configured static minutes (including explicit 0).
+    Rejects formula_based placeholders with 0 — those are not a planning source.
+    Does not invent minutes when absent.
+    """
+    if agg_op is None or agg_op.estimated_minutes is None:
+        return None, None
+    try:
+        minutes = float(agg_op.estimated_minutes)
+    except (TypeError, ValueError):
+        return None, None
+    calc = (agg_op.calculation_type or "").strip().lower()
+    if calc == "formula_based" and minutes == 0.0:
+        return None, None
+    return minutes, PLANNING_MINUTES_SOURCE_AGGREGATE_OPS
 
 
 class ExecutionPlanV2PreviewOrderNotFound(Exception):
@@ -259,6 +281,13 @@ def _build_planned_tasks(
         elif effective.origin == "linked_segment_task_rule":
             task_provenance.append("product_aggregate_snapshot.linked_segment_task_rules")
 
+        estimated_minutes, planning_minutes_source = resolve_planning_minutes_from_aggregate_op(
+            agg_op
+        )
+        task_warnings: list[str] = []
+        if estimated_minutes is None:
+            task_warnings.append(PLANNING_MINUTES_WARNING)
+
         tasks.append(
             PlannedTaskPreview(
                 task_key=frozen_identity.deterministic_task_key,
@@ -269,10 +298,10 @@ def _build_planned_tasks(
                 source_operation_code=priced_op or None,
                 source_task_rule_code=rule.task_name,
                 sequence_index=rule.sequence,
-                estimated_minutes=None,
-                planning_minutes_source=None,
+                estimated_minutes=estimated_minutes,
+                planning_minutes_source=planning_minutes_source,
                 machine_requirement=machine_req,
-                warnings=[PLANNING_MINUTES_WARNING],
+                warnings=task_warnings,
                 provenance=task_provenance,
                 frozen_identity=frozen_identity,
             )
@@ -443,7 +472,9 @@ def _build_preview_from_snapshot(
         sold_scope=sold_scope,
     )
     dependencies = _build_dependencies(tasks)
-    warnings = [PLANNING_MINUTES_WARNING]
+    warnings: list[str] = []
+    if any(task.estimated_minutes is None for task in tasks):
+        warnings.append(PLANNING_MINUTES_WARNING)
     if readiness_gate_excluded and READINESS_GATE_EXCLUDED_WARNING not in warnings:
         warnings.append(READINESS_GATE_EXCLUDED_WARNING)
 

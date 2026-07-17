@@ -851,6 +851,11 @@ class PostJobTruthService:
                 planned_f = float(planned_min) if planned_min is not None else None
             except (TypeError, ValueError):
                 planned_f = None
+            planning_minutes_source = task.get("planning_minutes_source")
+            if isinstance(planning_minutes_source, str):
+                planning_minutes_source = planning_minutes_source.strip() or None
+            else:
+                planning_minutes_source = None
 
             has_active = any(is_session_active(s) for s in task_sessions)
             if reality is None or not task_sessions:
@@ -897,6 +902,7 @@ class PostJobTruthService:
                         planned_f,
                         "present" if planned_f is not None else "missing",
                         unit="min",
+                        source=planning_minutes_source or "execution_plan",
                     ),
                     actual_minutes=self._pv(
                         actual_f_val, actual_presence, unit="min", source="sessions"

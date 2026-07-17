@@ -80,6 +80,15 @@ def _operation_code(row: dict[str, Any]) -> str | None:
     return str(code) if code else None
 
 
+def _optional_float(raw: Any) -> float | None:
+    if raw is None or raw == "":
+        return None
+    try:
+        return float(raw)
+    except (TypeError, ValueError):
+        return None
+
+
 def _dedupe_materials(items: list[ProductAggregateMaterial]) -> list[ProductAggregateMaterial]:
     seen: set[str] = set()
     out: list[ProductAggregateMaterial] = []
@@ -513,6 +522,12 @@ class ProductAggregateService:
                 continue
             formula_params = row.get("formula_params") or {}
             non_priced = bool(formula_params.get("non_priced"))
+            estimated_minutes = _optional_float(
+                row.get("estimated_minutes", row.get("estimatedMinutes"))
+            )
+            calculation_type = row.get("calculation_type") or row.get("calculationType")
+            if calculation_type is not None:
+                calculation_type = str(calculation_type).strip() or None
             out.append(
                 ProductAggregateOperation(
                     operation_code=code,
@@ -521,6 +536,8 @@ class ProductAggregateService:
                     component_ref=row.get("component_ref"),
                     formula_id=row.get("formula_id"),
                     priced=not non_priced,
+                    estimated_minutes=estimated_minutes,
+                    calculation_type=calculation_type,
                     provenance=provenance,  # type: ignore[arg-type]
                     source_template_code=source_template_code,
                     mini_module_code=mini_module_code,

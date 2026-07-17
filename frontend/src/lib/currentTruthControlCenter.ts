@@ -217,7 +217,8 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     inputRo: "Order Snapshot + task_contract",
     outputRo: "Plan / task-uri planificate",
     consumerRo: "Execution Reality",
-    limitationRo: "Materializare completă nu e universală pe toate șabloanele.",
+    limitationRo:
+      "Materializare completă nu e universală pe toate șabloanele; minute planificate statice provin din operațiile agregatului (TE2E-028A), restul pot rămâne fără sursă.",
     verifyRoute: "/execution",
     spineOrder: 7,
   },
@@ -245,7 +246,8 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     inputRo: "ExecutionPlan + Execution Reality",
     outputRo: "Reconciliere matched / missing / variance (read-only)",
     consumerRo: "Operator review / învățare",
-    limitationRo: "Fără write-back comercial; TE2E-028 rămâne deschis ca residual.",
+    limitationRo:
+      "Fără write-back comercial; TE2E-028A minute planificate statice PROVEN; TE2E-028 rămâne deschis (stoc G3 / labor $ / fixture / Letters breadth).",
     verifyRoute: "/execution",
     spineOrder: 9,
   },
@@ -805,6 +807,17 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
     provesRo: "Wave 7 semnat; TE2E-028 rămâne residual deschis",
     stillCurrentRuntime: false,
     source: "docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md",
+  },
+  {
+    id: "ev.te2e_028a",
+    title: "TE2E-028A Planning-minute source integrity",
+    category: "Dovadă curentă",
+    evidenceType: "qa",
+    date: "2026-07-17",
+    provesRo:
+      "Minute planificate statice (ex. qc_letters=15) supraviețuiesc aggregate→preview→plan→Post-Job; missing actual rămâne explicit; fără write-back",
+    stillCurrentRuntime: true,
+    source: "docs/qa/te2e-028a-planning-minutes-2026-07-17/",
   },
   {
     id: "ev.legacy_oc_tk",

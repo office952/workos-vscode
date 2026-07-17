@@ -1,0 +1,30 @@
+﻿{
+  "label": "TE2E-028A planning-minute source integrity",
+  "date": "2026-07-17",
+  "head_at_proof": "see_implementation_commit",
+  "template": "TPL-VOLUMETRIC-LETTERS_v2",
+  "new_fixture": {
+    "order_id": 972901,
+    "order_code": "ORD-TE2E028A-LIVE-972901",
+    "plan_id": 10,
+    "client_label": "TE2E-028A LIVE PROOF — TEST FIXTURE",
+    "retention": "LOCAL_TEST_FIXTURE — may delete; do not treat as Wave 7 reference",
+    "commercial_total": 1500.0,
+    "write_back_performed": false
+  },
+  "planned_minute_proof": {
+    "operation": "qc_letters",
+    "task_name": "Control calitate",
+    "planned_minutes": 15.0,
+    "planning_minutes_source": "product_aggregate_snapshot.operations.estimated_minutes",
+    "actual_presence": "not_captured",
+    "reconciliation_state": "missing_actual"
+  },
+  "reference_protection": {
+    "order_92402_plan": 8,
+    "order_92403_plan": 9,
+    "unchanged_total_estimated_time_minutes": 0.0
+  },
+  "root_cause": "Preview hardcoded null minutes; materialize coerced null→0.0; aggregate dropped template estimated_minutes",
+  "fix": "Carry static minutes on ProductAggregateOperation; wire preview provenance; keep null when missing; Post-Job consumes plan truth"
+}

@@ -202,12 +202,14 @@ def materialize_operational_tasks_from_v2_envelope(
 
         estimated_raw = planned.get("estimated_minutes")
         task_warnings = list(planned.get("warnings") or [])
+        planning_minutes_source = planned.get("planning_minutes_source")
+        # TE2E-028A: preserve absence as null — do not invent 0.0 for missing source.
         if estimated_raw is None:
             if PLANNING_MINUTES_WARNING not in task_warnings:
                 task_warnings.append(PLANNING_MINUTES_WARNING)
             if PLANNING_MINUTES_WARNING not in warnings:
                 warnings.append(PLANNING_MINUTES_WARNING)
-            estimated_time_minutes = 0.0
+            estimated_time_minutes = None
         else:
             try:
                 estimated_time_minutes = float(estimated_raw)
@@ -246,6 +248,7 @@ def materialize_operational_tasks_from_v2_envelope(
             "depends_on_task_ids": dep_ids,
             "sequence_index": planned.get("sequence_index"),
             "estimated_time_minutes": estimated_time_minutes,
+            "planning_minutes_source": planning_minutes_source,
             "quantity": 1.0,
             "layer_id": V2_LAYER_ID,
             "assigned_employee_id": None,

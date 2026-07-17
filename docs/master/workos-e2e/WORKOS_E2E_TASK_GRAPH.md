@@ -3,12 +3,13 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **UI-TRUTH-01C = COMPLETE — PROVEN_V1**  
+**Active task:** **TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT**  
 **Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
 **UI-TRUTH-01B:** **COMPLETE — PROVEN_V1** (CORE)  
-**UI-TRUTH-01C:** **COMPLETE — PROVEN_V1** — Failure, stale, retry, and drill-down states  
+**UI-TRUTH-01C:** **COMPLETE — PROVEN_V1**  
+**TE2E-028:** **open** (residuals remain; 028A slice proven)  
 **Control Center:** **COMPLETE — PROVEN_CURRENT**  
-**Recommended next:** Owner roadmap pick (FLEX-02 / TE2E-028 alternate — do not auto-start)  
+**Recommended next:** Owner roadmap pick (do not auto-start)  
 
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
@@ -602,6 +603,19 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Plan | `docs/plans/2026-07-17_ui_truth_01c_scope_plan.md` |
 | Worklog | `docs/worklog/realignment/2026-07-17_ui_truth_01c_scope.md` |
 | Next | Owner roadmap pick |
+
+## TE2E-028A — PLANNING_MINUTE_SOURCE_INTEGRITY
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_CURRENT** (2026-07-17) |
+| Parent | TE2E-028 (remains open) |
+| Scope | Static template minutes → aggregate → Plan V2 preview/persist/materialize → Post-Job |
+| Proof | order `972901` · plan `10` · `qc_letters`=15 |
+| Refs | plans 8/9 · orders 92402/92403 **untouched** |
+| Worklog | `docs/worklog/realignment/2026-07-17_te2e_028_current_residual_audit.md` |
+| Evidence | `docs/qa/te2e-028a-planning-minutes-2026-07-17/` |
+| Next | Owner roadmap pick — do not auto-start stock/labor/lifecycle |
 
 ## CURRENT_TRUTH_CONTROL_CENTER_V1
 

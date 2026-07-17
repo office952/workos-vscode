@@ -79,10 +79,68 @@ Narrow build: **TE2E-028A planning-minute source integrity**. Plans 8/9 and orde
 
 ## Commit status
 
-Audit commit pending (`docs(execution): approve te2e-028 planning-minute audit`), then implementation.
+- `3420b57` — `docs(execution): approve te2e-028 planning-minute audit`
+- (implementation) — `fix(execution): preserve planned-minute source integrity`
 
 ---
 
 ## Implementation — TE2E-028A (planning-minute source)
 
-*(filled during implementation)*
+### Owner decision
+
+Applied exactly as unpause pack above. Narrow reconciliation only.
+
+### Root-cause research
+
+Proven loss chain (preview null was a **clue**, confirmed as primary cut, not sole):
+
+1. `product_aggregate_service._operations_from_rows` dropped template `estimated_minutes` / `calculation_type`
+2. `execution_plan_v2_preview_service` hardcoded `estimated_minutes=None` / `planning_minutes_source=None`
+3. `execution_plan_task_parser` materialize coerced null → `0.0`
+4. Post-Job read persisted plan (correct consumer) and therefore saw zeros as present
+
+Authoritative source for this slice: **template static operation `estimated_minutes`** carried on `ProductAggregateOperation`, provenance `product_aggregate_snapshot.operations.estimated_minutes`. Formula_based `0` placeholders remain absent (not invented).
+
+### Source precedence
+
+1. Aggregate op `estimated_minutes` with `calculation_type=static` (or non-formula) → use value + provenance  
+2. `formula_based` with `0` → treat as missing  
+3. No value → missing + `PLANNING_MINUTES_SOURCE_REQUIRED`  
+4. CostEngine / EIC / commercial — ignored (existing V2 rule)
+
+### Implementation
+
+- Additive fields on `ProductAggregateOperation`
+- Preview `resolve_planning_minutes_from_aggregate_op`
+- Materialize keeps `null` when missing; copies `planning_minutes_source`
+- Post-Job surfaces planned source when present
+
+### Test data
+
+- Pytest fixture orders (ephemeral)  
+- Live local fixture: order `972901` / plan `10` / label `TE2E-028A LIVE PROOF — TEST FIXTURE` — **not** Wave 7 reference; may delete  
+- Plans `8`/`9` and orders `92402`/`92403` untouched
+
+### Tests
+
+`pytest tests/test_te2e_028a_planning_minute_source.py` + materialize null regression + existing planning-minutes missing test — pass.
+
+### Runtime proof
+
+- Aggregate live: `qc_letters=(15.0, static)`  
+- Preview/plan/Post-Job: planned 15 present, actual `not_captured`, `missing_actual`, `write_back=false`  
+- Refs after: plan 8/9 still `total_min=0.0`
+
+### Modules / Governance
+
+- Modules: **EVIDENCE/LIMITATION UPDATE** (ExecutionPlan + Post-Job limitation text; `ev.te2e_028a`)  
+- Governance: **NO BOUNDARY CHANGE**
+
+### Remaining TE2E-028 residuals
+
+Stock G3 · labor $ · fixture qualification · Letters breadth · formula ops without planning-duration authority · task lifecycle (deferred)
+
+### Status
+
+`TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT`  
+`TE2E-028` parent issue remains **open**

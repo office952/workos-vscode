@@ -15,6 +15,10 @@ EXECUTION_PLAN_V2_PERSIST_STATUS = "not_persisted"
 EXECUTION_PLAN_V2_TASKS_JSON_PLAN_VERSION = "v2.preview_to_plan.1"
 PLANNING_MINUTES_WARNING = "PLANNING_MINUTES_SOURCE_REQUIRED"
 TOTAL_ESTIMATED_TIME_SOURCE_NOT_AVAILABLE = "not_available_in_v2_preview"
+# TE2E-028A — authorized provenance when minutes come from aggregate ops (template static).
+PLANNING_MINUTES_SOURCE_AGGREGATE_OPS = (
+    "product_aggregate_snapshot.operations.estimated_minutes"
+)
 READINESS_GATE_TASK_TYPE = "READINESS_GATE"
 READINESS_GATE_EXCLUDED_WARNING = "READINESS_GATE_RULES_EXCLUDED_FROM_V2_PREVIEW"
 

@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **UI-TRUTH-01C = COMPLETE — PROVEN_V1** (stale / refresh / retry / details / Dashboard cleanup) |
+| Active task | **TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT** |
 
-| Next task | Owner roadmap pick; FLEX-02 / TE2E-028 alternate (do not auto-start) |
+| Next task | Owner roadmap pick; TE2E-028 residuals remain open (stock G3 / labor $ / fixture / Letters breadth); FLEX-02 alternate |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1520,6 +1520,26 @@ NEXT ROADMAP = GO
 | Build | frontend PASS |
 
 **Not claimed:** modules poller unified · universal DB diagnostics · alerts backend · all UI-truth waves done.
+
+**Next:** Owner roadmap pick only.
+
+---
+
+## TE2E-028A — PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT
+
+**Date:** 2026-07-17  
+**Parent issue:** TE2E-028 remains **open** (narrow slice only)
+
+| Item | Result |
+|------|--------|
+| Root cause | Preview nulled minutes; materialize coerced null→0.0; aggregate omitted template `estimated_minutes` |
+| Fix | Carry static minutes on aggregate ops → preview provenance → persist/materialize keep null when missing → Post-Job consumes plan |
+| Proof fixture | order `972901` · plan `10` · `qc_letters` = 15 · source `product_aggregate_snapshot.operations.estimated_minutes` |
+| Refs 92402/92403 | Untouched (plans 8/9) |
+| Tests | `test_te2e_028a_planning_minute_source.py` + materialize null regression |
+| Evidence | `docs/qa/te2e-028a-planning-minutes-2026-07-17/` |
+
+**Still open under TE2E-028:** Stock G3 · labor $ exclusion · fixture qualification · Letters-only breadth · formula ops without planning duration authority.
 
 **Next:** Owner roadmap pick only.
 
