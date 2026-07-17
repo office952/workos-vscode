@@ -50,11 +50,27 @@ async def test_letters_detects_step1_and_support_wiring(lifecycle_seeded_db) -> 
     by_stage = {s.stage: s for s in readiness.stages}
     assert by_stage["PRODUCT_TEMPLATE"].status == "PASS"
     assert by_stage["INTAKE_STEP_1"].status in {"WIRED", "PASS", "VALIDATED", "CONFIGURED"}
+    assert by_stage["INTAKE_STEP_1"].status != "BLOCKED"
+    assert not any(b.code == "STEP1_SUPPORT_BINDING_PERSIST_GATE" for b in by_stage["INTAKE_STEP_1"].blockers)
     assert by_stage["INTAKE_STEP_2"].status in {"WIRED", "PASS", "VALIDATED", "CONFIGURED"}
     assert by_stage["CPP"].status == "OWNER_GATE_REQUIRED"
     assert by_stage["TASK_MATERIALIZATION"].status == "OWNER_GATE_REQUIRED"
     assert any(g.code == "CPP_FORMULA_OWNER_GATE" for g in readiness.owner_gates)
     assert any(c.code == "STALE_BOND_CASETAT" for c in readiness.legacy_conflicts)
+    # Runtime blocker must not coexist with score=100 + activation_eligible=true
+    if readiness.lifecycle_status == "BLOCKED":
+        assert readiness.readiness_score < 100
+        assert readiness.activation_eligible is False
+
+
+@pytest.mark.asyncio
+async def test_blocked_stage_caps_score_and_activation(lifecycle_seeded_db) -> None:
+    """Any required BLOCKED stage ⇒ score <= 99 and activation_eligible false."""
+    svc = TemplateLifecycleControlService(lifecycle_seeded_db)
+    readiness = await svc.build_readiness("TPL-DOES-NOT-EXIST_v9")
+    assert readiness.lifecycle_status == "BLOCKED"
+    assert readiness.readiness_score <= 99
+    assert readiness.activation_eligible is False
 
 
 @pytest.mark.asyncio

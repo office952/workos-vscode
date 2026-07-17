@@ -452,17 +452,31 @@ class TemplateLifecycleControlService:
                     evidence=["LEGACY_INTAKE_SVG_ROLE_ADAPTER"],
                 )
             )
-        # Known Step-1 persistence guard: finish-setup blocked until layer roles complete
-        if _file_contains(
+        # Contur suport / SUPPORT_CONTOUR must persist via FinishSetup without fake layer roles.
+        # Marker: is_early_svg_component_association in workspace service.
+        early_support_persist = _file_contains(
             "backend/services/intake_v6_workspace_service.py",
-            'layer_roles_incomplete',
-        ) and has_support:
-            step1_warnings.append(
+            "is_early_svg_component_association",
+        ) or _file_contains(
+            "backend/services/intake_v6_workspace_service.py",
+            "early_svg_component_association",
+        )
+        if has_support and not early_support_persist:
+            step1_blockers.append(
                 _issue(
                     "STEP1_SUPPORT_BINDING_PERSIST_GATE",
-                    "Contur suport FinishSetup persist is gated by layer_roles_incomplete (known follow-up).",
+                    "Contur suport FinishSetup persist is blocked by layer_roles_incomplete — "
+                    "SUPPORT_CONTOUR cannot save before layer roles are complete.",
+                    evidence=["save_finish_setup_for_intake_v6_workspace", "layer_roles_incomplete"],
+                )
+            )
+        elif has_support and early_support_persist:
+            step1_warnings.append(
+                _issue(
+                    "STEP1_SUPPORT_EARLY_ASSOCIATION_ENABLED",
+                    "SUPPORT_CONTOUR may persist before layer roles are complete via early_svg_component_association.",
                     severity="warning",
-                    evidence=["save_finish_setup_for_intake_v6_workspace"],
+                    evidence=["is_early_svg_component_association"],
                 )
             )
         stages.append(
@@ -475,6 +489,7 @@ class TemplateLifecycleControlService:
                     f"letter={has_letters}",
                     f"logo={has_logo}",
                     f"support={has_support}",
+                    f"early_support_persist={early_support_persist}",
                     f"composition_service={_repo_file_exists('backend','services','intake_v6_product_composition_recommendation_service.py')}",
                 ],
                 blockers=step1_blockers,
@@ -930,23 +945,36 @@ class TemplateLifecycleControlService:
         else:
             lifecycle_status = "PASS"
 
-        scored = 0
+        # Score formula (activation-required stages only):
+        # PASS/VALIDATED/WIRED = 1.0 · OWNER_GATE_REQUIRED = 0.8 · CONFIGURED/DISCOVERED/PREVIEW_ONLY = 0.6
+        # NOT_APPLICABLE = 1.0 · BLOCKED = 0.0 (hard cap: any BLOCKED ⇒ score <= 99)
+        scored = 0.0
         weight = 0
         for stage in stages:
             if stage.stage not in ACTIVATION_REQUIRED_STAGES:
                 continue
             weight += 1
             if stage.status in {"PASS", "VALIDATED", "WIRED"}:
-                scored += 1
+                scored += 1.0
             elif stage.status in {"CONFIGURED", "DISCOVERED", "PREVIEW_ONLY"}:
                 scored += 0.6
             elif stage.status == "OWNER_GATE_REQUIRED":
                 scored += 0.8
             elif stage.status == "NOT_APPLICABLE":
-                scored += 1
+                scored += 1.0
+            # BLOCKED contributes 0
         readiness_score = int(round((scored / weight) * 100)) if weight else 0
+        if required_blocked:
+            readiness_score = min(readiness_score, 99)
 
-        activation_eligible = not required_blocked and template_status in {"ACTIVE", "CANDIDATE"}
+        # Intake-ready activation: no required BLOCKED stages. CPP/tasking/execution may remain owner-gated.
+        activation_eligible = (
+            not required_blocked
+            and template_status in {"ACTIVE", "CANDIDATE"}
+            and not any(
+                s.stage in ACTIVATION_REQUIRED_STAGES and s.blockers for s in stages
+            )
+        )
 
         version = None
         if "_v" in code:
