@@ -32,17 +32,27 @@ describe("Current Truth Control Center shared projection", () => {
   it("scopes Letters canonical slice without global Product System overclaim", () => {
     const ps = PRESENT_SYSTEMS.find((s) => s.id === "product_system");
     expect(ps?.status).toBe("PARTIAL");
-    expect(ps?.limitationRo).toMatch(/Letters/);
-    expect(ps?.limitationRo).toMatch(/PARTIAL/);
+    expect(ps?.limitationRo).toMatch(/review_labels/);
+    expect(ps?.limitationRo).toMatch(/MIXED/);
     expect(ps?.limitationRo).toMatch(/Nu deține tarife/);
+
+    const intake = PRESENT_SYSTEMS.find((s) => s.id === "intake_v6");
+    expect(intake?.limitationRo).toMatch(/review_labels/);
+    expect(intake?.limitationRo).toMatch(/MIXED/);
 
     const handoffs = PRESENT_HANDOFFS.map((h) => h.id);
     expect(handoffs).toContain("h.ps_intake");
     expect(handoffs).toContain("h.pa_cpp");
     expect(handoffs).toContain("h.pa_plan");
 
+    const psIntake = PRESENT_HANDOFFS.find((h) => h.id === "h.ps_intake");
+    expect(psIntake?.status).toBe("PARTIAL");
+    expect(psIntake?.outputContractRo).toMatch(/nu generare completă/i);
+
     const paCpp = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_cpp");
+    expect(paCpp?.status).toBe("PARTIAL");
     expect(paCpp?.outputContractRo).toMatch(/non-monetare/);
+    expect(paCpp?.outputContractRo).toMatch(/fallback/i);
     expect(paCpp?.outputContractRo).toMatch(/fără minute/i);
 
     const paPlan = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_plan");

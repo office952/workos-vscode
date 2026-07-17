@@ -91,7 +91,10 @@ class IntakeV6ModularFormContractSummary(BaseModel):
     registry_version: str
     active_module_count: int = 0
     field_binding_count: int = 0
+    # Full form runtime authority is not claimed for Letters yet.
+    # When true, runtime_authority_scope must describe the bounded surface.
     runtime_authority: bool = False
+    runtime_authority_scope: str | None = None
     warnings: list[str] = Field(default_factory=list)
 
 

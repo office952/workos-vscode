@@ -78,7 +78,10 @@ export interface IntakeV6ModularFormContractSummary {
   registry_version?: string;
   active_module_count?: number;
   field_binding_count?: number;
+  /** Full form authority — false for Letters; see runtime_authority_scope. */
   runtime_authority?: boolean;
+  /** Bounded surface, e.g. review_labels — not full dynamic form generation. */
+  runtime_authority_scope?: string | null;
   warnings?: string[];
 }
 

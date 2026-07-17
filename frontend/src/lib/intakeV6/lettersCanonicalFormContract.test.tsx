@@ -32,7 +32,8 @@ function makeLettersContract(
     summary: {
       template_code: "TPL-VOLUMETRIC-LETTERS_v2",
       contract_version: "1.1.0-letters-canonical",
-      runtime_authority: true,
+      runtime_authority: false,
+      runtime_authority_scope: "review_labels",
     },
     modules: [],
     trigger_alignments: [],

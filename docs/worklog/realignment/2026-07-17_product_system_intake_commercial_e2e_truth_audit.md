@@ -147,151 +147,111 @@ MODULES + GOVERNANCE = MANDATORY DOD
 - Section shells remain React composition (COMPATIBILITY_TEMPORARY) — not a global Intake rewrite
 - Other templates unchanged / unsupported by runtime_authority
 
-### Tests run (targeted)
+### Tests run (targeted) — closure evidence
 
 ```text
-pytest tests/test_letters_commercial_measurement_contract.py
-pytest tests/test_letters_cpp_measurement_consumption.py
-pytest tests/test_intake_v6_modular_form.py
-pytest tests/test_commercial_price_proposal_preview.py
-pytest tests/test_legacy_quote_price_isolation.py
-vitest: lettersCanonicalFormContract, currentTruthControlCenter, ModuleChain, Governance.presentTruth
+# Letters measurement + CPP consumption
+pytest tests/test_letters_commercial_measurement_contract.py -q
+→ passed
+pytest tests/test_letters_cpp_measurement_consumption.py -q
+→ passed (Aggregate measurements preferred; no COMPATIBILITY_WORKSPACE_PATH on debitare_fata)
+
+# Form contract
+pytest tests/test_intake_v6_modular_form.py -q -k letters_canonical
+→ 1 passed
+
+# CPP service suite (HTTP endpoint excluded — see known gap)
+pytest tests/test_commercial_price_proposal_preview.py -q -k "not test_post_endpoint"
+→ 18 passed
+
+# Isolation / TE2E
+pytest tests/test_te2e_028a_planning_minute_source.py tests/test_te2e_028b_formula_planning_duration.py tests/test_legacy_quote_price_isolation.py tests/test_commercial_pricing_time_isolation_audit.py -q
+→ 28 passed
+
+# Frontend present-truth + Letters labels
+vitest: currentTruthControlCenter, Governance.presentTruth, ModuleChain, lettersCanonicalFormContract
+→ 23 passed
 ```
+
+### Known pre-existing gap (not introduced by this slice)
+
+`test_commercial_price_proposal_preview.py::test_post_endpoint_returns_preview` returns HTTP 404 (`commercial_price_preview_not_found`) at audit HEAD `10926d2` **with Letters changes stashed**. Same class of fixture/HTTP-path failure as `test_get_endpoint_returns_200` (empty components) and EIC `test_post_endpoint_returns_preview`. Service-level `build_preview` remains green. **Out of slice** — do not greenwash by weakening assertions.
+
+### Runtime smoke (ports verified listening)
+
+| Check | Result |
+|--------|--------|
+| FE `:3000` | LISTEN · `/` `/modules` `/governance` → 200 |
+| BE `:8001` | LISTEN · `/health` → 200 |
+| Form contract | `1.1.0-letters-canonical`, `runtime_authority=false`, `runtime_authority_scope=review_labels` |
+| PD / Aggregate | compose path + commercial_measurements attached |
+| Baseline fixtures | plans 8/9/10/11 · orders 92402/92403/972901/972910 — **not mutated** |
+| Frozen commercial lineage | quote `3` / `QSN2-2026-0002` / order `92402` — net **3549.1286** / gross **4294.45** read-only (not mutated) |
+| Live Aggregate→CPP re-preview (same WS) | measurements preferred on active lines; current active set ≠ frozen 29-line composition (logo/ACM gates) — not used as freeze regression |
+
+### Closure verification (owner review — truth correction)
+
+Owner rejected COMPLETE overclaim. Verified at HEAD `75a9fe6`:
+
+| Concern | Runtime truth |
+|---------|----------------|
+| Field metadata (bindings) | Product System CANONICAL |
+| Review labels (6 keys) | Product System when contract loads; local DEFAULT fallback |
+| Form structure / options / visibility / validation / save | FRONTEND / MIXED |
+| `runtime_authority=true` (pre-correction) | **OVERCLAIM** → scoped to `review_labels` |
+| Aggregate → CPP | CANONICAL_WITH_EXPLICIT_FALLBACK |
+| Full persisted E2E lineage | NOT_PROVEN (API/test isolated) |
 
 ### Master status
 
 ```text
-LETTERS_CANONICAL_PRODUCT_SLICE_V1 = COMPLETE — PROVEN_CURRENT (Letters-scoped)
-SCOPE = TPL-VOLUMETRIC-LETTERS_v2
+LETTERS_CANONICAL_PRODUCT_SLICE_V1 = PARTIAL — CONTRACT AND PRICING HANDOFF PROVEN
+SCOPE = TPL-VOLUMETRIC-LETTERS_v2 only
 PRODUCT SYSTEM GLOBAL COVERAGE = PARTIAL
 INTAKE V6 GLOBAL PRODUCT CONTRACT = PARTIAL
 AGGREGATE → CPP GLOBAL COVERAGE = PARTIAL
+AUDIT_COMMIT = 10926d2
+IMPL_COMMITS = 440055f · 71d0104 · 75a9fe6
+TRUTH_CORRECTION = (this commit)
 ```
 
-### Owner conclusion (post-impl)
+### Owner conclusion (post-verification)
 
 ```text
-LETTERS PRODUCT SYSTEM CONTRACT = CANONICAL
-LETTERS INTAKE FORM SOURCE = PRODUCT SYSTEM (labels/required; section chrome transitional)
+LETTERS PRODUCT SYSTEM FIELD METADATA = CANONICAL
+LETTERS FORM STRUCTURE = FRONTEND
+LETTERS FORM BEHAVIOR = MIXED
+LETTERS REVIEW LABELS = PRODUCT SYSTEM (with local fallback)
+LETTERS INTAKE FORM SOURCE = MIXED
 PRODUCT DEFINITION = ACTIVE COMPILER
 PRODUCT AGGREGATE TECHNICAL TRUTH = CANONICAL
-PRODUCT AGGREGATE COMMERCIAL MEASUREMENTS = CANONICAL
+PRODUCT AGGREGATE COMMERCIAL MEASUREMENTS = CANONICAL_WITH_FALLBACK
 CPP 7G MONETARY AUTHORITY = PRESERVED
-COMMERCIAL BASELINE = PRESERVED (read-only lineage unchanged)
+COMMERCIAL BASELINE = PRESERVED
+FULL PERSISTED E2E LINEAGE = NOT PROVEN
 MINUTES → COMMERCIAL PRICE = NO
-MODULES PRESENT TRUTH = UPDATED
-GOVERNANCE PRESENT TRUTH = UPDATED
+MODULES PRESENT TRUTH = CORRECTED
+GOVERNANCE PRESENT TRUTH = CORRECTED
 GLOBAL PRODUCT SYSTEM COVERAGE = PARTIAL
+FINAL STATUS = PARTIAL
 ```
 
 ### Remaining limitations
 
 - Other templates: PARTIAL / NEVERIFICAT
-- Intake section ordering still JSX (not fully dynamic module-section generator)
-- Full live Quote→Order→Plan write for a brand-new customer workspace deferred to labeled local fixture policy; Aggregate→CPP write path proven in isolated pytest workspace
+- Intake section ordering / fields / options / visibility still JSX (not dynamic contract renderer)
+- `required` / `field_type` / `option_values` exist on contract but are not runtime UI authority
+- HTTP CPP preview TestClient 404 is pre-existing fixture/path debt (service path proven)
+- Brand-new live Quote→Order→Plan write deferred; Aggregate→CPP proven in isolated pytest workspace
 - Baseline records 8/9/10/11 and 92402/92403/972901/972910 not mutated
 
----
+### Boundaries respected
 
+- No TE2E-028C / Stock G3 / labor $ / lifecycle / template breadth / schema migration
+- No invented commercial formulas; minutes stay operational-only
+- TE2E-028A/B + commercial/legacy isolation re-proven green after slice
 
+### Historical audit note
 
-## Boundaries respected
-
-- No TE2E-028C / Stock G3 / labor $ / lifecycle / template breadth.
-- No mutation of plans 8/9/10 or commercial fixtures.
-- No invented commercial formulas.
-- TE2E-028A/B and commercial/legacy isolation not reopened without regression proof. Both explore tracks finished and agree with the audit already written:
-  - [Find live Letters commercial scenario](f2a99e05-f327-4978-a8af-a67e1134f4fb): Build 1 `92402` / `QSN2-2026-0002` / 3549.1286) is the commercial lineage; 028A/B are snapshot-only.
-  - [Explore PS Intake 7G spine](4a69fa6c-c0cb-44e9-8e9b-dde556aeae12): Active spine is real; Intake UI mixed/hardcoded; 7G uses geometry + DEV_BRIDGE rules, not Aggregate qty; minutes stay operational.
-  No further action — audit docs remain uncommitted pending owner review.**Verdict:** `PRODUCT_SYSTEM_INTAKE_COMMERCIAL_E2E_GATES_READY`
-  Your instinct matches the runtime: minutes did not rewrite commercial. What is incomplete is Product System as the real form/quantity center — not the 7G money math itself.
-  ### **Mini decision**
-
-  | **Question**         | **Proven now**                                                                    |
-  | -------------------- | --------------------------------------------------------------------------------- |
-  | Product System role  | Catalog + mini-modules + dossier/ops/formulas — **not** the React form generator  |
-  | Who builds Intake UI | **Mostly hardcoded** Review/analyzer components; modular contract = awareness     |
-  | Commercial inputs    | Workspace `quote_geometry` / `finish_setup` (+ PD)                                |
-  | Who calculates money | **CPP 7G** + `commercial_rules_volumetric_v2` (DEV_BRIDGE) + some registry rates  |
-  | Planned minutes      | Aggregate → Plan only (028A/B)                                                    |
-  | Misalignment         | Form MIXED · Aggregate qty ≠ 7G qty · Control Center overstates Aggregate→Pricing |
-
-  ### **Repository**
-  HEAD `bbffb19` · branch match · FE/BE up · **NO COMMIT**
-  ### **Live commercial reconcile (exact)**
-  Lineage: workspace `e1b8d1e8-…` → quote `3` → `QSN2-2026-0002` → order `92402`  
-  **29 CPP lines sum = 3549.1286 = snapshot = order**  
-  Quote `grand_total` **4294.45** = net × 1.21 VAT  
-  `972910` excluded (minutes fixture, no Intake→quote lineage)
-  ### **Owner conclusion pack**
-  PRODUCT SYSTEM → INTAKE V6 = PARTIAL
-  INTAKE FORM SOURCE = MIXED
-  PRODUCT DEFINITION = ACTIVE COMPILER
-  PRODUCT AGGREGATE = PARTIAL
-  CPP 7G INPUTS = EXPLAINED
-  COMMERCIAL TOTAL = RECONCILED
-  MINUTES → COMMERCIAL PRICE = NO
-  PARALLEL PRODUCT MODEL = PRESENT
-  VERSIONING = PARTIAL
-  IMPLEMENTATION = STOP
-  ### **Recommended build (after GO)**
-  **Option B** — Aggregate/PD commercial measurement contract consumed by 7G (Letters).  
-  Then Option A — form-contract-driven UI.  
-  DEV_BRIDGE → real Pricing Registry remains owner pricing work.
-  ### **Files (uncommitted)**
-  - `docs/audits/2026-07-17_product_system_intake_commercial_e2e_truth_audit.md`
-  - `docs/worklog/realignment/2026-07-17_product_system_intake_commercial_e2e_truth_audit.md`
-  ### **Roadmap checkpoint**
-  Awareness **9/10** · direction **~85%** · TE2E-028A/B + commercial/legacy isolation **intact** · parallel form/qty models **present and documented** · residuals remain **paused**
-  ### **Next safe step**
-  Owner review of gates / `AUDIT COMMIT`. Do not start TE2E-028C, Stock G3, or Product System implementation until then.
-  Both explore tracks finished and agree with the audit already written:
-  - **[Find live Letters commercial scenario](vscode-file://vscode-app/c:/Users/offic/AppData/Local/Programs/cursor/resources/app/out/vs/code/electron-sandbox/workbench/f2a99e05-f327-4978-a8af-a67e1134f4fb)**: Build 1 (`92402` / `QSN2-2026-0002` / 3549.1286) is the commercial lineage; 028A/B are snapshot-only.
-  - **[Explore PS Intake 7G spine](vscode-file://vscode-app/c:/Users/offic/AppData/Local/Programs/cursor/resources/app/out/vs/code/electron-sandbox/workbench/4a69fa6c-c0cb-44e9-8e9b-dde556aeae12)**: Active spine is real; Intake UI mixed/hardcoded; 7G uses geometry + DEV_BRIDGE rules, not Aggregate qty; minutes stay operational.
-  No further action — audit docs remain uncommitted pending owner review.**Verdict:** `PRODUCT_SYSTEM_INTAKE_COMMERCIAL_E2E_GATES_READY`
-  Your instinct matches the runtime: minutes did not rewrite commercial. What is incomplete is Product System as the real form/quantity center — not the 7G money math itself.
-  ### **Mini decision**
-
-  | **Question**         | **Proven now**                                                                    |
-  | -------------------- | --------------------------------------------------------------------------------- |
-  | Product System role  | Catalog + mini-modules + dossier/ops/formulas — **not** the React form generator  |
-  | Who builds Intake UI | **Mostly hardcoded** Review/analyzer components; modular contract = awareness     |
-  | Commercial inputs    | Workspace `quote_geometry` / `finish_setup` (+ PD)                                |
-  | Who calculates money | **CPP 7G** + `commercial_rules_volumetric_v2` (DEV_BRIDGE) + some registry rates  |
-  | Planned minutes      | Aggregate → Plan only (028A/B)                                                    |
-  | Misalignment         | Form MIXED · Aggregate qty ≠ 7G qty · Control Center overstates Aggregate→Pricing |
-
-  ### **Repository**
-  HEAD `bbffb19` · branch match · FE/BE up · **NO COMMIT**
-  ### **Live commercial reconcile (exact)**
-  Lineage: workspace `e1b8d1e8-…` → quote `3` → `QSN2-2026-0002` → order `92402`  
-  **29 CPP lines sum = 3549.1286 = snapshot = order**  
-  Quote `grand_total` **4294.45** = net × 1.21 VAT  
-  `972910` excluded (minutes fixture, no Intake→quote lineage)
-  ### **Owner conclusion pack**
-  PRODUCT SYSTEM → INTAKE V6 = PARTIAL
-  INTAKE FORM SOURCE = MIXED
-  PRODUCT DEFINITION = ACTIVE COMPILER
-  PRODUCT AGGREGATE = PARTIAL
-  CPP 7G INPUTS = EXPLAINED
-  COMMERCIAL TOTAL = RECONCILED
-  MINUTES → COMMERCIAL PRICE = NO
-  PARALLEL PRODUCT MODEL = PRESENT
-  VERSIONING = PARTIAL
-  IMPLEMENTATION = STOP
-  ### **Recommended build (after GO)**
-  **Option B** — Aggregate/PD commercial measurement contract consumed by 7G (Letters).  
-  Then Option A — form-contract-driven UI.  
-  DEV_BRIDGE → real Pricing Registry remains owner pricing work.
-  ### **Files (uncommitted)**
-  - `docs/audits/2026-07-17_product_system_intake_commercial_e2e_truth_audit.md`
-  - `docs/worklog/realignment/2026-07-17_product_system_intake_commercial_e2e_truth_audit.md`
-  ### **Roadmap checkpoint**
-  Awareness **9/10** · direction **~85%** · TE2E-028A/B + commercial/legacy isolation **intact** · parallel form/qty models **present and documented** · residuals remain **paused**
-  ### **Next safe step**
-  Owner review of gates / `AUDIT COMMIT`. Do not start TE2E-028C, Stock G3, or Product System implementation until then.
-  Both explore tracks finished and agree with the audit already written:
-  - **[Find live Letters commercial scenario](vscode-file://vscode-app/c:/Users/offic/AppData/Local/Programs/cursor/resources/app/out/vs/code/electron-sandbox/workbench/f2a99e05-f327-4978-a8af-a67e1134f4fb)**: Build 1 (`92402` / `QSN2-2026-0002` / 3549.1286) is the commercial lineage; 028A/B are snapshot-only.
-  - **[Explore PS Intake 7G spine](vscode-file://vscode-app/c:/Users/offic/AppData/Local/Programs/cursor/resources/app/out/vs/code/electron-sandbox/workbench/4a69fa6c-c0cb-44e9-8e9b-dde556aeae12)**: Active spine is real; Intake UI mixed/hardcoded; 7G uses geometry + DEV_BRIDGE rules, not Aggregate qty; minutes stay operational.
-  No further action — audit docs remain uncommitted pending owner review.
+Pre-impl audit verdict `PRODUCT_SYSTEM_INTAKE_COMMERCIAL_E2E_GATES_READY` and live reconcile (QSN2 / order `92402` / 3549.1286 / 4294.45) remain the commercial baseline reference. This closure supersedes the pre-GO “assemble Option A/B” stop — Letters form authority + Aggregate measurements → CPP are now implemented for `TPL-VOLUMETRIC-LETTERS_v2` only.
 

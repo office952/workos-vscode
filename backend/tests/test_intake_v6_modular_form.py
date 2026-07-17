@@ -85,6 +85,37 @@ def test_unknown_template_returns_none(form_service: IntakeV6ModularFormContract
     assert form_service.get_for_template("TPL-UNKNOWN") is None
 
 
+def test_letters_canonical_form_contract_version_runtime_authority_and_field_keys(
+    form_service: IntakeV6ModularFormContractService,
+):
+    contract = form_service.get_for_template(TEMPLATE)
+    assert contract is not None
+    assert contract.summary.contract_version == "1.1.0-letters-canonical"
+    assert contract.summary.runtime_authority is False
+    assert contract.summary.runtime_authority_scope == "review_labels"
+    assert any("runtime_authority_scope=review_labels" in note.lower() for note in contract.notes)
+
+    keys = {binding.canonical_key for binding in contract.field_bindings}
+    for expected_key in (
+        "face_finish_type",
+        "return_depth_mm",
+        "return_finish_type",
+        "backing_mode",
+        "lighting_system_type",
+        "mounting_system",
+    ):
+        assert expected_key in keys
+
+    face_binding = next(f for f in contract.field_bindings if f.canonical_key == "face_finish_type")
+    assert face_binding.field_type == "enum"
+    assert face_binding.option_values
+    assert "debitare_fata" in face_binding.consumers
+
+    depth_binding = next(f for f in contract.field_bindings if f.canonical_key == "return_depth_mm")
+    assert depth_binding.field_type == "number"
+    assert depth_binding.unit == "mm"
+
+
 def test_legacy_letters_alias_returns_canonical_modular_contract(form_service: IntakeV6ModularFormContractService):
     contract = form_service.get_for_template("TPL-VOLUMETRIC-LETTERS")
     assert contract is not None
@@ -142,6 +173,9 @@ def test_form_contract_endpoint_200(form_auth_client):
     assert response.status_code == 200
     body = response.json()
     assert body["summary"]["active_module_count"] == 7
+    assert body["summary"]["contract_version"] == "1.1.0-letters-canonical"
+    assert body["summary"]["runtime_authority"] is False
+    assert body["summary"]["runtime_authority_scope"] == "review_labels"
     assert len(body["field_bindings"]) >= 20
     assert body["form_system_backbone"]["read_only"] is True
     assert body["form_system_backbone"]["root"]["canonical_code"] == TEMPLATE

@@ -34,6 +34,8 @@ export interface IntakeV6ReturnCantFieldsProps {
   compact?: boolean;
   /** Render a single review grid row (finish / depth / color) for Față|Cant alignment. */
   reviewGridRow?: "finish" | "depth" | "color";
+  finishLabel?: string;
+  depthLabel?: string;
 }
 
 export default function IntakeV6ReturnCantFields({
@@ -47,18 +49,20 @@ export default function IntakeV6ReturnCantFields({
   cantSettingsRowTestId,
   compact = false,
   reviewGridRow,
+  finishLabel: finishLabelOverride,
+  depthLabel: depthLabelOverride,
 }: IntakeV6ReturnCantFieldsProps) {
   const effectiveDepths = allowedDepthOverride ?? ALLOWED_RETURN_DEPTH_MM;
   const uiOption = resolveIntakeV6ReturnFinishUiOption(returnCant.finishType);
   const return651Known = isKnownRegistryColor("ORACAL", returnCant.colorCode, "651");
   const returnRalKnown = isKnownRegistryColor("RAL", returnCant.colorCode);
   const isReviewLayout = layout === "review";
-  const finishLabel = isReviewLayout
+  const finishLabel = finishLabelOverride ?? (isReviewLayout
     ? "Finisaj cant / volum"
-    : `Tip finisaj ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER}`;
-  const depthLabel = isReviewLayout
+    : `Tip finisaj ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER}`);
+  const depthLabel = depthLabelOverride ?? (isReviewLayout
     ? "Adâncime cant / volum (mm)"
-    : `Adâncime ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER} (mm)`;
+    : `Adâncime ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER} (mm)`);
   const oracalColorLabel = isReviewLayout
     ? "Culoare Oracal cant"
     : `Culoare Oracal 651 ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER}`;

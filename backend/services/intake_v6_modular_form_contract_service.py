@@ -21,9 +21,12 @@ _GEOM = "quote_geometry"
 _CLIENT = "client"
 _SVG = "svg_source"
 
-# Runtime authority scope — TPL-VOLUMETRIC-LETTERS_v2 only (Letters canonical slice v1).
+# Scoped runtime authority — Letters Review labels only (not full form generation).
+_LETTERS_RUNTIME_AUTHORITY_SCOPE = "review_labels"
 _LETTERS_RUNTIME_AUTHORITY_NOTE = (
-    "runtime_authority=true — form contract is runtime authority for TPL-VOLUMETRIC-LETTERS_v2 only."
+    "runtime_authority=false; runtime_authority_scope=review_labels — "
+    "Product System owns field metadata and Review label_ro for TPL-VOLUMETRIC-LETTERS_v2; "
+    "section structure, options, visibility, validation, and save remain Intake frontend."
 )
 
 VOLUMETRIC_FIELD_BINDINGS: list[IntakeFormFieldBinding] = [
@@ -463,7 +466,8 @@ class IntakeV6ModularFormContractService:
                 registry_version=REGISTRY_VERSION,
                 active_module_count=len(active_modules),
                 field_binding_count=len(VOLUMETRIC_FIELD_BINDINGS),
-                runtime_authority=True,
+                runtime_authority=False,
+                runtime_authority_scope=_LETTERS_RUNTIME_AUTHORITY_SCOPE,
                 warnings=warnings,
             ),
             modules=modules,
@@ -478,7 +482,7 @@ class IntakeV6ModularFormContractService:
                 "Does not mutate workspace payload; Intake hydrates/saves answers separately.",
                 "ProductDefinition consumes field_bindings / product_definition_keys as compiler inputs.",
                 "ProductAggregate emits non-monetary commercial measurements; CPP 7G alone prices.",
-                "Other templates remain unsupported by this runtime-authority contract.",
+                "Other templates remain unsupported by this scoped contract.",
             ],
         )
 

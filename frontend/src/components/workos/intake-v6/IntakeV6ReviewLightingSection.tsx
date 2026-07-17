@@ -67,6 +67,7 @@ export default function IntakeV6ReviewLightingSection({
   allowedLedModulePowerW,
   allowedEmblemLightingModes,
   compact = true,
+  lightingSystemLabel,
 }: {
   illuminated: boolean;
   onIlluminatedChange: (value: boolean) => void;
@@ -106,6 +107,7 @@ export default function IntakeV6ReviewLightingSection({
   allowedLedModulePowerW: readonly TemplateFormOption[];
   allowedEmblemLightingModes: readonly TemplateFormOption[];
   compact?: boolean;
+  lightingSystemLabel?: string;
 }) {
   const fallbackDensity = ledAreaDensityModulesPerSqm(returnDepthMm ?? undefined);
   const shellClass = compact ? `${v6.cardCompact} !p-3` : `${v6.card} mb-4`;
@@ -191,7 +193,9 @@ export default function IntakeV6ReviewLightingSection({
               <p className="text-[11px] font-semibold text-cyan-200">Iluminare</p>
               <div className="grid gap-2 sm:grid-cols-2">
                 <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem LED</span>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>
+                    {lightingSystemLabel ?? "Sistem LED"}
+                  </span>
                   <select
                     className={REVIEW_SELECT_CLASS}
                     value={lightingSystemType}

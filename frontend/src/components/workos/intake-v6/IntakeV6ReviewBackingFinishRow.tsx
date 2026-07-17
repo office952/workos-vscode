@@ -15,11 +15,13 @@ export default function IntakeV6ReviewBackingFinishRow({
   onBackingChange,
   embedded = false,
   testIdSuffix,
+  backingLabel,
 }: {
   backingMode: IntakeV6BackingMode;
   onBackingChange: (mode: IntakeV6BackingMode) => void;
   embedded?: boolean;
   testIdSuffix?: string;
+  backingLabel?: string;
 }) {
   const rowTestId = testIdSuffix
     ? `intake-v6-backing-finish-row-${testIdSuffix}`
@@ -39,7 +41,7 @@ export default function IntakeV6ReviewBackingFinishRow({
       <div className={REVIEW_LAYER_CARD_GRID_CLASS}>
         <div className={REVIEW_FACE_COLUMN_CLASS} data-testid="intake-v6-backing-finish-zone">
           <label className={REVIEW_FIELD_BLOCK_CLASS}>
-            <span className={REVIEW_FIELD_LABEL_CLASS}>Finisaj spate</span>
+            <span className={REVIEW_FIELD_LABEL_CLASS}>{backingLabel ?? "Finisaj spate"}</span>
             <select
               className={REVIEW_SELECT_CLASS}
               value={backingMode}

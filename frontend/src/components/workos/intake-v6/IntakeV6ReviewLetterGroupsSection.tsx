@@ -44,6 +44,7 @@ import {
   copyFirstCantSettingsToAllGroups,
   patchLetterGroupFinishes,
 } from "./letterGroupFinishSectionHelpers";
+import type { LettersCanonicalFieldLabels } from "@/lib/intakeV6/lettersCanonicalFormContract";
 
 function layerTestIdSuffix(key: string): string {
   return key.replace(/[^a-zA-Z0-9_-]+/g, "-");
@@ -71,6 +72,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
   allowedReturnDepthMm,
   globalBackingFallback,
   soldScopeVisibility,
+  fieldLabels,
 }: {
   groups: IntakeV6LetterGroupFinish[];
   onChange: (groups: IntakeV6LetterGroupFinish[]) => void;
@@ -78,6 +80,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
   allowedReturnDepthMm?: readonly number[];
   globalBackingFallback?: IntakeV6BackingMode;
   soldScopeVisibility?: SoldScopeFieldVisibility;
+  fieldLabels?: Partial<LettersCanonicalFieldLabels> | null;
 }) {
   const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
   const effectiveFaceOptions = resolveLetterGroupFaceFinishOptions(faceFinishOptions);
@@ -173,6 +176,8 @@ export default function IntakeV6ReviewLetterGroupsSection({
                 patchGroup(group.group_key, patchLetterGroupFromReturnCant(cant)),
               testIdPrefix: `intake-v6-letter-group-return-${group.group_key}`,
               allowedReturnDepthMm,
+              finishLabel: fieldLabels?.return_finish_type,
+              depthLabel: fieldLabels?.return_depth_mm,
             };
 
             return (
@@ -219,7 +224,9 @@ export default function IntakeV6ReviewLetterGroupsSection({
                       <section data-testid={`intake-v6-face-letter-zone-${group.group_key}`}>
                         <ZoneTitle icon={PanelTop} title="Față" />
                         <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                          <span className={REVIEW_FIELD_LABEL_CLASS}>Finisaj față</span>
+                          <span className={REVIEW_FIELD_LABEL_CLASS}>
+                            {fieldLabels?.face_finish_type ?? "Finisaj față"}
+                          </span>
                           <select
                             className={REVIEW_SELECT_CLASS}
                             value={group.face_finish_type}
@@ -353,6 +360,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
                           embedded
                           testIdSuffix={layerTestIdSuffix(group.group_key)}
                           backingMode={resolvedBacking}
+                          backingLabel={fieldLabels?.backing_mode}
                           onBackingChange={(mode) =>
                             patchGroup(group.group_key, { backing_mode: mode, confirmed: false })
                           }
