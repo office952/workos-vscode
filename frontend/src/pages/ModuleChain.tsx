@@ -13,15 +13,28 @@ import {
 } from "lucide-react";
 import { useModuleChainData } from "@/hooks/useModuleChainData";
 import {
+  ACTIVE_SCOPE_HANDOFFS,
+  ACTIVE_SCOPE_KNOWN_DEFECTS_RO,
+  ACTIVE_SCOPE_READINESS_LAW,
+  ACTIVE_SCOPE_SYSTEM,
+  ACTIVE_SCOPE_TARGET_HANDOFF_RO,
+  ACTIVE_SCOPE_TARGET_NOTE_RO,
   CANONICAL_CONCEPTS,
   CANONICAL_ROUTES,
   CANONICAL_SPINE_LABELS_RO,
+  DOCUMENTATION_AUTHORITY_RULE_RO,
+  DOCUMENTATION_HIERARCHY,
+  FULL_TEMPLATE_COUPLING_DEFECT,
+  HYBRID_INTAKE_MODEL,
   MODULE_CHAIN_TABS,
+  MODULE_INDEPENDENCE_PRODUCT_STATUS,
+  OFFICIAL_CURRENT_TRUTH_ROUTES,
   PRESENT_EVIDENCE,
   PRESENT_HANDOFFS,
   PRESENT_SUPPORT_SYSTEMS,
   PRESENT_SYSTEMS,
   STABILIZATION_PRODUCTS,
+  UNREGISTERED_SYSTEM_POLICY,
   presentStatusBadgeClass,
   type ModuleChainTabId,
 } from "@/lib/currentTruthControlCenter";
@@ -158,8 +171,25 @@ export default function ModuleChain() {
           </button>
         </div>
         <p className="text-[12px] text-slate-500">
-          Control center — adevărul prezent al sistemelor WorkOS. Proiecție read-only.
+          Control center — adevărul prezent oficial al sistemelor WorkOS (Level 1). Proiecție read-only.
         </p>
+      </div>
+
+      <div
+        className="flex items-start gap-2 px-3 py-2.5 bg-blue-900/20 border border-blue-700/40 rounded-lg"
+        data-testid="module-chain-official-truth-banner"
+      >
+        <BookOpen className="w-4 h-4 text-blue-300 mt-0.5 shrink-0" />
+        <div className="text-[12px] text-blue-100/95 leading-relaxed space-y-1">
+          <p className="font-semibold" data-testid="official-current-truth-label">
+            Adevăr curent oficial = {OFFICIAL_CURRENT_TRUTH_ROUTES.modules} +{" "}
+            {OFFICIAL_CURRENT_TRUTH_ROUTES.governance}
+          </p>
+          <p data-testid="documentation-authority-rule">{DOCUMENTATION_AUTHORITY_RULE_RO}</p>
+          <p className="text-[11px] text-blue-200/80">
+            Audits / worklogs = dovezi (Level 3/4). Nu pot declara status oficial singure.
+          </p>
+        </div>
       </div>
 
       <div
@@ -169,7 +199,8 @@ export default function ModuleChain() {
         <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
         <p className="text-[12px] text-amber-200/95 leading-relaxed">
           Această hartă descrie ce există acum: status, contracte active, proprietar și limitări. Dovezile
-          istorice (inclusiv PROVEN_V1) sunt în tab-ul Surse și dovezi — nu sunt status de sănătate.
+          istorice (inclusiv PROVEN_V1) sunt în tab-ul Surse și dovezi — nu sunt status de sănătate. Ținta
+          Active Scope nu este afișată ca implementată.
         </p>
       </div>
 
@@ -204,6 +235,177 @@ export default function ModuleChain() {
           data-testid="module-chain-architecture"
           role="tabpanel"
         >
+          <div className="space-y-2" data-testid="documentation-hierarchy">
+            <SectionHeader title="Ierarhia documentației" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {DOCUMENTATION_HIERARCHY.map((level) => (
+                <div
+                  key={level.id}
+                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                  data-testid={`doc-hierarchy-level-${level.level}`}
+                >
+                  <p className="font-semibold text-slate-100">
+                    Level {level.level} — {level.labelRo}
+                  </p>
+                  <p className="text-slate-400 mt-1">{level.surfacesRo}</p>
+                  <p className="text-slate-500 mt-1">{level.ruleRo}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div
+            className="border border-amber-700/40 bg-amber-900/10 rounded-lg p-3 space-y-2"
+            data-testid="active-scope-system"
+          >
+            <div className="flex flex-wrap items-center gap-2">
+              <SectionHeader
+                title={ACTIVE_SCOPE_SYSTEM.canonicalName}
+                icon={<GitBranch className="w-4 h-4 text-amber-400" />}
+              />
+              <span
+                className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass("PARTIAL")}`}
+                data-testid="active-scope-status"
+              >
+                PARTIAL / CONFLICTED
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-300">{ACTIVE_SCOPE_SYSTEM.roleRo}</p>
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px] text-slate-400">
+              <div>
+                <dt className="uppercase text-slate-500">Owner (țintă)</dt>
+                <dd className="text-slate-200" data-testid="active-scope-owner">
+                  {ACTIVE_SCOPE_SYSTEM.owner}
+                </dd>
+              </div>
+              <div>
+                <dt className="uppercase text-slate-500">Owner gate</dt>
+                <dd className="text-amber-200" data-testid="active-scope-owner-gate">
+                  {ACTIVE_SCOPE_SYSTEM.ownerGatesRo}
+                </dd>
+              </div>
+              <div>
+                <dt className="uppercase text-slate-500">Intrări</dt>
+                <dd>{ACTIVE_SCOPE_SYSTEM.inputsRo}</dd>
+              </div>
+              <div>
+                <dt className="uppercase text-slate-500">Ieșiri</dt>
+                <dd>{ACTIVE_SCOPE_SYSTEM.outputsRo}</dd>
+              </div>
+            </dl>
+            <div data-testid="active-scope-known-defects">
+              <p className="text-[10px] uppercase text-slate-500 mb-1">Defecte cunoscute</p>
+              <ul className="list-disc list-inside text-[11px] text-amber-200/90 space-y-0.5">
+                {ACTIVE_SCOPE_KNOWN_DEFECTS_RO.map((d) => (
+                  <li key={d}>{d}</li>
+                ))}
+              </ul>
+            </div>
+            <div
+              className="border border-red-800/40 bg-red-900/15 rounded-md px-3 py-2 text-[11px]"
+              data-testid="full-template-coupling-defect"
+            >
+              <p className="font-semibold text-red-200">{FULL_TEMPLATE_COUPLING_DEFECT.id}</p>
+              <p className="text-red-100/90 mt-1">{FULL_TEMPLATE_COUPLING_DEFECT.doNotRo}</p>
+              <p className="text-slate-400 mt-1">
+                Runtime: {FULL_TEMPLATE_COUPLING_DEFECT.runtimeImplementation} · Next:{" "}
+                {FULL_TEMPLATE_COUPLING_DEFECT.nextBuildRo}
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-2" data-testid="active-scope-handoffs">
+            <SectionHeader
+              title="Handoff Active Scope (curent vs țintă)"
+              icon={<ArrowRight className="w-4 h-4 text-slate-400" />}
+            />
+            <p className="text-[11px] text-slate-500" data-testid="active-scope-target-note">
+              {ACTIVE_SCOPE_TARGET_NOTE_RO}
+            </p>
+            <p className="text-[10px] text-slate-600 font-mono" data-testid="active-scope-target-chain">
+              Țintă: {ACTIVE_SCOPE_TARGET_HANDOFF_RO.join(" → ")}
+            </p>
+            <div className="space-y-1.5">
+              {ACTIVE_SCOPE_HANDOFFS.map((h) => (
+                <div
+                  key={h.id}
+                  className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                  data-testid={`active-scope-handoff-${h.id}`}
+                >
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-blue-300 font-medium">{h.fromRo}</span>
+                    <ArrowRight className="w-3 h-3 text-slate-600" />
+                    <span className="text-blue-300 font-medium">{h.toRo}</span>
+                    <span className="ml-auto text-[9px] font-semibold border border-amber-700/50 text-amber-300 px-1.5 py-0.5 rounded">
+                      {h.status}
+                    </span>
+                  </div>
+                  <p className="text-slate-500 mt-1">{h.noteRo}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2" data-testid="module-independence-products">
+            <SectionHeader
+              title="Independență module — Litere / Logo / ACM"
+              icon={<BookOpen className="w-4 h-4 text-violet-400" />}
+            />
+            {MODULE_INDEPENDENCE_PRODUCT_STATUS.map((product) => (
+              <div
+                key={product.id}
+                className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+                data-testid={`module-independence-${product.id}`}
+              >
+                <p className="font-bold text-slate-100 mb-1">{product.labelRo}</p>
+                {"composedProduct" in product && (
+                  <p className="text-slate-400">
+                    COMPOSED PRODUCT = {product.composedProduct} · MODULE INDEPENDENCE ={" "}
+                    {product.moduleIndependence}
+                  </p>
+                )}
+                {"modeledReturn" in product && product.modeledReturn && (
+                  <p className="text-amber-200/90 mt-1" data-testid="modeled-return-status">
+                    Modeled return: INTAKE={product.modeledReturn.intakeSelection} · PD=
+                    {product.modeledReturn.pdActiveScope} · Aggregate=
+                    {product.modeledReturn.aggregateActiveScope} · CPP={product.modeledReturn.cpp} ·
+                    Exec={product.modeledReturn.execution} · FINAL={product.modeledReturn.final}
+                  </p>
+                )}
+                {"componentIndependence" in product && (
+                  <p className="text-slate-400">
+                    COMPONENT INDEPENDENCE = {product.componentIndependence}
+                    {"rootOfferability" in product
+                      ? ` · ROOT OFFERABILITY = ${product.rootOfferability}`
+                      : ""}
+                  </p>
+                )}
+              </div>
+            ))}
+            <div
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              data-testid="hybrid-intake-model"
+            >
+              <p className="font-semibold text-slate-100">Intake entry = HYBRID</p>
+              <p className="text-slate-400 mt-1">{HYBRID_INTAKE_MODEL.productFirstRo}</p>
+              <p className="text-slate-400">{HYBRID_INTAKE_MODEL.moduleFirstRo}</p>
+              <p className="text-amber-200/90 mt-1">{HYBRID_INTAKE_MODEL.noteRo}</p>
+            </div>
+            <div
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              data-testid="unregistered-system-policy"
+            >
+              <p className="font-semibold text-slate-100">{UNREGISTERED_SYSTEM_POLICY.id}</p>
+              <p className="text-slate-400 mt-1">{UNREGISTERED_SYSTEM_POLICY.definitionRo}</p>
+              <p className="text-amber-200/90 mt-1">
+                Status policy: {UNREGISTERED_SYSTEM_POLICY.status}
+              </p>
+            </div>
+            <p className="text-[11px] text-slate-500" data-testid="active-scope-readiness-summary">
+              {ACTIVE_SCOPE_READINESS_LAW.bindingRo}
+            </p>
+          </div>
+
           <SectionHeader title="Spine activ" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
           <p className="text-[11px] text-slate-500" data-testid="canonical-spine-label">
             Fluxul activ unic: {CANONICAL_SPINE_LABELS_RO.join(" → ")}

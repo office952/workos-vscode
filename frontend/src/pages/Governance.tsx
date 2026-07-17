@@ -14,12 +14,24 @@ import {
   type GovernanceTabHonestyMeta,
 } from "@/lib/truthPagesHonestyBaseline";
 import {
+  ACTIVE_SCOPE_OWNERSHIP,
+  ACTIVE_SCOPE_READINESS_LAW,
+  ACTIVE_SCOPE_SYSTEM,
   CANONICAL_SPINE_LABELS_RO,
+  DEPENDENCY_BINDING_RULE_RO,
+  DEPENDENCY_CLASSES,
+  DOCUMENTATION_AUTHORITY_RULE_RO,
+  DOCUMENTATION_HIERARCHY,
+  FULL_TEMPLATE_COUPLING_DEFECT,
+  HYBRID_INTAKE_MODEL,
+  OFFICIAL_CURRENT_TRUTH_ROUTES,
   PRESENT_BOUNDARIES,
   PRESENT_GATES,
   PRESENT_GUARDRAILS,
   PRESENT_OWNERSHIP_ROWS,
   SETTINGS_OWNERSHIP_ROWS,
+  SYSTEM_REGISTRATION_REQUIRED_FIELDS,
+  UNREGISTERED_SYSTEM_POLICY,
   governanceStatusBadgeClass,
   presentStatusBadgeClass,
 } from "@/lib/currentTruthControlCenter";
@@ -1546,6 +1558,149 @@ function OwnershipHonestyView({
   return (
     <div className="space-y-4" data-testid="governance-ownership-baseline">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.ownership} />
+
+      <section
+        className="bg-[#111827] border border-blue-700/40 rounded-lg p-4 space-y-2"
+        data-testid="governance-official-truth"
+      >
+        <SectionHeader
+          title="Documentație curentă oficială"
+          icon={<BookOpen className="w-4 h-4 text-blue-400" />}
+        />
+        <p className="text-[12px] text-blue-100 font-semibold" data-testid="governance-official-routes">
+          Level 1 = {OFFICIAL_CURRENT_TRUTH_ROUTES.modules} + {OFFICIAL_CURRENT_TRUTH_ROUTES.governance}
+        </p>
+        <p className="text-[11px] text-slate-400" data-testid="governance-documentation-authority">
+          {DOCUMENTATION_AUTHORITY_RULE_RO}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2" data-testid="governance-doc-hierarchy">
+          {DOCUMENTATION_HIERARCHY.map((level) => (
+            <div
+              key={level.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+            >
+              <p className="text-slate-200 font-medium">
+                Level {level.level} — {level.labelRo}
+              </p>
+              <p className="text-slate-500">{level.surfacesRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-system-registration"
+      >
+        <SectionHeader
+          title="Legea înregistrării sistemelor"
+          icon={<Shield className="w-4 h-4 text-violet-400" />}
+        />
+        <p className="text-[11px] text-slate-400">
+          Un sistem este oficial numai dacă este înregistrat cu câmpurile obligatorii. Altfel:{" "}
+          <span className="text-amber-300 font-semibold" data-testid="unregistered-system-id">
+            {UNREGISTERED_SYSTEM_POLICY.id}
+          </span>
+          .
+        </p>
+        <p className="text-[11px] text-slate-500" data-testid="unregistered-system-may-not">
+          Nu poate: {UNREGISTERED_SYSTEM_POLICY.mayNotRo.join("; ")}.
+        </p>
+        <p className="text-[10px] text-slate-500" data-testid="system-registration-fields">
+          Câmpuri: {SYSTEM_REGISTRATION_REQUIRED_FIELDS.join(" · ")}
+        </p>
+        <div
+          className="bg-[#1A2236] border border-amber-700/40 rounded-md px-3 py-2 text-[11px]"
+          data-testid="governance-active-scope-registration"
+        >
+          <p className="font-semibold text-slate-100">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
+          <p className="text-amber-200 mt-1" data-testid="governance-active-scope-status">
+            Status: PARTIAL / CONFLICTED · Owner: {ACTIVE_SCOPE_SYSTEM.owner}
+          </p>
+          <p className="text-slate-500 mt-1">{ACTIVE_SCOPE_SYSTEM.boundariesRo}</p>
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-active-scope-law"
+      >
+        <SectionHeader
+          title={ACTIVE_SCOPE_READINESS_LAW.titleRo}
+          icon={<Lock className="w-4 h-4 text-amber-400" />}
+        />
+        <p className="text-[12px] text-slate-200 font-medium" data-testid="readiness-law-binding">
+          {ACTIVE_SCOPE_READINESS_LAW.bindingRo}
+        </p>
+        <ul className="list-disc list-inside text-[11px] text-slate-400 space-y-0.5" data-testid="inactive-module-rules">
+          {ACTIVE_SCOPE_READINESS_LAW.inactiveMustNotRo.map((rule) => (
+            <li key={rule}>{rule}</li>
+          ))}
+        </ul>
+        <div className="space-y-1" data-testid="owner-law-lines">
+          {ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.map((line) => (
+            <p key={line} className="text-[11px] text-amber-200/90 font-mono">
+              {line}
+            </p>
+          ))}
+        </div>
+        <div className="space-y-1.5 mt-2" data-testid="active-scope-ownership-matrix">
+          {ACTIVE_SCOPE_OWNERSHIP.map((row) => (
+            <div
+              key={row.systemId}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              data-testid={`active-scope-owns-${row.systemId}`}
+            >
+              <p className="text-slate-200 font-medium">{row.systemId}</p>
+              <p className="text-emerald-300/90">Owns: {row.ownsRo}</p>
+              <p className="text-slate-500">Does not own: {row.doesNotOwnRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-dependency-classes"
+      >
+        <SectionHeader title="Clase de dependențe" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
+        <p className="text-[11px] text-amber-200/90" data-testid="dependency-binding-rule">
+          {DEPENDENCY_BINDING_RULE_RO}
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {DEPENDENCY_CLASSES.map((cls) => (
+            <div
+              key={cls.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+              data-testid={`dependency-class-${cls.id}`}
+            >
+              <p className="font-semibold text-slate-100">{cls.labelRo}</p>
+              <p className="text-slate-400 mt-1">{cls.definitionRo}</p>
+              <p className="text-slate-500 mt-1">Ex: {cls.exampleRo}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-2"
+        data-testid="governance-hybrid-intake"
+      >
+        <SectionHeader title="Model Intake HYBRID" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
+        <p className="text-[11px] text-slate-300" data-testid="hybrid-model-status">
+          Approved: {HYBRID_INTAKE_MODEL.approvedModel} · UI={HYBRID_INTAKE_MODEL.uiStatus} · Downstream=
+          {HYBRID_INTAKE_MODEL.downstreamStatus}
+        </p>
+        <p className="text-[11px] text-slate-400">{HYBRID_INTAKE_MODEL.compileRuleRo}</p>
+        <div
+          className="border border-red-800/40 bg-red-900/15 rounded-md px-3 py-2 text-[11px]"
+          data-testid="governance-full-template-coupling"
+        >
+          <p className="font-semibold text-red-200">{FULL_TEMPLATE_COUPLING_DEFECT.id}</p>
+          <p className="text-slate-400 mt-1">{FULL_TEMPLATE_COUPLING_DEFECT.includesRo.join("; ")}</p>
+        </div>
+      </section>
+
       <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-ownership">
         <SectionHeader title="Cine deține adevărul" icon={<Eye className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-3">

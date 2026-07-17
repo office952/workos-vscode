@@ -40,10 +40,16 @@ describe("Current Truth Control Center shared projection", () => {
 
     const pricing = PRESENT_SYSTEMS.find((s) => s.id === "pricing_commercial");
     expect(pricing?.verifyRoute).toBe("/inventory/pricing");
+    expect(pricing?.status).toBe("PARTIAL");
+    expect(pricing?.limitationRo).toMatch(/CONFLICTED/);
+
+    const pd = PRESENT_SYSTEMS.find((s) => s.id === "product_definition");
+    expect(pd?.status).toBe("PARTIAL");
+    expect(pd?.limitationRo).toMatch(/NOT CONSUMED|REWORK/);
 
     const intake = PRESENT_SYSTEMS.find((s) => s.id === "intake_v6");
     expect(intake?.limitationRo).toMatch(/renderer generic|generic/i);
-    expect(intake?.limitationRo).toMatch(/MIXED/);
+    expect(intake?.limitationRo).toMatch(/MIXED|sold-scope/i);
 
     const handoffs = PRESENT_HANDOFFS.map((h) => h.id);
     expect(handoffs).toContain("h.ps_intake");
@@ -56,9 +62,8 @@ describe("Current Truth Control Center shared projection", () => {
 
     const paCpp = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_cpp");
     expect(paCpp?.status).toBe("PARTIAL");
-    expect(paCpp?.outputContractRo).toMatch(/non-monetare/);
-    expect(paCpp?.outputContractRo).toMatch(/fallback/i);
-    expect(paCpp?.outputContractRo).toMatch(/fără minute/i);
+    expect(paCpp?.outputContractRo).toMatch(/non-monetare|CONFLICTED/);
+    expect(paCpp?.outputContractRo).toMatch(/live-calc|unscoped|CONFLICTED/i);
 
     const paPlan = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_plan");
     expect(paPlan?.outputContractRo).toMatch(/minute planificate/);
@@ -122,6 +127,8 @@ describe("Current Truth Control Center shared projection", () => {
     expect(g01?.requirementRo).not.toMatch(/Quotes calculează/);
     expect(g13?.titleRo).toBe("UTF-8 end-to-end pentru textul operator");
     expect(g13?.status).toBe("PARTIAL APLICAT");
+    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("NEAPLICAT");
+    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G15")?.status).toBe("APLICAT");
   });
 
   it("marks owner gates as policy, not fake readiness engine", () => {

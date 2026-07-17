@@ -55,12 +55,39 @@ describe("ModuleChain present-truth control center", () => {
     expect(screen.getByTestId("arch-node-product_system")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("arch-node-product_system")).toHaveTextContent("Letters");
     expect(screen.getByTestId("arch-node-intake_v6")).toHaveTextContent("CONFIRMAT");
+    expect(screen.getByTestId("arch-node-product_definition")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("arch-node-post_job")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("legacy-spine-notice")).toHaveTextContent(
       "nu reprezintă fluxul activ"
     );
     expect(screen.queryByText("PROVEN_V1")).not.toBeInTheDocument();
     expect(screen.queryByText("Operational Core")).not.toBeInTheDocument();
+  });
+
+  it("publishes official current-truth and Active Scope as PARTIAL/CONFLICTED", () => {
+    renderModuleChain();
+    expect(screen.getByTestId("official-current-truth-label")).toHaveTextContent("/modules");
+    expect(screen.getByTestId("official-current-truth-label")).toHaveTextContent("/governance");
+    expect(screen.getByTestId("documentation-authority-rule")).toHaveTextContent("oficial");
+    expect(screen.getByTestId("active-scope-status")).toHaveTextContent("PARTIAL / CONFLICTED");
+    expect(screen.getByTestId("active-scope-owner")).toHaveTextContent("ProductDefinition");
+    expect(screen.getByTestId("active-scope-owner-gate")).toHaveTextContent("STOP");
+    expect(screen.getByTestId("full-template-coupling-defect")).toHaveTextContent(
+      "FULL_TEMPLATE_COUPLING"
+    );
+    expect(screen.getByTestId("active-scope-handoff-as.offer_scope_pd")).toHaveTextContent(
+      "FAILED / NOT CONSUMED"
+    );
+    expect(screen.getByTestId("active-scope-handoff-as.aggregate_cpp")).toHaveTextContent(
+      "CONFLICTED"
+    );
+    expect(screen.getByTestId("active-scope-target-note")).toHaveTextContent("nu implementat");
+    expect(screen.getByTestId("module-independence-letters")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("modeled-return-status")).toHaveTextContent("PD=FAILED");
+    expect(screen.getByTestId("module-independence-logo")).toHaveTextContent("BLOCKED");
+    expect(screen.getByTestId("module-independence-acm")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("hybrid-intake-model")).toHaveTextContent("HYBRID");
+    expect(screen.getByTestId("unregistered-system-policy")).toHaveTextContent("UNREGISTERED_SYSTEM");
   });
 
   it("distinguishes concepts and canonical Inventory/Pricing/Dossier routes", () => {

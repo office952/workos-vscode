@@ -46,6 +46,30 @@ describe("Governance present-truth control center", () => {
     expect(screen.getByTestId("ownership-intake_v6")).toHaveTextContent("Intake V6");
     expect(screen.getByTestId("ownership-quote_snapshot")).toHaveTextContent("CONFIRMAT");
     expect(screen.getByTestId("ownership-post_job")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("ownership-active_scope_sold_scope")).toHaveTextContent("PARTIAL");
+    expect(screen.getByTestId("ownership-product_definition")).toHaveTextContent("PARTIAL");
+  });
+
+  it("publishes documentation hierarchy, registration law, readiness law", () => {
+    render(<Governance />);
+    expect(screen.getByTestId("governance-official-routes")).toHaveTextContent("/modules");
+    expect(screen.getByTestId("governance-official-routes")).toHaveTextContent("/governance");
+    expect(screen.getByTestId("unregistered-system-id")).toHaveTextContent("UNREGISTERED_SYSTEM");
+    expect(screen.getByTestId("governance-active-scope-status")).toHaveTextContent(
+      "PARTIAL / CONFLICTED"
+    );
+    expect(screen.getByTestId("readiness-law-binding")).toHaveTextContent("modulele active");
+    expect(screen.getByTestId("inactive-module-rules")).toHaveTextContent("nu creează warnings");
+    expect(screen.getByTestId("dependency-class-composition_only")).toHaveTextContent(
+      "Composition-only"
+    );
+    expect(screen.getByTestId("hybrid-model-status")).toHaveTextContent("HYBRID");
+    expect(screen.getByTestId("governance-full-template-coupling")).toHaveTextContent(
+      "FULL_TEMPLATE_COUPLING"
+    );
+    expect(screen.getByTestId("active-scope-owns-product_definition")).toHaveTextContent(
+      "active-scope readiness"
+    );
   });
 
   it("boundaries follow canonical spine and drop Quotes-calculează", () => {
@@ -88,6 +112,18 @@ describe("Governance present-truth control center", () => {
       "UTF-8 end-to-end pentru textul operator"
     );
     expect(within(panel).getByTestId("guardrail-G13")).toHaveTextContent("PARTIAL APLICAT");
+    expect(within(panel).getByTestId("guardrail-G14")).toHaveTextContent("module active");
+    expect(within(panel).getByTestId("guardrail-G15")).toHaveTextContent("APLICAT");
+    expect(within(panel).getByTestId("guardrail-G16")).toHaveTextContent("UNREGISTERED_SYSTEM");
+  });
+
+  it("keeps active-scope runtime owner gate as STOP policy", () => {
+    render(<Governance />);
+    fireEvent.click(screen.getByTestId("governance-tab-gates"));
+    const panel = screen.getByTestId("governance-panel-gates");
+    expect(within(panel).getByTestId("owner-gate-g.owner_active_scope_runtime")).toHaveTextContent(
+      "STOP"
+    );
   });
 
   it("labels agents as non-enforcement reference", () => {
