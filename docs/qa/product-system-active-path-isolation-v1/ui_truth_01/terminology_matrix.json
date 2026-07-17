@@ -80,8 +80,39 @@
       "current_text": "MOD PRODUCȚIE — Sursa de date: backend live",
       "target_text": "Staging · Backend disponibil · DB neverificată",
       "condition": "version.environment staging — remove false producție claim in dev"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Se verifică",
+      "condition": "initial loading / backend checking — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Backend — stare necunoscută",
+      "condition": "backend state unknown — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Backend — stare învechită",
+      "condition": "stale health snapshot — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Detalii tehnice",
+      "condition": "secondary technical strip label — UI-TRUTH-01B G3=STRIP"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date cu avertisment",
+      "condition": "diagnostics/health database check warning — UI-TRUTH-01B"
+    },
+    {
+      "current_text": "(none)",
+      "target_text": "Baza de date indisponibilă",
+      "condition": "diagnostics/health database check fail — UI-TRUTH-01B"
     }
   ],
   "compact_format": "Mediu · Backend · DB — e.g. Local · Backend disponibil · DB neverificată",
-  "forbidden_labels": ["LIVE", "LIVE / DB", "DB connected", "backend live without health proof", "green-only meaning"]
+  "forbidden_labels": ["LIVE", "LIVE / DB", "DB connected", "backend live without health proof", "green-only meaning"],
+  "ui_truth_01b_note": "01B CORE uses these targets via RuntimeStatusSummary; public health empty checks → DB neverificată (not confirmed)."
 }

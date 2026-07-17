@@ -388,6 +388,13 @@ export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
     source: "docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md · D-020",
   },
   {
+    id: "ev.ui_truth_01b",
+    kind: "document",
+    title: "UI-TRUTH-01B CORE — runtime health banner PROVEN_V1",
+    status: "CURRENT",
+    source: "docs/plans/2026-07-17_ui_truth_01b_unpause_plan.md · EnvironmentBanner ← useRuntimeHealth",
+  },
+  {
     id: "ev.worklog_b45",
     kind: "worklog",
     title: "Truth pages honesty baseline",

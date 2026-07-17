@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **NONE** — Wave 7 closed |
+| Active task | **NONE** — UI-TRUTH-01B CORE closed |
 
-| Next task | Documented resume candidate **UI-TRUTH-01B** (still **PAUSED** — needs explicit unpause GO); FLEX-02 / TE2E-028 residual builds remain alternate owner choices |
+| Next task | **UI-TRUTH-01C** (failure/stale/drill-down) — not started; FLEX-02 / TE2E-028 remain alternate owner choices |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -586,9 +586,9 @@ Next allowed task: **MOBILE-T03-BLOCKER-READINESS-VISIBILITY**. Frozen-spine des
 
 **UI-TRUTH-01A:** **COMPLETE** — `UI_TRUTH_01A_RUNTIME_TRUTH_FOUNDATION_PASS`
 
-**Next:** **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY**
+**UI-TRUTH-01B:** **COMPLETE — PROVEN_V1** (CORE, 2026-07-17) — see section below
 
-**APP-AUTH-06C:** **BLOCKED** until UI-TRUTH-01B + 01E runtime verification
+**APP-AUTH-06C:** **BLOCKED** until UI-TRUTH-01E runtime verification
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
@@ -1453,5 +1453,24 @@ NEXT ROADMAP = GO
 
 **Local reference data:** `LOCAL_REFERENCE_DATA — DO NOT MUTATE` — Build 1 `92402`/plan `8`; W7-T02 `92403`/plan `9`
 
-**Next:** Do not auto-start. Documented resume candidate = **UI-TRUTH-01B** (PAUSED). Owner must unpause or choose alternate (TE2E-028 residual / FLEX-02).
+**Next:** UI-TRUTH-01B closed below.
+
+## UI-TRUTH-01B — Banner rendering and Romanian terminology — COMPLETE — PROVEN_V1 (CORE)
+
+**Verdict:** `UI_TRUTH_01B_CORE_PASS`  
+**Date:** 2026-07-17  
+**Owner gates:** UNPAUSE · G1=CORE · G2=MATRIX · G3=STRIP · G4=SUMMARY
+
+| Item | Result |
+|------|--------|
+| Source | `useRuntimeHealth` (no auth→health inference) |
+| Presentation | `RuntimeStatusSummary` |
+| Forbidden | `LIVE / DB` removed from global strip |
+| Tests | RuntimeStatusSummary + EnvironmentBanner — 19 passed |
+| Build | `pnpm run build` PASS |
+| Smoke | `/orders`, Intake route, `/modules` |
+
+**Deferred (out of CORE):** header green `Live` connection badge; mock `N critical`; nav RO pass; Post-Job EN title; ModuleChain poller share (01C/01E).
+
+**Next:** **UI-TRUTH-01C** — not started.
 

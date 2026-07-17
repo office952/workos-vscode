@@ -3,9 +3,10 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **NONE** — Wave 7 **OWNER_ACCEPTED**  
+**Active task:** **NONE** — UI-TRUTH-01B **COMPLETE — PROVEN_V1** (CORE)  
 **Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
-**Recommended next:** **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** (still **PAUSED** — needs explicit unpause; do not auto-start)  
+**Recommended next:** **UI-TRUTH-01C** (failure/stale/drill-down) — not started; APP-AUTH-06C still blocked until 01E  
+**UI-TRUTH-01B–01E:** 01B **COMPLETE**; 01C–01E remain for follow-on (01B–01E pause lifted for 01B only)  
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
 **Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
@@ -572,7 +573,21 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Hook | `useRuntimeHealth` — same-origin `/api`, 45s poll, 120s stale |
 | Banner visual | **UNCHANGED** |
 | Tests | **41/41 PASS** |
-| Next | **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** |
+| Next | **UI-TRUTH-01B** — **COMPLETE — PROVEN_V1** (CORE) |
+
+## UI-TRUTH-01B — BANNER_RENDERING_AND_ROMANIAN_TERMINOLOGY
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_V1** (CORE, 2026-07-17) |
+| Owner gates | UNPAUSE · G1=CORE · G2=MATRIX · G3=STRIP · G4=SUMMARY |
+| Depends | UI-TRUTH-01A |
+| Scope | Global `EnvironmentBanner` ← `useRuntimeHealth` + `RuntimeStatusSummary`; Intake/Orders/Modules smoke |
+| Exclusions | Header `Live` badge · mock `N critical` · nav terminology · Post-Job EN · ModuleChain poller merge · 01C drill-down |
+| Verdict | `UI_TRUTH_01B_CORE_PASS` |
+| Plan | `docs/plans/2026-07-17_ui_truth_01b_unpause_plan.md` |
+| Worklog | `docs/worklog/realignment/2026-07-17_ui_truth_01b_unpause.md` |
+| Next | **UI-TRUTH-01C** (not started) |
 
 ## UI-TRUTH-01A — RUNTIME_TRUTH_CONTRACT_AND_HEALTH_HOOK_V1
 
@@ -583,7 +598,7 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Owner GO | **YES** |
 | Files | `runtimeStatus.ts`, `runtimeHealth.ts`, `useRuntimeHealth.ts` + tests |
 | Implementation authorized | UI-TRUTH-01A ONLY |
-| APP-AUTH-06C | **BLOCKED** |
+| APP-AUTH-06C | **BLOCKED** until 01E |
 
 ## RUNTIME-RECOVERY-02 — Full application connectivity and route health audit
 
