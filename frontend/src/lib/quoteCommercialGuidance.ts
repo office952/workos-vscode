@@ -10,7 +10,7 @@ export const QUOTE_REVISION_MECHANISM_NOTICE =
   "Revizia recalculează oferta prin mecanismul de pricing existent. Totalurile și marja nu se editează manual.";
 
 export const QUOTE_REVISION_UNAVAILABLE_NOTICE =
-  "Revizia automată necesită snapshot de pricing salvat la creare (oferte noi din QuoteWizard).";
+  "Revizia automată necesită snapshot de pricing salvat la creare (oferte noi din Intake V6).";
 
 export interface QuoteCommercialGuidance {
   title: string;
@@ -22,8 +22,8 @@ const GUIDANCE_BY_STATUS: Record<QuoteStatus, QuoteCommercialGuidance> = {
   draft: {
     title: "Ciornă — preț nefinalizat",
     description:
-      "Oferta nu are încă preț comercial calculat. Calculează prețul în QuoteWizard înainte de trimitere.",
-    nextAction: "Calculează prețul în QuoteWizard",
+      "Oferta nu are încă preț comercial calculat. Folosește Intake V6 pentru calculul ofertei.",
+    nextAction: "Deschide Intake V6",
   },
   priced: {
     title: "Ofertă calculată",

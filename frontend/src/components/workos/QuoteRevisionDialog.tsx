@@ -8,23 +8,13 @@ import type { Quote } from "@/lib/mockData";
 
 import { getQuote } from "@/lib/api";
 
-import {
+import type { QuotePriceResponse } from "@/api/quotes";
 
-  priceExistingQuote,
+import { LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO } from "@/lib/legacyQuotePriceRetirement";
 
-  QuotePricingError,
-
-  type QuotePriceResponse,
-
-} from "@/api/quotes";
+import { LegacyQuotePriceRetiredBanner } from "@/components/workos/LegacyQuotePriceRetiredBanner";
 
 import {
-
-  buildLegacyRevisionPriceRequest,
-
-  buildQuoteRevisionRequest,
-
-  formatLegacyRevisionApiError,
 
   LEGACY_REVISION_RECOVERY_MESSAGE,
 
@@ -233,112 +223,13 @@ export default function QuoteRevisionDialog({
 
 
 
-  const canSubmit =
-
-    !loadingSource &&
-
-    !blocked &&
-
-    (revisionSource != null || resolveResult?.kind === "legacy_candidate") &&
-
-    !discountValidation &&
-
-    !submitting &&
-
-    quote.dbId != null;
+  const canSubmit = false;
 
 
 
   async function handleSubmit() {
 
-    if (!quote.dbId || discountValidation) return;
-
-    setSubmitting(true);
-
-    setSubmitError(null);
-
-    try {
-
-      let body;
-
-      if (revisionSource) {
-
-        body = buildQuoteRevisionRequest(
-
-          quote,
-
-          revisionSource,
-
-          Number(discountPct),
-
-          { intakeDbId }
-
-        );
-
-        if (!body) {
-
-          setSubmitError("Payload revizie incomplet — lipsesc șablonul sau configurația.");
-
-          return;
-
-        }
-
-      } else if (resolveResult?.kind === "legacy_candidate") {
-
-        body = buildLegacyRevisionPriceRequest(
-
-          quote,
-
-          legacyPricing,
-
-          Number(discountPct),
-          { intakeDbId }
-
-        );
-
-      } else {
-
-        return;
-
-      }
-
-
-
-      const result = await priceExistingQuote(quote.dbId, body);
-
-      setSuccess(result);
-
-      await onRevised(result);
-
-    } catch (err) {
-
-      if (err instanceof QuotePricingError) {
-
-        const msg =
-
-          err.blockedReasons.length
-
-            ? err.blockedReasons.join("; ")
-
-            : formatLegacyRevisionApiError(err.message);
-
-        setSubmitError(msg);
-
-      } else {
-
-        setSubmitError(
-
-          err instanceof Error ? err.message : "Revizia nu a putut fi finalizată."
-
-        );
-
-      }
-
-    } finally {
-
-      setSubmitting(false);
-
-    }
+    setSubmitError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
 
   }
 
@@ -393,6 +284,8 @@ export default function QuoteRevisionDialog({
 
 
         <div className="p-4 space-y-4">
+
+          <LegacyQuotePriceRetiredBanner testId="quote-revision-legacy-retired" />
 
           <div className="grid grid-cols-2 gap-3 text-[11px]">
 

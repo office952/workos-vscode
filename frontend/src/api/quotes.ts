@@ -1,35 +1,20 @@
 /**
  * Quote pricing API wrapper.
  *
- * Thin, typed wrapper around the real backend endpoint
+ * Legacy customer-pricing endpoints
  *   POST /api/v1/entities/quotes/price
+ *   POST /api/v1/entities/quotes/{id}/price
+ * are RETIRED (HTTP 410). Active commercial authority is Intake V6 → 7G.
  *
- * The frontend NEVER computes costs. It only passes:
- *   - product_template       (canonical row from product_templates)
- *   - user_config            (quantity + dimensions chosen in the wizard)
- *   - pricing                (margin/vat/discount as agreed with client)
- *   - quote_input            (formula-based inputs required by the template)
- *   - client_name            (used by the orchestrator for persistence)
- *
- * The backend returns the full hierarchical snapshot (see Sprint #21.4 proof):
- *   {
- *     quote_id: number,
- *     snapshot: {
- *       product_definition: {...},
- *       cost_result: { total_cost, materials_cost, labour_cost, breakdown: [...] },
- *       pricing: { margin_pct, discount_pct, vat_pct },
- *       price: { net, gross, final },
- *       status: "priced" | "draft" | ...,
- *       blocked_reasons: string[]
- *     }
- *   }
- *
- * On HTTP 422 (validation block, e.g. NEEDS_QUOTE_INPUT) the backend returns
- *   { detail: { status: "blocked", blocked_reasons: [...] } }
- * which we surface back to the caller via `QuotePricingError`.
+ * These client helpers refuse to invoke the legacy route and do not invent
+ * a browser-side commercial total.
  */
 import { getAPIBaseURL } from "../lib/config";
 import type { ProductTemplateEntity } from "../lib/api";
+import {
+  LEGACY_QUOTE_PRICE_RETIRED_ERROR,
+  LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO,
+} from "@/lib/legacyQuotePriceRetirement";
 
 const apiBase = () => `${getAPIBaseURL()}/api/v1`;
 
@@ -229,40 +214,13 @@ export class QuotePricingError extends Error {
 // API call
 // ============================================================
 export async function priceQuote(
-  body: QuotePriceRequest
+  _body: QuotePriceRequest
 ): Promise<QuotePriceResponse> {
-  const res = await fetch(`${apiBase()}/entities/quotes/price`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    let detailMsg = `HTTP ${res.status}`;
-    let blocked: string[] = [];
-    try {
-      const errBody = await res.json();
-      const detail = errBody?.detail;
-      if (detail && typeof detail === "object") {
-        if (Array.isArray(detail.blocked_reasons)) {
-          blocked = detail.blocked_reasons.map(String);
-        }
-        if (detail.status) {
-          detailMsg = `${detail.status}${
-            blocked.length ? `: ${blocked.length} reason(s)` : ""
-          }`;
-        }
-      } else if (typeof detail === "string") {
-        detailMsg = detail;
-      }
-    } catch {
-      // non-JSON error body — keep default detailMsg
-    }
-    throw new QuotePricingError(detailMsg, res.status, blocked);
-  }
-
-  return (await res.json()) as QuotePriceResponse;
+  throw new QuotePricingError(
+    LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO,
+    410,
+    [LEGACY_QUOTE_PRICE_RETIRED_ERROR],
+  );
 }
 
 export async function postQuoteSendLog(
@@ -296,43 +254,12 @@ export async function postQuoteSendLog(
 }
 
 export async function priceExistingQuote(
-  quoteDbId: number,
-  body: QuotePriceRequest
+  _quoteDbId: number,
+  _body: QuotePriceRequest
 ): Promise<QuotePriceResponse> {
-  const res = await fetch(`${apiBase()}/entities/quotes/${quoteDbId}/price`, {
-    method: "POST",
-    credentials: "include",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    let detailMsg = `HTTP ${res.status}`;
-    let blocked: string[] = [];
-    try {
-      const errBody = await res.json();
-      const detail = errBody?.detail;
-      if (detail && typeof detail === "object") {
-        if (Array.isArray(detail.blocked_reasons)) {
-          blocked = detail.blocked_reasons.map(String);
-        }
-        if (detail.message) {
-          detailMsg = String(detail.message);
-        } else if (detail.error) {
-          detailMsg = String(detail.error);
-        } else if (detail.status) {
-          detailMsg = `${detail.status}${
-            blocked.length ? `: ${blocked.length} reason(s)` : ""
-          }`;
-        }
-      } else if (typeof detail === "string") {
-        detailMsg = detail;
-      }
-    } catch {
-      // non-JSON error body
-    }
-    throw new QuotePricingError(detailMsg, res.status, blocked);
-  }
-
-  return (await res.json()) as QuotePriceResponse;
+  throw new QuotePricingError(
+    LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO,
+    410,
+    [LEGACY_QUOTE_PRICE_RETIRED_ERROR],
+  );
 }

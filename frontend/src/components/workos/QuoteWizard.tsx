@@ -42,6 +42,8 @@ import {
   type QuotePriceResponse,
   type QuoteUserConfig,
 } from "@/api/quotes";
+import { LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO } from "@/lib/legacyQuotePriceRetirement";
+import { LegacyQuotePriceRetiredBanner } from "@/components/workos/LegacyQuotePriceRetiredBanner";
 import {
   costSimulationApi,
   type CostSimulationResponse,
@@ -402,7 +404,7 @@ export default function QuoteWizard({
   }
 
   // ------------------------------------------------------------
-  // Submit — POST /entities/quotes/price
+  // Submit — legacy /entities/quotes/price is RETIRED (use Intake V6 / 7G)
   // ------------------------------------------------------------
   async function handleSubmit() {
     if (!selectedTemplate) return;
@@ -425,6 +427,13 @@ export default function QuoteWizard({
       vat_pct: vatPct,
       discount_pct: discountPct,
     };
+
+    if (!isVolumetricPreliminary) {
+      setSubmitError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
+      setBlockedReasons(["legacy_quote_price_retired"]);
+      setSubmitting(false);
+      return;
+    }
 
     if (isVolumetricPreliminary) {
       const qi = buildVolumetricQuoteInputPayload(quoteInput);
@@ -506,59 +515,8 @@ export default function QuoteWizard({
   }
 
   async function handleCommercialQuote() {
-    if (!selectedTemplate || !simulationResult) return;
-    const quoteGate = simulationResult.readiness?.quote_gate as
-      | VolumetricQuoteGate
-      | undefined;
-    if (!quoteGate?.can_create_commercial_quote) return;
-
-    setCommercialSubmitting(true);
-    setCommercialError(null);
-    setBlockedReasons([]);
-
-    const user_config: QuoteUserConfig = {
-      quantity,
-      dimensions: {
-        width_mm: widthMm,
-        height_mm: heightMm,
-        depth_mm: depthMm,
-      },
-    };
-    const pricing: QuotePricingInput = {
-      margin_pct: marginPct,
-      vat_pct: vatPct,
-      discount_pct: discountPct,
-    };
-    const qi = buildVolumetricQuoteInputPayload(quoteInput);
-
-    try {
-      const resp = await priceQuote({
-        product_template: selectedTemplate,
-        user_config,
-        pricing,
-        client_name: clientName.trim(),
-        intake_id: intakeDbId,
-        quote_input: {
-          ...qi,
-          width_mm: widthMm,
-          height_mm: heightMm,
-          depth_mm: depthMm,
-        },
-      });
-      setResult(resp);
-      onCreated?.({ quoteId: resp.quote_id, quoteCode: resp.quote_code });
-    } catch (err) {
-      if (err instanceof QuotePricingError) {
-        setCommercialError(err.message);
-        setBlockedReasons(err.blockedReasons);
-      } else {
-        setCommercialError(
-          err instanceof Error ? err.message : "Eroare la crearea ofertei comerciale."
-        );
-      }
-    } finally {
-      setCommercialSubmitting(false);
-    }
+    setCommercialError(LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO);
+    setBlockedReasons(["legacy_quote_price_retired"]);
   }
 
   const volumetricQuoteGate = simulationResult?.readiness?.quote_gate as
@@ -622,6 +580,10 @@ export default function QuoteWizard({
             prefillSummary={intakePrefillSummary}
           />
         )}
+
+        <div className="px-5 pt-3">
+          <LegacyQuotePriceRetiredBanner />
+        </div>
 
         {/* Stepper */}
         <div className="px-5 py-3 border-b border-[#1E293B] bg-[#0B111E]">
@@ -752,7 +714,7 @@ export default function QuoteWizard({
                 <ChevronRight className="w-3.5 h-3.5" />
               </button>
             )}
-            {step === 4 && !result && !simulationResult && (
+            {step === 4 && !result && !simulationResult && isVolumetricPreliminary && (
               <button
                 onClick={handleSubmit}
                 disabled={!step4Valid || submitting}
@@ -766,11 +728,20 @@ export default function QuoteWizard({
                 ) : (
                   <>
                     <DollarSign className="w-3.5 h-3.5" />
-                    {isVolumetricPreliminary
-                      ? "Simulare preliminară"
-                      : "Calculează & salvează"}
+                    Simulare preliminară (intern)
                   </>
                 )}
+              </button>
+            )}
+            {step === 4 && !result && !simulationResult && !isVolumetricPreliminary && (
+              <button
+                type="button"
+                disabled
+                title={LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
+              >
+                <DollarSign className="w-3.5 h-3.5" />
+                Flux comercial retras
               </button>
             )}
             {step === 4 &&
@@ -779,25 +750,12 @@ export default function QuoteWizard({
               !result && (
                 <button
                   onClick={handleCommercialQuote}
-                  disabled={!canCreateCommercialQuote || commercialSubmitting}
-                  title={
-                    canCreateCommercialQuote
-                      ? undefined
-                      : "Rezolvă blocker-ele de readiness înainte de ofertă comercială."
-                  }
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed"
+                  disabled
+                  title={LEGACY_QUOTE_PRICE_RETIRED_MESSAGE_RO}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] rounded bg-slate-700 text-slate-400 cursor-not-allowed opacity-60"
                 >
-                  {commercialSubmitting ? (
-                    <>
-                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                      Se creează...
-                    </>
-                  ) : (
-                    <>
-                      <FileText className="w-3.5 h-3.5" />
-                      Creează ofertă comercială
-                    </>
-                  )}
+                  <FileText className="w-3.5 h-3.5" />
+                  Ofertă comercială retrasă — Intake V6
                 </button>
               )}
             {step === 4 && (result || simulationResult) && (

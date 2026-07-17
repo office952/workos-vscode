@@ -175,7 +175,8 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     inputRo: "Aggregate / context comercial",
     outputRo: "Valori comerciale pentru îngheț ofertă",
     consumerRo: "Quote Snapshot",
-    limitationRo: "Tarifele de registru nu sunt SoT pentru oferta acceptată; orele/minutele nu sunt autoritate comercială.",
+    limitationRo:
+      "Autoritate activă: Commercial Price Proposal 7G (Intake V6). Legacy /entities/quotes/price (orar) este retras (HTTP 410). Ore/minutele nu sunt autoritate comercială.",
     verifyRoute: "/pricing",
     spineOrder: 4,
   },
@@ -539,6 +540,7 @@ export const PRESENT_BOUNDARIES: PresentBoundary[] = [
     forbiddenRo: [
       "UI-ul nu calculează valori comerciale autoritare",
       "Orele/minutele nu sunt autoritate de pricing comercial",
+      "Legacy POST /entities/quotes/price retras — nu mai este autoritate comercială",
       "Inventarul nu este sursă de preț ofertă",
     ],
     enforcementRo: "Servicii commercial pricing / preview boundary",
@@ -818,6 +820,17 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
       "Minute planificate statice (ex. Control calitate=15 min) supraviețuiesc aggregate→preview→plan→Post-Job; UI /execution/972901 verificat (Plan vs execuție); missing actual rămâne explicit; fără write-back; TE2E-028 rămâne deschis",
     stillCurrentRuntime: true,
     source: "docs/qa/te2e-028a-planning-minutes-2026-07-17/",
+  },
+  {
+    id: "ev.legacy_quote_price_isolated",
+    title: "Legacy hourly quote /price isolated",
+    category: "Dovadă curentă",
+    evidenceType: "qa",
+    date: "2026-07-17",
+    provesRo:
+      "POST /entities/quotes/price retras (410, absent OpenAPI); QuoteWizard nu mai apelează legacy; autoritate comercială activă rămâne Intake V6 → 7G",
+    stillCurrentRuntime: true,
+    source: "docs/worklog/realignment/2026-07-17_commercial_pricing_time_isolation_audit.md",
   },
   {
     id: "ev.legacy_oc_tk",
