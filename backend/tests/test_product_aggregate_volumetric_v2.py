@@ -57,10 +57,82 @@ COSTENGINE_MAPPING = {
 
 TASK_RULES = {
     "rules": [
-        {"task_name": "cnc_face_cut", "task_type": "cnc_routing", "priced_operation": "face_cnc_cut", "sequence": 2},
-        {"task_name": "electrical_wiring", "task_type": "led_wiring", "priced_operation": "electrical_letters", "sequence": 9},
+        {
+            "task_name": "cnc_face_cut",
+            "task_type": "cnc_routing",
+            "priced_operation": "face_cnc_cut",
+            "sequence": 2,
+            "mini_module_code": "debitare_fata",
+        },
+        {
+            "task_name": "return_face_bonding",
+            "task_type": "assembly",
+            "priced_operation": "RETURN_PROFILE_FACE_BONDING",
+            "sequence": 4,
+            "mini_module_code": "modelare_cant",
+        },
+        {
+            "task_name": "electrical_wiring",
+            "task_type": "led_wiring",
+            "priced_operation": "electrical_letters",
+            "sequence": 9,
+            "mini_module_code": "sistem_led",
+        },
     ]
 }
+
+
+async def _ensure_face_cant_interface_fixture_rows(session) -> None:
+    """Upsert Build 3 interface technical rows on an existing thin fixture (no global seed)."""
+    from sqlalchemy import select
+
+    child = (
+        await session.execute(
+            select(Product_templates).where(Product_templates.template_code == CHILD_ALUMINUM).limit(1)
+        )
+    ).scalar_one_or_none()
+    if child is None:
+        return
+    ops = json.loads(child.operations_json or "[]")
+    mats = json.loads(child.required_materials_json or "[]")
+    op_codes = {str(row.get("code")) for row in ops if isinstance(row, dict)}
+    mat_codes = {
+        str(row.get("material_code") or row.get("materialCode"))
+        for row in mats
+        if isinstance(row, dict)
+    }
+    changed = False
+    if "RETURN_PROFILE_FACE_BONDING" not in op_codes:
+        ops.append(
+            {
+                "code": "RETURN_PROFILE_FACE_BONDING",
+                "workcenter": "WC_ASSEMBLY",
+                "component_ref": "comp_volum_aluminiu_module",
+            }
+        )
+        changed = True
+    if "MAT-ADEZIV-CANT-LITERE" not in mat_codes:
+        mats.append(
+            {
+                "material_code": "MAT-ADEZIV-CANT-LITERE",
+                "unit": "ml",
+                "component_ref": "comp_volum_aluminiu_module",
+            }
+        )
+        changed = True
+    if changed:
+        child.operations_json = json.dumps(ops)
+        child.required_materials_json = json.dumps(mats)
+
+    dossier = (
+        await session.execute(
+            select(ProductBlueprintDossier).where(ProductBlueprintDossier.template_code == TEMPLATE_CODE).limit(1)
+        )
+    ).scalar_one_or_none()
+    if dossier is not None:
+        dossier.task_rules_json = json.dumps(TASK_RULES)
+    if changed or dossier is not None:
+        await session.commit()
 
 
 async def _seed_volumetric_v2_fixture(session) -> None:
@@ -71,6 +143,7 @@ async def _seed_volumetric_v2_fixture(session) -> None:
         select(Product_templates).where(Product_templates.template_code == TEMPLATE_CODE).limit(1)
     )
     if existing.scalar_one_or_none() is not None:
+        await _ensure_face_cant_interface_fixture_rows(session)
         return
 
     parent = Product_templates(
@@ -98,13 +171,34 @@ async def _seed_volumetric_v2_fixture(session) -> None:
         ),
         active=True,
     )
+    # Mirror production seed interface rows (Build 4A.1 / Build 3 authority):
+    # MAT-ADEZIV-CANT-LITERE + RETURN_PROFILE_FACE_BONDING on child aluminum.
+    # Inline test fixture only — not a global seed_sync change.
     child_al = Product_templates(
         template_code=CHILD_ALUMINUM,
         family_id="volum_aluminiu_modular",
         family_name="Volum aluminiu modular",
         components_json=json.dumps([{"component_id": "comp_volum_aluminiu_module"}]),
-        operations_json=json.dumps([{"code": "RETURN_PROFILE_MACHINE_FORMING", "workcenter": "WC_METAL"}]),
-        required_materials_json=json.dumps([{"material_code": "MAT-PROFIL-LATERAL-LITERE-60MM"}]),
+        operations_json=json.dumps(
+            [
+                {"code": "RETURN_PROFILE_MACHINE_FORMING", "workcenter": "WC_METAL"},
+                {
+                    "code": "RETURN_PROFILE_FACE_BONDING",
+                    "workcenter": "WC_ASSEMBLY",
+                    "component_ref": "comp_volum_aluminiu_module",
+                },
+            ]
+        ),
+        required_materials_json=json.dumps(
+            [
+                {"material_code": "MAT-PROFIL-LATERAL-LITERE-60MM"},
+                {
+                    "material_code": "MAT-ADEZIV-CANT-LITERE",
+                    "unit": "ml",
+                    "component_ref": "comp_volum_aluminiu_module",
+                },
+            ]
+        ),
         active=True,
     )
     child_pm = Product_templates(
@@ -209,10 +303,14 @@ async def test_aggregate_compiles_dossier_task_rules_for_execution_plan(volumetr
     rule_names = {r.task_name for r in aggregate.task_contract.task_rules}
     assert "cnc_face_cut" in rule_names
     assert "electrical_wiring" in rule_names
-    assert aggregate.provenance_summary.dossier["task_rules"] == 2
+    assert "return_face_bonding" in rule_names
+    assert aggregate.provenance_summary.dossier["task_rules"] == 3
     priced = {r.priced_operation for r in aggregate.task_contract.task_rules}
     assert "face_cnc_cut" in priced
     assert "electrical_letters" in priced
+    assert "RETURN_PROFILE_FACE_BONDING" in priced
+    bonding = next(r for r in aggregate.task_contract.task_rules if r.task_name == "return_face_bonding")
+    assert bonding.mini_module_code == "modelare_cant"
 
 
 @pytest.mark.asyncio

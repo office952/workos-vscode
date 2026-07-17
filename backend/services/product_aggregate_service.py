@@ -627,13 +627,18 @@ class ProductAggregateService:
                 continue
             priced_op = rule.get("priced_operation")
             task_name = rule.get("task_name") or rule.get("task_code") or ""
-            mini = None
-            if priced_op:
+            # Prefer explicit dossier mini_module_code (Build 4A.1 FACE+CANT interface).
+            mini = rule.get("mini_module_code")
+            if mini is not None:
+                mini = str(mini).strip() or None
+            if not mini and priced_op:
                 mini = {
                     "face_cnc_cut": "debitare_fata",
                     "back_cut": "debitare_spate",
                     "side_forming": "modelare_cant",
-                    "return_face_bonding": "asamblare",
+                    # Interface bonding owns under modelare_cant (FACE+CANT), not asamblare.
+                    "return_face_bonding": "modelare_cant",
+                    "RETURN_PROFILE_FACE_BONDING": "modelare_cant",
                     "painting": "finisaje",
                     "vinyl_application": "colantare_fata",
                     "led_install_letters": "sistem_led",

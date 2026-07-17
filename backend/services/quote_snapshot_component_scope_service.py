@@ -43,6 +43,7 @@ from services.product_aggregate_planning_duration_service import (
     apply_planning_duration_resolution,
     collect_planning_duration_facts,
 )
+from services.product_aggregate_active_scope_filter import filter_aggregate_by_active_scope
 from services.product_aggregate_service import ProductAggregateService
 from services.product_aggregate_workspace_composition_service import SEGMENT_NAMESPACE_SEP
 from services.product_definition_builder_service import ProductDefinitionBuilderService
@@ -373,6 +374,20 @@ async def build_frozen_component_scope(
 
     if aggregate is None:
         return None
+
+    # Build 4A.1: Aggregate build_for_workspace filters from workspace payload only.
+    # Freeze ActiveScope already compiles workspace + quote_input. Re-apply that
+    # compiled scope so FACE+CANT interface outputs (and FACE/CANT exclusions)
+    # match the frozen ActiveScope authority — no invented materials.
+    if compiled is not None:
+        pd = await pd_builder.build_preview(template_code, workspace_id=workspace_id)
+        if pd is not None:
+            aggregate = filter_aggregate_by_active_scope(
+                aggregate,
+                pd=pd,
+                scope=compiled,
+                payload=merged_payload,
+            )
 
     # TE2E-028B: resolve formula duration from freeze-time product facts.
     duration_facts = collect_planning_duration_facts(merged_payload)

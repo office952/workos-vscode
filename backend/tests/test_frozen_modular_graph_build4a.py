@@ -593,25 +593,29 @@ async def test_live_preview_scenarios(volumetric_v2_db, snapshot_service, sold, 
         assert graph.scope.excluded_materials == []
         assert graph.scope.excluded_operations == []
         assert graph.execution.semantic_interface_face_cant_active is True
+        # Build 4A.1: technical authority must match Build 3 — adhesive×1 bonding×1.
+        assert graph.execution.adhesive_material_count == 1, graph.execution.material_codes
+        assert graph.execution.bonding_operation_count == 1, graph.execution.operation_codes
+        assert graph.execution.technical_adhesive_present is True
+        assert graph.execution.technical_bonding_present is True
         assert all(
             a.passed
             for a in graph.assertions
-            if a.code in ("interface_active", "interface_exclusions_empty")
-        )
-        # No greenwash: missing technical adhesive/bonding must FAIL assertions.
-        if (
-            graph.execution.adhesive_material_count == 1
-            and graph.execution.bonding_operation_count == 1
-        ):
-            assert all(
-                a.passed
-                for a in graph.assertions
-                if a.code in ("adhesive_exactly_once", "bonding_exactly_once")
+            if a.code
+            in (
+                "interface_active",
+                "interface_exclusions_empty",
+                "adhesive_exactly_once",
+                "bonding_exactly_once",
             )
-        else:
-            assert any(
-                a.code == "adhesive_exactly_once" and not a.passed for a in graph.assertions
-            ) or any(a.code == "bonding_exactly_once" and not a.passed for a in graph.assertions)
+        )
+        bonding_candidates = [
+            c
+            for c in graph.execution.task_candidates
+            if (c.priced_operation and "bonding" in c.priced_operation.lower())
+            or "bonding" in c.task_name.lower()
+        ]
+        assert len(bonding_candidates) == 1
     else:
         assert graph.execution.adhesive_material_count == 0
         assert graph.execution.bonding_operation_count == 0
