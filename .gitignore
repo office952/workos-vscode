@@ -104,7 +104,9 @@ frontend_tsc_runtime_check.txt
 tmp_*.txt
 tmp_*.json
 fisiere-teste/
-.vscode/
+# Keep workspace extension recommendations; ignore other local editor state
+.vscode/*
+!.vscode/extensions.json
 
 # Root-only local review leftovers (never source under docs/ or frontend/)
 /_review_*
