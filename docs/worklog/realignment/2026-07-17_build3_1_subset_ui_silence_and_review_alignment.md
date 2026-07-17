@@ -5,7 +5,7 @@
 | Date | 2026-07-17 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `3e2fc87` |
-| End HEAD | *(filled after commit)* |
+| End HEAD | `c73b52a` |
 | Verdict | `BUILD3_1_SUBSET_UI_ALIGNMENT_COMPLETE_WITH_GUARDS` |
 
 ## Owner rejection (accepted as GO)
