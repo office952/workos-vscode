@@ -114,6 +114,18 @@ describe("Active-scope governance registration", () => {
     expect(FULL_TEMPLATE_COUPLING_DEFECT.runtimeImplementation).toBe("PROVEN FOR LETTERS SLICE 1");
     expect(FULL_TEMPLATE_COUPLING_DEFECT.includesRo.join(" ")).toMatch(/active_scope|selected graph|FACE-only/);
     expect(PRESENT_GATES.some((g) => g.id === "g.owner_active_scope_runtime")).toBe(true);
+    expect(PRESENT_GATES.some((g) => g.id === "MOUNTING_MAP_NARROWING_OWNER_GATE")).toBe(true);
+    expect(PRESENT_GATES.some((g) => g.id === "MINI_MODULE_SPLIT_OWNER_GATE")).toBe(true);
+    expect(PRESENT_GATES.some((g) => g.id === "SOLD_CHIP_ACTIVATION_OWNER_GATE")).toBe(true);
+    expect(
+      PRESENT_GATES.filter((g) =>
+        [
+          "MOUNTING_MAP_NARROWING_OWNER_GATE",
+          "MINI_MODULE_SPLIT_OWNER_GATE",
+          "SOLD_CHIP_ACTIVATION_OWNER_GATE",
+        ].includes(g.id),
+      ).every((g) => g.status === "NEAPLICAT"),
+    ).toBe(true);
     expect(PRESENT_GUARDRAILS.some((g) => g.id === "G14")).toBe(true);
     expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("PARTIAL APLICAT");
     expect(PRESENT_GUARDRAILS.find((g) => g.id === "G15")?.status).toBe("APLICAT");

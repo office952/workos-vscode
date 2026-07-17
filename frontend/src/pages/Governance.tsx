@@ -1775,6 +1775,44 @@ function OwnershipHonestyView({
         </div>
       </section>
 
+      <section
+        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+        data-testid="governance-finish-mounting-ownership-layers"
+      >
+        <SectionHeader
+          title="Straturi ownership FINISH / MOUNTING"
+          icon={<Layers className="w-4 h-4 text-violet-400" />}
+        />
+        <p className="text-[11px] text-slate-500 mb-3">
+          Contracte întâi. Activarea mai târziu. Current ≠ Target. Alias ≠ autoritate.
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]" data-testid="governance-ownership-layers">
+          {(
+            [
+              ["module", "Modul (FINISH țintă / MOUNTING blocat)"],
+              ["component", "Componentă (RETURN-CANT Oracal/RAL)"],
+              ["workspace", "Workspace (valori proiect)"],
+              ["derived", "Derived (măsurători / alias)"],
+              ["commercial", "Commercial (CPP 7G)"],
+              ["execution", "Execution (cerințe ops — țintă)"],
+            ] as const
+          ).map(([id, label]) => (
+            <div
+              key={id}
+              className="rounded-md border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300"
+              data-testid={`governance-ownership-layer-${id}`}
+            >
+              {label}
+            </div>
+          ))}
+        </div>
+        <ul className="mt-3 space-y-1 text-[11px] text-red-300/90" data-testid="governance-ownership-v1-gates">
+          <li>MOUNTING_MAP_NARROWING_OWNER_GATE — NOT APPROVED</li>
+          <li>MINI_MODULE_SPLIT_OWNER_GATE — NOT APPROVED</li>
+          <li>SOLD_CHIP_ACTIVATION_OWNER_GATE — NOT APPROVED</li>
+        </ul>
+      </section>
+
       <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-settings-ownership">
         <SectionHeader title="Clasificare setări (Litere / Logo / ACM)" icon={<Layers className="w-4 h-4 text-cyan-400" />} />
         <p className="text-[11px] text-slate-500 mb-3">

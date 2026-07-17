@@ -431,6 +431,37 @@ export default function ModuleChain() {
               <p className="text-slate-500 mt-1">{SETTINGS_OWNERSHIP_TRUTH.noteRo}</p>
             </div>
             <div
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px] space-y-2"
+              data-testid="finish-mounting-ownership-modules"
+            >
+              <p className="font-semibold text-slate-100">FINISH / MOUNTING — ownership V1</p>
+              <div data-testid="modules-finish-ownership">
+                <p className="text-amber-200/90">{SETTINGS_OWNERSHIP_TRUTH.finishSoldRo}</p>
+                <ul className="mt-1 list-disc list-inside text-slate-400 space-y-0.5">
+                  <li>sold activation deferred</li>
+                  <li>runtime bucket mixed (finisaje neschimbat)</li>
+                  <li>target owner defined (modul FINISH)</li>
+                  <li>catalogs conflicted</li>
+                  <li>split owner gate pending</li>
+                </ul>
+              </div>
+              <div data-testid="modules-mounting-ownership">
+                <p className="text-amber-200/90">{SETTINGS_OWNERSHIP_TRUTH.mountingSoldRo}</p>
+                <ul className="mt-1 list-disc list-inside text-slate-400 space-y-0.5">
+                  <li>linked support partial</li>
+                  <li>sold module blocked</li>
+                  <li>canonical field model defined</li>
+                  <li>runtime map narrowing not approved</li>
+                  <li>alias defined (metal_support_required)</li>
+                </ul>
+              </div>
+              <ul className="space-y-0.5 text-red-300/90" data-testid="modules-ownership-owner-gates">
+                {SETTINGS_OWNERSHIP_TRUTH.ownerGatesNotApprovedRo.map((gate) => (
+                  <li key={gate}>{gate}</li>
+                ))}
+              </ul>
+            </div>
+            <div
               className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
               data-testid="false-generic-module-flags"
             >

@@ -1037,6 +1037,36 @@ export const PRESENT_GATES: PresentGate[] = [
     withoutApprovalRo: "STOP — nu activa Logo/ACM ca independență de modul",
     status: "POLITICA OWNER",
   },
+  {
+    id: "MOUNTING_MAP_NARROWING_OWNER_GATE",
+    nameRo: "MOUNTING map narrowing",
+    blocksRo: "Îngustare MOUNTING → {structura_suport, finisaje} / scoatere finisaje din mapă",
+    approverRo: "Owner",
+    enforcementRo: "NOT APPROVED în ownership V1 — mapă runtime neschimbată",
+    verificationRo: "lettersFinishMountingOwnership · offer_scope_canonical_map",
+    withoutApprovalRo: "STOP — MOUNTING_MAP_NARROWING_OWNER_GATE",
+    status: "NEAPLICAT",
+  },
+  {
+    id: "MINI_MODULE_SPLIT_OWNER_GATE",
+    nameRo: "Separare modul finisaje",
+    blocksRo: "Split finisaje în coduri registry / mini-module noi",
+    approverRo: "Owner",
+    enforcementRo: "NOT APPROVED — bucket mixt documentat, nu remediat",
+    verificationRo: "lettersFinishMountingOwnership · ModuleChain ownership cards",
+    withoutApprovalRo: "STOP — MINI_MODULE_SPLIT_OWNER_GATE",
+    status: "NEAPLICAT",
+  },
+  {
+    id: "SOLD_CHIP_ACTIVATION_OWNER_GATE",
+    nameRo: "Activare chip-uri sold FINISH / MOUNTING",
+    blocksRo: "Chip-uri ofertabile FINISH sau MOUNTING",
+    approverRo: "Owner",
+    enforcementRo: "NOT APPROVED — Captiv / amânat · Activare neaprobată",
+    verificationRo: "offer_scope · Intake sold chips absent",
+    withoutApprovalRo: "STOP — SOLD_CHIP_ACTIVATION_OWNER_GATE",
+    status: "NEAPLICAT",
+  },
 ];
 
 export const PRESENT_GUARDRAILS: PresentGuardrail[] = [

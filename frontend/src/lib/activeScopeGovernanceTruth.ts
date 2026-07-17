@@ -279,6 +279,14 @@ export const SETTINGS_OWNERSHIP_TRUTH = {
   operatorWarningRo: "Cataloage de opțiuni multiple — conflict nerezolvat",
   noteRo:
     "Component settings ownership = CONFLICTED · Module settings ownership = CONFLICTED. Nu rezolvă return_depth_mm, PSU, finish enums, LED pitch, premount, ACM thickness aici.",
+  finishSoldRo: "FINISH — captiv / amânat · Activare neaprobată · proprietar țintă: modul FINISH",
+  mountingSoldRo:
+    "MOUNTING — suport legat parțial · modul vândut blocat · mounting_system = metodă canonică · metal_support_required = alias",
+  ownerGatesNotApprovedRo: [
+    "MOUNTING_MAP_NARROWING_OWNER_GATE — NOT APPROVED",
+    "MINI_MODULE_SPLIT_OWNER_GATE — NOT APPROVED",
+    "SOLD_CHIP_ACTIVATION_OWNER_GATE — NOT APPROVED",
+  ] as const,
 };
 
 export const FALSE_GENERIC_MODULE_FLAGS_RO = [
@@ -380,7 +388,7 @@ export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
     commercialChipRo: "Rădăcină folosită azi",
     composedProduct: "ACTIVE_WITH_GUARDS",
     moduleIndependence: "PARTIAL / PROVEN FOR SLICE 1",
-    captiveDeferredRo: "FINISH · MOUNTING — captiv / amânat",
+    captiveDeferredRo: "FINISH · MOUNTING — captiv / amânat · Activare neaprobată",
     modeledReturn: {
       intakeSelection: "AVAILABLE",
       pdActiveScope: "READY",
