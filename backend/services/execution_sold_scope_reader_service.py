@@ -192,6 +192,17 @@ def _led_subscope_allows_operation(
     )
 
 
+def _is_return_only_composition_exclusion(
+    *,
+    priced_or_op_code: str,
+    ctx: ExecutionSoldScopeContext,
+) -> bool:
+    """Face↔return bonding is composition-only — not part of RETURN-CANT sold alone."""
+    if ctx.canonical_sold_modules != frozenset({"RETURN-CANT"}):
+        return False
+    return _text(priced_or_op_code) == "return_face_bonding"
+
+
 def include_task_rule_for_sold_scope(
     rule: ProductAggregateTaskRule,
     *,
@@ -205,6 +216,12 @@ def include_task_rule_for_sold_scope(
 
     if is_vector_prep_task_rule(rule):
         return True
+
+    if _is_return_only_composition_exclusion(
+        priced_or_op_code=_text(rule.priced_operation),
+        ctx=ctx,
+    ):
+        return False
 
     runtime_module = effective_runtime_module_for_task_rule(rule)
     if runtime_module is None:
@@ -229,6 +246,12 @@ def include_operation_for_sold_scope(
 
     if is_vector_prep_operation(operation):
         return True
+
+    if _is_return_only_composition_exclusion(
+        priced_or_op_code=_text(operation.operation_code),
+        ctx=ctx,
+    ):
+        return False
 
     runtime_module = effective_runtime_module_for_operation(operation)
     if runtime_module is None:

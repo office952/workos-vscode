@@ -106,6 +106,17 @@ def _build_composition_graph(
     )
 
 
+def _runtime_mini_module_for_child(
+    *,
+    source_template_code: str,
+    composition_module_code: str | None,
+) -> str | None:
+    """Map composition child → runtime mini_module_code (not composition role)."""
+    from data.mini_module_registry_volumetric_v2 import CHILD_TEMPLATE_TO_MODULE
+
+    return CHILD_TEMPLATE_TO_MODULE.get(source_template_code) or composition_module_code
+
+
 def _namespace_component(
     component: ProductAggregateComponent,
     *,
@@ -119,7 +130,10 @@ def _namespace_component(
             "component_id": component_ref,
             "role": node.node_role,
             "source_template_code": node.template_code,
-            "mini_module_code": node.module_code,
+            "mini_module_code": _runtime_mini_module_for_child(
+                source_template_code=node.template_code,
+                composition_module_code=node.module_code,
+            ),
             "provenance": "linked_module",
             "status": "present",
             "materials": [],
@@ -142,7 +156,10 @@ def _namespace_material(
         update={
             "component_ref": component_ref,
             "source_template_code": source_template_code,
-            "mini_module_code": mini_module_code,
+            "mini_module_code": _runtime_mini_module_for_child(
+                source_template_code=source_template_code,
+                composition_module_code=mini_module_code,
+            ),
             "provenance": "linked_module",
             "status": "present",
         }
@@ -163,7 +180,10 @@ def _namespace_operation(
         update={
             "component_ref": component_ref,
             "source_template_code": source_template_code,
-            "mini_module_code": mini_module_code,
+            "mini_module_code": _runtime_mini_module_for_child(
+                source_template_code=source_template_code,
+                composition_module_code=mini_module_code,
+            ),
             "provenance": "linked_module",
             "status": "present",
         }

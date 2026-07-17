@@ -793,13 +793,30 @@ class CommercialPriceProposalService:
                     )
                 )
 
-        logo_lines, logo_owner_decisions = await build_linked_logo_commercial_lines(
-            db=self._db,
+        # Linked logo commercial is composition/full-product only — not part of
+        # Letters Slice 1 component_subset (RETURN-CANT / FACE / BACK / LIGHTING).
+        from services.active_scope_resolver_service import compile_active_scope
+
+        _scope_for_logo = compile_active_scope(
+            template_code=rules_key,
             payload=payload,
-            pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
+            quote_input=quote_input or payload,
         )
-        lines.extend(logo_lines)
-        owner_decisions.extend(logo_owner_decisions)
+        logo_lines: list[CommercialPriceLine] = []
+        logo_owner_decisions: list[CommercialOwnerDecision] = []
+        if _scope_for_logo.use_legacy_full_product:
+            logo_lines, logo_owner_decisions = await build_linked_logo_commercial_lines(
+                db=self._db,
+                payload=payload,
+                pd_linked_segments=getattr(pd, "linked_template_runtime_segments", None),
+            )
+            lines.extend(logo_lines)
+            owner_decisions.extend(logo_owner_decisions)
+        elif getattr(pd, "linked_template_runtime_segments", None):
+            warnings.append(
+                "ACTIVE_SCOPE_SUBSET: linked logo commercial lines suppressed "
+                "(Logo remains BLOCKED for standalone sold scope)."
+            )
 
         missing_geometry = _missing_critical_geometry(payload, active_modules) if has_payload else []
         if missing_geometry:

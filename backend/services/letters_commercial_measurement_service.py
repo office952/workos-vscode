@@ -122,7 +122,8 @@ def build_letters_commercial_measurements(
     for rule in rules:
         if not isinstance(rule, CommercialRuleDefinition):
             continue
-        if rule.module_gate and modules and rule.module_gate not in modules:
+        gate = rule.module_gate or rule.module_code
+        if modules and gate and gate not in modules:
             measurements.append(
                 CommercialMeasurement(
                     measurement_key=f"cm.{rule.line_code}",
@@ -135,7 +136,7 @@ def build_letters_commercial_measurements(
                     resolution_status="not_applicable",
                     pricing_rule_code=rule.pricing_rule_code,
                     selector={
-                        "module_gate": rule.module_gate,
+                        "module_gate": gate,
                         "material_gate_path": rule.material_gate_path,
                         "material_gate_value": rule.material_gate_value,
                     },

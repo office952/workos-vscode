@@ -13,11 +13,7 @@ from schemas.graph_cost_projection import (
 )
 from schemas.product_aggregate import ProductAggregate, ProductAggregateCompositionGraph
 from schemas.product_definition import ProductDefinitionPreview
-from services.offer_scope_resolver_service import (
-    extract_offer_scope,
-    merge_scope_payload,
-    resolve_offer_scope,
-)
+from services.offer_scope_resolver_service import merge_scope_payload
 
 TD_W3_GRAPH_COST_LEGACY_COMPAT = "TD-W3-GRAPH-COST-001"
 
@@ -202,22 +198,21 @@ def resolve_cost_active_modules(
     structural_modules = set(projection.graph_structural_module_codes)
 
     payload = merge_scope_payload({}, quote_input)
-    scope = extract_offer_scope(payload, quote_input)
-    resolved = resolve_offer_scope(scope)
-    if not resolved.use_legacy:
-        if resolved.validation_errors:
-            return set(), projection
-        from services.offer_scope_resolver_service import _apply_conditional_gates
+    # Sold modules are the authority for component_subset — do not intersect with
+    # full-template PD always_on set (that caused RETURN-only empty / FACE pollution).
+    from services.active_scope_resolver_service import compile_active_scope
 
-        scoped = active & resolved.runtime_sold_modules
-        gated = _apply_conditional_gates(
-            scoped,
-            payload=payload,
-            quote_input=quote_input,
-        )
-        # Graph structural modules win over legacy bar/mounting gates on subset scope.
-        gated |= structural_modules & scoped
-        active = gated
+    scope_result = compile_active_scope(
+        template_code=pd.template_code,
+        payload=payload,
+        quote_input=quote_input,
+    )
+    if not scope_result.use_legacy_full_product:
+        if scope_result.errors:
+            return set(), projection
+        commercial = scope_result.commercial_set()
+        # Keep graph structural modules that are also commercially sold (e.g. modelare_cant).
+        active = commercial | (structural_modules & commercial)
         projection = projection.model_copy(
             update={
                 "structural_authority": "offer_scope_subset",

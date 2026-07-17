@@ -202,10 +202,26 @@ def test_linked_logo_operation_included_in_legacy():
 
 
 def test_return_face_bonding_operation_alias_in_return_cant():
+    # Runtime-only freeze (no canonical sold list) keeps historical alias inclusion.
     ctx = read_execution_sold_scope(
         snapshot_with_scope(offer_scope=offer_scope(runtime=["modelare_cant"]))
     )
     assert include_operation_for_sold_scope(_op("return_face_bonding"), ctx=ctx)
+
+
+def test_return_cant_canonical_sold_excludes_composition_bonding():
+    """RETURN-CANT ONLY — face↔return bonding is composition-only, not sold alone."""
+    ctx = read_execution_sold_scope(
+        snapshot_with_scope(
+            offer_scope=offer_scope(
+                sold=["RETURN-CANT"],
+                runtime=["modelare_cant"],
+            )
+        )
+    )
+    assert include_task_rule_for_sold_scope(_rule("return_profile_forming"), ctx=ctx)
+    assert not include_task_rule_for_sold_scope(_rule("return_face_bonding"), ctx=ctx)
+    assert not include_operation_for_sold_scope(_op("return_face_bonding"), ctx=ctx)
 
 
 @pytest.mark.asyncio

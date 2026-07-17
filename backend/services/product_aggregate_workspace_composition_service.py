@@ -25,9 +25,11 @@ from services.product_aggregate_explicit_composition_service import (
     apply_explicit_composition_graph,
     explicit_child_template_codes,
 )
+from services.active_scope_resolver_service import compile_active_scope
 from services.letters_commercial_measurement_service import (
     build_letters_commercial_measurements,
 )
+from services.product_aggregate_active_scope_filter import filter_aggregate_by_active_scope
 from services.product_aggregate_planning_duration_service import (
     apply_planning_duration_resolution,
     collect_planning_duration_facts,
@@ -399,28 +401,78 @@ def _apply_planning_duration_from_pd(
     return apply_planning_duration_resolution(aggregate, facts)
 
 
-def _quote_input_from_pd(pd: ProductDefinitionPreview) -> dict[str, Any]:
+def _quote_input_from_pd(
+    pd: ProductDefinitionPreview,
+    *,
+    workspace_payload: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     """Project PD canonical facts into the quote_input shape used by commercial rules."""
     from services.commercial_price_proposal_service import _payload_from_sources
 
-    return _payload_from_sources(pd=pd, quote_input=None)
+    base = _payload_from_sources(pd=pd, quote_input=None)
+    payload = workspace_payload or {}
+    # Preserve offer_scope / finish facts from workspace — required for active-scope compile.
+    for key in ("offer_scope", "offer_scope_confirmed", "finish_setup", "quote_geometry", "svg_source"):
+        if key in payload and key not in base:
+            base[key] = payload[key]
+        elif key in payload and isinstance(payload[key], dict):
+            merged = dict(base.get(key) or {})
+            merged.update(payload[key])
+            base[key] = merged
+    if "offer_scope" in payload:
+        base["offer_scope"] = payload["offer_scope"]
+    return base
 
 
 def _attach_commercial_measurements(
     aggregate: ProductAggregate,
     pd: ProductDefinitionPreview,
+    *,
+    workspace_payload: dict[str, Any] | None = None,
+    active_modules: set[str] | None = None,
 ) -> ProductAggregate:
     """LETTERS_CANONICAL_PRODUCT_SLICE_V1: non-monetary measurements for CPP 7G."""
-    quote_input = _quote_input_from_pd(pd)
+    quote_input = _quote_input_from_pd(pd, workspace_payload=workspace_payload)
+    scope = compile_active_scope(
+        template_code=pd.template_code,
+        payload=workspace_payload or quote_input,
+        quote_input=quote_input,
+    )
+    modules = active_modules
+    if modules is None:
+        if scope.use_legacy_full_product or scope.errors:
+            modules = None  # full-product: no gate → all rules eligible
+        else:
+            modules = scope.commercial_set()
     bundle = build_letters_commercial_measurements(
         template_code=aggregate.template_code,
         pd=pd,
         quote_input=quote_input,
-        active_modules=None,
+        active_modules=modules,
     )
     if bundle is None:
         return aggregate
     return aggregate.model_copy(update={"commercial_measurements": bundle})
+
+
+def _apply_active_scope_selected_graph(
+    aggregate: ProductAggregate,
+    pd: ProductDefinitionPreview,
+    *,
+    workspace_payload: dict[str, Any] | None = None,
+) -> ProductAggregate:
+    """Filter Aggregate to compiled active scope before measurements / consumers."""
+    scope = compile_active_scope(
+        template_code=pd.template_code,
+        payload=workspace_payload or {},
+        quote_input=workspace_payload,
+    )
+    return filter_aggregate_by_active_scope(
+        aggregate,
+        pd=pd,
+        scope=scope,
+        payload=workspace_payload,
+    )
 
 
 async def build_workspace_composed_aggregate(
@@ -434,6 +486,11 @@ async def build_workspace_composed_aggregate(
     pd = await pd_builder.build_preview(template_code, workspace_id=workspace_id)
     if pd is None:
         return None
+
+    workspace_payload: dict[str, Any] = {}
+    ws_payload, ws_error = await pd_builder._load_workspace_payload(workspace_id, pd.template_code)
+    if ws_error is None and ws_payload:
+        workspace_payload = ws_payload
 
     aggregate_svc = ProductAggregateService(db)
     letters_aggregate = await aggregate_svc.build(template_code)
@@ -456,7 +513,12 @@ async def build_workspace_composed_aggregate(
     segments = _confirmed_linked_segments(pd)
     if not segments:
         resolved = _apply_planning_duration_from_pd(letters_aggregate, pd)
-        return _attach_commercial_measurements(resolved, pd)
+        scoped = _apply_active_scope_selected_graph(
+            resolved, pd, workspace_payload=workspace_payload
+        )
+        return _attach_commercial_measurements(
+            scoped, pd, workspace_payload=workspace_payload
+        )
 
     logo_aggregates_by_segment: dict[str, ProductAggregate] = {}
     for segment in segments:
@@ -477,4 +539,9 @@ async def build_workspace_composed_aggregate(
         workspace_id=workspace_id,
     )
     resolved = _apply_planning_duration_from_pd(composed, pd)
-    return _attach_commercial_measurements(resolved, pd)
+    scoped = _apply_active_scope_selected_graph(
+        resolved, pd, workspace_payload=workspace_payload
+    )
+    return _attach_commercial_measurements(
+        scoped, pd, workspace_payload=workspace_payload
+    )

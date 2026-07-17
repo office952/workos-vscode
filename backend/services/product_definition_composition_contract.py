@@ -414,6 +414,13 @@ def build_product_definition_composition(
     nodes.append(root_node)
 
     volum_code = _volum_aluminum_code(finish)
+    # Hard technical: RETURN-CANT requires the aluminum child even when intake has not
+    # persisted volum_aluminum_module_template_code (default pilot child template).
+    if not volum_code:
+        offer = payload_map.get("offer_scope") if isinstance(payload_map.get("offer_scope"), dict) else {}
+        sold = {str(c).strip() for c in (offer.get("sold_modules") or []) if str(c).strip()}
+        if "RETURN-CANT" in sold:
+            volum_code = VOLUM_ALUMINUM_TEMPLATE_CODE
     volum_active = bool(volum_code)
     if volum_active and volum_code:
         volum_node = _build_node(
