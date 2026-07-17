@@ -213,7 +213,7 @@ export const STABILIZATION_PRODUCTS: readonly StabilizationProductRow[] = [
     commercialChipRo: "Rădăcină folosită azi",
     activeComponentsRo: "FACE/RETURN-CANT/BACK standalone Slice1; FINISH/MOUNTING captiv",
     activeModulesRo:
-      "geometry_svg (LETTERS_ONLY calc); debitare_*; modelare_cant; sistem_led (LETTERS_ONLY); finisaje (captiv); structura_suport (signage-shared)",
+      "geometry_svg (LETTERS_ONLY calc); debitare_*; modelare_cant; sistem_led (LETTERS_ONLY); finisaje (SURFACE_FINISH); sablon_montaj; ambalare_livrare_montaj; structura_suport (signage-shared)",
     intakeRo: "Intake V6 root offerable + form-contract pilot",
     productDefinitionRo: "PARTIAL — Slice 1 proven; stabilizare generală parțială",
     productAggregateRo: "PARTIAL — selected graph Slice 1; bonding composition-only pe RETURN-CANT",
@@ -353,7 +353,17 @@ export const MINI_MODULE_SCOPE_ROWS: readonly MiniModuleScopeRow[] = [
   {
     moduleCode: "finisaje",
     scope: "LETTERS_ONLY",
-    noteRo: "Include sablon montaj Letters — nu banner finishing.",
+    noteRo: "SURFACE_FINISH — vinyl/print/vopsire. Șablon → sablon_montaj; ambalare → ambalare_livrare_montaj.",
+  },
+  {
+    moduleCode: "sablon_montaj",
+    scope: "LETTERS_ONLY",
+    noteRo: "INSTALLATION_TEMPLATE — sub-capacitate MOUNTING; nu finisaj suprafață.",
+  },
+  {
+    moduleCode: "ambalare_livrare_montaj",
+    scope: "LETTERS_ONLY",
+    noteRo: "PACKAGING_LOGISTICS — compoziție Letters; nu chip sold; nu din MOUNTING-only.",
   },
   {
     moduleCode: "structura_suport",

@@ -5,9 +5,13 @@ import {
   deriveMetalSupportRequiredAlias,
   diagnoseMountingOwnershipConflicts,
   FINISH_OWNERSHIP_SUMMARY_RO,
+  FINISH_RUNTIME_MAP,
   LETTERS_OWNERSHIP_OWNER_GATES,
   MOUNTING_FIELD_MODEL_V1,
   MOUNTING_OWNERSHIP_SUMMARY_RO,
+  MOUNTING_RUNTIME_MAP_NARROWED,
+  RUNTIME_RESPONSIBILITY_CODES,
+  SNAPSHOT_WRITER_VERSION,
 } from "@/lib/lettersFinishMountingOwnership";
 
 describe("lettersFinishMountingOwnership", () => {
@@ -20,31 +24,40 @@ describe("lettersFinishMountingOwnership", () => {
     expect(MOUNTING_FIELD_MODEL_V1.mounting_solution.status).toBe("CURRENT");
   });
 
-  it("marks sold FINISH/MOUNTING blocked and owner gates not approved", () => {
+  it("marks sold FINISH/MOUNTING blocked; narrowing gates approved", () => {
     const finishSold = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "finish.sold_module");
     const mountingSold = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "mounting.sold_module");
     expect(finishSold?.runtime_status).toBe("BLOCKED");
     expect(mountingSold?.runtime_status).toBe("BLOCKED");
-    expect(LETTERS_OWNERSHIP_OWNER_GATES.every((g) => g.status === "NOT_APPROVED")).toBe(true);
+    expect(LETTERS_OWNERSHIP_OWNER_GATES.find((g) => g.id === "SOLD_CHIP_ACTIVATION_OWNER_GATE")?.status).toBe(
+      "NOT_APPROVED",
+    );
+    expect(LETTERS_OWNERSHIP_OWNER_GATES.find((g) => g.id === "MOUNTING_MAP_NARROWING_OWNER_GATE")?.status).toBe(
+      "APPROVED",
+    );
+    expect(LETTERS_OWNERSHIP_OWNER_GATES.find((g) => g.id === "MINI_MODULE_SPLIT_OWNER_GATE")?.status).toBe(
+      "APPROVED",
+    );
     expect(FINISH_OWNERSHIP_SUMMARY_RO.soldStatusRo).toMatch(/Activare neaprobată/);
     expect(MOUNTING_OWNERSHIP_SUMMARY_RO.soldStatusRo).toMatch(/blocat/);
   });
 
-  it("separates CURRENT vs TARGET ownership rows", () => {
-    const targets = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.filter((r) => r.current_or_target === "TARGET");
-    const currents = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.filter((r) => r.current_or_target === "CURRENT");
-    expect(targets.length).toBeGreaterThan(0);
-    expect(currents.length).toBeGreaterThan(0);
-    expect(targets.every((r) => r.runtime_status === "TARGET" || r.noteRo.length > 0)).toBe(true);
+  it("documents narrowed mounting map and precise runtime codes", () => {
+    expect([...MOUNTING_RUNTIME_MAP_NARROWED]).toEqual(["structura_suport", "sablon_montaj"]);
+    expect([...FINISH_RUNTIME_MAP]).toEqual(["finisaje"]);
+    expect(RUNTIME_RESPONSIBILITY_CODES.packaging).toBe("ambalare_livrare_montaj");
+    expect(SNAPSHOT_WRITER_VERSION).toBe("active_scope_snapshot/v2");
+    const mapRow = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "mounting.runtime_map");
+    expect(mapRow?.noteRo).toMatch(/APROBAT|îngust/i);
   });
 
-  it("assigns RETURN Oracal/RAL to COMPONENT and face vinyl intent to MODULE FINISH target", () => {
+  it("assigns RETURN Oracal/RAL to COMPONENT and face vinyl to SURFACE_FINISH", () => {
     const ret = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "finish.return_oracal_ral");
     const face = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "finish.face_intent");
     expect(ret?.canonical_owner).toBe("COMPONENT");
     expect(ret?.ownerDetailRo).toMatch(/RETURN-CANT/);
     expect(face?.canonical_owner).toBe("MODULE");
-    expect(face?.current_or_target).toBe("TARGET");
+    expect(face?.responsibility).toBe("SURFACE_FINISH");
   });
 
   it("keeps metal_support_required as derived alias with warnings only", () => {
@@ -57,11 +70,5 @@ describe("lettersFinishMountingOwnership", () => {
     });
     expect(diags[0]?.severity).toBe("compatibility_warning");
     expect(diags[0]?.canonicalWins).toBe(true);
-  });
-
-  it("documents mounting map narrowing as not approved", () => {
-    const mapRow = ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.find((r) => r.id === "mounting.runtime_map");
-    expect(mapRow?.activation_gate).toBe("MOUNTING_MAP_NARROWING_OWNER_GATE");
-    expect(mapRow?.noteRo).toMatch(/aprobată|neschimbată/i);
   });
 });

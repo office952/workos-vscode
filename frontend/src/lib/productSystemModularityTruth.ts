@@ -117,8 +117,20 @@ const LETTERS_TRUTH: ProductModularityTruth = {
     {
       moduleKey: "finisaje",
       labelRo: "finisaje",
-      independenceRo: "LETTERS_ONLY · captiv",
-      noteRo: "Nu dovedește finisaj reutilizabil global.",
+      independenceRo: "LETTERS_ONLY · SURFACE_FINISH",
+      noteRo: "Finisaj suprafață îngustat — nu șablon, nu ambalare.",
+    },
+    {
+      moduleKey: "sablon_montaj",
+      labelRo: "sablon_montaj",
+      independenceRo: "LETTERS_ONLY · INSTALLATION_TEMPLATE",
+      noteRo: "Sub-capacitate MOUNTING — nu chip sold.",
+    },
+    {
+      moduleKey: "ambalare_livrare_montaj",
+      labelRo: "ambalare_livrare_montaj",
+      independenceRo: "LETTERS composition/logistics",
+      noteRo: "Nu se activează din MOUNTING-only; nu chip sold.",
     },
     {
       moduleKey: "structura_suport",

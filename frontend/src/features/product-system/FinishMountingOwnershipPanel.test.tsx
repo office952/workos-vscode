@@ -4,7 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
 
 describe("FinishMountingOwnershipPanel", () => {
-  it("renders CURRENT vs TARGET separation and blocked sold modules", () => {
+  it("renders precise responsibilities and approved narrowing gates", () => {
     render(
       <MemoryRouter>
         <FinishMountingOwnershipPanel />
@@ -13,21 +13,24 @@ describe("FinishMountingOwnershipPanel", () => {
 
     expect(screen.getByTestId("finish-mounting-ownership-panel")).toBeInTheDocument();
     expect(screen.getByTestId("finish-ownership-summary")).toHaveTextContent(/Activare neaprobată/);
-    expect(screen.getByTestId("finish-ownership-summary")).toHaveTextContent(/Proprietar țintă: modul FINISH/);
-    expect(screen.getByTestId("finish-ownership-summary")).toHaveTextContent(/Cataloage conflictuale/);
-    expect(screen.getByTestId("mounting-ownership-summary")).toHaveTextContent(/Suport legat: parțial/);
-    expect(screen.getByTestId("mounting-ownership-summary")).toHaveTextContent(/mounting_system/);
-    expect(screen.getByTestId("mounting-ownership-summary")).toHaveTextContent(/metal_support_required/);
+    expect(screen.getByTestId("finish-ownership-summary")).toHaveTextContent(/SURFACE_FINISH/);
+    expect(screen.getByTestId("template-ownership-summary")).toHaveTextContent(/sablon_montaj/);
+    expect(screen.getByTestId("packaging-ownership-summary")).toHaveTextContent(/ambalare_livrare_montaj/);
+    expect(screen.getByTestId("mounting-ownership-summary")).toHaveTextContent(/structura_suport/);
+    expect(screen.getByTestId("mounting-ownership-summary")).toHaveTextContent(/sablon_montaj/);
+    expect(screen.getByTestId("legacy-compatibility-block")).toHaveTextContent(
+      /Alias agregat legacy/,
+    );
     expect(screen.getByTestId("ownership-gate-MOUNTING_MAP_NARROWING_OWNER_GATE")).toHaveTextContent(
-      /NOT APPROVED/,
+      /APPROVED/,
     );
     expect(screen.getByTestId("ownership-gate-MINI_MODULE_SPLIT_OWNER_GATE")).toHaveTextContent(
-      /NOT APPROVED/,
+      /APPROVED/,
     );
     expect(screen.getByTestId("ownership-gate-SOLD_CHIP_ACTIVATION_OWNER_GATE")).toHaveTextContent(
       /NOT APPROVED/,
     );
-    expect(screen.getByTestId("ownership-row-finish.face_intent")).toHaveTextContent(/ȚINTĂ/);
     expect(screen.getByTestId("ownership-row-mounting.alias")).toHaveTextContent(/COMPATIBILITY_ALIAS/);
+    expect(screen.getByTestId("ownership-action-links")).toBeInTheDocument();
   });
 });

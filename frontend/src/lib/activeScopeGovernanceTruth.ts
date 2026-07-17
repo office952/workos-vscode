@@ -279,19 +279,25 @@ export const SETTINGS_OWNERSHIP_TRUTH = {
   operatorWarningRo: "Cataloage de opțiuni multiple — conflict nerezolvat",
   noteRo:
     "Component settings ownership = CONFLICTED · Module settings ownership = CONFLICTED. Nu rezolvă return_depth_mm, PSU, finish enums, LED pitch, premount, ACM thickness aici.",
-  finishSoldRo: "FINISH — captiv / amânat · Activare neaprobată · proprietar țintă: modul FINISH",
+  finishSoldRo:
+    "FINISH — captiv / amânat · Activare neaprobată · runtime curent: finisaje = SURFACE_FINISH",
   mountingSoldRo:
-    "MOUNTING — suport legat parțial · modul vândut blocat · mounting_system = metodă canonică · metal_support_required = alias",
+    "MOUNTING — mapă îngustată {structura_suport, sablon_montaj} · modul vândut blocat · metal_support_required = alias",
+  ownerGatesApprovedRo: [
+    "MOUNTING_MAP_NARROWING_OWNER_GATE — APPROVED",
+    "MINI_MODULE_SPLIT_OWNER_GATE — APPROVED",
+  ] as const,
   ownerGatesNotApprovedRo: [
-    "MOUNTING_MAP_NARROWING_OWNER_GATE — NOT APPROVED",
-    "MINI_MODULE_SPLIT_OWNER_GATE — NOT APPROVED",
     "SOLD_CHIP_ACTIVATION_OWNER_GATE — NOT APPROVED",
+    "PACKAGING_SOLD_CHIP — NOT PLANNED",
   ] as const,
 };
 
 export const FALSE_GENERIC_MODULE_FLAGS_RO = [
   "sistem_led — LETTERS_ONLY (nu infrastructură LED globală)",
-  "finisaje — LETTERS_ONLY · captiv",
+  "finisaje — LETTERS_ONLY · SURFACE_FINISH (îngustat)",
+  "sablon_montaj — LETTERS_ONLY · INSTALLATION_TEMPLATE",
+  "ambalare_livrare_montaj — LETTERS composition/logistics · nu sold",
   "structura_suport — SHARED_WITHIN_SIGNAGE · reutilizare globală neprobată",
   "geometry_svg — LETTERS_ONLY · prerequisite de calcul",
 ] as const;

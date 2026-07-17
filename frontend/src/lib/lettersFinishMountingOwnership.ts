@@ -1,6 +1,6 @@
 /**
- * Letters FINISH / MOUNTING settings ownership contract (V1).
- * Metadata + diagnostics only — does not change sold scope, Aggregate, CPP, or Execution.
+ * Letters FINISH / MOUNTING ownership + runtime decoupling contract (V1).
+ * Documents precise responsibilities. Sold FINISH/MOUNTING chips remain deferred.
  */
 
 export type OwnershipOwnerToken =
@@ -31,11 +31,20 @@ export type OwnershipValueLayer =
   | "catalog_conflict"
   | "runtime_bucket";
 
+export type OwnershipResponsibility =
+  | "SURFACE_FINISH"
+  | "INSTALLATION_TEMPLATE"
+  | "PACKAGING_LOGISTICS"
+  | "STRUCTURE_SUPPORT"
+  | "LEGACY_ALIAS"
+  | "SOLD_DEFERRED";
+
 export type OwnershipSettingRecord = {
   id: string;
   fieldKey: string;
   labelRo: string;
-  domain: "FINISH" | "MOUNTING" | "SHARED";
+  domain: "FINISH" | "MOUNTING" | "LOGISTICS" | "SHARED";
+  responsibility: OwnershipResponsibility;
   canonical_owner: OwnershipOwnerToken;
   ownerDetailRo: string;
   value_layer: OwnershipValueLayer;
@@ -50,27 +59,28 @@ export type OwnershipSettingRecord = {
 export type OwnershipOwnerGateId =
   | "MOUNTING_MAP_NARROWING_OWNER_GATE"
   | "MINI_MODULE_SPLIT_OWNER_GATE"
-  | "SOLD_CHIP_ACTIVATION_OWNER_GATE";
+  | "SOLD_CHIP_ACTIVATION_OWNER_GATE"
+  | "PACKAGING_SOLD_CHIP";
 
 export const LETTERS_OWNERSHIP_OWNER_GATES: readonly {
   id: OwnershipOwnerGateId;
-  status: "NOT_APPROVED";
+  status: "APPROVED" | "NOT_APPROVED" | "NOT_PLANNED";
   labelRo: string;
   meaningRo: string;
 }[] = [
   {
     id: "MOUNTING_MAP_NARROWING_OWNER_GATE",
-    status: "NOT_APPROVED",
+    status: "APPROVED",
     labelRo: "Îngustare mapă MOUNTING",
     meaningRo:
-      "Nu se schimbă MOUNTING → {structura_suport, finisaje}. Maparea runtime rămâne neschimbată.",
+      "MOUNTING → {structura_suport, sablon_montaj}. Fără finisaje suprafață. Fără ambalare automată.",
   },
   {
     id: "MINI_MODULE_SPLIT_OWNER_GATE",
-    status: "NOT_APPROVED",
-    labelRo: "Separare modul finisaje",
+    status: "APPROVED",
+    labelRo: "Separare responsabilități finisaje",
     meaningRo:
-      "Nu se împarte finisaje în coduri registry noi. Bucket-ul mixt rămâne documentat, nu remediat.",
+      "finisaje = suprafață; sablon_montaj = șablon; ambalare_livrare_montaj = logistică. Modulul finisaje rămâne.",
   },
   {
     id: "SOLD_CHIP_ACTIVATION_OWNER_GATE",
@@ -78,15 +88,40 @@ export const LETTERS_OWNERSHIP_OWNER_GATES: readonly {
     labelRo: "Activare chip-uri sold",
     meaningRo: "FINISH și MOUNTING rămân amânate — fără chip-uri ofertabile.",
   },
+  {
+    id: "PACKAGING_SOLD_CHIP",
+    status: "NOT_PLANNED",
+    labelRo: "Chip sold ambalare",
+    meaningRo: "Ambalarea este responsabilitate de compoziție / logistică — nu modul vândut.",
+  },
 ] as const;
 
 export const FINISH_MOUNTING_OWNERSHIP_LAW_RO = [
-  "CONTRACTELE ÎNTÂI. ACTIVAREA MAI TÂRZIU.",
-  "HIDDEN DEFAULT ≠ SOLD MODULE.",
-  "UI TRUTH MUST MATCH CONTRACT TRUTH.",
+  "NU SCOATEM NIMIC DIN PRODUS.",
+  "FINISH RĂMÂNE FINISH. ȘABLONUL DEVINE ȘABLON. AMBALAREA DEVINE LOGISTICĂ.",
+  "VECHILE SNAPSHOTURI RĂMÂN CITIBILE. NOILE SNAPSHOTURI DEVIN PRECISE.",
+  "HIDDEN DEFAULT ≠ RESPONSABILITATE ACTIVĂ.",
 ] as const;
 
-/** Canonical mounting field model for V1 (persisted names). */
+export const RUNTIME_RESPONSIBILITY_CODES = {
+  surfaceFinish: "finisaje",
+  installationTemplate: "sablon_montaj",
+  packaging: "ambalare_livrare_montaj",
+  support: "structura_suport",
+} as const;
+
+export const MOUNTING_RUNTIME_MAP_NARROWED = ["structura_suport", "sablon_montaj"] as const;
+export const FINISH_RUNTIME_MAP = ["finisaje"] as const;
+export const LEGACY_FINISAJE_ALIAS_CODES = [
+  "finisaje",
+  "sablon_montaj",
+  "ambalare_livrare_montaj",
+] as const;
+
+export const SNAPSHOT_WRITER_VERSION = "active_scope_snapshot/v2";
+export const SNAPSHOT_LEGACY_VERSION = "active_scope_snapshot/v1";
+
+/** Canonical mounting field model (persisted names). */
 export const MOUNTING_FIELD_MODEL_V1 = {
   mounting_scope: {
     role: "canonical_commercial_prep_intent" as const,
@@ -118,11 +153,8 @@ export const MOUNTING_FIELD_MODEL_V1 = {
 export const BAR_MOUNTING_METHODS = ["steel_bars", "aluminum_bars"] as const;
 
 export type MountingSupportContradictionInput = {
-  /** Canonical method field (V1 persisted). */
   mounting_system?: string | null;
-  /** Canonical support composition. */
   mounting_solution?: { kind?: string | null; template_code?: string | null } | null | unknown;
-  /** Compatibility alias — never authoritative. */
   metal_support_required?: boolean | null;
 };
 
@@ -151,10 +183,6 @@ function methodImpliesBars(mountingSystem: string | null | undefined): boolean {
   return (BAR_MOUNTING_METHODS as readonly string[]).includes(mountingSystem);
 }
 
-/**
- * Pure diagnostics — does not rewrite values or change runtime activation.
- * Canonical current fields win; alias never silently becomes canonical.
- */
 export function diagnoseMountingOwnershipConflicts(
   input: MountingSupportContradictionInput,
 ): OwnershipDiagnostic[] {
@@ -200,7 +228,6 @@ export function diagnoseMountingOwnershipConflicts(
   return diagnostics;
 }
 
-/** Derive expected alias from canonical fields — documentation/helper only. */
 export function deriveMetalSupportRequiredAlias(
   input: Pick<MountingSupportContradictionInput, "mounting_system" | "mounting_solution">,
 ): boolean | null {
@@ -217,6 +244,7 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "FINISH",
     labelRo: "Chip sold FINISH",
     domain: "FINISH",
+    responsibility: "SOLD_DEFERRED",
     canonical_owner: "PRODUCT_TEMPLATE",
     ownerDetailRo: "Sold module amânat (SLICE1_DEFERRED)",
     value_layer: "runtime_bucket",
@@ -228,40 +256,59 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     noteRo: "Activare neaprobată. Captiv / amânat.",
   },
   {
-    id: "finish.runtime_bucket",
+    id: "finish.runtime_surface",
     fieldKey: "finisaje",
-    labelRo: "Bucket runtime finisaje",
+    labelRo: "Finisaj suprafață (runtime)",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "MODULE",
-    ownerDetailRo: "Mixt (suprafață + șablon + ambalare) — neschimbat în V1",
+    ownerDetailRo: "Responsabilitate SURFACE_FINISH — vinyl / print / vopsire / protecție",
     value_layer: "runtime_bucket",
     runtime_status: "CURRENT",
-    compatibility_status: "LEGACY",
+    compatibility_status: "CURRENT",
     current_or_target: "CURRENT",
     consumers: ["ProductDefinition", "Aggregate", "CPP"],
-    activation_gate: "MINI_MODULE_SPLIT_OWNER_GATE",
-    noteRo: "Separarea bucket-ului necesită owner gate separat. Ieșirile curente rămân neschimbate.",
+    activation_gate: "none",
+    noteRo: "Modulul finisaje rămâne. Nu mai deține șablonul sau ambalarea pe snapshoturi noi.",
+  },
+  {
+    id: "finish.legacy_alias",
+    fieldKey: "legacy_finisaje_aggregate_alias",
+    labelRo: "Alias agregat legacy finisaje",
+    domain: "SHARED",
+    responsibility: "LEGACY_ALIAS",
+    canonical_owner: "MODULE",
+    ownerDetailRo: "Doar pentru snapshoturi vechi (v1) — citire, nu rescriere",
+    value_layer: "runtime_bucket",
+    runtime_status: "LEGACY",
+    compatibility_status: "COMPATIBILITY_ALIAS",
+    current_or_target: "CURRENT",
+    consumers: ["Execution sold-scope reader", "active_scope_snapshot/v1"],
+    activation_gate: "none",
+    noteRo: "Alias agregat legacy pentru snapshoturi vechi. Nu este modelul canonic curent.",
   },
   {
     id: "finish.face_intent",
     fieldKey: "face_finish_type",
     labelRo: "Intent finisaj față (vinyl/print)",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "MODULE",
-    ownerDetailRo: "Proprietar țintă: modul FINISH",
+    ownerDetailRo: "Proprietar: modul FINISH (finisaje)",
     value_layer: "intent",
-    runtime_status: "TARGET",
+    runtime_status: "CURRENT",
     compatibility_status: "CURRENT",
-    current_or_target: "TARGET",
+    current_or_target: "CURRENT",
     consumers: ["Intake finish_setup", "form contract", "PD"],
-    activation_gate: "SOLD_CHIP_ACTIVATION_OWNER_GATE",
-    noteRo: "Țintă documentată. Runtime actual încă leagă vizibilitatea de FACE sold — neschimbat.",
+    activation_gate: "none",
+    noteRo: "FINISH surface — nu RETURN-CANT.",
   },
   {
     id: "finish.face_workspace",
     fieldKey: "letter_group_finishes.face_*",
     labelRo: "Valoare concretă finisaj față",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "WORKSPACE",
     ownerDetailRo: "Selecție proiect în finish_setup",
     value_layer: "workspace_value",
@@ -277,6 +324,7 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "return_finish_type",
     labelRo: "Oracal / RAL cant",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "COMPONENT",
     ownerDetailRo: "RETURN-CANT component",
     value_layer: "workspace_value",
@@ -292,44 +340,31 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "face_finish_catalogs",
     labelRo: "Cataloage finisaj față",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "MODULE",
-    ownerDetailRo: "Țintă: un singur SoT sub modul FINISH",
+    ownerDetailRo: "SoT sub responsabilitatea SURFACE_FINISH",
     value_layer: "catalog_conflict",
     runtime_status: "CURRENT",
     compatibility_status: "LEGACY",
     current_or_target: "CURRENT",
-    consumers: ["form contract", "FE option maps", "dossier", "QuoteWizard LEGACY"],
-    activation_gate: "MINI_MODULE_SPLIT_OWNER_GATE",
-    noteRo: "Cataloage conflictuale — conflict nerezolvat. Nu se unifică în V1.",
-  },
-  {
-    id: "finish.mounting_template_misown",
-    fieldKey: "mounting_template_*",
-    labelRo: "Șablon montaj (sub finisaje azi)",
-    domain: "MOUNTING",
-    canonical_owner: "MODULE",
-    ownerDetailRo: "Țintă: MOUNTING prep / INSTALLATION_TEMPLATE",
-    value_layer: "intent",
-    runtime_status: "TARGET",
-    compatibility_status: "CURRENT",
-    current_or_target: "TARGET",
-    consumers: ["form montaj_template", "finisaje runtime"],
-    activation_gate: "MINI_MODULE_SPLIT_OWNER_GATE",
-    noteRo: "Mis-owned sub finisaje în runtime curent. Nu se mută liniile/operațiile în V1.",
+    consumers: ["form contract", "FE option maps", "dossier"],
+    activation_gate: "none",
+    noteRo: "Cataloagele rămân; nu se elimină opțiuni de finisaj.",
   },
   {
     id: "finish.derived_area",
     fieldKey: "finish_coverage_measurements",
     labelRo: "Arii paint/foil/print",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "DERIVED",
     ownerDetailRo: "ProductAggregate measurements",
     value_layer: "derived",
-    runtime_status: "TARGET",
+    runtime_status: "CURRENT",
     compatibility_status: "CURRENT",
-    current_or_target: "TARGET",
+    current_or_target: "CURRENT",
     consumers: ["Aggregate", "CPP commercial_measurements"],
-    activation_gate: "SOLD_CHIP_ACTIVATION_OWNER_GATE",
+    activation_gate: "none",
     noteRo: "DERIVED — nu preț. CPP consumă măsurători; Registry deține tarife.",
   },
   {
@@ -337,6 +372,7 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "cpp_7g",
     labelRo: "Autoritate bani finisaj",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "COMMERCIAL",
     ownerDetailRo: "CPP 7G (+ Pricing Registry tarife)",
     value_layer: "commercial_authority",
@@ -350,17 +386,72 @@ export const FINISH_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
   {
     id: "finish.execution",
     fieldKey: "painting_vinyl_print_ops",
-    labelRo: "Cerințe execuție finisaj",
+    labelRo: "Cerințe execuție finisaj suprafață",
     domain: "FINISH",
+    responsibility: "SURFACE_FINISH",
     canonical_owner: "EXECUTION",
-    ownerDetailRo: "FINISH module / Execution (țintă)",
+    ownerDetailRo: "finisaje / Execution (precis pe snapshot v2)",
     value_layer: "execution_requirement",
-    runtime_status: "TARGET",
+    runtime_status: "CURRENT",
     compatibility_status: "CURRENT",
-    current_or_target: "TARGET",
+    current_or_target: "CURRENT",
     consumers: ["ExecutionPlan preview"],
-    activation_gate: "SOLD_CHIP_ACTIVATION_OWNER_GATE",
-    noteRo: "Fără materializare task în V1. Ieșirile curente neschimbate.",
+    activation_gate: "none",
+    noteRo: "Fără materializare task. Operații de suprafață doar sub finisaje.",
+  },
+] as const;
+
+export const INSTALLATION_TEMPLATE_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
+  {
+    id: "template.runtime",
+    fieldKey: "sablon_montaj",
+    labelRo: "Șablon montaj (runtime)",
+    domain: "MOUNTING",
+    responsibility: "INSTALLATION_TEMPLATE",
+    canonical_owner: "MODULE",
+    ownerDetailRo: "Responsabilitate INSTALLATION_TEMPLATE — sub-capacitate MOUNTING",
+    value_layer: "runtime_bucket",
+    runtime_status: "CURRENT",
+    compatibility_status: "CURRENT",
+    current_or_target: "CURRENT",
+    consumers: ["ProductDefinition", "Aggregate", "CPP", "Execution"],
+    activation_gate: "none",
+    noteRo: "Activ doar când mounting_template_enabled. Nu cere finisaj suprafață.",
+  },
+  {
+    id: "template.enabled",
+    fieldKey: "mounting_template_enabled",
+    labelRo: "Activare șablon montaj",
+    domain: "MOUNTING",
+    responsibility: "INSTALLATION_TEMPLATE",
+    canonical_owner: "WORKSPACE",
+    ownerDetailRo: "Intent workspace — nu finisaj suprafață",
+    value_layer: "intent",
+    runtime_status: "CURRENT",
+    compatibility_status: "CURRENT",
+    current_or_target: "CURRENT",
+    consumers: ["Intake", "form contract", "PD"],
+    activation_gate: "none",
+    noteRo: "INSTALLATION TEMPLATE ≠ SURFACE FINISH.",
+  },
+] as const;
+
+export const PACKAGING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
+  {
+    id: "packaging.runtime",
+    fieldKey: "ambalare_livrare_montaj",
+    labelRo: "Ambalare / logistică (runtime)",
+    domain: "LOGISTICS",
+    responsibility: "PACKAGING_LOGISTICS",
+    canonical_owner: "PRODUCT_TEMPLATE",
+    ownerDetailRo: "Responsabilitate de compoziție / logistică — nu modul sold",
+    value_layer: "runtime_bucket",
+    runtime_status: "CURRENT",
+    compatibility_status: "CURRENT",
+    current_or_target: "CURRENT",
+    consumers: ["Full Letters composition", "Aggregate", "CPP"],
+    activation_gate: "PACKAGING_SOLD_CHIP",
+    noteRo: "Nu se activează din MOUNTING-only. Full Letters poate activa explicit prin compoziție.",
   },
 ] as const;
 
@@ -370,6 +461,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "MOUNTING",
     labelRo: "Chip sold MOUNTING",
     domain: "MOUNTING",
+    responsibility: "SOLD_DEFERRED",
     canonical_owner: "PRODUCT_TEMPLATE",
     ownerDetailRo: "Sold module blocat / amânat",
     value_layer: "runtime_bucket",
@@ -385,6 +477,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "mounting_scope",
     labelRo: "Scope montaj",
     domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "WORKSPACE",
     ownerDetailRo: "Intent comercial pregătire / site",
     value_layer: "intent",
@@ -400,6 +493,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "mounting_system",
     labelRo: "Metodă montaj",
     domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "WORKSPACE",
     ownerDetailRo: "Câmp metodă canonic V1",
     value_layer: "workspace_value",
@@ -415,6 +509,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "mounting_solution",
     labelRo: "Soluție suport",
     domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "WORKSPACE",
     ownerDetailRo: "Compoziție tehnică → child templates",
     value_layer: "workspace_value",
@@ -430,6 +525,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     fieldKey: "metal_support_required",
     labelRo: "Alias metal_support_required",
     domain: "MOUNTING",
+    responsibility: "LEGACY_ALIAS",
     canonical_owner: "DERIVED",
     ownerDetailRo: "COMPATIBILITY_ALIAS derivat",
     value_layer: "derived",
@@ -438,13 +534,14 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     current_or_target: "CURRENT",
     consumers: ["quote_input", "module_link trigger (legacy DB)"],
     activation_gate: "none",
-    noteRo: "Nu este autoritate. Contradicțiile → compatibility_warning. Nu rescrie câmpurile canonice.",
+    noteRo: "Nu este autoritate. Contradicțiile → compatibility_warning.",
   },
   {
     id: "mounting.method_target_name",
     fieldKey: "mounting_method",
     labelRo: "Nume țintă mounting_method",
     domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "WORKSPACE",
     ownerDetailRo: "TARGET FUTURE NAME ONLY",
     value_layer: "intent",
@@ -458,30 +555,54 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
   {
     id: "mounting.runtime_map",
     fieldKey: "MOUNTING→runtime",
-    labelRo: "Mapă runtime MOUNTING",
+    labelRo: "Mapă runtime MOUNTING (îngustată)",
     domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "PRODUCT_TEMPLATE",
-    ownerDetailRo: "{structura_suport, finisaje} — neschimbată",
+    ownerDetailRo: "{structura_suport, sablon_montaj}",
     value_layer: "runtime_bucket",
     runtime_status: "CURRENT",
     compatibility_status: "CURRENT",
     current_or_target: "CURRENT",
     consumers: ["offer_scope_canonical_map"],
     activation_gate: "MOUNTING_MAP_NARROWING_OWNER_GATE",
-    noteRo: "Îngustarea mapei nu este aprobată în V1.",
+    noteRo: "Fără finisaje. Fără ambalare_livrare_montaj. Gate îngustare: APROBAT.",
+  },
+  {
+    id: "mounting.support_runtime",
+    fieldKey: "structura_suport",
+    labelRo: "Structură suport (runtime)",
+    domain: "MOUNTING",
+    responsibility: "STRUCTURE_SUPPORT",
+    canonical_owner: "MODULE",
+    ownerDetailRo: "Responsabilitate STRUCTURE_SUPPORT",
+    value_layer: "runtime_bucket",
+    runtime_status: "CURRENT",
+    compatibility_status: "CURRENT",
+    current_or_target: "CURRENT",
+    consumers: ["ProductDefinition", "Aggregate", "CPP"],
+    activation_gate: "none",
+    noteRo: "Bare / panou / hardware — separat de șablon și de finisaj suprafață.",
   },
 ] as const;
 
 export const ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
   ...FINISH_OWNERSHIP_SETTINGS,
+  ...INSTALLATION_TEMPLATE_OWNERSHIP_SETTINGS,
+  ...PACKAGING_OWNERSHIP_SETTINGS,
   ...MOUNTING_OWNERSHIP_SETTINGS,
 ];
+
+export function ownershipRowsByResponsibility(
+  responsibility: OwnershipResponsibility,
+): OwnershipSettingRecord[] {
+  return ALL_FINISH_MOUNTING_OWNERSHIP_SETTINGS.filter((r) => r.responsibility === responsibility);
+}
 
 export function ownershipStatusBadgeRo(status: OwnershipRuntimeStatus): string {
   return ownershipStatusLabelRo(status);
 }
 
-/** Operator-facing labels — correct Romanian (CURĂTOR avoided; use CURRENT). */
 export function ownershipStatusLabelRo(status: OwnershipRuntimeStatus): string {
   switch (status) {
     case "CURRENT":
@@ -501,16 +622,28 @@ export function ownershipStatusLabelRo(status: OwnershipRuntimeStatus): string {
 
 export const FINISH_OWNERSHIP_SUMMARY_RO = {
   soldStatusRo: "Captiv / amânat · Activare neaprobată",
-  targetOwnerRo: "Proprietar țintă: modul FINISH",
-  catalogsRo: "Cataloage conflictuale",
-  runtimeBucketRo: "Bucket runtime finisaje = mixt (neschimbat)",
+  targetOwnerRo: "Responsabilitate curentă: finisaje = SURFACE_FINISH",
+  catalogsRo: "Opțiuni finisaj păstrate — niciuna eliminată",
+  runtimeBucketRo: "finisaje îngustat · șablon/ambalare separate",
 } as const;
 
 export const MOUNTING_OWNERSHIP_SUMMARY_RO = {
-  linkedSupportRo: "Suport legat: parțial",
+  linkedSupportRo: "Suport: structura_suport",
   soldStatusRo: "Modul vândut: blocat",
   methodFieldRo: "Câmp metodă curent: mounting_system",
   solutionFieldRo: "Soluție suport: mounting_solution",
   aliasFieldRo: "Alias compatibilitate: metal_support_required",
-  mapGateRo: "Îngustare mapă: neaprobată",
+  mapGateRo: "Mapă îngustată: {structura_suport, sablon_montaj}",
+} as const;
+
+export const TEMPLATE_OWNERSHIP_SUMMARY_RO = {
+  runtimeCodeRo: "sablon_montaj",
+  roleRo: "Sub-capacitate MOUNTING / INSTALLATION_TEMPLATE",
+  inactiveRo: "Inactiv → fără materiale, linii, operații, avertismente șablon",
+} as const;
+
+export const PACKAGING_OWNERSHIP_SUMMARY_RO = {
+  runtimeCodeRo: "ambalare_livrare_montaj",
+  roleRo: "Compoziție / logistică — nu chip sold",
+  mountingLeakRo: "Nu se activează din MOUNTING-only",
 } as const;

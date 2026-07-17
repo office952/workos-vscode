@@ -2041,9 +2041,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               className="mb-2 rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
               data-testid="intake-v6-finish-ownership-note"
             >
-              Ownership: intent față vinyl/print → țintă modul FINISH · Oracal/RAL cant → RETURN-CANT ·
-              valori concrete → WORKSPACE · chip sold FINISH = amânat (nu apare aici) · hidden default ≠
-              modul vândut.
+              Ownership: finisaje = SURFACE_FINISH (vinyl/print/vopsire) · Oracal/RAL cant → RETURN-CANT ·
+              valori concrete → WORKSPACE · șablon ≠ finisaj suprafață · chip sold FINISH = amânat ·
+              hidden default ≠ responsabilitate activă.
             </p>
             {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
@@ -2179,10 +2179,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               className="rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
               data-testid="intake-v6-mounting-ownership-note"
             >
-              Ownership: mounting_scope = intent comercial · mounting_system = metodă canonică V1 ·
-              mounting_solution = compoziție suport · metal_support_required = alias compatibilitate
-              (nu autoritate) · chip sold MOUNTING = blocat · mounting_method = doar nume țintă (nu
-              câmp nou).
+              Ownership: MOUNTING → structura_suport + sablon_montaj · mounting_system = metodă ·
+              mounting_solution = suport · metal_support_required = alias · ambalare ≠ MOUNTING ·
+              chip sold MOUNTING = blocat · mounting_method = doar nume țintă.
+            </p>
+            <p
+              className="rounded border border-cyan-900/30 bg-cyan-950/10 px-2.5 py-2 text-[10px] text-cyan-100/80"
+              data-testid="intake-v6-template-ownership-note"
+            >
+              Șablon montaj = sablon_montaj (INSTALLATION_TEMPLATE). Activ doar cu
+              mounting_template_enabled. Nu cere finisaj suprafață.
             </p>
             {renderSectionByKey("montaj_template")}
             <IntakeV6ReviewSectionShell

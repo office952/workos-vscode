@@ -1786,30 +1786,36 @@ function OwnershipHonestyView({
         <p className="text-[11px] text-slate-500 mb-3">
           Contracte întâi. Activarea mai târziu. Current ≠ Target. Alias ≠ autoritate.
         </p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-[11px]" data-testid="governance-ownership-layers">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-[11px]" data-testid="governance-ownership-layers">
           {(
             [
-              ["module", "Modul (FINISH țintă / MOUNTING blocat)"],
-              ["component", "Componentă (RETURN-CANT Oracal/RAL)"],
-              ["workspace", "Workspace (valori proiect)"],
-              ["derived", "Derived (măsurători / alias)"],
-              ["commercial", "Commercial (CPP 7G)"],
-              ["execution", "Execution (cerințe ops — țintă)"],
+              ["surface", "Surface FINISH — finisaje"],
+              ["template", "Șablon montaj — sablon_montaj"],
+              ["packaging", "Ambalare / logistică — ambalare_livrare_montaj"],
+              ["support", "Support — structura_suport"],
+              ["legacy", "Legacy alias — snapshoturi v1"],
+              ["sold", "Sold FINISH/MOUNTING — BLOCKED"],
             ] as const
           ).map(([id, label]) => (
             <div
               key={id}
-              className="rounded-md border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300"
+              className="rounded-md border border-[#2A3548] bg-[#1A2236] px-2.5 py-2 text-slate-300 break-words"
               data-testid={`governance-ownership-layer-${id}`}
             >
               {label}
             </div>
           ))}
         </div>
-        <ul className="mt-3 space-y-1 text-[11px] text-red-300/90" data-testid="governance-ownership-v1-gates">
-          <li>MOUNTING_MAP_NARROWING_OWNER_GATE — NOT APPROVED</li>
-          <li>MINI_MODULE_SPLIT_OWNER_GATE — NOT APPROVED</li>
+        <ul className="mt-3 space-y-1 text-[11px] text-emerald-300/90 break-all" data-testid="governance-ownership-v1-gates-approved">
+          <li>MOUNTING_MAP_NARROWING_OWNER_GATE — APPROVED</li>
+          <li>MINI_MODULE_SPLIT_OWNER_GATE — APPROVED</li>
+          <li>Writer snapshot: active_scope_snapshot/v2</li>
+        </ul>
+        <ul className="mt-2 space-y-1 text-[11px] text-red-300/90 break-all" data-testid="governance-ownership-v1-gates">
           <li>SOLD_CHIP_ACTIVATION_OWNER_GATE — NOT APPROVED</li>
+          <li>PACKAGING_SOLD_CHIP — NOT PLANNED</li>
+          <li>FINISH SOLD ACTIVATION = BLOCKED</li>
+          <li>MOUNTING SOLD ACTIVATION = BLOCKED</li>
         </ul>
       </section>
 
