@@ -284,11 +284,53 @@ describe("IntakeV6LayersRoleTable display labels", () => {
 
     expect(screen.getByText("Layer 1 — albastru")).toBeInTheDocument();
     expect(screen.getByText("Grup detectat: maria")).toBeInTheDocument();
-    expect(screen.getByText("Țintă automată Product System: TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
-    expect(screen.getAllByText("Rol producție").length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Țintă automată Product System/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("Rol geometrie").length).toBeGreaterThan(0);
     expect(screen.getByText("Layer 2 — contur negru")).toBeInTheDocument();
     expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(screen.queryByText(/pseudo maria/i)).not.toBeInTheDocument();
+  });
+
+  it("shows Product System component on the same card as geometry role", () => {
+    render(
+      <IntakeV6LayersRoleTable
+        report={buildReport()}
+        confirmation={buildConfirmation()}
+        onUpdateLayerRole={() => undefined}
+        layout="cards"
+        workspaceTemplateCode="TPL-VOLUMETRIC-LETTERS_v2"
+        bindables={[
+          {
+            component_template_code: "TPL-VOLUMETRIC-FACE_v1",
+            owner_label: "Vector litere",
+            accepted_geometry_roles: ["LETTER_VECTOR_SET"],
+            selection_mode: "LAYER_OR_GROUP",
+            cardinality: "MULTI",
+            required: true,
+            available: true,
+            active: true,
+            active_by_default: true,
+          },
+          {
+            component_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+            owner_label: "Vector logo",
+            accepted_geometry_roles: ["LOGO_VECTOR_SET"],
+            selection_mode: "LAYER_OR_GROUP",
+            cardinality: "MULTI",
+            required: false,
+            available: true,
+            active: false,
+            active_by_default: false,
+            guards: ["candidate_only"],
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getAllByText("Față litere volumetrice").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Componentă logo volumetric").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Guarded").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Componentă produs").length).toBeGreaterThan(0);
   });
 
   it("keeps role selection functional with display-only labels", () => {

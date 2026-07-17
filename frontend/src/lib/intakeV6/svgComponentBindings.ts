@@ -195,3 +195,105 @@ export function ownerGeometryLabel(role: string | undefined): string {
       return role || "—";
   }
 }
+
+/** Owner-facing product-component label (presentation). Distinct from geometry role. */
+export function ownerFacingComponentProductLabel(
+  component: Pick<SvgBindableComponent, "component_template_code" | "owner_label"> | null | undefined,
+): string {
+  if (!component) return "—";
+  switch (component.component_template_code) {
+    case "TPL-VOLUMETRIC-FACE_v1":
+      return "Față litere volumetrice";
+    case "TPL-VOLUMETRIC-LOGO_v1":
+      return "Componentă logo volumetric";
+    case "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1":
+      return component.owner_label || "Panou Alucobond casetat";
+    default:
+      return component.owner_label || component.component_template_code;
+  }
+}
+
+export function findBindableByGeometryRole(
+  bindables: SvgBindableComponent[],
+  geometryRole: SvgGeometryRole,
+): SvgBindableComponent | undefined {
+  return bindables.find((c) => c.accepted_geometry_roles?.includes(geometryRole));
+}
+
+export function bindableForOwnerLayerRole(
+  bindables: SvgBindableComponent[],
+  role: string | null | undefined,
+): SvgBindableComponent | undefined {
+  if (role === "face") return findBindableByGeometryRole(bindables, "LETTER_VECTOR_SET");
+  if (role === "printed_artwork" || role === "logo") {
+    return findBindableByGeometryRole(bindables, "LOGO_VECTOR_SET");
+  }
+  return undefined;
+}
+
+export function layerRoleBindingsSyncKey(bindings: SvgComponentBinding[]): string {
+  return bindings
+    .filter(
+      (b) => b.geometry_role === "LETTER_VECTOR_SET" || b.geometry_role === "LOGO_VECTOR_SET",
+    )
+    .map(
+      (b) =>
+        `${b.geometry_role}:${b.component_template_code}:${[...b.selected_geometry.layer_ids].sort().join(",")}:${b.status}`,
+    )
+    .sort()
+    .join("|");
+}
+
+/** Derive letter/logo bindings from layer-role confirmation (keeps support bindings intact when merged). */
+export function buildLayerRoleComponentBindings(args: {
+  confirmation: {
+    layers: Array<{
+      layerKey: string;
+      confirmedRole: string | null;
+      confirmationState: string;
+    }>;
+  } | null;
+  bindables: SvgBindableComponent[];
+  sourceSvgHash: string | null;
+  previous: SvgComponentBinding[];
+}): SvgComponentBinding[] {
+  const lettersComp = findBindableByGeometryRole(args.bindables, "LETTER_VECTOR_SET");
+  if (!args.confirmation || !lettersComp) return args.previous;
+
+  const letterLayers = args.confirmation.layers
+    .filter((l) => l.confirmedRole === "face" && l.confirmationState !== "ignored")
+    .map((l) => l.layerKey);
+  const logoComp = findBindableByGeometryRole(args.bindables, "LOGO_VECTOR_SET");
+  const logoLayers = args.confirmation.layers
+    .filter(
+      (l) =>
+        (l.confirmedRole === "printed_artwork" || l.confirmedRole === "logo") &&
+        l.confirmationState !== "ignored",
+    )
+    .map((l) => l.layerKey);
+
+  let next = args.previous.filter(
+    (b) => b.geometry_role !== "LETTER_VECTOR_SET" && b.geometry_role !== "LOGO_VECTOR_SET",
+  );
+  next = upsertBinding(
+    next,
+    letterBinding({
+      layerIds: letterLayers,
+      sourceSvgHash: args.sourceSvgHash,
+      componentCode: lettersComp.component_template_code,
+      selectionMode: lettersComp.selection_mode,
+    }),
+  );
+  if (logoComp && logoLayers.length) {
+    next = upsertBinding(
+      next,
+      logoBinding({
+        layerIds: logoLayers,
+        sourceSvgHash: args.sourceSvgHash,
+        componentCode: logoComp.component_template_code,
+        selectionMode: logoComp.selection_mode,
+      }),
+    );
+  }
+  return next;
+}

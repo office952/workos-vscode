@@ -23,6 +23,8 @@ type Props = {
   finishSetup: Record<string, unknown> | null | undefined;
   svgSourceHash: string | null | undefined;
   disabled?: boolean;
+  /** embedded = hosted inside Contur suport card (no second primary surface). */
+  variant?: "panel" | "embedded";
   onSelectedContourIdChange?: (contourId: string | null) => void;
   onPersist: (patch: {
     svg_support_selection: SvgSupportSelectionState;
@@ -45,6 +47,7 @@ export default function IntakeV6AlucobondContourPanel({
   finishSetup,
   svgSourceHash,
   disabled = false,
+  variant = "panel",
   onSelectedContourIdChange,
   onPersist,
 }: Props) {
@@ -75,8 +78,12 @@ export default function IntakeV6AlucobondContourPanel({
   }, [selectedId, onSelectedContourIdChange]);
 
   const selected = cc?.candidates.find((c) => c.contour_id === selectedId) ?? null;
+  const acpRoleActive = role === "ALUCOBOND_CASED_PANEL";
+  /** Progressive disclosure: casing only after Contur suport → Panou Alucobond is chosen. */
+  const showCasingConfig = Boolean(selected && acpRoleActive);
+  const showGuards = Boolean(selected);
   const blank =
-    selected && role === "ALUCOBOND_CASED_PANEL"
+    selected && acpRoleActive
       ? blankPreviewMm({
           width_mm: selected.width_mm,
           height_mm: selected.height_mm,
@@ -85,6 +92,7 @@ export default function IntakeV6AlucobondContourPanel({
           l2_mm: foldCount === 2 ? l2 : null,
         })
       : null;
+  const embedded = variant === "embedded";
 
   if (!cc || cc.candidate_count === 0) {
     return null;
@@ -157,17 +165,20 @@ export default function IntakeV6AlucobondContourPanel({
 
   return (
     <section
-      className={`${v6.cardCompact} space-y-3`}
+      className={embedded ? "space-y-2" : `${v6.cardCompact} space-y-3`}
       data-testid="intake-v6-alucobond-contour-panel"
+      data-variant={variant}
     >
-      <div>
-        <h3 className={v6.sectionTitle}>Candidat de fundal / panou</h3>
-        <p className={v6.helper}>
-          Analyzerul detectează contururi închise și propune. Operatorul selectează și confirmă rolul.
-        </p>
-      </div>
+      {embedded ? null : (
+        <div>
+          <h3 className={v6.sectionTitle}>Candidat de fundal / panou</h3>
+          <p className={v6.helper}>
+            Analyzerul detectează contururi închise și propune. Operatorul selectează și confirmă rolul.
+          </p>
+        </div>
+      )}
 
-      {existing.status === "reconfirm_required" ? (
+      {showGuards && existing.status === "reconfirm_required" ? (
         <p
           className="rounded border border-amber-500/40 bg-amber-500/10 px-2 py-1.5 text-[11px] text-amber-100"
           data-testid="intake-v6-alucobond-reconfirm"
@@ -176,7 +187,7 @@ export default function IntakeV6AlucobondContourPanel({
         </p>
       ) : null}
 
-      {cc.unit_ambiguity ? (
+      {showGuards && cc.unit_ambiguity ? (
         <p className="text-[11px] text-amber-200/90" data-testid="intake-v6-alucobond-unit-guard">
           Unități ambigue (guard): dimensiunile panoului folosesc corecție viewBox-as-mm.
         </p>
@@ -215,7 +226,7 @@ export default function IntakeV6AlucobondContourPanel({
       {selected ? (
         <div className="space-y-2 rounded border border-[#2A3548] p-2" data-testid="intake-v6-contour-selected">
           <label className="block text-[11px] text-slate-300">
-            Confirmă rolul
+            Rol geometrie → componentă
             <select
               className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
               value={role}
@@ -226,13 +237,15 @@ export default function IntakeV6AlucobondContourPanel({
               <option value="">— selectează —</option>
               {ROLE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
-                  {o.label}
+                  {o.value === "ALUCOBOND_CASED_PANEL"
+                    ? "Contur suport · Panou Alucobond casetat"
+                    : o.label}
                 </option>
               ))}
             </select>
           </label>
 
-          {role === "ALUCOBOND_CASED_PANEL" ? (
+          {showCasingConfig ? (
             <div className="grid gap-2 sm:grid-cols-2" data-testid="intake-v6-alucobond-casing-fields">
               <label className="text-[11px] text-slate-300">
                 Număr de întoarceri

@@ -83,6 +83,9 @@ function buildHook(
     importSvgFile: vi.fn(),
     updateLayerRole: vi.fn(),
     confirmAllLayerRoles: vi.fn(),
+    confirmProductComposition: vi.fn(),
+    saveOfferScope: vi.fn(),
+    saveFinishSetup: vi.fn().mockResolvedValue(undefined),
     canImportSvg: true,
   };
 }

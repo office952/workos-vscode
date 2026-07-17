@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   bindingFromSupportSelection,
+  buildLayerRoleComponentBindings,
   filterBindableForUi,
   letterBinding,
+  ownerFacingComponentProductLabel,
   readSvgComponentBindings,
   upsertBinding,
 } from "./svgComponentBindings";
@@ -87,5 +89,63 @@ describe("svgComponentBindings", () => {
       binding_id: "bind_letters_a",
     });
     expect(next).toHaveLength(1);
+  });
+
+  it("builds layer-role bindings and keeps distinct product labels", () => {
+    expect(
+      ownerFacingComponentProductLabel({
+        component_template_code: "TPL-VOLUMETRIC-FACE_v1",
+        owner_label: "Vector litere",
+      }),
+    ).toBe("Față litere volumetrice");
+
+    const next = buildLayerRoleComponentBindings({
+      confirmation: {
+        layers: [
+          { layerKey: "L1", confirmedRole: "face", confirmationState: "confirmed" },
+          { layerKey: "L2", confirmedRole: "printed_artwork", confirmationState: "confirmed" },
+        ],
+      },
+      bindables: [
+        {
+          component_template_code: "TPL-VOLUMETRIC-FACE_v1",
+          owner_label: "Vector litere",
+          accepted_geometry_roles: ["LETTER_VECTOR_SET"],
+          selection_mode: "LAYER_OR_GROUP",
+          cardinality: "MULTI",
+          required: true,
+          available: true,
+          active: true,
+          active_by_default: true,
+        },
+        {
+          component_template_code: "TPL-VOLUMETRIC-LOGO_v1",
+          owner_label: "Vector logo",
+          accepted_geometry_roles: ["LOGO_VECTOR_SET"],
+          selection_mode: "LAYER_OR_GROUP",
+          cardinality: "MULTI",
+          required: false,
+          available: true,
+          active: false,
+          active_by_default: false,
+        },
+      ],
+      sourceSvgHash: "h",
+      previous: [
+        bindingFromSupportSelection({
+          ...emptySvgSupportSelection(),
+          status: "confirmed",
+          role: "ALUCOBOND_CASED_PANEL",
+          contour_id: "cc_1",
+          geometry_hash: "g1",
+          svg_source_hash: "h",
+        })!,
+      ],
+    });
+    expect(next.map((b) => b.geometry_role).sort()).toEqual([
+      "LETTER_VECTOR_SET",
+      "LOGO_VECTOR_SET",
+      "SUPPORT_CONTOUR",
+    ]);
   });
 });

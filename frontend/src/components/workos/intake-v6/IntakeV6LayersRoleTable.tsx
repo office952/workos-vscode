@@ -6,9 +6,15 @@ import {
 import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { INTAKE_V6_LETTERS_TEMPLATE_CODE, INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
+import {
+  bindableForOwnerLayerRole,
+  ownerFacingComponentProductLabel,
+  type SvgComponentBinding,
+} from "@/lib/intakeV6/svgComponentBindings";
+import type { SvgBindableComponent } from "@/lib/api";
 import type { LayerAutoRole, LayerRoleConfirmation, SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import { Layers, Palette, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6CardPagination";
 import IntakeV6LayerStatusIcon from "./IntakeV6LayerStatusIcon";
 import { resolveLayerColorHumanLabel } from "./layerColorDisplay";
@@ -79,18 +85,81 @@ function LayerRoleSelect({
   });
 
   return (
-    <select
-      className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
-      value={normalizedSelectedRole}
-      onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
-      data-testid={`intake-v6-layer-role-${layerKey}`}
+    <label className="block">
+      <span className="mb-1 block text-[11px] text-slate-400">Rol geometrie</span>
+      <select
+        className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
+        value={normalizedSelectedRole}
+        onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
+        data-testid={`intake-v6-layer-role-${layerKey}`}
+      >
+        {INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function LayerComponentBindingSummary({
+  layerKey,
+  selectedRole,
+  bindables,
+  bindings,
+}: {
+  layerKey: string;
+  selectedRole: LayerAutoRole;
+  bindables?: SvgBindableComponent[];
+  bindings?: SvgComponentBinding[];
+}) {
+  const bindable = bindableForOwnerLayerRole(bindables ?? [], selectedRole);
+  if (!bindable) return null;
+  const bound = (bindings ?? []).find(
+    (b) => b.component_template_code === bindable.component_template_code,
+  );
+  const includesLayer = bound?.selected_geometry.layer_ids.includes(layerKey) ?? false;
+  const statusLabel = !bound
+    ? "Neasociat"
+    : bound.status === "CONFIRMED" && includesLayer
+      ? "Confirmat"
+      : bound.status === "RECONFIRM_REQUIRED"
+        ? "Necesită reconfirmare"
+        : includesLayer
+          ? "Selectat"
+          : "Sugerat";
+  const guarded = Boolean(bindable.guards?.length);
+
+  return (
+    <div
+      className="mt-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5"
+      data-testid={`intake-v6-layer-component-${layerKey}`}
     >
-      {INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+      <p className="text-[10px] uppercase tracking-wide text-slate-500">Componentă produs</p>
+      <p className="text-[12px] font-medium text-slate-100">
+        {ownerFacingComponentProductLabel(bindable)}
+      </p>
+      <p className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-400">
+        <span>{bindable.required ? "Obligatoriu" : "Opțional"}</span>
+        <span>·</span>
+        <span data-testid={`intake-v6-layer-component-status-${layerKey}`}>{statusLabel}</span>
+        {guarded ? (
+          <>
+            <span>·</span>
+            <span className="text-amber-200/90" data-testid={`intake-v6-layer-component-guard-${layerKey}`}>
+              Guarded
+            </span>
+          </>
+        ) : null}
+      </p>
+      <details className="mt-1">
+        <summary className="cursor-pointer text-[10px] text-slate-500">Detalii tehnice</summary>
+        <p className="mt-0.5 font-mono text-[10px] text-slate-500">
+          {bindable.component_template_code}
+        </p>
+      </details>
+    </div>
   );
 }
 
@@ -292,6 +361,9 @@ export default function IntakeV6LayersRoleTable({
   hoveredLayerKey = null,
   onHoverLayerKey,
   workspaceTemplateCode,
+  bindables,
+  componentBindings,
+  trailingCards = null,
 }: {
   report: SvgAnalysisCoreReport;
   confirmation: LayerRoleConfirmation;
@@ -301,6 +373,11 @@ export default function IntakeV6LayersRoleTable({
   hoveredLayerKey?: string | null;
   onHoverLayerKey?: (layerKey: string | null) => void;
   workspaceTemplateCode?: string | null;
+  /** Product System svg_bindable_components — shown on the same card as geometry role. */
+  bindables?: SvgBindableComponent[];
+  componentBindings?: SvgComponentBinding[];
+  /** Extra cards in the same grid (e.g. Contur suport). */
+  trailingCards?: ReactNode;
 }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [internalHoveredLayerKey, setInternalHoveredLayerKey] = useState<string | null>(null);
@@ -365,7 +442,7 @@ export default function IntakeV6LayersRoleTable({
           <div>
             <h3 className={v6.sectionTitle}>Decizii straturi</h3>
             <p className={v6.sectionDesc}>
-              Confirmă rolul propus pentru fiecare strat detectat înainte de Review.
+              Rol geometric + componentă Product System pe același card. Hover evidențiază geometria.
             </p>
           </div>
           <span className={`${v6.mono} ${v6.metricLabel}`}>
@@ -387,21 +464,17 @@ export default function IntakeV6LayersRoleTable({
           onMouseLeave={() => setFocusedLayerKey(null)}
         >
             {paginatedLayers.map((layer, index) => {
-            const { layerKey } = resolveLayerRow(report, confirmation, layer);
+            const row = resolveLayerRow(report, confirmation, layer);
+            const { layerKey, selectedRole } = row;
               const display = buildIntakeV6LayerDisplayLabel(layer, pageIndex * INTAKE_V6_CARD_PAGE_SIZE + index, report);
               const primaryLabel = display.primaryLabel.replace(/\s*\/\s*artwork$/i, "");
-              const target = resolveIntakeV6LayerTargetTemplate({
-                layer,
-                selectedRole: resolveLayerRow(report, confirmation, layer).selectedRole,
-                workspaceTemplateCode,
-              });
             return (
                 <article
                   key={layer.id}
                   className={`rounded-md border px-3 py-3 transition outline-none focus-visible:ring-1 focus-visible:ring-cyan-400/50 ${
                     focusedLayerKey === layerKey
                       ? "border-cyan-400/40 bg-cyan-400/5"
-                      : resolveLayerRow(report, confirmation, layer).requiresAttention
+                      : row.requiresAttention
                         ? "border-amber-500/30 bg-amber-500/5"
                         : "border-[#2A3548]/80 bg-[#0A0F1A]/40"
                   }`}
@@ -416,25 +489,30 @@ export default function IntakeV6LayersRoleTable({
                     <div className="min-w-0">
                       <p className="truncate text-[12px] font-semibold text-slate-100">{primaryLabel}</p>
                       <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
-                      <p className="text-[11px] text-slate-500">Țintă automată Product System: {target.templateCode}</p>
                     </div>
                     <LayerStatusBadge
-                      state={resolveLayerRow(report, confirmation, layer).entry?.confirmationState}
+                      state={row.entry?.confirmationState}
                       layerKey={layerKey}
                       hidden={hideLayerStatusIcons}
                     />
                   </div>
-                  <p className="mb-2 text-[11px] text-slate-400">Rol producție</p>
                   <LayerRoleSelect
                     layer={layer}
                     layerKey={layerKey}
-                    selectedRole={resolveLayerRow(report, confirmation, layer).selectedRole}
+                    selectedRole={selectedRole}
                     onUpdateLayerRole={onUpdateLayerRole}
                     workspaceTemplateCode={workspaceTemplateCode}
+                  />
+                  <LayerComponentBindingSummary
+                    layerKey={layerKey}
+                    selectedRole={selectedRole}
+                    bindables={bindables}
+                    bindings={componentBindings}
                   />
                 </article>
             );
           })}
+          {trailingCards}
         </div>
       </div>
     );

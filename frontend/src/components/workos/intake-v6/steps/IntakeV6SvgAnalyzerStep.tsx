@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import {
 	findOutOfScopeLayerWarnings,
@@ -23,10 +23,18 @@ import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6Artwor
 import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
 import IntakeV6SvgComponentAssignmentPanel from "../IntakeV6SvgComponentAssignmentPanel";
+import IntakeV6SupportContourGeometryCard from "../IntakeV6SupportContourGeometryCard";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 import { INTAKE_V6_LETTERS_TEMPLATE_CODE } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
+import { useIntakeV6SvgBindables } from "@/lib/intakeV6/useIntakeV6SvgBindables";
+import {
+	buildLayerRoleComponentBindings,
+	findBindableByGeometryRole,
+	layerRoleBindingsSyncKey,
+	readSvgComponentBindings,
+} from "@/lib/intakeV6/svgComponentBindings";
 
 export interface IntakeV6SvgAnalyzerStepProps {
 	hook: IntakeV6WorkspaceHook;
@@ -74,6 +82,75 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		!Array.isArray(payload.product_binding)
 			? String((payload.product_binding as Record<string, unknown>).template_code ?? "")
 			: null;
+	const resolvedTemplateCode = templateCode || INTAKE_V6_LETTERS_TEMPLATE_CODE;
+	const finishSetup =
+		(payload?.finish_setup as Record<string, unknown> | undefined) ?? null;
+	const { bindables, loadError: bindableLoadError, usingLegacyFallback } =
+		useIntakeV6SvgBindables(resolvedTemplateCode);
+	const componentBindings = useMemo(
+		() => readSvgComponentBindings(finishSetup),
+		[finishSetup],
+	);
+	const supportComp = useMemo(
+		() => findBindableByGeometryRole(bindables, "SUPPORT_CONTOUR"),
+		[bindables],
+	);
+	const lastSyncedLayerBindingsKey = useRef<string | null>(null);
+
+	const persistFinishPatch = useCallback(
+		async (patch: {
+			svg_support_selection?: Record<string, unknown> | null;
+			svg_component_bindings?: ReturnType<typeof readSvgComponentBindings>;
+			mounting_solution?: Record<string, unknown> | null;
+			power_supply_service_corner?: string | null;
+		}) => {
+			const prev =
+				(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
+			const next: IntakeV6FinishSetup = {
+				...(prev as IntakeV6FinishSetup),
+			} as IntakeV6FinishSetup;
+			if (patch.svg_support_selection !== undefined) {
+				(next as Record<string, unknown>).svg_support_selection =
+					patch.svg_support_selection;
+			}
+			if (patch.svg_component_bindings !== undefined) {
+				(next as Record<string, unknown>).svg_component_bindings =
+					patch.svg_component_bindings;
+			}
+			if (patch.mounting_solution !== undefined) {
+				(next as Record<string, unknown>).mounting_solution = patch.mounting_solution;
+			}
+			if (patch.power_supply_service_corner !== undefined) {
+				(next as Record<string, unknown>).power_supply_service_corner =
+					patch.power_supply_service_corner;
+			}
+			await saveFinishSetup(next);
+		},
+		[payload?.finish_setup, saveFinishSetup],
+	);
+
+	/** Auto-sync letter/logo bindings when layer roles change — no second confirm button. */
+	useEffect(() => {
+		if (!confirmation || bindables.length === 0 || state.phase === "persisting") return;
+		const next = buildLayerRoleComponentBindings({
+			confirmation,
+			bindables,
+			sourceSvgHash: state.localFileHash,
+			previous: componentBindings,
+		});
+		const nextKey = layerRoleBindingsSyncKey(next);
+		const prevKey = layerRoleBindingsSyncKey(componentBindings);
+		if (nextKey === prevKey || nextKey === lastSyncedLayerBindingsKey.current) return;
+		lastSyncedLayerBindingsKey.current = nextKey;
+		void persistFinishPatch({ svg_component_bindings: next });
+	}, [
+		confirmation,
+		bindables,
+		componentBindings,
+		state.localFileHash,
+		state.phase,
+		persistFinishPatch,
+	]);
 
 	const geometryMetrics = useMemo(
 		() =>
@@ -282,45 +359,31 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 								layout="cards"
 								hoveredLayerKey={hoveredLayerKey}
 								onHoverLayerKey={setHoveredLayerKey}
+								workspaceTemplateCode={resolvedTemplateCode}
+								bindables={bindables}
+								componentBindings={componentBindings}
+								trailingCards={
+									supportComp && report ? (
+										<IntakeV6SupportContourGeometryCard
+											supportComp={supportComp}
+											report={report}
+											finishSetup={finishSetup}
+											svgSourceHash={state.localFileHash}
+											disabled={state.phase === "persisting"}
+											onSelectedContourIdChange={setSelectedContourId}
+											onPersist={persistFinishPatch}
+										/>
+									) : null
+								}
+							/>
+							<IntakeV6SvgComponentAssignmentPanel
+								templateCode={resolvedTemplateCode}
+								bindables={bindables}
+								finishSetup={finishSetup}
+								loadError={bindableLoadError}
+								usingLegacyFallback={usingLegacyFallback}
 							/>
 						</div>
-					) : null}
-
-					{report ? (
-						<IntakeV6SvgComponentAssignmentPanel
-							templateCode={templateCode || INTAKE_V6_LETTERS_TEMPLATE_CODE}
-							report={report}
-							confirmation={confirmation}
-							finishSetup={
-								(payload?.finish_setup as Record<string, unknown> | undefined) ?? null
-							}
-							svgSourceHash={state.localFileHash}
-							disabled={state.phase === "persisting"}
-							onSelectedContourIdChange={setSelectedContourId}
-							onPersistFinish={async (patch) => {
-								const prev =
-									(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
-								const next: IntakeV6FinishSetup = {
-									...(prev as IntakeV6FinishSetup),
-								} as IntakeV6FinishSetup;
-								if (patch.svg_support_selection !== undefined) {
-									(next as Record<string, unknown>).svg_support_selection =
-										patch.svg_support_selection;
-								}
-								if (patch.svg_component_bindings !== undefined) {
-									(next as Record<string, unknown>).svg_component_bindings =
-										patch.svg_component_bindings;
-								}
-								if (patch.mounting_solution !== undefined) {
-									(next as Record<string, unknown>).mounting_solution = patch.mounting_solution;
-								}
-								if (patch.power_supply_service_corner !== undefined) {
-									(next as Record<string, unknown>).power_supply_service_corner =
-										patch.power_supply_service_corner;
-								}
-								await saveFinishSetup(next);
-							}}
-						/>
 					) : null}
 
 					<IntakeV6ProductCompositionPanel
