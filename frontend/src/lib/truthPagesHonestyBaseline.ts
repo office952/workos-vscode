@@ -89,14 +89,14 @@ export const HONESTY_ARCHITECTURE_NODES: HonestyArchitectureNode[] = [
     labelRo: "Plan de execuție",
     technicalAlias: "ExecutionPlan",
     coverage: "partial",
-    note: "PROVEN_V1 same-scenario — plan 8 / 18 taskuri (order 92402); nu universal",
+    note: "PROVEN_V1 same-scenario — plan 8 / 18 taskuri (order 92402); Wave 7 OWNER_ACCEPTED; nu universal",
   },
   {
     id: "execution_reality",
     labelRo: "Execuție",
     technicalAlias: "Execution Reality",
     coverage: "partial",
-    note: "PROVEN_V1 same-scenario — sesiune închisă + post-job; acoperire parțială",
+    note: "PROVEN_V1 same-scenario — sesiune închisă + post-job; Wave 7 OWNER_ACCEPTED; acoperire parțială",
   },
 ];
 
@@ -383,9 +383,9 @@ export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
   {
     id: "ev.w7_t03_owner_signoff",
     kind: "document",
-    title: "W7-T03 Owner sign-off checklist — AWAITING_OWNER_SIGNATURE",
+    title: "Wave 7 OWNER_ACCEPTED — W7-T03 OWNER_SIGNED",
     status: "CURRENT",
-    source: "docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md",
+    source: "docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md · D-020",
   },
   {
     id: "ev.worklog_b45",

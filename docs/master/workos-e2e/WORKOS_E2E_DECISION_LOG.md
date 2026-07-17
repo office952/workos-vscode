@@ -24,12 +24,14 @@
 | D-017 | 2026-07-14 | **`mounting_system` is read-only compatibility projection** from canonical `mounting_solution` in Product Definition preview (TD-W2-PD-001) | Legacy module bindings still key off `mounting_system`; canonical mounting_solution wins for composition | Product Definition, W2-T02 removal | ACTIVE |
 | D-018 | 2026-07-14 | **Product Aggregate workspace builds consume explicit PD `composition_graph`** — registry module links are stripped when absent from graph | Eliminates parallel authority from trigger_field inference on workspace path | Product Aggregate, Cost handoff | ACTIVE |
 | D-019 | 2026-07-14 | **Wave 2 closed with nonblocking debt** — volumetric mounting spine is singular (PD → graph → Aggregate); logo segment adapter and Cost module-state path remain | W2-INT-01 integration gate | Waves 2–3 | ACTIVE |
+| D-020 | 2026-07-17 | **Wave 7 OWNER_ACCEPTED** — W7-T01/T02 ACCEPT; TE2E-028 residuals remain open accepted limitations (planning minutes partial, stock G3 deferred, labor $ excluded, deterministic fixture, limited Letters breadth); local Build 1 + 92403 retained as `LOCAL_REFERENCE_DATA — DO NOT MUTATE`; NEXT ROADMAP = GO but next build not auto-started | W7-T03 checklist + owner decision pack | Wave 7 / Acceptance | **ACTIVE — CLOSED WAVE 7** |
 
 ## Resolved owner decisions
 
 | ID | Decision | Date | Evidence |
 |----|----------|------|----------|
 | P-002 | **YES WITH POLISH** | 2026-07-14 | `docs/qa/workos-e2e-figma-master-maps-v1/FIGMA_MASTER_FINAL_REVIEW.md` |
+| Wave 7 pack | **ACCEPT** (W7 + T01 + T02; all LIMITARI=DA; RETINEM; NEXT=GO) | 2026-07-17 | `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md` · D-020 |
 
 ## Pending owner decisions
 

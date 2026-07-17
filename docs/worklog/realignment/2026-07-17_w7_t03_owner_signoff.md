@@ -2,38 +2,50 @@
 
 ## Objective
 
-Prepare Wave 7 owner acceptance: reconcile W7-T01 / W7-T02 evidence, classify limitations, publish executable checklist, mark Wave 7 awaiting owner signature.
+Prepare Wave 7 owner acceptance, then record explicit owner signature as canonical truth closure.
 
 ## Repository gate
 
 - Branch: `feature/product-system-active-path-isolation-v1`
-- Start HEAD: `3a55b3c`
-- Ancestry verified: `4da68ed` → `ad25fa9` → `91d8a3f` → `e5ac823` → `7321229` → `44260c7` → `c9c1b67` → `3a55b3c`
+- Sign-off pack HEAD: `fc33bb8`
+- Ancestry: `4da68ed` → `ad25fa9` → `91d8a3f` → `e5ac823` → `7321229` → `44260c7` → `c9c1b67` → `3a55b3c` → `fc33bb8`
 - Runtime: `:3000` / `:8001`
 
 ## Method
 
-Acceptance review only. No product code. No UTF-8 reopen. No Build 1 / 92403 mutation.
+Acceptance / truth closure only. No product code. No UTF-8 reopen. No Build 1 / 92403 mutation. No next roadmap implementation.
+
+## Owner decision (2026-07-17)
+
+```text
+WAVE 7 = ACCEPT
+W7-T01 = ACCEPT
+W7-T02 = ACCEPT
+LIMITARI ACCEPTATE = DA (all five TE2E-028 residuals)
+DATE LOCALE = RETINEM
+NEXT ROADMAP = GO
+```
+
+Recorded as **D-020**. Wave 7 → **COMPLETE — OWNER_ACCEPTED**. W7-T03 → **COMPLETE — OWNER_SIGNED**.
 
 ## Results
 
-- W7-T01: PASS — same-scenario PROVEN_V1 retained
-- W7-T02: PASS — matched / missing_actual / variance reconfirmed live
-- UTF-8: PASS — no mojibake on operator pages; G13 visible
-- TE2E-028: remains OPEN as PARTIAL_ACCEPTED residuals
-- Wave 7 status: **COMPLETE — AWAITING_OWNER_SIGNATURE**
+- W7-T01: **ACCEPTED — PROVEN_V1**
+- W7-T02: **ACCEPTED — PROVEN_V1**
+- W7-T03: **OWNER_SIGNED**
+- TE2E-028: remains **open** (owner-accepted limitations; not resolved)
+- Local reference data: `LOCAL_REFERENCE_DATA — DO NOT MUTATE` (92402/plan 8 · 92403/plan 9)
+- Next identified (not started): **UI-TRUTH-01B** (still PAUSED)
 
-## Live verification (2026-07-17)
+## Live verification (sign-off pack)
 
 | URL / source | Result |
 |-----|--------|
-| API `GET /api/v1/execution/92402/post-job-truth` | summary matched=1 · missing_actual=17 · ops=18; `write_back_performed=false`; revenue_net **3549.1286** |
-| API `GET /api/v1/execution/92403/post-job-truth` | variance=1 · Pregătire vector / font **0 → 75** (Δ 75); UTF-8 task names clean |
-| SQLite read-only | QSN2-2026-0002 **frozen**; order 92402 **locked** → snap id 2; plan **8**/92402; plan **9**/92403 |
-| `/execution/92402` | Plan vs execuție: potrivit 1 / fără actual 17 |
-| `/execution/92403` | varianță 1 · 0→75 min |
-| `/modules` Surse | W7-T01 + W7-T02 PROVEN_V1 + W7-T03 sign-off checklist |
-| `/governance` Reguli | G13 UTF-8 visible · no ownership change |
+| API `GET /api/v1/execution/92402/post-job-truth` | matched=1 · missing_actual=17 · ops=18; write_back=false; revenue_net 3549.1286 |
+| API `GET /api/v1/execution/92403/post-job-truth` | variance 0→75; UTF-8 clean |
+| `/execution/92402` · `/execution/92403` | Plan vs execuție visible; Romanian OK |
+| `/modules` Surse | W7-T01 + W7-T02 + W7-T03 evidence |
+| `/governance` Reguli | G13 UTF-8 · no ownership change |
 
 ## Artifacts
 
@@ -42,4 +54,4 @@ Acceptance review only. No product code. No UTF-8 reopen. No Build 1 / 92403 mut
 
 ## Next
 
-Wait for explicit owner decision pack answers. Do not start next roadmap item.
+Prepare planning/owner-gate prompt for **UI-TRUTH-01B** (or owner-chosen alternate). Do not start implementation in this task.

@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion follows)  
 
-**Last updated:** 2026-07-17 (**Wave 7 AWAITING_OWNER_SIGNATURE** · W7-T03 OWNER_SIGN_OFF_READY)
+**Last updated:** 2026-07-17 (**Wave 7 OWNER_ACCEPTED** · W7-T03 OWNER_SIGNED)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 7** — **COMPLETE — AWAITING_OWNER_SIGNATURE** (bounded Letters spine) |
+| Phase | **Wave 7** — **COMPLETE — OWNER_ACCEPTED** (bounded Letters spine PROVEN_V1) |
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **NONE** — W7-T03 **OWNER_SIGN_OFF_READY** |
+| Active task | **NONE** — Wave 7 closed |
 
-| Next task | **Owner signature** on Wave 7 decision pack; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | Documented resume candidate **UI-TRUTH-01B** (still **PAUSED** — needs explicit unpause GO); FLEX-02 / TE2E-028 residual builds remain alternate owner choices |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1421,24 +1421,37 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **Next:** W7-T03 — completed below
 
-## W7-T03 — Owner sign-off checklist — OWNER_SIGN_OFF_READY
+## W7-T03 — Owner sign-off checklist — OWNER_SIGNED
 
-**Verdict:** `W7_T03_OWNER_SIGNOFF_READY`
+**Verdict:** `WAVE_7_OWNER_ACCEPTED`
 
-**Wave 7:** `COMPLETE — AWAITING_OWNER_SIGNATURE` (do not mark OWNER_ACCEPTED before explicit owner answer)
+**Wave 7:** `COMPLETE — OWNER_ACCEPTED` (2026-07-17)
+
+### Owner decision (recorded exactly)
+
+```text
+WAVE 7 = ACCEPT
+W7-T01 = ACCEPT
+W7-T02 = ACCEPT
+LIMITARI ACCEPTATE: planning minutes partial / stock G3 deferred / labor cost excluded / deterministic fixture / limited template breadth = DA
+DATE LOCALE DE REFERINTA = RETINEM
+NEXT ROADMAP = GO
+```
 
 | Item | Result |
 |------|--------|
-| W7-T01 | PASS — `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
-| W7-T02 | PASS — matched / missing_actual / variance |
+| W7-T01 | **ACCEPTED — PROVEN_V1** — `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
+| W7-T02 | **ACCEPTED — PROVEN_V1** — matched / missing_actual / variance |
+| W7-T03 | **COMPLETE — OWNER_SIGNED** |
 | Freeze | PASS — QSN2-2026-0002 · total 3549.1286 · plan 8 |
 | UTF-8 / G13 | PASS — no mojibake; G13 visible |
-| TE2E-028 | PARTIAL_ACCEPTED residuals — issue remains **open** |
+| TE2E-028 | Owner-accepted residuals — issue remains **open** (not resolved) |
 
 **Checklist:** `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md`  
-**Worklog:** `docs/worklog/realignment/2026-07-17_w7_t03_owner_signoff.md`
+**Worklog:** `docs/worklog/realignment/2026-07-17_w7_t03_owner_signoff.md`  
+**Decision log:** D-020
 
-**Local reference data (DO NOT MUTATE):** Build 1 `92402`/plan `8`; W7-T02 `92403`/plan `9`
+**Local reference data:** `LOCAL_REFERENCE_DATA — DO NOT MUTATE` — Build 1 `92402`/plan `8`; W7-T02 `92403`/plan `9`
 
-**Next:** Wait for owner decision pack — do not start next roadmap build
+**Next:** Do not auto-start. Documented resume candidate = **UI-TRUTH-01B** (PAUSED). Owner must unpause or choose alternate (TE2E-028 residual / FLEX-02).
 

@@ -3,9 +3,9 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **NONE** — W7-T03 **OWNER_SIGN_OFF_READY**  
-**Wave 7:** **COMPLETE — AWAITING_OWNER_SIGNATURE**  
-**Recommended next:** Owner signature on Wave 7 decision pack (do not start next roadmap build)  
+**Active task:** **NONE** — Wave 7 **OWNER_ACCEPTED**  
+**Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
+**Recommended next:** **UI-TRUTH-01B-BANNER-RENDERING-AND-ROMANIAN-TERMINOLOGY** (still **PAUSED** — needs explicit unpause; do not auto-start)  
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
 **Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
@@ -1108,7 +1108,7 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **COMPLETE — PROVEN_V1** (2026-07-17) |
+| Status | **ACCEPTED — PROVEN_V1** (owner 2026-07-17) |
 | Verdict | `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
 | Issues | TE2E-013 **closed**; TE2E-022 partial (freeze observed; immutability gate open); TE2E-028 residual limitations |
 | Upstream | Waves 1–6 + owner GO (`4da68ed`) |
@@ -1124,7 +1124,7 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **COMPLETE — PROVEN_V1** (2026-07-17) |
+| Status | **ACCEPTED — PROVEN_V1** (owner 2026-07-17) |
 | Verdict | `W7_T02_RECONCILIATION_BREADTH_PASS` |
 | Title | Post-Job reconciliation breadth V1 |
 | Depends | W7-T01 — PROVEN_V1 |
@@ -1142,16 +1142,17 @@ Backup baseline FULL (01 + 01B). Runtime RECOVERED + startup ALIGNED (RUNTIME-CO
 
 | Field | Value |
 |-------|-------|
-| Status | **COMPLETE — OWNER_SIGN_OFF_READY** (2026-07-17) |
-| Wave 7 | **COMPLETE — AWAITING_OWNER_SIGNATURE** |
-| Verdict | `W7_T03_OWNER_SIGNOFF_READY` |
+| Status | **COMPLETE — OWNER_SIGNED** (2026-07-17) |
+| Wave 7 | **COMPLETE — OWNER_ACCEPTED** |
+| Verdict | `WAVE_7_OWNER_ACCEPTED` |
 | Title | Owner sign-off checklist |
-| Depends | W7-T01 PROVEN_V1 · W7-T02 PROVEN_V1 |
+| Depends | W7-T01 ACCEPTED · W7-T02 ACCEPTED |
 | Scope | Evidence reconciliation only — no product code |
 | Checklist | `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md` |
 | Worklog | `docs/worklog/realignment/2026-07-17_w7_t03_owner_signoff.md` |
-| Residuals | TE2E-028 remains **open** (PARTIAL_ACCEPTED for Wave 7) |
-| Next | Explicit owner decision pack — then stop |
+| Decision | D-020 — owner ACCEPT recorded exactly |
+| Residuals | TE2E-028 remains **open** (owner-accepted limitations) |
+| Next | UI-TRUTH-01B (PAUSED) — do not auto-start |
 
 ---
 

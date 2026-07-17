@@ -107,19 +107,21 @@
 
 | Task ID | Title | Issues | Depends | Status |
 |---------|-------|--------|---------|--------|
-| W7-T01 | Controlled same-scenario seed + full spine test | TE2E-013 | Owner GO + Waves 1–6 | **COMPLETE — PROVEN_V1** (2026-07-17; `DETERMINISTIC_LOCAL_SCENARIO`; commits `4da68ed`→`ad25fa9`→`91d8a3f`) |
-| W7-T02 | Post-Job reconciliation breadth V1 | TE2E-028 (partial) | W7-T01 — PROVEN_V1 | **COMPLETE — PROVEN_V1** (2026-07-17; Option A; orders `92402`/`92403`) |
-| W7-T03 | Owner sign-off checklist | All P1 + accepted P2 | W7-T02 | **COMPLETE — OWNER_SIGN_OFF_READY** (2026-07-17; Wave 7 `AWAITING_OWNER_SIGNATURE`) |
+| W7-T01 | Controlled same-scenario seed + full spine test | TE2E-013 | Owner GO + Waves 1–6 | **ACCEPTED — PROVEN_V1** (owner 2026-07-17; `DETERMINISTIC_LOCAL_SCENARIO`; commits `4da68ed`→`ad25fa9`→`91d8a3f`) |
+| W7-T02 | Post-Job reconciliation breadth V1 | TE2E-028 (partial) | W7-T01 — PROVEN_V1 | **ACCEPTED — PROVEN_V1** (owner 2026-07-17; Option A; orders `92402`/`92403`) |
+| W7-T03 | Owner sign-off checklist | All P1 + accepted P2 | W7-T02 | **COMPLETE — OWNER_SIGNED** (2026-07-17; Wave 7 `OWNER_ACCEPTED`) |
+
+**Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17) — Letters same-scenario spine PROVEN_V1; TE2E-028 residuals remain open accepted limitations.
 
 **Build 1 closure:** same-scenario Request→Post-Job proven on IR `IR-BUILD1-1784237119` / order `92402`. Residual limitations tracked as TE2E-028. Do not treat as universal template proof.
 
 ### W7-T03 — Binding definition
 
 **Title:** Owner sign-off checklist  
-**Purpose:** Validate W7-T01 + W7-T02 against approved DoD; classify TE2E-028 residuals; publish executable owner checklist; produce Wave 7 decision pack.  
+**Purpose:** Validate W7-T01 + W7-T02 against approved DoD; classify TE2E-028 residuals; publish executable owner checklist; produce Wave 7 sign-off decision.  
 **Host:** docs/truth only — no product implementation.  
 **PASS artifact:** `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md`  
-**Wave 7 gate:** `COMPLETE — AWAITING_OWNER_SIGNATURE` until explicit owner ACCEPT.
+**Wave 7 gate:** **COMPLETE — OWNER_ACCEPTED** (owner decision recorded 2026-07-17; D-020).
 
 ### W7-T02 — Binding Definition of Done (owner Option A)
 

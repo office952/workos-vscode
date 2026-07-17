@@ -27,7 +27,7 @@ WorkOS is an operational ERP for volumetric signage production: commercial intak
 | Intake V6 operator path | **Functional but canonically broken** at Step 2 |
 | Product System catalog | Operational (readonly) |
 | Product Definition | **Paused** — Figma + API only |
-| Commercial spine (Offer→Order→Execution) | **PROVEN_V1** same-scenario Letters (`DETERMINISTIC_LOCAL_SCENARIO`; not universal); Wave 7 **AWAITING_OWNER_SIGNATURE** (W7-T03) |
+| Commercial spine (Offer→Order→Execution) | **PROVEN_V1** same-scenario Letters (`DETERMINISTIC_LOCAL_SCENARIO`; not universal); Wave 7 **OWNER_ACCEPTED** (2026-07-17; W7-T03 OWNER_SIGNED) |
 | Operator UI coherence | **Poor** on Intake Step 2 (debug overload) |
 | Documentation | **Fragmented** until this master program |
 
