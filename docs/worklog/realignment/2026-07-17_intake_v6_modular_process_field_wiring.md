@@ -8,6 +8,9 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `08fc832` |
+| Feature commit | `4ccfba6` |
+| Worklog commit | `670d7c5` |
+| End HEAD | `670d7c5` |
 | Initial | `INTAKE_V6_MODULAR_PROCESS_FIELD_WIRING_IN_PROGRESS` |
 | Final | `INTAKE_V6_MODULAR_PROCESS_FIELD_WIRING_COMPLETE_WITH_GUARDS` |
 
