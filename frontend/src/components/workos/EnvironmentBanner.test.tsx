@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
 import EnvironmentBanner, { EnvironmentBannerView } from "@/components/workos/EnvironmentBanner";
 import { buildRuntimeStatusSummary } from "@/components/workos/RuntimeStatusSummary";
 import { EMPTY_RUNTIME_TRUTH_SNAPSHOT } from "@/types/runtimeStatus";
@@ -15,6 +16,10 @@ vi.mock("@/contexts/AuthContext", () => ({
 vi.mock("@/hooks/useRuntimeHealth", () => ({
   useRuntimeHealth: (opts?: { fetchDiagnostics?: boolean }) => mockUseRuntimeHealth(opts),
 }));
+
+function renderBanner(ui: React.ReactElement = <EnvironmentBanner />) {
+  return render(<MemoryRouter>{ui}</MemoryRouter>);
+}
 
 describe("EnvironmentBanner", () => {
   beforeEach(() => {
@@ -35,19 +40,45 @@ describe("EnvironmentBanner", () => {
     });
   });
 
-  it("wires hook with diagnostics and shows Romanian warning without LIVE/DB", () => {
-    render(<EnvironmentBanner />);
+  it("wires hook with diagnostics and shows compact chip without LIVE/DB", () => {
+    renderBanner();
     expect(mockUseRuntimeHealth).toHaveBeenCalledWith(
       expect.objectContaining({ fetchDiagnostics: true }),
     );
+    const banner = screen.getByTestId("environment-banner");
+    expect(banner).toHaveAttribute("data-presentation", "compact");
+    expect(banner).toHaveAttribute("data-severity", "warning");
     const main = screen.getByTestId("environment-banner-main");
-    expect(main.textContent).toBe("Local · Backend cu avertisment · DB neverificată");
+    expect(main.textContent).toBe("Local");
     expect(main.textContent).not.toMatch(/LIVE/);
-    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "warning");
+    expect(banner).toHaveAttribute(
+      "aria-label",
+      expect.stringContaining("Backend cu avertisment"),
+    );
+  });
+
+  it("does not render a full-width persistent strip for staging/warning", () => {
+    mockUseRuntimeHealth.mockReturnValue({
+      snapshot: {
+        ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
+        backend: { state: "healthy", rawStatus: "ok", checkedAt: "2026-07-17T04:00:00.000Z" },
+        database: { state: "unknown", source: "none" },
+        environment: { state: "staging", rawValue: "staging" },
+        diagnostics: { authorized: false, available: false, httpStatus: 403 },
+      },
+      isLoading: false,
+      isRefreshing: false,
+      refresh: mockRefresh,
+      lastError: null,
+    });
+    renderBanner();
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent("Staging");
+    expect(screen.queryByTestId("environment-banner-critical-strip")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("environment-banner-tech")).not.toBeInTheDocument();
   });
 
   it("exposes refresh action and opens details with 403 explanation", () => {
-    render(<EnvironmentBanner />);
+    renderBanner();
     const refresh = screen.getByTestId("environment-banner-refresh");
     expect(refresh).toHaveAccessibleName("Reverifică starea");
     fireEvent.click(refresh);
@@ -62,9 +93,13 @@ describe("EnvironmentBanner", () => {
     expect(screen.getByTestId("runtime-details-diagnostics-message")).toHaveTextContent(
       "Nu ai permisiune pentru diagnostice detaliate",
     );
+    expect(screen.getByTestId("environment-banner-control-center-link")).toHaveAttribute(
+      "href",
+      "/modules",
+    );
   });
 
-  it("shows stale label and retry wording when unavailable", () => {
+  it("shows stale label, retry wording, and critical strip when unavailable", () => {
     mockUseRuntimeHealth.mockReturnValue({
       snapshot: {
         ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
@@ -83,11 +118,15 @@ describe("EnvironmentBanner", () => {
       refresh: mockRefresh,
       lastError: "NETWORK_ERROR",
     });
-    render(<EnvironmentBanner />);
+    renderBanner();
     expect(screen.getByTestId("environment-banner-stale")).toHaveTextContent("Stare învechită");
     expect(screen.getByTestId("environment-banner-refresh")).toHaveAccessibleName("Reîncearcă");
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "critical");
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-stale", "true");
+    expect(screen.getByTestId("environment-banner-critical-strip")).toBeInTheDocument();
+    expect(screen.getByTestId("environment-banner-critical-text").textContent).toMatch(
+      /Backend/i,
+    );
   });
 
   it("authenticated alone with checking snapshot is not positive", () => {
@@ -98,7 +137,7 @@ describe("EnvironmentBanner", () => {
       refresh: mockRefresh,
       lastError: null,
     });
-    render(<EnvironmentBanner />);
+    renderBanner();
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "neutral");
     expect(screen.getByTestId("environment-banner-main").textContent).toContain("Se verifică");
   });
@@ -113,9 +152,7 @@ describe("EnvironmentBanner", () => {
       isLoading: true,
     });
     const onRefresh = vi.fn();
-    render(
-      <EnvironmentBannerView view={view} isRefreshing onRefresh={onRefresh} />,
-    );
+    renderBanner(<EnvironmentBannerView view={view} isRefreshing onRefresh={onRefresh} />);
     expect(screen.getByTestId("environment-banner-refresh")).toBeDisabled();
   });
 });

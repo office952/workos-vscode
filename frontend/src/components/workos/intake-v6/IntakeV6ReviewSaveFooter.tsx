@@ -18,7 +18,7 @@ export default function IntakeV6ReviewSaveFooter({
 
   return (
     <div
-      className="sticky bottom-0 z-10 mb-4 rounded border border-[#2A3548] bg-[#0A0F1A]/95 px-4 py-3 backdrop-blur-sm"
+      className="relative z-0 mb-20 rounded border border-[#2A3548] bg-[#0A0F1A]/95 px-4 py-3"
       data-testid="intake-v6-review-save-footer"
     >
       <div className={`flex items-center justify-between gap-3 text-[12px] ${tone}`}>
