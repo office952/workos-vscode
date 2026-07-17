@@ -131,7 +131,8 @@ export interface PlannedTaskRow {
   layer_id: string;
   process_type: string;
   machine_type: string;
-  estimated_time_minutes: number;
+  /** Null when planning source is absent — never coerce to 0 in UI. */
+  estimated_time_minutes: number | null;
   quantity: number;
 }
 

@@ -1314,7 +1314,7 @@ function RealityCapturePanel(props: RealityCapturePanelProps) {
                     )}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums text-slate-200">
-                    {t.estimated_time_minutes.toFixed(1)} min
+                    {fmtMinutes(t.estimated_time_minutes)}
                   </td>
                   <td className="px-3 py-2 text-right tabular-nums">
                     {actualMin === null ? (
