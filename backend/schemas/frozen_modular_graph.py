@@ -96,6 +96,8 @@ class FrozenTaskCandidatePreview(BaseModel):
     provenance: str | None = None
     trigger_condition: str | None = None
     interface_owner: str | None = None
+    # Real DAG edges from Product Process Contract (process_codes / task_names). Empty = legacy.
+    depends_on_process_ids: list[str] = Field(default_factory=list)
 
 
 class FrozenGraphExecutionPreview(BaseModel):

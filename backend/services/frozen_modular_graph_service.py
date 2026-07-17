@@ -265,6 +265,9 @@ def _task_candidates(aggregate: dict[str, Any] | None) -> list[FrozenTaskCandida
             str(owner or ""),
             str(row.get("provenance") or ""),
         ]
+        dep_ids = row.get("depends_on_process_ids") or row.get("depends_on") or []
+        if not isinstance(dep_ids, list):
+            dep_ids = []
         candidates.append(
             FrozenTaskCandidatePreview(
                 candidate_key="|".join(key_parts),
@@ -276,6 +279,7 @@ def _task_candidates(aggregate: dict[str, Any] | None) -> list[FrozenTaskCandida
                 provenance=str(row.get("provenance")) if row.get("provenance") is not None else None,
                 trigger_condition=row.get("trigger_condition"),
                 interface_owner=interface_owner,
+                depends_on_process_ids=[str(d) for d in dep_ids if str(d).strip()],
             )
         )
     # Stable order: sequence then name (do not invent from operations[])

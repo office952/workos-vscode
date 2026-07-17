@@ -146,38 +146,95 @@ def _project_candidates(graph: FrozenModularGraphPreview) -> list[ExecutionPrevi
 
 def _build_dependency_graph(
     candidates: list[ExecutionPreviewCandidate],
+    *,
+    frozen_candidates: list[Any] | None = None,
 ) -> ExecutionPreviewDependencyGraph:
-    """Linear sequence dependencies — no invented edges beyond frozen ordinal semantics."""
+    """Prefer real depends_on_process_ids from frozen task_rules; sequence only as legacy fallback."""
     edges: list[ExecutionPreviewDependencyEdge] = []
     keys = [c.preview_candidate_key for c in candidates]
-    for i in range(1, len(candidates)):
-        prev = candidates[i - 1]
-        cur = candidates[i]
-        edges.append(
-            ExecutionPreviewDependencyEdge(
-                from_candidate_key=prev.preview_candidate_key,
-                to_candidate_key=cur.preview_candidate_key,
-                provenance="sequence_order",
-            )
-        )
-        cur.dependencies = [prev.preview_candidate_key]
 
-    # Cycle detection (sequence chain cannot cycle unless duplicate keys).
-    seen: set[str] = set()
-    cycle = False
-    for key in keys:
-        if key in seen:
-            cycle = True
-            break
-        seen.add(key)
-    if len(keys) != len(set(keys)):
-        cycle = True
+    # Map process/task identity → preview candidate key
+    by_task_name: dict[str, str] = {}
+    by_process: dict[str, str] = {}
+    frozen_by_name: dict[str, Any] = {}
+    if frozen_candidates:
+        for fc in frozen_candidates:
+            name = getattr(fc, "task_name", None) or (fc.get("task_name") if isinstance(fc, dict) else None)
+            if name:
+                frozen_by_name[str(name)] = fc
+
+    for c in candidates:
+        if c.task_name:
+            by_task_name[c.task_name] = c.preview_candidate_key
+            by_process[c.task_name] = c.preview_candidate_key
+        if c.task_rule_code:
+            by_process[c.task_rule_code] = c.preview_candidate_key
+
+    has_real_deps = False
+    for c in candidates:
+        fc = frozen_by_name.get(c.task_name or "")
+        dep_ids: list[str] = []
+        if fc is not None:
+            dep_ids = list(getattr(fc, "depends_on_process_ids", None) or [])
+            if isinstance(fc, dict):
+                dep_ids = list(fc.get("depends_on_process_ids") or fc.get("depends_on") or [])
+        if dep_ids:
+            has_real_deps = True
+            resolved: list[str] = []
+            for dep in dep_ids:
+                key = by_process.get(str(dep)) or by_task_name.get(str(dep))
+                if key and key != c.preview_candidate_key:
+                    resolved.append(key)
+                    edges.append(
+                        ExecutionPreviewDependencyEdge(
+                            from_candidate_key=key,
+                            to_candidate_key=c.preview_candidate_key,
+                            provenance="process_depends_on",
+                        )
+                    )
+            c.dependencies = sorted(set(resolved))
+
+    if not has_real_deps:
+        # Legacy snapshots without process-graph edges: sequence chain (documented fallback).
+        for i in range(1, len(candidates)):
+            prev = candidates[i - 1]
+            cur = candidates[i]
+            edges.append(
+                ExecutionPreviewDependencyEdge(
+                    from_candidate_key=prev.preview_candidate_key,
+                    to_candidate_key=cur.preview_candidate_key,
+                    provenance="sequence_order",
+                )
+            )
+            cur.dependencies = [prev.preview_candidate_key]
+
+    # Cycle detection via Kahn on edge list
+    indeg: dict[str, int] = {k: 0 for k in keys}
+    adj: dict[str, list[str]] = {k: [] for k in keys}
+    for e in edges:
+        if e.from_candidate_key in adj and e.to_candidate_key in indeg:
+            adj[e.from_candidate_key].append(e.to_candidate_key)
+            indeg[e.to_candidate_key] += 1
+    from collections import deque
+
+    q = deque(sorted([k for k, d in indeg.items() if d == 0]))
+    topo: list[str] = []
+    while q:
+        n = q.popleft()
+        topo.append(n)
+        for nxt in sorted(adj.get(n) or []):
+            indeg[nxt] -= 1
+            if indeg[nxt] == 0:
+                q.append(nxt)
+                q = deque(sorted(q))
+    cycle = len(topo) != len(keys)
+    unresolved = sorted(set(keys) - set(topo)) if cycle else []
 
     return ExecutionPreviewDependencyGraph(
         edges=edges,
-        topological_order=[] if cycle else keys,
+        topological_order=[] if cycle else topo,
         cycle_detected=cycle,
-        unresolved=[],
+        unresolved=unresolved,
     )
 
 
@@ -317,7 +374,10 @@ def build_execution_preview_from_frozen_snapshot(
     scope_errors = _snapshot_scope_errors(snapshot)
 
     candidates = _project_candidates(graph)
-    deps = _build_dependency_graph(candidates)
+    deps = _build_dependency_graph(
+        candidates,
+        frozen_candidates=list(graph.execution.task_candidates),
+    )
     materials = _material_requirements(snapshot, candidates, graph=graph)
 
     readiness, blockers, warnings = _classify_readiness(

@@ -132,6 +132,9 @@ class ProductAggregateTaskRule(BaseModel):
     trigger_condition: str | None = None
     provenance: ProvenanceValue = "dossier"
     mini_module_code: str | None = None
+    # Optional process-graph edges (Product Process Contract resolver). Sequence remains tie-break only.
+    depends_on_process_ids: list[str] = Field(default_factory=list)
+    process_code: str | None = None
 
 
 class ProductAggregateTaskContract(BaseModel):
