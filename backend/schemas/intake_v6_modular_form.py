@@ -6,7 +6,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
-FORM_CONTRACT_VERSION = "1.0.0"
+FORM_CONTRACT_VERSION = "1.1.0-letters-canonical"
 
 OperationalStatus = Literal[
     "ACTIVE_OPERATIONAL",
@@ -37,6 +37,12 @@ class IntakeFormFieldBinding(BaseModel):
     workspace_path: str
     label_ro: str | None = None
     required: bool = False
+    field_type: str | None = None
+    unit: str | None = None
+    option_values: list[str] | None = None
+    visibility_rule: str | None = None
+    decision: str | None = None
+    consumers: list[str] = Field(default_factory=list)
     field_role: FieldRole = "module_configuration"
     module_codes: list[str] = Field(default_factory=list)
     operational_status: OperationalStatus = "ACTIVE_OPERATIONAL"
@@ -85,6 +91,7 @@ class IntakeV6ModularFormContractSummary(BaseModel):
     registry_version: str
     active_module_count: int = 0
     field_binding_count: int = 0
+    runtime_authority: bool = False
     warnings: list[str] = Field(default_factory=list)
 
 

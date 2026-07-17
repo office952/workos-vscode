@@ -212,6 +212,7 @@ import IntakeV6ArtworkOnlyDecisionPanel from "../IntakeV6ArtworkOnlyDecisionPane
 import { resolveLayerCardStatus } from "../letterGroupCardPresentation";
 import { useIntakeV6WorkspaceHeaderStatus } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
+import { resolveLettersCanonicalFieldLabels } from "@/lib/intakeV6/lettersCanonicalFormContract";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
 import { layerRoleConfirmationToV6Setup } from "@/lib/intakeV6/intakeV6LayerRoleBridge";
 import { resolveModuleActivationAttentionWarnings } from "@/lib/intakeV6/intakeV6ModuleActivationPreview";
@@ -702,6 +703,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     svgSource: svgSourcePayload,
     analysisReady,
   });
+  const lettersCanonicalFieldLabels = useMemo(
+    () =>
+      resolveLettersCanonicalFieldLabels(
+        modularTemplateCode,
+        modularFormContractHook.contract,
+      ),
+    [modularTemplateCode, modularFormContractHook.contract],
+  );
   const backboneRuntimeState = useMemo(
     () => ({
       layerRoleSetup: state.layerRoleConfirmation ? layerRoleConfirmationToV6Setup(state.layerRoleConfirmation) : null,
@@ -1987,6 +1996,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               faceFinishOptions={templateContract.faceFinishOptions}
               allowedReturnDepthMm={templateContract.allowedReturnDepthMm}
               globalBackingFallback={normalizeIntakeV6BackingMode(form.backing_mode)}
+              fieldLabels={lettersCanonicalFieldLabels}
             />
             ) : null}
             {artworkFinishes.length > 0 ? (
@@ -2085,6 +2095,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 selectedPsuWatts={form.selected_psu_watts}
                 onSelectedPsuChange={updateSelectedPsuWatts}
                 allowedPsuWatts={templateContract.allowedPsuWatts}
+                lightingSystemLabel={lettersCanonicalFieldLabels?.lighting_system_type}
               />
             </IntakeV6ReviewSectionShell>
           </div>
@@ -2452,7 +2463,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className={REVIEW_FIELD_BLOCK_CLASS}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sistem montaj (legacy, read-only)</span>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>
+                      {lettersCanonicalFieldLabels?.mounting_system ?? "Sistem montaj"} (legacy, read-only)
+                    </span>
                     <p
                       className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
                       data-testid="intake-v6-mounting-system-readonly"

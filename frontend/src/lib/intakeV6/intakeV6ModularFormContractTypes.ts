@@ -28,6 +28,12 @@ export interface IntakeV6ModularFormFieldBinding {
   workspace_path: string;
   label_ro?: string | null;
   required?: boolean;
+  field_type?: string | null;
+  unit?: string | null;
+  option_values?: string[] | null;
+  visibility_rule?: string | null;
+  decision?: string | null;
+  consumers?: string[];
   field_role?: IntakeV6ModularFieldRole;
   module_codes?: string[];
   operational_status?: IntakeV6ModularOperationalStatus;
@@ -72,6 +78,7 @@ export interface IntakeV6ModularFormContractSummary {
   registry_version?: string;
   active_module_count?: number;
   field_binding_count?: number;
+  runtime_authority?: boolean;
   warnings?: string[];
 }
 
