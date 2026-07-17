@@ -516,9 +516,10 @@ async def build_workspace_composed_aggregate(
         scoped = _apply_active_scope_selected_graph(
             resolved, pd, workspace_payload=workspace_payload
         )
-        return _attach_commercial_measurements(
+        measured = _attach_commercial_measurements(
             scoped, pd, workspace_payload=workspace_payload
         )
+        return _apply_live_process_bridge(measured, workspace_payload=workspace_payload)
 
     logo_aggregates_by_segment: dict[str, ProductAggregate] = {}
     for segment in segments:
@@ -542,6 +543,21 @@ async def build_workspace_composed_aggregate(
     scoped = _apply_active_scope_selected_graph(
         resolved, pd, workspace_payload=workspace_payload
     )
-    return _attach_commercial_measurements(
+    measured = _attach_commercial_measurements(
         scoped, pd, workspace_payload=workspace_payload
+    )
+    return _apply_live_process_bridge(measured, workspace_payload=workspace_payload)
+
+
+def _apply_live_process_bridge(
+    aggregate: ProductAggregate,
+    *,
+    workspace_payload: dict[str, Any],
+) -> ProductAggregate:
+    """Re-resolve modular process graph with workspace config (single letters DAG; keep logo rules)."""
+    from services.product_process_aggregate_bridge import apply_modular_process_graph_to_aggregate
+
+    return apply_modular_process_graph_to_aggregate(
+        aggregate,
+        workspace_payload=workspace_payload,
     )

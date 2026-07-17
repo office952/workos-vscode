@@ -140,6 +140,10 @@ class ProductAggregateTaskRule(BaseModel):
 class ProductAggregateTaskContract(BaseModel):
     task_rules: list[ProductAggregateTaskRule] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
+    # Observability: modular_resolver | dossier_legacy (no DB column — JSON aggregate only)
+    process_graph_source: str | None = None
+    process_graph_hash: str | None = None
+    process_contract_version: str | None = None
 
 
 class ProductAggregateConflict(BaseModel):

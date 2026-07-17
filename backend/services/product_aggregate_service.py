@@ -121,7 +121,13 @@ class ProductAggregateService:
     def __init__(self, db: AsyncSession) -> None:
         self._db = db
 
-    async def build(self, template_code: str) -> ProductAggregate | None:
+    async def build(
+        self,
+        template_code: str,
+        *,
+        process_bridge_payload: dict[str, Any] | None = None,
+    ) -> ProductAggregate | None:
+        """Compile ProductAggregate. Volumetric v2 overlays modular process resolver (task_contract)."""
         identity = resolve_template_identity(template_code)
         template = await self._load_template(template_code)
         if template is None:
@@ -296,7 +302,7 @@ class ProductAggregateService:
         registry_service = get_mini_module_registry_service()
         registry_refs = registry_service.get_refs_for_template(template.template_code)
 
-        return ProductAggregate(
+        aggregate = ProductAggregate(
             aggregate_version=AGGREGATE_VERSION,
             template_code=template.template_code,
             template_id=template.id,
@@ -320,6 +326,13 @@ class ProductAggregateService:
                     "Full contracts: GET /api/v1/product-system/mini-modules/by-template/{template_code}",
                 ],
             ),
+        )
+        # Live bridge: modular process resolver replaces dossier task_rules for pilot template only.
+        from services.product_process_aggregate_bridge import apply_modular_process_graph_to_aggregate
+
+        return apply_modular_process_graph_to_aggregate(
+            aggregate,
+            workspace_payload=process_bridge_payload,
         )
 
     async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:
@@ -646,6 +659,9 @@ class ProductAggregateService:
                     "mounting_template_cnc_cut": "sablon_montaj",
                     "packaging_letters": "ambalare_livrare_montaj",
                 }.get(str(priced_op))
+            dep_ids = rule.get("depends_on_process_ids") or rule.get("depends_on") or []
+            if not isinstance(dep_ids, list):
+                dep_ids = []
             task_rules.append(
                 ProductAggregateTaskRule(
                     task_name=str(task_name),
@@ -655,18 +671,23 @@ class ProductAggregateService:
                     trigger_condition=rule.get("trigger_condition"),
                     provenance="dossier",
                     mini_module_code=mini,
+                    depends_on_process_ids=[str(d) for d in dep_ids if str(d).strip()],
+                    process_code=str(rule.get("process_code") or "") or None,
                 )
             )
         notes = (
             [
                 "task_contract.task_rules compiled from product_blueprint_dossier.task_rules_json for ExecutionPlan V2.",
+                "process_graph_source=dossier_legacy",
             ]
             if task_rules
             else [
                 "No dossier task_rules_json available; ExecutionPlan V2 will block on empty task_contract.",
+                "process_graph_source=dossier_legacy",
             ]
         )
         return ProductAggregateTaskContract(
             task_rules=task_rules,
             notes=notes,
+            process_graph_source="dossier_legacy",
         )

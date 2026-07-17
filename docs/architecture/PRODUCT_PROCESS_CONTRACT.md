@@ -5,7 +5,7 @@
 | Status | CONTRACT_V1 / IMPLEMENTED_PILOT (resolver + catalogs) |
 | Date | 2026-07-17 |
 | Pilot | Litere volumetrice luminoase |
-| Runtime | Pure resolver + Aggregate/4A/4C bridge helpers; Intake/CPP/UI unchanged |
+| Runtime | Pure resolver + **live Aggregate overlay** (`apply_modular_process_graph_to_aggregate`); Intake/CPP/UI unchanged |
 
 This contract generalizes the letters canonical process so future products can reuse the same spine without a BPM engine.
 

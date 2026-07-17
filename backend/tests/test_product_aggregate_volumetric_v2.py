@@ -296,21 +296,24 @@ async def test_aggregate_includes_dossier_components(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_aggregate_compiles_dossier_task_rules_for_execution_plan(volumetric_v2_db):
+async def test_aggregate_compiles_modular_process_graph_for_execution_plan(volumetric_v2_db):
+    """Live Aggregate bridge: volumetric v2 uses modular resolver (not dossier list concat)."""
     service = ProductAggregateService(volumetric_v2_db)
     aggregate = await service.build(TEMPLATE_CODE)
     assert aggregate is not None
+    assert aggregate.task_contract.process_graph_source == "modular_resolver"
+    assert aggregate.task_contract.process_graph_hash
     rule_names = {r.task_name for r in aggregate.task_contract.task_rules}
-    assert "cnc_face_cut" in rule_names
-    assert "electrical_wiring" in rule_names
-    assert "return_face_bonding" in rule_names
+    assert "CUT_FACE" in rule_names
+    assert "BOND_FACE_TO_CANT" in rule_names
+    assert "FORM_CANT_CNC" in rule_names
+    # Dossier still loaded for provenance count, but not concatenated into task_rules
     assert aggregate.provenance_summary.dossier["task_rules"] == 3
-    priced = {r.priced_operation for r in aggregate.task_contract.task_rules}
-    assert "face_cnc_cut" in priced
-    assert "electrical_letters" in priced
-    assert "RETURN_PROFILE_FACE_BONDING" in priced
-    bonding = next(r for r in aggregate.task_contract.task_rules if r.task_name == "return_face_bonding")
+    bonding = next(r for r in aggregate.task_contract.task_rules if r.task_name == "BOND_FACE_TO_CANT")
+    assert bonding.depends_on_process_ids
+    assert bonding.provenance == "derived"
     assert bonding.mini_module_code == "modelare_cant"
+    assert any(w.code == "PROCESS_GRAPH_MODULAR_RESOLVER" for w in aggregate.warnings)
 
 
 @pytest.mark.asyncio
