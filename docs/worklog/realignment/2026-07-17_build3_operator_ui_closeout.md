@@ -7,7 +7,7 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `ce63b76` |
-| End HEAD | *(filled after commit)* |
+| End HEAD | `a65803ead48ee3ed3b13a9f287f75688786cfed4` |
 | Feature commit (prior closeout) | `f96ad0b` |
 | Verdict | `BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS` |
 
