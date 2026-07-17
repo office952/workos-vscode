@@ -39,7 +39,7 @@ Local task PASS **never** automatically opens the next wave.
 | 17 | Required P2 closed or accepted | owner sign-off list |
 | 18 | Final same-scenario E2E passes | W7-T01 — **PROVEN_V1** 2026-07-17 (`IR-BUILD1-1784237119`→`92402`; `DETERMINISTIC_LOCAL_SCENARIO`; residuals TE2E-028) |
 | 19 | Documentation consolidated | DOCUMENT_INDEX canonical only |
-| 20 | Owner signs off | written approval in DECISION_LOG |
+| 20 | Owner signs off | **W7-T03 OWNER_SIGN_OFF_READY** — checklist `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md`; Wave 7 `AWAITING_OWNER_SIGNATURE` until written owner ACCEPT |
 
 ---
 

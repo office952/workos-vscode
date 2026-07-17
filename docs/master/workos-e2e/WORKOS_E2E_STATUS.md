@@ -10,7 +10,7 @@
 
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion follows)  
 
-**Last updated:** 2026-07-17 (**SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1** · Build 1 closed)
+**Last updated:** 2026-07-17 (**Wave 7 AWAITING_OWNER_SIGNATURE** · W7-T03 OWNER_SIGN_OFF_READY)
 
 **Session ledger:** [`docs/worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md`](../../worklog/session/2026-07-15_session_master_backup_runtime_parity_governance_alignment.md)
 
@@ -24,13 +24,13 @@
 
 |-------|-------|
 
-| Phase | **Wave 7** — same-scenario spine **PROVEN_V1** (bounded); W7-T02+ still open |
+| Phase | **Wave 7** — **COMPLETE — AWAITING_OWNER_SIGNATURE** (bounded Letters spine) |
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **NONE** — W7-T02 **PROVEN_V1** |
+| Active task | **NONE** — W7-T03 **OWNER_SIGN_OFF_READY** |
 
-| Next task | Roadmap: **W7-T03** owner sign-off checklist — **not started**; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
+| Next task | **Owner signature** on Wave 7 decision pack; FLEX polish / UI-TRUTH / APP-AUTH **PAUSED** |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1419,5 +1419,26 @@ Backup baseline **FULL**. Runtime **STABLE** (3000→8001). Parity **observe-onl
 
 **TE2E-028:** remains open (planning-minute source; stock G3; labor $; fixture; templates)
 
-**Next:** W7-T03 — not started
+**Next:** W7-T03 — completed below
+
+## W7-T03 — Owner sign-off checklist — OWNER_SIGN_OFF_READY
+
+**Verdict:** `W7_T03_OWNER_SIGNOFF_READY`
+
+**Wave 7:** `COMPLETE — AWAITING_OWNER_SIGNATURE` (do not mark OWNER_ACCEPTED before explicit owner answer)
+
+| Item | Result |
+|------|--------|
+| W7-T01 | PASS — `SAME_SCENARIO_REQUEST_TO_POST_JOB_PROVEN_V1` |
+| W7-T02 | PASS — matched / missing_actual / variance |
+| Freeze | PASS — QSN2-2026-0002 · total 3549.1286 · plan 8 |
+| UTF-8 / G13 | PASS — no mojibake; G13 visible |
+| TE2E-028 | PARTIAL_ACCEPTED residuals — issue remains **open** |
+
+**Checklist:** `docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md`  
+**Worklog:** `docs/worklog/realignment/2026-07-17_w7_t03_owner_signoff.md`
+
+**Local reference data (DO NOT MUTATE):** Build 1 `92402`/plan `8`; W7-T02 `92403`/plan `9`
+
+**Next:** Wait for owner decision pack — do not start next roadmap build
 

@@ -381,6 +381,13 @@ export const HONESTY_EVIDENCE_ITEMS: HonestyEvidenceItem[] = [
     source: "docs/qa/w7-t02-reconciliation-2026-07-17/ · orders 92402/92403",
   },
   {
+    id: "ev.w7_t03_owner_signoff",
+    kind: "document",
+    title: "W7-T03 Owner sign-off checklist — AWAITING_OWNER_SIGNATURE",
+    status: "CURRENT",
+    source: "docs/plans/2026-07-17_w7_t03_owner_signoff_checklist.md",
+  },
+  {
     id: "ev.worklog_b45",
     kind: "worklog",
     title: "Truth pages honesty baseline",
