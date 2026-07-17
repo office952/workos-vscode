@@ -73,14 +73,28 @@ test.describe("Product System UI shell and navigation v1", () => {
       waitUntil: "domcontentloaded",
       timeout: 120_000,
     });
-    await expect(page.getByTestId("product-system-template-query-unavailable")).toBeVisible({
-      timeout: 30_000,
-    });
-    await expect(page.getByTestId("product-system-template-detail-panel")).toHaveCount(0);
+    // Operator path: unavailable. Advanced/governance: detail with blocked-root honesty.
+    const logoUnavailable = page.getByTestId("product-system-template-query-unavailable");
+    const logoDetail = page.getByTestId("product-system-template-detail-panel");
+    await expect
+      .poll(async () => {
+        if ((await logoUnavailable.count()) > 0) return "unavailable";
+        if ((await logoDetail.count()) > 0) return "detail";
+        return "pending";
+      }, { timeout: 30_000 })
+      .not.toBe("pending");
+    if ((await logoUnavailable.count()) > 0) {
+      await expect(logoUnavailable).toBeVisible();
+      await expect(logoDetail).toHaveCount(0);
+    } else {
+      await expect(logoDetail).toContainText(/rădăcină blocată/i);
+    }
 
     await page.goto("/product-system/components", { waitUntil: "domcontentloaded", timeout: 120_000 });
+    await expect(page.getByTestId("product-system-planned-section-badge")).toHaveText(/Planificat/i);
     await expect(page.getByTestId("product-system-planned-section")).toContainText(
-      /Această secțiune va fi activată/i,
+      /nu este operațională/i,
     );
+    await expect(page.getByTestId("product-system-shell-planned-badge-components")).toBeVisible();
   });
 });

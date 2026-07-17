@@ -315,11 +315,12 @@ export function TemplateGeneralTabPanel({
               Deschide dosarul tehnic (Blueprint Dossier)
             </Link>
             <Link
-              to="/intake"
+              to="/intake-v6"
+              data-testid="product-system-intake-v6-link"
               className="flex items-center gap-2.5 px-3 py-2.5 bg-[#0D1321] border border-[#1E293B] rounded-lg text-[12px] font-semibold text-purple-300 hover:border-purple-500/40 transition-colors"
             >
               <Inbox className="w-4 h-4 shrink-0 text-purple-400" />
-              Vezi cererile care folosesc această familie de produs
+              Vezi cererile Intake V6 pentru această familie
             </Link>
           </div>
         </SectionCard>

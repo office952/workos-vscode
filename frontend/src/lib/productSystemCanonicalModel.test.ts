@@ -31,6 +31,11 @@ describe("productSystemCanonicalModel", () => {
     expect(blob).not.toMatch(/TPL-BANNER/i);
     expect(STABILIZATION_PRODUCTS.find((p) => p.id === "logo")?.usageStatus).toBe("PARTIAL");
     expect(STABILIZATION_PRODUCTS.find((p) => p.id === "acm")?.usageStatus).toBe("PARTIAL");
+    expect(STABILIZATION_PRODUCTS.find((p) => p.id === "letters")?.commercialChipRo).toBe(
+      "Rădăcină folosită azi",
+    );
+    expect(STABILIZATION_PRODUCTS.find((p) => p.id === "logo")?.commercialChipRo).toMatch(/rădăcină blocată/i);
+    expect(STABILIZATION_PRODUCTS.find((p) => p.id === "acm")?.commercialChipRo).toMatch(/Montaj ACM/i);
   });
 
   it("exposes exact Inventory, Pricing and single Dossier routes", () => {

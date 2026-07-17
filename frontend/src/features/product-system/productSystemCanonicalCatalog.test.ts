@@ -169,6 +169,18 @@ describe("productSystemCanonicalCatalogModel", () => {
     expect(products.every((product) => !("bucket" in product))).toBe(true);
   });
 
+  it("uses commercial honesty chips instead of bare ACTIVE/CONFIRMAT", () => {
+    const products = buildCanonicalCatalogProducts({
+      templates: [],
+      availabilityItems: [letters, acm, logo],
+    });
+    const byCode = Object.fromEntries(products.map((p) => [p.templateCode, p]));
+    expect(byCode[LETTERS_TEMPLATE_CODE]?.commercialChipRo).toBe("Rădăcină folosită azi");
+    expect(byCode[LOGO_TEMPLATE_CODE]?.commercialChipRo).toMatch(/rădăcină blocată/i);
+    expect(byCode[TPL_ACM_BOXED_MOUNTING_SUPPORT]?.commercialChipRo).toMatch(/Montaj ACM/i);
+    expect(byCode[LETTERS_TEMPLATE_CODE]?.commercialChipRo).not.toMatch(/^(ACTIVE|CONFIRMAT|PARTIAL)$/);
+  });
+
   it("hides logo and component-first internals from operator visibility", () => {
     expect(isOperatorVisibleCatalogProduct(letters)).toBe(true);
     expect(isOperatorVisibleCatalogProduct(acm)).toBe(true);

@@ -54,12 +54,13 @@ describe("productTemplateScopePresentation", () => {
 
     expect(presentation.isProductTemplate).toBe(true);
     expect(presentation.workIntakeLabel).toBe("Work Intake DA");
-    expect(presentation.rootDirectLabel).toBe("Root direct: permis");
-    expect(presentation.statusLabel).toBe("Activ pentru ofertare");
-    expect(presentation.catalogStatusLabel).toBe("Produs ofertabil");
+    expect(presentation.rootDirectLabel).toBe("Ofertabil ca rădăcină");
+    expect(presentation.statusLabel).toBe("Rădăcină folosită azi");
+    expect(presentation.catalogStatusLabel).toBe("Rădăcină folosită azi");
     expect(presentation.isDirectRootAllowed).toBe(true);
     expect(presentation.isCandidateComposition).toBe(false);
     expect(presentation.forbiddenReason).toBeNull();
+    expect(presentation.catalogStatusLabel).not.toMatch(/^(ACTIVE|CONFIRMAT|PARTIAL)$/);
   });
 
   it("maps Logo to candidate composition and blocks direct root", () => {
@@ -76,13 +77,13 @@ describe("productTemplateScopePresentation", () => {
 
     expect(presentation.isProductTemplate).toBe(true);
     expect(presentation.workIntakeLabel).toBe("Work Intake NU");
-    expect(presentation.rootDirectLabel).toBe("Root direct: blocat pana la owner GO");
-    expect(presentation.statusLabel).toBe("Candidat compozitie");
-    expect(presentation.catalogStatusLabel).toBe("In pregatire");
+    expect(presentation.rootDirectLabel).toMatch(/Blocat ca rădăcină/i);
+    expect(presentation.statusLabel).toBe("Candidat · rădăcină blocată");
+    expect(presentation.catalogStatusLabel).toBe("Candidat · rădăcină blocată");
     expect(presentation.isDirectRootAllowed).toBe(false);
     expect(presentation.isCandidateComposition).toBe(true);
-    expect(presentation.usageModeLabel).toBe("candidate / linked child");
-    expect(presentation.forbiddenReason).toBe("Necesita GO owner pentru ofertare.");
+    expect(presentation.usageModeLabel).toMatch(/copil legat/i);
+    expect(presentation.forbiddenReason).toMatch(/Necesită GO owner/i);
   });
 
   it("keeps Logo out of direct root and component-root classifications", () => {

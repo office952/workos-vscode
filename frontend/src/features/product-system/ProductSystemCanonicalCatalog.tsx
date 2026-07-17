@@ -164,14 +164,25 @@ function CatalogProductCard({
 
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <span
+          className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${rollupToneClass(product.rollup)}`}
+          data-testid="product-system-canonical-card-commercial-chip"
+        >
+          {product.commercialChipRo}
+        </span>
+        <span
           className="rounded-full border border-slate-800 bg-slate-900/60 px-2 py-0.5 text-[11px] font-medium text-slate-400"
           data-testid="product-system-canonical-card-capability"
         >
-          {product.capabilityLabel}
+          {product.capabilityLabel === "Standalone" || product.capabilityLabel === "Both"
+            ? "De sine stătător"
+            : product.capabilityLabel === "Linked child"
+              ? "Copil legat"
+              : product.capabilityLabel}
         </span>
         <span
-          className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold ${rollupToneClass(product.rollup)}`}
+          className="rounded-full border border-slate-800/80 px-2 py-0.5 text-[10px] font-medium text-slate-600"
           data-testid="product-system-canonical-card-readiness-rollup"
+          title="Pregătire tehnică — nu înlocuiește chip-ul comercial"
         >
           {rollupLabel}
         </span>

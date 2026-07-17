@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import {
+  PRODUCT_SYSTEM_PLANNED_BADGE_RO,
   PRODUCT_SYSTEM_PLANNED_SECTION_MESSAGE,
   PRODUCT_SYSTEM_PRODUCTS_PATH,
   type ProductSystemShellNavId,
@@ -24,10 +25,23 @@ export default function ProductSystemPlannedSectionPage({
     <div
       data-testid="product-system-planned-section"
       data-section={section}
-      className="rounded-xl border border-slate-800/60 bg-slate-950/20 p-8 text-center"
+      data-operational="false"
+      className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/30 p-8 text-center"
     >
-      <h2 className="text-base font-semibold text-slate-100">{SECTION_TITLES[section]}</h2>
-      <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-400">
+      <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
+        <span
+          data-testid="product-system-planned-section-badge"
+          className="rounded border border-slate-700/80 bg-slate-900/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+        >
+          {PRODUCT_SYSTEM_PLANNED_BADGE_RO}
+        </span>
+        <span className="text-[11px] text-slate-600">Secțiune neoperațională</span>
+      </div>
+      <h2 className="text-base font-semibold text-slate-300">{SECTION_TITLES[section]}</h2>
+      <p
+        data-testid="product-system-planned-section-message"
+        className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-slate-500"
+      >
         {PRODUCT_SYSTEM_PLANNED_SECTION_MESSAGE}
       </p>
       <Link

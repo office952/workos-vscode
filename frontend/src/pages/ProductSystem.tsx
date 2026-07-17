@@ -3347,10 +3347,11 @@ function ProductSystemInfoPopover({
           <li>
             Șablonul este folosit în{" "}
             <Link
-              to="/intake"
+              to="/intake-v6"
+              data-testid="product-system-page-intake-v6-link"
               className="text-purple-300 underline underline-offset-2 hover:text-purple-200"
             >
-              Work Intake
+              Intake V6
             </Link>{" "}
             și la generarea ofertelor.
           </li>
@@ -3834,9 +3835,9 @@ export default function ProductSystem() {
             <ChevronRight className="w-3 h-3" />
             <span className="text-slate-300">
               {shouldShowEditorScreen(screen, draft)
-                ? "ProductSystem / Blueprint Studio"
+                ? "ProductSystem / Editor șablon"
                 : "ProductSystem / Șabloane"}
-            </span>
+              </span>
           </div>
 
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -3847,7 +3848,7 @@ export default function ProductSystem() {
               <div className="min-w-0">
                 <h1 className="text-[16px] font-bold text-slate-100 leading-tight">
                   {shouldShowEditorScreen(screen, draft)
-                    ? "ProductSystem / Blueprint Studio"
+                    ? "ProductSystem / Editor șablon"
                     : "Product System Catalog"}
                 </h1>
                 {shouldShowEditorScreen(screen, draft) ? (

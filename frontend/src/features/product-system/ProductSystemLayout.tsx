@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import { ProductSystemShellProvider, useProductSystemShell } from "./ProductSystemShellContext";
 import {
   PRICING_REGISTRY_PATH,
+  PRODUCT_SYSTEM_PLANNED_BADGE_RO,
   PRODUCT_SYSTEM_SHELL_NAV,
 } from "./productSystemShellConfig";
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
@@ -58,15 +59,28 @@ function ProductSystemLayoutInner() {
             to={item.path}
             end={item.id !== "products"}
             data-testid={`product-system-shell-nav-${item.id}`}
+            data-planned={item.plannedSection ? "true" : "false"}
             className={({ isActive }) =>
-              `rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
-                isActive
-                  ? "border border-b-0 border-slate-700 bg-slate-900/80 text-slate-100"
-                  : "text-slate-500 hover:text-slate-300"
+              `inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
+                item.plannedSection
+                  ? isActive
+                    ? "border border-b-0 border-dashed border-slate-700/80 bg-slate-950/40 text-slate-400"
+                    : "text-slate-600 hover:text-slate-400"
+                  : isActive
+                    ? "border border-b-0 border-slate-700 bg-slate-900/80 text-slate-100"
+                    : "text-slate-500 hover:text-slate-300"
               } ${item.id === "advanced" ? "ml-auto border-l border-slate-800/80 pl-4" : ""}`
             }
           >
-            {item.label}
+            <span>{item.label}</span>
+            {item.plannedSection ? (
+              <span
+                data-testid={`product-system-shell-planned-badge-${item.id}`}
+                className="rounded border border-slate-700/70 bg-slate-950/50 px-1 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-slate-500"
+              >
+                {PRODUCT_SYSTEM_PLANNED_BADGE_RO}
+              </span>
+            ) : null}
           </NavLink>
         ))}
       </nav>

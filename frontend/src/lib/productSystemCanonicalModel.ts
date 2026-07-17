@@ -188,7 +188,10 @@ export interface StabilizationProductRow {
   familyId: string;
   familyLabelRo: string;
   templateCode: string;
+  /** Internal maturity token — never show alone as product truth. */
   usageStatus: "ACTIVE" | "PARTIAL" | "OWNERSHIP_GAP";
+  /** Operator-facing commercial/root chip (preferred UI label). */
+  commercialChipRo: string;
   activeComponentsRo: string;
   activeModulesRo: string;
   intakeRo: string;
@@ -207,14 +210,17 @@ export const STABILIZATION_PRODUCTS: readonly StabilizationProductRow[] = [
     familyLabelRo: "Litere volumetrice",
     templateCode: "TPL-VOLUMETRIC-LETTERS_v2",
     usageStatus: "ACTIVE",
-    activeComponentsRo: "comp_face/spate/led/finisaj (dossier/BOM) + child return/support",
-    activeModulesRo: "geometry_svg, debitare_*, modelare_cant, sistem_led, finisaje, structura_suport",
+    commercialChipRo: "Rădăcină folosită azi",
+    activeComponentsRo: "FACE/RETURN-CANT/BACK standalone Slice1; FINISH/MOUNTING captiv",
+    activeModulesRo:
+      "geometry_svg (LETTERS_ONLY calc); debitare_*; modelare_cant; sistem_led (LETTERS_ONLY); finisaje (captiv); structura_suport (signage-shared)",
     intakeRo: "Intake V6 root offerable + form-contract pilot",
-    productDefinitionRo: "CONFIRMAT — activare module",
-    productAggregateRo: "CONFIRMAT — tehnic + măsurători (fallback explicit)",
-    pricingRo: "CPP 7G consumă măsurători",
-    executionRo: "PARTIAL — minute Aggregate → Plan (Letters)",
-    limitationRo: "Form full MIXED; renderer pilot pe secțiuni selectate.",
+    productDefinitionRo: "PARTIAL — Slice 1 proven; stabilizare generală parțială",
+    productAggregateRo: "PARTIAL — selected graph Slice 1; bonding composition-only pe RETURN-CANT",
+    pricingRo: "CPP 7G consumă măsurători scoped Slice 1",
+    executionRo: "PARTIAL — preview pe frozen sold scope (Letters)",
+    limitationRo:
+      "Slice 1 stabilizat; FINISH/MOUNTING captive; settings CONFLICTED; form MIXED pe zone rămase.",
   },
   {
     id: "logo",
@@ -222,14 +228,15 @@ export const STABILIZATION_PRODUCTS: readonly StabilizationProductRow[] = [
     familyLabelRo: "Logo",
     templateCode: "TPL-VOLUMETRIC-LOGO_v1",
     usageStatus: "PARTIAL",
-    activeComponentsRo: "LOGO-* child templates (composition)",
-    activeModulesRo: "Module links LOGO — fără mini-module registry dedicat",
+    commercialChipRo: "Candidat · rădăcină blocată",
+    activeComponentsRo: "LOGO-* child templates (composition) — nu dovedesc root",
+    activeModulesRo: "Module links LOGO — fără independență rădăcină",
     intakeRo: "Candidate / non-offerable root",
     productDefinitionRo: "PARTIAL — preview / fail-closed offerability",
     productAggregateRo: "PARTIAL — linkage existent, nu root comercial",
     pricingRo: "OWNERSHIP GAP — nu ofertabil ca root",
     executionRo: "NEVERIFICAT ca root",
-    limitationRo: "root_offerable=false; nu inventăm activare.",
+    limitationRo: "Rădăcină blocată; copil legat parțial; independență neprobată — fără activare.",
   },
   {
     id: "acm",
@@ -237,14 +244,16 @@ export const STABILIZATION_PRODUCTS: readonly StabilizationProductRow[] = [
     familyLabelRo: "Panouri ACM",
     templateCode: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
     usageStatus: "PARTIAL",
-    activeComponentsRo: "ACM boxed support components",
-    activeModulesRo: "Linked optional pe Letters (structura_suport map) + standalone offerable",
+    commercialChipRo: "Montaj ACM · parțial",
+    activeComponentsRo: "ACM boxed support — nu panou independent",
+    activeModulesRo: "Linked optional pe Letters + boxed mounting path",
     intakeRo: "Linked child / mounting path — nu root Letters",
     productDefinitionRo: "PARTIAL — composition mounting chain",
     productAggregateRo: "PARTIAL — linked child resolve",
     pricingRo: "PARTIAL — mounting support lines când activ",
     executionRo: "PARTIAL",
-    limitationRo: "Panou ACM casetat full product (TPL-ACM-CASSETTED-PANEL) rămâne archived/candidate.",
+    limitationRo:
+      "Montaj ACM · parțial. Panou independent nepregătit. Casetat (TPL-ACM-CASSETTED-PANEL) arhivat.",
   },
 ] as const;
 
@@ -414,6 +423,22 @@ export interface SettingsOwnershipRow {
 }
 
 export const SETTINGS_OWNERSHIP_ROWS: readonly SettingsOwnershipRow[] = [
+  {
+    setting: "Component settings catalogs",
+    category: "template",
+    currentOwnerRo: "MULTIPLE — unresolved",
+    runtimeSourceRo: "Form contract + FE catalogs + template JSON",
+    consumerRo: "Intake / PD",
+    statusRo: "CONFLICTED — Cataloage de opțiuni multiple — conflict nerezolvat",
+  },
+  {
+    setting: "Module settings catalogs",
+    category: "module",
+    currentOwnerRo: "MULTIPLE — unresolved",
+    runtimeSourceRo: "Form contract + FE catalogs + module defaults",
+    consumerRo: "Intake / PD",
+    statusRo: "CONFLICTED — Cataloage de opțiuni multiple — conflict nerezolvat",
+  },
   {
     setting: "VAT %",
     category: "company",

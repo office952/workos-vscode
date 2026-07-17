@@ -1,7 +1,12 @@
 import type { ProductTemplateAvailabilityItem } from "@/lib/api";
+import {
+  ACM_BOXED_TEMPLATE_CODE,
+  commercialChipForTemplateCode,
+  LETTERS_TEMPLATE_CODE,
+  LOGO_TEMPLATE_CODE,
+} from "@/lib/productSystemModularityTruth";
 
-export const LETTERS_TEMPLATE_CODE = "TPL-VOLUMETRIC-LETTERS_v2";
-export const LOGO_TEMPLATE_CODE = "TPL-VOLUMETRIC-LOGO_v1";
+export { LETTERS_TEMPLATE_CODE, LOGO_TEMPLATE_CODE };
 
 export type ProductTemplateScopePresentation = {
   templateCode: string;
@@ -58,20 +63,33 @@ export function getProductTemplateScopePresentation(
   const isCandidateComposition = isCandidateProductTemplate(template);
   const isDirectRootAllowed = isOfferableProductTemplate(template) && !isCandidateComposition;
   const workIntakeValueLabel = isDirectRootAllowed ? "Da" : "Nu";
+  const honestyChip = commercialChipForTemplateCode(template.template_code);
 
   let shortDescription =
     template.ui_description?.trim() ||
     template.description?.trim() ||
     (isDirectRootAllowed
-      ? "Product Template activ in Product System."
+      ? "Product Template activ în Product System."
       : "Product Template disponibil doar prin analyzer / linked composition.");
 
   if (template.template_code === LETTERS_TEMPLATE_CODE) {
     shortDescription =
-      "Product Template activ pentru litere volumetrice. Porneste cerere directa pentru root-ul ofertabil curent.";
-  } else if (isCandidateComposition) {
+      "Rădăcină ofertabilă pentru litere volumetrice. Slice 1 stabilizat; stabilizare generală parțială.";
+  } else if (template.template_code === LOGO_TEMPLATE_CODE || isCandidateComposition) {
     shortDescription =
-      "Product Template logo volumetric. Disponibil pentru analyzer / linked composition. Nu porneste oferta directa.";
+      "Candidat Logo — rădăcină blocată. Disponibil doar ca linked-child / analyzer. Nu pornește ofertă directă.";
+  } else if (template.template_code === ACM_BOXED_TEMPLATE_CODE) {
+    shortDescription =
+      "Montaj ACM boxed — parțial. Panoul independent și casetatul nu sunt pregătite.";
+  }
+
+  let catalogStatusLabel = honestyChip;
+  if (!catalogStatusLabel) {
+    catalogStatusLabel = isCandidateComposition
+      ? "Candidat · rădăcină blocată"
+      : isDirectRootAllowed
+        ? "Rădăcină folosită azi"
+        : template.ui_label?.trim() || "Arhivat / experimental";
   }
 
   return {
@@ -87,18 +105,22 @@ export function getProductTemplateScopePresentation(
     workIntakeLabel: `Work Intake ${isDirectRootAllowed ? "DA" : "NU"}`,
     workIntakeValueLabel,
     rootDirectLabel: isDirectRootAllowed
-      ? "Root direct: permis"
-      : "Root direct: blocat pana la owner GO",
-    statusLabel: isDirectRootAllowed ? "Activ pentru ofertare" : "Candidat compozitie",
-    catalogStatusLabel: isCandidateComposition
-      ? "In pregatire"
+      ? "Ofertabil ca rădăcină"
+      : "Blocat ca rădăcină până la owner GO",
+    statusLabel: isDirectRootAllowed
+      ? "Rădăcină folosită azi"
+      : isCandidateComposition
+        ? "Candidat · rădăcină blocată"
+        : "Neofertabil ca rădăcină",
+    catalogStatusLabel,
+    usageModeLabel: isCandidateComposition
+      ? "copil legat / candidate"
       : isDirectRootAllowed
-        ? "Produs ofertabil"
-        : template.ui_label?.trim() || "Arhivat / experimental",
-    usageModeLabel: isCandidateComposition ? "candidate / linked child" : isDirectRootAllowed ? "offerable" : "not direct root",
+        ? "rădăcină ofertabilă"
+        : "nu rădăcină directă",
     shortDescription,
     isDirectRootAllowed,
     isCandidateComposition,
-    forbiddenReason: isDirectRootAllowed ? null : "Necesita GO owner pentru ofertare.",
+    forbiddenReason: isDirectRootAllowed ? null : "Necesită GO owner pentru ofertare.",
   };
 }

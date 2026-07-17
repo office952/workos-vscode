@@ -6,6 +6,8 @@ import type {
 } from "@/lib/api";
 import { normalizeTemplateCode, isOwnerValidActiveTemplate } from "@/lib/activeTemplateScope";
 import { LOGO_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
+import { commercialChipForTemplateCode } from "@/lib/productSystemModularityTruth";
+import { getProductTemplateScopePresentation } from "@/lib/productTemplateScopePresentation";
 
 export type CanonicalCatalogRollup =
   | "READY"
@@ -31,11 +33,11 @@ export const CANONICAL_CATALOG_OPERATOR_FILTERS: Array<{
   label: string;
   testId: string;
 }> = [
-  { id: "all", label: "Toate operationale", testId: "product-system-canonical-filter-all" },
-  { id: "ready", label: "Pregatit", testId: "product-system-canonical-filter-ready" },
-  { id: "blocked", label: "Blocat", testId: "product-system-canonical-filter-blocked" },
-  { id: "standalone", label: "Standalone", testId: "product-system-canonical-filter-standalone" },
-  { id: "linked-child", label: "Linked child", testId: "product-system-canonical-filter-linked-child" },
+  { id: "all", label: "Toate operaționale", testId: "product-system-canonical-filter-all" },
+  { id: "ready", label: "Pregătit pentru ofertă", testId: "product-system-canonical-filter-ready" },
+  { id: "blocked", label: "Blocat (pregătire)", testId: "product-system-canonical-filter-blocked" },
+  { id: "standalone", label: "De sine stătător", testId: "product-system-canonical-filter-standalone" },
+  { id: "linked-child", label: "Copil legat", testId: "product-system-canonical-filter-linked-child" },
 ];
 
 export const CANONICAL_CATALOG_ADVANCED_FILTERS: Array<{
@@ -56,6 +58,8 @@ export type CanonicalCatalogProduct = {
   availability: ProductTemplateAvailabilityItem;
   template?: ProductTemplateEntity;
   capabilityLabel: CanonicalCapabilityLabel;
+  /** Operator-facing commercial/root chip — preferred over bare ACTIVE/PARTIAL. */
+  commercialChipRo: string;
   rollup: CanonicalCatalogRollup;
   blockerCount: number;
   operatorVisible: boolean;
@@ -71,9 +75,9 @@ const ROLLUP_SORT_WEIGHT: Record<CanonicalCatalogRollup, number> = {
 };
 
 export const CANONICAL_READINESS_ROLLUP_LABELS: Record<CanonicalCatalogRollup, string> = {
-  READY: "Pregatit",
-  BLOCKED: "Blocat",
-  PARTIALLY_READY: "Partial",
+  READY: "Pregătit pentru ofertă",
+  BLOCKED: "Blocat (pregătire)",
+  PARTIALLY_READY: "Parțial (compunere)",
   INTERNAL: "Intern",
   DEPRECATED: "Depreciat",
 };
@@ -279,14 +283,26 @@ export function buildCanonicalCatalogProducts({
     .map((availability) => {
       const template = templateEntityForAvailability(availability, templates);
       const operatorVisible = isOperatorVisibleCatalogProduct(availability);
+      const capabilityLabel = capabilityLabelFromCapabilities(
+        availability.capabilities,
+        availability,
+      );
+      const scope = getProductTemplateScopePresentation(availability);
       return {
         id: `template:${availability.template_id}`,
         templateCode: availability.template_code,
-        displayName: availability.ui_label || template.family_name || availability.template_code,
+        // Prefer family/name over API ui_label when honesty chip carries commercial status.
+        displayName:
+          template.family_name ||
+          availability.family_name ||
+          availability.ui_label ||
+          availability.template_code,
         familyName: availability.family_name || template.family_name || "—",
         availability,
         template,
-        capabilityLabel: capabilityLabelFromCapabilities(availability.capabilities, availability),
+        capabilityLabel,
+        commercialChipRo:
+          commercialChipForTemplateCode(availability.template_code) ?? scope.catalogStatusLabel,
         rollup: resolveCatalogRollup(availability),
         blockerCount: countReadinessBlockers(availability.readiness),
         operatorVisible,
