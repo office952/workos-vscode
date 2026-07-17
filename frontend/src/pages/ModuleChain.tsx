@@ -24,6 +24,7 @@ import {
   CANONICAL_SPINE_LABELS_RO,
   DOCUMENTATION_AUTHORITY_RULE_RO,
   DOCUMENTATION_HIERARCHY,
+  FALSE_GENERIC_MODULE_FLAGS_RO,
   FULL_TEMPLATE_COUPLING_DEFECT,
   HYBRID_INTAKE_MODEL,
   MODULE_CHAIN_TABS,
@@ -33,7 +34,9 @@ import {
   PRESENT_HANDOFFS,
   PRESENT_SUPPORT_SYSTEMS,
   PRESENT_SYSTEMS,
+  SETTINGS_OWNERSHIP_TRUTH,
   STABILIZATION_PRODUCTS,
+  SUPPORTING_SURFACE_CLASSIFICATIONS_RO,
   UNREGISTERED_SYSTEM_POLICY,
   presentStatusBadgeClass,
   type ModuleChainTabId,
@@ -351,19 +354,42 @@ export default function ModuleChain() {
               title="Independență module — Litere / Logo / ACM"
               icon={<BookOpen className="w-4 h-4 text-violet-400" />}
             />
+            <div
+              className="border border-purple-800/40 bg-purple-950/15 rounded-lg p-3 text-[11px] space-y-1"
+              data-testid="modularity-law-banner"
+            >
+              <p className="font-semibold text-purple-200">{ACTIVE_SCOPE_READINESS_LAW.titleRo}</p>
+              {ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.map((line) => (
+                <p key={line} className="text-purple-100/90">
+                  {line}
+                </p>
+              ))}
+            </div>
             {MODULE_INDEPENDENCE_PRODUCT_STATUS.map((product) => (
               <div
                 key={product.id}
                 className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
                 data-testid={`module-independence-${product.id}`}
               >
-                <p className="font-bold text-slate-100 mb-1">{product.labelRo}</p>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <p className="font-bold text-slate-100">{product.labelRo}</p>
+                  {"commercialChipRo" in product && product.commercialChipRo ? (
+                    <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border border-slate-600 text-slate-300">
+                      {product.commercialChipRo}
+                    </span>
+                  ) : null}
+                </div>
                 {"composedProduct" in product && (
                   <p className="text-slate-400">
                     COMPOSED PRODUCT = {product.composedProduct} · MODULE INDEPENDENCE ={" "}
                     {product.moduleIndependence}
                   </p>
                 )}
+                {"captiveDeferredRo" in product && product.captiveDeferredRo ? (
+                  <p className="text-amber-200/90 mt-1" data-testid="letters-captive-modules">
+                    {product.captiveDeferredRo}
+                  </p>
+                ) : null}
                 {"modeledReturn" in product && product.modeledReturn && (
                   <p className="text-amber-200/90 mt-1" data-testid="modeled-return-status">
                     Modeled return: INTAKE={product.modeledReturn.intakeSelection} · PD=
@@ -378,10 +404,54 @@ export default function ModuleChain() {
                     {"rootOfferability" in product
                       ? ` · ROOT OFFERABILITY = ${product.rootOfferability}`
                       : ""}
+                    {"linkedChildRo" in product && product.linkedChildRo
+                      ? ` · LINKED CHILD = ${product.linkedChildRo}`
+                      : ""}
+                    {"standaloneRo" in product && product.standaloneRo
+                      ? ` · STANDALONE = ${product.standaloneRo}`
+                      : ""}
+                    {"independentPanelRo" in product && product.independentPanelRo
+                      ? ` · INDEPENDENT PANEL = ${product.independentPanelRo}`
+                      : ""}
+                    {"cassetteRo" in product && product.cassetteRo
+                      ? ` · CASSETTE = ${product.cassetteRo}`
+                      : ""}
                   </p>
                 )}
               </div>
             ))}
+            <div
+              className="bg-[#1A2236] border border-amber-800/40 rounded-lg p-3 text-[11px]"
+              data-testid="settings-ownership-conflict"
+            >
+              <p className="font-semibold text-amber-100">
+                Settings ownership = {SETTINGS_OWNERSHIP_TRUTH.componentSettings}
+              </p>
+              <p className="text-amber-200/90 mt-1">{SETTINGS_OWNERSHIP_TRUTH.operatorWarningRo}</p>
+              <p className="text-slate-500 mt-1">{SETTINGS_OWNERSHIP_TRUTH.noteRo}</p>
+            </div>
+            <div
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              data-testid="false-generic-module-flags"
+            >
+              <p className="font-semibold text-slate-100 mb-1">Module false-generic (scope real)</p>
+              <ul className="list-disc list-inside text-slate-400 space-y-0.5">
+                {FALSE_GENERIC_MODULE_FLAGS_RO.map((row) => (
+                  <li key={row}>{row}</li>
+                ))}
+              </ul>
+            </div>
+            <div
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
+              data-testid="supporting-surface-classifications"
+            >
+              <p className="font-semibold text-slate-100 mb-1">Suprafețe suport (nu Level-1 spine)</p>
+              <ul className="list-disc list-inside text-slate-400 space-y-0.5">
+                {SUPPORTING_SURFACE_CLASSIFICATIONS_RO.map((row) => (
+                  <li key={row}>{row}</li>
+                ))}
+              </ul>
+            </div>
             <div
               className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 text-[11px]"
               data-testid="hybrid-intake-model"
@@ -474,8 +544,9 @@ export default function ModuleChain() {
                       className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass(
                         product.usageStatus === "ACTIVE" ? "CONFIRMAT" : "PARTIAL"
                       )}`}
+                      data-testid={`stabilization-chip-${product.id}`}
                     >
-                      {product.usageStatus}
+                      {product.commercialChipRo}
                     </span>
                   </div>
                   <p className="text-slate-400">{product.limitationRo}</p>

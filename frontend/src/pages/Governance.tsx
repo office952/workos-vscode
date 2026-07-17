@@ -1314,11 +1314,26 @@ function StatusFlowsView() {
           <button
             key={mod.id}
             onClick={() => setSelectedModule(selectedModule === mod.id ? null : mod.id)}
+            data-testid={`status-flow-${mod.id}`}
+            data-truth-class={mod.truthClass}
             className={`bg-[#111827] border rounded-lg p-3 text-center transition-all hover:border-slate-500 ${
               selectedModule === mod.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B]"
-            }`}
+            } ${mod.truthClass === "LEGACY" ? "opacity-70" : ""}`}
           >
             <p className={`text-[14px] font-bold ${mod.color}`}>{mod.shortName}</p>
+            <p
+              className={`mt-1 text-[9px] font-semibold uppercase tracking-wide ${
+                mod.truthClass === "LEGACY"
+                  ? "text-slate-500"
+                  : mod.truthClass === "TARGET"
+                    ? "text-violet-400"
+                    : mod.truthClass === "BLOCKED"
+                      ? "text-red-400"
+                      : "text-emerald-500/80"
+              }`}
+            >
+              {mod.truthClass}
+            </p>
             <p className="text-[10px] text-slate-500 mt-0.5">{mod.statuses.length} statusuri</p>
             <p className="text-[10px] text-slate-600">{mod.transitions.length} tranzitii</p>
           </button>
@@ -1346,11 +1361,26 @@ function StatusFlowsView() {
         };
 
         return (
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3 mb-4">
+          <div
+            className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 animate-in fade-in duration-300"
+            data-testid={`status-flow-detail-${mod.id}`}
+          >
+            <div className="flex flex-wrap items-center gap-3 mb-4">
               <h3 className={`text-[16px] font-bold ${mod.color}`}>{mod.name}</h3>
               <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded">Owner: {mod.owner}</span>
+              <span
+                className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 bg-slate-900 border border-slate-700 px-2 py-0.5 rounded"
+                data-testid={`status-flow-truth-class-${mod.id}`}
+              >
+                {mod.truthClass}
+              </span>
             </div>
+            <p
+              className="mb-4 text-[11px] text-slate-400 border border-slate-800 rounded-md px-3 py-2"
+              data-testid={`status-flow-honesty-${mod.id}`}
+            >
+              {mod.honestyNoteRo}
+            </p>
 
             {/* Status pills */}
             <div className="mb-4">

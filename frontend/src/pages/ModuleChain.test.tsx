@@ -93,10 +93,13 @@ describe("ModuleChain present-truth control center", () => {
     expect(screen.getByTestId("concept-node-component_template")).toHaveTextContent("STORAGE_MIXED");
     expect(screen.getByTestId("concept-node-mini_module")).toHaveTextContent("Mini-Module");
     expect(screen.getByTestId("concept-node-capability")).toHaveTextContent("interacțiune UI");
-    expect(screen.getByTestId("stabilization-letters")).toBeInTheDocument();
-    expect(screen.getByTestId("stabilization-logo")).toHaveTextContent("PARTIAL");
-    expect(screen.getByTestId("stabilization-acm")).toBeInTheDocument();
+    expect(screen.getByTestId("stabilization-letters")).toHaveTextContent("Rădăcină folosită azi");
+    expect(screen.getByTestId("stabilization-logo")).toHaveTextContent("rădăcină blocată");
+    expect(screen.getByTestId("stabilization-acm")).toHaveTextContent("Montaj ACM");
     expect(screen.queryByTestId("stabilization-banner")).not.toBeInTheDocument();
+    expect(screen.getByTestId("modularity-law-banner")).toBeInTheDocument();
+    expect(screen.getByTestId("settings-ownership-conflict")).toHaveTextContent("CONFLICTED");
+    expect(screen.getByTestId("supporting-surface-classifications")).toHaveTextContent("CostEngine");
     const routes = screen.getByTestId("canonical-route-links");
     expect(routes).toHaveTextContent("/inventory");
     expect(routes).toHaveTextContent("/inventory/pricing");

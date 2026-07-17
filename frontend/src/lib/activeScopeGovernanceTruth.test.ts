@@ -80,7 +80,8 @@ describe("Active-scope governance registration", () => {
 
   it("documents readiness law, dependency classes, hybrid intake", () => {
     expect(ACTIVE_SCOPE_READINESS_LAW.inactiveMustNotRo.join(" ")).toMatch(/warnings|linii comerciale|task/);
-    expect(ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.join(" ")).toMatch(/NEALES|SUSTINA|CAPTIVE/);
+    expect(ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.join(" ")).toMatch(/NEALES/);
+    expect(ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.join(" ")).toMatch(/CAPTIVE/);
     expect(ACTIVE_SCOPE_READINESS_LAW.status).toMatch(/PROVEN FOR LETTERS SLICE 1/);
     expect(DEPENDENCY_CLASSES.map((c) => c.id)).toEqual([
       "hard_technical",

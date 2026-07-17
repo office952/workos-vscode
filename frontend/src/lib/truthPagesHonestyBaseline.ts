@@ -453,10 +453,10 @@ export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = 
   },
   "status-flows": {
     tabId: "status-flows",
-    status: "STALE_HINT",
-    source: "governanceData.moduleStatusFlows (static)",
+    status: "HONESTY_BASELINE",
+    source: "governanceData.moduleStatusFlows (truthClass CURRENT/TARGET/LEGACY)",
     noteRo:
-      "Fluxuri de stare — referință parțială / pot fi istorice (inclusiv CostEngine). Nu sunt Level-1. Adevăr Active Scope / sold-scope snapshot: /modules + currentTruthControlCenter.",
+      "Fluxuri de stare clasificate: CURRENT / TARGET / LEGACY / BLOCKED. CostEngine = LEGACY (nu autoritate bani). QuoteWizard = LEGACY UI. live-calc/BOM = suport, nu Level-1. Adevăr Active Scope: /modules + currentTruthControlCenter.",
   },
   agents: {
     tabId: "agents",

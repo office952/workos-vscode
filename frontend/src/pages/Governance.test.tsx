@@ -147,7 +147,7 @@ describe("Governance tab completion", () => {
     );
 
     fireEvent.click(screen.getByTestId("governance-tab-status-flows"));
-    expect(screen.getByTestId("governance-tab-honesty-status-flows")).toHaveTextContent("STALE_HINT");
+    expect(screen.getByTestId("governance-tab-honesty-status-flows")).toHaveTextContent("HONESTY_BASELINE");
   });
 
   it("remains read-only", () => {

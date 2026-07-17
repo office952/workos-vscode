@@ -265,12 +265,35 @@ export const ACTIVE_SCOPE_READINESS_LAW = {
     "nu creează operații sau task-uri",
   ],
   ownerLawRo: [
-    "UN MODUL NEALES NU ESTE O PROBLEMA.",
-    "UN MODUL ALES TREBUIE SA SE SUSTINA SINGUR.",
-    "TEMPLATE-UL COMBINA MODULE — NU LE TINE CAPTIVE.",
+    "UN MODUL NEALES NU ESTE O PROBLEMĂ.",
+    "UN MODUL ALES TREBUIE SĂ SE SUSȚINĂ SINGUR.",
+    "TEMPLATE-UL COMBINĂ MODULE — NU LE ȚINE CAPTIVE.",
   ],
   status: "PROVEN FOR LETTERS SLICE 1" as const,
 };
+
+/** Settings catalogs remain multi-source — expose conflict; do not resolve in UI honesty. */
+export const SETTINGS_OWNERSHIP_TRUTH = {
+  componentSettings: "CONFLICTED" as const,
+  moduleSettings: "CONFLICTED" as const,
+  operatorWarningRo: "Cataloage de opțiuni multiple — conflict nerezolvat",
+  noteRo:
+    "Component settings ownership = CONFLICTED · Module settings ownership = CONFLICTED. Nu rezolvă return_depth_mm, PSU, finish enums, LED pitch, premount, ACM thickness aici.",
+};
+
+export const FALSE_GENERIC_MODULE_FLAGS_RO = [
+  "sistem_led — LETTERS_ONLY (nu infrastructură LED globală)",
+  "finisaje — LETTERS_ONLY · captiv",
+  "structura_suport — SHARED_WITHIN_SIGNAGE · reutilizare globală neprobată",
+  "geometry_svg — LETTERS_ONLY · prerequisite de calcul",
+] as const;
+
+export const SUPPORTING_SURFACE_CLASSIFICATIONS_RO = [
+  "live-calc — cale de calcul suport · nu sistem first-class separat",
+  "BOM — proiecție ProductAggregate · nu sistem first-class separat",
+  "QuoteWizard — suprafață UI LEGACY",
+  "CostEngine — LEGACY / costing protejat · nu autoritate bani (CPP 7G + /inventory/pricing)",
+] as const;
 
 export const ACTIVE_SCOPE_OWNERSHIP = [
   {
@@ -354,8 +377,10 @@ export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
   {
     id: "letters",
     labelRo: "Litere volumetrice",
-    composedProduct: "ACTIVE",
+    commercialChipRo: "Rădăcină folosită azi",
+    composedProduct: "ACTIVE_WITH_GUARDS",
     moduleIndependence: "PARTIAL / PROVEN FOR SLICE 1",
+    captiveDeferredRo: "FINISH · MOUNTING — captiv / amânat",
     modeledReturn: {
       intakeSelection: "AVAILABLE",
       pdActiveScope: "READY",
@@ -368,13 +393,19 @@ export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
   {
     id: "logo",
     labelRo: "Logo",
+    commercialChipRo: "Candidat · rădăcină blocată",
     componentIndependence: "BLOCKED",
     rootOfferability: "BLOCKED",
+    linkedChildRo: "PARTIAL",
+    standaloneRo: "NOT PROVEN",
   },
   {
     id: "acm",
     labelRo: "ACM",
+    commercialChipRo: "Montaj ACM · parțial",
     componentIndependence: "PARTIAL",
+    independentPanelRo: "NOT READY",
+    cassetteRo: "ARCHIVED",
   },
 ] as const;
 

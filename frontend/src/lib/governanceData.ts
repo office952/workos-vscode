@@ -9,6 +9,8 @@ export interface StatusTransition {
   trigger: string;
 }
 
+export type StatusFlowTruthClass = "CURRENT" | "TARGET" | "LEGACY" | "BLOCKED" | "SUPPORTING";
+
 export interface ModuleStatusFlow {
   id: string;
   name: string;
@@ -17,6 +19,9 @@ export interface ModuleStatusFlow {
   statuses: string[];
   transitions: StatusTransition[];
   color: string;
+  /** Honesty class — keep CURRENT / TARGET / LEGACY / BLOCKED visually separate. */
+  truthClass: StatusFlowTruthClass;
+  honestyNoteRo: string;
 }
 
 export const moduleStatusFlows: ModuleStatusFlow[] = [
@@ -32,10 +37,12 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "active", to: "deprecated", trigger: "manual admin" },
     ],
     color: "text-cyan-400",
+    truthClass: "LEGACY",
+    honestyNoteRo: "Referință istorică OC — nu spine-ul activ Intake V6 → CPP 7G.",
   },
   {
     id: "wi",
-    name: "Work Intake",
+    name: "Work Intake (legacy path)",
     shortName: "WI",
     owner: "operator / sales",
     statuses: ["new", "in_review", "needs_info", "ready_for_quote", "blocked", "cancelled"],
@@ -47,6 +54,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "abandon / invalid" },
     ],
     color: "text-orange-400",
+    truthClass: "LEGACY",
+    honestyNoteRo: "Calea legacy Work Intake. Intake curent operator: /intake-v6.",
   },
   {
     id: "product_system",
@@ -61,12 +70,14 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "invalid_configuration", to: "resolving", trigger: "corectie" },
     ],
     color: "text-pink-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Catalog / contract produs — adevăr curent pe /product-system.",
   },
   {
     id: "cost_engine",
-    name: "CostEngine",
+    name: "CostEngine (LEGACY)",
     shortName: "CE",
-    owner: "sistem",
+    owner: "sistem (protected legacy)",
     statuses: ["pending", "calculating", "calculated", "failed"],
     transitions: [
       { from: "pending", to: "calculating", trigger: "request calcul" },
@@ -74,7 +85,10 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "calculating", to: "failed", trigger: "eroare" },
       { from: "failed", to: "calculating", trigger: "retry" },
     ],
-    color: "text-cyan-400",
+    color: "text-slate-400",
+    truthClass: "LEGACY",
+    honestyNoteRo:
+      "LEGACY / costing protejat. Nu este autoritate bani. Autoritate comercială: CPP 7G + /inventory/pricing.",
   },
   {
     id: "quotes",
@@ -93,6 +107,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "sent/priced", to: "expired", trigger: "depasire termen" },
     ],
     color: "text-amber-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Quote Snapshot pe spine. QuoteWizard UI = LEGACY (nu acest flux).",
   },
   {
     id: "orders",
@@ -108,10 +124,12 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "anulare controlata" },
     ],
     color: "text-blue-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Order Snapshot pe spine — passthrough sold scope.",
   },
   {
     id: "workos",
-    name: "WorkOS",
+    name: "WorkOS / Execution",
     shortName: "WO",
     owner: "productie",
     statuses: ["pending", "scheduled", "in_progress", "blocked", "partial_done", "done"],
@@ -125,6 +143,8 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "in_progress", to: "done", trigger: "finalizare" },
     ],
     color: "text-emerald-400",
+    truthClass: "CURRENT",
+    honestyNoteRo: "Execution preview pe frozen sold scope (Letters Slice 1). Nu materializare task live aici.",
   },
   {
     id: "tasks",
@@ -141,13 +161,19 @@ export const moduleStatusFlows: ModuleStatusFlow[] = [
       { from: "*", to: "cancelled", trigger: "anulare" },
     ],
     color: "text-purple-400",
+    truthClass: "TARGET",
+    honestyNoteRo: "Țintă materializare — nu declara current fără GO dedicat.",
   },
 ];
 
 export const systemEvents = [
   { event: "WI_READY_FOR_QUOTE", source: "WI", description: "Cerere pregatita pentru ofertare" },
   { event: "PRODUCT_RESOLVED", source: "ProductSystem", description: "Configuratie produs rezolvata" },
-  { event: "COST_CALCULATED", source: "CostEngine", description: "Cost calculat cu succes" },
+  {
+    event: "COST_CALCULATED",
+    source: "CostEngine (LEGACY)",
+    description: "Cost legacy — nu autoritate bani; CPP 7G rămâne autoritatea comercială",
+  },
   { event: "QUOTE_ACCEPTED", source: "Quotes", description: "Oferta acceptata de client" },
   { event: "ORDER_LOCKED", source: "Orders", description: "Snapshot order inghetat" },
   { event: "WORK_STARTED", source: "WorkOS", description: "Executie pornita" },
