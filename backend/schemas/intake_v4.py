@@ -239,6 +239,12 @@ class IntakeV4FinishSetup(BaseModel):
     mounting_system: Literal["direct_wall", "steel_bars", "aluminum_bars", "acm_panel"] | None = None
     mounting_bar_profile: str | None = None
     support_type: str | None = None
+    # Modular process config (typed Intake → ProductDefinition → resolver). Not pricing.
+    mains_cable_length_m: float | None = None
+    power_supply_service_corner: (
+        Literal["TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT", "MANUAL_CONFIRMED"] | None
+    ) = None
+    service_screw_finish: Literal["NATURAL", "PAINTED_TO_MATCH_CANT"] | None = None
     emblem_lighting_mode: Literal["excluded", "area_lit", "needs_decision"] = "area_lit"
     letter_led_module_count: int | None = None
     emblem_led_module_count: int | None = None

@@ -309,6 +309,9 @@ function buildFinishSetupSyncSignature(finish: IntakeV6FinishSetup): string {
         : finish.site_installation_included === false
           ? false
           : null,
+    mains_cable_length_m: finish.mains_cable_length_m ?? null,
+    power_supply_service_corner: finish.power_supply_service_corner ?? null,
+    service_screw_finish: finish.service_screw_finish ?? null,
     emblem_lighting_mode: normalizeEmblemLightingMode(finish.emblem_lighting_mode),
     letter_led_module_count: finish.letter_led_module_count ?? null,
     emblem_led_module_count: finish.emblem_led_module_count ?? null,
@@ -422,6 +425,12 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
       typeof setup.mounting_bar_profile === "string" ? setup.mounting_bar_profile : "30x30x1.5",
     mounting_solution: resolveEffectiveMountingSolution(setup),
     ...hydrateMountingScopeFromFinishSetup(setup),
+    mains_cable_length_m:
+      typeof setup.mains_cable_length_m === "number" ? setup.mains_cable_length_m : null,
+    power_supply_service_corner: normalizePowerSupplyServiceCorner(
+      setup.power_supply_service_corner,
+    ),
+    service_screw_finish: normalizeServiceScrewFinish(setup.service_screw_finish),
     emblem_lighting_mode: normalizeEmblemLightingMode(setup.emblem_lighting_mode),
     letter_led_module_count:
       typeof setup.letter_led_module_count === "number" ? setup.letter_led_module_count : undefined,
@@ -431,6 +440,33 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
       typeof setup.total_led_module_count === "number" ? setup.total_led_module_count : undefined,
     confirmed: setup.confirmed === true,
   };
+}
+
+const MAINS_CABLE_LENGTH_OPTIONS_M = [
+  2.5, 5, 7.5, 10, 12.5, 15, 17.5, 20, 22.5, 25,
+] as const;
+
+const POWER_SUPPLY_SERVICE_CORNERS = [
+  "TOP_LEFT",
+  "TOP_RIGHT",
+  "BOTTOM_LEFT",
+  "BOTTOM_RIGHT",
+  "MANUAL_CONFIRMED",
+] as const;
+
+type PowerSupplyServiceCorner = (typeof POWER_SUPPLY_SERVICE_CORNERS)[number];
+type ServiceScrewFinish = "NATURAL" | "PAINTED_TO_MATCH_CANT";
+
+function normalizePowerSupplyServiceCorner(value: unknown): PowerSupplyServiceCorner | null {
+  return typeof value === "string" &&
+    (POWER_SUPPLY_SERVICE_CORNERS as readonly string[]).includes(value)
+    ? (value as PowerSupplyServiceCorner)
+    : null;
+}
+
+function normalizeServiceScrewFinish(value: unknown): ServiceScrewFinish | null {
+  if (value === "NATURAL" || value === "PAINTED_TO_MATCH_CANT") return value;
+  return null;
 }
 
 function pathGeometryFromPayload(payload: Record<string, unknown> | undefined): Record<string, unknown> | undefined {
@@ -2419,9 +2455,20 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       const currentConfig =
                         readMountingSolution(form as Record<string, unknown>)?.configuration ??
                         hydrateMountingSolutionFromLegacy(form as Record<string, unknown>)?.configuration;
-                      updateForm(buildMountingSolutionPatch(value, currentConfig) as Partial<IntakeV6FinishSetup>, {
-                        domains: ["mounting"],
-                      });
+                      const patch = buildMountingSolutionPatch(value, currentConfig) as Partial<IntakeV6FinishSetup>;
+                      const keepsCable =
+                        value === METAL_PREMOUNT_TEMPLATE_CODE || value === ACM_BOXED_MOUNTING_TEMPLATE_CODE;
+                      const keepsCorner = value === ACM_BOXED_MOUNTING_TEMPLATE_CODE;
+                      updateForm(
+                        {
+                          ...patch,
+                          mains_cable_length_m: keepsCable ? form.mains_cable_length_m ?? null : null,
+                          power_supply_service_corner: keepsCorner
+                            ? form.power_supply_service_corner ?? null
+                            : null,
+                        },
+                        { domains: ["mounting"] },
+                      );
                     }}
                     data-testid="intake-v6-mounting-solution-selector"
                   >
@@ -2627,6 +2674,114 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     </div>
                   ) : null}
                 </div>
+
+                {(selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
+                  selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE) &&
+                mountingPrepActive ? (
+                  <div
+                    className="mt-3 grid gap-2 sm:grid-cols-2"
+                    data-testid="intake-v6-process-electrical-fields"
+                  >
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>
+                        Lungime cablu alimentare (m)
+                      </span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={
+                          form.mains_cable_length_m != null &&
+                          (MAINS_CABLE_LENGTH_OPTIONS_M as readonly number[]).includes(
+                            form.mains_cable_length_m,
+                          )
+                            ? String(form.mains_cable_length_m)
+                            : ""
+                        }
+                        onChange={(event) => {
+                          const raw = event.target.value;
+                          updateForm(
+                            {
+                              mains_cable_length_m: raw === "" ? null : Number(raw),
+                            },
+                            { domains: ["mounting"] },
+                          );
+                        }}
+                        data-testid="intake-v6-mains-cable-length-m"
+                      >
+                        <option value="">— selectează —</option>
+                        {MAINS_CABLE_LENGTH_OPTIONS_M.map((length) => (
+                          <option key={length} value={length}>
+                            {length} m
+                          </option>
+                        ))}
+                      </select>
+                      <p className="mt-1 text-[10px] text-slate-500">
+                        Pas 2.5 m · 2.5–25 · proces tipizat (nu preț)
+                      </p>
+                    </label>
+                    {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
+                      <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                        <span className={REVIEW_FIELD_LABEL_CLASS}>
+                          Colt service transformator
+                        </span>
+                        <select
+                          className={REVIEW_SELECT_CLASS}
+                          value={form.power_supply_service_corner ?? ""}
+                          onChange={(event) =>
+                            updateForm(
+                              {
+                                power_supply_service_corner: normalizePowerSupplyServiceCorner(
+                                  event.target.value || null,
+                                ),
+                              },
+                              { domains: ["mounting"] },
+                            )
+                          }
+                          data-testid="intake-v6-power-supply-service-corner"
+                        >
+                          <option value="">— selectează —</option>
+                          <option value="TOP_LEFT">Stânga sus</option>
+                          <option value="TOP_RIGHT">Dreapta sus</option>
+                          <option value="BOTTOM_LEFT">Stânga jos</option>
+                          <option value="BOTTOM_RIGHT">Dreapta jos</option>
+                          <option value="MANUAL_CONFIRMED">Confirmat manual</option>
+                        </select>
+                      </label>
+                    ) : (
+                      <p
+                        className="text-[10px] text-slate-500 self-end pb-2"
+                        data-testid="intake-v6-service-corner-inactive-note"
+                      >
+                        Colt service: relevant doar pentru panou Alucobond casetat.
+                      </p>
+                    )}
+                  </div>
+                ) : null}
+
+                {mountingPrepActive ? (
+                  <div className="mt-3 grid gap-2 sm:grid-cols-2" data-testid="intake-v6-process-body-fields">
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Finisaj șuruburi corp</span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={form.service_screw_finish ?? "NATURAL"}
+                        onChange={(event) =>
+                          updateForm(
+                            {
+                              service_screw_finish: normalizeServiceScrewFinish(
+                                event.target.value,
+                              ) ?? "NATURAL",
+                            },
+                            { domains: ["mounting"] },
+                          )
+                        }
+                        data-testid="intake-v6-service-screw-finish"
+                      >
+                        <option value="NATURAL">Naturale</option>
+                        <option value="PAINTED_TO_MATCH_CANT">Vopsite în culoarea cantului</option>
+                      </select>
+                    </label>
+                  </div>
+                ) : null}
               </div>
 
               {volumAluminumModuleLinks.length > 0 ? (

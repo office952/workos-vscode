@@ -195,7 +195,7 @@ async def test_k_led_cyano_roles(volumetric_v2_db):
     from services.product_process_resolver_service import resolve_product_process_graph
     from services.product_process_resolve_input_adapter import build_resolve_input_from_active_config
 
-    inp, _, _ = build_resolve_input_from_active_config(
+    inp, _, _, _ = build_resolve_input_from_active_config(
         template_code=TEMPLATE_CODE,
         workspace_payload=_payload(),
     )

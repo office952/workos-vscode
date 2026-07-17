@@ -213,6 +213,16 @@ export interface IntakeV4FinishSetup {
     template_code: string;
     configuration?: Record<string, unknown>;
   } | null;
+  /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
+  mains_cable_length_m?: number | null;
+  power_supply_service_corner?:
+    | "TOP_LEFT"
+    | "TOP_RIGHT"
+    | "BOTTOM_LEFT"
+    | "BOTTOM_RIGHT"
+    | "MANUAL_CONFIRMED"
+    | null;
+  service_screw_finish?: "NATURAL" | "PAINTED_TO_MATCH_CANT" | null;
   emblem_lighting_mode?: "excluded" | "area_lit" | "needs_decision";
   letter_led_module_count?: number | null;
   emblem_led_module_count?: number | null;

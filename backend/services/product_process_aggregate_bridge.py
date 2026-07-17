@@ -182,11 +182,14 @@ def apply_modular_process_graph_to_aggregate(
     *,
     workspace_payload: dict[str, Any] | None = None,
     geometry_inputs: dict[str, Any] | None = None,
+    product_definition_canonical_values: dict[str, Any] | None = None,
 ) -> ProductAggregate:
     """
     Live Aggregate bridge: replace letters task_rules with resolver DAG when template
     has modular process contract. Preserves linked_segment logo rules. Never concatenates
     dossier + resolver. Zero DB writes.
+
+    Typed ProductDefinition canonical_values win over finish_setup (adapter precedence).
     """
     if not template_has_modular_process_contract(aggregate.template_code):
         tc = aggregate.task_contract
@@ -204,10 +207,11 @@ def apply_modular_process_graph_to_aggregate(
             }
         )
 
-    inp, map_warnings, map_blockers = build_resolve_input_from_active_config(
+    inp, map_warnings, map_blockers, config_meta = build_resolve_input_from_active_config(
         template_code=aggregate.template_code,
         workspace_payload=workspace_payload,
         geometry_inputs=geometry_inputs,
+        product_definition_canonical_values=product_definition_canonical_values,
     )
     graph = resolve_product_process_graph(inp)
     logo_rules = _logo_segment_rules(aggregate)
@@ -290,6 +294,12 @@ def apply_modular_process_graph_to_aggregate(
         f"active_components={','.join(graph.active_component_codes)}",
         f"active_interfaces={','.join(graph.active_interface_codes)}",
         "dossier_task_rules_not_concatenated",
+        f"config_source={config_meta.get('config_source')}",
+        f"support_source={config_meta.get('support_source')}",
+        f"cable_source={config_meta.get('cable_source')}",
+        f"mains_cable_length_m={graph.config_echo.get('mains_cable_length_m')}",
+        f"power_supply_service_corner={graph.config_echo.get('power_supply_service_corner')}",
+        f"service_screw_finish={graph.config_echo.get('screw_finish')}",
     ]
     if logo_rules:
         notes.append(f"logo_linked_segment_rules_preserved={len(logo_rules)}")
@@ -302,6 +312,8 @@ def apply_modular_process_graph_to_aggregate(
         graph.graph_hash,
     )
 
+    # Replace prior bridge info on re-apply (workspace compose / explicit PD overlay).
+    warnings = [w for w in warnings if w.code != "PROCESS_GRAPH_MODULAR_RESOLVER"]
     warnings.append(
         ProductAggregateConflict(
             code="PROCESS_GRAPH_MODULAR_RESOLVER",
@@ -313,6 +325,12 @@ def apply_modular_process_graph_to_aggregate(
                 "contract_version": graph.contract_version,
                 "process_count": len(modular_rules),
                 "edge_count": sum(len(r.depends_on_process_ids) for r in modular_rules),
+                **config_meta,
+                "mains_cable_length_m": graph.config_echo.get("mains_cable_length_m"),
+                "power_supply_service_corner": graph.config_echo.get("power_supply_service_corner"),
+                "service_screw_finish": graph.config_echo.get("screw_finish"),
+                "support_type": graph.config_echo.get("support_type"),
+                "cant_finish": graph.config_echo.get("cant_finish"),
             },
         )
     )

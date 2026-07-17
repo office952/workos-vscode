@@ -519,7 +519,11 @@ async def build_workspace_composed_aggregate(
         measured = _attach_commercial_measurements(
             scoped, pd, workspace_payload=workspace_payload
         )
-        return _apply_live_process_bridge(measured, workspace_payload=workspace_payload)
+        return _apply_live_process_bridge(
+            measured,
+            workspace_payload=workspace_payload,
+            product_definition_canonical_values=dict(pd.canonical_values or {}),
+        )
 
     logo_aggregates_by_segment: dict[str, ProductAggregate] = {}
     for segment in segments:
@@ -546,18 +550,24 @@ async def build_workspace_composed_aggregate(
     measured = _attach_commercial_measurements(
         scoped, pd, workspace_payload=workspace_payload
     )
-    return _apply_live_process_bridge(measured, workspace_payload=workspace_payload)
+    return _apply_live_process_bridge(
+        measured,
+        workspace_payload=workspace_payload,
+        product_definition_canonical_values=dict(pd.canonical_values or {}),
+    )
 
 
 def _apply_live_process_bridge(
     aggregate: ProductAggregate,
     *,
     workspace_payload: dict[str, Any],
+    product_definition_canonical_values: dict[str, Any] | None = None,
 ) -> ProductAggregate:
-    """Re-resolve modular process graph with workspace config (single letters DAG; keep logo rules)."""
+    """Re-resolve modular process graph with typed PD + workspace (single letters DAG; keep logo rules)."""
     from services.product_process_aggregate_bridge import apply_modular_process_graph_to_aggregate
 
     return apply_modular_process_graph_to_aggregate(
         aggregate,
         workspace_payload=workspace_payload,
+        product_definition_canonical_values=product_definition_canonical_values,
     )

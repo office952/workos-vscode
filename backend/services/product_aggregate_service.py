@@ -330,9 +330,16 @@ class ProductAggregateService:
         # Live bridge: modular process resolver replaces dossier task_rules for pilot template only.
         from services.product_process_aggregate_bridge import apply_modular_process_graph_to_aggregate
 
+        pd_canonical: dict[str, Any] | None = None
+        if isinstance(process_bridge_payload, dict):
+            raw_pd = process_bridge_payload.get("product_definition_canonical_values")
+            if isinstance(raw_pd, dict):
+                pd_canonical = raw_pd
+
         return apply_modular_process_graph_to_aggregate(
             aggregate,
             workspace_payload=process_bridge_payload,
+            product_definition_canonical_values=pd_canonical,
         )
 
     async def build_for_workspace(self, template_code: str, workspace_id: str) -> ProductAggregate | None:

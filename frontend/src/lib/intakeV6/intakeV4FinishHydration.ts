@@ -98,6 +98,9 @@ function normalizeFinishFormForCompare(form: IntakeV4FinishSetup) {
     mounting_template_material_type: form.mounting_template_material_type ?? null,
     mounting_system: form.mounting_system ?? null,
     mounting_bar_profile: form.mounting_bar_profile ?? null,
+    mains_cable_length_m: form.mains_cable_length_m ?? null,
+    power_supply_service_corner: form.power_supply_service_corner ?? null,
+    service_screw_finish: form.service_screw_finish ?? null,
     volum_aluminum_module_template_code: form.volum_aluminum_module_template_code ?? null,
     confirmed: form.confirmed === true,
   };
