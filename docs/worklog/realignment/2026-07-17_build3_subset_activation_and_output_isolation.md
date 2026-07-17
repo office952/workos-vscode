@@ -7,7 +7,7 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `5fbea48` (Build 2 worklog note) |
-| End HEAD | *(filled after commit)* |
+| End HEAD | `d5b3a19` (feature commit) |
 | Verdict | `BUILD3_SUBSET_ISOLATION_COMPLETE_WITH_GUARDS` |
 
 ## Objective
