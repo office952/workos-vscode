@@ -30,3 +30,30 @@
 ## Next safe step
 
 **Option 1 — OWNER REVIEW OF INTAKE V6 COMPONENT-AWARE SVG ASSIGNMENT**
+
+---
+
+## OWNER VISUAL INTEGRATION REVIEW
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-07-17 |
+| GO | `OWNER_REVIEW_INTAKE_V6_STEP1_SVG_MODULAR_UI_INTEGRATION` |
+| HEAD reviewed | `26eb0c7` |
+| Verdict | **`DUAL_UI_FLOW_STILL_VISIBLE`** |
+| Dual-flow class | `SINGLE_SOT_BUT_DUPLICATED_UI` |
+| Report | `docs/audits/2026-07-17_intake_v6_step1_svg_modular_ui_integration_review.md` |
+| App edits | None |
+| Commit | None |
+
+### Findings (short)
+
+- Modularitatea Product System există (availability payload live, bindings/PD durable).
+- UI Step 1 încă arată flow legacy pe carduri + panou „Asocieri produs” + ACP nested = al doilea sistem vizual.
+- Legacy adapter (Vector Litere/Logo) maschează asocierea pe Component Template.
+- Contour overlay pe preview e reutilizabil — nu lipsește modularitatea, lipsește unificarea vizuală.
+
+### Recommended next
+
+**Option 2 — GO SMALL INTAKE V6 SVG UI UNIFICATION FIX**  
+(carduri existente + Contur suport + progressive ACP; păstrează SoT actual)
