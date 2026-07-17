@@ -47,6 +47,8 @@ from services.acm_quote_input_helpers import (
     merge_acm_boxed_mounting_derived_fields,
 )
 from services.template_architecture_scope import resolve_template_identity
+from schemas.active_scope import ActiveScopeResult
+from services.active_scope_resolver_service import compile_active_scope
 
 BAR_MOUNTING = frozenset({"steel_bars", "aluminum_bars"})
 SYNTHETIC_COMPONENT_IDS = frozenset({"comp_auto_1"})
@@ -119,6 +121,7 @@ def _resolve_module_state(
     svg_source: dict[str, Any],
     analysis_ready: bool,
     composition: ProductDefinitionComposition | None = None,
+    active_scope: ActiveScopeResult | None = None,
 ) -> str:
     mounting_system = _read_string(finish.get("mounting_system"))
 
@@ -126,9 +129,22 @@ def _resolve_module_state(
         return "future_reserved"
 
     code = module.module_code
+
+    # Letters Slice 1 — sold/active scope is authority. Unselected modules are inactive
+    # (not pending) so they cannot block readiness.
+    if active_scope is not None and not active_scope.use_legacy_full_product:
+        if active_scope.errors:
+            return "inactive"
+        allowed = active_scope.active_set()
+        if code not in allowed:
+            return "inactive"
+        # Selected / prerequisite modules use scoped activation rules below.
+
     if code == "geometry_svg":
         return "always_on" if _has_geometry_basics({"svg_source": svg_source, "quote_geometry": quote_geometry}) else "pending"
     if code in ("debitare_fata", "debitare_spate", "modelare_cant"):
+        # Full product: co-active when analysis ready.
+        # Subset: only modules already allowlisted by active_scope reach here.
         return "always_on" if analysis_ready else "pending"
     if code == "structura_suport":
         if composition is not None:
@@ -147,6 +163,9 @@ def _resolve_module_state(
             return "pending"
         return "conditional_active"
     if code == "finisaje":
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            # Slice1 does not sell FINISH; only activate when allowlisted (should be rare).
+            return "conditional_active" if _read_bool(finish.get("mounting_template_enabled")) is True else "active"
         if _read_bool(finish.get("mounting_template_enabled")) is True:
             return "conditional_active"
         return "always_on"
@@ -320,10 +339,16 @@ def _classify_modules(
     client: dict[str, Any],
     analysis_ready: bool,
     composition: ProductDefinitionComposition | None = None,
+    active_scope: ActiveScopeResult | None = None,
 ) -> tuple[list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef], list[ProductDefinitionModuleRef]]:
     selected: list[ProductDefinitionModuleRef] = []
     optional: list[ProductDefinitionModuleRef] = []
     inactive: list[ProductDefinitionModuleRef] = []
+    scoped_subset = (
+        active_scope is not None
+        and not active_scope.use_legacy_full_product
+        and not active_scope.errors
+    )
 
     for module in modules:
         state = _resolve_module_state(
@@ -333,6 +358,7 @@ def _classify_modules(
             svg_source=svg_source,
             analysis_ready=analysis_ready,
             composition=composition,
+            active_scope=active_scope,
         )
         missing = _collect_missing_fields(
             module,
@@ -345,16 +371,22 @@ def _classify_modules(
         if missing and state in ("always_on", "active", "conditional_active"):
             state = "pending"
 
+        reason = module.warnings[0] if module.warnings else None
+        if scoped_subset and state == "inactive":
+            reason = reason or "inactive_outside_offer_scope"
+
         ref = ProductDefinitionModuleRef(
             module_code=module.module_code,
             module_name=module.module_name,
             activation_kind=module.activation_kind,
             state=state,  # type: ignore[arg-type]
-            activation_reason=module.warnings[0] if module.warnings else None,
-            missing_fields=missing,
+            activation_reason=reason,
+            missing_fields=missing if state not in ("inactive", "future_reserved") else [],
         )
 
         if state == "future_reserved":
+            inactive.append(ref)
+        elif state == "inactive":
             inactive.append(ref)
         elif module.activation_kind == "optional_addon":
             optional.append(ref)
@@ -365,12 +397,16 @@ def _classify_modules(
         elif _module_is_active(state):
             selected.append(ref)
         elif state == "pending":
-            optional.append(ref)
+            # In-scope pending still belongs to the selected graph (missing fields
+            # block readiness, not scope membership). Outside subset, keep optional.
+            if scoped_subset:
+                selected.append(ref)
+            else:
+                optional.append(ref)
         else:
             inactive.append(ref)
 
     return selected, optional, inactive
-
 
 def _active_module_codes(
     selected: list[ProductDefinitionModuleRef],
@@ -688,6 +724,12 @@ class ProductDefinitionBuilderService:
         client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
         analysis_ready = bool(payload.get("analysis_ready")) or _has_geometry_basics(payload)
 
+        active_scope = compile_active_scope(
+            template_code=stored_template_code,
+            payload=payload,
+            quote_input=payload,
+        )
+
         composition = build_product_definition_composition(
             root_template_code=stored_template_code,
             payload=payload,
@@ -702,6 +744,7 @@ class ProductDefinitionBuilderService:
             client=client,
             analysis_ready=analysis_ready,
             composition=composition,
+            active_scope=active_scope,
         )
 
         registry_response = self._registry.get_by_template(stored_template_code)
@@ -723,7 +766,13 @@ class ProductDefinitionBuilderService:
                         missing_fields=[],
                     )
                 )
-        active_modules = _active_module_codes(selected) | set(composition.active_module_codes)
+        selected_codes = _active_module_codes(selected)
+        if not active_scope.use_legacy_full_product and not active_scope.errors:
+            # Composition graph nodes (mounting/ACM) only when allowlisted by sold scope.
+            composition_active = set(composition.active_module_codes) & active_scope.active_set()
+            active_modules = selected_codes | composition_active
+        else:
+            active_modules = selected_codes | set(composition.active_module_codes)
 
         canonical_values = _build_canonical_values(form_contract.field_bindings, payload, composition=composition)
         geometry_inputs = _build_geometry_inputs(canonical_values)
@@ -753,35 +802,58 @@ class ProductDefinitionBuilderService:
             mod_codes = binding.module_codes
             if mod_codes and all(code in inactive_module_codes for code in mod_codes):
                 continue
+            # Active-scope: skip required bindings whose owning modules are all outside sold set.
+            if (
+                not active_scope.use_legacy_full_product
+                and not active_scope.errors
+                and mod_codes
+                and not any(code in active_scope.active_set() for code in mod_codes)
+            ):
+                continue
             if binding.canonical_key not in canonical_values:
                 missing_required.append(binding.canonical_key)
 
         invalid_combinations: list[str] = []
         mounting = _read_string(finish.get("mounting_system"))
-        if mounting and mounting not in BAR_MOUNTING and mounting not in ("direct_wall", "none", "template_only"):
+        finisaje_active = "finisaje" in active_modules or "structura_suport" in active_modules
+        if (
+            finisaje_active
+            and mounting
+            and mounting not in BAR_MOUNTING
+            and mounting not in ("direct_wall", "none", "template_only")
+        ):
             invalid_combinations.append(f"unknown mounting_system value: {mounting}")
 
         unresolved_warnings: list[str] = []
         warnings: list[str] = list(form_contract.summary.warnings)
-        for align in form_contract.trigger_alignments:
-            unresolved_warnings.append(
-                f"{align.warning_code}: {align.module_code} link={align.module_link_trigger_field} "
-                f"intake={align.canonical_intake_field}"
-            )
+        if active_scope.use_legacy_full_product:
+            for align in form_contract.trigger_alignments:
+                unresolved_warnings.append(
+                    f"{align.warning_code}: {align.module_code} link={align.module_link_trigger_field} "
+                    f"intake={align.canonical_intake_field}"
+                )
+                warnings.append(
+                    f"{align.warning_code} for {align.module_code} — canonical intake is {align.canonical_intake_field}"
+                )
+
+            for w in aggregate.warnings:
+                msg = f"{w.code}: {w.message}"
+                warnings.append(msg)
+                unresolved_warnings.append(msg)
+
+            for code in composition.blockers:
+                invalid_combinations.append(code)
+            for code in composition.warnings:
+                warnings.append(code)
+                unresolved_warnings.append(code)
+        else:
+            # Subset: only surface warnings/blockers tied to active modules.
+            for code in composition.blockers:
+                if any(mod in active_modules for mod in ("structura_suport", "modelare_cant")):
+                    invalid_combinations.append(code)
             warnings.append(
-                f"{align.warning_code} for {align.module_code} — canonical intake is {align.canonical_intake_field}"
+                f"ACTIVE_SCOPE_SUBSET mode={active_scope.mode} sold={','.join(active_scope.sold_module_codes)}"
             )
-
-        for w in aggregate.warnings:
-            msg = f"{w.code}: {w.message}"
-            warnings.append(msg)
-            unresolved_warnings.append(msg)
-
-        for code in composition.blockers:
-            invalid_combinations.append(code)
-        for code in composition.warnings:
-            warnings.append(code)
-            unresolved_warnings.append(code)
 
         for w in form_contract.orphan_fields_audit:
             warnings.append(f"ORPHAN_FIELD: {w}")
@@ -834,6 +906,16 @@ class ProductDefinitionBuilderService:
                 source="product_definition_composition_contract",
                 detail=f"mode={composition.composition_mode} nodes={len(composition.nodes)} edges={len(composition.edges)}",
             ),
+            ProductDefinitionProvenanceEntry(
+                key="active_scope",
+                source="active_scope_resolver_service",
+                detail=(
+                    f"resolver={active_scope.resolver_version} mode={active_scope.mode} "
+                    f"legacy={active_scope.use_legacy_full_product} "
+                    f"sold={active_scope.sold_module_codes} "
+                    f"active={active_scope.active_runtime_modules}"
+                ),
+            ),
         ]
         if workspace_id:
             provenance.append(
@@ -847,6 +929,7 @@ class ProductDefinitionBuilderService:
         notes = [
             "Read-only ProductDefinition preview — Step 6. No pricing, quote, order, or task generation.",
             "Template-level preview marks missing required fields when workspace payload is absent.",
+            "Active-scope readiness validates selected modules only (offer_scope component_subset).",
         ]
 
         return ProductDefinitionPreview(

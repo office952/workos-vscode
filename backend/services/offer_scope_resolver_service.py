@@ -129,22 +129,19 @@ def resolve_pricing_active_modules(
     quote_input: dict[str, Any] | None,
     legacy_fn: Callable[[ProductDefinitionPreview, dict[str, Any] | None], set[str]],
 ) -> set[str]:
-    """Return runtime mini_module_codes used to filter BOM / EIC / CPP rows."""
-    scope = extract_offer_scope(payload, quote_input)
-    resolved = resolve_offer_scope(scope)
+    """Return runtime mini_module_codes used to filter BOM / EIC / CPP rows.
 
-    if resolved.use_legacy:
-        return legacy_fn(pd, quote_input)
+    Letters Slice 1: sold modules are the commercial authority for component_subset
+    (via active_scope_resolver_service). Full product keeps legacy PD activation.
+    """
+    from services.active_scope_resolver_service import resolve_pricing_active_modules_from_scope
 
-    if resolved.validation_errors:
-        return set()
-
-    active = _apply_conditional_gates(
-        resolved.runtime_sold_modules,
+    return resolve_pricing_active_modules_from_scope(
+        pd=pd,
         payload=payload,
         quote_input=quote_input,
+        legacy_fn=legacy_fn,
     )
-    return active
 
 
 def merge_scope_payload(
