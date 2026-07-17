@@ -129,19 +129,22 @@ describe("Governance tab completion", () => {
     }
   });
 
-  it("marks Ready for Quotes tab as reference, not live readiness", () => {
+  it("marks Owner gates as present policy, not isCalculable readiness", () => {
     render(<Governance />);
     fireEvent.click(screen.getByTestId("governance-tab-gates"));
     const panel = screen.getByTestId("governance-panel-gates");
-    expect(within(panel).getByTestId("governance-tab-honesty-gates")).toHaveTextContent("REFERINȚĂ");
-    expect(panel).toHaveTextContent(/Nu este readiness operațional live/i);
+    expect(within(panel).getByTestId("governance-tab-honesty-gates")).toHaveTextContent("HONESTY_BASELINE");
+    expect(panel).toHaveTextContent(/Politică owner/i);
+    expect(within(panel).queryByText(/Ready for Quotes/i)).not.toBeInTheDocument();
   });
 
   it("marks Product Catalog as reference and status-flows conflict visible", () => {
     render(<Governance />);
     fireEvent.click(screen.getByTestId("governance-tab-products"));
     expect(screen.getByTestId("governance-tab-honesty-products")).toHaveTextContent("REFERINȚĂ");
-    expect(screen.getByTestId("governance-panel-products")).toHaveTextContent(/Nu înlocuiește Catalog produse/i);
+    expect(screen.getByTestId("governance-tab-honesty-products")).toHaveTextContent(
+      /fără autoritate operațională|Nu înlocuiește Catalog produse/i
+    );
 
     fireEvent.click(screen.getByTestId("governance-tab-status-flows"));
     expect(screen.getByTestId("governance-tab-honesty-status-flows")).toHaveTextContent("STALE_HINT");

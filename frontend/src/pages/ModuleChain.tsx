@@ -3,25 +3,25 @@ import { ModuleNodeCard, SectionHeader } from "@/components/workos/SharedCompone
 import {
   GitBranch,
   ArrowRight,
-  Ban,
   Wifi,
   WifiOff,
   RefreshCw,
   Loader2,
   AlertTriangle,
   BookOpen,
+  ExternalLink,
 } from "lucide-react";
 import { useModuleChainData } from "@/hooks/useModuleChainData";
 import {
-  HONESTY_ARCHITECTURE_NODES,
-  HONESTY_HANDOFFS,
-  HONESTY_RESOURCE_BOUNDARIES,
-  HONESTY_EVIDENCE_ITEMS,
+  CANONICAL_SPINE_LABELS_RO,
   MODULE_CHAIN_TABS,
-  coverageBadgeClass,
-  coverageLabelRo,
+  PRESENT_EVIDENCE,
+  PRESENT_HANDOFFS,
+  PRESENT_SUPPORT_SYSTEMS,
+  PRESENT_SYSTEMS,
+  presentStatusBadgeClass,
   type ModuleChainTabId,
-} from "@/lib/truthPagesHonestyBaseline";
+} from "@/lib/currentTruthControlCenter";
 
 function runtimeLabelRo(
   aggregateStatus: string,
@@ -36,31 +36,93 @@ function runtimeLabelRo(
     return { label: "INDISPONIBIL", className: "bg-red-900/30 text-red-300 border-red-800" };
   }
   if (aggregateStatus === "ok") {
-    return { label: "VERIFICAT", className: "bg-emerald-900/40 text-emerald-300 border-emerald-700" };
+    return {
+      label: "Backend disponibil",
+      className: "bg-emerald-900/40 text-emerald-300 border-emerald-700",
+    };
   }
   if (aggregateStatus === "warning" || aggregateStatus === "degraded") {
-    return { label: "DEGRADAT", className: "bg-amber-900/40 text-amber-300 border-amber-700" };
+    return {
+      label: "Backend cu avertisment",
+      className: "bg-amber-900/40 text-amber-300 border-amber-700",
+    };
   }
   if (aggregateStatus === "fail") {
-    return { label: "DEGRADAT", className: "bg-red-900/40 text-red-300 border-red-700" };
+    return {
+      label: "Backend degradat",
+      className: "bg-red-900/40 text-red-300 border-red-700",
+    };
   }
   return { label: "NEVERIFICAT", className: "bg-slate-700/60 text-slate-300 border-slate-600" };
 }
 
+function SystemCard({
+  system,
+  testIdPrefix,
+}: {
+  system: (typeof PRESENT_SYSTEMS)[number];
+  testIdPrefix: string;
+}) {
+  return (
+    <div
+      className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-3 min-w-[220px] max-w-[280px] flex-1"
+      data-testid={`${testIdPrefix}-${system.id}`}
+    >
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <div>
+          <span className="text-[13px] font-semibold text-slate-100">{system.labelRo}</span>
+          <p className="text-[10px] text-slate-500">{system.technicalName}</p>
+        </div>
+        <span
+          className={`shrink-0 px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass(system.status)}`}
+        >
+          {system.status}
+        </span>
+      </div>
+      <p className="text-[11px] text-slate-300 leading-snug mb-2">{system.purposeRo}</p>
+      <dl className="space-y-1 text-[10px] text-slate-400">
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Proprietar</dt>
+          <dd className="text-slate-300">{system.owner}</dd>
+        </div>
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Intrare</dt>
+          <dd>{system.inputRo}</dd>
+        </div>
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Ieșire</dt>
+          <dd>{system.outputRo}</dd>
+        </div>
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Consumator</dt>
+          <dd>{system.consumerRo}</dd>
+        </div>
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Limită actuală</dt>
+          <dd className="text-amber-200/90">{system.limitationRo}</dd>
+        </div>
+        <div>
+          <dt className="text-slate-500 uppercase tracking-wide">Verificare</dt>
+          <dd className="flex items-center gap-1 text-blue-300">
+            <ExternalLink className="w-3 h-3" />
+            <a href={system.verifyRoute} className="hover:underline">
+              {system.verifyRoute}
+            </a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 export default function ModuleChain() {
   const [activeTab, setActiveTab] = useState<ModuleChainTabId>("system_map");
-  const {
-    modules,
-    contractHandoffs,
-    aggregateStatus,
-    generatedAt,
-    loading,
-    error,
-    isLive,
-    refetch,
-  } = useModuleChainData(30000);
+  const { modules, aggregateStatus, generatedAt, loading, error, isLive, refetch, health } =
+    useModuleChainData(30000);
 
   const runtimeBadge = runtimeLabelRo(aggregateStatus, isLive, loading, error);
+  const checksCount = health ? Object.keys(health.checks || {}).length : 0;
+  const dbVerified = checksCount > 0 && Boolean(health?.checks?.database);
 
   return (
     <div className="space-y-4" data-testid="module-chain-page">
@@ -80,7 +142,7 @@ export default function ModuleChain() {
             data-testid="module-chain-runtime-source"
           >
             {isLive ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
-            {isLive ? "Health API" : "Health indisponibil"}
+            {isLive ? "Health API (agregat)" : "Health indisponibil"}
           </span>
           <button
             onClick={refetch}
@@ -92,7 +154,7 @@ export default function ModuleChain() {
           </button>
         </div>
         <p className="text-[12px] text-slate-500">
-          Cum sunt conectate sistemele, paginile și contractele — proiecție read-only, acoperire parțială.
+          Control center — adevărul prezent al sistemelor WorkOS. Proiecție read-only.
         </p>
       </div>
 
@@ -102,8 +164,8 @@ export default function ModuleChain() {
       >
         <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
         <p className="text-[12px] text-amber-200/95 leading-relaxed">
-          Această hartă este o proiecție read-only a documentației și verificărilor disponibile. Acoperirea este
-          parțială și nu reprezintă un editor al proceselor.
+          Această hartă descrie ce există acum: status, contracte active, proprietar și limitări. Dovezile
+          istorice (inclusiv PROVEN_V1) sunt în tab-ul Surse și dovezi — nu sunt status de sănătate.
         </p>
       </div>
 
@@ -134,142 +196,78 @@ export default function ModuleChain() {
 
       {activeTab === "system_map" && (
         <section
-          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4"
+          className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-4"
           data-testid="module-chain-architecture"
           role="tabpanel"
         >
-          <SectionHeader title="Structura sistemelor" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
-          <p className="text-[11px] text-slate-500 mb-3">
-            Noduri și limite — fără culori de health runtime. Transferurile detaliate sunt în tab-ul Contracte.
+          <SectionHeader title="Spine activ" icon={<GitBranch className="w-4 h-4 text-blue-400" />} />
+          <p className="text-[11px] text-slate-500" data-testid="canonical-spine-label">
+            Fluxul activ unic: {CANONICAL_SPINE_LABELS_RO.join(" → ")}
           </p>
-          <div className="flex flex-wrap gap-2 mb-4">
-            {HONESTY_ARCHITECTURE_NODES.map((node) => (
-              <div
-                key={node.id}
-                className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 min-w-[160px] max-w-[220px]"
-                data-testid={`arch-node-${node.id}`}
-              >
-                <span className="text-[13px] font-semibold text-slate-100">{node.labelRo}</span>
-                <p className="text-[10px] text-slate-500 mb-1.5">{node.technicalAlias}</p>
-                <span
-                  className={`inline-block px-1.5 py-0.5 text-[9px] font-semibold rounded border ${coverageBadgeClass(node.coverage)}`}
-                >
-                  {coverageLabelRo(node.coverage)}
-                </span>
-                <p className="text-[10px] text-slate-500 mt-1.5 leading-snug">{node.note}</p>
-              </div>
+          <div className="flex flex-wrap gap-2" data-testid="canonical-spine-systems">
+            {PRESENT_SYSTEMS.map((system) => (
+              <SystemCard key={system.id} system={system} testIdPrefix="arch-node" />
             ))}
           </div>
-          <p className="text-[11px] font-semibold text-slate-400 mb-2">Limite de resurse (separate)</p>
+          <p className="text-[11px] font-semibold text-slate-400">Sisteme suport (în afara spine-ului)</p>
           <div className="flex flex-wrap gap-2">
-            {HONESTY_RESOURCE_BOUNDARIES.map((node) => (
-              <div
-                key={node.id}
-                className="bg-[#151c2c] border border-[#2A3548]/80 rounded-lg px-3 py-2 min-w-[140px]"
-                data-testid={`resource-node-${node.id}`}
-              >
-                <p className="text-[12px] font-medium text-slate-200">{node.labelRo}</p>
-                <p className="text-[10px] text-slate-500">{node.technicalAlias}</p>
-                <span
-                  className={`inline-block mt-1 px-1.5 py-0.5 text-[9px] font-semibold rounded border ${coverageBadgeClass(node.coverage)}`}
-                >
-                  {coverageLabelRo(node.coverage)}
-                </span>
-              </div>
+            {PRESENT_SUPPORT_SYSTEMS.map((system) => (
+              <SystemCard key={system.id} system={system} testIdPrefix="support-node" />
             ))}
           </div>
+          <p
+            className="text-[11px] text-slate-500 border border-slate-700/60 rounded-md px-3 py-2"
+            data-testid="legacy-spine-notice"
+          >
+            Referință istorică OC→TK — nu reprezintă fluxul activ. Vezi Surse și dovezi.
+          </p>
         </section>
       )}
 
       {activeTab === "handoffs" && (
-        <section
-          className="space-y-4"
-          data-testid="module-chain-handoffs"
-          role="tabpanel"
-        >
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-            <SectionHeader title="Transferuri (baseline)" icon={<ArrowRight className="w-4 h-4" />} />
-            <p className="text-[11px] text-slate-500 mb-3">
-              Ce trece între sisteme — fiecare muchie cu sursă și status. Nu este editor de procese.
-            </p>
-            <div className="space-y-2">
-              {HONESTY_HANDOFFS.map((h) => (
-                <div
-                  key={`${h.fromId}-${h.toId}`}
-                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
-                  data-testid={`handoff-${h.fromId}-${h.toId}`}
-                >
-                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <span className="text-[13px] font-bold text-blue-400">{h.fromLabel}</span>
-                    <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
-                    <span className="text-[13px] font-bold text-blue-400">{h.toLabel}</span>
-                    <span
-                      className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${
-                        h.status === "proven_v1"
-                          ? "bg-emerald-900/40 text-emerald-200 border-emerald-600"
-                          : h.status === "baseline"
-                            ? "bg-emerald-900/30 text-emerald-300 border-emerald-700"
-                            : "bg-amber-900/30 text-amber-300 border-amber-700"
-                      }`}
-                    >
-                      {h.status === "proven_v1"
-                        ? "PROVEN_V1"
-                        : h.status === "baseline"
-                          ? "BASELINE"
-                          : "ACOPERIRE PARȚIALĂ"}
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400">{h.note}</p>
-                  <p className="text-[10px] text-slate-500 mt-1 flex items-center gap-1">
-                    <BookOpen className="w-3 h-3" />
-                    Sursă: {h.source}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <section className="space-y-4" data-testid="module-chain-handoffs" role="tabpanel">
           <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
             <SectionHeader
-              title="Contracte detaliate (referință tehnică)"
-              count={contractHandoffs.length}
+              title="Contracte și transferuri active"
               icon={<ArrowRight className="w-4 h-4" />}
             />
             <p className="text-[11px] text-slate-500 mb-3">
-              Payload / interdicții din date locale — etichetate REFERINȚĂ până la revalidare.
+              Handoff-uri din spine-ul activ. Fără lanț OC→TK ca flux paralel.
             </p>
-            <div className="space-y-3">
-              {contractHandoffs.map((handoff, idx) => (
-                <div key={idx} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-[13px] font-bold text-blue-400">{handoff.from}</span>
-                    <ArrowRight className="w-4 h-4 text-slate-600" />
-                    <span className="text-[13px] font-bold text-blue-400">{handoff.to}</span>
-                    <span className="ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border bg-slate-700/50 text-slate-300 border-slate-600">
-                      REFERINȚĂ
+            <div className="space-y-2">
+              {PRESENT_HANDOFFS.map((h) => (
+                <div
+                  key={h.id}
+                  className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3"
+                  data-testid={`handoff-${h.producerId}-${h.consumerId}`}
+                >
+                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                    <span className="text-[13px] font-bold text-blue-400">{h.producerRo}</span>
+                    <ArrowRight className="w-3.5 h-3.5 text-slate-600" />
+                    <span className="text-[13px] font-bold text-blue-400">{h.consumerRo}</span>
+                    <span
+                      className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass(h.status)}`}
+                    >
+                      {h.status}
                     </span>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-slate-400 mt-2">
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Payload</p>
-                      <p className="text-[11px] text-slate-300 leading-relaxed">{handoff.payloadSummary}</p>
+                      <dt className="text-[10px] text-slate-500 uppercase">Contract ieșire</dt>
+                      <dd className="text-slate-300">{h.outputContractRo}</dd>
                     </div>
                     <div>
-                      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
-                        <Ban className="w-3 h-3 text-red-400" /> Interzis
-                      </p>
-                      <div className="flex flex-wrap gap-1">
-                        {handoff.forbidden.map((f, i) => (
-                          <span
-                            key={i}
-                            className="px-1.5 py-0.5 text-[10px] bg-red-900/30 text-red-400 border border-red-800/40 rounded"
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
+                      <dt className="text-[10px] text-slate-500 uppercase">Punct de aplicare</dt>
+                      <dd>{h.enforcementRo}</dd>
                     </div>
-                  </div>
+                    <div className="md:col-span-2">
+                      <dt className="text-[10px] text-slate-500 uppercase">Verificare</dt>
+                      <dd className="flex items-center gap-1">
+                        <BookOpen className="w-3 h-3" />
+                        {h.verificationRo}
+                      </dd>
+                    </div>
+                  </dl>
                 </div>
               ))}
             </div>
@@ -285,14 +283,36 @@ export default function ModuleChain() {
         >
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <SectionHeader title="Stare runtime" icon={<Wifi className="w-4 h-4 text-slate-400" />} />
-            <span className={`px-2 py-0.5 text-[10px] font-semibold rounded border ${runtimeBadge.className}`}>
+            <span
+              className={`px-2 py-0.5 text-[10px] font-semibold rounded border ${runtimeBadge.className}`}
+              data-testid="module-chain-runtime-aggregate"
+            >
               {runtimeBadge.label}
             </span>
           </div>
           <p className="text-[11px] text-slate-500 mb-3">
-            Doar verificări reale din <code className="text-slate-400">GET /api/v1/system/health</code>. Fără
-            verificare mapată = Neverificat — nu „activ” implicit. Nu definește arhitectura.
+            Doar verificări din <code className="text-slate-400">GET /api/v1/system/health</code>. Statusul
+            agregat nu înseamnă DB verificată. Fără check mapat = Neverificat — nu „LIVE”.
           </p>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-3 text-[11px]"
+            data-testid="module-chain-runtime-distinctions"
+          >
+            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+              <p className="text-slate-500 text-[10px] uppercase">Backend</p>
+              <p className="text-slate-200">{runtimeBadge.label}</p>
+            </div>
+            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+              <p className="text-slate-500 text-[10px] uppercase">DB</p>
+              <p className="text-slate-200">
+                {dbVerified ? "DB verificată (check mapat)" : "DB neverificată"}
+              </p>
+            </div>
+            <div className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2">
+              <p className="text-slate-500 text-[10px] uppercase">Checks publice</p>
+              <p className="text-slate-200">{checksCount === 0 ? "Goale / redacted" : `${checksCount} check-uri`}</p>
+            </div>
+          </div>
           {error && (
             <div
               className="mb-3 px-3 py-2 rounded border border-red-800/40 bg-red-900/20 text-[11px] text-red-300"
@@ -329,23 +349,34 @@ export default function ModuleChain() {
         >
           <SectionHeader title="Surse și dovezi" icon={<BookOpen className="w-4 h-4 text-blue-400" />} />
           <p className="text-[11px] text-slate-500 mb-3">
-            Pe ce se bazează harta și statusurile — listă compactă. Nu este Centrul de documentație.
+            Dovezi și istoric — separate de statusul prezent. PROVEN_V1 = calificare dovadă, nu sănătate
+            sistem.
           </p>
           <div className="space-y-2">
-            {HONESTY_EVIDENCE_ITEMS.map((ev) => (
+            {PRESENT_EVIDENCE.map((ev) => (
               <div
                 key={ev.id}
-                className="flex flex-wrap items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
+                className="bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2 text-[11px]"
                 data-testid={`evidence-${ev.id}`}
               >
-                <span className="text-[9px] uppercase tracking-wide text-slate-500 border border-slate-600 px-1.5 py-0.5 rounded">
-                  {ev.kind}
-                </span>
-                <span className="text-slate-200 font-medium">{ev.title}</span>
-                <span className="px-1.5 py-0.5 rounded border border-amber-800/40 text-amber-300/90">
-                  {ev.status}
-                </span>
-                <span className="text-slate-500 ml-auto font-mono text-[10px]">{ev.source}</span>
+                <div className="flex flex-wrap items-center gap-2 mb-1">
+                  <span className="text-[9px] uppercase tracking-wide text-slate-500 border border-slate-600 px-1.5 py-0.5 rounded">
+                    {ev.category}
+                  </span>
+                  <span className="text-slate-200 font-medium">{ev.title}</span>
+                  <span className="text-[10px] text-slate-500">{ev.date}</span>
+                  <span
+                    className={`ml-auto px-1.5 py-0.5 rounded border text-[9px] ${
+                      ev.stillCurrentRuntime
+                        ? "border-emerald-800/50 text-emerald-300"
+                        : "border-slate-600 text-slate-400"
+                    }`}
+                  >
+                    {ev.stillCurrentRuntime ? "Relevant runtime acum" : "Istoric / nu status runtime"}
+                  </span>
+                </div>
+                <p className="text-slate-400 mb-1">{ev.provesRo}</p>
+                <p className="text-slate-500 font-mono text-[10px]">{ev.source}</p>
               </div>
             ))}
           </div>

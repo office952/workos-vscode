@@ -1,10 +1,7 @@
 import { useState, useMemo, useCallback, useEffect } from "react";
 import {
-  boundaryLayers,
   agents,
   truthHierarchy,
-  gateLevels,
-  guardrails,
   uiTruthRules,
   moduleStatusFlows,
   systemEvents,
@@ -12,12 +9,19 @@ import {
   productCatalog,
 } from "@/lib/governanceData";
 import {
-  HONESTY_OWNERSHIP_ROWS,
   HONESTY_SEPARATION_RULES,
-  HONESTY_OWNER_GATES,
   GOVERNANCE_TAB_HONESTY,
   type GovernanceTabHonestyMeta,
 } from "@/lib/truthPagesHonestyBaseline";
+import {
+  CANONICAL_SPINE_LABELS_RO,
+  PRESENT_BOUNDARIES,
+  PRESENT_GATES,
+  PRESENT_GUARDRAILS,
+  PRESENT_OWNERSHIP_ROWS,
+  governanceStatusBadgeClass,
+  presentStatusBadgeClass,
+} from "@/lib/currentTruthControlCenter";
 import {
   fetchDocumentationIndex,
   type DocumentationIndexFetchResult,
@@ -67,7 +71,7 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "status-flows", label: "Fluxuri de stare", icon: <Activity className="w-3.5 h-3.5" /> },
   { id: "agents", label: "Autoritatea agenților", icon: <Users className="w-3.5 h-3.5" /> },
   { id: "truth", label: "Surse de adevăr", icon: <Eye className="w-3.5 h-3.5" /> },
-  { id: "gates", label: "Pregătit pentru ofertare", icon: <Lock className="w-3.5 h-3.5" /> },
+  { id: "gates", label: "Owner gates", icon: <Lock className="w-3.5 h-3.5" /> },
   { id: "guardrails", label: "Reguli de protecție", icon: <Shield className="w-3.5 h-3.5" /> },
   { id: "products", label: "Catalog produse (referință)", icon: <Package className="w-3.5 h-3.5" /> },
   { id: "ui-rules", label: "Reguli de adevăr UI", icon: <BookOpen className="w-3.5 h-3.5" /> },
@@ -139,17 +143,17 @@ interface SearchResult {
 function buildSearchIndex(): SearchResult[] {
   const results: SearchResult[] = [];
 
-  // Boundaries
-  for (const layer of boundaryLayers) {
+  // Boundaries (present spine)
+  for (const layer of PRESENT_BOUNDARIES) {
     results.push({
       category: "Boundary Map",
       categoryIcon: <Layers className="w-3.5 h-3.5" />,
       tab: "boundaries",
-      title: `${layer.shortName} — ${layer.name}`,
-      subtitle: layer.role,
-      details: [layer.hardRule, ...layer.allowed, ...layer.forbidden],
+      title: `${layer.technicalAlias} — ${layer.nameRo}`,
+      subtitle: layer.truthControlledRo,
+      details: [layer.enforcementRo, ...layer.allowedRo, ...layer.forbiddenRo],
       severity: "critical",
-      module: layer.shortName,
+      module: layer.technicalAlias,
       itemType: "regulă",
     });
   }
@@ -184,31 +188,31 @@ function buildSearchIndex(): SearchResult[] {
     });
   }
 
-  // Gates
-  for (const level of gateLevels) {
+  // Owner gates (present policy)
+  for (const gate of PRESENT_GATES) {
     results.push({
-      category: "Ready for Quotes",
+      category: "Owner gates",
       categoryIcon: <Lock className="w-3.5 h-3.5" />,
       tab: "gates",
-      title: `Gate ${level.level}: ${level.name}`,
-      subtitle: level.verdicts.join(", "),
-      details: [level.rule],
+      title: gate.nameRo,
+      subtitle: gate.status,
+      details: [gate.blocksRo, gate.enforcementRo, gate.verificationRo],
       severity: "critical",
-      module: "Quotes",
+      module: "Owner",
       itemType: "gate",
     });
   }
 
-  // Guardrails
-  for (const g of guardrails) {
+  // Guardrails (present)
+  for (const g of PRESENT_GUARDRAILS) {
     results.push({
       category: "Guardrails",
       categoryIcon: <Shield className="w-3.5 h-3.5" />,
       tab: "guardrails",
-      title: `${g.id} — ${g.title}`,
-      subtitle: g.category,
-      details: [g.description],
-      severity: g.severity,
+      title: `${g.id} — ${g.titleRo}`,
+      subtitle: g.status,
+      details: [g.requirementRo, g.enforcementRo],
+      severity: g.status === "POLITICA OWNER" ? "info" : "warning",
       module: "System",
       itemType: "regulă",
     });
@@ -858,107 +862,72 @@ function SearchResultsView({
 
 // --- BOUNDARY MAP TAB ---
 function BoundaryMapView() {
-  const [expanded, setExpanded] = useState<string | null>(null);
-
   return (
     <div className="space-y-4" data-testid="governance-panel-boundaries">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.boundaries} />
-      {/* Flow visualization */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6">
-        <p className="text-[11px] text-slate-500 uppercase tracking-wide mb-4">
-          Flux de referință (nu acoperire canonică completă)
-        </p>
-        <div className="flex items-center gap-0 overflow-x-auto pb-2">
-          {boundaryLayers.map((layer, idx) => (
-            <div key={layer.id} className="flex items-center shrink-0">
-              <button
-                onClick={() => setExpanded(expanded === layer.id ? null : layer.id)}
-                className={`relative bg-gradient-to-b ${layer.color} border-t-2 ${layer.borderColor} border border-[#2A3548] rounded-lg px-5 py-4 min-w-[150px] hover:border-slate-500 transition-all duration-200 ${
-                  expanded === layer.id ? "ring-1 ring-blue-500/50" : ""
-                }`}
-              >
-                <p className="text-[14px] font-bold text-slate-100">{layer.shortName}</p>
-                <p className="text-[10px] text-slate-400 mt-1 leading-tight">{layer.role}</p>
-                <ChevronDown
-                  className={`w-3 h-3 text-slate-500 absolute bottom-1.5 right-1.5 transition-transform ${
-                    expanded === layer.id ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {idx < boundaryLayers.length - 1 && (
-                <div className="flex items-center px-2 shrink-0">
-                  <ArrowRight className="w-5 h-5 text-slate-600" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Expanded detail */}
-      {expanded && (() => {
-        const layer = boundaryLayers.find((l) => l.id === expanded);
-        if (!layer) return null;
-        return (
-          <div className={`bg-[#111827] border border-[#1E293B] border-l-2 ${layer.borderColor} rounded-lg p-5 animate-in fade-in duration-300`}>
-            <div className="flex items-center gap-2 mb-4">
-              <h3 className="text-[16px] font-bold text-slate-100">{layer.name}</h3>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${layer.borderColor.replace("border-", "bg-")}/20 ${layer.borderColor.replace("border-", "text-")}`}>
-                {layer.shortName}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-              <div>
-                <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <CheckCircle2 className="w-3 h-3" /> Are voie
-                </p>
-                <ul className="space-y-1">
-                  {layer.allowed.map((item, i) => (
-                    <li key={i} className="text-[12px] text-slate-300 flex items-start gap-2">
-                      <span className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-[10px] text-red-400 uppercase tracking-wide mb-2 flex items-center gap-1">
-                  <Ban className="w-3 h-3" /> Interzis
-                </p>
-                <ul className="space-y-1">
-                  {layer.forbidden.map((item, i) => (
-                    <li key={i} className="text-[12px] text-slate-400 flex items-start gap-2">
-                      <span className="w-1 h-1 rounded-full bg-red-500 mt-1.5 shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="bg-[#0D1321] border border-[#1E293B] rounded px-4 py-3">
-              <p className="text-[10px] text-amber-400 uppercase tracking-wide mb-1">Regula Dură</p>
-              <p className="text-[13px] text-slate-200 font-medium leading-relaxed">{layer.hardRule}</p>
-            </div>
-          </div>
-        );
-      })()}
-
-      {/* Formula scurtă */}
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-        <SectionHeader title="Formula Canonică" icon={<Zap className="w-4 h-4 text-amber-400" />} />
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-2">
-          {[
-            { label: "Templates", verb: "pregătește", color: "border-t-pink-500" },
-            { label: "Quotes", verb: "calculează", color: "border-t-amber-500" },
-            { label: "Orders", verb: "îngheață", color: "border-t-blue-500" },
-            { label: "WorkOS", verb: "execută", color: "border-t-emerald-500" },
-            { label: "OC", verb: "păzește adevărul", color: "border-t-cyan-500" },
-          ].map((item) => (
-            <div key={item.label} className={`bg-[#1A2236] border border-[#2A3548] border-t-2 ${item.color} rounded-lg p-3 text-center`}>
-              <p className="text-[13px] font-bold text-slate-200">{item.label}</p>
-              <p className="text-[11px] text-slate-400 mt-1">{item.verb}</p>
+        <SectionHeader title="Harta limitelor — spine activ" icon={<Layers className="w-4 h-4 text-blue-400" />} />
+        <p className="text-[11px] text-slate-500 mb-3" data-testid="governance-canonical-spine">
+          Spine activ: {CANONICAL_SPINE_LABELS_RO.join(" → ")}
+        </p>
+        <div className="space-y-3">
+          {PRESENT_BOUNDARIES.map((layer) => (
+            <div
+              key={layer.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              data-testid={`boundary-${layer.id}`}
+            >
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <h3 className="text-[14px] font-bold text-slate-100">{layer.nameRo}</h3>
+                <span className="text-[10px] text-slate-500">{layer.technicalAlias}</span>
+                <span
+                  className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(layer.status)}`}
+                >
+                  {layer.status}
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mb-2">
+                <span className="text-slate-500">Proprietar:</span> {layer.owner}
+              </p>
+              <p className="text-[12px] text-slate-300 mb-3">{layer.truthControlledRo}</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                <div>
+                  <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-1">Permis</p>
+                  <ul className="space-y-1">
+                    {layer.allowedRo.map((item) => (
+                      <li key={item} className="text-[11px] text-slate-300 flex items-start gap-1.5">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-500 mt-0.5 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="text-[10px] text-red-400 uppercase tracking-wide mb-1">Interzis</p>
+                  <ul className="space-y-1">
+                    {layer.forbiddenRo.map((item) => (
+                      <li key={item} className="text-[11px] text-slate-400 flex items-start gap-1.5">
+                        <Ban className="w-3 h-3 text-red-500 mt-0.5 shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <dl className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px] text-slate-500">
+                <div>
+                  <dt className="uppercase">Aplicare</dt>
+                  <dd className="text-slate-300">{layer.enforcementRo}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase">Owner gate</dt>
+                  <dd className="text-slate-300">{layer.ownerGateRo}</dd>
+                </div>
+                <div>
+                  <dt className="uppercase">Verificare</dt>
+                  <dd className="text-slate-300">{layer.verificationRo}</dd>
+                </div>
+              </dl>
             </div>
           ))}
         </div>
@@ -1168,89 +1137,55 @@ function TruthHierarchyView({
   );
 }
 
-// --- READY FOR QUOTES GATE TAB ---
+// --- OWNER GATES TAB ---
 function GateView() {
   return (
     <div className="space-y-4" data-testid="governance-panel-gates">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.gates} />
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
-        <SectionHeader
-          title="Pregătit pentru ofertare — logică de gate (referință)"
-          icon={<Lock className="w-4 h-4 text-amber-400" />}
-        />
+        <SectionHeader title="Owner gates — politică prezentă" icon={<Lock className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-4">
-          Model static de gate din date locale. Nu este readiness operațional live din Catalog produse / Quotes și nu
-          controlează ofertarea din această pagină.
+          Gate-uri de aprobare owner. Statusul „Politică owner” înseamnă control de proces — nu motor RBAC în UI.
+          Modelul istoric de readiness Blueprint nu mai este prezentat ca gate activ.
         </p>
-
-        {/* Gate flow */}
         <div className="space-y-3">
-          {gateLevels.map((level, idx) => (
-            <div key={level.level} className="flex items-start gap-3">
-              {/* Step indicator */}
-              <div className="flex flex-col items-center w-10 shrink-0">
-                <div className={`w-8 h-8 rounded-lg border-2 ${level.color} flex items-center justify-center text-[12px] font-bold text-slate-200 bg-[#1A2236]`}>
-                  {level.level}
-                </div>
-                {idx < gateLevels.length - 1 && (
-                  <div className="w-px h-4 bg-slate-700 mt-1" />
-                )}
+          {PRESENT_GATES.map((gate) => (
+            <div
+              key={gate.id}
+              className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4"
+              data-testid={`owner-gate-${gate.id}`}
+            >
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <p className="text-[14px] font-bold text-slate-200">{gate.nameRo}</p>
+                <span
+                  className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(gate.status)}`}
+                >
+                  {gate.status}
+                </span>
               </div>
-
-              {/* Content */}
-              <div className={`bg-[#1A2236] border border-[#2A3548] border-l-2 ${level.color} rounded-lg p-4 flex-1`}>
-                <p className="text-[14px] font-bold text-slate-200 mb-2">{level.name}</p>
-                <div className="flex flex-wrap gap-1.5 mb-3">
-                  {level.verdicts.map((v) => {
-                    const isPositive = v.includes("Ready") || v.includes("permis");
-                    const isNegative = v.includes("Not") || v.includes("Blocked") || v.includes("refuzat");
-                    return (
-                      <span
-                        key={v}
-                        className={`px-2 py-0.5 text-[11px] font-semibold rounded border ${
-                          isPositive
-                            ? "bg-emerald-900/30 text-emerald-400 border-emerald-700"
-                            : isNegative
-                            ? "bg-red-900/30 text-red-400 border-red-700"
-                            : "bg-amber-900/30 text-amber-400 border-amber-700"
-                        }`}
-                      >
-                        {v}
-                      </span>
-                    );
-                  })}
+              <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[11px] text-slate-400">
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Blochează</dt>
+                  <dd className="text-slate-300">{gate.blocksRo}</dd>
                 </div>
-                <p className="text-[12px] text-slate-300 leading-relaxed">{level.rule}</p>
-              </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Aprobator</dt>
+                  <dd className="text-slate-300">{gate.approverRo}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Aplicare</dt>
+                  <dd>{gate.enforcementRo}</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] text-slate-500 uppercase">Verificare</dt>
+                  <dd>{gate.verificationRo}</dd>
+                </div>
+                <div className="md:col-span-2">
+                  <dt className="text-[10px] text-slate-500 uppercase">Fără aprobare</dt>
+                  <dd className="text-amber-200/90">{gate.withoutApprovalRo}</dd>
+                </div>
+              </dl>
             </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Strict Rule */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-        <SectionHeader title="Regula Strictă" icon={<Shield className="w-4 h-4 text-red-400" />} />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-[#1A2236] border border-emerald-800/30 rounded-lg p-3">
-            <p className="text-[10px] text-emerald-400 uppercase tracking-wide mb-2">✓ Required Components</p>
-            <p className="text-[12px] text-slate-300">Participă la verdictul final. Dacă unul este necalculabil, gate-ul cade.</p>
-          </div>
-          <div className="bg-[#1A2236] border border-amber-800/30 rounded-lg p-3">
-            <p className="text-[10px] text-amber-400 uppercase tracking-wide mb-2">⚠ Optional Components</p>
-            <p className="text-[12px] text-slate-300">Nu blochează gate-ul. Pot genera warning-uri. Trebuie să rămână vizibile.</p>
-          </div>
-        </div>
-      </div>
-
-      {/* What's NOT accepted */}
-      <div className="bg-[#0D1321] border border-red-800/30 rounded-lg p-4">
-        <p className="text-[12px] text-red-400 font-semibold mb-2">🚫 Nu se acceptă</p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-          {["Procent minim", "Majoritate", "Aproape gata", "Best available variant", "Completări în Quotes", "Override tacit"].map((item) => (
-            <span key={item} className="flex items-center gap-1.5 text-[11px] text-slate-400">
-              <XCircle className="w-3 h-3 text-red-500 shrink-0" />
-              {item}
-            </span>
           ))}
         </div>
       </div>
@@ -1260,58 +1195,36 @@ function GateView() {
 
 // --- GUARDRAILS TAB ---
 function GuardrailsView() {
-  const [filter, setFilter] = useState<string>("all");
-  const categories = ["all", ...Array.from(new Set(guardrails.map((g) => g.category)))];
-
-  const filtered = filter === "all" ? guardrails : guardrails.filter((g) => g.category === filter);
-
-  const severityIcon = {
-    critical: <XCircle className="w-4 h-4 text-red-400" />,
-    warning: <AlertTriangle className="w-4 h-4 text-amber-400" />,
-    info: <Info className="w-4 h-4 text-blue-400" />,
-  };
-
-  const severityBorder = {
-    critical: "border-l-red-500",
-    warning: "border-l-amber-500",
-    info: "border-l-blue-500",
-  };
-
   return (
     <div className="space-y-4" data-testid="governance-panel-guardrails">
       <TabHonestyBanner meta={GOVERNANCE_TAB_HONESTY.guardrails} />
-      {/* Filter */}
-      <div className="flex items-center gap-2 flex-wrap">
-        {categories.map((cat) => (
-          <button
-            key={cat}
-            onClick={() => setFilter(cat)}
-            className={`px-3 py-1 text-[11px] font-medium rounded-full border transition-colors ${
-              filter === cat
-                ? "bg-blue-600/20 text-blue-400 border-blue-600/50"
-                : "bg-[#111827] text-slate-400 border-[#1E293B] hover:border-slate-500"
-            }`}
-          >
-            {cat === "all" ? "Toate" : cat}
-          </button>
-        ))}
-      </div>
-
-      {/* Guardrails list */}
       <div className="space-y-2">
-        {filtered.map((g) => (
-          <div key={g.id} className={`bg-[#111827] border border-[#1E293B] border-l-2 ${severityBorder[g.severity]} rounded-lg p-4`}>
-            <div className="flex items-start gap-3">
-              <span className="mt-0.5 shrink-0">{severityIcon[g.severity]}</span>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] font-mono text-slate-600">{g.id}</span>
-                  <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">{g.category}</span>
-                </div>
-                <p className="text-[13px] font-semibold text-slate-200">{g.title}</p>
-                <p className="text-[12px] text-slate-400 mt-1 leading-relaxed">{g.description}</p>
-              </div>
+        {PRESENT_GUARDRAILS.map((g) => (
+          <div
+            key={g.id}
+            className="bg-[#111827] border border-[#1E293B] border-l-2 border-l-amber-500 rounded-lg p-4"
+            data-testid={`guardrail-${g.id}`}
+          >
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="text-[10px] font-mono text-slate-600">{g.id}</span>
+              <p className="text-[13px] font-semibold text-slate-200">{g.titleRo}</p>
+              <span
+                className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(g.status)}`}
+              >
+                {g.status}
+              </span>
             </div>
+            <p className="text-[12px] text-slate-300 mt-1 leading-relaxed">{g.requirementRo}</p>
+            <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-[10px] text-slate-500">
+              <div>
+                <dt className="uppercase">Aplicare</dt>
+                <dd className="text-slate-400">{g.enforcementRo}</dd>
+              </div>
+              <div>
+                <dt className="uppercase">Owner gate</dt>
+                <dd className="text-slate-400">{g.ownerGateRo}</dd>
+              </div>
+            </dl>
           </div>
         ))}
       </div>
@@ -1642,31 +1555,33 @@ function OwnershipHonestyView({
             <thead>
               <tr className="text-[10px] uppercase tracking-wide text-slate-500 border-b border-[#1E293B]">
                 <th className="py-2 pr-3 font-medium">Domeniu</th>
-                <th className="py-2 pr-3 font-medium">Owner</th>
-                <th className="py-2 pr-3 font-medium">Authority</th>
-                <th className="py-2 pr-3 font-medium">Status</th>
-                <th className="py-2 font-medium">Sursă</th>
+                <th className="py-2 pr-3 font-medium">Proprietar</th>
+                <th className="py-2 pr-3 font-medium">Semantică</th>
+                <th className="py-2 pr-3 font-medium">Scriere</th>
+                <th className="py-2 pr-3 font-medium">Citire</th>
+                <th className="py-2 pr-3 font-medium">Aplicare</th>
+                <th className="py-2 font-medium">Status</th>
               </tr>
             </thead>
             <tbody>
-              {HONESTY_OWNERSHIP_ROWS.map((row) => (
-                <tr key={row.domainRo} className="border-b border-[#1E293B]/60 align-top">
+              {PRESENT_OWNERSHIP_ROWS.map((row) => (
+                <tr key={row.systemId} className="border-b border-[#1E293B]/60 align-top" data-testid={`ownership-${row.systemId}`}>
                   <td className="py-2 pr-3">
                     <p className="text-slate-200 font-medium">{row.domainRo}</p>
                     <p className="text-[10px] text-slate-500">{row.technicalAlias}</p>
                   </td>
                   <td className="py-2 pr-3 text-slate-300">{row.owner}</td>
-                  <td className="py-2 pr-3">
-                    <span className="text-[10px] px-1.5 py-0.5 rounded border border-slate-600 text-slate-300">
-                      {row.authority}
-                    </span>
-                  </td>
-                  <td className="py-2 pr-3">
-                    <span className="text-[10px] px-1.5 py-0.5 rounded border border-amber-800/50 text-amber-300 bg-amber-900/20">
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.semanticOwnershipRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.writeAuthorityRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.readOnlyRo}</td>
+                  <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.enforcementRo}</td>
+                  <td className="py-2">
+                    <span
+                      className={`text-[10px] px-1.5 py-0.5 rounded border ${presentStatusBadgeClass(row.status)}`}
+                    >
                       {row.status}
                     </span>
                   </td>
-                  <td className="py-2 text-slate-400 text-[11px]">{row.source}</td>
                 </tr>
               ))}
             </tbody>
@@ -1695,18 +1610,21 @@ function OwnershipHonestyView({
       </section>
 
       <section className="bg-[#111827] border border-[#1E293B] rounded-lg p-4" data-testid="governance-owner-gates">
-        <SectionHeader title="Owner gates" icon={<Lock className="w-4 h-4 text-amber-400" />} />
+        <SectionHeader title="Owner gates (rezumat)" icon={<Lock className="w-4 h-4 text-amber-400" />} />
         <p className="text-[11px] text-slate-500 mb-2">
-          Listă read-only — nu este motor de aprobare.
+          Listă read-only — detalii complete în tab-ul Owner gates. Nu este motor de aprobare.
         </p>
         <ul className="space-y-1.5">
-          {HONESTY_OWNER_GATES.map((gate) => (
+          {PRESENT_GATES.map((gate) => (
             <li
-              key={gate}
+              key={gate.id}
               className="flex items-start gap-2 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md px-3 py-2"
             >
               <Lock className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
-              {gate}
+              <span>
+                {gate.nameRo}
+                <span className="text-slate-500"> — {gate.status}</span>
+              </span>
             </li>
           ))}
         </ul>

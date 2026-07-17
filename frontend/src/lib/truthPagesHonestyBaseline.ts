@@ -442,27 +442,28 @@ export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = 
   ownership: {
     tabId: "ownership",
     status: "HONESTY_BASELINE",
-    source: "W0-B5 · OD-TERM · Page Completion Foundation",
-    noteRo: "Matrice mică de ownership — nu inventează domenii fără sursă.",
+    source: "currentTruthControlCenter · PRESENT_OWNERSHIP_ROWS",
+    noteRo: "Ownership prezent aliniat cu /modules — semantic / write / read-only / enforcement.",
   },
   boundaries: {
     tabId: "boundaries",
-    status: "REFERINȚĂ",
-    source: "governanceData.boundaryLayers (static local)",
-    noteRo: "Hartă de limite din date locale — acoperire parțială, nu grafic canonic complet.",
+    status: "HONESTY_BASELINE",
+    source: "currentTruthControlCenter · PRESENT_BOUNDARIES",
+    noteRo: "Limite prezente pe spine-ul activ. Fără lanțul istoric Templates→Quotes→OC ca flux activ.",
   },
   "status-flows": {
     tabId: "status-flows",
     status: "STALE_HINT",
     source: "governanceData.moduleStatusFlows (static)",
     noteRo:
-      "Fluxuri de stare pe modul — pot contrazice vocabularul B3 (page/runtime/doc/Figma). Nu le reinterpretăm silent.",
+      "Fluxuri de stare — referință parțială / pot fi istorice. Nu sunt motorul de stare live.",
   },
   agents: {
     tabId: "agents",
     status: "REFERINȚĂ",
-    source: "governanceData.agents (static)",
-    noteRo: "Autoritate agenți — read-only; nu este motor de permisiuni.",
+    source: "agent_authority_registry.json",
+    noteRo:
+      "Referință, fără autoritate operațională. Agenții sunt instrucțiuni/proces — nu enforcement RBAC.",
   },
   truth: {
     tabId: "truth",
@@ -472,23 +473,23 @@ export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = 
   },
   gates: {
     tabId: "gates",
-    status: "REFERINȚĂ",
-    source: "governanceData.gateLevels (static)",
+    status: "HONESTY_BASELINE",
+    source: "currentTruthControlCenter · PRESENT_GATES",
     noteRo:
-      "Nu este readiness operațional live din Product System / Quotes. Referință de gate logic — nu control de ofertare.",
+      "Owner gates prezente (politică). Nu este modelul istoric de readiness Blueprint / ofertare decorativă.",
   },
   guardrails: {
     tabId: "guardrails",
     status: "PARTIAL",
-    source: "governanceData.guardrails + Wave 0 owner gates",
-    noteRo: "Reguli de protecție — doar cele cu sursă; fără editor de politici.",
+    source: "currentTruthControlCenter · PRESENT_GUARDRAILS (G01 rescris, G13 păstrat)",
+    noteRo: "Fiecare regulă are status de aplicare: Aplicat / Parțial / Politică owner.",
   },
   products: {
     tabId: "products",
     status: "REFERINȚĂ",
     source: "governanceData.productCatalog (static local)",
     noteRo:
-      "Nu înlocuiește Catalog produse (Product System). Nomenclator local de referință — nu UI operațional.",
+      "Referință, fără autoritate operațională. Catalogul activ este /product-system.",
   },
   "ui-rules": {
     tabId: "ui-rules",

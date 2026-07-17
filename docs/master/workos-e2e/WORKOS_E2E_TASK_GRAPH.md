@@ -3,11 +3,11 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **CURRENT_TRUTH_CONTROL_CENTER_AUDIT = ACTIVE** (`/modules` + `/governance`)  
+**Active task:** **CURRENT_TRUTH_CONTROL_CENTER_V1 = COMPLETE — PROVEN_CURRENT** (`/modules` + `/governance`)  
 **Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
 **UI-TRUTH-01B:** **COMPLETE — PROVEN_V1** (CORE)  
-**UI-TRUTH-01C:** **PAUSED** — Failure, stale, retry, and drill-down states; resume after Control Center cycle  
-**Recommended next:** Owner review of Control Center audit (do not auto-start 01C)  
+**UI-TRUTH-01C:** **PAUSED** — Failure, stale, retry, and drill-down states; do not resume automatically  
+**Recommended next:** Owner roadmap pick (do not auto-start 01C)  
 
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
@@ -589,7 +589,20 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Verdict | `UI_TRUTH_01B_CORE_PASS` |
 | Plan | `docs/plans/2026-07-17_ui_truth_01b_unpause_plan.md` |
 | Worklog | `docs/worklog/realignment/2026-07-17_ui_truth_01b_unpause.md` |
-| Next | **UI-TRUTH-01C** (not started) |
+| Next | Control Center V1 complete; **UI-TRUTH-01C remains PAUSED** |
+
+## CURRENT_TRUTH_CONTROL_CENTER_V1
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_CURRENT** (2026-07-17) |
+| Pages | `/modules` · `/governance` |
+| Shared source | `frontend/src/lib/currentTruthControlCenter.ts` |
+| History | Surse și dovezi only |
+| UI-TRUTH-01C | **PAUSED** (unchanged) |
+| Audit | `docs/audits/2026-07-17_current_truth_control_center_audit.md` |
+| Worklog | `docs/worklog/realignment/2026-07-17_current_truth_control_center_audit.md` |
+| Next | Owner roadmap pick |
 
 ## UI-TRUTH-01A — RUNTIME_TRUTH_CONTRACT_AND_HEALTH_HOOK_V1
 

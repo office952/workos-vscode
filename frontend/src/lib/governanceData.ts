@@ -513,34 +513,14 @@ export interface GateLevel {
   color: string;
 }
 
+/** Historical Blueprint isCalculable model — not used in primary Governance Gates tab. */
 export const gateLevels: GateLevel[] = [
   {
-    level: "1",
-    name: "Build Variant",
-    verdicts: ["Ready", "Warning", "Blocked"],
-    rule: "Varianta este calculabilă doar dacă are contract complet: costProfile, costPerUnit > 0, costUnit, consumptionProfile, quantityType, quantitySource recunoscut, wastePercent, materialRef (dacă e cerut).",
-    color: "border-pink-500",
-  },
-  {
-    level: "2",
-    name: "Component",
-    verdicts: ["Ready", "Warning", "Blocked"],
-    rule: "Verdictul reflectă varianta relevantă activă. Nu se caută automat altă variantă. Nu se folosește best available variant. Nu se face fallback.",
-    color: "border-purple-500",
-  },
-  {
-    level: "3",
-    name: "Template",
-    verdicts: ["Ready for Quotes", "Not Ready for Quotes"],
-    rule: "Un Template este Ready for Quotes doar dacă TOATE componentele required au isCalculable = true. Nu se acceptă procent minim, majoritate, sau aproape gata.",
-    color: "border-blue-500",
-  },
-  {
-    level: "4",
-    name: "Gate Final",
-    verdicts: ["Handoff permis", "Handoff refuzat"],
-    rule: "Handoff-ul din Blueprint Studio către Quotes este permis doar dacă gate-ul este trecut. Dacă verdictul este Not Ready, handoff-ul trebuie refuzat.",
-    color: "border-emerald-500",
+    level: "H",
+    name: "Model istoric Blueprint (neaplicat ca gate prezent)",
+    verdicts: ["Referință arhitecturală"],
+    rule: "Modelul isCalculable / Ready for Quotes din Blueprint Studio nu este gate-ul prezent al Control Center. Vezi PRESENT_GATES (owner gates).",
+    color: "border-slate-500",
   },
 ];
 
@@ -554,7 +534,14 @@ export interface Guardrail {
 }
 
 export const guardrails: Guardrail[] = [
-  { id: "G01", category: "Boundary", title: "Nu amesteca rolurile modulelor", description: "Templates pregătește, Quotes calculează, Orders îngheață, WorkOS execută, OC păzește adevărul operațional.", severity: "critical" },
+  {
+    id: "G01",
+    category: "Boundary",
+    title: "Nu amesteca rolurile sistemelor",
+    description:
+      "Intake preia cererea; Product System deține șabloanele; ProductDefinition compilează; ProductAggregate structurează; Pricing calculează comercial; Quote/Order îngheață; ExecutionPlan planifică; Execution Reality înregistrează actuals; Post-Job reconciliază read-only. Quotes nu calculează — îngheață.",
+    severity: "critical",
+  },
   { id: "G02", category: "Fallback", title: "Nu accepta fallback-uri ascunse", description: "Nu alege altă variantă 'mai bună' fără regulă canonică. Nu completa tacit quantitySource lipsă.", severity: "critical" },
   { id: "G03", category: "Workaround", title: "Nu accepta workaround-uri arhitecturale", description: "Nu muta logica de business în UI. Nu muta reparații structurale în Quotes. Nu scrie adevăr operațional din WorkOS în locul OC.", severity: "critical" },
   { id: "G04", category: "Clarificare", title: "Cere clarificare obligatorie", description: "Dacă specificația este ambiguă, incompletă sau contradictorie, implementarea trebuie să se oprească și să ceară clarificare.", severity: "warning" },

@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **CURRENT_TRUTH_CONTROL_CENTER_AUDIT = ACTIVE** (`/modules` + `/governance` — audit first) |
+| Active task | **CURRENT_TRUTH_CONTROL_CENTER_V1 = COMPLETE — PROVEN_CURRENT** (`/modules` + `/governance`) |
 
-| Next task | Owner review of Current Truth Control Center audit; **UI-TRUTH-01C PAUSED** (not cancelled); FLEX-02 / TE2E-028 alternate |
+| Next task | Owner roadmap pick; **UI-TRUTH-01C remains PAUSED** (not cancelled); FLEX-02 / TE2E-028 alternate |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1472,5 +1472,29 @@ NEXT ROADMAP = GO
 
 **Deferred (out of CORE):** header green `Live` connection badge; mock `N critical`; nav RO pass; Post-Job EN title; ModuleChain poller share (01C/01E).
 
-**Next:** **UI-TRUTH-01C** — not started.
+**Next after 01B:** Control Center V1 completed; **UI-TRUTH-01C remains PAUSED**.
+
+---
+
+## CURRENT_TRUTH_CONTROL_CENTER_V1 — COMPLETE — PROVEN_CURRENT
+
+**Date:** 2026-07-17  
+**Audit baseline:** `1adb363`  
+**Pages:** `/modules` · `/governance`  
+**UI-TRUTH-01C:** remains **PAUSED**
+
+| Item | Result |
+|------|--------|
+| Shared projection | `frontend/src/lib/currentTruthControlCenter.ts` |
+| Canonical spine | Intake V6 → … → Post-Job (primary only) |
+| History | Moved to Surse și dovezi (incl. OC→TK, PROVEN_V1 packs) |
+| Runtime | Safe read-only `GET /api/v1/system/health`; empty checks → Neverificat / DB neverificată |
+| Governance | Ownership/Boundaries/Gates/Guardrails present-truth; G01 rewritten; G13 retained PARTIAL APLICAT |
+| Tests | currentTruthControlCenter + ModuleChain + Governance presentTruth + Governance tab — 26 passed |
+| Build | frontend `pnpm run build` PASS |
+| Visual | All Modules tabs + Governance ownership/boundaries/gates/guardrails verified live |
+
+**Known partial/neverified:** public health `checks:{}`; Pontaj NEVERIFICAT; PD without dedicated page; template breadth / TE2E-028 residual.
+
+**Next:** Owner roadmap pick only — do not auto-start UI-TRUTH-01C.
 
