@@ -8,6 +8,8 @@
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | HEAD before | `bc68c1b` |
 | Audit docs commit | `5fffc94` |
+| Feature commit | `514896e` |
+| Worklog commit | `c46a3e5` |
 | Start | `PRODUCT_SYSTEM_VECTOR_COMPONENT_ALIGNMENT_IN_PROGRESS` |
 | Final | `PRODUCT_SYSTEM_VECTOR_COMPONENT_ALIGNMENT_COMPLETE_WITH_GUARDS` |
 
