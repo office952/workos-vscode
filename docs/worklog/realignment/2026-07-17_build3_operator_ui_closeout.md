@@ -7,7 +7,7 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `7beb357` (Build 3 worklog) |
-| End HEAD | `f96ad0b` (operator UI closeout) |
+| End HEAD | `f96ad0b` (operator UI closeout); tip `a88cfa6` |
 | Verdict | `BUILD3_OPERATOR_UI_CLOSEOUT_COMPLETE_WITH_GUARDS` |
 
 ## Owner request
