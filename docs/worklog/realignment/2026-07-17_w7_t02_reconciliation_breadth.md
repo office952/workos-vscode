@@ -56,3 +56,35 @@ Order `92403` commercial total unchanged after sessions. Build 1 not mutated.
 ## Next
 
 W7-T03 owner sign-off — not started.
+
+---
+
+## Post-UTF-8 resume verification (2026-07-17)
+
+After encoding closure (`44260c7`, `c9c1b67`), W7-T02 was re-verified without reopening UTF-8 helpers/repairs.
+
+**Repo gate:** HEAD `c9c1b67` · branch `feature/product-system-active-path-isolation-v1`
+
+**Canonical DoD:** already recorded COMPLETE — PROVEN_V1 in roadmap/status/task graph (Option A). No DoD reinterpretation.
+
+**Live re-proof (ports 3000 / 8001):**
+
+| Scenario | Order | Plan | Result |
+|----------|-------|------|--------|
+| A completed/match | `92402` RO | `8` | matched=1 |
+| B incomplete / missing actuals | `92402` RO | `8` | missing_actual=17 · actual minutes `not_captured` (not 0) |
+| C minute variance | `92403` | `9` | variance=1 · 0→75 min · Δ 75 |
+
+**Build 1 freeze:** total `3549.1286` · `QSN2-2026-0002` frozen · plan `8` not regenerated · no new sessions/actuals · no mojibake
+
+**UI:** `/execution/92402` and `/execution/92403` — **Plan vs execuție** (potrivit / parțial / fără actual / varianță) with correct Romanian diacritics
+
+**Tests:** `pytest tests/test_post_job_truth.py` → 12 passed · `PostJobTruthPanel.test.tsx` → 4 passed
+
+**Evidence:** `docs/qa/w7-t02-reconciliation-2026-07-17/post-utf8-reverify/`
+
+**/modules:** Surse și dovezi shows `W7-T02 Post-Job reconciliation breadth PROVEN_V1` · no new node
+
+**/governance:** no ownership change · G13 untouched
+
+**Product code:** no further W7-T02 implementation required on this resume — prior commit `7321229` remains the feature commit.
