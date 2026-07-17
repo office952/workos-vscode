@@ -7,7 +7,8 @@
 | Repo | `C:/w/psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Start HEAD | `1764f0f` |
-| End HEAD | *(after commit)* |
+| End HEAD | `e07afb3` |
+| Commit | `e07afb3` |
 | Verdict | `BUILD2_FULL_PRODUCT_REPRODUCTION_COMPLETE_WITH_GUARDS` |
 
 ## Objective
