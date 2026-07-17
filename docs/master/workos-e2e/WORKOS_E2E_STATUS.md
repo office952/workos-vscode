@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **NONE** — UI-TRUTH-01B CORE closed |
+| Active task | **CURRENT_TRUTH_CONTROL_CENTER_AUDIT = ACTIVE** (`/modules` + `/governance` — audit first) |
 
-| Next task | **UI-TRUTH-01C** (failure/stale/drill-down) — not started; FLEX-02 / TE2E-028 remain alternate owner choices |
+| Next task | Owner review of Current Truth Control Center audit; **UI-TRUTH-01C PAUSED** (not cancelled); FLEX-02 / TE2E-028 alternate |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 

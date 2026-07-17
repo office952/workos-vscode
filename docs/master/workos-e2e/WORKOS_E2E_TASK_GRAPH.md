@@ -3,10 +3,12 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **NONE** — UI-TRUTH-01B **COMPLETE — PROVEN_V1** (CORE)  
+**Active task:** **CURRENT_TRUTH_CONTROL_CENTER_AUDIT = ACTIVE** (`/modules` + `/governance`)  
 **Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
-**Recommended next:** **UI-TRUTH-01C** (failure/stale/drill-down) — not started; APP-AUTH-06C still blocked until 01E  
-**UI-TRUTH-01B–01E:** 01B **COMPLETE**; 01C–01E remain for follow-on (01B–01E pause lifted for 01B only)  
+**UI-TRUTH-01B:** **COMPLETE — PROVEN_V1** (CORE)  
+**UI-TRUTH-01C:** **PAUSED** — Failure, stale, retry, and drill-down states; resume after Control Center cycle  
+**Recommended next:** Owner review of Control Center audit (do not auto-start 01C)  
+
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
 **Post-job closure:** `docs/worklog/realignment/2026-07-16_workos_post_job_v1_independent_closure.md`  
