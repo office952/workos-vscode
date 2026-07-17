@@ -28,7 +28,7 @@ Binding: Product System owns formula **definitions**; ProductAggregate **resolve
 
 ## 1. Verdict
 
-`TE2E_028B_OWNER_GATES_READY`
+`TE2E_028B_OWNER_GATES_READY` → implementation closed as `TE2E_028B_FORMULA_DURATION_PASS` (see worklog + master STATUS).
 
 ---
 

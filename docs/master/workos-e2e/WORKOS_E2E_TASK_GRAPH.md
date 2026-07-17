@@ -3,13 +3,13 @@
 **Program:** `WORKOS_E2E_MASTER_ALIGNMENT_AND_FINALIZATION_V1`  
 **Operating model:** `WORKOS_E2E_IMPLEMENTATION_OPERATING_MODEL.md`  
 **Accepted HEAD:** `91d8a3f` (same-scenario live evidence; truth promotion)  
-**Active task:** **TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT**  
+**Active task:** **TE2E-028B FORMULA PLANNING DURATION = COMPLETE — PROVEN_CURRENT**  
 **Wave 7:** **COMPLETE — OWNER_ACCEPTED** (2026-07-17)  
 **UI-TRUTH-01B:** **COMPLETE — PROVEN_V1** (CORE)  
 **UI-TRUTH-01C:** **COMPLETE — PROVEN_V1**  
-**TE2E-028:** **open** (residuals remain; 028A slice proven)  
+**TE2E-028:** **open** (residuals remain; 028A static + 028B Letters formula proven)  
 **Control Center:** **COMPLETE — PROVEN_CURRENT**  
-**Recommended next:** Owner roadmap pick (do not auto-start)  
+**Recommended next:** Owner roadmap pick — Stock G3 / labor $ / fixture / breadth (do not auto-start)  
 
 **Same-scenario plan:** `.compound-engineering/workos-same-scenario-request-to-post-job-e2e-v1/plan.md`  
 **Same-scenario proof:** `docs/qa/BUILD_SAME_SCENARIO_REQUEST_TO_POST_JOB_E2E_V1.md` · `docs/qa/same-scenario-e2e-2026-07-16/`  
@@ -616,6 +616,19 @@ Task IDs below are **lanes** under wave coordinator control. Parallel assumption
 | Worklog | `docs/worklog/realignment/2026-07-17_te2e_028_current_residual_audit.md` |
 | Evidence | `docs/qa/te2e-028a-planning-minutes-2026-07-17/` |
 | Next | Owner roadmap pick — do not auto-start stock/labor/lifecycle |
+
+## TE2E-028B — FORMULA_PLANNING_DURATION_AUTHORITY
+
+| Field | Value |
+|-------|-------|
+| Status | **COMPLETE — PROVEN_CURRENT** (2026-07-17) |
+| Parent | TE2E-028 (remains open) |
+| Scope | Letters-only · `vector_prep` · `count_based_time` · Aggregate resolve → Plan → Post-Job |
+| Proof | order `972910` · plan `11` · 5 letters → 10 min · UI Plan vs execuție |
+| Refs | plans 8/9/10 · orders 92402/92403/972901 **untouched** |
+| Worklog | `docs/worklog/realignment/2026-07-17_te2e_028b_formula_planning_duration_authority_audit.md` |
+| Audit | `docs/audits/2026-07-17_te2e_028b_formula_planning_duration_authority_audit.md` |
+| Next | Owner roadmap pick — Stock G3 / labor $ / fixture / breadth |
 
 ## CURRENT_TRUTH_CONTROL_CENTER_V1
 

@@ -84,4 +84,59 @@ Stage exact paths only. Never `git add .` / `-A`.
 
 ## Implementation section
 
-*(Filled after GO implementation.)*
+### Owner gates applied
+UNPAUSE · FORMULA AUTHORITY = PRODUCT AGGREGATE · EXPLICIT ZERO ONLY · MISSING = NULL · CONTRACT RULE · LETTERS ONLY · NEW TEST DATA · GO
+
+### Selected formula
+| Field | Value |
+|-------|--------|
+| Formula ID | `count_based_time` (Product System `FormulaId`) |
+| Operation | `vector_prep` (Pregătire vector / font) |
+| Params | `minutes_per_letter = 2.0` |
+| Input | `letter_count` (ProductDefinition geometry / product facts) |
+| Expected | 5 × 2.0 = **10.0** min |
+| Not used | `perimeter_pass_linear_meter` / other quantity formulas |
+
+### Authority model
+Product System contract (`planning_duration_contract.py`) → Aggregate resolve (`product_aggregate_planning_duration_service.py`) on workspace compose + freeze facts → Plan V2 consumer (no re-eval) → task → Post-Job read-only.
+
+### Contract mode
+- `static` via `calculation_type=static` (028A preserved)
+- `formula` via Product System duration contract for `vector_prep`
+- `none` for quantity placeholders without duration contract → minutes null
+
+### Zero semantics
+Placeholder seed 0 cleared to null; missing/malformed input → null; explicit 0 only with `planning_duration_status=resolved` + provenance.
+
+### Code changes
+- `backend/services/planning_duration_contract.py` (new)
+- `backend/services/product_aggregate_planning_duration_service.py` (new)
+- Aggregate schema optional planning fields
+- Plan V2 consumer accepts Aggregate-emitted formula provenance
+- Hooks: workspace composition + quote snapshot freeze facts
+- `backend/scripts/_te2e028b_live_proof.py` (LOCAL_TEST_FIXTURE seed helper)
+- Control Center evidence/limitation updates
+
+### Tests
+`backend/tests/test_te2e_028b_formula_planning_duration.py` — 10 tests PASS  
+`test_te2e_028a_planning_minute_source.py` — regression PASS  
+Commercial isolation + legacy `/price` isolation — PASS
+
+### Fixture
+`LOCAL_TEST_FIXTURE` order **972910** · plan **11** · commercial **1888** · retention `dev_ephemeral`  
+Refs 8/9/10 and 92402/92403/972901 untouched.
+
+### Runtime/UI proof
+URL `http://127.0.0.1:3000/execution/972910`  
+Plan vs execuție: Pregătire vector / font = **10 min**; Control calitate = **15 min**; other formula qty ops = **lipsă**; actual = neînregistrat; revenue 1888.00; write_back false.
+
+### Modules / Governance
+LIMITATION / EVIDENCE UPDATE on ProductAggregate + ExecutionPlan + Post-Job in Control Center. No new node. Boundary clarification only (PS defs · Aggregate resolve · Plan consume · CostEngine/EIC excluded).
+
+### Commits
+1. `docs(execution): approve te2e-028b formula duration authority`
+2. `feat(execution): resolve formula planned duration in aggregate`
+3. `docs(execution): close te2e-028b formula proof`
+
+### Remaining breadth
+TE2E-028 open: Stock G3 · labor money · fixture qualification · more templates/ops.

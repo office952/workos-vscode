@@ -28,9 +28,9 @@
 
 | Implementation hold | **Lifted — mobile final phase pending** |
 
-| Active task | **LEGACY COMMERCIAL PRICING PATH = ISOLATED — PROVEN_CURRENT** (after TE2E-028A UI closed) |
+| Active task | **TE2E-028B FORMULA PLANNING DURATION = COMPLETE — PROVEN_CURRENT** |
 
-| Next task | Owner roadmap pick; TE2E-028B **not started**; TE2E-028 residuals remain open (formula duration / stock G3 / labor $ / fixture / Letters breadth) |
+| Next task | Owner roadmap pick; TE2E-028 residuals remain open (stock G3 / labor $ / fixture qualification / Letters breadth) |
 
 | Runtime tooling lane | **CLOSED** at `e92d135` — do not reopen without new demonstrated blocker |
 
@@ -1542,4 +1542,28 @@ NEXT ROADMAP = GO
 **Still open under TE2E-028:** Stock G3 · labor $ exclusion · fixture qualification · Letters-only breadth · formula ops without planning duration authority.
 
 **Next:** Owner roadmap pick only.
+
+---
+
+## TE2E-028B — FORMULA PLANNING DURATION = COMPLETE — PROVEN_CURRENT
+
+**Date:** 2026-07-17  
+**Parent issue:** TE2E-028 remains **open** (narrow Letters formula slice only)  
+**Proof scope:** Letters only, one approved duration formula (`count_based_time`)
+
+| Item | Result |
+|------|--------|
+| Formula | `count_based_time` · op `vector_prep` · `letter_count × 2.0` |
+| Authority | Product System contract → ProductAggregate resolve/emit → Plan consume |
+| Zero/missing | Placeholder 0 → null; missing input → null; explicit zero only with provenance |
+| Proof fixture | `LOCAL_TEST_FIXTURE` order `972910` · plan `11` · vector_prep = 10 min |
+| UI | `/execution/972910` Plan vs execuție: Pregătire vector = **10 min**; QC = 15 min; commercial **1888.00** |
+| Refs | plans 8/9/10 · orders 92402/92403/972901 **untouched** |
+| Tests | `test_te2e_028b_formula_planning_duration.py` (+ 028A regression) |
+| Commercial | Isolation intact; CostEngine/EIC not Plan authority |
+| Worklog | `docs/worklog/realignment/2026-07-17_te2e_028b_formula_planning_duration_authority_audit.md` |
+
+**Still open under TE2E-028:** Stock G3 · labor $ · fixture qualification · broader template/op formula coverage.
+
+**Next:** Owner roadmap pick only — do not auto-start residuals.
 
