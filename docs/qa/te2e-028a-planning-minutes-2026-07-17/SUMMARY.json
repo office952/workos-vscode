@@ -1,7 +1,7 @@
 ﻿{
   "label": "TE2E-028A planning-minute source integrity",
   "date": "2026-07-17",
-  "head_at_proof": "see_implementation_commit",
+  "head_at_api_proof": "5640c36",
   "template": "TPL-VOLUMETRIC-LETTERS_v2",
   "new_fixture": {
     "order_id": 972901,
@@ -14,11 +14,23 @@
   },
   "planned_minute_proof": {
     "operation": "qc_letters",
+    "task_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2:qc_internal_check",
     "task_name": "Control calitate",
     "planned_minutes": 15.0,
     "planning_minutes_source": "product_aggregate_snapshot.operations.estimated_minutes",
     "actual_presence": "not_captured",
     "reconciliation_state": "missing_actual"
+  },
+  "ui_visual_proof": {
+    "route": "http://127.0.0.1:3000/execution/972901",
+    "section": "Post-job truth / Plan vs execuție",
+    "visible_planned": "15 min",
+    "visible_actual": "neînregistrat",
+    "visible_state": "fără actual",
+    "screenshot": "te2e-028a-plan-vs-executie-972901.png",
+    "empty_shell_cause": "ExecutionDetail estimated_time_minutes.toFixed(1) on null; fixed via fmtMinutes",
+    "console": "no blocking errors observed after fix",
+    "network": "no failed required /api/ sample after load"
   },
   "reference_protection": {
     "order_92402_plan": 8,
@@ -26,5 +38,7 @@
     "unchanged_total_estimated_time_minutes": 0.0
   },
   "root_cause": "Preview hardcoded null minutes; materialize coerced null→0.0; aggregate dropped template estimated_minutes",
-  "fix": "Carry static minutes on ProductAggregateOperation; wire preview provenance; keep null when missing; Post-Job consumes plan truth"
+  "fix": "Carry static minutes on ProductAggregateOperation; wire preview provenance; keep null when missing; Post-Job consumes plan truth; UI null-safe planned minutes projection",
+  "status": "COMPLETE — PROVEN_CURRENT — UI VERIFIED",
+  "parent_te2e_028": "OPEN"
 }

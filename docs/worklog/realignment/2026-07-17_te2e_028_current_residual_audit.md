@@ -140,7 +140,21 @@ Authoritative source for this slice: **template static operation `estimated_minu
 
 Stock G3 · labor $ · fixture qualification · Letters breadth · formula ops without planning-duration authority · task lifecycle (deferred)
 
+### Visual / UI closure (2026-07-17)
+
+- Runtime: FE `:3000`, BE `:8001`; HEAD `5640c36` + null-safe detail projection fix for TE2E-028A null minutes
+- Empty-shell cause (proven): `ExecutionDetail` called `estimated_time_minutes.toFixed(1)` when value was `null` (intentional after TE2E-028A). Order `92402` used zeros → no crash; `972901` mixed null/15 → blank `#root`. Fix: reuse `fmtMinutes` (`—` when missing).
+- API precheck (RO): `GET /api/v1/execution/972901/post-job-truth` — Control calitate planned `15.0` present, source `product_aggregate_snapshot.operations.estimated_minutes`, actual `not_captured`, state `missing_actual`, `write_back_performed=false`; plan `10`; refs `92402`/`8` and `92403`/`9` still `total_estimated_time_minutes=0.0`
+- UI route: `http://127.0.0.1:3000/execution/972901` (dev guard bypass for sessionless browser)
+- Section: Post-job truth → **Plan vs execuție**
+- Visible: **Control calitate** · Min. plan **15 min** · Min. efective **neînregistrat** · Stare **fără actual**
+- No false `0 min` on that planned op; other ops show **lipsă** for missing plan minutes
+- Screenshot: `docs/qa/te2e-028a-planning-minutes-2026-07-17/te2e-028a-plan-vs-executie-972901.png`
+- Console/network: no blocking console error; no failed required `/api/` calls in performance resource sample
+- Modules: evidence `ev.te2e_028a` remains current; parent TE2E-028 open; no new Governance node
+
 ### Status
 
-`TE2E-028A PLANNING-MINUTE SOURCE = COMPLETE — PROVEN_CURRENT`  
-`TE2E-028` parent issue remains **open**
+`TE2E-028A = COMPLETE — PROVEN_CURRENT — UI VERIFIED`  
+`TE2E-028` parent issue remains **open**  
+Next safe residual (not started): **TE2E-028B — Formula planning-duration authority audit**

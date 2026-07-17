@@ -815,7 +815,7 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
     evidenceType: "qa",
     date: "2026-07-17",
     provesRo:
-      "Minute planificate statice (ex. qc_letters=15) supraviețuiesc aggregate→preview→plan→Post-Job; missing actual rămâne explicit; fără write-back",
+      "Minute planificate statice (ex. Control calitate=15 min) supraviețuiesc aggregate→preview→plan→Post-Job; UI /execution/972901 verificat (Plan vs execuție); missing actual rămâne explicit; fără write-back; TE2E-028 rămâne deschis",
     stillCurrentRuntime: true,
     source: "docs/qa/te2e-028a-planning-minutes-2026-07-17/",
   },
