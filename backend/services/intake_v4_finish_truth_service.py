@@ -374,6 +374,8 @@ def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, A
             "mounting_bar_profile",
             "mounting_solution",
             "finish_target",
+            "svg_support_selection",
+            "svg_component_bindings",
         }:
             filtered[key] = value
     return setup.model_copy(update=filtered)

@@ -1,9 +1,18 @@
 import type { LayerAutoRole } from "@/lib/svgAnalyzer";
 import { INTAKE_V4_LAYER_ROLE_OPTIONS } from "./intakeV4LayerRoleOptions";
+import { LEGACY_INTAKE_SVG_ROLE_ADAPTER } from "./svgComponentBindings";
 
 export const INTAKE_V6_LAYER_ROLE_OPTIONS = INTAKE_V4_LAYER_ROLE_OPTIONS;
 export const INTAKE_V6_OWNER_ROLE_LABEL_LETTERS = "Vector Litere";
 export const INTAKE_V6_OWNER_ROLE_LABEL_LOGO = "Vector Logo";
+
+/**
+ * LEGACY_INTAKE_SVG_ROLE_ADAPTER — layer-role bridge for analysis-bundle only.
+ * Not Product System authority. Do not add Vector ACP / TPL-BOND-CASETAT here.
+ * Component assignment options come from template-availability.svg_bindable_components.
+ */
+export const INTAKE_V6_LEGACY_SVG_ROLE_ADAPTER_ID = LEGACY_INTAKE_SVG_ROLE_ADAPTER;
+
 export const INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS: ReadonlyArray<{
 	value: LayerAutoRole;
 	label: string;

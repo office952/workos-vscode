@@ -50,19 +50,35 @@ ProductDefinition     = salveaza component instances
 
 `TPL-ACM-BOXED-MOUNTING-SUPPORT_v1` · owner label **Panou Alucobond casetat** · process `ALUCOBOND_CASED_PANEL`.
 
-## ProductDefinition targets (documented; FinishSetup fix is a later GO)
+## Intake / FinishSetup / ProductDefinition (implemented 2026-07-17)
 
-| Component | Targets |
-|-----------|---------|
-| Letters | `layer_role_setup`, `selected_layer_refs.vector_litere`, composition letters |
-| Logo | `layer_role_setup`, `selected_layer_refs.vector_logo`, composition logo |
-| ACP | `mounting_solution`, `svg_support_selection` (schema gap), `support_type=alucobond_cased`, panel/casing/corner |
+### FinishSetup fields (JSON document — no DB migration)
+
+| Field | Role |
+|-------|------|
+| `svg_component_bindings[]` | Unified assignment SoT |
+| `svg_support_selection` | Synced from SUPPORT_CONTOUR binding (legacy adapters) |
+| `mounting_solution` | ACM template config when ACP confirmed |
+
+Persistence: `svg_component_binding_persistence.py` validates (blocks `TPL-BOND-CASETAT`), syncs selection, projects PD instances.
+
+### Intake Step 1
+
+- Loads `svg_bindable_components` via template-availability.
+- Panel: `IntakeV6SvgComponentAssignmentPanel` (Asocieri produs).
+- Layer role two-option list remains `LEGACY_INTAKE_SVG_ROLE_ADAPTER` for analysis-bundle only — not option authority.
+- ACP UI nested under Contur suport → Panou Alucobond casetat.
+
+### ProductDefinition
+
+- `canonical_values.svg_component_instances[]` from confirmed bindings.
+- Typed precedence: bindings → `svg_support_selection` → legacy mounting fields.
 
 ## Legacy Intake adapter
 
-`LEGACY_INTAKE_SVG_ROLE_ADAPTER` = hardcoded FE `INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS`.  
-Do not extend with ACP. Next Intake build consumes this projection.
+`LEGACY_INTAKE_SVG_ROLE_ADAPTER` = hardcoded FE `INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS` for layer_role_setup bridge.  
+Do not extend with ACP. Not Product System authority.
 
 ## Boundaries
 
-No CPP, tasking, DXF, CUT/FOLD, schema/migration/seed, Intake Step 1 UI change in this build.
+No CPP, tasking, DXF, CUT/FOLD, DB schema/migration/seed.

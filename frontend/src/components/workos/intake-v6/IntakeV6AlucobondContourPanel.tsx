@@ -10,6 +10,12 @@ import {
   type ContourRoleOption,
   type SvgSupportSelectionState,
 } from "@/lib/svgAnalyzer";
+import {
+  bindingFromSupportSelection,
+  readSvgComponentBindings,
+  upsertBinding,
+  type SvgComponentBinding,
+} from "@/lib/intakeV6/svgComponentBindings";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 type Props = {
@@ -20,6 +26,7 @@ type Props = {
   onSelectedContourIdChange?: (contourId: string | null) => void;
   onPersist: (patch: {
     svg_support_selection: SvgSupportSelectionState;
+    svg_component_bindings?: SvgComponentBinding[];
     mounting_solution?: Record<string, unknown> | null;
     power_supply_service_corner?: string | null;
   }) => Promise<void> | void;
@@ -89,22 +96,27 @@ export default function IntakeV6AlucobondContourPanel({
       setError("Selectează un contur și confirmă rolul.");
       return;
     }
+    const prevBindings = readSvgComponentBindings(finishSetup ?? undefined);
     if (role !== "ALUCOBOND_CASED_PANEL") {
       const cleared = emptySvgSupportSelection();
+      const selection: SvgSupportSelectionState = {
+        ...cleared,
+        status: "confirmed",
+        role,
+        contour_id: selected.contour_id,
+        svg_support_element_id: selected.element_id,
+        geometry_hash: selected.geometry_hash,
+        svg_source_hash: svgSourceHash ?? null,
+        candidate_explanation: selected.reasons,
+        confirmed_at: new Date().toISOString(),
+      };
       setBusy(true);
       try {
         await onPersist({
-          svg_support_selection: {
-            ...cleared,
-            status: "confirmed",
-            role,
-            contour_id: selected.contour_id,
-            svg_support_element_id: selected.element_id,
-            geometry_hash: selected.geometry_hash,
-            svg_source_hash: svgSourceHash ?? null,
-            candidate_explanation: selected.reasons,
-            confirmed_at: new Date().toISOString(),
-          },
+          svg_support_selection: selection,
+          svg_component_bindings: prevBindings.filter(
+            (b) => b.component_template_code !== "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          ),
           mounting_solution: null,
         });
       } finally {
@@ -127,10 +139,14 @@ export default function IntakeV6AlucobondContourPanel({
       return;
     }
     const mounting = buildAcmMountingSolutionFromSelection(result.selection);
+    const supportBinding = bindingFromSupportSelection(result.selection);
     setBusy(true);
     try {
       await onPersist({
         svg_support_selection: result.selection,
+        svg_component_bindings: supportBinding
+          ? upsertBinding(prevBindings, supportBinding)
+          : prevBindings,
         mounting_solution: mounting,
         power_supply_service_corner: corner,
       });

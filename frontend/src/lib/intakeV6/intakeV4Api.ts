@@ -216,6 +216,8 @@ export interface IntakeV4FinishSetup {
   } | null;
   /** Operator-confirmed SVG closed-contour support selection (Alucobond panel etc.). */
   svg_support_selection?: Record<string, unknown> | null;
+  /** Unified Product System component bindings (letters / logo / support). */
+  svg_component_bindings?: Record<string, unknown>[] | null;
   /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
   mains_cable_length_m?: number | null;
   power_supply_service_corner?:

@@ -23,4 +23,5 @@ export {
   casingRequirementsActive,
   blankPreviewMm,
   emptySvgSupportSelection,
+  ACM_BOXED_MOUNTING_TEMPLATE_CODE,
 } from "./closed-contour/alucobondCasedPanelSelection";

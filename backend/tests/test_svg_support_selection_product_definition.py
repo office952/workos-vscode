@@ -54,6 +54,30 @@ def test_pd_canonical_projects_confirmed_alucobond_selection():
                 "service_corner": "TOP_RIGHT",
                 "internal_frame_enabled": True,
             },
+            "svg_component_bindings": [
+                {
+                    "binding_id": "bind_support_cc_1",
+                    "geometry_role": "SUPPORT_CONTOUR",
+                    "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                    "selection_mode": "CLOSED_CONTOUR",
+                    "selected_geometry": {
+                        "layer_ids": [],
+                        "group_ids": [],
+                        "element_ids": ["cc_1"],
+                        "geometry_hashes": ["deadbeef"],
+                        "source_svg_hash": "src",
+                    },
+                    "configuration": {
+                        "fold_count": 2,
+                        "l1_mm": 60,
+                        "l2_mm": 25,
+                        "finished_depth_mm": 60,
+                        "service_corner": "TOP_RIGHT",
+                        "internal_frame_enabled": True,
+                    },
+                    "status": "CONFIRMED",
+                }
+            ],
         }
     }
     values = _build_canonical_values([], payload)
@@ -63,6 +87,10 @@ def test_pd_canonical_projects_confirmed_alucobond_selection():
     assert values["panel_geometry"]["width_mm"] == 2098.0
     assert values["service_corner"] == "TOP_RIGHT"
     assert values["internal_frame_enabled"] is True
+    assert values["svg_component_instances"][0]["component_template_code"] == (
+        "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+    )
+    assert values["svg_component_instances"][0]["geometry_role"] == "SUPPORT_CONTOUR"
 
 
 def test_pd_inactive_selection_no_casing_leakage():

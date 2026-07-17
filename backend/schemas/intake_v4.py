@@ -252,6 +252,10 @@ class IntakeV4FinishSetup(BaseModel):
     commercial_inputs: IntakeV4CommercialInputs | None = None
     confirmed: bool = False
     internal_draft_quote_confirmed: bool = False
+    # Component-aware SVG assignment (Product System authority). JSON document — no DB migration.
+    svg_component_bindings: list[dict[str, Any]] = Field(default_factory=list)
+    # Typed Alucobond/support selection (synced from SUPPORT_CONTOUR binding; must not be dropped).
+    svg_support_selection: dict[str, Any] | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):

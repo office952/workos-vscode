@@ -1253,9 +1253,24 @@ async def save_finish_setup_for_intake_v6_workspace(
         dump_intake_v4_finish_setup_for_persist,
         strip_global_backing_mirror_from_finish_dict,
     )
+    from services.svg_component_binding_persistence import (
+        sync_support_selection_from_bindings,
+        validate_bindings_for_new_selection,
+    )
+    from schemas.intake_v4 import IntakeV4FinishSetup
 
     normalized = normalize_intake_v6_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
+
+    finish_doc = normalized.model_dump(mode="json")
+    binding_blockers = validate_bindings_for_new_selection(finish_doc.get("svg_component_bindings") or [])
+    if binding_blockers:
+        raise HTTPException(
+            status_code=422,
+            detail={"error": "svg_component_binding_invalid", "blockers": binding_blockers},
+        )
+    finish_doc = sync_support_selection_from_bindings(finish_doc)
+    normalized = IntakeV4FinishSetup.model_validate(finish_doc)
 
     # Validate against dossier (non-blocking — warnings stored in payload)
     from services.intake_v6_template_option_contract_service import validate_finish_setup_against_dossier

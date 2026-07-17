@@ -22,10 +22,11 @@ import { isSingleLayerColorMode } from "../IntakeV6LayersColorBreakdown";
 import { detectArtworkOnlyRequiresDecision } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import { buildIntakeV6LayersAnalysisWarningSummaries } from "@/lib/intakeV6/intakeV6LayersAnalysisWarningSummaries";
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
-import IntakeV6AlucobondContourPanel from "../IntakeV6AlucobondContourPanel";
+import IntakeV6SvgComponentAssignmentPanel from "../IntakeV6SvgComponentAssignmentPanel";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "../atoms/intakeV6Presentation";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
+import { INTAKE_V6_LETTERS_TEMPLATE_CODE } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 
 export interface IntakeV6SvgAnalyzerStepProps {
 	hook: IntakeV6WorkspaceHook;
@@ -285,23 +286,32 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						</div>
 					) : null}
 
-					{report?.closedContourCandidates ? (
-						<IntakeV6AlucobondContourPanel
+					{report ? (
+						<IntakeV6SvgComponentAssignmentPanel
+							templateCode={templateCode || INTAKE_V6_LETTERS_TEMPLATE_CODE}
 							report={report}
+							confirmation={confirmation}
 							finishSetup={
 								(payload?.finish_setup as Record<string, unknown> | undefined) ?? null
 							}
 							svgSourceHash={state.localFileHash}
 							disabled={state.phase === "persisting"}
 							onSelectedContourIdChange={setSelectedContourId}
-							onPersist={async (patch) => {
+							onPersistFinish={async (patch) => {
 								const prev =
 									(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
 								const next: IntakeV6FinishSetup = {
 									...(prev as IntakeV6FinishSetup),
-									svg_support_selection: patch.svg_support_selection,
 								} as IntakeV6FinishSetup;
-								if (patch.mounting_solution) {
+								if (patch.svg_support_selection !== undefined) {
+									(next as Record<string, unknown>).svg_support_selection =
+										patch.svg_support_selection;
+								}
+								if (patch.svg_component_bindings !== undefined) {
+									(next as Record<string, unknown>).svg_component_bindings =
+										patch.svg_component_bindings;
+								}
+								if (patch.mounting_solution !== undefined) {
 									(next as Record<string, unknown>).mounting_solution = patch.mounting_solution;
 								}
 								if (patch.power_supply_service_corner !== undefined) {

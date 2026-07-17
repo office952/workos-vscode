@@ -319,8 +319,25 @@ def _build_canonical_values(
             if projected:
                 values["mounting_system"] = projected
 
+    # Component-aware SVG bindings (Product System authority) → PD instances.
+    from services.svg_component_binding_persistence import (
+        build_svg_component_instances,
+        read_svg_component_bindings,
+        sync_support_selection_from_bindings,
+    )
+
+    finish_for_pd = dict(finish) if isinstance(finish, dict) else {}
+    if read_svg_component_bindings(finish_for_pd):
+        finish_for_pd = sync_support_selection_from_bindings(finish_for_pd)
+    instances = build_svg_component_instances(finish_for_pd)
+    if instances:
+        values["svg_component_instances"] = instances
+        values["svg_component_bindings"] = read_svg_component_bindings(finish_for_pd) or finish_for_pd.get(
+            "svg_component_bindings"
+        )
+
     # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
-    selection = finish.get("svg_support_selection")
+    selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
     if isinstance(selection, dict) and selection.get("schema") == "svg_support_selection_v1":
         status = str(selection.get("status") or "").strip()
         role = str(selection.get("role") or "").strip()
