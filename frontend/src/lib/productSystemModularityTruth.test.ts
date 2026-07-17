@@ -31,7 +31,11 @@ describe("productSystemModularityTruth", () => {
     const mounting = truth.modules.find((m) => m.moduleKey === "MOUNTING");
     expect(face?.independenceRo).toMatch(/de sine stătător/);
     expect(finish?.independenceRo).toMatch(/captiv/);
+    expect(finish?.independenceRo).toMatch(/Activare neaprobată/);
     expect(mounting?.independenceRo).toMatch(/captiv/);
+    expect(mounting?.independenceRo).toMatch(/Activare neaprobată/);
+    expect(finish?.noteRo).toMatch(/modul FINISH/);
+    expect(mounting?.noteRo).toMatch(/mounting_system/);
     expect(truth.falseGeneric.some((m) => m.moduleKey === "sistem_led")).toBe(true);
     expect(truth.compositionDependencies[0]?.classId).toBe("COMPOSITION_ONLY");
     expect(truth.compositionDependencies[0]?.meaningRo).toMatch(/nu este cerință standalone/i);

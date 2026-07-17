@@ -94,14 +94,17 @@ const LETTERS_TRUTH: ProductModularityTruth = {
     {
       moduleKey: "FINISH",
       labelRo: "Finisaj (FINISH)",
-      independenceRo: "captiv · amânat",
+      independenceRo: "captiv · amânat · Activare neaprobată",
       scopeRo: "LETTERS_ONLY",
+      noteRo: "Proprietar țintă: modul FINISH · Cataloage conflictuale · fără chip sold",
     },
     {
       moduleKey: "MOUNTING",
       labelRo: "Montaj (MOUNTING)",
-      independenceRo: "captiv · amânat",
+      independenceRo: "captiv · amânat · Activare neaprobată",
       scopeRo: "SHARED_WITHIN_SIGNAGE",
+      noteRo:
+        "Suport legat parțial · mounting_system metodă canonică · metal_support_required = alias",
     },
   ],
   falseGeneric: [

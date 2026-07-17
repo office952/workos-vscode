@@ -16,6 +16,7 @@ import type {
   UnifiedCatalogDetailSection,
 } from "./productSystemUnifiedCatalogTypes";
 import { LegacyReplacementReadinessPanel } from "./LegacyReplacementReadinessPanel";
+import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -223,6 +224,8 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
           Ownership setări componente / module = CONFLICTED. {SETTINGS_OWNERSHIP_CONFLICT_RO}.
         </p>
       ) : null}
+
+      {templateCode === LETTERS_TEMPLATE_CODE ? <FinishMountingOwnershipPanel /> : null}
 
       <div className="flex flex-wrap gap-3 text-[12px]" data-testid="product-system-control-center-links">
         <Link to="/modules" className="text-blue-400 hover:text-blue-300">
@@ -436,6 +439,14 @@ export function ProductSystemTemplateDetailPanel({
                 <li key={chip}>· {chip}</li>
               ))}
             </ul>
+          ) : null}
+          {template.template_code === LETTERS_TEMPLATE_CODE ? (
+            <div data-testid="product-system-dossier-ownership-truth">
+              <p className="mb-2 text-[12px] text-slate-400">
+                Ownership FINISH / MOUNTING — read-only (current vs target). Nu este editor.
+              </p>
+              <FinishMountingOwnershipPanel />
+            </div>
           ) : null}
           <Link
             to="/product-system/blueprint-dossier"

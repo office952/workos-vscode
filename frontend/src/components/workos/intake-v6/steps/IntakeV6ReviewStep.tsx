@@ -2037,6 +2037,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 variant="review"
               />
             ) : null}
+            <p
+              className="mb-2 rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
+              data-testid="intake-v6-finish-ownership-note"
+            >
+              Ownership: intent față vinyl/print → țintă modul FINISH · Oracal/RAL cant → RETURN-CANT ·
+              valori concrete → WORKSPACE · chip sold FINISH = amânat (nu apare aici) · hidden default ≠
+              modul vândut.
+            </p>
             {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
@@ -2167,6 +2175,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
         {reviewTab === "montaj" ? (
           <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-2">
+            <p
+              className="rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
+              data-testid="intake-v6-mounting-ownership-note"
+            >
+              Ownership: mounting_scope = intent comercial · mounting_system = metodă canonică V1 ·
+              mounting_solution = compoziție suport · metal_support_required = alias compatibilitate
+              (nu autoritate) · chip sold MOUNTING = blocat · mounting_method = doar nume țintă (nu
+              câmp nou).
+            </p>
             {renderSectionByKey("montaj_template")}
             <IntakeV6ReviewSectionShell
               title="Montaj & template"
@@ -2533,7 +2550,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>
-                      {lettersCanonicalFieldLabels?.mounting_system ?? "Sistem montaj"} (legacy, read-only)
+                      {lettersCanonicalFieldLabels?.mounting_system ?? "Sistem montaj"}{" "}
+                      (canonic V1 / read-only aici)
                     </span>
                     <p
                       className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
