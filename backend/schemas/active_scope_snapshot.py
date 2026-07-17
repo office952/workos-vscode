@@ -12,8 +12,13 @@ from pydantic import BaseModel, Field
 from schemas.active_scope import ACTIVE_SCOPE_CONTRACT_VERSION, ACTIVE_SCOPE_RESOLVER_VERSION, ActiveScopeResult
 from schemas.offer_scope import OFFER_SCOPE_CONTRACT_VERSION
 
-ACTIVE_SCOPE_SNAPSHOT_VERSION = "active_scope_snapshot/v1"
-KNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSIONS = frozenset({ACTIVE_SCOPE_SNAPSHOT_VERSION})
+ACTIVE_SCOPE_SNAPSHOT_VERSION_V1 = "active_scope_snapshot/v1"
+ACTIVE_SCOPE_SNAPSHOT_VERSION_V2 = "active_scope_snapshot/v2"
+# Writers emit v2 (precise responsibilities). Readers accept v1 + v2.
+ACTIVE_SCOPE_SNAPSHOT_VERSION = ACTIVE_SCOPE_SNAPSHOT_VERSION_V2
+KNOWN_ACTIVE_SCOPE_SNAPSHOT_VERSIONS = frozenset(
+    {ACTIVE_SCOPE_SNAPSHOT_VERSION_V1, ACTIVE_SCOPE_SNAPSHOT_VERSION_V2}
+)
 
 ActiveScopeCompatibilityMode = Literal["enriched", "legacy_scope_fallback"]
 

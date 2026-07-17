@@ -33,9 +33,12 @@ VECTOR_PREP_OPERATION_CODE = "vector_prep"
 FILE_PREPARATION_TASK_TYPE = "file_preparation"
 
 # Execution-only alias — not a component registry extension.
+# Precise ownership after decoupling; legacy v1 snapshots expand finisaje separately.
 EXECUTION_PRICED_OP_RUNTIME_ALIASES: dict[str, str] = {
     "return_face_bonding": "modelare_cant",
-    "mounting_template_cnc_cut": "finisaje",
+    "mounting_template_cnc_cut": "sablon_montaj",
+    "packaging_letters": "ambalare_livrare_montaj",
+    "painting": "finisaje",
 }
 
 BLOCKED_MISSING_SOLD_SCOPE = "blocked_missing_sold_scope"
@@ -63,6 +66,26 @@ class ExecutionSoldScopeContext:
 
 def _text(value: str | None) -> str:
     return str(value or "").strip()
+
+
+def _normalize_sold_runtime_modules(
+    sold_runtime: frozenset[str],
+    *,
+    snapshot_version: str | None,
+) -> frozenset[str]:
+    """v1 / legacy mixed finisaje → expand; v2 precise codes unchanged."""
+    from schemas.active_scope_snapshot import ACTIVE_SCOPE_SNAPSHOT_VERSION_V1
+    from services.letters_finish_mounting_runtime_decoupling import (
+        expand_legacy_finisaje_runtime_modules,
+    )
+
+    version = _text(snapshot_version)
+    if version == ACTIVE_SCOPE_SNAPSHOT_VERSION_V1 or not version:
+        return expand_legacy_finisaje_runtime_modules(sold_runtime)
+    # v2+: only expand when old mixed set was frozen without split codes.
+    if "finisaje" in sold_runtime and "sablon_montaj" not in sold_runtime:
+        return expand_legacy_finisaje_runtime_modules(sold_runtime)
+    return sold_runtime
 
 
 def _enriched_usable(active: QuoteSnapshotActiveScope | None) -> bool:
@@ -112,8 +135,9 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
     if _enriched_usable(active):
         assert active is not None
         compiled = active.compiled
-        sold_runtime = frozenset(
-            m for m in (compiled.execution_scope_modules or []) if _text(m)
+        sold_runtime = _normalize_sold_runtime_modules(
+            frozenset(m for m in (compiled.execution_scope_modules or []) if _text(m)),
+            snapshot_version=active.active_scope_snapshot_version,
         )
         canonical_sold = frozenset(
             c for c in (compiled.sold_module_codes or []) if _text(c)
@@ -179,8 +203,13 @@ def read_execution_sold_scope(snapshot: OrderSnapshotV2) -> ExecutionSoldScopeCo
             )
 
     # --- Legacy thin offer_scope fallback ---
-    sold_runtime = frozenset(
-        module for module in (offer_scope.resolved_runtime_sold_modules or []) if _text(module)
+    sold_runtime = _normalize_sold_runtime_modules(
+        frozenset(
+            module for module in (offer_scope.resolved_runtime_sold_modules or []) if _text(module)
+        ),
+        snapshot_version=(
+            active.active_scope_snapshot_version if active is not None else None
+        ),
     )
     canonical_sold = frozenset(
         code for code in (offer_scope.sold_modules or []) if _text(code)
