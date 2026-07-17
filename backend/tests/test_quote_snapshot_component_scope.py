@@ -423,6 +423,7 @@ async def test_intake_v6_official_snapshot_includes_aggregate_and_scope(
     snap = captured["snapshot"]
     assert snap.product_aggregate_snapshot is not None
     assert snap.offer_scope_snapshot is not None
+    assert snap.active_scope_snapshot is not None
     assert snap.component_scope_version == COMPONENT_SCOPE_VERSION
     assert snap.commercial_price_proposal_snapshot.commercial_total == 119.0
 

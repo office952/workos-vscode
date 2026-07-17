@@ -456,7 +456,7 @@ export const GOVERNANCE_TAB_HONESTY: Record<string, GovernanceTabHonestyMeta> = 
     status: "STALE_HINT",
     source: "governanceData.moduleStatusFlows (static)",
     noteRo:
-      "Fluxuri de stare — referință parțială / pot fi istorice. Nu sunt motorul de stare live.",
+      "Fluxuri de stare — referință parțială / pot fi istorice (inclusiv CostEngine). Nu sunt Level-1. Adevăr Active Scope / sold-scope snapshot: /modules + currentTruthControlCenter.",
   },
   agents: {
     tabId: "agents",

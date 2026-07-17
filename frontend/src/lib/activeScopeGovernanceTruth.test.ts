@@ -74,7 +74,8 @@ describe("Active-scope governance registration", () => {
     expect(byId["as.pd_aggregate"]?.status).toBe("PROVEN");
     expect(byId["as.aggregate_cpp"]?.status).toBe("PROVEN");
     expect(byId["as.frozen_exec"]?.status).toBe("PROVEN");
-    expect(byId["as.scope_snapshot"]?.status).toBe("PARTIAL");
+    expect(byId["as.scope_snapshot"]?.status).toBe("PROVEN");
+    expect(byId["as.scope_snapshot"]?.noteRo).toMatch(/PROVEN FOR LETTERS SLICE 1/);
   });
 
   it("documents readiness law, dependency classes, hybrid intake", () => {

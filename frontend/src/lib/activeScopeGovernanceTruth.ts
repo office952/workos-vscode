@@ -130,21 +130,21 @@ export const ACTIVE_SCOPE_SYSTEM: OfficialSystemRegistration = {
     "Rezolvă setul exact de module/componente cerut de client (sold scope) și îl compilează în scope runtime activ.",
   owner: "ProductDefinition (compiled active scope) — Letters Slice 1 proven",
   ownedDataContractsRo:
-    "offer_scope.mode · sold_modules · ActiveScopeResult · runtime active/inactive · calc prerequisites · commercial/execution scope",
+    "offer_scope.mode · sold_modules · ActiveScopeResult · QuoteSnapshotActiveScope · runtime active/inactive · calc prerequisites · commercial/execution scope · composition exclusions",
   exclusionsRo:
-    "Nu deține tarife; nu materializează task-uri live; nu inventează template Return-only; FINISH/MOUNTING deferred Slice1; Logo/ACM out of slice",
+    "Nu deține tarife; nu materializează task-uri live; nu inventează template Return-only; FINISH/MOUNTING deferred Slice1; Logo/ACM out of slice; nu reinterpretează scope din workspace după freeze",
   inputsRo:
-    "product template · offer_scope.mode · sold_modules · workspace facts · hard/conditional/composition dependencies",
+    "Intake V6 persisted offer_scope · product template · workspace facts at freeze time · hard/conditional/composition dependencies",
   outputsRo:
-    "active runtime module set · inactive module set · calc prerequisites · commercial scope · execution scope · composition exclusions",
-  consumersRo: "ProductAggregate · CPP 7G · live-calc · BOM · Quote Snapshot · Order Snapshot · ExecutionPlan preview",
+    "active runtime module set · inactive module set · calc prerequisites · commercial scope · execution scope · composition exclusions · frozen QuoteSnapshotActiveScope",
+  consumersRo: "ProductAggregate · CPP 7G · live-calc · BOM · Quote Snapshot (freeze) · Order Snapshot (passthrough) · ExecutionPlan preview (frozen)",
   sourceOfTruthRo:
-    "/modules (oficial) · active_scope_resolver_service · ProductDefinition compile",
+    "/modules (oficial) · Intake V6 intent · active_scope_resolver_service · Quote Snapshot freeze",
   runtimeStatus: "PARTIAL",
   boundariesRo:
-    "PROVEN FOR LETTERS SLICE 1 — canonical resolver + PD/Aggregate/CPP/execution preview; not global module independence",
+    "PROVEN FOR LETTERS SLICE 1 — resolver + PD/Aggregate/CPP + sold-scope snapshot freeze + execution frozen consume; not global module independence",
   ownerGatesRo:
-    "Nu declara independență globală; Logo BLOCKED; ACM PARTIAL; fără task materialization; fără template/schema nou",
+    "Nu declara independență globală; Logo BLOCKED; ACM PARTIAL; fără task materialization; fără template/schema nou; Order/Exec fără recompile din live Intake",
   uiApiLinks: [
     OFFICIAL_CURRENT_TRUTH_ROUTES.modules,
     OFFICIAL_CURRENT_TRUTH_ROUTES.governance,
@@ -154,15 +154,15 @@ export const ACTIVE_SCOPE_SYSTEM: OfficialSystemRegistration = {
   supportingEvidence: [
     "docs/audits/2026-07-17_product_system_module_independence_e2e_audit.md",
     "docs/worklog/realignment/2026-07-17_active_scope_module_independence_v1.md",
+    "docs/worklog/realignment/2026-07-17_sold_scope_snapshot_active_scope_closure_v1.md",
     "backend/services/active_scope_resolver_service.py",
-    "backend/tests/test_active_scope_resolver_service.py",
-    "backend/tests/test_product_definition_active_scope.py",
-    "backend/tests/test_product_aggregate_active_scope_filter.py",
-    "backend/tests/test_intake_v6_live_calc_offer_scope.py",
+    "backend/services/quote_snapshot_component_scope_service.py",
     "backend/services/execution_sold_scope_reader_service.py",
+    "backend/tests/test_active_scope_resolver_service.py",
+    "backend/tests/test_active_scope_snapshot_freeze.py",
   ],
   lastVerificationStatus:
-    "PROVEN FOR LETTERS SLICE 1 — ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1; RETURN-CANT ONLY acceptance",
+    "PROVEN FOR LETTERS SLICE 1 — SOLD_SCOPE_SNAPSHOT_ACTIVE_SCOPE_CLOSURE_V1; RETURN-CANT freeze + Exec enriched path",
 };
 
 export const ACTIVE_SCOPE_KNOWN_DEFECTS_RO = [
@@ -224,17 +224,19 @@ export const ACTIVE_SCOPE_HANDOFFS: readonly {
   },
   {
     id: "as.scope_snapshot",
-    fromRo: "scope",
+    fromRo: "compile_active_scope",
     toRo: "frozen Quote/Order snapshot",
-    status: "PARTIAL",
-    noteRo: "offer_scope_snapshot freeze existent; official V6 snapshot path still has fixture dry-run debt",
+    status: "PROVEN",
+    noteRo:
+      "SOLD SCOPE SNAPSHOT = PROVEN FOR LETTERS SLICE 1 — Intake intent → ActiveScopeResult freeze; Order passthrough; workspace-independent; official V6 dry-run fixture debt remains orthogonal",
   },
   {
     id: "as.frozen_exec",
-    fromRo: "frozen sold_scope",
+    fromRo: "frozen active_scope_snapshot",
     toRo: "Execution filter",
     status: "PROVEN",
-    noteRo: "RETURN-CANT excludes return_face_bonding; preview-only, no materialization",
+    noteRo:
+      "enriched composition_excluded_operations primary; RETURN-CANT hardcode = legacy_scope_fallback only; preview-only, no materialization, no live Intake reread",
   },
 ];
 
