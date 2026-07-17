@@ -267,7 +267,7 @@ export default function ModuleChain() {
                 className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass("PARTIAL")}`}
                 data-testid="active-scope-status"
               >
-                PARTIAL / CONFLICTED
+                PARTIAL / PROVEN SLICE 1
               </span>
             </div>
             <p className="text-[11px] text-slate-300">{ACTIVE_SCOPE_SYSTEM.roleRo}</p>

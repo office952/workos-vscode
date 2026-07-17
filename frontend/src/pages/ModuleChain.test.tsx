@@ -64,26 +64,23 @@ describe("ModuleChain present-truth control center", () => {
     expect(screen.queryByText("Operational Core")).not.toBeInTheDocument();
   });
 
-  it("publishes official current-truth and Active Scope as PARTIAL/CONFLICTED", () => {
+  it("publishes official current-truth and Active Scope as PARTIAL / PROVEN SLICE 1", () => {
     renderModuleChain();
     expect(screen.getByTestId("official-current-truth-label")).toHaveTextContent("/modules");
     expect(screen.getByTestId("official-current-truth-label")).toHaveTextContent("/governance");
     expect(screen.getByTestId("documentation-authority-rule")).toHaveTextContent("oficial");
-    expect(screen.getByTestId("active-scope-status")).toHaveTextContent("PARTIAL / CONFLICTED");
+    expect(screen.getByTestId("active-scope-status")).toHaveTextContent("PARTIAL / PROVEN SLICE 1");
     expect(screen.getByTestId("active-scope-owner")).toHaveTextContent("ProductDefinition");
-    expect(screen.getByTestId("active-scope-owner-gate")).toHaveTextContent("STOP");
+    expect(screen.getByTestId("active-scope-owner-gate")).toHaveTextContent("Logo BLOCKED");
     expect(screen.getByTestId("full-template-coupling-defect")).toHaveTextContent(
       "FULL_TEMPLATE_COUPLING"
     );
-    expect(screen.getByTestId("active-scope-handoff-as.offer_scope_pd")).toHaveTextContent(
-      "FAILED / NOT CONSUMED"
-    );
-    expect(screen.getByTestId("active-scope-handoff-as.aggregate_cpp")).toHaveTextContent(
-      "CONFLICTED"
-    );
-    expect(screen.getByTestId("active-scope-target-note")).toHaveTextContent("nu implementat");
-    expect(screen.getByTestId("module-independence-letters")).toHaveTextContent("PARTIAL");
-    expect(screen.getByTestId("modeled-return-status")).toHaveTextContent("PD=FAILED");
+    expect(screen.getByTestId("active-scope-handoff-as.offer_scope_pd")).toHaveTextContent("PROVEN");
+    expect(screen.getByTestId("active-scope-handoff-as.aggregate_cpp")).toHaveTextContent("PROVEN");
+    expect(screen.getByTestId("active-scope-target-note")).toHaveTextContent("Slice 1");
+    expect(screen.getByTestId("module-independence-letters")).toHaveTextContent("PROVEN FOR SLICE 1");
+    expect(screen.getByTestId("modeled-return-status")).toHaveTextContent("PD=READY");
+    expect(screen.getByTestId("modeled-return-status")).toHaveTextContent("FINAL=READY");
     expect(screen.getByTestId("module-independence-logo")).toHaveTextContent("BLOCKED");
     expect(screen.getByTestId("module-independence-acm")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("hybrid-intake-model")).toHaveTextContent("HYBRID");

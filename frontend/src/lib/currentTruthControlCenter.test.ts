@@ -41,11 +41,11 @@ describe("Current Truth Control Center shared projection", () => {
     const pricing = PRESENT_SYSTEMS.find((s) => s.id === "pricing_commercial");
     expect(pricing?.verifyRoute).toBe("/inventory/pricing");
     expect(pricing?.status).toBe("PARTIAL");
-    expect(pricing?.limitationRo).toMatch(/CONFLICTED/);
+    expect(pricing?.limitationRo).toMatch(/autoritate bani|Slice 1|proven/i);
 
     const pd = PRESENT_SYSTEMS.find((s) => s.id === "product_definition");
     expect(pd?.status).toBe("PARTIAL");
-    expect(pd?.limitationRo).toMatch(/NOT CONSUMED|REWORK/);
+    expect(pd?.limitationRo).toMatch(/PROVEN FOR LETTERS SLICE 1|compile_active_scope/);
 
     const intake = PRESENT_SYSTEMS.find((s) => s.id === "intake_v6");
     expect(intake?.limitationRo).toMatch(/renderer generic|generic/i);
@@ -62,8 +62,7 @@ describe("Current Truth Control Center shared projection", () => {
 
     const paCpp = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_cpp");
     expect(paCpp?.status).toBe("PARTIAL");
-    expect(paCpp?.outputContractRo).toMatch(/non-monetare|CONFLICTED/);
-    expect(paCpp?.outputContractRo).toMatch(/live-calc|unscoped|CONFLICTED/i);
+    expect(paCpp?.outputContractRo).toMatch(/non-monetare|scoped|Slice 1/i);
 
     const paPlan = PRESENT_HANDOFFS.find((h) => h.id === "h.pa_plan");
     expect(paPlan?.outputContractRo).toMatch(/minute planificate/);
@@ -127,7 +126,7 @@ describe("Current Truth Control Center shared projection", () => {
     expect(g01?.requirementRo).not.toMatch(/Quotes calculează/);
     expect(g13?.titleRo).toBe("UTF-8 end-to-end pentru textul operator");
     expect(g13?.status).toBe("PARTIAL APLICAT");
-    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("NEAPLICAT");
+    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("PARTIAL APLICAT");
     expect(PRESENT_GUARDRAILS.find((g) => g.id === "G15")?.status).toBe("APLICAT");
   });
 

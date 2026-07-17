@@ -3,8 +3,7 @@
  * Consumed by /modules and /governance only as Level-1 present truth.
  * Audits/worklogs are Level-3/4 evidence — they do not override this file.
  *
- * RUNTIME IMPLEMENTATION = STOP until separate owner GO
- * (ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1).
+ * Letters Slice 1 runtime proof: ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1 (owner GO).
  */
 
 import { CANONICAL_ROUTES } from "@/lib/productSystemCanonicalModel";
@@ -129,23 +128,23 @@ export const ACTIVE_SCOPE_SYSTEM: OfficialSystemRegistration = {
   canonicalName: "Active Scope / Sold Scope",
   roleRo:
     "Rezolvă setul exact de module/componente cerut de client (sold scope) și îl compilează în scope runtime activ.",
-  owner: "ProductDefinition (compiled active scope) — țintă; runtime încă REWORK",
+  owner: "ProductDefinition (compiled active scope) — Letters Slice 1 proven",
   ownedDataContractsRo:
-    "offer_scope.mode · sold_modules · runtime active/inactive sets · calc prerequisites · commercial scope · execution scope",
+    "offer_scope.mode · sold_modules · ActiveScopeResult · runtime active/inactive · calc prerequisites · commercial/execution scope",
   exclusionsRo:
-    "Nu deține tarife; nu materializează task-uri live; nu inventează template Return-only; FINISH/MOUNTING deferred Slice1",
+    "Nu deține tarife; nu materializează task-uri live; nu inventează template Return-only; FINISH/MOUNTING deferred Slice1; Logo/ACM out of slice",
   inputsRo:
-    "product template · offer_scope.mode · sold_modules · hard technical prerequisites · conditional dependencies",
+    "product template · offer_scope.mode · sold_modules · workspace facts · hard/conditional/composition dependencies",
   outputsRo:
-    "active runtime module set · inactive module set · calc prerequisites · commercial scope · execution scope",
-  consumersRo: "ProductAggregate · CPP 7G · Quote Snapshot · Order Snapshot · ExecutionPlan",
+    "active runtime module set · inactive module set · calc prerequisites · commercial scope · execution scope · composition exclusions",
+  consumersRo: "ProductAggregate · CPP 7G · live-calc · BOM · Quote Snapshot · Order Snapshot · ExecutionPlan preview",
   sourceOfTruthRo:
-    "/modules (oficial) · offer_scope contract · ProductDefinition (țintă pentru compiled set)",
+    "/modules (oficial) · active_scope_resolver_service · ProductDefinition compile",
   runtimeStatus: "PARTIAL",
   boundariesRo:
-    "PARTIAL — FE visibility / BOM / Execution paths exist; ProductDefinition și Aggregate nu sunt unificate pe offer_scope",
+    "PROVEN FOR LETTERS SLICE 1 — canonical resolver + PD/Aggregate/CPP/execution preview; not global module independence",
   ownerGatesRo:
-    "RUNTIME IMPLEMENTATION = STOP până la GO separat ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1",
+    "Nu declara independență globală; Logo BLOCKED; ACM PARTIAL; fără task materialization; fără template/schema nou",
   uiApiLinks: [
     OFFICIAL_CURRENT_TRUTH_ROUTES.modules,
     OFFICIAL_CURRENT_TRUTH_ROUTES.governance,
@@ -154,21 +153,23 @@ export const ACTIVE_SCOPE_SYSTEM: OfficialSystemRegistration = {
   ],
   supportingEvidence: [
     "docs/audits/2026-07-17_product_system_module_independence_e2e_audit.md",
-    "docs/worklog/realignment/2026-07-17_product_system_module_independence_e2e_audit.md",
-    "backend/tests/test_offer_scope_bom_eic_cpp_filter.py",
+    "docs/worklog/realignment/2026-07-17_active_scope_module_independence_v1.md",
+    "backend/services/active_scope_resolver_service.py",
+    "backend/tests/test_active_scope_resolver_service.py",
+    "backend/tests/test_product_definition_active_scope.py",
+    "backend/tests/test_product_aggregate_active_scope_filter.py",
     "backend/tests/test_intake_v6_live_calc_offer_scope.py",
-    "backend/services/product_definition_builder_service.py#_resolve_module_state",
     "backend/services/execution_sold_scope_reader_service.py",
   ],
-  lastVerificationStatus: "PARTIAL / CONFLICTED — audit HEAD b0306d4; registration build post-56053fd",
+  lastVerificationStatus:
+    "PROVEN FOR LETTERS SLICE 1 — ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1; RETURN-CANT ONLY acceptance",
 };
 
 export const ACTIVE_SCOPE_KNOWN_DEFECTS_RO = [
-  "PD always-on Letters modules (face/back/return/finisaje)",
-  "Aggregate parent graph unscoped",
-  "live-calc commercial pollution",
-  "FACE-only BOM filter defect",
-  "execution depends on frozen sold_scope",
+  "FULL_TEMPLATE_COUPLING — remediat pe Letters Slice 1 (PD/Aggregate/CPP/exec preview)",
+  "Logo commercial/component independence rămâne BLOCKED",
+  "ACM cassette activation rămâne PARTIAL / out of slice",
+  "FINISH/MOUNTING sold codes deferred Slice1",
 ] as const;
 
 export type ActiveScopeHandoffStatus =
@@ -176,7 +177,8 @@ export type ActiveScopeHandoffStatus =
   | "PARTIAL"
   | "CONFLICTED"
   | "FAILED / NOT CONSUMED"
-  | "CONFIRMED_WITH_GUARDS";
+  | "CONFIRMED_WITH_GUARDS"
+  | "PROVEN";
 
 export const ACTIVE_SCOPE_HANDOFFS: readonly {
   id: string;
@@ -203,36 +205,36 @@ export const ACTIVE_SCOPE_HANDOFFS: readonly {
     id: "as.offer_scope_pd",
     fromRo: "offer_scope",
     toRo: "ProductDefinition active scope",
-    status: "FAILED / NOT CONSUMED",
-    noteRo: "_resolve_module_state ignoră offer_scope; always_on face/back/return",
+    status: "PROVEN",
+    noteRo: "compile_active_scope → _resolve_module_state; inactive outside sold set",
   },
   {
     id: "as.pd_aggregate",
     fromRo: "ProductDefinition",
     toRo: "Aggregate active graph",
-    status: "PARTIAL",
-    noteRo: "Aggregate merge parent+dossier; fără sold_scope în builder",
+    status: "PROVEN",
+    noteRo: "filter_aggregate_by_active_scope + identity enrich; bonding composition-only for RETURN-CANT",
   },
   {
     id: "as.aggregate_cpp",
     fromRo: "Aggregate",
     toRo: "CPP scoped measurements",
-    status: "CONFLICTED",
-    noteRo: "BOM return-only PASS; live-calc unscoped FAIL; measurements attach unscoped",
+    status: "PROVEN",
+    noteRo: "commercial_scope_modules + measurement module_gate; linked-logo suppressed in subset",
   },
   {
     id: "as.scope_snapshot",
     fromRo: "scope",
     toRo: "frozen Quote/Order snapshot",
     status: "PARTIAL",
-    noteRo: "sold_scope pe snapshot încă parțial pe căi",
+    noteRo: "offer_scope_snapshot freeze existent; official V6 snapshot path still has fixture dry-run debt",
   },
   {
     id: "as.frozen_exec",
     fromRo: "frozen sold_scope",
     toRo: "Execution filter",
-    status: "CONFIRMED_WITH_GUARDS",
-    noteRo: "execution_sold_scope_reader filtrează când scope e înghețat",
+    status: "PROVEN",
+    noteRo: "RETURN-CANT excludes return_face_bonding; preview-only, no materialization",
   },
 ];
 
@@ -246,7 +248,7 @@ export const ACTIVE_SCOPE_TARGET_HANDOFF_RO = [
 ] as const;
 
 export const ACTIVE_SCOPE_TARGET_NOTE_RO =
-  "Țintă — nu implementat. Nu afișa acest lanț ca comportament curent.";
+  "Lanțul țintă este proven pe Letters Slice 1. Nu declara independență globală pentru Logo/ACM.";
 
 export const ACTIVE_SCOPE_READINESS_LAW = {
   id: "active_scope_readiness_law",
@@ -265,7 +267,7 @@ export const ACTIVE_SCOPE_READINESS_LAW = {
     "UN MODUL ALES TREBUIE SA SE SUSTINA SINGUR.",
     "TEMPLATE-UL COMBINA MODULE — NU LE TINE CAPTIVE.",
   ],
-  status: "DOCUMENTED — RUNTIME REWORK" as const,
+  status: "PROVEN FOR LETTERS SLICE 1" as const,
 };
 
 export const ACTIVE_SCOPE_OWNERSHIP = [
@@ -342,8 +344,8 @@ export const HYBRID_INTAKE_MODEL = {
     "Selectezi un subset component/service prin component_subset existent (ex. RETURN-CANT).",
   compileRuleRo: "Ambele compilează în aceleași contracte de modul — fără template Return-only nou.",
   uiStatus: "PARTIAL" as const,
-  downstreamStatus: "NOT YET PROVEN" as const,
-  noteRo: "HYBRID UI ENTRY = PARTIAL · HYBRID DOWNSTREAM COMPILATION = NOT YET PROVEN",
+  downstreamStatus: "PROVEN FOR LETTERS SLICE 1" as const,
+  noteRo: "HYBRID UI ENTRY = PARTIAL · HYBRID DOWNSTREAM COMPILATION = PROVEN SLICE 1",
 };
 
 export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
@@ -351,14 +353,14 @@ export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
     id: "letters",
     labelRo: "Litere volumetrice",
     composedProduct: "ACTIVE",
-    moduleIndependence: "PARTIAL",
+    moduleIndependence: "PARTIAL / PROVEN FOR SLICE 1",
     modeledReturn: {
       intakeSelection: "AVAILABLE",
-      pdActiveScope: "FAILED",
-      aggregateActiveScope: "PARTIAL",
-      cpp: "CONFLICTED",
-      execution: "GUARDED",
-      final: "PARTIAL",
+      pdActiveScope: "READY",
+      aggregateActiveScope: "READY",
+      cpp: "READY",
+      execution: "READY",
+      final: "READY",
     },
   },
   {
@@ -377,19 +379,17 @@ export const MODULE_INDEPENDENCE_PRODUCT_STATUS = [
 export const FULL_TEMPLATE_COUPLING_DEFECT = {
   id: "FULL_TEMPLATE_COUPLING",
   titleRo: "Cuplare pe template complet",
-  severityRo: "CRITICAL — grouped defect",
+  severityRo: "REMEDIATED ON LETTERS SLICE 1 — still historical defect id",
   includesRo: [
-    "PD always-on face/back/return/finisaje",
-    "pending modules blocking readiness",
-    "Aggregate full parent/dossier merge",
-    "live-calc unscoped lines",
-    "BOM FACE-only empty result",
-    "path-dependent pricing",
-    "execution scope dependency on frozen sold_scope",
+    "PD always-on face/back/return/finisaje — fixed via active_scope",
+    "Aggregate full parent merge — filtered selected graph",
+    "live-calc unscoped lines — unified commercial_scope",
+    "BOM FACE-only empty — identity components + sold authority",
+    "return_face_bonding composition-only for RETURN-CANT alone",
   ],
-  doNotRo: "Nu deschide micro-defecte per warning — repară autoritatea de activare/filtrare.",
-  runtimeImplementation: "STOP",
-  nextBuildRo: "ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1 — numai după GO owner",
+  doNotRo: "Nu redeschide micro-defecte pe Letters Slice 1 fără regresie dovedită.",
+  runtimeImplementation: "PROVEN FOR LETTERS SLICE 1",
+  nextBuildRo: "Logo independence / ACM expansion — separate owner GO only",
 } as const;
 
 export const ACTIVE_SCOPE_EVIDENCE = [
@@ -400,18 +400,19 @@ export const ACTIVE_SCOPE_EVIDENCE = [
     evidenceType: "acceptance",
     date: "2026-07-17",
     provesRo:
-      "FULL_TEMPLATE_COUPLING_FOUND; HYBRID entry; PD/Aggregate unscoped; CPP CONFLICTED; return-only PARTIAL",
-    stillCurrentRuntime: true,
+      "FULL_TEMPLATE_COUPLING_FOUND baseline; HYBRID entry; registered before runtime GO",
+    stillCurrentRuntime: false,
     source: "docs/audits/2026-07-17_product_system_module_independence_e2e_audit.md",
   },
   {
-    id: "ev.module_independence_worklog",
-    title: "Module independence audit worklog",
-    category: "Dovadă istorică" as const,
-    evidenceType: "worklog",
+    id: "ev.active_scope_v1_worklog",
+    title: "Active scope module independence V1 worklog",
+    category: "Runtime proof" as const,
+    evidenceType: "acceptance",
     date: "2026-07-17",
-    provesRo: "Handoff Level-4 — nu overridează /modules+/governance",
-    stillCurrentRuntime: false,
-    source: "docs/worklog/realignment/2026-07-17_product_system_module_independence_e2e_audit.md",
+    provesRo:
+      "Letters Slice 1 resolver + PD/Aggregate/CPP/exec; RETURN-CANT ONLY ready",
+    stillCurrentRuntime: true,
+    source: "docs/worklog/realignment/2026-07-17_active_scope_module_independence_v1.md",
   },
 ] as const;

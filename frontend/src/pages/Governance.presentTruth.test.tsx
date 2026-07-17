@@ -56,7 +56,7 @@ describe("Governance present-truth control center", () => {
     expect(screen.getByTestId("governance-official-routes")).toHaveTextContent("/governance");
     expect(screen.getByTestId("unregistered-system-id")).toHaveTextContent("UNREGISTERED_SYSTEM");
     expect(screen.getByTestId("governance-active-scope-status")).toHaveTextContent(
-      "PARTIAL / CONFLICTED"
+      "PARTIAL / PROVEN SLICE 1"
     );
     expect(screen.getByTestId("readiness-law-binding")).toHaveTextContent("modulele active");
     expect(screen.getByTestId("inactive-module-rules")).toHaveTextContent("nu creează warnings");
@@ -117,12 +117,15 @@ describe("Governance present-truth control center", () => {
     expect(within(panel).getByTestId("guardrail-G16")).toHaveTextContent("UNREGISTERED_SYSTEM");
   });
 
-  it("keeps active-scope runtime owner gate as STOP policy", () => {
+  it("keeps active-scope runtime owner gate against Logo/ACM overclaim", () => {
     render(<Governance />);
     fireEvent.click(screen.getByTestId("governance-tab-gates"));
     const panel = screen.getByTestId("governance-panel-gates");
     expect(within(panel).getByTestId("owner-gate-g.owner_active_scope_runtime")).toHaveTextContent(
       "STOP"
+    );
+    expect(within(panel).getByTestId("owner-gate-g.owner_active_scope_runtime")).toHaveTextContent(
+      "Logo"
     );
   });
 

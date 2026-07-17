@@ -1615,7 +1615,7 @@ function OwnershipHonestyView({
         >
           <p className="font-semibold text-slate-100">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
           <p className="text-amber-200 mt-1" data-testid="governance-active-scope-status">
-            Status: PARTIAL / CONFLICTED · Owner: {ACTIVE_SCOPE_SYSTEM.owner}
+            Status: PARTIAL / PROVEN SLICE 1 · Owner: {ACTIVE_SCOPE_SYSTEM.owner}
           </p>
           <p className="text-slate-500 mt-1">{ACTIVE_SCOPE_SYSTEM.boundariesRo}</p>
         </div>

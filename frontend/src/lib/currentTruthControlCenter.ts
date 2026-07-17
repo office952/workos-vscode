@@ -200,11 +200,11 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     purposeRo:
       "Validează, normalizează și compilează configurația concretă; țintă: compiled active module set + active-scope readiness.",
     status: "PARTIAL",
-    inputRo: "Răspunsuri Intake + contract Product System (+ offer_scope — încă NOT CONSUMED)",
-    outputRo: "Fapte ProductDefinition (geometrie, finisaje, module, readiness)",
+    inputRo: "Răspunsuri Intake + contract Product System + offer_scope (Letters Slice 1)",
+    outputRo: "Fapte ProductDefinition (geometrie, finisaje, module, readiness pe active scope)",
     consumerRo: "ProductAggregate",
     limitationRo:
-      "ACTIVE-SCOPE READINESS = REWORK. offer_scope → PD = FAILED / NOT CONSUMED. Letters still always_on face/back/return/finisaje când analysis_ready. Nu calculează bani. Runtime fix = STOP până la GO.",
+      "ACTIVE-SCOPE READINESS = PROVEN FOR LETTERS SLICE 1. offer_scope → PD compile_active_scope. Nu calculează bani. Logo/ACM out of slice.",
     verifyRoute: "/intake-v6",
     spineOrder: 3,
   },
@@ -214,13 +214,13 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     technicalName: "ProductAggregate",
     owner: "Aggregate composition",
     purposeRo:
-      "Rezolvă adevărul tehnic (componente, cantități, operații, minute planificate) și emite măsurători comerciale non-monetare pentru CPP 7G — țintă: selected graph pe scope activ.",
+      "Rezolvă adevărul tehnic (componente, cantități, operații, minute planificate) și emite măsurători comerciale non-monetare pentru CPP 7G — selected graph pe scope activ.",
     status: "PARTIAL",
-    inputRo: "ProductDefinition / graf compilat",
+    inputRo: "ProductDefinition / graf compilat + ActiveScopeResult",
     outputRo: "Aggregate tehnic + măsurători comerciale (fără preț) + task_contract",
     consumerRo: "CPP 7G (măsurători), ExecutionPlan (operații / minute)",
     limitationRo:
-      "ACTIVE GRAPH = PARTIAL. Merge full parent BOM/dossier; measurements attach unscoped. Filtrarea sold-scope e downstream (CPP/EIC/Exec) — CONFLICTED pe live-calc. Nu emite prețuri. Runtime fix = STOP până la GO.",
+      "ACTIVE GRAPH = PROVEN FOR LETTERS SLICE 1. filter_aggregate_by_active_scope înainte de consumers. Nu emite prețuri. Logo/ACM out of slice.",
     verifyRoute: "/product-system",
     spineOrder: 4,
   },
@@ -235,7 +235,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     outputRo: "Linii comerciale, prețuri, TVA, total pentru îngheț ofertă",
     consumerRo: "Quote Snapshot",
     limitationRo:
-      "CPP 7G rămâne autoritate bani. STANDALONE MODULE PRICING = CONFLICTED (BOM return-only PASS; live-calc unscoped FAIL). Legacy /entities/quotes/price (orar) retras (HTTP 410). Minutele nu sunt autoritate comercială. Rută canonică Pricing: /inventory/pricing.",
+      "CPP 7G rămâne autoritate bani. Letters Slice 1 commercial_scope proven (live-calc/BOM/CPP unify). Legacy /entities/quotes/price (orar) retras (HTTP 410). Minutele nu sunt autoritate comercială. Rută canonică Pricing: /inventory/pricing.",
     verifyRoute: "/inventory/pricing",
     spineOrder: 5,
   },
@@ -319,7 +319,7 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     id: "active_scope_sold_scope",
     labelRo: "Active Scope / Sold Scope",
     technicalName: "Active Scope / Sold Scope",
-    owner: "ProductDefinition (compiled active scope) — țintă",
+    owner: "ProductDefinition (compiled active scope) — Letters Slice 1 proven",
     purposeRo:
       "Rezolvă setul exact de module/componente cerut de client. Regula: modul neales ≠ problemă; modul ales trebuie să se susțină singur.",
     status: "PARTIAL",
@@ -327,7 +327,7 @@ export const PRESENT_SUPPORT_SYSTEMS: PresentSystem[] = [
     outputRo: "active/inactive runtime sets · calc prerequisites · commercial + execution scope",
     consumerRo: "ProductAggregate · CPP 7G · Snapshots · ExecutionPlan",
     limitationRo:
-      "PARTIAL / CONFLICTED — FE+BOM+Exec paths exist; PD NOT CONSUMED; Aggregate unscoped; live-calc pollution; FACE-only filter defect. RUNTIME IMPLEMENTATION = STOP.",
+      "PROVEN FOR LETTERS SLICE 1 — RETURN-CANT ONLY ready. Nu independență globală; Logo BLOCKED; ACM PARTIAL.",
     verifyRoute: "/modules",
     spineOrder: 0,
   },
@@ -397,10 +397,10 @@ export const PRESENT_HANDOFFS: PresentHandoff[] = [
     consumerId: "product_definition",
     consumerRo: "ProductDefinition",
     outputContractRo:
-      "Răspunsuri workspace + offer_scope (selecție) — offer_scope încă NOT CONSUMED de PD activation",
+      "Răspunsuri workspace + offer_scope (selecție) — PD consumă via compile_active_scope (Slice 1)",
     enforcementRo: "Intake V6 workspace + ProductDefinition compile path",
     status: "PARTIAL",
-    verificationRo: "UI /intake-v6 · Active Scope handoff FAILED/NOT CONSUMED pe activare",
+    verificationRo: "UI /intake-v6 · test_product_definition_active_scope · Active Scope handoff PROVEN",
   },
   {
     id: "h.pd_pa",
@@ -408,10 +408,10 @@ export const PRESENT_HANDOFFS: PresentHandoff[] = [
     producerRo: "ProductDefinition",
     consumerId: "product_aggregate",
     consumerRo: "ProductAggregate",
-    outputContractRo: "Fapte canonice + module — Aggregate încă merge full parent graph",
-    enforcementRo: "Product compile → aggregate composition (active graph PARTIAL)",
+    outputContractRo: "Fapte canonice + module — Aggregate selected graph pe active scope (Slice 1)",
+    enforcementRo: "Product compile → filter_aggregate_by_active_scope",
     status: "PARTIAL",
-    verificationRo: "API Aggregate workspace compose (Letters) — unscoped parent BOM",
+    verificationRo: "test_product_aggregate_active_scope_filter · workspace compose",
   },
   {
     id: "h.pa_cpp",
@@ -420,10 +420,10 @@ export const PRESENT_HANDOFFS: PresentHandoff[] = [
     consumerId: "pricing_commercial",
     consumerRo: "CPP 7G",
     outputContractRo:
-      "Măsurători non-monetare — scope CONFLICTED (BOM return-only OK; live-calc unscoped; attach active_modules=None)",
-    enforcementRo: "commercial_measurements → CPP 7G; offer_scope filter path-dependent",
+      "Măsurători non-monetare scoped — commercial_scope_modules (Letters Slice 1 proven)",
+    enforcementRo: "commercial_measurements → CPP 7G; linked-logo suppressed in component_subset",
     status: "PARTIAL",
-    verificationRo: "test_offer_scope_bom_* · test_intake_v6_live_calc_offer_scope (FAIL live-calc)",
+    verificationRo: "test_intake_v6_live_calc_offer_scope · test_offer_scope_bom_*",
   },
   {
     id: "h.pa_plan",
@@ -581,18 +581,18 @@ export const PRESENT_OWNERSHIP_ROWS: PresentOwnershipRow[] = [
       "Compiled active module set · hard/conditional deps · active-scope readiness",
     writeAuthorityRo: "Compile path (sistem) — autoritate activare",
     readOnlyRo: "Aggregate (consum)",
-    enforcementRo: "REWORK: offer_scope încă NOT CONSUMED; FE visibility ≠ activation",
+    enforcementRo: "PROVEN Letters Slice 1 — compile_active_scope + readiness pe module active",
     status: "PARTIAL",
   },
   {
     systemId: "active_scope_sold_scope",
     domainRo: "Active Scope / Sold Scope",
     technicalAlias: "Active Scope / Sold Scope",
-    owner: "ProductDefinition (compiled) — țintă",
+    owner: "ProductDefinition (compiled) — Slice 1 proven",
     semanticOwnershipRo: "Set runtime activ/inactiv din offer_scope + hard deps",
-    writeAuthorityRo: "Țintă: PD compile — RUNTIME STOP până la GO",
+    writeAuthorityRo: "PD compile via active_scope_resolver_service",
     readOnlyRo: "Intake selecție · Aggregate/CPP/Exec consum",
-    enforcementRo: "PARTIAL/CONFLICTED — vezi FULL_TEMPLATE_COUPLING",
+    enforcementRo: "PROVEN FOR LETTERS SLICE 1 — FULL_TEMPLATE_COUPLING remediat pe slice",
     status: "PARTIAL",
   },
   {
@@ -604,7 +604,7 @@ export const PRESENT_OWNERSHIP_ROWS: PresentOwnershipRow[] = [
       "Selected technical graph · active components/materials/ops · active commercial measurements",
     writeAuthorityRo: "Aggregate composition (sistem)",
     readOnlyRo: "CPP 7G (măsurători), ExecutionPlan (operații/minute)",
-    enforcementRo: "PARTIAL — full parent merge; sold-scope filter downstream",
+    enforcementRo: "PROVEN Letters Slice 1 — selected graph înainte de consumers",
     status: "PARTIAL",
   },
   {
@@ -994,11 +994,11 @@ export const PRESENT_GATES: PresentGate[] = [
     id: "g.owner_active_scope_runtime",
     nameRo: "GO owner — Active Scope runtime (PD/Aggregate/CPP)",
     blocksRo:
-      "ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1 — PD active scope, Aggregate selected graph, live-calc/CPP unify, snapshot sold_scope",
+      "Extindere dincolo de Letters Slice 1 (Logo/ACM independence, FINISH/MOUNTING sold, task materialization)",
     approverRo: "Owner",
-    enforcementRo: "RUNTIME IMPLEMENTATION = STOP până la GO separat după înregistrarea în /modules+/governance",
-    verificationRo: "/modules Active Scope · /governance G14 · audit module independence",
-    withoutApprovalRo: "STOP — nu începe fix-uri PD/Aggregate/CPP",
+    enforcementRo: "Letters Slice 1 proven sub GO ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1 — nu overclaim global",
+    verificationRo: "/modules Active Scope · /governance G14 · worklog active_scope_module_independence_v1",
+    withoutApprovalRo: "STOP — nu activa Logo/ACM ca independență de modul",
     status: "POLITICA OWNER",
   },
 ];
@@ -1018,9 +1018,9 @@ export const PRESENT_GUARDRAILS: PresentGuardrail[] = [
     titleRo: "Readiness numai pe module active",
     requirementRo:
       "Readiness se evaluează numai pentru modulele active. Modulele inactive: nu cer setări, nu generează missing fields, nu creează warnings, linii comerciale, operații sau task-uri. Un modul neales nu este o problemă; un modul ales trebuie să se susțină singur.",
-    enforcementRo: "DOCUMENTED în /governance — runtime REWORK (FULL_TEMPLATE_COUPLING)",
-    status: "NEAPLICAT",
-    ownerGateRo: "ACTIVE_SCOPE_MODULE_INDEPENDENCE_V1 = GO owner separat",
+    enforcementRo: "PROVEN FOR LETTERS SLICE 1 — compile_active_scope + PD readiness scoped",
+    status: "PARTIAL APLICAT",
+    ownerGateRo: "Extindere Logo/ACM = GO owner separat",
   },
   {
     id: "G15",
@@ -1227,8 +1227,8 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
     evidenceType: "acceptance",
     date: "2026-07-17",
     provesRo:
-      "FULL_TEMPLATE_COUPLING_FOUND; HYBRID entry; PD/Aggregate unscoped; CPP CONFLICTED; return-only PARTIAL — Level-3 evidence, nu override Control Center",
-    stillCurrentRuntime: true,
+      "FULL_TEMPLATE_COUPLING_FOUND baseline — Level-3 evidence, nu override Control Center",
+    stillCurrentRuntime: false,
     source: "docs/audits/2026-07-17_product_system_module_independence_e2e_audit.md",
   },
   {
@@ -1240,6 +1240,17 @@ export const PRESENT_EVIDENCE: PresentEvidenceItem[] = [
     provesRo: "Level-4 history — nu definește adevărul curent oficial",
     stillCurrentRuntime: false,
     source: "docs/worklog/realignment/2026-07-17_product_system_module_independence_e2e_audit.md",
+  },
+  {
+    id: "ev.active_scope_v1_worklog",
+    title: "Active scope module independence V1",
+    category: "Runtime proof",
+    evidenceType: "acceptance",
+    date: "2026-07-17",
+    provesRo:
+      "Letters Slice 1 proven — RETURN-CANT ONLY ready; Level-3 evidence under /modules+/governance",
+    stillCurrentRuntime: true,
+    source: "docs/worklog/realignment/2026-07-17_active_scope_module_independence_v1.md",
   },
 ];
 

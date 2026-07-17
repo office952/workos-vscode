@@ -53,32 +53,34 @@ describe("Active-scope governance registration", () => {
     }
   });
 
-  it("registers Active Scope as PARTIAL/CONFLICTED — not COMPLETE", () => {
+  it("registers Active Scope as PARTIAL / PROVEN FOR LETTERS SLICE 1", () => {
     expect(ACTIVE_SCOPE_SYSTEM.canonicalSystemId).toBe("active_scope_sold_scope");
     expect(ACTIVE_SCOPE_SYSTEM.runtimeStatus).toBe("PARTIAL");
-    expect(ACTIVE_SCOPE_SYSTEM.boundariesRo).toMatch(/PARTIAL|CONFLICTED|NOT/);
-    expect(ACTIVE_SCOPE_SYSTEM.ownerGatesRo).toMatch(/STOP/);
+    expect(ACTIVE_SCOPE_SYSTEM.boundariesRo).toMatch(/PROVEN FOR LETTERS SLICE 1/);
+    expect(ACTIVE_SCOPE_SYSTEM.ownerGatesRo).toMatch(/Logo BLOCKED|ACM PARTIAL/);
     expect(ACTIVE_SCOPE_SYSTEM.owner).toMatch(/ProductDefinition/);
-    expect(ACTIVE_SCOPE_TARGET_NOTE_RO).toMatch(/nu implementat|Nu afișa/i);
+    expect(ACTIVE_SCOPE_TARGET_NOTE_RO).toMatch(/proven|Slice 1/i);
 
     const support = PRESENT_SUPPORT_SYSTEMS.find((s) => s.id === "active_scope_sold_scope");
     expect(support?.status).toBe("PARTIAL");
-    expect(support?.limitationRo).toMatch(/STOP|CONFLICTED|NOT CONSUMED/);
+    expect(support?.limitationRo).toMatch(/PROVEN FOR LETTERS SLICE 1/);
   });
 
-  it("keeps active-scope handoffs honest (PD failed, CPP conflicted, exec guarded)", () => {
+  it("marks Slice 1 handoffs proven (PD/Aggregate/CPP/exec)", () => {
     const byId = Object.fromEntries(ACTIVE_SCOPE_HANDOFFS.map((h) => [h.id, h]));
     expect(byId["as.intake_offer_scope"]?.status).toBe("CONFIRMED");
     expect(byId["as.offer_scope_fe"]?.status).toBe("CONFIRMED");
-    expect(byId["as.offer_scope_pd"]?.status).toBe("FAILED / NOT CONSUMED");
-    expect(byId["as.aggregate_cpp"]?.status).toBe("CONFLICTED");
-    expect(byId["as.frozen_exec"]?.status).toBe("CONFIRMED_WITH_GUARDS");
-    expect(ACTIVE_SCOPE_HANDOFFS.every((h) => h.status !== ("COMPLETE" as never))).toBe(true);
+    expect(byId["as.offer_scope_pd"]?.status).toBe("PROVEN");
+    expect(byId["as.pd_aggregate"]?.status).toBe("PROVEN");
+    expect(byId["as.aggregate_cpp"]?.status).toBe("PROVEN");
+    expect(byId["as.frozen_exec"]?.status).toBe("PROVEN");
+    expect(byId["as.scope_snapshot"]?.status).toBe("PARTIAL");
   });
 
   it("documents readiness law, dependency classes, hybrid intake", () => {
     expect(ACTIVE_SCOPE_READINESS_LAW.inactiveMustNotRo.join(" ")).toMatch(/warnings|linii comerciale|task/);
     expect(ACTIVE_SCOPE_READINESS_LAW.ownerLawRo.join(" ")).toMatch(/NEALES|SUSTINA|CAPTIVE/);
+    expect(ACTIVE_SCOPE_READINESS_LAW.status).toMatch(/PROVEN FOR LETTERS SLICE 1/);
     expect(DEPENDENCY_CLASSES.map((c) => c.id)).toEqual([
       "hard_technical",
       "conditional",
@@ -87,30 +89,31 @@ describe("Active-scope governance registration", () => {
       "execution",
     ]);
     expect(HYBRID_INTAKE_MODEL.approvedModel).toBe("HYBRID");
-    expect(HYBRID_INTAKE_MODEL.downstreamStatus).toBe("NOT YET PROVEN");
-    expect(HYBRID_INTAKE_MODEL.noteRo).toMatch(/NOT YET PROVEN/);
-    expect(HYBRID_INTAKE_MODEL.noteRo).not.toMatch(/\bCOMPLETE\b/);
+    expect(HYBRID_INTAKE_MODEL.downstreamStatus).toBe("PROVEN FOR LETTERS SLICE 1");
+    expect(HYBRID_INTAKE_MODEL.noteRo).toMatch(/PROVEN SLICE 1/);
   });
 
   it("keeps product independence statuses honest", () => {
     const letters = MODULE_INDEPENDENCE_PRODUCT_STATUS.find((p) => p.id === "letters");
     const logo = MODULE_INDEPENDENCE_PRODUCT_STATUS.find((p) => p.id === "logo");
     const acm = MODULE_INDEPENDENCE_PRODUCT_STATUS.find((p) => p.id === "acm");
-    expect(letters && "moduleIndependence" in letters && letters.moduleIndependence).toBe("PARTIAL");
-    expect(letters && "modeledReturn" in letters && letters.modeledReturn.final).toBe("PARTIAL");
-    expect(letters && "modeledReturn" in letters && letters.modeledReturn.pdActiveScope).toBe("FAILED");
+    expect(letters && "moduleIndependence" in letters && letters.moduleIndependence).toMatch(
+      /PARTIAL|PROVEN FOR SLICE 1/
+    );
+    expect(letters && "modeledReturn" in letters && letters.modeledReturn.final).toBe("READY");
+    expect(letters && "modeledReturn" in letters && letters.modeledReturn.pdActiveScope).toBe("READY");
     expect(logo && "componentIndependence" in logo && logo.componentIndependence).toBe("BLOCKED");
     expect(logo && "rootOfferability" in logo && logo.rootOfferability).toBe("BLOCKED");
     expect(acm && "componentIndependence" in acm && acm.componentIndependence).toBe("PARTIAL");
   });
 
-  it("groups FULL_TEMPLATE_COUPLING and blocks runtime implementation", () => {
+  it("records FULL_TEMPLATE_COUPLING remediation on Letters Slice 1", () => {
     expect(FULL_TEMPLATE_COUPLING_DEFECT.id).toBe("FULL_TEMPLATE_COUPLING");
-    expect(FULL_TEMPLATE_COUPLING_DEFECT.runtimeImplementation).toBe("STOP");
-    expect(FULL_TEMPLATE_COUPLING_DEFECT.includesRo.join(" ")).toMatch(/always-on|live-calc|FACE-only/);
+    expect(FULL_TEMPLATE_COUPLING_DEFECT.runtimeImplementation).toBe("PROVEN FOR LETTERS SLICE 1");
+    expect(FULL_TEMPLATE_COUPLING_DEFECT.includesRo.join(" ")).toMatch(/active_scope|selected graph|FACE-only/);
     expect(PRESENT_GATES.some((g) => g.id === "g.owner_active_scope_runtime")).toBe(true);
     expect(PRESENT_GUARDRAILS.some((g) => g.id === "G14")).toBe(true);
-    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("NEAPLICAT");
+    expect(PRESENT_GUARDRAILS.find((g) => g.id === "G14")?.status).toBe("PARTIAL APLICAT");
     expect(PRESENT_GUARDRAILS.find((g) => g.id === "G15")?.status).toBe("APLICAT");
     expect(PRESENT_GUARDRAILS.find((g) => g.id === "G16")?.status).toBe("APLICAT");
   });
@@ -118,9 +121,9 @@ describe("Active-scope governance registration", () => {
   it("links evidence without promoting audit to Level-1 status", () => {
     const audit = PRESENT_EVIDENCE.find((e) => e.id === "ev.module_independence_audit");
     expect(audit?.source).toMatch(/module_independence_e2e_audit/);
-    expect(audit?.provesRo).toMatch(/Level-3|nu override/i);
-    expect(PRESENT_EVIDENCE.find((e) => e.id === "ev.module_independence_worklog")?.stillCurrentRuntime).toBe(
-      false
+    expect(audit?.stillCurrentRuntime).toBe(false);
+    expect(PRESENT_EVIDENCE.find((e) => e.id === "ev.active_scope_v1_worklog")?.stillCurrentRuntime).toBe(
+      true
     );
   });
 
@@ -137,10 +140,10 @@ describe("Active-scope governance registration", () => {
     );
   });
 
-  it("keeps Active Scope ownership row and PD as PARTIAL", () => {
+  it("keeps Active Scope ownership row and PD as PARTIAL (slice-proven)", () => {
     expect(ownershipForSystem("active_scope_sold_scope")?.status).toBe("PARTIAL");
     expect(ownershipForSystem("product_definition")?.status).toBe("PARTIAL");
-    expect(ownershipForSystem("product_definition")?.enforcementRo).toMatch(/NOT CONSUMED|REWORK/);
+    expect(ownershipForSystem("product_definition")?.enforcementRo).toMatch(/PROVEN|Slice 1/);
     expect(PRESENT_SYSTEMS.find((s) => s.id === "product_definition")?.status).toBe("PARTIAL");
   });
 
