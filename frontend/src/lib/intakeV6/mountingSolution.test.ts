@@ -138,4 +138,36 @@ describe("mountingSolution", () => {
     const config = normalizeAcmMountingConfiguration({ acm_thickness_mm: 4 });
     expect(config.acm_thickness_mm).toBe(4);
   });
+
+  it("hydrates ACM panel dimensions from svg_support_selection instead of 1000×600 defaults", () => {
+    const solution = resolveEffectiveMountingSolution({
+      svg_support_selection: {
+        schema: "svg_support_selection_v1",
+        status: "confirmed",
+        role: "ALUCOBOND_CASED_PANEL",
+        contour_id: "cc_1",
+        geometry_hash: "gh",
+        svg_source_hash: "sh",
+        unit_ambiguity: true,
+        panel_geometry: {
+          width_mm: 1500,
+          height_mm: 900,
+          area_mm2: 1_350_000,
+          perimeter_mm: 4800,
+          geometry_hash: "gh",
+        },
+        casing_profile: {
+          fold_count: 2,
+          l1_mm: 60,
+          l2_mm: 25,
+          finished_depth_mm: 60,
+        },
+      },
+    });
+    expect(solution?.template_code).toBe(ACM_BOXED_MOUNTING_TEMPLATE_CODE);
+    expect(solution?.configuration.panel_width_mm).toBe(1500);
+    expect(solution?.configuration.panel_height_mm).toBe(900);
+    expect(solution?.configuration.dimension_source).toBe("svg_support_selection");
+    expect(solution?.configuration.unit_ambiguity).toBe(true);
+  });
 });

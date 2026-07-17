@@ -2555,6 +2555,41 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
                 {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
                   <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                    <div
+                      className="sm:col-span-3 rounded border border-cyan-500/25 bg-cyan-500/5 px-2.5 py-2 text-[11px] text-slate-300"
+                      data-testid="intake-v6-mounting-svg-dimension-source"
+                    >
+                      <p className="font-semibold text-slate-100">Panou Alucobond casetat · dimensiuni din Pasul 1</p>
+                      <p className="mt-0.5">
+                        Dimensiuni panou:{" "}
+                        <span className="text-cyan-100">
+                          {Number(acmMountingConfiguration.panel_width_mm).toFixed(1)} ×{" "}
+                          {Number(acmMountingConfiguration.panel_height_mm).toFixed(1)} mm
+                        </span>
+                        {acmMountingConfiguration.dimension_source === "svg_support_selection" ||
+                        acmMountingConfiguration.contour_id ||
+                        acmMountingConfiguration.geometry_hash ? (
+                          <span className="text-slate-500"> · sursă: SVG confirmat</span>
+                        ) : (
+                          <span className="text-amber-200"> · sursă: implicit / need SVG</span>
+                        )}
+                      </p>
+                      {acmMountingConfiguration.unit_ambiguity ? (
+                        <p
+                          className="mt-1 text-amber-200"
+                          data-testid="intake-v6-mounting-unit-ambiguity-guard"
+                        >
+                          Dimensiune SVG neconfirmată fizic (unit ambiguity / viewBox-as-mm guard).
+                        </p>
+                      ) : null}
+                      {acmMountingConfiguration.geometry_hash ||
+                      acmMountingConfiguration.contour_id ? (
+                        <p className="mt-1 font-mono text-[10px] text-slate-500">
+                          contour={String(acmMountingConfiguration.contour_id ?? "—")} · hash=
+                          {String(acmMountingConfiguration.geometry_hash ?? "—")}
+                        </p>
+                      ) : null}
+                    </div>
                     {ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS.filter((field) =>
                       [
                         "panel_width_mm",

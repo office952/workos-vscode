@@ -213,11 +213,94 @@ export function hydrateMountingSolutionFromLegacy(
   };
 }
 
+/**
+ * Prefer SVG-confirmed panel geometry over hardcoded ACM defaults (1000×600).
+ * Authority: finish_setup.svg_support_selection.panel_geometry / mounting_solution from Step 1.
+ */
+export function hydrateAcmMountingFromSvgSupport(
+  setup: Record<string, unknown> | null | undefined,
+): MountingSolutionRef | null {
+  if (!setup) return null;
+  // Lazy import avoided — read support selection shape directly to keep mountingSolution free of analyzer cycles.
+  const raw = setup.svg_support_selection;
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return null;
+  const selection = raw as Record<string, unknown>;
+  if (String(selection.status ?? "") !== "confirmed") return null;
+  if (String(selection.role ?? "") !== "ALUCOBOND_CASED_PANEL") return null;
+  const panel = selection.panel_geometry;
+  if (!panel || typeof panel !== "object" || Array.isArray(panel)) return null;
+  const panelRec = panel as Record<string, unknown>;
+  const width = Number(panelRec.width_mm);
+  const height = Number(panelRec.height_mm);
+  if (!(width > 0) || !(height > 0)) return null;
+
+  const existing = readMountingSolution(setup);
+  const existingConfig =
+    existing?.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE
+      ? normalizeAcmMountingConfiguration(existing.configuration)
+      : {};
+  const existingW = Number(existingConfig.panel_width_mm);
+  const existingH = Number(existingConfig.panel_height_mm);
+  const looksLikeDefault =
+    !existing ||
+    existing.template_code !== ACM_BOXED_MOUNTING_TEMPLATE_CODE ||
+    (existingW === DEFAULT_ACM_MOUNTING_CONFIGURATION.panel_width_mm &&
+      existingH === DEFAULT_ACM_MOUNTING_CONFIGURATION.panel_height_mm);
+
+  if (!looksLikeDefault && existing?.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE) {
+    // Keep operator overrides when they differ from defaults and from SVG (operator edited).
+    const matchesSvg =
+      Math.abs(existingW - width) < 0.05 && Math.abs(existingH - height) < 0.05;
+    if (!matchesSvg && existingW > 0 && existingH > 0) {
+      return existing;
+    }
+  }
+
+  const casing = selection.casing_profile;
+  const casingRec =
+    casing && typeof casing === "object" && !Array.isArray(casing)
+      ? (casing as Record<string, unknown>)
+      : {};
+  const fold = Number(casingRec.fold_count ?? existingConfig.fold_count ?? 2) === 1 ? 1 : 2;
+  const l1 = Number(casingRec.l1_mm ?? existingConfig.return_depth_mm ?? 60);
+  const l2 = Number(casingRec.l2_mm ?? existingConfig.rear_lip_mm ?? 25);
+
+  return {
+    kind: PRODUCT_SYSTEM_TEMPLATE_KIND,
+    template_code: ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+    configuration: normalizeAcmMountingConfiguration({
+      ...existingConfig,
+      panel_width_mm: width,
+      panel_height_mm: height,
+      return_depth_mm: l1,
+      rear_lip_mm: fold === 2 ? l2 : 0,
+      fold_count: fold,
+      finished_depth_mm: Number(casingRec.finished_depth_mm ?? l1),
+      svg_support_element_id: selection.svg_support_element_id ?? null,
+      geometry_hash: selection.geometry_hash ?? null,
+      contour_id: selection.contour_id ?? null,
+      panel_area_mm2: panelRec.area_mm2 ?? null,
+      panel_perimeter_mm: panelRec.perimeter_mm ?? null,
+      unit_ambiguity: Boolean(selection.unit_ambiguity),
+      dimension_source: "svg_support_selection",
+      svg_source_hash: selection.svg_source_hash ?? null,
+    }),
+  };
+}
+
 export function resolveEffectiveMountingSolution(
   setup: Record<string, unknown> | null | undefined,
 ): MountingSolutionRef | null {
   if (!setup) return null;
-  return readMountingSolution(setup) ?? hydrateMountingSolutionFromLegacy(setup);
+  const fromSvg = hydrateAcmMountingFromSvgSupport(setup);
+  const existing = readMountingSolution(setup);
+  if (fromSvg) {
+    // Prefer SVG-hydrated ACM when support is confirmed.
+    if (!existing || existing.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE) {
+      return fromSvg;
+    }
+  }
+  return existing ?? hydrateMountingSolutionFromLegacy(setup) ?? fromSvg;
 }
 
 export function isAllowedMountingSolutionTemplate(templateCode: string): boolean {
