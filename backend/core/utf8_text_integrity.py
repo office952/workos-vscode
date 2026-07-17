@@ -273,6 +273,34 @@ def repair_source_text(content: str) -> Tuple[str, List[dict]]:
     return text, audit
 
 
+def structural_commercial_fingerprint(obj: Any) -> Any:
+    """Mask strings; keep keys, array order/length, numbers, bools, nulls."""
+    if isinstance(obj, dict):
+        return {k: structural_commercial_fingerprint(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [structural_commercial_fingerprint(v) for v in obj]
+    if isinstance(obj, str):
+        return "<<STR>>"
+    if isinstance(obj, bool) or obj is None:
+        return obj
+    if isinstance(obj, (int, float)):
+        return obj
+    return f"<<OTHER:{type(obj).__name__}>>"
+
+
+def fingerprint_hash(obj: Any) -> str:
+    import hashlib
+    import json as _json
+
+    canon = _json.dumps(
+        structural_commercial_fingerprint(obj),
+        ensure_ascii=False,
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canon.encode("utf-8")).hexdigest()
+
+
 __all__ = [
     "TextClass",
     "Classification",
@@ -284,4 +312,6 @@ __all__ = [
     "assert_no_mojibake",
     "walk_repair_json",
     "repair_source_text",
+    "structural_commercial_fingerprint",
+    "fingerprint_hash",
 ]

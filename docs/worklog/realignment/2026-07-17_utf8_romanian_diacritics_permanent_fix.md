@@ -2,9 +2,8 @@
 
 ## Verdict
 
-`UTF8_DIACRITICS_PERMANENT_FIX_PASS` for operator-visible active path (source → product_templates → execution_plan → API → UI).
-
-Frozen commercial snapshots remain **explicitly gated** (not mutated): `quote_snapshots_v2.snapshot_json`, `orders.snapshot_v2_json` (and related). Encoding restoration there requires a separate owner GO.
+1. `UTF8_DIACRITICS_PERMANENT_FIX_PASS` — operator-visible active path (source → product_templates → execution_plan → API → UI).
+2. `FROZEN_SNAPSHOT_UTF8_RESTORATION_PASS` — local/dev frozen Quote/Order Snapshot V2 encoding restoration after explicit owner GO.
 
 ## Root cause
 
@@ -63,24 +62,90 @@ Source rollback: `git checkout -- <paths>` for committed source repairs.
 
 ## Tests
 
-- Backend: `pytest tests/test_utf8_text_integrity.py` → 10 passed
+- Backend: `pytest tests/test_utf8_text_integrity.py` → 14 passed (includes frozen snapshot invariants)
 - Frontend: `vitest run src/lib/utf8TextIntegrity.test.ts` → 3 passed
 - Frontend build: `pnpm run build` → success
 
+## Frozen snapshot UTF-8 restoration (Owner GO)
+
+Owner decision recorded: `FROZEN SNAPSHOT UTF8 RESTORATION — GO`  
+Scope: local/dev `backend/dev.db` only. Encoding restoration, not commercial mutation. Production not authorized.
+
+### Tooling
+
+- `backend/scripts/restore_frozen_snapshot_utf8.py` (requires `--include-frozen` to mutate)
+- Default `repair_utf8_mojibake.py` still excludes frozen unless `--include-frozen`
+
+### Dry-run
+
+- Evidence: `docs/qa/utf8-romanian-diacritics-2026-07-17/frozen-snapshot-dry-run.json`
+- Result: **6 CONFIRMED_SAFE**, 0 ambiguous, 0 fingerprint drift
+- Rows:
+  - `quote_snapshots_v2` id 1,2,3 (`snapshot_json`) — 37 string repairs each
+  - `orders` id 92401,92402,92403 (`snapshot_v2_json`) — 37 string repairs each
+- Build 1 focus: quote `3` / `QSN2-2026-0002` / order `92402`
+
+### Backup (pre-frozen-apply)
+
+- Path: `docs/qa/utf8-romanian-diacritics-2026-07-17/dev.db.frozen-backup-20260717T040112Z` (gitignored)
+- Meta: `frozen-db-backup-20260717T040112Z.json`
+- sha256: `d7a28f5d0430ccb24e7507ba293cf9854263dcc30d52abf5ca586fa40beca175`
+- bytes: 4714496; backup open verified
+
+### Apply
+
+- Applied 6 rows; structural/commercial fingerprint unchanged on every row
+- Idempotent re-dry-run: confirmed_safe=0
+- Quote↔Order label alignment for Build 1: **aligned_labels=true**
+- Plan 8 not regenerated / not rewritten in this step
+
+### Commercial fingerprint proof (Build 1)
+
+| Field | Before | After |
+|---|---|---|
+| Snapshot `QSN2-2026-0002` / quote_snapshots_v2 id 2 | frozen / v1.0.0 | unchanged |
+| Order 92402 status / quote_snapshot_v2_id | locked / 2 | unchanged |
+| Order `total_amount` | 3549.1286 | 3549.1286 |
+| Snapshot `commercial_total` | 3549.1286 | 3549.1286 |
+| Snapshot `internal_total` | 1560.3836 | 1560.3836 |
+| Template code | TPL-VOLUMETRIC-LETTERS_v2 | unchanged |
+| Sample label | `FaÈ›Äƒ plexi…` | `Față plexi…` |
+
+Evidence: `frozen-snapshot-commercial-fingerprint.json`, `frozen-snapshot-commercial-before-after.json`, `frozen-snapshot-repair-result.json`
+
+### LOCAL FROZEN SNAPSHOT UTF8 PROOF
+
+- `GET /api/v1/product-system/quote-snapshot-v2/QSN2-2026-0002` → 200, `Față` present, no mojibake, total 3549.1286
+- `GET /api/v1/entities/orders/92402` → 200, total 3549.1286, no mojibake
+- `GET /api/v1/entities/quotes/3` → 200, no mojibake
+- `GET /api/v1/execution/plan/92402` → 200, clean Romanian task labels
+- UI: `http://127.0.0.1:3000/execution/92402` — clean diacritics; screenshot `execution-92402-frozen-utf8-after.png`
+- Orders list shows `ORD-IV6-V2-1784237123-3` value **3.549,13 RON** unchanged; screenshot `orders-commercial-total-utf8.png`
+- Proof note: `LOCAL_FROZEN_SNAPSHOT_UTF8_PROOF.md`
+
+### Frozen rollback
+
+```powershell
+# stop backend writers first, then:
+Copy-Item docs/qa/utf8-romanian-diacritics-2026-07-17/dev.db.frozen-backup-20260717T040112Z backend/dev.db -Force
+```
+
+Full rollback was not executed (backup checksum + open verified). Execute only if validation fails.
+
 ## /modules impact
 
-No new system node. Harta sistemelor left unchanged (transport already UTF-8; defect was source/persisted text). Evidence note only in this worklog + QA folder.
+NO SYSTEM NODE CHANGE. Evidence updated under QA folder + this worklog only.
 
 ## /governance impact
 
-Added guardrail **G13** — UTF-8 end-to-end for operator text (`frontend/src/lib/governanceData.ts`). Visible under Reguli de protecție → Integritate text.
+**G13** remains accurate: semantic source owns text; transport preserves Unicode; frontend renders, not repairs; frozen restoration requires explicit owner GO; production remains separately gated. No duplicate rule added.
 
 ## Remaining risks
 
-1. Frozen snapshot JSON still contains mojibake until owner GO + `--include-frozen`.
-2. Historical QA JSON / worklog evidence intentionally retains defect quotes — do not “clean” archives.
-3. Seed is insert-only; existing DBs need repair script (or re-seed after delete) for new environments that already loaded corrupt templates.
+1. Production / non-local DBs are unmodified and remain separately gated.
+2. Historical QA JSON / screenshots that intentionally quote the defect remain untouched.
+3. Seed is insert-only; new environments that already loaded corrupt templates still need the repair scripts.
 
 ## Next safe step
 
-Owner decision on frozen snapshot encoding restoration (`quote_snapshots_v2` / `orders.snapshot_v2_json`) with dry-run + backup — or leave historically frozen as-is.
+Resume the previously approved roadmap task (post-encoding closure). Do not auto-start W7-T02/W7-T03.

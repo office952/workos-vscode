@@ -1,0 +1,10 @@
+{
+  "original_db_path": "C:\\w\\psiso\\backend\\dev.db",
+  "backup_path": "C:\\w\\psiso\\docs\\qa\\utf8-romanian-diacritics-2026-07-17\\dev.db.frozen-backup-20260717T040112Z",
+  "timestamp_utc": "20260717T040112Z",
+  "bytes": 4714496,
+  "sha256_original": "d7a28f5d0430ccb24e7507ba293cf9854263dcc30d52abf5ca586fa40beca175",
+  "sha256_backup": "d7a28f5d0430ccb24e7507ba293cf9854263dcc30d52abf5ca586fa40beca175",
+  "backup_open_ok": true,
+  "owner_go": "FROZEN SNAPSHOT UTF8 RESTORATION \u2014 GO"
+}

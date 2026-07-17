@@ -13,6 +13,7 @@ from core.utf8_text_integrity import (  # noqa: E402
     TextClass,
     assert_no_mojibake,
     classify_text,
+    fingerprint_hash,
     has_suspicious_mojibake,
     repair_source_text,
     safe_repair_text,
@@ -161,6 +162,98 @@ class Utf8HttpJsonTests(unittest.TestCase):
         self.assertIn("€", body)
         assert_no_mojibake(body)
         self.assertEqual(response.json()["label"], "Lipire cant pe față")
+
+
+class FrozenSnapshotUtf8RestorationTests(unittest.TestCase):
+    """Encoding-only frozen snapshot repair invariants (no commercial mutation)."""
+
+    def test_clean_snapshot_unchanged(self):
+        payload = {
+            "snapshot_version": "1.0.0",
+            "quote_id": 3,
+            "status": "frozen",
+            "totals": {"net": 100.5, "vat": 19.0, "gross": 119.5},
+            "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+            "labels": ["față", "șablon", "preț"],
+            "ops": [{"code": "CNC", "qty": 2, "price": 12.5}],
+        }
+        fixed, audit = walk_repair_json(payload)
+        self.assertEqual(audit, [])
+        self.assertEqual(fixed, payload)
+        self.assertEqual(fingerprint_hash(payload), fingerprint_hash(fixed))
+
+    def test_corrupted_snapshot_repairs_strings_only(self):
+        payload = {
+            "snapshot_version": "1.0.0",
+            "quote_id": 3,
+            "status": "frozen",
+            "totals": {"net": 100.5, "vat": 19.0, "gross": 119.5},
+            "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+            "material_roles": [
+                {"code": "MAT-FACE", "label": "FaÈ›Äƒ plexi", "qty": 1.25},
+                {"code": "MAT-ORACAL", "label": "Oracal 651 â€” autocolant", "qty": 2},
+            ],
+            "operation_roles": [
+                {"code": "OP-PREP", "label": "PregÄƒtire vector / font", "minutes": 30},
+            ],
+            "ambiguous_keep": "Brand Ä only",
+        }
+        before_fp = fingerprint_hash(payload)
+        fixed, audit = walk_repair_json(payload)
+        self.assertGreaterEqual(len(audit), 3)
+        self.assertEqual(fingerprint_hash(fixed), before_fp)
+        self.assertEqual(fixed["totals"], {"net": 100.5, "vat": 19.0, "gross": 119.5})
+        self.assertEqual(fixed["quote_id"], 3)
+        self.assertEqual(fixed["status"], "frozen")
+        self.assertEqual(fixed["template_code"], "TPL-VOLUMETRIC-LETTERS_v2")
+        self.assertEqual(fixed["material_roles"][0]["code"], "MAT-FACE")
+        self.assertEqual(fixed["material_roles"][0]["qty"], 1.25)
+        self.assertEqual(fixed["material_roles"][0]["label"], "Față plexi")
+        self.assertEqual(fixed["operation_roles"][0]["label"], "Pregătire vector / font")
+        # Lone Ä is not a confirmed mojibake digraph — left unchanged.
+        self.assertEqual(fixed["ambiguous_keep"], "Brand Ä only")
+        assert_no_mojibake(fixed["material_roles"][0]["label"])
+
+    def test_frozen_repair_idempotent(self):
+        payload = {
+            "label": "TÄƒiere CNC faÈ›Äƒ litere",
+            "price": 42.0,
+            "nested": [{"name": "È˜ablon montaj", "qty": 1}],
+        }
+        once, audit1 = walk_repair_json(payload)
+        twice, audit2 = walk_repair_json(once)
+        self.assertGreater(len(audit1), 0)
+        self.assertEqual(audit2, [])
+        self.assertEqual(once, twice)
+        self.assertEqual(fingerprint_hash(payload), fingerprint_hash(twice))
+
+    def test_quote_order_label_alignment_shape(self):
+        quote = {
+            "quote_id": 3,
+            "product_definition_snapshot": {
+                "material_roles": [{"code": "A", "label": "FaÈ›Äƒ plexi", "qty": 1}],
+                "operation_roles": [{"code": "B", "label": "ManoperÄƒ", "minutes": 10}],
+            },
+            "totals": {"gross": 200},
+        }
+        order = {
+            "order_id": 92402,
+            "quote_id": 3,
+            "product_definition_snapshot": {
+                "material_roles": [{"code": "A", "label": "FaÈ›Äƒ plexi", "qty": 1}],
+                "operation_roles": [{"code": "B", "label": "ManoperÄƒ", "minutes": 10}],
+            },
+            "totals": {"gross": 200},
+        }
+        q2, _ = walk_repair_json(quote)
+        o2, _ = walk_repair_json(order)
+        self.assertEqual(
+            q2["product_definition_snapshot"]["material_roles"][0]["label"],
+            o2["product_definition_snapshot"]["material_roles"][0]["label"],
+        )
+        self.assertEqual(q2["totals"], o2["totals"])
+        self.assertEqual(fingerprint_hash(quote), fingerprint_hash(q2))
+        self.assertEqual(fingerprint_hash(order), fingerprint_hash(o2))
 
 
 if __name__ == "__main__":
