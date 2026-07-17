@@ -57,3 +57,33 @@
 
 **Option 2 — GO SMALL INTAKE V6 SVG UI UNIFICATION FIX**  
 (carduri existente + Contur suport + progressive ACP; păstrează SoT actual)
+
+---
+
+## SVG UI UNIFICATION
+
+| Field | Value |
+|-------|-------|
+| Date | 2026-07-17 |
+| GO | `SMALL_INTAKE_V6_SVG_UI_UNIFICATION_FIX` |
+| Verdict | **`INTAKE_V6_SVG_UI_UNIFICATION_COMPLETE_WITH_GUARDS`** |
+| Audit | `docs/audits/2026-07-17_intake_v6_step1_svg_modular_ui_integration_review.md` § SMALL UI UNIFICATION |
+| Screenshots | `docs/audits/screenshots/2026-07-17_intake_v6_svg_ui_unification/` |
+
+### Implementation (UI only)
+
+- Unified layer cards: geometry role + Product System component + status/optional/guard.
+- Contur suport card in same grid; ACP progressive disclosure.
+- Assignment panel demoted to read-only summary.
+- Auto-sync letter/logo `svg_component_bindings` from layer confirmation.
+- No Product System / FinishSetup / ProductDefinition / availability API changes.
+
+### Runtime
+
+- FE `:3000` / BE `:8001` live.
+- Workspace `IV6-4DD49A26`; ACP fixture upload for support-contour proof.
+- No second primary assignment flow; no sync CTA; no Product Template target on cards.
+
+### Next safe step
+
+**Option 1 — OWNER REVIEW OF UNIFIED INTAKE SVG UI**

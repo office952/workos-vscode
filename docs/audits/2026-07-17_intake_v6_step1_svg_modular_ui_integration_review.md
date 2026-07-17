@@ -246,3 +246,58 @@ Do **not** keep a second full „Asocieri produs” stack as the primary operato
 ## Roadmap
 
 Awareness **9/10** · Direction **88/100%** (backend modular path solid; UI integration incomplete)
+
+---
+
+## SMALL UI UNIFICATION IMPLEMENTATION RESULT
+
+| Field | Value |
+|-------|-------|
+| GO | `SMALL_INTAKE_V6_SVG_UI_UNIFICATION_FIX` |
+| HEAD before | `a8737c0` (audit docs) / feature base `26eb0c7` |
+| Verdict | **`INTAKE_V6_SVG_UI_UNIFICATION_COMPLETE_WITH_GUARDS`** |
+| Dual-flow class after | **`SINGLE_VISUAL_FLOW`** (SoT still single) |
+| Backend / PS / FinishSetup / PD | **Unchanged** |
+
+### What changed (UI only)
+
+1. Layer cards show **Rol geometrie** + **Componentă produs** (PS bindable) on the same card.
+2. Removed primary „Țintă automată Product System: TPL-…”.
+3. Technical codes under **Detalii tehnice**.
+4. Letter/logo bindings **auto-sync** from layer confirmation (no separate sync CTA).
+5. **Contur suport** card in the same grid (`IntakeV6SupportContourGeometryCard`).
+6. ACP casing = progressive (only after contour + Panou Alucobond selected).
+7. Former assignment panel → compact **Rezumat asocieri** (`data-variant="summary"`).
+
+### Runtime proof
+
+| Item | Result |
+|------|--------|
+| URL | `http://127.0.0.1:3000/intake-v6/9c05851e-3230-4a97-821b-e52293ada844/operator` → Straturi |
+| Workspace | `IV6-4DD49A26` / `TPL-VOLUMETRIC-LETTERS_v2` |
+| Fixture | `LITERE-VOLUMETRICE-ACP.svg` (uploaded for contour proof; file not modified) |
+| Layer cards | 3–6 with component blocks; logo **Guarded** |
+| Support card | Present when `closedContourCandidates` exist |
+| Sync button | Absent |
+| Summary | Compact, not primary flow |
+| CTA | Continuă la Configurare visible |
+| Screenshots | `docs/audits/screenshots/2026-07-17_intake_v6_svg_ui_unification/` |
+
+### Guards remaining
+
+- Support contour card absent until closed-contour candidates exist on the analyzer report.
+- Legacy role dropdown remains as geometry bridge (contained, not PS authority).
+- Full ACP confirm → save → refresh → PD instance path not re-owned in this UI-only build (SoT unchanged; prior durability tests still PASS).
+- Real workspace was used for visual proof (file swap on existing WS).
+
+### Tests / build
+
+| Gate | Result |
+|------|--------|
+| FE bindings + RoleTable + Step 1 + closed-contour | 30 PASS |
+| BE binding contract + persistence | 8 PASS |
+| `pnpm build` (frontend) | PASS |
+
+### Next safe step
+
+**Option 1 — OWNER REVIEW OF UNIFIED INTAKE SVG UI**
