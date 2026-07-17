@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import { useEffect, useState, useCallback, useMemo, useRef } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
@@ -138,7 +138,7 @@ import { SourceBadge, StatusBadge } from "@/components/workos/design-system";
 import type { SourceState } from "@/components/workos/design-system";
 
 // ============================================================
-// COMPONENT TYPE CONFIG â€” icons, colors, descriptions, emoji
+// COMPONENT TYPE CONFIG — icons, colors, descriptions, emoji
 // ============================================================
 const COMPONENT_TYPE_CONFIG: Record<
   ProductComponentType,
@@ -157,8 +157,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     color: "text-blue-400",
     bgColor: "bg-blue-500/10",
     borderColor: "border-blue-500/30",
-    label: "StructurÄƒ MetalicÄƒ",
-    description: "Cadrul principal â€” profile sudate, debitate CNC",
+    label: "Structură Metalică",
+    description: "Cadrul principal — profile sudate, debitate CNC",
     emoji: "ðŸ—ï¸",
   },
   FATA_ACP_ROUTATA: {
@@ -166,7 +166,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     borderColor: "border-amber-500/30",
-    label: "FaÈ›Äƒ ACP RoutatÄƒ",
+    label: "Față ACP Routată",
     description: "Panoul frontal din aluminiu compozit, routat CNC",
     emoji: "ðŸŽ¨",
   },
@@ -176,7 +176,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-cyan-500/10",
     borderColor: "border-cyan-500/30",
     label: "Difuzie Plexiglas",
-    description: "Placa de difuzie din plexiglas opal pentru iluminare uniformÄƒ",
+    description: "Placa de difuzie din plexiglas opal pentru iluminare uniformă",
     emoji: "ðŸ’Ž",
   },
   ILUMINARE: {
@@ -194,7 +194,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-purple-500/10",
     borderColor: "border-purple-500/30",
     label: "Relief Plexiglas 10mm",
-    description: "Litere/forme 3D din plexiglas de 10mm, tÄƒiate laser",
+    description: "Litere/forme 3D din plexiglas de 10mm, tăiate laser",
     emoji: "âœ¨",
   },
   FINISAJ: {
@@ -203,7 +203,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-emerald-500/10",
     borderColor: "border-emerald-500/30",
     label: "Finisaj",
-    description: "Vopsire, lÄƒcuire, aplicare folii, asamblare finalÄƒ",
+    description: "Vopsire, lăcuire, aplicare folii, asamblare finală",
     emoji: "ðŸŽ¯",
   },
   // BUILD 4: Advertising production types
@@ -213,7 +213,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-rose-500/10",
     borderColor: "border-rose-500/30",
     label: "Substrat Print",
-    description: "Banner, mesh, PVC â€” suprafaÈ›a de imprimare",
+    description: "Banner, mesh, PVC — suprafața de imprimare",
     emoji: "ðŸ–¨ï¸",
   },
   VINYL_APPLICATION: {
@@ -222,7 +222,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-pink-500/10",
     borderColor: "border-pink-500/30",
     label: "Aplicare Vinyl",
-    description: "Autocolant, sticker, folie â€” aplicare È™i tÄƒiere",
+    description: "Autocolant, sticker, folie — aplicare și tăiere",
     emoji: "ðŸ“‹",
   },
   PLEXI_PANEL: {
@@ -231,7 +231,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-sky-500/10",
     borderColor: "border-sky-500/30",
     label: "Panou Plexiglas",
-    description: "PlacÄƒ plexiglas â€” tÄƒiere, gravare, montaj",
+    description: "Placă plexiglas — tăiere, gravare, montaj",
     emoji: "ðŸªŸ",
   },
   FRAME_PROFILE: {
@@ -240,7 +240,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-orange-500/10",
     borderColor: "border-orange-500/30",
     label: "Profil Cadru",
-    description: "Profil aluminiu pentru casetÄƒ luminoasÄƒ",
+    description: "Profil aluminiu pentru casetă luminoasă",
     emoji: "ðŸ”²",
   },
   LITERE_3D: {
@@ -249,7 +249,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-violet-500/10",
     borderColor: "border-violet-500/30",
     label: "Litere 3D",
-    description: "Litere volumetrice â€” faÈ›Äƒ plexi/acrilic, bordurÄƒ aluminiu, spate Forex 10 mm, LED pe spate",
+    description: "Litere volumetrice — față plexi/acrilic, bordură aluminiu, spate Forex 10 mm, LED pe spate",
     emoji: "ðŸ”¤",
   },
   ELECTRIC_LED: {
@@ -267,7 +267,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-red-500/10",
     borderColor: "border-red-500/30",
     label: "Externalizare",
-    description: "ProducÈ›ie externalizatÄƒ la furnizor",
+    description: "Producție externalizată la furnizor",
     emoji: "ðŸ­",
   },
   TAIERE_CNC_LASER: {
@@ -275,8 +275,8 @@ const COMPONENT_TYPE_CONFIG: Record<
     color: "text-teal-400",
     bgColor: "bg-teal-500/10",
     borderColor: "border-teal-500/30",
-    label: "TÄƒiere CNC/Laser",
-    description: "OperaÈ›ii de debitare CNC sau laser",
+    label: "Tăiere CNC/Laser",
+    description: "Operații de debitare CNC sau laser",
     emoji: "âš™ï¸",
   },
   LAMINARE: {
@@ -285,14 +285,14 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-lime-500/10",
     borderColor: "border-lime-500/30",
     label: "Laminare",
-    description: "Laminare protecÈ›ie UV, mat sau lucios",
+    description: "Laminare protecție UV, mat sau lucios",
     emoji: "ðŸ›¡ï¸",
   },
 };
 
 function getVolumetricStageIcon(stage: { code: string; label: string }): React.ReactNode | null {
   const key = `${stage.code} ${stage.label}`.toLowerCase();
-  if (key.includes("face") || key.includes("faÈ›Äƒ") || key.includes("fata") || key.includes("vizual")) {
+  if (key.includes("face") || key.includes("față") || key.includes("fata") || key.includes("vizual")) {
     return <ScanLine className="w-5 h-5" />;
   }
   if (key.includes("lateral") || key.includes("volum") || key.includes("profil")) {
@@ -337,8 +337,8 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   if (!routing) {
     if (!opCode.trim()) return null;
     return (
-      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsÄƒ â€” operaÈ›ie necunoscutÄƒ">
-        âš  Routing lipsÄƒ
+      <span className="px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 text-slate-600 border border-slate-700/50 whitespace-nowrap" title="Routing lipsă — operație necunoscută">
+        âš  Routing lipsă
       </span>
     );
   }
@@ -347,7 +347,7 @@ function OperationRoutingBadge({ opCode }: { opCode: string }) {
   return (
     <span
       className={`px-1.5 py-0.5 text-[8px] font-semibold rounded bg-slate-800/60 border border-slate-700/50 whitespace-nowrap ${ws.color}`}
-      title={`StaÈ›ie: ${ws.name} Â· Skill: ${routing.skillLabel} Â· Tablet-ready âœ“`}
+      title={`Stație: ${ws.name} Â· Skill: ${routing.skillLabel} Â· Tablet-ready âœ“`}
     >
       {ws.icon} {ws.shortName}
     </span>
@@ -377,7 +377,7 @@ function Tooltip({ text, children }: { text: string; children: React.ReactNode }
 }
 
 // ============================================================
-// DRAFT SHAPE â€” Sprint #15
+// DRAFT SHAPE — Sprint #15
 // ============================================================
 interface DraftTemplate {
   id?: number;
@@ -431,7 +431,7 @@ function emptyDraft(): DraftTemplate {
 }
 
 // ============================================================
-// SERIALIZATION â€” Sprint #15/#27 dual representation
+// SERIALIZATION — Sprint #15/#27 dual representation
 // ============================================================
 function serializeOperation(
   op: ProductTemplateOperation,
@@ -553,16 +553,16 @@ function computeValidation(
   const familyKnown =
     draft.family_id.trim().length > 0 &&
     (families.length === 0
-      ? draft.family_name.trim().length > 0  // registry not loaded â€” trust template data
+      ? draft.family_name.trim().length > 0  // registry not loaded — trust template data
       : families.some((f) => f.family_id === draft.family_id));
 
   return [
-    { key: "template_code", label: "Cod È™ablon completat", ok: draft.template_code.trim().length > 0 },
-    { key: "family", label: "Familie produs selectatÄƒ", ok: familyKnown },
-    { key: "components_min_1", label: "Minim o componentÄƒ", ok: draft.components.length > 0 },
+    { key: "template_code", label: "Cod șablon completat", ok: draft.template_code.trim().length > 0 },
+    { key: "family", label: "Familie produs selectată", ok: familyKnown },
+    { key: "components_min_1", label: "Minim o componentă", ok: draft.components.length > 0 },
     { key: "components_typed", label: "Componente cu tip valid", ok: componentsAllTyped },
-    { key: "each_component_has_operation", label: "Fiecare componentÄƒ are operaÈ›ii", ok: eachHasOp },
-    { key: "each_component_has_material", label: "Fiecare componentÄƒ are materiale", ok: eachHasMat },
+    { key: "each_component_has_operation", label: "Fiecare componentă are operații", ok: eachHasOp },
+    { key: "each_component_has_material", label: "Fiecare componentă are materiale", ok: eachHasMat },
   ];
 }
 
@@ -577,7 +577,7 @@ function getDraftDisplayCounts(draft: DraftTemplate) {
     0
   );
   const operationHours =
-    totalMinutes > 0 ? `${Math.round((totalMinutes / 60) * 10) / 10}h` : "â€”";
+    totalMinutes > 0 ? `${Math.round((totalMinutes / 60) * 10) / 10}h` : "—";
   const internalCalibrationHours =
     (draft.estimated_hours ?? 0) > 0
       ? `${draft.estimated_hours}h`
@@ -592,7 +592,7 @@ function getDraftDisplayCounts(draft: DraftTemplate) {
 }
 
 // ============================================================
-// VISUAL PRODUCT ILLUSTRATION â€” SVG totem/sign (orientative only)
+// VISUAL PRODUCT ILLUSTRATION — SVG totem/sign (orientative only)
 // ============================================================
 function ProductIllustration({ components }: { components: ProductTemplateComponent[] }) {
   const hasType = (t: ProductComponentType) => components.some((c) => c.type === t);
@@ -602,7 +602,7 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
       <div className="text-center py-8 px-3 border border-dashed border-[#2A3548] rounded-lg bg-[#0D1321]/60">
         <Package className="w-10 h-10 text-slate-600 mx-auto mb-2" />
         <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-          Previzualizare indisponibilÄƒ â€” È™ablonul nu are componente definite.
+          Previzualizare indisponibilă — șablonul nu are componente definite.
         </p>
       </div>
     );
@@ -688,14 +688,14 @@ function ProductIllustration({ components }: { components: ProductTemplateCompon
       </svg>
 
       <p className="text-[9px] text-slate-600 text-center mt-2 italic">
-        Stratificare orientativÄƒ (tipuri principale)
+        Stratificare orientativă (tipuri principale)
       </p>
     </div>
   );
 }
 
 // ============================================================
-// PRODUCT PREVIEW PANEL â€” operator-facing visual summary
+// PRODUCT PREVIEW PANEL — operator-facing visual summary
 // ============================================================
 function ProductPreviewPanel({
   draft,
@@ -717,19 +717,19 @@ function ProductPreviewPanel({
       {!compact && (
         <div className="space-y-1">
           <h3 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
-            Previzualizare orientativÄƒ
+            Previzualizare orientativă
           </h3>
           <p className="text-[10px] text-slate-500 leading-relaxed">
-            Vizualizare orientativÄƒ Â· date din È™ablon
+            Vizualizare orientativă Â· date din șablon
           </p>
           <p className="text-[9px] text-slate-600 italic">
-            Nu reprezintÄƒ randare tehnicÄƒ finalÄƒ
+            Nu reprezintă randare tehnică finală
           </p>
         </div>
       )}
       {compact && (
         <p className="text-[9px] text-slate-600 italic leading-relaxed">
-          Vizualizare orientativÄƒ Â· nu e randare tehnicÄƒ finalÄƒ
+          Vizualizare orientativă Â· nu e randare tehnică finală
         </p>
       )}
 
@@ -764,7 +764,7 @@ function ProductPreviewPanel({
                       {index + 1}. {typeLabel}
                     </p>
                     <p className="text-[10px] text-slate-300 truncate">
-                      {formatComponentDisplayName(c.name) || "FÄƒrÄƒ denumire"}
+                      {formatComponentDisplayName(c.name) || "Fără denumire"}
                     </p>
                     <p className="text-[8px] text-slate-500 mt-0.5">
                       {opCount} op. Â· {matCount} mat.
@@ -860,7 +860,7 @@ function MaterialRegistryStatusReadonly({
           status="missing"
           label={getMaterialRegistryUnknownLabel()}
           className="text-[8px] uppercase"
-          title="Codul nu existÄƒ Ã®n registrul de materiale Ã®ncÄƒrcat pe aceastÄƒ paginÄƒ"
+          title="Codul nu există în registrul de materiale încărcat pe această pagină"
         />
       </div>
     );
@@ -886,7 +886,7 @@ function MaterialRegistryStatusReadonly({
       {hasMaterialSourceNotes(registryRow) && sourceNotes ? (
         <div className="mt-1 border-t border-[#1E293B]/80 pt-1">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Note sursÄƒ (referinÈ›Äƒ, nu alias runtime)
+            Note sursă (referință, nu alias runtime)
           </p>
           <p className="text-[9px] text-slate-400 leading-snug whitespace-pre-wrap break-words max-h-20 overflow-y-auto scrollbar-thin">
             {sourceNotes}
@@ -917,7 +917,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
         </span>
         {(isFormulaBased || quoteInputs.length > 0) && (
           <span className="px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wide rounded bg-amber-900/30 text-amber-300 border border-amber-700/40">
-            Depinde de ofertÄƒ
+            Depinde de ofertă
           </span>
         )}
         {row.calculation_type ? (
@@ -932,7 +932,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
       {paramsText ? (
         <div className="mb-1">
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Parametri formulÄƒ
+            Parametri formulă
           </p>
           <pre className="text-[9px] text-slate-400 font-mono whitespace-pre-wrap break-all max-h-24 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
             {paramsText}
@@ -941,14 +941,14 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
       ) : null}
       {quoteInputs.length > 0 ? (
         <p className="text-[9px] text-slate-400 mb-1">
-          Input ofertÄƒ:{" "}
+          Input ofertă:{" "}
           <span className="text-amber-300/90 font-mono">{quoteInputs.join(", ")}</span>
         </p>
       ) : null}
       {extrasText ? (
         <div>
           <p className="text-[9px] text-slate-500 uppercase tracking-wide font-bold mb-0.5">
-            Metadate pÄƒstrate din È™ablon
+            Metadate păstrate din șablon
           </p>
           <pre className="text-[9px] text-slate-500 font-mono whitespace-pre-wrap break-all max-h-20 overflow-y-auto scrollbar-thin bg-[#0A0F1C]/80 rounded px-2 py-1 border border-[#1E293B]">
             {extrasText}
@@ -960,7 +960,7 @@ function FormulaLineMetadataReadonly({ row, kind }: { row: FormulaLineLike; kind
 }
 
 // ============================================================
-// COLLAPSIBLE COMPONENT CARD â€” the main redesign
+// COLLAPSIBLE COMPONENT CARD — the main redesign
 // ============================================================
 function CollapsibleComponentCard({
   component,
@@ -1081,7 +1081,7 @@ function CollapsibleComponentCard({
           : "border-[#1E293B] bg-[#111827] hover:border-slate-600"
       }`}
     >
-      {/* Collapsed header â€” always visible */}
+      {/* Collapsed header — always visible */}
       <div className="w-full text-left px-4 py-3 flex items-center gap-3">
         <button
           type="button"
@@ -1105,7 +1105,7 @@ function CollapsibleComponentCard({
             )}
           </div>
           <p className="text-[13px] font-semibold text-slate-200 truncate mt-0.5">
-            {displayName || <span className="text-slate-500 italic">FÄƒrÄƒ nume</span>}
+            {displayName || <span className="text-slate-500 italic">Fără nume</span>}
           </p>
         </div>
 
@@ -1154,7 +1154,7 @@ function CollapsibleComponentCard({
           <div className="grid grid-cols-3 gap-3 pt-3">
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                ID ComponentÄƒ
+                ID Componentă
                 <Tooltip text="Identificator unic intern (ex: comp_1, cadru_principal)">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
@@ -1169,8 +1169,8 @@ function CollapsibleComponentCard({
             </div>
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                Tip ComponentÄƒ
-                <Tooltip text="Categoria componentei â€” determinÄƒ fluxul de producÈ›ie">
+                Tip Componentă
+                <Tooltip text="Categoria componentei — determină fluxul de producție">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
               </label>
@@ -1193,8 +1193,8 @@ function CollapsibleComponentCard({
             </div>
             <div>
               <label className="flex items-center gap-1 text-[10px] text-slate-500 uppercase tracking-wide mb-1">
-                Nume ComponentÄƒ
-                <Tooltip text="Denumirea descriptivÄƒ (ex: Cadru metalic sudat 2x1m)">
+                Nume Componentă
+                <Tooltip text="Denumirea descriptivă (ex: Cadru metalic sudat 2x1m)">
                   <Info className="w-3 h-3 text-slate-600 cursor-help" />
                 </Tooltip>
               </label>
@@ -1219,23 +1219,23 @@ function CollapsibleComponentCard({
               <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
               <p className="text-[11px] text-amber-300">
                 {component._legacy
-                  ? "ComponentÄƒ migratÄƒ din forma veche. ConfirmÄƒ tipul È™i salveazÄƒ."
-                  : "OperaÈ›ii/materiale vechi ataÈ™ate aici. RevizuieÈ™te È™i redistribuie dacÄƒ e cazul."}
+                  ? "Componentă migrată din forma veche. Confirmă tipul și salvează."
+                  : "Operații/materiale vechi atașate aici. Revizuiește și redistribuie dacă e cazul."}
               </p>
             </div>
           )}
 
           <div className="px-3 py-2.5 rounded-lg border border-[#2A3548] bg-[#0D1321]/80 space-y-1.5">
             <p className="text-[10px] text-slate-400 leading-relaxed">
-              CÃ¢mpurile dinamice sunt afiÈ™ate informativ. Editarea formulelor se va trata Ã®ntr-un pas separat.
+              Câmpurile dinamice sunt afișate informativ. Editarea formulelor se va trata într-un pas separat.
             </p>
             <p className="text-[10px] text-slate-300 leading-relaxed">
-              Parametrii configurabili ai produsului â€” text, font, Ã®nÄƒlÈ›ime, adÃ¢ncime, tip iluminare, RAL,
-              montaj â€” nu se editeazÄƒ aici ca reguli de È™ablon. Ei trebuie colectaÈ›i Ã®n Intake / Dossier /
-              OfertÄƒ È™i folosiÈ›i de formulele dinamice.
+              Parametrii configurabili ai produsului — text, font, înălțime, adâncime, tip iluminare, RAL,
+              montaj — nu se editează aici ca reguli de șablon. Ei trebuie colectați în Intake / Dossier /
+              Ofertă și folosiți de formulele dinamice.
             </p>
             <p className="text-[10px] text-slate-500 italic leading-relaxed">
-              È˜ablonul defineÈ™te structura produsului; valorile concrete vin din cererea clientului È™i
+              Șablonul definește structura produsului; valorile concrete vin din cererea clientului și
               ofertare.
             </p>
           </div>
@@ -1246,7 +1246,7 @@ function CollapsibleComponentCard({
               <div className="flex items-center gap-2">
                 <Cog className="w-4 h-4 text-blue-400" />
                 <span className="text-[12px] font-bold text-slate-200">
-                  OperaÈ›ii de ProducÈ›ie
+                  Operații de Producție
                 </span>
                 <span className="text-[10px] text-blue-400 bg-blue-500/10 px-1.5 py-0.5 rounded-full font-bold">
                   {component.operations.length}
@@ -1256,14 +1256,14 @@ function CollapsibleComponentCard({
                 onClick={addOp}
                 className="flex items-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold transition-colors"
               >
-                <Plus className="w-3 h-3" /> AdaugÄƒ OperaÈ›ie
+                <Plus className="w-3 h-3" /> Adaugă Operație
               </button>
             </div>
 
             {component.operations.length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-3 bg-red-900/10 border border-red-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
-                <p className="text-[11px] text-red-300">Nicio operaÈ›ie definitÄƒ â€” necesarÄƒ minim 1 pentru salvare.</p>
+                <p className="text-[11px] text-red-300">Nicio operație definită — necesară minim 1 pentru salvare.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1289,7 +1289,7 @@ function CollapsibleComponentCard({
                         {dynamicMeta ? (
                           <span
                             className="shrink-0 px-1 py-0.5 text-[8px] font-bold uppercase rounded bg-cyan-900/40 text-cyan-300 border border-cyan-700/40"
-                            title="Linie dinamicÄƒ â€” metadate formule mai jos"
+                            title="Linie dinamică — metadate formule mai jos"
                           >
                             Dinamic
                           </span>
@@ -1308,7 +1308,7 @@ function CollapsibleComponentCard({
                           placeholder="Debitare CNC"
                           className="flex-[2] bg-transparent border-b border-[#2A3548] px-1 py-1 text-[11px] text-slate-200 outline-none focus:border-blue-500/50"
                         />
-                        <Tooltip text="Centrul de lucru (ex: CNC, SudurÄƒ, Vopsitorie)">
+                        <Tooltip text="Centrul de lucru (ex: CNC, Sudură, Vopsitorie)">
                           <input
                             type="text"
                             value={op.workcenter}
@@ -1379,7 +1379,7 @@ function CollapsibleComponentCard({
                     : "bg-emerald-600 hover:bg-emerald-500 text-white"
                 }`}
               >
-                <Plus className="w-3 h-3" /> AdaugÄƒ Material
+                <Plus className="w-3 h-3" /> Adaugă Material
               </button>
             </div>
 
@@ -1387,7 +1387,7 @@ function CollapsibleComponentCard({
               <div className="flex items-center gap-2 px-3 py-3 bg-amber-900/10 border border-amber-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-amber-400" />
                 <p className="text-[11px] text-amber-300">
-                  Registrul de materiale nu este Ã®ncÄƒrcat. Materialele din È™ablon sunt afiÈ™ate direct.{" "}
+                  Registrul de materiale nu este încărcat. Materialele din șablon sunt afișate direct.{" "}
                   <Link to="/inventory" className="underline hover:text-amber-200">Inventar</Link>
                 </p>
               </div>
@@ -1395,7 +1395,7 @@ function CollapsibleComponentCard({
             {component.materials.length === 0 ? (
               <div className="flex items-center gap-2 px-3 py-3 bg-red-900/10 border border-red-800/20 rounded-lg">
                 <AlertTriangle className="w-4 h-4 text-red-400" />
-                <p className="text-[11px] text-red-300">Niciun material â€” necesar minim 1 din registru.</p>
+                <p className="text-[11px] text-red-300">Niciun material — necesar minim 1 din registru.</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -1418,7 +1418,7 @@ function CollapsibleComponentCard({
                         {dynamicMeta ? (
                           <span
                             className="shrink-0 px-1 py-0.5 text-[8px] font-bold uppercase rounded bg-violet-900/40 text-violet-300 border border-violet-700/40"
-                            title="Linie dinamicÄƒ â€” metadate formule mai jos"
+                            title="Linie dinamică — metadate formule mai jos"
                           >
                             Dinamic
                           </span>
@@ -1441,13 +1441,13 @@ function CollapsibleComponentCard({
                             ? formatMaterialRegistryShortName(row.name)
                             : m.name
                               ? formatMaterialRegistryShortName(m.name)
-                              : "â€”"}
+                              : "—"}
                         </span>
                         <Tooltip
                           text={
                             dynamicMeta
-                              ? "Cantitate calculatÄƒ la ofertare din formulÄƒ È™i unitÄƒÈ›i (mp, ml, buc)"
-                              : "Cantitate staticÄƒ de referinÈ›Äƒ per unitate de produs"
+                              ? "Cantitate calculată la ofertare din formulă și unități (mp, ml, buc)"
+                              : "Cantitate statică de referință per unitate de produs"
                           }
                         >
                           <input
@@ -1460,7 +1460,7 @@ function CollapsibleComponentCard({
                           />
                         </Tooltip>
                         <span className="text-[10px] text-slate-500 font-mono w-10">
-                          {row ? row.unit : m.unit || "â€”"}
+                          {row ? row.unit : m.unit || "—"}
                         </span>
                         <button
                           onClick={() => removeMat(i)}
@@ -1487,7 +1487,7 @@ function CollapsibleComponentCard({
               onClick={onRemove}
               className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors"
             >
-              <Trash2 className="w-3.5 h-3.5" /> È˜terge Componenta
+              <Trash2 className="w-3.5 h-3.5" /> Șterge Componenta
             </button>
           </div>
         </div>
@@ -1497,7 +1497,7 @@ function CollapsibleComponentCard({
 }
 
 // ============================================================
-// EDITOR PANEL â€” Redesigned with visual components
+// EDITOR PANEL — Redesigned with visual components
 // ============================================================
 const SHARED_VOLUMETRIC_EDITOR_MODULES: Record<string, string> = {
   volumetric_face: "TPL-VOLUMETRIC-FACE_v1",
@@ -2962,7 +2962,7 @@ function TemplateEditor({
       <ComponentCalculationOwnershipPanel availability={availability} />
 
       {aggregateLoading ? (
-        <div className="text-[11px] text-slate-500">Se Ã®ncarcÄƒ ProductAggregateâ€¦</div>
+        <div className="text-[11px] text-slate-500">Se încarcă ProductAggregateâ€¦</div>
       ) : isLogoSharedProfile ? (
         <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
@@ -2977,7 +2977,7 @@ function TemplateEditor({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-            <h3 className="text-[14px] font-bold text-slate-100">StructurÄƒ produs (ProductAggregate)</h3>
+            <h3 className="text-[14px] font-bold text-slate-100">Structură produs (ProductAggregate)</h3>
             <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
               {aggregate.components.length}
             </span>
@@ -2985,7 +2985,7 @@ function TemplateEditor({
           <ProductAggregateStructureList aggregate={aggregate} />
           {draft.components.some(isSyntheticAutoComponent) ? (
             <div className="rounded-lg border border-amber-700/40 bg-amber-900/10 px-3 py-2 text-[10px] text-amber-200">
-              Legacy parent row conÈ›ine componentÄƒ sinteticÄƒ (comp_auto_1) â€” folositÄƒ doar pentru compatibilitate edit, nu ca adevÄƒr structural.
+              Legacy parent row conține componentă sintetică (comp_auto_1) — folosită doar pentru compatibilitate edit, nu ca adevăr structural.
             </div>
           ) : null}
         </div>
@@ -3008,13 +3008,13 @@ function TemplateEditor({
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-              <h3 className="text-[14px] font-bold text-slate-100">StructurÄƒ produs</h3>
+              <h3 className="text-[14px] font-bold text-slate-100">Structură produs</h3>
               <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
                 {draft.components.length}
               </span>
             </div>
             <p className="text-[10px] text-slate-500 mt-1 pl-7">
-              ApasÄƒ pe o componentÄƒ pentru detalii Ã®n panoul din dreapta. FoloseÈ™te sÄƒgeata pentru
+              Apasă pe o componentă pentru detalii în panoul din dreapta. Folosește săgeata pentru
               editare inline.
             </p>
           </div>
@@ -3024,7 +3024,7 @@ function TemplateEditor({
               onClick={addComponent}
               className="flex items-center gap-1.5 px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[11px] font-bold transition-colors shadow-lg shadow-purple-900/20"
             >
-              <Plus className="w-3.5 h-3.5" /> AdaugÄƒ componentÄƒ
+              <Plus className="w-3.5 h-3.5" /> Adaugă componentă
             </button>
           ) : null}
         </div>
@@ -3032,9 +3032,9 @@ function TemplateEditor({
         {draft.components.length === 0 ? (
           <div className="bg-[#111827] border border-[#1E293B] border-dashed rounded-xl p-8 text-center">
             <Layers className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentÄƒ definitÄƒ</p>
+            <p className="text-[13px] text-slate-400 font-semibold mb-1">Nicio componentă definită</p>
             <p className="text-[11px] text-slate-500 mb-4">
-              AdaugÄƒ componentele care definesc structura produsului.
+              Adaugă componentele care definesc structura produsului.
             </p>
             {!readOnly ? (
               <button
@@ -3042,7 +3042,7 @@ function TemplateEditor({
                 onClick={addComponent}
                 className="inline-flex items-center gap-1.5 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg text-[12px] font-bold transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" /> Prima componentÄƒ
+                <Plus className="w-3.5 h-3.5" /> Prima componentă
               </button>
             ) : null}
           </div>
@@ -3096,14 +3096,14 @@ function TemplateEditor({
         onChangeTemplate={onChangeTemplate}
         onBackToLibrary={onBackToLibrary}
         pricingHref={!isNew && draft.active ? `/inventory/pricing?template=${encodeURIComponent(draft.template_code)}` : undefined}
-        changeTemplateLabel={isNew ? "Alege template" : "SchimbÄƒ template"}
+        changeTemplateLabel={isNew ? "Alege template" : "Schimbă template"}
         readOnly={readOnly}
       />
 
       {readOnly ? (
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/15 border-b border-amber-800/30 text-[11px] text-amber-300 shrink-0">
           <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-          È˜ablon arhivat â€” vizualizare read-only. Nu este activ pentru ofertÄƒ sau Pricing.
+          Șablon arhivat — vizualizare read-only. Nu este activ pentru ofertă sau Pricing.
         </div>
       ) : null}
 
@@ -3128,7 +3128,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                StructurÄƒ produs
+                Structură produs
               </button>
               <button
                 type="button"
@@ -3139,7 +3139,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                Resurse operaÈ›ionale
+                Resurse operaționale
               </button>
               <button
                 type="button"
@@ -3162,7 +3162,7 @@ function TemplateEditor({
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                InformaÈ›ii generale
+                Informații generale
               </button>
             </div>
           </div>
@@ -3177,7 +3177,7 @@ function TemplateEditor({
                   ? (
                       isNew ? (
                         <div className="text-[11px] text-slate-500">
-                          Form System este disponibil dupÄƒ salvarea template-ului.
+                          Form System este disponibil după salvarea template-ului.
                         </div>
                       ) : (
                         <FormSystemAdminPanel templateCode={draft.template_code} />
@@ -3334,44 +3334,44 @@ function ProductSystemInfoPopover({
         align="end"
         className="w-[min(22rem,calc(100vw-2rem))] border-slate-700 bg-[#111827] p-4 text-slate-200 shadow-xl"
       >
-        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcÈ›ioneazÄƒ?</p>
+        <p className="text-[12px] font-bold text-slate-100 mb-2">Cum funcționează?</p>
         <ul className="space-y-2 text-[11px] text-slate-400 leading-relaxed list-disc pl-4">
           <li>
-            Fiecare produs este definit ca un <strong className="text-purple-300">È™ablon</strong>{" "}
+            Fiecare produs este definit ca un <strong className="text-purple-300">șablon</strong>{" "}
             format din <strong className="text-blue-300">componente</strong>.
           </li>
           <li>
-            Componentele conÈ›in <strong className="text-blue-300">operaÈ›ii</strong> È™i{" "}
-            <strong className="text-emerald-300">materiale</strong> necesare producÈ›iei.
+            Componentele conțin <strong className="text-blue-300">operații</strong> și{" "}
+            <strong className="text-emerald-300">materiale</strong> necesare producției.
           </li>
           <li>
-            È˜ablonul este folosit Ã®n{" "}
+            Șablonul este folosit în{" "}
             <Link
               to="/intake"
               className="text-purple-300 underline underline-offset-2 hover:text-purple-200"
             >
               Work Intake
             </Link>{" "}
-            È™i la generarea ofertelor.
+            și la generarea ofertelor.
           </li>
           <li>
-            Validarea completÄƒ a È™ablonului se face Ã®n paÈ™ii urmÄƒtori (ofertare, comenzi, preÈ›uri).
+            Validarea completă a șablonului se face în pașii următori (ofertare, comenzi, prețuri).
           </li>
           <li>
-            ProductSystem este zona de <strong className="text-amber-300/90">configurare È™ablon</strong>{" "}
-            â€” structurÄƒ produs, materiale È™i operaÈ›ii.
+            ProductSystem este zona de <strong className="text-amber-300/90">configurare șablon</strong>{" "}
+            — structură produs, materiale și operații.
           </li>
           <li>
-            È˜abloanele nu se È™terg din interfaÈ›Äƒ; se <strong className="text-slate-300">arhiveazÄƒ</strong>{" "}
-            pentru a pÄƒstra istoricul.
+            Șabloanele nu se șterg din interfață; se <strong className="text-slate-300">arhivează</strong>{" "}
+            pentru a păstra istoricul.
           </li>
         </ul>
         <p className="mt-3 text-[10px] text-slate-500 border-t border-slate-700/80 pt-3">
-          PreÈ›urile È™i ofertele folosesc aceste È™abloane Ã®n modulele dedicate â€” fÄƒrÄƒ modificarea datelor
+          Prețurile și ofertele folosesc aceste șabloane în modulele dedicate — fără modificarea datelor
           istorice.
         </p>
         <p className="mt-2 text-[10px] text-slate-600">
-          SursÄƒ date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
+          Sursă date: <span className="text-slate-400">{loadModeChipLabel(loadMode)}</span>
           {" Â· "}
           {catalogCounts.activeProducts} produse ofertabile Â· {catalogCounts.candidateProducts} in pregatire Â· {catalogCounts.internalModules} module interne
         </p>
@@ -3457,7 +3457,7 @@ export default function ProductSystem() {
         }),
       ]);
 
-      // Handle families (non-critical) â€” fall back to mock if API fails
+      // Handle families (non-critical) — fall back to mock if API fails
       const famItems = famRes.status === "fulfilled"
         ? Array.isArray(famRes.value?.items) ? famRes.value.items : []
         : [];
@@ -3490,7 +3490,7 @@ export default function ProductSystem() {
           setTemplates(apiTemplates);
           setLoadMode("api");
         } else if (useMock) {
-          // API responded successfully with an empty list â€” keep true empty state.
+          // API responded successfully with an empty list — keep true empty state.
           loaded = [];
           setTemplates([]);
           setLoadMode("empty_real");
@@ -3504,21 +3504,21 @@ export default function ProductSystem() {
         const errMsg = err instanceof Error ? err.message : String(err);
         const isAuthError = /40[13]/.test(errMsg) || /unauthorized|forbidden|permisiune/i.test(errMsg);
         if (useMock) {
-          // Mock enabled â€” always fall back to mock data on API failure
+          // Mock enabled — always fall back to mock data on API failure
           loaded = mockTemplatesToEntities() as unknown as ProductTemplateEntity[];
           setTemplates(loaded);
-          setWarning("DEV MOCK DATA â€” aceste date nu vin din API real.");
+          setWarning("DEV MOCK DATA — aceste date nu vin din API real.");
           setLoadMode("mock");
         } else if (isAuthError) {
           loaded = [];
           setTemplates([]);
-          setError("Nu ai permisiune sÄƒ accesezi È™abloanele. AutentificÄƒ-te È™i reÃ®ncearcÄƒ.");
+          setError("Nu ai permisiune să accesezi șabloanele. Autentifică-te și reîncearcă.");
           setLoadMode("auth_required");
         } else {
           console.error("Failed to load product templates", err);
           loaded = [];
           setTemplates([]);
-          setError("Nu s-au putut Ã®ncÄƒrca È™abloanele. VerificÄƒ conexiunea la backend.");
+          setError("Nu s-au putut încărca șabloanele. Verifică conexiunea la backend.");
           setLoadMode("error");
         }
       }
@@ -3533,7 +3533,7 @@ export default function ProductSystem() {
         setFamilies(mockProductFamilies() as unknown as ProductFamily[]);
         setMaterials([]);
         setAvailabilityItems([]);
-        setWarning("DEV MOCK DATA â€” aceste date nu vin din API real.");
+        setWarning("DEV MOCK DATA — aceste date nu vin din API real.");
         setLoadMode("mock");
       } else if (isAuthError) {
         loaded = [];
@@ -3541,14 +3541,14 @@ export default function ProductSystem() {
         setFamilies([]);
         setMaterials([]);
         setAvailabilityItems([]);
-        setWarning("LipsÄƒ sesiune / autentificare necesarÄƒ pentru API real.");
+        setWarning("Lipsă sesiune / autentificare necesară pentru API real.");
         setLoadMode("auth_required");
       } else {
         console.error("Failed to load product templates", e);
         loaded = [];
         setTemplates([]);
         setAvailabilityItems([]);
-        setError("Nu s-au putut Ã®ncÄƒrca È™abloanele. VerificÄƒ conexiunea la backend.");
+        setError("Nu s-au putut încărca șabloanele. Verifică conexiunea la backend.");
         setLoadMode("error");
       }
     } finally {
@@ -3662,7 +3662,7 @@ export default function ProductSystem() {
       setMessage({
         type: "error",
         text:
-          `Salvarea blocatÄƒ â€” ${structuralErrors.length} eroare(i) structurale: ` +
+          `Salvarea blocată — ${structuralErrors.length} eroare(i) structurale: ` +
           structuralErrors
             .slice(0, 3)
             .map((e) => `${e.path} [${e.code}]`)
@@ -3678,11 +3678,11 @@ export default function ProductSystem() {
       if (isNew) {
         const created = await productTemplatesApi.create(payload);
         savedId = created.id;
-        setMessage({ type: "success", text: `È˜ablon creat: ${created.template_code}` });
+        setMessage({ type: "success", text: `Șablon creat: ${created.template_code}` });
       } else if (draft.id) {
         await productTemplatesApi.update(draft.id, payload);
         savedId = draft.id;
-        setMessage({ type: "success", text: `È˜ablon actualizat: ${draft.template_code}` });
+        setMessage({ type: "success", text: `Șablon actualizat: ${draft.template_code}` });
       }
       const list = await loadTemplates();
       const refreshed = savedId != null ? list.find((t) => t.id === savedId) : null;
@@ -3693,7 +3693,7 @@ export default function ProductSystem() {
       }
     } catch (e) {
       console.error("Save failed", e);
-      setMessage({ type: "error", text: "Salvarea a eÈ™uat. VerificÄƒ consola pentru detalii." });
+      setMessage({ type: "error", text: "Salvarea a eșuat. Verifică consola pentru detalii." });
     } finally {
       setSaving(false);
     }
@@ -3707,13 +3707,13 @@ export default function ProductSystem() {
     if (!policy.canArchive) {
       setMessage({
         type: "error",
-        text: policy.blockReason ?? "Arhivarea nu este permisÄƒ pentru acest È™ablon.",
+        text: policy.blockReason ?? "Arhivarea nu este permisă pentru acest șablon.",
       });
       return;
     }
     if (
       !confirm(
-        `Arhivezi È™ablonul ${draft.template_code}?\n\nÈ˜ablonul va fi mutat Ã®n Arhivate È™i nu va mai apÄƒrea Ã®n fluxurile active de ofertare. Datele rÄƒmÃ¢n pÄƒstrate.`
+        `Arhivezi șablonul ${draft.template_code}?\n\nȘablonul va fi mutat în Arhivate și nu va mai apărea în fluxurile active de ofertare. Datele rămân păstrate.`
       )
     ) {
       return;
@@ -3722,12 +3722,12 @@ export default function ProductSystem() {
     try {
       const payload = draftToPayload({ ...draft, active: false });
       await productTemplatesApi.update(draft.id, payload);
-      setMessage({ type: "success", text: `È˜ablon arhivat: ${draft.template_code}` });
+      setMessage({ type: "success", text: `Șablon arhivat: ${draft.template_code}` });
       await loadTemplates();
       handleBackToLibrary();
     } catch (e) {
       console.error("Archive failed", e);
-      setMessage({ type: "error", text: "Arhivarea a eÈ™uat. VerificÄƒ consola pentru detalii." });
+      setMessage({ type: "error", text: "Arhivarea a eșuat. Verifică consola pentru detalii." });
     } finally {
       setSaving(false);
     }

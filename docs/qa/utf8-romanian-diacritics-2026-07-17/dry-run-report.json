@@ -1,0 +1,927 @@
+{
+  "generated_at_utc": "2026-07-17T03:53:20.418941+00:00",
+  "db": "C:\\w\\psiso\\backend\\dev.db",
+  "backup": {
+    "original_db_path": "C:\\w\\psiso\\backend\\dev.db",
+    "backup_path": "C:\\w\\psiso\\docs\\qa\\utf8-romanian-diacritics-2026-07-17\\dev.db.backup-20260717T035320Z",
+    "timestamp_utc": "20260717T035320Z",
+    "sha256_original": "9b8ebaa4a31aa5af31889a57e617a448ba57b1d44efc8a623611412d9d34d3c2",
+    "sha256_backup": "9b8ebaa4a31aa5af31889a57e617a448ba57b1d44efc8a623611412d9d34d3c2",
+    "bytes": 4714496
+  },
+  "sources": [
+    {
+      "path": "backend/seeds/seed_build4_templates.py",
+      "repairs": 162,
+      "changed": true,
+      "samples": [
+        {
+          "start": 11,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 103,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 155,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 206,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 261,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 312,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 365,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 437,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "backend/services/intake_v6_workspace_service.py",
+      "repairs": 14,
+      "changed": true,
+      "samples": [
+        {
+          "start": 50119,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56162,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56575,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56603,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56606,
+          "old": "Ã®",
+          "new": "î",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56624,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56746,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 56766,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "backend/tests/test_volumetric_operation_unit_pricing.py",
+      "repairs": 1,
+      "changed": true,
+      "samples": [
+        {
+          "start": 26,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "backend/tests/test_volumetric_lighting_gate.py",
+      "repairs": 1,
+      "changed": true,
+      "samples": [
+        {
+          "start": 26,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "backend/tests/test_volumetric_qc_internal_only.py",
+      "repairs": 1,
+      "changed": true,
+      "samples": [
+        {
+          "start": 26,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "backend/tests/test_volumetric_finish_mounting_pricing.py",
+      "repairs": 1,
+      "changed": true,
+      "samples": [
+        {
+          "start": 26,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/pages/ProductSystem.tsx",
+      "repairs": 248,
+      "changed": true,
+      "samples": [
+        {
+          "start": 5116,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 5623,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 5633,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 5673,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 5918,
+          "old": "È›Äƒ",
+          "new": "ță",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 5933,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 6302,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        },
+        {
+          "start": 6864,
+          "old": "Äƒ",
+          "new": "ă",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    },
+    {
+      "path": "frontend/src/lib/intakeV6/intakeV6WorkspaceCache.ts",
+      "repairs": 1,
+      "changed": true,
+      "samples": [
+        {
+          "start": 92,
+          "old": "â€”",
+          "new": "—",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1
+        }
+      ]
+    }
+  ],
+  "db_non_frozen": [
+    {
+      "table": "product_templates",
+      "pk": 8,
+      "column": "components_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 15,
+      "samples": [
+        {
+          "path": "$[0].operations[1].label",
+          "old": "PregÄƒtire vector / font",
+          "new": "Pregătire vector / font",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[0].operations[2].label",
+          "old": "TÄƒiere CNC faÈ›Äƒ litere",
+          "new": "Tăiere CNC față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[0].operations[3].label",
+          "old": "ManoperÄƒ aplicare folie feÈ›e litere",
+          "new": "Manoperă aplicare folie fețe litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[0].materials[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[0].materials[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[0].materials[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "product_templates",
+      "pk": 8,
+      "column": "operations_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 8,
+      "samples": [
+        {
+          "path": "$[1].label",
+          "old": "PregÄƒtire vector / font",
+          "new": "Pregătire vector / font",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[2].label",
+          "old": "TÄƒiere CNC faÈ›Äƒ litere",
+          "new": "Tăiere CNC față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[3].label",
+          "old": "ManoperÄƒ aplicare folie feÈ›e litere",
+          "new": "Manoperă aplicare folie fețe litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[4].label",
+          "old": "Modelare cant profil â€” utilaj (EUR/ml serviciu)",
+          "new": "Modelare cant profil — utilaj (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[5].label",
+          "old": "Lipire cant pe faÈ›Äƒ (EUR/ml serviciu)",
+          "new": "Lipire cant pe față (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[6].label",
+          "old": "TÄƒiere CNC spate Forex 10 mm",
+          "new": "Tăiere CNC spate Forex 10 mm",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "product_templates",
+      "pk": 8,
+      "column": "required_materials_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 7,
+      "samples": [
+        {
+          "path": "$[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "execution_plan",
+      "pk": 8,
+      "column": "tasks_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 32,
+      "samples": [
+        {
+          "path": "$.planned_operations[1].label",
+          "old": "PregÄƒtire vector / font",
+          "new": "Pregătire vector / font",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[2].label",
+          "old": "TÄƒiere CNC faÈ›Äƒ litere",
+          "new": "Tăiere CNC față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.planned_operations[3].label",
+          "old": "ManoperÄƒ aplicare folie feÈ›e litere",
+          "new": "Manoperă aplicare folie fețe litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.planned_operations[4].label",
+          "old": "Modelare cant profil â€” utilaj (EUR/ml serviciu)",
+          "new": "Modelare cant profil — utilaj (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[5].label",
+          "old": "Lipire cant pe faÈ›Äƒ (EUR/ml serviciu)",
+          "new": "Lipire cant pe față (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[6].label",
+          "old": "TÄƒiere CNC spate Forex 10 mm",
+          "new": "Tăiere CNC spate Forex 10 mm",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "execution_plan",
+      "pk": 9,
+      "column": "tasks_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 32,
+      "samples": [
+        {
+          "path": "$.planned_operations[1].label",
+          "old": "PregÄƒtire vector / font",
+          "new": "Pregătire vector / font",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[2].label",
+          "old": "TÄƒiere CNC faÈ›Äƒ litere",
+          "new": "Tăiere CNC față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.planned_operations[3].label",
+          "old": "ManoperÄƒ aplicare folie feÈ›e litere",
+          "new": "Manoperă aplicare folie fețe litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.planned_operations[4].label",
+          "old": "Modelare cant profil â€” utilaj (EUR/ml serviciu)",
+          "new": "Modelare cant profil — utilaj (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[5].label",
+          "old": "Lipire cant pe faÈ›Äƒ (EUR/ml serviciu)",
+          "new": "Lipire cant pe față (EUR/ml serviciu)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.planned_operations[6].label",
+          "old": "TÄƒiere CNC spate Forex 10 mm",
+          "new": "Tăiere CNC spate Forex 10 mm",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        }
+      ],
+      "proposed_json": true
+    }
+  ],
+  "db_frozen_gated": [
+    {
+      "table": "quote_snapshots_v2",
+      "pk": 1,
+      "column": "snapshot_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "quote_snapshots_v2",
+      "pk": 2,
+      "column": "snapshot_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "quote_snapshots_v2",
+      "pk": 3,
+      "column": "snapshot_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "orders",
+      "pk": 92401,
+      "column": "snapshot_v2_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "orders",
+      "pk": 92402,
+      "column": "snapshot_v2_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    },
+    {
+      "table": "orders",
+      "pk": 92403,
+      "column": "snapshot_v2_json",
+      "confidence": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+      "repair_passes": 1,
+      "string_repairs": 37,
+      "samples": [
+        {
+          "path": "$.product_definition_snapshot.material_roles[0].label",
+          "old": "FaÈ›Äƒ plexi/acrilic sau ACP; opÈ›ional vinyl/oracal/print",
+          "new": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[1].label",
+          "old": "Oracal 651 â€” autocolant faÈ›Äƒ litere",
+          "new": "Oracal 651 — autocolant față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=2"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[2].label",
+          "old": "Autocolant print faÈ›Äƒ litere",
+          "new": "Autocolant print față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[3].label",
+          "old": "Autocolant print + laminare faÈ›Äƒ litere",
+          "new": "Autocolant print + laminare față litere",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[8].label",
+          "old": "Vopsea RAL spray â€” tub (consumabil)",
+          "new": "Vopsea RAL spray — tub (consumabil)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=1"
+        },
+        {
+          "path": "$.product_definition_snapshot.material_roles[9].label",
+          "old": "È˜ablon hÃ¢rtie (material mp; fÄƒrÄƒ CNC Forex)",
+          "new": "Șablon hârtie (material mp; fără CNC Forex)",
+          "class": "MOJIBAKE_SINGLE_PASS_CONFIRMED",
+          "passes": 1,
+          "reason": "cp1252_segment_repairs=4"
+        }
+      ],
+      "proposed_json": true
+    }
+  ],
+  "frozen_owner_gate_required": true
+}

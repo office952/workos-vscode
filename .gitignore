@@ -44,6 +44,8 @@ local_dev.db-journal
 *.7z
 *.bak
 *.backup
+**/dev.db.backup*
+docs/qa/utf8-romanian-diacritics-2026-07-17/dev.db.backup*
 
 # Local archive folders
 _archived_local_exports/

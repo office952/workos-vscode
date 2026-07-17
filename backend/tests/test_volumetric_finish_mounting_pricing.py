@@ -1,4 +1,4 @@
-﻿"""TPL-VOLUMETRIC-LETTERS â€” face finish, mounting template, and premount bar pricing."""
+"""TPL-VOLUMETRIC-LETTERS — face finish, mounting template, and premount bar pricing."""
 
 from __future__ import annotations
 

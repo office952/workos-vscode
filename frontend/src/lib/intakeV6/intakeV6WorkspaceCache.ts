@@ -1,6 +1,6 @@
-﻿import type { IntakeV6WorkspaceResponse } from "./intakeV6Api";
+import type { IntakeV6WorkspaceResponse } from "./intakeV6Api";
 
-/** Survives React remount â€” avoids loading flash on every page entry. */
+/** Survives React remount — avoids loading flash on every page entry. */
 const workspaceById = new Map<string, IntakeV6WorkspaceResponse>();
 
 export function getCachedIntakeV6Workspace(workspaceId: string): IntakeV6WorkspaceResponse | undefined {

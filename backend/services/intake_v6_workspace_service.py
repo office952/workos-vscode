@@ -1,4 +1,4 @@
-﻿"""Intake V6 workspace persistence, with its own payload contract."""
+"""Intake V6 workspace persistence, with its own payload contract."""
 
 from __future__ import annotations
 
@@ -1255,7 +1255,7 @@ async def save_finish_setup_for_intake_v6_workspace(
     normalized = normalize_intake_v6_finish_setup(request)
     normalized = normalized.model_copy(update={"internal_draft_quote_confirmed": False})
 
-    # Validate against dossier (non-blocking â€” warnings stored in payload)
+    # Validate against dossier (non-blocking — warnings stored in payload)
     from services.intake_v6_template_option_contract_service import validate_finish_setup_against_dossier
 
     template_code = record.template_code or "TPL-VOLUMETRIC-LETTERS"
@@ -1385,7 +1385,7 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         code = str(exc)
         status_code = 422
         if code == "note_required":
-            detail = {"error": code, "message": "NotÄƒ operator obligatorie pentru footprint manual."}
+            detail = {"error": code, "message": "Notă operator obligatorie pentru footprint manual."}
         elif code == "footprint_below_eligible_area":
             detail = {
                 "error": code,
@@ -1394,10 +1394,10 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         elif code == "footprint_source_unavailable":
             detail = {
                 "error": code,
-                "message": "Sursa footprint selectatÄƒ nu are valoare disponibilÄƒ Ã®n analiza curentÄƒ.",
+                "message": "Sursa footprint selectată nu are valoare disponibilă în analiza curentă.",
             }
         elif code == "invalid_footprint_source":
-            detail = {"error": code, "message": "SursÄƒ footprint invalidÄƒ."}
+            detail = {"error": code, "message": "Sursă footprint invalidă."}
         else:
             detail = {"error": code, "message": "Dimensiuni footprint invalide."}
         raise HTTPException(status_code=status_code, detail=detail) from exc
@@ -1406,7 +1406,7 @@ async def save_sheet_footprint_override_for_intake_v6_workspace(
         selected_footprint_source=selected_source,
         width_cm=request.width_cm,
         height_cm=request.height_cm,
-        reason=request.reason or f"SursÄƒ footprint: {selected_source}",
+        reason=request.reason or f"Sursă footprint: {selected_source}",
         applies_to=request.applies_to,
         use_for_quote_estimate=request.use_for_quote_estimate,
         created_by=current_user.email or str(current_user.id),
@@ -1503,7 +1503,7 @@ async def save_internal_draft_quote_confirmation_for_workspace(
             status_code=422,
             detail={
                 "error": "finish_setup_not_confirmed",
-                "message": "FinalizeazÄƒ È™i confirmÄƒ finisajele Ã®n Review Ã®nainte de draft quote.",
+                "message": "Finalizează și confirmă finisajele în Review înainte de draft quote.",
                 "blockers": ["finish_setup_not_confirmed"],
             },
         )

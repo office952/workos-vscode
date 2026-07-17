@@ -566,6 +566,14 @@ export const guardrails: Guardrail[] = [
   { id: "G10", category: "Costing", title: "Costing nu este doar pricing", description: "Costing păzește adevărul economic: consum corect, cost corect, formule corecte, relație corectă produs-resurse.", severity: "info" },
   { id: "G11", category: "QA", title: "QA Alignment verifică coerența", description: "Verifică dacă .md, Figma, cod, SQL și runtime spun același lucru. Semnalează mismatch-uri imediat.", severity: "warning" },
   { id: "G12", category: "Escaladare", title: "Escaladare obligatorie la Nucleu", description: "Conflict între reguli, între agenți, între UI și business, între cod și documentație — toate se escaladează la Nucleu.", severity: "info" },
+  {
+    id: "G13",
+    category: "Integritate text",
+    title: "UTF-8 end-to-end pentru text operator",
+    description:
+      "Textul uman vizibil și persistat folosește UTF-8 pe tot lanțul (sursă → DB → API → UI). Niciun sistem nu convertește tacit Unicode prin Latin-1/Windows-1252. Importurile declară sau validează encoding-ul. Frontend-ul redă, nu repară. Sursa semantică rămâne la sistemul owner.",
+    severity: "critical",
+  },
 ];
 
 // --- UI TRUTH RULES ---
