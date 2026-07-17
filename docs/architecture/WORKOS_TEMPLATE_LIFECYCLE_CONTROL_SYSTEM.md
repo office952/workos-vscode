@@ -63,6 +63,24 @@ npm run template-lifecycle:validate
 
 Product System → template detail → tab **Lifecycle** (read-only matrix). No activation buttons.
 
+## Runtime blocker severity (Intake-ready)
+
+A template is **not Intake-ready** if required bindings cannot persist through FinishSetup and be consumed by the next step.
+
+| Class | Examples |
+|-------|----------|
+| **BLOCKED** | FinishSetup 422 on required support binding; Step 1 cannot complete; Step 2 required consumer missing |
+| **OWNER_GATE_REQUIRED** | CPP formula; snapshot activation; task materialization; execution rollout |
+| **WARNING** | Contained legacy adapter; optional guarded logo; early association evidence |
+
+Score rules:
+
+- Required stage `BLOCKED` contributes `0` and hard-caps `readiness_score <= 99`
+- `activation_eligible=false` when any activation-required stage is `BLOCKED` or carries blockers
+- Owner gates may keep a high technical score while `lifecycle_status=OWNER_GATE_REQUIRED`
+
+Step 1 support persistence uses `is_early_svg_component_association` so `SUPPORT_CONTOUR` / Contur suport can save before layer roles are complete, without inventing a fake legacy layer role.
+
 ## Non-goals V1
 
 - No parallel registry

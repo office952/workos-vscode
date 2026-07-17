@@ -35,6 +35,8 @@ If inspect cannot run → **STOP**.
 9. Runtime proof (route + tests + worklog)
 10. CPP / snapshot / task materialization remain owner-gated unless separate GO
 
+**Intake-ready rule:** a template is not Intake-ready if required bindings cannot pass FinishSetup and be consumed by the next step (e.g. Contur suport / `SUPPORT_CONTOUR` → ACM must persist even when layer roles are still partial).
+
 ## Validate before claiming active
 
 ```powershell
