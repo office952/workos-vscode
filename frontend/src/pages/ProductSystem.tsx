@@ -72,6 +72,7 @@ import {
   ProductAggregateStructureList,
 } from "@/features/product-system/ProductAggregateOverviewPanel";
 import { FormSystemAdminPanel } from "@/features/product-system/FormSystemAdminPanel";
+import { OwnerReadonlyVolumetricProofPanel } from "@/features/product-system/OwnerReadonlyVolumetricProofPanel";
 import { useProductAggregate } from "@/features/product-system/useProductAggregate";
 import {
   isSyntheticAutoComponent,
@@ -2734,6 +2735,7 @@ function TemplateEditor({
   availability,
   allTemplates,
   availabilityItems,
+  ownerProofWorkspaceId = null,
 }: {
   draft: DraftTemplate;
   isNew: boolean;
@@ -2755,6 +2757,8 @@ function TemplateEditor({
   availability?: ProductTemplateAvailabilityItem | null;
   allTemplates: ProductTemplateEntity[];
   availabilityItems: ProductTemplateAvailabilityItem[];
+  /** When set with volumetric template, shows owner read-only chain proof. */
+  ownerProofWorkspaceId?: string | null;
 }) {
   const [studioTab, setStudioTab] = useState<"structure" | "general" | "operational" | "form-system">("structure");
   const [selectedComponentIndex, setSelectedComponentIndex] = useState<number | null>(null);
@@ -3099,6 +3103,15 @@ function TemplateEditor({
         changeTemplateLabel={isNew ? "Alege template" : "Schimbă template"}
         readOnly={readOnly}
       />
+
+      {ownerProofWorkspaceId && isVolumetricLettersTemplate(draft.template_code) ? (
+        <div className="shrink-0 border-b border-[#1E293B] px-3 py-2 overflow-y-auto max-h-[42vh]">
+          <OwnerReadonlyVolumetricProofPanel
+            templateCode={draft.template_code}
+            workspaceId={ownerProofWorkspaceId}
+          />
+        </div>
+      ) : null}
 
       {readOnly ? (
         <div className="flex items-center gap-2 px-4 py-2 bg-amber-900/15 border-b border-amber-800/30 text-[11px] text-amber-300 shrink-0">
@@ -3961,6 +3974,9 @@ export default function ProductSystem() {
             availability={selectedAvailability}
             allTemplates={templates}
             availabilityItems={availabilityItems}
+            ownerProofWorkspaceId={
+              searchParams.get("owner_proof") === "1" ? searchParams.get("workspace_id") : null
+            }
           />
         ) : loadMode === "auth_required" && !loading ? (
           <div className="bg-[#111827] border border-amber-800/30 rounded-xl p-12 text-center">
