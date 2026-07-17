@@ -332,8 +332,16 @@ def _legacy_resolve_active_modules(pd: ProductDefinitionPreview, payload: dict[s
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):

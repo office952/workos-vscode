@@ -252,8 +252,16 @@ def _legacy_resolve_active_commercial_modules(
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):
@@ -397,6 +405,10 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
         partial_led_subscope_filter,
     )
 
+    # Site installation commercial marker — not surface finish; may fire without support module.
+    if rule.line_code == "montaj" and _site_install_commercially_required(payload):
+        return True
+
     module_key = rule.module_gate or rule.module_code
     if rule.always_include and rule.criticality == "optional":
         return module_key in active_modules or rule.module_code in active_modules
@@ -437,12 +449,6 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
 
         if not is_acm_boxed_mounting_payload(payload):
             return False
-
-    if rule.line_code == "montaj":
-        # Always surface when site install is commercially required; otherwise keep legacy
-        # optional include via finisaje module gate above.
-        if _site_install_commercially_required(payload):
-            return True
 
     return True
 

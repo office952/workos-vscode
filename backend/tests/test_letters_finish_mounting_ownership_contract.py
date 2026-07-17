@@ -1,4 +1,4 @@
-"""Non-behavioral ownership contract tests — must not alter sold outputs."""
+"""Ownership + runtime decoupling contract tests."""
 
 from __future__ import annotations
 
@@ -13,6 +13,10 @@ from services.letters_finish_mounting_ownership_contract import (
     diagnose_mounting_ownership_conflicts,
     ownership_contract_summary,
 )
+from services.letters_finish_mounting_runtime_decoupling import (
+    LEGACY_FINISAJE_AGGREGATE_ALIAS,
+    expand_legacy_finisaje_runtime_modules,
+)
 
 
 def test_sold_finish_mounting_remain_deferred():
@@ -20,18 +24,34 @@ def test_sold_finish_mounting_remain_deferred():
     assert "MOUNTING" in SLICE1_DEFERRED_CANONICAL
 
 
-def test_mounting_runtime_map_unchanged():
+def test_mounting_runtime_map_narrowed():
     assert CANONICAL_TO_RUNTIME["MOUNTING"] == MOUNTING_RUNTIME_MAP_UNCHANGED
-    assert CANONICAL_TO_RUNTIME["MOUNTING"] == frozenset({"structura_suport", "finisaje"})
+    assert CANONICAL_TO_RUNTIME["MOUNTING"] == frozenset(
+        {"structura_suport", "sablon_montaj"}
+    )
     assert CANONICAL_TO_RUNTIME["FINISH"] == frozenset({"finisaje"})
+    assert "finisaje" not in CANONICAL_TO_RUNTIME["MOUNTING"]
+    assert "ambalare_livrare_montaj" not in CANONICAL_TO_RUNTIME["MOUNTING"]
 
 
-def test_owner_gates_not_approved():
+def test_owner_gates_decoupling_approved_sold_blocked():
     summary = ownership_contract_summary()
     assert set(summary["owner_gates_not_approved"]) == OWNER_GATES_NOT_APPROVED
-    assert summary["behavioral_change"] is False
+    assert "SOLD_CHIP_ACTIVATION_OWNER_GATE" in OWNER_GATES_NOT_APPROVED
+    assert "MOUNTING_MAP_NARROWING_OWNER_GATE" not in OWNER_GATES_NOT_APPROVED
+    assert "MINI_MODULE_SPLIT_OWNER_GATE" not in OWNER_GATES_NOT_APPROVED
+    assert summary["behavioral_change"] is True
+    assert summary["finisaje_module_removed"] is False
     assert summary["sold_finish_status"] == "DEFERRED"
     assert summary["sold_mounting_status"] == "DEFERRED"
+    assert summary["sold_packaging"] == "NOT_PLANNED"
+
+
+def test_legacy_finisaje_expand_is_read_path_only():
+    expanded = expand_legacy_finisaje_runtime_modules({"finisaje"})
+    assert expanded == LEGACY_FINISAJE_AGGREGATE_ALIAS
+    assert "sablon_montaj" in expanded
+    assert "ambalare_livrare_montaj" in expanded
 
 
 def test_mounting_field_roles_canonical():

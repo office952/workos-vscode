@@ -163,11 +163,20 @@ def _resolve_module_state(
             return "pending"
         return "conditional_active"
     if code == "finisaje":
+        # Surface finish only — template/packaging are separate runtime codes.
         if active_scope is not None and not active_scope.use_legacy_full_product:
-            # Slice1 does not sell FINISH; only activate when allowlisted (should be rare).
-            return "conditional_active" if _read_bool(finish.get("mounting_template_enabled")) is True else "active"
-        if _read_bool(finish.get("mounting_template_enabled")) is True:
-            return "conditional_active"
+            # Slice1 does not sell FINISH; activate only when allowlisted.
+            return "active"
+        return "always_on"
+    if code == "sablon_montaj":
+        template_on = _read_bool(finish.get("mounting_template_enabled")) is True
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            return "conditional_active" if template_on else "inactive"
+        return "conditional_active" if template_on else "inactive"
+    if code == "ambalare_livrare_montaj":
+        # Composition/logistics — full Letters composition, never MOUNTING-only.
+        if active_scope is not None and not active_scope.use_legacy_full_product:
+            return "active" if code in active_scope.active_set() else "inactive"
         return "always_on"
 
     kind = module.activation_kind
@@ -815,9 +824,11 @@ class ProductDefinitionBuilderService:
 
         invalid_combinations: list[str] = []
         mounting = _read_string(finish.get("mounting_system"))
-        finisaje_active = "finisaje" in active_modules or "structura_suport" in active_modules
+        mounting_scope_active = (
+            "structura_suport" in active_modules or "sablon_montaj" in active_modules
+        )
         if (
-            finisaje_active
+            mounting_scope_active
             and mounting
             and mounting not in BAR_MOUNTING
             and mounting not in ("direct_wall", "none", "template_only")

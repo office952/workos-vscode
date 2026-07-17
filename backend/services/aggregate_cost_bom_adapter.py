@@ -78,6 +78,8 @@ ALWAYS_COSTABLE_MODULES = frozenset(
         "debitare_spate",
         "sistem_led",
         "finisaje",
+        "sablon_montaj",
+        "ambalare_livrare_montaj",
         "structura_suport",
     }
 )
@@ -88,7 +90,9 @@ MODULE_GEOMETRY_KEYS: dict[str, list[str]] = {
     "modelare_cant": ["return_depth_mm", "letter_perimeter_m"],
     "debitare_spate": ["backing_mode", "letter_face_area_m2"],
     "sistem_led": ["lighting_system_type", "selected_psu_watts", "led_module_count"],
-    "finisaje": ["mounting_system"],
+    "finisaje": ["face_finish_type"],
+    "sablon_montaj": ["mounting_template_enabled"],
+    "ambalare_livrare_montaj": ["packaging_required"],
     "structura_suport": ["mounting_system"],
 }
 
@@ -165,8 +169,16 @@ def _legacy_structural_active_modules(
             if mod.state == "active":
                 active.add(code)
             continue
-        if code == "finisaje":
-            active.add(code)
+        from services.letters_finish_mounting_runtime_decoupling import (
+            apply_decoupled_module_activation,
+        )
+
+        if apply_decoupled_module_activation(
+            code=code,
+            state=mod.state,
+            activation_kind=mod.activation_kind or "",
+            active=active,
+        ):
             continue
         if code == "sistem_led":
             if mod.state in ("active", "conditional_active"):

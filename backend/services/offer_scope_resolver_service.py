@@ -119,6 +119,13 @@ def _apply_conditional_gates(
         if not (is_lit and lighting and str(lighting).strip().lower() not in ("", "none")):
             active.discard("sistem_led")
 
+    # Installation template — only when explicitly enabled (not surface finish / packaging).
+    if "sablon_montaj" in active:
+        from services.letters_finish_mounting_runtime_decoupling import mounting_template_enabled
+
+        if not mounting_template_enabled(merged_finish):
+            active.discard("sablon_montaj")
+
     return active
 
 

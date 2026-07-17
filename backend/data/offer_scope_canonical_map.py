@@ -18,8 +18,10 @@ CANONICAL_TO_RUNTIME: dict[str, frozenset[str]] = {
     # SLICE1_TEMPORARY_WHOLE_MODULE — op split deferred to later slice.
     "LIGHTING": frozenset({"sistem_led"}),
     "ELECTRICAL": frozenset({"sistem_led"}),
+    # Surface finish only — installation template / packaging are separate runtime codes.
     "FINISH": frozenset({"finisaje"}),
-    "MOUNTING": frozenset({"structura_suport", "finisaje"}),
+    # Narrowed: no surface finish / packaging leakage from MOUNTING-only scope.
+    "MOUNTING": frozenset({"structura_suport", "sablon_montaj"}),
 }
 
 ALL_CANONICAL_SOLD_MODULES: frozenset[str] = frozenset(CANONICAL_TO_RUNTIME.keys())

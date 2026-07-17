@@ -28,7 +28,7 @@ from services.offer_scope_resolver_service import (
     resolve_offer_scope,
 )
 
-# All Letters mini-modules known to PD/form contract for Slice 1.
+# All Letters mini-modules known to PD/form contract for Slice 1 (+ decoupled responsibilities).
 LETTERS_RUNTIME_MODULES: frozenset[str] = frozenset(
     {
         "geometry_svg",
@@ -37,6 +37,8 @@ LETTERS_RUNTIME_MODULES: frozenset[str] = frozenset(
         "modelare_cant",
         "sistem_led",
         "finisaje",
+        "sablon_montaj",
+        "ambalare_livrare_montaj",
         "structura_suport",
         "electrica_logo",
     }
@@ -110,7 +112,16 @@ def _dependency_rows(
             )
         )
     for code in sorted(active):
-        if code in ("debitare_fata", "modelare_cant", "debitare_spate", "sistem_led", "finisaje"):
+        if code in (
+            "debitare_fata",
+            "modelare_cant",
+            "debitare_spate",
+            "sistem_led",
+            "finisaje",
+            "sablon_montaj",
+            "ambalare_livrare_montaj",
+            "structura_suport",
+        ):
             rows.append(
                 ActiveScopeDependency(
                     code=code,
