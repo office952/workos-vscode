@@ -137,6 +137,35 @@ def normalize_acm_mounting_configuration(config: Mapping[str, Any] | None) -> di
             pass
     if "internal_frame_enabled" in merged:
         merged["internal_frame_enabled"] = bool(merged["internal_frame_enabled"])
+
+    # Nested typed internal_frame (Shared RO) — wins over bare boolean.
+    from services.acp_internal_frame_domain import normalize_internal_frame_config
+
+    raw_frame = merged.get("internal_frame")
+    enabled_flag = bool(merged.get("internal_frame_enabled"))
+    if isinstance(raw_frame, Mapping):
+        frame_in = dict(raw_frame)
+        if "enabled" not in frame_in:
+            frame_in["enabled"] = enabled_flag
+    elif enabled_flag:
+        frame_in = {"enabled": True}
+    else:
+        frame_in = {"enabled": False}
+    fold = merged.get("fold_count")
+    try:
+        fold_i = int(fold) if fold is not None else None
+    except (TypeError, ValueError):
+        fold_i = None
+    normalized_frame = normalize_internal_frame_config(
+        frame_in,
+        panel_width_mm=merged.get("panel_width_mm"),
+        panel_height_mm=merged.get("panel_height_mm"),
+        panel_thickness_mm=merged.get("acm_thickness_mm"),
+        fold_count=fold_i,
+    )
+    merged["internal_frame"] = normalized_frame
+    merged["internal_frame_enabled"] = bool(normalized_frame.get("enabled"))
+    # Legacy frame_clearance_mm is not fit-allowance authority; keep numeric coalesce only.
     return merged
 
 

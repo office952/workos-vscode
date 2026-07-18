@@ -355,6 +355,60 @@ def _build_canonical_values(
                 values["service_corner"] = selection.get("service_corner")
             values["internal_frame_enabled"] = bool(selection.get("internal_frame_enabled"))
             values["support_type"] = "alucobond_cased"
+            # Nested typed frame from mounting_solution (Shared RO) wins over bare boolean.
+            mounting = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
+            if isinstance(mounting, dict):
+                mcfg = mounting.get("configuration")
+                if isinstance(mcfg, dict) and isinstance(mcfg.get("internal_frame"), dict):
+                    from services.acp_internal_frame_domain import normalize_internal_frame_config
+
+                    frame = normalize_internal_frame_config(
+                        mcfg.get("internal_frame"),
+                        panel_width_mm=mcfg.get("panel_width_mm"),
+                        panel_height_mm=mcfg.get("panel_height_mm"),
+                        panel_thickness_mm=mcfg.get("acm_thickness_mm"),
+                        fold_count=mcfg.get("fold_count"),
+                    )
+                    # Prefer selection marker if mounting frame disabled but selection enabled.
+                    if values["internal_frame_enabled"] and not frame.get("enabled"):
+                        frame = normalize_internal_frame_config(
+                            {**frame, "enabled": True},
+                            panel_width_mm=mcfg.get("panel_width_mm"),
+                            panel_height_mm=mcfg.get("panel_height_mm"),
+                            panel_thickness_mm=mcfg.get("acm_thickness_mm"),
+                            fold_count=mcfg.get("fold_count"),
+                        )
+                    if frame.get("enabled"):
+                        values["internal_frame"] = frame
+                        values["internal_frame_enabled"] = True
+                        from services.acp_internal_frame_domain import (
+                            build_aggregate_frame_projection,
+                        )
+
+                        projection = build_aggregate_frame_projection(frame)
+                        if projection:
+                            values["internal_frame_aggregate_projection"] = projection
+                    else:
+                        values["internal_frame_enabled"] = False
+                elif values["internal_frame_enabled"]:
+                    from services.acp_internal_frame_domain import (
+                        build_aggregate_frame_projection,
+                        normalize_internal_frame_config,
+                    )
+
+                    values["internal_frame"] = normalize_internal_frame_config(
+                        {"enabled": True},
+                        panel_width_mm=(selection.get("panel_geometry") or {}).get("width_mm")
+                        if isinstance(selection.get("panel_geometry"), dict)
+                        else None,
+                        panel_height_mm=(selection.get("panel_geometry") or {}).get("height_mm")
+                        if isinstance(selection.get("panel_geometry"), dict)
+                        else None,
+                        panel_thickness_mm=3,
+                    )
+                    projection = build_aggregate_frame_projection(values["internal_frame"])
+                    if projection:
+                        values["internal_frame_aggregate_projection"] = projection
         elif status == "reconfirm_required":
             values["svg_support_selection"] = {
                 "status": "reconfirm_required",

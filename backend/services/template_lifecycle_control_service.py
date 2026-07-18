@@ -525,6 +525,30 @@ class TemplateLifecycleControlService:
             )
         if not review_step and is_root_offerable_template(code):
             step2_blockers.append(_issue("STEP2_UI_MISSING", "Intake V6 Review/Step 2 surface missing."))
+        structural_ro = _repo_file_exists(
+            "backend", "data", "product_system", "structural_resource_options_v1.py"
+        )
+        if code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" or has_support:
+            if not structural_ro:
+                step2_blockers.append(
+                    _issue(
+                        "STRUCTURAL_RESOURCE_OPTIONS_MISSING",
+                        "Shared Technical Resource Options registry missing for ACP internal frame.",
+                        evidence=["structural_resource_options_v1.py"],
+                    )
+                )
+            elif _file_contains(
+                "backend/data/product_system/structural_resource_options_v1.py",
+                "PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED",
+            ):
+                step2_warnings.append(
+                    _issue(
+                        "PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED",
+                        "ACP internal frame materials confirmed; profile catalog empty until owner confirms sections.",
+                        severity="warning",
+                        evidence=["accepted_profile_codes=[]"],
+                    )
+                )
         step2_status: LifecycleStatus
         if step2_blockers:
             step2_status = "BLOCKED"
@@ -543,12 +567,14 @@ class TemplateLifecycleControlService:
                     f"review_step={review_step}",
                     f"mounting_hydrate={mounting_hydrate}",
                     f"support_bindable={has_support}",
+                    f"structural_ro={structural_ro}",
                 ],
                 blockers=step2_blockers,
                 warnings=step2_warnings,
                 affected_files=[
                     "frontend/src/lib/intakeV6/mountingSolution.ts",
                     "frontend/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx",
+                    "backend/data/product_system/structural_resource_options_v1.py",
                 ],
             )
         )
