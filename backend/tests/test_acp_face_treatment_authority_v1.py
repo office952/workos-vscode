@@ -219,7 +219,8 @@ def test_pd_instances_nest_shell_treatments_letters_separate() -> None:
     for ft in shell_fts:
         if ft["face_treatment_code"] == FACE_TREATMENT_ROUTED_BACKLIT:
             assert ft["readiness"] == READINESS_LOCAL_CONFIGURATION_REQUIRED
-            assert ft["local_configuration_status"] == "NOT_CONFIGURED"
+            assert ft["local_configuration_status"] == READINESS_LOCAL_CONFIGURATION_REQUIRED
+            assert ft.get("local_module_instance", {}).get("module_code")
 
 
 def test_inactive_treatment_zero_warnings() -> None:

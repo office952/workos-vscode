@@ -258,6 +258,8 @@ class IntakeV4FinishSetup(BaseModel):
     svg_support_selection: dict[str, Any] | None = None
     # Technical wall fixing system (Brat otel vertical, …) — independent of commercial mounting_scope.
     mounting_fixing_system: dict[str, Any] | None = None
+    # ACP shell-common electrical + per-zone illumination intents (guarded; no invented LED/PSU qty).
+    acp_electrical_configuration: dict[str, Any] | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):

@@ -377,6 +377,7 @@ def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, A
             "svg_support_selection",
             "svg_component_bindings",
             "mounting_fixing_system",
+            "acp_electrical_configuration",
         }:
             filtered[key] = value
     return setup.model_copy(update=filtered)
@@ -441,6 +442,19 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
     if setup.mounting_fixing_system is not None:
         updates["mounting_fixing_system"] = normalize_mounting_fixing_system(
             setup.mounting_fixing_system
+        )
+
+    from services.svg_component_binding_persistence import persist_normalized_bindings_on_finish
+
+    # Normalize bindings + shell electrical whenever finish payload includes them.
+    finish_for_modules = {**setup.model_dump(mode="json"), **updates}
+    if finish_for_modules.get("svg_component_bindings") is not None or finish_for_modules.get(
+        "acp_electrical_configuration"
+    ) is not None:
+        normalized_finish = persist_normalized_bindings_on_finish(finish_for_modules)
+        updates["svg_component_bindings"] = normalized_finish.get("svg_component_bindings")
+        updates["acp_electrical_configuration"] = normalized_finish.get(
+            "acp_electrical_configuration"
         )
 
     if groups:

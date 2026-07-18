@@ -23,6 +23,11 @@ from data.product_system.acp_face_treatment_registry_v1 import (
     is_shell_local_treatment,
     legacy_light_routed_policy,
 )
+from services.acp_local_face_module_service import (
+    build_local_module_aggregate_projection,
+    normalize_acp_electrical_configuration,
+    normalize_local_module,
+)
 from data.product_system.svg_component_binding_contract import (
     ACM_BOXED_SUPPORT,
     FACE_COMPONENT,
@@ -164,6 +169,7 @@ def normalize_binding(raw: dict[str, Any]) -> dict[str, Any]:
 
     if b.get("face_treatment_code") in {None, "", FACE_TREATMENT_NOT_APPLICABLE}:
         b["local_configuration_status"] = b.get("local_configuration_status") or "NOT_APPLICABLE"
+        b.pop("local_module_configuration", None)
     else:
         row = get_face_treatment(b.get("face_treatment_code"))
         if row and row.get("requires_local_module"):
@@ -172,6 +178,19 @@ def normalize_binding(raw: dict[str, Any]) -> dict[str, Any]:
             )
         else:
             b["local_configuration_status"] = b.get("local_configuration_status") or "NOT_REQUIRED"
+        module = normalize_local_module(
+            b.get("local_module_configuration"),
+            binding_id=binding_id,
+            treatment_code=str(b.get("face_treatment_code") or "") or None,
+            geometry_role=role,
+            component_template_code=code,
+            status=status,
+        )
+        if module:
+            b["local_module_configuration"] = module
+            mod_ready = (module.get("readiness") or {}).get("overall")
+            if mod_ready:
+                b["local_configuration_status"] = mod_ready
 
     b["face_treatment_contract_version"] = REGISTRY_VERSION
     return b
@@ -453,7 +472,8 @@ def build_face_treatment_instance(binding: dict[str, Any]) -> dict[str, Any] | N
     ids = [str(x) for x in _as_list(geom.get("element_ids")) if x]
     ids.extend(str(x) for x in _as_list(geom.get("layer_ids")) if x)
     readiness = evaluate_face_treatment_readiness(binding)
-    return {
+    module = _as_dict(binding.get("local_module_configuration"))
+    out = {
         "instance_id": binding.get("binding_id"),
         "zone_id": binding.get("local_zone_id"),
         "geometry_role": binding.get("geometry_role"),
@@ -465,6 +485,30 @@ def build_face_treatment_instance(binding: dict[str, Any]) -> dict[str, Any] | N
         "provenance": _as_dict(binding.get("provenance")),
         "component_template_code": binding.get("component_template_code"),
     }
+    if module:
+        out["local_module_instance"] = {
+            "module_instance_id": module.get("module_instance_id") or module.get("interface_instance_id"),
+            "module_code": module.get("module_code"),
+            "status": module.get("status"),
+            "readiness": (module.get("readiness") or {}).get("overall"),
+            "gates": (module.get("readiness") or {}).get("gates") or [],
+            "configuration": {
+                k: module.get(k)
+                for k in (
+                    "backing_material",
+                    "backing_mounting",
+                    "illumination_intent",
+                    "insert",
+                    "service",
+                    "placement_reference",
+                    "mounting_method_status",
+                    "cable_passage_status",
+                    "electrical_interface_status",
+                )
+                if module.get(k) is not None
+            },
+        }
+    return out
 
 
 def build_svg_component_instances(finish: dict[str, Any] | None) -> list[dict[str, Any]]:
@@ -600,4 +644,33 @@ def persist_normalized_bindings_on_finish(finish: dict[str, Any]) -> dict[str, A
     """Normalize bindings in-place on a finish dict (save path)."""
     finish = dict(finish)
     finish["svg_component_bindings"] = read_svg_component_bindings(finish)
+    service_corner = None
+    mounting = _as_dict(finish.get("mounting_solution"))
+    cfg = _as_dict(mounting.get("configuration"))
+    service_corner = (
+        cfg.get("service_corner")
+        or finish.get("power_supply_service_corner")
+        or _as_dict(finish.get("svg_support_selection")).get("service_corner")
+    )
+    finish["acp_electrical_configuration"] = normalize_acp_electrical_configuration(
+        finish.get("acp_electrical_configuration"),
+        bindings=finish["svg_component_bindings"],
+        service_corner=str(service_corner) if service_corner else None,
+    )
     return finish
+
+
+def collect_local_modules_from_finish(finish: dict[str, Any] | None) -> list[dict[str, Any]]:
+    modules: list[dict[str, Any]] = []
+    for b in read_svg_component_bindings(finish):
+        mod = _as_dict(b.get("local_module_configuration"))
+        if mod.get("module_code"):
+            modules.append(mod)
+    return modules
+
+
+def build_acp_local_modules_aggregate_from_finish(finish: dict[str, Any] | None) -> dict[str, Any] | None:
+    finish = finish or {}
+    modules = collect_local_modules_from_finish(finish)
+    electrical = finish.get("acp_electrical_configuration")
+    return build_local_module_aggregate_projection(modules, electrical=_as_dict(electrical) or None)
