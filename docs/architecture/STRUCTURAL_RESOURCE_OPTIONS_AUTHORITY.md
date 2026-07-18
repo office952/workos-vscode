@@ -5,6 +5,7 @@
 | Status | Design proposal (not implemented) |
 | Date | 2026-07-18 |
 | Owner-rules status | **PARTIAL OWNER_CONFIRMED** — materials + frame formula + crossbar spacing; **profiles DEFERRED** |
+| Runtime V1 | Code registry `structural_resource_options/v1` + GET API; ACP `accepted_profile_codes=[]` |
 | Related audit | `docs/audits/2026-07-18_structural_material_profile_catalog_audit.md` |
 | Owner decision | `docs/decisions/STRUCTURAL_RESOURCE_OPTIONS_OWNER_DECISION.md` |
 | Aligns with | `08_PRICING_REGISTRY_SEPARATION.md`, `MATERIAL_CANONICAL_NAMING_AND_ALIASES.md`, `18_GOVERNANCE_SETTINGS_POLICY.md` |
