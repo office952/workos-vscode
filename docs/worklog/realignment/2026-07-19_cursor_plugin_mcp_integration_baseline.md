@@ -4,46 +4,62 @@
 |-------|-------|
 | Date | 2026-07-19 |
 | System | Windows 10.0.26200 · Cursor 3.12.10 · VS Code CLI 1.128.0 |
-| Repo | `C:/w/psiso` · branch `feature/product-system-active-path-isolation-v1` · HEAD ~`4399875` |
-| Scope | Inventory + decision matrix — **no product changes**, **no new paid services** |
+| Repo | `C:/w/psiso` · branch `feature/product-system-active-path-isolation-v1` |
+| Scope | Inventory → Round 1 activation — **no product changes** |
 
 ## Deliverable
 
 `docs/qa/tooling-integration-baseline-2026-07-19/WORKOS_TOOLING_AND_INTEGRATION_BASELINE.md`
 
-## Inventory (summary)
+---
 
-- **Cursor extensions:** remote-ssh, better-svg  
-- **VS Code extensions:** Python suite, Thunder Client 2.41.0  
-- **MCP ready:** Figma, Context7, shadcn, cursor-ide-browser, cursor-app-control  
-- **MCP needsAuth:** Subtext (FullStory) — not auto-authenticated  
-- **CLI:** git, gh (unauthenticated), node/npx/pnpm; **no** semgrep/snyk/postman/newman/sentry-cli/datadog-ci/docker  
-- **CI:** none in-repo  
-- **App SDKs:** no Sentry/Datadog/analytics/workos.com  
+## A. Audit (initial — before Round 1 GO)
 
-## Decisions (high level)
+HEAD ~`4399875` → docs commit `aa8ace1`.
 
-| Round | Tools | Status |
-|-------|-------|--------|
-| Keep | Figma MCP, Thunder Client, Playwright, CE/Context7 | Already present |
-| Round 1 after GO | `gh auth`, Semgrep CLI local, Postman **or** keep Thunder | **Blocked by owner GO** |
-| Round 2 | Linear, Slack, Sentry, Datadog | Confirm accounts first |
-| Single SCA later | Prefer Snyk **if** needed | CONNECT LATER |
-| Analytics | ≤1 platform; Subtext may be candidate | OWNER DECISION |
-| Reject | WorkOS.com plugin, Buildkite (not CI), multi-SCA | NOT RELEVANT |
+- **CLI:** git, gh (**unauthenticated**), node/pnpm; **no** semgrep/postman  
+- **Thunder Client:** 2.41.0 already installed  
+- **MCP ready:** Figma, Context7, shadcn, browser  
+- **MCP needsAuth:** Subtext — not authenticated  
+- Round 1 blocked pending owner GO  
 
-## Owner gates
+---
 
-See report §12. No tokens stored. No installs executed this session.
+## B. Owner GO received
 
-## Potential costs
+```text
+GO_ROUND1_GH_AUTH
+GO_SEMGREP_CLI_LOCAL
+KEEP_THUNDER_CLIENT
+```
 
-None started. SaaS (Snyk/Sentry/Datadog/BrowserStack/Slack/Linear) would incur cost only after separate GO.
+Activation start HEAD: `aa8ace1`.
 
-## Next step
+---
 
-Owner issues Round-1 GO; agent installs only approved items and re-validates versions.
+## C. Activation results
 
-## Dirty tree
+| Gate | Result |
+|------|--------|
+| GO_ROUND1_GH_AUTH | **PASS** — `gh` 2.95.0 · logged in `office952` · host github.com · protocol https · scopes `gist`,`read:org`,`repo` · keyring · read-only validated · **zero write** |
+| GO_SEMGREP_CLI_LOCAL | **PASS** — Semgrep **1.170.0** in `%LOCALAPPDATA%\workos-tooling\semgrep` · User PATH updated · **not** in `backend/.venv` · no cloud login · smoke scan outside repo with `--metrics=off` |
+| KEEP_THUNDER_CLIENT | **PASS** — 2.41.0 kept · Postman not installed · no collections created |
 
-Large unrelated WIP left untouched; exact-path staging only for this worklog + baseline report.
+### Semgrep uninstall
+
+1. Remove `...\workos-tooling\semgrep\Scripts` from User PATH  
+2. Delete folder `%LOCALAPPDATA%\workos-tooling\semgrep`
+
+### GitHub logout (if needed)
+
+`gh auth logout -h github.com`
+
+---
+
+## D. Still closed
+
+Subtext, Linear, Slack, Sentry, Datadog, Snyk, BrowserStack, analytics, 1Password, JFrog, Zscaler, WorkOS.com, Postman.
+
+## E. Dirty tree
+
+Unrelated WIP left untouched; exact-path staging only for baseline docs + this worklog.

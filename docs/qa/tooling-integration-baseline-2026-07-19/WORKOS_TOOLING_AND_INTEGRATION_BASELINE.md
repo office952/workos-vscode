@@ -5,29 +5,46 @@
 | Date | 2026-07-19 |
 | Repo | `C:/w/psiso` |
 | Scope | Cursor / MCP / CLI / integrations inventory — **no product code changes** |
-| Verdict | **PARTIAL** — inventory + decision matrix complete; Round-1 installs awaiting owner GO |
+| Verdict (audit) | **PARTIAL** — inventory complete; Round 1 was awaiting GO |
+| Verdict (after Round 1 GO) | **PASS** — `gh` authenticated · Semgrep local · Thunder Client kept |
 
 ## 1. Verdict
 
-**PARTIAL**
+**PASS** (Round 1 activation)
 
-Inventory, classification, overlap, and owner gates are complete.  
-No new paid services, tokens, system agents, or product SDK wiring were introduced.  
-Round-1 local installs (`gh auth`, Semgrep CLI, Postman decision) wait on owner GO.
+Audit inventory remains historical below. Round 1 owner GO was consumed and activated:
+
+- `GO_ROUND1_GH_AUTH` → GitHub CLI authenticated as `office952` (keyring; https)
+- `GO_SEMGREP_CLI_LOCAL` → Semgrep **1.170.0** in isolated user venv (not app `.venv`)
+- `KEEP_THUNDER_CLIENT` → Thunder Client **2.41.0** kept; Postman **not** installed
+
+No product code, CI, Cloud Semgrep, Subtext, Linear/Slack/Sentry/Datadog, or SCA SaaS.
+
+## 1b. Round 1 activation log (2026-07-19)
+
+| Step | Result |
+|------|--------|
+| Baseline HEAD at activation start | `aa8ace1` |
+| Auth method | `gh auth login` device/web flow → github.com |
+| Account | `office952` |
+| Scopes observed | `gist`, `read:org`, `repo` (default gh; **write actions not used**) |
+| Read-only checks | `gh repo view` → `office952/workos-vscode` PUBLIC; commits readable; PR/issue lists empty |
+| Semgrep install | Isolated venv `%LOCALAPPDATA%\workos-tooling\semgrep` via bootstrap `python -m venv` from backend interpreter (packages **not** added to project venv) |
+| Semgrep PATH | User PATH += `...\workos-tooling\semgrep\Scripts` |
+| Semgrep metrics | `--metrics=off` on validation scan |
+| Semgrep cloud | No `semgrep login`; no `SEMGREP_APP_TOKEN`; settings.yml has only local/anonymous keys (no API token) |
+| Validation scan | Temp dir outside repo + `p/python`; exit 0; ~2.1s; no autofix |
+| Uninstall Semgrep | Remove User PATH entry; delete `%LOCALAPPDATA%\workos-tooling\semgrep` |
+| Thunder Client | KEEP `rangav.vscode-thunder-client@2.41.0` |
+| Postman | Absent (CLI + AppData) |
 
 ## 2. Mini decizia agentului
 
-**Now (already present / keep):** Figma MCP (ready), Cursor browser MCP, Context7, Compound Engineering skills/plugins, Thunder Client (API client), Playwright (local E2E), `gh`+`git` CLIs (unauthenticated).
+**Audit-time (historical):** Figma MCP, Thunder Client, Playwright, CE/Context7 present; `gh` unauthenticated; Semgrep absent.
 
-**Install/connect next — only after owner GO (Round 1):**
+**After Round 1 GO:** GitHub CLI usable for repo read/PR inspection; Semgrep available for local SAST; Thunder Client remains sole interactive API client.
 
-1. `gh auth login` (read-focused GitHub)  
-2. Semgrep CLI local-only (no Semgrep Cloud / no `SEMGREP_APP_TOKEN`)  
-3. Postman: **prefer Thunder Client already installed** OR owner chooses Postman desktop — do not dual-install without reason  
-
-**Round 2 — only if company accounts confirmed:** Linear, Slack, Sentry, Datadog.
-
-**Conditional / later:** BrowserStack, Buildkite, SCA vendor, product analytics, JFrog, 1Password, Zscaler.
+**Still closed (Round 2+):** Linear, Slack, Sentry, Datadog, Subtext auth, Snyk/SCA, BrowserStack, analytics, 1Password, JFrog, Zscaler, WorkOS.com.
 
 **Never for this product identity:** WorkOS.com vendor plugin (name collision only).
 
@@ -187,16 +204,22 @@ Linear, Slack, Sentry, Datadog, BrowserStack, SCA SaaS, 1Password CLI, analytics
 | BrowserStack vs Playwright | Prefer Playwright local; BrowserStack only for real device/browser matrix gap |
 | Analytics options | Confirm FullStory Subtext vs Amplitude cache vs none — pick ≤1 |
 
-## 12. Owner gates (remaining)
+## 12. Owner gates
 
-1. **GO_GH_AUTH** — `gh auth login` (declare scopes: prefer repo read + PR)  
-2. **GO_SEMGREP_CLI_LOCAL** — install Semgrep CLI; **no** app token / Cloud  
-3. **GO_POSTMAN_OR_THUNDER** — keep Thunder Client **or** adopt Postman workspace (pick one)  
+### Consumed (Round 1)
+
+1. **GO_ROUND1_GH_AUTH** — done  
+2. **GO_SEMGREP_CLI_LOCAL** — done (local-only)  
+3. **KEEP_THUNDER_CLIENT** — done (Postman deferred as duplicate)
+
+### Still closed
+
 4. **GO_SUBTEXT_MCP_AUTH** — only if FullStory Subtext is company-approved  
 5. **GO_LINEAR / GO_SLACK** — Round 2 if used operationally  
 6. **GO_SENTRY / GO_DATADOG** — only after service existence confirmed; no SDK in product without separate build  
 7. **GO_SCA_VENDOR** — if dependency scanning required (recommended candidate: Snyk)  
 8. **GO_ANALYTICS_PLATFORM** — confirm which (if any) is real  
+9. **GO_POSTMAN** — only if Thunder Client proves insufficient
 
 ## 13. Configuration files (secret-free)
 
@@ -210,17 +233,23 @@ No new secret-bearing config created.
 
 ## 14. Validation
 
-Commands run (representative):
+### Audit (historical)
 
-- `cursor --version` → 3.12.10  
-- `cursor --list-extensions --show-versions`  
-- `code --list-extensions --show-versions`  
-- `gh --version` / `gh auth status` → not logged in  
-- CLI presence probe (semgrep/snyk/postman/… absent)  
-- `git remote -v` → github.com/office952/workos-vscode.git  
-- CI path absence check  
-- Grep app deps for sentry/datadog/analytics/workos.com → none  
-- Env key presence check → all unset (names only)  
+- `gh auth status` → not logged in  
+- Semgrep absent from PATH  
+
+### Round 1 activation
+
+- `gh --version` → 2.95.0  
+- `gh auth status` → logged in `office952` (keyring); scopes `gist`, `read:org`, `repo`  
+- `gh repo view` → `office952/workos-vscode` PUBLIC, default `main`  
+- `gh api .../commits?per_page=3` → SHAs readable  
+- `gh pr list` / `gh issue list` → empty (OK)  
+- Zero write: no issue/PR/push/settings  
+- `semgrep --version` → 1.170.0  
+- Local smoke: temp `sample.py` outside repo, `semgrep --config=p/python --metrics=off` → exit 0  
+- `pip show semgrep` in `backend/.venv` → not installed (isolated)  
+- Thunder Client → 2.41.0; Postman absent
 
 ## 15. Worklog
 
@@ -236,6 +265,8 @@ See commit of this report + worklog only (exact-path staging). Unrelated dirty W
 2. Figma MCP includes write-capable tools — constrain for read-only audits.  
 3. Subtext MCP auth prompt — do not authenticate casually (external session data).  
 4. Cached marketplace plugins can be mistaken for “we use this in production”.  
+5. `gh` scopes include `repo` (default) — agent must continue avoiding write actions unless a later GO authorizes them.  
+6. Semgrep User PATH change requires new shells to pick up; uninstall = remove PATH + delete isolated venv.
 
 ## 18. Dead tools check
 
@@ -256,12 +287,10 @@ See commit of this report + worklog only (exact-path staging). Unrelated dirty W
 
 ## 20. Direction alignment
 
-**Cat sunt in directia stabilita: 70/100%**
+**Cat sunt in directia stabilita: 92/100%** (for Round-1 tooling activation)
 
-Inventory + gates done; Round-1 local installs not executed pending GO.
+Inventory retained; Round 1 activated and validated. Remaining gap is Round-2 services only when a real case appears.
 
 ## 21. Next recommended action
 
-**Owner: approve Round 1 with a single GO message**, e.g.  
-`GO_ROUND1_GH_AUTH + GO_SEMGREP_CLI_LOCAL + KEEP_THUNDER_CLIENT`  
-Then agent installs/connects only those three outcomes — nothing else.
+**Do not auto-start Round 2.** Next coherent build should be a **product/audit task that uses the activated tools** (e.g. `gh`-backed PR review or a scoped local Semgrep pass on a nominated path) — not connecting Linear/Slack/Sentry without a concrete need.
