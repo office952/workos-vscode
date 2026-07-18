@@ -4,6 +4,7 @@ import {
   ACM_BOXED_MOUNTING_TEMPLATE_CODE,
   buildMountingSolutionPatch,
   hydrateMountingSolutionFromLegacy,
+  isAcpProductComponentActive,
   isMountingSolutionCompositionActive,
   METAL_PREMOUNT_TEMPLATE_CODE,
   mountingSolutionSelectorValue,
@@ -80,6 +81,21 @@ describe("mountingSolution", () => {
       },
     };
     expect(isMountingSolutionCompositionActive(setup)).toBe(true);
+  });
+
+  it("ACM product component stays active when commercial mounting_scope is none", () => {
+    const setup = {
+      mounting_scope: "none",
+      mounting_solution: {
+        template_code: ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+        configuration: normalizeAcmMountingConfiguration({
+          panel_width_mm: 1000,
+          panel_height_mm: 600,
+        }),
+      },
+    };
+    expect(isMountingSolutionCompositionActive(setup)).toBe(true);
+    expect(isAcpProductComponentActive(setup)).toBe(true);
   });
 
   it("prepareMountingSolutionForSave removes legacy dual-write fields", () => {

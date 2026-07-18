@@ -230,16 +230,33 @@ def normalize_metal_mounting_configuration(config: Mapping[str, Any] | None) -> 
     return merged
 
 
-def is_mounting_solution_composition_active(setup: Mapping[str, Any] | None) -> bool:
-    """True only for Product System ACM/metal support children — not installation_template."""
+def is_acp_product_component_active(setup: Mapping[str, Any] | None) -> bool:
+    """ACP boxed panel is a product component — independent of commercial mounting_scope."""
     if not isinstance(setup, Mapping):
-        return False
-    if not is_mounting_preparation_active(setup):
         return False
     solution = resolve_effective_mounting_solution(setup)
     if not solution or is_installation_template_solution(solution):
         return False
-    return str(solution.get("template_code") or "").strip() in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES
+    return str(solution.get("template_code") or "").strip() == ACM_BOXED_MOUNTING_TEMPLATE_CODE
+
+
+def is_mounting_solution_composition_active(setup: Mapping[str, Any] | None) -> bool:
+    """Product System support children in composition.
+
+    ACP boxed panel is product truth and remains active when commercial mounting_scope=none.
+    Metal Premount remains gated by commercial preparation scope.
+    """
+    if not isinstance(setup, Mapping):
+        return False
+    solution = resolve_effective_mounting_solution(setup)
+    if not solution or is_installation_template_solution(solution):
+        return False
+    code = str(solution.get("template_code") or "").strip()
+    if code not in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
+        return False
+    if code == ACM_BOXED_MOUNTING_TEMPLATE_CODE:
+        return True
+    return is_mounting_preparation_active(setup)
 
 
 def is_structura_suport_active(setup: Mapping[str, Any] | None) -> bool:

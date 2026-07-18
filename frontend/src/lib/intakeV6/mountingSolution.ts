@@ -324,15 +324,26 @@ export function isAllowedMountingSolutionTemplate(templateCode: string): boolean
   );
 }
 
+export function isAcpProductComponentActive(
+  setup: Record<string, unknown> | null | undefined,
+): boolean {
+  if (!setup) return false;
+  const solution = resolveEffectiveMountingSolution(setup);
+  if (!solution || isInstallationTemplateSolution(solution)) return false;
+  return solution.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE;
+}
+
 export function isMountingSolutionCompositionActive(
   setup: Record<string, unknown> | null | undefined,
 ): boolean {
   if (!setup) return false;
-  const { mounting_scope } = hydrateMountingScopeFromFinishSetup(setup);
-  if (!isMountingPreparationActive(mounting_scope)) return false;
   const solution = resolveEffectiveMountingSolution(setup);
   if (!solution || isInstallationTemplateSolution(solution)) return false;
-  return isAllowedMountingSolutionTemplate(solution.template_code);
+  if (!isAllowedMountingSolutionTemplate(solution.template_code)) return false;
+  // ACP panel = product component; commercial mounting_scope must not hide it.
+  if (solution.template_code === ACM_BOXED_MOUNTING_TEMPLATE_CODE) return true;
+  const { mounting_scope } = hydrateMountingScopeFromFinishSetup(setup);
+  return isMountingPreparationActive(mounting_scope);
 }
 
 export function mountingSolutionSelectorValue(
@@ -413,8 +424,13 @@ export function prepareMountingSolutionForSave(
   return next;
 }
 
-export function isMountingSolutionSelectorDisabled(scope: MountingScopeV1): boolean {
-  return !isMountingPreparationActive(scope);
+export function isMountingSolutionSelectorDisabled(
+  scope: MountingScopeV1,
+  current?: MountingSolutionSelectorValue,
+): boolean {
+  if (isMountingPreparationActive(scope)) return false;
+  // ACP product component remains selectable/editable without commercial prep.
+  return current !== ACM_BOXED_MOUNTING_TEMPLATE_CODE;
 }
 
 export { ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS };
