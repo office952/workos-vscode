@@ -53,10 +53,10 @@ V1: suggestion + operator confirmation + override with provenance.
 
 ### 1.4 Profiles
 
-**No profile section is OWNER_CONFIRMED for ACP.**  
-Do not approve `20×20×1.5`, `30×30×1.5`, or premount/lightbox SKUs as ACP defaults.
+**No profile section is OWNER_CONFIRMED for ACP internal frame.**  
+Do not approve `20×20×1.5`, `30×30×1.5`, or premount/lightbox SKUs as ACP **internal frame** defaults.
 
-Registry V1 may ship with **empty** `accepted_profile_codes` / empty active profile catalog for ACP → Step 2 cannot reach complete confirmation until profiles are confirmed.
+`PROFILE-SHS-20X20X1_5` is **OWNER_CONFIRMED only for** fixing system `FIXING-SYSTEM-VERTICAL-STEEL-BRACKET` (Brat otel vertical). It remains in `not_for: acp_internal_frame`. ACP `accepted_profile_codes` stays `[]` → `PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED`.
 
 ---
 

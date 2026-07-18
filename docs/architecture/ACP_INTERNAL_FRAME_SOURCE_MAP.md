@@ -2,9 +2,12 @@
 
 | Field | Value |
 |-------|-------|
-| Status | Audit map (2026-07-17) |
+| Status | Audit map (2026-07-17) · updated 2026-07-18 decoupling note |
 | Related audit | `docs/audits/2026-07-17_acp_internal_frame_existing_contract_audit.md` |
 | Product path | `TPL-ACM-BOXED-MOUNTING-SUPPORT_v1` / Contur suport / Panou Alucobond casetat |
+| Related fixing | `docs/architecture/MOUNTING_FIXING_SYSTEM_CONTRACT.md` — **not** part of internal frame |
+
+**2026-07-18:** ACP panel configuration is independent of commercial `mounting_scope`. Wall fixing (`Brat otel vertical`) is a separate FinishSetup/PD path. `PROFILE-SHS-20X20X1_5` is for fixing only — ACP `accepted_profile_codes` stays empty (`PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED`).
 
 ## Authority order (truth)
 
