@@ -32,6 +32,6 @@ Clearance, protrusion, retention method, backing, LED/electrical details.
 
 Constructie confirmată (placă suport + insert 10 mm + cianoacrilat), recomandări CNC/laser și diferența față de routed backlit:
 
-→ `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §9  
+→ `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §10  
 
 Nu transforma aceste texte în defaults Aggregate fără GO.

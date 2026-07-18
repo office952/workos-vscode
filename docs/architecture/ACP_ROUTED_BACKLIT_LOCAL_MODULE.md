@@ -38,6 +38,6 @@ Projects identity, illumination intent, readiness, guarded process intents.
 
 Stack plexiglas 3 + Forex 10 + capac Forex 3, +30 mm bounding box, regimuri volum:
 
-→ `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §7–8  
+→ `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §9  
 
 Runtime V4 `inner_hole` poate deriva piese similare; modulul ACP rămâne gated până la registry optic.

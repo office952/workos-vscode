@@ -2,439 +2,421 @@
 
 | Câmp | Valoare |
 |------|---------|
-| Status | **CANONIC** — documentație de proces și ownership |
+| Status | **CANONIC** — proces, finish, fundal segmentat, electric, ownership |
 | Dată | 2026-07-19 |
-| GO docs | `GO_MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP_AUDIT` |
-| Baseline | `4c682c8` |
-| Mod | Docs-only; nu schimbă runtime |
+| GO | Audit consolidare completă (docs-only) |
+| Baseline audit | `849c776` |
+| Mod | Docs-only; **nu** schimbă runtime |
 
-**Rol:** un singur adevar de atelier / Product System pentru panouri casetate mixte.  
-**Nu înlocuiește** procesatorul grafic, CNC-ul sau atelierul.
+**Rol:** un singur adevăr pentru panouri casetate mixte, finisaje, fundaluri segmentate, litere, inserturi, șablon și electric.  
+**Nu înlocuiește** procesatorul grafic, CNC-ul, atelierul, electricianul sau montatorul.
 
 ---
 
 ## 0. Unde se citește ce
 
-| Subiect | Document / authority |
-|---------|----------------------|
+| Subiect | Authority |
+|---------|-----------|
 | Terminologie ACM/ACP/Bond | `ACP_ACM_DIBOND_TERMINOLOGY_MAP.md` |
-| Cadru interior (formulă + traverse) | `ACP_INTERNAL_FRAME_OWNER_RULES.md` + acest doc §5 |
-| Face treatments / module locale | `ACP_FACE_TREATMENT_AUTHORITY_CONTRACT.md`, module ACP_* |
-| Litere volumetrice (corp) | `LITERE_VOLUMETRICE_LUMINOASE_CANONICAL_PRODUCT_DOSSIER.md` |
-| LIGHT-ROUTED | `PARALLEL_LEGACY_COST_PATH` — nu SoT Intake V6 |
-| PD → Aggregate → Execution | `03_PRODUCT_DEFINITION_COMPILER.md`, `05_PRODUCT_AGGREGATE_FLOW.md`, `08_EXECUTION_PLAN_FLOW.md`, `10_EXECUTION_PLAN_TASK_GRAPH.md` |
+| Cadru interior (formulă) | `ACP_INTERNAL_FRAME_OWNER_RULES.md` + §6 |
+| Face treatments / module | `ACP_FACE_TREATMENT_*`, `ACP_*_LOCAL_MODULE.md` |
+| Corp litere / LED / Forex | `LITERE_VOLUMETRICE_LUMINOASE_CANONICAL_PRODUCT_DOSSIER.md` + graph |
+| Finish Oracal / print | `SHARED_VINYL_MATERIAL_CATALOG.md`, `CANONICAL_FINISH_ENUM_MAP_v1.md` |
+| LIGHT-ROUTED | `PARALLEL_LEGACY_COST_PATH` — nu SoT V6 |
+| PD → Aggregate → Execution | `03_…`, `05_…`, `08_…`, `10_…` |
 
 ---
 
-## 1. Descriere produs
+## 1. Scop produs
 
-Panou casetat din **ACM sau ACP** pe care pot coexista:
+Pot coexista pe același ansamblu:
 
-- carcasă pliată + cadru metalic interior;
-- zone decupate iluminate (plexiglas pe spate);
-- inserturi plexiglas ~10 mm în goluri;
-- litere/logo volumetrice aplicate pe față;
-- șablon de poziționare;
-- cablare, sursă, acces service.
+- panouri **ACM** și/sau **ACP** casetate;
+- cadru metalic; finisaj față / volum (Oracal 651 sau print+laminare);
+- fundal din **mai multe panouri**;
+- litere volumetrice aplicate; litere/forme decupate; insert plexiglas ~10 mm;
+- carcasă locală de iluminare; șablon; cablare; surse; 220V; montaj atelier + teren.
 
-Product Template **doar compune**. Adevărul rămâne pe componente și pe interfețe.
+Product Template **doar compune**.
 
 ---
 
-## 2. ACM vs ACP (terminologie)
+## 2. Terminologie ACM / ACP / Bond
 
 | Regulă | Detaliu |
 |--------|---------|
-| Familie material | ACM ≡ ACP ≡ Alucobond ≡ Dibond (alias-uri de magazin) |
+| Familie material | ACM ≡ ACP ≡ Alucobond ≡ Dibond (alias magazin) |
 | Cod live shell | `TPL-ACM-BOXED-MOUNTING-SUPPORT_v1` |
-| Label operator | „Panou Alucobond/ACP casetat” |
-| LIGHT-ROUTED | `TPL-ACP-LIGHT-ROUTED` = **legacy Cost**, nu composition V6 |
-| Capcană | `MAT-ACP-FATA-LITERE` = **plexi față litere**, nu panou compozit |
-| Bond | Conversational / alias; nu ID nou de template |
+| Label | „Panou Alucobond/ACP casetat” |
+| LIGHT-ROUTED | Legacy Cost — nu composition V6 |
+| Capcană | `MAT-ACP-FATA-LITERE` = **plexi față literă**, nu panou |
+| Bond | Conversational; nu ID template nou |
+| Reguli | Scrie **ACM**, **ACP**, sau **ACM/ACP** numai când e comun |
 
-În reguli tehnice scrie explicit: **ACM**, **ACP**, sau **ACM/ACP** numai când regula este comună.
-
----
-
-## 3. Ce vede clientul vs ce rămâne intern
-
-### Client
-
-Exemplu: `1000 × 1000 × 100 mm` =
-
-- lățime exterioară;
-- înălțime exterioară;
-- adâncime exterioară totală (volum).
-
-Clientul **nu** primește calculele interne (straturi, luft cadru, traverse, joc insert).
-
-### Intern (atelier / Product System)
-
-Dimensiuni CNC, listă debitare cadru, carcasă locală, jocuri, electrica, șablon — pe fișe interne / taskuri.
+Aliniere cerută (verificare, nu implementare aici): formular → PD → PS → materiale → pricing → taskuri → fișă atelier → client → Execution.
 
 ---
 
-## 4. Carcasă ACM/ACP — ordine CNC
+## 3. Ce vede clientul
 
-Ordine confirmată:
+`1000 × 1000 × 100 mm` = lățime × înălțime × **adâncime exterioară totală**.  
+Fără calcule interne (straturi, luft, traverse, jocuri).
 
-1. Frezare V pe **partea opusă** feței active (pregătește plierea).
-2. Decupaj grafic în **fața activă**.
-3. Debitare contur exterior.
+---
+
+## 4. Carcasă casetată — CNC
+
+1. Frezare V pe **partea opusă** feței active.  
+2. Decupaj grafic în fața activă.  
+3. Debitare contur exterior.  
 4. Pliere / formare.
 
-Note:
+Note: unghi freză ≠ unghi pliu automat; V mai permisiv posibil în practică (risc fisură față); doar CNC în Product System; unealta manuală **nu** intră în DAG.
 
-- Unghiul frezei **nu** definește automat unghiul final al pliului.
-- Doar CNC-ul este modelat pentru frezarea V.
-- Cadrul metalic stabilizează geometria finală.
-
-**Stare în repo (audit):** seed ACM are `cut → v_groove → fold`, fără regula „V pe fața opusă / decupaj înainte de contur”. Acest ordin este **OWNER_CONFIRMED în documentație**; materializarea în task_rules = gap.
+**Repo:** seed ACM `cut → v_groove → fold` — fără regula V-opus; gap task_rules.
 
 ---
 
-## 5. Fixarea panoului pe cadru
+## 5. Fixare pe cadru + finisaj față
 
-- Fixare pe contur.
-- Șuruburi autoforante cu cap înecat; capul la nivelul feței.
-- **Nu** inventa pas rigid sau dimensiune șurub fără GO.
+- Contur; autoforante cap înecat; fără pas/dimensiune inventate.
 
-### Finisaj față
-
-| Situație | Ordine |
-|----------|--------|
-| Față **fără** Oracal | Capetele se vopsesc la culoarea finală. |
-| Față **cu** Oracal 651 | 1) fixare pe cadru → 2) șuruburi îngropate → 3) colantare **după** fixare → 4) folia acoperă capetele → 5) **nu** se mai vopsesc șuruburile. |
-
-Catalog: Oracal 651 existent. Nu crea alt catalog.
-
-**Stare în repo:** secvența Oracal-după-șuruburi pe panou ACM/ACP era **MISSING** în docs anterioare; aici este canonică.
+| Față | Ordine |
+|------|--------|
+| Fără colant | Capete vopsite la culoare |
+| Cu colant | Fixare → șuruburi îngropate → **colant după** → folia acoperă → **nu** se vopsesc capetele |
 
 ---
 
-## 6. Cadru metalic interior
+## 6. Cadru metalic (atelier, nu CNC)
 
-### Ce se salvează (atelier — nu geometrie CNC)
+Salvat: dimensiune exterioară, material, profil/secțiune *(SKU DEFERRED)*, orientare, lungi/scurte, traverse, listă debitare.
 
-- dimensiune exterioară cadru;
-- material;
-- profil / secțiune *(cod profil: vezi gate)*;
-- orientare;
-- elemente lungi / scurte;
-- traverse;
-- listă de debitare.
+**Formulă cadru (existent):** `frame = panel − 2×grosime − 2 mm`. Exemplu: 2000×700×3 → 1992×692.
 
-### Formulă dimensiune cadru (OWNER_CONFIRMED existent)
+**Topologie debitare:** lungi = cotă completă; scurte = cotă − 2×lățime profil; traverse la fel.
 
-```text
-frame = panel_outer − 2 × grosime_panou − 2 mm (luft total)
-```
+Exemplu didactic profil 20×20, cadru 838×638: `2×838` + `2×598` + traverse 598.  
+**Nu** hardcoda 20×20×1,5 ca default runtime (profiluri DEFERRED).
 
-Exemplu documentat anterior: panou 2000×700×3 → cadru **1992×692**.
-
-### Topologie listă debitare (OWNER_CONFIRMED acest GO)
-
-- Elementele cele mai lungi rămân la cota completă a cadrului.
-- Elementele scurte intră între ele; din scurte se scade **lățimea profilului la ambele capete**.
-- Traversele: după același principiu (intră între elementele pe care le rigidizează).
-
-Exemplu didactic (profil 20×20, cadru 838×638):
-
-- 2 × 838 mm (lungi);
-- 2 × 598 mm (scurte: 638 − 2×20);
-- traverse între lungi: 598 mm.
-
-### Propunere traverse
-
-| Material | Spațiere propusă |
-|----------|------------------|
-| Oțel | ~1000 mm |
-| Aluminiu | ~750 mm |
-
-Sistemul propune; operatorul confirmă.
-
-### Gate profil
-
-`ACP_INTERNAL_FRAME_OWNER_RULES.md`: setul inițial de **coduri profil** pentru cadru interior ACP rămâne **DEFERRED**.  
-Exemplul 20×20 de mai sus explică **topologia debitării**, nu aprobă SKU-ul ca default runtime până la GO profiluri.
-
-Aggregate: cantități/listă debitare rămân **GUARDED** până există profil confirmat + consumer.
+Traverse propuse: oțel ~1000 mm; aluminiu ~750 mm; operator confirmă.
 
 ---
 
-## 7. Carcasă locală de iluminare (zonă decupată)
+## 7. Finisaj față ≠ finisaj volum
 
-### Construcție
+Zone distincte. Pe fiecare: culoare placă | Oracal 651 | print + laminare.
+
+Exemple valide: față Oracal + volum placă; față print+lam + volum Oracal; ambele la fel; ambele diferite.
+
+**Repo:** `face_finish_type` ≠ `return_finish_type` (EXISTS pe litere/intake). Pe shell ACM — documentat aici; binding runtime Finish Contract = gap.
+
+### Oracal 651
+
+Catalog existent: `MAT-ORACAL-651` / serie `ORACAL_651` / culori `651-xxx`. **Nu** crea alt catalog.
+
+### Print + laminare (exterior)
+
+1. Print → 2. Laminare → 3. Aplicare.  
+Ops existente pe artwork/față litere: `print_vinyl`, laminare, `face_vinyl_application_final`.
+
+---
+
+## 8. Lățime folie și strategii de colantare
+
+Lățimea utilă = din **catalog** (nu inventată).
+
+Oracal (existent): role nominale 1000/1260 mm → util ~960/1220.  
+Print+lam UI: 1050/1320/1500 (retrageri laterale) — distinct de nesting Oracal.
+
+### Ordine preferință
+
+1. **Față + primul pliu** dintr-o bucată (dacă latimea permite). Primul pliu = latura care redă volumul carcasei.  
+2. Față dintr-o bucată; **volum separat** (sus/jos/stânga/dreapta).  
+3. Față din mai multe bucăți; îmbinări vizibile; **suprapunere mică**; poziție discretă; **client informat**.
+
+### De salvat (Finish Contract)
+
+material · latime utilă · orientare · față+primul pliu da/nu · față o bucată da/nu · volum separat da/nu · nr bucăți · poziție îmbinări · suprapunere · schiță · client informat.
+
+### Mesaj client (calm)
+
+> Pentru această dimensiune, colantarea feței necesită mai multe bucăți de folie. Îmbinările vor avea o suprapunere discretă, necesară pentru stabilitate în timp, și vor fi poziționate cât mai puțin vizibil.
+
+---
+
+## 9. Carcasă locală de iluminare
 
 | Element | Material |
 |---------|----------|
-| Bază / fereastră | Plexiglas **3 mm** |
-| Pereți | Forex **10 mm** |
-| Capac demontabil | Forex **3 mm** |
+| Fereastră | Plexiglas 3 mm |
+| Pereți | Forex 10 mm |
+| Capac demontabil | Forex 3 mm |
 
-### Asamblare
+Asamblare: pereți lipiți; ramă lipită de plexi; capac pe șuruburi (demontabil); LED pe capac posibil.
 
-1. Pereții Forex se lipesc între ei.
-2. Rama Forex se lipește de plexiglas.
-3. Capacul **nu** se lipește — se prinde cu șuruburi, rămâne demontabil.
-4. LED-urile pot fi pe capac; capacul poate avea gravată poziția LED.
+Dimensiune: bbox personalizare + **30 mm / latură**; limită = pereți casetă + cadru + spațiu; contur poate fi asimetric.  
+Exemple: 400×400 → țintă 460×460; Forex 10: 2×cotă completă + 2×(cotă−20).
 
-### Dimensiune bază
+**Repo:** V4 `inner_hole` PARTIAL; modul routed gated.
 
-- Bounding box comun al personalizării.
-- Țintă: **+30 mm pe fiecare latură**.
-- Limite reale: pereții casetei ACM/ACP, profilul cadrului, spațiul liber.
-- Conturul poate fi asimetric.
+### Volum & iluminare
 
-Exemplu: grafică 400×400 → plexiglas țintă 460×460.
+Volum = adâncime exterioară. Marje (fără overlap):  
+90–100 → 5 · 80–&lt;90 → 4 · 70–&lt;80 → 3 · 50–&lt;70 → 2.
 
-### Forex 10 — topologie pereti (4 laturi)
+- Standard ≥60 mm: LED pe capac, iluminare spre plexi.  
+- Compact 30–60: bandă/perimetral, LED pe pereți — **altă** optică.  
+- &lt;30: nerecomandat, owner review.
 
-- 2 × cotă completă;
-- 2 × cotă minus 20 mm (când grosimea peretelui este 10 mm pe două capete).
-
-### Stare în repo
-
-| Sursă | Verdict |
-|-------|---------|
-| Intake V4 `inner_hole` package (plexi3 + Forex10 + Forex3) | **EXISTS** (analyzer helper) |
-| Modul ACP `ROUTED-BACKLIT` | **PARTIAL** — intent + gate-uri; fără BOM carcasă |
-| Documentație atelier unificată | Acest document |
+Electric shell: `SHELL_COMMON_WITH_ZONE_INTENTS`. Litere = traseu electric **propriu**.
 
 ---
 
-## 8. Volum (adâncime exterioară) și iluminare
+## 10. Plexiglas 10 mm (insert)
 
-Volum = adâncime exterioară totală a casetei.
+≠ routed (plexi pe spate). Insert = element în gol; 10 mm = variantă frecventă, nu unica.
 
-### Marje (intervale fără suprapunere)
+1. Placă suport pe spatele feței (transparent/opal — nu obligație globală).  
+2. Insert în decupaj.  
+3. Lipire cianoacrilat.
 
-| Volum (mm) | Marjă (mm) |
-|------------|------------|
-| ≥ 90 și ≤ 100 | 5 |
-| ≥ 80 și &lt; 90 | 4 |
-| ≥ 70 și &lt; 80 | 3 |
-| ≥ 50 și &lt; 70 | 2 |
-| ≥ 30 și &lt; 50 | (regim compact — vezi mai jos) |
-| &lt; 30 | Nerecomandat — owner review |
+CNC freză ≥3 mm (raze); laser pe insert; sistemul **nu** modifică grafica.
 
-### Regim standard
-
-- Minim recomandat **60 mm**.
-- Module LED pe capac.
-- Iluminare din spate spre plexiglas.
-
-### Regim compact (30–60 mm)
-
-- Bandă LED / iluminare perimetrală.
-- LED pe pereți laterali.
-- **Altă** configurație optică — nu doar carcasă micșorată.
-
-### Ownership electric
-
-Preferat: `SHELL_COMMON_WITH_ZONE_INTENTS`  
-(zonele declară intent; shell-ul compune LED/PSU/cablare/service — fără PSU duplicat pe zonă).
-
-Literele volumetrice iluminate își păstrează traseul electric **propriu** (nu se amestecă cu cavity-ul ACP).
+Recomandări procesator: raze · detalii · spații înguste · intrare ușoară · joc · fără goluri luminoase · CNC↔laser.
 
 ---
 
-## 9. Plexiglas 10 mm (insert în decupaj)
+## 11. Fundaluri segmentate (mai mari decât placa)
 
-### Diferență față de decupaj iluminat
+Produsul vizual = **un ansamblu**; fizic = mai multe panouri unite la montaj.
 
-| | Decupaj iluminat (routed) | Insert 10 mm |
-|--|---------------------------|--------------|
-| Rol | Gol + plexi pe **spate** | Element gros **în** gol |
-| Grosime tipică | Gate (ex. diffuser 3 mm pe legacy) | Variantă frecventă **10 mm** — nu unica admisă |
+Sistemul **nu** împarte automat. Poate propune confirmare:
 
-### Construcție confirmată
+> Am găsit mai multe fundaluri apropiate care par să formeze un singur ansamblu. Confirmă dacă este un fundal ACM/ACP realizat din mai multe panouri.
 
-1. Placă plexiglas lipită pe partea **opusă** feței active (susținere + transmisie lumină; transparentă sau opală — nu obligație globală).
-2. Elementul 10 mm intră în decupaj.
-3. Lipire de placa suport cu **cianoacrilat**.
+### După confirmare se salvează
 
-### CNC vs laser
+id ansamblu · nr panouri · ordine · poziție · dim. panou · dim. ansamblu · orientare · rost · continuitate grafică · schiță · elemente pe panou · elemente peste îmbinare · 220V · trasee · surse · dependențe montaj.
 
-- ACM/ACP: freză **minimum 3 mm** → colțuri interioare cu rază.
-- Plexiglas 10 mm: poate fi tăiat la **laser**.
-- Sistemul **nu** modifică automat grafica.
+Panourile **nu** devin produse independente dacă formează același fundal.
 
-### Recomandări scurte (procesator grafic confirmă)
+### Compoziție distribuită (normală)
 
-- Verifică razele lăsate de freză.
-- Verifică detaliile mici și spațiile înguste.
-- Verifică dacă piesele intră ușor.
-- Lasă joc pentru montaj și lipire.
-- Evită goluri luminoase.
-- Verifică potrivirea fișierului CNC cu fișierul laser.
+Litere pe panouri diferite = **OK**, nu panică.
 
-**Stare în repo:** modul insert EXISTĂ ca identity + gate-uri; backing + ciano + toleranțe = documentate aici, **nu** ca defaults inventate în Aggregate.
+> Grafica este distribuită pe mai multe panouri. Confirmă ordinea panourilor și continuitatea ansamblului.
 
----
+**Nu:** „Eroare: grafica traversează mai multe fundaluri.”
 
-## 10. Litere volumetrice (nu se copiază în shell)
+### Per element se salvează
 
-Adevărul corpului literei rămâne la `TPL-VOLUMETRIC-LETTERS_v2` / dossier litere.
+tip constructiv · panou principal · panou secundar · intersectează îmbinarea · regulă · strategie montaj · legătură electrică · dependențe.
 
-### Secvență corp (rezumat)
+Tipuri: literă volumetrică aplicată · aplicat simplu · literă/formă decupată · insert 10 mm.
 
-1. Cantul se lipește pe conturul feței (plexi 3 mm).
-2. Corpul rămâne separat.
-3. Spatele = Forex 10 mm; electrica pe Forex.
-4. Spatele se montează pe casetă; treceri, legături, test.
-5. Corpul se montează ulterior pe spate; fixare cu șuruburi vopsite.
+### Literă volumetrică **peste** îmbinare — EXECUTABIL
 
-### Montaj pe casetă (ordine)
+Montaj în **două etape**:
 
-1. Aplică șablonul.  
-2. Poziționează spatele Forex 10 mm.  
-3. Gaurește Forex + ACM/ACP pentru cabluri.  
-4. Trage cablurile în carcasă.  
-5. Legături + montaj sursă + verificare.  
-6. Montează corpul.  
-7. Fixare finală.
+1. Identifică panoul cu cea mai mare parte a spatelui Forex.  
+2. Fixează partea principală pe panoul principal.  
+3. Porțiunea peste îmbinare rămâne **temporar nesprijinită** până la alinierea panourilor.  
+4. Completează prinderea pe panoul secundar la montaj.
 
-Detalii corp / LED / finisaje: dossier litere — **nu** duplica aici.
+**Nu** spune „rămâne în aer”.  
+**Nu** blocker. **Nu** defect.
+
+> Această literă trece peste îmbinare. Fixează partea principală în atelier și completează prinderea după alinierea panourilor.
+
+### Decupaj / insert 10 mm peste îmbinare — BLOCKER
+
+Literă/formă **decupată** sau insert 10 mm care necesită gol continuu **nu** pot traversa îmbinarea.
+
+> O literă sau un decupaj trece peste îmbinarea dintre panouri. Mută îmbinarea sau modifică grafica.
+
+| Situație | Verdict |
+|----------|---------|
+| Compoziție pe mai multe panouri | Normal |
+| Literă aplicată peste îmbinare | Executabil, 2 etape |
+| Decupaj / insert 10 peste îmbinare | Imposibil — blocker |
+
+**Repo:** max 1 `SUPPORT_CONTOUR` — model ansamblu multi-panou **MISSING** (docs SoT aici).
 
 ---
 
-## 11. Șablonul de montaj
+## 12. Litere volumetrice — ordine reconciliată (din dossier + graph)
 
-### Ce este
+Adevărul corpului rămâne la `TPL-VOLUMETRIC-LETTERS_v2`.
 
-- Autocolant transparent, cu folie de transfer.
-- Litere / forme pline + ghidaje + schiță cu cote + fișier de tăiere.
+### Confirmat
 
-### Forme pline vs ghidaje
+- Cant pe plexi 3 mm → corp separat.  
+- Spate Forex 10 mm.  
+- **LED-urile se montează pe Forex înainte de prinderea spatelui pe fundal** (ordine owner T09→T13; workshop: LED înainte de închiderea corpului).  
+- Cablaj local pe Forex → traseu prin spate → `LOCAL_ELECTRICAL_READY`.  
+- Corp pe Forex cu șuruburi vopsite, **după** test aprindere (graph: TEST_LED_ON → ATTACH_BODY → TEST_UNIFORMITY).
 
-| Element | Comportament |
-|---------|--------------|
-| Forme pline | Rămân lipite pe ACM/ACP; acoperite de spatele Forex; **nu** se îndepărtează. |
-| Ghidaje liniare / crop-uri | Temporare; ajută poziționarea; se îndepărtează după aliniere. |
-
-### Alegerea ghidajelor
-
-- Ghidaje liniare: pot economisi material când grafica e departe de margini; cer măsurători.
-- Crop-uri: pot grăbi poziționarea; trebuie conectate geometric; pot consuma mult material.
-- Aproape de margini: diferența de consum e mică — procesatorul alege.
-- **Sistemul nu impune automat.**
-
-### Task (un singur ownership)
-
-Șablonul generează **un** task ownership-correct pe componenta **Litere** (`sablon_montaj` / INSTALLATION_TEMPLATE).
-
-**Interzis:** task șablon din ACM/ACP **plus** task șablon din litere.
-
-### Ce cere taskul
-
-- schiță șablon;
-- cote;
-- orientare;
-- tip ghidaje;
-- fișier tăiere;
-- confirmarea literelor / formelor pline.
-
-### Stare în repo (audit)
-
-| Aspect | Verdict |
-|--------|---------|
-| Mini-modul `sablon_montaj` pe litere | EXISTS |
-| Paper vs Forex CNC | EXISTS (cu drift memoriu paper vs default Forex) |
-| Vocabular pline / ghidaj / crop ca produs șablon | **MISSING** înainte — definit aici |
-| Task șablon pe ACM seed | Absent (bine) |
-| Risc sentinel comercial fără activare modul | Documentat în audit litere — de urmărit |
-
----
-
-## 12. Ownership (fermități)
-
-### Litere volumetrice
-
-Față, cant, spate, LED, cablaj corp, montaj corp–spate, **șablon**, reguli proprii de montaj.
-
-### ACM/ACP (shell)
-
-Față suport, carcasă, cadru, finisaj panou, spațiu interior, prindere pe cadru, acces cabluri / service.
-
-### Interfață ACM/ACP ↔ Litere
-
-Zonă montaj, poziționare, cote, relație cu șablonul, treceri cabluri, acces în carcasă, constrângeri structurale.  
-Cod tratament: `FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT` (`external_component`).
-
-### Carcasă locală iluminare / insert
-
-Plexi 3 + Forex 10 + capac 3; sau insert 10 mm + placă suport — pe **module locale** shell (`ownership_mode = acp_shell_local`).
-
-### Product Template
-
-Compune. Nu mută adevărul component-owned în mega-template.
-
----
-
-## 13. Task flow (sistemul existent)
+### Schemă atelier (cu suport / casetă)
 
 ```text
-Component Templates + Interface Contracts
+CUT_FOREX → LED pe Forex → cablaj local → ROUTE
+FABRICATE_PANEL/CADRU ∥ …
+ATTACH_BACKS pe casetă/bare
+  → (canal dacă bare) → CONNECT
+  → PSU (+ mains) → TEST_LED_ON
+  → ATTACH_BODY → TEST_UNIFORMITY → QC
+```
+
+Alucobond: fără canal cablu; PSU lângă `service_corner`.  
+Fără suport: PSU în colet; fără premount.
+
+### Atelier vs teren
+
+| Atelier | Teren / livrare |
+|---------|-----------------|
+| Debitare, LED pe Forex, cablaj local, premount spate, PSU pe ansamblu (dacă suport), teste, corp, pack | Livrare / montaj pe șantier; legături care depind de alinierea panourilor; re-test după montaj |
+
+### Drift documentat (nu ascuns)
+
+Graph permite ATTACH paralel cu LED până la canal; lista owner cere LED înainte de T13 — **preferăm ordinul owner + dossier §3.5** (LED pe Forex înainte de legături pe suport). Memoriu: un T17 vs două teste graph — ambele teste rămân în docs graph.
+
+---
+
+## 13. Șablon (un singur owner = Litere)
+
+- Material: autocolant transparent + folie transfer.  
+- Forme pline: rămân sub Forex; **nu** se îndepărtează.  
+- Ghidaje / crop: temporare; se scot după aliniere.  
+- Alegere ghidaj vs crop: procesatorul; sistemul **nu** impune.  
+- Task unic: `sablon_montaj` pe litere — **nu** și pe shell.
+
+Task cere: schiță · cote · orientare · tip ghidaj · fișier tăiere · confirmare forme pline.
+
+---
+
+## 14. Management 220V și cabluri
+
+Nu e suficient `alimentare 220V: da`.
+
+### Per panou
+
+- poziție 220V (colturi / centru / personalizat pe schiță);  
+- ieșire cablu; sursă/traf asociat; grup litere;  
+- traseu recomandat; direcție cabluri pregatite în atelier;  
+- rezervă cablu; legături între panouri;  
+- legături făcute în atelier vs rămase la montaj.
+
+Exemple mesaje:
+
+> Pregătește cablurile panoului 1 spre colțul dreapta sus.
+
+### Ansamblu
+
+Documentează: ce se pregătește în atelier · ce rămâne cu rezervă · unde e legătura finală · care panou deține sursa · care primește 220V · litere peste panouri · legături dependente de aliniere · test atelier · test după montaj.
+
+**Repo:** `service_corner` / `power_supply_service_corner` EXISTS pe shell; poziție 220V **per panou segmentat** = MISSING runtime — docs aici.  
+Litere: PSU pe ansamblu / colet; cablu alimentare default documentat în phase-2 answers (~5 m 2×1.5) — comercial, nu înlocuiește poziția pe panou.
+
+**Nu** duplica taskuri electrice: shell = context 220V + acces; litere = LED/cablaj local + PSU litere; interfață = treceri.
+
+---
+
+## 15. Ownership
+
+| Owner | Deține |
+|-------|--------|
+| **Shell ACM/ACP** | Panouri, carcasă, cadru, ordine panouri, dim., finisaj panou, prindere, continuitate ansamblu, acces interior, context 220V, service |
+| **Litere** | Față, cant, Forex, LED, cablaj local, corp, corp–spate, **șablon**, secvență proprie |
+| **Interfață** | Zonă montaj, panou principal/secundar, îmbinare, montaj 2 etape, treceri cablu, schiță, dependențe aliniere |
+| **Finish Contract** | Zonă, tip folie, cod, latime, orientare, față/primul pliu/volum, bucăți, îmbinări, mesaj client |
+| **Carcasă locală** | Plexi 3, Forex 10, capac 3, dim., iluminare, service |
+| **Product Template** | Doar compune |
+
+---
+
+## 16. Task flow
+
+```text
+Component + Interface + Finish Contracts
   → ProductDefinition
   → ProductAggregate (task_contract.task_rules)
   → frozen snapshot
   → ExecutionPlan
-  → taskuri operaționale existente
+  → taskuri existente
 ```
 
-Nu creăm: model task nou, scheduler, coadă, pagină, catalog paralel.
-
-Module inactive → **zero** materiale, procese, warnings, efecte CPP/task.
-
----
-
-## 14. Ce nu automatizăm
-
-- Procesare grafică / corectare rază / joc insert.
-- Unghi pliu din unghi freză.
-- Alegerea ghidaje vs crop.
-- Calcul structural certificat.
-- Cantități plexi/LED fără dimensiuni și registry optice.
-- Import reguli din `TPL-ACP-LIGHT-ROUTED`.
+Dependențe reale; fără catalog paralel. Inactive → zero output.  
+Ordinea completă litere: din dossier/graph (§12), nu inventată aici.
 
 ---
 
-## 15. Matrice audit — existent vs gap
+## 17. Mesaje atelier / client (limbaj)
 
-| Topic | În repo | În acest doc |
-|-------|---------|--------------|
-| Shell live ACM boxed | EXISTS | Confirmat |
-| LIGHT-ROUTED legacy | EXISTS (paralel) | Delimitat |
-| Face treatments composabile | EXISTS (identity) | Confirmat |
-| Module locale gated | EXISTS | Confirmat |
-| Cadru formulă + spacing | EXISTS | Confirmat + topologie debitare |
-| Profil cadru SKU | DEFERRED | Exemplu didactic 20×20 |
-| Ordine CNC V-opus/decupaj | Gap task_rules | OWNER_CONFIRMED docs |
-| Oracal după șuruburi | Gap | OWNER_CONFIRMED docs |
-| Carcasă locală stack | PARTIAL (inner_hole) | OWNER_CONFIRMED docs |
-| Regimuri volum iluminare | PARTIAL | OWNER_CONFIRMED docs |
-| Insert 10 + ciano + backing | PARTIAL gates | OWNER_CONFIRMED docs |
-| Șablon pline/ghidaj/crop | Gap vocabular | OWNER_CONFIRMED docs |
-| Un singur task șablon | Intent litere | Regulă fermă |
+Atelier: scurte, acțiune. Client: calm, transparent, fără dramatizare.
+
+Exemple bune: vezi §8, §11, §14.
+
+Evită: „configurație invalidă din cauza intersecției geometrice multi-panel”.
 
 ---
 
-## 16. Owner decisions rămase (implementare ulterioară)
+## 18. Exemple SVG (Desktop teste — nu în repo)
 
-1. Confirmare set profiluri cadru interior ACM/ACP (închide DEFERRED).  
-2. Materializare ordine CNC în `task_rules` ACM.  
-3. Registry RO optic/electric (închide gate-uri module).  
-4. Reconciliere șablon paper vs Forex default comercial.  
-5. DAG montaj litere pe panou + insert + routed (composition).  
-6. GO separat dacă LIGHT-ROUTED trebuie migrat (nu acum).
+Cale: `%USERPROFILE%\Desktop\fisiere-teste-svg\`
+
+| Fișier | Ce arată | Sistemul poate propune | Nu bloca |
+|--------|----------|------------------------|----------|
+| `litere-cu-fundal-acm-segmentat.svg` | 2×1000 mm ACM; litere pe câte un panou | Confirmare ansamblu segmentat | Dual-rect ca eroare |
+| `…-litera-peste-imbinare.svg` | Literă aplicată peste seamă | Ansamblu + montaj 2 etape | Reject intake |
+| `situatie-3.svg` | Peste îmbinare + overhang | Avertizări montaj/acoperire | Containment obligatoriu |
+
+Deducție: geometrie + confirmare operator. Nu SoT unic.
 
 ---
 
-## 17. Exemple scurte atelier
+## 19. Ce nu automatizăm
 
-**Client:** panou 1000×1000×80 mm → volum 80 → marjă 4 mm (intern).
+Procesare grafică · unghi pliu din freză · alegere ghidaj/crop · împărțire automată fundal · rotunjire insert · cantități fără registry · LIGHT-ROUTED ca SoT · unealtă manuală V.
 
-**Cadru:** după formulă din panou; listă: lungi complete, scurte −2×lățime profil.
+---
 
-**Zonă logo insert 10 mm + litere sus:** tratamente coexistente; litere = componentă separată; insert = modul local shell; un șablon = ownership litere.
+## 20. Matrice existent vs gap
+
+| Topic | Repo | Docs |
+|-------|------|------|
+| Shell ACM live | EXISTS | OK |
+| face≠return finish (litere) | EXISTS | OK |
+| Oracal 651 catalog | EXISTS | OK |
+| Print+lam ops | EXISTS (artwork) | OK |
+| Față+primul pliu strategie | MISSING | OWNER_CONFIRMED |
+| Ansamblu multi-panou | MISSING (1 SUPPORT) | OWNER_CONFIRMED |
+| Literă peste îmbinare | MISSING | EXECUTABIL |
+| Decupaj peste îmbinare | MISSING | BLOCKER |
+| 220V per panou | PARTIAL (service_corner) | OWNER_CONFIRMED |
+| LED pe Forex înainte de attach | Graph soft / owner list | OWNER_CONFIRMED docs |
+| Șablon unic litere | EXISTS intent | Ferm |
+
+---
+
+## 21. Owner decisions rămase (implementare)
+
+1. Profiluri cadru SKU (închide DEFERRED).  
+2. Model runtime ansamblu segmentat (înlocuiește limita 1 SUPPORT).  
+3. Finish Contract pe shell (față/volum/pliu/îmbinări).  
+4. Materializare CNC + Oracal-după-fixare în task_rules.  
+5. 220V position enum per panou.  
+6. Reconciliere graph ATTACH vs LED (dep tare).  
+7. Șablon paper vs Forex default.  
+8. GO LIGHT-ROUTED migrate — separat.
+
+---
+
+## 22. Legacy / reference / archive
+
+| Item | Status |
+|------|--------|
+| `TPL-ACP-LIGHT-ROUTED` | PARALLEL_LEGACY_COST_PATH |
+| `TPL-BOND-CASETAT` | Dead / blocked |
+| Intake-v3 shared-support pending | Reference — workshop 2026-07-17 wins |
+| Diffuser `splitDiffuserSegments` | Nu = fundal ACM segmentat |

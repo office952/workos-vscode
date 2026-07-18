@@ -59,4 +59,5 @@ See canonical §16 (profiles, CNC task_rules, optical RO, sablon paper/Forex, co
 
 ## Next step
 
-Single build: implement **workshop process gaps** into contracts/task_rules only after owner picks one slice (recommend: CNC order + Oracal-after-fixing on ACM shell) — not Round 2 tooling.
+**Superseded for scope:** complete consolidation continued in  
+`2026-07-19_mixed_acm_acp_complete_process_truth.md` (finish, segmented, 220V, atelier/montaj).

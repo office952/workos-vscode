@@ -24,7 +24,7 @@
 | **luminous panel / sign cabinet** | Product family (legacy path) | `TPL-ACP-LIGHT-ROUTED`, family panouri ACP iluminate | Backlit routed ACP + plexi + LED + relief | CostEngine / QuoteWizard hierarchical template | Panou ACP iluminat | Parallel to Intake V6 ACM boxed — not SVG-bindable composition |
 | **Contur suport** | Geometry role (owner) | `SUPPORT_CONTOUR` | Outer closed contour for support panel | PS SVG binding contract | `support_panel`, `ALUCOBOND_CASED_PANEL` | Three vocabularies |
 | **face_treatment** | Runtime identity (V6) | `acp_face_treatment_registry_v1` + FinishSetup bindings | Zone treatments on live ACM shell | Code authority | Not `face_mode` XOR | Composable — see mixed-face docs |
-| **Proces atelier mixt** | Documentație canonică | `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` | CNC, cadru, carcasă locală, insert 10, litere, șablon, ownership | Docs SoT (2026-07-19) | — | Nu înlocuiește LIGHT-ROUTED Cost |
+| **Proces atelier mixt** | Documentație canonică | `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` | CNC, cadru, finish față/volum, fundal segmentat, insert 10, litere, șablon, 220V, ownership | Docs SoT (2026-07-19 complete) | — | Nu înlocuiește LIGHT-ROUTED Cost |
 
 ---
 
