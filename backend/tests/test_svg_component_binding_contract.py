@@ -42,7 +42,12 @@ def test_letters_product_exposes_svg_bindable_components() -> None:
     assert "candidate_only" in logo["guards"]
 
     acm = by_code[ACM_BOXED_SUPPORT]
-    assert acm["accepted_geometry_roles"] == [GEOMETRY_ROLE_SUPPORT_CONTOUR]
+    assert GEOMETRY_ROLE_SUPPORT_CONTOUR in acm["accepted_geometry_roles"]
+    assert "CUTOUT_TEXT" in acm["accepted_geometry_roles"]
+    assert "ACRYLIC_INSERT" in acm["accepted_geometry_roles"]
+    assert "boxed_acp_shell" in acm["capabilities"]
+    assert "local_face_treatments" in acm["capabilities"]
+    assert "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT" in acm["accepted_face_treatment_codes"]
     assert acm["selection_mode"] == SELECTION_MODE_CLOSED_CONTOUR
     assert acm["cardinality"] == CARDINALITY_MAX_ONE
     assert acm["required"] is False
@@ -50,6 +55,7 @@ def test_letters_product_exposes_svg_bindable_components() -> None:
     assert acm["active_by_default"] is False
     assert acm["owner_label"] == "Panou Alucobond casetat"
     assert acm["svg_binding"]["geometry_requirements"]["closed_required"] is True
+    assert acm["svg_binding"]["geometry_requirements"]["local_face_treatments"] is True
 
     metal = by_code[METAL_PREMOUNT]
     assert metal["svg_binding"]["enabled"] is False
@@ -90,3 +96,17 @@ def test_acm_template_self_binding() -> None:
     assert len(comps) == 1
     assert comps[0]["selection_mode"] == SELECTION_MODE_CLOSED_CONTOUR
     assert comps[0]["cardinality"] == CARDINALITY_MAX_ONE
+    assert "local_face_treatments" in comps[0]["capabilities"]
+
+
+def test_catalog_exposes_face_treatments_and_not_light_routed_authority() -> None:
+    summary = get_svg_binding_catalog_summary(LETTERS_PRODUCT)
+    codes = {t["code"] for t in summary["face_treatments"]}
+    assert "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT" in codes
+    assert "FACE-TREATMENT-ACRYLIC-INSERT" in codes
+    assert summary["legacy_light_routed"]["intake_v6_composition_authority"] is False
+    assert summary["acp_shell_face_treatment_authority"]["global_face_mode"] is None
+    role_codes = {r["code"] for r in summary["geometry_roles"]}
+    assert "CUTOUT_TEXT" in role_codes
+    assert "ACRYLIC_INSERT" in role_codes
+    assert "ROUTED_FACE" not in role_codes

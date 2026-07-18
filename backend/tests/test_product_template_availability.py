@@ -313,7 +313,11 @@ async def test_letters_availability_exposes_svg_bindable_components(db_session):
     assert "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" in by_code
     acm = by_code["TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"]
     assert acm.owner_label == "Panou Alucobond casetat"
-    assert acm.accepted_geometry_roles == ["SUPPORT_CONTOUR"]
+    assert "SUPPORT_CONTOUR" in acm.accepted_geometry_roles
+    assert "CUTOUT_TEXT" in acm.accepted_geometry_roles
+    assert "ACRYLIC_INSERT" in acm.accepted_geometry_roles
+    assert "local_face_treatments" in acm.capabilities
+    assert "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT" in acm.accepted_face_treatment_codes
     assert acm.selection_mode == "CLOSED_CONTOUR"
     assert acm.cardinality == "MAX_ONE"
     assert acm.required is False

@@ -30,6 +30,7 @@ class SvgBindableComponent(BaseModel):
     process_component_code: str | None = None
     owner_label: str
     accepted_geometry_roles: list[str] = Field(default_factory=list)
+    accepted_face_treatment_codes: list[str] = Field(default_factory=list)
     selection_mode: str
     cardinality: str
     required: bool = False

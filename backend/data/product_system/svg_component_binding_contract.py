@@ -19,6 +19,10 @@ GEOMETRY_ROLE_LOGO_VECTOR_SET = "LOGO_VECTOR_SET"
 GEOMETRY_ROLE_SUPPORT_CONTOUR = "SUPPORT_CONTOUR"
 GEOMETRY_ROLE_DECORATIVE_VECTOR = "DECORATIVE_VECTOR"
 GEOMETRY_ROLE_IGNORE = "IGNORE"
+# Face-zone geometry (role = geometry intent; construction = face_treatment — not ROUTED_FACE)
+GEOMETRY_ROLE_CUTOUT_TEXT = "CUTOUT_TEXT"
+GEOMETRY_ROLE_CUTOUT_LOGO = "CUTOUT_LOGO"
+GEOMETRY_ROLE_ACRYLIC_INSERT = "ACRYLIC_INSERT"
 
 GEOMETRY_ROLE_OWNER_LABELS: dict[str, str] = {
     GEOMETRY_ROLE_LETTER_VECTOR_SET: "Vector litere",
@@ -26,7 +30,34 @@ GEOMETRY_ROLE_OWNER_LABELS: dict[str, str] = {
     GEOMETRY_ROLE_SUPPORT_CONTOUR: "Contur suport",
     GEOMETRY_ROLE_DECORATIVE_VECTOR: "Element decorativ",
     GEOMETRY_ROLE_IGNORE: "Ignoră",
+    GEOMETRY_ROLE_CUTOUT_TEXT: "Text decupat",
+    GEOMETRY_ROLE_CUTOUT_LOGO: "Logo decupat",
+    GEOMETRY_ROLE_ACRYLIC_INSERT: "Insert plexiglas",
 }
+
+# Face treatments hosted on the ACM boxed shell (codes from acp_face_treatment_registry_v1)
+ACM_SHELL_FACE_TREATMENT_CODES: list[str] = [
+    "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+    "FACE-TREATMENT-ACRYLIC-INSERT",
+    "FACE-TREATMENT-PLAIN-DECORATIVE",
+]
+
+ACM_SHELL_GEOMETRY_ROLES: list[str] = [
+    GEOMETRY_ROLE_SUPPORT_CONTOUR,
+    GEOMETRY_ROLE_CUTOUT_TEXT,
+    GEOMETRY_ROLE_CUTOUT_LOGO,
+    GEOMETRY_ROLE_ACRYLIC_INSERT,
+    GEOMETRY_ROLE_DECORATIVE_VECTOR,
+]
+
+ACM_SHELL_CAPABILITIES: list[str] = [
+    "boxed_acp_shell",
+    "local_face_treatments",
+    "panel_geometry",
+    "casing_configuration",
+    "service_corner",
+    "internal_frame",
+]
 
 SELECTION_MODE_LAYER_OR_GROUP = "LAYER_OR_GROUP"
 SELECTION_MODE_CLOSED_CONTOUR = "CLOSED_CONTOUR"
@@ -69,12 +100,14 @@ def _binding(
     product_definition_targets: list[str] | None = None,
     svg_binding_enabled: bool = True,
     capabilities: list[str] | None = None,
+    accepted_face_treatment_codes: list[str] | None = None,
 ) -> dict[str, Any]:
     return {
         "component_template_code": component_template_code,
         "process_component_code": process_component_code,
         "owner_label": owner_label,
         "accepted_geometry_roles": list(accepted_geometry_roles),
+        "accepted_face_treatment_codes": list(accepted_face_treatment_codes or []),
         "selection_mode": selection_mode,
         "cardinality": cardinality,
         "required": required,
@@ -89,6 +122,7 @@ def _binding(
             "geometry_requirements": geometry_requirements or {},
             "owner_label": owner_label,
             "technical_role": technical_role,
+            "accepted_face_treatment_codes": list(accepted_face_treatment_codes or []),
         },
         "technical_role": technical_role,
         "guards": list(guards or []),
@@ -147,8 +181,10 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
             component_template_code=ACM_BOXED_SUPPORT,
             process_component_code=PROCESS_ALUCOBOND,
             owner_label="Panou Alucobond casetat",
-            accepted_geometry_roles=[GEOMETRY_ROLE_SUPPORT_CONTOUR],
+            accepted_geometry_roles=list(ACM_SHELL_GEOMETRY_ROLES),
+            accepted_face_treatment_codes=list(ACM_SHELL_FACE_TREATMENT_CODES),
             selection_mode=SELECTION_MODE_CLOSED_CONTOUR,
+            # SUPPORT_CONTOUR remains MAX_ONE; cutout/insert/decorative are MULTI via same component.
             cardinality=CARDINALITY_MAX_ONE,
             required=False,
             available=True,
@@ -160,6 +196,9 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "casing_configuration": True,
                 "service_corner": True,
                 "internal_frame": True,
+                "local_face_treatments": True,
+                "support_contour_cardinality": CARDINALITY_MAX_ONE,
+                "face_treatment_cardinality": CARDINALITY_MULTI,
             },
             guards=[
                 "optional_addon",
@@ -167,22 +206,20 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "inactive_until_operator_activates",
                 "no_cpp_from_binding",
                 "no_tasking_from_binding",
+                "no_global_face_mode_xor",
             ],
             product_definition_targets=[
                 "finish_setup.mounting_solution",
                 "finish_setup.svg_support_selection",
+                "finish_setup.svg_component_bindings.face_treatment",
                 "canonical_values.support_type=alucobond_cased",
                 "canonical_values.svg_support_element_id",
                 "canonical_values.panel_geometry",
                 "canonical_values.casing_profile",
+                "canonical_values.face_treatment_instances",
                 "power_supply_service_corner",
             ],
-            capabilities=[
-                "panel_geometry",
-                "casing_configuration",
-                "service_corner",
-                "internal_frame",
-            ],
+            capabilities=list(ACM_SHELL_CAPABILITIES),
         ),
         _binding(
             component_template_code=METAL_PREMOUNT,
@@ -214,7 +251,8 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
             component_template_code=ACM_BOXED_SUPPORT,
             process_component_code=PROCESS_ALUCOBOND,
             owner_label="Panou Alucobond casetat",
-            accepted_geometry_roles=[GEOMETRY_ROLE_SUPPORT_CONTOUR],
+            accepted_geometry_roles=list(ACM_SHELL_GEOMETRY_ROLES),
+            accepted_face_treatment_codes=list(ACM_SHELL_FACE_TREATMENT_CODES),
             selection_mode=SELECTION_MODE_CLOSED_CONTOUR,
             cardinality=CARDINALITY_MAX_ONE,
             required=False,
@@ -227,21 +265,22 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "casing_configuration": True,
                 "service_corner": True,
                 "internal_frame": True,
+                "local_face_treatments": True,
+                "support_contour_cardinality": CARDINALITY_MAX_ONE,
+                "face_treatment_cardinality": CARDINALITY_MULTI,
             },
             guards=[
                 "standalone_or_linked_child",
                 "inactive_until_operator_activates",
+                "no_global_face_mode_xor",
             ],
             product_definition_targets=[
                 "finish_setup.mounting_solution",
                 "finish_setup.svg_support_selection",
+                "finish_setup.svg_component_bindings.face_treatment",
+                "canonical_values.face_treatment_instances",
             ],
-            capabilities=[
-                "panel_geometry",
-                "casing_configuration",
-                "service_corner",
-                "internal_frame",
-            ],
+            capabilities=list(ACM_SHELL_CAPABILITIES),
         ),
     ],
     LOGO_PRODUCT: [
@@ -290,3 +329,17 @@ def list_geometry_roles() -> list[dict[str, str]]:
         {"code": code, "owner_label": label}
         for code, label in GEOMETRY_ROLE_OWNER_LABELS.items()
     ]
+
+
+def acp_shell_face_treatment_authority() -> dict[str, Any]:
+    """Projection for Product System / Intake consumers — shell hosts local treatments."""
+    return {
+        "live_shell_template": ACM_BOXED_SUPPORT,
+        "capabilities": list(ACM_SHELL_CAPABILITIES),
+        "accepted_geometry_roles": list(ACM_SHELL_GEOMETRY_ROLES),
+        "accepted_face_treatment_codes": list(ACM_SHELL_FACE_TREATMENT_CODES),
+        "support_contour_cardinality": CARDINALITY_MAX_ONE,
+        "face_treatment_cardinality": CARDINALITY_MULTI,
+        "global_face_mode": None,
+        "authority": "product_system_svg_component_binding_contract_v1",
+    }
