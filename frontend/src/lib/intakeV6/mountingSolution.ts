@@ -137,6 +137,21 @@ export function normalizeAcmMountingConfiguration(
   merged.fold_sides = ["all", "top_bottom", "left_right"].includes(foldSides) ? foldSides : "all";
   const angle = Number(merged.v_groove_angle_deg ?? 135);
   merged.v_groove_angle_deg = Number.isFinite(angle) ? angle : 135;
+  if ("internal_frame_enabled" in merged) {
+    merged.internal_frame_enabled = Boolean(merged.internal_frame_enabled);
+  }
+  // Preserve nested internal_frame; do not invent profile codes client-side.
+  if (merged.internal_frame && typeof merged.internal_frame === "object") {
+    merged.internal_frame = { ...(merged.internal_frame as Record<string, unknown>) };
+    merged.internal_frame_enabled = Boolean(
+      (merged.internal_frame as { enabled?: unknown }).enabled ?? merged.internal_frame_enabled,
+    );
+  } else if (merged.internal_frame_enabled) {
+    merged.internal_frame = { enabled: true };
+  } else {
+    merged.internal_frame = { enabled: false };
+    merged.internal_frame_enabled = false;
+  }
   const derived = deriveAcmCasettedQuoteInput(merged);
   Object.assign(merged, derived.payload);
   return merged;

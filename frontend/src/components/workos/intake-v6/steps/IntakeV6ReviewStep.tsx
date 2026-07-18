@@ -94,6 +94,14 @@ import {
   type MountingSolutionSelectorValue,
 } from "@/lib/intakeV6/mountingSolution";
 import {
+  MAT_STRUCT_ALUMINIUM,
+  MAT_STRUCT_STEEL,
+  TOTAL_FIT_ALLOWANCE_MM,
+  proposeInternalFrame,
+  type CrossbarOrientation,
+  type InternalFrameConfig,
+} from "@/lib/intakeV6/acpInternalFrame";
+import {
   extractQuoteGeometryFromAnalyzer,
   readQuoteGeometryFromPayload,
   resolveQuoteGeometryForWorkspace,
@@ -2599,7 +2607,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         "rear_lip_mm",
                         "fold_sides",
                         "v_groove_angle_deg",
-                        "frame_clearance_mm",
+                        // frame_clearance_mm removed — not fit-allowance authority (fixed 2 mm total)
                       ].includes(field.key),
                     ).map((field) => (
                       <label key={field.key} className={REVIEW_FIELD_BLOCK_CLASS}>
@@ -2673,6 +2681,180 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         )}
                       </label>
                     ))}
+                    {Boolean(acmMountingConfiguration.internal_frame_enabled) ||
+                    Boolean(
+                      (acmMountingConfiguration.internal_frame as InternalFrameConfig | undefined)
+                        ?.enabled,
+                    ) ? (
+                      <div
+                        className="sm:col-span-3 rounded border border-amber-500/30 bg-amber-500/5 px-2.5 py-2 space-y-2"
+                        data-testid="intake-v6-acm-internal-frame-section"
+                      >
+                        <p className="text-[11px] font-semibold text-amber-100">
+                          Cadru interior panou ACP
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          Marja fixă de montaj: {TOTAL_FIT_ALLOWANCE_MM} mm total (nu este clearance
+                          editabil).
+                        </p>
+                        {(() => {
+                          const existing = (acmMountingConfiguration.internal_frame ||
+                            {}) as Partial<InternalFrameConfig>;
+                          const proposed = proposeInternalFrame({
+                            enabled: true,
+                            materialCode: existing.material_code ?? null,
+                            profileCode: existing.profile_code ?? null,
+                            panelWidthMm: Number(acmMountingConfiguration.panel_width_mm),
+                            panelHeightMm: Number(acmMountingConfiguration.panel_height_mm),
+                            panelThicknessMm: Number(acmMountingConfiguration.acm_thickness_mm ?? 3),
+                            orientation: (existing.crossbar_orientation as CrossbarOrientation) || null,
+                            confirmedCrossbarCount: existing.confirmed_crossbar_count ?? null,
+                            overrideReason: existing.override_reason ?? null,
+                          });
+                          const patchFrame = (next: InternalFrameConfig) =>
+                            updateForm(
+                              buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
+                                ...acmMountingConfiguration,
+                                internal_frame_enabled: true,
+                                internal_frame: next,
+                              }) as Partial<IntakeV6FinishSetup>,
+                              { domains: ["mounting"] },
+                            );
+                          return (
+                            <>
+                              <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                                <span className={REVIEW_FIELD_LABEL_CLASS}>Material</span>
+                                <select
+                                  className={REVIEW_SELECT_CLASS}
+                                  disabled={!mountingPrepActive}
+                                  value={proposed.material_code ?? ""}
+                                  onChange={(event) =>
+                                    patchFrame(
+                                      proposeInternalFrame({
+                                        enabled: true,
+                                        materialCode: event.target.value || null,
+                                        profileCode: null,
+                                        panelWidthMm: Number(acmMountingConfiguration.panel_width_mm),
+                                        panelHeightMm: Number(acmMountingConfiguration.panel_height_mm),
+                                        panelThicknessMm: Number(
+                                          acmMountingConfiguration.acm_thickness_mm ?? 3,
+                                        ),
+                                        orientation: proposed.crossbar_orientation,
+                                        confirmedCrossbarCount: proposed.confirmed_crossbar_count,
+                                        overrideReason: proposed.override_reason,
+                                      }),
+                                    )
+                                  }
+                                  data-testid="intake-v6-acm-internal-frame-material"
+                                >
+                                  <option value="">Selectează…</option>
+                                  <option value={MAT_STRUCT_STEEL}>Oțel</option>
+                                  <option value={MAT_STRUCT_ALUMINIUM}>Aluminiu</option>
+                                </select>
+                              </label>
+                              <div
+                                className="rounded border border-rose-500/30 bg-rose-950/20 px-2 py-1.5 text-[10px] text-rose-100"
+                                data-testid="intake-v6-acm-internal-frame-profile-gate"
+                              >
+                                Profil: catalog gol — PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED. Nu există
+                                selector free-text; confirmă secțiunile reale înainte de configurare
+                                completă.
+                              </div>
+                              <p
+                                className="text-[11px] text-slate-200"
+                                data-testid="intake-v6-acm-internal-frame-dimensions"
+                              >
+                                Dimensiune cadru calculată:{" "}
+                                {proposed.frame_outer_width_mm?.toFixed(1) ?? "—"} ×{" "}
+                                {proposed.frame_outer_height_mm?.toFixed(1) ?? "—"} mm
+                              </p>
+                              <p className="text-[10px] text-slate-400">
+                                Spacing max traverse:{" "}
+                                {proposed.max_crossbar_spacing_mm != null
+                                  ? `${proposed.max_crossbar_spacing_mm} mm`
+                                  : "— (selectează material)"}
+                              </p>
+                              <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                                <span className={REVIEW_FIELD_LABEL_CLASS}>Orientare traverse</span>
+                                <select
+                                  className={REVIEW_SELECT_CLASS}
+                                  disabled={!mountingPrepActive || !proposed.material_code}
+                                  value={proposed.crossbar_orientation ?? ""}
+                                  onChange={(event) => {
+                                    const orientation = (event.target.value ||
+                                      null) as CrossbarOrientation | null;
+                                    const next = proposeInternalFrame({
+                                      enabled: true,
+                                      materialCode: proposed.material_code,
+                                      profileCode: proposed.profile_code,
+                                      panelWidthMm: Number(acmMountingConfiguration.panel_width_mm),
+                                      panelHeightMm: Number(acmMountingConfiguration.panel_height_mm),
+                                      panelThicknessMm: Number(
+                                        acmMountingConfiguration.acm_thickness_mm ?? 3,
+                                      ),
+                                      orientation,
+                                      confirmedCrossbarCount: null,
+                                      overrideReason: null,
+                                    });
+                                    patchFrame(next);
+                                  }}
+                                  data-testid="intake-v6-acm-internal-frame-orientation"
+                                >
+                                  <option value="">Selectează…</option>
+                                  <option value="VERTICAL">Vertical</option>
+                                  <option value="HORIZONTAL">Orizontal</option>
+                                </select>
+                              </label>
+                              {proposed.suggested_crossbar_count != null ? (
+                                <div className="space-y-1 text-[11px] text-slate-200">
+                                  <p data-testid="intake-v6-acm-internal-frame-crossbar-suggestion">
+                                    Propunere traverse: {proposed.suggested_crossbar_count} (confirmă)
+                                  </p>
+                                  <button
+                                    type="button"
+                                    className="rounded border border-emerald-600/40 bg-emerald-950/30 px-2 py-1 text-[10px] text-emerald-100 disabled:opacity-40"
+                                    disabled={!mountingPrepActive}
+                                    data-testid="intake-v6-acm-internal-frame-confirm-crossbars"
+                                    onClick={() =>
+                                      patchFrame(
+                                        proposeInternalFrame({
+                                          enabled: true,
+                                          materialCode: proposed.material_code,
+                                          profileCode: proposed.profile_code,
+                                          panelWidthMm: Number(
+                                            acmMountingConfiguration.panel_width_mm,
+                                          ),
+                                          panelHeightMm: Number(
+                                            acmMountingConfiguration.panel_height_mm,
+                                          ),
+                                          panelThicknessMm: Number(
+                                            acmMountingConfiguration.acm_thickness_mm ?? 3,
+                                          ),
+                                          orientation: proposed.crossbar_orientation,
+                                          confirmedCrossbarCount: proposed.suggested_crossbar_count,
+                                          overrideReason: null,
+                                        }),
+                                      )
+                                    }
+                                  >
+                                    Confirmă propunerea
+                                  </button>
+                                </div>
+                              ) : null}
+                              <p
+                                className="text-[10px] text-amber-200"
+                                data-testid="intake-v6-acm-internal-frame-status"
+                              >
+                                Status: {proposed.confirmation_status}
+                                {proposed.blockers?.length
+                                  ? ` · ${proposed.blockers.join(", ")}`
+                                  : ""}
+                              </p>
+                            </>
+                          );
+                        })()}
+                      </div>
+                    ) : null}
                     <p
                       className="sm:col-span-3 text-[10px] text-cyan-200/80"
                       data-testid="intake-v6-mounting-solution-template-identity"

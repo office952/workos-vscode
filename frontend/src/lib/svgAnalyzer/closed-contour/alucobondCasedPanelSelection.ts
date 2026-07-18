@@ -199,7 +199,13 @@ export function buildAcmMountingSolutionFromSelection(
       panel_area_mm2: selection.panel_geometry.area_mm2,
       panel_perimeter_mm: selection.panel_geometry.perimeter_mm,
       internal_frame_enabled: selection.internal_frame_enabled,
-      frame_clearance_mm: selection.internal_frame_enabled ? 5 : 0,
+      // Legacy frame_clearance_mm is not fit-allowance authority (OWNER: fixed 2 mm total).
+      frame_clearance_mm: 0,
+      internal_frame: {
+        enabled: selection.internal_frame_enabled,
+        total_fit_allowance_mm: 2,
+        confirmation_status: selection.internal_frame_enabled ? "INCOMPLETE" : "NOT_APPLICABLE",
+      },
       acm_thickness_mm: 3,
       fold_sides: "all",
       v_groove_angle_deg: 135,
