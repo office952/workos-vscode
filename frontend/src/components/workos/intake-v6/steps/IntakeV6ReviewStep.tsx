@@ -78,7 +78,9 @@ import {
 import {
   buildMountingSolutionPatch,
   hydrateMountingSolutionFromLegacy,
+  isAcpProductComponentActive,
   isMountingSolutionCompositionActive,
+  isMountingSolutionSelectorDisabled,
   legacyMountingBarProfile,
   legacyMountingSystemLabel,
   ACM_BOXED_MOUNTING_TEMPLATE_CODE,
@@ -93,6 +95,12 @@ import {
   resolveEffectiveMountingSolution,
   type MountingSolutionSelectorValue,
 } from "@/lib/intakeV6/mountingSolution";
+import {
+  emptyMountingFixingSystem,
+  readMountingFixingSystem,
+  selectVerticalSteelBracket,
+  VERTICAL_STEEL_BRACKET,
+} from "@/lib/intakeV6/mountingFixingSystem";
 import {
   MAT_STRUCT_ALUMINIUM,
   MAT_STRUCT_STEEL,
@@ -1678,6 +1686,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const legacyMountingProfileDisplay = legacyMountingBarProfile(form as Record<string, unknown>);
   const mountingScope = normalizeMountingScope(form.mounting_scope, form as Record<string, unknown>);
   const mountingPrepActive = isMountingPreparationActive(mountingScope);
+  const acpProductActive = isAcpProductComponentActive(form as Record<string, unknown>);
+  const mountingFixingSystem = readMountingFixingSystem(form as Record<string, unknown>);
+  const mountingSolutionSelectorLocked = isMountingSolutionSelectorDisabled(
+    mountingScope,
+    selectedMountingSolutionValue,
+  );
   const volumModuleApplicable = isVolumAluminumModuleApplicable(
     modularTemplateCode,
     form as unknown as Record<string, unknown>,
@@ -2322,13 +2336,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </label>
 
               <div
-                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${mountingPrepActive ? "" : "opacity-60"}`}
+                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${
+                  mountingPrepActive || acpProductActive ? "" : "opacity-60"
+                }`}
                 data-testid="intake-v6-mounting-prep-section"
               >
-                <p className="mb-2 text-[11px] font-semibold text-slate-200">Pregătire</p>
+                <p className="mb-2 text-[11px] font-semibold text-slate-200">Pregătire și montaj</p>
                 {!mountingPrepActive ? (
                   <p className="mb-2 text-[10px] text-slate-400" data-testid="intake-v6-mounting-prep-readonly-note">
-                    Pregătirea este inactivă — valorile persistate rămân salvate.
+                    Serviciile comerciale de pregătire/montaj sunt inactive — configurarea panoului ACP
+                    rămâne disponibilă separat.
                   </p>
                 ) : null}
             <div className="grid gap-2 sm:grid-cols-2">
@@ -2436,9 +2453,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               >
                 <div className="mb-2 flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[11px] font-semibold text-cyan-300">Soluție de pregătire</p>
+                    <p className="text-[11px] font-semibold text-cyan-300">
+                      {acpProductActive
+                        ? "Configurație Panou ACP casetat"
+                        : "Structură suport / pregătire"}
+                    </p>
                     <p className="text-[10px] text-slate-400">
-                      Referință Product System — fără adevăr tehnic duplicat în Intake.
+                      {acpProductActive
+                        ? "Componentă de produs — independentă de scope-ul comercial de montaj."
+                        : "Metal Premount rămâne legat de pregătirea comercială."}
                     </p>
                   </div>
                   {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
@@ -2453,13 +2476,21 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </div>
 
                 <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Soluție</span>
+                  <span className={REVIEW_FIELD_LABEL_CLASS}>
+                    {acpProductActive ? "Panou ACP casetat" : "Soluție"}
+                  </span>
                   <select
                     className={REVIEW_SELECT_CLASS}
                     value={selectedMountingSolutionValue}
-                    disabled={!mountingPrepActive}
+                    disabled={mountingSolutionSelectorLocked}
                     onChange={(event) => {
                       const value = event.target.value as MountingSolutionSelectorValue;
+                      if (
+                        !mountingPrepActive &&
+                        value === METAL_PREMOUNT_TEMPLATE_CODE
+                      ) {
+                        return;
+                      }
                       const currentConfig =
                         readMountingSolution(form as Record<string, unknown>)?.configuration ??
                         hydrateMountingSolutionFromLegacy(form as Record<string, unknown>)?.configuration;
@@ -2481,7 +2512,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     data-testid="intake-v6-mounting-solution-selector"
                   >
                     {MOUNTING_SOLUTION_OPTIONS.map((option) => (
-                      <option key={option.value || "none"} value={option.value}>
+                      <option
+                        key={option.value || "none"}
+                        value={option.value}
+                        disabled={
+                          !mountingPrepActive && option.value === METAL_PREMOUNT_TEMPLATE_CODE
+                        }
+                      >
                         {option.label}
                       </option>
                     ))}
@@ -2562,12 +2599,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 ) : null}
 
                 {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
-                  <div className="mt-3 grid gap-2 sm:grid-cols-3">
+                  <div
+                    className="mt-3 grid gap-2 sm:grid-cols-3"
+                    data-testid="intake-v6-acp-product-config-section"
+                  >
                     <div
                       className="sm:col-span-3 rounded border border-cyan-500/25 bg-cyan-500/5 px-2.5 py-2 text-[11px] text-slate-300"
                       data-testid="intake-v6-mounting-svg-dimension-source"
                     >
-                      <p className="font-semibold text-slate-100">Panou Alucobond casetat · dimensiuni din Pasul 1</p>
+                      <p className="font-semibold text-slate-100">Panou ACP casetat · dimensiuni din Pasul 1</p>
                       <p className="mt-0.5">
                         Dimensiuni panou:{" "}
                         <span className="text-cyan-100">
@@ -2619,7 +2659,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                           <select
                             className={REVIEW_SELECT_CLASS}
                             value={String(acmMountingConfiguration[field.key] ?? field.placeholder)}
-                            disabled={!mountingPrepActive}
+                            disabled={!acpProductActive}
                             onChange={(event) =>
                               updateForm(
                                 buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
@@ -2641,7 +2681,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                           <select
                             className={REVIEW_SELECT_CLASS}
                             value={String(acmMountingConfiguration[field.key] ?? field.placeholder)}
-                            disabled={!mountingPrepActive}
+                            disabled={!acpProductActive}
                             onChange={(event) =>
                               updateForm(
                                 buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
@@ -2666,7 +2706,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                             step={field.key.includes("_mm") ? 1 : 0.1}
                             className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
                             value={Number(acmMountingConfiguration[field.key] ?? field.placeholder)}
-                            disabled={!mountingPrepActive}
+                            disabled={!acpProductActive}
                             onChange={(event) =>
                               updateForm(
                                 buildMountingSolutionPatch(ACM_BOXED_MOUNTING_TEMPLATE_CODE, {
@@ -2726,7 +2766,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                                 <span className={REVIEW_FIELD_LABEL_CLASS}>Material</span>
                                 <select
                                   className={REVIEW_SELECT_CLASS}
-                                  disabled={!mountingPrepActive}
+                                  disabled={!acpProductActive}
                                   value={proposed.material_code ?? ""}
                                   onChange={(event) =>
                                     patchFrame(
@@ -2778,7 +2818,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                                 <span className={REVIEW_FIELD_LABEL_CLASS}>Orientare traverse</span>
                                 <select
                                   className={REVIEW_SELECT_CLASS}
-                                  disabled={!mountingPrepActive || !proposed.material_code}
+                                  disabled={!acpProductActive || !proposed.material_code}
                                   value={proposed.crossbar_orientation ?? ""}
                                   onChange={(event) => {
                                     const orientation = (event.target.value ||
@@ -2813,7 +2853,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                                   <button
                                     type="button"
                                     className="rounded border border-emerald-600/40 bg-emerald-950/30 px-2 py-1 text-[10px] text-emerald-100 disabled:opacity-40"
-                                    disabled={!mountingPrepActive}
+                                    disabled={!acpProductActive}
                                     data-testid="intake-v6-acm-internal-frame-confirm-crossbars"
                                     onClick={() =>
                                       patchFrame(
@@ -2864,6 +2904,73 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </div>
                 ) : null}
 
+                {acpProductActive ? (
+                  <div
+                    className="mt-3 rounded border border-violet-500/30 bg-violet-950/20 px-3 py-3 space-y-2"
+                    data-testid="intake-v6-fixing-system-section"
+                  >
+                    <p className="text-[11px] font-semibold text-violet-100">Sistem de prindere</p>
+                    <p className="text-[10px] text-slate-400">
+                      Sistem tehnic de fixare pe perete — separat de cadrul interior ACP și de serviciul
+                      comercial de montaj.
+                    </p>
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Tip sistem</span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={mountingFixingSystem.type_code ?? ""}
+                        onChange={(event) => {
+                          const value = event.target.value;
+                          updateForm(
+                            {
+                              mounting_fixing_system:
+                                value === VERTICAL_STEEL_BRACKET
+                                  ? selectVerticalSteelBracket()
+                                  : emptyMountingFixingSystem(),
+                            } as Partial<IntakeV6FinishSetup>,
+                            { domains: ["mounting"] },
+                          );
+                        }}
+                        data-testid="intake-v6-fixing-system-type"
+                      >
+                        <option value="">— neconfigurat —</option>
+                        <option value={VERTICAL_STEEL_BRACKET}>Brat otel vertical</option>
+                      </select>
+                    </label>
+                    {mountingFixingSystem.type_code === VERTICAL_STEEL_BRACKET ? (
+                      <div
+                        className="grid gap-2 sm:grid-cols-2 text-[11px] text-slate-200"
+                        data-testid="intake-v6-fixing-vertical-steel-details"
+                      >
+                        <p data-testid="intake-v6-fixing-main-profile">
+                          <span className="text-slate-400">Profil principal: </span>
+                          Bara otel 20×20×1.5 mm
+                        </p>
+                        <p data-testid="intake-v6-fixing-top-angle">
+                          <span className="text-slate-400">Cornier superior: </span>
+                          Cornier otel debitat la lucrare
+                        </p>
+                        <p data-testid="intake-v6-fixing-bottom-bar">
+                          <span className="text-slate-400">Bara inferioară: </span>
+                          Bara orizontală debitată la lucrare
+                        </p>
+                        <p data-testid="intake-v6-fixing-manual-dims">
+                          <span className="text-slate-400">Dimensiuni cornier și bară: </span>
+                          Se stabilesc de operator pentru fiecare lucrare
+                        </p>
+                        <p className="sm:col-span-2" data-testid="intake-v6-fixing-fastener">
+                          <span className="text-slate-400">Fixare inferioară: </span>
+                          Autoforante cap hexagonal 4.5×60 mm
+                        </p>
+                        <p className="sm:col-span-2 text-[10px] text-amber-100/90">
+                          Status dimensiuni: MANUAL_CONFIRMATION_REQUIRED — fără cotă fixă sau
+                          formulă automată.
+                        </p>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
                   <div className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>
@@ -2891,6 +2998,39 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     </div>
                   ) : null}
                 </div>
+
+                {acpProductActive ? (
+                  <div
+                    className="mt-3 grid gap-2 sm:grid-cols-2"
+                    data-testid="intake-v6-acp-service-corner-fields"
+                  >
+                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                      <span className={REVIEW_FIELD_LABEL_CLASS}>Colt service transformator</span>
+                      <select
+                        className={REVIEW_SELECT_CLASS}
+                        value={form.power_supply_service_corner ?? ""}
+                        onChange={(event) =>
+                          updateForm(
+                            {
+                              power_supply_service_corner: normalizePowerSupplyServiceCorner(
+                                event.target.value || null,
+                              ),
+                            },
+                            { domains: ["mounting"] },
+                          )
+                        }
+                        data-testid="intake-v6-power-supply-service-corner"
+                      >
+                        <option value="">— selectează —</option>
+                        <option value="TOP_LEFT">Stânga sus</option>
+                        <option value="TOP_RIGHT">Dreapta sus</option>
+                        <option value="BOTTOM_LEFT">Stânga jos</option>
+                        <option value="BOTTOM_RIGHT">Dreapta jos</option>
+                        <option value="MANUAL_CONFIRMED">Confirmat manual</option>
+                      </select>
+                    </label>
+                  </div>
+                ) : null}
 
                 {(selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
                   selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE) &&
@@ -2932,45 +3072,17 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         ))}
                       </select>
                       <p className="mt-1 text-[10px] text-slate-500">
-                        Pas 2.5 m · 2.5–25 · proces + cantitate live materials (backend)
+                        Pas 2.5 m · 2.5–25 · cablare pregătită (serviciu comercial)
                       </p>
                     </label>
-                    {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
-                      <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                        <span className={REVIEW_FIELD_LABEL_CLASS}>
-                          Colt service transformator
-                        </span>
-                        <select
-                          className={REVIEW_SELECT_CLASS}
-                          value={form.power_supply_service_corner ?? ""}
-                          onChange={(event) =>
-                            updateForm(
-                              {
-                                power_supply_service_corner: normalizePowerSupplyServiceCorner(
-                                  event.target.value || null,
-                                ),
-                              },
-                              { domains: ["mounting"] },
-                            )
-                          }
-                          data-testid="intake-v6-power-supply-service-corner"
-                        >
-                          <option value="">— selectează —</option>
-                          <option value="TOP_LEFT">Stânga sus</option>
-                          <option value="TOP_RIGHT">Dreapta sus</option>
-                          <option value="BOTTOM_LEFT">Stânga jos</option>
-                          <option value="BOTTOM_RIGHT">Dreapta jos</option>
-                          <option value="MANUAL_CONFIRMED">Confirmat manual</option>
-                        </select>
-                      </label>
-                    ) : (
+                    {selectedMountingSolutionValue !== ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
                       <p
                         className="text-[10px] text-slate-500 self-end pb-2"
                         data-testid="intake-v6-service-corner-inactive-note"
                       >
-                        Colt service: relevant doar pentru panou Alucobond casetat.
+                        Colt service: relevant doar pentru panou ACP casetat.
                       </p>
-                    )}
+                    ) : null}
                   </div>
                 ) : null}
 

@@ -256,6 +256,8 @@ class IntakeV4FinishSetup(BaseModel):
     svg_component_bindings: list[dict[str, Any]] = Field(default_factory=list)
     # Typed Alucobond/support selection (synced from SUPPORT_CONTOUR binding; must not be dropped).
     svg_support_selection: dict[str, Any] | None = None
+    # Technical wall fixing system (Brat otel vertical, …) — independent of commercial mounting_scope.
+    mounting_fixing_system: dict[str, Any] | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):

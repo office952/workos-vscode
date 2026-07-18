@@ -376,6 +376,7 @@ def _apply_finish_setup_updates(setup: IntakeV4FinishSetup, updates: dict[str, A
             "finish_target",
             "svg_support_selection",
             "svg_component_bindings",
+            "mounting_fixing_system",
         }:
             filtered[key] = value
     return setup.model_copy(update=filtered)
@@ -435,6 +436,12 @@ def normalize_intake_v4_finish_setup(setup: IntakeV4FinishSetup) -> IntakeV4Fini
 
     updates.update(hydrate_mounting_scope_fields(setup.model_dump(mode="json")))
     updates.update(hydrate_mounting_solution_fields(setup.model_dump(mode="json")))
+    from services.mounting_fixing_system_service import normalize_mounting_fixing_system
+
+    if setup.mounting_fixing_system is not None:
+        updates["mounting_fixing_system"] = normalize_mounting_fixing_system(
+            setup.mounting_fixing_system
+        )
 
     if groups:
         updates["face_finish_type"] = _dominant_token(

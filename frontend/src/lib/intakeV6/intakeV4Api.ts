@@ -214,6 +214,8 @@ export interface IntakeV4FinishSetup {
     template_code: string | null;
     configuration?: Record<string, unknown>;
   } | null;
+  /** Technical wall fixing system — independent of commercial mounting_scope. */
+  mounting_fixing_system?: Record<string, unknown> | null;
   /** Operator-confirmed SVG closed-contour support selection (Alucobond panel etc.). */
   svg_support_selection?: Record<string, unknown> | null;
   /** Unified Product System component bindings (letters / logo / support). */
