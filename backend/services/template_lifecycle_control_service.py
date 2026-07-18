@@ -528,6 +528,13 @@ class TemplateLifecycleControlService:
         structural_ro = _repo_file_exists(
             "backend", "data", "product_system", "structural_resource_options_v1.py"
         )
+        fixing_contract = _repo_file_exists(
+            "backend", "data", "product_system", "mounting_fixing_system_v1.py"
+        )
+        acp_decoupled = _file_contains(
+            "backend/services/mounting_solution_service.py",
+            "is_acp_product_component_active",
+        )
         if code == "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" or has_support:
             if not structural_ro:
                 step2_blockers.append(
@@ -544,9 +551,26 @@ class TemplateLifecycleControlService:
                 step2_warnings.append(
                     _issue(
                         "PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED",
-                        "ACP internal frame materials confirmed; profile catalog empty until owner confirms sections.",
+                        "ACP internal frame materials confirmed; accepted_profile_codes empty until owner confirms ACP sections (fixing PROFILE-SHS-20X20X1_5 is separate).",
                         severity="warning",
-                        evidence=["accepted_profile_codes=[]"],
+                        evidence=["accepted_profile_codes=[]", "not_for=acp_internal_frame"],
+                    )
+                )
+            if not fixing_contract:
+                step2_warnings.append(
+                    _issue(
+                        "MOUNTING_FIXING_SYSTEM_CONTRACT_MISSING",
+                        "Vertical steel fixing bracket contract not present.",
+                        severity="warning",
+                        evidence=["mounting_fixing_system_v1.py"],
+                    )
+                )
+            if not acp_decoupled:
+                step2_blockers.append(
+                    _issue(
+                        "ACP_STILL_MOUNTING_SCOPE_DEPENDENT",
+                        "ACP product component must remain active independent of commercial mounting_scope.",
+                        evidence=["is_acp_product_component_active"],
                     )
                 )
         step2_status: LifecycleStatus
@@ -568,6 +592,8 @@ class TemplateLifecycleControlService:
                     f"mounting_hydrate={mounting_hydrate}",
                     f"support_bindable={has_support}",
                     f"structural_ro={structural_ro}",
+                    f"fixing_contract={fixing_contract}",
+                    f"acp_decoupled={acp_decoupled}",
                 ],
                 blockers=step2_blockers,
                 warnings=step2_warnings,
@@ -575,6 +601,7 @@ class TemplateLifecycleControlService:
                     "frontend/src/lib/intakeV6/mountingSolution.ts",
                     "frontend/src/components/workos/intake-v6/steps/IntakeV6ReviewStep.tsx",
                     "backend/data/product_system/structural_resource_options_v1.py",
+                    "backend/data/product_system/mounting_fixing_system_v1.py",
                 ],
             )
         )

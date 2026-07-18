@@ -355,6 +355,7 @@ def _build_canonical_values(
                 values["service_corner"] = selection.get("service_corner")
             values["internal_frame_enabled"] = bool(selection.get("internal_frame_enabled"))
             values["support_type"] = "alucobond_cased"
+            values["acp_panel_active"] = True
             # Nested typed frame from mounting_solution (Shared RO) wins over bare boolean.
             mounting = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
             if isinstance(mounting, dict):
@@ -416,6 +417,48 @@ def _build_canonical_values(
                 "contour_id": selection.get("contour_id"),
                 "geometry_hash": selection.get("geometry_hash"),
             }
+
+    # Commercial mounting scope + technical fixing system (separate authorities).
+    from services.mounting_scope_service import normalize_mounting_scope
+    from services.mounting_fixing_system_service import (
+        build_fixing_aggregate_projection,
+        normalize_mounting_fixing_system,
+    )
+    from services.mounting_solution_service import is_acp_product_component_active
+
+    commercial_scope = normalize_mounting_scope(
+        finish_for_pd.get("mounting_scope") or finish.get("mounting_scope"),
+        setup=finish_for_pd if isinstance(finish_for_pd, dict) else finish,
+    )
+    values["commercial_mounting_scope"] = commercial_scope
+    acp_active = is_acp_product_component_active(
+        finish_for_pd if isinstance(finish_for_pd, dict) else finish
+    )
+    if acp_active:
+        values["acp_panel_active"] = True
+        values["product_components"] = {
+            "acp_panel": {
+                "active": True,
+                "internal_frame": values.get("internal_frame"),
+                "internal_frame_enabled": values.get("internal_frame_enabled"),
+            }
+        }
+    fixing_for_config: dict[str, Any] | None = None
+    fixing_raw = finish_for_pd.get("mounting_fixing_system")
+    if fixing_raw is None:
+        fixing_raw = finish.get("mounting_fixing_system")
+    if fixing_raw is not None:
+        fixing = normalize_mounting_fixing_system(fixing_raw)
+        if fixing.get("type_code"):
+            values["mounting_fixing_system"] = fixing
+            fixing_for_config = fixing
+            projection = build_fixing_aggregate_projection(fixing)
+            if projection:
+                values["mounting_fixing_aggregate_projection"] = projection
+    values["mounting_configuration"] = {
+        "commercial_mounting_scope": commercial_scope,
+        "fixing_system": fixing_for_config,
+    }
 
     return values
 
