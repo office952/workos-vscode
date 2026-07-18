@@ -257,3 +257,216 @@ def test_incompatible_role_treatment_rejected() -> None:
     bad["face_treatment_code"] = FACE_TREATMENT_ACRYLIC_INSERT
     blockers = validate_bindings_for_new_selection([bad])
     assert any("incompatible with geometry_role" in b for b in blockers)
+
+
+# --- HTTP FinishSetup round-trip (auth_client) ---
+
+import json
+
+import pytest
+from sqlalchemy import delete
+
+from models.intake_v6_workspace import IntakeV6WorkspaceRecord
+
+WS_FACE_ID = "acp-face-treatment-foundation-ws"
+WS_FACE_CODE = "IV6-ACP-FACE-FT"
+SVG_HASH = "c" * 64
+
+
+def _complete_roles_payload() -> dict:
+    return {
+        "product_binding": {
+            "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+            "template_label": "Litere volumetrice",
+            "product_family": "litere_volumetrice",
+        },
+        "svg_source": {
+            "file_name": "LITERE-ACP-MIXED-FACE.svg",
+            "file_size_bytes": 1200,
+            "file_hash": SVG_HASH,
+            "upload_status": "analyzed",
+        },
+        "svg_analysis_json": {
+            "schemaVersion": "1.10.0",
+            "layers": [
+                {"id": "layer_letters", "name": "litere", "perimeterMl": 2.0, "filledAreaSqm": 0.1},
+                {"id": "layer_cutout", "name": "decupat", "perimeterMl": 1.0, "filledAreaSqm": 0.05},
+                {"id": "layer_insert", "name": "insert", "perimeterMl": 0.5, "filledAreaSqm": 0.02},
+            ],
+            "parts": {"count": 3, "nestableCount": 3},
+            "geometry": {"perimeterMl": 3.5},
+            "closedContourCandidates": {"candidate_count": 1, "unit_ambiguity": False},
+        },
+        "quote_geometry": {
+            "letter_count": 2,
+            "letter_perimeter_m": 3.0,
+            "face_area_m2": 0.15,
+            "confirmed": True,
+        },
+        "layer_role_setup": {
+            "confirmation_status": "complete",
+            "layers": [
+                {
+                    "layer_key": "layer_letters",
+                    "layer_id": "layer_letters",
+                    "layer_name": "litere",
+                    "auto_role": "face",
+                    "auto_confidence": "high",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                },
+                {
+                    "layer_key": "layer_cutout",
+                    "layer_id": "layer_cutout",
+                    "layer_name": "decupat",
+                    "auto_role": "face",
+                    "auto_confidence": "medium",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                },
+                {
+                    "layer_key": "layer_insert",
+                    "layer_id": "layer_insert",
+                    "layer_name": "insert",
+                    "auto_role": "face",
+                    "auto_confidence": "medium",
+                    "confirmed_role": "face",
+                    "confirmation_state": "confirmed",
+                },
+            ],
+            "warnings": [],
+        },
+    }
+
+
+def _mixed_face_finish_body() -> dict:
+    return {
+        "confirmed": False,
+        "illuminated": True,
+        "svg_component_bindings": [
+            {
+                **_support_binding(),
+                "selected_geometry": {
+                    "layer_ids": [],
+                    "group_ids": [],
+                    "element_ids": ["cc_shell"],
+                    "geometry_hashes": ["h_shell"],
+                    "source_svg_hash": SVG_HASH,
+                },
+            },
+            {
+                **_letters_binding(),
+                "selected_geometry": {
+                    "layer_ids": ["layer_letters"],
+                    "group_ids": [],
+                    "element_ids": [],
+                    "geometry_hashes": [],
+                    "source_svg_hash": SVG_HASH,
+                },
+            },
+            {
+                **_cutout_binding(),
+                "selected_geometry": {
+                    "layer_ids": ["layer_cutout"],
+                    "group_ids": [],
+                    "element_ids": ["el_cutout"],
+                    "geometry_hashes": ["h_cut"],
+                    "source_svg_hash": SVG_HASH,
+                },
+            },
+            {
+                **_insert_binding(),
+                "selected_geometry": {
+                    "layer_ids": ["layer_insert"],
+                    "group_ids": [],
+                    "element_ids": ["el_insert"],
+                    "geometry_hashes": ["h_ins"],
+                    "source_svg_hash": SVG_HASH,
+                },
+            },
+        ],
+        "mounting_solution": {
+            "kind": "product_system_template",
+            "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            "configuration": {
+                "panel_width_mm": 2000.0,
+                "panel_height_mm": 700.0,
+                "dimension_source": "svg_support_selection",
+            },
+        },
+    }
+
+
+@pytest.fixture
+def face_treatment_workspace(db_fixture):
+    from tests.test_product_aggregate_volumetric_v2 import _seed_volumetric_v2_fixture
+
+    async def _seed():
+        async with db_fixture.session_maker() as session:
+            await _seed_volumetric_v2_fixture(session)
+            await session.execute(
+                delete(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.id == WS_FACE_ID)
+            )
+            session.add(
+                IntakeV6WorkspaceRecord(
+                    id=WS_FACE_ID,
+                    workspace_code=WS_FACE_CODE,
+                    title="ACP face treatment foundation",
+                    template_code="TPL-VOLUMETRIC-LETTERS_v2",
+                    status="draft",
+                    payload_json=json.dumps(_complete_roles_payload()),
+                    readiness_status="draft",
+                    created_by_user_id="test-user-id",
+                    updated_by_user_id="test-user-id",
+                )
+            )
+            await session.commit()
+
+    db_fixture.run(_seed())
+    return WS_FACE_ID
+
+
+def test_http_mixed_face_finish_setup_save_and_refresh(auth_client, face_treatment_workspace) -> None:
+    """Runtime foundation: save mixed-face bindings; GET preserves identities + readiness."""
+    put = auth_client.put(
+        f"/api/v1/intake-v6/workspaces/{face_treatment_workspace}/finish-setup",
+        json=_mixed_face_finish_body(),
+    )
+    assert put.status_code == 200, put.text
+    finish = (put.json().get("payload") or {}).get("finish_setup") or {}
+    bindings = finish.get("svg_component_bindings") or []
+    by_role = {b["geometry_role"]: b for b in bindings if isinstance(b, dict)}
+    assert "SUPPORT_CONTOUR" in by_role
+    assert "LETTER_VECTOR_SET" in by_role
+    assert "CUTOUT_TEXT" in by_role
+    assert "ACRYLIC_INSERT" in by_role
+    assert by_role["CUTOUT_TEXT"]["face_treatment_code"] == FACE_TREATMENT_ROUTED_BACKLIT
+    assert by_role["ACRYLIC_INSERT"]["face_treatment_code"] == FACE_TREATMENT_ACRYLIC_INSERT
+    assert by_role["CUTOUT_TEXT"]["local_zone_id"].startswith("zone_")
+    zone_cut = by_role["CUTOUT_TEXT"]["local_zone_id"]
+    zone_ins = by_role["ACRYLIC_INSERT"]["local_zone_id"]
+
+    get = auth_client.get(f"/api/v1/intake-v6/workspaces/{face_treatment_workspace}")
+    assert get.status_code == 200, get.text
+    finish2 = (get.json().get("payload") or {}).get("finish_setup") or {}
+    bindings2 = {b["geometry_role"]: b for b in (finish2.get("svg_component_bindings") or [])}
+    assert bindings2["CUTOUT_TEXT"]["local_zone_id"] == zone_cut
+    assert bindings2["ACRYLIC_INSERT"]["local_zone_id"] == zone_ins
+    assert bindings2["CUTOUT_TEXT"]["face_treatment_code"] == FACE_TREATMENT_ROUTED_BACKLIT
+
+    from services.svg_component_binding_persistence import (
+        build_face_treatment_readiness_summary,
+        build_svg_component_instances,
+    )
+
+    instances = build_svg_component_instances(finish2)
+    shell = next(i for i in instances if i.get("geometry_role") == "SUPPORT_CONTOUR")
+    ft_codes = {f["face_treatment_code"] for f in shell.get("face_treatment_instances") or []}
+    assert FACE_TREATMENT_ROUTED_BACKLIT in ft_codes
+    assert FACE_TREATMENT_ACRYLIC_INSERT in ft_codes
+    readiness = build_face_treatment_readiness_summary(finish2)
+    assert any(
+        w.get("code") == "FACE_TREATMENT_LOCAL_MODULE_REQUIRED" for w in readiness.get("warnings") or []
+    )
+    # no global XOR — all four roles present after refresh
+    assert len(bindings2) >= 4
