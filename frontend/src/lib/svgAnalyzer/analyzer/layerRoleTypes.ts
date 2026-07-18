@@ -16,6 +16,10 @@ export type LayerAutoRole =
   | 'reference'
   | 'ignore'
   | 'unknown'
+  /** ACP shell-local geometry roles (FinishSetup face treatments) — not volumetric letters. */
+  | 'cutout_text'
+  | 'cutout_logo'
+  | 'acrylic_insert'
 
 export type LayerPaintKind = 'solid' | 'policromie' | 'mixed' | 'none'
 
@@ -85,6 +89,9 @@ export const LAYER_ROLE_OPTIONS: ReadonlyArray<{ value: LayerAutoRole; label: st
   { value: 'logo', label: 'Logo / emblemă' },
   { value: 'drill', label: 'Drill / montaj' },
   { value: 'reference', label: 'Reference / ghidaj' },
+  { value: 'cutout_text', label: 'Text decupat (ACP)' },
+  { value: 'cutout_logo', label: 'Logo decupat (ACP)' },
+  { value: 'acrylic_insert', label: 'Insert plexiglas (ACP)' },
   { value: 'ignore', label: 'Ignore — fără producție' },
   { value: 'unknown', label: 'Unknown — de confirmat' },
 ]
@@ -101,5 +108,8 @@ export const PRODUCTION_LAYER_ROLES: ReadonlySet<LayerAutoRole> = new Set([
   'printed_artwork',
   'logo',
   'drill',
+  'cutout_text',
+  'cutout_logo',
+  'acrylic_insert',
   'unknown',
 ])

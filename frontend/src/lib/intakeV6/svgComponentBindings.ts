@@ -44,6 +44,16 @@ export interface SvgBindingProvenance {
   face_treatment_registry_version?: string;
 }
 
+export interface SvgLocalModuleConfiguration {
+  schema?: string;
+  module_code?: string;
+  module_instance_id?: string;
+  interface_instance_id?: string;
+  status?: string;
+  readiness?: { overall?: string; gates?: Array<{ path: string; status: string }> };
+  [key: string]: unknown;
+}
+
 export interface SvgComponentBinding {
   schema: typeof SVG_COMPONENT_BINDINGS_SCHEMA;
   binding_id: string;
@@ -59,6 +69,7 @@ export interface SvgComponentBinding {
   face_treatment_code?: FaceTreatmentCode | string | null;
   confirmation_status?: string;
   local_configuration_status?: string;
+  local_module_configuration?: SvgLocalModuleConfiguration | null;
   face_treatment_contract_version?: string;
   provenance?: string | SvgBindingProvenance;
   svg_support_element_id?: string | null;
@@ -66,6 +77,18 @@ export interface SvgComponentBinding {
   unit_ambiguity?: boolean;
   confirmed_at?: string | null;
 }
+
+export const FACE_TREATMENT_APPLIED = "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT" as const;
+export const FACE_TREATMENT_ROUTED = "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT" as const;
+export const FACE_TREATMENT_INSERT = "FACE-TREATMENT-ACRYLIC-INSERT" as const;
+export const FACE_TREATMENT_PLAIN = "FACE-TREATMENT-PLAIN-DECORATIVE" as const;
+
+const SHELL_LOCAL_ROLES: SvgGeometryRole[] = [
+  "CUTOUT_TEXT",
+  "CUTOUT_LOGO",
+  "ACRYLIC_INSERT",
+  "DECORATIVE_VECTOR",
+];
 
 export const LEGACY_INTAKE_SVG_ROLE_ADAPTER = "LEGACY_INTAKE_SVG_ROLE_ADAPTER" as const;
 
@@ -96,6 +119,7 @@ export function upsertBinding(
 ): SvgComponentBinding[] {
   // Identity is binding_id / role — not component_template_code alone.
   // Multiple ACM face-treatment bindings share TPL-ACM-BOXED… and must coexist.
+  // Shell-local roles are one binding per geometry_role in Step 1 sync (stable zone via local_zone_id).
   const without = bindings.filter((b) => {
     if (next.binding_id && b.binding_id === next.binding_id) return false;
     if (next.geometry_role === "SUPPORT_CONTOUR" && b.geometry_role === "SUPPORT_CONTOUR") {
@@ -105,6 +129,9 @@ export function upsertBinding(
       (next.geometry_role === "LETTER_VECTOR_SET" || next.geometry_role === "LOGO_VECTOR_SET") &&
       b.geometry_role === next.geometry_role
     ) {
+      return false;
+    }
+    if (SHELL_LOCAL_ROLES.includes(next.geometry_role) && b.geometry_role === next.geometry_role) {
       return false;
     }
     return true;
@@ -161,7 +188,10 @@ export function letterBinding(args: {
   sourceSvgHash: string | null;
   componentCode: string;
   selectionMode: string;
+  /** When ACP shell host is present — applied interface, not absorbed into shell. */
+  appliedOnAcpHost?: boolean;
 }): SvgComponentBinding {
+  const confirmed = args.layerIds.length > 0;
   return {
     schema: SVG_COMPONENT_BINDINGS_SCHEMA,
     binding_id: `bind_letters_${args.layerIds.join("_") || "none"}`,
@@ -176,9 +206,10 @@ export function letterBinding(args: {
       source_svg_hash: args.sourceSvgHash,
     },
     configuration: {},
-    status: args.layerIds.length ? "CONFIRMED" : "DRAFT",
+    status: confirmed ? "CONFIRMED" : "DRAFT",
+    face_treatment_code: args.appliedOnAcpHost && confirmed ? FACE_TREATMENT_APPLIED : "NOT_APPLICABLE",
     provenance: "component_aware_assignment",
-    confirmed_at: args.layerIds.length ? new Date().toISOString() : null,
+    confirmed_at: confirmed ? new Date().toISOString() : null,
   };
 }
 
@@ -187,7 +218,9 @@ export function logoBinding(args: {
   sourceSvgHash: string | null;
   componentCode: string;
   selectionMode: string;
+  appliedOnAcpHost?: boolean;
 }): SvgComponentBinding {
+  const confirmed = args.layerIds.length > 0;
   return {
     schema: SVG_COMPONENT_BINDINGS_SCHEMA,
     binding_id: `bind_logo_${args.layerIds.join("_") || "none"}`,
@@ -202,9 +235,52 @@ export function logoBinding(args: {
       source_svg_hash: args.sourceSvgHash,
     },
     configuration: {},
-    status: args.layerIds.length ? "CONFIRMED" : "DRAFT",
+    status: confirmed ? "CONFIRMED" : "DRAFT",
+    face_treatment_code: args.appliedOnAcpHost && confirmed ? FACE_TREATMENT_APPLIED : "NOT_APPLICABLE",
     provenance: "component_aware_assignment",
-    confirmed_at: args.layerIds.length ? new Date().toISOString() : null,
+    confirmed_at: confirmed ? new Date().toISOString() : null,
+  };
+}
+
+export function acpShellLocalBinding(args: {
+  geometryRole: "CUTOUT_TEXT" | "CUTOUT_LOGO" | "ACRYLIC_INSERT" | "DECORATIVE_VECTOR";
+  layerIds: string[];
+  sourceSvgHash: string | null;
+  previous?: SvgComponentBinding | null;
+}): SvgComponentBinding {
+  const treatment: FaceTreatmentCode =
+    args.geometryRole === "ACRYLIC_INSERT"
+      ? FACE_TREATMENT_INSERT
+      : args.geometryRole === "DECORATIVE_VECTOR"
+        ? FACE_TREATMENT_PLAIN
+        : FACE_TREATMENT_ROUTED;
+  const layerKey = [...args.layerIds].sort().join("_") || "none";
+  const prev = args.previous;
+  const confirmed = args.layerIds.length > 0;
+  return {
+    schema: SVG_COMPONENT_BINDINGS_SCHEMA,
+    binding_id: prev?.binding_id || `bind_${args.geometryRole.toLowerCase()}_${layerKey}`,
+    geometry_role: args.geometryRole,
+    component_template_code: ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+    selection_mode: "LAYER_OR_GROUP",
+    selected_geometry: {
+      layer_ids: args.layerIds,
+      group_ids: [],
+      element_ids: [],
+      geometry_hashes: [],
+      source_svg_hash: args.sourceSvgHash,
+    },
+    configuration: prev?.configuration || {},
+    status: confirmed ? "CONFIRMED" : "INACTIVE",
+    local_zone_id: prev?.local_zone_id,
+    face_treatment_code: treatment,
+    local_module_configuration: prev?.local_module_configuration || null,
+    confirmation_status: confirmed ? "CONFIRMED" : "INACTIVE",
+    provenance: {
+      source: "component_aware_assignment",
+      face_treatment_registry_version: "acp_face_treatment_registry/v1",
+    },
+    confirmed_at: confirmed ? new Date().toISOString() : null,
   };
 }
 
@@ -275,23 +351,41 @@ export function bindableForOwnerLayerRole(
   if (role === "support_panel") {
     return findBindableByGeometryRole(bindables, "SUPPORT_CONTOUR");
   }
+  if (role === "cutout_text") return findBindableByGeometryRole(bindables, "CUTOUT_TEXT");
+  if (role === "cutout_logo") return findBindableByGeometryRole(bindables, "CUTOUT_LOGO");
+  if (role === "acrylic_insert") return findBindableByGeometryRole(bindables, "ACRYLIC_INSERT");
   return undefined;
+}
+
+export function ownerLayerRoleToGeometryRole(
+  role: string | null | undefined,
+): SvgGeometryRole | null {
+  if (role === "face") return "LETTER_VECTOR_SET";
+  if (role === "printed_artwork" || role === "logo") return "LOGO_VECTOR_SET";
+  if (role === "support_panel") return "SUPPORT_CONTOUR";
+  if (role === "cutout_text") return "CUTOUT_TEXT";
+  if (role === "cutout_logo") return "CUTOUT_LOGO";
+  if (role === "acrylic_insert") return "ACRYLIC_INSERT";
+  return null;
 }
 
 export function layerRoleBindingsSyncKey(bindings: SvgComponentBinding[]): string {
   return bindings
     .filter(
-      (b) => b.geometry_role === "LETTER_VECTOR_SET" || b.geometry_role === "LOGO_VECTOR_SET",
+      (b) =>
+        b.geometry_role === "LETTER_VECTOR_SET" ||
+        b.geometry_role === "LOGO_VECTOR_SET" ||
+        SHELL_LOCAL_ROLES.includes(b.geometry_role),
     )
     .map(
       (b) =>
-        `${b.geometry_role}:${b.component_template_code}:${[...b.selected_geometry.layer_ids].sort().join(",")}:${b.status}`,
+        `${b.geometry_role}:${b.component_template_code}:${[...b.selected_geometry.layer_ids].sort().join(",")}:${b.status}:${b.face_treatment_code || ""}`,
     )
     .sort()
     .join("|");
 }
 
-/** Derive letter/logo bindings from layer-role confirmation (keeps support bindings intact when merged). */
+/** Derive letter/logo/shell-local bindings from layer-role confirmation (keeps support intact). */
 export function buildLayerRoleComponentBindings(args: {
   confirmation: {
     layers: Array<{
@@ -307,20 +401,35 @@ export function buildLayerRoleComponentBindings(args: {
   const lettersComp = findBindableByGeometryRole(args.bindables, "LETTER_VECTOR_SET");
   if (!args.confirmation || !lettersComp) return args.previous;
 
-  const letterLayers = args.confirmation.layers
-    .filter((l) => l.confirmedRole === "face" && l.confirmationState !== "ignored")
+  const activeLayers = args.confirmation.layers.filter((l) => l.confirmationState !== "ignored");
+  const letterLayers = activeLayers
+    .filter((l) => l.confirmedRole === "face")
     .map((l) => l.layerKey);
   const logoComp = findBindableByGeometryRole(args.bindables, "LOGO_VECTOR_SET");
-  const logoLayers = args.confirmation.layers
-    .filter(
-      (l) =>
-        (l.confirmedRole === "printed_artwork" || l.confirmedRole === "logo") &&
-        l.confirmationState !== "ignored",
-    )
+  const logoLayers = activeLayers
+    .filter((l) => l.confirmedRole === "printed_artwork" || l.confirmedRole === "logo")
+    .map((l) => l.layerKey);
+  const cutoutTextLayers = activeLayers
+    .filter((l) => l.confirmedRole === "cutout_text")
+    .map((l) => l.layerKey);
+  const cutoutLogoLayers = activeLayers
+    .filter((l) => l.confirmedRole === "cutout_logo")
+    .map((l) => l.layerKey);
+  const insertLayers = activeLayers
+    .filter((l) => l.confirmedRole === "acrylic_insert")
     .map((l) => l.layerKey);
 
+  const hasAcpHost = args.previous.some(
+    (b) =>
+      b.geometry_role === "SUPPORT_CONTOUR" &&
+      (b.status === "CONFIRMED" || b.status === "DRAFT" || b.status === "RECONFIRM_REQUIRED"),
+  );
+
   let next = args.previous.filter(
-    (b) => b.geometry_role !== "LETTER_VECTOR_SET" && b.geometry_role !== "LOGO_VECTOR_SET",
+    (b) =>
+      b.geometry_role !== "LETTER_VECTOR_SET" &&
+      b.geometry_role !== "LOGO_VECTOR_SET" &&
+      !SHELL_LOCAL_ROLES.includes(b.geometry_role),
   );
   next = upsertBinding(
     next,
@@ -329,6 +438,7 @@ export function buildLayerRoleComponentBindings(args: {
       sourceSvgHash: args.sourceSvgHash,
       componentCode: lettersComp.component_template_code,
       selectionMode: lettersComp.selection_mode,
+      appliedOnAcpHost: hasAcpHost,
     }),
   );
   if (logoComp && logoLayers.length) {
@@ -339,6 +449,44 @@ export function buildLayerRoleComponentBindings(args: {
         sourceSvgHash: args.sourceSvgHash,
         componentCode: logoComp.component_template_code,
         selectionMode: logoComp.selection_mode,
+        appliedOnAcpHost: hasAcpHost,
+      }),
+    );
+  }
+
+  const prevByRole = (role: SvgGeometryRole) =>
+    args.previous.find((b) => b.geometry_role === role) || null;
+
+  if (cutoutTextLayers.length || prevByRole("CUTOUT_TEXT")) {
+    next = upsertBinding(
+      next,
+      acpShellLocalBinding({
+        geometryRole: "CUTOUT_TEXT",
+        layerIds: cutoutTextLayers,
+        sourceSvgHash: args.sourceSvgHash,
+        previous: prevByRole("CUTOUT_TEXT"),
+      }),
+    );
+  }
+  if (cutoutLogoLayers.length || prevByRole("CUTOUT_LOGO")) {
+    next = upsertBinding(
+      next,
+      acpShellLocalBinding({
+        geometryRole: "CUTOUT_LOGO",
+        layerIds: cutoutLogoLayers,
+        sourceSvgHash: args.sourceSvgHash,
+        previous: prevByRole("CUTOUT_LOGO"),
+      }),
+    );
+  }
+  if (insertLayers.length || prevByRole("ACRYLIC_INSERT")) {
+    next = upsertBinding(
+      next,
+      acpShellLocalBinding({
+        geometryRole: "ACRYLIC_INSERT",
+        layerIds: insertLayers,
+        sourceSvgHash: args.sourceSvgHash,
+        previous: prevByRole("ACRYLIC_INSERT"),
       }),
     );
   }

@@ -149,6 +149,43 @@ describe("svgComponentBindings", () => {
     ]);
   });
 
+  it("builds shell-local cutout/insert bindings from owner layer roles", () => {
+    const support = bindingFromSupportSelection({
+      ...emptySvgSupportSelection(),
+      status: "confirmed",
+      role: "ALUCOBOND_CASED_PANEL",
+      contour_id: "cc_1",
+      geometry_hash: "g1",
+      svg_source_hash: "h",
+    })!;
+    const next = buildLayerRoleComponentBindings({
+      confirmation: {
+        layers: [
+          { layerKey: "L1", confirmedRole: "face", confirmationState: "confirmed" },
+          { layerKey: "C1", confirmedRole: "cutout_text", confirmationState: "confirmed" },
+          { layerKey: "I1", confirmedRole: "acrylic_insert", confirmationState: "confirmed" },
+        ],
+      },
+      bindables: [
+        {
+          component_template_code: "TPL-VOLUMETRIC-FACE_v1",
+          owner_label: "Litere",
+          selection_mode: "LAYER_OR_GROUP",
+          accepted_geometry_roles: ["LETTER_VECTOR_SET"],
+        } as never,
+      ],
+      sourceSvgHash: "h",
+      previous: [support],
+    });
+    const byRole = Object.fromEntries(next.map((b) => [b.geometry_role, b]));
+    expect(byRole.LETTER_VECTOR_SET.face_treatment_code).toBe(
+      "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+    );
+    expect(byRole.CUTOUT_TEXT.face_treatment_code).toBe("FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT");
+    expect(byRole.ACRYLIC_INSERT.face_treatment_code).toBe("FACE-TREATMENT-ACRYLIC-INSERT");
+    expect(byRole.SUPPORT_CONTOUR).toBeTruthy();
+  });
+
   it("allows multiple ACM face-treatment bindings without XOR by component code", () => {
     const support = bindingFromSupportSelection({
       ...emptySvgSupportSelection(),

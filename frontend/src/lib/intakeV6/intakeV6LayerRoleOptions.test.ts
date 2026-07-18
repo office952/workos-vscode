@@ -44,11 +44,15 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
     expect(result.fallbackOptions).toEqual([]);
   });
 
-  it("exposes Contur suport in owner layer dropdown options", () => {
+  it("exposes Contur suport and ACP shell-local roles in owner layer dropdown", () => {
     expect(INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((o) => o.value)).toEqual([
       "face",
       "printed_artwork",
       "support_panel",
+      "cutout_text",
+      "cutout_logo",
+      "acrylic_insert",
+      "ignore",
     ]);
     expect(
       normalizeIntakeV6OwnerSelectableRole({
@@ -56,6 +60,18 @@ describe("getIntakeV6RoleOptionsForLayer", () => {
         confirmedRole: "support_panel",
       }),
     ).toBe("support_panel");
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "face" },
+        confirmedRole: "cutout_text",
+      }),
+    ).toBe("cutout_text");
+    expect(
+      normalizeIntakeV6OwnerSelectableRole({
+        layer: { autoRole: "face" },
+        confirmedRole: "acrylic_insert",
+      }),
+    ).toBe("acrylic_insert");
   });
 
   it("keeps a safe grouped fallback for unknown layers", () => {

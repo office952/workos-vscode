@@ -6,6 +6,10 @@ export const INTAKE_V6_LAYER_ROLE_OPTIONS = INTAKE_V4_LAYER_ROLE_OPTIONS;
 export const INTAKE_V6_OWNER_ROLE_LABEL_LETTERS = "Vector Litere";
 export const INTAKE_V6_OWNER_ROLE_LABEL_LOGO = "Vector Logo";
 export const INTAKE_V6_OWNER_ROLE_LABEL_SUPPORT = "Contur suport";
+export const INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_TEXT = "Text decupat";
+export const INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_LOGO = "Logo decupat";
+export const INTAKE_V6_OWNER_ROLE_LABEL_INSERT = "Insert plexiglas";
+export const INTAKE_V6_OWNER_ROLE_LABEL_IGNORE = "Decorativ / Ignore";
 
 /**
  * LEGACY_INTAKE_SVG_ROLE_ADAPTER — layer-role bridge for analysis-bundle only.
@@ -21,6 +25,10 @@ export const INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS: ReadonlyArray<{
 	{ value: "face", label: INTAKE_V6_OWNER_ROLE_LABEL_LETTERS },
 	{ value: "printed_artwork", label: INTAKE_V6_OWNER_ROLE_LABEL_LOGO },
 	{ value: "support_panel", label: INTAKE_V6_OWNER_ROLE_LABEL_SUPPORT },
+	{ value: "cutout_text", label: INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_TEXT },
+	{ value: "cutout_logo", label: INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_LOGO },
+	{ value: "acrylic_insert", label: INTAKE_V6_OWNER_ROLE_LABEL_INSERT },
+	{ value: "ignore", label: INTAKE_V6_OWNER_ROLE_LABEL_IGNORE },
 ];
 
 export interface IntakeV6LayerRoleOptionContext {
@@ -43,6 +51,10 @@ export interface IntakeV6LayerRoleOptionGroups {
 const LETTERS = "TPL-VOLUMETRIC-LETTERS_v2";
 const LOGO = "TPL-VOLUMETRIC-LOGO_v1";
 
+const OWNER_SELECTABLE = new Set(
+	INTAKE_V6_OWNER_LAYER_ROLE_OPTIONS.map((option) => option.value),
+);
+
 function pickOption(value: LayerAutoRole) {
 	return INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === value)!;
 }
@@ -55,6 +67,10 @@ export function getIntakeV6OwnerRoleLabel(role: string | null | undefined): stri
 	if (role === "face") return INTAKE_V6_OWNER_ROLE_LABEL_LETTERS;
 	if (role === "logo" || role === "printed_artwork") return INTAKE_V6_OWNER_ROLE_LABEL_LOGO;
 	if (role === "support_panel") return INTAKE_V6_OWNER_ROLE_LABEL_SUPPORT;
+	if (role === "cutout_text") return INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_TEXT;
+	if (role === "cutout_logo") return INTAKE_V6_OWNER_ROLE_LABEL_CUTOUT_LOGO;
+	if (role === "acrylic_insert") return INTAKE_V6_OWNER_ROLE_LABEL_INSERT;
+	if (role === "ignore") return INTAKE_V6_OWNER_ROLE_LABEL_IGNORE;
 	if (!role) return "—";
 	return INTAKE_V4_LAYER_ROLE_OPTIONS.find((option) => option.value === role)?.label ?? role;
 }
@@ -62,10 +78,13 @@ export function getIntakeV6OwnerRoleLabel(role: string | null | undefined): stri
 export function normalizeIntakeV6OwnerSelectableRole(
 	args: Pick<IntakeV6LayerRoleOptionContext, "layer" | "confirmedRole" | "targetTemplateCode">,
 ): LayerAutoRole {
-	if (args.confirmedRole === "support_panel") return "support_panel";
-	if (args.confirmedRole === "face") return "face";
-	if (args.confirmedRole === "logo" || args.confirmedRole === "printed_artwork") return "printed_artwork";
+	const confirmed = args.confirmedRole as LayerAutoRole | null | undefined;
+	if (confirmed && OWNER_SELECTABLE.has(confirmed)) return confirmed;
+	if (args.confirmedRole === "logo") return "printed_artwork";
 	if (args.layer.autoRole === "support_panel") return "support_panel";
+	if (args.layer.autoRole && OWNER_SELECTABLE.has(args.layer.autoRole as LayerAutoRole)) {
+		return args.layer.autoRole as LayerAutoRole;
+	}
 	if (args.targetTemplateCode === LOGO) return "printed_artwork";
 	if (args.layer.autoRole === "logo" || args.layer.autoRole === "printed_artwork") return "printed_artwork";
 	return "face";

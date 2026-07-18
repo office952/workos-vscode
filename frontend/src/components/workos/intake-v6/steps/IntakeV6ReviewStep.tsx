@@ -124,6 +124,7 @@ import type { IntakeV6SheetFootprintOverride } from "@/lib/intakeV6/intakeV6Shee
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import IntakeV6ArtworkFinishSection from "../IntakeV6ArtworkFinishSection";
 import IntakeV6ArtworkComplexityCard from "../IntakeV6ArtworkComplexityCard";
+import IntakeV6AcpLocalFaceModulesPanel from "../IntakeV6AcpLocalFaceModulesPanel";
 import {
   artworkComplexityDecisionsFromPayload,
   artworkComplexityFromReport,
@@ -2902,6 +2903,19 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       Template: {ACM_BOXED_MOUNTING_TEMPLATE_CODE}
                     </p>
                   </div>
+                ) : null}
+
+                {acpProductActive ? (
+                  <IntakeV6AcpLocalFaceModulesPanel
+                    finish={form as unknown as Record<string, unknown>}
+                    disabled={state.phase === "persisting"}
+                    onPatchBindings={(next) =>
+                      updateForm(
+                        { svg_component_bindings: next } as Partial<IntakeV6FinishSetup>,
+                        { domains: ["mounting"] },
+                      )
+                    }
+                  />
                 ) : null}
 
                 {acpProductActive ? (
