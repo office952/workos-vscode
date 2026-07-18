@@ -346,6 +346,24 @@ def _build_canonical_values(
         readiness = build_face_treatment_readiness_summary(finish_for_pd)
         if readiness.get("items") or readiness.get("warnings"):
             values["face_treatment_readiness"] = readiness
+        from services.svg_component_binding_persistence import (
+            build_acp_local_modules_aggregate_from_finish,
+            collect_local_modules_from_finish,
+        )
+
+        local_modules = collect_local_modules_from_finish(finish_for_pd)
+        if local_modules:
+            values["acp_local_face_module_instances"] = [
+                m
+                for m in local_modules
+                if str(m.get("status") or "").upper() != "INACTIVE"
+            ]
+        electrical = finish_for_pd.get("acp_electrical_configuration")
+        if isinstance(electrical, dict) and electrical.get("schema"):
+            values["acp_electrical_configuration"] = electrical
+        module_projection = build_acp_local_modules_aggregate_from_finish(finish_for_pd)
+        if module_projection:
+            values["acp_local_face_modules_aggregate_projection"] = module_projection
 
     # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
     selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
