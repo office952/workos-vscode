@@ -53,6 +53,10 @@ ACM_SHELL_GEOMETRY_ROLES: list[str] = [
 ACM_SHELL_CAPABILITIES: list[str] = [
     "boxed_acp_shell",
     "local_face_treatments",
+    "routed_backlit_cutout_module",
+    "acrylic_insert_module",
+    "applied_component_host",
+    "illumination_host",
     "panel_geometry",
     "casing_configuration",
     "service_corner",
