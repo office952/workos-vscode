@@ -99,6 +99,8 @@ Backend/frontend/test/screenshot WIP and other untracked trees left as-is. Exact
 
 Planned: `docs(product-system): complete mixed ACM ACP process truth`
 
-## Next step
+## Follow-up
 
-Single coherent build (after owner picks one slice): **segmented assembly + joint rules contracts** OR **Finish Contract shell (față/volum/pliu)** — not Employee Mobile; not Round 2 tooling.
+Segmented assembly + joint rules contract foundation shipped after this docs commit — see  
+`2026-07-19_segmented_acm_acp_background_contract_foundation.md`.  
+Șablon ACM/ACP vinyl truth closed there (no longer open paper vs Forex for that context).

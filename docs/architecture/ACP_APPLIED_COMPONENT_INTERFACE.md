@@ -18,6 +18,14 @@ The interface expresses the host relation to the ACP face — it does **not** ab
 - `placement_reference` → `ON_ACP_FACE` (no canvas editor)
 - `mounting_method_status`, `cable_passage_status`, `electrical_interface_status` → owner-gated
 - `confirmation_status`
+- Segmented background context (optional; shell assembly authority):
+  - `primary_panel_id`, `secondary_panel_id`
+  - `crosses_joint`, `joint_id`
+  - `mount_strategy` (`STANDARD` | `TWO_STAGE_JOINT_CROSSING`)
+  - `panel_alignment_dependency`, `cable_passage_context`
+  - `does_not_absorb_letter_ownership` → always true
+
+See `acm_segmented_background_v1` / `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §11.
 
 ## Electrical note
 

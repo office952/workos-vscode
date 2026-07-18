@@ -164,6 +164,7 @@ ACM_LOCAL_MODULE_CAPABILITIES: list[str] = [
     "acrylic_insert_module",
     "applied_component_host",
     "illumination_host",
+    "segmented_background_assembly",
 ]
 
 

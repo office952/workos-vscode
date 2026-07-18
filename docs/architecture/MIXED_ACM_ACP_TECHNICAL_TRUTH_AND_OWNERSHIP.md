@@ -241,7 +241,7 @@ Literă/formă **decupată** sau insert 10 mm care necesită gol continuu **nu**
 | Literă aplicată peste îmbinare | Executabil, 2 etape |
 | Decupaj / insert 10 peste îmbinare | Imposibil — blocker |
 
-**Repo:** max 1 `SUPPORT_CONTOUR` — model ansamblu multi-panou **MISSING** (docs SoT aici).
+**Runtime contract:** un `SUPPORT_CONTOUR` rămâne envelope (`MAX_ONE`); panourile fizice nested în `finish_setup.segmented_background` (`acm_segmented_background_v1`). Nu se flipuiește MULTI pe SUPPORT.
 
 ---
 
@@ -285,9 +285,21 @@ Graph permite ATTACH paralel cu LED până la canal; lista owner cere LED înain
 
 ## 13. Șablon (un singur owner = Litere)
 
-- Material: autocolant transparent + folie transfer.  
-- Forme pline: rămân sub Forex; **nu** se îndepărtează.  
-- Ghidaje / crop: temporare; se scot după aliniere.  
+### Montaj pe casetă ACM/ACP (OWNER_CONFIRMED — închis)
+
+Pentru litere volumetrice montate pe panou ACM/ACP:
+
+- material: **autocolant transparent** (nu hârtie ca default în acest context);
+- aplicare: **folie de transfer**;
+- formele literelor: **pline**;
+- formele pline **rămân** pe față sub spatele Forex 10 mm;
+- ghidajele liniare și crop-urile sunt **temporare** și se îndepărtează după poziționare.
+
+`paper vs Forex default` **nu** mai este o decizie deschisă pentru montajul pe ACM/ACP.  
+Alte variante de șablon din documentația literelor pot rămâne pentru **alte contexte de montaj** (fără casetă ACM/ACP) — nu se șterg global.
+
+### Reguli operaționale
+
 - Alegere ghidaj vs crop: procesatorul; sistemul **nu** impune.  
 - Task unic: `sablon_montaj` pe litere — **nu** și pe shell.
 
@@ -390,25 +402,27 @@ Procesare grafică · unghi pliu din freză · alegere ghidaj/crop · împărți
 | Oracal 651 catalog | EXISTS | OK |
 | Print+lam ops | EXISTS (artwork) | OK |
 | Față+primul pliu strategie | MISSING | OWNER_CONFIRMED |
-| Ansamblu multi-panou | MISSING (1 SUPPORT) | OWNER_CONFIRMED |
-| Literă peste îmbinare | MISSING | EXECUTABIL |
-| Decupaj peste îmbinare | MISSING | BLOCKER |
+| Ansamblu multi-panou | CONTRACT `acm_segmented_background_v1` (envelope MAX_ONE + panels) | OWNER_CONFIRMED |
+| Literă peste îmbinare | CONTRACT (2-stage + primary/secondary) | EXECUTABIL |
+| Decupaj peste îmbinare | CONTRACT blocker | BLOCKER |
 | 220V per panou | PARTIAL (service_corner) | OWNER_CONFIRMED |
 | LED pe Forex înainte de attach | Graph soft / owner list | OWNER_CONFIRMED docs |
-| Șablon unic litere | EXISTS intent | Ferm |
+| Șablon pe ACM/ACP | OWNER_CONFIRMED vinyl transparent | Ferm (§13) |
 
 ---
 
 ## 21. Owner decisions rămase (implementare)
 
 1. Profiluri cadru SKU (închide DEFERRED).  
-2. Model runtime ansamblu segmentat (înlocuiește limita 1 SUPPORT).  
+2. Consum SVG Analyzer → propunere segmentare (UI confirmare) — contractul există; wiring UI separat.  
 3. Finish Contract pe shell (față/volum/pliu/îmbinări).  
 4. Materializare CNC + Oracal-după-fixare în task_rules.  
 5. 220V position enum per panou.  
 6. Reconciliere graph ATTACH vs LED (dep tare).  
-7. Șablon paper vs Forex default.  
-8. GO LIGHT-ROUTED migrate — separat.
+7. GO LIGHT-ROUTED migrate — separat.  
+
+**Închis:** șablon pe ACM/ACP = autocolant transparent + transfer; forme pline permanente; ghidaje/crop temporare (§13).  
+**Închis ca model contract:** ansamblu = un `SUPPORT_CONTOUR` envelope + `assembly_panels[]` nested (nu MULTI SUPPORT global).
 
 ---
 

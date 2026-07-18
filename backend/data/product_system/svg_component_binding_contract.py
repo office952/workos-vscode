@@ -61,6 +61,8 @@ ACM_SHELL_CAPABILITIES: list[str] = [
     "casing_configuration",
     "service_corner",
     "internal_frame",
+    # Nested physical panels under one SUPPORT_CONTOUR assembly envelope (not MULTI support).
+    "segmented_background_assembly",
 ]
 
 SELECTION_MODE_LAYER_OR_GROUP = "LAYER_OR_GROUP"
@@ -188,7 +190,8 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
             accepted_geometry_roles=list(ACM_SHELL_GEOMETRY_ROLES),
             accepted_face_treatment_codes=list(ACM_SHELL_FACE_TREATMENT_CODES),
             selection_mode=SELECTION_MODE_CLOSED_CONTOUR,
-            # SUPPORT_CONTOUR remains MAX_ONE; cutout/insert/decorative are MULTI via same component.
+            # SUPPORT_CONTOUR remains MAX_ONE (assembly envelope). Physical multi-panel members nest
+            # under finish_setup.segmented_background — do not flip this to MULTI.
             cardinality=CARDINALITY_MAX_ONE,
             required=False,
             available=True,
@@ -203,6 +206,7 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "local_face_treatments": True,
                 "support_contour_cardinality": CARDINALITY_MAX_ONE,
                 "face_treatment_cardinality": CARDINALITY_MULTI,
+                "segmented_background_nested_panels": True,
             },
             guards=[
                 "optional_addon",
@@ -216,11 +220,13 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "finish_setup.mounting_solution",
                 "finish_setup.svg_support_selection",
                 "finish_setup.svg_component_bindings.face_treatment",
+                "finish_setup.segmented_background",
                 "canonical_values.support_type=alucobond_cased",
                 "canonical_values.svg_support_element_id",
                 "canonical_values.panel_geometry",
                 "canonical_values.casing_profile",
                 "canonical_values.face_treatment_instances",
+                "canonical_values.segmented_background",
                 "power_supply_service_corner",
             ],
             capabilities=list(ACM_SHELL_CAPABILITIES),
@@ -258,6 +264,7 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
             accepted_geometry_roles=list(ACM_SHELL_GEOMETRY_ROLES),
             accepted_face_treatment_codes=list(ACM_SHELL_FACE_TREATMENT_CODES),
             selection_mode=SELECTION_MODE_CLOSED_CONTOUR,
+            # Assembly envelope MAX_ONE; nested panels via segmented_background contract.
             cardinality=CARDINALITY_MAX_ONE,
             required=False,
             available=True,
@@ -272,6 +279,7 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "local_face_treatments": True,
                 "support_contour_cardinality": CARDINALITY_MAX_ONE,
                 "face_treatment_cardinality": CARDINALITY_MULTI,
+                "segmented_background_nested_panels": True,
             },
             guards=[
                 "standalone_or_linked_child",
@@ -282,7 +290,9 @@ SVG_BINDABLE_BY_PRODUCT_TEMPLATE: dict[str, list[dict[str, Any]]] = {
                 "finish_setup.mounting_solution",
                 "finish_setup.svg_support_selection",
                 "finish_setup.svg_component_bindings.face_treatment",
+                "finish_setup.segmented_background",
                 "canonical_values.face_treatment_instances",
+                "canonical_values.segmented_background",
             ],
             capabilities=list(ACM_SHELL_CAPABILITIES),
         ),

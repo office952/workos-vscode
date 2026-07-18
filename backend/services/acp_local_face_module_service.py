@@ -147,6 +147,15 @@ def empty_applied_interface(binding_id: str, applied_component_code: str) -> dic
         "cable_passage_status": GATE_OWNER_REQUIRED,
         "electrical_interface_status": GATE_OWNER_REQUIRED,
         "confirmation_status": STATUS_NOT_CONFIGURED,
+        # Segmented-background interface context (optional; does not absorb letter ownership)
+        "primary_panel_id": None,
+        "secondary_panel_id": None,
+        "crosses_joint": False,
+        "joint_id": None,
+        "mount_strategy": "STANDARD",
+        "panel_alignment_dependency": False,
+        "cable_passage_context": False,
+        "does_not_absorb_letter_ownership": True,
         "provenance": {"source": "operator", "contract_version": MODULES_CONTRACT_VERSION},
     }
 
@@ -201,6 +210,14 @@ def normalize_local_module(
             "confirmation_status",
             "host_component_template_code",
             "applied_component_template_code",
+            "primary_panel_id",
+            "secondary_panel_id",
+            "crosses_joint",
+            "joint_id",
+            "mount_strategy",
+            "panel_alignment_dependency",
+            "cable_passage_context",
+            "does_not_absorb_letter_ownership",
         ):
             if key in incoming and incoming[key] is not None:
                 if isinstance(incoming[key], Mapping) and isinstance(base.get(key), dict):

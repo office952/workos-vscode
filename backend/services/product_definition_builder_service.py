@@ -365,6 +365,37 @@ def _build_canonical_values(
         if module_projection:
             values["acp_local_face_modules_aggregate_projection"] = module_projection
 
+    # Segmented ACM/ACP background (shell-owned nested panels). PROPOSED/INACTIVE → no PD leak.
+    from services.acm_segmented_background_service import (
+        project_segmented_background_for_aggregate,
+        project_segmented_background_for_product_definition,
+        read_segmented_background_from_finish,
+    )
+
+    segmented = read_segmented_background_from_finish(finish_for_pd)
+    if segmented is not None:
+        # Keep raw normalized only for debug when unconfirmed; PD canonical = confirmed only.
+        pd_segmented = project_segmented_background_for_product_definition(segmented)
+        if pd_segmented is not None:
+            values["segmented_background"] = pd_segmented
+            agg_segmented = project_segmented_background_for_aggregate(segmented)
+            if agg_segmented is not None:
+                values["segmented_background_aggregate_projection"] = agg_segmented
+        # Explicit zero-leak marker for proposal/inactive (optional observability, no effects)
+        status_seg = str(segmented.get("status") or "").upper()
+        if status_seg in {"PROPOSED", "INACTIVE"}:
+            values["segmented_background_proposal"] = {
+                "schema": segmented.get("schema"),
+                "status": status_seg,
+                "assembly_id": segmented.get("assembly_id"),
+                "detection": segmented.get("detection"),
+                "operator_confirmed": False,
+                "downstream_effects": False,
+                "materials": [],
+                "processes": [],
+                "task_rules": [],
+            }
+
     # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
     selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
     if isinstance(selection, dict) and selection.get("schema") == "svg_support_selection_v1":
