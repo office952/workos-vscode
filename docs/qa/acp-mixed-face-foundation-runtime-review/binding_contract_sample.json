@@ -1,0 +1,33 @@
+{
+  "binding_id": "bind_cutout_text_z1",
+  "geometry_role": "CUTOUT_TEXT",
+  "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "selection_mode": "LAYER_OR_GROUP",
+  "selected_geometry": {
+    "layer_ids": [
+      "layer_cutout"
+    ],
+    "group_ids": [],
+    "element_ids": [
+      "el_cutout"
+    ],
+    "geometry_hashes": [
+      "h_cut"
+    ],
+    "source_svg_hash": "svg_review_hash"
+  },
+  "configuration": {},
+  "status": "CONFIRMED",
+  "face_treatment_code": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+  "confirmation_status": "CONFIRMED",
+  "schema": "svg_component_bindings_v1",
+  "local_zone_id": "zone_cutout_text_7109116fbd21",
+  "provenance": {
+    "source": "operator",
+    "geometry_hash": "h_cut",
+    "svg_hash": "svg_review_hash",
+    "face_treatment_registry_version": "acp_face_treatment/v1"
+  },
+  "local_configuration_status": "NOT_CONFIGURED",
+  "face_treatment_contract_version": "acp_face_treatment/v1"
+}
