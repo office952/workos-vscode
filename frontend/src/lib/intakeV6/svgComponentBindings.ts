@@ -14,9 +14,19 @@ export type SvgGeometryRole =
   | "LOGO_VECTOR_SET"
   | "SUPPORT_CONTOUR"
   | "DECORATIVE_VECTOR"
-  | "IGNORE";
+  | "IGNORE"
+  | "CUTOUT_TEXT"
+  | "CUTOUT_LOGO"
+  | "ACRYLIC_INSERT";
 
-export type SvgBindingStatus = "DRAFT" | "CONFIRMED" | "RECONFIRM_REQUIRED";
+export type SvgBindingStatus = "DRAFT" | "CONFIRMED" | "RECONFIRM_REQUIRED" | "INACTIVE";
+
+export type FaceTreatmentCode =
+  | "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT"
+  | "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT"
+  | "FACE-TREATMENT-ACRYLIC-INSERT"
+  | "FACE-TREATMENT-PLAIN-DECORATIVE"
+  | "NOT_APPLICABLE";
 
 export interface SvgSelectedGeometry {
   layer_ids: string[];
@@ -24,6 +34,14 @@ export interface SvgSelectedGeometry {
   element_ids: string[];
   geometry_hashes: string[];
   source_svg_hash: string | null;
+}
+
+export interface SvgBindingProvenance {
+  source?: string;
+  svg_hash?: string | null;
+  geometry_hash?: string | null;
+  legacy_note?: string;
+  face_treatment_registry_version?: string;
 }
 
 export interface SvgComponentBinding {
@@ -36,7 +54,13 @@ export interface SvgComponentBinding {
   configuration: Record<string, unknown>;
   panel_geometry?: Record<string, unknown> | null;
   status: SvgBindingStatus;
-  provenance?: string;
+  /** Stable zone identity — not array index. */
+  local_zone_id?: string;
+  face_treatment_code?: FaceTreatmentCode | string | null;
+  confirmation_status?: string;
+  local_configuration_status?: string;
+  face_treatment_contract_version?: string;
+  provenance?: string | SvgBindingProvenance;
   svg_support_element_id?: string | null;
   candidate_explanation?: string[];
   unit_ambiguity?: boolean;
@@ -70,7 +94,21 @@ export function upsertBinding(
   bindings: SvgComponentBinding[],
   next: SvgComponentBinding,
 ): SvgComponentBinding[] {
-  const without = bindings.filter((b) => b.component_template_code !== next.component_template_code);
+  // Identity is binding_id / role — not component_template_code alone.
+  // Multiple ACM face-treatment bindings share TPL-ACM-BOXED… and must coexist.
+  const without = bindings.filter((b) => {
+    if (next.binding_id && b.binding_id === next.binding_id) return false;
+    if (next.geometry_role === "SUPPORT_CONTOUR" && b.geometry_role === "SUPPORT_CONTOUR") {
+      return false;
+    }
+    if (
+      (next.geometry_role === "LETTER_VECTOR_SET" || next.geometry_role === "LOGO_VECTOR_SET") &&
+      b.geometry_role === next.geometry_role
+    ) {
+      return false;
+    }
+    return true;
+  });
   return [...without, next];
 }
 
@@ -191,6 +229,12 @@ export function ownerGeometryLabel(role: string | undefined): string {
       return "Element decorativ";
     case "IGNORE":
       return "Ignoră";
+    case "CUTOUT_TEXT":
+      return "Text decupat";
+    case "CUTOUT_LOGO":
+      return "Logo decupat";
+    case "ACRYLIC_INSERT":
+      return "Insert plexiglas";
     default:
       return role || "—";
   }

@@ -388,6 +388,8 @@ export interface SvgBindableComponent {
   process_component_code?: string | null;
   owner_label: string;
   accepted_geometry_roles: string[];
+  /** Optional face treatments hosted on this component (ACP shell). */
+  accepted_face_treatment_codes?: string[];
   selection_mode: string;
   cardinality: string;
   required: boolean;

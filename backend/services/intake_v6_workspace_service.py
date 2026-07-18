@@ -1309,6 +1309,7 @@ async def save_finish_setup_for_intake_v6_workspace(
         strip_global_backing_mirror_from_finish_dict,
     )
     from services.svg_component_binding_persistence import (
+        persist_normalized_bindings_on_finish,
         sync_support_selection_from_bindings,
         validate_bindings_for_new_selection,
     )
@@ -1339,6 +1340,7 @@ async def save_finish_setup_for_intake_v6_workspace(
         normalized = normalized.model_copy(update={"confirmed": False})
 
     finish_doc = normalized.model_dump(mode="json")
+    finish_doc = persist_normalized_bindings_on_finish(finish_doc)
     binding_blockers = validate_bindings_for_new_selection(finish_doc.get("svg_component_bindings") or [])
     if binding_blockers:
         raise HTTPException(

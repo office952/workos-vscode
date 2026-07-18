@@ -148,4 +148,50 @@ describe("svgComponentBindings", () => {
       "SUPPORT_CONTOUR",
     ]);
   });
+
+  it("allows multiple ACM face-treatment bindings without XOR by component code", () => {
+    const support = bindingFromSupportSelection({
+      ...emptySvgSupportSelection(),
+      status: "confirmed",
+      role: "ALUCOBOND_CASED_PANEL",
+      contour_id: "cc_1",
+      geometry_hash: "g1",
+      svg_source_hash: "h",
+    })!;
+    const cutout = {
+      ...support,
+      binding_id: "bind_cutout_1",
+      geometry_role: "CUTOUT_TEXT" as const,
+      face_treatment_code: "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+      selected_geometry: {
+        layer_ids: ["cut"],
+        group_ids: [],
+        element_ids: ["el_cut"],
+        geometry_hashes: ["hc"],
+        source_svg_hash: "h",
+      },
+    };
+    const insert = {
+      ...support,
+      binding_id: "bind_insert_1",
+      geometry_role: "ACRYLIC_INSERT" as const,
+      face_treatment_code: "FACE-TREATMENT-ACRYLIC-INSERT",
+      selected_geometry: {
+        layer_ids: ["ins"],
+        group_ids: [],
+        element_ids: ["el_ins"],
+        geometry_hashes: ["hi"],
+        source_svg_hash: "h",
+      },
+    };
+    let next = upsertBinding([], support);
+    next = upsertBinding(next, cutout);
+    next = upsertBinding(next, insert);
+    expect(next).toHaveLength(3);
+    expect(next.map((b) => b.geometry_role).sort()).toEqual([
+      "ACRYLIC_INSERT",
+      "CUTOUT_TEXT",
+      "SUPPORT_CONTOUR",
+    ]);
+  });
 });
