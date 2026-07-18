@@ -446,6 +446,15 @@ def test_http_mixed_face_finish_setup_save_and_refresh(auth_client, face_treatme
     assert by_role["CUTOUT_TEXT"]["local_zone_id"].startswith("zone_")
     zone_cut = by_role["CUTOUT_TEXT"]["local_zone_id"]
     zone_ins = by_role["ACRYLIC_INSERT"]["local_zone_id"]
+    assert by_role["CUTOUT_TEXT"].get("local_module_configuration", {}).get("module_code") == (
+        "ACP-LOCAL-MODULE-ROUTED-BACKLIT"
+    )
+    assert by_role["ACRYLIC_INSERT"].get("local_module_configuration", {}).get("module_code") == (
+        "ACP-LOCAL-MODULE-ACRYLIC-INSERT"
+    )
+    assert (finish.get("acp_electrical_configuration") or {}).get("ownership_mode") == (
+        "SHELL_COMMON_WITH_ZONE_INTENTS"
+    )
 
     get = auth_client.get(f"/api/v1/intake-v6/workspaces/{face_treatment_workspace}")
     assert get.status_code == 200, get.text
@@ -454,6 +463,12 @@ def test_http_mixed_face_finish_setup_save_and_refresh(auth_client, face_treatme
     assert bindings2["CUTOUT_TEXT"]["local_zone_id"] == zone_cut
     assert bindings2["ACRYLIC_INSERT"]["local_zone_id"] == zone_ins
     assert bindings2["CUTOUT_TEXT"]["face_treatment_code"] == FACE_TREATMENT_ROUTED_BACKLIT
+    assert bindings2["CUTOUT_TEXT"]["local_module_configuration"]["module_instance_id"] == (
+        by_role["CUTOUT_TEXT"]["local_module_configuration"]["module_instance_id"]
+    )
+    assert (finish2.get("acp_electrical_configuration") or {}).get("ownership_mode") == (
+        "SHELL_COMMON_WITH_ZONE_INTENTS"
+    )
 
     from services.svg_component_binding_persistence import (
         build_face_treatment_readiness_summary,
