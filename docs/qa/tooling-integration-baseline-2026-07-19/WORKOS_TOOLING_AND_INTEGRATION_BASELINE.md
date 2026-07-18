@@ -130,15 +130,15 @@ Unavailable without owner: company Linear/Slack/Sentry/Datadog/Postman org membe
 
 | Instrument | Exists already | Integration form | Account | Real case | Risk | Decision | Reason |
 |------------|----------------|------------------|---------|-----------|------|----------|--------|
-| GitHub | CLI yes; auth **no** | CLI + remote URL + (optional MCP later) | Unauthenticated | Yes — PRs/issues/blame | Medium if write | **INSTALL NOW** = `gh auth` after GO | CORE; prefer least privilege (repo read + PR as needed) |
+| GitHub | CLI yes; auth **no** *(audit)* → **authenticated after Round 1** | CLI + remote URL + (optional MCP later) | Unauthenticated *(audit)* → `office952` | Yes — PRs/issues/blame | Medium if write | **ACTIVATED** (Round 1) | CORE; write actions still unused |
 | Figma | MCP ready | MCP HTTP + Cursor plugin | Appears connected | Yes — UI/design | Medium (write tools exist) | **KEEP** — no new install | CORE; do not modify Figma files in this task |
 | Linear | Plugin cache only | MCP / plugin | Unknown | Unconfirmed | High (issues write) | **CONNECT LATER** | CORE *if* company uses Linear — confirm first |
 | Slack | Not configured | Marketplace / MCP | Unknown | Unconfirmed | High (messages) | **CONNECT LATER** | Only with minimal channel scope |
-| Semgrep | Not installed | CLI (prefer) / IDE | Not needed for local | Yes — SAST | Low local; High cloud | **INSTALL NOW** after GO (CLI local) | CORE; no Cloud/token until separate GO |
+| Semgrep | Not installed *(audit)* → **1.170.0 local** | CLI (prefer) / IDE | Not needed for local | Yes — SAST | Low local; High cloud | **ACTIVATED** (Round 1 local-only) | CORE; no Cloud/login |
 | Supply-chain (Snyk / Endor / Sonatype) | None | CLI / GH App / SaaS | None | Deps exist | High (upload) | **CONNECT LATER** — recommend **Snyk** *if* SCA needed | Single vendor; needs account+GO; Semgrep ≠ SCA |
 | Sentry | Not in app | Plugin / SDK / MCP | None | No DSN/SDK | High | **CONNECT LATER** | CONFIRM_SERVICE_EXISTS first; no DSN in code |
 | Datadog | Plugin cache | Plugin / agent / MCP | None | No agent/SDK | High | **CONNECT LATER** | No infra evidence; no agent install |
-| Postman | No; **Thunder Client yes** | Desktop / API | Unknown | OpenAPI on :8001 | Medium (secrets in env) | **DUPLICATE / OPTIONAL** | Prefer Thunder Client or one Postman workspace — not both |
+| Postman | No; **Thunder Client yes** | Desktop / API | Unknown | OpenAPI on :8001 | Medium (secrets in env) | **KEEP Thunder** (Round 1) · Postman deferred | Prefer Thunder Client; do not dual-install |
 | BrowserStack | No | Cloud + CLI | Unknown | Playwright local exists | Medium–High cost | **OPTIONAL / CONNECT LATER** | Only if cross-browser cloud required |
 | Buildkite | No | CI | N/A | No CI files | — | **NOT RELEVANT** | Project has no Buildkite (or any in-repo CI) |
 | Analytics (PostHog/Amplitude/Mixpanel/Pendo) | Amplitude cache only; Subtext MCP needsAuth | Plugin / MCP / SDK | Unconfirmed | No app SDK | High (PII/GDPR) | **OWNER DECISION** | At most one platform; Subtext/FullStory may already be the candidate — confirm |
