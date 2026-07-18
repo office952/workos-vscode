@@ -125,6 +125,8 @@ import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import IntakeV6ArtworkFinishSection from "../IntakeV6ArtworkFinishSection";
 import IntakeV6ArtworkComplexityCard from "../IntakeV6ArtworkComplexityCard";
 import IntakeV6AcpLocalFaceModulesPanel from "../IntakeV6AcpLocalFaceModulesPanel";
+import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPanel";
+import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
 import {
   artworkComplexityDecisionsFromPayload,
   artworkComplexityFromReport,
@@ -1101,6 +1103,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     };
   }, [workspaceId, analysisIdentityKey, analysisReady]);
 
+  const segmentedTruthKey = useMemo(() => {
+    const seg = readSegmentedBackground(form as unknown as Record<string, unknown>);
+    if (!seg) return "";
+    return `${seg.status}|${seg.assembly_id || ""}|${Boolean(seg.operator_confirmed)}|${(seg.panels || []).length}`;
+  }, [form]);
+
   useEffect(() => {
     if (!workspaceId || !analysisReady || !templateCode) {
       setProductDefinitionPreview(null);
@@ -1122,7 +1130,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, analysisReady, templateCode]);
+  }, [workspaceId, analysisReady, templateCode, segmentedTruthKey]);
 
   useEffect(() => {
     if (!workspaceId) return;
@@ -2914,6 +2922,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         { svg_component_bindings: next } as Partial<IntakeV6FinishSetup>,
                         { domains: ["mounting"] },
                       )
+                    }
+                  />
+                ) : null}
+
+                {readSegmentedBackground(form as unknown as Record<string, unknown>) ? (
+                  <IntakeV6SegmentedBackgroundPanel
+                    finish={form as unknown as Record<string, unknown>}
+                    disabled={state.phase === "persisting"}
+                    onPatch={(patch) =>
+                      updateForm(patch as Partial<IntakeV6FinishSetup>, { domains: ["mounting"] })
                     }
                   />
                 ) : null}

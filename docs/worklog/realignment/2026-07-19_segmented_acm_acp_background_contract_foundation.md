@@ -88,6 +88,7 @@ No UI. No Execution. No pricing.
 - Execution materialization of future_task_intent
 - LIGHT-ROUTED migrate
 
-## Next step
+## Follow-up
 
-One coherent build: **operator confirmation path** (finish_setup write + analyzer proposal hook) for segmented background — still without pricing/Execution.
+Operator confirmation path shipped — see  
+`2026-07-19_segmented_background_operator_confirmation_path.md`.

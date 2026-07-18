@@ -19,6 +19,7 @@ HOST_SHELL_TEMPLATE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
 STATUS_SINGLE_PANEL = "SINGLE_PANEL"
 STATUS_PROPOSED = "PROPOSED"
 STATUS_CONFIRMED = "CONFIRMED"
+STATUS_REJECTED = "REJECTED"
 STATUS_INACTIVE = "INACTIVE"
 
 # Element construction types (shell-facing classification; letters keep own construction)
@@ -47,24 +48,25 @@ MSG_INVALID_PANEL_REF = "INVALID_PANEL_REF"
 MSG_DUPLICATE_PANEL_ID = "DUPLICATE_PANEL_ID"
 MSG_CROSSING_ON_SINGLE_PANEL = "CROSSING_ON_SINGLE_PANEL"
 
+MSG_PROPOSAL_REJECTED = "PROPOSAL_REJECTED"
+MSG_ASSEMBLY_CONFIRMED = "ASSEMBLY_CONFIRMED"
+
 OPERATOR_MESSAGES_RO: dict[str, str] = {
     MSG_SEGMENTATION_PROPOSAL: (
-        "Am gasit mai multe fundaluri apropiate care par sa formeze un singur ansamblu. "
-        "Confirma daca sunt panouri ale aceluiasi fundal."
+        "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. "
+        "Verifica panourile si confirma."
     ),
     MSG_GRAPHIC_DISTRIBUTED: (
-        "Grafica este distribuita pe mai multe panouri. "
-        "Confirma ordinea si continuitatea ansamblului."
+        "Grafica este impartita pe mai multe panouri. Verifica ordinea si continuitatea."
     ),
     MSG_APPLIED_CROSSING: (
         "Aceasta litera trece peste imbinare si necesita montaj in doua etape."
     ),
     MSG_CUTOUT_CROSSING_BLOCKER: (
-        "O litera sau un decupaj trece peste imbinarea dintre panouri. "
-        "Muta imbinarea sau modifica grafica."
+        "O litera sau un decupaj trece peste imbinare. Muta imbinarea sau modifica grafica."
     ),
     MSG_INSERT_CROSSING_BLOCKER: (
-        "O litera sau un decupaj trece peste imbinarea dintre panouri. "
+        "Elementul din plexiglas de 10 mm trece peste imbinare. "
         "Muta imbinarea sau modifica grafica."
     ),
     MSG_INVALID_PANEL_REF: "Referinta de panou lipseste sau este invalida. Verifica legatura elementului.",
@@ -72,6 +74,8 @@ OPERATOR_MESSAGES_RO: dict[str, str] = {
     MSG_CROSSING_ON_SINGLE_PANEL: (
         "Un element este marcat ca trecand peste imbinare, dar exista un singur panou."
     ),
+    MSG_PROPOSAL_REJECTED: "Propunerea nu a fost confirmata. Nu se salveaza un ansamblu segmentat.",
+    MSG_ASSEMBLY_CONFIRMED: "Ansamblul din mai multe panouri a fost confirmat.",
 }
 
 CUTOUT_LIKE_CONSTRUCTIONS = frozenset({CONSTRUCTION_CUTOUT, CONSTRUCTION_ACRYLIC_INSERT})

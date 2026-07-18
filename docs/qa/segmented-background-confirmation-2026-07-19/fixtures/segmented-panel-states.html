@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Segmented background confirmation — UI states</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0b1220; color: #e2e8f0; }
+    .page { max-width: 720px; margin: 24px auto; padding: 16px; }
+    h1 { font-size: 16px; margin: 0 0 16px; color: #fde68a; }
+    .panel {
+      margin: 0 0 28px;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(69, 26, 3, 0.15);
+      border-radius: 6px;
+      padding: 12px;
+    }
+    .title { font-size: 12px; font-weight: 600; color: #fef3c7; }
+    .sub { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+    .badge {
+      float: right; font-size: 10px; border: 1px solid rgba(245,158,11,.4);
+      padding: 2px 6px; border-radius: 4px; color: #fef3c7;
+    }
+    .row { font-size: 11px; border: 1px solid #2a3548; background: #0a0f1a; padding: 6px 8px; margin: 4px 0; border-radius: 4px; }
+    .info { font-size: 11px; color: #a5f3fc; margin: 4px 0; }
+    .ok { font-size: 11px; color: #86efac; margin: 4px 0; }
+    .bad { font-size: 11px; color: #fda4af; margin: 4px 0; }
+    .btn {
+      display: inline-block; margin: 8px 6px 0 0; font-size: 11px;
+      border-radius: 4px; padding: 4px 10px; border: 1px solid #64748b; background: #0f172a; color: #e2e8f0;
+    }
+    .btn-ok { border-color: rgba(16,185,129,.5); background: rgba(6,78,59,.4); color: #d1fae5; }
+    .btn:disabled { opacity: .4; }
+    .label { font-size: 10px; color: #64748b; margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>Intake V6 · Review · Fundal segmentat ACM/ACP</h1>
+
+    <div class="label">1 — Proposal shown</div>
+    <div class="panel" id="state-proposal" data-testid="intake-v6-segmented-background-panel" data-status="proposed">
+      <span class="badge">Propus</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="sub">Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.</div>
+      <div class="row">panel_1 · ordine 1 · 1000 × 1000 mm · x=0</div>
+      <div class="row">panel_2 · ordine 2 · 1000 × 1000 mm · x=1000</div>
+      <div class="sub">Imbinari: panel_1 ↔ panel_2 (verticala)</div>
+      <button class="btn btn-ok">Confirma</button>
+      <button class="btn">Respinge</button>
+    </div>
+
+    <div class="label">2 — Distributed graphic allowed</div>
+    <div class="panel" id="state-distributed" data-status="proposed">
+      <span class="badge">Propus</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="sub">Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.</div>
+      <div class="row">panel_1 · ordine 1 · 1000 × 1000 mm</div>
+      <div class="row">panel_2 · ordine 2 · 1000 × 1000 mm</div>
+      <div class="info">Grafica este impartita pe mai multe panouri. Verifica ordinea si continuitatea.</div>
+      <button class="btn btn-ok">Confirma</button>
+      <button class="btn">Respinge</button>
+    </div>
+
+    <div class="label">3 — Applied letter crossing (two-stage, not blocker)</div>
+    <div class="panel" id="state-applied" data-status="proposed">
+      <span class="badge">Propus</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="info">Litera volumetrica aplicata (P): Aceasta litera trece peste imbinare si necesita montaj in doua etape.</div>
+      <button class="btn btn-ok">Confirma</button>
+      <button class="btn">Respinge</button>
+    </div>
+
+    <div class="label">4 — Cutout crossing blocker</div>
+    <div class="panel" id="state-cutout" data-status="proposed">
+      <span class="badge">Propus</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="bad">O litera sau un decupaj trece peste imbinare. Muta imbinarea sau modifica grafica.</div>
+      <button class="btn btn-ok" disabled>Confirma</button>
+      <button class="btn">Respinge</button>
+    </div>
+
+    <div class="label">5 — Confirmed assembly</div>
+    <div class="panel" id="state-confirmed" data-status="confirmed">
+      <span class="badge">Confirmat</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="ok">Ansamblul din mai multe panouri a fost confirmat.</div>
+      <div class="row">panel_1 · ordine 1 · 1000 × 1000 mm</div>
+      <div class="row">panel_2 · ordine 2 · 1000 × 1000 mm</div>
+    </div>
+
+    <div class="label">6 — Reloaded confirmed state</div>
+    <div class="panel" id="state-reloaded" data-status="confirmed">
+      <span class="badge">Confirmat</span>
+      <div class="title">Posibil fundal format din mai multe panouri</div>
+      <div class="ok">Ansamblul din mai multe panouri a fost confirmat.</div>
+      <div class="row">panel_1 · ordine 1 · 1000 × 1000 mm · x=0</div>
+      <div class="row">panel_2 · ordine 2 · 1000 × 1000 mm · x=1000</div>
+      <div class="sub">Reload: aceleasi ID-uri, ordine si imbinari (asm_reload).</div>
+    </div>
+  </div>
+</body>
+</html>

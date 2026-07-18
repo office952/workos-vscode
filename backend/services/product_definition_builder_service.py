@@ -383,7 +383,7 @@ def _build_canonical_values(
                 values["segmented_background_aggregate_projection"] = agg_segmented
         # Explicit zero-leak marker for proposal/inactive (optional observability, no effects)
         status_seg = str(segmented.get("status") or "").upper()
-        if status_seg in {"PROPOSED", "INACTIVE"}:
+        if status_seg in {"PROPOSED", "INACTIVE", "REJECTED"}:
             values["segmented_background_proposal"] = {
                 "schema": segmented.get("schema"),
                 "status": status_seg,
@@ -394,6 +394,7 @@ def _build_canonical_values(
                 "materials": [],
                 "processes": [],
                 "task_rules": [],
+                "future_task_intent_authority": "INFORMATIONAL_ONLY",
             }
 
     # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).

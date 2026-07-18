@@ -220,6 +220,11 @@ export interface IntakeV4FinishSetup {
   svg_support_selection?: Record<string, unknown> | null;
   /** Unified Product System component bindings (letters / logo / support). */
   svg_component_bindings?: Record<string, unknown>[] | null;
+  /**
+   * Multi-panel ACM/ACP assembly (nested under SUPPORT envelope).
+   * Analyzer may write PROPOSED; only CONFIRMED is ProductDefinition authority.
+   */
+  segmented_background?: Record<string, unknown> | null;
   /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
   mains_cable_length_m?: number | null;
   power_supply_service_corner?:

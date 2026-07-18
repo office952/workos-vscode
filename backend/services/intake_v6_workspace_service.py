@@ -1326,6 +1326,7 @@ async def save_finish_setup_for_intake_v6_workspace(
                 "svg_support_selection",
                 "mounting_solution",
                 "power_supply_service_corner",
+                "segmented_background",
             ):
                 if req_dump.get(key) is not None:
                     merged[key] = req_dump[key]
@@ -1348,6 +1349,15 @@ async def save_finish_setup_for_intake_v6_workspace(
             detail={"error": "svg_component_binding_invalid", "blockers": binding_blockers},
         )
     finish_doc = sync_support_selection_from_bindings(finish_doc)
+    from services.acm_segmented_background_service import persist_segmented_background_on_finish
+
+    try:
+        finish_doc = persist_segmented_background_on_finish(finish_doc)
+    except ValueError as exc:
+        detail = exc.args[0] if exc.args else {"error": "segmented_background_invalid"}
+        if not isinstance(detail, dict):
+            detail = {"error": str(detail)}
+        raise HTTPException(status_code=422, detail=detail) from exc
     normalized = IntakeV4FinishSetup.model_validate(finish_doc)
 
     # Validate against dossier (non-blocking — warnings stored in payload)

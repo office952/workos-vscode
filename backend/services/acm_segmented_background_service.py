@@ -29,17 +29,20 @@ from data.product_system.acm_segmented_background_v1 import (
     MOUNT_STANDARD,
     MOUNT_TWO_STAGE_JOINT,
     MSG_APPLIED_CROSSING,
+    MSG_ASSEMBLY_CONFIRMED,
     MSG_CROSSING_ON_SINGLE_PANEL,
     MSG_CUTOUT_CROSSING_BLOCKER,
     MSG_DUPLICATE_PANEL_ID,
     MSG_GRAPHIC_DISTRIBUTED,
     MSG_INSERT_CROSSING_BLOCKER,
     MSG_INVALID_PANEL_REF,
+    MSG_PROPOSAL_REJECTED,
     MSG_SEGMENTATION_PROPOSAL,
     SCHEMA,
     STATUS_CONFIRMED,
     STATUS_INACTIVE,
     STATUS_PROPOSED,
+    STATUS_REJECTED,
     STATUS_SINGLE_PANEL,
     contract_meta,
     operator_message,
@@ -402,6 +405,7 @@ def normalize_segmented_background(
         STATUS_SINGLE_PANEL,
         STATUS_PROPOSED,
         STATUS_CONFIRMED,
+        STATUS_REJECTED,
         STATUS_INACTIVE,
     }:
         status = STATUS_PROPOSED
@@ -463,11 +467,142 @@ def normalize_segmented_background(
 
     if status == STATUS_CONFIRMED:
         base["operator_confirmed"] = True
-    if status in {STATUS_PROPOSED, STATUS_INACTIVE}:
+    if status in {STATUS_PROPOSED, STATUS_INACTIVE, STATUS_REJECTED}:
         base["operator_confirmed"] = False
 
     base["validation"] = validate_segmented_background(base)
     return base
+
+
+def confirmation_blockers(config: Mapping[str, Any] | None) -> list[dict[str, str]]:
+    """Blockers that prevent operator confirmation (cutout/insert, invalid refs, etc.)."""
+    normalized = normalize_segmented_background(config)
+    if normalized is None:
+        return [_msg(MSG_INVALID_PANEL_REF, level="blocker")]
+    panels = [p for p in _as_list(normalized.get("panels")) if isinstance(p, Mapping)]
+    blockers = list((normalized.get("validation") or {}).get("blockers") or [])
+    if len(panels) < 2:
+        blockers.append(
+            {
+                "code": "SEGMENTATION_REQUIRES_TWO_PANELS",
+                "level": "blocker",
+                "message": "Un ansamblu segmentat necesita cel putin doua panouri.",
+            }
+        )
+    for p in panels:
+        w = p.get("width_mm")
+        h = p.get("height_mm")
+        try:
+            wf = float(w) if w is not None else 0.0
+            hf = float(h) if h is not None else 0.0
+        except (TypeError, ValueError):
+            wf, hf = 0.0, 0.0
+        if wf <= 0 or hf <= 0:
+            blockers.append(
+                {
+                    "code": "INVALID_PANEL_DIMENSIONS",
+                    "level": "blocker",
+                    "message": "Dimensiunile panoului sunt invalide.",
+                }
+            )
+            break
+    # Deduplicate
+    seen: set[str] = set()
+    out: list[dict[str, str]] = []
+    for b in blockers:
+        code = str(b.get("code") or "")
+        if code in seen:
+            continue
+        seen.add(code)
+        out.append(b)
+    return out
+
+
+def confirm_segmented_background(raw: Any) -> dict[str, Any]:
+    """Explicit operator confirmation. Raises ValueError if confirmation blockers exist."""
+    normalized = normalize_segmented_background(raw)
+    if normalized is None:
+        raise ValueError("segmented_background_missing")
+    blockers = confirmation_blockers(normalized)
+    if blockers:
+        raise ValueError(
+            {
+                "error": "segmented_background_confirmation_blocked",
+                "blockers": blockers,
+            }
+        )
+    normalized["status"] = STATUS_CONFIRMED
+    normalized["operator_confirmed"] = True
+    normalized["confirmation"] = {
+        "message_code": MSG_ASSEMBLY_CONFIRMED,
+        "message": operator_message(MSG_ASSEMBLY_CONFIRMED),
+        "authority": "OPERATOR",
+    }
+    normalized["validation"] = validate_segmented_background(normalized)
+    return normalized
+
+
+def reject_segmented_background(raw: Any = None) -> dict[str, Any]:
+    """Operator reject — clear confirmed authority; zero downstream effects."""
+    normalized = normalize_segmented_background(raw) or {
+        "schema": SCHEMA,
+        "contract_version": CONTRACT_VERSION,
+        "panels": [],
+        "joints": [],
+        "element_bindings": [],
+        "assembly_dimensions": {},
+        "meta": contract_meta(),
+    }
+    normalized["status"] = STATUS_REJECTED
+    normalized["operator_confirmed"] = False
+    normalized["confirmation"] = {
+        "message_code": MSG_PROPOSAL_REJECTED,
+        "message": operator_message(MSG_PROPOSAL_REJECTED),
+        "authority": "OPERATOR",
+    }
+    normalized["validation"] = {
+        "blockers": [],
+        "warnings": [],
+        "infos": [_msg(MSG_PROPOSAL_REJECTED, level="info")],
+    }
+    return normalized
+
+
+def persist_segmented_background_on_finish(finish: Mapping[str, Any] | None) -> dict[str, Any]:
+    """Normalize finish_setup.segmented_background; block illegal CONFIRMED writes.
+
+    Returns updated finish dict. Raises ValueError with structured detail when
+    status=CONFIRMED but confirmation blockers remain.
+    """
+    finish_d = dict(finish or {})
+    raw = finish_d.get("segmented_background")
+    if raw is None:
+        return finish_d
+    normalized = normalize_segmented_background(raw)
+    if normalized is None:
+        finish_d["segmented_background"] = None
+        return finish_d
+    status = str(normalized.get("status") or "").upper()
+    if status == STATUS_CONFIRMED:
+        # Re-run confirm gates — never silently accept impossible crossings.
+        blockers = confirmation_blockers(normalized)
+        if blockers:
+            raise ValueError(
+                {
+                    "error": "segmented_background_confirmation_blocked",
+                    "blockers": blockers,
+                }
+            )
+        normalized["operator_confirmed"] = True
+        normalized["confirmation"] = {
+            "message_code": MSG_ASSEMBLY_CONFIRMED,
+            "message": operator_message(MSG_ASSEMBLY_CONFIRMED),
+            "authority": "OPERATOR",
+        }
+    elif status in {STATUS_PROPOSED, STATUS_REJECTED, STATUS_INACTIVE, STATUS_SINGLE_PANEL}:
+        normalized["operator_confirmed"] = False
+    finish_d["segmented_background"] = normalized
+    return finish_d
 
 
 def read_segmented_background_from_finish(finish: Mapping[str, Any] | None) -> dict[str, Any] | None:
@@ -570,6 +705,8 @@ def project_segmented_background_for_aggregate(
         "blockers": blockers,
         "infos": infos,
         "future_task_intent": future_intent,
+        "future_task_intent_authority": "INFORMATIONAL_ONLY",
+        "task_contract_authority": "task_contract.task_rules — not this projection",
         "quantity_status": "GUARDED",
         "materials": [],
         "processes": [],
@@ -578,6 +715,7 @@ def project_segmented_background_for_aggregate(
         "notes": [
             "Confirmed assembly only — no pricing, no Execution materialization.",
             "Volumetric letters remain external components; interface binding only.",
+            "future_task_intent is contractual/informational — not a parallel task source.",
         ],
     }
 

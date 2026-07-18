@@ -38,6 +38,10 @@ import {
 	buildClearSupportContourPatch,
 	resolvePrimaryClosedContourCandidate,
 } from "@/lib/intakeV6/associatePrimarySupportContour";
+import {
+	proposeSegmentedBackgroundFromCandidates,
+	readSegmentedBackground,
+} from "@/lib/intakeV6/segmentedBackground";
 import { applyLayerRoleSelection, readSvgSupportSelection } from "@/lib/svgAnalyzer";
 import type { LayerAutoRole } from "@/lib/svgAnalyzer";
 
@@ -108,6 +112,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			svg_component_bindings?: ReturnType<typeof readSvgComponentBindings>;
 			mounting_solution?: Record<string, unknown> | null;
 			power_supply_service_corner?: string | null;
+			segmented_background?: Record<string, unknown> | null;
 		}): Promise<boolean> => {
 			const prev =
 				(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
@@ -128,6 +133,9 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			if (patch.power_supply_service_corner !== undefined) {
 				(next as Record<string, unknown>).power_supply_service_corner =
 					patch.power_supply_service_corner;
+			}
+			if (patch.segmented_background !== undefined) {
+				(next as Record<string, unknown>).segmented_background = patch.segmented_background;
 			}
 			const saved = await saveFinishSetup(next);
 			if (!saved) {
@@ -186,9 +194,22 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				];
 				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(mergedBindings);
 				if (contourId) setSelectedContourId(contourId);
+				// Analyzer may propose multi-panel assembly — never auto-confirm.
+				const existingSeg = readSegmentedBackground(
+					finishSetup as Record<string, unknown> | null,
+				);
+				const existingStatus = String(existingSeg?.status || "").toUpperCase();
+				let segmentedProposal: Record<string, unknown> | undefined;
+				if (existingStatus !== "CONFIRMED") {
+					const proposal = proposeSegmentedBackgroundFromCandidates(
+						report.closedContourCandidates?.candidates || [],
+					);
+					if (proposal) segmentedProposal = proposal as unknown as Record<string, unknown>;
+				}
 				void persistFinishPatch({
 					...patch,
 					svg_component_bindings: mergedBindings,
+					...(segmentedProposal ? { segmented_background: segmentedProposal } : {}),
 				});
 				return;
 			}

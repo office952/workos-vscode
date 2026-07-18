@@ -260,6 +260,9 @@ class IntakeV4FinishSetup(BaseModel):
     mounting_fixing_system: dict[str, Any] | None = None
     # ACP shell-common electrical + per-zone illumination intents (guarded; no invented LED/PSU qty).
     acp_electrical_configuration: dict[str, Any] | None = None
+    # Nested multi-panel ACM/ACP assembly (JSON document — no DB migration).
+    # Analyzer may write PROPOSED; only operator CONFIRMED is PD/Aggregate authority.
+    segmented_background: dict[str, Any] | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):
