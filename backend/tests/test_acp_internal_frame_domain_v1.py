@@ -17,11 +17,20 @@ from data.product_system.structural_resource_options_v1 import (
 )
 
 
-def test_materials_exist_profiles_empty():
+def test_materials_exist_acp_profiles_gated():
+    from data.product_system.structural_resource_options_v1 import (
+        ACM_BOXED_TEMPLATE,
+        get_accepted_options,
+    )
+
     codes = {m["code"] for m in list_materials()}
     assert MAT_STRUCT_STEEL in codes
     assert MAT_STRUCT_ALUMINIUM in codes
-    assert list_profiles() == []
+    accepted = get_accepted_options(ACM_BOXED_TEMPLATE) or {}
+    assert accepted.get("accepted_profile_codes") == []
+    fixing = [p for p in list_profiles() if p["code"] == "PROFILE-SHS-20X20X1_5"]
+    assert len(fixing) == 1
+    assert "acp_internal_frame" in (fixing[0].get("provenance") or {}).get("not_for", [])
 
 
 def test_frame_formula_2000x700_acm3():

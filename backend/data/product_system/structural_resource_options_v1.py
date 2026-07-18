@@ -55,8 +55,30 @@ STRUCTURAL_MATERIALS: list[dict[str, Any]] = [
     },
 ]
 
-# Empty until owner confirms real shop sections — do not seed premount/mock sizes.
-STRUCTURAL_PROFILES: list[dict[str, Any]] = []
+# Profiles in shared catalog. ACP internal_frame accepted_profile_codes stays empty
+# until owner confirms ACP sections. PROFILE-SHS-20X20X1_5 is OWNER_CONFIRMED for
+# vertical steel fixing bracket only (see mounting_fixing_system_v1).
+STRUCTURAL_PROFILES: list[dict[str, Any]] = [
+    {
+        "code": "PROFILE-SHS-20X20X1_5",
+        "label": "Țeavă pătrată 20×20×1.5 mm",
+        "shape": "SHS",
+        "width_mm": 20.0,
+        "height_mm": 20.0,
+        "wall_thickness_mm": 1.5,
+        "compatible_material_codes": [MAT_STRUCT_STEEL],
+        "status": "active",
+        "version": 1,
+        "aliases": ["20x20x1.5", "20×20×1.5"],
+        "provenance": {
+            "source": "OWNER_CONFIRMED",
+            "usage": ["vertical_steel_fixing_bracket"],
+            "not_for": ["acp_internal_frame"],
+            "date": "2026-07-18",
+            "registry_version": REGISTRY_VERSION,
+        },
+    },
+]
 
 # Product System accepted options for ACP nested internal frame.
 COMPONENT_ACCEPTED_OPTIONS: dict[str, dict[str, Any]] = {
