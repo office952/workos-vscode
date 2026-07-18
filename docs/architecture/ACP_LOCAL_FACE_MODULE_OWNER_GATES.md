@@ -31,3 +31,11 @@ Do **not** invent values. Implement structure; keep gates explicit.
 
 Module existence does not imply readiness COMPLETE.  
 Inactive modules produce zero warnings / materials / Aggregate leakage.
+
+## Proces atelier (docs, 2026-07-19)
+
+Adevărul de proces (CNC, Oracal după șuruburi, carcasă locală Forex, regimuri volum, insert 10 mm + ciano, șablon pline/ghidaje) este consolidat în:
+
+`docs/architecture/MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md`
+
+Acel document **nu** închide registry-urile optice/electrice din runtime — gate-urile din tabelul de mai sus rămân până la GO implementare.

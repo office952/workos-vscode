@@ -23,7 +23,8 @@
 | **mounting support** | Product / commercial mix | `mounting_solution`, Contur suport | Support child under letters **or** standalone | Now **product component** independent of commercial `mounting_scope` | Contur suport | Historically mislabeled as prep |
 | **luminous panel / sign cabinet** | Product family (legacy path) | `TPL-ACP-LIGHT-ROUTED`, family panouri ACP iluminate | Backlit routed ACP + plexi + LED + relief | CostEngine / QuoteWizard hierarchical template | Panou ACP iluminat | Parallel to Intake V6 ACM boxed — not SVG-bindable composition |
 | **Contur suport** | Geometry role (owner) | `SUPPORT_CONTOUR` | Outer closed contour for support panel | PS SVG binding contract | `support_panel`, `ALUCOBOND_CASED_PANEL` | Three vocabularies |
-| **face_mode / face_treatment / visual_zones** | **Absent** | No runtime SoT | Owner mixed-face concept | — | — | **Not modeled** |
+| **face_treatment** | Runtime identity (V6) | `acp_face_treatment_registry_v1` + FinishSetup bindings | Zone treatments on live ACM shell | Code authority | Not `face_mode` XOR | Composable — see mixed-face docs |
+| **Proces atelier mixt** | Documentație canonică | `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` | CNC, cadru, carcasă locală, insert 10, litere, șablon, ownership | Docs SoT (2026-07-19) | — | Nu înlocuiește LIGHT-ROUTED Cost |
 
 ---
 
@@ -45,4 +46,5 @@
 geometry role  ≠  component  ≠  face treatment  ≠  finish  ≠  material
 ```
 
-Today the live path collapses most of these into: one `SUPPORT_CONTOUR` + global casing config + separate letter/logo product bindings.
+Live path: `SUPPORT_CONTOUR` + casing/frame/fixing + separate letter/logo bindings + optional shell-local face treatments (routed / insert / plain).  
+Procesul tehnic de atelier pentru produsul mixt: **`MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md`**.

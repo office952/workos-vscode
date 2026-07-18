@@ -33,3 +33,11 @@ Not absorbed into Product Template. Not legacy `TPL-ACP-LIGHT-ROUTED` authority.
 
 Projects identity, illumination intent, readiness, guarded process intents.  
 **No quantities. No BOM. No CPP.**
+
+## Carcasă locală atelier (docs)
+
+Stack plexiglas 3 + Forex 10 + capac Forex 3, +30 mm bounding box, regimuri volum:
+
+→ `MIXED_ACM_ACP_TECHNICAL_TRUTH_AND_OWNERSHIP.md` §7–8  
+
+Runtime V4 `inner_hole` poate deriva piese similare; modulul ACP rămâne gated până la registry optic.
