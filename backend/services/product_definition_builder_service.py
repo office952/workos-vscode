@@ -321,6 +321,7 @@ def _build_canonical_values(
 
     # Component-aware SVG bindings (Product System authority) → PD instances.
     from services.svg_component_binding_persistence import (
+        build_face_treatment_readiness_summary,
         build_svg_component_instances,
         read_svg_component_bindings,
         sync_support_selection_from_bindings,
@@ -335,6 +336,16 @@ def _build_canonical_values(
         values["svg_component_bindings"] = read_svg_component_bindings(finish_for_pd) or finish_for_pd.get(
             "svg_component_bindings"
         )
+        # Nested face_treatment_instances live on ACP shell / letter instances (identity only).
+        face_treatments = []
+        for inst in instances:
+            for ft in inst.get("face_treatment_instances") or []:
+                face_treatments.append(ft)
+        if face_treatments:
+            values["face_treatment_instances"] = face_treatments
+        readiness = build_face_treatment_readiness_summary(finish_for_pd)
+        if readiness.get("items") or readiness.get("warnings"):
+            values["face_treatment_readiness"] = readiness
 
     # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
     selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
