@@ -336,6 +336,7 @@ function buildFinishSetupSyncSignature(finish: IntakeV6FinishSetup): string {
     emblem_led_module_count: finish.emblem_led_module_count ?? null,
     total_led_module_count: finish.total_led_module_count ?? null,
     confirmed: finish.confirmed === true,
+    segmented_background: finish.segmented_background ?? null,
   });
 }
 
@@ -458,6 +459,22 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
     total_led_module_count:
       typeof setup.total_led_module_count === "number" ? setup.total_led_module_count : undefined,
     confirmed: setup.confirmed === true,
+    // Segmented ACM/ACP proposal/confirm lives on finish_setup — must hydrate into Review form.
+    segmented_background:
+      setup.segmented_background != null &&
+      typeof setup.segmented_background === "object" &&
+      !Array.isArray(setup.segmented_background)
+        ? (setup.segmented_background as Record<string, unknown>)
+        : null,
+    svg_component_bindings: Array.isArray(setup.svg_component_bindings)
+      ? (setup.svg_component_bindings as IntakeV6FinishSetup["svg_component_bindings"])
+      : undefined,
+    svg_support_selection:
+      setup.svg_support_selection != null &&
+      typeof setup.svg_support_selection === "object" &&
+      !Array.isArray(setup.svg_support_selection)
+        ? (setup.svg_support_selection as Record<string, unknown>)
+        : null,
   };
 }
 
@@ -2930,9 +2947,20 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   <IntakeV6SegmentedBackgroundPanel
                     finish={form as unknown as Record<string, unknown>}
                     disabled={state.phase === "persisting"}
-                    onPatch={(patch) =>
-                      updateForm(patch as Partial<IntakeV6FinishSetup>, { domains: ["mounting"] })
-                    }
+                    onPatch={(patch) => {
+                      // Confirm/reject must hit finish-setup immediately — do not rely on
+                      // debounced autosave (operator can leave Review while "sync pending").
+                      setForm((prev) => {
+                        const next = syncLighting({
+                          ...prev,
+                          ...(patch as Partial<IntakeV6FinishSetup>),
+                          confirmed: false,
+                        });
+                        pendingDirtyDomainsRef.current.add("mounting");
+                        void persistFinishSetupState(next, true);
+                        return next;
+                      });
+                    }}
                   />
                 ) : null}
 

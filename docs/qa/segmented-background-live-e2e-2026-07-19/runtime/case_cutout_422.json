@@ -1,0 +1,15 @@
+{
+  "status": 422,
+  "body": {
+    "detail": {
+      "error": "segmented_background_confirmation_blocked",
+      "blockers": [
+        {
+          "code": "CUTOUT_CROSSING_BLOCKER",
+          "level": "blocker",
+          "message": "O litera sau un decupaj trece peste imbinare. Muta imbinarea sau modifica grafica."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "panelVisible": true,
+  "finishPuts": [
+    {
+      "url": "http://127.0.0.1:8002/api/v1/intake-v6/workspaces/d04b06ce-0448-4e25-96bc-34f421f6a171/finish-setup",
+      "status": 422
+    },
+    {
+      "url": "http://127.0.0.1:8002/api/v1/intake-v6/workspaces/d04b06ce-0448-4e25-96bc-34f421f6a171/finish-setup",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8002/api/v1/intake-v6/workspaces/d04b06ce-0448-4e25-96bc-34f421f6a171/finish-setup",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:8002/api/v1/intake-v6/workspaces/d04b06ce-0448-4e25-96bc-34f421f6a171/finish-setup",
+      "status": 200
+    }
+  ]
+}

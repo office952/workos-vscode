@@ -14,9 +14,12 @@ const SAME_ORIGIN_CONFIG: RuntimeConfig = {
 };
 
 // In dev mode, point directly at the locally controlled backend instance.
-// This avoids stale/shared listeners behind the Vite proxy on port 8000.
+// Prefer VITE_API_BASE_URL so a ghost/stale listener on the default port can be bypassed.
 const DEV_LOCAL_CONFIG: RuntimeConfig = {
-  API_BASE_URL: 'http://127.0.0.1:8001',
+  API_BASE_URL:
+    typeof import.meta.env.VITE_API_BASE_URL === 'string' && import.meta.env.VITE_API_BASE_URL.trim()
+      ? import.meta.env.VITE_API_BASE_URL.trim().replace(/\/$/, '')
+      : 'http://127.0.0.1:8001',
 };
 
 function isExplicitDevMode(): boolean {

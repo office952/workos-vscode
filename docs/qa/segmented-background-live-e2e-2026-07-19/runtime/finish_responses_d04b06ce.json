@@ -1,0 +1,12 @@
+[
+  {
+    "status": 200,
+    "hasSeg": true,
+    "segStatus": "PROPOSED"
+  },
+  {
+    "status": 200,
+    "hasSeg": true,
+    "segStatus": "PROPOSED"
+  }
+]

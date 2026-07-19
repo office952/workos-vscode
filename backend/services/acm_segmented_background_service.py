@@ -568,6 +568,28 @@ def reject_segmented_background(raw: Any = None) -> dict[str, Any]:
     return normalized
 
 
+def coalesce_segmented_background_for_finish(
+    incoming_finish: Mapping[str, Any] | None,
+    existing_finish: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """Keep PROPOSED/CONFIRMED/REJECTED when a sparse finish patch omits the field.
+
+    Letter/logo binding sync may PUT finish_setup without segmented_background; that
+    must not wipe a live operator proposal.
+    """
+    finish_d = dict(incoming_finish or {})
+    if finish_d.get("segmented_background") is not None:
+        return finish_d
+    existing = _as_dict(existing_finish)
+    existing_seg = existing.get("segmented_background")
+    if not isinstance(existing_seg, Mapping):
+        return finish_d
+    existing_status = str(existing_seg.get("status") or "").strip().upper()
+    if existing_status in {STATUS_PROPOSED, STATUS_CONFIRMED, STATUS_REJECTED}:
+        finish_d["segmented_background"] = dict(existing_seg)
+    return finish_d
+
+
 def persist_segmented_background_on_finish(finish: Mapping[str, Any] | None) -> dict[str, Any]:
     """Normalize finish_setup.segmented_background; block illegal CONFIRMED writes.
 

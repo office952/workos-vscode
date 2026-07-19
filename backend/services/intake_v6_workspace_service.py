@@ -1349,7 +1349,15 @@ async def save_finish_setup_for_intake_v6_workspace(
             detail={"error": "svg_component_binding_invalid", "blockers": binding_blockers},
         )
     finish_doc = sync_support_selection_from_bindings(finish_doc)
-    from services.acm_segmented_background_service import persist_segmented_background_on_finish
+    from services.acm_segmented_background_service import (
+        coalesce_segmented_background_for_finish,
+        persist_segmented_background_on_finish,
+    )
+
+    existing_finish_doc = (
+        payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    )
+    finish_doc = coalesce_segmented_background_for_finish(finish_doc, existing_finish_doc)
 
     try:
         finish_doc = persist_segmented_background_on_finish(finish_doc)

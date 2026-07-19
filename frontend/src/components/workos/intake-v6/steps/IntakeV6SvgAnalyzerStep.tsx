@@ -105,6 +105,18 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		[bindables],
 	);
 	const lastSyncedLayerBindingsKey = useRef<string | null>(null);
+	/** Latest segmented truth — binding-only finish patches must not wipe a live proposal. */
+	const segmentedBackgroundRef = useRef<Record<string, unknown> | null>(
+		readSegmentedBackground(finishSetup as Record<string, unknown> | null) as Record<
+			string,
+			unknown
+		> | null,
+	);
+	segmentedBackgroundRef.current =
+		(readSegmentedBackground(finishSetup as Record<string, unknown> | null) as Record<
+			string,
+			unknown
+		> | null) ?? segmentedBackgroundRef.current;
 
 	const persistFinishPatch = useCallback(
 		async (patch: {
@@ -136,6 +148,13 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			}
 			if (patch.segmented_background !== undefined) {
 				(next as Record<string, unknown>).segmented_background = patch.segmented_background;
+				segmentedBackgroundRef.current = patch.segmented_background;
+			} else if (segmentedBackgroundRef.current != null) {
+				// Preserve proposal/confirm across letter/logo binding sync races.
+				(next as Record<string, unknown>).segmented_background =
+					segmentedBackgroundRef.current;
+			} else if (prev.segmented_background != null) {
+				(next as Record<string, unknown>).segmented_background = prev.segmented_background;
 			}
 			const saved = await saveFinishSetup(next);
 			if (!saved) {
@@ -204,7 +223,11 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					const proposal = proposeSegmentedBackgroundFromCandidates(
 						report.closedContourCandidates?.candidates || [],
 					);
-					if (proposal) segmentedProposal = proposal as unknown as Record<string, unknown>;
+					if (proposal) {
+						segmentedProposal = proposal as unknown as Record<string, unknown>;
+						// Synchronous — binding sync useEffect must not race-wipe the proposal.
+						segmentedBackgroundRef.current = segmentedProposal;
+					}
 				}
 				void persistFinishPatch({
 					...patch,

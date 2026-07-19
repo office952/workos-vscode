@@ -1,0 +1,59 @@
+{
+  "id": "a6e327a3-749a-4594-a9cc-6cd377187daa",
+  "workspace_code": "IV6-473E0CCB",
+  "title": "live-seg-cross",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "status": "collecting_data",
+  "payload": {
+    "schema_version": "1.0.0",
+    "client": {
+      "client_name": null,
+      "job_title": null,
+      "width_mm": null,
+      "height_mm": null
+    },
+    "product_binding": {
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "template_id": 8,
+      "template_label": "Litere volumetrice",
+      "product_family": "litere_volumetrice",
+      "product_family_name": "Litere volumetrice",
+      "bound_at": "2026-07-19T06:14:38.691900Z"
+    },
+    "intake_request_code": null,
+    "offer_method": null,
+    "analyzer_mode": "analyzer_first",
+    "template_hint_code": null,
+    "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "source": null,
+    "work_intake_context": {
+      "offer_method": null,
+      "analyzer_mode": "analyzer_first",
+      "template_hint_code": null,
+      "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "source": null,
+      "selected_template_is_initial": true,
+      "product_truth_final_decided_later": true
+    },
+    "svg_source": null,
+    "svg": null,
+    "svg_source_text": null,
+    "svg_analysis_json": null,
+    "path_geometry_summary": null,
+    "quote_geometry": null,
+    "layer_role_setup": null,
+    "layer_role_review": null,
+    "product_composition_recommendation": null,
+    "product_composition_confirmed": null,
+    "product_truth": null,
+    "terminology_mode": null,
+    "finish_setup": null,
+    "offer_scope": null,
+    "offer_scope_confirmed": null,
+    "offer_scope_dependency_validation": null,
+    "sheet_quote_override": null
+  },
+  "readiness_status": "missing_svg",
+  "created_at": "2026-07-19T06:14:38.691900",
+  "updated_at": "2026-07-19T06:14:38.691900"
+}

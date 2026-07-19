@@ -17,6 +17,7 @@ from data.product_system.acm_segmented_background_v1 import (
     operator_message,
 )
 from services.acm_segmented_background_service import (
+    coalesce_segmented_background_for_finish,
     confirm_segmented_background,
     persist_segmented_background_on_finish,
     project_segmented_background_for_aggregate,
@@ -68,6 +69,18 @@ def test_reject_zero_confirmed_truth():
     assert finish["segmented_background"]["status"] == STATUS_REJECTED
     values = _build_canonical_values([], {"finish_setup": finish})
     assert "segmented_background" not in values
+
+
+def test_sparse_finish_patch_does_not_wipe_proposed_segmented():
+    """Binding-sync finish PUTs omit segmented_background — keep live PROPOSED."""
+    proposal = _proposal()
+    sparse = {"svg_component_bindings": [], "mounting_solution": {"kind": "x"}, "segmented_background": None}
+    merged = coalesce_segmented_background_for_finish(
+        sparse,
+        {"segmented_background": proposal},
+    )
+    assert merged["segmented_background"]["status"] == STATUS_PROPOSED
+    assert merged["segmented_background"]["assembly_id"] == proposal["assembly_id"]
 
 
 def test_confirm_persists_and_projects_pd_aggregate():
