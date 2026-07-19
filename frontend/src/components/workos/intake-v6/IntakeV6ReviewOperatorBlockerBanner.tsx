@@ -47,13 +47,14 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
     <div
       className={
         blocked
-          ? "mb-3 rounded-md border border-rose-500/45 bg-rose-500/10 px-3 py-2"
-          : "mb-3 rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2"
+          ? "sticky top-0 z-20 mb-3 rounded-md border border-rose-500/45 bg-rose-950/95 px-3 py-2 shadow-lg shadow-black/40 backdrop-blur-sm"
+          : "sticky top-0 z-20 mb-3 rounded-md border border-amber-500/40 bg-amber-950/90 px-3 py-2 shadow-lg shadow-black/30 backdrop-blur-sm"
       }
       data-testid="intake-v6-review-operator-blocker-banner"
       data-banner-severity={display.severity}
       data-blocker-count={display.blockerCount}
       data-warning-count={display.warningCount}
+      data-sticky="true"
       role="status"
     >
       <div className="flex flex-wrap items-start gap-2">
@@ -111,15 +112,24 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
                 >
                   <p className="font-semibold">
                     {issue.severity === "blocker" ? "Blocaj" : "Avertisment"}
-                    {issue.code ? ` · ${issue.code}` : ""}
+                    {issue.tabId === "montaj"
+                      ? " · Montaj"
+                      : issue.tabId === "iluminare"
+                        ? " · Iluminare și surse"
+                        : issue.tabId === "finisaje"
+                          ? " · Finisaje"
+                          : issue.tabId === "layers"
+                            ? " · Straturi"
+                            : ""}
                   </p>
                   <p className="mt-0.5">{issue.message}</p>
                   {issue.action ? <p className="mt-0.5 opacity-90">Acțiune: {issue.action}</p> : null}
-                  {issue.focusTarget && onFocusTarget ? (
+                  {(issue.focusTarget || issue.tabId) && onFocusTarget ? (
                     <button
                       type="button"
                       className="mt-1 text-[10px] font-semibold underline-offset-2 hover:underline"
-                      onClick={() => onFocusTarget(issue.focusTarget!)}
+                      data-testid={`intake-v6-review-operator-blocker-goto-${issue.id}`}
+                      onClick={() => onFocusTarget(issue.focusTarget || `tab:${issue.tabId}`)}
                     >
                       Mergi la secțiune
                     </button>

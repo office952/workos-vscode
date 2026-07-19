@@ -1,0 +1,31 @@
+[
+  {
+    "stickyBanner": "true"
+  },
+  {
+    "iluminareTab": "Iluminare și surseLED · backing"
+  },
+  {
+    "psuSub": true,
+    "psuTitle": "Alimentare LED / surseSursele pentru iluminarea literelor (nu alimentarea 220V a carcasei multi-panou).PSU (+30%): 26.33"
+  },
+  {
+    "fundalVisible": true
+  },
+  {
+    "elecVisible": true
+  },
+  {
+    "legacyInputVisible": false,
+    "supersededNote": false
+  },
+  {
+    "commercialExpanded": "false"
+  },
+  {
+    "advancedExpanded": "false"
+  },
+  {
+    "tabNavWhileBlocked": true
+  }
+]

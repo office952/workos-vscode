@@ -10,8 +10,14 @@ const TAB_ICONS: Record<IntakeV6ReviewTabId, LucideIcon> = {
 
 const FALLBACK_HINTS: Record<IntakeV6ReviewTabId, string> = {
   finisaje: "Față · cant · Vector Logo",
-  iluminare: "LED · backing",
-  montaj: "Șablon · sistem",
+  iluminare: "LED · surse litere",
+  montaj: "Fundal · carcasă · site",
+};
+
+const CANONICAL_TAB_LABELS: Record<IntakeV6ReviewTabId, string> = {
+  finisaje: "Finisaje",
+  iluminare: "Iluminare și surse",
+  montaj: "Montaj",
 };
 
 /**
@@ -35,10 +41,15 @@ export function resolveReviewTabsFromModularContract(
     if (!id || seen.has(id)) continue;
     if (id !== "finisaje" && id !== "iluminare" && id !== "montaj") continue;
     seen.add(id);
+    // Page-2 IA: iluminare tab always uses the operator-facing rename.
+    const label =
+      id === "iluminare"
+        ? CANONICAL_TAB_LABELS.iluminare
+        : section.tab_label_ro?.trim() || section.title_ro || CANONICAL_TAB_LABELS[id] || id;
     tabs.push({
       id,
-      label: section.tab_label_ro?.trim() || section.title_ro || id,
-      hint: section.tab_hint_ro?.trim() || FALLBACK_HINTS[id],
+      label,
+      hint: id === "iluminare" || id === "montaj" ? FALLBACK_HINTS[id] : section.tab_hint_ro?.trim() || FALLBACK_HINTS[id],
       icon: TAB_ICONS[id],
       moduleCodes: [...(section.module_codes ?? []), ...(section.component_owners ?? [])],
     });

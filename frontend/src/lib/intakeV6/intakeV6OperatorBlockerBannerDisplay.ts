@@ -34,6 +34,8 @@ export type OperatorBlockerBannerIssue = {
   message: string;
   action: string | null;
   focusTarget: string | null;
+  /** Optional Review tab to open before focusing a section. */
+  tabId?: "finisaje" | "iluminare" | "montaj" | "layers" | null;
 };
 
 export type OperatorBlockerBannerDisplay = {
@@ -60,6 +62,8 @@ export type OperatorBlockerBannerInput = {
   /** When true with empty missing-line keys, surface diagnostic inconsistency (not critical). */
   missingPriceFlagWithoutRows?: boolean;
   missingPriceLineKeys?: string[];
+  /** Extra final-confirmation issues (composition, segmented shell, …). */
+  extraIssues?: OperatorBlockerBannerIssue[];
 };
 
 function mapRuntimeBlockerCode(code: string): string {
@@ -139,9 +143,9 @@ function focusForCode(code: string): string | null {
 function buildSummaryTitle(blockerCount: number, warningCount: number): string {
   const parts: string[] = [];
   if (blockerCount === 1) {
-    parts.push("1 problemă blochează Confirmarea");
+    parts.push("Confirmarea finală este blocată de 1 element");
   } else if (blockerCount > 1) {
-    parts.push(`${blockerCount} probleme blochează Confirmarea`);
+    parts.push(`Confirmarea finală este blocată de ${blockerCount} elemente`);
   }
   if (warningCount === 1) {
     parts.push("1 avertisment");
@@ -163,6 +167,7 @@ export function buildOperatorBlockerBannerDisplay(
     plannerModel = null,
     missingPriceFlagWithoutRows = false,
     missingPriceLineKeys = [],
+    extraIssues = [],
   } = input;
 
   const issues: OperatorBlockerBannerIssue[] = [];
@@ -174,6 +179,10 @@ export function buildOperatorBlockerBannerDisplay(
     seen.add(key);
     issues.push(issue);
   };
+
+  for (const issue of extraIssues) {
+    pushIssue(issue);
+  }
 
   const runtimeCodes = collectRuntimeBlockerCodes(runtimeModel);
   const plannerCodes = collectPlannerBlockerCodes(plannerModel);

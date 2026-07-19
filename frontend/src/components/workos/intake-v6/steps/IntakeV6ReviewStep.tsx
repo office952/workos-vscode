@@ -127,7 +127,19 @@ import IntakeV6ArtworkComplexityCard from "../IntakeV6ArtworkComplexityCard";
 import IntakeV6AcpLocalFaceModulesPanel from "../IntakeV6AcpLocalFaceModulesPanel";
 import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPanel";
 import IntakeV6SegmentedElectricalPanel from "../IntakeV6SegmentedElectricalPanel";
+import IntakeV6MontajClusterShell from "../IntakeV6MontajClusterShell";
 import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import {
+  buildFinalConfirmationBlockers,
+  mergeFinalBlockersIntoBannerIssues,
+} from "@/lib/intakeV6/intakeV6FinalConfirmationBlockers";
+import {
+  legacyServiceCornerDemotedNoteRo,
+  legacyServiceCornerSupersededNoteRo,
+  resolveServiceCornerUiMode,
+  shouldShowLegacyServiceCornerInput,
+} from "@/lib/intakeV6/montajServiceCornerPrecedence";
+import { isProductCompositionConfirmed } from "@/lib/intakeV6/intakeV6Readiness";
 import {
   artworkComplexityDecisionsFromPayload,
   artworkComplexityFromReport,
@@ -1873,6 +1885,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     () => collectMissingPriceLineKeysFromBreakdown(breakdown),
     [breakdown],
   );
+  const finalConfirmationExtraIssues = useMemo(
+    () =>
+      mergeFinalBlockersIntoBannerIssues(
+        buildFinalConfirmationBlockers({
+          payload: state.workspace?.payload as Record<string, unknown> | undefined,
+          finish: form as unknown as Record<string, unknown>,
+        }),
+      ),
+    [state.workspace?.payload, form],
+  );
   const operatorBlockerBannerDisplay = useMemo(
     () =>
       buildOperatorBlockerBannerDisplay({
@@ -1885,6 +1907,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         missingPriceFlagWithoutRows:
           breakdown?.totals.contains_missing_prices === true && missingPriceLineKeys.length === 0,
         missingPriceLineKeys,
+        extraIssues: finalConfirmationExtraIssues,
       }),
     [
       reviewHandoffSurfacing,
@@ -1896,7 +1919,41 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       loadingProductTruthPromotionPlanner,
       breakdown?.totals.contains_missing_prices,
       missingPriceLineKeys,
+      finalConfirmationExtraIssues,
     ],
+  );
+  const handleOperatorBlockerFocus = useCallback(
+    (targetId: string) => {
+      if (targetId.startsWith("tab:")) {
+        const tab = targetId.slice(4) as IntakeV6ReviewTabId;
+        if (tab === "finisaje" || tab === "iluminare" || tab === "montaj") {
+          setReviewTab(tab);
+        }
+        return;
+      }
+      if (
+        targetId.includes("segmented") ||
+        targetId.includes("mounting") ||
+        targetId.includes("fundal") ||
+        targetId.includes("elec")
+      ) {
+        setReviewTab("montaj");
+      } else if (targetId.includes("artwork") || targetId.includes("letter")) {
+        setReviewTab("finisaje");
+      } else if (targetId.includes("lighting") || targetId.includes("psu") || targetId.includes("electrical-subsection")) {
+        setReviewTab("iluminare");
+      }
+      window.setTimeout(() => {
+        const node =
+          document.querySelector(`[data-testid="${targetId}"]`) ||
+          document.getElementById(targetId);
+        if (node instanceof HTMLElement) {
+          node.scrollIntoView({ behavior: "smooth", block: "center" });
+          node.focus?.({ preventScroll: true });
+        }
+      }, 80);
+    },
+    [setReviewTab],
   );
   const reviewDiagnosticEntryCount = useMemo(
     () =>
@@ -2125,6 +2182,18 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       <div className="mb-3">
         <IntakeV6OfferScopeReviewSummary payload={payload} />
       </div>
+      <IntakeV6ReviewOperatorBlockerBanner
+        display={operatorBlockerBannerDisplay}
+        nextStepGuidance={
+          isProductCompositionConfirmed(
+            state.workspace?.payload as Record<string, unknown> | undefined,
+          )
+            ? reviewHandoffSurfacing.nextStepGuidance
+            : "Poți naviga liber între taburi. Confirmarea finală rămâne blocată până rezolvi elementele din sumarul de mai sus."
+        }
+        onJumpToDiagnostic={handleJumpToDiagnostic}
+        onFocusTarget={handleOperatorBlockerFocus}
+      />
       <IntakeV6ReviewTabNav
         active={reviewTab}
         onChange={setReviewTab}
@@ -2148,14 +2217,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         Full-product composition from modular form contract
       </div>
 
-      <IntakeV6ReviewOperatorBlockerBanner
-        display={operatorBlockerBannerDisplay}
-        nextStepGuidance={reviewHandoffSurfacing.nextStepGuidance}
-        onJumpToDiagnostic={handleJumpToDiagnostic}
-      />
-
       <div
-        className="min-h-0 lg:flex-1 lg:overflow-hidden"
+        className="min-h-0 lg:flex-1"
         data-testid="intake-v6-review-tab-panels"
       >
         {reviewTab === "finisaje" ? (
@@ -2234,8 +2297,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <div data-testid="intake-v6-review-tab-panel-iluminare" className="space-y-2">
             {renderSectionByKey("iluminare")}
             <IntakeV6ReviewSectionShell
-              title="Iluminare"
-              description="LED, consum și culoare — emblemă când există artwork."
+              title="Iluminare și surse"
+              description="LED și surse pentru litere — separat de alimentarea 220V a carcasei."
               testId="intake-v6-review-section-lighting"
               compact
             >
@@ -2306,30 +2369,34 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         ) : null}
 
         {reviewTab === "montaj" ? (
-          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-2">
-            <p
-              className="rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
-              data-testid="intake-v6-mounting-ownership-note"
+          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-3">
+            <div
+              className="rounded-md border border-[#2A3548] bg-[#0A0F1A]/55 px-3 py-2"
+              data-testid="intake-v6-montaj-readiness-summary"
             >
-              Ownership: MOUNTING → structura_suport + sablon_montaj · mounting_system = metodă ·
-              mounting_solution = suport · metal_support_required = alias · ambalare ≠ MOUNTING ·
-              chip sold MOUNTING = blocat · mounting_method = doar nume țintă.
-            </p>
-            <p
-              className="rounded border border-cyan-900/30 bg-cyan-950/10 px-2.5 py-2 text-[10px] text-cyan-100/80"
-              data-testid="intake-v6-template-ownership-note"
-            >
-              Șablon montaj = sablon_montaj (INSTALLATION_TEMPLATE). Activ doar cu
-              mounting_template_enabled. Nu cere finisaj suprafață.
-            </p>
+              <p className="text-[12px] font-semibold text-slate-100">Montaj — ordine de lucru</p>
+              <p className="mt-0.5 text-[11px] text-slate-400">
+                1) Fundal și carcasă · 2) Montaj comercial (dacă e în ofertă) · 3) Detalii avansate
+              </p>
+            </div>
             {renderSectionByKey("montaj_template")}
             <IntakeV6ReviewSectionShell
-              title="Montaj & template"
-              description="Scope comercial montaj, pregătire în atelier și montaj la locație."
+              title="Montaj"
+              description="Fundal/carcasă, alimentare panouri, apoi opțiuni comerciale de montaj."
               testId="intake-v6-review-section-montaj"
               compact
             >
-            <div className={`${v6.cardCompact} !p-3`}>
+            <div className={`${v6.cardCompact} !p-3 space-y-3`}>
+              <IntakeV6TechnicalDetailsAccordion
+                title="Montaj comercial"
+                hint={
+                  mountingPrepActive
+                    ? "Scope, șablon și montaj la locație"
+                    : "Inactiv pentru scope-ul curent — expandă doar dacă ai nevoie"
+                }
+                defaultOpen={mountingPrepActive}
+                testId="intake-v6-montaj-commercial-cluster"
+              >
               <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
                 <span className={REVIEW_FIELD_LABEL_CLASS}>Scope comercial montaj</span>
                 <select
@@ -2473,7 +2540,36 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </label>
                 </>
               ) : null}
+                </div>
+              </div>
+              </IntakeV6TechnicalDetailsAccordion>
 
+              <IntakeV6MontajClusterShell
+                title="Fundal și carcasă"
+                description="Ansamblu panouri, îmbinări și alimentare 220V pe panouri — o singură decizie operator."
+                tone="primary"
+                statusLabel={
+                  (() => {
+                    const seg = readSegmentedBackground(form as unknown as Record<string, unknown>);
+                    if (!seg) return acpProductActive ? "Panou ACP" : "Fără segmentare";
+                    const st = String(seg.status || "").toUpperCase();
+                    if (st === "CONFIRMED") return "Ansamblu confirmat";
+                    if (st === "PROPOSED") return "Propunere";
+                    if (st === "REJECTED") return "Respins";
+                    return st;
+                  })()
+                }
+                statusTone={
+                  (() => {
+                    const seg = readSegmentedBackground(form as unknown as Record<string, unknown>);
+                    const st = String(seg?.status || "").toUpperCase();
+                    if (st === "CONFIRMED") return "ok";
+                    if (st === "PROPOSED") return "pending";
+                    return "muted";
+                  })()
+                }
+                testId="intake-v6-fundal-carcasa-cluster"
+              >
               <div
                 className="sm:col-span-2 rounded border border-cyan-900/50 bg-cyan-950/20 px-3 py-3"
                 data-testid="intake-v6-mounting-solution-panel"
@@ -2981,6 +3077,38 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     });
                   }}
                 />
+                {!shouldShowLegacyServiceCornerInput(form as unknown as Record<string, unknown>) ? (
+                  <p
+                    className="mt-2 text-[10px] text-slate-400"
+                    data-testid="intake-v6-legacy-corner-superseded-note"
+                  >
+                    {legacyServiceCornerSupersededNoteRo()}
+                  </p>
+                ) : null}
+              </div>
+              </IntakeV6MontajClusterShell>
+
+              <IntakeV6TechnicalDetailsAccordion
+                title="Avansat"
+                hint="Prindere, colț service, diagnostice ownership"
+                defaultOpen={false}
+                testId="intake-v6-montaj-advanced-cluster"
+              >
+                <p
+                  className="rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
+                  data-testid="intake-v6-mounting-ownership-note"
+                >
+                  Ownership: MOUNTING → structura_suport + sablon_montaj · mounting_system = metodă ·
+                  mounting_solution = suport · metal_support_required = alias · ambalare ≠ MOUNTING ·
+                  chip sold MOUNTING = blocat · mounting_method = doar nume țintă.
+                </p>
+                <p
+                  className="mt-2 rounded border border-cyan-900/30 bg-cyan-950/10 px-2.5 py-2 text-[10px] text-cyan-100/80"
+                  data-testid="intake-v6-template-ownership-note"
+                >
+                  Șablon montaj = sablon_montaj (INSTALLATION_TEMPLATE). Activ doar cu
+                  mounting_template_enabled. Nu cere finisaj suprafață.
+                </p>
 
                 {acpProductActive ? (
                   <div
@@ -3077,11 +3205,21 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   ) : null}
                 </div>
 
-                {acpProductActive ? (
+                {acpProductActive &&
+                shouldShowLegacyServiceCornerInput(form as unknown as Record<string, unknown>) ? (
                   <div
                     className="mt-3 grid gap-2 sm:grid-cols-2"
                     data-testid="intake-v6-acp-service-corner-fields"
                   >
+                    {resolveServiceCornerUiMode(form as unknown as Record<string, unknown>) ===
+                    "legacy_demoted_segmented_pending" ? (
+                      <p
+                        className="sm:col-span-2 text-[10px] text-amber-100/90"
+                        data-testid="intake-v6-legacy-corner-demoted-note"
+                      >
+                        {legacyServiceCornerDemotedNoteRo()}
+                      </p>
+                    ) : null}
                     <label className={REVIEW_FIELD_BLOCK_CLASS}>
                       <span className={REVIEW_FIELD_LABEL_CLASS}>Colt service transformator</span>
                       <select
@@ -3189,7 +3327,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     </label>
                   </div>
                 ) : null}
-              </div>
 
               {volumAluminumModuleLinks.length > 0 ? (
                 <div className="sm:col-span-2 rounded border border-cyan-900/50 bg-cyan-950/20 px-3 py-3">
@@ -3240,8 +3377,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </label>
                 </div>
               ) : null}
-            </div>
-              </div>
+              </IntakeV6TechnicalDetailsAccordion>
 
               <div
                 className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${siteInstallationSectionActive ? "" : "opacity-60"}`}

@@ -1,0 +1,4 @@
+{
+  "message": "Error: SVG import did not surface analyzer UI",
+  "stack": "Error: SVG import did not surface analyzer UI\n    at importSvg (file:///C:/w/psiso/docs/qa/intake-v6-page2-ia-montaj-realignment-2026-07-19/run-page2-ia-live.mjs:68:9)\n    at async main (file:///C:/w/psiso/docs/qa/intake-v6-page2-ia-montaj-realignment-2026-07-19/run-page2-ia-live.mjs:225:3)"
+}

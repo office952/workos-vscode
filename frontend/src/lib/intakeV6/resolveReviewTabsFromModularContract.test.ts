@@ -73,6 +73,7 @@ describe("resolveReviewTabsFromModularContract", () => {
     const tabs = resolveReviewTabsFromModularContract(makeContract());
     expect(tabs?.map((tab) => tab.id)).toEqual(["finisaje", "iluminare", "montaj"]);
     expect(tabs?.[0]?.label).toBe("Finisaje");
+    expect(tabs?.[1]?.label).toBe("Iluminare și surse");
     expect(tabs?.[0]?.moduleCodes).toEqual(expect.arrayContaining(["FACE", "CANT"]));
   });
 

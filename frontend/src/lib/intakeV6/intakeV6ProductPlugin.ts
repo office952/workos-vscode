@@ -33,15 +33,15 @@ const VOLUMETRIC_LETTERS_REVIEW_TABS: IntakeV6ReviewTabDefinition[] = [
   },
   {
     id: "iluminare",
-    label: "Iluminare",
-    hint: "LED · backing",
+    label: "Iluminare și surse",
+    hint: "LED · surse litere",
     icon: Lightbulb,
     moduleCodes: ["led", "backing"],
   },
   {
     id: "montaj",
     label: "Montaj",
-    hint: "Șablon · sistem",
+    hint: "Fundal · carcasă · site",
     icon: Wrench,
     moduleCodes: ["mounting", "template"],
   },

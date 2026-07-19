@@ -124,7 +124,7 @@ export default function IntakeV6ReviewLightingSection({
     <div className={shellClass} data-testid="intake-v6-review-lighting-section">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className={compact ? v6.zoneTitle : v6.sectionTitle}>Iluminare LED</p>
+          <p className={compact ? v6.zoneTitle : v6.sectionTitle}>Iluminare și surse</p>
           {canEditLedMaster && illuminated && ledDisplayPerimeterM != null ? (
             <p className="mt-0.5 text-[10px] text-slate-500">
               Perimetru litere:{" "}
@@ -292,11 +292,14 @@ export default function IntakeV6ReviewLightingSection({
 
           {showElectricalFields ? (
             <section className="space-y-2.5" data-testid="intake-v6-electrical-subsection">
-              <p className="text-[11px] font-semibold text-amber-200">Electrică</p>
+              <p className="text-[11px] font-semibold text-amber-200">Alimentare LED / surse</p>
+              <p className="text-[10px] text-slate-500">
+                Sursele pentru iluminarea literelor (nu alimentarea 220V a carcasei multi-panou).
+              </p>
               <div className="grid gap-2 sm:grid-cols-2">
                 {!hideContractManagedFields ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sursa LED template</span>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sursă LED (putere)</span>
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={selectedPsuWatts ?? ""}
