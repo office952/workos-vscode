@@ -1,0 +1,37 @@
+{
+  "ui": "http://127.0.0.1:3000",
+  "workspace_id": "29472e22-5fe1-4e8d-af66-f9ab75d5fe32",
+  "at": "2026-07-19T11:34:53.839Z",
+  "shots": [
+    "01_page1_straturi_full.png"
+  ],
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/29472e22-5fe1-4e8d-af66-f9ab75d5fe32/operator",
+    "hasComposition": true,
+    "hasScope": true,
+    "hasBlocker": true,
+    "hasPricing": true,
+    "hasFooter": true,
+    "warnLikeSample": [
+      "Stare sistem: necesită verificare",
+      "Necesită confirmare",
+      "1 tarif lipsă",
+      "Configurarea necesită atenție · 2 blocante · 1 avertizareUrmătorul pas este în footer. Deschide lista pentru detalii.Vez",
+      "Configurarea necesită atenție · 2 blocante · 1 avertizare",
+      "Următorul pas este în footer. Deschide lista pentru detalii.",
+      "Vezi detalii tehnice și diagnostic",
+      "Necesită confirmare",
+      "Operatorul trebuie sa confirme compozitia produsului propusa de analyzer inainte de priced dry-run ready.",
+      "Tarife lipsă — Accesorii montaj / conectori",
+      "— Accesorii montaj / conectori",
+      "Cantul necesită valori obligatorii lipsă. Verifică adâncimea și finisajul cantului.",
+      "Configurare incompletă· 2 / 3 confirmări· 2 blocante · 1 avertizareUrmătorul pas: Confirmă compoziția produsului.",
+      "Configurare incompletă",
+      "· 2 / 3 confirmări"
+    ],
+    "viewport": {
+      "w": 1100,
+      "h": 900
+    }
+  }
+}

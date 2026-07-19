@@ -1,0 +1,34 @@
+{
+  "tabs": [
+    {
+      "id": "intake-v6-review-tabs",
+      "text": "FinisajeFață · cant · Vector LogoIluminare și surseLED · surse litereMontajFunda"
+    },
+    {
+      "id": "intake-v6-review-tab-finisaje",
+      "text": "FinisajeFață · cant · Vector Logo"
+    },
+    {
+      "id": "intake-v6-review-tab-iluminare",
+      "text": "Iluminare și surseLED · surse litere"
+    },
+    {
+      "id": "intake-v6-review-tab-montaj",
+      "text": "MontajFundal · carcasă · site"
+    },
+    {
+      "id": "intake-v6-review-tab-panels",
+      "text": "Montaj — ordine de lucru1) Fundal și carcasă · 2) Montaj comercial (dacă e în of"
+    },
+    {
+      "id": "intake-v6-review-tab-panel-montaj",
+      "text": "Montaj — ordine de lucru1) Fundal și carcasă · 2) Montaj comercial (dacă e în of"
+    }
+  ],
+  "panels": [
+    "intake-v6-review-tab-panels",
+    "intake-v6-review-tab-panel-montaj"
+  ],
+  "montaj": true,
+  "lighting": false
+}
