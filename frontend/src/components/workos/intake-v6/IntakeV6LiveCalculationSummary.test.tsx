@@ -713,8 +713,14 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-review-calculator-panel")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-live-preview-more")).toHaveTextContent(/\+/);
+    expect(screen.getByTestId("intake-v6-review-calculator-panel")).toHaveAttribute(
+      "data-pricing-weight",
+      "secondary",
+    );
+    expect(screen.getByTestId("intake-v6-live-preview-more")).toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-review-calculator-details")).toBeInTheDocument();
+    // Line rows stay opt-in on the quiet rail.
+    expect(screen.queryByTestId("intake-v6-live-materials-list")).not.toBeInTheDocument();
   });
 
   it("collapses details on mobile until toggled", () => {
@@ -800,6 +806,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
         layout="rightPanel"
         officialPricing={{
           pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
           commercial_totals: {
             subtotal_net: 2500,
             total_gross: 2975,
@@ -828,7 +835,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-live-estimate-unavailable")).toHaveTextContent(
-      INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE,
+      /Prețul comercial oficial nu este disponibil|Estimarea comercială necesită/i,
     );
     expect(screen.queryByTestId("intake-v6-live-offer-gross")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);

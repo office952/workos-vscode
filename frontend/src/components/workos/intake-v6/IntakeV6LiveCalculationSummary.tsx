@@ -41,9 +41,9 @@ import { v6 } from "./atoms/intakeV6Presentation";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
-export const INTAKE_V6_LIVE_CALC_TITLE = "Calcul estimativ live";
+export const INTAKE_V6_LIVE_CALC_TITLE = "Rezultat comercial";
 export const INTAKE_V6_LIVE_CALC_PREVIEW_HINT =
-  "Se actualizează după configurația curentă. Valoarea finală se confirmă ulterior.";
+  "Estimare după configurația curentă. Detaliile de linii se deschid la cerere.";
 export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Valoare estimată cu TVA";
 export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Estimare netă";
 export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = "Cost intern (referință)";
@@ -692,14 +692,16 @@ function LiveCalcLineList({
 
 function LiveCalcPreviewHeader({ compact = false }: { compact?: boolean }) {
   return (
-    <div className={compact ? "mb-1.5 min-w-0" : "mb-2"} data-testid="intake-v6-live-calc-preview-header">
+    <div className={compact ? "mb-1 min-w-0" : "mb-1.5"} data-testid="intake-v6-live-calc-preview-header">
       <div className="flex items-center gap-1.5">
-        <Calculator className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
-        <h3 className="text-[12px] font-medium text-slate-300">{INTAKE_V6_LIVE_CALC_TITLE}</h3>
+        <Calculator className="h-3.5 w-3.5 shrink-0 text-slate-600" aria-hidden />
+        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          {INTAKE_V6_LIVE_CALC_TITLE}
+        </h3>
       </div>
       {!compact ? (
         <p
-          className="mt-1 text-[10px] leading-relaxed text-slate-500"
+          className="mt-1 text-[10px] leading-relaxed text-slate-600"
           data-testid="intake-v6-live-calc-preview-hint"
         >
           {INTAKE_V6_LIVE_CALC_PREVIEW_HINT}
@@ -1118,11 +1120,12 @@ export default function IntakeV6LiveCalculationSummary({
     return (
       <aside
         className={joinClassNames(
-          "rounded-md border border-[#243044]/60 bg-[#0A0F1A]/75 p-2.5",
+          "rounded-md border border-[#2A3548]/45 bg-[#0A0F1A]/55 p-2.5",
           className,
         )}
         data-testid="intake-v6-review-calculator-panel"
         data-layout={layout}
+        data-pricing-weight="secondary"
       >
         <LiveCalcPreviewHeader />
 
@@ -1133,7 +1136,7 @@ export default function IntakeV6LiveCalculationSummary({
           currency={currency}
           artworkOnlyBlocked={artworkOnlyBlocked}
           officialPricingBlocker={officialPricingBlocker}
-          emphasis="balanced"
+          emphasis="compact"
         />
 
         {pendingSave ? (
@@ -1162,29 +1165,11 @@ export default function IntakeV6LiveCalculationSummary({
         ) : null}
 
         {loading ? (
-          <p className="mb-2 mt-2 text-[11px] text-slate-400">Actualizez estimările…</p>
+          <p className="mb-2 mt-2 text-[11px] text-slate-500">Actualizez estimările…</p>
         ) : rows.length > 0 ? (
           <div className="mt-2" data-testid="intake-v6-live-materials-used">
-            {usesLogicalList ? (
-              <p className="mb-2 text-[10px] text-slate-500" data-testid="intake-v6-logical-list-summary">
-                Lista logică · {logicalRowCount}
-                {logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
-              </p>
-            ) : null}
-            <LiveCalcLineList
-              filteredRows={previewRows}
-              activeFilter={activeFilter}
-              filterTotals={filterTotals}
-              currency={currency}
-              logicalMode={usesLogicalList}
-              showTechnicalDetails={false}
-            />
-            {hiddenPreviewCount > 0 ? (
-              <p className="mt-1.5 text-[10px] text-slate-500" data-testid="intake-v6-live-preview-more">
-                +{hiddenPreviewCount} linii în detaliu
-              </p>
-            ) : null}
-            <div className="mt-2">
+            {/* Line detail is opt-in so commercial result stays secondary to product decisions. */}
+            <div className="mt-1">
               <DetailsSheet
                 detailsBody={detailsBody}
                 missingRateLabels={missingRateLabels}
@@ -1192,9 +1177,18 @@ export default function IntakeV6LiveCalculationSummary({
                 testId="intake-v6-review-calculator-details"
               />
             </div>
+            {hiddenPreviewCount > 0 ? (
+              <p className="sr-only" data-testid="intake-v6-live-preview-more">
+                +{hiddenPreviewCount} linii în detaliu
+              </p>
+            ) : (
+              <p className="sr-only" data-testid="intake-v6-live-preview-more">
+                Detalii linii disponibile la cerere
+              </p>
+            )}
           </div>
         ) : (
-          <p className="mt-2 text-[11px] text-slate-400">Nu există încă breakdown live.</p>
+          <p className="mt-2 text-[11px] text-slate-500">Nu există încă breakdown live.</p>
         )}
       </aside>
     );

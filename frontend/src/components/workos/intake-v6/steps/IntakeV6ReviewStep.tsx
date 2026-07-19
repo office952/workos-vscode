@@ -2195,7 +2195,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       </div>
 
       <div
-        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(360px,420px)] xl:grid-cols-[minmax(0,1fr)_minmax(390px,460px)]"
+        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(300px,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]"
         data-testid="intake-v6-review-layout"
       >
         <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
@@ -3479,29 +3479,37 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             eurToRonRate={eurToRonRate}
             artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
           />
-          <IntakeV6PricingInputPanel
-            preview={pricingPreview}
-            breakdown={breakdown}
-            officialPricing={pricedQuoteDryRun}
-            loading={loadingPricingPreview}
-            commercialInputs={commercialInputs}
-            onCommercialInputsChange={(next) => {
-              const nextCommercialInputs = { ...next, vatPercent: vatPct };
-              markLocalFinishChanged(["commercial_preview"], "long");
-              setCommercialInputsDirty(true);
-              setCommercialInputs(nextCommercialInputs);
-              if (commercialSaveTimerRef.current) {
-                clearTimeout(commercialSaveTimerRef.current);
-              }
-              commercialSaveTimerRef.current = setTimeout(() => {
-                commercialSaveTimerRef.current = null;
-                void saveCurrentFinish(true, nextCommercialInputs);
-              }, 700);
-            }}
-            eurToRonRate={eurToRonRate}
-            variant="commercialSliders"
-            commercialGuard={logoOnlyCandidateNotOfferable ? LOGO_ONLY_NOT_OFFERABLE_STATUS : null}
-          />
+          <IntakeV6TechnicalDetailsAccordion
+            title="Ajustări comerciale"
+            hint="Adaos, discount, TVA — nu înlocuiește deciziile de produs"
+            defaultOpen={false}
+            testId="intake-v6-review-commercial-adjustments"
+            className="mt-2"
+          >
+            <IntakeV6PricingInputPanel
+              preview={pricingPreview}
+              breakdown={breakdown}
+              officialPricing={pricedQuoteDryRun}
+              loading={loadingPricingPreview}
+              commercialInputs={commercialInputs}
+              onCommercialInputsChange={(next) => {
+                const nextCommercialInputs = { ...next, vatPercent: vatPct };
+                markLocalFinishChanged(["commercial_preview"], "long");
+                setCommercialInputsDirty(true);
+                setCommercialInputs(nextCommercialInputs);
+                if (commercialSaveTimerRef.current) {
+                  clearTimeout(commercialSaveTimerRef.current);
+                }
+                commercialSaveTimerRef.current = setTimeout(() => {
+                  commercialSaveTimerRef.current = null;
+                  void saveCurrentFinish(true, nextCommercialInputs);
+                }, 700);
+              }}
+              eurToRonRate={eurToRonRate}
+              variant="commercialSliders"
+              commercialGuard={logoOnlyCandidateNotOfferable ? LOGO_ONLY_NOT_OFFERABLE_STATUS : null}
+            />
+          </IntakeV6TechnicalDetailsAccordion>
         </div>
       </div>
 

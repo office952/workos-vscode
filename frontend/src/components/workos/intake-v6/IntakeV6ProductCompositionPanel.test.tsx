@@ -74,9 +74,9 @@ describe("IntakeV6ProductCompositionPanel", () => {
   it("keeps Product Definition linked segments under technical disclosure", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} linkedSegments={linkedSegments} />);
 
-    const advanced = screen.getByTestId("intake-v6-product-definition-linked-segments");
+    const advanced = screen.getByTestId("intake-v6-product-composition-technical");
     expect(advanced).toHaveAttribute("data-expanded", "false");
-    fireEvent.click(screen.getByTestId("intake-v6-product-definition-linked-segments-toggle"));
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-technical-toggle"));
     expect(advanced).toHaveAttribute("data-expanded", "true");
     expect(advanced).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
     expect(advanced).toHaveTextContent("TPL-VOLUMETRIC-LOGO_v1");
@@ -88,7 +88,7 @@ describe("IntakeV6ProductCompositionPanel", () => {
   it("stays stable when linked Product Definition summary is missing", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} linkedSegments={null} />);
 
-    expect(screen.queryByTestId("intake-v6-product-definition-linked-segments")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-product-composition-technical")).not.toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
   });
@@ -109,9 +109,31 @@ describe("IntakeV6ProductCompositionPanel", () => {
     expect(screen.getByTestId("intake-v6-product-composition-details")).toBeInTheDocument();
     expect(screen.getAllByText("TPL-VOLUMETRIC-LETTERS_v2").length).toBeGreaterThan(0);
     expect(screen.getAllByText("TPL-VOLUMETRIC-LOGO_v1").length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByTestId("intake-v6-product-definition-linked-segments-toggle"));
-    expect(screen.getByTestId("intake-v6-product-definition-linked-segments")).toHaveTextContent(
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-technical-toggle"));
+    expect(screen.getByTestId("intake-v6-product-composition-technical")).toHaveTextContent(
       /Nu activează pricing|Nu activeaza pricing/i,
     );
+  });
+
+  it("keeps confirm CTA on L1 and demotes registry warnings into technical disclosure", () => {
+    const withWarning = {
+      ...payload,
+      product_composition_recommendation: {
+        ...payload.product_composition_recommendation,
+        warnings: [
+          {
+            code: "LEGACY_SUPPORT_TEMPLATE",
+            message: "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM).",
+          },
+        ],
+      },
+    };
+    render(<IntakeV6ProductCompositionPanel payload={withWarning} onConfirm={vi.fn()} />);
+
+    expect(screen.getByTestId("intake-v6-confirm-product-composition")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.queryByText(/authority live/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-technical-toggle"));
+    expect(screen.getByTestId("intake-v6-product-composition-issues")).toHaveTextContent(/authority live/i);
   });
 });

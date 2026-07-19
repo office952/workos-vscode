@@ -154,8 +154,10 @@ export default function IntakeV6PricingInputPanel({
     !(group.items.length === 1 && group.items[0]?.label === group.label);
 
   const commercialSlidersBlock = (
-    <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
-      <h4 className="mb-3 text-[12px] font-semibold text-slate-200">Reglaje comerciale</h4>
+    <div className="rounded border border-[#2A3548]/40 bg-[#0A0F1A]/35 p-2.5">
+      <h4 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+        Reglaje comerciale
+      </h4>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-[11px] text-slate-300">
           <span className="mb-1 block text-slate-400">Adaos %</span>
@@ -275,7 +277,10 @@ export default function IntakeV6PricingInputPanel({
 
   if (variant === "commercialSliders") {
     return (
-      <div className={`${v6.cardCompact} mb-3 !p-3`} data-testid="intake-v6-pricing-input-preview">
+      <div
+        className="rounded-md border border-[#2A3548]/40 bg-transparent p-0"
+        data-testid="intake-v6-pricing-input-preview"
+      >
         {commercialSlidersBlock}
       </div>
     );

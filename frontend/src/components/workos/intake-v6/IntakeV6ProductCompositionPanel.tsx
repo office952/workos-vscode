@@ -184,7 +184,8 @@ export default function IntakeV6ProductCompositionPanel({
   const linkedSegmentItems = linkedSegments?.segments ?? [];
   const canConfirm = !confirmed && recommendation.status !== "blocked" && items.length > 0;
   const hasIssues = blockers.length > 0 || warnings.length > 0;
-  const [open, setOpen] = useState(() => !confirmed || hasIssues);
+  // Blockers force expand; technical warnings stay behind disclosure by default.
+  const [open, setOpen] = useState(() => !confirmed || blockers.length > 0);
 
   const componentSummary = items.map((item) => roleLabel(item.component_role, item.template_code)).join(" · ");
   const statusLabel = confirmed
@@ -195,7 +196,13 @@ export default function IntakeV6ProductCompositionPanel({
 
   return (
     <section
-      className={`${v6.cardCompact} ${confirmed ? "border-emerald-500/30 bg-emerald-500/5" : "border-cyan-500/30 bg-cyan-500/5"}`}
+      className={`rounded-md border px-3 py-2.5 sm:px-3.5 ${
+        confirmed
+          ? "border-[#2A3548]/70 bg-[#111827]/50"
+          : blockers.length > 0
+            ? "border-rose-500/35 bg-rose-950/20"
+            : "border-[#2A3548]/90 bg-[#111827]/70"
+      }`}
       data-testid="intake-v6-product-composition-panel"
     >
       <button
@@ -207,29 +214,32 @@ export default function IntakeV6ProductCompositionPanel({
         data-testid="intake-v6-product-composition-toggle"
       >
         <div className="min-w-0">
-          <p className="flex items-center gap-2 text-[12px] font-semibold text-slate-100">
-            <Layers3 className="h-3.5 w-3.5 text-cyan-300" aria-hidden />
-            Compoziție produs
+          <p className="flex items-center gap-2 text-[13px] font-semibold text-slate-100">
+            <Layers3 className="h-3.5 w-3.5 text-slate-400" aria-hidden />
+            Produs
           </p>
-          <p className="mt-1 text-[11px] text-slate-400" data-testid="intake-v6-product-composition-summary">
+          <p className="mt-1 text-[12px] text-slate-300" data-testid="intake-v6-product-composition-summary">
             {compositionLabel(recommendation.composition_type)}
           </p>
           {componentSummary ? (
-            <p className="mt-0.5 text-[10px] text-slate-500" data-testid="intake-v6-product-composition-components">
+            <p className="mt-0.5 text-[11px] text-slate-500" data-testid="intake-v6-product-composition-components">
               {componentSummary}
             </p>
           ) : null}
           {linkedSegmentItems.length > 0 ? (
-            <p className="mt-1 text-[10px] text-slate-500" data-testid="intake-v6-product-composition-linked-count">
+            <p className="mt-1 text-[10px] text-slate-600" data-testid="intake-v6-product-composition-linked-count">
               {linkedSegmentItems.length}{" "}
               {linkedSegmentItems.length === 1 ? "segment legat" : "segmente legate"}
             </p>
           ) : null}
-          {hasIssues && !open ? (
-            <p className="mt-1 text-[10px] text-amber-200/90">
-              {blockers.length > 0
-                ? `${blockers.length} blocant${blockers.length === 1 ? "" : "e"} — expandă pentru detalii`
-                : `${warnings.length} avertisment${warnings.length === 1 ? "" : "e"}`}
+          {blockers.length > 0 && !open ? (
+            <p className="mt-1 text-[11px] text-rose-200/90">
+              {blockers.length} blocant{blockers.length === 1 ? "" : "e"} — expandă pentru detalii
+            </p>
+          ) : null}
+          {warnings.length > 0 && blockers.length === 0 && !open ? (
+            <p className="mt-1 text-[11px] text-slate-500">
+              Context tehnic disponibil în detalii
             </p>
           ) : null}
         </div>
@@ -237,7 +247,7 @@ export default function IntakeV6ProductCompositionPanel({
           <span
             className={`rounded border px-2 py-0.5 text-[10px] font-semibold ${
               confirmed
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-300"
                 : blockers.length > 0
                   ? "border-rose-500/30 bg-rose-500/10 text-rose-200"
                   : "border-amber-500/30 bg-amber-500/10 text-amber-200"
@@ -245,25 +255,41 @@ export default function IntakeV6ProductCompositionPanel({
           >
             {statusLabel}
           </span>
-          <ChevronDown className={`h-4 w-4 text-slate-400 transition ${open ? "rotate-180" : ""}`} aria-hidden />
+          <ChevronDown className={`h-4 w-4 text-slate-500 transition ${open ? "rotate-180" : ""}`} aria-hidden />
         </div>
       </button>
+
+      {/* Required confirmation stays on L1 — never only inside technical disclosure. */}
+      {canConfirm && onConfirm ? (
+        <button
+          type="button"
+          className={`${v6.btnPrimary} mt-2.5 inline-flex items-center gap-1.5 text-[11px]`}
+          data-testid="intake-v6-confirm-product-composition"
+          onClick={() => onConfirm(items as Array<Record<string, unknown>>)}
+        >
+          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+          Confirmă compoziția produsului
+        </button>
+      ) : null}
 
       {open ? (
       <div data-testid="intake-v6-product-composition-details">
       <div className={`mt-3 grid gap-2 ${compact ? "" : "sm:grid-cols-2"}`}>
         {items.map((item) => (
-          <div key={item.composition_item_id ?? item.template_code} className="rounded border border-[#2A3548]/80 bg-[#0A0F1A]/60 p-2.5">
-            <p className="text-[11px] font-semibold text-slate-100">
+          <div
+            key={item.composition_item_id ?? item.template_code}
+            className="rounded border border-[#2A3548]/50 bg-[#0A0F1A]/40 px-2.5 py-2"
+          >
+            <p className="text-[12px] font-medium text-slate-200">
               {roleLabel(item.component_role, item.template_code)}
             </p>
             {item.status === "pending_template" ? (
               <p className="mt-1 text-[10px] text-amber-300">Template suport în așteptare</p>
             ) : (
-              <p className="mt-0.5 text-[10px] text-slate-500">Inclus în propunere</p>
+              <p className="mt-0.5 text-[10px] text-slate-600">Inclus în propunere</p>
             )}
             <details className="mt-1">
-              <summary className="cursor-pointer text-[10px] text-slate-500">Detalii tehnice</summary>
+              <summary className="cursor-pointer text-[10px] text-slate-600">Detalii tehnice</summary>
               <p className="mt-0.5 font-mono text-[10px] text-slate-500">{item.template_code}</p>
               {item.source_layer_ids?.length ? (
                 <p className="mt-0.5 text-[10px] text-slate-500">
@@ -276,71 +302,73 @@ export default function IntakeV6ProductCompositionPanel({
         ))}
       </div>
 
-      {warnings.length || blockers.length ? (
-        <div className="mt-3 space-y-1 text-[11px] text-amber-100" data-testid="intake-v6-product-composition-issues">
-          {[...blockers, ...warnings].map((item, index) => (
+      {blockers.length > 0 ? (
+        <div className="mt-3 space-y-1 text-[11px] text-rose-100" data-testid="intake-v6-product-composition-blockers">
+          {blockers.map((item, index) => (
             <p key={index} className="flex gap-1.5">
-              <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-amber-300" aria-hidden />
+              <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-rose-300" aria-hidden />
               <span>{String(item.message ?? item.code ?? "Verificare compoziție necesară")}</span>
             </p>
           ))}
         </div>
       ) : null}
 
-      {canConfirm && onConfirm ? (
-        <button
-          type="button"
-          className={`${v6.btnPrimary} mt-3 inline-flex items-center gap-1.5 text-[11px]`}
-          data-testid="intake-v6-confirm-product-composition"
-          onClick={() => onConfirm(items as Array<Record<string, unknown>>)}
-        >
-          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-          Confirmă compoziția produsului
-        </button>
-      ) : null}
-
-      {linkedSegmentItems.length > 0 ? (
+      {(warnings.length > 0 || linkedSegmentItems.length > 0) ? (
         <IntakeV6TechnicalDetailsAccordion
-          title="Detalii tehnice Product Definition"
-          hint="Segmente legate, coduri template, readiness"
+          title="Detalii tehnice compoziție"
+          hint="Avertismente registry, segmente legate, readiness"
           defaultOpen={false}
-          testId="intake-v6-product-definition-linked-segments"
+          testId="intake-v6-product-composition-technical"
           className="mt-3"
         >
-          {linkedSegments?.root_template_code ? (
-            <p className="text-[10px] text-slate-400">
-              Root: <span className="font-mono text-slate-200">{linkedSegments.root_template_code}</span>
-            </p>
+          {warnings.length > 0 ? (
+            <div className="mb-2 space-y-1 text-[11px] text-amber-100/90" data-testid="intake-v6-product-composition-issues">
+              {warnings.map((item, index) => (
+                <p key={index} className="flex gap-1.5">
+                  <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-amber-300" aria-hidden />
+                  <span>{String(item.message ?? item.code ?? "Verificare compoziție necesară")}</span>
+                </p>
+              ))}
+            </div>
           ) : null}
-          <p className="mt-1 text-[10px] text-amber-200">
-            Candidat compoziție, nu produs ofertabil separat
-          </p>
-          <p className="mt-0.5 text-[10px] text-slate-500">
-            Nu activează pricing, quote, order sau execution separat
-          </p>
-          <div className="mt-2 space-y-2">
-            {linkedSegmentItems.map((segment) => (
-              <div
-                key={segment.segment_key}
-                className="rounded border border-[#2A3548]/80 bg-[#111827]/55 p-2.5"
-                data-testid={`intake-v6-product-definition-linked-segment-${segment.segment_key}`}
-              >
-                <p className="text-[11px] font-semibold text-slate-100">
-                  {operatorCompositionRoleLabelRo(segment.composition_role)}
+          {linkedSegmentItems.length > 0 ? (
+            <div data-testid="intake-v6-product-definition-linked-segments">
+              {linkedSegments?.root_template_code ? (
+                <p className="text-[10px] text-slate-400">
+                  Root: <span className="font-mono text-slate-200">{linkedSegments.root_template_code}</span>
                 </p>
-                <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{segment.owning_template_code}</p>
-                <p className="mt-0.5 text-[10px] text-slate-400">
-                  Status asociere: {operatorBindingStatusLabelRo(segment.binding_status)}
-                </p>
-                <p className="mt-0.5 font-mono text-[10px] text-slate-500">
-                  pricing={segment.product_truth_readiness?.ready_for_pricing === true ? "DA" : "NU"} ·
-                  quote={segment.product_truth_readiness?.ready_for_quote === true ? "DA" : "NU"} ·
-                  order={segment.product_truth_readiness?.ready_for_order === true ? "DA" : "NU"} ·
-                  execution={segment.product_truth_readiness?.ready_for_execution === true ? "DA" : "NU"}
-                </p>
+              ) : null}
+              <p className="mt-1 text-[10px] text-amber-200">
+                Candidat compoziție, nu produs ofertabil separat
+              </p>
+              <p className="mt-0.5 text-[10px] text-slate-500">
+                Nu activează pricing, quote, order sau execution separat
+              </p>
+              <div className="mt-2 space-y-2">
+                {linkedSegmentItems.map((segment) => (
+                  <div
+                    key={segment.segment_key}
+                    className="rounded border border-[#2A3548]/80 bg-[#111827]/55 p-2.5"
+                    data-testid={`intake-v6-product-definition-linked-segment-${segment.segment_key}`}
+                  >
+                    <p className="text-[11px] font-semibold text-slate-100">
+                      {operatorCompositionRoleLabelRo(segment.composition_role)}
+                    </p>
+                    <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{segment.owning_template_code}</p>
+                    <p className="mt-0.5 text-[10px] text-slate-400">
+                      Status asociere: {operatorBindingStatusLabelRo(segment.binding_status)}
+                    </p>
+                    <p className="mt-0.5 font-mono text-[10px] text-slate-500">
+                      pricing={segment.product_truth_readiness?.ready_for_pricing === true ? "DA" : "NU"} ·
+                      quote={segment.product_truth_readiness?.ready_for_quote === true ? "DA" : "NU"} ·
+                      order={segment.product_truth_readiness?.ready_for_order === true ? "DA" : "NU"} ·
+                      execution={segment.product_truth_readiness?.ready_for_execution === true ? "DA" : "NU"}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : null}
         </IntakeV6TechnicalDetailsAccordion>
       ) : null}
       </div>
