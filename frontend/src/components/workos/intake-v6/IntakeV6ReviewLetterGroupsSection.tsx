@@ -1,5 +1,7 @@
 import ColorRegistrySelect from "@/components/workos/colorRegistry/ColorRegistrySelect";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
+import { resolveIntakeV6LetterGroupDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
+import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import {
   faceFinishNeedsColorPicker,
   faceFinishNeedsRollWidth,
@@ -73,6 +75,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
   globalBackingFallback,
   soldScopeVisibility,
   fieldLabels,
+  analyzerReport = null,
 }: {
   groups: IntakeV6LetterGroupFinish[];
   onChange: (groups: IntakeV6LetterGroupFinish[]) => void;
@@ -81,6 +84,8 @@ export default function IntakeV6ReviewLetterGroupsSection({
   globalBackingFallback?: IntakeV6BackingMode;
   soldScopeVisibility?: SoldScopeFieldVisibility;
   fieldLabels?: Partial<LettersCanonicalFieldLabels> | null;
+  /** Presentation-only — never mutates persisted layer_name */
+  analyzerReport?: SvgAnalysisCoreReport | null;
 }) {
   const visibility = soldScopeVisibility ?? resolveSoldScopeFieldVisibility(undefined);
   const effectiveFaceOptions = resolveLetterGroupFaceFinishOptions(faceFinishOptions);
@@ -154,6 +159,12 @@ export default function IntakeV6ReviewLetterGroupsSection({
 
         <div className="space-y-1.5">
           {paginatedGroups.map((group) => {
+            const groupIndex = Math.max(0, groups.findIndex((item) => item.group_key === group.group_key));
+            const displayLayerName = resolveIntakeV6LetterGroupDisplayLabel(
+              group,
+              groupIndex,
+              analyzerReport,
+            );
             const showColor = faceFinishNeedsColorPicker(group.face_finish_type);
             const showRollWidth = faceFinishNeedsRollWidth(group.face_finish_type);
             const rollWidthOptions = faceFinishRollWidthOptions(group.face_finish_type);
@@ -189,7 +200,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
                 onToggle={() => toggleExpanded(group.group_key)}
                 accentColor={accent}
                 layerIcon={Layers}
-                layerName={group.layer_name}
+                layerName={displayLayerName}
                 faceSummary={visibility.face ? faceSummary : "—"}
                 cantSummary={visibility.returnCant ? cantSummary : "—"}
                 spateSummary={spateSummary}

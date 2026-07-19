@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import {
   buildIntakeV6LayerDisplayLabel,
+  resolveIntakeV6LetterGroupDisplayLabel,
   resolveIntakeV6SourceLayerNameFromPayload,
+  resolveIntakeV6StoredLayerDisplayLabel,
   stripIntakeV6PseudoDisplayLabel,
 } from "./intakeV6LayerDisplayLabel";
 
@@ -120,5 +122,58 @@ describe("buildIntakeV6LayerDisplayLabel", () => {
         },
       }),
     ).toBe("Layer_x0020_1");
+  });
+});
+
+describe("resolveIntakeV6StoredLayerDisplayLabel", () => {
+  it("uses the same Page 1 helper when report layer is found", () => {
+    const report = makeReport();
+    const label = resolveIntakeV6StoredLayerDisplayLabel({
+      layerKey: "pseudo:maria",
+      layerName: "pseudo:maria",
+      index: 0,
+      report,
+    });
+    expect(label).toBe("Element 1 — albastru");
+    expect(label).not.toMatch(/pseudo/i);
+  });
+
+  it("never surfaces pseudo fill-* without a report", () => {
+    const label = resolveIntakeV6StoredLayerDisplayLabel({
+      layerKey: "pseudo:fill-c5c6c6",
+      layerName: "pseudo fill-c5c6c6",
+      index: 1,
+      sourceFillColor: "#c5c6c6",
+    });
+    expect(label).toMatch(/^Element 2/);
+    expect(label).not.toMatch(/pseudo|fill-c5c6c6/i);
+  });
+
+  it("uses neutral label for unknown screaming tokens", () => {
+    expect(
+      resolveIntakeV6StoredLayerDisplayLabel({
+        layerName: "GROUP_PATH_001",
+        index: 0,
+      }),
+    ).toBe("Element personalizat");
+  });
+
+  it("letter-group adapter matches stored-layer helper", () => {
+    const report = makeReport();
+    expect(
+      resolveIntakeV6LetterGroupDisplayLabel(
+        { group_key: "pseudo:maria", layer_name: "pseudo:maria", source_fill_color: "#00a0e3" },
+        0,
+        report,
+      ),
+    ).toBe(
+      resolveIntakeV6StoredLayerDisplayLabel({
+        layerKey: "pseudo:maria",
+        layerName: "pseudo:maria",
+        index: 0,
+        report,
+        sourceFillColor: "#00a0e3",
+      }),
+    );
   });
 });

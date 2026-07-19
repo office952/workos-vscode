@@ -31,6 +31,9 @@ describe("IntakeV6ReviewLetterGroupsSection collapsed Spate contract", () => {
       /Forex 10 mm/i,
     );
     expect(screen.queryByTestId("intake-v6-backing-mode-pseudo-maria")).not.toBeInTheDocument();
+    const header = screen.getByTestId("intake-v6-letter-group-header-pseudo:maria");
+    expect(header).not.toHaveTextContent(/pseudo/i);
+    expect(header.textContent).toMatch(/Element|maria|Logo|formă|detectat/i);
   });
 
   it("shows Forex select only after expand in Spate section order", () => {

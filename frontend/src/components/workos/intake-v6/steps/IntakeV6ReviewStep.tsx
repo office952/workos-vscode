@@ -2249,6 +2249,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             <IntakeV6ReviewLetterGroupsSection
               groups={effectiveLetterGroups}
               soldScopeVisibility={soldScopeVisibility}
+              analyzerReport={state.analyzerReport as SvgAnalysisCoreReport | null}
               onChange={(next) => {
                 setLetterGroups(next);
                 syncFormFromLayerFinishes(

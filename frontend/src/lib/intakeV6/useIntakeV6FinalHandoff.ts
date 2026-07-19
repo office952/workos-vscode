@@ -313,8 +313,16 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 				materialBreakdown,
 				nestingPreview,
 				handoffBlockers: handoffPreview?.blockers,
+				analyzerReport: state.analyzerReport,
 			}),
-		[payload, layerCount, materialBreakdown, nestingPreview, handoffPreview?.blockers],
+		[
+			payload,
+			layerCount,
+			materialBreakdown,
+			nestingPreview,
+			handoffPreview?.blockers,
+			state.analyzerReport,
+		],
 	);
 
 	const handoffPreviewOptions = useMemo(

@@ -176,3 +176,122 @@ export function resolveIntakeV6OperatorLayerTitle(
 ): string {
   return buildIntakeV6LayerDisplayLabel(layer, index, report).primaryLabel;
 }
+
+export type IntakeV6StoredLayerDisplayRef = {
+  layerKey?: string | null;
+  layerName?: string | null;
+  /** 0-based operator index for Element N fallbacks */
+  index?: number;
+  report?: SvgAnalysisCoreReport | null;
+  sourceFillColor?: string | null;
+};
+
+function findLayerInReport(
+  report: SvgAnalysisCoreReport,
+  layerKey: string,
+  layerName: string,
+): SvgAnalysisCoreReport["layers"][number] | null {
+  const key = layerKey.trim().toLowerCase();
+  const name = layerName.trim().toLowerCase();
+  if (!key && !name) return null;
+  return (
+    report.layers.find((layer) => {
+      const id = String(layer.id ?? "").trim().toLowerCase();
+      const ln = String(layer.name ?? "").trim().toLowerCase();
+      return (key && (id === key || ln === key)) || (name && (id === name || ln === name));
+    }) ?? null
+  );
+}
+
+function extractFillTokenSuffix(value: string): string | null {
+  const match = value.trim().match(/fill[-_]?([0-9a-f]{1,8})/i);
+  return match?.[1] ?? null;
+}
+
+function looksLikeInternalPathToken(value: string): boolean {
+  const v = value.trim();
+  if (!v) return false;
+  if (/^GROUP[_-]/i.test(v)) return true;
+  if (/^PATH[_-]/i.test(v)) return true;
+  if (/^[A-Z][A-Z0-9_]{3,}$/.test(v) && v.includes("_")) return true;
+  return false;
+}
+
+/**
+ * Single presentation adapter for stored letter/artwork refs (Finisaje, Confirmare, Review).
+ * Does not mutate analyzer truth or persisted layer_name — render-time only.
+ */
+export function resolveIntakeV6StoredLayerDisplayLabel(ref: IntakeV6StoredLayerDisplayRef): string {
+  const layerKey = String(ref.layerKey ?? "").trim();
+  const layerName = String(ref.layerName ?? "").trim();
+  const index = Math.max(0, ref.index ?? 0);
+  const n = index + 1;
+
+  if (ref.report) {
+    const layer = findLayerInReport(ref.report, layerKey || layerName, layerName || layerKey);
+    if (layer) {
+      const reportIndex = Math.max(0, ref.report.layers.indexOf(layer));
+      return buildIntakeV6LayerDisplayLabel(layer, ref.index ?? reportIndex, ref.report).primaryLabel;
+    }
+  }
+
+  const raw = layerName || layerKey;
+  if (!raw) return "Element grafic fără rol confirmat";
+
+  if (isPseudoFillToken(layerName) || isPseudoFillToken(layerKey) || isPseudoFillToken(raw)) {
+    const color =
+      resolveVisualColorLabel(ref.sourceFillColor ?? undefined) ??
+      resolveVisualColorLabel(
+        (() => {
+          const suffix = extractFillTokenSuffix(raw);
+          if (!suffix || suffix.length < 3) return undefined;
+          return `#${suffix}`;
+        })(),
+      );
+    if (color) return `Element ${n} — ${color}`;
+    const suffix = extractFillTokenSuffix(raw);
+    if (suffix && /^\d{1,3}$/.test(suffix)) return `Element grafic ${suffix}`;
+    return `Element ${n} — formă grafică detectată`;
+  }
+
+  if (/^layer[_x0]/i.test(layerName) || /^layer[_x0]/i.test(layerKey)) {
+    return `Element ${n} — detectat`;
+  }
+
+  if (looksLikeInternalPathToken(layerName) || looksLikeInternalPathToken(layerKey)) {
+    return "Element personalizat";
+  }
+
+  const op = getOperatorLayerLabel(layerKey || raw, layerName || raw);
+  if (op && !isPseudoFillToken(op) && !/^artwork layer$/i.test(op) && !/pseudo|fill-/i.test(op)) {
+    return op;
+  }
+
+  const stripped = normalizeDetectedName(raw);
+  if (!stripped || /pseudo|fill-/i.test(stripped) || looksLikeInternalPathToken(stripped)) {
+    return "Element grafic fără rol confirmat";
+  }
+  if (/^#?[0-9a-f]{3,8}$/i.test(stripped)) {
+    return "Element grafic fără rol confirmat";
+  }
+  return stripped;
+}
+
+/** Letter-group convenience wrapper — same single display path. */
+export function resolveIntakeV6LetterGroupDisplayLabel(
+  group: {
+    group_key?: string | null;
+    layer_name?: string | null;
+    source_fill_color?: string | null;
+  },
+  index: number,
+  report?: SvgAnalysisCoreReport | null,
+): string {
+  return resolveIntakeV6StoredLayerDisplayLabel({
+    layerKey: group.group_key,
+    layerName: group.layer_name,
+    index,
+    report,
+    sourceFillColor: group.source_fill_color,
+  });
+}
