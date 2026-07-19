@@ -326,6 +326,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
       expect.stringContaining("status: confirmat in Pasul 1"),
     );
     expandArtworkCard("logo-dreapta");
+    fireEvent.click(screen.getByTestId("intake-v6-artwork-source-metadata-logo-dreapta-toggle"));
     expect(screen.getByTestId("intake-v6-artwork-source-metadata-logo-dreapta")).toHaveTextContent(
       /sursa SVG: logo-dreapta/,
     );

@@ -1,0 +1,14 @@
+{
+  "url": "http://127.0.0.1:3000/intake-v6/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/operator",
+  "workspace": "e1ba14f2-ceca-4239-9e8e-e87c0e21d65f",
+  "ui": "http://127.0.0.1:3000",
+  "probe": {
+    "letterTitle": true,
+    "anatomy": true,
+    "artworkCluster": true,
+    "results": true,
+    "decisions": true
+  },
+  "montajOk": true,
+  "at": "2026-07-19T10:02:02.414Z"
+}

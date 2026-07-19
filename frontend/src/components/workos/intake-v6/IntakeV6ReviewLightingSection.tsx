@@ -11,17 +11,17 @@ import {
 } from "@/lib/intakeV6/sharedLedLightingDensity";
 import { Lightbulb, Power } from "lucide-react";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
-import { v6 } from "./atoms/intakeV6Presentation";
+import { v6, v6Pilot } from "./atoms/intakeV6Presentation";
 import {
+  PILOT_REVIEW_FIELD_LABEL_CLASS,
+  PILOT_REVIEW_SELECT_CLASS,
   REVIEW_FIELD_BLOCK_CLASS,
-  REVIEW_FIELD_LABEL_CLASS,
-  REVIEW_SELECT_CLASS,
 } from "./reviewFieldLayout";
 
 function lightColorLabel(value: string | undefined): string {
-  if (value === "neutral") return "Neutral white";
-  if (value === "cool") return "Cool white";
-  return "Warm white";
+  if (value === "neutral") return "Alb neutru";
+  if (value === "cool") return "Alb rece";
+  return "Alb cald";
 }
 
 function formatMl(value: number | null | undefined): string {
@@ -120,19 +120,19 @@ export default function IntakeV6ReviewLightingSection({
     (showLightingFields && illuminated) ||
     (showElectricalFields && (!showLightingFields || illuminated));
 
+  const showLightingResults =
+    showOperatorFields &&
+    ((showLightingFields && illuminated) || showElectricalFields);
+
   return (
     <div className={shellClass} data-testid="intake-v6-review-lighting-section">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className={compact ? v6.zoneTitle : v6.sectionTitle}>Iluminare și surse</p>
-          {canEditLedMaster && illuminated && ledDisplayPerimeterM != null ? (
-            <p className="mt-0.5 text-[10px] text-slate-500">
-              Perimetru litere:{" "}
-              <span className="font-semibold tabular-nums text-slate-300" data-testid="intake-v6-led-letters-perimeter">
-                {ledDisplayPerimeterM.toFixed(3)} m
-              </span>
-            </p>
-          ) : null}
+          <p className={`inline-flex items-center gap-1.5 ${v6Pilot.sectionTitle}`}>
+            <Lightbulb className="h-4 w-4 shrink-0 text-cyan-300/80" aria-hidden />
+            Iluminare și surse
+          </p>
+          <p className={`mt-0.5 ${v6Pilot.helper}`}>Alege sistemul LED; rezultatele calculate apar separat.</p>
         </div>
         {canEditLedMaster ? (
           <label
@@ -161,7 +161,7 @@ export default function IntakeV6ReviewLightingSection({
               {illuminated ? <Lightbulb className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-[10px] font-semibold">
+              <span className="block text-[13px] font-semibold">
                 {illuminated ? "LED activ" : "LED oprit"}
               </span>
             </span>
@@ -181,27 +181,27 @@ export default function IntakeV6ReviewLightingSection({
             </span>
           </label>
         ) : showElectricalFields ? (
-          <p className="text-[10px] text-slate-500" data-testid="intake-v6-led-master-readonly">
+          <p className={v6Pilot.helper} data-testid="intake-v6-led-master-readonly">
             Iluminare neinclusă în ofertă
           </p>
         ) : null}
       </div>
 
       {!showAnyLedScope ? (
-        <p className="text-[10px] text-slate-500">Iluminare / electrică nu sunt în scope-ul ofertei.</p>
+        <p className={v6Pilot.helper}>Iluminare / electrică nu sunt în scope-ul ofertei.</p>
       ) : showOperatorFields ? (
         <div className="space-y-3" data-testid="intake-v6-lighting-fields">
           {showLightingFields ? (
             <section className="space-y-2.5" data-testid="intake-v6-lighting-subsection">
-              <p className="text-[11px] font-semibold text-cyan-200">Iluminare</p>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <p className={v6Pilot.decisionTitle}>Decizii iluminare</p>
+              <div className="grid gap-2.5 sm:grid-cols-2">
                 {!hideContractManagedFields ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>
+                    <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>
                       {lightingSystemLabel ?? "Sistem LED"}
                     </span>
                     <select
-                      className={REVIEW_SELECT_CLASS}
+                      className={PILOT_REVIEW_SELECT_CLASS}
                       value={lightingSystemType}
                       onChange={(event) => onLightingSystemTypeChange(event.target.value)}
                       data-testid="intake-v6-lighting-system"
@@ -216,9 +216,9 @@ export default function IntakeV6ReviewLightingSection({
                 ) : null}
 
                 <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                  <span className={REVIEW_FIELD_LABEL_CLASS}>Culoare lumina</span>
+                  <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Culoare lumină</span>
                   <select
-                    className={REVIEW_SELECT_CLASS}
+                    className={PILOT_REVIEW_SELECT_CLASS}
                     value={lightColor}
                     onChange={(event) => onLightColorChange(event.target.value)}
                     data-testid="intake-v6-light-color"
@@ -233,9 +233,9 @@ export default function IntakeV6ReviewLightingSection({
 
                 {isLedModules ? (
                   <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Putere modul</span>
+                    <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Putere modul</span>
                     <select
-                      className={REVIEW_SELECT_CLASS}
+                      className={PILOT_REVIEW_SELECT_CLASS}
                       value={String(ledModulePowerW)}
                       onChange={(event) =>
                         onLedModulePowerWChange(normalizeIntakeV6LedModuleWattage(Number(event.target.value)))
@@ -253,9 +253,9 @@ export default function IntakeV6ReviewLightingSection({
 
                 {showEmblemLighting ? (
                   <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Iluminare emblemă</span>
+                    <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Iluminare emblemă</span>
                     <select
-                      className={REVIEW_SELECT_CLASS}
+                      className={PILOT_REVIEW_SELECT_CLASS}
                       value={emblemLightingMode}
                       onChange={(event) =>
                         onEmblemLightingChange(event.target.value as IntakeV6EmblemLightingMode)
@@ -271,37 +271,24 @@ export default function IntakeV6ReviewLightingSection({
                   </label>
                 ) : null}
               </div>
-
-              <p className="text-[10px] text-slate-500">
-                {isLedModules ? "Module LED" : "Banda LED"} · {lightColorLabel(lightColor)} ·{" "}
-                {isLedModules
-                  ? `${ledModulePowerW.toFixed(2)} W/modul`
-                  : `${ledStripPowerWPerMl.toFixed(1)} W/ml`}
-                {totalLedModuleCount != null ? (
-                  <>
-                    {" "}
-                    · module total{" "}
-                    <span className="font-medium tabular-nums text-slate-300" data-testid="intake-v6-led-total-modules-inline">
-                      {totalLedModuleCount} buc
-                    </span>
-                  </>
-                ) : null}
-              </p>
             </section>
           ) : null}
 
           {showElectricalFields ? (
             <section className="space-y-2.5" data-testid="intake-v6-electrical-subsection">
-              <p className="text-[11px] font-semibold text-amber-200">Alimentare LED / surse</p>
-              <p className="text-[10px] text-slate-500">
+              <p className={`inline-flex items-center gap-1.5 ${v6Pilot.decisionTitle}`}>
+                <Power className="h-3.5 w-3.5 text-amber-200/90" aria-hidden />
+                Decizii alimentare
+              </p>
+              <p className={v6Pilot.helper}>
                 Sursele pentru iluminarea literelor (nu alimentarea 220V a carcasei multi-panou).
               </p>
-              <div className="grid gap-2 sm:grid-cols-2">
+              <div className="grid gap-2.5 sm:grid-cols-2">
                 {!hideContractManagedFields ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Sursă LED (putere)</span>
+                    <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Sursă LED (putere)</span>
                     <select
-                      className={REVIEW_SELECT_CLASS}
+                      className={PILOT_REVIEW_SELECT_CLASS}
                       value={selectedPsuWatts ?? ""}
                       onChange={(event) => {
                         const raw = event.target.value;
@@ -319,18 +306,60 @@ export default function IntakeV6ReviewLightingSection({
                   </label>
                 ) : null}
               </div>
+            </section>
+          ) : null}
 
-              <p className="text-[10px] text-slate-500" data-testid="intake-v6-electrical-readout">
-                PSU (+{psuReservePercent}%):{" "}
-                <span className="font-medium tabular-nums text-slate-300">
-                  {requiredPsuWatts != null ? `${requiredPsuWatts.toFixed(2)} W` : "-"}
-                </span>
-                {" · "}
-                surse: <span className="font-medium text-slate-300">{psuLabel}</span>
-                {psuAllocationStatus && psuAllocationStatus !== "ok" ? (
-                  <span className="text-amber-200"> · PSU: {psuAllocationStatus}</span>
-                ) : null}
-              </p>
+          {showLightingResults ? (
+            <section
+              className={v6Pilot.resultPanel}
+              data-testid="intake-v6-lighting-results"
+              aria-label="Rezultate iluminare"
+            >
+              <p className={v6Pilot.resultLabel}>Rezultate calculate</p>
+              {showLightingFields && illuminated && ledDisplayPerimeterM != null ? (
+                <p className={v6Pilot.helper}>
+                  Perimetru litere:{" "}
+                  <span
+                    className={v6Pilot.resultValue}
+                    data-testid="intake-v6-led-letters-perimeter"
+                  >
+                    {ledDisplayPerimeterM.toFixed(3)} m
+                  </span>
+                </p>
+              ) : null}
+              {showLightingFields && illuminated ? (
+                <p className={v6Pilot.helper}>
+                  {isLedModules ? "Module LED" : "Bandă LED"} · {lightColorLabel(lightColor)} ·{" "}
+                  {isLedModules
+                    ? `${ledModulePowerW.toFixed(2)} W/modul`
+                    : `${ledStripPowerWPerMl.toFixed(1)} W/ml`}
+                  {totalLedModuleCount != null ? (
+                    <>
+                      {" "}
+                      · module total{" "}
+                      <span
+                        className={v6Pilot.resultValue}
+                        data-testid="intake-v6-led-total-modules-inline"
+                      >
+                        {totalLedModuleCount} buc
+                      </span>
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+              {showElectricalFields ? (
+                <p className={v6Pilot.helper} data-testid="intake-v6-electrical-readout">
+                  PSU (+{psuReservePercent}%):{" "}
+                  <span className={v6Pilot.resultValue}>
+                    {requiredPsuWatts != null ? `${requiredPsuWatts.toFixed(2)} W` : "-"}
+                  </span>
+                  {" · "}
+                  surse: <span className={v6Pilot.resultValue}>{psuLabel}</span>
+                  {psuAllocationStatus && psuAllocationStatus !== "ok" ? (
+                    <span className="text-amber-200"> · PSU: {psuAllocationStatus}</span>
+                  ) : null}
+                </p>
+              ) : null}
             </section>
           ) : null}
 
@@ -338,7 +367,7 @@ export default function IntakeV6ReviewLightingSection({
             title="Detalii calcul LED"
             testId="intake-v6-led-calculation-details"
           >
-            <div className="space-y-1 text-[10px] text-slate-400">
+            <div className={`space-y-1 ${v6Pilot.technical}`}>
               {showLightingFields && isLedModules ? (
                 <>
                   <p data-testid="intake-v6-led-letters-modules">
@@ -436,7 +465,7 @@ export default function IntakeV6ReviewLightingSection({
           </IntakeV6TechnicalDetailsAccordion>
         </div>
       ) : showLightingFields && !illuminated ? (
-        <p className="text-[10px] text-slate-500">Fără iluminare LED.</p>
+        <p className={v6Pilot.helper}>Fără iluminare LED.</p>
       ) : null}
     </div>
   );

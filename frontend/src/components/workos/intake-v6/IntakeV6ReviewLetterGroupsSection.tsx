@@ -27,12 +27,12 @@ import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6Card
 import IntakeV6LayerCardShell from "./IntakeV6LayerCardShell";
 import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
-import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
+import { AtomsBadge, v6, v6Pilot } from "./atoms/intakeV6Presentation";
 import {
+  PILOT_REVIEW_FIELD_LABEL_CLASS,
+  PILOT_REVIEW_SELECT_CLASS,
   REVIEW_COLOR_ROW_SHELL_CLASS,
   REVIEW_FIELD_BLOCK_CLASS,
-  REVIEW_FIELD_LABEL_CLASS,
-  REVIEW_SELECT_CLASS,
 } from "./reviewFieldLayout";
 import {
   buildCantSummaryLine,
@@ -61,9 +61,9 @@ function ZoneTitle({
   title: string;
 }) {
   return (
-    <div className="mb-1 flex items-center gap-1">
-      <Icon className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
-      <span className={v6.zoneTitle}>{title}</span>
+    <div className="mb-1.5 flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+      <span className={v6Pilot.zoneTitle}>{title}</span>
     </div>
   );
 }
@@ -123,10 +123,25 @@ export default function IntakeV6ReviewLetterGroupsSection({
 
   return (
     <div className={`${v6.cardCompact} mb-3 !p-3`} data-testid="intake-v6-letter-group-face-finishes">
-      <p className="mb-1 text-[10px] font-semibold text-slate-400">Vector Litere</p>
-      <p className="mb-2 text-[10px] leading-snug text-slate-500" data-testid="intake-v6-face-letters-helper">
-        Față = finisaj vizibil · Cant = lateral volum · Spate = Forex corp litere.
+      <p className={`mb-1 ${v6Pilot.clusterTitle}`}>Litere volumetrice</p>
+      <p className={`mb-2 ${v6Pilot.helper}`} data-testid="intake-v6-face-letters-helper">
+        Anatomie: Față (finisaj vizibil) · Cant (lateral volum) · Spate (Forex corp).
       </p>
+      <div
+        className="mb-2.5 flex flex-wrap items-center gap-3 text-[12px] text-slate-500"
+        data-testid="intake-v6-letter-anatomy-legend"
+        aria-hidden
+      >
+        <span className="inline-flex items-center gap-1">
+          <PanelTop className="h-3.5 w-3.5 text-slate-400" /> Față
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <Box className="h-3.5 w-3.5 text-slate-400" /> Cant
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <Layers className="h-3.5 w-3.5 text-slate-400" /> Spate
+        </span>
+      </div>
 
       <div data-testid="intake-v6-letter-group-cant-finishes">
         <p className="sr-only" data-testid="intake-v6-cant-letters-helper">
@@ -140,7 +155,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           >
             <button
               type="button"
-              className="rounded border border-[#2A3548] bg-[#1E293B]/80 px-2 py-0.5 text-[10px] font-semibold text-slate-300 hover:border-sky-500/30"
+              className="rounded border border-[#2A3548] bg-[#1E293B]/80 px-2.5 py-1 text-[12px] font-semibold text-slate-300 hover:border-sky-500/30"
               onClick={() => onChange(copyFirstCantSettingsToAllGroups(groups))}
               data-testid="intake-v6-copy-cant-to-all"
               title="Copiază finisajul și adâncimea cantului la toate layerele"
@@ -233,14 +248,17 @@ export default function IntakeV6ReviewLetterGroupsSection({
                 expandedChildren={
                   <>
                     {visibility.face ? (
-                      <section data-testid={`intake-v6-face-letter-zone-${group.group_key}`}>
+                      <section
+                        className={v6Pilot.anatomyZone}
+                        data-testid={`intake-v6-face-letter-zone-${group.group_key}`}
+                      >
                         <ZoneTitle icon={PanelTop} title="Față" />
                         <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                          <span className={REVIEW_FIELD_LABEL_CLASS}>
+                          <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>
                             {fieldLabels?.face_finish_type ?? "Finisaj față"}
                           </span>
                           <select
-                            className={REVIEW_SELECT_CLASS}
+                            className={PILOT_REVIEW_SELECT_CLASS}
                             value={group.face_finish_type}
                             onChange={(event) =>
                               patchGroup(group.group_key, {
@@ -271,12 +289,12 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             className={`${REVIEW_FIELD_BLOCK_CLASS} mt-2`}
                             data-testid={`intake-v6-face-settings-row-${group.group_key}`}
                           >
-                            <span className={`${REVIEW_FIELD_LABEL_CLASS} inline-flex items-center gap-1`}>
-                              <Ruler className="h-2.5 w-2.5 shrink-0" aria-hidden />
+                            <span className={`${PILOT_REVIEW_FIELD_LABEL_CLASS} inline-flex items-center gap-1`}>
+                              <Ruler className="h-3 w-3 shrink-0" aria-hidden />
                               Rolă (mm)
                             </span>
                             <select
-                              className={REVIEW_SELECT_CLASS}
+                              className={PILOT_REVIEW_SELECT_CLASS}
                               value={
                                 normalizeFaceVinylRollWidthMm(
                                   group.face_finish_type,
@@ -300,7 +318,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
                             </select>
                             {group.face_finish_type === "print_laminate" ? (
                               <span
-                                className="text-[10px] leading-relaxed text-slate-500"
+                                className={`${v6Pilot.helper} mt-1 block`}
                                 data-testid={`intake-v6-face-roll-width-print-note-${group.group_key}`}
                               >
                                 Rola print/laminare: {PRINT_LAMINATION_ROLL_WIDTHS_MM.join(" / ")} mm.
@@ -342,7 +360,10 @@ export default function IntakeV6ReviewLetterGroupsSection({
                     ) : null}
 
                     {visibility.returnCant ? (
-                      <section data-testid={`intake-v6-cant-letter-zone-${group.group_key}`}>
+                      <section
+                        className={v6Pilot.anatomyZone}
+                        data-testid={`intake-v6-cant-letter-zone-${group.group_key}`}
+                      >
                         <ZoneTitle icon={Box} title="Cant" />
                         <IntakeV6ReturnCantFields {...cantFieldProps} reviewGridRow="finish" />
                         <div className="mt-2">
@@ -365,6 +386,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
 
                     {visibility.back ? (
                       <section
+                        className={v6Pilot.anatomyZone}
                         data-testid={`intake-v6-review-backing-finish-integration-${group.group_key}`}
                       >
                         <ZoneTitle icon={Layers} title="Spate" />

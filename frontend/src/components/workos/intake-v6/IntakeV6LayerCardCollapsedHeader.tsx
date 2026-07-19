@@ -55,7 +55,7 @@ export default function IntakeV6LayerCardCollapsedHeader({
         data-testid={faceSummaryTestId}
         title={faceSummary}
       >
-        <span className="mr-1 text-slate-600">Față:</span>
+        <span className="mr-1 font-medium text-slate-500">Față</span>
         {faceSummary}
       </p>
       <p
@@ -63,7 +63,7 @@ export default function IntakeV6LayerCardCollapsedHeader({
         data-testid={cantSummaryTestId}
         title={cantSummary}
       >
-        <span className="mr-1 text-slate-600">Cant:</span>
+        <span className="mr-1 font-medium text-slate-500">Cant</span>
         {cantSummary}
       </p>
       <p
@@ -71,7 +71,7 @@ export default function IntakeV6LayerCardCollapsedHeader({
         data-testid={spateSummaryTestId}
         title={spateSummary ?? "—"}
       >
-        <span className="mr-1 text-slate-600">Spate:</span>
+        <span className="mr-1 font-medium text-slate-500">Spate</span>
         {spateSummary ?? "—"}
       </p>
       <span className="flex shrink-0 justify-end">{status}</span>

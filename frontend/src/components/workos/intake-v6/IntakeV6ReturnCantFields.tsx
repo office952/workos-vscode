@@ -15,12 +15,11 @@ import {
 } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import { v6 } from "./atoms/intakeV6Presentation";
 import {
+  PILOT_REVIEW_FIELD_LABEL_CLASS,
+  PILOT_REVIEW_SELECT_CLASS,
   REVIEW_FIELD_BLOCK_CLASS,
-  REVIEW_FIELD_LABEL_CLASS,
   REVIEW_SELECT_CLASS,
 } from "./reviewFieldLayout";
-
-const selectClass = REVIEW_SELECT_CLASS;
 
 export interface IntakeV6ReturnCantFieldsProps {
   idPrefix: string;
@@ -70,7 +69,8 @@ export default function IntakeV6ReturnCantFields({
     ? "Culoare RAL cant"
     : `Culoare RAL ${INTAKE_V6_CANT_VOLUM_LABEL_LOWER}`;
 
-  const labelClass = isReviewLayout ? REVIEW_FIELD_LABEL_CLASS : v6.label;
+  const labelClass = isReviewLayout ? PILOT_REVIEW_FIELD_LABEL_CLASS : v6.label;
+  const selectClass = isReviewLayout ? PILOT_REVIEW_SELECT_CLASS : REVIEW_SELECT_CLASS;
 
   const finishSelect = (
     <label className={isReviewLayout ? REVIEW_FIELD_BLOCK_CLASS : "block min-w-0"}>

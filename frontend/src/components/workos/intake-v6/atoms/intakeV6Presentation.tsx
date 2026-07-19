@@ -33,6 +33,29 @@ export const v6 = {
 		"rounded-md border border-[#2A3548] bg-[#1E293B] px-4 py-2 text-[12px] font-semibold text-slate-300 hover:border-sky-500/30",
 } as const;
 
+/**
+ * Scoped Configurator Design System pilot tokens (letters Finisaje + Iluminare).
+ * Do not replace `v6` — Montaj and page shell stay on the baseline tokens.
+ */
+export const v6Pilot = {
+	clusterTitle: "text-[16px] font-semibold leading-snug text-slate-100",
+	sectionTitle: "text-[15px] font-semibold leading-snug text-slate-100",
+	zoneTitle: "text-[14px] font-semibold leading-snug text-slate-200",
+	decisionTitle: "text-[13px] font-semibold text-slate-300",
+	label: "mb-1 block text-[13px] font-medium text-slate-400",
+	body: "text-[14px] leading-relaxed text-slate-200",
+	helper: "text-[12px] leading-relaxed text-slate-500",
+	technical: "text-[11px] leading-relaxed text-slate-500",
+	select:
+		"h-8 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1 text-[13px] text-slate-200 outline-none focus:border-sky-500/40",
+	resultPanel:
+		"rounded-md border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-3 py-2.5 space-y-1.5",
+	resultLabel: "text-[12px] font-semibold uppercase tracking-wide text-slate-500",
+	resultValue: "text-[14px] font-semibold tabular-nums text-slate-100",
+	anatomyZone:
+		"rounded-md border border-[#2A3548]/60 bg-[#111827]/40 px-2.5 py-2",
+} as const;
+
 export type AtomsBadgeTone = "ok" | "pending" | "action" | "muted";
 
 export function AtomsBadge({

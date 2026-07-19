@@ -1,10 +1,15 @@
-import { v6 } from "./atoms/intakeV6Presentation";
+import { v6, v6Pilot } from "./atoms/intakeV6Presentation";
 
 /** Compact review labels — no forced min-heights for grid alignment. */
 export const REVIEW_FIELD_LABEL_CLASS = `${v6.label} mb-0.5 leading-snug`;
 
 export const REVIEW_SELECT_CLASS =
   "h-7 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-0.5 text-[11px]";
+
+/** Letter / lighting pilot field chrome — do not use on Montaj. */
+export const PILOT_REVIEW_FIELD_LABEL_CLASS = `${v6Pilot.label} mb-0.5 leading-snug`;
+
+export const PILOT_REVIEW_SELECT_CLASS = v6Pilot.select;
 
 export const REVIEW_FIELD_BLOCK_CLASS = "block min-w-0";
 

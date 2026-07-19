@@ -22,11 +22,12 @@ import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6LayerCardShell from "./IntakeV6LayerCardShell";
 import IntakeV6LayerCardColumnHeader from "./IntakeV6LayerCardColumnHeader";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
-import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
+import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
+import { AtomsBadge, v6, v6Pilot } from "./atoms/intakeV6Presentation";
 import {
+  PILOT_REVIEW_FIELD_LABEL_CLASS,
+  PILOT_REVIEW_SELECT_CLASS,
   REVIEW_FIELD_BLOCK_CLASS,
-  REVIEW_FIELD_LABEL_CLASS,
-  REVIEW_SELECT_CLASS,
 } from "./reviewFieldLayout";
 import {
   buildArtworkCantSummaryLine,
@@ -226,7 +227,7 @@ function ArtworkAlerts({
           {onVerifyArtwork ? (
             <button
               type="button"
-              className="mt-2 rounded border border-amber-400/60 px-2 py-1 text-[10px] font-semibold text-amber-50 hover:bg-amber-500/20"
+              className="mt-2 rounded border border-amber-400/60 px-2 py-1 text-[12px] font-semibold text-amber-50 hover:bg-amber-500/20"
               onClick={onVerifyArtwork}
               data-testid="intake-v6-artwork-verify-cta"
             >
@@ -255,9 +256,9 @@ function ZoneTitle({
   title: string;
 }) {
   return (
-    <div className="mb-1 flex items-center gap-1">
-      <Icon className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
-      <span className={v6.zoneTitle}>{title}</span>
+    <div className="mb-1.5 flex items-center gap-1.5">
+      <Icon className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-hidden />
+      <span className={v6Pilot.zoneTitle}>{title}</span>
     </div>
   );
 }
@@ -429,13 +430,16 @@ export default function IntakeV6ArtworkFinishSection({
               expandedChildren={
                 <>
                   {visibility.face ? (
-                    <section data-testid={`intake-v6-artwork-face-zone-${row.layer_key}`}>
+                    <section
+                      className={v6Pilot.anatomyZone}
+                      data-testid={`intake-v6-artwork-face-zone-${row.layer_key}`}
+                    >
                       <ZoneTitle icon={Palette} title="Față" />
-                      <div className={`${REVIEW_FIELD_BLOCK_CLASS} space-y-2 text-[11px]`}>
+                      <div className={`${REVIEW_FIELD_BLOCK_CLASS} space-y-2`}>
                         <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                          <span className={REVIEW_FIELD_LABEL_CLASS}>Metodă personalizare față</span>
+                          <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Metodă personalizare față</span>
                           <select
-                            className={REVIEW_SELECT_CLASS}
+                            className={PILOT_REVIEW_SELECT_CLASS}
                             value={resolveArtworkFaceMethod(row)}
                             onChange={(event) => {
                               const nextMethod = event.target.value as ArtworkFaceMethod;
@@ -463,28 +467,33 @@ export default function IntakeV6ArtworkFinishSection({
                           </select>
                         </label>
                         <p
-                          className="text-[10px] leading-relaxed text-slate-500"
+                          className={v6Pilot.helper}
                           data-testid={`intake-v6-artwork-face-material-${row.layer_key}`}
                         >
                           Material față: {artworkFaceMaterialLabel(row, faceMethod)}
                         </p>
                         <p
-                          className="text-[10px] leading-relaxed text-slate-500"
+                          className={v6Pilot.helper}
                           data-testid={`intake-v6-artwork-symbolic-color-note-${row.layer_key}`}
                         >
                           Pata de culoare este un indicator simbolic, nu randare print/logo.
                         </p>
-                        <p
-                          className="text-[10px] leading-relaxed text-slate-500"
-                          data-testid={`intake-v6-artwork-source-metadata-${row.layer_key}`}
+                        <IntakeV6TechnicalDetailsAccordion
+                          title="Detalii tehnice"
+                          defaultOpen={false}
+                          testId={`intake-v6-artwork-source-metadata-${row.layer_key}`}
+                          className="mt-1"
                         >
-                          {artworkMetadataLine(row, stepOneConfirmed)}
-                        </p>
+                          <p className={v6Pilot.technical}>{artworkMetadataLine(row, stepOneConfirmed)}</p>
+                          <p className={`mt-1 font-mono ${v6Pilot.technical}`}>
+                            group_key: {row.layer_key}
+                          </p>
+                        </IntakeV6TechnicalDetailsAccordion>
                         {showRollWidth ? (
                           <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                            <span className={REVIEW_FIELD_LABEL_CLASS}>Rolă (mm)</span>
+                            <span className={PILOT_REVIEW_FIELD_LABEL_CLASS}>Rolă (mm)</span>
                             <select
-                              className={REVIEW_SELECT_CLASS}
+                              className={PILOT_REVIEW_SELECT_CLASS}
                               value={selectedRollWidth ?? ""}
                               onChange={(event) => {
                                 const raw = event.target.value;
@@ -524,7 +533,7 @@ export default function IntakeV6ArtworkFinishSection({
                             </select>
                             {faceMethod === "print_laminate" ? (
                               <span
-                                className="text-[10px] leading-relaxed text-slate-500"
+                                className={`${v6Pilot.helper} mt-1 block`}
                                 data-testid={`intake-v6-artwork-roll-retraction-${row.layer_key}`}
                               >
                                 Rola print/laminare: {PRINT_LAMINATION_ROLL_WIDTHS_MM.join(" / ")} mm. Util dupa
@@ -568,7 +577,7 @@ export default function IntakeV6ArtworkFinishSection({
                         </p>
                         {stepOneConfirmed && !row.confirmed ? (
                           <p
-                            className="inline-flex h-8 items-center rounded border border-emerald-500/30 bg-emerald-500/10 px-2.5 text-[10px] font-semibold text-emerald-200"
+                            className="inline-flex h-8 items-center rounded border border-emerald-500/30 bg-emerald-500/10 px-2.5 text-[12px] font-semibold text-emerald-200"
                             data-testid={`intake-v6-artwork-step1-confirmed-${row.layer_key}`}
                           >
                             Vector Logo confirmat in Pasul 1
@@ -576,7 +585,7 @@ export default function IntakeV6ArtworkFinishSection({
                         ) : (
                           <button
                             type="button"
-                            className={`inline-flex h-8 items-center gap-1.5 rounded border px-2.5 text-[10px] font-semibold ${
+                            className={`inline-flex h-8 items-center gap-1.5 rounded border px-2.5 text-[12px] font-semibold ${
                               row.confirmed
                                 ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-200"
                                 : "border-sky-500/40 bg-sky-500/15 text-sky-100 hover:bg-sky-500/25"
@@ -604,7 +613,10 @@ export default function IntakeV6ArtworkFinishSection({
                   ) : null}
 
                   {visibility.returnCant ? (
-                    <section data-testid={`intake-v6-artwork-cant-${row.layer_key}`}>
+                    <section
+                      className={v6Pilot.anatomyZone}
+                      data-testid={`intake-v6-artwork-cant-${row.layer_key}`}
+                    >
                       <ZoneTitle icon={Box} title="Cant" />
                       <IntakeV6ReturnCantFields
                         layout="review"
@@ -628,6 +640,7 @@ export default function IntakeV6ArtworkFinishSection({
 
                   {visibility.back ? (
                     <section
+                      className={v6Pilot.anatomyZone}
                       data-testid={`intake-v6-review-backing-finish-integration-${row.layer_key}`}
                     >
                       <ZoneTitle icon={Layers} title="Spate" />
@@ -658,7 +671,7 @@ export default function IntakeV6ArtworkFinishSection({
   if (embedded) {
     return (
       <div className={`${v6.cardCompact} mt-2 !p-3`} data-testid="intake-v6-artwork-finishes">
-        <p className="mb-2 text-[10px] font-semibold text-slate-400">{INTAKE_V6_OWNER_ROLE_LABEL_LOGO}</p>
+        <p className={`mb-2 ${v6Pilot.clusterTitle}`}>{INTAKE_V6_OWNER_ROLE_LABEL_LOGO}</p>
         {cards}
       </div>
     );
@@ -666,7 +679,7 @@ export default function IntakeV6ArtworkFinishSection({
 
   return (
     <div className={`${v6.cardCompact} mb-3 !p-3`} data-testid="intake-v6-artwork-finishes">
-      <p className="mb-2 text-[10px] font-semibold text-slate-400">{INTAKE_V6_OWNER_ROLE_LABEL_LOGO}</p>
+      <p className={`mb-2 ${v6Pilot.clusterTitle}`}>{INTAKE_V6_OWNER_ROLE_LABEL_LOGO}</p>
       {cards}
     </div>
   );

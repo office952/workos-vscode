@@ -2313,15 +2313,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 Valorile concrete rămân în {operatorFinishOwnershipDomainLabelRo("WORKSPACE")}.
                 Șablonul de montaj nu este finisaj de suprafață; chip-ul de scope pentru finisaj este amânat.
               </p>
-              <p className="mt-2 text-[10px] text-slate-500" data-testid="intake-v6-finish-ownership-technical-tokens">
+              <p className="mt-2 text-[11px] text-slate-600" data-testid="intake-v6-finish-ownership-technical-tokens">
                 Tokenuri interne (diagnostic):{" "}
-                <span className="font-mono text-slate-400">SURFACE_FINISH</span>
+                <span className="font-mono text-slate-500">SURFACE_FINISH</span>
                 {" · "}
-                <span className="font-mono text-slate-400">RETURN-CANT</span>
+                <span className="font-mono text-slate-500">RETURN-CANT</span>
                 {" · "}
-                <span className="font-mono text-slate-400">WORKSPACE</span>
+                <span className="font-mono text-slate-500">WORKSPACE</span>
                 {" · "}
-                <span className="font-mono text-slate-400">FINISH</span>
+                <span className="font-mono text-slate-500">FINISH</span>
               </p>
             </IntakeV6TechnicalDetailsAccordion>
           </div>
