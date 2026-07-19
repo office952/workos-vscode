@@ -593,12 +593,28 @@ def coalesce_segmented_background_for_finish(
 
     Letter/logo binding sync may PUT finish_setup without segmented_background; that
     must not wipe a live operator proposal.
+
+    Also protect CONFIRMED from accidental PROPOSED overwrite (analyzer re-propose /
+    stale client form) unless the client sets force_repropose=true.
     """
     finish_d = dict(incoming_finish or {})
-    if finish_d.get("segmented_background") is not None:
-        return finish_d
     existing = _as_dict(existing_finish)
     existing_seg = existing.get("segmented_background")
+    incoming_seg = finish_d.get("segmented_background")
+
+    if incoming_seg is not None:
+        if isinstance(existing_seg, Mapping) and isinstance(incoming_seg, Mapping):
+            existing_status = str(existing_seg.get("status") or "").strip().upper()
+            incoming_status = str(incoming_seg.get("status") or "").strip().upper()
+            force_repropose = bool(incoming_seg.get("force_repropose"))
+            if (
+                existing_status == STATUS_CONFIRMED
+                and incoming_status == STATUS_PROPOSED
+                and not force_repropose
+            ):
+                finish_d["segmented_background"] = dict(existing_seg)
+        return finish_d
+
     if not isinstance(existing_seg, Mapping):
         return finish_d
     existing_status = str(existing_seg.get("status") or "").strip().upper()

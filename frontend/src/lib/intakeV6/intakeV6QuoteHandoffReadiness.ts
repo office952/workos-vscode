@@ -37,7 +37,7 @@ export function formatQuoteHandoffBlocker(code: string): string {
 	if (code.startsWith("canonical_invalid_combination:")) {
 		const detail = code.slice("canonical_invalid_combination:".length).trim();
 		if (detail === "MOUNTING_SCOPE_INACTIVE") {
-			return "Montajul comercial nu este activ în scope — revizuiește opțiunile din tab-ul Montaj.";
+			return "Montajul comercial nu este activ — suportul de produs rămâne valid. Verifică doar opțiunile comerciale dacă oferta le include.";
 		}
 		return `Combinație invalidă în configurație: ${detail || "necunoscută"}.`;
 	}

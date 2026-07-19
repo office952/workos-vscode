@@ -954,8 +954,17 @@ export default function IntakeV6LiveCalculationSummary({
   const filterTotals = useMemo(() => sumFilteredLiveCalcRows(filteredRows), [filteredRows]);
   const previewRows = isRightPanel && !usesLogicalList ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
   const hiddenPreviewCount = Math.max(0, filteredRows.length - previewRows.length);
-  const missingRateLabels = diagnosticRows
-    .map((row) => row.label);
+  const missingRateLabels = diagnosticRows.map((row) => {
+    const label = row.label ?? "";
+    // D4: do not present manufacturing accessories as a Montaj commercial-field error.
+    if (/Accesorii montaj\s*\/\s*conectori/i.test(label)) {
+      return label.replace(
+        /Accesorii montaj\s*\/\s*conectori/i,
+        "Consumabile producție — accesorii / conectori",
+      );
+    }
+    return label;
+  });
   const visibleMissingRateLabels = missingRateLabels.slice(0, 2);
   const hiddenMissingRateCount = Math.max(0, missingRateLabels.length - visibleMissingRateLabels.length);
 

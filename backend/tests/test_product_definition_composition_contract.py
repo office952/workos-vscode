@@ -315,7 +315,8 @@ async def test_unknown_child_template_blocker():
 
 
 @pytest.mark.asyncio
-async def test_mounting_scope_inactive_with_selected_child():
+async def test_acm_product_support_valid_with_mounting_scope_none():
+    """D1/D2: ACM product support remains active when commercial mounting is none."""
     payload = _payload_acm_only()
     payload["finish_setup"]["mounting_scope"] = "none"
     payload["finish_setup"].pop("volum_aluminum_module_template_code", None)
@@ -324,7 +325,36 @@ async def test_mounting_scope_inactive_with_selected_child():
         payload=payload,
         source_payload_type="workspace_payload",
     )
-    assert BLOCKER_MOUNTING_SCOPE_INACTIVE in comp.blockers
+    assert BLOCKER_MOUNTING_SCOPE_INACTIVE not in comp.blockers
+    assert any(
+        n.template_code == ACM_BOXED_MOUNTING_TEMPLATE_CODE and n.included_in_graph
+        for n in comp.nodes
+    )
+
+
+@pytest.mark.asyncio
+async def test_metal_premount_not_in_graph_when_mounting_scope_none():
+    payload = _base_payload()
+    payload["finish_setup"]["mounting_scope"] = "none"
+    payload["finish_setup"]["mounting_solution"] = {
+        "template_code": METAL_PREMOUNT_TEMPLATE_CODE,
+        "configuration": {
+            "bar_count": 2,
+            "mounting_bar_profile": "30x30x1.5",
+            "bar_material": "steel",
+        },
+    }
+    payload["finish_setup"].pop("volum_aluminum_module_template_code", None)
+    comp = build_product_definition_composition(
+        root_template_code=TEMPLATE,
+        payload=payload,
+        source_payload_type="workspace_payload",
+    )
+    assert BLOCKER_MOUNTING_SCOPE_INACTIVE not in comp.blockers
+    assert not any(
+        n.template_code == METAL_PREMOUNT_TEMPLATE_CODE and n.included_in_graph
+        for n in comp.nodes
+    )
 
 
 @pytest.mark.asyncio

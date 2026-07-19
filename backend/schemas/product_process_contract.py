@@ -33,6 +33,10 @@ class ProductProcessResolveInput(BaseModel):
     illuminated: bool = True
     geometry_confirmed: bool = True
     led_layout_confirmed: bool = True
+    # D3: when segmented electrical authority is CONFIRMED+complete, legacy single-panel
+    # When True, confirmed multi-panel segmented assembly owns electrical/service decisions;
+    # power_supply_service_corner is not required for alucobond_cased.
+    segmented_electrical_authority_complete: bool = False
     geometry: dict[str, Any] = Field(default_factory=dict)
     # Adversarial / test injection hooks (never used in production paths)
     inject_cycle_edge: tuple[str, str] | None = None

@@ -2437,17 +2437,28 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               data-fundal-first={acpProductActive ? "true" : "false"}
               data-montaj-nesting="flat"
             >
-              <div className={acpProductActive ? "order-2" : "order-1"}>
+              <div
+                className={acpProductActive ? "order-2" : "order-1"}
+                data-authority="commercial-mounting"
+              >
               <IntakeV6TechnicalDetailsAccordion
                 title="Montaj comercial"
                 hint={
                   mountingPrepActive
-                    ? "Scope, șablon și montaj la locație"
-                    : "Inactiv pentru scope-ul curent — expandă doar dacă ai nevoie"
+                    ? "Serviciu comercial: scope, șablon, montaj la locație"
+                    : "Fără serviciu comercial — șablonul nu e activ"
                 }
                 defaultOpen={mountingPrepActive}
                 testId="intake-v6-montaj-commercial-cluster"
               >
+              {!mountingPrepActive && form.mounting_template_enabled === true ? (
+                <p
+                  className="mb-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5 text-[11px] text-slate-400"
+                  data-testid="intake-v6-mounting-template-inactive-legacy"
+                >
+                  Șablon montaj salvat anterior rămâne în date, dar este inactiv cât timp scope-ul comercial este „fără pregătire/montaj”.
+                </p>
+              ) : null}
               <label className={`${REVIEW_FIELD_BLOCK_CLASS} sm:col-span-2`}>
                 <span className={REVIEW_FIELD_LABEL_CLASS}>Scope comercial montaj</span>
                 <select
@@ -2665,10 +2676,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </IntakeV6TechnicalDetailsAccordion>
               </div>
 
-              <div className={acpProductActive ? "order-1" : "order-2"}>
+              <div
+                className={acpProductActive ? "order-1" : "order-2"}
+                data-authority="product-support"
+              >
               <IntakeV6MontajClusterShell
                 title="Fundal și carcasă"
-                description="Ansamblu panouri, îmbinări și alimentare 220V pe panouri — o singură decizie operator."
+                description="Suport de produs — panou, carcasă, segmentare. Independent de serviciul comercial de montaj."
                 tone="primary"
                 statusLabel={
                   (() => {
@@ -3167,39 +3181,57 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     }}
                   />
                 ) : null}
-
-                <IntakeV6SegmentedElectricalPanel
-                  finish={form as unknown as Record<string, unknown>}
-                  disabled={state.phase === "persisting"}
-                  onPatchSegmented={(segmentedNext) => {
-                    setForm((prev) => {
-                      const next = syncLighting({
-                        ...prev,
-                        segmented_background: segmentedNext as IntakeV6FinishSetup["segmented_background"],
-                        confirmed: false,
-                      });
-                      pendingDirtyDomainsRef.current.add("mounting");
-                      void persistFinishSetupState(next, true);
-                      return next;
-                    });
-                  }}
-                />
-                {!shouldShowLegacyServiceCornerInput(form as unknown as Record<string, unknown>) ? (
-                  <p
-                    className="mt-2 text-[10px] text-slate-400"
-                    data-testid="intake-v6-legacy-corner-superseded-note"
-                  >
-                    {legacyServiceCornerSupersededNoteRo()}
-                  </p>
-                ) : null}
               </div>
               </IntakeV6MontajClusterShell>
               </div>
 
-              <div className="order-3">
+              <div
+                className="order-3"
+                data-authority="electrical-service"
+                data-testid="intake-v6-montaj-electrical-authority"
+              >
+                <IntakeV6MontajClusterShell
+                  title="Alimentare și service"
+                  description={
+                    readSegmentedBackground(form as unknown as Record<string, unknown>)
+                      ? "Pe ansamblu multi-panou: alimentarea se decide pe panouri. Colțul service unic nu este autoritar."
+                      : "Punct de service / colț transformator pentru panou unic — doar când e necesar."
+                  }
+                  tone="secondary"
+                  testId="intake-v6-electrical-service-cluster"
+                >
+                  <IntakeV6SegmentedElectricalPanel
+                    finish={form as unknown as Record<string, unknown>}
+                    disabled={state.phase === "persisting"}
+                    onPatchSegmented={(segmentedNext) => {
+                      setForm((prev) => {
+                        const next = syncLighting({
+                          ...prev,
+                          segmented_background:
+                            segmentedNext as IntakeV6FinishSetup["segmented_background"],
+                          confirmed: false,
+                        });
+                        pendingDirtyDomainsRef.current.add("mounting");
+                        void persistFinishSetupState(next, true);
+                        return next;
+                      });
+                    }}
+                  />
+                  {!shouldShowLegacyServiceCornerInput(form as unknown as Record<string, unknown>) ? (
+                    <p
+                      className="mt-2 text-[10px] text-slate-400"
+                      data-testid="intake-v6-legacy-corner-superseded-note"
+                    >
+                      {legacyServiceCornerSupersededNoteRo()}
+                    </p>
+                  ) : null}
+                </IntakeV6MontajClusterShell>
+              </div>
+
+              <div className="order-4">
               <IntakeV6TechnicalDetailsAccordion
                 title="Avansat"
-                hint="Opțional — prindere, colț service, diagnostice ownership (tehnic)"
+                hint="Opțional — prindere, detalii tehnice, diagnostice"
                 defaultOpen={false}
                 testId="intake-v6-montaj-advanced-cluster"
               >

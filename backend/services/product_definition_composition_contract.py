@@ -20,6 +20,7 @@ from services.mounting_solution_service import (
     build_linked_module_input_from_solution,
     hydrate_mounting_solution_from_legacy,
     is_installation_template_solution,
+    is_mounting_solution_composition_active,
     legacy_mounting_system_from_solution,
     normalize_solution_configuration,
     read_mounting_solution,
@@ -472,8 +473,11 @@ def build_product_definition_composition(
     if frozen.legacy_fallback_used:
         warnings.append(WARN_LEGACY_MOUNTING_SYSTEM_FALLBACK)
 
-    if solution and not frozen.prep_active:
-        blockers.append(BLOCKER_MOUNTING_SCOPE_INACTIVE)
+    # D1/D2: mounting_scope=none must not emit MOUNTING_SCOPE_INACTIVE.
+    # Commercial-gated solutions (metal / installation template) simply stay out of
+    # the composition graph via is_mounting_solution_composition_active — they do not
+    # block product support / Aggregate readiness.
+    # BLOCKER_MOUNTING_SCOPE_INACTIVE remains defined for legacy handoff mapping only.
 
     primary_template = _read_string(solution.get("template_code")) if solution else None
     if primary_template and primary_template not in ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES:
@@ -500,7 +504,10 @@ def build_product_definition_composition(
     duplicate_roles: dict[str, str] = {}
     child_specs: list[tuple[str, ActivationSource, dict[str, Any]]] = []
 
-    if solution and frozen.prep_active and primary_template:
+    # Product support children follow mounting_solution composition activity:
+    # ACM remains active at mounting_scope=none; metal remains prep-gated.
+    composition_active = is_mounting_solution_composition_active(finish)
+    if solution and composition_active and primary_template:
         config = _coerce_dict(solution.get("configuration"))
         module_input = build_linked_module_input_from_solution(
             solution=solution,
@@ -514,7 +521,7 @@ def build_product_definition_composition(
             duplicate_roles[child_role] = primary_template
         child_specs.append((primary_template, frozen.activation_source, module_input))
 
-        if chain_requested and acm_primary and premount_in_supporting:
+        if chain_requested and acm_primary and premount_in_supporting and frozen.prep_active:
             premount_config = normalize_solution_configuration(
                 METAL_PREMOUNT_TEMPLATE_CODE,
                 pilot.get("premount_configuration"),

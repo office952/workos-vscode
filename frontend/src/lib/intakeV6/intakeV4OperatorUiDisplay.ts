@@ -119,7 +119,12 @@ export function getOperatorLayerLabel(
 }
 
 export function sanitizeOperatorDisplayText(text: string): string {
-  return text.replace(/_\d{10,}/g, (match) => getOperatorLayerLabel(match, match));
+  const withoutIds = text.replace(/_\d{10,}/g, (match) => getOperatorLayerLabel(match, match));
+  // D4: manufacturing consumable — not commercial Montaj scope language.
+  return withoutIds.replace(
+    /Accesorii montaj\s*\/\s*conectori/gi,
+    "Consumabile producție — accesorii / conectori",
+  );
 }
 
 export function formatOperatorOperationDisplayName(displayName: string): string {

@@ -691,7 +691,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-material-cost-led_modules")).toHaveTextContent("87.00 EUR");
 
     expect(screen.getByTestId("intake-v6-live-material-used-mounting_accessories_percent")).toHaveTextContent(
-      /Accesorii montaj/,
+      /Consumabile producție — accesorii \/ conectori/,
     );
     expect(screen.getByTestId("intake-v6-live-material-cost-mounting_accessories_percent")).toHaveTextContent(
       "10.00 EUR",

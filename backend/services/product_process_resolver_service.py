@@ -148,7 +148,10 @@ def _build_context(inp: ProductProcessResolveInput) -> dict[str, Any]:
         "screw_finish": inp.screw_finish,
         "template_selected": inp.template_selected,
         "mains_cable_selected": mains_selected,
-        "service_corner_required": inp.support_type == "alucobond_cased",
+        "service_corner_required": (
+            inp.support_type == "alucobond_cased"
+            and not bool(getattr(inp, "segmented_electrical_authority_complete", False))
+        ),
         "illuminated": inp.illuminated,
         "geometry_confirmed": inp.geometry_confirmed,
         "led_layout_confirmed": inp.led_layout_confirmed,
@@ -391,7 +394,13 @@ def resolve_product_process_graph(inp: ProductProcessResolveInput) -> ResolvedPr
             )
         # Explicitly reject silent defaulting to 5.0 when None — transport only
 
-    if inp.support_type == "alucobond_cased" and not inp.power_supply_service_corner:
+    # D3: single-panel authority uses power_supply_service_corner.
+    # Segmented CONFIRMED+complete electrical supersedes the legacy corner requirement.
+    if (
+        inp.support_type == "alucobond_cased"
+        and not inp.power_supply_service_corner
+        and not bool(getattr(inp, "segmented_electrical_authority_complete", False))
+    ):
         blockers.append(
             ResolverIssue(
                 code="service_corner_required",

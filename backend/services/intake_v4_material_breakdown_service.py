@@ -747,8 +747,9 @@ def _build_mounting_accessories_percent_row(
     accessory_cost = round(manufacturing_subtotal * MOUNTING_ACCESSORIES_RATE, 4)
     return IntakeV4MaterialQuantityRow(
         material_key="mounting_accessories_percent",
-        display_name="Accesorii montaj / conectori (5% cost confectie)",
-        material_name="Accesorii montaj / conectori",
+        # D4: manufacturing consumable — not commercial mounting scope.
+        display_name="Consumabile producție — accesorii / conectori (5% cost confecție)",
+        material_name="Consumabile producție — accesorii / conectori",
         category="consumable",
         quantity=1.0,
         base_quantity=1.0,

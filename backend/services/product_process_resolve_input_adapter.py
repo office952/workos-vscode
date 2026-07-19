@@ -44,6 +44,44 @@ def template_has_modular_process_contract(template_code: str | None) -> bool:
     )
 
 
+def _segmented_owns_service_corner_authority(finish: dict[str, Any] | None) -> bool:
+    """D3: confirmed multi-panel segmented assembly owns service/electrical — not legacy corner."""
+    if not isinstance(finish, dict):
+        return False
+    segmented = finish.get("segmented_background")
+    if not isinstance(segmented, dict):
+        return False
+    if str(segmented.get("status") or "").strip().upper() != "CONFIRMED":
+        return False
+    panels = segmented.get("panels")
+    return isinstance(panels, list) and len(panels) >= 2
+
+
+def _segmented_electrical_authority_complete(finish: dict[str, Any] | None) -> bool:
+    """D3: segmented electrical CONFIRMED with no blockers (full electrical truth)."""
+    if not _segmented_owns_service_corner_authority(finish):
+        return False
+    assert isinstance(finish, dict)
+    segmented = finish.get("segmented_background")
+    assert isinstance(segmented, dict)
+    panels = segmented.get("panels")
+    assert isinstance(panels, list)
+    electrical = segmented.get("electrical_connection_management")
+    if not isinstance(electrical, dict):
+        return False
+    if str(electrical.get("status") or "").strip().upper() != "CONFIRMED":
+        return False
+    from services.acm_segmented_electrical_service import electrical_confirmation_blockers
+
+    panel_ids = {
+        str(p.get("panel_id") or "")
+        for p in panels
+        if isinstance(p, dict) and p.get("panel_id")
+    }
+    blockers = electrical_confirmation_blockers(electrical, assembly_panel_ids=panel_ids)
+    return len(blockers) == 0
+
+
 def _as_dict(value: Any) -> dict[str, Any]:
     if value is None:
         return {}
@@ -388,11 +426,14 @@ def build_resolve_input_from_active_config(
     if cable is None and cable_raw in (None, ""):
         pass
 
+    from services.mounting_scope_service import is_mounting_preparation_active
+
     template_raw = _first_present(
         canonical.get("mounting_template_enabled"),
         finish.get("mounting_template_enabled"),
     )
-    template_selected = bool(template_raw is True)
+    # D5: legacy mounting_template_enabled=true under scope none is retained but inactive.
+    template_selected = bool(template_raw is True) and is_mounting_preparation_active(finish)
 
     # Typed vs legacy conflict: if PD and finish disagree on cable, typed PD wins (already via _first_present)
     if (
@@ -442,6 +483,10 @@ def build_resolve_input_from_active_config(
     # Strip non-geometry keys from geom
     clean_geom = {k: v for k, v in geom.items() if not str(k).startswith("_")}
 
+    # Skip legacy corner whenever segmented multi-panel is CONFIRMED (authority transferred).
+    # Incomplete ECM is a separate electrical readiness concern — not PROCESS_RESOLVER_SERVICE_CORNER.
+    segmented_electrical_complete = _segmented_owns_service_corner_authority(finish)
+
     inp = ProductProcessResolveInput(
         product_template_code=product_code,
         contract_version=CONTRACT_VERSION,
@@ -455,6 +500,7 @@ def build_resolve_input_from_active_config(
         illuminated=illuminated,
         geometry_confirmed=geometry_confirmed,
         led_layout_confirmed=led_layout_confirmed,
+        segmented_electrical_authority_complete=segmented_electrical_complete,
         geometry=clean_geom,
     )
     config_meta = {
