@@ -1,0 +1,8 @@
+{
+  "id": "c9ef796a-2731-418e-8a19-2b35f1461f61",
+  "workspace_code": "IV6-15CCCD91",
+  "svg": "litere-cu-fundal-acm-segmentat.svg",
+  "ui": "http://127.0.0.1:3001/intake-v6/c9ef796a-2731-418e-8a19-2b35f1461f61/operator",
+  "backend": "http://127.0.0.1:8003",
+  "baseline": "b680956"
+}
