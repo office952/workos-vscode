@@ -5,6 +5,7 @@ import IntakeV6LayersColorBreakdown, { isSingleLayerColorMode } from "./IntakeV6
 import IntakeV6LayersWarningsPanel from "./IntakeV6LayersWarningsPanel";
 import { ARTWORK_ONLY_STEP1_MESSAGE } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
 import {
+  operatorStatusSemanticRo,
   page1HandoffBlockedMessage,
   page1HandoffPendingMessage,
   page1HandoffReadyMessage,
@@ -58,7 +59,7 @@ export default function IntakeV6LayersOperatorPanel({
     : confirmation?.confirmationStatus === "complete"
       ? "Straturi confirmate"
       : report
-        ? "Confirmare necesară"
+        ? operatorStatusSemanticRo("needs_operator")
         : "Fără analiză";
 
   return (
@@ -196,7 +197,7 @@ export default function IntakeV6LayersOperatorPanel({
                 <strong className="mt-0.5 block text-[13px] tabular-nums text-amber-300">
                   {layerStats.pending}
                 </strong>
-                <span className="sr-only">De confirmat</span>
+                <span className="sr-only">{operatorStatusSemanticRo("needs_operator")}</span>
               </div>
             </div>
           </div>

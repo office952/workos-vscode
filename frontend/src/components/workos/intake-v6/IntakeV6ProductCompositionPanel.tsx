@@ -7,6 +7,7 @@ import { isPseudoFillToken } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
 import {
   operatorBindingStatusLabelRo,
   operatorCompositionRoleLabelRo,
+  operatorStatusSemanticRo,
 } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 
@@ -187,10 +188,10 @@ export default function IntakeV6ProductCompositionPanel({
 
   const componentSummary = items.map((item) => roleLabel(item.component_role, item.template_code)).join(" · ");
   const statusLabel = confirmed
-    ? "Confirmată"
+    ? operatorStatusSemanticRo("confirmed")
     : recommendation.status === "blocked" || blockers.length > 0
-      ? "Blocată"
-      : "Necesită confirmare";
+      ? operatorStatusSemanticRo("blocker")
+      : operatorStatusSemanticRo("needs_operator");
 
   return (
     <section

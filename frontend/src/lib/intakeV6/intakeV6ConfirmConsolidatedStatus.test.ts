@@ -41,7 +41,7 @@ describe("buildIntakeV6ConfirmConsolidatedStatus", () => {
     });
 
     expect(status.tier).toBe("blocked");
-    expect(status.indicatorLabel).toBe("Blocat");
+    expect(status.indicatorLabel).toBe("Blocant");
     expect(status.observations.some((item) => /finisaje/i.test(item))).toBe(true);
   });
 
@@ -54,7 +54,7 @@ describe("buildIntakeV6ConfirmConsolidatedStatus", () => {
     });
 
     expect(status.tier).toBe("attention");
-    expect(status.indicatorLabel).toBe("Atenție");
+    expect(status.indicatorLabel).toBe("Avertizare");
     expect(status.observations.some((item) => /Confirmă finisajele/i.test(item))).toBe(true);
   });
 

@@ -128,7 +128,7 @@ import IntakeV6AcpLocalFaceModulesPanel from "../IntakeV6AcpLocalFaceModulesPane
 import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPanel";
 import IntakeV6SegmentedElectricalPanel from "../IntakeV6SegmentedElectricalPanel";
 import IntakeV6MontajClusterShell from "../IntakeV6MontajClusterShell";
-import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import { readSegmentedBackground, statusLabelRo } from "@/lib/intakeV6/segmentedBackground";
 import {
   finishOwnershipTechnicalHintRo,
   finishOwnershipTechnicalTitleRo,
@@ -2658,9 +2658,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     const seg = readSegmentedBackground(form as unknown as Record<string, unknown>);
                     if (!seg) return acpProductActive ? "Panou ACP" : "Fără segmentare";
                     const st = String(seg.status || "").toUpperCase();
-                    if (st === "CONFIRMED") return "Ansamblu confirmat";
-                    if (st === "PROPOSED") return "Propunere";
-                    if (st === "REJECTED") return "Respins";
+                    if (st === "CONFIRMED" || st === "PROPOSED" || st === "REJECTED" || st === "INACTIVE") {
+                      return statusLabelRo(st);
+                    }
                     return operatorReadinessLabelRo(st);
                   })()
                 }

@@ -2,6 +2,7 @@ import {
   collectArtworkUndecidedWarnings,
   formatQuoteHandoffBlocker,
 } from "@/lib/intakeV6/intakeV6QuoteHandoffReadiness";
+import { confirmConsolidatedIndicatorLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 export const INTAKE_V6_CONFIRM_STATUS_TITLE = "Status configurație";
 
@@ -64,7 +65,7 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
       title: INTAKE_V6_CONFIRM_STATUS_TITLE,
       headline: "Previzualizarea confirmării nu este disponibilă.",
       observations: ["Reîncarcă pasul sau revino după ce datele sunt sincronizate."],
-      indicatorLabel: "Blocat",
+      indicatorLabel: confirmConsolidatedIndicatorLabelRo("blocked"),
     };
   }
 
@@ -121,7 +122,7 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
       title: INTAKE_V6_CONFIRM_STATUS_TITLE,
       headline: "Configurația nu este pregătită pentru confirmare.",
       observations,
-      indicatorLabel: "Blocat",
+      indicatorLabel: confirmConsolidatedIndicatorLabelRo("blocked"),
     };
   }
 
@@ -135,7 +136,7 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
       title: INTAKE_V6_CONFIRM_STATUS_TITLE,
       headline: "Necesită verificare înainte de confirmare.",
       observations,
-      indicatorLabel: "Atenție",
+      indicatorLabel: confirmConsolidatedIndicatorLabelRo("attention"),
     };
   }
 
@@ -145,7 +146,7 @@ export function buildIntakeV6ConfirmConsolidatedStatus(input: {
       title: INTAKE_V6_CONFIRM_STATUS_TITLE,
       headline: "Pregătit pentru confirmare.",
       observations: ["Poți continua cu confirmările de draft intern de mai jos."],
-      indicatorLabel: "Pregătit",
+      indicatorLabel: confirmConsolidatedIndicatorLabelRo("ready"),
     };
   }
 

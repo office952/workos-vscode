@@ -1,4 +1,9 @@
 import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
+import {
+  operatorStatusSemanticRo,
+  workspaceDetailReadyValueRo,
+  workspaceReadyAggregateLabelRo,
+} from "./intakeV6OperatorVocabulary";
 
 export type ReviewHeaderStatusTone = "success" | "warning" | "danger" | "neutral";
 
@@ -99,13 +104,13 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     {
       id: "svg",
       label: "SVG",
-      value: input.svgReady ? "OK" : "Necesită upload",
+      value: input.svgReady ? workspaceDetailReadyValueRo() : "Necesită upload",
       tone: input.svgReady ? "ok" : input.analysisReady ? "warn" : "bad",
     },
     {
       id: "pricing",
       label: "Pricing",
-      value: input.containsMissingPrices ? "Lipsesc tarife" : "OK",
+      value: input.containsMissingPrices ? "Lipsesc tarife" : workspaceDetailReadyValueRo(),
       tone: input.containsMissingPrices ? "bad" : "ok",
     },
     {
@@ -132,7 +137,11 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
     {
       id: "operator",
       label: "Confirmare finală",
-      value: showFinalConfirmationPending ? "Lipsește" : input.currentStep === "confirm" ? "Complet" : "Pas 3",
+      value: showFinalConfirmationPending
+        ? operatorStatusSemanticRo("missing_data")
+        : input.currentStep === "confirm"
+          ? operatorStatusSemanticRo("confirmed")
+          : "Pas 3",
       tone: showFinalConfirmationPending ? "warn" : "muted",
     },
     {
@@ -187,7 +196,7 @@ export function buildReviewHeaderStatus(input: BuildReviewHeaderStatusInput): Re
   }
 
   return {
-    label: "Totul OK",
+    label: workspaceReadyAggregateLabelRo(),
     tone: "success",
     actionCount: 0,
     details,

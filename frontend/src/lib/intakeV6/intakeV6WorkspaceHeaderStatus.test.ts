@@ -15,9 +15,9 @@ const baseState = {
 } as IntakeV6WorkspaceState;
 
 describe("intakeV6WorkspaceHeaderStatus", () => {
-  it("builds Totul OK from workspace layer chips", () => {
+  it("builds Pregătit from workspace layer chips", () => {
     const status = buildWorkspaceHeaderStatus(baseState);
-    expect(status.label).toBe("Totul OK");
+    expect(status.label).toBe("Pregătit");
     expect(status.details.find((row) => row.id === "layers")?.value).toBe("2/2 confirmate");
   });
 
@@ -35,13 +35,16 @@ describe("intakeV6WorkspaceHeaderStatus", () => {
   });
 
   it("merges review overlay for operator confirmation", () => {
-    const status = buildWorkspaceHeaderStatus(baseState, {
-      operatorConfirmationMissing: true,
-      artworkTotal: 2,
-      artworkConfirmed: 2,
-    });
+    const status = buildWorkspaceHeaderStatus(
+      { ...baseState, currentStep: "confirm" } as IntakeV6WorkspaceState,
+      {
+        operatorConfirmationMissing: true,
+        artworkTotal: 2,
+        artworkConfirmed: 2,
+      },
+    );
     expect(status.label).toBe("1 acțiune necesară");
-    expect(status.details.find((row) => row.id === "operator")?.value).toBe("Lipsește");
+    expect(status.details.find((row) => row.id === "operator")?.value).toBe("Lipsă date");
   });
 
   it("hides smart banner blocker duplicate on review step", () => {

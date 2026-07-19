@@ -8,9 +8,9 @@ import {
 
 describe("intake v6 operator state badges", () => {
   it("labels suggested and confirmed as different states", () => {
-    expect(describeOperatorStateBadge("SUGGESTED")).toBe("Sugerat de sistem");
+    expect(describeOperatorStateBadge("SUGGESTED")).toBe("Propunere");
     expect(resolveLayerConfirmationBadge("confirmed")).toBe("CONFIRMED");
-    expect(describeOperatorStateBadge("CONFIRMED")).toBe("Confirmat operator");
+    expect(describeOperatorStateBadge("CONFIRMED")).toBe("Confirmat");
   });
 
   it("does not label pending layer confirmation as confirmed", () => {

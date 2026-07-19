@@ -1,4 +1,5 @@
 import type { LayerConfirmationState } from "@/lib/svgAnalyzer";
+import { operatorStatusSemanticRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 export type IntakeV6OperatorStateBadge =
   | "SUGGESTED"
@@ -32,20 +33,20 @@ export function resolveArtworkFinishBadges(args: {
 export function describeOperatorStateBadge(state: IntakeV6OperatorStateBadge): string {
   switch (state) {
     case "SUGGESTED":
-      return "Sugerat de sistem";
+      return operatorStatusSemanticRo("proposal");
     case "NEEDS_CONFIRMATION":
-      return "Necesită confirmare";
+      return operatorStatusSemanticRo("needs_operator");
     case "NEEDS_FORM_INPUT":
-      return "Necesită input în formular";
+      return operatorStatusSemanticRo("missing_data");
     case "CONFIRMED":
-      return "Confirmat operator";
+      return operatorStatusSemanticRo("confirmed");
     case "FALLBACK":
       return "Fallback/hydrated din template";
     case "BLOCKED":
-      return "Blocat";
+      return operatorStatusSemanticRo("blocker");
     case "WARNING":
-      return "Warning";
+      return operatorStatusSemanticRo("warning");
     case "READY":
-      return "Ready";
+      return operatorStatusSemanticRo("ready");
   }
 }

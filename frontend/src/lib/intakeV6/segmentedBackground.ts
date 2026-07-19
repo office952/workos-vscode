@@ -5,6 +5,7 @@
  */
 
 import type { ClosedContourCandidate } from "@/lib/svgAnalyzer/closed-contour/closedContourTypes";
+import { segmentedAssemblyStatusLabelRo } from "./intakeV6OperatorVocabulary";
 
 export const SEGMENTED_BACKGROUND_SCHEMA = "acm_segmented_background_v1";
 
@@ -291,18 +292,5 @@ export function confirmationBlocked(config: SegmentedBackground | null): string[
 }
 
 export function statusLabelRo(status: SegmentedBackgroundStatus | string | undefined): string {
-  switch (String(status || "").toUpperCase()) {
-    case "PROPOSED":
-      return "Propus";
-    case "CONFIRMED":
-      return "Confirmat";
-    case "REJECTED":
-      return "Respins";
-    case "INACTIVE":
-      return "Inactiv";
-    case "SINGLE_PANEL":
-      return "Un panou";
-    default:
-      return "—";
-  }
+  return segmentedAssemblyStatusLabelRo(status);
 }

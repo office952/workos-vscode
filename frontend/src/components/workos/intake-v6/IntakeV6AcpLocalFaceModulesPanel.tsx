@@ -12,6 +12,7 @@ import {
   operatorGatePathLabelRo,
   operatorGateStatusLabelRo,
   operatorReadinessLabelRo,
+  operatorStatusSemanticRo,
 } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 
@@ -173,7 +174,7 @@ export default function IntakeV6AcpLocalFaceModulesPanel({
                 {module.gates.length > 0 ? (
                   <div data-testid="intake-v6-acp-module-owner-gates">
                     <p className="text-[10px] text-amber-200">
-                      Necesită confirmarea administratorului (nu sunt valori implicite):
+                      {operatorStatusSemanticRo("owner_decision")} (nu sunt valori implicite):
                     </p>
                     <ul className="mt-0.5 list-disc pl-4 text-[10px] text-amber-100/80">
                       {module.gates.slice(0, 8).map((gate) => (

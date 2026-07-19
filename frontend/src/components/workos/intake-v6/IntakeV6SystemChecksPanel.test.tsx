@@ -3,12 +3,13 @@ import { render, screen } from "@testing-library/react";
 import IntakeV6SystemChecksPanel, { resolveIntakeV6SystemChecksSummary } from "./IntakeV6SystemChecksPanel";
 
 describe("resolveIntakeV6SystemChecksSummary", () => {
-  it("returns OK when there are no mentions", () => {
+  it("returns Pregătit when there are no mentions", () => {
     expect(resolveIntakeV6SystemChecksSummary({ warningCount: 0, criticalCount: 0 })).toEqual(
       expect.objectContaining({
         mentionCount: 0,
         severity: "ok",
-        label: "Verificari sistem: OK",
+        label: "Verificări sistem: Pregătit",
+        badgeLabel: "Pregătit",
       }),
     );
   });
@@ -18,7 +19,8 @@ describe("resolveIntakeV6SystemChecksSummary", () => {
       expect.objectContaining({
         mentionCount: 4,
         severity: "warning",
-        label: "Verificari sistem: 4 mentiuni de rezolvat",
+        label: "Verificări sistem: 4 mențiuni de rezolvat",
+        badgeLabel: "Avertizare",
       }),
     );
 
@@ -26,6 +28,7 @@ describe("resolveIntakeV6SystemChecksSummary", () => {
       expect.objectContaining({
         mentionCount: 3,
         severity: "critical",
+        badgeLabel: "Blocant",
       }),
     );
   });
@@ -39,7 +42,7 @@ describe("IntakeV6SystemChecksPanel", () => {
       </IntakeV6SystemChecksPanel>,
     );
 
-    expect(screen.getByText("Verificari sistem: 2 mentiuni de rezolvat")).toBeInTheDocument();
+    expect(screen.getByText("Verificări sistem: 2 mențiuni de rezolvat")).toBeInTheDocument();
     expect(screen.queryByText("detalii")).not.toBeInTheDocument();
   });
 });

@@ -43,7 +43,7 @@ describe("IntakeV6SegmentedBackgroundPanel", () => {
     );
     expect(screen.getByTestId("intake-v6-segmented-background-panel")).toBeTruthy();
     expect(screen.getByText(/Posibil fundal format din mai multe panouri/i)).toBeTruthy();
-    expect(screen.getByTestId("intake-v6-segmented-status").textContent).toMatch(/Propus/i);
+    expect(screen.getByTestId("intake-v6-segmented-status").textContent).toMatch(/Propunere/i);
     fireEvent.click(screen.getByTestId("intake-v6-segmented-confirm"));
     expect(onPatch).toHaveBeenCalled();
     expect(onPatch.mock.calls[0][0].segmented_background.status).toBe("CONFIRMED");

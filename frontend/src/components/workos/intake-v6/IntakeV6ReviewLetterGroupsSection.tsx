@@ -1,6 +1,7 @@
 import ColorRegistrySelect from "@/components/workos/colorRegistry/ColorRegistrySelect";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
 import { resolveIntakeV6LetterGroupDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
+import { finishLetterCardStatusLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import type { SvgAnalysisCoreReport } from "@/lib/svgAnalyzer";
 import {
   faceFinishNeedsColorPicker,
@@ -215,7 +216,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
                       <AtomsBadge tone="ok">
                         <span className="inline-flex items-center gap-0.5">
                           <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                          OK
+                          {finishLetterCardStatusLabelRo("ok")}
                         </span>
                       </AtomsBadge>
                     ) : null}
@@ -223,7 +224,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
                       <AtomsBadge tone="pending">
                         <span className="inline-flex items-center gap-0.5">
                           <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
-                          Lipsă
+                          {finishLetterCardStatusLabelRo("warning")}
                         </span>
                       </AtomsBadge>
                     ) : null}

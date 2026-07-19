@@ -1,4 +1,5 @@
 import type { LayerAutoRole } from "@/lib/svgAnalyzer";
+import { operatorStatusSemanticRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 /** Operator-facing role list; values stay compatible with analyzer/backend payload. */
 export const INTAKE_V4_LAYER_ROLE_OPTIONS: ReadonlyArray<{ value: LayerAutoRole; label: string }> = [
@@ -13,5 +14,5 @@ export const INTAKE_V4_LAYER_ROLE_OPTIONS: ReadonlyArray<{ value: LayerAutoRole;
   { value: "return", label: "Cant / volum" },
   { value: "backing", label: "Spate / backing" },
   { value: "vinyl", label: "Vinil aplicat" },
-  { value: "unknown", label: "De confirmat" },
+  { value: "unknown", label: operatorStatusSemanticRo("needs_operator") },
 ];

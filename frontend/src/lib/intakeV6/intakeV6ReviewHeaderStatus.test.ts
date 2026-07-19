@@ -4,7 +4,7 @@ import { buildReviewHeaderStatus } from "./intakeV6ReviewHeaderStatus";
 const clearSurfacing = { showBanner: false, reasons: [], actions: [] };
 
 describe("buildReviewHeaderStatus", () => {
-  it("returns Totul OK when no actions or problems", () => {
+  it("returns Pregătit when no actions or problems", () => {
     const status = buildReviewHeaderStatus({
       analysisReady: true,
       svgReady: true,
@@ -19,11 +19,11 @@ describe("buildReviewHeaderStatus", () => {
       perimeterM: 5.2,
     });
 
-    expect(status.label).toBe("Totul OK");
+    expect(status.label).toBe("Pregătit");
     expect(status.tone).toBe("success");
     expect(status.actionCount).toBe(0);
-    expect(status.details.find((row) => row.id === "svg")?.value).toBe("OK");
-    expect(status.details.find((row) => row.id === "pricing")?.value).toBe("OK");
+    expect(status.details.find((row) => row.id === "svg")?.value).toBe("Pregătit");
+    expect(status.details.find((row) => row.id === "pricing")?.value).toBe("Pregătit");
   });
 
   it("returns action count when operator confirmation is missing on confirm step", () => {
@@ -42,7 +42,7 @@ describe("buildReviewHeaderStatus", () => {
     expect(status.label).toBe("1 acțiune necesară");
     expect(status.tone).toBe("warning");
     expect(status.actions.some((action) => action.id === "confirm-step")).toBe(true);
-    expect(status.details.find((row) => row.id === "operator")?.value).toBe("Lipsește");
+    expect(status.details.find((row) => row.id === "operator")?.value).toBe("Lipsă date");
   });
 
   it("returns Probleme when pricing rates are missing", () => {

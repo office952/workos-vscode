@@ -32,7 +32,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
   it("shows Lipsa in the header when confirmed=false and there is no step-one confirmation", () => {
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={vi.fn()} />);
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Lipsă");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Necesită confirmare");
     expect(screen.queryByTestId("intake-v6-artwork-step1-badge-logo")).not.toBeInTheDocument();
   });
 
@@ -207,13 +207,13 @@ describe("IntakeV6ArtworkFinishSection", () => {
   it("shows Vector Logo confirmat when confirmed=true", () => {
     render(<IntakeV6ArtworkFinishSection rows={confirmedRows} onChange={vi.fn()} />);
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("OK");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Confirmat");
     expandArtworkCard("logo");
     expect(screen.getByTestId("intake-v6-artwork-confirm-logo")).toHaveTextContent("Vector Logo confirmat");
-    expect(screen.getByTestId("intake-v6-artwork-confirmed-logo")).toHaveTextContent("OK");
+    expect(screen.getByTestId("intake-v6-artwork-confirmed-logo")).toHaveTextContent("Confirmat");
   });
 
-  it("shows Confirmat in Pasul 1 in the header when confirmed=false but step-one confirmation exists", () => {
+  it("shows Necesită confirmare in the header when confirmed=false but step-one confirmation exists", () => {
     render(
       <IntakeV6ArtworkFinishSection
         rows={rows}
@@ -222,8 +222,9 @@ describe("IntakeV6ArtworkFinishSection", () => {
       />,
     );
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Confirmat in Pasul 1");
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent("Lipsă");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Necesită confirmare");
+    expect(screen.getByTestId("intake-v6-artwork-step1-badge-logo")).toHaveTextContent("Necesită confirmare");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent("Confirmat in Pasul 1");
   });
 
   it("shows Step 1 confirmation instead of a second artwork confirmation CTA", () => {

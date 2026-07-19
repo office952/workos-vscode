@@ -330,7 +330,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
 
     expect(screen.getAllByText("Față litere volumetrice").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Componentă logo volumetric").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Necesită verificare tehnică").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Avertizare").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Componentă produs").length).toBeGreaterThan(0);
   });
 
@@ -418,7 +418,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(lettersSelect.textContent).not.toContain("Spate / backing");
     expect(lettersSelect.textContent).not.toContain("Vector Atipic");
     expect(lettersSelect.textContent).not.toContain("Ignora strat");
-    expect(lettersSelect.textContent).not.toContain("De confirmat");
+    expect(lettersSelect.textContent).not.toContain("Necesită confirmare");
   });
 
   it("uses the same owner taxonomy when the Letters+Logo context is detected from layer targets", () => {
@@ -461,7 +461,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(logoOptions).toHaveLength(7);
     expect(logoSelect.textContent).not.toContain("Vinil aplicat");
     expect(logoSelect.textContent).not.toContain("Ignora strat");
-    expect(logoSelect.textContent).not.toContain("De confirmat");
+    expect(logoSelect.textContent).not.toContain("Necesită confirmare");
     expect(logoSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
   });
 

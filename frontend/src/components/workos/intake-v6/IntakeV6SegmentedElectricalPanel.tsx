@@ -16,6 +16,7 @@ import {
   type ServicePointPosition,
 } from "@/lib/intakeV6/segmentedElectrical";
 import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import { electricalAssemblyStatusLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 const SUPPLY_OPTIONS: ElectricalSupplyMode[] = [
   "UNCONFIRMED",
@@ -95,7 +96,7 @@ export default function IntakeV6SegmentedElectricalPanel({
           className="shrink-0 rounded border border-sky-500/40 px-1.5 py-0.5 text-[10px] text-sky-100"
           data-testid="intake-v6-segmented-electrical-status"
         >
-          {status === "CONFIRMED" ? "Confirmat" : "Draft / neconfirmat"}
+          {electricalAssemblyStatusLabelRo(status)}
         </span>
       </div>
 

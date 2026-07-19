@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from "react";
+import { operatorStatusSemanticRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 
 export type IntakeV6SystemChecksSeverity = "ok" | "warning" | "critical";
 
@@ -19,15 +20,21 @@ export function resolveIntakeV6SystemChecksSummary(args: {
   const severity: IntakeV6SystemChecksSeverity =
     criticalCount > 0 ? "critical" : mentionCount > 0 ? "warning" : "ok";
 
+  const badgeLabel =
+    severity === "ok"
+      ? operatorStatusSemanticRo("ready")
+      : severity === "critical"
+        ? operatorStatusSemanticRo("blocker")
+        : operatorStatusSemanticRo("warning");
+
   return {
     mentionCount,
     severity,
     label:
       mentionCount === 0
-        ? "Verificari sistem: OK"
-        : `Verificari sistem: ${mentionCount} mentiuni de rezolvat`,
-    badgeLabel:
-      severity === "ok" ? "OK" : severity === "critical" ? "Critical" : "Warning",
+        ? `Verificări sistem: ${operatorStatusSemanticRo("ready")}`
+        : `Verificări sistem: ${mentionCount} mențiuni de rezolvat`,
+    badgeLabel,
   };
 }
 

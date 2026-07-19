@@ -13,6 +13,7 @@ import {
 } from "@/lib/intakeV6/intakeV6FaceFinishOptions";
 import { artworkToReturnCant, patchArtworkFromReturnCant } from "@/lib/intakeV6/intakeV6ReturnCantBridge";
 import { INTAKE_V6_OWNER_ROLE_LABEL_LOGO } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
+import { artworkFinishStatusLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import { AlertTriangle, Box, CheckCircle2, ImageIcon, Layers, Palette } from "lucide-react";
 import type { IntakeV6BackingMode } from "@/lib/intakeV6/intakeV6BackingMode";
 import { resolveLayerBackingMode } from "@/lib/intakeV6/intakeV4BackingMode";
@@ -387,34 +388,44 @@ export default function IntakeV6ArtworkFinishSection({
               cantSummaryTestId={`intake-v6-artwork-cant-summary-${row.layer_key}`}
               spateSummaryTestId={`intake-v6-artwork-spate-summary-${row.layer_key}`}
               cardTitle={tooltip}
-              status={
-                row.confirmed ? (
-                  <span data-testid={`intake-v6-artwork-confirmed-${row.layer_key}`}>
-                    <AtomsBadge tone="ok">
-                      <span className="inline-flex items-center gap-0.5">
-                        <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                        OK
-                      </span>
-                    </AtomsBadge>
-                  </span>
-                ) : stepOneConfirmed ? (
-                  <span data-testid={`intake-v6-artwork-step1-badge-${row.layer_key}`}>
-                    <AtomsBadge tone="ok">
-                      <span className="inline-flex items-center gap-0.5">
-                        <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                        Confirmat in Pasul 1
-                      </span>
-                    </AtomsBadge>
-                  </span>
-                ) : (
+              status={(() => {
+                const finishStatus = artworkFinishStatusLabelRo({
+                  confirmed: row.confirmed,
+                  stepOneConfirmed,
+                });
+                if (row.confirmed) {
+                  return (
+                    <span data-testid={`intake-v6-artwork-confirmed-${row.layer_key}`}>
+                      <AtomsBadge tone="ok">
+                        <span className="inline-flex items-center gap-0.5">
+                          <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
+                          {finishStatus.label}
+                        </span>
+                      </AtomsBadge>
+                    </span>
+                  );
+                }
+                if (stepOneConfirmed) {
+                  return (
+                    <span data-testid={`intake-v6-artwork-step1-badge-${row.layer_key}`}>
+                      <AtomsBadge tone="pending">
+                        <span className="inline-flex items-center gap-0.5">
+                          <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
+                          {finishStatus.label}
+                        </span>
+                      </AtomsBadge>
+                    </span>
+                  );
+                }
+                return (
                   <AtomsBadge tone="pending">
                     <span className="inline-flex items-center gap-0.5">
                       <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
-                      Lipsă
+                      {finishStatus.label}
                     </span>
                   </AtomsBadge>
-                )
-              }
+                );
+              })()}
               expandedChildren={
                 <>
                   {visibility.face ? (

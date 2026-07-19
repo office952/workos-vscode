@@ -15,7 +15,7 @@ describe("IntakeV6LayerStatusIcon", () => {
     render(<IntakeV6LayerStatusIcon state={undefined} />);
     expect(screen.getByTestId("intake-v6-layer-status-pending")).toHaveAttribute(
       "aria-label",
-      "De confirmat",
+      "Necesită confirmare",
     );
   });
 });

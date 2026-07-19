@@ -5,7 +5,12 @@ import {
 } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
-import { operatorGuardedLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
+import {
+  layerConfirmationStateLabelRo,
+  operatorBindingStatusLabelRo,
+  operatorGuardedLabelRo,
+  operatorStatusSemanticRo,
+} from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 import { INTAKE_V6_LETTERS_TEMPLATE_CODE, INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 import {
@@ -132,12 +137,12 @@ function LayerComponentBindingSummary({
   const statusLabel = !bound
     ? "Neasociat"
     : bound.status === "CONFIRMED" && includesGeometry
-      ? "Confirmat"
+      ? operatorStatusSemanticRo("confirmed")
       : bound.status === "RECONFIRM_REQUIRED"
-        ? "Necesită reconfirmare"
+        ? operatorBindingStatusLabelRo("reconfirm_required")
         : includesGeometry
           ? "Selectat"
-          : "Sugerat";
+          : operatorBindingStatusLabelRo("suggested");
   const guarded = Boolean(bindable.guards?.length);
 
   return (
@@ -201,9 +206,7 @@ function colorSwatchStyle(color: string | undefined): CSSProperties | undefined 
 function confirmationStateLabelRo(
   state: LayerRoleConfirmation["layers"][number]["confirmationState"] | undefined,
 ): string {
-  if (state === "confirmed") return "Confirmat";
-  if (state === "rejected") return "Respins";
-  return "Propunere";
+  return layerConfirmationStateLabelRo(state);
 }
 
 function LayerLegendRow({
