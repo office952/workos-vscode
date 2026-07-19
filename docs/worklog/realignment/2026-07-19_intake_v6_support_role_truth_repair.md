@@ -89,6 +89,12 @@ Screenshots: `docs/qa/intake-v6-support-role-truth-repair-2026-07-19/screenshots
 
 ---
 
+## Commit
+
+`8aafbd1b05c522d6f22b2f9acd737e83809e43dd` — `fix(intake-v6): repair support role proposal and persistence`
+
+---
+
 ## Next recommendation
 
 One coherent build after owner GO: resume letter Design System polish **only** if wiring remains green on mandatory fixtures — do not expand DS globally yet.

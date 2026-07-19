@@ -131,7 +131,7 @@ No dead second analyzer. Soft face/support candidates remain for operator UI.
 
 ## 30. Commit
 
-`fix(intake-v6): repair support role proposal and persistence` (hash after commit).
+`8aafbd1b05c522d6f22b2f9acd737e83809e43dd` — `fix(intake-v6): repair support role proposal and persistence`
 
 ## 31. Metoda de lucru si logica abordarii
 
