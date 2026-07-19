@@ -4,6 +4,11 @@ import IntakeV6Nest2SvgUploader from "./IntakeV6Nest2SvgUploader";
 import IntakeV6LayersColorBreakdown, { isSingleLayerColorMode } from "./IntakeV6LayersColorBreakdown";
 import IntakeV6LayersWarningsPanel from "./IntakeV6LayersWarningsPanel";
 import { ARTWORK_ONLY_STEP1_MESSAGE } from "@/lib/intakeV6/intakeV6ArtworkOnlyGuard";
+import {
+  page1HandoffBlockedMessage,
+  page1HandoffPendingMessage,
+  page1HandoffReadyMessage,
+} from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import { AtomsBadge, v6 } from "./atoms/intakeV6Presentation";
 
 export default function IntakeV6LayersOperatorPanel({
@@ -222,9 +227,28 @@ export default function IntakeV6LayersOperatorPanel({
       ) : null}
 
       {report && confirmation ? (
-        <p className={v6.helper}>
-          Confirmă rolul pentru fiecare strat, apoi folosește „Continuă la Review” din footer.
-        </p>
+        <div
+          className="rounded-lg border border-cyan-500/25 bg-cyan-950/20 px-2.5 py-2"
+          data-testid="intake-v6-page1-handoff-summary"
+        >
+          <p className="text-[11px] font-semibold text-cyan-100">Rezumat pentru continuare</p>
+          <p className="mt-1 text-[11px] leading-relaxed text-slate-300">
+            {confirmation.confirmationStatus === "complete"
+              ? page1HandoffReadyMessage()
+              : layerStats.pending > 0
+                ? page1HandoffPendingMessage(layerStats.pending)
+                : page1HandoffBlockedMessage()}
+          </p>
+          {confirmation.confirmationStatus === "complete" ? (
+            <p className="mt-1 text-[10px] text-slate-500">
+              Folosește „Continuă la Configurare” din footer.
+            </p>
+          ) : (
+            <p className="mt-1 text-[10px] text-slate-500">
+              Confirmă rolul pentru fiecare element, apoi continuă la Configurare.
+            </p>
+          )}
+        </div>
       ) : null}
     </aside>
   );

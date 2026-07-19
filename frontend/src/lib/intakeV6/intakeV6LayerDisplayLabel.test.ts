@@ -83,10 +83,28 @@ describe("buildIntakeV6LayerDisplayLabel", () => {
     const display = buildIntakeV6LayerDisplayLabel(layer, 0, report);
 
     expect(layer.id).toBe("pseudo:maria");
-    expect(display.primaryLabel).toBe("Layer 1 — albastru");
+    expect(display.primaryLabel).toBe("Element 1 — albastru");
     expect(display.secondaryLabel).toBe("Grup detectat: maria");
-    expect(display.sourceLabel).toBe("Layer sursa: Layer_x0020_1");
+    expect(display.sourceLabel).toBe("Layer sursă: Layer_x0020_1");
     expect(display.technicalKey).toBe("pseudo:maria");
+  });
+
+  it("does not surface pseudo fill-* tokens in primary or secondary labels", () => {
+    const report = makeReport();
+    const fillLayer = {
+      ...report.layers[1],
+      id: "pseudo:fill-c5c6c6",
+      name: "pseudo fill-c5c6c6",
+      colors: ["#c5c6c6"],
+      paintEvidence: { ...report.layers[1].paintEvidence, fills: ["#c5c6c6"] },
+    };
+    report.layers[1] = fillLayer;
+    const display = buildIntakeV6LayerDisplayLabel(fillLayer, 0, report);
+    expect(display.primaryLabel).toMatch(/^Element 1/);
+    expect(display.primaryLabel).not.toMatch(/pseudo|fill-c5c6c6/i);
+    expect(display.secondaryLabel).not.toMatch(/pseudo|fill-c5c6c6/i);
+    expect(display.secondaryLabel).toMatch(/Grup culoare detectat/i);
+    expect(display.technicalKey).toBe("pseudo:fill-c5c6c6");
   });
 
   it("strips technical pseudo prefixes from display labels", () => {

@@ -31,3 +31,18 @@ describe("intakeV6OperatorVocabulary", () => {
     expect(looksLikeRawInternalToken("Necesită confirmarea administratorului")).toBe(false);
   });
 });
+
+describe("intakeV6OperatorVocabulary page1 handoff", () => {
+  it("builds Romanian handoff messages", async () => {
+    const {
+      page1HandoffReadyMessage,
+      page1HandoffPendingMessage,
+      page1HandoffBlockedMessage,
+      operatorGuardedLabelRo,
+    } = await import("./intakeV6OperatorVocabulary");
+    expect(page1HandoffReadyMessage()).toMatch(/Pagina 2/);
+    expect(page1HandoffPendingMessage(2)).toMatch(/2 elemente/);
+    expect(page1HandoffBlockedMessage()).toMatch(/blocante/);
+    expect(operatorGuardedLabelRo()).toMatch(/verificare tehnică/i);
+  });
+});

@@ -85,10 +85,31 @@ export function getOperatorLayerLabel(
   if (isPositionalLogoLayer(layerId, layerName)) {
     return "Logo";
   }
+  // Never surface analyzer fill/pseudo tokens as primary operator titles.
+  if (
+    /^pseudo[:\s-]*fill[-_]?[0-9a-f]{3,8}$/i.test(id) ||
+    /^pseudo[:\s-]*fill[-_]?[0-9a-f]{3,8}$/i.test(name) ||
+    /^fill[-_]?[0-9a-f]{3,8}$/i.test(name) ||
+    /^pseudo:fill-/i.test(id)
+  ) {
+    return "Formă grafică detectată";
+  }
+  if (name.startsWith("pseudo ") || name.startsWith("pseudo:")) {
+    const stripped = name.replace(/^pseudo[:\s-]+/i, "").replace(/\s*\(([^)]+)\)\s*$/, "").trim();
+    if (stripped && !/^fill[-_]?[0-9a-f]/i.test(stripped)) {
+      return stripped;
+    }
+    return "Formă grafică detectată";
+  }
   if (name && !isInternalCorelLayerId(name)) {
     return layerName!.trim();
   }
   if (!isInternalCorelLayerId(layerId) && layerId.trim()) {
+    if (id.startsWith("pseudo:")) {
+      const stripped = id.replace(/^pseudo:/i, "");
+      if (/^fill[-_]?[0-9a-f]/i.test(stripped)) return "Formă grafică detectată";
+      return stripped || "Formă grafică detectată";
+    }
     return layerId.trim();
   }
   if (/logo|emblem|artwork|policromie/.test(name)) {

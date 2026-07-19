@@ -66,20 +66,22 @@ describe("IntakeV6ProductCompositionPanel", () => {
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(screen.getByText(/Straturi: Logo 1, Logo 2/i)).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: /Confirma compozitia produsului/i }));
+    fireEvent.click(screen.getByTestId("intake-v6-confirm-product-composition"));
 
     expect(onConfirm).toHaveBeenCalledWith(payload.product_composition_recommendation.composition_items);
   });
 
-  it("renders Product Definition linked segments as read-only composition summary", () => {
+  it("keeps Product Definition linked segments under technical disclosure", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} linkedSegments={linkedSegments} />);
 
-    const summary = screen.getByTestId("intake-v6-product-definition-linked-segments");
-    expect(summary).toHaveTextContent("Segmente legate Product Definition");
-    expect(summary).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
-    expect(summary).toHaveTextContent("TPL-VOLUMETRIC-LOGO_v1");
-    expect(summary).toHaveTextContent("Candidat compozitie, nu produs ofertabil separat");
-    expect(summary).toHaveTextContent("Nu activeaza pricing, quote, order sau execution separat");
+    const advanced = screen.getByTestId("intake-v6-product-definition-linked-segments");
+    expect(advanced).toHaveAttribute("data-expanded", "false");
+    fireEvent.click(screen.getByTestId("intake-v6-product-definition-linked-segments-toggle"));
+    expect(advanced).toHaveAttribute("data-expanded", "true");
+    expect(advanced).toHaveTextContent("TPL-VOLUMETRIC-LETTERS_v2");
+    expect(advanced).toHaveTextContent("TPL-VOLUMETRIC-LOGO_v1");
+    expect(advanced).toHaveTextContent(/Candidat compoziție|Candidat compozitie/i);
+    expect(advanced).toHaveTextContent(/Nu activează pricing|Nu activeaza pricing/i);
     expect(screen.queryByRole("button", { name: /oferta|comanda|execut/i })).not.toBeInTheDocument();
   });
 
@@ -96,7 +98,9 @@ describe("IntakeV6ProductCompositionPanel", () => {
 
     expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "false");
     expect(screen.getByTestId("intake-v6-product-composition-summary")).toHaveTextContent("Litere volumetrice + logo volumetric");
-    expect(screen.getByTestId("intake-v6-product-composition-linked-count")).toHaveTextContent("1 segmente linked");
+    expect(screen.getByTestId("intake-v6-product-composition-linked-count")).toHaveTextContent(
+      /1 segment legat/,
+    );
     expect(screen.queryByTestId("intake-v6-product-composition-details")).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
@@ -105,6 +109,9 @@ describe("IntakeV6ProductCompositionPanel", () => {
     expect(screen.getByTestId("intake-v6-product-composition-details")).toBeInTheDocument();
     expect(screen.getAllByText("TPL-VOLUMETRIC-LETTERS_v2").length).toBeGreaterThan(0);
     expect(screen.getAllByText("TPL-VOLUMETRIC-LOGO_v1").length).toBeGreaterThan(0);
-    expect(screen.getByTestId("intake-v6-product-definition-linked-segments")).toHaveTextContent("Nu activeaza pricing, quote, order sau execution separat");
+    fireEvent.click(screen.getByTestId("intake-v6-product-definition-linked-segments-toggle"));
+    expect(screen.getByTestId("intake-v6-product-definition-linked-segments")).toHaveTextContent(
+      /Nu activează pricing|Nu activeaza pricing/i,
+    );
   });
 });

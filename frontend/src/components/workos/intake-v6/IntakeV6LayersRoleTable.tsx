@@ -5,6 +5,8 @@ import {
 } from "@/lib/intakeV6/intakeV6LayerRoleOptions";
 import { buildIntakeV6LayerDisplayLabel } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
+import { operatorGuardedLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
+import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 import { INTAKE_V6_LETTERS_TEMPLATE_CODE, INTAKE_V6_LOGO_TEMPLATE_CODE, resolveIntakeV6LayerTargetTemplate } from "@/lib/intakeV6/intakeV6LayerTargetTemplate";
 import {
   bindableForOwnerLayerRole,
@@ -155,7 +157,7 @@ function LayerComponentBindingSummary({
           <>
             <span>·</span>
             <span className="text-amber-200/90" data-testid={`intake-v6-layer-component-guard-${layerKey}`}>
-              Guarded
+              {operatorGuardedLabelRo()}
             </span>
           </>
         ) : null}
@@ -196,13 +198,21 @@ function colorSwatchStyle(color: string | undefined): CSSProperties | undefined 
   return undefined;
 }
 
+function confirmationStateLabelRo(
+  state: LayerRoleConfirmation["layers"][number]["confirmationState"] | undefined,
+): string {
+  if (state === "confirmed") return "Confirmat";
+  if (state === "rejected") return "Respins";
+  return "Propunere";
+}
+
 function LayerLegendRow({
   layer,
   report,
   confirmation,
   onUpdateLayerRole,
   workspaceTemplateCode,
-  ownerRoleTaxonomyActive,
+  layerIndex,
   focused,
   onFocus,
   onBlur,
@@ -212,7 +222,7 @@ function LayerLegendRow({
   confirmation: LayerRoleConfirmation;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
   workspaceTemplateCode?: string | null;
-  ownerRoleTaxonomyActive?: boolean;
+  layerIndex: number;
   focused?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -222,12 +232,11 @@ function LayerLegendRow({
     confirmation,
     layer,
   );
+  const display = buildIntakeV6LayerDisplayLabel(layer, layerIndex, report);
   const colorToken = layer.colors?.[0];
-  const colorLabel = colorToken
-    ? resolveLayerColorHumanLabel(colorToken, report)
-    : layer.paintEvidence.paintKind ?? "—";
   const RowIcon = layer.layerKind === "raster_artwork" ? Palette : Layers;
   const hideLayerStatusIcons = confirmation.confirmationStatus === "complete";
+  const stateLabel = confirmationStateLabelRo(entry?.confirmationState);
 
   return (
     <li
@@ -253,21 +262,41 @@ function LayerLegendRow({
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1 truncate text-[12px] font-semibold text-slate-100">
             <RowIcon className="h-3 w-3 shrink-0 text-cyan-400/80" aria-hidden />
-            {resolveOperatorLayerName(report, layer)}
+            {display.primaryLabel}
           </p>
-          <p className="truncate text-[11px] text-slate-500">{colorLabel}</p>
+          <p className="truncate text-[11px] text-slate-500">{display.secondaryLabel}</p>
+          <p
+            className={`text-[10px] ${
+              entry?.confirmationState === "confirmed" ? "text-emerald-300/90" : "text-amber-200/90"
+            }`}
+            data-testid={`intake-v6-layer-confirm-state-${layerKey}`}
+          >
+            {stateLabel}
+          </p>
         </div>
         <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} hidden={hideLayerStatusIcons} />
       </div>
       <LayerRoleSelect
         layer={layer}
-        report={report}
         layerKey={layerKey}
         selectedRole={selectedRole}
         onUpdateLayerRole={onUpdateLayerRole}
         workspaceTemplateCode={workspaceTemplateCode}
-        ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
       />
+      <IntakeV6TechnicalDetailsAccordion
+        title="Detalii tehnice analiză"
+        hint="ID intern strat"
+        defaultOpen={false}
+        testId={`intake-v6-layer-legend-advanced-${layerKey}`}
+        className="mt-1.5"
+      >
+        <p className="font-mono text-[10px] text-slate-500">{display.technicalKey}</p>
+        {colorToken ? (
+          <p className="font-mono text-[10px] text-slate-500">
+            culoare: {resolveLayerColorHumanLabel(colorToken, report)} ({colorToken})
+          </p>
+        ) : null}
+      </IntakeV6TechnicalDetailsAccordion>
     </li>
   );
 }
@@ -278,7 +307,7 @@ function LayerCard({
   confirmation,
   onUpdateLayerRole,
   workspaceTemplateCode,
-  ownerRoleTaxonomyActive,
+  layerIndex = 0,
   focused = false,
   onFocus,
   onBlur,
@@ -288,7 +317,7 @@ function LayerCard({
   confirmation: LayerRoleConfirmation;
   onUpdateLayerRole: (layerKey: string, role: LayerAutoRole) => void;
   workspaceTemplateCode?: string | null;
-  ownerRoleTaxonomyActive?: boolean;
+  layerIndex?: number;
   focused?: boolean;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -298,9 +327,7 @@ function LayerCard({
     confirmation,
     layer,
   );
-  const colorLabel = layer.colors?.[0]
-    ? resolveLayerColorHumanLabel(layer.colors[0], report)
-    : layer.paintEvidence.paintKind ?? "—";
+  const display = buildIntakeV6LayerDisplayLabel(layer, layerIndex, report);
   const CardIcon = layer.layerKind === "raster_artwork" ? Palette : Layers;
   const hideLayerStatusIcons = confirmation.confirmationStatus === "complete";
   return (
@@ -323,37 +350,29 @@ function LayerCard({
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 truncate text-[12px] font-semibold text-slate-100">
             <CardIcon className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" aria-hidden />
-            {resolveOperatorLayerName(report, layer)}
+            {display.primaryLabel}
           </p>
-          <p className="text-[11px] text-slate-500">
-            {resolveLayerKindLabel(layer.layerKind)} · {colorLabel}
+          <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
+          <p
+            className={`text-[10px] ${
+              entry?.confirmationState === "confirmed" ? "text-emerald-300/90" : "text-amber-200/90"
+            }`}
+          >
+            {confirmationStateLabelRo(entry?.confirmationState)}
           </p>
         </div>
         <LayerStatusBadge state={entry?.confirmationState} layerKey={layerKey} hidden={hideLayerStatusIcons} />
       </div>
       <p className="mb-2 flex items-center gap-1.5 text-[11px] text-slate-400">
         <Sparkles className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
-        {resolveRoleLabel(layer.autoRole)}
-        <span className="text-slate-600">·</span>
-        <span className="text-slate-500">{layer.autoConfidence}</span>
+        Sugestie: {resolveRoleLabel(layer.autoRole)}
       </p>
-      {requiresAttention && entry?.confirmationState !== "confirmed" ? (
-        <p
-          className="mb-2 flex items-center gap-1 text-[11px] text-amber-300/90"
-          title="Necesită verificare operator"
-        >
-          <IntakeV6LayerStatusIcon state="pending" size="sm" />
-          <span className="sr-only">Necesită verificare operator</span>
-        </p>
-      ) : null}
       <LayerRoleSelect
         layer={layer}
-        report={report}
         layerKey={layerKey}
         selectedRole={selectedRole}
         onUpdateLayerRole={onUpdateLayerRole}
         workspaceTemplateCode={workspaceTemplateCode}
-        ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
       />
     </article>
   );
@@ -421,7 +440,7 @@ export default function IntakeV6LayersRoleTable({
         data-testid="intake-v6-layer-legend"
         onMouseLeave={() => setFocusedLayerKey(null)}
       >
-        {report.layers.map((layer) => {
+        {report.layers.map((layer, index) => {
           const { layerKey } = resolveLayerRow(report, confirmation, layer);
           return (
             <LayerLegendRow
@@ -431,7 +450,7 @@ export default function IntakeV6LayersRoleTable({
               confirmation={confirmation}
               onUpdateLayerRole={onUpdateLayerRole}
               workspaceTemplateCode={workspaceTemplateCode}
-              ownerRoleTaxonomyActive={ownerRoleTaxonomyActive}
+              layerIndex={index}
               focused={focusedLayerKey === layerKey}
               onFocus={() => setFocusedLayerKey(layerKey)}
               onBlur={() => setFocusedLayerKey(null)}
@@ -496,6 +515,16 @@ export default function IntakeV6LayersRoleTable({
                     <div className="min-w-0">
                       <p className="truncate text-[12px] font-semibold text-slate-100">{primaryLabel}</p>
                       <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
+                      <p
+                        className={`text-[10px] ${
+                          row.entry?.confirmationState === "confirmed"
+                            ? "text-emerald-300/90"
+                            : "text-amber-200/90"
+                        }`}
+                        data-testid={`intake-v6-layer-confirm-state-${layerKey}`}
+                      >
+                        {confirmationStateLabelRo(row.entry?.confirmationState)}
+                      </p>
                     </div>
                     <LayerStatusBadge
                       state={row.entry?.confirmationState}
@@ -540,20 +569,25 @@ export default function IntakeV6LayersRoleTable({
           </tr>
         </thead>
         <tbody>
-          {report.layers.map((layer) => {
+          {report.layers.map((layer, index) => {
             const { entry, layerKey, selectedRole, requiresAttention } = resolveLayerRow(
               report,
               confirmation,
               layer,
             );
-            const displayName = resolveOperatorLayerName(report, layer);
+            const display = buildIntakeV6LayerDisplayLabel(layer, index, report);
             return (
               <tr
                 key={layer.id}
                 className={`border-t border-[#2A3548] ${requiresAttention ? "bg-amber-500/5" : ""}`}
                 data-testid={`intake-v6-layer-row-${layerKey}`}
               >
-                <td className="py-2 pr-3 font-medium text-slate-200">{displayName}</td>
+                <td className="py-2 pr-3 font-medium text-slate-200">
+                  <span>{display.primaryLabel}</span>
+                  <span className="mt-0.5 block text-[10px] font-normal text-slate-500">
+                    {confirmationStateLabelRo(entry?.confirmationState)}
+                  </span>
+                </td>
                 <td className="py-2 pr-3 text-slate-400">{resolveLayerKindLabel(layer.layerKind)}</td>
                 <td className="py-2 pr-3 text-slate-400">
                   <div>{resolveRoleLabel(layer.autoRole)}</div>

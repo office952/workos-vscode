@@ -103,8 +103,10 @@ export default function IntakeV6OperatorWorkspaceFooter({
     >
       {primaryActionReason && (nextDisabled || isHandoffStep) ? (
         <p
+          id="intake-v6-footer-primary-action-reason"
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-footer-primary-action-reason"
+          role="status"
         >
           {primaryActionReason}
         </p>
@@ -195,6 +197,11 @@ export default function IntakeV6OperatorWorkspaceFooter({
             disabled={nextDisabled || persisting}
             onClick={onNext}
             data-testid="intake-v6-footer-next"
+            aria-describedby={
+              nextDisabled && primaryActionReason
+                ? "intake-v6-footer-primary-action-reason"
+                : undefined
+            }
           >
             {nextLabel}
           </button>

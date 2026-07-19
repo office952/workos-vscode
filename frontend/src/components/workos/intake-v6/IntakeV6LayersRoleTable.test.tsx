@@ -282,13 +282,14 @@ describe("IntakeV6LayersRoleTable display labels", () => {
       />,
     );
 
-    expect(screen.getByText("Layer 1 — albastru")).toBeInTheDocument();
+    expect(screen.getByText("Element 1 — albastru")).toBeInTheDocument();
     expect(screen.getByText("Grup detectat: maria")).toBeInTheDocument();
     expect(screen.queryByText(/Țintă automată Product System/i)).not.toBeInTheDocument();
     expect(screen.getAllByText("Rol geometrie").length).toBeGreaterThan(0);
-    expect(screen.getByText("Layer 2 — contur negru")).toBeInTheDocument();
+    expect(screen.getByText("Element 2 — contur negru")).toBeInTheDocument();
     expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(screen.queryByText(/pseudo maria/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/pseudo fill/i)).not.toBeInTheDocument();
   });
 
   it("shows Product System component on the same card as geometry role", () => {
@@ -329,7 +330,7 @@ describe("IntakeV6LayersRoleTable display labels", () => {
 
     expect(screen.getAllByText("Față litere volumetrice").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Componentă logo volumetric").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Guarded").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Necesită verificare tehnică").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Componentă produs").length).toBeGreaterThan(0);
   });
 
@@ -379,10 +380,10 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     );
 
     expect(screen.queryByTestId("intake-v6-layer-card-pagination")).not.toBeInTheDocument();
-    expect(screen.getByText("Layer 6 — contur negru")).toBeInTheDocument();
+    expect(screen.getByText("Element 6 — contur negru")).toBeInTheDocument();
   });
 
-  it("shows exactly the two owner-approved dropdown options for letters and logo layers", () => {
+  it("shows owner-approved dropdown options for letters and logo layers", () => {
     render(
       <IntakeV6LayersRoleTable
         report={buildReport()}
@@ -400,21 +401,24 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     expect(logoSelect.querySelector("optgroup")).toBeNull();
     const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
     const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
-    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
+    expect(letterOptions).toEqual([
+      "Vector Litere",
+      "Vector Logo",
+      "Contur suport",
+      "Text decupat",
+      "Logo decupat",
+      "Insert plexiglas",
+      "Decorativ / Ignore",
+    ]);
+    expect(logoOptions).toEqual(letterOptions);
     expect(new Set(letterOptions).size).toBe(letterOptions.length);
-    expect(new Set(logoOptions).size).toBe(logoOptions.length);
     expect(lettersSelect.textContent).not.toContain("Vinil aplicat");
     expect(lettersSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
     expect(lettersSelect.textContent).not.toContain("Cant / volum");
     expect(lettersSelect.textContent).not.toContain("Spate / backing");
     expect(lettersSelect.textContent).not.toContain("Vector Atipic");
-    expect(lettersSelect.textContent).not.toContain("Vector Atipic / logo");
     expect(lettersSelect.textContent).not.toContain("Ignora strat");
     expect(lettersSelect.textContent).not.toContain("De confirmat");
-    expect(lettersSelect.textContent).not.toContain("Decupaj interior");
-    expect(lettersSelect.textContent).not.toContain("Gauri montaj");
-    expect(lettersSelect.textContent).not.toContain("Referinta / ghidaj");
   });
 
   it("uses the same owner taxonomy when the Letters+Logo context is detected from layer targets", () => {
@@ -432,8 +436,8 @@ describe("IntakeV6LayersRoleTable display labels", () => {
     const letterOptions = Array.from(lettersSelect.querySelectorAll("option")).map((option) => option.textContent);
     const logoOptions = Array.from(logoSelect.querySelectorAll("option")).map((option) => option.textContent);
 
-    expect(letterOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
+    expect(letterOptions).toHaveLength(7);
+    expect(logoOptions).toEqual(letterOptions);
     expect(logoSelect.querySelector("optgroup")).toBeNull();
     expect(logoSelect.textContent).not.toContain("Vector Atipic");
     expect(logoSelect.textContent).not.toContain("Cant / volum");
@@ -454,16 +458,11 @@ describe("IntakeV6LayersRoleTable display labels", () => {
 
     expect(screen.getByText("Grup detectat: Logo 1")).toBeInTheDocument();
     expect(logoSelect.selectedOptions[0]?.textContent).toBe("Vector Logo");
-    expect(logoOptions).toEqual(["Vector Litere", "Vector Logo", "Contur suport"]);
+    expect(logoOptions).toHaveLength(7);
     expect(logoSelect.textContent).not.toContain("Vinil aplicat");
     expect(logoSelect.textContent).not.toContain("Ignora strat");
     expect(logoSelect.textContent).not.toContain("De confirmat");
     expect(logoSelect.textContent).not.toContain("Fundal / suport / bond / caseta");
-    expect(logoSelect.textContent).not.toContain("Decupaj interior");
-    expect(logoSelect.textContent).not.toContain("Gauri montaj");
-    expect(logoSelect.textContent).not.toContain("Referinta / ghidaj");
-    expect(logoSelect.textContent).not.toContain("Cant / volum");
-    expect(logoSelect.textContent).not.toContain("Spate / backing");
   });
 
   it("hides per-card status icons when all layers are confirmed", () => {

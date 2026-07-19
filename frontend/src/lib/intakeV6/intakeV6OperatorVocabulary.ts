@@ -1,5 +1,5 @@
 /**
- * Operator-facing Romanian vocabulary for Intake V6 Page 2.
+ * Operator-facing Romanian vocabulary for Intake V6 (Page 1 + Page 2).
  * Raw internal tokens may remain in advanced/debug contexts only.
  */
 
@@ -112,3 +112,53 @@ export function isOwnerDecisionStatus(raw: string | null | undefined): boolean {
 }
 
 export const OPERATOR_VOCAB_SEVERITY = SEVERITY_LABELS;
+
+const BINDING_STATUS_LABELS: Record<string, string> = {
+  suggested: "Propunere",
+  confirmed: "Confirmat",
+  draft: "Ciornă",
+  reconfirm_required: "Necesită reconfirmare",
+  unbound: "Neasociat",
+  selected: "Selectat",
+};
+
+const COMPOSITION_ROLE_LABELS: Record<string, string> = {
+  linked_logo_segment: "Segment logo legat",
+  volumetric_letters: "Litere volumetrice",
+  volumetric_logo: "Logo volumetric",
+  support_panel: "Fundal / suport",
+};
+
+/** Binding / component association status for primary UI. */
+export function operatorBindingStatusLabelRo(raw: string | null | undefined): string {
+  if (raw == null || !String(raw).trim()) return "—";
+  const key = String(raw).trim().toLowerCase();
+  return BINDING_STATUS_LABELS[key] || operatorReadinessLabelRo(raw);
+}
+
+export function operatorCompositionRoleLabelRo(raw: string | null | undefined): string {
+  if (raw == null || !String(raw).trim()) return "Componentă";
+  const key = String(raw).trim();
+  return COMPOSITION_ROLE_LABELS[key] || COMPOSITION_ROLE_LABELS[key.toLowerCase()] || key;
+}
+
+/** Guard flag on bindables — not a failure; optional technical constraint. */
+export function operatorGuardedLabelRo(): string {
+  return "Necesită verificare tehnică";
+}
+
+export function page1HandoffReadyMessage(): string {
+  return "Analiza este pregătită. Pe Pagina 2 vei configura finisajele, iluminarea și montajul pentru componentele confirmate.";
+}
+
+export function page1HandoffPendingMessage(pendingCount: number): string {
+  const n = Math.max(0, pendingCount);
+  if (n === 1) {
+    return "Mai este 1 element care necesită confirmare înainte de configurare.";
+  }
+  return `Mai sunt ${n} elemente care necesită confirmare înainte de configurare.`;
+}
+
+export function page1HandoffBlockedMessage(): string {
+  return "Nu poți continua până când rezolvi elementele marcate ca blocante.";
+}
