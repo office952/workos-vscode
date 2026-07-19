@@ -3,7 +3,9 @@ import type { IntakeV6StepId, IntakeV6WorkspaceState } from "@/lib/intakeV6/inta
 import { buildIntakeV6FooterIssuesDisplay } from "@/lib/intakeV6/intakeV6FooterIssuesDisplay";
 import {
   buildIntakeV6OperatorGuidanceModel,
+  guidanceIssuesFromStickyIssues,
   normalizeGuidanceNextAction,
+  type GuidanceAttentionIssue,
 } from "@/lib/intakeV6/intakeV6OperatorGuidance";
 import { buildWorkspaceHeaderStatus } from "@/lib/intakeV6/intakeV6WorkspaceHeaderStatus";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "./IntakeV6WorkspaceHeaderStatusContext";
@@ -22,8 +24,6 @@ export default function IntakeV6OperatorWorkspaceFooter({
   persisting,
   workspaceState,
   canContinueFromAnalyzer = false,
-  reviewBlockerCount,
-  reviewWarningCount,
 }: {
   currentStep: IntakeV6StepId;
   stepIndex: number;
@@ -37,8 +37,6 @@ export default function IntakeV6OperatorWorkspaceFooter({
   persisting: boolean;
   workspaceState: IntakeV6WorkspaceState;
   canContinueFromAnalyzer?: boolean;
-  reviewBlockerCount?: number;
-  reviewWarningCount?: number;
 }) {
   const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
   const [issuesOpen, setIssuesOpen] = useState(false);
@@ -48,6 +46,65 @@ export default function IntakeV6OperatorWorkspaceFooter({
     () => buildWorkspaceHeaderStatus(workspaceState, statusCtx?.overlay ?? {}),
     [workspaceState, statusCtx?.overlay],
   );
+
+  const attentionIssues = useMemo(
+    () =>
+      guidanceIssuesFromStickyIssues(
+        (statusCtx?.overlay.attentionIssues ?? []).map((issue) => ({
+          id: issue.id,
+          severity: issue.severity,
+          message: issue.message,
+          action: issue.action,
+          focusTarget: issue.focusTarget,
+          tabId: issue.tabId,
+        })),
+      ),
+    [statusCtx?.overlay.attentionIssues],
+  );
+
+  /** Informational drawer rows — not counted as blockers/warnings in sticky/spine. */
+  const informationIssues = useMemo((): GuidanceAttentionIssue[] => {
+    const legacy = buildIntakeV6FooterIssuesDisplay({
+      // Never duplicate footer primary action inside the inventory.
+      primaryActionReason: null,
+      problemDetails: status.details.filter((row) => row.tone === "warn" || row.tone === "bad"),
+      reviewWarnings: statusCtx?.overlay.reviewWarnings,
+      secondaryWarnings: statusCtx?.overlay.secondaryWarnings,
+      statusActions: status.actions,
+    });
+    const known = new Set(
+      attentionIssues.map((issue) => issue.message.trim().toLowerCase()),
+    );
+    const info: GuidanceAttentionIssue[] = [];
+    for (const group of legacy.groups) {
+      const severity: GuidanceAttentionIssue["severity"] =
+        group.id === "actions" || group.id === "warnings"
+          ? // When sticky inventory is present, blockers/warnings already live there.
+            attentionIssues.length > 0
+            ? "information"
+            : group.id === "actions"
+              ? "blocker"
+              : "warning"
+          : "information";
+      for (const entry of group.entries) {
+        if (known.has(entry.title.trim().toLowerCase())) continue;
+        info.push({
+          id: entry.id,
+          severity,
+          message: entry.title,
+          action: entry.actionId ?? null,
+        });
+        known.add(entry.title.trim().toLowerCase());
+      }
+    }
+    return info;
+  }, [
+    attentionIssues,
+    status.details,
+    status.actions,
+    statusCtx?.overlay.reviewWarnings,
+    statusCtx?.overlay.secondaryWarnings,
+  ]);
 
   const guidance = useMemo(
     () =>
@@ -59,15 +116,15 @@ export default function IntakeV6OperatorWorkspaceFooter({
           : null,
         confirmDisabledReason: confirmFooter?.disabledReason ?? null,
         confirmCanSubmit: confirmFooter?.canSubmit ?? false,
-        reviewBlockerCount,
-        reviewWarningCount,
+        attentionIssues: attentionIssues.length > 0 ? attentionIssues : null,
+        informationIssues,
       }),
     [
       workspaceState,
       canContinueFromAnalyzer,
       confirmFooter,
-      reviewBlockerCount,
-      reviewWarningCount,
+      attentionIssues,
+      informationIssues,
     ],
   );
 
@@ -89,27 +146,26 @@ export default function IntakeV6OperatorWorkspaceFooter({
       isHandoffStep || nextDisabled ? confirmDisabledReason ?? footerBlocker : footerBlocker,
     );
 
-  const issuesDisplay = useMemo(
-    () =>
-      buildIntakeV6FooterIssuesDisplay({
-        primaryActionReason: nextDisabled && !isHandoffStep ? null : primaryActionReason,
-        problemDetails: status.details.filter((row) => row.tone === "warn" || row.tone === "bad"),
-        reviewWarnings: statusCtx?.overlay.reviewWarnings,
-        secondaryWarnings: statusCtx?.overlay.secondaryWarnings,
-        statusActions: status.actions,
-      }),
-    [
-      primaryActionReason,
-      nextDisabled,
-      isHandoffStep,
-      status.details,
-      status.actions,
-      statusCtx?.overlay.reviewWarnings,
-      statusCtx?.overlay.secondaryWarnings,
-    ],
-  );
+  const drawerGroups = useMemo(() => {
+    const groups: Array<{
+      id: "blockers" | "warnings" | "information";
+      label: string;
+      entries: GuidanceAttentionIssue[];
+    }> = [];
+    if (guidance.blockers.length > 0) {
+      groups.push({ id: "blockers", label: "Blocante", entries: guidance.blockers });
+    }
+    if (guidance.warnings.length > 0) {
+      groups.push({ id: "warnings", label: "Avertizări", entries: guidance.warnings });
+    }
+    if (guidance.information.length > 0) {
+      groups.push({ id: "information", label: "Informații", entries: guidance.information });
+    }
+    return groups;
+  }, [guidance.blockers, guidance.warnings, guidance.information]);
 
-  const showIssuesDrawer = issuesDisplay.totalCount > 0;
+  const showIssuesDrawer =
+    guidance.blockerCount + guidance.warningCount + guidance.informationCount > 0;
 
   useEffect(() => {
     statusCtx?.registerFooterIssuesOpener?.(() => setIssuesOpen(true));
@@ -124,10 +180,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
     else if (actionId === "jump-live-calc") handlers?.onJumpToLiveCalc?.();
   }
 
-  const countLabel =
-    issuesDisplay.totalCount > 0
-      ? `Probleme și avertizări — ${issuesDisplay.totalCount}`
-      : "Probleme, avertizări și detalii";
+  const countLabel = guidance.drawerToggleLabel;
 
   return (
     <footer
@@ -187,19 +240,10 @@ export default function IntakeV6OperatorWorkspaceFooter({
           </button>
           {issuesOpen ? (
             <div className="border-t border-[#2A3548] px-3 py-2 text-[11px]" data-testid="intake-v6-footer-issues-content">
-              {issuesDisplay.actionCount + issuesDisplay.warningCount + issuesDisplay.technicalCount > 0 ? (
-                <p className="mb-2 text-[10px] text-slate-500" data-testid="intake-v6-footer-issues-breakdown">
-                  {issuesDisplay.actionCount > 0 ? `${issuesDisplay.actionCount} acțiuni` : null}
-                  {issuesDisplay.actionCount > 0 && issuesDisplay.warningCount > 0 ? " · " : null}
-                  {issuesDisplay.warningCount > 0 ? `${issuesDisplay.warningCount} avertizări` : null}
-                  {(issuesDisplay.actionCount > 0 || issuesDisplay.warningCount > 0) &&
-                  issuesDisplay.technicalCount > 0
-                    ? " · "
-                    : null}
-                  {issuesDisplay.technicalCount > 0 ? `${issuesDisplay.technicalCount} detalii tehnice` : null}
-                </p>
-              ) : null}
-              {issuesDisplay.groups.map((group) => (
+              <p className="mb-2 text-[10px] text-slate-500" data-testid="intake-v6-footer-issues-breakdown">
+                {guidance.drawerToggleLabel}
+              </p>
+              {drawerGroups.map((group) => (
                 <div key={group.id} className="mb-3 last:mb-0" data-testid={`intake-v6-footer-group-${group.id}`}>
                   <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
                     {group.label}
@@ -210,14 +254,18 @@ export default function IntakeV6OperatorWorkspaceFooter({
                         key={entry.id}
                         className="rounded border border-[#2A3548] px-2 py-1.5 text-slate-300"
                         data-testid={`intake-v6-footer-issue-${entry.id}`}
+                        data-issue-severity={entry.severity}
                       >
-                        <span>{entry.title}</span>
-                        {entry.actionId ? (
+                        <span>{entry.message}</span>
+                        {entry.action && !entry.action.startsWith("jump-") && entry.action.length > 2 ? (
+                          <span className="mt-0.5 block text-[10px] text-slate-500">{entry.action}</span>
+                        ) : null}
+                        {entry.action && /^(confirm-step|jump-)/.test(entry.action) ? (
                           <button
                             type="button"
                             className="ml-2 text-[10px] font-semibold text-cyan-300 hover:text-cyan-200"
-                            onClick={() => handleStatusAction(entry.actionId!)}
-                            data-testid={`intake-v6-footer-issue-action-${entry.actionId}`}
+                            onClick={() => handleStatusAction(entry.action!)}
+                            data-testid={`intake-v6-footer-issue-action-${entry.action}`}
                           >
                             Mergi
                           </button>

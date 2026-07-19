@@ -1,12 +1,15 @@
 /**
  * Single operator guidance spine for Intake V6.
- * Presentation-only: consolidates next action + progress + counts.
+ * Presentation-only: consolidates next action + progress + attention counts.
  * Domain predicates stay in intakeV6Readiness / final blockers.
  */
 
 import type { IntakeV6StepId, IntakeV6WorkspaceState } from "./intakeV6Contracts";
 import { isLayerRoleSetupComplete } from "./intakeV6AnalysisIdentity";
-import { buildFinalConfirmationBlockers } from "./intakeV6FinalConfirmationBlockers";
+import {
+  buildFinalConfirmationBlockers,
+  type FinalConfirmationBlocker,
+} from "./intakeV6FinalConfirmationBlockers";
 import {
   canContinueFromReviewStep,
   getIntakeV6FirstBlocker,
@@ -26,6 +29,18 @@ export type IntakeV6GuidanceProgressItem = {
   done: boolean;
 };
 
+/** Presentation inventory severity — existing operator vocabulary only. */
+export type GuidanceAttentionSeverity = "blocker" | "warning" | "information";
+
+export type GuidanceAttentionIssue = {
+  id: string;
+  severity: GuidanceAttentionSeverity;
+  message: string;
+  action?: string | null;
+  focusTarget?: string | null;
+  tabId?: "finisaje" | "iluminare" | "montaj" | "layers" | null;
+};
+
 export type IntakeV6OperatorGuidanceModel = {
   stepId: IntakeV6StepId;
   whereAmI: string;
@@ -38,10 +53,18 @@ export type IntakeV6OperatorGuidanceModel = {
   progressItems: IntakeV6GuidanceProgressItem[];
   /** Single authoritative next action (footer primary). */
   nextAction: string | null;
+  blockers: GuidanceAttentionIssue[];
+  warnings: GuidanceAttentionIssue[];
+  information: GuidanceAttentionIssue[];
   blockerCount: number;
   warningCount: number;
-  /** Compact counts for chrome. */
+  informationCount: number;
+  /** Compact counts for spine / sticky (blockers + warnings only). */
   countsLabel: string | null;
+  /** Sticky headline — same numbers as countsLabel. */
+  stickySummaryTitle: string | null;
+  /** Drawer toggle — severity breakdown including information. */
+  drawerToggleLabel: string;
   canContinue: boolean;
   continueEnabledLabel: string;
 };
@@ -106,9 +129,7 @@ function buildReviewProgress(state: IntakeV6WorkspaceState): IntakeV6GuidancePro
 
 function buildConfirmProgress(checklist?: { done: number; total: number } | null): IntakeV6GuidanceProgressItem[] {
   if (!checklist || checklist.total <= 0) {
-    return [
-      { id: "operator", label: "Confirmări operator", done: false },
-    ];
+    return [{ id: "operator", label: "Confirmări operator", done: false }];
   }
   return [
     {
@@ -119,7 +140,10 @@ function buildConfirmProgress(checklist?: { done: number; total: number } | null
   ];
 }
 
-function polishCountsLabel(blockerCount: number, warningCount: number): string | null {
+export function polishGuidanceCountsLabel(
+  blockerCount: number,
+  warningCount: number,
+): string | null {
   if (blockerCount <= 0 && warningCount <= 0) return null;
   const parts: string[] = [];
   if (blockerCount === 1) parts.push("1 blocant");
@@ -129,6 +153,98 @@ function polishCountsLabel(blockerCount: number, warningCount: number): string |
   return parts.join(" · ");
 }
 
+/** Sticky answers: how much attention is needed? Same counts as footer spine. */
+export function buildGuidanceStickySummaryTitle(
+  blockerCount: number,
+  warningCount: number,
+): string {
+  const counts = polishGuidanceCountsLabel(blockerCount, warningCount);
+  if (!counts) return "Verifică starea secțiunii Configurare";
+  return `Configurarea necesită atenție · ${counts}`;
+}
+
+/** Drawer toggle — severity breakdown (includes information). */
+export function buildGuidanceDrawerToggleLabel(
+  blockerCount: number,
+  warningCount: number,
+  informationCount: number,
+): string {
+  const parts: string[] = [];
+  if (blockerCount === 1) parts.push("1 blocant");
+  else if (blockerCount > 1) parts.push(`${blockerCount} blocante`);
+  if (warningCount === 1) parts.push("1 avertizare");
+  else if (warningCount > 1) parts.push(`${warningCount} avertizări`);
+  if (informationCount === 1) parts.push("1 informație");
+  else if (informationCount > 1) parts.push(`${informationCount} informații`);
+  return parts.length > 0 ? parts.join(" · ") : "Probleme, avertizări și detalii";
+}
+
+function dedupeKey(issue: GuidanceAttentionIssue): string {
+  return `${issue.severity}:${issue.message.trim().toLowerCase()}`;
+}
+
+export function mergeGuidanceAttentionIssues(
+  issues: GuidanceAttentionIssue[],
+): GuidanceAttentionIssue[] {
+  const seen = new Set<string>();
+  const out: GuidanceAttentionIssue[] = [];
+  for (const issue of issues) {
+    const message = issue.message.trim();
+    if (!message) continue;
+    const key = dedupeKey({ ...issue, message });
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push({ ...issue, message });
+  }
+  return out;
+}
+
+export function guidanceIssuesFromFinalBlockers(
+  finals: FinalConfirmationBlocker[],
+): GuidanceAttentionIssue[] {
+  return finals.map((b) => ({
+    id: `final-${b.id}`,
+    severity: b.severity === "blocker" ? "blocker" : "warning",
+    message: `${b.section}: ${b.message}`,
+    action: b.action,
+    focusTarget: b.focusTarget,
+    tabId: b.tabId,
+  }));
+}
+
+/** Map sticky banner issues into guidance inventory (presentation only). */
+export function guidanceIssuesFromStickyIssues(
+  issues: Array<{
+    id: string;
+    severity: "blocker" | "warning";
+    message: string;
+    action?: string | null;
+    focusTarget?: string | null;
+    tabId?: "finisaje" | "iluminare" | "montaj" | "layers" | null;
+  }>,
+): GuidanceAttentionIssue[] {
+  return issues.map((issue) => ({
+    id: issue.id,
+    severity: issue.severity,
+    message: issue.message,
+    action: issue.action ?? null,
+    focusTarget: issue.focusTarget ?? null,
+    tabId: issue.tabId ?? null,
+  }));
+}
+
+function partitionAttention(issues: GuidanceAttentionIssue[]): {
+  blockers: GuidanceAttentionIssue[];
+  warnings: GuidanceAttentionIssue[];
+  information: GuidanceAttentionIssue[];
+} {
+  return {
+    blockers: issues.filter((i) => i.severity === "blocker"),
+    warnings: issues.filter((i) => i.severity === "warning"),
+    information: issues.filter((i) => i.severity === "information"),
+  };
+}
+
 export function buildIntakeV6OperatorGuidanceModel(input: {
   state: IntakeV6WorkspaceState;
   canContinueFromAnalyzer: boolean;
@@ -136,9 +252,13 @@ export function buildIntakeV6OperatorGuidanceModel(input: {
   confirmChecklist?: { done: number; total: number } | null;
   confirmDisabledReason?: string | null;
   confirmCanSubmit?: boolean;
-  /** Extra warning/blocker counts from Review sticky (optional overlay). */
-  reviewBlockerCount?: number;
-  reviewWarningCount?: number;
+  /**
+   * Authoritative attention inventory from sticky (Configurare).
+   * When set, counts and sticky/drawer labels use this list.
+   */
+  attentionIssues?: GuidanceAttentionIssue[] | null;
+  /** Extra informational rows for drawer only (not sticky headline). */
+  informationIssues?: GuidanceAttentionIssue[] | null;
 }): IntakeV6OperatorGuidanceModel {
   const { state } = input;
   const stepId = state.currentStep;
@@ -154,22 +274,14 @@ export function buildIntakeV6OperatorGuidanceModel(input: {
     progressItems = buildLayersProgress(state);
     canContinue = input.canContinueFromAnalyzer;
     continueEnabledLabel = "Continuă la Configurare";
-    nextAction = canContinue
-      ? null
-      : normalizeGuidanceNextAction(getIntakeV6FirstBlocker(state));
-    statusLabel = canContinue
-      ? operatorStatusSemanticRo("ready")
-      : "Straturi incomplete";
+    nextAction = canContinue ? null : normalizeGuidanceNextAction(getIntakeV6FirstBlocker(state));
+    statusLabel = canContinue ? operatorStatusSemanticRo("ready") : "Straturi incomplete";
   } else if (stepId === "review") {
     progressItems = buildReviewProgress(state);
     canContinue = canContinueFromReviewStep(state);
     continueEnabledLabel = "Continuă la Confirmare";
-    nextAction = canContinue
-      ? null
-      : normalizeGuidanceNextAction(getIntakeV6FirstBlocker(state));
-    statusLabel = canContinue
-      ? operatorStatusSemanticRo("ready")
-      : "Configurare incompletă";
+    nextAction = canContinue ? null : normalizeGuidanceNextAction(getIntakeV6FirstBlocker(state));
+    statusLabel = canContinue ? operatorStatusSemanticRo("ready") : "Configurare incompletă";
   } else {
     progressItems = buildConfirmProgress(input.confirmChecklist);
     canContinue = Boolean(input.confirmCanSubmit);
@@ -177,9 +289,7 @@ export function buildIntakeV6OperatorGuidanceModel(input: {
     nextAction = canContinue
       ? null
       : normalizeGuidanceNextAction(input.confirmDisabledReason ?? getIntakeV6FirstBlocker(state));
-    statusLabel = canContinue
-      ? operatorStatusSemanticRo("ready")
-      : "Confirmare incompletă";
+    statusLabel = canContinue ? operatorStatusSemanticRo("ready") : "Confirmare incompletă";
   }
 
   const checklist = input.confirmChecklist;
@@ -194,33 +304,50 @@ export function buildIntakeV6OperatorGuidanceModel(input: {
   const progressLabel =
     progressTotal > 0 ? `${progressDone} / ${progressTotal} confirmări` : null;
 
-  // Counts: final confirmation blockers on review/confirm + optional review overlay
-  let blockerCount = Math.max(0, input.reviewBlockerCount ?? 0);
-  let warningCount = Math.max(0, input.reviewWarningCount ?? 0);
+  const finals =
+    stepId === "review" || stepId === "confirm"
+      ? buildFinalConfirmationBlockers({
+          payload: state.workspace?.payload,
+          finish:
+            (state.workspace?.payload?.finish_setup as Record<string, unknown> | undefined) ?? null,
+        })
+      : [];
 
-  if (stepId === "review" || stepId === "confirm") {
-    const finals = buildFinalConfirmationBlockers({
-      payload: state.workspace?.payload,
-      finish: (state.workspace?.payload?.finish_setup as Record<string, unknown> | undefined) ?? null,
-    });
-    const fromFinalBlockers = finals.filter((f) => f.severity === "blocker").length;
-    const fromFinalWarnings = finals.filter((f) => f.severity === "warning").length;
-    // Prefer overlay counts when provided (includes handoff surfacing); else final gates
-    if (input.reviewBlockerCount == null && input.reviewWarningCount == null) {
-      blockerCount = fromFinalBlockers;
-      warningCount = fromFinalWarnings;
-    } else {
-      // Ensure composition/segmented gates are never under-counted vs overlay
-      blockerCount = Math.max(blockerCount, fromFinalBlockers);
-      warningCount = Math.max(warningCount, fromFinalWarnings);
+  const inventorySeed: GuidanceAttentionIssue[] = [];
+  if (input.attentionIssues && input.attentionIssues.length > 0) {
+    inventorySeed.push(...input.attentionIssues);
+  } else {
+    inventorySeed.push(...guidanceIssuesFromFinalBlockers(finals));
+  }
+  if (input.informationIssues?.length) {
+    inventorySeed.push(...input.informationIssues);
+  }
+
+  let inventory = mergeGuidanceAttentionIssues(inventorySeed);
+
+  if (!canContinue && nextAction) {
+    const already = inventory.some(
+      (issue) =>
+        issue.severity === "blocker" &&
+        issue.message.toLowerCase().includes(nextAction!.toLowerCase().slice(0, 24)),
+    );
+    if (!already && inventory.filter((i) => i.severity === "blocker").length === 0) {
+      inventory = mergeGuidanceAttentionIssues([
+        ...inventory,
+        {
+          id: "guidance-next-action",
+          severity: "blocker",
+          message: nextAction,
+        },
+      ]);
     }
-  } else if (stepId === "layers" && nextAction) {
-    blockerCount = Math.max(blockerCount, 1);
   }
 
-  if (!canContinue && nextAction && blockerCount === 0) {
-    blockerCount = 1;
-  }
+  const { blockers, warnings, information } = partitionAttention(inventory);
+  const blockerCount = blockers.length;
+  const warningCount = warnings.length;
+  const informationCount = information.length;
+  const countsLabel = polishGuidanceCountsLabel(blockerCount, warningCount);
 
   return {
     stepId,
@@ -231,9 +358,22 @@ export function buildIntakeV6OperatorGuidanceModel(input: {
     progressTotal,
     progressItems,
     nextAction,
+    blockers,
+    warnings,
+    information,
     blockerCount,
     warningCount,
-    countsLabel: polishCountsLabel(blockerCount, warningCount),
+    informationCount,
+    countsLabel,
+    stickySummaryTitle:
+      blockerCount + warningCount > 0
+        ? buildGuidanceStickySummaryTitle(blockerCount, warningCount)
+        : null,
+    drawerToggleLabel: buildGuidanceDrawerToggleLabel(
+      blockerCount,
+      warningCount,
+      informationCount,
+    ),
     canContinue,
     continueEnabledLabel,
   };

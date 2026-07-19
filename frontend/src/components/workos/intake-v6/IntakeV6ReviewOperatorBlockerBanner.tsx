@@ -122,7 +122,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
                   data-issue-severity={issue.severity}
                 >
                   <p className="font-semibold">
-                    {issue.severity === "blocker" ? "Blocaj" : "Avertisment"}
+                    {issue.severity === "blocker" ? "Blocant" : "Avertizare"}
                     {issue.tabId === "montaj"
                       ? " · Montaj"
                       : issue.tabId === "iluminare"

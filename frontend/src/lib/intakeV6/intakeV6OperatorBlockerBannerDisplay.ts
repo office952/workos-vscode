@@ -2,6 +2,7 @@ import type {
   IntakeV6ProductTruthPromotionPlannerResponse,
   IntakeV6RuntimeCaptureReadModelResponse,
 } from "./intakeV6Api";
+import { buildGuidanceStickySummaryTitle } from "./intakeV6OperatorGuidance";
 import type { ReviewHandoffSurfacing } from "./intakeV6QuoteHandoffReadiness";
 
 export const INTAKE_V6_REVIEW_DIAGNOSTIC_ANCHOR_ID = "intake-v6-review-diagnostic-tehnic";
@@ -41,7 +42,7 @@ export type OperatorBlockerBannerIssue = {
 export type OperatorBlockerBannerDisplay = {
   show: boolean;
   loading: boolean;
-  /** Compact title e.g. "2 probleme blochează Confirmarea · 1 avertisment" */
+  /** Compact title — same count language as footer guidance spine */
   summaryTitle: string;
   blockerCount: number;
   warningCount: number;
@@ -138,22 +139,6 @@ function focusForCode(code: string): string | null {
   if (code.includes("MOUNTING")) return "intake-v6-mounting-solution-selector";
   if (code.includes("LAYER_ROLES") || code.includes("SELECTED_LAYER")) return null;
   return INTAKE_V6_REVIEW_DIAGNOSTIC_ANCHOR_ID;
-}
-
-function buildSummaryTitle(blockerCount: number, warningCount: number): string {
-  const parts: string[] = [];
-  if (blockerCount === 1) {
-    parts.push("Confirmarea finală este blocată de 1 element");
-  } else if (blockerCount > 1) {
-    parts.push(`Confirmarea finală este blocată de ${blockerCount} elemente`);
-  }
-  if (warningCount === 1) {
-    parts.push("1 avertisment");
-  } else if (warningCount > 1) {
-    parts.push(`${warningCount} avertismente`);
-  }
-  if (parts.length === 0) return "Verifică starea secțiunii Review";
-  return parts.join(" · ");
 }
 
 export function buildOperatorBlockerBannerDisplay(
@@ -271,7 +256,8 @@ export function buildOperatorBlockerBannerDisplay(
   return {
     show,
     loading: loading && !show,
-    summaryTitle: buildSummaryTitle(blockerCount, warningCount),
+    // Same count language as footer guidance spine (one model).
+    summaryTitle: buildGuidanceStickySummaryTitle(blockerCount, warningCount),
     blockerCount,
     warningCount,
     severity,

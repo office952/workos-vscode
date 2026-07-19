@@ -8,6 +8,18 @@ import {
 
 export type WorkspaceHeaderStatusOverlay = Partial<BuildReviewHeaderStatusInput> & {
   secondaryWarnings?: readonly string[];
+  /**
+   * Authoritative attention inventory from Configurare sticky
+   * (presentation-only; shared with footer guidance counts).
+   */
+  attentionIssues?: ReadonlyArray<{
+    id: string;
+    severity: "blocker" | "warning";
+    message: string;
+    action?: string | null;
+    focusTarget?: string | null;
+    tabId?: "finisaje" | "iluminare" | "montaj" | "layers" | null;
+  }>;
 };
 
 export function buildWorkspaceHeaderStatus(

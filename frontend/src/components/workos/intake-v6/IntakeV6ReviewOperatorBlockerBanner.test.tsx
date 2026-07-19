@@ -9,7 +9,7 @@ afterEach(() => cleanup());
 const blockedDisplay: OperatorBlockerBannerDisplay = {
   show: true,
   loading: false,
-  summaryTitle: "1 problemă blochează Confirmarea",
+  summaryTitle: "Configurarea necesită atenție · 1 blocant",
   blockerCount: 1,
   warningCount: 0,
   messages: [
@@ -33,7 +33,7 @@ describe("IntakeV6ReviewOperatorBlockerBanner", () => {
   it("renders compact summary title and footer hint instead of duplicated next-action", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
     expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-title")).toHaveTextContent(
-      /1 problemă blochează Confirmarea/i,
+      /Configurarea necesită atenție · 1 blocant/i,
     );
     expect(screen.getByTestId("intake-v6-review-operator-blocker-footer-hint")).toHaveTextContent(/footer/i);
     expect(screen.queryByTestId("intake-v6-review-operator-blocker-compact-one")).not.toBeInTheDocument();

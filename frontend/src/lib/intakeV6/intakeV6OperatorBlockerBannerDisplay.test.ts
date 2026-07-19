@@ -121,7 +121,7 @@ describe("buildOperatorBlockerBannerDisplay", () => {
     expect(display.messages.length).toBeGreaterThan(0);
     expect(display.messages.length).toBeLessThanOrEqual(OPERATOR_BLOCKER_BANNER_MAX_MESSAGES);
     expect(display.summaryTitle).toMatch(
-      /Confirmarea finală este blocată de \d+ elemente|Confirmarea finală este blocată de 1 element|probleme blochează Confirmarea|problemă blochează Confirmarea/i,
+      /Configurarea necesită atenție · .+blocant/i,
     );
   });
 

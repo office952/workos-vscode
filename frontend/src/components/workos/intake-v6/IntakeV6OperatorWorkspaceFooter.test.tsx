@@ -104,6 +104,10 @@ describe("IntakeV6OperatorWorkspaceFooter", () => {
       /Confirmă rolul pentru toate straturile/i,
     );
     expect(footer.getByTestId("intake-v6-footer-issues-toggle")).toHaveAttribute("aria-expanded", "false");
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).toHaveTextContent(/blocant/i);
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).not.toHaveTextContent(
+      /Probleme și avertizări —/i,
+    );
   });
 
   it("keeps grouped issues collapsed until expanded", () => {
@@ -131,5 +135,54 @@ describe("IntakeV6OperatorWorkspaceFooter", () => {
 
     fireEvent.click(footer.getByTestId("intake-v6-footer-issues-toggle"));
     expect(footer.getByTestId("intake-v6-footer-group-warnings")).toHaveTextContent(/Vector Litere/i);
+  });
+
+  it("aligns drawer toggle with sticky attention inventory counts", () => {
+    function AttentionSeed() {
+      const { setOverlay } = useIntakeV6WorkspaceHeaderStatus();
+      useEffect(() => {
+        setOverlay({
+          attentionIssues: [
+            {
+              id: "b1",
+              severity: "blocker",
+              message: "Compoziția produsului nu este confirmată.",
+            },
+            {
+              id: "w1",
+              severity: "warning",
+              message: "Există o propunere de fundal din mai multe panouri.",
+            },
+          ],
+        });
+      }, [setOverlay]);
+      return null;
+    }
+
+    const view = render(
+      <IntakeV6WorkspaceHeaderStatusProvider>
+        <AttentionSeed />
+        <IntakeV6OperatorWorkspaceFooter
+          currentStep="review"
+          stepIndex={1}
+          stepOrderLength={3}
+          footerBlocker="Confirmă compoziția produsului."
+          nextDisabled
+          nextLabel="Continuă la Confirmare"
+          nextButtonClassName="test-next"
+          onBack={vi.fn()}
+          onNext={vi.fn()}
+          persisting={false}
+          workspaceState={baseWorkspaceState({ currentStep: "review" })}
+        />
+      </IntakeV6WorkspaceHeaderStatusProvider>,
+    );
+    const footer = within(view.container);
+    expect(footer.getByTestId("intake-v6-guidance-counts")).toHaveTextContent(
+      "1 blocant · 1 avertizare",
+    );
+    expect(footer.getByTestId("intake-v6-footer-issues-count")).toHaveTextContent(
+      "1 blocant · 1 avertizare",
+    );
   });
 });

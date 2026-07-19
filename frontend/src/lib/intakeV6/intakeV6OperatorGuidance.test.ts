@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import type { IntakeV6WorkspaceState } from "./intakeV6Contracts";
 import { initialIntakeV6WorkspaceState } from "./intakeV6WorkspaceReducer";
 import {
+  buildGuidanceDrawerToggleLabel,
+  buildGuidanceStickySummaryTitle,
   buildIntakeV6OperatorGuidanceModel,
   normalizeGuidanceNextAction,
 } from "./intakeV6OperatorGuidance";
@@ -131,5 +133,65 @@ describe("buildIntakeV6OperatorGuidanceModel", () => {
     expect(guidance.whereAmI).toBe("Confirmare");
     expect(guidance.nextAction).toMatch(/operatorului/i);
     expect(guidance.progressLabel).toBe("1 / 2 confirmări");
+  });
+
+  it("uses sticky attention inventory as the single count source", () => {
+    const guidance = buildIntakeV6OperatorGuidanceModel({
+      state: baseState({ currentStep: "review" } as Partial<IntakeV6WorkspaceState>),
+      canContinueFromAnalyzer: true,
+      attentionIssues: [
+        {
+          id: "composition",
+          severity: "blocker",
+          message: "Compoziția produsului nu este confirmată.",
+        },
+        {
+          id: "seg",
+          severity: "warning",
+          message: "Există o propunere de fundal din mai multe panouri.",
+        },
+        {
+          id: "tariff",
+          severity: "warning",
+          message: "Linii fără tarif: glue",
+        },
+      ],
+      informationIssues: [
+        {
+          id: "info-1",
+          severity: "information",
+          message: "Detaliu tehnic intern.",
+        },
+      ],
+    });
+    expect(guidance.blockerCount).toBe(1);
+    expect(guidance.warningCount).toBe(2);
+    expect(guidance.informationCount).toBe(1);
+    expect(guidance.countsLabel).toBe("1 blocant · 2 avertizări");
+    expect(guidance.stickySummaryTitle).toBe(
+      buildGuidanceStickySummaryTitle(1, 2),
+    );
+    expect(guidance.drawerToggleLabel).toBe(
+      buildGuidanceDrawerToggleLabel(1, 2, 1),
+    );
+    expect(guidance.stickySummaryTitle).toEqual(expect.stringContaining("1 blocant"));
+    expect(guidance.drawerToggleLabel).toMatch(/1 informație/);
+  });
+});
+
+describe("guidance count labels", () => {
+  it("keeps sticky and drawer language aligned", () => {
+    expect(buildGuidanceStickySummaryTitle(3, 1)).toBe(
+      "Configurarea necesită atenție · 3 blocante · 1 avertizare",
+    );
+    expect(buildGuidanceDrawerToggleLabel(3, 1, 4)).toBe(
+      "3 blocante · 1 avertizare · 4 informații",
+    );
+  });
+
+  it("handles zero blockers warning-only", () => {
+    expect(buildGuidanceStickySummaryTitle(0, 2)).toBe(
+      "Configurarea necesită atenție · 2 avertizări",
+    );
   });
 });

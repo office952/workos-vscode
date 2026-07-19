@@ -2092,6 +2092,15 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       surfacing: reviewHandoffSurfacing,
       pendingSave: selectorPendingSave,
       pendingConfirmationCount,
+      // One attention inventory for footer guidance counts (same as sticky).
+      attentionIssues: operatorBlockerBannerDisplay.issues.map((issue) => ({
+        id: issue.id,
+        severity: issue.severity,
+        message: issue.message,
+        action: issue.action,
+        focusTarget: issue.focusTarget,
+        tabId: issue.tabId ?? null,
+      })),
       widthMm:
         (state.analyzerReport as SvgAnalysisCoreReport | null)?.document.widthMm ??
         quoteGeometry.width_mm,
@@ -2113,6 +2122,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     selectorPendingSave,
     pendingConfirmationCount,
     effectiveReviewWarnings,
+    operatorBlockerBannerDisplay.issues,
     quoteGeometry.width_mm,
     quoteGeometry.height_mm,
     geometryMetrics,
