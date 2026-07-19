@@ -162,3 +162,26 @@ export function page1HandoffPendingMessage(pendingCount: number): string {
 export function page1HandoffBlockedMessage(): string {
   return "Nu poți continua până când rezolvi elementele marcate ca blocante.";
 }
+
+/** Finish ownership domain tokens — primary UI uses RO; raw stays in technical details. */
+const FINISH_OWNERSHIP_DOMAIN_LABELS: Record<string, string> = {
+  SURFACE_FINISH: "Finisaj suprafață",
+  "RETURN-CANT": "Finisaj cant",
+  RETURN_CANT: "Finisaj cant",
+  WORKSPACE: "Valori din workspace",
+  FINISH: "Finisaj (scope ofertă)",
+};
+
+export function operatorFinishOwnershipDomainLabelRo(raw: string | null | undefined): string {
+  if (raw == null || !String(raw).trim()) return "—";
+  const key = String(raw).trim();
+  return FINISH_OWNERSHIP_DOMAIN_LABELS[key] || FINISH_OWNERSHIP_DOMAIN_LABELS[key.toUpperCase()] || "Necesită verificare";
+}
+
+export function finishOwnershipTechnicalHintRo(): string {
+  return "Opțional — sursă de adevăr și mapări interne";
+}
+
+export function finishOwnershipTechnicalTitleRo(): string {
+  return "Detalii tehnice despre finisaj";
+}

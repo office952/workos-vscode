@@ -129,7 +129,12 @@ import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPane
 import IntakeV6SegmentedElectricalPanel from "../IntakeV6SegmentedElectricalPanel";
 import IntakeV6MontajClusterShell from "../IntakeV6MontajClusterShell";
 import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
-import { operatorReadinessLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
+import {
+  finishOwnershipTechnicalHintRo,
+  finishOwnershipTechnicalTitleRo,
+  operatorFinishOwnershipDomainLabelRo,
+  operatorReadinessLabelRo,
+} from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import {
   buildFinalConfirmationBlockers,
   mergeFinalBlockersIntoBannerIssues,
@@ -2233,19 +2238,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 variant="review"
               />
             ) : null}
-            <IntakeV6TechnicalDetailsAccordion
-              title="Detalii ownership finisaje"
-              hint="Opțional — mapare internă SURFACE_FINISH / RETURN-CANT"
-              defaultOpen={false}
-              testId="intake-v6-finish-ownership-note"
-              className="mb-2"
-            >
-              <p className="text-[10px] text-slate-400">
-                Ownership: finisaje = SURFACE_FINISH (vinyl/print/vopsire) · Oracal/RAL cant → RETURN-CANT ·
-                valori concrete → WORKSPACE · șablon ≠ finisaj suprafață · chip sold FINISH = amânat ·
-                hidden default ≠ responsabilitate activă.
-              </p>
-            </IntakeV6TechnicalDetailsAccordion>
             {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
@@ -2296,6 +2288,30 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </div>
             ) : null}
             </IntakeV6ReviewSectionShell>
+            <IntakeV6TechnicalDetailsAccordion
+              title={finishOwnershipTechnicalTitleRo()}
+              hint={finishOwnershipTechnicalHintRo()}
+              defaultOpen={false}
+              testId="intake-v6-finish-ownership-note"
+              className="mt-2 mb-1"
+            >
+              <p className="text-[11px] text-slate-300">
+                Fața folosește {operatorFinishOwnershipDomainLabelRo("SURFACE_FINISH")} (vinyl / print / vopsire).
+                Cantul Oracal/RAL ține de {operatorFinishOwnershipDomainLabelRo("RETURN-CANT")}.
+                Valorile concrete rămân în {operatorFinishOwnershipDomainLabelRo("WORKSPACE")}.
+                Șablonul de montaj nu este finisaj de suprafață; chip-ul de scope pentru finisaj este amânat.
+              </p>
+              <p className="mt-2 text-[10px] text-slate-500" data-testid="intake-v6-finish-ownership-technical-tokens">
+                Tokenuri interne (diagnostic):{" "}
+                <span className="font-mono text-slate-400">SURFACE_FINISH</span>
+                {" · "}
+                <span className="font-mono text-slate-400">RETURN-CANT</span>
+                {" · "}
+                <span className="font-mono text-slate-400">WORKSPACE</span>
+                {" · "}
+                <span className="font-mono text-slate-400">FINISH</span>
+              </p>
+            </IntakeV6TechnicalDetailsAccordion>
           </div>
         ) : null}
 
