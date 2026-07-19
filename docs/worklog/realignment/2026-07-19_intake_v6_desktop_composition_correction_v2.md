@@ -4,6 +4,7 @@
 **Branch:** `feature/product-system-active-path-isolation-v1`  
 **Rejected commit:** `1ad841b`  
 **Functional baseline:** `9f0efa0`  
+**Correction commit:** `5336734`  
 
 ## Owner visual findings addressed
 

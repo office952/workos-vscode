@@ -21,7 +21,7 @@ Commit `1ad841b` — refactor(intake-v6): reset desktop operator presentation. O
 - Branch: `feature/product-system-active-path-isolation-v1`
 - Functional baseline protected: `9f0efa0`
 - Foreign WIP present and untouched
-- Isolated commit: `refactor(intake-v6): correct desktop form composition`
+- Isolated commit: `5336734` — `refactor(intake-v6): correct desktop form composition`
 
 ## 6. Runtime
 
@@ -175,7 +175,7 @@ Composition confirmation: reduced to CTA + corner + footer (Confirmare residual)
 
 ## 38. Commit
 
-`refactor(intake-v6): correct desktop form composition` (isolated; foreign WIP excluded)
+`5336734` — `refactor(intake-v6): correct desktop form composition` (isolated; foreign WIP excluded)
 
 ## 39. Metoda de lucru si logica abordarii
 
