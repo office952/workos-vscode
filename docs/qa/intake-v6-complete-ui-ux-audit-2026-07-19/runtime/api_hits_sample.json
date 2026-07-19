@@ -1,0 +1,122 @@
+{
+  "total": 317,
+  "bad": [
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/finish-setup",
+      "status": 422,
+      "method": "PUT"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+      "status": 404,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/volumetric-face-back-prep/cost-draft?shanfren_forex=false",
+      "status": 404,
+      "method": "GET"
+    }
+  ],
+  "last20": [
+    {
+      "url": "/api/v1/company-commercial-settings",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/product-system/template-availability?include_runtime_modules=true&include_archived=false",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/task-preview",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/template-form-contract",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/product-system-binding",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/pricing-input-preview",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/runtime-capture-read-model",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/product-truth-promotion-planner",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/product-system/product-definition/TPL-VOLUMETRIC-LETTERS_v2?workspace_id=e1ba14f2-ceca-4239-9e8e-e87c0e21d65f",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/material-breakdown",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/production-task-dry-run",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/ai-informational-assist-candidate",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/production-handoff-preview",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/system/version",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/quote-handoff-preview?client_analysis_hash=ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/task-generation-dry-run",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/system/diagnostics",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/order-bound-task-readiness",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/priced-quote-dry-run",
+      "status": 200,
+      "method": "GET"
+    },
+    {
+      "url": "/api/v1/intake-v6/workspaces/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/logical-list-read-model",
+      "status": 200,
+      "method": "GET"
+    }
+  ]
+}

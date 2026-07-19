@@ -1,0 +1,4 @@
+{
+  "message": "TimeoutError: locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n  - waiting for getByTestId('intake-v6-header') to be visible\n",
+  "stack": "locator.waitFor: Timeout 90000ms exceeded.\nCall log:\n  - waiting for getByTestId('intake-v6-header') to be visible\n\n    at gotoOperator (C:\\w\\psiso\\docs\\qa\\intake-v6-complete-ui-ux-audit-2026-07-19\\run-complete-audit.mjs:89:46)\n    at async runPrimaryFlow (C:\\w\\psiso\\docs\\qa\\intake-v6-complete-ui-ux-audit-2026-07-19\\run-complete-audit.mjs:245:3)\n    at async main (C:\\w\\psiso\\docs\\qa\\intake-v6-complete-ui-ux-audit-2026-07-19\\run-complete-audit.mjs:524:5)"
+}

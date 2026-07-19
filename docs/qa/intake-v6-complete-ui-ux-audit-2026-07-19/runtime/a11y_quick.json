@@ -1,0 +1,17 @@
+{
+  "tabRoles": 3,
+  "tablist": true,
+  "unlabeledControls": [
+    {
+      "tag": "BUTTON",
+      "testid": null,
+      "type": null
+    },
+    {
+      "tag": "BUTTON",
+      "testid": null,
+      "type": null
+    }
+  ],
+  "overflowX": false
+}

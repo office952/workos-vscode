@@ -1,0 +1,25 @@
+{
+  "url": "http://127.0.0.1:3001/intake-v6/e1ba14f2-ceca-4239-9e8e-e87c0e21d65f/operator",
+  "title": "erpWork OS",
+  "tabs": [],
+  "cardCountApprox": 45,
+  "tallCards": [],
+  "badges": [
+    "Stare sistem: necesită verificare"
+  ],
+  "blockers": [
+    {
+      "testid": "environment-banner-details-toggle",
+      "text": "Stare sistem: necesită verificare"
+    },
+    {
+      "testid": "intake-v6-footer-primary-action-reason",
+      "text": "Încarcă, analizează și salvează un fișier SVG."
+    }
+  ],
+  "headings": [
+    "Confirmă fișierul SVG",
+    "Panou operator",
+    "Rezumat straturi"
+  ]
+}
