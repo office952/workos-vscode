@@ -2195,8 +2195,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             state.workspace?.payload as Record<string, unknown> | undefined,
           )
             ? reviewHandoffSurfacing.nextStepGuidance
-            : "Poți naviga liber între taburi. Confirmarea finală rămâne blocată până rezolvi elementele din sumarul de mai sus."
+            : "Poți naviga liber între taburi. Următorul pas obligatoriu este în footer."
         }
+        suppressCompactDetail
         onJumpToDiagnostic={handleJumpToDiagnostic}
         onFocusTarget={handleOperatorBlockerFocus}
       />

@@ -32,8 +32,8 @@ export function buildFinalConfirmationBlockers(input: {
       id: "composition",
       severity: "blocker",
       section: "Compoziție",
-      message: "Compoziția produsului propusă de analyzer nu este confirmată.",
-      action: "Confirmă compoziția deasupra taburilor.",
+      message: "Compoziția produsului nu este confirmată.",
+      action: "Confirmă compoziția deasupra taburilor (următorul pas e în footer).",
       tabId: null,
       focusTarget: "intake-v6-confirm-product-composition",
     });

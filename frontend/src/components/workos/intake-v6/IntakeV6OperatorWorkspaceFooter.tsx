@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import type { IntakeV6StepId, IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
 import { buildIntakeV6FooterIssuesDisplay } from "@/lib/intakeV6/intakeV6FooterIssuesDisplay";
+import {
+  buildIntakeV6OperatorGuidanceModel,
+  normalizeGuidanceNextAction,
+} from "@/lib/intakeV6/intakeV6OperatorGuidance";
 import { buildWorkspaceHeaderStatus } from "@/lib/intakeV6/intakeV6WorkspaceHeaderStatus";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "./IntakeV6WorkspaceHeaderStatusContext";
 import { v6 } from "./atoms/intakeV6Presentation";
@@ -17,6 +21,9 @@ export default function IntakeV6OperatorWorkspaceFooter({
   onNext,
   persisting,
   workspaceState,
+  canContinueFromAnalyzer = false,
+  reviewBlockerCount,
+  reviewWarningCount,
 }: {
   currentStep: IntakeV6StepId;
   stepIndex: number;
@@ -29,6 +36,9 @@ export default function IntakeV6OperatorWorkspaceFooter({
   onNext: () => void;
   persisting: boolean;
   workspaceState: IntakeV6WorkspaceState;
+  canContinueFromAnalyzer?: boolean;
+  reviewBlockerCount?: number;
+  reviewWarningCount?: number;
 }) {
   const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
   const [issuesOpen, setIssuesOpen] = useState(false);
@@ -37,6 +47,28 @@ export default function IntakeV6OperatorWorkspaceFooter({
   const status = useMemo(
     () => buildWorkspaceHeaderStatus(workspaceState, statusCtx?.overlay ?? {}),
     [workspaceState, statusCtx?.overlay],
+  );
+
+  const guidance = useMemo(
+    () =>
+      buildIntakeV6OperatorGuidanceModel({
+        state: workspaceState,
+        canContinueFromAnalyzer,
+        confirmChecklist: confirmFooter
+          ? { done: confirmFooter.checklistDone, total: confirmFooter.checklistTotal }
+          : null,
+        confirmDisabledReason: confirmFooter?.disabledReason ?? null,
+        confirmCanSubmit: confirmFooter?.canSubmit ?? false,
+        reviewBlockerCount,
+        reviewWarningCount,
+      }),
+    [
+      workspaceState,
+      canContinueFromAnalyzer,
+      confirmFooter,
+      reviewBlockerCount,
+      reviewWarningCount,
+    ],
   );
 
   const stepLabel =
@@ -52,9 +84,10 @@ export default function IntakeV6OperatorWorkspaceFooter({
       : null;
 
   const primaryActionReason =
-    isHandoffStep || nextDisabled
-      ? confirmDisabledReason ?? footerBlocker
-      : footerBlocker;
+    guidance.nextAction ??
+    normalizeGuidanceNextAction(
+      isHandoffStep || nextDisabled ? confirmDisabledReason ?? footerBlocker : footerBlocker,
+    );
 
   const issuesDisplay = useMemo(
     () =>
@@ -101,15 +134,43 @@ export default function IntakeV6OperatorWorkspaceFooter({
       className="sticky bottom-0 z-10 mt-auto border-t border-[#2A3548] bg-[#111827]/95 px-7 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.35)] backdrop-blur-sm"
       data-testid="intake-v6-operator-workspace-footer"
     >
-      {primaryActionReason && (nextDisabled || isHandoffStep) ? (
-        <p
+      {(nextDisabled || isHandoffStep || guidance.nextAction || !guidance.canContinue) &&
+      (primaryActionReason || guidance.progressLabel || guidance.countsLabel) ? (
+        <div
           id="intake-v6-footer-primary-action-reason"
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-footer-primary-action-reason"
+          data-guidance-status={guidance.statusLabel}
           role="status"
+          aria-live="polite"
         >
-          {primaryActionReason}
-        </p>
+          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5" data-testid="intake-v6-guidance-spine">
+            <span className="font-semibold text-amber-50" data-testid="intake-v6-guidance-status">
+              {guidance.statusLabel}
+            </span>
+            {guidance.progressLabel ? (
+              <span className="text-amber-100/70" data-testid="intake-v6-guidance-progress">
+                · {guidance.progressLabel}
+              </span>
+            ) : null}
+            {guidance.countsLabel ? (
+              <span className="text-amber-100/70" data-testid="intake-v6-guidance-counts">
+                · {guidance.countsLabel}
+              </span>
+            ) : null}
+          </p>
+          {primaryActionReason ? (
+            <p className="mt-1 text-amber-50/95" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold text-amber-50">Următorul pas: </span>
+              {primaryActionReason}
+            </p>
+          ) : guidance.canContinue ? (
+            <p className="mt-1 text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold">Următorul pas: </span>
+              {guidance.continueEnabledLabel}
+            </p>
+          ) : null}
+        </div>
       ) : null}
 
       {showIssuesDrawer ? (

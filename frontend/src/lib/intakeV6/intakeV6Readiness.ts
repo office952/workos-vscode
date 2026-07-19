@@ -97,7 +97,7 @@ export function getIntakeV6FirstBlocker(state: IntakeV6WorkspaceState): string |
   }
 
   if (readiness === "product_composition_not_confirmed" && !isProductCompositionConfirmed(payload)) {
-    return "Confirmă compoziția produsului propusă de analyzer.";
+    return "Confirmă compoziția produsului.";
   }
 
   if (readiness === "offer_scope_not_confirmed" || !isOfferScopeConfirmed(payload)) {

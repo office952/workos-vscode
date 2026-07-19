@@ -153,6 +153,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
         onNext={goNext}
         persisting={state.phase === "persisting"}
         workspaceState={state}
+        canContinueFromAnalyzer={canContinueFromAnalyzer}
       />
     </div>
     </IntakeV6WorkspaceHeaderStatusProvider>

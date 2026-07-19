@@ -30,11 +30,13 @@ const blockedDisplay: OperatorBlockerBannerDisplay = {
 };
 
 describe("IntakeV6ReviewOperatorBlockerBanner", () => {
-  it("renders compact summary title", () => {
+  it("renders compact summary title and footer hint instead of duplicated next-action", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
     expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-title")).toHaveTextContent(
       /1 problemă blochează Confirmarea/i,
     );
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-footer-hint")).toHaveTextContent(/footer/i);
+    expect(screen.queryByTestId("intake-v6-review-operator-blocker-compact-one")).not.toBeInTheDocument();
   });
 
   it("expands to show issue details without raw-only generic panel", () => {

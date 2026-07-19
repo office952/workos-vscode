@@ -7,12 +7,15 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
   nextStepGuidance = null,
   onJumpToDiagnostic,
   onFocusTarget,
+  /** When true, do not repeat the single-issue next-action line (footer owns it). */
+  suppressCompactDetail = true,
 }: {
   display: OperatorBlockerBannerDisplay;
   /** Neutral guidance when the only pending gate is a future step (e.g. Step 3 confirmation). */
   nextStepGuidance?: string | null;
   onJumpToDiagnostic?: () => void;
   onFocusTarget?: (targetId: string) => void;
+  suppressCompactDetail?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
 
@@ -86,13 +89,21 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
             />
           </button>
 
-          {!expanded && issueCount === 1 ? (
+          {!expanded && issueCount === 1 && !suppressCompactDetail ? (
             <p
               className={`mt-1 text-[11px] leading-snug ${blocked ? "text-rose-50/90" : "text-amber-50/90"}`}
               data-testid="intake-v6-review-operator-blocker-compact-one"
             >
               {display.issues[0]?.message}
               {display.issues[0]?.action ? ` — ${display.issues[0].action}` : ""}
+            </p>
+          ) : null}
+          {!expanded && suppressCompactDetail && issueCount > 0 ? (
+            <p
+              className={`mt-1 text-[11px] leading-snug ${blocked ? "text-rose-50/80" : "text-amber-50/80"}`}
+              data-testid="intake-v6-review-operator-blocker-footer-hint"
+            >
+              Următorul pas este în footer. Deschide lista pentru detalii.
             </p>
           ) : null}
 
