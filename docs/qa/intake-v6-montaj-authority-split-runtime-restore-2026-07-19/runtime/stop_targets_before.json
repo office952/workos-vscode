@@ -1,0 +1,32 @@
+﻿[
+    {
+        "PID":  35220,
+        "AliveBefore":  true,
+        "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"-c\" \"from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=25988, pipe_handle=412)\" \"--multiprocessing-fork\"",
+        "CreationDate":  "\/Date(1784457695636)\/"
+    },
+    {
+        "PID":  23792,
+        "AliveBefore":  true,
+        "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"-c\" \"from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=27664, pipe_handle=380)\" \"--multiprocessing-fork\"",
+        "CreationDate":  "\/Date(1784476603260)\/"
+    },
+    {
+        "PID":  29460,
+        "AliveBefore":  true,
+        "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"-c\" \"from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=30868, pipe_handle=596)\" \"--multiprocessing-fork\"",
+        "CreationDate":  "\/Date(1784476472627)\/"
+    },
+    {
+        "PID":  40616,
+        "AliveBefore":  true,
+        "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"-c\" \"from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=11388, pipe_handle=784)\" \"--multiprocessing-fork\"",
+        "CreationDate":  "\/Date(1784476619674)\/"
+    },
+    {
+        "PID":  32180,
+        "AliveBefore":  true,
+        "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" \"-c\" \"from multiprocessing.spawn import spawn_main; spawn_main(parent_pid=34884, pipe_handle=768)\" \"--multiprocessing-fork\"",
+        "CreationDate":  "\/Date(1784476574764)\/"
+    }
+]

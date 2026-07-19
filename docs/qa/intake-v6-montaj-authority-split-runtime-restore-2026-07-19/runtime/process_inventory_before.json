@@ -1,0 +1,64 @@
+﻿{
+    "p8003":  {
+                  "rows":  [
+                               {
+                                   "Port":  8003,
+                                   "PID":  27664,
+                                   "State":  2,
+                                   "Name":  "GONE_OR_GHOST",
+                                   "ExecutablePath":  "",
+                                   "CommandLine":  "",
+                                   "StartTime":  null,
+                                   "ParentPID":  null,
+                                   "ParentCmd":  "",
+                                   "CreationDate":  null
+                               }
+                           ],
+                  "netstat":  [
+                                  "TCP    127.0.0.1:8003         0.0.0.0:0              LISTENING       25988",
+                                  "TCP    127.0.0.1:8003         0.0.0.0:0              LISTENING       27664",
+                                  "TCP    127.0.0.1:8003         0.0.0.0:0              LISTENING       30868",
+                                  "TCP    127.0.0.1:8003         0.0.0.0:0              LISTENING       11388",
+                                  "TCP    127.0.0.1:8003         0.0.0.0:0              LISTENING       34884"
+                              ]
+              },
+    "p3000":  {
+                  "rows":  [
+                               {
+                                   "Port":  3000,
+                                   "PID":  9368,
+                                   "State":  2,
+                                   "Name":  "node.exe",
+                                   "ExecutablePath":  "C:\\Program Files\\nodejs\\node.exe",
+                                   "CommandLine":  "node   \"C:\\w\\psiso\\frontend\\node_modules\\.bin\\\\..\\vite\\bin\\vite.js\" \"--host\" \"127.0.0.1\" \"--port\" \"3000\"",
+                                   "StartTime":  "\/Date(1784476861338)\/",
+                                   "ParentPID":  20752,
+                                   "ParentCmd":  "C:\\WINDOWS\\system32\\cmd.exe /q /d /s /c \"vite ^^^\"--host^^^\" ^^^\"127.0.0.1^^^\" ^^^\"--port^^^\" ^^^\"3000^^^\"\"",
+                                   "CreationDate":  "\/Date(1784476861338)\/"
+                               }
+                           ],
+                  "netstat":  [
+                                  "TCP    127.0.0.1:3000         0.0.0.0:0              LISTENING       9368"
+                              ]
+              },
+    "p8013":  {
+                  "rows":  [
+                               {
+                                   "Port":  8013,
+                                   "PID":  17840,
+                                   "State":  2,
+                                   "Name":  "python.exe",
+                                   "ExecutablePath":  "C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+                                   "CommandLine":  "\"C:\\Users\\offic\\AppData\\Local\\Programs\\Python\\Python312\\python.exe\" -m uvicorn main:app --host 127.0.0.1 --port 8013 ",
+                                   "StartTime":  "\/Date(1784476855914)\/",
+                                   "ParentPID":  17828,
+                                   "ParentCmd":  "\"C:\\w\\psiso\\backend\\.venv\\Scripts\\python.exe\" -m uvicorn main:app --host 127.0.0.1 --port 8013 ",
+                                   "CreationDate":  "\/Date(1784476855914)\/"
+                               }
+                           ],
+                  "netstat":  [
+                                  "TCP    127.0.0.1:8013         0.0.0.0:0              LISTENING       17840"
+                              ]
+              },
+    "at":  "2026-07-20T01:46:20.0400191+03:00"
+}

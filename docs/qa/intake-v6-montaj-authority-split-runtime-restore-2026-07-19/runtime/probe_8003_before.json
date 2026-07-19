@@ -1,0 +1,41 @@
+﻿{
+    "port":  8003,
+    "health":  {
+                   "status":  "healthy"
+               },
+    "health_err":  null,
+    "finish":  {
+                   "workspace_code":  "IV6-EA145E74",
+                   "updated_at":  "2026-07-19T15:37:15.857960",
+                   "mounting_scope":  "none",
+                   "mounting_solution":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                   "mounting_template_enabled":  true,
+                   "corner":  null,
+                   "seg":  "CONFIRMED",
+                   "ecm":  "DRAFT"
+               },
+    "pd":  {
+               "solution_status":  "blocked",
+               "blockers":  [
+                                "MOUNTING_SCOPE_INACTIVE"
+                            ],
+               "compatibility_status":  "blocked",
+               "acm_included":  [
+
+                                ],
+               "provenance":  [
+                                  "frozen_mounting_resolution=prep_active=False scope=none",
+                                  "mounting_solution=TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+                              ]
+           },
+    "agg":  {
+                "conflict_codes":  [
+                                       "COMPOSITION_GRAPH_BLOCKED",
+                                       "PROCESS_RESOLVER_SERVICE_CORNER_REQUIRED"
+                                   ],
+                "has_MOUNTING_SCOPE_INACTIVE":  true
+            },
+    "errors":  [
+
+               ]
+}
