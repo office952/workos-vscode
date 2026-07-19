@@ -668,3 +668,28 @@ Outcome: coherent surfaces without feature changes.
 Overall audit confidence: **0.88** (live walkthrough + code tracks + PD/Agg inspection).  
 IA recommendation confidence: **0.90**.  
 Plugin recommendation confidence: **0.85** (environment surveyed; no company SaaS accounts verified).
+
+---
+
+## 36. Operator vocabulary & placement (governance — 2026-07-19)
+
+**Accepted Page 2 IA** (post `fc9c21b`): tabs Finisaje · Iluminare și surse · Montaj; Montaj clusters: Montaj comercial · Fundal și carcasă · Avansat.  
+**Mapping layer:** `frontend/src/lib/intakeV6/intakeV6OperatorVocabulary.ts`  
+**Rule:** primary operator UI uses Romanian labels; raw tokens only in Avansat / module advanced disclosure / logs / tests.
+
+| Concept | Operator label | Technical/internal label | Primary location | Advanced/debug location |
+|---------|----------------|--------------------------|------------------|-------------------------|
+| Owner gate | Necesită confirmarea administratorului | `OWNER_GATE` / `OWNER_GATE_REQUIRED` | Module ACP readiness (RO) | Module „Detalii tehnice” accordion |
+| Informational-only intent | Informativ | `INFORMATIONAL_ONLY` | Severity / status badges | Raw token in advanced |
+| Segmented proposal | Propunere | `PROPOSED` | Fundal și carcasă status | Segmented panel diagnostics |
+| Confirmed segmented assembly | Ansamblu confirmat | `CONFIRMED` (segmented) | Fundal și carcasă status | PD / debug dumps |
+| Direct 220V | Alimentare directă 220V | `DIRECT_220V` | Fundal — electrical panel options | Raw mode in tests/logs |
+| Shared panel supply | Alimentare din alt panou | `SHARED_FROM_PANEL` | Fundal — electrical panel options | Raw mode in tests/logs |
+| Unresolved electrical state | Neconfirmat | `UNCONFIRMED` | Fundal — electrical + blockers | Raw mode in tests/logs |
+| Cutout blocker | (blocker message RO via sticky banner) | cutout / crossing codes | Sticky blocker summary | Diagnostic tehnic accordion |
+| Insert blocker | (blocker message RO) | insert / acrylic codes | Sticky blocker summary | Diagnostic tehnic accordion |
+| Commercial installation | Montaj la locație / scope comercial | `site_installation_included`, `mounting_scope` | Montaj comercial accordion | — |
+| Advanced diagnostics | Avansat (opțional / tehnic) | ownership notes, template IDs, gate paths | Collapsed Avansat cluster | Same (expanded) |
+
+**Severity vocabulary (consistent):** Informativ · Necesită verificare · Avertizare · Blocant · Confirmat · Neconfirmat · Necesită decizie owner/admin.  
+Owner approval is **not** presented as a technical failure (amber owner-decision tone, not rose blocker unless it truly blocks Confirmare).

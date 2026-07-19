@@ -54,6 +54,7 @@ export default function IntakeV6TechnicalDetailsAccordion({
         onClick={() => setOpen(!open)}
         data-testid={`${testId}-toggle`}
         aria-expanded={open}
+        aria-label={`${title}${open ? " — expandat" : " — restrâns"}`}
       >
         <div className="min-w-0 flex-1">
           <span className="block text-[12px] font-semibold text-slate-300">{title}</span>

@@ -129,6 +129,7 @@ import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPane
 import IntakeV6SegmentedElectricalPanel from "../IntakeV6SegmentedElectricalPanel";
 import IntakeV6MontajClusterShell from "../IntakeV6MontajClusterShell";
 import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import { operatorReadinessLabelRo } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
 import {
   buildFinalConfirmationBlockers,
   mergeFinalBlockersIntoBannerIssues,
@@ -2232,14 +2233,19 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 variant="review"
               />
             ) : null}
-            <p
-              className="mb-2 rounded border border-slate-700/60 bg-slate-950/40 px-2.5 py-2 text-[10px] text-slate-400"
-              data-testid="intake-v6-finish-ownership-note"
+            <IntakeV6TechnicalDetailsAccordion
+              title="Detalii ownership finisaje"
+              hint="Opțional — mapare internă SURFACE_FINISH / RETURN-CANT"
+              defaultOpen={false}
+              testId="intake-v6-finish-ownership-note"
+              className="mb-2"
             >
-              Ownership: finisaje = SURFACE_FINISH (vinyl/print/vopsire) · Oracal/RAL cant → RETURN-CANT ·
-              valori concrete → WORKSPACE · șablon ≠ finisaj suprafață · chip sold FINISH = amânat ·
-              hidden default ≠ responsabilitate activă.
-            </p>
+              <p className="text-[10px] text-slate-400">
+                Ownership: finisaje = SURFACE_FINISH (vinyl/print/vopsire) · Oracal/RAL cant → RETURN-CANT ·
+                valori concrete → WORKSPACE · șablon ≠ finisaj suprafață · chip sold FINISH = amânat ·
+                hidden default ≠ responsabilitate activă.
+              </p>
+            </IntakeV6TechnicalDetailsAccordion>
             {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
               title="Finisaje pe layer"
@@ -2542,6 +2548,88 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               ) : null}
                 </div>
               </div>
+
+              {(selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
+                selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE) &&
+              mountingPrepActive ? (
+                <div
+                  className="mt-3 grid gap-2 sm:grid-cols-2"
+                  data-testid="intake-v6-process-electrical-fields"
+                >
+                  <label className={REVIEW_FIELD_BLOCK_CLASS}>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>
+                      Lungime cablu alimentare (m)
+                    </span>
+                    <select
+                      className={REVIEW_SELECT_CLASS}
+                      value={
+                        form.mains_cable_length_m != null &&
+                        (MAINS_CABLE_LENGTH_OPTIONS_M as readonly number[]).includes(
+                          form.mains_cable_length_m,
+                        )
+                          ? String(form.mains_cable_length_m)
+                          : ""
+                      }
+                      onChange={(event) => {
+                        const raw = event.target.value;
+                        updateForm(
+                          {
+                            mains_cable_length_m: raw === "" ? null : Number(raw),
+                          },
+                          { domains: ["mounting"] },
+                        );
+                      }}
+                      data-testid="intake-v6-mains-cable-length-m"
+                    >
+                      <option value="">— selectează —</option>
+                      {MAINS_CABLE_LENGTH_OPTIONS_M.map((length) => (
+                        <option key={length} value={length}>
+                          {length} m
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-[10px] text-slate-500">
+                      Pas 2.5 m · 2.5–25 · cablare pregătită (serviciu comercial)
+                    </p>
+                  </label>
+                  {selectedMountingSolutionValue !== ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
+                    <p
+                      className="text-[10px] text-slate-500 self-end pb-2"
+                      data-testid="intake-v6-service-corner-inactive-note"
+                    >
+                      Colt service: relevant doar pentru panou ACP casetat.
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+
+              <div
+                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${siteInstallationSectionActive ? "" : "opacity-60"}`}
+                data-testid="intake-v6-mounting-site-section"
+              >
+                <p className="mb-2 text-[11px] font-semibold text-slate-200">Montaj la locație</p>
+                {!siteInstallationSectionActive ? (
+                  <p className="text-[10px] text-slate-400" data-testid="intake-v6-mounting-site-inactive-note">
+                    Disponibil când scope-ul include montaj la locație.
+                  </p>
+                ) : (
+                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-cyan-400"
+                      checked={form.site_installation_included !== false}
+                      onChange={(event) =>
+                        updateForm(
+                          { site_installation_included: event.target.checked },
+                          { domains: ["mounting"] },
+                        )
+                      }
+                      data-testid="intake-v6-site-installation-included"
+                    />
+                    Montaj la locație inclus în ofertă
+                  </label>
+                )}
+              </div>
               </IntakeV6TechnicalDetailsAccordion>
 
               <IntakeV6MontajClusterShell
@@ -2556,7 +2644,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     if (st === "CONFIRMED") return "Ansamblu confirmat";
                     if (st === "PROPOSED") return "Propunere";
                     if (st === "REJECTED") return "Respins";
-                    return st;
+                    return operatorReadinessLabelRo(st);
                   })()
                 }
                 statusTone={
@@ -2713,10 +2801,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       />
                     </label>
                     <p
-                      className="sm:col-span-3 text-[10px] text-cyan-200/80"
+                      className="sm:col-span-3 text-[10px] text-slate-500"
                       data-testid="intake-v6-mounting-solution-template-identity"
                     >
-                      Template: {METAL_PREMOUNT_TEMPLATE_CODE}
+                      Detaliu tehnic · ID șablon: {METAL_PREMOUNT_TEMPLATE_CODE}
                     </p>
                   </div>
                 ) : null}
@@ -2919,9 +3007,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                                 className="rounded border border-rose-500/30 bg-rose-950/20 px-2 py-1.5 text-[10px] text-rose-100"
                                 data-testid="intake-v6-acm-internal-frame-profile-gate"
                               >
-                                Profil: catalog gol — PROFILE_INITIAL_SET_OWNER_GATE_REQUIRED. Nu există
-                                selector free-text; confirmă secțiunile reale înainte de configurare
-                                completă.
+                                Profil: catalog gol — necesită setarea inițială a profilului (admin).
+                                Nu există selector free-text; confirmă secțiunile reale înainte de
+                                configurare completă.
                               </div>
                               <p
                                 className="text-[11px] text-slate-200"
@@ -3019,10 +3107,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       </div>
                     ) : null}
                     <p
-                      className="sm:col-span-3 text-[10px] text-cyan-200/80"
+                      className="sm:col-span-3 text-[10px] text-slate-500"
                       data-testid="intake-v6-mounting-solution-template-identity"
                     >
-                      Template: {ACM_BOXED_MOUNTING_TEMPLATE_CODE}
+                      Detaliu tehnic · ID șablon: {ACM_BOXED_MOUNTING_TEMPLATE_CODE}
                     </p>
                   </div>
                 ) : null}
@@ -3090,7 +3178,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
               <IntakeV6TechnicalDetailsAccordion
                 title="Avansat"
-                hint="Prindere, colț service, diagnostice ownership"
+                hint="Opțional — prindere, colț service, diagnostice ownership (tehnic)"
                 defaultOpen={false}
                 testId="intake-v6-montaj-advanced-cluster"
               >
@@ -3169,7 +3257,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                           Autoforante cap hexagonal 4.5×60 mm
                         </p>
                         <p className="sm:col-span-2 text-[10px] text-amber-100/90">
-                          Status dimensiuni: MANUAL_CONFIRMATION_REQUIRED — fără cotă fixă sau
+                          Status dimensiuni: necesită confirmare manuală — fără cotă fixă sau
                           formulă automată.
                         </p>
                       </div>
@@ -3245,60 +3333,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         <option value="MANUAL_CONFIRMED">Confirmat manual</option>
                       </select>
                     </label>
-                  </div>
-                ) : null}
-
-                {(selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
-                  selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE) &&
-                mountingPrepActive ? (
-                  <div
-                    className="mt-3 grid gap-2 sm:grid-cols-2"
-                    data-testid="intake-v6-process-electrical-fields"
-                  >
-                    <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                      <span className={REVIEW_FIELD_LABEL_CLASS}>
-                        Lungime cablu alimentare (m)
-                      </span>
-                      <select
-                        className={REVIEW_SELECT_CLASS}
-                        value={
-                          form.mains_cable_length_m != null &&
-                          (MAINS_CABLE_LENGTH_OPTIONS_M as readonly number[]).includes(
-                            form.mains_cable_length_m,
-                          )
-                            ? String(form.mains_cable_length_m)
-                            : ""
-                        }
-                        onChange={(event) => {
-                          const raw = event.target.value;
-                          updateForm(
-                            {
-                              mains_cable_length_m: raw === "" ? null : Number(raw),
-                            },
-                            { domains: ["mounting"] },
-                          );
-                        }}
-                        data-testid="intake-v6-mains-cable-length-m"
-                      >
-                        <option value="">— selectează —</option>
-                        {MAINS_CABLE_LENGTH_OPTIONS_M.map((length) => (
-                          <option key={length} value={length}>
-                            {length} m
-                          </option>
-                        ))}
-                      </select>
-                      <p className="mt-1 text-[10px] text-slate-500">
-                        Pas 2.5 m · 2.5–25 · cablare pregătită (serviciu comercial)
-                      </p>
-                    </label>
-                    {selectedMountingSolutionValue !== ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
-                      <p
-                        className="text-[10px] text-slate-500 self-end pb-2"
-                        data-testid="intake-v6-service-corner-inactive-note"
-                      >
-                        Colt service: relevant doar pentru panou ACP casetat.
-                      </p>
-                    ) : null}
                   </div>
                 ) : null}
 
@@ -3378,34 +3412,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </div>
               ) : null}
               </IntakeV6TechnicalDetailsAccordion>
-
-              <div
-                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${siteInstallationSectionActive ? "" : "opacity-60"}`}
-                data-testid="intake-v6-mounting-site-section"
-              >
-                <p className="mb-2 text-[11px] font-semibold text-slate-200">Montaj la locație</p>
-                {!siteInstallationSectionActive ? (
-                  <p className="text-[10px] text-slate-400" data-testid="intake-v6-mounting-site-inactive-note">
-                    Disponibil când scope-ul include montaj la locație.
-                  </p>
-                ) : (
-                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 accent-cyan-400"
-                      checked={form.site_installation_included !== false}
-                      onChange={(event) =>
-                        updateForm(
-                          { site_installation_included: event.target.checked },
-                          { domains: ["mounting"] },
-                        )
-                      }
-                      data-testid="intake-v6-site-installation-included"
-                    />
-                    Montaj la locație inclus în ofertă
-                  </label>
-                )}
-              </div>
             </div>
             </IntakeV6ReviewSectionShell>
           </div>
