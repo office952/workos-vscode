@@ -20,6 +20,15 @@ describe("intakeV6QuoteHandoffReadiness", () => {
     );
   });
 
+  it("maps composition readiness codes to operator Romanian without enum leak", () => {
+    expect(
+      formatQuoteHandoffBlocker("readiness_not_ready:product_composition_not_confirmed"),
+    ).toMatch(/compoziția produsului/i);
+    expect(
+      formatQuoteHandoffBlocker("readiness_not_ready:product_composition_not_confirmed"),
+    ).not.toMatch(/Workspace readiness|product_composition_not_confirmed/i);
+  });
+
   it("surfaces fetch failure instead of infinite loading", () => {
     const ui = resolveQuoteHandoffUiStatus(null, {
       loading: false,

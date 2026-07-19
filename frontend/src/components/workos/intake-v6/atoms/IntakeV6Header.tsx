@@ -1,9 +1,11 @@
 import type { IntakeV6StepId, IntakeV6WorkspaceState } from "@/lib/intakeV6/intakeV6Contracts";
+import { isAnalysisReadyForReview } from "@/lib/intakeV6/intakeV6AnalysisIdentity";
 import {
   LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE,
   LOGO_ONLY_COMMERCIAL_GUARD_TITLE,
   isLogoOnlyCandidateNotOfferableStatus,
 } from "@/lib/intakeV6/intakeV6LogoOnlyCommercialGuard";
+import { canContinueFromReviewStep } from "@/lib/intakeV6/intakeV6Readiness";
 import { useIntakeV6WorkspaceHeaderStatusOptional } from "../IntakeV6WorkspaceHeaderStatusContext";
 import IntakeV6ProgressBar from "./IntakeV6ProgressBar";
 import { v6 } from "./intakeV6Presentation";
@@ -106,6 +108,11 @@ export default function IntakeV6Header({
         compact
         currentStep={state.currentStep}
         canAccessStep={canAccessStep}
+        isStepComplete={(step) => {
+          if (step === "layers") return isAnalysisReadyForReview(state);
+          if (step === "review") return canContinueFromReviewStep(state);
+          return false;
+        }}
         onStepClick={onStepClick}
       />
     </header>

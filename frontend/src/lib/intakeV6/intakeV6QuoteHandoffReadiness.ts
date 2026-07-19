@@ -70,9 +70,21 @@ export function formatQuoteHandoffBlocker(code: string): string {
 	if (code.startsWith("readiness_not_ready:")) {
 		const readiness = code.split(":")[1] ?? "unknown";
 		if (readiness === "layer_roles_incomplete") {
-			return "Product Truth incomplet: rolurile layerelor/grupurilor trebuie confirmate de operator.";
+			return "Confirmă rolul pentru toate straturile înainte de ofertare.";
 		}
-		return `Workspace readiness: ${readiness}.`;
+		if (readiness === "product_composition_not_confirmed") {
+			return "Confirmă compoziția produsului în Configurare.";
+		}
+		if (readiness === "finish_setup_incomplete") {
+			return "Finalizează finisajele în Configurare înainte de draft.";
+		}
+		if (readiness === "offer_scope_not_confirmed") {
+			return "Confirmă ce producem (produs complet sau componente selectate).";
+		}
+		return "Configurarea nu este gata pentru confirmare finală.";
+	}
+	if (code === "product_composition_not_confirmed") {
+		return "Confirmă compoziția produsului în Configurare.";
 	}
 	if (code === "finish_setup_not_confirmed") {
 		return "Finalizează și confirmă finisajele în Review înainte de draft quote.";

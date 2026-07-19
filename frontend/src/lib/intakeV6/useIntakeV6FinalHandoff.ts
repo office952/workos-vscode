@@ -54,6 +54,7 @@ import { useCompanyCommercialSettings } from "@/hooks/useCompanyCommercialSettin
 import { useModularFormContract } from "@/lib/intakeV6/useModularFormContract";
 import { useModularFormAwareness } from "@/lib/intakeV6/useModularFormAwareness";
 import { isAnalysisReadyForReview } from "@/lib/intakeV6/intakeV6AnalysisIdentity";
+import { isProductCompositionConfirmed } from "@/lib/intakeV6/intakeV6Readiness";
 import type { IntakeV6ConfirmSummaryViewModel } from "@/lib/intakeV6/intakeV6ConfirmSummary";
 import {
 	reconcileLocalConfirmationWithPersisted,
@@ -509,9 +510,14 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		],
 	);
 
+	const compositionConfirmed = isProductCompositionConfirmed(
+		payload as Record<string, unknown> | undefined,
+	);
+
 	const checklistProgress = useMemo(
 		() =>
 			resolveConfirmChecklistProgress({
+				compositionConfirmed,
 				finishSetupComplete: !finishSetupIncomplete,
 				operatorConfirmationComplete,
 				confirmInternalDraft,
@@ -519,6 +525,7 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 				showDraftBoundaryItem: showHandoffCheckboxes,
 			}),
 		[
+			compositionConfirmed,
 			finishSetupIncomplete,
 			operatorConfirmationComplete,
 			confirmInternalDraft,
@@ -821,6 +828,7 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		allFatalBlockers,
 		reviewWarnings,
 		finishSetupIncomplete,
+		compositionConfirmed,
 		operatorConfirmationComplete,
 		confirmationHydrationPending,
 		quoteGeometry,

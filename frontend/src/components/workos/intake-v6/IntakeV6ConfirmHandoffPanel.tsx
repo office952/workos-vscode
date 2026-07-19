@@ -36,6 +36,7 @@ function ChecklistControlRow({
 }
 
 export default function IntakeV6ConfirmHandoffPanel({
+  compositionConfirmed = true,
   finishSetupIncomplete,
   operatorConfirmationComplete,
   confirmInternalDraft,
@@ -50,6 +51,7 @@ export default function IntakeV6ConfirmHandoffPanel({
   onInternalDraftChange,
   onDraftBoundaryChange,
 }: {
+  compositionConfirmed?: boolean;
   finishSetupIncomplete: boolean;
   operatorConfirmationComplete: boolean;
   confirmInternalDraft: boolean;
@@ -75,7 +77,9 @@ export default function IntakeV6ConfirmHandoffPanel({
   const confirmationDisabled =
     confirmationHydrationPending ||
     savingInternalConfirmation ||
-    !canResolveInternalDraftConfirmation;
+    !canResolveInternalDraftConfirmation ||
+    !compositionConfirmed ||
+    finishSetupIncomplete;
 
   return (
     <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-quote-handoff">
@@ -86,9 +90,19 @@ export default function IntakeV6ConfirmHandoffPanel({
 
       <ul className="mb-3 space-y-1.5" data-testid="intake-v6-confirm-handoff-checklist">
         <ChecklistControlRow
+          done={compositionConfirmed}
+          warning={!compositionConfirmed}
+          label={
+            compositionConfirmed
+              ? "Compoziție produs confirmată"
+              : "Compoziție produs — confirmă în Configurare"
+          }
+          testId="intake-v6-confirm-checklist-composition"
+        />
+        <ChecklistControlRow
           done={!finishSetupIncomplete}
           warning={finishSetupIncomplete}
-          label="Finisaje confirmate în Review"
+          label="Finisaje confirmate în Configurare"
           testId="intake-v6-confirm-checklist-finish"
         />
         <ChecklistControlRow
@@ -97,7 +111,7 @@ export default function IntakeV6ConfirmHandoffPanel({
           label="Confirm finisajele și datele de ofertare pentru draft intern"
           testId="intake-v6-confirm-checklist-operator"
           control={
-            !finishSetupIncomplete ? (
+            compositionConfirmed && !finishSetupIncomplete ? (
               <label
                 className="flex cursor-pointer items-start gap-2 text-[11px] text-slate-300"
                 data-testid="intake-v6-internal-draft-confirmation"

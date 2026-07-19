@@ -117,6 +117,7 @@ export default function IntakeV6FinalConfigurationSummary({
 
 					{showHandoffPanel ? (
 						<IntakeV6ConfirmHandoffPanel
+							compositionConfirmed={handoff.compositionConfirmed}
 							finishSetupIncomplete={handoff.finishSetupIncomplete}
 							operatorConfirmationComplete={handoff.operatorConfirmationComplete}
 							confirmInternalDraft={handoff.confirmInternalDraft}

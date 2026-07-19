@@ -7,6 +7,8 @@ import {
 interface IntakeV6ProgressBarProps {
 	currentStep: IntakeV6StepId;
 	canAccessStep?: (step: IntakeV6StepId) => boolean;
+	/** When set, ✓ only appears if the step is actually complete (not merely visited). */
+	isStepComplete?: (step: IntakeV6StepId) => boolean;
 	onStepClick?: (step: IntakeV6StepId) => void;
 	compact?: boolean;
 }
@@ -14,6 +16,7 @@ interface IntakeV6ProgressBarProps {
 export default function IntakeV6ProgressBar({
 	currentStep,
 	canAccessStep,
+	isStepComplete,
 	onStepClick,
 	compact = false,
 }: IntakeV6ProgressBarProps) {
@@ -29,7 +32,9 @@ export default function IntakeV6ProgressBar({
 			aria-label="Workspace steps"
 		>
 			{INTAKE_V6_VISIBLE_PROGRESS_STEPS.map((step, index) => {
-				const done = index < currentIndex;
+				const visited = index < currentIndex;
+				const complete = isStepComplete ? isStepComplete(step.id) : visited;
+				const done = visited && complete;
 				const active = step.id === visibleStep;
 				const accessible = canAccessStep?.(step.id) ?? true;
 				const circleClass = compact ? "h-6 w-6 text-[11px]" : "h-9 w-9 text-[13px]";
@@ -41,6 +46,8 @@ export default function IntakeV6ProgressBar({
 							disabled={!accessible}
 							onClick={() => onStepClick?.(step.id)}
 							data-testid={`intake-v6-progress-step-${step.id}`}
+							data-step-complete={done ? "true" : "false"}
+							aria-current={active ? "step" : undefined}
 						>
 							<span
 								className={`flex items-center justify-center rounded-full border-2 font-bold ${circleClass} ${
@@ -48,7 +55,9 @@ export default function IntakeV6ProgressBar({
 										? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
 										: active
 											? "border-sky-500/40 bg-sky-500/10 text-sky-300"
-											: "border-[#2A3548] bg-[#1E293B] text-slate-500"
+											: visited && !complete
+												? "border-amber-500/40 bg-amber-500/10 text-amber-200"
+												: "border-[#2A3548] bg-[#1E293B] text-slate-500"
 								}`}
 							>
 								{done ? "✓" : index + 1}
@@ -56,7 +65,15 @@ export default function IntakeV6ProgressBar({
 							<span
 								className={`font-semibold tracking-wide ${
 									compact ? "text-[11px]" : "text-[12px]"
-								} ${active ? "text-sky-300" : done ? "text-emerald-400" : "text-slate-500"}`}
+								} ${
+									active
+										? "text-sky-300"
+										: done
+											? "text-emerald-400"
+											: visited && !complete
+												? "text-amber-200"
+												: "text-slate-500"
+								}`}
 							>
 								{step.label}
 							</span>

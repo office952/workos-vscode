@@ -69,4 +69,20 @@ describe("IntakeV6ConfirmHandoffPanel confirmation hydration", () => {
     );
     expect(screen.getByTestId("intake-v6-confirmation-load-error")).toBeInTheDocument();
   });
+
+  it("surfaces incomplete composition before handoff checkboxes", () => {
+    render(
+      <IntakeV6ConfirmHandoffPanel
+        {...baseProps}
+        compositionConfirmed={false}
+        operatorConfirmationComplete={false}
+        confirmInternalDraft={false}
+        confirmationHydrationPending={false}
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-confirm-checklist-composition")).toHaveTextContent(
+      /Compoziție produs/i,
+    );
+    expect(screen.queryByTestId("intake-v6-confirm-internal-draft")).not.toBeInTheDocument();
+  });
 });
