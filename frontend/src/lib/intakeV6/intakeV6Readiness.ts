@@ -65,8 +65,18 @@ function confirmationOnlyOfferScope(payload: Record<string, unknown> | undefined
 export function canAccessIntakeV6Step(state: IntakeV6WorkspaceState, step: IntakeV6StepId): boolean {
   if (step === "layers") return true;
 
-  if (step === "review" || step === "confirm") {
+  // Review stays open so the operator can finish roles/composition/finish.
+  if (step === "review") {
     return isAnalysisReadyForReview(state);
+  }
+
+  // Confirmare only after role confirmation + product composition are satisfied.
+  // Final canSubmit / quote-ready domain logic is unchanged.
+  if (step === "confirm") {
+    return (
+      isAnalysisReadyForReview(state) &&
+      isProductCompositionConfirmed(state.workspace?.payload)
+    );
   }
 
   return false;

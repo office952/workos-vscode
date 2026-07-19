@@ -49,7 +49,9 @@ function layerWarnings(
   if (layerOrigin === 'stroke_vector_outline' || layerOrigin === 'corel_logo_stroke_outline') {
     warnings.push('STROKE_ONLY_VECTOR_LAYER: Stroke-only vector isolated as logo/artwork candidate - confirm what it represents and how it goes to production.')
   } else if (layerKind === 'pseudo') {
-    warnings.push('PSEUDO_LAYER_SOLID_FILL: Pseudo-layer generated from solid vector fills — confirm face role for volumetric letters.')
+    warnings.push(
+      'PSEUDO_LAYER_SOLID_FILL: Pseudo-layer generated from solid vector fills — confirm physical role (letter face vs Contur suport); proposal is not confirmation.',
+    )
   }
   if (layerKind === 'raster_artwork') {
     warnings.push('RASTER_ARTWORK_LAYER: Raster image isolated — confirm printed artwork role.')

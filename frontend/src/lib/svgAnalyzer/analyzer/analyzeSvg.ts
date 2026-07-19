@@ -4,6 +4,7 @@ import { getBenchmarkOptionsForFile } from './benchmarkConfig'
 import { analyzeGeometry } from './analyzeGeometry'
 import { analyzeLayers } from './analyzeLayers'
 import { buildAnalysisReport } from './buildAnalysisReport'
+import { refineLayerRoleProposalsWithGeometry } from './refineLayerRoleProposalsWithGeometry'
 import { buildOfficialAnalysisJson } from './buildOfficialAnalysisJson'
 import { detectWarnings } from './detectWarnings'
 import { parseSvg } from './parseSvg'
@@ -30,7 +31,9 @@ export function analyzeSvgString(source: string, fileName: string, fileSizeBytes
   const geometry = analyzeGeometry(parsed)
   const { doc: layerExpandedDoc, layerMeta } = expandSemanticAndPseudoLayers(parsed, geometry)
   const colors = analyzeColors(layerExpandedDoc)
-  const layers = analyzeLayers(layerExpandedDoc, geometry, colors, layerMeta)
+  const layersRaw = analyzeLayers(layerExpandedDoc, geometry, colors, layerMeta)
+  const closedContourCandidates = detectClosedContourCandidates(layerExpandedDoc, geometry)
+  const layers = refineLayerRoleProposalsWithGeometry(layersRaw, closedContourCandidates)
   const warnings = detectWarnings(layerExpandedDoc, geometry, layers, colors)
   const coreReport = buildAnalysisReport(layerExpandedDoc, geometry, layers, colors, warnings, mergedOptions)
 
@@ -55,7 +58,6 @@ export function analyzeSvgString(source: string, fileName: string, fileSizeBytes
   const partsReport = extractParts(coreReport, layerExpandedDoc)
   const nestingReport = buildNestingReport(partsReport)
   const artworkComplexity = buildArtworkComplexityReport(layerExpandedDoc, geometry, layers)
-  const closedContourCandidates = detectClosedContourCandidates(layerExpandedDoc, geometry)
 
   const report = buildOfficialAnalysisJson(coreReport, partsReport, nestingReport, artworkComplexity)
   report.closedContourCandidates = closedContourCandidates

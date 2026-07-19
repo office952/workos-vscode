@@ -1,0 +1,107 @@
+{
+  "id": "acm_client",
+  "workspace_id": "52a0c1fa-c3dd-486f-a722-d3b9b9ab119b",
+  "initial": {
+    "href": "http://127.0.0.1:3000/intake-v6/52a0c1fa-c3dd-486f-a722-d3b9b9ab119b/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-c5c6c6",
+        "value": "support_panel",
+        "label": "Contur suport"
+      },
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-e31e24",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "empty": false,
+    "supportError": null,
+    "text": {
+      "vectorLitere": true,
+      "conturSuport": true
+    },
+    "confirmDisabled": true,
+    "confirmAria": null
+  },
+  "afterConfirm": {
+    "href": "http://127.0.0.1:3000/intake-v6/52a0c1fa-c3dd-486f-a722-d3b9b9ab119b/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-c5c6c6",
+        "value": "support_panel",
+        "label": "Contur suport"
+      },
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-e31e24",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "empty": false,
+    "supportError": null,
+    "text": {
+      "vectorLitere": true,
+      "conturSuport": true
+    },
+    "confirmDisabled": true,
+    "confirmAria": null
+  },
+  "afterReload": {
+    "href": "http://127.0.0.1:3000/intake-v6/52a0c1fa-c3dd-486f-a722-d3b9b9ab119b/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-c5c6c6",
+        "value": "support_panel",
+        "label": "Contur suport"
+      },
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-e31e24",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "empty": false,
+    "supportError": null,
+    "text": {
+      "vectorLitere": true,
+      "conturSuport": true
+    },
+    "confirmDisabled": true,
+    "confirmAria": null
+  },
+  "roles": [
+    {
+      "key": "pseudo:fill-c5c6c6",
+      "auto": "support_panel",
+      "conf": "support_panel",
+      "state": "confirmed"
+    },
+    {
+      "key": "pseudo:fill-e31e24",
+      "auto": "face",
+      "conf": null,
+      "state": "pending"
+    }
+  ],
+  "bindings": [
+    {
+      "role": "LETTER_VECTOR_SET",
+      "template": "TPL-VOLUMETRIC-FACE_v1",
+      "status": "DRAFT"
+    },
+    {
+      "role": "SUPPORT_CONTOUR",
+      "template": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "status": "CONFIRMED"
+    }
+  ],
+  "supportError": null,
+  "pass": {
+    "greyProposedSupportOrSelectable": true,
+    "greyNotForcedFaceProposal": true,
+    "supportBinding": true,
+    "noSupportError": true,
+    "reloadKeepsSupport": true
+  }
+}

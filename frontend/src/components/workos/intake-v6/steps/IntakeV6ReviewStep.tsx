@@ -1595,7 +1595,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) as IntakeV6FinishSetup;
       const body = buildCurrentFinishBody(confirmed, commercialInputsOverride, preparedState);
       const pendingDomains = new Set(pendingDirtyDomainsRef.current);
-      const workspace = await saveFinishSetup(body);
+      const saveResult = await saveFinishSetup(body);
+      if (!saveResult.ok) {
+        throw new Error(saveResult.message);
+      }
+      const workspace = saveResult.workspace;
       if (
         workspace &&
         requestId === autosaveRequestRef.current &&

@@ -59,6 +59,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		confirmProductComposition,
 		saveOfferScope,
 		saveFinishSetup,
+		persistAnalysisBundle,
 	} = hook;
 	const statusCtx = useIntakeV6WorkspaceHeaderStatusOptional();
 	const [previewInspectOpen, setPreviewInspectOpen] = useState(false);
@@ -119,13 +120,16 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		> | null) ?? segmentedBackgroundRef.current;
 
 	const persistFinishPatch = useCallback(
-		async (patch: {
-			svg_support_selection?: Record<string, unknown> | null;
-			svg_component_bindings?: ReturnType<typeof readSvgComponentBindings>;
-			mounting_solution?: Record<string, unknown> | null;
-			power_supply_service_corner?: string | null;
-			segmented_background?: Record<string, unknown> | null;
-		}): Promise<boolean> => {
+		async (
+			patch: {
+				svg_support_selection?: Record<string, unknown> | null;
+				svg_component_bindings?: ReturnType<typeof readSvgComponentBindings>;
+				mounting_solution?: Record<string, unknown> | null;
+				power_supply_service_corner?: string | null;
+				segmented_background?: Record<string, unknown> | null;
+			},
+			options?: { errorContext?: "support" | "bindings" },
+		): Promise<boolean> => {
 			const prev =
 				(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
 			const next: IntakeV6FinishSetup = {
@@ -157,17 +161,18 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				(next as Record<string, unknown>).segmented_background = prev.segmented_background;
 			}
 			const saved = await saveFinishSetup(next);
-			if (!saved) {
-				setSupportAssociateError(
-					state.error ||
-						"Salvarea Contur suport / ACP a eșuat (FinishSetup). Verifică Probleme și avertizări.",
-				);
+			if (!saved.ok) {
+				const prefix =
+					options?.errorContext === "support"
+						? "Salvarea Contur suport / ACP a eșuat (FinishSetup). "
+						: "Salvarea asociărilor SVG a eșuat (FinishSetup). ";
+				setSupportAssociateError(`${prefix}${saved.message}`);
 				return false;
 			}
 			setSupportAssociateError(null);
 			return true;
 		},
-		[payload?.finish_setup, saveFinishSetup, state.error],
+		[payload?.finish_setup, saveFinishSetup],
 	);
 
 	const handleUpdateLayerRole = useCallback(
@@ -219,7 +224,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				);
 				const existingStatus = String(existingSeg?.status || "").toUpperCase();
 				let segmentedProposal: Record<string, unknown> | undefined;
-				if (existingStatus !== "CONFIRMED") {
+				if (existingStatus !== "CONFIRMED" && existingStatus !== "REJECTED") {
 					const proposal = proposeSegmentedBackgroundFromCandidates(
 						report.closedContourCandidates?.candidates || [],
 					);
@@ -229,11 +234,31 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						segmentedBackgroundRef.current = segmentedProposal;
 					}
 				}
-				void persistFinishPatch({
-					...patch,
-					svg_component_bindings: mergedBindings,
-					...(segmentedProposal ? { segmented_background: segmentedProposal } : {}),
-				});
+				void (async () => {
+					// Early FinishSetup association requires persisted layer_role_setup.
+					const analysisOk = await persistAnalysisBundle({
+						layerRoleConfirmation: nextConfirmation,
+					});
+					if (!analysisOk) {
+						setSupportAssociateError(
+							"Contur suport: analiza SVG trebuie salvată înainte de asocierea FinishSetup. Reîncearcă după ce salvarea reușește.",
+						);
+						return;
+					}
+					const supportOk = await persistFinishPatch(
+						{
+							...patch,
+							svg_component_bindings: mergedBindings,
+						},
+						{ errorContext: "support" },
+					);
+					if (!supportOk || !segmentedProposal) return;
+					// Segmented proposal is separate — must not block SUPPORT_CONTOUR persistence.
+					await persistFinishPatch(
+						{ segmented_background: segmentedProposal },
+						{ errorContext: "support" },
+					);
+				})();
 				return;
 			}
 
@@ -256,15 +281,28 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					...cleared.svg_component_bindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR"),
 				];
 				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(mergedBindings);
-				void persistFinishPatch({
-					...cleared,
-					svg_component_bindings: mergedBindings,
-				});
+				void (async () => {
+					await persistAnalysisBundle();
+					await persistFinishPatch(
+						{
+							...cleared,
+							svg_component_bindings: mergedBindings,
+						},
+						{ errorContext: "support" },
+					);
+				})();
 				return;
 			}
 
+			// Letter/logo FinishSetup sync only after roles are complete (or support early path above).
+			if (nextConfirmation.confirmationStatus !== "complete") {
+				return;
+			}
 			lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(letterLogoBindings);
-			void persistFinishPatch({ svg_component_bindings: letterLogoBindings });
+			void persistFinishPatch(
+				{ svg_component_bindings: letterLogoBindings },
+				{ errorContext: "bindings" },
+			);
 		},
 		[
 			updateLayerRole,
@@ -276,6 +314,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			componentBindings,
 			supportComp?.component_template_code,
 			persistFinishPatch,
+			persistAnalysisBundle,
 		],
 	);
 
@@ -297,8 +336,12 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		const nextKey = layerRoleBindingsSyncKey(merged);
 		const prevKey = layerRoleBindingsSyncKey(componentBindings);
 		if (nextKey === prevKey || nextKey === lastSyncedLayerBindingsKey.current) return;
+		// Backend rejects non-early FinishSetup while layer roles are incomplete.
+		const rolesComplete = confirmation.confirmationStatus === "complete";
+		const hasSupportContour = merged.some((b) => b.geometry_role === "SUPPORT_CONTOUR");
+		if (!rolesComplete && !hasSupportContour) return;
 		lastSyncedLayerBindingsKey.current = nextKey;
-		void persistFinishPatch({ svg_component_bindings: merged });
+		void persistFinishPatch({ svg_component_bindings: merged }, { errorContext: "bindings" });
 	}, [
 		confirmation,
 		bindables,

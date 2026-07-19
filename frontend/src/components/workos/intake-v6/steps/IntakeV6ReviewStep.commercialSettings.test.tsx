@@ -413,7 +413,7 @@ function renderReviewStepHarness() {
         };
         setWorkspace(nextWorkspace);
         saveFinishSetup(body);
-        return nextWorkspace;
+        return { ok: true as const, workspace: nextWorkspace };
       }) as IntakeV6WorkspaceHook["saveFinishSetup"],
     );
     return <IntakeV6ReviewStep hook={hook} />;

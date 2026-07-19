@@ -902,11 +902,16 @@ async def upload_svg_to_intake_v6_workspace(
         "file_hash": file_hash,
         "upload_status": "analyzed",
     }
+    # Persist source text so Page 1 can hydrate via the canonical client analyzer
+    # (server path_geometry_summary alone does not populate nest2 svg_analysis_json).
+    payload_raw["svg_source_text"] = validation.svg_text
     payload_raw["layer_role_setup"] = layer_setup.model_dump(mode="json")
     _sync_selected_layer_refs(payload_raw)
     apply_product_composition_recommendation(payload_raw)
     if svg_source_replaced:
         payload_raw.pop("finish_setup", None)
+        # Clear stale client analysis when a different SVG replaces the source.
+        payload_raw.pop("svg_analysis_json", None)
         clear_return_cant_runtime_product_truth(payload_raw)
     else:
         _reset_internal_draft_quote_confirmation(payload_raw)

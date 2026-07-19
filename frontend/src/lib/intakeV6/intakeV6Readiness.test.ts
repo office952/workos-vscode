@@ -50,6 +50,9 @@ describe("intakeV6Readiness boundary", () => {
     const state = {
       ...initialIntakeV6WorkspaceState,
       currentStep: "review" as const,
+      analyzerStatus: "ready" as const,
+      localFileHash: "hash-a",
+      unsavedAnalysis: false,
       workspace: {
         ...syncedWorkspace,
         readiness_status: "product_composition_not_confirmed",
@@ -60,8 +63,22 @@ describe("intakeV6Readiness boundary", () => {
       },
     };
 
+    expect(canAccessIntakeV6Step(state, "review")).toBe(true);
+    expect(canAccessIntakeV6Step(state, "confirm")).toBe(false);
     expect(canContinueFromReviewStep(state)).toBe(false);
     expect(getIntakeV6FirstBlocker(state)).toMatch(/compoziția produsului/i);
+  });
+
+  it("allows Confirmare only when analysis ready and composition confirmed", () => {
+    const state = {
+      ...initialIntakeV6WorkspaceState,
+      analyzerStatus: "ready" as const,
+      localFileHash: "hash-a",
+      unsavedAnalysis: false,
+      workspace: syncedWorkspace,
+    };
+    expect(canAccessIntakeV6Step(state, "confirm")).toBe(true);
+    expect(canAccessIntakeV6Step(state, "review")).toBe(true);
   });
 
   it("treats missing offer_scope as legacy full product", () => {

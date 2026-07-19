@@ -94,13 +94,21 @@ export function guessLayerAutoRole(
   }
 
   if (isPseudoLayerId(layerKey) || token.startsWith('pseudo ')) {
-    pushCandidate(candidates, 'face', 'high', 'Pseudo-layer from solid vector fill — volumetric letter geometry candidate.')
-    return {
-      autoRole: 'face',
-      autoConfidence: 'high',
-      autoRoleCandidates: candidates,
-      productionHint: 'cnc_cut',
-    }
+    // Unsafe historical short-circuit forced every pseudo fill to `face`.
+    // Keep soft candidates; metrics below + geometry refinement decide proposal.
+    pushCandidate(
+      candidates,
+      'face',
+      'medium',
+      'Pseudo solid fill may be letter geometry — pending shape evidence.',
+    )
+    pushCandidate(
+      candidates,
+      'support_panel',
+      'low',
+      'Pseudo solid fill may be outer support envelope — pending geometry evidence.',
+    )
+    // Fall through to paint/metrics heuristics (multi-shape → face; otherwise unknown).
   }
 
   if (isLogoArtworkLayerName(layerName) || isLogoLayerId(layerKey)) {
