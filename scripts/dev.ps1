@@ -39,7 +39,7 @@ function Set-WorkOsDevModeEnv {
     # Frontend dev auth (Vite build-time / runtime import.meta.env)
     $env:VITE_ENABLE_DEV_AUTH = "true"
     $env:BACKEND_PORT = [string](Get-WorkOsBackendPort)
-    Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
+    [void](Sync-WorkOsViteApiBaseUrl)
 }
 
 function Show-WorkOsDevModeReport {
@@ -56,6 +56,8 @@ function Show-WorkOsDevModeReport {
     Write-Host ("  Health                   = {0}" -f $HealthUrl)
     Write-Host ("  Vite proxy (/api)        = {0}" -f (Get-WorkOsViteProxyTarget))
     Write-Host ("  BACKEND_PORT             = {0}" -f $env:BACKEND_PORT)
+    Write-Host ("  VITE_API_BASE_URL        = {0}" -f $env:VITE_API_BASE_URL)
+    Write-Host ("  Local compat             = {0}/api/v1/system/local-compatibility" -f $BackendUrl)
     Write-Host ("  Backend dev auth         = {0} (APP_ENV={1}, dev_auth_allowed)" -f $(if ($backendDevAuth) { "ENABLED" } else { "DISABLED" }), $env:APP_ENV)
     Write-Host ("  Frontend dev auth        = {0} (VITE_ENABLE_DEV_AUTH={1})" -f $(if ($frontendDevAuth) { "ENABLED" } else { "DISABLED" }), $env:VITE_ENABLE_DEV_AUTH)
     Write-Host ("  Impersonation            = {0}" -f $impersonation)

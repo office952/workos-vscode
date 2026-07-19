@@ -10,15 +10,17 @@ $FrontendDir = Join-Path $Root "frontend"
 Initialize-WorkOsDevPortContract
 Clear-WorkOsParityEnv
 $env:VITE_ENABLE_DEV_AUTH = "true"
-Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
+$viteApiBase = Sync-WorkOsViteApiBaseUrl
 
 $frontendPort = Get-WorkOsFrontendPort
 $proxyTarget = Get-WorkOsViteProxyTarget
 
 Write-Host "=== WorkOS frontend dev ===" -ForegroundColor Cyan
-Write-Host ("  Frontend URL   = {0}" -f (Get-WorkOsFrontendUrl))
-Write-Host ("  Vite proxy     = /api -> {0}" -f $proxyTarget)
-Write-Host ("  BACKEND_PORT   = {0}" -f $env:BACKEND_PORT)
+Write-Host ("  Frontend URL        = {0}" -f (Get-WorkOsFrontendUrl))
+Write-Host ("  Vite proxy          = /api -> {0}" -f $proxyTarget)
+Write-Host ("  BACKEND_PORT        = {0}" -f $env:BACKEND_PORT)
+Write-Host ("  VITE_API_BASE_URL   = {0}" -f $viteApiBase)
+Write-Host ("  Compat probe        = {0}/api/v1/system/local-compatibility" -f $viteApiBase)
 Write-Host ""
 
 Set-Location $FrontendDir

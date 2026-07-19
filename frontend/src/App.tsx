@@ -82,6 +82,7 @@ import { isMockEnabled } from "./lib/mockGuard";
 import { resolveShellCriticalCount } from "./lib/shellAlertTruth";
 import VersionBadge from "./components/system/VersionBadge";
 import EnvironmentBanner from "./components/workos/EnvironmentBanner";
+import LocalApiCompatibilityBanner from "./components/workos/LocalApiCompatibilityBanner";
 import { personalNavItems } from "./lib/personalNavigation";
 
 const queryClient = new QueryClient({
@@ -629,6 +630,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      {/* DEV-only stale/wrong backend banner — outside shell so Intake V6 sees it too */}
+      <LocalApiCompatibilityBanner />
       <BrowserRouter future={{ v7_relativeSplatPath: true }}>
         <AuthProvider>
           <Routes>

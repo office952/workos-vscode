@@ -6,6 +6,7 @@
     "dev:stack": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1",
     "dev:backend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-backend.ps1",
     "dev:frontend": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-frontend.ps1",
+    "diag:local-listeners": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/workos-local-listeners.ps1",
     "test:startup-contract": "node --test scripts/canonical_startup_contract.test.mjs",
     "dev": "vite",
     "build": "vite build",

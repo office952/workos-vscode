@@ -33,7 +33,7 @@ function Set-WorkOsLocalDevEnv {
     $env:ALLOWED_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000"
     $env:VITE_ENABLE_DEV_AUTH = "true"
     $env:BACKEND_PORT = [string](Get-WorkOsBackendPort)
-    Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
+    [void](Sync-WorkOsViteApiBaseUrl)
 }
 
 function Show-WorkOsLocalDevSummary {
@@ -51,10 +51,12 @@ function Show-WorkOsLocalDevSummary {
     Write-Host ("  DEBUG                    = {0}" -f $env:DEBUG)
     Write-Host ("  VITE_ENABLE_DEV_AUTH     = {0}" -f $env:VITE_ENABLE_DEV_AUTH)
     Write-Host ("  BACKEND_PORT             = {0}" -f $env:BACKEND_PORT)
+    Write-Host ("  VITE_API_BASE_URL        = {0}" -f $env:VITE_API_BASE_URL)
     Write-Host ("  Vite proxy (/api)        = {0}" -f (Get-WorkOsViteProxyTarget))
     Write-Host ("  Backend                  = {0}" -f $backendUrl)
     Write-Host ("  Frontend                 = {0}" -f $frontendUrl)
     Write-Host ("  Health                   = {0}/health" -f $backendUrl)
+    Write-Host ("  Local compat             = {0}/api/v1/system/local-compatibility" -f $backendUrl)
     Write-Host ("  ProductSystem            = {0}{1}" -f $frontendUrl, $ProductSystemPath)
     Write-Host ("  Pricing                  = {0}{1}" -f $frontendUrl, $PricingPath)
     Write-Host ""
@@ -391,14 +393,17 @@ if (-not (Test-Path "node_modules")) {
 }
 Write-Host "Starting frontend (Ctrl+C stops frontend; backend job will be stopped if started here)..." -ForegroundColor Green
 
+$viteApiBaseForJob = Sync-WorkOsViteApiBaseUrl
 $frontendJob = Start-Job -ScriptBlock {
-    param($FrontendDir, $BackendPort, $FrontendPort)
+    param($FrontendDir, $BackendPort, $FrontendPort, $ViteApiBaseUrl)
     Set-Location $FrontendDir
     $env:BACKEND_PORT = [string]$BackendPort
     $env:VITE_ENABLE_DEV_AUTH = "true"
-    Remove-Item Env:VITE_API_BASE_URL -ErrorAction SilentlyContinue
+    if ($ViteApiBaseUrl) {
+        $env:VITE_API_BASE_URL = [string]$ViteApiBaseUrl
+    }
     npx --yes pnpm@8.10.0 run dev --host 127.0.0.1 --port $FrontendPort
-} -ArgumentList $FrontendDir, $BackendPort, $FrontendPort
+} -ArgumentList $FrontendDir, $BackendPort, $FrontendPort, $viteApiBaseForJob
 
 $frontendReady = Wait-ForService -Name "Frontend" -Probe { Test-HttpOk -Url $FrontendUrl }
 if (-not $frontendReady) {

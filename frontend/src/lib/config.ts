@@ -13,13 +13,15 @@ const SAME_ORIGIN_CONFIG: RuntimeConfig = {
   API_BASE_URL: '',
 };
 
-// In dev mode, point directly at the locally controlled backend instance.
-// Prefer VITE_API_BASE_URL so a ghost/stale listener on the default port can be bypassed.
+// In Vite DEV:
+// 1) Explicit VITE_API_BASE_URL wins (bypass proxy / target a specific instance).
+// 2) Otherwise same-origin '' so product traffic uses the Vite `/api` proxy
+//    (BACKEND_PORT) — avoids a hardcoded ghost port like :8001.
 const DEV_LOCAL_CONFIG: RuntimeConfig = {
   API_BASE_URL:
     typeof import.meta.env.VITE_API_BASE_URL === 'string' && import.meta.env.VITE_API_BASE_URL.trim()
       ? import.meta.env.VITE_API_BASE_URL.trim().replace(/\/$/, '')
-      : 'http://127.0.0.1:8001',
+      : '',
 };
 
 function isExplicitDevMode(): boolean {

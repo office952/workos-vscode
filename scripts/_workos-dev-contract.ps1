@@ -39,6 +39,19 @@ function Get-WorkOsViteProxyTarget {
     return "http://$($script:WorkOsDefaultBackendHost):$port"
 }
 
+function Sync-WorkOsViteApiBaseUrl {
+    <#
+    .SYNOPSIS
+      Ensure VITE_API_BASE_URL matches the configured backend URL when unset.
+      Never clears an explicit operator/developer value.
+    #>
+    Initialize-WorkOsDevPortContract
+    if (-not $env:VITE_API_BASE_URL -or -not "$($env:VITE_API_BASE_URL)".Trim()) {
+        $env:VITE_API_BASE_URL = Get-WorkOsBackendUrl
+    }
+    return $env:VITE_API_BASE_URL
+}
+
 function Clear-WorkOsParityEnv {
     $names = @(
         'PARITY_OBSERVE_ENABLED',
