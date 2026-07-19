@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { readPersistedOfferScope } from "@/lib/intakeV6/intakeV6OfferScopeState";
 import { describeOfferScopeSummary } from "@/lib/intakeV6/intakeV6OfferScopePresets";
 
+/** Compact scope chip — must not compete with the active form. */
 export default function IntakeV6OfferScopeReviewSummary({
   payload,
 }: {
@@ -17,55 +18,44 @@ export default function IntakeV6OfferScopeReviewSummary({
 
   return (
     <section
-      className="rounded-md border border-[#2A3548]/55 bg-[#111827]/40 px-3 py-2"
+      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#2A3548]/55 bg-[#111827]/30 px-2.5 py-1"
       data-testid="intake-v6-review-offer-scope-summary"
+      data-scope-weight="chip"
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-            <Package className="h-3 w-3 text-slate-500" aria-hidden />
-            Scope ofertă
-          </p>
-          <p
-            className="mt-1 text-[12px] text-slate-300"
-            data-testid="intake-v6-review-offer-scope-mode"
-          >
-            {summary.requestModeLabelRo}
-            {summary.activeLabelsRo.length > 0 ? (
-              <span className="text-slate-500">
-                {" "}
-                ·{" "}
-                <span data-testid="intake-v6-review-offer-scope-active">
-                  {summary.activeLabelsRo.join(", ")}
-                </span>
-              </span>
-            ) : null}
-          </p>
-          {!hasExcluded ? (
-            <p
-              className="mt-0.5 text-[11px] text-slate-600"
-              data-testid="intake-v6-review-offer-scope-full"
-            >
-              Toate componentele produsului sunt în scope.
-            </p>
-          ) : null}
-        </div>
-        {hasExcluded ? (
-          <button
-            type="button"
-            className="inline-flex shrink-0 items-center gap-1 rounded border border-[#2A3548]/70 px-2 py-1 text-[10px] font-semibold text-slate-400 hover:text-slate-200"
-            onClick={() => setOpen((value) => !value)}
-            aria-expanded={open}
-            data-testid="intake-v6-review-offer-scope-disclosure"
-          >
-            Detalii
-            <ChevronDown className={`h-3 w-3 transition ${open ? "rotate-180" : ""}`} aria-hidden />
-          </button>
+      <Package className="h-3 w-3 shrink-0 text-slate-500" aria-hidden />
+      <p
+        className="min-w-0 truncate text-[11px] text-slate-400"
+        data-testid="intake-v6-review-offer-scope-mode"
+      >
+        <span className="font-semibold text-slate-500">Scope</span>
+        {" · "}
+        {summary.requestModeLabelRo}
+        {summary.activeLabelsRo.length > 0 ? (
+          <span data-testid="intake-v6-review-offer-scope-active">
+            {" · "}
+            {summary.activeLabelsRo.join(", ")}
+          </span>
         ) : null}
-      </div>
+      </p>
+      {!hasExcluded ? (
+        <span className="sr-only" data-testid="intake-v6-review-offer-scope-full">
+          Toate componentele produsului sunt în scope.
+        </span>
+      ) : (
+        <button
+          type="button"
+          className="inline-flex shrink-0 items-center gap-0.5 text-[10px] font-semibold text-slate-500 hover:text-slate-300"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          data-testid="intake-v6-review-offer-scope-disclosure"
+        >
+          Detalii
+          <ChevronDown className={`h-3 w-3 transition ${open ? "rotate-180" : ""}`} aria-hidden />
+        </button>
+      )}
       {open && hasExcluded ? (
         <p
-          className="mt-2 border-t border-[#2A3548]/50 pt-2 text-[11px] text-slate-500"
+          className="basis-full text-[10px] text-slate-500"
           data-testid="intake-v6-review-offer-scope-excluded"
         >
           Nu sunt incluse: {summary.excludedLabelsRo.join(", ")}

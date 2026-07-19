@@ -21,7 +21,7 @@ const RUNTIME_BLOCKER_OPERATOR_MESSAGES: Record<string, string> = {
   LAYER_ROLES_INCOMPLETE:
     "Rolurile straturilor trebuie confirmate în Pasul 1.",
   MOUNTING_SOLUTION_MISSING:
-    "Soluția de montaj lipsește. Alege șablon montaj (fără ACM/metal) sau o structură Product System în tab-ul Montaj.",
+    "Soluția de montaj lipsește. Alege șablon montaj (fără ACM/metal) sau o structură de suport în tab-ul Montaj.",
   MOUNTING_SOLUTION_INVALID:
     "Soluția de montaj selectată nu este validă. Alege metal, ACM casetat sau șablon montaj.",
 };

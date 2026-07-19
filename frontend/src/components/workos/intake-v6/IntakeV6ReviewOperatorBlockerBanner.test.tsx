@@ -30,24 +30,23 @@ const blockedDisplay: OperatorBlockerBannerDisplay = {
 };
 
 describe("IntakeV6ReviewOperatorBlockerBanner", () => {
-  it("renders compact summary without footer-next-step duplication", () => {
+  it("renders compact corner chip without full-width slab copy", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
     expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-title")).toHaveTextContent(
-      /Configurarea necesită atenție · 1 blocant/i,
+      /! 1 problemă/i,
     );
     expect(screen.getByTestId("intake-v6-review-operator-blocker-banner")).toHaveAttribute(
       "data-attention-weight",
-      "compact",
+      "corner",
     );
-    expect(screen.queryByTestId("intake-v6-review-operator-blocker-footer-hint")).not.toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-expand-hint")).toHaveTextContent(/Deschide lista/i);
-    expect(screen.queryByTestId("intake-v6-review-operator-blocker-compact-one")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Următorul pas este în footer/i)).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-review-operator-blocker-banner-list")).not.toBeInTheDocument();
   });
 
-  it("expands to show issue details without raw-only generic panel", () => {
+  it("expands to show issue details", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
     fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-banner-toggle"));
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-messages")).toHaveTextContent(
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-list")).toHaveTextContent(
       /Referințele straturilor selectate lipsesc/i,
     );
   });

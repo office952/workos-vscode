@@ -770,7 +770,7 @@ describe("IntakeV6ConfirmStep", () => {
 
     expect(screen.getByTestId("intake-v6-confirm-consolidated-observations")).toHaveTextContent(
 
-      /Confirmă finisajele/i,
+      /finisajele/i,
 
     );
 

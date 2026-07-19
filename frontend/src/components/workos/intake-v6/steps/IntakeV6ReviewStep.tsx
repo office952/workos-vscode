@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import {
   getIntakeV6AiInformationalAssistCandidate,
@@ -208,6 +207,8 @@ import {
 import IntakeV6ReviewTabNav, { type IntakeV6ReviewTabId } from "../IntakeV6ReviewTabNav";
 import IntakeV6OfferScopeReviewSummary from "../IntakeV6OfferScopeReviewSummary";
 import IntakeV6ReviewOperatorBlockerBanner from "../IntakeV6ReviewOperatorBlockerBanner";
+import IntakeV6ReviewFormRegion from "../IntakeV6ReviewFormRegion";
+import IntakeV6ReviewDiagnosticDrawer from "../IntakeV6ReviewDiagnosticDrawer";
 import IntakeV6ReviewSectionShell from "../atoms/IntakeV6ReviewSectionShell";
 import {
   REVIEW_FIELD_BLOCK_CLASS,
@@ -1272,11 +1273,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     };
   }, [workspaceId, analysisIdentityKey, analysisReady, previewRefresh.breakdown, previewRefresh.pricedQuote]);
 
+  // Lazy: fetch diagnostic read-models only when the separate drawer opens.
   useEffect(() => {
-    if (!workspaceId) {
-      setRuntimeCaptureReadModel(null);
-      setRuntimeCaptureReadModelError(null);
-      setLoadingRuntimeCaptureReadModel(false);
+    if (!workspaceId || !diagnosticSectionOpen) {
+      if (!diagnosticSectionOpen) {
+        setLoadingRuntimeCaptureReadModel(false);
+      }
       return;
     }
     let cancelled = false;
@@ -1306,13 +1308,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, state.workspace?.updated_at]);
+  }, [workspaceId, state.workspace?.updated_at, diagnosticSectionOpen]);
 
   useEffect(() => {
-    if (!workspaceId) {
-      setProductTruthPromotionPlanner(null);
-      setProductTruthPromotionPlannerError(null);
-      setLoadingProductTruthPromotionPlanner(false);
+    if (!workspaceId || !diagnosticSectionOpen) {
+      if (!diagnosticSectionOpen) {
+        setLoadingProductTruthPromotionPlanner(false);
+      }
       return;
     }
     let cancelled = false;
@@ -1342,7 +1344,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     return () => {
       cancelled = true;
     };
-  }, [workspaceId, state.workspace?.updated_at]);
+  }, [workspaceId, state.workspace?.updated_at, diagnosticSectionOpen]);
 
   useEffect(() => {
     if (commercialInputsDirty && commercialInputsPendingSave) return;
@@ -2160,22 +2162,29 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) : null}
       {analysisReady ? (
         <>
-      <div className="mb-4">
-        <IntakeV6ProductCompositionPanel
-          payload={state.workspace?.payload as Record<string, unknown> | undefined}
-          linkedSegments={productDefinitionPreview?.linked_template_runtime_segments ?? null}
-          onConfirm={(items) => void confirmProductComposition(items)}
-        />
+      <div
+        className="mb-2 flex flex-wrap items-center gap-2"
+        data-testid="intake-v6-review-identity-strip"
+      >
+        <div className="min-w-0 flex-1">
+          <IntakeV6ProductCompositionPanel
+            payload={state.workspace?.payload as Record<string, unknown> | undefined}
+            linkedSegments={productDefinitionPreview?.linked_template_runtime_segments ?? null}
+            onConfirm={(items) => void confirmProductComposition(items)}
+            compact
+          />
+        </div>
+        <IntakeV6OfferScopeReviewSummary payload={payload} />
       </div>
       {logoOnlyCandidateNotOfferable ? (
         <div
-          className="mb-4 rounded border border-amber-500/35 bg-amber-500/10 px-4 py-3 text-[12px] leading-relaxed text-amber-100"
+          className="mb-2 rounded border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-100"
           data-testid="intake-v6-review-logo-only-commercial-guard"
         >
           <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
         </div>
       ) : null}
-      <div className="mb-4 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
+      <div className="mb-2 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
         <IntakeV6LiveCalculationSummary
           breakdown={breakdown}
           faceBackDraft={faceBackPrepDraft.draft}
@@ -2195,35 +2204,32 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       </div>
 
       <div
-        className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(300px,340px)] xl:grid-cols-[minmax(0,1fr)_minmax(320px,360px)]"
+        className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] xl:grid-cols-[minmax(0,1fr)_minmax(300px,340px)]"
         data-testid="intake-v6-review-layout"
       >
         <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
-      <div className="mb-3">
-        <IntakeV6OfferScopeReviewSummary payload={payload} />
-      </div>
-      <IntakeV6ReviewOperatorBlockerBanner
-        display={operatorBlockerBannerDisplay}
-        nextStepGuidance={
-          isProductCompositionConfirmed(
-            state.workspace?.payload as Record<string, unknown> | undefined,
-          )
-            ? reviewHandoffSurfacing.nextStepGuidance
-            : null
+      <IntakeV6ReviewFormRegion
+        tabNav={
+          <IntakeV6ReviewTabNav
+            active={reviewTab}
+            onChange={setReviewTab}
+            templateCode={modularTemplateCode}
+            tabs={scopedReviewTabs}
+            compositionAuthority={compositionProvenance.compositionAuthority}
+            pendingFinisaje={pendingConfirmationCount}
+            illuminated={form.illuminated !== false}
+          />
         }
-        suppressCompactDetail
-        onJumpToDiagnostic={handleJumpToDiagnostic}
-        onFocusTarget={handleOperatorBlockerFocus}
-      />
-      <IntakeV6ReviewTabNav
-        active={reviewTab}
-        onChange={setReviewTab}
-        templateCode={modularTemplateCode}
-        tabs={scopedReviewTabs}
-        compositionAuthority={compositionProvenance.compositionAuthority}
-        pendingFinisaje={pendingConfirmationCount}
-        illuminated={form.illuminated !== false}
-      />
+        attention={
+          <IntakeV6ReviewOperatorBlockerBanner
+            display={operatorBlockerBannerDisplay}
+            nextStepGuidance={null}
+            suppressCompactDetail
+            onJumpToDiagnostic={handleJumpToDiagnostic}
+            onFocusTarget={handleOperatorBlockerFocus}
+          />
+        }
+      >
       <div
         className="sr-only"
         data-testid="intake-v6-full-product-composition"
@@ -2259,6 +2265,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               description="Față · Cant · Spate — decizii pe strat."
               testId="intake-v6-review-section-face-letters"
               compact
+              hideHeading
             >
             {effectiveLetterGroups.length > 0 ? (
             <IntakeV6ReviewLetterGroupsSection
@@ -2339,6 +2346,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               description="Alege LED-ul și sursa; rezultatele calculate apar separat."
               testId="intake-v6-review-section-lighting"
               compact
+              hideHeading
             >
               <IntakeV6ReviewLightingSection
                 illuminated={form.illuminated !== false}
@@ -2407,11 +2415,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         ) : null}
 
         {reviewTab === "montaj" ? (
-          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-3">
-            <p
-              className="text-[11px] text-slate-500"
-              data-testid="intake-v6-montaj-readiness-summary"
-            >
+          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-2">
+            <p className="sr-only" data-testid="intake-v6-montaj-readiness-summary">
               {acpProductActive
                 ? "Fundal și carcasă primul · montaj comercial doar dacă e în ofertă"
                 : "Montaj comercial · fundal/suport · detalii avansate"}
@@ -2425,10 +2430,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               }
               testId="intake-v6-review-section-montaj"
               compact
+              hideHeading
             >
             <div
-              className={`${v6.cardCompact} !p-3 flex flex-col gap-3`}
+              className="flex flex-col gap-2.5"
               data-fundal-first={acpProductActive ? "true" : "false"}
+              data-montaj-nesting="flat"
             >
               <div className={acpProductActive ? "order-2" : "order-1"}>
               <IntakeV6TechnicalDetailsAccordion
@@ -3383,22 +3390,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       <p className="text-[11px] font-semibold text-cyan-300">Modul volum aluminiu</p>
                       <p className="text-[10px] text-slate-400">Legat modular de template-ul mamă.</p>
                     </div>
-                    {selectedVolumAluminumModule ? (
-                      <div className="flex items-center gap-2 text-[10px]">
-                        <Link
-                          to={`/product-system?template=${encodeURIComponent(selectedVolumAluminumModule.module_template_code)}`}
-                          className="rounded border border-cyan-800/50 px-2 py-1 text-cyan-300 hover:bg-cyan-900/30"
-                        >
-                          Product System
-                        </Link>
-                        <Link
-                          to={`/inventory/pricing?template=${encodeURIComponent(selectedVolumAluminumModule.module_template_code)}`}
-                          className="rounded border border-cyan-800/50 px-2 py-1 text-cyan-300 hover:bg-cyan-900/30"
-                        >
-                          Pricing
-                        </Link>
-                      </div>
-                    ) : null}
+                    {null}
                   </div>
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>Template modul</span>
@@ -3432,6 +3424,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           </div>
         ) : null}
       </div>
+      </IntakeV6ReviewFormRegion>
 
       <IntakeV6ReviewSaveFooter
         saving={saving}
@@ -3507,15 +3500,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </p>
       ) : null}
 
-      <IntakeV6TechnicalDetailsAccordion
-        title={INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE}
-        testId="intake-v6-review-technical-details"
-        defaultOpen={false}
+      <div ref={diagnosticRef}>
+      <IntakeV6ReviewDiagnosticDrawer
         open={diagnosticSectionOpen}
         onOpenChange={setDiagnosticSectionOpen}
-        itemCount={reviewDiagnosticEntryCount}
-        hint="Pentru verificare avansată"
-        className="mb-4 mt-2"
+        title={`${INTAKE_V6_REVIEW_DIAGNOSTIC_SECTION_TITLE}${
+          reviewDiagnosticEntryCount > 0 ? ` · ${reviewDiagnosticEntryCount}` : ""
+        }`}
       >
       {returnCantReadonlyAwareness.operator_readiness === "blocked" ? (
         <IntakeV6ReturnCantBlockedStateAwarenessPanel model={returnCantReadonlyAwareness} />
@@ -3525,11 +3516,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           variant="technicalOnly"
         />
       ) : null}
-      <div
-        ref={diagnosticRef}
-        id="intake-v6-review-diagnostic-tehnic"
-        data-testid="intake-v6-review-diagnostic-tehnic"
-      >
       <FormSystemBackboneAwarenessPanel
         backbone={modularFormContractHook.contract?.form_system_backbone ?? null}
         runtimeState={backboneRuntimeState}
@@ -3546,10 +3532,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         loading={loadingProductTruthPromotionPlanner}
         error={productTruthPromotionPlannerError}
       />
-      </div>
       {binding ? (
         <div className={`${v6.card} mb-0`} data-testid="intake-v6-review-binding">
-          <h3 className={`mb-1 ${v6.sectionTitle}`}>ProductSystem</h3>
+          <h3 className={`mb-1 ${v6.sectionTitle}`}>Legături template (tehnic)</h3>
           <p className="text-[11px] text-slate-400">
             {binding.template_label ?? binding.template_code} · {binding.operation_count} operații
           </p>
@@ -3865,7 +3850,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             ) : null}
           </div>
       ) : null}
-      </IntakeV6TechnicalDetailsAccordion>
+      </IntakeV6ReviewDiagnosticDrawer>
+      </div>
 
         </>
       ) : null}

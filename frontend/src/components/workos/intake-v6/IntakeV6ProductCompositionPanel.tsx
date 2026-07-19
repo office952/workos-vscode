@@ -196,56 +196,37 @@ export default function IntakeV6ProductCompositionPanel({
 
   return (
     <section
-      className={`rounded-md border px-3 py-2.5 sm:px-3.5 ${
+      className={`rounded-md border px-2.5 py-1.5 ${
         confirmed
-          ? "border-[#2A3548]/70 bg-[#111827]/50"
+          ? "border-[#2A3548]/55 bg-[#111827]/35"
           : blockers.length > 0
-            ? "border-rose-500/35 bg-rose-950/20"
-            : "border-[#2A3548]/90 bg-[#111827]/70"
+            ? "border-rose-500/30 bg-rose-950/15"
+            : "border-[#2A3548]/70 bg-[#111827]/45"
       }`}
       data-testid="intake-v6-product-composition-panel"
+      data-header-weight="compact-row"
     >
-      <button
-        type="button"
-        className="flex w-full items-start justify-between gap-3 text-left"
-        onClick={() => setOpen((value) => !value)}
-        aria-expanded={open}
-        aria-label={`Compoziție produs — ${open ? "expandat" : "restrâns"}`}
-        data-testid="intake-v6-product-composition-toggle"
-      >
-        <div className="min-w-0">
-          <p className="flex items-center gap-2 text-[13px] font-semibold text-slate-100">
-            <Layers3 className="h-3.5 w-3.5 text-slate-400" aria-hidden />
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          className="flex min-w-0 flex-1 items-center gap-2 text-left"
+          onClick={() => setOpen((value) => !value)}
+          aria-expanded={open}
+          aria-label={`Compoziție produs — ${open ? "expandat" : "restrâns"}`}
+          data-testid="intake-v6-product-composition-toggle"
+        >
+          <Layers3 className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+          <span className="shrink-0 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             Produs
-          </p>
-          <p className="mt-1 text-[12px] text-slate-300" data-testid="intake-v6-product-composition-summary">
-            {compositionLabel(recommendation.composition_type)}
-          </p>
-          {componentSummary ? (
-            <p className="mt-0.5 text-[11px] text-slate-500" data-testid="intake-v6-product-composition-components">
-              {componentSummary}
-            </p>
-          ) : null}
-          {linkedSegmentItems.length > 0 ? (
-            <p className="mt-1 text-[10px] text-slate-600" data-testid="intake-v6-product-composition-linked-count">
-              {linkedSegmentItems.length}{" "}
-              {linkedSegmentItems.length === 1 ? "segment legat" : "segmente legate"}
-            </p>
-          ) : null}
-          {blockers.length > 0 && !open ? (
-            <p className="mt-1 text-[11px] text-rose-200/90">
-              {blockers.length} blocant{blockers.length === 1 ? "" : "e"} — expandă pentru detalii
-            </p>
-          ) : null}
-          {warnings.length > 0 && blockers.length === 0 && !open ? (
-            <p className="mt-1 text-[11px] text-slate-500">
-              Context tehnic disponibil în detalii
-            </p>
-          ) : null}
-        </div>
-        <div className="flex shrink-0 items-center gap-2">
+          </span>
           <span
-            className={`rounded border px-2 py-0.5 text-[10px] font-semibold ${
+            className="min-w-0 truncate text-[12px] font-medium text-slate-200"
+            data-testid="intake-v6-product-composition-summary"
+          >
+            {compositionLabel(recommendation.composition_type)}
+          </span>
+          <span
+            className={`ml-auto shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${
               confirmed
                 ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-300"
                 : blockers.length > 0
@@ -255,21 +236,32 @@ export default function IntakeV6ProductCompositionPanel({
           >
             {statusLabel}
           </span>
-          <ChevronDown className={`h-4 w-4 text-slate-500 transition ${open ? "rotate-180" : ""}`} aria-hidden />
-        </div>
-      </button>
-
-      {/* Required confirmation stays on L1 — never only inside technical disclosure. */}
-      {canConfirm && onConfirm ? (
-        <button
-          type="button"
-          className={`${v6.btnPrimary} mt-2.5 inline-flex items-center gap-1.5 text-[11px]`}
-          data-testid="intake-v6-confirm-product-composition"
-          onClick={() => onConfirm(items as Array<Record<string, unknown>>)}
-        >
-          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
-          Confirmă compoziția produsului
+          <ChevronDown
+            className={`h-3.5 w-3.5 shrink-0 text-slate-500 transition ${open ? "rotate-180" : ""}`}
+            aria-hidden
+          />
         </button>
+        {canConfirm && onConfirm ? (
+          <button
+            type="button"
+            className={`${v6.btnPrimary} inline-flex shrink-0 items-center gap-1 px-2.5 py-1 text-[11px]`}
+            data-testid="intake-v6-confirm-product-composition"
+            onClick={() => onConfirm(items as Array<Record<string, unknown>>)}
+          >
+            <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+            Confirmă
+          </button>
+        ) : null}
+      </div>
+      {/* Component mini-dashboard only when expanded — not first-paint L1. */}
+      <span className="sr-only" data-testid="intake-v6-product-composition-components">
+        {componentSummary}
+      </span>
+      {linkedSegmentItems.length > 0 ? (
+        <span className="sr-only" data-testid="intake-v6-product-composition-linked-count">
+          {linkedSegmentItems.length}{" "}
+          {linkedSegmentItems.length === 1 ? "segment legat" : "segmente legate"}
+        </span>
       ) : null}
 
       {open ? (

@@ -184,45 +184,47 @@ export default function IntakeV6OperatorWorkspaceFooter({
 
   return (
     <footer
-      className="sticky bottom-0 z-10 mt-auto border-t border-[#2A3548] bg-[#111827]/95 px-7 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.35)] backdrop-blur-sm"
+      className="sticky bottom-0 z-10 mt-auto border-t border-[#2A3548] bg-[#111827]/95 px-5 py-2 shadow-[0_-6px_18px_rgba(0,0,0,0.28)] backdrop-blur-sm"
       data-testid="intake-v6-operator-workspace-footer"
+      data-footer-weight="compact"
     >
       {(nextDisabled || isHandoffStep || guidance.nextAction || !guidance.canContinue) &&
       (primaryActionReason || guidance.progressLabel || guidance.countsLabel) ? (
         <div
           id="intake-v6-footer-primary-action-reason"
-          className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
+          className="mb-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5 text-[11px] leading-snug text-slate-300"
           data-testid="intake-v6-footer-primary-action-reason"
           data-guidance-status={guidance.statusLabel}
           role="status"
           aria-live="polite"
         >
-          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5" data-testid="intake-v6-guidance-spine">
-            <span className="font-semibold text-amber-50" data-testid="intake-v6-guidance-status">
-              {guidance.statusLabel}
+          <span className="font-semibold text-slate-200" data-testid="intake-v6-guidance-status">
+            {guidance.statusLabel}
+          </span>
+          {guidance.progressLabel ? (
+            <span className="text-slate-500" data-testid="intake-v6-guidance-progress">
+              · {guidance.progressLabel}
             </span>
-            {guidance.progressLabel ? (
-              <span className="text-amber-100/70" data-testid="intake-v6-guidance-progress">
-                · {guidance.progressLabel}
-              </span>
-            ) : null}
-            {guidance.countsLabel ? (
-              <span className="text-amber-100/70" data-testid="intake-v6-guidance-counts">
-                · {guidance.countsLabel}
-              </span>
-            ) : null}
-          </p>
+          ) : null}
+          {guidance.countsLabel ? (
+            <span className="text-slate-500" data-testid="intake-v6-guidance-counts">
+              · {guidance.countsLabel}
+            </span>
+          ) : null}
           {primaryActionReason ? (
-            <p className="mt-1 text-amber-50/95" data-testid="intake-v6-guidance-next-action">
-              <span className="font-semibold text-amber-50">Următorul pas: </span>
+            <span className="basis-full text-slate-200" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold text-slate-100">Următorul pas: </span>
               {primaryActionReason}
-            </p>
+            </span>
           ) : guidance.canContinue ? (
-            <p className="mt-1 text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
+            <span className="basis-full text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
               <span className="font-semibold">Următorul pas: </span>
               {guidance.continueEnabledLabel}
-            </p>
+            </span>
           ) : null}
+          <span className="sr-only" data-testid="intake-v6-guidance-spine">
+            {guidance.statusLabel}
+          </span>
         </div>
       ) : null}
 

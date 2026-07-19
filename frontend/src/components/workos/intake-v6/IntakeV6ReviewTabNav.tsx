@@ -33,11 +33,12 @@ export default function IntakeV6ReviewTabNav({
 
   return (
     <div
-      className="mb-3 flex flex-wrap gap-1 border-b border-[#2A3548]/80 pb-0"
+      className="mb-0 flex flex-wrap gap-0.5 pb-0"
       role="tablist"
-      aria-label="Secțiuni review"
+      aria-label="Secțiuni formular"
       data-testid="intake-v6-review-tabs"
       data-composition-authority={compositionAuthority ? "contract" : "plugin-fallback"}
+      data-tabs-own-form="true"
     >
       {tabs.map((tab) => {
         const selected = active === tab.id;
@@ -49,10 +50,10 @@ export default function IntakeV6ReviewTabNav({
             role="tab"
             aria-selected={selected}
             className={joinClassNames(
-              "relative -mb-px flex min-w-[5.5rem] flex-col rounded-t-md border px-2.5 py-1.5 text-left transition",
+              "relative -mb-px flex min-w-[4.75rem] flex-col rounded-t-md border px-2.5 py-1.5 text-left transition",
               selected
-                ? "border-[#2A3548] border-b-[#111827] bg-[#111827] text-slate-100"
-                : "border-transparent text-slate-500 hover:text-slate-300",
+                ? "border-[#2A3548]/90 border-b-[#0B1220] bg-[#0B1220] text-slate-100"
+                : "border-transparent text-slate-500 hover:bg-[#111827]/50 hover:text-slate-300",
             )}
             onClick={() => onChange(tab.id)}
             data-testid={`intake-v6-review-tab-${tab.id}`}
@@ -69,7 +70,7 @@ export default function IntakeV6ReviewTabNav({
                 </span>
               ) : null}
             </span>
-            <span className="mt-0.5 truncate text-[11px] font-normal text-slate-500">{tab.hint}</span>
+            <span className="mt-0.5 truncate text-[10px] font-normal text-slate-500">{tab.hint}</span>
           </button>
         );
       })}

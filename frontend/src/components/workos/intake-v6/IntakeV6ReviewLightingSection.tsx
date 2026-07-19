@@ -280,9 +280,6 @@ export default function IntakeV6ReviewLightingSection({
                 <Power className="h-3.5 w-3.5 text-amber-200/90" aria-hidden />
                 Decizii alimentare
               </p>
-              <p className={v6Pilot.helper}>
-                Sursele pentru iluminarea literelor (nu alimentarea 220V a carcasei multi-panou).
-              </p>
               <div className="grid gap-2.5 sm:grid-cols-2">
                 {!hideContractManagedFields ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>

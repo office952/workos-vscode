@@ -98,9 +98,14 @@ export default function IntakeV6FinalConfigurationSummary({
 					</p>
 				) : null}
 
+				{/* One readiness summary — checklist owns the action; do not re-list every observation. */}
 				<ConsolidatedBlockersList
 					headline={handoff.consolidatedStatus.headline}
-					observations={handoff.consolidatedStatus.observations}
+					observations={
+						showHandoffPanel
+							? handoff.consolidatedStatus.observations.slice(0, 1)
+							: handoff.consolidatedStatus.observations
+					}
 					tier={handoff.consolidatedStatus.tier}
 				/>
 
@@ -136,7 +141,7 @@ export default function IntakeV6FinalConfigurationSummary({
 							<div>
 								<h3 className={v6.sectionTitle}>Oferta pretuita</h3>
 								<p className="mt-1 text-[11px] text-slate-400">
-									Scrie totalurile comerciale V6 pe oferta. Nu creeaza comanda, executie sau miscari de stoc.
+									Total comercial pe ofertă — fără comandă sau stoc.
 								</p>
 							</div>
 							<span className="text-[12px] font-semibold text-slate-100" data-testid="intake-v6-priced-quote-total">
@@ -146,8 +151,10 @@ export default function IntakeV6FinalConfigurationSummary({
 								})} ${handoff.pricedQuoteDryRun?.commercial_totals?.currency ?? "RON"}`}
 							</span>
 						</div>
-						{handoff.createPricedQuoteDisabledReason ? (
-							<p className="mb-2 text-[11px] text-amber-200" data-testid="intake-v6-priced-quote-disabled-reason">
+						{handoff.createPricedQuoteDisabledReason &&
+						!handoff.canCreatePricedQuote &&
+						!/finisaj|draft intern|confirm/i.test(handoff.createPricedQuoteDisabledReason) ? (
+							<p className="mb-2 text-[11px] text-slate-400" data-testid="intake-v6-priced-quote-disabled-reason">
 								{handoff.createPricedQuoteDisabledReason}
 							</p>
 						) : null}

@@ -79,12 +79,21 @@ export function normalizeGuidanceNextAction(raw: string | null | undefined): str
   if (raw == null) return null;
   let text = String(raw).trim();
   if (!text) return null;
-  text = text.replace(/\s*propusă de analyzer\.?/gi, ".");
-  text = text.replace(/\s*propusa de analyzer\.?/gi, ".");
-  text = text.replace(/\banalyzer\b/gi, "sistem");
+  text = text.replace(/\s*propus[ăa] de analyzer\.?/gi, "");
+  text = text.replace(/\s*înainte de priced dry-run ready\.?/gi, "");
+  text = text.replace(/\s*inainte de priced dry-run ready\.?/gi, "");
+  text = text.replace(/\bpriced dry-run ready\b/gi, "");
+  text = text.replace(/\bdry-run\b/gi, "");
+  text = text.replace(/\banalyzer\b/gi, "");
+  text = text.replace(/\s{2,}/g, " ");
+  text = text.replace(/\s+([.!?])/g, "$1");
   text = text.replace(/\.\s*\./g, ".");
-  text = text.replace(/\s+/g, " ").trim();
-  return text;
+  text = text.trim();
+  if (/compozi[țt]ie/i.test(text) && /confirm/i.test(text)) {
+    return "Confirmă compoziția produsului.";
+  }
+  if (text && !/[.!?]$/.test(text)) text = `${text}.`;
+  return text || null;
 }
 
 function buildLayersProgress(state: IntakeV6WorkspaceState): IntakeV6GuidanceProgressItem[] {
