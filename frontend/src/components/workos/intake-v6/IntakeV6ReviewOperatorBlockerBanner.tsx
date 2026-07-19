@@ -22,7 +22,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
   if (display.loading) {
     return (
       <p
-        className="mb-3 rounded-md border border-[#2A3548] bg-[#0A0F1A]/60 px-4 py-2.5 text-[12px] text-slate-400"
+        className="mb-2 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/50 px-2.5 py-1.5 text-[12px] text-slate-400"
         data-testid="intake-v6-review-operator-blocker-banner-loading"
       >
         Verific blocajele operator…
@@ -34,7 +34,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
     if (!nextStepGuidance) return null;
     return (
       <p
-        className="mb-3 rounded-md border border-[#2A3548]/80 bg-[#0A0F1A]/50 px-3 py-2 text-[12px] text-slate-300"
+        className="mb-2 rounded border border-[#2A3548]/60 bg-[#0A0F1A]/40 px-2.5 py-1.5 text-[12px] text-slate-400"
         data-testid="intake-v6-review-next-step-guidance"
         role="status"
       >
@@ -50,19 +50,20 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
     <div
       className={
         blocked
-          ? "sticky top-0 z-20 mb-3 rounded-md border border-rose-500/45 bg-rose-950/95 px-3 py-2 shadow-lg shadow-black/40 backdrop-blur-sm"
-          : "sticky top-0 z-20 mb-3 rounded-md border border-amber-500/40 bg-amber-950/90 px-3 py-2 shadow-lg shadow-black/30 backdrop-blur-sm"
+          ? "mb-2 rounded border border-rose-500/30 bg-rose-950/35 px-2.5 py-1.5"
+          : "mb-2 rounded border border-amber-500/25 bg-amber-950/25 px-2.5 py-1.5"
       }
       data-testid="intake-v6-review-operator-blocker-banner"
       data-banner-severity={display.severity}
       data-blocker-count={display.blockerCount}
       data-warning-count={display.warningCount}
-      data-sticky="true"
+      data-sticky="false"
+      data-attention-weight="compact"
       role="status"
     >
       <div className="flex flex-wrap items-start gap-2">
         <AlertTriangle
-          className={`mt-0.5 h-4 w-4 shrink-0 ${blocked ? "text-rose-300" : "text-amber-300"}`}
+          className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${blocked ? "text-rose-300" : "text-amber-300"}`}
           aria-hidden
         />
         <div className="min-w-0 flex-1">
@@ -100,10 +101,10 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
           ) : null}
           {!expanded && suppressCompactDetail && issueCount > 0 ? (
             <p
-              className={`mt-1 text-[11px] leading-snug ${blocked ? "text-rose-50/80" : "text-amber-50/80"}`}
-              data-testid="intake-v6-review-operator-blocker-footer-hint"
+              className={`mt-0.5 text-[11px] leading-snug ${blocked ? "text-rose-100/70" : "text-amber-100/70"}`}
+              data-testid="intake-v6-review-operator-blocker-expand-hint"
             >
-              Următorul pas este în footer. Deschide lista pentru detalii.
+              Deschide lista pentru detalii și acțiuni.
             </p>
           ) : null}
 
@@ -138,7 +139,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
                   {(issue.focusTarget || issue.tabId) && onFocusTarget ? (
                     <button
                       type="button"
-                      className="mt-1 text-[10px] font-semibold underline-offset-2 hover:underline"
+                      className="mt-1 text-[11px] font-semibold underline-offset-2 hover:underline"
                       data-testid={`intake-v6-review-operator-blocker-goto-${issue.id}`}
                       onClick={() => onFocusTarget(issue.focusTarget || `tab:${issue.tabId}`)}
                     >
@@ -150,7 +151,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
             </ul>
           ) : null}
 
-          {onJumpToDiagnostic ? (
+          {onJumpToDiagnostic && expanded ? (
             <button
               type="button"
               className={`mt-2 text-[11px] font-semibold underline-offset-2 hover:underline ${
@@ -159,7 +160,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
               onClick={onJumpToDiagnostic}
               data-testid="intake-v6-review-operator-blocker-diagnostic-link"
             >
-              Vezi detalii tehnice și diagnostic
+              Diagnostic tehnic
             </button>
           ) : null}
         </div>

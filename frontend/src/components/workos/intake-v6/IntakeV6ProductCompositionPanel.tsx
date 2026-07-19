@@ -184,8 +184,8 @@ export default function IntakeV6ProductCompositionPanel({
   const linkedSegmentItems = linkedSegments?.segments ?? [];
   const canConfirm = !confirmed && recommendation.status !== "blocked" && items.length > 0;
   const hasIssues = blockers.length > 0 || warnings.length > 0;
-  // Blockers force expand; technical warnings stay behind disclosure by default.
-  const [open, setOpen] = useState(() => !confirmed || blockers.length > 0);
+  // Keep L1 compact: expand only for blockers; confirm CTA stays outside details.
+  const [open, setOpen] = useState(() => blockers.length > 0);
 
   const componentSummary = items.map((item) => roleLabel(item.component_role, item.template_code)).join(" · ");
   const statusLabel = confirmed

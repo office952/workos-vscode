@@ -1,0 +1,26 @@
+{
+  "id": "acm_presentation_reset",
+  "workspace_id": "854fbb73-2329-4ee2-b9a0-21158f8eb1b9",
+  "workspace_code": "IV6-45B6C558",
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/854fbb73-2329-4ee2-b9a0-21158f8eb1b9/operator",
+    "viewport": {
+      "w": 1440,
+      "h": 1000
+    },
+    "hasBlockerBanner": true,
+    "footerHintBanner": false,
+    "rawTplOnCompositionL1": false,
+    "productTruthVisible": false,
+    "writeFlagsVisible": false,
+    "diagnosticExpanded": false,
+    "confirmFirstPaint": false,
+    "fundalFirst": null,
+    "iluminareContractDup": false,
+    "lightingSection": false,
+    "montajPanel": true,
+    "finisajePanel": false,
+    "rezultatComercial": true,
+    "footerNext": false
+  }
+}

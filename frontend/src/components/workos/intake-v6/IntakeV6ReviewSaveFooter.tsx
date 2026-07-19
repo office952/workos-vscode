@@ -7,27 +7,30 @@ export default function IntakeV6ReviewSaveFooter({
   pendingSave: boolean;
   error?: string | null;
 }) {
+  // D1: successful idle sync is quiet — do not keep a persistent success slab.
+  if (!saving && !pendingSave && !error) {
+    return (
+      <p className="sr-only" data-testid="intake-v6-review-autosave-status" aria-live="polite">
+        Preturi si materiale actualizate
+      </p>
+    );
+  }
+
   const label = saving
     ? "Sincronizez preturile..."
     : error
       ? "Sincronizare esuata"
-      : pendingSave
-        ? "Sincronizare automata in asteptare"
-        : "Preturi si materiale actualizate";
-  const tone = error ? "text-red-300" : pendingSave || saving ? "text-amber-200" : "text-emerald-300";
+      : "Sincronizare automata in asteptare";
+  const tone = error ? "text-red-300" : "text-slate-400";
 
   return (
     <div
-      className="relative z-0 mb-20 rounded border border-[#2A3548] bg-[#0A0F1A]/95 px-4 py-3"
+      className="relative z-0 mb-20 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/70 px-3 py-2"
       data-testid="intake-v6-review-save-footer"
     >
       <div className={`flex items-center justify-between gap-3 text-[12px] ${tone}`}>
         <span data-testid="intake-v6-review-autosave-status">{label}</span>
-        <span className="h-2 w-2 rounded-full bg-current opacity-80" aria-hidden />
       </div>
     </div>
   );
 }
-
-
-

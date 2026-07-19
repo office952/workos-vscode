@@ -46,8 +46,11 @@ export default function IntakeV6ConfirmHandoffPanel({
   savingInternalConfirmation,
   confirmationHydrationPending = false,
   confirmationLoadError = null,
+  allFatalBlockers,
+  showBlockerList,
   resultMessage,
   errorMessage,
+  fallbackBlockerMessage,
   onInternalDraftChange,
   onDraftBoundaryChange,
 }: {
@@ -82,11 +85,26 @@ export default function IntakeV6ConfirmHandoffPanel({
     finishSetupIncomplete;
 
   return (
-    <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-quote-handoff">
+    <div
+      className={`${v6.cardCompact} !p-3`}
+      data-testid="intake-v6-quote-handoff"
+      data-fatal-blocker-count={allFatalBlockers.length}
+      data-show-blocker-list={showBlockerList ? "true" : "false"}
+    >
       <h3 className={`mb-2 ${v6.sectionTitle}`}>Confirmare finală</h3>
       <p className={`mb-3 ${v6.helper}`}>
         Creează doar draft intern — fără comandă, producție sau stoc.
       </p>
+
+      {/* Status/blocker narrative lives in ConsolidatedBlockersList (first paint). Handoff owns checklist + draft action. */}
+      {fallbackBlockerMessage && allFatalBlockers.length === 0 ? (
+        <p
+          className="mb-3 text-[12px] leading-snug text-amber-100/90"
+          data-testid="intake-v6-confirm-handoff-fallback-blocker"
+        >
+          {fallbackBlockerMessage}
+        </p>
+      ) : null}
 
       <ul className="mb-3 space-y-1.5" data-testid="intake-v6-confirm-handoff-checklist">
         <ChecklistControlRow

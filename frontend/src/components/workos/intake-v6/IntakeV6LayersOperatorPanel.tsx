@@ -240,15 +240,11 @@ export default function IntakeV6LayersOperatorPanel({
                 ? page1HandoffPendingMessage(layerStats.pending)
                 : page1HandoffBlockedMessage()}
           </p>
-          {confirmation.confirmationStatus === "complete" ? (
-            <p className="mt-1 text-[10px] text-slate-500">
-              Folosește „Continuă la Configurare” din footer.
+          {confirmation.confirmationStatus !== "complete" ? (
+            <p className="mt-1 text-[11px] text-slate-500">
+              Confirmă rolul pentru fiecare element.
             </p>
-          ) : (
-            <p className="mt-1 text-[10px] text-slate-500">
-              Confirmă rolul pentru fiecare element, apoi continuă la Configurare.
-            </p>
-          )}
+          ) : null}
         </div>
       ) : null}
     </aside>

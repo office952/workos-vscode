@@ -178,6 +178,14 @@ function buildHook(overrides: Partial<IntakeV6WorkspaceHook> = {}): IntakeV6Work
 
         payload: {
 
+          product_composition_confirmed: {
+
+            confirmed: true,
+
+            confirmed_at: "2026-07-19T12:00:00.000Z",
+
+          },
+
           finish_setup: {
 
             face_finish_type: "none",
@@ -603,6 +611,10 @@ function renderConfirmStep(hook: IntakeV6WorkspaceHook = buildHook()) {
 }
 
 async function expandConfirmSummary() {
+  // Status + handoff live on first paint; accordion still holds the technical dashboard.
+  await waitFor(() => {
+    expect(screen.getByTestId("intake-v6-confirm-first-paint")).toBeInTheDocument();
+  });
   await waitFor(() => {
     expect(screen.getByTestId("intake-v6-final-configuration-summary-toggle")).toBeInTheDocument();
   });

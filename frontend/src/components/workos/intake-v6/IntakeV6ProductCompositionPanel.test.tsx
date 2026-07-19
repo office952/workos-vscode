@@ -62,6 +62,10 @@ describe("IntakeV6ProductCompositionPanel", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} onConfirm={onConfirm} />);
 
     expect(screen.getByText("Litere volumetrice + logo volumetric")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-confirm-product-composition")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
     expect(screen.getByText(/Straturi: Logo 1, Logo 2/i)).toBeInTheDocument();
@@ -74,6 +78,7 @@ describe("IntakeV6ProductCompositionPanel", () => {
   it("keeps Product Definition linked segments under technical disclosure", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} linkedSegments={linkedSegments} />);
 
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
     const advanced = screen.getByTestId("intake-v6-product-composition-technical");
     expect(advanced).toHaveAttribute("data-expanded", "false");
     fireEvent.click(screen.getByTestId("intake-v6-product-composition-technical-toggle"));
@@ -88,6 +93,7 @@ describe("IntakeV6ProductCompositionPanel", () => {
   it("stays stable when linked Product Definition summary is missing", () => {
     render(<IntakeV6ProductCompositionPanel payload={payload} linkedSegments={null} />);
 
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
     expect(screen.queryByTestId("intake-v6-product-composition-technical")).not.toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LETTERS_v2")).toBeInTheDocument();
     expect(screen.getByText("TPL-VOLUMETRIC-LOGO_v1")).toBeInTheDocument();
@@ -131,8 +137,9 @@ describe("IntakeV6ProductCompositionPanel", () => {
     render(<IntakeV6ProductCompositionPanel payload={withWarning} onConfirm={vi.fn()} />);
 
     expect(screen.getByTestId("intake-v6-confirm-product-composition")).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByTestId("intake-v6-product-composition-toggle")).toHaveAttribute("aria-expanded", "false");
     expect(screen.queryByText(/authority live/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("intake-v6-product-composition-toggle"));
     fireEvent.click(screen.getByTestId("intake-v6-product-composition-technical-toggle"));
     expect(screen.getByTestId("intake-v6-product-composition-issues")).toHaveTextContent(/authority live/i);
   });

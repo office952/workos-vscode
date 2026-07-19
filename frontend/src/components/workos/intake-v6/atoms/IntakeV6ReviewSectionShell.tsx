@@ -35,11 +35,7 @@ export default function IntakeV6ReviewSectionShell({
             {title}
           </h2>
           {description ? (
-            <p
-              className={`${v6.sectionDesc} ${
-                compact ? "text-[10px]" : ""
-              }`}
-            >
+            <p className={`${v6.sectionDesc} ${compact ? "text-[11px] text-slate-500" : ""}`}>
               {description}
             </p>
           ) : null}

@@ -51,6 +51,17 @@ export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
   "Estimarea comercială necesită completarea configurației curente.";
 export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Calcul estimativ live — detalii";
 
+/** Keep product-gate blockers short on the commercial rail — Produs CTA owns the action. */
+function shortenOperatorPricingBlocker(message: string | null | undefined): string | null {
+  if (!message) return null;
+  const lower = message.toLowerCase();
+  if (lower.includes("compozit") || lower.includes("composition") || lower.includes("analyzer")) {
+    return "Estimat indisponibil — confirmă produsul.";
+  }
+  if (message.length > 96) return `${message.slice(0, 93).trim()}…`;
+  return message;
+}
+
 type LiveCalcDisplayBucket = "included" | "diagnostic" | "missing" | "legacy" | "excluded";
 
 type LogicalChildRowDisplay = {
@@ -762,8 +773,8 @@ function LiveCalcEstimateTotalsBlock({
           </div>
         </>
       ) : !artworkOnlyBlocked ? (
-        <p className="text-[11px] leading-relaxed text-amber-200/90" data-testid="intake-v6-live-estimate-unavailable">
-          {officialPricingBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+        <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
+          {shortenOperatorPricingBlocker(officialPricingBlocker) ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
         </p>
       ) : null}
       <div

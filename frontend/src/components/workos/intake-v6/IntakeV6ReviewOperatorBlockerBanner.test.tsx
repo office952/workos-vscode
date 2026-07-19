@@ -30,12 +30,17 @@ const blockedDisplay: OperatorBlockerBannerDisplay = {
 };
 
 describe("IntakeV6ReviewOperatorBlockerBanner", () => {
-  it("renders compact summary title and footer hint instead of duplicated next-action", () => {
+  it("renders compact summary without footer-next-step duplication", () => {
     render(<IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} />);
     expect(screen.getByTestId("intake-v6-review-operator-blocker-banner-title")).toHaveTextContent(
       /Configurarea necesită atenție · 1 blocant/i,
     );
-    expect(screen.getByTestId("intake-v6-review-operator-blocker-footer-hint")).toHaveTextContent(/footer/i);
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-banner")).toHaveAttribute(
+      "data-attention-weight",
+      "compact",
+    );
+    expect(screen.queryByTestId("intake-v6-review-operator-blocker-footer-hint")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-review-operator-blocker-expand-hint")).toHaveTextContent(/Deschide lista/i);
     expect(screen.queryByTestId("intake-v6-review-operator-blocker-compact-one")).not.toBeInTheDocument();
   });
 
@@ -47,11 +52,12 @@ describe("IntakeV6ReviewOperatorBlockerBanner", () => {
     );
   });
 
-  it("calls diagnostic jump handler", () => {
+  it("calls diagnostic jump handler when list is expanded", () => {
     const onJump = vi.fn();
     render(
       <IntakeV6ReviewOperatorBlockerBanner display={blockedDisplay} onJumpToDiagnostic={onJump} />,
     );
+    fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-banner-toggle"));
     fireEvent.click(screen.getByTestId("intake-v6-review-operator-blocker-diagnostic-link"));
     expect(onJump).toHaveBeenCalledOnce();
   });

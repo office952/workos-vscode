@@ -2209,7 +2209,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             state.workspace?.payload as Record<string, unknown> | undefined,
           )
             ? reviewHandoffSurfacing.nextStepGuidance
-            : "Poți naviga liber între taburi. Următorul pas obligatoriu este în footer."
+            : null
         }
         suppressCompactDetail
         onJumpToDiagnostic={handleJumpToDiagnostic}
@@ -2255,8 +2255,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             ) : null}
             {effectiveLetterGroups.length === 0 ? renderSectionByKey("finisaje_fields") : null}
             <IntakeV6ReviewSectionShell
-              title="Finisaje pe layer"
-              description="Față, cant și Vector Logo — același card compact pe strat."
+              title="Finisaje"
+              description="Față · Cant · Spate — decizii pe strat."
               testId="intake-v6-review-section-face-letters"
               compact
             >
@@ -2333,10 +2333,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
         {reviewTab === "iluminare" ? (
           <div data-testid="intake-v6-review-tab-panel-iluminare" className="space-y-2">
-            {renderSectionByKey("iluminare")}
+            {/* One visible owner: specialized lighting section (not dual contract+adapter rows). */}
             <IntakeV6ReviewSectionShell
               title="Iluminare și surse"
-              description="LED și surse pentru litere — separat de alimentarea 220V a carcasei."
+              description="Alege LED-ul și sursa; rezultatele calculate apar separat."
               testId="intake-v6-review-section-lighting"
               compact
             >
@@ -2400,7 +2400,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 onSelectedPsuChange={updateSelectedPsuWatts}
                 allowedPsuWatts={templateContract.allowedPsuWatts}
                 lightingSystemLabel={lettersCanonicalFieldLabels?.lighting_system_type}
-                hideContractManagedFields={contractRendererEnabled}
+                hideContractManagedFields={false}
               />
             </IntakeV6ReviewSectionShell>
           </div>
@@ -2408,23 +2408,29 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
         {reviewTab === "montaj" ? (
           <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-3">
-            <div
-              className="rounded-md border border-[#2A3548] bg-[#0A0F1A]/55 px-3 py-2"
+            <p
+              className="text-[11px] text-slate-500"
               data-testid="intake-v6-montaj-readiness-summary"
             >
-              <p className="text-[12px] font-semibold text-slate-100">Montaj — ordine de lucru</p>
-              <p className="mt-0.5 text-[11px] text-slate-400">
-                1) Fundal și carcasă · 2) Montaj comercial (dacă e în ofertă) · 3) Detalii avansate
-              </p>
-            </div>
-            {renderSectionByKey("montaj_template")}
+              {acpProductActive
+                ? "Fundal și carcasă primul · montaj comercial doar dacă e în ofertă"
+                : "Montaj comercial · fundal/suport · detalii avansate"}
+            </p>
             <IntakeV6ReviewSectionShell
               title="Montaj"
-              description="Fundal/carcasă, alimentare panouri, apoi opțiuni comerciale de montaj."
+              description={
+                acpProductActive
+                  ? "Configurare panou / carcasă, apoi opțiuni comerciale dacă sunt în ofertă."
+                  : "Opțiuni de montaj și suport."
+              }
               testId="intake-v6-review-section-montaj"
               compact
             >
-            <div className={`${v6.cardCompact} !p-3 space-y-3`}>
+            <div
+              className={`${v6.cardCompact} !p-3 flex flex-col gap-3`}
+              data-fundal-first={acpProductActive ? "true" : "false"}
+            >
+              <div className={acpProductActive ? "order-2" : "order-1"}>
               <IntakeV6TechnicalDetailsAccordion
                 title="Montaj comercial"
                 hint={
@@ -2467,27 +2473,19 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </select>
               </label>
 
+              {mountingPrepActive ? (
               <div
-                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${
-                  mountingPrepActive || acpProductActive ? "" : "opacity-60"
-                }`}
+                className="mt-3 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/50 p-3"
                 data-testid="intake-v6-mounting-prep-section"
               >
-                <p className="mb-2 text-[11px] font-semibold text-slate-200">Pregătire și montaj</p>
-                {!mountingPrepActive ? (
-                  <p className="mb-2 text-[10px] text-slate-400" data-testid="intake-v6-mounting-prep-readonly-note">
-                    Serviciile comerciale de pregătire/montaj sunt inactive — configurarea panoului ACP
-                    rămâne disponibilă separat.
-                  </p>
-                ) : null}
+                <p className="mb-2 text-[12px] font-semibold text-slate-200">Pregătire și montaj</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {!contractRendererEnabled ? (
-              <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
+              <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[12px] text-slate-100">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-cyan-400"
                   checked={form.mounting_template_enabled !== false}
-                  disabled={!mountingPrepActive}
                   onChange={(event) =>
                     updateForm(
                       {
@@ -2518,9 +2516,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         type="number"
                         min={mountingTemplateAreaFallbackM2 ?? 0}
                         step="0.01"
-                        className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                        className="min-w-0 flex-1 bg-transparent px-2 py-1.5 text-[12px] outline-none"
                         value={form.mounting_template_area_m2 ?? ""}
-                        disabled={!mountingPrepActive}
                         placeholder={
                           mountingTemplateAreaFallbackM2 != null
                             ? String(mountingTemplateAreaFallbackM2)
@@ -2545,7 +2542,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         }}
                         data-testid="intake-v6-mounting-template-area"
                       />
-                      <span className="flex items-center border-l border-[#2A3548] px-2 text-[10px] font-semibold text-slate-400">
+                      <span className="flex items-center border-l border-[#2A3548] px-2 text-[11px] font-semibold text-slate-400">
                         m²
                       </span>
                     </div>
@@ -2557,7 +2554,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={form.mounting_template_material_type ?? "forex"}
-                      disabled={!mountingPrepActive}
                       onChange={(event) =>
                         updateForm(
                           {
@@ -2580,6 +2576,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               ) : null}
                 </div>
               </div>
+              ) : null}
 
               {(selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
                 selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE) &&
@@ -2635,17 +2632,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </div>
               ) : null}
 
+              {siteInstallationSectionActive ? (
               <div
-                className={`mt-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-3 ${siteInstallationSectionActive ? "" : "opacity-60"}`}
+                className="mt-3 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/50 p-3"
                 data-testid="intake-v6-mounting-site-section"
               >
-                <p className="mb-2 text-[11px] font-semibold text-slate-200">Montaj la locație</p>
-                {!siteInstallationSectionActive ? (
-                  <p className="text-[10px] text-slate-400" data-testid="intake-v6-mounting-site-inactive-note">
-                    Disponibil când scope-ul include montaj la locație.
-                  </p>
-                ) : (
-                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[11px] text-slate-100">
+                <p className="mb-2 text-[12px] font-semibold text-slate-200">Montaj la locație</p>
+                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[12px] text-slate-100">
                     <input
                       type="checkbox"
                       className="h-4 w-4 accent-cyan-400"
@@ -2660,10 +2653,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     />
                     Montaj la locație inclus în ofertă
                   </label>
-                )}
               </div>
+              ) : null}
               </IntakeV6TechnicalDetailsAccordion>
+              </div>
 
+              <div className={acpProductActive ? "order-1" : "order-2"}>
               <IntakeV6MontajClusterShell
                 title="Fundal și carcasă"
                 description="Ansamblu panouri, îmbinări și alimentare 220V pe panouri — o singură decizie operator."
@@ -2707,15 +2702,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         : "Metal Premount rămâne legat de pregătirea comercială."}
                     </p>
                   </div>
-                  {selectedMountingSolutionValue === METAL_PREMOUNT_TEMPLATE_CODE ||
-                  selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
-                    <Link
-                      to={`/product-system?template=${encodeURIComponent(selectedMountingSolutionValue)}`}
-                      className="rounded border border-cyan-800/50 px-2 py-1 text-[10px] text-cyan-300 hover:bg-cyan-900/30"
-                    >
-                      Product System
-                    </Link>
-                  ) : null}
                 </div>
 
                 <label className={REVIEW_FIELD_BLOCK_CLASS}>
@@ -2873,13 +2859,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                           Dimensiune SVG neconfirmată fizic (unit ambiguity / viewBox-as-mm guard).
                         </p>
                       ) : null}
-                      {acmMountingConfiguration.geometry_hash ||
-                      acmMountingConfiguration.contour_id ? (
-                        <p className="mt-1 font-mono text-[10px] text-slate-500">
-                          contour={String(acmMountingConfiguration.contour_id ?? "—")} · hash=
-                          {String(acmMountingConfiguration.geometry_hash ?? "—")}
-                        </p>
-                      ) : null}
+                      {/* contour/hash IDs stay in Diagnostic tehnic — not L1 */}
                     </div>
                     {ACM_BOXED_MOUNTING_QUOTE_INPUT_FIELDS.filter((field) =>
                       [
@@ -3207,7 +3187,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 ) : null}
               </div>
               </IntakeV6MontajClusterShell>
+              </div>
 
+              <div className="order-3">
               <IntakeV6TechnicalDetailsAccordion
                 title="Avansat"
                 hint="Opțional — prindere, colț service, diagnostice ownership (tehnic)"
@@ -3444,6 +3426,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 </div>
               ) : null}
               </IntakeV6TechnicalDetailsAccordion>
+              </div>
             </div>
             </IntakeV6ReviewSectionShell>
           </div>
@@ -3513,7 +3496,9 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         </div>
       </div>
 
-      {returnCantReadonlyAwareness.operator_readiness === "blocked" ? (
+      {/* Local Cant owns the incomplete state when letter groups render; avoid a second page-level channel. */}
+      {returnCantReadonlyAwareness.operator_readiness === "blocked" &&
+      effectiveLetterGroups.length === 0 ? (
         <p
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-return-cant-blocked-operator-message"

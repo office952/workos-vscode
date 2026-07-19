@@ -36,7 +36,10 @@ export function formatQuoteHandoffBlocker(code: string): string {
 	}
 	if (code.startsWith("canonical_invalid_combination:")) {
 		const detail = code.slice("canonical_invalid_combination:".length).trim();
-		return `Combinație invalidă în configurația canonică: ${detail || "necunoscută"}.`;
+		if (detail === "MOUNTING_SCOPE_INACTIVE") {
+			return "Montajul comercial nu este activ în scope — revizuiește opțiunile din tab-ul Montaj.";
+		}
+		return `Combinație invalidă în configurație: ${detail || "necunoscută"}.`;
 	}
 	if (code.startsWith("canonical_unresolved_warning:")) {
 		const detail = code.slice("canonical_unresolved_warning:".length).trim();
