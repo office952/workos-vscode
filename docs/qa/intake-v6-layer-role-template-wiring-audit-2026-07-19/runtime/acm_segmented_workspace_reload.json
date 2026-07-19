@@ -1,0 +1,38 @@
+{
+  "id": "bbe0485b-ee07-4210-90e2-3bbf5238c950",
+  "workspace_code": "IV6-1FD4EF62",
+  "title": "wiring-audit-acm_segmented-1784456060400",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "readiness_status": "layer_roles_incomplete",
+  "layer_count": 2,
+  "layers": [
+    {
+      "key": "gravare-cnc-135gr",
+      "name": "gravare-cnc-135gr"
+    },
+    {
+      "key": "decupare-cnc-outside"
+    }
+  ],
+  "role_setup_status": "partial",
+  "role_layers": [
+    {
+      "key": "gravare-cnc-135gr",
+      "auto": "unknown",
+      "state": "pending",
+      "label": "gravare-cnc-135gr"
+    },
+    {
+      "key": "decupare-cnc-outside",
+      "auto": "unknown",
+      "state": "pending",
+      "label": null
+    }
+  ],
+  "composition_items": [],
+  "composition_confirmed": false,
+  "bindings": [],
+  "support_selection": null,
+  "segmented": null,
+  "product_truth_components": []
+}

@@ -1,10 +1,19 @@
 # Screenshots — Configurator Letter Pilot
 
 **Date:** 2026-07-19  
-**UI:** `http://127.0.0.1:3000` (proxy stack; prior evidence also on `:3001`)  
-**BE:** `http://127.0.0.1:8003`  
+**Accepted runtime (PASS evidence):** FE `http://127.0.0.1:3000` · BE `http://127.0.0.1:8003`  
+**Served commit for after screenshots:** `f39c260` (`refactor(intake-v6): apply configurator design pilot to letters`)  
 **Workspace:** `e1ba14f2-ceca-4239-9e8e-e87c0e21d65f` (`audit-complete-ui-ux-basic`)  
-**Path:** `/intake-v6/{id}/operator` → Configurare
+**Path:** `/intake-v6/{id}/operator` → Configurare  
+
+### Runtime closure (mandatory)
+
+| Runtime | Status for this pilot |
+|---------|------------------------|
+| `:3000` + `:8003` | **PASS evidence** — after screenshots 03–09 + live probe (`anatomy`/`results`/`decisions`/Montaj = true) captured here after `f39c260` was on HEAD |
+| `:3001` | **Not acceptance runtime** — Windows crash exit `3221226505` (operational incident only). Do **not** treat `:3001` as visual-pilot PASS. No restart required for this pack. |
+
+Intermediate “live FE may not include our pilot changes” was resolved by re-capturing on `:3000` with probe all-true after commit `f39c260`.
 
 | # | File | State | Steps | Honest note |
 |---|------|-------|-------|-------------|

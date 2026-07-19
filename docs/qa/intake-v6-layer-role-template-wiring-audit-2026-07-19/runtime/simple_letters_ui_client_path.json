@@ -1,0 +1,75 @@
+{
+  "fixture": {
+    "id": "simple_letters",
+    "file": "litere-vol-1-layer.svg"
+  },
+  "workspace_id": "970bdafd-2adf-4346-b3d7-d28a40a8d9fa",
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/970bdafd-2adf-4346-b3d7-d28a40a8d9fa/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-00a0e3",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "hasRoleTable": true,
+    "textSnips": {
+      "vectorLitere": true,
+      "vectorLogo": true,
+      "support": true,
+      "compositionBlocked": false
+    },
+    "stepLayers": "step",
+    "stepReview": null,
+    "stepConfirm": null,
+    "footer": "Următorul pas: Confirmă rolul pentru toate straturile."
+  },
+  "nav": {
+    "before": {
+      "href": "http://127.0.0.1:3000/intake-v6/970bdafd-2adf-4346-b3d7-d28a40a8d9fa/operator",
+      "confirm": null,
+      "review": null,
+      "layers": "step"
+    },
+    "after": {
+      "href": "http://127.0.0.1:3000/intake-v6/970bdafd-2adf-4346-b3d7-d28a40a8d9fa/operator",
+      "confirm": null,
+      "review": null,
+      "layers": "step"
+    },
+    "from": "face",
+    "to": "printed_artwork",
+    "jumpedToConfirm": false,
+    "jumpedToReview": false
+  },
+  "page2": {
+    "href": "http://127.0.0.1:3000/intake-v6/970bdafd-2adf-4346-b3d7-d28a40a8d9fa/operator",
+    "letterCluster": false,
+    "artwork": false,
+    "lighting": false,
+    "montajPanel": true,
+    "oracal": false,
+    "folds": true,
+    "segmented": true,
+    "alucobond": true
+  },
+  "bindings": [],
+  "roles": [
+    {
+      "key": "pseudo:fill-00a0e3",
+      "auto": "face",
+      "conf": "printed_artwork",
+      "state": "confirmed"
+    }
+  ],
+  "readiness": "product_composition_not_confirmed",
+  "composition_status": "needs_confirmation",
+  "composition_items": [
+    {
+      "template": "TPL-VOLUMETRIC-LOGO_v1"
+    }
+  ],
+  "seg": null,
+  "support": null
+}

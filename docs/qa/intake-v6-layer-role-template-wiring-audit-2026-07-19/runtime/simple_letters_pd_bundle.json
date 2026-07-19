@@ -1,0 +1,892 @@
+{
+  "pd_letters": {
+    "status": 200,
+    "body": {
+      "preview_version": "1.0.0",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "business_name_ro": "Litere volumetrice",
+      "source_context": {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "workspace_id": "c6e2eb60-e3b7-45b0-8c38-663c5237d184",
+        "quote_id": null,
+        "source_payload_type": "workspace_payload"
+      },
+      "selected_modules": [
+        {
+          "module_code": "finisaje",
+          "module_name": "Finisaj suprafață (vinyl / print / vopsire)",
+          "activation_kind": "conditional_gate",
+          "state": "always_on",
+          "activation_reason": "Narrowed to SURFACE_FINISH. Installation template → sablon_montaj; packaging → ambalare_livrare_montaj.",
+          "missing_fields": []
+        },
+        {
+          "module_code": "ambalare_livrare_montaj",
+          "module_name": "Ambalare / logistică (composition)",
+          "activation_kind": "conditional_gate",
+          "state": "always_on",
+          "activation_reason": "Composition/logistics responsibility — NOT a sold module; NOT activated by MOUNTING-only.",
+          "missing_fields": []
+        }
+      ],
+      "optional_modules": [
+        {
+          "module_code": "modelare_cant",
+          "module_name": "Volum aluminiu — cant/lateral",
+          "activation_kind": "required_module",
+          "state": "pending",
+          "activation_reason": null,
+          "missing_fields": [
+            "letter_perimeter_m",
+            "return_depth_mm",
+            "return_finish_type",
+            "volum_aluminum_module_template_code"
+          ]
+        },
+        {
+          "module_code": "debitare_fata",
+          "module_name": "Debitare față litere",
+          "activation_kind": "always_on",
+          "state": "pending",
+          "activation_reason": "Parent BOM does not include face ops — dossier mapping is audit contract until Step 7.",
+          "missing_fields": [
+            "face_finish_type",
+            "letter_face_area_m2",
+            "letter_perimeter_m",
+            "width_mm"
+          ]
+        },
+        {
+          "module_code": "debitare_spate",
+          "module_name": "Debitare spate litere",
+          "activation_kind": "always_on",
+          "state": "pending",
+          "activation_reason": null,
+          "missing_fields": [
+            "backing_mode",
+            "letter_face_area_m2"
+          ]
+        },
+        {
+          "module_code": "sistem_led",
+          "module_name": "Sistem LED litere",
+          "activation_kind": "conditional_gate",
+          "state": "pending",
+          "activation_reason": null,
+          "missing_fields": []
+        },
+        {
+          "module_code": "geometry_svg",
+          "module_name": "Analiză SVG și geometrie",
+          "activation_kind": "always_on",
+          "state": "pending",
+          "activation_reason": "Non-priced gate operation — does not generate priced task until Step 9 wiring.",
+          "missing_fields": [
+            "height_mm",
+            "letter_count",
+            "letter_face_area_m2",
+            "letter_perimeter_m",
+            "width_mm"
+          ]
+        }
+      ],
+      "inactive_modules": [
+        {
+          "module_code": "structura_suport",
+          "module_name": "Structură metalică premontaj",
+          "activation_kind": "optional_addon",
+          "state": "inactive",
+          "activation_reason": "premount_bar_preparation is non_priced in child template today — Cost Engine wiring in Step 7.",
+          "missing_fields": []
+        },
+        {
+          "module_code": "sablon_montaj",
+          "module_name": "Șablon montaj (installation template)",
+          "activation_kind": "conditional_gate",
+          "state": "inactive",
+          "activation_reason": "MOUNTING sub-capability — not a sold chip; not surface FINISH.",
+          "missing_fields": []
+        },
+        {
+          "module_code": "electrica_logo",
+          "module_name": "Electrică emblemă / logo",
+          "activation_kind": "future_reserved",
+          "state": "future_reserved",
+          "activation_reason": "OPEN QUESTION in MODULAR_PRODUCT_FLOW_CONTRACT §16 — do not activate until ProductDefinition builder resolves.",
+          "missing_fields": []
+        }
+      ],
+      "components": [
+        {
+          "component_id": "comp_face_litere",
+          "label_ro": "Vizual față — plexi/acrilic",
+          "role": "LITERE_3D",
+          "mini_module_code": "debitare_fata",
+          "module_active": false,
+          "provenance": "parent",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        },
+        {
+          "component_id": "comp_lateral_litere",
+          "label_ro": "Volum aluminiu — profil lateral",
+          "role": "LITERE_3D",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "parent",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        },
+        {
+          "component_id": "comp_spate_litere",
+          "label_ro": "Capac spate — Forex 10 mm",
+          "role": "STRUCTURA",
+          "mini_module_code": "debitare_spate",
+          "module_active": false,
+          "provenance": "parent",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        },
+        {
+          "component_id": "comp_led_litere",
+          "label_ro": "Sistem LED — module, surse, cablaj",
+          "role": "ELECTRIC_LED",
+          "mini_module_code": "sistem_led",
+          "module_active": false,
+          "provenance": "parent",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        },
+        {
+          "component_id": "comp_finisaj_litere",
+          "label_ro": "Finisaj — vopsire, asamblare, ambalare",
+          "role": "FINISAJ",
+          "mini_module_code": "finisaje",
+          "module_active": true,
+          "provenance": "parent",
+          "source_template_code": "TPL-VOLUMETRIC-LETTERS_v2"
+        }
+      ],
+      "material_roles": [
+        {
+          "material_code": "MAT-ACP-FATA-LITERE",
+          "label": "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+          "unit": "mp",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-ORACAL-651",
+          "label": "Oracal 651 — autocolant față litere",
+          "unit": "mp",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-VINYL-PRINT",
+          "label": "Autocolant print față litere",
+          "unit": "mp",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-VINYL-PRINT-LAMINATED",
+          "label": "Autocolant print + laminare față litere",
+          "unit": "mp",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-PROFIL-LATERAL-LITERE",
+          "label": "Profil lateral litere",
+          "unit": "ml",
+          "component_ref": "comp_lateral_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-SPATE-PVC-LITERE",
+          "label": "Forex 10 mm spate litere (cod MAT-SPATE-PVC-LITERE)",
+          "unit": "mp",
+          "component_ref": "comp_spate_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-LED-MODULE",
+          "label": "Module LED litere (pitch 75+25 mm pe perimetru)",
+          "unit": "buc",
+          "component_ref": "comp_led_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-LED-PSU-12V",
+          "label": "Surse LED litere",
+          "unit": "buc",
+          "component_ref": "comp_led_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-VOPSEA-RAL",
+          "label": "Vopsea RAL spray — tub (consumabil)",
+          "unit": "buc",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-SABLON-HARTIE",
+          "label": "Șablon hârtie (material mp; fără CNC Forex)",
+          "unit": "mp",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-SABLON-MONTAJ",
+          "label": "Șablon montaj Forex 3 mm (material mp; CNC separat)",
+          "unit": "mp",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-CONSUMABILE-MONTAJ",
+          "label": "Consumabile",
+          "unit": "set",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "provenance": "parent"
+        },
+        {
+          "material_code": "MAT-PREMOUNT-BAR-STEEL",
+          "label": "Bare premontaj oțel",
+          "unit": "ml",
+          "component_ref": "comp_premount_bars",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-PREMOUNT-BAR-ALUMINUM",
+          "label": "Bare premontaj aluminiu",
+          "unit": "ml",
+          "component_ref": "comp_premount_bars",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-PROFIL-LATERAL-LITERE-30MM",
+          "label": "Profil aluminiu return/cant 30 mm",
+          "unit": "ml",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-PROFIL-LATERAL-LITERE-60MM",
+          "label": "Profil aluminiu return/cant 60 mm",
+          "unit": "ml",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-PROFIL-LATERAL-LITERE-80MM",
+          "label": "Profil aluminiu return/cant 80 mm",
+          "unit": "ml",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-PROFIL-LATERAL-LITERE-100MM",
+          "label": "Profil aluminiu return/cant 100 mm",
+          "unit": "ml",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-ORACAL-651",
+          "label": "Folie autocolantă PVC — Oracal 651",
+          "unit": "mp",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-VOPSEA-RAL",
+          "label": "Vopsea RAL spray — tub",
+          "unit": "buc",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-ADEZIV-CANT-LITERE",
+          "label": "Adeziv lipire cant / module LED",
+          "unit": "ml",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-ACM-BOND-PANEL",
+          "label": "Panou ACM/Bond față",
+          "unit": "mp",
+          "component_ref": "comp_acm_panel_face",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-ACM-BOND-PANEL",
+          "label": "ACM suplimentar canturi / intoarceri",
+          "unit": "mp",
+          "component_ref": "comp_casetted_returns",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "provenance": "linked_module"
+        },
+        {
+          "material_code": "MAT-SURUBURI-GEN",
+          "label": "Suruburi autofiletante înecate",
+          "unit": "set",
+          "component_ref": "comp_mounting_fasteners",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "provenance": "linked_module"
+        }
+      ],
+      "operation_roles": [
+        {
+          "operation_code": "svg_geometry_analysis",
+          "label": "Analiză SVG și mapare layere/culori",
+          "workcenter": "PREPRESS",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": true,
+          "is_priced": false,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "vector_prep",
+          "label": "Pregătire vector / font",
+          "workcenter": "PREPRESS",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "face_cnc_cut",
+          "label": "Tăiere CNC față litere",
+          "workcenter": "CNC_ROUTER",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "vinyl_application",
+          "label": "Manoperă aplicare folie fețe litere",
+          "workcenter": "FACE_VINYL_APPLICATION_LABOR",
+          "component_ref": "comp_face_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "side_forming",
+          "label": "Modelare cant profil — utilaj (EUR/ml serviciu)",
+          "workcenter": "RETURN_PROFILE_MACHINE_FORMING",
+          "component_ref": "comp_lateral_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "return_face_bonding",
+          "label": "Lipire cant pe față (EUR/ml serviciu)",
+          "workcenter": "RETURN_PROFILE_FACE_BONDING",
+          "component_ref": "comp_lateral_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "back_cut",
+          "label": "Tăiere CNC spate Forex 10 mm",
+          "workcenter": "CNC_ROUTER",
+          "component_ref": "comp_spate_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "led_install_letters",
+          "label": "Montaj LED per modul",
+          "workcenter": "LED_ASSEMBLY",
+          "component_ref": "comp_led_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "electrical_letters",
+          "label": "Cablaj electric litere",
+          "workcenter": "ELECTRICAL_WIRING",
+          "component_ref": "comp_led_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "mounting_template_cnc_cut",
+          "label": "CNC debitare șablon montaj Forex 3 mm (serviciu separat)",
+          "workcenter": "CNC_ROUTER",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "painting",
+          "label": "Vopsire RAL (serviciu perimetru)",
+          "workcenter": "PAINTING",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "assembly_letters",
+          "label": "Asamblare litere",
+          "workcenter": "ASSEMBLY",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "qc_letters",
+          "label": "Control calitate",
+          "workcenter": "QC_INSPECTION",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "packaging_letters",
+          "label": "Ambalare + șablon",
+          "workcenter": "PACKAGING",
+          "component_ref": "comp_finisaj_litere",
+          "mini_module_code": null,
+          "module_active": true,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "parent"
+        },
+        {
+          "operation_code": "premount_bar_preparation",
+          "label": "Debitare și pregătire bare premontaj",
+          "workcenter": "WC_METAL_FAB",
+          "component_ref": "comp_premount_bars",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": false,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "RETURN_PROFILE_MACHINE_FORMING",
+          "label": "Modelare cant profil litere — utilaj",
+          "workcenter": "WC_FORMING",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "RETURN_PROFILE_FACE_BONDING",
+          "label": "Lipire cant profil pe față litere",
+          "workcenter": "WC_ASSEMBLY",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "PAINTING",
+          "label": "Vopsire RAL — serviciu perimetru",
+          "workcenter": "WC_PAINT",
+          "component_ref": "comp_volum_aluminiu_module",
+          "mini_module_code": "modelare_cant",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "CUT_ACM_PANEL",
+          "label": "Debitare panou ACM la dimensiune",
+          "workcenter": "ACM_PANEL_CUTTING",
+          "component_ref": "comp_acm_panel_face",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "V_GROOVE_ROUTER",
+          "label": "Frezare V-groove (135°) pe lungimea pliului",
+          "workcenter": "ACM_V_GROOVE",
+          "component_ref": "comp_casetted_returns",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "FOLD_CASSETTE",
+          "label": "Casetare / pliere manuală",
+          "workcenter": "ASSEMBLY",
+          "component_ref": "comp_casetted_returns",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "ACM_BOXED_ASSEMBLY",
+          "label": "Asamblare suport ACM casetat (comercial)",
+          "workcenter": "ACM_BOXED_ASSEMBLY",
+          "component_ref": "comp_mounting_fasteners",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        },
+        {
+          "operation_code": "MOUNT_ACM_PANEL",
+          "label": "Montaj panou ACM pe structură / premontaj",
+          "workcenter": "ASSEMBLY",
+          "component_ref": "comp_mounting_fasteners",
+          "mini_module_code": "structura_suport",
+          "module_active": false,
+          "is_geometry_gate": false,
+          "is_priced": true,
+          "provenance": "linked_module"
+        }
+      ],
+      "linked_template_runtime_segments": {
+        "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "composition_mode": "root_with_linked_segments",
+        "segments": [],
+        "product_truth_readiness_summary": {
+          "status": "not_applicable",
+          "ready_segments_count": 0,
+          "partial_segments_count": 0,
+          "blocked_segments_count": 0,
+          "pricing_ready": false,
+          "quote_ready": false,
+          "order_ready": false,
+          "execution_ready": false,
+          "reason": "no_runtime_segments",
+          "warnings_count": 0
+        },
+        "summary": {
+          "status": "ok",
+          "segments_count": 0,
+          "confirmed_segments_count": 0,
+          "suggested_binding_count": 0,
+          "missing_finish_count": 0,
+          "missing_binding_count": 0,
+          "root_offerable_activation": false,
+          "separate_quote_activation": false,
+          "task_graph_activation": false,
+          "product_truth_readiness_status": "no_runtime_segments"
+        }
+      },
+      "canonical_values": {
+        "vector_file": "litere-vol-1-layer.svg",
+        "commercial_mounting_scope": "none",
+        "mounting_configuration": {
+          "commercial_mounting_scope": "none",
+          "fixing_system": null
+        }
+      },
+      "geometry_inputs": {
+        "vector_file": "litere-vol-1-layer.svg"
+      },
+      "validation": {
+        "readiness_status": "partial",
+        "missing_required_fields": [
+          "backing_mode",
+          "face_finish_type",
+          "height_mm",
+          "letter_count",
+          "letter_face_area_m2",
+          "letter_perimeter_m",
+          "return_depth_mm",
+          "return_finish_type",
+          "volum_aluminum_module_template_code",
+          "width_mm"
+        ],
+        "invalid_combinations": [],
+        "unresolved_warnings": [
+          "TRIGGER_FIELD_MISMATCH: structura_suport link=metal_support_required intake=finish_setup.mounting_system",
+          "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+          "DOSSIER_METADATA_ONLY: Blueprint dossier is metadata for BOM/ops; task_rules_json is consumed into task_contract for ExecutionPlan V2.",
+          "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+          "TEMPLATE_IDENTITY: Template identity resolution trace.",
+          "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY: default_illuminated_true_template_only",
+          "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL: default_screw_finish_NATURAL",
+          "PROCESS_GRAPH_MODULAR_RESOLVER: task_contract compiled from modular product process resolver (not dossier list)."
+        ]
+      },
+      "provenance": [
+        {
+          "key": "template_identity",
+          "source": "template_architecture_scope",
+          "detail": "requested='TPL-VOLUMETRIC-LETTERS_V2' canonical='TPL-VOLUMETRIC-LETTERS_V2' type=canonical alias=False src=template_architecture_scope:canonical"
+        },
+        {
+          "key": "form_contract",
+          "source": "intake_v6_modular_form_contract",
+          "detail": "version=1.4.0-subset-activation bindings=26"
+        },
+        {
+          "key": "mini_module_registry",
+          "source": "mini_module_registry_service",
+          "detail": "active_modules=9"
+        },
+        {
+          "key": "product_aggregate",
+          "source": "product_aggregate_service",
+          "detail": "components=5 operations=23"
+        },
+        {
+          "key": "composition_contract",
+          "source": "product_definition_composition_contract",
+          "detail": "mode=none nodes=1 edges=0"
+        },
+        {
+          "key": "active_scope",
+          "source": "active_scope_resolver_service",
+          "detail": "resolver=letters_slice1_active_scope/v1 mode=full_product legacy=True sold=[] active=[]"
+        },
+        {
+          "key": "workspace_payload",
+          "source": "intake_v6_workspaces.payload_json",
+          "detail": "workspace_id=c6e2eb60-e3b7-45b0-8c38-663c5237d184 read_only=true"
+        }
+      ],
+      "resource_hints": {
+        "scope": "future_resource_hint",
+        "pricing_source": [
+          "modelare_cant:cost_engine_inputs",
+          "structura_suport:cost_engine_inputs",
+          "debitare_fata:cost_engine_inputs",
+          "debitare_spate:cost_engine_inputs",
+          "sistem_led:cost_engine_inputs",
+          "finisaje:cost_engine_inputs",
+          "sablon_montaj:cost_engine_inputs",
+          "ambalare_livrare_montaj:cost_engine_inputs",
+          "geometry_svg:cost_engine_inputs"
+        ],
+        "inventory_source": [
+          "modelare_cant:MAT-PROFIL-LATERAL-LITERE-30MM",
+          "modelare_cant:MAT-PROFIL-LATERAL-LITERE-60MM",
+          "modelare_cant:MAT-PROFIL-LATERAL-LITERE-80MM",
+          "modelare_cant:MAT-PROFIL-LATERAL-LITERE-100MM",
+          "modelare_cant:MAT-ORACAL-651",
+          "modelare_cant:MAT-VOPSEA-RAL",
+          "modelare_cant:MAT-ADEZIV-CANT-LITERE",
+          "structura_suport:MAT-PREMOUNT-BAR-STEEL",
+          "structura_suport:MAT-PREMOUNT-BAR-ALUMINUM",
+          "debitare_fata:face_material_code",
+          "debitare_spate:backing_material_code",
+          "sistem_led:MAT-LED-MODULE",
+          "sistem_led:MAT-LED-PSU-12V",
+          "finisaje:MAT-VOPSEA-RAL",
+          "sablon_montaj:MAT-SABLON-MONTAJ",
+          "sablon_montaj:MAT-SABLON-HARTIE"
+        ],
+        "required_machine_type": [
+          "modelare_cant:RETURN_PROFILE_MACHINE_FORMING",
+          "modelare_cant:RETURN_PROFILE_FACE_BONDING",
+          "modelare_cant:PAINTING",
+          "structura_suport:premount_bar_preparation",
+          "debitare_fata:face_cnc_cut",
+          "debitare_fata:vinyl_application",
+          "debitare_spate:back_cut",
+          "sistem_led:led_install_letters",
+          "sistem_led:electrical_letters",
+          "finisaje:painting",
+          "sablon_montaj:mounting_template_cnc_cut",
+          "ambalare_livrare_montaj:packaging_letters",
+          "geometry_svg:svg_geometry_analysis"
+        ],
+        "required_employee_roles": [],
+        "employee_availability_dependency": [],
+        "attendance_capacity_dependency": [],
+        "subcontractable": [],
+        "external_partner_fallback": [],
+        "machine_failure_fallback": [],
+        "execution_routing_notes": [
+          "modelare_cant:task_preview_outputs=side_forming,return_face_bonding,return_painting",
+          "structura_suport:task_preview_outputs=premount_bar_preparation,premount_welding_assembly",
+          "debitare_fata:task_preview_outputs=cnc_face_cut,vinyl_application",
+          "debitare_spate:task_preview_outputs=back_panel_cut",
+          "sistem_led:task_preview_outputs=led_install_letters,electrical_wiring",
+          "finisaje:task_preview_outputs=painting",
+          "sablon_montaj:task_preview_outputs=mounting_template_cnc_cut",
+          "ambalare_livrare_montaj:task_preview_outputs=packaging_letters",
+          "geometry_svg:task_preview_outputs=none"
+        ]
+      },
+      "warnings": [
+        "TRIGGER_FIELD_MISMATCH for structura_suport is documented — canonical intake trigger is mounting_system.",
+        "TRIGGER_FIELD_MISMATCH for structura_suport — canonical intake is finish_setup.mounting_system",
+        "TRIGGER_FIELD_MISMATCH: Module link trigger_field 'metal_support_required' may not match Intake V6 field 'mounting_system' used in commercial quote flow.",
+        "DOSSIER_METADATA_ONLY: Blueprint dossier is metadata for BOM/ops; task_rules_json is consumed into task_contract for ExecutionPlan V2.",
+        "CANONICAL_CONTRACT_AUTHORITY: ProductAggregate compiled from canonical template/component contracts.",
+        "TEMPLATE_IDENTITY: Template identity resolution trace.",
+        "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY: default_illuminated_true_template_only",
+        "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL: default_screw_finish_NATURAL",
+        "PROCESS_GRAPH_MODULAR_RESOLVER: task_contract compiled from modular product process resolver (not dossier list).",
+        "ORPHAN_FIELD: finish_setup.illuminated — UI gate only; maps to lighting_system_type indirectly",
+        "ORPHAN_FIELD: finish_setup.commercial_inputs — quote commercial layer, not product module (READONLY_EXPLANATORY)",
+        "ORPHAN_FIELD: finish_setup.artwork_complexity_decisions — artwork path, FUTURE_RESERVED_STEP_6 for emblem modules",
+        "ORPHAN_FIELD: finish_setup.emblem_lighting_mode — FUTURE electrica_logo OPEN QUESTION"
+      ],
+      "notes": [
+        "Read-only ProductDefinition preview — Step 6. No pricing, quote, order, or task generation.",
+        "Template-level preview marks missing required fields when workspace payload is absent.",
+        "Active-scope readiness validates selected modules only (offer_scope component_subset)."
+      ],
+      "composition": {
+        "composed_graph_version": "1.0.0",
+        "composition_mode": "none",
+        "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "selected_solution_id": null,
+        "solution_status": "confirmed",
+        "solution_reason_codes": [],
+        "compatibility_status": "compatible",
+        "blockers": [],
+        "warnings": [],
+        "alternatives": [],
+        "provenance": [
+          {
+            "key": "frozen_mounting_resolution",
+            "source": "mounting_solution_service",
+            "detail": "prep_active=False scope=none"
+          },
+          {
+            "key": "mounting_solution",
+            "source": "none",
+            "detail": "none"
+          }
+        ],
+        "active_module_codes": [],
+        "nodes": [
+          {
+            "node_id": "node:root_product:TPL-VOLUMETRIC-LETTERS_v2",
+            "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+            "module_code": "root",
+            "module_role": "root_product",
+            "node_role": "root_product",
+            "parent_node_id": null,
+            "activation_source": "template_registry",
+            "included_in_graph": true,
+            "inherited_inputs": {},
+            "locally_owned_inputs": {},
+            "unresolved_inputs": [],
+            "compatibility_status": "compatible",
+            "blockers": [],
+            "warnings": [],
+            "provenance": [
+              {
+                "key": "activation_source",
+                "source": "product_definition_composition_contract",
+                "detail": "template_registry"
+              }
+            ]
+          }
+        ],
+        "edges": [],
+        "frozen_mounting_solution": null
+      }
+    }
+  },
+  "pd_preview": {
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  },
+  "pre_order_preview": {
+    "status": 404,
+    "body": {
+      "detail": "Not Found"
+    }
+  }
+}

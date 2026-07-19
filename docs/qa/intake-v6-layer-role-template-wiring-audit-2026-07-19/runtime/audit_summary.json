@@ -1,0 +1,156 @@
+{
+  "at": "2026-07-19T10:15:02.405Z",
+  "ui": "http://127.0.0.1:3000",
+  "expected_head": "f39c260",
+  "note": "After screenshots for letter pilot closed on :3000; this audit uses same stack. :3001 crash 3221226505 operational only.",
+  "fixtures_found": [
+    {
+      "id": "acm_segmented",
+      "file": "litere-cu-fundal-acm-segmentat.svg",
+      "exists": true
+    },
+    {
+      "id": "acm_crossing",
+      "file": "litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg",
+      "exists": true
+    },
+    {
+      "id": "situatie_3",
+      "file": "situatie-3.svg",
+      "exists": true
+    },
+    {
+      "id": "simple_letters",
+      "file": "litere-vol-1-layer.svg",
+      "exists": true
+    }
+  ],
+  "results": [
+    {
+      "id": "acm_segmented",
+      "workspace_id": "bbe0485b-ee07-4210-90e2-3bbf5238c950",
+      "face": false,
+      "acm": false,
+      "bindings": [],
+      "role_layers": [
+        {
+          "key": "gravare-cnc-135gr",
+          "auto": "unknown",
+          "state": "pending",
+          "label": "gravare-cnc-135gr"
+        },
+        {
+          "key": "decupare-cnc-outside",
+          "auto": "unknown",
+          "state": "pending",
+          "label": null
+        }
+      ],
+      "composition_items": [],
+      "page2": {
+        "href": "http://127.0.0.1:3000/intake-v6/bbe0485b-ee07-4210-90e2-3bbf5238c950/operator",
+        "hasLetterCluster": false,
+        "hasArtwork": false,
+        "hasLighting": false,
+        "hasSegmented": false,
+        "hasOracal": false,
+        "hasFold": false,
+        "hasVectorLitere": true,
+        "montajVisible": false
+      }
+    },
+    {
+      "id": "acm_crossing",
+      "workspace_id": "131ee0a5-d5a1-4ad8-a203-540eddc5d378",
+      "face": false,
+      "acm": false,
+      "bindings": [],
+      "role_layers": [
+        {
+          "key": "gravare-cnc-135gr",
+          "auto": "unknown",
+          "state": "pending",
+          "label": "gravare-cnc-135gr"
+        },
+        {
+          "key": "decupare-cnc-outside",
+          "auto": "unknown",
+          "state": "pending",
+          "label": null
+        }
+      ],
+      "composition_items": [],
+      "page2": {
+        "href": "http://127.0.0.1:3000/intake-v6/131ee0a5-d5a1-4ad8-a203-540eddc5d378/operator",
+        "hasLetterCluster": false,
+        "hasArtwork": false,
+        "hasLighting": false,
+        "hasSegmented": false,
+        "hasOracal": false,
+        "hasFold": false,
+        "hasVectorLitere": true,
+        "montajVisible": false
+      }
+    },
+    {
+      "id": "situatie_3",
+      "workspace_id": "36b2592e-097c-4cab-8e76-52691644c347",
+      "face": false,
+      "acm": false,
+      "bindings": [],
+      "role_layers": [
+        {
+          "key": "gravare-cnc-135gr",
+          "auto": "unknown",
+          "state": "pending",
+          "label": "gravare-cnc-135gr"
+        },
+        {
+          "key": "decupare-cnc-outside",
+          "auto": "unknown",
+          "state": "pending",
+          "label": null
+        }
+      ],
+      "composition_items": [],
+      "page2": {
+        "href": "http://127.0.0.1:3000/intake-v6/36b2592e-097c-4cab-8e76-52691644c347/operator",
+        "hasLetterCluster": false,
+        "hasArtwork": false,
+        "hasLighting": false,
+        "hasSegmented": false,
+        "hasOracal": false,
+        "hasFold": false,
+        "hasVectorLitere": true,
+        "montajVisible": false
+      }
+    },
+    {
+      "id": "simple_letters",
+      "workspace_id": "c6e2eb60-e3b7-45b0-8c38-663c5237d184",
+      "face": false,
+      "acm": false,
+      "bindings": [],
+      "role_layers": [
+        {
+          "key": "Layer_x0020_1",
+          "auto": "unknown",
+          "state": "pending",
+          "label": null
+        }
+      ],
+      "composition_items": [],
+      "page2": {
+        "href": "http://127.0.0.1:3000/intake-v6/c6e2eb60-e3b7-45b0-8c38-663c5237d184/operator",
+        "hasLetterCluster": false,
+        "hasArtwork": false,
+        "hasLighting": false,
+        "hasSegmented": false,
+        "hasOracal": false,
+        "hasFold": false,
+        "hasVectorLitere": true,
+        "montajVisible": false
+      }
+    }
+  ]
+}

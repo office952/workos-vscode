@@ -1,0 +1,403 @@
+{
+  "status": 200,
+  "body": {
+    "workspace": {
+      "id": "131ee0a5-d5a1-4ad8-a203-540eddc5d378",
+      "workspace_code": "IV6-5FEB4AEB",
+      "title": "wiring-audit-acm_crossing-1784456070701",
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "status": "collecting_data",
+      "payload": {
+        "schema_version": "1.0.0",
+        "client": {
+          "client_name": null,
+          "job_title": null,
+          "width_mm": null,
+          "height_mm": null
+        },
+        "product_binding": {
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "template_id": 8,
+          "template_label": "Litere volumetrice",
+          "product_family": "litere_volumetrice",
+          "product_family_name": "Litere volumetrice",
+          "bound_at": "2026-07-19T10:14:30.753127Z"
+        },
+        "intake_request_code": null,
+        "offer_method": null,
+        "analyzer_mode": "analyzer_first",
+        "template_hint_code": null,
+        "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "source": null,
+        "work_intake_context": {
+          "offer_method": null,
+          "analyzer_mode": "analyzer_first",
+          "template_hint_code": null,
+          "selected_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "source": null,
+          "selected_template_is_initial": true,
+          "product_truth_final_decided_later": true
+        },
+        "svg_source": {
+          "file_name": "litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg",
+          "file_size_bytes": 5136,
+          "file_hash": "2bdb43e8c16950affc746279b265a99b0f625466d0c70824daa12bf8b64da546",
+          "upload_status": "analyzed"
+        },
+        "svg": null,
+        "svg_source_text": null,
+        "svg_analysis_json": null,
+        "path_geometry_summary": {
+          "parse_status": "parsed",
+          "metrics_version": "v2-path-metrics",
+          "bbox_w_mm": 2000.003649,
+          "bbox_h_mm": 349.999499,
+          "area_mm2_approx": 820605.050868,
+          "perimeter_mm_approx": 12670.534204,
+          "warnings": [
+            "svg_sanitized_doctype_removed",
+            "path_curve_metrics_approximate"
+          ],
+          "sanitization": {
+            "original_file_has_doctype": true,
+            "analysis_sanitized": true,
+            "sanitization_reason": "svg_doctype_removed",
+            "source_file_name": "litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg",
+            "source_content_hash": "2bdb43e8c16950affc746279b265a99b0f625466d0c70824daa12bf8b64da546",
+            "analysis_content_hash": "d2d83a3780572a75540a113ac94c84a9eb817be43d4874b2e9bed13318f4cc11"
+          },
+          "doctype_removed_for_safe_parse": true,
+          "layers": [
+            {
+              "layer_id": "gravare-cnc-135gr",
+              "layer_name": "gravare-cnc-135gr",
+              "layer_key": "gravare-cnc-135gr",
+              "display_name": "gravare-cnc-135gr",
+              "source": "drawable_summary",
+              "element_counts": {
+                "paths": 0,
+                "polygons": 0,
+                "polylines": 0,
+                "rects": 2,
+                "circles": 0,
+                "ellipses": 0,
+                "texts": 0,
+                "total": 2
+              },
+              "color_evidence": {
+                "fills": [
+                  "#C5C6C6"
+                ],
+                "strokes": [
+                  "#2B2A29"
+                ],
+                "dominant_fill": "#C5C6C6",
+                "dominant_stroke": "#2B2A29",
+                "is_multicolor": false,
+                "fill_groups": [
+                  {
+                    "color": "#C5C6C6",
+                    "label": "#C5C6C6",
+                    "element_count": 2,
+                    "kind": "fill"
+                  }
+                ]
+              },
+              "font_evidence": {
+                "has_text": false,
+                "font_families": [],
+                "converted_to_paths": true,
+                "note": "Text converted to paths — font not recoverable from SVG."
+              },
+              "path_count": 0,
+              "closed_contour_count": 0,
+              "perimeter_mm": null,
+              "area_mm2": null
+            },
+            {
+              "layer_id": "decupare-cnc-outside",
+              "layer_name": null,
+              "layer_key": "decupare-cnc-outside",
+              "display_name": "decupare-cnc-outside",
+              "source": "drawable_summary",
+              "element_counts": {
+                "paths": 1,
+                "polygons": 0,
+                "polylines": 0,
+                "rects": 0,
+                "circles": 0,
+                "ellipses": 0,
+                "texts": 0,
+                "total": 1
+              },
+              "color_evidence": {
+                "fills": [
+                  "#E31E24"
+                ],
+                "strokes": [],
+                "dominant_fill": "#E31E24",
+                "dominant_stroke": null,
+                "is_multicolor": false,
+                "fill_groups": [
+                  {
+                    "color": "#E31E24",
+                    "label": "#E31E24",
+                    "element_count": 1,
+                    "kind": "fill"
+                  }
+                ]
+              },
+              "font_evidence": {
+                "has_text": false,
+                "font_families": [],
+                "converted_to_paths": true,
+                "note": "Text converted to paths — font not recoverable from SVG."
+              },
+              "path_count": 1,
+              "closed_contour_count": 14,
+              "perimeter_mm": 7270.532975,
+              "area_mm2": 120604.775901
+            }
+          ],
+          "layer_count": 2,
+          "contour_split": {
+            "outer_contour_perimeter_mm": null,
+            "inner_hole_perimeter_mm": null,
+            "total_cutting_perimeter_mm": 7270.532975,
+            "split_quality": "missing"
+          },
+          "drawable_layers": [
+            {
+              "layer_id": "gravare-cnc-135gr",
+              "layer_name": "gravare-cnc-135gr",
+              "layer_key": "gravare-cnc-135gr",
+              "display_name": "gravare-cnc-135gr",
+              "source": "drawable_summary",
+              "element_counts": {
+                "paths": 0,
+                "polygons": 0,
+                "polylines": 0,
+                "rects": 2,
+                "circles": 0,
+                "ellipses": 0,
+                "texts": 0,
+                "total": 2
+              },
+              "color_evidence": {
+                "fills": [
+                  "#C5C6C6"
+                ],
+                "strokes": [
+                  "#2B2A29"
+                ],
+                "dominant_fill": "#C5C6C6",
+                "dominant_stroke": "#2B2A29",
+                "is_multicolor": false,
+                "fill_groups": [
+                  {
+                    "color": "#C5C6C6",
+                    "label": "#C5C6C6",
+                    "element_count": 2,
+                    "kind": "fill"
+                  }
+                ]
+              },
+              "font_evidence": {
+                "has_text": false,
+                "font_families": [],
+                "converted_to_paths": true,
+                "note": "Text converted to paths — font not recoverable from SVG."
+              }
+            },
+            {
+              "layer_id": "decupare-cnc-outside",
+              "layer_name": "decupare-cnc-outside",
+              "layer_key": "decupare-cnc-outside",
+              "display_name": "decupare-cnc-outside",
+              "source": "drawable_summary",
+              "element_counts": {
+                "paths": 1,
+                "polygons": 0,
+                "polylines": 0,
+                "rects": 0,
+                "circles": 0,
+                "ellipses": 0,
+                "texts": 0,
+                "total": 1
+              },
+              "color_evidence": {
+                "fills": [
+                  "#E31E24"
+                ],
+                "strokes": [],
+                "dominant_fill": "#E31E24",
+                "dominant_stroke": null,
+                "is_multicolor": false,
+                "fill_groups": [
+                  {
+                    "color": "#E31E24",
+                    "label": "#E31E24",
+                    "element_count": 1,
+                    "kind": "fill"
+                  }
+                ]
+              },
+              "font_evidence": {
+                "has_text": false,
+                "font_families": [],
+                "converted_to_paths": true,
+                "note": "Text converted to paths — font not recoverable from SVG."
+              }
+            }
+          ],
+          "font_evidence": {
+            "has_text": false,
+            "font_families": [],
+            "converted_to_paths": true,
+            "note": "Text converted to paths — font not recoverable from SVG."
+          }
+        },
+        "quote_geometry": null,
+        "layer_role_setup": {
+          "confirmation_status": "partial",
+          "layers": [
+            {
+              "layer_key": "gravare-cnc-135gr",
+              "layer_id": "gravare-cnc-135gr",
+              "layer_name": "gravare-cnc-135gr",
+              "auto_role": "unknown",
+              "auto_confidence": "low",
+              "confirmed_role": null,
+              "confirmation_state": "pending",
+              "operator_note": null,
+              "path_count": 0,
+              "dominant_fill": "#C5C6C6"
+            },
+            {
+              "layer_key": "decupare-cnc-outside",
+              "layer_id": "decupare-cnc-outside",
+              "layer_name": null,
+              "auto_role": "unknown",
+              "auto_confidence": "low",
+              "confirmed_role": null,
+              "confirmation_state": "pending",
+              "operator_note": null,
+              "path_count": 1,
+              "dominant_fill": "#E31E24"
+            }
+          ],
+          "layer_bindings": [],
+          "warnings": []
+        },
+        "layer_role_review": {
+          "roles": [
+            {
+              "layer_id": "gravare-cnc-135gr",
+              "source_label": "gravare-cnc-135gr",
+              "display_label": "gravare-cnc-135gr",
+              "original_label": "gravare-cnc-135gr",
+              "operator_role": "reference",
+              "technical_role": "unknown",
+              "role_source": "suggested",
+              "confidence": "low",
+              "geometry_ref": {
+                "layer_key": "gravare-cnc-135gr"
+              },
+              "color_refs": [
+                "#C5C6C6"
+              ],
+              "status": "pending"
+            },
+            {
+              "layer_id": "decupare-cnc-outside",
+              "source_label": "decupare-cnc-outside",
+              "display_label": "decupare-cnc-outside",
+              "original_label": "decupare-cnc-outside",
+              "operator_role": "reference",
+              "technical_role": "unknown",
+              "role_source": "suggested",
+              "confidence": "low",
+              "geometry_ref": {
+                "layer_key": "decupare-cnc-outside"
+              },
+              "color_refs": [
+                "#E31E24"
+              ],
+              "status": "pending"
+            }
+          ]
+        },
+        "product_composition_recommendation": {
+          "status": "blocked",
+          "composition_type": "undetermined",
+          "source": "analyzer_rules_v1",
+          "recommended_templates": [],
+          "composition_items": [],
+          "shared_modules_policy": {
+            "dedupe_common_operations": true,
+            "graphic_verification_scope": "assembly",
+            "file_preparation_scope": "assembly",
+            "light_test_scope": "assembly",
+            "packaging_scope": "assembly"
+          },
+          "blockers": [
+            {
+              "code": "NO_PRODUCT_COMPONENT_DETECTED",
+              "message": "Nu exista roluri constructive confirmate pentru recomandare de template."
+            }
+          ],
+          "warnings": [],
+          "generated_at": "2026-07-19T10:14:30.806265+00:00"
+        },
+        "product_composition_confirmed": {
+          "confirmed": false,
+          "confirmed_at": null,
+          "confirmed_by": null,
+          "items": []
+        },
+        "product_truth": null,
+        "terminology_mode": "constructive_vector",
+        "finish_setup": null,
+        "offer_scope": null,
+        "offer_scope_confirmed": null,
+        "offer_scope_dependency_validation": null,
+        "sheet_quote_override": null
+      },
+      "readiness_status": "layer_roles_incomplete",
+      "created_at": "2026-07-19T10:14:30.753127",
+      "updated_at": "2026-07-19T10:14:30.806265"
+    },
+    "layer_role_setup": {
+      "confirmation_status": "partial",
+      "layers": [
+        {
+          "layer_key": "gravare-cnc-135gr",
+          "layer_id": "gravare-cnc-135gr",
+          "layer_name": "gravare-cnc-135gr",
+          "auto_role": "unknown",
+          "auto_confidence": "low",
+          "confirmed_role": null,
+          "confirmation_state": "pending",
+          "operator_note": null,
+          "path_count": 0,
+          "dominant_fill": "#C5C6C6"
+        },
+        {
+          "layer_key": "decupare-cnc-outside",
+          "layer_id": "decupare-cnc-outside",
+          "layer_name": null,
+          "auto_role": "unknown",
+          "auto_confidence": "low",
+          "confirmed_role": null,
+          "confirmation_state": "pending",
+          "operator_note": null,
+          "path_count": 1,
+          "dominant_fill": "#E31E24"
+        }
+      ],
+      "layer_bindings": [],
+      "warnings": []
+    },
+    "warnings": []
+  }
+}

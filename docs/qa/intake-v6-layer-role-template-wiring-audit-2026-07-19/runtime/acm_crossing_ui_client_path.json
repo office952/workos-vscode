@@ -1,0 +1,86 @@
+{
+  "fixture": {
+    "id": "acm_crossing",
+    "file": "litere-cu-fundal-acm-segmentat-litera-peste-imbinare.svg"
+  },
+  "workspace_id": "184c55b6-0485-462d-a5a3-e0a2976eeabe",
+  "probe": {
+    "href": "http://127.0.0.1:3000/intake-v6/184c55b6-0485-462d-a5a3-e0a2976eeabe/operator",
+    "roles": [
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-c5c6c6",
+        "value": "face",
+        "label": "Vector Litere"
+      },
+      {
+        "id": "intake-v6-layer-role-pseudo:fill-e31e24",
+        "value": "face",
+        "label": "Vector Litere"
+      }
+    ],
+    "hasRoleTable": true,
+    "textSnips": {
+      "vectorLitere": true,
+      "vectorLogo": true,
+      "support": true,
+      "compositionBlocked": false
+    },
+    "stepLayers": "step",
+    "stepReview": null,
+    "stepConfirm": null,
+    "footer": "Următorul pas: Confirmă rolul pentru toate straturile."
+  },
+  "nav": {
+    "before": {
+      "href": "http://127.0.0.1:3000/intake-v6/184c55b6-0485-462d-a5a3-e0a2976eeabe/operator",
+      "confirm": null,
+      "review": null,
+      "layers": "step"
+    },
+    "after": {
+      "href": "http://127.0.0.1:3000/intake-v6/184c55b6-0485-462d-a5a3-e0a2976eeabe/operator",
+      "confirm": null,
+      "review": null,
+      "layers": "step"
+    },
+    "from": "face",
+    "to": "printed_artwork",
+    "jumpedToConfirm": false,
+    "jumpedToReview": false
+  },
+  "page2": {
+    "href": "http://127.0.0.1:3000/intake-v6/184c55b6-0485-462d-a5a3-e0a2976eeabe/operator",
+    "letterCluster": false,
+    "artwork": false,
+    "lighting": false,
+    "montajPanel": false,
+    "oracal": false,
+    "folds": true,
+    "segmented": true,
+    "alucobond": true
+  },
+  "bindings": [],
+  "roles": [
+    {
+      "key": "pseudo:fill-c5c6c6",
+      "auto": "face",
+      "conf": null,
+      "state": "pending"
+    },
+    {
+      "key": "pseudo:fill-e31e24",
+      "auto": "face",
+      "conf": null,
+      "state": "pending"
+    }
+  ],
+  "readiness": "layer_roles_incomplete",
+  "composition_status": "needs_confirmation",
+  "composition_items": [
+    {
+      "template": "TPL-VOLUMETRIC-LETTERS_v2"
+    }
+  ],
+  "seg": null,
+  "support": null
+}

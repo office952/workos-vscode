@@ -1,0 +1,38 @@
+{
+  "id": "131ee0a5-d5a1-4ad8-a203-540eddc5d378",
+  "workspace_code": "IV6-5FEB4AEB",
+  "title": "wiring-audit-acm_crossing-1784456070701",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "readiness_status": "layer_roles_incomplete",
+  "layer_count": 2,
+  "layers": [
+    {
+      "key": "gravare-cnc-135gr",
+      "name": "gravare-cnc-135gr"
+    },
+    {
+      "key": "decupare-cnc-outside"
+    }
+  ],
+  "role_setup_status": "partial",
+  "role_layers": [
+    {
+      "key": "gravare-cnc-135gr",
+      "auto": "unknown",
+      "state": "pending",
+      "label": "gravare-cnc-135gr"
+    },
+    {
+      "key": "decupare-cnc-outside",
+      "auto": "unknown",
+      "state": "pending",
+      "label": null
+    }
+  ],
+  "composition_items": [],
+  "composition_confirmed": false,
+  "bindings": [],
+  "support_selection": null,
+  "segmented": null,
+  "product_truth_components": []
+}

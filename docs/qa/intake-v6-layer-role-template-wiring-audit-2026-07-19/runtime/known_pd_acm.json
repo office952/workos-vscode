@@ -1,0 +1,299 @@
+﻿{
+    "preview_version":  "1.0.0",
+    "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "business_name_ro":  "Panouri ACP / ACM",
+    "source_context":  {
+                           "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                           "workspace_id":  "bd26e3d5-1e63-4e39-8e72-ebaaea501e49",
+                           "quote_id":  null,
+                           "source_payload_type":  "template_only"
+                       },
+    "selected_modules":  [
+                             {
+                                 "module_code":  "structura_suport",
+                                 "module_name":  "Structura suport ACM casetat",
+                                 "activation_kind":  "always_on",
+                                 "state":  "active",
+                                 "activation_reason":  "Standalone boxed ACM mounting root template.",
+                                 "missing_fields":  [
+
+                                                    ]
+                             }
+                         ],
+    "optional_modules":  [
+
+                         ],
+    "inactive_modules":  [
+
+                         ],
+    "components":  [
+                       {
+                           "component_id":  "comp_acm_panel_face",
+                           "label_ro":  "Panou ACM/Dibond â faÈÄ corp (fundal / suport premontaj)",
+                           "role":  "STRUCTURA",
+                           "mini_module_code":  null,
+                           "module_active":  true,
+                           "provenance":  "parent",
+                           "source_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+                       },
+                       {
+                           "component_id":  "comp_casetted_returns",
+                           "label_ro":  "Casetare / pliuri V-groove 135Â°",
+                           "role":  "TAIERE_CNC_LASER",
+                           "mini_module_code":  null,
+                           "module_active":  true,
+                           "provenance":  "parent",
+                           "source_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+                       },
+                       {
+                           "component_id":  "comp_mounting_fasteners",
+                           "label_ro":  "Prinderi Ã®necate / montaj panou",
+                           "role":  "FINISAJ",
+                           "mini_module_code":  null,
+                           "module_active":  true,
+                           "provenance":  "parent",
+                           "source_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+                       }
+                   ],
+    "material_roles":  [
+                           {
+                               "material_code":  "MAT-ACM-BOND-PANEL",
+                               "label":  "Panou ACM/Bond faÈÄ",
+                               "unit":  "mp",
+                               "component_ref":  "comp_acm_panel_face",
+                               "mini_module_code":  null,
+                               "module_active":  true,
+                               "provenance":  "parent"
+                           },
+                           {
+                               "material_code":  "MAT-ACM-BOND-PANEL",
+                               "label":  "ACM suplimentar canturi / intoarceri",
+                               "unit":  "mp",
+                               "component_ref":  "comp_casetted_returns",
+                               "mini_module_code":  null,
+                               "module_active":  true,
+                               "provenance":  "parent"
+                           },
+                           {
+                               "material_code":  "MAT-SURUBURI-GEN",
+                               "label":  "Suruburi autofiletante Ã®necate",
+                               "unit":  "set",
+                               "component_ref":  "comp_mounting_fasteners",
+                               "mini_module_code":  null,
+                               "module_active":  true,
+                               "provenance":  "parent"
+                           }
+                       ],
+    "operation_roles":  [
+                            {
+                                "operation_code":  "CUT_ACM_PANEL",
+                                "label":  "Debitare panou ACM la dimensiune",
+                                "workcenter":  "ACM_PANEL_CUTTING",
+                                "component_ref":  "comp_acm_panel_face",
+                                "mini_module_code":  null,
+                                "module_active":  true,
+                                "is_geometry_gate":  false,
+                                "is_priced":  true,
+                                "provenance":  "parent"
+                            },
+                            {
+                                "operation_code":  "V_GROOVE_ROUTER",
+                                "label":  "Frezare V-groove (135Â°) pe lungimea pliului",
+                                "workcenter":  "ACM_V_GROOVE",
+                                "component_ref":  "comp_casetted_returns",
+                                "mini_module_code":  null,
+                                "module_active":  true,
+                                "is_geometry_gate":  false,
+                                "is_priced":  true,
+                                "provenance":  "parent"
+                            },
+                            {
+                                "operation_code":  "FOLD_CASSETTE",
+                                "label":  "Casetare / pliere manualÄ",
+                                "workcenter":  "ASSEMBLY",
+                                "component_ref":  "comp_casetted_returns",
+                                "mini_module_code":  null,
+                                "module_active":  true,
+                                "is_geometry_gate":  false,
+                                "is_priced":  true,
+                                "provenance":  "parent"
+                            },
+                            {
+                                "operation_code":  "ACM_BOXED_ASSEMBLY",
+                                "label":  "Asamblare suport ACM casetat (comercial)",
+                                "workcenter":  "ACM_BOXED_ASSEMBLY",
+                                "component_ref":  "comp_mounting_fasteners",
+                                "mini_module_code":  null,
+                                "module_active":  true,
+                                "is_geometry_gate":  false,
+                                "is_priced":  true,
+                                "provenance":  "parent"
+                            },
+                            {
+                                "operation_code":  "MOUNT_ACM_PANEL",
+                                "label":  "Montaj panou ACM pe structurÄ / premontaj",
+                                "workcenter":  "ASSEMBLY",
+                                "component_ref":  "comp_mounting_fasteners",
+                                "mini_module_code":  null,
+                                "module_active":  true,
+                                "is_geometry_gate":  false,
+                                "is_priced":  true,
+                                "provenance":  "parent"
+                            }
+                        ],
+    "linked_template_runtime_segments":  null,
+    "canonical_values":  {
+
+                         },
+    "geometry_inputs":  {
+
+                        },
+    "validation":  {
+                       "readiness_status":  "partial",
+                       "missing_required_fields":  [
+                                                       "acm_thickness_mm",
+                                                       "fold_sides",
+                                                       "panel_height_mm",
+                                                       "panel_width_mm",
+                                                       "return_depth_mm"
+                                                   ],
+                       "invalid_combinations":  [
+
+                                                ],
+                       "unresolved_warnings":  [
+
+                                               ]
+                   },
+    "provenance":  [
+                       {
+                           "key":  "template_identity",
+                           "source":  "template_architecture_scope",
+                           "detail":  "requested=\u0027TPL-ACM-BOXED-MOUNTING-SUPPORT_V1\u0027 canonical=\u0027TPL-ACM-BOXED-MOUNTING-SUPPORT_V1\u0027 type=canonical alias=False src=template_architecture_scope:canonical"
+                       },
+                       {
+                           "key":  "product_aggregate",
+                           "source":  "product_aggregate_service",
+                           "detail":  "standalone_root=true components=3 operations=5"
+                       },
+                       {
+                           "key":  "standalone_root_contract",
+                           "source":  "acm_quote_input_helpers",
+                           "detail":  "boxed_mounting_standalone_root_v1"
+                       },
+                       {
+                           "key":  "workspace_payload",
+                           "source":  "intake_v6_workspaces.payload_json",
+                           "detail":  "workspace_id=bd26e3d5-1e63-4e39-8e72-ebaaea501e49 read_only=true"
+                       }
+                   ],
+    "resource_hints":  {
+                           "scope":  "future_resource_hint",
+                           "pricing_source":  [
+
+                                              ],
+                           "inventory_source":  [
+
+                                                ],
+                           "required_machine_type":  [
+
+                                                     ],
+                           "required_employee_roles":  [
+
+                                                       ],
+                           "employee_availability_dependency":  [
+
+                                                                ],
+                           "attendance_capacity_dependency":  [
+
+                                                              ],
+                           "subcontractable":  [
+
+                                               ],
+                           "external_partner_fallback":  [
+
+                                                         ],
+                           "machine_failure_fallback":  [
+
+                                                        ],
+                           "execution_routing_notes":  [
+
+                                                       ]
+                       },
+    "warnings":  [
+                     "DOSSIER_METADATA_ONLY: Blueprint dossier is metadata for BOM/ops; task_rules_json is consumed into task_contract for ExecutionPlan V2.",
+                     "TEMPLATE_IDENTITY: Template identity resolution trace."
+                 ],
+    "notes":  [
+                  "Read-only ProductDefinition preview â standalone boxed ACM mounting root.",
+                  "Reuses linked-child aggregate/BOM truth; no Intake V6 modular form contract."
+              ],
+    "composition":  {
+                        "composed_graph_version":  "1.0.0",
+                        "composition_mode":  "standalone_root",
+                        "root_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                        "selected_solution_id":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                        "solution_status":  "confirmed",
+                        "solution_reason_codes":  [
+
+                                                  ],
+                        "compatibility_status":  "compatible",
+                        "blockers":  [
+
+                                     ],
+                        "warnings":  [
+
+                                     ],
+                        "alternatives":  [
+
+                                         ],
+                        "provenance":  [
+                                           {
+                                               "key":  "standalone_root",
+                                               "source":  "product_definition_composition_contract",
+                                               "detail":  "boxed_acm_mounting_standalone_root_v1"
+                                           }
+                                       ],
+                        "active_module_codes":  [
+                                                    "structura_suport"
+                                                ],
+                        "nodes":  [
+                                      {
+                                          "node_id":  "node:root_product:TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                          "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                          "module_code":  "structura_suport",
+                                          "module_role":  "mounting_support",
+                                          "node_role":  "root_product",
+                                          "parent_node_id":  null,
+                                          "activation_source":  "template_registry",
+                                          "included_in_graph":  true,
+                                          "inherited_inputs":  {
+
+                                                               },
+                                          "locally_owned_inputs":  {
+
+                                                                   },
+                                          "unresolved_inputs":  [
+
+                                                                ],
+                                          "compatibility_status":  "compatible",
+                                          "blockers":  [
+
+                                                       ],
+                                          "warnings":  [
+
+                                                       ],
+                                          "provenance":  [
+                                                             {
+                                                                 "key":  "activation_source",
+                                                                 "source":  "product_definition_composition_contract",
+                                                                 "detail":  "template_registry"
+                                                             }
+                                                         ]
+                                      }
+                                  ],
+                        "edges":  [
+
+                                  ],
+                        "frozen_mounting_solution":  null
+                    }
+}

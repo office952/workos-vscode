@@ -1,0 +1,131 @@
+{
+  "p1": {
+    "roles": [],
+    "href": "http://127.0.0.1:3000/intake-v6/bd26e3d5-1e63-4e39-8e72-ebaaea501e49/operator",
+    "textHasSupport": true
+  },
+  "p2": {
+    "href": "http://127.0.0.1:3000/intake-v6/bd26e3d5-1e63-4e39-8e72-ebaaea501e49/operator",
+    "letterCluster": false,
+    "artwork": false,
+    "lighting": false,
+    "montaj": true,
+    "oracal": false,
+    "folds": true,
+    "segmented": true,
+    "alucobond": true
+  },
+  "api_summary": {
+    "readiness": "product_composition_not_confirmed",
+    "roles": [
+      {
+        "layer_key": "pseudo:fill-c5c6c6",
+        "layer_id": "pseudo:fill-c5c6c6",
+        "layer_name": "pseudo fill-c5c6c6",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "support_panel",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      },
+      {
+        "layer_key": "pseudo:fill-e31e24",
+        "layer_id": "pseudo:fill-e31e24",
+        "layer_name": "pseudo fill-e31e24",
+        "auto_role": "face",
+        "auto_confidence": "high",
+        "confirmed_role": "face",
+        "confirmation_state": "confirmed",
+        "operator_note": null,
+        "path_count": null,
+        "dominant_fill": null
+      }
+    ],
+    "bindings": [
+      {
+        "role": "LETTER_VECTOR_SET",
+        "tpl": "TPL-VOLUMETRIC-FACE_v1",
+        "status": "CONFIRMED"
+      },
+      {
+        "role": "SUPPORT_CONTOUR",
+        "tpl": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "status": "CONFIRMED"
+      }
+    ],
+    "composition": {
+      "status": "needs_confirmation",
+      "composition_type": "letters_plus_support",
+      "source": "analyzer_rules_v1",
+      "recommended_templates": [
+        {
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "role_in_composition": "letters",
+          "reason": "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+          "source_layer_ids": [
+            "pseudo:fill-e31e24"
+          ],
+          "confidence": "high",
+          "status": "suggested"
+        },
+        {
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "role_in_composition": "support_panel",
+          "reason": "Support/background contour detected; maps to live optional component TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 (legacy alias TPL-BOND-CASETAT is not authority).",
+          "source_layer_ids": [
+            "pseudo:fill-c5c6c6"
+          ],
+          "confidence": "medium",
+          "status": "available_optional"
+        }
+      ],
+      "composition_items": [
+        {
+          "composition_item_id": "letters",
+          "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+          "component_role": "volumetric_letters",
+          "source_layer_ids": [
+            "pseudo:fill-e31e24"
+          ],
+          "source_group_ids": [
+            "pseudo:fill-e31e24"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "suggested"
+        },
+        {
+          "composition_item_id": "support",
+          "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+          "component_role": "support_panel",
+          "source_layer_ids": [
+            "pseudo:fill-c5c6c6"
+          ],
+          "source_group_ids": [
+            "pseudo:fill-c5c6c6"
+          ],
+          "shared_module_policy": "dedupe_common_operations",
+          "status": "available_optional"
+        }
+      ],
+      "shared_modules_policy": {
+        "dedupe_common_operations": true,
+        "graphic_verification_scope": "assembly",
+        "file_preparation_scope": "assembly",
+        "light_test_scope": "assembly",
+        "packaging_scope": "assembly"
+      },
+      "blockers": [],
+      "warnings": [
+        {
+          "code": "SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM",
+          "message": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETAT este legacy/deprecated."
+        }
+      ],
+      "generated_at": "2026-07-19T08:36:21.286299+00:00"
+    },
+    "seg": "CONFIRMED",
+    "support": "confirmed"
+  }
+}

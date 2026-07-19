@@ -64,7 +64,8 @@ Targeted Vitest green (letter groups, artwork, lighting, return cant, footer gui
 
 ## 16. Live validation
 
-FE `:3000` (also validated earlier on `:3001`) · BE `:8003` · workspace `e1ba14f2-…` · probe all true · Montaj panel present.
+**Acceptance stack only:** FE `:3000` · BE `:8003` · workspace `e1ba14f2-…` · probe all true · Montaj panel present · after screenshots under commit `f39c260`.  
+**`:3001`:** operational crash (`3221226505`) — not used as PASS evidence; no restart for this pack.
 
 ## 17. Screenshots
 

@@ -1,0 +1,327 @@
+{
+  "knownProbe": {
+    "href": "http://127.0.0.1:3000/intake-v6/bd26e3d5-1e63-4e39-8e72-ebaaea501e49/operator",
+    "letterCluster": false,
+    "artwork": false,
+    "lighting": false,
+    "montaj": true,
+    "oracal": false,
+    "folds": true,
+    "segmented": true,
+    "alucobond": true,
+    "vectorLitere": true
+  },
+  "bindings": [
+    {
+      "schema": "svg_component_bindings_v1",
+      "binding_id": "bind_letters_pseudo:fill-e31e24",
+      "geometry_role": "LETTER_VECTOR_SET",
+      "component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+      "selection_mode": "LAYER_OR_GROUP",
+      "selected_geometry": {
+        "layer_ids": [
+          "pseudo:fill-e31e24"
+        ],
+        "group_ids": [],
+        "element_ids": [],
+        "geometry_hashes": [],
+        "source_svg_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+      },
+      "configuration": {},
+      "status": "CONFIRMED",
+      "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+      "provenance": {
+        "source": "legacy_string",
+        "legacy_note": "component_aware_assignment",
+        "svg_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "confirmed_at": "2026-07-19T08:36:17.024Z",
+      "local_zone_id": "zone_letter_vector_set_e8ca4848b864",
+      "confirmation_status": "CONFIRMED",
+      "local_configuration_status": "LOCAL_CONFIGURATION_REQUIRED",
+      "local_module_configuration": {
+        "schema": "acp_applied_component_interface_v1",
+        "module_code": "ACP-APPLIED-COMPONENT-INTERFACE",
+        "interface_instance_id": "mod_applied-component-interface_12f537e02aee",
+        "status": "ACTIVE",
+        "contract_version": "acp_local_face_modules/v1",
+        "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "applied_component_template_code": "TPL-VOLUMETRIC-FACE_v1",
+        "placement_reference": "ON_ACP_FACE",
+        "mounting_method_status": "OWNER_GATE_REQUIRED",
+        "cable_passage_status": "OWNER_GATE_REQUIRED",
+        "electrical_interface_status": "OWNER_GATE_REQUIRED",
+        "confirmation_status": "NOT_CONFIGURED",
+        "primary_panel_id": null,
+        "secondary_panel_id": null,
+        "crosses_joint": false,
+        "joint_id": null,
+        "mount_strategy": "STANDARD",
+        "panel_alignment_dependency": false,
+        "cable_passage_context": false,
+        "does_not_absorb_letter_ownership": true,
+        "provenance": {
+          "source": "operator",
+          "contract_version": "acp_local_face_modules/v1"
+        },
+        "face_treatment_code": "FACE-TREATMENT-APPLIED-VOLUMETRIC-COMPONENT",
+        "geometry_role": "LETTER_VECTOR_SET",
+        "binding_id": "bind_letters_pseudo:fill-e31e24",
+        "readiness": {
+          "overall": "LOCAL_CONFIGURATION_REQUIRED",
+          "warnings": [
+            {
+              "code": "ACP_APPLIED_INTERFACE_OWNER_GATES",
+              "message": "Applied component remains separate; host interface gated."
+            }
+          ],
+          "blockers": [],
+          "gates": [
+            {
+              "path": "mounting_method_status",
+              "status": "OWNER_GATE_REQUIRED"
+            },
+            {
+              "path": "cable_passage_status",
+              "status": "OWNER_GATE_REQUIRED"
+            },
+            {
+              "path": "electrical_interface_status",
+              "status": "OWNER_GATE_REQUIRED"
+            }
+          ],
+          "actionable": true
+        }
+      },
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    },
+    {
+      "schema": "svg_component_bindings_v1",
+      "binding_id": "bind_support_cc_7af1352f",
+      "geometry_role": "SUPPORT_CONTOUR",
+      "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "selection_mode": "CLOSED_CONTOUR",
+      "selected_geometry": {
+        "layer_ids": [],
+        "group_ids": [],
+        "element_ids": [
+          "cc_7af1352f"
+        ],
+        "geometry_hashes": [
+          "7af1352f"
+        ],
+        "source_svg_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+      },
+      "configuration": {
+        "fold_count": 2,
+        "l1_mm": 60,
+        "l2_mm": 25,
+        "finished_depth_mm": 60,
+        "service_corner": null,
+        "internal_frame_enabled": false
+      },
+      "panel_geometry": {
+        "width_mm": 1000,
+        "height_mm": 350,
+        "area_mm2": 350000.137,
+        "perimeter_mm": 2700.001,
+        "geometry_hash": "7af1352f"
+      },
+      "status": "CONFIRMED",
+      "provenance": {
+        "source": "legacy_string",
+        "legacy_note": "svg_support_selection_sync",
+        "geometry_hash": "7af1352f",
+        "svg_hash": "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc",
+        "face_treatment_registry_version": "acp_face_treatment/v1"
+      },
+      "svg_support_element_id": "el-1",
+      "candidate_explanation": [
+        "candidat panou: probabil",
+        "contur închis",
+        "suprafață mare (42.9% din compoziție)",
+        "rectangularitate 0.7725"
+      ],
+      "unit_ambiguity": false,
+      "confirmed_at": "2026-07-19T08:36:11.953Z",
+      "local_zone_id": "zone_support_contour_2dfc786804a9",
+      "face_treatment_code": "NOT_APPLICABLE",
+      "confirmation_status": "CONFIRMED",
+      "local_configuration_status": "NOT_APPLICABLE",
+      "face_treatment_contract_version": "acp_face_treatment/v1"
+    }
+  ],
+  "roles": [
+    {
+      "layer_key": "pseudo:fill-c5c6c6",
+      "layer_id": "pseudo:fill-c5c6c6",
+      "layer_name": "pseudo fill-c5c6c6",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "support_panel",
+      "confirmation_state": "confirmed",
+      "operator_note": null,
+      "path_count": null,
+      "dominant_fill": null
+    },
+    {
+      "layer_key": "pseudo:fill-e31e24",
+      "layer_id": "pseudo:fill-e31e24",
+      "layer_name": "pseudo fill-e31e24",
+      "auto_role": "face",
+      "auto_confidence": "high",
+      "confirmed_role": "face",
+      "confirmation_state": "confirmed",
+      "operator_note": null,
+      "path_count": null,
+      "dominant_fill": null
+    }
+  ],
+  "composition": {
+    "status": "needs_confirmation",
+    "composition_type": "letters_plus_support",
+    "source": "analyzer_rules_v1",
+    "recommended_templates": [
+      {
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "role_in_composition": "letters",
+        "reason": "Confirmed volumetric letter/vector roles exist in SVG analysis.",
+        "source_layer_ids": [
+          "pseudo:fill-e31e24"
+        ],
+        "confidence": "high",
+        "status": "suggested"
+      },
+      {
+        "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "role_in_composition": "support_panel",
+        "reason": "Support/background contour detected; maps to live optional component TPL-ACM-BOXED-MOUNTING-SUPPORT_v1 (legacy alias TPL-BOND-CASETAT is not authority).",
+        "source_layer_ids": [
+          "pseudo:fill-c5c6c6"
+        ],
+        "confidence": "medium",
+        "status": "available_optional"
+      }
+    ],
+    "composition_items": [
+      {
+        "composition_item_id": "letters",
+        "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+        "component_role": "volumetric_letters",
+        "source_layer_ids": [
+          "pseudo:fill-e31e24"
+        ],
+        "source_group_ids": [
+          "pseudo:fill-e31e24"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "suggested"
+      },
+      {
+        "composition_item_id": "support",
+        "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+        "component_role": "support_panel",
+        "source_layer_ids": [
+          "pseudo:fill-c5c6c6"
+        ],
+        "source_group_ids": [
+          "pseudo:fill-c5c6c6"
+        ],
+        "shared_module_policy": "dedupe_common_operations",
+        "status": "available_optional"
+      }
+    ],
+    "shared_modules_policy": {
+      "dedupe_common_operations": true,
+      "graphic_verification_scope": "assembly",
+      "file_preparation_scope": "assembly",
+      "light_test_scope": "assembly",
+      "packaging_scope": "assembly"
+    },
+    "blockers": [],
+    "warnings": [
+      {
+        "code": "SUPPORT_TEMPLATE_LEGACY_REDIRECTED_TO_ACM",
+        "message": "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM-BOXED-MOUNTING-SUPPORT_v1). TPL-BOND-CASETAT este legacy/deprecated."
+      }
+    ],
+    "generated_at": "2026-07-19T08:36:21.286299+00:00"
+  },
+  "seg": {
+    "schema": "acm_segmented_background_v1",
+    "contract_version": "acm_segmented_background/v1",
+    "status": "CONFIRMED",
+    "assembly_id": "asm_el-1_el-2",
+    "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "operator_confirmed": true,
+    "graphic_continuity": true,
+    "panels": [
+      {
+        "panel_id": "panel_1",
+        "order": 1,
+        "width_mm": 1000,
+        "height_mm": 350,
+        "position": {
+          "x_mm": 0,
+          "y_mm": 0
+        },
+        "contour_element_id": "el-1"
+      },
+      {
+        "panel_id": "panel_2",
+        "order": 2,
+        "width_mm": 1000,
+        "height_mm": 350,
+        "position": {
+          "x_mm": 1000,
+          "y_mm": 0
+        },
+        "contour_element_id": "el-2"
+      }
+    ],
+    "joints": [
+      {
+        "joint_id": "joint_panel_1_panel_2",
+        "left_panel_id": "panel_1",
+        "right_panel_id": "panel_2",
+        "orientation": "VERTICAL"
+      }
+    ],
+    "assembly_dimensions": {
+      "width_mm": 2000,
+      "height_mm": 350
+    },
+    "element_bindings": [],
+    "detection": {
+      "source": "svg_analyzer_proposal",
+      "nearby_support_count": 2,
+      "message_code": "SEGMENTATION_PROPOSAL",
+      "message": "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.",
+      "authority": "PROPOSAL_ONLY"
+    },
+    "meta": {
+      "schema": "acm_segmented_background_v1",
+      "contract_version": "acm_segmented_background/v1",
+      "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "support_contour_role": "ASSEMBLY_ENVELOPE_MAX_ONE",
+      "panels_role": "PHYSICAL_MEMBERS_NESTED",
+      "detection_authority": "PROPOSAL_ONLY",
+      "confirmation_authority": "OPERATOR",
+      "letters_ownership": "EXTERNAL — interface binding only",
+      "no_auto_divide": true,
+      "no_task_materialization": true,
+      "no_pricing": true
+    },
+    "validation": {
+      "blockers": [],
+      "warnings": [],
+      "infos": []
+    },
+    "confirmation": {
+      "message_code": "ASSEMBLY_CONFIRMED",
+      "message": "Ansamblul din mai multe panouri a fost confirmat.",
+      "authority": "OPERATOR"
+    }
+  }
+}
