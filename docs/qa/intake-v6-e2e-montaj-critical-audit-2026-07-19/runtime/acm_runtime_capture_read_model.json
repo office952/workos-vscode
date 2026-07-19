@@ -1,0 +1,96 @@
+﻿{
+    "read_only":  true,
+    "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+    "workspace_record_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+    "workspace_code":  "IV6-EA145E74",
+    "root_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "product_binding_template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+    "read_model_version":  "v1",
+    "fields":  [
+                   {
+                       "field_key":  "svg.selected_layer_refs[]",
+                       "runtime_source":  "svg.selected_layer_refs[]",
+                       "product_truth_path":  "svg.selected_layer_refs[]",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Persisted selected layer refs require layer_role_setup.confirmation_status=complete plus stable layer_id and confirmation_state=confirmed.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   },
+                   {
+                       "field_key":  "finish.finish_target",
+                       "runtime_source":  "finish_setup.finish_target",
+                       "product_truth_path":  "components.finish.target",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Explicit persisted finish_setup.finish_target and finish_setup.confirmed=true.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   },
+                   {
+                       "field_key":  "finish.print_required",
+                       "runtime_source":  "finish_setup.artwork_finishes[].print_required",
+                       "product_truth_path":  "components.artwork.items[].printRequired",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Every persisted artwork finish row must carry an explicit print_required value and row confirmation or finish_setup.confirmed=true.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   },
+                   {
+                       "field_key":  "finish.lamination_required",
+                       "runtime_source":  "finish_setup.artwork_finishes[].lamination_required",
+                       "product_truth_path":  "components.artwork.items[].laminationRequired",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Every persisted artwork finish row must carry an explicit lamination_required value and row confirmation or finish_setup.confirmed=true.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   },
+                   {
+                       "field_key":  "mounting.mounting_scope",
+                       "runtime_source":  "finish_setup.mounting_scope",
+                       "product_truth_path":  "components.mounting.mountingScope",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Explicit persisted finish_setup.mounting_scope and finish_setup.confirmed=true; no fallback from mounting_system or support_type.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   },
+                   {
+                       "field_key":  "mounting.mounting_solution",
+                       "runtime_source":  "finish_setup.mounting_solution",
+                       "product_truth_path":  "components.mounting.solution",
+                       "state":  "confirmed",
+                       "confirmation_rule":  "Explicit persisted finish_setup.mounting_solution when mounting preparation is active; legacy mounting_system and support_type do not satisfy this gate.",
+                       "blockers":  [
+
+                                    ],
+                       "ready_for_product_truth":  true
+                   }
+               ],
+    "blockers":  [
+
+                 ],
+    "downstream_write_intent":  {
+                                    "pricing_write":  false,
+                                    "quote_write":  false,
+                                    "order_write":  false,
+                                    "product_definition_write":  false,
+                                    "product_aggregate_write":  false,
+                                    "task_graph_write":  false,
+                                    "execution_runtime_write":  false,
+                                    "inventory_movement":  false,
+                                    "db_write":  false
+                                },
+    "notes":  [
+                  "Minimal runtime capture read model only.",
+                  "Fail-closed: missing or unconfirmed runtime inputs remain blocked.",
+                  "No Product Truth, Pricing, Quote, Order, Execution, ProductAggregate, TaskGraph, or DB write behavior is invoked."
+              ]
+}

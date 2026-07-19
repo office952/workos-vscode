@@ -1,0 +1,258 @@
+﻿{
+    "workspace_id":  "3fb7a2b5-ec60-48e4-8b5c-c8649c0c8982",
+    "workspace_code":  "IV6-EA145E74",
+    "title":  "composition-v2-acm-1784473878952",
+    "readiness":  "ready_for_quote_preview",
+    "mounting_scope":  "none",
+    "site_installation_included":  null,
+    "mounting_solution":  {
+                              "kind":  "product_system_template",
+                              "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                              "configuration":  {
+                                                    "panel_width_mm":  1000.0,
+                                                    "panel_height_mm":  350.0,
+                                                    "acm_thickness_mm":  3,
+                                                    "return_depth_mm":  60.0,
+                                                    "rear_lip_mm":  25.0,
+                                                    "fold_sides":  "all",
+                                                    "v_groove_angle_deg":  135.0,
+                                                    "frame_clearance_mm":  0.0,
+                                                    "fold_count":  2,
+                                                    "finished_depth_mm":  60,
+                                                    "svg_support_element_id":  "el-1",
+                                                    "geometry_hash":  "7af1352f",
+                                                    "contour_id":  "cc_7af1352f",
+                                                    "panel_area_mm2":  350000.137,
+                                                    "panel_perimeter_mm":  2700.001,
+                                                    "internal_frame_enabled":  false,
+                                                    "internal_frame":  {
+                                                                           "enabled":  false,
+                                                                           "material_code":  null,
+                                                                           "profile_code":  null,
+                                                                           "panel_outer_width_mm":  null,
+                                                                           "panel_outer_height_mm":  null,
+                                                                           "panel_material_thickness_mm":  null,
+                                                                           "total_fit_allowance_mm":  2.0,
+                                                                           "frame_outer_width_mm":  null,
+                                                                           "frame_outer_height_mm":  null,
+                                                                           "crossbar_rule_code":  "MATERIAL_SPACING_V1",
+                                                                           "max_crossbar_spacing_mm":  null,
+                                                                           "crossbar_orientation":  null,
+                                                                           "suggested_crossbar_count":  null,
+                                                                           "confirmed_crossbar_count":  null,
+                                                                           "override_reason":  null,
+                                                                           "structural_review_required":  false,
+                                                                           "confirmation_status":  "NOT_APPLICABLE",
+                                                                           "quantity_status":  "NOT_APPLICABLE",
+                                                                           "blockers":  [
+
+                                                                                        ],
+                                                                           "provenance":  {
+                                                                                              "resource_registry_version":  "structural_resource_options/v1"
+                                                                                          }
+                                                                       },
+                                                    "panel_area_m2":  0.35,
+                                                    "panel_perimeter_m":  2.7,
+                                                    "fold_length_m":  2.7,
+                                                    "return_strip_area_m2":  0.162,
+                                                    "unit_ambiguity":  false,
+                                                    "dimension_source":  "svg_support_selection",
+                                                    "svg_source_hash":  "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc"
+                                                }
+                          },
+    "mounting_template_enabled":  true,
+    "mounting_template_area_m2":  0.7004,
+    "mounting_template_material_type":  "forex",
+    "mains_cable_length_m":  null,
+    "power_supply_service_corner":  null,
+    "service_screw_finish":  null,
+    "mounting_fixing_system":  null,
+    "support_type":  null,
+    "mounting_system":  null,
+    "mounting_bar_profile":  null,
+    "confirmed":  true,
+    "svg_support_selection":  {
+                                  "schema":  "svg_support_selection_v1",
+                                  "status":  "confirmed",
+                                  "role":  "ALUCOBOND_CASED_PANEL",
+                                  "contour_id":  "cc_7af1352f",
+                                  "svg_support_element_id":  "el-1",
+                                  "geometry_hash":  "7af1352f",
+                                  "svg_source_hash":  "ff5c35da170d2f416924170f0bfe48b3436e952ee8e1a7e522148a3e031570bc",
+                                  "panel_geometry":  {
+                                                         "width_mm":  1000,
+                                                         "height_mm":  350,
+                                                         "area_mm2":  350000.137,
+                                                         "perimeter_mm":  2700.001,
+                                                         "geometry_hash":  "7af1352f"
+                                                     },
+                                  "casing_profile":  {
+                                                         "fold_count":  2,
+                                                         "l1_mm":  60,
+                                                         "l2_mm":  25,
+                                                         "finished_depth_mm":  60
+                                                     },
+                                  "service_corner":  null,
+                                  "internal_frame_enabled":  false,
+                                  "candidate_explanation":  [
+                                                                "candidat panou: probabil",
+                                                                "contur Ã®nchis",
+                                                                "suprafaÈÄ mare (42.9% din compoziÈie)",
+                                                                "rectangularitate 0.7725"
+                                                            ],
+                                  "unit_ambiguity":  false,
+                                  "confirmed_at":  "2026-07-19T15:11:56.372Z",
+                                  "component_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                  "geometry_role":  "SUPPORT_CONTOUR"
+                              },
+    "segmented_background":  {
+                                 "schema":  "acm_segmented_background_v1",
+                                 "contract_version":  "acm_segmented_background/v1",
+                                 "status":  "PROPOSED",
+                                 "assembly_id":  "asm_el-1_el-2",
+                                 "host_component_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                 "operator_confirmed":  false,
+                                 "graphic_continuity":  true,
+                                 "panels":  [
+                                                {
+                                                    "panel_id":  "panel_1",
+                                                    "order":  1,
+                                                    "width_mm":  1000,
+                                                    "height_mm":  350,
+                                                    "position":  {
+                                                                     "x_mm":  0,
+                                                                     "y_mm":  0
+                                                                 },
+                                                    "contour_element_id":  "el-1"
+                                                },
+                                                {
+                                                    "panel_id":  "panel_2",
+                                                    "order":  2,
+                                                    "width_mm":  1000,
+                                                    "height_mm":  350,
+                                                    "position":  {
+                                                                     "x_mm":  1000,
+                                                                     "y_mm":  0
+                                                                 },
+                                                    "contour_element_id":  "el-2"
+                                                }
+                                            ],
+                                 "joints":  [
+                                                {
+                                                    "joint_id":  "joint_panel_1_panel_2",
+                                                    "left_panel_id":  "panel_1",
+                                                    "right_panel_id":  "panel_2",
+                                                    "orientation":  "VERTICAL"
+                                                }
+                                            ],
+                                 "assembly_dimensions":  {
+                                                             "width_mm":  2000,
+                                                             "height_mm":  350
+                                                         },
+                                 "element_bindings":  [
+
+                                                      ],
+                                 "detection":  {
+                                                   "source":  "svg_analyzer_proposal",
+                                                   "nearby_support_count":  2,
+                                                   "message_code":  "SEGMENTATION_PROPOSAL",
+                                                   "message":  "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma.",
+                                                   "authority":  "PROPOSAL_ONLY"
+                                               },
+                                 "meta":  {
+                                              "schema":  "acm_segmented_background_v1",
+                                              "contract_version":  "acm_segmented_background/v1",
+                                              "host_component_template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                              "support_contour_role":  "ASSEMBLY_ENVELOPE_MAX_ONE",
+                                              "panels_role":  "PHYSICAL_MEMBERS_NESTED",
+                                              "detection_authority":  "PROPOSAL_ONLY",
+                                              "confirmation_authority":  "OPERATOR",
+                                              "letters_ownership":  "EXTERNAL â interface binding only",
+                                              "no_auto_divide":  true,
+                                              "no_task_materialization":  true,
+                                              "no_pricing":  true
+                                          },
+                                 "validation":  {
+                                                    "blockers":  [
+
+                                                                 ],
+                                                    "warnings":  [
+
+                                                                 ],
+                                                    "infos":  [
+                                                                  {
+                                                                      "code":  "SEGMENTATION_PROPOSAL",
+                                                                      "level":  "info",
+                                                                      "message":  "Am gasit mai multe fundaluri apropiate care pot forma un singur ansamblu. Verifica panourile si confirma."
+                                                                  }
+                                                              ]
+                                                }
+                             },
+    "acp_electrical_configuration":  {
+                                         "schema":  "acp_electrical_configuration_v1",
+                                         "ownership_mode":  "SHELL_COMMON_WITH_ZONE_INTENTS",
+                                         "contract_version":  "acp_local_face_modules/v1",
+                                         "service_corner":  null,
+                                         "zone_intents":  [
+
+                                                          ],
+                                         "led_configuration_status":  "OWNER_GATE_REQUIRED",
+                                         "psu_configuration_status":  "OWNER_GATE_REQUIRED",
+                                         "wiring_configuration_status":  "OWNER_GATE_REQUIRED",
+                                         "electrical_test_status":  "OWNER_GATE_REQUIRED",
+                                         "policy":  {
+                                                        "mode":  "SHELL_COMMON_WITH_ZONE_INTENTS",
+                                                        "contract_version":  "acp_local_face_modules/v1",
+                                                        "zone_declares":  "illumination_intent",
+                                                        "shell_owns":  [
+                                                                           "led_configuration",
+                                                                           "psu_configuration",
+                                                                           "wiring",
+                                                                           "service_access"
+                                                                       ],
+                                                        "no_duplicate_psu_per_zone":  true,
+                                                        "letters_electrical_path":  "SEPARATE_PRODUCT â not ACP cavity",
+                                                        "legacy_light_routed":  "PARALLEL_LEGACY_COST_PATH â reference only"
+                                                    }
+                                     },
+    "bindings_count":  2,
+    "binding_roles":  [
+                          null,
+                          null
+                      ],
+    "composition":  {
+                        "confirmed":  true,
+                        "confirmed_at":  "2026-07-19T15:12:19.269340+00:00",
+                        "confirmed_by":  "dev@localhost",
+                        "items":  [
+                                      {
+                                          "composition_item_id":  "letters",
+                                          "template_code":  "TPL-VOLUMETRIC-LETTERS_v2",
+                                          "component_role":  "volumetric_letters",
+                                          "source_layer_ids":  [
+                                                                   "pseudo:fill-e31e24"
+                                                               ],
+                                          "source_group_ids":  [
+                                                                   "pseudo:fill-e31e24"
+                                                               ],
+                                          "shared_module_policy":  "dedupe_common_operations",
+                                          "status":  "suggested"
+                                      },
+                                      {
+                                          "composition_item_id":  "support",
+                                          "template_code":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                                          "component_role":  "support_panel",
+                                          "source_layer_ids":  [
+                                                                   "pseudo:fill-c5c6c6"
+                                                               ],
+                                          "source_group_ids":  [
+                                                                   "pseudo:fill-c5c6c6"
+                                                               ],
+                                          "shared_module_policy":  "dedupe_common_operations",
+                                          "status":  "available_optional"
+                                      }
+                                  ],
+                        "operator_note":  null,
+                        "source":  "operator_confirmation_v1"
+                    }
+}
