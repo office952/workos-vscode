@@ -71,6 +71,7 @@ export interface SegmentedBackground {
     infos?: Array<{ code: string; level: string; message: string }>;
   };
   confirmation?: { message_code?: string; message?: string; authority?: string };
+  electrical_connection_management?: Record<string, unknown> | null;
 }
 
 export const SEGMENTED_MESSAGES_RO = {

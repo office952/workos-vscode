@@ -1,0 +1,185 @@
+{
+  "schema": "acm_segmented_background_v1",
+  "contract_version": "acm_segmented_background/v1",
+  "status": "CONFIRMED",
+  "assembly_id": "asm_el-1_el-2",
+  "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+  "operator_confirmed": true,
+  "graphic_continuity": true,
+  "panels": [
+    {
+      "panel_id": "panel_1",
+      "order": 1,
+      "width_mm": 1000,
+      "height_mm": 350,
+      "position": {
+        "x_mm": 0,
+        "y_mm": 0
+      },
+      "contour_element_id": "el-1"
+    },
+    {
+      "panel_id": "panel_2",
+      "order": 2,
+      "width_mm": 1000,
+      "height_mm": 350,
+      "position": {
+        "x_mm": 1000,
+        "y_mm": 0
+      },
+      "contour_element_id": "el-2"
+    }
+  ],
+  "joints": [
+    {
+      "joint_id": "joint_panel_1_panel_2",
+      "left_panel_id": "panel_1",
+      "right_panel_id": "panel_2",
+      "orientation": "VERTICAL"
+    }
+  ],
+  "assembly_dimensions": {
+    "width_mm": 2000,
+    "height_mm": 350
+  },
+  "element_bindings": [],
+  "validation": {
+    "blockers": [],
+    "warnings": [],
+    "infos": []
+  },
+  "meta": {
+    "schema": "acm_segmented_background_v1",
+    "contract_version": "acm_segmented_background/v1",
+    "host_component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "support_contour_role": "ASSEMBLY_ENVELOPE_MAX_ONE",
+    "panels_role": "PHYSICAL_MEMBERS_NESTED",
+    "detection_authority": "PROPOSAL_ONLY",
+    "confirmation_authority": "OPERATOR",
+    "letters_ownership": "EXTERNAL — interface binding only",
+    "no_auto_divide": true,
+    "no_task_materialization": true,
+    "no_pricing": true
+  },
+  "task_materialization": false,
+  "pricing": false,
+  "electrical_connection_management": {
+    "schema": "acm_segmented_electrical_connection_v1",
+    "contract_version": "acm_segmented_electrical_connection/v1",
+    "status": "CONFIRMED",
+    "operator_confirmed": true,
+    "panels": [
+      {
+        "panel_id": "panel_1",
+        "supply_mode": "DIRECT_220V",
+        "shared_from_panel_id": null,
+        "service_point_position": "TOP_RIGHT",
+        "custom_position_note": null,
+        "sketch_ref": null,
+        "cable_exit_position": null,
+        "routing_direction_note_ro": null,
+        "power_supply_group_id": null,
+        "letter_group_ref": null,
+        "workshop_prep": {
+          "cables_routed_toward_service": false,
+          "passages_prepared": false,
+          "labeled": false,
+          "reserve_required": false,
+          "reserve_note_ro": null
+        },
+        "installation": {
+          "connect_to_client_220v": false,
+          "finalize_after_alignment": false,
+          "notes_ro": null
+        },
+        "notes_ro": null
+      },
+      {
+        "panel_id": "panel_2",
+        "supply_mode": "SHARED_FROM_PANEL",
+        "shared_from_panel_id": "panel_1",
+        "service_point_position": "NONE",
+        "custom_position_note": null,
+        "sketch_ref": null,
+        "cable_exit_position": null,
+        "routing_direction_note_ro": null,
+        "power_supply_group_id": null,
+        "letter_group_ref": null,
+        "workshop_prep": {
+          "cables_routed_toward_service": false,
+          "passages_prepared": false,
+          "labeled": false,
+          "reserve_required": false,
+          "reserve_note_ro": null
+        },
+        "installation": {
+          "connect_to_client_220v": false,
+          "finalize_after_alignment": false,
+          "notes_ro": null
+        },
+        "notes_ro": null
+      }
+    ],
+    "inter_panel_connections": [
+      {
+        "connection_id": "ec_panel_1_panel_2",
+        "source_panel_id": "panel_1",
+        "destination_panel_id": "panel_2",
+        "connection_type": "LV_FEED",
+        "routing_direction_note_ro": null,
+        "alignment_dependent": true,
+        "prepared_in_workshop": true,
+        "completed_on_site": true,
+        "reserve_required": true,
+        "estimated_length_m": null,
+        "length_is_estimate": true,
+        "sketch_ref": null,
+        "notes_ro": "Aceasta legatura se finalizeaza dupa alinierea panourilor."
+      }
+    ],
+    "validation": {
+      "blockers": [],
+      "warnings": [],
+      "infos": [
+        {
+          "code": "ELEC_ROUTE_CABLES",
+          "level": "info",
+          "message": "Pregateste cablurile panoului spre pozitia de alimentare declarata."
+        },
+        {
+          "code": "ELEC_SHARED_FROM_PANEL",
+          "level": "info",
+          "message": "Acest panou primeste alimentarea dintr-un alt panou al ansamblului."
+        },
+        {
+          "code": "ELEC_RESERVE",
+          "level": "info",
+          "message": "Lasa rezerva de cablu pentru legatura finala dintre panouri."
+        },
+        {
+          "code": "ELEC_CONFIRMED",
+          "level": "info",
+          "message": "Configuratia electrica a ansamblului a fost confirmata."
+        }
+      ]
+    },
+    "confirmation": {
+      "message_code": "ELEC_CONFIRMED",
+      "message": "Configuratia electrica a ansamblului a fost confirmata.",
+      "authority": "OPERATOR"
+    },
+    "meta": {
+      "schema": "acm_segmented_electrical_connection_v1",
+      "contract_version": "acm_segmented_electrical_connection/v1",
+      "ownership": "ACM_ACP_SHELL_ASSEMBLY",
+      "letters_electrical": "EXTERNAL — letter-local LED/wiring unchanged",
+      "no_psu_sizing": true,
+      "no_pricing": true,
+      "no_task_materialization": true,
+      "future_task_intent_authority": "INFORMATIONAL_ONLY"
+    },
+    "task_materialization": false,
+    "pricing": false,
+    "psu_sizing": false
+  }
+}

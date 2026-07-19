@@ -126,6 +126,7 @@ import IntakeV6ArtworkFinishSection from "../IntakeV6ArtworkFinishSection";
 import IntakeV6ArtworkComplexityCard from "../IntakeV6ArtworkComplexityCard";
 import IntakeV6AcpLocalFaceModulesPanel from "../IntakeV6AcpLocalFaceModulesPanel";
 import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPanel";
+import IntakeV6SegmentedElectricalPanel from "../IntakeV6SegmentedElectricalPanel";
 import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
 import {
   artworkComplexityDecisionsFromPayload,
@@ -2963,6 +2964,23 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     }}
                   />
                 ) : null}
+
+                <IntakeV6SegmentedElectricalPanel
+                  finish={form as unknown as Record<string, unknown>}
+                  disabled={state.phase === "persisting"}
+                  onPatchSegmented={(segmentedNext) => {
+                    setForm((prev) => {
+                      const next = syncLighting({
+                        ...prev,
+                        segmented_background: segmentedNext as IntakeV6FinishSetup["segmented_background"],
+                        confirmed: false,
+                      });
+                      pendingDirtyDomainsRef.current.add("mounting");
+                      void persistFinishSetupState(next, true);
+                      return next;
+                    });
+                  }}
+                />
 
                 {acpProductActive ? (
                   <div

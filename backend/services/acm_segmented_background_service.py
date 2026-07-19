@@ -470,6 +470,23 @@ def normalize_segmented_background(
     if status in {STATUS_PROPOSED, STATUS_INACTIVE, STATUS_REJECTED}:
         base["operator_confirmed"] = False
 
+    # Shell-owned electrical context — only meaningful on confirmed multi-panel assemblies.
+    from services.acm_segmented_electrical_service import (
+        normalize_electrical_connection_management,
+    )
+
+    panel_ids = {str(p.get("panel_id") or "") for p in panels if p.get("panel_id")}
+    if status == STATUS_CONFIRMED and len(panel_ids) >= 2:
+        electrical = normalize_electrical_connection_management(
+            incoming.get("electrical_connection_management"),
+            assembly_panel_ids=panel_ids,
+        )
+        if electrical is not None:
+            base["electrical_connection_management"] = electrical
+    elif "electrical_connection_management" in incoming and status == STATUS_CONFIRMED:
+        # Single-panel confirmed should not carry segmented electrical truth.
+        pass
+
     base["validation"] = validate_segmented_background(base)
     return base
 
@@ -621,8 +638,30 @@ def persist_segmented_background_on_finish(finish: Mapping[str, Any] | None) -> 
             "message": operator_message(MSG_ASSEMBLY_CONFIRMED),
             "authority": "OPERATOR",
         }
+        # Electrical confirm is independent — block only when electrical itself is CONFIRMED
+        # with contradictions (does not require electrical for assembly confirm).
+        from services.acm_segmented_electrical_service import electrical_confirmation_blockers
+
+        electrical = normalized.get("electrical_connection_management")
+        if isinstance(electrical, Mapping) and str(electrical.get("status") or "").upper() == "CONFIRMED":
+            panel_ids = {
+                str(p.get("panel_id") or "")
+                for p in _as_list(normalized.get("panels"))
+                if p.get("panel_id")
+            }
+            elec_blockers = electrical_confirmation_blockers(
+                electrical, assembly_panel_ids=panel_ids
+            )
+            if elec_blockers:
+                raise ValueError(
+                    {
+                        "error": "segmented_electrical_confirmation_blocked",
+                        "blockers": elec_blockers,
+                    }
+                )
     elif status in {STATUS_PROPOSED, STATUS_REJECTED, STATUS_INACTIVE, STATUS_SINGLE_PANEL}:
         normalized["operator_confirmed"] = False
+        normalized.pop("electrical_connection_management", None)
     finish_d["segmented_background"] = normalized
     return finish_d
 
@@ -656,7 +695,19 @@ def project_segmented_background_for_product_definition(
         [dict(p) for p in _as_list(config.get("panels")) if isinstance(p, Mapping)],
         key=lambda p: int(p.get("order") or 0),
     )
-    return {
+    from services.acm_segmented_electrical_service import (
+        project_electrical_draft_non_authoritative,
+        project_electrical_for_product_definition,
+    )
+
+    electrical_raw = config.get("electrical_connection_management")
+    electrical_confirmed = project_electrical_for_product_definition(
+        electrical_raw, assembly_confirmed=True
+    )
+    electrical_draft = project_electrical_draft_non_authoritative(
+        electrical_raw, assembly_confirmed=True
+    )
+    out: dict[str, Any] = {
         "schema": SCHEMA,
         "contract_version": CONTRACT_VERSION,
         "status": STATUS_CONFIRMED,
@@ -676,6 +727,11 @@ def project_segmented_background_for_product_definition(
         "task_materialization": False,
         "pricing": False,
     }
+    if electrical_confirmed is not None:
+        out["electrical_connection_management"] = electrical_confirmed
+    elif electrical_draft is not None:
+        out["electrical_connection_management_draft"] = electrical_draft
+    return out
 
 
 def project_segmented_background_for_aggregate(
@@ -714,7 +770,18 @@ def project_segmented_background_for_aggregate(
     if blockers:
         future_intent.append("cutout_or_insert_crossing_blocked")
 
-    return {
+    from services.acm_segmented_electrical_service import project_electrical_for_aggregate
+
+    electrical_agg = project_electrical_for_aggregate(
+        config.get("electrical_connection_management") if isinstance(config, Mapping) else None,
+        assembly_confirmed=True,
+    )
+    if electrical_agg:
+        for intent in electrical_agg.get("future_task_intent") or []:
+            if intent not in future_intent:
+                future_intent.append(intent)
+
+    out_agg: dict[str, Any] = {
         "kind": "acm_segmented_background",
         "contract_version": CONTRACT_VERSION,
         "assembly_id": pd.get("assembly_id"),
@@ -740,6 +807,9 @@ def project_segmented_background_for_aggregate(
             "future_task_intent is contractual/informational — not a parallel task source.",
         ],
     }
+    if electrical_agg is not None:
+        out_agg["electrical_connection_management"] = electrical_agg
+    return out_agg
 
 
 def apply_segmented_panel_context_to_applied_interface(
