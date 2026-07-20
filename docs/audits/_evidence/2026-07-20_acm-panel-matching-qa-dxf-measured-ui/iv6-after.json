@@ -1,0 +1,64 @@
+{
+  "status": "provisional_with_warnings",
+  "face_area_m2": 0.7,
+  "cut_length_m": null,
+  "fold_length_m": null,
+  "v_groove_l1_ml": null,
+  "v_groove_l2_ml": null,
+  "v_groove_total_ml": null,
+  "path_measurement_status": "unavailable",
+  "path_measurement_source": "unavailable",
+  "final_eligibility": false,
+  "offer_eligibility": false,
+  "execution_eligibility": false,
+  "warnings": [
+    "technical_configuration_unconfirmed",
+    "construction_catalog_defaults",
+    "segmentation_proposed",
+    "composition_inconsistent_or_unconfirmed",
+    "double_fold_proxy_forbidden",
+    "l2_active_proxy_forbidden",
+    "proxy_rectangular_not_eligible",
+    "quantity_unavailable",
+    "Envelope contour (1000\u00d7350) nu este overall assembly \u2014 ignorat pentru ansamblu.",
+    "envelope_not_used_for_commercial_face_area",
+    "segmentation_joints_no_commercial_rate"
+  ],
+  "blockers": [
+    "final_price_unavailable",
+    "offer_ferm_unavailable",
+    "execution_blocked"
+  ],
+  "lines": [
+    {
+      "code": "acm_panel_cut",
+      "quantity": null,
+      "unit": "ml"
+    },
+    {
+      "code": "acm_v_groove",
+      "quantity": null,
+      "unit": "ml"
+    },
+    {
+      "code": "acm_panel_face_material",
+      "quantity": 0.7,
+      "unit": "m2"
+    },
+    {
+      "code": "acm_return_strip_material",
+      "quantity": null,
+      "unit": "m2"
+    },
+    {
+      "code": "acm_boxed_assembly",
+      "quantity": 0.7,
+      "unit": "m2"
+    },
+    {
+      "code": "acm_fasteners",
+      "quantity": 1.0,
+      "unit": "set"
+    }
+  ]
+}
