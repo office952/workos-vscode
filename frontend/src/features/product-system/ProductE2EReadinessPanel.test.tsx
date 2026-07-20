@@ -33,6 +33,27 @@ describe("ProductE2EReadinessPanel", () => {
             evidence: { conflict_code: "required_inactive_child" },
           },
         ],
+        systems: [
+          {
+            system: "catalog",
+            status: "PASS",
+            finding_count: 1,
+            summary: "Catalog present",
+          },
+          {
+            system: "components",
+            status: "BLOCKED",
+            blocking: true,
+            finding_count: 2,
+            summary: "Required inactive Aluminiu",
+          },
+          {
+            system: "execution_preview",
+            status: "NOT_TESTED",
+            finding_count: 1,
+            summary: "Static mode",
+          },
+        ],
       }),
     } as Response);
 
@@ -53,6 +74,14 @@ describe("ProductE2EReadinessPanel", () => {
     fireEvent.click(screen.getByTestId("product-e2e-readiness-findings-toggle"));
     expect(screen.getByTestId("product-e2e-readiness-findings")).toHaveTextContent(
       /Aluminiu \(volumetric\)/,
+    );
+    expect(screen.getByTestId("product-e2e-readiness-system-link-check")).toHaveTextContent(
+      /System Link Check/,
+    );
+    expect(screen.getByTestId("system-link-row-catalog")).toHaveTextContent(/PASS/);
+    expect(screen.getByTestId("system-link-row-components")).toHaveTextContent(/BLOCKED/);
+    expect(screen.getByTestId("system-link-row-execution_preview")).toHaveTextContent(
+      /NOT_TESTED/,
     );
   });
 });

@@ -30,31 +30,41 @@ interface ReadinessFinding {
   recommended_navigation?: string | null;
 }
 
+interface SystemNode {
+  system: string;
+  status: CheckStatus;
+  blocking?: boolean;
+  finding_count?: number;
+  summary?: string;
+}
+
 interface ReadinessResponse {
   template_code: string;
   mode: "static" | "runtime_dry_run" | string;
   verdict: string;
   e2e_ready?: boolean;
   findings: ReadinessFinding[];
+  systems?: SystemNode[];
   no_write: boolean;
   write_performed?: boolean;
   build_closure_status?: string;
   template_publication_status?: string;
 }
 
+/** Catalog → … → Execution Preview — System Link Check order. */
 const PIPELINE = [
-  "Catalog",
-  "Components",
-  "Intake",
-  "Product Truth",
-  "ProductDefinition",
-  "Aggregate",
-  "Quantity",
-  "CPP",
-  "EIC",
-  "Quote Snapshot",
-  "Order Snapshot",
-  "Execution Preview",
+  { key: "catalog", label: "Catalog" },
+  { key: "components", label: "Components" },
+  { key: "intake", label: "Intake" },
+  { key: "product_truth", label: "Product Truth" },
+  { key: "product_definition", label: "ProductDefinition" },
+  { key: "aggregate", label: "Aggregate" },
+  { key: "quantity", label: "Quantity" },
+  { key: "cpp", label: "CPP" },
+  { key: "eic", label: "EIC" },
+  { key: "quote_snapshot", label: "Quote Snapshot" },
+  { key: "order_snapshot", label: "Order Snapshot" },
+  { key: "execution_preview", label: "Execution Preview" },
 ] as const;
 
 function statusColor(status: CheckStatus): string {
@@ -300,20 +310,52 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
                 </ul>
               ) : null}
 
-              <details className="mt-2" data-testid="product-e2e-readiness-pipeline">
-                <summary className="cursor-pointer text-[10px] text-slate-500 hover:text-slate-400">
-                  Traseu sisteme (diagnostic)
+              <details className="mt-2" open data-testid="product-e2e-readiness-system-link-check">
+                <summary className="cursor-pointer text-[10px] text-slate-400 hover:text-slate-300">
+                  System Link Check — Catalog → Execution Preview
                 </summary>
-                <div className="mt-1.5 flex flex-wrap gap-1.5">
-                  {PIPELINE.map((node) => (
-                    <span
-                      key={node}
-                      className="rounded border border-slate-700/60 bg-slate-900/50 px-1.5 py-0.5 text-[9px] text-slate-400"
-                    >
-                      {node}
-                    </span>
-                  ))}
-                </div>
+                <p className="mt-1 text-[10px] text-slate-500">
+                  Read-only. Nu repară, nu activează, nu publică.
+                </p>
+                <table
+                  className="mt-1.5 w-full border-collapse text-[10px]"
+                  data-testid="product-e2e-readiness-system-link-table"
+                >
+                  <thead>
+                    <tr className="text-left text-slate-500">
+                      <th className="border-b border-slate-800 py-1 pr-2 font-medium">Hop</th>
+                      <th className="border-b border-slate-800 py-1 pr-2 font-medium">Status</th>
+                      <th className="border-b border-slate-800 py-1 font-medium">Summary</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {PIPELINE.map((node) => {
+                      const live = (active.systems ?? []).find((s) => s.system === node.key);
+                      const status = live?.status ?? "NOT_TESTED";
+                      return (
+                        <tr key={node.key} data-testid={`system-link-row-${node.key}`}>
+                          <td className="border-b border-slate-900/80 py-1 pr-2 text-slate-300">
+                            {node.label}
+                          </td>
+                          <td className="border-b border-slate-900/80 py-1 pr-2">
+                            <span
+                              className={`rounded border px-1 py-0.5 ${statusColor(status)}`}
+                            >
+                              {status}
+                            </span>
+                          </td>
+                          <td className="border-b border-slate-900/80 py-1 text-slate-500">
+                            {live?.summary
+                              || (live?.finding_count
+                                ? `${live.finding_count} findings`
+                                : "—")}
+                            {live?.blocking ? " · blocking" : ""}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
                 <p className="mt-1 text-[10px] text-slate-600">
                   mode={active.mode} · no_write={String(active.no_write)}
                 </p>
