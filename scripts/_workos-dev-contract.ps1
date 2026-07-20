@@ -1,7 +1,7 @@
 # WorkOS local development port contract (canonical source stack).
 # Dot-source from dev.ps1, start-dev.ps1, dev-backend.ps1, dev-frontend.ps1
 
-$script:WorkOsDefaultBackendPort = 8001
+$script:WorkOsDefaultBackendPort = 8000
 $script:WorkOsDefaultFrontendPort = 3000
 $script:WorkOsDefaultBackendHost = '127.0.0.1'
 

@@ -2,7 +2,7 @@
 # Requires: Node.js 20+, Python 3.11+ on PATH, pnpm (or use npx pnpm@8.10.0)
 #
 # Idempotent startup:
-#   - Detects port 8001 / 3000 occupancy before launching
+#   - Detects port 8000 / 3000 occupancy before launching
 #   - Reuses processes that already serve WorkOS health endpoints
 #   - Refuses to start when ports are held by unknown/unhealthy processes
 #   - Waits for backend /health and frontend before reporting ready

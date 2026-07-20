@@ -36,10 +36,11 @@ export default defineConfig(() => {
       port: parseInt(process.env.VITE_PORT || '3000'),
       allowedHosts: true as const, // Allow App Viewer proxy hostnames
       // Backend port can be overridden with BACKEND_PORT=... pnpm run dev.
-      // Default 8001 matches the canonical uvicorn launch for this workspace.
+      // Default 8000 matches AGENTS.md / WorkOS canonical authoring stack
+      // (publication + e2e-readiness). Stale :8001 processes often 404 those routes.
       proxy: {
         '/api': {
-          target: `http://127.0.0.1:${process.env.BACKEND_PORT || '8001'}`,
+          target: `http://127.0.0.1:${process.env.BACKEND_PORT || '8000'}`,
           changeOrigin: true,
           timeout: 30_000,
           proxyTimeout: 30_000,

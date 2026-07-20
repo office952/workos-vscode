@@ -1,4 +1,4 @@
-# Start WorkOS backend only (uvicorn :8001 by default) with local SQLite defaults.
+# Start WorkOS backend only (uvicorn :8000 by default) with local SQLite defaults.
 # Windows helper invoked by: npm run dev:backend
 #
 # Injects env vars into this process — does NOT load backend/.env automatically.

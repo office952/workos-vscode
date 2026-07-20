@@ -3,10 +3,10 @@
 # Does NOT hardcode dev auth in Python source - env vars only.
 #
 # Usage:
-#   .\scripts\dev.ps1              Start or reuse backend :8001 + frontend :3000
+#   .\scripts\dev.ps1              Start or reuse backend :8000 + frontend :3000
 #   .\scripts\dev.ps1 -PreflightOnly   Validate layout/env only (no servers)
 #
-# Stop: Ctrl+C when frontend logs are streaming; or stop PIDs on ports 8001 / 3000.
+# Stop: Ctrl+C when frontend logs are streaming; or stop PIDs on ports 8000 / 3000.
 
 param(
     [switch] $PreflightOnly
@@ -65,7 +65,7 @@ function Show-WorkOsDevModeReport {
     Write-Host "  JWT_SECRET_KEY           = [local placeholder, not for deploy]"
     Write-Host ("  ALLOWED_ORIGINS          = {0}" -f $env:ALLOWED_ORIGINS)
     Write-Host ""
-    Write-Host "Stop: Ctrl+C while this script streams frontend logs, or end the processes listening on ports 8001 and 3000." -ForegroundColor DarkGray
+    Write-Host "Stop: Ctrl+C while this script streams frontend logs, or end the processes listening on ports 8000 and 3000." -ForegroundColor DarkGray
     Write-Host ""
 }
 
