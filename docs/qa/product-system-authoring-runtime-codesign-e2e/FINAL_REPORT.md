@@ -63,7 +63,7 @@ See `CLOSURE_ALLOWLIST.md` — all 20 kickoff items confirmed; touch rules docum
 | `b8a4c0a` | feat(product-system): split BUILD closure from template publication readiness |
 | `670a4e2` | test(product-truth): harden confirm idempotency stale and freeze gate cases |
 
-Post-closure HEAD: `670a4e2` (docs SHA patch may follow). No push/PR.
+Post-closure HEAD: `2e77e7c` (+ Figma structure commit if present). No push/PR.
 
 ## 7. HTTP confirm proof
 

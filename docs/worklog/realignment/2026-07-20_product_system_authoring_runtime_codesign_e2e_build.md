@@ -106,7 +106,8 @@ Confirm pe DB reală + split BUILD/TEMPLATE + Figma IDs reale = progres serios. 
 | `2ed6b01` | docs/qa evidence + allowlist + worklog + FINAL_REPORT + screenshots |
 | `b8a4c0a` | readiness dual-axis + UI honesty banners + readiness tests |
 | `670a4e2` | confirm/freeze test hardening (allowlist) |
-| HEAD | `670a4e2` |
+| `2e77e7c` | record FINAL CLOSURE commit SHAs |
+| HEAD | see `git rev-parse HEAD` after last docs patch |
 
 ### Stop conditions
 

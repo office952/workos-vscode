@@ -1,45 +1,50 @@
-# Figma structure — Product System authoring (FINAL CLOSURE)
+# Figma-ready structure — Product System authoring (co-design)
 
 | Field | Value |
 |-------|--------|
 | File | `0CDPIuqoaZ1OQgNnvNyl1F` |
 | Date | 2026-07-20 |
-| Write access | **YES** (Full seat) — frames created with real IDs |
-| Rule | Do not invent IDs. Owner promotes PROPOSED → FINAL. |
+| Rule | **Do not invent FINAL frame IDs.** Existing Intake frames are authority for operator runtime. PS authoring frames below are proposed structure for designer write — implement UI against contract freeze now. |
 
-## Existing Intake frames (verified)
+## Existing Intake frames (verified via MCP — Agent C 2026-07-20)
 
-| Frame | Node ID | Role |
-|-------|---------|------|
-| FINAL — Confirmare 1440×900 | `66:2` | Operator confirm |
-| Configurare | `64:2` | Config / Finisaje |
-| Iluminare | `65:2` | Lighting |
-| Montaj | `65:106` | Mounting |
-| PinFooter | `67:18` | Sticky footer pattern |
+| Frame | Node ID | Role | MCP verify |
+|-------|---------|------|------------|
+| FINAL — Confirmare 1440×900 | `66:2` | Operator confirm; checkbox → ConfirmJobProductTruth | **PASS** — name/size match |
+| FINAL — Configurare Finisaje 1440×900 | `64:2` | Config / Finisaje | **PASS** — name/size match |
+| FINAL — Configurare Iluminare 1440×900 | `65:2` | Lighting | **PASS** — name/size match |
+| FINAL — Configurare Montaj 1440×900 | `65:106` | Mounting | **PASS** — name/size match |
+| PinFooter (on Confirmare) | `67:18` | Sticky footer pattern (handoff / continue) | **PASS** — nested under `66:2` |
 
-## Page: PS — Authoring Studio (`91:2`)
+Evidence PNGs: `screenshots/figma_01_*` … `figma_10_*`.
 
-| Frame | Node ID | Status | Runtime mapping |
-|-------|---------|--------|-----------------|
-| PS Template Authoring Shell | `91:3` | PROPOSED | `/product-system/products/:code` |
-| Component Contract + Used-by | `91:12` | PROPOSED | `ComponentContractUsedByPanel` |
-| Blueprint Dossier Studio split | `91:21` | PROPOSED | `/product-system/blueprint-dossier` |
-| Publication states | `91:36` | PROPOSED | `ProductTemplatePublicationPanel` |
-| Readiness PASS / BLOCKED | `91:60` | PROPOSED | `ProductE2EReadinessPanel` |
-| 01 Product System Landing | `91:76` | PROPOSED shell | `/product-system/products` |
-| 02 Product Template Overview | `91:79` | PROPOSED shell | template overview |
-| 03 Composition / Components | `91:82` | PROPOSED shell | composition tab |
-| 06 Validation Rail | `91:85` | PROPOSED shell | dossier rail |
-| 07 E2E Readiness Collapsed | `91:88` | PROPOSED shell | readiness collapsed |
-| 08 E2E Readiness Expanded | `91:91` | PROPOSED shell | readiness expanded |
-| 10 Publication Ready | `91:94` | PROPOSED shell | only when truly publishable |
-| 11 Version Status | `91:97` | PROPOSED shell | publication_version |
-| 12 Runtime Preview | `91:100` | PROPOSED shell | runtime preview tab |
+## Product System authoring frames — CREATED (Agent C, write access OK)
 
-Screenshots: `screenshots/figma_*.png`.
+Page: **`PS — Authoring Studio`** · page id **`91:2`**
 
-## Honesty
+| Frame | Node ID | Role | FINAL? |
+|-------|---------|------|--------|
+| PS Template Authoring Shell | `91:3` | Tabs overview / composition / contracts / dossier / readiness / publication | **PROPOSED** — not owner-promoted FINAL |
+| Component Contract + Used-by | `91:12` | Child/dual-role PT, usage_mode, instance_schema_id | PROPOSED |
+| Blueprint Dossier Studio split | `91:21` | Tree + editor + rail + sticky footer (`91:32`) | PROPOSED |
+| Publication states | `91:36` | DRAFT→…→ARCHIVED + `active ≠ published` | PROPOSED |
+| Readiness PASS / BLOCKED | `91:60` | Honest BLOCKED when aluminiu inactive | PROPOSED |
+| Canvas note | `91:75` | Provenance note for Agent C closure | n/a |
 
-- `active ≠ published`
-- aluminiu inactive → TEMPLATE PUBLICATION BLOCKED (never fake PASS)
-- BUILD closure may PASS_WITH_WARNINGS while template publication stays BLOCKED
+Write access: **granted** (Full seat on plan; `use_figma` created page + frames). IDs are real from MCP return — not invented.
+
+Owner still must promote any frame to **FINAL** naming before UI may claim Figma FINAL parity.
+
+## UI implemented against contract (code)
+
+| Surface | Route / component | Live surface note (Agent C) |
+|---------|-------------------|-----------------------------|
+| Publication panel | `ProductTemplatePublicationPanel` | Visible on Blueprint Dossier Studio; **not** on catalog detail Lifecycle tab |
+| Component contracts | `ComponentContractUsedByPanel` | Same as publication (dossier rail) |
+| E2E Readiness | `ProductE2EReadinessPanel` | Same; catalog Lifecycle uses older `TemplateLifecycleReadinessPanel` |
+| Sticky footer | `blueprint-dossier-sticky-publish-footer` | Captured on dossier |
+| Confirmare wiring | `useIntakeV6FinalHandoff` → confirm-job | Confirmare step reachable on fixture |
+
+## Pattern reuse from PinFooter `67:18`
+
+Sticky bottom bar: status text left + primary CTA right; dark `#111827` / border `#2a364a`.
