@@ -3,13 +3,15 @@
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Status | **PARTIAL — spine landed; screenshots / live HTTP confirm thin** |
+| Status | **PARTIAL — FINAL CLOSURE GATE complete with honest dual verdicts** |
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| Kickoff HEAD | `6a1c1d16371d65c701c46d5f4c4b5990d9b16731` |
-| Owner GO | **YES** |
-| Dirty tree at kickoff | 362 entries — **preserved** |
-| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/ALLOWLIST_MANIFEST.md` |
+| Kickoff HEAD (build) | `6a1c1d16371d65c701c46d5f4c4b5990d9b16731` |
+| Closure kickoff HEAD | `705a701a6e48f2bee1f638e44031f32f6d19d751` |
+| Owner GO | **YES** (closure only) |
+| Dirty tree | ~361 entries — **preserved** |
+| Allowlist (build) | `docs/qa/product-system-authoring-runtime-codesign-e2e/ALLOWLIST_MANIFEST.md` |
+| Allowlist (closure) | `docs/qa/product-system-authoring-runtime-codesign-e2e/CLOSURE_ALLOWLIST.md` |
 | Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/FINAL_REPORT.md` |
 
 ## Authority links
@@ -24,18 +26,15 @@
 
 `ef349ef`, `136f38b`, `70b2fdf`, `6a1c1d1`
 
-## Checkpoint log
+## Build commits (pre-closure)
 
-| CP | Status | Evidence |
-|----|--------|----------|
-| CP0 Kickoff + worklog + allowlist + contract freeze | **DONE** | This file + ALLOWLIST + contract map |
-| CP1 Template authoring + publication lifecycle | **DONE** | publication service/router/panel + tests |
-| CP2 Component contracts used-by / usage_mode | **DONE** | component-contract API + panel; no CT table |
-| CP3 Blueprint Dossier Studio shell unify | **DONE** | authoring rail + sticky publish footer |
-| CP4 Job Truth HTTP→DB→reload | **PARTIAL** | pytest confirm suite green; live HTTP screenshot thin |
-| CP5 E2E Readiness hard-gates publish/offer | **DONE** | publish 409 on BLOCKED; DRAFT blocks offerability; proof script |
-| CP6 Snapshot/Order/EP | **CLASSIFIED** | freeze tests pass; no assertion weaken |
-| CP7 Screenshots + final report | **PARTIAL** | FINAL_REPORT + Figma-ready; browser pack thin |
+| SHA | Checkpoint |
+|-----|------------|
+| `034dbea` | CP0 docs + allowlist + Figma-ready + proof script + FINAL_REPORT |
+| `e50f99b` | CP1+CP2+CP5 backend publication + component contracts + readiness gate |
+| `b0560bc` | CP3 (+ panels) frontend PS + Blueprint Dossier Studio rail/footer |
+| `a10efeb` | record authoring co-design commit SHAs |
+| `705a701` | include HEAD SHA in authoring final report |
 
 ## Contract map (frozen)
 
@@ -44,39 +43,76 @@ Product Family
   └─ Product Template (root | dual-role | child)
        ├─ Composition: product_template_module_links (+ usage_mode, instance_schema_id)
        ├─ Component contract = child/dual-role PT (no CT table)
-       ├─ Blueprint Dossier (docs + bridges; NOT BOM SoT)
+       ├─ Blueprint Dossier (docs + evidence + bridges; NOT BOM SoT)
        └─ publication_status: NULL|DRAFT|VALIDATED|E2E_CHECKED|PUBLISHED|DEPRECATED|ARCHIVED
 ```
 
 **`active=true` ≠ published / offerable / runtime-ready.**
 
-| Offerability | Rule |
-|--------------|------|
-| `publication_status` NULL | legacy — prior policy continues |
-| explicit non-PUBLISHED | hard-block quote_offerable |
-| PUBLISHED | defers to active + policy |
-| publish action | requires readiness publishable verdict; VL+inactive aluminiu → 409 |
+---
 
-## Tests / proof
+## FINAL CLOSURE GATE
 
-```text
-pytest publication + component-contract + e2e-readiness + job-confirm + freeze → PASS
-runtime/job_truth_publication_proof.py → PROOF_OK (publish 409)
-vitest ProductTemplatePublicationPanel.test.tsx → PASS
-```
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Owner GO | closure only — no new architecture |
+| Closure HEAD in | `705a701` |
+| Fixture | `TPL-VOLUMETRIC-LETTERS_v2` (+ ACM boxed bags); **aluminiu NOT activated** |
+| DB | `C:\w\psiso\backend\dev.db` |
+| Stack | BE 8000 (+ preexisting 8011); FE 3000 (+ 3011) |
 
-## Commits this build
+### Kickoff (20 items) — confirmed
 
-| SHA | Checkpoint |
-|-----|------------|
-| `034dbea` | CP0 docs + allowlist + Figma-ready + proof script + FINAL_REPORT |
-| `e50f99b` | CP1+CP2+CP5 backend publication + component contracts + readiness gate |
-| `b0560bc` | CP3 (+ panels) frontend PS + Blueprint Dossier Studio rail/footer |
+See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
 
-## Stop conditions hit
+### Checkpoint matrix
+
+| CP | Verdict | Evidence |
+|----|---------|----------|
+| CP-A HTTP→DB→reload | **PASS** | `runtime/CP_A_HTTP_DB_PROOF_RESULT.md`, `cp_a_live_http_db_confirm_evidence.json` |
+| CP-B Same revision PD/Agg/Qty | **PARTIAL** | PD surfaces revision; Agg/Qty pin but no shared surface |
+| CP-C EIC → Qty Builder | **PARTIAL** | parallel EIC path remains; no pricing reopen |
+| CP-D Snap V2 freeze | **PASS** | freeze cases + pytest |
+| CP-E Order + EP | **PASS** | no live reread; no materialization |
+| CP-F Readiness static + dry_run | **PASS** | BUILD PASS_WITH_WARNINGS + TEMPLATE BLOCKED; DB sha unchanged |
+| CP-G Figma PS frames | **PARTIAL→CREATED** | page `91:2` + real IDs; PROPOSED not owner-FINAL |
+| CP-H Screenshot pack 1–22 | **PARTIAL** | catalog/template/dossier/intake + Figma; items 11–22 thin; panels MISSING_DOM |
+
+### Dual verdict (critical)
+
+| Axis | Status |
+|------|--------|
+| Build closure (gate overall) | **PARTIAL** |
+| BUILD readiness axis | **PASS_WITH_WARNINGS** |
+| Template publication | **BLOCKED** (inactive aluminiu — correct) |
+| UI acceptance | **PARTIAL** |
+| Runtime E2E | **PARTIAL** |
+
+**BUILD PASS vs TEMPLATE PUBLICATION BLOCKED applies** for the readiness/publication honesty split.
+
+### Direction score
+
+**86/100%** — see FINAL_REPORT §36–37.
+
+### PAREREA MEA SINCERA
+
+Confirm pe DB reală + split BUILD/TEMPLATE + Figma IDs reale = progres serios. Fără EIC pe Qty, fără pack UI 1–22, **nu e PASS**. Aluminiu inactiv rămâne conflict onest.
+
+### Closure commits
+
+_(filled after commit)_
+
+| SHA | Group |
+|-----|-------|
+| TBD | docs/qa evidence + allowlist + worklog + FINAL_REPORT |
+| TBD | readiness dual-axis + UI honesty banners + tests |
+| TBD | confirm/freeze test additions + proof scripts |
+
+### Stop conditions
 
 None.
 
-## Direction score
+### Forbidden paths
 
-**78/100%** — see FINAL_REPORT §36–37.
+No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no push/PR, dirty tree preserved.

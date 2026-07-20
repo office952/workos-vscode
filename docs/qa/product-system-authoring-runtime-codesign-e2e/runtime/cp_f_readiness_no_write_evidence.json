@@ -1,0 +1,61 @@
+{
+  "proof": "cp_f_readiness_no_write",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "child_inactive": "TPL-VOLUM-ALUMINIU_v1",
+  "aluminiu_activated": false,
+  "db_before": {
+    "label": "before_static_and_runtime",
+    "at": "2026-07-20T19:35:12.956618+00:00",
+    "row_counts": {
+      "product_templates": 3,
+      "product_template_module_links": 2,
+      "intake_v6_workspaces": 0
+    },
+    "sha256": "f0ff4e3a3da75b5d920c27f900f30d24bf78912f7ff116b7a52dd556563e3217"
+  },
+  "db_after": {
+    "label": "after_static_and_runtime",
+    "at": "2026-07-20T19:35:13.005042+00:00",
+    "row_counts": {
+      "product_templates": 3,
+      "product_template_module_links": 2,
+      "intake_v6_workspaces": 0
+    },
+    "sha256": "f0ff4e3a3da75b5d920c27f900f30d24bf78912f7ff116b7a52dd556563e3217"
+  },
+  "static": {
+    "verdict": "BLOCKED",
+    "e2e_ready": false,
+    "no_write": true,
+    "write_performed": false,
+    "build_closure_status": "PASS_WITH_WARNINGS",
+    "template_publication_status": "BLOCKED",
+    "known_conflicts": [
+      "CANONICAL_CONTRACT_AUTHORITY",
+      "DOSSIER_METADATA_ONLY",
+      "PARENT_COMPONENTS_EMPTY",
+      "PROCESS_GRAPH_MODULAR_RESOLVER",
+      "PROCESS_MAP_DEFAULT_ILLUMINATED_TRUE_TEMPLATE_ONLY",
+      "PROCESS_MAP_DEFAULT_SCREW_FINISH_NATURAL",
+      "TEMPLATE_IDENTITY",
+      "TRIGGER_FIELD_MISMATCH",
+      "execution_catalog_bypass_not_exercised",
+      "not_tested_downstream",
+      "order_reread_risk_not_exercised",
+      "required_inactive_child",
+      "snapshot_live_race_not_exercised"
+    ]
+  },
+  "runtime_dry_run": {
+    "verdict": "BLOCKED",
+    "e2e_ready": false,
+    "no_write": true,
+    "write_performed": false,
+    "build_closure_status": "BLOCKED",
+    "template_publication_status": "BLOCKED",
+    "workspace_id": "ws-cp-f-missing-fixture"
+  },
+  "build_pass_while_template_publication_blocked": true,
+  "db_unchanged": true,
+  "PROOF_OK": true
+}

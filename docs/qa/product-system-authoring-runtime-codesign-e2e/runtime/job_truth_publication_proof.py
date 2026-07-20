@@ -50,9 +50,13 @@ async def main() -> int:
 
         readiness = await ProductE2EReadinessService(session).run_static(TEMPLATE_CODE)
         print(f"STATIC_VERDICT={readiness.verdict} e2e_ready={readiness.e2e_ready}")
+        print(f"BUILD_CLOSURE={readiness.build_closure_status}")
+        print(f"TEMPLATE_PUBLICATION={readiness.template_publication_status}")
         print(f"KNOWN_CONFLICTS={readiness.known_conflicts}")
         assert readiness.verdict == "BLOCKED"
         assert readiness.e2e_ready is False
+        assert readiness.build_closure_status in ("PASS", "PASS_WITH_WARNINGS")
+        assert readiness.template_publication_status == "BLOCKED"
 
         pub = ProductTemplatePublicationService(session)
         state = await pub.get_state(TEMPLATE_CODE)

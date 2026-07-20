@@ -1,0 +1,64 @@
+{
+  "proof": "CP-A_product_truth_http_db_persist_reload",
+  "started_at": "2026-07-20T19:32:38.724974+00:00",
+  "head_expected": "705a701a6e48f2bee1f638e44031f32f6d19d751",
+  "db_path": "C:\\w\\psiso\\backend\\dev.db",
+  "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+  "steps": {
+    "create_workspace": {
+      "status": 201,
+      "ok": true,
+      "body_keys": [
+        "id",
+        "workspace_code",
+        "title",
+        "template_code",
+        "status",
+        "payload",
+        "readiness_status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    "db_after_create": {
+      "found": true,
+      "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "updated_at": "2026-07-20 19:32:38.756687",
+      "has_confirmed_snapshot_v1": false,
+      "revision": null,
+      "content_hash": null,
+      "confirmation_state": null,
+      "pinned_bag_keys": [],
+      "snapshot_metadata": {},
+      "audit_trail_len": 0
+    },
+    "seed_finish_bags": {
+      "status": 422,
+      "ok": false
+    }
+  },
+  "verdict": "FAIL",
+  "base_url": "http://127.0.0.1:8000",
+  "auth": {
+    "header": "Authorization: Bearer __DEV_BYPASS_TOKEN__",
+    "router_dependency": "Depends(get_current_user) on /api/v1/intake-v6",
+    "confirm_route": "POST /api/v1/intake-v6/workspaces/{id}/product-truth/confirm-job",
+    "status_route": "GET /api/v1/intake-v6/workspaces/{id}/product-truth/job-status",
+    "me": {
+      "status": 200,
+      "body": {
+        "id": "dev-admin-user-00000000",
+        "email": "dev@localhost",
+        "name": "Dev Admin",
+        "role": "admin",
+        "last_login": "2026-07-20T22:32:38.739595"
+      },
+      "ok": true
+    }
+  },
+  "workspace_id": "fbf8b6bb-bfd9-4df2-894c-8c09cf84ae4e",
+  "workspace_code": "IV6-23DDDE4B",
+  "template_code_observed": "TPL-VOLUMETRIC-LETTERS_v2",
+  "error": "UnicodeEncodeError('charmap', 'FAIL seed bags \u2192 C:\\\\w\\\\psiso\\\\docs\\\\qa\\\\product-system-authoring-runtime-codesign-e2e\\\\runtime\\\\cp_a_http_db_proof_20260720_223238.json', 15, 16, 'character maps to <undefined>')",
+  "finished_at": "2026-07-20T19:32:38.805241+00:00"
+}

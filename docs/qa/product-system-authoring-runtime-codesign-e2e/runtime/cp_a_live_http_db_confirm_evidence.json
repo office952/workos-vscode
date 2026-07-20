@@ -1,0 +1,174 @@
+{
+  "db_url": "sqlite+aiosqlite:///C:/w/psiso/backend/dev.db",
+  "started_at": "2026-07-20T19:34:45.874383+00:00",
+  "workspace_code": "IV6-CLOSURE-49BB28C6",
+  "source_workspace_id": "528598d4-f4da-45c2-94db-f9ac1fbeb15b",
+  "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+  "insert_ok": true,
+  "confirm_1_status": 200,
+  "confirm_1_body": {
+    "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+    "workspace_code": "IV6-CLOSURE-49BB28C6",
+    "write_performed": true,
+    "idempotent_noop": false,
+    "product_truth_path": "payload_json.product_truth.confirmed_snapshot_v1",
+    "metadata": {
+      "revision": 1,
+      "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+      "confirmation_state": "confirmed",
+      "confirmed_at": "2026-07-20T19:34:46.494317+00:00",
+      "confirmed_by": "closure-proof-user",
+      "expected_draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_template_version": null,
+      "contract_version": "job_revision_v1",
+      "source": "confirm_job_product_truth",
+      "provenance": {
+        "command": "ConfirmJobProductTruth",
+        "pinned_bag_keys": [
+          "letter_group_instances",
+          "acm_panel_instance",
+          "component_placements"
+        ],
+        "catalog_write": false
+      }
+    },
+    "pinned_bag_keys": [
+      "letter_group_instances",
+      "acm_panel_instance",
+      "component_placements"
+    ],
+    "draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+    "previous_revision": null,
+    "audit_entry": {
+      "command": "ConfirmJobProductTruth",
+      "previous_revision": null,
+      "current_revision": 1,
+      "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+      "previous_content_hash": null,
+      "correction_reason": null,
+      "actor": "closure-proof-user",
+      "timestamp": "2026-07-20T19:34:46.494317+00:00",
+      "draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526"
+    }
+  },
+  "revision": 1,
+  "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+  "write_performed": true,
+  "idempotent_noop_1": false,
+  "db_reload_revision": 1,
+  "db_reload_content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+  "db_reload_state": "confirmed",
+  "db_pinned_bag_keys": [
+    "letter_group_instances",
+    "acm_panel_instance",
+    "component_placements"
+  ],
+  "job_status_http": 200,
+  "job_status_body": {
+    "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+    "has_job_revision": true,
+    "metadata": {
+      "revision": 1,
+      "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+      "confirmation_state": "confirmed",
+      "confirmed_at": "2026-07-20T19:34:46.494317+00:00",
+      "confirmed_by": "closure-proof-user",
+      "expected_draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_template_version": null,
+      "contract_version": "job_revision_v1",
+      "source": "confirm_job_product_truth",
+      "provenance": {
+        "command": "ConfirmJobProductTruth",
+        "pinned_bag_keys": [
+          "letter_group_instances",
+          "acm_panel_instance",
+          "component_placements"
+        ],
+        "catalog_write": false
+      }
+    },
+    "draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+    "is_stale": false,
+    "commercial_freeze_allowed": true
+  },
+  "confirm_2_status": 200,
+  "confirm_2_body": {
+    "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+    "workspace_code": "IV6-CLOSURE-49BB28C6",
+    "write_performed": false,
+    "idempotent_noop": true,
+    "product_truth_path": "payload_json.product_truth.confirmed_snapshot_v1",
+    "metadata": {
+      "revision": 1,
+      "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+      "confirmation_state": "confirmed",
+      "confirmed_at": "2026-07-20T19:34:46.494317+00:00",
+      "confirmed_by": "closure-proof-user",
+      "expected_draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_template_version": null,
+      "contract_version": "job_revision_v1",
+      "source": "confirm_job_product_truth",
+      "provenance": {
+        "command": "ConfirmJobProductTruth",
+        "pinned_bag_keys": [
+          "letter_group_instances",
+          "acm_panel_instance",
+          "component_placements"
+        ],
+        "catalog_write": false
+      }
+    },
+    "pinned_bag_keys": [
+      "letter_group_instances",
+      "acm_panel_instance",
+      "component_placements"
+    ],
+    "draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+    "previous_revision": 1,
+    "audit_entry": null
+  },
+  "stale_mark_mutated": true,
+  "job_status_after_edit": {
+    "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+    "has_job_revision": true,
+    "metadata": {
+      "revision": 1,
+      "content_hash": "sha256:d9b704e0bcde62d906bd32eecc4b1372ea56dfdd0b58abab34be93878425e4d9",
+      "confirmation_state": "stale_after_edit",
+      "confirmed_at": "2026-07-20T19:34:46.494317+00:00",
+      "confirmed_by": "closure-proof-user",
+      "expected_draft_hash": "sha256:a20005a216b0432b6c73e2bbf3f8bad15330eaad6b185fb004d607c018884526",
+      "root_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "root_template_version": null,
+      "contract_version": "job_revision_v1",
+      "source": "confirm_job_product_truth",
+      "provenance": {
+        "command": "ConfirmJobProductTruth",
+        "pinned_bag_keys": [
+          "letter_group_instances",
+          "acm_panel_instance",
+          "component_placements"
+        ],
+        "catalog_write": false
+      }
+    },
+    "draft_hash": "sha256:1edd892fbe6aa5f883fb356972641d11041653f65fcbdae0e28fd7e277d005af",
+    "is_stale": true,
+    "commercial_freeze_allowed": false
+  },
+  "confirm_wrong_rev_status": 409,
+  "confirm_wrong_rev_body": {
+    "detail": {
+      "error": "revision_mismatch",
+      "workspace_id": "827ecf8a-7700-4dc0-9547-6b2accd2c72e",
+      "expected_revision": 999,
+      "actual_revision": 1
+    }
+  },
+  "db_row_count": 1,
+  "verdict": "PASS",
+  "finished_at": "2026-07-20T19:34:46.564377+00:00"
+}

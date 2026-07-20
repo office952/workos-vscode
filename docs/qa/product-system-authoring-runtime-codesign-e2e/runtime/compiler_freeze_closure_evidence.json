@@ -1,0 +1,68 @@
+{
+  "generated_at": "2026-07-20T19:34:56.290204+00:00",
+  "head_expected": "705a701a6e48f2bee1f638e44031f32f6d19d751",
+  "foundation": [
+    "ef349ef",
+    "136f38b",
+    "70b2fdf",
+    "6a1c1d1"
+  ],
+  "checkpoints": {
+    "CP-B": {
+      "status": "PARTIAL",
+      "product_definition": "emits product_truth_job_revision provenance (code path 136f38b)",
+      "aggregate": "applies pinned bags when freeze_allowed; does not surface revision in provenance_summary",
+      "quantity_builder": {
+        "source": "letter_group_instance_authority",
+        "uses_pinned_instances": true,
+        "surfaces_product_truth_revision": false
+      },
+      "shared_revision": 1,
+      "shared_content_hash": "sha256:b38f4e2e1c7c4e18fe89792f1695cbe82cfd648c98c4ad7f78a9fd2dd5137c7d",
+      "same_revision_surfaced_across_all_three": false,
+      "pin_preference_shared_pd_agg": true,
+      "notes": "PD provenance carries revision/hash; Agg/Qty consume pin but do not emit same revision fields."
+    },
+    "CP-C": {
+      "status": "PARTIAL",
+      "eic_coupling": {
+        "eic_imports_letter_group_instance_authority": false,
+        "eic_imports_letters_commercial_measurement": false,
+        "eic_source_mentions_qty_builder": false,
+        "converged_on_quantity_builder": false
+      },
+      "qty_builder_source": "letter_group_instance_authority",
+      "fallbacks_still_present_in_qty_builder": true,
+      "pricing_reopened": false,
+      "notes": "EIC still uses parallel _extract_quantity paths; no import of Quantity Builder."
+    },
+    "CP-D": {
+      "status": "PASS",
+      "cases": {
+        "confirmed_allows": true,
+        "stale_blocks": true,
+        "unconfirmed_blocks": true,
+        "wrong_hash_covered_by_pytest": "test_content_hash_mismatch_409",
+        "accepted_terminal_covered_by_pytest": "test_v6_freeze_blocks_accepted_quote_terminal",
+        "draft_drift_pin_restored": true
+      },
+      "revision": 1,
+      "content_hash": "sha256:b38f4e2e1c7c4e18fe89792f1695cbe82cfd648c98c4ad7f78a9fd2dd5137c7d",
+      "confirm_response_revision": 1
+    },
+    "CP-E": {
+      "status": "PASS",
+      "order_provenance": {
+        "source": "quote_snapshot_v2",
+        "product_truth_revision": 1,
+        "product_truth_content_hash": "sha256:b38f4e2e1c7c4e18fe89792f1695cbe82cfd648c98c4ad7f78a9fd2dd5137c7d",
+        "freeze_from_pinned_product_truth": true,
+        "no_live_workspace_reread": true
+      },
+      "same_revision_as_confirm": true,
+      "ep_reads_order_snapshot_only": true,
+      "ep_no_materialization_docstring": true,
+      "ep_no_live_recompile_default": true
+    }
+  }
+}
