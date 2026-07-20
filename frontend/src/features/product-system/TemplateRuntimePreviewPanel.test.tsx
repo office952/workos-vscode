@@ -36,12 +36,15 @@ describe("TemplateRuntimePreviewPanel", () => {
     vi.clearAllMocks();
   });
 
-  it("renders progressive disclosure sections for PD preview", async () => {
+  it("renders human summary first and collapsed diagnostics for PD preview", async () => {
     render(<TemplateRuntimePreviewPanel templateCode="TPL-VOLUMETRIC-LETTERS_v2" />);
     await waitFor(() => {
       expect(screen.getByTestId("runtime-preview-body")).toBeTruthy();
     });
+    expect(screen.getByTestId("runtime-preview-human-summary")).toHaveTextContent(/Rezumat operator/i);
+    expect(screen.getByTestId("runtime-preview-human-summary")).toHaveTextContent(/Parțial/);
     expect(screen.getByTestId("runtime-preview-modules")).toHaveTextContent(/MOD-A/);
     expect(screen.getByTestId("runtime-preview-materials")).toHaveTextContent(/Materials/);
   });
 });
+

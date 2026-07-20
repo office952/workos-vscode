@@ -47,6 +47,13 @@ describe("ProductE2EReadinessPanel", () => {
     expect(screen.getByTestId("product-e2e-readiness-template-publication")).toHaveTextContent(
       "TEMPLATE PUBLICATION BLOCKED",
     );
-    expect(screen.getByTestId("product-e2e-readiness-build-pass-pub-blocked")).toBeTruthy();
+    expect(screen.getByTestId("product-e2e-readiness-build-pass-pub-blocked")).toHaveTextContent(
+      /Aluminiu \(volumetric\)/,
+    );
+    fireEvent.click(screen.getByTestId("product-e2e-readiness-findings-toggle"));
+    expect(screen.getByTestId("product-e2e-readiness-findings")).toHaveTextContent(
+      /Aluminiu \(volumetric\)/,
+    );
   });
 });
+

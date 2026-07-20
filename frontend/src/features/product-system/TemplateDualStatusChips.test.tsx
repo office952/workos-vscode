@@ -24,13 +24,13 @@ describe("TemplateDualStatusChips", () => {
     vi.clearAllMocks();
   });
 
-  it("shows BUILD and TEMPLATE axes separately with active≠published", async () => {
+  it("shows Build and Publicare axes separately with activ≠publicat", async () => {
     render(<TemplateDualStatusChips templateCode="TPL-VOLUMETRIC-LETTERS_v2" dbActive />);
-    expect(screen.getByTestId("template-dual-status-build")).toHaveTextContent(/BUILD ACTIVE/i);
+    expect(screen.getByTestId("template-dual-status-build")).toHaveTextContent(/Build activ/i);
     await waitFor(() => {
-      expect(screen.getByTestId("template-dual-status-publication")).toHaveTextContent(/TEMPLATE DRAFT/i);
+      expect(screen.getByTestId("template-dual-status-publication")).toHaveTextContent(/Publicare DRAFT/i);
     });
-    expect(screen.getByTestId("template-dual-status-publication")).toHaveTextContent(/BLOCKED/i);
+    expect(screen.getByTestId("template-dual-status-publication")).toHaveTextContent(/blocată/i);
     expect(screen.getByTestId("template-dual-status-active-ne-published")).toBeTruthy();
   });
 });
