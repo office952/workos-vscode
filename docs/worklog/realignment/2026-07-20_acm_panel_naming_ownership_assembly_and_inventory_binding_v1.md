@@ -5,6 +5,7 @@
 | Date | 2026-07-20 |
 | Build | `WORKOS_ACM_PANEL_NAMING_OWNERSHIP_ASSEMBLY_AND_INVENTORY_BINDING_V1` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
+| Feature commit | `f2adf6b` |
 | Mode | Slice A+B combined — no Pricing formulas, no Offer/Exec, no task_rules |
 | Fixture | `IV6-DB2F86B7` / `a7b0162b-dc91-467f-aa24-c1279fb3a073` |
 

@@ -5,6 +5,7 @@
 | Date | 2026-07-20 |
 | Mode | Implementation Slice A+B — **STOP for owner review** |
 | Branch | `feature/product-system-active-path-isolation-v1` |
+| Feature commit | `f2adf6b` |
 | Fixture | `IV6-DB2F86B7` / `a7b0162b-dc91-467f-aa24-c1279fb3a073` |
 | Evidence | [`docs/audits/_evidence/2026-07-20_acm-panel-naming-assembly-binding/`](./_evidence/2026-07-20_acm-panel-naming-assembly-binding/) |
 | Plan | [`docs/plans/2026-07-20_WORKOS_ACM_PANEL_NAMING_OWNERSHIP_ASSEMBLY_AND_INVENTORY_BINDING_V1.md`](../plans/2026-07-20_WORKOS_ACM_PANEL_NAMING_OWNERSHIP_ASSEMBLY_AND_INVENTORY_BINDING_V1.md) |
