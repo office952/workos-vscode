@@ -181,3 +181,71 @@ vitest publication + readiness panels → 2 passed
 ### Stop conditions
 
 None.
+
+---
+
+## CONTINUATION — External Artwork Analysis Boundary (2026-07-20)
+
+| Field | Value |
+|-------|--------|
+| Owner GO | **YES** — boundary + Product System continuation (not new audit) |
+| Kickoff HEAD | `db64b46` (reconfirmed) |
+| Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
+| Dirty tree | preserved (~360+) |
+| Prior gates | **preserved** — Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; UI NEEDS_POLISH; Figma PROPOSED; Template publication BLOCKED; direction ~92 — **not reopened** |
+| Aluminiu | **NOT activated** |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/EXTERNAL_ARTWORK_ANALYSIS_BOUNDARY_ALLOWLIST.md` |
+| Canonical ownership | [`docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md`](../../architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md) |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/EXTERNAL_ARTWORK_ANALYSIS_BOUNDARY_REPORT.md` |
+
+### Decision
+
+**External Artwork Analysis Ownership:** separate desktop app owns all SVG/DWG/DXF (and other graphic) file intelligence. WorkOS consumes versioned external results, reviews, operator confirms → Product Truth. Transport TBD.
+
+### Delivered
+
+| Area | Artifact |
+|------|----------|
+| Boundary docs | ownership doc; teaching model + AGENTS + systems alignment map amended |
+| Contract v1 | `backend/schemas/artwork_analysis_contract_v1.py` + FE types |
+| Adapter | `backend/services/artwork_analysis_intake_adapter.py` (consume-only; no PT write) |
+| Readiness | `backend/services/artwork_analysis_integration_readiness.py` (+ non-blocking e2e map when bag present) |
+| UI stub | `ArtworkAnalysisReviewPanel` mounted on product Lifecycle tab (empty state) |
+| Tests | `test_artwork_analysis_contract_v1.py` + FE contract/panel tests |
+
+### Inventory classification (summary)
+
+| Area | Classification | Action |
+|------|----------------|--------|
+| `frontend/src/lib/svgAnalyzer/**` | ACTIVE (legacy runtime) / EXTERNAL_APP_OWNED | Do not extend |
+| `backend/services/intake_v3_svg_analysis_service.py` + related | ACTIVE (legacy) | Do not extend |
+| `backend/services/svg_analyzer.py` (V5) | LEGACY | Do not extend |
+| `backend/services/svg_*` metrics/preview/sanitize | LEGACY / UI-support | Do not grow into intelligence |
+| `backend/services/acm_dxf_path_measurement.py` + ezdxf | LEGACY / EXPERIMENTAL (AcmPanel QA) | Do not extend; EXTERNAL_APP_OWNED target |
+| New `artwork_analysis_*` | ACTIVE (integration) | Consume/review only |
+
+### Forbidden confirmation
+
+No new SVG/DWG/DXF parser, analyzer, auto-group, AI authority, or direct Product Truth write from analysis adapter.
+
+### Stop conditions hit?
+
+None. Transport remains TBD (documented). No major schema migration. No aluminiu activation. No deletion of legacy analyzers.
+
+### Direction scores (this continuation)
+
+| Axis | Score |
+|------|-------|
+| Product System continuation | 90 |
+| External boundary clarity | 95 |
+| UI (review stub) | 78 |
+| Runtime integration readiness | 72 (contract + readiness; transport TBD; legacy analyzers still live) |
+
+### Commits (this continuation)
+
+| SHA | Group |
+|-----|-------|
+| `7e2a1a4` | docs: External Artwork Analysis Ownership boundary |
+| `66cf0ef` | feat(schemas): artwork_analysis_contract_v1 + adapter |
+| `99d9442` | feat(ui): ArtworkAnalysisReviewPanel stub |
+| _(docs tip)_ | docs(qa)/worklog + allowlist + report |
