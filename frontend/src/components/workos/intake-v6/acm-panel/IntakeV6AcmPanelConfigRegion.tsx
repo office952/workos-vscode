@@ -12,6 +12,7 @@ import IntakeV6AcmPanelInspector, {
   type IntakeV6AcmPanelInspectorHandle,
 } from "./IntakeV6AcmPanelInspector";
 import IntakeV6AcmPanelValidationRail from "./IntakeV6AcmPanelValidationRail";
+import IntakeV6AcmPanelBlueprintPreview from "./IntakeV6AcmPanelBlueprintPreview";
 import {
   canContinueAfterAcmPanelFlush,
   useAcmPanelDraftFlushBridge,
@@ -118,14 +119,27 @@ export default function IntakeV6AcmPanelConfigRegion({
       />
       <div className="min-w-0">
         {showInspector ? (
-          <IntakeV6AcmPanelInspector
-            ref={inspectorRef}
-            model={acmModel}
-            finishSetup={finishSetup}
-            actions={actions}
-            focusIssue={focusIssue}
-            onFocusConsumed={() => setFocusIssue(null)}
-          />
+          <div
+            className="flex min-w-0 flex-col gap-2 xl:grid xl:grid-cols-[minmax(0,1fr)_minmax(220px,280px)] xl:items-start"
+            data-testid="intake-v6-acm-inspector-with-blueprint"
+          >
+            <div className="min-w-0 order-2 xl:order-1">
+              <IntakeV6AcmPanelInspector
+                ref={inspectorRef}
+                model={acmModel}
+                finishSetup={finishSetup}
+                actions={actions}
+                focusIssue={focusIssue}
+                onFocusConsumed={() => setFocusIssue(null)}
+              />
+            </div>
+            <div className="order-1 xl:order-2 xl:sticky xl:top-2">
+              <IntakeV6AcmPanelBlueprintPreview
+                finishSetup={finishSetup}
+                payload={payload ?? null}
+              />
+            </div>
+          </div>
         ) : (
           <div
             className="rounded border border-[#2A3548]/50 bg-[#111827]/30 px-3 py-4 text-[12px] text-slate-400"
