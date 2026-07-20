@@ -67,7 +67,11 @@ vitest ProductTemplatePublicationPanel.test.tsx → PASS
 
 ## Commits this build
 
-(see git log after allowlist commits)
+| SHA | Checkpoint |
+|-----|------------|
+| `034dbea` | CP0 docs + allowlist + Figma-ready + proof script + FINAL_REPORT |
+| `e50f99b` | CP1+CP2+CP5 backend publication + component contracts + readiness gate |
+| `b0560bc` | CP3 (+ panels) frontend PS + Blueprint Dossier Studio rail/footer |
 
 ## Stop conditions hit
 

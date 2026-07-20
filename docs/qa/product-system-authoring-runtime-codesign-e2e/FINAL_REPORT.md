@@ -65,7 +65,13 @@ None hit. Non-scope respected.
 
 ## 33. Commits
 
-(filled after allowlist commits)
+| SHA | Message |
+|-----|---------|
+| `034dbea` | docs(product-system): CP0 authoring co-design worklog and allowlist |
+| `e50f99b` | feat(product-system): publication lifecycle and component contracts |
+| `b0560bc` | feat(product-system): publication and contract UI in PS and dossier studio |
+
+Foundation kept: `ef349ef`, `136f38b`, `70b2fdf`, `6a1c1d1`. No push/PR.
 
 ## 34. Screenshot pack
 
