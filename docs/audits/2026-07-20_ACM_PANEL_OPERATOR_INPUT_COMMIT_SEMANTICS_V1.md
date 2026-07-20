@@ -93,7 +93,13 @@ Blur între câmpuri = PUT per câmp (acceptat). Invalid blochează nav/confirm.
 
 ## 20. Commit
 
-Vezi git după commit — hash complet/scurt în mesajul final agent.
+| | |
+|--|--|
+| Branch | `feature/product-system-active-path-isolation-v1` |
+| HEAD before | `779bf25667e40c355b92fdf3dc089b460a73aa03` |
+| Full hash | `1edccf2c36688d8f5065cc6ef05aab58eca7d51e` |
+| Short | `1edccf2` |
+| Message | `fix(intake-v6): debounce AcmPanel inspector field commits` |
 
 ## 21. Opinie sinceră
 

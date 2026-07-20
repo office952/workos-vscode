@@ -68,6 +68,13 @@ Before (soak keystroke): 3 PUTs for one typing flow. After: 1.
 - ReviewStep only calls flush bridge — draft ownership remains in acm-panel.
 - Invalid draft blocks confirm/nav; operator must fix field.
 
+## Commit
+
+- Full: `1edccf2c36688d8f5065cc6ef05aab58eca7d51e`
+- Short: `1edccf2`
+- Message: `fix(intake-v6): debounce AcmPanel inspector field commits`
+- HEAD before: `779bf25`
+
 ## Roadmap
 
 S0–S2 can move to full PASS after owner accepts this commit. Next large choices remain owner-gated (remediation / blueprint / MULTI).
