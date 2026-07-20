@@ -391,3 +391,65 @@ None.
 | `41e0901` | fix(product-system-ui): refine readiness publication and runtime preview |
 | `0aefefa` | test(product-system-ui): close interaction and state coverage |
 | `1a823e8` | docs(qa): finalize Figma and screenshot acceptance |
+
+---
+
+## PRODUCT SYSTEM REAL PRODUCT CONFIGURATION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Owner GO | **YES** — configure VL as first complete Product System product |
+| Kickoff HEAD | `5382525` (**reconfirmed**) |
+| Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
+| Dirty tree | ~360 — **preserved** (allowlist-only) |
+| Aluminiu | **NOT activated** — publication BLOCKED honest |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/REAL_PRODUCT_CONFIGURATION_ALLOWLIST.md` |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/REAL_PRODUCT_CONFIGURATION_FINAL_REPORT.md` |
+| Evidence | `runtime/vl_real_product_config_system_link_check.json` |
+
+### Delivered
+
+| Stream | Verdict |
+|--------|---------|
+| A Root PT config | **PASS** — identity stubs; composition 5 req + 2 opt |
+| B Component contracts | **PASS** — FACE/BACK/LED/FINISH seeded + linked; usage_mode/schema stamped |
+| C Dossier | **PASS** — geometry_input_contract + ownership (documentary) |
+| D E2E Readiness | **PASS** — BUILD PASS_WITH_WARNINGS; TEMPLATE BLOCKED on Aluminiu |
+| E System Link Check | **PASS** — Catalog→EP status table (no auto-repair) |
+| F Runtime Preview | **PASS_WITH_WARNINGS** — prior human summary retained |
+
+### Dual verdict
+
+| Axis | Status |
+|------|--------|
+| Product configuration | **PASS** |
+| Template publication | **BLOCKED** (inactive Aluminiu — correct) |
+
+### Aluminiu owner ask
+
+**No activation GO requested.** Keep inactive until dedicated owner choice (activate / demote link / keep BLOCKED). Required link remains correct.
+
+### Direction score
+
+**91/100** — see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT §29–33.
+
+### Tests
+
+```text
+pytest VL config + readiness + publication + contracts + composition + aggregate → 31 passed
+vitest Readiness System Link Check + Runtime Preview → 2 passed
+```
+
+### Stop conditions
+
+None.
+
+### Commits (this configuration)
+
+| SHA | Group |
+|-----|-------|
+| _(post-commit)_ | feat(product-system): VL component modules composition |
+| _(post-commit)_ | feat(product-system-ui): System Link Check table |
+| _(post-commit)_ | test(product-system): VL real product configuration |
+| _(post-commit)_ | docs(qa): real product configuration report + worklog |
