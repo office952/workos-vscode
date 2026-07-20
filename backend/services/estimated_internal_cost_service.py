@@ -281,6 +281,45 @@ def _payload_from_sources(
     return {}
 
 
+def _overlay_canonical_quantity_builder(
+    template_code: str,
+    payload: dict[str, Any],
+    *,
+    pd: ProductDefinitionPreview | None = None,
+) -> dict[str, Any]:
+    """Prefer Quantity Builder letter quantities over raw parallel payload fields.
+
+    Adapter only — does not change EIC formulas, rates, or CostEngine.
+    """
+    if not str(template_code or "").startswith("TPL-VOLUMETRIC-LETTERS"):
+        return payload
+    from services.letter_group_instance_authority import build_volumetric_letters_commercial_quantities
+
+    geom = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    qty = build_volumetric_letters_commercial_quantities(
+        quote_geometry=geom,
+        finish_setup=finish,
+        product_truth_job_revision=getattr(pd, "product_truth_job_revision", None) if pd else None,
+        product_truth_content_hash=getattr(pd, "product_truth_content_hash", None) if pd else None,
+        product_truth_status=getattr(pd, "product_truth_status", None) if pd else None,
+    )
+    out = dict(payload)
+    out_geom = dict(geom)
+    out_finish = dict(finish)
+    if qty.get("letter_face_area_m2") is not None:
+        out_geom["letter_face_area_m2"] = qty["letter_face_area_m2"]
+    if qty.get("letter_perimeter_m") is not None:
+        out_geom["letter_perimeter_m"] = qty["letter_perimeter_m"]
+    if qty.get("led_module_count") is not None:
+        out_finish["led_module_count"] = qty["led_module_count"]
+        out_finish["letter_led_module_count"] = qty["led_module_count"]
+    out["quote_geometry"] = out_geom
+    out["finish_setup"] = out_finish
+    out["volumetric_letters_commercial_quantities"] = qty
+    return out
+
+
 def _merged_values(pd: ProductDefinitionPreview, payload: dict[str, Any]) -> dict[str, Any]:
     merged = dict(pd.canonical_values)
     merged.update({k: v for k, v in payload.items() if v is not None and v != ""})
@@ -789,6 +828,7 @@ class EstimatedInternalCostService:
             return None
 
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
+        payload = _overlay_canonical_quantity_builder(template_code, payload, pd=pd)
         values = _merged_values(pd, payload)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
 
