@@ -236,6 +236,132 @@ def _commercial_line_items(commercial_preview: Any) -> list[dict[str, Any]]:
 	return items
 
 
+def _build_acm_panel_commercial_preview(
+	*,
+	quote_input: dict[str, Any],
+	payload_raw: dict[str, Any],
+	line_items: list[dict[str, Any]],
+) -> dict[str, Any] | None:
+	"""Provisional AcmPanel pricing projection over CPP lines (no second pricing system)."""
+	from services.acm_commercial_geometry import (
+		ACM_COMMERCIAL_GEOMETRY_VERSION,
+		apply_acm_commercial_geometry,
+		build_acm_panel_authority_summary,
+	)
+	from services.acm_panel_pd_projection import coalesce_acm_panel_instance_from_finish
+	from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
+
+	merged_payload: dict[str, Any] = dict(payload_raw or {})
+	if quote_input:
+		# Prefer workspace finish_setup; overlay quote_input for derived keys.
+		qi = dict(quote_input)
+		if isinstance(merged_payload.get("finish_setup"), dict) and "finish_setup" not in qi:
+			qi["finish_setup"] = merged_payload["finish_setup"]
+		merged = merge_acm_boxed_mounting_derived_fields(qi)
+	else:
+		merged = merge_acm_boxed_mounting_derived_fields(merged_payload)
+
+	finish = merged.get("finish_setup") if isinstance(merged.get("finish_setup"), dict) else {}
+	if coalesce_acm_panel_instance_from_finish(finish) is None and coalesce_acm_panel_instance_from_finish(
+		merged_payload.get("finish_setup") if isinstance(merged_payload.get("finish_setup"), dict) else {}
+	) is None:
+		return None
+
+	apply_acm_commercial_geometry(merged)
+	# Authority must read workspace finish (segmented / instance), not only quote_input merge.
+	authority_finish = (
+		merged_payload.get("finish_setup")
+		if isinstance(merged_payload.get("finish_setup"), dict)
+		else finish
+	)
+	authority = build_acm_panel_authority_summary(
+		{
+			**merged_payload,
+			"finish_setup": authority_finish or {},
+			"acm_commercial_geometry": merged.get("acm_commercial_geometry"),
+		}
+	)
+	geom = merged.get("acm_commercial_geometry") if isinstance(merged.get("acm_commercial_geometry"), dict) else {}
+
+	acm_lines = [line for line in line_items if str(line.get("code") or "").startswith("acm_")]
+	hourly = [
+		line
+		for line in acm_lines
+		if str(line.get("basis_type") or "").lower() in {"hour", "hourly", "per_hour"}
+		or str(line.get("unit") or "").lower() in {"h", "hour", "ore", "eur/h", "eur/hour"}
+	]
+	warnings = list(authority.get("warnings") or [])
+	warnings.extend(list(merged.get("acm_commercial_geometry_warnings") or []))
+	if hourly:
+		warnings.append("hourly_commercial_line_detected")
+	blockers = list(authority.get("blockers") or [])
+
+	estimated_total = 0.0
+	preview_lines: list[dict[str, Any]] = []
+	for line in acm_lines:
+		amount = line.get("subtotal")
+		try:
+			amount_f = float(amount) if amount is not None else None
+		except (TypeError, ValueError):
+			amount_f = None
+		if amount_f is not None:
+			estimated_total += amount_f
+		preview_lines.append(
+			{
+				"code": line.get("code"),
+				"label": line.get("label"),
+				"quantity": line.get("quantity"),
+				"unit": line.get("unit"),
+				"rate": line.get("commercial_unit_price"),
+				"amount": amount_f,
+				"source": line.get("source"),
+				"status": "provisional",
+				"warnings": list(line.get("warnings") or []),
+				"basis_type": line.get("basis_type"),
+			}
+		)
+
+	currency = "EUR"
+	if acm_lines and acm_lines[0].get("source_currency"):
+		currency = str(acm_lines[0].get("source_currency"))
+	elif acm_lines and acm_lines[0].get("cpp_currency"):
+		currency = str(acm_lines[0].get("cpp_currency"))
+
+	return {
+		"status": authority.get("status") or "unavailable",
+		"currency": currency,
+		"estimated_total": round(estimated_total, 4) if preview_lines else None,
+		"lines": preview_lines,
+		"geometry_summary": {
+			"assembly_width_mm": geom.get("assembly_width_mm") or merged.get("assembly_width_mm"),
+			"assembly_height_mm": geom.get("assembly_height_mm") or merged.get("assembly_height_mm"),
+			"envelope_width_mm": geom.get("envelope_width_mm"),
+			"envelope_height_mm": geom.get("envelope_height_mm"),
+			"face_area_m2": geom.get("commercial_face_area_m2") or merged.get("commercial_face_area_m2"),
+			"cut_length_m": geom.get("commercial_cut_length_m") or merged.get("commercial_cut_length_m"),
+			"fold_length_m": geom.get("commercial_fold_length_m") or merged.get("commercial_fold_length_m"),
+			"assembly_exterior_perimeter_m": geom.get("assembly_exterior_perimeter_m"),
+			"panel_count": geom.get("panel_count"),
+			"joint_count": geom.get("joint_count"),
+			"envelope_ignored_for_multi_panel": geom.get("envelope_ignored_for_multi_panel"),
+		},
+		"material_reference": {
+			"preferred_sku": "MAT-ACM-BOND-3MM",
+			"legacy_alias": "MAT-ACP-3MM",
+			"legacy_excluded_from_duplicate": True,
+		},
+		"rate_version": ACM_COMMERCIAL_GEOMETRY_VERSION,
+		"authority_summary": authority,
+		"warnings": list(dict.fromkeys(str(w) for w in warnings)),
+		"blockers": list(dict.fromkeys(str(b) for b in blockers)),
+		"final_eligibility": bool(authority.get("final_eligibility")),
+		"offer_eligibility": bool(authority.get("offer_eligibility")),
+		"execution_eligibility": bool(authority.get("execution_eligibility")),
+		"line_count": len(preview_lines),
+		"hourly_commercial_detected": bool(hourly),
+	}
+
+
 def _optional_commercial_owner_codes(payload_raw: dict[str, Any], commercial_preview: Any) -> frozenset[str]:
 	"""Packaging stays optional; montaj is optional only when site install is not required."""
 	from services.commercial_price_proposal_service import _site_install_commercially_required
@@ -490,6 +616,15 @@ async def build_intake_v6_priced_quote_dry_run(
 			diagnostic_cost_plus["canonical_authority"] = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	pricing_status = V6_PRICED_DRY_RUN_BLOCKED if blockers else V6_PRICED_DRY_RUN_READY
+	acm_panel_commercial_preview = _build_acm_panel_commercial_preview(
+		quote_input=quote_input,
+		payload_raw=payload_raw if isinstance(payload_raw, dict) else {},
+		line_items=line_items,
+	)
+	if acm_panel_commercial_preview is not None:
+		for w in acm_panel_commercial_preview.get("warnings") or []:
+			warnings.append(f"acm_panel:{w}")
+
 	return {
 		"pricing_status": pricing_status,
 		"pricing_authority": pricing_authority,
@@ -505,6 +640,7 @@ async def build_intake_v6_priced_quote_dry_run(
 		"pricing_mode": pricing_mode,
 		"commercial_totals": totals,
 		"commercial_line_items": line_items,
+		"acm_panel_commercial_preview": acm_panel_commercial_preview,
 		"internal_cost_trace": _material_trace(material_breakdown, material_warning),
 		"estimated_internal_cost_trace": _estimated_internal_cost_trace(internal_preview),
 		"diagnostic_cost_plus_trace": diagnostic_cost_plus,

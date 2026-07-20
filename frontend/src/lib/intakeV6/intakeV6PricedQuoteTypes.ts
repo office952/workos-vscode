@@ -11,6 +11,53 @@ export type IntakeV6PricedQuoteBlocker = {
   message: string;
 };
 
+export type AcmPanelCommercialPreviewLine = {
+  code?: string | null;
+  label?: string | null;
+  quantity?: number | null;
+  unit?: string | null;
+  rate?: number | null;
+  amount?: number | null;
+  source?: string | null;
+  status?: string | null;
+  warnings?: string[];
+  basis_type?: string | null;
+};
+
+export type AcmPanelCommercialPreview = {
+  status?: string | null;
+  currency?: string | null;
+  estimated_total?: number | null;
+  lines?: AcmPanelCommercialPreviewLine[];
+  geometry_summary?: {
+    assembly_width_mm?: number | null;
+    assembly_height_mm?: number | null;
+    envelope_width_mm?: number | null;
+    envelope_height_mm?: number | null;
+    face_area_m2?: number | null;
+    cut_length_m?: number | null;
+    fold_length_m?: number | null;
+    assembly_exterior_perimeter_m?: number | null;
+    panel_count?: number | null;
+    joint_count?: number | null;
+    envelope_ignored_for_multi_panel?: boolean | null;
+  } | null;
+  material_reference?: {
+    preferred_sku?: string | null;
+    legacy_alias?: string | null;
+    legacy_excluded_from_duplicate?: boolean | null;
+  } | null;
+  rate_version?: string | null;
+  authority_summary?: Record<string, unknown> | null;
+  warnings?: string[];
+  blockers?: string[];
+  final_eligibility?: boolean;
+  offer_eligibility?: boolean;
+  execution_eligibility?: boolean;
+  line_count?: number | null;
+  hourly_commercial_detected?: boolean;
+};
+
 export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_status: "V6_PRICED_DRY_RUN_READY" | "V6_PRICED_DRY_RUN_BLOCKED" | string;
   pricing_authority?: string | null;
@@ -23,6 +70,7 @@ export type IntakeV6PricedQuoteDryRunResponse = {
   pricing_mode?: string;
   commercial_totals: IntakeV6CommercialTotals;
   commercial_line_items?: Array<Record<string, unknown>>;
+  acm_panel_commercial_preview?: AcmPanelCommercialPreview | null;
   internal_cost_trace?: Record<string, unknown>;
   estimated_internal_cost_trace?: Record<string, unknown>;
   diagnostic_cost_plus_trace?: Record<string, unknown> | null;

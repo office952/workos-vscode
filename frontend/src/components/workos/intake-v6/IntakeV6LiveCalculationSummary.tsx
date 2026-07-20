@@ -37,6 +37,7 @@ import {
 import { AlertTriangle, Calculator, ChevronRight, Ruler } from "lucide-react";
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { formatEdgeCantOperatorPerimeter } from "@/lib/intakeV6/intakeV4EdgeCantDisplay";
+import AcmPanelProvisionalPricingBlock from "./AcmPanelProvisionalPricingBlock";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
@@ -939,6 +940,7 @@ export default function IntakeV6LiveCalculationSummary({
   const officialTotals = officialPricing?.commercial_totals ?? null;
   const hasOfficialTotals = intakeV6HasOfficialCommercialTotals(officialPricing);
   const officialPricingBlocker = intakeV6OfficialPricingBlockerMessage(officialPricing);
+  const acmPanelCommercialPreview = officialPricing?.acm_panel_commercial_preview ?? null;
   const displayGrossRon = hasOfficialTotals ? officialTotals?.total_gross ?? null : null;
   const displayNetRon = hasOfficialTotals ? officialTotals?.subtotal_net ?? null : null;
   const includedRows = useMemo(() => rows.filter((row) => row.displayBucket === "included"), [rows]);
@@ -1138,6 +1140,10 @@ export default function IntakeV6LiveCalculationSummary({
             />
           </div>
         </div>
+        {/* Confirm continuity: same AcmPanel provisional contract as Review live-calc */}
+        <div className="border-t border-[#243044]/50 px-3 pb-2">
+          <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
+        </div>
       </div>
     );
   }
@@ -1164,6 +1170,8 @@ export default function IntakeV6LiveCalculationSummary({
           officialPricingBlocker={officialPricingBlocker}
           emphasis="compact"
         />
+
+        <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
 
         {pendingSave ? (
           <p
@@ -1245,6 +1253,8 @@ export default function IntakeV6LiveCalculationSummary({
         officialPricingBlocker={officialPricingBlocker}
         emphasis="sidebar"
       />
+
+      <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} />
 
       {pendingSave ? (
         <p

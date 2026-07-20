@@ -6,6 +6,7 @@ import IntakeV6ConfirmDashboard from "./IntakeV6ConfirmDashboard";
 import IntakeV6ConfirmHandoffPanel from "./IntakeV6ConfirmHandoffPanel";
 import IntakeV6ConfirmOperationalSummary from "./IntakeV6ConfirmOperationalSummary";
 import IntakeV6ModularFormAwarenessPanel from "./IntakeV6ModularFormAwarenessPanel";
+import AcmPanelProvisionalPricingBlock from "./AcmPanelProvisionalPricingBlock";
 import IntakeV6LiveCalculationSummary from "./IntakeV6LiveCalculationSummary";
 import IntakeV6OfferScopeReviewSummary from "./IntakeV6OfferScopeReviewSummary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
@@ -179,6 +180,11 @@ export default function IntakeV6FinalConfigurationSummary({
 								</button>
 							) : null}
 						</div>
+						{/* Continuity when CTA card replaces bar live-calc */}
+						<AcmPanelProvisionalPricingBlock
+							preview={handoff.pricedQuoteDryRun?.acm_panel_commercial_preview}
+							compact
+						/>
 					</div>
 				) : (
 					<IntakeV6LiveCalculationSummary

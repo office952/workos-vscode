@@ -140,10 +140,11 @@ def _standalone_root_configuration(payload: Mapping[str, Any]) -> Dict[str, Any]
 def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[str, Any]:
     """Merge derived ACM boxed mounting geometry into a quote/CPP/EIC payload.
 
-    Injects assembly_width_mm / assembly_height_mm when AcmPanel geometry is present.
-    Does not switch commercial area formulas off panel_* (Slice C).
+    Injects assembly_* and applies commercial geometry adapter (Slice C):
+    face area from assembly; cut/fold from sum of panel perimeters.
+    Never remaps panel_width_mm/panel_height_mm to assembly dims.
     """
-    from services.acm_assembly_extent import inject_assembly_extent_keys
+    from services.acm_commercial_geometry import apply_acm_commercial_geometry
     from services.mounting_solution_service import (
         ACM_BOXED_MOUNTING_TEMPLATE_CODE,
         normalize_acm_mounting_configuration,
@@ -156,14 +157,13 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
         derived, _warnings, _blockers = derive_acm_casetted_quote_input(standalone_config)
         out.update(derived)
         out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
-        finish = out.get("finish_setup") if isinstance(out.get("finish_setup"), dict) else {}
-        inject_assembly_extent_keys(out, finish=finish or out, acm_instance=out.get("acm_panel_instance"))
+        apply_acm_commercial_geometry(out)
         return out
 
     finish = out.get("finish_setup") if isinstance(out.get("finish_setup"), dict) else {}
     solution = read_mounting_solution(finish) or read_mounting_solution(out)
     if not solution or solution.get("template_code") != ACM_BOXED_MOUNTING_TEMPLATE_CODE:
-        inject_assembly_extent_keys(out, finish=finish or out, acm_instance=out.get("acm_panel_instance"))
+        apply_acm_commercial_geometry(out)
         return out
 
     config = normalize_acm_mounting_configuration(solution.get("configuration"))
@@ -174,12 +174,8 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
         config["panel_height_mm"] = client["height_mm"]
     derived, _warnings, _blockers = derive_acm_casetted_quote_input(config)
     out.update(derived)
-    inject_assembly_extent_keys(
-        out,
-        finish=finish,
-        acm_instance=out.get("acm_panel_instance")
-        or (config.get("acm_panel_instance") if isinstance(config, dict) else None),
-    )
+    # Preserve envelope/primary contour dims — do not overwrite with assembly.
+    apply_acm_commercial_geometry(out)
     return out
 
 
