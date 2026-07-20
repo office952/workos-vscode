@@ -218,6 +218,10 @@ import {
 import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetailsAccordion";
 import IntakeV6LiveCalculationSummary from "../IntakeV6LiveCalculationSummary";
 import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
+import IntakeV6AcmPanelConfigRegion from "../acm-panel/IntakeV6AcmPanelConfigRegion";
+import IntakeV6AcmPanelFundalSummary from "../acm-panel/IntakeV6AcmPanelFundalSummary";
+import { buildAcmPanelUiReadModel } from "@/lib/intakeV6/acmPanel/uiReadModel";
+import { useIntakeV6ProductComponentSelection } from "@/lib/intakeV6/useIntakeV6ProductComponentSelection";
 import { getProductDefinitionPreview, ProductDefinitionPreviewNotFoundError, type ProductDefinitionPreview } from "@/api/productDefinitionPreview";
 import {
   LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE,
@@ -594,6 +598,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const { state, saveFinishSetup, trySetStep, confirmProductComposition } = hook;
   const { setOverlay, setHandlers } = useIntakeV6WorkspaceHeaderStatus();
   const workspaceId = state.workspace?.id;
+  const { selectedId: selectedProductComponentId, setSelectedId: setSelectedProductComponentId } =
+    useIntakeV6ProductComponentSelection(workspaceId);
   const { vatPct, eurToRonRate } = useCompanyCommercialSettings(Boolean(workspaceId));
   const payload = state.workspace?.payload as Record<string, unknown> | undefined;
   const soldScopeVisibility = useMemo(() => resolveSoldScopeFieldVisibility(payload), [payload]);
@@ -1766,6 +1772,14 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ),
     [letterGroups, state.analyzerReport, state.layerRoleConfirmation],
   );
+  const acmPanelUiModel = useMemo(
+    () =>
+      buildAcmPanelUiReadModel({
+        finishSetup: form as unknown as Record<string, unknown>,
+        payload: payload ?? null,
+      }),
+    [form, payload],
+  );
   const returnCantReadonlyAwareness = useMemo(() => {
     const svgFileName =
       typeof svgSourcePayload?.file_name === "string"
@@ -2184,6 +2198,28 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
         </div>
       ) : null}
+      <IntakeV6AcmPanelConfigRegion
+        payload={payload}
+        finishSetup={form as unknown as Record<string, unknown>}
+        hasLetters={effectiveLetterGroups.length > 0}
+        hasLogo={artworkFinishes.length > 0}
+        selectedId={selectedProductComponentId}
+        onSelect={setSelectedProductComponentId}
+        onApplyFinishPatch={(patch) => {
+          setForm((prev) => {
+            const next = syncLighting({
+              ...prev,
+              ...patch,
+              confirmed: false,
+            });
+            pendingDirtyDomainsRef.current.add("mounting");
+            void persistFinishSetupState(next, true);
+            return next;
+          });
+        }}
+        onNavigateLetters={() => setReviewTab("finisaje")}
+        onNavigateLogo={() => setReviewTab("finisaje")}
+      />
       <div className="mb-2 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
         <IntakeV6LiveCalculationSummary
           breakdown={breakdown}
@@ -2848,7 +2884,20 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </div>
                 ) : null}
 
-                {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE ? (
+                {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE &&
+                acmPanelUiModel.exists ? (
+                  <div className="mt-3" data-testid="intake-v6-acp-product-config-section">
+                    <IntakeV6AcmPanelFundalSummary
+                      model={acmPanelUiModel}
+                      onOpenInspector={() => {
+                        setSelectedProductComponentId("acm_panel");
+                      }}
+                    />
+                  </div>
+                ) : null}
+
+                {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE &&
+                !acmPanelUiModel.exists ? (
                   <div
                     className="mt-3 grid gap-2 sm:grid-cols-3"
                     data-testid="intake-v6-acp-product-config-section"
@@ -3161,7 +3210,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   />
                 ) : null}
 
-                {readSegmentedBackground(form as unknown as Record<string, unknown>) ? (
+                {readSegmentedBackground(form as unknown as Record<string, unknown>) &&
+                !acmPanelUiModel.exists ? (
                   <IntakeV6SegmentedBackgroundPanel
                     finish={form as unknown as Record<string, unknown>}
                     disabled={state.phase === "persisting"}
@@ -3180,6 +3230,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       });
                     }}
                   />
+                ) : null}
+                {acmPanelUiModel.exists &&
+                readSegmentedBackground(form as unknown as Record<string, unknown>) ? (
+                  <p
+                    className="mt-2 text-[10px] text-slate-500"
+                    data-testid="intake-v6-acm-segmented-moved-to-inspector"
+                  >
+                    Segmentarea multi-panou se configurează în inspectorul Panou Alucobond (secțiunea
+                    Segmente).
+                  </p>
                 ) : null}
               </div>
               </IntakeV6MontajClusterShell>

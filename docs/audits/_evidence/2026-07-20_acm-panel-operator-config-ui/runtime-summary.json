@@ -1,0 +1,59 @@
+﻿{
+    "nested_instance_id":  "acm_cc_7af1352f_ff5c35da170d",
+    "segmented_status":  "PROPOSED",
+    "geometry_panels":  2,
+    "association_status":  "proposed",
+    "workspace_code":  "IV6-DB2F86B7",
+    "relations":  [
+                      "belongs_to_assembly:proposed",
+                      "belongs_to_assembly:proposed",
+                      "positioned_on:unknown"
+                  ],
+    "top_level_instance_present":  false,
+    "active_capabilities":  [
+                                "boxed_returns",
+                                "rear_lip",
+                                "segmented_panels"
+                            ],
+    "field_class":  {
+                        "panel_geometry":  "critical",
+                        "contour_association":  "critical",
+                        "fold_count":  "critical",
+                        "l1_mm":  "critical",
+                        "l2_mm":  "critical",
+                        "acm_thickness_mm":  "critical",
+                        "finished_depth_mm":  "critical",
+                        "internal_frame":  "optional",
+                        "service_corner":  "optional",
+                        "detection_message":  "informational"
+                    },
+    "selection_status":  "proposed",
+    "technical_configuration_status":  "proposed",
+    "segmented_panels":  2,
+    "composition_status":  "unconfirmed",
+    "role_status":  "confirmed",
+    "inactive_capabilities":  [
+                                  "internal_frame",
+                                  "graphic_cutouts",
+                                  "illuminated_cutouts",
+                                  "plexiglass_inserts",
+                                  "led_system",
+                                  "rear_closure",
+                                  "totem_face",
+                                  "direct_letter_mounting",
+                                  "wall_mounting",
+                                  "structure_mounting"
+                              ],
+    "domain_action":  "upsert",
+    "mounting_template":  "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "field_authority":  {
+                            "panel_geometry":  "detected",
+                            "fold_count":  "catalog_default",
+                            "l1_mm":  "catalog_default",
+                            "l2_mm":  "catalog_default",
+                            "finished_depth_mm":  "catalog_default",
+                            "acm_thickness_mm":  "catalog_default",
+                            "internal_frame":  "catalog_default",
+                            "service_corner":  "catalog_default"
+                        }
+}

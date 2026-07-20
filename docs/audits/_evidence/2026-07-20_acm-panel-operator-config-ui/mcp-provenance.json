@@ -1,0 +1,30 @@
+{
+  "audit": "WORKOS_ACM_PANEL_OPERATOR_CONFIGURATION_21ST_UI_AUDIT",
+  "user-21st": {
+    "status": "USED / PROVEN",
+    "tool": "search",
+    "queries": [
+      "modular component configurator inspector master detail settings",
+      "property panel accordion nested form dense settings",
+      "validation status progression sticky summary sidebar",
+      "master detail split view sidebar list inspector",
+      "technical form nested segment editor relation editor blueprint",
+      "sticky footer actions toolbar summary panel"
+    ],
+    "generate_or_take": "NOT USED"
+  },
+  "user-figma": {
+    "status": "USED / PROVEN",
+    "actions": [
+      { "tool": "get_screenshot", "fileKey": "0CDPIuqoaZ1OQgNnvNyl1F", "nodeId": "24:268" },
+      { "tool": "get_screenshot", "fileKey": "0CDPIuqoaZ1OQgNnvNyl1F", "nodeId": "23:3" },
+      { "tool": "get_screenshot", "fileKey": "0CDPIuqoaZ1OQgNnvNyl1F", "nodeId": "47:145" },
+      { "tool": "get_metadata", "fileKey": "0CDPIuqoaZ1OQgNnvNyl1F", "nodeId": "24:268" },
+      { "tool": "get_design_context", "fileKey": "0CDPIuqoaZ1OQgNnvNyl1F", "nodeId": "41:104" },
+      { "tool": "get_screenshot", "fileKey": "911Q6oRKcEursrRoT4Qj0h", "nodeId": "14:2" }
+    ],
+    "new_figma_file_created": false
+  },
+  "sql_readonly": "NOT USED",
+  "github": "NOT USED"
+}

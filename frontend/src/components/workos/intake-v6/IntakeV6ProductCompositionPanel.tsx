@@ -7,8 +7,8 @@ import { isPseudoFillToken } from "@/lib/intakeV6/intakeV6LayerDisplayLabel";
 import {
   operatorBindingStatusLabelRo,
   operatorCompositionRoleLabelRo,
-  operatorStatusSemanticRo,
 } from "@/lib/intakeV6/intakeV6OperatorVocabulary";
+import { buildAcmPanelUiReadModel } from "@/lib/intakeV6/acmPanel/uiReadModel";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
 
 type CompositionItem = {
@@ -115,11 +115,6 @@ function readRecommendation(payload: Record<string, unknown> | null | undefined)
   };
 }
 
-function isConfirmed(payload: Record<string, unknown> | null | undefined): boolean {
-  const raw = asRecord(payload?.product_composition_confirmed);
-  return raw?.confirmed === true;
-}
-
 function roleLabel(role: string | undefined, templateCode?: string): string {
   if (role === "volumetric_letters") return "Litere volumetrice";
   if (role === "volumetric_logo") return "Logo volumetric";
@@ -176,35 +171,45 @@ export default function IntakeV6ProductCompositionPanel({
   const recommendation = readRecommendation(payload);
   if (!recommendation) return null;
 
-  const confirmed = isConfirmed(payload);
+  const finish = asRecord(payload)?.finish_setup;
+  const acmModel = buildAcmPanelUiReadModel({
+    finishSetup: finish,
+    payload: payload ?? null,
+  });
+  const honesty = acmModel.compositionHonesty;
   const items = recommendation.composition_items ?? [];
   const sourceLayerLabels = formatSourceLayerIds(items);
   const blockers = recommendation.blockers ?? [];
   const warnings = recommendation.warnings ?? [];
   const linkedSegmentItems = linkedSegments?.segments ?? [];
-  const canConfirm = !confirmed && recommendation.status !== "blocked" && items.length > 0;
-  const hasIssues = blockers.length > 0 || warnings.length > 0;
+  const canConfirm =
+    honesty.showConfirmCta &&
+    recommendation.status !== "blocked" &&
+    items.length > 0 &&
+    !honesty.inconsistency;
+  const hasIssues =
+    blockers.length > 0 || warnings.length > 0 || honesty.inconsistency;
   // Keep L1 compact: expand only for blockers; confirm CTA stays outside details.
-  const [open, setOpen] = useState(() => blockers.length > 0);
+  const [open, setOpen] = useState(() => blockers.length > 0 || honesty.inconsistency);
 
   const componentSummary = items.map((item) => roleLabel(item.component_role, item.template_code)).join(" · ");
-  const statusLabel = confirmed
-    ? operatorStatusSemanticRo("confirmed")
-    : recommendation.status === "blocked" || blockers.length > 0
-      ? operatorStatusSemanticRo("blocker")
-      : operatorStatusSemanticRo("needs_operator");
+  const statusLabel = honesty.productBadgeLabel;
+  const badgeOk = honesty.productBadgeTone === "ok";
+  const badgeBlocker =
+    honesty.productBadgeTone === "blocker" || blockers.length > 0;
 
   return (
     <section
       className={`rounded-md border px-2.5 py-1.5 ${
-        confirmed
+        badgeOk
           ? "border-[#2A3548]/55 bg-[#111827]/35"
-          : blockers.length > 0
+          : badgeBlocker
             ? "border-rose-500/30 bg-rose-950/15"
             : "border-[#2A3548]/70 bg-[#111827]/45"
       }`}
       data-testid="intake-v6-product-composition-panel"
       data-header-weight="compact-row"
+      data-composition-honesty={honesty.productBadgeTone}
     >
       <div className="flex flex-wrap items-center gap-2">
         <button
@@ -227,12 +232,13 @@ export default function IntakeV6ProductCompositionPanel({
           </span>
           <span
             className={`ml-auto shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-semibold ${
-              confirmed
+              badgeOk
                 ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-300"
-                : blockers.length > 0
+                : badgeBlocker
                   ? "border-rose-500/30 bg-rose-500/10 text-rose-200"
                   : "border-amber-500/30 bg-amber-500/10 text-amber-200"
             }`}
+            data-testid="intake-v6-product-composition-status"
           >
             {statusLabel}
           </span>
@@ -293,6 +299,16 @@ export default function IntakeV6ProductCompositionPanel({
           </div>
         ))}
       </div>
+
+      {honesty.inconsistency && honesty.inconsistencyMessage ? (
+        <div
+          className="mt-3 flex gap-1.5 text-[11px] text-rose-100"
+          data-testid="intake-v6-product-composition-honesty-warning"
+        >
+          <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-rose-300" aria-hidden />
+          <span>{honesty.inconsistencyMessage}</span>
+        </div>
+      ) : null}
 
       {blockers.length > 0 ? (
         <div className="mt-3 space-y-1 text-[11px] text-rose-100" data-testid="intake-v6-product-composition-blockers">

@@ -2,3 +2,6 @@ export * from "./types";
 export * from "./relations";
 export * from "./instantiate";
 export * from "./preserve";
+export * from "./resolveInstance";
+export * from "./uiReadModel";
+export * from "./operatorPatch";
