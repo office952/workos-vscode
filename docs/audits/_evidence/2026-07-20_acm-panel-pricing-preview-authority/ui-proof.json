@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "status": "provisional_with_warnings",
+  "finalElig": "false",
+  "offerElig": "false",
+  "execElig": "false",
+  "face": "Arie față: 0.7 mp · Debitare: 5.4 ml · V-groove: 5.4 ml",
+  "summary": "Calcul bazat pe: ansamblu 2000 × 350 mm · 2 panouri · rate active din registrul de prețuri",
+  "writesAfterToggle": 0,
+  "confirmVisible": true,
+  "inspectorHasProvisionalHeader": true,
+  "mutatingWrites": [],
+  "inventoryPricingMutating": [],
+  "baseUrl": "http://127.0.0.1:3011"
+}
