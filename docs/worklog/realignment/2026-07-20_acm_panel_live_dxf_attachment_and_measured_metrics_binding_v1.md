@@ -59,7 +59,8 @@ Compact block in AcmPanel inspector Geometrie section — filename, panel, statu
 
 ## Screenshots
 
-UI screenshots: see evidence `screenshots-status.md` — capture deferred if stack not live; testids ready for operator capture.
+Captured on `3011` / IV6-DB2F86B7: see `docs/audits/_evidence/2026-07-20_acm-panel-live-dxf-attachment/shots/` + `screenshot-report.json`.  
+Shots 5–10 (measured golden on mismatched fixture) = **SKIP_BY_POLICY**; runtime JSON covers measurement honesty.
 
 ## Next
 
