@@ -238,7 +238,8 @@ VL is now a real composed product in Product System: FACE/BACK/LED/FINISH exist 
 
 | SHA | Group |
 |-----|-------|
-| _(fill after commit)_ | feat composition/contracts seed |
-| _(fill after commit)_ | feat System Link Check UI |
-| _(fill after commit)_ | test VL real product configuration |
-| _(fill after commit)_ | docs/qa report + worklog |
+| `80367c0` | feat(product-system): complete VL component module composition contracts |
+| `f42172c` | feat(product-system-ui): show System Link Check status table on readiness |
+| `c05d57e` | test(product-system): prove VL real product configuration contracts |
+| `7de64bb` | docs(qa): record VL real product configuration evidence and report |
+| tip HEAD | docs tip SHA table (this patch) |

@@ -449,7 +449,7 @@ None.
 
 | SHA | Group |
 |-----|-------|
-| _(post-commit)_ | feat(product-system): VL component modules composition |
-| _(post-commit)_ | feat(product-system-ui): System Link Check table |
-| _(post-commit)_ | test(product-system): VL real product configuration |
-| _(post-commit)_ | docs(qa): real product configuration report + worklog |
+| `80367c0` | feat(product-system): VL component modules composition |
+| `f42172c` | feat(product-system-ui): System Link Check table |
+| `c05d57e` | test(product-system): VL real product configuration |
+| `7de64bb` | docs(qa): real product configuration report + worklog |
