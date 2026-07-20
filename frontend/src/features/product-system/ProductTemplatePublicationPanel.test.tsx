@@ -33,6 +33,9 @@ describe("ProductTemplatePublicationPanel", () => {
       );
     });
     expect(screen.getAllByText(/active ≠ published/i).length).toBeGreaterThan(0);
+    expect(screen.getByTestId("product-template-publication-blocked-banner")).toHaveTextContent(
+      /TEMPLATE PUBLICATION BLOCKED/i,
+    );
     expect(screen.getByTestId("product-template-publication-action-publish")).toBeTruthy();
   });
 });

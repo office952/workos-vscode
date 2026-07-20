@@ -18,6 +18,7 @@ from models.intake_v6_workspace import IntakeV6WorkspaceRecord
 from models.product_template_module_links import ProductTemplateModuleLink
 from models.product_templates import Product_templates
 from schemas.product_e2e_readiness import (
+    ProductE2EBuildClosureStatus,
     ProductE2ECheckFinding,
     ProductE2ECheckStatus,
     ProductE2EMode,
@@ -25,6 +26,7 @@ from schemas.product_e2e_readiness import (
     ProductE2ESeverity,
     ProductE2ESystem,
     ProductE2ESystemNode,
+    ProductE2ETemplatePublicationStatus,
     ProductE2EVerdict,
 )
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
@@ -39,11 +41,27 @@ from services.product_truth_job_confirm_service import (
     get_pinned_typed_bags,
     is_job_revision_stale,
 )
-from services.template_architecture_scope import resolve_template_identity
+from services.template_architecture_scope import (
+    RUNTIME_TEMPLATE_CODE_BY_ALIAS,
+    normalize_template_code,
+    resolve_template_identity,
+)
 
 logger = logging.getLogger(__name__)
 
 KNOWN_REQUIRED_INACTIVE_CHILD = "TPL-VOLUM-ALUMINIU_v1"
+
+
+def _catalog_facing_template_code(template_code: str) -> str:
+    """Prefer alias-map casing used in catalog rows over identity uppercase."""
+    raw = str(template_code or "").strip()
+    if not raw:
+        return raw
+    mapped = RUNTIME_TEMPLATE_CODE_BY_ALIAS.get(normalize_template_code(raw))
+    if mapped:
+        return mapped
+    identity = resolve_template_identity(raw)
+    return identity.canonical_template_code or raw
 
 _STATIC_NOT_TESTED_SYSTEMS: tuple[ProductE2ESystem, ...] = (
     "cpp",
@@ -183,6 +201,37 @@ def _aggregate_systems(findings: list[ProductE2ECheckFinding]) -> list[ProductE2
     return nodes
 
 
+_PUBLISHABLE_VERDICTS = frozenset(
+    {
+        "STATIC_READY",
+        "STATIC_READY_WITH_WARNINGS",
+        "RUNTIME_READY",
+    }
+)
+
+# Honest publication conflicts that must not fail BUILD closure readiness.
+_PUBLICATION_ONLY_CONFLICT_CODES = frozenset(
+    {
+        "required_inactive_child",
+    }
+)
+
+
+def _is_publication_only_finding(finding: ProductE2ECheckFinding) -> bool:
+    """Inactive required child (e.g. aluminiu) blocks publish, not build spine closure."""
+    if not isinstance(finding.evidence, dict):
+        return False
+    code = str(finding.evidence.get("conflict_code") or "")
+    if code in _PUBLICATION_ONLY_CONFLICT_CODES:
+        return True
+    if (
+        finding.component_template_code == KNOWN_REQUIRED_INACTIVE_CHILD
+        and finding.status == "BLOCKED"
+    ):
+        return True
+    return False
+
+
 def _compute_verdict(
     *,
     mode: ProductE2EMode,
@@ -240,6 +289,49 @@ def _compute_verdict(
     return "RUNTIME_READY", True, known_conflicts
 
 
+def _compute_build_and_publication_status(
+    *,
+    verdict: ProductE2EVerdict,
+    e2e_ready: bool,
+    findings: list[ProductE2ECheckFinding],
+) -> tuple[ProductE2EBuildClosureStatus, ProductE2ETemplatePublicationStatus]:
+    """Split BUILD closure from TEMPLATE publication readiness.
+
+    Overall ``verdict`` remains the publish hard-gate (BLOCKED when inactive aluminiu).
+    BUILD may still PASS when the only blockers are publication-only conflicts.
+    """
+    if verdict in _PUBLISHABLE_VERDICTS or e2e_ready:
+        publication: ProductE2ETemplatePublicationStatus = "PASS"
+    elif any(
+        f.blocking or f.status in ("FAIL", "BLOCKED") for f in findings
+    ):
+        publication = "BLOCKED"
+    else:
+        publication = "NOT_READY"
+
+    build_relevant = [f for f in findings if not _is_publication_only_finding(f)]
+    build_blockers = [
+        f
+        for f in build_relevant
+        if f.blocking or f.status in ("FAIL", "BLOCKED")
+    ]
+    if build_blockers:
+        if any(f.status == "BLOCKED" for f in build_blockers):
+            build: ProductE2EBuildClosureStatus = "BLOCKED"
+        else:
+            build = "FAIL"
+        return build, publication
+
+    statuses = {f.status for f in build_relevant}
+    if statuses & {"PASS_WITH_WARNINGS", "LEGACY_DEPENDENCY", "STALE_EVIDENCE", "PARTIAL"}:
+        return "PASS_WITH_WARNINGS", publication
+    if statuses & {"NOT_CONFIGURED"} and not (
+        statuses & {"PASS", "PASS_WITH_WARNINGS"}
+    ):
+        return "PARTIAL", publication
+    return "PASS", publication
+
+
 class ProductE2EReadinessService:
     """Orchestrate read-only E2E readiness checkers for a product template."""
 
@@ -273,8 +365,9 @@ class ProductE2EReadinessService:
         mode: ProductE2EMode,
         workspace_id: str | None,
     ) -> ProductE2EReadinessResult:
-        identity = resolve_template_identity(template_code)
-        canonical = identity.canonical_template_code or template_code
+        # Use catalog-facing code (mixed-case seed codes). Identity uppercase alone
+        # would false-negative catalog.template_missing for TPL-VOLUMETRIC-LETTERS_v2.
+        canonical = _catalog_facing_template_code(template_code)
 
         payload: dict[str, Any] | None = None
         if workspace_id:
@@ -331,6 +424,11 @@ class ProductE2EReadinessService:
                     )
 
         verdict, e2e_ready, known_conflicts = _compute_verdict(mode=mode, findings=findings)
+        build_closure_status, template_publication_status = _compute_build_and_publication_status(
+            verdict=verdict,
+            e2e_ready=e2e_ready,
+            findings=findings,
+        )
         return ProductE2EReadinessResult(
             template_code=canonical,
             mode=mode,
@@ -344,6 +442,8 @@ class ProductE2EReadinessService:
             findings=findings,
             systems=_aggregate_systems(findings),
             known_conflicts=known_conflicts,
+            build_closure_status=build_closure_status,
+            template_publication_status=template_publication_status,
         )
 
     async def _load_workspace_payload(self, workspace_id: str) -> dict[str, Any] | None:
@@ -370,12 +470,25 @@ class ProductE2EReadinessService:
         return payload if isinstance(payload, dict) else {}
 
     async def _load_template_row(self, template_code: str) -> Product_templates | None:
-        result = await self._db.execute(
-            select(Product_templates)
-            .where(Product_templates.template_code == template_code)
-            .limit(1)
-        )
-        return result.scalar_one_or_none()
+        candidates: list[str] = []
+        for code in (
+            template_code,
+            _catalog_facing_template_code(template_code),
+            normalize_template_code(template_code),
+        ):
+            text = str(code or "").strip()
+            if text and text not in candidates:
+                candidates.append(text)
+        for code in candidates:
+            result = await self._db.execute(
+                select(Product_templates)
+                .where(Product_templates.template_code == code)
+                .limit(1)
+            )
+            row = result.scalar_one_or_none()
+            if row is not None:
+                return row
+        return None
 
     async def _load_module_links(self, parent_code: str) -> list[ProductTemplateModuleLink]:
         result = await self._db.execute(

@@ -46,6 +46,9 @@ async def test_static_vl_detects_inactive_required_child(volumetric_v2_db):
     assert result.no_write is True
     assert result.verdict == "BLOCKED"
     assert result.e2e_ready is False
+    # BUILD spine may PASS while TEMPLATE PUBLICATION stays BLOCKED (honest aluminiu).
+    assert result.build_closure_status in ("PASS", "PASS_WITH_WARNINGS")
+    assert result.template_publication_status == "BLOCKED"
 
     inactive = [
         f

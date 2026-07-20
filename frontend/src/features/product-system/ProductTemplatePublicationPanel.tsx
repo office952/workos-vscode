@@ -131,14 +131,23 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
             </p>
           ) : null}
           {state.publish_blockers.length > 0 ? (
-            <ul
-              className="list-disc space-y-0.5 pl-4 text-[11px] text-rose-200"
-              data-testid="product-template-publication-blockers"
-            >
-              {state.publish_blockers.map((b) => (
-                <li key={b}>{b}</li>
-              ))}
-            </ul>
+            <>
+              <p
+                className="rounded border border-rose-800/40 bg-rose-950/20 px-2 py-1 text-[11px] text-rose-100"
+                data-testid="product-template-publication-blocked-banner"
+              >
+                TEMPLATE PUBLICATION BLOCKED — publicarea nu este permisă. BUILD closure poate rămâne
+                PASS separat (active ≠ published).
+              </p>
+              <ul
+                className="list-disc space-y-0.5 pl-4 text-[11px] text-rose-200"
+                data-testid="product-template-publication-blockers"
+              >
+                {state.publish_blockers.map((b) => (
+                  <li key={b}>{b}</li>
+                ))}
+              </ul>
+            </>
           ) : null}
           <div className="flex flex-wrap gap-1.5 pt-1">
             {state.allowed_actions.map((action) => (

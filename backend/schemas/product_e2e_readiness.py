@@ -32,6 +32,22 @@ ProductE2EVerdict = Literal[
     "NOT_TESTED",
 ]
 
+# BUILD closure ≠ TEMPLATE publication (inactive required child can BLOCK publish while build PASS).
+ProductE2EBuildClosureStatus = Literal[
+    "PASS",
+    "PASS_WITH_WARNINGS",
+    "PARTIAL",
+    "FAIL",
+    "BLOCKED",
+    "NOT_TESTED",
+]
+
+ProductE2ETemplatePublicationStatus = Literal[
+    "PASS",
+    "BLOCKED",
+    "NOT_READY",
+]
+
 ProductE2EMode = Literal["static", "runtime_dry_run"]
 
 ProductE2ESeverity = Literal["info", "warning", "error", "blocker"]
@@ -96,4 +112,7 @@ class ProductE2EReadinessResult(BaseModel):
     findings: list[ProductE2ECheckFinding] = Field(default_factory=list)
     systems: list[ProductE2ESystemNode] = Field(default_factory=list)
     known_conflicts: list[str] = Field(default_factory=list)
+    # Independent axes: BUILD spine may PASS while TEMPLATE PUBLICATION is BLOCKED.
+    build_closure_status: ProductE2EBuildClosureStatus = "NOT_TESTED"
+    template_publication_status: ProductE2ETemplatePublicationStatus = "NOT_READY"
     contract_version: str = "product_e2e_readiness_v1"

@@ -37,6 +37,10 @@ interface ReadinessResponse {
   findings: ReadinessFinding[];
   no_write: boolean;
   write_performed?: boolean;
+  /** BUILD spine closure — may PASS while template publication is BLOCKED. */
+  build_closure_status?: string;
+  /** Template publication readiness — independent of BUILD closure. */
+  template_publication_status?: string;
 }
 
 const PIPELINE = [
@@ -203,9 +207,42 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
 
           {active ? (
             <div data-testid="product-e2e-readiness-result">
+              <div
+                className="mb-2 grid gap-1.5 rounded border border-slate-700/60 bg-slate-950/40 p-2"
+                data-testid="product-e2e-readiness-dual-axes"
+              >
+                <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                  <span className="text-slate-500">BUILD closure</span>
+                  <span
+                    className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.build_closure_status || "NOT_TESTED")}`}
+                    data-testid="product-e2e-readiness-build-closure"
+                  >
+                    BUILD {active.build_closure_status || "NOT_TESTED"}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                  <span className="text-slate-500">TEMPLATE publication</span>
+                  <span
+                    className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.template_publication_status || "NOT_READY")}`}
+                    data-testid="product-e2e-readiness-template-publication"
+                  >
+                    TEMPLATE PUBLICATION {active.template_publication_status || "NOT_READY"}
+                  </span>
+                </div>
+                {active.build_closure_status?.startsWith("PASS") &&
+                active.template_publication_status === "BLOCKED" ? (
+                  <p
+                    className="text-[10px] text-amber-200/90"
+                    data-testid="product-e2e-readiness-build-pass-pub-blocked"
+                  >
+                    BUILD poate fi PASS în timp ce TEMPLATE PUBLICATION rămâne BLOCKED (ex. child
+                    inactiv TPL-VOLUM-ALUMINIU_v1 — conflict onest, fără activare).
+                  </p>
+                ) : null}
+              </div>
               <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px]">
                 <span className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.verdict)}`}>
-                  {active.verdict}
+                  gate={active.verdict}
                 </span>
                 <span className="text-slate-500">
                   mode={active.mode} · no_write={String(active.no_write)} · findings={findings.length}
