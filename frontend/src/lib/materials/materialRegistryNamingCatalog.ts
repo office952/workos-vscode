@@ -13,8 +13,8 @@ export type MaterialNamingCatalogEntry = {
 export const MATERIAL_NAMING_CATALOG: readonly MaterialNamingCatalogEntry[] = [
   {
     code: "MAT-ACP-3MM",
-    canonicalName: "Panou compozit aluminiu (ACM/ACP) 3 mm",
-    legacyRisk: "Duplicate naming vs MAT-ACM-BOND-3MM",
+    canonicalName: "Panou compozit aluminiu (ACM/ACP) 3 mm — legacy alias",
+    legacyRisk: "Legacy alias of MAT-ACM-BOND-3MM — not a second technical/pricing option",
   },
   {
     code: "MAT-ACM-BOND-3MM",

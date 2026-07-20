@@ -8,7 +8,13 @@ import type {
   AcmPanelComponentInstance,
   ComponentRelation,
 } from "./types";
+import {
+  ASSEMBLY_DIMENSION_TOLERANCE_MM,
+  computeAcmAssemblyExtent,
+} from "./assemblyExtent";
 import { resolveAcmPanelInstance } from "./resolveInstance";
+
+export { ASSEMBLY_DIMENSION_TOLERANCE_MM } from "./assemblyExtent";
 
 export type AcmBlueprintReadiness = "L0" | "L1-P" | "L1-C" | "L1-B";
 
@@ -133,8 +139,6 @@ export type AcmPanelBlueprintReadModel = {
   letterPlacementUnknown: boolean;
   collapsedSummary: string;
 };
-
-export const ASSEMBLY_DIMENSION_TOLERANCE_MM = 1;
 
 const CRITICAL_FOR_L1C = [
   "panel_geometry",
@@ -708,60 +712,29 @@ export function buildAcmPanelBlueprintReadModel(
     }))
     .sort((a, b) => a.order - b.order);
 
-  let assemblyWidth = extent.width;
-  let assemblyHeight = extent.height;
-  let assemblySource: AcmBlueprintAssembly["source"] =
-    panels.length > 1 ? "panel_extent" : "single_panel";
-
   const asmDims = asRecord(segmented?.assembly_dimensions);
-  const asmW = num(asmDims?.width_mm);
-  const asmH = num(asmDims?.height_mm);
-
-  if (panels.length > 1) {
-    // Never use single-contour envelope as overall
-    if (asmW != null && asmH != null && asmW > 0 && asmH > 0) {
-      const dw = Math.abs(asmW - extent.width);
-      const dh = Math.abs(asmH - extent.height);
-      if (dw <= ASSEMBLY_DIMENSION_TOLERANCE_MM && dh <= ASSEMBLY_DIMENSION_TOLERANCE_MM) {
-        assemblyWidth = asmW;
-        assemblyHeight = asmH;
-        assemblySource = "assembly_dimensions";
-      } else {
-        warnings.push(
-          `assembly_dimensions (${formatMm(asmW)}×${formatMm(asmH)}) diferă de extent panouri (${formatMm(extent.width)}×${formatMm(extent.height)}) — folosesc extent panouri.`,
-        );
-        assemblySource = "panel_extent";
-      }
-    }
-  } else if (panels.length === 1) {
-    if (asmW != null && asmH != null && asmW > 0 && asmH > 0) {
-      const dw = Math.abs(asmW - panels[0]!.width_mm);
-      const dh = Math.abs(asmH - panels[0]!.height_mm);
-      if (dw <= ASSEMBLY_DIMENSION_TOLERANCE_MM && dh <= ASSEMBLY_DIMENSION_TOLERANCE_MM) {
-        assemblyWidth = asmW;
-        assemblyHeight = asmH;
-        assemblySource = "assembly_dimensions";
-      } else {
-        assemblyWidth = panels[0]!.width_mm;
-        assemblyHeight = panels[0]!.height_mm;
-      }
-    } else {
-      assemblyWidth = panels[0]!.width_mm;
-      assemblyHeight = panels[0]!.height_mm;
-    }
+  const extentResult = computeAcmAssemblyExtent({
+    panels: validPanels.map((p) => ({
+      width_mm: p.width_mm,
+      height_mm: p.height_mm,
+      x_mm: p.x_mm,
+      y_mm: p.y_mm,
+    })),
+    assembly_dimensions: asmDims
+      ? {
+          width_mm: num(asmDims.width_mm),
+          height_mm: num(asmDims.height_mm),
+        }
+      : null,
+    envelope_width_mm: num(instance.geometry.width_mm),
+    envelope_height_mm: num(instance.geometry.height_mm),
+  });
+  for (const w of extentResult.warnings) {
+    warnings.push(w);
   }
-
-  const envelopeW = num(instance.geometry.width_mm);
-  const envelopeH = num(instance.geometry.height_mm);
-  if (
-    panels.length > 1 &&
-    envelopeW != null &&
-    Math.abs(envelopeW - assemblyWidth) > ASSEMBLY_DIMENSION_TOLERANCE_MM
-  ) {
-    warnings.push(
-      `Envelope contour (${formatMm(envelopeW)}×${formatMm(envelopeH ?? 0)}) nu este overall assembly — ignorat pentru ansamblu.`,
-    );
-  }
+  const assemblyWidth = extentResult.assembly_width_mm ?? extent.width;
+  const assemblyHeight = extentResult.assembly_height_mm ?? extent.height;
+  const assemblySource: AcmBlueprintAssembly["source"] = extentResult.source;
 
   const assembly: AcmBlueprintAssembly = {
     width_mm: assemblyWidth,

@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "workspace": {
+    "id": "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+    "code": "IV6-DB2F86B7",
+    "template": "TPL-VOLUMETRIC-LETTERS_v2"
+  },
+  "letters": {
+    "source_payload_type": "workspace_payload",
+    "assembly_width_mm": 2000.0,
+    "assembly_height_mm": 350.0,
+    "assembly_extent_source": "assembly_dimensions",
+    "envelope_ignored": true,
+    "acm_instance_id": "acm_cc_7af1352f_ff5c35da170d",
+    "tech": "proposed",
+    "composition": "unconfirmed",
+    "seg_proposal": "PROPOSED",
+    "panel_width_mm": null,
+    "linked_workspace_template_code": null,
+    "read_mode": null
+  },
+  "acm_root": {
+    "source_payload_type": "workspace_payload",
+    "assembly_width_mm": 2000.0,
+    "assembly_height_mm": 350.0,
+    "assembly_extent_source": "assembly_dimensions",
+    "envelope_ignored": true,
+    "acm_instance_id": "acm_cc_7af1352f_ff5c35da170d",
+    "tech": "proposed",
+    "composition": "unconfirmed",
+    "seg_proposal": "PROPOSED",
+    "panel_width_mm": 1000.0,
+    "linked_workspace_template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "read_mode": "cross_template_acm_parity"
+  }
+}

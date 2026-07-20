@@ -564,6 +564,16 @@ def _build_canonical_values(
         "fixing_system": fixing_for_config,
     }
 
+    from services.acm_assembly_extent import inject_assembly_extent_keys
+
+    inject_assembly_extent_keys(
+        values,
+        finish=finish_for_pd if isinstance(finish_for_pd, dict) else finish,
+        acm_instance=values.get("acm_panel_instance")
+        if isinstance(values.get("acm_panel_instance"), dict)
+        else None,
+    )
+
     return values
 
 
@@ -572,6 +582,8 @@ def _build_geometry_inputs(canonical_values: dict[str, Any]) -> dict[str, Any]:
         "vector_file",
         "width_mm",
         "height_mm",
+        "assembly_width_mm",
+        "assembly_height_mm",
         "letter_count",
         "letter_perimeter_m",
         "letter_face_area_m2",
@@ -777,6 +789,8 @@ def _compute_readiness(
 
 
 def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str, Any]:
+    from services.acm_panel_pd_projection import project_acm_finish_into_canonical
+
     merged = merge_acm_boxed_mounting_derived_fields(payload)
     values: dict[str, Any] = {}
     for key in ACM_BOXED_MOUNTING_STANDALONE_REQUIRED_KEYS:
@@ -785,6 +799,14 @@ def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str,
     for key, value in merged.items():
         if key not in values and value is not None:
             values[key] = value
+    finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
+    # Cross-template / Letters-hosted AcmPanel: project instance + assembly_* without inventing owner.
+    project_acm_finish_into_canonical(values, finish if finish else None)
+    if not finish and payload:
+        # Flat payload already coalesced at root (standalone quote-input style).
+        from services.acm_assembly_extent import inject_assembly_extent_keys
+
+        inject_assembly_extent_keys(values, finish=payload, acm_instance=values.get("acm_panel_instance"))
     return values
 
 
@@ -793,6 +815,8 @@ def _build_acm_standalone_geometry_inputs(canonical_values: dict[str, Any]) -> d
     for key in (
         "panel_width_mm",
         "panel_height_mm",
+        "assembly_width_mm",
+        "assembly_height_mm",
         "panel_area_m2",
         "panel_perimeter_m",
         "fold_length_m",
@@ -812,6 +836,8 @@ async def _build_acm_standalone_product_definition_preview(
     workspace_id: str | None,
     payload: dict[str, Any],
     source_type: str,
+    linked_workspace_template_code: str | None = None,
+    cross_template_acm_parity: bool = False,
 ) -> ProductDefinitionPreview:
     active_modules = {"structura_suport"}
     structura_ref = ProductDefinitionModuleRef(
@@ -869,6 +895,21 @@ async def _build_acm_standalone_product_definition_preview(
                 detail=f"workspace_id={workspace_id} read_only=true",
             )
         )
+    if cross_template_acm_parity and linked_workspace_template_code:
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="linked_workspace_template_code",
+                source="intake_v6_workspaces.template_code",
+                detail=str(linked_workspace_template_code),
+            )
+        )
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="read_mode",
+                source="acm_panel_pd_projection",
+                detail="cross_template_acm_parity",
+            )
+        )
 
     return ProductDefinitionPreview(
         template_code=template_code,
@@ -894,6 +935,13 @@ async def _build_acm_standalone_product_definition_preview(
         notes=[
             "Read-only ProductDefinition preview — standalone boxed ACM mounting root.",
             "Reuses linked-child aggregate/BOM truth; no Intake V6 modular form contract.",
+            *(
+                [
+                    "Cross-template AcmPanel parity read — no new instance/lifecycle/owner.",
+                ]
+                if cross_template_acm_parity
+                else []
+            ),
         ],
         composition=build_product_definition_composition(
             root_template_code=template_code,
@@ -934,12 +982,24 @@ class ProductDefinitionBuilderService:
 
         payload: dict[str, Any] = {}
         source_type: str = "template_only"
+        linked_workspace_template_code: str | None = None
+        cross_template_acm_parity = False
         if workspace_id:
             ws_payload, ws_error = await self._load_workspace_payload(workspace_id, stored_template_code)
             if ws_error == "workspace_not_found":
                 return None
             if ws_error == "workspace_template_mismatch":
                 payload = {}
+                # ACM boxed root may read Letters-hosted AcmPanel for parity (read-only).
+                if is_acm_boxed_mounting_standalone_root_template(stored_template_code):
+                    any_payload, linked_code = await self._load_workspace_payload_any(workspace_id)
+                    from services.acm_panel_pd_projection import workspace_has_real_acm_panel
+
+                    if any_payload is not None and workspace_has_real_acm_panel(any_payload):
+                        payload = any_payload
+                        source_type = "workspace_payload"
+                        linked_workspace_template_code = linked_code
+                        cross_template_acm_parity = True
             else:
                 payload = ws_payload or {}
                 source_type = "workspace_payload"
@@ -951,6 +1011,8 @@ class ProductDefinitionBuilderService:
                 workspace_id=workspace_id,
                 payload=payload,
                 source_type=source_type,
+                linked_workspace_template_code=linked_workspace_template_code,
+                cross_template_acm_parity=cross_template_acm_parity,
             )
             preview.provenance.insert(
                 0,
@@ -1227,3 +1289,16 @@ class ProductDefinitionBuilderService:
         if record.template_code != template_code:
             return None, "workspace_template_mismatch"
         return _parse_workspace_payload(record.payload_json), None
+
+    async def _load_workspace_payload_any(
+        self,
+        workspace_id: str,
+    ) -> tuple[dict[str, Any] | None, str | None]:
+        """Load workspace payload without template match — used for ACM-root parity only."""
+        result = await self._db.execute(
+            select(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.id == workspace_id).limit(1)
+        )
+        record = result.scalar_one_or_none()
+        if record is None:
+            return None, None
+        return _parse_workspace_payload(record.payload_json), record.template_code

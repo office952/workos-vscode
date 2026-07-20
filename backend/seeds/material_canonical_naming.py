@@ -21,11 +21,12 @@ _LEGACY_CODE_NOTE = "Cod operațional păstrat pentru compatibilitate CostEngine
 CANONICAL_MATERIAL_NAMING: Dict[str, CanonicalMaterialNaming] = {
     "MAT-ACP-3MM": {
         "code": "MAT-ACP-3MM",
-        "canonical_name": "Panou compozit aluminiu (ACM/ACP) 3 mm",
+        "canonical_name": "Panou compozit aluminiu (ACM/ACP) 3 mm — legacy alias",
         "source_notes": (
-            "Canonical: panou compozit aluminiu. Aliasuri: ACP, Dibond, Alucobond, bond. "
-            "Evită rând duplicat față de MAT-ACM-BOND-3MM — același material generic; "
-            "consolidează prețul pe un singur cod la migrare viitoare. "
+            "LEGACY ALIAS — nu este a doua opțiune tehnică/pricing echivalentă. "
+            "Preferred/canonical SKU: MAT-ACM-BOND-3MM. "
+            "Păstrat pentru compatibilitate CostEngine/legacy seeds; fără ștergere și fără migrare distructivă. "
+            "Aliasuri populare: ACP, Dibond, Alucobond, bond. "
             f"{_LEGACY_CODE_NOTE}"
         ),
     },
@@ -34,6 +35,7 @@ CANONICAL_MATERIAL_NAMING: Dict[str, CanonicalMaterialNaming] = {
         "canonical_name": "Panou compozit aluminiu (ACM/ACP) — rezolvare grosime",
         "source_notes": (
             "Alias template — rezolvat la quote time către MAT-ACM-BOND-3MM / 4MM. "
+            "Preferred thickness SKU: MAT-ACM-BOND-3MM. "
             "Nu spate literă Forex. Identitate completă ACM necesită grosime folie Al + finisaj."
         ),
     },
@@ -41,6 +43,8 @@ CANONICAL_MATERIAL_NAMING: Dict[str, CanonicalMaterialNaming] = {
         "code": "MAT-ACM-BOND-3MM",
         "canonical_name": "Panou compozit aluminiu (ACM/ACP) 3 mm",
         "source_notes": (
+            "CANONICAL / PREFERRED SKU pentru panou ACM 3 mm (AcmPanel / boxed mounting). "
+            "MAT-ACP-3MM este legacy alias — nu afișa ca alternativă tehnică echivalentă. "
             "Aliasuri populare: Dibond, Alucobond, bond. "
             "Grosime folie aluminiu (ex. 0.21 vs 0.30 mm) = SKU distinct la registry matur. "
             f"{_LEGACY_CODE_NOTE}"

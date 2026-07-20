@@ -82,3 +82,7 @@ def test_proposed_acm_instance_projects_panels_without_technical_confirmed():
     assert prop["task_rules"] == []
     # CONFIRMED-only authority must not leak
     assert "segmented_background" not in values or values.get("segmented_background") is None
+    # Explicit assembly keys (not panel_* overload)
+    assert values["assembly_width_mm"] == 2000
+    assert values["assembly_height_mm"] == 350
+    assert values.get("panel_width_mm") != 2000
