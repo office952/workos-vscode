@@ -4,10 +4,10 @@
 |-------|--------|
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| FE | `http://127.0.0.1:3000` (also 3011 up) |
-| BE publication APIs | Present on **8000**; **absent on 8011** (404) |
-| FE→API | `3000/api/v1/product-system/...` → **404** (proxy not on publication BE) |
-| Pack 1–22 | **Not defined** in owner materials for this build — maximal honest pack below |
+| FE | Canonical `3000` (proxy→8001 stale); completion capture on `3020` with `BACKEND_PORT=8000` |
+| BE publication APIs | Present on **8000**; **absent on stale 8001** (404) |
+| FE→API | `3000` publication → **404 ENVIRONMENT_FAILURE**; `3020`→8000 → **200** |
+| Pack | Completion gate improved Lifecycle panels — see below |
 
 ## Figma exports (file `0CDPIuqoaZ1OQgNnvNyl1F`)
 
@@ -30,10 +30,10 @@
 |---|------|---------|--------|
 | U1 | `ui_01_product_system_catalog.png` | Product System catalog | **OK** |
 | U2 | `ui_02_template_detail_volumetric.png` | VL detail Prezentare | **OK** |
-| U3 | `ui_03_template_lifecycle_tab.png` | Lifecycle (legacy readiness panel) | **OK** — not new publication panel |
-| U4 | — | Informații generale / editor | **MISSING** — `open-editor` control count 0 in catalog detail |
-| U5 | — | Publication on catalog detail | **MISSING** — panel not mounted on detail shell |
-| U6 | — | Readiness on catalog detail | **MISSING** — same |
+| U3 | `ui_03_template_lifecycle_tab.png` | Lifecycle + mounted panels | **OK** (completion gate) |
+| U4 | `ui_04_publication_panel_lifecycle.png` | Publication on Lifecycle | **OK** (was MISSING_DOM) |
+| U5 | `ui_05_readiness_panel_lifecycle.png` | Readiness dual axes on Lifecycle | **OK** (was MISSING_DOM) |
+| U6 | `figma_91_3_template_authoring_shell.png` / `figma_91_36_*` / `figma_91_60_*` | Figma compare frames | **OK** PROPOSED |
 | U7 | `ui_07_template_dossier_tab.png` | Template Dossier tab | **OK** |
 | U8 | `ui_08_blueprint_dossier_studio.png` | Dossier studio | **OK** |
 | U9 | `ui_09_dossier_sticky_footer.png` | Sticky footer | **OK** |

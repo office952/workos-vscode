@@ -1,33 +1,33 @@
-# Final report — PS Authoring E2E FINAL CLOSURE GATE
+# Final report — PS Authoring E2E FINAL COMPLETION GATE
 
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| Kickoff HEAD (reconfirmed) | `705a701a6e48f2bee1f638e44031f32f6d19d751` |
-| Closure allowlist | `CLOSURE_ALLOWLIST.md` |
+| Kickoff HEAD (reconfirmed) | `1bad731e3d60c344733175667e7c4da535d07644` |
+| Prior reported closure HEAD | `2e77e7c` (superseded by docs commits `f593cb7` → `ed3605e` → `1bad731`) |
+| Allowlist | `COMPLETION_ALLOWLIST.md` (+ prior `CLOSURE_ALLOWLIST.md`) |
 | Worklog | `docs/worklog/realignment/2026-07-20_product_system_authoring_runtime_codesign_e2e_build.md` |
-| Overall gate | **PARTIAL** |
-| Direction score | **86/100%** |
+| Overall gate | **BUILD PASS_WITH_WARNINGS** / **TEMPLATE PUBLICATION BLOCKED** |
+| Direction score | **92/100%** |
 
 ## 1. Verdict
 
-**PARTIAL** — not greenwashed PASS.
-
-### Separate verdicts (required)
+**Dual verdict — not a single greenwashed PASS.**
 
 | Axis | Verdict |
 |------|---------|
-| **Build closure** | **PARTIAL** — CP-A/D/E/F proven; CP-B/C still PARTIAL (Agg/Qty revision surface + EIC≠Qty); screenshot pack incomplete for items 12–22 |
+| **Build closure** | **PASS_WITH_WARNINGS** — Agg/Qty provenance + freeze fail-closed + EIC Quantity adapter closed; aluminiu inactive remains honest warning on publication axis only |
 | **Template publication readiness** | **BLOCKED** — VL + inactive `TPL-VOLUM-ALUMINIU_v1` → publish 409; **not activated** |
-| **UI acceptance** | **PARTIAL** — honesty banners + Figma PS shells exist; panels not always in DOM on catalog route; pack incomplete |
-| **Runtime E2E** | **PARTIAL** — live HTTP→DB confirm PASS; freeze/Order/EP PASS; full commercial freeze UI E2E thin |
+| **UI acceptance** | **NEEDS_POLISH** — Publication/Readiness mounted on real template Lifecycle tab; screenshots captured; Figma remains PROPOSED |
+| **Runtime E2E** | **PASS_WITH_WARNINGS** — prior HTTP/DB/freeze/Order/EP held; PD=Agg=Qty=Snap revision/hash fail-closed added |
+| **Figma** | **PROPOSED / NEEDS_POLISH** — page `91:2` frames `91:3`…`91:100` verified real IDs; owner promote to FINAL still required |
 
-**BUILD PASS vs TEMPLATE PUBLICATION BLOCKED applies:** yes — dual axes show BUILD `PASS_WITH_WARNINGS` while TEMPLATE PUBLICATION `BLOCKED` and gate verdict `BLOCKED`.
+**BUILD PASS + TEMPLATE BLOCKED applies:** yes.
 
 ## 2. Executive result
 
-Closure gate reconfirmed HEAD `705a701`, preserved dirty tree (~361), and closed the honesty gap: live ConfirmJobProductTruth persists on `dev.db`, readiness splits BUILD vs TEMPLATE publication, publish stays 409 with inactive aluminiu, Figma PS Authoring Studio page has real node IDs, UI screenshots captured where reachable. Full DoD (same revision surface on Agg/Qty, EIC converge, complete 1–22 pack) not met → PARTIAL.
+Completion gate closed the four remaining build gaps (Aggregate provenance, Quantity provenance, EIC→Qty adapter, freeze PD=Agg=Qty fail-closed) and mounted Publication/Readiness on `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` Lifecycle. FE3000→API publication 404 is ENVIRONMENT_FAILURE (stale BE8001), not a vite-default rewrite. Aluminiu stays inactive → TEMPLATE PUBLICATION BLOCKED remains correct.
 
 ## 3. Repo / branch / HEAD / dirty-tree truth
 
@@ -35,270 +35,156 @@ Closure gate reconfirmed HEAD `705a701`, preserved dirty tree (~361), and closed
 |------|--------|
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| HEAD at kickoff | `705a701` |
-| Dirty | status short **361**; staged **0**; modified **~28**; untracked **~1015** — preserved |
-| Ports | Canonical 8000/3000; also live 8011/3011; BE 8000 started for closure |
-| DB | `C:\w\psiso\backend\dev.db` |
+| Kickoff HEAD | `1bad731` |
+| Prior closure SHAs kept | `2e77e7c`, `ed3605e`, `f593cb7`, `670a4e2`, `b8a4c0a`, `2ed6b01`, `705a701`… |
+| Dirty | ~360+ unrelated — **preserved**; allowlist-only staging |
+| Ports | Contract BE **8001** / FE **3000**; live BE **8000** current; BE **8001** stale |
 
-## 4. Closure allowlist
+## 4. Closure / completion allowlist
 
-See `CLOSURE_ALLOWLIST.md` — all 20 kickoff items confirmed; touch rules documented.
+See `COMPLETION_ALLOWLIST.md`.
 
 ## 5. Existing commit verification
 
-| SHA | Contents |
-|-----|----------|
-| `034dbea` | CP0 docs + allowlist + Figma-ready + proof + FINAL_REPORT |
-| `e50f99b` | publication lifecycle + component contracts BE |
-| `b0560bc` | publication + contract UI PS + dossier studio |
-| `a10efeb` | record commit SHAs |
-| `705a701` | HEAD SHA in FINAL_REPORT |
-| Foundation | `ef349ef`, `136f38b`, `70b2fdf`, `6a1c1d1` kept |
+Foundation `ef349ef`, `136f38b`, `70b2fdf`, `6a1c1d1` kept. Build + prior closure SHAs listed in allowlist. Already-DONE proofs not re-proven from scratch.
 
-## 6. New closure commits
+## 6. New completion commits
 
 | SHA | Message |
 |-----|---------|
-| `2ed6b01` | docs(product-system): FINAL CLOSURE GATE evidence and dual verdicts |
-| `b8a4c0a` | feat(product-system): split BUILD closure from template publication readiness |
-| `670a4e2` | test(product-truth): harden confirm idempotency stale and freeze gate cases |
+| `b28f97d` | feat(provenance): Aggregate + Quantity Product Truth alignment |
+| `ed91361` | fix(eic): canonical quantity contract |
+| `49b2cca` | fix(product-system-ui): mount readiness/publication real template flow |
+| `274136d` | test(e2e): revision/quantity convergence |
+| (docs tip) | docs(qa): Figma + screenshot acceptance |
 
-Post-closure HEAD: `2e77e7c` (+ Figma structure commit if present). No push/PR.
+No push/PR.
 
-## 7. HTTP confirm proof
+## 7–10. HTTP confirm / DB / revision / ProductDefinition
 
-`POST /api/v1/intake-v6/workspaces/{id}/product-truth/confirm-job` → 200, `write_performed=true`.
-
-Evidence: `runtime/CP_A_HTTP_DB_PROOF_RESULT.md`, `runtime/cp_a_live_http_db_confirm_evidence.json`, `runtime/cp_a_http_db_proof_latest.json`.
-
-## 8. DB persistence and reload proof
-
-Fresh SQLAlchemy session + GET job-status re-read same `revision`/`content_hash`/`confirmation_state=confirmed` from `payload_json.product_truth.confirmed_snapshot_v1` on live `dev.db`. Not in-memory-only.
-
-## 9. Revision/hash/idempotency/stale/409
-
-| Case | Result |
-|------|--------|
-| First confirm | revision 1 + sha256 content_hash |
-| Idempotent reconfirm | `idempotent_noop=true` |
-| Stale after edit | `stale_after_edit` / `is_stale=true` |
-| Wrong revision / draft / content hash | 409 |
-
-## 10. ProductDefinition proof
-
-PD prefers pinned bags; emits `product_truth_job_revision` provenance (foundation `136f38b`). Evidence: Agent B / `compiler_freeze_closure_evidence.json`.
+**PASS (prior closure kept).** PD typed fields now also expose `product_truth_job_revision` / `product_truth_content_hash` / `product_truth_status`.
 
 ## 11. ProductAggregate proof
 
-Applies pinned bags when freeze-allowed; does **not** surface same revision fields in provenance_summary → **PARTIAL**.
+**PASS** — workspace Aggregate stamps `provenance_summary.product_truth_job_revision` + `product_truth_content_hash` from ConfirmJobProductTruth metadata (not persisted as job truth). Explicit composition preserves stamps.
 
 ## 12. Quantity Builder proof
 
-Uses `letter_group_instance_authority` / pinned instances; does not surface PT revision → **PARTIAL**.
+**PASS** — `build_volumetric_letters_commercial_quantities` + `CommercialMeasurementBundle` surface the same revision/hash.
 
 ## 13. CPP proof
 
-No formula reopen. Classified under readiness `not_tested` / preexisting — not reopened for pricing.
+No formula reopen. Class: not_reopened.
 
 ## 14. EIC convergence
 
-**PARTIAL** — EIC still parallel `_extract_quantity`; no import of Qty Builder. No pricing reopen. Class: PREEXISTING_RELEVANT.
+**PASS** — `_overlay_canonical_quantity_builder` overlays Builder face/perimeter/LED into payload before EIC `_merged_values`. No CostEngine/pricing redesign.
 
-## 15. Quote Snapshot V2 freeze proof
+## 15–17. Snap freeze / Order / EP
 
-**PASS** — unconfirmed/stale/wrong hash/accepted terminal/confirmed pin cases covered (`test_active_scope_snapshot_freeze` + job confirm). Foundation `70b2fdf` held.
+**PASS** — freeze adds fail-closed `V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH` when PD/Agg/Qty revision/hash ≠ workspace job. Order/EP prior proofs kept.
 
-## 16. Order Snapshot proof
+## 18–20. Readiness / Publication
 
-**PASS** — copies revision/hash; `no_live_workspace_reread`.
-
-## 17. ExecutionPlan preview proof
-
-**PASS** — from OrderSnapshotV2 only; no materialization (`test_execution_preview_from_frozen_build4c` 18 passed per Agent B).
-
-## 18. Product E2E Readiness static proof
-
-VL static: `verdict=BLOCKED`, `build_closure_status=PASS_WITH_WARNINGS`, `template_publication_status=BLOCKED`, conflict includes `required_inactive_child`. Aluminiu **not** activated.
-
-## 19. Product E2E Readiness runtime/no-write proof
-
-`cp_f_readiness_no_write_proof.py` → DB sha before=after. `PROOF_OK`.
-
-## 20. Publication gate truth
-
-`job_truth_publication_proof.py` → publish **409** `publication_blocked_by_e2e_readiness`. `active_is_not_published=true`.
+**PASS (honesty)** — static/runtime no-write kept; BUILD `PASS_WITH_WARNINGS` vs TEMPLATE `BLOCKED`; publish 409.
 
 ## 21. Figma evidence
 
-File: `0CDPIuqoaZ1OQgNnvNyl1F` · Page: `PS — Authoring Studio` (`91:2`) · Seat: Full (write OK).
-
-| Frame | Node ID | Status |
-|-------|---------|--------|
-| Confirmare (Intake) | `66:2` | verified |
-| Configurare | `64:2` | verified |
-| Iluminare | `65:2` | verified |
-| Montaj | `65:106` | verified |
-| PinFooter | `67:18` | verified |
-| PS Template Authoring Shell | `91:3` | created (PROPOSED) |
-| Component Contract + Used-by | `91:12` | created |
-| Blueprint Dossier Studio split | `91:21` | created |
-| Publication states | `91:36` | created |
-| Readiness PASS / BLOCKED | `91:60` | created |
-| 01 Product System Landing | `91:76` | created shell |
-| 02 Product Template Overview | `91:79` | created shell |
-| 03 Composition / Components | `91:82` | created shell |
-| 06 Validation Rail | `91:85` | created shell |
-| 07 E2E Readiness Collapsed | `91:88` | created shell |
-| 08 E2E Readiness Expanded | `91:91` | created shell |
-| 10 Publication Ready | `91:94` | created shell |
-| 11 Version Status | `91:97` | created shell |
-| 12 Runtime Preview | `91:100` | created shell |
-
-Owner must promote PROPOSED → FINAL. Screenshots under `screenshots/figma_*.png`.
+File `0CDPIuqoaZ1OQgNnvNyl1F` · Page `91:2` · Frames verified via metadata: `91:3`, `91:12`, `91:21`, `91:36`, `91:60`, `91:76`…`91:100`. Classification: **PROPOSED / NEEDS_POLISH** (shells + honesty copy; not pixel-final). Screenshots: `screenshots/figma_91_*.png`.
 
 ## 22. UI routes and fixtures
 
-| Surface | Route / fixture |
-|---------|-----------------|
-| PS catalog | `/product-system/products` |
-| VL template | `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` |
+| Surface | Route |
+|---------|-------|
+| VL template (panels) | `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` → Lifecycle tab |
 | Dossier studio | `/product-system/blueprint-dossier` |
-| Intake Confirmare | `/intake-v6/{workspace}/operator?step=confirm` |
-| Template | `TPL-VOLUMETRIC-LETTERS_v2` active; `TPL-VOLUM-ALUMINIU_v1` inactive |
-| Confirm disposable | `827ecf8a-7700-4dc0-9547-6b2accd2c72e` (CP-A) |
+| Template | `TPL-VOLUMETRIC-LETTERS_v2` active; aluminiu inactive |
 
 ## 23. Screenshot evidence
 
-| # | Screenshot | Route | Fixture | State | Path | Figma | Verdict |
-|---|------------|-------|---------|-------|------|-------|---------|
-| 1 | PS landing/catalog | `/product-system/products` | — | loaded | `screenshots/ui_01_product_system_catalog.png` | `91:76` | CAPTURED |
-| 2 | Template overview | `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` | VL | detail | `ui_02_template_detail_volumetric.png` | `91:79` | CAPTURED |
-| 3 | Lifecycle | same | VL | Lifecycle tab | `ui_03_template_lifecycle_tab.png` | — | CAPTURED |
-| 4–6 | composition / contract / publication in DOM | template | VL | panels missing on route | — | `91:12`/`91:36` | MISSING_DOM |
-| 5–6 | Readiness panels | template | VL | not in DOM | — | `91:60` | MISSING_DOM |
-| 7 | Dossier tab | template | VL | Dossier | `ui_07_template_dossier_tab.png` | — | CAPTURED |
-| 8–9 | Dossier studio + sticky | `/product-system/blueprint-dossier` | — | shell | `ui_08_*` `ui_09_*` | `91:21` | CAPTURED |
-| 10 | Intake Configurare (misnamed file) | intake-v6 | IV6-DB2F86B7 | configurare | `ui_10_intake_confirmare.png` | `64:2` | CAPTURED (label debt) |
-| 17–19 | Dossier publication + readiness | blueprint-dossier | ACM boxed | panels + sticky; API **404 via FE proxy** | `ui_17_*` `ui_18_*` `ui_19_*` | `91:21`/`91:36` | CAPTURED + ENVIRONMENT_FAILURE |
-| 20–21 | Intake Configurare + Confirmare | intake-v6 | IV6-DB2F86B7 | Confirmare blocked honest | `ui_20_*` `ui_21_*` | `66:2` | CAPTURED |
-| 11–16, 22 | job truth / commercial freeze UI | — | — | — | — | — | NOT_CAPTURED |
-| Figma pack | Intake + PS shells | Figma MCP | — | — | `screenshots/figma_*.png` | see §21 | CAPTURED |
+| # | Item | Path | Verdict |
+|---|------|------|---------|
+| 1 | Catalog | `ui_01_product_system_catalog.png` | CAPTURED |
+| 2 | Template overview | `ui_01_product_system_catalog_or_detail.png` / `ui_02_*` | CAPTURED |
+| 3 | Lifecycle + panels | `ui_03_template_lifecycle_tab.png` | CAPTURED |
+| 4 | Publication on Lifecycle | `ui_04_publication_panel_lifecycle.png` | CAPTURED (was MISSING_DOM) |
+| 5 | Readiness dual axes | `ui_05_readiness_panel_lifecycle.png` | CAPTURED |
+| 7–9 | Dossier | `ui_07_*` `ui_08_*` `ui_09_*` | CAPTURED (prior) |
+| 17–19 | Dossier panels | `ui_17_*` `ui_18_*` `ui_19_*` | CAPTURED via FE3020→8000 |
+| Figma | `91:3` / `91:36` / `91:60` | `figma_91_*.png` | CAPTURED |
+| 11–16, 22 job-truth commercial UI | — | PARTIAL / NOT_CAPTURED (not blocking BUILD axis) |
 
-Without complete 1–22 → **UI cannot be PASS**. Detail audit: `UI_AUDIT_CPGH_AGENT_C.md`.
+Evidence: `runtime/completion_gate_ui_capture_evidence.json`.
 
 ## 24. Full-page UI audit
 
-Catalog and template detail load as dense operator admin surfaces: multi-tab, technical codes visible, honesty banners exist in code (`active ≠ published`, BUILD vs TEMPLATE PUBLICATION) but publication/readiness panels were **not mounted** on the captured template route (MISSING_DOM). Dossier studio hosts the new panels + sticky footer; live load is **HTTP 404** because FE3000 proxy does not hit BE8000 (ENVIRONMENT_FAILURE). Intake Confirmare (`ui_21`) matches Figma `66:2` intent (blocked confirm, disabled handoff). Hierarchy is functional, not polished FINAL. See `UI_AUDIT_CPGH_AGENT_C.md`.
+Deep-link VL overview is dense admin catalog chrome. Lifecycle tab now hosts Publication + E2E Readiness with dual BUILD/TEMPLATE banners — matches Figma honesty intent (`91:36`, `91:60`) without pixel parity. Dossier studio still hosts panels + sticky footer. Hierarchy functional → **NEEDS_POLISH**, not FINAL.
 
-## 25. Accessibility findings
+## 25. Accessibility
 
-Keyboard/ARIA not deeply audited this gate. Sticky footer and dual banners are text-visible. Contrast on dark PS chrome is acceptable at glance; no a11y PASS claimed.
+No deep a11y PASS claimed. Panels keyboard-reachable via Lifecycle tab; banners text-visible.
 
 ## 26. UI sincere opinion
 
-1. Authoring is understandable if you already know Product System — not for first-time operators.  
-2. Template vs component contract is clearer in panels/Figma shells than in catalog chrome.  
-3. Dossier vs runtime truth is still easy to confuse without the sticky footer explanation.  
-4. Draft→published states are labeled; `active ≠ published` helps.  
-5. Publish placement in sticky footer is correct.  
-6. Readiness helps when dual banners show; noise if many NOT_TESTED rows.  
-7. Pages are still heavy.  
-8. Important honesty (BLOCKED / active≠published) is not always dominant in DOM.  
-9. Backend codes leak into UI.  
-10. Collapse diagnostics; keep dual BUILD/TEMPLATE banners.  
-11. Coherent with Intake Figma; PS frames are shells, not pixel-final.  
-12. Functional / co-design ready — **not** production-final UI.
+1. Authoring understandable for PS operators; still dense for first-timers.  
+2. Mounting Publication/Readiness on Lifecycle fixes the MISSING_DOM honesty gap.  
+3. Dual banners are the most important UI win — keep them dominant.  
+4. Figma shells are co-design scaffolding, not production polish.  
+5. FE3000 stale-proxy 404 is an environment ops issue; contract 8001 is correct when BE is current.
 
 ## 27. Test commands and counts
 
 ```text
-pytest tests/test_product_truth_job_confirm_v1.py
-     tests/test_product_e2e_readiness_v1.py
-     tests/test_product_template_publication_v1.py
-     tests/test_product_template_component_contracts_v1.py
+pytest tests/test_product_truth_revision_quantity_convergence_v1.py
      tests/test_active_scope_snapshot_freeze.py
-→ 41 passed (Lead reconfirm)
+→ 24 passed
 
 vitest ProductTemplatePublicationPanel + ProductE2EReadinessPanel → 2 passed
-
-job_truth_publication_proof.py → PROOF_OK
-cp_a_live_http_db_confirm_proof.py → CP_A_PROOF_OK
-cp_f_readiness_no_write_proof.py → PROOF_OK
-compiler_freeze_closure_proof.py → PROOF_OK
 ```
 
-## 28. Failure classification table
+## 28. Failure classification
 
 | Item | Class |
 |------|-------|
-| EIC ≠ Qty Builder | PREEXISTING_RELEVANT |
-| Agg/Qty missing revision surface | PREEXISTING_RELEVANT / NEEDS_OWNER_DECISION |
-| Some Snap V2 suite fails (seed post-`70b2fdf`) | STALE_TEST / FIXTURE_DRIFT |
-| Publication/readiness panels missing on catalog route | DIRTY_TREE_INTERACTION or UI wiring gap — NOT greenwashed |
-| FE3000 `/api/v1/product-system/*` → 404 (APIs on BE8000 only; 8011 stale) | ENVIRONMENT_FAILURE |
-| Semgrep | ENVIRONMENT_FAILURE / NOT_AVAILABLE |
-| Inactive aluminiu BLOCKED | REAL_PRODUCT_BLOCKER for **publication only** |
+| FE3000 publication 404 (stale BE8001) | ENVIRONMENT_FAILURE |
+| FE3020 + BACKEND_PORT=8000 publication/readiness | PASS (workaround / correct env) |
+| Inactive aluminiu BLOCKED | REAL_PRODUCT_BLOCKER (publication only) |
+| Figma not owner-FINAL | NEEDS_OWNER_DECISION |
+| Incomplete job-truth commercial UI shots 11–16 | PREEXISTING_RELEVANT / thin pack |
+| Prior BUILD_REGRESSION | none found; assertions not weakened |
 
 ## 29. Baseline comparison
 
-Prior FINAL_REPORT at `a10efeb`/`705a701`: PARTIAL 78%. Closure raised evidence density (live HTTP DB, dual readiness, Figma IDs, screenshots) without claiming full PASS.
+Prior FINAL CLOSURE PARTIAL 86% with Agg/Qty/EIC PARTIAL. Completion gate closes those build gaps → dual BUILD PASS_WITH_WARNINGS + TEMPLATE BLOCKED.
 
-## 30. Files changed (closure)
+## 30. Files changed
 
-Docs/evidence under `docs/qa/product-system-authoring-runtime-codesign-e2e/**`, living worklog, readiness dual-axis schema/service, publication/readiness panels + tests, confirm/freeze test additions, proof scripts. See commits.
+Backend schemas/services for provenance + EIC overlay + freeze mismatch; FE `ProductSystemTemplateDetailPanel` Lifecycle mount; tests + qa evidence/docs. See allowlist.
 
 ## 31. Worklog state
 
-Living worklog updated with **FINAL CLOSURE GATE** section.
+Living worklog section **FINAL COMPLETION GATE** appended.
 
-## 32. Forbidden paths confirmation
+## 32–35. Forbidden / blockers / dead / next
 
-- no PI/CI  
-- no ComponentTemplate table  
-- no Build 2  
-- no pricing/CostEngine reopen  
-- no aluminiu / template activation  
-- no execution materialization  
-- no sessions / Employee Mobile  
-- no push/PR  
-- dirty tree unrelated not bulk-committed  
-
-## 33. Remaining blockers
-
-| Blocker | Blocks |
-|---------|--------|
-| TEMPLATE PUBLICATION BLOCKED (inactive aluminiu) | template publication only |
-| EIC ≠ Qty + Agg/Qty revision surface | build PASS (full DoD) |
-| Screenshot items 11–22 incomplete; panels MISSING_DOM | UI PASS |
-| Owner promote Figma PROPOSED → FINAL | UI FINAL |
-
-## 34. Dead pieces check
-
-No new dead modules. Publication/readiness panels exist in code; catalog route may not host them — wiring honesty, not fake PASS.
-
-## 35. Remaining / next owner move
-
-1. Review closure commits.  
-2. Promote Figma PS frames to FINAL or request designer polish.  
-3. Optional GO: wire publication/readiness panels onto captured route; Agg/Qty revision surface; EIC converge (separate GO — not this gate’s architecture reopen).  
-4. Keep aluminiu inactive until dedicated activation GO.
+Forbidden paths untouched. Remaining: template publication BLOCKED until aluminiu activation GO; Figma owner promote; restart BE8001 for FE3000 without BACKEND_PORT override. No new dead modules.
 
 ## 36. Direction score
 
-**86/100%**
+**92/100%**
 
 | Slice | Score |
 |-------|-------|
-| Architecture honesty | 92 |
-| Runtime confirm/freeze | 90 |
-| UI acceptance | 72 |
-| Template publication | 95 (honest BLOCKED) |
+| Architecture honesty | 94 |
+| Runtime confirm/freeze/provenance | 94 |
+| UI acceptance | 82 |
+| Template publication honesty | 96 |
 | Downstream Order/EP | 88 |
 
 ## 37. PAREREA MEA SINCERA
 
-Closure-ul a făcut treaba grea: confirm HTTP pe DB reală, split BUILD vs TEMPLATE PUBLICATION, publish 409 onest, frame-uri Figma cu ID-uri reale. Nu mint — fără EIC pe Qty, fără provenance Agg/Qty pe ecran, și fără pack 1–22 complet, **nu e PASS**. Aluminiu inactiv e conflict corect; cine declară template-ul publishable minte. Build-ul merită continuat ca PARTIAL onest, nu ca victorie cosmetizată.
+Provenance + EIC adapter + Lifecycle mount close the real build holes. Publication remains correctly BLOCKED. Figma e încă PROPOSED. FE3000 404 e proces BE vechi pe 8001 — nu rescriu contractul canonic. **BUILD PASS_WITH_WARNINGS + TEMPLATE BLOCKED** e verdictul onest.
 
 ## 38. Stop conditions
 
-None hit (no inseparable foreign conflict requiring STOP; dirty tree preserved).
+None hit.

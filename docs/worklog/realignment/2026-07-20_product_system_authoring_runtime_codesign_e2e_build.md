@@ -3,11 +3,12 @@
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Status | **PARTIAL — FINAL CLOSURE GATE complete with honest dual verdicts** |
+| Status | **BUILD PASS_WITH_WARNINGS + TEMPLATE PUBLICATION BLOCKED — FINAL COMPLETION GATE** |
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD (build) | `6a1c1d16371d65c701c46d5f4c4b5990d9b16731` |
 | Closure kickoff HEAD | `705a701a6e48f2bee1f638e44031f32f6d19d751` |
+| Completion kickoff HEAD | `1bad731e3d60c344733175667e7c4da535d07644` |
 | Owner GO | **YES** (closure only) |
 | Dirty tree | ~361 entries — **preserved** |
 | Allowlist (build) | `docs/qa/product-system-authoring-runtime-codesign-e2e/ALLOWLIST_MANIFEST.md` |
@@ -116,3 +117,67 @@ None.
 ### Forbidden paths
 
 No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no push/PR, dirty tree preserved.
+
+---
+
+## FINAL COMPLETION GATE
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Owner GO | completion only — close remaining gaps |
+| Kickoff HEAD | `1bad731` (prior reported `2e77e7c` + later docs `ed3605e`/`f593cb7` kept) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/COMPLETION_ALLOWLIST.md` |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/FINAL_REPORT.md` |
+
+### Gaps closed
+
+| Gap | Verdict | Notes |
+|-----|---------|-------|
+| Aggregate revision/hash provenance | **PASS** | `provenance_summary.product_truth_*` stamped from job meta |
+| Quantity Builder revision/hash | **PASS** | qty dict + `CommercialMeasurementBundle` fields |
+| Freeze PD=Agg=Qty=Snap | **PASS** | `V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH` fail-closed |
+| EIC → Quantity Builder | **PASS** | `_overlay_canonical_quantity_builder` adapter; no CostEngine reopen |
+| Publication/Readiness on VL route | **PASS** | Lifecycle tab on `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` |
+| FE proxy 3000→API 404 | **ENVIRONMENT_FAILURE** | FE→8001 stale; 8000 current; contract stays 8001 |
+| Screenshot pack | **PARTIAL→improved** | Lifecycle panels + Figma `91:3`/`36`/`60` captured |
+| Figma classification | **PROPOSED / NEEDS_POLISH** | page `91:2`, frames `91:3`…`91:100` real IDs |
+
+### Dual verdicts
+
+| Axis | Status |
+|------|--------|
+| Build | **PASS_WITH_WARNINGS** |
+| Template publication | **BLOCKED** (inactive aluminiu — correct) |
+| UI | **NEEDS_POLISH** |
+| Runtime E2E | **PASS_WITH_WARNINGS** |
+| Figma | **PROPOSED / NEEDS_POLISH** |
+
+**BUILD PASS + TEMPLATE BLOCKED applies.**
+
+### Direction score
+
+**92/100%** — see FINAL_REPORT §36.
+
+### Tests
+
+```text
+pytest tests/test_product_truth_revision_quantity_convergence_v1.py
+     tests/test_active_scope_snapshot_freeze.py
+→ 24 passed
+vitest publication + readiness panels → 2 passed
+```
+
+### Completion commits
+
+| SHA | Group |
+|-----|-------|
+| `b28f97d` | feat(provenance): Aggregate + Quantity Product Truth alignment |
+| `ed91361` | fix(eic): canonical quantity contract |
+| `49b2cca` | fix(product-system-ui): mount readiness/publication real template flow |
+| `274136d` | test(e2e): revision/quantity convergence |
+| (this docs commit) | docs(qa): Figma + screenshot acceptance |
+
+### Stop conditions
+
+None.
