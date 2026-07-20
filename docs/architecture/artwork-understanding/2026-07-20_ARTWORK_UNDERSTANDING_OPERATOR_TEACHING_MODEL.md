@@ -6,12 +6,15 @@
 | Date | 2026-07-20 |
 | Scope | Volumetric letters artwork interpretation & Product Truth |
 | Related | Build 2 GO suspended — see plan addendum |
+| Ownership boundary | **[`2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md`](./2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md)** — desktop app owns file analysis; WorkOS consumes/reviews/confirms only |
 
 ---
 
 ## 1. Verdict
 
-Volumetric letters need a clear split between **observation** (deterministic code), **interpretation** (assisted, future AI), and **confirmation** (operator). Product Truth stores only confirmed truth. Grouping is not “one SVG layer = one commercial group” by default — the operator declares `by_layer` or `by_color`. When the system is unsure, it must stop and ask, not invent groups.
+Volumetric letters need a clear split between **observation** (deterministic, from the external desktop analysis app), **interpretation** (assisted, future AI — not WorkOS Product Truth authority), and **confirmation** (operator). Product Truth stores only confirmed truth. Grouping is not “one SVG layer = one commercial group” by default — the operator declares `by_layer` or `by_color`. When the system is unsure, it must stop and ask, not invent groups.
+
+**Permanent limit (2026-07-20):** WorkOS must not implement or extend SVG/DWG/DXF (or other graphic) parsers, geometry extractors, auto-grouping, or file-to-Product-Truth conversion. See External Artwork Analysis Ownership.
 
 ```text
 Codul observa.
@@ -114,9 +117,11 @@ Forbidden compensations: silent continuation, approximate groups, uncertain Prod
 
 ---
 
-## 10. Deterministic parser
+## 10. Deterministic observation (external app)
 
-Parser remains deterministic: extract structure and metrics. It may report ambiguity signals. It must not invent commercial group identity or Product Truth.
+Deterministic parse/geometry observation is owned by the **separate desktop analysis app**. It extracts structure and metrics and may report ambiguity signals. It must not invent commercial group identity or Product Truth.
+
+WorkOS **consumes** a versioned external result (`artwork_analysis_contract_v1`), validates structure/provenance, and never treats observations or proposed bindings as confirmed truth. Existing in-repo SVG/DXF analyzers are LEGACY / EXTERNAL_APP_OWNED for ownership purposes — do not extend; do not delete without owner GO.
 
 ---
 
@@ -181,7 +186,9 @@ Always say **what is different**.
 
 ## 17. Vector workflow
 
-Primary path today: SVG / vector upload → deterministic analysis → (future) assisted questions → operator confirm → Product Truth → quantity builder → CPP/CostEngine paths as already bounded.
+Canonical path: Desktop analysis app → external structured result (observed/proposed) → WorkOS Intake / Product System → operator review → confirm → Product Truth → quantity builder → CPP/CostEngine paths as already bounded.
+
+Legacy in-repo SVG upload/analyze paths may still run until migration; they are not the ownership target and must not grow new analysis capability.
 
 ---
 

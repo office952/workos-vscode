@@ -30,15 +30,16 @@ When a build spec exists under `docs/qa/BUILD_*.md`, follow its stated boundary.
 
 For volumetric letters artwork and Product Truth:
 
-1. **Code observes** — deterministic parse/geometry only; no guesses about human intent.
-2. **AI may interpret** (future assistant) — proposes and asks; **never** writes Product Truth, Pricing, CostEngine, Offer, Order, Execution, or production handoff.
-3. **Operator confirms** — only confirmed truth is saved.
-4. **Honesty when uncertain** — stop and ask the smallest useful question; do not invent groups, fuzzy-match, or ship unconfirmed truth into pricing.
-5. **Initial grouping modes** — operator declares `by_layer` or `by_color`; do not auto-mix methods. Layer/color names and fixture labels (e.g. Maria, Soare) are observations/test data, not domain identity.
-6. **Confirmed-case learning** — save versioned, auditable precedents for reuse; global model changes require dataset/eval/owner GO, not a single click.
-7. **Deterministic validation** remains mandatory alongside any assisted interpretation.
+1. **Desktop analysis app observes** — all SVG/DWG/DXF (and other graphic) file intelligence lives outside WorkOS. Do **not** implement or extend WorkOS parsers/analyzers/auto-grouping.
+2. **WorkOS consumes** a versioned external structured result (observed/proposed only); validates contract/provenance; never treats it as Product Truth authority.
+3. **AI may interpret** (future assistant) — proposes and asks; **never** writes Product Truth, Pricing, CostEngine, Offer, Order, Execution, or production handoff.
+4. **Operator confirms** — only confirmed truth is saved.
+5. **Honesty when uncertain** — stop and ask the smallest useful question; do not invent groups, fuzzy-match, or ship unconfirmed truth into pricing.
+6. **Initial grouping modes** — operator declares `by_layer` or `by_color`; do not auto-mix methods. Layer/color names and fixture labels (e.g. Maria, Soare) are observations/test data, not domain identity.
+7. **Confirmed-case learning** — save versioned, auditable precedents for reuse; global model changes require dataset/eval/owner GO, not a single click.
+8. **Deterministic validation** of the **consumed** external payload remains mandatory; geometric correctness of the desktop parse is not a WorkOS readiness claim.
 
-Canonical architecture: [`docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md`](docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md). Build 2 GO suspended pending re-audit: [`docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md`](docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md).
+Canonical ownership: [`docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md`](docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md). Teaching semantics: [`docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md`](docs/architecture/artwork-understanding/2026-07-20_ARTWORK_UNDERSTANDING_OPERATOR_TEACHING_MODEL.md). Build 2 GO suspended pending re-audit: [`docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md`](docs/plans/2026-07-20_WORKOS_VOLUMETRIC_LETTERS_BUILD2_LOGIC_REALIGNMENT_ADDENDUM.md).
 
 
 
