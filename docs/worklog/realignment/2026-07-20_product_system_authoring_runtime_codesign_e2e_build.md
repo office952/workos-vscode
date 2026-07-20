@@ -1,16 +1,16 @@
-# WORKOS — Product System Authoring + Runtime Co-Design E2E Build
+# WORKOS ? Product System Authoring + Runtime Co-Design E2E Build
 
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Status | **BUILD PASS_WITH_WARNINGS + TEMPLATE PUBLICATION BLOCKED — FINAL COMPLETION GATE** |
+| Status | **BUILD PASS_WITH_WARNINGS + TEMPLATE PUBLICATION BLOCKED ? FINAL COMPLETION GATE** |
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD (build) | `6a1c1d16371d65c701c46d5f4c4b5990d9b16731` |
 | Closure kickoff HEAD | `705a701a6e48f2bee1f638e44031f32f6d19d751` |
 | Completion kickoff HEAD | `1bad731e3d60c344733175667e7c4da535d07644` |
 | Owner GO | **YES** (closure only) |
-| Dirty tree | ~361 entries — **preserved** |
+| Dirty tree | ~361 entries ? **preserved** |
 | Allowlist (build) | `docs/qa/product-system-authoring-runtime-codesign-e2e/ALLOWLIST_MANIFEST.md` |
 | Allowlist (closure) | `docs/qa/product-system-authoring-runtime-codesign-e2e/CLOSURE_ALLOWLIST.md` |
 | Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/FINAL_REPORT.md` |
@@ -41,14 +41,14 @@
 
 ```text
 Product Family
-  └─ Product Template (root | dual-role | child)
-       ├─ Composition: product_template_module_links (+ usage_mode, instance_schema_id)
-       ├─ Component contract = child/dual-role PT (no CT table)
-       ├─ Blueprint Dossier (docs + evidence + bridges; NOT BOM SoT)
-       └─ publication_status: NULL|DRAFT|VALIDATED|E2E_CHECKED|PUBLISHED|DEPRECATED|ARCHIVED
+  ?? Product Template (root | dual-role | child)
+       ?? Composition: product_template_module_links (+ usage_mode, instance_schema_id)
+       ?? Component contract = child/dual-role PT (no CT table)
+       ?? Blueprint Dossier (docs + evidence + bridges; NOT BOM SoT)
+       ?? publication_status: NULL|DRAFT|VALIDATED|E2E_CHECKED|PUBLISHED|DEPRECATED|ARCHIVED
 ```
 
-**`active=true` ≠ published / offerable / runtime-ready.**
+**`active=true` ? published / offerable / runtime-ready.**
 
 ---
 
@@ -57,28 +57,28 @@ Product Family
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Owner GO | closure only — no new architecture |
+| Owner GO | closure only ? no new architecture |
 | Closure HEAD in | `705a701` |
 | Fixture | `TPL-VOLUMETRIC-LETTERS_v2` (+ ACM boxed bags); **aluminiu NOT activated** |
 | DB | `C:\w\psiso\backend\dev.db` |
 | Stack | BE 8000 (+ preexisting 8011); FE 3000 (+ 3011) |
 
-### Kickoff (20 items) — confirmed
+### Kickoff (20 items) ? confirmed
 
-See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
+See `CLOSURE_ALLOWLIST.md` � Kickoff confirmation.
 
 ### Checkpoint matrix
 
 | CP | Verdict | Evidence |
 |----|---------|----------|
-| CP-A HTTP→DB→reload | **PASS** | `runtime/CP_A_HTTP_DB_PROOF_RESULT.md`, `cp_a_live_http_db_confirm_evidence.json` |
+| CP-A HTTP?DB?reload | **PASS** | `runtime/CP_A_HTTP_DB_PROOF_RESULT.md`, `cp_a_live_http_db_confirm_evidence.json` |
 | CP-B Same revision PD/Agg/Qty | **PARTIAL** | PD surfaces revision; Agg/Qty pin but no shared surface |
-| CP-C EIC → Qty Builder | **PARTIAL** | parallel EIC path remains; no pricing reopen |
+| CP-C EIC ? Qty Builder | **PARTIAL** | parallel EIC path remains; no pricing reopen |
 | CP-D Snap V2 freeze | **PASS** | freeze cases + pytest |
 | CP-E Order + EP | **PASS** | no live reread; no materialization |
 | CP-F Readiness static + dry_run | **PASS** | BUILD PASS_WITH_WARNINGS + TEMPLATE BLOCKED; DB sha unchanged |
-| CP-G Figma PS frames | **CREATED (PROPOSED)** | page `91:2`; core `91:3`/`12`/`21`/`36`/`60` + pack shells `91:76`–`91:100`; Intake refs verified; not owner-FINAL |
-| CP-H Screenshot pack 1–22 | **PARTIAL** | maximal pack in `screenshots/`; dossier panels + Confirmare `ui_21`; FE proxy 404 ENVIRONMENT_FAILURE; catalog MISSING_DOM for new panels |
+| CP-G Figma PS frames | **CREATED (PROPOSED)** | page `91:2`; core `91:3`/`12`/`21`/`36`/`60` + pack shells `91:76`?`91:100`; Intake refs verified; not owner-FINAL |
+| CP-H Screenshot pack 1?22 | **PARTIAL** | maximal pack in `screenshots/`; dossier panels + Confirmare `ui_21`; FE proxy 404 ENVIRONMENT_FAILURE; catalog MISSING_DOM for new panels |
 
 ### Dual verdict (critical)
 
@@ -86,19 +86,19 @@ See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
 |------|--------|
 | Build closure (gate overall) | **PARTIAL** |
 | BUILD readiness axis | **PASS_WITH_WARNINGS** |
-| Template publication | **BLOCKED** (inactive aluminiu — correct) |
-| UI acceptance | **PARTIAL** — see `UI_AUDIT_CPGH_AGENT_C.md` |
+| Template publication | **BLOCKED** (inactive aluminiu ? correct) |
+| UI acceptance | **PARTIAL** ? see `UI_AUDIT_CPGH_AGENT_C.md` |
 | Runtime E2E | **PARTIAL** |
 
 **BUILD PASS vs TEMPLATE PUBLICATION BLOCKED applies** for the readiness/publication honesty split.
 
 ### Direction score
 
-**86/100%** — see FINAL_REPORT §36–37.
+**86/100%** ? see FINAL_REPORT �36?37.
 
 ### PAREREA MEA SINCERA
 
-Confirm pe DB reală + split BUILD/TEMPLATE + Figma IDs reale = progres serios. Fără EIC pe Qty, fără pack UI 1–22, **nu e PASS**. Aluminiu inactiv rămâne conflict onest.
+Confirm pe DB real? + split BUILD/TEMPLATE + Figma IDs reale = progres serios. F?r? EIC pe Qty, f?r? pack UI 1?22, **nu e PASS**. Aluminiu inactiv r?m�ne conflict onest.
 
 ### Closure commits
 
@@ -125,7 +125,7 @@ No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Owner GO | completion only — close remaining gaps |
+| Owner GO | completion only ? close remaining gaps |
 | Kickoff HEAD | `1bad731` (prior reported `2e77e7c` + later docs `ed3605e`/`f593cb7` kept) |
 | Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/COMPLETION_ALLOWLIST.md` |
 | Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/FINAL_REPORT.md` |
@@ -137,18 +137,18 @@ No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no
 | Aggregate revision/hash provenance | **PASS** | `provenance_summary.product_truth_*` stamped from job meta |
 | Quantity Builder revision/hash | **PASS** | qty dict + `CommercialMeasurementBundle` fields |
 | Freeze PD=Agg=Qty=Snap | **PASS** | `V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH` fail-closed |
-| EIC → Quantity Builder | **PASS** | `_overlay_canonical_quantity_builder` adapter; no CostEngine reopen |
+| EIC ? Quantity Builder | **PASS** | `_overlay_canonical_quantity_builder` adapter; no CostEngine reopen |
 | Publication/Readiness on VL route | **PASS** | Lifecycle tab on `/product-system/products/TPL-VOLUMETRIC-LETTERS_v2` |
-| FE proxy 3000→API 404 | **ENVIRONMENT_FAILURE** | FE→8001 stale; 8000 current; contract stays 8001 |
-| Screenshot pack | **PARTIAL→improved** | Lifecycle panels + Figma `91:3`/`36`/`60` captured |
-| Figma classification | **PROPOSED / NEEDS_POLISH** | page `91:2`, frames `91:3`…`91:100` real IDs |
+| FE proxy 3000?API 404 | **ENVIRONMENT_FAILURE** | FE?8001 stale; 8000 current; contract stays 8001 |
+| Screenshot pack | **PARTIAL?improved** | Lifecycle panels + Figma `91:3`/`36`/`60` captured |
+| Figma classification | **PROPOSED / NEEDS_POLISH** | page `91:2`, frames `91:3`?`91:100` real IDs |
 
 ### Dual verdicts
 
 | Axis | Status |
 |------|--------|
 | Build | **PASS_WITH_WARNINGS** |
-| Template publication | **BLOCKED** (inactive aluminiu — correct) |
+| Template publication | **BLOCKED** (inactive aluminiu ? correct) |
 | UI | **NEEDS_POLISH** |
 | Runtime E2E | **PASS_WITH_WARNINGS** |
 | Figma | **PROPOSED / NEEDS_POLISH** |
@@ -157,15 +157,15 @@ No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no
 
 ### Direction score
 
-**92/100%** — see FINAL_REPORT §36.
+**92/100%** ? see FINAL_REPORT �36.
 
 ### Tests
 
 ```text
 pytest tests/test_product_truth_revision_quantity_convergence_v1.py
      tests/test_active_scope_snapshot_freeze.py
-→ 24 passed
-vitest publication + readiness panels → 2 passed
+? 24 passed
+vitest publication + readiness panels ? 2 passed
 ```
 
 ### Completion commits
@@ -184,15 +184,15 @@ None.
 
 ---
 
-## CONTINUATION — External Artwork Analysis Boundary (2026-07-20)
+## CONTINUATION ? External Artwork Analysis Boundary (2026-07-20)
 
 | Field | Value |
 |-------|--------|
-| Owner GO | **YES** — boundary + Product System continuation (not new audit) |
+| Owner GO | **YES** ? boundary + Product System continuation (not new audit) |
 | Kickoff HEAD | `db64b46` (reconfirmed) |
 | Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
 | Dirty tree | preserved (~360+) |
-| Prior gates | **preserved** — Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; UI NEEDS_POLISH; Figma PROPOSED; Template publication BLOCKED; direction ~92 — **not reopened** |
+| Prior gates | **preserved** ? Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; UI NEEDS_POLISH; Figma PROPOSED; Template publication BLOCKED; direction ~92 ? **not reopened** |
 | Aluminiu | **NOT activated** |
 | Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/EXTERNAL_ARTWORK_ANALYSIS_BOUNDARY_ALLOWLIST.md` |
 | Canonical ownership | [`docs/architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md`](../../architecture/artwork-understanding/2026-07-20_EXTERNAL_ARTWORK_ANALYSIS_OWNERSHIP.md) |
@@ -200,7 +200,7 @@ None.
 
 ### Decision
 
-**External Artwork Analysis Ownership:** separate desktop app owns all SVG/DWG/DXF (and other graphic) file intelligence. WorkOS consumes versioned external results, reviews, operator confirms → Product Truth. Transport TBD.
+**External Artwork Analysis Ownership:** separate desktop app owns all SVG/DWG/DXF (and other graphic) file intelligence. WorkOS consumes versioned external results, reviews, operator confirms ? Product Truth. Transport TBD.
 
 ### Delivered
 
@@ -259,20 +259,20 @@ None. Transport remains TBD (documented). No major schema migration. No aluminiu
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Owner GO | **YES** — authoring continuation (close coherent admin authoring) |
+| Owner GO | **YES** ? authoring continuation (close coherent admin authoring) |
 | Kickoff HEAD | `e2f3fc9` (**reconfirmed**) |
 | Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
-| Dirty tree | ~360 — **preserved** (allowlist-only) |
-| Prior gates | **preserved** — Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; Template publication BLOCKED; UI/Figma NEEDS_POLISH |
+| Dirty tree | ~360 ? **preserved** (allowlist-only) |
+| Prior gates | **preserved** ? Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; Template publication BLOCKED; UI/Figma NEEDS_POLISH |
 | Aluminiu | **NOT activated** (real blocker) |
 | Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_ALLOWLIST.md` |
 | CP0 contracts | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_CP0_CONTRACT_MAP.md` |
 | Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_FINAL_REPORT.md` |
-| Master plan | Continue existing — **no new Master Plan** |
+| Master plan | Continue existing ? **no new Master Plan** |
 
 ### Kickoff (20 items)
 
-Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` § Kickoff confirmation.
+Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` � Kickoff confirmation.
 
 ### Checkpoint matrix
 
@@ -301,7 +301,7 @@ Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` § Kickoff confirmation.
 
 ### Direction score
 
-**84/100** — see `AUTHORING_CONTINUATION_FINAL_REPORT.md` §29–35.
+**84/100** ? see `AUTHORING_CONTINUATION_FINAL_REPORT.md` �29?35.
 
 ### Locked boundaries (do not reopen)
 
@@ -328,21 +328,21 @@ None.
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Owner GO | **YES** — restricted UI/UX polish only |
+| Owner GO | **YES** ? restricted UI/UX polish only |
 | Kickoff HEAD | `2d4b348` (**reconfirmed**) |
 | Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
-| Dirty tree | ~360 — **preserved** (allowlist-only) |
-| Prior gates | **preserved** — Authoring PASS_WITH_WARNINGS; Lifecycle/publication PASS; Readiness PASS_WITH_WARNINGS; Runtime preview PASS_WITH_WARNINGS; Template publication BLOCKED |
+| Dirty tree | ~360 ? **preserved** (allowlist-only) |
+| Prior gates | **preserved** ? Authoring PASS_WITH_WARNINGS; Lifecycle/publication PASS; Readiness PASS_WITH_WARNINGS; Runtime preview PASS_WITH_WARNINGS; Template publication BLOCKED |
 | Aluminiu | **NOT activated** (still real blocker) |
 | Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_POLISH_ALLOWLIST.md` |
 | Page audits | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_PAGE_AUDITS_FINAL_POLISH.md` |
 | Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_FIGMA_FINAL_POLISH_REPORT.md` |
 | Figma class | `docs/qa/product-system-authoring-runtime-codesign-e2e/FIGMA_CLASSIFICATION_FINAL_POLISH.md` |
-| Screenshots | `polish_01`…`polish_23` |
+| Screenshots | `polish_01`?`polish_23` |
 
 ### Objective
 
-Transform Product System from functional/honest → clear, coherent daily admin use. Visual order: identity → lifecycle → composition/contracts → blockers → validation → readiness → publication → runtime preview → technical diagnostics.
+Transform Product System from functional/honest ? clear, coherent daily admin use. Visual order: identity ? lifecycle ? composition/contracts ? blockers ? validation ? readiness ? publication ? runtime preview ? technical diagnostics.
 
 ### Checkpoint matrix
 
@@ -369,13 +369,13 @@ Transform Product System from functional/honest → clear, coherent daily admin 
 
 ### Direction score
 
-**88/100** — see `UI_FIGMA_FINAL_POLISH_REPORT.md` §29–31.
+**88/100** ? see `UI_FIGMA_FINAL_POLISH_REPORT.md` �29?31.
 
 ### Tests
 
 ```text
-vitest product-system polish suite → 9 passed
-pytest publication + composition + contracts → 9 passed
+vitest product-system polish suite ? 9 passed
+pytest publication + composition + contracts ? 9 passed
 ```
 
 ### Stop conditions
@@ -399,11 +399,11 @@ None.
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-20 |
-| Owner GO | **YES** — configure VL as first complete Product System product |
+| Owner GO | **YES** ? configure VL as first complete Product System product |
 | Kickoff HEAD | `5382525` (**reconfirmed**) |
 | Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
-| Dirty tree | ~360 — **preserved** (allowlist-only) |
-| Aluminiu | **NOT activated** — publication BLOCKED honest |
+| Dirty tree | ~360 ? **preserved** (allowlist-only) |
+| Aluminiu | **NOT activated** ? publication BLOCKED honest |
 | Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/REAL_PRODUCT_CONFIGURATION_ALLOWLIST.md` |
 | Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/REAL_PRODUCT_CONFIGURATION_FINAL_REPORT.md` |
 | Evidence | `runtime/vl_real_product_config_system_link_check.json` |
@@ -412,19 +412,19 @@ None.
 
 | Stream | Verdict |
 |--------|---------|
-| A Root PT config | **PASS** — identity stubs; composition 5 req + 2 opt |
-| B Component contracts | **PASS** — FACE/BACK/LED/FINISH seeded + linked; usage_mode/schema stamped |
-| C Dossier | **PASS** — geometry_input_contract + ownership (documentary) |
-| D E2E Readiness | **PASS** — BUILD PASS_WITH_WARNINGS; TEMPLATE BLOCKED on Aluminiu |
-| E System Link Check | **PASS** — Catalog→EP status table (no auto-repair) |
-| F Runtime Preview | **PASS_WITH_WARNINGS** — prior human summary retained |
+| A Root PT config | **PASS** ? identity stubs; composition 5 req + 2 opt |
+| B Component contracts | **PASS** ? FACE/BACK/LED/FINISH seeded + linked; usage_mode/schema stamped |
+| C Dossier | **PASS** ? geometry_input_contract + ownership (documentary) |
+| D E2E Readiness | **PASS** ? BUILD PASS_WITH_WARNINGS; TEMPLATE BLOCKED on Aluminiu |
+| E System Link Check | **PASS** ? Catalog?EP status table (no auto-repair) |
+| F Runtime Preview | **PASS_WITH_WARNINGS** ? prior human summary retained |
 
 ### Dual verdict
 
 | Axis | Status |
 |------|--------|
 | Product configuration | **PASS** |
-| Template publication | **BLOCKED** (inactive Aluminiu — correct) |
+| Template publication | **BLOCKED** (inactive Aluminiu ? correct) |
 
 ### Aluminiu owner ask
 
@@ -432,13 +432,13 @@ None.
 
 ### Direction score
 
-**91/100** — see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT §29–33.
+**91/100** ? see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT �29?33.
 
 ### Tests
 
 ```text
-pytest VL config + readiness + publication + contracts + composition + aggregate → 31 passed
-vitest Readiness System Link Check + Runtime Preview → 2 passed
+pytest VL config + readiness + publication + contracts + composition + aggregate ? 31 passed
+vitest Readiness System Link Check + Runtime Preview ? 2 passed
 ```
 
 ### Stop conditions
@@ -462,12 +462,12 @@ None.
 |-------|--------|
 | Date | 2026-07-20 |
 | HEAD | `033f28fee016752622debba4f5a1817303d9a1ef` |
-| Mode | READ-ONLY � no code/Figma/data changes; **no commit** |
+| Mode | READ-ONLY ? no code/Figma/data changes; **no commit** |
 | Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_FULL_PAGE_UI_TRUTH_AUDIT.md` |
 | Screenshots | `docs/qa/product-system-authoring-runtime-codesign-e2e/ui-truth-audit/` (22 PNG) |
-| Verdict | **STOP** � 10s clarity FAIL; Planificat KEEP; darkness = WorkOS theme + nested surfaces; publication honesty gap + FE:3000?BE:8001 404 on readiness/publication |
-| Planificat | KEEP (shell roadmap badge ? product status); optional RENAME Neopera?ional / �n cur�nd |
-| Direction scores | clarity 38 � visual align 55 � action 32 � status 28 � comfort 40 |
+| Verdict | **STOP** ? 10s clarity FAIL; Planificat KEEP; darkness = WorkOS theme + nested surfaces; publication honesty gap + FE:3000?BE:8001 404 on readiness/publication |
+| Planificat | KEEP (shell roadmap badge ? product status); optional RENAME Neopera?ional / ?n cur?nd |
+| Direction scores | clarity 38 ? visual align 55 ? action 32 ? status 28 ? comfort 40 |
 
 Owner STOP before further PS UI implementation. Accepted prior VL config / Aluminiu inactive / CPP?EP NOT_TESTED unchanged.
 
@@ -484,10 +484,10 @@ Owner STOP before further PS UI implementation. Accepted prior VL config / Alumi
 | Commit range | `033f28fe` ? `e52a0280` (semantic/visual P0 + QA evidence) |
 | Shared map | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SHARED_SEMANTIC_MAP.md` |
 | Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SEMANTIC_VISUAL_REALIGNMENT_FINAL_REPORT.md` |
-| Planificat | **RENAME+MOVE+DEMOTE** ? ?�n dezvoltare? secondary nav cluster (sections non-functional; badge kept demoted) |
+| Planificat | **RENAME+MOVE+DEMOTE** ? ??n dezvoltare? secondary nav cluster (sections non-functional; badge kept demoted) |
 | Public? fail-closed | FE `resolvePublishUiGate` ? disabled when readiness BLOCKED even if publication GET `publish_allowed=true` |
 | Proxy | Canonical BACKEND_PORT **8000**; proof FE:3021 ? publication/readiness 200 |
-| Direction scores | clarity 72 � visual 68 � action 78 � status 74 � comfort 62 (was 38/55/32/28/40) |
+| Direction scores | clarity 72 ? visual 68 ? action 78 ? status 74 ? comfort 62 (was 38/55/32/28/40) |
 | 10s | **PASS** |
 | Aluminiu | Still BLOCKED |
 | Stop | None |
@@ -503,12 +503,13 @@ Owner STOP before further PS UI implementation. Accepted prior VL config / Alumi
 |-------|--------|
 | Date | 2026-07-21 |
 | Kickoff HEAD | `e52a02807722523e2292de80995d0761284e7fca` (`e52a0280`) |
+| Completion HEAD | `c8c0125d` (docs) ? sequence `a1187f0a` ? `00d49809` ? `884ef88d` ? `c64ae634` ? `c8c0125d` |
 | Shared visual map | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P1_SHARED_VISUAL_MAP.md` |
-| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P1_WORKOS_VISUAL_CONSOLIDATION_FINAL_REPORT.md` |
-| WorkOS refs | `/settings` (form) � `/quotes` (list) � `/intake-v6/operator` (detail/ops) |
-| P0 regression | **GREEN** ? fail-closed Public?, ?�n dezvoltare?, Aluminiu BLOCKED, proxy 8000 |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P1_WORKOS_VISUAL_CONSOLIDATION_FINAL_REPORT.md`
+| WorkOS refs | `/settings` (form) ? `/quotes` (list) ? `/intake-v6/operator` (detail/ops) |
+| P0 regression | **GREEN** ? fail-closed Public?, ??n dezvoltare?, Aluminiu BLOCKED, proxy 8000 |
 | Comfort | **62 ? 72** |
-| Direction scores | clarity 74 � visual 78 � action 78 � status 75 � comfort 72 |
+| Direction scores | clarity 74 ? visual 78 ? action 78 ? status 75 ? comfort 72 |
 | 10s | **PASS** (P0 intact) |
 | Figma `0CDPIuqoaZ1OQgNnvNyl1F` | Intake V6 cover ? **not** PS Authoring Studio; no FINAL; no edits |
 | Screenshots | `p1-visual/after/` |

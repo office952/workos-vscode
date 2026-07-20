@@ -164,7 +164,15 @@ Untouched: CostEngine, Pricing rates, Inventory-as-price, Aluminiu activation, P
 
 ## 27. Commits (allowlist)
 
-See git log after commit sequence (owner-specified messages).
+| SHA | Message |
+|-----|---------|
+| `a1187f0a` | refactor(product-system-ui): align surfaces and layout with WorkOS |
+| `00d49809` | refactor(product-system-ui): simplify template composition and dossier presentation |
+| `884ef88d` | refactor(product-system-ui): align readiness publication and runtime panels |
+| `c64ae634` | test(product-system-ui): preserve semantic and interaction coverage |
+| `c8c0125d` | docs(qa): add P0 pointer and P1 visual acceptance evidence |
+
+Completion HEAD after docs commit: `c8c0125d` (amend worklog pointer in follow-up only if needed — dirty tree remain untouched otherwise).
 
 ## 28. Files changed (summary)
 
