@@ -320,3 +320,74 @@ None.
 | `fa8c93d` | feat(product-system-ui): tabs + dual status + runtime preview |
 | `1017f2c` | feat(dossier): sticky command model + deep-link |
 | _(docs tip)_ | docs(qa): final report + UI audit + worklog |
+
+---
+
+## PRODUCT SYSTEM UI / FIGMA FINAL POLISH
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Owner GO | **YES** — restricted UI/UX polish only |
+| Kickoff HEAD | `2d4b348` (**reconfirmed**) |
+| Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
+| Dirty tree | ~360 — **preserved** (allowlist-only) |
+| Prior gates | **preserved** — Authoring PASS_WITH_WARNINGS; Lifecycle/publication PASS; Readiness PASS_WITH_WARNINGS; Runtime preview PASS_WITH_WARNINGS; Template publication BLOCKED |
+| Aluminiu | **NOT activated** (still real blocker) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_POLISH_ALLOWLIST.md` |
+| Page audits | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_PAGE_AUDITS_FINAL_POLISH.md` |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/UI_FIGMA_FINAL_POLISH_REPORT.md` |
+| Figma class | `docs/qa/product-system-authoring-runtime-codesign-e2e/FIGMA_CLASSIFICATION_FINAL_POLISH.md` |
+| Screenshots | `polish_01`…`polish_23` |
+
+### Objective
+
+Transform Product System from functional/honest → clear, coherent daily admin use. Visual order: identity → lifecycle → composition/contracts → blockers → validation → readiness → publication → runtime preview → technical diagnostics.
+
+### Checkpoint matrix
+
+| CP | Verdict |
+|----|---------|
+| CP1 Shell/status hierarchy | **PASS** |
+| CP2 Composition + contracts | **PASS** |
+| CP3 Dossier sticky RO commands | **PASS** |
+| CP4 Readiness + publication honesty | **PASS** (VL BLOCKED) |
+| CP5 Runtime preview human-first | **PASS_WITH_WARNINGS** |
+| CP6 UI/Figma/screenshots acceptance | **PASS_WITH_WARNINGS** (Figma not FINAL) |
+
+### Separate verdicts
+
+| Axis | Verdict |
+|------|---------|
+| UI implementation | **PASS_WITH_WARNINGS** |
+| Figma | **NEEDS_POLISH** |
+| Usability | **PASS_WITH_WARNINGS** |
+| Accessibility | **PASS_WITH_WARNINGS** |
+| Runtime route integration | **PASS** |
+
+**Aluminiu still BLOCKED. No fake Publication-ready for Litere volumetrice.**
+
+### Direction score
+
+**88/100** — see `UI_FIGMA_FINAL_POLISH_REPORT.md` §29–31.
+
+### Tests
+
+```text
+vitest product-system polish suite → 9 passed
+pytest publication + composition + contracts → 9 passed
+```
+
+### Stop conditions
+
+None.
+
+### Commits (this polish)
+
+| SHA | Group |
+|-----|-------|
+| _(see git log)_ | fix(product-system-ui): clarify authoring shell and status hierarchy |
+| | fix(product-system-ui): simplify composition component contracts and dossier |
+| | fix(product-system-ui): refine readiness publication and runtime preview |
+| | test(product-system-ui): close interaction and state coverage |
+| | docs(qa): finalize Figma and screenshot acceptance |

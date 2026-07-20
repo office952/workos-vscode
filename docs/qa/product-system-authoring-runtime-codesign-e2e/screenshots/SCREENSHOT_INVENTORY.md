@@ -1,4 +1,4 @@
-# Screenshot inventory — Agent C (CP-G / CP-H)
+# Screenshot inventory — Agent C (CP-G / CP-H) + Final Polish
 
 | Field | Value |
 |-------|--------|
@@ -8,6 +8,39 @@
 | BE publication APIs | Present on **8000**; **absent on stale 8001** (404) |
 | FE→API | `3000` publication → **404 ENVIRONMENT_FAILURE**; `3020`→8000 → **200** |
 | Pack | Completion gate improved Lifecycle panels — see below |
+| Final polish pack | `polish_01`…`polish_23` live on FE **3000** (2026-07-20) — see § Final polish |
+
+## Final polish pack (UI / Figma Final Polish)
+
+Script: `runtime/capture_ui_final_polish.mjs` · Evidence: `runtime/final_polish_ui_capture_evidence.json`
+
+| # | File | Surface |
+|---|------|---------|
+| 1 | `polish_01_landing_products.png` | Landing products |
+| 2 | `polish_02_template_overview_dual_chips.png` | Overview + dual chips |
+| 3 | `polish_03_composition_authoring.png` | Composition |
+| 4 | `polish_04_components_list.png` | Components (diagnostic) |
+| 5 | `polish_05_contracts_used_by.png` | Contracts |
+| 6 | `polish_06_relationships.png` | Relationships |
+| 7 | `polish_07_materials_preview.png` | Materials |
+| 8 | `polish_08_dossier_tab_cta.png` | Dossier tab CTA |
+| 9 | `polish_09_dossier_studio_deeplink.png` | Dossier Studio deep-link |
+| 10 | `polish_10_sticky_save_validate_check_publish.png` | Sticky commands |
+| 11 | `polish_11_runtime_preview_summary.png` | Runtime Preview summary |
+| 12 | `polish_12_readiness_dual_axes.png` | Readiness dual axes |
+| 13 | `polish_13_publication_blocked_human.png` | Publication blocked (human) |
+| 14 | `polish_14_diagnostic_guards.png` | Diagnostic |
+| 15 | `polish_15_dossier_publication_blocked.png` | Dossier publication |
+| 16 | `polish_16_dossier_readiness_compact.png` | Dossier readiness |
+| 17 | `polish_17_overview_modularity_collapsed.png` | Overview modularity |
+| 18 | `polish_18_composition_contract_details.png` | Composition details |
+| 19 | `polish_19_readiness_expanded_actions.png` | Readiness expanded |
+| 20 | `polish_20_runtime_diagnostics_collapsed.png` | Runtime diagnostics |
+| 21 | `polish_21_shell_nav_products.png` | Shell nav |
+| 22 | `polish_22_planned_section_honesty.png` | Planned section |
+| 23 | `polish_23_publication_not_ready_vl.png` | VL not publication-ready |
+
+**Honesty:** no shot claims Publication-ready for VolumetricLetters.
 
 ## Figma exports (file `0CDPIuqoaZ1OQgNnvNyl1F`)
 

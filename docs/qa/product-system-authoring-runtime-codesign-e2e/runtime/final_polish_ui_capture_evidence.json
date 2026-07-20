@@ -1,0 +1,167 @@
+{
+  "fe": "http://127.0.0.1:3000",
+  "captured_at": "2026-07-20T20:26:56.744Z",
+  "shots": [
+    {
+      "name": "polish_01_landing_products",
+      "note": "Landing /product-system/products",
+      "size": 130305,
+      "ok": true
+    },
+    {
+      "name": "polish_02_template_overview_dual_chips",
+      "note": "Overview + dual status chips",
+      "size": 155285,
+      "ok": true
+    },
+    {
+      "name": "polish_03_composition_authoring",
+      "note": "Composition authoring",
+      "size": 160911,
+      "ok": true
+    },
+    {
+      "name": "polish_04_components_list",
+      "note": "Components diagnostic list",
+      "size": 163227,
+      "ok": true
+    },
+    {
+      "name": "polish_05_contracts_used_by",
+      "note": "Component contracts / used-by",
+      "size": 154022,
+      "ok": true
+    },
+    {
+      "name": "polish_06_relationships",
+      "note": "Relationships map",
+      "size": 159009,
+      "ok": true
+    },
+    {
+      "name": "polish_07_materials_preview",
+      "note": "Materials via PD preview",
+      "size": 158917,
+      "ok": true
+    },
+    {
+      "name": "polish_08_dossier_tab_cta",
+      "note": "Dossier tab + Studio CTA",
+      "size": 161054,
+      "ok": true
+    },
+    {
+      "name": "polish_09_dossier_studio_deeplink",
+      "note": "Dossier Studio deep-link ?template=",
+      "size": 137580,
+      "ok": true
+    },
+    {
+      "name": "polish_10_sticky_save_validate_check_publish",
+      "note": "Sticky Salvează→Validează→Verifică→Publică",
+      "size": 120617,
+      "ok": true
+    },
+    {
+      "name": "polish_11_runtime_preview_summary",
+      "note": "Runtime Preview human summary",
+      "size": 159010,
+      "ok": true
+    },
+    {
+      "name": "polish_12_readiness_dual_axes",
+      "note": "Readiness BUILD vs TEMPLATE BLOCKED",
+      "size": 162732,
+      "ok": true
+    },
+    {
+      "name": "polish_13_publication_blocked_human",
+      "note": "Publication blocked — human name primary",
+      "size": 156413,
+      "ok": true
+    },
+    {
+      "name": "polish_14_diagnostic_guards",
+      "note": "Diagnostic / guards (secondary)",
+      "size": 150103,
+      "ok": true
+    },
+    {
+      "name": "polish_15_dossier_publication_blocked",
+      "note": "Dossier rail publication blocked",
+      "size": 122199,
+      "ok": true
+    },
+    {
+      "name": "polish_16_dossier_readiness_compact",
+      "note": "Dossier readiness compact dual axes",
+      "size": 122199,
+      "ok": true
+    },
+    {
+      "name": "polish_17_overview_modularity_collapsed",
+      "note": "Overview — modularity progressive disclosure",
+      "size": 155283,
+      "ok": true
+    },
+    {
+      "name": "polish_18_composition_contract_details",
+      "note": "Composition with contract details collapsed",
+      "size": 160911,
+      "ok": true
+    },
+    {
+      "name": "polish_19_readiness_expanded_actions",
+      "note": "Readiness expanded actions",
+      "size": 162226,
+      "ok": true
+    },
+    {
+      "name": "polish_20_runtime_diagnostics_collapsed",
+      "note": "Runtime diagnostics collapsed",
+      "size": 159010,
+      "ok": true
+    },
+    {
+      "name": "polish_21_shell_nav_products",
+      "note": "Shell nav — Products active",
+      "size": 130305,
+      "ok": true
+    },
+    {
+      "name": "polish_22_planned_section_honesty",
+      "note": "Planned Components section honesty",
+      "size": 74193,
+      "ok": true
+    },
+    {
+      "name": "polish_23_publication_not_ready_vl",
+      "note": "VL not falsely publication-ready",
+      "size": 156402,
+      "ok": true
+    }
+  ],
+  "console_errors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "notes": [
+    "console_errors=13; likely404=13",
+    "VL publication must remain BLOCKED — aluminiu inactive"
+  ],
+  "panels": {
+    "publication_blocked_banner": 0,
+    "dual_chips": 1
+  }
+}
