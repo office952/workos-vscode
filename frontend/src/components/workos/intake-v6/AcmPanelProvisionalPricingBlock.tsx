@@ -10,6 +10,7 @@ import {
   acmPanelPreviewIsVisible,
   formatAcmPanelMmPair,
   formatAcmPanelMoney,
+  formatAcmPanelPathSource,
   formatAcmPanelQty,
   humanizeAcmPanelPreviewWarning,
 } from "@/lib/intakeV6/acmPanel/acmPanelCommercialPreviewDisplay";
@@ -42,6 +43,7 @@ export default function AcmPanelProvisionalPricingBlock({
       data-final-eligible={preview.final_eligibility ? "true" : "false"}
       data-offer-eligible={preview.offer_eligibility ? "true" : "false"}
       data-execution-eligible={preview.execution_eligibility ? "true" : "false"}
+      data-path-source={geom.path_measurement_status || geom.path_measurement_source || "unknown"}
     >
       <header className="flex items-start gap-1.5">
         <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300/90" aria-hidden />
@@ -70,8 +72,28 @@ export default function AcmPanelProvisionalPricingBlock({
       {geom.face_area_m2 != null ? (
         <p className="mt-1 text-[10px] tabular-nums text-slate-300" data-testid="intake-v6-acm-panel-face-area">
           Arie față: {formatAcmPanelQty(geom.face_area_m2, "mp")}
-          {geom.cut_length_m != null ? ` · Debitare: ${formatAcmPanelQty(geom.cut_length_m, "ml")}` : ""}
-          {geom.fold_length_m != null ? ` · V-groove: ${formatAcmPanelQty(geom.fold_length_m, "ml")}` : ""}
+          {geom.cut_length_m != null
+            ? ` · Debitare: ${formatAcmPanelQty(geom.cut_length_m, "ml")}`
+            : " · Debitare: indisponibil"}
+          {geom.fold_length_m != null
+            ? ` · V-groove: ${formatAcmPanelQty(geom.fold_length_m, "ml")}`
+            : " · V-groove: indisponibil"}
+        </p>
+      ) : null}
+
+      {formatAcmPanelPathSource(geom.path_measurement_status, geom.path_measurement_source) ? (
+        <p className="mt-1 text-[10px] text-slate-400" data-testid="intake-v6-acm-panel-path-source">
+          {formatAcmPanelPathSource(geom.path_measurement_status, geom.path_measurement_source)}
+        </p>
+      ) : null}
+
+      {(geom.v_groove_l1_ml != null || geom.v_groove_l2_ml != null) && !compact ? (
+        <p className="mt-0.5 text-[10px] tabular-nums text-slate-500" data-testid="intake-v6-acm-panel-vgroove-split">
+          V L1: {formatAcmPanelQty(geom.v_groove_l1_ml, "ml")}
+          {" · "}
+          V L2: {formatAcmPanelQty(geom.v_groove_l2_ml, "ml")}
+          {" · "}
+          V total: {formatAcmPanelQty(geom.v_groove_total_ml ?? geom.fold_length_m, "ml")}
         </p>
       ) : null}
 
@@ -81,6 +103,12 @@ export default function AcmPanelProvisionalPricingBlock({
       >
         Prețul este estimativ. Configurația tehnică, segmentarea și compoziția necesită confirmare. Prețul
         nu este eligibil pentru ofertă fermă.
+        {geom.path_measurement_status === "proxy_rectangular"
+          ? " Cantitățile CUT/V sunt din proxy rectangular, nu din trasee măsurate."
+          : ""}
+        {geom.path_measurement_status === "unavailable"
+          ? " Cantitățile CUT/V lipsesc până la geometrie de producție măsurată."
+          : ""}
       </p>
 
       {warnings.length > 0 ? (

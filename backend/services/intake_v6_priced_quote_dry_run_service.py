@@ -327,6 +327,33 @@ def _build_acm_panel_commercial_preview(
 	elif acm_lines and acm_lines[0].get("cpp_currency"):
 		currency = str(acm_lines[0].get("cpp_currency"))
 
+	prod = (
+		merged.get("acm_panel_production_geometry_metrics")
+		if isinstance(merged.get("acm_panel_production_geometry_metrics"), dict)
+		else {}
+	)
+	path_status = str(
+		geom.get("path_measurement_status")
+		or prod.get("measurement_status")
+		or merged.get("acm_path_quantity_status")
+		or ""
+	)
+	if path_status == "unavailable":
+		warnings.append("quantity_unavailable")
+		# Path quantities missing — keep final/offer blocked even if other gates cleared later.
+		if "final_price_unavailable" not in blockers:
+			blockers.append("final_price_unavailable")
+		if "offer_ferm_unavailable" not in blockers:
+			blockers.append("offer_ferm_unavailable")
+		authority = {
+			**authority,
+			"final_eligibility": False,
+			"offer_eligibility": False,
+			"execution_eligibility": False,
+		}
+	if path_status == "proxy_rectangular":
+		warnings.append("cut_v_quantity_source=proxy_rectangular")
+
 	return {
 		"status": authority.get("status") or "unavailable",
 		"currency": currency,
@@ -340,11 +367,19 @@ def _build_acm_panel_commercial_preview(
 			"face_area_m2": geom.get("commercial_face_area_m2") or merged.get("commercial_face_area_m2"),
 			"cut_length_m": geom.get("commercial_cut_length_m") or merged.get("commercial_cut_length_m"),
 			"fold_length_m": geom.get("commercial_fold_length_m") or merged.get("commercial_fold_length_m"),
+			"v_groove_l1_ml": geom.get("v_groove_l1_ml") or prod.get("total_v_groove_l1_ml"),
+			"v_groove_l2_ml": geom.get("v_groove_l2_ml") or prod.get("total_v_groove_l2_ml"),
+			"v_groove_total_ml": geom.get("v_groove_total_ml") or prod.get("total_v_groove_ml"),
 			"assembly_exterior_perimeter_m": geom.get("assembly_exterior_perimeter_m"),
 			"panel_count": geom.get("panel_count"),
 			"joint_count": geom.get("joint_count"),
 			"envelope_ignored_for_multi_panel": geom.get("envelope_ignored_for_multi_panel"),
+			"path_measurement_status": path_status or None,
+			"path_measurement_source": geom.get("path_measurement_source")
+			or prod.get("measurement_source")
+			or merged.get("acm_path_quantity_source"),
 		},
+		"production_geometry_metrics": prod or None,
 		"material_reference": {
 			"preferred_sku": "MAT-ACM-BOND-3MM",
 			"legacy_alias": "MAT-ACP-3MM",

@@ -1,6 +1,8 @@
-"""AcmPanel commercial geometry adapter (Slice C).
+"""AcmPanel commercial geometry adapter (Slice C + production metrics).
 
-Face area from assembly_*; cut/fold from sum of panel perimeters.
+Face area from assembly_*.
+CUT/V quantities from production geometry metrics (measured DXF) or
+explicit single-fold rectangular proxy — never silent double-fold perimeter.
 Never remaps panel_width_mm/panel_height_mm to assembly dimensions.
 """
 
@@ -13,7 +15,6 @@ from services.acm_assembly_extent import (
     inject_assembly_extent_keys,
     read_panels_for_assembly_extent,
 )
-from services.acm_quote_input_helpers import _fold_length_mm
 
 ACM_COMMERCIAL_GEOMETRY_VERSION = "acm_commercial_geometry_v1"
 
@@ -144,10 +145,8 @@ def compute_acm_commercial_geometry(
     fold_sides = _read_fold_sides(payload, acm_instance)
     return_depth = _read_return_depth_mm(payload, acm_instance)
 
+    # Face / assembly extent only — CUT/V resolved by production metrics (measured|proxy|unavailable).
     commercial_face_area_m2: Optional[float] = None
-    commercial_cut_length_m: Optional[float] = None
-    commercial_fold_length_m: Optional[float] = None
-    commercial_return_strip_area_m2: Optional[float] = None
     assembly_exterior_perimeter_m: Optional[float] = None
     mode = "none"
 
@@ -157,29 +156,12 @@ def compute_acm_commercial_geometry(
 
     if len(valid_panels) >= 2:
         mode = "multi_panel"
-        cut = 0.0
-        fold = 0.0
-        for pw, ph in valid_panels:
-            cut += 2.0 * (pw + ph) / 1000.0
-            fold_mm = _fold_length_mm(pw, ph, fold_sides)
-            if fold_mm is None:
-                warnings.append("invalid_fold_sides_for_panel")
-                continue
-            fold += fold_mm / 1000.0
-        commercial_cut_length_m = round(cut, 6)
-        commercial_fold_length_m = round(fold, 6)
-        if return_depth > 0 and commercial_fold_length_m is not None:
-            commercial_return_strip_area_m2 = round(
-                commercial_fold_length_m * (return_depth / 1000.0), 6
-            )
         if (
             commercial_face_area_m2 is not None
             and envelope_w is not None
             and abs((envelope_w * (ah or 0)) / 1_000_000.0 - commercial_face_area_m2) > 1e-6
         ):
-            warnings.append(
-                "envelope_not_used_for_commercial_face_area"
-            )
+            warnings.append("envelope_not_used_for_commercial_face_area")
     elif len(valid_panels) == 1:
         mode = "single_panel"
         pw, ph = valid_panels[0]
@@ -187,26 +169,9 @@ def compute_acm_commercial_geometry(
             commercial_face_area_m2 = round((pw * ph) / 1_000_000.0, 6)
             aw = pw
             ah = ph
-        commercial_cut_length_m = round(2.0 * (pw + ph) / 1000.0, 6)
-        fold_mm = _fold_length_mm(pw, ph, fold_sides)
-        if fold_mm is not None:
-            commercial_fold_length_m = round(fold_mm / 1000.0, 6)
-            if return_depth > 0:
-                commercial_return_strip_area_m2 = round(
-                    commercial_fold_length_m * (return_depth / 1000.0), 6
-                )
     elif aw is not None and ah is not None:
-        # Fallback: assembly only (no panel list) — cut/fold from assembly exterior with warning
         mode = "assembly_fallback"
-        warnings.append("missing_panel_list_cut_fold_from_assembly_exterior")
-        commercial_cut_length_m = assembly_exterior_perimeter_m
-        fold_mm = _fold_length_mm(aw, ah, fold_sides)
-        if fold_mm is not None:
-            commercial_fold_length_m = round(fold_mm / 1000.0, 6)
-            if return_depth > 0:
-                commercial_return_strip_area_m2 = round(
-                    commercial_fold_length_m * (return_depth / 1000.0), 6
-                )
+        warnings.append("missing_panel_list_assembly_face_only")
 
     joint_count = 0
     if isinstance(acm_instance, Mapping):
@@ -231,9 +196,6 @@ def compute_acm_commercial_geometry(
         "panel_count": len(valid_panels),
         "joint_count": joint_count,
         "commercial_face_area_m2": commercial_face_area_m2,
-        "commercial_cut_length_m": commercial_cut_length_m,
-        "commercial_fold_length_m": commercial_fold_length_m,
-        "commercial_return_strip_area_m2": commercial_return_strip_area_m2,
         "assembly_exterior_perimeter_m": assembly_exterior_perimeter_m,
         "return_depth_mm": return_depth,
         "fold_sides": fold_sides,
@@ -249,7 +211,10 @@ def apply_acm_commercial_geometry(payload: MutableMapping[str, Any]) -> list[str
     """Mutate payload: set commercial_* and alias CPP quantity keys. Returns warnings.
 
     Does not overwrite panel_width_mm / panel_height_mm with assembly dims.
+    CUT/V come from production metrics (measured or gated proxy), not universal perimeter.
     """
+    from services.acm_production_geometry_metrics import apply_production_metrics_to_commercial_payload
+
     geom = compute_acm_commercial_geometry(payload)
     warnings = list(geom.get("warnings") or [])
 
@@ -257,6 +222,27 @@ def apply_acm_commercial_geometry(payload: MutableMapping[str, Any]) -> list[str
         payload["assembly_width_mm"] = geom["assembly_width_mm"]
     if geom.get("assembly_height_mm") is not None:
         payload["assembly_height_mm"] = geom["assembly_height_mm"]
+
+    # Clear legacy derive perimeter/fold before metrics resolve (avoid silent stale proxy).
+    for key in (
+        "panel_perimeter_m",
+        "fold_length_m",
+        "commercial_cut_length_m",
+        "commercial_fold_length_m",
+        "return_strip_area_m2",
+        "commercial_return_strip_area_m2",
+    ):
+        payload.pop(key, None)
+
+    metrics = apply_production_metrics_to_commercial_payload(
+        payload,
+        commercial_face_area_m2=geom.get("commercial_face_area_m2"),
+        return_depth_mm=float(geom.get("return_depth_mm") or 60.0),
+    )
+    warnings.extend(list(metrics.get("warnings") or []))
+
+    if geom.get("assembly_exterior_perimeter_m") is not None:
+        payload["assembly_exterior_perimeter_m"] = geom["assembly_exterior_perimeter_m"]
 
     payload["acm_commercial_geometry"] = {
         k: geom[k]
@@ -270,31 +256,29 @@ def apply_acm_commercial_geometry(payload: MutableMapping[str, Any]) -> list[str
             "panel_count",
             "joint_count",
             "commercial_face_area_m2",
-            "commercial_cut_length_m",
-            "commercial_fold_length_m",
-            "commercial_return_strip_area_m2",
             "assembly_exterior_perimeter_m",
             "envelope_ignored_for_multi_panel",
         )
         if k in geom
     }
-
-    # Explicit commercial keys
-    if geom.get("commercial_face_area_m2") is not None:
-        payload["commercial_face_area_m2"] = geom["commercial_face_area_m2"]
-        # CPP quantity_paths still read panel_area_m2 — alias without remapping panel dims
-        payload["panel_area_m2"] = geom["commercial_face_area_m2"]
-    if geom.get("commercial_cut_length_m") is not None:
-        payload["commercial_cut_length_m"] = geom["commercial_cut_length_m"]
-        payload["panel_perimeter_m"] = geom["commercial_cut_length_m"]
-    if geom.get("commercial_fold_length_m") is not None:
-        payload["commercial_fold_length_m"] = geom["commercial_fold_length_m"]
-        payload["fold_length_m"] = geom["commercial_fold_length_m"]
-    if geom.get("commercial_return_strip_area_m2") is not None:
-        payload["commercial_return_strip_area_m2"] = geom["commercial_return_strip_area_m2"]
-        payload["return_strip_area_m2"] = geom["commercial_return_strip_area_m2"]
-    if geom.get("assembly_exterior_perimeter_m") is not None:
-        payload["assembly_exterior_perimeter_m"] = geom["assembly_exterior_perimeter_m"]
+    payload["acm_commercial_geometry"]["commercial_cut_length_m"] = payload.get(
+        "commercial_cut_length_m"
+    )
+    payload["acm_commercial_geometry"]["commercial_fold_length_m"] = payload.get(
+        "commercial_fold_length_m"
+    )
+    payload["acm_commercial_geometry"]["commercial_return_strip_area_m2"] = payload.get(
+        "commercial_return_strip_area_m2"
+    )
+    payload["acm_commercial_geometry"]["path_measurement_status"] = metrics.get(
+        "measurement_status"
+    )
+    payload["acm_commercial_geometry"]["path_measurement_source"] = metrics.get(
+        "measurement_source"
+    )
+    payload["acm_commercial_geometry"]["v_groove_l1_ml"] = metrics.get("total_v_groove_l1_ml")
+    payload["acm_commercial_geometry"]["v_groove_l2_ml"] = metrics.get("total_v_groove_l2_ml")
+    payload["acm_commercial_geometry"]["v_groove_total_ml"] = metrics.get("total_v_groove_ml")
 
     payload["acm_commercial_geometry_version"] = ACM_COMMERCIAL_GEOMETRY_VERSION
     if warnings:

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   acmPanelPreviewIsVisible,
   formatAcmPanelMmPair,
+  formatAcmPanelPathSource,
   formatAcmPanelQty,
   humanizeAcmPanelPreviewWarning,
 } from "./acmPanelCommercialPreviewDisplay";
@@ -33,5 +34,11 @@ describe("acmPanelCommercialPreviewDisplay", () => {
         lines: [{ code: "acm_panel_cut" }],
       }),
     ).toBe(true);
+  });
+
+  it("formats path quantity source", () => {
+    expect(formatAcmPanelPathSource("measured", "imported_dxf")).toContain("măsurat");
+    expect(formatAcmPanelPathSource("proxy_rectangular", "proxy_rectangular")).toContain("proxy");
+    expect(formatAcmPanelPathSource("unavailable", "unavailable")).toContain("indisponibil");
   });
 });

@@ -53,7 +53,27 @@ const WARNING_LABELS: Record<string, string> = {
   final_price_unavailable: "Preț final indisponibil",
   offer_ferm_unavailable: "Ofertă fermă indisponibilă",
   execution_blocked: "Execution blocat",
+  quantity_unavailable: "Cantități CUT/V indisponibile — lipsește geometrie măsurată",
+  "cut_v_quantity_source=proxy_rectangular": "CUT/V din proxy rectangular (estimare, nu măsurare DXF)",
+  double_fold_proxy_forbidden: "Double-fold: proxy rectangular interzis",
+  l2_active_proxy_forbidden: "L2 activ: proxy rectangular interzis",
 };
+
+export function formatAcmPanelPathSource(
+  status: string | null | undefined,
+  source: string | null | undefined,
+): string | null {
+  const s = (status || source || "").trim();
+  if (!s) return null;
+  if (s === "measured" || source === "imported_dxf") return "Sursă cantități: măsurat (DXF)";
+  if (s === "proxy_rectangular" || source === "proxy_rectangular") {
+    return "Sursă cantități: proxy rectangular (estimare)";
+  }
+  if (s === "unavailable" || source === "unavailable") {
+    return "Sursă cantități: indisponibil";
+  }
+  return `Sursă cantități: ${s}`;
+}
 
 export function humanizeAcmPanelPreviewWarning(code: string): string {
   const key = code.replace(/^acm_panel:/, "");

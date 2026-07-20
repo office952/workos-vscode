@@ -1,4 +1,4 @@
-"""AcmPanel commercial geometry adapter — Slice C contract."""
+"""AcmPanel commercial geometry — face/assembly + production metrics wiring."""
 
 from services.acm_commercial_geometry import (
     apply_acm_commercial_geometry,
@@ -8,7 +8,7 @@ from services.acm_commercial_geometry import (
 from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
 
 
-def _fixture_payload() -> dict:
+def _fixture_payload(*, fold_count: int = 1, l2_mm: float = 0.0) -> dict:
     return {
         "finish_setup": {
             "acm_panel_instance": {
@@ -45,7 +45,9 @@ def _fixture_payload() -> dict:
                 },
                 "configuration": {
                     "finished_depth_mm": 60,
-                    "fold_count": 2,
+                    "fold_count": fold_count,
+                    "l1_mm": 60,
+                    "l2_mm": l2_mm,
                     "field_authority": {
                         "fold_count": "catalog_default",
                         "l1_mm": "catalog_default",
@@ -91,22 +93,28 @@ def test_multi_panel_face_area_from_assembly_not_envelope():
     assert geom["assembly_width_mm"] == 2000
     assert geom["assembly_height_mm"] == 350
     assert geom["commercial_face_area_m2"] == 0.7
-    assert geom["commercial_cut_length_m"] == 5.4
-    assert geom["commercial_fold_length_m"] == 5.4
     assert geom["assembly_exterior_perimeter_m"] == 4.7
     assert geom["panel_count"] == 2
     assert geom["mode"] == "multi_panel"
 
 
-def test_merge_aliases_cpp_keys_without_remapping_panel_dims():
-    merged = merge_acm_boxed_mounting_derived_fields(_fixture_payload())
+def test_merge_single_fold_proxy_aliases_cpp_keys():
+    merged = merge_acm_boxed_mounting_derived_fields(_fixture_payload(fold_count=1, l2_mm=0))
     assert merged["panel_width_mm"] == 1000
     assert merged["panel_height_mm"] == 350
     assert merged["assembly_width_mm"] == 2000
     assert merged["panel_area_m2"] == 0.7
     assert merged["panel_perimeter_m"] == 5.4
     assert merged["fold_length_m"] == 5.4
-    assert abs(merged["return_strip_area_m2"] - 0.324) < 1e-6
+    assert merged["acm_path_quantity_status"] == "proxy_rectangular"
+
+
+def test_merge_double_fold_clears_cut_v_proxy():
+    merged = merge_acm_boxed_mounting_derived_fields(_fixture_payload(fold_count=2, l2_mm=28))
+    assert merged["panel_area_m2"] == 0.7
+    assert merged.get("panel_perimeter_m") is None
+    assert merged.get("fold_length_m") is None
+    assert merged["acm_path_quantity_status"] == "unavailable"
 
 
 def test_apply_does_not_overwrite_panel_dims_with_assembly():
@@ -141,7 +149,12 @@ def test_single_panel_parity():
                     ],
                     "joints": [],
                 },
-                "configuration": {"finished_depth_mm": 60},
+                "configuration": {
+                    "finished_depth_mm": 60,
+                    "fold_count": 1,
+                    "l1_mm": 60,
+                    "l2_mm": 0,
+                },
             },
             "mounting_solution": {
                 "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
@@ -158,6 +171,7 @@ def test_single_panel_parity():
     assert merged["panel_area_m2"] == 0.96
     assert merged["panel_perimeter_m"] == 4.0
     assert merged["fold_length_m"] == 4.0
+    assert merged["acm_path_quantity_status"] == "proxy_rectangular"
 
 
 def test_authority_summary_fixture_provisional_with_warnings():
@@ -184,7 +198,11 @@ def test_assembly_fallback_warns_when_panel_list_missing():
                 "technical_configuration_status": "proposed",
                 "composition_status": "unconfirmed",
                 "geometry": {"width_mm": 1000, "height_mm": 350, "panels": [], "joints": []},
-                "configuration": {"finished_depth_mm": 60},
+                "configuration": {
+                    "finished_depth_mm": 60,
+                    "fold_count": 1,
+                    "l2_mm": 0,
+                },
             },
             "mounting_solution": {
                 "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
@@ -200,19 +218,4 @@ def test_assembly_fallback_warns_when_panel_list_missing():
     geom = compute_acm_commercial_geometry(payload)
     assert geom["commercial_face_area_m2"] == 0.7
     assert geom["mode"] == "assembly_fallback"
-    assert geom["commercial_cut_length_m"] == 4.7
-    assert "missing_panel_list_cut_fold_from_assembly_exterior" in geom["warnings"]
-
-
-def test_no_hourly_units_in_cpp_rate_contract_codes():
-    """Guard: known acm_* commercial codes must not be EUR/hour (registry contract)."""
-    known = {
-        "acm_panel_cut": "ml",
-        "acm_v_groove": "ml",
-        "acm_panel_face_material": "m2",
-        "acm_return_strip_material": "m2",
-        "acm_boxed_assembly": "m2",
-        "acm_fasteners": "set",
-    }
-    assert "hour" not in " ".join(known.values())
-    assert len(known) == 6
+    assert "missing_panel_list_assembly_face_only" in geom["warnings"]

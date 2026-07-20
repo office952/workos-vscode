@@ -37,11 +37,17 @@ export type AcmPanelCommercialPreview = {
     face_area_m2?: number | null;
     cut_length_m?: number | null;
     fold_length_m?: number | null;
+    v_groove_l1_ml?: number | null;
+    v_groove_l2_ml?: number | null;
+    v_groove_total_ml?: number | null;
     assembly_exterior_perimeter_m?: number | null;
     panel_count?: number | null;
     joint_count?: number | null;
     envelope_ignored_for_multi_panel?: boolean | null;
+    path_measurement_status?: string | null;
+    path_measurement_source?: string | null;
   } | null;
+  production_geometry_metrics?: Record<string, unknown> | null;
   material_reference?: {
     preferred_sku?: string | null;
     legacy_alias?: string | null;
