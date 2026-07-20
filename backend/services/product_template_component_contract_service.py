@@ -23,9 +23,39 @@ _INSTANCE_SCHEMA_HINTS: dict[str, list[str]] = {
         "component_placements",
         "acm_panel_instance",
     ],
+    "TPL-VOLUMETRIC-FACE_v1": ["letter_group_instances.face"],
+    "TPL-VOLUMETRIC-BACK_v1": ["letter_group_instances.back"],
+    "TPL-VOLUMETRIC-LED_v1": ["letter_group_instances.lighting"],
+    "TPL-VOLUMETRIC-FINISH_v1": ["letter_group_instances.finish"],
     "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": ["acm_panel_component_instance_v1"],
     "TPL-VOLUM-ALUMINIU_v1": ["letter_group_instances.sidewall"],
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": ["component_placements.mounting"],
+}
+
+# Expected geometry inputs only — WorkOS never parses SVG/DWG/DXF.
+_GEOMETRY_INPUT_HINTS: dict[str, list[str]] = {
+    "TPL-VOLUMETRIC-LETTERS_v2": [
+        "width_mm",
+        "height_mm",
+        "depth_mm",
+        "letter_face_area_m2",
+        "letter_perimeter_m",
+        "letter_count",
+        "component_placements",
+        "external_artwork_analysis_ref",
+        "geometry_provenance",
+    ],
+    "TPL-VOLUMETRIC-FACE_v1": [
+        "width_mm",
+        "height_mm",
+        "letter_face_area_m2",
+        "external_artwork_analysis_ref",
+        "geometry_provenance",
+    ],
+    "TPL-VOLUMETRIC-BACK_v1": ["letter_face_area_m2", "backing_mode", "backing_thickness_mm"],
+    "TPL-VOLUM-ALUMINIU_v1": ["letter_perimeter_m", "return_depth_mm", "depth_mm"],
+    "TPL-VOLUMETRIC-LED_v1": ["led_module_count", "selected_psu_watts", "lighting_system_type"],
+    "TPL-VOLUMETRIC-FINISH_v1": ["mounting_template_area_m2", "letter_count"],
 }
 
 
@@ -131,6 +161,8 @@ class ProductTemplateComponentContractService:
             used_by=sorted(used_by, key=lambda e: e.parent_template_code),
             children=sorted(children, key=lambda e: e.module_template_code),
             instance_schema_hints=_INSTANCE_SCHEMA_HINTS.get(code, []),
+            geometry_input_hints=_GEOMETRY_INPUT_HINTS.get(code, []),
+            geometry_inputs_consume_only=True,
             no_component_templates_table=True,
         )
 

@@ -50,7 +50,11 @@ DOSSIER_COMPONENT_MINI_MODULE: dict[str, str] = {
 
 # Child template → mini-module code
 CHILD_TEMPLATE_MINI_MODULE: dict[str, str] = {
+    "TPL-VOLUMETRIC-FACE_v1": "debitare_fata",
+    "TPL-VOLUMETRIC-BACK_v1": "debitare_spate",
     "TPL-VOLUM-ALUMINIU_v1": "modelare_cant",
+    "TPL-VOLUMETRIC-LED_v1": "sistem_led",
+    "TPL-VOLUMETRIC-FINISH_v1": "finisaje",
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": "structura_suport",
     "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "structura_suport",
 }

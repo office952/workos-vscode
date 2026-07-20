@@ -505,7 +505,8 @@ def _volum_aluminum_template_payload() -> dict[str, Any]:
         "estimated_hours": 3.0,
         "base_labor_rate": 80.0,
         "base_margin_pct": 40.0,
-        "active": True,
+        # Required child stays inactive until owner GO — publication blocker must remain honest.
+        "active": False,
         "notes": "Modul separat extras din TPL-VOLUMETRIC-LETTERS_v2 pentru volum aluminiu / cant profil lateral.",
     }
 
@@ -838,8 +839,14 @@ async def seed_tpl_volumetric_letters_v2() -> dict[str, Any]:
             volum_aluminum_template_action = "created"
         else:
             volum_aluminum_template = volum_aluminum_existing
+            # Never auto-activate Aluminiu on re-seed; preserve owner-inactive blocker.
+            prior_active = volum_aluminum_template.active
             for key, value in volum_aluminum_template_payload.items():
+                if key == "active":
+                    continue
                 setattr(volum_aluminum_template, key, value)
+            if prior_active is not False:
+                volum_aluminum_template.active = False
             volum_aluminum_template_action = "updated"
 
         volum_aluminum_dossier_payload = _volum_aluminum_dossier_payload(volum_aluminum_template.id)

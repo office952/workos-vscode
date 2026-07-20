@@ -48,6 +48,8 @@ class ProductTemplateComponentContractView(BaseModel):
     used_by: list[ComponentContractUsedByEdge] = Field(default_factory=list)
     children: list[ComponentContractChildEdge] = Field(default_factory=list)
     instance_schema_hints: list[str] = Field(default_factory=list)
+    geometry_input_hints: list[str] = Field(default_factory=list)
+    geometry_inputs_consume_only: bool = True
     no_component_templates_table: bool = True
     contract_version: str = "product_template_component_contract_v1"
 
