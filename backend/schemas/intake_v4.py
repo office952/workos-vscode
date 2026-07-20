@@ -263,6 +263,11 @@ class IntakeV4FinishSetup(BaseModel):
     # Nested multi-panel ACM/ACP assembly (JSON document — no DB migration).
     # Analyzer may write PROPOSED; only operator CONFIRMED is PD/Aggregate authority.
     segmented_background: dict[str, Any] | None = None
+    # Generic ACM panel component instance (reusable Component Template truth).
+    # finish_setup remains Intake transport; identity lives on acm_panel_instance.
+    acm_panel_instance: dict[str, Any] | None = None
+    # Explicit domain write intent — omit/accidental ≠ clear; no blind SUPPORT preserve.
+    acm_panel_domain_action: Literal["preserve", "upsert", "clear"] | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):

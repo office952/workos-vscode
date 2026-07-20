@@ -38,8 +38,13 @@ describe("support panel confirmation path (Confirm All parity)", () => {
     });
 
     expect(pathResult.ok).toBe(true);
+    expect(pathResult.finishPatch?.segmented_background).toBeTruthy();
     expect(pathResult.segmentedProposal).not.toBeNull();
     expect(pathResult.segmentedProposal?.status).toBe("PROPOSED");
     expect((pathResult.segmentedProposal?.panels ?? []).length).toBeGreaterThanOrEqual(2);
+    const selection = pathResult.finishPatch?.svg_support_selection as { status?: string };
+    expect(selection?.status).toBe("proposed");
+    expect(pathResult.instance?.composition_status).toBe("unconfirmed");
+    expect(pathResult.instance?.association_status).toBe("proposed");
   });
 });

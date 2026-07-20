@@ -89,7 +89,11 @@ export interface AlucobondPanelGeometry {
   geometry_hash: string;
 }
 
-export type SvgSupportSelectionStatus = "none" | "confirmed" | "reconfirm_required";
+export type SvgSupportSelectionStatus =
+  | "none"
+  | "proposed"
+  | "confirmed"
+  | "reconfirm_required";
 
 export interface SvgSupportSelectionState {
   schema: "svg_support_selection_v1";
@@ -106,4 +110,9 @@ export interface SvgSupportSelectionState {
   candidate_explanation: string[];
   unit_ambiguity: boolean;
   confirmed_at: string | null;
+  /** Optional authority axes — catalog defaults are never operator_confirmed. */
+  field_authority?: Record<string, string>;
+  field_class?: Record<string, string>;
+  association_status?: "unconfirmed" | "proposed" | "confirmed" | "unknown";
+  technical_configuration_status?: "unconfirmed" | "proposed" | "confirmed" | "unknown";
 }

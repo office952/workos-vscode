@@ -391,18 +391,54 @@ def _build_canonical_values(
                 "detection": segmented.get("detection"),
                 "operator_confirmed": False,
                 "downstream_effects": False,
+                "host_component_template_code": segmented.get("host_component_template_code"),
+                "panels": segmented.get("panels") or [],
+                "joints": segmented.get("joints") or [],
+                "assembly_dimensions": segmented.get("assembly_dimensions"),
+                "element_bindings": segmented.get("element_bindings") or [],
+                "meta": segmented.get("meta") if isinstance(segmented.get("meta"), dict) else {},
                 "materials": [],
                 "processes": [],
                 "task_rules": [],
                 "future_task_intent_authority": "INFORMATIONAL_ONLY",
             }
 
-    # Operator-confirmed SVG Alucobond panel selection (typed; inactive ⇒ no leakage).
+    # Generic ACM panel instance (reusable component — not letters-only).
+    # Prefer top-level; fall back to nested selection/mounting embeds (transport adapters).
+    acm_instance = finish_for_pd.get("acm_panel_instance") or finish.get("acm_panel_instance")
+    if not isinstance(acm_instance, dict):
+        sel_probe = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
+        if isinstance(sel_probe, dict) and isinstance(sel_probe.get("acm_panel_instance"), dict):
+            acm_instance = sel_probe.get("acm_panel_instance")
+        else:
+            ms = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
+            cfg = ms.get("configuration") if isinstance(ms, dict) else None
+            if isinstance(cfg, dict) and isinstance(cfg.get("acm_panel_instance"), dict):
+                acm_instance = cfg.get("acm_panel_instance")
+    if isinstance(acm_instance, dict) and acm_instance.get("schema") == "acm_panel_component_instance_v1":
+        values["acm_panel_instance"] = acm_instance
+        values["acm_panel_association_status"] = acm_instance.get("association_status")
+        values["acm_panel_technical_configuration_status"] = acm_instance.get(
+            "technical_configuration_status"
+        )
+        values["acm_panel_composition_status"] = acm_instance.get("composition_status")
+        values["acm_panel_capabilities"] = acm_instance.get("capabilities")
+        values["support_type"] = "alucobond_cased"
+        # Active for observability when association proposed/confirmed — catalog_default ≠ confirmed truth.
+        values["acp_panel_active"] = str(acm_instance.get("association_status") or "") in {
+            "proposed",
+            "confirmed",
+        }
+        values["acp_panel_technical_confirmed"] = (
+            str(acm_instance.get("technical_configuration_status") or "") == "confirmed"
+        )
+
+    # SVG Alucobond selection (typed). proposed = association only; confirmed = operator technical truth.
     selection = finish_for_pd.get("svg_support_selection") or finish.get("svg_support_selection")
     if isinstance(selection, dict) and selection.get("schema") == "svg_support_selection_v1":
         status = str(selection.get("status") or "").strip()
         role = str(selection.get("role") or "").strip()
-        if status == "confirmed" and role == "ALUCOBOND_CASED_PANEL":
+        if role == "ALUCOBOND_CASED_PANEL" and status in {"proposed", "confirmed"}:
             values["svg_support_selection"] = selection
             if selection.get("svg_support_element_id"):
                 values["svg_support_element_id"] = selection.get("svg_support_element_id")
@@ -412,11 +448,18 @@ def _build_canonical_values(
             casing = selection.get("casing_profile")
             if isinstance(casing, dict):
                 values["casing_profile"] = casing
+                # Catalog defaults must not be treated as operator-confirmed technical truth.
+                auth = selection.get("field_authority") if isinstance(selection.get("field_authority"), dict) else {}
+                values["casing_profile_field_authority"] = auth
             if selection.get("service_corner"):
                 values["service_corner"] = selection.get("service_corner")
             values["internal_frame_enabled"] = bool(selection.get("internal_frame_enabled"))
             values["support_type"] = "alucobond_cased"
             values["acp_panel_active"] = True
+            values["acp_panel_selection_status"] = status
+            values["acp_panel_technical_confirmed"] = status == "confirmed" and str(
+                selection.get("technical_configuration_status") or ""
+            ) in {"confirmed", ""}
             # Nested typed frame from mounting_solution (Shared RO) wins over bare boolean.
             mounting = finish_for_pd.get("mounting_solution") or finish.get("mounting_solution")
             if isinstance(mounting, dict):

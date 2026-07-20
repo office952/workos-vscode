@@ -343,6 +343,8 @@ def hydrate_bindings_from_legacy_support(finish: dict[str, Any]) -> list[dict[st
     status_raw = str(selection.get("status") or "")
     if status_raw == "confirmed" and selection.get("role") == "ALUCOBOND_CASED_PANEL":
         status = BINDING_STATUS_CONFIRMED
+    elif status_raw == "proposed" and selection.get("role") == "ALUCOBOND_CASED_PANEL":
+        status = BINDING_STATUS_DRAFT
     elif status_raw == "reconfirm_required":
         status = BINDING_STATUS_RECONFIRM
     else:

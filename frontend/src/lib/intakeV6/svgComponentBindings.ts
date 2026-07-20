@@ -148,7 +148,7 @@ export function bindingFromSupportSelection(
       ? "RECONFIRM_REQUIRED"
       : selection.status === "confirmed"
         ? "CONFIRMED"
-        : "DRAFT";
+        : "DRAFT"; // proposed association → DRAFT (not CONFIRMED)
   if (selection.role && selection.role !== "ALUCOBOND_CASED_PANEL" && status === "CONFIRMED") {
     return null;
   }

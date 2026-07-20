@@ -1,14 +1,14 @@
 /**
- * Associate primary closed-contour geometry with live ACM support component.
- * Used from canonical layer role Contur suport — not a parallel UI SoT.
+ * Associate primary closed-contour geometry with ACM panel component (Intake adapter).
+ * Uses proposed association/technical — not operator-confirmed selection.
  */
 
 import type { ClosedContourCandidate, SvgAnalysisReport } from "@/lib/svgAnalyzer";
+import { emptySvgSupportSelection } from "@/lib/svgAnalyzer";
 import {
-  buildAcmMountingSolutionFromSelection,
-  confirmAlucobondSelection,
-  emptySvgSupportSelection,
-} from "@/lib/svgAnalyzer";
+  proposeAlucobondSelection,
+  buildAcmMountingSolutionProposed,
+} from "./acmPanel/instantiate";
 import {
   bindingFromSupportSelection,
   readSvgComponentBindings,
@@ -28,6 +28,7 @@ export type SupportContourPersistPatch = {
   svg_component_bindings: SvgComponentBinding[];
   mounting_solution: Record<string, unknown> | null;
   power_supply_service_corner?: string | null;
+  acm_panel_domain_action?: "upsert" | "clear";
 };
 
 export function buildAssociatePrimarySupportContourPatch(args: {
@@ -45,26 +46,22 @@ export function buildAssociatePrimarySupportContourPatch(args: {
       contourId: null,
     };
   }
-  const result = confirmAlucobondSelection({
+  const result = proposeAlucobondSelection({
     candidate: target,
     svg_source_hash: args.svgSourceHash ?? "",
-    fold_count: 2,
-    l1_mm: 60,
-    l2_mm: 25,
-    service_corner: null,
-    internal_frame_enabled: false,
     unit_ambiguity: Boolean(args.report.closedContourCandidates?.unit_ambiguity),
   });
   if (result.blockers.length) {
     return { patch: null, blockers: result.blockers, contourId: target.contour_id };
   }
-  const supportBinding = bindingFromSupportSelection(result.selection);
+  const supportBinding = bindingFromSupportSelection(result.selection as never);
   const prev = readSvgComponentBindings(args.finishSetup);
   return {
     patch: {
-      svg_support_selection: result.selection,
+      acm_panel_domain_action: "upsert",
+      svg_support_selection: result.selection as never,
       svg_component_bindings: supportBinding ? upsertBinding(prev, supportBinding) : prev,
-      mounting_solution: buildAcmMountingSolutionFromSelection(result.selection),
+      mounting_solution: buildAcmMountingSolutionProposed(result.selection as never),
       power_supply_service_corner: result.selection.service_corner,
     },
     blockers: [],
@@ -79,6 +76,7 @@ export function buildClearSupportContourPatch(args: {
   const code = args.componentTemplateCode ?? "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
   const prev = readSvgComponentBindings(args.finishSetup);
   return {
+    acm_panel_domain_action: "clear",
     svg_support_selection: emptySvgSupportSelection(),
     svg_component_bindings: prev.filter((b) => b.component_template_code !== code),
     mounting_solution: null,

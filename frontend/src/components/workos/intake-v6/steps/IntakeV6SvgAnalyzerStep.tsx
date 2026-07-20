@@ -42,6 +42,7 @@ import {
 	buildSupportPanelConfirmationPath,
 	confirmationIncludesConfirmedSupportPanel,
 } from "@/lib/intakeV6/intakeV6SupportPanelConfirmationPath";
+import { mergeLetterLogoBindingsPreservingAcmPanelDomain } from "@/lib/intakeV6/acmPanel";
 import { applyLayerRoleSelection, readSvgSupportSelection } from "@/lib/svgAnalyzer";
 import type { LayerAutoRole } from "@/lib/svgAnalyzer";
 
@@ -113,6 +114,8 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			unknown
 		> | null,
 	);
+	/** Serialize finish PUTs so letter sync cannot race ACM upsert. */
+	const finishPersistChain = useRef(Promise.resolve(true));
 	segmentedBackgroundRef.current =
 		(readSegmentedBackground(finishSetup as Record<string, unknown> | null) as Record<
 			string,
@@ -127,50 +130,76 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				mounting_solution?: Record<string, unknown> | null;
 				power_supply_service_corner?: string | null;
 				segmented_background?: Record<string, unknown> | null;
+				acm_panel_domain_action?: "preserve" | "upsert" | "clear";
+				acm_panel_instance?: Record<string, unknown> | null;
 			},
 			options?: { errorContext?: "support" | "bindings" },
 		): Promise<boolean> => {
-			const prev =
-				(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
-			const next: IntakeV6FinishSetup = {
-				...(prev as IntakeV6FinishSetup),
-			} as IntakeV6FinishSetup;
-			if (patch.svg_support_selection !== undefined) {
-				(next as Record<string, unknown>).svg_support_selection =
-					patch.svg_support_selection;
-			}
-			if (patch.svg_component_bindings !== undefined) {
-				(next as Record<string, unknown>).svg_component_bindings =
-					patch.svg_component_bindings;
-			}
-			if (patch.mounting_solution !== undefined) {
-				(next as Record<string, unknown>).mounting_solution = patch.mounting_solution;
-			}
-			if (patch.power_supply_service_corner !== undefined) {
-				(next as Record<string, unknown>).power_supply_service_corner =
-					patch.power_supply_service_corner;
-			}
-			if (patch.segmented_background !== undefined) {
-				(next as Record<string, unknown>).segmented_background = patch.segmented_background;
-				segmentedBackgroundRef.current = patch.segmented_background;
-			} else if (segmentedBackgroundRef.current != null) {
-				// Preserve proposal/confirm across letter/logo binding sync races.
-				(next as Record<string, unknown>).segmented_background =
-					segmentedBackgroundRef.current;
-			} else if (prev.segmented_background != null) {
-				(next as Record<string, unknown>).segmented_background = prev.segmented_background;
-			}
-			const saved = await saveFinishSetup(next);
-			if (!saved.ok) {
-				const prefix =
-					options?.errorContext === "support"
-						? "Salvarea Contur suport / ACP a eșuat (FinishSetup). "
-						: "Salvarea asociărilor SVG a eșuat (FinishSetup). ";
-				setSupportAssociateError(`${prefix}${saved.message}`);
-				return false;
-			}
-			setSupportAssociateError(null);
-			return true;
+			const run = async (): Promise<boolean> => {
+				const prev =
+					(payload?.finish_setup as Record<string, unknown> | undefined) ?? {};
+				const next: IntakeV6FinishSetup = {
+					...(prev as IntakeV6FinishSetup),
+				} as IntakeV6FinishSetup;
+				const nextRec = next as Record<string, unknown>;
+				if (patch.svg_support_selection !== undefined) {
+					nextRec.svg_support_selection = patch.svg_support_selection;
+				}
+				if (patch.svg_component_bindings !== undefined) {
+					nextRec.svg_component_bindings = patch.svg_component_bindings;
+				}
+				if (patch.mounting_solution !== undefined) {
+					nextRec.mounting_solution = patch.mounting_solution;
+				}
+				if (patch.power_supply_service_corner !== undefined) {
+					nextRec.power_supply_service_corner = patch.power_supply_service_corner;
+				}
+				if (patch.acm_panel_instance !== undefined) {
+					nextRec.acm_panel_instance = patch.acm_panel_instance;
+				}
+				if (patch.acm_panel_domain_action !== undefined) {
+					nextRec.acm_panel_domain_action = patch.acm_panel_domain_action;
+				} else if (patch.svg_component_bindings !== undefined && patch.svg_support_selection === undefined) {
+					nextRec.acm_panel_domain_action = "preserve";
+				}
+				if (patch.segmented_background !== undefined) {
+					nextRec.segmented_background = patch.segmented_background;
+					segmentedBackgroundRef.current = patch.segmented_background;
+				} else if (segmentedBackgroundRef.current != null) {
+					nextRec.segmented_background = segmentedBackgroundRef.current;
+				} else if (prev.segmented_background != null) {
+					nextRec.segmented_background = prev.segmented_background;
+				}
+				// Preserve ACM shell on bindings-only sync when action=preserve.
+				if (nextRec.acm_panel_domain_action === "preserve") {
+					if (nextRec.svg_support_selection == null && prev.svg_support_selection != null) {
+						nextRec.svg_support_selection = prev.svg_support_selection;
+					}
+					if (nextRec.mounting_solution == null && prev.mounting_solution != null) {
+						nextRec.mounting_solution = prev.mounting_solution;
+					}
+					if (nextRec.acm_panel_instance == null && prev.acm_panel_instance != null) {
+						nextRec.acm_panel_instance = prev.acm_panel_instance;
+					}
+				}
+				const saved = await saveFinishSetup(next);
+				if (!saved.ok) {
+					const prefix =
+						options?.errorContext === "support"
+							? "Salvarea Contur suport / ACP a eșuat (FinishSetup). "
+							: "Salvarea asociărilor SVG a eșuat (FinishSetup). ";
+					setSupportAssociateError(`${prefix}${saved.message}`);
+					return false;
+				}
+				setSupportAssociateError(null);
+				return true;
+			};
+			const queued = finishPersistChain.current.then(run, run);
+			finishPersistChain.current = queued.then(
+				() => true,
+				() => true,
+			);
+			return queued;
 		},
 		[payload?.finish_setup, saveFinishSetup],
 	);
@@ -222,14 +251,8 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						);
 						return;
 					}
-					const supportOk = await persistFinishPatch(path.finishPatch!, {
-						errorContext: "support",
-					});
-					if (!supportOk || !path.segmentedProposal) return;
-					await persistFinishPatch(
-						{ segmented_background: path.segmentedProposal as unknown as Record<string, unknown> },
-						{ errorContext: "support" },
-					);
+					// Atomic single PUT: ACM instance + binding + selection + mounting + segmented.
+					await persistFinishPatch(path.finishPatch!, { errorContext: "support" });
 				})();
 				return;
 			}
@@ -270,9 +293,23 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			if (nextConfirmation.confirmationStatus !== "complete") {
 				return;
 			}
-			lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(letterLogoBindings);
+			const preserved = mergeLetterLogoBindingsPreservingAcmPanelDomain({
+				letterLogoBindings,
+				finishSetup,
+				supportRoleStillConfirmed: confirmationIncludesConfirmedSupportPanel(nextConfirmation),
+			});
+			lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(
+				preserved.svg_component_bindings,
+			);
 			void persistFinishPatch(
-				{ svg_component_bindings: letterLogoBindings },
+				{
+					svg_component_bindings: preserved.svg_component_bindings,
+					svg_support_selection: preserved.svg_support_selection as Record<string, unknown> | undefined,
+					mounting_solution: preserved.mounting_solution as Record<string, unknown> | undefined,
+					acm_panel_instance: preserved.acm_panel_instance as Record<string, unknown> | undefined,
+					segmented_background: preserved.segmented_background as Record<string, unknown> | undefined,
+					acm_panel_domain_action: preserved.acm_panel_domain_action,
+				},
 				{ errorContext: "bindings" },
 			);
 		},
@@ -322,14 +359,8 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 				);
 				return;
 			}
-			const supportOk = await persistFinishPatch(path.finishPatch!, { errorContext: "support" });
-			if (!supportOk) return;
-			if (path.segmentedProposal) {
-				await persistFinishPatch(
-					{ segmented_background: path.segmentedProposal as unknown as Record<string, unknown> },
-					{ errorContext: "support" },
-				);
-			}
+			// Atomic single PUT — no second segmented write, no auto composition confirm.
+			await persistFinishPatch(path.finishPatch!, { errorContext: "support" });
 		})();
 	}, [
 		report,
@@ -341,7 +372,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 		persistFinishPatch,
 	]);
 
-	/** Auto-sync letter/logo bindings when layer roles change — no second confirm button. */
+	/** Auto-sync letter/logo bindings when layer roles change — preserve ACM shell via domain action. */
 	useEffect(() => {
 		if (!confirmation || bindables.length === 0 || state.phase === "persisting") return;
 		const next = buildLayerRoleComponentBindings({
@@ -350,25 +381,36 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			sourceSvgHash: state.localFileHash,
 			previous: componentBindings,
 		});
-		// Never drop SUPPORT_CONTOUR / ACP while syncing letter/logo roles.
-		const supportKept = componentBindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR");
-		const merged = [
-			...next.filter((b) => b.geometry_role !== "SUPPORT_CONTOUR"),
-			...supportKept,
-		];
-		const nextKey = layerRoleBindingsSyncKey(merged);
+		const preserved = mergeLetterLogoBindingsPreservingAcmPanelDomain({
+			letterLogoBindings: next,
+			finishSetup,
+			supportRoleStillConfirmed: confirmationIncludesConfirmedSupportPanel(confirmation),
+		});
+		const nextKey = layerRoleBindingsSyncKey(preserved.svg_component_bindings);
 		const prevKey = layerRoleBindingsSyncKey(componentBindings);
 		if (nextKey === prevKey || nextKey === lastSyncedLayerBindingsKey.current) return;
-		// Backend rejects non-early FinishSetup while layer roles are incomplete.
 		const rolesComplete = confirmation.confirmationStatus === "complete";
-		const hasSupportContour = merged.some((b) => b.geometry_role === "SUPPORT_CONTOUR");
+		const hasSupportContour = preserved.svg_component_bindings.some(
+			(b) => b.geometry_role === "SUPPORT_CONTOUR",
+		);
 		if (!rolesComplete && !hasSupportContour) return;
 		lastSyncedLayerBindingsKey.current = nextKey;
-		void persistFinishPatch({ svg_component_bindings: merged }, { errorContext: "bindings" });
+		void persistFinishPatch(
+			{
+				svg_component_bindings: preserved.svg_component_bindings,
+				svg_support_selection: preserved.svg_support_selection as Record<string, unknown> | undefined,
+				mounting_solution: preserved.mounting_solution as Record<string, unknown> | undefined,
+				acm_panel_instance: preserved.acm_panel_instance as Record<string, unknown> | undefined,
+				segmented_background: preserved.segmented_background as Record<string, unknown> | undefined,
+				acm_panel_domain_action: preserved.acm_panel_domain_action,
+			},
+			{ errorContext: "bindings" },
+		);
 	}, [
 		confirmation,
 		bindables,
 		componentBindings,
+		finishSetup,
 		state.localFileHash,
 		state.phase,
 		persistFinishPatch,

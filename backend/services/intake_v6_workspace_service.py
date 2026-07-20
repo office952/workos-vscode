@@ -1075,6 +1075,24 @@ async def save_product_composition_confirmation_for_workspace(
         "operator_note": operator_note,
         "source": "operator_confirmation_v1",
     }
+    # Sync ACM panel instance composition_status (does not auto-confirm association/technical).
+    finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    if isinstance(finish, dict):
+        acm_codes = {"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"}
+        items_list = confirmed_items if isinstance(confirmed_items, list) else []
+        has_acm = any(
+            isinstance(it, dict) and str(it.get("template_code") or "") in acm_codes for it in items_list
+        )
+        next_comp_status = "confirmed" if (confirmed and has_acm) else "unconfirmed"
+        inst = finish.get("acm_panel_instance")
+        if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+            finish["acm_panel_instance"] = {**inst, "composition_status": next_comp_status}
+        sel = finish.get("svg_support_selection")
+        if isinstance(sel, dict) and isinstance(sel.get("acm_panel_instance"), dict):
+            nested = dict(sel["acm_panel_instance"])
+            nested["composition_status"] = next_comp_status
+            finish["svg_support_selection"] = {**sel, "acm_panel_instance": nested}
+        payload_raw["finish_setup"] = finish
     persist_logo_layer_bindings_from_composition_confirmation(
         payload_raw,
         confirmed=bool(confirmed),
@@ -1252,8 +1270,10 @@ def is_early_svg_component_association(request: IntakeV6FinishSetup) -> bool:
     if isinstance(selection, dict):
         status = str(selection.get("status") or "").strip().lower()
         role = str(selection.get("role") or "").strip().upper()
-        if status in {"confirmed", "draft", "reconfirm_required"} and role == "ALUCOBOND_CASED_PANEL":
+        if status in {"proposed", "confirmed", "draft", "reconfirm_required"} and role == "ALUCOBOND_CASED_PANEL":
             return True
+    if getattr(request, "acm_panel_instance", None):
+        return True
     return False
 
 
@@ -1332,6 +1352,8 @@ async def save_finish_setup_for_intake_v6_workspace(
                 "mounting_solution",
                 "power_supply_service_corner",
                 "segmented_background",
+                "acm_panel_instance",
+                "acm_panel_domain_action",
             ):
                 if req_dump.get(key) is not None:
                     merged[key] = req_dump[key]
@@ -1363,6 +1385,16 @@ async def save_finish_setup_for_intake_v6_workspace(
         payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
     )
     finish_doc = coalesce_segmented_background_for_finish(finish_doc, existing_finish_doc)
+    from services.acm_panel_domain_service import coalesce_acm_panel_domain_for_finish
+
+    layer_setup_raw = (
+        payload_raw.get("layer_role_setup") if isinstance(payload_raw.get("layer_role_setup"), dict) else None
+    )
+    finish_doc = coalesce_acm_panel_domain_for_finish(
+        finish_doc,
+        existing_finish_doc,
+        layer_role_setup=layer_setup_raw,
+    )
 
     try:
         finish_doc = persist_segmented_background_on_finish(finish_doc)

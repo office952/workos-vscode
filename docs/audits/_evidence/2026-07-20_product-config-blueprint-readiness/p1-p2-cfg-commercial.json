@@ -1,0 +1,282 @@
+[
+    {
+        "code":  "IV6-379CEB03",
+        "flags":  "CFG_support_without_SUPPORT_CONTOUR_binding,CFG_segmented_without_SUPPORT_CONTOUR_binding,INFO_segmented_proposed_unconfirmed",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-B30B4A20",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-3A52D29C",
+        "flags":  "P2_logo_as_support,P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-87B98425",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-54B66A17",
+        "flags":  "P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding,CFG_segmented_without_SUPPORT_CONTOUR_binding,INFO_segmented_proposed_unconfirmed",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-1987097A",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-2F4BB68D",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-9B68FD3F",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-A057CA30",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-E5E4D2A5",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-61F1ABBC",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-AE7A20D5",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-E89E2FFF",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-8FA7A26E",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-6C090F29",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-C16A4A25",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-32E96489",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-11514591",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-B6D7E020",
+        "flags":  "P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    },
+    {
+        "code":  "IV6-51330F65",
+        "flags":  "P2_logo_as_support,P1_missing_segmented,P3_phantom_artwork,CFG_support_without_SUPPORT_CONTOUR_binding",
+        "quote_exists":  false,
+        "quote_id":  null,
+        "quote_status":  null,
+        "snapshot_v2":  {
+
+                        },
+        "writes_execution_plan":  false,
+        "v6_order":  {
+
+                     }
+    }
+]
