@@ -1,0 +1,47 @@
+{
+  "golden_single": {
+    "cut": 5.4,
+    "v_l1": 5.4,
+    "v_l2": 0.0,
+    "v_total": 5.4,
+    "status": "measured"
+  },
+  "golden_double": {
+    "cut": 5.499412,
+    "v_l1": 5.4,
+    "v_l2": 4.600004,
+    "v_total": 10.000004,
+    "status": "measured"
+  },
+  "proxy_sample": {
+    "status": "proxy_rectangular",
+    "cut": 5.4,
+    "v": 5.4,
+    "face": 0.7
+  },
+  "iv6_db2f86b7": {
+    "face": 0.7,
+    "cut": null,
+    "v": null,
+    "path_status": "unavailable",
+    "path_source": "unavailable",
+    "preview_status": "provisional_with_warnings",
+    "final": false,
+    "offer": false,
+    "exec": false,
+    "warnings": [
+      "technical_configuration_unconfirmed",
+      "construction_catalog_defaults",
+      "segmentation_proposed",
+      "composition_inconsistent_or_unconfirmed",
+      "double_fold_proxy_forbidden",
+      "l2_active_proxy_forbidden",
+      "proxy_rectangular_not_eligible",
+      "quantity_unavailable",
+      "Envelope contour (1000\u00d7350) nu este overall assembly \u2014 ignorat pentru ansamblu.",
+      "envelope_not_used_for_commercial_face_area",
+      "segmentation_joints_no_commercial_rate"
+    ]
+  },
+  "ok": true
+}
