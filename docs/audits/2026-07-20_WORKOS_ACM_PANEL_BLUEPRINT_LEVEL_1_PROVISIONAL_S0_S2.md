@@ -26,7 +26,7 @@ Build S0–S2 livrat: read model pur + schematic SVG read-only + slot sticky col
 |--|--|
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | HEAD before | `3ac9fb96a3ef8d486abfc21547d43063a560ff6e` |
-| HEAD after | *(vezi §34 după commit)* |
+| Feature commit | `c3267b563e01f10c4490dae02b3a3002a0430dd7` (`c3267b5`) |
 
 ## 4. Capability inventory
 
@@ -206,7 +206,15 @@ Owner accept → confirmări operator pe fixture → L1-C natural. Nu forța L1-
 
 ## 34. Commit
 
-*(completat după git commit)*
+| | |
+|--|--|
+| Full | `c3267b563e01f10c4490dae02b3a3002a0430dd7` |
+| Short | `c3267b5` |
+| Message | `feat(intake-v6): AcmPanel Blueprint L1-P provisional schematic` |
+| Branch | `feature/product-system-active-path-isolation-v1` |
+| Before | `3ac9fb9` |
+| Files | 22 (+3123 / −8) |
+| Tests | 26 blueprint + 35 regression Vitest; runtime `pass: true` |
 
 ## 35. Opinia sinceră
 

@@ -5,6 +5,7 @@
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | HEAD before | `3ac9fb96a3ef8d486abfc21547d43063a560ff6e` (`3ac9fb9`) |
+| Feature commit | `c3267b563e01f10c4490dae02b3a3002a0430dd7` (`c3267b5`) |
 | Mode | L1-P only — no L1-C pretence |
 | Fixture | `IV6-DB2F86B7` |
 
