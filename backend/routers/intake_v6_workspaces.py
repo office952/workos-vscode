@@ -272,6 +272,51 @@ async def upload_workspace_svg_v6(
     )
 
 
+@router.post("/workspaces/{workspace_id}/acm-panel/production-geometry/dxf")
+async def upload_acm_panel_production_geometry_dxf(
+    workspace_id: str,
+    file: UploadFile = File(...),
+    component_instance_id: str = Query(...),
+    panel_id: str | None = Query(None),
+    geometry_role: str = Query("production_geometry"),
+    bind: bool = Query(True),
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    """Upload production DXF under V6 workspace namespace; bind to AcmPanel instance when bind=true.
+
+    Write endpoint. Does not unlock Offer/Execution. Not Work Intake work-file ownership.
+    """
+    from services.acm_production_geometry_attachment import upload_and_optionally_bind_production_dxf
+
+    raw_bytes = await file.read()
+    return await upload_and_optionally_bind_production_dxf(
+        db,
+        workspace_id,
+        raw_bytes=raw_bytes,
+        filename=file.filename or "upload.dxf",
+        content_type=file.content_type,
+        component_instance_id=component_instance_id,
+        panel_id=panel_id,
+        geometry_role=geometry_role,
+        bind=bind,
+        uploaded_by=current_user.email or current_user.name or str(current_user.id),
+        current_user=current_user,
+    )
+
+
+@router.get("/workspaces/{workspace_id}/acm-panel/production-geometry/{attachment_id}/download")
+async def download_acm_panel_production_geometry_dxf(
+    workspace_id: str,
+    attachment_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+):
+    from services.acm_production_geometry_attachment import download_production_dxf
+
+    return await download_production_dxf(db, workspace_id, attachment_id)
+
+
 @router.put("/workspaces/{workspace_id}/analysis-bundle", response_model=IntakeV6WorkspaceResponse)
 async def save_analysis_bundle_v6(
     workspace_id: str,

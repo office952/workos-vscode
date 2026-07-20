@@ -2223,6 +2223,24 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         hasLogo={artworkFinishes.length > 0}
         selectedId={selectedProductComponentId}
         onSelect={setSelectedProductComponentId}
+        workspaceId={workspaceId}
+        onProductionGeometryBound={() => {
+          if (!workspaceId) return;
+          void getIntakeV6Workspace(workspaceId).then((ws) => {
+            const fs = (ws.payload as { finish_setup?: Record<string, unknown> } | undefined)
+              ?.finish_setup;
+            if (fs) {
+              setForm((prev) =>
+                syncLighting({
+                  ...prev,
+                  ...fs,
+                  confirmed: false,
+                }),
+              );
+            }
+            bumpPreviewRefresh(["mounting", "commercial_preview"]);
+          });
+        }}
         onApplyFinishPatch={(patch) => {
           setForm((prev) => {
             const next = syncLighting({

@@ -208,10 +208,16 @@ def aggregate_assembly_metrics(
 ) -> dict[str, Any]:
     warnings: list[str] = []
     statuses = [str(p.get("measurement_status") or "") for p in panels]
-    if any(s == "unavailable" for s in statuses):
+    if any(s == "stale" for s in statuses):
+        status = "stale"
+    elif any(s == "unavailable" for s in statuses):
         status = "unavailable"
-    elif panels and all(s == "measured" for s in statuses):
-        status = "measured"
+    elif panels and all(s in {"measured", "measured_with_warnings"} for s in statuses):
+        status = (
+            "measured_with_warnings"
+            if any(s == "measured_with_warnings" for s in statuses)
+            else "measured"
+        )
     elif panels and all(s == "proxy_rectangular" for s in statuses):
         status = "proxy_rectangular"
     elif panels:
@@ -308,7 +314,21 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
         joints = geom.get("joints") if isinstance(geom.get("joints"), list) else []
         joint_count = len(joints)
 
-    # Precomputed metrics on payload win.
+    # Build panel list early (attachment resolve + proxy)
+    valid_panels: list[tuple[str, float, float]] = []
+    for idx, p in enumerate(panels_raw or []):
+        if not isinstance(p, Mapping):
+            continue
+        pw = _num(p.get("width_mm"))
+        ph = _num(p.get("height_mm"))
+        if pw is not None and ph is not None and pw > 0 and ph > 0:
+            pid = str(p.get("panel_id") or f"p{idx + 1}")
+            valid_panels.append((pid, pw, ph))
+
+    if not valid_panels and aw and ah:
+        valid_panels = [("assembly", aw, ah)]
+
+    # Precomputed metrics on payload win only when explicitly provided for tests.
     precomputed = payload.get("acm_panel_production_geometry_metrics")
     if isinstance(precomputed, Mapping) and precomputed.get("schema") in {
         ACM_ASSEMBLY_GEOMETRY_METRICS_SCHEMA,
@@ -323,6 +343,32 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
             joint_count=joint_count,
         )
 
+    # Component-owned production_geometry attachments (live binding).
+    from services.acm_production_geometry_attachment import resolve_metrics_from_attachments
+
+    attached = resolve_metrics_from_attachments(
+        payload,
+        acm_instance=acm_instance,
+        assembly_width_mm=aw,
+        assembly_height_mm=ah,
+        panels=valid_panels,
+        construction=construction,
+        joint_count=joint_count,
+    )
+    stale_attachment_warnings: list[str] = []
+    if attached is not None:
+        att_status = str(attached.get("measurement_status") or "")
+        if att_status in {"measured", "measured_with_warnings"}:
+            return attached
+        if att_status == "stale":
+            # Do not consume stale quantities; allow proxy fallback when eligible.
+            stale_attachment_warnings = list(attached.get("warnings") or [])
+            stale_attachment_warnings.append("production_geometry_stale")
+        else:
+            # invalid / semantic_mapping_required / unavailable from attachments
+            return attached
+
+    # Dev/test filesystem path (not operator SoT).
     dxf_path = (
         payload.get("acm_production_dxf_path")
         or (finish.get("acm_production_dxf_path") if isinstance(finish, Mapping) else None)
@@ -334,7 +380,6 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
     )
     if isinstance(dxf_path, str) and dxf_path.strip():
         measured = measure_dxf_production_paths(dxf_path.strip())
-        # Active face: prefer explicit active dims, else assembly, else envelope
         face_w = aw or envelope_w
         face_h = ah or envelope_h
         panel = build_panel_metrics_from_measured(
@@ -352,20 +397,6 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
             assembly_height_mm=ah or face_h,
             joint_count=joint_count,
         )
-
-    # Build panel list for proxy / unavailable
-    valid_panels: list[tuple[str, float, float]] = []
-    for idx, p in enumerate(panels_raw or []):
-        if not isinstance(p, Mapping):
-            continue
-        pw = _num(p.get("width_mm"))
-        ph = _num(p.get("height_mm"))
-        if pw is not None and ph is not None and pw > 0 and ph > 0:
-            pid = str(p.get("panel_id") or f"p{idx + 1}")
-            valid_panels.append((pid, pw, ph))
-
-    if not valid_panels and aw and ah:
-        valid_panels = [("assembly", aw, ah)]
 
     has_cutouts = bool(payload.get("has_cutouts") or (finish or {}).get("has_cutouts"))
     has_special_corners = bool(
@@ -427,12 +458,22 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
                 }
             )
 
-    return aggregate_assembly_metrics(
+    result = aggregate_assembly_metrics(
         panel_metrics,
         assembly_width_mm=aw,
         assembly_height_mm=ah,
         joint_count=joint_count,
     )
+    if stale_attachment_warnings:
+        warnings = list(result.get("warnings") or [])
+        for w in stale_attachment_warnings:
+            if w not in warnings:
+                warnings.append(w)
+        result["warnings"] = warnings
+        if result.get("measurement_status") == "proxy_rectangular":
+            # Proxy used after stale measured attachment — be explicit.
+            result["measurement_source"] = "proxy_rectangular_after_stale"
+    return result
 
 
 def apply_production_metrics_to_commercial_payload(
@@ -457,15 +498,16 @@ def apply_production_metrics_to_commercial_payload(
     cut = _num(metrics.get("total_cut_length_ml"))
     vtot = _num(metrics.get("total_v_groove_ml"))
 
-    if status in {"measured", "proxy_rectangular"} and cut is not None:
+    consumable = status in {"measured", "measured_with_warnings", "proxy_rectangular"}
+    if consumable and cut is not None:
         payload["commercial_cut_length_m"] = cut
         payload["panel_perimeter_m"] = cut
     else:
-        # Do not leave stale perimeter proxy when unavailable
+        # Do not leave stale perimeter proxy when unavailable/stale
         payload.pop("commercial_cut_length_m", None)
         payload.pop("panel_perimeter_m", None)
 
-    if status in {"measured", "proxy_rectangular"} and vtot is not None:
+    if consumable and vtot is not None:
         payload["commercial_fold_length_m"] = vtot
         payload["fold_length_m"] = vtot
     else:

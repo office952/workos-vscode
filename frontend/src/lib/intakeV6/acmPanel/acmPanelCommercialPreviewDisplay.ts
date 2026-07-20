@@ -57,6 +57,10 @@ const WARNING_LABELS: Record<string, string> = {
   "cut_v_quantity_source=proxy_rectangular": "CUT/V din proxy rectangular (estimare, nu măsurare DXF)",
   double_fold_proxy_forbidden: "Double-fold: proxy rectangular interzis",
   l2_active_proxy_forbidden: "L2 activ: proxy rectangular interzis",
+  production_geometry_stale: "Geometrie producție stale — reîncarcă DXF",
+  measured_with_warnings: "Măsurare cu avertismente (ACI necunoscut exclus)",
+  semantic_mapping_required: "Mapping ACI necesar — cantități incomplete",
+  missing_panel_attachment: "Lipsește DXF pentru un panou",
 };
 
 export function formatAcmPanelPathSource(
@@ -72,6 +76,8 @@ export function formatAcmPanelPathSource(
   if (s === "unavailable" || source === "unavailable") {
     return "Sursă cantități: indisponibil";
   }
+  if (s === "stale" || source === "stale") return "Sursă cantități: stale (config schimbată)";
+  if (s === "measured_with_warnings") return "Sursă cantități: măsurat cu avertismente";
   return `Sursă cantități: ${s}`;
 }
 

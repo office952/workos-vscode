@@ -41,6 +41,35 @@ def _has_support_role_confirmed(payload_or_finish_context: Mapping[str, Any] | N
     return False
 
 
+def _merge_production_geometry_preserve(
+    finish_d: dict[str, Any],
+    existing: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Keep component-owned production_geometry when incoming instance omits the bundle."""
+    incoming_inst = finish_d.get("acm_panel_instance")
+    existing_inst = existing.get("acm_panel_instance")
+    if isinstance(incoming_inst, dict) and isinstance(existing_inst, Mapping):
+        if "production_geometry" not in incoming_inst and existing_inst.get("production_geometry"):
+            merged = dict(incoming_inst)
+            merged["production_geometry"] = existing_inst.get("production_geometry")
+            finish_d["acm_panel_instance"] = merged
+    # Nested mirrors
+    for nest_key in ("svg_support_selection",):
+        inc_sel = finish_d.get(nest_key)
+        ex_sel = existing.get(nest_key)
+        if isinstance(inc_sel, dict) and isinstance(ex_sel, Mapping):
+            inc_i = inc_sel.get("acm_panel_instance")
+            ex_i = ex_sel.get("acm_panel_instance")
+            if isinstance(inc_i, dict) and isinstance(ex_i, Mapping):
+                if "production_geometry" not in inc_i and ex_i.get("production_geometry"):
+                    mi = dict(inc_i)
+                    mi["production_geometry"] = ex_i.get("production_geometry")
+                    sel = dict(inc_sel)
+                    sel["acm_panel_instance"] = mi
+                    finish_d[nest_key] = sel
+    return finish_d
+
+
 def coalesce_acm_panel_domain_for_finish(
     incoming_finish: Mapping[str, Any] | None,
     existing_finish: Mapping[str, Any] | None,
@@ -88,6 +117,8 @@ def coalesce_acm_panel_domain_for_finish(
         return finish_d
 
     if action == "upsert":
+        # Preserve production_geometry binding when FE upsert omits it (inspector patches).
+        finish_d = _merge_production_geometry_preserve(finish_d, existing)
         return finish_d
 
     # preserve

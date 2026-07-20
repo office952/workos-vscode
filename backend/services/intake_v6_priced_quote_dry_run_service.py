@@ -338,9 +338,22 @@ def _build_acm_panel_commercial_preview(
 		or merged.get("acm_path_quantity_status")
 		or ""
 	)
-	if path_status == "unavailable":
-		warnings.append("quantity_unavailable")
-		# Path quantities missing — keep final/offer blocked even if other gates cleared later.
+	if path_status in {
+		"unavailable",
+		"stale",
+		"invalid",
+		"semantic_mapping_required",
+		"measured_with_warnings",
+	}:
+		if path_status == "unavailable":
+			warnings.append("quantity_unavailable")
+		elif path_status == "stale":
+			warnings.append("production_geometry_stale")
+		elif path_status == "semantic_mapping_required":
+			warnings.append("semantic_mapping_required")
+		elif path_status == "measured_with_warnings":
+			warnings.append("measured_with_warnings")
+		# Path incomplete / provisional — keep final/offer/exec blocked.
 		if "final_price_unavailable" not in blockers:
 			blockers.append("final_price_unavailable")
 		if "offer_ferm_unavailable" not in blockers:

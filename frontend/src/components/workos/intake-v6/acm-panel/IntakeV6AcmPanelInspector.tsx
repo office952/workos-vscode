@@ -30,10 +30,12 @@ import type { AcmPanelDraftNumericField } from "@/lib/intakeV6/acmPanel/commitSe
 import type { AcmPanelFlushResult } from "@/lib/intakeV6/acmPanel/commitSemantics";
 import type { SegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
+import AcmPanelProductionGeometryBlock from "./AcmPanelProductionGeometryBlock";
 
 export type AcmPanelInspectorActions = {
   onApplyFinishPatch: (patch: Partial<IntakeV6FinishSetup>) => void;
   onSegmentedPatch: (patch: { segmented_background: SegmentedBackground }) => void;
+  onProductionGeometryBound?: () => void;
 };
 
 export type IntakeV6AcmPanelInspectorHandle = {
@@ -149,9 +151,10 @@ const IntakeV6AcmPanelInspector = forwardRef<
     actions: AcmPanelInspectorActions;
     focusIssue?: AcmPanelIssue | null;
     onFocusConsumed?: () => void;
+    workspaceId?: string | null;
   }
 >(function IntakeV6AcmPanelInspector(
-  { model, finishSetup, actions, focusIssue, onFocusConsumed },
+  { model, finishSetup, actions, focusIssue, onFocusConsumed, workspaceId },
   ref,
 ) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -358,6 +361,12 @@ const IntakeV6AcmPanelInspector = forwardRef<
         >
           Confirmă geometria
         </button>
+        <AcmPanelProductionGeometryBlock
+          workspaceId={workspaceId}
+          componentInstanceId={inst.component_instance_id}
+          instance={inst as unknown as Record<string, unknown>}
+          onBound={() => actions.onProductionGeometryBound?.()}
+        />
       </Section>
 
       <Section

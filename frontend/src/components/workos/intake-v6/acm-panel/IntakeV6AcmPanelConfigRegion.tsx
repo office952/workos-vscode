@@ -36,6 +36,8 @@ export default function IntakeV6AcmPanelConfigRegion({
   onApplyFinishPatch,
   onNavigateLetters,
   onNavigateLogo,
+  workspaceId,
+  onProductionGeometryBound,
 }: {
   payload: Record<string, unknown> | null | undefined;
   finishSetup: Record<string, unknown> | null | undefined;
@@ -46,6 +48,8 @@ export default function IntakeV6AcmPanelConfigRegion({
   onApplyFinishPatch: (patch: Partial<IntakeV6FinishSetup>) => void;
   onNavigateLetters: () => void;
   onNavigateLogo: () => void;
+  workspaceId?: string | null;
+  onProductionGeometryBound?: () => void;
 }) {
   const acmModel = useMemo(
     () =>
@@ -99,8 +103,9 @@ export default function IntakeV6AcmPanelConfigRegion({
       onSegmentedPatch: (patch: { segmented_background: SegmentedBackground }) => {
         onApplyFinishPatch(patch as Partial<IntakeV6FinishSetup>);
       },
+      onProductionGeometryBound,
     }),
-    [onApplyFinishPatch],
+    [onApplyFinishPatch, onProductionGeometryBound],
   );
 
   if (!items.length) return null;
@@ -131,6 +136,7 @@ export default function IntakeV6AcmPanelConfigRegion({
                 actions={actions}
                 focusIssue={focusIssue}
                 onFocusConsumed={() => setFocusIssue(null)}
+                workspaceId={workspaceId}
               />
             </div>
             <div className="order-1 xl:order-2 xl:sticky xl:top-2">

@@ -1434,6 +1434,38 @@ async def save_finish_setup_for_intake_v6_workspace(
     apply_v6_pricing_preview_derived_state(payload_raw)
     strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
     apply_return_cant_runtime_product_truth_bridge(payload_raw)
+
+    # Stale production DXF measurements when config fingerprint no longer matches.
+    try:
+        from services.acm_production_geometry_attachment import (
+            compute_config_fingerprint,
+            mark_stale_attachments_in_instance,
+        )
+
+        finish_live = payload_raw.get("finish_setup")
+        if isinstance(finish_live, dict):
+            for key in ("acm_panel_instance",):
+                inst = finish_live.get(key)
+                if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                    fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                    mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+            sel = finish_live.get("svg_support_selection")
+            if isinstance(sel, dict):
+                inst = sel.get("acm_panel_instance")
+                if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                    fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                    mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+            ms = finish_live.get("mounting_solution")
+            if isinstance(ms, dict):
+                cfg = ms.get("configuration")
+                if isinstance(cfg, dict):
+                    inst = cfg.get("acm_panel_instance")
+                    if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
+                        fp = compute_config_fingerprint(payload=payload_raw, acm_instance=inst)
+                        mark_stale_attachments_in_instance(inst, current_fingerprint=fp)
+    except Exception:
+        pass
+
     return await _persist_payload_json_raw_for_product_truth_writer(
         db,
         record,
