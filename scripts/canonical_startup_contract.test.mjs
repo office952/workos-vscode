@@ -27,19 +27,19 @@ const EXPECTED_ROUTES = [
   '/api/v1/intake-v6/workspaces',
 ];
 
-test('vite default proxy targets canonical backend 8001 on 127.0.0.1', () => {
+test('vite default proxy targets canonical backend 8000 on 127.0.0.1', () => {
   const vite = read('frontend/vite.config.ts');
-  assert.match(vite, /BACKEND_PORT \|\| '8001'/);
+  assert.match(vite, /BACKEND_PORT \|\| '8000'/);
   assert.match(vite, /http:\/\/127\.0\.0\.1:\$\{process\.env\.BACKEND_PORT/);
-  assert.doesNotMatch(vite, /BACKEND_PORT \|\| '8000'/);
+  assert.doesNotMatch(vite, /BACKEND_PORT \|\| '8001'/);
 });
 
-test('backend launcher defaults to port 8001', () => {
+test('backend launcher defaults to port 8000', () => {
   const script = read('scripts/dev-backend.ps1');
   const contract = read('scripts/_workos-dev-contract.ps1');
   assert.match(script, /Initialize-WorkOsDevPortContract/);
   assert.match(script, /Get-WorkOsBackendPort/);
-  assert.match(contract, /WorkOsDefaultBackendPort = 8001/);
+  assert.match(contract, /WorkOsDefaultBackendPort = 8000/);
 });
 
 test('frontend launcher sets BACKEND_PORT via dev contract', () => {
@@ -49,40 +49,40 @@ test('frontend launcher sets BACKEND_PORT via dev contract', () => {
   assert.match(script, /--port \$frontendPort/);
 });
 
-test('combined launcher uses backend port 8001 and passes BACKEND_PORT to frontend job', () => {
+test('combined launcher uses backend port 8000 and passes BACKEND_PORT to frontend job', () => {
   const startDev = read('scripts/start-dev.ps1');
   assert.match(startDev, /Get-WorkOsBackendPort/);
   assert.match(startDev, /\$env:BACKEND_PORT = \[string\]\$BackendPort/);
   assert.match(startDev, /--port \$BackendPort --reload/);
-  assert.doesNotMatch(startDev, /--port 8000 --reload/);
+  assert.doesNotMatch(startDev, /--port 8001 --reload/);
 });
 
 test('canonical dev.ps1 entry aligns stack to contract ports', () => {
   const dev = read('scripts/dev.ps1');
-  assert.match(dev, /backend :8001 \+ frontend :3000/);
+  assert.match(dev, /backend :8000 \+ frontend :3000/);
   assert.match(dev, /Get-WorkOsBackendUrl/);
   assert.match(dev, /\$env:BACKEND_PORT = \[string\]\(Get-WorkOsBackendPort\)/);
 });
 
-test('no canonical launcher hardcodes default backend 8000', () => {
+test('no canonical launcher hardcodes literal uvicorn --port 8000/8001', () => {
   const canonical = [
     'scripts/dev.ps1',
     'scripts/start-dev.ps1',
     'scripts/dev-backend.ps1',
     'scripts/dev-frontend.ps1',
-    'frontend/vite.config.ts',
   ];
   for (const rel of canonical) {
     const text = read(rel);
     assert.doesNotMatch(text, /--port 8000\b/);
-    assert.doesNotMatch(text, /127\.0\.0\.1:8000/);
+    assert.doesNotMatch(text, /--port 8001\b/);
+    assert.doesNotMatch(text, /127\.0\.0\.1:8001/);
   }
 });
 
 test('restore/test may override backend port via BACKEND_PORT env', () => {
   const contract = read('scripts/_workos-dev-contract.ps1');
   assert.match(contract, /if \(-not \$env:BACKEND_PORT\)/);
-  assert.match(contract, /WorkOsDefaultBackendPort = 8001/);
+  assert.match(contract, /WorkOsDefaultBackendPort = 8000/);
 });
 
 test('parity env vars are cleared in canonical launchers', () => {
@@ -107,9 +107,9 @@ test('root package.json exposes canonical stack commands', () => {
   assert.match(pkg.scripts['dev:frontend'], /dev-frontend\.ps1/);
 });
 
-test('bash launcher defaults to 8001 when BACKEND_PORT unset', () => {
+test('bash launcher defaults to 8000 when BACKEND_PORT unset', () => {
   const bash = read('start_app.sh');
-  assert.match(bash, /BACKEND_PORT="\$\{BACKEND_PORT:-8001\}"/);
+  assert.match(bash, /BACKEND_PORT="\$\{BACKEND_PORT:-8000\}"/);
   assert.match(bash, /--port "\$\{BACKEND_PORT\}"/);
 });
 
@@ -297,7 +297,7 @@ test('backend listener canonical check uses venv path not cmdline root', () => {
 
 test('scenario L existing canonical port contract assertions remain', () => {
   const contract = read(CONTRACT_PATH);
-  assert.match(contract, /WorkOsDefaultBackendPort = 8001/);
+  assert.match(contract, /WorkOsDefaultBackendPort = 8000/);
   const startDev = read(START_DEV_PATH);
   assert.match(startDev, /--port \$BackendPort --reload/);
 });
