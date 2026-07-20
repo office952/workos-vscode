@@ -33,6 +33,9 @@ class ProductTemplateModuleLinkData(BaseModel):
     execution_mode: str = "linked_child_work"
     active: bool = True
     notes: Optional[str] = None
+    # Component-contract edge fields (no ComponentTemplate table).
+    usage_mode: Optional[str] = None
+    instance_schema_id: Optional[str] = None
 
 
 class ProductTemplateModuleLinkUpdateData(BaseModel):
@@ -45,6 +48,8 @@ class ProductTemplateModuleLinkUpdateData(BaseModel):
     execution_mode: Optional[str] = None
     active: Optional[bool] = None
     notes: Optional[str] = None
+    usage_mode: Optional[str] = None
+    instance_schema_id: Optional[str] = None
 
 
 class ProductTemplateModuleLinkResponse(BaseModel):
@@ -62,6 +67,8 @@ class ProductTemplateModuleLinkResponse(BaseModel):
     execution_mode: str
     active: bool
     notes: Optional[str] = None
+    usage_mode: Optional[str] = None
+    instance_schema_id: Optional[str] = None
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
