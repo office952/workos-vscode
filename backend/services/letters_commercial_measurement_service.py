@@ -115,6 +115,28 @@ def build_letters_commercial_measurements(
 
     rules = RULES_BY_TEMPLATE.get(PILOT_TEMPLATE) or ()
     facts = collect_measurement_facts(pd=pd, quote_input=quote_input)
+    # Sole V6 commercial quantity resolver — prefer instance authority over raw bags.
+    from services.letter_group_instance_authority import build_volumetric_letters_commercial_quantities
+
+    finish = facts.get("finish_setup") if isinstance(facts.get("finish_setup"), dict) else {}
+    if not finish and isinstance(quote_input, dict):
+        finish = quote_input.get("finish_setup") if isinstance(quote_input.get("finish_setup"), dict) else {}
+    geom = facts.get("quote_geometry") if isinstance(facts.get("quote_geometry"), dict) else {}
+    qty = build_volumetric_letters_commercial_quantities(quote_geometry=geom, finish_setup=finish)
+    if qty.get("letter_face_area_m2") is not None:
+        facts["letter_face_area_m2"] = qty["letter_face_area_m2"]
+        facts.setdefault("face_area_m2", qty["letter_face_area_m2"])
+        if isinstance(facts.get("quote_geometry"), dict):
+            facts["quote_geometry"]["letter_face_area_m2"] = qty["letter_face_area_m2"]
+    if qty.get("letter_perimeter_m") is not None:
+        facts["letter_perimeter_m"] = qty["letter_perimeter_m"]
+        if isinstance(facts.get("quote_geometry"), dict):
+            facts["quote_geometry"]["letter_perimeter_m"] = qty["letter_perimeter_m"]
+    if qty.get("led_module_count") is not None:
+        facts["letter_led_module_count"] = qty["led_module_count"]
+        facts["led_module_count"] = qty["led_module_count"]
+    facts["volumetric_letters_commercial_quantities"] = qty
+
     modules = active_modules or set()
     measurements: list[CommercialMeasurement] = []
     diagnostics: list[str] = []

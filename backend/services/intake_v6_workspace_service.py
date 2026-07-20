@@ -1395,6 +1395,15 @@ async def save_finish_setup_for_intake_v6_workspace(
         existing_finish_doc,
         layer_role_setup=layer_setup_raw,
     )
+    from services.letter_group_instance_authority import coalesce_letter_group_authority_for_finish
+
+    svg_source = payload_raw.get("svg_source") if isinstance(payload_raw.get("svg_source"), dict) else {}
+    svg_hash = str(svg_source.get("file_hash") or "").strip() or None
+    finish_doc = coalesce_letter_group_authority_for_finish(
+        finish_doc,
+        existing_finish_doc,
+        svg_hash=svg_hash,
+    )
 
     try:
         finish_doc = persist_segmented_background_on_finish(finish_doc)

@@ -47,11 +47,13 @@ import {
 } from "@/lib/intakeV6/intakeV6ArtworkFinish";
 import {
   DEFAULT_RETURN_DEPTH_MM,
-  deriveLetterGroupsFromAnalyzer,
   letterGroupFinishesFromPayload,
-  mergeLetterGroupFinishes,
   type IntakeV6LetterGroupFinish,
 } from "@/lib/intakeV6/intakeV6LetterGroups";
+import {
+  attachLetterAuthorityToFinishBody,
+  resolveLetterGroupsForReview,
+} from "@/lib/intakeV6/letterGroupInstanceAuthority";
 import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6ReturnFinishOptions";
 import {
   countConfiguredArtworkFinishes,
@@ -703,14 +705,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     finishFromPayload(payload).return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM;
   const expectedLetterGroups = useMemo(
     () =>
-      mergeLetterGroupFinishes(
-        deriveLetterGroupsFromAnalyzer(
-          state.analyzerReport as SvgAnalysisCoreReport | null,
-          state.layerRoleConfirmation,
-          finishDepthMm,
-        ),
-        letterGroupFinishesFromPayload(payload),
-      ),
+      resolveLetterGroupsForReview({
+        report: state.analyzerReport as SvgAnalysisCoreReport | null,
+        confirmation: state.layerRoleConfirmation,
+        payload: payload as Record<string, unknown> | undefined,
+        defaultReturnDepthMm: finishDepthMm,
+      }),
     [payload, state.analyzerReport, state.layerRoleConfirmation, finishDepthMm],
   );
   const expectedArtworkFinishes = useMemo(
@@ -1072,14 +1072,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     const nextForm = syncLighting(
       applyMountingTemplateMinimumArea(finish, mountingTemplateAreaFallbackM2),
     );
-    const nextLetterGroups = mergeLetterGroupFinishes(
-      deriveLetterGroupsFromAnalyzer(
-        state.analyzerReport as SvgAnalysisCoreReport | null,
-        state.layerRoleConfirmation,
-        finish.return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM,
-      ),
-      letterGroupFinishesFromPayload(payload),
-    );
+    const nextLetterGroups = resolveLetterGroupsForReview({
+      report: state.analyzerReport as SvgAnalysisCoreReport | null,
+      confirmation: state.layerRoleConfirmation,
+      payload: payload as Record<string, unknown> | undefined,
+      defaultReturnDepthMm: finish.return_depth_mm ?? DEFAULT_RETURN_DEPTH_MM,
+    });
     const nextArtworkFinishes = mergeArtworkFinishes(
       deriveArtworkFinishesFromAnalyzer(
         state.analyzerReport as SvgAnalysisCoreReport | null,
@@ -1553,7 +1551,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     commercialInputsOverride?: IntakeV6OfferCommercialInputs,
     formSource: IntakeV6FinishSetup = form,
   ): IntakeV6FinishSetup {
-    return syncLighting(
+    const layered = syncLighting(
       syncIntakeV6FinishPayloadFromLayerFinishes(
         {
           ...formSource,
@@ -1580,6 +1578,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         artworkFinishes,
       ),
     );
+    return attachLetterAuthorityToFinishBody(
+      layered as unknown as Record<string, unknown>,
+      letterGroups,
+      payload as Record<string, unknown> | undefined,
+    ) as unknown as IntakeV6FinishSetup;
   }
 
   async function persistFinishSetupState(
@@ -1615,14 +1618,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         const syncedNextForm = syncLighting(
           applyMountingTemplateMinimumArea(nextFinish, mountingTemplateAreaFallbackM2),
         );
-        const nextLetterGroups = mergeLetterGroupFinishes(
-          deriveLetterGroupsFromAnalyzer(
-            state.analyzerReport as SvgAnalysisCoreReport | null,
-            state.layerRoleConfirmation,
-            nextDepth,
-          ),
-          letterGroupFinishesFromPayload(nextPayload),
-        );
+        const nextLetterGroups = resolveLetterGroupsForReview({
+          report: state.analyzerReport as SvgAnalysisCoreReport | null,
+          confirmation: state.layerRoleConfirmation,
+          payload: nextPayload,
+          defaultReturnDepthMm: nextDepth,
+        });
         const nextArtworkFinishes = mergeArtworkFinishes(
           deriveArtworkFinishesFromAnalyzer(
             state.analyzerReport as SvgAnalysisCoreReport | null,

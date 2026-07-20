@@ -102,23 +102,26 @@ export function mergeLetterGroupFinishes(
     const prior = savedByKey.get(item.group_key);
     const sameSourceFill =
       !prior ||
-      (prior.source_fill_color != null &&
-        item.source_fill_color != null &&
-        prior.source_fill_color.trim().toLowerCase() === item.source_fill_color.trim().toLowerCase());
+      prior.source_fill_color == null ||
+      item.source_fill_color == null ||
+      prior.source_fill_color.trim().toLowerCase() === item.source_fill_color.trim().toLowerCase();
+    // Confirmed commercial fields survive fill drift; geometry suggestions still refresh from derived.
+    const keepCommercial = Boolean(prior?.confirmed) || sameSourceFill;
     const merged = prior
       ? {
           ...item,
-          face_finish_type: sameSourceFill ? prior.face_finish_type ?? item.face_finish_type : item.face_finish_type,
-          face_oracal_code: sameSourceFill ? prior.face_oracal_code : item.face_oracal_code,
-          face_oracal_name: sameSourceFill ? prior.face_oracal_name : item.face_oracal_name,
-          return_finish_type: sameSourceFill ? prior.return_finish_type ?? item.return_finish_type : item.return_finish_type,
-          return_oracal_code: sameSourceFill ? prior.return_oracal_code : item.return_oracal_code,
-          return_oracal_name: sameSourceFill ? prior.return_oracal_name : item.return_oracal_name,
-          return_depth_mm: sameSourceFill ? prior.return_depth_mm ?? item.return_depth_mm : item.return_depth_mm,
-          face_vinyl_roll_width_mm: sameSourceFill
+          face_finish_type: keepCommercial ? prior.face_finish_type ?? item.face_finish_type : item.face_finish_type,
+          face_oracal_code: keepCommercial ? prior.face_oracal_code : item.face_oracal_code,
+          face_oracal_name: keepCommercial ? prior.face_oracal_name : item.face_oracal_name,
+          return_finish_type: keepCommercial ? prior.return_finish_type ?? item.return_finish_type : item.return_finish_type,
+          return_oracal_code: keepCommercial ? prior.return_oracal_code : item.return_oracal_code,
+          return_oracal_name: keepCommercial ? prior.return_oracal_name : item.return_oracal_name,
+          return_depth_mm: keepCommercial ? prior.return_depth_mm ?? item.return_depth_mm : item.return_depth_mm,
+          face_vinyl_roll_width_mm: keepCommercial
             ? prior.face_vinyl_roll_width_mm ?? item.face_vinyl_roll_width_mm
             : item.face_vinyl_roll_width_mm,
-          confirmed: sameSourceFill ? prior.confirmed : false,
+          backing_mode: keepCommercial ? prior.backing_mode ?? item.backing_mode : item.backing_mode,
+          confirmed: keepCommercial ? prior.confirmed : false,
         }
       : item;
     return normalizeLetterGroupFaceRollWidth(applyNearestOracal651ToLetterGroup(merged));

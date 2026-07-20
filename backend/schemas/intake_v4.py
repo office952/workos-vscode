@@ -215,6 +215,11 @@ class IntakeV4FinishSetup(BaseModel):
     psu_configuration: list[int] = Field(default_factory=list)
     psu_allocation_status: str | None = None
     letter_group_finishes: list[IntakeV4LetterGroupFinish] = Field(default_factory=list)
+    # Write authority for letter groups (JSON document — no DB migration).
+    # Legacy letter_group_finishes is one-way projection for old consumers.
+    letter_group_instances: list[dict[str, Any]] = Field(default_factory=list)
+    # Minimal placement relations (letters → wall/acm/frame/totem_face/none).
+    component_placements: list[dict[str, Any]] = Field(default_factory=list)
     artwork_finishes: list[IntakeV4ArtworkFinish] = Field(default_factory=list)
     artwork_complexity_decisions: list[IntakeV4ArtworkComplexityDecision] = Field(default_factory=list)
     backing_mode: Literal["none", "forex_10_no_bevel", "forex_10_with_bevel"] | None = "forex_10_no_bevel"
