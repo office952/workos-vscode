@@ -176,7 +176,7 @@ vitest publication + readiness panels → 2 passed
 | `ed91361` | fix(eic): canonical quantity contract |
 | `49b2cca` | fix(product-system-ui): mount readiness/publication real template flow |
 | `274136d` | test(e2e): revision/quantity convergence |
-| (this docs commit) | docs(qa): Figma + screenshot acceptance |
+| `d871306` | docs(qa): Figma + screenshot acceptance |
 
 ### Stop conditions
 

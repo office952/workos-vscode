@@ -56,7 +56,7 @@ Foundation `ef349ef`, `136f38b`, `70b2fdf`, `6a1c1d1` kept. Build + prior closur
 | `ed91361` | fix(eic): canonical quantity contract |
 | `49b2cca` | fix(product-system-ui): mount readiness/publication real template flow |
 | `274136d` | test(e2e): revision/quantity convergence |
-| (docs tip) | docs(qa): Figma + screenshot acceptance |
+| `d871306` | docs(qa): Figma + screenshot acceptance |
 
 No push/PR.
 
