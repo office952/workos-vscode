@@ -672,6 +672,61 @@ def _payload_without_product_truth_confirmed_snapshot(payload_raw: dict[str, Any
     return payload_copy
 
 
+async def confirm_job_product_truth_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+    request: Any,
+    current_user: UserResponse,
+) -> dict[str, Any]:
+    """ConfirmJobProductTruth — pin typed bags into confirmed_snapshot_v1 job revision."""
+    from schemas.product_truth_job_confirm import ConfirmJobProductTruthRequest
+    from services.product_truth_job_confirm_service import confirm_job_product_truth
+
+    body = (
+        request
+        if isinstance(request, ConfirmJobProductTruthRequest)
+        else ConfirmJobProductTruthRequest.model_validate(request)
+    )
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+
+    response, payload_raw = confirm_job_product_truth(
+        workspace_id=record.id,
+        workspace_code=record.workspace_code,
+        payload_raw=payload_raw,
+        expected_revision=body.expected_revision,
+        expected_draft_hash=body.expected_draft_hash,
+        expected_content_hash=body.expected_content_hash,
+        root_template_code=body.root_template_code or record.template_code,
+        root_template_version=None,
+        actor_id=str(current_user.id),
+        correction_reason=body.correction_reason,
+    )
+    if response.get("write_performed") is True:
+        await _persist_payload_json_raw_for_product_truth_writer(
+            db,
+            record,
+            payload_raw,
+            current_user=current_user,
+        )
+    return response
+
+
+async def get_job_product_truth_status_for_workspace(
+    db: AsyncSession,
+    workspace_id: str,
+) -> dict[str, Any]:
+    from services.product_truth_job_confirm_service import build_job_truth_status
+
+    record = await _get_record_or_404(db, workspace_id)
+    payload_raw = _json_loads(record.payload_json, {})
+    if not isinstance(payload_raw, dict):
+        payload_raw = {}
+    return build_job_truth_status(workspace_id=record.id, payload_raw=payload_raw)
+
+
 async def promote_product_truth_for_workspace(
     db: AsyncSession,
     workspace_id: str,
@@ -1443,6 +1498,11 @@ async def save_finish_setup_for_intake_v6_workspace(
     apply_v6_pricing_preview_derived_state(payload_raw)
     strip_global_backing_mirror_from_finish_dict(payload_raw.get("finish_setup"))
     apply_return_cant_runtime_product_truth_bridge(payload_raw)
+
+    # Job Product Truth: draft edit after confirm → stale_after_edit (pin retained).
+    from services.product_truth_job_confirm_service import mark_job_revision_stale_if_confirmed
+
+    mark_job_revision_stale_if_confirmed(payload_raw)
 
     # Stale production DXF measurements when config fingerprint no longer matches.
     try:

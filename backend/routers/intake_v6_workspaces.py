@@ -76,11 +76,18 @@ from services.intake_v6_quote_to_order_service import (
     persist_v6_owner_approval,
 )
 from services.intake_v6_template_option_contract_service import get_template_form_contract_for_workspace
+from schemas.product_truth_job_confirm import (
+    ConfirmJobProductTruthRequest,
+    ConfirmJobProductTruthResponse,
+    JobProductTruthStatusResponse,
+)
 from services.intake_v6_workspace_service import (
+    confirm_job_product_truth_for_workspace,
     create_draft_quote_for_intake_v6_workspace,
     create_intake_v6_workspace,
     ensure_intake_v6_workspace_for_intake_request,
     get_form_system_runtime_capture_read_model_for_workspace,
+    get_job_product_truth_status_for_workspace,
     get_product_truth_writer_dry_run_for_workspace,
     promote_product_truth_for_workspace,
     get_product_truth_promotion_planner_for_workspace,
@@ -252,6 +259,33 @@ async def post_product_truth_writer_promote_v6(
     current_user: UserResponse = Depends(get_current_user),
 ) -> dict:
     return await promote_product_truth_for_workspace(db, workspace_id, request, current_user)
+
+
+@router.post(
+    "/workspaces/{workspace_id}/product-truth/confirm-job",
+    response_model=ConfirmJobProductTruthResponse,
+)
+async def post_confirm_job_product_truth_v6(
+    workspace_id: str,
+    request: ConfirmJobProductTruthRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    """ConfirmJobProductTruth — pin typed bags + revision/hash (no PI/CI tables)."""
+    return await confirm_job_product_truth_for_workspace(db, workspace_id, request, current_user)
+
+
+@router.get(
+    "/workspaces/{workspace_id}/product-truth/job-status",
+    response_model=JobProductTruthStatusResponse,
+)
+async def get_job_product_truth_status_v6(
+    workspace_id: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: UserResponse = Depends(get_current_user),
+) -> dict:
+    _ = current_user
+    return await get_job_product_truth_status_for_workspace(db, workspace_id)
 
 
 @router.post("/workspaces/{workspace_id}/svg", response_model=IntakeV6SvgUploadResponse)
