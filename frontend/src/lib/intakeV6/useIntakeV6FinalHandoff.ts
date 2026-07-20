@@ -21,6 +21,10 @@ import {
 	type IntakeV6QuoteHandoffPreviewResponse,
 	type IntakeV6FinishSetup,
 } from "@/lib/intakeV6/intakeV6Api";
+import {
+	confirmJobProductTruth,
+	getJobProductTruthStatus,
+} from "@/lib/intakeV6/productTruthJobConfirm";
 import { buildIntakeV6ConfirmSummary } from "@/lib/intakeV6/intakeV6ConfirmSummary";
 import {
 	readIntakeV6OfferCommercialInputs,
@@ -447,12 +451,32 @@ export function useIntakeV6FinalHandoff(hook: IntakeV6WorkspaceHook) {
 		savingInternalConfirmationRef.current = true;
 		setError(null);
 		try {
+			if (checked) {
+				// ConfirmJobProductTruth — pin typed bags + revision before commercial freeze.
+				const status = await getJobProductTruthStatus(ws.id);
+				const expectedRevision = status.has_job_revision
+					? Number(status.metadata?.revision ?? 0)
+					: 0;
+				await confirmJobProductTruth(ws.id, {
+					expected_revision: expectedRevision,
+					expected_draft_hash: status.draft_hash,
+					root_template_code: ws.template_code ?? undefined,
+				});
+			}
 			await saveIntakeV6InternalDraftQuoteConfirmation(ws.id, { confirmed: checked });
 			const refreshed = await getIntakeV6QuoteHandoffPreview(ws.id, clientAnalysisHash ?? undefined);
 			setHandoffPreview(refreshed);
 			setConfirmInternalDraft(refreshed.operator_confirmation_complete === true);
 		} catch (err) {
-			setError(err instanceof Error ? err.message : "Salvare confirmare draft intern esuata.");
+			const detail =
+				err && typeof err === "object" && "detail" in err
+					? JSON.stringify((err as { detail: unknown }).detail)
+					: null;
+			setError(
+				err instanceof Error
+					? `${err.message}${detail ? ` — ${detail}` : ""}`
+					: "Salvare confirmare draft intern esuata.",
+			);
 			setConfirmInternalDraft(previousPersisted);
 		} finally {
 			savingInternalConfirmationRef.current = false;

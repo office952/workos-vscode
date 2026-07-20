@@ -40,6 +40,7 @@ import {
   VolumetricComponentProductionHint,
 } from "@/features/product-system/VolumetricProductionGuidance";
 import { TemplateGeneralTabPanel } from "@/features/product-system/TemplateGeneralTabPanel";
+import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
 import { getTemplateArchivePolicy } from "@/features/product-system/templateArchivePolicy";
 import {
   deriveConstructionStages,
@@ -2956,6 +2957,9 @@ function TemplateEditor({
         onArchive={readOnly ? undefined : onArchive}
       />
       <SharedVolumetricFoundationPanel availability={availability} />
+      {draft.template_code ? (
+        <ProductE2EReadinessPanel templateCode={draft.template_code} />
+      ) : null}
     </div>
   );
 
