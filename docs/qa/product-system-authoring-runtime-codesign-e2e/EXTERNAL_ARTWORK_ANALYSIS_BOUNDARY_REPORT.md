@@ -187,8 +187,8 @@ vitest run artworkAnalysisContractV1.test.ts ArtworkAnalysisReviewPanel.test.tsx
 |-------|--------|
 | Verdict | PASS_WITH_WARNINGS |
 | Kickoff HEAD | `db64b46` |
-| Tip HEAD (pre-docs commit 4) | see `git rev-parse HEAD` after commit 4 |
-| Commit SHAs | `7e2a1a4`, `66cf0ef`, `99d9442`, + docs commit |
+| Tip HEAD | `9da0244` |
+| Commit SHAs | `7e2a1a4`, `66cf0ef`, `99d9442`, `9da0244` |
 | Doc paths | ownership + worklog + this report + allowlist |
 | Inventory | §12 |
 | Stop conditions | None hard-stop; transport TBD |
