@@ -212,3 +212,7 @@ class ProductDefinitionPreview(BaseModel):
     warnings: list[str] = Field(default_factory=list)
     notes: list[str] = Field(default_factory=list)
     composition: ProductDefinitionComposition | None = None
+    # Typed Product Truth job provenance (mirrors provenance entry product_truth_job_revision).
+    product_truth_job_revision: int | None = None
+    product_truth_content_hash: str | None = None
+    product_truth_status: str | None = None

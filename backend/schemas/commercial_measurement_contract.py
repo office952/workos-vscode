@@ -44,3 +44,7 @@ class CommercialMeasurementBundle(BaseModel):
     template_code: str
     measurements: list[CommercialMeasurement] = Field(default_factory=list)
     diagnostics: list[str] = Field(default_factory=list)
+    # Quantity Builder provenance aligned with Product Truth job revision (display-only).
+    product_truth_job_revision: int | None = None
+    product_truth_content_hash: str | None = None
+    product_truth_status: str | None = None

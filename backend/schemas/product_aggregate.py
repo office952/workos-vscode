@@ -159,6 +159,10 @@ class ProductAggregateProvenanceSummary(BaseModel):
     dossier: dict[str, int] = Field(default_factory=dict)
     linked_modules: dict[str, int] = Field(default_factory=dict)
     aggregate_totals: dict[str, int] = Field(default_factory=dict)
+    # Display/compiler provenance from ConfirmJobProductTruth — not persisted job truth.
+    product_truth_job_revision: int | None = None
+    product_truth_content_hash: str | None = None
+    product_truth_status: str | None = None
 
 
 class ProductAggregateMiniModuleRegistrySummary(BaseModel):

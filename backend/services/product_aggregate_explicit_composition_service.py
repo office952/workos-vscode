@@ -374,6 +374,9 @@ def apply_explicit_composition_graph(
             "composition_nodes": len(graph.nodes),
             "composition_edges": len(graph.edges),
         },
+        product_truth_job_revision=base_aggregate.provenance_summary.product_truth_job_revision,
+        product_truth_content_hash=base_aggregate.provenance_summary.product_truth_content_hash,
+        product_truth_status=base_aggregate.provenance_summary.product_truth_status,
     )
 
     return base_aggregate.model_copy(

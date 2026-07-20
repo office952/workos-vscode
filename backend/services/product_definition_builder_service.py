@@ -1285,6 +1285,13 @@ class ProductDefinitionBuilderService:
             f"Product Truth job status: {truth_status}.",
         ]
 
+        truth_revision_int: int | None = None
+        if truth_revision is not None:
+            try:
+                truth_revision_int = int(truth_revision)
+            except (TypeError, ValueError):
+                truth_revision_int = None
+
         return ProductDefinitionPreview(
             template_code=stored_template_code,
             business_name_ro=aggregate.business_name_ro or aggregate.family_name,
@@ -1308,6 +1315,9 @@ class ProductDefinitionBuilderService:
             warnings=warnings,
             notes=notes,
             composition=composition,
+            product_truth_job_revision=truth_revision_int,
+            product_truth_content_hash=str(truth_content_hash) if truth_content_hash else None,
+            product_truth_status=truth_status,
         )
 
     async def _load_workspace_payload(

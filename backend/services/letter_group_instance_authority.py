@@ -290,6 +290,9 @@ def build_volumetric_letters_commercial_quantities(
     *,
     quote_geometry: Mapping[str, Any] | None,
     finish_setup: Mapping[str, Any] | None,
+    product_truth_job_revision: int | None = None,
+    product_truth_content_hash: str | None = None,
+    product_truth_status: str | None = None,
 ) -> dict[str, Any]:
     """Sole V6 commercial quantity resolver for letters (no rates, no money)."""
     geom = dict(quote_geometry) if isinstance(quote_geometry, Mapping) else {}
@@ -371,6 +374,9 @@ def build_volumetric_letters_commercial_quantities(
         "led_perimeter_ml": geom.get("led_perimeter_ml"),
         "led_module_count": led_count,
         "instance_count": len(instances),
+        "product_truth_job_revision": product_truth_job_revision,
+        "product_truth_content_hash": product_truth_content_hash,
+        "product_truth_status": product_truth_status,
         "cost_engine_legacy": True,
         "notes": [
             "CPP consumes outer letter_perimeter_m / letter_face_area_m2 via this resolver",

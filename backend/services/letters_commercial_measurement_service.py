@@ -109,9 +109,24 @@ def build_letters_commercial_measurements(
     pd: ProductDefinitionPreview | None,
     quote_input: Mapping[str, Any] | None,
     active_modules: set[str] | None = None,
+    product_truth_job_revision: int | None = None,
+    product_truth_content_hash: str | None = None,
+    product_truth_status: str | None = None,
 ) -> CommercialMeasurementBundle | None:
     if not is_letters_commercial_measurement_template(template_code):
         return None
+
+    # Prefer explicit args; else typed PD fields (display provenance only).
+    truth_revision = product_truth_job_revision
+    truth_hash = product_truth_content_hash
+    truth_status = product_truth_status
+    if pd is not None:
+        if truth_revision is None:
+            truth_revision = getattr(pd, "product_truth_job_revision", None)
+        if truth_hash is None:
+            truth_hash = getattr(pd, "product_truth_content_hash", None)
+        if truth_status is None:
+            truth_status = getattr(pd, "product_truth_status", None)
 
     rules = RULES_BY_TEMPLATE.get(PILOT_TEMPLATE) or ()
     facts = collect_measurement_facts(pd=pd, quote_input=quote_input)
@@ -122,7 +137,13 @@ def build_letters_commercial_measurements(
     if not finish and isinstance(quote_input, dict):
         finish = quote_input.get("finish_setup") if isinstance(quote_input.get("finish_setup"), dict) else {}
     geom = facts.get("quote_geometry") if isinstance(facts.get("quote_geometry"), dict) else {}
-    qty = build_volumetric_letters_commercial_quantities(quote_geometry=geom, finish_setup=finish)
+    qty = build_volumetric_letters_commercial_quantities(
+        quote_geometry=geom,
+        finish_setup=finish,
+        product_truth_job_revision=truth_revision,
+        product_truth_content_hash=truth_hash,
+        product_truth_status=truth_status,
+    )
     if qty.get("letter_face_area_m2") is not None:
         facts["letter_face_area_m2"] = qty["letter_face_area_m2"]
         facts.setdefault("face_area_m2", qty["letter_face_area_m2"])
@@ -231,6 +252,9 @@ def build_letters_commercial_measurements(
         template_code="TPL-VOLUMETRIC-LETTERS_v2",
         measurements=measurements,
         diagnostics=diagnostics,
+        product_truth_job_revision=truth_revision,
+        product_truth_content_hash=truth_hash,
+        product_truth_status=truth_status,
     )
 
 

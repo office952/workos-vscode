@@ -108,6 +108,50 @@ def commercial_freeze_allowed(payload_raw: dict[str, Any]) -> bool:
     return True
 
 
+def read_product_truth_provenance(
+    payload_raw: dict[str, Any] | None,
+    *,
+    freeze_allowed: bool | None = None,
+) -> dict[str, Any]:
+    """Read-only job revision/hash surface for PD / Aggregate / Quantity / Snap.
+
+    Does not invent authority — returns None fields when metadata absent.
+    When freeze_allowed is True (or computed True), status is ``confirmed``.
+    """
+    if not isinstance(payload_raw, dict):
+        return {
+            "product_truth_status": "draft",
+            "product_truth_job_revision": None,
+            "product_truth_content_hash": None,
+        }
+    meta = get_job_revision_metadata(payload_raw)
+    if not meta:
+        return {
+            "product_truth_status": "draft",
+            "product_truth_job_revision": None,
+            "product_truth_content_hash": None,
+        }
+    allowed = commercial_freeze_allowed(payload_raw) if freeze_allowed is None else bool(freeze_allowed)
+    state = str(meta.get("confirmation_state") or "draft")
+    if allowed:
+        status = "confirmed"
+    elif state == "stale_after_edit":
+        status = "stale_after_edit"
+    else:
+        status = state or "draft"
+    revision = meta.get("revision")
+    try:
+        revision_int = int(revision) if revision is not None else None
+    except (TypeError, ValueError):
+        revision_int = None
+    content_hash = meta.get("content_hash")
+    return {
+        "product_truth_status": status,
+        "product_truth_job_revision": revision_int,
+        "product_truth_content_hash": str(content_hash) if content_hash else None,
+    }
+
+
 def assert_commercial_freeze_allowed(payload_raw: dict[str, Any]) -> dict[str, Any]:
     """Raise 422 if job Product Truth is missing/stale. Returns metadata when allowed."""
     meta = get_job_revision_metadata(payload_raw)

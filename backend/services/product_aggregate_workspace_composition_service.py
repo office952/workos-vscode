@@ -369,6 +369,9 @@ def compose_from_product_definition(
             "operations": len(operations),
             "linked_logo_segments": linked_segment_count,
         },
+        product_truth_job_revision=letters_aggregate.provenance_summary.product_truth_job_revision,
+        product_truth_content_hash=letters_aggregate.provenance_summary.product_truth_content_hash,
+        product_truth_status=letters_aggregate.provenance_summary.product_truth_status,
     )
 
     return letters_aggregate.model_copy(
@@ -444,15 +447,45 @@ def _attach_commercial_measurements(
             modules = None  # full-product: no gate → all rules eligible
         else:
             modules = scope.commercial_set()
+    prov = aggregate.provenance_summary
     bundle = build_letters_commercial_measurements(
         template_code=aggregate.template_code,
         pd=pd,
         quote_input=quote_input,
         active_modules=modules,
+        product_truth_job_revision=prov.product_truth_job_revision,
+        product_truth_content_hash=prov.product_truth_content_hash,
+        product_truth_status=prov.product_truth_status,
     )
     if bundle is None:
         return aggregate
     return aggregate.model_copy(update={"commercial_measurements": bundle})
+
+
+def _stamp_aggregate_product_truth_provenance(
+    aggregate: ProductAggregate,
+    *,
+    workspace_payload: dict[str, Any],
+    pd: ProductDefinitionPreview | None = None,
+) -> ProductAggregate:
+    """Stamp Aggregate provenance from workspace job meta or typed PD fields."""
+    from services.product_truth_job_confirm_service import read_product_truth_provenance
+
+    truth = read_product_truth_provenance(workspace_payload)
+    if truth.get("product_truth_job_revision") is None and pd is not None:
+        truth = {
+            "product_truth_status": getattr(pd, "product_truth_status", None) or truth["product_truth_status"],
+            "product_truth_job_revision": getattr(pd, "product_truth_job_revision", None),
+            "product_truth_content_hash": getattr(pd, "product_truth_content_hash", None),
+        }
+    summary = aggregate.provenance_summary.model_copy(
+        update={
+            "product_truth_job_revision": truth.get("product_truth_job_revision"),
+            "product_truth_content_hash": truth.get("product_truth_content_hash"),
+            "product_truth_status": truth.get("product_truth_status"),
+        }
+    )
+    return aggregate.model_copy(update={"provenance_summary": summary})
 
 
 def _apply_active_scope_selected_graph(
@@ -507,6 +540,13 @@ async def build_workspace_composed_aggregate(
     letters_aggregate = await aggregate_svc.build(template_code)
     if letters_aggregate is None:
         return None
+
+    # Stamp job revision/hash before composition copies so all paths preserve it.
+    letters_aggregate = _stamp_aggregate_product_truth_provenance(
+        letters_aggregate,
+        workspace_payload=workspace_payload,
+        pd=pd,
+    )
 
     if pd.composition is not None:
         child_codes = explicit_child_template_codes(pd.composition)

@@ -49,6 +49,7 @@ V6_SNAPSHOT_WRITE_PROVENANCE_MISSING = "V6_SNAPSHOT_WRITE_PROVENANCE_MISSING"
 V6_SNAPSHOT_FRONTEND_PREVIEW_FORBIDDEN = "V6_SNAPSHOT_FRONTEND_PREVIEW_FORBIDDEN"
 V6_SNAPSHOT_V2_V4_SOURCE_FORBIDDEN = "V6_SNAPSHOT_V2_V4_SOURCE_FORBIDDEN"
 V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED = "V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED"
+V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH = "V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH"
 V6_SNAPSHOT_ALREADY_EXISTS = "V6_SNAPSHOT_ALREADY_EXISTS"
 V6_SNAPSHOT_ORDER_EXISTS = "V6_SNAPSHOT_ORDER_EXISTS"
 V6_SNAPSHOT_QUOTE_TERMINAL = "V6_SNAPSHOT_QUOTE_TERMINAL"
@@ -72,6 +73,74 @@ _TERMINAL_STATUSES = frozenset({"accepted", "rejected", "expired", "converted", 
 
 def _blocker(code: str, message: str) -> dict[str, str]:
 	return {"code": code, "message": message}
+
+
+def _norm_revision(value: Any) -> int | None:
+	if value is None:
+		return None
+	try:
+		return int(value)
+	except (TypeError, ValueError):
+		return None
+
+
+def _norm_hash(value: Any) -> str | None:
+	if value is None:
+		return None
+	text = str(value).strip()
+	return text or None
+
+
+def _product_truth_provenance_mismatch_blocker(
+	*,
+	job_truth_meta: dict[str, Any],
+	quote_snapshot_v2: Any,
+) -> dict[str, str] | None:
+	"""Require PD / Aggregate / Quantity surfaces to match workspace job revision+hash."""
+	expected_rev = _norm_revision(job_truth_meta.get("revision"))
+	expected_hash = _norm_hash(job_truth_meta.get("content_hash"))
+	if expected_rev is None or expected_hash is None:
+		return _blocker(
+			V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH,
+			"Freeze requires confirmed Product Truth revision and content_hash on the workspace job.",
+		)
+
+	pd = getattr(quote_snapshot_v2, "product_definition_snapshot", None)
+	agg = getattr(quote_snapshot_v2, "product_aggregate_snapshot", None)
+	mismatches: list[str] = []
+
+	pd_rev = _norm_revision(getattr(pd, "product_truth_job_revision", None) if pd is not None else None)
+	pd_hash = _norm_hash(getattr(pd, "product_truth_content_hash", None) if pd is not None else None)
+	if pd is None or pd_rev != expected_rev or pd_hash != expected_hash:
+		mismatches.append("product_definition")
+
+	agg_summary = getattr(agg, "provenance_summary", None) if agg is not None else None
+	agg_rev = _norm_revision(
+		getattr(agg_summary, "product_truth_job_revision", None) if agg_summary is not None else None
+	)
+	agg_hash = _norm_hash(
+		getattr(agg_summary, "product_truth_content_hash", None) if agg_summary is not None else None
+	)
+	if agg is None or agg_rev != expected_rev or agg_hash != expected_hash:
+		mismatches.append("product_aggregate")
+
+	cm = getattr(agg, "commercial_measurements", None) if agg is not None else None
+	qty_rev = _norm_revision(getattr(cm, "product_truth_job_revision", None) if cm is not None else None)
+	qty_hash = _norm_hash(getattr(cm, "product_truth_content_hash", None) if cm is not None else None)
+	# Quantity provenance is required for letters measurement templates; when bundle is absent
+	# (non-letters), skip qty axis. For VL pilot, bundle must match.
+	template_code = str(getattr(agg, "template_code", None) or getattr(pd, "template_code", None) or "")
+	letters_template = template_code.startswith("TPL-VOLUMETRIC-LETTERS")
+	if letters_template:
+		if cm is None or qty_rev != expected_rev or qty_hash != expected_hash:
+			mismatches.append("quantity_builder")
+
+	if not mismatches:
+		return None
+	return _blocker(
+		V6_SNAPSHOT_PRODUCT_TRUTH_PROVENANCE_MISMATCH,
+		"Product Truth revision/hash mismatch across " + ", ".join(mismatches) + " vs workspace job.",
+	)
 
 
 def _blocked(
@@ -566,6 +635,20 @@ async def create_v6_quote_snapshot_v2(
 			blockers=[_blocker(V6_SNAPSHOT_CANONICAL_COMPOSE_FAILED, "Canonical Quote Snapshot V2 preview could not be composed.")],
 		)
 
+	# Fail-closed: PD = Aggregate = Quantity Builder = workspace job revision/hash.
+	provenance_blocker = _product_truth_provenance_mismatch_blocker(
+		job_truth_meta=job_truth_meta,
+		quote_snapshot_v2=quote_snapshot_v2,
+	)
+	if provenance_blocker is not None:
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[provenance_blocker],
+			warnings=list(quote_snapshot_v2.warnings_snapshot),
+			readiness=quote_snapshot_v2.readiness,
+		)
+
 	if quote_snapshot_v2.offer_scope_snapshot and quote_snapshot_v2.offer_scope_snapshot.validation_errors:
 		return _blocked(
 			quote_id=quote_id,
@@ -624,6 +707,7 @@ async def create_v6_quote_snapshot_v2(
 			"product_family": (linkage or {}).get("product_family") or "volumetric_letters",
 			"product_truth_status": "confirmed_job_revision",
 			"product_truth_revision": job_truth_meta.get("revision"),
+			"product_truth_job_revision": job_truth_meta.get("revision"),
 			"product_truth_content_hash": job_truth_meta.get("content_hash"),
 			"product_truth_confirmed_at": job_truth_meta.get("confirmed_at"),
 			"root_template_code": job_truth_meta.get("root_template_code"),
