@@ -27,15 +27,24 @@ export function buildLayerPaintEvidence(layerId: string, elements: ParsedSvgElem
   const hasImage = layerElements.some((element) => element.type === 'image')
   const textElementCount = layerElements.filter((element) => element.type === 'text').length
 
-  const colorTokens = new Set([...fills, ...strokes])
-  const isMulticolor = colorTokens.size >= 2 || hasGradient || hasPattern || hasImage
+  // Real policromie = multiple fills, gradient/pattern/image — NOT fill+stroke technical contour.
+  // ACM panels often use one solid fill + a darker stroke; that must stay "solid".
+  const distinctFills = fills.length
+  const isRealPolychrome =
+    hasGradient ||
+    hasPattern ||
+    hasImage ||
+    distinctFills >= 2 ||
+    (distinctFills >= 1 && fills.some((fill) => fill.startsWith('url(')))
 
   let paintKind: LayerPaintKind = 'none'
-  if (hasGradient || hasPattern || hasImage || (isMulticolor && colorTokens.size >= 2)) {
+  if (isRealPolychrome) {
     paintKind = 'policromie'
-  } else if (fills.length === 1 || strokes.length === 1) {
+  } else if (fills.length === 1 || (fills.length === 0 && strokes.length === 1)) {
     paintKind = 'solid'
-  } else if (colorTokens.size === 1) {
+  } else if (fills.length === 0 && strokes.length === 0 && layerElements.length > 0) {
+    paintKind = 'mixed'
+  } else if (fills.length === 1 && strokes.length >= 1) {
     paintKind = 'solid'
   } else if (layerElements.length > 0) {
     paintKind = 'mixed'
@@ -48,8 +57,8 @@ export function buildLayerPaintEvidence(layerId: string, elements: ParsedSvgElem
     hasGradient,
     hasPattern,
     hasImage,
-    isMulticolor,
-    fillCount: colorTokens.size,
+    isMulticolor: isRealPolychrome,
+    fillCount: fills.length,
     textElementCount,
     paintKind,
   }

@@ -1,0 +1,905 @@
+{
+  "case": {
+    "id": "case2-gradi-curat",
+    "label": "gradi-curat",
+    "file": "C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg"
+  },
+  "startedAt": "2026-07-20T00:26:55.173Z",
+  "steps": [
+    {
+      "step": "fixture",
+      "observed": "exists C:\\Users\\offic\\Desktop\\fisiere-teste-svg\\gradi-curat.svg",
+      "expected": null,
+      "at": "2026-07-20T00:26:55.173Z",
+      "bytes": 27173
+    },
+    {
+      "step": "create_workspace",
+      "observed": "created ebfed730-eaf9-4e90-ad9e-aa949a061c7d / IV6-3A52D29C",
+      "expected": null,
+      "at": "2026-07-20T00:26:55.190Z"
+    },
+    {
+      "step": "open_intake_v6",
+      "observed": "workspace operator loaded",
+      "expected": null,
+      "at": "2026-07-20T00:26:56.154Z",
+      "ui": {
+        "url": "http://127.0.0.1:3000/intake-v6/ebfed730-eaf9-4e90-ad9e-aa949a061c7d/operator",
+        "fileChip": null,
+        "emptyAnalyzer": "Nu există încă o analiză SVG salvată. Folosește panoul operator pentru upload.",
+        "error": null,
+        "conturHint": null,
+        "conturError": null,
+        "layersAllConfirmed": false,
+        "layerRows": [],
+        "layerRoleSelects": [],
+        "previewPresent": false,
+        "previewInspect": false,
+        "geometrySummary": null,
+        "componentAssignment": null,
+        "bindableList": [],
+        "blockerBanner": null,
+        "warningTexts": [
+          "Stare sistem: necesită verificare"
+        ],
+        "redTexts": [],
+        "header": "IV6-3A52D29C·Litere volumetrice·Straturi1Straturi2Configurare3Confirmare",
+        "stepReview": false,
+        "stepLayers": true,
+        "busyLabelVisible": false,
+        "bodySample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app Stare sistem: necesită verificare DA IV6-3A52D29C · Litere volumetrice · Straturi 1 Straturi 2 Configurare 3 Confirmare Confirmă fișierul SVG Încarcă SVG-ul corect înainte de confirmarea rolurilor. Trage SVG aici sau folosește panoul operator. Încarcă SVG Ce producem? Produs complet Doar față Doar cant Față + cant Produs complet Doar anumite componente Selecție confirmată Ofertă pentru produs complet Mod: Produs complet Componente active: Față, Cant, Spate, Iluminare, Electrică Panou operator Upload, status analiză și acțiuni rapide pentru confirmarea straturilor. Rezumat straturi Încarcă SVG Nu există încă o analiză SVG salvată. Folosește panoul operator pentru upload. Straturi incomplete · 0 / 2 confirmări · 1 blocant Următorul pas: Încarcă, analizează și salvează un fișier SVG. Straturi incomplet"
+      }
+    },
+    {
+      "step": "upload_control",
+      "observed": "select button missing; input attached",
+      "expected": null,
+      "at": "2026-07-20T00:26:57.043Z",
+      "selectVisible": false,
+      "inputAttached": true
+    },
+    {
+      "step": "upload_start",
+      "observed": "setInputFiles done; sawBusy=true",
+      "expected": "feedback Analizez… during process",
+      "at": "2026-07-20T00:26:57.190Z"
+    },
+    {
+      "step": "after_process",
+      "observed": "file chip visible",
+      "expected": "chip with correct filename + recognized SVG",
+      "at": "2026-07-20T00:26:57.241Z",
+      "ms": 149,
+      "ui": {
+        "url": "http://127.0.0.1:3000/intake-v6/ebfed730-eaf9-4e90-ad9e-aa949a061c7d/operator",
+        "fileChip": "gradi-curat.svg",
+        "emptyAnalyzer": null,
+        "error": null,
+        "conturHint": "Pentru panoul exterior ACP: pe cardul contur negru alege rolul Contur suport — apare Panou Alucobond casetat în Compoziție produs propusă.",
+        "conturError": null,
+        "layersAllConfirmed": false,
+        "layerRows": [
+          "intake-v6-layer-row-pseudo:maria",
+          "intake-v6-layer-row-pseudo:soare",
+          "intake-v6-layer-row-pseudo:ana",
+          "intake-v6-layer-row-pseudo:gradinita",
+          "intake-v6-layer-row-logo_instance_001",
+          "intake-v6-layer-row-logo_instance_002"
+        ],
+        "layerRoleSelects": [
+          {
+            "testId": "intake-v6-layer-role-pseudo:maria",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:soare",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:ana",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:gradinita",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_001",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_002",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          }
+        ],
+        "previewPresent": true,
+        "previewInspect": false,
+        "geometrySummary": null,
+        "componentAssignment": null,
+        "bindableList": [],
+        "blockerBanner": null,
+        "warningTexts": [
+          "Stare sistem: necesită verificare",
+          "6",
+          "4 observații analizăVezi în subsol",
+          "4 observații analiză",
+          "Vezi în subsol"
+        ],
+        "redTexts": [],
+        "header": "IV6-3A52D29C·Litere volumetrice·Straturi1Straturi2Configurare3Confirmare",
+        "stepReview": false,
+        "stepLayers": true,
+        "busyLabelVisible": false,
+        "bodySample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app Stare sistem: necesită verificare DA ◇ Analiză nesalvată sau fișier schimbat — salvează din Pas 1 înainte de Review/Confirm. IV6-3A52D29C · Litere volumetrice · Straturi 1 Straturi 2 Configurare 3 Confirmare Fișier recunoscut Verifică thumbnail-ul — deschide preview mare pentru detalii și straturi. gradi-curat.svg Dimensiuni 5087 mm × 600 mm Straturi 6 Culori 5 Contururi 36 Deschide preview Schimbă fișier Pentru panoul exterior ACP: pe cardul contur negru alege rolul Contur suport — apare Panou Alucobond casetat în Compoziție produs propusă. Decizii straturi Rol geometric + componentă Product System pe același card. Hover evidențiază geometria. 6 straturi Element 1 — albastru Grup detectat: maria Propunere Rol geometrie Vector Litere Vector Logo Contur suport Text decupat Logo decupat Insert plexigl"
+      },
+      "uploadOk": true,
+      "uploadError": null
+    },
+    {
+      "step": "preview",
+      "observed": "preview visible",
+      "expected": "SVG preview present",
+      "at": "2026-07-20T00:26:57.338Z"
+    },
+    {
+      "step": "layers",
+      "observed": "6 layer rows",
+      "expected": null,
+      "at": "2026-07-20T00:26:58.076Z",
+      "ui": {
+        "url": "http://127.0.0.1:3000/intake-v6/ebfed730-eaf9-4e90-ad9e-aa949a061c7d/operator",
+        "fileChip": "gradi-curat.svg",
+        "emptyAnalyzer": null,
+        "error": null,
+        "conturHint": "Pentru panoul exterior ACP: pe cardul contur negru alege rolul Contur suport — apare Panou Alucobond casetat în Compoziție produs propusă.",
+        "conturError": null,
+        "layersAllConfirmed": false,
+        "layerRows": [
+          "intake-v6-layer-row-pseudo:maria",
+          "intake-v6-layer-row-pseudo:soare",
+          "intake-v6-layer-row-pseudo:ana",
+          "intake-v6-layer-row-pseudo:gradinita",
+          "intake-v6-layer-row-logo_instance_001",
+          "intake-v6-layer-row-logo_instance_002"
+        ],
+        "layerRoleSelects": [
+          {
+            "testId": "intake-v6-layer-role-pseudo:maria",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:soare",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:ana",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:gradinita",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_001",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_002",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:maria",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:soare",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:ana",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-pseudo:gradinita",
+            "selected": "face",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_001",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          },
+          {
+            "testId": "intake-v6-layer-role-logo_instance_002",
+            "selected": "support_panel",
+            "options": [
+              {
+                "value": "face",
+                "label": "Vector Litere"
+              },
+              {
+                "value": "printed_artwork",
+                "label": "Vector Logo"
+              },
+              {
+                "value": "support_panel",
+                "label": "Contur suport"
+              },
+              {
+                "value": "cutout_text",
+                "label": "Text decupat"
+              },
+              {
+                "value": "cutout_logo",
+                "label": "Logo decupat"
+              },
+              {
+                "value": "acrylic_insert",
+                "label": "Insert plexiglas"
+              },
+              {
+                "value": "ignore",
+                "label": "Decorativ / Ignore"
+              }
+            ]
+          }
+        ],
+        "previewPresent": true,
+        "previewInspect": true,
+        "geometrySummary": null,
+        "componentAssignment": null,
+        "bindableList": [],
+        "blockerBanner": null,
+        "warningTexts": [
+          "Stare sistem: necesită verificare",
+          "6",
+          "4 observații analizăVezi în subsol",
+          "4 observații analiză",
+          "Vezi în subsol"
+        ],
+        "redTexts": [],
+        "header": "IV6-3A52D29C·Litere volumetrice·Straturi1Straturi2Configurare3Confirmare",
+        "stepReview": false,
+        "stepLayers": true,
+        "busyLabelVisible": false,
+        "bodySample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app Stare sistem: necesită verificare DA ◇ Analiză nesalvată sau fișier schimbat — salvează din Pas 1 înainte de Review/Confirm. IV6-3A52D29C · Litere volumetrice · Straturi 1 Straturi 2 Configurare 3 Confirmare Fișier recunoscut Verifică thumbnail-ul — deschide preview mare pentru detalii și straturi. gradi-curat.svg Dimensiuni 5087 mm × 600 mm Straturi 6 Culori 5 Contururi 36 Deschide preview Schimbă fișier Pentru panoul exterior ACP: pe cardul contur negru alege rolul Contur suport — apare Panou Alucobond casetat în Compoziție produs propusă. Decizii straturi Rol geometric + componentă Product System pe același card. Hover evidențiază geometria. 6 straturi Element 1 — albastru Grup detectat: maria Propunere Rol geometrie Vector Litere Vector Logo Contur suport Text decupat Logo decupat Insert plexigl"
+      }
+    },
+    {
+      "step": "analysis_persist_wait",
+      "observed": "analysis/svg present on workspace",
+      "expected": "debounced persist of client analysis",
+      "at": "2026-07-20T00:26:58.201Z"
+    },
+    {
+      "step": "confirm_roles",
+      "observed": "clicked confirm-all-roles",
+      "expected": null,
+      "at": "2026-07-20T00:26:59.752Z"
+    },
+    {
+      "step": "advance_next",
+      "observed": "clicked footer next: Continuă la Configurare",
+      "expected": null,
+      "at": "2026-07-20T00:27:01.850Z"
+    },
+    {
+      "step": "review_config",
+      "observed": "on review step",
+      "expected": null,
+      "at": "2026-07-20T00:27:03.505Z",
+      "ui": {
+        "url": "http://127.0.0.1:3000/intake-v6/ebfed730-eaf9-4e90-ad9e-aa949a061c7d/operator",
+        "fileChip": null,
+        "emptyAnalyzer": null,
+        "error": null,
+        "conturHint": null,
+        "conturError": null,
+        "layersAllConfirmed": false,
+        "layerRows": [],
+        "layerRoleSelects": [],
+        "previewPresent": false,
+        "previewInspect": false,
+        "geometrySummary": null,
+        "componentAssignment": null,
+        "bindableList": [],
+        "blockerBanner": "! 2 probleme",
+        "warningTexts": [
+          "Stare sistem: necesită verificare",
+          "Necesită confirmare",
+          "Necesită confirmare"
+        ],
+        "redTexts": [],
+        "header": "IV6-3A52D29C·Litere volumetrice·Configurare✓Straturi2Configurare3Confirmare",
+        "stepReview": true,
+        "stepLayers": false,
+        "busyLabelVisible": false,
+        "bodySample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app Stare sistem: necesită verificare DA IV6-3A52D29C · Litere volumetrice · Configurare ✓ Straturi 2 Configurare 3 Confirmare PRODUS Litere volumetrice + Panou Alucobond casetat Necesită confirmare Confirmă Litere volumetrice · Panou Alucobond casetat Scope · Produs complet · Față, Cant, Spate, Iluminare, Electrică Toate componentele produsului sunt în scope. Finisaje Față · cant · Vector Logo Iluminare și surse LED · surse litere Montaj Fundal · carcasă · site ! 2 probleme Full-product composition from modular form contract Litere volumetrice Anatomie: Față (finisaj vizibil) · Cant (lateral volum) · Spate (Forex corp). Față Cant Spate Laterala literei / adâncimea volumului. Copiază cant la toate Element 1 — albastru FațăFără finisaj — plexiglas brut CantAlb · 60 mm SpateForex 10 mm fara sanfren Elemen"
+      }
+    },
+    {
+      "step": "save",
+      "observed": "no explicit save button; relying on auto-persist",
+      "expected": null,
+      "at": "2026-07-20T00:27:04.919Z"
+    },
+    {
+      "step": "refresh_persistence",
+      "observed": {
+        "fileChip": null,
+        "layerRows": 0,
+        "has_svg_source": true,
+        "has_svg_analysis": true,
+        "file_name": null
+      },
+      "expected": "file + analysis + layers persist after refresh",
+      "at": "2026-07-20T00:27:07.868Z",
+      "ui": {
+        "url": "http://127.0.0.1:3000/intake-v6/ebfed730-eaf9-4e90-ad9e-aa949a061c7d/operator",
+        "fileChip": null,
+        "emptyAnalyzer": null,
+        "error": null,
+        "conturHint": null,
+        "conturError": null,
+        "layersAllConfirmed": false,
+        "layerRows": [],
+        "layerRoleSelects": [],
+        "previewPresent": false,
+        "previewInspect": false,
+        "geometrySummary": null,
+        "componentAssignment": null,
+        "bindableList": [],
+        "blockerBanner": "! 2 probleme",
+        "warningTexts": [
+          "Stare sistem: necesită verificare",
+          "Necesită confirmare",
+          "Necesită confirmare"
+        ],
+        "redTexts": [],
+        "header": "IV6-3A52D29C·Litere volumetrice·Configurare✓Straturi2Configurare3Confirmare",
+        "stepReview": true,
+        "stepLayers": false,
+        "busyLabelVisible": false,
+        "bodySample": "WorkOS OPERAȚIUNI Control Tower Shop Floor Operator Atelier Tablet COMERCIAL Clienți Work Intake Oferte Comenzi Execuție Documente RESURSE Inventar & OC Pricing Product System Colaboratori Utilaje Rapoarte PERSONAL Angajați operaționali Evidență internă HR Pontaj Plăți angajați Avansuri / Datorii SISTEM Harta sistemelor Guvernanța sistemului Setări WorkOS BUILD_25 STAGING /workspace/app Stare sistem: necesită verificare DA IV6-3A52D29C · Litere volumetrice · Configurare ✓ Straturi 2 Configurare 3 Confirmare PRODUS Litere volumetrice + Panou Alucobond casetat Necesită confirmare Confirmă Litere volumetrice · Panou Alucobond casetat 2 segmente legate Scope · Produs complet · Față, Cant, Spate, Iluminare, Electrică Toate componentele produsului sunt în scope. Finisaje Față · cant · Vector Logo Iluminare și surse LED · surse litere Montaj Fundal · carcasă · site ! 2 probleme Full-product composition from modular form contract Litere volumetrice Anatomie: Față (finisaj vizibil) · Cant (lateral volum) · Spate (Forex corp). Față Cant Spate Laterala literei / adâncimea volumului. Copiază cant la toate Element 1 — albastru FațăFără finisaj — plexiglas brut CantAlb · 60 mm SpateForex 10 mm f"
+      }
+    }
+  ],
+  "problems": [],
+  "screenshots": [
+    "01-before-upload-1440x900.png",
+    "02-layers-before-upload-1440x900.png",
+    "03-upload-processing-1440x900.png",
+    "04-after-process-1440x900.png",
+    "05-preview-1440x900.png",
+    "05b-preview-inspect-1440x900.png",
+    "06-layers-detected-1440x900.png",
+    "07-components-area-1440x900.png",
+    "08-blockers-warnings-1440x900.png",
+    "09-after-role-confirm-1440x900.png",
+    "10-after-advance-1440x900.png",
+    "11-review-config-1440x900.png",
+    "11b-review-tab-montaj-1440x900.png",
+    "11b-review-tab-finisaje-1440x900.png",
+    "12-saved-state-1440x900.png",
+    "13-after-refresh-1440x900.png",
+    "14-final-fullpage.png",
+    "14-final-viewport-1440x900.png"
+  ],
+  "workspaceId": "ebfed730-eaf9-4e90-ad9e-aa949a061c7d",
+  "workspaceCode": "IV6-3A52D29C",
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)",
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "finishedAt": "2026-07-20T00:27:07.969Z"
+}

@@ -1,0 +1,47 @@
+{
+  "at": "2026-07-20T00:47:46.466Z",
+  "mode": "dry-run",
+  "selectionCriteria": [
+    "logo_* layer confirmed as support_panel",
+    "support_panel confirmed but segmented_background null/absent",
+    "artwork_finishes present without printed_artwork/logo confirmed roles"
+  ],
+  "scannedKnownAuditWorkspaces": 2,
+  "suspectCount": 2,
+  "workspaces": [
+    {
+      "id": "319c706e-fd7d-407a-9903-67f5c560085b",
+      "workspace_code": "IV6-87B98425",
+      "title": "Audit SVG litere-cu-fundal-acm-segmentat 1784507201231",
+      "fileName": "litere-cu-fundal-acm-segmentat.svg",
+      "flags": [
+        "P1_missing_segmented",
+        "P3_phantom_artwork"
+      ],
+      "impact": {
+        "composition": true,
+        "pricing": true,
+        "offerOrderUnknown": true
+      },
+      "recommendation": "Owner-gated remediation: re-open Straturi, re-confirm roles, clear phantom artwork_finishes, re-propose segmented if support confirmed. Do NOT auto-rewrite offers/orders."
+    },
+    {
+      "id": "ebfed730-eaf9-4e90-ad9e-aa949a061c7d",
+      "workspace_code": "IV6-3A52D29C",
+      "title": "Audit SVG gradi-curat 1784507215173",
+      "fileName": "gradi-curat.svg",
+      "flags": [
+        "P2_logo_as_support",
+        "P1_missing_segmented",
+        "P3_phantom_artwork"
+      ],
+      "impact": {
+        "composition": true,
+        "pricing": true,
+        "offerOrderUnknown": true
+      },
+      "recommendation": "Owner-gated remediation: re-open Straturi, re-confirm roles, clear phantom artwork_finishes, re-propose segmented if support confirmed. Do NOT auto-rewrite offers/orders."
+    }
+  ],
+  "note": "No historical data modified. Expand scan via DB SQL in a dedicated remediation build after owner GO."
+}

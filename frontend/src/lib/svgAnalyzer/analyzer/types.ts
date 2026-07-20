@@ -126,6 +126,10 @@ export interface LayerAnalysis {
   layerKind?: LayerKind
   layerOrigin?: string | null
   roleReason?: string | null
+  /** Semantic SVG group ids preserved across color clustering. */
+  sourceGroupIds?: string[]
+  /** Drawable element ids owned by this layer. */
+  elementIds?: string[]
   autoRole: LayerAutoRole
   autoConfidence: ConfidenceLevel
   autoRoleCandidates: LayerRoleCandidate[]
@@ -198,6 +202,8 @@ export interface SvgAnalysisLayer {
   layerKind?: LayerKind
   layerOrigin?: string | null
   roleReason?: string | null
+  sourceGroupIds?: string[]
+  elementIds?: string[]
   autoRole: LayerAutoRole
   autoConfidence: ConfidenceLevel
   autoRoleCandidates: LayerRoleCandidate[]

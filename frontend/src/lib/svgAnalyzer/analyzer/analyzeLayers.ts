@@ -1,5 +1,6 @@
 import { buildLayerPaintEvidence } from './analyzePaint'
 import { guessLayerAutoRole } from './guessLayerAutoRole'
+import { isPseudoLayerId } from './layerNameSemantics'
 import type { LayerExpansionMeta } from './semanticAndPseudoLayerExpansion'
 import type { ColorAnalysis, GeometrySummary, LayerAnalysis, ParsedSvgDocument } from './types'
 
@@ -123,6 +124,8 @@ function layersFromElementLayerAssignments(
       layerKind: expansion?.layerKind,
       layerOrigin: expansion?.layerOrigin ?? null,
       roleReason: expansion?.roleReason ?? roleFields.autoRoleCandidates[0]?.reason ?? null,
+      sourceGroupIds: expansion?.sourceGroupIds ?? [],
+      elementIds: expansion?.elementIds ?? layerElements.map((element) => element.elementId),
       ...roleFields,
       elementCount: layerElements.length,
       pathElementCount: layerPathElements.length,
@@ -239,6 +242,8 @@ export function analyzeLayers(
       layerKind: expansion?.layerKind,
       layerOrigin: expansion?.layerOrigin ?? null,
       roleReason: expansion?.roleReason ?? roleFields.autoRoleCandidates[0]?.reason ?? null,
+      sourceGroupIds: expansion?.sourceGroupIds ?? (isPseudoLayerId(group.id) ? [] : [group.id]),
+      elementIds: expansion?.elementIds ?? layerElements.map((e) => e.elementId),
       ...roleFields,
       elementCount: layerElements.length,
       pathElementCount: layerPathElements.length,

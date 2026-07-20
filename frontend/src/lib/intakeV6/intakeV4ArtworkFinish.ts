@@ -1,6 +1,4 @@
 import type { LayerRoleConfirmation, SvgAnalysisCoreReport, SvgAnalysisLayer } from "@/lib/svgAnalyzer";
-import { isArtworkLayerName } from "@/lib/intakeSvgContracts";
-import { layerHasLetterPathGeometry, layerIsArtworkCandidate } from "./intakeV6ArtworkOnlyGuard";
 import type {
   SvgArtworkColorMode,
   SvgArtworkExecutionType,
@@ -13,6 +11,11 @@ import { INTAKE_V6_DEFAULT_RETURN_FINISH_TYPE } from "@/lib/intakeV6/intakeV6Ret
 import { buildOperatorLogoLabelMap, getOperatorLayerLabel } from "@/lib/intakeV6/intakeV4OperatorUiDisplay";
 import { stableLayerInstanceKey } from "@/lib/intakeV6/layerInstanceIdentity";
 import { normalizeIntakeV4BackingMode, type IntakeV4BackingMode } from "./intakeV4BackingMode";
+import {
+  layerQualifiesAsArtworkFinishSource,
+  logoPresenceAllowsArtworkFinishRows,
+  resolveLogoPresence,
+} from "./intakeV6LogoPresence";
 
 export type IntakeV4ArtworkPrintTransparency = "standard" | "translucent" | "transparent";
 
@@ -47,8 +50,6 @@ export interface IntakeV4ArtworkFinish {
   backing_mode?: IntakeV4BackingMode | null;
   confirmed: boolean;
 }
-
-const ARTWORK_ROLES = new Set(["printed_artwork", "logo", "policromie"]);
 
 export function normalizeArtworkFinishState(
   row: IntakeV4ArtworkFinish,
@@ -115,10 +116,7 @@ function isArtworkLayer(
   layer: SvgAnalysisLayer,
   role: string | null | undefined,
 ): boolean {
-  if (role && ARTWORK_ROLES.has(role)) return true;
-  if (isArtworkLayerName(layer.name) || isArtworkLayerName(layer.id)) return true;
-  if (!layerHasLetterPathGeometry(layer) && layerIsArtworkCandidate(layer)) return true;
-  return false;
+  return layerQualifiesAsArtworkFinishSource(layer, role);
 }
 
 function layerAreaM2(layer: SvgAnalysisLayer): number | null {
@@ -132,6 +130,9 @@ export function deriveArtworkFinishesFromAnalyzer(
   defaultReturnDepthMm = 60,
 ): IntakeV4ArtworkFinish[] {
   if (!report || !confirmation) return [];
+
+  const presence = resolveLogoPresence(report, confirmation);
+  if (!logoPresenceAllowsArtworkFinishRows(presence)) return [];
 
   const rows: IntakeV4ArtworkFinish[] = [];
   const logoLabelMap = buildOperatorLogoLabelMap(report.layers);

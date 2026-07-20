@@ -1,0 +1,177 @@
+[
+  {
+    "case": "acm",
+    "workspaceId": "646b746d-94c8-41e1-be27-baaeabd26457",
+    "workspaceCode": "IV6-379CEB03",
+    "checks": [
+      {
+        "name": "segmented_status",
+        "pass": true,
+        "status": "PROPOSED",
+        "panels": 2
+      },
+      {
+        "name": "reopen_layers",
+        "pass": true,
+        "chip": "litere-cu-fundal-acm-segmentat.svg",
+        "layers": 2
+      },
+      {
+        "name": "refresh_then_layers",
+        "pass": true,
+        "chip": "litere-cu-fundal-acm-segmentat.svg",
+        "layers": 2
+      },
+      {
+        "name": "logo_not_support",
+        "pass": true
+      },
+      {
+        "name": "has_support_assembly",
+        "pass": true
+      },
+      {
+        "name": "panels_geometries",
+        "pass": true,
+        "panels": 2
+      },
+      {
+        "name": "artwork_bounds",
+        "pass": true,
+        "artworkCount": 0
+      }
+    ],
+    "payload": {
+      "readiness": "product_composition_not_confirmed",
+      "layerCount": 2,
+      "supportRoles": [
+        "pseudo:fill-c5c6c6"
+      ],
+      "logoAsSupport": [],
+      "artworkCount": 0,
+      "segmented": "PROPOSED",
+      "panels": 2,
+      "provenanceSample": [
+        {
+          "id": "pseudo:fill-c5c6c6",
+          "sourceGroupIds": [
+            "gravare-cnc-135gr"
+          ],
+          "elementIds": [
+            "el-1",
+            "el-2"
+          ]
+        },
+        {
+          "id": "pseudo:fill-e31e24",
+          "sourceGroupIds": [
+            "decupare-cnc-outside"
+          ],
+          "elementIds": [
+            "el-3"
+          ]
+        }
+      ]
+    },
+    "pass": true
+  },
+  {
+    "case": "gradi",
+    "workspaceId": "3f7d1c7a-a12b-488e-8f70-12df8de0795f",
+    "workspaceCode": "IV6-B6C01680",
+    "checks": [
+      {
+        "name": "no_support_panel_on_gradi",
+        "pass": true,
+        "hasSupportRole": false
+      },
+      {
+        "name": "reopen_layers",
+        "pass": true,
+        "chip": "gradi-curat.svg",
+        "layers": 6
+      },
+      {
+        "name": "refresh_then_layers",
+        "pass": true,
+        "chip": "gradi-curat.svg",
+        "layers": 6
+      },
+      {
+        "name": "logo_not_support",
+        "pass": true
+      },
+      {
+        "name": "artwork_bounds",
+        "pass": true,
+        "artworkCount": 2
+      }
+    ],
+    "payload": {
+      "readiness": "product_composition_not_confirmed",
+      "layerCount": 6,
+      "supportRoles": [],
+      "logoAsSupport": [],
+      "artworkCount": 2,
+      "segmented": null,
+      "panels": 0,
+      "provenanceSample": [
+        {
+          "id": "pseudo:maria",
+          "sourceGroupIds": [
+            "Layer_x0020_1"
+          ],
+          "elementIds": [
+            "el-1"
+          ]
+        },
+        {
+          "id": "pseudo:soare",
+          "sourceGroupIds": [
+            "Layer_x0020_1"
+          ],
+          "elementIds": [
+            "el-2"
+          ]
+        },
+        {
+          "id": "pseudo:ana",
+          "sourceGroupIds": [
+            "Layer_x0020_1"
+          ],
+          "elementIds": [
+            "el-3"
+          ]
+        },
+        {
+          "id": "pseudo:gradinita",
+          "sourceGroupIds": [
+            "Layer_x0020_1"
+          ],
+          "elementIds": [
+            "el-4"
+          ]
+        },
+        {
+          "id": "logo_instance_001",
+          "sourceGroupIds": [
+            "logo_instance_001"
+          ],
+          "elementIds": [
+            "el-5"
+          ]
+        },
+        {
+          "id": "logo_instance_002",
+          "sourceGroupIds": [
+            "logo_instance_002"
+          ],
+          "elementIds": [
+            "el-6"
+          ]
+        }
+      ]
+    },
+    "pass": true
+  }
+]

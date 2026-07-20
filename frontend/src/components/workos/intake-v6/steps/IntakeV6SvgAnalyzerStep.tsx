@@ -34,14 +34,14 @@ import {
 	readSvgComponentBindings,
 } from "@/lib/intakeV6/svgComponentBindings";
 import {
-	buildAssociatePrimarySupportContourPatch,
 	buildClearSupportContourPatch,
 	resolvePrimaryClosedContourCandidate,
 } from "@/lib/intakeV6/associatePrimarySupportContour";
+import { readSegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
 import {
-	proposeSegmentedBackgroundFromCandidates,
-	readSegmentedBackground,
-} from "@/lib/intakeV6/segmentedBackground";
+	buildSupportPanelConfirmationPath,
+	confirmationIncludesConfirmedSupportPanel,
+} from "@/lib/intakeV6/intakeV6SupportPanelConfirmationPath";
 import { applyLayerRoleSelection, readSvgSupportSelection } from "@/lib/svgAnalyzer";
 import type { LayerAutoRole } from "@/lib/svgAnalyzer";
 
@@ -193,49 +193,26 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			});
 
 			if (role === "support_panel") {
-				if (!report?.closedContourCandidates?.candidate_count) {
-					setSupportAssociateError(
-						"Contur suport necesită candidați closed-contour din analiza SVG. Reîncarcă fișierul SVG, apoi alege din nou Contur suport pe cardul contur negru.",
-					);
-					return;
-				}
-				const { patch, contourId, blockers } = buildAssociatePrimarySupportContourPatch({
+				const path = buildSupportPanelConfirmationPath({
 					report,
+					confirmation: nextConfirmation,
 					finishSetup,
+					bindables,
 					svgSourceHash: state.localFileHash,
 				});
-				if (blockers.length || !patch) {
-					setSupportAssociateError(
-						blockers.join(" ") ||
-							"Nu s-a putut asocia Panou Alucobond casetat. Verifică geometria conturului.",
-					);
+				if (!path.ok || !path.finishPatch) {
+					setSupportAssociateError(path.blockers.join(" ") || "Asociere Contur suport eșuată.");
 					return;
 				}
-				// Merge letter/logo sync + support binding in one FinishSetup write (avoid race wipe).
-				const mergedBindings = [
-					...letterLogoBindings.filter((b) => b.geometry_role !== "SUPPORT_CONTOUR"),
-					...patch.svg_component_bindings.filter((b) => b.geometry_role === "SUPPORT_CONTOUR"),
-				];
-				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(mergedBindings);
-				if (contourId) setSelectedContourId(contourId);
-				// Analyzer may propose multi-panel assembly — never auto-confirm.
-				const existingSeg = readSegmentedBackground(
-					finishSetup as Record<string, unknown> | null,
-				);
-				const existingStatus = String(existingSeg?.status || "").toUpperCase();
-				let segmentedProposal: Record<string, unknown> | undefined;
-				if (existingStatus !== "CONFIRMED" && existingStatus !== "REJECTED") {
-					const proposal = proposeSegmentedBackgroundFromCandidates(
-						report.closedContourCandidates?.candidates || [],
-					);
-					if (proposal) {
-						segmentedProposal = proposal as unknown as Record<string, unknown>;
-						// Synchronous — binding sync useEffect must not race-wipe the proposal.
-						segmentedBackgroundRef.current = segmentedProposal;
-					}
+				lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(path.mergedBindings);
+				if (path.contourId) setSelectedContourId(path.contourId);
+				if (path.segmentedProposal) {
+					segmentedBackgroundRef.current = path.segmentedProposal as unknown as Record<
+						string,
+						unknown
+					>;
 				}
 				void (async () => {
-					// Early FinishSetup association requires persisted layer_role_setup.
 					const analysisOk = await persistAnalysisBundle({
 						layerRoleConfirmation: nextConfirmation,
 					});
@@ -245,17 +222,12 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 						);
 						return;
 					}
-					const supportOk = await persistFinishPatch(
-						{
-							...patch,
-							svg_component_bindings: mergedBindings,
-						},
-						{ errorContext: "support" },
-					);
-					if (!supportOk || !segmentedProposal) return;
-					// Segmented proposal is separate — must not block SUPPORT_CONTOUR persistence.
+					const supportOk = await persistFinishPatch(path.finishPatch!, {
+						errorContext: "support",
+					});
+					if (!supportOk || !path.segmentedProposal) return;
 					await persistFinishPatch(
-						{ segmented_background: segmentedProposal },
+						{ segmented_background: path.segmentedProposal as unknown as Record<string, unknown> },
 						{ errorContext: "support" },
 					);
 				})();
@@ -317,6 +289,57 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 			persistAnalysisBundle,
 		],
 	);
+
+	/** Confirm All uses the same support + segmented write-path as manual Contur suport (R4). */
+	const handleConfirmAllRoles = useCallback(() => {
+		if (!report) {
+			confirmAllLayerRoles();
+			return;
+		}
+		const next = confirmAllLayerRoles();
+		if (!next || !confirmationIncludesConfirmedSupportPanel(next)) return;
+		const path = buildSupportPanelConfirmationPath({
+			report,
+			confirmation: next,
+			finishSetup,
+			bindables,
+			svgSourceHash: state.localFileHash,
+		});
+		if (!path.ok || !path.finishPatch) {
+			setSupportAssociateError(path.blockers.join(" ") || "Asociere Contur suport eșuată.");
+			return;
+		}
+		lastSyncedLayerBindingsKey.current = layerRoleBindingsSyncKey(path.mergedBindings);
+		if (path.contourId) setSelectedContourId(path.contourId);
+		if (path.segmentedProposal) {
+			segmentedBackgroundRef.current = path.segmentedProposal as unknown as Record<string, unknown>;
+		}
+		void (async () => {
+			const analysisOk = await persistAnalysisBundle({ layerRoleConfirmation: next });
+			if (!analysisOk) {
+				setSupportAssociateError(
+					"Contur suport: analiza SVG trebuie salvată înainte de asocierea FinishSetup.",
+				);
+				return;
+			}
+			const supportOk = await persistFinishPatch(path.finishPatch!, { errorContext: "support" });
+			if (!supportOk) return;
+			if (path.segmentedProposal) {
+				await persistFinishPatch(
+					{ segmented_background: path.segmentedProposal as unknown as Record<string, unknown> },
+					{ errorContext: "support" },
+				);
+			}
+		})();
+	}, [
+		report,
+		confirmAllLayerRoles,
+		finishSetup,
+		bindables,
+		state.localFileHash,
+		persistAnalysisBundle,
+		persistFinishPatch,
+	]);
 
 	/** Auto-sync letter/logo bindings when layer roles change — no second confirm button. */
 	useEffect(() => {
@@ -656,7 +679,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 					scopeWarnings={scopeWarnings}
 					artworkOnlyRequiresDecision={artworkOnlyRequiresDecision}
 					onImportFile={handleImport}
-					onConfirmAllRoles={() => confirmAllLayerRoles()}
+					onConfirmAllRoles={() => handleConfirmAllRoles()}
 					onScrollToPending={layerStats.pending > 0 ? scrollToPending : undefined}
 					onJumpToLayer={jumpToLayer}
 				/>

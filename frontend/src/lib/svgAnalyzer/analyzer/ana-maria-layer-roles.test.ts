@@ -84,8 +84,12 @@ describe("ana-maria six-layer classification", () => {
 
     expect(report.layers.length).toBe(6);
     const logoLayers = report.layers.filter(
-      (layer) => layer.id === "logo-stanga" || layer.id === "logo-dreapta",
+      (layer) =>
+        layer.id.startsWith("logo_instance_") ||
+        layer.id === "logo-stanga" ||
+        layer.id === "logo-dreapta",
     );
+    expect(logoLayers).toHaveLength(2);
     expect(logoLayers.map((layer) => layer.name)).toEqual(["Logo 1", "Logo 2"]);
     expect(logoLayers.every((layer) => layer.autoRole === "printed_artwork")).toBe(true);
     expect(logoLayers.every((layer) => layer.layerOrigin === "stroke_vector_outline")).toBe(true);

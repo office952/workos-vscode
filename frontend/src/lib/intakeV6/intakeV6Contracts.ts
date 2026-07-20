@@ -38,6 +38,11 @@ export interface IntakeV6WorkspaceState {
 	error: string | null;
 	loadErrorCode: IntakeV6LoadErrorCode | null;
 	currentStep: IntakeV6StepId;
+	/**
+	 * Explicit operator step choice (e.g. reopen Straturi). Survives LOAD_SUCCESS
+	 * so readiness-derived review bounce cannot wipe reinspection (P7).
+	 */
+	operatorStepIntent: IntakeV6StepId | null;
 	workspace: IntakeV6WorkspaceResponse | null;
 	svg: IntakeV6SvgFileMeta | null;
 	layerChips: IntakeV6LayerChip[];

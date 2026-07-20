@@ -13,6 +13,7 @@ import {
   isCorelInternalGroupId,
   isGenericLayerName,
   isLogoArtworkLayerName,
+  isPseudoLayerId,
   isSemanticProductionOrArtworkLayerName,
   normalizeLayerDisplayName,
 } from './layerNameSemantics'
@@ -25,6 +26,10 @@ export interface LayerExpansionMeta {
   layerOrigin: string
   roleReason: string
   positionHint?: 'left' | 'right' | 'center' | 'top' | 'bottom' | null
+  /** Semantic SVG group ids before color-cluster rewrite (provenance). */
+  sourceGroupIds?: string[]
+  /** Drawable element ids owned by this layer after expansion. */
+  elementIds?: string[]
 }
 
 export interface SemanticPseudoLayerExpansionResult {
@@ -348,6 +353,21 @@ export function expandSemanticAndPseudoLayers(
 
   assignRasterLogoLayers(doc, geometry, elements, newGroups, layerMeta, 'pseudo')
 
+  // Capture semantic group provenance before color-cluster rewrite.
+  const priorGroupByElement = new Map<string, string>()
+  for (const element of elements) {
+    if (element.layerId && element.type !== 'group' && element.type !== 'unknown') {
+      priorGroupByElement.set(element.elementId, element.layerId)
+    }
+  }
+  for (const group of doc.groups) {
+    for (const elementId of group.elementIds) {
+      if (!priorGroupByElement.has(elementId)) {
+        priorGroupByElement.set(elementId, group.id)
+      }
+    }
+  }
+
   for (const fill of uniqueFills) {
     const semantic = useAnaMariaFillSemantics ? letterSemanticForSolidFill(fill) : null
     const letterId = semantic?.letterId ?? `fill-${fill.replace('#', '')}`
@@ -359,6 +379,8 @@ export function expandSemanticAndPseudoLayers(
         layerKind: 'pseudo',
         layerOrigin: 'solid_fill_cluster',
         roleReason: 'Pseudo-layer generated from solid vector fill color cluster.',
+        sourceGroupIds: [],
+        elementIds: [],
       })
     }
   }
@@ -370,11 +392,19 @@ export function expandSemanticAndPseudoLayers(
     const name = semantic?.pseudoDisplayName ?? `pseudo ${letterId}`
     const element = elements.find((entry) => entry.elementId === vector.elementId)
     if (!element) continue
+    const priorGroupId = priorGroupByElement.get(vector.elementId)
     element.layerId = id
     element.layerName = name
     const group = newGroups.find((entry) => entry.id === id)
     if (group) {
       group.elementIds.push(vector.elementId)
+    }
+    const meta = layerMeta.get(id)
+    if (meta) {
+      meta.elementIds = [...(meta.elementIds ?? []), vector.elementId]
+      if (priorGroupId && !isPseudoLayerId(priorGroupId) && !(meta.sourceGroupIds ?? []).includes(priorGroupId)) {
+        meta.sourceGroupIds = [...(meta.sourceGroupIds ?? []), priorGroupId]
+      }
     }
   }
 

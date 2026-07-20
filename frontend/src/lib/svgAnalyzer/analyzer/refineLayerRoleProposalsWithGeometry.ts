@@ -1,10 +1,12 @@
 /**
  * Evidence-driven role proposal refinement for pseudo / solid-fill layers.
- * Uses sibling geometry + closed-contour envelope — never color.
+ * Uses sibling geometry + closed-contour envelope — never color alone.
+ * Artwork/logo candidates are excluded from support refine (R2).
  * Proposals remain unconfirmed.
  */
 
 import type { ClosedContourCandidate, ClosedContourDetectionReport } from "../closed-contour/closedContourTypes";
+import { isArtworkOrLogoCandidateLayer } from "./artworkLogoCandidate";
 import { isPseudoLayerId } from "./layerNameSemantics";
 import type { LayerAutoRole, LayerRoleCandidate } from "./layerRoleTypes";
 import type { ConfidenceLevel, LayerAnalysis } from "./types";
@@ -76,6 +78,51 @@ function withRole(
   };
 }
 
+function hasPositiveSupportEvidence(
+  layer: LayerAnalysis,
+  layers: LayerAnalysis[],
+  outerCandidates: ClosedContourCandidate[],
+  letterLikePseudos: LayerAnalysis[],
+): { strong: boolean; reason: string } {
+  const hasLetterSibling = layers.some(
+    (sibling) => sibling.id !== layer.id && (isLetterLike(sibling) || sibling.autoRole === "face"),
+  );
+  if (!hasLetterSibling) {
+    return { strong: false, reason: "No distinct letter/face sibling for support evidence." };
+  }
+
+  const matchesOuter = outerCandidates.some((contour) => dimsMatch(layer, contour));
+  const candidateArea = areaSignal(layer);
+  const maxSiblingArea = Math.max(
+    0,
+    ...layers.filter((sibling) => sibling.id !== layer.id).map(areaSignal),
+  );
+  const dominantArea =
+    candidateArea > 0 && (maxSiblingArea === 0 || candidateArea >= maxSiblingArea * 0.85);
+
+  const panelLikeFill =
+    (layer.paintEvidence?.fills?.length ?? 0) >= 1 ||
+    layer.pathElementCount === 0 ||
+    (layer.filledAreaSqm != null && layer.filledAreaSqm > 0);
+
+  const strong =
+    panelLikeFill &&
+    (matchesOuter ||
+      (dominantArea && letterLikePseudos.some((letter) => letter.id !== layer.id)) ||
+      (layer.filledAreaSqm != null &&
+        layer.filledAreaSqm > 0 &&
+        letterLikePseudos.some(
+          (letter) => letter.id !== layer.id && letter.filledAreaSqm == null && complexity(letter) >= 3,
+        )));
+
+  return {
+    strong,
+    reason: strong
+      ? "Outer/low-complexity solid fill envelope beside letter geometry — propose Contur suport (requires confirmation)."
+      : "Insufficient cumulative support evidence — requires operator confirmation.",
+  };
+}
+
 export function refineLayerRoleProposalsWithGeometry(
   layers: LayerAnalysis[],
   closedContours?: ClosedContourDetectionReport | null,
@@ -87,37 +134,20 @@ export function refineLayerRoleProposalsWithGeometry(
   if (pseudoLayers.length === 0) return layers;
 
   const letterLikePseudos = pseudoLayers.filter(isLetterLike);
-  const supportShapePseudos = pseudoLayers.filter(isSupportLikeShape);
+  const supportShapePseudos = pseudoLayers.filter(
+    (layer) => isSupportLikeShape(layer) && !isArtworkOrLogoCandidateLayer(layer),
+  );
 
   const strongSupportIds = new Set<string>();
 
   for (const candidate of supportShapePseudos) {
-    const hasLetterSibling = layers.some(
-      (sibling) => sibling.id !== candidate.id && (isLetterLike(sibling) || sibling.autoRole === "face"),
+    const evidence = hasPositiveSupportEvidence(
+      candidate,
+      layers,
+      outerCandidates,
+      letterLikePseudos,
     );
-    if (!hasLetterSibling) continue;
-
-    const matchesOuter = outerCandidates.some((contour) => dimsMatch(candidate, contour));
-    const candidateArea = areaSignal(candidate);
-    const maxSiblingArea = Math.max(
-      0,
-      ...layers.filter((sibling) => sibling.id !== candidate.id).map(areaSignal),
-    );
-    const dominantArea =
-      candidateArea > 0 && (maxSiblingArea === 0 || candidateArea >= maxSiblingArea * 0.85);
-
-    // Strong support: outer-envelope match, or low-complexity panel with filled area
-    // beside a multi-glyph letter sibling (common ACM + letters packaging).
-    const strong =
-      matchesOuter ||
-      (dominantArea && letterLikePseudos.some((letter) => letter.id !== candidate.id)) ||
-      (candidate.filledAreaSqm != null &&
-        candidate.filledAreaSqm > 0 &&
-        letterLikePseudos.some(
-          (letter) => letter.id !== candidate.id && letter.filledAreaSqm == null && complexity(letter) >= 3,
-        ));
-
-    if (strong) strongSupportIds.add(candidate.id);
+    if (evidence.strong) strongSupportIds.add(candidate.id);
   }
 
   // Ambiguous: several support-shaped pseudos without a single clear outer winner.
@@ -137,6 +167,28 @@ export function refineLayerRoleProposalsWithGeometry(
   }
 
   return layers.map((layer) => {
+    // Artwork/logo candidates: never overwrite to support_panel; keep guess or demote confidence on conflict.
+    if (isArtworkOrLogoCandidateLayer(layer)) {
+      if (layer.autoRole === "support_panel") {
+        return withRole(
+          layer,
+          "printed_artwork",
+          "medium",
+          "Artwork/logo candidate excluded from Contur suport refine — operator must confirm production intent.",
+        );
+      }
+      if (layer.autoRole === "printed_artwork" || layer.autoRole === "logo") {
+        return withRole(
+          layer,
+          layer.autoRole,
+          layer.autoConfidence === "high" ? "high" : layer.autoConfidence,
+          layer.roleReason ??
+            "Artwork/logo candidate preserved — Contur suport refine skipped.",
+        );
+      }
+      return layer;
+    }
+
     if (!isPseudoLayer(layer)) return layer;
 
     if (strongSupportIds.has(layer.id)) {
@@ -166,7 +218,6 @@ export function refineLayerRoleProposalsWithGeometry(
     }
 
     if (isSupportLikeShape(layer) && letterLikePseudos.length === 0 && pseudoLayers.length === 1) {
-      // Single simple panel without letter siblings — do not invent ACM support.
       return withRole(
         layer,
         "unknown",
@@ -176,7 +227,6 @@ export function refineLayerRoleProposalsWithGeometry(
     }
 
     if (layer.autoRole === "face" && complexity(layer) <= 2 && !strongSupportIds.has(layer.id)) {
-      // Former unsafe pseudo→face default without letter evidence.
       if (pseudoLayers.length >= 2) {
         return withRole(
           layer,

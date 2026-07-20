@@ -382,14 +382,15 @@ export function useIntakeV6Workspace(workspaceId: string | undefined) {
     [state.layerRoleConfirmation],
   );
 
-  const confirmAllLayerRoles = useCallback(() => {
-    if (!state.layerRoleConfirmation) return;
+  const confirmAllLayerRoles = useCallback((): NonNullable<typeof state.layerRoleConfirmation> | null => {
+    if (!state.layerRoleConfirmation) return null;
     const next = confirmAllSuggestedLayerRoles(state.layerRoleConfirmation, state.analyzerReport);
     dispatch({
       type: "LAYER_ROLE_CONFIRMATION_UPDATE",
       layerRoleConfirmation: next,
       layerChips: layerChipsFromLayerRoleConfirmation(next),
     });
+    return next;
   }, [state.analyzerReport, state.layerRoleConfirmation]);
 
   const persistAnalysisBundle = useCallback(

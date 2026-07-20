@@ -1,0 +1,76 @@
+{
+  "case": "acm",
+  "workspaceId": "646b746d-94c8-41e1-be27-baaeabd26457",
+  "workspaceCode": "IV6-379CEB03",
+  "checks": [
+    {
+      "name": "segmented_status",
+      "pass": true,
+      "status": "PROPOSED",
+      "panels": 2
+    },
+    {
+      "name": "reopen_layers",
+      "pass": true,
+      "chip": "litere-cu-fundal-acm-segmentat.svg",
+      "layers": 2
+    },
+    {
+      "name": "refresh_then_layers",
+      "pass": true,
+      "chip": "litere-cu-fundal-acm-segmentat.svg",
+      "layers": 2
+    },
+    {
+      "name": "logo_not_support",
+      "pass": true
+    },
+    {
+      "name": "has_support_assembly",
+      "pass": true
+    },
+    {
+      "name": "panels_geometries",
+      "pass": true,
+      "panels": 2
+    },
+    {
+      "name": "artwork_bounds",
+      "pass": true,
+      "artworkCount": 0
+    }
+  ],
+  "payload": {
+    "readiness": "product_composition_not_confirmed",
+    "layerCount": 2,
+    "supportRoles": [
+      "pseudo:fill-c5c6c6"
+    ],
+    "logoAsSupport": [],
+    "artworkCount": 0,
+    "segmented": "PROPOSED",
+    "panels": 2,
+    "provenanceSample": [
+      {
+        "id": "pseudo:fill-c5c6c6",
+        "sourceGroupIds": [
+          "gravare-cnc-135gr"
+        ],
+        "elementIds": [
+          "el-1",
+          "el-2"
+        ]
+      },
+      {
+        "id": "pseudo:fill-e31e24",
+        "sourceGroupIds": [
+          "decupare-cnc-outside"
+        ],
+        "elementIds": [
+          "el-3"
+        ]
+      }
+    ]
+  },
+  "pass": true
+}
