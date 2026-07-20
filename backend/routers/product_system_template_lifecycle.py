@@ -5,7 +5,7 @@ GET-only. No writes. No parallel registry. Product System remains authority.
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from core.database import get_db

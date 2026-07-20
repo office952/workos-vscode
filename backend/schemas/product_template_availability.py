@@ -74,6 +74,11 @@ class ProductTemplateAvailabilityItem(BaseModel):
     shared_component_contracts: list[SharedVolumetricComponentSummary] = Field(default_factory=list)
     capabilities: ProductSystemTemplateCapabilities | None = None
     readiness: ProductSystemTemplateReadiness | None = None
+    # Publication lifecycle (active=true is never sufficient for published).
+    publication_status: str | None = None
+    publication_legacy_unspecified: bool = True
+    publication_offerability_gate: str | None = None
+    active_is_not_published: bool = True
 
 
 class ProductTemplateAvailabilityResponse(BaseModel):

@@ -29,6 +29,10 @@ from services.product_system_template_readiness_service import (
 )
 from services.template_usage_mode_policy import is_root_offerable_template
 from services.svg_component_binding_service import get_svg_bindable_components
+from services.product_template_publication_service import (
+    apply_publication_offerability_gate,
+    normalize_publication_status,
+)
 
 
 # Catalog metadata for the current Product System composition view.
@@ -157,7 +161,13 @@ class ProductTemplateAvailabilityService:
         if offerable_only:
             items = [item for item in items if item.quote_offerable]
         if not include_runtime_modules:
-            items = [item for item in items if not item.runtime_module]
+            # Keep dual-role roots (e.g. ACM boxed: root_offerable + Letters optional_addon).
+            # Only hide pure runtime modules that are not quote_offerable.
+            items = [
+                item
+                for item in items
+                if (not item.runtime_module) or item.quote_offerable
+            ]
         if not include_archived:
             items = [
                 item
@@ -224,6 +234,17 @@ class ProductTemplateAvailabilityService:
             status_reason = "owner_valid_parent_template"
             quote_offerable = True
 
+        publication_status = normalize_publication_status(
+            getattr(template, "publication_status", None)
+        )
+        quote_offerable, publication_gate = apply_publication_offerability_gate(
+            legacy_quote_offerable=quote_offerable,
+            publication_status=publication_status,
+        )
+        if publication_status is not None and publication_status != "PUBLISHED":
+            status = "not_offerable"
+            status_reason = publication_gate
+
         role = self._resolve_product_system_role(
             db_active=db_active,
             quote_offerable=quote_offerable,
@@ -271,6 +292,10 @@ class ProductTemplateAvailabilityService:
                 for item in get_svg_bindable_components(template_code)
             ],
             shared_component_contracts=get_shared_volumetric_component_summaries_for_template(template_code),
+            publication_status=publication_status,
+            publication_legacy_unspecified=publication_status is None,
+            publication_offerability_gate=publication_gate,
+            active_is_not_published=True,
         )
 
     def _build_composition_modules(
