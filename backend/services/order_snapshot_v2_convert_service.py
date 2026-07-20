@@ -169,6 +169,19 @@ def _component_scope_fields_from_quote(parsed: QuoteSnapshotV2) -> dict[str, Any
     }
 
 
+def _enrich_order_provenance_with_product_truth(
+    parsed: QuoteSnapshotV2,
+    linkage: dict[str, Any],
+) -> dict[str, Any]:
+    """Pass through quote provenance + Product Truth revision from V6 freeze envelope."""
+    base = dict(parsed.provenance or {}) if isinstance(parsed.provenance, dict) else {}
+    base["product_truth_revision"] = linkage.get("product_truth_revision")
+    base["product_truth_content_hash"] = linkage.get("product_truth_content_hash")
+    base["freeze_from_pinned_product_truth"] = linkage.get("freeze_from_pinned_product_truth")
+    base["no_live_workspace_reread"] = True
+    return base
+
+
 def _build_order_snapshot_v2(
     *,
     quote: Quotes,
@@ -205,7 +218,7 @@ def _build_order_snapshot_v2(
         owner_decisions_snapshot=parsed.owner_decisions_snapshot,
         warnings_snapshot=parsed.warnings_snapshot,
         blockers_snapshot=parsed.blockers_snapshot,
-        provenance=parsed.provenance,
+        provenance=_enrich_order_provenance_with_product_truth(parsed, linkage),
         accepted_at=accept_record.get("accepted_at"),
         accepted_by=accept_record.get("accepted_by_display_name") or accept_record.get("accepted_by_user_id"),
         converted_at=converted_at,

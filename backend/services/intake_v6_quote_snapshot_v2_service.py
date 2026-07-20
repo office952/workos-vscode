@@ -48,6 +48,7 @@ V6_SNAPSHOT_LINE_ITEMS_INVALID = "V6_SNAPSHOT_LINE_ITEMS_INVALID"
 V6_SNAPSHOT_WRITE_PROVENANCE_MISSING = "V6_SNAPSHOT_WRITE_PROVENANCE_MISSING"
 V6_SNAPSHOT_FRONTEND_PREVIEW_FORBIDDEN = "V6_SNAPSHOT_FRONTEND_PREVIEW_FORBIDDEN"
 V6_SNAPSHOT_V2_V4_SOURCE_FORBIDDEN = "V6_SNAPSHOT_V2_V4_SOURCE_FORBIDDEN"
+V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED = "V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED"
 V6_SNAPSHOT_ALREADY_EXISTS = "V6_SNAPSHOT_ALREADY_EXISTS"
 V6_SNAPSHOT_ORDER_EXISTS = "V6_SNAPSHOT_ORDER_EXISTS"
 V6_SNAPSHOT_QUOTE_TERMINAL = "V6_SNAPSHOT_QUOTE_TERMINAL"
@@ -467,6 +468,47 @@ async def create_v6_quote_snapshot_v2(
 	client_output = _client_output(quote_obj, commercial, line_items)
 	now = datetime.now(timezone.utc).isoformat()
 
+	# Freeze requires non-stale ConfirmJobProductTruth with pinned bags (no live-draft race).
+	from models.intake_v6_workspace import IntakeV6WorkspaceRecord
+	from services.product_truth_job_confirm_service import (
+		commercial_freeze_allowed,
+		get_job_revision_metadata,
+	)
+
+	ws_result = await db.execute(
+		select(IntakeV6WorkspaceRecord).where(IntakeV6WorkspaceRecord.id == workspace_id_str)
+	)
+	ws_record = ws_result.scalar_one_or_none()
+	if ws_record is None:
+		ws_result = await db.execute(
+			select(IntakeV6WorkspaceRecord).where(
+				IntakeV6WorkspaceRecord.workspace_code == workspace_id_str
+			)
+		)
+		ws_record = ws_result.scalar_one_or_none()
+	ws_payload: dict[str, Any] = {}
+	if ws_record is not None:
+		try:
+			ws_payload = json.loads(ws_record.payload_json or "{}")
+		except Exception:
+			ws_payload = {}
+		if not isinstance(ws_payload, dict):
+			ws_payload = {}
+	if not commercial_freeze_allowed(ws_payload):
+		meta = get_job_revision_metadata(ws_payload) or {}
+		return _blocked(
+			quote_id=quote_id,
+			quote_code=quote_code,
+			blockers=[
+				_blocker(
+					V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED,
+					"Quote Snapshot V2 freeze requires a non-stale ConfirmJobProductTruth revision "
+					f"(state={meta.get('confirmation_state') or 'unconfirmed'}).",
+				)
+			],
+		)
+	job_truth_meta = get_job_revision_metadata(ws_payload) or {}
+
 	dry_run = await build_intake_v6_priced_quote_dry_run(db, workspace_id_str, pricing_mode="snapshot_v2")
 	if dry_run.get("pricing_status") != V6_PRICED_DRY_RUN_READY:
 		return _blocked(
@@ -580,10 +622,15 @@ async def create_v6_quote_snapshot_v2(
 			"source_svg": (linkage or {}).get("source_svg"),
 			"template_code": (linkage or {}).get("template_code"),
 			"product_family": (linkage or {}).get("product_family") or "volumetric_letters",
-			"product_truth_status": (linkage or {}).get("product_truth_status") or "runtime_product_truth_reference_unavailable",
+			"product_truth_status": "confirmed_job_revision",
+			"product_truth_revision": job_truth_meta.get("revision"),
+			"product_truth_content_hash": job_truth_meta.get("content_hash"),
+			"product_truth_confirmed_at": job_truth_meta.get("confirmed_at"),
+			"root_template_code": job_truth_meta.get("root_template_code"),
 			"pricing_source": (linkage or {}).get("pricing_source"),
 			"no_v4_v2_commercial_truth": True,
 			"frontend_preview_not_used": True,
+			"freeze_from_pinned_product_truth": True,
 		},
 		"client_output": client_output,
 		"internal_trace": {
