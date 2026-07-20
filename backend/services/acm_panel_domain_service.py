@@ -117,6 +117,9 @@ def coalesce_acm_panel_domain_for_finish(
         return finish_d
 
     if action == "upsert":
+        # Preserve top-level instance when FE upsert omits it (Review autosave without hydrate).
+        if finish_d.get("acm_panel_instance") in (None, {}) and existing.get("acm_panel_instance"):
+            finish_d["acm_panel_instance"] = existing.get("acm_panel_instance")
         # Preserve production_geometry binding when FE upsert omits it (inspector patches).
         finish_d = _merge_production_geometry_preserve(finish_d, existing)
         return finish_d
@@ -154,5 +157,10 @@ def coalesce_acm_panel_domain_for_finish(
             finish_d["mounting_solution"] = existing.get("mounting_solution")
         if finish_d.get("acm_panel_instance") in (None, {}) and existing.get("acm_panel_instance"):
             finish_d["acm_panel_instance"] = existing.get("acm_panel_instance")
+
+    # Autosave / analysis-bundle races omit acm_panel_instance even when support role
+    # was rewritten — keep existing component instance unless action was clear.
+    if finish_d.get("acm_panel_instance") in (None, {}) and existing.get("acm_panel_instance"):
+        finish_d["acm_panel_instance"] = existing.get("acm_panel_instance")
 
     return finish_d

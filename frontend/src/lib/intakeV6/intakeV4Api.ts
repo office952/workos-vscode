@@ -225,6 +225,11 @@ export interface IntakeV4FinishSetup {
    * Analyzer may write PROPOSED; only CONFIRMED is ProductDefinition authority.
    */
   segmented_background?: Record<string, unknown> | null;
+  /**
+   * Component-owned AcmPanel instance (geometry, authority, production_geometry DXF binding).
+   * Must round-trip through Review hydrate/persist — omission autosaves wipe measured attachments.
+   */
+  acm_panel_instance?: Record<string, unknown> | null;
   /** Typed process config — Intake → ProductDefinition → modular resolver (not pricing). */
   mains_cable_length_m?: number | null;
   power_supply_service_corner?:

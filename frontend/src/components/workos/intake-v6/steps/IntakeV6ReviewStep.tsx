@@ -94,6 +94,7 @@ import {
   resolveEffectiveMountingSolution,
   type MountingSolutionSelectorValue,
 } from "@/lib/intakeV6/mountingSolution";
+import { hydrateAcmPanelFinishFields } from "@/lib/intakeV6/acmPanel/finishSetupAcmHydrate";
 import {
   emptyMountingFixingSystem,
   readMountingFixingSystem,
@@ -365,6 +366,8 @@ function buildFinishSetupSyncSignature(finish: IntakeV6FinishSetup): string {
     total_led_module_count: finish.total_led_module_count ?? null,
     confirmed: finish.confirmed === true,
     segmented_background: finish.segmented_background ?? null,
+    svg_support_selection: finish.svg_support_selection ?? null,
+    acm_panel_instance: finish.acm_panel_instance ?? null,
   });
 }
 
@@ -487,22 +490,11 @@ function finishFromPayload(payload: Record<string, unknown> | undefined): Intake
     total_led_module_count:
       typeof setup.total_led_module_count === "number" ? setup.total_led_module_count : undefined,
     confirmed: setup.confirmed === true,
-    // Segmented ACM/ACP proposal/confirm lives on finish_setup — must hydrate into Review form.
-    segmented_background:
-      setup.segmented_background != null &&
-      typeof setup.segmented_background === "object" &&
-      !Array.isArray(setup.segmented_background)
-        ? (setup.segmented_background as Record<string, unknown>)
-        : null,
     svg_component_bindings: Array.isArray(setup.svg_component_bindings)
       ? (setup.svg_component_bindings as IntakeV6FinishSetup["svg_component_bindings"])
       : undefined,
-    svg_support_selection:
-      setup.svg_support_selection != null &&
-      typeof setup.svg_support_selection === "object" &&
-      !Array.isArray(setup.svg_support_selection)
-        ? (setup.svg_support_selection as Record<string, unknown>)
-        : null,
+    // AcmPanel shell + production_geometry must round-trip or Review autosave wipes DXF binding.
+    ...hydrateAcmPanelFinishFields(setup),
   };
 }
 
