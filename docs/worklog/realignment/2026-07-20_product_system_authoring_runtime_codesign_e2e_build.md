@@ -250,3 +250,73 @@ None. Transport remains TBD (documented). No major schema migration. No aluminiu
 | `99d9442` | feat(ui): ArtworkAnalysisReviewPanel stub |
 | `9da0244` | docs(qa)/worklog + allowlist + report |
 | `1864d92` | docs(qa): note boundary tip HEAD |
+| `e2f3fc9` | docs(qa): finalize external artwork analysis boundary SHA table |
+
+---
+
+## PRODUCT SYSTEM AUTHORING CONTINUATION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Owner GO | **YES** — authoring continuation (close coherent admin authoring) |
+| Kickoff HEAD | `e2f3fc9` (**reconfirmed**) |
+| Branch | `feature/product-system-active-path-isolation-v1` (unchanged) |
+| Dirty tree | ~360 — **preserved** (allowlist-only) |
+| Prior gates | **preserved** — Build PASS_WITH_WARNINGS; Runtime PASS_WITH_WARNINGS; Template publication BLOCKED; UI/Figma NEEDS_POLISH |
+| Aluminiu | **NOT activated** (real blocker) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_ALLOWLIST.md` |
+| CP0 contracts | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_CP0_CONTRACT_MAP.md` |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/AUTHORING_CONTINUATION_FINAL_REPORT.md` |
+| Master plan | Continue existing — **no new Master Plan** |
+
+### Kickoff (20 items)
+
+Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` § Kickoff confirmation.
+
+### Checkpoint matrix
+
+| CP | Scope | Status |
+|----|-------|--------|
+| CP0 | Shared contracts / UI / Figma / external boundary maps | **PASS** |
+| CP1 | Product System shell + tabs + dual status | **PASS_WITH_WARNINGS** |
+| CP2 | Composition + component contracts | **PASS_WITH_WARNINGS** |
+| CP3 | Dossier Studio sticky command model | **PASS_WITH_WARNINGS** |
+| CP4 | Readiness + Publication mounted in real flow | **PASS** |
+| CP5 | Runtime Preview read-only | **PASS_WITH_WARNINGS** |
+| CP6 | UI/Figma acceptance + screenshots + sincere audit | **PARTIAL** |
+
+### Separate verdicts
+
+| Axis | Verdict |
+|------|---------|
+| Authoring | PASS_WITH_WARNINGS |
+| UI | NEEDS_POLISH |
+| Lifecycle / publication | PASS (VL BLOCKED honest) |
+| Readiness | PASS_WITH_WARNINGS |
+| Runtime preview | PASS_WITH_WARNINGS |
+| Figma | NEEDS_POLISH |
+
+**Aluminiu still BLOCKED. Template publication not falsely ready.**
+
+### Direction score
+
+**84/100** — see `AUTHORING_CONTINUATION_FINAL_REPORT.md` §29–35.
+
+### Locked boundaries (do not reopen)
+
+External Artwork Analysis ownership; no CT table; no PI/CI; no Build 2; no Aluminiu activation; no pricing/CostEngine; no Execution materialization; no desktop transport; no SVG analysis extension.
+
+### Stop conditions
+
+None.
+
+### Commits (this continuation)
+
+| SHA | Group |
+|-----|-------|
+| `b023154` | docs(qa): CP0 allowlist + contract map |
+| `b02b044` | feat(composition): module links + authoring panel |
+| `fa8c93d` | feat(product-system-ui): tabs + dual status + runtime preview |
+| `1017f2c` | feat(dossier): sticky command model + deep-link |
+| _(docs tip)_ | docs(qa): final report + UI audit + worklog |

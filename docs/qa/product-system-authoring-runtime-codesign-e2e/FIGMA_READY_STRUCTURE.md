@@ -24,11 +24,11 @@ Page: **`PS — Authoring Studio`** · page id **`91:2`**
 
 | Frame | Node ID | Role | FINAL? |
 |-------|---------|------|--------|
-| PS Template Authoring Shell | `91:3` | Tabs overview / composition / contracts / dossier / readiness / publication | **PROPOSED** — not owner-promoted FINAL |
-| Component Contract + Used-by | `91:12` | Child/dual-role PT, usage_mode, instance_schema_id | PROPOSED |
-| Blueprint Dossier Studio split | `91:21` | Tree + editor + rail + sticky footer (`91:32`) | PROPOSED |
-| Publication states | `91:36` | DRAFT→…→ARCHIVED + `active ≠ published` | PROPOSED |
-| Readiness PASS / BLOCKED | `91:60` | Honest BLOCKED when aluminiu inactive | PROPOSED |
+| PS Template Authoring Shell | `91:3` | Tabs overview / composition / contracts / dossier / readiness / publication | **NEEDS_POLISH** — implemented against; not owner-FINAL |
+| Component Contract + Used-by | `91:12` | Child/dual-role PT, usage_mode, instance_schema_id | **NEEDS_POLISH** |
+| Blueprint Dossier Studio split | `91:21` | Tree + editor + rail + sticky footer (`91:32`) | **NEEDS_POLISH** |
+| Publication states | `91:36` | DRAFT→…→ARCHIVED + `active ≠ published` | **NEEDS_POLISH** |
+| Readiness PASS / BLOCKED | `91:60` | Honest BLOCKED when aluminiu inactive | **NEEDS_POLISH** |
 | Canvas note | `91:75` | Provenance note for Agent C closure | n/a |
 | 01 Product System Landing | `91:76` | Pack shell (closure map) | PROPOSED |
 | 02 Product Template Overview | `91:79` | Pack shell | PROPOSED |
