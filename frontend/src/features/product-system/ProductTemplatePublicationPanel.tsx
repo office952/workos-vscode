@@ -1,5 +1,6 @@
 /**
  * Publication lifecycle panel — active ≠ published; publish hard-gated by E2E readiness.
+ * Blockers: human name primary, template code secondary.
  */
 
 import { useCallback, useEffect, useState } from "react";
@@ -9,6 +10,7 @@ import {
   type PublicationAction,
   type ProductTemplatePublicationState,
 } from "@/api/productTemplatePublication";
+import { formatPublicationBlocker, humanTemplateName } from "./productSystemAdminDisplay";
 
 const ACTION_LABELS: Record<PublicationAction, string> = {
   enter_draft: "Intră în DRAFT",
@@ -74,7 +76,7 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
       const nested = detail && typeof detail === "object" && "detail" in detail ? detail.detail : detail;
       const blockers =
         nested && typeof nested === "object" && Array.isArray((nested as { blockers?: string[] }).blockers)
-          ? (nested as { blockers: string[] }).blockers.join("; ")
+          ? (nested as { blockers: string[] }).blockers.map((b) => formatPublicationBlocker(b).primary).join("; ")
           : null;
       setError(blockers || (e instanceof Error ? e.message : "Tranziție eșuată"));
       await reload();
@@ -83,16 +85,23 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
     }
   };
 
+  const humanName = humanTemplateName(templateCode);
+  const isBlocked = Boolean(state && state.publish_blockers.length > 0);
+
   return (
     <section
-      className="rounded-xl border border-violet-800/40 bg-violet-950/10 p-3"
+      className="rounded-xl border border-slate-700/60 bg-[#0B1220] p-3"
       data-testid="product-template-publication-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-violet-100">Publicare șablon</h3>
-          <p className="mt-0.5 text-[11px] text-violet-200/80">
-            active ≠ published. Publicarea este blocată de E2E Readiness. Fără tabel component_templates.
+          <h3 className="text-sm font-semibold text-slate-100">Publicare șablon</h3>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            <span className="font-medium text-slate-200">{humanName}</span>
+            <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
+          </p>
+          <p className="mt-1 text-[11px] text-slate-500">
+            Activ în catalog ≠ publicat. Publicarea e blocată de E2E Readiness — fără auto-publicare.
           </p>
         </div>
         <button
@@ -116,45 +125,68 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
               {state.effective_status}
             </span>
             <span className="rounded border border-slate-700/60 px-2 py-0.5 text-slate-300">
-              DB active: {state.db_active ? "da" : "nu"}
+              Catalog: {state.db_active ? "activ" : "inactiv"}
             </span>
             <span className="rounded border border-amber-800/40 px-2 py-0.5 text-amber-100">
-              active ≠ published
+              activ ≠ publicat
             </span>
           </div>
-          <p className="text-[11px] text-slate-400">
-            Poartă ofertabilitate: <code>{state.offerability_gate}</code>
-          </p>
-          {state.last_e2e_verdict ? (
-            <p className="text-[11px] text-slate-400">
-              Ultimul verdict E2E: <code data-testid="product-template-publication-e2e">{state.last_e2e_verdict}</code>
-            </p>
-          ) : null}
-          {state.publish_blockers.length > 0 ? (
-            <>
-              <p
-                className="rounded border border-rose-800/40 bg-rose-950/20 px-2 py-1 text-[11px] text-rose-100"
-                data-testid="product-template-publication-blocked-banner"
-              >
-                TEMPLATE PUBLICATION BLOCKED — publicarea nu este permisă. BUILD closure poate rămâne
-                PASS separat (active ≠ published).
+
+          {isBlocked ? (
+            <div
+              className="rounded-lg border border-rose-800/40 bg-rose-950/20 px-3 py-2"
+              data-testid="product-template-publication-blocked-banner"
+            >
+              <p className="text-[12px] font-semibold text-rose-100">
+                Publicare blocată — {humanName}
+              </p>
+              <p className="mt-0.5 text-[10px] text-rose-200/80">
+                Build-ul poate rămâne PASS separat. Nu ofertaați acest șablon ca „gata de publicare”.
               </p>
               <ul
-                className="list-disc space-y-0.5 pl-4 text-[11px] text-rose-200"
+                className="mt-2 list-disc space-y-1 pl-4 text-[11px] text-rose-100"
                 data-testid="product-template-publication-blockers"
               >
-                {state.publish_blockers.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
+                {state.publish_blockers.map((b) => {
+                  const display = formatPublicationBlocker(b);
+                  return (
+                    <li key={b}>
+                      <span>{display.primary}</span>
+                      {display.secondary ? (
+                        <span className="ml-1 font-mono text-[10px] text-rose-200/60">
+                          ({display.secondary})
+                        </span>
+                      ) : null}
+                    </li>
+                  );
+                })}
               </ul>
-            </>
+            </div>
           ) : null}
+
+          <details className="text-[11px] text-slate-500">
+            <summary className="cursor-pointer select-none hover:text-slate-400">
+              Detalii tehnice (poartă / verdict)
+            </summary>
+            <p className="mt-1">
+              Poartă ofertabilitate: <code>{state.offerability_gate}</code>
+            </p>
+            {state.last_e2e_verdict ? (
+              <p className="mt-1">
+                Ultimul verdict E2E:{" "}
+                <code data-testid="product-template-publication-e2e">{state.last_e2e_verdict}</code>
+              </p>
+            ) : null}
+          </details>
+
           <div className="flex flex-wrap gap-1.5 pt-1">
             {state.allowed_actions.map((action) => (
               <button
                 key={action}
                 type="button"
-                disabled={loading || (action === "publish" && !state.publish_allowed && state.publish_blockers.length > 0)}
+                disabled={
+                  loading || (action === "publish" && !state.publish_allowed && state.publish_blockers.length > 0)
+                }
                 onClick={() => void runAction(action)}
                 className={
                   action === "publish"

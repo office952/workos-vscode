@@ -1,10 +1,11 @@
 /**
  * Product E2E Readiness Check — admin/owner surface on Product Template page.
- * Label: Verifica traseul produsului. No auto-fix / activation / writes.
+ * Compact dual BUILD/TEMPLATE summary; findings progressive disclosure.
  */
 
 import { useCallback, useState } from "react";
 import { getAPIBaseURL } from "@/lib/config";
+import { formatReadinessFindingMessage, humanTemplateName } from "./productSystemAdminDisplay";
 
 type CheckStatus =
   | "PASS"
@@ -37,9 +38,7 @@ interface ReadinessResponse {
   findings: ReadinessFinding[];
   no_write: boolean;
   write_performed?: boolean;
-  /** BUILD spine closure — may PASS while template publication is BLOCKED. */
   build_closure_status?: string;
-  /** Template publication readiness — independent of BUILD closure. */
   template_publication_status?: string;
 }
 
@@ -91,9 +90,11 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
   const [workspaceId, setWorkspaceId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
+  const [findingsOpen, setFindingsOpen] = useState(false);
 
   const base = `${getAPIBaseURL()}/api/v1/product-system`;
+  const humanName = humanTemplateName(templateCode);
 
   const runStatic = useCallback(async () => {
     setLoading(true);
@@ -103,6 +104,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
         `${base}/e2e-readiness/${encodeURIComponent(templateCode)}/static`,
       );
       setStaticResult(data);
+      setExpanded(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Static check failed");
     } finally {
@@ -127,6 +129,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
         },
       );
       setRuntimeResult(data);
+      setExpanded(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Runtime dry-run failed");
     } finally {
@@ -136,6 +139,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
 
   const active = runtimeResult ?? staticResult;
   const findings = active?.findings ?? [];
+  const blockingCount = findings.filter((f) => f.blocking).length;
 
   return (
     <section
@@ -144,33 +148,69 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-[13px] font-semibold text-slate-100">Verifica traseul produsului</h3>
+          <h3 className="text-[13px] font-semibold text-slate-100">Verifică traseul produsului</h3>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            <span className="font-medium text-slate-200">{humanName}</span>
+            <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
+          </p>
           <p className="mt-0.5 text-[10px] text-slate-500">
-            Product E2E Readiness — read-only. Nu activează, nu confirmă, nu creează quote/order.
+            Read-only · nu activează · nu confirmă · nu creează quote/order.
           </p>
         </div>
         <button
           type="button"
           className="text-[10px] text-slate-400 underline"
           onClick={() => setExpanded((v) => !v)}
+          data-testid="product-e2e-readiness-toggle"
+          aria-expanded={expanded}
         >
           {expanded ? "Restrânge" : "Extinde"}
         </button>
       </div>
 
+      {/* Compact dual-axis strip — always visible once result exists */}
+      {active ? (
+        <div
+          className="mt-3 grid gap-1.5 rounded-lg border border-slate-700/60 bg-slate-950/40 p-2.5"
+          data-testid="product-e2e-readiness-dual-axes"
+        >
+          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+            <span className="w-28 shrink-0 text-slate-500">Build</span>
+            <span
+              className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.build_closure_status || "NOT_TESTED")}`}
+              data-testid="product-e2e-readiness-build-closure"
+            >
+              BUILD {active.build_closure_status || "NOT_TESTED"}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-[11px]">
+            <span className="w-28 shrink-0 text-slate-500">Publicare</span>
+            <span
+              className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.template_publication_status || "NOT_READY")}`}
+              data-testid="product-e2e-readiness-template-publication"
+            >
+              TEMPLATE PUBLICATION {active.template_publication_status || "NOT_READY"}
+            </span>
+          </div>
+          {active.build_closure_status?.startsWith("PASS") &&
+          active.template_publication_status === "BLOCKED" ? (
+            <p
+              className="text-[10px] text-amber-200/90"
+              data-testid="product-e2e-readiness-build-pass-pub-blocked"
+            >
+              Build poate fi PASS în timp ce publicarea rămâne blocată (ex.{" "}
+              {humanTemplateName("TPL-VOLUM-ALUMINIU_v1")} inactiv — conflict onest, fără activare).
+            </p>
+          ) : null}
+          <p className="text-[10px] text-slate-500">
+            Verdict poartă: <span className="text-slate-300">{active.verdict}</span>
+            {blockingCount > 0 ? ` · ${blockingCount} blocking` : ""} · {findings.length} findings
+          </p>
+        </div>
+      ) : null}
+
       {expanded ? (
         <div className="mt-3 space-y-3">
-          <div className="flex flex-wrap gap-1.5" data-testid="product-e2e-readiness-pipeline">
-            {PIPELINE.map((node) => (
-              <span
-                key={node}
-                className="rounded border border-slate-700/60 bg-slate-900/50 px-1.5 py-0.5 text-[9px] text-slate-400"
-              >
-                {node}
-              </span>
-            ))}
-          </div>
-
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
@@ -187,6 +227,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
               value={workspaceId}
               onChange={(e) => setWorkspaceId(e.target.value)}
               data-testid="product-e2e-readiness-workspace-input"
+              aria-label="workspace_id pentru runtime dry-run"
             />
             <button
               type="button"
@@ -205,79 +246,99 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
             </p>
           ) : null}
 
-          {active ? (
-            <div data-testid="product-e2e-readiness-result">
-              <div
-                className="mb-2 grid gap-1.5 rounded border border-slate-700/60 bg-slate-950/40 p-2"
-                data-testid="product-e2e-readiness-dual-axes"
-              >
-                <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                  <span className="text-slate-500">BUILD closure</span>
-                  <span
-                    className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.build_closure_status || "NOT_TESTED")}`}
-                    data-testid="product-e2e-readiness-build-closure"
-                  >
-                    BUILD {active.build_closure_status || "NOT_TESTED"}
-                  </span>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 text-[11px]">
-                  <span className="text-slate-500">TEMPLATE publication</span>
-                  <span
-                    className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.template_publication_status || "NOT_READY")}`}
-                    data-testid="product-e2e-readiness-template-publication"
-                  >
-                    TEMPLATE PUBLICATION {active.template_publication_status || "NOT_READY"}
-                  </span>
-                </div>
-                {active.build_closure_status?.startsWith("PASS") &&
-                active.template_publication_status === "BLOCKED" ? (
-                  <p
-                    className="text-[10px] text-amber-200/90"
-                    data-testid="product-e2e-readiness-build-pass-pub-blocked"
-                  >
-                    BUILD poate fi PASS în timp ce TEMPLATE PUBLICATION rămâne BLOCKED (ex. child
-                    inactiv TPL-VOLUM-ALUMINIU_v1 — conflict onest, fără activare).
-                  </p>
-                ) : null}
-              </div>
-              <div className="mb-2 flex flex-wrap items-center gap-2 text-[11px]">
-                <span className={`rounded border px-2 py-0.5 font-semibold ${statusColor(active.verdict)}`}>
-                  gate={active.verdict}
-                </span>
-                <span className="text-slate-500">
-                  mode={active.mode} · no_write={String(active.no_write)} · findings={findings.length}
-                </span>
-              </div>
-              <ul className="max-h-64 space-y-1.5 overflow-y-auto" data-testid="product-e2e-readiness-findings">
-                {findings.map((f) => (
-                  <li
-                    key={`${f.check_id}-${f.system}`}
-                    className={`rounded border px-2 py-1.5 text-[10px] ${statusColor(f.status)}`}
-                  >
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="font-semibold">{f.system}</span>
-                      <span>{f.status}</span>
-                      {f.blocking ? (
-                        <span className="rounded bg-rose-900/50 px-1 text-[9px]">blocking</span>
-                      ) : null}
-                    </div>
-                    <p className="mt-0.5 text-slate-300">{f.message}</p>
-                    {f.evidence ? (
-                      <p className="mt-0.5 font-mono text-[9px] text-slate-500">
-                        {typeof f.evidence === "string" ? f.evidence : JSON.stringify(f.evidence)}
-                      </p>
-                    ) : null}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
+          {!active ? (
             <p className="text-[10px] text-slate-500">
-              Rulează verificarea statică înainte de activare / offerability.
+              Rulează verificarea statică pentru a vedea Build vs Publicare.
             </p>
+          ) : (
+            <div data-testid="product-e2e-readiness-result">
+              <button
+                type="button"
+                className="mb-2 text-[11px] text-slate-400 underline"
+                onClick={() => setFindingsOpen((v) => !v)}
+                data-testid="product-e2e-readiness-findings-toggle"
+                aria-expanded={findingsOpen}
+              >
+                {findingsOpen ? "Ascunde findings" : `Arată findings (${findings.length})`}
+              </button>
+              {findingsOpen ? (
+                <ul
+                  className="max-h-64 space-y-1.5 overflow-y-auto"
+                  data-testid="product-e2e-readiness-findings"
+                >
+                  {findings.map((f) => {
+                    const msg = formatReadinessFindingMessage(f.message);
+                    return (
+                      <li
+                        key={`${f.check_id}-${f.system}`}
+                        className={`rounded border px-2 py-1.5 text-[10px] ${statusColor(f.status)}`}
+                      >
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <span className="font-semibold">{f.system}</span>
+                          <span>{f.status}</span>
+                          {f.blocking ? (
+                            <span className="rounded bg-rose-900/50 px-1 text-[9px]">blocking</span>
+                          ) : null}
+                        </div>
+                        <p className="mt-0.5 text-slate-200">{msg.primary}</p>
+                        {msg.secondary ? (
+                          <p className="mt-0.5 font-mono text-[9px] text-slate-500">{msg.secondary}</p>
+                        ) : null}
+                        {f.evidence ? (
+                          <details className="mt-0.5">
+                            <summary className="cursor-pointer text-[9px] text-slate-500">
+                              evidence
+                            </summary>
+                            <p className="font-mono text-[9px] text-slate-500">
+                              {typeof f.evidence === "string" ? f.evidence : JSON.stringify(f.evidence)}
+                            </p>
+                          </details>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+
+              <details className="mt-2" data-testid="product-e2e-readiness-pipeline">
+                <summary className="cursor-pointer text-[10px] text-slate-500 hover:text-slate-400">
+                  Traseu sisteme (diagnostic)
+                </summary>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {PIPELINE.map((node) => (
+                    <span
+                      key={node}
+                      className="rounded border border-slate-700/60 bg-slate-900/50 px-1.5 py-0.5 text-[9px] text-slate-400"
+                    >
+                      {node}
+                    </span>
+                  ))}
+                </div>
+                <p className="mt-1 text-[10px] text-slate-600">
+                  mode={active.mode} · no_write={String(active.no_write)}
+                </p>
+              </details>
+            </div>
           )}
         </div>
-      ) : null}
+      ) : (
+        <div className="mt-3 flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={loading}
+            onClick={() => void runStatic()}
+            className="rounded-md border border-cyan-700/50 bg-cyan-950/40 px-2.5 py-1.5 text-[11px] font-medium text-cyan-100"
+            data-testid="product-e2e-readiness-static-btn"
+          >
+            Verificare statică
+          </button>
+          {!active ? (
+            <p className="self-center text-[10px] text-slate-500">
+              Compact: rulează check-ul pentru axe Build / Publicare.
+            </p>
+          ) : null}
+        </div>
+      )}
     </section>
   );
 }
