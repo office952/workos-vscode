@@ -5,6 +5,7 @@
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD (reconfirmed) | `1bad731e3d60c344733175667e7c4da535d07644` |
+| Completion tip HEAD | `79ba594b620a84fc27bf8982704ccde526dd2a75` |
 | Prior reported closure HEAD | `2e77e7c` (superseded by docs commits `f593cb7` → `ed3605e` → `1bad731`) |
 | Allowlist | `COMPLETION_ALLOWLIST.md` (+ prior `CLOSURE_ALLOWLIST.md`) |
 | Worklog | `docs/worklog/realignment/2026-07-20_product_system_authoring_runtime_codesign_e2e_build.md` |
