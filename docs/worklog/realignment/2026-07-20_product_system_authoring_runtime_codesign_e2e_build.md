@@ -480,15 +480,39 @@ Owner STOP before further PS UI implementation. Accepted prior VL config / Alumi
 |-------|--------|
 | Date | 2026-07-20 |
 | Kickoff HEAD | `033f28fee016752622debba4f5a1817303d9a1ef` |
+| Completion HEAD | `e52a02807722523e2292de80995d0761284e7fca` (`e52a0280`) ? **reconfirmed 2026-07-21** |
+| Commit range | `033f28fe` ? `e52a0280` (semantic/visual P0 + QA evidence) |
 | Shared map | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SHARED_SEMANTIC_MAP.md` |
 | Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SEMANTIC_VISUAL_REALIGNMENT_FINAL_REPORT.md` |
-| Planificat | **RENAME+MOVE+DEMOTE** ‚Üí ‚Äû√én dezvoltare‚Äù secondary nav cluster (sections non-functional; badge kept demoted) |
-| PublicƒÉ fail-closed | FE `resolvePublishUiGate` ‚Äî disabled when readiness BLOCKED even if publication GET `publish_allowed=true` |
-| Proxy | Canonical BACKEND_PORT **8000**; proof FE:3021 ‚Üí publication/readiness 200 |
-| Direction scores | clarity 72 ¬∑ visual 68 ¬∑ action 78 ¬∑ status 74 ¬∑ comfort 62 (was 38/55/32/28/40) |
+| Planificat | **RENAME+MOVE+DEMOTE** ? ?Œn dezvoltare? secondary nav cluster (sections non-functional; badge kept demoted) |
+| Public? fail-closed | FE `resolvePublishUiGate` ? disabled when readiness BLOCKED even if publication GET `publish_allowed=true` |
+| Proxy | Canonical BACKEND_PORT **8000**; proof FE:3021 ? publication/readiness 200 |
+| Direction scores | clarity 72 ∑ visual 68 ∑ action 78 ∑ status 74 ∑ comfort 62 (was 38/55/32/28/40) |
 | 10s | **PASS** |
 | Aluminiu | Still BLOCKED |
 | Stop | None |
 | Tests | vitest 13 passed; publication pytest 5 passed |
 | After screenshots | `ui-truth-audit/after/` (5 PNG) |
+| Verdict | **P0 PASS** |
+
+---
+
+## PRODUCT SYSTEM P1 WORKOS VISUAL CONSOLIDATION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `e52a02807722523e2292de80995d0761284e7fca` (`e52a0280`) |
+| Shared visual map | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P1_SHARED_VISUAL_MAP.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P1_WORKOS_VISUAL_CONSOLIDATION_FINAL_REPORT.md` |
+| WorkOS refs | `/settings` (form) ∑ `/quotes` (list) ∑ `/intake-v6/operator` (detail/ops) |
+| P0 regression | **GREEN** ? fail-closed Public?, ?Œn dezvoltare?, Aluminiu BLOCKED, proxy 8000 |
+| Comfort | **62 ? 72** |
+| Direction scores | clarity 74 ∑ visual 78 ∑ action 78 ∑ status 75 ∑ comfort 72 |
+| 10s | **PASS** (P0 intact) |
+| Figma `0CDPIuqoaZ1OQgNnvNyl1F` | Intake V6 cover ? **not** PS Authoring Studio; no FINAL; no edits |
+| Screenshots | `p1-visual/after/` |
+| Tests | vitest 19 passed; publication pytest 5 passed |
+| Stop | None (Figma mismatch noted, not blocking ? runtime refs used) |
+| Verdict | **P1 PASS** |
 
