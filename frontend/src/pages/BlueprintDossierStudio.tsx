@@ -1686,19 +1686,21 @@ function DossierEditor({
         </div>
       </div>
 
-      {/* Sticky footer — Save → Validate → E2E Check → Publish (template authority, not dossier SoT) */}
+      {/* Sticky footer — Salvează → Validează → Verifică → Publică (template authority, not dossier SoT) */}
       <div
-        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-violet-800/40 bg-[#0B1220]/95 px-4 py-3 backdrop-blur"
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700/70 bg-[#0B1220]/95 px-4 py-3 backdrop-blur"
         data-testid="blueprint-dossier-sticky-publish-footer"
+        role="region"
+        aria-label="Comenzi Dossier: salvează, validează, verifică, publică"
       >
         <div className="text-[10px] text-slate-400">
-          <span className="font-semibold text-violet-200">Product Template</span>
+          <span className="font-semibold text-slate-200">Șablon</span>
           {" · "}
-          {dossier.template_code}
+          <span className="text-slate-300">{dossier.template_code}</span>
           {" · "}
-          dossier status {dossier.status} (documentație)
+          dossier {dossier.status} (documentație)
           {" · "}
-          Save≠Validate≠E2E≠Publish
+          Salvează ≠ Validează ≠ Verifică ≠ Publică
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
@@ -1730,7 +1732,7 @@ function DossierEditor({
             className="rounded-lg border border-slate-600 px-3 py-1.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
             data-testid="blueprint-dossier-footer-validate"
           >
-            Validate
+            Validează
           </button>
           <button
             type="button"
@@ -1741,7 +1743,7 @@ function DossierEditor({
             className="rounded-lg border border-cyan-800/50 bg-cyan-950/30 px-3 py-1.5 text-[11px] font-semibold text-cyan-100 hover:bg-cyan-900/30"
             data-testid="blueprint-dossier-footer-e2e"
           >
-            E2E Check
+            Verifică
           </button>
           <button
             type="button"
@@ -1749,10 +1751,10 @@ function DossierEditor({
               const el = document.getElementById("dossier-rail-publication");
               el?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            className="rounded-lg border border-violet-700/50 bg-violet-950/40 px-3 py-1.5 text-[11px] font-semibold text-violet-100 hover:bg-violet-900/40"
+            className="rounded-lg border border-slate-600 bg-slate-900/80 px-3 py-1.5 text-[11px] font-semibold text-slate-100 hover:bg-slate-800"
             data-testid="blueprint-dossier-footer-publish"
           >
-            Publish
+            Publică
           </button>
         </div>
       </div>

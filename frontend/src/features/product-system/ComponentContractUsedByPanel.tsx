@@ -8,6 +8,7 @@ import {
   patchComponentContractLink,
   type ProductTemplateComponentContractView,
 } from "@/api/productTemplateComponentContracts";
+import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
 
 export function ComponentContractUsedByPanel({ templateCode }: { templateCode: string }) {
   const [view, setView] = useState<ProductTemplateComponentContractView | null>(null);
@@ -42,14 +43,18 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
 
   return (
     <section
-      className="rounded-xl border border-cyan-800/40 bg-cyan-950/10 p-3"
+      className="rounded-xl border border-slate-700/60 bg-[#0D1321]/40 p-3"
       data-testid="component-contract-used-by-panel"
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-cyan-100">Contracte componente</h3>
-          <p className="mt-0.5 text-[11px] text-cyan-200/80">
-            Child / dual-role Product Template + usage_mode + schema instanță. Fără tabel component_templates.
+          <h3 className="text-sm font-semibold text-slate-100">Contracte componente</h3>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            <span className="font-medium text-slate-200">{humanTemplateName(templateCode)}</span>
+            <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
+          </p>
+          <p className="mt-1 text-[11px] text-slate-500">
+            Cine folosește acest șablon și ce copii are — rol + mod utilizare + schema instanță.
           </p>
         </div>
         <button
@@ -64,16 +69,13 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
       {view ? (
         <div className="mt-3 space-y-3 text-[11px]" data-testid="component-contract-view">
           <div className="flex flex-wrap gap-2">
-            <span className="rounded border border-cyan-800/50 px-2 py-0.5 text-cyan-100">
+            <span className="rounded border border-slate-600/60 px-2 py-0.5 text-slate-200">
               Rol: {view.role}
-            </span>
-            <span className="rounded border border-slate-700 px-2 py-0.5 text-slate-300">
-              no CT table: {view.no_component_templates_table ? "da" : "nu"}
             </span>
           </div>
 
           <div>
-            <h4 className="mb-1 font-medium text-slate-200">Folosit de (used-by)</h4>
+            <h4 className="mb-1 font-medium text-slate-200">Folosit de</h4>
             {view.used_by.length === 0 ? (
               <p className="text-slate-500">Niciun părinte activ.</p>
             ) : (
@@ -83,10 +85,16 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                     key={`${edge.parent_template_code}-${edge.link_id ?? "x"}`}
                     className="rounded border border-slate-800 bg-slate-950/40 px-2 py-1.5 text-slate-300"
                   >
-                    <div className="font-medium text-slate-100">{edge.parent_template_code}</div>
-                    <div className="text-slate-500">
-                      {edge.relation_type ?? "—"} · usage_mode={edge.usage_mode ?? "policy"} · schema=
-                      {edge.instance_schema_id ?? "—"}
+                    <div className="font-medium text-slate-100">
+                      {humanTemplateName(edge.parent_template_code)}
+                    </div>
+                    <div className="font-mono text-[10px] text-slate-500">
+                      {edge.parent_template_code}
+                    </div>
+                    <div className="mt-0.5 text-slate-500">
+                      {edge.relation_type ? relationTypeLabelRo(edge.relation_type) : "—"}
+                      {" · "}
+                      {edge.usage_mode ?? "policy"}
                     </div>
                   </li>
                 ))}
@@ -107,8 +115,16 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                       key={`${edge.module_template_code}-${linkId ?? "x"}`}
                       className="rounded border border-slate-800 bg-slate-950/40 px-2 py-2"
                     >
-                      <div className="font-medium text-slate-100">{edge.module_template_code}</div>
-                      <p className="mt-0.5 text-slate-500">{edge.policy_reason ?? edge.relation_type ?? ""}</p>
+                      <div className="font-medium text-slate-100">
+                        {humanTemplateName(edge.module_template_code)}
+                      </div>
+                      <div className="font-mono text-[10px] text-slate-500">
+                        {edge.module_template_code}
+                      </div>
+                      <p className="mt-0.5 text-slate-500">
+                        {edge.policy_reason ??
+                          (edge.relation_type ? relationTypeLabelRo(edge.relation_type) : "")}
+                      </p>
                       {typeof linkId === "number" ? (
                         <div className="mt-2 flex flex-wrap items-end gap-2">
                           <label className="flex flex-col gap-0.5 text-slate-400">
@@ -155,11 +171,18 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
             )}
           </div>
 
-          {view.instance_schema_hints.length > 0 ? (
-            <p className="text-slate-500">
-              Hint schema: {view.instance_schema_hints.join(", ")}
+          <details className="text-slate-500">
+            <summary className="cursor-pointer select-none hover:text-slate-400">
+              Diagnostic contract
+            </summary>
+            <p className="mt-1">
+              Fără tabel component_templates:{" "}
+              {view.no_component_templates_table ? "da" : "nu"}
             </p>
-          ) : null}
+            {view.instance_schema_hints.length > 0 ? (
+              <p className="mt-1">Hint schema: {view.instance_schema_hints.join(", ")}</p>
+            ) : null}
+          </details>
         </div>
       ) : null}
 

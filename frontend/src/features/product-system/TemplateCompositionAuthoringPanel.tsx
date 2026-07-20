@@ -9,6 +9,7 @@ import {
   type ProductTemplateModuleLinkEntity,
 } from "@/api/productTemplateModuleLinks";
 import { patchComponentContractLink } from "@/api/productTemplateComponentContracts";
+import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
 
 const RELATION_OPTIONS = [
   "required_child",
@@ -80,18 +81,19 @@ export function TemplateCompositionAuthoringPanel({
 
   return (
     <section
-      className="space-y-3 rounded-xl border border-indigo-800/40 bg-indigo-950/10 px-4 py-4"
+      className="space-y-3 rounded-xl border border-slate-700/60 bg-[#0D1321]/40 px-4 py-4"
       data-testid="template-composition-authoring-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-indigo-100">Compoziție — legături modul</h3>
-          <p className="mt-0.5 text-[11px] text-indigo-200/75">
-            Add/remove soft via active · rol (relation_type) · usage_mode · schema instanță. Fără tabel CT.
-            Aluminiu inactiv rămâne blocker real — nu se auto-activează.
+          <h3 className="text-sm font-semibold text-slate-100">Compoziție</h3>
+          <p className="mt-0.5 text-[11px] text-slate-400">
+            <span className="font-medium text-slate-200">{humanTemplateName(parentTemplateCode)}</span>
+            <span className="ml-1.5 font-mono text-[10px] text-slate-500">{parentTemplateCode}</span>
           </p>
-          <p className="mt-1 font-mono text-[10px] text-slate-500">
-            parent #{parentTemplateId} · {parentTemplateCode}
+          <p className="mt-1 text-[11px] text-slate-500">
+            Editează roluri și includerea soft. Aluminiu inactiv rămâne blocker real — nu se
+            auto-activează.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -135,8 +137,10 @@ export function TemplateCompositionAuthoringPanel({
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
-                  <span className="text-[10px] text-slate-500">#{index + 1} · id {link.id}</span>
-                  <p className="font-mono text-xs text-slate-100">{link.module_template_code}</p>
+                  <p className="text-xs font-medium text-slate-100">
+                    {humanTemplateName(link.module_template_code)}
+                  </p>
+                  <p className="font-mono text-[10px] text-slate-500">{link.module_template_code}</p>
                 </div>
                 <span
                   className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold ${
@@ -145,13 +149,13 @@ export function TemplateCompositionAuthoringPanel({
                       : "border-slate-700 text-slate-500"
                   }`}
                 >
-                  {link.active ? "active" : "inactive"}
+                  {link.active ? "inclus" : "eliminat soft"}
                 </span>
               </div>
 
               <div className="mt-2 grid gap-2 sm:grid-cols-2">
                 <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
-                  Rol / relation_type
+                  Rol
                   <select
                     className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
                     defaultValue={link.relation_type}
@@ -162,14 +166,14 @@ export function TemplateCompositionAuthoringPanel({
                     {[link.relation_type, ...RELATION_OPTIONS.filter((r) => r !== link.relation_type)].map(
                       (opt) => (
                         <option key={opt} value={opt}>
-                          {opt}
+                          {relationTypeLabelRo(opt)}
                         </option>
                       ),
                     )}
                   </select>
                 </label>
                 <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
-                  Required / optional (soft)
+                  Includere (soft)
                   <select
                     className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
                     value={link.active ? "included" : "removed"}
@@ -179,53 +183,58 @@ export function TemplateCompositionAuthoringPanel({
                       void updateLink(link.id, { active: e.target.value === "included" })
                     }
                   >
-                    <option value="included">inclus (active)</option>
-                    <option value="removed">eliminat soft (inactive)</option>
+                    <option value="included">inclus</option>
+                    <option value="removed">eliminat soft</option>
                   </select>
                 </label>
               </div>
 
-              <div className="mt-2 flex flex-wrap items-end gap-2">
-                <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
-                  usage_mode
-                  <input
-                    className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
-                    defaultValue={link.usage_mode ?? ""}
-                    id={`comp-usage-${link.id}`}
-                    data-testid={`composition-usage-${link.id}`}
-                  />
-                </label>
-                <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
-                  instance_schema_id (geometry inputs only)
-                  <input
-                    className="min-w-[12rem] rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
-                    defaultValue={link.instance_schema_id ?? ""}
-                    id={`comp-schema-${link.id}`}
-                    data-testid={`composition-schema-${link.id}`}
-                  />
-                </label>
-                <button
-                  type="button"
-                  className="rounded border border-cyan-800/50 bg-cyan-950/30 px-2 py-1 text-[11px] font-semibold text-cyan-100 disabled:opacity-50"
-                  disabled={busyId === link.id}
-                  data-testid={`composition-save-contract-${link.id}`}
-                  onClick={() => {
-                    const usage = (
-                      document.getElementById(`comp-usage-${link.id}`) as HTMLInputElement | null
-                    )?.value ?? "";
-                    const schema = (
-                      document.getElementById(`comp-schema-${link.id}`) as HTMLInputElement | null
-                    )?.value ?? "";
-                    void saveContractEdge(link.id, usage, schema);
-                  }}
-                >
-                  Salvează contract
-                </button>
-              </div>
-
-              <p className="mt-1.5 text-[10px] text-slate-500">
-                pricing={link.pricing_mode} · execution={link.execution_mode} · trigger={link.trigger_field}
-              </p>
+              <details className="mt-2">
+                <summary className="cursor-pointer text-[10px] text-slate-500 hover:text-slate-400">
+                  Contract instanță · diagnostic #{index + 1}
+                </summary>
+                <div className="mt-2 flex flex-wrap items-end gap-2">
+                  <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
+                    Mod utilizare
+                    <input
+                      className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                      defaultValue={link.usage_mode ?? ""}
+                      id={`comp-usage-${link.id}`}
+                      data-testid={`composition-usage-${link.id}`}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
+                    Schema instanță (inputuri geometrie)
+                    <input
+                      className="min-w-[12rem] rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                      defaultValue={link.instance_schema_id ?? ""}
+                      id={`comp-schema-${link.id}`}
+                      data-testid={`composition-schema-${link.id}`}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="rounded border border-cyan-800/50 bg-cyan-950/30 px-2 py-1 text-[11px] font-semibold text-cyan-100 disabled:opacity-50"
+                    disabled={busyId === link.id}
+                    data-testid={`composition-save-contract-${link.id}`}
+                    onClick={() => {
+                      const usage =
+                        (document.getElementById(`comp-usage-${link.id}`) as HTMLInputElement | null)
+                          ?.value ?? "";
+                      const schema =
+                        (document.getElementById(`comp-schema-${link.id}`) as HTMLInputElement | null)
+                          ?.value ?? "";
+                      void saveContractEdge(link.id, usage, schema);
+                    }}
+                  >
+                    Salvează contract
+                  </button>
+                </div>
+                <p className="mt-1.5 font-mono text-[10px] text-slate-600">
+                  link #{link.id} · parent #{parentTemplateId} · pricing={link.pricing_mode} ·
+                  execution={link.execution_mode} · trigger={link.trigger_field}
+                </p>
+              </details>
             </li>
           ))}
         </ul>
