@@ -987,7 +987,7 @@ export function TemplateLibraryView({
 
   return (
     <div className="space-y-3" data-testid="product-system-catalog-shell" data-density={density}>
-      <div className="rounded-lg border border-[#1E293B] bg-[#0D1321] px-3 py-2.5">
+      <div className="rounded-lg border border-[#1E293B] bg-[#111827] px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
             <p className="text-[14px] font-bold text-slate-100">{shellContextLabel ?? "Product System Catalog"}</p>
@@ -1038,7 +1038,7 @@ export function TemplateLibraryView({
         )}
       </div>
 
-      <section className="rounded-lg border border-[#1E293B] bg-[#0B1120]/70 p-3" data-testid={`product-system-view-${effectiveCatalogView}`}>
+      <section className="rounded-lg border border-[#1E293B] bg-[#111827] p-3" data-testid={`product-system-view-${effectiveCatalogView}`}>
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <div>
             <h2 ref={headingRef} tabIndex={-1} className="text-[14px] font-bold text-slate-100 focus:outline-none">

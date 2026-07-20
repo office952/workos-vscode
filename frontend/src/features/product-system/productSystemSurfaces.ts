@@ -1,15 +1,32 @@
 /**
- * Product System content surfaces — WorkOS tokens, fewer nested dark levels.
- * Shell stays on app chrome; PS content uses at most ~2 surface depths.
+ * Product System content surfaces — aliases to WorkOS tokens.
+ * Shell stays on app chrome; PS content uses at most 2 surface depths.
+ *
+ * Canonical tokens: frontend/src/components/workos/design-system/tokens.ts
+ *   surface #111827 · surfaceRaised #1A2236 · input #0B1220
+ *   borders subtle #1E293B · strong #2A3548
+ * Shared map: docs/qa/.../PRODUCT_SYSTEM_P1_SHARED_VISUAL_MAP.md
+ *
+ * Tailwind needs full literal class strings at build time — hexes below
+ * equal WorkOS tokens. Do not invent a separate PS palette.
  */
 
-/** Primary content panel (level 1) — lighter than historic #0B1220 / #0D1321 stacks. */
+/** Opaque content panel (L1) — matches Settings / Quotes cards. */
 export const PS_SURFACE_PANEL =
-  "rounded-xl border border-slate-700/50 bg-[#111827]/70";
+  "rounded-lg border border-[#1E293B] bg-[#111827]";
 
-/** Nested inset inside a panel (level 2 max) — no third dark box. */
+/** Nested support inside a panel (L2 max) — WorkOS raised wash. */
 export const PS_SURFACE_INSET =
-  "rounded-lg border border-slate-700/40 bg-[#1A2236]/35";
+  "rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40";
 
-/** Quiet diagnostic / secondary chrome. */
-export const PS_SURFACE_QUIET = "rounded-lg border border-slate-800/60 bg-slate-900/30";
+/** Row / list item inside a panel — border only; no third dark well. */
+export const PS_SURFACE_ROW =
+  "rounded-md border border-[#2A3548]/55 bg-transparent";
+
+/** Form control fill — WorkOS input. */
+export const PS_SURFACE_INPUT =
+  "rounded border border-[#2A3548] bg-[#0B1220] text-slate-200 outline-none focus:border-blue-500/50";
+
+/** Quiet diagnostic / secondary chrome — not a deeper black stack. */
+export const PS_SURFACE_QUIET =
+  "rounded-md border border-slate-800/70 bg-slate-900/25";

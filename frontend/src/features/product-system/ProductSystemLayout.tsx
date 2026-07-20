@@ -8,6 +8,7 @@ import {
 } from "./productSystemShellConfig";
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
 import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStackBanner";
+import { PS_SURFACE_QUIET } from "./productSystemSurfaces";
 
 function ProductSystemLayoutInner() {
   const location = useLocation();
@@ -48,7 +49,7 @@ function ProductSystemLayoutInner() {
           <Link
             to={PRICING_REGISTRY_PATH}
             data-testid="product-system-pricing-registry-link"
-            className="inline-flex items-center gap-1.5 rounded-md border border-slate-700/60 bg-[#111827]/50 px-2.5 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100"
+            className={`inline-flex items-center gap-1.5 ${PS_SURFACE_QUIET} px-2.5 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100`}
           >
             Pricing Registry
             <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
@@ -72,7 +73,7 @@ function ProductSystemLayoutInner() {
               className={({ isActive }) =>
                 `inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
                   isActive
-                    ? "border border-b-0 border-slate-700 bg-[#111827]/80 text-slate-100"
+                    ? `border border-b-0 border-[#1E293B] bg-[#111827] text-slate-100`
                     : "text-slate-500 hover:text-slate-300"
                 }`
               }
