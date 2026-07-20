@@ -6,6 +6,7 @@
 import { useCallback, useState } from "react";
 import { getAPIBaseURL } from "@/lib/config";
 import { formatReadinessFindingMessage, humanTemplateName } from "./productSystemAdminDisplay";
+import { PS_SURFACE_INSET, PS_SURFACE_INPUT, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 type CheckStatus =
   | "PASS"
@@ -153,7 +154,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
 
   return (
     <section
-      className="rounded-xl border border-slate-700/50 bg-[#111827]/70 p-3"
+      className={`${PS_SURFACE_PANEL} p-3`}
       data-testid="product-e2e-readiness-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -181,7 +182,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
       {/* Compact dual-axis strip — always visible once result exists */}
       {active ? (
         <div
-          className="mt-3 grid gap-1.5 rounded-lg border border-slate-700/40 bg-[#1A2236]/35 p-2.5"
+          className={`mt-3 grid gap-1.5 ${PS_SURFACE_INSET} p-2.5`}
           data-testid="product-e2e-readiness-dual-axes"
         >
           <div className="flex flex-wrap items-center gap-2 text-[11px]">
@@ -232,7 +233,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
               Verificare statică
             </button>
             <input
-              className="min-w-[180px] flex-1 rounded-md border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+              className={`min-w-[180px] flex-1 ${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
               placeholder="workspace_id (runtime dry-run)"
               value={workspaceId}
               onChange={(e) => setWorkspaceId(e.target.value)}

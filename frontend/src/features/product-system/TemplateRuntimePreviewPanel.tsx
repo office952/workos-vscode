@@ -9,6 +9,11 @@ import {
   type ProductDefinitionPreview,
 } from "@/api/productDefinitionPreview";
 import { humanTemplateName } from "./productSystemAdminDisplay";
+import {
+  PS_SURFACE_INPUT,
+  PS_SURFACE_PANEL,
+  PS_SURFACE_QUIET,
+} from "./productSystemSurfaces";
 
 function readinessLabelRo(status: string): string {
   switch (status) {
@@ -51,7 +56,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
 
   return (
     <section
-      className="space-y-3 rounded-xl border border-slate-700/50 bg-[#111827]/70 px-4 py-4"
+      className={`space-y-3 ${PS_SURFACE_PANEL} px-4 py-4`}
       data-testid="template-runtime-preview-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -80,7 +85,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
       <label className="flex max-w-md flex-col gap-0.5 text-[11px] text-slate-400">
         Fixture workspace (opțional)
         <input
-          className="rounded border border-slate-700 bg-slate-950 px-2 py-1 font-mono text-[11px] text-slate-200"
+          className={`${PS_SURFACE_INPUT} px-2 py-1 font-mono text-[11px]`}
           value={workspaceId}
           onChange={(e) => setWorkspaceId(e.target.value)}
           placeholder="gol = doar șablon"
@@ -100,7 +105,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
       {preview ? (
         <div className="space-y-3 text-[12px] text-slate-300" data-testid="runtime-preview-body">
           <div
-            className="rounded-lg border border-slate-700/60 bg-slate-950/40 px-3 py-2.5"
+            className={`${PS_SURFACE_QUIET} px-3 py-2.5`}
             data-testid="runtime-preview-human-summary"
           >
             <p className="text-[12px] font-medium text-slate-100">Rezumat operator</p>
