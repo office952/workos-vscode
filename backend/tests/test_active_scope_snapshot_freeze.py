@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import copy
 import json
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -26,6 +28,10 @@ from services.execution_sold_scope_reader_service import (
     read_execution_sold_scope,
 )
 from services.order_snapshot_v2_convert_service import _component_scope_fields_from_quote
+from services.product_truth_job_confirm_service import (
+    confirm_job_product_truth,
+    mark_job_revision_stale_if_confirmed,
+)
 from services.quote_snapshot_component_scope_service import build_frozen_component_scope
 from tests.execution_sold_scope_fixtures import offer_scope, snapshot_with_scope, sold_scope_dossier_aggregate
 from tests.test_quote_snapshot_v2 import TEMPLATE, _full_quote_input, _seed_workspace
@@ -337,3 +343,223 @@ async def test_freeze_survives_workspace_payload_mutation(volumetric_v2_db) -> N
     ctx = read_execution_sold_scope(order_snap)
     assert ctx.canonical_sold_modules == frozenset({"RETURN-CANT"})
     assert frozen.compiled.sold_module_codes == ["RETURN-CANT"]
+
+
+def _confirm_payload_bags() -> dict:
+    return {
+        "template_code": ROOT,
+        "finish_setup": {
+            "letter_group_instances": [
+                {
+                    "schema": "volumetric_letter_group_instance_v1",
+                    "instance_id": "11111111-1111-1111-1111-111111111111",
+                    "group_key": "pseudo:maria",
+                    "confirmed": True,
+                }
+            ],
+            "acm_panel_instance": {
+                "schema": "acm_panel_component_instance_v1",
+                "component_instance_id": "acm-1",
+                "component_template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+                "association_status": "confirmed",
+            },
+        },
+    }
+
+
+async def _seed_workspace_with_product_truth(
+    db,
+    *,
+    confirm: bool = True,
+    stale: bool = False,
+) -> str:
+    base = _full_quote_input()
+    bags = _confirm_payload_bags()
+    base["finish_setup"] = {
+        **(base.get("finish_setup") if isinstance(base.get("finish_setup"), dict) else {}),
+        **bags["finish_setup"],
+    }
+    if confirm:
+        _, confirmed = confirm_job_product_truth(
+            workspace_id="pending",
+            workspace_code="IV6-PT",
+            payload_raw=base,
+            expected_revision=0,
+            expected_draft_hash=None,
+            expected_content_hash=None,
+            root_template_code=ROOT,
+            root_template_version=None,
+            actor_id="freeze-gate",
+        )
+        base = confirmed
+        if stale:
+            base["finish_setup"]["letter_group_instances"][0]["confirmed"] = False
+            assert mark_job_revision_stale_if_confirmed(base) is True
+    return await _seed_workspace(db, payload=base)
+
+
+def _priced_quote(workspace_id: str, *, status: str = "priced") -> SimpleNamespace:
+    notes = json.dumps(
+        {
+            "intake_v6_linkage_v1": {
+                "source_workspace_id": workspace_id,
+                "template_code": ROOT,
+                "pricing_source": "intake_v6_backend_priced_dry_run",
+                "intake_v6_priced_quote_write_v1": {
+                    "pricing_input_trace": _full_quote_input(),
+                    "internal_cost_trace_summary": {"estimated_cost_total": 100.0, "currency": "EUR"},
+                    "no_v4_v2_commercial_truth": True,
+                    "frontend_preview_not_used": True,
+                },
+            }
+        }
+    )
+    return SimpleNamespace(
+        id=901,
+        code="Q-PT-FREEZE",
+        intake_code=f"IV6-{workspace_id}",
+        client_id=1,
+        client_name="Test",
+        status=status,
+        line_items=json.dumps(
+            [{"name": "Line", "total": 100.0, "unit_price": 100.0, "quantity": 1, "unit": "buc"}]
+        ),
+        subtotal=100.0,
+        discount=0.0,
+        total_before_vat=100.0,
+        vat=19.0,
+        grand_total=119.0,
+        margin_pct=0.0,
+        valid_until=None,
+        created_at=None,
+        notes=notes,
+    )
+
+
+@pytest.mark.asyncio
+async def test_v6_freeze_blocks_without_confirmed_product_truth(
+    volumetric_v2_db, monkeypatch
+) -> None:
+    from services import intake_v6_quote_snapshot_v2_service as v6_snap
+
+    workspace_id = await _seed_workspace_with_product_truth(volumetric_v2_db, confirm=False)
+    quote = _priced_quote(workspace_id)
+
+    class _Quotes:
+        async def get_by_id(self, _quote_id):
+            return quote
+
+    monkeypatch.setattr(v6_snap, "QuotesService", lambda _db: _Quotes())
+    monkeypatch.setattr(v6_snap, "_snapshot_count", AsyncMock(return_value=0))
+    monkeypatch.setattr(v6_snap, "_order_count", AsyncMock(return_value=0))
+
+    result = await v6_snap.create_v6_quote_snapshot_v2(
+        volumetric_v2_db,
+        quote_id=901,
+        workspace_id=workspace_id,
+        expected_grand_total=119.0,
+    )
+    assert result["status"] == v6_snap.V6_QUOTE_SNAPSHOT_V2_BLOCKED
+    assert v6_snap.V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED in {
+        b["code"] for b in result["blockers"]
+    }
+
+
+@pytest.mark.asyncio
+async def test_v6_freeze_blocks_when_product_truth_stale(
+    volumetric_v2_db, monkeypatch
+) -> None:
+    from services import intake_v6_quote_snapshot_v2_service as v6_snap
+
+    workspace_id = await _seed_workspace_with_product_truth(
+        volumetric_v2_db, confirm=True, stale=True
+    )
+    quote = _priced_quote(workspace_id)
+
+    class _Quotes:
+        async def get_by_id(self, _quote_id):
+            return quote
+
+    monkeypatch.setattr(v6_snap, "QuotesService", lambda _db: _Quotes())
+    monkeypatch.setattr(v6_snap, "_snapshot_count", AsyncMock(return_value=0))
+    monkeypatch.setattr(v6_snap, "_order_count", AsyncMock(return_value=0))
+
+    result = await v6_snap.create_v6_quote_snapshot_v2(
+        volumetric_v2_db,
+        quote_id=901,
+        workspace_id=workspace_id,
+        expected_grand_total=119.0,
+    )
+    assert result["status"] == v6_snap.V6_QUOTE_SNAPSHOT_V2_BLOCKED
+    assert v6_snap.V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED in {
+        b["code"] for b in result["blockers"]
+    }
+    assert any("stale_after_edit" in str(b.get("message") or "") for b in result["blockers"])
+
+
+@pytest.mark.asyncio
+async def test_v6_freeze_blocks_accepted_quote_terminal(
+    volumetric_v2_db, monkeypatch
+) -> None:
+    from services import intake_v6_quote_snapshot_v2_service as v6_snap
+
+    workspace_id = await _seed_workspace_with_product_truth(volumetric_v2_db, confirm=True)
+    quote = _priced_quote(workspace_id, status="accepted")
+
+    class _Quotes:
+        async def get_by_id(self, _quote_id):
+            return quote
+
+    monkeypatch.setattr(v6_snap, "QuotesService", lambda _db: _Quotes())
+    monkeypatch.setattr(v6_snap, "_snapshot_count", AsyncMock(return_value=0))
+    monkeypatch.setattr(v6_snap, "_order_count", AsyncMock(return_value=0))
+
+    result = await v6_snap.create_v6_quote_snapshot_v2(
+        volumetric_v2_db,
+        quote_id=901,
+        workspace_id=workspace_id,
+        expected_grand_total=119.0,
+    )
+    assert result["status"] == v6_snap.V6_QUOTE_SNAPSHOT_V2_BLOCKED
+    assert v6_snap.V6_SNAPSHOT_QUOTE_TERMINAL in {b["code"] for b in result["blockers"]}
+
+
+@pytest.mark.asyncio
+async def test_v6_freeze_passes_product_truth_gate_when_confirmed(
+    volumetric_v2_db, monkeypatch
+) -> None:
+    """Confirmed non-stale pin clears PRODUCT_TRUTH gate (later dry-run may still block)."""
+    from services import intake_v6_quote_snapshot_v2_service as v6_snap
+
+    workspace_id = await _seed_workspace_with_product_truth(volumetric_v2_db, confirm=True)
+    quote = _priced_quote(workspace_id)
+
+    class _Quotes:
+        async def get_by_id(self, _quote_id):
+            return quote
+
+    async def _dry_run_after_pt_gate(_db, _workspace_id, pricing_mode="snapshot_v2"):
+        return {
+            "pricing_status": "NOT_READY",
+            "blockers": [{"code": "DRY_RUN_STUB_AFTER_PT", "message": "PT gate cleared"}],
+            "warnings": [],
+        }
+
+    monkeypatch.setattr(v6_snap, "QuotesService", lambda _db: _Quotes())
+    monkeypatch.setattr(v6_snap, "_snapshot_count", AsyncMock(return_value=0))
+    monkeypatch.setattr(v6_snap, "_order_count", AsyncMock(return_value=0))
+    monkeypatch.setattr(
+        v6_snap, "build_intake_v6_priced_quote_dry_run", _dry_run_after_pt_gate
+    )
+
+    result = await v6_snap.create_v6_quote_snapshot_v2(
+        volumetric_v2_db,
+        quote_id=901,
+        workspace_id=workspace_id,
+        expected_grand_total=119.0,
+    )
+    codes = {b["code"] for b in result.get("blockers") or []}
+    assert result["status"] == v6_snap.V6_QUOTE_SNAPSHOT_V2_BLOCKED
+    assert v6_snap.V6_SNAPSHOT_PRODUCT_TRUTH_NOT_CONFIRMED not in codes
+    assert v6_snap.V6_SNAPSHOT_DRY_RUN_REPRICE_BLOCKED in codes
+    assert "DRY_RUN_STUB_AFTER_PT" in codes

@@ -6,7 +6,10 @@ import copy
 
 import pytest
 
+from types import SimpleNamespace
+
 from services.product_truth_job_confirm_service import (
+    apply_pinned_bags_onto_payload,
     commercial_freeze_allowed,
     confirm_job_product_truth,
     draft_hash_for_payload,
@@ -14,6 +17,7 @@ from services.product_truth_job_confirm_service import (
     mark_job_revision_stale_if_confirmed,
 )
 from services.acm_panel_domain_service import project_acm_mirrors_from_canonical
+from services.order_snapshot_v2_convert_service import _enrich_order_provenance_with_product_truth
 
 
 def _payload_with_bags() -> dict:
@@ -220,3 +224,70 @@ def test_acm_mirrors_projected_from_canonical():
     out = project_acm_mirrors_from_canonical(copy.deepcopy(finish))
     assert out["svg_support_selection"]["acm_panel_instance"]["component_instance_id"] == "acm-1"
     assert out["mounting_solution"]["configuration"]["acm_panel_instance"]["component_instance_id"] == "acm-1"
+
+
+def test_content_hash_mismatch_409():
+    payload = _payload_with_bags()
+    confirm_job_product_truth(
+        workspace_id="ws-1",
+        workspace_code="IV6-TEST",
+        payload_raw=payload,
+        expected_revision=0,
+        expected_draft_hash=None,
+        expected_content_hash=None,
+        root_template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        root_template_version=None,
+        actor_id="user-1",
+    )
+    from fastapi import HTTPException
+
+    with pytest.raises(HTTPException) as exc:
+        confirm_job_product_truth(
+            workspace_id="ws-1",
+            workspace_code="IV6-TEST",
+            payload_raw=payload,
+            expected_revision=1,
+            expected_draft_hash=None,
+            expected_content_hash="sha256:deadbeef",
+            root_template_code="TPL-VOLUMETRIC-LETTERS_v2",
+            root_template_version=None,
+            actor_id="user-1",
+        )
+    assert exc.value.status_code == 409
+    assert exc.value.detail["error"] == "content_hash_mismatch"
+
+
+def test_apply_pinned_bags_ignores_live_draft_drift():
+    payload = _payload_with_bags()
+    confirm_job_product_truth(
+        workspace_id="ws-1",
+        workspace_code="IV6-TEST",
+        payload_raw=payload,
+        expected_revision=0,
+        expected_draft_hash=None,
+        expected_content_hash=None,
+        root_template_code="TPL-VOLUMETRIC-LETTERS_v2",
+        root_template_version=None,
+        actor_id="user-1",
+    )
+    pinned_id = payload["product_truth"]["confirmed_snapshot_v1"]["pinned_typed_bags"][
+        "letter_group_instances"
+    ][0]["instance_id"]
+    payload["finish_setup"]["letter_group_instances"][0]["instance_id"] = "drifted-live-id"
+    restored = apply_pinned_bags_onto_payload(payload)
+    assert restored["finish_setup"]["letter_group_instances"][0]["instance_id"] == pinned_id
+    assert commercial_freeze_allowed(payload) is True
+
+
+def test_order_provenance_copies_product_truth_revision_no_live_reread():
+    parsed = SimpleNamespace(provenance={"source": "quote_snapshot_v2"})
+    linkage = {
+        "product_truth_revision": 3,
+        "product_truth_content_hash": "sha256:pin",
+        "freeze_from_pinned_product_truth": True,
+    }
+    prov = _enrich_order_provenance_with_product_truth(parsed, linkage)
+    assert prov["product_truth_revision"] == 3
+    assert prov["product_truth_content_hash"] == "sha256:pin"
+    assert prov["freeze_from_pinned_product_truth"] is True
+    assert prov["no_live_workspace_reread"] is True
