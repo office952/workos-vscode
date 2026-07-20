@@ -1,6 +1,6 @@
 /**
- * Dual status: BUILD/DB active vs TEMPLATE publication — never conflated.
- * Compact admin chips: lifecycle readable first; codes stay secondary.
+ * Layered status: lifecycle (catalog) vs publication gate — never equal-weight soup.
+ * Shell „În dezvoltare” must not appear here.
  */
 
 import { useEffect, useState } from "react";
@@ -8,17 +8,22 @@ import {
   getProductTemplatePublication,
   type ProductTemplatePublicationState,
 } from "@/api/productTemplatePublication";
+import { getAPIBaseURL } from "@/lib/config";
+import {
+  resolvePublishUiGate,
+  type ReadinessGateInput,
+} from "./productSystemPublicationGate";
 
 function chipClass(kind: "ok" | "warn" | "blocked" | "neutral"): string {
   switch (kind) {
     case "ok":
-      return "border-emerald-800/50 bg-emerald-950/30 text-emerald-100";
+      return "border-emerald-800/40 bg-emerald-950/20 text-emerald-100";
     case "warn":
-      return "border-amber-800/50 bg-amber-950/25 text-amber-100";
+      return "border-amber-800/40 bg-amber-950/20 text-amber-100";
     case "blocked":
-      return "border-rose-800/50 bg-rose-950/30 text-rose-100";
+      return "border-rose-800/40 bg-rose-950/25 text-rose-100";
     case "neutral":
-      return "border-slate-700/70 bg-slate-950/40 text-slate-300";
+      return "border-slate-700/50 bg-slate-900/30 text-slate-300";
     default: {
       const _exhaustive: never = kind;
       return _exhaustive;
@@ -26,19 +31,29 @@ function chipClass(kind: "ok" | "warn" | "blocked" | "neutral"): string {
   }
 }
 
-function publicationDisplay(pub: ProductTemplatePublicationState | null): {
-  label: string;
-  kind: "ok" | "warn" | "blocked" | "neutral";
-} {
-  if (!pub) return { label: "—", kind: "neutral" };
-  const status = pub.effective_status ?? pub.publication_status ?? "—";
-  if (!pub.publish_allowed) {
-    return { label: `${status} · blocată`, kind: "blocked" };
+async function fetchReadinessGate(templateCode: string): Promise<ReadinessGateInput | null> {
+  const base = `${getAPIBaseURL()}/api/v1/product-system`;
+  try {
+    const res = await fetch(
+      `${base}/e2e-readiness/${encodeURIComponent(templateCode)}/static`,
+      { credentials: "include" },
+    );
+    if (!res.ok) return null;
+    const data = (await res.json()) as {
+      verdict?: string;
+      e2e_ready?: boolean;
+      known_conflicts?: string[];
+      findings?: Array<{ blocking?: boolean; message?: string; code?: string }>;
+    };
+    return {
+      verdict: data.verdict ?? null,
+      e2eReady: data.e2e_ready ?? null,
+      knownConflicts: data.known_conflicts ?? [],
+      findings: data.findings ?? [],
+    };
+  } catch {
+    return null;
   }
-  if (pub.publication_status === "PUBLISHED") {
-    return { label: status, kind: "ok" };
-  }
-  return { label: status, kind: "warn" };
 }
 
 export function TemplateDualStatusChips({
@@ -49,14 +64,20 @@ export function TemplateDualStatusChips({
   dbActive: boolean;
 }) {
   const [pub, setPub] = useState<ProductTemplatePublicationState | null>(null);
+  const [readiness, setReadiness] = useState<ReadinessGateInput | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     setError(null);
-    void getProductTemplatePublication(templateCode)
-      .then((state) => {
-        if (!cancelled) setPub(state);
+    void Promise.all([
+      getProductTemplatePublication(templateCode),
+      fetchReadinessGate(templateCode),
+    ])
+      .then(([state, readinessGate]) => {
+        if (cancelled) return;
+        setPub(state);
+        setReadiness(readinessGate);
       })
       .catch((e) => {
         if (!cancelled) setError(e instanceof Error ? e.message : "Publication state unavailable");
@@ -66,38 +87,58 @@ export function TemplateDualStatusChips({
     };
   }, [templateCode]);
 
-  const publication = publicationDisplay(pub);
+  const gate = resolvePublishUiGate(pub, readiness);
+  const status = pub?.effective_status ?? pub?.publication_status ?? "—";
+  const publicationKind = !pub
+    ? ("neutral" as const)
+    : !gate.publishEnabled
+      ? ("blocked" as const)
+      : pub.publication_status === "PUBLISHED"
+        ? ("ok" as const)
+        : ("warn" as const);
+  const publicationLabel = !pub
+    ? "—"
+    : !gate.publishEnabled
+      ? `${status} · blocată`
+      : status;
 
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5"
+      className="flex flex-col items-end gap-1.5"
       data-testid="template-dual-status-chips"
-      title="active ≠ published ≠ offerable ≠ E2E-ready"
-      aria-label="Status build și publicare șablon"
+      title="lifecycle ≠ publicare ≠ pregătire E2E"
+      aria-label="Status lifecycle și poartă de publicare"
     >
-      <span
-        data-testid="template-dual-status-build"
-        className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${chipClass(
-          dbActive ? "ok" : "neutral",
-        )}`}
-      >
-        Build {dbActive ? "activ" : "inactiv"}
-      </span>
-      <span
-        data-testid="template-dual-status-publication"
-        className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${chipClass(
-          publication.kind,
-        )}`}
-      >
-        Publicare {publication.label}
-      </span>
-      {pub?.active_is_not_published ? (
+      <div className="flex flex-wrap items-center justify-end gap-1.5">
         <span
-          data-testid="template-dual-status-active-ne-published"
-          className="rounded-md border border-slate-700/60 px-2 py-0.5 text-[10px] text-slate-400"
+          data-testid="template-dual-status-build"
+          className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${chipClass(
+            dbActive ? "ok" : "neutral",
+          )}`}
         >
-          activ ≠ publicat
+          {dbActive ? "Activ în catalog" : "Inactiv în catalog"}
         </span>
+        <span
+          data-testid="template-dual-status-publication"
+          className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold tracking-wide ${chipClass(
+            publicationKind,
+          )}`}
+        >
+          Publicare: {publicationLabel}
+        </span>
+      </div>
+      {gate.primaryBlockerRo ? (
+        <p
+          className="max-w-xs text-right text-[11px] font-medium text-rose-100/95"
+          data-testid="template-dual-status-primary-blocker"
+        >
+          {gate.primaryBlockerRo}
+          {gate.secondaryCode ? (
+            <span className="ml-1 font-mono text-[10px] font-normal text-rose-200/55">
+              ({gate.secondaryCode})
+            </span>
+          ) : null}
+        </p>
       ) : null}
       {error ? (
         <span className="text-[10px] text-slate-500" data-testid="template-dual-status-error">

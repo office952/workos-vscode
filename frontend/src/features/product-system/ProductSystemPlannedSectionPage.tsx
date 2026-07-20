@@ -5,6 +5,7 @@ import {
   PRODUCT_SYSTEM_PRODUCTS_PATH,
   type ProductSystemShellNavId,
 } from "./productSystemShellConfig";
+import { PS_SURFACE_QUIET } from "./productSystemSurfaces";
 
 const SECTION_TITLES: Record<ProductSystemShellNavId, string> = {
   products: "Products",
@@ -26,12 +27,12 @@ export default function ProductSystemPlannedSectionPage({
       data-testid="product-system-planned-section"
       data-section={section}
       data-operational="false"
-      className="rounded-xl border border-dashed border-slate-700/70 bg-slate-950/30 p-8 text-center"
+      className={`${PS_SURFACE_QUIET} border-dashed p-8 text-center`}
     >
       <div className="mb-3 flex flex-wrap items-center justify-center gap-2">
         <span
           data-testid="product-system-planned-section-badge"
-          className="rounded border border-slate-700/80 bg-slate-900/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400"
+          className="text-[10px] font-medium uppercase tracking-wide text-slate-500"
         >
           {PRODUCT_SYSTEM_PLANNED_BADGE_RO}
         </span>

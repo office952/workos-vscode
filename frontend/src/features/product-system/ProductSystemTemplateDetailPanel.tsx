@@ -26,6 +26,7 @@ import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthorin
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { humanTemplateName } from "./productSystemAdminDisplay";
+import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 /** Primary authoring flow — identity → composition → dossier → readiness → publication → preview. */
 const PRODUCT_PRIMARY_SECTIONS: Array<{
@@ -36,10 +37,10 @@ const PRODUCT_PRIMARY_SECTIONS: Array<{
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
   { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
-  { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
-  { id: "readiness", label: "Readiness", testId: "product-system-template-detail-tab-readiness" },
+  { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
+  { id: "readiness", label: "Pregătire E2E", testId: "product-system-template-detail-tab-readiness" },
   { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
-  { id: "runtime-preview", label: "Runtime Preview", testId: "product-system-template-detail-tab-runtime-preview" },
+  { id: "runtime-preview", label: "Previzualizare runtime", testId: "product-system-template-detail-tab-runtime-preview" },
 ];
 
 /** Secondary / diagnostic — available, not dominant. */
@@ -130,7 +131,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
   return (
     <section
       data-testid="product-system-template-modularity-truth"
-      className="space-y-4 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
+      className={`${PS_SURFACE_PANEL} space-y-4 px-4 py-4 text-sm text-slate-200`}
     >
       {truth.showModularityLaw ? (
         <div
@@ -348,6 +349,37 @@ export function ProductSystemTemplateDetailPanel({
         </div>
       </header>
 
+      {isProduct ? (
+        <div
+          className={`${PS_SURFACE_INSET} flex flex-wrap items-center justify-between gap-2 px-3 py-2`}
+          data-testid="product-system-template-next-action-strip"
+        >
+          <p className="text-[12px] text-slate-300">
+            <span className="font-semibold text-slate-100">Următorul pas:</span>{" "}
+            verifică Pregătire E2E — publicarea rămâne blocată cât timp un copil obligatoriu
+            (ex. Aluminiu) este inactiv.
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              type="button"
+              className="rounded border border-slate-600/70 px-2.5 py-1 text-[11px] font-medium text-slate-200 hover:bg-slate-800/60"
+              data-testid="product-system-template-next-action-readiness"
+              onClick={() => onSectionChange("readiness")}
+            >
+              Verifică traseul
+            </button>
+            <button
+              type="button"
+              className="rounded border border-slate-700/60 px-2.5 py-1 text-[11px] font-medium text-slate-400 hover:bg-slate-900/40"
+              data-testid="product-system-template-next-action-publication"
+              onClick={() => onSectionChange("publication")}
+            >
+              Publicare
+            </button>
+          </div>
+        </div>
+      ) : null}
+
       <div className="space-y-1.5">
         <div
           className="flex flex-wrap gap-1 border-b border-slate-800/80"
@@ -403,7 +435,7 @@ export function ProductSystemTemplateDetailPanel({
         <div className="space-y-4">
           <section
             data-testid="product-system-template-detail-overview"
-            className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
+            className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-200`}
           >
             <div className="grid gap-2 sm:grid-cols-2">
               <p>
@@ -434,7 +466,7 @@ export function ProductSystemTemplateDetailPanel({
             </details>
           </section>
           {isProduct ? (
-            <details className="rounded-xl border border-slate-800/70 bg-[#0D1321]/30 px-4 py-3">
+            <details className={`${PS_SURFACE_PANEL} px-4 py-3`}>
               <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
                 Axe de adevăr / modularitate (read-only)
               </summary>
@@ -452,7 +484,7 @@ export function ProductSystemTemplateDetailPanel({
             parentTemplateCode={template.template_code}
             parentTemplateId={template.id}
           />
-          <section className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200">
+          <section className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-200`}>
             <p className="text-[11px] text-slate-500">
               Availability read-model (nu dovedește independență modulară).
             </p>
@@ -525,7 +557,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "relationships" && isProduct ? (
         <section
           data-testid="product-system-template-detail-relationships"
-          className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-300`}
         >
           <p className="text-[11px] text-slate-500">
             Hartă relații parent↔child din availability — validare vizuală, fără auto-activare.
@@ -566,7 +598,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "dossier" ? (
         <section
           data-testid="product-system-template-detail-dossier"
-          className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+          className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4 text-sm text-slate-300`}
         >
           <p>
             Un singur Dossier canonic. Prezența în Dossier nu dovedește modularitate — distinge rădăcină,
@@ -661,7 +693,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "fields" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-fields"
-          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
         >
           <p>Câmpurile modulului legacy se configurează în editorul Product System.</p>
           <p className="mt-2 font-mono text-xs text-slate-500">
@@ -677,7 +709,7 @@ export function ProductSystemTemplateDetailPanel({
       {section === "product-truth-paths" && !isProduct ? (
         <section
           data-testid="product-system-template-detail-product-truth-paths"
-          className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+          className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
         >
           <p>Căile Product Truth sunt deținute de compoziția produsului părinte.</p>
           <p className="mt-2 text-sm text-slate-500">Vizualizare readonly în catalog — fără scriere Product Truth.</p>
@@ -688,7 +720,7 @@ export function ProductSystemTemplateDetailPanel({
         <div className="space-y-4">
           <section
             data-testid="product-system-template-detail-guards"
-            className="rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+            className={`${PS_SURFACE_PANEL} px-4 py-4 text-sm text-slate-300`}
           >
             <p>
               <span className="text-slate-500">Status tehnic:</span> {availability.status}
