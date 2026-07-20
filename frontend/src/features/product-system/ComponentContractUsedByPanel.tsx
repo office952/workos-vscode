@@ -9,6 +9,11 @@ import {
   type ProductTemplateComponentContractView,
 } from "@/api/productTemplateComponentContracts";
 import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
+import {
+  PS_SURFACE_INPUT,
+  PS_SURFACE_PANEL,
+  PS_SURFACE_ROW,
+} from "./productSystemSurfaces";
 
 export function ComponentContractUsedByPanel({ templateCode }: { templateCode: string }) {
   const [view, setView] = useState<ProductTemplateComponentContractView | null>(null);
@@ -43,7 +48,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
 
   return (
     <section
-      className="rounded-xl border border-slate-700/50 bg-[#111827]/70 p-3"
+      className={`${PS_SURFACE_PANEL} p-3`}
       data-testid="component-contract-used-by-panel"
     >
       <div className="flex items-start justify-between gap-2">
@@ -83,7 +88,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                 {view.used_by.map((edge) => (
                   <li
                     key={`${edge.parent_template_code}-${edge.link_id ?? "x"}`}
-                    className="rounded border border-slate-800 bg-slate-950/40 px-2 py-1.5 text-slate-300"
+                    className={`${PS_SURFACE_ROW} px-2 py-1.5 text-slate-300`}
                   >
                     <div className="font-medium text-slate-100">
                       {humanTemplateName(edge.parent_template_code)}
@@ -113,7 +118,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                   return (
                     <li
                       key={`${edge.module_template_code}-${linkId ?? "x"}`}
-                      className="rounded border border-slate-800 bg-slate-950/40 px-2 py-2"
+                      className={`${PS_SURFACE_ROW} px-2 py-2`}
                     >
                       <div className="font-medium text-slate-100">
                         {humanTemplateName(edge.module_template_code)}
@@ -130,7 +135,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                           <label className="flex flex-col gap-0.5 text-slate-400">
                             usage_mode
                             <input
-                              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-slate-200"
+                              className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                               defaultValue={edge.usage_mode ?? ""}
                               data-testid={`component-contract-usage-${linkId}`}
                               id={`usage-${linkId}`}
@@ -139,7 +144,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                           <label className="flex flex-col gap-0.5 text-slate-400">
                             instance_schema_id
                             <input
-                              className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-slate-200"
+                              className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                               defaultValue={edge.instance_schema_id ?? ""}
                               data-testid={`component-contract-schema-${linkId}`}
                               id={`schema-${linkId}`}

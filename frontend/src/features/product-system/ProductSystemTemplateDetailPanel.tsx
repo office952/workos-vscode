@@ -153,7 +153,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
         {truth.summaryChipsRo.map((chip) => (
           <span
             key={chip}
-            className="rounded-full border border-slate-700/80 bg-slate-900/50 px-2 py-0.5 text-[11px] font-medium text-slate-300"
+            className="rounded border border-[#2A3548]/55 bg-transparent px-2 py-0.5 text-[11px] font-medium text-slate-300"
           >
             {chip}
           </span>
@@ -405,29 +405,38 @@ export function ProductSystemTemplateDetailPanel({
           ))}
         </div>
         {showDiagnosticTabs && diagnosticSections.length > 0 ? (
-          <div
-            className="flex flex-wrap gap-1"
-            role="tablist"
-            aria-label="Diagnostic și liste secundare"
+          <details
+            className="group"
+            data-testid="product-system-template-diagnostic-tabs"
+            open={diagnosticSections.some((tab) => tab.id === section)}
           >
-            {diagnosticSections.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                role="tab"
-                aria-selected={section === tab.id}
-                data-testid={tab.testId}
-                onClick={() => onSectionChange(tab.id)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                  section === tab.id
-                    ? "bg-slate-800/80 text-slate-200 ring-1 ring-slate-600/50"
-                    : "text-slate-600 hover:bg-slate-900/50 hover:text-slate-400"
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
+            <summary className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-slate-400">
+              Diagnostic și liste secundare
+            </summary>
+            <div
+              className="mt-1 flex flex-wrap gap-1"
+              role="tablist"
+              aria-label="Diagnostic și liste secundare"
+            >
+              {diagnosticSections.map((tab) => (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={section === tab.id}
+                  data-testid={tab.testId}
+                  onClick={() => onSectionChange(tab.id)}
+                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                    section === tab.id
+                      ? "bg-slate-800/80 text-slate-200 ring-1 ring-slate-600/50"
+                      : "text-slate-600 hover:bg-slate-900/50 hover:text-slate-400"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </details>
         ) : null}
       </div>
 

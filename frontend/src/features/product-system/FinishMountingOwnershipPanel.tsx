@@ -77,7 +77,7 @@ function OwnershipRows({
           <li
             key={row.id}
             data-testid={`ownership-row-${row.id}`}
-            className="min-w-0 rounded-md border border-slate-800/60 bg-slate-950/30 px-2.5 py-2"
+            className="min-w-0 rounded-md border border-[#2A3548]/55 bg-transparent px-2.5 py-2"
           >
             <div className="flex flex-wrap items-start justify-between gap-2">
               <div className="min-w-0">
@@ -114,7 +114,7 @@ export function FinishMountingOwnershipPanel() {
   return (
     <section
       data-testid="finish-mounting-ownership-panel"
-      className="space-y-4 rounded-xl border border-slate-800/70 bg-[#0D1321]/40 px-4 py-4 text-sm text-slate-200"
+      className="space-y-4 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-4 text-sm text-slate-200"
     >
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
@@ -145,7 +145,7 @@ export function FinishMountingOwnershipPanel() {
           <span
             key={id}
             data-testid={`responsibility-code-${id}`}
-            className="max-w-full break-all rounded border border-slate-700 bg-slate-950/50 px-2 py-1"
+            className="max-w-full break-all rounded border border-[#2A3548]/55 bg-transparent px-2 py-1"
           >
             {code}
           </span>
@@ -206,7 +206,7 @@ export function FinishMountingOwnershipPanel() {
 
       <div
         data-testid="mounting-ownership-summary"
-        className="rounded-lg border border-slate-700/60 bg-slate-950/40 px-3 py-2 text-[12px] text-slate-200"
+        className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 px-3 py-2 text-[12px] text-slate-200"
       >
         <p className="font-semibold text-slate-100">MOUNTING</p>
         <p>{MOUNTING_OWNERSHIP_SUMMARY_RO.linkedSupportRo}</p>
@@ -287,7 +287,7 @@ export function FinishMountingOwnershipPanel() {
             <li
               key={gate.id}
               data-testid={`ownership-gate-${gate.id}`}
-              className="min-w-0 rounded-md border border-slate-800/50 bg-slate-950/40 px-2.5 py-2 text-[11px]"
+              className="min-w-0 rounded-md border border-[#2A3548]/55 bg-transparent px-2.5 py-2 text-[11px]"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="break-all font-mono text-[10px] text-slate-300">{gate.id}</p>
@@ -301,7 +301,7 @@ export function FinishMountingOwnershipPanel() {
       </div>
 
       <div
-        className="sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-slate-800/60 bg-[#0D1321]/95 py-2 text-[12px] backdrop-blur-sm"
+        className="sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-[#1E293B] bg-[#111827]/95 py-2 text-[12px] backdrop-blur-sm"
         data-testid="ownership-action-links"
       >
         <Link to="/intake-v6" className="text-blue-400 hover:text-blue-300">

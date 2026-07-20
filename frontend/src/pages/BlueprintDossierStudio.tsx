@@ -535,7 +535,7 @@ function SectionNav({
   completionStates: Record<string, { status: SectionCompletionState }>;
 }) {
   return (
-    <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-2 space-y-0.5">
+    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-2 space-y-0.5">
       <p className="text-[9px] text-slate-600 uppercase tracking-wide font-bold px-2 py-1">
         Navigare Secțiuni
       </p>
@@ -806,7 +806,7 @@ function TemplateModuleLinksPanel({
                   {link.active ? "ACTIV" : "INACTIV"}
                 </span>
               </div>
-              <div className="rounded-md bg-[#0D1321] border border-[#1E293B] px-2 py-1.5">
+              <div className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 px-2 py-1.5">
                 <p className="text-[9px] text-slate-500 uppercase font-bold">Trigger</p>
                 <p className="text-[10px] text-slate-300 font-mono">{link.trigger_field} = {formatModuleLinkValue(triggerValue)}</p>
               </div>
@@ -862,7 +862,7 @@ function StatusTransitionBar({
   const currentCfg = STATUS_CONFIG[current];
 
   return (
-    <div className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Shield className="w-4 h-4 text-purple-400" />
@@ -1305,7 +1305,7 @@ function DossierEditor({
                 value={ownerRole}
                 onChange={(e) => { setOwnerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: product_manager"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
             <div>
@@ -1315,7 +1315,7 @@ function DossierEditor({
                 value={reviewerRole}
                 onChange={(e) => { setReviewerRole(e.target.value); setDirty(true); }}
                 placeholder="ex: tech_lead"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-purple-500/50"
+                className="w-full bg-[#0B1220] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 font-mono outline-none focus:border-blue-500/50"
               />
             </div>
           </div>
@@ -1340,7 +1340,7 @@ function DossierEditor({
           {/* Section cards summary */}
           <div className="space-y-3">
             {visibleGroups.map((group) => (
-              <div key={group.key} className="bg-[#0D1321] border border-[#1E293B] rounded-xl p-3">
+              <div key={group.key} className="rounded-md border border-[#2A3548]/60 bg-[#1A2236]/40 p-3">
                 <div className="flex items-start justify-between gap-3 mb-2">
                   <div>
                     <p className="text-[11px] font-bold text-slate-200">{group.title}</p>
@@ -1688,7 +1688,7 @@ function DossierEditor({
 
       {/* Sticky footer — Salvează → Validează → Verifică → Publică (template authority, not dossier SoT) */}
       <div
-        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700/50 bg-[#111827]/95 px-4 py-3 backdrop-blur"
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-3"
         data-testid="blueprint-dossier-sticky-publish-footer"
         role="region"
         aria-label="Comenzi Dossier: salvează, validează, verifică, publică"
@@ -2340,7 +2340,7 @@ export default function BlueprintDossierStudio() {
               />
             </div>
 
-            <div className="flex gap-1 bg-[#0D1321] p-1 rounded-lg border border-[#1E293B]">
+            <div className="flex gap-1 bg-[#111827] p-1 rounded-lg border border-[#1E293B]">
               <button
                 type="button"
                 onClick={() => setListTab("active")}

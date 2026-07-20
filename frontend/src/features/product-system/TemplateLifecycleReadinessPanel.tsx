@@ -75,7 +75,7 @@ export function TemplateLifecycleReadinessPanel({
   return (
     <section
       data-testid="product-system-lifecycle-readiness"
-      className="space-y-4 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
+      className="space-y-4 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-4 text-sm text-slate-200"
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

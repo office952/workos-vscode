@@ -128,7 +128,7 @@ export function LegacyReplacementReadinessPanel({
   return (
     <section
       data-testid="product-system-legacy-replacement-readiness"
-      className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4"
+      className="space-y-3 rounded-lg border border-[#1E293B] bg-[#111827] px-4 py-4"
     >
       <div>
         <div className="flex flex-wrap items-center gap-2">
@@ -152,7 +152,7 @@ export function LegacyReplacementReadinessPanel({
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         <div
           data-testid="product-system-legacy-replacement-summary-mapped"
-          className="rounded-md border border-slate-800/80 bg-slate-950/40 px-2 py-1.5"
+          className="rounded-md border border-[#2A3548]/55 bg-transparent px-2 py-1.5"
         >
           <p className="text-[10px] font-semibold uppercase text-slate-500">Legacy modules mapped</p>
           <p className="text-base font-bold tabular-nums text-slate-100">

@@ -10,6 +10,11 @@ import {
 } from "@/api/productTemplateModuleLinks";
 import { patchComponentContractLink } from "@/api/productTemplateComponentContracts";
 import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
+import {
+  PS_SURFACE_INPUT,
+  PS_SURFACE_PANEL,
+  PS_SURFACE_ROW,
+} from "./productSystemSurfaces";
 
 const RELATION_OPTIONS = [
   "required_child",
@@ -81,7 +86,7 @@ export function TemplateCompositionAuthoringPanel({
 
   return (
     <section
-      className="space-y-3 rounded-xl border border-slate-700/50 bg-[#111827]/70 px-4 py-4"
+      className={`space-y-3 ${PS_SURFACE_PANEL} px-4 py-4`}
       data-testid="template-composition-authoring-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
@@ -132,7 +137,7 @@ export function TemplateCompositionAuthoringPanel({
           {visible.map((link, index) => (
             <li
               key={link.id}
-              className="rounded-lg border border-slate-800/80 bg-slate-950/40 px-3 py-2.5"
+              className={`${PS_SURFACE_ROW} px-3 py-2.5`}
               data-testid={`composition-link-${link.id}`}
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
@@ -157,7 +162,7 @@ export function TemplateCompositionAuthoringPanel({
                 <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
                   Rol
                   <select
-                    className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                    className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                     defaultValue={link.relation_type}
                     disabled={busyId === link.id}
                     data-testid={`composition-relation-${link.id}`}
@@ -175,7 +180,7 @@ export function TemplateCompositionAuthoringPanel({
                 <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
                   Includere (soft)
                   <select
-                    className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                    className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                     value={link.active ? "included" : "removed"}
                     disabled={busyId === link.id}
                     data-testid={`composition-active-${link.id}`}
@@ -197,7 +202,7 @@ export function TemplateCompositionAuthoringPanel({
                   <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
                     Mod utilizare
                     <input
-                      className="rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                      className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                       defaultValue={link.usage_mode ?? ""}
                       id={`comp-usage-${link.id}`}
                       data-testid={`composition-usage-${link.id}`}
@@ -206,7 +211,7 @@ export function TemplateCompositionAuthoringPanel({
                   <label className="flex flex-col gap-0.5 text-[10px] text-slate-400">
                     Schema instanță (inputuri geometrie)
                     <input
-                      className="min-w-[12rem] rounded border border-slate-700 bg-slate-950 px-2 py-1 text-[11px] text-slate-200"
+                      className={`min-w-[12rem] ${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                       defaultValue={link.instance_schema_id ?? ""}
                       id={`comp-schema-${link.id}`}
                       data-testid={`composition-schema-${link.id}`}
