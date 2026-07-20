@@ -26,6 +26,8 @@ function statusLabel(status: string): string {
     uploaded: "încărcat",
     unavailable: "indisponibil",
     proxy_rectangular: "proxy",
+    commercial_deduced: "deducere comercială",
+    commercial_deduced_with_assumptions: "deducere (asumpții)",
     no_attachment: "fără atașament",
   };
   return map[status] || status;
@@ -89,7 +91,7 @@ export default function AcmPanelProductionGeometryBlock({
       data-testid="intake-v6-acm-production-geometry"
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-semibold text-slate-200">Geometrie producție (DXF)</p>
+        <p className="text-[11px] font-semibold text-slate-200">Geometrie producție — optional</p>
         <span
           className="rounded border border-slate-600/40 px-1.5 py-0.5 text-[10px] text-slate-400"
           data-testid="intake-v6-acm-pg-status"
@@ -119,7 +121,9 @@ export default function AcmPanelProductionGeometryBlock({
       <p className="text-[10px] text-slate-500" data-testid="intake-v6-acm-pg-filename">
         Fișier: {String(current?.original_filename || current?.filename || "—")}
       </p>
-      <p className="text-[10px] text-slate-500">Rol: production_geometry</p>
+      <p className="text-[10px] text-slate-500">
+        Rol: production_geometry · DXF măsurat opțional (nu e necesar pentru estimarea ofertei)
+      </p>
 
       {snap ? (
         <div className="grid grid-cols-2 gap-1 text-[10px] text-slate-300" data-testid="intake-v6-acm-pg-metrics">

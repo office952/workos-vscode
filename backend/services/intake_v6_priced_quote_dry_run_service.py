@@ -366,6 +366,11 @@ def _build_acm_panel_commercial_preview(
 		}
 	if path_status == "proxy_rectangular":
 		warnings.append("cut_v_quantity_source=proxy_rectangular")
+	if path_status in {
+		"commercial_deduced",
+		"commercial_deduced_with_assumptions",
+	}:
+		warnings.append("cut_v_quantity_source=commercial_deduction")
 
 	return {
 		"status": authority.get("status") or "unavailable",

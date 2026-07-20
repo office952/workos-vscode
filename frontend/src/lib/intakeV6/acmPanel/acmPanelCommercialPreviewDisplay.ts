@@ -53,14 +53,17 @@ const WARNING_LABELS: Record<string, string> = {
   final_price_unavailable: "Preț final indisponibil",
   offer_ferm_unavailable: "Ofertă fermă indisponibilă",
   execution_blocked: "Execution blocat",
-  quantity_unavailable: "Cantități CUT/V indisponibile — lipsește geometrie măsurată",
+  quantity_unavailable: "Cantități CUT/V indisponibile pentru configurația curentă",
   "cut_v_quantity_source=proxy_rectangular": "CUT/V din proxy rectangular (estimare, nu măsurare DXF)",
+  "cut_v_quantity_source=commercial_deduction": "CUT/V din deducere comercială (estimare ofertă)",
   double_fold_proxy_forbidden: "Double-fold: proxy rectangular interzis",
   l2_active_proxy_forbidden: "L2 activ: proxy rectangular interzis",
-  production_geometry_stale: "Geometrie producție stale — reîncarcă DXF",
+  production_geometry_stale: "Geometrie producție stale — reîncarcă DXF sau folosește deducerea comercială",
   measured_with_warnings: "Măsurare cu avertismente (ACI necunoscut exclus)",
   semantic_mapping_required: "Mapping ACI necesar — cantități incomplete",
   missing_panel_attachment: "Lipsește DXF pentru un panou",
+  fold_sides_not_supported_for_commercial_deduction:
+    "fold_sides nesuportat pentru deducere comercială (doar toate laturile)",
 };
 
 export function formatAcmPanelPathSource(
@@ -69,16 +72,40 @@ export function formatAcmPanelPathSource(
 ): string | null {
   const s = (status || source || "").trim();
   if (!s) return null;
-  if (s === "measured" || source === "imported_dxf") return "Sursă cantități: măsurat (DXF)";
+  if (s === "measured" || source === "imported_dxf") return "Sursa cantități: măsurat (DXF)";
+  if (
+    s === "commercial_deduced" ||
+    s === "commercial_deduced_with_assumptions" ||
+    source === "commercial_deduced" ||
+    source === "commercial_deduced_after_stale"
+  ) {
+    return "Sursa cantități: Deducere comercială";
+  }
   if (s === "proxy_rectangular" || source === "proxy_rectangular") {
-    return "Sursă cantități: proxy rectangular (estimare)";
+    return "Sursa cantități: proxy rectangular (estimare)";
   }
   if (s === "unavailable" || source === "unavailable") {
-    return "Sursă cantități: indisponibil";
+    return "Sursa cantități: indisponibil";
   }
-  if (s === "stale" || source === "stale") return "Sursă cantități: stale (config schimbată)";
-  if (s === "measured_with_warnings") return "Sursă cantități: măsurat cu avertismente";
-  return `Sursă cantități: ${s}`;
+  if (s === "stale" || source === "stale") return "Sursa cantități: stale (config schimbată)";
+  if (s === "measured_with_warnings") return "Sursa cantități: măsurat cu avertismente";
+  return `Sursa cantități: ${s}`;
+}
+
+export function formatAcmPanelMultiPanelDeductionNote(
+  panelCount: number | null | undefined,
+  status: string | null | undefined,
+  source: string | null | undefined,
+): string | null {
+  if (panelCount == null || panelCount < 2) return null;
+  const s = (status || source || "").trim();
+  const commercial =
+    s === "commercial_deduced" ||
+    s === "commercial_deduced_with_assumptions" ||
+    source === "commercial_deduced" ||
+    source === "commercial_deduced_after_stale";
+  if (!commercial) return null;
+  return `Calculat separat pentru ${panelCount} panouri`;
 }
 
 export function humanizeAcmPanelPreviewWarning(code: string): string {

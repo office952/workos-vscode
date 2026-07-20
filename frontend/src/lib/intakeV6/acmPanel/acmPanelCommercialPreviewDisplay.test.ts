@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   acmPanelPreviewIsVisible,
   formatAcmPanelMmPair,
+  formatAcmPanelMultiPanelDeductionNote,
   formatAcmPanelPathSource,
   formatAcmPanelQty,
   humanizeAcmPanelPreviewWarning,
@@ -38,7 +39,18 @@ describe("acmPanelCommercialPreviewDisplay", () => {
 
   it("formats path quantity source", () => {
     expect(formatAcmPanelPathSource("measured", "imported_dxf")).toContain("măsurat");
+    expect(formatAcmPanelPathSource("commercial_deduced", "commercial_deduced")).toContain(
+      "Deducere comercială",
+    );
     expect(formatAcmPanelPathSource("proxy_rectangular", "proxy_rectangular")).toContain("proxy");
     expect(formatAcmPanelPathSource("unavailable", "unavailable")).toContain("indisponibil");
+  });
+
+  it("notes multi-panel commercial deduction", () => {
+    expect(
+      formatAcmPanelMultiPanelDeductionNote(2, "commercial_deduced", "commercial_deduced"),
+    ).toBe("Calculat separat pentru 2 panouri");
+    expect(formatAcmPanelMultiPanelDeductionNote(1, "commercial_deduced", "commercial_deduced")).toBeNull();
+    expect(formatAcmPanelMultiPanelDeductionNote(2, "measured", "imported_dxf")).toBeNull();
   });
 });

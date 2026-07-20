@@ -188,19 +188,22 @@ def test_stale_fingerprint_rejects_measured_quantities_double_fold():
     }
     payload = _payload(inst)
     metrics = resolve_production_geometry_metrics(payload)
-    assert metrics["measurement_status"] in {"unavailable", "stale"}
-    assert metrics.get("total_cut_length_ml") is None
-    out = {}
-    apply_production_metrics_to_commercial_payload(
-        {**payload, **out},
-        commercial_face_area_m2=0.6,
-        return_depth_mm=60,
-    )
-    # merge into mutable
+    # Stale measured rejected; commercial deduction fills offer-time CUT/V.
+    assert metrics["measurement_status"] in {
+        "commercial_deduced",
+        "commercial_deduced_with_assumptions",
+    }
+    assert metrics["total_cut_length_ml"] == pytest.approx(5.64)
+    assert metrics["total_v_groove_ml"] == pytest.approx(10.0)
+    assert "production_geometry_stale" in (metrics.get("warnings") or [])
     m = dict(payload)
     apply_production_metrics_to_commercial_payload(m, commercial_face_area_m2=0.6, return_depth_mm=60)
-    assert m.get("panel_perimeter_m") is None
-    assert m.get("fold_length_m") is None
+    assert m.get("panel_perimeter_m") == pytest.approx(5.64)
+    assert m.get("fold_length_m") == pytest.approx(10.0)
+    assert m.get("acm_path_quantity_status") in {
+        "commercial_deduced",
+        "commercial_deduced_with_assumptions",
+    }
 
 
 def test_reference_role_not_eligible():

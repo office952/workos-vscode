@@ -1,5 +1,7 @@
 """AcmPanel commercial geometry — face/assembly + production metrics wiring."""
 
+import pytest
+
 from services.acm_commercial_geometry import (
     apply_acm_commercial_geometry,
     build_acm_panel_authority_summary,
@@ -98,23 +100,25 @@ def test_multi_panel_face_area_from_assembly_not_envelope():
     assert geom["mode"] == "multi_panel"
 
 
-def test_merge_single_fold_proxy_aliases_cpp_keys():
+def test_merge_single_fold_commercial_aliases_cpp_keys():
     merged = merge_acm_boxed_mounting_derived_fields(_fixture_payload(fold_count=1, l2_mm=0))
     assert merged["panel_width_mm"] == 1000
     assert merged["panel_height_mm"] == 350
     assert merged["assembly_width_mm"] == 2000
     assert merged["panel_area_m2"] == 0.7
-    assert merged["panel_perimeter_m"] == 5.4
-    assert merged["fold_length_m"] == 5.4
-    assert merged["acm_path_quantity_status"] == "proxy_rectangular"
+    # blank peri L1=60: 3.18 × 2 panels
+    assert merged["panel_perimeter_m"] == 6.36
+    assert merged["fold_length_m"] == 6.36
+    assert merged["acm_path_quantity_status"] == "commercial_deduced"
 
 
-def test_merge_double_fold_clears_cut_v_proxy():
+def test_merge_double_fold_sets_commercial_cut_v():
     merged = merge_acm_boxed_mounting_derived_fields(_fixture_payload(fold_count=2, l2_mm=28))
     assert merged["panel_area_m2"] == 0.7
-    assert merged.get("panel_perimeter_m") is None
-    assert merged.get("fold_length_m") is None
-    assert merged["acm_path_quantity_status"] == "unavailable"
+    # per panel L1=60 L2=28: blank 1176×526 → cut 3.404; V_L1 3.18; V_L2 2.7; V_tot 5.88
+    assert merged["panel_perimeter_m"] == pytest.approx(6.808)
+    assert merged["fold_length_m"] == pytest.approx(11.76)
+    assert merged["acm_path_quantity_status"] == "commercial_deduced"
 
 
 def test_apply_does_not_overwrite_panel_dims_with_assembly():
@@ -169,9 +173,10 @@ def test_single_panel_parity():
     }
     merged = merge_acm_boxed_mounting_derived_fields(payload)
     assert merged["panel_area_m2"] == 0.96
-    assert merged["panel_perimeter_m"] == 4.0
-    assert merged["fold_length_m"] == 4.0
-    assert merged["acm_path_quantity_status"] == "proxy_rectangular"
+    # blank 1320×920 → 4.48
+    assert merged["panel_perimeter_m"] == pytest.approx(4.48)
+    assert merged["fold_length_m"] == pytest.approx(4.48)
+    assert merged["acm_path_quantity_status"] == "commercial_deduced"
 
 
 def test_authority_summary_fixture_provisional_with_warnings():

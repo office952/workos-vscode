@@ -1,7 +1,7 @@
 """AcmPanel production geometry metrics contract + quantity resolution.
 
 Owns path quantity truth for Pricing consumers. Does not own rates.
-Extends Slice C face/assembly logic; replaces perimeter proxy only when safe.
+Offer-time path: measured DXF (optional) else commercial deduction (fold_sides=all).
 """
 
 from __future__ import annotations
@@ -14,10 +14,22 @@ from services.acm_assembly_extent import (
     inject_assembly_extent_keys,
     read_panels_for_assembly_extent,
 )
-from services.acm_quote_input_helpers import _fold_length_mm
-
 ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA = "acm_panel_production_geometry_metrics_v1"
 ACM_ASSEMBLY_GEOMETRY_METRICS_SCHEMA = "acm_panel_assembly_geometry_metrics_v1"
+
+CONSUMABLE_PATH_STATUSES = frozenset(
+    {
+        "measured",
+        "measured_with_warnings",
+        "commercial_deduced",
+        "commercial_deduced_with_assumptions",
+        # Legacy Slice C status — still consumable if present on older payloads.
+        "proxy_rectangular",
+    }
+)
+
+CUT_BLANK_PERIMETER_ASSUMPTION = "cut_uses_blank_outer_perimeter_no_cnc_relief"
+RETURN_MATERIAL_ASSUMPTION = "return_area_is_commercial_blank_minus_face_not_exact_finished_returns"
 
 
 def _num(value: Any) -> Optional[float]:
@@ -161,6 +173,131 @@ def build_panel_metrics_from_measured(
     }
 
 
+def _normalize_fold_sides(fold_sides: str) -> str:
+    return str(fold_sides or "").strip().lower().replace("-", "_").replace(" ", "_")
+
+
+def commercial_deduction_fold_sides_supported(fold_sides: str) -> bool:
+    return _normalize_fold_sides(fold_sides) in {"all", "toate", "toate_laturile"}
+
+
+def build_commercial_deduction_panel_metrics(
+    *,
+    panel_id: str,
+    width_mm: float,
+    height_mm: float,
+    l1_mm: float | None,
+    l2_mm: float | None,
+    fold_sides: str,
+    construction_type: str | None = None,
+) -> dict[str, Any]:
+    """Per-panel commercial deduction for offer-time CUT/V (fold_sides=all only)."""
+    w = float(width_mm)
+    h = float(height_mm)
+    l1 = float(l1_mm or 0.0)
+    l2 = float(l2_mm or 0.0)
+    if construction_type in {"single_fold", "double_fold"}:
+        ctype = construction_type
+    else:
+        ctype = "double_fold" if l2 > 0 else "single_fold"
+
+    assumptions = [CUT_BLANK_PERIMETER_ASSUMPTION, RETURN_MATERIAL_ASSUMPTION]
+    warnings: list[str] = []
+
+    if not commercial_deduction_fold_sides_supported(fold_sides):
+        face = round((w * h) / 1_000_000.0, 6) if w > 0 and h > 0 else None
+        return {
+            "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
+            "panel_id": panel_id,
+            "construction_type": ctype,
+            "active_width_mm": w,
+            "active_height_mm": h,
+            "l1_mm": l1,
+            "l2_mm": l2,
+            "active_face_area_m2": face,
+            "blank_area_m2": None,
+            "return_material_area_m2": None,
+            "cut_length_ml": None,
+            "v_groove_l1_ml": None,
+            "v_groove_l2_ml": None,
+            "v_groove_total_ml": None,
+            "measurement_source": "unavailable",
+            "measurement_status": "unavailable",
+            "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
+            "assumptions": assumptions,
+            "warnings": ["fold_sides_not_supported_for_commercial_deduction"],
+        }
+
+    if w <= 0 or h <= 0 or l1 < 0 or l2 < 0:
+        return {
+            "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
+            "panel_id": panel_id,
+            "construction_type": ctype,
+            "active_width_mm": w if w > 0 else None,
+            "active_height_mm": h if h > 0 else None,
+            "l1_mm": l1,
+            "l2_mm": l2,
+            "active_face_area_m2": None,
+            "blank_area_m2": None,
+            "return_material_area_m2": None,
+            "cut_length_ml": None,
+            "v_groove_l1_ml": None,
+            "v_groove_l2_ml": None,
+            "v_groove_total_ml": None,
+            "measurement_source": "unavailable",
+            "measurement_status": "unavailable",
+            "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
+            "assumptions": assumptions,
+            "warnings": ["insufficient_panel_dimensions_for_commercial_deduction"],
+        }
+
+    if ctype == "single_fold" or l2 <= 0:
+        blank_w = w + 2.0 * l1
+        blank_h = h + 2.0 * l1
+        cut_ml = round(2.0 * (blank_w + blank_h) / 1000.0, 6)
+        v_l1 = cut_ml
+        v_l2 = 0.0
+        v_tot = v_l1
+        out_construction = "single_fold"
+    else:
+        blank_w = w + 2.0 * (l1 + l2)
+        blank_h = h + 2.0 * (l1 + l2)
+        blank_l1_w = w + 2.0 * l1
+        blank_l1_h = h + 2.0 * l1
+        cut_ml = round(2.0 * (blank_w + blank_h) / 1000.0, 6)
+        v_l1 = round(2.0 * (blank_l1_w + blank_l1_h) / 1000.0, 6)
+        v_l2 = round(2.0 * (w + h) / 1000.0, 6)
+        v_tot = round(v_l1 + v_l2, 6)
+        out_construction = "double_fold"
+
+    face = round((w * h) / 1_000_000.0, 6)
+    blank = round((blank_w * blank_h) / 1_000_000.0, 6)
+    return_area = round(blank - face, 6)
+    warnings.append("quantity_source=commercial_deduction")
+
+    return {
+        "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
+        "panel_id": panel_id,
+        "construction_type": out_construction,
+        "active_width_mm": w,
+        "active_height_mm": h,
+        "l1_mm": l1,
+        "l2_mm": l2 if out_construction == "double_fold" else 0.0,
+        "active_face_area_m2": face,
+        "blank_area_m2": blank,
+        "return_material_area_m2": return_area,
+        "cut_length_ml": cut_ml,
+        "v_groove_l1_ml": v_l1,
+        "v_groove_l2_ml": v_l2,
+        "v_groove_total_ml": v_tot,
+        "measurement_source": "commercial_deduced",
+        "measurement_status": "commercial_deduced",
+        "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
+        "assumptions": assumptions,
+        "warnings": warnings,
+    }
+
+
 def build_proxy_panel_metrics(
     *,
     panel_id: str,
@@ -169,34 +306,16 @@ def build_proxy_panel_metrics(
     l1_mm: float | None,
     fold_sides: str,
 ) -> dict[str, Any]:
-    """Explicit rectangular single-fold proxy (Slice C perimeter equivalence)."""
-    cut_ml = round(2.0 * (width_mm + height_mm) / 1000.0, 6)
-    fold_mm = _fold_length_mm(width_mm, height_mm, fold_sides)
-    v_total = round((fold_mm or 0.0) / 1000.0, 6)
-    face = round((width_mm * height_mm) / 1_000_000.0, 6)
-    l1 = l1_mm or 0.0
-    blank = None
-    if l1 > 0:
-        blank = round(((width_mm + 2 * l1) * (height_mm + 2 * l1)) / 1_000_000.0, 6)
-    return {
-        "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
-        "panel_id": panel_id,
-        "construction_type": "single_fold",
-        "active_width_mm": width_mm,
-        "active_height_mm": height_mm,
-        "l1_mm": l1_mm,
-        "l2_mm": 0.0,
-        "active_face_area_m2": face,
-        "blank_area_m2": blank,
-        "cut_length_ml": cut_ml,
-        "v_groove_l1_ml": v_total,
-        "v_groove_l2_ml": 0.0,
-        "v_groove_total_ml": v_total,
-        "measurement_source": "proxy_rectangular",
-        "measurement_status": "proxy_rectangular",
-        "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
-        "warnings": ["quantity_source=provisional_rectangular_single_fold_proxy"],
-    }
+    """Deprecated Slice C face-perimeter proxy — prefer build_commercial_deduction_panel_metrics."""
+    return build_commercial_deduction_panel_metrics(
+        panel_id=panel_id,
+        width_mm=width_mm,
+        height_mm=height_mm,
+        l1_mm=l1_mm,
+        l2_mm=0.0,
+        fold_sides=fold_sides,
+        construction_type="single_fold",
+    )
 
 
 def aggregate_assembly_metrics(
@@ -217,6 +336,14 @@ def aggregate_assembly_metrics(
             "measured_with_warnings"
             if any(s == "measured_with_warnings" for s in statuses)
             else "measured"
+        )
+    elif panels and all(
+        s in {"commercial_deduced", "commercial_deduced_with_assumptions"} for s in statuses
+    ):
+        status = (
+            "commercial_deduced_with_assumptions"
+            if any(s == "commercial_deduced_with_assumptions" for s in statuses)
+            else "commercial_deduced"
         )
     elif panels and all(s == "proxy_rectangular" for s in statuses):
         status = "proxy_rectangular"
@@ -253,6 +380,8 @@ def aggregate_assembly_metrics(
             if w not in warnings:
                 warnings.append(str(w))
 
+    if status in {"commercial_deduced", "commercial_deduced_with_assumptions"}:
+        warnings.append("cut_v_quantity_source=commercial_deduction")
     if status == "proxy_rectangular":
         warnings.append("cut_v_quantity_source=proxy_rectangular")
     if status == "unavailable":
@@ -281,7 +410,7 @@ def aggregate_assembly_metrics(
 
 
 def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str, Any]:
-    """Resolve assembly production metrics from measured DXF/metrics or gated proxy."""
+    """Resolve assembly production metrics: measured DXF, else commercial deduction."""
     from services.acm_dxf_path_measurement import measure_dxf_production_paths
 
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), Mapping) else {}
@@ -361,11 +490,23 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
         if att_status in {"measured", "measured_with_warnings"}:
             return attached
         if att_status == "stale":
-            # Do not consume stale quantities; allow proxy fallback when eligible.
+            # Do not consume stale quantities; fall through to commercial deduction.
             stale_attachment_warnings = list(attached.get("warnings") or [])
             stale_attachment_warnings.append("production_geometry_stale")
+        elif att_status in {"unavailable", "invalid", "semantic_mapping_required"}:
+            # Keep partial assemblies that already have some measured panels.
+            panels_att = attached.get("panels") if isinstance(attached.get("panels"), list) else []
+            has_measured = any(
+                isinstance(p, Mapping)
+                and str(p.get("measurement_status") or "")
+                in {"measured", "measured_with_warnings"}
+                for p in panels_att
+            )
+            if has_measured:
+                return attached
+            # No consumable measured panels — commercial deduction when config allows.
+            stale_attachment_warnings = list(attached.get("warnings") or [])
         else:
-            # invalid / semantic_mapping_required / unavailable from attachments
             return attached
 
     # Dev/test filesystem path (not operator SoT).
@@ -404,59 +545,58 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
     )
     irregular = bool(payload.get("irregular_contour") or (finish or {}).get("irregular_contour"))
 
-    eligible = proxy_rectangular_eligible(
-        construction_type=str(construction["construction_type"]),
-        l2_mm=construction["l2_mm"],
-        fold_sides=fold_sides,
-        has_cutouts=has_cutouts,
-        has_special_corners=has_special_corners,
-        irregular_contour=irregular,
-    )
-
     panel_metrics: list[dict[str, Any]] = []
-    if eligible and valid_panels:
-        for pid, pw, ph in valid_panels:
-            panel_metrics.append(
-                build_proxy_panel_metrics(
-                    panel_id=pid,
-                    width_mm=pw,
-                    height_mm=ph,
-                    l1_mm=construction["l1_mm"],
-                    fold_sides=fold_sides,
-                )
-            )
-    else:
-        reasons = []
-        if construction["construction_type"] == "double_fold":
-            reasons.append("double_fold_proxy_forbidden")
-        if construction["l2_mm"] and construction["l2_mm"] > 0:
-            reasons.append("l2_active_proxy_forbidden")
-        if not eligible:
-            reasons.append("proxy_rectangular_not_eligible")
-        reasons.append("quantity_unavailable")
-        for pid, pw, ph in valid_panels or [("unknown", 0.0, 0.0)]:
-            face = round((pw * ph) / 1_000_000.0, 6) if pw and ph else None
-            panel_metrics.append(
-                {
-                    "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
-                    "panel_id": pid,
-                    "construction_type": construction["construction_type"],
-                    "active_width_mm": pw or None,
-                    "active_height_mm": ph or None,
-                    "l1_mm": construction["l1_mm"],
-                    "l2_mm": construction["l2_mm"],
-                    "active_face_area_m2": face,
-                    "blank_area_m2": None,
-                    "cut_length_ml": None,
-                    "v_groove_l1_ml": None,
-                    "v_groove_l2_ml": None,
-                    "v_groove_total_ml": None,
-                    "measurement_source": "unavailable",
-                    "measurement_status": "unavailable",
-                    "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
-                    "warnings": list(reasons),
-                }
-            )
+    for pid, pw, ph in valid_panels or []:
+        row = build_commercial_deduction_panel_metrics(
+            panel_id=pid,
+            width_mm=pw,
+            height_mm=ph,
+            l1_mm=construction["l1_mm"],
+            l2_mm=construction["l2_mm"],
+            fold_sides=fold_sides,
+            construction_type=str(construction["construction_type"] or ""),
+        )
+        extra: list[str] = []
+        if has_cutouts:
+            extra.append("commercial_deduction_ignores_cutouts")
+        if has_special_corners:
+            extra.append("commercial_deduction_assumes_corner_none")
+        if irregular:
+            extra.append("commercial_deduction_assumes_rectangular_face")
+        if extra:
+            warns = list(row.get("warnings") or [])
+            for w in extra:
+                if w not in warns:
+                    warns.append(w)
+            row["warnings"] = warns
+            if row.get("measurement_status") == "commercial_deduced":
+                row["measurement_status"] = "commercial_deduced_with_assumptions"
+        panel_metrics.append(row)
+
+    if not panel_metrics:
+        panel_metrics.append(
+            {
+                "schema": ACM_PRODUCTION_GEOMETRY_METRICS_SCHEMA,
+                "panel_id": "unknown",
+                "construction_type": construction["construction_type"],
+                "active_width_mm": None,
+                "active_height_mm": None,
+                "l1_mm": construction["l1_mm"],
+                "l2_mm": construction["l2_mm"],
+                "active_face_area_m2": None,
+                "blank_area_m2": None,
+                "return_material_area_m2": None,
+                "cut_length_ml": None,
+                "v_groove_l1_ml": None,
+                "v_groove_l2_ml": None,
+                "v_groove_total_ml": None,
+                "measurement_source": "unavailable",
+                "measurement_status": "unavailable",
+                "semantic_mapping_version": ACM_ACI_SEMANTIC_MAPPING_VERSION,
+                "assumptions": [CUT_BLANK_PERIMETER_ASSUMPTION, RETURN_MATERIAL_ASSUMPTION],
+                "warnings": ["quantity_unavailable", "no_panel_dimensions"],
+            }
+        )
 
     result = aggregate_assembly_metrics(
         panel_metrics,
@@ -470,9 +610,11 @@ def resolve_production_geometry_metrics(payload: Mapping[str, Any]) -> dict[str,
             if w not in warnings:
                 warnings.append(w)
         result["warnings"] = warnings
-        if result.get("measurement_status") == "proxy_rectangular":
-            # Proxy used after stale measured attachment — be explicit.
-            result["measurement_source"] = "proxy_rectangular_after_stale"
+        if result.get("measurement_status") in {
+            "commercial_deduced",
+            "commercial_deduced_with_assumptions",
+        }:
+            result["measurement_source"] = "commercial_deduced_after_stale"
     return result
 
 
@@ -498,7 +640,7 @@ def apply_production_metrics_to_commercial_payload(
     cut = _num(metrics.get("total_cut_length_ml"))
     vtot = _num(metrics.get("total_v_groove_ml"))
 
-    consumable = status in {"measured", "measured_with_warnings", "proxy_rectangular"}
+    consumable = status in CONSUMABLE_PATH_STATUSES
     if consumable and cut is not None:
         payload["commercial_cut_length_m"] = cut
         payload["panel_perimeter_m"] = cut

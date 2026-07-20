@@ -10,6 +10,7 @@ import {
   acmPanelPreviewIsVisible,
   formatAcmPanelMmPair,
   formatAcmPanelMoney,
+  formatAcmPanelMultiPanelDeductionNote,
   formatAcmPanelPathSource,
   formatAcmPanelQty,
   humanizeAcmPanelPreviewWarning,
@@ -27,6 +28,15 @@ export default function AcmPanelProvisionalPricingBlock({
 
   const geom = preview.geometry_summary || {};
   const assemblyLabel = formatAcmPanelMmPair(geom.assembly_width_mm, geom.assembly_height_mm);
+  const pathSourceLabel = formatAcmPanelPathSource(
+    geom.path_measurement_status,
+    geom.path_measurement_source,
+  );
+  const multiPanelNote = formatAcmPanelMultiPanelDeductionNote(
+    geom.panel_count,
+    geom.path_measurement_status,
+    geom.path_measurement_source,
+  );
   const currency = preview.currency || "EUR";
   const warnings = (preview.warnings || []).map(humanizeAcmPanelPreviewWarning);
   const lines = preview.lines || [];
@@ -81,9 +91,10 @@ export default function AcmPanelProvisionalPricingBlock({
         </p>
       ) : null}
 
-      {formatAcmPanelPathSource(geom.path_measurement_status, geom.path_measurement_source) ? (
+      {pathSourceLabel ? (
         <p className="mt-1 text-[10px] text-slate-400" data-testid="intake-v6-acm-panel-path-source">
-          {formatAcmPanelPathSource(geom.path_measurement_status, geom.path_measurement_source)}
+          {pathSourceLabel}
+          {multiPanelNote ? ` · ${multiPanelNote}` : ""}
         </p>
       ) : null}
 
@@ -106,8 +117,12 @@ export default function AcmPanelProvisionalPricingBlock({
         {geom.path_measurement_status === "proxy_rectangular"
           ? " Cantitățile CUT/V sunt din proxy rectangular, nu din trasee măsurate."
           : ""}
+        {geom.path_measurement_status === "commercial_deduced" ||
+        geom.path_measurement_status === "commercial_deduced_with_assumptions"
+          ? " Cantitățile CUT/V sunt din deducere comercială (estimare ofertă); DXF măsurat e opțional."
+          : ""}
         {geom.path_measurement_status === "unavailable"
-          ? " Cantitățile CUT/V lipsesc până la geometrie de producție măsurată."
+          ? " Cantitățile CUT/V lipsesc pentru configurația curentă."
           : ""}
       </p>
 

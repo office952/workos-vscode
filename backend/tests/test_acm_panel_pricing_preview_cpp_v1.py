@@ -112,7 +112,7 @@ async def acm_rates_seeded_db(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
-async def test_cpp_single_fold_proxy_face_and_perimeter_sum(acm_rates_seeded_db):
+async def test_cpp_single_fold_commercial_face_and_blank_perimeter_sum(acm_rates_seeded_db):
     preview = await CommercialPriceProposalService(acm_rates_seeded_db).build_preview(
         LETTERS,
         quote_input=_multi_panel_quote_input(fold_count=1, l2_mm=0),
@@ -128,8 +128,9 @@ async def test_cpp_single_fold_proxy_face_and_perimeter_sum(acm_rates_seeded_db)
         "acm_fasteners",
     }
     assert by_code["acm_panel_face_material"].quantity == pytest.approx(0.7)
-    assert by_code["acm_panel_cut"].quantity == pytest.approx(5.4)
-    assert by_code["acm_v_groove"].quantity == pytest.approx(5.4)
+    # blank peri L1=60: 3.18 × 2
+    assert by_code["acm_panel_cut"].quantity == pytest.approx(6.36)
+    assert by_code["acm_v_groove"].quantity == pytest.approx(6.36)
     assert by_code["acm_boxed_assembly"].quantity == pytest.approx(0.7)
     assert by_code["acm_boxed_assembly"].subtotal == pytest.approx(20.0)
     assert by_code["acm_panel_cut"].commercial_unit_price == pytest.approx(1.5)
@@ -139,7 +140,7 @@ async def test_cpp_single_fold_proxy_face_and_perimeter_sum(acm_rates_seeded_db)
 
 
 @pytest.mark.asyncio
-async def test_cpp_double_fold_without_dxf_omits_cut_v_quantities(acm_rates_seeded_db):
+async def test_cpp_double_fold_without_dxf_uses_commercial_cut_v(acm_rates_seeded_db):
     preview = await CommercialPriceProposalService(acm_rates_seeded_db).build_preview(
         LETTERS,
         quote_input=_multi_panel_quote_input(fold_count=2, l2_mm=28),
@@ -148,19 +149,10 @@ async def test_cpp_double_fold_without_dxf_omits_cut_v_quantities(acm_rates_seed
     by_code = {line.code: line for line in preview.commercial_price_lines if line.code.startswith("acm_")}
     assert "acm_panel_face_material" in by_code
     assert by_code["acm_panel_face_material"].quantity == pytest.approx(0.7)
-    # CUT/V unavailable — lines absent or without usable quantity
-    if "acm_panel_cut" in by_code:
-        assert by_code["acm_panel_cut"].quantity in (None, 0) or by_code["acm_panel_cut"].subtotal in (
-            None,
-            0,
-        )
-    else:
-        assert "acm_panel_cut" not in by_code
-    if "acm_v_groove" in by_code:
-        assert by_code["acm_v_groove"].quantity in (None, 0) or by_code["acm_v_groove"].subtotal in (
-            None,
-            0,
-        )
+    assert "acm_panel_cut" in by_code
+    assert "acm_v_groove" in by_code
+    assert by_code["acm_panel_cut"].quantity == pytest.approx(6.808)
+    assert by_code["acm_v_groove"].quantity == pytest.approx(11.76)
     assert preview.forbidden_hourly_usage_detected == []
 
 

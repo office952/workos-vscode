@@ -104,10 +104,11 @@ def test_proxy_eligible_single_fold_only():
 def test_proxy_panel_metrics_parametric_not_hardcoded():
     a = build_proxy_panel_metrics(panel_id="a", width_mm=1200, height_mm=400, l1_mm=80, fold_sides="all")
     b = build_proxy_panel_metrics(panel_id="b", width_mm=800, height_mm=200, l1_mm=50, fold_sides="all")
-    assert a["cut_length_ml"] == pytest.approx(3.2)
-    assert b["cut_length_ml"] == pytest.approx(2.0)
+    # Commercial blank perimeter: 1360×560 → 3.84; 900×300 → 2.4
+    assert a["cut_length_ml"] == pytest.approx(3.84)
+    assert b["cut_length_ml"] == pytest.approx(2.4)
     assert a["cut_length_ml"] != b["cut_length_ml"]
-    assert a["measurement_status"] == "proxy_rectangular"
+    assert a["measurement_status"] == "commercial_deduced"
 
 
 def test_multi_panel_aggregation_sum():
@@ -122,7 +123,7 @@ def test_multi_panel_aggregation_sum():
     assert agg["panel_count"] == 2
     assert agg["total_cut_length_ml"] == pytest.approx(p1["cut_length_ml"] + p2["cut_length_ml"])
     assert agg["total_active_face_area_m2"] == pytest.approx(0.88)  # assembly 2200x400
-    assert agg["measurement_status"] == "proxy_rectangular"
+    assert agg["measurement_status"] == "commercial_deduced"
 
 
 def test_resolve_dxf_measured_path():
@@ -150,7 +151,7 @@ def test_resolve_dxf_measured_path():
     assert metrics["total_v_groove_ml"] == pytest.approx(10.000004, abs=TOL)
 
 
-def test_resolve_double_fold_without_dxf_unavailable():
+def test_resolve_double_fold_without_dxf_commercial_deduced():
     metrics = resolve_production_geometry_metrics(
         {
             "finish_setup": {
@@ -211,13 +212,13 @@ def test_resolve_double_fold_without_dxf_unavailable():
             }
         }
     )
-    assert metrics["measurement_status"] == "unavailable"
-    assert metrics["total_cut_length_ml"] is None
-    assert "quantity_unavailable" in metrics["warnings"]
-    assert "double_fold_proxy_forbidden" in metrics["warnings"]
+    assert metrics["measurement_status"] == "commercial_deduced"
+    assert metrics["total_cut_length_ml"] == pytest.approx(7.48)
+    assert metrics["total_v_groove_ml"] == pytest.approx(12.4)
+    assert "cut_v_quantity_source=commercial_deduction" in metrics["warnings"]
 
 
-def test_merge_single_fold_proxy_sets_cpp_aliases():
+def test_merge_single_fold_commercial_sets_cpp_aliases():
     payload = {
         "finish_setup": {
             "acm_panel_instance": {
@@ -278,12 +279,13 @@ def test_merge_single_fold_proxy_sets_cpp_aliases():
     }
     merged = merge_acm_boxed_mounting_derived_fields(payload)
     assert merged["panel_area_m2"] == pytest.approx(0.7)
-    assert merged["panel_perimeter_m"] == pytest.approx(5.4)
-    assert merged["fold_length_m"] == pytest.approx(5.4)
-    assert merged["acm_path_quantity_status"] == "proxy_rectangular"
+    # blank peri per panel (1200+550)*2/1000 = 3.5 × 2
+    assert merged["panel_perimeter_m"] == pytest.approx(7.0)
+    assert merged["fold_length_m"] == pytest.approx(7.0)
+    assert merged["acm_path_quantity_status"] == "commercial_deduced"
 
 
-def test_merge_double_fold_clears_perimeter_proxy():
+def test_merge_double_fold_sets_commercial_cut_v():
     payload = {
         "finish_setup": {
             "acm_panel_instance": {
@@ -344,6 +346,6 @@ def test_merge_double_fold_clears_perimeter_proxy():
     }
     merged = merge_acm_boxed_mounting_derived_fields(payload)
     assert merged["panel_area_m2"] == pytest.approx(0.7)
-    assert "panel_perimeter_m" not in merged or merged.get("panel_perimeter_m") is None
-    assert "fold_length_m" not in merged or merged.get("fold_length_m") is None
-    assert merged["acm_path_quantity_status"] == "unavailable"
+    assert merged["panel_perimeter_m"] == pytest.approx(7.176)
+    assert merged["fold_length_m"] == pytest.approx(12.128)
+    assert merged["acm_path_quantity_status"] == "commercial_deduced"
