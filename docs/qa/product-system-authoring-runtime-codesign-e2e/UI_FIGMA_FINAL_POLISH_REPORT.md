@@ -5,7 +5,7 @@
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `2d4b3480687afba10da4abd3ae9fe6d7b8a30367` (**reconfirmed**) |
-| Tip HEAD | see `git rev-parse HEAD` after commits |
+| Tip HEAD | `1a823e82a61b4599b4713a2742007661d481ca59` |
 | Dirty tree | ~360 preserved; allowlist-only |
 | Allowlist | `UI_POLISH_ALLOWLIST.md` |
 | Worklog | `docs/worklog/realignment/2026-07-20_product_system_authoring_runtime_codesign_e2e_build.md` § PRODUCT SYSTEM UI / FIGMA FINAL POLISH |
@@ -128,10 +128,12 @@ Product System e acum un shell de authoring pe care un admin îl poate parcurge 
 
 ---
 
-## Commits (planned allowlist groups)
+## Commits (allowlist landed)
 
-1. `fix(product-system-ui): clarify authoring shell and status hierarchy`
-2. `fix(product-system-ui): simplify composition component contracts and dossier`
-3. `fix(product-system-ui): refine readiness publication and runtime preview`
-4. `test(product-system-ui): close interaction and state coverage`
-5. `docs(qa): finalize Figma and screenshot acceptance`
+| SHA | Message |
+|-----|---------|
+| `82c685f` | fix(product-system-ui): clarify authoring shell and status hierarchy |
+| `b878b3d` | fix(product-system-ui): simplify composition component contracts and dossier |
+| `41e0901` | fix(product-system-ui): refine readiness publication and runtime preview |
+| `0aefefa` | test(product-system-ui): close interaction and state coverage |
+| `1a823e8` | docs(qa): finalize Figma and screenshot acceptance |

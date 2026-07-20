@@ -386,8 +386,8 @@ None.
 
 | SHA | Group |
 |-----|-------|
-| _(see git log)_ | fix(product-system-ui): clarify authoring shell and status hierarchy |
-| | fix(product-system-ui): simplify composition component contracts and dossier |
-| | fix(product-system-ui): refine readiness publication and runtime preview |
-| | test(product-system-ui): close interaction and state coverage |
-| | docs(qa): finalize Figma and screenshot acceptance |
+| `82c685f` | fix(product-system-ui): clarify authoring shell and status hierarchy |
+| `b878b3d` | fix(product-system-ui): simplify composition component contracts and dossier |
+| `41e0901` | fix(product-system-ui): refine readiness publication and runtime preview |
+| `0aefefa` | test(product-system-ui): close interaction and state coverage |
+| `1a823e8` | docs(qa): finalize Figma and screenshot acceptance |
