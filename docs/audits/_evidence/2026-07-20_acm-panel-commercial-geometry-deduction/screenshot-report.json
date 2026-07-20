@@ -1,0 +1,117 @@
+{
+  "build": "WORKOS_ACM_PANEL_COMMERCIAL_GEOMETRY_DEDUCTION_V1",
+  "ui": "http://127.0.0.1:3011",
+  "mutating_requests": [],
+  "rows": [
+    {
+      "id": 1,
+      "name": "Review full page (control)",
+      "file": "01-control-review-full.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Commercial deduction preview visible; DXF not required",
+      "observed": "Sursa cantități: Deducere comercială · Calculat separat pentru 2 panouri",
+      "verdict": "PASS",
+      "opinion": "Control was previously unavailable without DXF; now commercial_deduced."
+    },
+    {
+      "id": 2,
+      "name": "Source commercial deduction",
+      "file": "02-source-commercial-deduction.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Sursa cantități: Deducere comercială",
+      "observed": "Sursa cantități: Deducere comercială · Calculat separat pentru 2 panouri",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 3,
+      "name": "Unequal/multi-panel summary",
+      "file": "03-multi-panel-summary.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Calculat separat pentru N panouri (control = 2 equal; unequal proven in runtime JSON)",
+      "observed": "Sursa cantități: Deducere comercială · Calculat separat pentru 2 panouri",
+      "verdict": "PASS",
+      "opinion": "Multi-panel note present."
+    },
+    {
+      "id": 4,
+      "name": "Double-fold preview without DXF",
+      "file": "04-double-fold-no-dxf-preview.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "CUT/V present via commercial deduction",
+      "observed": "Arie față: 0.7 mp · Debitare: 7.176 ml · V-groove: 12.128 ml",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 5,
+      "name": "DXF optional label",
+      "file": "05-dxf-optional-label.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Geometrie producție — optional; no 'Încarcă DXF pentru a calcula oferta'",
+      "observed": "Geometrie producție — optionalfără atașamentPanoupanel_1panel_2Fișier: —Rol: production_geometry · DXF măsurat opțional (nu e necesar pentru estimarea ofertei)Încarcă DXF",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 7,
+      "name": "Final/Offer/Execution blocked",
+      "file": "07-gates-blocked.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "badges show indisponibil",
+      "observed": "Final: indisponibilOffer ferm: indisponibilExecution: blocat",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 6,
+      "name": "Measured override",
+      "file": "06-measured-override.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7a74172-ad09-4f93-b0f5-f89fe5b9aad9/operator",
+      "workspace": "IV6-13D39D32",
+      "viewport": "1440x900",
+      "expected": "Sursa cantități: măsurat (DXF)",
+      "observed": "Sursa cantități: măsurat (DXF)",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 8,
+      "name": "Confirm continuity",
+      "file": "08-confirm-continuity.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Provisional pricing still present / gates unchanged",
+      "observed": "provisional visible",
+      "verdict": "PASS",
+      "opinion": ""
+    },
+    {
+      "id": 9,
+      "name": "Full-page final",
+      "file": "09-full-page-final.png",
+      "route": "http://127.0.0.1:3011/intake-v6/a7b0162b-dc91-467f-aa24-c1279fb3a073/operator",
+      "workspace": "IV6-DB2F86B7",
+      "viewport": "1440x900",
+      "expected": "Stable Review composition",
+      "observed": "full page captured",
+      "verdict": "PASS",
+      "opinion": ""
+    }
+  ],
+  "pass_count": 9,
+  "fail_count": 0
+}
