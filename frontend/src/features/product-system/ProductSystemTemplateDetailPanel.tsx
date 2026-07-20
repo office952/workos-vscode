@@ -21,13 +21,22 @@ import { TemplateLifecycleReadinessPanel } from "./TemplateLifecycleReadinessPan
 import { ProductE2EReadinessPanel } from "./ProductE2EReadinessPanel";
 import { ProductTemplatePublicationPanel } from "./ProductTemplatePublicationPanel";
 import { ArtworkAnalysisReviewPanel } from "./ArtworkAnalysisReviewPanel";
+import { ComponentContractUsedByPanel } from "./ComponentContractUsedByPanel";
+import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
+import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
+import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
   { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
+  { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
+  { id: "relationships", label: "Relații", testId: "product-system-template-detail-tab-relationships" },
+  { id: "materials", label: "Materiale", testId: "product-system-template-detail-tab-materials" },
   { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
-  { id: "lifecycle", label: "Lifecycle", testId: "product-system-template-detail-tab-lifecycle" },
+  { id: "runtime-preview", label: "Runtime Preview", testId: "product-system-template-detail-tab-runtime-preview" },
+  { id: "readiness", label: "E2E Readiness", testId: "product-system-template-detail-tab-readiness" },
+  { id: "publication", label: "Publication", testId: "product-system-template-detail-tab-publication" },
   { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
 ];
 
@@ -288,20 +297,16 @@ export function ProductSystemTemplateDetailPanel({
           className="flex flex-col items-end gap-1.5"
           data-testid="product-system-template-detail-commercial-chip"
         >
+          <TemplateDualStatusChips
+            templateCode={template.template_code}
+            dbActive={Boolean(template.active ?? availability.status === "available")}
+          />
           <StatusBadge
             domain="productSystem"
             status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
             label={modularity?.commercialChipRo ?? scope.catalogStatusLabel}
             className="shrink-0 text-[10px] uppercase"
           />
-          {modularity?.capabilityChipRo ? (
-            <span
-              data-testid="product-system-template-detail-capability-chip"
-              className="rounded-full border border-slate-700/70 px-2 py-0.5 text-[10px] font-medium text-slate-400"
-            >
-              {modularity.capabilityChipRo}
-            </span>
-          ) : null}
         </div>
       </div>
 
@@ -364,64 +369,34 @@ export function ProductSystemTemplateDetailPanel({
       ) : null}
 
       {section === "composition" && isProduct ? (
-        <section
-          data-testid="product-system-template-detail-composition"
-          className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200"
-        >
-          <p className="text-[11px] text-slate-500">
-            Rândurile de compoziție descriu legături — nu dovedesc independență modulară.
-          </p>
-          {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
-            <p className="text-slate-500">Niciun modul de compoziție expus în availability.</p>
-          ) : (
-            <ul className="space-y-2">
-              {availability.composition_modules.map((module) => (
-                <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-xs">
-                  {module.role_label}: {module.module_template_code} · {module.status_label}
-                </li>
-              ))}
-              {availability.shared_component_contracts.map((contract) => (
-                <li key={contract.component_key} className="font-mono text-xs">
-                  {contract.display_name}: {contract.module_template_code} · modul legacy partajat
-                </li>
-              ))}
-            </ul>
-          )}
-          {(availability.svg_bindable_components ?? []).length > 0 ? (
-            <div
-              className="mt-3 space-y-2 border-t border-slate-800/70 pt-3"
-              data-testid="product-system-svg-bindable-components"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
-                Componente SVG-bindable
-              </p>
-              <p className="text-[11px] text-slate-500">
-                Authority Product System — rol geometric → componentă (Intake consumă ulterior).
-              </p>
+        <div className="space-y-4" data-testid="product-system-template-detail-composition">
+          <TemplateCompositionAuthoringPanel
+            parentTemplateCode={template.template_code}
+            parentTemplateId={template.id}
+          />
+          <section className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-200">
+            <p className="text-[11px] text-slate-500">
+              Availability read-model (nu dovedește independență modulară).
+            </p>
+            {availability.composition_modules.length === 0 &&
+            availability.shared_component_contracts.length === 0 ? (
+              <p className="text-slate-500">Niciun modul de compoziție expus în availability.</p>
+            ) : (
               <ul className="space-y-2">
-                {(availability.svg_bindable_components ?? []).map((bindable) => (
-                  <li
-                    key={bindable.component_template_code}
-                    className="rounded border border-slate-800/80 bg-slate-950/40 px-2 py-1.5 font-mono text-[11px] text-slate-200"
-                    data-testid={`product-system-svg-bindable-${bindable.component_template_code}`}
-                  >
-                    <div className="font-sans text-[12px] font-medium text-slate-100">{bindable.owner_label}</div>
-                    <div className="truncate text-slate-400">{bindable.component_template_code}</div>
-                    <div className="mt-0.5 text-[10px] text-slate-500">
-                      {(bindable.accepted_geometry_roles.length
-                        ? bindable.accepted_geometry_roles.join(", ")
-                        : "fără rol SVG")}{" "}
-                      · {bindable.selection_mode} · {bindable.cardinality}
-                      {bindable.required ? " · required" : " · optional"}
-                      {bindable.active_by_default ? " · active default" : " · inactive default"}
-                    </div>
+                {availability.composition_modules.map((module) => (
+                  <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-xs">
+                    {module.role_label}: {module.module_template_code} · {module.status_label}
+                  </li>
+                ))}
+                {availability.shared_component_contracts.map((contract) => (
+                  <li key={contract.component_key} className="font-mono text-xs">
+                    {contract.display_name}: {contract.module_template_code} · modul legacy partajat
                   </li>
                 ))}
               </ul>
-            </div>
-          ) : null}
-          {modularity ? <ModularityHonestySection templateCode={template.template_code} /> : null}
-        </section>
+            )}
+          </section>
+        </div>
       ) : null}
 
       {section === "components" && isProduct ? (
@@ -463,6 +438,53 @@ export function ProductSystemTemplateDetailPanel({
         </section>
       ) : null}
 
+      {section === "contracts" && isProduct ? (
+        <div data-testid="product-system-template-detail-contracts">
+          <ComponentContractUsedByPanel templateCode={template.template_code} />
+        </div>
+      ) : null}
+
+      {section === "relationships" && isProduct ? (
+        <section
+          data-testid="product-system-template-detail-relationships"
+          className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4 text-sm text-slate-300"
+        >
+          <p className="text-[11px] text-slate-500">
+            Hartă relații parent↔child din availability — validare vizuală, fără auto-activare.
+          </p>
+          <ul className="space-y-2 font-mono text-xs">
+            {availability.composition_modules.map((module) => (
+              <li key={`rel-${module.role_key}-${module.module_template_code}`}>
+                {template.template_code} → {module.module_template_code} · {module.role_label} ·{" "}
+                {module.status_label}
+              </li>
+            ))}
+            {(availability.parent_product_codes?.length
+              ? availability.parent_product_codes
+              : availability.parent_codes
+            ).map((parentCode) => (
+              <li key={`parent-${parentCode}`}>
+                {parentCode} → {template.template_code} (părinte)
+              </li>
+            ))}
+          </ul>
+          {availability.composition_modules.length === 0 &&
+          (availability.parent_product_codes?.length ?? availability.parent_codes?.length ?? 0) ===
+            0 ? (
+            <p className="text-slate-500">Nicio relație expusă.</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      {section === "materials" && isProduct ? (
+        <div data-testid="product-system-template-detail-materials">
+          <TemplateRuntimePreviewPanel templateCode={template.template_code} />
+          <p className="mt-2 text-[11px] text-slate-500">
+            Materiale din ProductDefinition preview (read-only). Nu e Pricing / Inventory SoT.
+          </p>
+        </div>
+      ) : null}
+
       {section === "dossier" ? (
         <section
           data-testid="product-system-template-detail-dossier"
@@ -471,6 +493,10 @@ export function ProductSystemTemplateDetailPanel({
           <p>
             Un singur Dossier canonic. Prezența în Dossier nu dovedește modularitate — distinge rădăcină,
             copil, standalone, composition-only și module captive.
+          </p>
+          <p className="text-[11px] text-slate-500">
+            Clasificare: Documentation / Review / Decisions / Approved bridges. Runtime-owned rămâne în
+            Intake / PD / Order — nu în Dossier.
           </p>
           {modularity ? (
             <ul className="space-y-1 text-[12px] text-slate-400" data-testid="product-system-dossier-modularity-hints">
@@ -488,11 +514,11 @@ export function ProductSystemTemplateDetailPanel({
             </div>
           ) : null}
           <Link
-            to="/product-system/blueprint-dossier"
+            to={`/product-system/blueprint-dossier?template=${encodeURIComponent(template.template_code)}`}
             data-testid="product-system-template-detail-dossier-cta"
             className="inline-flex rounded-md border border-purple-800/40 bg-purple-950/30 px-3 py-1.5 text-xs font-semibold text-purple-200 transition-colors hover:bg-purple-900/30"
           >
-            Deschide Dossier canonic
+            Deschide Dossier Studio
           </Link>
           <div className="flex flex-wrap gap-3 text-[12px]">
             <Link to="/modules" className="text-blue-400 hover:text-blue-300">
@@ -513,6 +539,28 @@ export function ProductSystemTemplateDetailPanel({
             ) : null}
           </div>
         </section>
+      ) : null}
+
+      {section === "runtime-preview" && isProduct ? (
+        <div data-testid="product-system-template-detail-runtime-preview">
+          <TemplateRuntimePreviewPanel templateCode={template.template_code} />
+        </div>
+      ) : null}
+
+      {section === "readiness" && isProduct ? (
+        <div className="space-y-4" data-testid="product-system-template-detail-readiness">
+          <ProductE2EReadinessPanel templateCode={template.template_code} />
+          <ArtworkAnalysisReviewPanel />
+        </div>
+      ) : null}
+
+      {section === "publication" && isProduct ? (
+        <div className="space-y-4" data-testid="product-system-template-detail-publication">
+          <ProductTemplatePublicationPanel templateCode={template.template_code} />
+          <p className="text-[11px] text-slate-500">
+            Fail-closed publish · fără auto-publish · fără SVG geometry checks în poarta de publicare.
+          </p>
+        </div>
       ) : null}
 
       {section === "lifecycle" ? (
