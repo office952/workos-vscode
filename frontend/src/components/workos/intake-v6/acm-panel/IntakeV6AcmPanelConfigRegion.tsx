@@ -1,24 +1,21 @@
 /**
  * ReviewStep layout mount for product component list + AcmPanel inspector.
- * Owns no AcmPanel domain semantics — delegates to uiReadModel + operatorPatch.
+ * Owns no AcmPanel domain semantics — delegates to uiReadModel + operatorPatch drafts.
  */
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import IntakeV6ProductComponentList, {
   buildProductComponentListItems,
 } from "./IntakeV6ProductComponentList";
 import IntakeV6AcmPanelInspector, {
   type AcmPanelInspectorActions,
+  type IntakeV6AcmPanelInspectorHandle,
 } from "./IntakeV6AcmPanelInspector";
 import IntakeV6AcmPanelValidationRail from "./IntakeV6AcmPanelValidationRail";
 import {
-  buildAcmPanelConfirmConstructionPatch,
-  buildAcmPanelConfirmFieldPatch,
-  buildAcmPanelConfirmRelationPatch,
-  buildAcmPanelConfirmTechnicalPatch,
-  buildAcmPanelUpdateFieldPatch,
-  type AcmOperatorFieldKey,
-} from "@/lib/intakeV6/acmPanel/operatorPatch";
+  canContinueAfterAcmPanelFlush,
+  useAcmPanelDraftFlushBridge,
+} from "./AcmPanelDraftFlushContext";
 import {
   buildAcmPanelUiReadModel,
   type AcmPanelIssue,
@@ -26,6 +23,7 @@ import {
 import type { IntakeV6ProductComponentId } from "@/lib/intakeV6/useIntakeV6ProductComponentSelection";
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 import type { SegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import { emptyFlushResult } from "@/lib/intakeV6/acmPanel/commitSemantics";
 
 export default function IntakeV6AcmPanelConfigRegion({
   payload,
@@ -70,58 +68,38 @@ export default function IntakeV6AcmPanelConfigRegion({
   );
 
   const [focusIssue, setFocusIssue] = useState<AcmPanelIssue | null>(null);
+  const inspectorRef = useRef<IntakeV6AcmPanelInspectorHandle | null>(null);
+  const { registerFlush } = useAcmPanelDraftFlushBridge();
+
+  useEffect(() => {
+    registerFlush(() => {
+      if (!inspectorRef.current) return emptyFlushResult("nothing_to_commit");
+      return inspectorRef.current.flushAll();
+    });
+    return () => registerFlush(null);
+  }, [registerFlush]);
 
   const handleSelect = useCallback(
     (id: IntakeV6ProductComponentId) => {
+      if (selectedId === "acm_panel" && id !== "acm_panel") {
+        const result = inspectorRef.current?.flushAll() ?? emptyFlushResult("nothing_to_commit");
+        if (!canContinueAfterAcmPanelFlush(result)) return;
+      }
       onSelect(id);
       if (id === "letters") onNavigateLetters();
       if (id === "logo") onNavigateLogo();
     },
-    [onSelect, onNavigateLetters, onNavigateLogo],
-  );
-
-  const applyPatch = useCallback(
-    (patch: Partial<IntakeV6FinishSetup> | null) => {
-      if (!patch) return;
-      onApplyFinishPatch(patch);
-    },
-    [onApplyFinishPatch],
+    [onSelect, onNavigateLetters, onNavigateLogo, selectedId],
   );
 
   const actions: AcmPanelInspectorActions = useMemo(
     () => ({
-      onUpdateField: (field: AcmOperatorFieldKey, value: number | boolean | 1 | 2 | null) => {
-        applyPatch(
-          buildAcmPanelUpdateFieldPatch({
-            finishSetup,
-            field,
-            value,
-          }),
-        );
-      },
-      onConfirmField: (fieldKeys: string[]) => {
-        applyPatch(buildAcmPanelConfirmFieldPatch({ finishSetup, fieldKeys }));
-      },
-      onConfirmConstruction: () => {
-        applyPatch(buildAcmPanelConfirmConstructionPatch({ finishSetup }));
-      },
-      onConfirmTechnical: () => {
-        applyPatch(buildAcmPanelConfirmTechnicalPatch({ finishSetup }));
-      },
-      onConfirmRelation: (relationId: string) => {
-        applyPatch(
-          buildAcmPanelConfirmRelationPatch({
-            finishSetup,
-            relationId,
-            status: "confirmed",
-          }),
-        );
-      },
+      onApplyFinishPatch,
       onSegmentedPatch: (patch: { segmented_background: SegmentedBackground }) => {
-        applyPatch(patch as Partial<IntakeV6FinishSetup>);
+        onApplyFinishPatch(patch as Partial<IntakeV6FinishSetup>);
       },
     }),
-    [applyPatch, finishSetup],
+    [onApplyFinishPatch],
   );
 
   if (!items.length) return null;
@@ -141,6 +119,7 @@ export default function IntakeV6AcmPanelConfigRegion({
       <div className="min-w-0">
         {showInspector ? (
           <IntakeV6AcmPanelInspector
+            ref={inspectorRef}
             model={acmModel}
             finishSetup={finishSetup}
             actions={actions}
@@ -166,6 +145,11 @@ export default function IntakeV6AcmPanelConfigRegion({
         <IntakeV6AcmPanelValidationRail
           model={acmModel}
           onIssueClick={(issue) => {
+            if (selectedId === "acm_panel") {
+              const result =
+                inspectorRef.current?.flushAll() ?? emptyFlushResult("nothing_to_commit");
+              if (!canContinueAfterAcmPanelFlush(result)) return;
+            }
             onSelect("acm_panel");
             setFocusIssue(issue);
           }}

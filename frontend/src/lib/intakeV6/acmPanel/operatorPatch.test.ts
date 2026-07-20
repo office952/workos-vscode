@@ -3,6 +3,8 @@ import {
   buildAcmPanelConfirmTechnicalPatch,
   buildAcmPanelConfirmConstructionPatch,
   buildAcmPanelUpdateFieldPatch,
+  buildAcmPanelUpdateFieldsPatch,
+  buildAcmPanelConfirmActionWithUpdatesPatch,
   assertNoCompositionAutoConfirm,
 } from "./operatorPatch";
 import type { AcmPanelComponentInstance } from "./types";
@@ -114,5 +116,47 @@ describe("acmPanel operatorPatch", () => {
     expect((patch?.acm_panel_instance as AcmPanelComponentInstance).composition_status).toBe(
       "unconfirmed",
     );
+  });
+
+  it("update fields batch applies multiple values in one patch", () => {
+    const patch = buildAcmPanelUpdateFieldsPatch({
+      finishSetup: finish(),
+      updates: [
+        { field: "l1_mm", value: 61 },
+        { field: "l2_mm", value: 26 },
+      ],
+    });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.configuration.l1_mm).toBe(61);
+    expect(inst.configuration.l2_mm).toBe(26);
+    expect(inst.composition_status).toBe("unconfirmed");
+  });
+
+  it("confirm construction with pending L1 is one patch with update + confirm", () => {
+    const patch = buildAcmPanelConfirmActionWithUpdatesPatch({
+      finishSetup: finish(),
+      updates: [{ field: "l1_mm", value: 70 }],
+      action: { kind: "confirm_construction" },
+    });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.configuration.l1_mm).toBe(70);
+    expect(inst.configuration.field_authority.l1_mm).toBe("operator_confirmed");
+    expect(inst.configuration.field_authority.fold_count).toBe("operator_confirmed");
+    expect(inst.composition_status).toBe("unconfirmed");
+  });
+
+  it("confirm technical with two field updates is one patch", () => {
+    const patch = buildAcmPanelConfirmTechnicalPatch({
+      finishSetup: finish(),
+      updates: [
+        { field: "l1_mm", value: 62 },
+        { field: "acm_thickness_mm", value: 4 },
+      ],
+    });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.configuration.l1_mm).toBe(62);
+    expect(inst.configuration.acm_thickness_mm).toBe(4);
+    expect(inst.technical_configuration_status).toBe("confirmed");
+    expect(inst.composition_status).toBe("unconfirmed");
   });
 });

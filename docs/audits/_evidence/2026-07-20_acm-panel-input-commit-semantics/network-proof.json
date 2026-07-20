@@ -1,0 +1,143 @@
+{
+  "workspace": "IV6-DB2F86B7",
+  "cases": [
+    {
+      "name": "typing_65",
+      "keystrokes": "typing_65",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513720943,
+          "l1": 65,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "typing_65"
+        }
+      ],
+      "l1Before": 83,
+      "l1After": 65,
+      "duplicate": false
+    },
+    {
+      "name": "paste_75",
+      "keystrokes": "paste_75",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513722147,
+          "l1": 75,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "paste_75"
+        }
+      ],
+      "l1Before": 65,
+      "l1After": 75,
+      "duplicate": false
+    },
+    {
+      "name": "rapid_replace_78",
+      "keystrokes": "rapid_replace_78",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513723798,
+          "l1": 78,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "rapid_replace_78"
+        }
+      ],
+      "l1Before": 75,
+      "l1After": 78,
+      "duplicate": false
+    },
+    {
+      "name": "blur_commit_79",
+      "keystrokes": "blur_commit_79",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513724931,
+          "l1": 79,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "blur_commit_79"
+        }
+      ],
+      "l1Before": 78,
+      "l1After": 79,
+      "duplicate": false
+    },
+    {
+      "name": "enter_commit_80",
+      "keystrokes": "enter_commit_80",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513725878,
+          "l1": 80,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "enter_commit_80"
+        }
+      ],
+      "l1Before": 79,
+      "l1After": 80,
+      "duplicate": false
+    },
+    {
+      "name": "section_switch_flush_81",
+      "keystrokes": "section_switch_flush_81",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513726846,
+          "l1": 81,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "section_switch_flush_81"
+        }
+      ],
+      "l1Before": 80,
+      "l1After": 81,
+      "duplicate": false
+    },
+    {
+      "name": "confirm_with_pending_82",
+      "keystrokes": "confirm_with_pending_82",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513727849,
+          "l1": 82,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "confirm_with_pending_82"
+        }
+      ],
+      "l1Before": 81,
+      "l1After": 82,
+      "duplicate": false
+    },
+    {
+      "name": "two_fields_flush",
+      "keystrokes": "two_fields_flush",
+      "requestCount": 1,
+      "puts": [
+        {
+          "t": 1784513728918,
+          "l1": 83,
+          "domainAction": "upsert",
+          "authL1": "operator_confirmed",
+          "phase": "two_fields_flush"
+        }
+      ],
+      "l1Before": 82,
+      "l1After": 83,
+      "duplicate": false
+    }
+  ],
+  "afterRefreshL1": 83,
+  "pass": true
+}

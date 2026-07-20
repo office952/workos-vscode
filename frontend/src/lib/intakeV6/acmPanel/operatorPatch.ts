@@ -113,39 +113,39 @@ function mapConfigKeyToAuthorityKey(field: AcmOperatorFieldKey): string {
   return field;
 }
 
-export function buildAcmPanelUpdateFieldPatch(args: {
-  finishSetup: unknown;
+export type AcmPanelFieldUpdateInput = {
   field: AcmOperatorFieldKey;
   value: number | boolean | 1 | 2 | null;
-  /** When true, marks authority operator_confirmed for that field. */
   confirmAuthority?: boolean;
-}): Partial<IntakeV6FinishSetup> | null {
-  const ctx = requireInstance(args.finishSetup);
-  if (!ctx) return null;
-  const { finish, instance } = ctx;
-  const authKey = mapConfigKeyToAuthorityKey(args.field);
+};
 
-  if (args.field === "panel_width_mm") {
-    instance.geometry.width_mm = typeof args.value === "number" ? args.value : null;
-  } else if (args.field === "panel_height_mm") {
-    instance.geometry.height_mm = typeof args.value === "number" ? args.value : null;
-  } else if (args.field === "acm_thickness_mm") {
+function applyFieldUpdateOnInstance(
+  instance: AcmPanelComponentInstance,
+  update: AcmPanelFieldUpdateInput,
+): void {
+  const authKey = mapConfigKeyToAuthorityKey(update.field);
+
+  if (update.field === "panel_width_mm") {
+    instance.geometry.width_mm = typeof update.value === "number" ? update.value : null;
+  } else if (update.field === "panel_height_mm") {
+    instance.geometry.height_mm = typeof update.value === "number" ? update.value : null;
+  } else if (update.field === "acm_thickness_mm") {
     instance.configuration.acm_thickness_mm =
-      typeof args.value === "number" ? args.value : null;
-  } else if (args.field === "fold_count") {
+      typeof update.value === "number" ? update.value : null;
+  } else if (update.field === "fold_count") {
     instance.configuration.fold_count =
-      args.value === 1 || args.value === 2 ? args.value : null;
-  } else if (args.field === "l1_mm" || args.field === "finished_depth_mm") {
-    const n = typeof args.value === "number" ? args.value : null;
+      update.value === 1 || update.value === 2 ? update.value : null;
+  } else if (update.field === "l1_mm" || update.field === "finished_depth_mm") {
+    const n = typeof update.value === "number" ? update.value : null;
     instance.configuration.l1_mm = n;
     instance.configuration.finished_depth_mm = n;
-  } else if (args.field === "l2_mm" || args.field === "rear_lip_mm") {
-    instance.configuration.l2_mm = typeof args.value === "number" ? args.value : null;
-  } else if (args.field === "internal_frame_enabled") {
-    instance.configuration.internal_frame_enabled = Boolean(args.value);
+  } else if (update.field === "l2_mm" || update.field === "rear_lip_mm") {
+    instance.configuration.l2_mm = typeof update.value === "number" ? update.value : null;
+  } else if (update.field === "internal_frame_enabled") {
+    instance.configuration.internal_frame_enabled = Boolean(update.value);
   }
 
-  if (args.confirmAuthority) {
+  if (update.confirmAuthority) {
     instance.configuration.field_authority = {
       ...instance.configuration.field_authority,
       [authKey]: "operator_confirmed",
@@ -154,14 +154,124 @@ export function buildAcmPanelUpdateFieldPatch(args: {
     instance.configuration.field_authority[authKey] === "catalog_default" ||
     instance.configuration.field_authority[authKey] === "detected"
   ) {
-    // Edit without explicit confirm → proposed (not operator confirmed).
     instance.configuration.field_authority = {
       ...instance.configuration.field_authority,
       [authKey]: "proposed",
     };
   }
+}
 
-  instance.technical_configuration_status = "proposed";
+function applyUpdatesOnInstance(
+  instance: AcmPanelComponentInstance,
+  updates: AcmPanelFieldUpdateInput[],
+): void {
+  for (const update of updates) {
+    applyFieldUpdateOnInstance(instance, update);
+  }
+  if (updates.length > 0) {
+    instance.technical_configuration_status = "proposed";
+  }
+  instance.updated_at = new Date().toISOString();
+}
+
+export function buildAcmPanelUpdateFieldPatch(args: {
+  finishSetup: unknown;
+  field: AcmOperatorFieldKey;
+  value: number | boolean | 1 | 2 | null;
+  /** When true, marks authority operator_confirmed for that field. */
+  confirmAuthority?: boolean;
+}): Partial<IntakeV6FinishSetup> | null {
+  return buildAcmPanelUpdateFieldsPatch({
+    finishSetup: args.finishSetup,
+    updates: [
+      {
+        field: args.field,
+        value: args.value,
+        confirmAuthority: args.confirmAuthority,
+      },
+    ],
+  });
+}
+
+/** Apply multiple field updates in one operatorPatch / one finish sync. */
+export function buildAcmPanelUpdateFieldsPatch(args: {
+  finishSetup: unknown;
+  updates: AcmPanelFieldUpdateInput[];
+}): Partial<IntakeV6FinishSetup> | null {
+  const ctx = requireInstance(args.finishSetup);
+  if (!ctx) return null;
+  if (!args.updates.length) return null;
+  const { finish, instance } = ctx;
+  applyUpdatesOnInstance(instance, args.updates);
+  return syncInstanceIntoFinish(finish, instance);
+}
+
+export type AcmPanelConfirmAction =
+  | { kind: "confirm_geometry" }
+  | { kind: "confirm_construction" }
+  | { kind: "confirm_technical" }
+  | { kind: "confirm_relation"; relationId: string; status?: ComponentRelationStatus };
+
+/**
+ * One semantic intent: optional pending field updates + confirm action → one patch.
+ * Never flush-then-confirm as two writes.
+ */
+export function buildAcmPanelConfirmActionWithUpdatesPatch(args: {
+  finishSetup: unknown;
+  updates?: AcmPanelFieldUpdateInput[];
+  action: AcmPanelConfirmAction;
+}): Partial<IntakeV6FinishSetup> | null {
+  const ctx = requireInstance(args.finishSetup);
+  if (!ctx) return null;
+  const { finish, instance } = ctx;
+  const updates = args.updates ?? [];
+  if (updates.length) {
+    applyUpdatesOnInstance(instance, updates);
+  }
+
+  if (args.action.kind === "confirm_geometry") {
+    instance.configuration.field_authority = {
+      ...instance.configuration.field_authority,
+      panel_geometry: "operator_confirmed",
+    };
+  } else if (args.action.kind === "confirm_construction") {
+    const keys = [
+      "panel_geometry",
+      "fold_count",
+      "l1_mm",
+      "l2_mm",
+      "acm_thickness_mm",
+      "finished_depth_mm",
+      "internal_frame",
+    ];
+    const nextAuth: Record<string, AcmFieldAuthority> = {
+      ...instance.configuration.field_authority,
+    };
+    for (const key of keys) nextAuth[key] = "operator_confirmed";
+    instance.configuration.field_authority = nextAuth;
+  } else if (args.action.kind === "confirm_technical") {
+    instance.configuration.field_authority = {
+      ...instance.configuration.field_authority,
+      panel_geometry: "operator_confirmed",
+      fold_count: "operator_confirmed",
+      l1_mm: "operator_confirmed",
+      l2_mm: "operator_confirmed",
+      acm_thickness_mm: "operator_confirmed",
+      finished_depth_mm: "operator_confirmed",
+      internal_frame: "operator_confirmed",
+    };
+    instance.technical_configuration_status = "confirmed";
+    if (instance.association_status === "proposed") {
+      instance.association_status = "confirmed";
+    }
+  } else if (args.action.kind === "confirm_relation") {
+    const status = args.action.status ?? "confirmed";
+    const relationId = args.action.relationId;
+    instance.relations = (instance.relations ?? []).map((rel: ComponentRelation) =>
+      rel.relation_id === relationId ? { ...rel, status } : rel,
+    );
+  }
+
   instance.updated_at = new Date().toISOString();
   return syncInstanceIntoFinish(finish, instance);
 }
@@ -169,10 +279,23 @@ export function buildAcmPanelUpdateFieldPatch(args: {
 export function buildAcmPanelConfirmFieldPatch(args: {
   finishSetup: unknown;
   fieldKeys: string[];
+  updates?: AcmPanelFieldUpdateInput[];
 }): Partial<IntakeV6FinishSetup> | null {
+  if (
+    args.fieldKeys.length === 1 &&
+    args.fieldKeys[0] === "panel_geometry" &&
+    !args.updates?.length
+  ) {
+    return buildAcmPanelConfirmActionWithUpdatesPatch({
+      finishSetup: args.finishSetup,
+      updates: args.updates,
+      action: { kind: "confirm_geometry" },
+    });
+  }
   const ctx = requireInstance(args.finishSetup);
   if (!ctx) return null;
   const { finish, instance } = ctx;
+  if (args.updates?.length) applyUpdatesOnInstance(instance, args.updates);
   const nextAuth: Record<string, AcmFieldAuthority> = {
     ...instance.configuration.field_authority,
   };
@@ -186,60 +309,41 @@ export function buildAcmPanelConfirmFieldPatch(args: {
 
 export function buildAcmPanelConfirmConstructionPatch(args: {
   finishSetup: unknown;
+  updates?: AcmPanelFieldUpdateInput[];
 }): Partial<IntakeV6FinishSetup> | null {
-  return buildAcmPanelConfirmFieldPatch({
+  return buildAcmPanelConfirmActionWithUpdatesPatch({
     finishSetup: args.finishSetup,
-    fieldKeys: [
-      "panel_geometry",
-      "fold_count",
-      "l1_mm",
-      "l2_mm",
-      "acm_thickness_mm",
-      "finished_depth_mm",
-      "internal_frame",
-    ],
+    updates: args.updates,
+    action: { kind: "confirm_construction" },
   });
 }
 
 export function buildAcmPanelConfirmTechnicalPatch(args: {
   finishSetup: unknown;
+  updates?: AcmPanelFieldUpdateInput[];
 }): Partial<IntakeV6FinishSetup> | null {
-  const ctx = requireInstance(args.finishSetup);
-  if (!ctx) return null;
-  const { finish, instance } = ctx;
-  const nextAuth: Record<string, AcmFieldAuthority> = {
-    ...instance.configuration.field_authority,
-    panel_geometry: "operator_confirmed",
-    fold_count: "operator_confirmed",
-    l1_mm: "operator_confirmed",
-    l2_mm: "operator_confirmed",
-    acm_thickness_mm: "operator_confirmed",
-    finished_depth_mm: "operator_confirmed",
-    internal_frame: "operator_confirmed",
-  };
-  instance.configuration.field_authority = nextAuth;
-  instance.technical_configuration_status = "confirmed";
-  if (instance.association_status === "proposed") {
-    instance.association_status = "confirmed";
-  }
-  // Never touch composition_status — product composition CTA only.
-  instance.updated_at = new Date().toISOString();
-  return syncInstanceIntoFinish(finish, instance);
+  return buildAcmPanelConfirmActionWithUpdatesPatch({
+    finishSetup: args.finishSetup,
+    updates: args.updates,
+    action: { kind: "confirm_technical" },
+  });
 }
 
 export function buildAcmPanelConfirmRelationPatch(args: {
   finishSetup: unknown;
   relationId: string;
   status: ComponentRelationStatus;
+  updates?: AcmPanelFieldUpdateInput[];
 }): Partial<IntakeV6FinishSetup> | null {
-  const ctx = requireInstance(args.finishSetup);
-  if (!ctx) return null;
-  const { finish, instance } = ctx;
-  instance.relations = (instance.relations ?? []).map((rel: ComponentRelation) =>
-    rel.relation_id === args.relationId ? { ...rel, status: args.status } : rel,
-  );
-  instance.updated_at = new Date().toISOString();
-  return syncInstanceIntoFinish(finish, instance);
+  return buildAcmPanelConfirmActionWithUpdatesPatch({
+    finishSetup: args.finishSetup,
+    updates: args.updates,
+    action: {
+      kind: "confirm_relation",
+      relationId: args.relationId,
+      status: args.status,
+    },
+  });
 }
 
 export function buildAcmPanelPromoteTopLevelPatch(args: {

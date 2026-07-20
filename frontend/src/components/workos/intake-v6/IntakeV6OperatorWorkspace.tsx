@@ -16,16 +16,22 @@ import { IntakeV6WorkspaceHeaderStatusProvider } from "./IntakeV6WorkspaceHeader
 import IntakeV6OperatorWorkspaceFooter from "./IntakeV6OperatorWorkspaceFooter";
 import { v6 } from "./atoms/intakeV6Presentation";
 import type { IntakeV6StepId } from "@/lib/intakeV6/intakeV6Contracts";
+import {
+  AcmPanelDraftFlushProvider,
+  canContinueAfterAcmPanelFlush,
+  useAcmPanelDraftFlushBridge,
+} from "./acm-panel/AcmPanelDraftFlushContext";
 
 interface IntakeV6OperatorWorkspaceProps {
   hook: IntakeV6WorkspaceHook;
 }
 
-export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWorkspaceProps) {
+function IntakeV6OperatorWorkspaceInner({ hook }: IntakeV6OperatorWorkspaceProps) {
   const location = useLocation();
   const isIntakeV6 = location.pathname.startsWith("/intake-v6") || location.pathname.startsWith("/intake-v6-app");
   const [promoteStatus, setPromoteStatus] = useState<"idle" | "running" | "success" | "error">("idle");
   const [promoteMessage, setPromoteMessage] = useState<string | null>(null);
+  const { flushAcmPanelDrafts } = useAcmPanelDraftFlushBridge();
   const {
     state,
     trySetStep,
@@ -39,7 +45,13 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
   const visibleStepIndex = intakeV6VisibleStepIndex(state.currentStep);
   const stepIndex = INTAKE_V6_STEP_ORDER.indexOf(state.currentStep);
 
+  const flushReviewDraftsOrBlock = useCallback(() => {
+    if (state.currentStep !== "review") return true;
+    return canContinueAfterAcmPanelFlush(flushAcmPanelDrafts());
+  }, [flushAcmPanelDrafts, state.currentStep]);
+
   const goBack = () => {
+    if (!flushReviewDraftsOrBlock()) return;
     if (stepIndex > 0) trySetStep(INTAKE_V6_STEP_ORDER[stepIndex - 1]!);
   };
 
@@ -49,6 +61,7 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
       return;
     }
     if (state.currentStep === "review" && canContinueFromReview) {
+      if (!flushReviewDraftsOrBlock()) return;
       trySetStep("confirm");
     }
   };
@@ -93,16 +106,25 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
 
   const handleStepClick = useCallback(
     (step: IntakeV6StepId) => {
+      if (state.currentStep === "review" && step !== "review") {
+        if (!flushReviewDraftsOrBlock()) return;
+      }
       trySetStep(step);
     },
-    [trySetStep],
+    [flushReviewDraftsOrBlock, state.currentStep, trySetStep],
   );
 
   return (
     <IntakeV6WorkspaceHeaderStatusProvider
       defaultHandlers={{
-        onJumpToLayers: () => trySetStep("layers"),
-        onJumpToConfirm: () => trySetStep("confirm"),
+        onJumpToLayers: () => {
+          if (!flushReviewDraftsOrBlock()) return;
+          trySetStep("layers");
+        },
+        onJumpToConfirm: () => {
+          if (!flushReviewDraftsOrBlock()) return;
+          trySetStep("confirm");
+        },
       }}
     >
     <div className={v6.page} data-testid="intake-v6-operator-workspace">
@@ -157,5 +179,13 @@ export default function IntakeV6OperatorWorkspace({ hook }: IntakeV6OperatorWork
       />
     </div>
     </IntakeV6WorkspaceHeaderStatusProvider>
+  );
+}
+
+export default function IntakeV6OperatorWorkspace(props: IntakeV6OperatorWorkspaceProps) {
+  return (
+    <AcmPanelDraftFlushProvider>
+      <IntakeV6OperatorWorkspaceInner {...props} />
+    </AcmPanelDraftFlushProvider>
   );
 }

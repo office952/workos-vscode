@@ -1,25 +1,43 @@
 /**
  * AcmPanel operator inspector — progressive disclosure sections.
- * Consumes uiReadModel; writes only via operatorPatch callbacks.
+ * Numeric fields use local draft + debounce; confirms combine pending updates into one PUT.
  */
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import IntakeV6SegmentedBackgroundPanel from "../IntakeV6SegmentedBackgroundPanel";
 import {
   authorityHintForField,
   type AcmPanelIssue,
   type AcmPanelUiReadModel,
 } from "@/lib/intakeV6/acmPanel/uiReadModel";
-import type { AcmOperatorFieldKey } from "@/lib/intakeV6/acmPanel/operatorPatch";
+import {
+  buildAcmPanelConfirmActionWithUpdatesPatch,
+  buildAcmPanelUpdateFieldsPatch,
+} from "@/lib/intakeV6/acmPanel/operatorPatch";
+import {
+  useAcmPanelOperatorDrafts,
+  type AcmPanelOperatorDraftsApi,
+} from "@/lib/intakeV6/acmPanel/useAcmPanelOperatorDrafts";
+import type { AcmPanelDraftNumericField } from "@/lib/intakeV6/acmPanel/commitSemantics";
+import type { AcmPanelFlushResult } from "@/lib/intakeV6/acmPanel/commitSemantics";
 import type { SegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
+import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 
 export type AcmPanelInspectorActions = {
-  onUpdateField: (field: AcmOperatorFieldKey, value: number | boolean | 1 | 2 | null) => void;
-  onConfirmField: (fieldKeys: string[]) => void;
-  onConfirmConstruction: () => void;
-  onConfirmTechnical: () => void;
-  onConfirmRelation: (relationId: string) => void;
+  onApplyFinishPatch: (patch: Partial<IntakeV6FinishSetup>) => void;
   onSegmentedPatch: (patch: { segmented_background: SegmentedBackground }) => void;
+};
+
+export type IntakeV6AcmPanelInspectorHandle = {
+  flushAll: () => AcmPanelFlushResult;
 };
 
 function Section({
@@ -71,19 +89,71 @@ function AuthorityHint({ model, fieldKey }: { model: AcmPanelUiReadModel; fieldK
   );
 }
 
-export default function IntakeV6AcmPanelInspector({
+function sectionForField(field: AcmPanelDraftNumericField): string {
+  if (field === "panel_width_mm" || field === "panel_height_mm") return "geometry";
+  return "construction";
+}
+
+function DraftNumberInput({
+  field,
+  label,
+  drafts,
   model,
-  finishSetup,
-  actions,
-  focusIssue,
-  onFocusConsumed,
+  authorityKey,
 }: {
+  field: AcmPanelDraftNumericField;
+  label: string;
+  drafts: AcmPanelOperatorDraftsApi;
   model: AcmPanelUiReadModel;
-  finishSetup: Record<string, unknown> | null | undefined;
-  actions: AcmPanelInspectorActions;
-  focusIssue?: AcmPanelIssue | null;
-  onFocusConsumed?: () => void;
+  authorityKey: string;
 }) {
+  const props = drafts.getFieldProps(field);
+  return (
+    <label className="block text-[11px]">
+      <span className="text-slate-500">{label}</span>
+      <input
+        type="text"
+        inputMode="decimal"
+        className={`mt-0.5 w-full rounded border bg-[#0A0F1A] px-2 py-1.5 text-[11px] ${
+          props.status === "invalid"
+            ? "border-rose-500/50 text-rose-100"
+            : "border-[#2A3548] text-slate-100"
+        }`}
+        value={props.value}
+        data-testid={`intake-v6-acm-field-${field}`}
+        data-draft-status={props.status}
+        onChange={(e) => props.onChange(e.target.value)}
+        onBlur={() => props.onBlur()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            props.onEnter();
+          }
+        }}
+      />
+      <AuthorityHint model={model} fieldKey={authorityKey} />
+      {props.error ? (
+        <p className="mt-0.5 text-[10px] text-rose-300" data-testid={`intake-v6-acm-field-error-${field}`}>
+          {props.error}
+        </p>
+      ) : null}
+    </label>
+  );
+}
+
+const IntakeV6AcmPanelInspector = forwardRef<
+  IntakeV6AcmPanelInspectorHandle,
+  {
+    model: AcmPanelUiReadModel;
+    finishSetup: Record<string, unknown> | null | undefined;
+    actions: AcmPanelInspectorActions;
+    focusIssue?: AcmPanelIssue | null;
+    onFocusConsumed?: () => void;
+  }
+>(function IntakeV6AcmPanelInspector(
+  { model, finishSetup, actions, focusIssue, onFocusConsumed },
+  ref,
+) {
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     summary: true,
     geometry: false,
@@ -95,6 +165,89 @@ export default function IntakeV6AcmPanelInspector({
     technical: false,
   });
   const rootRef = useRef<HTMLElement | null>(null);
+
+  const canonical = useMemo(() => {
+    const cfg = model.instance?.configuration;
+    const geo = model.instance?.geometry;
+    return {
+      panel_width_mm: geo?.width_mm,
+      panel_height_mm: geo?.height_mm,
+      acm_thickness_mm: cfg?.acm_thickness_mm,
+      l1_mm: cfg?.l1_mm,
+      l2_mm: cfg?.l2_mm,
+      fold_count: cfg?.fold_count,
+    };
+  }, [model.instance]);
+
+  const drafts = useAcmPanelOperatorDrafts({
+    canonical,
+    onCommitUpdates: (updates) => {
+      const patch = buildAcmPanelUpdateFieldsPatch({ finishSetup, updates });
+      if (patch) actions.onApplyFinishPatch(patch);
+    },
+  });
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      flushAll: () => drafts.flushAll(),
+    }),
+    [drafts],
+  );
+
+  const focusInvalid = (field: AcmPanelDraftNumericField) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [sectionForField(field)]: true,
+      summary: true,
+    }));
+    window.setTimeout(() => {
+      const el = document.querySelector(
+        `[data-testid="intake-v6-acm-field-${field}"]`,
+      ) as HTMLElement | null;
+      el?.scrollIntoView({ behavior: "smooth", block: "center" });
+      el?.focus?.();
+    }, 50);
+  };
+
+  const requestSectionToggle = (id: string) => {
+    const result = drafts.flushAll();
+    if (result.status === "blocked_invalid") {
+      const field = drafts.getFirstInvalidField();
+      if (field) focusInvalid(field);
+      return;
+    }
+    setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const runConfirm = (
+    action:
+      | { kind: "confirm_geometry" }
+      | { kind: "confirm_construction" }
+      | { kind: "confirm_technical" }
+      | { kind: "confirm_relation"; relationId: string },
+  ) => {
+    const snap = drafts.takePendingUpdates();
+    if (snap.status === "blocked_invalid") {
+      const field = drafts.getFirstInvalidField();
+      if (field) focusInvalid(field);
+      return;
+    }
+    const updates = snap.updates;
+    const patch = buildAcmPanelConfirmActionWithUpdatesPatch({
+      finishSetup,
+      updates,
+      action:
+        action.kind === "confirm_relation"
+          ? { kind: "confirm_relation", relationId: action.relationId, status: "confirmed" }
+          : action,
+    });
+    if (!patch) return;
+    actions.onApplyFinishPatch(patch);
+    if (updates.length) {
+      drafts.markClean(updates.map((u) => u.field as AcmPanelDraftNumericField));
+    }
+  };
 
   useEffect(() => {
     if (!focusIssue) return;
@@ -129,8 +282,6 @@ export default function IntakeV6AcmPanelInspector({
 
   const inst = model.instance;
   const cfg = inst.configuration;
-  const toggle = (id: string) =>
-    setOpenSections((prev) => ({ ...prev, [id]: !prev[id] }));
 
   return (
     <section
@@ -142,7 +293,7 @@ export default function IntakeV6AcmPanelInspector({
         id="summary"
         title="Rezumat"
         open={openSections.summary}
-        onToggle={() => toggle("summary")}
+        onToggle={() => requestSectionToggle("summary")}
         status={model.primaryStatus.label}
       >
         <div className="space-y-1 text-[11px] text-slate-300" data-testid="intake-v6-acm-summary">
@@ -153,7 +304,9 @@ export default function IntakeV6AcmPanelInspector({
           <p>Tehnic: {model.technical.label}</p>
           <p>Compoziție instanță: {model.composition.label}</p>
           <p>Dimensiuni: {model.dimensionsSummary ?? "—"}</p>
-          <p>Segmente: {model.segmentCount} ({model.segmentedLabel})</p>
+          <p>
+            Segmente: {model.segmentCount} ({model.segmentedLabel})
+          </p>
           {model.unresolvedConfirmations.length ? (
             <p className="text-amber-200">
               Nerezolvat: {model.unresolvedConfirmations.join(" · ")}
@@ -171,34 +324,24 @@ export default function IntakeV6AcmPanelInspector({
         id="geometry"
         title="Geometrie"
         open={openSections.geometry}
-        onToggle={() => toggle("geometry")}
+        onToggle={() => requestSectionToggle("geometry")}
         status={authorityHintForField(model, "panel_geometry").label}
       >
         <div className="grid gap-2 sm:grid-cols-2">
-          <label className="block text-[11px]">
-            <span className="text-slate-500">Lățime (mm)</span>
-            <input
-              type="number"
-              className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px]"
-              value={inst.geometry.width_mm ?? ""}
-              data-testid="intake-v6-acm-field-panel_geometry"
-              onChange={(e) =>
-                actions.onUpdateField("panel_width_mm", Number(e.target.value))
-              }
-            />
-            <AuthorityHint model={model} fieldKey="panel_geometry" />
-          </label>
-          <label className="block text-[11px]">
-            <span className="text-slate-500">Înălțime (mm)</span>
-            <input
-              type="number"
-              className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px]"
-              value={inst.geometry.height_mm ?? ""}
-              onChange={(e) =>
-                actions.onUpdateField("panel_height_mm", Number(e.target.value))
-              }
-            />
-          </label>
+          <DraftNumberInput
+            field="panel_width_mm"
+            label="Lățime (mm)"
+            drafts={drafts}
+            model={model}
+            authorityKey="panel_geometry"
+          />
+          <DraftNumberInput
+            field="panel_height_mm"
+            label="Înălțime (mm)"
+            drafts={drafts}
+            model={model}
+            authorityKey="panel_geometry"
+          />
         </div>
         <p className="mt-2 text-[10px] text-slate-500">
           Sursă: SVG / detected · unități mm
@@ -209,7 +352,9 @@ export default function IntakeV6AcmPanelInspector({
         <button
           type="button"
           className="mt-2 rounded border border-emerald-500/30 px-2 py-1 text-[11px] text-emerald-200"
-          onClick={() => actions.onConfirmField(["panel_geometry"])}
+          data-testid="intake-v6-acm-confirm-geometry"
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => runConfirm({ kind: "confirm_geometry" })}
         >
           Confirmă geometria
         </button>
@@ -219,7 +364,7 @@ export default function IntakeV6AcmPanelInspector({
         id="construction"
         title="Construcție"
         open={openSections.construction}
-        onToggle={() => toggle("construction")}
+        onToggle={() => requestSectionToggle("construction")}
         status={model.technical.label}
       >
         <p className="mb-2 text-[10px] text-slate-500">
@@ -231,40 +376,42 @@ export default function IntakeV6AcmPanelInspector({
               : "nespecificat"}
         </p>
         <div className="grid gap-2 sm:grid-cols-2">
-          {(
-            [
-              ["acm_thickness_mm", "Grosime ACM", cfg.acm_thickness_mm],
-              ["l1_mm", "Perete / întoarcere", cfg.l1_mm],
-              ["l2_mm", "Buză interioară", cfg.l2_mm],
-              ["fold_count", "Fold count", cfg.fold_count],
-            ] as const
-          ).map(([key, label, value]) => (
-            <label key={key} className="block text-[11px]">
-              <span className="text-slate-500">{label}</span>
-              <input
-                type="number"
-                className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px]"
-                value={value ?? ""}
-                data-testid={`intake-v6-acm-field-${key}`}
-                onChange={(e) =>
-                  actions.onUpdateField(
-                    key as AcmOperatorFieldKey,
-                    key === "fold_count"
-                      ? (Number(e.target.value) as 1 | 2)
-                      : Number(e.target.value),
-                  )
-                }
-              />
-              <AuthorityHint model={model} fieldKey={key} />
-            </label>
-          ))}
+          <DraftNumberInput
+            field="acm_thickness_mm"
+            label="Grosime ACM"
+            drafts={drafts}
+            model={model}
+            authorityKey="acm_thickness_mm"
+          />
+          <DraftNumberInput
+            field="l1_mm"
+            label="Perete / întoarcere"
+            drafts={drafts}
+            model={model}
+            authorityKey="l1_mm"
+          />
+          <DraftNumberInput
+            field="l2_mm"
+            label="Buză interioară"
+            drafts={drafts}
+            model={model}
+            authorityKey="l2_mm"
+          />
+          <DraftNumberInput
+            field="fold_count"
+            label="Fold count"
+            drafts={drafts}
+            model={model}
+            authorityKey="fold_count"
+          />
         </div>
         <div className="mt-2 flex flex-wrap gap-2">
           <button
             type="button"
             className="rounded border border-amber-500/35 px-2 py-1 text-[11px] text-amber-100"
             data-testid="intake-v6-acm-confirm-construction"
-            onClick={() => actions.onConfirmConstruction()}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => runConfirm({ kind: "confirm_construction" })}
           >
             Confirmă valorile din construcție
           </button>
@@ -272,7 +419,8 @@ export default function IntakeV6AcmPanelInspector({
             type="button"
             className="rounded border border-emerald-500/35 px-2 py-1 text-[11px] text-emerald-100"
             data-testid="intake-v6-acm-confirm-technical"
-            onClick={() => actions.onConfirmTechnical()}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => runConfirm({ kind: "confirm_technical" })}
           >
             Confirmă configurația tehnică
           </button>
@@ -287,12 +435,20 @@ export default function IntakeV6AcmPanelInspector({
         id="segments"
         title="Segmente"
         open={openSections.segments}
-        onToggle={() => toggle("segments")}
+        onToggle={() => requestSectionToggle("segments")}
         status={model.segmentedLabel}
       >
         <IntakeV6SegmentedBackgroundPanel
           finish={finishSetup}
-          onPatch={actions.onSegmentedPatch}
+          onPatch={(patch) => {
+            const flush = drafts.flushAll();
+            if (flush.status === "blocked_invalid") {
+              const field = drafts.getFirstInvalidField();
+              if (field) focusInvalid(field);
+              return;
+            }
+            actions.onSegmentedPatch(patch);
+          }}
         />
       </Section>
 
@@ -300,7 +456,7 @@ export default function IntakeV6AcmPanelInspector({
         id="material"
         title="Material și finisaj"
         open={openSections.material}
-        onToggle={() => toggle("material")}
+        onToggle={() => requestSectionToggle("material")}
       >
         <p className="text-[11px] text-slate-400">
           Grosime ACM: {cfg.acm_thickness_mm ?? "—"} mm ·{" "}
@@ -315,7 +471,7 @@ export default function IntakeV6AcmPanelInspector({
         id="structure"
         title="Structură și montaj"
         open={openSections.structure}
-        onToggle={() => toggle("structure")}
+        onToggle={() => requestSectionToggle("structure")}
       >
         <p className="text-[11px] text-slate-300">
           Cadru interior: {cfg.internal_frame_enabled ? "activ" : "inactiv"}
@@ -325,7 +481,9 @@ export default function IntakeV6AcmPanelInspector({
           geometrie.
         </p>
         {model.mountingRelations.length === 0 ? (
-          <p className="mt-1 text-[11px] text-slate-500">Nicio relație mounts_on / attached_to_structure.</p>
+          <p className="mt-1 text-[11px] text-slate-500">
+            Nicio relație mounts_on / attached_to_structure.
+          </p>
         ) : (
           <ul className="mt-1 space-y-1">
             {model.mountingRelations.map((rel) => (
@@ -341,7 +499,10 @@ export default function IntakeV6AcmPanelInspector({
                   <button
                     type="button"
                     className="rounded border border-emerald-500/30 px-1.5 py-0.5 text-[10px] text-emerald-200"
-                    onClick={() => actions.onConfirmRelation(rel.relation_id)}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() =>
+                      runConfirm({ kind: "confirm_relation", relationId: rel.relation_id })
+                    }
                   >
                     Confirmă
                   </button>
@@ -356,7 +517,7 @@ export default function IntakeV6AcmPanelInspector({
         id="relations"
         title="Relații"
         open={openSections.relations}
-        onToggle={() => toggle("relations")}
+        onToggle={() => requestSectionToggle("relations")}
       >
         <p className="text-[10px] font-semibold uppercase text-slate-500">Geometrice</p>
         <ul className="mt-1 space-y-1 text-[11px] text-slate-300">
@@ -383,7 +544,7 @@ export default function IntakeV6AcmPanelInspector({
         id="technical"
         title="Detalii tehnice"
         open={openSections.technical}
-        onToggle={() => toggle("technical")}
+        onToggle={() => requestSectionToggle("technical")}
       >
         <pre
           className="overflow-x-auto whitespace-pre-wrap font-mono text-[10px] text-slate-500"
@@ -413,4 +574,6 @@ export default function IntakeV6AcmPanelInspector({
       </Section>
     </section>
   );
-}
+});
+
+export default IntakeV6AcmPanelInspector;

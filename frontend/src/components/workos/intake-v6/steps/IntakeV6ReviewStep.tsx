@@ -220,6 +220,10 @@ import IntakeV6LiveCalculationSummary from "../IntakeV6LiveCalculationSummary";
 import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
 import IntakeV6AcmPanelConfigRegion from "../acm-panel/IntakeV6AcmPanelConfigRegion";
 import IntakeV6AcmPanelFundalSummary from "../acm-panel/IntakeV6AcmPanelFundalSummary";
+import {
+  canContinueAfterAcmPanelFlush,
+  useAcmPanelDraftFlushBridge,
+} from "../acm-panel/AcmPanelDraftFlushContext";
 import { buildAcmPanelUiReadModel } from "@/lib/intakeV6/acmPanel/uiReadModel";
 import { useIntakeV6ProductComponentSelection } from "@/lib/intakeV6/useIntakeV6ProductComponentSelection";
 import { getProductDefinitionPreview, ProductDefinitionPreviewNotFoundError, type ProductDefinitionPreview } from "@/api/productDefinitionPreview";
@@ -2149,19 +2153,33 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     state.analyzerReport,
   ]);
 
+  const { flushAcmPanelDrafts } = useAcmPanelDraftFlushBridge();
+
   useEffect(() => {
     setHandlers({
       onJumpToPending: handleJumpToPending,
       onJumpToLiveCalc: handleJumpToLiveCalc,
-      onJumpToLayers: () => trySetStep("layers"),
-      onJumpToConfirm: () => trySetStep("confirm"),
+      onJumpToLayers: () => {
+        if (!canContinueAfterAcmPanelFlush(flushAcmPanelDrafts())) return;
+        trySetStep("layers");
+      },
+      onJumpToConfirm: () => {
+        if (!canContinueAfterAcmPanelFlush(flushAcmPanelDrafts())) return;
+        trySetStep("confirm");
+      },
     });
     return () =>
       setHandlers({
         onJumpToPending: undefined,
         onJumpToLiveCalc: undefined,
       });
-  }, [setHandlers, trySetStep, handleJumpToPending, handleJumpToLiveCalc]);
+  }, [
+    setHandlers,
+    trySetStep,
+    handleJumpToPending,
+    handleJumpToLiveCalc,
+    flushAcmPanelDrafts,
+  ]);
 
   return (
     <section data-testid="intake-v6-step-review">
