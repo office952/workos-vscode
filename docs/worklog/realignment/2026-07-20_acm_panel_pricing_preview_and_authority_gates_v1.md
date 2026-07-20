@@ -4,7 +4,10 @@
 |-------|--------|
 | Date | 2026-07-20 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
-| HEAD before | `e9a502f` (docs after A+B `f2adf6b`) |
+| HEAD before | `e9a502fb1e26f6cd85b65f3da12c2ad2076d8ace` |
+| Feature commit | `ab514f32d54af219787bfb4d049242cecfa0c8b1` (`ab514f3`) |
+| Docs commit | `446fce38f87ba1823676822a52ec373ca141620a` (`446fce3`) |
+| HEAD after | `446fce3` |
 | Plan | `docs/plans/2026-07-20_WORKOS_ACM_PANEL_PRICING_PREVIEW_AND_AUTHORITY_GATES_V1.md` |
 | Fixture | `IV6-DB2F86B7` / `a7b0162b-dc91-467f-aa24-c1279fb3a073` |
 | Verdict | **PASS** (provisional preview + authority gates; no final/Offer/Exec) |
