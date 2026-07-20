@@ -20,6 +20,7 @@ import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
 import { TemplateLifecycleReadinessPanel } from "./TemplateLifecycleReadinessPanel";
 import { ProductE2EReadinessPanel } from "./ProductE2EReadinessPanel";
 import { ProductTemplatePublicationPanel } from "./ProductTemplatePublicationPanel";
+import { ArtworkAnalysisReviewPanel } from "./ArtworkAnalysisReviewPanel";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -521,6 +522,7 @@ export function ProductSystemTemplateDetailPanel({
             <>
               <ProductTemplatePublicationPanel templateCode={template.template_code} />
               <ProductE2EReadinessPanel templateCode={template.template_code} />
+              <ArtworkAnalysisReviewPanel />
             </>
           ) : null}
         </div>
