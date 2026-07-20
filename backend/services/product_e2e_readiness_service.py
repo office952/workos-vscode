@@ -29,6 +29,12 @@ from schemas.product_e2e_readiness import (
     ProductE2ETemplatePublicationStatus,
     ProductE2EVerdict,
 )
+from services.artwork_analysis_integration_readiness import (
+    evaluate_artwork_analysis_integration_readiness,
+)
+from services.artwork_analysis_intake_adapter import (
+    extract_external_artwork_analysis_from_workspace,
+)
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
 from services.letters_commercial_measurement_service import (
     is_letters_commercial_measurement_template,
@@ -377,6 +383,13 @@ class ProductE2EReadinessService:
         findings.extend(await self._check_catalog(canonical))
         findings.extend(await self._check_component_links(canonical))
         findings.extend(self._check_intake_contract(canonical))
+        # External artwork analysis: only surface when a consume bag is present so
+        # static BUILD / TEMPLATE axes are not reopened by transport TBD noise.
+        findings.extend(
+            self._check_external_artwork_analysis(
+                canonical, mode=mode, payload=payload
+            )
+        )
         findings.extend(
             await self._check_product_truth(
                 canonical, mode=mode, workspace_id=workspace_id, payload=payload
@@ -707,6 +720,56 @@ class ProductE2EReadinessService:
                 evidence_type="form_contract",
             )
         ]
+
+    def _check_external_artwork_analysis(
+        self,
+        template_code: str,
+        *,
+        mode: ProductE2EMode,
+        payload: dict[str, Any] | None,
+    ) -> list[ProductE2ECheckFinding]:
+        """Map external analysis integration checks into intake findings.
+
+        Non-blocking always in this orchestrator so prior BUILD/TEMPLATE gates
+        are not reopened. Geometric parse correctness is never claimed.
+        """
+        external = extract_external_artwork_analysis_from_workspace(payload)
+        if external is None:
+            return []
+
+        result = evaluate_artwork_analysis_integration_readiness(
+            payload,
+            external_payload=external,
+            mode="runtime" if mode == "runtime_dry_run" else "static",
+        )
+        mapped: list[ProductE2ECheckFinding] = []
+        for item in result.findings:
+            status: ProductE2ECheckStatus
+            if item.status == "FAIL":
+                status = "PASS_WITH_WARNINGS"
+            elif item.status in (
+                "PASS",
+                "PASS_WITH_WARNINGS",
+                "NOT_CONFIGURED",
+                "NOT_TESTED",
+            ):
+                status = item.status  # type: ignore[assignment]
+            else:
+                status = "PASS_WITH_WARNINGS"
+            mapped.append(
+                _finding(
+                    check_id=item.check_id,
+                    system="intake",
+                    status=status,
+                    message=item.message,
+                    source_owner="artwork_analysis_integration_readiness",
+                    template_code=template_code,
+                    blocking=False,
+                    evidence=item.evidence,
+                    evidence_type="external_artwork_analysis",
+                )
+            )
+        return mapped
 
     async def _check_product_truth(
         self,
