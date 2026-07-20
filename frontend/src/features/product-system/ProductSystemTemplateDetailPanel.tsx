@@ -18,6 +18,8 @@ import type {
 import { LegacyReplacementReadinessPanel } from "./LegacyReplacementReadinessPanel";
 import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
 import { TemplateLifecycleReadinessPanel } from "./TemplateLifecycleReadinessPanel";
+import { ProductE2EReadinessPanel } from "./ProductE2EReadinessPanel";
+import { ProductTemplatePublicationPanel } from "./ProductTemplatePublicationPanel";
 
 const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -513,7 +515,15 @@ export function ProductSystemTemplateDetailPanel({
       ) : null}
 
       {section === "lifecycle" ? (
-        <TemplateLifecycleReadinessPanel templateCode={template.template_code} />
+        <div className="space-y-4" data-testid="product-system-template-detail-lifecycle">
+          <TemplateLifecycleReadinessPanel templateCode={template.template_code} />
+          {isProduct ? (
+            <>
+              <ProductTemplatePublicationPanel templateCode={template.template_code} />
+              <ProductE2EReadinessPanel templateCode={template.template_code} />
+            </>
+          ) : null}
+        </div>
       ) : null}
 
       {section === "fields" && !isProduct ? (
