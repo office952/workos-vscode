@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useMemo, useRef, lazy, Suspense } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   productTemplatesApi,
   type ProductTemplateEntity,
@@ -1234,9 +1234,15 @@ function DossierEditor({
         <p className="text-[10px] text-slate-500 px-1">
           Dossier = documentație + dovezi review + punți aprobate. Publicarea șablonului și E2E Readiness rămân pe Product Template.
         </p>
-        <ProductTemplatePublicationPanel templateCode={dossier.template_code} />
-        <ComponentContractUsedByPanel templateCode={dossier.template_code} />
-        <ProductE2EReadinessPanel templateCode={dossier.template_code} />
+        <div id="dossier-rail-publication" data-testid="dossier-rail-publication">
+          <ProductTemplatePublicationPanel templateCode={dossier.template_code} />
+        </div>
+        <div id="dossier-rail-contracts" data-testid="dossier-rail-contracts">
+          <ComponentContractUsedByPanel templateCode={dossier.template_code} />
+        </div>
+        <div id="dossier-rail-e2e" data-testid="dossier-rail-e2e">
+          <ProductE2EReadinessPanel templateCode={dossier.template_code} />
+        </div>
       </div>
 
       <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
@@ -1680,7 +1686,7 @@ function DossierEditor({
         </div>
       </div>
 
-      {/* Sticky footer — save / validate / E2E / publish (template authority, not dossier SoT) */}
+      {/* Sticky footer — Save → Validate → E2E Check → Publish (template authority, not dossier SoT) */}
       <div
         className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-violet-800/40 bg-[#0B1220]/95 px-4 py-3 backdrop-blur"
         data-testid="blueprint-dossier-sticky-publish-footer"
@@ -1692,7 +1698,7 @@ function DossierEditor({
           {" · "}
           dossier status {dossier.status} (documentație)
           {" · "}
-          publicare = lifecycle șablon + E2E Readiness
+          Save≠Validate≠E2E≠Publish
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
@@ -1713,7 +1719,40 @@ function DossierEditor({
             }`}
             data-testid="blueprint-dossier-footer-save"
           >
-            Salvează dossier
+            Salvează
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-contracts");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-slate-600 px-3 py-1.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
+            data-testid="blueprint-dossier-footer-validate"
+          >
+            Validate
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-e2e");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-cyan-800/50 bg-cyan-950/30 px-3 py-1.5 text-[11px] font-semibold text-cyan-100 hover:bg-cyan-900/30"
+            data-testid="blueprint-dossier-footer-e2e"
+          >
+            E2E Check
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("dossier-rail-publication");
+              el?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="rounded-lg border border-violet-700/50 bg-violet-950/40 px-3 py-1.5 text-[11px] font-semibold text-violet-100 hover:bg-violet-900/40"
+            data-testid="blueprint-dossier-footer-publish"
+          >
+            Publish
           </button>
         </div>
       </div>
@@ -1809,6 +1848,8 @@ function BoundaryWarning() {
 // MAIN PAGE
 // ============================================================
 export default function BlueprintDossierStudio() {
+  const [searchParams] = useSearchParams();
+  const deepLinkTemplate = (searchParams.get("template") || "").trim();
   const [dossiers, setDossiers] = useState<BlueprintDossierEntity[]>([]);
   const [templates, setTemplates] = useState<ProductTemplateEntity[]>([]);
   const [moduleLinks, setModuleLinks] = useState<ProductTemplateModuleLinkEntity[]>([]);
@@ -1980,17 +2021,21 @@ export default function BlueprintDossierStudio() {
 
   useEffect(() => {
     if (loading || templates.length === 0 || initialFocusDone.current) return;
+    const fromQuery = deepLinkTemplate
+      ? templates.find((t) => t.template_code === deepLinkTemplate) ?? null
+      : null;
     const preferred =
+      fromQuery ??
       templates.find((t) => isOwnerValidActiveTemplate(t.template_code)) ??
       activeTemplates[0] ??
       null;
     if (!preferred) return;
     setSelectedTemplateId(preferred.id);
-    setListTab("active");
+    setListTab(isActiveTemplateForQuote(preferred) ? "active" : "archived");
     const dossier = dossierByTemplateId.get(preferred.id);
     if (dossier) setSelectedDossierId(dossier.id);
     initialFocusDone.current = true;
-  }, [loading, templates, activeTemplates, dossierByTemplateId]);
+  }, [loading, templates, activeTemplates, dossierByTemplateId, deepLinkTemplate]);
 
   useEffect(() => {
     let cancelled = false;
