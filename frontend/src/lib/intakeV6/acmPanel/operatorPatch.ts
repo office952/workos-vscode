@@ -1,6 +1,9 @@
 /**
  * Single write-path for AcmPanel operator configuration.
- * Syncs top-level instance + selection/mounting embeds; never auto-confirms composition.
+ * Canonical identity: finish_setup.acm_panel_instance.
+ * Nested selection/mounting copies are one-way compatibility projections only —
+ * not independent writers. Backend re-projects nests from canonical on coalesce.
+ * Never auto-confirms composition.
  */
 
 import {

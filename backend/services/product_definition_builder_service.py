@@ -1034,6 +1034,30 @@ class ProductDefinitionBuilderService:
         if form_contract is None:
             return None
 
+        # Prefer pinned typed bags from ConfirmJobProductTruth when revision is non-stale.
+        truth_status = "draft"
+        truth_revision = None
+        truth_content_hash = None
+        try:
+            from services.product_truth_job_confirm_service import (
+                apply_pinned_bags_onto_payload,
+                commercial_freeze_allowed,
+                get_job_revision_metadata,
+            )
+
+            job_meta = get_job_revision_metadata(payload)
+            if job_meta and commercial_freeze_allowed(payload):
+                payload = apply_pinned_bags_onto_payload(payload)
+                truth_status = "confirmed"
+                truth_revision = job_meta.get("revision")
+                truth_content_hash = job_meta.get("content_hash")
+            elif job_meta and str(job_meta.get("confirmation_state") or "") == "stale_after_edit":
+                truth_status = "stale_after_edit"
+                truth_revision = job_meta.get("revision")
+                truth_content_hash = job_meta.get("content_hash")
+        except Exception:
+            pass
+
         finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
         quote_geometry = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
         svg_source = payload.get("svg_source") if isinstance(payload.get("svg_source"), dict) else {}
@@ -1243,11 +1267,22 @@ class ProductDefinitionBuilderService:
                     detail=f"workspace_id={workspace_id} read_only=true",
                 )
             )
+        provenance.append(
+            ProductDefinitionProvenanceEntry(
+                key="product_truth_job_revision",
+                source="product_truth.confirmed_snapshot_v1",
+                detail=(
+                    f"truth_status={truth_status} revision={truth_revision} "
+                    f"content_hash={truth_content_hash} catalog_write=false"
+                ),
+            )
+        )
 
         notes = [
             "Read-only ProductDefinition preview — Step 6. No pricing, quote, order, or task generation.",
             "Template-level preview marks missing required fields when workspace payload is absent.",
             "Active-scope readiness validates selected modules only (offer_scope component_subset).",
+            f"Product Truth job status: {truth_status}.",
         ]
 
         return ProductDefinitionPreview(

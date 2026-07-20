@@ -6,6 +6,7 @@ SUPPORT_CONTOUR is an adapter role for the letters-on-support consumer — not u
 
 from __future__ import annotations
 
+import copy
 from typing import Any, Mapping
 
 
@@ -70,6 +71,33 @@ def _merge_production_geometry_preserve(
     return finish_d
 
 
+def project_acm_mirrors_from_canonical(finish_d: dict[str, Any]) -> dict[str, Any]:
+    """One-way: canonical finish_setup.acm_panel_instance → nested transport mirrors.
+
+    Nested mirrors must not be independently authored after this projection.
+    """
+    canonical = finish_d.get("acm_panel_instance")
+    if not isinstance(canonical, dict) or canonical.get("schema") != "acm_panel_component_instance_v1":
+        return finish_d
+    pinned = copy.deepcopy(canonical)
+
+    sel = finish_d.get("svg_support_selection")
+    if isinstance(sel, dict):
+        sel = dict(sel)
+        sel["acm_panel_instance"] = copy.deepcopy(pinned)
+        finish_d["svg_support_selection"] = sel
+
+    ms = finish_d.get("mounting_solution")
+    if isinstance(ms, dict):
+        ms = dict(ms)
+        cfg = ms.get("configuration")
+        cfg = dict(cfg) if isinstance(cfg, dict) else {}
+        cfg["acm_panel_instance"] = copy.deepcopy(pinned)
+        ms["configuration"] = cfg
+        finish_d["mounting_solution"] = ms
+    return finish_d
+
+
 def coalesce_acm_panel_domain_for_finish(
     incoming_finish: Mapping[str, Any] | None,
     existing_finish: Mapping[str, Any] | None,
@@ -82,6 +110,9 @@ def coalesce_acm_panel_domain_for_finish(
     - clear: wipe ACM shell (even if existing)
     - preserve / omit: keep existing SUPPORT/selection/mounting/instance when
       incoming bindings-only would drop them and support role still confirmed
+
+    Canonical identity path: finish_setup.acm_panel_instance. Nested copies are
+    one-way projections only (see project_acm_mirrors_from_canonical).
     """
     finish_d = dict(incoming_finish or {})
     existing = _as_dict(existing_finish)
@@ -122,7 +153,7 @@ def coalesce_acm_panel_domain_for_finish(
             finish_d["acm_panel_instance"] = existing.get("acm_panel_instance")
         # Preserve production_geometry binding when FE upsert omits it (inspector patches).
         finish_d = _merge_production_geometry_preserve(finish_d, existing)
-        return finish_d
+        return project_acm_mirrors_from_canonical(finish_d)
 
     # preserve
     support_still_wanted = _has_support_role_confirmed(layer_role_setup)
@@ -163,4 +194,4 @@ def coalesce_acm_panel_domain_for_finish(
     if finish_d.get("acm_panel_instance") in (None, {}) and existing.get("acm_panel_instance"):
         finish_d["acm_panel_instance"] = existing.get("acm_panel_instance")
 
-    return finish_d
+    return project_acm_mirrors_from_canonical(finish_d)

@@ -491,6 +491,17 @@ async def build_workspace_composed_aggregate(
     ws_payload, ws_error = await pd_builder._load_workspace_payload(workspace_id, pd.template_code)
     if ws_error is None and ws_payload:
         workspace_payload = ws_payload
+        # Prefer pinned bags from ConfirmJobProductTruth when freeze-allowed.
+        try:
+            from services.product_truth_job_confirm_service import (
+                apply_pinned_bags_onto_payload,
+                commercial_freeze_allowed,
+            )
+
+            if commercial_freeze_allowed(workspace_payload):
+                workspace_payload = apply_pinned_bags_onto_payload(workspace_payload)
+        except Exception:
+            pass
 
     aggregate_svc = ProductAggregateService(db)
     letters_aggregate = await aggregate_svc.build(template_code)
