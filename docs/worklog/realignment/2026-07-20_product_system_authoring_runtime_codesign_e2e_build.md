@@ -453,3 +453,42 @@ None.
 | `f42172c` | feat(product-system-ui): System Link Check table |
 | `c05d57e` | test(product-system): VL real product configuration |
 | `7de64bb` | docs(qa): real product configuration report + worklog |
+
+---
+
+## PRODUCT SYSTEM FULL-PAGE UI TRUTH AUDIT (READ-ONLY STOP)
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| HEAD | `033f28fee016752622debba4f5a1817303d9a1ef` |
+| Mode | READ-ONLY ó no code/Figma/data changes; **no commit** |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_FULL_PAGE_UI_TRUTH_AUDIT.md` |
+| Screenshots | `docs/qa/product-system-authoring-runtime-codesign-e2e/ui-truth-audit/` (22 PNG) |
+| Verdict | **STOP** ó 10s clarity FAIL; Planificat KEEP; darkness = WorkOS theme + nested surfaces; publication honesty gap + FE:3000?BE:8001 404 on readiness/publication |
+| Planificat | KEEP (shell roadmap badge ? product status); optional RENAME Neopera?ional / Œn cur‚nd |
+| Direction scores | clarity 38 ∑ visual align 55 ∑ action 32 ∑ status 28 ∑ comfort 40 |
+
+Owner STOP before further PS UI implementation. Accepted prior VL config / Aluminiu inactive / CPP?EP NOT_TESTED unchanged.
+
+
+---
+
+## PRODUCT SYSTEM P0 SEMANTIC AND VISUAL REALIGNMENT
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-20 |
+| Kickoff HEAD | `033f28fee016752622debba4f5a1817303d9a1ef` |
+| Shared map | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SHARED_SEMANTIC_MAP.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/PRODUCT_SYSTEM_P0_SEMANTIC_VISUAL_REALIGNMENT_FINAL_REPORT.md` |
+| Planificat | **RENAME+MOVE+DEMOTE** ‚Üí ‚Äû√én dezvoltare‚Äù secondary nav cluster (sections non-functional; badge kept demoted) |
+| PublicƒÉ fail-closed | FE `resolvePublishUiGate` ‚Äî disabled when readiness BLOCKED even if publication GET `publish_allowed=true` |
+| Proxy | Canonical BACKEND_PORT **8000**; proof FE:3021 ‚Üí publication/readiness 200 |
+| Direction scores | clarity 72 ¬∑ visual 68 ¬∑ action 78 ¬∑ status 74 ¬∑ comfort 62 (was 38/55/32/28/40) |
+| 10s | **PASS** |
+| Aluminiu | Still BLOCKED |
+| Stop | None |
+| Tests | vitest 13 passed; publication pytest 5 passed |
+| After screenshots | `ui-truth-audit/after/` (5 PNG) |
+

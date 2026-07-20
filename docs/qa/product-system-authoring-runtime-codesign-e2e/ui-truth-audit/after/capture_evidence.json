@@ -1,0 +1,32 @@
+{
+  "fe": "http://127.0.0.1:3021",
+  "captured_at": "2026-07-20T21:01:55.295Z",
+  "shots": [
+    {
+      "name": "01_shell_nav_in_dezvoltare",
+      "note": "Shell: Products primary + În dezvoltare cluster",
+      "size": 127442
+    },
+    {
+      "name": "02_section_in_dezvoltare",
+      "note": "Non-operational section badge renamed",
+      "size": 71068
+    },
+    {
+      "name": "03_vl_header_next_action",
+      "note": "VL header lifecycle/publication + next-action strip",
+      "size": 161336
+    },
+    {
+      "name": "04_vl_publication_fail_closed",
+      "note": "Publică disabled + primary blocker",
+      "size": 162330
+    },
+    {
+      "name": "05_vl_readiness_blocked",
+      "note": "Pregătire E2E BLOCKED",
+      "size": 180777
+    }
+  ],
+  "notes": []
+}
