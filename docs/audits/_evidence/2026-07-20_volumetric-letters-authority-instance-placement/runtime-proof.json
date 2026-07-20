@@ -1,0 +1,430 @@
+{
+  "schema": "volumetric_letters_authority_runtime_proof_v1",
+  "db": "C:\\w\\psiso\\backend\\dev.db",
+  "fixtures": [
+    {
+      "workspace_code": "IV6-195E885C",
+      "template": "TPL-VOLUMETRIC-LETTERS_v2",
+      "route": "/intake-v6/IV6-195E885C",
+      "before": {
+        "letter_group_finishes_count": 4,
+        "letter_group_instances_count": 0,
+        "group_keys": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "instance_ids": [],
+        "illuminated": true,
+        "acm_quantity_source": null
+      },
+      "after_coalesce_dry": {
+        "letter_group_instances_count": 4,
+        "group_keys": [
+          "pseudo:maria",
+          "pseudo:soare",
+          "pseudo:ana",
+          "pseudo:gradinita"
+        ],
+        "instance_ids": [
+          "136d8c58-aef4-4bbc-8ec0-45aa31dabc54",
+          "9d5efad4-0a1d-49ca-97db-3c0eadcaf7a1",
+          "550183f1-3d2e-4e9c-90df-54fb7958d0ec",
+          "2e327b11-2868-4e7f-ba47-e62b04869101"
+        ],
+        "legacy_projection_count": 4,
+        "placements": [
+          {
+            "source_instance_id": "136d8c58-aef4-4bbc-8ec0-45aa31dabc54",
+            "target_kind": "none",
+            "target_instance_id": null,
+            "target_face": null
+          },
+          {
+            "source_instance_id": "9d5efad4-0a1d-49ca-97db-3c0eadcaf7a1",
+            "target_kind": "none",
+            "target_instance_id": null,
+            "target_face": null
+          },
+          {
+            "source_instance_id": "550183f1-3d2e-4e9c-90df-54fb7958d0ec",
+            "target_kind": "none",
+            "target_instance_id": null,
+            "target_face": null
+          },
+          {
+            "source_instance_id": "2e327b11-2868-4e7f-ba47-e62b04869101",
+            "target_kind": "none",
+            "target_instance_id": null,
+            "target_face": null
+          }
+        ],
+        "uuid_stable_reload": true,
+        "uuid_stable_omit": true
+      },
+      "quantities": {
+        "schema": "volumetric_letters_commercial_quantities_v1",
+        "source": "letter_group_instance_authority",
+        "letter_face_area_m2": 1.263762,
+        "letter_perimeter_m": 20.9727,
+        "letter_return_perimeter_ml": 25.0188,
+        "cnc_cutting_perimeter_ml": 25.0188,
+        "led_perimeter_ml": 20.9727,
+        "led_module_count": 84,
+        "instance_count": 4,
+        "cost_engine_legacy": true,
+        "notes": [
+          "CPP consumes outer letter_perimeter_m / letter_face_area_m2 via this resolver",
+          "CostEngine may still read quote_geometry CNC/return keys — not a V6 override"
+        ]
+      },
+      "cpp_measurement_dry_run": {
+        "measurement_count": 17,
+        "resolved_lines": [
+          {
+            "line_code": "debitare_fata",
+            "quantity": 20.9727,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "modelare_cant_aluminiu",
+            "quantity": 20.9727,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "debitare_spate",
+            "quantity": 1.263762,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sistem_led_module",
+            "quantity": 84.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sursa_led",
+            "quantity": 1.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "finisaje_colantare_vopsire",
+            "quantity": 1.263762,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj",
+            "quantity": 3.0523,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj_forex",
+            "quantity": 3.0523,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "montaj",
+            "quantity": 1.0,
+            "unit": "locatie",
+            "resolution_status": "resolved"
+          }
+        ],
+        "qty_bundle_source": "letter_group_instance_authority"
+      },
+      "acm_panel_unchanged_check": {
+        "had_acm": false,
+        "quantity_source_before": null,
+        "component_instance_id": null,
+        "note": "coalesce_letter does not mutate acm_panel_instance",
+        "acm_still_present": false
+      },
+      "network_writes": {
+        "finish_setup_put": false,
+        "offer": false,
+        "order": false,
+        "execution": false
+      },
+      "gates": {
+        "identity_uuid": true,
+        "no_hash_in_id": true,
+        "one_way_projection": true,
+        "qty_source": true
+      },
+      "workspace_id": "80570a4a-a806-4305-a39c-b34a72092694",
+      "table": "intake_v6_workspaces"
+    },
+    {
+      "workspace_code": "IV6-DB2F86B7",
+      "template": "TPL-VOLUMETRIC-LETTERS_v2",
+      "route": "/intake-v6/IV6-DB2F86B7",
+      "before": {
+        "letter_group_finishes_count": 1,
+        "letter_group_instances_count": 0,
+        "group_keys": [
+          "pseudo:fill-e31e24"
+        ],
+        "instance_ids": [],
+        "illuminated": true,
+        "acm_quantity_source": null
+      },
+      "after_coalesce_dry": {
+        "letter_group_instances_count": 1,
+        "group_keys": [
+          "pseudo:fill-e31e24"
+        ],
+        "instance_ids": [
+          "32c9d672-4149-4f85-9fbb-8a174ffe77d7"
+        ],
+        "legacy_projection_count": 1,
+        "placements": [
+          {
+            "source_instance_id": "32c9d672-4149-4f85-9fbb-8a174ffe77d7",
+            "target_kind": "acm_panel",
+            "target_instance_id": "acm_cc_7af1352f_ff5c35da170d",
+            "target_face": null
+          }
+        ],
+        "uuid_stable_reload": true,
+        "uuid_stable_omit": true
+      },
+      "quantities": {
+        "schema": "volumetric_letters_commercial_quantities_v1",
+        "source": "letter_group_instance_authority",
+        "letter_face_area_m2": 0.344709,
+        "letter_perimeter_m": 6.6456,
+        "letter_return_perimeter_ml": 7.2708,
+        "cnc_cutting_perimeter_ml": 7.2708,
+        "led_perimeter_ml": 6.6456,
+        "led_module_count": 27,
+        "instance_count": 1,
+        "cost_engine_legacy": true,
+        "notes": [
+          "CPP consumes outer letter_perimeter_m / letter_face_area_m2 via this resolver",
+          "CostEngine may still read quote_geometry CNC/return keys — not a V6 override"
+        ]
+      },
+      "cpp_measurement_dry_run": {
+        "measurement_count": 17,
+        "resolved_lines": [
+          {
+            "line_code": "debitare_fata",
+            "quantity": 6.6456,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "modelare_cant_aluminiu",
+            "quantity": 6.6456,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "debitare_spate",
+            "quantity": 0.344709,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sistem_led_module",
+            "quantity": 27.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sursa_led",
+            "quantity": 1.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "finisaje_colantare_vopsire",
+            "quantity": 0.344709,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj",
+            "quantity": 0.7004,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj_forex",
+            "quantity": 0.7004,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "montaj",
+            "quantity": 1.0,
+            "unit": "locatie",
+            "resolution_status": "resolved"
+          }
+        ],
+        "qty_bundle_source": "letter_group_instance_authority"
+      },
+      "acm_panel_unchanged_check": {
+        "had_acm": true,
+        "quantity_source_before": null,
+        "component_instance_id": "acm_cc_7af1352f_ff5c35da170d",
+        "note": "coalesce_letter does not mutate acm_panel_instance",
+        "acm_still_present": true
+      },
+      "network_writes": {
+        "finish_setup_put": false,
+        "offer": false,
+        "order": false,
+        "execution": false
+      },
+      "gates": {
+        "identity_uuid": true,
+        "no_hash_in_id": true,
+        "one_way_projection": true,
+        "qty_source": true
+      },
+      "workspace_id": "a7b0162b-dc91-467f-aa24-c1279fb3a073",
+      "table": "intake_v6_workspaces"
+    },
+    {
+      "workspace_code": "IV6-13D39D32",
+      "template": "TPL-VOLUMETRIC-LETTERS_v2",
+      "route": "/intake-v6/IV6-13D39D32",
+      "before": {
+        "letter_group_finishes_count": 1,
+        "letter_group_instances_count": 0,
+        "group_keys": [
+          "pseudo:fill-e31e24"
+        ],
+        "instance_ids": [],
+        "illuminated": true,
+        "acm_quantity_source": null
+      },
+      "after_coalesce_dry": {
+        "letter_group_instances_count": 1,
+        "group_keys": [
+          "pseudo:fill-e31e24"
+        ],
+        "instance_ids": [
+          "11f5586c-e2bb-4c1f-bfb6-f159c8331d4c"
+        ],
+        "legacy_projection_count": 1,
+        "placements": [
+          {
+            "source_instance_id": "11f5586c-e2bb-4c1f-bfb6-f159c8331d4c",
+            "target_kind": "acm_panel",
+            "target_instance_id": "acm_qa_double_fold_2000x300",
+            "target_face": null
+          }
+        ],
+        "uuid_stable_reload": true,
+        "uuid_stable_omit": true
+      },
+      "quantities": {
+        "schema": "volumetric_letters_commercial_quantities_v1",
+        "source": "letter_group_instance_authority",
+        "letter_face_area_m2": 0.344709,
+        "letter_perimeter_m": 6.6456,
+        "letter_return_perimeter_ml": 7.2708,
+        "cnc_cutting_perimeter_ml": 7.2708,
+        "led_perimeter_ml": 6.6456,
+        "led_module_count": 27,
+        "instance_count": 1,
+        "cost_engine_legacy": true,
+        "notes": [
+          "CPP consumes outer letter_perimeter_m / letter_face_area_m2 via this resolver",
+          "CostEngine may still read quote_geometry CNC/return keys — not a V6 override"
+        ]
+      },
+      "cpp_measurement_dry_run": {
+        "measurement_count": 17,
+        "resolved_lines": [
+          {
+            "line_code": "debitare_fata",
+            "quantity": 6.6456,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "modelare_cant_aluminiu",
+            "quantity": 6.6456,
+            "unit": "ml",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "debitare_spate",
+            "quantity": 0.344709,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sistem_led_module",
+            "quantity": 27.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sursa_led",
+            "quantity": 1.0,
+            "unit": "buc",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "finisaje_colantare_vopsire",
+            "quantity": 0.344709,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj",
+            "quantity": 0.7004,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "sablon_montaj_forex",
+            "quantity": 0.7004,
+            "unit": "m2",
+            "resolution_status": "resolved"
+          },
+          {
+            "line_code": "montaj",
+            "quantity": 1.0,
+            "unit": "locatie",
+            "resolution_status": "resolved"
+          }
+        ],
+        "qty_bundle_source": "letter_group_instance_authority"
+      },
+      "acm_panel_unchanged_check": {
+        "had_acm": true,
+        "quantity_source_before": null,
+        "component_instance_id": "acm_qa_double_fold_2000x300",
+        "note": "coalesce_letter does not mutate acm_panel_instance",
+        "acm_still_present": true
+      },
+      "network_writes": {
+        "finish_setup_put": false,
+        "offer": false,
+        "order": false,
+        "execution": false
+      },
+      "gates": {
+        "identity_uuid": true,
+        "no_hash_in_id": true,
+        "one_way_projection": true,
+        "qty_source": true
+      },
+      "workspace_id": "a7a74172-ad09-4f93-b0f5-f89fe5b9aad9",
+      "table": "intake_v6_workspaces"
+    }
+  ],
+  "missing": []
+}
