@@ -57,7 +57,13 @@ See `CLOSURE_ALLOWLIST.md` — all 20 kickoff items confirmed; touch rules docum
 
 ## 6. New closure commits
 
-See worklog FINAL CLOSURE GATE — commit table (filled after git commit).
+| SHA | Message |
+|-----|---------|
+| `2ed6b01` | docs(product-system): FINAL CLOSURE GATE evidence and dual verdicts |
+| `b8a4c0a` | feat(product-system): split BUILD closure from template publication readiness |
+| `670a4e2` | test(product-truth): harden confirm idempotency stale and freeze gate cases |
+
+Post-closure HEAD: `670a4e2` (docs SHA patch may follow). No push/PR.
 
 ## 7. HTTP confirm proof
 

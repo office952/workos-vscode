@@ -101,13 +101,12 @@ Confirm pe DB reală + split BUILD/TEMPLATE + Figma IDs reale = progres serios. 
 
 ### Closure commits
 
-_(filled after commit)_
-
 | SHA | Group |
 |-----|-------|
-| TBD | docs/qa evidence + allowlist + worklog + FINAL_REPORT |
-| TBD | readiness dual-axis + UI honesty banners + tests |
-| TBD | confirm/freeze test additions + proof scripts |
+| `2ed6b01` | docs/qa evidence + allowlist + worklog + FINAL_REPORT + screenshots |
+| `b8a4c0a` | readiness dual-axis + UI honesty banners + readiness tests |
+| `670a4e2` | confirm/freeze test hardening (allowlist) |
+| HEAD | `670a4e2` |
 
 ### Stop conditions
 
