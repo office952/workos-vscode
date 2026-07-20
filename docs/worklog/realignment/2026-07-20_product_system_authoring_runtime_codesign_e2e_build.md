@@ -248,4 +248,5 @@ None. Transport remains TBD (documented). No major schema migration. No aluminiu
 | `7e2a1a4` | docs: External Artwork Analysis Ownership boundary |
 | `66cf0ef` | feat(schemas): artwork_analysis_contract_v1 + adapter |
 | `99d9442` | feat(ui): ArtworkAnalysisReviewPanel stub |
-| _(docs tip)_ | docs(qa)/worklog + allowlist + report |
+| `9da0244` | docs(qa)/worklog + allowlist + report |
+| `1864d92` | docs(qa): note boundary tip HEAD |

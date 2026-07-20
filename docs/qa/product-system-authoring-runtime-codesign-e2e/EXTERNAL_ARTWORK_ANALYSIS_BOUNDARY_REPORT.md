@@ -124,7 +124,8 @@ npx --yes pnpm@8.10.0 exec vitest run src/lib/artworkAnalysis/artworkAnalysisCon
 | `7e2a1a4` | docs: External Artwork Analysis Ownership boundary |
 | `66cf0ef` | feat(schemas): artwork_analysis_contract_v1 + adapter validation |
 | `99d9442` | feat(ui): external artwork analysis review stub |
-| _(this)_ | docs(qa)/worklog + allowlist + report |
+| `9da0244` | docs(qa)/worklog + allowlist + report |
+| `1864d92` | docs(qa): note boundary tip HEAD (pre-fixup) |
 
 ## 17. Stop conditions
 
@@ -187,8 +188,8 @@ vitest run artworkAnalysisContractV1.test.ts ArtworkAnalysisReviewPanel.test.tsx
 |-------|--------|
 | Verdict | PASS_WITH_WARNINGS |
 | Kickoff HEAD | `db64b46` |
-| Tip HEAD | `9da0244` |
-| Commit SHAs | `7e2a1a4`, `66cf0ef`, `99d9442`, `9da0244` |
+| Tip HEAD | `1864d92` |
+| Commit SHAs | `7e2a1a4`, `66cf0ef`, `99d9442`, `9da0244`, `1864d92` |
 | Doc paths | ownership + worklog + this report + allowlist |
 | Inventory | §12 |
 | Stop conditions | None hard-stop; transport TBD |
