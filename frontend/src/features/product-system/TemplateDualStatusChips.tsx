@@ -1,5 +1,6 @@
 /**
  * Dual status: BUILD/DB active vs TEMPLATE publication — never conflated.
+ * Compact admin chips: lifecycle readable first; codes stay secondary.
  */
 
 import { useEffect, useState } from "react";
@@ -23,6 +24,21 @@ function chipClass(kind: "ok" | "warn" | "blocked" | "neutral"): string {
       return _exhaustive;
     }
   }
+}
+
+function publicationDisplay(pub: ProductTemplatePublicationState | null): {
+  label: string;
+  kind: "ok" | "warn" | "blocked" | "neutral";
+} {
+  if (!pub) return { label: "—", kind: "neutral" };
+  const status = pub.effective_status ?? pub.publication_status ?? "—";
+  if (!pub.publish_allowed) {
+    return { label: `${status} · blocată`, kind: "blocked" };
+  }
+  if (pub.publication_status === "PUBLISHED") {
+    return { label: status, kind: "ok" };
+  }
+  return { label: status, kind: "warn" };
 }
 
 export function TemplateDualStatusChips({
@@ -50,21 +66,14 @@ export function TemplateDualStatusChips({
     };
   }, [templateCode]);
 
-  const publicationLabel = pub?.effective_status ?? pub?.publication_status ?? "—";
-  const publishBlocked = pub ? !pub.publish_allowed : false;
-  const publicationKind: "ok" | "warn" | "blocked" | "neutral" = !pub
-    ? "neutral"
-    : publishBlocked
-      ? "blocked"
-      : pub.publication_status === "PUBLISHED"
-        ? "ok"
-        : "warn";
+  const publication = publicationDisplay(pub);
 
   return (
     <div
       className="flex flex-wrap items-center gap-1.5"
       data-testid="template-dual-status-chips"
       title="active ≠ published ≠ offerable ≠ E2E-ready"
+      aria-label="Status build și publicare șablon"
     >
       <span
         data-testid="template-dual-status-build"
@@ -72,23 +81,22 @@ export function TemplateDualStatusChips({
           dbActive ? "ok" : "neutral",
         )}`}
       >
-        BUILD {dbActive ? "ACTIVE" : "INACTIVE"}
+        Build {dbActive ? "activ" : "inactiv"}
       </span>
       <span
         data-testid="template-dual-status-publication"
         className={`rounded-md border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${chipClass(
-          publicationKind,
+          publication.kind,
         )}`}
       >
-        TEMPLATE {publicationLabel}
-        {publishBlocked ? " · BLOCKED" : ""}
+        Publicare {publication.label}
       </span>
       {pub?.active_is_not_published ? (
         <span
           data-testid="template-dual-status-active-ne-published"
           className="rounded-md border border-slate-700/60 px-2 py-0.5 text-[10px] text-slate-400"
         >
-          active ≠ published
+          activ ≠ publicat
         </span>
       ) : null}
       {error ? (

@@ -25,20 +25,36 @@ import { ComponentContractUsedByPanel } from "./ComponentContractUsedByPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
+import { humanTemplateName } from "./productSystemAdminDisplay";
 
-const PRODUCT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
+/** Primary authoring flow — identity → composition → dossier → readiness → publication → preview. */
+const PRODUCT_PRIMARY_SECTIONS: Array<{
+  id: UnifiedCatalogDetailSection;
+  label: string;
+  testId: string;
+}> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
-  { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
   { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
+  { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
+  { id: "readiness", label: "Readiness", testId: "product-system-template-detail-tab-readiness" },
+  { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
+  { id: "runtime-preview", label: "Runtime Preview", testId: "product-system-template-detail-tab-runtime-preview" },
+];
+
+/** Secondary / diagnostic — available, not dominant. */
+const PRODUCT_DIAGNOSTIC_SECTIONS: Array<{
+  id: UnifiedCatalogDetailSection;
+  label: string;
+  testId: string;
+}> = [
+  { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
   { id: "relationships", label: "Relații", testId: "product-system-template-detail-tab-relationships" },
   { id: "materials", label: "Materiale", testId: "product-system-template-detail-tab-materials" },
-  { id: "dossier", label: "Dossier", testId: "product-system-template-detail-tab-dossier" },
-  { id: "runtime-preview", label: "Runtime Preview", testId: "product-system-template-detail-tab-runtime-preview" },
-  { id: "readiness", label: "E2E Readiness", testId: "product-system-template-detail-tab-readiness" },
-  { id: "publication", label: "Publication", testId: "product-system-template-detail-tab-publication" },
-  { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
+  { id: "guards", label: "Diagnostic", testId: "product-system-template-detail-tab-guards" },
 ];
+
+const PRODUCT_SECTIONS = [...PRODUCT_PRIMARY_SECTIONS, ...PRODUCT_DIAGNOSTIC_SECTIONS];
 
 const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -278,12 +294,21 @@ export function ProductSystemTemplateDetailPanel({
   const scope = getProductTemplateScopePresentation(availability);
   const modularity = getProductModularityTruth(template.template_code);
 
+  const displayName =
+    template.family_name || humanTemplateName(template.template_code);
+  const primarySections = isProduct ? PRODUCT_PRIMARY_SECTIONS : sections;
+  const diagnosticSections = isProduct ? PRODUCT_DIAGNOSTIC_SECTIONS : [];
+  const showDiagnosticTabs = diagnosticSections.length > 0;
+
   return (
     <div data-testid="product-system-template-detail-panel" className="space-y-4">
-      <div className="flex flex-wrap items-start gap-3 border-b border-slate-800/70 pb-4">
+      <header className="flex flex-wrap items-start gap-3 border-b border-slate-800/70 pb-4">
         <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <p className="text-base font-semibold text-slate-100">{template.family_name || template.template_code}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Șablon produs
+          </p>
+          <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
+            <h2 className="text-lg font-semibold text-slate-100">{displayName}</h2>
             <p className="font-mono text-xs text-slate-500">{template.template_code}</p>
           </div>
           <p
@@ -301,33 +326,77 @@ export function ProductSystemTemplateDetailPanel({
             templateCode={template.template_code}
             dbActive={Boolean(template.active ?? availability.status === "available")}
           />
-          <StatusBadge
-            domain="productSystem"
-            status={catalogBucket === "archived" ? "archived" : scope.isDirectRootAllowed ? "active" : "archived"}
-            label={modularity?.commercialChipRo ?? scope.catalogStatusLabel}
-            className="shrink-0 text-[10px] uppercase"
-          />
+          <details className="text-right">
+            <summary className="cursor-pointer select-none text-[10px] text-slate-500 hover:text-slate-400">
+              Status catalog
+            </summary>
+            <div className="mt-1 flex justify-end">
+              <StatusBadge
+                domain="productSystem"
+                status={
+                  catalogBucket === "archived"
+                    ? "archived"
+                    : scope.isDirectRootAllowed
+                      ? "active"
+                      : "archived"
+                }
+                label={modularity?.commercialChipRo ?? scope.catalogStatusLabel}
+                className="shrink-0 text-[10px] uppercase"
+              />
+            </div>
+          </details>
         </div>
-      </div>
+      </header>
 
-      <div className="flex flex-wrap gap-2" role="tablist" aria-label="Secțiuni detaliu șablon">
-        {sections.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={section === tab.id}
-            data-testid={tab.testId}
-            onClick={() => onSectionChange(tab.id)}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-              section === tab.id
-                ? "bg-purple-950/40 text-purple-100 ring-1 ring-purple-700/30"
-                : "text-slate-500 hover:bg-slate-900/60 hover:text-slate-300"
-            }`}
+      <div className="space-y-1.5">
+        <div
+          className="flex flex-wrap gap-1 border-b border-slate-800/80"
+          role="tablist"
+          aria-label="Flux authoring șablon"
+        >
+          {primarySections.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              role="tab"
+              aria-selected={section === tab.id}
+              data-testid={tab.testId}
+              onClick={() => onSectionChange(tab.id)}
+              className={`border-b-2 px-3 py-2 text-xs font-semibold transition-colors ${
+                section === tab.id
+                  ? "border-sky-500 text-slate-100"
+                  : "border-transparent text-slate-500 hover:text-slate-300"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        {showDiagnosticTabs && diagnosticSections.length > 0 ? (
+          <div
+            className="flex flex-wrap gap-1"
+            role="tablist"
+            aria-label="Diagnostic și liste secundare"
           >
-            {tab.label}
-          </button>
-        ))}
+            {diagnosticSections.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={section === tab.id}
+                data-testid={tab.testId}
+                onClick={() => onSectionChange(tab.id)}
+                className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                  section === tab.id
+                    ? "bg-slate-800/80 text-slate-200 ring-1 ring-slate-600/50"
+                    : "text-slate-600 hover:bg-slate-900/50 hover:text-slate-400"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       {section === "overview" ? (
@@ -364,7 +433,16 @@ export function ProductSystemTemplateDetailPanel({
               ) : null}
             </details>
           </section>
-          {isProduct ? <ModularityHonestySection templateCode={template.template_code} /> : null}
+          {isProduct ? (
+            <details className="rounded-xl border border-slate-800/70 bg-[#0D1321]/30 px-4 py-3">
+              <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
+                Axe de adevăr / modularitate (read-only)
+              </summary>
+              <div className="mt-3">
+                <ModularityHonestySection templateCode={template.template_code} />
+              </div>
+            </details>
+          ) : null}
         </div>
       ) : null}
 
@@ -516,10 +594,14 @@ export function ProductSystemTemplateDetailPanel({
           <Link
             to={`/product-system/blueprint-dossier?template=${encodeURIComponent(template.template_code)}`}
             data-testid="product-system-template-detail-dossier-cta"
-            className="inline-flex rounded-md border border-purple-800/40 bg-purple-950/30 px-3 py-1.5 text-xs font-semibold text-purple-200 transition-colors hover:bg-purple-900/30"
+            className="inline-flex rounded-md border border-sky-800/40 bg-sky-950/30 px-3 py-1.5 text-xs font-semibold text-sky-100 transition-colors hover:bg-sky-900/30"
           >
             Deschide Dossier Studio
           </Link>
+          <p className="text-[11px] text-slate-500">
+            În Studio: Salvează → Validează → Verifică → Publică (sticky). Publicarea rămâne pe
+            autoritatea șablonului, nu pe Dossier.
+          </p>
           <div className="flex flex-wrap gap-3 text-[12px]">
             <Link to="/modules" className="text-blue-400 hover:text-blue-300">
               /modules

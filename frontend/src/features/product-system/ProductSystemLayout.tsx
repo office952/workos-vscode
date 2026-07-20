@@ -36,14 +36,19 @@ function ProductSystemLayoutInner() {
           ) : null}
         </nav>
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h1 className="text-base font-bold text-slate-100">Product System</h1>
+          <div>
+            <h1 className="text-base font-bold text-slate-100">Product System</h1>
+            <p className="mt-0.5 text-[11px] text-slate-500" data-testid="product-system-shell-subtitle">
+              Catalog admin · identitate → lifecycle → compoziție → readiness → publicare
+            </p>
+          </div>
           <Link
             to={PRICING_REGISTRY_PATH}
             data-testid="product-system-pricing-registry-link"
             className="inline-flex items-center gap-1.5 rounded-md border border-slate-700/80 bg-slate-900/60 px-2.5 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100"
           >
             Pricing Registry
-            <ExternalLink className="h-3 w-3 shrink-0 opacity-70" />
+            <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
           </Link>
         </div>
       </div>
