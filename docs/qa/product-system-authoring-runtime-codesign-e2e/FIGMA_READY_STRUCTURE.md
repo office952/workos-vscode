@@ -30,8 +30,17 @@ Page: **`PS — Authoring Studio`** · page id **`91:2`**
 | Publication states | `91:36` | DRAFT→…→ARCHIVED + `active ≠ published` | PROPOSED |
 | Readiness PASS / BLOCKED | `91:60` | Honest BLOCKED when aluminiu inactive | PROPOSED |
 | Canvas note | `91:75` | Provenance note for Agent C closure | n/a |
+| 01 Product System Landing | `91:76` | Pack shell (closure map) | PROPOSED |
+| 02 Product Template Overview | `91:79` | Pack shell | PROPOSED |
+| 03 Composition / Components | `91:82` | Pack shell | PROPOSED |
+| 06 Validation Rail | `91:85` | Pack shell | PROPOSED |
+| 07 E2E Readiness Collapsed | `91:88` | Pack shell | PROPOSED |
+| 08 E2E Readiness Expanded | `91:91` | Pack shell | PROPOSED |
+| 10 Publication Ready | `91:94` | Pack shell | PROPOSED |
+| 11 Version Status | `91:97` | Pack shell | PROPOSED |
+| 12 Runtime Preview | `91:100` | Pack shell | PROPOSED |
 
-Write access: **granted** (Full seat on plan; `use_figma` created page + frames). IDs are real from MCP return — not invented.
+Write access: **granted** (Full seat on plan; `use_figma` created page + frames). IDs are real from MCP return — not invented. Core five + note created by Agent C; pack shells `91:76`–`91:100` also present on page (closure map).
 
 Owner still must promote any frame to **FINAL** naming before UI may claim Figma FINAL parity.
 

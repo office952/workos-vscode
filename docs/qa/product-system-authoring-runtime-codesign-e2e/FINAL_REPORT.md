@@ -178,16 +178,17 @@ Owner must promote PROPOSED → FINAL. Screenshots under `screenshots/figma_*.pn
 | 5–6 | Readiness panels | template | VL | not in DOM | — | `91:60` | MISSING_DOM |
 | 7 | Dossier tab | template | VL | Dossier | `ui_07_template_dossier_tab.png` | — | CAPTURED |
 | 8–9 | Dossier studio + sticky | `/product-system/blueprint-dossier` | — | shell | `ui_08_*` `ui_09_*` | `91:21` | CAPTURED |
-| 10 | Intake Confirmare | intake-v6 confirm | ACM VL ws | reachable | `ui_10_intake_confirmare.png` | `66:2` | CAPTURED |
-| 11–17 | job truth states | — | — | — | — | — | NOT_CAPTURED |
-| 18–22 | PD/Agg/Qty/Snap/EP UI | — | — | — | — | — | NOT_CAPTURED |
+| 10 | Intake Configurare (misnamed file) | intake-v6 | IV6-DB2F86B7 | configurare | `ui_10_intake_confirmare.png` | `64:2` | CAPTURED (label debt) |
+| 17–19 | Dossier publication + readiness | blueprint-dossier | ACM boxed | panels + sticky; API **404 via FE proxy** | `ui_17_*` `ui_18_*` `ui_19_*` | `91:21`/`91:36` | CAPTURED + ENVIRONMENT_FAILURE |
+| 20–21 | Intake Configurare + Confirmare | intake-v6 | IV6-DB2F86B7 | Confirmare blocked honest | `ui_20_*` `ui_21_*` | `66:2` | CAPTURED |
+| 11–16, 22 | job truth / commercial freeze UI | — | — | — | — | — | NOT_CAPTURED |
 | Figma pack | Intake + PS shells | Figma MCP | — | — | `screenshots/figma_*.png` | see §21 | CAPTURED |
 
-Without complete 1–22 → **UI cannot be PASS**.
+Without complete 1–22 → **UI cannot be PASS**. Detail audit: `UI_AUDIT_CPGH_AGENT_C.md`.
 
 ## 24. Full-page UI audit
 
-Catalog and template detail load as dense operator admin surfaces: multi-tab, technical codes visible, honesty banners exist in code (`active ≠ published`, BUILD vs TEMPLATE PUBLICATION) but publication/readiness panels were **not mounted** on the captured template route (MISSING_DOM). Dossier studio sticky footer present. Intake Confirmare matches Figma `66:2` intent. Hierarchy is functional, not polished FINAL.
+Catalog and template detail load as dense operator admin surfaces: multi-tab, technical codes visible, honesty banners exist in code (`active ≠ published`, BUILD vs TEMPLATE PUBLICATION) but publication/readiness panels were **not mounted** on the captured template route (MISSING_DOM). Dossier studio hosts the new panels + sticky footer; live load is **HTTP 404** because FE3000 proxy does not hit BE8000 (ENVIRONMENT_FAILURE). Intake Confirmare (`ui_21`) matches Figma `66:2` intent (blocked confirm, disabled handoff). Hierarchy is functional, not polished FINAL. See `UI_AUDIT_CPGH_AGENT_C.md`.
 
 ## 25. Accessibility findings
 
@@ -234,6 +235,7 @@ compiler_freeze_closure_proof.py → PROOF_OK
 | Agg/Qty missing revision surface | PREEXISTING_RELEVANT / NEEDS_OWNER_DECISION |
 | Some Snap V2 suite fails (seed post-`70b2fdf`) | STALE_TEST / FIXTURE_DRIFT |
 | Publication/readiness panels missing on catalog route | DIRTY_TREE_INTERACTION or UI wiring gap — NOT greenwashed |
+| FE3000 `/api/v1/product-system/*` → 404 (APIs on BE8000 only; 8011 stale) | ENVIRONMENT_FAILURE |
 | Semgrep | ENVIRONMENT_FAILURE / NOT_AVAILABLE |
 | Inactive aluminiu BLOCKED | REAL_PRODUCT_BLOCKER for **publication only** |
 

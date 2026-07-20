@@ -76,8 +76,8 @@ See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
 | CP-D Snap V2 freeze | **PASS** | freeze cases + pytest |
 | CP-E Order + EP | **PASS** | no live reread; no materialization |
 | CP-F Readiness static + dry_run | **PASS** | BUILD PASS_WITH_WARNINGS + TEMPLATE BLOCKED; DB sha unchanged |
-| CP-G Figma PS frames | **PARTIAL→CREATED** | page `91:2` + real IDs; PROPOSED not owner-FINAL |
-| CP-H Screenshot pack 1–22 | **PARTIAL** | catalog/template/dossier/intake + Figma; items 11–22 thin; panels MISSING_DOM |
+| CP-G Figma PS frames | **CREATED (PROPOSED)** | page `91:2`; core `91:3`/`12`/`21`/`36`/`60` + pack shells `91:76`–`91:100`; Intake refs verified; not owner-FINAL |
+| CP-H Screenshot pack 1–22 | **PARTIAL** | maximal pack in `screenshots/`; dossier panels + Confirmare `ui_21`; FE proxy 404 ENVIRONMENT_FAILURE; catalog MISSING_DOM for new panels |
 
 ### Dual verdict (critical)
 
@@ -86,7 +86,7 @@ See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
 | Build closure (gate overall) | **PARTIAL** |
 | BUILD readiness axis | **PASS_WITH_WARNINGS** |
 | Template publication | **BLOCKED** (inactive aluminiu — correct) |
-| UI acceptance | **PARTIAL** |
+| UI acceptance | **PARTIAL** — see `UI_AUDIT_CPGH_AGENT_C.md` |
 | Runtime E2E | **PARTIAL** |
 
 **BUILD PASS vs TEMPLATE PUBLICATION BLOCKED applies** for the readiness/publication honesty split.
