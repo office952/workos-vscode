@@ -51,7 +51,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
 
   return (
     <section
-      className="space-y-3 rounded-xl border border-slate-800/70 bg-[#0D1321]/50 px-4 py-4"
+      className="space-y-3 rounded-xl border border-slate-700/50 bg-[#111827]/70 px-4 py-4"
       data-testid="template-runtime-preview-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">

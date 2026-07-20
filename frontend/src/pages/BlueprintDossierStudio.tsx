@@ -1688,7 +1688,7 @@ function DossierEditor({
 
       {/* Sticky footer — Salvează → Validează → Verifică → Publică (template authority, not dossier SoT) */}
       <div
-        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700/70 bg-[#0B1220]/95 px-4 py-3 backdrop-blur"
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-slate-700/50 bg-[#111827]/95 px-4 py-3 backdrop-blur"
         data-testid="blueprint-dossier-sticky-publish-footer"
         role="region"
         aria-label="Comenzi Dossier: salvează, validează, verifică, publică"
@@ -1700,7 +1700,7 @@ function DossierEditor({
           {" · "}
           dossier {dossier.status} (documentație)
           {" · "}
-          Salvează ≠ Validează ≠ Verifică ≠ Publică
+          Salvează → Validează → Verifică → Publică
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link
@@ -1751,8 +1751,10 @@ function DossierEditor({
               const el = document.getElementById("dossier-rail-publication");
               el?.scrollIntoView({ behavior: "smooth", block: "start" });
             }}
-            className="rounded-lg border border-slate-600 bg-slate-900/80 px-3 py-1.5 text-[11px] font-semibold text-slate-100 hover:bg-slate-800"
+            className="rounded-lg border border-slate-700/70 bg-slate-900/50 px-3 py-1.5 text-[11px] font-semibold text-slate-400 hover:bg-slate-900"
             data-testid="blueprint-dossier-footer-publish"
+            title="Deschide poarta de publicare — Publică e dezactivată când Pregătire E2E e BLOCKED"
+            aria-label="Deschide publicare (poartă fail-closed în panou)"
           >
             Publică
           </button>

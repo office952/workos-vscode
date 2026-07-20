@@ -81,7 +81,7 @@ export function TemplateCompositionAuthoringPanel({
 
   return (
     <section
-      className="space-y-3 rounded-xl border border-slate-700/60 bg-[#0D1321]/40 px-4 py-4"
+      className="space-y-3 rounded-xl border border-slate-700/50 bg-[#111827]/70 px-4 py-4"
       data-testid="template-composition-authoring-panel"
     >
       <div className="flex flex-wrap items-start justify-between gap-2">

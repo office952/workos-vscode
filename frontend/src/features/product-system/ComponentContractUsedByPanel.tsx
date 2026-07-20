@@ -43,7 +43,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
 
   return (
     <section
-      className="rounded-xl border border-slate-700/60 bg-[#0D1321]/40 p-3"
+      className="rounded-xl border border-slate-700/50 bg-[#111827]/70 p-3"
       data-testid="component-contract-used-by-panel"
     >
       <div className="flex items-start justify-between gap-2">
