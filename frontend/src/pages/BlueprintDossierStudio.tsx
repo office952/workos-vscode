@@ -35,6 +35,9 @@ import { isDevAuthFallback } from "@/lib/mockGuard";
 import { ProductAggregateOverviewPanel } from "@/features/product-system/ProductAggregateOverviewPanel";
 import { useProductAggregate } from "@/features/product-system/useProductAggregate";
 import type { ProductAggregate } from "@/api/productAggregate";
+import { ProductTemplatePublicationPanel } from "@/features/product-system/ProductTemplatePublicationPanel";
+import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
+import { ComponentContractUsedByPanel } from "@/features/product-system/ComponentContractUsedByPanel";
 import {
   DossierSectionEditorShell,
   VariantsEditor,
@@ -1226,6 +1229,16 @@ function DossierEditor({
 
       <TemplateModuleLinksPanel links={moduleLinks} />
 
+      {/* Authoring rail: same Product System authority — dossier is not a second SoT */}
+      <div className="space-y-3" data-testid="blueprint-dossier-authoring-rail">
+        <p className="text-[10px] text-slate-500 px-1">
+          Dossier = documentație + dovezi review + punți aprobate. Publicarea șablonului și E2E Readiness rămân pe Product Template.
+        </p>
+        <ProductTemplatePublicationPanel templateCode={dossier.template_code} />
+        <ComponentContractUsedByPanel templateCode={dossier.template_code} />
+        <ProductE2EReadinessPanel templateCode={dossier.template_code} />
+      </div>
+
       <div className="bg-[#111827] border border-[#1E293B] rounded-xl p-3">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div>
@@ -1664,6 +1677,44 @@ function DossierEditor({
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Sticky footer — save / validate / E2E / publish (template authority, not dossier SoT) */}
+      <div
+        className="sticky bottom-0 z-20 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-violet-800/40 bg-[#0B1220]/95 px-4 py-3 backdrop-blur"
+        data-testid="blueprint-dossier-sticky-publish-footer"
+      >
+        <div className="text-[10px] text-slate-400">
+          <span className="font-semibold text-violet-200">Product Template</span>
+          {" · "}
+          {dossier.template_code}
+          {" · "}
+          dossier status {dossier.status} (documentație)
+          {" · "}
+          publicare = lifecycle șablon + E2E Readiness
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Link
+            to={`/product-system/products/${encodeURIComponent(dossier.template_code)}`}
+            className="rounded-lg border border-slate-700 px-3 py-1.5 text-[11px] font-semibold text-slate-200 hover:bg-slate-800"
+            data-testid="blueprint-dossier-footer-open-template"
+          >
+            Deschide șablonul
+          </Link>
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!dirty || saving || hasJsonError || readOnly}
+            className={`rounded-lg px-3 py-1.5 text-[11px] font-bold ${
+              dirty && !saving && !hasJsonError && !readOnly
+                ? "bg-emerald-600 text-white"
+                : "bg-slate-800 text-slate-500"
+            }`}
+            data-testid="blueprint-dossier-footer-save"
+          >
+            Salvează dossier
+          </button>
         </div>
       </div>
     </div>

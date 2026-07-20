@@ -41,6 +41,8 @@ import {
 } from "@/features/product-system/VolumetricProductionGuidance";
 import { TemplateGeneralTabPanel } from "@/features/product-system/TemplateGeneralTabPanel";
 import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
+import { ProductTemplatePublicationPanel } from "@/features/product-system/ProductTemplatePublicationPanel";
+import { ComponentContractUsedByPanel } from "@/features/product-system/ComponentContractUsedByPanel";
 import { getTemplateArchivePolicy } from "@/features/product-system/templateArchivePolicy";
 import {
   deriveConstructionStages,
@@ -2958,7 +2960,11 @@ function TemplateEditor({
       />
       <SharedVolumetricFoundationPanel availability={availability} />
       {draft.template_code ? (
-        <ProductE2EReadinessPanel templateCode={draft.template_code} />
+        <>
+          <ProductTemplatePublicationPanel templateCode={draft.template_code} />
+          <ComponentContractUsedByPanel templateCode={draft.template_code} />
+          <ProductE2EReadinessPanel templateCode={draft.template_code} />
+        </>
       ) : null}
     </div>
   );
