@@ -781,3 +781,71 @@ TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
 ### Next owner decision
 
 keep draft (recommended) / resolve logo root offerability GO / future conditional frame / prepare later publication proof.
+
+---
+
+## ACM APPLIED CONTENT MULTI-CHILD TRUTH AUDIT (read-only pointer)
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| HEAD | `290a4540` |
+| Mode | READ-ONLY ? no XOR/UI/schema/pricing changes |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/ACM_APPLIED_CONTENT_MULTI_CHILD_TRUTH_AUDIT.md` |
+| CURRENT XOR | **DEMOTE** (temporary Decision A guard, not durable business law) |
+| MULTI-CHILD | **SUPPORTED_WITH_WARNINGS** |
+| Target model (not implemented) | Option 1 ? two optional child roles + cardinality validator |
+| Owner decision framed | Keep XOR temporarily |
+| Screenshots | 9 under `screenshots/acm-applied-content-multi-child-audit/` |
+
+---
+
+## ACM / BOND FACE-TREATMENT COMMERCIAL PATH
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `290a4540` (reconfirmed tip) |
+| Axis | **B** ? shell-local face treatments (orthogonal to applied_content XOR) |
+| CP0 | `ACM_FACE_TREATMENT_COMMERCIAL_PATH_CP0_FREEZE.md` ? **FROZEN** |
+| Allowlist | `ACM_FACE_TREATMENT_COMMERCIAL_PATH_ALLOWLIST.md` |
+| Final report | `ACM_FACE_TREATMENT_COMMERCIAL_PATH_FINAL_REPORT.md` |
+| Engine | native inline |
+| Publication | **KEEP_DRAFT** |
+
+### Model (frozen)
+
+```text
+TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
+??? Axis A (unchanged): applied_content XOR + optional frame
+??? Axis B (this build): acm_face_treatments_v1
+    ??? routed_cutouts[] ? FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT
+    ??? acrylic_inserts[] ? FACE-TREATMENT-ACRYLIC-INSERT (~10 mm; RELIEF_PLEXI_10MM badge)
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Identities | Routed + insert reconfirmed; insert?relief product; badge only |
+| Coexistence | none / routed / insert / both |
+| Double sheet | Treatment qty keys disjoint from panel; Aggregate materials=[] |
+| CPP/EIC | Panel 6 acm_* preserved; optical treatment lines BLOCKED honest |
+| XOR | Unchanged; no applied_content VL links created |
+| UI | ?Tratarea fe?ei Bond/ACM? separate section |
+| Tests | 16 pytest + 3 vitest + 30 regression PASS |
+| Screenshots | 01?03 CAPTURED |
+| Verdict | **PASS_WITH_WARNINGS** |
+
+### Commit sequence
+
+1. `docs(qa): freeze ACM face-treatment commercial path CP0`
+2. `feat(product-system): add ACM face-treatment commercial path domain`
+3. `feat(product-system): wire face treatments through PT PD Aggregate readiness`
+4. `fix(product-system-ui): expose Bond ACM face-treatment section`
+5. `test(product-system): prove face-treatment commercial path coexistence`
+6. `docs(qa): finalize ACM face-treatment commercial path evidence`
+
+### Next owner decision
+
+Optical / plexiglas / illumination rate catalog GO ? or accept treatment commercial lines remain BLOCKED.
