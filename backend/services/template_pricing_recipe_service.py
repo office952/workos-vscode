@@ -18,6 +18,8 @@ from data.internal_cost_rules_volumetric_v2 import (
 from models.product_templates import Product_templates
 from schemas.template_pricing_recipe import (
     TEMPLATE_PRICING_RECIPE_VERSION,
+    TemplateLaborRecipeItem,
+    TemplateLaborRecipeSummary,
     TemplatePricingAcmAcceptance,
     TemplatePricingCppPreview,
     TemplatePricingEicPreview,
@@ -28,6 +30,10 @@ from schemas.template_pricing_recipe import (
 )
 from services.acm_face_treatment_commercial_path_v1 import build_cpp_eic_commercial_gate
 from services.pricing_registry_service import PricingRegistryService
+from services.template_labor_recipe import (
+    build_labor_recipes,
+    merge_labor_from_pricing_recipe_items,
+)
 from services.template_usage_mode_policy import get_template_usage_mode_policy
 from services.volum_aluminiu_component_contract import (
     IDENTITY_MAP as VOLUM_ALUMINIU_IDENTITY_MAP,
@@ -165,11 +171,40 @@ class TemplatePricingRecipeService:
             deduped.append(item)
         recipe = deduped
 
+        commercial_by_catalog: dict[str, str] = {}
+        for item in recipe:
+            if item.recipe_kind == "commercial_line" and item.catalog_code and item.cpp_line_code:
+                commercial_by_catalog[str(item.catalog_code)] = str(item.cpp_line_code)
+
+        labor_raw = build_labor_recipes(
+            template_code=stored_code,
+            row=row,
+            registry_by_code=by_code,
+            commercial_line_by_catalog=commercial_by_catalog,
+        )
+        labor_raw = merge_labor_from_pricing_recipe_items(
+            template_code=stored_code,
+            pricing_items=recipe,
+            existing=labor_raw,
+        )
+        labor_recipes = [TemplateLaborRecipeItem.model_validate(x) for x in labor_raw]
+        labor_summary = TemplateLaborRecipeSummary(
+            total=len(labor_recipes),
+            technical_ready=sum(1 for r in labor_recipes if r.technical_ready),
+            commercial_ready=sum(1 for r in labor_recipes if r.commercial_ready),
+            missing_rate=sum(1 for r in labor_recipes if r.status == "missing"),
+            warnings=sum(
+                1
+                for r in labor_recipes
+                if r.status == "warning" or r.warnings or r.data_quality_flags
+            ),
+        )
+
         summary = self._summarize(recipe, registry)
         cpp = self._cpp_preview(stored_code, recipe)
         eic = self._eic_preview(stored_code)
         acm = self._acm_acceptance(stored_code, registry)
-        readiness = self._readiness(summary, recipe, acm)
+        readiness = self._readiness(summary, recipe, acm, labor_summary)
 
         blockers: list[str] = []
         warnings: list[str] = []
@@ -178,6 +213,9 @@ class TemplatePricingRecipeService:
             warnings.extend(item.warnings)
             if item.data_quality_message_ro:
                 warnings.append(item.data_quality_message_ro)
+        for labor in labor_recipes:
+            blockers.extend(labor.blockers)
+            warnings.extend(labor.warnings)
         if acm.applies and acm.blockers:
             blockers.extend(acm.blockers)
 
@@ -203,6 +241,8 @@ class TemplatePricingRecipeService:
             usage_mode=usage_mode,
             summary=summary,
             recipe=recipe,
+            labor_recipes=labor_recipes,
+            labor_summary=labor_summary,
             cpp_preview=cpp,
             eic_preview=eic,
             readiness=readiness,
@@ -546,6 +586,7 @@ class TemplatePricingRecipeService:
         summary: TemplatePricingSummary,
         recipe: list[TemplatePricingRecipeItem],
         acm: TemplatePricingAcmAcceptance,
+        labor_summary: TemplateLaborRecipeSummary | None = None,
     ) -> TemplatePricingReadiness:
         technical = summary.total_items > 0 and all(
             r.technical_ready or r.recipe_kind == "commercial_line" for r in recipe
@@ -566,9 +607,19 @@ class TemplatePricingRecipeService:
             tech_notes.append("Nicio linie de rețetă derivabilă pentru acest template.")
         else:
             tech_notes.append(f"{summary.total_items} linii rețetă vizibile (catalog + reguli).")
+        if labor_summary and labor_summary.total:
+            tech_notes.append(
+                f"Manoperă: {labor_summary.technical_ready}/{labor_summary.total} "
+                "rețete tehnic pregătite (formula/qty pe template)."
+            )
         comm_notes = []
         if summary.missing:
             comm_notes.append(f"{summary.missing} linii cu tarif lipsă în catalog.")
+        if labor_summary and labor_summary.missing_rate:
+            comm_notes.append(
+                f"{labor_summary.missing_rate} rețete manoperă cu tarif central lipsă "
+                "(blochează comercial, nu configurația tehnică)."
+            )
         if acm.applies:
             comm_notes.append(
                 f"ACM shell registry: {acm.shell_registry_confirmed}/"
@@ -578,13 +629,17 @@ class TemplatePricingRecipeService:
                 comm_notes.append(
                     "Tratamente față blocate comercial (treatment_commercial_lines_allowed=false)."
                 )
+        labor_blocks_commercial = bool(labor_summary and labor_summary.missing_rate)
         return TemplatePricingReadiness(
             technical_ready=bool(technical),
-            commercial_ready=bool(commercial) and summary.missing == 0,
+            commercial_ready=bool(commercial)
+            and summary.missing == 0
+            and not labor_blocks_commercial,
             technical_notes_ro=tech_notes,
             commercial_notes_ro=comm_notes,
             inventory_notes_ro=[
                 "Stocul neurmărit nu blochează prețuirea comercială.",
                 "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+                "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului.",
             ],
         )

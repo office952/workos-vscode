@@ -6,7 +6,39 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-TEMPLATE_PRICING_RECIPE_VERSION = "1.0.0"
+TEMPLATE_PRICING_RECIPE_VERSION = "1.1.0"
+
+LaborClass = Literal[
+    "LABOR_INTERNAL",
+    "LABOR_COMMERCIAL",
+    "MACHINE_OPERATION",
+    "INTERNAL_SERVICE",
+    "EXTERNAL_SERVICE",
+    "INSTALLATION_SERVICE",
+    "UNKNOWN_AMBIGUOUS",
+    "LEGACY",
+    "MISSING_RATE",
+]
+
+LaborRecipeRole = Literal[
+    "assembly",
+    "wiring",
+    "finishing",
+    "mounting",
+    "packaging",
+    "other",
+]
+
+LaborBasis = Literal[
+    "hour",
+    "minute",
+    "buc",
+    "ml",
+    "mp",
+    "set",
+    "produs",
+    "unknown",
+]
 
 RecipeKind = Literal[
     "material",
@@ -126,6 +158,60 @@ class TemplatePricingAcmAcceptance(BaseModel):
     policy_ro: Optional[str] = None
 
 
+class TemplateLaborRecipeItem(BaseModel):
+    """Central rate + template-specific labor recipe (LABOR_RECIPE_CONTRACT_V1)."""
+
+    labor_recipe_id: str
+    template_code: str
+    operation_code: str
+    catalog_code: str
+    workcenter_declared: Optional[str] = None
+    operator_name: str
+    labor_class: LaborClass = "UNKNOWN_AMBIGUOUS"
+    recipe_role: LaborRecipeRole = "other"
+    quantity_keys: list[str] = Field(default_factory=list)
+    formula_id: Optional[str] = None
+    formula_owner: Optional[str] = None
+    basis: LaborBasis = "unknown"
+    rate_basis: Optional[str] = None
+    standard_time: Optional[Any] = None
+    multiplier: Optional[Any] = None
+    minimum: Optional[Any] = None
+    dependencies: dict[str, Any] = Field(default_factory=dict)
+    base_rate_source: Optional[str] = None
+    internal_cost_rate: Optional[float] = None
+    commercial_rate: Optional[float] = None
+    commercial_rate_status: Literal["available", "unavailable", "missing"] = "unavailable"
+    unit: Optional[str] = None
+    currency: Optional[str] = None
+    status: RecipeItemStatus = "active"
+    typed_catalog: Optional[str] = None
+    data_quality_flags: list[str] = Field(default_factory=list)
+    data_quality_message_ro: Optional[str] = None
+    cpp_line_code: Optional[str] = None
+    eic_rule_code: Optional[str] = None
+    technical_ready: bool = False
+    commercial_ready: bool = False
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    editable: bool = False
+    editability_reason_ro: str = (
+        "V1 este read-only — tarif central în catalog; rețeta pe template."
+    )
+    source_links: dict[str, str] = Field(default_factory=dict)
+    provenance: Optional[str] = None
+    legacy: bool = False
+    confidence: Literal["high", "medium", "low"] = "medium"
+
+
+class TemplateLaborRecipeSummary(BaseModel):
+    total: int = 0
+    technical_ready: int = 0
+    commercial_ready: int = 0
+    missing_rate: int = 0
+    warnings: int = 0
+
+
 class TemplatePricingRecipeResponse(BaseModel):
     schema_version: str = TEMPLATE_PRICING_RECIPE_VERSION
     template_code: str
@@ -138,8 +224,17 @@ class TemplatePricingRecipeResponse(BaseModel):
         "Cataloagele dețin tarifele reutilizabile. Template-ul deține rețeta. "
         "CPP calculează. EIC explică. Studio-ul doar compune și face lanțul vizibil."
     )
+    labor_ownership_note_ro: str = (
+        "Tariful central de manoperă e în catalog. "
+        "Rețeta (formulă, cantitate, minim, aplicabilitate) e pe template. "
+        "Tariful lipsă blochează doar pregătirea comercială, nu configurația tehnică."
+    )
     summary: TemplatePricingSummary
     recipe: list[TemplatePricingRecipeItem] = Field(default_factory=list)
+    labor_recipes: list[TemplateLaborRecipeItem] = Field(default_factory=list)
+    labor_summary: TemplateLaborRecipeSummary = Field(
+        default_factory=TemplateLaborRecipeSummary
+    )
     cpp_preview: TemplatePricingCppPreview
     eic_preview: TemplatePricingEicPreview
     readiness: TemplatePricingReadiness
