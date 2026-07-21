@@ -5,6 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `212654a2` |
+| Final HEAD | `bd5c8e9f` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/labor-recipe-contract-v1/` |
 | API | `GET /api/v1/product-system/templates/{code}/pricing` (`schema_version` **1.1.0**) |
@@ -109,7 +110,13 @@ backend/tests/test_template_pricing_recipe.py
 
 ## 30. Commits
 
-See git log on branch after finalize commits (docs freeze → BE → UI → tests/docs evidence).
+| SHA | Message |
+|-----|---------|
+| `23e54434` | docs(qa): freeze Labor Recipe Contract V1 |
+| `09e0412e` | feat(product-system): add typed template labor recipe read model |
+| `e9461d81` | feat(product-system-ui): expose labor recipes in Preturi template |
+| `82aba35c` | docs(qa): finalize Labor Recipe Contract V1 evidence |
+| `bd5c8e9f` | docs(qa): record Labor Recipe Contract V1 final HEAD |
 
 ## 31. Worklog
 
