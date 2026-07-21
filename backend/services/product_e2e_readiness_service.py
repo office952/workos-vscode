@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
+from types import SimpleNamespace
 from typing import Any
 
 from sqlalchemy import select
@@ -17,6 +18,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from models.intake_v6_workspace import IntakeV6WorkspaceRecord
 from models.product_template_module_links import ProductTemplateModuleLink
 from models.product_templates import Product_templates
+from schemas.commercial_price_proposal import CommercialPriceProposalPreview
+from schemas.estimated_internal_cost import EstimatedInternalCostPreview
+from schemas.product_aggregate import ProductAggregate
+from schemas.product_definition import (
+    ProductDefinitionPreview,
+    ProductDefinitionSourceContext,
+)
 from schemas.product_e2e_readiness import (
     ProductE2EBuildClosureStatus,
     ProductE2ECheckFinding,
@@ -29,11 +37,18 @@ from schemas.product_e2e_readiness import (
     ProductE2ETemplatePublicationStatus,
     ProductE2EVerdict,
 )
+from schemas.quote_snapshot_v2 import QuoteSnapshotOfferScope, QuoteSnapshotV2
+from schemas.volum_aluminiu_separate_calc_preview import (
+    VolumAluminiuSeparateCalcPreviewRequest,
+)
 from services.artwork_analysis_integration_readiness import (
     evaluate_artwork_analysis_integration_readiness,
 )
 from services.artwork_analysis_intake_adapter import (
     extract_external_artwork_analysis_from_workspace,
+)
+from services.execution_preview_from_frozen_graph_service import (
+    build_execution_preview_from_frozen_snapshot,
 )
 from services.intake_v6_modular_form_contract_service import IntakeV6ModularFormContractService
 from services.letters_commercial_measurement_service import (
@@ -56,8 +71,13 @@ from services.volum_aluminiu_component_contract import (
     ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
     ALLOWED_DEPTH_MM,
     BOM_COMPONENT_ID,
+    COMMERCIAL_BASIS_SYNONYM,
+    COMMERCIAL_LINE_CODE,
+    INTERNAL_RULE_CODE,
+    PARENT_TEMPLATE_CODE,
     PRICING_COMPONENT_CODE,
     PUBLICATION_REMAINS_BLOCKED,
+    TEMPLATE_CODE as VOLUM_ALUMINIU_TEMPLATE_CODE,
     build_identity_convergence_view,
     build_input_contract_view,
     map_component_ref_to_module,
@@ -65,6 +85,11 @@ from services.volum_aluminiu_component_contract import (
 from services.volum_aluminiu_quantity_ownership import (
     QUOTE_GEOMETRY_CLASSIFICATION_BRIDGE,
     QUOTE_GEOMETRY_CLASSIFICATION_LEGACY,
+    resolve_component_quantity_from_payload,
+    resolve_product_total_perimeter_authority,
+)
+from services.volum_aluminiu_separate_calc_preview_service import (
+    VolumAluminiuSeparateCalcPreviewService,
 )
 
 logger = logging.getLogger(__name__)
@@ -426,13 +451,21 @@ class ProductE2EReadinessService:
                 canonical, mode=mode, payload=payload, workspace_id=workspace_id
             )
         )
-        findings.extend(self._check_commercial(canonical))
+        findings.extend(
+            self._check_commercial(
+                canonical, mode=mode, payload=payload, workspace_id=workspace_id
+            )
+        )
         findings.extend(
             self._check_snapshot(
                 canonical, mode=mode, payload=payload, workspace_id=workspace_id
             )
         )
-        findings.extend(self._check_execution_handoff(canonical))
+        findings.extend(
+            self._check_execution_handoff(
+                canonical, mode=mode, payload=payload, workspace_id=workspace_id
+            )
+        )
 
         if mode == "static":
             for system in _STATIC_NOT_TESTED_SYSTEMS:
@@ -1239,29 +1272,184 @@ class ProductE2EReadinessService:
             )
         ]
 
-    def _check_commercial(self, template_code: str) -> list[ProductE2ECheckFinding]:
-        return [
-            _finding(
-                check_id="cpp.not_tested",
-                system="cpp",
-                status="NOT_TESTED",
-                message="CPP readiness not exercised by this check (no formula duplication).",
-                source_owner="commercial_price_proposal_service",
-                template_code=template_code,
-                blocking=False,
-                evidence={"conflict_code": "not_tested_downstream"},
-            ),
-            _finding(
-                check_id="eic.not_tested",
-                system="eic",
-                status="NOT_TESTED",
-                message="EIC readiness not exercised by this check (no formula duplication).",
-                source_owner="estimated_internal_cost_service",
-                template_code=template_code,
-                blocking=False,
-                evidence={"conflict_code": "not_tested_downstream"},
-            ),
-        ]
+    def _check_commercial(
+        self,
+        template_code: str,
+        *,
+        mode: ProductE2EMode,
+        payload: dict[str, Any] | None,
+        workspace_id: str | None,
+    ) -> list[ProductE2ECheckFinding]:
+        """CPP/EIC: static stays NOT_TESTED; runtime proves ml qty path without CostEngine dup."""
+        if mode == "static" or payload is None:
+            return [
+                _finding(
+                    check_id="cpp.not_tested",
+                    system="cpp",
+                    status="NOT_TESTED",
+                    message="CPP readiness not exercised by this check (no formula duplication).",
+                    source_owner="commercial_price_proposal_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "not_tested_downstream"},
+                ),
+                _finding(
+                    check_id="eic.not_tested",
+                    system="eic",
+                    status="NOT_TESTED",
+                    message="EIC readiness not exercised by this check (no formula duplication).",
+                    source_owner="estimated_internal_cost_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "not_tested_downstream"},
+                ),
+            ]
+
+        if template_code != PARENT_TEMPLATE_CODE:
+            return [
+                _finding(
+                    check_id="cpp.runtime_template_out_of_scope",
+                    system="cpp",
+                    status="NOT_TESTED",
+                    message="Runtime CPP ml proof scoped to TPL-VOLUMETRIC-LETTERS_v2.",
+                    source_owner="commercial_price_proposal_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "not_tested_downstream"},
+                ),
+                _finding(
+                    check_id="eic.runtime_template_out_of_scope",
+                    system="eic",
+                    status="NOT_TESTED",
+                    message="Runtime EIC ml proof scoped to TPL-VOLUMETRIC-LETTERS_v2.",
+                    source_owner="estimated_internal_cost_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "not_tested_downstream"},
+                ),
+            ]
+
+        component_qty = resolve_component_quantity_from_payload(payload)
+        total_auth = resolve_product_total_perimeter_authority(payload)
+        preview = VolumAluminiuSeparateCalcPreviewService().build_preview(
+            VOLUM_ALUMINIU_TEMPLATE_CODE,
+            VolumAluminiuSeparateCalcPreviewRequest(payload=payload),
+        )
+
+        findings: list[ProductE2ECheckFinding] = []
+        preview_qty = None
+        if isinstance(preview.quantity, dict):
+            preview_qty = preview.quantity.get("quantity_m")
+        total_qty = total_auth.get("quantity_m")
+        commercial = preview.commercial if isinstance(preview.commercial, dict) else {}
+        basis = str(commercial.get("basis_type") or "").strip().lower()
+        hourly_hit = basis in {"hour", "hourly", "h", "ore", "ora"}
+        qty_aligned = (
+            component_qty.get("ok") is True
+            and preview.separate_calculation == "PASS"
+            and preview_qty is not None
+            and total_qty is not None
+            and abs(float(preview_qty) - float(total_qty)) < 1e-6
+            and abs(float(preview_qty) - float(component_qty["quantity_m"])) < 1e-6
+        )
+
+        if qty_aligned and basis == COMMERCIAL_BASIS_SYNONYM and not hourly_hit:
+            findings.append(
+                _finding(
+                    check_id="cpp.runtime_ml_preview_aligned",
+                    system="cpp",
+                    status="PASS",
+                    message=(
+                        "Runtime dry-run: separate-calc CPP ml qty aligns with confirmed "
+                        "perimeter / product-total (no formula duplication)."
+                    ),
+                    source_owner="volum_aluminiu_separate_calc_preview_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={
+                        "quantity_m": preview_qty,
+                        "basis_type": basis,
+                        "commercial_line_code": COMMERCIAL_LINE_CODE,
+                        "persist": preview.persist,
+                    },
+                )
+            )
+        else:
+            findings.append(
+                _finding(
+                    check_id="cpp.runtime_ml_preview_misaligned",
+                    system="cpp",
+                    status="FAIL",
+                    message="Runtime dry-run: CPP ml preview/product-total alignment failed.",
+                    source_owner="volum_aluminiu_separate_calc_preview_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={
+                        "conflict_code": "cpp_ml_preview_misaligned",
+                        "component_qty": component_qty,
+                        "total_authority": {
+                            "authority": total_auth.get("authority"),
+                            "quantity_m": total_qty,
+                        },
+                        "separate_calculation": preview.separate_calculation,
+                        "basis_type": basis,
+                        "hourly_hit": hourly_hit,
+                    },
+                )
+            )
+
+        internal = preview.internal_cost if isinstance(preview.internal_cost, dict) else {}
+        internal_ok = (
+            preview.separate_calculation == "PASS"
+            and str(internal.get("rule_code") or "") == INTERNAL_RULE_CODE
+            and qty_aligned
+            and not hourly_hit
+        )
+        if internal_ok:
+            findings.append(
+                _finding(
+                    check_id="eic.runtime_ml_internal_aligned",
+                    system="eic",
+                    status="PASS",
+                    message=(
+                        "Runtime dry-run: EIC INT_VOL_V2_RETURN_ML shares confirmed ml qty "
+                        "(no formula duplication)."
+                    ),
+                    source_owner="volum_aluminiu_separate_calc_preview_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={
+                        "rule_code": INTERNAL_RULE_CODE,
+                        "quantity_m": preview_qty,
+                        "persist": preview.persist,
+                    },
+                )
+            )
+        else:
+            findings.append(
+                _finding(
+                    check_id="eic.runtime_ml_internal_misaligned",
+                    system="eic",
+                    status="FAIL",
+                    message="Runtime dry-run: EIC ml internal rule/qty alignment failed.",
+                    source_owner="volum_aluminiu_separate_calc_preview_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={
+                        "conflict_code": "eic_ml_internal_misaligned",
+                        "internal": internal,
+                        "qty_aligned": qty_aligned,
+                        "hourly_hit": hourly_hit,
+                    },
+                )
+            )
+        return findings
 
     def _check_snapshot(
         self,
@@ -1351,26 +1539,199 @@ class ProductE2EReadinessService:
             )
         return findings
 
-    def _check_execution_handoff(self, template_code: str) -> list[ProductE2ECheckFinding]:
-        return [
-            _finding(
-                check_id="order_snapshot.not_tested",
-                system="order_snapshot",
-                status="NOT_TESTED",
-                message="Order Snapshot copy path not exercised (no writes / no order create).",
-                source_owner="order_snapshot_v2_convert_service",
-                template_code=template_code,
-                blocking=False,
-                evidence={"conflict_code": "order_reread_risk_not_exercised"},
+    def _check_execution_handoff(
+        self,
+        template_code: str,
+        *,
+        mode: ProductE2EMode,
+        payload: dict[str, Any] | None,
+        workspace_id: str | None,
+    ) -> list[ProductE2ECheckFinding]:
+        """Order/EP: static NOT_TESTED; runtime proves provenance + frozen preview (no materialize)."""
+        if mode == "static" or payload is None:
+            return [
+                _finding(
+                    check_id="order_snapshot.not_tested",
+                    system="order_snapshot",
+                    status="NOT_TESTED",
+                    message="Order Snapshot copy path not exercised (no writes / no order create).",
+                    source_owner="order_snapshot_v2_convert_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "order_reread_risk_not_exercised"},
+                ),
+                _finding(
+                    check_id="execution_preview.not_tested",
+                    system="execution_preview",
+                    status="NOT_TESTED",
+                    message="ExecutionPlan preview not exercised (no materialization).",
+                    source_owner="execution_plan_v2_preview_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={"conflict_code": "execution_catalog_bypass_not_exercised"},
+                ),
+            ]
+
+        findings: list[ProductE2ECheckFinding] = []
+        meta = get_job_revision_metadata(payload) or {}
+        freeze_ok = commercial_freeze_allowed(payload)
+
+        if not freeze_ok:
+            findings.append(
+                _finding(
+                    check_id="order_snapshot.freeze_blocked",
+                    system="order_snapshot",
+                    status="FAIL",
+                    message="Order Snapshot provenance proof requires confirmed non-stale Product Truth.",
+                    source_owner="order_snapshot_v2_convert_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={"conflict_code": "order_snapshot_freeze_blocked"},
+                )
+            )
+            findings.append(
+                _finding(
+                    check_id="execution_preview.freeze_blocked",
+                    system="execution_preview",
+                    status="FAIL",
+                    message="Execution preview proof requires confirmed non-stale Product Truth.",
+                    source_owner="execution_preview_from_frozen_graph_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={"conflict_code": "execution_preview_freeze_blocked"},
+                )
+            )
+            return findings
+
+        # Circular import: order_snapshot_v2_convert → … → product_e2e_readiness.
+        from services.order_snapshot_v2_convert_service import (  # noqa: PLC0415
+            _enrich_order_provenance_with_product_truth,
+        )
+
+        linkage = {
+            "product_truth_revision": meta.get("revision"),
+            "product_truth_content_hash": meta.get("content_hash"),
+            "freeze_from_pinned_product_truth": True,
+        }
+        prov = _enrich_order_provenance_with_product_truth(
+            SimpleNamespace(provenance={"source": "quote_snapshot_v2_dry_run"}),
+            linkage,
+        )
+        if (
+            prov.get("product_truth_revision") == meta.get("revision")
+            and prov.get("product_truth_content_hash") == meta.get("content_hash")
+            and prov.get("no_live_workspace_reread") is True
+        ):
+            findings.append(
+                _finding(
+                    check_id="order_snapshot.runtime_provenance_pass_through",
+                    system="order_snapshot",
+                    status="PASS",
+                    message=(
+                        "Runtime dry-run: Order Snapshot provenance copies Product Truth "
+                        "revision/hash with no_live_workspace_reread (no order create)."
+                    ),
+                    source_owner="order_snapshot_v2_convert_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={
+                        "product_truth_revision": prov.get("product_truth_revision"),
+                        "no_live_workspace_reread": True,
+                        "order_created": False,
+                    },
+                )
+            )
+        else:
+            findings.append(
+                _finding(
+                    check_id="order_snapshot.runtime_provenance_failed",
+                    system="order_snapshot",
+                    status="FAIL",
+                    message="Runtime dry-run: Order Snapshot provenance pass-through failed.",
+                    source_owner="order_snapshot_v2_convert_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={"conflict_code": "order_provenance_mismatch", "provenance": prov},
+                )
+            )
+
+        snap = QuoteSnapshotV2(
+            template_code=template_code,
+            offer_scope_snapshot=QuoteSnapshotOfferScope(
+                mode="full_product",
+                sold_modules=[],
+                use_legacy=True,
             ),
-            _finding(
-                check_id="execution_preview.not_tested",
-                system="execution_preview",
-                status="NOT_TESTED",
-                message="ExecutionPlan preview not exercised (no materialization).",
-                source_owner="execution_plan_v2_preview_service",
+            product_definition_snapshot=ProductDefinitionPreview(
                 template_code=template_code,
-                blocking=False,
-                evidence={"conflict_code": "execution_catalog_bypass_not_exercised"},
+                source_context=ProductDefinitionSourceContext(template_code=template_code),
+                product_truth_job_revision=meta.get("revision"),
+                product_truth_content_hash=meta.get("content_hash"),
+                product_truth_status="confirmed",
             ),
-        ]
+            product_aggregate_snapshot=ProductAggregate(
+                template_code=template_code,
+                template_id=0,
+            ),
+            commercial_price_proposal_snapshot=CommercialPriceProposalPreview(
+                template_code=template_code,
+                currency="RON",
+            ),
+            estimated_internal_cost_snapshot=EstimatedInternalCostPreview(
+                template_code=template_code,
+            ),
+            persist_status="not_persisted",
+            workspace_id=workspace_id,
+        )
+        preview = build_execution_preview_from_frozen_snapshot(snap)
+        safety = preview.safety
+        if (
+            safety.no_write is True
+            and safety.no_materialization is True
+            and safety.no_live_recompile is True
+        ):
+            findings.append(
+                _finding(
+                    check_id="execution_preview.runtime_frozen_preview",
+                    system="execution_preview",
+                    status="PASS",
+                    message=(
+                        "Runtime dry-run: Execution preview from frozen snapshot "
+                        "(no write / no materialization / no live recompile)."
+                    ),
+                    source_owner="execution_preview_from_frozen_graph_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    blocking=False,
+                    evidence={
+                        "no_write": True,
+                        "no_materialization": True,
+                        "no_live_recompile": True,
+                        "source_authority": getattr(
+                            getattr(preview, "source", None), "source_authority", None
+                        ),
+                    },
+                )
+            )
+        else:
+            findings.append(
+                _finding(
+                    check_id="execution_preview.runtime_safety_failed",
+                    system="execution_preview",
+                    status="FAIL",
+                    message="Runtime dry-run: Execution preview safety flags not all true.",
+                    source_owner="execution_preview_from_frozen_graph_service",
+                    template_code=template_code,
+                    workspace_id=workspace_id,
+                    evidence={
+                        "conflict_code": "execution_preview_safety_failed",
+                        "no_write": safety.no_write,
+                        "no_materialization": safety.no_materialization,
+                        "no_live_recompile": safety.no_live_recompile,
+                    },
+                )
+            )
+        return findings
