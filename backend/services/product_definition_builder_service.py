@@ -789,7 +789,10 @@ def _compute_readiness(
 
 
 def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str, Any]:
-    from services.acm_panel_pd_projection import project_acm_finish_into_canonical
+    from services.acm_panel_pd_projection import (
+        project_acm_finish_into_canonical,
+        project_face_treatments_into_values,
+    )
 
     merged = merge_acm_boxed_mounting_derived_fields(payload)
     values: dict[str, Any] = {}
@@ -802,6 +805,8 @@ def _build_acm_standalone_canonical_values(payload: dict[str, Any]) -> dict[str,
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
     # Cross-template / Letters-hosted AcmPanel: project instance + assembly_* without inventing owner.
     project_acm_finish_into_canonical(values, finish if finish else None)
+    # Axis B face treatments — ensure projection even when finish_setup is flat/empty.
+    project_face_treatments_into_values(values, finish if finish else None, payload)
     if not finish and payload:
         # Flat payload already coalesced at root (standalone quote-input style).
         from services.acm_assembly_extent import inject_assembly_extent_keys

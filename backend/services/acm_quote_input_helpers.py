@@ -149,6 +149,10 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
         read_applied_content,
         read_metal_frame_optional,
     )
+    from services.acm_face_treatment_commercial_path_v1 import (
+        BAG_KEY as FACE_TREATMENT_BAG_KEY,
+        read_face_treatments,
+    )
     from services.acm_commercial_geometry import apply_acm_commercial_geometry
     from services.mounting_solution_service import (
         ACM_BOXED_MOUNTING_TEMPLATE_CODE,
@@ -163,6 +167,10 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
     frame = read_metal_frame_optional(payload)
     out["metal_frame_enabled"] = bool(frame.get("enabled"))
     out["metal_frame_domain"] = frame.get("kind")
+    # Axis B face treatments — orthogonal to XOR; preserve markers (no panel sheet fold-in).
+    face_treatments = read_face_treatments(payload)
+    out[FACE_TREATMENT_BAG_KEY] = face_treatments
+    out["face_treatment_coexistence"] = face_treatments.get("coexistence")
 
     standalone_config = _standalone_root_configuration(payload)
     if standalone_config is not None:
@@ -173,6 +181,8 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
         if applied is not None:
             out["applied_content"] = applied
         out["metal_frame_enabled"] = bool(frame.get("enabled"))
+        out[FACE_TREATMENT_BAG_KEY] = face_treatments
+        out["face_treatment_coexistence"] = face_treatments.get("coexistence")
         apply_acm_commercial_geometry(out)
         return out
 

@@ -8,6 +8,12 @@ from __future__ import annotations
 from typing import Any, Mapping, MutableMapping
 
 from services.acm_assembly_extent import inject_assembly_extent_keys
+from services.acm_face_treatment_commercial_path_v1 import (
+    BAG_KEY as FACE_TREATMENT_BAG_KEY,
+    project_for_aggregate as project_face_treatments_for_aggregate,
+    project_for_product_definition as project_face_treatments_for_pd,
+    read_face_treatments,
+)
 
 
 def coalesce_acm_panel_instance_from_finish(finish: Mapping[str, Any] | None) -> dict[str, Any] | None:
@@ -131,6 +137,44 @@ def project_svg_support_selection_into_values(
         values["acp_panel_technical_confirmed"] = True
 
 
+def project_face_treatments_into_values(
+    values: MutableMapping[str, Any],
+    finish: Mapping[str, Any] | None,
+    payload: Mapping[str, Any] | None = None,
+) -> None:
+    """Axis B — project acm_face_treatments_v1 into PD canonical values (no panel sheet)."""
+    source = payload if isinstance(payload, Mapping) else finish
+    if isinstance(finish, Mapping) and finish.get(FACE_TREATMENT_BAG_KEY) is not None:
+        source = {"finish_setup": finish}
+    domain = read_face_treatments(source if isinstance(source, Mapping) else None)
+    projection = project_face_treatments_for_pd(domain)
+    values[FACE_TREATMENT_BAG_KEY] = projection["acm_face_treatments"]
+    values["acm_face_treatment_quantity_matrix"] = projection["acm_face_treatment_quantity_matrix"]
+    values["acm_face_treatment_ops_intents"] = projection["acm_face_treatment_ops_intents"]
+    values["acm_face_treatment_cpp_eic_gate"] = projection["acm_face_treatment_cpp_eic_gate"]
+    values["face_treatment_coexistence"] = domain.get("coexistence")
+    agg = project_face_treatments_for_aggregate(domain)
+    if agg is not None:
+        values["acm_face_treatments_aggregate_projection"] = agg
+    modules = projection.get("acp_local_face_module_instances_from_face_treatments") or []
+    if modules:
+        existing = list(values.get("acp_local_face_module_instances") or [])
+        # Avoid duplicate module_instance_id when SVG bindings already projected modules.
+        seen = {
+            str(m.get("module_instance_id") or m.get("interface_instance_id") or "")
+            for m in existing
+            if isinstance(m, Mapping)
+        }
+        for mod in modules:
+            mid = str(mod.get("module_instance_id") or mod.get("interface_instance_id") or "")
+            if mid and mid in seen:
+                continue
+            existing.append(mod)
+            if mid:
+                seen.add(mid)
+        values["acp_local_face_module_instances"] = existing
+
+
 def project_acm_finish_into_canonical(
     values: MutableMapping[str, Any],
     finish: Mapping[str, Any] | None,
@@ -142,5 +186,6 @@ def project_acm_finish_into_canonical(
     if inst is not None:
         project_acm_instance_into_values(values, inst)
     project_svg_support_selection_into_values(values, finish_d)
+    project_face_treatments_into_values(values, finish_d)
     return inject_assembly_extent_keys(values, finish=finish_d, acm_instance=inst)
 

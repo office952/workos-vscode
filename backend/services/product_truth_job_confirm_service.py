@@ -12,6 +12,11 @@ from typing import Any
 
 from fastapi import HTTPException
 
+from services.acm_face_treatment_commercial_path_v1 import (
+    BAG_KEY as FACE_TREATMENT_BAG_KEY,
+    normalize_face_treatments,
+    read_face_treatments,
+)
 from services.acm_panel_pd_projection import coalesce_acm_panel_instance_from_finish
 from services.product_truth_writer_dry_run_service import TARGET_PATH, compute_payload_hash
 
@@ -20,6 +25,7 @@ PINNED_BAG_KEYS = (
     "letter_group_instances",
     "acm_panel_instance",
     "component_placements",
+    "acm_face_treatments",
 )
 
 
@@ -55,10 +61,16 @@ def extract_typed_bags_from_finish(payload_raw: dict[str, Any]) -> dict[str, Any
     letters = _list(finish.get("letter_group_instances"))
     placements = _list(finish.get("component_placements"))
     acm = coalesce_acm_panel_instance_from_finish(finish)
+    # Axis B — pin shell-local face treatments (orthogonal to applied_content XOR).
+    if FACE_TREATMENT_BAG_KEY in finish and finish.get(FACE_TREATMENT_BAG_KEY) is not None:
+        face_treatments = normalize_face_treatments(finish.get(FACE_TREATMENT_BAG_KEY))
+    else:
+        face_treatments = read_face_treatments(payload_raw)
     return {
         "letter_group_instances": copy.deepcopy(letters),
         "acm_panel_instance": copy.deepcopy(acm) if isinstance(acm, dict) else None,
         "component_placements": copy.deepcopy(placements),
+        FACE_TREATMENT_BAG_KEY: copy.deepcopy(face_treatments),
     }
 
 
@@ -189,6 +201,8 @@ def apply_pinned_bags_onto_payload(payload_raw: dict[str, Any]) -> dict[str, Any
         finish["component_placements"] = copy.deepcopy(bags.get("component_placements") or [])
     if "acm_panel_instance" in bags:
         finish["acm_panel_instance"] = copy.deepcopy(bags.get("acm_panel_instance"))
+    if FACE_TREATMENT_BAG_KEY in bags and bags.get(FACE_TREATMENT_BAG_KEY) is not None:
+        finish[FACE_TREATMENT_BAG_KEY] = copy.deepcopy(bags.get(FACE_TREATMENT_BAG_KEY))
     # Re-project ACM mirrors from canonical pin
     try:
         from services.acm_panel_domain_service import project_acm_mirrors_from_canonical

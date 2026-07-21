@@ -48,6 +48,7 @@ from services.acm_boxed_support_composition_v1 import (
     LOGO_ROOT,
     resolve_acm_boxed_composition,
 )
+from services.acm_face_treatment_commercial_path_v1 import readiness_finding_for_template
 from services.artwork_analysis_integration_readiness import (
     evaluate_artwork_analysis_integration_readiness,
 )
@@ -649,6 +650,20 @@ class ProductE2EReadinessService:
                         "blockers": logo_blockers,
                         "publication": "KEEP_DRAFT",
                     },
+                )
+            )
+            # Axis B — face-treatment commercial path (orthogonal to XOR).
+            ft = readiness_finding_for_template({"applied_content": "none"})
+            findings.append(
+                _finding(
+                    check_id=ft["check_id"],
+                    system="components",
+                    status=ft["status"],
+                    message=ft["message"],
+                    source_owner="acm_face_treatment_commercial_path_v1",
+                    template_code=template_code,
+                    blocking=bool(ft.get("blocking")),
+                    evidence=ft.get("evidence") or {},
                 )
             )
 
