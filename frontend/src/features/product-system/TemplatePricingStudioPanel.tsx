@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   templatePricingRecipeApi,
+  type TemplateLaborRecipeItem,
   type TemplatePricingRecipeItem,
   type TemplatePricingRecipeResponse,
   type TemplateRecipeKind,
@@ -223,6 +224,12 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
         ) : null}
       </section>
 
+      <LaborRecipeSection
+        items={data.labor_recipes ?? []}
+        summary={data.labor_summary}
+        ownershipNote={data.labor_ownership_note_ro}
+      />
+
       <div className="flex flex-wrap gap-1" role="tablist" aria-label="Filtru tip rețetă">
         {filters.map((f) => (
           <button
@@ -325,6 +332,122 @@ function SummaryStat({
         {value}
       </p>
     </div>
+  );
+}
+
+function LaborRecipeSection({
+  items,
+  summary,
+  ownershipNote,
+}: {
+  items: TemplateLaborRecipeItem[];
+  summary?: TemplatePricingRecipeResponse["labor_summary"];
+  ownershipNote?: string;
+}) {
+  return (
+    <section
+      data-testid="template-labor-recipe-section"
+      className={`${PS_SURFACE_PANEL} space-y-3 px-4 py-4`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+            Manoperă specifică template-ului
+          </p>
+          <p className="mt-1 max-w-2xl text-[12px] text-slate-400">
+            {ownershipNote ||
+              "Tarif central în catalog + rețetă (formulă / cantitate) pe template."}
+          </p>
+        </div>
+        {summary ? (
+          <div className="flex flex-wrap gap-1.5 text-[10px]">
+            <span className="rounded border border-slate-700 px-2 py-0.5 text-slate-300">
+              Rețete: {summary.total}
+            </span>
+            <span className="rounded border border-emerald-900/40 px-2 py-0.5 text-emerald-200/90">
+              Tehnic: {summary.technical_ready}
+            </span>
+            <span className="rounded border border-amber-900/40 px-2 py-0.5 text-amber-200/90">
+              Tarif lipsă: {summary.missing_rate}
+            </span>
+          </div>
+        ) : null}
+      </div>
+
+      {items.length === 0 ? (
+        <p
+          data-testid="template-labor-recipe-empty"
+          className="text-[12px] text-slate-500"
+        >
+          Nicio rețetă de manoperă derivabilă din operațiile template-ului.
+        </p>
+      ) : (
+        <div className="overflow-hidden rounded-lg border border-slate-800/70">
+          <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_auto] gap-2 border-b border-slate-800/70 bg-slate-950/40 px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
+            <span>Operație</span>
+            <span>Formulă / cantitate</span>
+            <span>Cost intern</span>
+            <span>Tarif comercial</span>
+            <span>Status</span>
+          </div>
+          {items.map((row) => (
+            <div
+              key={row.labor_recipe_id}
+              data-testid={`template-labor-row-${row.operation_code}`}
+              className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,0.9fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_auto] gap-2 border-b border-slate-800/50 px-3 py-2.5 text-[12px] text-slate-200 last:border-b-0"
+            >
+              <div className="min-w-0">
+                <p className="truncate font-medium text-slate-100">{row.operator_name}</p>
+                <p className="mt-0.5 font-mono text-[10px] text-slate-500">
+                  {row.recipe_role} · {row.catalog_code}
+                </p>
+                <p className="mt-0.5 text-[10px] text-slate-500">{row.labor_class}</p>
+                {row.data_quality_message_ro ? (
+                  <p className="mt-1 text-[10px] text-amber-200/80">{row.data_quality_message_ro}</p>
+                ) : null}
+              </div>
+              <div>
+                <p className="font-mono text-[10px] text-slate-400">
+                  {row.formula_id || "—"}
+                </p>
+                <p className="mt-0.5 font-mono text-[10px] text-slate-500">
+                  {row.quantity_keys.length ? row.quantity_keys.join(", ") : "qty —"}
+                </p>
+                <p className="mt-0.5 text-[10px] text-slate-500">bază: {row.basis}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-slate-300">
+                  {row.internal_cost_rate != null
+                    ? `${row.internal_cost_rate}${row.currency ? ` ${row.currency}` : ""}`
+                    : "indisponibil"}
+                </p>
+                <p className="mt-0.5 text-[10px] text-slate-500">{row.unit || "—"}</p>
+              </div>
+              <div>
+                <p className="text-[11px] text-slate-300">
+                  {row.commercial_rate_status === "available" && row.commercial_rate != null
+                    ? `${row.commercial_rate}${row.currency ? ` ${row.currency}` : ""}`
+                    : row.commercial_rate_status}
+                </p>
+                {row.cpp_line_code ? (
+                  <p className="mt-0.5 font-mono text-[10px] text-slate-500">
+                    CPP: {row.cpp_line_code}
+                  </p>
+                ) : null}
+              </div>
+              <div className="space-y-1 text-right">
+                <span className={`rounded border px-1.5 py-0.5 text-[10px] ${statusChip(row.status)}`}>
+                  {statusLabel(row.status)}
+                </span>
+                <p className="text-[10px] text-slate-500">
+                  T:{row.technical_ready ? "da" : "nu"} · C:{row.commercial_ready ? "da" : "nu"}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }
 

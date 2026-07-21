@@ -50,6 +50,59 @@ export interface TemplatePricingRecipeItem {
   confidence: "high" | "medium" | "low";
 }
 
+export type LaborClass =
+  | "LABOR_INTERNAL"
+  | "LABOR_COMMERCIAL"
+  | "MACHINE_OPERATION"
+  | "INTERNAL_SERVICE"
+  | "EXTERNAL_SERVICE"
+  | "INSTALLATION_SERVICE"
+  | "UNKNOWN_AMBIGUOUS"
+  | "LEGACY"
+  | "MISSING_RATE";
+
+export interface TemplateLaborRecipeItem {
+  labor_recipe_id: string;
+  template_code: string;
+  operation_code: string;
+  catalog_code: string;
+  workcenter_declared?: string | null;
+  operator_name: string;
+  labor_class: LaborClass;
+  recipe_role: "assembly" | "wiring" | "finishing" | "mounting" | "packaging" | "other";
+  quantity_keys: string[];
+  formula_id?: string | null;
+  formula_owner?: string | null;
+  basis: "hour" | "minute" | "buc" | "ml" | "mp" | "set" | "produs" | "unknown";
+  rate_basis?: string | null;
+  standard_time?: unknown;
+  multiplier?: unknown;
+  minimum?: unknown;
+  dependencies: Record<string, unknown>;
+  base_rate_source?: string | null;
+  internal_cost_rate?: number | null;
+  commercial_rate?: number | null;
+  commercial_rate_status: "available" | "unavailable" | "missing";
+  unit?: string | null;
+  currency?: string | null;
+  status: "active" | "missing" | "blocked" | "warning" | "inactive";
+  typed_catalog?: string | null;
+  data_quality_flags: string[];
+  data_quality_message_ro?: string | null;
+  cpp_line_code?: string | null;
+  eic_rule_code?: string | null;
+  technical_ready: boolean;
+  commercial_ready: boolean;
+  blockers: string[];
+  warnings: string[];
+  editable: boolean;
+  editability_reason_ro: string;
+  source_links: Record<string, string>;
+  provenance?: string | null;
+  legacy: boolean;
+  confidence: "high" | "medium" | "low";
+}
+
 export interface TemplatePricingRecipeResponse {
   schema_version: string;
   template_code: string;
@@ -59,6 +112,7 @@ export interface TemplatePricingRecipeResponse {
   usage_mode?: string | null;
   editability_policy: string;
   ownership_note_ro: string;
+  labor_ownership_note_ro?: string;
   summary: {
     total_items: number;
     materials: number;
@@ -74,6 +128,14 @@ export interface TemplatePricingRecipeResponse {
     registry_missing_price: number;
   };
   recipe: TemplatePricingRecipeItem[];
+  labor_recipes?: TemplateLaborRecipeItem[];
+  labor_summary?: {
+    total: number;
+    technical_ready: number;
+    commercial_ready: number;
+    missing_rate: number;
+    warnings: number;
+  };
   cpp_preview: {
     available: boolean;
     status: string;
