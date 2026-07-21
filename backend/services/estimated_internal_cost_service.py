@@ -294,6 +294,9 @@ def _overlay_canonical_quantity_builder(
     if not str(template_code or "").startswith("TPL-VOLUMETRIC-LETTERS"):
         return payload
     from services.letter_group_instance_authority import build_volumetric_letters_commercial_quantities
+    from services.volum_aluminiu_quantity_ownership import (
+        apply_confirmed_perimeter_quote_geometry_bridge,
+    )
 
     geom = payload.get("quote_geometry") if isinstance(payload.get("quote_geometry"), dict) else {}
     finish = payload.get("finish_setup") if isinstance(payload.get("finish_setup"), dict) else {}
@@ -317,6 +320,8 @@ def _overlay_canonical_quantity_builder(
     out["quote_geometry"] = out_geom
     out["finish_setup"] = out_finish
     out["volumetric_letters_commercial_quantities"] = qty
+    # Confirmed Product Truth wins over letter_group / quote_geometry for return perimeter.
+    out, _perimeter_authority = apply_confirmed_perimeter_quote_geometry_bridge(out)
     return out
 
 

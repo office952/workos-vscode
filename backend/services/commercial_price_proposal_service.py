@@ -708,6 +708,13 @@ class CommercialPriceProposalService:
             return None
 
         payload = _payload_from_sources(pd=pd, quote_input=quote_input)
+        # Prefer confirmed return perimeter for VL product-total; control quote_geometry bridge.
+        if str(rules_key or "").startswith("TPL-VOLUMETRIC-LETTERS"):
+            from services.volum_aluminiu_quantity_ownership import (
+                apply_confirmed_perimeter_quote_geometry_bridge,
+            )
+
+            payload, _perimeter_authority = apply_confirmed_perimeter_quote_geometry_bridge(payload)
         has_payload = bool(payload) or pd.source_context.source_payload_type == "workspace_payload"
         active_modules = await _resolve_commercial_modules_for_preview(
             db=self._db,

@@ -158,9 +158,24 @@ def build_letters_commercial_measurements(
         facts["led_module_count"] = qty["led_module_count"]
     facts["volumetric_letters_commercial_quantities"] = qty
 
+    # Prefer confirmed aluminium-return Product Truth perimeter for product-total measurements.
+    from services.volum_aluminiu_quantity_ownership import (
+        apply_confirmed_perimeter_quote_geometry_bridge,
+    )
+
+    facts, perimeter_authority = apply_confirmed_perimeter_quote_geometry_bridge(facts)
+    if perimeter_authority.get("authority") == "confirmed_product_truth":
+        diagnostics_seed = ["perimeter_authority=confirmed_product_truth"]
+    elif perimeter_authority.get("divergence"):
+        diagnostics_seed = ["perimeter_authority=diverged_fail_closed"]
+    elif perimeter_authority.get("authority") == "quote_geometry_legacy_fallback":
+        diagnostics_seed = ["perimeter_authority=quote_geometry_legacy_fallback"]
+    else:
+        diagnostics_seed = []
+
     modules = active_modules or set()
     measurements: list[CommercialMeasurement] = []
-    diagnostics: list[str] = []
+    diagnostics: list[str] = list(diagnostics_seed)
 
     for rule in rules:
         if not isinstance(rule, CommercialRuleDefinition):

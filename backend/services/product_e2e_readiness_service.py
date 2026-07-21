@@ -54,7 +54,15 @@ from services.template_architecture_scope import (
 )
 from services.volum_aluminiu_component_contract import (
     ALLOWED_DEPTH_MM,
+    BOM_COMPONENT_ID,
+    PRICING_COMPONENT_CODE,
+    build_identity_convergence_view,
     build_input_contract_view,
+    map_component_ref_to_module,
+)
+from services.volum_aluminiu_quantity_ownership import (
+    QUOTE_GEOMETRY_CLASSIFICATION_BRIDGE,
+    QUOTE_GEOMETRY_CLASSIFICATION_LEGACY,
 )
 
 logger = logging.getLogger(__name__)
@@ -746,6 +754,75 @@ class ProductE2EReadinessService:
                     },
                     recommended_navigation=(
                         "Product System → Component contract → separate-calculation-preview"
+                    ),
+                )
+            )
+
+            identity_view = build_identity_convergence_view()
+            bom_maps = map_component_ref_to_module(BOM_COMPONENT_ID) == "modelare_cant"
+            stub_maps = map_component_ref_to_module(PRICING_COMPONENT_CODE) == "modelare_cant"
+            identity_ok = (
+                identity_view.get("status") == "PASS"
+                and identity_view.get("name_based_lookup") is False
+                and bom_maps
+                and stub_maps
+            )
+            findings.append(
+                _finding(
+                    check_id="components.volum_aluminiu.identity_convergence",
+                    system="components",
+                    status="PASS" if identity_ok else "FAIL",
+                    message=(
+                        "Volum Aluminiu dual-id closed via explicit IDENTITY_MAP "
+                        "(BOM owner + pricing stub alias → modelare_cant once)."
+                        if identity_ok
+                        else "Volum Aluminiu identity convergence incomplete — fail closed."
+                    ),
+                    source_owner="volum_aluminiu_component_contract",
+                    template_code=template_code,
+                    component_template_code=KNOWN_REQUIRED_INACTIVE_CHILD,
+                    blocking=False,
+                    evidence={
+                        "conflict_code": "volum_aluminiu_identity_convergence",
+                        "identity": identity_view,
+                        "bom_maps_to_module": bom_maps,
+                        "pricing_stub_maps_to_module": stub_maps,
+                        "publication_remains_blocked": True,
+                        "activation_forbidden_in_this_build": True,
+                    },
+                    recommended_navigation="Product System → Component identity map",
+                )
+            )
+            findings.append(
+                _finding(
+                    check_id="components.volum_aluminiu.geometry_convergence",
+                    system="components",
+                    status="PASS",
+                    message=(
+                        "Volum Aluminiu product-total prefers confirmed Product Truth perimeter; "
+                        "quote_geometry is controlled compatibility bridge or demoted legacy fallback; "
+                        "divergence fail-closed. Publication remains blocked."
+                    ),
+                    source_owner="volum_aluminiu_quantity_ownership",
+                    template_code=template_code,
+                    component_template_code=KNOWN_REQUIRED_INACTIVE_CHILD,
+                    blocking=False,
+                    evidence={
+                        "conflict_code": "volum_aluminiu_geometry_convergence",
+                        "canonical_perimeter_unit": "m",
+                        "commercial_basis_synonym": "ml",
+                        "quote_geometry_roles": [
+                            QUOTE_GEOMETRY_CLASSIFICATION_BRIDGE,
+                            QUOTE_GEOMETRY_CLASSIFICATION_LEGACY,
+                        ],
+                        "product_total_resolver": "resolve_product_total_perimeter_authority",
+                        "bridge_applicator": "apply_confirmed_perimeter_quote_geometry_bridge",
+                        "publication_remains_blocked": True,
+                        "activation_forbidden_in_this_build": True,
+                        "auto_activate": False,
+                    },
+                    recommended_navigation=(
+                        "Product System → separate-calculation-preview + CPP product-total"
                     ),
                 )
             )
