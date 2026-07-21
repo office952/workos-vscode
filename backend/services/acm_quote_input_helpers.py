@@ -143,7 +143,12 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
     Injects assembly_* and applies commercial geometry adapter (Slice C):
     face area from assembly; cut/fold from sum of panel perimeters.
     Never remaps panel_width_mm/panel_height_mm to assembly dims.
+    Preserves applied_content XOR + metal_frame_enabled operator markers.
     """
+    from services.acm_boxed_support_composition_v1 import (
+        read_applied_content,
+        read_metal_frame_optional,
+    )
     from services.acm_commercial_geometry import apply_acm_commercial_geometry
     from services.mounting_solution_service import (
         ACM_BOXED_MOUNTING_TEMPLATE_CODE,
@@ -152,11 +157,22 @@ def merge_acm_boxed_mounting_derived_fields(payload: Mapping[str, Any]) -> Dict[
     )
 
     out: Dict[str, Any] = dict(payload)
+    applied = read_applied_content(payload)
+    if applied is not None:
+        out["applied_content"] = applied
+    frame = read_metal_frame_optional(payload)
+    out["metal_frame_enabled"] = bool(frame.get("enabled"))
+    out["metal_frame_domain"] = frame.get("kind")
+
     standalone_config = _standalone_root_configuration(payload)
     if standalone_config is not None:
         derived, _warnings, _blockers = derive_acm_casetted_quote_input(standalone_config)
         out.update(derived)
         out.setdefault("template_code", ACM_BOXED_MOUNTING_TEMPLATE_CODE)
+        # Re-assert composition markers after geometry merge (no double-count into panel keys).
+        if applied is not None:
+            out["applied_content"] = applied
+        out["metal_frame_enabled"] = bool(frame.get("enabled"))
         apply_acm_commercial_geometry(out)
         return out
 

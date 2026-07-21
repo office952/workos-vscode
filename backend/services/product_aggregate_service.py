@@ -59,6 +59,8 @@ CHILD_TEMPLATE_MINI_MODULE: dict[str, str] = {
     "TPL-VOLUMETRIC-FINISH_v1": "finisaje",
     "TPL-METAL-PREMOUNT-STRUCTURE_v1": "structura_suport",
     "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": "structura_suport",
+    # ACM boxed composition Decision A — logo pack under ACM root (candidate-blocked).
+    "TPL-VOLUMETRIC-LOGO_v1": "applied_logo_pack",
 }
 
 # Known trigger field mismatches (documented OPEN QUESTION in contract)
@@ -190,7 +192,18 @@ class ProductAggregateService:
             )
         )
 
+        # ACM Decision A: applied_content XOR children are composition intent only.
+        # Do not fold letter/logo BOM into the panel aggregate (avoids double-count).
+        # Modules list still exposes the optional edges for authoring/readiness.
+        applied_content_child_codes = {
+            link.module_template_code
+            for link in links
+            if (link.trigger_field or "").strip() == "applied_content"
+        }
+
         for child_code, child_row in child_templates.items():
+            if child_code in applied_content_child_codes:
+                continue
             mini = CHILD_TEMPLATE_MINI_MODULE.get(child_code)
             child_mats = _json_loads(child_row.required_materials_json, [])
             child_ops = _json_loads(child_row.operations_json, [])

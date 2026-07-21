@@ -41,6 +41,13 @@ from schemas.quote_snapshot_v2 import QuoteSnapshotOfferScope, QuoteSnapshotV2
 from schemas.volum_aluminiu_separate_calc_preview import (
     VolumAluminiuSeparateCalcPreviewRequest,
 )
+from services.acm_boxed_support_composition_v1 import (
+    ACM_BOXED_ROOT,
+    APPLIED_CONTENT_TRIGGER_FIELD,
+    BLOCKER_LOGO_BRANCH_CANDIDATE,
+    LOGO_ROOT,
+    resolve_acm_boxed_composition,
+)
 from services.artwork_analysis_integration_readiness import (
     evaluate_artwork_analysis_integration_readiness,
 )
@@ -598,6 +605,53 @@ class ProductE2EReadinessService:
 
     async def _check_component_links(self, template_code: str) -> list[ProductE2ECheckFinding]:
         findings: list[ProductE2ECheckFinding] = []
+
+        if normalize_template_code(template_code) == normalize_template_code(ACM_BOXED_ROOT):
+            # Composition Decision A — XOR + logo honesty (no publication).
+            resolved = resolve_acm_boxed_composition({"applied_content": "none"})
+            findings.append(
+                _finding(
+                    check_id="components.acm_applied_content_xor_contract",
+                    system="components",
+                    status="PASS",
+                    message=(
+                        "ACM boxed applied_content XOR contract present "
+                        "(letters|logo); metal_frame optional operator-explicit."
+                    ),
+                    source_owner="acm_boxed_support_composition_v1",
+                    template_code=template_code,
+                    blocking=False,
+                    evidence={
+                        "decision": "A",
+                        "xor": ["letters", "logo"],
+                        "frame": "acp_internal_frame_optional",
+                        "panel_only_ok": True,
+                    },
+                )
+            )
+            logo_resolved = resolve_acm_boxed_composition({"applied_content": "logo"})
+            logo_blockers = logo_resolved["xor"].get("blockers") or []
+            findings.append(
+                _finding(
+                    check_id="components.acm_logo_branch_honesty",
+                    system="components",
+                    status="BLOCKED" if BLOCKER_LOGO_BRANCH_CANDIDATE in logo_blockers else "PASS",
+                    message=(
+                        f"Logo branch under ACM: {logo_resolved['xor'].get('logo_branch_status')} "
+                        f"(root={LOGO_ROOT})."
+                    ),
+                    source_owner="acm_boxed_support_composition_v1",
+                    template_code=template_code,
+                    component_template_code=LOGO_ROOT,
+                    blocking=False,
+                    evidence={
+                        "trigger_field": APPLIED_CONTENT_TRIGGER_FIELD,
+                        "blockers": logo_blockers,
+                        "publication": "KEEP_DRAFT",
+                    },
+                )
+            )
+
         links = await self._load_module_links(template_code)
         aggregate = await self._aggregate.build(template_code)
         if aggregate is None and not links:
