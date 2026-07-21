@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-07-21T12:01:52.302587+00:00",
+  "kickoff_head_reported": "520f3f01",
+  "parent_publication_status": "unpublished",
+  "parent_publish_executed": false,
+  "fixture": "VL_PREPUB_E2E_FIXTURE_v1",
+  "confirmed_perimeter_m": 12.5,
+  "static_verdict": "STATIC_READY_WITH_WARNINGS",
+  "runtime_verdict": "PARTIAL",
+  "runtime_e2e_ready": false,
+  "six_not_tested_disposition": [
+    {
+      "system": "product_truth",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    },
+    {
+      "system": "cpp",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    },
+    {
+      "system": "eic",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    },
+    {
+      "system": "quote_snapshot",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    },
+    {
+      "system": "order_snapshot",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    },
+    {
+      "system": "execution_preview",
+      "before_static": "NOT_TESTED",
+      "after_runtime": "PASS"
+    }
+  ],
+  "publication_recommendation": "GO_WITH_CONDITIONS",
+  "recommendation_note": "Runtime closes the six NOT_TESTED on isolated fixture; parent remains unpublished pending explicit owner publication GO; static mode still reports NOT_TESTED by design."
+}

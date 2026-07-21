@@ -649,3 +649,39 @@ Closure HEAD after docs commit: see `git rev-parse HEAD` post-commit.
 | 3 | `e2d7594a` | docs(qa): record controlled activation and parent readiness evidence |
 
 Activation HEAD: `e2d7594a`.
+
+## VOLUMETRIC LETTERS PRE-PUBLICATION E2E PROOF
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `520f3f01` (reconfirmed) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/VL_PRE_PUBLICATION_E2E_ALLOWLIST.md` |
+| Shared map | `docs/qa/product-system-authoring-runtime-codesign-e2e/VL_PRE_PUBLICATION_E2E_SHARED_MAP.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/VL_PRE_PUBLICATION_E2E_FINAL_REPORT.md` |
+| Evidence | `docs/qa/product-system-authoring-runtime-codesign-e2e/runtime/vl_pre_publication_*` |
+| Fixture | `VL_PREPUB_E2E_FIXTURE_v1` ? confirmed perimeter **12.5 m**, depth 60, `white_aluminum` |
+| Six NOT_TESTED (static) | **preserved** (honest) |
+| Six NOT_TESTED (runtime_dry_run) | **all PASS** |
+| Runtime verdict | **PARTIAL** (Aggregate warnings remain) |
+| e2e_ready | **false** under PARTIAL |
+| Parent published | **false** (untouched) |
+| Publication recommendation | **GO_WITH_CONDITIONS** ? **not executed** |
+| Screenshots 1?17 | NOT_CAPTURED (stack not live) |
+| Tests | `test_vl_pre_publication_e2e_proof_v1.py` + readiness + VL invariants ? passed |
+| Stop conditions | None hard-triggered |
+| Code delta | Runtime CPP/EIC/Order/EP checkers in `product_e2e_readiness_service.py` (no formula duplication; no order create; no EP materialization) |
+
+### Commit sequence (allowlist)
+
+1. `fix: evidence-backed E2E defects only` ? readiness runtime checkers
+2. `test: intake through quantity` / CPP EIC snapshot / order EP boundaries ? single proof module
+3. `docs(qa): finalize pre-publication proof`
+
+### Recorded SHAs
+
+| # | SHA | Message |
+|---|-----|---------|
+| 1 | `443c917e` | fix: evidence-backed E2E defects only |
+| 2 | `1d0365b5` | test: intake through quantity |
+| 3 | (this commit) | docs(qa): finalize pre-publication proof |
