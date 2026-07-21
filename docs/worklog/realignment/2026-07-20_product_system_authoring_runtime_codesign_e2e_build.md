@@ -989,3 +989,37 @@ Central catalogs own reusable labor rates.
 Product Templates own labor recipes, quantities, applicability and minimums.
 Missing labor rates block commercial readiness, not technical configuration.
 ```
+
+---
+
+## LABOR RECIPE CONTRACT V1 CLOSURE
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `1518b6ac` |
+| Owner GO | LABOR_RECIPE_CONTRACT_V1_CLOSURE |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/labor-recipe-contract-v1-closure/` |
+| schema_version | 1.1.1 |
+| Proof port | `8020` (`:8000` ghost — environment) |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Volum Aluminiu Prețuri tab | Reachable; legacy bucket preserved |
+| VL formula status | 12/12 explicit (8 qty-key, 1 confirmed, 2 operation-only, 1 missing-owner) |
+| Productivity invented | No |
+| CPP/EIC | Unchanged vs Labor V1 dumps |
+| ACM | 5/0; treatment blocked |
+| Next | OWNER_LABOR_PRODUCTIVITY_RATES_V1 (do not auto-execute) |
+
+### Explicit ownership
+
+```text
+Central catalogs own reusable labor rates.
+Product Templates own labor consumption formulas.
+An operation without a confirmed formula remains visible but commercially unresolved.
+No productivity value is invented to obtain a green status.
+```
