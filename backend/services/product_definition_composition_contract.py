@@ -13,6 +13,14 @@ from schemas.product_definition import (
     CompositionProvenanceEntry,
     ProductDefinitionComposition,
 )
+from services.acm_boxed_support_composition_v1 import (
+    APPLIED_CONTENT_LETTERS,
+    APPLIED_CONTENT_LOGO,
+    APPLIED_CONTENT_NONE,
+    content_pack_template_codes,
+    read_metal_frame_optional,
+    resolve_acm_boxed_composition,
+)
 from services.mounting_solution_service import (
     ACM_BOXED_MOUNTING_TEMPLATE_CODE,
     ALLOWED_MOUNTING_SOLUTION_TEMPLATE_CODES,
@@ -65,9 +73,14 @@ BLOCKER_INCOMPATIBLE_MOUNTING_CHAIN = "INCOMPATIBLE_MOUNTING_CHAIN"
 BLOCKER_MISSING_STRUCTURAL_SUPPORT_INPUTS = "MISSING_STRUCTURAL_SUPPORT_INPUTS"
 BLOCKER_MISSING_ACM_TO_PREMOUNT_EDGE = "MISSING_ACM_TO_PREMOUNT_EDGE"
 BLOCKER_AMBIGUOUS_SUPPORT_HIERARCHY = "AMBIGUOUS_SUPPORT_HIERARCHY"
+BLOCKER_APPLIED_CONTENT_XOR = "APPLIED_CONTENT_XOR_VIOLATION"
+BLOCKER_LOGO_BRANCH_CANDIDATE = "LOGO_BRANCH_CANDIDATE_BLOCKED"
+BLOCKER_UNKNOWN_APPLIED_CONTENT = "UNKNOWN_APPLIED_CONTENT"
 
 # Stable warning reason codes
 WARN_LEGACY_MOUNTING_SYSTEM_FALLBACK = "LEGACY_MOUNTING_SYSTEM_FALLBACK"
+WARN_ACM_PANEL_ONLY_NO_CONTENT = "ACM_PANEL_ONLY_NO_APPLIED_CONTENT"
+WARN_UNPUBLISHED_LETTERS_CHILD = "UNPUBLISHED_LETTERS_CHILD_REUSE"
 WARN_OPERATOR_OVERRIDE_USED = "OPERATOR_OVERRIDE_USED"
 WARN_OPTIONAL_INPUT_MISSING = "OPTIONAL_INPUT_MISSING"
 WARN_ALTERNATIVE_SOLUTION_AVAILABLE = "ALTERNATIVE_SOLUTION_AVAILABLE"
@@ -352,6 +365,12 @@ def build_product_definition_composition(
     active_module_codes: list[str] = []
 
     if standalone_root:
+        resolved = resolve_acm_boxed_composition(payload_map)
+        xor = resolved["xor"]
+        frame = read_metal_frame_optional(payload_map)
+        applied = xor.get("applied_content") or APPLIED_CONTENT_NONE
+        composition_blockers = list(xor.get("blockers") or [])
+        composition_warnings = list(xor.get("warnings") or [])
         root_node = _build_node(
             template_code=root_template_code,
             module_code=STRUCTURA_SUPORT_MODULE_CODE,
@@ -361,32 +380,109 @@ def build_product_definition_composition(
             activation_source="template_registry",
             included=True,
             inherited_inputs={},
-            local_inputs={},
+            local_inputs={
+                "applied_content": applied,
+                "metal_frame_enabled": bool(frame.get("enabled")),
+                "metal_frame_kind": frame.get("kind"),
+            },
             unresolved_inputs=[],
-            blockers=[],
-            warnings=[],
+            blockers=list(composition_blockers),
+            warnings=list(composition_warnings),
         )
+        nodes = [root_node]
+        edges: list[CompositionEdge] = []
+        active_codes = [STRUCTURA_SUPORT_MODULE_CODE]
+        root_node_id = root_node.node_id
+        pack_codes = content_pack_template_codes(applied) if applied != APPLIED_CONTENT_NONE else ()
+        for child_code in pack_codes:
+            child_role = "other"
+            module_code = (
+                "applied_letters"
+                if applied == APPLIED_CONTENT_LETTERS
+                else "applied_logo"
+            )
+            child_node = _build_node(
+                template_code=child_code,
+                module_code=module_code,
+                module_role="applied_content",
+                node_role=child_role,
+                parent_node_id=root_node_id,
+                activation_source="composition_pilot",
+                included=True,
+                inherited_inputs={
+                    k: quote_input[k]
+                    for k in quote_input
+                    if k in ("panel_width_mm", "panel_height_mm", "width_mm", "height_mm")
+                },
+                local_inputs={"applied_content": applied},
+                unresolved_inputs=[],
+                blockers=(
+                    [BLOCKER_LOGO_BRANCH_CANDIDATE]
+                    if applied == APPLIED_CONTENT_LOGO
+                    else []
+                ),
+                warnings=(
+                    [WARN_UNPUBLISHED_LETTERS_CHILD]
+                    if applied == APPLIED_CONTENT_LETTERS
+                    else []
+                ),
+            )
+            nodes.append(child_node)
+            edges.append(
+                _build_edge(
+                    parent_template_code=root_template_code,
+                    parent_node_id=root_node_id,
+                    child_template_code=child_code,
+                    child_node_id=child_node.node_id,
+                    module_code=module_code,
+                    module_role="applied_content",
+                    child_role=child_role,
+                    relation_type="optional_addon",
+                    dependency_role="applied_content_xor",
+                    activation_source="composition_pilot",
+                    included=True,
+                    inherited_inputs=child_node.inherited_inputs,
+                    local_inputs=child_node.locally_owned_inputs,
+                    unresolved_inputs=[],
+                    blockers=list(child_node.blockers),
+                    warnings=list(child_node.warnings),
+                )
+            )
+            if module_code not in active_codes:
+                active_codes.append(module_code)
+
+        compat: CompatibilityStatus = "compatible"
+        if composition_blockers:
+            compat = "blocked"
+        elif composition_warnings:
+            compat = "partial"
+
         return ProductDefinitionComposition(
             composed_graph_version=COMPOSITION_GRAPH_VERSION,
             composition_mode="standalone_root",
             root_template_code=root_template_code,
             selected_solution_id=root_template_code,
-            solution_status="confirmed",
-            solution_reason_codes=[],
-            compatibility_status="compatible",
-            blockers=[],
-            warnings=[],
+            solution_status="confirmed" if not composition_blockers else "blocked",
+            solution_reason_codes=list(composition_blockers),
+            compatibility_status=compat,
+            blockers=composition_blockers,
+            warnings=composition_warnings,
             alternatives=[],
             provenance=[
                 CompositionProvenanceEntry(
                     key="standalone_root",
                     source="product_definition_composition_contract",
                     detail="boxed_acm_mounting_standalone_root_v1",
-                )
+                ),
+                CompositionProvenanceEntry(
+                    key="applied_content_xor",
+                    source="acm_boxed_support_composition_v1",
+                    detail=f"applied_content={applied};frame_optional={bool(frame.get('enabled'))}",
+                ),
             ],
-            active_module_codes=[STRUCTURA_SUPORT_MODULE_CODE],
-            nodes=[root_node],
-            edges=[],
+            active_module_codes=active_codes,
+            nodes=nodes,
+            edges=edges,
             frozen_mounting_solution=None,
         )
 
