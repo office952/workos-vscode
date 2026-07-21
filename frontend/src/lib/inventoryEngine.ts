@@ -169,6 +169,11 @@ function nowISO(): string {
 }
 
 function recalcStatus(mat: InventoryMaterial): void {
+  if (mat.stockCurrent === null || mat.stockCurrent === undefined) {
+    mat.stockStatus = "untracked";
+    mat.daysUntilEmpty = 0;
+    return;
+  }
   if (mat.stockCurrent <= 0) {
     mat.stockStatus = "out_of_stock";
     mat.daysUntilEmpty = 0;
@@ -229,9 +234,9 @@ export function onJobCompleted(jobId: string): { success: boolean; events: Engin
       }
     }
 
-    // Deduct from main stock
-    const oldStock = material.stockCurrent;
-    material.stockCurrent = Math.max(0, +(material.stockCurrent - actualQuantity).toFixed(2));
+    // Deduct from main stock (mock engine only; null stock treated as 0 for deduction math)
+    const oldStock = material.stockCurrent ?? 0;
+    material.stockCurrent = Math.max(0, +(oldStock - actualQuantity).toFixed(2));
     recalcStatus(material);
 
     newEvents.push({
@@ -273,8 +278,9 @@ export function topUpReservoir(
   const material = inventoryMaterials.find((m) => m.id === materialId);
   if (!material) return { success: false, message: "Material negăsit." };
 
-  if (material.stockCurrent < 1) {
-    return { success: false, message: `Stoc insuficient pe raft pentru ${material.name}. Stoc curent: ${material.stockCurrent}L.` };
+  const shelf = material.stockCurrent ?? 0;
+  if (shelf < 1) {
+    return { success: false, message: `Stoc insuficient pe raft pentru ${material.name}. Stoc curent: ${shelf}L.` };
   }
 
   const reservoir = inkReservoirs.find((r) => r.materialId === materialId);
@@ -285,7 +291,7 @@ export function topUpReservoir(
   }
 
   // Deduct 1L from shelf stock
-  material.stockCurrent = +(material.stockCurrent - 1).toFixed(2);
+  material.stockCurrent = +(shelf - 1).toFixed(2);
   recalcStatus(material);
 
   // Add to reservoir
@@ -361,8 +367,10 @@ export function checkAndGenerateDraftOrders(): EngineEvent[] {
 
     // Find supplier
     const supplier = suppliers.find((s) => s.name === material.supplier);
-    const suggestedQty = +(material.stockMax - material.stockCurrent).toFixed(2);
-    const estimatedCost = +(suggestedQty * material.unitCost).toFixed(2);
+    const current = material.stockCurrent ?? 0;
+    const unitCost = material.unitCost ?? 0;
+    const suggestedQty = +(material.stockMax - current).toFixed(2);
+    const estimatedCost = +(suggestedQty * unitCost).toFixed(2);
 
     const draft: PurchaseDraft = {
       id: nextDraftId(),
@@ -449,6 +457,7 @@ export function getCompletedJobs(): JobConsumptionRecord[] {
 export function needsRecalibration(materialId: string): boolean {
   const material = inventoryMaterials.find((m) => m.id === materialId);
   if (!material) return false;
+  if (material.stockCurrent === null || material.stockCurrent === undefined) return false;
   if (material.stockCurrent > 0) return false;
 
   // Check if recently recalibrated (within last hour)

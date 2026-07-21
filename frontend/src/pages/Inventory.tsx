@@ -68,14 +68,16 @@ import {
   ChevronUp,
   Database,
   Loader2,
+  Info,
 } from "lucide-react";
 
 // ── Status configs ──────────────────────────────────────────
 const stockStatusConfig: Record<StockStatus, { label: string; cls: string; dotCls: string }> = {
-  ok: { label: "OK", cls: "text-emerald-400", dotCls: "bg-emerald-500" },
+  ok: { label: "În stoc", cls: "text-emerald-400", dotCls: "bg-emerald-500" },
   low: { label: "Scăzut", cls: "text-amber-400", dotCls: "bg-amber-500" },
   critical: { label: "Critic", cls: "text-red-400", dotCls: "bg-red-500 animate-pulse" },
   out_of_stock: { label: "Epuizat", cls: "text-red-500", dotCls: "bg-red-600 animate-pulse" },
+  untracked: { label: "Stoc neurmărit", cls: "text-slate-400", dotCls: "bg-slate-500" },
 };
 
 const sheetTypeConfig: Record<SheetType, { label: string; cls: string; icon: React.ReactNode }> = {
@@ -125,9 +127,17 @@ function CategoryIcon({ category }: { category: string }) {
 }
 
 // ── Stock bar ───────────────────────────────────────────────
-function StockBar({ current, min, max }: { current: number; min: number; max: number }) {
-  const pct = Math.min((current / max) * 100, 100);
-  const minPct = (min / max) * 100;
+function StockBar({ current, min, max }: { current: number | null; min: number; max: number }) {
+  if (current === null || current === undefined) {
+    return (
+      <div className="relative w-full" title="Stoc neurmărit">
+        <div className="w-full bg-slate-800 rounded-full h-2 overflow-hidden border border-dashed border-slate-600" />
+      </div>
+    );
+  }
+  const safeMax = max > 0 ? max : 1;
+  const pct = Math.min((current / safeMax) * 100, 100);
+  const minPct = (min / safeMax) * 100;
   const color = current <= 0 ? "bg-red-600" : current <= min ? "bg-red-500" : current <= min * 1.5 ? "bg-amber-500" : "bg-emerald-500";
 
   return (
@@ -484,14 +494,22 @@ export default function Inventory() {
   const pendingJobs = getPendingJobs();
   const completedJobs = getCompletedJobs();
 
-  // Categorize materials
-  const plateMaterials = inventoryMaterials.filter((m) => isPlateMaterial(m.id));
-  const rollMaterials = inventoryMaterials.filter((m) => isRollMaterial(m.id));
-  const inkMaterials = inventoryMaterials.filter((m) => m.category === "Consumabile");
-  const otherMaterials = inventoryMaterials.filter((m) => !isPlateMaterial(m.id) && !isRollMaterial(m.id) && m.category !== "Consumabile");
+  // Categorize materials from live category (not obsolete mock IDs).
+  const plateMaterials = inventoryMaterials.filter((m) => m.uiTabCategory === "placi");
+  const rollMaterials = inventoryMaterials.filter((m) => m.uiTabCategory === "role");
+  const inkMaterials = inventoryMaterials.filter((m) => m.uiTabCategory === "cerneala");
+  const otherMaterials = inventoryMaterials.filter((m) => m.uiTabCategory === "altele" || !m.uiTabCategory);
 
   const criticalCount = inventoryMaterials.filter((m) => m.stockStatus === "critical" || m.stockStatus === "out_of_stock").length;
   const lowCount = inventoryMaterials.filter((m) => m.stockStatus === "low").length;
+  const untrackedCount = inventoryMaterials.filter((m) => m.stockStatus === "untracked").length;
+  const missingPriceCount = inventoryMaterials.filter(
+    (m) => m.unitCost === null || m.unitCost === undefined || m.registryStatus === "missing_price"
+  ).length;
+  const trackedStockValue = inventoryMaterials.reduce((sum, m) => {
+    if (m.stockCurrent === null || m.unitCost === null || m.unitCost === undefined) return sum;
+    return sum + m.stockCurrent * m.unitCost;
+  }, 0);
 
   const totalSheets = isMockSource ? physicalSheets.filter((s) => s.status === "available").length : 0;
   const totalFullSheets = isMockSource ? physicalSheets.filter((s) => s.status === "available" && s.type === "full_sheet").length : 0;
@@ -517,7 +535,14 @@ export default function Inventory() {
 
   filtered = [...filtered].sort((a, b) => {
     if (sortBy === "name") return a.name.localeCompare(b.name);
-    if (sortBy === "stock") return a.stockCurrent - b.stockCurrent;
+    if (sortBy === "stock") {
+      const av = a.stockCurrent;
+      const bv = b.stockCurrent;
+      if (av === null && bv === null) return 0;
+      if (av === null) return 1;
+      if (bv === null) return -1;
+      return av - bv;
+    }
     return a.daysUntilEmpty - b.daysUntilEmpty;
   });
 
@@ -531,7 +556,7 @@ export default function Inventory() {
     // Check for materials needing recalibration
     inventoryMaterials.forEach((m) => {
       if (needsRecalibration(m.id)) {
-        setRecalModal({ materialId: m.id, materialName: m.name, currentStock: m.stockCurrent, unit: m.unit });
+        setRecalModal({ materialId: m.id, materialName: m.name, currentStock: m.stockCurrent ?? 0, unit: m.unit });
       }
     });
     forceUpdate();
@@ -648,12 +673,12 @@ export default function Inventory() {
         </div>
       )}
 
-      {/* Alert Banner */}
+      {/* Alert Banner — only confirmed critical/zero stock (not untracked). */}
       {criticalCount > 0 && (
         <div className="flex items-center gap-2 px-4 py-2.5 bg-red-900/20 border border-red-800/40 rounded-lg">
           <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
           <p className="text-[12px] text-red-300">
-            <strong>{criticalCount} material(e) în stare critică</strong> — necesită reaprovizionare urgentă.
+            <strong>{criticalCount} material(e) cu stoc confirmat critic / epuizat</strong> — necesită reaprovizionare urgentă.
             {lowCount > 0 && <span className="text-amber-400 ml-2">+ {lowCount} cu stoc scăzut</span>}
           </p>
           {isMockSource && drafts.filter((d) => d.status === "draft").length > 0 && (
@@ -661,6 +686,23 @@ export default function Inventory() {
               {drafts.filter((d) => d.status === "draft").length} draft(uri) comandă generate
             </span>
           )}
+        </div>
+      )}
+      {(untrackedCount > 0 || missingPriceCount > 0) && (
+        <div className="flex items-start gap-2 px-4 py-2.5 bg-slate-900/40 border border-slate-700/50 rounded-lg">
+          <Info className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
+          <p className="text-[12px] text-slate-300">
+            {untrackedCount > 0 && (
+              <span>
+                <strong>{untrackedCount}</strong> cu stoc neurmărit (nu înseamnă epuizat).{" "}
+              </span>
+            )}
+            {missingPriceCount > 0 && (
+              <span>
+                <strong>{missingPriceCount}</strong> cu cost achiziție lipsă — rămân vizibile / selectabile; calcul comercial blocat separat.
+              </span>
+            )}
+          </p>
         </div>
       )}
 
@@ -686,9 +728,9 @@ export default function Inventory() {
           <p className="text-[20px] font-bold text-amber-400 mt-1">{lowCount}</p>
         </div>
         <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
-          <p className="text-[10px] text-slate-400 uppercase tracking-wide">Valoare Stoc</p>
+          <p className="text-[10px] text-slate-400 uppercase tracking-wide">Valoare Stoc (urmărit)</p>
           <p className="text-[16px] font-bold text-emerald-400 mt-1">
-            {inventoryMaterials.reduce((sum, m) => sum + m.stockCurrent * m.unitCost, 0).toLocaleString("ro-RO")} RON
+            {trackedStockValue.toLocaleString("ro-RO")} RON
           </p>
         </div>
       </div>
@@ -891,6 +933,7 @@ export default function Inventory() {
               <option value="low">Scăzut</option>
               <option value="critical">Critic</option>
               <option value="out_of_stock">Epuizat</option>
+              <option value="untracked">Stoc neurmărit</option>
             </select>
             <button
               onClick={() => setSortBy(sortBy === "days" ? "stock" : sortBy === "stock" ? "name" : "days")}
@@ -939,27 +982,36 @@ export default function Inventory() {
                     <tbody>
                       {filtered.map((mat) => {
                         const sCfg = stockStatusConfig[mat.stockStatus];
-                        const isPlate = isPlateMaterial(mat.id);
-                        const isRoll = isRollMaterial(mat.id);
-                        const isInk = mat.category === "Consumabile" && mat.unit === "litru";
-                        const sheets = isMockSource && isPlate ? getAvailableSheets(mat.id) : [];
+                        const isPlate = mat.uiTabCategory === "placi" || isPlateMaterial(mat.id);
+                        const isRoll = mat.uiTabCategory === "role" || isRollMaterial(mat.id);
+                        const isInk = mat.uiTabCategory === "cerneala";
+                        const sheets = isMockSource && isPlateMaterial(mat.id) ? getAvailableSheets(mat.id) : [];
                         const fullCount = sheets.filter((s) => s.type === "full_sheet").length;
                         const remnantCount = sheets.filter((s) => s.type === "remnant").length;
                         const isSelected = selectedPlate?.id === mat.id;
                         const needsRecal = needsRecalibration(mat.id);
+                        const missingPrice =
+                          mat.unitCost === null ||
+                          mat.unitCost === undefined ||
+                          mat.registryStatus === "missing_price";
 
                         return (
                           <tr
                             key={mat.id}
-                            onClick={() => isMockSource && isPlate ? setSelectedPlate(isSelected ? null : mat) : undefined}
+                            onClick={() => isMockSource && isPlateMaterial(mat.id) ? setSelectedPlate(isSelected ? null : mat) : undefined}
                             className={`border-b border-[#1E293B]/50 transition-colors ${
-                              isPlate ? "cursor-pointer" : ""
+                              isMockSource && isPlateMaterial(mat.id) ? "cursor-pointer" : ""
                             } ${isSelected ? "bg-blue-900/20 border-blue-800/30" : "hover:bg-[#1A2236]/50"}`}
                           >
                             <td className="px-4 py-2.5">
-                              <div className="flex items-center gap-1.5">
-                                <span className={`w-2 h-2 rounded-full ${sCfg.dotCls}`} />
-                                <span className={`text-[11px] font-semibold ${sCfg.cls}`}>{sCfg.label}</span>
+                              <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-1.5">
+                                  <span className={`w-2 h-2 rounded-full ${sCfg.dotCls}`} />
+                                  <span className={`text-[11px] font-semibold ${sCfg.cls}`}>{sCfg.label}</span>
+                                </div>
+                                {missingPrice && (
+                                  <span className="text-[10px] text-amber-300/90">Preț lipsă</span>
+                                )}
                               </div>
                             </td>
                             <td className="px-4 py-2.5">
@@ -973,8 +1025,17 @@ export default function Inventory() {
                               </div>
                             </td>
                             <td className="px-4 py-2.5">
-                              <span className={`font-semibold ${sCfg.cls}`}>{mat.stockCurrent}</span>
-                              <span className="text-slate-500"> / {mat.stockMax} {mat.unit}</span>
+                              {mat.stockCurrent === null || mat.stockCurrent === undefined ? (
+                                <>
+                                  <span className={`font-semibold ${sCfg.cls}`}>—</span>
+                                  <span className="text-slate-500"> {mat.unit} (neurmărit)</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className={`font-semibold ${sCfg.cls}`}>{mat.stockCurrent}</span>
+                                  <span className="text-slate-500"> / {mat.stockMax} {mat.unit}</span>
+                                </>
+                              )}
                             </td>
                             <td className="px-4 py-2.5">
                               <StockBar current={mat.stockCurrent} min={mat.stockMin} max={mat.stockMax} />
@@ -1026,7 +1087,7 @@ export default function Inventory() {
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
-                                      setRecalModal({ materialId: mat.id, materialName: mat.name, currentStock: mat.stockCurrent, unit: mat.unit });
+                                      setRecalModal({ materialId: mat.id, materialName: mat.name, currentStock: mat.stockCurrent ?? 0, unit: mat.unit });
                                     }}
                                     className="p-1 text-amber-400 hover:text-amber-300 transition-colors"
                                     title="Recalibrare necesară"

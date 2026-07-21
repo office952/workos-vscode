@@ -754,23 +754,29 @@ export const orders: Order[] = DEMO_DATA_ENABLED ? [
 // ============================================================
 // INVENTORY / OPERATIONAL CORE
 // ============================================================
-export type StockStatus = "ok" | "low" | "critical" | "out_of_stock";
+export type StockStatus = "ok" | "low" | "critical" | "out_of_stock" | "untracked";
 
 export interface InventoryMaterial {
   id: string;
   name: string;
   category: string;
   unit: string;
-  stockCurrent: number;
+  /** null = stock not tracked (never treat as zero). */
+  stockCurrent: number | null;
   stockMin: number;
   stockMax: number;
   stockStatus: StockStatus;
-  unitCost: number;
+  /** Purchase / acquisition cost; null when missing. */
+  unitCost: number | null;
   supplier: string;
   lastRestocked: string;
   consumptionRate: number; // units per day avg
   daysUntilEmpty: number;
   location: string;
+  /** Live registry status when known (active / missing_price / …). */
+  registryStatus?: string | null;
+  /** Inventory UI tab membership derived from live category (not mock IDs). */
+  uiTabCategory?: "placi" | "role" | "cerneala" | "altele";
 }
 
 export const inventoryMaterials: InventoryMaterial[] = [

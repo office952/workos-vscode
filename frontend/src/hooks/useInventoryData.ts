@@ -5,9 +5,12 @@ import {
   inventoryMaterials as mockMaterials,
   suppliers as mockSuppliers,
   type InventoryMaterial,
-  type StockStatus,
   type Supplier,
 } from "@/lib/mockData";
+import {
+  classifyInventoryUiTab,
+  computeInventoryStockStatus,
+} from "@/lib/inventory/inventoryMaterialClassification";
 
 export type DataSource = "db" | "mock" | "empty" | "error" | "loading";
 
@@ -45,31 +48,27 @@ interface DBSupplier {
   updated_at: string | null;
 }
 
-function computeStockStatus(
-  current: number,
-  min: number,
-  max: number
-): StockStatus {
-  if (current <= 0) return "out_of_stock";
-  if (current <= min * 0.5) return "critical";
-  if (current <= min) return "low";
-  return "ok";
-}
-
 function computeDaysUntilEmpty(
-  current: number,
+  current: number | null,
   consumptionRate: number
 ): number {
-  if (consumptionRate <= 0 || current <= 0) return 0;
+  if (current === null || consumptionRate <= 0 || current <= 0) return 0;
   return Math.round(current / consumptionRate);
 }
 
 function mapDBToMaterial(db: DBMaterial): InventoryMaterial {
-  const stockCurrent = db.stock_current ?? 0;
+  const stockCurrent = db.stock_current;
   const stockMin = db.stock_min ?? 0;
-  const stockMax = db.stock_max ?? Math.max(stockCurrent * 2, 100);
-  const unitCost = db.unit_cost ?? 0;
+  const stockMax =
+    db.stock_max ??
+    (stockCurrent !== null ? Math.max(stockCurrent * 2, 100) : 100);
+  const unitCost = db.unit_cost;
   const consumptionRate = db.consumption_rate ?? 0;
+  const uiTabCategory = classifyInventoryUiTab({
+    category: db.category,
+    unit: db.unit,
+    code: db.code,
+  });
 
   return {
     id: db.code,
@@ -84,8 +83,13 @@ function mapDBToMaterial(db: DBMaterial): InventoryMaterial {
     lastRestocked: db.last_restocked || "N/A",
     consumptionRate,
     daysUntilEmpty: computeDaysUntilEmpty(stockCurrent, consumptionRate),
-    stockStatus: computeStockStatus(stockCurrent, stockMin, stockMax),
+    stockStatus: computeInventoryStockStatus({
+      stockCurrent,
+      stockMin,
+    }),
     location: db.location || "",
+    registryStatus: db.status ?? null,
+    uiTabCategory,
   };
 }
 
@@ -101,6 +105,20 @@ function mapDBToSupplier(db: DBSupplier): Supplier {
   };
 }
 
+function annotateMockMaterial(m: InventoryMaterial): InventoryMaterial {
+  return {
+    ...m,
+    uiTabCategory:
+      m.uiTabCategory ??
+      classifyInventoryUiTab({
+        category: m.category,
+        unit: m.unit,
+        code: m.id,
+      }),
+    registryStatus: m.registryStatus ?? (m.unitCost == null ? "missing_price" : "active"),
+  };
+}
+
 interface InventoryDataState {
   materials: InventoryMaterial[];
   suppliers: Supplier[];
@@ -112,7 +130,9 @@ interface InventoryDataState {
 
 export function useInventoryData(): InventoryDataState {
   const mockEnabled = isMockEnabled();
-  const [materials, setMaterials] = useState<InventoryMaterial[]>(mockEnabled ? mockMaterials : []);
+  const [materials, setMaterials] = useState<InventoryMaterial[]>(
+    mockEnabled ? mockMaterials.map(annotateMockMaterial) : []
+  );
   const [suppliers, setSuppliers] = useState<Supplier[]>(mockEnabled ? mockSuppliers : []);
   const [source, setSource] = useState<DataSource>(mockEnabled ? "mock" : "loading");
   const [loading, setLoading] = useState(true);
@@ -147,7 +167,7 @@ export function useInventoryData(): InventoryDataState {
         setMaterials(dbMaterials.map(mapDBToMaterial));
         setSource("db");
       } else if (mockEnabled) {
-        setMaterials(mockMaterials);
+        setMaterials(mockMaterials.map(annotateMockMaterial));
         setSource("mock");
       } else {
         setMaterials([]);
@@ -163,7 +183,7 @@ export function useInventoryData(): InventoryDataState {
       if (!mountedRef.current) return;
       if (mockEnabled) {
         console.warn("[useInventoryData] API unavailable, using mock data:", err);
-        setMaterials(mockMaterials);
+        setMaterials(mockMaterials.map(annotateMockMaterial));
         setSuppliers(mockSuppliers);
         setSource("mock");
       } else {
@@ -178,7 +198,7 @@ export function useInventoryData(): InventoryDataState {
         setLoading(false);
       }
     }
-  }, []);
+  }, [mockEnabled]);
 
   useEffect(() => {
     mountedRef.current = true;
