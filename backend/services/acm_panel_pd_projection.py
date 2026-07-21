@@ -152,6 +152,12 @@ def project_face_treatments_into_values(
     values["acm_face_treatment_quantity_matrix"] = projection["acm_face_treatment_quantity_matrix"]
     values["acm_face_treatment_ops_intents"] = projection["acm_face_treatment_ops_intents"]
     values["acm_face_treatment_cpp_eic_gate"] = projection["acm_face_treatment_cpp_eic_gate"]
+    values["acm_face_treatment_optical_catalog_resolution"] = projection[
+        "acm_face_treatment_optical_catalog_resolution"
+    ]
+    values["acm_face_treatment_commercial_ui_summary"] = projection[
+        "acm_face_treatment_commercial_ui_summary"
+    ]
     values["face_treatment_coexistence"] = domain.get("coexistence")
     agg = project_face_treatments_for_aggregate(domain)
     if agg is not None:

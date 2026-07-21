@@ -59,6 +59,13 @@ WARN_INSERT_THICKNESS_NOT_SOLE = "INSERT_THICKNESS_NOT_SOLE_ADMITTED"
 WARN_LEGACY_LIGHT_ROUTED_NOT_AUTHORITY = "LEGACY_LIGHT_ROUTED_NOT_AUTHORITY"
 WARN_PANEL_ONLY_NO_FACE_TREATMENTS = "ACM_PANEL_ONLY_NO_FACE_TREATMENTS"
 
+# Catalog resolution statuses — priced emission only when WIRED + owner rate proven.
+RESOLUTION_WIRED = "WIRED"
+RESOLUTION_KEY_STUB_NO_RATE = "KEY_STUB_NO_RATE"
+RESOLUTION_WRONG_PRODUCT = "WRONG_PRODUCT"
+RESOLUTION_LEGACY_FORBIDDEN = "LEGACY_FORBIDDEN"
+RESOLUTION_GENUINELY_MISSING = "GENUINELY_MISSING"
+
 # Treatment quantity keys — never share commercial keys with panel sheet.
 ROUTED_QUANTITY_KEYS = frozenset(
     {
@@ -111,10 +118,11 @@ def empty_face_treatments_domain() -> dict[str, Any]:
         "commercial": {
             "panel_sheet_owner": "acm_shell",
             "double_sheet_guard": "treatments_must_not_bill_panel_sheet",
-            "optical_pricing_status": "BLOCKED",
-            "optical_blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
-            "illumination_pricing_status": "BLOCKED",
-            "illumination_blocker": BLOCKER_ILLUMINATION_RATES_MISSING,
+            # Panel-only empty domain: no treatment optical/illumination blockers yet.
+            "optical_pricing_status": "NOT_APPLICABLE",
+            "optical_blocker": None,
+            "illumination_pricing_status": "NOT_APPLICABLE",
+            "illumination_blocker": None,
         },
         "readiness": {
             "overall": "NOT_APPLICABLE",
@@ -296,11 +304,9 @@ def normalize_face_treatments(raw: Any) -> dict[str, Any]:
     if inserts:
         warnings.append(WARN_INSERT_THICKNESS_NOT_SOLE)
 
-    # Active treatments always face optical/illumination commercial blockers.
-    if coexistence != COEXISTENCE_NONE:
-        blockers.append(BLOCKER_OPTICAL_CATALOG_MISSING)
-        if coexistence in {COEXISTENCE_ROUTED_ONLY, COEXISTENCE_BOTH}:
-            blockers.append(BLOCKER_ILLUMINATION_RATES_MISSING)
+    # Scoped commercial blockers (CP0 optical freeze): insert-only gets optical
+    # BLOCK only — must not inherit routed illumination BLOCK.
+    blockers.extend(scoped_commercial_blockers(coexistence))
 
     ui_badges: dict[str, Any] = {}
     relief_ids = [i["id"] for i in inserts if i.get("ui_badge") == UI_BADGE_RELIEF_PLEXI_10MM]
@@ -467,6 +473,8 @@ def build_ops_intents(domain: Mapping[str, Any] | None) -> dict[str, Any]:
                     "electrical_test_intent",
                 ],
                 "rate_status": "BLOCKED",
+                "optical_blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+                "illumination_blocker": BLOCKER_ILLUMINATION_RATES_MISSING,
                 "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
             }
         )
@@ -485,6 +493,8 @@ def build_ops_intents(domain: Mapping[str, Any] | None) -> dict[str, Any]:
                     "illumination_intent",
                 ],
                 "rate_status": "BLOCKED",
+                "optical_blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+                "illumination_blocker": None,
                 "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
             }
         )
@@ -496,30 +506,278 @@ def build_ops_intents(domain: Mapping[str, Any] | None) -> dict[str, Any]:
     }
 
 
+def scoped_commercial_blockers(coexistence: str) -> list[str]:
+    """Optical vs illumination blockers scoped by coexistence (CP0 freeze)."""
+    if coexistence == COEXISTENCE_NONE:
+        return []
+    blockers = [BLOCKER_OPTICAL_CATALOG_MISSING]
+    if coexistence in {COEXISTENCE_ROUTED_ONLY, COEXISTENCE_BOTH}:
+        blockers.append(BLOCKER_ILLUMINATION_RATES_MISSING)
+    return blockers
+
+
+def _catalog_need_applies(need_id: str, coexistence: str) -> bool:
+    if coexistence == COEXISTENCE_NONE:
+        return False
+    insert_needs = {
+        "acrylic_insert_10mm_material",
+        "insert_cnc_fit_retain",
+        "insert_adhesive_spacers",
+    }
+    routed_needs = {
+        "optical_backing_plexi",
+        "cnc_route_acp_face",
+        "cut_mount_plexiglas_backing",
+    }
+    if coexistence == COEXISTENCE_INSERT_ONLY:
+        return need_id in insert_needs
+    if coexistence == COEXISTENCE_ROUTED_ONLY:
+        return need_id in routed_needs
+    if coexistence == COEXISTENCE_BOTH:
+        return need_id in insert_needs or need_id in routed_needs
+    return False
+
+
+def build_catalog_resolution(domain: Mapping[str, Any] | None = None) -> dict[str, Any]:
+    """Read-only optical/illumination catalog map — no invented rates.
+
+    Priced emission requires resolution_status == WIRED with proven owner rate + unit.
+    Optical face-treatment needs are not WIRED in this closure (PARTIAL).
+    """
+    d = normalize_face_treatments(domain) if not (
+        isinstance(domain, Mapping) and domain.get("schema") == DOMAIN_SCHEMA
+    ) else normalize_face_treatments(domain)
+    coexistence = str(d.get("coexistence") or COEXISTENCE_NONE)
+    rows: list[dict[str, Any]] = [
+        {
+            "need_id": "panel_shell_commercial",
+            "need": "Panel sheet / cut / V-groove / assembly",
+            "candidate_keys": [
+                "acm_panel_material",
+                "ACM_PANEL_CUTTING",
+                "ACM_V_GROOVE",
+                "ACM_BOXED_ASSEMBLY",
+            ],
+            "resolution_status": RESOLUTION_WIRED,
+            "action": "preserve_panel_path",
+            "priced_emission": True,
+            "owner": "acm_shell",
+            "blocker": None,
+            "applies": True,
+            "notes": "Pre-existing owner-confirmed ACM panel commercial path.",
+        },
+        {
+            "need_id": "acrylic_insert_10mm_material",
+            "need": "Acrylic insert ~10 mm material",
+            "candidate_keys": ["MAT-PLEXI-OPAL-10MM", "MAT-PLEXI-TRANSP-10MM"],
+            "resolution_status": RESOLUTION_KEY_STUB_NO_RATE,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ACRYLIC_INSERT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies(
+                "acrylic_insert_10mm_material", coexistence
+            ),
+            "notes": "Inventory stubs exist; unit_cost missing — do not invent.",
+        },
+        {
+            "need_id": "optical_backing_plexi",
+            "need": "Optical backing plexi (routed)",
+            "candidate_keys": ["MAT-PLEXI-OPAL-3MM", "MAT-ACP-FATA-LITERE"],
+            "resolution_status": RESOLUTION_WRONG_PRODUCT,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ROUTED_BACKLIT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies("optical_backing_plexi", coexistence),
+            "notes": (
+                "Stub or volumetric letter-face 3 mm — not Axis B backing authority."
+            ),
+        },
+        {
+            "need_id": "cnc_route_acp_face",
+            "need": "CNC route ACP face / cutout",
+            "candidate_keys": ["cnc_route_acp_face"],
+            "resolution_status": RESOLUTION_GENUINELY_MISSING,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ROUTED_BACKLIT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies("cnc_route_acp_face", coexistence),
+            "notes": "ACM_PANEL_CUTTING is panel perimeter — different qty basis.",
+        },
+        {
+            "need_id": "cut_mount_plexiglas_backing",
+            "need": "Cut / mount plexiglas backing",
+            "candidate_keys": ["cut_plexiglas_backing", "mount_plexiglas_backing"],
+            "resolution_status": RESOLUTION_GENUINELY_MISSING,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ROUTED_BACKLIT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies(
+                "cut_mount_plexiglas_backing", coexistence
+            ),
+            "notes": "Process intents only — no owner treatment op rates.",
+        },
+        {
+            "need_id": "insert_cnc_fit_retain",
+            "need": "CNC insert pocket / cut insert / fit / retain",
+            "candidate_keys": [
+                "cnc_route_acp_insert_pocket",
+                "cut_plexiglas_insert",
+                "fit_insert",
+                "retain_insert",
+            ],
+            "resolution_status": RESOLUTION_GENUINELY_MISSING,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ACRYLIC_INSERT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies("insert_cnc_fit_retain", coexistence),
+            "notes": "Process intents only — no owner treatment op rates.",
+        },
+        {
+            "need_id": "insert_adhesive_spacers",
+            "need": "Insert adhesive / spacers / retention consumables",
+            "candidate_keys": ["MAT-ADEZIV-SILICON", "MAT-DISTANTIERE-INOX"],
+            "resolution_status": RESOLUTION_GENUINELY_MISSING,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": MODULE_ACRYLIC_INSERT,
+            "blocker": BLOCKER_OPTICAL_CATALOG_MISSING,
+            "applies": _catalog_need_applies("insert_adhesive_spacers", coexistence),
+            "notes": "Stubs / MIXED tech truth — no owner commercial rates for Axis B.",
+        },
+        {
+            "need_id": "treatment_illumination_led_psu",
+            "need": "Treatment illumination LED / PSU / wiring (ACM cavity)",
+            "candidate_keys": [
+                "MAT-LED-MODULE",
+                "MAT-LED-STRIP",
+                "MAT-LED-PSU-12V-60W",
+            ],
+            "resolution_status": RESOLUTION_WRONG_PRODUCT,
+            "action": "STOP",
+            "priced_emission": False,
+            "owner": "SHELL_COMMON_WITH_ZONE_INTENTS",
+            "blocker": BLOCKER_ILLUMINATION_RATES_MISSING,
+            "applies": coexistence in {COEXISTENCE_ROUTED_ONLY, COEXISTENCE_BOTH},
+            "notes": (
+                "Volumetric LED rates must not remap to ACM cavity; ACP optical/electrical "
+                "RO catalogs MISSING."
+            ),
+        },
+        {
+            "need_id": "legacy_light_routed",
+            "need": "LIGHT-ROUTED CostEngine formulas",
+            "candidate_keys": ["TPL-ACP-LIGHT-ROUTED"],
+            "resolution_status": RESOLUTION_LEGACY_FORBIDDEN,
+            "action": "never_wire",
+            "priced_emission": False,
+            "owner": "PARALLEL_LEGACY_COST_PATH",
+            "blocker": None,
+            "applies": False,
+            "notes": "Legacy parallel path — not Axis B commercial authority.",
+        },
+    ]
+
+    # Optical treatment needs are never all WIRED this run when treatments active.
+    optical_wired = False
+    if coexistence == COEXISTENCE_NONE:
+        optical_wired = True
+
+    illum_required = coexistence in {COEXISTENCE_ROUTED_ONLY, COEXISTENCE_BOTH}
+    illum_row = next(r for r in rows if r["need_id"] == "treatment_illumination_led_psu")
+    illumination_wired = (
+        illum_row["resolution_status"] == RESOLUTION_WIRED if illum_required else True
+    )
+
+    treatment_lines_allowed = bool(
+        coexistence != COEXISTENCE_NONE and optical_wired and illumination_wired
+    )
+
+    return {
+        "schema": "acm_face_treatment_optical_catalog_resolution_v1",
+        "coexistence": coexistence,
+        "rows": rows,
+        "optical_catalog_wired": optical_wired,
+        "illumination_catalog_wired": illumination_wired,
+        "illumination_required": illum_required,
+        "treatment_commercial_lines_allowed": treatment_lines_allowed,
+        "priced_treatment_subtotal": None,
+        "priced_treatment_subtotal_status": (
+            "NOT_APPLICABLE"
+            if coexistence == COEXISTENCE_NONE
+            else "BLOCKED"
+        ),
+        "resource_authority": RESOURCE_AUTHORITY,
+        "policy": (
+            "Priced emission only when required rows are WIRED with proven owner rates. "
+            "Do not invent rates. Do not remap volumetric/LIGHT-ROUTED into Axis B."
+        ),
+    }
+
+
 def build_cpp_eic_commercial_gate(domain: Mapping[str, Any] | None) -> dict[str, Any]:
     """Honest CPP/EIC gate for face treatments — never invent optical rates."""
     d = normalize_face_treatments(domain) if not (
         isinstance(domain, Mapping) and domain.get("schema") == DOMAIN_SCHEMA
-    ) else dict(domain)
+    ) else normalize_face_treatments(domain)
     coexistence = d.get("coexistence") or COEXISTENCE_NONE
-    treatment_lines_allowed = False
-    blockers: list[str] = []
-    if coexistence != COEXISTENCE_NONE:
-        blockers = [
-            BLOCKER_OPTICAL_CATALOG_MISSING,
-            BLOCKER_ILLUMINATION_RATES_MISSING,
-        ]
+    catalog = build_catalog_resolution(d)
+    blockers = scoped_commercial_blockers(str(coexistence))
+    treatment_lines_allowed = bool(catalog.get("treatment_commercial_lines_allowed"))
     return {
         "schema": "acm_face_treatment_cpp_eic_gate_v1",
         "panel_cpp_path": "unchanged_acm_panel_commercial_geometry",
         "treatment_commercial_lines_allowed": treatment_lines_allowed,
         "coexistence": coexistence,
         "blockers": blockers,
+        "optical_blocker_applies": BLOCKER_OPTICAL_CATALOG_MISSING in blockers,
+        "illumination_blocker_applies": BLOCKER_ILLUMINATION_RATES_MISSING in blockers,
+        "priced_treatment_subtotal": catalog.get("priced_treatment_subtotal"),
+        "priced_treatment_subtotal_status": catalog.get(
+            "priced_treatment_subtotal_status"
+        ),
+        "catalog_resolution_schema": catalog.get("schema"),
         "policy": (
-            "Panel-only ACM CPP/EIC remains valid. Face-treatment optical/electrical "
-            "lines stay BLOCKED until owner optical catalog GO. Do not invent rates."
+            "Panel-only ACM CPP/EIC remains valid. Face-treatment optical lines stay "
+            "BLOCKED until owner optical catalog GO. Insert-only does not inherit "
+            "routed illumination BLOCK. Do not invent rates."
         ),
         "resource_authority": RESOURCE_AUTHORITY,
+        "no_double_sheet": True,
+        "no_volumetric_led_fold_in": True,
+        "no_psu_duplicate": True,
+        "no_hourly_commercial_price": True,
+    }
+
+
+def build_commercial_ui_summary(domain: Mapping[str, Any] | None) -> dict[str, Any]:
+    """Compact commercial readiness summary for face-treatment UI (no redesign)."""
+    d = normalize_face_treatments(domain) if not (
+        isinstance(domain, Mapping) and domain.get("schema") == DOMAIN_SCHEMA
+    ) else normalize_face_treatments(domain)
+    gate = build_cpp_eic_commercial_gate(d)
+    readiness = _as_dict(d.get("readiness"))
+    return {
+        "schema": "acm_face_treatment_commercial_ui_summary_v1",
+        "coexistence": d.get("coexistence"),
+        "readiness_overall": readiness.get("overall"),
+        "scoped_blockers": list(gate.get("blockers") or []),
+        "treatment_commercial_lines_allowed": gate.get(
+            "treatment_commercial_lines_allowed"
+        ),
+        "priced_treatment_subtotal": gate.get("priced_treatment_subtotal"),
+        "priced_treatment_subtotal_status": gate.get("priced_treatment_subtotal_status"),
+        "optical_blocker": BLOCKER_OPTICAL_CATALOG_MISSING
+        if gate.get("optical_blocker_applies")
+        else None,
+        "illumination_blocker": BLOCKER_ILLUMINATION_RATES_MISSING
+        if gate.get("illumination_blocker_applies")
+        else None,
+        "panel_only_blocked_by_absent_treatments": False,
     }
 
 
@@ -540,6 +798,8 @@ def project_for_product_definition(domain: Mapping[str, Any] | None) -> dict[str
         "acm_face_treatment_quantity_matrix": build_quantity_matrix(d),
         "acm_face_treatment_ops_intents": build_ops_intents(d),
         "acm_face_treatment_cpp_eic_gate": build_cpp_eic_commercial_gate(d),
+        "acm_face_treatment_optical_catalog_resolution": build_catalog_resolution(d),
+        "acm_face_treatment_commercial_ui_summary": build_commercial_ui_summary(d),
         "acp_local_face_module_instances_from_face_treatments": modules,
     }
 
@@ -562,6 +822,7 @@ def project_for_aggregate(domain: Mapping[str, Any] | None) -> dict[str, Any] | 
     qty = build_quantity_matrix(d)
     ops = build_ops_intents(d)
     gate = build_cpp_eic_commercial_gate(d)
+    catalog = build_catalog_resolution(d)
     return {
         "kind": "acm_face_treatments",
         "schema": DOMAIN_SCHEMA,
@@ -571,6 +832,7 @@ def project_for_aggregate(domain: Mapping[str, Any] | None) -> dict[str, Any] | 
         "quantity_matrix": qty,
         "ops_intents": ops,
         "cpp_eic_gate": gate,
+        "optical_catalog_resolution": catalog,
         "materials": [],  # optical materials blocked — do not invent
         "operations": [],
         "owns_panel_sheet": False,
@@ -638,6 +900,9 @@ def readiness_finding_for_template(payload: Mapping[str, Any] | None = None) -> 
             "orthogonal_to_xor": True,
             "optional_absent_ok": True,
             "optical_blockers": blockers,
+            "scoped_blockers": blockers,
+            "catalog_resolution": build_catalog_resolution(domain),
+            "commercial_ui": build_commercial_ui_summary(domain),
             "panel_only_blocked_by_absent_treatments": False,
             "publication": "KEEP_DRAFT",
         },
@@ -645,13 +910,14 @@ def readiness_finding_for_template(payload: Mapping[str, Any] | None = None) -> 
 
 
 def scenario_matrix() -> list[dict[str, Any]]:
-    """Canonical coexistence scenarios for tests / evidence."""
+    """Canonical coexistence / CPP scenarios for tests / evidence."""
     scenarios = []
-    for name, routed_n, insert_n in (
-        ("panel_only", 0, 0),
-        ("routed_only", 1, 0),
-        ("insert_only", 0, 1),
-        ("both", 1, 1),
+    for name, routed_n, insert_n, frame in (
+        ("panel_only", 0, 0, False),
+        ("routed_illuminated", 1, 0, False),
+        ("insert_only", 0, 1, False),
+        ("both", 1, 1, False),
+        ("both_plus_frame", 1, 1, True),
     ):
         raw: dict[str, Any] = {
             "routed_cutouts": [
@@ -664,14 +930,30 @@ def scenario_matrix() -> list[dict[str, Any]]:
             ],
         }
         domain = normalize_face_treatments(raw)
+        gate = build_cpp_eic_commercial_gate(domain)
+        catalog = build_catalog_resolution(domain)
         scenarios.append(
             {
                 "name": name,
                 "coexistence": domain["coexistence"],
+                "frame_optional": frame,
                 "quantity": build_quantity_matrix(domain),
                 "ops": build_ops_intents(domain),
-                "cpp_eic": build_cpp_eic_commercial_gate(domain),
+                "cpp_eic": gate,
+                "catalog_resolution": catalog,
+                "commercial_ui": build_commercial_ui_summary(domain),
                 "aggregate": project_for_aggregate(domain),
+                "guards": {
+                    "no_double_sheet": gate.get("no_double_sheet") is True,
+                    "no_volumetric_led_fold_in": gate.get("no_volumetric_led_fold_in")
+                    is True,
+                    "no_psu_duplicate": gate.get("no_psu_duplicate") is True,
+                    "no_hourly_commercial_price": gate.get("no_hourly_commercial_price")
+                    is True,
+                    "treatment_lines_allowed": gate.get(
+                        "treatment_commercial_lines_allowed"
+                    ),
+                },
             }
         )
     return scenarios
