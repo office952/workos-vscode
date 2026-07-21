@@ -28,6 +28,7 @@ import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthorin
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { TemplatePricingStudioPanel } from "./TemplatePricingStudioPanel";
+import { showTemplatePricingStudio } from "./templatePricingStudioEligibility";
 import { humanTemplateName } from "./productSystemAdminDisplay";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
@@ -71,6 +72,20 @@ const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string
   { id: "product-truth-paths", label: "Product Truth", testId: "product-system-template-detail-tab-product-truth-paths" },
   { id: "guards", label: "Garduri", testId: "product-system-template-detail-tab-guards" },
 ];
+
+const COMPONENT_PRICING_TAB = {
+  id: "pricing" as const,
+  label: "Prețuri template",
+  testId: "product-system-template-detail-tab-pricing",
+};
+
+function componentSectionsWithOptionalPricing(
+  includePricing: boolean,
+): Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> {
+  if (!includePricing) return COMPONENT_SECTIONS;
+  const [overview, ...rest] = COMPONENT_SECTIONS;
+  return [overview, COMPONENT_PRICING_TAB, ...rest];
+}
 
 function bucketOverviewCopy(
   templateCode: string,
@@ -296,7 +311,13 @@ export function ProductSystemTemplateDetailPanel({
 }) {
   const isProduct =
     catalogBucket === "current-products" || catalogBucket === "candidate-products";
-  const sections = isProduct ? PRODUCT_SECTIONS : COMPONENT_SECTIONS;
+  const pricingStudioVisible = showTemplatePricingStudio({
+    isProduct,
+    templateCode: template.template_code,
+  });
+  const sections = isProduct
+    ? PRODUCT_SECTIONS
+    : componentSectionsWithOptionalPricing(pricingStudioVisible);
   const overview = bucketOverviewCopy(template.template_code, catalogBucket, availability);
   const scope = getProductTemplateScopePresentation(availability);
   const modularity = getProductModularityTruth(template.template_code);
@@ -575,8 +596,17 @@ export function ProductSystemTemplateDetailPanel({
         </div>
       ) : null}
 
-      {section === "pricing" && isProduct ? (
+      {section === "pricing" && pricingStudioVisible ? (
         <div data-testid="product-system-template-detail-pricing">
+          {!isProduct ? (
+            <p
+              data-testid="product-system-template-pricing-module-note"
+              className="mb-3 text-[12px] text-slate-400"
+            >
+              Modul component / legacy — bucket neschimbat. Prețuri template reutilizează
+              același Studio și API; nu transformă entitatea în produs root.
+            </p>
+          ) : null}
           <TemplatePricingStudioPanel templateCode={template.template_code} />
         </div>
       ) : null}
