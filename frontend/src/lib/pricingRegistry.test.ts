@@ -247,11 +247,11 @@ describe("pricingRegistry V2 spacious helpers", () => {
     expect(quoteImpactLabel(sampleItems[3])).toBe("Blochează calcul complet");
   });
 
-  it("groups coverage stack by material and service sections", () => {
+  it("groups coverage stack by material and machine operation sections", () => {
     const tplItems = itemsForTemplate(sampleItems, "TPL-VOLUMETRIC-LETTERS_v2");
     const sections = groupItemsForCoverageStack(tplItems, []);
     expect(sections.some((s) => s.key === "materials")).toBe(true);
-    expect(sections.some((s) => s.key === "services")).toBe(true);
+    expect(sections.some((s) => s.key === "machine_operations")).toBe(true);
     const ledGroup = sections
       .find((s) => s.key === "materials")
       ?.subgroups.find((g) => g.label === "LED / electrice");
