@@ -5,6 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `1518b6ac` |
+| Final HEAD | `b14d3e26` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/labor-recipe-contract-v1-closure/` |
 | schema_version | **1.1.1** (additive formula truth fields) |
