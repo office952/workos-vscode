@@ -849,3 +849,45 @@ TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
 ### Next owner decision
 
 Optical / plexiglas / illumination rate catalog GO ? or accept treatment commercial lines remain BLOCKED.
+
+---
+
+## ACM FACE-TREATMENT OPTICAL AND ILLUMINATION CATALOG CLOSURE
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `9bdcfaa8` (reconfirmed tip) |
+| Axis | **B** ? optical / plexiglas / illumination catalog closure |
+| CP0 | `ACM_FACE_TREATMENT_OPTICAL_CATALOG_CP0_FREEZE.md` ? **FROZEN** |
+| Allowlist | `ACM_FACE_TREATMENT_OPTICAL_CATALOG_ALLOWLIST.md` |
+| Shared map | `ACM_FACE_TREATMENT_OPTICAL_CATALOG_SHARED_MAP.md` |
+| Final report | `ACM_FACE_TREATMENT_OPTICAL_ILLUMINATION_CATALOG_CLOSURE_FINAL_REPORT.md` |
+| Engine | native inline |
+| Publication | **KEEP_DRAFT** |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Catalog map | Resolution statuses for all needs; optical priced WIRED=0 |
+| Scoped blockers | insert-only optical only; routed illuminated optical+illumination |
+| CPP/EIC | Panel 6 acm_* preserved; treatment lines BLOCKED; guards proven |
+| Remapping | Volumetric LED / letter plexi / LIGHT-ROUTED not wired |
+| UI | Readiness / scoped blockers / lines_allowed / subtotal BLOCKED |
+| Tests | 18 pytest + 4 vitest PASS |
+| Screenshots | 01?04 CAPTURED |
+| Verdict | **PASS_WITH_WARNINGS** (PARTIAL priced close) |
+
+### Commit sequence
+
+1. `docs(qa): freeze ACM face-treatment optical catalog CP0 and shared map`
+2. `feat(product-system): add face-treatment optical catalog resolution map`
+3. `feat(product-system): scope optical and illumination commercial blockers`
+4. `fix(product-system-ui): expose face-treatment commercial readiness and blockers`
+5. `test(product-system): prove optical catalog partial close and CPP scenarios`
+6. `docs(qa): finalize ACM face-treatment optical illumination catalog closure`
+
+### Next owner decision
+
+Provide dedicated ACM face-treatment optical / plexiglas (~10 mm) / treatment-CNC / ACM-cavity illumination owner rate RO (EUR + unit + ownership).
