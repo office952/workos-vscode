@@ -52,6 +52,10 @@ from services.template_architecture_scope import (
     normalize_template_code,
     resolve_template_identity,
 )
+from services.volum_aluminiu_component_contract import (
+    ALLOWED_DEPTH_MM,
+    build_input_contract_view,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -691,6 +695,60 @@ class ProductE2EReadinessService:
                         },
                     )
                 )
+
+        # Contract completeness for aluminium return — does NOT authorize activation/publish.
+        if KNOWN_REQUIRED_INACTIVE_CHILD in required_codes or template_code == KNOWN_REQUIRED_INACTIVE_CHILD:
+            input_contract = build_input_contract_view()
+            depth_options = []
+            try:
+                form = self._form.get_for_template(
+                    template_code if template_code != KNOWN_REQUIRED_INACTIVE_CHILD else "TPL-VOLUMETRIC-LETTERS_v2"
+                )
+                if form is not None:
+                    for field in getattr(form, "fields", None) or []:
+                        if getattr(field, "canonical_key", None) == "return_depth_mm":
+                            depth_options = list(getattr(field, "option_values", None) or [])
+            except Exception:  # noqa: BLE001 — readiness must stay read-only/fail-soft
+                depth_options = []
+
+            depth_aligned = (
+                not depth_options
+                or set(int(x) for x in depth_options if str(x).isdigit()) == set(ALLOWED_DEPTH_MM)
+            )
+            findings.append(
+                _finding(
+                    check_id="components.volum_aluminiu.separate_calc_contract",
+                    system="components",
+                    status="PASS" if depth_aligned else "PASS_WITH_WARNINGS",
+                    message=(
+                        "Volum Aluminiu separate-calc contract present "
+                        "(confirmed perimeter required; publication remains blocked)."
+                        if depth_aligned
+                        else "Volum Aluminiu contract present but return_depth_mm options misaligned with material gates."
+                    ),
+                    source_owner="volum_aluminiu_component_contract",
+                    template_code=template_code,
+                    component_template_code=KNOWN_REQUIRED_INACTIVE_CHILD,
+                    blocking=False,
+                    evidence={
+                        "conflict_code": "volum_aluminiu_contract_completeness",
+                        "preview_endpoint": (
+                            f"/api/v1/product-system/templates/{KNOWN_REQUIRED_INACTIVE_CHILD}"
+                            "/separate-calculation-preview"
+                        ),
+                        "publication_remains_blocked": True,
+                        "activation_forbidden_in_this_build": True,
+                        "depth_options": depth_options,
+                        "allowed_depth_mm": sorted(ALLOWED_DEPTH_MM),
+                        "depth_aligned": depth_aligned,
+                        "canonical_perimeter_unit": input_contract.get("canonical_perimeter_unit"),
+                        "commercial_basis": input_contract.get("commercial", {}).get("basis"),
+                    },
+                    recommended_navigation=(
+                        "Product System → Component contract → separate-calculation-preview"
+                    ),
+                )
+            )
 
         return findings
 
