@@ -231,7 +231,7 @@ Outbound ACM `applied_content` volumetric links remain **0** — not created thi
 | 3 | `9034b9ce` | `feat(product-system): wire face treatments through PT PD Aggregate readiness` |
 | 4 | `d646be77` | `fix(product-system-ui): expose Bond ACM face-treatment section` |
 | 5 | `c020e3be` | `test(product-system): prove face-treatment commercial path coexistence` |
-| 6 | tip | `docs(qa): finalize ACM face-treatment commercial path evidence` |
+| 6 | `8461e5b1` | `docs(qa): finalize ACM face-treatment commercial path evidence` |
 
 ## 40. Return-to-parent envelope
 
