@@ -686,4 +686,4 @@ Activation HEAD: `e2d7594a`.
 | 2 | `1d0365b5` | test: intake through quantity |
 | 3 | `84a353d0` | docs(qa): finalize pre-publication proof |
 
-Proof HEAD: `84a353d0`.
+Proof HEAD: `dc00f5c5`.
