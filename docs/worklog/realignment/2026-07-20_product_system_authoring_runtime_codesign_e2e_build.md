@@ -684,4 +684,6 @@ Activation HEAD: `e2d7594a`.
 |---|-----|---------|
 | 1 | `443c917e` | fix: evidence-backed E2E defects only |
 | 2 | `1d0365b5` | test: intake through quantity |
-| 3 | (this commit) | docs(qa): finalize pre-publication proof |
+| 3 | `84a353d0` | docs(qa): finalize pre-publication proof |
+
+Proof HEAD: `84a353d0`.
