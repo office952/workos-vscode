@@ -52,6 +52,12 @@ class ProductTemplateComponentContractView(BaseModel):
     geometry_inputs_consume_only: bool = True
     no_component_templates_table: bool = True
     contract_version: str = "product_template_component_contract_v1"
+    # Optional enrichment for child components that expose a separate-calc contract.
+    input_contract: Optional[dict[str, Any]] = None
+    separate_calculation: Optional[dict[str, Any]] = None
+    quantity_ownership: Optional[dict[str, Any]] = None
+    materials_ops_ownership: Optional[dict[str, Any]] = None
+    publication_gate: Optional[dict[str, Any]] = None
 
 
 class ComponentContractLinkPatchRequest(BaseModel):
