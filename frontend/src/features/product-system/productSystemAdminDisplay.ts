@@ -6,8 +6,8 @@
 const TEMPLATE_HUMAN_NAMES: Record<string, string> = {
   "TPL-VOLUMETRIC-LETTERS_v2": "Litere volumetrice",
   "TPL-VOLUMETRIC-LETTERS": "Litere volumetrice",
-  "TPL-VOLUM-ALUMINIU_v1": "Aluminiu (volumetric)",
-  "TPL-VOLUM-ALUMINIU": "Aluminiu (volumetric)",
+  "TPL-VOLUM-ALUMINIU_v1": "Cant / volum din aluminiu",
+  "TPL-VOLUM-ALUMINIU": "Cant / volum din aluminiu",
   "TPL-ACM-CASSETTED-PANEL": "Panou ACM casetat",
   "TPL-VOLUMETRIC-LOGO": "Logo volumetric",
 };
