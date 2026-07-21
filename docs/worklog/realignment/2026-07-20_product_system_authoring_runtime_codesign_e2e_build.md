@@ -891,3 +891,35 @@ Optical / plexiglas / illumination rate catalog GO ? or accept treatment commerc
 ### Next owner decision
 
 Provide dedicated ACM face-treatment optical / plexiglas (~10 mm) / treatment-CNC / ACM-cavity illumination owner rate RO (EUR + unit + ownership).
+
+---
+
+## PRICING FOUNDATION V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `46c22c16` |
+| Owner GO | Hybrid Option C — PRICING_FOUNDATION_V1 only |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/pricing-foundation-v1/` |
+| Commits | `037f08ad` · `5a4cb359` · `7826e500` · docs finalize |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Inventory preservation | 64 materials remain; not emptied |
+| Tab classification | Live category — Plăci/Role/Cerneală/Altele (no mock IDs) |
+| Stock semantics | `null` → Stoc neurmărit; Critice/Epuizate = confirmed only |
+| Typed pricing catalogs | Materiale / Operații utilaje / Manoperă+servicii |
+| Cost vs rate labels | Cost achiziție vs Rată calcul |
+| Rate-basis mismatches | Detected + warned; not rewritten |
+| ACM freeze | KEEP_DRAFT; coverage 5/0 unchanged |
+| Next | TEMPLATE_PRICING_STUDIO_V1 |
+
+### Explicit ownership
+
+- Inventory remains the live material source of truth.
+- Pricing Foundation classifies and exposes reusable rates.
+- Product System will compose template recipes in a later dedicated surface.
