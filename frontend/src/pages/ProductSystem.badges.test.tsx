@@ -669,10 +669,10 @@ describe("ProductSystem design-system badges", () => {
     expect(truthContainer).toHaveTextContent("perimeter_source");
     expect(screen.getAllByText(/parent aggregate only/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/form system only/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/component-owned source missing/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/source not wired yet/i).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/component-owned source missing/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/calculation blocked until component-scoped confirmation exists/i)).toBeInTheDocument();
+    expect(screen.getByText(/evidence-only perimeter cannot set confirmed/i)).toBeInTheDocument();
+    expect(screen.getByText(/confirmed perimeter required/i)).toBeInTheDocument();
+    expect(screen.getByText(/publication\/activation remain blocked/i)).toBeInTheDocument();
+    expect(screen.getByText(/separate-calculation-preview/i)).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /promote/i })).not.toBeInTheDocument();
     expect(screen.queryByText(/ready for future calculation/i)).not.toBeInTheDocument();
   });

@@ -35,6 +35,15 @@ async def test_component_contract_used_by_and_children(volumetric_v2_db):
     child = await service.get_contract(CHILD_ALUMINUM)
     assert child.role in {"child_component", "component_only"}
     assert any(e.parent_template_code == TEMPLATE_CODE for e in child.used_by)
+    assert child.input_contract is not None
+    assert child.input_contract["canonical_perimeter_unit"] == "m"
+    assert child.input_contract["commercial"]["basis"] == "ml"
+    assert child.input_contract["publication"]["remains_blocked"] is True
+    assert child.separate_calculation is not None
+    assert "separate-calculation-preview" in child.separate_calculation["preview_endpoint"]
+    assert child.quantity_ownership is not None
+    assert child.materials_ops_ownership is not None
+    assert "confirmed_perimeter_m" in child.geometry_input_hints
 
 
 @pytest.mark.asyncio

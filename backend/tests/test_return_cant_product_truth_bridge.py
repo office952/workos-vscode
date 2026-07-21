@@ -148,10 +148,62 @@ def test_quote_geometry_perimeter_is_evidence_only() -> None:
     assert instance["geometry"]["perimeter_source"] == "evidence_only"
     assert instance["geometry"]["evidence_perimeter_m"] == 18.5
     assert "confirmed_perimeter_m" not in instance["geometry"]
-    assert instance["confirmation_state"] == "confirmed"
+    # Evidence alone must not confirm the component (contract honesty).
+    assert instance["confirmation_state"] == "blocked"
     assert "RETURN_CANT_PERIMETER_EVIDENCE_ONLY" in instance["blockers"]
     assert "RETURN_CANT_CONFIRMED_PERIMETER_MISSING" in instance["blockers"]
-    assert "RETURN_CANT_COMPONENT_CONFIRMATION_MISSING" not in instance["blockers"]
+    assert "RETURN_CANT_COMPONENT_CONFIRMATION_PENDING" in instance["blockers"]
+    assert "RETURN_CANT_PERIMETER_CONFIRMATION_MISSING" in instance["blockers"]
+
+
+def test_operator_confirmed_perimeter_drives_component_confirmation() -> None:
+    payload = _base_payload()
+    payload["finish_setup"]["letter_group_finishes"] = [
+        {
+            "group_key": "pseudo:maria",
+            "return_finish_type": "white_aluminum",
+            "return_depth_mm": 60,
+        }
+    ]
+    payload["finish_setup"]["return_cant_component_confirmation"] = {
+        "instances": {
+            "letter_group:pseudo:maria": {
+                "confirmed_perimeter_m": 12.5,
+                "confirmed_perimeter_source": "operator_confirmed",
+                "confirmation_source": "operator_component_confirmation",
+                "confirmed_by": "operator@test",
+            }
+        }
+    }
+
+    instance = _instance(payload, "letter_group:pseudo:maria")
+
+    assert instance["confirmation_state"] == "confirmed"
+    assert instance["confirmation_source"] == "operator_component_confirmation"
+    assert instance["geometry"]["confirmed_perimeter_m"] == 12.5
+    assert instance["geometry"]["perimeter_source"] == "operator_confirmed"
+    assert instance["geometry"]["evidence_perimeter_m"] == 18.5
+    assert "RETURN_CANT_CONFIRMED_PERIMETER_MISSING" not in instance["blockers"]
+
+
+def test_proposed_evidence_cannot_silently_become_confirmed() -> None:
+    payload = _base_payload()
+    payload["finish_setup"]["letter_group_finishes"] = [
+        {
+            "group_key": "pseudo:maria",
+            "return_finish_type": "white_aluminum",
+            "return_depth_mm": 60,
+            "return_cant_confirmation": {
+                "confirmed_perimeter_m": 18.5,
+                "confirmed_perimeter_source": "evidence_only",
+            },
+        }
+    ]
+
+    instance = _instance(payload, "letter_group:pseudo:maria")
+
+    assert instance["confirmation_state"] != "confirmed"
+    assert "confirmed_perimeter_m" not in instance["geometry"]
 
 
 def test_paint_application_emits_final_pricing_keys_by_width() -> None:
