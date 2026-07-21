@@ -28,6 +28,11 @@ from services.volumetric_material_rate_resolver import (
 )
 from services.active_template_scope import is_owner_valid_active_template
 from services.workcenter_rates_service import load_workcenter_rate_dict
+from services.pricing_typed_catalog import (
+    enrich_markup_item,
+    enrich_material_item,
+    enrich_workcenter_item,
+)
 
 # Operator-facing category taxonomy (Pricing Registry, not Inventory stock view)
 REGISTRY_CATEGORIES = (
@@ -366,34 +371,36 @@ class PricingRegistryService:
             )
             ce_rate = cost_engine_materials.get(mat_code)
             items.append(
-                {
-                    "pricing_code": mat_code,
-                    "display_name": row.name if row else mat_code,
-                    "pricing_kind": "material",
-                    "registry_category": infer_registry_category(
-                        pricing_code=mat_code,
-                        pricing_kind="material",
-                        inventory_category=getattr(row, "category", None),
-                        display_name=getattr(row, "name", None),
-                    ),
-                    "unit": getattr(row, "unit", None) or "buc",
-                    "base_cost": float(row.unit_cost) if has_price else None,
-                    "currency": getattr(row, "currency", None),
-                    "vat_percent": getattr(row, "vat_percent", None),
-                    "status": status,
-                    "confidence": confidence,
-                    "source_notes": getattr(row, "source_notes", None),
-                    "used_by_templates": sorted(used_by_material.get(mat_code, [])),
-                    "affects_quote_calculation": True,
-                    "technical_source": "inventory_materials",
-                    "cost_engine_rate": ce_rate,
-                    "cost_engine_rate_match": (
-                        ce_rate is not None
-                        and has_price
-                        and abs(float(ce_rate) - float(row.unit_cost)) < 1e-9
-                    ),
-                    "editable": True,
-                }
+                enrich_material_item(
+                    {
+                        "pricing_code": mat_code,
+                        "display_name": row.name if row else mat_code,
+                        "pricing_kind": "material",
+                        "registry_category": infer_registry_category(
+                            pricing_code=mat_code,
+                            pricing_kind="material",
+                            inventory_category=getattr(row, "category", None),
+                            display_name=getattr(row, "name", None),
+                        ),
+                        "unit": getattr(row, "unit", None) or "buc",
+                        "base_cost": float(row.unit_cost) if has_price else None,
+                        "currency": getattr(row, "currency", None),
+                        "vat_percent": getattr(row, "vat_percent", None),
+                        "status": status,
+                        "confidence": confidence,
+                        "source_notes": getattr(row, "source_notes", None),
+                        "used_by_templates": sorted(used_by_material.get(mat_code, [])),
+                        "affects_quote_calculation": True,
+                        "technical_source": "inventory_materials",
+                        "cost_engine_rate": ce_rate,
+                        "cost_engine_rate_match": (
+                            ce_rate is not None
+                            and has_price
+                            and abs(float(ce_rate) - float(row.unit_cost)) < 1e-9
+                        ),
+                        "editable": True,
+                    }
+                )
             )
 
         for wc_code in sorted(all_workcenter_codes):
@@ -433,30 +440,37 @@ class PricingRegistryService:
                 used_by_templates=used_by_templates,
             )
             items.append(
-                {
-                    "pricing_code": wc_code,
-                    "display_name": display_name,
-                    "pricing_kind": "operation_rate",
-                    "registry_category": registry_category,
-                    "unit": rate_unit,
-                    "base_cost": rate_val,
-                    "currency": getattr(row, "currency", None),
-                    "vat_percent": None,
-                    "status": "active" if has_rate else "missing_price",
-                    "confidence": "owner_confirmed" if has_rate else "missing",
-                    "source_notes": getattr(row, "notes", None),
-                    "used_by_templates": used_by_templates,
-                    "affects_quote_calculation": True,
-                    "technical_source": "workcenter_rates",
-                    "cost_engine_rate": ce_rate,
-                    "cost_engine_rate_match": (
-                        ce_rate is not None
-                        and has_rate
-                        and abs(float(ce_rate) - float(rate_val)) < 1e-9
+                enrich_workcenter_item(
+                    {
+                        "pricing_code": wc_code,
+                        "display_name": display_name,
+                        "pricing_kind": "operation_rate",
+                        "registry_category": registry_category,
+                        "unit": rate_unit,
+                        "base_cost": rate_val,
+                        "currency": getattr(row, "currency", None),
+                        "vat_percent": None,
+                        "status": "active" if has_rate else "missing_price",
+                        "confidence": "owner_confirmed" if has_rate else "missing",
+                        "source_notes": getattr(row, "notes", None),
+                        "used_by_templates": used_by_templates,
+                        "affects_quote_calculation": True,
+                        "technical_source": "workcenter_rates",
+                        "cost_engine_rate": ce_rate,
+                        "cost_engine_rate_match": (
+                            ce_rate is not None
+                            and has_rate
+                            and abs(float(ce_rate) - float(rate_val)) < 1e-9
+                        ),
+                        "editable": True,
+                        "rate_basis": basis,
+                    },
+                    rate_basis=basis,
+                    rate_per_hour=getattr(row, "rate_per_hour", None) if row else None,
+                    rate_per_linear_meter=(
+                        getattr(row, "rate_per_linear_meter", None) if row else None
                     ),
-                    "editable": True,
-                    "rate_basis": basis,
-                }
+                )
             )
 
         markup_rows = (
@@ -465,23 +479,25 @@ class PricingRegistryService:
         markup_items: List[Dict[str, Any]] = []
         for pol in markup_rows:
             markup_items.append(
-                {
-                    "pricing_code": f"MARKUP-{pol.id}",
-                    "display_name": pol.name or f"Policy #{pol.id}",
-                    "pricing_kind": "markup_rule",
-                    "registry_category": "Adaos comercial",
-                    "unit": pol.markup_type or "percent",
-                    "base_cost": pol.markup_percent or pol.markup_fixed,
-                    "currency": pol.currency,
-                    "status": str(pol.status or "active"),
-                    "confidence": "owner_confirmed",
-                    "scope_type": pol.scope_type,
-                    "scope_value": pol.scope_value,
-                    "used_by_templates": [],
-                    "affects_quote_calculation": True,
-                    "technical_source": "commercial_markup_policies",
-                    "editable": False,
-                }
+                enrich_markup_item(
+                    {
+                        "pricing_code": f"MARKUP-{pol.id}",
+                        "display_name": pol.name or f"Policy #{pol.id}",
+                        "pricing_kind": "markup_rule",
+                        "registry_category": "Adaos comercial",
+                        "unit": pol.markup_type or "percent",
+                        "base_cost": pol.markup_percent or pol.markup_fixed,
+                        "currency": pol.currency,
+                        "status": str(pol.status or "active"),
+                        "confidence": "owner_confirmed",
+                        "scope_type": pol.scope_type,
+                        "scope_value": pol.scope_value,
+                        "used_by_templates": [],
+                        "affects_quote_calculation": True,
+                        "technical_source": "commercial_markup_policies",
+                        "editable": False,
+                    }
+                )
             )
 
         owner_confirmed = sum(1 for i in items if i["confidence"] == "owner_confirmed")

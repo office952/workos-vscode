@@ -1,7 +1,7 @@
 /**
  * Single pricing registry entry — card row (Oferte-like separation).
  */
-import { History, Pencil } from "lucide-react";
+import { AlertTriangle, History, Pencil } from "lucide-react";
 import type { PricingRegistryItem } from "@/api/pricingRegistry";
 import {
   quoteImpactLabel,
@@ -9,6 +9,15 @@ import {
 } from "@/lib/pricingRegistry";
 import { StatusBadge } from "@/components/workos/design-system";
 import { entryRowClass } from "./pricingRegistryUi";
+import {
+  hasRateBasisMismatch,
+  machineFamilyLabelRo,
+  RATE_BASIS_MISMATCH_MESSAGE_RO,
+  resolveMachineFamily,
+  resolveTypedCatalog,
+  typedCatalogLabelRo,
+} from "@/lib/pricing/pricingTypedCatalog";
+import { normalizePricingDisplayName } from "@/lib/pricing/pricingDisplayNaming";
 
 function pricingRegistryItemStatusKey(item: PricingRegistryItem): string {
   if (item.status === "missing_price" || item.confidence === "missing") {
@@ -61,10 +70,18 @@ export function PricingEntryRow({
 }: PricingEntryRowProps) {
   const status = statusDisplayText(item);
   const impact = quoteImpactLabel(item);
-  const isMaterial = item.pricing_kind === "material";
+  const typed = resolveTypedCatalog(item);
+  const isMaterial = typed === "material" || item.pricing_kind === "material";
   const isRate = ["operation_rate", "workcenter_rate", "service"].includes(item.pricing_kind);
   const canEditMaterial = isMaterial && item.editable !== false && onEditMaterial;
   const canEditRate = isRate && item.editable !== false && onEditRate;
+  const displayName = normalizePricingDisplayName(
+    item.pricing_code,
+    item.display_name
+  );
+  const costLabel = item.cost_label_ro || (isMaterial ? "Cost achiziție" : "Rată calcul");
+  const mismatch = hasRateBasisMismatch(item);
+  const familyLabel = machineFamilyLabelRo(resolveMachineFamily(item));
 
   return (
     <div
@@ -77,10 +94,13 @@ export function PricingEntryRow({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-[13px] font-semibold text-slate-100 truncate">{item.display_name}</p>
-            <p className="text-[15px] font-bold text-slate-100 shrink-0">
-              {item.base_cost != null ? fmtCost(item.base_cost, item.currency) : "Lipsă"}
-            </p>
+            <p className="text-[13px] font-semibold text-slate-100 truncate">{displayName}</p>
+            <div className="text-right shrink-0">
+              <p className="text-[10px] text-slate-500 uppercase tracking-wide">{costLabel}</p>
+              <p className="text-[15px] font-bold text-slate-100">
+                {item.base_cost != null ? fmtCost(item.base_cost, item.currency) : "Lipsă"}
+              </p>
+            </div>
           </div>
           <div className="flex items-center justify-between gap-3 mt-1">
             <div className="flex items-center gap-2 min-w-0 flex-wrap">
@@ -89,6 +109,14 @@ export function PricingEntryRow({
                 status={pricingRegistryItemStatusKey(item)}
                 label={status.text}
               />
+              <span className="text-[10px] text-slate-400 border border-slate-700/60 rounded px-1.5 py-0.5">
+                {typedCatalogLabelRo(typed)}
+              </span>
+              {familyLabel && (
+                <span className="text-[10px] text-cyan-300/80 border border-cyan-800/40 rounded px-1.5 py-0.5">
+                  {familyLabel}
+                </span>
+              )}
               <span className="font-mono text-[11px] text-blue-400/90 truncate">{item.pricing_code}</span>
             </div>
             <p className="text-[10px] text-slate-500 shrink-0">{item.unit}</p>
@@ -98,6 +126,12 @@ export function PricingEntryRow({
             {showCategory && <span>·</span>}
             <span className="text-slate-400">{impact}</span>
           </div>
+          {mismatch && (
+            <p className="flex items-start gap-1.5 mt-1.5 text-[11px] text-amber-300/90">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+              <span>{item.data_quality_message_ro || RATE_BASIS_MISMATCH_MESSAGE_RO}</span>
+            </p>
+          )}
           {showTemplates && item.used_by_templates.length > 0 && (
             <p className="text-[10px] text-slate-600 mt-1 font-mono truncate">
               {item.used_by_templates.join(", ")}

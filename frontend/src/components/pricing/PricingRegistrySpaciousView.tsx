@@ -38,6 +38,10 @@ import {
 import { PricingEntryRow } from "./PricingEntryRow";
 import { SourceBadge } from "@/components/workos/design-system";
 import { PRICING_VIEW_TAB_META } from "./pricingRegistryUi";
+import {
+  filterByTypedCatalogView,
+  type TypedCatalogView,
+} from "@/lib/pricing/pricingTypedCatalog";
 
 function fmtCost(n: number | null | undefined, currency?: string | null): string {
   if (n === null || n === undefined || Number.isNaN(n)) return "Lipsă";
@@ -143,6 +147,7 @@ export function PricingRegistrySpaciousView({
   baseCurrency,
 }: PricingRegistrySpaciousViewProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [typedCatalogView, setTypedCatalogView] = useState<TypedCatalogView>("all");
   const [pickerSearch, setPickerSearch] = useState("");
   const [pickerFamily, setPickerFamily] = useState("all");
   const pickerRef = useRef<HTMLDivElement>(null);
@@ -184,43 +189,48 @@ export function PricingRegistrySpaciousView({
   const problemBanner = formatProblemBanner(problemQueue);
 
   const filteredStackItems = useMemo(() => {
-    if (!stackSearch.trim()) return templateItems;
+    const typed = filterByTypedCatalogView(templateItems, typedCatalogView);
+    if (!stackSearch.trim()) return typed;
     const q = stackSearch.trim().toLowerCase();
-    return templateItems.filter(
+    return typed.filter(
       (i) =>
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q) ||
         i.registry_category.toLowerCase().includes(q)
     );
-  }, [templateItems, stackSearch]);
+  }, [templateItems, stackSearch, typedCatalogView]);
 
   const coverageSections = useMemo(
     () =>
       groupItemsForCoverageStack(
         filteredStackItems,
-        mainView === "coverage" ? registry.markup_policies : [],
+        mainView === "coverage" && typedCatalogView === "all"
+          ? registry.markup_policies
+          : [],
         { includeVerification: false }
       ),
-    [filteredStackItems, registry.markup_policies, mainView]
+    [filteredStackItems, registry.markup_policies, mainView, typedCatalogView]
   );
 
   const allEntriesFiltered = useMemo(() => {
-    if (!stackSearch.trim()) return registry.items;
+    const typed = filterByTypedCatalogView(registry.items, typedCatalogView);
+    if (!stackSearch.trim()) return typed;
     const q = stackSearch.trim().toLowerCase();
-    return registry.items.filter(
+    return typed.filter(
       (i) =>
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q)
     );
-  }, [registry.items, stackSearch]);
+  }, [registry.items, stackSearch, typedCatalogView]);
 
   const verifyItems = useMemo(() => {
-    const base = registry.items.filter(
+    const base = filterByTypedCatalogView(registry.items, typedCatalogView).filter(
       (i) =>
         i.status === "missing_price" ||
         i.status === "needs_review" ||
         i.confidence === "estimated" ||
-        i.confidence === "missing"
+        i.confidence === "missing" ||
+        (i.data_quality_flags ?? []).includes("rate_basis_column_mismatch")
     );
     if (!stackSearch.trim()) return base;
     const q = stackSearch.trim().toLowerCase();
@@ -229,7 +239,7 @@ export function PricingRegistrySpaciousView({
         i.pricing_code.toLowerCase().includes(q) ||
         i.display_name.toLowerCase().includes(q)
     );
-  }, [registry.items, stackSearch]);
+  }, [registry.items, stackSearch, typedCatalogView]);
 
   useEffect(() => {
     if (!pickerOpen) return;
@@ -260,8 +270,8 @@ export function PricingRegistrySpaciousView({
             />
           </div>
           <p className="text-[11px] text-slate-500 mt-0.5">
-            <span className="text-slate-400">Pricing</span> = prețuri pentru calcul ofertă ·{" "}
-            <span className="text-slate-400">Inventory</span> = stoc și achiziții (referință operațională)
+            <span className="text-slate-400">Pricing</span> = cataloage typed (materiale / utilaje / manoperă) ·{" "}
+            <span className="text-slate-400">Inventory</span> = stoc și cost achiziție · rezultatul comercial rămâne în CPP
             {baseCurrency ? (
               <>
                 {" "}
@@ -329,6 +339,34 @@ export function PricingRegistrySpaciousView({
           );
         })}
       </div>
+
+      {/* Typed catalog views — Pricing Foundation V1 */}
+      {(mainView === "coverage" || mainView === "all" || mainView === "verify") && (
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] uppercase tracking-wide text-slate-500 mr-1">Catalog:</span>
+          {(
+            [
+              { key: "all" as const, label: "Toate tipurile" },
+              { key: "material" as const, label: "Preturi materiale" },
+              { key: "machine_operation" as const, label: "Operații utilaje" },
+              { key: "labor_service" as const, label: "Manoperă și servicii" },
+            ] as const
+          ).map((tab) => (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setTypedCatalogView(tab.key)}
+              className={`px-2.5 py-1 text-[11px] font-medium rounded-md border transition-all ${
+                typedCatalogView === tab.key
+                  ? "bg-cyan-900/30 text-cyan-200 border-cyan-700/50"
+                  : "bg-transparent text-slate-500 border-[#2A3548] hover:border-slate-500 hover:text-slate-300"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Template zone — coverage + verify share template context */}
       {(mainView === "coverage" || mainView === "verify") && (
@@ -896,9 +934,12 @@ function DetailPanel({
       </div>
 
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Valoare în calcul ofertă</p>
+        <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">{model.costLabelRo}</p>
         <p className="text-[20px] font-bold text-slate-100">{costDisplay}</p>
         <p className="text-[11px] text-slate-500">{model.unit}</p>
+        {model.machineFamilyLabel && (
+          <p className="text-[11px] text-cyan-300/80 mt-1">{model.machineFamilyLabel}</p>
+        )}
         <p className={`text-[11px] font-semibold mt-2 ${severityClass(model.status.severity)}`}>
           {model.status.text}
         </p>
@@ -906,6 +947,12 @@ function DetailPanel({
           <p className="text-[10px] text-amber-300 mt-2 leading-relaxed flex items-start gap-1">
             <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
             {model.currencyMismatchWarning}
+          </p>
+        )}
+        {model.dataQualityWarningRo && (
+          <p className="text-[10px] text-amber-300 mt-2 leading-relaxed flex items-start gap-1">
+            <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+            {model.dataQualityWarningRo}
           </p>
         )}
       </div>
