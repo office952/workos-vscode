@@ -1,0 +1,123 @@
+{
+  "schema": "acm_face_treatment_optical_catalog_closure_proof_v1",
+  "kickoff_head": "9bdcfaa8",
+  "verdict": "PASS_WITH_WARNINGS",
+  "identities": {
+    "routed": "FACE-TREATMENT-ROUTED-BACKLIT-CUTOUT",
+    "insert": "FACE-TREATMENT-ACRYLIC-INSERT"
+  },
+  "blockers": {
+    "optical": "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+    "illumination": "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+  },
+  "scenarios": [
+    {
+      "name": "panel_only",
+      "coexistence": "none",
+      "frame_optional": false,
+      "blockers": [],
+      "treatment_commercial_lines_allowed": false,
+      "subtotal_status": "NOT_APPLICABLE",
+      "guards": {
+        "no_double_sheet": true,
+        "no_volumetric_led_fold_in": true,
+        "no_psu_duplicate": true,
+        "no_hourly_commercial_price": true,
+        "treatment_lines_allowed": false
+      },
+      "double_sheet_ok": true,
+      "materials": []
+    },
+    {
+      "name": "routed_illuminated",
+      "coexistence": "routed_only",
+      "frame_optional": false,
+      "blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "treatment_commercial_lines_allowed": false,
+      "subtotal_status": "BLOCKED",
+      "guards": {
+        "no_double_sheet": true,
+        "no_volumetric_led_fold_in": true,
+        "no_psu_duplicate": true,
+        "no_hourly_commercial_price": true,
+        "treatment_lines_allowed": false
+      },
+      "double_sheet_ok": true,
+      "materials": []
+    },
+    {
+      "name": "insert_only",
+      "coexistence": "insert_only",
+      "frame_optional": false,
+      "blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING"
+      ],
+      "treatment_commercial_lines_allowed": false,
+      "subtotal_status": "BLOCKED",
+      "guards": {
+        "no_double_sheet": true,
+        "no_volumetric_led_fold_in": true,
+        "no_psu_duplicate": true,
+        "no_hourly_commercial_price": true,
+        "treatment_lines_allowed": false
+      },
+      "double_sheet_ok": true,
+      "materials": []
+    },
+    {
+      "name": "both",
+      "coexistence": "both",
+      "frame_optional": false,
+      "blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "treatment_commercial_lines_allowed": false,
+      "subtotal_status": "BLOCKED",
+      "guards": {
+        "no_double_sheet": true,
+        "no_volumetric_led_fold_in": true,
+        "no_psu_duplicate": true,
+        "no_hourly_commercial_price": true,
+        "treatment_lines_allowed": false
+      },
+      "double_sheet_ok": true,
+      "materials": []
+    },
+    {
+      "name": "both_plus_frame",
+      "coexistence": "both",
+      "frame_optional": true,
+      "blockers": [
+        "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+        "FACE_TREATMENT_ILLUMINATION_RATES_MISSING"
+      ],
+      "treatment_commercial_lines_allowed": false,
+      "subtotal_status": "BLOCKED",
+      "guards": {
+        "no_double_sheet": true,
+        "no_volumetric_led_fold_in": true,
+        "no_psu_duplicate": true,
+        "no_hourly_commercial_price": true,
+        "treatment_lines_allowed": false
+      },
+      "double_sheet_ok": true,
+      "materials": []
+    }
+  ],
+  "catalog_resolution_statuses": {
+    "panel_shell_commercial": "WIRED",
+    "acrylic_insert_10mm_material": "KEY_STUB_NO_RATE",
+    "optical_backing_plexi": "WRONG_PRODUCT",
+    "cnc_route_acp_face": "GENUINELY_MISSING",
+    "cut_mount_plexiglas_backing": "GENUINELY_MISSING",
+    "insert_cnc_fit_retain": "GENUINELY_MISSING",
+    "insert_adhesive_spacers": "GENUINELY_MISSING",
+    "treatment_illumination_led_psu": "WRONG_PRODUCT",
+    "legacy_light_routed": "LEGACY_FORBIDDEN"
+  },
+  "priced_optical_wired_count": 0
+}
