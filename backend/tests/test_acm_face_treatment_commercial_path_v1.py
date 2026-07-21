@@ -29,14 +29,20 @@ from services.acm_boxed_support_composition_v1 import (
 )
 from services.acm_face_treatment_commercial_path_v1 import (
     BAG_KEY,
+    BLOCKER_ILLUMINATION_RATES_MISSING,
     BLOCKER_OPTICAL_CATALOG_MISSING,
     COEXISTENCE_BOTH,
     COEXISTENCE_INSERT_ONLY,
     COEXISTENCE_NONE,
     COEXISTENCE_ROUTED_ONLY,
     DOMAIN_SCHEMA,
+    RESOLUTION_KEY_STUB_NO_RATE,
+    RESOLUTION_LEGACY_FORBIDDEN,
+    RESOLUTION_WRONG_PRODUCT,
     TREATMENT_QUANTITY_KEYS,
     UI_BADGE_RELIEF_PLEXI_10MM,
+    build_catalog_resolution,
+    build_commercial_ui_summary,
     build_cpp_eic_commercial_gate,
     build_quantity_matrix,
     confirm_face_treatments,
@@ -46,6 +52,7 @@ from services.acm_face_treatment_commercial_path_v1 import (
     read_face_treatments,
     readiness_finding_for_template,
     scenario_matrix,
+    scoped_commercial_blockers,
 )
 from services.acm_quote_input_helpers import merge_acm_boxed_mounting_derived_fields
 from services.commercial_price_proposal_service import CommercialPriceProposalService
@@ -125,10 +132,65 @@ def test_cpp_eic_optical_honestly_blocked():
     gate = build_cpp_eic_commercial_gate(d)
     assert gate["treatment_commercial_lines_allowed"] is False
     assert BLOCKER_OPTICAL_CATALOG_MISSING in gate["blockers"]
+    assert BLOCKER_ILLUMINATION_RATES_MISSING in gate["blockers"]
+    assert gate["priced_treatment_subtotal"] is None
+    assert gate["priced_treatment_subtotal_status"] == "BLOCKED"
+    assert gate["no_double_sheet"] is True
+    assert gate["no_volumetric_led_fold_in"] is True
+    assert gate["no_psu_duplicate"] is True
+    assert gate["no_hourly_commercial_price"] is True
 
     panel_only = build_cpp_eic_commercial_gate(normalize_face_treatments(None))
     assert panel_only["treatment_commercial_lines_allowed"] is False
     assert panel_only["blockers"] == []
+
+
+def test_insert_only_does_not_inherit_illumination_block():
+    d = normalize_face_treatments({"acrylic_inserts": [_insert_raw()]})
+    assert d["coexistence"] == COEXISTENCE_INSERT_ONLY
+    assert d["readiness"]["blockers"] == [BLOCKER_OPTICAL_CATALOG_MISSING]
+    assert BLOCKER_ILLUMINATION_RATES_MISSING not in d["readiness"]["blockers"]
+    gate = build_cpp_eic_commercial_gate(d)
+    assert gate["blockers"] == [BLOCKER_OPTICAL_CATALOG_MISSING]
+    assert gate["illumination_blocker_applies"] is False
+    assert scoped_commercial_blockers(COEXISTENCE_INSERT_ONLY) == [
+        BLOCKER_OPTICAL_CATALOG_MISSING
+    ]
+
+
+def test_catalog_resolution_statuses_honest():
+    d = normalize_face_treatments(
+        {"routed_cutouts": [_routed_raw()], "acrylic_inserts": [_insert_raw()]}
+    )
+    catalog = build_catalog_resolution(d)
+    assert catalog["schema"] == "acm_face_treatment_optical_catalog_resolution_v1"
+    assert catalog["treatment_commercial_lines_allowed"] is False
+    by_id = {r["need_id"]: r for r in catalog["rows"]}
+    assert by_id["acrylic_insert_10mm_material"]["resolution_status"] == (
+        RESOLUTION_KEY_STUB_NO_RATE
+    )
+    assert by_id["optical_backing_plexi"]["resolution_status"] == RESOLUTION_WRONG_PRODUCT
+    assert by_id["treatment_illumination_led_psu"]["resolution_status"] == (
+        RESOLUTION_WRONG_PRODUCT
+    )
+    assert by_id["legacy_light_routed"]["resolution_status"] == RESOLUTION_LEGACY_FORBIDDEN
+    assert by_id["panel_shell_commercial"]["resolution_status"] == "WIRED"
+    # No optical treatment row is WIRED for priced emission.
+    optical_rows = [
+        r
+        for r in catalog["rows"]
+        if r["need_id"] != "panel_shell_commercial"
+        and r["need_id"] != "legacy_light_routed"
+    ]
+    assert all(r["resolution_status"] != "WIRED" for r in optical_rows)
+    assert all(r["priced_emission"] is False for r in optical_rows)
+
+    ui = build_commercial_ui_summary(d)
+    assert ui["treatment_commercial_lines_allowed"] is False
+    assert ui["priced_treatment_subtotal"] is None
+    assert ui["priced_treatment_subtotal_status"] == "BLOCKED"
+    assert BLOCKER_OPTICAL_CATALOG_MISSING in ui["scoped_blockers"]
+    assert BLOCKER_ILLUMINATION_RATES_MISSING in ui["scoped_blockers"]
 
 
 def test_orthogonal_to_applied_content_xor():
@@ -210,13 +272,31 @@ def test_readiness_panel_only_not_blocked():
     assert finding["evidence"]["optional_absent_ok"] is True
 
 
-def test_scenario_matrix_covers_four():
+def test_scenario_matrix_covers_cpp_guards():
     rows = scenario_matrix()
     names = {r["name"] for r in rows}
-    assert names == {"panel_only", "routed_only", "insert_only", "both"}
+    assert names == {
+        "panel_only",
+        "routed_illuminated",
+        "insert_only",
+        "both",
+        "both_plus_frame",
+    }
     both = next(r for r in rows if r["name"] == "both")
     assert both["cpp_eic"]["treatment_commercial_lines_allowed"] is False
     assert both["aggregate"]["double_sheet_guard_ok"] is True
+    assert both["guards"]["no_double_sheet"] is True
+    assert both["guards"]["no_volumetric_led_fold_in"] is True
+    assert both["guards"]["no_psu_duplicate"] is True
+    assert both["guards"]["no_hourly_commercial_price"] is True
+
+    insert_only = next(r for r in rows if r["name"] == "insert_only")
+    assert insert_only["cpp_eic"]["blockers"] == [BLOCKER_OPTICAL_CATALOG_MISSING]
+    assert BLOCKER_ILLUMINATION_RATES_MISSING not in insert_only["cpp_eic"]["blockers"]
+
+    routed = next(r for r in rows if r["name"] == "routed_illuminated")
+    assert BLOCKER_ILLUMINATION_RATES_MISSING in routed["cpp_eic"]["blockers"]
+    assert routed["catalog_resolution"]["illumination_required"] is True
 
 
 @pytest_asyncio.fixture
@@ -292,3 +372,12 @@ async def test_panel_cpp_unaffected_by_face_treatments(acm_ft_db):
     assert len(acm_codes) == 6
     assert not any(c and "plexiglas" in str(c).lower() for c in codes)
     assert not any(c and "optical" in str(c).lower() for c in codes)
+    assert not any(c and "led" in str(c).lower() for c in codes)
+    assert not any(c and "psu" in str(c).lower() for c in codes)
+    assert not any(c and "wiring" in str(c).lower() for c in codes)
+    assert not any(c and "hourly" in str(c).lower() for c in codes)
+    # Aggregate must not fold treatment materials while catalog incomplete.
+    agg = project_for_aggregate(domain)
+    assert agg["materials"] == []
+    assert agg["operations"] == []
+    assert agg["optical_catalog_resolution"]["treatment_commercial_lines_allowed"] is False

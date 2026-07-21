@@ -325,6 +325,23 @@ def normalize_face_treatments(raw: Any) -> dict[str, Any]:
     elif coexistence != COEXISTENCE_NONE:
         overall = "LOCAL_CONFIGURATION_REQUIRED"
 
+    commercial = dict(base["commercial"])
+    if coexistence == COEXISTENCE_NONE:
+        commercial["optical_pricing_status"] = "NOT_APPLICABLE"
+        commercial["optical_blocker"] = None
+        commercial["illumination_pricing_status"] = "NOT_APPLICABLE"
+        commercial["illumination_blocker"] = None
+    else:
+        commercial["optical_pricing_status"] = "BLOCKED"
+        commercial["optical_blocker"] = BLOCKER_OPTICAL_CATALOG_MISSING
+        if coexistence in {COEXISTENCE_ROUTED_ONLY, COEXISTENCE_BOTH}:
+            commercial["illumination_pricing_status"] = "BLOCKED"
+            commercial["illumination_blocker"] = BLOCKER_ILLUMINATION_RATES_MISSING
+        else:
+            # insert_only — do not inherit routed illumination BLOCK
+            commercial["illumination_pricing_status"] = "NOT_APPLICABLE"
+            commercial["illumination_blocker"] = None
+
     base.update(
         {
             "status": status,
@@ -332,6 +349,7 @@ def normalize_face_treatments(raw: Any) -> dict[str, Any]:
             "acrylic_inserts": inserts,
             "coexistence": coexistence,
             "ui_badges": ui_badges,
+            "commercial": commercial,
             "readiness": {
                 "overall": overall,
                 "optional_absent_ok": True,
