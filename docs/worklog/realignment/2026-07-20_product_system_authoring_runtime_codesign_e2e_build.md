@@ -65,7 +65,7 @@ Product Family
 
 ### Kickoff (20 items) ? confirmed
 
-See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
+See `CLOSURE_ALLOWLIST.md` ï¿½ Kickoff confirmation.
 
 ### Checkpoint matrix
 
@@ -94,11 +94,11 @@ See `CLOSURE_ALLOWLIST.md` § Kickoff confirmation.
 
 ### Direction score
 
-**86/100%** ? see FINAL_REPORT §36?37.
+**86/100%** ? see FINAL_REPORT ï¿½36?37.
 
 ### PAREREA MEA SINCERA
 
-Confirm pe DB real? + split BUILD/TEMPLATE + Figma IDs reale = progres serios. F?r? EIC pe Qty, f?r? pack UI 1?22, **nu e PASS**. Aluminiu inactiv r?mâne conflict onest.
+Confirm pe DB real? + split BUILD/TEMPLATE + Figma IDs reale = progres serios. F?r? EIC pe Qty, f?r? pack UI 1?22, **nu e PASS**. Aluminiu inactiv r?mï¿½ne conflict onest.
 
 ### Closure commits
 
@@ -157,7 +157,7 @@ No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no
 
 ### Direction score
 
-**92/100%** ? see FINAL_REPORT §36.
+**92/100%** ? see FINAL_REPORT ï¿½36.
 
 ### Tests
 
@@ -272,7 +272,7 @@ None. Transport remains TBD (documented). No major schema migration. No aluminiu
 
 ### Kickoff (20 items)
 
-Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` § Kickoff confirmation.
+Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` ï¿½ Kickoff confirmation.
 
 ### Checkpoint matrix
 
@@ -301,7 +301,7 @@ Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` § Kickoff confirmation.
 
 ### Direction score
 
-**84/100** ? see `AUTHORING_CONTINUATION_FINAL_REPORT.md` §29?35.
+**84/100** ? see `AUTHORING_CONTINUATION_FINAL_REPORT.md` ï¿½29?35.
 
 ### Locked boundaries (do not reopen)
 
@@ -369,7 +369,7 @@ Transform Product System from functional/honest ? clear, coherent daily admin us
 
 ### Direction score
 
-**88/100** ? see `UI_FIGMA_FINAL_POLISH_REPORT.md` §29?31.
+**88/100** ? see `UI_FIGMA_FINAL_POLISH_REPORT.md` ï¿½29?31.
 
 ### Tests
 
@@ -432,7 +432,7 @@ None.
 
 ### Direction score
 
-**91/100** ? see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT §29?33.
+**91/100** ? see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT ï¿½29?33.
 
 ### Tests
 
@@ -517,3 +517,59 @@ Owner STOP before further PS UI implementation. Accepted prior VL config / Alumi
 | Stop | None (Figma mismatch noted, not blocking ? runtime refs used) |
 | Verdict | **P1 PASS** |
 
+## VOLUM ALUMINIU COMPONENT CONTRACT AUDIT (pointer)
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| HEAD | `6608cdc5` (reconfirmed; no activation; no commit) |
+| Report | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_COMPONENT_CONTRACT_AUDIT.md` |
+| Evidence | `docs/qa/product-system-authoring-runtime-codesign-e2e/volum-aluminiu-audit/` (3 screenshots) |
+| Separate calculability | **PARTIAL** |
+| Activation recommendation | **NO-GO** |
+| Owner decision | **keep blocked** |
+| Commercial-hourly | **PASS** (ml basis; anti-hourly) |
+| Stop conditions | None hard-triggered |
+
+## VOLUM ALUMINIU COMPONENT CONTRACT COMPLETION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `6608cdc5` (reconfirmed) |
+| CP0 map | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_COMPONENT_CONTRACT_CP0_SHARED_MAP.md` |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_CONTRACT_COMPLETION_ALLOWLIST.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_COMPONENT_CONTRACT_COMPLETION_FINAL_REPORT.md` |
+| Evidence | `docs/qa/product-system-authoring-runtime-codesign-e2e/volum-aluminiu-completion/` |
+| Separate calculability | **PASS_WITH_WARNINGS** |
+| Activation recommendation | **NO-GO** (not executed) |
+| Publication | **still BLOCKED** (`KNOWN_REQUIRED_INACTIVE_CHILD`) |
+| Unit freeze | confirmed perimeter **m**; commercial synonym **ml** (1:1) |
+| Preview endpoint | `POST /api/v1/product-system/templates/TPL-VOLUM-ALUMINIU_v1/separate-calculation-preview` |
+| Tests | pytest 28 passed (bridge + qty + preview + contracts + readiness); vitest admin display 4 passed |
+| Stop conditions | None hard-triggered |
+
+### Commit sequence (allowlist)
+
+Recorded after push of local commits (no remote push):
+
+1. feat(product-system): complete aluminium return input and provenance contract
+2. feat(product-system): close aluminium return quantity and operation ownership
+3. feat(product-system): add safe separate calculation preview and readiness
+4. fix(product-system-ui): clarify aluminium return contract and confirmation
+5. test(product-system): prove aluminium return separate calculation boundaries
+6. docs(qa): commit audit and completion evidence
+
+
+### Recorded SHAs
+
+| # | SHA | Message |
+|---|-----|---------|
+| 1 | `d3a58672` | feat(product-system): complete aluminium return input and provenance contract |
+| 2 | `0a2096df` | feat(product-system): close aluminium return quantity and operation ownership |
+| 3 | `95445da7` | feat(product-system): add safe separate calculation preview and readiness |
+| 4 | `64119287` | fix(product-system-ui): clarify aluminium return contract and confirmation |
+| 5 | `d9e10a14` | test(product-system): prove aluminium return separate calculation boundaries |
+| 6 | (this commit) | docs(qa): commit audit and completion evidence |
+
+Completion HEAD after docs commit: see `git rev-parse HEAD` post-commit.

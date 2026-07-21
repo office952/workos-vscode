@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Readiness Blocker</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; background: #0f172a; color: #e2e8f0; margin: 24px; }
+    h1 { font-size: 20px; }
+    .bad { color: #fca5a5; }
+    .ok { color: #86efac; }
+    pre { background: #111827; border: 1px solid #334155; padding: 12px; border-radius: 8px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>E2E Readiness — Aluminiu blocker (static evidence)</h1>
+  <p>
+    Verdict: <span class="bad">BLOCKED</span> ·
+    template_publication: <span class="bad">BLOCKED</span> ·
+    write_performed=<span class="ok">false</span>
+  </p>
+  <pre>{
+  "id": "components.required_inactive.TPL-VOLUM-ALUMINIU_v1",
+  "system": "components",
+  "status": "BLOCKED",
+  "msg": "Required child template TPL-VOLUM-ALUMINIU_v1 is inactive (known conflict for TPL-VOLUM-ALUMINIU_v1)."
+}</pre>
+  <p style="color:#94a3b8">Source: runtime/vl_real_product_config_system_link_check.json + live DB active=false + contract API.</p>
+</body>
+</html>

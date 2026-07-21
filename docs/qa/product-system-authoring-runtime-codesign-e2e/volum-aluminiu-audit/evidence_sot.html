@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Volum Aluminiu SoT Matrix</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; background: #0f172a; color: #e2e8f0; margin: 24px; }
+    h1 { font-size: 20px; margin: 0 0 6px; }
+    .sub { color: #94a3b8; margin-bottom: 16px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; background: #111827; }
+    th, td { border: 1px solid #334155; padding: 8px; text-align: left; vertical-align: top; }
+    th { color: #93c5fd; background: #0b1220; }
+    .pass { color: #86efac; } .partial { color: #fcd34d; } .block { color: #fca5a5; }
+    code { color: #fde68a; }
+  </style>
+</head>
+<body>
+  <h1>Source-of-truth matrix — Catalog → EP (Volum Aluminiu)</h1>
+  <p class="sub">READ-ONLY evidence · child PT owns BOM/ops · root composes · no repair</p>
+  <table>
+    <tr><th>Hop</th><th>Owner / SoT</th><th>Status</th><th>Evidence</th></tr>
+    <tr><td>Catalog</td><td>Product_templates row</td><td class="pass">PASS</td><td>exists; family volum_aluminiu_modular; active=false</td></tr>
+    <tr><td>Composition link</td><td>product_template_module_links</td><td class="pass">PASS</td><td>VL required_module → Aluminiu; sidewall schema</td></tr>
+    <tr><td>Component contract</td><td>child PT + contract service</td><td class="pass">PASS</td><td>role child_component; component_only; used_by VL</td></tr>
+    <tr><td>Inputs / schema</td><td>form + geometry consume-only</td><td class="partial">PARTIAL</td><td>return_depth/finish owned; perimeter parent/geometry</td></tr>
+    <tr><td>Materials/Ops</td><td>child required_materials/operations_json</td><td class="pass">PASS</td><td>Aggregate provenance linked_module from Aluminiu</td></tr>
+    <tr><td>Quantities</td><td>formulas ml / gates depth+finish</td><td class="partial">PARTIAL</td><td>qty via perimeter; depth gate 30/60/80/100 vs form 40/120 mismatch</td></tr>
+    <tr><td>Commercial (CPP)</td><td>commercial_rules modelare_cant_aluminiu</td><td class="partial">PARTIAL</td><td>ml basis; NOT_TESTED live; anti-hourly explicit</td></tr>
+    <tr><td>Internal cost (EIC)</td><td>internal_cost_rules modelare_cant</td><td class="partial">PARTIAL</td><td>ml basis; anti-hourly; NOT_TESTED live</td></tr>
+    <tr><td>Product Truth</td><td>return_cant bridge + letter_group sidewall</td><td class="partial">PARTIAL</td><td>bridge exists; confirmation_state missing at component</td></tr>
+    <tr><td>Aggregate</td><td>ProductAggregateService</td><td class="pass">PASS</td><td>module modelare_cant; mats/ops from child</td></tr>
+    <tr><td>Readiness</td><td>product_e2e_readiness_service</td><td class="block">BLOCKED</td><td>required_inactive_child known conflict</td></tr>
+    <tr><td>Publication</td><td>E2E gate on publish transition</td><td class="block">BLOCKED</td><td>do not activate only to clear blocker</td></tr>
+    <tr><td>Quote / Order / EP</td><td>downstream snapshots</td><td class="partial">NOT_TESTED</td><td>static readiness intentionally skips</td></tr>
+  </table>
+  <p class="sub" style="margin-top:14px">Dual IDs: root stub <code>comp_lateral_litere</code> (parent, empty BOM) · child mats/ops <code>comp_volum_aluminiu_module</code> · runtime mini-module <code>modelare_cant</code>.</p>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Volum Aluminiu Audit Evidence</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; background: #0f172a; color: #e2e8f0; margin: 24px; }
+    h1 { font-size: 22px; margin: 0 0 8px; }
+    .sub { color: #94a3b8; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 14px; }
+    .k { color: #93c5fd; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .v { font-size: 18px; margin-top: 4px; font-weight: 600; }
+    .ok { color: #86efac; }
+    .bad { color: #fca5a5; }
+    .warn { color: #fcd34d; }
+    ul { margin: 8px 0 0 18px; padding: 0; line-height: 1.45; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    td, th { border-bottom: 1px solid #334155; padding: 6px 4px; text-align: left; vertical-align: top; }
+    code { color: #fde68a; }
+  </style>
+</head>
+<body>
+  <h1>Volum Aluminiu — Component Contract Audit Evidence</h1>
+  <p class="sub">HEAD 6608cdc5 · READ-ONLY · TPL-VOLUM-ALUMINIU_v1 · no activation</p>
+  <div class="grid">
+    <div class="card">
+      <div class="k">Identity</div>
+      <div class="v">TPL-VOLUM-ALUMINIU_v1</div>
+      <ul>
+        <li>Role: child_component / component_only</li>
+        <li>Family: volum_aluminiu_modular</li>
+        <li>DB active: <span class="bad">false</span></li>
+        <li>Root offerable: false</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Publication blocker</div>
+      <div class="v bad">BLOCKED</div>
+      <ul>
+        <li>VL required_module link active</li>
+        <li>Finding: components.required_inactive.TPL-VOLUM-ALUMINIU_v1</li>
+        <li>Seed keeps active=false by design</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Used by</div>
+      <div class="v">TPL-VOLUMETRIC-LETTERS_v2</div>
+      <ul>
+        <li>relation: required_module</li>
+        <li>usage_mode: linked_child</li>
+        <li>schema: letter_group_instances.sidewall</li>
+        <li>pricing_mode: separate_quote_line</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Separate calculation</div>
+      <div class="v warn">PARTIAL</div>
+      <ul>
+        <li>Owns mats/ops/formulas on child PT</li>
+        <li>Perimeter still parent/geometry dependency</li>
+        <li>UI status: partial_ready · calculation blocked</li>
+        <li>Commercial basis: ml (not hourly)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="k">Owned materials / operations</div>
+    <table>
+      <tr><th>Materials</th><th>Operations</th></tr>
+      <tr>
+        <td>MAT-PROFIL-LATERAL 30/60/80/100<br>MAT-ORACAL-651 · MAT-VOPSEA-RAL · MAT-ADEZIV-CANT-LITERE</td>
+        <td>RETURN_PROFILE_MACHINE_FORMING<br>RETURN_PROFILE_FACE_BONDING<br>PAINTING</td>
+      </tr>
+    </table>
+    <p style="color:#94a3b8;font-size:13px;margin-top:10px">
+      ID dualitate: root stub <code>comp_lateral_litere</code> vs child <code>comp_volum_aluminiu_module</code>
+      · mini-module <code>modelare_cant</code>.
+      Logo return = <code>TPL-VOLUMETRIC-LOGO-RETURN_v1</code> (separat, activ).
+    </p>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="k">Activation recommendation</div>
+    <div class="v bad">NO-GO / keep blocked</div>
+    <p style="margin-top:8px;color:#cbd5e1">
+      Nu activa doar ca sa deblochezi publicarea. Lipsesc: confirmation_state component,
+      material_profile explicit, perimeter_source confirmat, aliniere depth form (40/120)
+      vs gate material (30/60/80/100), GO comercial/ops dedicat.
+    </p>
+  </div>
+</body>
+</html>
