@@ -953,3 +953,39 @@ Provide dedicated ACM face-treatment optical / plexiglas (~10 mm) / treatment-CN
 - Reusable catalog rates belong to Inventory/Pricing.
 - Template-specific quantities, formulas and applicability belong to Product System.
 - Template Pricing Studio composes them and exposes provenance; it does not invent resources or rates.
+
+---
+
+## LABOR RECIPE CONTRACT V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `212654a2` |
+| Owner GO | LABOR_RECIPE_CONTRACT_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/labor-recipe-contract-v1/` |
+| API | additive `labor_recipes[]` on template pricing (`schema_version` 1.1.0) |
+| UI | Prețuri template → Manoperă specifică template-ului |
+| Proof port | `8020` (Windows `:8000` ghost — environment warning) |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Ownership | Central catalogs own reusable labor rates; templates own recipes/qty/applicability |
+| ACM labor | 3 recipes; missing ASSEMBLY rates visible; treatments still blocked; 5/0 unchanged |
+| VL labor | 12 recipes (registry-linked + commercial refs); formulas mostly empty — honest |
+| Logo | 3 labor/service refs via commercial lines |
+| Volum Aluminiu | 2 ops recipes in API; Prețuri tab hidden on component-first bucket |
+| CPP/EIC | Unchanged vs Studio V1 runtime dumps |
+| HR / migrations / new rates | None |
+| Next | LABOR_RECIPE_CONTRACT_V1_CLOSURE (do not auto-execute) |
+
+### Explicit ownership
+
+```text
+Central catalogs own reusable labor rates.
+Product Templates own labor recipes, quantities, applicability and minimums.
+Missing labor rates block commercial readiness, not technical configuration.
+```
