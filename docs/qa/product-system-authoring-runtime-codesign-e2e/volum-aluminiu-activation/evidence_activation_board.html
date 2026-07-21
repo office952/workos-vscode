@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <title>Volum Aluminiu Controlled Activation</title>
+  <style>
+    body { font-family: Segoe UI, sans-serif; background: #0f172a; color: #e2e8f0; margin: 24px; }
+    h1 { font-size: 22px; margin: 0 0 8px; }
+    .sub { color: #94a3b8; margin-bottom: 20px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .card { background: #111827; border: 1px solid #334155; border-radius: 10px; padding: 14px; }
+    .k { color: #93c5fd; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+    .v { font-size: 18px; margin-top: 4px; font-weight: 600; }
+    .ok { color: #86efac; } .bad { color: #fca5a5; } .warn { color: #fcd34d; }
+    ul { margin: 8px 0 0 18px; line-height: 1.45; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+    td, th { border-bottom: 1px solid #334155; padding: 6px 4px; text-align: left; }
+    code { color: #fde68a; }
+  </style>
+</head>
+<body>
+  <h1>VOLUM ALUMINIU — Controlled Activation</h1>
+  <p class="sub">Owner ACTIVATION GO · activate-only · parent NOT published · states kept separate</p>
+  <div class="grid">
+    <div class="card">
+      <div class="k">Component active</div>
+      <div class="v ok">TRUE</div>
+      <ul>
+        <li>Canonical: <code>TPL-VOLUM-ALUMINIU_v1</code></li>
+        <li>DB row id: <code>10</code></li>
+        <li>Field mutated: <code>active</code> false → true</li>
+        <li>Aliases activated: <span class="ok">false</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Component published</div>
+      <div class="v warn">NOT PUBLISHED</div>
+      <ul>
+        <li><code>publication_status</code>: null</li>
+        <li><code>published_at</code>: null</li>
+        <li>Activate ≠ publish</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Parent ready</div>
+      <div class="v warn">PASS_WITH_WARNINGS_NOT_PUBLISHED</div>
+      <ul>
+        <li>Inactivity blocker closed</li>
+        <li>NOT_TESTED preserved (6)</li>
+        <li>No local optimistic Publish enablement claimed as publish</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="k">Parent published</div>
+      <div class="v ok">FALSE</div>
+      <ul>
+        <li><code>TPL-VOLUMETRIC-LETTERS_v2</code> publication_status null</li>
+        <li>Auto-publish: forbidden / not executed</li>
+        <li>Logo return: untouched</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="k">Identity table</div>
+    <table>
+      <tr><th>Layer</th><th>Identifier</th><th>Active target</th><th>Verdict</th></tr>
+      <tr><td>Template</td><td>TPL-VOLUM-ALUMINIU_v1</td><td>true</td><td class="ok">PASS</td></tr>
+      <tr><td>BOM</td><td>comp_volum_aluminiu_module</td><td>modelare_cant</td><td class="ok">PASS</td></tr>
+      <tr><td>Pricing stub</td><td>comp_lateral_litere</td><td>modelare_cant</td><td class="ok">PASS</td></tr>
+      <tr><td>Aspirational</td><td>TPL-COMP-LETTER-RETURN-CANT_v1</td><td>—</td><td class="ok">PASS (absent)</td></tr>
+      <tr><td>Logo return</td><td>TPL-VOLUMETRIC-LOGO-RETURN_v1</td><td>true (untouched)</td><td class="ok">PASS_UNTOUCHED</td></tr>
+    </table>
+  </div>
+</body>
+</html>

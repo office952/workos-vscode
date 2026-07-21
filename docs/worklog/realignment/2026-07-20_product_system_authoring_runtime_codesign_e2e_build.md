@@ -610,3 +610,42 @@ Completion HEAD after docs commit: see `git rev-parse HEAD` post-commit.
 | 4 | (this commit) | docs(qa): activation readiness closure evidence |
 
 Closure HEAD after docs commit: see `git rev-parse HEAD` post-commit.
+
+## VOLUM ALUMINIU CONTROLLED ACTIVATION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `6dcf7bc1` (reconfirmed) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_CONTROLLED_ACTIVATION_ALLOWLIST.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_CONTROLLED_ACTIVATION_FINAL_REPORT.md` |
+| Evidence | `docs/qa/product-system-authoring-runtime-codesign-e2e/volum-aluminiu-activation/` |
+| Activation mechanism | `backend/scripts/activate_tpl_volum_aluminiu_v1.py` |
+| Field mutated | `product_templates.active` false ? true (row id 10 only) |
+| Component active | **true** |
+| Component published | **false** (`publication_status` null) |
+| Parent published | **false** (not touched) |
+| Parent impact | **PASS_WITH_WARNINGS_NOT_PUBLISHED** |
+| Inactivity blocker | **closed** (`required_active` PASS) |
+| NOT_TESTED | **preserved** (6) |
+| Separate calc preview | **PASS** (12.5 m fixture) |
+| Logo return | **untouched** |
+| Tests | activation + VL invariant suite passed |
+| Stop conditions | None hard-triggered |
+| Next owner decision | keep parent unpublished **or** request parent publication GO |
+
+### Commit sequence (allowlist)
+
+1. chore(product-system): activate canonical aluminium return component
+2. test(product-system): prove activation identity and calculation invariants
+3. docs(qa): record controlled activation and parent readiness evidence
+
+### Recorded SHAs
+
+| # | SHA | Message |
+|---|-----|---------|
+| 1 | `ee6398e6` | chore(product-system): activate canonical aluminium return component |
+| 2 | `7800bbc7` | test(product-system): prove activation identity and calculation invariants |
+| 3 | `e2d7594a` | docs(qa): record controlled activation and parent readiness evidence |
+
+Activation HEAD: `e2d7594a`.

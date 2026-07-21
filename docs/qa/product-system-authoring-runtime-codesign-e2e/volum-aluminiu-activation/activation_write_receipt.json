@@ -1,0 +1,46 @@
+{
+  "schema": "volum_aluminiu_controlled_activation_v1",
+  "actor": "product_system_activation_controller",
+  "timestamp_utc": "2026-07-21T11:50:35.197342+00:00",
+  "dry_run": false,
+  "command": "activate_tpl_volum_aluminiu_v1",
+  "canonical_template_code": "TPL-VOLUM-ALUMINIU_v1",
+  "row_id": 10,
+  "row_count_matched": 1,
+  "fields_mutated": ["active"],
+  "previous": {
+    "active": false,
+    "publication_status": null,
+    "published_at": null
+  },
+  "result": {
+    "active": true,
+    "publication_status": null,
+    "published_at": null,
+    "would_set_active": null
+  },
+  "idempotent_noop": false,
+  "mutated": true,
+  "parent": {
+    "template_code": "TPL-VOLUMETRIC-LETTERS_v2",
+    "active": true,
+    "publication_status": null,
+    "published_at": null,
+    "published": false,
+    "touched": false
+  },
+  "aliases_activated": false,
+  "logo_return_touched": false,
+  "audit_event": {
+    "type": "component_template_activate_only",
+    "template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "from_active": false,
+    "to_active": true
+  },
+  "idempotent_rerun_utc": "2026-07-21T11:50:55.373952+00:00",
+  "idempotent_rerun": {
+    "mutated": false,
+    "idempotent_noop": true,
+    "fields_mutated": []
+  }
+}
