@@ -56,6 +56,117 @@ INTERNAL_RULE_CODE = "INT_VOL_V2_RETURN_ML"
 PUBLICATION_REMAINS_BLOCKED = True
 ACTIVATION_FORBIDDEN_IN_THIS_BUILD = True
 
+# Shared convergence map — one canonical identity; aliases are explicit mappings only.
+IDENTITY_MAP: dict[str, Any] = {
+    "canonical_template_code": TEMPLATE_CODE,
+    "canonical_bom_component_id": BOM_COMPONENT_ID,
+    "aggregate_module_code": MINI_MODULE_CODE,
+    "pt_container": PT_CONTAINER,
+    "instance_schema_id": INSTANCE_SCHEMA_ID,
+    "shared_contract_key": SHARED_CONTRACT_KEY,
+    "parent_template_code": PARENT_TEMPLATE_CODE,
+    "commercial_line_code": COMMERCIAL_LINE_CODE,
+    "commercial_rule_code": COMMERCIAL_RULE_CODE,
+    "internal_rule_code": INTERNAL_RULE_CODE,
+    "aliases": {
+        "pricing_component_code": PRICING_COMPONENT_CODE,
+        "pt_role": "return_cant",
+        "produced_roles": ("sidewall", "side_wall", "return_profile", "lateral_cant"),
+        "process_aliases": ("RETURN-CANT", "RETURN_CANT", "CANT"),
+        "aspirational_template_code": "TPL-COMP-LETTER-RETURN-CANT_v1",
+        "aspirational_component_id": "comp_letter_return_cant_v1",
+        "admin_label": "Cant / volum din aluminiu",
+    },
+    "lookup_policy": "id_or_code_only_via_IDENTITY_MAP",
+    "name_based_lookup": False,
+    "double_counting_policy": "aggregate_keys_once_by_modelare_cant",
+}
+
+# Token → canonical axis (id/code only; no fuzzy name match).
+_IDENTITY_TOKEN_INDEX: dict[str, str] = {
+    TEMPLATE_CODE: "canonical_template_code",
+    BOM_COMPONENT_ID: "canonical_bom_component_id",
+    MINI_MODULE_CODE: "aggregate_module_code",
+    PRICING_COMPONENT_CODE: "alias.pricing_component_code",
+    COMMERCIAL_LINE_CODE: "commercial_line_code",
+    COMMERCIAL_RULE_CODE: "commercial_rule_code",
+    INTERNAL_RULE_CODE: "internal_rule_code",
+    INSTANCE_SCHEMA_ID: "instance_schema_id",
+    SHARED_CONTRACT_KEY: "shared_contract_key",
+    "return_cant": "alias.pt_role",
+    "sidewall": "alias.produced_roles",
+    "RETURN-CANT": "alias.process_aliases",
+    "RETURN_CANT": "alias.process_aliases",
+    "CANT": "alias.process_aliases",
+    "TPL-COMP-LETTER-RETURN-CANT_v1": "alias.aspirational_template_code",
+    "comp_letter_return_cant_v1": "alias.aspirational_component_id",
+}
+
+
+def resolve_identity_token(token: Any) -> dict[str, Any] | None:
+    """Map a known id/code to the aluminium-return identity. No name-based lookup."""
+    key = str(token or "").strip()
+    if not key:
+        return None
+    axis = _IDENTITY_TOKEN_INDEX.get(key)
+    if axis is None:
+        return None
+    return {
+        "token": key,
+        "axis": axis,
+        "canonical_template_code": TEMPLATE_CODE,
+        "canonical_bom_component_id": BOM_COMPONENT_ID,
+        "aggregate_module_code": MINI_MODULE_CODE,
+        "pricing_component_code": PRICING_COMPONENT_CODE,
+        "is_alias": axis.startswith("alias."),
+        "is_canonical_bom": key == BOM_COMPONENT_ID,
+        "is_pricing_stub": key == PRICING_COMPONENT_CODE,
+    }
+
+
+def map_component_ref_to_module(component_ref: Any) -> str | None:
+    """Resolve BOM id or pricing stub to Aggregate module — explicit map only."""
+    resolved = resolve_identity_token(component_ref)
+    if resolved is None:
+        return None
+    if resolved["is_canonical_bom"] or resolved["is_pricing_stub"]:
+        return MINI_MODULE_CODE
+    if str(component_ref).strip() == MINI_MODULE_CODE:
+        return MINI_MODULE_CODE
+    return None
+
+
+def map_template_to_module(template_code: Any) -> str | None:
+    if str(template_code or "").strip() == TEMPLATE_CODE:
+        return MINI_MODULE_CODE
+    return None
+
+
+def build_identity_convergence_view() -> dict[str, Any]:
+    return {
+        "schema": "volum_aluminiu_identity_convergence_v1",
+        "status": "PASS",
+        "canonical": {
+            "template_code": TEMPLATE_CODE,
+            "bom_component_id": BOM_COMPONENT_ID,
+            "aggregate_module_code": MINI_MODULE_CODE,
+        },
+        "aliases": dict(IDENTITY_MAP["aliases"]),
+        "used_by": [
+            "product_truth.components.return_cant",
+            "Aggregate modelare_cant (CHILD_TEMPLATE + dossier aliases)",
+            "CPP modelare_cant_aluminiu / comp_lateral_litere stub",
+            "EIC INT_VOL_V2_RETURN_ML",
+            "separate-calculation-preview",
+            "readiness identity_convergence finding",
+        ],
+        "lookup_policy": IDENTITY_MAP["lookup_policy"],
+        "name_based_lookup": False,
+        "double_counting_policy": IDENTITY_MAP["double_counting_policy"],
+        "publication_remains_blocked": PUBLICATION_REMAINS_BLOCKED,
+        "activation_forbidden_in_this_build": ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
+    }
+
 
 def _positive_number(value: Any) -> float | None:
     try:
@@ -196,11 +307,7 @@ def build_input_contract_view() -> dict[str, Any]:
             "geometry_inputs_consume_only": True,
             "no_file_parse_in_workos": True,
         },
-        "identity": {
-            "bom_component_id": BOM_COMPONENT_ID,
-            "pricing_component_code": PRICING_COMPONENT_CODE,
-            "dual_id_policy": "bom_owner_vs_pricing_stub_documented",
-        },
+        "identity": build_identity_convergence_view(),
         "commercial": {
             "line_code": COMMERCIAL_LINE_CODE,
             "rule_code": COMMERCIAL_RULE_CODE,

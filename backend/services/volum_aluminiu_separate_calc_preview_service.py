@@ -258,7 +258,8 @@ class VolumAluminiuSeparateCalcPreviewService:
             blockers=blockers,
             warnings=[
                 "publication_and_activation_remain_blocked",
-                "dual_id_bom_vs_pricing_stub_documented",
+                "identity_aliases_mapped_via_IDENTITY_MAP",
+                "quote_geometry_controlled_bridge_or_legacy_fallback",
             ],
             input_contract=build_input_contract_view(),
         )

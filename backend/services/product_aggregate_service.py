@@ -40,9 +40,11 @@ logger = logging.getLogger(__name__)
 TEMPLATE_NOT_FOUND = "template_not_found"
 
 # Dossier component_id → mini-module code (volumetric letters v2)
+# pricing stub + canonical BOM id both map to modelare_cant (explicit alias; no double count)
 DOSSIER_COMPONENT_MINI_MODULE: dict[str, str] = {
     "comp_face_litere": "debitare_fata",
     "comp_lateral_litere": "modelare_cant",
+    "comp_volum_aluminiu_module": "modelare_cant",
     "comp_spate_litere": "debitare_spate",
     "comp_led_litere": "sistem_led",
     "comp_finisaj_litere": "finisaje",

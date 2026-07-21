@@ -586,6 +586,7 @@ CHILD_TEMPLATE_TO_MODULE: dict[str, str] = {
 DOSSIER_COMPONENT_TO_MODULE: dict[str, str] = {
     "comp_face_litere": "debitare_fata",
     "comp_lateral_litere": "modelare_cant",
+    "comp_volum_aluminiu_module": "modelare_cant",  # canonical BOM alias → same module once
     "comp_spate_litere": "debitare_spate",
     "comp_led_litere": "sistem_led",
     "comp_finisaj_litere": "finisaje",
