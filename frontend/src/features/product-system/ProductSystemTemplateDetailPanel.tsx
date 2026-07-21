@@ -22,11 +22,14 @@ import { ProductE2EReadinessPanel } from "./ProductE2EReadinessPanel";
 import { ProductTemplatePublicationPanel } from "./ProductTemplatePublicationPanel";
 import { ArtworkAnalysisReviewPanel } from "./ArtworkAnalysisReviewPanel";
 import { ComponentContractUsedByPanel } from "./ComponentContractUsedByPanel";
+import { AcmBoxedAppliedContentPanel } from "./AcmBoxedAppliedContentPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { humanTemplateName } from "./productSystemAdminDisplay";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
+
+const ACM_BOXED_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 
 /** Primary authoring flow — identity → composition → dossier → readiness → publication → preview. */
 const PRODUCT_PRIMARY_SECTIONS: Array<{
@@ -489,6 +492,9 @@ export function ProductSystemTemplateDetailPanel({
 
       {section === "composition" && isProduct ? (
         <div className="space-y-4" data-testid="product-system-template-detail-composition">
+          {template.template_code === ACM_BOXED_TEMPLATE_CODE ? (
+            <AcmBoxedAppliedContentPanel templateCode={template.template_code} />
+          ) : null}
           <TemplateCompositionAuthoringPanel
             parentTemplateCode={template.template_code}
             parentTemplateId={template.id}
