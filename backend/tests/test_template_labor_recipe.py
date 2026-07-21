@@ -231,7 +231,7 @@ class TestServiceLaborRecipes(unittest.IsolatedAsyncioTestCase):
         )
         recipe = await service.build_recipe(ACM_BOXED_TEMPLATE)
         assert recipe is not None
-        self.assertEqual(recipe.schema_version, "1.1.0")
+        self.assertEqual(recipe.schema_version, "1.1.1")
         self.assertGreaterEqual(recipe.labor_summary.total, 1)
         self.assertTrue(any(r.catalog_code == "ACM_BOXED_ASSEMBLY" for r in recipe.labor_recipes))
         self.assertTrue(all(r.editable is False for r in recipe.labor_recipes))

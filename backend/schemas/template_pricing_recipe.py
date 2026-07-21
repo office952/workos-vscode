@@ -6,7 +6,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-TEMPLATE_PRICING_RECIPE_VERSION = "1.1.0"
+TEMPLATE_PRICING_RECIPE_VERSION = "1.1.1"
 
 LaborClass = Literal[
     "LABOR_INTERNAL",
@@ -38,6 +38,15 @@ LaborBasis = Literal[
     "set",
     "produs",
     "unknown",
+]
+
+LaborFormulaStatus = Literal[
+    "FORMULA_CONFIRMED",
+    "QUANTITY_KEY_CONFIRMED",
+    "OPERATION_ONLY",
+    "MISSING_OWNER_FORMULA",
+    "LEGACY_METADATA",
+    "NOT_APPLICABLE",
 ]
 
 RecipeKind = Literal[
@@ -172,6 +181,13 @@ class TemplateLaborRecipeItem(BaseModel):
     quantity_keys: list[str] = Field(default_factory=list)
     formula_id: Optional[str] = None
     formula_owner: Optional[str] = None
+    formula_status: LaborFormulaStatus = "OPERATION_ONLY"
+    formula_status_label_ro: Optional[str] = None
+    formula_source: Optional[str] = None
+    quantity_source: Optional[str] = None
+    owner_confirmation_required: bool = False
+    unresolved_reason: Optional[str] = None
+    evidence_level: Optional[str] = None
     basis: LaborBasis = "unknown"
     rate_basis: Optional[str] = None
     standard_time: Optional[Any] = None

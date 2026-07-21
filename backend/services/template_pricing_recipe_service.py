@@ -30,6 +30,7 @@ from schemas.template_pricing_recipe import (
 )
 from services.acm_face_treatment_commercial_path_v1 import build_cpp_eic_commercial_gate
 from services.pricing_registry_service import PricingRegistryService
+from services.template_labor_formula_truth import enrich_labor_recipes_formula_truth
 from services.template_labor_recipe import (
     build_labor_recipes,
     merge_labor_from_pricing_recipe_items,
@@ -187,6 +188,7 @@ class TemplatePricingRecipeService:
             pricing_items=recipe,
             existing=labor_raw,
         )
+        labor_raw = enrich_labor_recipes_formula_truth(labor_raw)
         labor_recipes = [TemplateLaborRecipeItem.model_validate(x) for x in labor_raw]
         labor_summary = TemplateLaborRecipeSummary(
             total=len(labor_recipes),
