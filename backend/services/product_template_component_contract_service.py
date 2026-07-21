@@ -16,6 +16,11 @@ from schemas.product_template_component_contract import (
 )
 from services.product_template_publication_service import normalize_publication_status
 from services.template_usage_mode_policy import get_template_usage_mode_policy
+from services.volum_aluminiu_component_contract import (
+    TEMPLATE_CODE as VOLUM_ALUMINIU_TEMPLATE_CODE,
+    build_input_contract_view,
+)
+from services.volum_aluminiu_quantity_ownership import build_quantity_and_ops_ownership_view
 
 _INSTANCE_SCHEMA_HINTS: dict[str, list[str]] = {
     "TPL-VOLUMETRIC-LETTERS_v2": [
@@ -53,7 +58,14 @@ _GEOMETRY_INPUT_HINTS: dict[str, list[str]] = {
         "geometry_provenance",
     ],
     "TPL-VOLUMETRIC-BACK_v1": ["letter_face_area_m2", "backing_mode", "backing_thickness_mm"],
-    "TPL-VOLUM-ALUMINIU_v1": ["letter_perimeter_m", "return_depth_mm", "depth_mm"],
+    "TPL-VOLUM-ALUMINIU_v1": [
+        "letter_perimeter_m",  # evidence only → geometry.evidence_perimeter_m
+        "confirmed_perimeter_m",  # drives separate calc
+        "return_depth_mm",
+        "depth_mm",
+        "perimeter_source",
+        "confirmation_state",
+    ],
     "TPL-VOLUMETRIC-LED_v1": ["led_module_count", "selected_psu_watts", "lighting_system_type"],
     "TPL-VOLUMETRIC-FINISH_v1": ["mounting_template_area_m2", "letter_count"],
 }
@@ -138,6 +150,34 @@ class ProductTemplateComponentContractService:
         else:
             role = "template"
 
+        input_contract = None
+        separate_calculation = None
+        quantity_ownership = None
+        materials_ops_ownership = None
+        publication_gate = None
+        if code == VOLUM_ALUMINIU_TEMPLATE_CODE:
+            input_contract = build_input_contract_view()
+            ownership = build_quantity_and_ops_ownership_view()
+            quantity_ownership = ownership["quantity_ownership"]
+            materials_ops_ownership = ownership["materials_ops_ownership"]
+            separate_calculation = {
+                "status": "contract_ready_for_preview",
+                "requires_confirmed_perimeter": True,
+                "preview_endpoint": (
+                    f"/api/v1/product-system/templates/{VOLUM_ALUMINIU_TEMPLATE_CODE}"
+                    "/separate-calculation-preview"
+                ),
+                "activation_required": False,
+                "publication_blocked": True,
+                "commercial_basis": "ml",
+                "anti_hourly": True,
+                "note": (
+                    "Separate calc preview is available when instances carry operator/"
+                    "verified confirmed_perimeter_m; template remains inactive for publish"
+                ),
+            }
+            publication_gate = input_contract.get("publication")
+
         return ProductTemplateComponentContractView(
             template_code=code,
             template_id=int(row.id),
@@ -164,6 +204,11 @@ class ProductTemplateComponentContractService:
             geometry_input_hints=_GEOMETRY_INPUT_HINTS.get(code, []),
             geometry_inputs_consume_only=True,
             no_component_templates_table=True,
+            input_contract=input_contract,
+            separate_calculation=separate_calculation,
+            quantity_ownership=quantity_ownership,
+            materials_ops_ownership=materials_ops_ownership,
+            publication_gate=publication_gate,
         )
 
     async def patch_link(
