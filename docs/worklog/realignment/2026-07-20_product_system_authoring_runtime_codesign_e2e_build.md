@@ -923,3 +923,33 @@ Provide dedicated ACM face-treatment optical / plexiglas (~10 mm) / treatment-CN
 - Inventory remains the live material source of truth.
 - Pricing Foundation classifies and exposes reusable rates.
 - Product System will compose template recipes in a later dedicated surface.
+
+---
+
+## TEMPLATE PRICING STUDIO V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `585115da` |
+| Owner GO | TEMPLATE_PRICING_STUDIO_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/template-pricing-studio-v1/` |
+| Route | `/product-system/products/:templateCode` → tab **Prețuri template** |
+| API | `GET /api/v1/product-system/templates/{template_code}/pricing` |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Typed catalog gate | 50/50 after BE restart |
+| ACM shell | 5/0 unchanged; treatment lines blocked |
+| Editability | read-only V1 |
+| CPP/EIC | structural preview only — no calc change |
+| Next | LABOR_RECIPE_CONTRACT_V1 |
+
+### Explicit ownership
+
+- Reusable catalog rates belong to Inventory/Pricing.
+- Template-specific quantities, formulas and applicability belong to Product System.
+- Template Pricing Studio composes them and exposes provenance; it does not invent resources or rates.
