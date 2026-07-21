@@ -203,7 +203,7 @@ No XOR change · no dual-select · no invent rates · no volumetric remap · no 
 | 3 | `fa0e891b` | feat(product-system): scope optical and illumination commercial blockers |
 | 4 | `839ed377` | fix(product-system-ui): expose face-treatment commercial readiness and blockers |
 | 5 | `bf9da181` | test(product-system): prove optical catalog partial close and CPP scenarios |
-| 6 | _(tip after this finalize commit)_ | docs(qa): finalize ACM face-treatment optical illumination catalog closure |
+| 6 | `742edd2f` | docs(qa): finalize ACM face-treatment optical illumination catalog closure |
 
 ## Files changed (allowlist)
 
