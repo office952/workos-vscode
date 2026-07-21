@@ -61,6 +61,14 @@ export type LaborClass =
   | "LEGACY"
   | "MISSING_RATE";
 
+export type LaborFormulaStatus =
+  | "FORMULA_CONFIRMED"
+  | "QUANTITY_KEY_CONFIRMED"
+  | "OPERATION_ONLY"
+  | "MISSING_OWNER_FORMULA"
+  | "LEGACY_METADATA"
+  | "NOT_APPLICABLE";
+
 export interface TemplateLaborRecipeItem {
   labor_recipe_id: string;
   template_code: string;
@@ -73,6 +81,13 @@ export interface TemplateLaborRecipeItem {
   quantity_keys: string[];
   formula_id?: string | null;
   formula_owner?: string | null;
+  formula_status?: LaborFormulaStatus;
+  formula_status_label_ro?: string | null;
+  formula_source?: string | null;
+  quantity_source?: string | null;
+  owner_confirmation_required?: boolean;
+  unresolved_reason?: string | null;
+  evidence_level?: string | null;
   basis: "hour" | "minute" | "buc" | "ml" | "mp" | "set" | "produs" | "unknown";
   rate_basis?: string | null;
   standard_time?: unknown;
