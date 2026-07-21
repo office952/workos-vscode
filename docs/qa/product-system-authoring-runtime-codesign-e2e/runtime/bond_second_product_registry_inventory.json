@@ -1,0 +1,246 @@
+{
+  "kickoff_head": "1b1b333c9ebfc715e678abe27e1dc181717107b8",
+  "template_count": 19,
+  "templates": [
+    {
+      "code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "family_id": "panouri_acp_iluminate",
+      "family_name": "Panouri ACP / ACM",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-ACM-CASSETTED-PANEL",
+      "family_id": "panouri_acp_iluminate",
+      "family_name": "Panouri ACP / ACM",
+      "active": false,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-ACP-LIGHT-ROUTED",
+      "family_id": "panouri_acp_iluminate",
+      "family_name": "Panouri ACP Iluminate",
+      "active": false,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-CUT-ACM-LETTERS",
+      "family_id": "panouri_acp_iluminate",
+      "family_name": "Panouri ACP / ACM",
+      "active": false,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "family_id": "structuri_metalice_premontaj",
+      "family_name": "Structuri metalice premontaj",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUM-ALUMINIU_v1",
+      "family_id": "volum_aluminiu_modular",
+      "family_name": "Volum aluminiu modular",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-BACK_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-FACE-BACK-PREP",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice — pregătire față/spate",
+      "active": false,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-FACE_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-FINISH_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LED_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LETTERS_v2",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-BACK_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-FACE_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-FINISH_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-LIGHTING_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-MOUNTING_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO-RETURN_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    },
+    {
+      "code": "TPL-VOLUMETRIC-LOGO_v1",
+      "family_id": "litere_volumetrice",
+      "family_name": "Litere volumetrice",
+      "active": true,
+      "publication_status": null
+    }
+  ],
+  "link_count": 13,
+  "links": [
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "relation": "optional_addon",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "acm_panel_component_instance_v1"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-METAL-PREMOUNT-STRUCTURE_v1",
+      "relation": "optional_addon",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "component_placements.mounting"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-VOLUM-ALUMINIU_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "letter_group_instances.sidewall"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-VOLUMETRIC-BACK_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "letter_group_instances.back"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-VOLUMETRIC-FACE_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "letter_group_instances.face"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-VOLUMETRIC-FINISH_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "letter_group_instances.finish"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LETTERS_v2",
+      "child": "TPL-VOLUMETRIC-LED_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": "linked_child",
+      "instance_schema_id": "letter_group_instances.lighting"
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-BACK_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-FACE_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-FINISH_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-LIGHTING_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-MOUNTING_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    },
+    {
+      "parent": "TPL-VOLUMETRIC-LOGO_v1",
+      "child": "TPL-VOLUMETRIC-LOGO-RETURN_v1",
+      "relation": "required_module",
+      "active": true,
+      "usage_mode": null,
+      "instance_schema_id": null
+    }
+  ]
+}

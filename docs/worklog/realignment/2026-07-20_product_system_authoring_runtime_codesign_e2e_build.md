@@ -687,3 +687,47 @@ Activation HEAD: `e2d7594a`.
 | 3 | `84a353d0` | docs(qa): finalize pre-publication proof |
 
 Proof HEAD: `dc00f5c5`.
+
+### VL closure pointer (2026-07-21)
+
+`TPL-VOLUMETRIC-LETTERS_v2` remains the configured first real product: Aluminiu active unpublished, separate calc PASS, runtime-partial, unpublished reference. Pre-publication proof closed under `VL_PRE_PUBLICATION_E2E_*`. **No further dedicated VL work** in the Bond second-product run ? leave as configured reference only.
+
+---
+
+## SECOND REAL PRODUCT CONFIGURATION ? BOND CASETAT CU LITERE / LOGO VOLUMETRIC
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `1b1b333c` (reconfirmed) |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/BOND_SECOND_PRODUCT_ALLOWLIST.md` |
+| Inventory | `docs/qa/product-system-authoring-runtime-codesign-e2e/BOND_SECOND_PRODUCT_IDENTITY_INVENTORY.md` |
+| CP0 | `docs/qa/product-system-authoring-runtime-codesign-e2e/BOND_SECOND_PRODUCT_CP0_FREEZE.md` ? **NOT FROZEN** |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/BOND_SECOND_PRODUCT_CONFIGURATION_FINAL_REPORT.md` |
+| DB evidence | `docs/qa/product-system-authoring-runtime-codesign-e2e/runtime/bond_second_product_registry_inventory.json` |
+
+### Gate
+
+**STOP before create** ? multiple Bond/ACM/ACP casetat near-identities. Live panel authority remains `TPL-ACM-BOXED-MOUNTING-SUPPORT_v1`. VL already links ACM as optional child. No reverse ACM?letters/logo composition. Frame is domain (`acp_internal_frame`), not a PT.
+
+### Owner pick required
+
+| Option | Meaning |
+|--------|---------|
+| **A** (prefer) | Extend ACM boxed composition; reuse VL letters XOR logo modules; no new panel twin |
+| **B** | New composite root SKU; still reuses ACM boxed as panel |
+| **C** | Decline second product; VL+optional ACM covers the case |
+
+### Configuration / publication
+
+| Axis | Result |
+|------|--------|
+| Product configured? | **No** (STOP) |
+| Verdict | **FAIL** (STOP ? not configured) |
+| Publication | **BLOCKED** |
+| Feat commits 1?5 | SKIPPED |
+| Docs commit 6 | inventory + generalization evidence |
+
+### Generalization (one line)
+
+VL = letters-root + ACM-child; Bond target = ACM-root + letters/logo-child; dual-role ACM exists; inverse composition needs owner policy before any create.
