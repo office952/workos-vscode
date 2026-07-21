@@ -65,7 +65,7 @@ Product Family
 
 ### Kickoff (20 items) ? confirmed
 
-See `CLOSURE_ALLOWLIST.md` � Kickoff confirmation.
+See `CLOSURE_ALLOWLIST.md` ? Kickoff confirmation.
 
 ### Checkpoint matrix
 
@@ -94,11 +94,11 @@ See `CLOSURE_ALLOWLIST.md` � Kickoff confirmation.
 
 ### Direction score
 
-**86/100%** ? see FINAL_REPORT �36?37.
+**86/100%** ? see FINAL_REPORT ?36?37.
 
 ### PAREREA MEA SINCERA
 
-Confirm pe DB real? + split BUILD/TEMPLATE + Figma IDs reale = progres serios. F?r? EIC pe Qty, f?r? pack UI 1?22, **nu e PASS**. Aluminiu inactiv r?m�ne conflict onest.
+Confirm pe DB real? + split BUILD/TEMPLATE + Figma IDs reale = progres serios. F?r? EIC pe Qty, f?r? pack UI 1?22, **nu e PASS**. Aluminiu inactiv r?m?ne conflict onest.
 
 ### Closure commits
 
@@ -157,7 +157,7 @@ No PI/CI, no CT table, no Build 2, no pricing reopen, no aluminiu activation, no
 
 ### Direction score
 
-**92/100%** ? see FINAL_REPORT �36.
+**92/100%** ? see FINAL_REPORT ?36.
 
 ### Tests
 
@@ -272,7 +272,7 @@ None. Transport remains TBD (documented). No major schema migration. No aluminiu
 
 ### Kickoff (20 items)
 
-Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` � Kickoff confirmation.
+Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` ? Kickoff confirmation.
 
 ### Checkpoint matrix
 
@@ -301,7 +301,7 @@ Confirmed in `AUTHORING_CONTINUATION_ALLOWLIST.md` � Kickoff confirmation.
 
 ### Direction score
 
-**84/100** ? see `AUTHORING_CONTINUATION_FINAL_REPORT.md` �29?35.
+**84/100** ? see `AUTHORING_CONTINUATION_FINAL_REPORT.md` ?29?35.
 
 ### Locked boundaries (do not reopen)
 
@@ -369,7 +369,7 @@ Transform Product System from functional/honest ? clear, coherent daily admin us
 
 ### Direction score
 
-**88/100** ? see `UI_FIGMA_FINAL_POLISH_REPORT.md` �29?31.
+**88/100** ? see `UI_FIGMA_FINAL_POLISH_REPORT.md` ?29?31.
 
 ### Tests
 
@@ -432,7 +432,7 @@ None.
 
 ### Direction score
 
-**91/100** ? see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT �29?33.
+**91/100** ? see REAL_PRODUCT_CONFIGURATION_FINAL_REPORT ?29?33.
 
 ### Tests
 
@@ -573,3 +573,40 @@ Recorded after push of local commits (no remote push):
 | 6 | (this commit) | docs(qa): commit audit and completion evidence |
 
 Completion HEAD after docs commit: see `git rev-parse HEAD` post-commit.
+
+## VOLUM ALUMINIU ACTIVATION READINESS CLOSURE
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `a385f156` (reconfirmed) |
+| Convergence map | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_ACTIVATION_READINESS_CONVERGENCE_MAP.md` |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_ACTIVATION_READINESS_ALLOWLIST.md` |
+| Final report | `docs/qa/product-system-authoring-runtime-codesign-e2e/VOLUM_ALUMINIU_ACTIVATION_READINESS_CLOSURE_FINAL_REPORT.md` |
+| Identity verdict | **PASS** (canonical BOM + explicit pricing stub alias) |
+| Geometry verdict | **PASS** (confirmed PT authority; quote_geometry bridge/legacy; diverge fail-closed) |
+| Preview ? CPP | Equivalent confirmed perimeter basis within 6dp |
+| Separate calculability | **PASS** (prior warnings closed) |
+| Activation recommendation | **NO-GO** (not executed) |
+| Publication | **still BLOCKED** |
+| Unit freeze | confirmed perimeter **m**; commercial synonym **ml** (1:1) |
+| Tests | pytest identity/geometry + prior VL suite ? 55 passed |
+| Stop conditions | None hard-triggered |
+
+### Commit sequence (allowlist)
+
+1. feat(product-system): converge aluminium return canonical identity mappings
+2. feat(product-system): converge CPP product-total on confirmed perimeter / control quote_geometry bridge
+3. test(product-system): prove identity and geometry equivalence
+4. docs(qa): activation readiness closure evidence
+
+### Recorded SHAs
+
+| # | SHA | Message |
+|---|-----|---------|
+| 1 | `a7cb015f` | feat(product-system): converge aluminium return canonical identity mappings |
+| 2 | `5b2daca4` | feat(product-system): converge CPP product-total on confirmed perimeter / control quote_geometry bridge |
+| 3 | `ca835156` | test(product-system): prove identity and geometry equivalence |
+| 4 | (this commit) | docs(qa): activation readiness closure evidence |
+
+Closure HEAD after docs commit: see `git rev-parse HEAD` post-commit.
