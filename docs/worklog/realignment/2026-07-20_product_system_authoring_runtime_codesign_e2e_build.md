@@ -731,3 +731,53 @@ Proof HEAD: `dc00f5c5`.
 ### Generalization (one line)
 
 VL = letters-root + ACM-child; Bond target = ACM-root + letters/logo-child; dual-role ACM exists; inverse composition needs owner policy before any create.
+
+---
+
+## ACM BOXED SUPPORT COMPOSITION EXTENSION
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-21 |
+| Kickoff HEAD | `5dfe807a` (reconfirmed) |
+| Owner decision | **A** locked (extend ACM boxed; no new panel/composite SKU) |
+| Previous STOP | Bond second-product near-identity STOP ? closed by A |
+| Allowlist | `docs/qa/product-system-authoring-runtime-codesign-e2e/ACM_BOXED_SUPPORT_COMPOSITION_ALLOWLIST.md` |
+| CP0 | `ACM_BOXED_SUPPORT_COMPOSITION_CP0_FREEZE.md` ? **FROZEN** |
+| Final report | `ACM_BOXED_SUPPORT_COMPOSITION_FINAL_REPORT.md` |
+| Engine | native inline |
+
+### Model (frozen)
+
+```text
+TPL-ACM-BOXED-MOUNTING-SUPPORT_v1
+??? applied_content XOR letters | logo
+??? metal_frame optional (acp_internal_frame, operator-explicit)
+??? mounting / finish / assembly (root-owned)
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Letters | Component reuse FACE/BACK/ALUMINIU/LED/FINISH; VL root not child (cycle guard) |
+| Logo | Root `TPL-VOLUMETRIC-LOGO_v1` linked as draft intent; **honestly blocked** candidate |
+| Frame | Optional domain; no auto thresholds |
+| XOR | Validators + composition contract + UI radios |
+| Double-count | Applied-content BOM excluded from panel aggregate rollup |
+| Publication | **KEEP_DRAFT** |
+| Screenshots 1?20 | NOT_CAPTURED |
+| Configuration verdict | **PASS_WITH_WARNINGS** |
+
+### Commit sequence
+
+1. `feat(product-system): extend ACM boxed support composition`
+2. `feat(product-system): add letters-logo XOR and optional frame contracts`
+3. `feat(product-system): compile ACM composite truth quantities and readiness`
+4. `fix(product-system-ui): expose applied content and optional frame configuration`
+5. `test(product-system): prove ACM composition and reuse invariants`
+6. `docs(qa): finalize ACM second-product evidence`
+
+### Next owner decision
+
+keep draft (recommended) / resolve logo root offerability GO / future conditional frame / prepare later publication proof.
