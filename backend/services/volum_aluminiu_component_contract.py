@@ -1,6 +1,7 @@
 """TPL-VOLUM-ALUMINIU_v1 component contract helpers — separate calc honesty.
 
-No activation. No ComponentTemplate table. Geometry consume-only.
+Activate-only is owner-gated elsewhere; this module does not publish.
+No ComponentTemplate table. Geometry consume-only.
 """
 
 from __future__ import annotations
@@ -53,8 +54,10 @@ COMMERCIAL_LINE_CODE = "modelare_cant_aluminiu"
 COMMERCIAL_RULE_CODE = "VOL_V2_RETURN_PROFILE_ML"
 INTERNAL_RULE_CODE = "INT_VOL_V2_RETURN_ML"
 
+# Parent / product-template publication is a separate owner GO — activation must not publish.
 PUBLICATION_REMAINS_BLOCKED = True
-ACTIVATION_FORBIDDEN_IN_THIS_BUILD = True
+# Owner ACTIVATION GO for TPL-VOLUM-ALUMINIU_v1 (activate-only; not publish).
+ACTIVATION_FORBIDDEN_IN_THIS_BUILD = False
 
 # Shared convergence map — one canonical identity; aliases are explicit mappings only.
 IDENTITY_MAP: dict[str, Any] = {

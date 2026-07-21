@@ -53,9 +53,11 @@ from services.template_architecture_scope import (
     resolve_template_identity,
 )
 from services.volum_aluminiu_component_contract import (
+    ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
     ALLOWED_DEPTH_MM,
     BOM_COMPONENT_ID,
     PRICING_COMPONENT_CODE,
+    PUBLICATION_REMAINS_BLOCKED,
     build_identity_convergence_view,
     build_input_contract_view,
     map_component_ref_to_module,
@@ -730,7 +732,7 @@ class ProductE2EReadinessService:
                     status="PASS" if depth_aligned else "PASS_WITH_WARNINGS",
                     message=(
                         "Volum Aluminiu separate-calc contract present "
-                        "(confirmed perimeter required; publication remains blocked)."
+                        "(confirmed perimeter required; parent publication is a separate GO)."
                         if depth_aligned
                         else "Volum Aluminiu contract present but return_depth_mm options misaligned with material gates."
                     ),
@@ -744,8 +746,8 @@ class ProductE2EReadinessService:
                             f"/api/v1/product-system/templates/{KNOWN_REQUIRED_INACTIVE_CHILD}"
                             "/separate-calculation-preview"
                         ),
-                        "publication_remains_blocked": True,
-                        "activation_forbidden_in_this_build": True,
+                        "publication_remains_blocked": PUBLICATION_REMAINS_BLOCKED,
+                        "activation_forbidden_in_this_build": ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
                         "depth_options": depth_options,
                         "allowed_depth_mm": sorted(ALLOWED_DEPTH_MM),
                         "depth_aligned": depth_aligned,
@@ -787,8 +789,8 @@ class ProductE2EReadinessService:
                         "identity": identity_view,
                         "bom_maps_to_module": bom_maps,
                         "pricing_stub_maps_to_module": stub_maps,
-                        "publication_remains_blocked": True,
-                        "activation_forbidden_in_this_build": True,
+                        "publication_remains_blocked": PUBLICATION_REMAINS_BLOCKED,
+                        "activation_forbidden_in_this_build": ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
                     },
                     recommended_navigation="Product System → Component identity map",
                 )
@@ -801,7 +803,7 @@ class ProductE2EReadinessService:
                     message=(
                         "Volum Aluminiu product-total prefers confirmed Product Truth perimeter; "
                         "quote_geometry is controlled compatibility bridge or demoted legacy fallback; "
-                        "divergence fail-closed. Publication remains blocked."
+                        "divergence fail-closed. Parent publication is a separate GO."
                     ),
                     source_owner="volum_aluminiu_quantity_ownership",
                     template_code=template_code,
@@ -817,8 +819,8 @@ class ProductE2EReadinessService:
                         ],
                         "product_total_resolver": "resolve_product_total_perimeter_authority",
                         "bridge_applicator": "apply_confirmed_perimeter_quote_geometry_bridge",
-                        "publication_remains_blocked": True,
-                        "activation_forbidden_in_this_build": True,
+                        "publication_remains_blocked": PUBLICATION_REMAINS_BLOCKED,
+                        "activation_forbidden_in_this_build": ACTIVATION_FORBIDDEN_IN_THIS_BUILD,
                         "auto_activate": False,
                     },
                     recommended_navigation=(

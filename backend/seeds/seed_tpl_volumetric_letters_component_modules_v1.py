@@ -5,7 +5,8 @@ links them as required modules, stamps usage_mode + instance_schema_id on all VL
 edges (including Aluminiu / Premount / ACM), and moves BOM ownership off the root
 for those components so Aggregate provenance is not duplicated.
 
-Does NOT activate TPL-VOLUM-ALUMINIU_v1. Does NOT publish. No ComponentTemplate table.
+Preserves owner-activated TPL-VOLUM-ALUMINIU_v1 (active=true after ACTIVATION GO).
+Does NOT publish parent or child. No ComponentTemplate table.
 Geometry contracts are inputs-only (no SVG/DWG/DXF parse).
 """
 
@@ -660,8 +661,9 @@ def _patch_parent_dossier(dossier: ProductBlueprintDossier | None) -> bool:
         "dossier_is_not_bom_sot": True,
     }
     sections["publication_policy"] = {
-        "aluminiu_required_inactive_blocks_publication": True,
-        "do_not_auto_activate": True,
+        "aluminiu_required_inactive_blocks_publication": False,
+        "aluminiu_active_after_owner_go": True,
+        "do_not_auto_publish": True,
         "publication_status_left_unspecified_until_ready": True,
     }
     dossier.sections_json = _json_dumps(sections)
@@ -761,7 +763,7 @@ async def seed_tpl_volumetric_letters_component_modules_v1() -> dict[str, Any]:
             link.instance_schema_id = stamp["instance_schema_id"]
             stats["edge_stamps"] += 1
 
-        # Never activate Aluminiu — preserve inactive if present.
+        # Owner ACTIVATION GO — preserve active Aluminiu; never force-deactivate or publish.
         aluminiu = (
             await session.execute(
                 select(Product_templates)
@@ -770,9 +772,6 @@ async def seed_tpl_volumetric_letters_component_modules_v1() -> dict[str, Any]:
             )
         ).scalar_one_or_none()
         if aluminiu is not None:
-            if aluminiu.active is True:
-                # Owner policy for this build: keep publication blocker honest.
-                aluminiu.active = False
             stats["aluminiu_active_preserved"] = bool(aluminiu.active)
 
         stats["parent_bom_handoff"] = _handoff_parent_bom(parent)
