@@ -27,6 +27,7 @@ import { AcmBoxedFaceTreatmentPanel } from "./AcmBoxedFaceTreatmentPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
+import { TemplatePricingStudioPanel } from "./TemplatePricingStudioPanel";
 import { humanTemplateName } from "./productSystemAdminDisplay";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
@@ -41,6 +42,7 @@ const PRODUCT_PRIMARY_SECTIONS: Array<{
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
   { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
   { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
+  { id: "pricing", label: "Prețuri template", testId: "product-system-template-detail-tab-pricing" },
   { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
   { id: "readiness", label: "Pregătire E2E", testId: "product-system-template-detail-tab-readiness" },
   { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
@@ -570,6 +572,12 @@ export function ProductSystemTemplateDetailPanel({
       {section === "contracts" && isProduct ? (
         <div data-testid="product-system-template-detail-contracts">
           <ComponentContractUsedByPanel templateCode={template.template_code} />
+        </div>
+      ) : null}
+
+      {section === "pricing" && isProduct ? (
+        <div data-testid="product-system-template-detail-pricing">
+          <TemplatePricingStudioPanel templateCode={template.template_code} />
         </div>
       ) : null}
 
