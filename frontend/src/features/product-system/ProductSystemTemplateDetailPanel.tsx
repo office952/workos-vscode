@@ -23,6 +23,7 @@ import { ProductTemplatePublicationPanel } from "./ProductTemplatePublicationPan
 import { ArtworkAnalysisReviewPanel } from "./ArtworkAnalysisReviewPanel";
 import { ComponentContractUsedByPanel } from "./ComponentContractUsedByPanel";
 import { AcmBoxedAppliedContentPanel } from "./AcmBoxedAppliedContentPanel";
+import { AcmBoxedFaceTreatmentPanel } from "./AcmBoxedFaceTreatmentPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
@@ -493,7 +494,10 @@ export function ProductSystemTemplateDetailPanel({
       {section === "composition" && isProduct ? (
         <div className="space-y-4" data-testid="product-system-template-detail-composition">
           {template.template_code === ACM_BOXED_TEMPLATE_CODE ? (
-            <AcmBoxedAppliedContentPanel templateCode={template.template_code} />
+            <>
+              <AcmBoxedAppliedContentPanel templateCode={template.template_code} />
+              <AcmBoxedFaceTreatmentPanel templateCode={template.template_code} />
+            </>
           ) : null}
           <TemplateCompositionAuthoringPanel
             parentTemplateCode={template.template_code}
