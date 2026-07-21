@@ -53,6 +53,19 @@ export function AcmBoxedFaceTreatmentPanel({
   const coexistence = computeCoexistence(routedEnabled, insertEnabled);
   const showReliefBadge = insertEnabled && Math.abs(insertThicknessMm - 10) < 0.01;
 
+  // Mirror backend scoped_commercial_blockers — no invented rates.
+  const scopedBlockers: string[] = [];
+  if (coexistence !== "none") {
+    scopedBlockers.push("FACE_TREATMENT_OPTICAL_CATALOG_MISSING");
+    if (coexistence === "routed_only" || coexistence === "both") {
+      scopedBlockers.push("FACE_TREATMENT_ILLUMINATION_RATES_MISSING");
+    }
+  }
+  const treatmentLinesAllowed = false;
+  const subtotalStatus = coexistence === "none" ? "NOT_APPLICABLE" : "BLOCKED";
+  const readinessOverall =
+    coexistence === "none" ? "NOT_APPLICABLE" : "LOCAL_CONFIGURATION_REQUIRED";
+
   const emit = (next: AcmBoxedFaceTreatmentState) => {
     onChange?.(next);
   };
@@ -181,13 +194,53 @@ export function AcmBoxedFaceTreatmentPanel({
           : " — panoul ACM rămâne owner pentru tablă; tratamentele nu dublează foaia."}
       </p>
 
+      <div
+        className="space-y-1 rounded border border-slate-700 bg-slate-900/40 px-2 py-1.5 text-[11px] text-slate-300"
+        data-testid="acm-face-treatment-commercial-readiness"
+      >
+        <p>
+          Readiness tratamente:{" "}
+          <span className="font-mono text-slate-200" data-testid="acm-face-treatment-readiness-overall">
+            {readinessOverall}
+          </span>
+        </p>
+        <p>
+          treatment_commercial_lines_allowed:{" "}
+          <span
+            className="font-mono text-slate-200"
+            data-testid="acm-face-treatment-lines-allowed"
+          >
+            {String(treatmentLinesAllowed)}
+          </span>
+        </p>
+        <p>
+          Subtotal tratamente:{" "}
+          <span
+            className="font-mono text-slate-200"
+            data-testid="acm-face-treatment-subtotal"
+          >
+            {subtotalStatus === "BLOCKED" ? "BLOCKED" : "null"}
+          </span>
+          <span className="ml-1 text-slate-500">({subtotalStatus})</span>
+        </p>
+        <p data-testid="acm-face-treatment-scoped-blockers">
+          Blockers:{" "}
+          {scopedBlockers.length === 0 ? (
+            <span className="font-mono text-slate-400">[]</span>
+          ) : (
+            <span className="font-mono text-amber-100">{scopedBlockers.join(", ")}</span>
+          )}
+        </p>
+      </div>
+
       {(routedEnabled || insertEnabled) && (
         <p
           className="rounded border border-amber-800/40 bg-amber-950/20 px-2 py-1.5 text-[11px] text-amber-100"
           data-testid="acm-face-treatment-optical-blocked-note"
         >
           Comercial optic/electric: BLOCKED onest — lipsește catalogul optic/electrical RO. Nu se
-          inventează prețuri. LIGHT-ROUTED nu este autoritate.
+          inventează prețuri. LIGHT-ROUTED nu este autoritate. Insert-only nu moștenește blocker-ul
+          de iluminare routed.
         </p>
       )}
     </section>

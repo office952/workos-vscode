@@ -36,11 +36,36 @@ describe("AcmBoxedFaceTreatmentPanel", () => {
       "RELIEF_PLEXI_10MM",
     );
     expect(screen.getByTestId("acm-face-treatment-optical-blocked-note")).toBeInTheDocument();
+    expect(screen.getByTestId("acm-face-treatment-lines-allowed")).toHaveTextContent("false");
+    expect(screen.getByTestId("acm-face-treatment-subtotal")).toHaveTextContent("BLOCKED");
+    expect(screen.getByTestId("acm-face-treatment-scoped-blockers")).toHaveTextContent(
+      "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+    );
+    expect(screen.getByTestId("acm-face-treatment-scoped-blockers")).toHaveTextContent(
+      "FACE_TREATMENT_ILLUMINATION_RATES_MISSING",
+    );
     expect(onChange).toHaveBeenLastCalledWith({
       routedEnabled: true,
       insertEnabled: true,
       coexistence: "both",
       insertThicknessMm: 10,
     });
+  });
+
+  it("insert-only exposes optical blocker without illumination blocker", () => {
+    render(
+      <AcmBoxedFaceTreatmentPanel templateCode="TPL-ACM-BOXED-MOUNTING-SUPPORT_v1" />,
+    );
+    fireEvent.click(screen.getByTestId("acm-face-treatment-insert-checkbox"));
+    expect(screen.getByTestId("acm-face-treatment-coexistence")).toHaveTextContent(
+      "insert_only",
+    );
+    expect(screen.getByTestId("acm-face-treatment-scoped-blockers")).toHaveTextContent(
+      "FACE_TREATMENT_OPTICAL_CATALOG_MISSING",
+    );
+    expect(screen.getByTestId("acm-face-treatment-scoped-blockers")).not.toHaveTextContent(
+      "FACE_TREATMENT_ILLUMINATION_RATES_MISSING",
+    );
+    expect(screen.getByTestId("acm-face-treatment-subtotal")).toHaveTextContent("BLOCKED");
   });
 });
