@@ -18,6 +18,14 @@ from scripts.seed_acm_template_pack import (
     ACM_CASSETTED_QUOTE_INPUT_KEYS,
     CASSETTED_COMPONENTS,
 )
+from services.acm_boxed_support_composition_v1 import (
+    APPLIED_CONTENT_LETTERS,
+    APPLIED_CONTENT_LOGO,
+    APPLIED_CONTENT_TRIGGER_FIELD,
+    FRAME_DOMAIN_KIND,
+    LETTERS_PACK_TEMPLATE_CODES,
+    LOGO_PACK_TEMPLATE_CODES,
+)
 from services.product_template_module_links_service import ProductTemplateModuleLinksService
 
 logger = logging.getLogger(__name__)
@@ -169,6 +177,22 @@ def _dossier_payload(template_id: int) -> dict[str, Any]:
             "owner_valid_active": True,
             "root_offerable": True,
         },
+        "composition_extension_v1": {
+            "decision": "A",
+            "applied_content_xor": [APPLIED_CONTENT_LETTERS, APPLIED_CONTENT_LOGO],
+            "letters_pack": list(LETTERS_PACK_TEMPLATE_CODES),
+            "letters_root_reference": LETTERS_TEMPLATE_CODE,
+            "logo_pack": list(LOGO_PACK_TEMPLATE_CODES),
+            "logo_branch": "honestly_blocked_candidate_until_owner_go",
+            "metal_frame": {
+                "kind": FRAME_DOMAIN_KIND,
+                "cardinality": "optional",
+                "selection": "operator_explicit",
+                "automatic_thresholds": False,
+                "product_template": None,
+            },
+            "cycle_guard": "do_not_link_VL_root_under_ACM_while_VL_links_ACM",
+        },
         "components": [
             {"id": cid, "label": cid.replace("comp_", "").replace("_", " ").upper()}
             for cid in ACM_COMPONENT_IDS
@@ -285,10 +309,58 @@ def _letters_module_link_payload(
     }
 
 
+def _applied_content_child_link_payload(
+    *,
+    parent_template: Product_templates,
+    child_template: Product_templates,
+    pack: str,
+) -> dict[str, Any]:
+    """ACM root → letters/logo pack child (Decision A composition extension)."""
+    is_logo = pack == APPLIED_CONTENT_LOGO
+    return {
+        "parent_template_id": parent_template.id,
+        "parent_template_code": TEMPLATE_CODE,
+        "module_template_id": child_template.id,
+        "module_template_code": child_template.template_code,
+        "relation_type": "optional_addon",
+        "trigger_field": APPLIED_CONTENT_TRIGGER_FIELD,
+        "trigger_value_json": _json_dumps(pack),
+        "input_mapping_json": _json_dumps(
+            {
+                "panel_width_mm": "width_mm",
+                "panel_height_mm": "height_mm",
+            }
+        ),
+        "default_values_json": _json_dumps(
+            {
+                APPLIED_CONTENT_TRIGGER_FIELD: pack,
+                "metal_frame_optional": True,
+                "metal_frame_domain": FRAME_DOMAIN_KIND,
+            }
+        ),
+        "pricing_mode": "separate_quote_line",
+        "execution_mode": "linked_child_work",
+        "usage_mode": "linked_child",
+        "instance_schema_id": (
+            "acm_applied_logo_pack_v1" if is_logo else "acm_applied_letters_pack_v1"
+        ),
+        "active": True,
+        "notes": (
+            f"ACM boxed composition Decision A — applied_content={pack} XOR. "
+            + (
+                "Logo root candidate-blocked for offerability; edge is draft intent only."
+                if is_logo
+                else "Letters component reuse; VL root not linked (cycle guard)."
+            )
+        ),
+    }
+
+
 async def seed_tpl_acm_boxed_mounting_support_v1() -> dict[str, Any]:
     template_action = "unchanged"
     dossier_action = "unchanged"
     module_link_action = "unchanged"
+    composition_link_actions: dict[str, str] = {}
 
     async with db_manager.async_session_maker() as session:
         existing = (
@@ -339,6 +411,43 @@ async def seed_tpl_acm_boxed_mounting_support_v1() -> dict[str, Any]:
         else:
             module_link_action = "skipped_letters_template_missing"
 
+        links_svc = ProductTemplateModuleLinksService(session)
+        for child_code in LETTERS_PACK_TEMPLATE_CODES:
+            child = (
+                await session.execute(
+                    select(Product_templates).where(Product_templates.template_code == child_code)
+                )
+            ).scalar_one_or_none()
+            if child is None:
+                composition_link_actions[child_code] = "skipped_missing"
+                continue
+            _, action = await links_svc.upsert_by_contract(
+                _applied_content_child_link_payload(
+                    parent_template=template,
+                    child_template=child,
+                    pack=APPLIED_CONTENT_LETTERS,
+                )
+            )
+            composition_link_actions[child_code] = action
+
+        for child_code in LOGO_PACK_TEMPLATE_CODES:
+            child = (
+                await session.execute(
+                    select(Product_templates).where(Product_templates.template_code == child_code)
+                )
+            ).scalar_one_or_none()
+            if child is None:
+                composition_link_actions[child_code] = "skipped_missing"
+                continue
+            _, action = await links_svc.upsert_by_contract(
+                _applied_content_child_link_payload(
+                    parent_template=template,
+                    child_template=child,
+                    pack=APPLIED_CONTENT_LOGO,
+                )
+            )
+            composition_link_actions[child_code] = action
+
         await session.commit()
         await session.refresh(template)
 
@@ -347,7 +456,9 @@ async def seed_tpl_acm_boxed_mounting_support_v1() -> dict[str, Any]:
         "template_action": template_action,
         "dossier_action": dossier_action,
         "module_link_action": module_link_action,
+        "composition_link_actions": composition_link_actions,
         "letters_parent": LETTERS_TEMPLATE_CODE,
+        "applied_content_xor": [APPLIED_CONTENT_LETTERS, APPLIED_CONTENT_LOGO],
         "active": True,
         "component_count": len(ACM_COMPONENT_IDS),
         "operation_count": len(ACM_OPERATION_CODES),
