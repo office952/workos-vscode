@@ -1023,3 +1023,39 @@ Product Templates own labor consumption formulas.
 An operation without a confirmed formula remains visible but commercially unresolved.
 No productivity value is invented to obtain a green status.
 ```
+
+---
+
+## AI OPERATIONAL DEFAULTS V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `aa0f8956` |
+| Owner GO | AI_OPERATIONAL_DEFAULTS_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/ai-operational-defaults-v1/` |
+| schema_version | 1.2.0 |
+| Proof port | `8020` (`:8000` ghost — environment) |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Contract | Typed AI registry + JSON overrides; no Alembic |
+| Packaging / Electrical / LED | Quantity-based defaults; no time-primary |
+| Labor fallback | Eligible OPERATION_ONLY / MISSING_OWNER only; PREPRESS skipped |
+| Precedence | MEASURED > OWNER > CATALOG > AI > LEGACY |
+| Readiness | ACTIVE_WITH_AI_DEFAULTS; ACM ACTIVE_WITH_WARNINGS (treatments blocked) |
+| UI | Prețuri template → Decizii operaționale AI |
+| CPP/EIC | Coherent; VL `ambalare` demoted; ACM 5/0 |
+| Next | TEMPLATE_ACTIVATION_V1 (do not auto-execute) |
+
+### Explicit ownership
+
+```text
+AI decisions are allowed operational defaults.
+They must be configurable, traceable and replaceable.
+Missing perfect truth does not automatically block activation.
+Time is observed for calibration, not required as the primary pricing basis.
+```
