@@ -12,6 +12,7 @@ import {
   type TemplatePricingRecipeResponse,
   type TemplateRecipeKind,
 } from "@/api/templatePricingRecipe";
+import { AiOperationalDefaultsSection } from "./AiOperationalDefaultsSection";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 type KindFilter = "all" | TemplateRecipeKind;
@@ -70,6 +71,19 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<KindFilter>("all");
+
+  const reload = () => {
+    setLoading(true);
+    setError(null);
+    templatePricingRecipeApi
+      .getRecipe(templateCode)
+      .then((res) => setData(res))
+      .catch((err: unknown) => {
+        setData(null);
+        setError(err instanceof Error ? err.message : String(err));
+      })
+      .finally(() => setLoading(false));
+  };
 
   useEffect(() => {
     let cancelled = false;
@@ -176,8 +190,28 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
             >
               Comercial: {data.readiness.commercial_ready ? "pregătit" : "blocat / incomplet"}
             </span>
+            {data.readiness.activation_status ? (
+              <span
+                data-testid="template-pricing-activation-status"
+                className={`rounded border px-2 py-0.5 text-[10px] font-medium ${
+                  data.readiness.activation_status === "BLOCKED"
+                    ? "border-rose-800/40 text-rose-200"
+                    : data.readiness.activation_status === "ACTIVE_WITH_AI_DEFAULTS"
+                      ? "border-sky-800/40 text-sky-200"
+                      : "border-emerald-800/40 text-emerald-200"
+                }`}
+              >
+                {data.readiness.activation_status === "ACTIVE_WITH_AI_DEFAULTS"
+                  ? "AI activ"
+                  : data.readiness.activation_status === "ACTIVE_WITH_CONFIRMED_TRUTH"
+                    ? "Confirmat"
+                    : data.readiness.activation_status === "ACTIVE_WITH_WARNINGS"
+                      ? "Activ cu avertismente"
+                      : "Blocat"}
+              </span>
+            ) : null}
             <span className="rounded border border-slate-700 px-2 py-0.5 text-[10px] text-slate-400">
-              Editare: read-only
+              Catalog: read-only · AI: configurabil
             </span>
           </div>
         </div>
@@ -228,6 +262,12 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
         items={data.labor_recipes ?? []}
         summary={data.labor_summary}
         ownershipNote={data.labor_ownership_note_ro}
+      />
+
+      <AiOperationalDefaultsSection
+        items={data.ai_decisions ?? []}
+        ownershipNote={data.ai_ownership_note_ro}
+        onChanged={reload}
       />
 
       <div className="flex flex-wrap gap-1" role="tablist" aria-label="Filtru tip rețetă">

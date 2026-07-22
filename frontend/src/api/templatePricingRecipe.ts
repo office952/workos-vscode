@@ -116,6 +116,48 @@ export interface TemplateLaborRecipeItem {
   provenance?: string | null;
   legacy: boolean;
   confidence: "high" | "medium" | "low";
+  decision_source?: string | null;
+  ai_decision_id?: string | null;
+  ai_default_value?: number | null;
+  ai_confidence?: string | null;
+  is_configurable?: boolean;
+  resolved_from?: string | null;
+  rationale_ro?: string | null;
+  review_trigger?: string | null;
+}
+
+export type ActivationStatus =
+  | "ACTIVE_WITH_CONFIRMED_TRUTH"
+  | "ACTIVE_WITH_AI_DEFAULTS"
+  | "ACTIVE_WITH_WARNINGS"
+  | "BLOCKED";
+
+export interface AiOperationalDecisionItem {
+  decision_id: string;
+  domain: string;
+  target_type: string;
+  target_code: string;
+  display_name_ro: string;
+  formula: string;
+  unit: string;
+  default_value: number;
+  resolved_value: number;
+  minimum: number;
+  maximum?: number | null;
+  currency: string;
+  quantity_key?: string | null;
+  confidence: "LOW" | "MEDIUM" | "HIGH";
+  rationale_ro: string;
+  decision_source: string;
+  resolved_from: string;
+  configurable: boolean;
+  has_override: boolean;
+  review_trigger?: string | null;
+  status: string;
+  readiness_effect: string;
+  affected_templates: string[];
+  packaging_band?: string | null;
+  fragile_addon?: number | null;
 }
 
 export interface TemplatePricingRecipeResponse {
@@ -128,6 +170,7 @@ export interface TemplatePricingRecipeResponse {
   editability_policy: string;
   ownership_note_ro: string;
   labor_ownership_note_ro?: string;
+  ai_ownership_note_ro?: string;
   summary: {
     total_items: number;
     materials: number;
@@ -150,7 +193,9 @@ export interface TemplatePricingRecipeResponse {
     commercial_ready: number;
     missing_rate: number;
     warnings: number;
+    ai_defaults_applied?: number;
   };
+  ai_decisions?: AiOperationalDecisionItem[];
   cpp_preview: {
     available: boolean;
     status: string;
@@ -170,6 +215,10 @@ export interface TemplatePricingRecipeResponse {
   readiness: {
     technical_ready: boolean;
     commercial_ready: boolean;
+    activation_status?: ActivationStatus;
+    ai_defaults_active?: boolean;
+    demoted_blockers?: string[];
+    real_blockers_retained?: string[];
     technical_notes_ro: string[];
     commercial_notes_ro: string[];
     inventory_notes_ro: string[];
@@ -200,5 +249,36 @@ export const templatePricingRecipeApi = {
       throw new Error(detail);
     }
     return res.json();
+  },
+  putAiDefault: async (decisionId: string, value: number): Promise<void> => {
+    const res = await fetch(
+      `${getAPIBaseURL()}/api/v1/product-system/ai-operational-defaults/${encodeURIComponent(decisionId)}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value }),
+      },
+    );
+    if (!res.ok) {
+      const detail = await formatApiErrorResponse(
+        res,
+        `AI default override failed: HTTP ${res.status}`,
+      );
+      throw new Error(detail);
+    }
+  },
+  deleteAiDefault: async (decisionId: string): Promise<void> => {
+    const res = await fetch(
+      `${getAPIBaseURL()}/api/v1/product-system/ai-operational-defaults/${encodeURIComponent(decisionId)}`,
+      { method: "DELETE", credentials: "include" },
+    );
+    if (!res.ok) {
+      const detail = await formatApiErrorResponse(
+        res,
+        `AI default restore failed: HTTP ${res.status}`,
+      );
+      throw new Error(detail);
+    }
   },
 };
