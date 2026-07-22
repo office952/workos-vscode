@@ -20,6 +20,7 @@ import {
 import type { PricingRegistryItem, PricingRegistryResponse } from "@/api/pricingRegistry";
 import type { CommercialMarkupPolicy } from "@/api/commercialMarkupPoliciesAdmin";
 import type { PriceHistoryEntryDTO } from "@/api/inventoryMaterialsAdmin";
+import { MaterialMarketPriceRegistryPanel } from "@/features/pricing/MaterialMarketPriceRegistryPanel";
 import {
   buildDetailPanelModel,
   buildProblemQueue,
@@ -367,6 +368,11 @@ export function PricingRegistrySpaciousView({
           ))}
         </div>
       )}
+
+      {typedCatalogView === "material" &&
+      (mainView === "coverage" || mainView === "all" || mainView === "verify") ? (
+        <MaterialMarketPriceRegistryPanel />
+      ) : null}
 
       {/* Template zone — coverage + verify share template context */}
       {(mainView === "coverage" || mainView === "verify") && (
