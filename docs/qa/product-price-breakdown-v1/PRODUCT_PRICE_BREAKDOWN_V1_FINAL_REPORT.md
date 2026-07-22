@@ -5,6 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `b8c6e8a8` (TEMPLATE_ACTIVATION_V1 accepted) |
+| Final HEAD | `16e9db79` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/product-price-breakdown-v1/` |
 | Proof port | `8020` (`:8000` ghost environment warning) |
@@ -167,3 +168,9 @@ Inventory live · Product System recipes · CPP calculates · EIC explains · AI
 ## 44. Direction score
 
 **82/100%** — material 70 · quantity 85 · formula 85 · AI 90 · totals 90 · CPP/EIC 88 · UI 85 · calibration readiness 75
+
+
+## Pin
+
+Final HEAD: `16e9db79` � kickoff `b8c6e8a8` � no push / no PR.
+
