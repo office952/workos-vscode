@@ -70,6 +70,7 @@ import OperationalRealityReview from "./pages/OperationalRealityReview";
 import OperationalReports from "./pages/OperationalReports";
 import CommercialSpineDemo from "./pages/CommercialSpineDemo";
 import VolumetricLetterPreviewDemo from "./pages/VolumetricLetterPreviewDemo";
+import WorkIntakeProductDefinitionDemo from "./pages/WorkIntakeProductDefinitionDemo";
 // Deprecated intake entrypoints removed; Intake V6 is the active dedicated workspace.
 import IntakeV6OperatorWorkspaceApp from "./pages/IntakeV6OperatorWorkspaceApp";
 import AuthCallback from "./pages/AuthCallback";
@@ -287,9 +288,9 @@ function AppShell() {
                     key={item.to}
                     to={item.to}
                     end={
-                      item.to === "/inventory" || item.to === "/product-system/products"
-                        ? false
-                        : true
+                      // Inventar must be exact so /inventory/pricing only highlights Pricing.
+                      // Product System keeps prefix match for nested product routes.
+                      item.to === "/product-system/products" ? false : true
                     }
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
@@ -591,6 +592,10 @@ export function AuthenticatedAppRoutes() {
         <Route path="/employee-app/*" element={<EmployeeMobileStandaloneRoot />} />
         <Route path="/employee-app-v2/*" element={<EmployeeMobileV2StandaloneRoot />} />
         <Route path="/intake-v6-app/*" element={<IntakeV6StandaloneRoot />} />
+        <Route
+          path="/demo/work-intake-product-definition"
+          element={<WorkIntakeProductDefinitionDemo />}
+        />
         <Route path="*" element={<AppShell />} />
       </Route>
     </Routes>
