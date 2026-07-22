@@ -1059,3 +1059,38 @@ They must be configurable, traceable and replaceable.
 Missing perfect truth does not automatically block activation.
 Time is observed for calibration, not required as the primary pricing basis.
 ```
+
+---
+
+## TEMPLATE ACTIVATION V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `c5a7ffea` |
+| Owner GO | TEMPLATE_ACTIVATION_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/template-activation-v1/` |
+| Proof port | `8020` |
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| VL | PUBLISHED v1 with AI provenance |
+| ACM shell | PUBLISHED v1; treatments still commercially blocked; 5/0 |
+| Logo / Volum Aluminiu | not root-published (honest blockers) |
+| Publish gate | structural blockers only; known_conflicts → warnings |
+| Sidebar | Inventar exact; Pricing exact |
+| CPP/EIC | unchanged vs AI defaults dumps |
+| Next | PRODUCT_PRICE_BREAKDOWN_V1 (do not auto-execute) |
+
+### Explicit ownership
+
+```text
+Configured AI defaults are valid operational truth.
+AI provenance must remain visible and replaceable.
+Publication is allowed when technical and commercial truth are coherent.
+Warnings do not automatically block publication.
+Historical snapshots remain immutable.
+```

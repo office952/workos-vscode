@@ -1,0 +1,115 @@
+{
+  "publication": {
+    "template_code": "TPL-VOLUM-ALUMINIU_v1",
+    "template_id": 10,
+    "db_active": true,
+    "publication_status": null,
+    "effective_status": "LEGACY_UNSPECIFIED",
+    "legacy_unspecified": true,
+    "publication_version": null,
+    "last_e2e_verdict": null,
+    "last_e2e_checked_at": null,
+    "published_at": null,
+    "published_by": null,
+    "offerability_gate": "legacy_unspecified_keeps_prior_policy",
+    "publish_allowed": true,
+    "publish_blockers": [],
+    "publish_warnings": [],
+    "allowed_actions": [
+      "enter_draft",
+      "mark_e2e_checked",
+      "publish"
+    ],
+    "active_is_not_published": true,
+    "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+    "uses_ai_defaults": true,
+    "ai_decision_ids": [
+      "AI_PACK_PRODUCT_BAND"
+    ],
+    "publication_eligible": false,
+    "activation_eligible": true,
+    "optional_capability_blockers": [],
+    "recommended_target": "ACTIVE_UNPUBLISHED",
+    "eligibility": {
+      "template_code": "TPL-VOLUM-ALUMINIU_v1",
+      "current_lifecycle": "LEGACY_UNSPECIFIED",
+      "active": true,
+      "published": false,
+      "technical_readiness": false,
+      "commercial_readiness": true,
+      "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+      "ai_defaults": {
+        "uses_ai_defaults": true,
+        "ai_decision_ids": [
+          "AI_PACK_PRODUCT_BAND"
+        ],
+        "precedence": [
+          "MEASURED_REALITY",
+          "OWNER_CONFIRMED",
+          "CATALOG",
+          "AI_DECISION",
+          "LEGACY"
+        ]
+      },
+      "warnings": [],
+      "structural_blockers": [],
+      "optional_capability_blockers": [],
+      "e2e_verdict": null,
+      "e2e_ready": false,
+      "acm_treatment_commercial_lines_allowed": null,
+      "publication_eligible": false,
+      "activation_eligible": true,
+      "target_state": "ACTIVE_UNPUBLISHED",
+      "confidence": "medium",
+      "contract_version": "template_activation_eligibility_v1"
+    },
+    "contract_version": "product_template_publication_v1_1"
+  },
+  "pricing_readiness": {
+    "technical_ready": true,
+    "commercial_ready": true,
+    "activation_status": "ACTIVE_WITH_AI_DEFAULTS",
+    "ai_defaults_active": true,
+    "demoted_blockers": [],
+    "real_blockers_retained": [],
+    "technical_notes_ro": [
+      "1 linii rețetă vizibile (catalog + reguli).",
+      "Manoperă: 2/2 rețete tehnic pregătite (formula/qty pe template)."
+    ],
+    "commercial_notes_ro": [
+      "2 rețete manoperă cu tarif central lipsă (acoperite de AI dacă decision_source=AI_DECISION)."
+    ],
+    "inventory_notes_ro": [
+      "Stocul neurmărit nu blochează prețuirea comercială.",
+      "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+      "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului."
+    ]
+  },
+  "ai_decisions": [
+    "AI_PACK_PRODUCT_BAND"
+  ],
+  "e2e": {
+    "verdict": "BLOCKED",
+    "template_publication_status": "BLOCKED",
+    "build_closure_status": "FAIL"
+  },
+  "acm": {
+    "applies": false,
+    "shell_registry_confirmed": null,
+    "shell_registry_missing": null,
+    "treatment_commercial_lines_allowed": null,
+    "blockers": [],
+    "policy_ro": null
+  },
+  "cpp": {
+    "status": "structural_catalog",
+    "lines": [
+      "modelare_cant_aluminiu"
+    ],
+    "blocked": []
+  },
+  "eic": {
+    "status": "structural_catalog",
+    "rules": []
+  }
+}

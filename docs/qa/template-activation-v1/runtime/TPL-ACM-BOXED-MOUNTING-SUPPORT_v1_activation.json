@@ -1,0 +1,129 @@
+{
+  "publication": {
+    "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+    "template_id": 14,
+    "db_active": true,
+    "publication_status": "PUBLISHED",
+    "effective_status": "PUBLISHED",
+    "legacy_unspecified": false,
+    "publication_version": 1,
+    "last_e2e_verdict": "STATIC_READY_WITH_WARNINGS",
+    "last_e2e_checked_at": "2026-07-22T00:08:45.812027+00:00",
+    "published_at": "2026-07-22T00:08:45.860084+00:00",
+    "published_by": "template_activation_v1",
+    "offerability_gate": "published_requires_active_and_policy",
+    "publish_allowed": false,
+    "publish_blockers": [],
+    "publish_warnings": [],
+    "allowed_actions": [
+      "deprecate"
+    ],
+    "active_is_not_published": true,
+    "operational_readiness": "ACTIVE_WITH_WARNINGS",
+    "uses_ai_defaults": true,
+    "ai_decision_ids": [
+      "AI_PACK_PRODUCT_BAND",
+      "AI_ACM_PANEL_LABOR_M2"
+    ],
+    "publication_eligible": true,
+    "activation_eligible": true,
+    "optional_capability_blockers": [],
+    "recommended_target": "PUBLISHED",
+    "eligibility": {
+      "template_code": "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+      "current_lifecycle": "PUBLISHED",
+      "active": true,
+      "published": true,
+      "technical_readiness": true,
+      "commercial_readiness": true,
+      "operational_readiness": "ACTIVE_WITH_WARNINGS",
+      "ai_defaults": {
+        "uses_ai_defaults": true,
+        "ai_decision_ids": [
+          "AI_PACK_PRODUCT_BAND",
+          "AI_ACM_PANEL_LABOR_M2"
+        ],
+        "precedence": [
+          "MEASURED_REALITY",
+          "OWNER_CONFIRMED",
+          "CATALOG",
+          "AI_DECISION",
+          "LEGACY"
+        ]
+      },
+      "warnings": [],
+      "structural_blockers": [],
+      "optional_capability_blockers": [],
+      "e2e_verdict": "STATIC_READY_WITH_WARNINGS",
+      "e2e_ready": false,
+      "acm_treatment_commercial_lines_allowed": false,
+      "publication_eligible": true,
+      "activation_eligible": true,
+      "target_state": "PUBLISHED",
+      "confidence": "high",
+      "contract_version": "template_activation_eligibility_v1"
+    },
+    "contract_version": "product_template_publication_v1_1"
+  },
+  "pricing_readiness": {
+    "technical_ready": true,
+    "commercial_ready": true,
+    "activation_status": "ACTIVE_WITH_WARNINGS",
+    "ai_defaults_active": true,
+    "demoted_blockers": [
+      "MISSING_OWNER_FORMULA",
+      "OPERATION_ONLY"
+    ],
+    "real_blockers_retained": [
+      "ACM_TREATMENT_COMMERCIAL_BLOCKED"
+    ],
+    "technical_notes_ro": [
+      "11 linii rețetă vizibile (catalog + reguli).",
+      "Manoperă: 3/3 rețete tehnic pregătite (formula/qty pe template).",
+      "AI defaults active pe 2 rețete manoperă."
+    ],
+    "commercial_notes_ro": [
+      "ACM shell registry: 5/0 (confirmed/missing).",
+      "Tratamente față blocate comercial (treatment_commercial_lines_allowed=false).",
+      "Blocker-e artificiale demovate de AI: MISSING_OWNER_FORMULA, OPERATION_ONLY"
+    ],
+    "inventory_notes_ro": [
+      "Stocul neurmărit nu blochează prețuirea comercială.",
+      "Materialele fără cost achiziție rămân vizibile și blocate comercial.",
+      "Tariful de manoperă lipsă nu blochează configurația tehnică a produsului."
+    ]
+  },
+  "ai_decisions": [
+    "AI_PACK_PRODUCT_BAND",
+    "AI_ACM_PANEL_LABOR_M2"
+  ],
+  "e2e": {
+    "verdict": "STATIC_READY_WITH_WARNINGS",
+    "template_publication_status": "PASS",
+    "build_closure_status": "PASS_WITH_WARNINGS"
+  },
+  "acm": {
+    "applies": true,
+    "shell_registry_confirmed": 5,
+    "shell_registry_missing": 0,
+    "treatment_commercial_lines_allowed": false,
+    "blockers": [],
+    "policy_ro": "Shell ACM: coverage registry confirmată. Tratamente față: treatment_commercial_lines_allowed=false până la owner rates. Nu se inventează prețuri."
+  },
+  "cpp": {
+    "status": "structural_catalog",
+    "lines": [
+      "acm_boxed_assembly",
+      "acm_fasteners",
+      "acm_panel_cut",
+      "acm_panel_face_material",
+      "acm_return_strip_material",
+      "acm_v_groove"
+    ],
+    "blocked": []
+  },
+  "eic": {
+    "status": "structural_catalog",
+    "rules": []
+  }
+}
