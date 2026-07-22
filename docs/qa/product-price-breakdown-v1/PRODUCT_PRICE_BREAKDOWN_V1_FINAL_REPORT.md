@@ -1,11 +1,11 @@
-# PRODUCT_PRICE_BREAKDOWN_V1 ? Final Report
+# PRODUCT_PRICE_BREAKDOWN_V1 - Final Report
 
 | Field | Value |
 |-------|--------|
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `b8c6e8a8` (TEMPLATE_ACTIVATION_V1 accepted) |
-| Final HEAD | `cb3a5d1f` (+ encoding fix commit) |
+| Final HEAD | `dd1fbd19` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/product-price-breakdown-v1/` |
 | Proof port | `8020` (`:8000` ghost environment warning) |
@@ -14,18 +14,18 @@
 
 | Axis | Result |
 |------|--------|
-| Materials | PASS_WITH_WARNINGS ? purchase/inventory gaps visible (`Pret material lipsa`) |
-| Market price truth | PASS ? no AI-invented material prices |
-| Quantities | PASS ? fixture demo + Product Truth keys; VL qty resolved |
-| Machine operations | PASS ? projected from CPP/EIC |
-| Labor | PASS ? physical drivers via AI/CPP lines; time secondary |
-| Services | PASS ? packaging/service lines projected |
-| AI defaults | PASS ? visible, configurable via existing AI section |
-| Totals | PASS ? internal != commercial |
-| CPP reconciliation | PASS ? VL `cpp_total_matches=true` (1061 RON) |
-| EIC provenance | PASS ? VL `eic_total_matches=true` (923.2 RON); provenance arrays |
-| UI | PASS ? Desfasurator pret in Preturi template |
-| Template acceptance | PASS_WITH_WARNINGS ? see sections 25-28 |
+| Materials | PASS_WITH_WARNINGS - purchase/inventory gaps visible |
+| Market price truth | PASS - no AI-invented material prices |
+| Quantities | PASS - fixture demo + Product Truth keys; VL qty resolved |
+| Machine operations | PASS - projected from CPP/EIC |
+| Labor | PASS - physical drivers via AI/CPP lines; time secondary |
+| Services | PASS - packaging/service lines projected |
+| AI defaults | PASS - visible, configurable via existing AI section |
+| Totals | PASS - internal != commercial |
+| CPP reconciliation | PASS - VL cpp_total_matches=true (1061 RON) |
+| EIC provenance | PASS - VL eic_total_matches=true (923.2 RON) |
+| UI | PASS - Desfasurator pret in Preturi template |
+| Template acceptance | PASS_WITH_WARNINGS - see sections 25-28 |
 
 ## 2. Executive truth (RO)
 
@@ -40,15 +40,15 @@ Operatorul vede acum cum se construieste pretul pe configuratie demo: materiale 
 
 ## 4. Accepted lifecycle state (from TEMPLATE_ACTIVATION_V1)
 
-VL PUBLISHED · ACM shell PUBLISHED (treatments blocked) · Logo unpublished · Volum Aluminiu child · snapshots/CPP/EIC behavior unchanged by this build
+VL PUBLISHED; ACM shell PUBLISHED (treatments blocked); Logo unpublished; Volum Aluminiu child; snapshots/CPP/EIC behavior unchanged by this build
 
 ## 5. Runtime truth
 
 | Port | State |
 |------|-------|
-| `:8000` | Ghost LISTENING / stale 404 ? environment |
+| `:8000` | Ghost LISTENING / stale 404 - environment |
 | `:8020` | Canonical proof (uvicorn no-reload) |
-| `:3000` | FE with `BACKEND_PORT=8020` |
+| `:3000` | FE with BACKEND_PORT=8020 |
 
 Runtime dumps: `runtime/SUMMARY.json`
 
@@ -61,14 +61,14 @@ Runtime dumps: `runtime/SUMMARY.json`
 
 ## 6-9. Plan / map / agents / CP0
 
-CP0 freeze + allowlist in this folder. Shared line map implemented in `schemas/product_price_breakdown.py`. Adapter service only ? no second calculator.
+CP0 freeze + allowlist in this folder. Shared line map in `schemas/product_price_breakdown.py`. Adapter only - no second calculator.
 
 ## 10-17. Contracts delivered
 
 - API: `POST /api/v1/product-system/templates/{code}/price-breakdown`
 - Groups: material / machine / labor / service / ai_decision / adjustment
 - AI contribution note (no parallel total)
-- Calibration hooks = capacity hints, `excluded_from_total=true`
+- Calibration hooks = capacity hints, excluded_from_total=true
 
 ## 18-19. Formula simplicity / no-time-primary
 
@@ -83,19 +83,19 @@ Internal and commercial totals separate. VL line sums reconcile with CPP/EIC aut
 | Template | Verdict | Note |
 |----------|---------|------|
 | VL | PASS | Full demo breakdown |
-| ACM | PASS_WITH_WARNINGS | treatments blocked chip; standalone demo CPP still blocked on geometry/PD completeness ? seeded pytest proves reconcile |
+| ACM | PASS_WITH_WARNINGS | treatments blocked chip; seeded pytest proves reconcile |
 | Logo | PASS | Preview without pretending publication readiness |
 | Volum Aluminiu | PASS | Separate-calc child slice; not root |
 
 ## 29-30. UI / screenshots
 
-`SCREENSHOT_MATRIX.md` ? 11 captures.
+`SCREENSHOT_MATRIX.md` - 11 captures.
 
 ## 31. Tests
 
 ```text
-pytest tests/test_product_price_breakdown_v1.py ? 6 passed
-vitest PriceBreakdownSection.test.tsx ? 1 passed
+pytest tests/test_product_price_breakdown_v1.py -> 6 passed
+vitest PriceBreakdownSection.test.tsx -> 1 passed
 ```
 
 ## 32. Runtime/API evidence
@@ -104,9 +104,9 @@ vitest PriceBreakdownSection.test.tsx ? 1 passed
 
 ## 33. Files changed (allowlist)
 
-Backend: schemas/services/router/fixtures/tests  
-Frontend: api + PriceBreakdownSection + Studio wire + vitest  
-Docs: `docs/qa/product-price-breakdown-v1/**` + canonical worklog append
+Backend: schemas/services/router/fixtures/tests
+Frontend: api + PriceBreakdownSection + Studio wire + vitest
+Docs: docs/qa/product-price-breakdown-v1/** + canonical worklog append
 
 ## 34. Commits
 
@@ -117,13 +117,14 @@ b069ec84 feat(product-system): add authoritative price breakdown read model
 37628ac9 test(product-system): prove CPP EIC reconciliation for price breakdown
 16e9db79 docs(qa): finalize Product Price Breakdown V1 evidence
 cb3a5d1f docs(qa): pin Product Price Breakdown V1 final HEAD
+dd1fbd19 docs(qa): restore Product Price Breakdown V1 report encoding
 ```
 
 No push / no PR.
 
 ## 35. Worklog
 
-Section **PRODUCT PRICE BREAKDOWN V1** appended to canonical realignment worklog.
+Section PRODUCT PRICE BREAKDOWN V1 appended to canonical realignment worklog.
 
 ## 36. Dirty-tree protection
 
@@ -131,7 +132,7 @@ Outside-allowlist paths untouched.
 
 ## 37. Remaining warnings
 
-- `:8000` ghost
+- :8000 ghost
 - ACM demo fixture commercial still blocked (honest)
 - Material purchase gaps still visible
 - Logo without CPP rules as root
@@ -146,9 +147,9 @@ Outside-allowlist paths untouched.
 
 ## 39. Next recommended build (do not auto-execute)
 
-**MATERIAL_MARKET_PRICE_REGISTRY_V1** ? close material purchase gaps with real supplier truth.
+MATERIAL_MARKET_PRICE_REGISTRY_V1 - close material purchase gaps with real supplier truth.
 
-Alternates: `AI_CALIBRATION_FEEDBACK_V1` · `ACM_CAPABILITY_PRICING_V1` · `PRODUCT_PRICE_BREAKDOWN_V1_CLOSURE`
+Alternates: AI_CALIBRATION_FEEDBACK_V1; ACM_CAPABILITY_PRICING_V1; PRODUCT_PRICE_BREAKDOWN_V1_CLOSURE
 
 ## 40. Dead pieces
 
@@ -160,20 +161,20 @@ Adapter read-model over CPP+EIC+recipe; demo fixtures; UI progressive disclosure
 
 ## 42. Parerea sincera
 
-- 10 seconds? **Da** ? totals + reconcile chips first.
-- Material market-based? **Da unde exista**; lipsurile sunt oneste.
-- Labor simple? **Da** ? driveri fizici / AI quantity.
-- Overengineering? **Nu** ? un endpoint adapter.
-- Time secondary? **Da**.
-- CPP reconcile? **Da pe VL (+ pytest ACM seeded)**.
-- AI easy to review? **Da** (lines + existing AI section).
-- ACM base separated? **Da** (treatments blocked).
-- Calibrate first: **material gaps + LED/packaging rates**.
+- 10 seconds? Da - totals + reconcile chips first.
+- Material market-based? Da unde exista; lipsurile sunt oneste.
+- Labor simple? Da - driveri fizici / AI quantity.
+- Overengineering? Nu - un endpoint adapter.
+- Time secondary? Da.
+- CPP reconcile? Da pe VL (+ pytest ACM seeded).
+- AI easy to review? Da.
+- ACM base separated? Da (treatments blocked).
+- Calibrate first: material gaps + LED/packaging rates.
 
 ## 43. Roadmap awareness
 
-Inventory live · Product System recipes · CPP calculates · EIC explains · AI configurable · breakdown = calibration surface · no Execution · no artwork parser · no Build 2 · mobile out.
+Inventory live; Product System recipes; CPP calculates; EIC explains; AI configurable; breakdown = calibration surface; no Execution; no artwork parser; no Build 2; mobile out.
 
 ## 44. Direction score
 
-**82/100%** ? material 70 · quantity 85 · formula 85 · AI 90 · totals 90 · CPP/EIC 88 · UI 85 · calibration readiness 75
+82/100% - material 70; quantity 85; formula 85; AI 90; totals 90; CPP/EIC 88; UI 85; calibration readiness 75
