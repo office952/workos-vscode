@@ -27,6 +27,7 @@
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `8aac9eda` |
+| Final HEAD | `7bdd9f61` |
 | Proof port | `:8020` |
 
 ## 4. Accepted finish-line state
