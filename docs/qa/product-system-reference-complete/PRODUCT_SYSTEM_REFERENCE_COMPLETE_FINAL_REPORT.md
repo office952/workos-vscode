@@ -19,7 +19,7 @@ Laboratorul Product System a ajuns la linia de stop acceptată: **cost de produc
 | Owner-accepted prior HEAD | `7bdd9f61` |
 | Tip at kickoff | `cd89dfe4` |
 | Feature commit | `9769bbe8` |
-| Final HEAD | `9769bbe8` *(docs pin may follow)* |
+| Final HEAD | `7084a9d2` |
 | Proof port | `:8020` |
 | Dirty tree | Large protected dirty tree; allowlist-only writes |
 
