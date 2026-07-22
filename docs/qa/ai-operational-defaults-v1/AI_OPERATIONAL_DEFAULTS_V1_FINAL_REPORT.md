@@ -5,6 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `aa0f8956` |
+| Final HEAD | `19fc3c6a` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/ai-operational-defaults-v1/` |
 | API schema | **1.2.0** (`ai_decisions[]`, activation_status) |
@@ -38,7 +39,8 @@ Lipsa unui tarif „perfect” nu mai blochează automat template-ul. AI decide 
 - Repo: `C:\w\psiso`
 - Branch: `feature/product-system-active-path-isolation-v1`
 - Kickoff: `aa0f8956`
-- Final HEAD: *(see commits after this report)*
+- Final HEAD: `19fc3c6a`
+- Commits: `72dfecb4` → `6d8e3d60` → `0a8cec13` → `b8e678b6` → `19fc3c6a`
 - Dirty tree: large unrelated set — only allowlist files touched
 
 ## 4. Owner strategy readback
