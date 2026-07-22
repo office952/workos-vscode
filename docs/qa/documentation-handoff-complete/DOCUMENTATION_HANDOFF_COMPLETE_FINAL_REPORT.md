@@ -16,7 +16,7 @@ Există acum un pachet canonic de **25 de contracte** sub `docs/workflow-adv/`, 
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff docs tip | `fd2532e1` |
 | Owner-accept Product System | `9769bbe8` |
-| Final HEAD | *(docs commits of this build)* |
+| Final HEAD (owner accept) | `1f2b5a43` |
 | Dirty tree | Large protected dirty tree; allowlist-only staging |
 
 ## 4. Accepted reference-complete state
