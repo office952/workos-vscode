@@ -1,0 +1,23 @@
+---
+description: Require reading Workflow-ADV Smart Code Standard before any implementation work
+alwaysApply: true
+---
+
+# Workflow-ADV Smart Code prerequisite
+
+Before planning or writing Workflow-ADV implementation code, read:
+
+1. `docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`
+2. `docs/workflow-adv/README.md`
+
+Documentation-only work may proceed without code changes.
+
+Never invent parallel standards. Follow the canonical Workflow-ADV documentation and amend it through governed versioning when needed.
+
+Respect these non-negotiable boundaries:
+
+- EIC production cost is the reference finish line; do not imply offer, order, or Execution authority.
+- Workflow-ADV Analyzer is a separate desktop system: it emits versioned observed/proposed I/O only and owns no Product Truth, pricing, templates, central database writes, or central-app parser.
+- Product Truth requires operator confirmation; no Analyzer, AI, import, or UI shortcut may silently confirm it.
+- FREEZE ON is immutable accepted operational truth. Use a new DEV version for change; never mutate frozen operational content in place.
+- Do not implement frontend business-truth, quantity, pricing, or EIC calculations. The frontend presents typed domain/API evidence and supports valid operator actions.
