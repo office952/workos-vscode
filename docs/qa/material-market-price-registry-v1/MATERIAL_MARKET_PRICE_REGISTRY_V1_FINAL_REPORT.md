@@ -5,6 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `a243dd69` |
+| Final HEAD | `12faaf60` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/material-market-price-registry-v1/` |
 | Proof port | `8020` |
