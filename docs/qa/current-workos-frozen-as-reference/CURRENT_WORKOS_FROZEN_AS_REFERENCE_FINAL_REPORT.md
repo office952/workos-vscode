@@ -15,7 +15,7 @@ WorkOS este înghețat ca **laborator/referință istorică**. Product System e 
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `e3a9dc09` |
-| Final HEAD | *(freeze commit tip)* |
+| Final HEAD (owner accept) | `ec755414` |
 | Dirty tree | Large unrelated dirty tree; allowlist-only staging |
 
 ## 4–6. Accepted prior states

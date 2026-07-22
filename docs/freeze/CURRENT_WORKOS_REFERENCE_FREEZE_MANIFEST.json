@@ -11,7 +11,8 @@
     "product_system_docs_tip_pre_handoff": "fd2532e1",
     "documentation_handoff_owner_accept": "1f2b5a43",
     "documentation_handoff_docs_tip": "e3a9dc09",
-    "kickoff_head": "e3a9dc09"
+    "kickoff_head": "e3a9dc09",
+    "freeze_tip_owner_accept": "ec755414"
   },
   "canonical_docs_root": "docs/workflow-adv/",
   "smart_code_path": "docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md",

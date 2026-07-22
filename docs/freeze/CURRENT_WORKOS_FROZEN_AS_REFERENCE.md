@@ -19,7 +19,7 @@
 | Product System owner-accept | `9769bbe8` |
 | Documentation handoff owner-accept tip | `1f2b5a43` |
 | Documentation handoff docs tip (kickoff) | `e3a9dc09` |
-| Freeze tip | *(this freeze commit)* |
+| Freeze tip (owner accept) | `ec755414` |
 
 ## Accepted evidence roots
 
