@@ -1,0 +1,28 @@
+{
+  "proof_port": 8020,
+  "kickoff_head": "a243dd69",
+  "summary": {
+    "total": 64,
+    "priced": 31,
+    "missing": 33,
+    "stale": 0,
+    "review_soon": 0,
+    "unknown_date": 34,
+    "with_supplier": 0,
+    "active_template_critical_missing": 1,
+    "temporary_ai_fallback": 0
+  },
+  "acm_3mm": {
+    "material_code": "MAT-ACM-BOND-3MM",
+    "raw_price": 15.0,
+    "source_type": "OWNER_CONFIRMED",
+    "freshness": "CURRENT",
+    "normalized_unit": "mp"
+  },
+  "vl_breakdown": {
+    "material_lines": 20,
+    "with_purchase_provenance": 16
+  },
+  "no_ai_invented_prices": true,
+  "migration": "none"
+}

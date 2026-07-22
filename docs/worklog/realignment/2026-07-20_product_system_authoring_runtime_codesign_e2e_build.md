@@ -1131,3 +1131,39 @@ EIC remains the provenance authority.
 | UI | Desfășurător preț under Prețuri template |
 | Tests | 6 pytest + 1 vitest |
 | Next | MATERIAL_MARKET_PRICE_REGISTRY_V1 (do not auto-execute) |
+
+---
+
+## MATERIAL MARKET PRICE REGISTRY V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `a243dd69` |
+| Owner GO | MATERIAL_MARKET_PRICE_REGISTRY_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/material-market-price-registry-v1/` |
+| Proof port | `8020` |
+| Migration | none |
+
+### Owner rule
+
+```text
+Material prices require real purchase or market truth.
+AI may normalize, classify and temporarily bridge gaps, but must not impersonate supplier truth.
+Inventory owns material identity.
+Pricing owns price sources and normalization.
+Product System consumes resolved material truth without copying it.
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| API | `GET /api/v1/pricing/material-market-prices` |
+| Counts | 64 total · 31 priced · 33 missing · 0 AI fallback |
+| ACM 3mm | 15 EUR/mp OWNER_CONFIRMED |
+| Normalization | sheet->mp formula + mp identity |
+| UI | `/inventory/pricing` Preturi materiale registry |
+| Breakdown | material provenance on VL lines (16/20) |
+| Next | SUPPLIER_PRICE_IMPORT_V1 (do not auto-execute) |

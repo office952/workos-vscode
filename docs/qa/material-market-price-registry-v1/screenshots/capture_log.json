@@ -1,0 +1,40 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    {
+      "name": "01_pricing_overview.png",
+      "note": "Pricing overview",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\01_pricing_overview.png"
+    },
+    {
+      "name": "02_material_registry.png",
+      "note": "Material market registry",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\02_material_registry.png"
+    },
+    {
+      "name": "03_missing_prices.png",
+      "note": "Missing prices filter",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\03_missing_prices.png"
+    },
+    {
+      "name": "04_acm_3mm_detail.png",
+      "note": "ACM 3mm priced detail",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\04_acm_3mm_detail.png"
+    },
+    {
+      "name": "05_registry_full.png",
+      "note": "Full registry",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\05_registry_full.png"
+    },
+    {
+      "name": "06_vl_material_breakdown.png",
+      "note": "VL material breakdown provenance",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\06_vl_material_breakdown.png"
+    },
+    {
+      "name": "07_acm_breakdown.png",
+      "note": "ACM breakdown",
+      "file": "C:\\w\\psiso\\docs\\qa\\material-market-price-registry-v1\\screenshots\\07_acm_breakdown.png"
+    }
+  ]
+}
