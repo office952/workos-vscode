@@ -18,7 +18,8 @@ Laboratorul Product System a ajuns la linia de stop acceptată: **cost de produc
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Owner-accepted prior HEAD | `7bdd9f61` |
 | Tip at kickoff | `cd89dfe4` |
-| Final HEAD | *(pin commit of this build)* |
+| Feature commit | `9769bbe8` |
+| Final HEAD | `9769bbe8` *(docs pin may follow)* |
 | Proof port | `:8020` |
 | Dirty tree | Large protected dirty tree; allowlist-only writes |
 
