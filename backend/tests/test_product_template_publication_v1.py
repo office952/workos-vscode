@@ -102,8 +102,72 @@ async def test_enter_draft_then_offerability_blocked(volumetric_v2_db):
 
 
 @pytest.mark.asyncio
+async def test_known_conflicts_do_not_block_when_verdict_publishable(volumetric_v2_db):
+    """TEMPLATE_ACTIVATION_V1: TEMPLATE_IDENTITY etc. are warnings, not publish blockers."""
+    from unittest.mock import AsyncMock, MagicMock, patch
+
+    session = volumetric_v2_db
+    row = (
+        await session.execute(
+            select(Product_templates).where(Product_templates.template_code == TEMPLATE_CODE).limit(1)
+        )
+    ).scalar_one()
+    # LEGACY_UNSPECIFIED may publish directly when readiness is publishable.
+    row.publication_status = None
+    row.publication_version = None
+    await session.commit()
+
+    service = ProductTemplatePublicationService(session)
+    fake_readiness = MagicMock()
+    fake_readiness.verdict = "STATIC_READY_WITH_WARNINGS"
+    fake_readiness.e2e_ready = False
+    fake_readiness.known_conflicts = ["TEMPLATE_IDENTITY", "DOSSIER_METADATA_ONLY"]
+    fake_readiness.findings = []
+
+    with patch(
+        "services.product_template_publication_service.ProductE2EReadinessService"
+    ) as readiness_cls:
+        readiness_cls.return_value.run_static = AsyncMock(return_value=fake_readiness)
+        with patch.object(
+            service,
+            "_pricing_context",
+            AsyncMock(
+                return_value={
+                    "operational_readiness": "ACTIVE_WITH_AI_DEFAULTS",
+                    "ai_decisions": [{"decision_id": "AI_PACK_PRODUCT_BAND"}],
+                    "acm_treatment_allowed": None,
+                }
+            ),
+        ):
+            result = await service.transition(
+                TEMPLATE_CODE,
+                ProductTemplatePublicationTransitionRequest(
+                    action="publish", actor="activation_v1_test"
+                ),
+            )
+    assert result.ok is True
+    assert result.state.publication_status == "PUBLISHED"
+    assert result.evidence.get("uses_ai_defaults") is True
+    assert "AI_PACK_PRODUCT_BAND" in (result.evidence.get("ai_decision_ids") or [])
+    # Isolate session for subsequent tests in this module.
+    row.publication_status = None
+    row.publication_version = None
+    row.published_at = None
+    row.published_by = None
+    await session.commit()
+
+
+@pytest.mark.asyncio
 async def test_mark_validated_without_readiness(volumetric_v2_db):
     session = volumetric_v2_db
+    row = (
+        await session.execute(
+            select(Product_templates).where(Product_templates.template_code == TEMPLATE_CODE).limit(1)
+        )
+    ).scalar_one()
+    row.publication_status = None
+    await session.commit()
+
     service = ProductTemplatePublicationService(session)
     state = await service.get_state(TEMPLATE_CODE)
     if state.publication_status != "DRAFT":

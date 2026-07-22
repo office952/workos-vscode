@@ -240,4 +240,7 @@ async def test_readiness_reports_acm_xor_and_logo_honesty(acm_composition_db) ->
     logo_finding = next(
         f for f in result.findings if f.check_id == "components.acm_logo_branch_honesty"
     )
-    assert logo_finding.status == "BLOCKED"
+    # Optional capability: honesty warning must not BLOCK base shell publication.
+    assert logo_finding.status == "PASS_WITH_WARNINGS"
+    assert logo_finding.blocking is False
+    assert logo_finding.evidence.get("optional_capability") is True

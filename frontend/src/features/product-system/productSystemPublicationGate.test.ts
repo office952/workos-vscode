@@ -72,4 +72,14 @@ describe("resolvePublishUiGate", () => {
     expect(gate.publishEnabled).toBe(true);
     expect(gate.primaryBlockerRo).toBeNull();
   });
+
+  it("allows publish for STATIC_READY_WITH_WARNINGS even when e2e_ready is false", () => {
+    const gate = resolvePublishUiGate(publication({ publish_allowed: true }), {
+      verdict: "STATIC_READY_WITH_WARNINGS",
+      e2eReady: false,
+      knownConflicts: ["TEMPLATE_IDENTITY"],
+      findings: [],
+    });
+    expect(gate.publishEnabled).toBe(true);
+  });
 });
