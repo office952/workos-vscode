@@ -6,7 +6,7 @@ from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, Field
 
-TEMPLATE_PRICING_RECIPE_VERSION = "1.1.1"
+TEMPLATE_PRICING_RECIPE_VERSION = "1.2.0"
 
 LaborClass = Literal[
     "LABOR_INTERNAL",
@@ -150,9 +150,21 @@ class TemplatePricingEicPreview(BaseModel):
     rule_codes: list[str] = Field(default_factory=list)
 
 
+ActivationStatus = Literal[
+    "ACTIVE_WITH_CONFIRMED_TRUTH",
+    "ACTIVE_WITH_AI_DEFAULTS",
+    "ACTIVE_WITH_WARNINGS",
+    "BLOCKED",
+]
+
+
 class TemplatePricingReadiness(BaseModel):
     technical_ready: bool = False
     commercial_ready: bool = False
+    activation_status: ActivationStatus = "BLOCKED"
+    ai_defaults_active: bool = False
+    demoted_blockers: list[str] = Field(default_factory=list)
+    real_blockers_retained: list[str] = Field(default_factory=list)
     technical_notes_ro: list[str] = Field(default_factory=list)
     commercial_notes_ro: list[str] = Field(default_factory=list)
     inventory_notes_ro: list[str] = Field(default_factory=list)
@@ -218,6 +230,14 @@ class TemplateLaborRecipeItem(BaseModel):
     provenance: Optional[str] = None
     legacy: bool = False
     confidence: Literal["high", "medium", "low"] = "medium"
+    decision_source: Optional[str] = None
+    ai_decision_id: Optional[str] = None
+    ai_default_value: Optional[float] = None
+    ai_confidence: Optional[str] = None
+    is_configurable: bool = False
+    resolved_from: Optional[str] = None
+    rationale_ro: Optional[str] = None
+    review_trigger: Optional[str] = None
 
 
 class TemplateLaborRecipeSummary(BaseModel):
@@ -226,6 +246,44 @@ class TemplateLaborRecipeSummary(BaseModel):
     commercial_ready: int = 0
     missing_rate: int = 0
     warnings: int = 0
+    ai_defaults_applied: int = 0
+
+
+class AiOperationalDecisionItem(BaseModel):
+    decision_id: str
+    domain: str
+    target_type: str
+    target_code: str
+    display_name_ro: str
+    formula: str
+    unit: str
+    default_value: float
+    resolved_value: float
+    minimum: float
+    maximum: Optional[float] = None
+    currency: str = "EUR"
+    quantity_key: Optional[str] = None
+    confidence: Literal["LOW", "MEDIUM", "HIGH"] = "MEDIUM"
+    rationale_ro: str
+    decision_source: str = "AI_DECISION"
+    resolved_from: str = "AI_DECISION"
+    configurable: bool = True
+    has_override: bool = False
+    review_trigger: Optional[str] = None
+    status: str = "active"
+    readiness_effect: str = "ACTIVE_WITH_AI_DEFAULTS"
+    affected_templates: list[str] = Field(default_factory=list)
+    template_code: Optional[str] = None
+    precedence_order: list[str] = Field(default_factory=list)
+    calibration_hooks: list[str] = Field(default_factory=list)
+    demotes_blockers: list[str] = Field(default_factory=list)
+    owner_confirmation_required: bool = False
+    superseded_by: Optional[str] = None
+    packaging_band: Optional[str] = None
+    fragile_addon: Optional[float] = None
+    psu_count: Optional[int] = None
+    per_psu_rate: Optional[float] = None
+    also_applies_to_operations: list[str] = Field(default_factory=list)
 
 
 class TemplatePricingRecipeResponse(BaseModel):
@@ -245,12 +303,18 @@ class TemplatePricingRecipeResponse(BaseModel):
         "Rețeta (formulă, cantitate, minim, aplicabilitate) e pe template. "
         "Tariful lipsă blochează doar pregătirea comercială, nu configurația tehnică."
     )
+    ai_ownership_note_ro: str = (
+        "Deciziile AI sunt default-uri operaționale configurabile. "
+        "Precedență: măsurat > owner confirmat > catalog > AI > legacy. "
+        "Timpul nu este baza primară de cost — se observă pentru calibrare."
+    )
     summary: TemplatePricingSummary
     recipe: list[TemplatePricingRecipeItem] = Field(default_factory=list)
     labor_recipes: list[TemplateLaborRecipeItem] = Field(default_factory=list)
     labor_summary: TemplateLaborRecipeSummary = Field(
         default_factory=TemplateLaborRecipeSummary
     )
+    ai_decisions: list[AiOperationalDecisionItem] = Field(default_factory=list)
     cpp_preview: TemplatePricingCppPreview
     eic_preview: TemplatePricingEicPreview
     readiness: TemplatePricingReadiness

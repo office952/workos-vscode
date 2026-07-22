@@ -18,6 +18,7 @@ from data.internal_cost_rules_volumetric_v2 import (
 from models.product_templates import Product_templates
 from schemas.template_pricing_recipe import (
     TEMPLATE_PRICING_RECIPE_VERSION,
+    AiOperationalDecisionItem,
     TemplateLaborRecipeItem,
     TemplateLaborRecipeSummary,
     TemplatePricingAcmAcceptance,
@@ -29,6 +30,11 @@ from schemas.template_pricing_recipe import (
     TemplatePricingSummary,
 )
 from services.acm_face_treatment_commercial_path_v1 import build_cpp_eic_commercial_gate
+from services.ai_operational_defaults import (
+    apply_ai_defaults_to_labor_recipes,
+    build_ai_decisions_for_template,
+    compute_activation_status,
+)
 from services.pricing_registry_service import PricingRegistryService
 from services.template_labor_formula_truth import enrich_labor_recipes_formula_truth
 from services.template_labor_recipe import (
@@ -189,6 +195,48 @@ class TemplatePricingRecipeService:
             existing=labor_raw,
         )
         labor_raw = enrich_labor_recipes_formula_truth(labor_raw)
+
+        # AI operational defaults (configurable) — do not write catalog rates.
+        illuminated = any(
+            str(r.get("catalog_code") or "").upper()
+            in {"LED_ASSEMBLY", "ELECTRICAL_WIRING"}
+            for r in labor_raw
+        )
+        ai_raw = build_ai_decisions_for_template(
+            stored_code,
+            illuminated=illuminated,
+            psu_count=None,
+        )
+        labor_raw, demoted_from_labor = apply_ai_defaults_to_labor_recipes(
+            template_code=stored_code,
+            labor_recipes=labor_raw,
+            ai_decisions=ai_raw,
+        )
+        ai_decisions = [AiOperationalDecisionItem.model_validate(x) for x in ai_raw]
+
+        # Demote artificial commercial packaging blocker when AI packaging applies.
+        demoted_blockers: list[str] = list(demoted_from_labor)
+        if any(d.domain == "packaging" for d in ai_decisions):
+            for item in recipe:
+                if item.recipe_kind != "commercial_line":
+                    continue
+                if "AMBALARE" not in str(item.stable_code or "").upper() and str(
+                    item.cpp_line_code or ""
+                ).lower() not in {"ambalare", "packaging"}:
+                    if "AMBALARE_COMMERCIAL_RULE" not in (item.blockers or []):
+                        continue
+                if "AMBALARE_COMMERCIAL_RULE" in (item.blockers or []) or item.status == "blocked":
+                    item.blockers = [
+                        b for b in item.blockers if b != "AMBALARE_COMMERCIAL_RULE"
+                    ]
+                    item.warnings = list(item.warnings or []) + [
+                        "AI_DEFAULT_DEMOTES:AMBALARE_COMMERCIAL_RULE"
+                    ]
+                    if item.status == "blocked":
+                        item.status = "warning"  # type: ignore[assignment]
+                    item.commercial_ready = True
+                    demoted_blockers.append("AMBALARE_COMMERCIAL_RULE")
+
         labor_recipes = [TemplateLaborRecipeItem.model_validate(x) for x in labor_raw]
         labor_summary = TemplateLaborRecipeSummary(
             total=len(labor_recipes),
@@ -200,13 +248,23 @@ class TemplatePricingRecipeService:
                 for r in labor_recipes
                 if r.status == "warning" or r.warnings or r.data_quality_flags
             ),
+            ai_defaults_applied=sum(
+                1 for r in labor_recipes if r.decision_source == "AI_DECISION"
+            ),
         )
 
         summary = self._summarize(recipe, registry)
         cpp = self._cpp_preview(stored_code, recipe)
         eic = self._eic_preview(stored_code)
         acm = self._acm_acceptance(stored_code, registry)
-        readiness = self._readiness(summary, recipe, acm, labor_summary)
+        readiness = self._readiness(
+            summary,
+            recipe,
+            acm,
+            labor_summary,
+            ai_decisions=ai_decisions,
+            demoted_blockers=sorted(set(demoted_blockers)),
+        )
 
         blockers: list[str] = []
         warnings: list[str] = []
@@ -220,6 +278,9 @@ class TemplatePricingRecipeService:
             warnings.extend(labor.warnings)
         if acm.applies and acm.blockers:
             blockers.extend(acm.blockers)
+        # Artificial demoted codes must not remain as top-level blockers
+        demoted_set = set(demoted_blockers)
+        blockers = [b for b in blockers if b not in demoted_set]
 
         usage_policy = get_template_usage_mode_policy(stored_code)
         usage_mode = None
@@ -245,6 +306,7 @@ class TemplatePricingRecipeService:
             recipe=recipe,
             labor_recipes=labor_recipes,
             labor_summary=labor_summary,
+            ai_decisions=ai_decisions,
             cpp_preview=cpp,
             eic_preview=eic,
             readiness=readiness,
@@ -589,6 +651,9 @@ class TemplatePricingRecipeService:
         recipe: list[TemplatePricingRecipeItem],
         acm: TemplatePricingAcmAcceptance,
         labor_summary: TemplateLaborRecipeSummary | None = None,
+        *,
+        ai_decisions: list[AiOperationalDecisionItem] | None = None,
+        demoted_blockers: list[str] | None = None,
     ) -> TemplatePricingReadiness:
         technical = summary.total_items > 0 and all(
             r.technical_ready or r.recipe_kind == "commercial_line" for r in recipe
@@ -614,13 +679,17 @@ class TemplatePricingRecipeService:
                 f"Manoperă: {labor_summary.technical_ready}/{labor_summary.total} "
                 "rețete tehnic pregătite (formula/qty pe template)."
             )
+        if labor_summary and labor_summary.ai_defaults_applied:
+            tech_notes.append(
+                f"AI defaults active pe {labor_summary.ai_defaults_applied} rețete manoperă."
+            )
         comm_notes = []
         if summary.missing:
             comm_notes.append(f"{summary.missing} linii cu tarif lipsă în catalog.")
         if labor_summary and labor_summary.missing_rate:
             comm_notes.append(
                 f"{labor_summary.missing_rate} rețete manoperă cu tarif central lipsă "
-                "(blochează comercial, nu configurația tehnică)."
+                "(acoperite de AI dacă decision_source=AI_DECISION)."
             )
         if acm.applies:
             comm_notes.append(
@@ -631,12 +700,47 @@ class TemplatePricingRecipeService:
                 comm_notes.append(
                     "Tratamente față blocate comercial (treatment_commercial_lines_allowed=false)."
                 )
-        labor_blocks_commercial = bool(labor_summary and labor_summary.missing_rate)
+        ai_list = ai_decisions or []
+        ai_covers = (
+            bool(ai_list)
+            and bool(labor_summary and labor_summary.ai_defaults_applied)
+        ) or any(d.domain == "packaging" for d in ai_list)
+        # Missing catalog rates no longer hard-block when AI covers labor gaps
+        labor_blocks_commercial = bool(
+            labor_summary
+            and labor_summary.missing_rate
+            and labor_summary.ai_defaults_applied == 0
+        )
+        commercial_ready = (
+            bool(commercial) and summary.missing == 0 and not labor_blocks_commercial
+        ) or (
+            # ACTIVE_WITH_AI_DEFAULTS path: technical ok + AI covers operational gaps
+            bool(technical)
+            and ai_covers
+            and (not acm.applies or (acm.shell_registry_missing or 0) == 0)
+        )
+        real_blockers: list[str] = []
+        if acm.applies and acm.treatment_commercial_lines_allowed is False:
+            real_blockers.append("ACM_TREATMENT_COMMERCIAL_BLOCKED")
+        activation = compute_activation_status(
+            technical_ready=bool(technical),
+            commercial_ready=bool(commercial_ready),
+            has_ai_decisions=bool(ai_list),
+            ai_covers_gaps=ai_covers,
+            has_real_blockers=bool(real_blockers),
+            has_warnings=summary.warnings > 0 or bool(demoted_blockers),
+        )
+        if demoted_blockers:
+            comm_notes.append(
+                "Blocker-e artificiale demovate de AI: " + ", ".join(demoted_blockers)
+            )
         return TemplatePricingReadiness(
             technical_ready=bool(technical),
-            commercial_ready=bool(commercial)
-            and summary.missing == 0
-            and not labor_blocks_commercial,
+            commercial_ready=bool(commercial_ready),
+            activation_status=activation,  # type: ignore[arg-type]
+            ai_defaults_active=bool(ai_list),
+            demoted_blockers=list(demoted_blockers or []),
+            real_blockers_retained=real_blockers,
             technical_notes_ro=tech_notes,
             commercial_notes_ro=comm_notes,
             inventory_notes_ro=[
