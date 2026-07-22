@@ -6,6 +6,26 @@ Read this before editing the WorkOS monorepo. Human developers can use it too.
 
 
 
+## 0. Workflow-ADV documentation handoff
+
+
+
+Product System laboratory feature work is **closed** at production cost / EIC (`PRODUCT_SYSTEM_REFERENCE_COMPLETE`).
+
+
+
+Canonical Workflow-ADV contracts: [`docs/workflow-adv/README.md`](docs/workflow-adv/README.md).
+
+
+
+Before any Workflow-ADV **implementation** work, read [`docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`](docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md) (enforced by `.cursor/rules/workflow-adv-smart-code.mdc`).
+
+
+
+Do **not** continue expanding Product System features, Lab UI, offer/Execution, Supplier Import, or in-repo SVG/DXF/DWG parsers in this repository unless an owner GO explicitly reopens a named build.
+
+
+
 ## 1. Prime directive
 
 
