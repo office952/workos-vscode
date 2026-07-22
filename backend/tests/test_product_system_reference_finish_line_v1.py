@@ -95,4 +95,8 @@ def test_finish_line_http_contract_authenticated(auth_client):
     assert c.status_code == 200
     crit = c.json()
     assert "ACTIVE_TEMPLATE_CRITICAL" in crit["policy"]
-    assert "MAT-LED-PSU-12V" in {i["material_code"] for i in crit["items"]}
+    assert "VARIANT_SELECTOR" in crit["policy"]
+    psu = next(i for i in crit["items"] if i["material_code"] == "MAT-LED-PSU-12V")
+    assert psu["classification"] == "VARIANT_SELECTOR"
+    assert psu["missing_price"] is False
+    assert "MAT-LED-PSU-12V" not in crit["active_template_critical_codes"]

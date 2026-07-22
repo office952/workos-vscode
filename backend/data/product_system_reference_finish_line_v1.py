@@ -66,6 +66,10 @@ MATERIAL_CLASSIFICATION_POLICY = {
         "Referenced by active template but optional capability / alternate path; "
         "missing price warns, does not block root readiness alone."
     ),
+    "VARIANT_SELECTOR": (
+        "Family/selector code that must not own a direct purchase price. "
+        "Resolves to concrete priced variants via quote selection keys."
+    ),
     "UNUSED_ACTIVE": "Present in Inventory active set but not referenced by active templates.",
     "LEGACY": "Legacy code retained for history; not in finish-line path.",
     "DUPLICATE_ALIAS": "Alias/duplicate of a canonical material code.",
@@ -78,14 +82,15 @@ MATERIAL_CLASSIFICATION_POLICY = {
 MANUAL_FILL_SEED: list[dict[str, Any]] = [
     {
         "material_code": "MAT-LED-PSU-12V",
-        "classification": "ACTIVE_TEMPLATE_CRITICAL",
+        "classification": "VARIANT_SELECTOR",
         "reason_ro": (
-            "Consumat pe calea VL iluminată; lipsa prețului distorsionează costul LED/PSU. "
-            "Raportat ca singurul critical în auditul de registry când unit_cost lipsește."
+            "Selector familie PSU 12V — nu SKU de achiziție. "
+            "Prețul stă pe MAT-LED-PSU-12V-{60|100|160|200}W (OWNER_CONFIRMED). "
+            "Nu inventăm preț generic pe codul selector."
         ),
         "templates": ["TPL-VOLUMETRIC-LETTERS_v2"],
-        "action": "manual_owner_fill",
-        "do_not": ["invent_price", "supplier_import"],
+        "action": "resolve_to_variant",
+        "do_not": ["invent_price", "supplier_import", "price_selector"],
     },
     {
         "material_code": "MAT-ADEZIV-CANT-LITERE",

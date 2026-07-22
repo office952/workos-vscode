@@ -54,12 +54,22 @@ class MaterialPriceHistoryPoint(BaseModel):
     snapshot_source: Optional[str] = None
 
 
+MaterialRole = Literal[
+    "physical_sku",
+    "variant_selector",
+    "unknown",
+]
+
+
 class MaterialMarketPriceRecord(BaseModel):
     material_code: str
     display_name: str
     category: Optional[str] = None
     subcategory: Optional[str] = None
     variant: Optional[str] = None
+    material_role: MaterialRole = "physical_sku"
+    variant_codes: list[str] = Field(default_factory=list)
+    requires_direct_price: bool = True
     inventory_status: Optional[str] = None
     stock_current: Optional[float] = None
     supplier_id: Optional[int] = None

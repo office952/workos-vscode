@@ -22,6 +22,13 @@ from schemas.material_market_price_registry import (
     MaterialPriceHistoryPoint,
     MaterialPriceNormalization,
 )
+from services.material_variant_selector_policy import (
+    MATERIAL_ROLE_PHYSICAL_SKU,
+    MATERIAL_ROLE_VARIANT_SELECTOR,
+    is_variant_selector,
+    selector_note_ro,
+    selector_variants,
+)
 from services.product_readiness_service import ProductReadinessService
 
 SOURCE_PRECEDENCE = [
@@ -308,13 +315,22 @@ class MaterialMarketPriceRegistryService:
             norm = build_normalization(row)
             supplier = suppliers.get(int(row.supplier_id)) if row.supplier_id else None
             templates = sorted(set(usage.get(str(row.code), [])))
+            code = str(row.code)
+            selector = is_variant_selector(code)
+            variants = selector_variants(code) if selector else []
             missing = row.unit_cost is None or source_type == "MISSING"
-            blocker = "Pret material lipsa" if missing else None
-            if missing and (
-                str(row.code) in CRITICAL_VL_GAPS or any("VOLUMETRIC" in t for t in templates)
+            # Selectors intentionally lack a direct purchase price — variants own truth.
+            blocker = None if selector else ("Pret material lipsa" if missing else None)
+            if (
+                missing
+                and not selector
+                and (
+                    code in CRITICAL_VL_GAPS
+                    or any("VOLUMETRIC" in t for t in templates)
+                )
             ):
-                if str(row.code) not in critical_missing:
-                    critical_missing.append(str(row.code))
+                if code not in critical_missing:
+                    critical_missing.append(code)
 
             hist_pts: list[MaterialPriceHistoryPoint] = []
             for h in history_by_material.get(int(row.id), [])[:12]:
@@ -333,24 +349,35 @@ class MaterialMarketPriceRegistryService:
                 )
 
             confidence: str = "medium"
-            if source_type in {"MEASURED_LANDED_COST", "PURCHASE_INVOICE", "OWNER_CONFIRMED"}:
+            if selector:
+                confidence = "high"
+            elif source_type in {"MEASURED_LANDED_COST", "PURCHASE_INVOICE", "OWNER_CONFIRMED"}:
                 confidence = "high"
             elif missing or freshness in {"STALE", "EXPIRED", "UNKNOWN_DATE"}:
                 confidence = "low"
 
             warn = None
+            if selector:
+                warn = selector_note_ro(code)
             if freshness in {"STALE", "EXPIRED"}:
-                warn = f"Sursa {freshness.lower()}"
+                warn = (warn + "; " if warn else "") + f"Sursa {freshness.lower()}"
             if norm.note_ro and "nedeterminată" in norm.note_ro:
                 warn = (warn + "; " if warn else "") + norm.note_ro
 
             items.append(
                 MaterialMarketPriceRecord(
-                    material_code=str(row.code),
+                    material_code=code,
                     display_name=str(row.name or row.code),
                     category=row.category,
                     subcategory=row.subcategory,
                     variant=_variant_label(row),
+                    material_role=(
+                        MATERIAL_ROLE_VARIANT_SELECTOR
+                        if selector
+                        else MATERIAL_ROLE_PHYSICAL_SKU
+                    ),
+                    variant_codes=variants,
+                    requires_direct_price=not selector,
                     inventory_status=row.status,
                     stock_current=row.stock_current,
                     supplier_id=int(row.supplier_id) if row.supplier_id else None,
@@ -379,7 +406,10 @@ class MaterialMarketPriceRegistryService:
                     freshness_policy_ro=freshness_policy,
                     confidence=confidence,  # type: ignore[arg-type]
                     temporary_ai_fallback=source_type == "TEMPORARY_AI_FALLBACK",
-                    canonical=source_type != "TEMPORARY_AI_FALLBACK" and not missing,
+                    # Selector identity is canonical; purchase authority is on variants.
+                    canonical=True if selector else (
+                        source_type != "TEMPORARY_AI_FALLBACK" and not missing
+                    ),
                     blocker=blocker,
                     warning=warn,
                     active_templates=templates,

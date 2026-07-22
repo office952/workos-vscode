@@ -109,6 +109,12 @@ async def test_registry_lists_missing_and_priced(volumetric_v2_db):
     missing = [i for i in out.items if i.raw_price is None]
     for m in missing:
         assert m.source_type == "MISSING"
+        if m.material_role == "variant_selector":
+            # Selectors intentionally lack direct purchase price.
+            assert m.requires_direct_price is False
+            assert m.blocker is None
+            assert m.canonical is True
+            continue
         assert m.canonical is False
         assert m.blocker
 

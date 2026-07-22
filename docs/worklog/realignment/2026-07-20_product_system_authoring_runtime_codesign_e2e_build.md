@@ -1204,3 +1204,36 @@ No offer, markup, Execution, SVG parser, or Supplier Import.
 | VL proof | EIC 923.2 · CPP 1061 |
 | Tests | 5 pytest |
 | Next | ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 (do not auto-execute) |
+
+---
+
+## ACTIVE TEMPLATE CRITICAL MATERIAL FILL V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `8aac9eda` |
+| Owner GO | ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 |
+| Verdict | **PASS** |
+| Evidence | `docs/qa/active-template-critical-material-fill-v1/` |
+| Proof port | `8020` |
+
+### Identity verdict
+
+```text
+MAT-LED-PSU-12V = VARIANT_SELECTOR
+Do not invent a generic price.
+Resolve to MAT-LED-PSU-12V-{60|100|160|200}W (OWNER_CONFIRMED).
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Registry critical_missing | `[]` (was MAT-LED-PSU-12V) |
+| Selector role | `variant_selector` · requires_direct_price=false |
+| Variants | 12/16/20/40 EUR OWNER_CONFIRMED |
+| VL breakdown | concrete MAT-LED-PSU-12V-100W @ 16 |
+| EIC/CPP | 923.2 / 1061 reconcile OK |
+| Freeze readiness | READY_WITH_LIMITATION |
+| Next | PRODUCT_SYSTEM_REFERENCE_COMPLETE (do not auto-execute) |

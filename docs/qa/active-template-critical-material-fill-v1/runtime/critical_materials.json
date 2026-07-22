@@ -1,0 +1,114 @@
+{
+  "contract_version": "product_system_reference_finish_line_v1",
+  "policy": {
+    "ACTIVE_TEMPLATE_CRITICAL": "Referenced by an owner-valid active template recipe/path AND unit_cost missing AND absence blocks or materially distorts production-cost truth for that path.",
+    "ACTIVE_TEMPLATE_OPTIONAL": "Referenced by active template but optional capability / alternate path; missing price warns, does not block root readiness alone.",
+    "VARIANT_SELECTOR": "Family/selector code that must not own a direct purchase price. Resolves to concrete priced variants via quote selection keys.",
+    "UNUSED_ACTIVE": "Present in Inventory active set but not referenced by active templates.",
+    "LEGACY": "Legacy code retained for history; not in finish-line path.",
+    "DUPLICATE_ALIAS": "Alias/duplicate of a canonical material code.",
+    "FUTURE_ONLY": "Reserved for future templates; not finish-line critical.",
+    "UNKNOWN": "Insufficient evidence to classify."
+  },
+  "items": [
+    {
+      "material_code": "MAT-LED-PSU-12V",
+      "classification": "VARIANT_SELECTOR",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": false,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Selector familie PSU 12V — nu SKU de achiziție. Prețul stă pe MAT-LED-PSU-12V-{60|100|160|200}W (OWNER_CONFIRMED). Nu inventăm preț generic pe codul selector.",
+      "action": "resolve_to_variant",
+      "do_not": [
+        "invent_price",
+        "supplier_import",
+        "price_selector"
+      ],
+      "evidence": "inventory status=missing_price; unit_cost=None; source_type=MISSING; material_role=variant_selector; variants=['MAT-LED-PSU-12V-100W', 'MAT-LED-PSU-12V-160W', 'MAT-LED-PSU-12V-200W', 'MAT-LED-PSU-12V-60W']"
+    },
+    {
+      "material_code": "MAT-ADEZIV-CANT-LITERE",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "În CRITICAL_VL_GAPS seed; adeziv FACE+CANT — completează manual dacă lipsește.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "MAT-CABLU-MYYUP-2X075",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Cablu opțional pe căi de livrare iluminate.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "MAT-CABLU-MYYUP-2X15",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Cablu opțional pe căi de livrare iluminate.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "SVC-LAMINATION-SERVICE",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Serviciu laminare — seed gap; nu blochează root fără finisaj laminat.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    }
+  ],
+  "active_template_critical_codes": [],
+  "manual_fill_required_codes": [
+    "MAT-ADEZIV-CANT-LITERE",
+    "MAT-CABLU-MYYUP-2X075",
+    "MAT-CABLU-MYYUP-2X15",
+    "SVC-LAMINATION-SERVICE"
+  ],
+  "notes_ro": [
+    "Nu inventăm prețuri în acest build.",
+    "Nu construim Supplier Import.",
+    "MAT-LED-PSU-12V este VARIANT_SELECTOR — preț pe variante 60/100/160/200W.",
+    "ACTIVE_TEMPLATE_CRITICAL cu preț lipsă: niciunul (falsul gap MAT-LED-PSU-12V eliminat ca selector)."
+  ]
+}

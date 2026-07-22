@@ -1,0 +1,35 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "shots": [
+    {
+      "name": "01_material_pricing_overview.png",
+      "note": "Preturi materiale overview",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\01_material_pricing_overview.png"
+    },
+    {
+      "name": "02_psu_selector_generic.png",
+      "note": "Generic PSU selector identity",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\02_psu_selector_generic.png"
+    },
+    {
+      "name": "03_psu_variant_100w.png",
+      "note": "Concrete 100W OWNER_CONFIRMED",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\03_psu_variant_100w.png"
+    },
+    {
+      "name": "04_finish_line_critical_cleared.png",
+      "note": "Finish-line critical panel",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\04_finish_line_critical_cleared.png"
+    },
+    {
+      "name": "05_vl_breakdown_materials.png",
+      "note": "VL materials incl concrete PSU",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\05_vl_breakdown_materials.png"
+    },
+    {
+      "name": "06_vl_eic_cpp_reconcile.png",
+      "note": "VL EIC/CPP still reconciled",
+      "file": "C:\\w\\psiso\\docs\\qa\\active-template-critical-material-fill-v1\\screenshots\\06_vl_eic_cpp_reconcile.png"
+    }
+  ]
+}

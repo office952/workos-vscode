@@ -60,6 +60,9 @@ export interface MaterialMarketPriceRecord {
   confidence: "high" | "medium" | "low";
   temporary_ai_fallback: boolean;
   canonical: boolean;
+  material_role?: "physical_sku" | "variant_selector" | "unknown";
+  variant_codes?: string[];
+  requires_direct_price?: boolean;
   blocker?: string | null;
   warning?: string | null;
   active_templates: string[];

@@ -63,6 +63,9 @@ function sourceLabel(s: MaterialSourceType): string {
 }
 
 function statusChip(row: MaterialMarketPriceRecord): { label: string; className: string } {
+  if (row.material_role === "variant_selector" || row.requires_direct_price === false) {
+    return { label: "Selector variantă", className: "border-sky-800/40 text-sky-200" };
+  }
   if (row.temporary_ai_fallback) {
     return { label: "Fallback AI", className: "border-amber-800/40 text-amber-200" };
   }
@@ -289,6 +292,15 @@ export function MaterialMarketPriceRegistryPanel() {
             <div className="space-y-2">
               <p className="text-sm font-semibold text-slate-100">{selectedRow.display_name}</p>
               <p className="font-mono text-[11px] text-slate-500">{selectedRow.material_code}</p>
+              {selectedRow.material_role === "variant_selector" ? (
+                <p
+                  data-testid="material-market-selector-note"
+                  className="rounded border border-sky-900/40 bg-sky-950/20 px-2 py-1.5 text-[11px] text-sky-100/90"
+                >
+                  Selector familie — fără preț direct. Variante:{" "}
+                  {(selectedRow.variant_codes || []).join(", ") || "—"}
+                </p>
+              ) : null}
               <p>
                 Furnizor: {selectedRow.supplier_name || "—"}
                 {selectedRow.preferred ? " · preferat" : ""}

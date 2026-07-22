@@ -44,6 +44,7 @@ from services.intake_v6_modular_form_contract_service import (
     VOLUMETRIC_FIELD_BINDINGS,
 )
 from services.material_market_price_registry_service import MaterialMarketPriceRegistryService
+from services.material_variant_selector_policy import is_variant_selector
 
 
 def _validation_rule(binding: Any) -> Optional[str]:
@@ -306,15 +307,21 @@ class ProductSystemReferenceFinishLineService:
         for seed in MANUAL_FILL_SEED:
             code = str(seed["material_code"])
             row = by_code.get(code)
-            missing = True if row is None else (row.raw_price is None)
             classification = str(seed["classification"])
+            selector = is_variant_selector(code) or classification == "VARIANT_SELECTOR"
+            missing = False if selector else (True if row is None else (row.raw_price is None))
             if not missing and classification == "ACTIVE_TEMPLATE_CRITICAL":
                 classification = "ACTIVE_TEMPLATE_OPTIONAL"
+            if selector:
+                classification = "VARIANT_SELECTOR"
             evidence = None
             if row is not None:
+                role = getattr(row, "material_role", None)
+                variants = getattr(row, "variant_codes", None) or []
                 evidence = (
                     f"inventory status={row.inventory_status}; "
-                    f"unit_cost={row.raw_price}; source_type={row.source_type}"
+                    f"unit_cost={row.raw_price}; source_type={row.source_type}; "
+                    f"material_role={role}; variants={list(variants)[:4]}"
                 )
             items.append(
                 CriticalMaterialPolicyItem(
@@ -325,7 +332,11 @@ class ProductSystemReferenceFinishLineService:
                     missing_price=missing,
                     templates=list(seed.get("templates") or []),
                     reason_ro=str(seed["reason_ro"]),
-                    action="none_priced" if not missing else str(seed["action"]),
+                    action=(
+                        str(seed["action"])
+                        if selector
+                        else ("none_priced" if not missing else str(seed["action"]))
+                    ),
                     do_not=list(seed.get("do_not") or []),
                     evidence=evidence,
                 )
@@ -372,16 +383,22 @@ class ProductSystemReferenceFinishLineService:
             for i in items
             if i.classification == "ACTIVE_TEMPLATE_CRITICAL" and i.missing_price
         ]
-        manual = [i.material_code for i in items if i.missing_price]
+        # Selectors are not manual price-fill targets.
+        manual = [
+            i.material_code
+            for i in items
+            if i.missing_price and i.classification != "VARIANT_SELECTOR"
+        ]
         notes = [
             "Nu inventăm prețuri în acest build.",
             "Nu construim Supplier Import.",
-            "Următorul fill dedicat: ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 (owner GO).",
+            "MAT-LED-PSU-12V este VARIANT_SELECTOR — preț pe variante 60/100/160/200W.",
         ]
-        if active_critical == ["MAT-LED-PSU-12V"]:
-            notes.append("Confirmare runtime: singurul ACTIVE_TEMPLATE_CRITICAL rămâne MAT-LED-PSU-12V.")
-        elif not active_critical:
-            notes.append("Niciun ACTIVE_TEMPLATE_CRITICAL cu preț lipsă la runtime (verificați seed).")
+        if not active_critical:
+            notes.append(
+                "ACTIVE_TEMPLATE_CRITICAL cu preț lipsă: niciunul "
+                "(falsul gap MAT-LED-PSU-12V eliminat ca selector)."
+            )
         else:
             notes.append(f"ACTIVE_TEMPLATE_CRITICAL cu preț lipsă: {', '.join(active_critical)}")
 
@@ -450,6 +467,7 @@ class ProductSystemReferenceFinishLineService:
             "Authoring Option 2: add-child UI deferred (API/seed only).",
             "Form System remains VL-pilot wired (USABLE_WITH_TEMPLATE_GAPS).",
             "Generic Form Builder deferred to Workflow-ADV.",
+            "MAT-LED-PSU-12V classified as VARIANT_SELECTOR (no generic price).",
         ]
         if critical.active_template_critical_codes:
             warnings.append(

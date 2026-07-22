@@ -1,0 +1,59 @@
+{
+  "identity": "VARIANT_SELECTOR",
+  "generic_role": "variant_selector",
+  "generic_blocker": null,
+  "generic_requires_direct_price": false,
+  "critical_missing": [],
+  "active_template_critical_missing": 0,
+  "finish_line_critical": [],
+  "variant_prices": {
+    "MAT-LED-PSU-12V-60W": {
+      "raw_price": 12.0,
+      "source_type": "OWNER_CONFIRMED"
+    },
+    "MAT-LED-PSU-12V-100W": {
+      "raw_price": 16.0,
+      "source_type": "OWNER_CONFIRMED"
+    },
+    "MAT-LED-PSU-12V-160W": {
+      "raw_price": 20.0,
+      "source_type": "OWNER_CONFIRMED"
+    },
+    "MAT-LED-PSU-12V-200W": {
+      "raw_price": 40.0,
+      "source_type": "OWNER_CONFIRMED"
+    }
+  },
+  "vl_internal_total": 923.2,
+  "vl_commercial_total": 1061.0,
+  "vl_cpp_ok": true,
+  "vl_eic_ok": true,
+  "vl_psu_lines": [
+    {
+      "source_id": "VOL_V2_LED_PSU_PIECE",
+      "display_name": "Surs\u0103 LED (PSU)",
+      "internal_cost": null,
+      "material_source_type": null
+    },
+    {
+      "source_id": "MAT-LED-PSU-12V-100W",
+      "display_name": "MAT-LED-PSU-12V-100W",
+      "internal_cost": 16.0,
+      "material_source_type": "OWNER_CONFIRMED"
+    },
+    {
+      "source_id": "INT_VOL_V2_PSU_PIECE",
+      "display_name": "Surs\u0103 LED \u2014 cost intern piece",
+      "internal_cost": 45.0,
+      "material_source_type": null
+    },
+    {
+      "source_id": "AI_ELEC_PER_PSU",
+      "display_name": "Electric \u2014 per surs\u0103 alimentare",
+      "internal_cost": null,
+      "material_source_type": null
+    }
+  ],
+  "no_invented_generic_price": true,
+  "freeze_readiness": "READY_WITH_LIMITATION"
+}
