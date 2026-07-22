@@ -1094,3 +1094,40 @@ Publication is allowed when technical and commercial truth are coherent.
 Warnings do not automatically block publication.
 Historical snapshots remain immutable.
 ```
+
+---
+
+## PRODUCT PRICE BREAKDOWN V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `b8c6e8a8` |
+| Owner GO | PRODUCT_PRICE_BREAKDOWN_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/product-price-breakdown-v1/` |
+| Proof port | `8020` |
+
+### Owner strategy
+
+```text
+The price breakdown is the calibration surface.
+Materials use real market/purchase truth.
+Labor uses simple physical drivers and configurable rates.
+Time is optional evidence for later calibration.
+CPP remains the calculation authority.
+EIC remains the provenance authority.
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| API | `POST .../templates/{code}/price-breakdown` adapter |
+| VL | 42 lines · comercial 1061 · intern 923.2 · reconcile OK |
+| ACM | treatments blocked chip; demo CPP partial |
+| Logo | honest preview without root CPP |
+| Volum Aluminiu | child separate-calc slice (not root) |
+| UI | Desfășurător preț under Prețuri template |
+| Tests | 6 pytest + 1 vitest |
+| Next | MATERIAL_MARKET_PRICE_REGISTRY_V1 (do not auto-execute) |
