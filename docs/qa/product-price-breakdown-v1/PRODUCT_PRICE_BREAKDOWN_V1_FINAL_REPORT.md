@@ -5,7 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `b8c6e8a8` (TEMPLATE_ACTIVATION_V1 accepted) |
-| Final HEAD | `dd1fbd19` |
+| Final HEAD | 262d41ac |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/product-price-breakdown-v1/` |
 | Proof port | `8020` (`:8000` ghost environment warning) |
