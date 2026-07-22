@@ -201,10 +201,10 @@ export function PriceBreakdownSection({ templateCode }: { templateCode: string }
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-              Desfășurător preț
+              Desfășurător — cost producție
             </p>
             <h3 className="mt-0.5 text-base font-semibold text-slate-100">
-              Cum se construiește prețul pentru configurația curentă?
+              Cum se construiește costul de producție (EIC) pentru configurația curentă?
             </h3>
             <p className="mt-1 max-w-2xl text-[12px] leading-relaxed text-slate-400">
               {data.ownership_note_ro}
@@ -240,11 +240,11 @@ export function PriceBreakdownSection({ templateCode }: { templateCode: string }
           data-testid="price-breakdown-totals"
         >
           <TotalStat
-            label="Intern (EIC)"
+            label="Cost producție (EIC)"
             value={money(data.totals.internal_total, data.totals.currency)}
           />
           <TotalStat
-            label="Comercial (CPP)"
+            label="Preț comercial (CPP)"
             value={money(data.totals.commercial_total, data.totals.currency)}
           />
           <TotalStat

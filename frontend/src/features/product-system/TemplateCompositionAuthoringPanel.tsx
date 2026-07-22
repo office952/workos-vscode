@@ -100,6 +100,13 @@ export function TemplateCompositionAuthoringPanel({
             Editează roluri și includerea soft. Aluminiu inactiv rămâne blocker real — nu se
             auto-activează.
           </p>
+          <p
+            className="mt-2 rounded border border-amber-800/40 bg-amber-950/20 px-2 py-1.5 text-[11px] text-amber-100/90"
+            data-testid="composition-authoring-lab-limitation"
+          >
+            Limitare laborator (finish line Option 2): panoul actualizează legături existente.
+            Adăugarea unui child nou se face via API/seed — fără Template Factory în acest build.
+          </p>
         </div>
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-1.5 text-[11px] text-slate-400">

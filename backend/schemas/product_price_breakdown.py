@@ -111,9 +111,11 @@ class ProductPriceBreakdownResponse(BaseModel):
     fixture_id: Optional[str] = None
     currency: str = "RON"
     ownership_note_ro: str = (
-        "Desfășurătorul explică CPP (comercial) și EIC (intern). "
-        "Nu recalculează. Materialele folosesc cost achiziție. "
-        "Manopera folosește driveri fizici. Timpul e secundar."
+        "Linia de referință a laboratorului: Cost producție (EIC). "
+        "Preț comercial (CPP) rămâne vizibil pentru reconciliere, nu ca ofertă. "
+        "Desfășurătorul nu recalculează. Materialele folosesc cost achiziție. "
+        "Manopera folosește driveri fizici. Timpul e secundar. "
+        "Fără adaos / ofertă / comandă în finish line."
     )
     publication_status: Optional[str] = None
     operational_readiness: Optional[str] = None

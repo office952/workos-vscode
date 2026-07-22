@@ -1167,3 +1167,40 @@ Product System consumes resolved material truth without copying it.
 | UI | `/inventory/pricing` Preturi materiale registry |
 | Breakdown | material provenance on VL lines (16/20) |
 | Next | SUPPLIER_PRICE_IMPORT_V1 (do not auto-execute) |
+
+---
+
+## PRODUCT SYSTEM REFERENCE FINISH LINE V1
+
+| Field | Value |
+|-------|--------|
+| Date | 2026-07-22 |
+| Kickoff HEAD | `f67d56a7` |
+| Owner GO | PRODUCT_SYSTEM_REFERENCE_FINISH_LINE_V1 |
+| Verdict | **PASS_WITH_WARNINGS** |
+| Evidence | `docs/qa/product-system-reference-finish-line-v1/` |
+| Proof port | `8020` |
+
+### Owner strategy
+
+```text
+Freeze the laboratory at production cost (EIC).
+Transfer a modular Product System + schema-driven Form contract,
+not a collection of VL pages.
+Analyzer observes/proposes only.
+No offer, markup, Execution, SVG parser, or Supplier Import.
+```
+
+### Outcomes
+
+| Axis | Result |
+|------|--------|
+| Contract API | `GET .../reference-finish-line/contract` |
+| Form map | 26 VL fields · USABLE_WITH_TEMPLATE_GAPS |
+| Analyzer I/O | `workflow_adv_analyzer_io_contract_v1` frozen |
+| Authoring | Option 2 — API/seed add-child; UI update-only |
+| Cost labels | Cost producție (EIC) vs Preț comercial (CPP) |
+| Critical | MAT-LED-PSU-12V only ACTIVE_TEMPLATE_CRITICAL missing |
+| VL proof | EIC 923.2 · CPP 1061 |
+| Tests | 5 pytest |
+| Next | ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 (do not auto-execute) |

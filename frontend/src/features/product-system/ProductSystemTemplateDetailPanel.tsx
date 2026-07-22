@@ -27,6 +27,7 @@ import { ComponentContractUsedByPanel } from "./ComponentContractUsedByPanel";
 import { AcmBoxedAppliedContentPanel } from "./AcmBoxedAppliedContentPanel";
 import { AcmBoxedFaceTreatmentPanel } from "./AcmBoxedFaceTreatmentPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
+import { ProductSystemReferenceFinishLinePanel } from "./ProductSystemReferenceFinishLinePanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { TemplatePricingStudioPanel } from "./TemplatePricingStudioPanel";
@@ -532,14 +533,17 @@ export function ProductSystemTemplateDetailPanel({
             </details>
           </section>
           {isProduct ? (
-            <details className={`${PS_SURFACE_PANEL} px-4 py-3`}>
-              <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
-                Axe de adevăr / modularitate (read-only)
-              </summary>
-              <div className="mt-3">
-                <ModularityHonestySection templateCode={template.template_code} />
-              </div>
-            </details>
+            <>
+              <ProductSystemReferenceFinishLinePanel />
+              <details className={`${PS_SURFACE_PANEL} px-4 py-3`}>
+                <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
+                  Axe de adevăr / modularitate (read-only)
+                </summary>
+                <div className="mt-3">
+                  <ModularityHonestySection templateCode={template.template_code} />
+                </div>
+              </details>
+            </>
           ) : null}
         </div>
       ) : null}

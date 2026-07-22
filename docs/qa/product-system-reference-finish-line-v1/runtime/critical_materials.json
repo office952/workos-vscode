@@ -1,0 +1,115 @@
+{
+  "contract_version": "product_system_reference_finish_line_v1",
+  "policy": {
+    "ACTIVE_TEMPLATE_CRITICAL": "Referenced by an owner-valid active template recipe/path AND unit_cost missing AND absence blocks or materially distorts production-cost truth for that path.",
+    "ACTIVE_TEMPLATE_OPTIONAL": "Referenced by active template but optional capability / alternate path; missing price warns, does not block root readiness alone.",
+    "UNUSED_ACTIVE": "Present in Inventory active set but not referenced by active templates.",
+    "LEGACY": "Legacy code retained for history; not in finish-line path.",
+    "DUPLICATE_ALIAS": "Alias/duplicate of a canonical material code.",
+    "FUTURE_ONLY": "Reserved for future templates; not finish-line critical.",
+    "UNKNOWN": "Insufficient evidence to classify."
+  },
+  "items": [
+    {
+      "material_code": "MAT-LED-PSU-12V",
+      "classification": "ACTIVE_TEMPLATE_CRITICAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Consumat pe calea VL iluminat\u0103; lipsa pre\u021bului distorsioneaz\u0103 costul LED/PSU. Raportat ca singurul critical \u00een auditul de registry c\u00e2nd unit_cost lipse\u0219te.",
+      "action": "manual_owner_fill",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": "inventory status=missing_price; unit_cost=None; source_type=MISSING"
+    },
+    {
+      "material_code": "MAT-ADEZIV-CANT-LITERE",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "\u00cen CRITICAL_VL_GAPS seed; adeziv FACE+CANT \u2014 completeaz\u0103 manual dac\u0103 lipse\u0219te.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "MAT-CABLU-MYYUP-2X075",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Cablu op\u021bional pe c\u0103i de livrare iluminate.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "MAT-CABLU-MYYUP-2X15",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Cablu op\u021bional pe c\u0103i de livrare iluminate.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    },
+    {
+      "material_code": "SVC-LAMINATION-SERVICE",
+      "classification": "ACTIVE_TEMPLATE_OPTIONAL",
+      "unit_cost": null,
+      "currency": null,
+      "missing_price": true,
+      "templates": [
+        "TPL-VOLUMETRIC-LETTERS_v2"
+      ],
+      "reason_ro": "Serviciu laminare \u2014 seed gap; nu blocheaz\u0103 root f\u0103r\u0103 finisaj laminat.",
+      "action": "manual_owner_fill_if_missing",
+      "do_not": [
+        "invent_price",
+        "supplier_import"
+      ],
+      "evidence": null
+    }
+  ],
+  "active_template_critical_codes": [
+    "MAT-LED-PSU-12V"
+  ],
+  "manual_fill_required_codes": [
+    "MAT-LED-PSU-12V",
+    "MAT-ADEZIV-CANT-LITERE",
+    "MAT-CABLU-MYYUP-2X075",
+    "MAT-CABLU-MYYUP-2X15",
+    "SVC-LAMINATION-SERVICE"
+  ],
+  "notes_ro": [
+    "Nu invent\u0103m pre\u021buri \u00een acest build.",
+    "Nu construim Supplier Import.",
+    "Urm\u0103torul fill dedicat: ACTIVE_TEMPLATE_CRITICAL_MATERIAL_FILL_V1 (owner GO).",
+    "Confirmare runtime: singurul ACTIVE_TEMPLATE_CRITICAL r\u0103m\u00e2ne MAT-LED-PSU-12V."
+  ]
+}

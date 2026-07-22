@@ -1,0 +1,64 @@
+{
+  "mode": "live_http",
+  "base": "http://127.0.0.1:8020",
+  "overall_verdict": "PASS_WITH_WARNINGS",
+  "modularity_verdict": "MODULAR_WITH_GAPS",
+  "form_system_verdict": "USABLE_WITH_TEMPLATE_GAPS",
+  "scalability_verdict": "SCALABLE_WITH_KNOWN_LIMITS",
+  "authoring_decision": "OPTION_2_DOCUMENTED_LAB_LIMITATION",
+  "field_count": 26,
+  "reusable_fields": [
+    "width_mm",
+    "height_mm",
+    "letter_count",
+    "letter_perimeter_m",
+    "letter_face_area_m2",
+    "return_depth_mm",
+    "back_bevel_enabled",
+    "led_module_count",
+    "mains_cable_length_m",
+    "mounting_template_enabled",
+    "mounting_template_area_m2",
+    "metal_support_required",
+    "premount_bar_length_ml",
+    "bar_material"
+  ],
+  "hardcoded_ui_fields": [
+    "vector_file",
+    "volum_aluminum_module_template_code",
+    "mounting_system",
+    "mounting_solution",
+    "letter_group_finishes"
+  ],
+  "active_template_critical": [
+    "MAT-LED-PSU-12V"
+  ],
+  "manual_fill_required": [
+    "MAT-LED-PSU-12V",
+    "MAT-ADEZIV-CANT-LITERE",
+    "MAT-CABLU-MYYUP-2X075",
+    "MAT-CABLU-MYYUP-2X15",
+    "SVC-LAMINATION-SERVICE"
+  ],
+  "analyzer_do_not": [
+    "parse_svg_in_workos",
+    "write_product_truth_from_analyzer",
+    "calculate_price_in_analyzer",
+    "auto_confirm_proposals"
+  ],
+  "vl_breakdown_status": 200,
+  "child_breakdown_status": 200,
+  "logo_breakdown_status": 200,
+  "production_cost_authority": "EIC_production_cost",
+  "warnings": [
+    "Authoring Option 2: add-child UI deferred (API/seed only).",
+    "Form System remains VL-pilot wired (USABLE_WITH_TEMPLATE_GAPS).",
+    "Generic Form Builder deferred to Workflow-ADV.",
+    "Critical materials missing price: MAT-LED-PSU-12V"
+  ],
+  "vl_internal_total": 923.2,
+  "vl_commercial_total": 1061.0,
+  "ownership_note_ro": "Linia de referin\u021b\u0103 a laboratorului: Cost produc\u021bie (EIC). Pre\u021b comercial (CPP) r\u0103m\u00e2ne vizibil pentru reconciliere, nu ca ofert\u0103. Desf\u0103\u0219ur\u0103torul nu recalculeaz\u0103. Materialele folosesc cost achizi\u021bie. Manopera folose\u0219te driveri fizici. Timpul e secundar. F\u0103r\u0103 adaos / ofert\u0103 / comand\u0103 \u00een finish line.",
+  "logo_publication": null,
+  "logo_blockers": []
+}
