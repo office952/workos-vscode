@@ -5,12 +5,14 @@ Rules:
 - NULL publication_status = legacy unspecified; prior offerability policy continues.
 - Explicit non-PUBLISHED status hard-blocks quote offerability.
 - publish / mark_e2e_checked require readiness verdict in publishable set.
+- TEMPLATE_ACTIVATION_V1: known_conflicts are warnings unless structural;
+  AI defaults are valid commercial truth and must appear in publish evidence.
 """
 
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -25,6 +27,12 @@ from schemas.product_template_publication import (
     ProductTemplatePublicationTransitionResponse,
 )
 from services.product_e2e_readiness_service import ProductE2EReadinessService
+from services.template_activation_eligibility import (
+    STRUCTURAL_KNOWN_CONFLICTS,
+    build_activation_eligibility,
+    classify_finding_scope,
+)
+from services.template_pricing_recipe_service import TemplatePricingRecipeService
 
 PUBLICATION_STATUSES: tuple[PublicationStatus, ...] = (
     "DRAFT",
@@ -127,17 +135,45 @@ class ProductTemplatePublicationService:
             )
         return row
 
+    async def _pricing_context(self, template_code: str) -> dict[str, Any]:
+        try:
+            recipe = await TemplatePricingRecipeService(self.db).build_recipe(template_code)
+        except Exception:
+            return {
+                "operational_readiness": None,
+                "ai_decisions": [],
+                "acm_treatment_allowed": None,
+            }
+        if recipe is None:
+            return {
+                "operational_readiness": None,
+                "ai_decisions": [],
+                "acm_treatment_allowed": None,
+            }
+        ai = [d.model_dump() for d in (recipe.ai_decisions or [])]
+        acm = recipe.acm_acceptance
+        return {
+            "operational_readiness": getattr(recipe.readiness, "activation_status", None),
+            "ai_decisions": ai,
+            "acm_treatment_allowed": (
+                acm.treatment_commercial_lines_allowed if acm and acm.applies else None
+            ),
+        }
+
     def _build_state(
         self,
         row: Product_templates,
         *,
         publish_blockers: list[str] | None = None,
+        publish_warnings: list[str] | None = None,
         publish_allowed: bool | None = None,
+        eligibility: dict[str, Any] | None = None,
     ) -> ProductTemplatePublicationState:
         status = normalize_publication_status(getattr(row, "publication_status", None))
         legacy = status is None
         effective = "LEGACY_UNSPECIFIED" if legacy else status
         blockers = list(publish_blockers or [])
+        warnings = list(publish_warnings or [])
         allowed = sorted(_ALLOWED.get(status, frozenset()))
         if publish_allowed is None:
             publish_allowed = "publish" in allowed and not blockers
@@ -152,6 +188,7 @@ class ProductTemplatePublicationService:
             )
         )
 
+        elig = eligibility or {}
         return ProductTemplatePublicationState(
             template_code=str(row.template_code),
             template_id=int(row.id),
@@ -167,50 +204,149 @@ class ProductTemplatePublicationService:
             offerability_gate=offer_gate,
             publish_allowed=bool(publish_allowed),
             publish_blockers=blockers,
+            publish_warnings=warnings,
             allowed_actions=allowed,  # type: ignore[arg-type]
             active_is_not_published=True,
+            operational_readiness=elig.get("operational_readiness"),
+            uses_ai_defaults=bool((elig.get("ai_defaults") or {}).get("uses_ai_defaults")),
+            ai_decision_ids=list((elig.get("ai_defaults") or {}).get("ai_decision_ids") or []),
+            publication_eligible=elig.get("publication_eligible"),
+            activation_eligible=elig.get("activation_eligible"),
+            optional_capability_blockers=list(elig.get("optional_capability_blockers") or []),
+            recommended_target=elig.get("target_state"),
+            eligibility=elig or None,
+        )
+
+    async def _eligibility_for_row(
+        self,
+        row: Product_templates,
+        *,
+        readiness: Any | None = None,
+    ) -> dict[str, Any]:
+        pricing = await self._pricing_context(str(row.template_code))
+        if readiness is None:
+            # Lightweight: no full re-run; use stored verdict
+            return build_activation_eligibility(
+                template_code=str(row.template_code),
+                publication_status=normalize_publication_status(
+                    getattr(row, "publication_status", None)
+                ),
+                effective_status=(
+                    "LEGACY_UNSPECIFIED"
+                    if normalize_publication_status(getattr(row, "publication_status", None))
+                    is None
+                    else str(getattr(row, "publication_status"))
+                ),
+                db_active=row.active is not False,
+                e2e_verdict=getattr(row, "last_e2e_verdict", None),
+                e2e_ready=False,
+                known_conflicts=[],
+                findings=[],
+                pricing_activation=pricing.get("operational_readiness"),
+                ai_decisions=pricing.get("ai_decisions") or [],
+                acm_treatment_allowed=pricing.get("acm_treatment_allowed"),
+            )
+
+        findings = list(getattr(readiness, "findings", None) or [])
+        return build_activation_eligibility(
+            template_code=str(row.template_code),
+            publication_status=normalize_publication_status(
+                getattr(row, "publication_status", None)
+            ),
+            effective_status=(
+                "LEGACY_UNSPECIFIED"
+                if normalize_publication_status(getattr(row, "publication_status", None))
+                is None
+                else str(getattr(row, "publication_status"))
+            ),
+            db_active=row.active is not False,
+            e2e_verdict=getattr(readiness, "verdict", None),
+            e2e_ready=bool(getattr(readiness, "e2e_ready", False)),
+            known_conflicts=list(getattr(readiness, "known_conflicts", None) or []),
+            findings=findings,
+            pricing_activation=pricing.get("operational_readiness"),
+            ai_decisions=pricing.get("ai_decisions") or [],
+            acm_treatment_allowed=pricing.get("acm_treatment_allowed"),
         )
 
     async def get_state(self, template_code: str) -> ProductTemplatePublicationState:
         row = await self._load_template(template_code)
-        blockers = await self._publish_blockers(row, run_readiness=False)
+        blockers, warnings, _ = await self._publish_blockers(row, run_readiness=False)
         status = normalize_publication_status(getattr(row, "publication_status", None))
         allowed = _ALLOWED.get(status, frozenset())
+        eligibility = await self._eligibility_for_row(row, readiness=None)
+        # Align eligibility.publish with cheap gate when last verdict is known.
+        if eligibility.get("publication_eligible") is None:
+            pass
+        last = str(getattr(row, "last_e2e_verdict", None) or "")
+        if last in PUBLISHABLE_VERDICTS and not blockers:
+            eligibility["publication_eligible"] = True
+            eligibility["target_state"] = "PUBLISHED"
         return self._build_state(
             row,
             publish_blockers=blockers,
+            publish_warnings=warnings,
             publish_allowed=("publish" in allowed and not blockers),
+            eligibility=eligibility,
         )
+
+    def _split_publish_blockers(
+        self,
+        row: Product_templates,
+        readiness: Any,
+    ) -> tuple[list[str], list[str]]:
+        blockers: list[str] = []
+        warnings: list[str] = []
+        if row.active is False:
+            blockers.append("template_inactive")
+
+        verdict = str(getattr(readiness, "verdict", None) or "").strip()
+        if verdict and verdict not in PUBLISHABLE_VERDICTS:
+            blockers.append(f"readiness_verdict_{verdict}")
+
+        for conflict in getattr(readiness, "known_conflicts", None) or []:
+            code = str(conflict)
+            if code in STRUCTURAL_KNOWN_CONFLICTS:
+                blockers.append(f"known_conflict:{code}")
+            else:
+                warnings.append(f"known_conflict:{code}")
+
+        for f in getattr(readiness, "findings", None) or []:
+            scope = classify_finding_scope(f)
+            check_id = str(getattr(f, "check_id", None) or "finding")
+            if scope == "structural" and (
+                bool(getattr(f, "blocking", False))
+                or str(getattr(f, "status", None)) in {"FAIL", "BLOCKED"}
+            ):
+                blockers.append(check_id)
+            elif scope == "optional_capability":
+                warnings.append(f"optional_capability:{check_id}")
+            elif bool(getattr(f, "blocking", False)):
+                blockers.append(check_id)
+
+        return sorted(set(blockers)), sorted(set(warnings))[:40]
 
     async def _publish_blockers(
         self,
         row: Product_templates,
         *,
         run_readiness: bool,
-    ) -> list[str]:
-        blockers: list[str] = []
-        if row.active is False:
-            blockers.append("template_inactive")
-
+    ) -> tuple[list[str], list[str], Any | None]:
         if not run_readiness:
-            # Cheap preview: use last stored verdict when present.
+            blockers: list[str] = []
+            warnings: list[str] = []
+            if row.active is False:
+                blockers.append("template_inactive")
             last = str(getattr(row, "last_e2e_verdict", None) or "").strip()
             if last and last not in PUBLISHABLE_VERDICTS:
                 blockers.append(f"last_e2e_verdict_not_publishable:{last}")
-            return blockers
+            return blockers, warnings, None
 
         readiness = await ProductE2EReadinessService(self.db).run_static(str(row.template_code))
         row.last_e2e_verdict = readiness.verdict
         row.last_e2e_checked_at = _utcnow()
-        if readiness.verdict not in PUBLISHABLE_VERDICTS and not readiness.e2e_ready:
-            blockers.append(f"readiness_verdict_{readiness.verdict}")
-        if readiness.known_conflicts:
-            for conflict in readiness.known_conflicts:
-                blockers.append(f"known_conflict:{conflict}")
-        blocking_findings = [f for f in readiness.findings if f.blocking]
-        if blocking_findings:
-            blockers.append(f"blocking_findings:{len(blocking_findings)}")
-        return blockers
+        blockers, warnings = self._split_publish_blockers(row, readiness)
+        return blockers, warnings, readiness
 
     async def transition(
         self,
@@ -235,16 +371,30 @@ class ProductTemplatePublicationService:
         target = _ACTION_TARGET[action]
         readiness_verdict: str | None = None
         readiness_ready: bool | None = None
-        evidence: dict = {"action": action, "from": status, "to": target}
+        evidence: dict[str, Any] = {"action": action, "from": status, "to": target}
 
         needs_readiness = action in {"mark_e2e_checked", "publish"} and request.run_readiness
         blockers: list[str] = []
+        warnings: list[str] = []
+        readiness = None
         if needs_readiness:
-            blockers = await self._publish_blockers(row, run_readiness=True)
+            blockers, warnings, readiness = await self._publish_blockers(
+                row, run_readiness=True
+            )
             readiness_verdict = getattr(row, "last_e2e_verdict", None)
             readiness_ready = readiness_verdict in PUBLISHABLE_VERDICTS
+            pricing = await self._pricing_context(str(row.template_code))
             evidence["readiness_verdict"] = readiness_verdict
             evidence["publish_blockers"] = blockers
+            evidence["publish_warnings"] = warnings
+            evidence["uses_ai_defaults"] = bool(pricing.get("ai_decisions"))
+            evidence["ai_decision_ids"] = [
+                str(d.get("decision_id"))
+                for d in (pricing.get("ai_decisions") or [])
+                if d.get("decision_id")
+            ]
+            evidence["operational_readiness"] = pricing.get("operational_readiness")
+            evidence["active_is_not_published"] = True
             # Persist last readiness evidence even when publish is blocked (no status change).
             await self.db.commit()
             await self.db.refresh(row)
@@ -257,17 +407,41 @@ class ProductTemplatePublicationService:
                         "action": action,
                         "readiness_verdict": readiness_verdict,
                         "blockers": blockers,
+                        "warnings": warnings,
                         "active_is_not_published": True,
                         "last_e2e_verdict": readiness_verdict,
+                        "uses_ai_defaults": evidence["uses_ai_defaults"],
+                        "ai_decision_ids": evidence["ai_decision_ids"],
                     },
                 )
+
+        # Idempotent publish: already PUBLISHED → no double version bump
+        if action == "publish" and status == "PUBLISHED":
+            eligibility = await self._eligibility_for_row(row, readiness=readiness)
+            state = self._build_state(
+                row,
+                publish_blockers=[],
+                publish_warnings=warnings,
+                publish_allowed=False,
+                eligibility=eligibility,
+            )
+            return ProductTemplatePublicationTransitionResponse(
+                ok=True,
+                state=state,
+                readiness_verdict=readiness_verdict,
+                readiness_e2e_ready=readiness_ready,
+                message="publication_status already PUBLISHED (idempotent)",
+                evidence={**evidence, "idempotent": True},
+            )
 
         row.publication_status = target
         if target == "PUBLISHED":
             version = int(getattr(row, "publication_version", None) or 0)
             row.publication_version = version + 1 if version >= 0 else 1
             row.published_at = _utcnow()
-            row.published_by = (request.actor or "product_system_admin").strip() or "product_system_admin"
+            row.published_by = (
+                (request.actor or "product_system_admin").strip() or "product_system_admin"
+            )
         if target in {"DRAFT", "VALIDATED"} and status == "DEPRECATED":
             row.published_at = None
             row.published_by = None
@@ -275,7 +449,14 @@ class ProductTemplatePublicationService:
         await self.db.commit()
         await self.db.refresh(row)
 
-        state = self._build_state(row, publish_blockers=[], publish_allowed=False)
+        eligibility = await self._eligibility_for_row(row, readiness=readiness)
+        state = self._build_state(
+            row,
+            publish_blockers=[],
+            publish_warnings=warnings,
+            publish_allowed=False,
+            eligibility=eligibility,
+        )
         return ProductTemplatePublicationTransitionResponse(
             ok=True,
             state=state,

@@ -46,9 +46,19 @@ class ProductTemplatePublicationState(BaseModel):
     offerability_gate: str
     publish_allowed: bool = False
     publish_blockers: list[str] = Field(default_factory=list)
+    publish_warnings: list[str] = Field(default_factory=list)
     allowed_actions: list[PublicationAction] = Field(default_factory=list)
     active_is_not_published: bool = True
-    contract_version: str = "product_template_publication_v1"
+    # TEMPLATE_ACTIVATION_V1 additive eligibility (optional clients ignore)
+    operational_readiness: Optional[str] = None
+    uses_ai_defaults: bool = False
+    ai_decision_ids: list[str] = Field(default_factory=list)
+    publication_eligible: Optional[bool] = None
+    activation_eligible: Optional[bool] = None
+    optional_capability_blockers: list[str] = Field(default_factory=list)
+    recommended_target: Optional[str] = None
+    eligibility: Optional[dict[str, Any]] = None
+    contract_version: str = "product_template_publication_v1_1"
 
 
 class ProductTemplatePublicationTransitionRequest(BaseModel):

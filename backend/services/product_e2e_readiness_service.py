@@ -632,14 +632,16 @@ class ProductE2EReadinessService:
             )
             logo_resolved = resolve_acm_boxed_composition({"applied_content": "logo"})
             logo_blockers = logo_resolved["xor"].get("blockers") or []
+            logo_honestly_blocked = BLOCKER_LOGO_BRANCH_CANDIDATE in logo_blockers
+            # Optional capability: logo branch honesty must not suspend panel-only shell.
             findings.append(
                 _finding(
                     check_id="components.acm_logo_branch_honesty",
                     system="components",
-                    status="BLOCKED" if BLOCKER_LOGO_BRANCH_CANDIDATE in logo_blockers else "PASS",
+                    status="PASS_WITH_WARNINGS" if logo_honestly_blocked else "PASS",
                     message=(
                         f"Logo branch under ACM: {logo_resolved['xor'].get('logo_branch_status')} "
-                        f"(root={LOGO_ROOT})."
+                        f"(root={LOGO_ROOT}). Optional capability — shell panel-only remains eligible."
                     ),
                     source_owner="acm_boxed_support_composition_v1",
                     template_code=template_code,
@@ -649,6 +651,9 @@ class ProductE2EReadinessService:
                         "trigger_field": APPLIED_CONTENT_TRIGGER_FIELD,
                         "blockers": logo_blockers,
                         "publication": "KEEP_DRAFT",
+                        "optional_capability": True,
+                        "optional_absent_ok": True,
+                        "base_shell_not_blocked": True,
                     },
                 )
             )
