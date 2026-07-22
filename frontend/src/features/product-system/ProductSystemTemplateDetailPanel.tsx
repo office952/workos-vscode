@@ -28,6 +28,7 @@ import { AcmBoxedAppliedContentPanel } from "./AcmBoxedAppliedContentPanel";
 import { AcmBoxedFaceTreatmentPanel } from "./AcmBoxedFaceTreatmentPanel";
 import { TemplateCompositionAuthoringPanel } from "./TemplateCompositionAuthoringPanel";
 import { ProductSystemReferenceFinishLinePanel } from "./ProductSystemReferenceFinishLinePanel";
+import { ProductSystemReferenceCompletePanel } from "./ProductSystemReferenceCompletePanel";
 import { TemplateRuntimePreviewPanel } from "./TemplateRuntimePreviewPanel";
 import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { TemplatePricingStudioPanel } from "./TemplatePricingStudioPanel";
@@ -534,6 +535,7 @@ export function ProductSystemTemplateDetailPanel({
           </section>
           {isProduct ? (
             <>
+              <ProductSystemReferenceCompletePanel />
               <ProductSystemReferenceFinishLinePanel />
               <details className={`${PS_SURFACE_PANEL} px-4 py-3`}>
                 <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
