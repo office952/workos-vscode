@@ -5,7 +5,7 @@
 | Date | 2026-07-22 |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `c5a7ffea` |
-| Final HEAD | *(tip after commits)* |
+| Final HEAD | `1f8d8e0b` |
 | Verdict | **PASS_WITH_WARNINGS** |
 | Evidence | `docs/qa/template-activation-v1/` |
 | Migration | **none** |
