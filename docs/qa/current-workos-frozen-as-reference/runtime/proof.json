@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-07-22",
+  "proof_backend": "127.0.0.1:8020",
+  "endpoint": "/api/v1/product-system/reference-complete",
+  "http_status": 200,
+  "overall_verdict": "PASS",
+  "freeze_readiness": "READY_FOR_DOCUMENTATION_HANDOFF",
+  "live_proof": {
+    "vl_internal_total": 923.2,
+    "vl_commercial_total": 1061.0,
+    "active_template_critical_codes": [],
+    "psu_material_role": "variant_selector",
+    "field_count": 26,
+    "vl_fixture_ok": true
+  },
+  "note": "Captured at CURRENT_WORKOS_FROZEN_AS_REFERENCE verification."
+}

@@ -6,11 +6,19 @@ Read this before editing the WorkOS monorepo. Human developers can use it too.
 
 
 
-## 0. Workflow-ADV documentation handoff
+## 0. Current WorkOS reference freeze
 
 
 
-Product System laboratory feature work is **closed** at production cost / EIC (`PRODUCT_SYSTEM_REFERENCE_COMPLETE`).
+**Status: `CURRENT_WORKOS_FROZEN_AS_REFERENCE` — PASS**
+
+
+
+Declaration: [`docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md`](docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md) · Manifest: [`docs/freeze/CURRENT_WORKOS_REFERENCE_FREEZE_MANIFEST.json`](docs/freeze/CURRENT_WORKOS_REFERENCE_FREEZE_MANIFEST.json).
+
+
+
+Product System laboratory feature work is **closed** at production cost / EIC. This repository is historical laboratory / reference evidence.
 
 
 
@@ -18,11 +26,11 @@ Canonical Workflow-ADV contracts: [`docs/workflow-adv/README.md`](docs/workflow-
 
 
 
-Before any Workflow-ADV **implementation** work, read [`docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`](docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md) (enforced by `.cursor/rules/workflow-adv-smart-code.mdc`).
+Before any Workflow-ADV **implementation** work, read [`docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`](docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md) (Cursor rule: `.cursor/rules/workflow-adv-smart-code.mdc`). Smart Code is **not** yet a mandatory CI stack — product code in Workflow-ADV remains **blocked** until `WORKFLOW_ADV_SMART_CODE_ENFORCEMENT_BOOTSTRAP` is accepted.
 
 
 
-Do **not** continue expanding Product System features, Lab UI, offer/Execution, Supplier Import, or in-repo SVG/DXF/DWG parsers in this repository unless an owner GO explicitly reopens a named build.
+Post-freeze changes in this repo are limited to reference correction, evidence preservation, security/emergency repair, or explicit owner instruction `CURRENT_WORKOS_REFERENCE_FREEZE_OFF`. Do **not** expand Product System features, Lab UI, offer/Execution, Supplier Import, or in-repo SVG/DXF/DWG parsers without that unfreeze.
 
 
 

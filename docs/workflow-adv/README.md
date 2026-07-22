@@ -19,12 +19,16 @@ Current WorkOS is **not** the required implementation architecture for Workflow-
 
 **DOCUMENTATION_HANDOFF_COMPLETE — PASS** (package readiness)
 
+**Current WorkOS: [`CURRENT_WORKOS_FROZEN_AS_REFERENCE`](../freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md) — PASS**
+
 | Field | Value |
 |-------|--------|
 | Owner-accept Product System HEAD | `9769bbe8` |
+| Documentation handoff tip | `1f2b5a43` / docs tip `e3a9dc09` |
 | Evidence root | `docs/qa/product-system-reference-complete/` |
 | Finish line | Production cost / EIC |
 | Smart Code pre-read | [`docs/architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md`](../architecture/WORKFLOW_ADV_SMART_CODE_STANDARD.md) |
+| Workflow-ADV product code | **BLOCKED** pending `WORKFLOW_ADV_SMART_CODE_ENFORCEMENT_BOOTSTRAP` |
 
 ## Audience
 

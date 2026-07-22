@@ -1,6 +1,8 @@
 # WorkOS Frontend
 
-React/Vite operator UI for WorkOS. **Start with the root docs:** [`../README.md`](../README.md) and [`../AGENTS.md`](../AGENTS.md).
+> **Reference freeze:** Current WorkOS is [`CURRENT_WORKOS_FROZEN_AS_REFERENCE`](docs/freeze/CURRENT_WORKOS_FROZEN_AS_REFERENCE.md). Product System feature development is closed. Workflow-ADV product code is blocked pending Smart Code enforcement bootstrap. Agent guide: [`AGENTS.md`](AGENTS.md).
+
+React/Vite operator UI for WorkOS. **Start with** [`AGENTS.md`](AGENTS.md) and [`docs/workflow-adv/README.md`](docs/workflow-adv/README.md).
 
 ## Stack
 
