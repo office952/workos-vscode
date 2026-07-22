@@ -100,6 +100,21 @@ function LineRow({ line }: { line: PriceBreakdownLine }) {
           </p>
           <p>CPP: {line.cpp_line || "—"}</p>
           <p>EIC: {line.eic_rule || "—"}</p>
+          {line.material_source_type ? (
+            <p className="sm:col-span-2">
+              Material: {line.material_source_type}
+              {line.material_supplier ? ` · ${line.material_supplier}` : ""}
+              {line.material_freshness ? ` · ${line.material_freshness}` : ""}
+              {line.material_normalized_price != null
+                ? ` · norm ${line.material_normalized_price} ${line.material_normalized_unit || ""}`
+                : ""}
+            </p>
+          ) : null}
+          {line.material_normalization_formula ? (
+            <pre className="sm:col-span-2 whitespace-pre-wrap font-mono text-[10px] text-slate-500">
+              {line.material_normalization_formula}
+            </pre>
+          ) : null}
           {line.rationale_ro ? <p className="sm:col-span-2">{line.rationale_ro}</p> : null}
           {line.configurable ? (
             <p className="text-sky-300/80 sm:col-span-2">Configurabil (AI) — vezi Decizii operaționale AI</p>

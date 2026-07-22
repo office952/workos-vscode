@@ -57,6 +57,15 @@ class PriceBreakdownLine(BaseModel):
     confidence: Optional[str] = None
     rationale_ro: Optional[str] = None
     ai_decision_id: Optional[str] = None
+    # MATERIAL_MARKET_PRICE_REGISTRY_V1 — additive purchase provenance
+    material_source_type: Optional[str] = None
+    material_supplier: Optional[str] = None
+    material_freshness: Optional[str] = None
+    material_effective_from: Optional[str] = None
+    material_normalization_formula: Optional[str] = None
+    material_normalized_unit: Optional[str] = None
+    material_normalized_price: Optional[float] = None
+    material_canonical: Optional[bool] = None
 
 
 class PriceBreakdownGroupTotal(BaseModel):

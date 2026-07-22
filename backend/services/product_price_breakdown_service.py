@@ -23,12 +23,80 @@ from schemas.volum_aluminiu_separate_calc_preview import (
 )
 from services.commercial_price_proposal_service import CommercialPriceProposalService
 from services.estimated_internal_cost_service import EstimatedInternalCostService
+from services.material_market_price_registry_service import (
+    MaterialMarketPriceRegistryService,
+)
 from services.product_price_breakdown_fixtures import resolve_fixture
 from services.template_architecture_scope import VOLUM_ALUMINUM_TEMPLATE_CODE
 from services.template_pricing_recipe_service import TemplatePricingRecipeService
 from services.volum_aluminiu_separate_calc_preview_service import (
     VolumAluminiuSeparateCalcPreviewService,
 )
+
+
+def _extract_inventory_material_code(resource_code: str) -> str:
+    """EIC often prefixes codes as material_MAT-FOO_comp_... — recover MAT-FOO."""
+    raw = str(resource_code or "").strip()
+    if not raw:
+        return ""
+    if raw in ("",):
+        return ""
+    if raw.startswith("MAT-") or raw.startswith("SVC-"):
+        return raw
+    # material_MAT-CODE_comp_... or material_MAT-CODE
+    if "MAT-" in raw:
+        start = raw.index("MAT-")
+        rest = raw[start:]
+        # cut at next underscore-comp or end
+        for sep in ("_comp_", "_module", "::"):
+            if sep in rest:
+                rest = rest.split(sep, 1)[0]
+                break
+        return rest
+    if "SVC-" in raw:
+        start = raw.index("SVC-")
+        rest = raw[start:]
+        for sep in ("_comp_", "::"):
+            if sep in rest:
+                rest = rest.split(sep, 1)[0]
+                break
+        return rest
+    return raw
+
+
+def _enrich_material_line_from_market(
+    line: PriceBreakdownLine,
+    market_by_code: dict[str, Any],
+) -> PriceBreakdownLine:
+    """Attach Inventory purchase provenance without changing totals."""
+    if line.line_group != "material":
+        return line
+    code = _extract_inventory_material_code(str(line.resource_code or ""))
+    rec = market_by_code.get(code) or market_by_code.get(
+        str(line.resource_code or "").strip()
+    )
+    if rec is None:
+        return line
+    warn = line.warning
+    if rec.freshness in {"STALE", "EXPIRED"}:
+        stale = f"Sursa material {rec.freshness}"
+        warn = f"{warn}; {stale}" if warn else stale
+    if rec.blocker and not warn:
+        warn = rec.blocker
+    return line.model_copy(
+        update={
+            "material_source_type": rec.source_type,
+            "material_supplier": rec.supplier_name,
+            "material_freshness": rec.freshness,
+            "material_effective_from": rec.effective_from,
+            "material_normalization_formula": rec.normalization.formula_display,
+            "material_normalized_unit": rec.normalization.normalized_unit,
+            "material_normalized_price": rec.normalization.normalized_price,
+            "material_canonical": rec.canonical,
+            "warning": warn,
+            "source_id": rec.material_code or line.source_id,
+        }
+    )
 
 
 def _fmt_formula(
@@ -353,6 +421,13 @@ class ProductPriceBreakdownService:
                             configurable=False,
                         )
                     )
+
+        # Material market provenance (Inventory purchase truth — no invented prices)
+        market = await MaterialMarketPriceRegistryService(self.db).build_registry(
+            include_history=False
+        )
+        market_by_code = {i.material_code: i for i in market.items}
+        lines = [_enrich_material_line_from_market(l, market_by_code) for l in lines]
 
         # Group totals
         group_internal: dict[str, float] = defaultdict(float)

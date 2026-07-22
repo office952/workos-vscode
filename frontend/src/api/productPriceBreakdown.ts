@@ -40,6 +40,14 @@ export interface PriceBreakdownLine {
   confidence?: string | null;
   rationale_ro?: string | null;
   ai_decision_id?: string | null;
+  material_source_type?: string | null;
+  material_supplier?: string | null;
+  material_freshness?: string | null;
+  material_effective_from?: string | null;
+  material_normalization_formula?: string | null;
+  material_normalized_unit?: string | null;
+  material_normalized_price?: number | null;
+  material_canonical?: boolean | null;
 }
 
 export interface PriceBreakdownGroupTotal {
