@@ -6,7 +6,8 @@
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff accepted HEAD | `7bdd9f61` |
 | Tip at kickoff | `cd89dfe4` |
-| Final HEAD | `9769bbe8` |
+| Final HEAD (owner accept) | `9769bbe8` |
+| Docs tip | `3caada56` |
 | Proof port | `:8020` |
 
 ## Definition
