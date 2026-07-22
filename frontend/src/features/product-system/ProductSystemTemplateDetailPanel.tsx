@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import type { ProductTemplateAvailabilityItem, ProductTemplateEntity } from "@/lib/api";
+import { getProductTemplatePublication } from "@/api/productTemplatePublication";
 import { StatusBadge } from "@/components/workos/design-system";
 import {
   LETTERS_TEMPLATE_CODE,
@@ -327,6 +329,25 @@ export function ProductSystemTemplateDetailPanel({
   const primarySections = isProduct ? PRODUCT_PRIMARY_SECTIONS : sections;
   const diagnosticSections = isProduct ? PRODUCT_DIAGNOSTIC_SECTIONS : [];
   const showDiagnosticTabs = diagnosticSections.length > 0;
+  const [publicationStatus, setPublicationStatus] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isProduct) {
+      setPublicationStatus(null);
+      return;
+    }
+    let cancelled = false;
+    void getProductTemplatePublication(template.template_code)
+      .then((state) => {
+        if (!cancelled) setPublicationStatus(state.publication_status);
+      })
+      .catch(() => {
+        if (!cancelled) setPublicationStatus(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isProduct, template.template_code]);
 
   return (
     <div data-testid="product-system-template-detail-panel" className="space-y-4">
@@ -383,8 +404,17 @@ export function ProductSystemTemplateDetailPanel({
         >
           <p className="text-[12px] text-slate-300">
             <span className="font-semibold text-slate-100">Următorul pas:</span>{" "}
-            verifică Pregătire E2E — publicarea rămâne blocată cât timp un copil obligatoriu
-            (ex. Aluminiu) este inactiv.
+            {publicationStatus === "PUBLISHED" ? (
+              <>
+                șablonul este <span className="text-emerald-200">PUBLISHED</span>. Verifică
+                Prețuri template / AI defaults și snapshot-urile înainte de ofertă nouă.
+              </>
+            ) : (
+              <>
+                verifică Pregătire E2E înainte de publicare. Copiii obligatorii inactivi și
+                blockerele structurale blochează publicarea (nu default-urile AI).
+              </>
+            )}
           </p>
           <div className="flex flex-wrap gap-1.5">
             <button

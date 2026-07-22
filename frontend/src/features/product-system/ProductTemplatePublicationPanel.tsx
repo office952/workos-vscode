@@ -110,6 +110,17 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
   }, [reload]);
 
   const runAction = async (action: PublicationAction) => {
+    if (action === "publish") {
+      const aiNote = state?.uses_ai_defaults
+        ? `\n\nFolosește default-uri AI: ${(state.ai_decision_ids || []).join(", ") || "da"}.`
+        : "";
+      const ok = window.confirm(
+        `Publici ${humanTemplateName(templateCode)} (${templateCode})?\n\n` +
+          `Activ în catalog ≠ publicat. Snapshot-urile istorice rămân înghețate.` +
+          aiNote,
+      );
+      if (!ok) return;
+    }
     setLoading(true);
     setError(null);
     setMessage(null);
@@ -136,7 +147,11 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
 
   const humanName = humanTemplateName(templateCode);
   const gate = resolvePublishUiGate(state, readiness);
-  const showBlockedBanner = Boolean(state && !gate.publishEnabled);
+  const alreadyPublished = state?.publication_status === "PUBLISHED";
+  // After publish, publish action is unavailable — that is not a readiness block.
+  const showBlockedBanner = Boolean(
+    state && !alreadyPublished && !gate.publishEnabled && state.allowed_actions.includes("publish"),
+  );
 
   const orderedActions = state
     ? ACTION_ORDER.filter((action) => state.allowed_actions.includes(action)).concat(
@@ -157,7 +172,8 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
           </p>
           <p className="mt-1 text-[11px] text-slate-500">
-            Activ în catalog ≠ publicat. Publicarea e blocată de E2E Readiness — fără auto-publicare.
+            Activ în catalog ≠ publicat. Publicarea e hard-gated de E2E structural — AI defaults nu
+            blochează. Fără auto-publicare.
           </p>
         </div>
         <button
@@ -183,7 +199,46 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
             <span className="rounded border border-slate-700/50 px-2 py-0.5 text-slate-400">
               Catalog: {state.db_active ? "activ" : "inactiv"}
             </span>
+            {state.operational_readiness ? (
+              <span
+                className="rounded border border-sky-800/40 px-2 py-0.5 text-sky-200"
+                data-testid="product-template-publication-operational"
+              >
+                Readiness:{" "}
+                {state.operational_readiness === "ACTIVE_WITH_AI_DEFAULTS"
+                  ? "AI activ"
+                  : state.operational_readiness === "ACTIVE_WITH_WARNINGS"
+                    ? "Activ cu avertismente"
+                    : state.operational_readiness === "ACTIVE_WITH_CONFIRMED_TRUTH"
+                      ? "Confirmat"
+                      : state.operational_readiness}
+              </span>
+            ) : null}
+            {state.uses_ai_defaults ? (
+              <span
+                className="rounded border border-sky-900/40 px-2 py-0.5 text-sky-200"
+                data-testid="product-template-publication-ai"
+              >
+                AI defaults · {(state.ai_decision_ids || []).length}
+              </span>
+            ) : null}
+            {state.publication_eligible ? (
+              <span
+                className="rounded border border-emerald-800/40 px-2 py-0.5 text-emerald-200"
+                data-testid="product-template-publication-eligible"
+              >
+                Eligibil publicare
+              </span>
+            ) : null}
           </div>
+          {state.optional_capability_blockers && state.optional_capability_blockers.length > 0 ? (
+            <p
+              className="text-[11px] text-amber-200/80"
+              data-testid="product-template-publication-optional-caps"
+            >
+              Capacități opționale blocate: {state.optional_capability_blockers.join(", ")}
+            </p>
+          ) : null}
 
           {showBlockedBanner ? (
             <div

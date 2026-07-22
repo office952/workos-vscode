@@ -82,10 +82,12 @@ export function resolvePublishUiGate(
 
   const verdict = (readiness?.verdict ?? publication.last_e2e_verdict ?? "").trim();
   const hasReadinessSignal = Boolean(verdict) || readiness?.e2eReady != null;
+  // STATIC_READY_WITH_WARNINGS often has e2e_ready=false — still publishable.
+  const verdictPublishable = verdict.length > 0 && PUBLISHABLE_VERDICTS.has(verdict);
   const readinessBlocks =
     !hasReadinessSignal ||
-    readiness?.e2eReady === false ||
-    (verdict.length > 0 && !PUBLISHABLE_VERDICTS.has(verdict)) ||
+    (verdict.length > 0 && !verdictPublishable) ||
+    (!verdict && readiness?.e2eReady === false) ||
     Boolean(readiness?.knownConflicts?.includes("required_inactive_child"));
 
   const aluminiu = aluminiuFromFindings(readiness?.findings);

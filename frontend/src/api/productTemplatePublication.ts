@@ -32,8 +32,17 @@ export interface ProductTemplatePublicationState {
   offerability_gate: string;
   publish_allowed: boolean;
   publish_blockers: string[];
+  publish_warnings?: string[];
   allowed_actions: PublicationAction[];
   active_is_not_published: boolean;
+  operational_readiness?: string | null;
+  uses_ai_defaults?: boolean;
+  ai_decision_ids?: string[];
+  publication_eligible?: boolean | null;
+  activation_eligible?: boolean | null;
+  optional_capability_blockers?: string[];
+  recommended_target?: string | null;
+  eligibility?: Record<string, unknown> | null;
   contract_version: string;
 }
 

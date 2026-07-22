@@ -89,18 +89,22 @@ export function TemplateDualStatusChips({
 
   const gate = resolvePublishUiGate(pub, readiness);
   const status = pub?.effective_status ?? pub?.publication_status ?? "—";
+  const isPublished = pub?.publication_status === "PUBLISHED";
+  // After PUBLISHED, publish action is unavailable — do not label as blocked.
   const publicationKind = !pub
     ? ("neutral" as const)
-    : !gate.publishEnabled
-      ? ("blocked" as const)
-      : pub.publication_status === "PUBLISHED"
-        ? ("ok" as const)
+    : isPublished
+      ? ("ok" as const)
+      : !gate.publishEnabled
+        ? ("blocked" as const)
         : ("warn" as const);
   const publicationLabel = !pub
     ? "—"
-    : !gate.publishEnabled
-      ? `${status} · blocată`
-      : status;
+    : isPublished
+      ? "PUBLISHED"
+      : !gate.publishEnabled
+        ? `${status} · blocată`
+        : status;
 
   return (
     <div
