@@ -13,6 +13,7 @@ import {
   type TemplateRecipeKind,
 } from "@/api/templatePricingRecipe";
 import { AiOperationalDefaultsSection } from "./AiOperationalDefaultsSection";
+import { PriceBreakdownSection } from "./PriceBreakdownSection";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 type KindFilter = "all" | TemplateRecipeKind;
@@ -269,6 +270,8 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
         ownershipNote={data.ai_ownership_note_ro}
         onChanged={reload}
       />
+
+      <PriceBreakdownSection templateCode={templateCode} />
 
       <div className="flex flex-wrap gap-1" role="tablist" aria-label="Filtru tip rețetă">
         {filters.map((f) => (
