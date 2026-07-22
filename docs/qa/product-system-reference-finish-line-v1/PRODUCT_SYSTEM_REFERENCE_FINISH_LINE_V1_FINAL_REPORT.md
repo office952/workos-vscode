@@ -33,6 +33,7 @@ Laboratorul poate fi înghețat la **cost de producție (EIC)** cu contracte exp
 | Repo | `C:\w\psiso` |
 | Branch | `feature/product-system-active-path-isolation-v1` |
 | Kickoff HEAD | `f67d56a7` |
+| Final HEAD | `a205675e` |
 | Proof port | `:8020` |
 | Dirty tree | protected outside allowlist |
 
@@ -104,7 +105,9 @@ Backend data/schemas/services/routers/tests; FE finish-line panel + composition 
 
 ## 39. Commits
 
-Local commits only — no push / no PR.
+- `a205675e` — feat(product-system): freeze reference finish line at production cost
+
+Local only — no push / no PR.
 
 ## 40. Worklog
 
