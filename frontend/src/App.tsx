@@ -170,10 +170,10 @@ const navSections: NavSection[] = [
     title: "Resurse",
     items: [
       { to: "/inventory", label: "Inventar & OC", icon: Warehouse },
-      { to: "/inventory/pricing", label: "Pricing", icon: BarChart3 },
+      { to: "/inventory/pricing", label: "Pricing (registry)", icon: BarChart3 },
       { to: "/product-system/products", label: "Product System", icon: Package },
       { to: "/colaboratori", label: "Colaboratori", icon: Handshake },
-      { to: "/utilaje", label: "Utilaje", icon: Cog },
+      { to: "/utilaje", label: "Utilaje (registry)", icon: Cog },
       { to: "/reports", label: "Rapoarte", icon: BarChart3 },
     ],
   },

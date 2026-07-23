@@ -1,8 +1,8 @@
 /**
- * Nivel 1 UI vocabulary: Product Template → Modules (equal).
+ * Product System UI vocabulary (Nivel 1 + Product Compiler display shell).
  *
- * Labels only — does NOT rename DB columns, API fields (`module_template_*`),
- * formulas, ProductAggregate semantics, CPP/EIC, or mini-module registry codes.
+ * Labels / IA only — does NOT rename DB columns, API fields (`module_template_*`),
+ * formulas, ProductDefinition / ProductAggregate behavior, CPP/EIC, or mini-module registry codes.
  */
 
 export const PRODUCT_TEMPLATE_LABEL = "Product Template";
@@ -21,8 +21,32 @@ export const MODULE_PRODUS_LIST_HEADING = "Module produs";
 export const MINI_MODULE_OPERATIONAL_LABEL = "Mini-modul operațional";
 export const MINI_MODULE_OPERATIONAL_EN_LABEL = "Operational mini-module";
 
+/** Visible unified concept for ProductDefinition + ProductAggregate (display only). */
+export const PRODUCT_COMPILER_LABEL = "Product Compiler";
+export const PRODUCT_COMPILER_DEFINITION_STAGE_LABEL = "Product Compiler · Definiție";
+export const PRODUCT_COMPILER_GRAPH_STAGE_LABEL = "Product Compiler · Graf tehnic";
+export const PRODUCT_COMPILER_RELATION_HELP =
+  "Product Template → Module produs egale → Product Compiler (output tehnic pentru ofertă / plan).";
+export const PRODUCT_COMPILER_NO_PRICE_HELP =
+  "Product Compiler nu calculează preț client. Oferta rămâne pe canal comercial separat.";
+
+/** ExecutionPlan operator-facing states (map to existing preview / draft / materialize). */
+export const EXECUTION_PLAN_LABEL = "Execution Plan";
+export const EXECUTION_PLAN_PREVIEW_STATE_LABEL = "Preview";
+export const EXECUTION_PLAN_DRAFT_STATE_LABEL = "Draft Plan";
+export const EXECUTION_PLAN_OPERATIONAL_STATE_LABEL = "Operational Plan";
+export const EXECUTION_PLAN_STATES_HELP =
+  "Preview (citire) → Draft Plan (salvat) → Operational Plan (materializat — GO owner).";
+
+/** Internal registries — not the operator product spine. */
+export const PRICING_REGISTRY_NAV_LABEL = "Pricing (registry)";
+export const MACHINES_REGISTRY_NAV_LABEL = "Utilaje (registry)";
+export const HR_PONTAJ_REGISTRY_NAV_LABEL = "Pontaj (registry intern)";
+export const INTERNAL_REGISTRY_HELPER_HINT =
+  "Registry intern / helper — nu este fluxul principal Product Template → Module produs → Compiler.";
+
 export const PRODUCT_TEMPLATE_COMPOSES_HELP =
-  "Product Template compune Module produs egale (față, cant/volum, spate, iluminare, structură, finisaj, montaj). Fiecare modul deține adevărul său tehnic. ProductAggregate rămâne read model derivat.";
+  "Product Template compune Module produs egale (față, cant/volum, spate, iluminare, structură, finisaj, montaj). Fiecare modul deține adevărul său tehnic. Product Compiler produce output-ul tehnic derivat (fără preț).";
 
 export const PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP =
   "Product Template este nivelul principal (composer). Modulele produsului sunt egale ca valoare structurală; acest panou arată ownership / gaps fără a inventa readiness.";
@@ -38,7 +62,7 @@ export const RETURN_CANT_MOVE_TRUTH_HELP =
 
 export const MUST_OWN_ON_MODULE_LABEL = "Must own truth on Module produs";
 
-/** Map legacy FE display tokens → Nivel 1 labels (internal keys may still use old wording). */
+/** Map legacy FE display tokens → Module produs vocabulary (internal keys may still use old wording). */
 export function displayModuleSourceTypeLabel(sourceType: string): string {
   switch (sourceType) {
     case "component template / registry":
@@ -50,6 +74,24 @@ export function displayModuleSourceTypeLabel(sourceType: string): string {
     default:
       return sourceType;
   }
+}
+
+/**
+ * Display-only adapter for wire field names that still say module_template_*.
+ * Does not rename API/DB contracts.
+ */
+export function displayModuleTemplateWireLabel(wireKey: string): string {
+  const normalized = wireKey.trim();
+  if (normalized === "module_template_code" || normalized.endsWith("_module_template_code")) {
+    return "Module produs code";
+  }
+  if (normalized.includes("module_template")) {
+    return "Module produs (wire)";
+  }
+  if (normalized === "component_template_code") {
+    return "Module produs code";
+  }
+  return wireKey;
 }
 
 export function equalModulesHintRo(): string {

@@ -165,7 +165,11 @@ export default function Utilaje() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Cog className="w-5 h-5 text-cyan-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Utilaje</h1>
+          <h1 className="text-[18px] font-bold text-slate-100">Utilaje (registry)</h1>
+          <p className="text-[11px] text-slate-500 mt-0.5">
+            Registry intern de capacitate — nu face parte din fluxul Product Template → Module produs → Product
+            Compiler.
+          </p>
           <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
             {machines.length} echipamente
           </span>

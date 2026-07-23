@@ -4,6 +4,8 @@ import type {
   ExecutionPlanV2MaterializationAuditResponse,
   ExecutionPlanV2PreviewResponse,
 } from "@/api/execution";
+import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
+import { EXECUTION_PLAN_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
 
 interface ExecutionPlanV2TruthPanelProps {
   preview: ExecutionPlanV2PreviewResponse;
@@ -48,7 +50,7 @@ export function ExecutionPlanV2TruthPanel({
         <div className="flex items-center gap-2">
           <FileSearch className="w-4 h-4 text-cyan-400" />
           <h2 className="text-[13px] font-bold text-slate-200 uppercase tracking-wide">
-            Step 9B V2 Truth Layer
+            {EXECUTION_PLAN_LABEL}
           </h2>
         </div>
         <div className="flex items-center gap-2">
@@ -62,18 +64,24 @@ export function ExecutionPlanV2TruthPanel({
       </header>
 
       <div className="p-4 space-y-4">
+        <ExecutionPlanStatesStrip
+          hasPreview
+          hasDraftPlan={Boolean(preview.planned_tasks.length)}
+          hasOperationalTasks={false}
+          operationalBlocked
+        />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 text-[11px]">
           <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Planned tasks</p>
+            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Draft Plan · tasks</p>
             <p className="mt-1 text-cyan-300 font-bold">{preview.planned_tasks.length}</p>
           </div>
           <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Planned ops</p>
+            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Preview · ops</p>
             <p className="mt-1 text-cyan-300 font-bold">{preview.planned_operations.length}</p>
           </div>
           <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
-            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Materialize status</p>
-            <p className="mt-1 text-slate-300 font-semibold">{audit?.materialization_status ?? "—"}</p>
+            <p className="text-slate-500 uppercase text-[9px] tracking-wide">Operational Plan</p>
+            <p className="mt-1 text-slate-300 font-semibold">{audit?.materialization_status ?? "blocked"}</p>
           </div>
           <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
             <p className="text-slate-500 uppercase text-[9px] tracking-wide">Snapshot source</p>

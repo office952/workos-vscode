@@ -4,6 +4,8 @@ import {
   PROVENANCE_LABELS,
   provenanceBadgeClass,
 } from "@/features/product-system/productAggregateDisplay";
+import { ProductCompilerDisplayShell } from "@/features/product-system/ProductCompilerDisplayShell";
+import { PRODUCT_COMPILER_GRAPH_STAGE_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
 import { AlertTriangle, Layers, Link2, Package, Cog } from "lucide-react";
 
 function ConflictList({
@@ -115,11 +117,15 @@ export function ProductAggregateOverviewPanel({
 
   return (
     <div className="space-y-4" data-testid="product-aggregate-overview">
+      <ProductCompilerDisplayShell stage="graph" compact />
       <div className="rounded-xl border border-purple-700/30 bg-purple-900/10 px-4 py-3">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[10px] uppercase tracking-wide font-bold text-purple-300/90">
-              ProductAggregate (read model)
+              {PRODUCT_COMPILER_GRAPH_STAGE_LABEL}
+            </p>
+            <p className="text-[11px] text-slate-400 mt-0.5">
+              Output tehnic derivat (read model intern: ProductAggregate)
             </p>
             <p className="text-[13px] font-bold text-slate-100 mt-0.5">
               {aggregate.business_name_ro || aggregate.template_code}
@@ -134,7 +140,8 @@ export function ProductAggregateOverviewPanel({
             className="mt-3 text-[11px] text-amber-200 bg-amber-900/20 border border-amber-700/30 rounded-lg px-3 py-2"
             data-testid="aggregate-parent-empty-message"
           >
-            Parent template has no direct components. Showing ProductAggregate from dossier and linked modules.
+            Parent template has no direct components. Showing Product Compiler graph from dossier and linked Module
+            produs.
           </p>
         ) : null}
 
@@ -166,8 +173,8 @@ export function ProductAggregateOverviewPanel({
       <div>
         <div className="flex items-center gap-2 mb-2">
           <Layers className="w-4 h-4 text-emerald-400" />
-          <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
-            Componente aggregate ({aggregate.components.length})
+            <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">
+            Module / componente în Compiler ({aggregate.components.length})
           </h4>
         </div>
         <div className="space-y-2">
@@ -181,7 +188,7 @@ export function ProductAggregateOverviewPanel({
         <div>
           <div className="flex items-center gap-2 mb-2">
             <Link2 className="w-4 h-4 text-blue-400" />
-            <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">Linked modules</h4>
+            <h4 className="text-[11px] font-bold text-slate-200 uppercase tracking-wide">Linked Module produs</h4>
           </div>
           <div className="space-y-2">
             {aggregate.modules.required.map((mod) => (

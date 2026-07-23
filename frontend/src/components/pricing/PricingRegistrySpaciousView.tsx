@@ -266,6 +266,10 @@ export function PricingRegistrySpaciousView({
           <div className="flex items-center gap-2 flex-wrap">
             <TrendingUp className="w-5 h-5 text-blue-400 shrink-0" />
             <h1 className="text-[18px] font-bold text-slate-100">Pricing Registry</h1>
+            <p className="text-[11px] text-slate-500 mt-0.5">
+              Registry intern de referință — nu este fluxul operator Product Template → Module produs → Product
+              Compiler.
+            </p>
             <SourceBadge
               source={source === "db" ? "db" : source === "loading" ? "loading" : "error"}
             />

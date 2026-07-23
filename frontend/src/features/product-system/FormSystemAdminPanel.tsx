@@ -39,7 +39,7 @@ function ReadOnlyBanner() {
       <div>
         <p className="font-semibold">Form System — read-only (Step 6 / 7D)</p>
         <p className="text-sky-300/80 mt-0.5">
-          ProductDefinition preview · nu este preț final · nu generează taskuri · nu creează order
+          Product Compiler · Definiție (preview) · nu este preț final · nu generează taskuri · nu creează order
         </p>
       </div>
     </div>
@@ -175,7 +175,8 @@ function ProductDefinitionPreviewSection({ preview }: { preview: ProductDefiniti
     <div className="space-y-3" data-testid="form-system-pd-preview">
       <div className="flex items-center gap-2">
         <ClipboardList className="w-4 h-4 text-emerald-400" />
-        <h4 className="text-[13px] font-bold text-slate-100">ProductDefinition preview</h4>
+        <h4 className="text-[13px] font-bold text-slate-100">Product Compiler · Definiție</h4>
+        <span className="text-[10px] text-slate-500">intern: ProductDefinition preview</span>
         <span
           className={`text-[10px] font-bold uppercase px-2 py-0.5 rounded border ${readinessBadgeClass(preview.validation.readiness_status)}`}
           data-testid="form-system-readiness-status"

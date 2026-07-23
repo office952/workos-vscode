@@ -2,11 +2,16 @@ import { describe, expect, it } from "vitest";
 import { CANDIDATE_MODULE_SEMANTIC_LABEL } from "./candidateModuleProdusReadonlyUiShared";
 import { CANONICAL_CONCEPTS } from "@/lib/productSystemCanonicalModel";
 import {
+  EXECUTION_PLAN_DRAFT_STATE_LABEL,
+  EXECUTION_PLAN_OPERATIONAL_STATE_LABEL,
+  EXECUTION_PLAN_PREVIEW_STATE_LABEL,
   MINI_MODULE_OPERATIONAL_LABEL,
   MODULE_PRODUS_LABEL,
+  PRODUCT_COMPILER_LABEL,
   PRODUCT_MODULES_SEMANTIC_LABEL,
   PRODUCT_TEMPLATE_LABEL,
   displayModuleSourceTypeLabel,
+  displayModuleTemplateWireLabel,
   equalModulesHintRo,
 } from "./productTemplateModulesVocabulary";
 
@@ -48,5 +53,19 @@ describe("productTemplateModulesVocabulary (Nivel 1 labels)", () => {
     expect(moduleConcept?.technicalName).toBe("Module (product)");
     expect(moduleConcept?.technicalName).not.toMatch(/Component Template/i);
     expect(mini?.nameRo).toBe("Mini-modul operațional");
+  });
+
+  it("exposes Product Compiler and Execution Plan three-state display vocabulary", () => {
+    expect(PRODUCT_COMPILER_LABEL).toBe("Product Compiler");
+    expect(EXECUTION_PLAN_PREVIEW_STATE_LABEL).toBe("Preview");
+    expect(EXECUTION_PLAN_DRAFT_STATE_LABEL).toBe("Draft Plan");
+    expect(EXECUTION_PLAN_OPERATIONAL_STATE_LABEL).toBe("Operational Plan");
+  });
+
+  it("adapts module_template_* wire keys to Module produs display labels without renaming contracts", () => {
+    expect(displayModuleTemplateWireLabel("module_template_code")).toBe("Module produs code");
+    expect(displayModuleTemplateWireLabel("shared_module_template_code")).toBe("Module produs code");
+    expect(displayModuleTemplateWireLabel("component_template_code")).toBe("Module produs code");
+    expect(displayModuleTemplateWireLabel("unrelated_field")).toBe("unrelated_field");
   });
 });

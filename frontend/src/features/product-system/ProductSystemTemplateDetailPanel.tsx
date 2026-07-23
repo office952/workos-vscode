@@ -683,7 +683,7 @@ export function ProductSystemTemplateDetailPanel({
         <div data-testid="product-system-template-detail-materials">
           <TemplateRuntimePreviewPanel templateCode={template.template_code} />
           <p className="mt-2 text-[11px] text-slate-500">
-            Materiale din ProductDefinition preview (read-only). Nu e Pricing / Inventory SoT.
+            Materiale din Product Compiler · Definiție (read-only). Nu e Pricing Registry / Inventory SoT.
           </p>
         </div>
       ) : null}

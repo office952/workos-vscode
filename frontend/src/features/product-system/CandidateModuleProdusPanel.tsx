@@ -1091,7 +1091,10 @@ function CandidateModuleProdusGuardsAuditPanel({
         data-testid="product-system-candidate-module-product-definition-readiness"
         className="rounded-lg border border-slate-700/80 bg-slate-950/60 px-3 py-3"
       >
-        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">ProductDefinition readiness</p>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-slate-200">
+          Product Compiler · Definiție — readiness
+        </p>
+        <p className="text-[10px] text-slate-500">intern: ProductDefinition consumption contract (readonly)</p>
         <div className="mt-2 flex flex-wrap items-center gap-2 text-[10px] font-bold">
           <span
             data-testid="product-system-candidate-module-product-definition-paths-count"

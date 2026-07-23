@@ -83,9 +83,12 @@ import {
   shouldPreferAggregateDisplay,
 } from "@/features/product-system/productAggregateDisplay";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
+import { ProductCompilerDisplayShell } from "@/features/product-system/ProductCompilerDisplayShell";
 import {
   MODULE_PRODUS_BOUNDARY_LABEL,
   MUST_OWN_ON_MODULE_LABEL,
+  PRODUCT_COMPILER_GRAPH_STAGE_LABEL,
+  PRODUCT_COMPILER_LABEL,
   PRODUCT_TEMPLATE_COMPOSES_HELP,
   PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP,
   RETURN_CANT_MOVE_TRUTH_HELP,
@@ -2991,12 +2994,13 @@ function TemplateEditor({
 
   const structurePanel = (
     <div className="space-y-4">
+      <ProductCompilerDisplayShell stage="both" />
       {candidateModuleProdusReadonlyPanel}
 
       <ComponentCalculationOwnershipPanel availability={availability} />
 
       {aggregateLoading ? (
-        <div className="text-[11px] text-slate-500">Se încarcă ProductAggregateâ€¦</div>
+        <div className="text-[11px] text-slate-500">Se încarcă {PRODUCT_COMPILER_LABEL}…</div>
       ) : isLogoSharedProfile ? (
         <SharedVolumetricFoundationPanel availability={availability} />
       ) : (
@@ -3011,7 +3015,7 @@ function TemplateEditor({
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Hammer className="w-5 h-5 text-purple-400 shrink-0" />
-            <h3 className="text-[14px] font-bold text-slate-100">Structură produs (ProductAggregate)</h3>
+            <h3 className="text-[14px] font-bold text-slate-100">{PRODUCT_COMPILER_GRAPH_STAGE_LABEL}</h3>
             <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
               {aggregate.components.length}
             </span>
@@ -3170,8 +3174,9 @@ function TemplateEditor({
                     ? "bg-purple-600/30 text-purple-200"
                     : "text-slate-500 hover:text-slate-300"
                 }`}
+                data-testid="product-system-studio-tab-compiler"
               >
-                Structură produs
+                {PRODUCT_COMPILER_LABEL}
               </button>
               <button
                 type="button"

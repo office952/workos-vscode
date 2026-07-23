@@ -26,6 +26,7 @@ import {
   type AlertSeverity,
 } from "@/api/execution";
 import FlowBreadcrumb, { executionBreadcrumb } from "@/components/workos/FlowBreadcrumb";
+import { ExecutionPlanStatesStrip } from "@/components/execution/ExecutionPlanStatesStrip";
 
 // ---------------------------------------------------------------------------
 // Formatting helpers — all null-safe. They ONLY handle presentation; they
@@ -149,6 +150,8 @@ export default function ExecutionDashboard() {
           </button>
         </div>
       </div>
+
+      <ExecutionPlanStatesStrip hasPreview hasDraftPlan={false} hasOperationalTasks={false} operationalBlocked />
 
       {/* Summary cards — one per status. Purely reflective. */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">

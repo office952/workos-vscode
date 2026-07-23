@@ -326,7 +326,7 @@ export function ProductSystemCatalogShell(props: ProductSystemCatalogShellProps)
           <p>Cross-entity guard and audit index — readonly catalog boundary checks only.</p>
           {hasCandidateModuleProdusCandidate ? (
             <p>
-              Candidate Module produs — Litere include completeness, drift, ProductDefinition readiness și guard-uri
+              Candidate Module produs — Litere include completeness, drift, Product Compiler readiness și guard-uri
               runtime interzise. Open <strong className="text-cyan-200">Seturi Module produs</strong> → Guards / Audit for
               detail.
             </p>

@@ -52,20 +52,20 @@ interface ReadinessResponse {
   template_publication_status?: string;
 }
 
-/** Catalog → … → Execution Preview — System Link Check order. */
+/** Catalog → … → Execution Preview — System Link Check order (operator labels). */
 const PIPELINE = [
   { key: "catalog", label: "Catalog" },
   { key: "components", label: "Module produs" },
   { key: "intake", label: "Intake" },
   { key: "product_truth", label: "Product Truth" },
-  { key: "product_definition", label: "ProductDefinition" },
-  { key: "aggregate", label: "Aggregate" },
+  { key: "product_definition", label: "Compiler · Definiție" },
+  { key: "aggregate", label: "Compiler · Graf" },
   { key: "quantity", label: "Quantity" },
-  { key: "cpp", label: "CPP" },
-  { key: "eic", label: "EIC" },
+  { key: "cpp", label: "Ofertă (CPP)" },
+  { key: "eic", label: "Cost intern (EIC)" },
   { key: "quote_snapshot", label: "Quote Snapshot" },
   { key: "order_snapshot", label: "Order Snapshot" },
-  { key: "execution_preview", label: "Execution Preview" },
+  { key: "execution_preview", label: "Execution Plan · Preview" },
 ] as const;
 
 function statusColor(status: CheckStatus): string {
