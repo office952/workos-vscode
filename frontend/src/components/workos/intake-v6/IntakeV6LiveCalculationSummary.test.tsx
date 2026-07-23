@@ -835,7 +835,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     );
 
     expect(screen.getByTestId("intake-v6-live-estimate-unavailable")).toHaveTextContent(
-      /Prețul comercial oficial nu este disponibil|Estimarea comercială necesită/i,
+      /Oferta client nu este disponibilă|Oferta client necesită/i,
     );
     expect(screen.queryByTestId("intake-v6-live-offer-gross")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);

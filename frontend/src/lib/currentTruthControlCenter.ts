@@ -249,7 +249,7 @@ export const PRESENT_SYSTEMS: PresentSystem[] = [
     owner: "Commercial freeze",
     purposeRo: "Îngheață propunerea comercială acceptată + compiled ActiveScopeResult (Letters Slice 1).",
     status: "CONFIRMAT",
-    inputRo: "Rezultat comercial + Intake offer_scope → compile_active_scope (la freeze)",
+    inputRo: "Ofertă client + Intake offer_scope → compile_active_scope (la freeze)",
     outputRo: "Snapshot ofertă + active_scope_snapshot înghețat",
     consumerRo: "Order Snapshot",
     limitationRo:

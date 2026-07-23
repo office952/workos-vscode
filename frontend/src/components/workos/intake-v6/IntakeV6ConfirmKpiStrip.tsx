@@ -1,5 +1,6 @@
 import { FileCheck, Layers, Ruler } from "lucide-react";
 import { formatFaceBackPrepMoney } from "@/lib/intakeV6/intakeV6FaceBackPrepCostDraftDisplay";
+import { COST_INTERN_ESTIMATIV_LABEL } from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
 import { v6 } from "./atoms/intakeV6Presentation";
 
 function KpiCell({
@@ -60,7 +61,7 @@ export default function IntakeV6ConfirmKpiStrip({
     >
       <KpiCell
         icon={FileCheck}
-        label="Cost intern referință"
+        label={COST_INTERN_ESTIMATIV_LABEL}
         value={
           loading || internalCostEur == null
             ? "—"

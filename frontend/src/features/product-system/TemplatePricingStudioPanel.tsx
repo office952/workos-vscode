@@ -429,8 +429,8 @@ function LaborRecipeSection({
           <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.1fr)_minmax(0,0.65fr)_minmax(0,0.65fr)_auto] gap-2 border-b border-slate-800/70 bg-slate-950/40 px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
             <span>Operație</span>
             <span>Formulă / cantitate</span>
-            <span>Cost intern</span>
-            <span>Tarif comercial</span>
+            <span>Cost intern estimativ</span>
+            <span>Ofertă client</span>
             <span>Status</span>
           </div>
           {items.map((row) => (

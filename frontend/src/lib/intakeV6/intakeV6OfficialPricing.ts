@@ -18,12 +18,12 @@ export function intakeV6HasOfficialCommercialTotals(
 export function intakeV6OfficialPricingBlockerMessage(
   pricing: IntakeV6PricedQuoteDryRunResponse | null | undefined,
 ): string | null {
-  if (!pricing) return "Prețul comercial oficial nu este disponibil.";
+  if (!pricing) return "Oferta client nu este disponibilă.";
   if (intakeV6HasOfficialCommercialTotals(pricing)) return null;
   const blockers = pricing.blockers ?? [];
   if (blockers.length > 0) return blockers[0]?.message ?? blockers[0]?.code ?? null;
   if (pricing.commercial_authority_status === "blocked") {
-    return "Prețul comercial oficial este blocat — 7G nu a returnat un total valid.";
+    return "Oferta client este blocată — 7G nu a returnat un total valid.";
   }
-  return "Prețul comercial oficial nu este disponibil.";
+  return "Oferta client nu este disponibilă.";
 }

@@ -203,7 +203,7 @@ describe("Quotes design-system badges", () => {
       sourcesDetail: { quotes: "db" },
     });
 
-    expect(await screen.findByText("Breakdown pe componente")).toBeInTheDocument();
+    expect(await screen.findByText("Ofertă client — breakdown pe componente")).toBeInTheDocument();
     expect(screen.getByText("Litere volumetrice")).toBeInTheDocument();
     expect(screen.getAllByText(/1\.104,33/).length).toBeGreaterThan(0);
   });

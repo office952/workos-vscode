@@ -28,7 +28,7 @@ export const PRODUCT_COMPILER_GRAPH_STAGE_LABEL = "Product Compiler · Graf tehn
 export const PRODUCT_COMPILER_RELATION_HELP =
   "Product Template → Module produs egale → Product Compiler (output tehnic pentru ofertă / plan).";
 export const PRODUCT_COMPILER_NO_PRICE_HELP =
-  "Product Compiler nu calculează preț client. Oferta rămâne pe canal comercial separat.";
+  "Product Compiler nu calculează Ofertă client. Oferta client rămâne pe canal comercial separat.";
 
 /** ExecutionPlan operator-facing states (map to existing preview / draft / materialize). */
 export const EXECUTION_PLAN_LABEL = "Execution Plan";

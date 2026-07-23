@@ -39,18 +39,25 @@ import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { formatEdgeCantOperatorPerimeter } from "@/lib/intakeV6/intakeV4EdgeCantDisplay";
 import AcmPanelProvisionalPricingBlock from "./AcmPanelProvisionalPricingBlock";
 import { v6 } from "./atoms/intakeV6Presentation";
+import {
+  COST_INTERN_ESTIMATIV_LABEL,
+  OFERTA_CLIENT_HELP,
+  OFERTA_CLIENT_LABEL,
+  OFERTA_VS_COST_BOUNDARY_HELP,
+} from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
-export const INTAKE_V6_LIVE_CALC_TITLE = "Rezultat comercial";
+export const INTAKE_V6_LIVE_CALC_TITLE = OFERTA_CLIENT_LABEL;
 export const INTAKE_V6_LIVE_CALC_PREVIEW_HINT =
-  "Estimare după configurația curentă. Detaliile de linii se deschid la cerere.";
-export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Valoare estimată cu TVA";
-export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Estimare netă";
-export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = "Cost intern (referință)";
+  `${OFERTA_CLIENT_HELP} Detaliile de linii se deschid la cerere.`;
+export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Ofertă client cu TVA";
+export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Ofertă client netă";
+export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = COST_INTERN_ESTIMATIV_LABEL;
 export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
-  "Estimarea comercială necesită completarea configurației curente.";
-export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Calcul estimativ live — detalii";
+  "Oferta client necesită completarea configurației curente.";
+export const INTAKE_V6_LIVE_CALC_DETAILS_TITLE = "Ofertă client — detalii estimate";
+export const INTAKE_V6_LIVE_CALC_BOUNDARY_HINT = OFERTA_VS_COST_BOUNDARY_HELP;
 
 /** Pricing reports availability only — Produs CTA owns the composition action. */
 function shortenOperatorPricingBlocker(message: string | null | undefined): string | null {
@@ -718,12 +725,20 @@ function LiveCalcPreviewHeader({ compact = false }: { compact?: boolean }) {
         </h3>
       </div>
       {!compact ? (
-        <p
-          className="mt-1 text-[10px] leading-relaxed text-slate-600"
-          data-testid="intake-v6-live-calc-preview-hint"
-        >
-          {INTAKE_V6_LIVE_CALC_PREVIEW_HINT}
-        </p>
+        <>
+          <p
+            className="mt-1 text-[10px] leading-relaxed text-slate-600"
+            data-testid="intake-v6-live-calc-preview-hint"
+          >
+            {INTAKE_V6_LIVE_CALC_PREVIEW_HINT}
+          </p>
+          <p
+            className="mt-1 text-[10px] leading-relaxed text-cyan-700/80"
+            data-testid="intake-v6-live-calc-boundary-hint"
+          >
+            {INTAKE_V6_LIVE_CALC_BOUNDARY_HINT}
+          </p>
+        </>
       ) : null}
     </div>
   );

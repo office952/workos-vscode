@@ -994,20 +994,21 @@ export default function Quotes() {
                     <AlertTriangle className="w-4 h-4 text-blue-300 mt-0.5 shrink-0" />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="text-[12px] font-semibold text-blue-200">Truth boundary</p>
+                        <p className="text-[12px] font-semibold text-blue-200">Ofertă client înghețată</p>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-900/30 text-blue-300 border border-blue-700/30">
-                          Frozen commercial truth here
+                          Ofertă client (Snapshot V2)
                         </span>
                         <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-900/40 text-slate-300 border border-slate-700/40">
-                          Upstream pricing preview elsewhere
+                          Cost intern / registries upstream
                         </span>
                       </div>
                       <p className="text-[11px] text-blue-100/90 mt-1 leading-relaxed">
-                        În Oferte vezi snapshot-ul comercial V2 înghețat pentru acceptare și conversie. Pricing, ProductSystem și alte preview-uri upstream nu pot înlocui acest snapshot după freeze.
+                        În Oferte vezi Oferta client (Snapshot V2) pentru acceptare și conversie. Pricing Registry,
+                        Product System și Cost intern estimativ upstream nu pot înlocui acest snapshot după freeze.
                       </p>
                       <div className="flex items-center gap-3 flex-wrap mt-2 text-[11px]">
                         <Link to="/inventory/pricing" className="text-blue-300 hover:text-blue-200 underline underline-offset-2">
-                          Vezi inputurile interne în Pricing
+                          Pricing Registry (helper intern)
                         </Link>
                         <Link to="/orders" className="text-blue-300 hover:text-blue-200 underline underline-offset-2">
                           Vezi snapshot-to-plan în Comenzi
@@ -1034,7 +1035,8 @@ export default function Quotes() {
               {intakeV6WorkspaceId ? (
                 <div className="bg-[#0F172A] border border-cyan-900/40 rounded-lg p-3">
                   <p className="text-[11px] text-cyan-100 leading-relaxed">
-                    Lista de mai jos este snapshot-ul comercial persistat al ofertei selectate. Nu reprezintă breakdown-ul tehnic live din Intake V6 material-breakdown, deci este normal să fie mai agregată decât calculatorul intern.
+                    Lista de mai jos este Oferta client persistată (Snapshot V2). Nu este Cost intern estimativ /
+                    breakdown tehnic live din Intake V6 — e normal să fie mai agregată decât calculatorul intern.
                   </p>
                 </div>
               ) : null}
@@ -1047,14 +1049,15 @@ export default function Quotes() {
                     aria-expanded={expandedTechnicalBreakdown}
                   >
                     <SectionHeader
-                      title="Breakdown tehnic live Intake V6"
+                      title="Cost intern estimativ — breakdown tehnic live"
                       count={technicalBreakdownRowCount || undefined}
                       icon={<Package className="w-4 h-4" />}
                     />
                     {expandedTechnicalBreakdown ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
                   </button>
                   <p className="text-[10px] text-slate-500 mt-2 mb-3">
-                    Acest bloc este citit live din workspace-ul Intake V6 legat la ofertă și arată breakdown-ul tehnic intern, separat de snapshot-ul comercial persistat.
+                    Canal Cost intern estimativ (live Intake V6) — separat de Oferta client înghețată. Nu modifica
+                    Pricing Registry aici în fluxul de ofertare.
                   </p>
                   {technicalBreakdownLoading ? (
                     <p className="text-[12px] text-slate-400">Încărcare breakdown tehnic V6...</p>
@@ -1064,7 +1067,7 @@ export default function Quotes() {
                     <>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
                         <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-                          <p className="text-[10px] uppercase tracking-wide text-slate-500">Cost intern estimat</p>
+                          <p className="text-[10px] uppercase tracking-wide text-slate-500">Cost intern estimativ</p>
                           <p className="text-[14px] font-semibold text-slate-100 mt-1">
                             {formatQuoteMoney(technicalBreakdown.totals?.estimated_cost_total ?? 0, technicalBreakdownCurrency)}
                           </p>
@@ -1204,7 +1207,7 @@ export default function Quotes() {
                     aria-expanded={expandedLineItems}
                   >
                     <SectionHeader
-                      title="Breakdown comercial pe componente"
+                      title="Ofertă client — breakdown pe componente"
                       count={selectedQuote.componentBreakdown.length}
                       icon={<Layers className="w-4 h-4" />}
                     />
@@ -1267,7 +1270,7 @@ export default function Quotes() {
               {/* Pricing Summary */}
               {(!showIntakeV6CommercialSpine || showV6CompactTotals) && (
               <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-                <SectionHeader title="Totaluri comerciale afișate" icon={<DollarSign className="w-4 h-4" />} />
+                <SectionHeader title="Ofertă client — totaluri afișate" icon={<DollarSign className="w-4 h-4" />} />
                 <p className="text-[10px] text-slate-500 mt-2 mb-3">
                   {isUnpricedIntakeV6Quote(selectedQuote)
                     ? "Draft V6 nepretuit: totalurile de mai jos sunt placeholder 0 RON până când bridge-ul V6 scrie totalurile backend oficiale."

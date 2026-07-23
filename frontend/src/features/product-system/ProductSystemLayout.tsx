@@ -9,6 +9,7 @@ import {
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
 import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStackBanner";
 import { PS_SURFACE_QUIET } from "./productSystemSurfaces";
+import { PRICING_REGISTRY_NAV_LABEL } from "./productTemplateModulesVocabulary";
 
 function ProductSystemLayoutInner() {
   const location = useLocation();
@@ -51,7 +52,7 @@ function ProductSystemLayoutInner() {
             data-testid="product-system-pricing-registry-link"
             className={`inline-flex items-center gap-1.5 ${PS_SURFACE_QUIET} px-2.5 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100`}
           >
-            Pricing Registry
+            {PRICING_REGISTRY_NAV_LABEL}
             <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
           </Link>
         </div>

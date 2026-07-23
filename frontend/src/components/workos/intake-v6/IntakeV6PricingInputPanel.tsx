@@ -56,7 +56,7 @@ export default function IntakeV6PricingInputPanel({
   breakdown,
   officialPricing,
   loading,
-  title = "Rezumat ofertare V6",
+  title = "Rezumat Ofertă client (V6)",
   showDebugPayload = false,
   commercialInputs,
   onCommercialInputsChange,
@@ -75,7 +75,13 @@ export default function IntakeV6PricingInputPanel({
   if (!preview) {
     return (
       <div className={`${v6.card} mb-4`} data-testid="intake-v6-pricing-input-preview">
-        <p className="text-[12px] text-slate-400">Pricing input preview indisponibil.</p>
+        <IntakeV6AggregateCostTruthNotice compact />
+        <p className="text-[12px] text-slate-300">
+          Product Truth incomplet — Oferta client apare după confirmarea operatorului.
+        </p>
+        <p className="mt-1 text-[11px] text-slate-500">
+          Nu bloca pe registry intern: Pricing / Utilaje / Pontaj rămân helper, nu fluxul principal.
+        </p>
       </div>
     );
   }
@@ -130,7 +136,7 @@ export default function IntakeV6PricingInputPanel({
     >
       <p className="font-semibold">Marjă internă negativă</p>
       <p className="mt-1 text-red-100/90">
-        Cost intern referință {formatCurrency(internalEstimateRon as number)} depășește prețul net oficial cu{" "}
+        Cost intern estimativ {formatCurrency(internalEstimateRon as number)} depășește Oferta client (net) cu{" "}
         {formatCurrency(Math.abs(internalMarginVsNetRon as number))}.
       </p>
     </div>
@@ -236,7 +242,7 @@ export default function IntakeV6PricingInputPanel({
           </dd>
         </div>
         <div className="flex justify-between gap-2 font-semibold text-emerald-300">
-          <dt>{hasOfficialTotals ? "Preț oficial" : "Preț comercial"}</dt>
+          <dt>{hasOfficialTotals ? "Ofertă client" : "Ofertă client (estimată)"}</dt>
           <dd data-testid="intake-v6-offer-final-price">
             {hasOfficialTotals && officialTotals?.total_gross != null
               ? formatCurrency(officialTotals.total_gross)
@@ -293,8 +299,10 @@ export default function IntakeV6PricingInputPanel({
     return (
       <div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-confirm-pricing-hero">
         <IntakeV6AggregateCostTruthNotice compact />
-        <h3 className={`mb-2 ${v6.sectionTitle}`}>Ofertă comercială</h3>
-        <p className={`mb-1 ${v6.metricLabel}`}>{hasOfficialTotals ? "Preț oficial cu TVA" : "Preț comercial oficial"}</p>
+        <h3 className={`mb-2 ${v6.sectionTitle}`}>Ofertă client</h3>
+        <p className={`mb-1 ${v6.metricLabel}`}>
+          {hasOfficialTotals ? "Ofertă client cu TVA" : "Ofertă client"}
+        </p>
         {hasOfficialTotals && heroGross != null ? (
           <p
             className="text-[28px] font-bold tabular-nums leading-none text-emerald-300"
@@ -307,17 +315,17 @@ export default function IntakeV6PricingInputPanel({
             className="text-[13px] leading-relaxed text-amber-200/90"
             data-testid="intake-v6-confirm-pricing-hero-blocked"
           >
-            {officialPricingBlocker ?? "Prețul comercial oficial nu este disponibil."}
+            {officialPricingBlocker ?? "Oferta client nu este disponibilă."}
           </p>
         )}
         <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-[#243044]/70 pt-2 text-[11px]">
-          <span className="text-slate-500">Net oficial</span>
+          <span className="text-slate-500">Ofertă client netă</span>
           <span className="tabular-nums text-cyan-200" data-testid="intake-v6-confirm-pricing-hero-net">
             {heroNet != null ? formatCurrency(heroNet) : "—"}
           </span>
         </div>
         <div className="mt-1 flex flex-wrap items-baseline justify-between gap-2 text-[11px]">
-          <span className="text-slate-500">Cost intern referință</span>
+          <span className="text-slate-500">Cost intern estimativ</span>
           <span className="tabular-nums text-slate-200">
             {breakdown?.totals.estimated_cost_total != null
               ? formatFaceBackPrepMoney(
@@ -330,11 +338,11 @@ export default function IntakeV6PricingInputPanel({
         {offerModel.internalEstimateCurrency === "EUR" ? (
           <p className="mt-1 text-[10px] text-slate-500" data-testid="intake-v6-confirm-pricing-hero-fx">
             {hasOfficialTotals
-              ? `Preț oficial backend V6 · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
+              ? `Ofertă client (backend V6) · TVA ${Number(officialTotals?.vat_rate ?? 0).toLocaleString("ro-RO", {
                   minimumFractionDigits: 0,
                   maximumFractionDigits: 2,
                 })}%`
-              : `Oferta în RON · curs ${offerModel.eurToRonRate.toLocaleString("ro-RO", {
+              : `Ofertă client în RON · curs ${offerModel.eurToRonRate.toLocaleString("ro-RO", {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 4,
                 })} RON/EUR`}
@@ -511,7 +519,7 @@ export default function IntakeV6PricingInputPanel({
             {hasOfficialTotals ? (
               <>
                 <div className="flex items-center justify-between gap-3 text-slate-300">
-                  <dt>Total net oficial</dt>
+                  <dt>Ofertă client netă</dt>
                   <dd>{formatCurrency(officialTotals?.subtotal_net ?? 0)}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-slate-300">
@@ -519,24 +527,24 @@ export default function IntakeV6PricingInputPanel({
                   <dd>{formatCurrency(officialTotals?.vat_amount ?? 0)}</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t border-[#2A3548] pt-2 text-[12px] font-semibold text-emerald-300">
-                  <dt>Preț oficial cu TVA</dt>
+                  <dt>Ofertă client cu TVA</dt>
                   <dd data-testid="intake-v6-offer-final-price">
                     {formatCurrency(officialTotals?.total_gross ?? 0)}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 text-[10px] text-slate-500">
-                  <dt>Sursă preț</dt>
-                  <dd data-testid="intake-v6-offer-price-source">Backend V6 · 7G</dd>
+                  <dt>Sursă Ofertă client</dt>
+                  <dd data-testid="intake-v6-offer-price-source">Backend V6 · CPP</dd>
                 </div>
               </>
             ) : (
               <>
                 <div className="flex items-center justify-between gap-3 text-slate-300">
-                  <dt>Total net oficial</dt>
+                  <dt>Ofertă client netă</dt>
                   <dd>—</dd>
                 </div>
                 <div className="flex items-center justify-between gap-3 border-t border-[#2A3548] pt-2 text-[12px] font-semibold text-amber-200/90">
-                  <dt>Preț comercial oficial</dt>
+                  <dt>Ofertă client</dt>
                   <dd data-testid="intake-v6-offer-final-price">—</dd>
                 </div>
                 {officialPricingBlocker ? (
@@ -545,9 +553,9 @@ export default function IntakeV6PricingInputPanel({
                   </div>
                 ) : null}
                 <div className="rounded border border-[#1C2433] bg-[#0F1724]/40 p-2 text-[10px] text-slate-500">
-                  <p className="mb-1 font-semibold text-slate-400">Estimare locală (non-oficială)</p>
+                  <p className="mb-1 font-semibold text-slate-400">Estimare locală (nu este Ofertă client)</p>
                   <div className="flex items-center justify-between gap-3 text-slate-400">
-                    <span>Bază cost intern × adaos</span>
+                    <span>Bază Cost intern estimativ × adaos</span>
                     <span>{formatCurrency(offerModel.totalGross)}</span>
                   </div>
                 </div>

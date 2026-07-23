@@ -86,42 +86,42 @@ function buildWorkflowSteps(args: {
   return [
     {
       id: "price",
-      label: "Prețuire",
-      done: priced,
-      active: !priced && args.dryRunReady,
-    },
-    {
-      id: "snapshot",
-      label: "Snapshot V2",
-      done: args.snapshotExists,
-      active: priced && !args.snapshotExists,
-    },
-    {
-      id: "review",
-      label: "Review",
-      done: args.pricingDone,
-      active: args.snapshotExists && !args.pricingDone,
-    },
-    {
-      id: "owner",
-      label: "Aprobare",
-      done: args.ownerValid,
-      active: args.pricingDone && !args.ownerValid,
-    },
-    {
-      id: "accept",
-      label: "Accept",
-      done: args.accepted,
-      active: args.ownerValid && !args.accepted,
-    },
-    {
-      id: "order",
-      label: "Comandă",
-      done: args.converted,
-      active: args.accepted && !args.converted,
-    },
-  ];
-}
+          label: "Ofertă client",
+          done: priced,
+          active: !priced && args.dryRunReady,
+        },
+        {
+          id: "snapshot",
+          label: "Snapshot V2",
+          done: args.snapshotExists,
+          active: priced && !args.snapshotExists,
+        },
+        {
+          id: "review",
+          label: "Review",
+          done: args.pricingDone,
+          active: args.snapshotExists && !args.pricingDone,
+        },
+        {
+          id: "owner",
+          label: "Aprobare",
+          done: args.ownerValid,
+          active: args.pricingDone && !args.ownerValid,
+        },
+        {
+          id: "accept",
+          label: "Accept",
+          done: args.accepted,
+          active: args.ownerValid && !args.accepted,
+        },
+        {
+          id: "order",
+          label: "Comandă",
+          done: args.converted,
+          active: args.accepted && !args.converted,
+        },
+      ];
+    }
 
 function WorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
   return (
@@ -304,9 +304,9 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         : "Oferta si review folosesc snapshot V2 inghetat. Continua cu review si accept."
       : "Snapshot V2 inghetat — trimiterea in ofertare foloseste snapshot-ul, nu dry-run live."
     : quoteTotalsAvailable
-      ? "Total oficial pe quote. Continuă cu snapshot și review."
+      ? "Ofertă client pe quote. Continuă cu snapshot și review."
       : dryRunReady
-        ? "Previzualizare backend pregătită. Scrie totalurile pe ofertă."
+        ? "Previzualizare backend pregătită. Scrie totalurile pe Oferta client."
         : "Completează workspace-ul V6 sau rezolvă blockerele de mai jos.";
 
   const primaryAction = resolvePrimarySpineAction({
@@ -330,11 +330,14 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     <div className={v6.card} data-testid="intake-v6-commercial-spine">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Flux comercial V6</h3>
+          <h3 className="text-[13px] font-bold text-slate-100">Flux Ofertă client (V6)</h3>
           <p className="mt-1 text-[11px] text-slate-400">{heroHint}</p>
+          <p className="mt-1 text-[10px] text-slate-500">
+            Ofertă client = preț pentru client. Cost intern estimativ = referință atelier (canal separat).
+          </p>
         </div>
         <div className="text-right" data-testid="intake-v6-hero-total">
-          <p className="text-[10px] uppercase tracking-wide text-slate-500">Total estimat / oficial</p>
+          <p className="text-[10px] uppercase tracking-wide text-slate-500">Ofertă client (total)</p>
           <p
             className={`text-[18px] font-bold ${quoteTotalsAvailable || dryRunReady ? "text-slate-100" : "text-amber-300"}`}
           >
@@ -365,12 +368,12 @@ export default function IntakeV6QuoteCommercialSpinePanel({
               </p>
             ) : null}
           </div>
-          {internalCostReview?.available === true ? (
+            {internalCostReview?.available === true ? (
             <p className="mt-2 text-[11px] text-amber-200/90" data-testid="intake-v6-internal-cost-review">
-              Cost intern:{" "}
+              Cost intern estimativ:{" "}
               {internalCostReview.execution_blocked === true
                 ? "partial / blocat pentru executie"
-                : "disponibil"}
+                : "disponibil (nu este Ofertă client)"}
             </p>
           ) : null}
           {columnDriftBlocked ? (
@@ -387,7 +390,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       <section className="mb-4 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3" data-testid="intake-v6-priced-quote-bridge">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-          <h4 className="text-[12px] font-semibold text-slate-200">1. Prețuire oficială</h4>
+          <h4 className="text-[12px] font-semibold text-slate-200">1. Ofertă client</h4>
           <span
             className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
               pricingSectionComplete || dryRunReady
@@ -397,14 +400,14 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             data-testid="intake-v6-dry-run-status-label"
           >
             {pricingSectionComplete
-              ? "Prețuit"
+              ? "Ofertă scrisă"
               : dryRunStatusLabel(dryRun?.pricing_status, dryRunLoading)}
           </span>
         </div>
 
         {pricingSectionComplete && !showSecondaryActions && primaryAction !== "snapshot" ? (
           <p className="text-[11px] text-emerald-200/90" data-testid="intake-v6-pricing-complete-summary">
-            Totalurile oficiale sunt pe ofertă.
+            Totalurile Ofertă client sunt pe ofertă.
           </p>
         ) : dryRunLoading && !dryRun ? (
           <p className="text-[11px] text-slate-400">Calculez previzualizarea backend…</p>
@@ -768,8 +771,8 @@ export default function IntakeV6QuoteCommercialSpinePanel({
             </div>
           </dl>
           <p className="mt-2 leading-relaxed">
-            Totalurile oficiale provin din backend V6, nu din preview Intake. Snapshot V2 îngheață oferta
-            înainte de accept; conversia creează doar order snapshot, fără plan de execuție.
+            Totalurile Ofertă client provin din backend V6, nu din preview Intake. Snapshot V2 îngheață
+            Oferta client înainte de accept; conversia creează doar order snapshot, fără plan de execuție.
           </p>
           {dryRunTotals ? (
             <p className="mt-2" data-testid="intake-v6-dry-run-subtotal">

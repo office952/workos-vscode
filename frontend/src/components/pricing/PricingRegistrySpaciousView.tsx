@@ -275,8 +275,8 @@ export function PricingRegistrySpaciousView({
             />
           </div>
           <p className="text-[11px] text-slate-500 mt-0.5">
-            <span className="text-slate-400">Pricing</span> = cataloage typed (materiale / utilaje / manoperă) ·{" "}
-            <span className="text-slate-400">Inventory</span> = stoc și cost achiziție · rezultatul comercial rămâne în CPP
+            <span className="text-slate-400">Pricing</span> = registry intern (materiale / utilaje / manoperă) ·{" "}
+            <span className="text-slate-400">Inventory</span> = stoc și cost achiziție · Oferta client rămâne pe canal CPP
             {baseCurrency ? (
               <>
                 {" "}

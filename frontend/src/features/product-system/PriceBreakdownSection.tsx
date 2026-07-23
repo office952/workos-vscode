@@ -240,11 +240,11 @@ export function PriceBreakdownSection({ templateCode }: { templateCode: string }
           data-testid="price-breakdown-totals"
         >
           <TotalStat
-            label="Cost producție (EIC)"
+            label="Cost intern estimativ (EIC)"
             value={money(data.totals.internal_total, data.totals.currency)}
           />
           <TotalStat
-            label="Preț comercial (CPP)"
+            label="Ofertă client (CPP)"
             value={money(data.totals.commercial_total, data.totals.currency)}
           />
           <TotalStat
@@ -328,8 +328,8 @@ export function PriceBreakdownSection({ templateCode }: { templateCode: string }
         <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,1.1fr)_minmax(0,0.7fr)_minmax(0,0.7fr)] gap-2 border-b border-slate-800/70 bg-slate-950/40 px-3 py-2 text-[10px] font-bold uppercase tracking-wide text-slate-500">
           <span>Linie</span>
           <span>Formulă</span>
-          <span>Cost intern</span>
-          <span>Valoare comercială</span>
+          <span>Cost intern estimativ</span>
+          <span>Ofertă client</span>
         </div>
         {filtered.length === 0 ? (
           <p className="px-4 py-6 text-sm text-slate-500">Nicio linie în acest filtru.</p>
