@@ -34,7 +34,7 @@ import {
 import type {
   UnifiedCatalogDetailSection,
   UnifiedCatalogEntry,
-} from "./productSystemUnifiedCatalogTypes";
+} from "./productSystemCatalogEntries";
 
 export type ProductSystemCanonicalCatalogProps = {
   templates: ProductTemplateEntity[];
@@ -113,7 +113,7 @@ function isOperatorDeepLinkBlocked(
   if (entry.bucket === "legacy-shared-modules") return true;
   if (entry.bucket === "archived") return true;
   if (entry.bucket === "candidate-products") return true;
-  if (entry.bucket === "component-first-sets") return true;
+  if (entry.bucket === "candidate-module-sets") return true;
   if (entry.availability?.readiness?.rollup === "INTERNAL") return true;
   if (entry.availability?.capabilities?.internal_only) return true;
   return false;

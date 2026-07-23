@@ -1,10 +1,10 @@
 import {
   buildLegacyReplacementSummary,
   legacyReplacementStatusLabel,
-  LEGACY_TO_COMPONENT_FIRST_REPLACEMENT_MAP,
+  LEGACY_TO_CANDIDATE_MODULE_REPLACEMENT_MAP,
   resolveLegacyReplacementEntry,
   type LegacyReplacementMapEntry,
-} from "./legacyToComponentFirstReplacementMap";
+} from "./legacyToCandidateModuleReplacementMap";
 
 function StatusChip({
   label,
@@ -66,7 +66,7 @@ function ReplacementRow({
   entry: LegacyReplacementMapEntry;
   highlighted?: boolean;
 }) {
-  const looksLikeComponentFirst = entry.legacyCode.includes("COMP-LETTER");
+  const looksLikeCandidateModuleProdus = entry.legacyCode.includes("COMP-LETTER");
 
   return (
     <tr
@@ -99,12 +99,12 @@ function ReplacementRow({
       </td>
       <td className="px-2 py-2 align-top text-[10px] text-slate-500">
         {entry.ownerNoteRo}
-        {looksLikeComponentFirst ? (
+        {looksLikeCandidateModuleProdus ? (
           <p
             data-testid={`product-system-legacy-not-component-warning-${entry.legacyCode}`}
             className="mt-1 font-semibold text-amber-200/90"
           >
-            Legacy module, not TPL-COMP component template
+            Legacy module, not Module produs (TPL-COMP candidate)
           </p>
         ) : null}
       </td>
@@ -120,7 +120,7 @@ export function LegacyReplacementReadinessPanel({
   compact?: boolean;
 }) {
   const summary = buildLegacyReplacementSummary();
-  const entries = LEGACY_TO_COMPONENT_FIRST_REPLACEMENT_MAP;
+  const entries = LEGACY_TO_CANDIDATE_MODULE_REPLACEMENT_MAP;
   const highlighted = highlightLegacyCode
     ? normalizeHighlight(highlightLegacyCode)
     : null;
@@ -144,7 +144,7 @@ export function LegacyReplacementReadinessPanel({
           className="mt-2 text-xs leading-relaxed text-slate-400"
         >
           Template-urile legacy sunt păstrate pentru produsul activ și istoric. Ele pot fi deprecated doar după ce
-          component-first deține adevărul complet și runtime-ul este validat. Replacement path proposed · readonly
+          Module produs deține adevărul complet și runtime-ul este validat. Replacement path proposed · readonly
           mapping · no delete now · future deprecation candidate.
         </p>
       </div>
@@ -233,28 +233,28 @@ function normalizeHighlight(code: string): string {
   return code.trim().toUpperCase();
 }
 
-export function ComponentFirstReplacementContextPanel() {
+export function CandidateModuleProdusReplacementContextPanel() {
   return (
     <section
-      data-testid="product-system-component-first-replacement-context"
+      data-testid="product-system-candidate-module-replacement-context"
       className="rounded-xl border border-cyan-900/40 bg-cyan-950/10 px-4 py-3"
     >
-      <h3 className="text-sm font-semibold text-cyan-100">Ce înlocuiește component-first?</h3>
+      <h3 className="text-sm font-semibold text-cyan-100">Ce înlocuiesc Modulele produs?</h3>
       <p className="mt-1 text-xs text-slate-400">
         Nu înlocuiește runtime acum. Este doar replacement map readonly — fără activare, fără Work Intake, fără
         Pricing.
       </p>
       <ul className="mt-3 space-y-1.5 text-xs text-slate-300">
-        <li data-testid="product-system-component-first-replaces-face">FACE înlocuiește modulul legacy TPL-VOLUMETRIC-FACE_v1</li>
-        <li data-testid="product-system-component-first-replaces-back">BACK înlocuiește modulul legacy TPL-VOLUMETRIC-BACK_v1</li>
-        <li data-testid="product-system-component-first-replaces-return-cant">
+        <li data-testid="product-system-candidate-module-replaces-face">FACE înlocuiește modulul legacy TPL-VOLUMETRIC-FACE_v1</li>
+        <li data-testid="product-system-candidate-module-replaces-back">BACK înlocuiește modulul legacy TPL-VOLUMETRIC-BACK_v1</li>
+        <li data-testid="product-system-candidate-module-replaces-return-cant">
           RETURN-CANT înlocuiește modulul legacy TPL-VOLUM-ALUMINIU_v1
         </li>
-        <li data-testid="product-system-component-first-replaces-led">LED înlocuiește modulul legacy TPL-VOLUMETRIC-LED_v1</li>
-        <li data-testid="product-system-component-first-replaces-finish">
+        <li data-testid="product-system-candidate-module-replaces-led">LED înlocuiește modulul legacy TPL-VOLUMETRIC-LED_v1</li>
+        <li data-testid="product-system-candidate-module-replaces-finish">
           FINISH înlocuiește modulul legacy TPL-VOLUMETRIC-FINISH_v1
         </li>
-        <li data-testid="product-system-component-first-replaces-mounting">
+        <li data-testid="product-system-candidate-module-replaces-mounting">
           MOUNTING înlocuiește modulul legacy TPL-METAL-PREMOUNT-STRUCTURE_v1
         </li>
       </ul>

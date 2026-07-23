@@ -70,8 +70,8 @@ import OperationalRealityReview from "./pages/OperationalRealityReview";
 import OperationalReports from "./pages/OperationalReports";
 import CommercialSpineDemo from "./pages/CommercialSpineDemo";
 import VolumetricLetterPreviewDemo from "./pages/VolumetricLetterPreviewDemo";
-import WorkIntakeProductDefinitionDemo from "./pages/WorkIntakeProductDefinitionDemo";
 // Deprecated intake entrypoints removed; Intake V6 is the active dedicated workspace.
+// WorkIntakeProductDefinitionDemo was referenced but never shipped on disk — removed to restore boot.
 import IntakeV6OperatorWorkspaceApp from "./pages/IntakeV6OperatorWorkspaceApp";
 import AuthCallback from "./pages/AuthCallback";
 import AuthError from "./pages/AuthError";
@@ -592,10 +592,6 @@ export function AuthenticatedAppRoutes() {
         <Route path="/employee-app/*" element={<EmployeeMobileStandaloneRoot />} />
         <Route path="/employee-app-v2/*" element={<EmployeeMobileV2StandaloneRoot />} />
         <Route path="/intake-v6-app/*" element={<IntakeV6StandaloneRoot />} />
-        <Route
-          path="/demo/work-intake-product-definition"
-          element={<WorkIntakeProductDefinitionDemo />}
-        />
         <Route path="*" element={<AppShell />} />
       </Route>
     </Routes>

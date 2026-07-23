@@ -531,7 +531,7 @@ export default function ModuleChain() {
           <div className="border-t border-[#1E293B] pt-4 space-y-3" data-testid="canonical-concept-map">
             <SectionHeader title="Vocabular Product System (distinct)" icon={<BookOpen className="w-4 h-4 text-violet-400" />} />
             <p className="text-[11px] text-slate-500">
-              Familie ≠ Șablon produs ≠ Componentă ≠ Mini-modul ≠ Capability. Scope stabilizare doar Litere + Logo + ACM.
+              Familie ≠ Product Template ≠ Module produs ≠ Mini-modul operațional ≠ Capability. Scope stabilizare doar Litere + Logo + ACM.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {CANONICAL_CONCEPTS.map((concept) => (

@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const OUT = path.resolve(__dirname, "../../docs/qa/component-first-return-cant-owner-input-apply-v1/screenshots");
+const OUT = path.resolve(__dirname, "../../docs/qa/candidate-module-return-cant-owner-input-apply-v1/screenshots");
 const BASE = process.env.PW_BASE_URL ?? "http://127.0.0.1:3000";
 
 async function expand(page, bucketId, toggleId) {
@@ -24,9 +24,12 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 await page.goto(`${BASE}/product-system`, { waitUntil: "domcontentloaded", timeout: 120_000 });
 await page.getByTestId("product-system-unified-catalog").waitFor({ timeout: 60_000 });
 
-await expand(page, "product-system-catalog-bucket-component-first-sets", "product-system-catalog-bucket-toggle-component-first-sets");
-await page.getByTestId("product-system-unified-row-candidate-set").click();
-await page.getByTestId("product-system-component-first-tab-guards-audit").click();
+await expand(page, "product-system-catalog-bucket-candidate-module-sets", "product-system-catalog-bucket-toggle-candidate-module-sets");
+await page.getByTestId("product-system-canonical-filter-deprecated").click();
+await page.locator(`[data-testid="product-system-canonical-catalog-card"][data-template-code="TPL-LETTERS-COMPOSER_v1"]`).click();
+await page.getByTestId("product-system-template-detail-tab-dossier").click();
+await page.getByTestId("product-system-template-detail-open-editor").click();
+await page.getByTestId("product-system-candidate-module-tab-guards-audit").click();
 await page.getByTestId("product-system-truth-owner-workshop").waitFor({ timeout: 15_000 });
 
 await shot(page, "01_component_first_workshop_panel");

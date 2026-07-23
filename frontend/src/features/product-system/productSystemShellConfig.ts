@@ -33,7 +33,7 @@ export const PRODUCT_SYSTEM_SHELL_NAV: ProductSystemShellNavItem[] = [
   { id: "products", label: "Products", path: PRODUCT_SYSTEM_PRODUCTS_PATH },
   {
     id: "components",
-    label: "Components",
+    label: "Module produs",
     path: "/product-system/components",
     plannedSection: true,
   },

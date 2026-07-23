@@ -10,8 +10,8 @@ const BASE = process.env.PW_BASE_URL ?? "http://127.0.0.1:3000";
 const BUCKET = {
   legacy: "product-system-catalog-bucket-legacy-shared-modules",
   legacyToggle: "product-system-catalog-bucket-toggle-legacy-shared-modules",
-  componentFirst: "product-system-catalog-bucket-component-first-sets",
-  componentFirstToggle: "product-system-catalog-bucket-toggle-component-first-sets",
+  candidateModuleProdus: "product-system-catalog-bucket-candidate-module-sets",
+  candidateModuleProdusToggle: "product-system-catalog-bucket-toggle-candidate-module-sets",
 };
 
 async function expand(page, bucketId, toggleId) {
@@ -58,9 +58,12 @@ await shot(page, "07_mapping_led");
 await page.getByTestId("product-system-legacy-replacement-global-verdict").scrollIntoViewIfNeeded();
 await shot(page, "08_not_ready_for_delete_summary");
 
-await expand(page, BUCKET.componentFirst, BUCKET.componentFirstToggle);
-await page.getByTestId("product-system-unified-row-candidate-set").click();
-await page.getByTestId("product-system-component-first-replacement-context").waitFor({ timeout: 15_000 });
+await expand(page, BUCKET.candidateModuleProdus, BUCKET.candidateModuleProdusToggle);
+await page.getByTestId("product-system-canonical-filter-deprecated").click();
+await page.locator(`[data-testid="product-system-canonical-catalog-card"][data-template-code="TPL-LETTERS-COMPOSER_v1"]`).click();
+await page.getByTestId("product-system-template-detail-tab-dossier").click();
+await page.getByTestId("product-system-template-detail-open-editor").click();
+await page.getByTestId("product-system-candidate-module-replacement-context").waitFor({ timeout: 15_000 });
 await shot(page, "09_component_first_replacement_context");
 
 await page.evaluate(() => window.scrollTo(0, 0));

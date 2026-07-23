@@ -84,11 +84,21 @@ import {
 } from "@/features/product-system/productAggregateDisplay";
 import { buildReturnCantReadonlyContainerModel } from "@/features/product-system/returnCantReadonlyContainerModel";
 import {
-  assessComponentFirstLiveCompleteness,
-  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-} from "@/features/product-system/componentFirstReadonlyCompleteness";
-import { buildComponentFirstReadonlySetModel } from "@/features/product-system/componentFirstReadonlySetModel";
-import { ComponentFirstReadonlyCandidatePanel } from "@/features/product-system/ComponentFirstReadonlyCandidatePanel";
+  MODULE_PRODUS_BOUNDARY_LABEL,
+  MUST_OWN_ON_MODULE_LABEL,
+  PRODUCT_TEMPLATE_COMPOSES_HELP,
+  PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP,
+  RETURN_CANT_MOVE_TRUTH_HELP,
+  SHARED_FOUNDATION_HELP,
+  displayModuleSourceTypeLabel,
+  equalModulesHintRo,
+} from "@/features/product-system/productTemplateModulesVocabulary";
+import {
+  assessCandidateModuleProdusLiveCompleteness,
+  CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
+} from "@/features/product-system/candidateModuleProdusReadonlyCompleteness";
+import { buildCandidateModuleProdusReadonlySetModel } from "@/features/product-system/candidateModuleProdusReadonlySetModel";
+import { CandidateModuleProdusPanel } from "@/features/product-system/CandidateModuleProdusPanel";
 import { ProductSystemCanonicalCatalog } from "@/features/product-system/ProductSystemCanonicalCatalog";
 import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
 import {
@@ -1600,6 +1610,7 @@ type ProductCompositionReadModelEntry = {
   requiredInLetters: boolean;
   currentWiring: "wired" | "partial" | "missing";
   currentSourceType:
+    | "module produs"
     | "component template"
     | "parent aggregate"
     | "dossier"
@@ -1850,11 +1861,11 @@ const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
     key: "material_profile",
     label: "material cant / profil aluminiu",
     canonicalTarget: "components.return_cant.material_profile",
-    currentSource: "Component Template catalog gate",
+    currentSource: "Module produs catalog gate",
     currentSourcePath: "TPL-VOLUM-ALUMINIU_v1.required_materials_json[*] gate return_depth_mm",
     sourceStatus: "component-owned source missing",
     blocker: "RETURN_CANT_MATERIAL_MISSING",
-    note: "Profiles 30/60/80/100 mm exist in the child template catalog, but no confirmed component-owned Product Truth field exists yet.",
+    note: "Profiles 30/60/80/100 mm exist in the Module produs catalog, but no confirmed module-owned Product Truth field exists yet.",
   },
   {
     key: "return_depth_mm",
@@ -1890,21 +1901,21 @@ const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
     key: "operation_modelare_cant",
     label: "operation: modelare_cant",
     canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_MACHINE_FORMING]",
-    currentSource: "Component Template operation",
-    currentSourcePath: "child template operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    currentSource: "Module produs operation",
+    currentSourcePath: "Module produs operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
     sourceStatus: "component-owned template only",
     blocker: "RETURN_CANT_DEPTH_MISSING",
-    note: "The operation exists in the child template and registry, but separate calculation is still blocked until component-owned inputs are explicit.",
+    note: "The operation exists on the Module produs and registry, but separate calculation is still blocked until module-owned inputs are explicit.",
   },
   {
     key: "operation_bonding",
     label: "operation: bonding / lipire cant",
     canonicalTarget: "TPL-VOLUM-ALUMINIU_v1.operations_json[RETURN_PROFILE_FACE_BONDING]",
-    currentSource: "Component Template operation",
-    currentSourcePath: "child template operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
+    currentSource: "Module produs operation",
+    currentSourcePath: "Module produs operation + aggregate outputs operations.linked_module[TPL-VOLUM-ALUMINIU_v1]",
     sourceStatus: "component-owned template only",
     blocker: "RETURN_CANT_MATERIAL_MISSING",
-    note: "Bonding is already modeled as a component operation, but it still depends on missing material/profile truth and perimeter dependency confirmation.",
+    note: "Bonding is already modeled as a Module produs operation, but it still depends on missing material/profile truth and perimeter dependency confirmation.",
   },
   {
     key: "finish_source",
@@ -1919,12 +1930,12 @@ const RETURN_CANT_SEPARATE_SOURCE_PATHS: ReturnCantSourcePathAudit[] = [
   {
     key: "resources_tools",
     label: "resources / tools",
-    canonicalTarget: "operation_resource_requirements + child template workcenters",
+    canonicalTarget: "operation_resource_requirements + Module produs workcenters",
     currentSource: "Workcenter hints only",
     currentSourcePath: "WC_FORMING, WC_ASSEMBLY, WC_PAINT; operation_resource_requirements not surfaced in this panel",
     sourceStatus: "operation registry missing",
     blocker: "RETURN_CANT_OPERATION_RESOURCE_MAPPING_MISSING",
-    note: "Workcenters are present on the child template operations, but explicit machine/resource authorization is still an operational registry concern, not a component-owned truth field.",
+    note: "Workcenters are present on Module produs operations, but explicit machine/resource authorization is still an operational registry concern, not a module-owned truth field.",
   },
   {
     key: "separate_calculation_readiness",
@@ -1953,7 +1964,7 @@ const RETURN_CANT_TRUTH_CONTAINER_FIELDS: ReturnCantTruthContainerFieldAudit[] =
     sourceType: "component template / registry",
     currentSource: "TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].component_template_code",
-    note: "The structural boundary is already real at the child template level.",
+    note: "The structural boundary is already real at the Module produs (child Product Template) level.",
   },
   {
     key: "component_id",
@@ -2009,7 +2020,7 @@ const RETURN_CANT_TRUTH_CONTAINER_FIELDS: ReturnCantTruthContainerFieldAudit[] =
     sourceType: "component template / registry",
     currentSource: "profile width/material gates in TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].material_profile",
-    note: "The material family exists in the component template, but the selected truth field is still missing.",
+    note: "The material family exists on the Module produs (child Product Template), but the selected truth field is still missing.",
   },
   {
     key: "depth_mm",
@@ -2122,11 +2133,11 @@ const STRUCTURAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
     componentId: "comp_lateral_litere",
     requiredInLetters: true,
     currentWiring: "partial",
-    currentSourceType: "component template",
+    currentSourceType: "module produs",
     productTruthTarget: "components.return_cant.*",
     formSystemFields: ["return_depth_mm", "return_finish_type", "volum_aluminum_module_template_code", "letter_perimeter_m"],
     geometryDependency: "depends on face confirmed perimeter",
-    materialSource: "child template profile gate only",
+    materialSource: "Module produs profile gate only",
     operationSource: "modelare_cant / RETURN_PROFILE_MACHINE_FORMING / RETURN_PROFILE_FACE_BONDING",
     calculationReadiness: "blocked",
     blockers: [
@@ -2183,11 +2194,11 @@ const FUNCTIONAL_COMPOSITION_READ_MODEL: ProductCompositionReadModelEntry[] = [
     componentId: "comp_premount_bars",
     requiredInLetters: false,
     currentWiring: "partial",
-    currentSourceType: "component template",
+    currentSourceType: "module produs",
     productTruthTarget: "components.mounting.* / components.support.*",
     formSystemFields: ["mounting_system", "metal_support_required", "premount_bar_length_ml"],
     geometryDependency: "depends on width and installation strategy",
-    materialSource: "child template + derived support bridge",
+    materialSource: "Module produs + derived support bridge",
     operationSource: "structura_suport",
     calculationReadiness: "blocked",
     blockers: ["TRIGGER_FIELD_MISMATCH", "SUPPORT_REQUIRED_UNKNOWN"],
@@ -2295,7 +2306,7 @@ function ReturnCantTruthContainerPanel() {
                   <p className="mt-0.5 text-[9px] text-slate-500">{field.note}</p>
                 </div>
                 <div>
-                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantTruthSourceClass(field.sourceType)}`}>{field.sourceType}</span>
+                  <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${returnCantTruthSourceClass(field.sourceType)}`}>{displayModuleSourceTypeLabel(field.sourceType)}</span>
                 </div>
                 <p className="font-mono text-slate-300">{field.currentSource}</p>
                 <p className="font-mono text-cyan-200/85">{field.targetPath}</p>
@@ -2345,7 +2356,7 @@ function CompositionReadModelTable({
         <div>
           <h4 className="text-[11px] font-bold uppercase tracking-wide text-violet-100">{title}</h4>
           <p className="mt-0.5 text-[10px] text-violet-300/80">
-            Product Template composes; Component Template owns truth. ProductAggregate stays a derived read model.
+            {PRODUCT_TEMPLATE_COMPOSES_HELP} {equalModulesHintRo()}
           </p>
         </div>
         <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-[9px] font-bold text-slate-300">Overall status: PARTIAL</span>
@@ -2357,8 +2368,8 @@ function CompositionReadModelTable({
 
       <div className="mt-3 overflow-hidden rounded-lg border border-slate-800/90 bg-[#0D1321]/90">
         <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2 border-b border-slate-800 px-3 py-2 text-[9px] font-bold uppercase tracking-wide text-slate-500">
-          <span>Component</span>
-          <span>Template / id</span>
+          <span>Module</span>
+          <span>Module / id</span>
           <span>Current source</span>
           <span>Truth target / dependencies</span>
           <span>Status</span>
@@ -2370,7 +2381,7 @@ function CompositionReadModelTable({
               <div className="grid grid-cols-[minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,0.9fr)_minmax(0,1.1fr)_minmax(0,0.8fr)_minmax(0,1fr)] gap-2">
                 <div>
                   <p className="font-bold text-slate-100">{entry.label}</p>
-                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.componentType === "structural" ? "structural component" : "functional component"}</p>
+                  <p className="mt-0.5 text-[9px] text-slate-500">{entry.componentType === "structural" ? "Module produs (structural)" : "Module produs (functional)"}</p>
                 </div>
                 <div>
                   <p className="font-mono text-cyan-200/85">{entry.componentTemplateCode}</p>
@@ -2378,7 +2389,7 @@ function CompositionReadModelTable({
                 </div>
                 <div>
                   <span className={`inline-flex rounded border px-1.5 py-0.5 text-[9px] font-bold ${compositionWiringClass(entry.currentWiring)}`}>{entry.currentWiring}</span>
-                  <p className="mt-1 text-[9px] text-slate-400">source: {entry.currentSourceType}</p>
+                  <p className="mt-1 text-[9px] text-slate-400">source: {displayModuleSourceTypeLabel(entry.currentSourceType)}</p>
                 </div>
                 <div>
                   <p className="font-mono text-cyan-200/85">{entry.productTruthTarget}</p>
@@ -2419,7 +2430,7 @@ function ReturnCantSeparateCalculationSourcePaths({
         <div>
           <h4 className="text-[11px] font-bold uppercase tracking-wide text-cyan-100">Separate calculation source paths</h4>
           <p className="mt-0.5 text-[10px] text-cyan-300/80">
-            Read-only alignment for the return/cant component. Shows what already exists, what remains parent aggregate only, and what still has to move into Component Template truth.
+            {RETURN_CANT_MOVE_TRUTH_HELP}
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[9px] font-bold">
@@ -2438,7 +2449,7 @@ function ReturnCantSeparateCalculationSourcePaths({
           <p className="mt-1 text-[10px] text-slate-200">`quote_geometry.letter_perimeter_m`, linked aggregate operation traces, and global review setup hydration.</p>
         </div>
         <div className="rounded-lg border border-slate-800/90 bg-[#0D1321]/90 px-3 py-2">
-          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">Must move into Component Template</p>
+          <p className="text-[9px] font-bold uppercase tracking-wide text-slate-400">{MUST_OWN_ON_MODULE_LABEL}</p>
           <p className="mt-1 text-[10px] text-slate-200">`material_profile`, `perimeter_source`, `layer_group_ids`, and `confirmation_state`.</p>
         </div>
       </div>
@@ -2517,9 +2528,9 @@ function ComponentCalculationOwnershipPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-[13px] font-bold text-amber-100">Component calculation ownership</h3>
+          <h3 className="text-[13px] font-bold text-amber-100">Module calculation ownership</h3>
           <p className="mt-0.5 text-[11px] text-amber-200/75">
-            Product Template remains composer only. Component Templates own technical truth; this panel shows current ownership, gaps, and blocked calculation boundaries without inventing readiness.
+            {PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP}
           </p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
@@ -2578,7 +2589,7 @@ function ComponentCalculationOwnershipPanel({
                 <div>
                   <p className="text-[12px] font-bold text-slate-100">{audit.label}</p>
                   <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{moduleCode}</p>
-                  <p className="mt-0.5 text-[10px] text-slate-500">Owner boundary: Component Template</p>
+                  <p className="mt-0.5 text-[10px] text-slate-500">{MODULE_PRODUS_BOUNDARY_LABEL}</p>
                 </div>
                 <span
                   className={`rounded border px-2 py-0.5 text-[9px] font-bold ${ownershipStatusClass(audit.separateCalculationStatus)}`}
@@ -2678,7 +2689,7 @@ function SharedVolumetricFoundationPanel({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
           <h3 className="text-[13px] font-bold text-cyan-100">Shared component foundation</h3>
-          <p className="mt-0.5 text-[11px] text-cyan-300/70">Contracte comune ca entitati principale; backing module templates sunt binding-uri de profil. No pricing, no runtime activation, no Work Intake exposure change.</p>
+          <p className="mt-0.5 text-[11px] text-cyan-300/70">{SHARED_FOUNDATION_HELP}</p>
         </div>
         <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
           <span className="rounded border border-cyan-700/40 bg-cyan-950/40 px-2 py-0.5 text-cyan-200">Read-only</span>
@@ -2938,8 +2949,8 @@ function TemplateEditor({
     (contract) => contract.profile_key === "logo"
   ) ?? false;
 
-  const componentFirstReadonlyPanel = (
-    <ComponentFirstReadonlyCandidatePanel
+  const candidateModuleProdusReadonlyPanel = (
+    <CandidateModuleProdusPanel
       templates={allTemplates}
       availabilityItems={availabilityItems}
       selectedTemplateCode={draft.template_code}
@@ -2949,7 +2960,7 @@ function TemplateEditor({
 
   const generalTabPanel = (
     <div className="space-y-3">
-      {componentFirstReadonlyPanel}
+      {candidateModuleProdusReadonlyPanel}
       <TemplateGeneralTabPanel
         draft={draft}
         readOnly={readOnly}
@@ -2980,7 +2991,7 @@ function TemplateEditor({
 
   const structurePanel = (
     <div className="space-y-4">
-      {componentFirstReadonlyPanel}
+      {candidateModuleProdusReadonlyPanel}
 
       <ComponentCalculationOwnershipPanel availability={availability} />
 
@@ -3622,9 +3633,9 @@ export default function ProductSystem() {
     return m;
   }, [materials]);
 
-  const hasComponentFirstCandidate = useMemo(
+  const hasCandidateModuleProdusCandidate = useMemo(
     () =>
-      buildComponentFirstReadonlySetModel(templates, availabilityItems, COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE) !=
+      buildCandidateModuleProdusReadonlySetModel(templates, availabilityItems, CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE) !=
       null,
     [templates, availabilityItems],
   );
@@ -3634,8 +3645,8 @@ export default function ProductSystem() {
     [availabilityItems],
   );
 
-  const componentFirstCompleteness = useMemo(
-    () => assessComponentFirstLiveCompleteness(templates),
+  const candidateModuleProdusCompleteness = useMemo(
+    () => assessCandidateModuleProdusLiveCompleteness(templates),
     [templates],
   );
 
@@ -3843,7 +3854,7 @@ export default function ProductSystem() {
             data-testid="product-system-catalog-overview"
             className="text-xs leading-relaxed text-slate-500"
           >
-            Catalog de design · inspectare readonly · setul component-first Letters rămâne inactiv
+            Catalog de design · inspectare readonly · candidate Module produs Letters rămâne inactiv
           </p>
           {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
             <p className="rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">

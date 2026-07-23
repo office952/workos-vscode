@@ -40,7 +40,7 @@ async function main() {
   await shotViewport(page, "03_current_products_bucket");
 
   await page.getByTestId("product-system-catalog-bucket-candidate-products").scrollIntoViewIfNeeded();
-  await page.getByTestId("product-system-catalog-bucket-component-first-sets").scrollIntoViewIfNeeded();
+  await page.getByTestId("product-system-catalog-bucket-candidate-module-sets").scrollIntoViewIfNeeded();
   await shotViewport(page, "04_candidate_and_component_first_buckets");
 
   await page.getByTestId("product-system-unified-row-TPL-VOLUMETRIC-LETTERS_v2").click();

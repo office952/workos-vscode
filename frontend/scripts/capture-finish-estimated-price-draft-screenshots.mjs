@@ -32,12 +32,15 @@ async function main() {
 
   await expandBucket(
     page,
-    "product-system-catalog-bucket-component-first-sets",
-    "product-system-catalog-bucket-toggle-component-first-sets",
+    "product-system-catalog-bucket-candidate-module-sets",
+    "product-system-catalog-bucket-toggle-candidate-module-sets",
   );
-  await page.getByTestId("product-system-unified-row-candidate-set").click();
-  await page.waitForSelector('[data-testid="product-system-component-first-letters-set"]', { timeout: 15000 });
-  await page.getByTestId("product-system-component-first-tab-guards-audit").click();
+  await page.getByTestId("product-system-canonical-filter-deprecated").click();
+await page.locator(`[data-testid="product-system-canonical-catalog-card"][data-template-code="TPL-LETTERS-COMPOSER_v1"]`).click();
+await page.getByTestId("product-system-template-detail-tab-dossier").click();
+await page.getByTestId("product-system-template-detail-open-editor").click();
+  await page.waitForSelector('[data-testid="product-system-candidate-module-letters-set"]', { timeout: 15000 });
+  await page.getByTestId("product-system-candidate-module-tab-guards-audit").click();
   await page.waitForSelector('[data-testid="product-system-finish-estimate-draft-panel"]', { timeout: 30000 });
 
   const panel = page.getByTestId("product-system-finish-estimate-draft-panel");

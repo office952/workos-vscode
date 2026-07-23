@@ -511,7 +511,7 @@ export const MOUNTING_OWNERSHIP_SETTINGS: readonly OwnershipSettingRecord[] = [
     domain: "MOUNTING",
     responsibility: "STRUCTURE_SUPPORT",
     canonical_owner: "WORKSPACE",
-    ownerDetailRo: "Compoziție tehnică → child templates",
+    ownerDetailRo: "Compoziție tehnică → Module produs (child Product Template)",
     value_layer: "workspace_value",
     runtime_status: "CURRENT",
     compatibility_status: "CURRENT",

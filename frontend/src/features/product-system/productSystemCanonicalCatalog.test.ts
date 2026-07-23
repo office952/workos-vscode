@@ -125,7 +125,7 @@ const premount = availability({
   },
 });
 
-const componentFirstComposer = availability({
+const candidateModuleProdusComposer = availability({
   template_id: 99,
   template_code: "TPL-PRODUCT-COMPOSER-LETTERS_v1",
   quote_offerable: false,
@@ -162,7 +162,7 @@ describe("productSystemCanonicalCatalogModel", () => {
   it("builds one canonical list without legacy bucket membership", () => {
     const products = buildCanonicalCatalogProducts({
       templates: [],
-      availabilityItems: [letters, acm, logo, premount, componentFirstComposer],
+      availabilityItems: [letters, acm, logo, premount, candidateModuleProdusComposer],
     });
     expect(products.some((product) => product.templateCode === LETTERS_TEMPLATE_CODE)).toBe(true);
     expect(products.some((product) => product.templateCode === TPL_ACM_BOXED_MOUNTING_SUPPORT)).toBe(true);
@@ -181,7 +181,7 @@ describe("productSystemCanonicalCatalogModel", () => {
     expect(byCode[LETTERS_TEMPLATE_CODE]?.commercialChipRo).not.toMatch(/^(ACTIVE|CONFIRMAT|PARTIAL)$/);
   });
 
-  it("hides logo and component-first internals from operator visibility", () => {
+  it("hides logo and candidate-module internals from operator visibility", () => {
     expect(isOperatorVisibleCatalogProduct(letters)).toBe(true);
     expect(isOperatorVisibleCatalogProduct(acm)).toBe(true);
     expect(isOperatorVisibleCatalogProduct(logo)).toBe(false);

@@ -12,7 +12,7 @@ import {
   RETURN_CANT_RAL_PRICING_REGISTRY_KEYS,
   type ReturnCantCatalogPriceInput,
   type ReturnCantRalMaterialPricingRegistryReference,
-} from "./componentFirstReturnCantCatalogPriceInputs";
+} from "./candidateModuleProdusReturnCantCatalogPriceInputs";
 
 function StatusChip({
   label,

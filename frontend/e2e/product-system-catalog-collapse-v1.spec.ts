@@ -14,7 +14,7 @@ const LOGO = "TPL-VOLUMETRIC-LOGO_v1";
 const BUCKET_TEST_IDS = [
   "product-system-catalog-bucket-current-products",
   "product-system-catalog-bucket-candidate-products",
-  "product-system-catalog-bucket-component-first-sets",
+  "product-system-catalog-bucket-candidate-module-sets",
   "product-system-catalog-bucket-legacy-shared-modules",
   "product-system-catalog-bucket-archived",
 ];
@@ -37,7 +37,7 @@ test.describe("Product System catalog collapse v1", () => {
       role: "operator",
       bucket_headings_absent: [],
       visible_templates: [] as string[],
-      hidden_templates: [LOGO, "component-first-set"],
+      hidden_templates: [LOGO, "candidate-module-set"],
       filters_exercised: [] as string[],
       console_errors: [] as string[],
       network_errors: [] as string[],

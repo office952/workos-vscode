@@ -42,10 +42,10 @@ async function main() {
   await shotPage(page, "02_products_tab_existing_roots");
 
   await clickPrimaryTab(page, "candidate-sets");
-  await page.waitForSelector('[data-testid="product-system-component-first-candidate-set-card"]', { timeout: 15000 });
+  await page.waitForSelector('[data-testid="product-system-candidate-module-candidate-set-card"]', { timeout: 15000 });
   await shotViewport(page, "03_candidate_sets_collapsed_card");
-  await page.getByTestId("product-system-component-first-view-candidate").click();
-  await page.waitForSelector('[data-testid="product-system-component-first-letters-set"]', { timeout: 15000 });
+  await page.getByTestId("product-system-candidate-module-view-candidate").click();
+  await page.waitForSelector('[data-testid="product-system-candidate-module-letters-set"]', { timeout: 15000 });
   await shotPage(page, "04_candidate_sets_detail_open");
 
   await clickPrimaryTab(page, "candidate-sets");

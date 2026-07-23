@@ -225,9 +225,9 @@ function SharedComponentUsagePopover({
           className="absolute right-0 top-8 z-40 w-80 rounded-lg border border-slate-700 bg-slate-950 p-3 text-[11px] shadow-xl shadow-black/40"
           onClick={(event) => event.stopPropagation()}
         >
-          <p className="font-mono text-[10px] font-bold uppercase text-slate-500">Componenta</p>
+          <p className="font-mono text-[10px] font-bold uppercase text-slate-500">Module produs</p>
           <p className="mt-0.5 font-mono text-[12px] font-bold text-cyan-100">{componentCode}</p>
-          <p className="mt-1 font-mono text-[10px] text-cyan-200">Shared module: {sharedModuleCode}</p>
+          <p className="mt-1 font-mono text-[10px] text-cyan-200">Module produs: {sharedModuleCode}</p>
           <p className="mt-3 text-[10px] font-bold uppercase text-slate-500">Folosita de</p>
           <div className="mt-1.5 space-y-1.5">
             {contract.bindings.map((binding) => (
@@ -634,7 +634,7 @@ function TemplateLibraryRow({
                 <>
                   <div className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.4fr)_auto] gap-2 border-b border-slate-800 px-2.5 py-1.5 text-[9px] font-bold uppercase text-slate-500">
                     <span>Rol</span>
-                    <span>Template componenta</span>
+                    <span>Module produs</span>
                     <span>Status</span>
                   </div>
                   <div className="divide-y divide-slate-800/80">
@@ -685,15 +685,15 @@ const CATALOG_GROUPS = [
   },
   {
     id: "internal_modules",
-    title: "Module interne active",
-    chip: "Module interne",
-    description: "Componente folosite de produse parinte. Nu se aleg direct in Work Intake.",
+    title: "Module produs (interne) active",
+    chip: "Module produs",
+    description: "Module produs folosite de Product Template părinte. Nu se aleg direct în Work Intake.",
   },
   {
     id: "shared_components",
-    title: "Componente comune",
-    chip: "Componente comune",
-    description: "Module confirmate sau reutilizabile intre mai multe produse.",
+    title: "Module produs partajate",
+    chip: "Module partajate",
+    description: "Module produs confirmate sau reutilizabile între mai multe Product Template-uri.",
   },
   {
     id: "archived_experimental",
@@ -714,8 +714,8 @@ const CATALOG_VIEWS: Array<{
 }> = [
   { id: "overview", label: "Overview", description: "Orientare rapida" },
   { id: "products", label: "Produse", description: "Produse ofertabile si candidate" },
-  { id: "components", label: "Componente", description: "Module interne si shared" },
-  { id: "composition", label: "Compozitii", description: "Produs -> rol -> componenta" },
+  { id: "components", label: "Module produs", description: "Module produs interne și shared — egale sub Product Template" },
+  { id: "composition", label: "Compozitii", description: "Product Template -> Module produs egale" },
   { id: "archived", label: "Arhivate", description: "Scoase din flow activ" },
 ];
 
@@ -1130,7 +1130,7 @@ export function TemplateLibraryView({
 
               {effectiveCatalogView === "components" ? (
                 <div className="flex flex-wrap gap-2">
-                  {[["contracts", "Componente comune"], ["technical", "Module tehnice"], ["all", "Toate"]].map(([id, label]) => (
+                  {[["contracts", "Module partajate"], ["technical", "Module tehnice"], ["all", "Toate"]].map(([id, label]) => (
                     <button key={id} type="button" onClick={() => setComponentFilter(id as ComponentFilter)} className={`rounded-md border px-2.5 py-1 text-[10px] font-bold ${componentFilter === id ? "border-purple-500/50 bg-purple-500/10 text-purple-200" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{label}</button>
                   ))}
                   <select aria-label="Filtru produs parinte" value={parentFilter} onChange={(event) => setParentFilter(event.target.value)} className="rounded-md border border-slate-700 bg-slate-900 px-2 py-1 text-[10px] font-bold text-slate-300 outline-none">
@@ -1143,14 +1143,14 @@ export function TemplateLibraryView({
 
             {effectiveCatalogView === "products" ? (
               <div className="space-y-2">
-                {detailed ? <p className="text-[11px] text-slate-500">Produse ofertabile si produse in pregatire. Modulele interne nu sunt afisate aici.</p> : null}
+                {detailed ? <p className="text-[11px] text-slate-500">Produse ofertabile și produse în pregătire. Modulele produs nu sunt afișate aici (vezi tab Module produs).</p> : null}
                 {searchedProductRows.length === 0 ? <div className="rounded-lg border border-dashed border-slate-700 bg-slate-900/40 px-3 py-3 text-[11px] text-slate-500">Niciun produs pentru filtrele curente.</div> : <div className="grid grid-cols-1 gap-3 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4" data-testid="product-system-products-list">{searchedProductRows.map(renderTemplateRow)}</div>}
               </div>
             ) : null}
 
             {effectiveCatalogView === "components" ? (
               <div className="space-y-2">
-                {detailed ? <p className="text-[11px] text-slate-500">Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.</p> : null}
+                {detailed ? <p className="text-[11px] text-slate-500">Modulele produs partajate sunt unitățile principale; Product Template-urile care le folosesc sunt sumarizate în iconul shared.</p> : null}
                 {(componentFilter === "contracts" || componentFilter === "all") && searchedSharedContractGroups.length > 0 ? (
                   <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3" data-testid="product-system-shared-contracts-list">
                     {searchedSharedContractGroups.map((contract) => {
@@ -1169,7 +1169,7 @@ export function TemplateLibraryView({
                             </div>
                             <SharedComponentUsagePopover contract={contract} sharedModuleCode={sharedModuleCode} />
                           </div>
-                          <p className="mt-2 truncate font-mono text-[10px] text-cyan-200">Shared primary module: {sharedModuleCode}</p>
+                          <p className="mt-2 truncate font-mono text-[10px] text-cyan-200">Module produs principal: {sharedModuleCode}</p>
                           <div className="mt-2 flex flex-wrap gap-1.5 text-[9px] font-bold">
                             <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-2 py-0.5 text-cyan-200">shared</span>
                             <span className="rounded border border-slate-700 bg-slate-900 px-2 py-0.5 text-slate-300">used by {contract.bindings.length} products</span>

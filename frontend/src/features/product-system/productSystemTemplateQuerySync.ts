@@ -1,6 +1,6 @@
 import type { ProductTemplateAvailabilityItem } from "@/lib/api";
 import { normalizeTemplateCode } from "@/lib/activeTemplateScope";
-import type { UnifiedCatalogEntry } from "./productSystemUnifiedCatalogTypes";
+import type { UnifiedCatalogEntry } from "./productSystemCatalogEntries";
 
 export const PRODUCT_SYSTEM_TEMPLATE_QUERY_PARAM = "template";
 

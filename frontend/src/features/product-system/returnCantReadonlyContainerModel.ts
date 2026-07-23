@@ -64,7 +64,7 @@ const SOURCE_TYPE_ROWS: ReturnCantReadonlyContainerFieldAudit[] = [
     sourceType: "component template / registry",
     currentSource: "TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].component_template_code",
-    note: "The structural boundary is already real at the child template level.",
+    note: "The structural boundary is already real at the Module produs (child Product Template) level.",
   },
   {
     key: "component_id",
@@ -120,7 +120,7 @@ const SOURCE_TYPE_ROWS: ReturnCantReadonlyContainerFieldAudit[] = [
     sourceType: "component template / registry",
     currentSource: "profile width/material gates in TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].material_profile",
-    note: "The material family exists in the component template, but the selected truth field is still missing.",
+    note: "The material family exists on the Module produs (child Product Template), but the selected truth field is still missing.",
   },
   {
     key: "depth_mm",

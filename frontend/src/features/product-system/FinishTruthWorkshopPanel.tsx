@@ -17,7 +17,7 @@ import {
   FINISH_WORKSHOP_STATUS,
   type FinishWorkshopFieldStatus,
   type FinishWorkshopVariantEntry,
-} from "./componentFirstFinishTruthWorkshop";
+} from "./candidateModuleProdusFinishTruthWorkshop";
 import { FinishEstimatedPriceDraftPanel } from "./FinishEstimatedPriceDraftPanel";
 
 function StatusChip({

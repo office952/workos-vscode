@@ -16,7 +16,7 @@ import {
   resolveTemplateQuerySelection,
   TEMPLATE_UNAVAILABLE_MESSAGE,
 } from "@/features/product-system/productSystemTemplateQuerySync";
-import type { UnifiedCatalogEntry } from "@/features/product-system/productSystemUnifiedCatalogTypes";
+import type { UnifiedCatalogEntry } from "@/features/product-system/productSystemCatalogEntries";
 
 function templateEntry(
   templateCode: string,

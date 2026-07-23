@@ -16,7 +16,7 @@ import {
 import type {
   UnifiedCatalogBucketId,
   UnifiedCatalogDetailSection,
-} from "./productSystemUnifiedCatalogTypes";
+} from "./productSystemCatalogEntries";
 import { LegacyReplacementReadinessPanel } from "./LegacyReplacementReadinessPanel";
 import { FinishMountingOwnershipPanel } from "./FinishMountingOwnershipPanel";
 import { TemplateLifecycleReadinessPanel } from "./TemplateLifecycleReadinessPanel";
@@ -105,7 +105,7 @@ function bucketOverviewCopy(
       bullets: [
         ...modularity.summaryChipsRo,
         scope.shortDescription,
-        "Dossier / BOM / child template ≠ dovadă de modularitate — doar comportament independent.",
+        "Dossier / BOM / Module produs ≠ dovadă de modularitate — doar comportament independent.",
       ],
     };
   }
@@ -115,8 +115,8 @@ function bucketOverviewCopy(
       headline: "Rădăcină folosită azi",
       bullets: [
         "Produs ofertabil folosit în Work Intake.",
-        "Compoziția folosește module legacy partajate — nu TPL-COMP-* component-first.",
-        "Separat de setul candidate component-first Letters.",
+        "Compoziția folosește Module produs partajate (legacy links) — nu setul TPL-COMP-* candidat.",
+        "Separat de setul candidate Module produs Letters.",
       ],
     };
   }
@@ -127,7 +127,7 @@ function bucketOverviewCopy(
       bullets: [
         "Necesită decizie owner înainte de orice cale directă ofertabilă.",
         "Doar compoziție linked / analyzer — fără activare Logo din catalog.",
-        "Nu este un Product Composer component-first.",
+        "Nu este un Product Template ofertabil standalone.",
       ],
     };
   }
@@ -137,7 +137,7 @@ function bucketOverviewCopy(
       headline: "Modul intern legacy",
       bullets: [
         "Folosit de compoziția produsului părinte — nu e rădăcină ofertabilă standalone.",
-        "Nu este template component-first TPL-COMP-*.",
+        "Nu este set candidat Module produs TPL-COMP-*.",
         "Contract readonly de readiness în catalog — nu execuție runtime.",
       ],
     };
@@ -529,7 +529,7 @@ export function ProductSystemTemplateDetailPanel({
                 ))}
               </ul>
               {catalogBucket === "legacy-shared-modules" ? (
-                <p className="mt-2 pl-4">Contract modul legacy partajat — nu component-first.</p>
+                <p className="mt-2 pl-4">Contract modul legacy partajat — nu set candidat Module produs.</p>
               ) : null}
             </details>
           </section>

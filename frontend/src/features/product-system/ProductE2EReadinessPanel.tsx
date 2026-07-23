@@ -55,7 +55,7 @@ interface ReadinessResponse {
 /** Catalog → … → Execution Preview — System Link Check order. */
 const PIPELINE = [
   { key: "catalog", label: "Catalog" },
-  { key: "components", label: "Components" },
+  { key: "components", label: "Module produs" },
   { key: "intake", label: "Intake" },
   { key: "product_truth", label: "Product Truth" },
   { key: "product_definition", label: "ProductDefinition" },

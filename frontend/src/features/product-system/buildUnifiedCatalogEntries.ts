@@ -5,28 +5,28 @@ import {
 } from "@/lib/productTemplateScopePresentation";
 import { TPL_ACM_BOXED_MOUNTING_SUPPORT } from "@/lib/acmQuoteInput";
 import {
-  COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-  COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES,
-  assessComponentFirstContractDrift,
-  normalizeComponentFirstTemplateCode,
-} from "./componentFirstReadonlyCompleteness";
-import { buildComponentFirstReadonlySetModel } from "./componentFirstReadonlySetModel";
+  CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
+  CANDIDATE_MODULE_EXPECTED_TEMPLATE_CODES,
+  assessCandidateModuleProdusContractDrift,
+  normalizeCandidateModuleProdusTemplateCode,
+} from "./candidateModuleProdusReadonlyCompleteness";
+import { buildCandidateModuleProdusReadonlySetModel } from "./candidateModuleProdusReadonlySetModel";
 import {
   UNIFIED_CATALOG_BUCKETS,
   type UnifiedCatalogBucketGroup,
   type UnifiedCatalogBucketId,
   type UnifiedCatalogEntry,
-} from "./productSystemUnifiedCatalogTypes";
+} from "./productSystemCatalogEntries";
 
-const CANDIDATE_SET_ENTRY_ID = "candidate-set:component-first-letters";
+const CANDIDATE_SET_ENTRY_ID = "candidate-set:module-produs-letters";
 
 function normalizeCode(code: string): string {
   return code.trim().toUpperCase();
 }
 
-function isComponentFirstCatalogCode(code: string): boolean {
-  return COMPONENT_FIRST_EXPECTED_TEMPLATE_CODES.some(
-    (expected) => normalizeComponentFirstTemplateCode(expected) === normalizeComponentFirstTemplateCode(code),
+function isCandidateModuleProdusCatalogCode(code: string): boolean {
+  return CANDIDATE_MODULE_EXPECTED_TEMPLATE_CODES.some(
+    (expected) => normalizeCandidateModuleProdusTemplateCode(expected) === normalizeCandidateModuleProdusTemplateCode(code),
   );
 }
 
@@ -74,7 +74,7 @@ function assignCatalogBucket(
   availability: ProductTemplateAvailabilityItem,
 ): UnifiedCatalogBucketId {
   if (kind === "candidate-set") {
-    return "component-first-sets";
+    return "candidate-module-sets";
   }
 
   const code = normalizeCode(templateCode);
@@ -125,10 +125,10 @@ function enrichEntryPresentation(
   if (entry.kind === "candidate-set") {
     return {
       ...entry,
-      entityType: "Component-first candidate set",
-      lifecycleLabel: "Product Composer · Readonly · NOT OFFERABLE",
+      entityType: "Candidate Module produs set",
+      lifecycleLabel: "Product Template · Readonly · NOT OFFERABLE",
       metadata:
-        "Product Composer + 6 Component Templates · readonly contract · no Work Intake / Pricing / Quote",
+        "1 Product Template + N Module produs egale · readonly contract · no Work Intake / Pricing / Quote",
     };
   }
 
@@ -139,7 +139,7 @@ function enrichEntryPresentation(
       lifecycleLabel: "Used today · Offerable · Work Intake: yes",
       metadata:
         availability.ui_description ||
-        "Current production root for volumetric letters. Separate from component-first candidate set.",
+        "Current production root for volumetric letters. Separate from candidate Module produs set.",
     };
   }
 
@@ -174,7 +174,7 @@ function enrichEntryPresentation(
       ...entry,
       entityType: "Legacy internal module",
       lifecycleLabel: "Used by parent product",
-      metadata: `Legacy shared module contract · Used by ${parents} · Not component-first TPL-COMP-*`,
+      metadata: `Module produs partajat (legacy) · Used by ${parents} · Not TPL-COMP-* candidate set`,
     };
   }
 
@@ -230,12 +230,12 @@ function candidateSetEntry(liveRowCount: number, expectedRowCount: number): Unif
   const base: UnifiedCatalogEntry = {
     id: CANDIDATE_SET_ENTRY_ID,
     kind: "candidate-set",
-    bucket: "component-first-sets",
-    name: "Component-first Letters Candidate",
-    templateCode: COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
-    entityType: "Component-first candidate set",
-    lifecycleLabel: "Product Composer · Readonly · NOT OFFERABLE",
-    metadata: `Product Composer + 6 Component Templates · ${liveRowCount}/${expectedRowCount} live rows · no Work Intake`,
+    bucket: "candidate-module-sets",
+    name: "Candidate Module produs — Litere",
+    templateCode: CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
+    entityType: "Candidate Module produs set",
+    lifecycleLabel: "Product Template · Readonly · NOT OFFERABLE",
+    metadata: `1 Product Template + N Module produs egale · ${liveRowCount}/${expectedRowCount} live rows · no Work Intake`,
     importanceRank: 15,
     isProduct: false,
     isComponent: false,
@@ -250,7 +250,7 @@ function candidateSetEntry(liveRowCount: number, expectedRowCount: number): Unif
     base,
     fallbackAvailability({
       id: 0,
-      template_code: COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+      template_code: CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
       active: false,
       components_json: "[]",
       operations_json: "[]",
@@ -269,14 +269,14 @@ export function buildUnifiedCatalogEntries({
   const availabilityByCode = new Map(
     availabilityItems.map((item) => [normalizeCode(item.template_code), item]),
   );
-  const candidateModel = buildComponentFirstReadonlySetModel(
+  const candidateModel = buildCandidateModuleProdusReadonlySetModel(
     templates,
     availabilityItems,
-    COMPONENT_FIRST_COMPOSER_TEMPLATE_CODE,
+    CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE,
   );
 
   const templateEntries = templates
-    .filter((template) => !candidateModel || !isComponentFirstCatalogCode(template.template_code))
+    .filter((template) => !candidateModel || !isCandidateModuleProdusCatalogCode(template.template_code))
     .map((template) => {
       const availability =
         availabilityByCode.get(normalizeCode(template.template_code)) ?? fallbackAvailability(template);
@@ -285,7 +285,7 @@ export function buildUnifiedCatalogEntries({
 
   const entries: UnifiedCatalogEntry[] = [...templateEntries];
   if (candidateModel) {
-    const drift = assessComponentFirstContractDrift(templates);
+    const drift = assessCandidateModuleProdusContractDrift(templates);
     entries.push(
       candidateSetEntry(drift.completeness.foundRowCount, drift.completeness.expectedRowCount),
     );
@@ -308,14 +308,14 @@ export function filterUnifiedCatalogEntries({
   search,
 }: {
   entries: UnifiedCatalogEntry[];
-  filter: import("./productSystemUnifiedCatalogTypes").UnifiedCatalogFilter;
+  filter: import("./productSystemCatalogEntries").UnifiedCatalogFilter;
   search: string;
 }): UnifiedCatalogEntry[] {
   const q = search.trim().toLowerCase();
   return entries.filter((entry) => {
     if (filter === "current-products" && entry.bucket !== "current-products") return false;
     if (filter === "candidate-products" && entry.bucket !== "candidate-products") return false;
-    if (filter === "component-first-sets" && entry.bucket !== "component-first-sets") return false;
+    if (filter === "candidate-module-sets" && entry.bucket !== "candidate-module-sets") return false;
     if (filter === "legacy-modules" && entry.bucket !== "legacy-shared-modules") return false;
     if (filter === "archived" && entry.bucket !== "archived") return false;
     if (filter === "blocked" && !entry.isBlocked) return false;

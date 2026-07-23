@@ -15,7 +15,7 @@ import {
   FACE_WORKSHOP_STATUS,
   type FaceTruthField,
   type FaceWorkshopFieldStatus,
-} from "./componentFirstFaceTruthWorkshop";
+} from "./candidateModuleProdusFaceTruthWorkshop";
 import { CANONICAL_FINISH_RETIRED_PATHS } from "./canonicalFinishEnumMap";
 import { FaceEstimatedPriceDraftPanel } from "./FaceEstimatedPriceDraftPanel";
 

@@ -8,7 +8,7 @@ import {
   FACE_MATERIAL_ESTIMATE_DRAFTS,
   formatFaceEstimateDraftValue,
   type FaceEstimateDraftEntry,
-} from "./componentFirstFaceEstimatedPriceDraft";
+} from "./candidateModuleProdusFaceEstimatedPriceDraft";
 
 function StatusChip({
   label,

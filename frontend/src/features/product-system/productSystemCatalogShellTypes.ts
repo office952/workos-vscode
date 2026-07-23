@@ -12,8 +12,8 @@ export const PRODUCT_SYSTEM_PRIMARY_TABS: Array<{
   testId: string;
 }> = [
   { id: "products", label: "Products", testId: "product-system-primary-tab-products" },
-  { id: "components", label: "Components", testId: "product-system-primary-tab-components" },
-  { id: "candidate-sets", label: "Candidate Sets", testId: "product-system-primary-tab-candidate-sets" },
+  { id: "components", label: "Module produs", testId: "product-system-primary-tab-components" },
+  { id: "candidate-sets", label: "Seturi Module produs", testId: "product-system-primary-tab-candidate-sets" },
   { id: "dossiers", label: "Dossiers", testId: "product-system-primary-tab-dossiers" },
   { id: "guards-audit", label: "Guards / Audit", testId: "product-system-primary-tab-guards-audit" },
   { id: "archived", label: "Archived", testId: "product-system-primary-tab-archived" },

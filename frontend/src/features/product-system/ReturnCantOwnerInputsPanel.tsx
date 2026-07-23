@@ -9,7 +9,7 @@ import {
   RETURN_CANT_STILL_MISSING_BEFORE_PRICING,
   RETURN_CANT_STILL_MISSING_BEFORE_PRODUCT_DEFINITION,
   type ReturnCantOwnerInput,
-} from "./componentFirstReturnCantOwnerInputs";
+} from "./candidateModuleProdusReturnCantOwnerInputs";
 
 function StatusChip({
   label,

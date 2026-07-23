@@ -8,7 +8,7 @@ import {
   FINISH_OWNER_PRICE_VALUES_DECISION,
   type FinishEstimateDraftEntry,
   type FinishDraftValueStatus,
-} from "./componentFirstFinishEstimatedPriceDraft";
+} from "./candidateModuleProdusFinishEstimatedPriceDraft";
 
 function StatusChip({
   label,

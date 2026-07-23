@@ -351,8 +351,8 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(within(products).queryByText(VOLUM_ALUMINUM)).not.toBeInTheDocument();
     expect(products.textContent).not.toContain("Work Intake: DA");
     expect(within(products).queryByText("GO owner")).not.toBeInTheDocument();
-    expect(within(products).getAllByText("Produs ofertabil").length).toBeGreaterThanOrEqual(1);
-    expect(within(products).getByText("In pregatire")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Ofertabile/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /In pregatire/i })).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-icon-${LETTERS}`)).toHaveAttribute("data-icon-size", "large");
     expect(within(products).getByTestId(`product-system-template-icon-${LETTERS}`)).toHaveClass("h-16");
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LETTERS}`)).toBeInTheDocument();
@@ -474,22 +474,22 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getAllByText("GO owner").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Apare in Work Intake").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("Actualizat: 01.07.2026 · Creat: 01.07.2026")).toHaveLength(2);
-    expect(screen.getByText(/Necesita GO owner pentru ofertare/)).toBeInTheDocument();
+    expect(screen.getByText(/Necesita GO owner/)).toBeInTheDocument();
   });
 
   it("switches to Components view and shows compact shared component cards with usage popovers", () => {
     renderCatalog();
 
-    fireEvent.click(screen.getByRole("tab", { name: /Componente/i }));
+    fireEvent.click(screen.getByRole("tab", { name: /Module produs/i }));
 
     const sharedContracts = screen.getByTestId("product-system-shared-contracts-list");
     expect(screen.getByTestId("product-system-view-components")).toBeInTheDocument();
-    expect(screen.getByTestId("product-system-view-tab-components")).toHaveTextContent("Componente 6");
+    expect(screen.getByTestId("product-system-view-tab-components")).toHaveTextContent("Module produs 6");
     expect(screen.getAllByTestId(/product-system-shared-contract-row-/)).toHaveLength(6);
     const faceContract = screen.getByTestId("product-system-shared-contract-row-volumetric_face");
     expect(within(faceContract).getByText("volumetric_face")).toBeInTheDocument();
     expect(within(faceContract).getByText("Volumetric face")).toBeInTheDocument();
-    expect(faceContract).toHaveTextContent(`Shared primary module: ${FACE}`);
+    expect(faceContract).toHaveTextContent(`Module produs principal: ${FACE}`);
     expect(faceContract).toHaveTextContent("shared");
     expect(faceContract).toHaveTextContent("used by 2 products");
     expect(faceContract).not.toHaveTextContent(LOGO_FACE);
@@ -499,22 +499,22 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(faceContract).not.toHaveTextContent("Logo strategy source");
     fireEvent.mouseEnter(screen.getByTestId("product-system-shared-usage-trigger-volumetric_face"));
     const faceUsage = screen.getByTestId("product-system-shared-usage-popover-volumetric_face");
-    expect(faceUsage).toHaveTextContent("Componenta");
-    expect(faceUsage).toHaveTextContent("Shared module: TPL-VOLUMETRIC-FACE_v1");
-    expect(faceUsage).toHaveTextContent(`${LETTERS}offerable — Work Intake DA`);
-    expect(faceUsage).toHaveTextContent(`${LOGO}candidate / linked child — Work Intake NU`);
+    expect(faceUsage).toHaveTextContent("Module produs");
+    expect(faceUsage).toHaveTextContent("Module produs: TPL-VOLUMETRIC-FACE_v1");
+    expect(faceUsage).toHaveTextContent(`${LETTERS}rădăcină ofertabilă — Work Intake DA`);
+    expect(faceUsage).toHaveTextContent(`${LOGO}copil legat / candidate — Work Intake NU`);
     fireEvent.mouseLeave(screen.getByTestId("product-system-shared-usage-trigger-volumetric_face"));
     const lightingContract = screen.getByTestId("product-system-shared-contract-row-volumetric_lighting");
-    expect(lightingContract).toHaveTextContent("Shared primary module: TPL-VOLUMETRIC-LED_v1");
+    expect(lightingContract).toHaveTextContent("Module produs principal: TPL-VOLUMETRIC-LED_v1");
     expect(lightingContract).not.toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(lightingContract).not.toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
     fireEvent.mouseEnter(screen.getByTestId("product-system-shared-usage-trigger-volumetric_lighting"));
     const lightingUsage = screen.getByTestId("product-system-shared-usage-popover-volumetric_lighting");
-    expect(lightingUsage).toHaveTextContent("Shared module: TPL-VOLUMETRIC-LED_v1");
-    expect(lightingUsage).toHaveTextContent(`${LETTERS}offerable — Work Intake DA — strategy: TPL-VOLUMETRIC-LED_v1`);
-    expect(lightingUsage).toHaveTextContent(`${LOGO}candidate / linked child — Work Intake NU — strategy: TPL-VOLUMETRIC-LOGO-LIGHTING_v1`);
+    expect(lightingUsage).toHaveTextContent("Module produs: TPL-VOLUMETRIC-LED_v1");
+    expect(lightingUsage).toHaveTextContent(`${LETTERS}rădăcină ofertabilă — Work Intake DA — strategy: TPL-VOLUMETRIC-LED_v1`);
+    expect(lightingUsage).toHaveTextContent(`${LOGO}copil legat / candidate — Work Intake NU — strategy: TPL-VOLUMETRIC-LOGO-LIGHTING_v1`);
     fireEvent.mouseLeave(screen.getByTestId("product-system-shared-usage-trigger-volumetric_lighting"));
-    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_return_side")).toHaveTextContent(`Shared primary module: ${VOLUM_ALUMINUM}`);
+    expect(screen.getByTestId("product-system-shared-contract-row-volumetric_return_side")).toHaveTextContent(`Module produs principal: ${VOLUM_ALUMINUM}`);
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_finish")).toHaveTextContent("Volumetric finish");
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_mounting_structure")).toHaveTextContent("Volumetric mounting / structure");
     expect(screen.queryByTestId("product-system-components-list")).not.toBeInTheDocument();
@@ -537,17 +537,17 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
   it("keeps Components compact dense and adds owner details only in detailed density", () => {
     renderCatalog();
 
-    fireEvent.click(screen.getByRole("tab", { name: /Componente/i }));
+    fireEvent.click(screen.getByRole("tab", { name: /Module produs/i }));
 
     expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "compact");
-    expect(screen.queryByText("Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Modulele produs partajate sunt unitățile principale; Product Template-urile care le folosesc sunt sumarizate în iconul shared.")).not.toBeInTheDocument();
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).not.toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).not.toHaveTextContent("Logo lighting profile is strategy only");
 
     fireEvent.click(screen.getByTestId("product-system-density-detailed"));
 
     expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "detailed");
-    expect(screen.getByText("Componentele comune sunt entitatile principale; produsele care le folosesc sunt sumarizate in iconul shared.")).toBeInTheDocument();
+    expect(screen.getByText("Modulele produs partajate sunt unitățile principale; Product Template-urile care le folosesc sunt sumarizate în iconul shared.")).toBeInTheDocument();
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("PARTIAL");
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("Letters strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(screen.getByTestId("product-system-shared-contract-row-volumetric_lighting")).toHaveTextContent("Logo strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
@@ -568,7 +568,7 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(lettersSharedBase).toHaveTextContent("Shared volumetric base: 6 module comune");
     expect(lettersSharedBase).toHaveTextContent("Fata comuna -> TPL-VOLUMETRIC-FACE_v1");
     expect(lettersSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
-    expect(lettersSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
+    expect(lettersSharedBase).toHaveTextContent("Cant / volum din aluminiu -> TPL-VOLUM-ALUMINIU_v1");
     expect(lettersSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
     expect(lettersSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(lettersSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
@@ -579,13 +579,13 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(logoSharedBase).toHaveTextContent("Shared volumetric base: 6 module comune");
     expect(logoSharedBase).toHaveTextContent("Fata comuna -> TPL-VOLUMETRIC-FACE_v1");
     expect(logoSharedBase).toHaveTextContent("Spate comuna -> TPL-VOLUMETRIC-BACK_v1");
-    expect(logoSharedBase).toHaveTextContent("Cant / return comun -> TPL-VOLUM-ALUMINIU_v1");
+    expect(logoSharedBase).toHaveTextContent("Cant / volum din aluminiu -> TPL-VOLUM-ALUMINIU_v1");
     expect(logoSharedBase).toHaveTextContent("Finisaj comun -> TPL-VOLUMETRIC-FINISH_v1");
     expect(logoSharedBase).toHaveTextContent("Montaj / structura comuna -> TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(logoSharedBase).toHaveTextContent("Lighting / LED comun -> TPL-VOLUMETRIC-LED_v1");
     expect(logoSharedBase).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
     expect(logoSharedBase).toHaveTextContent("Work Intake: NU");
-    expect(logoSharedBase).toHaveTextContent("candidate / linked child / Work Intake NU");
+    expect(logoSharedBase).toHaveTextContent("copil legat / candidate / Work Intake NU");
     expect(logoSharedBase).toHaveTextContent("Logo uses the same shared volumetric modules as Letters. Logo lighting profile is strategy only.");
     for (const hiddenCode of OLD_LOGO_BACKING_TEMPLATE_CODES) {
       expect(composition).not.toHaveTextContent(hiddenCode);

@@ -187,7 +187,7 @@ function isCanonicalProductSystemTemplate(item: ProductTemplateAvailabilityItem)
   return false;
 }
 
-/** Parent/standalone templates eligible for the canonical product catalog (not component-first sets). */
+/** Parent/standalone templates eligible for the canonical product catalog (not candidate-module sets). */
 export function isCatalogEligibleAvailability(
   item: ProductTemplateAvailabilityItem,
 ): boolean {

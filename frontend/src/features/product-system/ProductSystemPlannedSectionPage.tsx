@@ -9,7 +9,7 @@ import { PS_SURFACE_QUIET } from "./productSystemSurfaces";
 
 const SECTION_TITLES: Record<ProductSystemShellNavId, string> = {
   products: "Products",
-  components: "Components",
+  components: "Module produs",
   resources: "Resources",
   operations: "Operations",
   dependencies: "Dependencies",

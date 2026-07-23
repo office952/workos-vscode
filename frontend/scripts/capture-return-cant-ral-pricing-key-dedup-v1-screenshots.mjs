@@ -26,11 +26,14 @@ await page.getByTestId("product-system-unified-catalog").waitFor({ timeout: 60_0
 
 await expand(
   page,
-  "product-system-catalog-bucket-component-first-sets",
-  "product-system-catalog-bucket-toggle-component-first-sets",
+  "product-system-catalog-bucket-candidate-module-sets",
+  "product-system-catalog-bucket-toggle-candidate-module-sets",
 );
-await page.getByTestId("product-system-unified-row-candidate-set").click();
-await page.getByTestId("product-system-component-first-tab-guards-audit").click();
+await page.getByTestId("product-system-canonical-filter-deprecated").click();
+await page.locator(`[data-testid="product-system-canonical-catalog-card"][data-template-code="TPL-LETTERS-COMPOSER_v1"]`).click();
+await page.getByTestId("product-system-template-detail-tab-dossier").click();
+await page.getByTestId("product-system-template-detail-open-editor").click();
+await page.getByTestId("product-system-candidate-module-tab-guards-audit").click();
 await page.getByTestId("product-system-return-cant-catalog-price-inputs").waitFor({ timeout: 15_000 });
 
 await shot(page, "01_return_cant_catalog_price_inputs_after_ral_dedup");

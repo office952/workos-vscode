@@ -90,8 +90,9 @@ describe("ModuleChain present-truth control center", () => {
   it("distinguishes concepts and canonical Inventory/Pricing/Dossier routes", () => {
     renderModuleChain();
     expect(screen.getByTestId("concept-node-product_family")).toHaveTextContent("Product Family");
+    expect(screen.getByTestId("concept-node-component_template")).toHaveTextContent("Module (product)");
     expect(screen.getByTestId("concept-node-component_template")).toHaveTextContent("STORAGE_MIXED");
-    expect(screen.getByTestId("concept-node-mini_module")).toHaveTextContent("Mini-Module");
+    expect(screen.getByTestId("concept-node-mini_module")).toHaveTextContent("Operational mini-module");
     expect(screen.getByTestId("concept-node-capability")).toHaveTextContent("interacțiune UI");
     expect(screen.getByTestId("stabilization-letters")).toHaveTextContent("Rădăcină folosită azi");
     expect(screen.getByTestId("stabilization-logo")).toHaveTextContent("rădăcină blocată");
