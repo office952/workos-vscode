@@ -273,6 +273,12 @@ class IntakeV4FinishSetup(BaseModel):
     acm_panel_instance: dict[str, Any] | None = None
     # Explicit domain write intent — omit/accidental ≠ clear; no blind SUPPORT preserve.
     acm_panel_domain_action: Literal["preserve", "upsert", "clear"] | None = None
+    # ACM boxed composition XOR (Decision A) — must survive workspace payload parse/dump.
+    # none = panel-alone offerable root; letters = Letters↔ACM connection CPP gate.
+    applied_content: Literal["none", "letters", "logo"] | None = None
+    # Letters↔ACM outbox layer (integral m²) — preferred qty for connection mp lines.
+    letters_layer_outbox_m2: float | None = None
+    letters_layer_outbox_source: str | None = None
 
 
 class IntakeV4AnalysisPersistRequest(BaseModel):

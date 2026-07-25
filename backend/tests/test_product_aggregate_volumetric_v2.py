@@ -21,7 +21,7 @@ CHILD_LED = "TPL-VOLUMETRIC-LED_v1"
 CHILD_FINISH = "TPL-VOLUMETRIC-FINISH_v1"
 
 DOSSIER_COMPONENTS = [
-    {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexi/acrilic"},
+    {"id": "comp_face_litere", "label": "VIZUAL FAȚĂ", "role": "față plexiglas 3mm PMMA - opal"},
     {"id": "comp_lateral_litere", "label": "VOLUM ALUMINIU", "role": "profil lateral"},
     {"id": "comp_spate_litere", "label": "CAPAC SPATE", "role": "spate Forex"},
     {"id": "comp_led_litere", "label": "SISTEM LED", "role": "LED"},

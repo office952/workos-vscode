@@ -53,7 +53,7 @@ export function formatQuoteHandoffBlocker(code: string): string {
 		return `Vector Logo — execuție nedecisă pe ${layerKey}.`;
 	}
 	if (code === "unclassified_vector_artwork_requires_decision") {
-		return "Perimetru vector rezidual: verifică fiecare Vector Logo cu execuție nedecisă — protecția de perimetru rămâne activă.";
+		return "Perimetru vector nealocat — verifică Vector Logo în Finisaje.";
 	}
 	if (code === "artwork_only_requires_decision") {
 		return "Nu există straturi de litere volumetrice confirmate. Vector Logo/policromie necesită decizie operator. Template-ul curent este Litere volumetrice; fișierul încărcat pare doar Vector Logo.";
@@ -378,21 +378,45 @@ export function buildReviewHandoffSurfacing(args: {
 	containsMissingPrices?: boolean;
 	allArtworkFinishesConfirmed?: boolean;
 	allArtworkProductConfigured?: boolean;
+	/** When 0, residual Vector Logo chrome is noise (no logo rows to decide). */
+	artworkFinishRowCount?: number;
 	currentStep?: "layers" | "review" | "confirm";
 }): ReviewHandoffSurfacing {
 	const handoffUi = resolveQuoteHandoffUiStatus(args.handoff, args.handoffOptions);
 	const reviewWarnings = args.handoff?.review_warnings ?? [];
 	const fatalBlockers = args.handoff?.fatal_blockers ?? args.handoff?.blockers ?? [];
 	const step = args.currentStep ?? "review";
-	const stepScopedFatals = filterStepScopedFatalBlockers(fatalBlockers, step);
-	const artworkNeedsDecision = hasArtworkNeedsDecisionWarning(reviewWarnings);
-	const vectorResidualWarning = hasUnclassifiedVectorArtworkWarning(reviewWarnings);
+	const artworkFinishRowCount = args.artworkFinishRowCount;
+	const suppressArtworkVectorFatals = artworkFinishRowCount === 0;
+	const stepScopedFatals = filterStepScopedFatalBlockers(fatalBlockers, step).filter((code) => {
+		if (!suppressArtworkVectorFatals) return true;
+		return !(
+			code === "unclassified_vector_artwork_requires_decision" ||
+			code.startsWith("artwork_execution_undecided:") ||
+			code === "artwork_only_requires_decision"
+		);
+	});
+	const reviewWarningsEffective = suppressArtworkVectorFatals
+		? reviewWarnings.filter(
+				(code) =>
+					code !== "unclassified_vector_artwork_requires_decision" &&
+					!code.startsWith("artwork_execution_undecided:") &&
+					code !== "artwork_only_requires_decision",
+			)
+		: reviewWarnings;
+	const artworkNeedsDecision = hasArtworkNeedsDecisionWarning(reviewWarningsEffective);
+	const vectorResidualWarning = hasUnclassifiedVectorArtworkWarning(reviewWarningsEffective);
 	const artworkConfigured =
 		args.allArtworkProductConfigured ??
 		(args.allArtworkFinishesConfirmed !== false && args.allArtworkFinishesConfirmed !== undefined
 			? args.allArtworkFinishesConfirmed
 			: true);
 	const artworkUnconfigured = args.allArtworkProductConfigured === false;
+	const surfaceResidualVector =
+		vectorResidualWarning &&
+		artworkConfigured &&
+		!artworkUnconfigured &&
+		(artworkFinishRowCount == null || artworkFinishRowCount > 0);
 	const operatorConfirmationMissing = fatalBlockers.includes("operator_confirmation_missing");
 	const onlyOperatorConfirmationPending = isOnlyOperatorConfirmationBlocking({
 		handoffAllowed: handoffUi.handoffAllowed,
@@ -400,6 +424,10 @@ export function buildReviewHandoffSurfacing(args: {
 	});
 	const showOperatorConfirmationOnStep = step === "confirm" && operatorConfirmationMissing;
 	const containsMissingPrices = args.containsMissingPrices === true;
+	const layerRolesBlocked = stepScopedFatals.some(
+		(code) =>
+			code === "layer_roles_incomplete" || code === "readiness_not_ready:layer_roles_incomplete",
+	);
 	const productTruthBlocked = stepScopedFatals.some(isProductTruthBlocker);
 	// Suppress only the loading flash (null handoff + loading) — permanent fetch failure still banners.
 	const suppressLoadingHandoffBanner =
@@ -411,8 +439,9 @@ export function buildReviewHandoffSurfacing(args: {
 
 	const showBanner =
 		handoffBlockedOnThisStep ||
-		artworkNeedsDecision ||
 		artworkUnconfigured ||
+		surfaceResidualVector ||
+		(artworkNeedsDecision && !vectorResidualWarning) ||
 		containsMissingPrices ||
 		showOperatorConfirmationOnStep;
 
@@ -421,55 +450,59 @@ export function buildReviewHandoffSurfacing(args: {
 			? "Confirmarea finală se efectuează în Pasul 3."
 			: null;
 
-	const reasons: string[] = [];
-	if (stepScopedFatals.some((code) => code === "layer_roles_incomplete" || code === "readiness_not_ready:layer_roles_incomplete")) {
-		reasons.push(
-			"Oferta rămâne blocată: rolurile layerelor/grupurilor trebuie confirmate de operator. Pricing Registry este pregătit; lipsește Product Truth confirmat.",
-		);
+	// Paired reason/action — never prepend a generic Product Truth action onto an unrelated reason.
+	const pairs: Array<{ reason: string; action: string }> = [];
+	if (layerRolesBlocked) {
+		pairs.push({
+			reason:
+				"Oferta rămâne blocată: rolurile layerelor/grupurilor trebuie confirmate de operator. Pricing Registry este pregătit; lipsește Product Truth confirmat.",
+			action:
+				"Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.",
+		});
 	}
 	if (artworkUnconfigured) {
-		reasons.push("Vector Logo necesită decizie de execuție sau date obligatorii lipsă.");
-	} else if (artworkConfigured && vectorResidualWarning) {
-		reasons.push(
-			"Perimetru vector rezidual față de SVG — verifică Vector Logo-urile cu execuție nedecisă (și literele) în Review.",
-		);
-	} else if (artworkNeedsDecision) {
-		reasons.push("Vector Logo neconfirmat sau fără decizie de execuție.");
+		pairs.push({
+			reason: "Vector Logo necesită decizie de execuție sau date obligatorii lipsă.",
+			action: "Deschide Finisaje și completează execuția Vector Logo.",
+		});
+	} else if (surfaceResidualVector) {
+		pairs.push({
+			reason: "Perimetru vector nealocat — verifică Vector Logo în Finisaje.",
+			action: "Deschide Finisaje și confirmă execuția Vector Logo (sau ignore).",
+		});
+	} else if (artworkNeedsDecision && !vectorResidualWarning) {
+		pairs.push({
+			reason: "Vector Logo neconfirmat sau fără decizie de execuție.",
+			action: "Deschide Finisaje și rezolvă deciziile Vector Logo.",
+		});
 	}
 	if (showOperatorConfirmationOnStep) {
-		reasons.push(
-			"Confirmă finisajele și datele de ofertare pentru draft intern (checkbox-ul din Confirmare finală).",
-		);
+		pairs.push({
+			reason:
+				"Confirmă finisajele și datele de ofertare pentru draft intern (checkbox-ul din Confirmare finală).",
+			action: "Bifează checkbox-ul de confirmare draft intern din Confirmare finală.",
+		});
 	}
 	if (containsMissingPrices) {
-		reasons.push("Calculul live conține linii fără tarif configurat.");
+		pairs.push({
+			reason: "Calculul live conține linii fără tarif configurat.",
+			action: "Verifică liniile cu tarif lipsă în Calcul live.",
+		});
 	}
-	if (handoffBlockedOnThisStep && reasons.length === 0) {
-		reasons.push("Handoff-ul către ofertă reală este blocat.");
+	if (handoffBlockedOnThisStep && pairs.length === 0) {
+		pairs.push({
+			reason: "Handoff-ul către ofertă reală este blocat.",
+			action: productTruthBlocked
+				? "Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff."
+				: "Rezolvă blocajele din diagnosticul tehnic.",
+		});
 	}
 
-	const actions: string[] = [];
-	if (productTruthBlocked) {
-		actions.push("Confirmă rolurile layerelor/grupurilor și deciziile de componentă înainte de ofertă/preview/handoff.");
-	}
-	if (artworkUnconfigured) {
-		actions.push("Completează execuția Vector Logo (ex. print/laminare) pentru fiecare layer logo clasificat.");
-	} else if (artworkConfigured && vectorResidualWarning) {
-		actions.push(
-			"Rezolvă Vector Logo-urile incomplete (execuție nedecisă); logo-urile valide rămân separate, ca literele.",
-		);
-	} else if (artworkNeedsDecision) {
-		actions.push("Rezolvă deciziile Vector Logo în Review.");
-	}
-	if (containsMissingPrices) {
-		actions.push("Verifică liniile cu tarif lipsă în Calcul live.");
-	}
-	if (showOperatorConfirmationOnStep) {
-		actions.push("Bifează checkbox-ul de confirmare draft intern din Confirmare finală.");
-	}
+	const reasons = pairs.map((pair) => pair.reason);
+	const actions = pairs.map((pair) => pair.action);
 
 	const badges: IntakeV6OperatorStateBadge[] = showBanner
-		? productTruthBlocked || artworkUnconfigured || showOperatorConfirmationOnStep
+		? layerRolesBlocked || artworkUnconfigured || showOperatorConfirmationOnStep
 			? ["BLOCKED", "NEEDS_CONFIRMATION"]
 			: containsMissingPrices
 				? ["WARNING", "NEEDS_FORM_INPUT"]

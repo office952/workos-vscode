@@ -11,6 +11,7 @@ from typing import Any
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from seeds.material_canonical_naming import LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME
 from services.cnc_machine_operation_pricing_read_model_service import (
     build_cnc_operation_pricing_overrides,
     build_shared_plexiglas_face_batch_overrides,
@@ -42,6 +43,15 @@ from services.shared_vinyl_material_catalog import (
 CORE_CATEGORY_MATERIALS = "MATERIALE"
 CORE_CATEGORY_SERVICES = "SERVICII_OPERATII"
 CORE_CATEGORY_LABOR = "MANOPERA"
+
+# ACM bond + Letters↔ACM connection contract lines from priced dry-run.
+_COMPOSITION_MATERIAL_CODES = frozenset(
+    {
+        "acm_panel_face_material",
+        "acm_return_strip_material",
+        "acm_fasteners",
+    }
+)
 ORACAL_BASIS_ROLL_NESTING = "roll_nesting_quote_estimate"
 ORACAL_BASIS_AREA_FALLBACK = "area_with_waste_fallback"
 MATERIAL_CATALOG_SOURCE = "shared_material_color_catalog_registry"
@@ -478,6 +488,46 @@ def _find(rows: list[dict[str, Any]], *tokens: str) -> list[dict[str, Any]]:
 
 def _first(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
     return rows[0] if rows else None
+
+
+def _composition_contract_logical_rows(
+    commercial_lines: list[dict[str, Any]],
+) -> list[dict[str, Any]]:
+    """Surface ACM + letters_acm_conn_* dry-run lines into the Page 2 logical list."""
+    out: list[dict[str, Any]] = []
+    for line in commercial_lines:
+        code = str(line.get("code") or "").strip()
+        if not (code.startswith("letters_acm_conn_") or code.startswith("acm_")):
+            continue
+        qty = line.get("quantity")
+        subtotal = line.get("subtotal")
+        unit = line.get("unit")
+        category = (
+            CORE_CATEGORY_MATERIALS
+            if code in _COMPOSITION_MATERIAL_CODES
+            else CORE_CATEGORY_SERVICES
+        )
+        currency = str(line.get("source_currency") or line.get("cpp_currency") or "RON")
+        warnings = [str(w) for w in (line.get("warnings") or []) if w][:4]
+        out.append(
+            _line(
+                line_id=f"commercial.{code}",
+                display_label=str(line.get("label") or code),
+                category=category,
+                formula_code=str(line.get("pricing_rule_code") or f"COMMERCIAL_{code.upper()}"),
+                component_code=str(line.get("component_code") or "comp_letters_acm_composition"),
+                module_code=str(line.get("module_code") or "composition"),
+                status="MATCHED" if isinstance(subtotal, (int, float)) else "PARTIAL",
+                quantity=qty if isinstance(qty, (int, float)) else None,
+                unit=str(unit) if unit else None,
+                subtotal=float(subtotal) if isinstance(subtotal, (int, float)) else None,
+                currency=currency,
+                runtime_source="priced_quote_dry_run.commercial_line_items",
+                formula_status="commercial_dry_run_binding",
+                warnings=warnings,
+            )
+        )
+    return out
 
 
 def _line(
@@ -1133,8 +1183,8 @@ def build_gradi_logical_list_read_model_from_runtime(
     all_runtime_rows = [*material_rows, *consumable_rows, *operation_rows, *edge_rows]
 
     rows: list[dict[str, Any]] = [
-        *([_line(line_id="material.plexiglas_face", display_label="Plexiglas 3 mm / fata litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face"))] if has_confirmed_letter_face_content else []),
-        _line(line_id="material.logo_plexiglas_face", display_label="Plexiglas 3 mm / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", rows=logo_runtime_plexi_rows or None, status=("PARTIAL" if logo_runtime_plexi_quantity is None else None), quantity=(logo_runtime_plexi_quantity if logo_runtime_plexi_quantity is not None else artwork_area if isinstance(artwork_area, (int, float)) else None), unit="m2", subtotal=logo_runtime_plexi_subtotal, gaps=(["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"] if logo_runtime_plexi_quantity is None else []), warnings=(["Structural logo/emblem plexiglas row is logical only until runtime material row exists."] if logo_runtime_plexi_quantity is None else []), preferences={"artwork_layer_count": len(artwork_prefs)}),
+        *([_line(line_id="material.plexiglas_face", display_label=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME, category=CORE_CATEGORY_MATERIALS, component_code="comp_face_litere", module_code="debitare_fata", formula_code="MATERIAL_PLEXI_FACE_BY_AREA_V1", rows=mat("plexiglas_face"))] if has_confirmed_letter_face_content else []),
+        _line(line_id="material.logo_plexiglas_face", display_label=f"{LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME} / embleme/logo", category=CORE_CATEGORY_MATERIALS, component_code="comp_logo_face", module_code="finisaje", formula_code="MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", rows=logo_runtime_plexi_rows or None, status=("PARTIAL" if logo_runtime_plexi_quantity is None else None), quantity=(logo_runtime_plexi_quantity if logo_runtime_plexi_quantity is not None else artwork_area if isinstance(artwork_area, (int, float)) else None), unit="m2", subtotal=logo_runtime_plexi_subtotal, gaps=(["LOGO_PLEXI_STRUCTURAL_RUNTIME_ROW_MISSING"] if logo_runtime_plexi_quantity is None else []), warnings=(["Structural logo/emblem plexiglas row is logical only until runtime material row exists."] if logo_runtime_plexi_quantity is None else []), preferences={"artwork_layer_count": len(artwork_prefs)}),
         *([_line(line_id="material.forex_backing", display_label="Forex 10 mm / spate litere", category=CORE_CATEGORY_MATERIALS, component_code="comp_spate_litere", module_code="debitare_spate", formula_code="MATERIAL_FOREX_BACK_BY_AREA_V1", rows=forex_rows, status="PARTIAL" if "backing_area_fallback_used" in warnings else None, gaps=["BACKING_AREA_FALLBACK_USED"] if "backing_area_fallback_used" in warnings else [], warnings=(["LINKED_LOGO_BACKING_FALLBACK_USED"] if linked_logo_backing_rows else []))] if has_confirmed_letter_face_content or forex_rows else []),
         *([
         _line(
@@ -1286,8 +1336,23 @@ def build_gradi_logical_list_read_model_from_runtime(
         payload_raw=workspace_payload,
         quote_input=merge_workspace_offer_scope_into_quote_input(workspace_payload, {}),
     )
+    composition_rows = _composition_contract_logical_rows(commercial_lines)
+    if composition_rows:
+        rows = [*rows, *composition_rows]
+        response_warnings.append("COMPOSITION_CONTRACT_LINES_SURFACED_FROM_DRY_RUN")
 
     core_codes = {CORE_CATEGORY_MATERIALS, CORE_CATEGORY_SERVICES, CORE_CATEGORY_LABOR}
+    vl_core_count = len(rows) - len(composition_rows)
+    acm_contract_count = sum(
+        1
+        for row in composition_rows
+        if str(row.get("line_id") or "").startswith("commercial.acm_")
+    )
+    connection_contract_count = sum(
+        1
+        for row in composition_rows
+        if str(row.get("line_id") or "").startswith("commercial.letters_acm_conn_")
+    )
     return {
         "read_only": True,
         "source": "gradi_logical_list_read_model_v1",
@@ -1299,9 +1364,12 @@ def build_gradi_logical_list_read_model_from_runtime(
         "composition_items": composition_items,
         "fixture_hint": "gradi-curat.svg",
         "categories": ["TOATE", CORE_CATEGORY_MATERIALS, "SERVICII / OPERATII", CORE_CATEGORY_LABOR],
-        "core_row_count": len(rows),
+        "core_row_count": vl_core_count,
+        "composition_contract_row_count": len(composition_rows),
+        "composition_acm_row_count": acm_contract_count,
+        "composition_connection_row_count": connection_contract_count,
         "target_core_row_count": 21,
-        "core_rows_complete": len(rows) == 21,
+        "core_rows_complete": vl_core_count == 21,
         "rows": rows,
         "excluded_extra_commercial_lines": [
             line

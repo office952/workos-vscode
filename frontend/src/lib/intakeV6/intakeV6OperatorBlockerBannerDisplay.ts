@@ -239,6 +239,7 @@ export function buildOperatorBlockerBannerDisplay(
         message: reason,
         action: actions[index] ?? null,
         focusTarget: isResidual ? "intake-v6-artwork-finishes" : null,
+        tabId: isResidual ? "finisaje" : null,
       });
     });
   }

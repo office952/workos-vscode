@@ -319,6 +319,29 @@ def _build_canonical_values(
             if projected:
                 values["mounting_system"] = projected
 
+    # Layer-scoped backing (letter_group_finishes[].backing_mode) is canonical when the
+    # global finish_setup.backing_mode mirror is intentionally cleared.
+    if values.get("backing_mode") in (None, ""):
+        from services.intake_v4_backing_mode_service import (
+            finish_has_explicit_layer_backing_modes,
+            resolve_backing_mode_from_finish,
+            resolve_layer_backing_mode,
+        )
+
+        mode = resolve_backing_mode_from_finish(finish)
+        if mode is None and finish_has_explicit_layer_backing_modes(finish):
+            for group in finish.get("letter_group_finishes") or []:
+                if isinstance(group, dict) and group.get("backing_mode") is not None:
+                    mode = resolve_layer_backing_mode(group, finish)
+                    break
+            if mode is None:
+                for artwork in finish.get("artwork_finishes") or []:
+                    if isinstance(artwork, dict) and artwork.get("backing_mode") is not None:
+                        mode = resolve_layer_backing_mode(artwork, finish)
+                        break
+        if mode is not None:
+            values["backing_mode"] = mode
+
     # Component-aware SVG bindings (Product System authority) → PD instances.
     from services.svg_component_binding_persistence import (
         build_face_treatment_readiness_summary,

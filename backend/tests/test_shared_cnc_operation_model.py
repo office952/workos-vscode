@@ -35,8 +35,8 @@ class TestVolumetricLettersCncRows:
         assert "cnc_face_bevel_plexiglas_3mm" in keys
         cut = next(r for r in rows if r.key == "cnc_face_cutting_plexiglas_3mm")
         bevel = next(r for r in rows if r.key == "cnc_face_bevel_plexiglas_3mm")
-        assert cut.display_name == "Debitare CNC față Plexiglas 3 mm"
-        assert bevel.display_name == "Șanfren CNC față Plexiglas 3 mm"
+        assert cut.display_name == "Debitare CNC față plexiglas 3mm PMMA - opal"
+        assert bevel.display_name == "Șanfren CNC față plexiglas 3mm PMMA - opal"
         assert cut.quantity == pytest.approx(PBL_FACE_ML, rel=1e-4)
         assert bevel.quantity == pytest.approx(PBL_FACE_ML, rel=1e-4)
         assert cut.passes == 1
@@ -47,7 +47,7 @@ class TestVolumetricLettersCncRows:
     def test_plexiglas_label_explicit(self, pbl_geometry):
         rows = build_volumetric_letters_cnc_operation_rows(pbl_geometry, backing_mode="none")
         cut = next(r for r in rows if r.key == "cnc_face_cutting_plexiglas_3mm")
-        assert cut.material_name == "Plexiglas 3 mm"
+        assert cut.material_name == "plexiglas 3mm PMMA - opal"
         assert cut.thickness_mm == 3.0
 
     def test_forex_backing_three_passes_without_bevel(self, pbl_geometry):
@@ -127,7 +127,7 @@ class TestCuttingServiceContract:
             perimeter_ml=10.0,
             thickness_mm=3.0,
             material_family="plexiglas",
-            material_name="Plexiglas 3 mm",
+            material_name="plexiglas 3mm PMMA - opal",
         )
         assert len(rows) >= 1
         assert any("nu se consumă stoc intern" in w for w in warnings)

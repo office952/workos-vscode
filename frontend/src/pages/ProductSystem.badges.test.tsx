@@ -10,8 +10,8 @@ import { CANDIDATE_MODULE_COMPOSER_TEMPLATE_CODE } from "@/features/product-syst
 import { ProductSystemShellProvider } from "@/features/product-system/ProductSystemShellContext";
 
 /**
- * Nivel 2A: live Product System library uses ProductSystemCanonicalCatalog.
- * Legacy unified-bucket rows / candidate-set catalog entry are no longer on the page.
+ * Nivel 2A: CanonicalCatalog is isolated behind ?ps_legacy=1 (Product System V2 is primary).
+ * These tests exercise the legacy catalog/studio fallback + candidate panel smoke.
  * Candidate Module produs panel content is covered via the same panel component the editor mounts
  * (direct render), plus a small CanonicalCatalog → editor smoke path.
  */
@@ -27,7 +27,7 @@ vi.mock("@/hooks/useCurrentPermissions", () => ({
   }),
 }));
 
-function renderProductSystem(initialEntry = "/product-system/products") {
+function renderProductSystem(initialEntry = "/product-system/products?ps_legacy=1") {
   return render(
     <TooltipProvider>
       <MemoryRouter initialEntries={[initialEntry]}>
@@ -714,7 +714,12 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.getByTestId("product-system-return-cant-face-dependency")).toHaveTextContent("components.face.confirmed_perimeter");
     expect(screen.getByTestId("product-system-return-cant-legacy-alias")).toHaveTextContent("components.returnCant.depthMm");
     expect(truthContainer).toHaveTextContent("status: BLOCKED");
-    expect(truthContainer).toHaveTextContent("component_template_code");
+    expect(
+      screen.getByTestId("product-system-return-cant-truth-field-component_template_code"),
+    ).toHaveTextContent("Module produs code");
+    expect(
+      screen.getByTestId("product-system-return-cant-truth-field-component_template_code"),
+    ).toHaveTextContent("components.return_cant.instances[].component_template_code");
     expect(truthContainer).toHaveTextContent("resource_requirements_ref");
     expect(truthContainer).toHaveTextContent("component dependency anchor");
     expect(truthContainer).toHaveTextContent("Form System capture");
@@ -1917,6 +1922,32 @@ describe("ProductSystem design-system badges", () => {
     expect(screen.queryByRole("button", { name: /^save$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /^activate$/i })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /create pricing key/i })).not.toBeInTheDocument();
+  });
+
+  it("centers the product story (Module produs + Compiler + Ofertă/Cost channels) on overview", async () => {
+    renderProductSystem();
+
+    await selectCanonicalProduct("TPL-VOLUMETRIC-LETTERS_v2");
+
+    const story = screen.getByTestId("product-system-template-story");
+    expect(story).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-template-story-modules")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("product-system-template-story-module-TPL-VOLUMETRIC-FACE_v1"),
+    ).toBeInTheDocument();
+    expect(screen.getByTestId("product-system-template-story-compiler")).toBeInTheDocument();
+
+    const channels = screen.getByTestId("product-system-template-story-channels");
+    expect(channels).toHaveTextContent("Ofertă client");
+    expect(channels).toHaveTextContent("Cost intern");
+    expect(channels).toHaveTextContent("Execution");
+    expect(channels).toHaveTextContent("Alte sisteme");
+
+    // Story navigation buttons route to the deeper sections.
+    fireEvent.click(screen.getByTestId("product-system-template-story-open-readiness"));
+    await waitFor(() => {
+      expect(screen.getByTestId("product-system-template-detail-readiness")).toBeInTheDocument();
+    });
   });
 
   it("renders FINISH estimated price draft panel with evidence readonly authority", async () => {

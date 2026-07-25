@@ -29,6 +29,75 @@ from services.offer_scope_resolver_service import (
     extract_offer_scope,
     resolve_offer_scope,
 )
+from services.intake_v6_subset_capture_filter import is_acm_panel_only_composition
+
+# VL letter modules — not sold on ACM panel-alone; suppress even under legacy full-product scope.
+_ACM_PANEL_ONLY_SUPPRESSED_MODULES = frozenset(
+    {
+        "debitare_fata",
+        "modelare_cant",
+        "debitare_spate",
+        "sistem_led",
+        "finisaje",
+    }
+)
+
+
+def _acm_panel_only_suppress_material_key(material_key: str | None) -> bool:
+    key = str(material_key or "").strip().lower()
+    if not key:
+        return False
+    # Never silence AcmPanel commercial/material keys.
+    if key.startswith("acm_"):
+        return False
+    module = runtime_module_for_material_key(key)
+    if module in _ACM_PANEL_ONLY_SUPPRESSED_MODULES:
+        return True
+    if any(
+        tok in key
+        for tok in (
+            "adhesive",
+            "adeziv",
+            "plexiglas",
+            "return_material",
+            "forex",
+            "led_",
+            "wire_",
+            "vinyl",
+        )
+    ):
+        return True
+    return False
+
+
+def _acm_panel_only_suppress_logical_row(row: dict[str, Any]) -> bool:
+    code = str(row.get("code") or row.get("line_id") or "").strip().lower()
+    # Preserve AcmPanel CPP/EIC lines (acm_panel_face_material, acm_v_groove, …).
+    if code.startswith("acm_"):
+        return False
+    module = str(row.get("module_code") or "").strip().lower()
+    if module in _ACM_PANEL_ONLY_SUPPRESSED_MODULES:
+        return True
+    blob = " ".join(
+        str(row.get(k) or "")
+        for k in ("line_id", "label", "code", "material_key", "description")
+    ).lower()
+    if any(
+        tok in blob
+        for tok in (
+            "adhesive",
+            "adeziv",
+            "plexiglas",
+            "led",
+            "forex",
+            "vinyl",
+        )
+    ):
+        return True
+    # Letter-cant chrome only — not ACM return strip (those use acm_* codes).
+    if "cant" in blob:
+        return True
+    return False
 
 
 def coerce_payload_raw(payload: Any, payload_raw: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -277,6 +346,7 @@ def filter_material_breakdown_by_offer_scope(
     quote_input: dict[str, Any] | None = None,
 ) -> IntakeV4MaterialBreakdownResponse:
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
+    acm_panel_only = is_acm_panel_only_composition(payload_raw)
     excluded_materials = resolve_composition_excluded_materials(payload_raw, quote_input)
     mounting_ctx = _merged_mounting_context(payload_raw, quote_input)
     mounting_prep_active = is_mounting_preparation_active(mounting_ctx)
@@ -287,6 +357,8 @@ def filter_material_breakdown_by_offer_scope(
     def _material_allowed(row: IntakeV4MaterialQuantityRow) -> bool:
         key = str(row.material_key or "").strip().lower()
         mat_code = str(getattr(row, "material_code", None) or "").strip().lower()
+        if acm_panel_only and _acm_panel_only_suppress_material_key(row.material_key):
+            return False
         if key in excluded_materials or mat_code in excluded_materials:
             return False
         if not mounting_prep_active and _is_mounting_prep_material_key(row.material_key):
@@ -301,6 +373,10 @@ def filter_material_breakdown_by_offer_scope(
         )
 
     def _operation_allowed(row: IntakeV4CncOperationRow | IntakeV4EdgeCantOperationRow) -> bool:
+        if acm_panel_only:
+            module = runtime_module_for_operation_row(row)
+            if module in _ACM_PANEL_ONLY_SUPPRESSED_MODULES:
+                return False
         if not mounting_prep_active and _is_mounting_prep_operation_row(row):
             return False
         op_code = str(
@@ -327,16 +403,20 @@ def filter_material_breakdown_by_offer_scope(
     material_rows = [row for row in breakdown.material_rows if _material_allowed(row)]
     consumable_rows = [row for row in breakdown.consumable_rows if _material_allowed(row)]
     operation_rows = [row for row in breakdown.operation_rows if _operation_allowed(row)]
-    edge_cant_operation_rows = [
-        row
-        for row in breakdown.edge_cant_operation_rows
-        if _row_allowed(
-            runtime_module="modelare_cant",
-            use_legacy=use_legacy,
-            active_modules=active_modules,
-            sold_led_subscopes=sold_led_subscopes,
-        )
-    ]
+    edge_cant_operation_rows = (
+        []
+        if acm_panel_only
+        else [
+            row
+            for row in breakdown.edge_cant_operation_rows
+            if _row_allowed(
+                runtime_module="modelare_cant",
+                use_legacy=use_legacy,
+                active_modules=active_modules,
+                sold_led_subscopes=sold_led_subscopes,
+            )
+        ]
+    )
 
     total = 0.0
     contains_missing_prices = False
@@ -385,13 +465,18 @@ def filter_logical_list_rows_by_offer_scope(
     payload_raw: dict[str, Any],
     quote_input: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
+    acm_panel_only = is_acm_panel_only_composition(payload_raw)
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
     if use_legacy:
-        return rows
+        if not acm_panel_only:
+            return rows
+        return [row for row in rows if not _acm_panel_only_suppress_logical_row(row)]
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
     mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for row in rows:
+        if acm_panel_only and _acm_panel_only_suppress_logical_row(row):
+            continue
         module_code = row.get("module_code")
         if not isinstance(module_code, str) or module_code not in active_modules:
             continue
@@ -414,13 +499,18 @@ def filter_commercial_line_items_by_offer_scope(
     payload_raw: dict[str, Any],
     quote_input: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
+    acm_panel_only = is_acm_panel_only_composition(payload_raw)
     use_legacy, active_modules = resolve_live_calc_scope(payload_raw, quote_input)
     if use_legacy:
-        return line_items
+        if not acm_panel_only:
+            return line_items
+        return [line for line in line_items if not _acm_panel_only_suppress_logical_row(line)]
     sold_led_subscopes = resolve_sold_led_subscopes(payload_raw, quote_input)
     mount_decision = resolve_lighting_mount_consumers(payload_raw, quote_input)
     filtered: list[dict[str, Any]] = []
     for line in line_items:
+        if acm_panel_only and _acm_panel_only_suppress_logical_row(line):
+            continue
         module_code = line.get("module_code")
         if not isinstance(module_code, str) or module_code not in active_modules:
             continue

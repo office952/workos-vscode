@@ -30,7 +30,7 @@ export function resolveLetterGroupFaceFinishOptions(
   if (templateOptions) {
     for (const opt of templateOptions) {
       if (opt.value === "printed_laminated_vinyl") {
-        labelByValue.set("print_laminate", opt.label.replace(" pe vinyl", ""));
+        // Prefer canonical face option label (Printat / Laminat); do not invent from legacy wording.
         continue;
       }
       if (!isDisallowedLetterGroupFaceFinish(opt.value)) {

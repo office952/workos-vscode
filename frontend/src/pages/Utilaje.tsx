@@ -28,6 +28,8 @@ import {
   Plus,
   AlertTriangle,
 } from "lucide-react";
+import { CncProcessableBadge } from "@/components/workos/CncProcessableBadge";
+import { machineCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge";
 
 const machineStatusConfig: Record<string, { label: string; cls: string; icon: React.ReactNode }> = {
   running: { label: "Rulează", cls: "text-emerald-400", icon: <Activity className="w-3 h-3" /> },
@@ -255,8 +257,16 @@ export default function Utilaje() {
                     m.status === "maintenance" ? "bg-red-500" : "bg-slate-600"
                   }`} />
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-0.5">
+                    <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                       <span className="text-[13px] font-semibold text-slate-200">{m.name}</span>
+                      {machineCarriesCncProcessableBadge({
+                        type: m.type,
+                        id: m.id,
+                        name: m.name,
+                        workcenterCode: m.workcenterId,
+                      }) ? (
+                        <CncProcessableBadge size="sm" testId={`utilaje-cnc-badge-${m.id}`} />
+                      ) : null}
                       <span className={`inline-flex items-center gap-1 text-[11px] font-medium ${stCfg.cls}`}>
                         {stCfg.icon} {stCfg.label}
                       </span>
@@ -293,14 +303,45 @@ export default function Utilaje() {
             <>
               {/* Machine Info */}
               <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-3 flex-wrap">
                   <div className={`w-3 h-3 rounded-full ${
                     selected.status === "running" ? "bg-emerald-500" :
                     selected.status === "idle" ? "bg-amber-500" :
                     selected.status === "maintenance" ? "bg-red-500" : "bg-slate-600"
                   }`} />
                   <h3 className="text-[16px] font-bold text-slate-100">{selected.name}</h3>
+                  {machineCarriesCncProcessableBadge({
+                    type: selected.type,
+                    id: selected.id,
+                    name: selected.name,
+                    workcenterCode: selected.workcenterId,
+                  }) ? (
+                    <CncProcessableBadge size="sm" testId="utilaje-cnc-badge-selected" />
+                  ) : null}
                 </div>
+
+                {machineCarriesCncProcessableBadge({
+                  type: selected.type,
+                  id: selected.id,
+                  name: selected.name,
+                  workcenterCode: selected.workcenterId,
+                }) ? (
+                  <div
+                    className="mb-3 rounded-md border border-violet-800/40 bg-violet-950/25 px-3 py-2.5"
+                    data-testid="utilaje-cnc-capability-block"
+                  >
+                    <p className="mb-1.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-violet-400/85">
+                      Capacitate CNC — față litere
+                    </p>
+                    <CncProcessableBadge
+                      size="sm"
+                      showBadgeMark={false}
+                      showServices
+                      showMaterial
+                      testId="utilaje-cnc-capability"
+                    />
+                  </div>
+                ) : null}
 
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">

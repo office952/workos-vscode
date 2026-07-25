@@ -63,6 +63,8 @@ def _empty_totals(*, vat_rate: float | None = None) -> dict[str, Any]:
 		"vat_amount": None,
 		"total_gross": None,
 		"currency": "RON",
+		"commercial_base_subtotal": None,
+		"commercial_adjustment_trace": None,
 	}
 
 
@@ -96,27 +98,29 @@ def _read_commercial_inputs(
 				return value
 		return fallback
 
+	# Default adaos 0: 7G commercial lines are already sell prices. Operator Adaos /
+	# Discount / Ajustare are explicit post-7G adjustments on that commercial base.
 	return {
-		"markup_percent": pick("markup_percent", 35.0),
+		"markup_percent": pick("markup_percent", 0.0),
 		"discount_percent": pick("discount_percent", 0.0),
 		"vat_percent": float(settings_vat_percent),
 		"manual_adjustment_ron": pick("manual_adjustment_ron", 0.0),
 	}
 
 
-def _build_cost_plus_totals(
+def _apply_commercial_adjustments_to_base(
 	*,
-	internal_cost_total: float,
-	eur_to_ron_rate: float,
+	base_subtotal: float,
 	commercial_inputs: dict[str, float],
 ) -> dict[str, Any]:
-	production_base = _round_money(internal_cost_total * eur_to_ron_rate)
-	markup_percent = commercial_inputs["markup_percent"]
-	discount_percent = commercial_inputs["discount_percent"]
-	vat_percent = commercial_inputs["vat_percent"]
-	manual_adjustment_ron = commercial_inputs["manual_adjustment_ron"]
-	markup_value = _round_money(production_base * markup_percent / 100)
-	subtotal_before_discount = _round_money(production_base + markup_value + manual_adjustment_ron)
+	"""Apply operator Adaos / Discount / Ajustare on a commercial base (7G subtotal)."""
+	markup_percent = float(commercial_inputs["markup_percent"])
+	discount_percent = float(commercial_inputs["discount_percent"])
+	vat_percent = float(commercial_inputs["vat_percent"])
+	manual_adjustment_ron = float(commercial_inputs["manual_adjustment_ron"])
+	base = _round_money(base_subtotal)
+	markup_value = _round_money(base * markup_percent / 100)
+	subtotal_before_discount = _round_money(base + markup_value + manual_adjustment_ron)
 	discount_value = _round_money(subtotal_before_discount * discount_percent / 100)
 	subtotal_net = _round_money(subtotal_before_discount - discount_value)
 	vat_amount = _round_money(subtotal_net * vat_percent / 100)
@@ -127,16 +131,46 @@ def _build_cost_plus_totals(
 		"vat_amount": vat_amount,
 		"total_gross": total_gross,
 		"currency": "RON",
-		"cost_plus_trace": {
-			"internal_cost_total": _round_money(internal_cost_total),
-			"internal_cost_currency": "EUR",
-			"eur_to_ron_rate": eur_to_ron_rate,
-			"production_base_ron": production_base,
+		"commercial_base_subtotal": base,
+		"commercial_adjustment_trace": {
+			"basis": "commercial_price_proposal_7g_subtotal",
 			"markup_percent": markup_percent,
 			"markup_value": markup_value,
 			"manual_adjustment_ron": _round_money(manual_adjustment_ron),
 			"discount_percent": discount_percent,
 			"discount_value": discount_value,
+		},
+	}
+
+
+def _build_cost_plus_totals(
+	*,
+	internal_cost_total: float,
+	eur_to_ron_rate: float,
+	commercial_inputs: dict[str, float],
+) -> dict[str, Any]:
+	production_base = _round_money(internal_cost_total * eur_to_ron_rate)
+	adjusted = _apply_commercial_adjustments_to_base(
+		base_subtotal=production_base,
+		commercial_inputs=commercial_inputs,
+	)
+	trace = adjusted.get("commercial_adjustment_trace") if isinstance(adjusted.get("commercial_adjustment_trace"), dict) else {}
+	return {
+		"subtotal_net": adjusted["subtotal_net"],
+		"vat_rate": adjusted["vat_rate"],
+		"vat_amount": adjusted["vat_amount"],
+		"total_gross": adjusted["total_gross"],
+		"currency": "RON",
+		"cost_plus_trace": {
+			"internal_cost_total": _round_money(internal_cost_total),
+			"internal_cost_currency": "EUR",
+			"eur_to_ron_rate": eur_to_ron_rate,
+			"production_base_ron": production_base,
+			"markup_percent": trace.get("markup_percent"),
+			"markup_value": trace.get("markup_value"),
+			"manual_adjustment_ron": trace.get("manual_adjustment_ron"),
+			"discount_percent": trace.get("discount_percent"),
+			"discount_value": trace.get("discount_value"),
 		},
 	}
 
@@ -179,15 +213,16 @@ def _estimated_internal_cost_trace(preview: Any | None) -> dict[str, Any]:
 	}
 
 
-def _official_totals_from_7g(*, subtotal: float, vat_rate: float) -> dict[str, Any]:
-	vat_amount = _round_money(subtotal * vat_rate / 100)
-	return {
-		"subtotal_net": _round_money(subtotal),
-		"vat_rate": vat_rate,
-		"vat_amount": vat_amount,
-		"total_gross": _round_money(subtotal + vat_amount),
-		"currency": "RON",
-	}
+def _official_totals_from_7g(
+	*,
+	subtotal: float,
+	commercial_inputs: dict[str, float],
+) -> dict[str, Any]:
+	# Preserve settings VAT on commercial_inputs (caller already set vat_percent).
+	return _apply_commercial_adjustments_to_base(
+		base_subtotal=subtotal,
+		commercial_inputs=commercial_inputs,
+	)
 
 
 def _pricing_trace(pricing_preview: Any) -> dict[str, Any]:
@@ -465,9 +500,54 @@ def _enrich_quote_input_linked_logo_geometry(
 		"light_color",
 		"led_module_count",
 		"total_led_module_count",
+		# Letters↔ACM composition XOR + outbox qty (CPP connection gate).
+		"applied_content",
+		"letters_layer_outbox_m2",
+		"letters_layer_outbox_source",
+		"mounting_template_area_m2",
+		"mounting_template_enabled",
 	):
 		if (key not in finish or finish.get(key) in (None, [], {})) and key in raw_finish:
 			finish[key] = raw_finish[key]
+	# Top-level CPP markers when adapter omitted them.
+	if out.get("applied_content") in (None, "") and raw_finish.get("applied_content") not in (None, ""):
+		out["applied_content"] = raw_finish.get("applied_content")
+	if out.get("letters_layer_outbox_m2") in (None, "", 0, 0.0) and raw_finish.get(
+		"letters_layer_outbox_m2"
+	) not in (None, "", 0, 0.0):
+		out["letters_layer_outbox_m2"] = raw_finish.get("letters_layer_outbox_m2")
+
+	# Composition confirm is authoritative for Letters↔ACM connection commercial gate.
+	# CPP only receives quote_input — without this bridge, empty finish.applied_content
+	# hides letters_acm_conn_* even when operator confirmed letters+support.
+	confirmed = (
+		payload_raw.get("product_composition_confirmed")
+		if isinstance(payload_raw.get("product_composition_confirmed"), dict)
+		else None
+	)
+	if confirmed:
+		out["product_composition_confirmed"] = confirmed
+		confirmed_applied = confirmed.get("applied_content")
+		if out.get("applied_content") in (None, "") and confirmed_applied not in (None, ""):
+			out["applied_content"] = confirmed_applied
+		if finish.get("applied_content") in (None, "") and confirmed_applied not in (None, ""):
+			finish["applied_content"] = confirmed_applied
+		confirmed_outbox = confirmed.get("letters_layer_outbox_m2")
+		if out.get("letters_layer_outbox_m2") in (None, "", 0, 0.0) and confirmed_outbox not in (
+			None,
+			"",
+			0,
+			0.0,
+		):
+			out["letters_layer_outbox_m2"] = confirmed_outbox
+		if finish.get("letters_layer_outbox_m2") in (None, "", 0, 0.0) and confirmed_outbox not in (
+			None,
+			"",
+			0,
+			0.0,
+		):
+			finish["letters_layer_outbox_m2"] = confirmed_outbox
+
 	letter_led = _positive_number(finish.get("letter_led_module_count"))
 	emblem_led = _positive_number(finish.get("emblem_led_module_count"))
 	total_led = _positive_number(finish.get("led_module_count") or finish.get("total_led_module_count"))
@@ -652,7 +732,11 @@ async def build_intake_v6_priced_quote_dry_run(
 		)
 		totals = _empty_totals(vat_rate=vat_rate)
 	else:
-		totals = _official_totals_from_7g(subtotal=subtotal, vat_rate=float(vat_rate or 0))
+		# Operator Adaos/Discount/Ajustare adjust the official 7G commercial base.
+		totals = _official_totals_from_7g(
+			subtotal=subtotal,
+			commercial_inputs=commercial_inputs,
+		)
 		pricing_authority = V6_OFFICIAL_COMMERCIAL_AUTHORITY
 
 	if internal_cost_total is not None or eic_internal_total is not None:

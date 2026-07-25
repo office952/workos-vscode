@@ -5,11 +5,17 @@ import {
   EXECUTION_PLAN_DRAFT_STATE_LABEL,
   EXECUTION_PLAN_OPERATIONAL_STATE_LABEL,
   EXECUTION_PLAN_PREVIEW_STATE_LABEL,
+  INSTANCE_SCHEMA_ID_DISPLAY_LABEL,
   MINI_MODULE_OPERATIONAL_LABEL,
+  MODULE_PRODUS_CODE_LABEL,
   MODULE_PRODUS_LABEL,
+  MODULE_PRODUS_SHARED_LABEL,
+  MODULE_PRODUS_SHARED_SINGULAR_LABEL,
   PRODUCT_COMPILER_LABEL,
   PRODUCT_MODULES_SEMANTIC_LABEL,
   PRODUCT_TEMPLATE_LABEL,
+  PRODUCT_TEMPLATE_MODULE_LINKS_DISPLAY_LABEL,
+  USAGE_MODE_DISPLAY_LABEL,
   displayModuleSourceTypeLabel,
   displayModuleTemplateWireLabel,
   equalModulesHintRo,
@@ -63,9 +69,22 @@ describe("productTemplateModulesVocabulary (Nivel 1 labels)", () => {
   });
 
   it("adapts module_template_* wire keys to Module produs display labels without renaming contracts", () => {
-    expect(displayModuleTemplateWireLabel("module_template_code")).toBe("Module produs code");
-    expect(displayModuleTemplateWireLabel("shared_module_template_code")).toBe("Module produs code");
-    expect(displayModuleTemplateWireLabel("component_template_code")).toBe("Module produs code");
+    expect(displayModuleTemplateWireLabel("module_template_code")).toBe(MODULE_PRODUS_CODE_LABEL);
+    expect(displayModuleTemplateWireLabel("shared_module_template_code")).toBe(MODULE_PRODUS_CODE_LABEL);
+    expect(displayModuleTemplateWireLabel("component_template_code")).toBe(MODULE_PRODUS_CODE_LABEL);
+    expect(displayModuleTemplateWireLabel("module_template_id")).toBe("Module produs id");
+    expect(displayModuleTemplateWireLabel("product_template_module_links")).toBe(
+      PRODUCT_TEMPLATE_MODULE_LINKS_DISPLAY_LABEL,
+    );
+    expect(displayModuleTemplateWireLabel("usage_mode")).toBe(USAGE_MODE_DISPLAY_LABEL);
+    expect(displayModuleTemplateWireLabel("instance_schema_id")).toBe(INSTANCE_SCHEMA_ID_DISPLAY_LABEL);
     expect(displayModuleTemplateWireLabel("unrelated_field")).toBe("unrelated_field");
+    expect(displayModuleTemplateWireLabel("instance_id")).toBe("instance_id");
+  });
+
+  it("exposes shared Module produs chrome constants for admin tables", () => {
+    expect(MODULE_PRODUS_SHARED_LABEL).toBe("Module produs partajate");
+    expect(MODULE_PRODUS_SHARED_SINGULAR_LABEL).toBe("Module produs partajat");
+    expect(MODULE_PRODUS_SHARED_LABEL).not.toMatch(/Shared module/i);
   });
 });

@@ -90,7 +90,7 @@ function VolumetricHumanOverview() {
       <SectionCard title="Cum se folosește acest șablon" icon={<BookOpen className="w-3.5 h-3.5" />}>
         <p className="text-[12px] text-slate-400 leading-relaxed">
           Acest șablon descrie cum se construiesc literele volumetrice luminoase: fața din
-          plexi/acrilic, cantul din profil aluminiu, spatele din Forex, iluminarea LED și finisajul
+          plexiglas 3mm PMMA - opal, cantul din profil aluminiu, spatele din Forex, iluminarea LED și finisajul
           final.
         </p>
       </SectionCard>
@@ -98,7 +98,7 @@ function VolumetricHumanOverview() {
       <SectionCard title="Flux de producție" icon={<Workflow className="w-3.5 h-3.5" />}>
         <BulletList
           items={[
-            "Fața literelor se taie din plexi/acrilic (CNC/laser).",
+            "Fața literelor se taie din plexiglas 3mm PMMA - opal (CNC/laser).",
             "Cantul/lateralul se realizează din profil aluminiu.",
             "Spatele este din Forex 10 mm.",
             "LED-urile se montează pe spate.",
@@ -110,7 +110,7 @@ function VolumetricHumanOverview() {
       <SectionCard title="Ce se calculează la ofertare" icon={<Calculator className="w-3.5 h-3.5" />}>
         <BulletList
           items={[
-            "Materiale pe mp, ml sau buc (față plexi, profil aluminiu, Forex, surse LED).",
+            "Materiale pe mp, ml sau buc (față plexiglas 3mm PMMA - opal, profil aluminiu, Forex, surse LED).",
             "Operații pe ml, buc sau set (tăiere, modelare, lipire, montaj LED).",
             "LED-uri estimate din perimetrul literelor.",
             "Surse LED pe buc, în funcție de configurație.",
@@ -315,12 +315,12 @@ export function TemplateGeneralTabPanel({
               Deschide dosarul tehnic (Blueprint Dossier)
             </Link>
             <Link
-              to="/intake-v6"
+              to="/intake-v6/operator"
               data-testid="product-system-intake-v6-link"
               className="flex items-center gap-2.5 px-3 py-2.5 bg-[#0D1321] border border-[#1E293B] rounded-lg text-[12px] font-semibold text-purple-300 hover:border-purple-500/40 transition-colors"
             >
               <Inbox className="w-4 h-4 shrink-0 text-purple-400" />
-              Vezi cererile Intake V6 pentru această familie
+              Vezi cererile Intake V6 (operator) pentru această familie
             </Link>
           </div>
         </SectionCard>

@@ -35,6 +35,12 @@ import { SectionHeader } from "@/components/workos/SharedComponents";
 import RecalibrationModal from "@/components/workos/RecalibrationModal";
 import InventorySheetQualityPanel from "@/components/inventory/InventorySheetQualityPanel";
 import StockMovementsPanel from "@/components/inventory/StockMovementsPanel";
+import { CncProcessableBadge } from "@/components/workos/CncProcessableBadge";
+import { materialCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge";
+import {
+  misleadingCodeNoteRo,
+  normalizePricingDisplayName,
+} from "@/lib/pricing/pricingDisplayNaming";
 import { buildSheetQualityMaterialUrl } from "@/utils/inventorySheetQualityLinks";
 import {
   Warehouse,
@@ -197,7 +203,12 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
       <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <Layers className="w-4 h-4 text-blue-400" />
-          <span className="text-[14px] font-bold text-slate-200">{material.name}</span>
+          <span className="text-[14px] font-bold text-slate-200">
+            {normalizePricingDisplayName(material.id, material.name)}
+          </span>
+          {materialCarriesCncProcessableBadge(material.id) ? (
+            <CncProcessableBadge size="sm" testId={`inventory-cnc-badge-detail-${material.id}`} />
+          ) : null}
           <span className={`text-[10px] font-semibold ${stockStatusConfig[material.stockStatus].cls}`}>
             ● {stockStatusConfig[material.stockStatus].label}
           </span>
@@ -1015,8 +1026,23 @@ export default function Inventory() {
                               </div>
                             </td>
                             <td className="px-4 py-2.5">
-                              <p className="text-slate-200 font-medium">{mat.name}</p>
+                              <div className="flex flex-wrap items-center gap-1.5">
+                                <p className="text-slate-200 font-medium">
+                                  {normalizePricingDisplayName(mat.id, mat.name)}
+                                </p>
+                                {materialCarriesCncProcessableBadge(mat.id) ? (
+                                  <CncProcessableBadge
+                                    size="sm"
+                                    testId={`inventory-cnc-badge-${mat.id}`}
+                                  />
+                                ) : null}
+                              </div>
                               <p className="text-[10px] text-slate-500 font-mono">{mat.id}</p>
+                              {misleadingCodeNoteRo(mat.id) ? (
+                                <p className="mt-0.5 max-w-md text-[10px] leading-snug text-amber-500/80">
+                                  {misleadingCodeNoteRo(mat.id)}
+                                </p>
+                              ) : null}
                             </td>
                             <td className="px-4 py-2.5">
                               <div className="flex items-center gap-1">

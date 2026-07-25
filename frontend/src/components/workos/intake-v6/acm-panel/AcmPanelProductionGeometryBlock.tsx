@@ -1,5 +1,5 @@
 /**
- * Compact production DXF attachment UI for AcmPanel inspector.
+ * Compact production DXF attachment strip for AcmPanel inspector.
  * Technical status only — no money.
  */
 
@@ -8,6 +8,7 @@ import {
   activeProductionGeometryAttachments,
   uploadAcmPanelProductionDxf,
 } from "@/lib/intakeV6/acmPanel/productionGeometryApi";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 
 type Props = {
   workspaceId: string | null | undefined;
@@ -31,6 +32,22 @@ function statusLabel(status: string): string {
     no_attachment: "fără atașament",
   };
   return map[status] || status;
+}
+
+function statusTone(status: string): string {
+  if (status === "stale" || status === "invalid" || status === "semantic_mapping_required") {
+    return "border-amber-500/35 bg-amber-500/10 text-amber-200/90";
+  }
+  if (
+    status === "measured" ||
+    status === "measured_with_warnings" ||
+    status === "uploaded" ||
+    status === "commercial_deduced" ||
+    status === "commercial_deduced_with_assumptions"
+  ) {
+    return "border-emerald-500/30 bg-emerald-500/10 text-emerald-200/90";
+  }
+  return "border-slate-600/35 bg-slate-800/40 text-slate-400";
 }
 
 export default function AcmPanelProductionGeometryBlock({
@@ -84,30 +101,38 @@ export default function AcmPanelProductionGeometryBlock({
 
   const snap = (current?.metrics_snapshot as Record<string, unknown> | undefined) || lastPreview;
   const mStatus = String(current?.measurement_status || snap?.measurement_status || "no_attachment");
+  const filename = String(current?.original_filename || current?.filename || "").trim();
+  const hasFile = Boolean(filename);
+  const hasMetrics = Boolean(snap);
+  const hasWarnings =
+    Array.isArray(current?.warnings) && (current.warnings as string[]).length > 0;
+  const showDetail = hasMetrics || mStatus === "stale" || hasWarnings || Boolean(error);
 
   return (
     <div
-      className="mt-3 space-y-2 rounded border border-[#2A3548]/50 bg-[#0A0F1A]/40 px-2 py-2"
+      className="mt-2 border-t border-[#2A3548]/45 pt-2"
       data-testid="intake-v6-acm-production-geometry"
     >
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-[11px] font-semibold text-slate-200">Geometrie producție — optional</p>
-        <span
-          className="rounded border border-slate-600/40 px-1.5 py-0.5 text-[10px] text-slate-400"
-          data-testid="intake-v6-acm-pg-status"
-        >
-          {statusLabel(mStatus)}
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        <span className="text-[11px] font-medium tracking-tight text-slate-300">
+          DXF producție
         </span>
-      </div>
+        {intakeV6ShowOperatorConfigStatusBadges() ? (
+          <span
+            className={`rounded border px-1.5 py-px text-[10px] leading-4 ${statusTone(mStatus)}`}
+            data-testid="intake-v6-acm-pg-status"
+          >
+            {statusLabel(mStatus)}
+          </span>
+        ) : null}
 
-      {panels.length > 1 ? (
-        <label className="block text-[10px] text-slate-500">
-          Panou
+        {panels.length > 1 ? (
           <select
-            className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-1.5 py-1 text-[11px] text-slate-200"
+            className="h-6 max-w-[9rem] truncate rounded border border-[#2A3548]/70 bg-[#111827]/80 px-1.5 text-[10px] text-slate-300"
             data-testid="intake-v6-acm-pg-panel"
             value={panelId}
             onChange={(e) => setPanelId(e.target.value)}
+            aria-label="Panou"
           >
             {panels.map((p) => (
               <option key={p.panel_id || "none"} value={p.panel_id}>
@@ -115,62 +140,97 @@ export default function AcmPanelProductionGeometryBlock({
               </option>
             ))}
           </select>
+        ) : null}
+
+        {hasFile ? (
+          <span
+            className="min-w-0 max-w-[12rem] truncate text-[10px] text-slate-400"
+            data-testid="intake-v6-acm-pg-filename"
+            title={filename}
+          >
+            {filename}
+          </span>
+        ) : (
+          <span className="sr-only" data-testid="intake-v6-acm-pg-filename">
+            —
+          </span>
+        )}
+
+        <label
+          className={`ml-auto inline-flex h-6 cursor-pointer items-center rounded border px-2 text-[10px] font-medium transition-colors ${
+            busy || !workspaceId
+              ? "cursor-not-allowed border-slate-600/40 text-slate-500"
+              : "border-sky-500/35 bg-sky-500/10 text-sky-200 hover:border-sky-400/50 hover:bg-sky-500/15"
+          }`}
+        >
+          <input
+            type="file"
+            accept=".dxf,application/dxf,image/vnd.dxf"
+            className="hidden"
+            data-testid="intake-v6-acm-pg-file"
+            disabled={busy || !workspaceId}
+            onChange={(e) => {
+              const f = e.target.files?.[0] || null;
+              e.target.value = "";
+              void onFile(f);
+            }}
+          />
+          {busy ? "Se încarcă…" : current ? "Înlocuiește" : "Încarcă DXF"}
         </label>
+      </div>
+
+      {!hasFile ? (
+        <p className="mt-0.5 text-[10px] leading-4 text-slate-500/90">
+          opțional · măsurători atelier
+          {!workspaceId ? " · workspace indisponibil" : null}
+        </p>
       ) : null}
 
-      <p className="text-[10px] text-slate-500" data-testid="intake-v6-acm-pg-filename">
-        Fișier: {String(current?.original_filename || current?.filename || "—")}
-      </p>
-      <p className="text-[10px] text-slate-500">
-        Rol: production_geometry · DXF măsurat opțional (nu e necesar pentru estimarea ofertei)
-      </p>
+      {showDetail ? (
+        <div className="mt-1.5 space-y-1">
+          {hasMetrics ? (
+            <div
+              className="flex flex-wrap gap-x-3 gap-y-0.5 text-[10px] tabular-nums text-slate-400"
+              data-testid="intake-v6-acm-pg-metrics"
+            >
+              <span>
+                CUT <span className="text-slate-300">{String(snap?.cut_length_ml ?? "—")}</span> ml
+              </span>
+              <span>
+                V <span className="text-slate-300">{String(snap?.v_groove_total_ml ?? "—")}</span> ml
+              </span>
+              <span>
+                L1 <span className="text-slate-300">{String(snap?.v_groove_l1_ml ?? "—")}</span>
+              </span>
+              <span>
+                L2 <span className="text-slate-300">{String(snap?.v_groove_l2_ml ?? "—")}</span>
+              </span>
+            </div>
+          ) : null}
 
-      {snap ? (
-        <div className="grid grid-cols-2 gap-1 text-[10px] text-slate-300" data-testid="intake-v6-acm-pg-metrics">
-          <span>CUT: {snap.cut_length_ml ?? "—"} ml</span>
-          <span>V tot: {snap.v_groove_total_ml ?? "—"} ml</span>
-          <span>V L1: {snap.v_groove_l1_ml ?? "—"} ml</span>
-          <span>V L2: {snap.v_groove_l2_ml ?? "—"} ml</span>
+          {mStatus === "stale" ? (
+            <p className="text-[10px] leading-4 text-amber-200/90" data-testid="intake-v6-acm-pg-stale">
+              Configurația s-a schimbat — reîncarcă DXF.
+            </p>
+          ) : null}
+
+          {hasWarnings && current ? (
+            <ul
+              className="list-inside list-disc text-[10px] leading-4 text-amber-200/80"
+              data-testid="intake-v6-acm-pg-warnings"
+            >
+              {(current.warnings as string[]).slice(0, 4).map((w) => (
+                <li key={w}>{w}</li>
+              ))}
+            </ul>
+          ) : null}
+
+          {error ? (
+            <p className="text-[10px] leading-4 text-rose-300" data-testid="intake-v6-acm-pg-error">
+              {error}
+            </p>
+          ) : null}
         </div>
-      ) : null}
-
-      {mStatus === "stale" ? (
-        <p className="text-[10px] text-amber-200" data-testid="intake-v6-acm-pg-stale">
-          Configurația s-a schimbat — măsurarea este stale. Reîncarcă DXF.
-        </p>
-      ) : null}
-
-      {Array.isArray(current?.warnings) && (current.warnings as string[]).length ? (
-        <ul className="list-inside list-disc text-[10px] text-amber-200/90" data-testid="intake-v6-acm-pg-warnings">
-          {(current.warnings as string[]).slice(0, 4).map((w) => (
-            <li key={w}>{w}</li>
-          ))}
-        </ul>
-      ) : null}
-
-      {error ? (
-        <p className="text-[10px] text-rose-300" data-testid="intake-v6-acm-pg-error">
-          {error}
-        </p>
-      ) : null}
-
-      <label className="inline-flex cursor-pointer items-center gap-2 rounded border border-sky-500/30 px-2 py-1 text-[11px] text-sky-200">
-        <input
-          type="file"
-          accept=".dxf,application/dxf,image/vnd.dxf"
-          className="hidden"
-          data-testid="intake-v6-acm-pg-file"
-          disabled={busy || !workspaceId}
-          onChange={(e) => {
-            const f = e.target.files?.[0] || null;
-            e.target.value = "";
-            void onFile(f);
-          }}
-        />
-        {busy ? "Se încarcă…" : current ? "Înlocuiește DXF" : "Încarcă DXF"}
-      </label>
-      {!workspaceId ? (
-        <p className="text-[10px] text-slate-500">Workspace indisponibil pentru upload.</p>
       ) : null}
     </div>
   );

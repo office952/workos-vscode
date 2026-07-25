@@ -1,6 +1,9 @@
 /**
  * ReviewStep layout mount for product component list + AcmPanel inspector.
  * Owns no AcmPanel domain semantics — delegates to uiReadModel + operatorPatch drafts.
+ *
+ * variant="lab" — 3-col list | inspector | validation (legacy)
+ * variant="workbench" — flat form in Panou/carcasă (no nested component list)
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -25,6 +28,7 @@ import type { IntakeV6ProductComponentId } from "@/lib/intakeV6/useIntakeV6Produ
 import type { IntakeV6FinishSetup } from "@/lib/intakeV6/intakeV6Api";
 import type { SegmentedBackground } from "@/lib/intakeV6/segmentedBackground";
 import { emptyFlushResult } from "@/lib/intakeV6/acmPanel/commitSemantics";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 
 export default function IntakeV6AcmPanelConfigRegion({
   payload,
@@ -38,6 +42,7 @@ export default function IntakeV6AcmPanelConfigRegion({
   onNavigateLogo,
   workspaceId,
   onProductionGeometryBound,
+  variant = "lab",
 }: {
   payload: Record<string, unknown> | null | undefined;
   finishSetup: Record<string, unknown> | null | undefined;
@@ -50,6 +55,8 @@ export default function IntakeV6AcmPanelConfigRegion({
   onNavigateLogo: () => void;
   workspaceId?: string | null;
   onProductionGeometryBound?: () => void;
+  /** workbench = flat Panou/carcasă form; lab = nested 3-col sheet/legacy */
+  variant?: "lab" | "workbench";
 }) {
   const acmModel = useMemo(
     () =>
@@ -84,6 +91,13 @@ export default function IntakeV6AcmPanelConfigRegion({
     return () => registerFlush(null);
   }, [registerFlush]);
 
+  useEffect(() => {
+    if (variant !== "workbench") return;
+    if (!acmModel.exists) return;
+    if (selectedId === "acm_panel") return;
+    onSelect("acm_panel");
+  }, [variant, acmModel.exists, selectedId, onSelect]);
+
   const handleSelect = useCallback(
     (id: IntakeV6ProductComponentId) => {
       if (selectedId === "acm_panel" && id !== "acm_panel") {
@@ -108,14 +122,95 @@ export default function IntakeV6AcmPanelConfigRegion({
     [onApplyFinishPatch, onProductionGeometryBound],
   );
 
-  if (!items.length) return null;
+  if (!items.length && !acmModel.exists) return null;
 
-  const showInspector = selectedId === "acm_panel" && acmModel.exists;
+  const showInspector =
+    variant === "workbench"
+      ? acmModel.exists
+      : selectedId === "acm_panel" && acmModel.exists;
+
+  if (variant === "workbench") {
+    if (!acmModel.exists) return null;
+    const onValidationIssue = (issue: AcmPanelIssue) => {
+      const result =
+        inspectorRef.current?.flushAll() ?? emptyFlushResult("nothing_to_commit");
+      if (!canContinueAfterAcmPanelFlush(result)) return;
+      onSelect("acm_panel");
+      setFocusIssue(issue);
+    };
+    const validationClean = acmModel.issues.length === 0;
+    return (
+      <div
+        className="space-y-2"
+        data-testid="intake-v6-acm-panel-config-region"
+        data-acm-layout="workbench"
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <p className="text-[13px] font-semibold text-slate-100">Panou Alucobond</p>
+            <p className="text-[11px] text-slate-500">Geometrie, construcție și finisaj</p>
+          </div>
+          {intakeV6ShowOperatorConfigStatusBadges() ? (
+            <p
+              className="rounded-full border border-cyan-500/30 bg-cyan-500/10 px-2.5 py-0.5 text-[11px] font-medium text-cyan-100"
+              data-testid="intake-v6-acm-workbench-status"
+            >
+              {acmModel.primaryStatus.label}
+            </p>
+          ) : null}
+        </div>
+        <div
+          className="overflow-hidden rounded border border-[#2A3548]/55 bg-[#0B1220]/80"
+          data-testid="intake-v6-acm-tech-status-strip"
+        >
+          <IntakeV6AcmPanelBlueprintPreview
+            chrome="embedded"
+            finishSetup={finishSetup}
+            payload={payload ?? null}
+            inlineMeta={
+              validationClean ? (
+                <span
+                  data-testid="intake-v6-acm-validation-rail"
+                  data-density="inline"
+                  data-state="clean"
+                >
+                  <span className="font-medium text-emerald-300/90">Validare</span>
+                  {" · fără probleme deschise"}
+                </span>
+              ) : null
+            }
+          />
+          {!validationClean ? (
+            <IntakeV6AcmPanelValidationRail
+              density="inline"
+              model={acmModel}
+              onIssueClick={onValidationIssue}
+            />
+          ) : null}
+        </div>
+        {showInspector ? (
+          <div className="min-w-0">
+            <IntakeV6AcmPanelInspector
+              ref={inspectorRef}
+              model={acmModel}
+              finishSetup={finishSetup}
+              actions={actions}
+              focusIssue={focusIssue}
+              onFocusConsumed={() => setFocusIssue(null)}
+              workspaceId={workspaceId}
+              presentation="flat"
+            />
+          </div>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div
       className="mb-3 grid gap-2 lg:grid-cols-[minmax(200px,240px)_minmax(0,1fr)_minmax(200px,240px)]"
       data-testid="intake-v6-acm-panel-config-region"
+      data-acm-layout="lab"
     >
       <IntakeV6ProductComponentList
         items={items}
@@ -156,7 +251,7 @@ export default function IntakeV6AcmPanelConfigRegion({
               : selectedId === "logo"
                 ? "Vector Logo — folosește tab-ul Finisaje pentru configurare."
                 : acmModel.exists
-                  ? "Selectează Panou Alucobond casetat pentru inspector."
+                  ? "Selectează Alucobond casetat pentru inspector."
                   : "Selectează o componentă din listă."}
           </div>
         )}

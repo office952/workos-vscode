@@ -635,7 +635,7 @@ export default function IntakeV6SvgAnalyzerStep({ hook }: IntakeV6SvgAnalyzerSte
 								>
 									Pentru panoul exterior ACP: pe cardul <span className="font-semibold">contur negru</span>{" "}
 									alege rolul <span className="font-semibold">Contur suport</span> — apare{" "}
-									<span className="font-semibold">Panou Alucobond casetat</span> în Compoziție produs
+									<span className="font-semibold">Alucobond casetat</span> în Compoziție produs
 									propusă.
 								</p>
 							) : null}

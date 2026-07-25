@@ -10,6 +10,7 @@ export type AcmAssemblyExtentSource =
   | "panel_extent"
   | "assembly_dimensions"
   | "single_panel"
+  | "envelope"
   | "none";
 
 export type AcmAssemblyPanelInput = {
@@ -109,6 +110,18 @@ export function computeAcmAssemblyExtent(args: {
         assembly_width_mm: asmW,
         assembly_height_mm: asmH,
         source: "assembly_dimensions",
+        warnings,
+        envelope_ignored_for_multi_panel: false,
+      };
+    }
+    // Single-panel / panel-alone: geometry W×H when panels[] empty (legacy / unsynced).
+    const envW = num(args.envelope_width_mm);
+    const envH = num(args.envelope_height_mm);
+    if (envW != null && envH != null && envW > 0 && envH > 0) {
+      return {
+        assembly_width_mm: envW,
+        assembly_height_mm: envH,
+        source: "envelope",
         warnings,
         envelope_ignored_for_multi_panel: false,
       };

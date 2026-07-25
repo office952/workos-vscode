@@ -120,7 +120,7 @@ function roleLabel(role: string | undefined, templateCode?: string): string {
   if (role === "volumetric_logo") return "Logo volumetric";
   if (role === "support_panel") {
     if (templateCode === "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1") {
-      return "Panou Alucobond casetat";
+      return "Alucobond casetat";
     }
     return "Fundal / suport";
   }
@@ -130,11 +130,14 @@ function roleLabel(role: string | undefined, templateCode?: string): string {
 function compositionLabel(type: string | undefined): string {
   if (type === "letters_plus_logo") return "Litere volumetrice + logo volumetric";
   if (type === "letters_plus_logo_plus_support") {
-    return "Litere volumetrice + logo volumetric + Panou Alucobond casetat";
+    return "Litere volumetrice + logo volumetric + Alucobond casetat";
   }
-  if (type === "letters_plus_support") return "Litere volumetrice + Panou Alucobond casetat";
+  if (type === "letters_plus_support") return "Litere volumetrice + Alucobond casetat";
   if (type === "logo_only") return "Logo volumetric";
   if (type === "letters_only") return "Litere volumetrice";
+  if (type === "support_only" || type === "support_only_pending") {
+    return "Panou Alucobond casetat";
+  }
   return "Compoziție produs";
 }
 

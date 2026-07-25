@@ -3,12 +3,18 @@
  * Human name primary; technical codes secondary. No authority changes.
  */
 
+import {
+  ACM_BOXED_MOUNTING_TEMPLATE_CODE,
+  ACM_BOXED_OWNER_LABEL_RO,
+} from "./acmBoxedTemplateIdentity";
+
 const TEMPLATE_HUMAN_NAMES: Record<string, string> = {
   "TPL-VOLUMETRIC-LETTERS_v2": "Litere volumetrice",
   "TPL-VOLUMETRIC-LETTERS": "Litere volumetrice",
   "TPL-VOLUM-ALUMINIU_v1": "Cant / volum din aluminiu",
   "TPL-VOLUM-ALUMINIU": "Cant / volum din aluminiu",
-  "TPL-ACM-CASSETTED-PANEL": "Panou ACM casetat",
+  [ACM_BOXED_MOUNTING_TEMPLATE_CODE]: ACM_BOXED_OWNER_LABEL_RO,
+  "TPL-ACM-CASSETTED-PANEL": ACM_BOXED_OWNER_LABEL_RO,
   "TPL-VOLUMETRIC-LOGO": "Logo volumetric",
 };
 

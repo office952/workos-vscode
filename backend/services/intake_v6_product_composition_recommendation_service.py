@@ -316,9 +316,22 @@ def build_product_composition_recommendation(payload: dict[str, Any]) -> dict[st
     elif letter_layers:
         composition_type = "letters_only"
     elif has_support:
-        composition_type = "support_only_pending"
+        # ACM panel-alone is an offerable composition (applied_content=none), not a pending stub.
+        composition_type = "support_only"
     else:
         composition_type = "undetermined"
+
+    if composition_type == "support_only":
+        for item in composition_items:
+            if item.get("component_role") == "support_panel":
+                item["status"] = "recommended"
+        for tmpl in recommended_templates:
+            if tmpl.get("role_in_composition") == "support_panel":
+                tmpl["status"] = "recommended"
+                tmpl["reason"] = (
+                    "Panou Alucobond casetat detectat ca produs de sine stătător "
+                    f"({SUPPORT_TEMPLATE_LIVE_CODE}); applied_content=none după confirmare."
+                )
 
     return {
         "status": "needs_confirmation" if recommended_templates else "blocked",

@@ -273,18 +273,28 @@ function buildIssues(args: {
   }
 
   const auth = instance.configuration.field_authority ?? {};
+  const criticalFieldLabel: Record<string, string> = {
+    panel_geometry: "Geometrie panou",
+    fold_count: "Număr de întoarceri (pliuri)",
+    l1_mm: "Prima întoarcere (L1)",
+    l2_mm: "A doua întoarcere (L2)",
+    acm_thickness_mm: "Grosime ACM",
+    finished_depth_mm: "Adâncime casetă",
+  };
   for (const key of CRITICAL_FIELD_KEYS) {
     if (key === "l2_mm" && instance.configuration.fold_count === 1) continue;
     if (key === "panel_geometry" && (auth.panel_geometry === "detected" || auth.panel_geometry === "operator_confirmed")) {
       continue;
     }
     if (auth[key] === "catalog_default" || auth[key] === "proposed") {
+      const label = criticalFieldLabel[key] ?? key;
       issues.push({
         id: `auth-${key}`,
         severity: "blocker",
         sectionId: "construction",
-        fieldTestId: `intake-v6-acm-field-${key}`,
-        message: `Câmp critic ${key}: ${authorityToOperator(auth[key]).label} — confirmă explicit.`,
+        fieldTestId:
+          key === "fold_count" ? "intake-v6-acm-field-fold_count" : `intake-v6-acm-field-${key}`,
+        message: `${label}: ${authorityToOperator(auth[key]).label} — selectează / confirmă în Construcție.`,
       });
     }
   }
@@ -455,7 +465,7 @@ export function buildAcmPanelUiReadModel(
     source: resolved.source,
     inconsistentProjection: resolved.inconsistent,
     inconsistencyNotes: resolved.inconsistencyNotes,
-    label: "Panou Alucobond casetat",
+    label: "Alucobond casetat",
     templateCode: instance?.component_template_code ?? null,
     dimensionsSummary,
     segmentCount,

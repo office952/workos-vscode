@@ -19,4 +19,24 @@ describe("IntakeV6ReviewFormRegion", () => {
     expect(screen.getByTestId("intake-v6-review-form-body")).toHaveTextContent("form fields");
     expect(screen.getByTestId("intake-v6-review-attention-slot")).toBeInTheDocument();
   });
+
+  it("supports workbench top domain chrome", () => {
+    render(
+      <IntakeV6ReviewFormRegion
+        layout="workbench"
+        tabNav={<div data-testid="intake-v6-review-tabs">domains</div>}
+      >
+        <p>panel</p>
+      </IntakeV6ReviewFormRegion>,
+    );
+    expect(screen.getByTestId("intake-v6-review-form-region")).toHaveAttribute(
+      "data-workbench",
+      "true",
+    );
+    expect(screen.getByTestId("intake-v6-review-domain-nav-shell")).toHaveAttribute(
+      "data-domain-nav-placement",
+      "top",
+    );
+    expect(screen.getByTestId("intake-v6-review-form-body")).toHaveTextContent("panel");
+  });
 });

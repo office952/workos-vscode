@@ -36,6 +36,7 @@ from services.intake_v4_backing_mode_service import (
     resolve_layer_backing_mode,
     resolve_volumetric_backing_state,
 )
+from seeds.material_canonical_naming import LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME
 from services.volumetric_material_rate_resolver import PROFILE_DEPTH_MM_TO_VARIANT_CODE
 from dataclasses import asdict
 
@@ -2003,7 +2004,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
                     "material",
                     sheet_face_qty,
                     "m2",
@@ -2019,7 +2020,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
                     "material",
                     logo_only_artwork_box_footprint,
                     "m2",
@@ -2037,7 +2038,7 @@ def build_intake_v4_material_breakdown(
             material_rows.append(
                 _cost_row(
                     "plexiglas_face",
-                    "Plexiglas 3 mm",
+                    LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
                     "material",
                     face_area,
                     "m2",

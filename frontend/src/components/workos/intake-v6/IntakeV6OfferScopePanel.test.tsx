@@ -23,6 +23,21 @@ describe("IntakeV6OfferScopePanel", () => {
     expect(screen.queryByTestId("intake-v6-offer-scope-subset-options")).not.toBeInTheDocument();
   });
 
+  it("ACM panel-alone teaches panou needs instead of Față/Cant/LED checkboxes", () => {
+    render(
+      <IntakeV6OfferScopePanel
+        payload={{
+          product_composition_recommendation: { composition_type: "support_only" },
+        }}
+        onSave={vi.fn(async () => true)}
+      />,
+    );
+    expect(screen.getByTestId("intake-v6-acm-panel-only-needs")).toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-acm-panel-only-out-of-scope")).toHaveTextContent(/Adeziv/i);
+    expect(screen.queryByTestId("intake-v6-offer-scope-face")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-offer-scope-cant")).not.toBeInTheDocument();
+  });
+
   it("shows primary modules and system LED bundle with advanced split in subset mode", () => {
     render(<IntakeV6OfferScopePanel payload={{}} onSave={vi.fn(async () => true)} />);
 

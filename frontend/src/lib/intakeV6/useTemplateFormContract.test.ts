@@ -260,7 +260,7 @@ describe("useTemplateFormContract", () => {
 
       const labelMap = Object.fromEntries(result.current.faceFinishOptions.map((o) => [o.value, o.label]));
       expect(labelMap["oracal_651"]).toBe("Oracal 651");
-      expect(labelMap["oracal_8500"]).toBe("Oracal 8500 — translucid");
+      expect(labelMap["oracal_8500"]).toBe("Oracal 8500");
       expect(labelMap["none"]).toBe("Fără finisaj — plexiglas brut");
     });
 

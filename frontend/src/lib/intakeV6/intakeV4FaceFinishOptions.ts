@@ -1,8 +1,8 @@
 const LETTER_GROUP_FACE_UI_OPTIONS = [
   { value: "oracal_651", label: "Oracal 651" },
   { value: "oracal_641", label: "Oracal 641" },
-  { value: "oracal_8500", label: "Oracal 8500 — translucid" },
-  { value: "print_laminate", label: "Print + laminare" },
+  { value: "oracal_8500", label: "Oracal 8500" },
+  { value: "print_laminate", label: "Printat / Laminat" },
 ] as const;
 
 export const INTAKE_V4_ORACAL_FACE_ROLL_WIDTH_OPTIONS = [

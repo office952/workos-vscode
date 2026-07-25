@@ -10,6 +10,11 @@ import {
 } from "@/api/productTemplateComponentContracts";
 import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
 import {
+  MODULE_PRODUS_CODE_LABEL,
+  MODULE_PRODUS_LIST_HEADING,
+  displayModuleTemplateWireLabel,
+} from "./productTemplateModulesVocabulary";
+import {
   PS_SURFACE_INPUT,
   PS_SURFACE_PANEL,
   PS_SURFACE_ROW,
@@ -108,7 +113,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
           </div>
 
           <div>
-            <h4 className="mb-1 font-medium text-slate-200">Copii / module</h4>
+            <h4 className="mb-1 font-medium text-slate-200">Copii / {MODULE_PRODUS_LIST_HEADING}</h4>
             {view.children.length === 0 ? (
               <p className="text-slate-500">Nicio legătură copil.</p>
             ) : (
@@ -123,7 +128,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                       <div className="font-medium text-slate-100">
                         {humanTemplateName(edge.module_template_code)}
                       </div>
-                      <div className="font-mono text-[10px] text-slate-500">
+                      <div className="font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
                         {edge.module_template_code}
                       </div>
                       <p className="mt-0.5 text-slate-500">
@@ -133,7 +138,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                       {typeof linkId === "number" ? (
                         <div className="mt-2 flex flex-wrap items-end gap-2">
                           <label className="flex flex-col gap-0.5 text-slate-400">
-                            usage_mode
+                            {displayModuleTemplateWireLabel("usage_mode")}
                             <input
                               className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                               defaultValue={edge.usage_mode ?? ""}
@@ -142,7 +147,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                             />
                           </label>
                           <label className="flex flex-col gap-0.5 text-slate-400">
-                            instance_schema_id
+                            {displayModuleTemplateWireLabel("instance_schema_id")}
                             <input
                               className={`${PS_SURFACE_INPUT} px-2 py-1 text-[11px]`}
                               defaultValue={edge.instance_schema_id ?? ""}

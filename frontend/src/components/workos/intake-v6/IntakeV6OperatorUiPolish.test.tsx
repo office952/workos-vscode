@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it } from "vitest";
 import IntakeV6MaterialBreakdownPanel from "@/components/workos/intake-v6/IntakeV6MaterialBreakdownPanel";
@@ -21,7 +21,7 @@ function breakdownWithMixedOperations(): IntakeV6MaterialBreakdownResponse {
     operation_rows: [
       {
         key: "cnc_face_cutting_plexiglas_3mm",
-        display_name: "Debitare CNC față Plexiglas 3 mm",
+        display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
         operation_type: "cutting",
         quantity: 25.02,
         unit: "ml",

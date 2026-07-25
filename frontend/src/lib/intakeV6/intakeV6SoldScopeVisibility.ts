@@ -1,3 +1,4 @@
+import { isAcmPanelOnlyComposition } from "./acmPanel/acmPanelOnlyComposition";
 import {
   readPersistedOfferScope,
   type OfferScopeMode,
@@ -56,6 +57,19 @@ export function resolveSoldScopeFieldVisibility(
   payload: Record<string, unknown> | null | undefined,
 ): SoldScopeFieldVisibility {
   const persisted = readPersistedOfferScope(payload);
+  // Composition support_only (ACM panel-alone) outranks VL full_product teaching:
+  // letter FACE/CANT/BACK/LED are not sold — do not require finish completeness.
+  if (isAcmPanelOnlyComposition(payload)) {
+    return {
+      mode: persisted.mode,
+      soldModules: persisted.soldModules,
+      face: false,
+      returnCant: false,
+      back: false,
+      lighting: false,
+      electrical: false,
+    };
+  }
   if (persisted.mode === "full_product" || persisted.soldModules.length === 0) {
     return {
       mode: persisted.mode,

@@ -44,6 +44,19 @@ def test_multi_panel_missing_positions_uses_assembly_dimensions():
     assert result["source"] == "assembly_dimensions"
 
 
+def test_empty_panels_falls_back_to_envelope():
+    """Panel-alone legacy instances: empty panels[] + geometry W×H → V-groove qty."""
+    result = compute_acm_assembly_extent(
+        panels=[],
+        assembly_dimensions=None,
+        envelope_width_mm=2000,
+        envelope_height_mm=500,
+    )
+    assert result["assembly_width_mm"] == 2000
+    assert result["assembly_height_mm"] == 500
+    assert result["source"] == "envelope"
+
+
 def test_never_overloads_panel_keys_in_canonical_values():
     payload = {
         "finish_setup": {

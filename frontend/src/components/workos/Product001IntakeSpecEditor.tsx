@@ -849,8 +849,8 @@ export default function Product001IntakeSpecEditor({
                 >
                   <option value="">— selectează —</option>
                   <option value="oracal_651">Autocolant colorat Oracal 651</option>
-                  <option value="oracal_8500">Oracal 8500 translucent</option>
-                  <option value="printed_laminated_vinyl">Print + laminare</option>
+                  <option value="oracal_8500">Oracal 8500</option>
+                  <option value="printed_laminated_vinyl">Printat / Laminat</option>
                 </select>
               </div>
             )}

@@ -191,6 +191,54 @@ def test_authority_summary_fixture_provisional_with_warnings():
     assert "composition_inconsistent_or_unconfirmed" in summary["warnings"]
 
 
+def test_authority_single_panel_segmentation_not_required():
+    """Remus doar-panou (~2000×500): no multi-panel seg → N/A, not a firm-offer blocker."""
+    payload = {
+        "finish_setup": {
+            "acm_panel_instance": {
+                "schema": "acm_panel_component_instance_v1",
+                "component_instance_id": "acm_remus",
+                "association_status": "confirmed",
+                "technical_configuration_status": "confirmed",
+                "composition_status": "confirmed",
+                "geometry": {
+                    "width_mm": 2000,
+                    "height_mm": 500,
+                    "panels": [
+                        {
+                            "panel_id": "p1",
+                            "width_mm": 2000,
+                            "height_mm": 500,
+                            "position": {"x_mm": 0, "y_mm": 0},
+                        }
+                    ],
+                    "joints": [],
+                },
+                "configuration": {
+                    "finished_depth_mm": 60,
+                    "fold_count": 1,
+                    "l1_mm": 60,
+                    "l2_mm": 0,
+                    "field_authority": {
+                        "panel_geometry": "operator_confirmed",
+                        "fold_count": "operator_confirmed",
+                        "l1_mm": "operator_confirmed",
+                        "acm_thickness_mm": "operator_confirmed",
+                        "finished_depth_mm": "operator_confirmed",
+                    },
+                },
+            }
+        }
+    }
+    summary = build_acm_panel_authority_summary(payload)
+    assert summary["segmented_confirmed"] is True
+    assert summary["segmented_status"] is None
+    assert summary["final_eligibility"] is True
+    assert summary["offer_eligibility"] is True
+    assert summary["status"] == "official_ready"
+    assert "segmentation_proposed" not in summary["warnings"]
+
+
 def test_assembly_fallback_warns_when_panel_list_missing():
     payload = {
         "assembly_width_mm": 2000,
@@ -224,3 +272,5 @@ def test_assembly_fallback_warns_when_panel_list_missing():
     assert geom["commercial_face_area_m2"] == 0.7
     assert geom["mode"] == "assembly_fallback"
     assert "missing_panel_list_assembly_face_only" in geom["warnings"]
+    # Empty panels[] must not read as "0 panouri" when assembly dims price the panel.
+    assert geom["panel_count"] == 1

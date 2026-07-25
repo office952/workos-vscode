@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   intakeV6HasOfficialCommercialTotals,
   intakeV6OfficialPricingBlockerMessage,
+  intakeV6OperatorFacingPricingBlocker,
   V6_OFFICIAL_COMMERCIAL_AUTHORITY,
 } from "./intakeV6OfficialPricing";
 import type { IntakeV6PricedQuoteDryRunResponse } from "./intakeV6PricedQuoteTypes";
@@ -64,5 +65,12 @@ describe("intakeV6OfficialPricing", () => {
         }),
       ),
     ).toBe("7G blocked");
+  });
+
+  it("humanizes dry-run English for the offer rail", () => {
+    expect(
+      intakeV6OperatorFacingPricingBlocker("V6 backend pricing input is not ready for dry-run."),
+    ).toMatch(/nu e gata/i);
+    expect(intakeV6OperatorFacingPricingBlocker("7G blocked")).toMatch(/blocată/i);
   });
 });

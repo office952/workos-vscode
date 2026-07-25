@@ -97,7 +97,9 @@ describe("closed contour candidates", () => {
       l1_mm: 60,
       l2_mm: 25,
     });
-    expect(blank.blank_width_mm).toBe(cand.width_mm + 2 * 85);
+    // fold_sum = 85; +10 mm CNC fixing margin (owner 2026-07-23)
+    expect(blank.cnc_fixing_margin_mm).toBe(10);
+    expect(blank.blank_width_mm).toBe(cand.width_mm + 2 * 85 + 10);
 
     const bad = confirmAlucobondSelection({
       candidate: cand,

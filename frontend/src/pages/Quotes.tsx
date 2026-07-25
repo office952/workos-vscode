@@ -55,7 +55,11 @@ import QuoteDocumentGovernancePanel from "@/components/workos/QuoteDocumentGover
 import FlatMaterialNestingSummary from "@/components/workos/FlatMaterialNestingSummary";
 import IntakeV6QuoteCommercialSpinePanel from "@/components/workos/intake-v6/IntakeV6QuoteCommercialSpinePanel";
 import IntakeV6QuoteDetailExtras from "@/components/workos/intake-v6/IntakeV6QuoteDetailExtras";
-import { formatV6QuoteTotalLabel, isUnpricedIntakeV6Quote } from "@/lib/intakeV6/intakeV6QuoteDisplay";
+import {
+  formatV6QuoteTotalLabel,
+  isIntakeV6Quote,
+  isUnpricedIntakeV6Quote,
+} from "@/lib/intakeV6/intakeV6QuoteDisplay";
 import {
   readIntakeV6QuoteHumanSummary,
   shouldHideRawIntakeV6QuoteNotes,
@@ -280,7 +284,8 @@ function QuoteCard({ quote, isSelected, onClick }: { quote: Quote; isSelected: b
       <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
         <span>{quote.lineItems.length} linii</span>
         <span className="flex items-center gap-0.5">
-          <Percent className="w-3 h-3" /> Marjă {quote.marginPct}%
+          <Percent className="w-3 h-3" />{" "}
+          {isIntakeV6Quote(quote) ? `Adaos ${quote.marginPct}%` : `Marjă ${quote.marginPct}%`}
         </span>
         {quote.discountPct > 0 && (
           <span className="text-amber-400">-{quote.discountPct}% discount</span>
@@ -1319,11 +1324,29 @@ export default function Quotes() {
                     </span>
                   </div>
                   <div className="flex justify-between pt-1">
-                    <span className="text-slate-500 flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Marjă</span>
-                    <span className={`font-semibold ${selectedQuote.marginPct >= 35 ? "text-emerald-400" : "text-amber-400"}`}>
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3" />{" "}
+                      {showIntakeV6CommercialSpine ? "Adaos comercial" : "Marjă"}
+                    </span>
+                    <span
+                      className={`font-semibold ${selectedQuote.marginPct >= 35 ? "text-emerald-400" : "text-amber-400"}`}
+                      data-testid={
+                        showIntakeV6CommercialSpine ? "quote-v6-detail-adaos-percent" : undefined
+                      }
+                      title={
+                        showIntakeV6CommercialSpine
+                          ? "Adaos comercial % pe baza ofertei 7G (nu marjă pe cost: (preț−cost)/preț)."
+                          : undefined
+                      }
+                    >
                       {selectedQuote.marginPct}%
                     </span>
                   </div>
+                  {showIntakeV6CommercialSpine ? (
+                    <p className="text-[10px] text-slate-500 pt-1" data-testid="quote-v6-adaos-vs-marja-hint">
+                      Adaos = majorare pe baza comercială. Nu este marjă internă pe cost.
+                    </p>
+                  ) : null}
                 </div>
               </div>
               )}

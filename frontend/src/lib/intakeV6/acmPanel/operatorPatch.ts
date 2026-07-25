@@ -22,6 +22,10 @@ import type {
   ComponentRelationStatus,
 } from "./types";
 import { ACM_PANEL_TEMPLATE_CODE } from "./types";
+import {
+  normalizeAcmShellFinish,
+  type AcmShellFinishContract,
+} from "./shellFinish";
 
 export type AcmOperatorFieldKey =
   | "acm_thickness_mm"
@@ -122,6 +126,39 @@ export type AcmPanelFieldUpdateInput = {
   confirmAuthority?: boolean;
 };
 
+/**
+ * Keep geometry.panels[0] aligned with envelope W×H for single-panel assemblies.
+ * Empty panels → commercial CUT/V quantity unavailable; dim edits must sync the row.
+ */
+function syncGeometryPanelsFromEnvelope(instance: AcmPanelComponentInstance): void {
+  const w = instance.geometry.width_mm;
+  const h = instance.geometry.height_mm;
+  if (typeof w !== "number" || !(w > 0) || typeof h !== "number" || !(h > 0)) return;
+
+  const panels = [...(instance.geometry.panels ?? [])];
+  if (panels.length === 0) {
+    instance.geometry.panels = [
+      {
+        panel_id: "panel_1",
+        order: 1,
+        width_mm: w,
+        height_mm: h,
+        position: { x_mm: 0, y_mm: 0 },
+        contour_element_id: instance.geometry.element_id,
+      },
+    ];
+    return;
+  }
+  if (panels.length === 1) {
+    panels[0] = {
+      ...panels[0],
+      width_mm: w,
+      height_mm: h,
+    };
+    instance.geometry.panels = panels;
+  }
+}
+
 function applyFieldUpdateOnInstance(
   instance: AcmPanelComponentInstance,
   update: AcmPanelFieldUpdateInput,
@@ -171,6 +208,7 @@ function applyUpdatesOnInstance(
   for (const update of updates) {
     applyFieldUpdateOnInstance(instance, update);
   }
+  syncGeometryPanelsFromEnvelope(instance);
   if (updates.length > 0) {
     instance.technical_configuration_status = "proposed";
   }
@@ -209,11 +247,61 @@ export function buildAcmPanelUpdateFieldsPatch(args: {
   return syncInstanceIntoFinish(finish, instance);
 }
 
+/** Persist ACM shell foil Finish Contract on acm_panel_instance.shell_finish. */
+export function buildAcmPanelShellFinishPatch(args: {
+  finishSetup: unknown;
+  shellFinish: AcmShellFinishContract | Record<string, unknown>;
+  confirm?: boolean;
+}): Partial<IntakeV6FinishSetup> | null {
+  const ctx = requireInstance(args.finishSetup);
+  if (!ctx) return null;
+  const { finish, instance } = ctx;
+  const next = normalizeAcmShellFinish(args.shellFinish);
+  if (args.confirm) {
+    next.operator_confirmed = true;
+  }
+  instance.shell_finish = next;
+  instance.updated_at = new Date().toISOString();
+  return syncInstanceIntoFinish(finish, instance);
+}
+
 export type AcmPanelConfirmAction =
   | { kind: "confirm_geometry" }
   | { kind: "confirm_construction" }
   | { kind: "confirm_technical" }
+  /** Geometry + construction + shell finish — single operator confirm for ACM panel form. */
+  | { kind: "confirm_panel" }
   | { kind: "confirm_relation"; relationId: string; status?: ComponentRelationStatus };
+
+function applyTechnicalConfirmOnInstance(instance: AcmPanelComponentInstance): void {
+  instance.configuration.field_authority = {
+    ...instance.configuration.field_authority,
+    panel_geometry: "operator_confirmed",
+    fold_count: "operator_confirmed",
+    l1_mm: "operator_confirmed",
+    l2_mm: "operator_confirmed",
+    acm_thickness_mm: "operator_confirmed",
+    finished_depth_mm: "operator_confirmed",
+    internal_frame: "operator_confirmed",
+  };
+  instance.technical_configuration_status = "confirmed";
+  if (instance.association_status === "proposed") {
+    instance.association_status = "confirmed";
+  }
+}
+
+function applyShellFinishConfirmOnInstance(instance: AcmPanelComponentInstance): void {
+  const raw = instance.shell_finish;
+  if (!raw || typeof raw !== "object") {
+    instance.shell_finish = normalizeAcmShellFinish({
+      operator_confirmed: true,
+    });
+    return;
+  }
+  const next = normalizeAcmShellFinish(raw as Record<string, unknown>);
+  next.operator_confirmed = true;
+  instance.shell_finish = next;
+}
 
 /**
  * One semantic intent: optional pending field updates + confirm action → one patch.
@@ -253,20 +341,10 @@ export function buildAcmPanelConfirmActionWithUpdatesPatch(args: {
     for (const key of keys) nextAuth[key] = "operator_confirmed";
     instance.configuration.field_authority = nextAuth;
   } else if (args.action.kind === "confirm_technical") {
-    instance.configuration.field_authority = {
-      ...instance.configuration.field_authority,
-      panel_geometry: "operator_confirmed",
-      fold_count: "operator_confirmed",
-      l1_mm: "operator_confirmed",
-      l2_mm: "operator_confirmed",
-      acm_thickness_mm: "operator_confirmed",
-      finished_depth_mm: "operator_confirmed",
-      internal_frame: "operator_confirmed",
-    };
-    instance.technical_configuration_status = "confirmed";
-    if (instance.association_status === "proposed") {
-      instance.association_status = "confirmed";
-    }
+    applyTechnicalConfirmOnInstance(instance);
+  } else if (args.action.kind === "confirm_panel") {
+    applyTechnicalConfirmOnInstance(instance);
+    applyShellFinishConfirmOnInstance(instance);
   } else if (args.action.kind === "confirm_relation") {
     const status = args.action.status ?? "confirmed";
     const relationId = args.action.relationId;
@@ -275,6 +353,8 @@ export function buildAcmPanelConfirmActionWithUpdatesPatch(args: {
     );
   }
 
+  // Confirm without dim updates still seeds panels[] for CUT/V deduction.
+  syncGeometryPanelsFromEnvelope(instance);
   instance.updated_at = new Date().toISOString();
   return syncInstanceIntoFinish(finish, instance);
 }
@@ -329,6 +409,18 @@ export function buildAcmPanelConfirmTechnicalPatch(args: {
     finishSetup: args.finishSetup,
     updates: args.updates,
     action: { kind: "confirm_technical" },
+  });
+}
+
+/** One end-of-form confirm: technical construction + shell finish. */
+export function buildAcmPanelConfirmPanelPatch(args: {
+  finishSetup: unknown;
+  updates?: AcmPanelFieldUpdateInput[];
+}): Partial<IntakeV6FinishSetup> | null {
+  return buildAcmPanelConfirmActionWithUpdatesPatch({
+    finishSetup: args.finishSetup,
+    updates: args.updates,
+    action: { kind: "confirm_panel" },
   });
 }
 

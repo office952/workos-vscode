@@ -111,6 +111,11 @@ export interface AcmPanelComponentInstance {
   geometry: AcmPanelGeometry;
   configuration: AcmPanelConfiguration;
   relations: ComponentRelation[];
+  /**
+   * Shell foil Finish Contract (face ≠ volume). Optional — MIXED §7–8.
+   * Shape: acm_shell_finish_v1 (see shellFinish.ts). Not letter finishes.
+   */
+  shell_finish?: unknown;
   svg_source_hash: string | null;
   updated_at: string;
 }

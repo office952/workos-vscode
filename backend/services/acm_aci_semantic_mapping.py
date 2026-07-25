@@ -2,6 +2,11 @@
 
 Owner golden DXFs use a single layer (`Layer 1`); semantics are encoded in ACI color.
 Pricing must not own or duplicate this map.
+
+ArtCAM owner settings (2026-07-23):
+- black outer closed path = Cut outside → CUT (Decupare)
+- red lines = V-groove along line → V_GROOVE_L1 / L2
+Docs: docs/architecture/ACM_ARTCAM_DXF_OWNER_GOLDEN.md
 """
 
 from __future__ import annotations
@@ -51,6 +56,7 @@ def mapping_metadata() -> dict[str, object]:
         "layer_name_dependency": False,
         "notes": (
             "Golden owner DXFs place all entities on 'Layer 1'. "
-            "Semantic class is ACI color only for mapping version v1."
+            "Semantic class is ACI color only for mapping version v1. "
+            "ArtCAM: black Cut outside → CUT; red V-groove along line → V_GROOVE_*."
         ),
     }

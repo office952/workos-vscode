@@ -112,6 +112,7 @@ export type UnifiedCatalogEntry = {
 export type UnifiedCatalogDetailSection =
   | "overview"
   | "composition"
+  | "compiler"
   | "components"
   | "contracts"
   | "relationships"

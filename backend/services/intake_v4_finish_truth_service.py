@@ -534,9 +534,11 @@ def artwork_finish_runtime_boolean_state(
 
     artwork_rows = list(normalized_setup.artwork_finishes or [])
     if not artwork_rows:
+        # Letters-only / letters+ACM with no artwork rows: print/lamination are N/A,
+        # not an unknown that blocks dry-run / ofertare.
         return {
-            "status": "missing",
-            "blocker_code": blocker_code,
+            "status": "not_applicable",
+            "blocker_code": None,
             "rows": [],
             "source_path": source_path,
         }

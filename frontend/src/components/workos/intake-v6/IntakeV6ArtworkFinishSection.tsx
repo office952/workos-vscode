@@ -23,6 +23,7 @@ import IntakeV6LayerCardShell from "./IntakeV6LayerCardShell";
 import IntakeV6LayerCardColumnHeader from "./IntakeV6LayerCardColumnHeader";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 import { AtomsBadge, v6, v6Pilot } from "./atoms/intakeV6Presentation";
 import {
   PILOT_REVIEW_FIELD_LABEL_CLASS,
@@ -58,8 +59,8 @@ const ARTWORK_FACE_METHOD_OPTIONS = [
   { value: "none", label: "Fără finisaj — plexiglas brut" },
   { value: "oracal_641", label: "Oracal 641" },
   { value: "oracal_651", label: "Oracal 651" },
-  { value: "oracal_8500", label: "Oracal 8500 — translucid" },
-  { value: "print_laminate", label: "Print + laminare" },
+  { value: "oracal_8500", label: "Oracal 8500" },
+  { value: "print_laminate", label: "Printat / Laminat" },
 ] as const;
 
 type ArtworkFaceMethod = (typeof ARTWORK_FACE_METHOD_OPTIONS)[number]["value"];
@@ -390,6 +391,7 @@ export default function IntakeV6ArtworkFinishSection({
               spateSummaryTestId={`intake-v6-artwork-spate-summary-${row.layer_key}`}
               cardTitle={tooltip}
               status={(() => {
+                if (!intakeV6ShowOperatorConfigStatusBadges()) return null;
                 const finishStatus = artworkFinishStatusLabelRo({
                   confirmed: row.confirmed,
                   stepOneConfirmed,

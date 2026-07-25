@@ -3,12 +3,13 @@
  * No edit callbacks, no persistence, no operatorPatch.
  */
 
-import { useId, useMemo, useState } from "react";
+import { useId, useMemo, useState, type ReactNode } from "react";
 import {
   buildAcmPanelBlueprintReadModel,
   type AcmBlueprintCalloutStyle,
   type AcmPanelBlueprintReadModel,
 } from "@/lib/intakeV6/acmPanel/blueprintReadModel";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 
 function strokeForStyle(style: AcmBlueprintCalloutStyle): {
   strokeDasharray?: string;
@@ -34,6 +35,10 @@ function strokeForStyle(style: AcmBlueprintCalloutStyle): {
 
 function formatDim(value: number): string {
   return Number.isInteger(value) ? String(value) : String(Math.round(value * 10) / 10);
+}
+
+function panelCountLabel(count: number): string {
+  return count === 1 ? "1 panou" : `${count} panouri`;
 }
 
 function FrontSchematic({ model }: { model: AcmPanelBlueprintReadModel }) {
@@ -194,20 +199,23 @@ function ConstructionBlock({ model }: { model: AcmPanelBlueprintReadModel }) {
           >
             <span className="text-slate-500">{r.label}:</span>{" "}
             {typeof r.value === "number" ? formatDim(r.value) : String(r.value)}
-            {r.unit ? ` ${r.unit}` : ""}{" "}
-            <span className="text-[10px] text-slate-500">
-              (
-              {r.authority === "catalog_default"
-                ? "Propunere catalog"
-                : r.authority === "proposed"
-                  ? "Propus"
-                  : r.authority === "detected"
-                    ? "Detectat"
-                    : r.authority === "operator_confirmed"
-                      ? "Confirmat"
-                      : r.authority}
-              )
-            </span>
+            {r.unit ? ` ${r.unit}` : ""}
+            {intakeV6ShowOperatorConfigStatusBadges() ? (
+              <span className="text-[10px] text-slate-500">
+                {" "}
+                (
+                {r.authority === "catalog_default"
+                  ? "Propunere catalog"
+                  : r.authority === "proposed"
+                    ? "Propus"
+                    : r.authority === "detected"
+                      ? "Detectat"
+                      : r.authority === "operator_confirmed"
+                        ? "Confirmat"
+                        : r.authority}
+                )
+              </span>
+            ) : null}
           </li>
         ))}
       </ul>
@@ -221,6 +229,13 @@ export type IntakeV6AcmPanelBlueprintPreviewProps = {
   /** Optional prebuilt model (tests). */
   model?: AcmPanelBlueprintReadModel;
   defaultExpanded?: boolean;
+  /**
+   * standalone — own sticky card (lab / default)
+   * embedded — borderless slot inside a shared tech strip (workbench)
+   */
+  chrome?: "standalone" | "embedded";
+  /** Extra plain-text meta on the embedded collapsed row (e.g. clean validation). */
+  inlineMeta?: ReactNode;
 };
 
 /**
@@ -231,6 +246,8 @@ export default function IntakeV6AcmPanelBlueprintPreview({
   payload,
   model: modelProp,
   defaultExpanded = false,
+  chrome = "standalone",
+  inlineMeta = null,
 }: IntakeV6AcmPanelBlueprintPreviewProps) {
   const model = useMemo(
     () =>
@@ -248,52 +265,89 @@ export default function IntakeV6AcmPanelBlueprintPreview({
     return null;
   }
 
+  const summary = model.assembly
+    ? `${formatDim(model.assembly.width_mm)} × ${formatDim(model.assembly.height_mm)} mm · ${panelCountLabel(model.panels.length)}`
+    : model.collapsedSummary;
+  const embedded = chrome === "embedded";
+
   return (
     <div
-      className="sticky top-2 z-[1] rounded border border-[#2A3548]/70 bg-[#0B1220]/95 shadow-sm backdrop-blur-sm"
+      className={
+        embedded
+          ? "z-[1]"
+          : "sticky top-2 z-[1] rounded border border-[#2A3548]/60 bg-[#0B1220]/90"
+      }
       data-testid="intake-v6-acm-blueprint-preview"
       data-readiness={model.readiness}
       data-expanded={expanded ? "true" : "false"}
+      data-chrome={chrome}
     >
       <button
         type="button"
-        className="flex w-full flex-col gap-0.5 px-2.5 py-2 text-left"
+        className="w-full px-2.5 py-1 text-left"
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
         aria-controls="intake-v6-acm-blueprint-panel"
         data-testid="intake-v6-acm-blueprint-toggle"
       >
-        <div className="flex items-center gap-2">
-          <span className="text-[12px] font-semibold text-slate-100">
-            Previzualizare tehnică
-          </span>
-          <span
-            className="rounded border border-amber-500/30 px-1.5 py-0.5 text-[10px] text-amber-200"
-            data-testid="intake-v6-acm-blueprint-readiness-badge"
-          >
-            Nivel {model.readiness}
-            {model.readiness === "L1-P" ? " · Provizoriu" : ""}
-            {model.readiness === "L1-B" ? " · Blocat" : ""}
-            {model.readiness === "L1-C" ? " · Confirmat" : ""}
-          </span>
-          <span className="ml-auto text-[10px] text-slate-500">
-            {expanded ? "▾" : "▸"}
-          </span>
-        </div>
-        <div
-          className="text-[11px] text-slate-400"
-          data-testid="intake-v6-acm-blueprint-collapsed-summary"
-        >
-          {model.assembly
-            ? `${formatDim(model.assembly.width_mm)} × ${formatDim(model.assembly.height_mm)} mm · ${model.panels.length} panouri`
-            : model.collapsedSummary}
-        </div>
+        {embedded ? (
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <span className="shrink-0 text-[11px] font-semibold text-slate-100">
+              Previzualizare
+            </span>
+            <span
+              className="min-w-0 truncate text-[11px] text-slate-400"
+              data-testid="intake-v6-acm-blueprint-collapsed-summary"
+            >
+              {summary}
+            </span>
+            {inlineMeta ? (
+              <>
+                <span className="text-[10px] text-slate-600" aria-hidden="true">
+                  ·
+                </span>
+                <span className="min-w-0 text-[10px] text-slate-400">{inlineMeta}</span>
+              </>
+            ) : null}
+            <span className="ml-auto shrink-0 text-[10px] text-slate-500">
+              {expanded ? "▾" : "▸"}
+            </span>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-slate-100">
+                Previzualizare tehnică
+              </span>
+              {intakeV6ShowOperatorConfigStatusBadges() ? (
+                <span
+                  className="rounded border border-amber-500/30 px-1.5 py-0.5 text-[10px] text-amber-200"
+                  data-testid="intake-v6-acm-blueprint-readiness-badge"
+                >
+                  Nivel {model.readiness}
+                  {model.readiness === "L1-P" ? " · Provizoriu" : ""}
+                  {model.readiness === "L1-B" ? " · Blocat" : ""}
+                  {model.readiness === "L1-C" ? " · Confirmat" : ""}
+                </span>
+              ) : null}
+              <span className="ml-auto text-[10px] text-slate-500">
+                {expanded ? "▾" : "▸"}
+              </span>
+            </div>
+            <div
+              className="mt-0.5 text-[11px] text-slate-400"
+              data-testid="intake-v6-acm-blueprint-collapsed-summary"
+            >
+              {summary}
+            </div>
+          </>
+        )}
       </button>
 
       {expanded ? (
         <div
           id="intake-v6-acm-blueprint-panel"
-          className="border-t border-[#2A3548]/60 px-2.5 py-2"
+          className="border-t border-[#2A3548]/50 px-2.5 py-1.5"
           data-testid="intake-v6-acm-blueprint-expanded"
         >
           <p
@@ -333,17 +387,31 @@ export default function IntakeV6AcmPanelBlueprintPreview({
 
           {model.readiness !== "L1-B" ? <FrontSchematic model={model} /> : null}
 
-          <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-slate-500" aria-hidden="true">
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-block h-px w-3 border-t border-slate-300" /> Confirmat/detectat
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-block h-px w-3 border-t border-dashed border-amber-300" /> Propus
-            </span>
-            <span className="inline-flex items-center gap-1">
-              <span className="inline-block h-px w-3 border-t border-dashed border-slate-500" /> Catalog
-            </span>
-          </div>
+          {intakeV6ShowOperatorConfigStatusBadges() ? (
+            <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-slate-500" aria-hidden="true">
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-slate-300" /> Confirmat/detectat
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-dashed border-amber-300" /> Propus
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-dashed border-slate-500" /> Catalog
+              </span>
+            </div>
+          ) : (
+            <div className="mt-1 flex flex-wrap gap-2 text-[10px] text-slate-500" aria-hidden="true">
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-slate-300" /> Final
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-dashed border-amber-300" /> Provizoriu
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="inline-block h-px w-3 border-t border-dashed border-slate-500" /> Catalog
+              </span>
+            </div>
+          )}
 
           {model.letterPlacementUnknown ? (
             <p

@@ -8,7 +8,7 @@ import {
 import type { ProductTemplateComponent } from "@/lib/api";
 
 export const VOLUMETRIC_PRODUCTION_FLOW_ONE_LINE =
-  "față plexi/acrilic → volum aluminiu → capac Forex → LED → finisaj";
+  "față plexiglas 3mm PMMA - opal → volum aluminiu → capac Forex → LED → finisaj";
 
 /** One-line flux summary for the structure editor — full rules live in Informații generale. */
 export function VolumetricProductionFlowSummary() {

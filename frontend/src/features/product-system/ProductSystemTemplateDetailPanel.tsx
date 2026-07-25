@@ -34,39 +34,88 @@ import { TemplateDualStatusChips } from "./TemplateDualStatusChips";
 import { TemplatePricingStudioPanel } from "./TemplatePricingStudioPanel";
 import { showTemplatePricingStudio } from "./templatePricingStudioEligibility";
 import { humanTemplateName } from "./productSystemAdminDisplay";
+import {
+  MODULE_PRODUS_CODE_LABEL,
+  MODULE_PRODUS_LIST_HEADING,
+  PRODUCT_COMPILER_LABEL,
+  displayModuleTemplateWireLabel,
+} from "./productTemplateModulesVocabulary";
 import { PS_SURFACE_INSET, PS_SURFACE_PANEL } from "./productSystemSurfaces";
+import { ProductCompilerDisplayShell } from "./ProductCompilerDisplayShell";
+import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
+
+type ModuleProdusSummaryRow = {
+  key: string;
+  roleLabel: string;
+  moduleName: string;
+  moduleCode: string;
+  statusLabel: string;
+  isLegacyShared: boolean;
+};
+
+/** Derive the visible Module produs composition from the availability read-model. */
+function buildModuleProdusSummary(
+  availability: ProductTemplateAvailabilityItem,
+): ModuleProdusSummaryRow[] {
+  const rows: ModuleProdusSummaryRow[] = [];
+  for (const module of availability.composition_modules) {
+    rows.push({
+      key: `mod-${module.role_key}-${module.module_template_code}`,
+      roleLabel: module.role_label,
+      moduleName: humanTemplateName(module.module_template_code),
+      moduleCode: module.module_template_code,
+      statusLabel: module.status_label,
+      isLegacyShared: false,
+    });
+  }
+  for (const contract of availability.shared_component_contracts) {
+    rows.push({
+      key: `shared-${contract.component_key}`,
+      roleLabel: contract.display_name,
+      moduleName: humanTemplateName(contract.module_template_code),
+      moduleCode: contract.module_template_code,
+      statusLabel: "modul partajat",
+      isLegacyShared: true,
+    });
+  }
+  return rows;
+}
 
 const ACM_BOXED_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 
-/** Primary authoring flow — identity → composition → dossier → readiness → publication → preview. */
+/** Blank workspace primary IA — Template / Modules / Compiler / Readiness only. */
 const PRODUCT_PRIMARY_SECTIONS: Array<{
   id: UnifiedCatalogDetailSection;
   label: string;
   testId: string;
 }> = [
-  { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
-  { id: "composition", label: "Compoziție", testId: "product-system-template-detail-tab-composition" },
-  { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
-  { id: "pricing", label: "Prețuri template", testId: "product-system-template-detail-tab-pricing" },
-  { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
-  { id: "readiness", label: "Pregătire E2E", testId: "product-system-template-detail-tab-readiness" },
-  { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
-  { id: "runtime-preview", label: "Previzualizare runtime", testId: "product-system-template-detail-tab-runtime-preview" },
+  { id: "overview", label: "Product Template", testId: "product-system-template-detail-tab-overview" },
+  { id: "composition", label: "Module produs", testId: "product-system-template-detail-tab-composition" },
+  { id: "compiler", label: "Product Compiler", testId: "product-system-template-detail-tab-compiler" },
+  { id: "readiness", label: "Pregătire", testId: "product-system-template-detail-tab-readiness" },
 ];
 
-/** Secondary / diagnostic — available, not dominant. */
-const PRODUCT_DIAGNOSTIC_SECTIONS: Array<{
+/** Admin / debug / diagnostic — not primary chrome. */
+const PRODUCT_ADMIN_SECTIONS: Array<{
   id: UnifiedCatalogDetailSection;
   label: string;
   testId: string;
 }> = [
+  { id: "contracts", label: "Contracte", testId: "product-system-template-detail-tab-contracts" },
+  { id: "pricing", label: "Prețuri template", testId: "product-system-template-detail-tab-pricing" },
+  { id: "dossier", label: "Dosar tehnic", testId: "product-system-template-detail-tab-dossier" },
+  { id: "publication", label: "Publicare", testId: "product-system-template-detail-tab-publication" },
+  { id: "runtime-preview", label: "Previzualizare runtime", testId: "product-system-template-detail-tab-runtime-preview" },
   { id: "components", label: "Componente", testId: "product-system-template-detail-tab-components" },
   { id: "relationships", label: "Relații", testId: "product-system-template-detail-tab-relationships" },
   { id: "materials", label: "Materiale", testId: "product-system-template-detail-tab-materials" },
   { id: "guards", label: "Diagnostic", testId: "product-system-template-detail-tab-guards" },
 ];
 
-const PRODUCT_SECTIONS = [...PRODUCT_PRIMARY_SECTIONS, ...PRODUCT_DIAGNOSTIC_SECTIONS];
+/** @deprecated alias — admin drawer uses PRODUCT_ADMIN_SECTIONS */
+const PRODUCT_DIAGNOSTIC_SECTIONS = PRODUCT_ADMIN_SECTIONS;
+
+const PRODUCT_SECTIONS = [...PRODUCT_PRIMARY_SECTIONS, ...PRODUCT_ADMIN_SECTIONS];
 
 const COMPONENT_SECTIONS: Array<{ id: UnifiedCatalogDetailSection; label: string; testId: string }> = [
   { id: "overview", label: "Prezentare", testId: "product-system-template-detail-tab-overview" },
@@ -296,6 +345,129 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
   );
 }
 
+function ProductStoryOverview({
+  template,
+  availability,
+  onSectionChange,
+}: {
+  template: ProductTemplateEntity;
+  availability: ProductTemplateAvailabilityItem;
+  onSectionChange: (section: UnifiedCatalogDetailSection) => void;
+}) {
+  const modules = buildModuleProdusSummary(availability);
+  const readyForOffer = availability.status === "offerable" || availability.quote_offerable;
+
+  return (
+    <div className="space-y-4" data-testid="product-system-template-story">
+      <section
+        data-testid="product-system-template-story-modules"
+        className={`${PS_SURFACE_PANEL} px-4 py-4`}
+      >
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-cyan-300/90">
+              Centrul produsului
+            </p>
+            <h3 className="mt-0.5 text-sm font-semibold text-slate-100">
+              {MODULE_PRODUS_LIST_HEADING} care compun {humanTemplateName(template.template_code)}
+            </h3>
+          </div>
+          <span className="rounded-full border border-slate-800 bg-slate-950/60 px-2 py-0.5 text-[11px] font-bold tabular-nums text-slate-400">
+            {modules.length}
+          </span>
+        </div>
+        {modules.length === 0 ? (
+          <p className="mt-3 text-[12px] text-slate-500">
+            Niciun Module produs expus în availability. Vezi tab-ul Compoziție pentru authoring.
+          </p>
+        ) : (
+          <ul className="mt-3 grid gap-2 sm:grid-cols-2" data-testid="product-system-template-story-modules-list">
+            {modules.map((row) => (
+              <li
+                key={row.key}
+                className={`${PS_SURFACE_INSET} px-2.5 py-2`}
+                data-testid={`product-system-template-story-module-${row.moduleCode}`}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="min-w-0 truncate text-[12px] font-semibold text-slate-100">
+                    {row.roleLabel}
+                  </span>
+                  <span className="shrink-0 text-[10px] text-slate-500">{row.statusLabel}</span>
+                </div>
+                <p className="mt-0.5 truncate text-[11px] text-slate-300">{row.moduleName}</p>
+                <p
+                  className="mt-0.5 truncate font-mono text-[10px] text-slate-600"
+                  title={MODULE_PRODUS_CODE_LABEL}
+                >
+                  {row.moduleCode}
+                </p>
+              </li>
+            ))}
+          </ul>
+        )}
+        <button
+          type="button"
+          data-testid="product-system-template-story-open-composition"
+          onClick={() => onSectionChange("composition")}
+          className="mt-3 inline-flex rounded border border-slate-700/70 px-2.5 py-1 text-[11px] font-medium text-slate-300 hover:bg-slate-800/60"
+        >
+          Deschide Module produs
+        </button>
+      </section>
+
+      <div className="grid gap-3 lg:grid-cols-2">
+        <div data-testid="product-system-template-story-compiler">
+          <ProductCompilerDisplayShell stage="both" compact />
+          <button
+            type="button"
+            data-testid="product-system-template-story-open-compiler"
+            onClick={() => onSectionChange("compiler")}
+            className="mt-2 inline-flex rounded border border-violet-800/50 bg-violet-950/20 px-2.5 py-1 text-[11px] font-medium text-violet-100 hover:bg-violet-900/30"
+          >
+            Extinde Product Compiler
+          </button>
+        </div>
+        <section
+          data-testid="product-system-template-story-readiness"
+          className={`${PS_SURFACE_PANEL} flex flex-col justify-between px-4 py-3`}
+        >
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-wide text-sky-300/90">
+              Pregătire E2E
+            </p>
+            <p className="mt-1 text-[12px] text-slate-300">
+              {readyForOffer
+                ? "Structură validă pentru readiness — Oferta client rămâne downstream."
+                : "Verifică blockerele structurale. Publicare / Ofertă sunt în afara centrului workspace."}
+            </p>
+          </div>
+          <button
+            type="button"
+            data-testid="product-system-template-story-open-readiness"
+            onClick={() => onSectionChange("readiness")}
+            className="mt-3 inline-flex w-max rounded border border-sky-800/50 bg-sky-950/30 px-2.5 py-1 text-[11px] font-semibold text-sky-100 hover:bg-sky-900/30"
+          >
+            Deschide Pregătire
+          </button>
+        </section>
+      </div>
+
+      <details className="group" data-testid="product-system-template-story-downstream">
+        <summary className="cursor-pointer select-none text-[11px] font-medium text-slate-500 hover:text-slate-300">
+          Downstream (secundar) — Cost / Ofertă / Execution
+        </summary>
+        <div className="mt-2">
+          <ProductSystemOfferCostChannels testId="product-system-template-story-channels" />
+        </div>
+      </details>
+
+      <p className="text-[10px] text-slate-600">
+        {PRODUCT_COMPILER_LABEL} nu calculează Oferta client. Product System nu este ecran de ofertare.
+      </p>
+    </div>
+  );
+}
+
 export function ProductSystemTemplateDetailPanel({
   template,
   availability,
@@ -329,8 +501,11 @@ export function ProductSystemTemplateDetailPanel({
   const displayName =
     template.family_name || humanTemplateName(template.template_code);
   const primarySections = isProduct ? PRODUCT_PRIMARY_SECTIONS : sections;
-  const diagnosticSections = isProduct ? PRODUCT_DIAGNOSTIC_SECTIONS : [];
-  const showDiagnosticTabs = diagnosticSections.length > 0;
+  const adminSections = isProduct
+    ? PRODUCT_ADMIN_SECTIONS.filter((tab) => tab.id !== "pricing" || pricingStudioVisible)
+    : [];
+  const diagnosticSections = adminSections;
+  const showDiagnosticTabs = adminSections.length > 0;
   const [publicationStatus, setPublicationStatus] = useState<string | null>(null);
 
   useEffect(() => {
@@ -405,17 +580,14 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-next-action-strip"
         >
           <p className="text-[12px] text-slate-300">
-            <span className="font-semibold text-slate-100">Următorul pas:</span>{" "}
+            <span className="font-semibold text-slate-100">Centru workspace:</span>{" "}
+            Module produs + Product Compiler + Pregătire.{" "}
             {publicationStatus === "PUBLISHED" ? (
               <>
-                șablonul este <span className="text-emerald-200">PUBLISHED</span>. Verifică
-                Prețuri template / AI defaults și snapshot-urile înainte de ofertă nouă.
+                Status catalog: <span className="text-emerald-200">PUBLISHED</span> (admin).
               </>
             ) : (
-              <>
-                verifică Pregătire E2E înainte de publicare. Copiii obligatorii inactivi și
-                blockerele structurale blochează publicarea (nu default-urile AI).
-              </>
+              <>Publicare și Prețuri template sunt în Admin / debug.</>
             )}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -425,15 +597,15 @@ export function ProductSystemTemplateDetailPanel({
               data-testid="product-system-template-next-action-readiness"
               onClick={() => onSectionChange("readiness")}
             >
-              Verifică traseul
+              Deschide Pregătire
             </button>
             <button
               type="button"
               className="rounded border border-slate-700/60 px-2.5 py-1 text-[11px] font-medium text-slate-400 hover:bg-slate-900/40"
-              data-testid="product-system-template-next-action-publication"
-              onClick={() => onSectionChange("publication")}
+              data-testid="product-system-template-next-action-compiler"
+              onClick={() => onSectionChange("compiler")}
             >
-              Publicare
+              Product Compiler
             </button>
           </div>
         </div>
@@ -443,7 +615,8 @@ export function ProductSystemTemplateDetailPanel({
         <div
           className="flex flex-wrap gap-1 border-b border-slate-800/80"
           role="tablist"
-          aria-label="Flux authoring șablon"
+          aria-label="Workspace Product System"
+          data-testid="product-system-template-primary-tabs"
         >
           {primarySections.map((tab) => (
             <button
@@ -469,13 +642,16 @@ export function ProductSystemTemplateDetailPanel({
             data-testid="product-system-template-diagnostic-tabs"
             open={diagnosticSections.some((tab) => tab.id === section)}
           >
-            <summary className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-slate-400">
-              Diagnostic și liste secundare
+            <summary
+              className="cursor-pointer select-none py-1 text-[11px] font-medium text-slate-600 hover:text-slate-400"
+              data-testid="product-system-template-admin-drawer-summary"
+            >
+              Admin / debug / diagnostic
             </summary>
             <div
               className="mt-1 flex flex-wrap gap-1"
               role="tablist"
-              aria-label="Diagnostic și liste secundare"
+              aria-label="Admin debug diagnostic"
             >
               {diagnosticSections.map((tab) => (
                 <button
@@ -534,19 +710,21 @@ export function ProductSystemTemplateDetailPanel({
             </details>
           </section>
           {isProduct ? (
-            <>
-              <ProductSystemReferenceCompletePanel />
-              <ProductSystemReferenceFinishLinePanel />
-              <details className={`${PS_SURFACE_PANEL} px-4 py-3`}>
-                <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
-                  Axe de adevăr / modularitate (read-only)
-                </summary>
-                <div className="mt-3">
-                  <ModularityHonestySection templateCode={template.template_code} />
-                </div>
-              </details>
-            </>
+            <ProductStoryOverview
+              template={template}
+              availability={availability}
+              onSectionChange={onSectionChange}
+            />
           ) : null}
+        </div>
+      ) : null}
+
+      {section === "compiler" && isProduct ? (
+        <div className="space-y-3" data-testid="product-system-template-detail-compiler">
+          <p className="text-[12px] text-slate-400">
+            {PRODUCT_COMPILER_LABEL} compact — output tehnic (Definiție + Graf). Fără preț, fără Ofertă.
+          </p>
+          <ProductCompilerDisplayShell stage="both" compact={false} />
         </div>
       ) : null}
 
@@ -572,13 +750,25 @@ export function ProductSystemTemplateDetailPanel({
             ) : (
               <ul className="space-y-2">
                 {availability.composition_modules.map((module) => (
-                  <li key={`${module.role_key}-${module.module_template_code}`} className="font-mono text-xs">
-                    {module.role_label}: {module.module_template_code} · {module.status_label}
+                  <li key={`${module.role_key}-${module.module_template_code}`} className="text-xs text-slate-200">
+                    <span className="font-medium">{module.role_label}</span>
+                    {": "}
+                    <span>{humanTemplateName(module.module_template_code)}</span>
+                    <span className="ml-1.5 font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                      {module.module_template_code}
+                    </span>
+                    <span className="text-slate-500"> · {module.status_label}</span>
                   </li>
                 ))}
                 {availability.shared_component_contracts.map((contract) => (
-                  <li key={contract.component_key} className="font-mono text-xs">
-                    {contract.display_name}: {contract.module_template_code} · modul legacy partajat
+                  <li key={contract.component_key} className="text-xs text-slate-200">
+                    <span className="font-medium">{contract.display_name}</span>
+                    {": "}
+                    <span>{humanTemplateName(contract.module_template_code)}</span>
+                    <span className="ml-1.5 font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                      {contract.module_template_code}
+                    </span>
+                    <span className="text-slate-500"> · modul legacy partajat</span>
                   </li>
                 ))}
               </ul>
@@ -594,7 +784,7 @@ export function ProductSystemTemplateDetailPanel({
         >
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/70 bg-slate-950/30 px-4 py-2.5 text-[11px] font-bold uppercase text-slate-500">
             <span>Rol</span>
-            <span>Cod modul</span>
+            <span>{displayModuleTemplateWireLabel("module_template_code")}</span>
             <span>Status</span>
           </div>
           {availability.composition_modules.length === 0 && availability.shared_component_contracts.length === 0 ? (
@@ -607,7 +797,12 @@ export function ProductSystemTemplateDetailPanel({
                   className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/50 px-4 py-2.5 text-sm text-slate-200 last:border-b-0"
                 >
                   <span>{module.role_label}</span>
-                  <span className="font-mono text-xs text-slate-400">{module.module_template_code}</span>
+                  <div className="min-w-0">
+                    <p className="truncate text-slate-100">{humanTemplateName(module.module_template_code)}</p>
+                    <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                      {module.module_template_code}
+                    </p>
+                  </div>
                   <span className="text-xs text-slate-500">{module.status_label}</span>
                 </div>
               ))}
@@ -617,7 +812,12 @@ export function ProductSystemTemplateDetailPanel({
                   className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)_auto] gap-3 border-b border-slate-800/50 px-4 py-2.5 text-sm text-slate-200 last:border-b-0"
                 >
                   <span>{contract.display_name}</span>
-                  <span className="font-mono text-xs text-slate-400">{contract.module_template_code}</span>
+                  <div className="min-w-0">
+                    <p className="truncate text-slate-100">{humanTemplateName(contract.module_template_code)}</p>
+                    <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                      {contract.module_template_code}
+                    </p>
+                  </div>
                   <span className="text-xs text-slate-500">modul legacy</span>
                 </div>
               ))}
@@ -655,11 +855,19 @@ export function ProductSystemTemplateDetailPanel({
           <p className="text-[11px] text-slate-500">
             Hartă relații parent↔child din availability — validare vizuală, fără auto-activare.
           </p>
-          <ul className="space-y-2 font-mono text-xs">
+          <ul className="space-y-2 text-xs text-slate-300">
             {availability.composition_modules.map((module) => (
               <li key={`rel-${module.role_key}-${module.module_template_code}`}>
-                {template.template_code} → {module.module_template_code} · {module.role_label} ·{" "}
-                {module.status_label}
+                <span className="font-medium text-slate-100">{humanTemplateName(template.template_code)}</span>
+                <span className="mx-1 text-slate-500">→</span>
+                <span className="font-medium text-slate-100">{humanTemplateName(module.module_template_code)}</span>
+                <span className="ml-1.5 font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                  {module.module_template_code}
+                </span>
+                <span className="text-slate-500">
+                  {" "}
+                  · {module.role_label} · {module.status_label}
+                </span>
               </li>
             ))}
             {(availability.parent_product_codes?.length
@@ -667,7 +875,11 @@ export function ProductSystemTemplateDetailPanel({
               : availability.parent_codes
             ).map((parentCode) => (
               <li key={`parent-${parentCode}`}>
-                {parentCode} → {template.template_code} (părinte)
+                <span className="font-medium text-slate-100">{humanTemplateName(parentCode)}</span>
+                <span className="mx-1 text-slate-500">→</span>
+                <span className="font-medium text-slate-100">{humanTemplateName(template.template_code)}</span>
+                <span className="ml-1.5 font-mono text-[10px] text-slate-500">{template.template_code}</span>
+                <span className="text-slate-500"> (părinte)</span>
               </li>
             ))}
           </ul>
@@ -767,6 +979,16 @@ export function ProductSystemTemplateDetailPanel({
           <p className="text-[11px] text-slate-500">
             Fail-closed publish · fără auto-publish · fără SVG geometry checks în poarta de publicare.
           </p>
+          <details className={`${PS_SURFACE_PANEL} px-4 py-3`} data-testid="product-system-admin-lab-closure">
+            <summary className="cursor-pointer select-none text-[12px] font-medium text-slate-400 hover:text-slate-300">
+              Laboratory / finish line (admin only — nu pe overview)
+            </summary>
+            <div className="mt-3 space-y-4">
+              <ProductSystemReferenceCompletePanel />
+              <ProductSystemReferenceFinishLinePanel />
+              <ModularityHonestySection templateCode={template.template_code} />
+            </div>
+          </details>
         </div>
       ) : null}
 

@@ -56,6 +56,39 @@ const linkedSegments = {
 };
 
 describe("IntakeV6ProductCompositionPanel", () => {
+  it("labels ACM panel-alone as Panou Alucobond casetat", () => {
+    const supportOnly = {
+      product_composition_recommendation: {
+        status: "needs_confirmation",
+        composition_type: "support_only",
+        composition_items: [
+          {
+            composition_item_id: "support",
+            template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
+            component_role: "support_panel",
+            source_layer_ids: ["Alucobond_x0020_Casetat"],
+            status: "recommended",
+          },
+        ],
+        warnings: [],
+        blockers: [],
+      },
+      product_composition_confirmed: { confirmed: false },
+      finish_setup: {
+        acm_panel_instance: {
+          schema: "acm_panel_component_instance_v1",
+          composition_status: "unconfirmed",
+        },
+      },
+    };
+
+    render(<IntakeV6ProductCompositionPanel payload={supportOnly} />);
+
+    expect(screen.getByTestId("intake-v6-product-composition-summary")).toHaveTextContent(
+      "Panou Alucobond casetat",
+    );
+  });
+
   it("renders Gradi as letters plus logo and confirms the composition", () => {
     const onConfirm = vi.fn();
 
@@ -129,7 +162,7 @@ describe("IntakeV6ProductCompositionPanel", () => {
         warnings: [
           {
             code: "LEGACY_SUPPORT_TEMPLATE",
-            message: "Suport/fundal detectat; authority live este Panou Alucobond casetat (TPL-ACM).",
+            message: "Suport/fundal detectat; authority live este Alucobond casetat (TPL-ACM).",
           },
         ],
       },

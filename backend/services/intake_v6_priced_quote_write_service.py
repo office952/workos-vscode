@@ -444,16 +444,38 @@ async def write_intake_v6_priced_quote_totals(
 	notes_payload[INTAKE_V6_LINKAGE_JSON_KEY] = linkage_payload
 
 	vat_amount = _money(totals.get("vat_amount") or 0)
+	adjustment_trace = (
+		totals.get("commercial_adjustment_trace")
+		if isinstance(totals.get("commercial_adjustment_trace"), dict)
+		else {}
+	)
+	# Quote.margin_pct stores operator Adaos comercial % (markup on 7G base), not true margin.
+	markup_percent = adjustment_trace.get("markup_percent")
+	try:
+		margin_pct = float(markup_percent) if markup_percent is not None else 0.0
+	except (TypeError, ValueError):
+		margin_pct = 0.0
+	discount_percent = adjustment_trace.get("discount_percent")
+	try:
+		discount_pct = float(discount_percent) if discount_percent is not None else 0.0
+	except (TypeError, ValueError):
+		discount_pct = 0.0
+	discount_value = adjustment_trace.get("discount_value")
+	try:
+		discount_amount = float(discount_value) if discount_value is not None else 0.0
+	except (TypeError, ValueError):
+		discount_amount = 0.0
+	linkage_payload["intake_v6_priced_quote_write_v1"]["commercial_adjustment_trace"] = adjustment_trace
 	update_data = {
 		"status": "priced",
 		"line_items": json.dumps(mapped_line_items, default=str),
 		"subtotal": _money(subtotal),
-		"discount": 0.0,
-		"discount_pct": 0.0,
+		"discount": _money(discount_amount),
+		"discount_pct": discount_pct,
 		"total_before_vat": _money(subtotal),
 		"vat": vat_amount,
 		"grand_total": _money(total_gross),
-		"margin_pct": 0.0,
+		"margin_pct": margin_pct,
 		"notes": json.dumps(notes_payload, default=str),
 	}
 	updated = await quotes_service.update(quote_id, update_data)

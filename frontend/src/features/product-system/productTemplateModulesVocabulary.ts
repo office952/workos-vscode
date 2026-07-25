@@ -13,9 +13,19 @@ export const PRODUCT_MODULES_SEMANTIC_LABEL = "1 Product Template + N Module pro
 export const MODULE_PRODUS_LABEL = "Module produs";
 export const MODULE_TEHNIC_LABEL = "Modul tehnic";
 export const MODULE_PRODUS_SHARED_LABEL = "Module produs partajate";
+export const MODULE_PRODUS_SHARED_SINGULAR_LABEL = "Module produs partajat";
+export const MODULE_PRODUS_SHARED_VOLUMETRIC_LABEL = "Module produs volumetrice partajate";
+export const MODULE_PRODUS_CODE_LABEL = "Module produs code";
 export const MODULE_PRODUS_BOUNDARY_LABEL = "Owner boundary: Module produs";
 export const MODULE_PRODUS_CANDIDATE_SET_LABEL = "Candidate Module produs — Litere";
 export const MODULE_PRODUS_LIST_HEADING = "Module produs";
+
+/** Admin chrome for product_template_module_links (display only — API table name unchanged). */
+export const PRODUCT_TEMPLATE_MODULE_LINKS_DISPLAY_LABEL = "Legături Module produs";
+
+/** Soft admin captions for contract patch fields (payload keys stay wire). */
+export const USAGE_MODE_DISPLAY_LABEL = "Mod utilizare";
+export const INSTANCE_SCHEMA_ID_DISPLAY_LABEL = "Schema instanță";
 
 /** Mini-module registry — operational packaging, not a product module. */
 export const MINI_MODULE_OPERATIONAL_LABEL = "Mini-modul operațional";
@@ -83,13 +93,25 @@ export function displayModuleSourceTypeLabel(sourceType: string): string {
 export function displayModuleTemplateWireLabel(wireKey: string): string {
   const normalized = wireKey.trim();
   if (normalized === "module_template_code" || normalized.endsWith("_module_template_code")) {
-    return "Module produs code";
+    return MODULE_PRODUS_CODE_LABEL;
+  }
+  if (normalized === "component_template_code") {
+    return MODULE_PRODUS_CODE_LABEL;
+  }
+  if (normalized === "module_template_id") {
+    return "Module produs id";
+  }
+  if (normalized === "product_template_module_links") {
+    return PRODUCT_TEMPLATE_MODULE_LINKS_DISPLAY_LABEL;
+  }
+  if (normalized === "usage_mode") {
+    return USAGE_MODE_DISPLAY_LABEL;
+  }
+  if (normalized === "instance_schema_id") {
+    return INSTANCE_SCHEMA_ID_DISPLAY_LABEL;
   }
   if (normalized.includes("module_template")) {
     return "Module produs (wire)";
-  }
-  if (normalized === "component_template_code") {
-    return "Module produs code";
   }
   return wireKey;
 }
@@ -97,3 +119,68 @@ export function displayModuleTemplateWireLabel(wireKey: string): string {
 export function equalModulesHintRo(): string {
   return "Față, cant/volum și spate sunt Module produs egale — nu ierarhii nested de template.";
 }
+
+/**
+ * Operator spine for the Product System workspace — Product System ownership only.
+ * Ofertă / Cost / Execution are downstream mentions, never spine steps.
+ * Display / IA only; no behavior, API, or formula changes.
+ */
+export type ProductSystemSpineStep = {
+  id: "template" | "modules" | "compiler" | "readiness";
+  index: number;
+  label: string;
+  hint: string;
+};
+
+export const PRODUCT_SYSTEM_SPINE_STEPS: ProductSystemSpineStep[] = [
+  {
+    id: "template",
+    index: 1,
+    label: PRODUCT_TEMPLATE_LABEL,
+    hint: "Produsul vizibil — centrul workspace-ului.",
+  },
+  {
+    id: "modules",
+    index: 2,
+    label: MODULE_PRODUS_LABEL,
+    hint: "Module egale care compun produsul (față, cant/volum, spate, LED, finisaj, montaj).",
+  },
+  {
+    id: "compiler",
+    index: 3,
+    label: PRODUCT_COMPILER_LABEL,
+    hint: "Compilează output-ul tehnic (Definiție + Graf) — fără preț.",
+  },
+  {
+    id: "readiness",
+    index: 4,
+    label: "Pregătire",
+    hint: "Blockere structurale / readiness — nu calculatoare de bani.",
+  },
+];
+
+export const PRODUCT_SYSTEM_SPINE_TAGLINE =
+  "Product Template → Module produs → Product Compiler → Pregătire.";
+
+/** Downstream channels — secondary links only; never Product System spine steps. */
+export const OFERTA_CLIENT_CHANNEL_LABEL = "Ofertă client";
+export const OFERTA_CLIENT_CHANNEL_HELP =
+  "Canal comercial separat (Intake / Oferte). Nu se calculează aici.";
+export const COST_INTERN_CHANNEL_LABEL = "Cost intern";
+export const COST_INTERN_CHANNEL_HELP =
+  "Estimare internă separată — nu preț pentru client.";
+export const EXECUTION_CHANNEL_LABEL = "Execution";
+export const EXECUTION_CHANNEL_HELP =
+  "Plan / execuție după comandă. Nu este flux Product System.";
+export const DOWNSTREAM_CHANNELS_STRIP_LABEL = "Alte sisteme (linkuri)";
+export const DOWNSTREAM_CHANNELS_STRIP_HELP =
+  "Doar legături — nu pași și nu calculatoare în Product System.";
+export const REGISTRY_INTERN_CHANNEL_LABEL = "Registry intern";
+export const REGISTRY_INTERN_CHANNEL_HELP =
+  "Pricing / Utilaje / Pontaj — inputuri admin, pe pagini separate.";
+
+export const PRODUCT_SYSTEM_WORKSPACE_SUBTITLE =
+  "Product Template + Module produs · Product Compiler · Pregătire";
+export const INTAKE_V6_OPERATOR_PATH = "/intake-v6/operator";
+export const QUOTES_DOWNSTREAM_PATH = "/quotes";
+export const EXECUTION_DOWNSTREAM_PATH = "/execution";

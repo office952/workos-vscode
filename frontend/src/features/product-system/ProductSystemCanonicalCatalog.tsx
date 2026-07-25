@@ -10,6 +10,8 @@ import {
   defaultTemplateDetailSection,
   ProductSystemTemplateDetailPanel,
 } from "./ProductSystemTemplateDetailPanel";
+import { ProductSystemSpineBand } from "./ProductSystemSpineBand";
+import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
 import { useProductSystemShell } from "./ProductSystemShellContext";
 import {
   CANONICAL_CATALOG_ADVANCED_FILTERS,
@@ -534,14 +536,24 @@ export function ProductSystemCanonicalCatalog({
                 testId="product-system-canonical-operator-list"
               />
               {canViewAdvanced && filter === "all" && advancedProducts.length > 0 ? (
-                <CatalogListSection
-                  title="Catalog Advanced"
-                  description="Intern, depreciat sau experimental — doar governance."
-                  products={advancedProducts}
-                  selectedTemplateCode={selectedTemplateCodeFromEntry(selectedEntry)}
-                  onSelectProduct={selectProduct}
-                  testId="product-system-canonical-advanced-list"
-                />
+                <details
+                  className="rounded-lg border border-slate-800/70 px-2 py-2"
+                  data-testid="product-system-canonical-advanced-details"
+                >
+                  <summary className="cursor-pointer select-none px-1 text-[11px] font-medium text-slate-500 hover:text-slate-300">
+                    Admin — catalog intern / depreciat ({advancedProducts.length})
+                  </summary>
+                  <div className="mt-2">
+                    <CatalogListSection
+                      title="Catalog Advanced"
+                      description="Intern, depreciat sau experimental — doar governance."
+                      products={advancedProducts}
+                      selectedTemplateCode={selectedTemplateCodeFromEntry(selectedEntry)}
+                      onSelectProduct={selectProduct}
+                      testId="product-system-canonical-advanced-list"
+                    />
+                  </div>
+                </details>
               ) : null}
               {canViewAdvanced && isAdvancedFilter ? (
                 <CatalogListSection
@@ -575,11 +587,28 @@ export function ProductSystemCanonicalCatalog({
               </p>
             </div>
           ) : !selectedEntry || selectedEntry.kind === "candidate-set" ? (
-            <div className="flex h-full min-h-[18rem] flex-col items-center justify-center px-4 text-center">
-              <p className="text-sm font-medium text-slate-300">Nicio intrare selectata</p>
-              <p className="mt-1 max-w-xs text-xs leading-relaxed text-slate-500">
-                Alege un produs din catalog pentru a vedea context, compozitie si garduri.
-              </p>
+            <div
+              className="flex h-full min-h-[18rem] flex-col justify-center gap-4 px-1"
+              data-testid="product-system-detail-empty-story"
+            >
+              <div>
+                <p className="text-sm font-semibold text-slate-200">
+                  Alege un Product Template
+                </p>
+                <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                  Centrul workspace: Product Template + Module produs + Product Compiler +
+                  Pregătire. Cost / Ofertă / Execution sunt doar downstream (secundar).
+                </p>
+              </div>
+              <ProductSystemSpineBand />
+              <details data-testid="product-system-detail-empty-downstream">
+                <summary className="cursor-pointer select-none text-[11px] font-medium text-slate-500 hover:text-slate-300">
+                  Downstream (secundar)
+                </summary>
+                <div className="mt-2">
+                  <ProductSystemOfferCostChannels />
+                </div>
+              </details>
             </div>
           ) : selectedEntry.template && selectedEntry.availability ? (
             <ProductSystemTemplateDetailPanel

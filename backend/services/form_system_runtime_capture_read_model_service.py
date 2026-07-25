@@ -210,7 +210,7 @@ def build_form_system_runtime_capture_read_model(
                 "state": state,
                 "confirmation_rule": spec["confirmation_rule"],
                 "blockers": blockers,
-                "ready_for_product_truth": state == "confirmed" and not blockers,
+                "ready_for_product_truth": state in {"confirmed", "ready"} and not blockers,
             }
         )
 

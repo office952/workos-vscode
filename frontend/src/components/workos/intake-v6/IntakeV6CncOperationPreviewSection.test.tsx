@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+﻿import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
 import type { IntakeV6CncOperationDryRunCandidate } from "@/lib/intakeV6/intakeV6Api";
@@ -36,11 +36,11 @@ describe("IntakeV6CncOperationPreviewSection", () => {
         candidates={[
           cncCandidate({
             operation_key: "cnc_face_cutting_plexiglas_3mm",
-            title: "Debitare CNC față Plexiglas 3 mm",
+            title: "Debitare CNC față plexiglas 3mm PMMA - opal",
           }),
           cncCandidate({
             operation_key: "cnc_face_bevel_plexiglas_3mm",
-            title: "Șanfren CNC față Plexiglas 3 mm",
+            title: "Șanfren CNC față plexiglas 3mm PMMA - opal",
           }),
         ]}
         testIdPrefix="test-cnc"
@@ -81,7 +81,7 @@ describe("IntakeV6CncOperationPreviewSection", () => {
         candidates={[
           cncCandidate({
             operation_key: "cnc_face_cutting_plexiglas_3mm",
-            title: "Debitare CNC față Plexiglas 3 mm",
+            title: "Debitare CNC față plexiglas 3mm PMMA - opal",
             pricing_status: "missing_rate",
             estimated_cost: null,
           }),

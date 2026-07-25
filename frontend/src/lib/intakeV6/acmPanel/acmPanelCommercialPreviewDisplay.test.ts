@@ -3,9 +3,11 @@ import {
   acmPanelPreviewIsVisible,
   formatAcmPanelMmPair,
   formatAcmPanelMultiPanelDeductionNote,
+  formatAcmPanelPanelCountLabel,
   formatAcmPanelPathSource,
   formatAcmPanelQty,
   humanizeAcmPanelPreviewWarning,
+  prepareAcmPanelPreviewWarnings,
 } from "./acmPanelCommercialPreviewDisplay";
 
 describe("acmPanelCommercialPreviewDisplay", () => {
@@ -52,5 +54,26 @@ describe("acmPanelCommercialPreviewDisplay", () => {
     ).toBe("Calculat separat pentru 2 panouri");
     expect(formatAcmPanelMultiPanelDeductionNote(1, "commercial_deduced", "commercial_deduced")).toBeNull();
     expect(formatAcmPanelMultiPanelDeductionNote(2, "measured", "imported_dxf")).toBeNull();
+  });
+
+  it("never shows 0 panouri when assembly dims exist", () => {
+    expect(formatAcmPanelPanelCountLabel(0, 2000, 500)).toBe("1 panou");
+    expect(formatAcmPanelPanelCountLabel(null, 2000, 500)).toBe("1 panou");
+    expect(formatAcmPanelPanelCountLabel(2, 2000, 500)).toBe("2 panouri");
+  });
+
+  it("humanizes quantity_source and drops path-source duplicates", () => {
+    expect(humanizeAcmPanelPreviewWarning("quantity_source=commercial_deduction")).toMatch(
+      /deducere comercială/i,
+    );
+    const prepared = prepareAcmPanelPreviewWarnings(
+      [
+        "quantity_source=commercial_deduction",
+        "cut_v_quantity_source=commercial_deduction",
+        "technical_configuration_unconfirmed",
+      ],
+      true,
+    );
+    expect(prepared).toEqual(["Configurație tehnică neconfirmată"]);
   });
 });

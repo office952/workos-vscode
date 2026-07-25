@@ -274,6 +274,67 @@ async def test_dry_run_7g_official_total_differs_from_diagnostic_cost_plus() -> 
     assert result["diagnostic_cost_plus_trace"]["total_gross"] != 1190.0
 
 
+@pytest.mark.asyncio
+async def test_dry_run_applies_operator_adaos_on_7g_commercial_base(monkeypatch) -> None:
+    async def fake_get_record(_db, workspace_id):
+        assert workspace_id == "workspace-v6"
+        return SimpleNamespace(
+            id="workspace-v6",
+            workspace_code="IV6-TEST",
+            template_code="TPL-VOLUMETRIC-LETTERS_v2",
+            payload_json=(
+                '{"product_binding":{"template_code":"TPL-VOLUMETRIC-LETTERS_v2"},'
+                '"intake_request_code":"IR-TEST",'
+                '"finish_setup":{"commercial_inputs":{'
+                '"markup_percent":50.0,"discount_percent":0.0,'
+                '"vat_percent":19.0,"manual_adjustment_ron":0.0}}}'
+            ),
+        )
+
+    monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    assert result["pricing_status"] == dry_run.V6_PRICED_DRY_RUN_READY
+    totals = result["commercial_totals"]
+    assert totals["commercial_base_subtotal"] == 1000.0
+    assert totals["subtotal_net"] == 1500.0
+    assert totals["vat_amount"] == 285.0
+    assert totals["total_gross"] == 1785.0
+    assert totals["commercial_adjustment_trace"]["markup_percent"] == 50.0
+    assert totals["commercial_adjustment_trace"]["markup_value"] == 500.0
+
+
+@pytest.mark.asyncio
+async def test_dry_run_applies_discount_and_manual_adjustment_on_7g_base(monkeypatch) -> None:
+    async def fake_get_record(_db, workspace_id):
+        return SimpleNamespace(
+            id="workspace-v6",
+            workspace_code="IV6-TEST",
+            template_code="TPL-VOLUMETRIC-LETTERS_v2",
+            payload_json=(
+                '{"product_binding":{"template_code":"TPL-VOLUMETRIC-LETTERS_v2"},'
+                '"intake_request_code":"IR-TEST",'
+                '"finish_setup":{"commercial_inputs":{'
+                '"markup_percent":0.0,"discount_percent":10.0,'
+                '"vat_percent":19.0,"manual_adjustment_ron":100.0}}}'
+            ),
+        )
+
+    monkeypatch.setattr(dry_run, "_get_record_or_404", fake_get_record)
+
+    result = await dry_run.build_intake_v6_priced_quote_dry_run(FakeDb(), "workspace-v6")
+
+    totals = result["commercial_totals"]
+    # base 1000 + manual 100 = 1100; discount 10% = 110; net 990; vat 19% = 188.1; gross 1178.1
+    assert totals["commercial_base_subtotal"] == 1000.0
+    assert totals["subtotal_net"] == 990.0
+    assert totals["vat_amount"] == 188.1
+    assert totals["total_gross"] == 1178.1
+    assert totals["commercial_adjustment_trace"]["discount_percent"] == 10.0
+    assert totals["commercial_adjustment_trace"]["manual_adjustment_ron"] == 100.0
+
+
 def test_dry_run_service_does_not_call_v4_draft_builder() -> None:
     path = Path(dry_run.__file__)
     source = path.read_text(encoding="utf-8")

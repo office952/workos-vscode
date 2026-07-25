@@ -17,7 +17,12 @@ import {
   resolveTypedCatalog,
   typedCatalogLabelRo,
 } from "@/lib/pricing/pricingTypedCatalog";
-import { normalizePricingDisplayName } from "@/lib/pricing/pricingDisplayNaming";
+import { CncProcessableBadge } from "@/components/workos/CncProcessableBadge";
+import { materialCarriesCncProcessableBadge } from "@/lib/cnc/cncProcessableBadge";
+import {
+  misleadingCodeNoteRo,
+  normalizePricingDisplayName,
+} from "@/lib/pricing/pricingDisplayNaming";
 
 function pricingRegistryItemStatusKey(item: PricingRegistryItem): string {
   if (item.status === "missing_price" || item.confidence === "missing") {
@@ -79,9 +84,11 @@ export function PricingEntryRow({
     item.pricing_code,
     item.display_name
   );
+  const namingNote = isMaterial ? misleadingCodeNoteRo(item.pricing_code) : null;
   const costLabel = item.cost_label_ro || (isMaterial ? "Cost achiziție" : "Rată calcul");
   const mismatch = hasRateBasisMismatch(item);
   const familyLabel = machineFamilyLabelRo(resolveMachineFamily(item));
+  const showCncBadge = isMaterial && materialCarriesCncProcessableBadge(item.pricing_code);
 
   return (
     <div
@@ -94,7 +101,21 @@ export function PricingEntryRow({
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-[13px] font-semibold text-slate-100 truncate">{displayName}</p>
+            <div className="flex min-w-0 items-center gap-2">
+              <p className="text-[13px] font-semibold text-slate-100 truncate">{displayName}</p>
+              {showCncBadge ? (
+                <span
+                  className="shrink-0"
+                  onClick={(e) => e.stopPropagation()}
+                  onKeyDown={(e) => e.stopPropagation()}
+                >
+                  <CncProcessableBadge
+                    size="sm"
+                    testId={`pricing-cnc-badge-${item.pricing_code}`}
+                  />
+                </span>
+              ) : null}
+            </div>
             <div className="text-right shrink-0">
               <p className="text-[10px] text-slate-500 uppercase tracking-wide">{costLabel}</p>
               <p className="text-[15px] font-bold text-slate-100">
@@ -126,6 +147,9 @@ export function PricingEntryRow({
             {showCategory && <span>·</span>}
             <span className="text-slate-400">{impact}</span>
           </div>
+          {namingNote ? (
+            <p className="mt-1.5 text-[10px] leading-snug text-amber-500/80">{namingNote}</p>
+          ) : null}
           {mismatch && (
             <p className="flex items-start gap-1.5 mt-1.5 text-[11px] text-amber-300/90">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />

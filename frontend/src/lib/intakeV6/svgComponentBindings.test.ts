@@ -60,7 +60,7 @@ describe("svgComponentBindings", () => {
       },
       {
         component_template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
-        owner_label: "Panou Alucobond casetat",
+        owner_label: "Alucobond casetat",
         accepted_geometry_roles: ["SUPPORT_CONTOUR"],
         selection_mode: "CLOSED_CONTOUR",
         cardinality: "MAX_ONE",

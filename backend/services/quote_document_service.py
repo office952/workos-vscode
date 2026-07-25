@@ -133,7 +133,7 @@ PRODUCT_COMMERCIAL_TEXT: Dict[str, Dict[str, Any]] = {
         "client_title": "Litere volumetrice luminoase",
         "short_description": "Litere volumetrice luminoase realizate conform configurației aprobate.",
         "technical_description": (
-            "Litere volumetrice: față plexi/acrilic (opțional vinyl/oracal), bordură profil aluminiu, "
+            "Litere volumetrice: față plexiglas 3mm PMMA - opal (opțional vinyl/oracal), bordură profil aluminiu, "
             "spate Forex 10 mm. LED montat pe spate. "
             "Premontaj opțional pe structură metalică sau panou ACM casetat (suport, nu spate literă). "
             "Finisare: vopsire RAL, folie sau natural. Șablon montaj."

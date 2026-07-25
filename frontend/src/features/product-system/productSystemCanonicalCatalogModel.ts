@@ -8,6 +8,11 @@ import { normalizeTemplateCode, isOwnerValidActiveTemplate } from "@/lib/activeT
 import { LOGO_TEMPLATE_CODE } from "@/lib/productTemplateScopePresentation";
 import { commercialChipForTemplateCode } from "@/lib/productSystemModularityTruth";
 import { getProductTemplateScopePresentation } from "@/lib/productTemplateScopePresentation";
+import {
+  ACM_BOXED_OWNER_LABEL_RO,
+  isAcmBoxedMountingTemplate,
+} from "./acmBoxedTemplateIdentity";
+import { humanTemplateName } from "./productSystemAdminDisplay";
 
 export type CanonicalCatalogRollup =
   | "READY"
@@ -34,7 +39,7 @@ export const CANONICAL_CATALOG_OPERATOR_FILTERS: Array<{
   testId: string;
 }> = [
   { id: "all", label: "Toate operaționale", testId: "product-system-canonical-filter-all" },
-  { id: "ready", label: "Pregătit pentru ofertă", testId: "product-system-canonical-filter-ready" },
+  { id: "ready", label: "Pregătit (structură)", testId: "product-system-canonical-filter-ready" },
   { id: "blocked", label: "Blocat (pregătire)", testId: "product-system-canonical-filter-blocked" },
   { id: "standalone", label: "De sine stătător", testId: "product-system-canonical-filter-standalone" },
   { id: "linked-child", label: "Copil legat", testId: "product-system-canonical-filter-linked-child" },
@@ -75,7 +80,7 @@ const ROLLUP_SORT_WEIGHT: Record<CanonicalCatalogRollup, number> = {
 };
 
 export const CANONICAL_READINESS_ROLLUP_LABELS: Record<CanonicalCatalogRollup, string> = {
-  READY: "Pregătit pentru ofertă",
+  READY: "Pregătit (structură)",
   BLOCKED: "Blocat (pregătire)",
   PARTIALLY_READY: "Parțial (compunere)",
   INTERNAL: "Intern",
@@ -291,12 +296,14 @@ export function buildCanonicalCatalogProducts({
       return {
         id: `template:${availability.template_id}`,
         templateCode: availability.template_code,
-        // Prefer family/name over API ui_label when honesty chip carries commercial status.
-        displayName:
-          template.family_name ||
-          availability.family_name ||
-          availability.ui_label ||
-          availability.template_code,
+        // Prefer owner product title for ACM; else family/name over API ui_label.
+        displayName: isAcmBoxedMountingTemplate(availability.template_code)
+          ? ACM_BOXED_OWNER_LABEL_RO
+          : template.family_name ||
+            availability.family_name ||
+            availability.ui_label ||
+            humanTemplateName(availability.template_code) ||
+            availability.template_code,
         familyName: availability.family_name || template.family_name || "—",
         availability,
         template,

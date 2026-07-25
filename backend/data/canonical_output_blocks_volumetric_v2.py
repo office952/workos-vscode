@@ -14,7 +14,7 @@ CANONICAL_OUTPUT_BLOCKS_V2: dict[str, Any] = {
             "audience": "client",
             "approval_status": "approved",
             "template_text": (
-                "Litere volumetrice 3D {{product_name}} — față plexi/acrilic, "
+                "Litere volumetrice 3D {{product_name}} — față plexiglas 3mm PMMA - opal, "
                 "bordură profil aluminiu, spate Forex 10 mm, iluminare LED opțională."
             ),
             "variables": [
@@ -33,7 +33,7 @@ CANONICAL_OUTPUT_BLOCKS_V2: dict[str, Any] = {
             "document_type": "production_sheet",
             "audience": "internal",
             "approval_status": "approved",
-            "template_text": "Față: plexi/acrilic; Bordură: profil aluminiu; Spate: Forex 10 mm; LED opțional.",
+            "template_text": "Față: plexiglas 3mm PMMA - opal; Bordură: profil aluminiu; Spate: Forex 10 mm; LED opțional.",
             "variables": [],
         },
     ]

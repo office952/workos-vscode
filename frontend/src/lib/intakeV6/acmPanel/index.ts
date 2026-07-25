@@ -8,3 +8,4 @@ export * from "./operatorPatch";
 export * from "./commitSemantics";
 export * from "./useAcmPanelOperatorDrafts";
 export * from "./blueprintReadModel";
+export * from "./shellFinish";

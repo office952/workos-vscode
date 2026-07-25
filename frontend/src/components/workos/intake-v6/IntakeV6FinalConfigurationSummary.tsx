@@ -1,12 +1,13 @@
+import { useMemo } from "react";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
 import { useIntakeV6FinalHandoff } from "@/lib/intakeV6/useIntakeV6FinalHandoff";
 import { formatWorkspaceReadinessLabel } from "@/lib/intakeV6/intakeV6OperatorUiDisplay";
+import { isAcmPanelOnlyComposition } from "@/lib/intakeV6/acmPanel/acmPanelOnlyComposition";
 import { v6 } from "./atoms/intakeV6Presentation";
 import IntakeV6ConfirmDashboard from "./IntakeV6ConfirmDashboard";
 import IntakeV6ConfirmHandoffPanel from "./IntakeV6ConfirmHandoffPanel";
 import IntakeV6ConfirmOperationalSummary from "./IntakeV6ConfirmOperationalSummary";
 import IntakeV6ModularFormAwarenessPanel from "./IntakeV6ModularFormAwarenessPanel";
-import AcmPanelProvisionalPricingBlock from "./AcmPanelProvisionalPricingBlock";
 import IntakeV6LiveCalculationSummary from "./IntakeV6LiveCalculationSummary";
 import IntakeV6OfferScopeReviewSummary from "./IntakeV6OfferScopeReviewSummary";
 import IntakeV6TechnicalDetailsAccordion from "./atoms/IntakeV6TechnicalDetailsAccordion";
@@ -63,6 +64,13 @@ export default function IntakeV6FinalConfigurationSummary({
 	variant = "embedded",
 }: IntakeV6FinalConfigurationSummaryProps) {
 	const handoff = useIntakeV6FinalHandoff(hook);
+	const acmPanelOnly = useMemo(
+		() =>
+			isAcmPanelOnlyComposition(
+				handoff.ws?.payload as Record<string, unknown> | null | undefined,
+			),
+		[handoff.ws?.payload],
+	);
 
 	// Confirmare first paint always exposes the checklist / handoff purpose.
 	const showHandoffPanel =
@@ -138,19 +146,69 @@ export default function IntakeV6FinalConfigurationSummary({
 
 				{handoff.pricedQuoteDryRunTotal != null ? (
 					<div className={`${v6.cardCompact} !p-3`} data-testid="intake-v6-priced-quote-cta-card">
-						<div className="mb-2 flex flex-wrap items-start justify-between gap-2">
-							<div>
-								<h3 className={v6.sectionTitle}>Oferta pretuita</h3>
-								<p className="mt-1 text-[11px] text-slate-400">
-									Total comercial pe ofertă — fără comandă sau stoc.
-								</p>
+						<div className="mb-2">
+							<div className="mb-2 flex flex-wrap items-start justify-between gap-2">
+								<div>
+									<h3 className={v6.sectionTitle}>Ofertă client — total</h3>
+									<p className="mt-1 text-[11px] text-slate-400">
+										Total comercial pe ofertă — fără comandă sau stoc.
+									</p>
+								</div>
+								<span
+									className="text-[20px] font-bold tabular-nums text-emerald-200"
+									data-testid="intake-v6-priced-quote-total"
+								>
+									{`${handoff.pricedQuoteDryRunTotal.toLocaleString("ro-RO", {
+										minimumFractionDigits: 2,
+										maximumFractionDigits: 2,
+									})} ${handoff.pricedQuoteDryRun?.commercial_totals?.currency ?? "RON"}`}
+								</span>
 							</div>
-							<span className="text-[12px] font-semibold text-slate-100" data-testid="intake-v6-priced-quote-total">
-								{`${handoff.pricedQuoteDryRunTotal.toLocaleString("ro-RO", {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2,
-								})} ${handoff.pricedQuoteDryRun?.commercial_totals?.currency ?? "RON"}`}
-							</span>
+							{handoff.pricedQuoteDryRun?.commercial_totals?.subtotal_net != null ? (
+								<dl
+									className="grid grid-cols-2 gap-x-3 gap-y-1 rounded border border-[#243044]/60 bg-[#0B1220]/50 px-2.5 py-2 text-[11px]"
+									data-testid="intake-v6-confirm-offer-totals-breakdown"
+								>
+									<div className="flex justify-between gap-2 text-slate-400">
+										<dt>Net</dt>
+										<dd className="tabular-nums text-slate-200">
+											{handoff.pricedQuoteDryRun.commercial_totals.subtotal_net.toLocaleString("ro-RO", {
+												minimumFractionDigits: 2,
+												maximumFractionDigits: 2,
+											})}{" "}
+											RON
+										</dd>
+									</div>
+									<div className="flex justify-between gap-2 text-slate-400">
+										<dt>
+											TVA
+											{handoff.pricedQuoteDryRun.commercial_totals.vat_rate != null
+												? ` (${handoff.pricedQuoteDryRun.commercial_totals.vat_rate}%)`
+												: ""}
+										</dt>
+										<dd className="tabular-nums text-slate-200">
+											{(handoff.pricedQuoteDryRun.commercial_totals.vat_amount ?? 0).toLocaleString("ro-RO", {
+												minimumFractionDigits: 2,
+												maximumFractionDigits: 2,
+											})}{" "}
+											RON
+										</dd>
+									</div>
+									{handoff.pricedQuoteDryRun.commercial_totals.commercial_adjustment_trace
+										?.markup_percent != null ? (
+										<div className="col-span-2 flex justify-between gap-2 text-slate-400">
+											<dt>Adaos comercial</dt>
+											<dd className="tabular-nums text-slate-200">
+												{Number(
+													handoff.pricedQuoteDryRun.commercial_totals.commercial_adjustment_trace
+														.markup_percent,
+												).toLocaleString("ro-RO", { maximumFractionDigits: 2 })}
+												%
+											</dd>
+										</div>
+									) : null}
+								</dl>
+							) : null}
 						</div>
 						{handoff.createPricedQuoteDisabledReason &&
 						!handoff.canCreatePricedQuote &&
@@ -180,11 +238,6 @@ export default function IntakeV6FinalConfigurationSummary({
 								</button>
 							) : null}
 						</div>
-						{/* Continuity when CTA card replaces bar live-calc */}
-						<AcmPanelProvisionalPricingBlock
-							preview={handoff.pricedQuoteDryRun?.acm_panel_commercial_preview}
-							compact
-						/>
 					</div>
 				) : (
 					<IntakeV6LiveCalculationSummary
@@ -196,6 +249,8 @@ export default function IntakeV6FinalConfigurationSummary({
 						officialPricing={handoff.pricedQuoteDryRun}
 						commercialInputs={handoff.commercialInputs}
 						eurToRonRate={handoff.eurToRonRate}
+						suppressLetterCantChrome={acmPanelOnly}
+						hideAcmPanelProvisional
 					/>
 				)}
 			</div>
@@ -250,7 +305,11 @@ export default function IntakeV6FinalConfigurationSummary({
 							</ul>
 						</div>
 
-						<IntakeV6ConfirmOperationalSummary summary={handoff.summary} variant="technical" />
+						<IntakeV6ConfirmOperationalSummary
+							summary={handoff.summary}
+							variant="technical"
+							acmPanelOnly={acmPanelOnly}
+						/>
 					</IntakeV6TechnicalDetailsAccordion>
 				</div>
 			</IntakeV6TechnicalDetailsAccordion>

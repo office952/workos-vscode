@@ -327,7 +327,7 @@ export function ownerFacingComponentProductLabel(
     case "TPL-VOLUMETRIC-LOGO_v1":
       return "Componentă logo volumetric";
     case "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1":
-      return component.owner_label || "Panou Alucobond casetat";
+      return component.owner_label || "Alucobond casetat";
     default:
       return component.owner_label || component.component_template_code;
   }

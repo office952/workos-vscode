@@ -97,6 +97,15 @@ def _dry_run(**overrides):
             "vat_amount": 210.0,
             "total_gross": 1210.0,
             "currency": "RON",
+            "commercial_base_subtotal": 1000.0,
+            "commercial_adjustment_trace": {
+                "basis": "commercial_price_proposal_7g_subtotal",
+                "markup_percent": 35.0,
+                "markup_value": 0.0,
+                "manual_adjustment_ron": 0.0,
+                "discount_percent": 0.0,
+                "discount_value": 0.0,
+            },
         },
         "commercial_line_items": [
             {
@@ -192,6 +201,10 @@ async def test_successful_write_updates_existing_eligible_v6_unpriced_quote_with
     assert FakeQuotesService.quote.total_before_vat == 1000.0
     assert FakeQuotesService.quote.vat == 210.0
     assert FakeQuotesService.quote.grand_total == 1210.0
+    assert FakeQuotesService.quote.margin_pct == 35.0
+    notes = json.loads(FakeQuotesService.quote.notes)
+    write_trace = notes["intake_v6_linkage_v1"]["intake_v6_priced_quote_write_v1"]
+    assert write_trace["commercial_adjustment_trace"]["markup_percent"] == 35.0
 
 
 @pytest.mark.asyncio

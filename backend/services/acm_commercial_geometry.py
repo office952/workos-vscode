@@ -186,6 +186,18 @@ def compute_acm_commercial_geometry(
     if joint_count > 0:
         warnings.append("segmentation_joints_no_commercial_rate")
 
+    # Operator honesty: empty panels[] + assembly/envelope dims = one logical panel,
+    # not "0 panouri" while CUT/V/face still price.
+    panel_count = len(valid_panels)
+    if (
+        panel_count == 0
+        and aw is not None
+        and ah is not None
+        and aw > 0
+        and ah > 0
+    ):
+        panel_count = 1
+
     return {
         "version": ACM_COMMERCIAL_GEOMETRY_VERSION,
         "mode": mode,
@@ -193,7 +205,7 @@ def compute_acm_commercial_geometry(
         "assembly_height_mm": ah,
         "envelope_width_mm": envelope_w,
         "envelope_height_mm": envelope_h,
-        "panel_count": len(valid_panels),
+        "panel_count": panel_count,
         "joint_count": joint_count,
         "commercial_face_area_m2": commercial_face_area_m2,
         "assembly_exterior_perimeter_m": assembly_exterior_perimeter_m,
@@ -324,7 +336,23 @@ def build_acm_panel_authority_summary(payload: Mapping[str, Any]) -> dict[str, A
         composition_inconsistent = True
 
     technical_confirmed = tech == "confirmed"
-    segmented_confirmed = seg_status == "CONFIRMED"
+
+    # Segmentation gate: only multi-panel assemblies require CONFIRMED.
+    # Single-panel / absent / INACTIVE / SINGLE_PANEL → N/A (satisfied).
+    panel_count = 0
+    geom = inst.get("geometry") if isinstance(inst.get("geometry"), Mapping) else {}
+    panels = geom.get("panels") if isinstance(geom, Mapping) else None
+    if isinstance(panels, list):
+        panel_count = len(panels)
+    if panel_count < 2 and isinstance(seg, Mapping):
+        seg_panels = seg.get("panels")
+        if isinstance(seg_panels, list):
+            panel_count = max(panel_count, len(seg_panels))
+
+    if panel_count >= 2:
+        segmented_confirmed = seg_status == "CONFIRMED"
+    else:
+        segmented_confirmed = True
 
     warnings: list[str] = []
     blockers: list[str] = []
@@ -332,7 +360,7 @@ def build_acm_panel_authority_summary(payload: Mapping[str, Any]) -> dict[str, A
         warnings.append("technical_configuration_unconfirmed")
     if catalog_defaults:
         warnings.append("construction_catalog_defaults")
-    if seg_status == "PROPOSED":
+    if seg_status == "PROPOSED" and panel_count >= 2:
         warnings.append("segmentation_proposed")
     if composition_inconsistent or composition == "unconfirmed":
         warnings.append("composition_inconsistent_or_unconfirmed")

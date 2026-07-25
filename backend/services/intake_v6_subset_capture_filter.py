@@ -38,21 +38,63 @@ RETURN_CANT_CAPTURE_FATAL_CODES = frozenset(
     }
 )
 
+# VL letter/artwork capture fatals — not applicable to ACM panel-alone (support_only).
+ACM_PANEL_ONLY_LETTER_CAPTURE_FATAL_CODES = frozenset(
+    {
+        "SELECTED_LAYER_REFS_EMPTY",
+        "FINISH_TARGET_MISSING",
+        "PRINT_REQUIRED_UNKNOWN",
+        "LAMINATION_REQUIRED_UNKNOWN",
+        *FACE_CAPTURE_FATAL_CODES,
+        *RETURN_CANT_CAPTURE_FATAL_CODES,
+        *LIGHTING_CAPTURE_FATAL_CODES,
+    }
+)
+
+ACM_SUPPORT_TEMPLATE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"
+
+
+def is_acm_panel_only_composition(payload_raw: dict[str, Any]) -> bool:
+    """True when operator path is ACM panel-alone (no letters/logo sold composition)."""
+    recommendation = payload_raw.get("product_composition_recommendation")
+    if isinstance(recommendation, dict):
+        ctype = str(recommendation.get("composition_type") or "").strip().lower()
+        if ctype in {"support_only", "support_only_pending"}:
+            return True
+
+    confirmed = payload_raw.get("product_composition_confirmed")
+    if not (isinstance(confirmed, dict) and confirmed.get("confirmed") is True):
+        return False
+    items = confirmed.get("items")
+    if not isinstance(items, list) or not items:
+        return False
+    codes = {
+        str(it.get("template_code") or "").strip()
+        for it in items
+        if isinstance(it, dict)
+    }
+    codes.discard("")
+    return codes == {ACM_SUPPORT_TEMPLATE}
+
 
 def inactive_module_capture_codes_for_payload(payload_raw: dict[str, Any]) -> frozenset[str]:
     """Return capture codes that must not gate readiness/UI for the current sold scope.
 
-    Full product / legacy (no subset) keeps all capture fatals unchanged.
+    Full product / legacy (no subset) keeps all capture fatals unchanged — except
+    ACM panel-alone composition, which suppresses VL letter/artwork capture fatals.
     """
     from services.offer_scope_resolver_service import extract_offer_scope, resolve_offer_scope
+
+    inactive: set[str] = set()
+    if is_acm_panel_only_composition(payload_raw):
+        inactive.update(ACM_PANEL_ONLY_LETTER_CAPTURE_FATAL_CODES)
 
     scope = extract_offer_scope(payload_raw, None)
     resolved = resolve_offer_scope(scope)
     if resolved.use_legacy or resolved.mode != "component_subset":
-        return frozenset()
+        return frozenset(inactive)
 
     sold = set(resolved.canonical_sold_modules)
-    inactive: set[str] = set()
     # Mounting / șablon are not Slice-1 sold modules — never fatal on subsets.
     inactive.update(MOUNTING_CAPTURE_FATAL_CODES)
     if "LIGHTING" not in sold and "ELECTRICAL" not in sold:

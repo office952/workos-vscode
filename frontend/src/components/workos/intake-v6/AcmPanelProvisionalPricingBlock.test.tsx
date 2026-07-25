@@ -45,11 +45,11 @@ describe("AcmPanelProvisionalPricingBlock", () => {
   it("renders provisional header, face area, and eligibility", () => {
     render(<AcmPanelProvisionalPricingBlock preview={preview} />);
     expect(screen.getByTestId("intake-v6-acm-panel-provisional-header")).toHaveTextContent(
-      "Estimare provizorie AcmPanel",
+      "Estimare provizorie — panou Alucobond",
     );
     expect(screen.getByTestId("intake-v6-acm-panel-face-area")).toHaveTextContent("0.7");
     expect(screen.getByTestId("intake-v6-acm-panel-eligibility-badges")).toHaveTextContent(
-      "Offer ferm: indisponibil",
+      "Ofertă fermă: indisponibilă",
     );
     fireEvent.click(screen.getByTestId("intake-v6-acm-panel-breakdown-toggle"));
     expect(screen.getByTestId("intake-v6-acm-panel-line-acm_panel_cut")).toHaveAttribute(
@@ -61,5 +61,21 @@ describe("AcmPanelProvisionalPricingBlock", () => {
   it("renders nothing without preview", () => {
     const { container } = render(<AcmPanelProvisionalPricingBlock preview={null} />);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it("rail variant hides Final/Execution badges and keeps panou total", () => {
+    render(<AcmPanelProvisionalPricingBlock preview={preview} variant="rail" />);
+    expect(screen.getByTestId("intake-v6-acm-panel-provisional-header")).toHaveTextContent(
+      "Panou Alucobond",
+    );
+    expect(screen.queryByTestId("intake-v6-acm-panel-eligibility-badges")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Execution/i)).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-acm-panel-provisional-total")).toBeInTheDocument();
+  });
+
+  it("embedded rail only exposes line details toggle", () => {
+    render(<AcmPanelProvisionalPricingBlock preview={preview} variant="rail" embedded />);
+    expect(screen.queryByTestId("intake-v6-acm-panel-eligibility-badges")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-acm-panel-breakdown-toggle")).toBeInTheDocument();
   });
 });

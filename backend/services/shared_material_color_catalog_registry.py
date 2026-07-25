@@ -97,7 +97,7 @@ _MATERIAL_SERIES: Final[tuple[MaterialSeries, ...]] = (
     MaterialSeries("ORACAL_651", "VINYL", "Oracal", "651", "Oracal 651 Intermediate Cal", "premium_vinyl", "m2"),
     MaterialSeries("ORACAL_8500", "TRANSLUCENT_VINYL", "Oracal", "8500", "Oracal 8500 Translucent Cal", "translucent_vinyl", "m2"),
     MaterialSeries("RAL_PAINT", "PAINT", "RAL", "RAL", "RAL Paint", "paint_coating", "m2"),
-    MaterialSeries("PLEXIGLAS_3MM", "PLEXIGLAS", None, "3MM", "Plexiglas 3 mm", "acrylic_sheet", "m2"),
+    MaterialSeries("PLEXIGLAS_3MM", "PLEXIGLAS", None, "3MM", "plexiglas 3mm PMMA - opal", "acrylic_sheet", "m2"),
     MaterialSeries("FOREX_10MM", "FOREX", None, "10MM", "Forex 10 mm", "expanded_pvc_sheet", "m2"),
     MaterialSeries("ACM_3MM", "ACM", None, "3MM", "ACM 3 mm", "acm_sheet", "m2"),
     MaterialSeries("ALUMINUM_SHEET_GENERIC", "ALUMINUM_SHEET", None, None, "Aluminum Sheet Generic", "aluminum_sheet", "m2"),

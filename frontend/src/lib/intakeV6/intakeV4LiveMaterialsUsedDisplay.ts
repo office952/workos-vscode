@@ -247,7 +247,7 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   for (const [index, rows] of splitRowsByIdentity(groupRowsByPredicate(materialRows, isPlexiglasFaceRow)).entries()) {
     addMaterialGroup(result, {
       groupKey: index === 0 ? "plexi" : `plexi_${index + 1}`,
-      label: "Plexiglas 3 mm",
+      label: "plexiglas 3mm PMMA - opal",
       rows,
       currency,
     });
@@ -353,13 +353,13 @@ export function buildIntakeV4LiveMaterialsUsedRows(args: {
   const operationRows = breakdown.operation_rows ?? [];
   addOperationGroup(result, {
     groupKey: "cnc_face",
-    label: "Debitare CNC față Plexiglas",
+    label: "Debitare CNC față plexiglas 3mm PMMA - opal",
     rows: operationRows.filter((row) => row.key === "cnc_face_cutting_plexiglas_3mm"),
     currency,
   });
   addOperationGroup(result, {
     groupKey: "cnc_face_bevel",
-    label: "Șanfren CNC față Plexiglas",
+    label: "Șanfren CNC față plexiglas 3mm PMMA - opal",
     rows: operationRows.filter((row) => row.key === "cnc_face_bevel_plexiglas_3mm"),
     currency,
   });

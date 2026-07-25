@@ -35,7 +35,7 @@ type Props = {
 };
 
 const ROLE_OPTIONS: Array<{ value: ContourRoleOption; label: string }> = [
-  { value: "ALUCOBOND_CASED_PANEL", label: "Panou Alucobond casetat" },
+  { value: "ALUCOBOND_CASED_PANEL", label: "Alucobond casetat" },
   { value: "FLAT_BACKGROUND", label: "Fundal plat" },
   { value: "DECORATIVE_CONTOUR", label: "Contur decorativ" },
   { value: "GRAPHIC_ELEMENT", label: "Element grafic" },
@@ -238,7 +238,7 @@ export default function IntakeV6AlucobondContourPanel({
               {ROLE_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.value === "ALUCOBOND_CASED_PANEL"
-                    ? "Contur suport · Panou Alucobond casetat"
+                    ? "Contur suport · Alucobond casetat"
                     : o.label}
                 </option>
               ))}
@@ -354,7 +354,7 @@ export default function IntakeV6AlucobondContourPanel({
 
       {existing.status === "confirmed" && existing.role === "ALUCOBOND_CASED_PANEL" ? (
         <p className="text-[11px] text-emerald-300" data-testid="intake-v6-alucobond-confirmed-badge">
-          Confirmat · Panou Alucobond casetat
+          Confirmat · Alucobond casetat
         </p>
       ) : null}
     </section>

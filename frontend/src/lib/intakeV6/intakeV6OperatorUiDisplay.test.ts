@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 
 import type { IntakeV6CncOperationRow } from "./intakeV6Api";
 import {
@@ -49,7 +49,7 @@ describe("intakeV6OperatorUiDisplay", () => {
     const rows: IntakeV6CncOperationRow[] = [
       {
         key: "cnc_face_cutting_plexiglas_3mm",
-        display_name: "Debitare CNC față Plexiglas 3 mm",
+        display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
         operation_type: "cutting",
         quantity: 13.62,
         unit: "ml",

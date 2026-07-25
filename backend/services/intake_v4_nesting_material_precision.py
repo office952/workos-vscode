@@ -23,8 +23,11 @@ CONFIDENCE_MISSING_METADATA = "estimate_missing_metadata"
 ORPHAN_UNASSIGNED_SPLIT_PART_RE = re.compile(r"^split_layer_\d+_\d+$")
 
 SHEET_FACE_ROLES = frozenset({"face"})
-SHEET_BACKING_ROLES = frozenset({"backing", "support_panel"})
-SHEET_EXCLUDED_ROLES = frozenset({"printed_artwork", "ignored", "artwork"})
+# Forex / letter backing only — ACM Alucobond support_panel must NOT inflate VL plexi/forex sheets.
+SHEET_BACKING_ROLES = frozenset({"backing"})
+SHEET_EXCLUDED_ROLES = frozenset(
+    {"printed_artwork", "ignored", "artwork", "support_panel", "acp_support", "box_background"}
+)
 DERIVED_FACE_KINDS = frozenset({"relief-insert", "diffuser-plate"})
 DERIVED_BACKING_KINDS = frozenset({"back-cover-plate", "wall-strip-plate"})
 
@@ -574,19 +577,37 @@ def _allocate_prorated_sheet_area(
     sheet_area_sqm: float,
     face_area: float | None,
     backing_area: float | None,
+    *,
+    max_waste_factor: float = 2.5,
 ) -> tuple[float | None, float | None]:
+    """Prorate consumed sheet area across face/backing geometry.
+
+    Guard: when nesting metadata collapses to a full sheet (e.g. 4.5 m²) while letter
+    face geometry is tiny (~0.33 m²), do not charge the whole sheet as VL plexiglas.
+    """
     face = _positive(face_area)
     backing = _positive(backing_area)
+    sheet = float(sheet_area_sqm)
+
+    def _cap(qty: float, geom: float | None) -> float:
+        if geom is None:
+            return round(qty, 4)
+        if qty > geom * max_waste_factor:
+            return round(geom, 4)
+        return round(qty, 4)
+
     if face and backing:
         denom = face + backing
         if denom <= 0:
             return None, None
-        return round(sheet_area_sqm * face / denom, 4), round(sheet_area_sqm * backing / denom, 4)
+        face_qty = sheet * face / denom
+        backing_qty = sheet * backing / denom
+        return _cap(face_qty, face), _cap(backing_qty, backing)
     if face:
-        return round(sheet_area_sqm, 4), None
+        return _cap(sheet, face), None
     if backing:
-        return None, round(sheet_area_sqm, 4)
-    return round(sheet_area_sqm, 4), None
+        return None, _cap(sheet, backing)
+    return round(sheet, 4), None
 
 
 def compute_sheet_nesting_material_split(

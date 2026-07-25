@@ -73,19 +73,47 @@ def normalize_applied_content(value: Any) -> AppliedContent | None:
     return None
 
 
+def _has_meaningful_applied_content_value(raw: Any) -> bool:
+    """True when a source explicitly set applied_content (including explicit none)."""
+    if raw is None:
+        return False
+    return bool(str(raw).strip())
+
+
 def read_applied_content(payload: Mapping[str, Any] | None) -> AppliedContent | None:
-    """Read applied_content from quote_input / finish_setup / top-level payload."""
+    """Read applied_content from quote_input / finish_setup / composition confirm / top-level.
+
+    Empty/null bags (common after partial finish writes) must not shadow
+    product_composition_confirmed.applied_content — otherwise Letters↔ACM
+    connection commercial lines never fire on VL+ACM workspaces.
+    """
     if not isinstance(payload, Mapping):
         return APPLIED_CONTENT_NONE
-    for key in ("applied_content",):
-        if key in payload:
-            return normalize_applied_content(payload.get(key))
+    sources: list[Any] = []
+    if "applied_content" in payload:
+        sources.append(payload.get("applied_content"))
     finish = payload.get("finish_setup")
     if isinstance(finish, Mapping) and "applied_content" in finish:
-        return normalize_applied_content(finish.get("applied_content"))
+        sources.append(finish.get("applied_content"))
     quote = payload.get("quote_input")
     if isinstance(quote, Mapping) and "applied_content" in quote:
-        return normalize_applied_content(quote.get("applied_content"))
+        sources.append(quote.get("applied_content"))
+    confirmed = payload.get("product_composition_confirmed")
+    if isinstance(confirmed, Mapping) and "applied_content" in confirmed:
+        sources.append(confirmed.get("applied_content"))
+
+    # Prefer an explicit letters/logo decision from any source before treating
+    # an empty finish bag as "none".
+    normalized_meaningful: list[AppliedContent | None] = []
+    for raw in sources:
+        if not _has_meaningful_applied_content_value(raw):
+            continue
+        normalized_meaningful.append(normalize_applied_content(raw))
+    for value in normalized_meaningful:
+        if value in {APPLIED_CONTENT_LETTERS, APPLIED_CONTENT_LOGO}:
+            return value
+    if normalized_meaningful:
+        return normalized_meaningful[0]
     return APPLIED_CONTENT_NONE
 
 

@@ -537,7 +537,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
         _comp(
             "comp_face_litere",
             "LITERE_3D",
-            "Față litere — plexi/acrilic (CNC/laser)",
+            "Față litere — plexiglas 3mm PMMA - opal (CNC/laser)",
             operations=[
                 _op_formula(
                     "vector_prep", "PREPRESS", 1,
@@ -574,7 +574,7 @@ def _volumetric_letters_components() -> List[Dict[str, Any]]:
                 _mat_formula(
                     "MAT-ACP-FATA-LITERE", "mp", "letter_face_area",
                     {"waste_pct": 0.15},
-                    "Față plexi/acrilic sau ACP; opțional vinyl/oracal/print",
+                    "Față plexiglas 3mm PMMA - opal; opțional vinyl/oracal/print",
                     requires_quote_input=["letter_face_area_m2"],
                 ),
                 _mat_formula(
@@ -993,7 +993,7 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
         "family_id": "litere_volumetrice",
         "family_name": "Litere volumetrice",
         "description": (
-            "Litere volumetrice 3D — față plexi/acrilic (opțional vinyl/oracal), "
+            "Litere volumetrice 3D — față plexiglas 3mm PMMA - opal (opțional vinyl/oracal), "
             "bordură profil aluminiu, spate Forex 10 mm. LED pe spate. "
             "Premontaj opțional: perete / structură metalică / panou ACM casetat "
             "(suport separat de spatele literei)."
@@ -1008,7 +1008,7 @@ TEMPLATE_DEFINITIONS: List[Dict[str, Any]] = [
             "illumination(none/frontlit/backlit/halo), mounting_type, "
             "paint_finish, indoor_outdoor. "
             "Straturi producție (ref. docs/production/volumetric-letters-production-layers.md): "
-            "față plexi/acrilic tăiat; opțional vinyl/print/oracal; șanfren față opțional/configurabil. "
+            "față plexiglas 3mm PMMA - opal tăiat; opțional vinyl/print/oracal; șanfren față opțional/configurabil. "
             "Bordură: profil aluminiu, adâncime configurabilă. "
             "Spate litere: Forex 10 mm (nu PVC/aluminiu generic); șanfren spate opțional/configurabil. "
             "LED: module montate pe spate Forex; cablaj + sursă în strat electric. "

@@ -356,7 +356,7 @@ def _volumetric_letters_output_blocks() -> List[Dict[str, Any]]:
             "audience": "client",
             "approval_status": "approved",
             "template_text": (
-                "Litere volumetrice 3D {{product_name}} — față plexi/acrilic, "
+                "Litere volumetrice 3D {{product_name}} — față plexiglas 3mm PMMA - opal, "
                 "bordură profil aluminiu, spate Forex 10 mm, iluminare LED opțională. "
                 "Text: conform vector furnizat. Înălțime literă: {{height_mm}}mm."
             ),
@@ -373,7 +373,7 @@ def _volumetric_letters_output_blocks() -> List[Dict[str, Any]]:
             "audience": "internal",
             "approval_status": "approved",
             "template_text": (
-                "Față: plexi/acrilic tăiat (opțional vinyl/oracal); șanfren față configurabil. "
+                "Față: plexiglas 3mm PMMA - opal tăiat (opțional vinyl/oracal); șanfren față configurabil. "
                 "Bordură: profil aluminiu (adâncime 30–150 mm configurabilă). "
                 "Spate litere: Forex 10 mm (nu panou ACM); șanfren spate configurabil. "
                 "LED: module pe spate Forex; cablaj + sursă. "

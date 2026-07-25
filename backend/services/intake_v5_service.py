@@ -203,7 +203,7 @@ def calculate_bom(
 
     # 1. Față plexiglas 3mm
     face_qty = face_area * 1.15  # 15% waste
-    _add_mat("MAT-ACP-FATA-LITERE", "Plexiglas 3 mm — față litere", face_qty, "mp")
+    _add_mat("MAT-ACP-FATA-LITERE", "plexiglas 3mm PMMA - opal", face_qty, "mp")
 
     # 2. Spate Forex 10mm
     if inputs.backing_enabled:

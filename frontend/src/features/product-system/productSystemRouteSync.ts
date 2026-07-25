@@ -28,6 +28,11 @@ export function buildProductSystemProductDetailPath(templateCode: string): strin
   return `${PRODUCT_SYSTEM_PRODUCTS_PATH}/${encodeURIComponent(templateCode)}`;
 }
 
+/** Structure-step detail pages nest under the product detail path. */
+export function isProductSystemProductStructureDetailPath(pathname: string): boolean {
+  return /^\/product-system\/products\/[^/]+\/structure\//.test(pathname);
+}
+
 export function buildProductSystemProductsPathWithQuery(templateCode: string): string {
   return `${PRODUCT_SYSTEM_PRODUCTS_PATH}?template=${encodeURIComponent(templateCode)}`;
 }

@@ -62,7 +62,7 @@ describe("formatVolumetricFinishSummary", () => {
     expect(s.faceVinylTranslucent).toBe(false);
   });
 
-  it("formats face vinyl Oracal 8500 translucent", () => {
+  it("formats face vinyl Oracal 8500", () => {
     const s = formatVolumetricFinishSummary({
       face_vinyl_enabled: true,
       face_vinyl_series: "8500",
@@ -70,7 +70,7 @@ describe("formatVolumetricFinishSummary", () => {
       face_vinyl_name: "White translucent",
       face_finish_type: "oracal_8500",
     });
-    expect(s.faceVinylLabel).toBe("Oracal 8500 translucent");
+    expect(s.faceVinylLabel).toBe("Oracal 8500");
     expect(s.faceVinylTranslucent).toBe(true);
     expect(s.faceVinylDetail).toMatch(/8500-010/);
   });

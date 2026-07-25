@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+﻿import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import type {
   IntakeV6ArtworkFinish,
@@ -9,7 +9,6 @@ import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGro
 import IntakeV6LiveCalculationSummary, {
   INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE,
   INTAKE_V6_LIVE_CALC_GROSS_LABEL,
-  INTAKE_V6_LIVE_CALC_PREVIEW_HINT,
   INTAKE_V6_LIVE_CALC_TITLE,
 } from "./IntakeV6LiveCalculationSummary";
 
@@ -42,7 +41,7 @@ const baseBreakdown: IntakeV6MaterialBreakdownResponse = {
   material_rows: [
     {
       material_key: "plexiglas_face",
-      display_name: "Plexiglas 3 mm / față litere",
+      display_name: "plexiglas 3mm PMMA - opal",
       category: "material",
       quantity: 2,
       base_quantity: 2,
@@ -244,7 +243,7 @@ const baseBreakdown: IntakeV6MaterialBreakdownResponse = {
   operation_rows: [
     {
       key: "cnc_face_cutting_plexiglas_3mm",
-      display_name: "Debitare CNC față Plexiglas 3 mm",
+      display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
       operation_type: "cutting",
       quantity: 20,
       unit: "ml",
@@ -320,8 +319,8 @@ const logicalList: IntakeV6LogicalListReadModelResponse = {
   core_rows_complete: true,
   categories: ["TOATE", "MATERIALE", "SERVICII / OPERATII", "MANOPERA"],
   rows: [
-    ["material.plexiglas_face", "MATERIALE", "MATCHED", "Plexiglas 3 mm / fata litere", 1.2638, "m2", "MATERIAL_PLEXI_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 1, 32, "EUR"],
-    ["material.logo_plexiglas_face", "MATERIALE", "MATCHED", "Plexiglas 3 mm / embleme/logo", 0.8005, "m2", "MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 0, 18.4, "EUR"],
+    ["material.plexiglas_face", "MATERIALE", "MATCHED", "plexiglas 3mm PMMA - opal", 1.2638, "m2", "MATERIAL_PLEXI_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 1, 32, "EUR"],
+    ["material.logo_plexiglas_face", "MATERIALE", "MATCHED", "plexiglas 3mm PMMA - opal / embleme/logo", 0.8005, "m2", "MATERIAL_PLEXI_LOGO_FACE_BY_AREA_V1", "v1", "proposed_binding", [], [], 0, 18.4, "EUR"],
     ["material.forex_backing", "MATERIALE", "PARTIAL", "Forex 10 mm / spate litere", 1.2638, "m2", "MATERIAL_FOREX_BACK_BY_AREA_V1", "v1", "proposed_binding", [], ["BACKING_AREA_FALLBACK_USED"], 1, 28.8, "EUR"],
     ["material.face_oracal", "MATERIALE", "PARTIAL_TARIFF_CONFIRMATION_REQUIRED", "Vinil fata Oracal - consum pe serii 641 + 651", 1.3751, "m2", "MATERIAL_ORACAL_FACE_BY_NESTED_AREA_V1", "v1", "proposed_binding", [], ["ORACAL_ROLL_COLOR_SPLIT_MISSING"], 2, 15.2, "EUR"],
     ["material.print", "MATERIALE", "SPLIT_IN_RUNTIME", "Material print Orafol", 0.996821, "m2", "MATERIAL_PRINT_BY_NESTED_AREA_V1", "v1", "proposed_binding", [], [], 3, 4.08, "EUR"],
@@ -378,9 +377,9 @@ describe("IntakeV6LiveCalculationSummary", () => {
       />,
     );
 
-    expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent("16/16");
+    expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent(/16 rânduri \(VL 16\)/);
     expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(
-      /Plexiglas 3 mm/,
+      /plexiglas 3mm PMMA - opal/,
     );
     expect(screen.queryByTestId("intake-v6-live-material-used-material.logo_plexiglas_face")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-material-used-material.forex_backing")).toHaveTextContent(
@@ -410,7 +409,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
 
     expect(screen.getByTestId("intake-v6-logical-source-material.plexiglas_shared-0")).toHaveTextContent(
-      /Sursă: Plexiglas 3 mm \/ fata litere/,
+      /Sursă: plexiglas 3mm PMMA - opal/,
     );
     expect(screen.getByTestId("intake-v6-logical-formula-material.plexiglas_shared")).toHaveTextContent(
       "MATERIAL_PLEXI_FACE_BY_AREA_V1 @ v1",
@@ -511,22 +510,22 @@ describe("IntakeV6LiveCalculationSummary", () => {
         quantity: 1,
         subtotal: 16,
         currency: "EUR",
-        display_label: "Plexiglas 3 mm / fata litere",
+        display_label: "plexiglas 3mm PMMA - opal",
       },
       {
         ...logicalList.rows[1]!,
         quantity: null,
         subtotal: null,
         currency: "EUR",
-        display_label: "Plexiglas 3 mm / embleme/logo",
+        display_label: "plexiglas 3mm PMMA - opal / embleme/logo",
         child_rows: [],
       },
     ]);
 
     render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={placeholderLogicalList} />);
 
-    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/Plexiglas 3 mm/);
-    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/Plexiglas 3 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/plexiglas 3mm PMMA - opal/);
+    expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/plexiglas 3mm PMMA - opal/);
     expect(screen.getByTestId("intake-v6-live-material-used-material.plexiglas_shared")).toHaveTextContent(/1\s*m2/);
     expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).toHaveTextContent(/16[,.]00\s*EUR/);
     expect(screen.getByTestId("intake-v6-live-material-cost-material.plexiglas_shared")).not.toHaveTextContent(/112[,.]00\s*EUR/);
@@ -597,7 +596,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
   it("does not delete logical rows from source data; it only changes the display buckets", () => {
     render(<IntakeV6LiveCalculationSummary breakdown={baseBreakdown} faceBackDraft={null} logicalList={logicalList} />);
 
-    expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent("16/16");
+    expect(screen.getByTestId("intake-v6-logical-list-summary")).toHaveTextContent(/16 rânduri \(VL 16\)/);
     expect(screen.getByTestId("intake-v6-live-diagnostics")).toHaveTextContent(/Neincluse \/ necesită configurare/);
   });
 
@@ -630,14 +629,14 @@ describe("IntakeV6LiveCalculationSummary", () => {
       />,
     );
 
-    expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toHaveTextContent(/Plexiglas 3 mm/);
+    expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toHaveTextContent(/plexiglas 3mm PMMA - opal/);
     expect(screen.getByTestId("intake-v6-live-material-used-plexi")).toHaveTextContent(/2\.000 m²/);
     expect(screen.getByTestId("intake-v6-live-material-cost-plexi")).toHaveTextContent("32.00 EUR");
     expect(screen.queryByText(/față litere/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/embleme\/logo/i)).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId("intake-v6-live-technical-toggle").querySelector("input") as HTMLInputElement);
-    expect(screen.getByTestId("intake-v6-breakdown-source-plexi-0")).toHaveTextContent(/Sursă: Plexiglas 3 mm \/ față litere/);
+    expect(screen.getByTestId("intake-v6-breakdown-source-plexi-0")).toHaveTextContent(/Sursă: plexiglas 3mm PMMA - opal/);
   });
 
   it("keeps Oracal series and cant Oracal separated with their own prices", () => {
@@ -675,7 +674,9 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-material-used-application_service")).toHaveTextContent(/Serviciu aplicare/);
     expect(screen.getByTestId("intake-v6-live-material-cost-application_service")).toHaveTextContent("1.80 EUR");
 
-    expect(screen.getByTestId("intake-v6-live-material-used-cnc_face")).toHaveTextContent(/Debitare CNC față Plexiglas/);
+    expect(screen.getByTestId("intake-v6-live-material-used-cnc_face")).toHaveTextContent(
+      /Debitare CNC față plexiglas 3mm PMMA - opal/,
+    );
     expect(screen.getByTestId("intake-v6-live-material-cost-cnc_face")).toHaveTextContent("30.00 EUR");
 
     expect(screen.queryByTestId("intake-v6-live-material-used-edge_oracal_application")).not.toBeInTheDocument();
@@ -785,7 +786,7 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.getByTestId("intake-v6-live-cant-metrics")).toHaveTextContent(/20\.88 m/);
   });
 
-  it("shows estimative title and preview hint in right panel", () => {
+  it("shows quiet offer rail hero without preview essay in right panel", () => {
     render(
       <IntakeV6LiveCalculationSummary
         breakdown={baseBreakdown}
@@ -794,8 +795,16 @@ describe("IntakeV6LiveCalculationSummary", () => {
       />,
     );
 
-    expect(screen.getByText(INTAKE_V6_LIVE_CALC_TITLE)).toBeInTheDocument();
-    expect(screen.getByTestId("intake-v6-live-calc-preview-hint")).toHaveTextContent(INTAKE_V6_LIVE_CALC_PREVIEW_HINT);
+    expect(screen.getByTestId("intake-v6-review-calculator-panel")).toHaveAttribute(
+      "data-offer-rail",
+      "workbench",
+    );
+    expect(screen.getByTestId("intake-v6-live-calc-preview-header")).toHaveTextContent(
+      INTAKE_V6_LIVE_CALC_TITLE,
+    );
+    expect(screen.queryByTestId("intake-v6-live-calc-preview-hint")).not.toBeInTheDocument();
+    expect(screen.getByTestId("intake-v6-offer-rail-blockers")).toHaveTextContent(/Ce blochează/i);
+    expect(screen.getByTestId("intake-v6-offer-rail-letters")).toBeInTheDocument();
   });
 
   it("uses preview labels instead of final-price wording when dry-run totals are available", () => {
@@ -811,6 +820,9 @@ describe("IntakeV6LiveCalculationSummary", () => {
             subtotal_net: 2500,
             total_gross: 2975,
             vat_rate: 19,
+            vat_amount: 475,
+            commercial_base_subtotal: 2500,
+            commercial_adjustment_trace: { markup_percent: 0 },
           },
         }}
       />,
@@ -822,7 +834,44 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.queryByText(/Total final/i)).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/2[,.]?975/);
     expect(screen.getByTestId("intake-v6-live-offer-net")).toHaveTextContent(/2[,.]?500/);
+    expect(screen.getByTestId("intake-v6-live-offer-vat")).toHaveTextContent(/475/);
     expect(screen.getByTestId("intake-v6-live-material-total")).toHaveTextContent(/298[,.]45\s*EUR/);
+  });
+
+  it("recomputes Ofertă client when local Adaos changes on 7G commercial base", () => {
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        layout="rightPanel"
+        commercialInputs={{
+          markupPercent: 50,
+          discountPercent: 0,
+          vatPercent: 21,
+          manualAdjustmentRon: 0,
+        }}
+        officialPricing={{
+          pricing_status: "V6_PRICED_DRY_RUN_READY",
+          pricing_authority: "commercial_price_proposal_7g",
+          pricing_source: "intake_v6_backend_priced_dry_run",
+          workspace_id: "ws",
+          commercial_totals: {
+            subtotal_net: 1891.53,
+            total_gross: 2288.75,
+            vat_rate: 21,
+            vat_amount: 397.22,
+            currency: "RON",
+            commercial_base_subtotal: 1891.53,
+            commercial_adjustment_trace: { markup_percent: 0 },
+          },
+        }}
+      />,
+    );
+
+    // 1891.53 * 1.5 = 2837.295 → 2837.3; vat 21% = 595.83; gross 3433.13
+    expect(screen.getByTestId("intake-v6-live-offer-net")).toHaveTextContent(/2[,.]?837/);
+    expect(screen.getByTestId("intake-v6-live-offer-gross")).toHaveTextContent(/3[,.]?433/);
+    expect(screen.getByTestId("intake-v6-live-offer-adaos")).toHaveTextContent(/50/);
   });
 
   it("shows incomplete estimate message instead of a false gross total", () => {
@@ -855,5 +904,78 @@ describe("IntakeV6LiveCalculationSummary", () => {
     expect(screen.queryByTestId("intake-v6-live-calc-filters")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-live-diagnostics")).not.toBeInTheDocument();
     expect(screen.queryByTestId("intake-v6-live-technical-toggle")).not.toBeInTheDocument();
+  });
+
+  it("Letters+ACM: Forex null qty is diagnostic (not Lipsa cantitate scare); consumabile hide formula jargon", () => {
+    const lettersAcmList = buildLogicalListWithRows([
+      {
+        line_id: "commercial.letters_acm_conn_pack",
+        category: "MATERIALE",
+        status: "MATCHED",
+        display_label: "Impachetare ansamblu Litere + Alucobond",
+        quantity: 1.0004,
+        unit: "m2",
+        formula_code_proposed: "LETTERS_ACM_PACK",
+        formula_version_proposed: "v1",
+        formula_status: "proposed_binding",
+        gaps: [],
+        warnings: [],
+        child_rows: [],
+        subtotal: 15,
+        currency: "EUR",
+      },
+      {
+        line_id: "material.forex_backing",
+        category: "MATERIALE",
+        status: "MATCHED",
+        display_label: "Forex 10 mm / spate litere",
+        quantity: null,
+        unit: "m2",
+        formula_code_proposed: "MATERIAL_FOREX_BACK_BY_AREA_V1",
+        formula_version_proposed: "v1",
+        formula_status: "proposed_binding",
+        gaps: [],
+        warnings: [],
+        child_rows: [],
+        subtotal: null,
+        currency: "EUR",
+      },
+      {
+        line_id: "material.mounting_accessories",
+        category: "MATERIALE",
+        status: "MATCHED",
+        display_label: "Consumabile producție — accesorii / conectori",
+        quantity: null,
+        unit: "eur",
+        formula_code_proposed: "MATERIAL_MOUNTING_ACCESSORIES_BY_COST_PERCENT_V1",
+        formula_version_proposed: null,
+        formula_status: "legacy_unversioned",
+        gaps: ["COMMERCIAL_FORMULA_UNVERSIONED"],
+        warnings: [],
+        child_rows: [],
+        subtotal: null,
+        currency: "EUR",
+      },
+    ]);
+
+    render(
+      <IntakeV6LiveCalculationSummary
+        breakdown={baseBreakdown}
+        faceBackDraft={null}
+        logicalList={{
+          ...lettersAcmList,
+          composition_connection_row_count: 1,
+        }}
+      />,
+    );
+
+    const diagnostics = screen.getByTestId("intake-v6-live-diagnostics");
+    expect(diagnostics).toHaveTextContent(/Spate litere — cantitate necalculată/i);
+    expect(diagnostics).toHaveTextContent(/Forex 10 mm/);
+    expect(diagnostics).not.toHaveTextContent(/Lipsa cantitate/);
+    expect(diagnostics).not.toHaveTextContent(/COMMERCIAL_FORMULA_UNVERSIONED/);
+    expect(diagnostics).not.toHaveTextContent(/Consumabile producție/);
+    // Must not promote Forex qty gap into "Tarife lipsă" scare on the offer rail.
+    expect(screen.queryByText(/Tarife lipsă:\s*Forex/i)).not.toBeInTheDocument();
   });
 });

@@ -60,7 +60,7 @@ export const FACE_ESTIMATE_CALCULATION_RULES: readonly string[] = [
 export const FACE_MATERIAL_ESTIMATE_DRAFTS: readonly FaceEstimateDraftEntry[] = [
   {
     key: "plexiglas_3mm_material",
-    labelRo: "Plexiglas / acrylic 3 mm — material față",
+    labelRo: "plexiglas 3mm PMMA - opal",
     category: "face_material",
     status: "owner_estimate_draft",
     materialFamily: "Plexiglas / acrylic",
@@ -70,7 +70,7 @@ export const FACE_MATERIAL_ESTIMATE_DRAFTS: readonly FaceEstimateDraftEntry[] = 
     unit: "mp",
     faceStandard: true,
     notesRo:
-      "Linie standard FACE. Aliniat la MAT-ACP-FATA-LITERE (16 EUR/mp) — owner draft readonly, nu Pricing Registry authority.",
+      "Linie standard FACE (display lock). Aliniat la MAT-ACP-FATA-LITERE (16 EUR/mp) — owner draft readonly, nu Pricing Registry authority.",
     pricingActive: false,
     mustNotWritePricingRegistry: true,
   },
@@ -109,7 +109,7 @@ export const FACE_MATERIAL_ESTIMATE_DRAFTS: readonly FaceEstimateDraftEntry[] = 
 export const FACE_CNC_CUTTING_ESTIMATE_DRAFTS: readonly FaceEstimateDraftEntry[] = [
   {
     key: "plexiglas_3mm_cnc",
-    labelRo: "Debitare CNC FACE — Plexiglas 3 mm",
+    labelRo: "Debitare CNC FACE — plexiglas 3mm PMMA - opal",
     category: "face_cnc_cutting",
     status: "owner_estimate_draft",
     materialFamily: "Plexiglas / acrylic",

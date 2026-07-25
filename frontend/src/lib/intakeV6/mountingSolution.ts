@@ -45,7 +45,7 @@ export const MOUNTING_SOLUTION_OPTIONS: ReadonlyArray<{
   },
   {
     value: ACM_BOXED_MOUNTING_TEMPLATE_CODE,
-    label: "Suport ACM casetat",
+    label: "Alucobond casetat",
   },
 ] as const;
 

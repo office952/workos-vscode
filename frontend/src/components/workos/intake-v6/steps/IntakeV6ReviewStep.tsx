@@ -69,6 +69,11 @@ import {
 } from "@/lib/intakeV6/intakeV6SoldScopeVisibility";
 import { resolveIntakeV6ReviewTabs } from "@/lib/intakeV6/intakeV6ProductPlugin";
 import {
+  acmPanelOnlyReviewTabs,
+  isAcmPanelOnlyComposition,
+} from "@/lib/intakeV6/acmPanel/acmPanelOnlyComposition";
+import IntakeV6AcmPanelOnlyNeedsPanel from "../acm-panel/IntakeV6AcmPanelOnlyNeedsPanel";
+import {
   hydrateMountingScopeFromFinishSetup,
   isMountingPreparationActive,
   isSiteInstallationSectionActive,
@@ -208,10 +213,21 @@ import {
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
 import IntakeV6ReviewTabNav, { type IntakeV6ReviewTabId } from "../IntakeV6ReviewTabNav";
-import IntakeV6OfferScopeReviewSummary from "../IntakeV6OfferScopeReviewSummary";
 import IntakeV6ReviewOperatorBlockerBanner from "../IntakeV6ReviewOperatorBlockerBanner";
-import IntakeV6ReviewFormRegion from "../IntakeV6ReviewFormRegion";
+import IntakeV6ReviewWorkbenchLayout from "../IntakeV6ReviewWorkbenchLayout";
 import IntakeV6ReviewDiagnosticDrawer from "../IntakeV6ReviewDiagnosticDrawer";
+import {
+  domainSelectionToTabState,
+  expandReviewTabsToDomains,
+  resolveReviewDomainFromTab,
+  type IntakeV6ReviewDomainId,
+} from "@/lib/intakeV6/intakeV6ReviewDomainNav";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import IntakeV6ReviewSectionShell from "../atoms/IntakeV6ReviewSectionShell";
 import {
   REVIEW_FIELD_BLOCK_CLASS,
@@ -222,7 +238,6 @@ import IntakeV6TechnicalDetailsAccordion from "../atoms/IntakeV6TechnicalDetails
 import IntakeV6LiveCalculationSummary from "../IntakeV6LiveCalculationSummary";
 import IntakeV6ProductCompositionPanel from "../IntakeV6ProductCompositionPanel";
 import IntakeV6AcmPanelConfigRegion from "../acm-panel/IntakeV6AcmPanelConfigRegion";
-import IntakeV6AcmPanelFundalSummary from "../acm-panel/IntakeV6AcmPanelFundalSummary";
 import {
   canContinueAfterAcmPanelFlush,
   useAcmPanelDraftFlushBridge,
@@ -827,11 +842,18 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
     () => resolveReviewTabsFromModularContract(modularFormContract),
     [modularFormContract],
   );
+  const acmPanelOnly = useMemo(
+    () => isAcmPanelOnlyComposition(payload as Record<string, unknown> | undefined),
+    [payload],
+  );
   const scopedReviewTabs = useMemo(() => {
     const base =
       contractComposedReviewTabs ?? resolveIntakeV6ReviewTabs(modularTemplateCode);
+    if (acmPanelOnly) {
+      return acmPanelOnlyReviewTabs(base);
+    }
     return filterReviewTabsBySoldScope(base, soldScopeVisibility) ?? base;
-  }, [contractComposedReviewTabs, modularTemplateCode, soldScopeVisibility]);
+  }, [acmPanelOnly, contractComposedReviewTabs, modularTemplateCode, soldScopeVisibility]);
   const compositionProvenance = useMemo(
     () => contractCompositionProvenance(modularFormContract),
     [modularFormContract],
@@ -944,12 +966,32 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const pendingAutosavePolicyRef = useRef<ReviewAutosavePolicy>("short");
   const [highlightArtworkUnconfirmed, setHighlightArtworkUnconfirmed] = useState(false);
   const [reviewTab, setReviewTab] = useState<IntakeV6ReviewTabId>("finisaje");
+  const [montajDomain, setMontajDomain] = useState<"panou_carcasa" | "montaj_comercial">(
+    "panou_carcasa",
+  );
+  const [productDetailsOpen, setProductDetailsOpen] = useState(false);
   useEffect(() => {
     const next = resolveActiveReviewTabForScope(reviewTab, scopedReviewTabs);
     if (next !== reviewTab) {
       setReviewTab(next);
     }
   }, [reviewTab, scopedReviewTabs]);
+  const reviewDomains = useMemo(() => {
+    const expanded = expandReviewTabsToDomains(scopedReviewTabs);
+    if (acmPanelOnly) {
+      return expanded.filter((domain) => domain.id !== "montaj_comercial");
+    }
+    return expanded;
+  }, [acmPanelOnly, scopedReviewTabs]);
+  const activeReviewDomain = useMemo(
+    () => resolveReviewDomainFromTab(reviewTab, montajDomain, reviewDomains),
+    [reviewTab, montajDomain, reviewDomains],
+  );
+  const handleReviewDomainChange = useCallback((domainId: IntakeV6ReviewDomainId) => {
+    const next = domainSelectionToTabState(domainId);
+    setReviewTab(next.tab);
+    setMontajDomain(next.montajDomain);
+  }, []);
   const [diagnosticSectionOpen, setDiagnosticSectionOpen] = useState(false);
   const localRevisionRef = useRef(0);
   const autosaveRequestRef = useRef(0);
@@ -1895,6 +1937,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       },
       containsMissingPrices: breakdown?.totals.contains_missing_prices === true,
       allArtworkProductConfigured,
+      artworkFinishRowCount: artworkFinishes.length,
       currentStep: "review",
     });
   }, [
@@ -1948,19 +1991,28 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
   const handleOperatorBlockerFocus = useCallback(
     (targetId: string) => {
       if (targetId.startsWith("tab:")) {
-        const tab = targetId.slice(4) as IntakeV6ReviewTabId;
+        const tab = targetId.slice(4) as IntakeV6ReviewTabId | IntakeV6ReviewDomainId;
+        if (tab === "panou_carcasa" || tab === "montaj_comercial") {
+          handleReviewDomainChange(tab);
+          return;
+        }
         if (tab === "finisaje" || tab === "iluminare" || tab === "montaj") {
           setReviewTab(tab);
+          if (tab === "montaj") setMontajDomain("panou_carcasa");
         }
         return;
       }
       if (
         targetId.includes("segmented") ||
-        targetId.includes("mounting") ||
         targetId.includes("fundal") ||
-        targetId.includes("elec")
+        targetId.includes("acm") ||
+        targetId.includes("carcasa")
       ) {
-        setReviewTab("montaj");
+        handleReviewDomainChange("panou_carcasa");
+      } else if (targetId.includes("mounting") || targetId.includes("site")) {
+        handleReviewDomainChange("montaj_comercial");
+      } else if (targetId.includes("elec")) {
+        handleReviewDomainChange("panou_carcasa");
       } else if (targetId.includes("artwork") || targetId.includes("letter")) {
         setReviewTab("finisaje");
       } else if (targetId.includes("lighting") || targetId.includes("psu") || targetId.includes("electrical-subsection")) {
@@ -1976,7 +2028,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         }
       }, 80);
     },
-    [setReviewTab],
+    [handleReviewDomainChange, setReviewTab],
   );
   const reviewDiagnosticEntryCount = useMemo(
     () =>
@@ -2187,20 +2239,6 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
       ) : null}
       {analysisReady ? (
         <>
-      <div
-        className="mb-2 flex flex-wrap items-center gap-2"
-        data-testid="intake-v6-review-identity-strip"
-      >
-        <div className="min-w-0 flex-1">
-          <IntakeV6ProductCompositionPanel
-            payload={state.workspace?.payload as Record<string, unknown> | undefined}
-            linkedSegments={productDefinitionPreview?.linked_template_runtime_segments ?? null}
-            onConfirm={(items) => void confirmProductComposition(items)}
-            compact
-          />
-        </div>
-        <IntakeV6OfferScopeReviewSummary payload={payload} />
-      </div>
       {logoOnlyCandidateNotOfferable ? (
         <div
           className="mb-2 rounded border border-amber-500/35 bg-amber-500/10 px-3 py-2 text-[11px] leading-relaxed text-amber-100"
@@ -2209,92 +2247,73 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           <strong>{LOGO_ONLY_COMMERCIAL_GUARD_TITLE}</strong> · {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE}
         </div>
       ) : null}
-      <IntakeV6AcmPanelConfigRegion
-        payload={payload}
-        finishSetup={form as unknown as Record<string, unknown>}
-        hasLetters={effectiveLetterGroups.length > 0}
-        hasLogo={artworkFinishes.length > 0}
-        selectedId={selectedProductComponentId}
-        onSelect={setSelectedProductComponentId}
-        workspaceId={workspaceId}
-        onProductionGeometryBound={() => {
-          if (!workspaceId) return;
-          void getIntakeV6Workspace(workspaceId).then((ws) => {
-            const fs = (ws.payload as { finish_setup?: Record<string, unknown> } | undefined)
-              ?.finish_setup;
-            if (fs) {
-              setForm((prev) =>
-                syncLighting({
-                  ...prev,
-                  ...fs,
-                  confirmed: false,
-                }),
-              );
-            }
-            bumpPreviewRefresh(["mounting", "commercial_preview"]);
-          });
-        }}
-        onApplyFinishPatch={(patch) => {
-          setForm((prev) => {
-            const next = syncLighting({
-              ...prev,
-              ...patch,
-              confirmed: false,
-            });
-            pendingDirtyDomainsRef.current.add("mounting");
-            void persistFinishSetupState(next, true);
-            return next;
-          });
-        }}
-        onNavigateLetters={() => setReviewTab("finisaje")}
-        onNavigateLogo={() => setReviewTab("finisaje")}
-      />
-      <div className="mb-2 lg:hidden" data-testid="intake-v6-review-price-spine-mobile">
-        <IntakeV6LiveCalculationSummary
-          breakdown={breakdown}
-          faceBackDraft={faceBackPrepDraft.draft}
-          loading={loadingBreakdown || faceBackPrepDraft.loading}
-          layout="bar"
-          operatorCantPerimeterM={operatorCantPerimeterM}
-          pendingSave={localReviewEditsPending}
-          letterGroups={effectiveLetterGroups}
-          artworkFinishes={artworkFinishes}
-          pricingPreview={pricingPreview}
-          officialPricing={pricedQuoteDryRun}
-          logicalList={logicalListReadModel}
-          commercialInputs={commercialInputs}
-          eurToRonRate={eurToRonRate}
-          artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
-        />
-      </div>
-
+      <Sheet open={productDetailsOpen} onOpenChange={setProductDetailsOpen}>
+        <IntakeV6ReviewWorkbenchLayout
+          attention={
+            <IntakeV6ReviewOperatorBlockerBanner
+              display={operatorBlockerBannerDisplay}
+              nextStepGuidance={null}
+              suppressCompactDetail
+              onJumpToDiagnostic={handleJumpToDiagnostic}
+              onFocusTarget={handleOperatorBlockerFocus}
+            />
+          }
+          domainNav={
+            <div
+              className="flex items-stretch gap-1"
+              data-testid="intake-v6-review-domain-nav-stack"
+              data-domain-nav-placement="top"
+            >
+              <div className="min-w-0 flex-1">
+                <IntakeV6ReviewTabNav
+                  active={activeReviewDomain}
+                  onChange={handleReviewDomainChange}
+                  templateCode={modularTemplateCode}
+                  tabs={scopedReviewTabs}
+                  domains={reviewDomains}
+                  orientation="horizontal"
+                  compositionAuthority={compositionProvenance.compositionAuthority}
+                  pendingFinisaje={pendingConfirmationCount}
+                  illuminated={form.illuminated !== false}
+                />
+              </div>
+              <div className="flex shrink-0 items-center border-l border-[#2A3548]/70 px-1.5 py-1">
+                <button
+                  type="button"
+                  className="rounded-md border border-[#2A3548]/80 bg-[#111827]/60 px-2 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-400/40 hover:text-slate-100"
+                  data-testid="intake-v6-review-composition-sheet-trigger"
+                  onClick={() => setProductDetailsOpen(true)}
+                >
+                  Compoziție
+                </button>
+              </div>
+            </div>
+          }
+          mobileOfferBar={
+            <IntakeV6LiveCalculationSummary
+              breakdown={breakdown}
+              faceBackDraft={faceBackPrepDraft.draft}
+              loading={loadingBreakdown || faceBackPrepDraft.loading}
+              layout="bar"
+              operatorCantPerimeterM={operatorCantPerimeterM}
+              pendingSave={localReviewEditsPending}
+              letterGroups={effectiveLetterGroups}
+              artworkFinishes={artworkFinishes}
+              pricingPreview={pricingPreview}
+              officialPricing={pricedQuoteDryRun}
+              logicalList={logicalListReadModel}
+              commercialInputs={commercialInputs}
+              eurToRonRate={eurToRonRate}
+              artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
+              suppressLetterCantChrome={acmPanelOnly}
+            />
+          }
+          formBody={
+            <>
       <div
-        className="grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(280px,320px)] xl:grid-cols-[minmax(0,1fr)_minmax(300px,340px)]"
-        data-testid="intake-v6-review-layout"
-      >
-        <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
-      <IntakeV6ReviewFormRegion
-        tabNav={
-          <IntakeV6ReviewTabNav
-            active={reviewTab}
-            onChange={setReviewTab}
-            templateCode={modularTemplateCode}
-            tabs={scopedReviewTabs}
-            compositionAuthority={compositionProvenance.compositionAuthority}
-            pendingFinisaje={pendingConfirmationCount}
-            illuminated={form.illuminated !== false}
-          />
-        }
-        attention={
-          <IntakeV6ReviewOperatorBlockerBanner
-            display={operatorBlockerBannerDisplay}
-            nextStepGuidance={null}
-            suppressCompactDetail
-            onJumpToDiagnostic={handleJumpToDiagnostic}
-            onFocusTarget={handleOperatorBlockerFocus}
-          />
-        }
-      >
+        className="sr-only"
+        data-testid="intake-v6-review-tab-panels-open"
+      />
       <div
         className="sr-only"
         data-testid="intake-v6-full-product-composition"
@@ -2480,18 +2499,76 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         ) : null}
 
         {reviewTab === "montaj" ? (
-          <div data-testid="intake-v6-review-tab-panel-montaj" className="space-y-2">
+          <div
+            data-testid="intake-v6-review-tab-panel-montaj"
+            className="space-y-2"
+            data-montaj-domain={montajDomain}
+          >
+            {montajDomain === "panou_carcasa" && acmPanelUiModel.exists ? (
+              <div data-testid="intake-v6-acm-panou-inline-form">
+                <IntakeV6AcmPanelConfigRegion
+                  variant="workbench"
+                  payload={payload}
+                  finishSetup={form as unknown as Record<string, unknown>}
+                  hasLetters={acmPanelOnly ? false : effectiveLetterGroups.length > 0}
+                  hasLogo={acmPanelOnly ? false : artworkFinishes.length > 0}
+                  selectedId={selectedProductComponentId}
+                  onSelect={setSelectedProductComponentId}
+                  workspaceId={workspaceId}
+                  onProductionGeometryBound={() => {
+                    if (!workspaceId) return;
+                    void getIntakeV6Workspace(workspaceId).then((ws) => {
+                      const fs = (ws.payload as { finish_setup?: Record<string, unknown> } | undefined)
+                        ?.finish_setup;
+                      if (fs) {
+                        setForm((prev) =>
+                          syncLighting({
+                            ...prev,
+                            ...fs,
+                            confirmed: false,
+                          }),
+                        );
+                      }
+                      bumpPreviewRefresh(["mounting", "commercial_preview"]);
+                    });
+                  }}
+                  onApplyFinishPatch={(patch) => {
+                    setForm((prev) => {
+                      const next = syncLighting({
+                        ...prev,
+                        ...patch,
+                        confirmed: false,
+                      });
+                      pendingDirtyDomainsRef.current.add("mounting");
+                      void persistFinishSetupState(next, true);
+                      return next;
+                    });
+                  }}
+                  onNavigateLetters={() => setReviewTab("finisaje")}
+                  onNavigateLogo={() => setReviewTab("finisaje")}
+                />
+              </div>
+            ) : null}
+            {acmPanelOnly && montajDomain === "panou_carcasa" && !acmPanelUiModel.exists ? (
+              <IntakeV6AcmPanelOnlyNeedsPanel payload={payload} variant="review" />
+            ) : null}
             <p className="sr-only" data-testid="intake-v6-montaj-readiness-summary">
-              {acpProductActive
-                ? "Fundal și carcasă primul · montaj comercial doar dacă e în ofertă"
-                : "Montaj comercial · fundal/suport · detalii avansate"}
+              {acmPanelOnly
+                ? "Panou Alucobond casetat · formular Panou / carcasă"
+                : montajDomain === "panou_carcasa"
+                  ? "Fundal și carcasă · panou / suport"
+                  : "Montaj comercial · scope · șablon · șantier"}
             </p>
             <IntakeV6ReviewSectionShell
-              title="Montaj"
+              title={montajDomain === "montaj_comercial" ? "Montaj comercial" : "Panou / carcasă"}
               description={
-                acpProductActive
-                  ? "Configurare panou / carcasă, apoi opțiuni comerciale dacă sunt în ofertă."
-                  : "Opțiuni de montaj și suport."
+                acmPanelOnly
+                  ? "Panou ACM: geometrie și construcție în formularul de mai sus. Montaj comercial VL litere nu face parte din ofertă."
+                  : montajDomain === "panou_carcasa"
+                    ? acmPanelUiModel.exists
+                      ? "Soluție suport / legacy — configurarea Bond e în formularul Alucobond de mai sus."
+                      : "Geometrie, suport și carcasă — independent de serviciul comercial de montaj."
+                    : "Scope comercial, șablon și montaj la locație."
               }
               testId="intake-v6-review-section-montaj"
               compact
@@ -2500,22 +2577,26 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             <div
               className="flex flex-col gap-2.5"
               data-fundal-first={acpProductActive ? "true" : "false"}
-              data-montaj-nesting="flat"
+              data-montaj-nesting="split-domains"
+              data-montaj-domain={montajDomain}
+              data-acm-panel-only={acmPanelOnly ? "true" : "false"}
             >
+              {!acmPanelOnly && montajDomain === "montaj_comercial" ? (
+              <>
               <div
-                className={acpProductActive ? "order-2" : "order-1"}
+                className="order-1"
                 data-authority="commercial-mounting"
               >
-              <IntakeV6TechnicalDetailsAccordion
-                title="Montaj comercial"
-                hint={
-                  mountingPrepActive
-                    ? "Serviciu comercial: scope, șablon, montaj la locație"
-                    : "Fără serviciu comercial — șablonul nu e activ"
-                }
-                defaultOpen={mountingPrepActive}
-                testId="intake-v6-montaj-commercial-cluster"
+              <div
+                className="space-y-2"
+                data-testid="intake-v6-montaj-commercial-cluster"
               >
+              <p className="text-[12px] font-semibold text-slate-200">Montaj comercial</p>
+              <p className="text-[10px] text-slate-500">
+                {mountingPrepActive
+                  ? "Serviciu comercial: scope, șablon, montaj la locație"
+                  : "Fără serviciu comercial — șablonul nu e activ"}
+              </p>
               {!mountingPrepActive && form.mounting_template_enabled === true ? (
                 <p
                   className="mb-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5 text-[11px] text-slate-400"
@@ -2738,11 +2819,16 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   </label>
               </div>
               ) : null}
-              </IntakeV6TechnicalDetailsAccordion>
               </div>
+              </div>
+              </>
+              ) : null}
 
+              {!acmPanelOnly && montajDomain === "panou_carcasa" ? (
+              <>
+              {!acmPanelUiModel.exists ? (
               <div
-                className={acpProductActive ? "order-1" : "order-2"}
+                className="order-1"
                 data-authority="product-support"
               >
               <IntakeV6MontajClusterShell
@@ -2915,14 +3001,12 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
                 {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE &&
                 acmPanelUiModel.exists ? (
-                  <div className="mt-3" data-testid="intake-v6-acp-product-config-section">
-                    <IntakeV6AcmPanelFundalSummary
-                      model={acmPanelUiModel}
-                      onOpenInspector={() => {
-                        setSelectedProductComponentId("acm_panel");
-                      }}
-                    />
-                  </div>
+                  <p
+                    className="mt-2 text-[11px] text-slate-500"
+                    data-testid="intake-v6-acp-product-config-section"
+                  >
+                    Formularul editabil Alucobond este deasupra (Panou / carcasă) — nu în card nested.
+                  </p>
                 ) : null}
 
                 {selectedMountingSolutionValue === ACM_BOXED_MOUNTING_TEMPLATE_CODE &&
@@ -3273,6 +3357,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </div>
               </IntakeV6MontajClusterShell>
               </div>
+              ) : null}
 
               <div
                 className="order-3"
@@ -3514,7 +3599,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     {null}
                   </div>
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
-                    <span className={REVIEW_FIELD_LABEL_CLASS}>Template modul</span>
+                    <span className={REVIEW_FIELD_LABEL_CLASS}>Module produs</span>
                     <select
                       className={REVIEW_SELECT_CLASS}
                       value={selectedVolumAluminumModuleCode}
@@ -3540,78 +3625,117 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               ) : null}
               </IntakeV6TechnicalDetailsAccordion>
               </div>
+              </>
+              ) : null}
             </div>
             </IntakeV6ReviewSectionShell>
           </div>
         ) : null}
       </div>
-      </IntakeV6ReviewFormRegion>
-
-      <IntakeV6ReviewSaveFooter
-        saving={saving}
-          pendingSave={localReviewEditsPending}
-        error={error}
-      />
-
-        </div>
-
-        <div
-          ref={liveCalcRef}
-          className="hidden lg:block lg:sticky lg:top-4 lg:self-start"
-          data-testid="intake-v6-live-calculation-sticky-shell"
-        >
-          <IntakeV6LiveCalculationSummary
-            breakdown={breakdown}
-            faceBackDraft={faceBackPrepDraft.draft}
-            loading={loadingBreakdown || faceBackPrepDraft.loading}
-            layout="rightPanel"
-            operatorCantPerimeterM={operatorCantPerimeterM}
-            pendingSave={localReviewEditsPending}
-            letterGroups={effectiveLetterGroups}
-            artworkFinishes={artworkFinishes}
-            pricingPreview={pricingPreview}
-            officialPricing={pricedQuoteDryRun}
-            logicalList={logicalListReadModel}
-            commercialInputs={commercialInputs}
-            eurToRonRate={eurToRonRate}
-            artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
-          />
-          <IntakeV6TechnicalDetailsAccordion
-            title="Ajustări comerciale"
-            hint="Adaos, discount, TVA — nu înlocuiește deciziile de produs"
-            defaultOpen={false}
-            testId="intake-v6-review-commercial-adjustments"
-            className="mt-2"
-          >
-            <IntakeV6PricingInputPanel
-              preview={pricingPreview}
-              breakdown={breakdown}
-              officialPricing={pricedQuoteDryRun}
-              loading={loadingPricingPreview}
-              commercialInputs={commercialInputs}
-              onCommercialInputsChange={(next) => {
-                const nextCommercialInputs = { ...next, vatPercent: vatPct };
-                markLocalFinishChanged(["commercial_preview"], "long");
-                setCommercialInputsDirty(true);
-                setCommercialInputs(nextCommercialInputs);
-                if (commercialSaveTimerRef.current) {
-                  clearTimeout(commercialSaveTimerRef.current);
-                }
-                commercialSaveTimerRef.current = setTimeout(() => {
-                  commercialSaveTimerRef.current = null;
-                  void saveCurrentFinish(true, nextCommercialInputs);
-                }, 700);
-              }}
-              eurToRonRate={eurToRonRate}
-              variant="commercialSliders"
-              commercialGuard={logoOnlyCandidateNotOfferable ? LOGO_ONLY_NOT_OFFERABLE_STATUS : null}
+            </>
+          }
+          formFooter={
+            <IntakeV6ReviewSaveFooter
+              saving={saving}
+              pendingSave={localReviewEditsPending}
+              error={error}
             />
-          </IntakeV6TechnicalDetailsAccordion>
-        </div>
-      </div>
+          }
+          offerRail={
+            <div ref={liveCalcRef}>
+              <IntakeV6LiveCalculationSummary
+                breakdown={breakdown}
+                faceBackDraft={faceBackPrepDraft.draft}
+                loading={loadingBreakdown || faceBackPrepDraft.loading}
+                layout="rightPanel"
+                operatorCantPerimeterM={operatorCantPerimeterM}
+                pendingSave={localReviewEditsPending}
+                letterGroups={effectiveLetterGroups}
+                artworkFinishes={artworkFinishes}
+                pricingPreview={pricingPreview}
+                officialPricing={pricedQuoteDryRun}
+                logicalList={logicalListReadModel}
+                commercialInputs={commercialInputs}
+                eurToRonRate={eurToRonRate}
+                artworkOnlyBlocked={artworkOnlyBlocked || logoOnlyCandidateNotOfferable}
+                suppressLetterCantChrome={acmPanelOnly}
+              />
+              <details
+                className="mt-2 rounded-md border border-[#2A3548]/70 bg-[#0B1220]/35 p-2"
+                data-testid="intake-v6-review-commercial-adjustments"
+              >
+                <summary className="cursor-pointer list-none text-[11px] font-semibold text-slate-300 [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex items-center gap-1.5">
+                    Ajustări comerciale
+                    <span className="font-normal text-slate-500">· adaos / discount</span>
+                  </span>
+                </summary>
+                <p className="mb-2 mt-1.5 text-[10px] text-slate-500">
+                  Nu înlocuiește deciziile de produs. Oferta client rămâne în rezumatul de mai sus.
+                </p>
+                <IntakeV6PricingInputPanel
+                  preview={pricingPreview}
+                  breakdown={breakdown}
+                  officialPricing={pricedQuoteDryRun}
+                  loading={loadingPricingPreview}
+                  commercialInputs={commercialInputs}
+                  onCommercialInputsChange={(next) => {
+                    const nextCommercialInputs = { ...next, vatPercent: vatPct };
+                    markLocalFinishChanged(["commercial_preview"], "long");
+                    setCommercialInputsDirty(true);
+                    setCommercialInputs(nextCommercialInputs);
+                    if (commercialSaveTimerRef.current) {
+                      clearTimeout(commercialSaveTimerRef.current);
+                    }
+                    commercialSaveTimerRef.current = setTimeout(() => {
+                      commercialSaveTimerRef.current = null;
+                      void saveCurrentFinish(true, nextCommercialInputs);
+                    }, 700);
+                  }}
+                  eurToRonRate={eurToRonRate}
+                  variant="commercialSliders"
+                />
+              </details>
+            </div>
+          }
+        />
+        <SheetContent
+          side="right"
+          className="w-full overflow-y-auto border-[#2A3548] bg-[#0A0F1A] sm:max-w-lg"
+          data-testid="intake-v6-review-product-details-sheet"
+        >
+          <SheetHeader>
+            <SheetTitle className="text-slate-100">Compoziție produs</SheetTitle>
+          </SheetHeader>
+          <div className="mt-3 space-y-3">
+            <p className="text-[11px] text-slate-400">
+              Configurarea Bond / Alucobond e în domeniul{" "}
+              <strong className="text-slate-200">Panou / carcasă</strong> — formular flat, nu în
+              acest drawer.
+            </p>
+            <button
+              type="button"
+              className="rounded-md border border-cyan-500/35 bg-cyan-500/10 px-2.5 py-1.5 text-[11px] font-semibold text-cyan-100"
+              data-testid="intake-v6-review-goto-panou-from-sheet"
+              onClick={() => {
+                setProductDetailsOpen(false);
+                handleReviewDomainChange("panou_carcasa");
+              }}
+            >
+              Deschide Panou / carcasă
+            </button>
+            <IntakeV6ProductCompositionPanel
+              payload={state.workspace?.payload as Record<string, unknown> | undefined}
+              linkedSegments={productDefinitionPreview?.linked_template_runtime_segments ?? null}
+              onConfirm={(items) => void confirmProductComposition(items)}
+            />
+          </div>
+        </SheetContent>
+      </Sheet>
 
       {/* Local Cant owns the incomplete state when letter groups render; avoid a second page-level channel. */}
-      {returnCantReadonlyAwareness.operator_readiness === "blocked" &&
+      {!acmPanelOnly &&
+      returnCantReadonlyAwareness.operator_readiness === "blocked" &&
       effectiveLetterGroups.length === 0 ? (
         <p
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-3 py-2 text-[11px] leading-relaxed text-amber-100/90"
@@ -3661,7 +3785,8 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           </p>
           {binding.module_links.length > 0 ? (
             <p className="mt-2 text-[11px] text-cyan-300">
-              Module active: {binding.module_links.map((module) => module.module_template_code).join(", ")}
+              Module produs active:{" "}
+              {binding.module_links.map((module) => module.module_template_code).join(", ")}
             </p>
           ) : null}
         </div>

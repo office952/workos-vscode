@@ -130,7 +130,7 @@ def _ensure_v2_components(source: Product_templates | None) -> tuple[str, str, s
     canonical_component_metadata = {
         "comp_face_litere": {
             "type": "LITERE_3D",
-            "name": "Vizual față — plexi/acrilic",
+            "name": "Vizual față — plexiglas 3mm PMMA - opal",
         },
         "comp_lateral_litere": {
             "type": "LITERE_3D",
@@ -403,7 +403,7 @@ def _volum_aluminum_template_payload() -> dict[str, Any]:
         {
             "materialCode": "MAT-PROFIL-LATERAL-LITERE-30MM",
             "material_code": "MAT-PROFIL-LATERAL-LITERE-30MM",
-            "name": "Profil aluminiu return/cant 30 mm",
+            "name": "Volum aluminiu 30 mm",
             "unit": "ml",
             "quantity": 0,
             "calculation_type": "formula_based",
@@ -415,7 +415,7 @@ def _volum_aluminum_template_payload() -> dict[str, Any]:
         {
             "materialCode": "MAT-PROFIL-LATERAL-LITERE-60MM",
             "material_code": "MAT-PROFIL-LATERAL-LITERE-60MM",
-            "name": "Profil aluminiu return/cant 60 mm",
+            "name": "Volum aluminiu 60 mm",
             "unit": "ml",
             "quantity": 0,
             "calculation_type": "formula_based",
@@ -427,7 +427,7 @@ def _volum_aluminum_template_payload() -> dict[str, Any]:
         {
             "materialCode": "MAT-PROFIL-LATERAL-LITERE-80MM",
             "material_code": "MAT-PROFIL-LATERAL-LITERE-80MM",
-            "name": "Profil aluminiu return/cant 80 mm",
+            "name": "Volum aluminiu 80 mm",
             "unit": "ml",
             "quantity": 0,
             "calculation_type": "formula_based",
@@ -439,7 +439,7 @@ def _volum_aluminum_template_payload() -> dict[str, Any]:
         {
             "materialCode": "MAT-PROFIL-LATERAL-LITERE-100MM",
             "material_code": "MAT-PROFIL-LATERAL-LITERE-100MM",
-            "name": "Profil aluminiu return/cant 100 mm",
+            "name": "Volum aluminiu 100 mm",
             "unit": "ml",
             "quantity": 0,
             "calculation_type": "formula_based",

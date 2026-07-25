@@ -17,13 +17,16 @@ import {
   type LiveCalcFilterId,
 } from "@/lib/intakeV6/intakeV6LiveCalculationRowFilters";
 import {
+  applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   type IntakeV6OfferCommercialInputs,
 } from "@/lib/intakeV6/intakeV6OfferCalculator";
 import {
   intakeV6HasOfficialCommercialTotals,
   intakeV6OfficialPricingBlockerMessage,
+  intakeV6OperatorFacingPricingBlocker,
 } from "@/lib/intakeV6/intakeV6OfficialPricing";
+import { acmPanelPreviewIsVisible } from "@/lib/intakeV6/acmPanel/acmPanelCommercialPreviewDisplay";
 import type { IntakeV6FaceBackPrepCostDraftResponse } from "@/lib/intakeV6/useIntakeV6FaceBackPrepCostDraft";
 import type { IntakeV6LetterGroupFinish } from "@/lib/intakeV6/intakeV6LetterGroups";
 import {
@@ -45,6 +48,7 @@ import {
   OFERTA_CLIENT_LABEL,
   OFERTA_VS_COST_BOUNDARY_HELP,
 } from "@/lib/intakeV6/intakeV6OfferCostChromeVocabulary";
+import { LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME } from "@/lib/materials/lettersFacePlexiMaterialDisplay";
 
 const RIGHT_PANEL_PREVIEW_LINES = 5;
 
@@ -53,6 +57,8 @@ export const INTAKE_V6_LIVE_CALC_PREVIEW_HINT =
   `${OFERTA_CLIENT_HELP} Detaliile de linii se deschid la cerere.`;
 export const INTAKE_V6_LIVE_CALC_GROSS_LABEL = "Ofertă client cu TVA";
 export const INTAKE_V6_LIVE_CALC_NET_LABEL = "Ofertă client netă";
+export const INTAKE_V6_LIVE_CALC_VAT_LABEL = "TVA";
+export const INTAKE_V6_LIVE_CALC_ADAOS_LABEL = "Adaos comercial";
 export const INTAKE_V6_LIVE_CALC_INTERNAL_LABEL = COST_INTERN_ESTIMATIV_LABEL;
 export const INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE =
   "Oferta client necesită completarea configurației curente.";
@@ -61,19 +67,7 @@ export const INTAKE_V6_LIVE_CALC_BOUNDARY_HINT = OFERTA_VS_COST_BOUNDARY_HELP;
 
 /** Pricing reports availability only — Produs CTA owns the composition action. */
 function shortenOperatorPricingBlocker(message: string | null | undefined): string | null {
-  if (!message) return null;
-  const lower = message.toLowerCase();
-  if (
-    lower.includes("compozit") ||
-    lower.includes("composition") ||
-    lower.includes("analyzer") ||
-    lower.includes("dry-run") ||
-    lower.includes("dry run")
-  ) {
-    return "Preț disponibil după confirmarea produsului.";
-  }
-  if (message.length > 96) return `${message.slice(0, 93).trim()}…`;
-  return message;
+  return intakeV6OperatorFacingPricingBlocker(message);
 }
 
 type LiveCalcDisplayBucket = "included" | "diagnostic" | "missing" | "legacy" | "excluded";
@@ -151,7 +145,7 @@ function resolveLogicalVisibleKey(row: IntakeV6LogicalListLineTrace): string {
 
 function resolveLogicalVisibleLabel(row: IntakeV6LogicalListLineTrace): string {
   if (row.line_id === "material.plexiglas_face" || row.line_id === "material.logo_plexiglas_face") {
-    return "Plexiglas 3 mm";
+    return LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME;
   }
   if (row.line_id === "material.forex_backing") return "Forex 10 mm";
   if (row.line_id === "material.return_profile") return "Cant / volum";
@@ -230,16 +224,6 @@ function mergeLogicalChildRows(
   return Array.from(merged.values());
 }
 
-function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
-  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "cantitate lipsă";
-  if ((row.blockers?.length ?? 0) > 0) return "blocat";
-  if ((row.gaps?.length ?? 0) > 0) return "gap explicit";
-  if (row.formula_status === "legacy_unversioned") return "legacy";
-  if (row.status?.includes("PARTIAL")) return "estimat";
-  if (row.status === "MATCHED") return "priced";
-  return row.status?.toLowerCase().replace(/_/g, " ") || "read-only";
-}
-
 function hasFinitePositiveNumber(value: number | null | undefined): value is number {
   return value != null && Number.isFinite(value) && value > 0;
 }
@@ -248,6 +232,26 @@ const NON_BLOCKING_LOGICAL_GAPS = new Set([
   "FORMULA_TRACE_MISSING",
   "COMMERCIAL_FORMULA_UNVERSIONED",
 ]);
+
+function resolveLogicalStatus(row: IntakeV6LogicalListLineTrace): string {
+  // Consumabile percent — atelier/legacy chrome, not operator "cantitate lipsă" scare.
+  if (
+    row.line_id === "material.mounting_accessories" &&
+    (row.formula_status === "legacy_unversioned" ||
+      (row.gaps ?? []).includes("COMMERCIAL_FORMULA_UNVERSIONED"))
+  ) {
+    return "legacy";
+  }
+  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) {
+    return "cantitate lipsă";
+  }
+  if ((row.blockers?.length ?? 0) > 0) return "blocat";
+  if ((row.gaps ?? []).some((gap) => !NON_BLOCKING_LOGICAL_GAPS.has(gap))) return "gap explicit";
+  if (row.formula_status === "legacy_unversioned") return "legacy";
+  if (row.status?.includes("PARTIAL")) return "estimat";
+  if (row.status === "MATCHED") return "priced";
+  return row.status?.toLowerCase().replace(/_/g, " ") || "read-only";
+}
 
 function hasBlockingLogicalGaps(row: IntakeV6LogicalListLineTrace): boolean {
   return (row.gaps ?? []).some((gap) => !NON_BLOCKING_LOGICAL_GAPS.has(gap));
@@ -342,12 +346,28 @@ function hasBreakdownPartialTrace(row: ReturnType<typeof buildIntakeV6LiveMateri
   return text.includes("partial") || text.includes("split_in_runtime") || text.includes("trace partial");
 }
 
+function operatorFacingLogicalGapText(row: IntakeV6LogicalListLineTrace): string {
+  const gaps = [...(row.gaps ?? []), ...(row.warnings ?? []), ...(row.blockers ?? [])].filter(
+    (token) => token && !NON_BLOCKING_LOGICAL_GAPS.has(token),
+  );
+  return gaps.length > 0 ? gaps.join(" · ") : "fără gap";
+}
+
 function resolveLogicalDiagnosticReason(
   row: IntakeV6LogicalListLineTrace,
   statusLabel: string,
   amountValue: number | null,
+  opts?: { hasLettersAcmComposition?: boolean },
 ): string {
-  if (row.formula_status === "legacy_unversioned" && amountValue == null) return "Legacy";
+  if (row.line_id === "material.mounting_accessories") return "Atelier / legacy";
+  if (
+    row.line_id === "material.forex_backing" &&
+    (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) &&
+    opts?.hasLettersAcmComposition
+  ) {
+    return "Spate litere — cantitate necalculată";
+  }
+  if (row.formula_status === "legacy_unversioned" && amountValue == null) return "Atelier / legacy";
   if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "Lipsa cantitate";
   if (hasMissingLogicalPrice(row, amountValue)) return "Fără tarif";
   if (hasExplicitLogicalGap(row)) return "Gap explicit";
@@ -363,9 +383,37 @@ function classifyLogicalRow(
   row: IntakeV6LogicalListLineTrace,
   statusLabel: string,
   amountValue: number | null,
+  opts?: { hasLettersAcmComposition?: boolean },
 ): LiveCalcDisplayBucket {
   if (hasVisiblePricedLogicalContribution(row, amountValue)) return "included";
-  if (row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0) return "missing";
+
+  const qtyMissing = row.quantity == null || !Number.isFinite(row.quantity) || row.quantity <= 0;
+
+  // Consumabile — never primary "missing" scare (formula atelier / unversioned).
+  if (row.line_id === "material.mounting_accessories") {
+    return "legacy";
+  }
+
+  // Letters+ACM: Forex backs remain structural, but null qty is diagnostic noise when
+  // connection pack is already in the list — not an offer-blocking primary miss.
+  if (
+    row.line_id === "material.forex_backing" &&
+    qtyMissing &&
+    opts?.hasLettersAcmComposition
+  ) {
+    return "diagnostic";
+  }
+
+  if (qtyMissing) {
+    if (
+      row.formula_status === "legacy_unversioned" ||
+      ((row.gaps ?? []).length > 0 &&
+        (row.gaps ?? []).every((gap) => NON_BLOCKING_LOGICAL_GAPS.has(gap)))
+    ) {
+      return "legacy";
+    }
+    return "missing";
+  }
   if (hasMissingLogicalPrice(row, amountValue)) return "missing";
   if ((row.blockers?.length ?? 0) > 0) return "missing";
   if (row.status === "SPLIT_IN_RUNTIME") return "excluded";
@@ -422,14 +470,17 @@ function buildLogicalDisplayRows(
   fallbackCurrency: string,
 ): LiveCalcDisplayRow[] {
   const rows = logicalList?.rows ?? [];
+  const hasLettersAcmComposition =
+    (logicalList?.composition_connection_row_count ?? 0) > 0 ||
+    rows.some((row) => String(row.line_id || "").startsWith("commercial.letters_acm_conn_"));
+  const classifyOpts = { hasLettersAcmComposition };
   const grouped = new Map<string, LiveCalcDisplayRow>();
   rows.forEach((row) => {
     const formula = [row.formula_code_proposed, row.formula_version_proposed].filter(Boolean).join(" @ ");
-    const gaps = [...(row.gaps ?? []), ...(row.warnings ?? []), ...(row.blockers ?? [])];
     const amountValue = hasFinitePositiveNumber(row.subtotal) ? row.subtotal : null;
     const amountCurrency = row.currency ?? fallbackCurrency;
     const statusLabel = resolveLogicalStatus(row);
-    const displayBucket = classifyLogicalRow(row, statusLabel, amountValue);
+    const displayBucket = classifyLogicalRow(row, statusLabel, amountValue, classifyOpts);
     const highlightedRow = shouldHighlightLogicalRow(row, statusLabel, amountValue);
     const visiblePricedContribution = hasVisiblePricedLogicalContribution(row, amountValue);
     const groupKey = resolveLogicalVisibleKey(row);
@@ -447,7 +498,7 @@ function buildLogicalDisplayRows(
         muted: displayBucket !== "included" || highlightedRow,
         category: normalizeLogicalCategory(row.category),
         formulaText: formula || "formula lipsă",
-        gapText: gaps.length > 0 ? gaps.join(" · ") : "fără gap",
+        gapText: operatorFacingLogicalGapText(row),
         childCount: row.child_rows?.length ?? 0,
         childRows,
         technicalDetails,
@@ -459,7 +510,7 @@ function buildLogicalDisplayRows(
         diagnosticReason:
           displayBucket === "included"
             ? undefined
-            : resolveLogicalDiagnosticReason(row, statusLabel, amountValue),
+            : resolveLogicalDiagnosticReason(row, statusLabel, amountValue, classifyOpts),
       } satisfies LiveCalcDisplayRow);
       return;
     }
@@ -494,7 +545,8 @@ function buildLogicalDisplayRows(
     existing.childCount = (existing.childCount ?? 0) + (row.child_rows?.length ?? 0);
     existing.childRows = mergeLogicalChildRows(existing.childRows, childRows);
     existing.technicalDetails = dedupeStrings([...(existing.technicalDetails ?? []), ...technicalDetails]);
-    existing.gapText = dedupeStrings([existing.gapText, gaps.length > 0 ? gaps.join(" · ") : null]).join(" · ") || "fără gap";
+    existing.gapText =
+      dedupeStrings([existing.gapText, operatorFacingLogicalGapText(row)]).join(" · ") || "fără gap";
     if (visiblePricedContribution) {
       existing.displayBucket = "included";
       existing.muted = Boolean(existing.muted) || highlightedRow;
@@ -508,7 +560,12 @@ function buildLogicalDisplayRows(
       existing.displayBucket = displayBucket;
       existing.muted = true;
       existing.statusLabel = statusLabel;
-      existing.diagnosticReason = resolveLogicalDiagnosticReason(row, statusLabel, amountValue);
+      existing.diagnosticReason = resolveLogicalDiagnosticReason(
+        row,
+        statusLabel,
+        amountValue,
+        classifyOpts,
+      );
     }
   });
   return Array.from(grouped.values()).map((row) => {
@@ -747,19 +804,28 @@ function LiveCalcPreviewHeader({ compact = false }: { compact?: boolean }) {
 function LiveCalcEstimateTotalsBlock({
   displayGrossRon,
   displayNetRon,
+  displayVatRon,
+  displayVatRate,
+  displayAdaosPercent,
   total,
   currency,
   artworkOnlyBlocked,
   officialPricingBlocker = null,
   emphasis = "balanced",
+  acmPanelCostFallback = false,
 }: {
   displayGrossRon: number | null;
   displayNetRon: number | null;
+  displayVatRon?: number | null;
+  displayVatRate?: number | null;
+  displayAdaosPercent?: number | null;
   total: number | null;
   currency: string;
   artworkOnlyBlocked: boolean;
   officialPricingBlocker?: string | null;
   emphasis?: "balanced" | "compact" | "sidebar";
+  /** When VL breakdown is empty on ACM-only, total is AcmPanel provisional EUR. */
+  acmPanelCostFallback?: boolean;
 }) {
   const showCommercialEstimate =
     !artworkOnlyBlocked && displayGrossRon != null && displayNetRon != null;
@@ -793,6 +859,28 @@ function LiveCalcEstimateTotalsBlock({
               {formatFaceBackPrepMoney(displayNetRon, "RON")}
             </span>
           </div>
+          {displayVatRon != null ? (
+            <div className="mt-1 flex items-baseline justify-between gap-2 text-[11px]">
+              <span className="text-slate-500">
+                {displayVatRate != null
+                  ? `${INTAKE_V6_LIVE_CALC_VAT_LABEL} (${displayVatRate.toLocaleString("ro-RO", {
+                      maximumFractionDigits: 2,
+                    })}%)`
+                  : INTAKE_V6_LIVE_CALC_VAT_LABEL}
+              </span>
+              <span className="tabular-nums text-slate-400" data-testid="intake-v6-live-offer-vat">
+                {formatFaceBackPrepMoney(displayVatRon, "RON")}
+              </span>
+            </div>
+          ) : null}
+          {displayAdaosPercent != null ? (
+            <div className="mt-1 flex items-baseline justify-between gap-2 text-[11px]">
+              <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_ADAOS_LABEL}</span>
+              <span className="tabular-nums text-slate-300" data-testid="intake-v6-live-offer-adaos">
+                {displayAdaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
+              </span>
+            </div>
+          ) : null}
         </>
       ) : !artworkOnlyBlocked ? (
         <p className="text-[11px] leading-relaxed text-slate-400" data-testid="intake-v6-live-estimate-unavailable">
@@ -805,7 +893,9 @@ function LiveCalcEstimateTotalsBlock({
           showCommercialEstimate ? "mt-1.5 border-t border-[#243044]/40 pt-1.5" : "",
         )}
       >
-        <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
+        <span className="text-slate-500">
+          {acmPanelCostFallback ? "Estimare panou ACM" : INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}
+        </span>
         <span
           className={joinClassNames(
             "tabular-nums text-slate-300",
@@ -816,6 +906,11 @@ function LiveCalcEstimateTotalsBlock({
           {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, currency)}
         </span>
       </div>
+      {acmPanelCostFallback && total != null ? (
+        <p className="mt-1 text-[10px] leading-snug text-slate-500" data-testid="intake-v6-live-acm-cost-hint">
+          Canal VL litere gol pe această ofertă — valoarea vine din liniile AcmPanel (provizoriu).
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -898,6 +993,10 @@ export default function IntakeV6LiveCalculationSummary({
   eurToRonRate = null,
   hideTitle = false,
   artworkOnlyBlocked = false,
+  /** ACM panel-alone: hide VL letter cant/adhesive teaching chrome. */
+  suppressLetterCantChrome = false,
+  /** Confirm (pas 3): Ofertă client owns the story — hide ACM provisional estimate noise. */
+  hideAcmPanelProvisional = false,
 }: {
   breakdown: IntakeV6MaterialBreakdownResponse | null;
   faceBackDraft: IntakeV6FaceBackPrepCostDraftResponse | null;
@@ -915,19 +1014,39 @@ export default function IntakeV6LiveCalculationSummary({
   eurToRonRate?: number | null;
   hideTitle?: boolean;
   artworkOnlyBlocked?: boolean;
+  suppressLetterCantChrome?: boolean;
+  hideAcmPanelProvisional?: boolean;
 }) {
   const currency = breakdown?.totals.currency ?? faceBackDraft?.currency ?? "EUR";
-  const total = artworkOnlyBlocked
+  const breakdownTotal = artworkOnlyBlocked
     ? null
     : breakdown?.totals.estimated_cost_total ?? breakdown?.totals.material_cost_total ?? null;
+  const acmPanelCommercialPreviewEarly = officialPricing?.acm_panel_commercial_preview ?? null;
+  // ACM panel-alone: VL material breakdown is empty by design — use AcmPanel EUR as cost spine.
+  const total =
+    breakdownTotal ??
+    (suppressLetterCantChrome &&
+    acmPanelCommercialPreviewEarly?.estimated_total != null &&
+    Number.isFinite(acmPanelCommercialPreviewEarly.estimated_total)
+      ? acmPanelCommercialPreviewEarly.estimated_total
+      : null);
+  const internalCurrency =
+    breakdownTotal != null
+      ? currency
+      : suppressLetterCantChrome
+        ? acmPanelCommercialPreviewEarly?.currency || "EUR"
+        : currency;
   const missingPrices = artworkOnlyBlocked ? false : breakdown?.totals.contains_missing_prices === true;
   const isBar = layout === "bar";
   const isRightPanel = layout === "rightPanel";
+  const effectiveLetterGroups = suppressLetterCantChrome ? [] : letterGroups;
+  const effectiveArtworkFinishes = suppressLetterCantChrome ? [] : artworkFinishes;
+  const effectiveCantPerimeter = suppressLetterCantChrome ? null : operatorCantPerimeterM;
   const breakdownRows = buildIntakeV6LiveMaterialsUsedRows({
     breakdown,
-    operatorCantPerimeterM,
-    letterGroups,
-    artworkFinishes,
+    operatorCantPerimeterM: effectiveCantPerimeter,
+    letterGroups: effectiveLetterGroups,
+    artworkFinishes: effectiveArtworkFinishes,
     currency,
   });
   const logicalRows = useMemo(() => buildLogicalDisplayRows(logicalList, currency), [logicalList, currency]);
@@ -938,7 +1057,22 @@ export default function IntakeV6LiveCalculationSummary({
         const classification = classifyBreakdownRow(row);
         return { ...row, source: "material-breakdown", ...classification };
       });
-  const logicalRowCount = logicalList?.core_row_count ?? logicalRows.length;
+  const compositionContractRowCount = logicalList?.composition_contract_row_count ?? 0;
+  const compositionAcmRowCount =
+    logicalList?.composition_acm_row_count ??
+    (logicalList?.rows ?? []).filter((row) =>
+      String(row.line_id || "").startsWith("commercial.acm_"),
+    ).length;
+  const compositionConnectionRowCount =
+    logicalList?.composition_connection_row_count ??
+    (logicalList?.rows ?? []).filter((row) =>
+      String(row.line_id || "").startsWith("commercial.letters_acm_conn_"),
+    ).length;
+  const logicalCoreRowCount = logicalList?.core_row_count ?? null;
+  const logicalRowCount =
+    logicalCoreRowCount != null
+      ? logicalCoreRowCount + (compositionContractRowCount || 0)
+      : logicalRows.length;
   const logicalTargetRowCount = logicalList?.target_core_row_count ?? null;
   const [materialsOpen, setMaterialsOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState<LiveCalcFilterId>("all");
@@ -955,11 +1089,55 @@ export default function IntakeV6LiveCalculationSummary({
   const officialTotals = officialPricing?.commercial_totals ?? null;
   const hasOfficialTotals = intakeV6HasOfficialCommercialTotals(officialPricing);
   const officialPricingBlocker = intakeV6OfficialPricingBlockerMessage(officialPricing);
-  const acmPanelCommercialPreview = officialPricing?.acm_panel_commercial_preview ?? null;
-  const displayGrossRon = hasOfficialTotals ? officialTotals?.total_gross ?? null : null;
-  const displayNetRon = hasOfficialTotals ? officialTotals?.subtotal_net ?? null : null;
+  const acmPanelCommercialPreview = acmPanelCommercialPreviewEarly;
+  const acmPanelCostFallback =
+    suppressLetterCantChrome && breakdownTotal == null && total != null;
+  const emptyVlBreakdownMessage =
+    suppressLetterCantChrome &&
+    acmPanelCommercialPreview != null &&
+    ((acmPanelCommercialPreview.lines?.length ?? 0) > 0 ||
+      acmPanelCommercialPreview.estimated_total != null)
+      ? "Breakdown litere VL: neaplicabil. Detaliile sunt în estimarea panou Alucobond."
+      : "Nu există încă breakdown live.";
+  const resolvedOfferTotals = useMemo(() => {
+    if (!hasOfficialTotals || officialTotals == null) return null;
+    const baseFromServer =
+      officialTotals.commercial_base_subtotal != null &&
+      Number.isFinite(officialTotals.commercial_base_subtotal)
+        ? officialTotals.commercial_base_subtotal
+        : null;
+    if (baseFromServer != null && commercialInputs) {
+      const adjusted = applyIntakeV6CommercialAdjustments(baseFromServer, commercialInputs);
+      return {
+        net: adjusted.subtotalNet,
+        vat: adjusted.vatValue,
+        gross: adjusted.totalGross,
+        vatRate: adjusted.vatPercent,
+        adaosPercent: adjusted.markupPercent,
+      };
+    }
+    return {
+      net: officialTotals.subtotal_net ?? null,
+      vat: officialTotals.vat_amount ?? null,
+      gross: officialTotals.total_gross ?? null,
+      vatRate: officialTotals.vat_rate ?? null,
+      adaosPercent: officialTotals.commercial_adjustment_trace?.markup_percent ?? null,
+    };
+  }, [commercialInputs, hasOfficialTotals, officialTotals]);
+  const displayGrossRon = resolvedOfferTotals?.gross ?? null;
+  const displayNetRon = resolvedOfferTotals?.net ?? null;
+  const displayVatRon = resolvedOfferTotals?.vat ?? null;
+  const displayVatRate = resolvedOfferTotals?.vatRate ?? null;
+  const displayAdaosPercent = resolvedOfferTotals?.adaosPercent ?? null;
   const includedRows = useMemo(() => rows.filter((row) => row.displayBucket === "included"), [rows]);
-  const diagnosticRows = useMemo(() => rows.filter((row) => row.displayBucket !== "included"), [rows]);
+  // Legacy/atelier rows stay out of the primary "necesită configurare" scare list.
+  const diagnosticRows = useMemo(
+    () =>
+      rows.filter(
+        (row) => row.displayBucket === "missing" || row.displayBucket === "diagnostic",
+      ),
+    [rows],
+  );
   const filteredRows = useMemo(() => {
     if (activeFilter === "missing_rates") return diagnosticRows;
     return filterLiveCalcRows(includedRows, activeFilter);
@@ -971,17 +1149,31 @@ export default function IntakeV6LiveCalculationSummary({
   const filterTotals = useMemo(() => sumFilteredLiveCalcRows(filteredRows), [filteredRows]);
   const previewRows = isRightPanel && !usesLogicalList ? filteredRows.slice(0, RIGHT_PANEL_PREVIEW_LINES) : filteredRows;
   const hiddenPreviewCount = Math.max(0, filteredRows.length - previewRows.length);
-  const missingRateLabels = diagnosticRows.map((row) => {
-    const label = row.label ?? "";
-    // D4: do not present manufacturing accessories as a Montaj commercial-field error.
-    if (/Accesorii montaj\s*\/\s*conectori/i.test(label)) {
-      return label.replace(
-        /Accesorii montaj\s*\/\s*conectori/i,
-        "Consumabile producție — accesorii / conectori",
+  // Only real tariff gaps — not quantity/diagnostic leftovers (e.g. Forex null qty on Letters+ACM).
+  const missingRateLabels = diagnosticRows
+    .filter((row) => {
+      if (row.statusLabel === "cantitate lipsă") return false;
+      if (/cantitate/i.test(row.diagnosticReason ?? "")) return false;
+      if (row.diagnosticReason === "Spate litere — cantitate necalculată") return false;
+      if (row.diagnosticReason === "Atelier / legacy") return false;
+      return (
+        row.diagnosticReason === "Fără tarif" ||
+        row.statusLabel === "fără tarif" ||
+        (row.displayBucket === "missing" &&
+          row.amountValue == null &&
+          hasFinitePositiveNumber(row.quantityValue))
       );
-    }
-    return label;
-  });
+    })
+    .map((row) => {
+      const label = row.label ?? "";
+      if (/Accesorii montaj\s*\/\s*conectori/i.test(label)) {
+        return label.replace(
+          /Accesorii montaj\s*\/\s*conectori/i,
+          "Consumabile producție — accesorii / conectori",
+        );
+      }
+      return label;
+    });
   const visibleMissingRateLabels = missingRateLabels.slice(0, 2);
   const hiddenMissingRateCount = Math.max(0, missingRateLabels.length - visibleMissingRateLabels.length);
 
@@ -1037,8 +1229,8 @@ export default function IntakeV6LiveCalculationSummary({
 
   const detailsBody = (
     <>
-      <CantMetricsStrip operatorCantPerimeterM={operatorCantPerimeterM} />
-      {artworkOnlyBlocked ? (
+      <CantMetricsStrip operatorCantPerimeterM={effectiveCantPerimeter} />
+      {artworkOnlyBlocked && !suppressLetterCantChrome ? (
         <p
           className="mb-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5 text-[11px] leading-relaxed text-amber-100/90"
           data-testid="intake-v6-live-artwork-only-blocked"
@@ -1061,7 +1253,22 @@ export default function IntakeV6LiveCalculationSummary({
           className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
           data-testid="intake-v6-logical-list-summary"
         >
-          Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri · material breakdown în detalii tehnice.
+          Lista logică read-model · {logicalRowCount} rânduri
+          {logicalCoreRowCount != null
+            ? ` (VL ${logicalCoreRowCount}${
+                compositionAcmRowCount ? ` + panou ${compositionAcmRowCount}` : ""
+              }${
+                compositionConnectionRowCount
+                  ? ` + legături ${compositionConnectionRowCount}`
+                  : ""
+              }${
+                logicalTargetRowCount && logicalCoreRowCount !== logicalTargetRowCount
+                  ? ` · țintă VL ${logicalTargetRowCount}`
+                  : ""
+              })`
+            : ""}
+          {" "}
+          · material breakdown în detalii tehnice.
         </p>
       ) : null}
       {loading ? (
@@ -1079,7 +1286,7 @@ export default function IntakeV6LiveCalculationSummary({
           {activeFilter !== "missing_rates" ? <DiagnosticSection rows={diagnosticRows} /> : null}
         </>
       ) : (
-        <p className="text-[11px] text-slate-400">Nu există încă breakdown live.</p>
+        <p className="text-[11px] text-slate-400">{emptyVlBreakdownMessage}</p>
       )}
     </>
   );
@@ -1102,30 +1309,43 @@ export default function IntakeV6LiveCalculationSummary({
           <LiveCalcPreviewHeader compact />
 
           {displayGrossRon != null && displayNetRon != null && !artworkOnlyBlocked ? (
-            <div className="min-w-0 border-l border-[#243044]/60 pl-3">
+            <div className="min-w-0 border-l border-[#243044]/60 pl-3" data-testid="intake-v6-live-totals-summary">
               <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
               <span
-                className="text-[14px] font-semibold tabular-nums leading-none text-slate-200"
+                className="text-[16px] font-semibold tabular-nums leading-none text-emerald-200"
                 data-testid="intake-v6-live-offer-gross"
               >
                 {formatFaceBackPrepMoney(displayGrossRon, "RON")}
               </span>
-              <span
-                className="ml-2 text-[10px] tabular-nums text-slate-400"
-                data-testid="intake-v6-live-offer-net"
-              >
-                {INTAKE_V6_LIVE_CALC_NET_LABEL} {formatFaceBackPrepMoney(displayNetRon, "RON")}
-              </span>
+              <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 text-[10px] tabular-nums text-slate-400">
+                <span data-testid="intake-v6-live-offer-net">
+                  Net {formatFaceBackPrepMoney(displayNetRon, "RON")}
+                </span>
+                {displayVatRon != null ? (
+                  <span data-testid="intake-v6-live-offer-vat">
+                    · TVA {formatFaceBackPrepMoney(displayVatRon, "RON")}
+                  </span>
+                ) : null}
+                {displayAdaosPercent != null ? (
+                  <span data-testid="intake-v6-live-offer-adaos">
+                    · Adaos {displayAdaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
+                  </span>
+                ) : null}
+              </div>
             </div>
           ) : null}
 
           <div className="min-w-0 border-l border-[#243044]/60 pl-3">
-            <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
+            <span className="block text-[10px] text-slate-500">
+              {acmPanelCostFallback ? "Estimare panou ACM" : INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}
+            </span>
             <span
               className="text-[12px] font-medium tabular-nums text-slate-300"
               data-testid="intake-v6-live-material-total"
             >
-              {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, currency)}
+              {artworkOnlyBlocked
+                ? "indisponibil"
+                : totalCostLabel(total, internalCurrency)}
             </span>
           </div>
 
@@ -1155,38 +1375,222 @@ export default function IntakeV6LiveCalculationSummary({
             />
           </div>
         </div>
-        {/* Confirm continuity: same AcmPanel provisional contract as Review live-calc */}
-        <div className="border-t border-[#243044]/50 px-3 pb-2">
-          <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
-        </div>
+        {!hideAcmPanelProvisional ? (
+          <div className="border-t border-[#243044]/50 px-3 pb-2">
+            <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
+          </div>
+        ) : null}
       </div>
     );
   }
 
   if (isRightPanel) {
+    const showCommercialEstimate =
+      !artworkOnlyBlocked && displayGrossRon != null && displayNetRon != null;
+    const operatorBlocker = shortenOperatorPricingBlocker(officialPricingBlocker);
+    const acmPreviewVisible = acmPanelPreviewIsVisible(acmPanelCommercialPreview);
+    const lettersInternalTotal =
+      !suppressLetterCantChrome && breakdownTotal != null ? breakdownTotal : null;
+    const showCompositionSection =
+      lettersInternalTotal != null || acmPreviewVisible || compositionContractRowCount > 0;
+    const blockerReasons: string[] = [];
+    if (artworkOnlyBlocked) {
+      blockerReasons.push("Artwork-only — confirmă straturile de litere înainte de ofertă.");
+    } else if (!showCommercialEstimate && operatorBlocker) {
+      blockerReasons.push(operatorBlocker);
+    }
+    if (!artworkOnlyBlocked && (missingPrices || missingRateLabels.length > 0)) {
+      const ratesDetail =
+        visibleMissingRateLabels.length > 0
+          ? `${visibleMissingRateLabels.join("; ")}${
+              hiddenMissingRateCount > 0 ? ` (+${hiddenMissingRateCount})` : ""
+            }`
+          : null;
+      blockerReasons.push(ratesDetail ? `Tarife lipsă: ${ratesDetail}` : "Tarife lipsă pe unele linii.");
+    }
+
     return (
       <aside
         className={joinClassNames(
-          "rounded-md border border-[#2A3548]/45 bg-[#0A0F1A]/55 p-2.5",
+          "rounded-md border border-[#2A3548]/55 bg-[#0A0F1A]/70 p-2.5",
           className,
         )}
         data-testid="intake-v6-review-calculator-panel"
         data-layout={layout}
         data-pricing-weight="secondary"
+        data-offer-rail="workbench"
       >
-        <LiveCalcPreviewHeader />
+        <div className="mb-2 min-w-0" data-testid="intake-v6-live-calc-preview-header">
+          <div className="flex items-center gap-1.5">
+            <Calculator className="h-3.5 w-3.5 shrink-0 text-slate-500" aria-hidden />
+            <h3 className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+              {INTAKE_V6_LIVE_CALC_TITLE}
+            </h3>
+          </div>
+        </div>
 
-        <LiveCalcEstimateTotalsBlock
-          displayGrossRon={displayGrossRon}
-          displayNetRon={displayNetRon}
-          total={total}
-          currency={currency}
-          artworkOnlyBlocked={artworkOnlyBlocked}
-          officialPricingBlocker={officialPricingBlocker}
-          emphasis="compact"
-        />
+        <div
+          className="rounded-md border border-emerald-500/25 bg-[#101827]/85 px-2.5 py-2.5"
+          data-testid="intake-v6-live-totals-summary"
+          data-offer-hero="true"
+        >
+          {showCommercialEstimate ? (
+            <>
+              <span className="block text-[10px] font-semibold uppercase tracking-wide text-emerald-200/80">
+                {INTAKE_V6_LIVE_CALC_GROSS_LABEL}
+              </span>
+              <span
+                className="mt-0.5 block text-[22px] font-bold tabular-nums leading-tight text-emerald-200"
+                data-testid="intake-v6-live-offer-gross"
+              >
+                {formatFaceBackPrepMoney(displayGrossRon, "RON")}
+              </span>
+              <div className="mt-1.5 space-y-1 border-t border-[#243044]/50 pt-1.5 text-[11px]">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
+                  <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-net">
+                    {formatFaceBackPrepMoney(displayNetRon, "RON")}
+                  </span>
+                </div>
+                {displayVatRon != null ? (
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-slate-500">
+                      {displayVatRate != null
+                        ? `${INTAKE_V6_LIVE_CALC_VAT_LABEL} (${displayVatRate.toLocaleString("ro-RO", {
+                            maximumFractionDigits: 2,
+                          })}%)`
+                        : INTAKE_V6_LIVE_CALC_VAT_LABEL}
+                    </span>
+                    <span className="tabular-nums text-slate-300" data-testid="intake-v6-live-offer-vat">
+                      {formatFaceBackPrepMoney(displayVatRon, "RON")}
+                    </span>
+                  </div>
+                ) : null}
+                {displayAdaosPercent != null ? (
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_ADAOS_LABEL}</span>
+                    <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-adaos">
+                      {displayAdaosPercent.toLocaleString("ro-RO", { maximumFractionDigits: 2 })}%
+                    </span>
+                  </div>
+                ) : null}
+              </div>
+            </>
+          ) : (
+            <div data-testid="intake-v6-live-estimate-unavailable">
+              <p className="text-[12px] font-medium leading-snug text-slate-200">Încă indisponibilă</p>
+              <p className="mt-0.5 text-[10px] leading-relaxed text-slate-500">
+                {operatorBlocker ?? INTAKE_V6_LIVE_CALC_ESTIMATE_UNAVAILABLE}
+              </p>
+            </div>
+          )}
+        </div>
 
-        <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
+        {showCompositionSection ? (
+          <div
+            className="mt-2 rounded-md border border-[#243044]/45 bg-[#0B1220]/35 px-2 py-1.5"
+            data-testid="intake-v6-offer-rail-composition"
+          >
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+              Estimări pe produs
+            </p>
+            <ul className="space-y-1">
+              {lettersInternalTotal != null ? (
+                <li
+                  className="flex items-baseline justify-between gap-2 text-[11px]"
+                  data-testid="intake-v6-offer-rail-letters"
+                >
+                  <span className="text-slate-400">Litere</span>
+                  <span className="tabular-nums text-slate-200">
+                    {totalCostLabel(lettersInternalTotal, currency)}
+                  </span>
+                </li>
+              ) : null}
+              {acmPreviewVisible && acmPanelCommercialPreview ? (
+                <li
+                  className="flex items-baseline justify-between gap-2 text-[11px]"
+                  data-testid="intake-v6-offer-rail-bond"
+                >
+                  <span className="text-slate-400">Panou Alucobond</span>
+                  <span className="tabular-nums text-slate-200">
+                    {totalCostLabel(
+                      acmPanelCommercialPreview.estimated_total ?? null,
+                      acmPanelCommercialPreview.currency || "EUR",
+                    )}
+                  </span>
+                </li>
+              ) : null}
+              {compositionConnectionRowCount > 0 ? (
+                <li
+                  className="flex items-baseline justify-between gap-2 text-[11px]"
+                  data-testid="intake-v6-offer-rail-contract"
+                >
+                  <span className="text-slate-400">Legături Litere↔Bond</span>
+                  <span className="tabular-nums text-slate-300">
+                    {compositionConnectionRowCount} linii
+                  </span>
+                </li>
+              ) : compositionAcmRowCount > 0 ? (
+                <li
+                  className="flex items-baseline justify-between gap-2 text-[11px]"
+                  data-testid="intake-v6-offer-rail-contract-missing"
+                >
+                  <span className="text-slate-400">Legături Litere↔Bond</span>
+                  <span className="tabular-nums text-amber-100/80">lipsă în calcul</span>
+                </li>
+              ) : null}
+            </ul>
+            {acmPreviewVisible ? (
+              <AcmPanelProvisionalPricingBlock
+                preview={acmPanelCommercialPreview}
+                variant="rail"
+                embedded
+              />
+            ) : null}
+          </div>
+        ) : null}
+
+        {!acmPanelCostFallback && total != null ? (
+          lettersInternalTotal != null &&
+          lettersInternalTotal === total &&
+          !acmPreviewVisible ? (
+            <div
+              className="mt-1.5 text-[10px] text-slate-500"
+              data-testid="intake-v6-offer-rail-internal"
+            >
+              <span className="sr-only" data-testid="intake-v6-live-material-total">
+                {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, internalCurrency)}
+              </span>
+              Litere = {INTAKE_V6_LIVE_CALC_INTERNAL_LABEL.toLowerCase()} (atelier).
+            </div>
+          ) : (
+            <div
+              className="mt-2 flex items-baseline justify-between gap-2 border-t border-[#243044]/40 pt-2 text-[11px]"
+              data-testid="intake-v6-offer-rail-internal"
+            >
+              <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
+              <span
+                className="tabular-nums text-slate-300"
+                data-testid="intake-v6-live-material-total"
+              >
+                {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, internalCurrency)}
+              </span>
+            </div>
+          )
+        ) : acmPanelCostFallback && total != null ? (
+          <>
+            <p className="mt-2 text-[10px] leading-snug text-slate-500" data-testid="intake-v6-live-acm-cost-hint">
+              Costul de pe panou e afișat mai sus — canalul litere e gol pe această ofertă.
+            </p>
+            <div className="sr-only" data-testid="intake-v6-live-material-total">
+              {totalCostLabel(total, internalCurrency)}
+            </div>
+          </>
+        ) : (
+          <div className="sr-only" data-testid="intake-v6-live-material-total">
+            {artworkOnlyBlocked ? "indisponibil" : totalCostLabel(total, internalCurrency)}
+          </div>
+        )}
 
         {pendingSave ? (
           <p
@@ -1197,19 +1601,33 @@ export default function IntakeV6LiveCalculationSummary({
           </p>
         ) : null}
 
-        {missingPrices || missingRateLabels.length > 0 ? (
+        {blockerReasons.length > 0 ? (
           <div
-            className="mb-2 mt-2 rounded border border-amber-500/20 bg-amber-500/5 px-2 py-1.5 text-[10px] text-amber-100/80"
-            data-testid="intake-v6-live-missing-rates-banner"
+            className="mt-2 rounded border border-amber-500/25 bg-amber-500/5 px-2 py-1.5"
+            data-testid="intake-v6-offer-rail-blockers"
           >
-            <span className="font-medium">Tarife lipsă</span>
-            {visibleMissingRateLabels.length > 0 ? (
-              <span className="text-amber-100/70">
-                {" "}
-                — {visibleMissingRateLabels.join("; ")}
-                {hiddenMissingRateCount > 0 ? ` (+${hiddenMissingRateCount})` : ""}
-              </span>
-            ) : null}
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-amber-100/90">
+              Ce blochează
+            </p>
+            <ul className="mt-1 space-y-0.5">
+              {blockerReasons.map((reason) => (
+                <li key={reason} className="text-[10px] leading-snug text-amber-100/80">
+                  · {reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        {/* Keep legacy test id when rates are the only story inside the unified blocker. */}
+        {missingPrices || missingRateLabels.length > 0 ? (
+          <div className="sr-only" data-testid="intake-v6-live-missing-rates-banner">
+            Tarife lipsă
+            {visibleMissingRateLabels.length > 0
+              ? ` — ${visibleMissingRateLabels.join("; ")}${
+                  hiddenMissingRateCount > 0 ? ` (+${hiddenMissingRateCount})` : ""
+                }`
+              : ""}
           </div>
         ) : null}
 
@@ -1217,15 +1635,12 @@ export default function IntakeV6LiveCalculationSummary({
           <p className="mb-2 mt-2 text-[11px] text-slate-500">Actualizez estimările…</p>
         ) : rows.length > 0 ? (
           <div className="mt-2" data-testid="intake-v6-live-materials-used">
-            {/* Line detail is opt-in so commercial result stays secondary to product decisions. */}
-            <div className="mt-1">
-              <DetailsSheet
-                detailsBody={detailsBody}
-                missingRateLabels={missingRateLabels}
-                triggerLabel={`Detalii linii (${filteredRows.length})`}
-                testId="intake-v6-review-calculator-details"
-              />
-            </div>
+            <DetailsSheet
+              detailsBody={detailsBody}
+              missingRateLabels={missingRateLabels}
+              triggerLabel={`Detalii linii (${filteredRows.length})`}
+              testId="intake-v6-review-calculator-details"
+            />
             {hiddenPreviewCount > 0 ? (
               <p className="sr-only" data-testid="intake-v6-live-preview-more">
                 +{hiddenPreviewCount} linii în detaliu
@@ -1237,7 +1652,7 @@ export default function IntakeV6LiveCalculationSummary({
             )}
           </div>
         ) : (
-          <p className="mt-2 text-[11px] text-slate-500">Nu există încă breakdown live.</p>
+          <p className="mt-2 text-[11px] text-slate-500">{emptyVlBreakdownMessage}</p>
         )}
       </aside>
     );
@@ -1262,14 +1677,20 @@ export default function IntakeV6LiveCalculationSummary({
       <LiveCalcEstimateTotalsBlock
         displayGrossRon={displayGrossRon}
         displayNetRon={displayNetRon}
+        displayVatRon={displayVatRon}
+        displayVatRate={displayVatRate}
+        displayAdaosPercent={displayAdaosPercent}
         total={total}
-        currency={currency}
+        currency={internalCurrency}
         artworkOnlyBlocked={artworkOnlyBlocked}
         officialPricingBlocker={officialPricingBlocker}
         emphasis="sidebar"
+        acmPanelCostFallback={acmPanelCostFallback}
       />
 
-      <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} />
+      {!hideAcmPanelProvisional ? (
+        <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} />
+      ) : null}
 
       {pendingSave ? (
         <p
@@ -1314,7 +1735,16 @@ export default function IntakeV6LiveCalculationSummary({
               className="mb-2 rounded border border-cyan-500/20 bg-cyan-500/5 px-2 py-1.5 text-[11px] text-cyan-100/85"
               data-testid="intake-v6-logical-list-summary"
             >
-              Lista logică read-model · {logicalRowCount}{logicalTargetRowCount ? `/${logicalTargetRowCount}` : ""} rânduri
+              Lista logică read-model · {logicalRowCount} rânduri
+              {logicalCoreRowCount != null
+                ? ` (VL ${logicalCoreRowCount}${
+                    compositionAcmRowCount ? ` + panou ${compositionAcmRowCount}` : ""
+                  }${
+                    compositionConnectionRowCount
+                      ? ` + legături ${compositionConnectionRowCount}`
+                      : ""
+                  })`
+                : ""}
             </p>
           ) : null}
           {filterChips}
@@ -1346,7 +1776,7 @@ export default function IntakeV6LiveCalculationSummary({
           </div>
         </div>
       ) : (
-        <p className="text-[11px] text-slate-400">Nu există încă breakdown live.</p>
+        <p className="text-[11px] text-slate-400">{emptyVlBreakdownMessage}</p>
       )}
     </aside>
   );

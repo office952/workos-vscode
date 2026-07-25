@@ -10,6 +10,7 @@ import {
 } from "@/api/productTemplateModuleLinks";
 import { patchComponentContractLink } from "@/api/productTemplateComponentContracts";
 import { humanTemplateName, relationTypeLabelRo } from "./productSystemAdminDisplay";
+import { displayModuleTemplateWireLabel } from "./productTemplateModulesVocabulary";
 import {
   PS_SURFACE_INPUT,
   PS_SURFACE_PANEL,
@@ -95,6 +96,9 @@ export function TemplateCompositionAuthoringPanel({
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanTemplateName(parentTemplateCode)}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{parentTemplateCode}</span>
+          </p>
+          <p className="mt-0.5 text-[10px] text-slate-500">
+            {displayModuleTemplateWireLabel("product_template_module_links")}
           </p>
           <p className="mt-1 text-[11px] text-slate-500">
             Editează roluri și includerea soft. Aluminiu inactiv rămâne blocker real — nu se

@@ -10,6 +10,8 @@ describe("productSystemAdminDisplay", () => {
   it("prefers human name for known templates", () => {
     expect(humanTemplateName("TPL-VOLUM-ALUMINIU_v1")).toBe("Cant / volum din aluminiu");
     expect(humanTemplateName("TPL-VOLUMETRIC-LETTERS_v2")).toBe("Litere volumetrice");
+    expect(humanTemplateName("TPL-ACM-BOXED-MOUNTING-SUPPORT_v1")).toBe("Alucobond casetat");
+    expect(humanTemplateName("TPL-ACM-CASSETTED-PANEL")).toBe("Alucobond casetat");
   });
 
   it("formats known_conflict blockers with human name primary", () => {

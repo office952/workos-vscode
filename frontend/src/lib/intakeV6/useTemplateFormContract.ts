@@ -73,10 +73,10 @@ const FACE_FINISH_LABEL: Record<string, string> = {
   none: "Fără finisaj — plexiglas brut",
   oracal_651: "Oracal 651",
   oracal_641: "Oracal 641",
-  oracal_8500: "Oracal 8500 — translucid",
+  oracal_8500: "Oracal 8500",
   printed_vinyl: "Print pe vinyl",
-  printed_laminated_vinyl: "Print + laminare pe vinyl",
-  print_laminate: "Print + laminare",
+  printed_laminated_vinyl: "Printat / Laminat",
+  print_laminate: "Printat / Laminat",
   colored_plexiglas: "Plexiglas colorat",
 };
 

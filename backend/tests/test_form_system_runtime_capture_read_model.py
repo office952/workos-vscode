@@ -141,6 +141,21 @@ def test_read_model_missing_row_level_print_and_lamination_stay_blocked() -> Non
     assert fields["finish.lamination_required"]["blockers"] == ["LAMINATION_REQUIRED_UNKNOWN"]
 
 
+def test_read_model_empty_artwork_rows_print_lamination_not_applicable() -> None:
+    payload = _complete_payload()
+    payload["finish_setup"]["artwork_finishes"] = []
+
+    model = build_form_system_runtime_capture_read_model(payload, template_code=ROOT)
+    fields = _by_key(model)
+
+    assert fields["finish.print_required"]["state"] in {"ready", "confirmed"}
+    assert fields["finish.print_required"]["blockers"] == []
+    assert fields["finish.print_required"]["ready_for_product_truth"] is True
+    assert fields["finish.lamination_required"]["state"] in {"ready", "confirmed"}
+    assert fields["finish.lamination_required"]["blockers"] == []
+    assert fields["finish.lamination_required"]["ready_for_product_truth"] is True
+
+
 def test_read_model_mounting_scope_and_mounting_solution_do_not_fall_back() -> None:
     payload = _complete_payload()
     payload["finish_setup"].pop("mounting_solution")

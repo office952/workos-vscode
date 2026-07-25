@@ -304,7 +304,7 @@ export function FinishMountingOwnershipPanel() {
         className="sticky bottom-0 z-10 flex flex-wrap gap-3 border-t border-[#1E293B] bg-[#111827]/95 py-2 text-[12px] backdrop-blur-sm"
         data-testid="ownership-action-links"
       >
-        <Link to="/intake-v6" className="text-blue-400 hover:text-blue-300">
+        <Link to="/intake-v6/operator" className="text-blue-400 hover:text-blue-300">
           Intake V6
         </Link>
         <Link to="/product-system/blueprint-dossier" className="text-blue-400 hover:text-blue-300">

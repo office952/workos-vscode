@@ -143,4 +143,92 @@ describe("IntakeV6AcmPanelConfigRegion blueprint slot", () => {
     );
     expect(screen.queryByTestId("intake-v6-acm-blueprint-preview")).toBeNull();
   });
+
+  it("workbench variant renders flat inspector without component list chrome", () => {
+    const onSelect = vi.fn();
+    render(
+      <AcmPanelDraftFlushProvider>
+        <IntakeV6AcmPanelConfigRegion
+          variant="workbench"
+          payload={{
+            product_composition_recommendation: {
+              composition_items: [
+                { component_role: "support_panel", template_code: ACM_PANEL_TEMPLATE_CODE },
+              ],
+            },
+          }}
+          finishSetup={acmFinish()}
+          hasLetters={false}
+          hasLogo={false}
+          selectedId={null}
+          onSelect={onSelect}
+          onApplyFinishPatch={vi.fn()}
+          onNavigateLetters={vi.fn()}
+          onNavigateLogo={vi.fn()}
+        />
+      </AcmPanelDraftFlushProvider>,
+    );
+
+    expect(screen.getByTestId("intake-v6-acm-panel-config-region")).toHaveAttribute(
+      "data-acm-layout",
+      "workbench",
+    );
+    expect(screen.getByTestId("intake-v6-acm-panel-inspector")).toHaveAttribute(
+      "data-presentation",
+      "flat",
+    );
+    expect(screen.getByTestId("intake-v6-acm-section-geometry")).toHaveAttribute(
+      "data-presentation",
+      "flat",
+    );
+    expect(screen.getByTestId("intake-v6-acm-field-fold_count")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-product-component-list")).toBeNull();
+    expect(onSelect).toHaveBeenCalledWith("acm_panel");
+  });
+
+  it("workbench merges blueprint + validation into one tech strip without badges", () => {
+    render(
+      <AcmPanelDraftFlushProvider>
+        <IntakeV6AcmPanelConfigRegion
+          variant="workbench"
+          payload={{
+            product_composition_recommendation: {
+              composition_items: [
+                { component_role: "support_panel", template_code: ACM_PANEL_TEMPLATE_CODE },
+              ],
+            },
+          }}
+          finishSetup={acmFinish()}
+          hasLetters={false}
+          hasLogo={false}
+          selectedId="acm_panel"
+          onSelect={vi.fn()}
+          onApplyFinishPatch={vi.fn()}
+          onNavigateLetters={vi.fn()}
+          onNavigateLogo={vi.fn()}
+        />
+      </AcmPanelDraftFlushProvider>,
+    );
+
+    const strip = screen.getByTestId("intake-v6-acm-tech-status-strip");
+    expect(strip).toContainElement(screen.getByTestId("intake-v6-acm-blueprint-preview"));
+    expect(strip).toContainElement(screen.getByTestId("intake-v6-acm-validation-rail"));
+    expect(screen.getByTestId("intake-v6-acm-blueprint-preview")).toHaveAttribute(
+      "data-chrome",
+      "embedded",
+    );
+    expect(screen.getByTestId("intake-v6-acm-validation-rail")).toHaveAttribute(
+      "data-density",
+      "inline",
+    );
+    expect(screen.queryByTestId("intake-v6-acm-blueprint-readiness-badge")).toBeNull();
+    expect(screen.queryByTestId("intake-v6-acm-workbench-status")).toBeNull();
+    expect(screen.queryByTestId("intake-v6-acm-authority-panel_geometry")).toBeNull();
+    expect(screen.getByTestId("intake-v6-acm-panel-config-region").textContent).not.toMatch(
+      /Confirmat de operator|Neaplicabil|Nivel L1/,
+    );
+    expect(screen.getByTestId("intake-v6-acm-confirm-panel")).toBeInTheDocument();
+    // Fixture may surface issues; when present they stay inside the shared strip.
+    expect(strip).toHaveTextContent(/Validare/i);
+  });
 });

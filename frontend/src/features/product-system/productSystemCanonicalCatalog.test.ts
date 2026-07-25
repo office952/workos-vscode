@@ -167,6 +167,9 @@ describe("productSystemCanonicalCatalogModel", () => {
     expect(products.some((product) => product.templateCode === LETTERS_TEMPLATE_CODE)).toBe(true);
     expect(products.some((product) => product.templateCode === TPL_ACM_BOXED_MOUNTING_SUPPORT)).toBe(true);
     expect(products.every((product) => !("bucket" in product))).toBe(true);
+    expect(
+      products.find((product) => product.templateCode === TPL_ACM_BOXED_MOUNTING_SUPPORT)?.displayName,
+    ).toBe("Alucobond casetat");
   });
 
   it("uses commercial honesty chips instead of bare ACTIVE/CONFIRMAT", () => {

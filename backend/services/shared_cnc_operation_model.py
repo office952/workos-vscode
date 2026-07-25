@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Literal, Mapping, Sequence
 
+from seeds.material_canonical_naming import LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME
 from services.intake_v4_cnc_router_pass_policy_service import resolve_cnc_cutting_perimeter_ml
 
 DEFAULT_DEPTH_PER_PASS_MM = 3.5
@@ -373,10 +374,10 @@ CUTTING_SERVICE_CNC_BINDING = CncProductionResourceBinding(
 
 VOLUMETRIC_FACE_CUTTING_RULE = CncOperationRule(
     operation_key="cnc_face_cutting_plexiglas_3mm",
-    display_name="Debitare CNC față Plexiglas 3 mm",
+    display_name=f"Debitare CNC față {LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}",
     operation_type=CncOperationType.CUTTING,
     material_family="plexiglas",
-    material_name="Plexiglas 3 mm",
+    material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
     thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="face_cnc_cutting_perimeter",
@@ -389,10 +390,10 @@ VOLUMETRIC_FACE_CUTTING_RULE = CncOperationRule(
 
 VOLUMETRIC_FACE_BEVEL_RULE = CncOperationRule(
     operation_key="cnc_face_bevel_plexiglas_3mm",
-    display_name="Șanfren CNC față Plexiglas 3 mm",
+    display_name=f"Șanfren CNC față {LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}",
     operation_type=CncOperationType.BEVEL,
     material_family="plexiglas",
-    material_name="Plexiglas 3 mm",
+    material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
     thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
     basis_type=CncBasisType.PATH_PERIMETER,
     basis_key="face_cnc_cutting_perimeter",
@@ -562,7 +563,7 @@ def build_volumetric_letters_cnc_operation_rows(
             display_name=VOLUMETRIC_FACE_CUTTING_RULE.display_name,
             operation_type=CncOperationType.CUTTING.value,
             material_family="plexiglas",
-            material_name="Plexiglas 3 mm",
+            material_name=LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME,
             thickness_mm=DEFAULT_FACE_PLEXI_THICKNESS_MM,
             basis_key="face_cnc_cutting_perimeter",
             basis_label="Perimetru CNC față",

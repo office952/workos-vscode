@@ -1,5 +1,6 @@
 import { ChevronDown, Package } from "lucide-react";
 import { useMemo, useState } from "react";
+import { resolveAcmPanelOnlyUiScope } from "@/lib/intakeV6/acmPanel/acmPanelOnlyComposition";
 import { readPersistedOfferScope } from "@/lib/intakeV6/intakeV6OfferScopeState";
 import { describeOfferScopeSummary } from "@/lib/intakeV6/intakeV6OfferScopePresets";
 
@@ -9,12 +10,41 @@ export default function IntakeV6OfferScopeReviewSummary({
 }: {
   payload: Record<string, unknown> | null | undefined;
 }) {
+  const acmScope = useMemo(() => resolveAcmPanelOnlyUiScope(payload), [payload]);
   const summary = useMemo(() => {
     const persisted = readPersistedOfferScope(payload);
     return describeOfferScopeSummary(persisted.mode, persisted.soldModules);
   }, [payload]);
   const [open, setOpen] = useState(false);
-  const hasExcluded = summary.excludedLabelsRo.length > 0;
+  const hasExcluded = acmScope.isAcmPanelOnly
+    ? true
+    : summary.excludedLabelsRo.length > 0;
+
+  if (acmScope.isAcmPanelOnly) {
+    return (
+      <section
+        className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/5 px-2.5 py-1"
+        data-testid="intake-v6-review-offer-scope-summary"
+        data-scope-weight="chip"
+        data-acm-panel-only="true"
+      >
+        <Package className="h-3 w-3 shrink-0 text-cyan-400" aria-hidden />
+        <p
+          className="min-w-0 truncate text-[11px] text-cyan-100/90"
+          data-testid="intake-v6-review-offer-scope-mode"
+        >
+          <span className="font-semibold text-cyan-200/80">Scope</span>
+          {" · "}
+          <span data-testid="intake-v6-review-offer-scope-acm-panel-only">
+            {acmScope.scopeChipLabelRo}
+          </span>
+        </p>
+        <span className="sr-only" data-testid="intake-v6-review-offer-scope-excluded">
+          Nu sunt incluse: {acmScope.outOfScopeNeedsRo.join(", ")}
+        </span>
+      </section>
+    );
+  }
 
   return (
     <section

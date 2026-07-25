@@ -7,6 +7,7 @@ import {
   buildAcmPanelUiReadModel,
   type AcmPanelUiReadModel,
 } from "@/lib/intakeV6/acmPanel/uiReadModel";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 import type { IntakeV6ProductComponentId } from "@/lib/intakeV6/useIntakeV6ProductComponentSelection";
 
 export type ProductComponentListItem = {
@@ -123,11 +124,13 @@ export default function IntakeV6ProductComponentList({
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span className="text-[12px] font-semibold text-slate-100">{item.title}</span>
-                    <span
-                      className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold ${toneClass(item.statusTone)}`}
-                    >
-                      {item.statusLabel}
-                    </span>
+                    {intakeV6ShowOperatorConfigStatusBadges() ? (
+                      <span
+                        className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold ${toneClass(item.statusTone)}`}
+                      >
+                        {item.statusLabel}
+                      </span>
+                    ) : null}
                     {item.issueCount > 0 ? (
                       <span className="text-[10px] text-amber-200">{item.issueCount} probleme</span>
                     ) : null}

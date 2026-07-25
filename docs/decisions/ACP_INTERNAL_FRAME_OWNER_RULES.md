@@ -29,6 +29,7 @@
 | Structural certified calc | **NOT_APPLICABLE** | WorkOS never claims certified structural calc |
 | Global XOR frame vs premount | **OWNER_CONFIRMED** reject | Independent; XOR is mounting-support choice only |
 | Initial ACP profile sizes | **DEFERRED** | None confirmed — Registry profiles list empty for ACP until GO |
+| Cutlist symbol **P** | **OWNER_CONFIRMED** (2026-07-23) | See §1.2b — variable only; not a SKU |
 
 ### 1.2 Frame formula (OWNER_CONFIRMED)
 
@@ -41,6 +42,27 @@ Example ACP 3 mm, panel 2000×700 → frame **1992×692** (single fold = double 
 
 `total_fit_allowance_mm = 2` is the fixed mounting margin (luft total).  
 It is **not** a configurable clearance min/max and **not** the old hidden 5 mm default.
+
+### 1.2b Cutlist symbol **P** (OWNER_CONFIRMED — 2026-07-23)
+
+| Field | Value |
+|-------|-------|
+| **Symbol** | `P` |
+| **Meaning** | Outer width of the frame profile section (mm) used in cutlist topology |
+| **Status** | **OWNER_CONFIRMED** as the cutlist variable |
+| **Examples** | `20×20` → **P = 20**; `30×30` → **P = 30** |
+| **Not P** | Wall thickness in the metal (“în carne”), e.g. **1.5 mm** on `20×20×1.5` — separate parameter; **not** used in `− 2×P` |
+| **Not confirmed** | Concrete profile SKU / default `P` value (still §1.4 DEFERRED) |
+
+```text
+longs   = frame axis length (full)           → qty 2
+shorts  = frame perpendicular axis − 2×P     → qty 2
+crossbars = same length as shorts            → qty N (suggested; operator confirms)
+```
+
+Didactic only (MIXED §6): if `P = 20` and frame 838×638 → `2×838` + `2×598` + crossbars 598.  
+That example does **not** approve `20×20×1.5` as ACP internal-frame default until a separate SKU GO.  
+`1.5` here = wall thickness only, not P.
 
 ### 1.3 Crossbars (OWNER_CONFIRMED)
 

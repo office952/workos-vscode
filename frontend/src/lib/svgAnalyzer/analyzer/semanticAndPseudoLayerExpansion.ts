@@ -15,6 +15,7 @@ import {
   isLogoArtworkLayerName,
   isPseudoLayerId,
   isSemanticProductionOrArtworkLayerName,
+  isSupportPanelLayerName,
   normalizeLayerDisplayName,
 } from './layerNameSemantics'
 import { shouldPreserveExistingLayerStructure } from './pseudoLayerExpansionGuard'
@@ -199,6 +200,31 @@ function shouldUseAnaMariaFillSemantics(fileName: string): boolean {
   return token.includes('gradi-curat') || token.includes('ana-maria-gradinita')
 }
 
+function nameSuggestsSupportPanelContour(name: string | null | undefined): boolean {
+  if (!name) return false
+  return isSupportPanelLayerName(name)
+}
+
+function strokeElementBelongsToSupportNamedLayer(
+  doc: ParsedSvgDocument,
+  element: ParsedSvgDocument['elements'][number],
+): boolean {
+  if (nameSuggestsSupportPanelContour(element.layerName) || nameSuggestsSupportPanelContour(element.layerId)) {
+    return true
+  }
+  for (const group of doc.groups) {
+    const owns =
+      group.elementIds.includes(element.elementId) ||
+      group.id === element.layerId ||
+      normalizeLayerDisplayName(group.name ?? '') === normalizeLayerDisplayName(element.layerName ?? '')
+    if (!owns) continue
+    if (nameSuggestsSupportPanelContour(group.name) || nameSuggestsSupportPanelContour(group.id)) {
+      return true
+    }
+  }
+  return false
+}
+
 function assignStrokeOnlyLogoLayers(
   doc: ParsedSvgDocument,
   geometry: GeometrySummary,
@@ -217,6 +243,11 @@ function assignStrokeOnlyLogoLayers(
     })
 
   for (const candidate of candidates) {
+    // Panel-alone / named ACM support stroke must stay Contur suport — not Logo N.
+    if (strokeElementBelongsToSupportNamedLayer(doc, candidate)) {
+      continue
+    }
+
     const bbox = geoById.get(candidate.elementId)?.bbox
     const candidateCenterX = bbox ? bbox.x + bbox.width / 2 : null
     const positionHint = deriveVisualPositionHint(candidateCenterX, centerX)

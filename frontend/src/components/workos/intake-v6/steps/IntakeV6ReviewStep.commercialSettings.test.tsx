@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { IntakeV6WorkspaceHook } from "@/lib/intakeV6/useIntakeV6Workspace";
@@ -128,7 +128,13 @@ vi.mock("../atoms/IntakeV6ReviewSectionShell", () => ({
   default: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 vi.mock("../atoms/IntakeV6TechnicalDetailsAccordion", () => ({
-  default: () => null,
+  default: ({
+    children,
+    testId,
+  }: {
+    children?: React.ReactNode;
+    testId?: string;
+  }) => <div data-testid={testId}>{children}</div>,
 }));
 vi.mock("../IntakeV6WorkspaceHeaderStatusContext", () => ({
   useIntakeV6WorkspaceHeaderStatus: () => ({ setOverlay: vi.fn(), setHandlers: vi.fn() }),
@@ -600,6 +606,10 @@ describe("IntakeV6ReviewStep commercial settings regression", () => {
   it("mounts the return/cant blocked awareness panel in review without ready-state claims", async () => {
     renderReviewStepHarness();
 
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-return-cant-blocked-operator-message")).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByTestId("intake-v6-review-technical-details-toggle"));
     await waitFor(() => {
       expect(screen.getByTestId("mock-return-cant-blocked-awareness")).toBeInTheDocument();
     });

@@ -59,12 +59,33 @@ export function isArtworkOrPolicromieLayerName(name: string): boolean {
   )
 }
 
+/** Named ACM / Alucobond / fundal Contur suport Corel layers (stroke or fill). */
+export function isSupportPanelLayerName(name: string): boolean {
+  const n = normalizeLayerDisplayName(name)
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_\- ]+/g, ' ')
+  if (!n) return false
+  return (
+    n.includes('alucobond') ||
+    n.includes('dibond') ||
+    n.includes('casetat') ||
+    n.includes('caseta') ||
+    /\bacm\b/.test(n) ||
+    n.includes('support') ||
+    n.includes('fundal') ||
+    (n.includes('panou') && !n.includes('logo')) ||
+    (n.includes('panel') && !n.includes('logo'))
+  )
+}
+
 export function isSemanticProductionOrArtworkLayerName(name: string): boolean {
   if (isGenericLayerName(name) || isCorelInternalGroupId(name)) return false
   return (
     isLogoArtworkLayerName(name) ||
     isVolumetricLetterLayerName(name) ||
-    isArtworkOrPolicromieLayerName(name)
+    isArtworkOrPolicromieLayerName(name) ||
+    isSupportPanelLayerName(name)
   )
 }
 

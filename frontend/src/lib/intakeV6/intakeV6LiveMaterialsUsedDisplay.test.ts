@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+﻿import { describe, expect, it } from "vitest";
 import { buildIntakeV6LiveMaterialsUsedRows } from "./intakeV6LiveMaterialsUsedDisplay";
 import type {
 	IntakeV6CncOperationRow,
@@ -82,7 +82,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 				materialRows: [
 					materialRow({
 						material_key: "plexiglas_face",
-						display_name: "Plexiglas 3 mm",
+						display_name: "plexiglas 3mm PMMA - opal",
 						registry_code: "MAT-ACP-FATA-LITERE",
 						base_quantity: 2,
 						quantity: 2,
@@ -106,10 +106,10 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 			artworkFinishes: [{ layer_key: "logo", estimated_area_m2: 0.5 }],
 		});
 
-		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("Plexiglas 3 mm");
+		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("plexiglas 3mm PMMA - opal");
 		expect(rows.find((item) => item.groupKey === "plexi")?.quantityText).toContain("2.500 m");
 		expect(rows.find((item) => item.groupKey === "plexi")?.costText).toBe("40.00 EUR");
-		expect(rows.find((item) => item.groupKey === "plexi")?.technicalDetails).toContain("Sursă: Plexiglas 3 mm");
+		expect(rows.find((item) => item.groupKey === "plexi")?.technicalDetails).toContain("Sursă: plexiglas 3mm PMMA - opal");
 		expect(rows.find((item) => item.groupKey === "plexi")?.technicalDetails).toContain("Sursă: Plexiglas față emblemă — Logo 1");
 	});
 
@@ -119,7 +119,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 				materialRows: [
 					materialRow({
 						material_key: "plexiglas_face",
-						display_name: "Plexiglas 3 mm",
+						display_name: "plexiglas 3mm PMMA - opal",
 						base_quantity: 1.264,
 						quantity: 1.264,
 						priced_quantity: 2.5238,
@@ -132,7 +132,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 
 		expect(rows.find((item) => item.groupKey === "plexi")?.quantityText).toContain("2.524 m");
 		expect(rows.find((item) => item.groupKey === "plexi")?.costText).toBe("40.38 EUR");
-		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("Plexiglas 3 mm");
+		expect(rows.find((item) => item.groupKey === "plexi")?.label).toBe("plexiglas 3mm PMMA - opal");
 	});
 
 	it("separates Oracal face vinyl series and cant vinyl with their own prices", () => {
@@ -342,7 +342,7 @@ describe("buildIntakeV6LiveMaterialsUsedRows", () => {
 				operationRows: [
 					operationRow({
 						key: "cnc_face_cutting_plexiglas_3mm",
-						display_name: "Debitare CNC fata Plexiglas 3 mm",
+						display_name: "Debitare CNC față plexiglas 3mm PMMA - opal",
 						quantity: 24.6488,
 						operation_equivalent_quantity: 24.6488,
 						operation_equivalent_unit: "ml-pass",

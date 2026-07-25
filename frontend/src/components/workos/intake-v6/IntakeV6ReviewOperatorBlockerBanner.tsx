@@ -98,10 +98,15 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
                   <button
                     type="button"
                     className="mt-1 text-[10px] font-semibold text-cyan-300 hover:text-cyan-200"
-                    onClick={() => onFocusTarget(issue.focusTarget!)}
+                    onClick={() => {
+                      if (issue.tabId) {
+                        onFocusTarget(`tab:${issue.tabId}`);
+                      }
+                      onFocusTarget(issue.focusTarget!);
+                    }}
                     data-testid={`intake-v6-review-operator-blocker-jump-${issue.id}`}
                   >
-                    Mergi la câmp
+                    {issue.tabId === "finisaje" ? "Mergi la Finisaje" : "Mergi la câmp"}
                   </button>
                 ) : null}
               </li>

@@ -66,14 +66,51 @@ Fără calcule interne (straturi, luft, traverse, jocuri).
 
 ## 4. Carcasă casetată — CNC
 
-1. Frezare V pe **partea opusă** feței active.  
-2. Decupaj grafic în fața activă.  
-3. Debitare contur exterior.  
-4. Pliere / formare.
+Pe CNC sunt **două tipuri de proces** distincte (owner 2026-07-23):
 
-Note: unghi freză ≠ unghi pliu automat; V mai permisiv posibil în practică (risc fisură față); doar CNC în Product System; unealta manuală **nu** intră în DAG.
+Taxonomie CNC owner — **3 elemente separate** (2026-07-23):
 
-**Repo:** seed ACM `cut → v_groove → fold` — fără regula V-opus; gap task_rules.
+| # | Etichetă RO | Unde | Ce face |
+|---|-------------|------|---------|
+| 1 | **Decupare** | Litere + ACM | Taie prin material (contur / grafică) |
+| 2 | **Canal / Șanfren** | **Doar litere** | Canal pe suprafață sau pe margine (lipire volum–față) — ≠ V-groove |
+| 3 | **V-groove** | **Doar Dibond/ACM** (îndoire) | Șanț V pe linia de pliu; piele ~0.8 mm |
+
+Pe Corp ACM casetat: **Decupare** (`CUT_ACM_PANEL`) + **V-groove** (`ACM_V_GROOVE`). Nu alias V-groove ↔ Canal/Șanfren.
+
+Plierea / formarea = **manoperă atelier după CNC**, pe șanțurile V — nu e al treilea tip de tăiere CNC.
+
+### Geometrie V → pliu (owner diagram 2026-07-23)
+
+Schițe + taxonomie: [`CNC_PROCESS_TAXONOMY_RO.md`](./CNC_PROCESS_TAXONOMY_RO.md)  
+DXF ArtCAM (200×30, un pliu / două pliuri): [`ACM_ARTCAM_DXF_OWNER_GOLDEN.md`](./ACM_ARTCAM_DXF_OWNER_GOLDEN.md)  
+Evidence V-groove PNG: [`../worklog/realignment/audit_assets/24_acm_vgroove_fold_geometry.png`](../worklog/realignment/audit_assets/24_acm_vgroove_fold_geometry.png)
+
+| Unghi șanț V (deschis) | Bază plană șanț | Piele rămasă (nu tăiată) | Unghi după pliere |
+|------------------------|-----------------|--------------------------|-------------------|
+| **135°** | **2 mm** | **0.8 mm** | **45°** |
+| **90°** | **3 mm** | **0.8 mm** | **90°** |
+
+V lasă skin-ul exterior intact (pliu pe piele); nu e CUT. Pentru casetă tipică atelierul folosește pliu **90°** (șanț 90° / bază 3 mm).
+
+### Ordine atelier casetare bond (OWNER_CONFIRMED 2026-07-23)
+
+SoT display: `frontend/src/features/product-system/acmBoxedStructurePrincipalTaskOrder.ts`
+
+1. Pregătire fișier **ArtCAM** (cote finale, desfășurată/blank intern, linii V-groove, contur exterior, toleranțe)  
+2. Frezare **V-groove** / linii de îndoire  
+3. **Debitare finală** pe conturul exterior  
+4. Curățare muchii / debavurare + **îndoiri** / formare casetă  
+5. Confecționare **cadru metalic** cf. specificații  
+6. **Prindere** cadru de corpul casetat Alucobond  
+7. **Aplicare autocolant** (dacă e selectat)  
+8. **Altfel** — vopsire autoforante la culoarea Alucobondului  
+9. Pregătire **accesorii montaj**  
+10. **Impachetare** produs cf. specificații  
+
+Note: 7 XOR 8. Doar CNC în Product System pentru V+CUT; unealta manuală **nu** intră în DAG.  
+
+**Repo seed** încă poate lista ops cut→V→fold — non-blocking; ordinea atelier de mai sus e authority.
 
 ---
 
@@ -298,12 +335,25 @@ Pentru litere volumetrice montate pe panou ACM/ACP:
 `paper vs Forex default` **nu** mai este o decizie deschisă pentru montajul pe ACM/ACP.  
 Alte variante de șablon din documentația literelor pot rămâne pentru **alte contexte de montaj** (fără casetă ACM/ACP) — nu se șterg global.
 
+### Calcul comercial (OWNER_CONFIRMED 2026-07-23)
+
+Pe composition Litere↔Alucobond, material + cutter/plotter + transfer + aplicare = **un singur proces**:
+
+| Câmp | Valoare |
+|------|---------|
+| Tarif | **20 EUR / mp** |
+| Baza mp | **Outbox al literelor volumetrice ca layer integral** (nu sumă piesă cu piesă) |
+| Reguli | Nu orar; nu descompune în linii separate material/cutter/transfer/aplicare |
+
+Secvența composition = **spine comun** memoriu T12–T18 cu **delta** Alucobond:  
+`docs/architecture/product-system/LETTERS_ACM_COMPATIBILITY_CONTRACT_V1.md` (nu montaj paralel).
+
 ### Reguli operaționale
 
 - Alegere ghidaj vs crop: procesatorul; sistemul **nu** impune.  
 - Task unic: `sablon_montaj` pe litere — **nu** și pe shell.
 
-Task cere: schiță · cote · orientare · tip ghidaj · fișier tăiere · confirmare forme pline.
+Task cere: schiță · cote · orientare · tip ghidaj · fișier tăiere · confirmare forme pline · **aria outbox layer integral** (baza mp).
 
 ---
 
@@ -401,13 +451,13 @@ Procesare grafică · unghi pliu din freză · alegere ghidaj/crop · împărți
 | face≠return finish (litere) | EXISTS | OK |
 | Oracal 651 catalog | EXISTS | OK |
 | Print+lam ops | EXISTS (artwork) | OK |
-| Față+primul pliu strategie | MISSING | OWNER_CONFIRMED |
+| Față+primul pliu strategie | PARTIAL — Intake `shell_finish` v1 (AcmPanel) | OWNER_CONFIRMED |
 | Ansamblu multi-panou | CONTRACT `acm_segmented_background_v1` (envelope MAX_ONE + panels) | OWNER_CONFIRMED |
 | Literă peste îmbinare | CONTRACT (2-stage + primary/secondary) | EXECUTABIL |
 | Decupaj peste îmbinare | CONTRACT blocker | BLOCKER |
 | 220V per panou | PARTIAL (service_corner) | OWNER_CONFIRMED |
 | LED pe Forex înainte de attach | Graph soft / owner list | OWNER_CONFIRMED docs |
-| Șablon pe ACM/ACP | OWNER_CONFIRMED vinyl transparent | Ferm (§13) |
+| Șablon pe ACM/ACP | OWNER_CONFIRMED vinyl transparent + **20 EUR/mp** pe outbox layer integral | Ferm (§13) |
 
 ---
 
@@ -415,13 +465,13 @@ Procesare grafică · unghi pliu din freză · alegere ghidaj/crop · împărți
 
 1. Profiluri cadru SKU (închide DEFERRED).  
 2. Consum SVG Analyzer → propunere segmentare (UI confirmare) — contractul există; wiring UI separat.  
-3. Finish Contract pe shell (față/volum/pliu/îmbinări).  
+3. ~~Finish Contract pe shell (față/volum)~~ — **v1 Intake** (`acm_panel_instance.shell_finish`); CostEngine / task_rules încă gap; îmbinări segmentate = separat.  
 4. Materializare CNC + Oracal-după-fixare în task_rules.  
 5. 220V position enum per panou.  
 6. Reconciliere graph ATTACH vs LED (dep tare).  
 7. GO LIGHT-ROUTED migrate — separat.  
 
-**Închis:** șablon pe ACM/ACP = autocolant transparent + transfer; forme pline permanente; ghidaje/crop temporare (§13).  
+**Închis:** șablon pe ACM/ACP = autocolant transparent + transfer; forme pline permanente; ghidaje/crop temporare (§13); comercial composition **20 EUR/mp** pe outbox layer integral (`LETTERS_ACM_COMPATIBILITY_CONTRACT_V1_ACCEPTED`).  
 **Închis ca model contract:** ansamblu = un `SUPPORT_CONTOUR` envelope + `assembly_panels[]` nested (nu MULTI SUPPORT global).
 
 ---

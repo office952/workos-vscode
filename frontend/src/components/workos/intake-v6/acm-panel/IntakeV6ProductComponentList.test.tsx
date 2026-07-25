@@ -51,7 +51,7 @@ describe("IntakeV6ProductComponentList", () => {
       hasLogo: false,
     });
     expect(items.map((i) => i.id)).toEqual(["letters", "acm_panel"]);
-    expect(items.find((i) => i.id === "acm_panel")?.title).toBe("Panou Alucobond casetat");
+    expect(items.find((i) => i.id === "acm_panel")?.title).toBe("Alucobond casetat");
 
     const onSelect = vi.fn();
     render(

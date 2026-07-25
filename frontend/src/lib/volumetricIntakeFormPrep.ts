@@ -186,7 +186,7 @@ export function buildVolumetricQuotePrepSummary(
     pushIfMissing(
       missingForFinalQuote,
       true,
-      "Panou ACM casetat — necesită template separat pentru ofertă finală"
+      "Alucobond casetat — necesită template separat pentru ofertă finală"
     );
   }
 

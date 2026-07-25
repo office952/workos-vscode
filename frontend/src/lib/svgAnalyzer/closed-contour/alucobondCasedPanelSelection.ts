@@ -77,18 +77,32 @@ export function validateCasingProfile(profile: AlucobondCasingProfile | null): s
   return blockers;
 }
 
+/**
+ * CNC fixing margin on unfolded material (owner 2026-07-23): +10 mm total on each blank axis.
+ * Terms: W/H = face; L1/L2 = returns; atelier/UI = „material desfășurat”; repo = blank_* .
+ */
+export const ACM_BLANK_CNC_FIXING_MARGIN_MM = 10;
+
 export function blankPreviewMm(args: {
   width_mm: number;
   height_mm: number;
   fold_count: 1 | 2;
   l1_mm: number;
   l2_mm: number | null;
-}): { blank_width_mm: number; blank_height_mm: number; fold_sum_mm: number } {
+}): {
+  blank_width_mm: number;
+  blank_height_mm: number;
+  fold_sum_mm: number;
+  cnc_fixing_margin_mm: number;
+} {
   const foldSum = args.fold_count === 2 ? args.l1_mm + Number(args.l2_mm ?? 0) : args.l1_mm;
+  const margin = ACM_BLANK_CNC_FIXING_MARGIN_MM;
   return {
     fold_sum_mm: foldSum,
-    blank_width_mm: args.width_mm + 2 * foldSum,
-    blank_height_mm: args.height_mm + 2 * foldSum,
+    cnc_fixing_margin_mm: margin,
+    // blank = face + (L1×2) + (L2×2 if fold_count=2) + 10 mm CNC fixing margin
+    blank_width_mm: args.width_mm + 2 * foldSum + margin,
+    blank_height_mm: args.height_mm + 2 * foldSum + margin,
   };
 }
 

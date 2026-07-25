@@ -783,7 +783,7 @@ export const inventoryMaterials: InventoryMaterial[] = [
   { id: "MAT-001", name: "ACP / Dibond 3mm alb", category: "Plăci", unit: "mp", stockCurrent: 12, stockMin: 20, stockMax: 100, stockStatus: "critical", unitCost: 45, supplier: "Alucobond RO", lastRestocked: "2026-03-28", consumptionRate: 3.5, daysUntilEmpty: 3, location: "Depozit A1" },
   { id: "MAT-002", name: "ACP / Dibond 3mm negru", category: "Plăci", unit: "mp", stockCurrent: 35, stockMin: 20, stockMax: 100, stockStatus: "ok", unitCost: 48, supplier: "Alucobond RO", lastRestocked: "2026-04-02", consumptionRate: 2.0, daysUntilEmpty: 17, location: "Depozit A1" },
   { id: "MAT-003", name: "PVC expandat 5mm alb", category: "Plăci", unit: "mp", stockCurrent: 45, stockMin: 30, stockMax: 150, stockStatus: "ok", unitCost: 18, supplier: "Simona AG", lastRestocked: "2026-04-01", consumptionRate: 4.0, daysUntilEmpty: 11, location: "Depozit A2" },
-  { id: "MAT-004", name: "Plexiglas 3mm opal", category: "Plăci", unit: "mp", stockCurrent: 18, stockMin: 15, stockMax: 80, stockStatus: "low", unitCost: 55, supplier: "Evonik RO", lastRestocked: "2026-03-30", consumptionRate: 2.5, daysUntilEmpty: 7, location: "Depozit A2" },
+  { id: "MAT-004", name: "plexiglas 3mm PMMA - opal", category: "Plăci", unit: "mp", stockCurrent: 18, stockMin: 15, stockMax: 80, stockStatus: "low", unitCost: 55, supplier: "Evonik RO", lastRestocked: "2026-03-30", consumptionRate: 2.5, daysUntilEmpty: 7, location: "Depozit A2" },
   { id: "MAT-005", name: "Autocolant alb lucios 1.37m", category: "Rolă", unit: "ml", stockCurrent: 120, stockMin: 50, stockMax: 300, stockStatus: "ok", unitCost: 3.5, supplier: "Oracal", lastRestocked: "2026-04-03", consumptionRate: 12, daysUntilEmpty: 10, location: "Depozit B1" },
   { id: "MAT-006", name: "Laminat mat 80μm", category: "Rolă", unit: "ml", stockCurrent: 85, stockMin: 40, stockMax: 200, stockStatus: "ok", unitCost: 2.8, supplier: "Oracal", lastRestocked: "2026-04-03", consumptionRate: 10, daysUntilEmpty: 8, location: "Depozit B1" },
   { id: "MAT-007", name: "Banner frontlit 440g", category: "Rolă", unit: "ml", stockCurrent: 60, stockMin: 30, stockMax: 150, stockStatus: "ok", unitCost: 4.2, supplier: "Heytex", lastRestocked: "2026-04-01", consumptionRate: 5, daysUntilEmpty: 12, location: "Depozit B2" },
@@ -964,7 +964,7 @@ export const productTemplates: ProductTemplate[] = [
     estimatedHours: 4.25,
     requiredMaterials: [
       { materialId: "MAT-011", name: "Profil aluminiu U 40x40", quantity: 8, unit: "ml", stockStatus: "ok", stockCurrent: 80 },
-      { materialId: "MAT-004", name: "Plexiglas 3mm opal", quantity: 3, unit: "mp", stockStatus: "low", stockCurrent: 18 },
+      { materialId: "MAT-004", name: "plexiglas 3mm PMMA - opal", quantity: 3, unit: "mp", stockStatus: "low", stockCurrent: 18 },
       { materialId: "MAT-001", name: "ACP / Dibond 3mm alb", quantity: 3, unit: "mp", stockStatus: "critical", stockCurrent: 12 },
       { materialId: "MAT-009", name: "Module LED SMD 3x2W", quantity: 40, unit: "buc", stockStatus: "ok", stockCurrent: 450 },
       { materialId: "MAT-010", name: "Surse LED 12V 150W", quantity: 2, unit: "buc", stockStatus: "low", stockCurrent: 15 },
@@ -1047,7 +1047,7 @@ export const productTemplates: ProductTemplate[] = [
     estimatedHours: 4.58,
     requiredMaterials: [
       { materialId: "MAT-003", name: "PVC expandat 5mm alb", quantity: 8, unit: "mp", stockStatus: "ok", stockCurrent: 45 },
-      { materialId: "MAT-004", name: "Plexiglas 3mm opal", quantity: 4, unit: "mp", stockStatus: "low", stockCurrent: 18 },
+      { materialId: "MAT-004", name: "plexiglas 3mm PMMA - opal", quantity: 4, unit: "mp", stockStatus: "low", stockCurrent: 18 },
     ],
   },
   {
@@ -1171,7 +1171,7 @@ export const build4ProductTemplates: ProductTemplate[] = [
       { materialId: "MAT-POLICARBONAT-OPAL", name: "Policarbonat opal", quantity: 0, unit: "mp", stockStatus: "ok", stockCurrent: 25 },
       { materialId: "MAT-VINYL-TRANSPARENT", name: "Vinyl print față", quantity: 0, unit: "mp", stockStatus: "ok", stockCurrent: 40 },
       { materialId: "MAT-PANOU-SPATE-ALU", name: "Panou spate aluminiu", quantity: 0, unit: "mp", stockStatus: "ok", stockCurrent: 30 },
-      { materialId: "MAT-LED-MODULE", name: "Module LED", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 300 },
+      { materialId: "MAT-LED-MODULE", name: "Modul LED 12V", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 300 },
       { materialId: "MAT-LED-PSU-12V", name: "Surse alimentare LED", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 20 },
     ],
   },
@@ -1179,8 +1179,8 @@ export const build4ProductTemplates: ProductTemplate[] = [
     templateCode: "TPL-VOLUMETRIC-LETTERS",
     familyId: "litere_volumetrice",
     familyName: "Litere volumetrice",
-    description: "Litere volumetrice 3D — față plexi/acrilic, bordură profil aluminiu, spate Forex 10 mm. LED pe spate. Premontaj opțional ACM/structură.",
-    components: ["Față litere — plexi/acrilic (CNC/laser)", "Laterale litere — profil aluminiu (bordură)", "Spate litere — Forex 10 mm", "Iluminare LED — montaj pe spate Forex", "Finisare — vopsire, asamblare, QC"],
+    description: "Litere volumetrice 3D — față plexiglas 3mm PMMA - opal, bordură profil aluminiu, spate Forex 10 mm. LED pe spate. Premontaj opțional ACM/structură.",
+    components: ["Față litere — plexiglas 3mm PMMA - opal (CNC/laser)", "Laterale litere — profil aluminiu (bordură)", "Spate litere — Forex 10 mm", "Iluminare LED — montaj pe spate Forex", "Finisare — vopsire, asamblare, QC"],
     operations: [
       { code: "vector_prep", name: "Pregătire vector / font", workcenter: "PREPRESS", estimatedMinutes: 45, sequence: 1 },
       { code: "face_cnc_cut", name: "Tăiere CNC față litere", workcenter: "CNC_ROUTER", estimatedMinutes: 0, sequence: 2 },
@@ -1196,9 +1196,9 @@ export const build4ProductTemplates: ProductTemplate[] = [
     estimatedHours: 12.0,
     requiredMaterials: [
       { materialId: "MAT-ACP-FATA-LITERE", name: "ACP/aluminiu față", quantity: 0, unit: "mp", stockStatus: "ok", stockCurrent: 15 },
-      { materialId: "MAT-PROFIL-LATERAL-LITERE", name: "Profil lateral litere", quantity: 0, unit: "ml", stockStatus: "ok", stockCurrent: 50 },
+      { materialId: "MAT-PROFIL-LATERAL-LITERE", name: "Volum aluminiu — alege lățimea (30/60/80/100)", quantity: 0, unit: "ml", stockStatus: "ok", stockCurrent: 50 },
       { materialId: "MAT-SPATE-PVC-LITERE", name: "Forex 10 mm spate litere", quantity: 0, unit: "mp", stockStatus: "ok", stockCurrent: 20 },
-      { materialId: "MAT-LED-MODULE", name: "Module LED litere", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 300 },
+      { materialId: "MAT-LED-MODULE", name: "Modul LED 12V", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 300 },
       { materialId: "MAT-LED-PSU-12V", name: "Surse LED litere", quantity: 0, unit: "buc", stockStatus: "ok", stockCurrent: 20 },
       { materialId: "MAT-VOPSEA-RAL", name: "Vopsea RAL", quantity: 0, unit: "set", stockStatus: "ok", stockCurrent: 10 },
     ],
@@ -1440,7 +1440,7 @@ export const standardSheetFormats: StandardSheetFormat[] = [
   },
   {
     materialId: "MAT-004",
-    materialName: "Plexiglas 3mm opal",
+    materialName: "plexiglas 3mm PMMA - opal",
     formats: [
       { widthMM: 3050, heightMM: 2050, label: "3050×2050mm" },
       { widthMM: 2050, heightMM: 1250, label: "2050×1250mm" },
@@ -1478,7 +1478,7 @@ export const physicalSheets: PhysicalSheet[] = [
   { sheetId: "SHT-024", materialId: "MAT-003", widthMM: 2440, heightMM: 1220, type: "full_sheet", status: "available", location: "Depozit A2" },
   { sheetId: "SHT-025", materialId: "MAT-003", widthMM: 3050, heightMM: 2050, type: "full_sheet", status: "available", location: "Depozit A2" },
   { sheetId: "SHT-026", materialId: "MAT-003", widthMM: 1500, heightMM: 1220, type: "remnant", status: "available", location: "Depozit A2", sourceJobId: "JOB-0031", label: "Rest din JOB-0031" },
-  // MAT-004: Plexiglas 3mm opal — 18 mp
+  // MAT-004: plexiglas 3mm PMMA - opal — 18 mp
   { sheetId: "SHT-030", materialId: "MAT-004", widthMM: 3050, heightMM: 2050, type: "full_sheet", status: "available", location: "Depozit A2" },
   { sheetId: "SHT-031", materialId: "MAT-004", widthMM: 2050, heightMM: 1250, type: "full_sheet", status: "available", location: "Depozit A2" },
   { sheetId: "SHT-032", materialId: "MAT-004", widthMM: 3050, heightMM: 100, type: "remnant", status: "available", location: "Depozit A2", sourceJobId: "JOB-0033", label: "Fâșie din JOB-0033" },

@@ -345,9 +345,134 @@ ACM_STRUCTURA_COMMERCIAL_RULES: tuple[CommercialRuleDefinition, ...] = (
     ),
 )
 
+# Letters↔ACM composition connection — owner sheet (mirror FE lettersAcmCompositionConnectionPrices).
+LETTERS_ACM_SABLON_PROCESS_EUR_M2 = 20.0
+LETTERS_ACM_FASTEN_FOREX_EUR_M2 = 8.0
+LETTERS_ACM_ELECTRIC_PSU_EUR_BUC = 35.0
+LETTERS_ACM_CABLE_5M_EUR_BUC = 6.0
+LETTERS_ACM_LIGHT_TEST_EUR_BUC = 8.0
+LETTERS_ACM_ATTACH_BODY_EUR_M2 = 12.0
+LETTERS_ACM_PACK_EUR_M2 = 10.0
+LETTERS_ACM_PACK_MIN_EUR = 15.0
+
+LETTERS_ACM_COMPOSITION_CONNECTION_RULES: tuple[CommercialRuleDefinition, ...] = (
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_sablon_process",
+        label="Proces șablon pe Alucobond (material+cutter+transfer+aplicare)",
+        module_code="sablon_montaj",
+        component_code="comp_finisaj_litere",
+        pricing_rule_code="LETTERS_ACM_SABLON_PROCESS_M2",
+        basis_type="m2",
+        quantity_paths=("letters_layer_outbox_m2", "finish_setup.letters_layer_outbox_m2"),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:letters_acm_sablon_20_eur_m2",
+        documented_unit_price=LETTERS_ACM_SABLON_PROCESS_EUR_M2,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        warnings=(
+            "Owner-locked 20 EUR/mp on letters-layer outbox integral. "
+            "Suppresses legacy sablon_montaj_* split under ACM composition.",
+        ),
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_fasten_forex",
+        label="Prindere Forex pe bond (autoforante)",
+        module_code="structura_suport",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_FASTEN_FOREX_M2",
+        basis_type="m2",
+        quantity_paths=("letters_layer_outbox_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:letters_acm_fasten_forex",
+        documented_unit_price=LETTERS_ACM_FASTEN_FOREX_EUR_M2,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_electric_psu",
+        label="Electrică în carcasa bond + legare transformator",
+        module_code="structura_suport",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_ELECTRIC_PSU_BUC",
+        basis_type="piece",
+        quantity_paths=(),
+        unit="buc",
+        source="commercial_rules_volumetric_v2:letters_acm_electric_psu",
+        documented_unit_price=LETTERS_ACM_ELECTRIC_PSU_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_cable_5m",
+        label="Cablu alimentare 5 m 220V (2×1.5) + atasare",
+        module_code="structura_suport",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_CABLE_5M_BUC",
+        basis_type="piece",
+        quantity_paths=(),
+        unit="buc",
+        source="commercial_rules_volumetric_v2:letters_acm_cable_5m",
+        documented_unit_price=LETTERS_ACM_CABLE_5M_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_light_test",
+        label="Test lumină",
+        module_code="structura_suport",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_LIGHT_TEST_BUC",
+        basis_type="piece",
+        quantity_paths=(),
+        unit="buc",
+        source="commercial_rules_volumetric_v2:letters_acm_light_test",
+        documented_unit_price=LETTERS_ACM_LIGHT_TEST_EUR_BUC,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_attach_body",
+        label="Prindere corp pe Forex (autoforante fine vopsite)",
+        module_code="structura_suport",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_ATTACH_BODY_M2",
+        basis_type="m2",
+        quantity_paths=("letters_layer_outbox_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:letters_acm_attach_body",
+        documented_unit_price=LETTERS_ACM_ATTACH_BODY_EUR_M2,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+    ),
+    CommercialRuleDefinition(
+        line_code="letters_acm_conn_pack",
+        label="Impachetare ansamblu Litere + Alucobond",
+        module_code="ambalare_livrare_montaj",
+        component_code=None,
+        pricing_rule_code="LETTERS_ACM_PACK_M2_MIN",
+        basis_type="m2",
+        quantity_paths=("letters_layer_outbox_m2",),
+        unit="m2",
+        source="commercial_rules_volumetric_v2:letters_acm_pack_min",
+        documented_unit_price=LETTERS_ACM_PACK_EUR_M2,
+        documented_unit_price_currency="EUR",
+        always_include=True,
+        criticality="optional",
+        warnings=(
+            f"Minimum commercial charge {LETTERS_ACM_PACK_MIN_EUR} EUR when area × rate is lower.",
+        ),
+    ),
+)
+
 VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM: tuple[CommercialRuleDefinition, ...] = (
     *VOLUMETRIC_V2_COMMERCIAL_RULES,
     *ACM_STRUCTURA_COMMERCIAL_RULES,
+    *LETTERS_ACM_COMPOSITION_CONNECTION_RULES,
 )
 
 # Linked-child logo commercial rule *templates* (expanded per segment in CPP).
@@ -475,7 +600,10 @@ LOGO_LINKED_CHILD_COMMERCIAL_RULE_TEMPLATES: tuple[CommercialRuleDefinition, ...
 
 RULES_BY_TEMPLATE: dict[str, tuple[CommercialRuleDefinition, ...]] = {
     PILOT_TEMPLATE: VOLUMETRIC_V2_COMMERCIAL_RULES_WITH_ACM,
-    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": ACM_STRUCTURA_COMMERCIAL_RULES,
+    "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1": (
+        *ACM_STRUCTURA_COMMERCIAL_RULES,
+        *LETTERS_ACM_COMPOSITION_CONNECTION_RULES,
+    ),
 }
 
 CRITICAL_MODULE_CODES = frozenset(

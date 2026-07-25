@@ -1,124 +1,75 @@
-import { NavLink, Outlet, Link, useLocation } from "react-router-dom";
-import { ExternalLink } from "lucide-react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { ProductSystemShellProvider, useProductSystemShell } from "./ProductSystemShellContext";
-import {
-  PRICING_REGISTRY_PATH,
-  PRODUCT_SYSTEM_PLANNED_BADGE_RO,
-  PRODUCT_SYSTEM_SHELL_NAV,
-} from "./productSystemShellConfig";
+import { PRODUCT_SYSTEM_SHELL_NAV } from "./productSystemShellConfig";
 import { productSystemShellNavIdForPath } from "./productSystemRouteSync";
 import { ProductSystemAuthoringStackBanner } from "./ProductSystemAuthoringStackBanner";
-import { PS_SURFACE_QUIET } from "./productSystemSurfaces";
-import { PRICING_REGISTRY_NAV_LABEL } from "./productTemplateModulesVocabulary";
 
 function ProductSystemLayoutInner() {
   const location = useLocation();
   const { canViewAdvanced } = useProductSystemShell();
   const activeNavId = productSystemShellNavIdForPath(location.pathname);
 
-  const visibleNav = PRODUCT_SYSTEM_SHELL_NAV.filter(
-    (item) => !item.requiresAdvancedAccess || canViewAdvanced,
+  // Planned sections stay routable but off primary chrome.
+  const operationalNav = PRODUCT_SYSTEM_SHELL_NAV.filter(
+    (item) =>
+      !item.plannedSection && (!item.requiresAdvancedAccess || canViewAdvanced),
   );
-  const operationalNav = visibleNav.filter((item) => !item.plannedSection);
-  const plannedNav = visibleNav.filter((item) => item.plannedSection);
+  // One real section today (Workspace) — do not render a lonely tab that repeats the title.
+  const showSectionNav = operationalNav.length > 1;
+  const onWorkspace =
+    activeNavId === "products" ||
+    location.pathname === "/product-system" ||
+    location.pathname.startsWith("/product-system/products");
 
   return (
-    <div className="space-y-4" data-testid="product-system-shell">
-      <div className="space-y-1">
-        <nav
-          aria-label="Product System breadcrumb"
-          className="text-[11px] text-slate-500"
-          data-testid="product-system-breadcrumb"
+    <div className="space-y-3" data-testid="product-system-shell" data-workspace="blank">
+      <header className="flex flex-wrap items-center justify-between gap-2">
+        <h1
+          className="text-base font-bold text-slate-100"
+          data-testid="product-system-shell-title"
         >
-          <span className="text-slate-400">Product System</span>
-          {activeNavId && activeNavId !== "products" ? (
-            <>
-              <span className="mx-1.5 text-slate-600">/</span>
-              <span className="text-slate-300">
-                {PRODUCT_SYSTEM_SHELL_NAV.find((item) => item.id === activeNavId)?.label}
-              </span>
-            </>
-          ) : null}
-        </nav>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h1 className="text-base font-bold text-slate-100">Product System</h1>
-            <p className="mt-0.5 text-[11px] text-slate-500" data-testid="product-system-shell-subtitle">
-              Catalog admin · identitate → lifecycle → compoziție → readiness → publicare
-            </p>
-          </div>
-          <Link
-            to={PRICING_REGISTRY_PATH}
-            data-testid="product-system-pricing-registry-link"
-            className={`inline-flex items-center gap-1.5 ${PS_SURFACE_QUIET} px-2.5 py-1.5 text-[11px] font-medium text-slate-300 transition-colors hover:border-slate-600 hover:text-slate-100`}
-          >
-            {PRICING_REGISTRY_NAV_LABEL}
-            <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
-          </Link>
-        </div>
-      </div>
+          Product System
+        </h1>
+        {/* Subtitle / breadcrumb / single Workspace tab removed — they duplicated the page header. */}
+        <p className="sr-only" data-testid="product-system-shell-subtitle">
+          Product Template, Module produs, Product Compiler, Pregătire
+        </p>
+      </header>
 
-      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-slate-800/70 pb-0.5">
-        <nav
-          aria-label="Product System sections"
-          className="flex flex-wrap gap-1"
-          data-testid="product-system-shell-nav"
-        >
-          {operationalNav.map((item) => (
-            <NavLink
-              key={item.id}
-              to={item.path}
-              end={item.id !== "products"}
-              data-testid={`product-system-shell-nav-${item.id}`}
-              data-planned="false"
-              className={({ isActive }) =>
-                `inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
-                  isActive
-                    ? `border border-b-0 border-[#1E293B] bg-[#111827] text-slate-100`
-                    : "text-slate-500 hover:text-slate-300"
-                }`
-              }
-            >
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
-        </nav>
-
-        {plannedNav.length > 0 ? (
+      {showSectionNav ? (
+        <div className="border-b border-slate-800/70 pb-0.5">
           <nav
-            aria-label="Secțiuni în dezvoltare"
-            className="flex flex-wrap items-center gap-1 pb-1"
-            data-testid="product-system-shell-nav-planned"
+            aria-label="Product System sections"
+            className="flex flex-wrap gap-1"
+            data-testid="product-system-shell-nav"
           >
-            <span
-              className="mr-1 text-[10px] font-medium uppercase tracking-wide text-slate-600"
-              data-testid="product-system-shell-planned-cluster-label"
-            >
-              {PRODUCT_SYSTEM_PLANNED_BADGE_RO}
-            </span>
-            {plannedNav.map((item) => (
+            {operationalNav.map((item) => (
               <NavLink
                 key={item.id}
                 to={item.path}
-                end
+                end={item.id !== "products"}
                 data-testid={`product-system-shell-nav-${item.id}`}
-                data-planned="true"
+                data-planned="false"
                 className={({ isActive }) =>
-                  `inline-flex items-center rounded px-2 py-1 text-[11px] font-medium transition-colors ${
-                    item.id === "advanced" ? "ml-1 border-l border-slate-800/80 pl-3" : ""
-                  } ${
+                  `inline-flex items-center gap-1.5 rounded-t-md px-3 py-2 text-[12px] font-medium transition-colors ${
                     isActive
-                      ? "bg-slate-900/50 text-slate-400"
-                      : "text-slate-600 hover:text-slate-500"
+                      ? "border border-b-0 border-[#1E293B] bg-[#111827] text-slate-100"
+                      : "text-slate-500 hover:text-slate-300"
                   }`
                 }
               >
-                <span>{item.label}</span>
+                <span>{item.label === "Products" ? "Workspace" : item.label}</span>
               </NavLink>
             ))}
           </nav>
-        ) : null}
-      </div>
+        </div>
+      ) : (
+        <div
+          className="hidden"
+          data-testid="product-system-shell-nav"
+          data-single-section={onWorkspace ? "workspace" : "other"}
+        />
+      )}
 
       <ProductSystemAuthoringStackBanner />
 

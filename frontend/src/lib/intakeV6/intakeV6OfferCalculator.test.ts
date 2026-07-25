@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  applyIntakeV6CommercialAdjustments,
   buildIntakeV6OfferModel,
   convertIntakeV6InternalCostToRon,
   resolveIntakeV6OfferCommercialDefaults,
@@ -83,10 +84,32 @@ describe("intakeV6OfferCalculator currency", () => {
 
   it("normalizes missing persisted commercial inputs to safe defaults", () => {
     expect(resolveIntakeV6OfferCommercialDefaults(buildPreview(), null)).toEqual({
-      markupPercent: 35,
+      markupPercent: 0,
       discountPercent: 0,
       vatPercent: 19,
       manualAdjustmentRon: 0,
+    });
+  });
+
+  it("applies Adaos on commercial base like backend dry-run", () => {
+    expect(
+      applyIntakeV6CommercialAdjustments(1000, {
+        markupPercent: 50,
+        discountPercent: 0,
+        vatPercent: 21,
+        manualAdjustmentRon: 0,
+      }),
+    ).toEqual({
+      commercialBaseSubtotal: 1000,
+      markupValue: 500,
+      discountValue: 0,
+      subtotalNet: 1500,
+      vatValue: 315,
+      totalGross: 1815,
+      markupPercent: 50,
+      discountPercent: 0,
+      manualAdjustmentRon: 0,
+      vatPercent: 21,
     });
   });
 

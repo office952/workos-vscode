@@ -53,6 +53,9 @@ from services.intake_v6_layer_binding_persistence_service import (
 from services.intake_v6_product_composition_recommendation_service import (
     apply_product_composition_recommendation,
 )
+from services.letters_acm_composition_commercial_v1 import (
+    resolve_letters_layer_outbox_m2,
+)
 from services.intake_v6_product_system_service import (
     build_binding_response,
     resolve_product_template_or_raise,
@@ -1131,13 +1134,17 @@ async def save_product_composition_confirmation_for_workspace(
         "source": "operator_confirmation_v1",
     }
     # Sync ACM panel instance composition_status (does not auto-confirm association/technical).
+    # Create finish_setup when missing so applied_content XOR survives before Montaj seed.
     finish = payload_raw.get("finish_setup") if isinstance(payload_raw.get("finish_setup"), dict) else None
+    items_list = confirmed_items if isinstance(confirmed_items, list) else []
+    acm_codes = {"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"}
+    has_acm = any(
+        isinstance(it, dict) and str(it.get("template_code") or "") in acm_codes for it in items_list
+    )
+    if finish is None and confirmed and has_acm:
+        finish = {}
+        payload_raw["finish_setup"] = finish
     if isinstance(finish, dict):
-        acm_codes = {"TPL-ACM-BOXED-MOUNTING-SUPPORT_v1"}
-        items_list = confirmed_items if isinstance(confirmed_items, list) else []
-        has_acm = any(
-            isinstance(it, dict) and str(it.get("template_code") or "") in acm_codes for it in items_list
-        )
         next_comp_status = "confirmed" if (confirmed and has_acm) else "unconfirmed"
         inst = finish.get("acm_panel_instance")
         if isinstance(inst, dict) and inst.get("schema") == "acm_panel_component_instance_v1":
@@ -1147,6 +1154,63 @@ async def save_product_composition_confirmation_for_workspace(
             nested = dict(sel["acm_panel_instance"])
             nested["composition_status"] = next_comp_status
             finish["svg_support_selection"] = {**sel, "acm_panel_instance": nested}
+
+        # ACM composition XOR: panel-alone → none; letters+ACM → letters (CPP connection gate).
+        recommendation = payload_raw.get("product_composition_recommendation")
+        composition_type = (
+            str(recommendation.get("composition_type") or "").strip().lower()
+            if isinstance(recommendation, dict)
+            else ""
+        )
+        letters_codes = {"TPL-VOLUMETRIC-LETTERS_v2"}
+        item_codes = {
+            str(it.get("template_code") or "").strip()
+            for it in items_list
+            if isinstance(it, dict)
+        }
+        item_codes.discard("")
+        is_support_only = composition_type in {"support_only", "support_only_pending"} or (
+            confirmed and item_codes == acm_codes
+        )
+        is_letters_plus_support = composition_type == "letters_plus_support" or (
+            confirmed
+            and has_acm
+            and bool(item_codes & letters_codes)
+            and not is_support_only
+        )
+        composition_confirmed = payload_raw.get("product_composition_confirmed")
+        if not isinstance(composition_confirmed, dict):
+            composition_confirmed = {}
+
+        if confirmed and is_support_only and has_acm:
+            finish["applied_content"] = "none"
+            composition_confirmed = {**composition_confirmed, "applied_content": "none"}
+            payload_raw["product_composition_confirmed"] = composition_confirmed
+        elif confirmed and is_letters_plus_support and has_acm:
+            finish["applied_content"] = "letters"
+            composition_confirmed = {**composition_confirmed, "applied_content": "letters"}
+            # Seed canonical outbox qty when missing (contract: integral layer, not per-glyph).
+            outbox_qty, outbox_src = resolve_letters_layer_outbox_m2(
+                {
+                    **payload_raw,
+                    "finish_setup": finish,
+                }
+            )
+            if outbox_qty is not None and finish.get("letters_layer_outbox_m2") in (
+                None,
+                "",
+                0,
+                0.0,
+            ):
+                finish["letters_layer_outbox_m2"] = outbox_qty
+                finish["letters_layer_outbox_source"] = outbox_src
+            composition_confirmed = {
+                **composition_confirmed,
+                "letters_layer_outbox_m2": finish.get("letters_layer_outbox_m2"),
+                "letters_layer_outbox_source": finish.get("letters_layer_outbox_source"),
+            }
+            payload_raw["product_composition_confirmed"] = composition_confirmed
+
         payload_raw["finish_setup"] = finish
     persist_logo_layer_bindings_from_composition_confirmation(
         payload_raw,

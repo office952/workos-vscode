@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildAcmPanelConfirmTechnicalPatch,
   buildAcmPanelConfirmConstructionPatch,
+  buildAcmPanelConfirmPanelPatch,
   buildAcmPanelUpdateFieldPatch,
   buildAcmPanelUpdateFieldsPatch,
   buildAcmPanelConfirmActionWithUpdatesPatch,
@@ -90,6 +91,37 @@ describe("acmPanel operatorPatch", () => {
     expect(inst.composition_status).toBe("unconfirmed");
   });
 
+  it("confirm technical seeds panels[] from envelope when empty", () => {
+    const patch = buildAcmPanelConfirmTechnicalPatch({ finishSetup: finish() });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.geometry.panels).toHaveLength(1);
+    expect(inst.geometry.panels?.[0]?.width_mm).toBe(1000);
+    expect(inst.geometry.panels?.[0]?.height_mm).toBe(350);
+  });
+
+  it("width update syncs single panels[0] for CUT/V deduction", () => {
+    const seeded = finish();
+    const base = seeded.acm_panel_instance as AcmPanelComponentInstance;
+    base.geometry.panels = [
+      {
+        panel_id: "panel_1",
+        order: 1,
+        width_mm: 1000,
+        height_mm: 350,
+        position: { x_mm: 0, y_mm: 0 },
+      },
+    ];
+    const patch = buildAcmPanelUpdateFieldPatch({
+      finishSetup: { ...seeded, acm_panel_instance: base },
+      field: "panel_width_mm",
+      value: 2000,
+    });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.geometry.width_mm).toBe(2000);
+    expect(inst.geometry.panels?.[0]?.width_mm).toBe(2000);
+    expect(inst.geometry.panels?.[0]?.height_mm).toBe(350);
+  });
+
   it("confirm technical does not auto-confirm composition", () => {
     const patch = buildAcmPanelConfirmTechnicalPatch({ finishSetup: finish() });
     const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
@@ -157,6 +189,19 @@ describe("acmPanel operatorPatch", () => {
     expect(inst.configuration.l1_mm).toBe(62);
     expect(inst.configuration.acm_thickness_mm).toBe(4);
     expect(inst.technical_configuration_status).toBe("confirmed");
+    expect(inst.composition_status).toBe("unconfirmed");
+  });
+
+  it("confirm panel confirms technical + shell finish without composition", () => {
+    const patch = buildAcmPanelConfirmPanelPatch({
+      finishSetup: finish(),
+      updates: [{ field: "l1_mm", value: 55 }],
+    });
+    const inst = patch?.acm_panel_instance as AcmPanelComponentInstance;
+    expect(inst.configuration.l1_mm).toBe(55);
+    expect(inst.technical_configuration_status).toBe("confirmed");
+    expect(inst.configuration.field_authority.panel_geometry).toBe("operator_confirmed");
+    expect((inst.shell_finish as { operator_confirmed?: boolean })?.operator_confirmed).toBe(true);
     expect(inst.composition_status).toBe("unconfirmed");
   });
 });

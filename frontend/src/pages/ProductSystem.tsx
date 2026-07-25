@@ -92,8 +92,10 @@ import {
   PRODUCT_TEMPLATE_COMPOSES_HELP,
   PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP,
   RETURN_CANT_MOVE_TRUTH_HELP,
+  MODULE_PRODUS_SHARED_SINGULAR_LABEL,
   SHARED_FOUNDATION_HELP,
   displayModuleSourceTypeLabel,
+  displayModuleTemplateWireLabel,
   equalModulesHintRo,
 } from "@/features/product-system/productTemplateModulesVocabulary";
 import {
@@ -103,6 +105,9 @@ import {
 import { buildCandidateModuleProdusReadonlySetModel } from "@/features/product-system/candidateModuleProdusReadonlySetModel";
 import { CandidateModuleProdusPanel } from "@/features/product-system/CandidateModuleProdusPanel";
 import { ProductSystemCanonicalCatalog } from "@/features/product-system/ProductSystemCanonicalCatalog";
+import { ProductSystemV2Workspace } from "@/features/product-system/ProductSystemV2Workspace";
+import { ProductSystemSpineBand } from "@/features/product-system/ProductSystemSpineBand";
+import { isPsLegacyCatalogEnabled } from "@/features/product-system/productSystemV2WorkspaceModel";
 import { parseRequestedTemplateCode } from "@/features/product-system/productSystemTemplateQuerySync";
 import {
   buildProductSystemProductDetailPath,
@@ -266,7 +271,7 @@ const COMPONENT_TYPE_CONFIG: Record<
     bgColor: "bg-violet-500/10",
     borderColor: "border-violet-500/30",
     label: "Litere 3D",
-    description: "Litere volumetrice — față plexi/acrilic, bordură aluminiu, spate Forex 10 mm, LED pe spate",
+    description: "Litere volumetrice — față plexiglas 3mm PMMA - opal, bordură aluminiu, spate Forex 10 mm, LED pe spate",
     emoji: "ðŸ”¤",
   },
   ELECTRIC_LED: {
@@ -1963,7 +1968,7 @@ const RETURN_CANT_TRUTH_CONTAINER_FIELDS: ReturnCantTruthContainerFieldAudit[] =
   },
   {
     key: "component_template_code",
-    label: "component_template_code",
+    label: displayModuleTemplateWireLabel("component_template_code"),
     sourceType: "component template / registry",
     currentSource: "TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].component_template_code",
@@ -2718,9 +2723,9 @@ function SharedVolumetricFoundationPanel({
               <span className={`rounded border px-1.5 py-0.5 text-[9px] font-bold ${contract.confidence === "PARTIAL" ? "border-amber-700/40 bg-amber-900/20 text-amber-300" : "border-slate-700 bg-slate-900 text-slate-300"}`}>{contract.confidence}</span>
             </div>
             <p className="mt-1 text-[10px] text-slate-500">Profile: {contract.profile_key}</p>
-            <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Shared module: {SHARED_VOLUMETRIC_EDITOR_MODULES[contract.component_key] ?? contract.shared_module_template_code ?? contract.module_template_code}</p>
+            <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {SHARED_VOLUMETRIC_EDITOR_MODULES[contract.component_key] ?? contract.shared_module_template_code ?? contract.module_template_code}</p>
             {contract.component_key === "volumetric_lighting" && contract.shared_module_template_code ? (
-              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Shared module: {contract.shared_module_template_code}</p>
+              <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">{MODULE_PRODUS_SHARED_SINGULAR_LABEL}: {contract.shared_module_template_code}</p>
             ) : null}
             {contract.component_key === "volumetric_lighting" && contract.strategy_source_template_code ? (
               <p className="mt-0.5 truncate font-mono text-[10px] text-cyan-200">Strategy source: {contract.strategy_source_template_code}</p>
@@ -3395,13 +3400,13 @@ function ProductSystemInfoPopover({
           <li>
             Șablonul este folosit în{" "}
             <Link
-              to="/intake-v6"
+              to="/intake-v6/operator"
               data-testid="product-system-page-intake-v6-link"
               className="text-purple-300 underline underline-offset-2 hover:text-purple-200"
             >
               Intake V6
             </Link>{" "}
-            și la generarea ofertelor.
+            (downstream) — Oferta client nu se formează aici.
           </li>
           <li>
             Validarea completă a șablonului se face în pașii următori (ofertare, comenzi, prețuri).
@@ -3459,13 +3464,19 @@ export default function ProductSystem() {
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [catalogSearch, setCatalogSearch] = useState("");
 
+  const useLegacyCatalog = isPsLegacyCatalogEnabled(searchParams);
+
   const handleRequestedTemplateCodeChange = useCallback(
     (templateCode: string | null) => {
       if (shellMode) {
+        const legacySuffix = useLegacyCatalog ? "?ps_legacy=1" : "";
         if (templateCode) {
-          navigate(buildProductSystemProductDetailPath(templateCode), { replace: false });
+          navigate(
+            `${buildProductSystemProductDetailPath(templateCode)}${legacySuffix}`,
+            { replace: false },
+          );
         } else {
-          navigate("/product-system/products", { replace: false });
+          navigate(`/product-system/products${legacySuffix}`, { replace: false });
         }
         return;
       }
@@ -3477,12 +3488,15 @@ export default function ProductSystem() {
           } else {
             next.delete("template");
           }
+          if (useLegacyCatalog) {
+            next.set("ps_legacy", "1");
+          }
           return next;
         },
         { replace: false },
       );
     },
-    [navigate, setSearchParams, shellMode],
+    [navigate, setSearchParams, shellMode, useLegacyCatalog],
   );
 
   const loadTemplates = useCallback(async (): Promise<ProductTemplateEntity[]> => {
@@ -3799,7 +3813,7 @@ export default function ProductSystem() {
       data-testid="product-system-products-page"
       data-canonical-template-code={routeTemplateCode ?? undefined}
     >
-      {shouldShowLibraryScreen(screen) ? (
+      {shouldShowLibraryScreen(screen) && useLegacyCatalog ? (
         <div className="space-y-2 rounded-xl border border-slate-800/60 bg-slate-950/20 p-3" data-testid="product-system-library-header">
           <div className="flex flex-wrap items-center gap-2 lg:flex-nowrap">
             <div className="flex min-w-0 items-center gap-2">
@@ -3819,12 +3833,18 @@ export default function ProductSystem() {
                       className="truncate text-sm font-semibold leading-tight text-slate-200"
                       data-testid="product-system-products-title"
                     >
-                      Products
+                      Catalog vechi (intern)
                     </h2>
                   ) : (
                     <h1 className="truncate text-base font-bold leading-tight text-slate-100">Product System</h1>
                   )}
                   <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+                  <span
+                    className="rounded border border-amber-800/40 bg-amber-950/20 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200/90"
+                    data-testid="product-system-legacy-catalog-badge"
+                  >
+                    Legacy
+                  </span>
                 </div>
               </div>
             </div>
@@ -3842,6 +3862,13 @@ export default function ProductSystem() {
             </div>
 
             <div className="flex shrink-0 items-center gap-1.5">
+              <Link
+                to="/product-system/products"
+                data-testid="product-system-return-v2-link"
+                className="rounded-md border border-sky-800/50 px-2 py-1.5 text-[11px] font-medium text-sky-200 hover:bg-sky-950/30"
+              >
+                Înapoi la V2
+              </Link>
               <button
                 onClick={loadTemplates}
                 disabled={loading}
@@ -3855,14 +3882,42 @@ export default function ProductSystem() {
               <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} readOnly={operatorReadOnly} />
             </div>
           </div>
-          <p
-            data-testid="product-system-catalog-overview"
-            className="text-xs leading-relaxed text-slate-500"
-          >
-            Catalog de design · inspectare readonly · candidate Module produs Letters rămâne inactiv
-          </p>
+          <ProductSystemSpineBand testId="product-system-catalog-overview" />
           {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
             <p className="rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">
+              {loadMode === "mock"
+                ? "Mod previzualizare — date mock, nu API live."
+                : loadMode === "auth_required"
+                  ? "Autentificare necesară pentru șabloane reale."
+                  : "Încărcarea șabloanelor a eșuat — reîncarcă sau verifică backend-ul."}
+            </p>
+          ) : null}
+        </div>
+      ) : shouldShowLibraryScreen(screen) && !useLegacyCatalog ? (
+        <div
+          className="flex flex-wrap items-center justify-end gap-2"
+          data-testid="product-system-v2-page-toolbar"
+        >
+          {/* No second title here — shell owns "Product System"; workspace owns the spine once. */}
+          <span className="sr-only" data-testid="product-system-products-title">
+            Product System workspace
+          </span>
+          <SourceBadge source={productSystemLoadModeToSource(loadMode)} />
+          <button
+            onClick={loadTemplates}
+            disabled={loading}
+            aria-label="Reîncarcă"
+            data-testid="product-system-reload-icon"
+            className="rounded-md border border-slate-700 bg-slate-800/80 p-2 text-slate-300 transition-colors hover:bg-slate-700 disabled:opacity-50"
+          >
+            <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
+          <ProductSystemInfoPopover loadMode={loadMode} catalogCounts={catalogCounts} compact />
+          {!operatorReadOnly ? (
+            <ProductSystemLibraryMoreMenu onCreateTemplate={handleNew} readOnly={operatorReadOnly} />
+          ) : null}
+          {loadMode === "mock" || loadMode === "auth_required" || loadMode === "error" ? (
+            <p className="w-full rounded-lg border border-amber-800/30 bg-amber-950/15 px-3 py-2 text-sm text-amber-300/90">
               {loadMode === "mock"
                 ? "Mod previzualizare — date mock, nu API live."
                 : loadMode === "auth_required"
@@ -4023,7 +4078,7 @@ export default function ProductSystem() {
               Product System nu poate valida șabloanele reale fără autentificare.
             </p>
           </div>
-        ) : shouldShowLibraryScreen(screen) ? (
+        ) : shouldShowLibraryScreen(screen) && useLegacyCatalog ? (
           <ProductSystemCanonicalCatalog
             templates={templates}
             availabilityItems={availabilityItems}
@@ -4033,6 +4088,17 @@ export default function ProductSystem() {
             requestedTemplateCode={requestedTemplateCode}
             onRequestedTemplateCodeChange={handleRequestedTemplateCodeChange}
             onOpenTemplate={handleOpenEditor}
+          />
+        ) : shouldShowLibraryScreen(screen) ? (
+          <ProductSystemV2Workspace
+            templates={templates}
+            availabilityItems={availabilityItems}
+            loading={loading}
+            search={catalogSearch}
+            onSearchChange={setCatalogSearch}
+            requestedTemplateCode={requestedTemplateCode}
+            onRequestedTemplateCodeChange={handleRequestedTemplateCodeChange}
+            onOpenTemplate={operatorReadOnly ? undefined : handleOpenEditor}
           />
         ) : null}
       </div>

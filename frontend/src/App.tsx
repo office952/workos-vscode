@@ -57,6 +57,13 @@ import ProductSystem from "./pages/ProductSystem";
 import ProductSystemLayout from "./features/product-system/ProductSystemLayout";
 import ProductSystemIndexRedirect from "./features/product-system/ProductSystemIndexRedirect";
 import ProductSystemPlannedSectionPage from "./features/product-system/ProductSystemPlannedSectionPage";
+import LettersFaceStructureDetailPage from "./features/product-system/LettersFaceStructureDetailPage";
+import LettersVolumeAluminumStructureDetailPage from "./features/product-system/LettersVolumeAluminumStructureDetailPage";
+import LettersBackForexStructureDetailPage from "./features/product-system/LettersBackForexStructureDetailPage";
+import LettersLedStructureDetailPage from "./features/product-system/LettersLedStructureDetailPage";
+import AcmBoxedStructureDetailPage from "./features/product-system/AcmBoxedStructureDetailPage";
+import LettersAcmCompositionConnectionPricesPage from "./features/product-system/LettersAcmCompositionConnectionPricesPage";
+import LettersAcmComposerIaMockPage from "./features/product-system/LettersAcmComposerIaMockPage";
 import Clients from "./pages/Clients";
 import ClientWorkspace from "./pages/ClientWorkspace";
 import DocumentCenter from "./pages/DocumentCenter";
@@ -78,6 +85,8 @@ import AuthError from "./pages/AuthError";
 import LogoutCallbackPage from "./pages/LogoutCallbackPage";
 import LoginGate from "./components/LoginGate";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { ThemeToggle } from "./components/workos/design-system/ThemeToggle";
 import { productionAlerts } from "./lib/mockData";
 import { isMockEnabled } from "./lib/mockGuard";
 import { resolveShellCriticalCount } from "./lib/shellAlertTruth";
@@ -348,6 +357,7 @@ function AppShell() {
                 {criticalAlerts} critical
               </div>
             )}
+            <ThemeToggle compact className="text-slate-400" />
             <button className="relative p-1.5 rounded hover:bg-slate-800 transition-colors">
               <Bell className="w-4 h-4 text-slate-400" />
               {criticalAlerts > 0 && (
@@ -401,6 +411,34 @@ function AppShell() {
                 <Route index element={<ProductSystemIndexRedirect />} />
                 <Route path="products" element={<ProductSystem />} />
                 <Route path="products/:templateCode" element={<ProductSystem />} />
+                <Route
+                  path="products/:templateCode/structure/vizual-fata"
+                  element={<LettersFaceStructureDetailPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/volum-aluminiu"
+                  element={<LettersVolumeAluminumStructureDetailPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/capac-spate"
+                  element={<LettersBackForexStructureDetailPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/sistem-led"
+                  element={<LettersLedStructureDetailPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/conexiune-litere-acm-preturi"
+                  element={<LettersAcmCompositionConnectionPricesPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/composer-litere-acm"
+                  element={<LettersAcmComposerIaMockPage />}
+                />
+                <Route
+                  path="products/:templateCode/structure/:stepId"
+                  element={<AcmBoxedStructureDetailPage />}
+                />
                 <Route path="components" element={<ProductSystemPlannedSectionPage section="components" />} />
                 <Route path="resources" element={<ProductSystemPlannedSectionPage section="resources" />} />
                 <Route path="operations" element={<ProductSystemPlannedSectionPage section="operations" />} />
@@ -627,25 +665,27 @@ function AuthGate() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      {/* DEV-only stale/wrong backend banner — outside shell so Intake V6 sees it too */}
-      <LocalApiCompatibilityBanner />
-      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <Routes>
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/auth/error" element={<AuthError />} />
-            <Route path="/auth/logout" element={<LogoutCallbackPage />} />
-            <Route path="/logout-callback" element={<LogoutCallbackPage />} />
-            <Route path="*" element={<AuthGate />} />
-          </Routes>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ThemeProvider defaultTheme="light">
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        {/* DEV-only stale/wrong backend banner — outside shell so Intake V6 sees it too */}
+        <LocalApiCompatibilityBanner />
+        <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+          <AuthProvider>
+            <Routes>
+              <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route path="/auth/error" element={<AuthError />} />
+              <Route path="/auth/logout" element={<LogoutCallbackPage />} />
+              <Route path="/logout-callback" element={<LogoutCallbackPage />} />
+              <Route path="*" element={<AuthGate />} />
+            </Routes>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;

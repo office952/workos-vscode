@@ -87,6 +87,18 @@ def compute_acm_assembly_extent(
                 "warnings": warnings,
                 "envelope_ignored_for_multi_panel": False,
             }
+        # Single-panel / panel-alone: geometry W×H envelope is the assembly when
+        # panels[] is empty (legacy instances before seed) or not yet synced.
+        env_w = _num(envelope_width_mm)
+        env_h = _num(envelope_height_mm)
+        if env_w is not None and env_h is not None and env_w > 0 and env_h > 0:
+            return {
+                "assembly_width_mm": env_w,
+                "assembly_height_mm": env_h,
+                "source": "envelope",
+                "warnings": warnings,
+                "envelope_ignored_for_multi_panel": False,
+            }
         return {
             "assembly_width_mm": None,
             "assembly_height_mm": None,
@@ -239,6 +251,13 @@ def inject_assembly_extent_keys(
             assembly_dimensions = prop.get("assembly_dimensions")
         if not panels and isinstance(prop, Mapping) and isinstance(prop.get("panels"), list):
             panels = [p for p in prop["panels"] if isinstance(p, Mapping)]
+
+    # Explicit assembly keys already on values outrank contour envelope fallback.
+    if assembly_dimensions is None:
+        existing_w = _num(values.get("assembly_width_mm"))
+        existing_h = _num(values.get("assembly_height_mm"))
+        if existing_w is not None and existing_h is not None and existing_w > 0 and existing_h > 0:
+            assembly_dimensions = {"width_mm": existing_w, "height_mm": existing_h}
 
     result = compute_acm_assembly_extent(
         panels=panels,

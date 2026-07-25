@@ -4,6 +4,7 @@
  */
 
 import type { AcmPanelUiReadModel } from "@/lib/intakeV6/acmPanel/uiReadModel";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 
 export default function IntakeV6AcmPanelFundalSummary({
   model,
@@ -13,30 +14,35 @@ export default function IntakeV6AcmPanelFundalSummary({
   onOpenInspector: (sectionId?: string) => void;
 }) {
   if (!model.exists) return null;
+  const showStatus = intakeV6ShowOperatorConfigStatusBadges();
 
   return (
     <div
       className="rounded border border-cyan-900/50 bg-cyan-950/20 px-3 py-3"
       data-testid="intake-v6-acm-fundal-readonly-summary"
     >
-      <p className="text-[11px] font-semibold text-cyan-200">Panou Alucobond casetat</p>
+      <p className="text-[11px] font-semibold text-cyan-200">Alucobond casetat</p>
       <p className="mt-1 text-[11px] text-slate-300">
-        Stare: <span className="text-amber-100">{model.primaryStatus.label}</span>
+        {showStatus ? (
+          <>
+            Stare: <span className="text-amber-100">{model.primaryStatus.label}</span>
+          </>
+        ) : null}
         {model.dimensionsSummary ? (
           <>
-            {" "}
-            · Dimensiuni: <span className="text-cyan-100">{model.dimensionsSummary}</span>
+            {showStatus ? " · " : null}
+            Dimensiuni: <span className="text-cyan-100">{model.dimensionsSummary}</span>
           </>
         ) : null}
         {model.segmentCount > 1 ? (
           <>
             {" "}
-            · Segmente: <span className="text-cyan-100">{model.segmentCount}</span> (
-            {model.segmentedLabel})
+            · Segmente: <span className="text-cyan-100">{model.segmentCount}</span>
+            {showStatus ? <> ({model.segmentedLabel})</> : null}
           </>
         ) : null}
       </p>
-      {model.unresolvedConfirmations.length ? (
+      {showStatus && model.unresolvedConfirmations.length ? (
         <p className="mt-1 text-[10px] text-amber-200">
           Nerezolvat: {model.unresolvedConfirmations.join(" · ")}
         </p>

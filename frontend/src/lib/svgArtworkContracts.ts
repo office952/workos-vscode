@@ -25,7 +25,7 @@ export const SVG_ARTWORK_EXECUTION_OPTIONS: Array<{
   label: string;
 }> = [
   { value: "none_raw_plexi", label: "Fără finisaj — plexiglas brut" },
-  { value: "print_laminate", label: "Print + laminare" },
+  { value: "print_laminate", label: "Printat / Laminat" },
   { value: "print_only", label: "Print" },
   { value: "cut_vinyl", label: "Colant tăiat" },
   { value: "translucent_vinyl", label: "Colant translucid" },

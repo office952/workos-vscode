@@ -1077,7 +1077,9 @@ export default function Pricing() {
     }
   });
   const [selectedItem, setSelectedItem] = useState<PricingRegistryItem | null>(null);
-  const [stackSearch, setStackSearch] = useState("");
+  const [stackSearch, setStackSearch] = useState(() =>
+    String(searchParams.get("code") || searchParams.get("q") || "").trim(),
+  );
   const [detailHistory, setDetailHistory] = useState<PriceHistoryEntryDTO[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
 

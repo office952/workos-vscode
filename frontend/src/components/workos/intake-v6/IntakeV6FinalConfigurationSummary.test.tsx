@@ -205,15 +205,35 @@ beforeEach(() => {
     blockers: [],
     commercial_line_items: [],
     pricing_hash: "hash-123",
+    acm_panel_commercial_preview: {
+      status: "provisional",
+      estimated_total: 86.77,
+      currency: "EUR",
+      final_eligibility: false,
+      offer_eligibility: false,
+      execution_eligibility: false,
+      geometry_summary: {
+        assembly_width_mm: 1000,
+        assembly_height_mm: 500,
+        panel_count: 1,
+        face_area_m2: 0.5,
+      },
+      lines: [{ code: "ACM_FACE", label: "Față", amount: 40 }],
+      warnings: [],
+    },
   });
   mockedHandoff.mockResolvedValue(handoffReady);
 });
 
-function renderSummary(hook: IntakeV6WorkspaceHook = buildHook(), withFooter = false) {
+function renderSummary(
+  hook: IntakeV6WorkspaceHook = buildHook(),
+  withFooter = false,
+  variant: "embedded" | "legacyPage" = "embedded",
+) {
   return render(
     <MemoryRouter>
       <IntakeV6WorkspaceHeaderStatusProvider>
-        <IntakeV6FinalConfigurationSummary hook={hook} />
+        <IntakeV6FinalConfigurationSummary hook={hook} variant={variant} />
         {withFooter ? (
           <IntakeV6OperatorWorkspaceFooter
             currentStep="confirm"
@@ -277,5 +297,17 @@ describe("IntakeV6FinalConfigurationSummary", () => {
     });
 
     expect(screen.getByTestId("intake-v6-create-internal-draft")).toHaveTextContent("Continuă către ofertă");
+  });
+
+  it("hides ACM provisional estimate on Confirm (legacyPage) while keeping Ofertă client CTA", async () => {
+    renderSummary(buildHook(), false, "legacyPage");
+
+    await waitFor(() => {
+      expect(screen.getByTestId("intake-v6-priced-quote-cta-card")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("intake-v6-create-priced-quote")).toBeInTheDocument();
+    expect(screen.queryByTestId("intake-v6-acm-panel-provisional-pricing")).not.toBeInTheDocument();
+    expect(screen.queryByText(/Estimare provizorie — panou Alucobond/i)).not.toBeInTheDocument();
   });
 });

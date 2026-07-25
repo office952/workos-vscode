@@ -569,7 +569,7 @@ export function buildAcmPanelBlueprintReadModel(
 ): AcmPanelBlueprintReadModel {
   const empty = (readiness: AcmBlueprintReadiness, extras?: Partial<AcmPanelBlueprintReadModel>): AcmPanelBlueprintReadModel => ({
     readiness,
-    label: "Panou Alucobond casetat",
+    label: "Alucobond casetat",
     disclaimer: "Schematic Nivel 1 provizoriu — nu este desen de execuție.",
     provisionalNote:
       readiness === "L1-P" || readiness === "L1-B"
@@ -897,7 +897,7 @@ export function buildAcmPanelBlueprintReadModel(
 
   return {
     readiness,
-    label: "Panou Alucobond casetat",
+    label: "Alucobond casetat",
     disclaimer: "Schematic Nivel 1 provizoriu — nu este desen de execuție.",
     provisionalNote:
       readiness === "L1-P"

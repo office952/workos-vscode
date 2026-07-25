@@ -103,10 +103,10 @@ const SOURCE_REVIEW_OPTIONS = [
 const FALLBACK_POLICY: InventoryMaterialsPolicyDTO = {
   canonical_categories: ["Placi", "Profile metalice", "Parti electrice", "Folii", "Consumabile"],
   recommended_subcategories: {
-    "Profile metalice": ["Otel / teava rectangulara", "Otel / teava rotunda", "Otel / cornier", "Otel / platbanda", "Aluminiu / profil litera volumetrica", "Aluminiu / profil caseta luminoasa", "Aluminiu / profil rama", "Aluminiu / profil sistem textil/banner"],
-    Folii: ["Oracal 651", "Oracal 641", "Oracal 8500 translucent", "Printabil", "Laminare"],
+    "Profile metalice": ["Volum aluminiu (litere)", "Otel / teava rectangulara", "Otel / teava rotunda", "Otel / cornier", "Otel / platbanda", "Aluminiu / profil litera volumetrica", "Aluminiu / profil caseta luminoasa", "Aluminiu / profil rama", "Aluminiu / profil sistem textil/banner"],
+    Folii: ["Oracal 651", "Oracal 641", "Oracal 8500", "Printat / Laminat", "Printabil"],
     Placi: ["ACM / Alucobond / Dibond", "Plexiglas", "Forex", "HIPS / alte placi"],
-    "Parti electrice": ["LED modules", "surse alimentare", "cabluri / conectori"],
+    "Parti electrice": ["Module LED", "Surse LED 12V", "Cabluri / conectori"],
     Consumabile: ["adezivi", "suruburi / prinderi", "distantieri / kit montaj", "consumabile generale"],
   },
   required_pricing_fields: ["unit", "unit_cost", "currency", "vat_percent", "valid_from"],
@@ -118,10 +118,10 @@ const FALLBACK_POLICY: InventoryMaterialsPolicyDTO = {
   category_policy: {
     accepted: ["Placi", "Profile metalice", "Parti electrice", "Folii", "Consumabile"],
     recommended_subcategories: {
-      "Profile metalice": ["Otel / teava rectangulara", "Otel / teava rotunda", "Otel / cornier", "Otel / platbanda", "Aluminiu / profil litera volumetrica", "Aluminiu / profil caseta luminoasa", "Aluminiu / profil rama", "Aluminiu / profil sistem textil/banner"],
-      Folii: ["Oracal 651", "Oracal 641", "Oracal 8500 translucent", "Printabil", "Laminare"],
+      "Profile metalice": ["Volum aluminiu (litere)", "Otel / teava rectangulara", "Otel / teava rotunda", "Otel / cornier", "Otel / platbanda", "Aluminiu / profil litera volumetrica", "Aluminiu / profil caseta luminoasa", "Aluminiu / profil rama", "Aluminiu / profil sistem textil/banner"],
+      Folii: ["Oracal 651", "Oracal 641", "Oracal 8500", "Printat / Laminat", "Printabil"],
       Placi: ["ACM / Alucobond / Dibond", "Plexiglas", "Forex", "HIPS / alte placi"],
-      "Parti electrice": ["LED modules", "surse alimentare", "cabluri / conectori"],
+      "Parti electrice": ["Module LED", "Surse LED 12V", "Cabluri / conectori"],
       Consumabile: ["adezivi", "suruburi / prinderi", "distantieri / kit montaj", "servicii interne"],
     },
   },
@@ -195,9 +195,10 @@ function inferRecommendedSubcategory(m: InventoryMaterialDTO, canonicalCategory:
   const hay = `${m.code} ${m.name} ${m.category ?? ""}`.toLowerCase();
   if (!canonicalCategory) return null;
   if (canonicalCategory === "Folii") {
-    if (hay.includes("8500")) return "Oracal 8500 translucent";
+    if (hay.includes("8500")) return "Oracal 8500";
     if (hay.includes("651")) return "Oracal 651";
     if (hay.includes("641")) return "Oracal 641";
+    if (hay.includes("print") && hay.includes("lamin")) return "Printat / Laminat";
     if (hay.includes("lamin")) return "Laminare";
     if (hay.includes("print")) return "Printabil";
   }
@@ -208,6 +209,13 @@ function inferRecommendedSubcategory(m: InventoryMaterialDTO, canonicalCategory:
     if (hay.includes("hips")) return "HIPS / alte placi";
   }
   if (canonicalCategory === "Profile metalice") {
+    if (
+      hay.includes("profil-lateral-litere") ||
+      hay.includes("mat-profil-lateral-litere") ||
+      (hay.includes("volum aluminiu") && !hay.includes("caseta"))
+    ) {
+      return "Volum aluminiu (litere)";
+    }
     if (hay.includes("rectang")) return "Otel / teava rectangulara";
     if (hay.includes("rotund")) return "Otel / teava rotunda";
     if (hay.includes("cornier")) return "Otel / cornier";
@@ -218,9 +226,13 @@ function inferRecommendedSubcategory(m: InventoryMaterialDTO, canonicalCategory:
     if (hay.includes("litera")) return "Aluminiu / profil litera volumetrica";
   }
   if (canonicalCategory === "Parti electrice") {
-    if (hay.includes("led")) return "LED modules";
-    if (hay.includes("sursa") || hay.includes("aliment")) return "surse alimentare";
-    if (hay.includes("cablu") || hay.includes("conector")) return "cabluri / conectori";
+    if (hay.includes("psu") || hay.includes("sursa") || hay.includes("aliment")) {
+      return "Surse LED 12V";
+    }
+    if (hay.includes("cablu") || hay.includes("conector")) return "Cabluri / conectori";
+    if (hay.includes("led") || hay.includes("banda led") || hay.includes("modul led")) {
+      return "Module LED";
+    }
   }
   if (canonicalCategory === "Consumabile") {
     if (hay.includes("adeziv")) return "adezivi";

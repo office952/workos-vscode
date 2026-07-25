@@ -243,7 +243,7 @@ export function buildAtomicAcmPanelInstantiationPatch(args: {
   if (!target) {
     return {
       ok: false,
-      blockers: ["Nu există un contur închis candidabil pentru Panou Alucobond."],
+      blockers: ["Nu există un contur închis candidabil pentru Alucobond casetat."],
       finishPatch: null,
       instance: null,
       contourId: null,
@@ -293,11 +293,26 @@ export function buildAtomicAcmPanelInstantiationPatch(args: {
   }
 
   const instanceId = stableInstanceId(target.contour_id, svgSourceHash);
-  const panels = segmented?.panels ?? [];
+  const segmentedPanels = segmented?.panels ?? [];
+  // Single-panel assemblies (no segmentation) still need a panel row with W×H
+  // so commercial CUT/V deduction can run — empty panels → quantity unavailable.
+  const panels =
+    segmentedPanels.length > 0
+      ? segmentedPanels
+      : [
+          {
+            panel_id: "panel_1",
+            order: 1,
+            width_mm: target.width_mm,
+            height_mm: target.height_mm,
+            position: { x_mm: 0, y_mm: 0 },
+            contour_element_id: target.element_id,
+          },
+        ];
   const relations = [
     ...buildPanelBelongsToAssemblyRelations({
       componentInstanceId: instanceId,
-      panels: panels.length ? panels : [{ panel_id: "panel_1" }],
+      panels,
     }),
     ...proposeGeometryPlacementRelations({
       componentInstanceId: instanceId,

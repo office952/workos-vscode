@@ -116,11 +116,24 @@ def _coalesce_quote_input(quote_input: dict[str, Any] | None) -> dict[str, Any]:
         "mounting_solution",
         "mounting_scope",
         "site_installation_included",
+        "applied_content",
+        "letters_layer_outbox_m2",
+        "letters_layer_outbox_source",
     ):
         if key in out and key not in merged_finish:
             merged_finish[key] = out[key]
     if merged_finish:
         out["finish_setup"] = merged_finish
+    # Lift composition markers for CPP gate when only nested on finish_setup.
+    if out.get("applied_content") in (None, "") and merged_finish.get("applied_content") not in (
+        None,
+        "",
+    ):
+        out["applied_content"] = merged_finish.get("applied_content")
+    if out.get("letters_layer_outbox_m2") in (None, "", 0, 0.0) and merged_finish.get(
+        "letters_layer_outbox_m2"
+    ) not in (None, "", 0, 0.0):
+        out["letters_layer_outbox_m2"] = merged_finish.get("letters_layer_outbox_m2")
 
     geometry = out.get("quote_geometry") if isinstance(out.get("quote_geometry"), dict) else {}
     merged_geometry = dict(geometry)
@@ -398,6 +411,10 @@ def _site_install_commercially_required(payload: dict[str, Any]) -> bool:
 
 
 def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payload: dict[str, Any]) -> bool:
+    from services.letters_acm_composition_commercial_v1 import (
+        COMPOSITION_LINE_PREFIX,
+        is_letters_acm_composition_active,
+    )
     from services.lighting_mount_consumer_service import resolve_lighting_mount_consumers
     from services.offer_scope_led_subscope_service import (
         commercial_line_led_subscope,
@@ -408,6 +425,10 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
     # Site installation commercial marker — not surface finish; may fire without support module.
     if rule.line_code == "montaj" and _site_install_commercially_required(payload):
         return True
+
+    # Letters↔ACM composition connection sheet — independent of active_modules set.
+    if rule.line_code.startswith(COMPOSITION_LINE_PREFIX):
+        return is_letters_acm_composition_active(payload)
 
     module_key = rule.module_gate or rule.module_code
     if rule.always_include and rule.criticality == "optional":
@@ -430,6 +451,9 @@ def _rule_applies(rule: CommercialRuleDefinition, active_modules: set[str], payl
             return False
 
     if rule.line_code.startswith("sablon_montaj"):
+        # ACM composition uses bundled letters_acm_conn_sablon_process @ 20 EUR/mp.
+        if is_letters_acm_composition_active(payload):
+            return False
         if not _sablon_enabled(payload):
             return False
         material = _sablon_material(payload)
@@ -476,6 +500,27 @@ async def _build_line(
         quantity = _extract_quantity(payload, rule.quantity_paths) if rule.quantity_paths else None
         if quantity is not None:
             warnings.append("quantity_source=COMPATIBILITY_WORKSPACE_PATH")
+
+    # Letters↔ACM composition mp lines — outbox / mounting_template_area honesty path.
+    if rule.line_code.startswith("letters_acm_conn_") and rule.basis_type == "m2":
+        from services.letters_acm_composition_commercial_v1 import (
+            resolve_letters_layer_outbox_m2,
+        )
+
+        outbox_qty, outbox_src = resolve_letters_layer_outbox_m2(payload)
+        if outbox_qty is not None:
+            quantity = float(outbox_qty)
+            warnings.append(f"quantity_source=letters_acm_outbox:{outbox_src}")
+            if outbox_src not in (
+                "letters_layer_outbox_m2",
+                "finish_setup.letters_layer_outbox_m2",
+            ):
+                warnings.append(
+                    "outbox_qty_fallback_not_canonical_letters_layer_outbox_m2"
+                )
+        elif quantity is None:
+            warnings.append("missing_letters_layer_outbox_m2")
+
     owner_required = rule.owner_decision_required
     basis_type = rule.basis_type
     source = rule.source
@@ -548,6 +593,12 @@ async def _build_line(
 
         subtotal = round(max(float(quantity) * float(unit_price), ACM_BOXED_ASSEMBLY_MIN_EUR), 4)
         warnings.append(f"minimum_charge_applied={ACM_BOXED_ASSEMBLY_MIN_EUR}EUR")
+
+    if rule.pricing_rule_code == "LETTERS_ACM_PACK_M2_MIN" and unit_price is not None and quantity is not None:
+        from data.commercial_rules_volumetric_v2 import LETTERS_ACM_PACK_MIN_EUR
+
+        subtotal = round(max(float(quantity) * float(unit_price), LETTERS_ACM_PACK_MIN_EUR), 4)
+        warnings.append(f"minimum_charge_applied={LETTERS_ACM_PACK_MIN_EUR}EUR")
 
     if basis_type == "unknown":
         owner_required = True

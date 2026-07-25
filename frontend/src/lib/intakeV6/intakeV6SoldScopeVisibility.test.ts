@@ -24,6 +24,20 @@ describe("intakeV6SoldScopeVisibility", () => {
     expect(visibility).toMatchObject({ face: true, returnCant: true, back: true });
   });
 
+  it("ACM panel-alone composition suppresses VL letter modules even under full_product", () => {
+    const visibility = resolveSoldScopeFieldVisibility({
+      offer_scope: { mode: "full_product", sold_modules: [] },
+      product_composition_recommendation: { composition_type: "support_only" },
+    });
+    expect(visibility).toMatchObject({
+      face: false,
+      returnCant: false,
+      back: false,
+      lighting: false,
+      electrical: false,
+    });
+  });
+
   it("shows FACE only", () => {
     const visibility = resolveSoldScopeFieldVisibility({
       offer_scope: { mode: "component_subset", sold_modules: ["FACE"] },

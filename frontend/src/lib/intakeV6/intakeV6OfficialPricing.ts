@@ -27,3 +27,41 @@ export function intakeV6OfficialPricingBlockerMessage(
   }
   return "Oferta client nu este disponibilă.";
 }
+
+/**
+ * Operator-facing copy for offer rail / commercial sliders.
+ * Keeps backend blocker codes/messages for diagnostics; never shows dry-run English in primary UI.
+ */
+export function intakeV6OperatorFacingPricingBlocker(
+  message: string | null | undefined,
+): string | null {
+  if (!message) return null;
+  const lower = message.toLowerCase();
+  if (
+    lower.includes("pricing input") ||
+    lower.includes("not ready for dry-run") ||
+    lower.includes("not ready for priced") ||
+    lower.includes("dry-run") ||
+    lower.includes("dry run")
+  ) {
+    return "Oferta client nu e gata încă — completează configurația și tarifele lipsă.";
+  }
+  if (
+    lower.includes("compozit") ||
+    lower.includes("composition") ||
+    lower.includes("analyzer")
+  ) {
+    return "Preț disponibil după confirmarea produsului.";
+  }
+  if (lower.includes("7g")) {
+    return "Oferta client este blocată — verifică liniile comerciale.";
+  }
+  if (message.length > 96) return `${message.slice(0, 93).trim()}…`;
+  return message;
+}
+
+export function intakeV6OperatorFacingOfficialPricingBlocker(
+  pricing: IntakeV6PricedQuoteDryRunResponse | null | undefined,
+): string | null {
+  return intakeV6OperatorFacingPricingBlocker(intakeV6OfficialPricingBlockerMessage(pricing));
+}

@@ -100,6 +100,24 @@ def test_logo_svg_generated_side_label_is_neutral_for_operator() -> None:
     assert review["roles"][0]["display_label"] == "Logo volumetric"
 
 
+def test_recommends_support_only_for_acm_panel_alone_svg() -> None:
+    payload = _payload(
+        "doar-panou.svg",
+        [_layer("Alucobond_x0020_Casetat", "Alucobond Casetat", "support_panel")],
+    )
+
+    recommendation = build_product_composition_recommendation(payload)
+
+    assert recommendation["composition_type"] == "support_only"
+    assert recommendation["status"] == "needs_confirmation"
+    assert [item["template_code"] for item in recommendation["composition_items"]] == [
+        SUPPORT_TEMPLATE_LIVE_CODE
+    ]
+    support = recommendation["composition_items"][0]
+    assert support["status"] == "recommended"
+    assert support["component_role"] == "support_panel"
+
+
 def test_support_from_svg_component_binding_without_layer_role() -> None:
     payload = _payload("letters-acp.svg", [_layer("letters", "Litere", "face")])
     payload["finish_setup"] = {

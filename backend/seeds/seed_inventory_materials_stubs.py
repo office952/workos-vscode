@@ -49,13 +49,13 @@ CANONICAL_MATERIAL_STUBS: List[Dict[str, Any]] = [
     },
     {
         "code": "MAT-LED-MODULE",
-        "name": "Modul LED (rezistent apa, backlit)",
+        "name": "Modul LED 12V",
         "unit": "buc",
         "category": "iluminat_led",
     },
     {
         "code": "MAT-LED-PSU-12V",
-        "name": "Sursa alimentare LED 12V",
+        "name": "Sursă LED 12V — alege puterea (60/100/160/200 W)",
         "unit": "buc",
         "category": "iluminat_led",
     },

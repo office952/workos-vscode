@@ -589,6 +589,16 @@ def _overlay_runtime_artwork_finish_boolean_fields(
                 }
             )
             continue
+        if runtime["status"] == "not_applicable":
+            field.update(
+                {
+                    "source_type": "not_applicable",
+                    "state": "ready",
+                    "blocker_code": None,
+                    "notes": f"No artwork finish rows — {runtime['source_path']} is not applicable for this composition.",
+                }
+            )
+            continue
         field.update(
             {
                 "source_type": "payload_artwork_rows",

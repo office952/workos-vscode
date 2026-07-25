@@ -38,4 +38,15 @@ describe("computeAcmAssemblyExtent", () => {
     expect(result.assembly_height_mm).toBe(350);
     expect(result.source).toBe("panel_extent");
   });
+
+  it("empty panels falls back to envelope for panel-alone", () => {
+    const result = computeAcmAssemblyExtent({
+      panels: [],
+      envelope_width_mm: 2000,
+      envelope_height_mm: 500,
+    });
+    expect(result.assembly_width_mm).toBe(2000);
+    expect(result.assembly_height_mm).toBe(500);
+    expect(result.source).toBe("envelope");
+  });
 });

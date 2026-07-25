@@ -10,6 +10,12 @@ import {
   formatTemplateListDate,
   type LibraryTab,
 } from "@/features/product-system/productSystemNavigation";
+import { humanTemplateName } from "@/features/product-system/productSystemAdminDisplay";
+import {
+  MODULE_PRODUS_CODE_LABEL,
+  MODULE_PRODUS_SHARED_LABEL,
+  MODULE_PRODUS_SHARED_VOLUMETRIC_LABEL,
+} from "@/features/product-system/productTemplateModulesVocabulary";
 
 type SharedFoundationModuleMapping = {
   componentKey: string;
@@ -501,12 +507,12 @@ function TemplateLibraryRow({
               <div data-testid={`product-system-template-compact-foundation-${template.template_code}`} className="mt-1 space-y-1 text-[9px] font-bold">
                 <div className="flex flex-wrap gap-1">
                   <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared base: {sharedContracts.length}/6</span>
-                  <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared modules: {sharedContracts.length}/6</span>
+                  <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">{MODULE_PRODUS_SHARED_LABEL}: {sharedContracts.length}/6</span>
                   <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
                   <span className={`rounded border px-1.5 py-0.5 ${scope?.isDirectRootAllowed ? "border-emerald-700/40 bg-emerald-900/20 text-emerald-300" : "border-slate-700 bg-slate-900 text-slate-400"}`}>{scope?.workIntakeLabel ?? `Work Intake ${availability?.quote_offerable ? "DA" : "NU"}`}</span>
                 </div>
                 {lightingStrategy?.strategy_source_template_code ? <p className="font-mono text-[9px] text-amber-200">{lightingStrategy.profile_key === "logo" ? "Lighting strategy/profile source" : "Lighting strategy source"}: {lightingStrategy.strategy_source_template_code}</p> : null}
-                <p className="font-mono text-[9px] text-slate-500">Common modules: {formatSharedModuleCodes()}</p>
+                <p className="font-mono text-[9px] text-slate-500">{MODULE_PRODUS_SHARED_LABEL}: {formatSharedModuleCodes()}</p>
               </div>
             ) : null}
             {detailed ? (
@@ -519,7 +525,7 @@ function TemplateLibraryRow({
             ) : null}
             {detailed && sharedContracts.length > 0 ? (
               <div data-testid={`product-system-template-shared-foundation-${template.template_code}`} className="mt-2 flex flex-wrap gap-1.5 text-[10px] font-bold">
-                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">Shared modules: {sharedContracts.length}/6</span>
+                <span className="rounded border border-cyan-700/40 bg-cyan-950/30 px-1.5 py-0.5 text-cyan-200">{MODULE_PRODUS_SHARED_LABEL}: {sharedContracts.length}/6</span>
                 <span className="rounded border border-slate-700 bg-slate-900 px-1.5 py-0.5 text-slate-300">Profile {sharedProfileLabel}</span>
                 {hasLightingAudit && lightingStrategy?.strategy_source_template_code ? <span className="rounded border border-amber-700/40 bg-amber-900/20 px-1.5 py-0.5 text-amber-300">{lightingStrategy.profile_key === "logo" ? "Lighting strategy/profile source" : "Lighting strategy source"}: {lightingStrategy.strategy_source_template_code}</span> : null}
               </div>
@@ -647,7 +653,12 @@ function TemplateLibraryRow({
                           <p className="font-bold text-slate-100">{module.role_label}</p>
                           {detailed && module.ui_hint ? <p className="mt-0.5 text-[10px] text-slate-500">{module.ui_hint}</p> : null}
                         </div>
-                        <p className="min-w-0 truncate font-mono text-[10px] text-slate-400">{module.module_template_code}</p>
+                        <div className="min-w-0">
+                          <p className="truncate text-[11px] text-slate-200">{humanTemplateName(module.module_template_code)}</p>
+                          <p className="mt-0.5 truncate font-mono text-[9px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                            {module.module_template_code}
+                          </p>
+                        </div>
                         <span
                           className={`h-fit whitespace-nowrap rounded-full border px-2 py-0.5 text-[9px] font-bold ${
                             module.is_required
@@ -1065,7 +1076,7 @@ export function TemplateLibraryView({
             <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
               {[
                 { id: "products" as const, title: "Produse", count: productRows.length, detail: `${grouped.active_products.length} ofertabil, ${grouped.candidate_products.length} in pregatire`, action: "Vezi produse" },
-                { id: "components" as const, title: "Shared modules", count: sharedContractGroups.length, detail: `${sharedFoundationBindingCount} product usages summarized behind icons`, action: "Vezi componente" },
+                { id: "components" as const, title: MODULE_PRODUS_SHARED_LABEL, count: sharedContractGroups.length, detail: `${sharedFoundationBindingCount} product usages summarized behind icons`, action: "Vezi componente" },
                 { id: "composition" as const, title: "Compozitii", count: compositionRows.length, detail: "Produse cu compozitie expusa in API", action: "Vezi compozitii" },
                 { id: "archived" as const, title: "Catalog entries", count: allCatalogRows.length, detail: "Total tehnic: produse, module backing si arhive", action: "Vezi catalog" },
               ].map((card) => (
@@ -1080,7 +1091,7 @@ export function TemplateLibraryView({
             <div data-testid="product-system-overview-shared-foundation" className="rounded-lg border border-cyan-800/40 bg-cyan-950/10 px-3 py-2">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="text-[12px] font-bold text-cyan-100">Shared Volumetric Modules</p>
+                  <p className="text-[12px] font-bold text-cyan-100">{MODULE_PRODUS_SHARED_VOLUMETRIC_LABEL}</p>
                   <p className="mt-0.5 text-[10px] text-cyan-300/70">Letters si Logo consuma aceleasi 6 componente comune. Nu activeaza pricing, executie sau Work Intake.</p>
                 </div>
                 <div className="flex flex-wrap gap-1.5 text-[10px] font-bold">
@@ -1241,7 +1252,23 @@ export function TemplateLibraryView({
                         </div>
                       ) : availability.composition_modules.length === 0 ? <div className="mt-3 rounded-lg border border-dashed border-slate-700 bg-slate-950/40 px-3 py-3 text-[11px] text-slate-500">Produsul nu are compozitie expusa in API.</div> : (
                         detailed ? <div className="mt-2 divide-y divide-slate-800 overflow-hidden rounded-lg border border-slate-800">
-                          {availability.composition_modules.map((module) => <div key={`${template.template_code}-${module.role_key}-${module.module_template_code}`} className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"><span className="font-bold text-slate-100">{module.role_label}</span><span className="truncate font-mono text-[10px] text-slate-400">{module.module_template_code}</span><span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-slate-300">{module.status_label ?? (module.is_required ? "Modul intern activ" : "Optional / conditionat")}</span></div>)}
+                          {availability.composition_modules.map((module) => (
+                            <div
+                              key={`${template.template_code}-${module.role_key}-${module.module_template_code}`}
+                              className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2 px-2.5 py-1.5 text-[11px]"
+                            >
+                              <span className="font-bold text-slate-100">{module.role_label}</span>
+                              <div className="min-w-0">
+                                <span className="block truncate text-slate-200">{humanTemplateName(module.module_template_code)}</span>
+                                <span className="mt-0.5 block truncate font-mono text-[9px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
+                                  {module.module_template_code}
+                                </span>
+                              </div>
+                              <span className="whitespace-nowrap rounded-full border border-slate-700 bg-slate-950 px-2 py-0.5 text-[9px] font-bold text-slate-300">
+                                {module.status_label ?? (module.is_required ? "Modul intern activ" : "Optional / conditionat")}
+                              </span>
+                            </div>
+                          ))}
                         </div> : <p className="mt-2 text-[11px] text-slate-300">{availability.composition_modules.map((module) => module.role_label).join(" | ")}</p>
                       )}
                     </div>

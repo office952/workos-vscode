@@ -23,7 +23,7 @@ export default function IntakeV6BackingAndEmblemSection({
     <div className={`${v6.card} mb-4`} data-testid="intake-v6-backing-section">
       <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide">Spate / backing litere</h2>
       <p className="mb-3 text-[11px] text-slate-500">
-        Față litere: <strong className="text-slate-300">Plexiglas 3 mm</strong> - șanfren față
+        Față litere: <strong className="text-slate-300">plexiglas 3mm PMMA - opal</strong> - șanfren față
         obligatoriu (operații CNC separate în breakdown).
       </p>
       <label className="mb-4 block">

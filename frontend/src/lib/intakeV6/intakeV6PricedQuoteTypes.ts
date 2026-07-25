@@ -1,9 +1,21 @@
+export type IntakeV6CommercialAdjustmentTrace = {
+  basis?: string | null;
+  markup_percent?: number | null;
+  markup_value?: number | null;
+  manual_adjustment_ron?: number | null;
+  discount_percent?: number | null;
+  discount_value?: number | null;
+};
+
 export type IntakeV6CommercialTotals = {
   subtotal_net: number | null;
   vat_rate: number | null;
   vat_amount: number | null;
   total_gross: number | null;
   currency: string;
+  /** Raw 7G commercial subtotal before operator Adaos/Discount/Ajustare. */
+  commercial_base_subtotal?: number | null;
+  commercial_adjustment_trace?: IntakeV6CommercialAdjustmentTrace | null;
 };
 
 export type IntakeV6PricedQuoteBlocker = {
@@ -120,6 +132,11 @@ export type IntakeV6LogicalListReadModelResponse = {
   template_code?: string | null;
   categories?: string[];
   core_row_count?: number | null;
+  composition_contract_row_count?: number | null;
+  /** ACM commercial.* rows surfaced into the logical list (not Letters↔Bond conn). */
+  composition_acm_row_count?: number | null;
+  /** letters_acm_conn_* commercial rows only. */
+  composition_connection_row_count?: number | null;
   target_core_row_count?: number | null;
   core_rows_complete?: boolean;
   rows?: IntakeV6LogicalListLineTrace[];

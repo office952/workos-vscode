@@ -94,13 +94,13 @@ def build_shared_plexiglas_face_batch_overrides(
         "nesting_method": "shared_face_batch_logical_trace",
         "material_tariff_source": "pricing_registry" if material_tariff_eur_per_m2 is not None else None,
         "material_tariff_eur_per_m2": material_tariff_eur_per_m2,
-        "sheet_batch_note": "LETTER_FACE and LOGO_FACE share the same physical Plexiglas 3 mm batch.",
+        "sheet_batch_note": "LETTER_FACE and LOGO_FACE share the same physical plexiglas 3mm PMMA - opal batch.",
         "shared_batch_roles": shared_roles,
     }
 
     letter_override = {
         "material_code": PLEXIGLAS_3MM,
-        "material_name": "Plexiglas 3 mm",
+        "material_name": "plexiglas 3mm PMMA - opal",
         "thickness_mm": 3.0,
         "nesting_group": PLEXIGLAS_3MM_FACE_BATCH,
         "batch_roles": (["LETTER_FACE"] if has_letter_face_content else []),
@@ -142,7 +142,7 @@ def build_shared_plexiglas_face_batch_overrides(
         "currency": letter_face_row.get("currency") if letter_face_row else None,
         "runtime_source": runtime_source,
         "material_code": PLEXIGLAS_3MM,
-        "material_name": "Plexiglas 3 mm",
+        "material_name": "plexiglas 3mm PMMA - opal",
         "thickness_mm": 3.0,
         "nesting_group": PLEXIGLAS_3MM_FACE_BATCH,
         "batch_roles": ["LOGO_FACE"],

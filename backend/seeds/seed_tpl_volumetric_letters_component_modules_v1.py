@@ -73,7 +73,7 @@ CHILD_SPECS: list[dict[str, Any]] = [
         "template_code": VOLUMETRIC_FACE_TEMPLATE_CODE,
         "component_id": "comp_face_litere",
         "type": "LITERE_3D",
-        "name": "Vizual fata — plexi/acrilic",
+        "name": "Vizual fata — plexiglas 3mm PMMA - opal",
         "description": "Component-only Product Template for letter face panel.",
         "relation_type": "required_module",
         "trigger_field": "face_module_template_code",

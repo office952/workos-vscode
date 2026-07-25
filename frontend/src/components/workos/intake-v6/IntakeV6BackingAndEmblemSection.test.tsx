@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+﻿import { fireEvent, render, screen } from "@testing-library/react";
 import IntakeV6BackingAndEmblemSection from "./IntakeV6BackingAndEmblemSection";
 
 describe("IntakeV6BackingAndEmblemSection", () => {
@@ -16,7 +16,7 @@ describe("IntakeV6BackingAndEmblemSection", () => {
 
     expect(screen.getByTestId("intake-v6-backing-section")).toBeInTheDocument();
     expect(screen.getByText("Spate / backing litere")).toBeInTheDocument();
-    expect(screen.getByText(/Plexiglas 3 mm/)).toBeInTheDocument();
+    expect(screen.getByText(/plexiglas 3mm PMMA - opal/)).toBeInTheDocument();
 
     const backingSelect = screen.getByTestId("intake-v6-backing-mode");
     expect(backingSelect).toHaveDisplayValue("Forex 10 mm fara sanfren");

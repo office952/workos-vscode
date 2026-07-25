@@ -2,17 +2,56 @@ import type { ReactNode } from "react";
 
 /**
  * Tabs + active panel as one visual form unit.
- * Attention corner slots into the tab chrome (top-right).
+ * Workbench mode: horizontal domain nav along the top, panel below.
+ * Legacy mode: horizontal tab chrome on top.
  */
 export default function IntakeV6ReviewFormRegion({
   tabNav,
   attention,
   children,
+  layout = "horizontal",
 }: {
   tabNav: ReactNode;
   attention?: ReactNode;
   children: ReactNode;
+  layout?: "horizontal" | "workbench";
 }) {
+  if (layout === "workbench") {
+    return (
+      <div
+        className="rounded-lg border border-[#2A3548]/90 bg-[#0B1220]/55"
+        data-testid="intake-v6-review-form-region"
+        data-form-leads="true"
+        data-workbench="true"
+      >
+        <div
+          className="flex min-h-[18rem] flex-col gap-0"
+          data-testid="intake-v6-review-form-chrome"
+          data-domain-nav-placement="top"
+        >
+          <aside
+            className="border-b border-[#2A3548]/80 bg-[#0A0F1A]/40"
+            data-testid="intake-v6-review-domain-nav-shell"
+            data-domain-nav-placement="top"
+          >
+            {tabNav}
+          </aside>
+          <div
+            className="min-w-0 flex-1 px-2.5 py-2.5 sm:px-3 sm:py-3"
+            data-testid="intake-v6-review-form-body"
+          >
+            {attention ? (
+              <div className="mb-2 flex justify-end" data-testid="intake-v6-review-attention-slot">
+                {attention}
+              </div>
+            ) : null}
+            {children}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="rounded-lg border border-[#2A3548]/90 bg-[#0B1220]/55"

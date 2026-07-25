@@ -1,3 +1,5 @@
+import { displayModuleTemplateWireLabel } from "./productTemplateModulesVocabulary";
+
 export interface ReturnCantReadonlyContainerFieldAudit {
   key:
     | "instance_id"
@@ -60,7 +62,7 @@ const SOURCE_TYPE_ROWS: ReturnCantReadonlyContainerFieldAudit[] = [
   },
   {
     key: "component_template_code",
-    label: "component_template_code",
+    label: displayModuleTemplateWireLabel("component_template_code"),
     sourceType: "component template / registry",
     currentSource: "TPL-VOLUM-ALUMINIU_v1",
     targetPath: "components.return_cant.instances[].component_template_code",

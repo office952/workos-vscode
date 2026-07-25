@@ -11,28 +11,86 @@ function groupIssues(issues: AcmPanelIssue[]) {
 export default function IntakeV6AcmPanelValidationRail({
   model,
   onIssueClick,
+  density = "rail",
 }: {
   model: AcmPanelUiReadModel;
   onIssueClick: (issue: AcmPanelIssue) => void;
+  /**
+   * rail — standalone sticky card (lab column)
+   * inline — borderless footer for shared tech strip (workbench clean merge)
+   */
+  density?: "rail" | "inline";
 }) {
   if (!model.exists) return null;
   const { blockers, warnings, observations } = groupIssues(model.issues);
-  if (!blockers.length && !warnings.length && !observations.length) {
+  const clean = !blockers.length && !warnings.length && !observations.length;
+
+  if (clean) {
+    if (density === "inline") {
+      return (
+        <div
+          className="border-t border-[#2A3548]/50 px-2.5 py-1.5"
+          data-testid="intake-v6-acm-validation-rail"
+          data-density="inline"
+          data-state="clean"
+        >
+          <p className="text-[10px] leading-snug text-slate-400">
+            <span className="font-medium text-emerald-300/90">Validare</span>
+            {" · "}
+            fără probleme deschise pe Panoul Alucobond
+          </p>
+        </div>
+      );
+    }
     return (
       <aside
-        className="sticky top-2 rounded border border-emerald-500/25 bg-emerald-950/15 px-2.5 py-2"
+        className="sticky top-2 px-2.5 py-1.5"
         data-testid="intake-v6-acm-validation-rail"
+        data-density="rail"
+        data-state="clean"
       >
-        <p className="text-[11px] font-semibold text-emerald-200">Validare panou</p>
-        <p className="mt-0.5 text-[10px] text-slate-400">Fără probleme deschise pe Panoul Alucobond.</p>
+        <p className="text-[10px] leading-snug text-slate-400">
+          <span className="font-medium text-emerald-300/90">Validare panou</span>
+          {" · "}
+          fără probleme deschise
+        </p>
       </aside>
+    );
+  }
+
+  if (density === "inline") {
+    return (
+      <div
+        className="space-y-1.5 border-t border-[#2A3548]/50 px-2.5 py-1.5"
+        data-testid="intake-v6-acm-validation-rail"
+        data-density="inline"
+        data-state="issues"
+      >
+        <p className="text-[10px] font-medium text-slate-300">Validare panou</p>
+        {blockers.length ? (
+          <IssueGroup title="Blocante" items={blockers} tone="blocker" onIssueClick={onIssueClick} />
+        ) : null}
+        {warnings.length ? (
+          <IssueGroup title="Avertizări" items={warnings} tone="warning" onIssueClick={onIssueClick} />
+        ) : null}
+        {observations.length ? (
+          <IssueGroup
+            title="Observații"
+            items={observations}
+            tone="observation"
+            onIssueClick={onIssueClick}
+          />
+        ) : null}
+      </div>
     );
   }
 
   return (
     <aside
-      className="sticky top-2 space-y-2 rounded border border-[#2A3548]/70 bg-[#111827]/55 px-2.5 py-2"
+      className="sticky top-2 space-y-1.5 rounded border border-[#2A3548]/60 bg-[#111827]/40 px-2.5 py-1.5"
       data-testid="intake-v6-acm-validation-rail"
+      data-density="rail"
+      data-state="issues"
     >
       <p className="text-[11px] font-semibold text-slate-200">Validare panou</p>
       {blockers.length ? (
@@ -78,7 +136,7 @@ function IssueGroup({
           <li key={issue.id}>
             <button
               type="button"
-              className="w-full rounded border border-[#2A3548]/50 bg-[#0A0F1A]/50 px-2 py-1.5 text-left text-[11px] text-slate-300 hover:border-[#3b82f5]/40"
+              className="w-full rounded border border-[#2A3548]/50 bg-[#0A0F1A]/50 px-2 py-1 text-left text-[11px] text-slate-300 hover:border-[#3b82f5]/40"
               data-testid={`intake-v6-acm-issue-${issue.id}`}
               onClick={() => onIssueClick(issue)}
             >

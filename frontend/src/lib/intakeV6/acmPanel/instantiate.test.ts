@@ -20,7 +20,7 @@ const ACM = path.join(
 const bindables = [
   {
     component_template_code: "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1",
-    owner_label: "Panou Alucobond casetat",
+    owner_label: "Alucobond casetat",
     geometry_role: "SUPPORT_CONTOUR",
     available: true,
   },

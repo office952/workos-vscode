@@ -29,10 +29,12 @@ function expandArtworkCard(layerKey: string) {
 }
 
 describe("IntakeV6ArtworkFinishSection", () => {
-  it("shows Lipsa in the header when confirmed=false and there is no step-one confirmation", () => {
+  it("hides status badge chrome on operator Configurare when confirmed=false", () => {
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={vi.fn()} />);
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Necesită confirmare");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent(
+      "Necesită confirmare",
+    );
     expect(screen.queryByTestId("intake-v6-artwork-step1-badge-logo")).not.toBeInTheDocument();
   });
 
@@ -40,7 +42,7 @@ describe("IntakeV6ArtworkFinishSection", () => {
     const onChange = vi.fn();
     render(<IntakeV6ArtworkFinishSection rows={rows} onChange={onChange} />);
     expandArtworkCard("logo");
-    expect(screen.getByTestId("intake-v6-artwork-execution-logo")).toHaveTextContent("Print + laminare");
+    expect(screen.getByTestId("intake-v6-artwork-execution-logo")).toHaveTextContent("Printat / Laminat");
     expect(screen.getByTestId("intake-v6-artwork-cant-logo")).toBeInTheDocument();
     const method = screen.getByTestId("intake-v6-artwork-face-method-logo");
     const labels = Array.from(method.querySelectorAll("option")).map((opt) => opt.textContent);
@@ -48,8 +50,8 @@ describe("IntakeV6ArtworkFinishSection", () => {
       "Fără finisaj — plexiglas brut",
       "Oracal 641",
       "Oracal 651",
-      "Oracal 8500 — translucid",
-      "Print + laminare",
+      "Oracal 8500",
+      "Printat / Laminat",
     ]);
     expect(screen.queryByTestId("intake-v6-artwork-transparent-logo")).not.toBeInTheDocument();
     const rollWidth = screen.getByTestId("intake-v6-artwork-roll-width-logo");
@@ -204,16 +206,16 @@ describe("IntakeV6ArtworkFinishSection", () => {
     expect(next[0]?.return_finish_type).toBe("white_aluminum");
   });
 
-  it("shows Vector Logo confirmat when confirmed=true", () => {
+  it("keeps Vector Logo confirmat action text without status badge when confirmed=true", () => {
     render(<IntakeV6ArtworkFinishSection rows={confirmedRows} onChange={vi.fn()} />);
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Confirmat");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent("Confirmat");
+    expect(screen.queryByTestId("intake-v6-artwork-confirmed-logo")).not.toBeInTheDocument();
     expandArtworkCard("logo");
     expect(screen.getByTestId("intake-v6-artwork-confirm-logo")).toHaveTextContent("Vector Logo confirmat");
-    expect(screen.getByTestId("intake-v6-artwork-confirmed-logo")).toHaveTextContent("Confirmat");
   });
 
-  it("shows Necesită confirmare in the header when confirmed=false but step-one confirmation exists", () => {
+  it("hides Necesită confirmare badge when step-one confirmation exists", () => {
     render(
       <IntakeV6ArtworkFinishSection
         rows={rows}
@@ -222,8 +224,10 @@ describe("IntakeV6ArtworkFinishSection", () => {
       />,
     );
 
-    expect(screen.getByTestId("intake-v6-artwork-header-logo")).toHaveTextContent("Necesită confirmare");
-    expect(screen.getByTestId("intake-v6-artwork-step1-badge-logo")).toHaveTextContent("Necesită confirmare");
+    expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent(
+      "Necesită confirmare",
+    );
+    expect(screen.queryByTestId("intake-v6-artwork-step1-badge-logo")).not.toBeInTheDocument();
     expect(screen.getByTestId("intake-v6-artwork-header-logo")).not.toHaveTextContent("Confirmat in Pasul 1");
   });
 

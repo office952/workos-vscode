@@ -43,6 +43,29 @@ export function formatAcmPanelQty(
   return u ? `${n} ${u}` : n;
 }
 
+/** Honest panel count for UI — never show "0 panouri" when assembly is priced. */
+export function formatAcmPanelPanelCountLabel(
+  panelCount: number | null | undefined,
+  assemblyWidthMm: number | null | undefined,
+  assemblyHeightMm: number | null | undefined,
+): string | null {
+  const hasAssembly =
+    assemblyWidthMm != null &&
+    assemblyHeightMm != null &&
+    Number.isFinite(assemblyWidthMm) &&
+    Number.isFinite(assemblyHeightMm) &&
+    assemblyWidthMm > 0 &&
+    assemblyHeightMm > 0;
+  const n =
+    panelCount != null && Number.isFinite(panelCount) && panelCount > 0
+      ? Math.floor(panelCount)
+      : hasAssembly
+        ? 1
+        : null;
+  if (n == null) return null;
+  return n === 1 ? "1 panou" : `${n} panouri`;
+}
+
 const WARNING_LABELS: Record<string, string> = {
   technical_configuration_unconfirmed: "Configurație tehnică neconfirmată",
   construction_catalog_defaults: "Valori construction din catalog",
@@ -56,6 +79,10 @@ const WARNING_LABELS: Record<string, string> = {
   quantity_unavailable: "Cantități CUT/V indisponibile pentru configurația curentă",
   "cut_v_quantity_source=proxy_rectangular": "CUT/V din proxy rectangular (estimare, nu măsurare DXF)",
   "cut_v_quantity_source=commercial_deduction": "CUT/V din deducere comercială (estimare ofertă)",
+  "quantity_source=commercial_deduction": "CUT/V din deducere comercială (estimare ofertă)",
+  "quantity_source=proxy_rectangular": "CUT/V din proxy rectangular (estimare)",
+  missing_panel_list_assembly_face_only:
+    "Lista panouri goală — cantități din dimensiunea ansamblului (1 panou logic)",
   double_fold_proxy_forbidden: "Double-fold: proxy rectangular interzis",
   l2_active_proxy_forbidden: "L2 activ: proxy rectangular interzis",
   production_geometry_stale: "Geometrie producție stale — reîncarcă DXF sau folosește deducerea comercială",
@@ -64,7 +91,16 @@ const WARNING_LABELS: Record<string, string> = {
   missing_panel_attachment: "Lipsește DXF pentru un panou",
   fold_sides_not_supported_for_commercial_deduction:
     "fold_sides nesuportat pentru deducere comercială (doar toate laturile)",
+  hourly_commercial_line_detected: "Linie comercială orară detectată (neobișnuit pentru AcmPanel)",
 };
+
+/** Warnings already covered by the path-source line — do not repeat as raw keys. */
+const PATH_SOURCE_REDUNDANT_WARNINGS = new Set([
+  "quantity_source=commercial_deduction",
+  "cut_v_quantity_source=commercial_deduction",
+  "quantity_source=proxy_rectangular",
+  "cut_v_quantity_source=proxy_rectangular",
+]);
 
 export function formatAcmPanelPathSource(
   status: string | null | undefined,
@@ -111,6 +147,25 @@ export function formatAcmPanelMultiPanelDeductionNote(
 export function humanizeAcmPanelPreviewWarning(code: string): string {
   const key = code.replace(/^acm_panel:/, "");
   return WARNING_LABELS[key] || key;
+}
+
+/** Humanize + drop duplicates already shown via path-source line. */
+export function prepareAcmPanelPreviewWarnings(
+  warnings: string[] | null | undefined,
+  pathSourceShown: boolean,
+): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const raw of warnings || []) {
+    const key = String(raw || "").replace(/^acm_panel:/, "").trim();
+    if (!key) continue;
+    if (pathSourceShown && PATH_SOURCE_REDUNDANT_WARNINGS.has(key)) continue;
+    const label = humanizeAcmPanelPreviewWarning(key);
+    if (seen.has(label)) continue;
+    seen.add(label);
+    out.push(label);
+  }
+  return out;
 }
 
 export function acmPanelPreviewIsVisible(

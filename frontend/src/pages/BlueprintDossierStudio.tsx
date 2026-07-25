@@ -38,6 +38,8 @@ import type { ProductAggregate } from "@/api/productAggregate";
 import { ProductTemplatePublicationPanel } from "@/features/product-system/ProductTemplatePublicationPanel";
 import { ProductE2EReadinessPanel } from "@/features/product-system/ProductE2EReadinessPanel";
 import { ComponentContractUsedByPanel } from "@/features/product-system/ComponentContractUsedByPanel";
+import { humanTemplateName } from "@/features/product-system/productSystemAdminDisplay";
+import { MODULE_PRODUS_CODE_LABEL } from "@/features/product-system/productTemplateModulesVocabulary";
 import {
   DossierSectionEditorShell,
   VariantsEditor,
@@ -799,7 +801,12 @@ function TemplateModuleLinksPanel({
             <div key={link.id} className="rounded-lg border border-emerald-800/25 bg-emerald-950/10 p-3 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="text-[11px] font-mono font-bold text-emerald-300 truncate">{link.module_template_code}</p>
+                  <p className="text-[11px] font-bold text-emerald-200 truncate">
+                    {humanTemplateName(link.module_template_code)}
+                  </p>
+                  <p className="text-[9px] font-mono text-emerald-300/80 truncate mt-0.5" title={MODULE_PRODUS_CODE_LABEL}>
+                    {link.module_template_code}
+                  </p>
                   <p className="text-[9px] text-slate-500 mt-0.5">{link.relation_type} · {link.pricing_mode} · {link.execution_mode}</p>
                 </div>
                 <span className="px-1.5 py-0.5 text-[8px] font-bold bg-slate-800 text-slate-400 border border-slate-700 rounded">

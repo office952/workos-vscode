@@ -18,6 +18,8 @@ import {
   resolveActiveOfferScopePreset,
   type OfferScopePreset,
 } from "@/lib/intakeV6/intakeV6OfferScopePresets";
+import { resolveAcmPanelOnlyUiScope } from "@/lib/intakeV6/acmPanel/acmPanelOnlyComposition";
+import IntakeV6AcmPanelOnlyNeedsPanel from "./acm-panel/IntakeV6AcmPanelOnlyNeedsPanel";
 import IntakeV6OfferScopeDependencyFeedback from "./IntakeV6OfferScopeDependencyFeedback";
 import { v6 } from "./atoms/intakeV6Presentation";
 
@@ -84,6 +86,7 @@ export default function IntakeV6OfferScopePanel({
   }) => Promise<boolean>;
   disabled?: boolean;
 }) {
+  const acmPanelOnlyScope = useMemo(() => resolveAcmPanelOnlyUiScope(payload), [payload]);
   const persisted = useMemo(() => readPersistedOfferScope(payload), [payload]);
   const [mode, setMode] = useState<OfferScopeMode>(persisted.mode);
   const [soldModules, setSoldModules] = useState<SoldModuleCode[]>(persisted.soldModules);
@@ -332,6 +335,20 @@ export default function IntakeV6OfferScopePanel({
       setAdvancedOpen(true);
     }
   }, [soldModules]);
+
+  // ACM panel-alone: teach panou needs — do not show Față/Cant/LED letter checkboxes.
+  if (acmPanelOnlyScope.isAcmPanelOnly) {
+    return (
+      <div
+        className="mb-3"
+        data-testid="intake-v6-offer-scope-panel"
+        data-acm-panel-only="true"
+        aria-disabled={disabled ? "true" : undefined}
+      >
+        <IntakeV6AcmPanelOnlyNeedsPanel scope={acmPanelOnlyScope} variant="offer_scope" />
+      </div>
+    );
+  }
 
   return (
     <section

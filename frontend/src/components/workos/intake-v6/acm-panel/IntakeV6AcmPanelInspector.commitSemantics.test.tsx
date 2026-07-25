@@ -87,6 +87,13 @@ function model(): AcmPanelUiReadModel {
   } as unknown as AcmPanelUiReadModel;
 }
 
+function ensureSectionOpen(testId: string) {
+  const section = screen.getByTestId(testId);
+  if (section.getAttribute("data-open") !== "true") {
+    fireEvent.click(section.querySelector("button")!);
+  }
+}
+
 describe("IntakeV6AcmPanelInspector commit semantics", () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -95,7 +102,7 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
     vi.useRealTimers();
   });
 
-  it("pending L1 + Confirm construction → exactly one apply with update+confirm", () => {
+  it("pending L1 + Confirm panou → exactly one apply with update+confirm", () => {
     const onApplyFinishPatch = vi.fn();
     render(
       <IntakeV6AcmPanelInspector
@@ -104,19 +111,21 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
         actions={{ onApplyFinishPatch, onSegmentedPatch: vi.fn() }}
       />,
     );
-    fireEvent.click(screen.getByTestId("intake-v6-acm-section-construction").querySelector("button")!);
+    ensureSectionOpen("intake-v6-acm-section-construction");
     const l1 = screen.getByTestId("intake-v6-acm-field-l1_mm");
     fireEvent.change(l1, { target: { value: "70" } });
-    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-construction"));
+    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-panel"));
     expect(onApplyFinishPatch).toHaveBeenCalledTimes(1);
     const patch = onApplyFinishPatch.mock.calls[0]![0];
     expect(patch.acm_panel_instance.configuration.l1_mm).toBe(70);
     expect(patch.acm_panel_instance.configuration.field_authority.l1_mm).toBe(
       "operator_confirmed",
     );
+    expect(patch.acm_panel_instance.technical_configuration_status).toBe("confirmed");
+    expect(patch.acm_panel_instance.shell_finish?.operator_confirmed).toBe(true);
   });
 
-  it("two pending fields + Confirm technical → exactly one apply", () => {
+  it("two pending fields + Confirm panou → exactly one apply", () => {
     const onApplyFinishPatch = vi.fn();
     render(
       <IntakeV6AcmPanelInspector
@@ -125,22 +134,25 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
         actions={{ onApplyFinishPatch, onSegmentedPatch: vi.fn() }}
       />,
     );
-    fireEvent.click(screen.getByTestId("intake-v6-acm-section-construction").querySelector("button")!);
+    ensureSectionOpen("intake-v6-acm-section-construction");
     fireEvent.change(screen.getByTestId("intake-v6-acm-field-l1_mm"), {
       target: { value: "62" },
     });
     fireEvent.change(screen.getByTestId("intake-v6-acm-field-l2_mm"), {
       target: { value: "27" },
     });
-    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-technical"));
+    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-panel"));
     expect(onApplyFinishPatch).toHaveBeenCalledTimes(1);
     const inst = onApplyFinishPatch.mock.calls[0]![0].acm_panel_instance;
     expect(inst.configuration.l1_mm).toBe(62);
     expect(inst.configuration.l2_mm).toBe(27);
     expect(inst.technical_configuration_status).toBe("confirmed");
+    expect(screen.queryByTestId("intake-v6-acm-confirm-geometry")).toBeNull();
+    expect(screen.queryByTestId("intake-v6-acm-confirm-technical")).toBeNull();
+    expect(screen.queryByTestId("intake-v6-acm-shell-finish-confirm")).toBeNull();
   });
 
-  it("invalid pending + Confirm → zero apply", () => {
+  it("invalid pending + Confirm panou → zero apply", () => {
     const onApplyFinishPatch = vi.fn();
     render(
       <IntakeV6AcmPanelInspector
@@ -149,11 +161,11 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
         actions={{ onApplyFinishPatch, onSegmentedPatch: vi.fn() }}
       />,
     );
-    fireEvent.click(screen.getByTestId("intake-v6-acm-section-construction").querySelector("button")!);
-    fireEvent.change(screen.getByTestId("intake-v6-acm-field-fold_count"), {
-      target: { value: "9" },
+    ensureSectionOpen("intake-v6-acm-section-construction");
+    fireEvent.change(screen.getByTestId("intake-v6-acm-field-l1_mm"), {
+      target: { value: "abc" },
     });
-    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-construction"));
+    fireEvent.click(screen.getByTestId("intake-v6-acm-confirm-panel"));
     expect(onApplyFinishPatch).not.toHaveBeenCalled();
   });
 
@@ -166,7 +178,7 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
         actions={{ onApplyFinishPatch, onSegmentedPatch: vi.fn() }}
       />,
     );
-    fireEvent.click(screen.getByTestId("intake-v6-acm-section-construction").querySelector("button")!);
+    ensureSectionOpen("intake-v6-acm-section-construction");
     const l1 = screen.getByTestId("intake-v6-acm-field-l1_mm");
     fireEvent.change(l1, { target: { value: "6" } });
     fireEvent.change(l1, { target: { value: "60" } });
@@ -191,7 +203,7 @@ describe("IntakeV6AcmPanelInspector commit semantics", () => {
         actions={{ onApplyFinishPatch, onSegmentedPatch: vi.fn() }}
       />,
     );
-    fireEvent.click(screen.getByTestId("intake-v6-acm-section-construction").querySelector("button")!);
+    ensureSectionOpen("intake-v6-acm-section-construction");
     fireEvent.change(screen.getByTestId("intake-v6-acm-field-l1_mm"), {
       target: { value: "68" },
     });

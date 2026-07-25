@@ -125,9 +125,9 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
       { value: "none", label: "Fără finisaj — plexiglas brut" },
       { value: "oracal_641", label: "Oracal 641" },
       { value: "oracal_651", label: "Oracal 651" },
-      { value: "oracal_8500", label: "Oracal 8500 — translucid" },
+      { value: "oracal_8500", label: "Oracal 8500" },
       { value: "printed_vinyl", label: "Print pe vinyl" },
-      { value: "printed_laminated_vinyl", label: "Print + laminare pe vinyl" },
+      { value: "printed_laminated_vinyl", label: "Printat / Laminat" },
     ];
     render(
       <IntakeV6ReviewLetterGroupsSection
@@ -142,10 +142,9 @@ describe("IntakeV6LetterGroupFinishesSection", () => {
     expect(labels).toContain("Fără finisaj — plexiglas brut");
     expect(labels).toContain("Oracal 641");
     expect(labels).toContain("Oracal 651");
-    expect(labels).toContain("Oracal 8500 — translucid");
-    expect(labels).toContain("Print + laminare");
+    expect(labels).toContain("Oracal 8500");
+    expect(labels).toContain("Printat / Laminat");
     expect(labels).not.toContain("Print pe vinyl");
-    expect(labels).not.toContain("Print + laminare pe vinyl");
   });
 
   it("lets letter groups select print and lamination", () => {

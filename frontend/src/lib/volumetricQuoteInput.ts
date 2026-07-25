@@ -40,14 +40,14 @@ export const VOLUMETRIC_FACE_FINISH_OPTIONS = [
   { value: "none", label: "Fără finisaj suplimentar (plexi față)" },
   { value: "oracal_651", label: "Oracal 651" },
   { value: "printed_vinyl", label: "Autocolant print" },
-  { value: "printed_laminated_vinyl", label: "Autocolant print + laminare" },
+  { value: "printed_laminated_vinyl", label: "Printat / Laminat" },
 ] as const;
 
 export const VOLUMETRIC_MOUNTING_SYSTEM_OPTIONS = [
   { value: "direct_wall", label: "Montaj direct pe perete" },
   { value: "steel_bars", label: "Bare oțel premontaj" },
   { value: "aluminum_bars", label: "Bare aluminiu premontaj" },
-  { value: "acm_panel", label: "Panou ACM casetat" },
+  { value: "acm_panel", label: "Alucobond casetat" },
 ] as const;
 
 export const VOLUMETRIC_DEFAULT_FACE_FINISH_TYPE = "none";

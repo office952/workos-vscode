@@ -317,11 +317,15 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getByRole("tab", { name: /Overview/i })).toHaveAttribute("aria-selected", "true");
     expect(screen.getByTestId("product-system-overview-card-products")).toHaveTextContent("Produse");
     expect(screen.getByTestId("product-system-overview-card-products")).toHaveTextContent("2");
-    expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("Shared modules");
+    expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent(
+      "Module produs partajate",
+    );
     expect(screen.getByTestId("product-system-overview-card-components")).toHaveTextContent("6");
     expect(screen.getByTestId("product-system-overview-card-composition")).toHaveTextContent("2");
     expect(screen.getByTestId("product-system-overview-card-archived")).toHaveTextContent("5");
-    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Shared Volumetric Modules");
+    expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent(
+      "Module produs volumetrice partajate",
+    );
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("Letters si Logo consuma aceleasi 6 componente comune");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("2 produse conectate");
     expect(screen.getByTestId("product-system-overview-shared-foundation")).toHaveTextContent("6 componente comune");
@@ -358,13 +362,17 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LETTERS}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-bottom-actions-${LOGO}`)).toBeInTheDocument();
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Shared base: 6/6");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Shared modules: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent(
+      "Module produs partajate: 6/6",
+    );
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Work Intake DA");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LETTERS}`)).toHaveTextContent("TPL-METAL-PREMOUNT-STRUCTURE_v1");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared base: 6/6");
-    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Shared modules: 6/6");
+    expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent(
+      "Module produs partajate: 6/6",
+    );
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Work Intake NU");
     expect(within(products).getByTestId(`product-system-template-compact-foundation-${LOGO}`)).toHaveTextContent("Lighting strategy/profile source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");
@@ -466,7 +474,9 @@ describe("TemplateLibraryView scalable Product System navigation", () => {
     expect(screen.getByTestId("product-system-catalog-shell")).toHaveAttribute("data-density", "detailed");
     expect(screen.getByTestId(`product-system-template-composition-trigger-${LETTERS}`)).toHaveTextContent("Shared base (6 comune)");
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Profile letters");
-    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Shared modules: 6/6");
+    expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent(
+      "Module produs partajate: 6/6",
+    );
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LETTERS}`)).toHaveTextContent("Lighting strategy source: TPL-VOLUMETRIC-LED_v1");
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("Profile logo");
     expect(screen.getByTestId(`product-system-template-shared-foundation-${LOGO}`)).toHaveTextContent("Lighting strategy/profile source: TPL-VOLUMETRIC-LOGO-LIGHTING_v1");

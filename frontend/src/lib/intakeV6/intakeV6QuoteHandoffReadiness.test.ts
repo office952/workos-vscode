@@ -99,7 +99,7 @@ describe("intakeV6QuoteHandoffReadiness", () => {
       "finish_setup_not_confirmed",
     ]);
     expect(warnings).toHaveLength(1);
-    expect(warnings[0]).toMatch(/Perimetru vector rezidual|Vector Logo/i);
+    expect(warnings[0]).toMatch(/Perimetru vector nealocat|Vector Logo/i);
     expect(hasArtworkNeedsDecisionWarning(["unclassified_vector_artwork_requires_decision"])).toBe(true);
   });
 
@@ -151,12 +151,38 @@ describe("intakeV6QuoteHandoffReadiness", () => {
         preview_only: true,
       },
       allArtworkFinishesConfirmed: true,
+      artworkFinishRowCount: 1,
     });
     expect(surfacing.showBanner).toBe(true);
-    expect(surfacing.reasons.join(" ")).toMatch(/Perimetru vector rezidual|Vector Logo/i);
-    expect(surfacing.reasons.join(" ")).toMatch(/perimetru|SVG/i);
-    expect(surfacing.actions.join(" ")).toMatch(/Vector Logo/i);
+    expect(surfacing.reasons.join(" ")).toMatch(/Perimetru vector nealocat|Vector Logo/i);
+    expect(surfacing.actions.join(" ")).toMatch(/Finisaje|Vector Logo/i);
     expect(surfacing.actions.join(" ")).not.toMatch(/Logo 1\/2/);
+    expect(surfacing.actions.join(" ")).not.toMatch(/Confirmă rolurile/i);
+  });
+
+  it("suppresses residual Vector Logo noise when no artwork finish rows exist", () => {
+    const surfacing = buildReviewHandoffSurfacing({
+      handoff: {
+        workspace_id: "ws",
+        handoff_allowed: true,
+        can_create_internal_draft_quote: true,
+        status_label: "READY_FOR_INTERNAL_DRAFT_REVIEW",
+        blockers: [],
+        fatal_blockers: [],
+        review_warnings: ["unclassified_vector_artwork_requires_decision"],
+        requires_operator_confirmation: false,
+        operator_confirmation_complete: true,
+        client_send_allowed: false,
+        accept_allowed: false,
+        convert_to_order_allowed: false,
+        production_allowed: false,
+        preview_only: true,
+      },
+      allArtworkProductConfigured: true,
+      artworkFinishRowCount: 0,
+    });
+    expect(surfacing.showBanner).toBe(false);
+    expect(surfacing.reasons.join(" ")).not.toMatch(/Vector Logo|perimetru/i);
   });
 
   it("aligns review readiness copy when workspace is ready but handoff is blocked", () => {
@@ -200,6 +226,7 @@ describe("intakeV6QuoteHandoffReadiness", () => {
         preview_only: true,
       },
       allArtworkProductConfigured: true,
+      artworkFinishRowCount: 3,
     });
     const text = `${surfacing.reasons.join(" ")} ${surfacing.actions.join(" ")}`;
     expect(text).not.toMatch(/Logo 1\/2/);

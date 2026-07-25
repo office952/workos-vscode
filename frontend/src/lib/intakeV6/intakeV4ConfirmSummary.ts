@@ -126,7 +126,7 @@ function faceFinishLabel(
 ): string {
   const token = String(code ?? "").trim().toLowerCase();
   if (!token || token === "none") return "Fără finisaj — plexiglas brut";
-  if (token === "oracal_8500") return "Oracal 8500 translucent";
+  if (token === "oracal_8500") return "Oracal 8500";
   if (token === "oracal_651") {
     const color = oracalName || oracalCode;
     return color ? `Oracal 651 ${color}` : "Oracal 651";
@@ -138,7 +138,7 @@ function faceFinishLabel(
   if (token === "ral_spray") return "RAL spray";
   if (token === "policromie") return "Policromie";
   if (token === "colored_plexiglas") return "plexiglas colorat";
-  if (token === "print_laminate") return "Print + laminare";
+  if (token === "print_laminate" || token === "printed_laminated_vinyl") return "Printat / Laminat";
   if (token === "print_translucent") return "print translucid";
   if (token === "printed_vinyl_on_face") return "vinil printat pe față";
   return code ?? "—";
@@ -177,7 +177,7 @@ function resolveLetterFaceLabel(finish: IntakeV4FinishSetup): string {
   } else {
     finishPart = faceFinishLabel(finish.face_finish_type);
   }
-  return `Plexiglas 3 mm / față litere · ${finishPart}`;
+  return `plexiglas 3mm PMMA - opal · ${finishPart}`;
 }
 
 function resolveBackingForexLabel(

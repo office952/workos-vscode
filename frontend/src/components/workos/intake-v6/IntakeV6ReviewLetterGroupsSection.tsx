@@ -27,6 +27,7 @@ import IntakeV6CardPagination, { INTAKE_V6_CARD_PAGE_SIZE } from "./IntakeV6Card
 import IntakeV6LayerCardShell from "./IntakeV6LayerCardShell";
 import IntakeV6ReviewBackingFinishRow from "./IntakeV6ReviewBackingFinishRow";
 import IntakeV6ReturnCantFields from "./IntakeV6ReturnCantFields";
+import { intakeV6ShowOperatorConfigStatusBadges } from "@/lib/intakeV6/intakeV6OperatorConfigStatusChrome";
 import { AtomsBadge, v6, v6Pilot } from "./atoms/intakeV6Presentation";
 import {
   PILOT_REVIEW_FIELD_LABEL_CLASS,
@@ -226,24 +227,26 @@ export default function IntakeV6ReviewLetterGroupsSection({
                 swatchTestId={`intake-v6-letter-group-swatch-${group.group_key}`}
                 statusAttr={status}
                 status={
-                  <>
-                    {status === "ok" ? (
-                      <AtomsBadge tone="ok">
-                        <span className="inline-flex items-center gap-0.5">
-                          <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
-                          {finishLetterCardStatusLabelRo("ok")}
-                        </span>
-                      </AtomsBadge>
-                    ) : null}
-                    {status === "warning" ? (
-                      <AtomsBadge tone="pending">
-                        <span className="inline-flex items-center gap-0.5">
-                          <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
-                          {finishLetterCardStatusLabelRo("warning")}
-                        </span>
-                      </AtomsBadge>
-                    ) : null}
-                  </>
+                  intakeV6ShowOperatorConfigStatusBadges() ? (
+                    <>
+                      {status === "ok" ? (
+                        <AtomsBadge tone="ok">
+                          <span className="inline-flex items-center gap-0.5">
+                            <CheckCircle2 className="h-2.5 w-2.5" aria-hidden />
+                            {finishLetterCardStatusLabelRo("ok")}
+                          </span>
+                        </AtomsBadge>
+                      ) : null}
+                      {status === "warning" ? (
+                        <AtomsBadge tone="pending">
+                          <span className="inline-flex items-center gap-0.5">
+                            <AlertTriangle className="h-2.5 w-2.5" aria-hidden />
+                            {finishLetterCardStatusLabelRo("warning")}
+                          </span>
+                        </AtomsBadge>
+                      ) : null}
+                    </>
+                  ) : null
                 }
                 expandedChildren={
                   <>

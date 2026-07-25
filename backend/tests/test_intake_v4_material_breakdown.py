@@ -1056,7 +1056,7 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         op_names = {row.display_name for row in result.operation_rows}
         assert "Vinil față Oracal 651" not in names
         assert all("Serviciu aplicare — litere" != name for name in op_names)
-        assert any("Plexiglas 3 mm" == name for name in names)
+        assert any("plexiglas 3mm PMMA - opal" == name for name in names)
 
     def test_artwork_oracal_641_adds_logo_specific_vinyl_and_application(self):
         payload = _payload_finish_truth_base()
@@ -1077,7 +1077,7 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         result = build_intake_v4_material_breakdown("ws-art-641", payload)
         names = {row.display_name for row in result.material_rows}
         op_names = {row.display_name for row in result.operation_rows}
-        assert any(name == "Plexiglas 3 mm" for name in names)
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
         assert any("Vinil față Oracal 641 — Logo 1" == name for name in names)
         assert "Vinil față Oracal 651" not in names
         assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
@@ -1101,7 +1101,7 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         result = build_intake_v4_material_breakdown("ws-art-8500", payload)
         names = {row.display_name for row in result.material_rows}
         op_names = {row.display_name for row in result.operation_rows}
-        assert any(name == "Plexiglas 3 mm" for name in names)
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
         assert any("Vinil față Oracal 8500 — Logo 1" == name for name in names)
         assert "Vinil față Oracal 651" not in names
         assert any("Serviciu aplicare — Logo 1" == name for name in op_names)
@@ -1127,7 +1127,7 @@ class TestIntakeV4FinishStateTruthMaterialBreakdown:
         result = build_intake_v4_material_breakdown("ws-art-print", payload)
         names = {row.display_name for row in result.material_rows}
         op_names = {row.display_name for row in result.operation_rows}
-        assert any(name == "Plexiglas 3 mm" for name in names)
+        assert any(name == "plexiglas 3mm PMMA - opal" for name in names)
         assert any("Material print Orafol — Logo 1" == name for name in names)
         assert any("Material laminare Orafol — Logo 1" == name for name in names)
         assert any("Serviciu print — Logo 1" == name for name in op_names)

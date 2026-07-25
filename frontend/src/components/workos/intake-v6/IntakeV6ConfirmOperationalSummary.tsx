@@ -106,9 +106,12 @@ function formatEmblemLedModuleFallback(label: string): string {
 export default function IntakeV6ConfirmOperationalSummary({
   summary,
   variant = "full",
+  acmPanelOnly = false,
 }: {
   summary: IntakeV6ConfirmSummaryViewModel;
   variant?: "operator" | "technical" | "full";
+  /** ACM panel-alone: hide VL letter / cant / adhesive teaching blocks. */
+  acmPanelOnly?: boolean;
 }) {
   const showOperator = variant === "operator" || variant === "full";
   const showTechnical = variant === "technical" || variant === "full";
@@ -117,6 +120,37 @@ export default function IntakeV6ConfirmOperationalSummary({
     summary.lighting.psuConfiguration.length > 0
       ? summary.lighting.psuConfiguration.map((w) => `${w} W`).join(" + ")
       : "—";
+
+  if (acmPanelOnly) {
+    return (
+      <div className="space-y-3" data-testid="intake-v6-confirm-acm-panel-only-root">
+        <SummarySection title="Rezumat — panou ACM" testId="intake-v6-confirm-acm-panel-only">
+          <SummaryRow
+            label="Produs ofertat"
+            value="Panou Alucobond casetat"
+            testId="intake-v6-confirm-acm-product"
+          />
+          <SummaryRow
+            label="Litere / cant / adeziv"
+            value="În afara ofertei — nu se cere"
+            testId="intake-v6-confirm-acm-letter-out-of-scope"
+          />
+          <SummaryRow
+            label="Layere SVG"
+            value={String(summary.structure.layerCount)}
+            testId="intake-v6-confirm-layers"
+          />
+        </SummarySection>
+        <p
+          className="rounded border border-cyan-500/20 bg-cyan-500/5 px-2.5 py-2 text-[11px] leading-relaxed text-slate-400"
+          data-testid="intake-v6-confirm-acm-panel-only-hint"
+        >
+          Prețul panoului vine din liniile ACM (CUT / V-groove / față / asamblare). Nu din adeziv cant
+          litere.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>

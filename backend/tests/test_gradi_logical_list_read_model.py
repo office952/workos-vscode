@@ -166,7 +166,7 @@ def _logo_only_breakdown() -> SimpleNamespace:
         material_rows=[
             _row(
                 "plexiglas_face",
-                "Plexiglas 3 mm",
+                "plexiglas 3mm PMMA - opal",
                 1.0004,
                 "m2",
                 16.0064,
@@ -189,7 +189,7 @@ def _breakdown() -> SimpleNamespace:
         template_code="TPL-VOLUMETRIC-LETTERS_v2",
         totals={"estimated_cost_total": 772.92, "currency": "EUR"},
         material_rows=[
-            _row("plexiglas_face", "Plexiglas 3 mm / fata litere", 1.2638, "m2", 20.2208, quantity_basis="sheet_nesting_role_split_quote_estimate", quantity_source="svg_analysis_json.nesting|sheet_3000x2000|single_face"),
+            _row("plexiglas_face", "plexiglas 3mm PMMA - opal", 1.2638, "m2", 20.2208, quantity_basis="sheet_nesting_role_split_quote_estimate", quantity_source="svg_analysis_json.nesting|sheet_3000x2000|single_face"),
             _row("forex_backing", "Forex 10 mm / spate litere", 1.2638, "m2", 20.2208, quantity_basis="backing_area_fallback_from_face_quoteable_area", quantity_source="sheet_nesting_face_quoteable|backing_area_missing"),
             _row("artwork_plexiglas_logo-stanga", "Plexiglas față emblemă — Logo 1", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_1_001"]),
             _row("artwork_plexiglas_logo-dreapta", "Plexiglas față emblemă — Logo 2", 0.4002, "m2", 6.4032, quantity_basis="linked_logo_face_bounding_footprint_quote_estimate", quantity_source="quote_geometry.artwork_boxes|bounding_box_footprint|linked_logo_segment", source_part_ids=["part_logo_2_002"]),
@@ -252,9 +252,69 @@ def test_gradi_logical_read_model_returns_21_core_rows_and_excludes_extras() -> 
     )
 
     assert result["core_row_count"] == 21
+    assert result["composition_contract_row_count"] == 0
     assert result["core_rows_complete"] is True
     assert {row["category"] for row in result["rows"]} == {"MATERIALE", "SERVICII_OPERATII", "MANOPERA"}
     assert {line["code"] for line in result["excluded_extra_commercial_lines"]} == {"ambalare", "montaj"}
+
+
+def test_gradi_logical_read_model_surfaces_letters_acm_contract_and_acm_bond_lines() -> None:
+    dry = _dry_run()
+    dry["commercial_line_items"] = [
+        *dry["commercial_line_items"],
+        {
+            "code": "letters_acm_conn_sablon_process",
+            "label": "Proces șablon pe Alucobond",
+            "module_code": "composition",
+            "component_code": "comp_letters_acm_composition",
+            "quantity": 0.35,
+            "unit": "m2",
+            "commercial_unit_price": 20,
+            "subtotal": 7,
+            "pricing_rule_code": "LETTERS_ACM_CONN_SABLON",
+            "source_currency": "EUR",
+            "warnings": [],
+        },
+        {
+            "code": "acm_panel_cut",
+            "label": "Debitare panou ACM",
+            "module_code": "acm_panel",
+            "component_code": "comp_acm_panel",
+            "quantity": 5.48,
+            "unit": "ml",
+            "commercial_unit_price": 1.5,
+            "subtotal": 8.22,
+            "pricing_rule_code": "ACM_PANEL_CUT_ML",
+            "source_currency": "EUR",
+            "warnings": [],
+        },
+        {
+            "code": "acm_panel_face_material",
+            "label": "Material ACM față panou",
+            "module_code": "acm_panel",
+            "component_code": "comp_acm_panel",
+            "quantity": 1,
+            "unit": "m2",
+            "commercial_unit_price": 15,
+            "subtotal": 15,
+            "pricing_rule_code": "ACM_FACE_MATERIAL_M2",
+            "source_currency": "EUR",
+            "warnings": [],
+        },
+    ]
+    result = build_gradi_logical_list_read_model_from_runtime(
+        workspace_payload=_payload(), material_breakdown=_breakdown(), priced_dry_run=dry
+    )
+    by_id = {row["line_id"]: row for row in result["rows"]}
+    assert result["core_row_count"] == 21
+    assert result["composition_contract_row_count"] == 3
+    assert result["composition_acm_row_count"] == 2
+    assert result["composition_connection_row_count"] == 1
+    assert by_id["commercial.letters_acm_conn_sablon_process"]["quantity"] == 0.35
+    assert by_id["commercial.letters_acm_conn_sablon_process"]["subtotal"] == 7
+    assert by_id["commercial.acm_panel_cut"]["category"] == "SERVICII_OPERATII"
+    assert by_id["commercial.acm_panel_face_material"]["category"] == "MATERIALE"
+    assert "COMPOSITION_CONTRACT_LINES_SURFACED_FROM_DRY_RUN" in result["warnings"]
 
 
 def test_gradi_logical_read_model_builds_oracal_row_and_logo_plexi_rows_without_runtime_material_row() -> None:
@@ -280,7 +340,7 @@ def test_gradi_logical_read_model_builds_oracal_row_and_logo_plexi_rows_without_
     assert {row["key"] for row in by_id["material.face_oracal"]["child_rows"]} == {"face_vinyl_641", "face_vinyl_651"}
     assert {row["inventory_consumption_key"] for row in by_id["material.face_oracal"]["child_rows"]} == {"ORACAL_641", "ORACAL_651"}
     assert "ORACAL_MATERIAL_RUNTIME_ROW_MISSING" not in by_id["material.face_oracal"]["gaps"]
-    assert by_id["material.logo_plexiglas_face"]["display_label"] == "Plexiglas 3 mm / embleme/logo"
+    assert by_id["material.logo_plexiglas_face"]["display_label"] == "plexiglas 3mm PMMA - opal / embleme/logo"
     assert by_id["material.logo_plexiglas_face"]["quantity"] == pytest.approx(0.8004, rel=0, abs=1e-4)
     assert by_id["material.logo_plexiglas_face"]["material_code"] == "PLEXIGLAS_3MM"
     assert by_id["material.logo_plexiglas_face"]["nesting_group"] == "PLEXIGLAS_3MM_FACE_BATCH"
@@ -428,7 +488,7 @@ def test_logo_only_logical_rows_keep_compatible_physical_footprint_source_for_pl
         material_rows=[
             _row(
                 "plexiglas_face",
-                "Plexiglas 3 mm",
+                "plexiglas 3mm PMMA - opal",
                 2.25,
                 "m2",
                 36.0,

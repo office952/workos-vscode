@@ -350,6 +350,26 @@ def test_runtime_artwork_print_missing_value_keeps_backbone_blocked():
     assert field["blocker_code"] == "PRINT_REQUIRED_UNKNOWN"
 
 
+def test_runtime_artwork_print_not_applicable_when_no_artwork_rows():
+    payload = {
+        "finish_setup": {
+            "confirmed": True,
+            "artwork_finishes": [],
+        }
+    }
+
+    contract = build_form_system_contract_map(ROOT, payload_raw=payload)
+    print_field = _fields_by_key(contract)["finish.print_required"]
+    lam_field = _fields_by_key(contract)["finish.lamination_required"]
+
+    assert print_field["source_type"] == "not_applicable"
+    assert print_field["state"] == "ready"
+    assert print_field["blocker_code"] is None
+    assert lam_field["source_type"] == "not_applicable"
+    assert lam_field["state"] == "ready"
+    assert lam_field["blocker_code"] is None
+
+
 def test_runtime_artwork_lamination_unconfirmed_does_not_unlock_backbone_field():
     payload = {
         "finish_setup": {
