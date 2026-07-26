@@ -350,7 +350,7 @@ export function CandidateModuleProdusSettingsSheet({
       <SheetContent
         side="right"
         data-testid="product-system-candidate-module-settings-sheet"
-        className="w-full overflow-y-auto border-wo-border-subtle bg-[#0A0F1A] sm:max-w-lg"
+        className="w-full overflow-y-auto border-wo-border-subtle bg-wo-surface-inset sm:max-w-lg"
       >
         <SheetHeader className="space-y-2 border-b border-slate-800 pb-3">
           <ReadonlyDrawerBanner />

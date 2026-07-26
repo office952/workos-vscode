@@ -115,7 +115,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
       const letter = env.charAt(0).toUpperCase() || "?";
       return (
         <div
-          className="flex items-center justify-center h-8 border-t border-[#1E293B]"
+          className="flex items-center justify-center h-8 border-t border-wo-border-subtle"
           title={`${state.data.app_name || "WorkOS"} ${
             state.data.release_version || ""
           } · ${env}`}
@@ -130,7 +130,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
     }
     return (
       <div
-        className="flex items-center justify-center h-8 border-t border-[#1E293B]"
+        className="flex items-center justify-center h-8 border-t border-wo-border-subtle"
         title="Version unavailable"
         data-testid="version-badge-collapsed"
       >
@@ -143,7 +143,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
   if (state.status === "loading") {
     return (
       <div
-        className="px-3 py-2 border-t border-[#1E293B] text-[10px] text-slate-600 flex items-center gap-1.5"
+        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-slate-600 flex items-center gap-1.5"
         data-testid="version-badge"
       >
         <span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-600 animate-pulse" />
@@ -155,7 +155,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
   if (state.status === "error") {
     return (
       <div
-        className="px-3 py-2 border-t border-[#1E293B] text-[10px] text-slate-500"
+        className="px-3 py-2 border-t border-wo-border-subtle text-[10px] text-slate-500"
         title={state.message}
         data-testid="version-badge"
       >
@@ -181,7 +181,7 @@ export default function VersionBadge({ collapsed = false }: VersionBadgeProps) {
   return (
     <div
       ref={containerRef}
-      className="relative border-t border-[#1E293B]"
+      className="relative border-t border-wo-border-subtle"
       onMouseEnter={() => setPopoverOpen(true)}
       onMouseLeave={() => setPopoverOpen(false)}
       onFocus={() => setPopoverOpen(true)}

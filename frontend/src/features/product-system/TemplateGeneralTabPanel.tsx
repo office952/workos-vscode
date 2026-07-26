@@ -194,7 +194,7 @@ export function TemplateGeneralTabPanel({
 
   return (
     <div className="space-y-4 w-full">
-      <div className="bg-gradient-to-r from-[#111827] to-[#131B2E] border border-purple-500/20 rounded-xl p-4 flex flex-wrap items-center gap-4">
+      <div className="bg-gradient-to-r from-wo-surface-raised to-[#131B2E] border border-purple-500/20 rounded-xl p-4 flex flex-wrap items-center gap-4">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <span className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center shrink-0">
             <Package className="w-5 h-5 text-purple-300" />

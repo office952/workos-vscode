@@ -104,7 +104,7 @@ export default function EmployeeProfile() {
       <div className="flex items-center gap-4">
         <button
           onClick={() => navigate("/employees-records")}
-          className="p-2 rounded-lg bg-[#1A2236] border border-[#2A3548] hover:border-slate-500 transition-colors"
+          className="p-2 rounded-lg bg-wo-surface-raised border border-wo-border-strong hover:border-slate-500 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 text-slate-300" />
         </button>
@@ -141,14 +141,14 @@ export default function EmployeeProfile() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-lg p-1">
+      <div className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-md text-[12px] font-semibold transition-colors ${
               activeTab === tab.id
-                ? "bg-[#1A2236] text-slate-100 border border-[#2A3548]"
+                ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
@@ -179,7 +179,7 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
       {/* Info */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-4">
         <h3 className="text-[14px] font-semibold text-slate-200">Informații generale</h3>
         <div className="grid grid-cols-2 gap-4">
           <InfoField icon={<User className="w-3.5 h-3.5 text-slate-500" />} label="Funcție" value={employee.functie} />
@@ -190,7 +190,7 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
           <InfoField icon={<Mail className="w-3.5 h-3.5 text-slate-500" />} label="Email" value={employee.email} />
         </div>
         {employee.observatii && (
-          <div className="bg-[#1A2236] rounded-lg p-3">
+          <div className="bg-wo-surface-raised rounded-lg p-3">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Observații interne</p>
             <p className="text-[12px] text-slate-300">{employee.observatii}</p>
           </div>
@@ -199,7 +199,7 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
 
       {/* Program & Skills */}
       <div className="space-y-4">
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-3">
           <h3 className="text-[14px] font-semibold text-slate-200">Program de lucru</h3>
           <div className="grid grid-cols-2 gap-3">
             <InfoField icon={<Clock className="w-3.5 h-3.5 text-slate-500" />} label="Program" value="Luni – Vineri" />
@@ -208,7 +208,7 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
           <p className="text-[10px] text-slate-600 italic">Program standard intern. Configurabil dacă există orar special.</p>
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-3">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-3">
           <h3 className="text-[14px] font-semibold text-slate-200">Skill-uri / Stații</h3>
           <div className="flex flex-wrap gap-2">
             {employee.skills.map((skill) => (
@@ -221,13 +221,13 @@ function ProfileTab({ employee, advances }: { employee: EmployeeRecord; advances
 
         {/* Active debts summary */}
         {advances.length > 0 && (
-          <div className="bg-[#111827] border border-amber-800/30 rounded-lg p-5 space-y-3">
+          <div className="bg-wo-surface-raised border border-amber-800/30 rounded-lg p-5 space-y-3">
             <h3 className="text-[14px] font-semibold text-amber-300 flex items-center gap-2">
               <AlertTriangle className="w-4 h-4" /> Datorii active
             </h3>
             <div className="space-y-2">
               {advances.filter((a) => a.status === "activ").map((adv) => (
-                <div key={adv.id} className="flex items-center justify-between px-3 py-2 bg-[#1A2236] rounded-lg">
+                <div key={adv.id} className="flex items-center justify-between px-3 py-2 bg-wo-surface-raised rounded-lg">
                   <div>
                     <p className="text-[12px] text-slate-200 font-medium">
                       {adv.tip === "avans" ? "Avans" : adv.tip === "imprumut" ? "Împrumut" : "Reținere"}
@@ -273,14 +273,14 @@ function DocumentsTab({ documents }: { documents: EmployeeDocument[] }) {
         <button
           disabled
           title="Coming soon — necesită sistem de fișiere backend"
-          className="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-[#1A2236] border border-[#2A3548] rounded-md cursor-not-allowed"
+          className="px-3 py-1.5 text-[11px] font-semibold text-slate-500 bg-wo-surface-raised border border-wo-border-strong rounded-md cursor-not-allowed"
         >
           + Adaugă document — coming soon
         </button>
       </div>
 
       {documents.length === 0 ? (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
           <FileText className="w-8 h-8 text-slate-600 mx-auto mb-2" />
           <p className="text-[13px] text-slate-500">Nu există documente înregistrate.</p>
         </div>
@@ -289,7 +289,7 @@ function DocumentsTab({ documents }: { documents: EmployeeDocument[] }) {
           {documents.map((doc) => {
             const statusCfg = DOCUMENT_STATUS_CONFIG[doc.status];
             return (
-              <div key={doc.id} className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 flex items-center gap-4">
+              <div key={doc.id} className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 flex items-center gap-4">
                 <FileText className="w-5 h-5 text-slate-500 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-[13px] font-semibold text-slate-200">{doc.tipLabel}</p>
@@ -333,7 +333,7 @@ function MedicinaTab({ documents, employeeName }: { documents: EmployeeDocument[
         <h3 className="text-[14px] font-semibold text-slate-200">Medicina muncii — {employeeName}</h3>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
         <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-3">Status curent</p>
         {latest ? (
           <div className="space-y-3">
@@ -377,7 +377,7 @@ function MedicinaTab({ documents, employeeName }: { documents: EmployeeDocument[
         )}
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
         <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-3">Istoric</p>
         {documents.length === 0 ? (
           <p className="text-[12px] text-slate-500">Niciun document medicina muncii.</p>
@@ -386,7 +386,7 @@ function MedicinaTab({ documents, employeeName }: { documents: EmployeeDocument[
             {documents.map((doc) => {
               const statusCfg = DOCUMENT_STATUS_CONFIG[doc.status];
               return (
-                <div key={doc.id} className="flex items-center gap-3 px-3 py-2 bg-[#1A2236] rounded-lg">
+                <div key={doc.id} className="flex items-center gap-3 px-3 py-2 bg-wo-surface-raised rounded-lg">
                   <Heart className="w-4 h-4 text-pink-400 shrink-0" />
                   <div className="flex-1">
                     <p className="text-[12px] text-slate-200">
@@ -404,7 +404,7 @@ function MedicinaTab({ documents, employeeName }: { documents: EmployeeDocument[
         )}
       </div>
 
-      <div className="bg-[#0D1321] border border-[#1E293B] rounded-lg px-4 py-3">
+      <div className="bg-wo-surface-inset border border-wo-border-subtle rounded-lg px-4 py-3">
         <p className="text-[10px] text-slate-600 flex items-center gap-2">
           <Shield className="w-3 h-3" />
           Nu se afișează date medicale sensibile. Doar status document (valid/expirat).
@@ -436,7 +436,7 @@ function AlertsTab({ alerts }: { alerts: InternalAlert[] }) {
       </h3>
 
       {alerts.length === 0 ? (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
           <CheckCircle2 className="w-8 h-8 text-emerald-500 mx-auto mb-2" />
           <p className="text-[13px] text-slate-400">Nicio alertă activă. Totul este în ordine.</p>
         </div>

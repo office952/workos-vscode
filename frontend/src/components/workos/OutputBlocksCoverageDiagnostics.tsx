@@ -41,7 +41,7 @@ export default function OutputBlocksCoverageDiagnostics() {
   };
 
   return (
-    <div className="rounded-lg border border-[#1E293B] bg-[#111827] overflow-hidden">
+    <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised overflow-hidden">
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-[#1a2234] transition-colors"
@@ -85,7 +85,7 @@ export default function OutputBlocksCoverageDiagnostics() {
 
       {/* Content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-[#1E293B]">
+        <div className="px-4 pb-4 space-y-3 border-t border-wo-border-subtle">
           {/* Disclaimer */}
           <div className="flex items-start gap-2 px-3 py-2 mt-3 rounded border border-cyan-800/50 bg-cyan-900/20">
             <Info className="w-3.5 h-3.5 text-cyan-400 mt-0.5 shrink-0" />
@@ -115,7 +115,7 @@ export default function OutputBlocksCoverageDiagnostics() {
             <div className="space-y-3">
               {/* Summary */}
               <div className="grid grid-cols-4 gap-2">
-                <div className="rounded border border-[#2A3548] bg-[#0D1321] p-2 text-center">
+                <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-2 text-center">
                   <p className="text-[16px] font-bold text-slate-100">{data.total_templates}</p>
                   <p className="text-[9px] text-slate-500 uppercase">Total</p>
                 </div>

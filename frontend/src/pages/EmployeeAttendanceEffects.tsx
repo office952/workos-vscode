@@ -201,7 +201,7 @@ export default function EmployeeAttendanceEffects() {
         </p>
       </div>
 
-      <div className="flex gap-2 border-b border-[#1E293B] pb-2">
+      <div className="flex gap-2 border-b border-wo-border-subtle pb-2">
         <button
           type="button"
           data-testid="attendance-effects-tab-candidates"
@@ -284,7 +284,7 @@ export default function EmployeeAttendanceEffects() {
               {candidates.map((candidate) => (
                 <article
                   key={candidate.employee_request_id}
-                  className="rounded-xl border border-[#1E293B] bg-[#111827] p-4 space-y-3"
+                  className="rounded-xl border border-wo-border-subtle bg-wo-surface-raised p-4 space-y-3"
                   data-testid={`attendance-effect-candidate-${candidate.employee_request_id}`}
                 >
                   <div>
@@ -329,7 +329,7 @@ export default function EmployeeAttendanceEffects() {
                   "px-3 py-1.5 text-xs rounded-lg border transition-colors",
                   filter === item.value
                     ? "bg-blue-900/40 text-blue-200 border-blue-700/50"
-                    : "bg-[#111827] text-slate-400 border-[#243044] hover:border-slate-500",
+                    : "bg-wo-surface-raised text-slate-400 border-wo-border-strong hover:border-slate-500",
                 )}
                 onClick={() => setFilter(item.value)}
               >
@@ -369,7 +369,7 @@ export default function EmployeeAttendanceEffects() {
               {effects.map((effect) => (
                 <article
                   key={effect.id}
-                  className="rounded-xl border border-[#1E293B] bg-[#111827] p-4 space-y-3"
+                  className="rounded-xl border border-wo-border-subtle bg-wo-surface-raised p-4 space-y-3"
                   data-testid={`attendance-effect-card-${effect.id}`}
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">

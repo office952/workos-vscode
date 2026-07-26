@@ -380,7 +380,7 @@ export default function VolumetricLettersQuoteFlow({
           <FlowBreadcrumb items={volumetricQuoteBreadcrumb(intakeRequestId)} />
           <button
             onClick={onClose}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-[#2A3548] text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
           >
             <X className="w-3.5 h-3.5" />
             Închide
@@ -392,7 +392,7 @@ export default function VolumetricLettersQuoteFlow({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-[#2A3548] text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
             data-testid="volumetric-quote-back-to-spec"
           >
             <X className="w-3.5 h-3.5" />
@@ -426,7 +426,7 @@ export default function VolumetricLettersQuoteFlow({
           {!embedded && (
             <>
               {/* Context strip */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3">
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-[12px]">
                   <div>
                     <p className="text-[9px] uppercase tracking-wide text-slate-500">Client</p>
@@ -464,7 +464,7 @@ export default function VolumetricLettersQuoteFlow({
               </div>
 
               {/* Client info */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <p className="text-[11px] font-semibold text-slate-300 mb-2">
                   Informații primite de la client
                 </p>
@@ -474,7 +474,7 @@ export default function VolumetricLettersQuoteFlow({
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-2">
                   {flowState.text && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full border border-[#2A3548] text-slate-500">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full border border-wo-border-strong text-slate-500">
                       text cerere
                     </span>
                   )}
@@ -496,7 +496,7 @@ export default function VolumetricLettersQuoteFlow({
           )}
 
           {/* Materials — collapsed by default */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p className="text-[12px] text-slate-300">{materialSummary}</p>
               <button
@@ -522,7 +522,7 @@ export default function VolumetricLettersQuoteFlow({
                   materialFiles.map((file) => (
                     <div
                       key={file.id}
-                      className="border border-[#2A3548] rounded-md px-3 py-2 bg-[#0f1524]"
+                      className="border border-wo-border-strong rounded-md px-3 py-2 bg-[#0f1524]"
                     >
                       <p className="text-[12px] text-slate-200 truncate">{file.name}</p>
                       <p className="text-[10px] text-slate-500 mt-0.5">
@@ -540,7 +540,7 @@ export default function VolumetricLettersQuoteFlow({
           </div>
 
           {!embedded && !commercialHandoffMode && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
               <h2 className="text-[15px] font-semibold text-slate-100 mb-3">
                 Cum vrei să calculezi?
               </h2>
@@ -557,7 +557,7 @@ export default function VolumetricLettersQuoteFlow({
                       className={`text-left rounded-lg border p-3 transition-colors ${
                         active
                           ? "border-blue-500/60 bg-blue-950/30 ring-1 ring-blue-500/30"
-                          : "border-[#2A3548] hover:border-slate-500 bg-[#0f1524]"
+                          : "border-wo-border-strong hover:border-slate-500 bg-[#0f1524]"
                       }`}
                     >
                       <p className="text-[13px] font-semibold text-slate-100">{opt.title}</p>
@@ -584,7 +584,7 @@ export default function VolumetricLettersQuoteFlow({
           )}
 
           <div
-            className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-4"
+            className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-4"
             data-testid={embedded ? "volumetric-quote-embedded-summary" : undefined}
           >
             {embedded ? (
@@ -593,7 +593,7 @@ export default function VolumetricLettersQuoteFlow({
                   spec={initialProductSpec}
                   geometryExtracted={geometryExtracted}
                 />
-                <p className="text-[10px] text-slate-500 border-t border-[#1E293B] pt-3">
+                <p className="text-[10px] text-slate-500 border-t border-wo-border-subtle pt-3">
                   Datele provin din tab-ul <span className="text-blue-400">Specificație</span>.
                   Modifică acolo, apoi recalculează.
                 </p>
@@ -601,13 +601,13 @@ export default function VolumetricLettersQuoteFlow({
             ) : commercialHandoffMode ? (
               <>
                 <details
-                  className="rounded-md border border-[#2A3548] bg-[#0A0F1A]/30"
+                  className="rounded-md border border-wo-border-strong bg-wo-surface-inset/30"
                   data-testid="volumetric-advanced-technical-override"
                 >
                   <summary className="cursor-pointer px-3 py-2.5 text-[12px] font-medium text-slate-400 hover:text-slate-200">
                     Advanced technical override
                   </summary>
-                  <div className="px-3 pb-3 space-y-3 border-t border-[#1E293B]/80 pt-3">
+                  <div className="px-3 pb-3 space-y-3 border-t border-wo-border-subtle/80 pt-3">
                     <label className="flex items-start gap-2 text-[11px] text-slate-300 cursor-pointer">
                       <input
                         type="checkbox"
@@ -630,7 +630,7 @@ export default function VolumetricLettersQuoteFlow({
                             value={technicalOverrideReason}
                             onChange={(e) => setTechnicalOverrideReason(e.target.value)}
                             placeholder="ex: ajustare perimetru pentru variantă comercială"
-                            className="mt-1 w-full bg-[#0f1524] border border-[#2A3548] rounded px-2 py-1.5 text-[12px] text-slate-100"
+                            className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
                             data-testid="volumetric-technical-override-reason"
                           />
                         </label>
@@ -747,7 +747,7 @@ export default function VolumetricLettersQuoteFlow({
 
           {/* Simulation panel */}
           {simulationResult && costBreakdown && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
               <p className="text-[12px] font-semibold text-slate-200 mb-3 flex items-center gap-2">
                 <Calculator className="w-4 h-4 text-blue-400" />
                 Rezultat simulare preliminară
@@ -785,11 +785,11 @@ export default function VolumetricLettersQuoteFlow({
               </div>
               {linkedModuleResults.length > 0 && (
                 <div
-                  className="mt-4 border-t border-[#1E293B] pt-3 space-y-2"
+                  className="mt-4 border-t border-wo-border-subtle pt-3 space-y-2"
                   data-testid="volumetric-linked-modules-preview"
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px]">
-                    <div className="bg-[#0A0F1A] border border-[#1E293B] rounded px-3 py-2">
+                    <div className="bg-wo-surface-inset border border-wo-border-subtle rounded px-3 py-2">
                       <p className="text-slate-500">Litere volumetrice</p>
                       <p className="font-semibold text-slate-100">
                         {formatMoney(
@@ -799,7 +799,7 @@ export default function VolumetricLettersQuoteFlow({
                         )}
                       </p>
                     </div>
-                    <div className="bg-[#0A0F1A] border border-[#1E293B] rounded px-3 py-2">
+                    <div className="bg-wo-surface-inset border border-wo-border-subtle rounded px-3 py-2">
                       <p className="text-slate-500">Module atașate</p>
                       <p className="font-semibold text-blue-300">
                         {formatMoney(
@@ -808,7 +808,7 @@ export default function VolumetricLettersQuoteFlow({
                         )}
                       </p>
                     </div>
-                    <div className="bg-[#0A0F1A] border border-[#1E293B] rounded px-3 py-2">
+                    <div className="bg-wo-surface-inset border border-wo-border-subtle rounded px-3 py-2">
                       <p className="text-slate-500">Total compus</p>
                       <p className="font-semibold text-emerald-300">
                         {formatMoney(
@@ -826,7 +826,7 @@ export default function VolumetricLettersQuoteFlow({
                       return (
                         <div
                           key={`${module.template_code}-${index}`}
-                          className="border border-[#2A3548] rounded-md bg-[#0f1524] px-3 py-2"
+                          className="border border-wo-border-strong rounded-md bg-[#0f1524] px-3 py-2"
                         >
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <p className="text-[12px] font-semibold text-slate-200">
@@ -866,7 +866,7 @@ export default function VolumetricLettersQuoteFlow({
         </div>
 
         {/* Right rail */}
-        <aside className="xl:sticky xl:top-4 bg-[#0a0f1a] border border-[#1E293B] rounded-lg p-4 space-y-3">
+        <aside className="xl:sticky xl:top-4 bg-[#0a0f1a] border border-wo-border-subtle rounded-lg p-4 space-y-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             Stare ofertare
           </p>
@@ -893,7 +893,7 @@ export default function VolumetricLettersQuoteFlow({
               onDiscountChange={setDiscountPct}
             />
           )}
-          <div className="border-t border-[#1E293B] pt-3 space-y-2">
+          <div className="border-t border-wo-border-subtle pt-3 space-y-2">
             <div data-testid="volumetric-production-cost-summary">
               <p className="text-[10px] text-slate-500">Cost estimat producție</p>
               <p className="text-[22px] font-bold text-slate-100">
@@ -1123,7 +1123,7 @@ function VectorMethodPanel({
     spec?.vector_layer_mapping_status === "mapped" ||
     Boolean(spec?.svg_layer_mappings && Object.keys(spec.svg_layer_mappings).length);
   return (
-    <div className="rounded-md border border-[#2A3548] bg-[#0f1524] p-3 space-y-2 text-[11px]">
+    <div className="rounded-md border border-wo-border-strong bg-[#0f1524] p-3 space-y-2 text-[11px]">
       <p className="text-slate-300 font-medium flex items-center gap-2">
         <Layers className="w-4 h-4 text-blue-400" />
         Vector &amp; review
@@ -1270,7 +1270,7 @@ function CostOptionsPanel({
           <select
             value={quoteInput.selected_psu_watts ?? ""}
             onChange={(e) => onChange("selected_psu_watts", e.target.value)}
-            className="mt-1 w-full bg-[#0f1524] border border-[#2A3548] rounded px-2 py-1.5 text-[12px] text-slate-100"
+            className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
           >
             <option value="">—</option>
             {VOLUMETRIC_PSU_WATTAGE_OPTIONS.map((w) => (
@@ -1286,7 +1286,7 @@ function CostOptionsPanel({
         <select
           value={quoteInput.mounting_system ?? ""}
           onChange={(e) => onChange("mounting_system", e.target.value)}
-          className="mt-1 w-full bg-[#0f1524] border border-[#2A3548] rounded px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
         >
           {VOLUMETRIC_MOUNTING_SYSTEM_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -1322,7 +1322,7 @@ function CostOptionsPanel({
         <select
           value={quoteInput.face_finish_type ?? "none"}
           onChange={(e) => onChange("face_finish_type", e.target.value)}
-          className="mt-1 w-full bg-[#0f1524] border border-[#2A3548] rounded px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-1 w-full bg-[#0f1524] border border-wo-border-strong rounded px-2 py-1.5 text-[12px] text-slate-100"
         >
           {VOLUMETRIC_FACE_FINISH_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
@@ -1443,7 +1443,7 @@ function CommercialPricingPanel({
 }) {
   return (
     <div
-      className="border-t border-[#1E293B] pt-3 space-y-2"
+      className="border-t border-wo-border-subtle pt-3 space-y-2"
       data-testid="volumetric-commercial-pricing"
     >
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -1543,9 +1543,9 @@ function Field({
         readOnly={readOnly}
         disabled={readOnly}
         onChange={(e) => onChange(e.target.value)}
-        className={`mt-1 w-full border border-[#2A3548] rounded px-2 py-1.5 text-[12px] ${
+        className={`mt-1 w-full border border-wo-border-strong rounded px-2 py-1.5 text-[12px] ${
           readOnly
-            ? "bg-[#0A0F1A]/60 text-slate-400 cursor-default"
+            ? "bg-wo-surface-inset/60 text-slate-400 cursor-default"
             : "bg-[#0f1524] text-slate-100"
         }`}
       />

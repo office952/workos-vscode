@@ -240,7 +240,7 @@ export default function EmployeePayments() {
         </p>
       </header>
 
-      <Alert className="bg-[#111827] border-[#1E293B] text-slate-300">
+      <Alert className="bg-wo-surface-raised border-wo-border-subtle text-slate-300">
         <Info className="h-4 w-4 text-slate-400" />
         <AlertDescription className="text-[12px]">
           Sumele afișate sunt pentru evidență operațională. Pagina nu configurează salarii și nu
@@ -253,7 +253,7 @@ export default function EmployeePayments() {
         <button
           type="button"
           onClick={() => setMonthKey((k) => shiftMonthKey(k, -1))}
-          className="p-1.5 rounded border border-[#2A3548] text-slate-400 hover:text-white"
+          className="p-1.5 rounded border border-wo-border-strong text-slate-400 hover:text-white"
           aria-label="Luna anterioară"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -264,7 +264,7 @@ export default function EmployeePayments() {
         <button
           type="button"
           onClick={() => setMonthKey((k) => shiftMonthKey(k, 1))}
-          className="p-1.5 rounded border border-[#2A3548] text-slate-400 hover:text-white"
+          className="p-1.5 rounded border border-wo-border-strong text-slate-400 hover:text-white"
           aria-label="Luna următoare"
         >
           <ChevronRight className="w-4 h-4" />
@@ -290,13 +290,13 @@ export default function EmployeePayments() {
                   placeholder="Caută angajat"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 text-[12px] bg-[#0B1220] border border-[#2A3548] rounded text-slate-200 w-[140px]"
+                  className="pl-8 pr-3 py-1.5 text-[12px] bg-wo-surface-input border border-wo-border-strong rounded text-slate-200 w-[140px]"
                 />
               </div>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as SortKey)}
-                className="text-[12px] bg-[#0B1220] border border-[#2A3548] rounded px-2 py-1.5 text-slate-300"
+                className="text-[12px] bg-wo-surface-input border border-wo-border-strong rounded px-2 py-1.5 text-slate-300"
                 aria-label="Sortare"
               >
                 <option value="remaining">Sortare: sumă rămasă</option>
@@ -306,7 +306,7 @@ export default function EmployeePayments() {
           </div>
 
           {filteredRows.length === 0 ? (
-            <p className="text-[13px] text-slate-500 py-8 text-center border border-[#1E293B] rounded-lg">
+            <p className="text-[13px] text-slate-500 py-8 text-center border border-wo-border-subtle rounded-lg">
               Niciun angajat pentru filtrele selectate.
             </p>
           ) : (
@@ -346,7 +346,7 @@ export default function EmployeePayments() {
               onSave={handleSaveRecording}
             />
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6 text-center text-slate-500 text-[13px]">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6 text-center text-slate-500 text-[13px]">
               Selectați un angajat din listă sau ajustați filtrele.
             </div>
           )}
@@ -359,27 +359,27 @@ export default function EmployeePayments() {
 function PaymentSummaryCards({ summary }: { summary: MonthPaymentSummary }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Calculat luna aceasta</p>
         <p className="text-xl font-bold text-slate-100">
           {summary.calculated.toLocaleString("ro-RO")}{" "}
           <span className="text-xs text-slate-500">RON</span>
         </p>
       </div>
-      <div className="bg-[#1A2236] border border-emerald-800/30 rounded-lg p-3">
+      <div className="bg-wo-surface-raised border border-emerald-800/30 rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Plătit</p>
         <p className="text-xl font-bold text-emerald-400 flex items-center gap-1">
           <CheckCircle2 className="w-4 h-4" />
           {summary.paid.toLocaleString("ro-RO")} RON
         </p>
       </div>
-      <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+      <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Rămas</p>
         <p className="text-xl font-bold text-slate-100">
           {summary.remaining.toLocaleString("ro-RO")} RON
         </p>
       </div>
-      <div className="bg-[#1A2236] border border-amber-800/30 rounded-lg p-3">
+      <div className="bg-wo-surface-raised border border-amber-800/30 rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Situație</p>
         <p className="text-xl font-bold text-amber-400 flex items-center gap-1">
           <Clock className="w-4 h-4" />
@@ -402,7 +402,7 @@ function PaymentSlotTabs({
     { key: "30", label: "Tranșa 30 / final lună" },
   ];
   return (
-    <div className="flex gap-1 border-b border-[#1E293B]">
+    <div className="flex gap-1 border-b border-wo-border-subtle">
       {tabs.map((tab) => (
         <button
           key={tab.key}
@@ -444,7 +444,7 @@ function PaymentFilterChips({
           className={`px-3 py-1 rounded-full text-[11px] border transition-colors ${
             value === chip.key
               ? "bg-blue-600/20 border-blue-500/50 text-blue-300"
-              : "border-[#2A3548] text-slate-400 hover:text-slate-200"
+              : "border-wo-border-strong text-slate-400 hover:text-slate-200"
           }`}
         >
           {chip.label}
@@ -506,7 +506,7 @@ function EmployeeListRow({
       className={`w-full text-left rounded-lg border p-3 transition-colors ${
         selected
           ? "border-blue-500/60 bg-blue-950/25 ring-1 ring-blue-500/30"
-          : "border-[#1E293B] bg-[#111827] hover:border-[#2A3548] hover:bg-[#0f172a]"
+          : "border-wo-border-subtle bg-wo-surface-raised hover:border-wo-border-strong hover:bg-wo-surface-inset"
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
@@ -585,7 +585,7 @@ function EmployeePaymentDetailPanel({
 
   if (row.missingBase) {
     return (
-      <div className="bg-[#111827] border border-amber-800/40 rounded-lg p-5 space-y-4">
+      <div className="bg-wo-surface-raised border border-amber-800/40 rounded-lg p-5 space-y-4">
         <h2 className="text-[16px] font-semibold text-slate-100">{row.employeeName}</h2>
         <p className="text-[12px] text-amber-300/90 flex items-center gap-1.5">
           <AlertTriangle className="w-4 h-4 shrink-0" />
@@ -593,7 +593,7 @@ function EmployeePaymentDetailPanel({
         </p>
         <Link
           to="/employees"
-          className="inline-block text-[12px] px-3 py-1.5 rounded border border-[#2A3548] text-slate-300 hover:text-white"
+          className="inline-block text-[12px] px-3 py-1.5 rounded border border-wo-border-strong text-slate-300 hover:text-white"
         >
           Deschide profil angajat
         </Link>
@@ -602,7 +602,7 @@ function EmployeePaymentDetailPanel({
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-5">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-[16px] font-semibold text-slate-100">{row.employeeName}</h2>
@@ -662,7 +662,7 @@ function EmployeePaymentDetailPanel({
         {activeHistory.length === 0 && cancelledHistory.length === 0 ? (
           <p className="text-[11px] text-slate-500">Nicio plată înregistrată pentru această tranșă.</p>
         ) : (
-          <ul className="divide-y divide-[#1E293B] text-[11px]">
+          <ul className="divide-y divide-wo-border-subtle text-[11px]">
             {activeHistory.map((entry) => (
               <HistoryRow key={entry.id} entry={entry} />
             ))}
@@ -673,7 +673,7 @@ function EmployeePaymentDetailPanel({
         )}
       </div>
 
-      <section aria-label="Înregistrare plată" className="border-t border-[#1E293B] pt-4 space-y-3">
+      <section aria-label="Înregistrare plată" className="border-t border-wo-border-subtle pt-4 space-y-3">
         <h3 className="text-[13px] font-semibold text-slate-200">Înregistrează plată</h3>
 
         {isPaid || slotData.remainingAmount <= 0 ? (
@@ -693,7 +693,7 @@ function EmployeePaymentDetailPanel({
                 step="1"
                 value={formAmount}
                 onChange={(e) => onAmountChange(e.target.value)}
-                className="w-full bg-[#0B1220] border border-[#2A3548] rounded px-3 py-2 text-slate-100"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100"
               />
             </label>
             <label className="block space-y-1 text-[12px]">
@@ -702,7 +702,7 @@ function EmployeePaymentDetailPanel({
                 type="date"
                 value={formDate}
                 onChange={(e) => onDateChange(e.target.value)}
-                className="w-full bg-[#0B1220] border border-[#2A3548] rounded px-3 py-2 text-slate-100"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100"
               />
             </label>
             <label className="block space-y-1 text-[12px]">
@@ -711,7 +711,7 @@ function EmployeePaymentDetailPanel({
                 value={formNotes}
                 onChange={(e) => onNotesChange(e.target.value)}
                 rows={2}
-                className="w-full bg-[#0B1220] border border-[#2A3548] rounded px-3 py-2 text-slate-100 resize-none"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100 resize-none"
               />
             </label>
             {formError && <p className="text-red-400 text-[11px]">{formError}</p>}

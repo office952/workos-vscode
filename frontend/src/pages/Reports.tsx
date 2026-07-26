@@ -66,7 +66,7 @@ function MetricCard({
 }) {
   const isPositive = trend >= 0;
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-4">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <span className="text-slate-400">{icon}</span>
@@ -237,7 +237,7 @@ export default function Reports() {
     return (
       <div className="space-y-4">
         <DataSourceBanner source={source} />
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-6">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-6">
           <p className="text-[12px] text-slate-400">Nu există date de raportare disponibile încă.</p>
         </div>
       </div>
@@ -272,7 +272,7 @@ export default function Reports() {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg">
+      <div className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg">
         <Factory className="w-4 h-4 text-blue-400" />
         <p className="text-[12px] text-slate-300">
           Rapoarte operaționale (realitate execuție, fără cost/profit/salarii)
@@ -345,7 +345,7 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* 30-Day Throughput Chart */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader
             title="Throughput \u2014 30 Zile"
             icon={<BarChart3 className="w-4 h-4" />}
@@ -379,7 +379,7 @@ export default function Reports() {
         </div>
 
         {/* OTIF Trend */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader
             title="OTIF % \u2014 30 Zile"
             icon={<Target className="w-4 h-4" />}
@@ -441,7 +441,7 @@ export default function Reports() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Workcenter Utilization Heatmap */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader
             title="Utilizare Workcentere \u2014 S\u0103pt\u0103m\u00e2na Curent\u0103"
             icon={<Factory className="w-4 h-4" />}
@@ -474,7 +474,7 @@ export default function Reports() {
         </div>
 
         {/* Job Completion Funnel */}
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
           <SectionHeader
             title="Job Status Funnel"
             icon={<Activity className="w-4 h-4" />}

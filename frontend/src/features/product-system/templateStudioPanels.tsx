@@ -543,7 +543,7 @@ export function ComponentTimelineWrap({
         <span className="w-7 h-7 flex items-center justify-center rounded-full bg-purple-500/15 border border-purple-500/35 text-[11px] font-bold text-purple-300">
           {index + 1}
         </span>
-        {!isLast ? <div className="w-px flex-1 min-h-[12px] bg-[#2A3548] mt-1" /> : null}
+        {!isLast ? <div className="w-px flex-1 min-h-[12px] bg-wo-hover mt-1" /> : null}
       </div>
       <div className="flex-1 min-w-0 pb-1">{children}</div>
     </div>

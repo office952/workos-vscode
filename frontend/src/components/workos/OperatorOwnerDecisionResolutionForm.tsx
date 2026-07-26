@@ -88,7 +88,7 @@ export function OperatorOwnerDecisionResolutionForm({
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={2}
-          className="mt-1 w-full rounded border border-[#243044] bg-[#0A1020] px-2 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-500"
+          className="mt-1 w-full rounded border border-wo-border-strong bg-[#0A1020] px-2 py-1.5 text-[11px] text-slate-200 placeholder:text-slate-500"
           placeholder="Descrieti rezolvarea operationala..."
           data-testid={`owner-decision-resolve-note-${item.code}`}
         />

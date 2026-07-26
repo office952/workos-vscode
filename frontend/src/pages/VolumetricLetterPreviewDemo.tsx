@@ -25,7 +25,7 @@ function ScenarioCard({
 
   return (
     <article
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-3"
       data-testid={`volumetric-preview-demo-scenario-${scenarioId}`}
     >
       <div>
@@ -85,11 +85,11 @@ export default function VolumetricLetterPreviewDemo() {
       </header>
 
       <div
-        className="flex flex-wrap items-center gap-3 rounded-lg border border-[#1E293B] bg-[#111827] p-3"
+        className="flex flex-wrap items-center gap-3 rounded-lg border border-wo-border-subtle bg-wo-surface-raised p-3"
         data-testid="volumetric-letter-preview-demo-global-controls"
       >
         <span className="text-[10px] uppercase tracking-wide text-slate-500">Controale globale</span>
-        <div className="inline-flex rounded border border-[#1E293B] overflow-hidden">
+        <div className="inline-flex rounded border border-wo-border-subtle overflow-hidden">
           <button
             type="button"
             className={`px-3 py-1.5 text-[10px] uppercase tracking-wide ${
@@ -117,7 +117,7 @@ export default function VolumetricLetterPreviewDemo() {
         </div>
         <button
           type="button"
-          className={`px-3 py-1.5 text-[10px] uppercase tracking-wide rounded border border-[#1E293B] ${
+          className={`px-3 py-1.5 text-[10px] uppercase tracking-wide rounded border border-wo-border-subtle ${
             showLabels ? "bg-slate-700 text-slate-100" : "text-slate-400 hover:text-slate-200"
           }`}
           onClick={() => setShowLabels((v) => !v)}

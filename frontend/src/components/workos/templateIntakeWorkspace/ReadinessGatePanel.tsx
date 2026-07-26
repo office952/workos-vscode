@@ -50,7 +50,7 @@ function StagedReadinessList({
             className={`rounded-lg border px-3 py-2 ${
               isActive
                 ? "border-amber-900/50 bg-amber-950/20"
-                : "border-[#1E293B] bg-[#0f172a]/40"
+                : "border-wo-border-subtle bg-wo-surface-inset/40"
             }`}
           >
             <div className="flex items-center gap-1.5 mb-1">
@@ -107,7 +107,7 @@ export default function ReadinessGatePanel({
   return (
     <div
       id={INTAKE_SECTION_IDS["ready-actions"]}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 scroll-mt-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 scroll-mt-4"
       data-testid="readiness-gate-panel"
     >
       <div className="mb-2">

@@ -174,7 +174,7 @@ export function VolumetricCommercialReadinessPanel({
 
       {showAcknowledgementControl && summary.requiresAcknowledgement && (
         <div
-          className="border-t border-[#1E293B] pt-2"
+          className="border-t border-wo-border-subtle pt-2"
           data-testid={`${testId}-ack-control`}
         >
           <label className="flex items-start gap-2 text-[11px] text-slate-300 cursor-pointer">
@@ -183,7 +183,7 @@ export function VolumetricCommercialReadinessPanel({
               id="quote_convert_acknowledge_warnings"
               checked={acknowledgementChecked}
               onChange={(e) => onAcknowledgementChange?.(e.target.checked)}
-              className="w-4 h-4 mt-0.5 rounded border-[#2A3548] bg-[#1A2236] accent-blue-600"
+              className="w-4 h-4 mt-0.5 rounded border-wo-border-strong bg-wo-surface-raised accent-blue-600"
             />
             <span>
               Confirm că am verificat avertizările comerciale și continui cu conversia.
@@ -203,7 +203,7 @@ export function VolumetricCommercialReadinessPanel({
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#0B111E]/60 border border-[#1E293B] rounded px-2 py-1">
+    <div className="bg-[#0B111E]/60 border border-wo-border-subtle rounded px-2 py-1">
       <p className="text-slate-500 truncate">{label}</p>
       <p className="font-mono text-slate-300">{value}</p>
     </div>

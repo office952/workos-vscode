@@ -65,8 +65,8 @@ export default function IntakeWorkTypePicker({
               selected
                 ? "border-emerald-500/60 bg-emerald-950/25 ring-1 ring-emerald-500/30"
                 : disabled
-                  ? "border-[#2A3548] bg-[#141c2e]/60 opacity-55 cursor-not-allowed"
-                  : "border-[#2A3548] bg-[#1A2236] hover:border-slate-500 cursor-pointer"
+                  ? "border-wo-border-strong bg-[#141c2e]/60 opacity-55 cursor-not-allowed"
+                  : "border-wo-border-strong bg-wo-surface-raised hover:border-slate-500 cursor-pointer"
             }`}
           >
             <span className="text-[12px] font-semibold text-slate-100 leading-snug">

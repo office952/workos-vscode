@@ -311,11 +311,11 @@ export default function Attendance() {
       </Alert>
 
       <div className="flex items-center gap-4">
-        <button type="button" onClick={prevMonth} className="p-2 rounded-lg bg-[#1A2236] border border-[#2A3548]">
+        <button type="button" onClick={prevMonth} className="p-2 rounded-lg bg-wo-surface-raised border border-wo-border-strong">
           <ChevronLeft className="w-4 h-4 text-slate-300" />
         </button>
         <p className="text-[18px] font-bold text-slate-100">{MONTHS[month - 1]} {year}</p>
-        <button type="button" onClick={nextMonth} className="p-2 rounded-lg bg-[#1A2236] border border-[#2A3548]">
+        <button type="button" onClick={nextMonth} className="p-2 rounded-lg bg-wo-surface-raised border border-wo-border-strong">
           <ChevronRight className="w-4 h-4 text-slate-300" />
         </button>
       </div>
@@ -328,7 +328,7 @@ export default function Attendance() {
       </div>
 
       {!hasAnyEvents && (
-        <div className="bg-[#111827] border border-dashed border-[#2A3548] rounded-lg p-6 text-center space-y-3">
+        <div className="bg-wo-surface-raised border border-dashed border-wo-border-strong rounded-lg p-6 text-center space-y-3">
           <p className="text-[13px] text-slate-400">
             Nicio excepție înregistrată. Toți angajații activi sunt considerați prezenți conform
             programului standard.
@@ -353,7 +353,7 @@ export default function Attendance() {
             {rows.map((row) => (
               <div
                 key={row.employeeId}
-                className="w-full bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3"
+                className="w-full bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3"
               >
                 <div className="flex items-center gap-3 flex-wrap">
                   <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-[11px] font-bold text-slate-300 shrink-0">
@@ -398,7 +398,7 @@ export default function Attendance() {
               Toți
             </button>
           </div>
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-3 space-y-1 max-h-[420px] overflow-y-auto">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 space-y-1 max-h-[420px] overflow-y-auto">
             {eventsLoading ? (
               <div className="flex items-center gap-2 text-slate-500 text-[12px] py-4 justify-center">
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -410,7 +410,7 @@ export default function Attendance() {
               </p>
             ) : (
               events.map((ev) => (
-                <div key={ev.id} className="flex items-center gap-2 px-2 py-1.5 rounded bg-[#1A2236]">
+                <div key={ev.id} className="flex items-center gap-2 px-2 py-1.5 rounded bg-wo-surface-raised">
                   <span className="text-[10px] text-slate-500 font-mono min-w-[88px]">
                     {formatEventRange(ev)}
                   </span>
@@ -453,7 +453,7 @@ export default function Attendance() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="bg-[#111827] border-[#2A3548] text-slate-100">
+        <DialogContent className="bg-wo-surface-raised border-wo-border-strong text-slate-100">
           <DialogHeader>
             <DialogTitle>Adaugă eveniment pontaj</DialogTitle>
           </DialogHeader>
@@ -464,7 +464,7 @@ export default function Attendance() {
                 onChange={(e) =>
                   setFormEmployeeId(e.target.value === "" ? "" : Number(e.target.value))
                 }
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
               >
                 <option value="">Selectează...</option>
                 {activeEmployees.map((emp) => (
@@ -483,7 +483,7 @@ export default function Attendance() {
                     setFormEndDate(formStartDate);
                   }
                 }}
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
               >
                 {EVENT_TYPE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -494,7 +494,7 @@ export default function Attendance() {
               <select
                 value={formStatus}
                 onChange={(e) => setFormStatus(e.target.value as AttendanceEventStatus)}
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
               >
                 {STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -509,7 +509,7 @@ export default function Attendance() {
                   setFormStartDate(e.target.value);
                   if (isSingleDayForm) setFormEndDate(e.target.value);
                 }}
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
               />
             </Field>
             {!isSingleDayForm && (
@@ -518,7 +518,7 @@ export default function Attendance() {
                   type="date"
                   value={formEndDate}
                   onChange={(e) => setFormEndDate(e.target.value)}
-                  className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                  className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
                 />
               </Field>
             )}
@@ -536,7 +536,7 @@ export default function Attendance() {
                   step={0.5}
                   value={formHoursOverride}
                   onChange={(e) => setFormHoursOverride(e.target.value)}
-                  className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                  className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
                   placeholder="ex. 4 pentru zi parțială"
                 />
               </Field>
@@ -550,7 +550,7 @@ export default function Attendance() {
                   step={0.5}
                   value={formHoursDelta}
                   onChange={(e) => setFormHoursDelta(e.target.value)}
-                  className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                  className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
                   placeholder="ex. +2 ore suplimentare"
                 />
               </Field>
@@ -560,14 +560,14 @@ export default function Attendance() {
                 value={formNotes}
                 onChange={(e) => setFormNotes(e.target.value)}
                 rows={2}
-                className="w-full bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+                className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
                 placeholder={formType === "correction" ? "Obligatoriu pentru corecție" : ""}
               />
             </Field>
             {formError && <p className="text-[12px] text-red-400">{formError}</p>}
           </div>
           <DialogFooter className="gap-2">
-            <button type="button" onClick={() => setFormOpen(false)} className="px-3 py-2 text-[12px] border border-[#2A3548] rounded-md">
+            <button type="button" onClick={() => setFormOpen(false)} className="px-3 py-2 text-[12px] border border-wo-border-strong rounded-md">
               Anulează
             </button>
             <button
@@ -599,7 +599,7 @@ function KpiCard({
   alert?: boolean;
 }) {
   return (
-    <div className={`bg-[#1A2236] border rounded-lg p-3 ${alert ? "border-amber-800/40" : "border-[#2A3548]"}`}>
+    <div className={`bg-wo-surface-raised border rounded-lg p-3 ${alert ? "border-amber-800/40" : "border-wo-border-strong"}`}>
       <div className="flex items-center gap-2 mb-1">{icon}<span className="text-[10px] text-slate-500 uppercase">{label}</span></div>
       <p className="text-[22px] font-bold text-slate-100">{value}{suffix}</p>
     </div>

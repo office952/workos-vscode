@@ -52,9 +52,9 @@ export default function ReadinessWarningAcknowledgementModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg shadow-xl max-w-md w-full mx-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg shadow-xl max-w-md w-full mx-4">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-wo-border-subtle">
           <div className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-amber-400" />
             <h2 className="text-[14px] font-bold text-slate-100">Readiness Warnings</h2>
@@ -75,7 +75,7 @@ export default function ReadinessWarningAcknowledgementModal({
           </p>
 
           {/* Warnings List */}
-          <div className="bg-[#1A2236] border border-amber-800/30 rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
+          <div className="bg-wo-surface-raised border border-amber-800/30 rounded-lg p-3 space-y-2 max-h-48 overflow-y-auto">
             {warnings && warnings.length > 0 ? (
               warnings.map((warning, idx) => {
                 const warningText =
@@ -100,7 +100,7 @@ export default function ReadinessWarningAcknowledgementModal({
 
           {/* Readiness Result Summary (Optional) */}
           {readinessResult && typeof readinessResult === "object" && "overall_status" in readinessResult && (
-            <div className="bg-[#1A2236] rounded-lg p-3">
+            <div className="bg-wo-surface-raised rounded-lg p-3">
               <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Status</p>
               <p className="text-[12px] text-slate-300 font-semibold">
                 {String((readinessResult as Record<string, unknown>).overall_status)}
@@ -116,7 +116,7 @@ export default function ReadinessWarningAcknowledgementModal({
               checked={isChecked}
               onChange={(e) => setIsChecked(e.target.checked)}
               disabled={isSubmitting || isLoading}
-              className="w-4 h-4 rounded border-[#2A3548] bg-[#1A2236] accent-blue-600 mt-1 cursor-pointer disabled:opacity-50"
+              className="w-4 h-4 rounded border-wo-border-strong bg-wo-surface-raised accent-blue-600 mt-1 cursor-pointer disabled:opacity-50"
             />
             <label htmlFor="acknowledge_warnings" className="text-[11px] text-slate-300 cursor-pointer flex-1">
               I have reviewed and acknowledge these readiness warnings.
@@ -134,7 +134,7 @@ export default function ReadinessWarningAcknowledgementModal({
               onChange={(e) => setReason(e.target.value)}
               disabled={isSubmitting || isLoading}
               placeholder="Explain why you are acknowledging these warnings (required)"
-              className="w-full px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded text-[11px] text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none disabled:opacity-50"
+              className="w-full px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded text-[11px] text-slate-300 placeholder-slate-600 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 resize-none disabled:opacity-50"
               rows={3}
             />
             <p className="text-[10px] text-slate-500 mt-1">Minimum 5 characters required.</p>
@@ -142,7 +142,7 @@ export default function ReadinessWarningAcknowledgementModal({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center gap-2 px-6 py-3 border-t border-[#1E293B] bg-[#0D1117]">
+        <div className="flex items-center gap-2 px-6 py-3 border-t border-wo-border-subtle bg-[#0D1117]">
           <button
             onClick={handleCancel}
             disabled={isSubmitting || isLoading}

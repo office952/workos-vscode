@@ -165,7 +165,7 @@ export function MaterialsCapturePanel({
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -189,7 +189,7 @@ export function MaterialsCapturePanel({
           {materials.map((mat, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded px-3 py-2"
+              className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2"
             >
               {editingIndex === idx ? (
                 /* Inline edit mode */
@@ -198,14 +198,14 @@ export function MaterialsCapturePanel({
                     type="text"
                     value={editRow.material_name}
                     onChange={(e) => setEditRow({ ...editRow, material_name: e.target.value })}
-                    className="flex-1 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                    className="flex-1 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
                     placeholder="Nume material"
                   />
                   <input
                     type="number"
                     value={editRow.quantity || ""}
                     onChange={(e) => setEditRow({ ...editRow, quantity: parseFloat(e.target.value) || 0 })}
-                    className="w-20 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                    className="w-20 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
                     placeholder="Cant."
                     step="0.01"
                     min="0.01"
@@ -213,7 +213,7 @@ export function MaterialsCapturePanel({
                   <select
                     value={editRow.unit}
                     onChange={(e) => setEditRow({ ...editRow, unit: e.target.value })}
-                    className="w-20 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                    className="w-20 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
                   >
                     {VALID_UNITS.map((u) => (
                       <option key={u} value={u}>{u}</option>
@@ -292,14 +292,14 @@ export function MaterialsCapturePanel({
                 type="text"
                 value={row.material_name}
                 onChange={(e) => updatePendingRow(idx, "material_name", e.target.value)}
-                className="flex-1 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                className="flex-1 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
                 placeholder="Nume material *"
               />
               <input
                 type="number"
                 value={row.quantity || ""}
                 onChange={(e) => updatePendingRow(idx, "quantity", parseFloat(e.target.value) || 0)}
-                className="w-20 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                className="w-20 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
                 placeholder="Cant. *"
                 step="0.01"
                 min="0.01"
@@ -307,7 +307,7 @@ export function MaterialsCapturePanel({
               <select
                 value={row.unit}
                 onChange={(e) => updatePendingRow(idx, "unit", e.target.value)}
-                className="w-20 bg-[#0F172A] border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
+                className="w-20 bg-wo-surface-inset border border-slate-600 rounded px-2 py-1 text-[12px] text-slate-200"
               >
                 {VALID_UNITS.map((u) => (
                   <option key={u} value={u}>{u}</option>

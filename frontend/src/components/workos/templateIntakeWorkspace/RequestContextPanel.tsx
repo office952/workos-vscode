@@ -50,7 +50,7 @@ export default function RequestContextPanel({
 
   return (
     <div
-      className={`bg-[#111827] border border-[#1E293B] rounded-lg ${compact ? "p-3" : "p-4"}`}
+      className={`bg-wo-surface-raised border border-wo-border-subtle rounded-lg ${compact ? "p-3" : "p-4"}`}
       data-testid="request-context-panel"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
@@ -100,7 +100,7 @@ export default function RequestContextPanel({
               onChange={(e) => setAssignedTo(e.target.value)}
               onBlur={() => void onAssignedBlur()}
               placeholder="Operator"
-              className="w-full bg-[#0D1321] border border-[#2A3548] rounded px-2 py-0.5 text-[11px] text-slate-200"
+              className="w-full bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-0.5 text-[11px] text-slate-200"
             />
           )}
         </div>
@@ -110,7 +110,7 @@ export default function RequestContextPanel({
             value={selectedDeliveryType}
             disabled={source === "mock"}
             onChange={(e) => void onDeliveryTypeChange(e.target.value as DeliveryType)}
-            className="w-full bg-[#0D1321] border border-[#2A3548] rounded px-2 py-0.5 text-[11px] text-slate-200"
+            className="w-full bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-0.5 text-[11px] text-slate-200"
           >
             {(Object.keys(deliveryTypeLabels) as DeliveryType[]).map((dt) => (
               <option key={dt} value={dt}>

@@ -63,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </p>
 
               {err && (
-                <div className="bg-[#0D1321] border border-red-900/40 rounded p-3 mb-3 overflow-auto max-h-64">
+                <div className="bg-wo-surface-inset border border-red-900/40 rounded p-3 mb-3 overflow-auto max-h-64">
                   <p className="text-[11px] text-red-300 font-mono mb-1">
                     {err.name}: {err.message}
                   </p>

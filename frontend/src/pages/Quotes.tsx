@@ -1038,7 +1038,7 @@ export default function Quotes() {
               ) : null}
 
               {intakeV6WorkspaceId ? (
-                <div className="bg-[#0F172A] border border-cyan-900/40 rounded-lg p-3">
+                <div className="bg-wo-surface-inset border border-cyan-900/40 rounded-lg p-3">
                   <p className="text-[11px] text-cyan-100 leading-relaxed">
                     Lista de mai jos este Oferta client persistată (Snapshot V2). Nu este Cost intern estimativ /
                     breakdown tehnic live din Intake V6 — e normal să fie mai agregată decât calculatorul intern.

@@ -113,21 +113,21 @@ export default function EmployeesRecords() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <div className="flex items-center gap-2 mb-1">
             <Users className="w-4 h-4 text-blue-400" />
             <span className="text-[10px] text-slate-500 uppercase">Angajati activi</span>
           </div>
           <p className="text-[22px] font-bold text-slate-100">{totalActivi}</p>
         </div>
-        <div className={`bg-[#1A2236] border rounded-lg p-3 ${totalAlerts > 0 ? "border-amber-800/40" : "border-[#2A3548]"}`}>
+        <div className={`bg-wo-surface-raised border rounded-lg p-3 ${totalAlerts > 0 ? "border-amber-800/40" : "border-wo-border-strong"}`}>
           <div className="flex items-center gap-2 mb-1">
             <Bell className="w-4 h-4 text-amber-400" />
             <span className="text-[10px] text-slate-500 uppercase">Alerte active</span>
           </div>
           <p className={`text-[22px] font-bold ${totalAlerts > 0 ? "text-amber-400" : "text-slate-500"}`}>{totalAlerts}</p>
         </div>
-        <div className={`bg-[#1A2236] border rounded-lg p-3 ${medicinaProblems > 0 ? "border-red-800/40" : "border-[#2A3548]"}`}>
+        <div className={`bg-wo-surface-raised border rounded-lg p-3 ${medicinaProblems > 0 ? "border-red-800/40" : "border-wo-border-strong"}`}>
           <div className="flex items-center gap-2 mb-1">
             <Heart className="w-4 h-4 text-pink-400" />
             <span className="text-[10px] text-slate-500 uppercase">Medicina muncii</span>
@@ -136,7 +136,7 @@ export default function EmployeesRecords() {
             {medicinaProblems > 0 ? `${medicinaProblems} probleme` : "OK"}
           </p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <div className="flex items-center gap-2 mb-1">
             <FileText className="w-4 h-4 text-slate-400" />
             <span className="text-[10px] text-slate-500 uppercase">Documente lipsa</span>
@@ -161,7 +161,7 @@ export default function EmployeesRecords() {
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
+        <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
           <Search className="w-4 h-4 text-slate-500" />
           <input
             type="text"
@@ -174,7 +174,7 @@ export default function EmployeesRecords() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="bg-[#111827] border border-[#1E293B] rounded-md px-2 py-2 text-[12px] text-slate-200"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-md px-2 py-2 text-[12px] text-slate-200"
         >
           <option value="all">Toate statusurile</option>
           <option value="activ">Activ</option>
@@ -190,7 +190,7 @@ export default function EmployeesRecords() {
           <button
             key={emp.id}
             onClick={() => navigate(`/employees-records/${emp.id}`)}
-            className="w-full bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3 text-left transition-all hover:border-slate-500 hover:scale-[1.005]"
+            className="w-full bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3 text-left transition-all hover:border-slate-500 hover:scale-[1.005]"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-[13px] font-bold text-slate-300 shrink-0">

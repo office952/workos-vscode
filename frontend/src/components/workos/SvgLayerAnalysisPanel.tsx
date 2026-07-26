@@ -273,7 +273,7 @@ export default function SvgLayerAnalysisPanel({
   }
 
   return (
-    <div className="space-y-3 border border-[#1E293B] rounded-lg bg-[#0B111E] p-3">
+    <div className="space-y-3 border border-wo-border-subtle rounded-lg bg-[#0B111E] p-3">
       <div className="flex items-center gap-2">
         <Layers className="w-4 h-4 text-cyan-400" />
         <h3 className="text-[12px] font-semibold text-slate-200">
@@ -286,7 +286,7 @@ export default function SvgLayerAnalysisPanel({
         onChange={(e) => setSvgText(e.target.value)}
         rows={4}
         placeholder="Lipiți SVG cu layere denumite exact ca template_code (ex. TPL-VOLUMETRIC-LETTERS)…"
-        className="w-full bg-[#111827] border border-[#2A3548] rounded px-3 py-2 text-[11px] font-mono text-slate-300 outline-none focus:border-cyan-500/50"
+        className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-3 py-2 text-[11px] font-mono text-slate-300 outline-none focus:border-cyan-500/50"
       />
       <div className="flex flex-wrap gap-2">
         <button
@@ -332,9 +332,9 @@ export default function SvgLayerAnalysisPanel({
             {analysis.summary.layers_mapped ?? 0} · nemapate:{" "}
             {analysis.summary.layers_unmapped ?? 0}
           </div>
-          <div className="overflow-auto max-h-56 border border-[#1E293B] rounded">
+          <div className="overflow-auto max-h-56 border border-wo-border-subtle rounded">
             <table className="w-full text-[11px]">
-              <thead className="bg-[#111827] text-[10px] uppercase text-slate-500">
+              <thead className="bg-wo-surface-raised text-[10px] uppercase text-slate-500">
                 <tr>
                   <th className="text-left px-2 py-1.5">Layer (template_code)</th>
                   <th className="text-left px-2 py-1.5">Status</th>
@@ -344,7 +344,7 @@ export default function SvgLayerAnalysisPanel({
               </thead>
               <tbody>
                 {analysis.layers.map((layer) => (
-                  <tr key={layer.svg_layer_id} className="border-t border-[#1E293B]">
+                  <tr key={layer.svg_layer_id} className="border-t border-wo-border-subtle">
                     <td className="px-2 py-1.5">
                       <div className="font-mono text-cyan-300">
                         {layer.mapped_template_code ?? layer.svg_layer_name}
@@ -415,7 +415,7 @@ export default function SvgLayerAnalysisPanel({
               return (
                 <div
                   key={`inputs-${layer.svg_layer_id}`}
-                  className="border border-[#1E293B] rounded p-2 space-y-2"
+                  className="border border-wo-border-subtle rounded p-2 space-y-2"
                 >
                   <div className="text-[10px] font-mono text-cyan-300">
                     {layer.mapped_template_code} — parametri manuali
@@ -444,7 +444,7 @@ export default function SvgLayerAnalysisPanel({
                                 e.target.value
                               )
                             }
-                            className="w-full bg-[#111827] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200"
+                            className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200"
                           >
                             {field.selectOptions.map((opt) => (
                               <option key={opt.value} value={opt.value}>
@@ -462,7 +462,7 @@ export default function SvgLayerAnalysisPanel({
                                 e.target.value
                               )
                             }
-                            className="w-full bg-[#111827] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200"
+                            className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200"
                           >
                             {field.numberOptions.map((opt) => (
                               <option key={opt} value={String(opt)}>
@@ -482,7 +482,7 @@ export default function SvgLayerAnalysisPanel({
                                 e.target.value
                               )
                             }
-                            className="w-full bg-[#111827] border border-[#2A3548] rounded px-2 py-1 text-[11px] text-slate-200"
+                            className="w-full bg-wo-surface-raised border border-wo-border-strong rounded px-2 py-1 text-[11px] text-slate-200"
                           />
                         )}
                       </label>
@@ -495,7 +495,7 @@ export default function SvgLayerAnalysisPanel({
       )}
 
       {layerSims && (
-        <div className="space-y-2 border-t border-[#1E293B] pt-2">
+        <div className="space-y-2 border-t border-wo-border-subtle pt-2">
           <div className="flex items-center gap-2 text-[11px] text-amber-200">
             <AlertTriangle className="w-3.5 h-3.5" />
             {layerSims.is_partial
@@ -511,7 +511,7 @@ export default function SvgLayerAnalysisPanel({
             return (
               <div
                 key={row.layer.svg_layer_id}
-                className="text-[10px] bg-[#111827] border border-[#1E293B] rounded px-2 py-1.5"
+                className="text-[10px] bg-wo-surface-raised border border-wo-border-subtle rounded px-2 py-1.5"
               >
                 <span className="font-mono text-cyan-300">
                   {row.layer.mapped_template_code}

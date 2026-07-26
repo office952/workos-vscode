@@ -25,7 +25,7 @@ export default function WorkspaceTabBar({
         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-semibold border transition-colors ${
           activeTab === "spec"
             ? "bg-blue-600/20 text-blue-200 border-blue-500/50"
-            : "bg-[#0D1321] text-slate-400 border-[#2A3548] hover:text-slate-200"
+            : "bg-wo-surface-inset text-slate-400 border-wo-border-strong hover:text-slate-200"
         }`}
       >
         <FileText className="w-3.5 h-3.5" />
@@ -40,7 +40,7 @@ export default function WorkspaceTabBar({
         className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-[12px] font-semibold border transition-colors ${
           activeTab === "quote"
             ? "bg-emerald-600/20 text-emerald-200 border-emerald-500/50"
-            : "bg-[#0D1321] text-slate-400 border-[#2A3548] hover:text-slate-200"
+            : "bg-wo-surface-inset text-slate-400 border-wo-border-strong hover:text-slate-200"
         }`}
       >
         <Calculator className="w-3.5 h-3.5" />

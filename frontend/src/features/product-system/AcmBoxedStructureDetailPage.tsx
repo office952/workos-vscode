@@ -41,7 +41,7 @@ const ACCENT: Record<
     title: "text-cyan-300/90",
     border: "border-cyan-500/35",
     chip: "border-cyan-400/40 bg-cyan-500/15 text-cyan-50",
-    chipMuted: "border-wo-border-strong bg-[#0A0F1A] text-wo-text-muted",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-cyan-300/85",
     hero: "border-cyan-500/35",
   },
@@ -49,7 +49,7 @@ const ACCENT: Record<
     title: "text-amber-300/90",
     border: "border-amber-500/35",
     chip: "border-amber-400/40 bg-amber-500/15 text-amber-50",
-    chipMuted: "border-wo-border-strong bg-[#0A0F1A] text-wo-text-muted",
+    chipMuted: "border-wo-border-strong bg-wo-surface-inset text-wo-text-muted",
     mono: "text-amber-300/85",
     hero: "border-amber-500/35",
   },
@@ -258,7 +258,7 @@ export default function AcmBoxedStructureDetailPage() {
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           {doc.sections.map((section) => (
-            <article key={section.id} className="rounded-xl border border-wo-border-strong bg-[#0A0F1A] px-4 py-4">
+            <article key={section.id} className="rounded-xl border border-wo-border-strong bg-wo-surface-inset px-4 py-4">
               <h3 className="text-[13px] font-semibold text-wo-text-primary">{section.titleRo}</h3>
               <p className="mt-2 text-[12px] leading-relaxed text-wo-text-muted">{section.bodyRo}</p>
               {section.bulletsRo?.length ? (

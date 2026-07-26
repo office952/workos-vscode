@@ -109,7 +109,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-xl p-4 space-y-3"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl p-4 space-y-3"
       data-testid="operator-task-assignment-panel"
     >
       <div className="flex items-center gap-2">
@@ -144,7 +144,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
             return (
               <div
                 key={task.id}
-                className="flex flex-col gap-2 rounded-lg border border-[#2A3548] bg-[#1A2236] px-3 py-2.5"
+                className="flex flex-col gap-2 rounded-lg border border-wo-border-strong bg-wo-surface-raised px-3 py-2.5"
                 data-testid={`operator-task-assignment-row-${task.id}`}
               >
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -166,7 +166,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                       onChange={(event) =>
                         setSelection((prev) => ({ ...prev, [task.id]: event.target.value }))
                       }
-                      className="min-w-[160px] bg-[#0A1020] border border-[#2A3548] rounded-lg px-2 py-1.5 text-[12px] text-slate-200"
+                      className="min-w-[160px] bg-[#0A1020] border border-wo-border-strong rounded-lg px-2 py-1.5 text-[12px] text-slate-200"
                       data-testid={`operator-task-assignment-select-${task.id}`}
                     >
                       <option value="">— Angajat —</option>
@@ -205,7 +205,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                     }
                     rows={3}
                     placeholder="Opțional — vizibile pe Employee Mobile când sunt salvate."
-                    className="w-full bg-[#0A1020] border border-[#2A3548] rounded-lg px-2.5 py-2 text-[12px] text-slate-200 resize-y min-h-[72px]"
+                    className="w-full bg-[#0A1020] border border-wo-border-strong rounded-lg px-2.5 py-2 text-[12px] text-slate-200 resize-y min-h-[72px]"
                     data-testid={`operator-task-instructions-input-${task.id}`}
                   />
                   <div className="flex justify-end">
@@ -213,7 +213,7 @@ export default function OperatorTaskAssignmentPanel({ tasks, wired, onAssigned, 
                       type="button"
                       disabled={savingInstructions === task.id}
                       onClick={() => void handleSaveInstructions(task)}
-                      className="px-3 py-1.5 rounded-lg border border-[#2A3548] hover:bg-[#243047] disabled:opacity-50 text-[12px] font-medium text-slate-200"
+                      className="px-3 py-1.5 rounded-lg border border-wo-border-strong hover:bg-[#243047] disabled:opacity-50 text-[12px] font-medium text-slate-200"
                       data-testid={`operator-task-instructions-save-${task.id}`}
                     >
                       {savingInstructions === task.id ? "…" : "Salvează instrucțiuni"}

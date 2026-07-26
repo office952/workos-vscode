@@ -59,7 +59,7 @@ export default function QuoteOutputCompositionPreview({ quoteId, quoteCode }: Pr
   };
 
   return (
-    <div className="rounded-lg border border-[#1E293B] bg-[#111827] overflow-hidden">
+    <div className="rounded-lg border border-wo-border-subtle bg-wo-surface-raised overflow-hidden">
       {/* Header */}
       <div
         className="flex items-center justify-between px-4 py-3 cursor-pointer hover:bg-[#1a2234] transition-colors"
@@ -108,7 +108,7 @@ export default function QuoteOutputCompositionPreview({ quoteId, quoteCode }: Pr
 
       {/* Content */}
       {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-[#1E293B]">
+        <div className="px-4 pb-4 space-y-3 border-t border-wo-border-subtle">
           {/* Disclaimer */}
           <div className="flex items-start gap-2 px-3 py-2 mt-3 rounded border border-amber-800/50 bg-amber-900/20">
             <Info className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
@@ -171,7 +171,7 @@ export default function QuoteOutputCompositionPreview({ quoteId, quoteCode }: Pr
               </div>
 
               {/* Commercial summary */}
-              <div className="rounded border border-[#2A3548] bg-[#0D1321] p-3">
+              <div className="rounded border border-wo-border-strong bg-wo-surface-inset p-3">
                 <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">
                   Commercial Summary (read-only)
                 </p>
@@ -247,7 +247,7 @@ export default function QuoteOutputCompositionPreview({ quoteId, quoteCode }: Pr
                   {result.sections.map((section, i) => (
                     <div
                       key={i}
-                      className="rounded border border-[#2A3548] bg-[#0D1321] p-3 space-y-1.5"
+                      className="rounded border border-wo-border-strong bg-wo-surface-inset p-3 space-y-1.5"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-[11px] font-medium text-slate-200">
@@ -300,9 +300,9 @@ export default function QuoteOutputCompositionPreview({ quoteId, quoteCode }: Pr
               )}
 
               {/* Trace */}
-              <div className="pt-2 border-t border-[#1E293B]">
+              <div className="pt-2 border-t border-wo-border-subtle">
                 <p className="text-[10px] font-bold text-slate-500 uppercase mb-1">Trace</p>
-                <pre className="text-[9px] text-slate-600 bg-[#0A0F1C] rounded p-2 overflow-x-auto">
+                <pre className="text-[9px] text-slate-600 bg-wo-surface-inset rounded p-2 overflow-x-auto">
                   {JSON.stringify(result.trace, null, 2)}
                 </pre>
               </div>

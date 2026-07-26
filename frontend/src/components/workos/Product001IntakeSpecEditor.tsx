@@ -135,7 +135,7 @@ const VINYL_FINISH_OPTIONS = [
 ] as const;
 
 function fieldClass() {
-  return "w-full bg-[#0A0F1A] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
+  return "w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
 }
 
 function labelClass() {
@@ -227,15 +227,15 @@ function FormSection({
 
   return (
     <div
-      className={`rounded-lg border ${borderAccent} ${highlightRing} bg-[#0A0F1A]/40 overflow-hidden`}
+      className={`rounded-lg border ${borderAccent} ${highlightRing} bg-wo-surface-inset/40 overflow-hidden`}
       data-highlighted={highlighted ? "true" : undefined}
     >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-[#0D1321]/60 transition-colors"
+        className="w-full flex items-start gap-3 px-4 py-3 text-left hover:bg-wo-hover/60 transition-colors"
       >
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#1E293B] text-[11px] font-bold text-slate-300">
+        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-wo-hover text-[11px] font-bold text-slate-300">
           {number}
         </span>
         <div className="flex-1 min-w-0">
@@ -680,9 +680,9 @@ export default function Product001IntakeSpecEditor({
     mountingSystem === "steel_bars" || mountingSystem === "aluminum_bars";
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg overflow-hidden">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg overflow-hidden">
       {/* Header — template identity */}
-      <div className="px-4 py-4 border-b border-[#1E293B] bg-gradient-to-r from-purple-900/20 to-[#111827]">
+      <div className="px-4 py-4 border-b border-wo-border-subtle bg-gradient-to-r from-purple-900/20 to-wo-surface-raised">
         <div className="flex items-start gap-3">
           <Layers className="w-5 h-5 text-purple-400 shrink-0 mt-0.5" />
           <div className="space-y-1">
@@ -972,7 +972,7 @@ export default function Product001IntakeSpecEditor({
             </div>
           )}
           {pathway !== "quick_estimate" && (
-            <p className="md:col-span-2 text-[10px] text-slate-500 border-t border-[#1E293B] pt-2">
+            <p className="md:col-span-2 text-[10px] text-slate-500 border-t border-wo-border-subtle pt-2">
               Dimensiunile generale descriu ansamblul montat. Nu calculează singure perimetrul
               sau aria față a literelor.
             </p>
@@ -1056,7 +1056,7 @@ export default function Product001IntakeSpecEditor({
               placeholder="ex: 9"
             />
           </div>
-          <div className="md:col-span-2 rounded-md border border-[#1E293B] bg-[#05080f] px-3 py-2">
+          <div className="md:col-span-2 rounded-md border border-wo-border-subtle bg-wo-surface-inset px-3 py-2">
             <p className="text-[10px] text-slate-500">Sursă geometrie (informativ)</p>
             <p className="text-[11px] text-slate-300">{quotePrep.geometrySource}</p>
             {quotePrep.ledModuleCountEstimate != null && (
@@ -1788,7 +1788,7 @@ export default function Product001IntakeSpecEditor({
       </div>
 
       {!readOnly && (
-        <div className="flex items-center justify-between px-4 py-3 border-t border-[#1E293B] bg-[#0D1321]/50">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-wo-border-subtle bg-wo-surface-inset/50">
           <div className="text-[10px] text-slate-500 max-w-lg">
             Salvează specificația produsului în cerere. Geometria pentru calcul poate fi
             completată aici sau în QuoteWizard — nu se inventează din vector fără extragere
@@ -1841,7 +1841,7 @@ function PrepList({
         : "text-red-400";
 
   return (
-    <div className="rounded-md border border-[#1E293B] bg-[#05080f] p-3">
+    <div className="rounded-md border border-wo-border-subtle bg-wo-surface-inset p-3">
       <div className="flex items-center gap-1.5 mb-2">
         <Icon className={`w-3.5 h-3.5 ${iconCls}`} />
         <p className="text-[10px] text-slate-400 font-semibold">{title}</p>

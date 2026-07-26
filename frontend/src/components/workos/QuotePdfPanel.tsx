@@ -121,7 +121,7 @@ export default function QuotePdfPanel({
   };
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -216,7 +216,7 @@ export default function QuotePdfPanel({
               {archives.map((a) => (
                 <div
                   key={a.id}
-                  className="flex items-center justify-between px-2 py-1.5 bg-[#0F172A] rounded border border-[#1E293B]"
+                  className="flex items-center justify-between px-2 py-1.5 bg-wo-surface-inset rounded border border-wo-border-subtle"
                 >
                   <div className="text-[10px] text-slate-400">
                     <span className="text-slate-300 font-medium">

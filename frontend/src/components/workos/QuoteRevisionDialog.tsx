@@ -245,13 +245,13 @@ export default function QuoteRevisionDialog({
 
       <div
 
-        className="bg-[#111827] border border-[#1E293B] rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
 
         data-testid="quote-revision-dialog"
 
       >
 
-        <div className="flex items-center justify-between p-4 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between p-4 border-b border-wo-border-subtle">
 
           <div className="flex items-center gap-2">
 
@@ -459,7 +459,7 @@ export default function QuoteRevisionDialog({
 
                 onChange={(e) => setDiscountPct(e.target.value)}
 
-                className="w-full px-3 py-2 rounded-lg border border-[#2A3548] bg-[#0f1524] text-slate-100 text-[13px]"
+                className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
 
               />
 
@@ -533,7 +533,7 @@ export default function QuoteRevisionDialog({
 
 
 
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-[#1E293B]">
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-wo-border-subtle">
 
           <button
 
@@ -541,7 +541,7 @@ export default function QuoteRevisionDialog({
 
             onClick={onClose}
 
-            className="px-3 py-1.5 text-[12px] rounded border border-[#2A3548] text-slate-400 hover:text-slate-200"
+            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200"
 
           >
 

@@ -275,7 +275,7 @@ export function TemplateDownstreamLinkagePanel({
                 return (
               <div
                 key={link.module_code}
-                className="rounded-lg border border-[#243044] bg-wo-surface-raised px-3 py-2"
+                className="rounded-lg border border-wo-border-strong bg-wo-surface-raised px-3 py-2"
                 data-testid={`template-downstream-linkage-row-${link.module_code}`}
               >
                 <div className="flex flex-wrap items-center gap-2 justify-between">

@@ -200,7 +200,7 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <Layers className="w-4 h-4 text-blue-400" />
           <span className="text-[14px] font-bold text-slate-200">
@@ -215,19 +215,19 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
         </div>
 
         <div className="grid grid-cols-4 gap-3 mb-4">
-          <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+          <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
             <p className="text-[20px] font-bold text-slate-100">{sheets.length}</p>
             <p className="text-[9px] text-slate-500 uppercase">Plăci Total</p>
           </div>
-          <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+          <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
             <p className="text-[20px] font-bold text-blue-300">{fullSheets.length}</p>
             <p className="text-[9px] text-slate-500 uppercase">Întregi</p>
           </div>
-          <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+          <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
             <p className="text-[20px] font-bold text-amber-300">{remnants.length}</p>
             <p className="text-[9px] text-slate-500 uppercase">Resturi</p>
           </div>
-          <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+          <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
             <p className="text-[20px] font-bold text-slate-100">{totalAreaM2.toFixed(1)}</p>
             <p className="text-[9px] text-slate-500 uppercase">mp Total</p>
           </div>
@@ -248,7 +248,7 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
 
         <div>
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Hartă Plăci (proporțional)</p>
-          <div className="flex flex-wrap gap-2 items-end p-3 bg-[#0D1321] rounded-lg border border-[#1E293B] min-h-[60px]">
+          <div className="flex flex-wrap gap-2 items-end p-3 bg-wo-surface-inset rounded-lg border border-wo-border-subtle min-h-[60px]">
             {sheets.map((sheet) => (
               <SheetVisual key={sheet.sheetId} sheet={sheet} maxW={maxDim} />
             ))}
@@ -267,14 +267,14 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
         </div>
       </div>
 
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg overflow-hidden">
-        <div className="px-4 py-2.5 border-b border-[#1E293B] bg-[#0D1321]">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg overflow-hidden">
+        <div className="px-4 py-2.5 border-b border-wo-border-subtle bg-wo-surface-inset">
           <p className="text-[12px] font-semibold text-slate-300">Plăci Individuale ({sheets.length})</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[12px]">
             <thead>
-              <tr className="text-slate-500 text-left border-b border-[#1E293B]">
+              <tr className="text-slate-500 text-left border-b border-wo-border-subtle">
                 <th className="px-4 py-2 font-medium">ID</th>
                 <th className="px-4 py-2 font-medium">Dimensiuni</th>
                 <th className="px-4 py-2 font-medium">mp</th>
@@ -290,7 +290,7 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
                 const sCfg = sheetStatusConfig[sheet.status];
                 const areaMp = (sheet.widthMM * sheet.heightMM) / 1_000_000;
                 return (
-                  <tr key={sheet.sheetId} className="border-b border-[#1E293B]/50 hover:bg-[#1A2236]/50 transition-colors">
+                  <tr key={sheet.sheetId} className="border-b border-wo-border-subtle/50 hover:bg-wo-surface-raised/50 transition-colors">
                     <td className="px-4 py-2 font-mono text-slate-400">{sheet.sheetId}</td>
                     <td className="px-4 py-2">
                       <span className="font-mono text-slate-200">{sheet.widthMM}×{sheet.heightMM}</span>
@@ -342,10 +342,10 @@ function InkReservoirCard({
   };
   const inkColor = inkColors[reservoir.materialId] || "blue";
   const borderColor = `border-${inkColor}-700/50`;
-  const bgColor = pct <= 15 ? "bg-red-900/20" : pct <= 35 ? "bg-amber-900/10" : "bg-[#1A2236]";
+  const bgColor = pct <= 15 ? "bg-red-900/20" : pct <= 35 ? "bg-amber-900/10" : "bg-wo-surface-raised";
 
   return (
-    <div className={`${bgColor} border border-[#2A3548] rounded-lg p-3`}>
+    <div className={`${bgColor} border border-wo-border-strong rounded-lg p-3`}>
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
           <Droplets className={`w-4 h-4 ${pct <= 15 ? "text-red-400" : pct <= 35 ? "text-amber-400" : "text-cyan-400"}`} />
@@ -393,7 +393,7 @@ function EventLogItem({ event }: { event: EngineEvent }) {
   };
 
   return (
-    <div className="flex items-start gap-2 px-3 py-2 border-b border-[#1E293B]/50 last:border-0">
+    <div className="flex items-start gap-2 px-3 py-2 border-b border-wo-border-subtle/50 last:border-0">
       <div className="mt-0.5 shrink-0">{iconMap[event.type] || <Activity className="w-3.5 h-3.5 text-slate-500" />}</div>
       <div className="flex-1 min-w-0">
         <p className="text-[11px] text-slate-300 leading-relaxed">{event.message}</p>
@@ -414,7 +414,7 @@ function PurchaseDraftRow({
   onSend: (draftId: string) => void;
 }) {
   return (
-    <tr className="border-b border-[#1E293B]/50 hover:bg-[#1A2236]/50 transition-colors">
+    <tr className="border-b border-wo-border-subtle/50 hover:bg-wo-surface-raised/50 transition-colors">
       <td className="px-4 py-2.5">
         <span className="font-mono text-[11px] text-slate-400">{draft.id}</span>
       </td>
@@ -719,26 +719,26 @@ export default function Inventory() {
 
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-cyan-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-cyan-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Total Materiale</p>
           <p className="text-[20px] font-bold text-slate-100 mt-1">{inventoryMaterials.length}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Plăci Fizice</p>
           <div className="flex items-baseline gap-2 mt-1">
             <p className="text-[20px] font-bold text-blue-300">{totalFullSheets}</p>
             <p className="text-[11px] text-amber-400">+{totalRemnants} resturi</p>
           </div>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-red-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-red-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Critice / Epuizate</p>
           <p className="text-[20px] font-bold text-red-400 mt-1">{criticalCount}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-amber-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Stoc Scăzut</p>
           <p className="text-[20px] font-bold text-amber-400 mt-1">{lowCount}</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Valoare Stoc (urmărit)</p>
           <p className="text-[16px] font-bold text-emerald-400 mt-1">
             {trackedStockValue.toLocaleString("ro-RO")} RON
@@ -747,7 +747,7 @@ export default function Inventory() {
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-1 w-fit flex-wrap">
         {([
           { key: "all" as InventoryTab, label: "Toate", count: inventoryMaterials.length, icon: <Package className="w-3.5 h-3.5" /> },
           { key: "placi" as InventoryTab, label: "Plăci", count: plateMaterials.length, icon: <Layers className="w-3.5 h-3.5" /> },
@@ -789,7 +789,7 @@ export default function Inventory() {
       {activeTab === "automatizare" && isMockSource && (
         <div className="space-y-4">
           {/* Ink Reservoirs */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <SectionHeader title="Rezervoare Cerneală (Printer)" count={reservoirs.length} icon={<Droplets className="w-4 h-4" />} />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
               {reservoirs.map((r) => (
@@ -799,14 +799,14 @@ export default function Inventory() {
           </div>
 
           {/* Pending Jobs — Simulate Completion */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <SectionHeader title="Job-uri în Așteptare (Simulare ColorGate)" count={pendingJobs.length} icon={<Play className="w-4 h-4" />} />
             {pendingJobs.length === 0 ? (
               <p className="text-[12px] text-slate-500 italic">Toate job-urile au fost finalizate.</p>
             ) : (
               <div className="space-y-2">
                 {pendingJobs.map((job) => (
-                  <div key={job.jobId} className="flex items-center gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                  <div key={job.jobId} className="flex items-center gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-[12px] text-blue-300 font-semibold">{job.jobId}</span>
@@ -843,7 +843,7 @@ export default function Inventory() {
 
           {/* Completed Jobs */}
           {completedJobs.length > 0 && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
               <SectionHeader title="Job-uri Finalizate" count={completedJobs.length} icon={<CheckCircle2 className="w-4 h-4" />} />
               <div className="space-y-1.5">
                 {completedJobs.map((job) => (
@@ -861,7 +861,7 @@ export default function Inventory() {
           )}
 
           {/* Purchase Drafts */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <SectionHeader title="Draft Comenzi Aprovizionare" count={drafts.length} icon={<ShoppingCart className="w-4 h-4" />} />
             {drafts.length === 0 ? (
               <p className="text-[12px] text-slate-500 italic">Nu există draft-uri de comenzi. Stocurile sunt suficiente.</p>
@@ -869,7 +869,7 @@ export default function Inventory() {
               <div className="overflow-x-auto">
                 <table className="w-full text-[12px]">
                   <thead>
-                    <tr className="text-slate-500 text-left border-b border-[#1E293B]">
+                    <tr className="text-slate-500 text-left border-b border-wo-border-subtle">
                       <th className="px-4 py-2 font-medium">ID</th>
                       <th className="px-4 py-2 font-medium">Material</th>
                       <th className="px-4 py-2 font-medium">Cantitate</th>
@@ -891,7 +891,7 @@ export default function Inventory() {
           </div>
 
           {/* Event Log */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg">
             <button
               onClick={() => setShowEventLog(!showEventLog)}
               className="w-full flex items-center justify-between px-4 py-3 text-left"
@@ -904,7 +904,7 @@ export default function Inventory() {
               {showEventLog ? <ChevronUp className="w-4 h-4 text-slate-500" /> : <ChevronDown className="w-4 h-4 text-slate-500" />}
             </button>
             {showEventLog && (
-              <div className="border-t border-[#1E293B] max-h-64 overflow-y-auto">
+              <div className="border-t border-wo-border-subtle max-h-64 overflow-y-auto">
                 {events.length === 0 ? (
                   <p className="px-4 py-3 text-[12px] text-slate-500 italic">Niciun eveniment încă. Finalizați un job pentru a vedea activitatea.</p>
                 ) : (
@@ -924,7 +924,7 @@ export default function Inventory() {
         <>
           {/* Filters */}
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-blue-500/50">
+            <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex-1 max-w-sm focus-within:border-blue-500/50">
               <Search className="w-4 h-4 text-slate-500" />
               <input
                 type="text"
@@ -937,7 +937,7 @@ export default function Inventory() {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as StockStatus | "all")}
-              className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 text-[12px] text-slate-300 outline-none"
+              className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 text-[12px] text-slate-300 outline-none"
             >
               <option value="all">Toate statusurile</option>
               <option value="ok">OK</option>
@@ -948,7 +948,7 @@ export default function Inventory() {
             </select>
             <button
               onClick={() => setSortBy(sortBy === "days" ? "stock" : sortBy === "stock" ? "name" : "days")}
-              className="flex items-center gap-1 px-3 py-2 bg-[#111827] border border-[#1E293B] rounded-lg text-[12px] text-slate-400 hover:text-slate-200 transition-colors"
+              className="flex items-center gap-1 px-3 py-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg text-[12px] text-slate-400 hover:text-slate-200 transition-colors"
             >
               <ArrowUpDown className="w-3.5 h-3.5" />
               {sortBy === "days" ? "Zile rămase" : sortBy === "stock" ? "Stoc curent" : "Nume"}
@@ -958,7 +958,7 @@ export default function Inventory() {
 
           {/* Ink Reservoirs (shown on cerneala tab) */}
           {activeTab === "cerneala" && isMockSource && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
               <SectionHeader title="Rezervoare Cerneală (Printer)" count={reservoirs.length} icon={<Droplets className="w-4 h-4" />} />
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
                 {reservoirs.map((r) => (
@@ -972,11 +972,11 @@ export default function Inventory() {
           <div className={`grid gap-4 ${isMockSource && (activeTab === "placi" || (activeTab === "all" && selectedPlate)) ? "grid-cols-1 lg:grid-cols-3" : "grid-cols-1"}`}>
             {/* Materials Table */}
             <div className={`${isMockSource && (activeTab === "placi" || (activeTab === "all" && selectedPlate)) ? "lg:col-span-2" : ""}`}>
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg overflow-hidden">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-[12px]">
                     <thead>
-                      <tr className="text-slate-500 text-left border-b border-[#1E293B] bg-[#0D1321]">
+                      <tr className="text-slate-500 text-left border-b border-wo-border-subtle bg-wo-surface-inset">
                         <th className="px-4 py-2.5 font-medium">Status</th>
                         <th className="px-4 py-2.5 font-medium">Material</th>
                         <th className="px-4 py-2.5 font-medium">Tip</th>
@@ -1010,9 +1010,9 @@ export default function Inventory() {
                           <tr
                             key={mat.id}
                             onClick={() => isMockSource && isPlateMaterial(mat.id) ? setSelectedPlate(isSelected ? null : mat) : undefined}
-                            className={`border-b border-[#1E293B]/50 transition-colors ${
+                            className={`border-b border-wo-border-subtle/50 transition-colors ${
                               isMockSource && isPlateMaterial(mat.id) ? "cursor-pointer" : ""
-                            } ${isSelected ? "bg-blue-900/20 border-blue-800/30" : "hover:bg-[#1A2236]/50"}`}
+                            } ${isSelected ? "bg-blue-900/20 border-blue-800/30" : "hover:bg-wo-surface-raised/50"}`}
                           >
                             <td className="px-4 py-2.5">
                               <div className="flex flex-col gap-1">
@@ -1154,12 +1154,12 @@ export default function Inventory() {
 
           {/* Purchase Drafts (shown on all tabs when drafts exist) */}
           {isMockSource && drafts.length > 0 && activeTab !== "cerneala" && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
               <SectionHeader title="Draft Comenzi Aprovizionare" count={drafts.length} icon={<ShoppingCart className="w-4 h-4" />} />
               <div className="overflow-x-auto">
                 <table className="w-full text-[12px]">
                   <thead>
-                    <tr className="text-slate-500 text-left border-b border-[#1E293B]">
+                    <tr className="text-slate-500 text-left border-b border-wo-border-subtle">
                       <th className="px-4 py-2 font-medium">ID</th>
                       <th className="px-4 py-2 font-medium">Material</th>
                       <th className="px-4 py-2 font-medium">Cantitate</th>
@@ -1181,11 +1181,11 @@ export default function Inventory() {
           )}
 
           {/* Suppliers */}
-          <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+          <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
             <SectionHeader title="Furnizori" count={suppliers.length} icon={<Truck className="w-4 h-4" />} />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
               {suppliers.map((sup) => (
-                <div key={sup.id} className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+                <div key={sup.id} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-[13px] font-semibold text-slate-200">{sup.name}</p>
                     <div className="flex items-center gap-0.5">

@@ -259,26 +259,26 @@ export default function EmployeeAdvances() {
       </Alert>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#1A2236] border border-amber-800/30 rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-amber-800/30 rounded-lg p-3">
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Sold total activ</p>
           <p className="text-[22px] font-bold text-amber-400">
             {(totals?.active_balance ?? 0).toLocaleString("ro-RO")}{" "}
             <span className="text-[12px] text-slate-500">{currency}</span>
           </p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Avansuri (ledger)</p>
           <p className="text-[22px] font-bold text-blue-400">
             {(totals?.advance_total ?? 0).toLocaleString("ro-RO")} {currency}
           </p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Împrumuturi (ledger)</p>
           <p className="text-[22px] font-bold text-purple-400">
             {(totals?.loan_total ?? 0).toLocaleString("ro-RO")} {currency}
           </p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Rețineri (ledger)</p>
           <p className="text-[22px] font-bold text-red-400">
             {(totals?.retention_total ?? 0).toLocaleString("ro-RO")} {currency}
@@ -287,7 +287,7 @@ export default function EmployeeAdvances() {
       </div>
 
       {!hasAnyTransactions && (
-        <Alert className="bg-[#111827] border-[#1E293B] text-slate-300">
+        <Alert className="bg-wo-surface-raised border-wo-border-subtle text-slate-300">
           <AlertDescription className="text-[12px]">
             Nu există avansuri, datorii sau rețineri active. Adaugă prima tranzacție internă.
           </AlertDescription>
@@ -295,13 +295,13 @@ export default function EmployeeAdvances() {
       )}
 
       <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-md p-0.5">
+        <div className="flex items-center gap-1 bg-wo-surface-raised border border-wo-border-subtle rounded-md p-0.5">
           <button
             type="button"
             onClick={() => setFilterType("all")}
             className={`px-3 py-1.5 text-[11px] font-semibold rounded transition-colors ${
               filterType === "all"
-                ? "bg-[#1A2236] text-slate-100 border border-[#2A3548]"
+                ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
@@ -314,7 +314,7 @@ export default function EmployeeAdvances() {
               onClick={() => setFilterType(t.value)}
               className={`px-3 py-1.5 text-[11px] font-semibold rounded transition-colors ${
                 filterType === t.value
-                  ? "bg-[#1A2236] text-slate-100 border border-[#2A3548]"
+                  ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
                   : "text-slate-500 hover:text-slate-300"
               }`}
             >
@@ -326,7 +326,7 @@ export default function EmployeeAdvances() {
         <select
           value={filterEmployee}
           onChange={(e) => setFilterEmployee(e.target.value)}
-          className="bg-[#111827] border border-[#1E293B] rounded-md px-2 py-2 text-[12px] text-slate-200"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-md px-2 py-2 text-[12px] text-slate-200"
         >
           <option value="all">Toți angajații</option>
           {activeEmployees.map((emp) => (
@@ -337,7 +337,7 @@ export default function EmployeeAdvances() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="bg-[#111827] border border-[#1E293B] rounded-md px-2 py-2 text-[12px] text-slate-200"
+          className="bg-wo-surface-raised border border-wo-border-subtle rounded-md px-2 py-2 text-[12px] text-slate-200"
         >
           <option value="all">Toate statusurile</option>
           <option value="active">Activ</option>
@@ -345,7 +345,7 @@ export default function EmployeeAdvances() {
           <option value="cancelled">Anulat</option>
         </select>
 
-        <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-xs focus-within:border-blue-500/50">
+        <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex-1 max-w-xs focus-within:border-blue-500/50">
           <Search className="w-4 h-4 text-slate-500" />
           <input
             type="text"
@@ -367,7 +367,7 @@ export default function EmployeeAdvances() {
               <Loader2 className="w-4 h-4 animate-spin" /> Se încarcă...
             </div>
           ) : filteredTransactions.length === 0 ? (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
               <Wallet className="w-8 h-8 text-slate-600 mx-auto mb-2" />
               <p className="text-[13px] text-slate-500">Nicio tranzacție pentru filtrul curent.</p>
             </div>
@@ -378,7 +378,7 @@ export default function EmployeeAdvances() {
               return (
                 <div
                   key={tx.id}
-                  className="bg-[#111827] border border-[#1E293B] rounded-lg px-4 py-3"
+                  className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg border ${typeCfg.cls}`}>{typeCfg.icon}</div>
@@ -431,7 +431,7 @@ export default function EmployeeAdvances() {
             {(summary?.employees ?? []).map((row) => (
               <div
                 key={row.employee_id}
-                className="bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2"
+                className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2"
               >
                 <div className="flex justify-between items-start gap-2">
                   <div>
@@ -449,7 +449,7 @@ export default function EmployeeAdvances() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="bg-[#111827] border-[#1E293B] text-slate-100 max-w-md">
+        <DialogContent className="bg-wo-surface-raised border-wo-border-subtle text-slate-100 max-w-md">
           <DialogHeader>
             <DialogTitle>Adaugă tranzacție internă</DialogTitle>
           </DialogHeader>
@@ -459,7 +459,7 @@ export default function EmployeeAdvances() {
               <select
                 value={formEmployeeId}
                 onChange={(e) => setFormEmployeeId(Number(e.target.value))}
-                className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
               >
                 {activeEmployees.map((emp) => (
                   <option key={emp.id} value={emp.id}>{emp.name}</option>
@@ -471,7 +471,7 @@ export default function EmployeeAdvances() {
               <select
                 value={formType}
                 onChange={(e) => setFormType(e.target.value as BalanceTransactionType)}
-                className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
               >
                 {TYPE_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -484,7 +484,7 @@ export default function EmployeeAdvances() {
                 type="date"
                 value={formDate}
                 onChange={(e) => setFormDate(e.target.value)}
-                className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
               />
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -496,7 +496,7 @@ export default function EmployeeAdvances() {
                   step="0.01"
                   value={formAmount}
                   onChange={(e) => setFormAmount(e.target.value)}
-                  className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                  className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
                 />
               </label>
               <label className="block space-y-1">
@@ -505,7 +505,7 @@ export default function EmployeeAdvances() {
                   type="text"
                   value={formCurrency}
                   onChange={(e) => setFormCurrency(e.target.value)}
-                  className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                  className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
                 />
               </label>
             </div>
@@ -515,7 +515,7 @@ export default function EmployeeAdvances() {
                 value={formNotes}
                 onChange={(e) => setFormNotes(e.target.value)}
                 rows={3}
-                className="w-full bg-[#0f172a] border border-[#1E293B] rounded px-2 py-2"
+                className="w-full bg-wo-surface-inset border border-wo-border-subtle rounded px-2 py-2"
               />
             </label>
             {formError && <p className="text-red-400 text-[11px]">{formError}</p>}

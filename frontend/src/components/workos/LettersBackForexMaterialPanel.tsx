@@ -48,7 +48,7 @@ export function LettersBackForexMaterialPanel({
           <TooltipContent
             side="top"
             align="start"
-            className="max-w-[16rem] border-amber-700/40 bg-[#0F172A] px-3 py-2.5 text-slate-200 shadow-lg"
+            className="max-w-[16rem] border-amber-700/40 bg-wo-surface-inset px-3 py-2.5 text-slate-200 shadow-lg"
           >
             <p className="text-[11px] font-semibold tracking-wide text-amber-200">
               {LETTERS_BACK_FOREX_10MM_DISPLAY_NAME}
@@ -77,7 +77,7 @@ export function LettersBackForexMaterialPanel({
           <Tooltip key={step.id} delayDuration={150}>
             <TooltipTrigger asChild>
               <span
-                className="inline-flex items-center gap-1 rounded-md border border-amber-800/45 bg-[#0F172A]/80 px-2 py-1 text-[11px] font-medium text-amber-100/95"
+                className="inline-flex items-center gap-1 rounded-md border border-amber-800/45 bg-wo-surface-inset/80 px-2 py-1 text-[11px] font-medium text-amber-100/95"
                 data-testid={`${testId}-process-${index}`}
               >
                 <span className="font-bold tabular-nums text-amber-300/90">{index + 1}.</span>
@@ -90,7 +90,7 @@ export function LettersBackForexMaterialPanel({
             <TooltipContent
               side="top"
               align="start"
-              className="max-w-[14rem] border-amber-700/40 bg-[#0F172A] px-3 py-2 text-slate-200 shadow-lg"
+              className="max-w-[14rem] border-amber-700/40 bg-wo-surface-inset px-3 py-2 text-slate-200 shadow-lg"
             >
               <p className="text-[11px] leading-snug text-slate-300">{step.meaningRo}</p>
             </TooltipContent>

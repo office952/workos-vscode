@@ -67,7 +67,7 @@ export function LettersFaceFinishOptionBadges({
             <TooltipContent
               side="top"
               align="start"
-              className="max-w-[16rem] border-emerald-700/40 bg-[#0F172A] px-3 py-2.5 text-slate-200 shadow-lg"
+              className="max-w-[16rem] border-emerald-700/40 bg-wo-surface-inset px-3 py-2.5 text-slate-200 shadow-lg"
               data-testid={`${testId}-${option.id}-tooltip`}
             >
               <p className="text-[11px] font-semibold tracking-wide text-emerald-200">
@@ -107,7 +107,7 @@ export function LettersFaceFinishOptionBadges({
             <Tooltip key={step.id} delayDuration={150}>
               <TooltipTrigger asChild>
                 <span
-                  className="inline-flex items-center gap-1 rounded-md border border-emerald-800/45 bg-[#0F172A]/80 px-2 py-1 text-[11px] font-medium text-emerald-100/95"
+                  className="inline-flex items-center gap-1 rounded-md border border-emerald-800/45 bg-wo-surface-inset/80 px-2 py-1 text-[11px] font-medium text-emerald-100/95"
                   data-testid={`${testId}-labor-${index}`}
                 >
                   <span className="font-bold tabular-nums text-emerald-300/90">{index + 1}.</span>
@@ -117,7 +117,7 @@ export function LettersFaceFinishOptionBadges({
               <TooltipContent
                 side="top"
                 align="start"
-                className="max-w-[14rem] border-emerald-700/40 bg-[#0F172A] px-3 py-2 text-slate-200 shadow-lg"
+                className="max-w-[14rem] border-emerald-700/40 bg-wo-surface-inset px-3 py-2 text-slate-200 shadow-lg"
               >
                 <p className="text-[11px] leading-snug text-slate-300">{step.meaningRo}</p>
               </TooltipContent>

@@ -51,7 +51,7 @@ export default function IntakePathwaySelector({
               className={`text-left rounded-lg border p-3 transition-colors disabled:opacity-60 ${
                 active
                   ? "border-blue-500/60 bg-blue-950/40 ring-1 ring-blue-500/30"
-                  : "border-[#2A3548] bg-[#0f1524] hover:border-slate-500"
+                  : "border-wo-border-strong bg-[#0f1524] hover:border-slate-500"
               }`}
             >
               <div className="flex items-center gap-2 mb-1">

@@ -49,7 +49,7 @@ function TemplatePickerRow({
       className={`w-full text-left rounded-xl border px-3 py-2.5 transition-all ${
         selected
           ? "border-purple-500/50 bg-purple-900/15 ring-1 ring-purple-500/30"
-          : "border-wo-border-subtle bg-wo-surface-raised hover:border-slate-500 hover:bg-[#131B2E]"
+          : "border-wo-border-subtle bg-wo-surface-raised hover:border-slate-500 hover:bg-wo-surface-raised"
       }`}
     >
       <div className="flex items-start justify-between gap-2">

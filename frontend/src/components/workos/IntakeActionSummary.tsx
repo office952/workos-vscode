@@ -91,7 +91,7 @@ export default function IntakeActionSummary({
     <div
       id="intake-action-summary"
       data-testid="intake-action-summary"
-      className="bg-[#111827] border border-blue-900/40 rounded-lg p-4 ring-1 ring-blue-900/20"
+      className="bg-wo-surface-raised border border-blue-900/40 rounded-lg p-4 ring-1 ring-blue-900/20"
     >
       <div className="flex items-center gap-2 mb-3">
         <FileText className="w-4 h-4 text-blue-400 shrink-0" />
@@ -210,7 +210,7 @@ export default function IntakeActionSummary({
         </div>
       )}
 
-      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#1E293B]">
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-wo-border-subtle">
         <span className="text-[10px] text-slate-500 self-center mr-1">
           Salt rapid:
         </span>

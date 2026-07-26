@@ -144,8 +144,8 @@ export default function Personal() {
             <div
               key={status}
               onClick={() => setFilterStatus(filterStatus === status ? "all" : status)}
-              className={`bg-[#1A2236] border rounded-lg p-3 cursor-pointer transition-all ${
-                isActive ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#2A3548] hover:border-slate-500"
+              className={`bg-wo-surface-raised border rounded-lg p-3 cursor-pointer transition-all ${
+                isActive ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-strong hover:border-slate-500"
               }`}
             >
               <div className="flex items-center gap-2 mb-1">
@@ -160,7 +160,7 @@ export default function Personal() {
 
       {/* Search */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
+        <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-subtle rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
           <Search className="w-4 h-4 text-slate-500" />
           <input
             type="text"
@@ -185,8 +185,8 @@ export default function Personal() {
             <div
               key={col.id}
               onClick={() => setSelected(col)}
-              className={`bg-[#111827] border rounded-lg p-3 cursor-pointer transition-all ${
-                selected?.id === col.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-[#1E293B] hover:border-slate-500"
+              className={`bg-wo-surface-raised border rounded-lg p-3 cursor-pointer transition-all ${
+                selected?.id === col.id ? "border-blue-500/50 ring-1 ring-blue-500/30" : "border-wo-border-subtle hover:border-slate-500"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -214,7 +214,7 @@ export default function Personal() {
             </div>
           ))}
           {filtered.length === 0 && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center text-slate-500 text-[13px]">
               Niciun angajat găsit.
             </div>
           )}
@@ -224,7 +224,7 @@ export default function Personal() {
         <div className="space-y-4">
           {selected ? (
             <>
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-[16px] font-bold text-slate-300">
                     {selected.name.split(" ").map((n) => n[0]).join("")}
@@ -292,22 +292,22 @@ export default function Personal() {
               </div>
 
               {/* Performance */}
-              <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+              <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-3">
                   <Activity className="w-4 h-4 text-blue-400" />
                   <span className="text-[13px] font-bold text-slate-200">Performanță</span>
                 </div>
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-3">
-                    <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+                    <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
                       <p className="text-[18px] font-bold text-slate-100">{selected.tasksCompletedToday}</p>
                       <p className="text-[9px] text-slate-500 uppercase">Azi</p>
                     </div>
-                    <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+                    <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
                       <p className="text-[18px] font-bold text-slate-100">{selected.tasksCompletedWeek}</p>
                       <p className="text-[9px] text-slate-500 uppercase">Săptămâna</p>
                     </div>
-                    <div className="bg-[#1A2236] rounded-lg p-2 text-center">
+                    <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
                       <p className="text-[18px] font-bold text-slate-100">{selected.avgTaskDurationMin}m</p>
                       <p className="text-[9px] text-slate-500 uppercase">Avg/Task</p>
                     </div>
@@ -327,7 +327,7 @@ export default function Personal() {
               </div>
             </>
           ) : (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
+            <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-8 text-center">
               <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
               <p className="text-[13px] text-slate-500">Selectează un angajat pentru detalii</p>
             </div>

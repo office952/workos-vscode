@@ -112,7 +112,7 @@ export default function OperatorTaskCollaborationPanel({
     <div
       data-testid={`${testIdPrefix}-${task.task_id}`}
       className={cn(
-        "rounded border border-[#1F2A44] bg-[#0B1220]/80 text-left",
+        "rounded border border-[#1F2A44] bg-wo-surface-input/80 text-left",
         compact ? "mt-1 p-2" : "mt-2 p-3",
       )}
     >

@@ -3311,7 +3311,7 @@ function ProductSystemLibraryMoreMenu({
         <MoreHorizontal className="h-3.5 w-3.5" />
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[12rem] rounded border border-slate-800 bg-[#0f172a] p-1 shadow-lg">
+        <div className="absolute right-0 top-full z-20 mt-0.5 min-w-[12rem] rounded border border-slate-800 bg-wo-surface-inset p-1 shadow-lg">
           <p className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wide text-wo-text-muted">
             Design-time (admin)
           </p>

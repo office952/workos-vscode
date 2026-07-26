@@ -363,7 +363,7 @@ function IdentitySection({
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-5"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5"
       data-testid="intake-identity-section"
     >
       <div className="flex items-center justify-between mb-4">
@@ -386,7 +386,7 @@ function IdentitySection({
 
       {/* Temp Ref display */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg px-3 py-2">
+        <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2">
           <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">
             Referință Temporară
           </p>
@@ -395,7 +395,7 @@ function IdentitySection({
           </p>
         </div>
         {identity.resolvedAt && (
-          <div className="bg-[#0D1321] border border-emerald-800/30 rounded-lg px-3 py-2">
+          <div className="bg-wo-surface-inset border border-emerald-800/30 rounded-lg px-3 py-2">
             <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">
               Rezolvat la
             </p>
@@ -418,7 +418,7 @@ function IdentitySection({
       )}
 
       {/* CUI Input — SmartBill Lookup */}
-      <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4">
+      <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4">
         {!allowMockLookup && (
           <div className="flex items-start gap-2 mb-3 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
             <AlertTriangle className="w-3.5 h-3.5 text-amber-400 mt-0.5 shrink-0" />
@@ -433,7 +433,7 @@ function IdentitySection({
           <span className="text-[9px] text-slate-600 font-normal ml-1">(opțional)</span>
         </p>
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5 flex-1 max-w-sm focus-within:border-blue-500/50">
+          <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5 flex-1 max-w-sm focus-within:border-blue-500/50">
             <Search className="w-4 h-4 text-slate-500 shrink-0" />
             <input
               type="text"
@@ -478,7 +478,7 @@ function IdentitySection({
         )}
 
         {found && previewCompany && (
-          <div className="mt-4 bg-[#111827] border border-emerald-800/30 rounded-lg p-4" data-testid="fiscal-lookup-preview">
+          <div className="mt-4 bg-wo-surface-raised border border-emerald-800/30 rounded-lg p-4" data-testid="fiscal-lookup-preview">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <p className="text-[12px] text-emerald-400 font-semibold">
@@ -523,7 +523,7 @@ function IdentitySection({
             </div>
 
             {!allowMockLookup && (
-              <div className="mt-4 border-t border-[#2A3548] pt-4 space-y-3">
+              <div className="mt-4 border-t border-wo-border-strong pt-4 space-y-3">
                 <div className="text-[11px] text-slate-400">
                   {clientMatchStatus === "loading" && "Verific client existent după CUI..."}
                   {clientMatchStatus === "none" && "Client inexistent în sistem."}
@@ -742,7 +742,7 @@ function ProductSystemSection({
   });
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
       <div className="flex items-center justify-between mb-4">
         <SectionHeader
           title="Informații Produs — ProductSystem"
@@ -770,7 +770,7 @@ function ProductSystemSection({
       </div>
 
       {/* Template info */}
-      <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4 mb-4">
+      <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4 mb-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
           <div>
             <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">
@@ -811,7 +811,7 @@ function ProductSystemSection({
           {template.components.map((c, i) => (
             <span
               key={i}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium bg-[#0D1321] text-slate-300 border border-[#2A3548] rounded-lg"
+              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium bg-wo-surface-inset text-slate-300 border border-wo-border-strong rounded-lg"
             >
               <BoxSelect className="w-3 h-3 text-slate-500" />
               {c}
@@ -826,8 +826,8 @@ function ProductSystemSection({
           <Cog className="w-3.5 h-3.5 text-blue-400" />
           Routing Operații Producție
         </p>
-        <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg overflow-hidden">
-          <div className="grid grid-cols-[40px_1fr_1fr_80px] gap-2 px-3 py-2 bg-[#1A2236] text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
+        <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg overflow-hidden">
+          <div className="grid grid-cols-[40px_1fr_1fr_80px] gap-2 px-3 py-2 bg-wo-surface-raised text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
             <span>#</span>
             <span>Operație</span>
             <span>Centru Lucru</span>
@@ -836,7 +836,7 @@ function ProductSystemSection({
           {template.operations.map((op) => (
             <div
               key={op.code + op.sequence}
-              className="grid grid-cols-[40px_1fr_1fr_80px] gap-2 px-3 py-2 border-t border-[#1E293B] text-[11px]"
+              className="grid grid-cols-[40px_1fr_1fr_80px] gap-2 px-3 py-2 border-t border-wo-border-subtle text-[11px]"
             >
               <span className="text-slate-600 font-mono">{op.sequence}</span>
               <span className="text-slate-200">{op.name}</span>
@@ -857,7 +857,7 @@ function ProductSystemSection({
         </p>
 
         {/* Piece dimension info for nesting context */}
-        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-[#0D1321] border border-[#2A3548] rounded-lg">
+        <div className="flex items-center gap-2 mb-3 px-3 py-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg">
           <Info className="w-3.5 h-3.5 text-blue-400 shrink-0" />
           <p className="text-[10px] text-slate-400">
             <strong className="text-slate-300">Dimensiune piesă referință:</strong>{" "}
@@ -866,9 +866,9 @@ function ProductSystemSection({
           </p>
         </div>
 
-        <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg overflow-hidden">
+        <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg overflow-hidden">
           {/* Header — different for plate vs non-plate */}
-          <div className="grid grid-cols-[1fr_120px_120px] gap-2 px-3 py-2 bg-[#1A2236] text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
+          <div className="grid grid-cols-[1fr_120px_120px] gap-2 px-3 py-2 bg-wo-surface-raised text-[10px] text-slate-500 uppercase tracking-wide font-semibold">
             <span>Material</span>
             <span className="text-center">Plăci / Stoc</span>
             <span className="text-right">Fit Check</span>
@@ -885,7 +885,7 @@ function ProductSystemSection({
             const remnantCount = sheets.filter((s) => s.type === "remnant").length;
 
             return (
-              <div key={mat.materialId} className="border-t border-[#1E293B]">
+              <div key={mat.materialId} className="border-t border-wo-border-subtle">
                 <div className="grid grid-cols-[1fr_120px_120px] gap-2 px-3 py-2.5 text-[11px]">
                   <div>
                     <span className="text-slate-200">{mat.name}</span>
@@ -1010,7 +1010,7 @@ function ProductSystemSection({
 
 function NoTemplateSection({ familyName }: { familyName: string }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+    <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5">
       <SectionHeader
         title="Informații Produs — ProductSystem"
         icon={<Package className="w-4 h-4 text-purple-400" />}
@@ -1100,7 +1100,7 @@ function UnresolvedWorkTypeSection({
   return (
     <div
       id={INTAKE_SECTION_IDS.template}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 scroll-mt-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 scroll-mt-4"
       data-testid="unresolved-work-type-section"
     >
       <SectionHeader
@@ -1119,19 +1119,19 @@ function UnresolvedWorkTypeSection({
         </p>
       </div>
       <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-[12px]">
-        <div className="rounded-lg border border-[#2A3548] bg-[#0D1321] px-3 py-2">
+        <div className="rounded-lg border border-wo-border-strong bg-wo-surface-inset px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Tip lucrare</p>
           <p className="text-slate-200 font-semibold">neales</p>
         </div>
-        <div className="rounded-lg border border-[#2A3548] bg-[#0D1321] px-3 py-2">
+        <div className="rounded-lg border border-wo-border-strong bg-wo-surface-inset px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Template</p>
           <p className="text-slate-200 font-semibold">neconfirmat</p>
         </div>
-        <div className="rounded-lg border border-[#2A3548] bg-[#0D1321] px-3 py-2">
+        <div className="rounded-lg border border-wo-border-strong bg-wo-surface-inset px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Specificație</p>
           <p className="text-slate-200 font-semibold">neîncepută</p>
         </div>
-        <div className="rounded-lg border border-[#2A3548] bg-[#0D1321] px-3 py-2">
+        <div className="rounded-lg border border-wo-border-strong bg-wo-surface-inset px-3 py-2">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Stare</p>
           <p className="text-slate-200 font-semibold">Nou / incomplet</p>
         </div>
@@ -1149,7 +1149,7 @@ function UnresolvedWorkTypeSection({
         {selectingWorkType ? "Se salvează…" : "Alege tip lucrare"}
       </button>
       {workTypePickerOpen && (
-        <div className="mt-4 pt-4 border-t border-[#1E293B]" data-testid="unresolved-work-type-picker">
+        <div className="mt-4 pt-4 border-t border-wo-border-subtle" data-testid="unresolved-work-type-picker">
           {workTypePicker}
         </div>
       )}
@@ -1185,7 +1185,7 @@ function BackendAssistSection({
   return (
     <div
       id={INTAKE_SECTION_IDS.template}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 scroll-mt-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 scroll-mt-4"
     >
       <SectionHeader
         title="Asistență Intake — Contract Backend"
@@ -1235,7 +1235,7 @@ function BackendAssistSection({
             {templateSuggestions.map((item) => {
               const applied = appliedSuggestionId === item.template_id;
               return (
-                <div key={item.template_id} className="px-3 py-2 bg-[#0D1321] border border-[#2A3548] rounded-lg">
+                <div key={item.template_id} className="px-3 py-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg">
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="text-[12px] text-slate-100 font-semibold">{item.template_name}</p>
@@ -1280,7 +1280,7 @@ function BackendAssistSection({
         )}
         <div className="space-y-1">
           {materialItems.slice(0, 6).map((item) => (
-            <div key={item.material_id} className="px-3 py-2 bg-[#0D1321] border border-[#2A3548] rounded-lg flex items-center justify-between gap-3">
+            <div key={item.material_id} className="px-3 py-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-[11px] text-slate-200">{item.material_name}</p>
                 <p className="text-[10px] text-slate-500">{item.category} · {item.status}</p>
@@ -1419,7 +1419,7 @@ function AuditTerenSection({
   return (
     <div
       id={INTAKE_SECTION_IDS.terrain}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 scroll-mt-4"
+      className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 scroll-mt-4"
       data-testid="intake-audit-teren-section"
     >
       <div className="flex items-center justify-between mb-4">
@@ -1459,7 +1459,7 @@ function AuditTerenSection({
       <div className="space-y-4">
         {/* 1. Adresă Montaj */}
         <div
-          className={`bg-[#0D1321] border rounded-lg p-4 ${isAddressComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
+          className={`bg-wo-surface-inset border rounded-lg p-4 ${isAddressComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -1482,7 +1482,7 @@ function AuditTerenSection({
           </div>
           <div className="space-y-3">
             <div className="relative">
-              <div className="flex items-center gap-2 bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2.5 focus-within:border-blue-500/50">
+              <div className="flex items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2.5 focus-within:border-blue-500/50">
                 <MapPin className="w-4 h-4 text-slate-500 shrink-0" />
                 <input
                   type="text"
@@ -1499,7 +1499,7 @@ function AuditTerenSection({
                 )}
               </div>
               {showSuggestions && (
-                <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-[#1A2236] border border-[#2A3548] rounded-lg shadow-xl overflow-hidden">
+                <div className="absolute z-10 top-full left-0 right-0 mt-1 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl overflow-hidden">
                   {suggestions.map((s) => (
                     <button
                       key={s.placeId}
@@ -1537,7 +1537,7 @@ function AuditTerenSection({
             )}
 
             {audit.addressSelected && !audit.addressConfirmed && (
-              <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 space-y-2">
+              <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 space-y-2">
                 <div>
                   <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
                     Link Google Maps
@@ -1580,7 +1580,7 @@ function AuditTerenSection({
             )}
 
             {audit.addressConfirmed && (
-              <div className="bg-[#1A2236] border border-emerald-800/30 rounded-lg p-3">
+              <div className="bg-wo-surface-raised border border-emerald-800/30 rounded-lg p-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400" />
@@ -1613,7 +1613,7 @@ function AuditTerenSection({
 
         {/* 2. Poze Locație Montaj */}
         <div
-          className={`bg-[#0D1321] border rounded-lg p-4 ${isPhotosComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
+          className={`bg-wo-surface-inset border rounded-lg p-4 ${isPhotosComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
         >
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -1668,7 +1668,7 @@ function AuditTerenSection({
 
           {audit.photosStatus === "link_sent" && (
             <div className="space-y-3">
-              <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
+              <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
                 <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
                   Link Upload
                 </p>
@@ -1710,7 +1710,7 @@ function AuditTerenSection({
                 {photoLabels.map((label, i) => (
                   <div
                     key={i}
-                    className="flex-1 bg-[#1A2236] border border-[#2A3548] rounded-lg p-3 flex flex-col items-center gap-1.5"
+                    className="flex-1 bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 flex flex-col items-center gap-1.5"
                   >
                     <div className="w-full aspect-[4/3] bg-slate-700/50 rounded flex items-center justify-center">
                       <Image className="w-6 h-6 text-slate-500" />
@@ -1727,7 +1727,7 @@ function AuditTerenSection({
 
         {/* 3. Detalii Tehnice Client */}
         <div
-          className={`bg-[#0D1321] border rounded-lg p-4 ${isTechComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
+          className={`bg-wo-surface-inset border rounded-lg p-4 ${isTechComplete ? "border-emerald-800/40" : "border-red-800/30"}`}
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
@@ -1777,7 +1777,7 @@ function AuditTerenSection({
                   onChange={(e) =>
                     onAuditChange({ techPowerSource: e.target.value })
                   }
-                  className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[13px] text-slate-200 outline-none focus:border-blue-500/50"
+                  className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-slate-200 outline-none focus:border-blue-500/50"
                 >
                   <option value="">— Selectează —</option>
                   <option value="220V">220V monofazat</option>
@@ -1797,7 +1797,7 @@ function AuditTerenSection({
                     onChange={(e) =>
                       onAuditChange({ heavyEquipmentAccess: e.target.value })
                     }
-                    className="w-full bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[13px] text-slate-200 outline-none focus:border-blue-500/50"
+                    className="w-full bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-slate-200 outline-none focus:border-blue-500/50"
                   >
                     <option value="">— Selectează —</option>
                     <option value="yes">Da — acces liber pentru macara</option>
@@ -1814,7 +1814,7 @@ function AuditTerenSection({
             </div>
 
             {/* Cable provision notice */}
-            <div className="flex items-start gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg">
+            <div className="flex items-start gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg">
               <Cable className="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0" />
               <p className="text-[10px] text-slate-400">
                 <strong className="text-slate-300">Alimentare electrică:</strong> Se includ standard{" "}
@@ -1846,7 +1846,7 @@ function AuditTerenSection({
                           className={`inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-semibold rounded-lg border transition-colors ${
                             isActive
                               ? "bg-blue-600/20 text-blue-300 border-blue-500/50 ring-1 ring-blue-500/30"
-                              : "bg-[#0D1321] text-slate-500 border-[#2A3548] hover:border-slate-500 hover:text-slate-300"
+                              : "bg-wo-surface-inset text-slate-500 border-wo-border-strong hover:border-slate-500 hover:text-slate-300"
                           }`}
                         >
                           <span>{opt.icon}</span>
@@ -1897,8 +1897,8 @@ function AuditTerenSection({
                             }
                             className={`w-full flex items-start gap-3 px-3 py-2.5 rounded-lg border transition-colors text-left ${
                               isActive
-                                ? `bg-[#1A2236] ${opt.cls} ring-1 ring-blue-500/20`
-                                : "bg-[#0D1321] border-[#2A3548] hover:border-slate-500"
+                                ? `bg-wo-surface-raised ${opt.cls} ring-1 ring-blue-500/20`
+                                : "bg-wo-surface-inset border-wo-border-strong hover:border-slate-500"
                             }`}
                           >
                             <div
@@ -1958,7 +1958,7 @@ function AuditTerenSection({
                                   onAuditChange({ existingFoundationDims: e.target.value })
                                 }
                                 placeholder="ex: 800×800×600mm"
-                                className="w-full max-w-xs bg-[#1A2236] border border-[#2A3548] rounded-lg px-3 py-2 text-[13px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50 font-mono"
+                                className="w-full max-w-xs bg-wo-surface-raised border border-wo-border-strong rounded-lg px-3 py-2 text-[13px] text-slate-200 placeholder:text-slate-600 outline-none focus:border-blue-500/50 font-mono"
                               />
                               {audit.existingFoundationDims.trim() === "" && (
                                 <p className="text-[10px] text-red-400 mt-1 flex items-center gap-1">
@@ -2801,7 +2801,7 @@ export default function IntakeDetail() {
       )}
 
       {/* Client Summary Bar */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <div>
             <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">
@@ -2848,7 +2848,7 @@ export default function IntakeDetail() {
                 onChange={(e) => setAssignedTo(e.target.value)}
                 onBlur={() => void handleAssignedBlur()}
                 placeholder="Nume operator responsabil"
-                className="w-full bg-[#0D1321] border border-[#2A3548] rounded px-2 py-1 text-[12px] text-slate-200"
+                className="w-full bg-wo-surface-inset border border-wo-border-strong rounded px-2 py-1 text-[12px] text-slate-200"
               />
             )}
           </div>
@@ -2856,7 +2856,7 @@ export default function IntakeDetail() {
       </div>
 
       {/* Delivery Type Selector — Interactive */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="flex items-center gap-2 mb-3">
           <Truck className="w-4 h-4 text-blue-400" />
           <p className="text-[13px] font-semibold text-slate-200">
@@ -2873,7 +2873,7 @@ export default function IntakeDetail() {
                 className={`inline-flex items-center gap-1.5 px-3 py-2 text-[12px] font-semibold rounded-lg border transition-all ${
                   isActive
                     ? "bg-blue-600/20 text-blue-300 border-blue-500/50 ring-1 ring-blue-500/30"
-                    : "bg-[#0D1321] text-slate-500 border-[#2A3548] hover:border-slate-500 hover:text-slate-300"
+                    : "bg-wo-surface-inset text-slate-500 border-wo-border-strong hover:border-slate-500 hover:text-slate-300"
                 }`}
               >
                 {isActive && <CheckCircle2 className="w-3.5 h-3.5" />}
@@ -2996,7 +2996,7 @@ export default function IntakeDetail() {
       {/* Bottom Action Bar */}
       <div
         id={INTAKE_SECTION_IDS["ready-actions"]}
-        className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 scroll-mt-4"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 scroll-mt-4"
       >
         {workTypeUnresolved ? (
           <div className="flex items-center justify-between">

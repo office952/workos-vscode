@@ -43,7 +43,7 @@ import {
 } from "@/lib/svgIntakeFlow";
 
 function fieldClass() {
-  return "w-full bg-[#0A0F1A] border border-[#2A3548] rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
+  return "w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2 text-[12px] text-slate-200 outline-none focus:border-blue-500/50";
 }
 
 function labelClass() {
@@ -551,7 +551,7 @@ export default function VectorIntakeFastAskPanel({
           className={`flex flex-wrap items-center gap-2 rounded-lg border border-dashed px-3 py-2 transition-colors ${
             dragOver
               ? "border-emerald-500/60 bg-emerald-900/20"
-              : "border-[#2A3548] bg-[#0A0F1A]/40"
+              : "border-wo-border-strong bg-wo-surface-inset/40"
           }`}
           data-testid="vector-file-drop-zone"
           onDragOver={(e) => {
@@ -573,7 +573,7 @@ export default function VectorIntakeFastAskPanel({
           />
           <label
             htmlFor="vector-fast-ask-file-input"
-            className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-[#1E293B] hover:bg-[#2A3548] border border-[#2A3548] text-slate-200 ${
+            className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-[12px] font-semibold bg-wo-hover hover:bg-wo-hover border border-wo-border-strong text-slate-200 ${
               readOnly || analyzing ? "opacity-40 pointer-events-none" : "cursor-pointer"
             }`}
             data-testid="vector-fast-ask-file-button"
@@ -1242,7 +1242,7 @@ export default function VectorIntakeFastAskPanel({
 
       {/* 6 — Review status */}
       <div
-        className="space-y-3 rounded-lg border border-[#1E293B] bg-[#0A0F1A]/60 p-3"
+        className="space-y-3 rounded-lg border border-wo-border-subtle bg-wo-surface-inset/60 p-3"
         data-testid="vector-surface-review-section"
       >
         {sectionHeading(

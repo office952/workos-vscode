@@ -30,8 +30,8 @@ export function GateVerdictCard({ gate, loading, onRefresh }: GateVerdictCardPro
   const isReady = gate.can_generate;
 
   return (
-    <section className="bg-[#1A2236] border border-[#2A3548] rounded-lg">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-[#2A3548]">
+    <section className="bg-wo-surface-raised border border-wo-border-strong rounded-lg">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-wo-border-strong">
         <div className="flex items-center gap-2">
           {isReady ? (
             <ShieldCheck className="w-4 h-4 text-emerald-400" />
@@ -66,25 +66,25 @@ export function GateVerdictCard({ gate, loading, onRefresh }: GateVerdictCardPro
       <div className="p-4 space-y-4">
         {/* Summary row */}
         <div className="grid grid-cols-4 gap-2 text-[11px]">
-          <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+          <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
             <p className="text-slate-500 uppercase text-[9px] tracking-wide">Evaluat la</p>
             <p className="mt-1 text-slate-300 font-semibold">
               {fmtDateTime(gate.evaluated_at)}
             </p>
           </div>
-          <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+          <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
             <p className="text-slate-500 uppercase text-[9px] tracking-wide">Blockers</p>
             <p className={`mt-1 font-bold ${gate.blockers.length > 0 ? "text-red-300" : "text-emerald-300"}`}>
               {gate.blockers.length}
             </p>
           </div>
-          <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+          <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
             <p className="text-slate-500 uppercase text-[9px] tracking-wide">Warnings</p>
             <p className={`mt-1 font-bold ${gate.warnings.length > 0 ? "text-amber-300" : "text-slate-400"}`}>
               {gate.warnings.length}
             </p>
           </div>
-          <div className="bg-[#111827] rounded px-2.5 py-2 border border-[#1F2A44]">
+          <div className="bg-wo-surface-raised rounded px-2.5 py-2 border border-[#1F2A44]">
             <p className="text-slate-500 uppercase text-[9px] tracking-wide">Acțiune</p>
             <p className="mt-1 text-slate-300 text-[10px]">
               {gate.required_next_action || "—"}

@@ -47,9 +47,9 @@ function ActionButton({ action, isPrimary }: { action: NextStepAction; isPrimary
     primary:
       "bg-blue-600 hover:bg-blue-500 text-white border border-blue-500",
     secondary:
-      "bg-[#1E293B] hover:bg-[#2A3548] text-slate-300 border border-[#2A3548]",
+      "bg-wo-hover hover:bg-wo-hover text-slate-300 border border-wo-border-strong",
     ghost:
-      "bg-transparent hover:bg-[#1E293B] text-slate-400 border border-transparent",
+      "bg-transparent hover:bg-wo-hover text-slate-400 border border-transparent",
   };
 
   const disabledClasses = "opacity-40 cursor-not-allowed pointer-events-none";
@@ -228,7 +228,7 @@ export function AuthErrorState({
           {error}
         </p>
       )}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 max-w-md w-full">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4 max-w-md w-full">
         <p className="text-[11px] text-slate-500 font-medium mb-2">
           Posibile cauze:
         </p>

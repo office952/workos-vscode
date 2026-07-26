@@ -4,7 +4,7 @@ interface DocumentGovernanceTerminologyCardProps {
 
 export default function DocumentGovernanceTerminologyCard({ className = "" }: DocumentGovernanceTerminologyCardProps) {
   return (
-    <div className={`mt-3 rounded-lg border border-slate-700/40 bg-[#0F172A] p-3 ${className}`.trim()}>
+    <div className={`mt-3 rounded-lg border border-slate-700/40 bg-wo-surface-inset p-3 ${className}`.trim()}>
       <p className="text-[10px] uppercase tracking-wide text-slate-500">Terminologie governance</p>
       <div className="mt-2 space-y-1 text-[11px] text-slate-300">
         <p>

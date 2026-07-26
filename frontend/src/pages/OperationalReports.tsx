@@ -133,20 +133,20 @@ export default function OperationalReports() {
         Rapoarte operaționale bazate pe realitatea colectată — fără cost intern, profit sau salarii.
       </p>
 
-      <div className="flex flex-wrap items-center gap-3 bg-[#1A2236] border border-[#2A3548] rounded-lg px-4 py-3">
+      <div className="flex flex-wrap items-center gap-3 bg-wo-surface-raised border border-wo-border-strong rounded-lg px-4 py-3">
         <Filter className="w-4 h-4 text-slate-500" />
         <input
           type="date"
           value={fromDate}
           onChange={(e) => setFromDate(e.target.value)}
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1"
           placeholder="De la"
         />
         <input
           type="date"
           value={toDate}
           onChange={(e) => setToDate(e.target.value)}
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1"
           placeholder="Până la"
         />
         <input
@@ -155,7 +155,7 @@ export default function OperationalReports() {
           value={employeeId}
           onChange={(e) => setEmployeeId(e.target.value)}
           placeholder="Employee ID"
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1 w-32"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1 w-32"
         />
         <input
           type="number"
@@ -163,7 +163,7 @@ export default function OperationalReports() {
           value={orderId}
           onChange={(e) => setOrderId(e.target.value)}
           placeholder="Order ID"
-          className="bg-[#0F1520] border border-[#2A3548] text-[12px] text-slate-300 rounded px-2 py-1 w-28"
+          className="bg-[#0F1520] border border-wo-border-strong text-[12px] text-slate-300 rounded px-2 py-1 w-28"
         />
       </div>
 
@@ -345,7 +345,7 @@ function MetricCard({
   value: number;
 }) {
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg px-4 py-3">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg px-4 py-3">
       <div className="flex items-center gap-2 text-slate-400 mb-1">
         {icon}
         <p className="text-[11px] uppercase tracking-wide">{label}</p>
@@ -367,10 +367,10 @@ function DataTable({
   rows: (string | React.ReactNode)[][];
 }) {
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg overflow-x-auto">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg overflow-x-auto">
       <table className="w-full text-[12px]">
         <thead>
-          <tr className="border-b border-[#2A3548] text-slate-400">
+          <tr className="border-b border-wo-border-strong text-slate-400">
             {headers.map((h) => (
               <th key={h} className="text-left px-4 py-2 font-medium">
                 {h}
@@ -395,7 +395,7 @@ function DataTable({
           )}
           {!loading &&
             rows.map((row, idx) => (
-              <tr key={idx} className="border-b border-[#2A3548]/60 hover:bg-slate-800/30">
+              <tr key={idx} className="border-b border-wo-border-strong/60 hover:bg-slate-800/30">
                 {row.map((cell, cidx) => (
                   <td key={cidx} className="px-4 py-2 text-slate-300">
                     {cell}

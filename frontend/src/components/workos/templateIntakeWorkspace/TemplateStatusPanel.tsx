@@ -35,7 +35,7 @@ export default function TemplateStatusPanel({
 
   return (
     <div
-      className={`bg-[#111827] border border-[#1E293B] rounded-lg p-3 text-[11px] text-slate-400 ${
+      className={`bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 text-[11px] text-slate-400 ${
         variant === "stacked" ? "space-y-2" : ""
       }`}
       data-testid="template-status-panel"

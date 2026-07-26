@@ -328,13 +328,13 @@ export default function QuoteSendDialog({
 
       <div
 
-        className="bg-[#111827] border border-[#1E293B] rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
+        className="bg-wo-surface-raised border border-wo-border-subtle rounded-xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto"
 
         data-testid="quote-send-dialog"
 
       >
 
-        <div className="flex items-center justify-between p-4 border-b border-[#1E293B]">
+        <div className="flex items-center justify-between p-4 border-b border-wo-border-subtle">
 
           <div className="flex items-center gap-2">
 
@@ -394,7 +394,7 @@ export default function QuoteSendDialog({
 
 
 
-        <div className="p-4 border-b border-[#1E293B] bg-[#0D1321]">
+        <div className="p-4 border-b border-wo-border-subtle bg-wo-surface-inset">
 
           <div className="flex items-center justify-between">
 
@@ -422,7 +422,7 @@ export default function QuoteSendDialog({
 
 
 
-        <div className="p-4 space-y-3 border-b border-[#1E293B]">
+        <div className="p-4 space-y-3 border-b border-wo-border-subtle">
 
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">
 
@@ -440,7 +440,7 @@ export default function QuoteSendDialog({
 
               disabled={pdfGenerating}
 
-              className="flex items-center gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
 
             >
 
@@ -454,7 +454,7 @@ export default function QuoteSendDialog({
 
               onClick={handleEmail}
 
-              className="flex items-center gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
 
             >
 
@@ -468,7 +468,7 @@ export default function QuoteSendDialog({
 
               onClick={handleWhatsApp}
 
-              className="flex items-center gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
 
             >
 
@@ -482,7 +482,7 @@ export default function QuoteSendDialog({
 
               onClick={handleCopyLink}
 
-              className="flex items-center gap-2 px-3 py-2 bg-[#1A2236] border border-[#2A3548] rounded-lg text-[11px] text-slate-200"
+              className="flex items-center gap-2 px-3 py-2 bg-wo-surface-raised border border-wo-border-strong rounded-lg text-[11px] text-slate-200"
 
             >
 
@@ -534,7 +534,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setChannel(e.target.value as QuoteSendChannel)}
 
-              className="w-full px-3 py-2 rounded-lg border border-[#2A3548] bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
 
             >
 
@@ -572,7 +572,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setRecipient(e.target.value)}
 
-              className="w-full px-3 py-2 rounded-lg border border-[#2A3548] bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
 
             />
 
@@ -600,7 +600,7 @@ export default function QuoteSendDialog({
 
               rows={2}
 
-              className="w-full px-3 py-2 rounded-lg border border-[#2A3548] bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
 
             />
 
@@ -626,7 +626,7 @@ export default function QuoteSendDialog({
 
               onChange={(e) => setDocumentRef(e.target.value)}
 
-              className="w-full px-3 py-2 rounded-lg border border-[#2A3548] bg-[#0f1524] text-slate-100 text-[13px]"
+              className="w-full px-3 py-2 rounded-lg border border-wo-border-strong bg-[#0f1524] text-slate-100 text-[13px]"
 
             />
 
@@ -708,7 +708,7 @@ export default function QuoteSendDialog({
 
 
 
-        <div className="flex items-center justify-end gap-2 p-4 border-t border-[#1E293B]">
+        <div className="flex items-center justify-end gap-2 p-4 border-t border-wo-border-subtle">
 
           <button
 
@@ -716,7 +716,7 @@ export default function QuoteSendDialog({
 
             onClick={onClose}
 
-            className="px-3 py-1.5 text-[12px] rounded border border-[#2A3548] text-slate-400 hover:text-slate-200"
+            className="px-3 py-1.5 text-[12px] rounded border border-wo-border-strong text-slate-400 hover:text-slate-200"
 
           >
 

@@ -9,7 +9,7 @@ import type { ColorRegistryFilter } from "@/lib/colorRegistry/colorRegistry";
 import type { ColorRegistryItem } from "@/lib/colorRegistry/colorRegistryTypes";
 
 const fieldClass =
-  "w-full bg-[#0A0F1A] border border-[#2A3548] rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-100 outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30";
+  "w-full bg-wo-surface-inset border border-wo-border-strong rounded-lg px-3 py-2.5 text-[13px] font-medium text-slate-100 outline-none focus:border-blue-500/60 focus:ring-1 focus:ring-blue-500/30";
 const labelClass =
   "text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-1 block";
 const helperClass = "text-[9px] text-slate-600 leading-snug";
@@ -17,13 +17,13 @@ const helperClass = "text-[9px] text-slate-600 leading-snug";
 /** Shared Intake V6 color row — card flex + fixed Schimbă button. */
 const colorRowClass = "flex h-9 items-stretch gap-2";
 const colorCardButtonClass =
-  "flex h-9 min-h-9 min-w-0 flex-1 items-center gap-2 rounded-md border border-[#2A3548] bg-[#0A0F1A]/80 px-2 text-left transition hover:border-cyan-500/40 hover:bg-[#0A0F1A] disabled:opacity-50";
+  "flex h-9 min-h-9 min-w-0 flex-1 items-center gap-2 rounded-md border border-wo-border-strong bg-wo-surface-inset/80 px-2 text-left transition hover:border-cyan-500/40 hover:bg-wo-surface-inset disabled:opacity-50";
 const colorChangeButtonClass =
-  "inline-flex h-9 w-[4.75rem] shrink-0 items-center justify-center rounded-md border border-[#2A3548] bg-[#1E293B] px-2 text-[10px] font-semibold uppercase tracking-wide text-slate-300 transition hover:border-cyan-500/40 hover:text-cyan-200 disabled:opacity-50 whitespace-nowrap";
+  "inline-flex h-9 w-[4.75rem] shrink-0 items-center justify-center rounded-md border border-wo-border-strong bg-wo-hover px-2 text-[10px] font-semibold uppercase tracking-wide text-slate-300 transition hover:border-cyan-500/40 hover:text-cyan-200 disabled:opacity-50 whitespace-nowrap";
 const colorBadgeClass =
   "inline-flex h-5 max-w-[4.25rem] shrink-0 items-center justify-center truncate rounded border border-purple-500/30 bg-purple-500/10 px-1 py-0.5 text-[7px] font-bold uppercase tracking-wide text-purple-300/90";
 const colorChooseButtonClass =
-  "flex h-9 w-full items-center rounded-md border border-dashed border-[#2A3548] bg-[#0A0F1A]/40 px-3 text-left text-[11px] font-semibold text-cyan-300/90 transition hover:border-cyan-500/40 hover:bg-[#0A0F1A] disabled:opacity-50";
+  "flex h-9 w-full items-center rounded-md border border-dashed border-wo-border-strong bg-wo-surface-inset/40 px-3 text-left text-[11px] font-semibold text-cyan-300/90 transition hover:border-cyan-500/40 hover:bg-wo-surface-inset disabled:opacity-50";
 const reviewLabelClass =
   "mb-1 block min-h-[2rem] text-[10px] font-semibold uppercase leading-tight tracking-wide text-slate-500";
 
@@ -195,7 +195,7 @@ export default function ColorRegistrySelect({
 
       {open && !disabled ? (
         <div
-          className="rounded-lg border border-[#2A3548] bg-[#0D1321] p-2 shadow-lg"
+          className="rounded-lg border border-wo-border-strong bg-wo-surface-inset p-2 shadow-lg"
           data-testid={`${testId}-panel`}
         >
           <input
@@ -213,7 +213,7 @@ export default function ColorRegistrySelect({
             {query.trim() ? ` pentru „${query.trim()}”` : ""}
           </p>
           <ul
-            className="mt-1 max-h-72 overflow-y-auto rounded-lg border border-[#2A3548] bg-[#0A0F1A] divide-y divide-[#1E293B]"
+            className="mt-1 max-h-72 overflow-y-auto rounded-lg border border-wo-border-strong bg-wo-surface-inset divide-y divide-wo-border-subtle"
             data-testid={`${testId}-list`}
             role="listbox"
             aria-label={label}
@@ -225,7 +225,7 @@ export default function ColorRegistrySelect({
                 <li key={`${item.system}-${item.series ?? ""}-${item.code}`}>
                   <button
                     type="button"
-                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] text-slate-200 hover:bg-[#1E293B]/80 disabled:opacity-40"
+                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-[11px] text-slate-200 hover:bg-wo-hover/80 disabled:opacity-40"
                     disabled={!item.active}
                     onClick={() => selectItem(item)}
                     data-testid={`${testId}-option-${item.system}-${item.series ?? "ral"}-${item.code}`}

@@ -35,7 +35,7 @@ function DecisionRow({
 }) {
   return (
     <li
-      className="rounded-md border border-[#243044] bg-[#0A1020]/50 px-3 py-2 space-y-1"
+      className="rounded-md border border-wo-border-strong bg-[#0A1020]/50 px-3 py-2 space-y-1"
       data-testid={`owner-decision-row-${item.code}`}
     >
       <div className="flex flex-wrap items-center gap-1.5">
@@ -62,7 +62,7 @@ function DecisionRow({
         <p className="text-[10px] text-slate-500">Confirmarea poate fi suficienta (conform backend)</p>
       ) : null}
       {showResolverMeta ? (
-        <div className="text-[10px] text-slate-400 space-y-0.5 pt-1 border-t border-[#243044]">
+        <div className="text-[10px] text-slate-400 space-y-0.5 pt-1 border-t border-wo-border-strong">
           <p>Poate rezolva: {item.can_resolve ? "da" : "nu"}</p>
           {item.resolved_at ? <p>Rezolvat la: {item.resolved_at}</p> : null}
           {item.resolved_by_user_name ? <p>Rezolvat de: {item.resolved_by_user_name}</p> : null}
@@ -104,7 +104,7 @@ export function OperatorOwnerDecisionDetailsPanel({
 
   return (
     <section
-      className="rounded-lg border border-[#243044] bg-[#0D1321]"
+      className="rounded-lg border border-wo-border-strong bg-wo-surface-inset"
       data-testid={testId || "operator-owner-decision-details"}
     >
       <button

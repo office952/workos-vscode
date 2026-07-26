@@ -471,8 +471,8 @@ function TemplateLibraryRow({
       data-testid={`product-system-template-${template.template_code}`}
       className={`bg-wo-surface-raised border rounded-lg ${detailed ? "p-4" : "p-3"} cursor-pointer transition-all group ${
         availability?.display_group === "active_products"
-          ? "border-wo-border-subtle hover:border-purple-600/40 hover:bg-[#131B2E]"
-          : "border-slate-800/80 hover:border-slate-600/50 hover:bg-[#131B2E]/80 opacity-90"
+          ? "border-wo-border-subtle hover:border-purple-600/40 hover:bg-wo-surface-raised"
+          : "border-slate-800/80 hover:border-slate-600/50 hover:bg-wo-surface-raised/80 opacity-90"
       } ${recommended ? "ring-1 ring-purple-500/30 border-purple-500/40" : ""}`}
     >
       <div className="flex min-h-[5rem] items-start gap-3">

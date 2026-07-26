@@ -61,7 +61,7 @@ export function CncProcessableBadge({
             <TooltipContent
               side="top"
               align="start"
-              className="max-w-[16rem] border-violet-600/50 bg-[#0F172A] px-3 py-2.5 text-slate-200 shadow-lg shadow-violet-950/50"
+              className="max-w-[16rem] border-violet-600/50 bg-wo-surface-inset px-3 py-2.5 text-slate-200 shadow-lg shadow-violet-950/50"
               data-testid={`${testId}-tooltip`}
             >
               <p className="text-[11px] font-semibold tracking-wide text-violet-200">
@@ -92,7 +92,7 @@ export function CncProcessableBadge({
           ? CNC_PROCESSABLE_LETTER_FACE_SERVICES.map((service, index) => (
               <span
                 key={service}
-                className="inline-flex items-center gap-1 rounded-md border border-violet-700/40 bg-[#0F172A]/80 px-2 py-1 text-[11px] font-medium text-violet-100/95"
+                className="inline-flex items-center gap-1 rounded-md border border-violet-700/40 bg-wo-surface-inset/80 px-2 py-1 text-[11px] font-medium text-violet-100/95"
                 data-testid={`${testId}-service-${index}`}
               >
                 <span className="font-bold tabular-nums text-violet-300/90">{index + 1}.</span>

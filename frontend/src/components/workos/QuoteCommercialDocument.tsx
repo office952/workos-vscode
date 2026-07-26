@@ -125,7 +125,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
 
   if (loading) {
     return (
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="flex items-center gap-2 text-slate-400">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span className="text-[12px]">Se încarcă documentul comercial...</span>
@@ -136,7 +136,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
 
   if (error) {
     return (
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="flex items-center gap-2 text-amber-400">
           <AlertTriangle className="w-4 h-4" />
           <span className="text-[12px]">Document comercial indisponibil</span>
@@ -156,7 +156,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
   return (
     <div className="space-y-3" data-testid="quote-commercial-document-panel">
       {/* Operator chrome — not part of client-facing document */}
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+      <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-4">
         <div className="flex items-center justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 flex-wrap min-w-0">
             <FileText className="w-4 h-4 text-blue-400 shrink-0" />
@@ -214,7 +214,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
       {/* Client-facing document preview */}
       {previewOpen && (
         <div
-          className="rounded-xl border border-slate-600/35 bg-[#0F1629] shadow-[0_4px_24px_rgba(0,0,0,0.22)] overflow-hidden"
+          className="rounded-xl border border-slate-600/35 bg-wo-surface-inset shadow-[0_4px_24px_rgba(0,0,0,0.22)] overflow-hidden"
           data-testid="commercial-document-preview"
         >
           <div className="px-5 py-4 border-b border-slate-600/30 bg-gradient-to-b from-slate-800/35 to-transparent">
