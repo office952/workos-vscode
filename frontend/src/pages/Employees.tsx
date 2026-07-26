@@ -35,6 +35,7 @@ import {
   type EmployeePayload,
 } from "@/api/costEngine";
 import { EmployeeOperationalPanel } from "@/features/operational-registry/EmployeeOperationalPanel";
+import { InternalCostNotice } from "@/components/workos/design-system";
 import EmployeeMobileAccessBadge from "@/components/workos/employees/EmployeeMobileAccessBadge";
 import EmployeeAdminOperationalSummary from "@/components/workos/employees/EmployeeAdminOperationalSummary";
 import {
@@ -248,14 +249,14 @@ function formToPayload(f: FormState): EmployeePayload {
 function ValidityBadge({ valid }: { valid: boolean }) {
   if (valid) {
     return (
-      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-400 bg-emerald-900/30 border border-emerald-700/50 rounded px-1.5 py-0.5">
+      <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 border border-emerald-200 dark:text-emerald-300 dark:bg-emerald-900/30 dark:border-emerald-700/50 rounded px-1.5 py-0.5">
         <CheckCircle2 className="w-3 h-3" />
-        CostEngine OK
+        Cost intern valid
       </span>
     );
   }
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-400 bg-amber-900/30 border border-amber-700/50 rounded px-1.5 py-0.5">
+    <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-100 border border-amber-200 dark:text-amber-300 dark:bg-amber-900/30 dark:border-amber-700/50 rounded px-1.5 py-0.5">
       <AlertTriangle className="w-3 h-3" />
       Date incomplete
     </span>
@@ -269,8 +270,8 @@ function EmployeeStatusBadge({ status }: { status: string }) {
     <span
       className={`inline-flex items-center gap-1 text-[10px] font-semibold rounded-full border px-2 py-0.5 ${
         isActive
-          ? "text-emerald-300 bg-emerald-900/25 border-emerald-700/45"
-          : "text-slate-400 bg-slate-800/60 border-slate-600"
+          ? "text-emerald-700 bg-emerald-100 border-emerald-200 dark:text-emerald-300 dark:bg-emerald-900/25 dark:border-emerald-700/45"
+          : "text-slate-600 bg-slate-100 border-slate-200 dark:text-muted-foreground dark:bg-muted/60 dark:border-slate-600"
       }`}
     >
       {isActive ? (
@@ -436,35 +437,41 @@ export default function Employees() {
   // ============================================================
   return (
     <div className="space-y-4">
+      {/* Internal Cost Notice — HR ≠ tarif client */}
+      <InternalCostNotice
+        message="Cost intern angajat — analytics / profitability. NU tarif client. Registry intern HR nu conduce oferta client."
+        compact
+      />
+
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <Users className="w-5 h-5 text-cyan-400" />
-            <h1 className="text-[18px] font-bold text-slate-100">Angajați operaționali</h1>
+            <Users className="w-5 h-5 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
+            <h1 className="text-[18px] font-bold text-foreground">Angajați operaționali</h1>
             <Badge
-              className="gap-1 text-[10px] uppercase tracking-wide bg-emerald-900/50 text-emerald-300 border-emerald-600/60 hover:bg-emerald-900/50"
+              className="gap-1 text-[10px] uppercase tracking-wide bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/50 dark:text-emerald-300 dark:border-emerald-600/60 hover:bg-emerald-100 dark:hover:bg-emerald-900/50"
             >
               <Database className="w-3 h-3" />
               LIVE DB
             </Badge>
             <Badge
-              className="text-[10px] uppercase tracking-wide bg-cyan-950/60 text-cyan-300 border-cyan-700/60 hover:bg-cyan-950/60"
+              className="text-[10px] uppercase tracking-wide bg-cyan-100 text-cyan-700 border-cyan-200 dark:bg-cyan-950/60 dark:text-cyan-300 dark:border-cyan-700/60 hover:bg-cyan-100 dark:hover:bg-cyan-950/60"
             >
               OPERAȚIONAL
             </Badge>
-            <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full">
+            <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
               {kpis.total} persoane
             </span>
           </div>
-          <p className="text-[13px] text-slate-300 pl-7">
+          <p className="text-[13px] text-muted-foreground pl-7">
             Registry pentru execuție, operații, autorizări și alocări. Nu este evidență salarială.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => void load()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500 transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500 transition-colors"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reîncarcă
@@ -481,49 +488,49 @@ export default function Employees() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Total</p>
-          <p className="text-[22px] font-bold text-slate-100">{kpis.total}</p>
-          <p className="text-[10px] text-slate-500">angajați înregistrați</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Total</p>
+          <p className="text-[22px] font-bold text-foreground">{kpis.total}</p>
+          <p className="text-[10px] text-muted-foreground">angajați înregistrați</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Activi</p>
-          <p className="text-[22px] font-bold text-emerald-400">{kpis.active}</p>
-          <p className="text-[10px] text-slate-500">status = activ</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Activi</p>
+          <p className="text-[22px] font-bold text-emerald-600 dark:text-emerald-400">{kpis.active}</p>
+          <p className="text-[10px] text-muted-foreground">status = activ</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Productivi</p>
-          <p className="text-[22px] font-bold text-blue-400">{kpis.productive}</p>
-          <p className="text-[10px] text-slate-500">intră în CostEngine</p>
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Productivi</p>
+          <p className="text-[22px] font-bold text-blue-600 dark:text-blue-400">{kpis.productive}</p>
+          <p className="text-[10px] text-muted-foreground">intră în calcul cost intern</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Validați CostEngine</p>
-          <p className="text-[22px] font-bold text-slate-100">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Validați cost intern</p>
+          <p className="text-[22px] font-bold text-foreground">
             {kpis.valid}
-            <span className="text-[12px] text-slate-500"> / {kpis.total}</span>
+            <span className="text-[12px] text-muted-foreground"> / {kpis.total}</span>
           </p>
-          <p className="text-[10px] text-slate-500">date complete pentru costare</p>
+          <p className="text-[10px] text-muted-foreground">date complete pentru costare</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="space-y-2">
         <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-2 bg-[#111827] border border-[#1E293B] rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
-            <Search className="w-4 h-4 text-slate-500" />
+          <div className="flex items-center gap-2 bg-card border border-border rounded-lg px-3 py-2 flex-1 max-w-md focus-within:border-blue-500/50">
+            <Search className="w-4 h-4 text-muted-foreground" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Caută nume, rol, departament, email, user..."
-              className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+              className="bg-transparent text-[13px] text-foreground placeholder:text-wo-text-dim outline-none w-full"
               data-testid="employees-search-input"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-[#111827] border border-[#1E293B] rounded-md px-2 py-2 text-[12px] text-slate-200"
+            className="bg-card border border-border rounded-md px-2 py-2 text-[12px] text-foreground"
             data-testid="employees-status-select"
           >
             <option value="all">Toate statusurile</option>
@@ -536,7 +543,7 @@ export default function Employees() {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-[#111827] border border-[#1E293B] rounded-md px-2 py-2 text-[12px] text-slate-200"
+            className="bg-card border border-border rounded-md px-2 py-2 text-[12px] text-foreground"
             data-testid="employees-type-select"
           >
             <option value="all">Toate tipurile</option>
@@ -546,7 +553,7 @@ export default function Employees() {
               </option>
             ))}
           </select>
-          <span className="text-[11px] text-slate-500 ml-auto">
+          <span className="text-[11px] text-muted-foreground ml-auto">
             {filtered.length} rezultate
           </span>
         </div>
@@ -564,8 +571,8 @@ export default function Employees() {
                 type="button"
                 className={`px-2.5 py-1.5 text-[10px] font-medium rounded-full border transition-colors min-h-[30px] ${
                   active
-                    ? "bg-blue-900/40 text-blue-200 border-blue-700/50"
-                    : "bg-[#0A1020] text-slate-400 border-[#243044] hover:border-slate-600"
+                    ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/40 dark:text-blue-200 dark:border-blue-700/50"
+                    : "bg-background text-muted-foreground border-border hover:border-slate-600"
                 }`}
                 data-testid={`employees-quick-filter-${option.value}`}
                 aria-pressed={active}
@@ -590,8 +597,8 @@ export default function Employees() {
                 type="button"
                 className={`px-2.5 py-1.5 text-[10px] font-medium rounded-full border transition-colors min-h-[30px] ${
                   active
-                    ? "bg-emerald-900/30 text-emerald-200 border-emerald-700/45"
-                    : "bg-[#0A1020] text-slate-400 border-[#243044] hover:border-slate-600"
+                    ? "bg-emerald-100 text-emerald-700 border-emerald-200 dark:bg-emerald-900/30 dark:text-emerald-200 dark:border-emerald-700/45"
+                    : "bg-background text-muted-foreground border-border hover:border-slate-600"
                 }`}
                 data-testid={`employees-quick-mobile-filter-${option.value}`}
                 aria-pressed={active}
@@ -608,8 +615,8 @@ export default function Employees() {
         <div className="space-y-2">
           <div className={`rounded-lg px-4 py-3 text-[12px] border ${
             loadError.includes("401") || loadError.includes("403") || loadError.toLowerCase().includes("unauthorized")
-              ? "bg-amber-900/20 border-amber-800/60 text-amber-300"
-              : "bg-red-900/20 border-red-800/60 text-red-300"
+              ? "bg-amber-100 border-amber-200 text-amber-700 dark:bg-amber-900/20 dark:border-amber-800/60 dark:text-amber-300"
+              : "bg-red-100 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800/60 dark:text-red-300"
           }`}>
             <div className="flex items-start gap-2">
               <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" />
@@ -632,8 +639,8 @@ export default function Employees() {
             </div>
           </div>
           <div className="flex items-start gap-2 px-3 py-2 bg-blue-900/10 border border-blue-800/20 rounded-lg">
-            <Info className="w-3.5 h-3.5 text-blue-400 mt-0.5 shrink-0" />
-            <p className="text-[10px] text-blue-300/80">
+            <Info className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
+            <p className="text-[10px] text-blue-600/80 dark:text-blue-300/80">
               <strong>Sugestie:</strong> Modulul Angajați necesită backend live (nu funcționează cu date mock).
               Asigură-te că serverul FastAPI este pornit și accesibil.
             </p>
@@ -646,7 +653,7 @@ export default function Employees() {
         <div className="lg:col-span-2 space-y-2">
           {loading && (
             <div
-              className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]"
+              className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-[13px]"
               data-testid="employees-loading"
             >
               Se încarcă angajații…
@@ -654,11 +661,11 @@ export default function Employees() {
           )}
           {!loading && filtered.length === 0 && (
             <div
-              className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center space-y-2"
+              className="bg-card border border-border rounded-lg p-8 text-center space-y-2"
               data-testid="employees-empty"
             >
-              <Users className="w-8 h-8 text-slate-600 mx-auto" aria-hidden />
-              <p className="text-[13px] text-slate-400">
+              <Users className="w-8 h-8 text-wo-text-dim mx-auto" aria-hidden />
+              <p className="text-[13px] text-muted-foreground">
                 {items.length === 0
                   ? "Niciun angajat înregistrat încă."
                   : "Niciun angajat nu corespunde filtrelor selectate."}
@@ -676,14 +683,14 @@ export default function Employees() {
                     setSelectedId(e.id);
                     setMode("view");
                   }}
-                  className={`bg-[#111827] border rounded-xl p-3.5 cursor-pointer transition-all ${
+                  className={`bg-card border rounded-xl p-3.5 cursor-pointer transition-all ${
                     active
                       ? "border-blue-500/50 ring-1 ring-blue-500/30"
-                      : "border-[#1E293B] hover:border-slate-500"
+                      : "border-border hover:border-slate-500"
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-[13px] font-bold text-slate-300 shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-[13px] font-bold text-muted-foreground shrink-0">
                       {e.name
                         .split(" ")
                         .map((n) => n[0])
@@ -692,34 +699,34 @@ export default function Employees() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <span className="text-[13px] font-semibold text-slate-100">
+                        <span className="text-[13px] font-semibold text-foreground">
                           {e.name}
                         </span>
                         <EmployeeStatusBadge status={e.status} />
-                        <span className="text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                           {typeLabel(e.employee_type)}
                         </span>
                       </div>
-                      <div className="flex items-center gap-2 text-[11px] text-slate-400 flex-wrap">
+                      <div className="flex items-center gap-2 text-[11px] text-muted-foreground flex-wrap">
                         <span className="inline-flex items-center gap-1">
-                          <Briefcase className="w-3 h-3 shrink-0 text-slate-500" aria-hidden />
+                          <Briefcase className="w-3 h-3 shrink-0 text-muted-foreground" aria-hidden />
                           {e.role || "fără rol"}
                         </span>
-                        <span className="text-slate-600">·</span>
+                        <span className="text-wo-text-dim">·</span>
                         <span className="inline-flex items-center gap-1">
-                          <Building2 className="w-3 h-3 shrink-0 text-slate-500" aria-hidden />
+                          <Building2 className="w-3 h-3 shrink-0 text-muted-foreground" aria-hidden />
                           {e.department || "—"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 mt-1.5 flex-wrap">
                         <EmployeeMobileAccessBadge employee={e} compact />
                         <ValidityBadge valid={e.valid_for_cost_engine} />
-                        <span className="text-[10px] text-slate-600">
+                        <span className="text-[10px] text-wo-text-dim">
                           Cost orar: {fmtMoney(e.cost_ora_calculat)} /h
                         </span>
                       </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-600 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-wo-text-dim shrink-0" />
                   </div>
                 </div>
               );
@@ -741,9 +748,9 @@ export default function Employees() {
             </>
           )}
           {mode === "view" && !selected && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
-              <Users className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[13px] text-slate-500">
+            <div className="bg-card border border-border rounded-lg p-8 text-center">
+              <Users className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+              <p className="text-[13px] text-muted-foreground">
                 Selectează un angajat sau adaugă unul nou.
               </p>
             </div>
@@ -790,11 +797,11 @@ function EmployeeDetail({
 
   return (
     <div
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-card border border-border rounded-lg p-4 space-y-3"
       data-testid="employee-detail-panel"
     >
       <div className="flex items-start gap-3">
-        <div className="w-11 h-11 rounded-full bg-slate-700 flex items-center justify-center text-[14px] font-bold text-slate-300">
+        <div className="w-11 h-11 rounded-full bg-slate-700 flex items-center justify-center text-[14px] font-bold text-muted-foreground">
           {e.name
             .split(" ")
             .map((n) => n[0])
@@ -802,12 +809,12 @@ function EmployeeDetail({
             .join("")}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="text-[15px] font-bold text-slate-100">{e.name}</h3>
+          <h3 className="text-[15px] font-bold text-foreground">{e.name}</h3>
           <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-            <span className="text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
               {typeLabel(e.employee_type)}
             </span>
-            <span className="text-[10px] text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+            <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
               {statusLabel(e.status)}
             </span>
             <ValidityBadge valid={e.valid_for_cost_engine} />
@@ -816,7 +823,7 @@ function EmployeeDetail({
         <div className="flex items-center gap-1">
           <button
             onClick={onEdit}
-            className="p-1.5 text-slate-400 hover:text-slate-100 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500 transition-colors"
+            className="p-1.5 text-muted-foreground hover:text-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500 transition-colors"
             title="Editează"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -824,7 +831,7 @@ function EmployeeDetail({
           <button
             onClick={onDelete}
             disabled={deleting}
-            className="p-1.5 text-red-400 hover:text-red-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-red-600/60 transition-colors disabled:opacity-50"
+            className="p-1.5 text-red-600 hover:text-red-500 dark:text-red-400 dark:hover:text-red-300 bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-red-600/60 transition-colors disabled:opacity-50"
             title="Șterge"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -838,14 +845,14 @@ function EmployeeDetail({
       </div>
 
       <div
-        className="bg-[#1A2236] rounded-lg p-3 space-y-2.5"
+        className="bg-wo-surface-raised rounded-lg p-3 space-y-2.5"
         data-testid="employee-detail-mobile-access"
       >
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">Acces Employee Mobile</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Acces Employee Mobile</p>
         <div className="flex items-center gap-2 flex-wrap">
           <EmployeeMobileAccessBadge employee={e} />
         </div>
-        <p className="text-[11px] text-slate-400 leading-relaxed">{mobileAccess.description}</p>
+        <p className="text-[11px] text-muted-foreground leading-relaxed">{mobileAccess.description}</p>
         {e.user_id && (
           <Field label="User legat (WorkOS)">
             <span className="font-mono text-[11px] break-all">{e.user_id}</span>
@@ -857,28 +864,28 @@ function EmployeeDetail({
         {e.auth_role && (
           <Field label="Rol autentificare">{employeeAuthRoleLabel(e.auth_role)}</Field>
         )}
-        <p className="text-[10px] text-slate-500 italic">
+        <p className="text-[10px] text-muted-foreground italic">
           Employee Mobile folosește același cont WorkOS — fără creare automată de conturi din această
           pagină.
         </p>
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 space-y-2">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">
+      <div className="bg-wo-surface-raised rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
           Plată internă
         </p>
         <Field label="Sumă lunară internă pentru plată (RON)">
           {fmtMoney(e.monthly_internal_pay_amount)}
         </Field>
-        <p className="text-[10px] text-slate-500 italic">
+        <p className="text-[10px] text-muted-foreground italic">
           Folosită ulterior pentru calculul tranșelor 15/30 în Plăți angajați. Nu
           reprezintă costul total al firmei.
         </p>
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 space-y-2">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">
-          Date CostEngine
+      <div className="bg-wo-surface-raised rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
+          Date cost intern
         </p>
         <div className="grid grid-cols-2 gap-2">
           <Field label="Cost lunar firmă (RON)">
@@ -891,12 +898,12 @@ function EmployeeDetail({
             {fmtNumber(e.ore_lucru_luna)}
           </Field>
           <Field label="Cost oră calculat (RON/h)">
-            <span className="font-mono text-emerald-300">
+            <span className="font-mono text-emerald-600 dark:text-emerald-300">
               {fmtMoney(e.cost_ora_calculat)}
             </span>
           </Field>
         </div>
-        <p className="text-[10px] text-slate-500 italic">
+        <p className="text-[10px] text-muted-foreground italic">
           Cost oră calculat este furnizat de backend (cost_lunar_firma /
           ore_productive_luna). Frontend-ul nu recalculează.
         </p>
@@ -904,14 +911,14 @@ function EmployeeDetail({
 
       {(e.skills?.length ?? 0) > 0 && (
         <div>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
             Skills
           </p>
           <div className="flex flex-wrap gap-1">
             {(e.skills ?? []).map((s) => (
               <span
                 key={s}
-                className="px-2 py-0.5 text-[10px] bg-slate-800 text-slate-300 rounded border border-slate-700"
+                className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded border border-border"
               >
                 {s}
               </span>
@@ -922,14 +929,14 @@ function EmployeeDetail({
 
       {(e.machines?.length ?? 0) > 0 && (
         <div>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
             Utilaje
           </p>
           <div className="flex flex-wrap gap-1">
             {(e.machines ?? []).map((m) => (
               <span
                 key={m}
-                className="px-2 py-0.5 text-[10px] bg-slate-800 text-slate-300 rounded border border-slate-700"
+                className="px-2 py-0.5 text-[10px] bg-muted text-muted-foreground rounded border border-border"
               >
                 {m}
               </span>
@@ -945,11 +952,11 @@ function EmployeeDetail({
       )}
 
       {e.observatii && (
-        <div className="bg-[#1A2236] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+        <div className="bg-wo-surface-raised rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
             Observații
           </p>
-          <p className="text-[12px] text-slate-300 whitespace-pre-wrap">
+          <p className="text-[12px] text-muted-foreground whitespace-pre-wrap">
             {e.observatii}
           </p>
         </div>
@@ -967,10 +974,10 @@ function Field({
 }) {
   return (
     <div>
-      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </p>
-      <div className="text-[12px] text-slate-200">{children}</div>
+      <div className="text-[12px] text-foreground">{children}</div>
     </div>
   );
 }
@@ -1007,16 +1014,16 @@ function EmployeeForm({
         e.preventDefault();
         onSubmit();
       }}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-card border border-border rounded-lg p-4 space-y-3"
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-[14px] font-bold text-slate-100">
+        <h3 className="text-[14px] font-bold text-foreground">
           {mode === "create" ? "Angajat nou" : "Editează angajat"}
         </h3>
         <button
           type="button"
           onClick={onCancel}
-          className="p-1 text-slate-400 hover:text-slate-100"
+          className="p-1 text-muted-foreground hover:text-foreground"
           title="Închide"
         >
           <X className="w-4 h-4" />
@@ -1058,8 +1065,8 @@ function EmployeeForm({
         />
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 space-y-2">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">
+      <div className="bg-wo-surface-raised rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
           Plată internă
         </p>
         <TextField
@@ -1072,9 +1079,9 @@ function EmployeeForm({
         />
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 space-y-2">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">
-          Date CostEngine
+      <div className="bg-wo-surface-raised rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
+          Date cost intern
         </p>
         <TextField
           label="Cost lunar firmă (RON) *"
@@ -1100,7 +1107,7 @@ function EmployeeForm({
             error={fieldErrors.ore_productive_luna}
           />
         </div>
-        <p className="text-[10px] text-slate-500 italic">
+        <p className="text-[10px] text-muted-foreground italic">
           Costul oră este calculat de backend — nu se editează aici.
         </p>
       </div>
@@ -1130,7 +1137,7 @@ function EmployeeForm({
       />
 
       {warnings.length > 0 && (
-        <div className="bg-amber-900/30 border border-amber-700/50 text-amber-200 text-[11px] rounded-md px-3 py-2 space-y-1">
+        <div className="bg-amber-100 border border-amber-200 text-amber-700 dark:bg-amber-900/30 dark:border-amber-700/50 dark:text-amber-200 text-[11px] rounded-md px-3 py-2 space-y-1">
           {warnings.map((w) => (
             <div key={w} className="flex items-start gap-1.5">
               <AlertTriangle className="w-3 h-3 mt-0.5 shrink-0" />
@@ -1141,7 +1148,7 @@ function EmployeeForm({
       )}
 
       {saveError && (
-        <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-[12px] rounded-md px-3 py-2">
+        <div className="bg-red-100 border border-red-200 text-red-700 dark:bg-red-900/30 dark:border-red-700/50 dark:text-red-300 text-[12px] rounded-md px-3 py-2">
           {saveError}
         </div>
       )}
@@ -1158,7 +1165,7 @@ function EmployeeForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+          className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
         >
           Anulează
         </button>
@@ -1187,7 +1194,7 @@ function TextField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <input
@@ -1195,16 +1202,16 @@ function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         step={type === "number" ? "0.01" : undefined}
-        className={`w-full bg-[#0B1220] border rounded-md px-2 py-1.5 text-[12px] text-slate-100 placeholder:text-slate-600 outline-none ${
+        className={`w-full bg-background border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none ${
           error
             ? "border-red-600/60 focus:border-red-500"
-            : "border-[#1E293B] focus:border-blue-500/50"
+            : "border-border focus:border-blue-500/50"
         }`}
       />
       {hint && !error && (
-        <p className="text-[10px] text-slate-500 mt-1">{hint}</p>
+        <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>
       )}
-      {error && <p className="text-[10px] text-red-400 mt-1">{error}</p>}
+      {error && <p className="text-[10px] text-red-600 dark:text-red-400 mt-1">{error}</p>}
     </div>
   );
 }
@@ -1220,14 +1227,14 @@ function TextareaField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <textarea
         value={value}
         rows={3}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[#0B1220] border border-[#1E293B] rounded-md px-2 py-1.5 text-[12px] text-slate-100 placeholder:text-slate-600 outline-none focus:border-blue-500/50 resize-y"
+        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none focus:border-blue-500/50 resize-y"
       />
     </div>
   );
@@ -1246,13 +1253,13 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[#0B1220] border border-[#1E293B] rounded-md px-2 py-1.5 text-[12px] text-slate-100 outline-none focus:border-blue-500/50"
+        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground outline-none focus:border-blue-500/50"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

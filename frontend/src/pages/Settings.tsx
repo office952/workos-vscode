@@ -17,6 +17,7 @@ import {
   companySettings,
   type CompanySettings,
 } from "@/lib/mockData";
+import { ReadinessPanel, type ReadinessItem } from "@/components/workos/design-system";
 import {
   Settings as SettingsIcon,
   Building2,
@@ -106,13 +107,13 @@ export default function Settings() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <SettingsIcon className="w-5 h-5 text-slate-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Setări</h1>
+          <SettingsIcon className="w-5 h-5 text-muted-foreground" />
+          <h1 className="text-[18px] font-bold text-foreground">Setări</h1>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex items-center gap-1 bg-[#111827] border border-[#1E293B] rounded-lg p-1 w-fit flex-wrap">
+      <div className="flex items-center gap-1 bg-card border border-border rounded-lg p-1 w-fit flex-wrap">
         <TabButton
           active={activeTab === "company"}
           onClick={() => setActiveTab("company")}
@@ -129,7 +130,7 @@ export default function Settings() {
           active={activeTab === "cost_engine"}
           onClick={() => setActiveTab("cost_engine")}
           icon={<Calculator className="w-3.5 h-3.5" />}
-          label="CostEngine"
+          label="Cost Intern"
         />
         <TabButton
           active={activeTab === "integrations"}
@@ -145,7 +146,7 @@ export default function Settings() {
         </p>
         <Link
           to={sheetQualityInvalidUrl}
-          className="text-[11px] font-semibold text-blue-300 hover:text-blue-200 underline underline-offset-2 whitespace-nowrap"
+          className="text-[11px] font-semibold text-blue-600 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-200 underline underline-offset-2 whitespace-nowrap"
         >
           Open Sheet Quality
         </Link>
@@ -153,8 +154,8 @@ export default function Settings() {
 
       {activeTab === "company" && (
         <div className="flex items-start gap-2 px-3 py-2 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-          <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-[11px] text-amber-300/90">
+          <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-[11px] text-amber-700 dark:text-amber-300/90">
             Tabul "Societate" afișează profil local static. Nu este sincronizat cu o sursă live backend în acest build.
           </p>
         </div>
@@ -190,8 +191,8 @@ function TabButton({
       onClick={onClick}
       className={`px-4 py-2 rounded-md text-[12px] font-semibold transition-colors ${
         active
-          ? "bg-blue-600/20 text-blue-400"
-          : "text-slate-400 hover:text-slate-200"
+          ? "bg-blue-600/20 text-blue-600 dark:text-blue-400"
+          : "text-muted-foreground hover:text-foreground"
       }`}
     >
       <span className="flex items-center gap-2">
@@ -216,11 +217,11 @@ function InfoRow({
 }) {
   return (
     <div>
-      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
         {icon}
         {label}
       </p>
-      <p className="text-[13px] text-slate-200">{value || "—"}</p>
+      <p className="text-[13px] text-foreground">{value || "—"}</p>
     </div>
   );
 }
@@ -273,18 +274,18 @@ function CompanyCommercialVatPanel() {
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+    <div className="bg-card border border-border rounded-lg p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Receipt className="w-4 h-4 text-emerald-400" />
-        <span className="text-[14px] font-bold text-slate-200">TVA ofertare</span>
+        <Receipt className="w-4 h-4 text-emerald-600 dark:text-emerald-600 dark:text-emerald-400" />
+        <span className="text-[14px] font-bold text-foreground">TVA implicit (registry intern)</span>
       </div>
-      <p className="text-[11px] text-slate-500 mb-4">
+      <p className="text-[11px] text-muted-foreground mb-4">
         Sursa TVA pentru oferte. Ofertele salvează snapshot-ul TVA la generare; documentele istorice
         nu se actualizează când schimbi această valoare.
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1">
+          <label className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">
             TVA implicit pentru oferte (%)
           </label>
           <input
@@ -295,7 +296,7 @@ function CompanyCommercialVatPanel() {
             disabled={loading || saving}
             value={vatPct}
             onChange={(e) => setVatPct(e.target.value)}
-            className="w-32 bg-[#0B1220] border border-[#1E293B] rounded px-3 py-2 text-[13px] text-slate-200"
+            className="w-32 bg-background border border-border rounded px-3 py-2 text-[13px] text-foreground"
             data-testid="settings-default-vat-pct"
           />
         </div>
@@ -309,8 +310,8 @@ function CompanyCommercialVatPanel() {
           Salvează TVA
         </button>
       </div>
-      {error && <p className="text-[11px] text-red-400 mt-2">{error}</p>}
-      {success && <p className="text-[11px] text-emerald-400 mt-2">{success}</p>}
+      {error && <p className="text-[11px] text-red-600 dark:text-red-400 mt-2">{error}</p>}
+      {success && <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-2">{success}</p>}
     </div>
   );
 }
@@ -363,18 +364,18 @@ function CompanyCommercialFxPanel() {
   }
 
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+    <div className="bg-card border border-border rounded-lg p-5">
       <div className="flex items-center gap-2 mb-3">
-        <Receipt className="w-4 h-4 text-cyan-400" />
-        <span className="text-[14px] font-bold text-slate-200">Curs EUR/RON</span>
+        <Receipt className="w-4 h-4 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
+        <span className="text-[14px] font-bold text-foreground">Curs EUR/RON</span>
       </div>
-      <p className="text-[11px] text-slate-500 mb-4">
+      <p className="text-[11px] text-muted-foreground mb-4">
         Curs EUR/RON folosit la conversia ofertelor în comenzi. Momentan se completează manual.
         Preluarea automată a cursului va fi tratată separat.
       </p>
       <div className="flex flex-wrap items-end gap-3">
         <div>
-          <label className="text-[10px] text-slate-500 uppercase tracking-wide block mb-1">
+          <label className="text-[10px] text-muted-foreground uppercase tracking-wide block mb-1">
             Curs EUR/RON (RON pentru 1 EUR)
           </label>
           <input
@@ -384,7 +385,7 @@ function CompanyCommercialFxPanel() {
             disabled={loading || saving}
             value={rate}
             onChange={(e) => setRate(e.target.value)}
-            className="w-40 bg-[#0B1220] border border-[#1E293B] rounded px-3 py-2 text-[13px] text-slate-200"
+            className="w-40 bg-background border border-border rounded px-3 py-2 text-[13px] text-foreground"
             data-testid="settings-eur-to-ron-rate"
           />
         </div>
@@ -398,8 +399,8 @@ function CompanyCommercialFxPanel() {
           Salvează curs
         </button>
       </div>
-      {error && <p className="text-[11px] text-red-400 mt-2">{error}</p>}
-      {success && <p className="text-[11px] text-emerald-400 mt-2">{success}</p>}
+      {error && <p className="text-[11px] text-red-600 dark:text-red-400 mt-2">{error}</p>}
+      {success && <p className="text-[11px] text-emerald-600 dark:text-emerald-400 mt-2">{success}</p>}
     </div>
   );
 }
@@ -407,10 +408,10 @@ function CompanyCommercialFxPanel() {
 function CompanyTab({ settings }: { settings: CompanySettings }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+      <div className="bg-card border border-border rounded-lg p-5">
         <div className="flex items-center gap-2 mb-4">
-          <Building2 className="w-4 h-4 text-blue-400" />
-          <span className="text-[14px] font-bold text-slate-200">Date Societate</span>
+          <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+          <span className="text-[14px] font-bold text-foreground">Date Societate</span>
         </div>
         <div className="space-y-4">
           <InfoRow label="Denumire" value={settings.name} icon={<Building2 className="w-3 h-3" />} />
@@ -424,10 +425,10 @@ function CompanyTab({ settings }: { settings: CompanySettings }) {
             <InfoRow label="Cod Poștal" value={settings.postalCode} />
           </div>
           <div>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Plătitor TVA</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Plătitor TVA</p>
             <span
               className={`inline-flex items-center gap-1 text-[12px] font-semibold ${
-                settings.vatPayer ? "text-emerald-400" : "text-slate-400"
+                settings.vatPayer ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
               }`}
             >
               {settings.vatPayer ? (
@@ -443,10 +444,10 @@ function CompanyTab({ settings }: { settings: CompanySettings }) {
       </div>
 
       <div className="space-y-4">
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+        <div className="bg-card border border-border rounded-lg p-5">
           <div className="flex items-center gap-2 mb-4">
-            <Phone className="w-4 h-4 text-blue-400" />
-            <span className="text-[14px] font-bold text-slate-200">Contact</span>
+            <Phone className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+            <span className="text-[14px] font-bold text-foreground">Contact</span>
           </div>
           <div className="space-y-4">
             <InfoRow label="Telefon" value={settings.phone} icon={<Phone className="w-3 h-3" />} />
@@ -455,10 +456,10 @@ function CompanyTab({ settings }: { settings: CompanySettings }) {
           </div>
         </div>
 
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5">
+        <div className="bg-card border border-border rounded-lg p-5">
           <div className="flex items-center gap-2 mb-4">
-            <Landmark className="w-4 h-4 text-blue-400" />
-            <span className="text-[14px] font-bold text-slate-200">Date Bancare</span>
+            <Landmark className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+            <span className="text-[14px] font-bold text-foreground">Date Bancare</span>
           </div>
           <div className="space-y-4">
             <InfoRow label="Bancă" value={settings.bankName} icon={<Landmark className="w-3 h-3" />} />
@@ -598,25 +599,66 @@ function IntegrationsTab() {
   }, [hydrateFormFromConfig, loadHealth]);
 
   const statusTone: Record<SmartbillProviderHealthResponse["status"], string> = {
-    disabled: "text-slate-300 border-slate-600 bg-slate-800/60",
-    not_configured: "text-amber-300 border-amber-700 bg-amber-900/20",
-    configured: "text-emerald-300 border-emerald-700 bg-emerald-900/20",
-    invalid_config: "text-red-300 border-red-700 bg-red-900/20",
+    disabled: "text-muted-foreground border-slate-600 bg-muted/60",
+    not_configured: "text-amber-700 dark:text-amber-300 border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20",
+    configured: "text-emerald-700 dark:text-emerald-300 border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20",
+    invalid_config: "text-red-700 dark:text-red-300 border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20",
   };
+
+  // Build readiness items from health state
+  const readinessItems: ReadinessItem[] = useMemo(() => {
+    const items: ReadinessItem[] = [
+      {
+        id: "smartbill-provider",
+        label: "SmartBill Provider",
+        status: !health
+          ? "pending"
+          : health.status === "configured"
+            ? "pass"
+            : health.status === "invalid_config"
+              ? "fail"
+              : health.status === "not_configured"
+                ? "warning"
+                : "pending",
+        detail: health ? `Status: ${health.status}` : "Se verifică...",
+      },
+      {
+        id: "smartbill-enabled",
+        label: "SmartBill Activat",
+        status: config?.enabled ? "pass" : "warning",
+        detail: config?.enabled ? "Provider activ" : "Provider dezactivat",
+      },
+      {
+        id: "smartbill-credentials",
+        label: "Credențiale configurate",
+        status: !config
+          ? "pending"
+          : config.username_present && config.token_present
+            ? "pass"
+            : !config.username_present && !config.token_present
+              ? "fail"
+              : "warning",
+        detail: config
+          ? `Username: ${config.username_present ? "✓" : "✗"}, Token: ${config.token_present ? "✓" : "✗"}`
+          : "Se verifică...",
+      },
+    ];
+    return items;
+  }, [health, config]);
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-[14px] font-bold text-slate-100">Provider Diagnostics</h2>
-          <p className="text-[11px] text-slate-500">
+          <h2 className="text-[14px] font-bold text-foreground">Provider Diagnostics</h2>
+          <p className="text-[11px] text-muted-foreground">
             Configuratie administrabila din UI, cu secrete protejate in backend.
           </p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => void loadAll()}
-            className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-[#2A3548] bg-[#111827] text-slate-300 hover:text-slate-100"
+            className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-wo-border-strong bg-card text-muted-foreground hover:text-foreground"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Refresh
@@ -624,85 +666,93 @@ function IntegrationsTab() {
         </div>
       </div>
 
+      {/* System Readiness Panel */}
+      <ReadinessPanel
+        title="Stare Integrări"
+        subtitle="Verificare automată a conexiunilor externe"
+        items={readinessItems}
+        icon={<Globe className="w-4 h-4" />}
+      />
+
       {loading && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 text-[12px] text-slate-400">
+        <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-muted-foreground">
           Se încarcă diagnosticul SmartBill...
         </div>
       )}
 
       {error && !loading && (
-        <div className="flex items-start gap-2 px-3 py-3 bg-red-900/20 border border-red-800/40 rounded-lg">
-          <XCircle className="w-4 h-4 text-red-400 mt-0.5 shrink-0" />
-          <p className="text-[12px] text-red-300">Provider diagnostic unavailable: {error}</p>
+        <div className="flex items-start gap-2 px-3 py-3 bg-red-100 border border-red-200 dark:bg-red-900/20 dark:border-red-800/40 rounded-lg">
+          <XCircle className="w-4 h-4 text-red-600 dark:text-red-400 mt-0.5 shrink-0" />
+          <p className="text-[12px] text-red-700 dark:text-red-300">Provider diagnostic unavailable: {error}</p>
         </div>
       )}
 
       {config && !loading && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-5 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-blue-400" />
-              <span className="text-[14px] font-bold text-slate-200">SmartBill Config</span>
+              <Globe className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+              <span className="text-[14px] font-bold text-foreground">SmartBill Config</span>
             </div>
-            <span className="px-2.5 py-1 rounded-lg border text-[11px] font-semibold text-slate-300 border-slate-600 bg-slate-800/60">
+            <span className="px-2.5 py-1 rounded-lg border text-[11px] font-semibold text-muted-foreground border-slate-600 bg-muted/60">
               source: {config.source}
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Enabled</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Enabled</p>
               <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
             </label>
 
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Base URL</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Base URL</p>
               <input
                 value={baseUrl}
                 onChange={(e) => setBaseUrl(e.target.value)}
-                className="w-full rounded-md bg-[#111827] border border-[#2A3548] px-2 py-2 text-[12px] text-slate-200"
+                className="w-full rounded-md bg-card border border-wo-border-strong px-2 py-2 text-[12px] text-foreground"
                 placeholder="https://api.smartbill.ro"
               />
             </label>
 
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Username</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Username</p>
               <input
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full rounded-md bg-[#111827] border border-[#2A3548] px-2 py-2 text-[12px] text-slate-200"
+                className="w-full rounded-md bg-card border border-wo-border-strong px-2 py-2 text-[12px] text-foreground"
                 placeholder={config.username_present ? `Current: ${config.username_hint || "configured"}` : "billing@example.com"}
               />
             </label>
 
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Token (write-only)</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Token (write-only)</p>
               <input
                 type="password"
                 value={token}
                 onChange={(e) => setToken(e.target.value)}
-                className="w-full rounded-md bg-[#111827] border border-[#2A3548] px-2 py-2 text-[12px] text-slate-200"
+                className="w-full rounded-md bg-card border border-wo-border-strong px-2 py-2 text-[12px] text-foreground"
                 placeholder={config.token_present ? "Token already configured" : "Paste new token"}
                 autoComplete="new-password"
               />
             </label>
 
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Lookup path</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Lookup path</p>
               <input
                 value={lookupPath}
                 onChange={(e) => setLookupPath(e.target.value)}
-                className="w-full rounded-md bg-[#111827] border border-[#2A3548] px-2 py-2 text-[12px] text-slate-200"
+                className="w-full rounded-md bg-card border border-wo-border-strong px-2 py-2 text-[12px] text-foreground"
                 placeholder="/fiscal-lookup"
               />
             </label>
 
-            <label className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-3 block">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Timeout seconds</p>
+            <label className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-3 block">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Timeout seconds</p>
               <input
                 value={timeoutSeconds}
                 onChange={(e) => setTimeoutSeconds(e.target.value)}
-                className="w-full rounded-md bg-[#111827] border border-[#2A3548] px-2 py-2 text-[12px] text-slate-200"
+                className="w-full rounded-md bg-card border border-wo-border-strong px-2 py-2 text-[12px] text-foreground"
                 placeholder="5"
                 inputMode="numeric"
               />
@@ -713,7 +763,7 @@ function IntegrationsTab() {
             <button
               disabled={saving}
               onClick={() => void handleSaveConfig()}
-              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-emerald-700 bg-emerald-900/20 text-emerald-300 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-emerald-700 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-300 disabled:opacity-60"
             >
               <Save className="w-3.5 h-3.5" />
               {saving ? "Saving..." : "Save config"}
@@ -722,7 +772,7 @@ function IntegrationsTab() {
             <button
               disabled={testing}
               onClick={() => void handleTestConfig()}
-              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-blue-700 bg-blue-900/20 text-blue-300 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-blue-700 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 disabled:opacity-60"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               {testing ? "Testing..." : "Test connection (local)"}
@@ -731,14 +781,14 @@ function IntegrationsTab() {
             <button
               disabled={saving || !config.token_present}
               onClick={() => void handleClearToken()}
-              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-red-700 bg-red-900/20 text-red-300 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-3 py-2 text-[12px] font-semibold rounded-lg border border-red-300 dark:border-red-700 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 disabled:opacity-60"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Clear token
             </button>
           </div>
 
-          <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4 text-[12px] text-slate-300 space-y-1">
+          <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4 text-[12px] text-muted-foreground space-y-1">
             <p>token_present: {String(config.token_present)}</p>
             <p>username_present: {String(config.username_present)}</p>
             <p>username_hint: {config.username_hint || "—"}</p>
@@ -750,19 +800,19 @@ function IntegrationsTab() {
             </p>
           </div>
 
-          <div className="bg-amber-900/15 border border-amber-800/30 rounded-lg p-3 text-[12px] text-amber-300">
+          <div className="bg-amber-100 border border-amber-200 dark:bg-amber-900/15 dark:border-amber-800/30 rounded-lg p-3 text-[12px] text-amber-700 dark:text-amber-300">
             Configuratia completa nu garanteaza ca providerul raspunde corect. Verificarea reala se face prin lookup controlat / UAT.
           </div>
 
           {testResult && (
-            <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4 text-[12px] text-slate-300 space-y-1">
+            <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4 text-[12px] text-muted-foreground space-y-1">
               <p>test.status: {testResult.status}</p>
               <p>test.ok: {String(testResult.ok)}</p>
               <p>test.mode: {testResult.mode}</p>
               <p>test.source: {testResult.source}</p>
               <p>test.message: {testResult.message}</p>
               {testResult.warnings.length > 0 && (
-                <ul className="list-disc list-inside text-amber-300">
+                <ul className="list-disc list-inside text-amber-700 dark:text-amber-300">
                   {testResult.warnings.map((w) => (
                     <li key={w}>{w}</li>
                   ))}
@@ -774,21 +824,21 @@ function IntegrationsTab() {
       )}
 
       {health && !loading && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-5 space-y-4">
+        <div className="bg-card border border-border rounded-lg p-5 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4 text-blue-400" />
-              <span className="text-[14px] font-bold text-slate-200">SmartBill Health</span>
+              <Globe className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+              <span className="text-[14px] font-bold text-foreground">SmartBill Health</span>
             </div>
             <span className={`px-2.5 py-1 rounded-lg border text-[11px] font-semibold ${statusTone[health.status]}`}>
               {health.status}
             </span>
           </div>
 
-          <p className="text-[12px] text-slate-400">source: {health.source}</p>
+          <p className="text-[12px] text-muted-foreground">source: {health.source}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4 space-y-3">
+            <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4 space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <InfoRow label="Enabled" value={health.enabled ? "true" : "false"} />
                 <InfoRow label="Configured" value={health.configured ? "true" : "false"} />
@@ -799,9 +849,9 @@ function IntegrationsTab() {
               <InfoRow label="Timeout seconds" value={health.settings.timeout_seconds === null ? "—" : String(health.settings.timeout_seconds)} />
             </div>
 
-            <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4 space-y-3">
-              <p className="text-[10px] text-slate-500 uppercase tracking-wide">Present fields</p>
-              <ul className="space-y-1 text-[12px] text-slate-300">
+            <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4 space-y-3">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Present fields</p>
+              <ul className="space-y-1 text-[12px] text-muted-foreground">
                 <li>base_url: {String(health.present_fields.base_url)}</li>
                 <li>username: {String(health.present_fields.username)}</li>
                 <li>token: {String(health.present_fields.token)}</li>
@@ -811,30 +861,30 @@ function IntegrationsTab() {
             </div>
           </div>
 
-          <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4">
-            <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Missing fields</p>
+          <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Missing fields</p>
             {health.missing_fields.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {health.missing_fields.map((field) => (
-                  <span key={field} className="px-2 py-1 text-[11px] rounded border border-amber-700 bg-amber-900/20 text-amber-300">
+                  <span key={field} className="px-2 py-1 text-[11px] rounded border border-amber-200 bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
                     {field}
                   </span>
                 ))}
               </div>
             ) : (
-              <p className="text-[12px] text-slate-300">Niciun câmp obligatoriu lipsă.</p>
+              <p className="text-[12px] text-muted-foreground">Niciun câmp obligatoriu lipsă.</p>
             )}
           </div>
 
-          <div className="bg-[#0D1321] border border-[#2A3548] rounded-lg p-4">
-            <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-2">Live validation</p>
-            <p className="text-[12px] text-slate-300">{health.live_validation.message}</p>
+          <div className="bg-wo-surface-inset border border-wo-border-strong rounded-lg p-4">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-2">Live validation</p>
+            <p className="text-[12px] text-muted-foreground">{health.live_validation.message}</p>
           </div>
 
           {health.warnings.length > 0 && (
             <div className="flex items-start gap-2 px-3 py-3 bg-amber-900/15 border border-amber-800/30 rounded-lg">
-              <AlertTriangle className="w-4 h-4 text-amber-400 mt-0.5 shrink-0" />
-              <div className="text-[12px] text-amber-300 space-y-1">
+              <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 mt-0.5 shrink-0" />
+              <div className="text-[12px] text-amber-600 dark:text-amber-300 space-y-1">
                 {health.warnings.map((warning) => (
                   <p key={warning}>{warning}</p>
                 ))}
@@ -851,13 +901,13 @@ function IntegrationsTab() {
 // RECURRING PAYMENTS TAB — backed by backend
 // ============================================================
 const PAYMENT_CATEGORIES: { value: string; label: string; cls: string }[] = [
-  { value: "chirie", label: "Chirie", cls: "bg-purple-900/40 text-purple-300 border-purple-700" },
-  { value: "utilitati", label: "Utilități", cls: "bg-amber-900/40 text-amber-300 border-amber-700" },
-  { value: "leasing", label: "Leasing", cls: "bg-blue-900/40 text-blue-300 border-blue-700" },
-  { value: "asigurare", label: "Asigurare", cls: "bg-emerald-900/40 text-emerald-300 border-emerald-700" },
-  { value: "abonament", label: "Abonament", cls: "bg-cyan-900/40 text-cyan-300 border-cyan-700" },
-  { value: "servicii", label: "Servicii", cls: "bg-teal-900/40 text-teal-300 border-teal-700" },
-  { value: "alte_costuri", label: "Alte costuri", cls: "bg-slate-700/60 text-slate-300 border-slate-600" },
+  { value: "chirie", label: "Chirie", cls: "bg-purple-50 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-700" },
+  { value: "utilitati", label: "Utilități", cls: "bg-amber-50 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-700" },
+  { value: "leasing", label: "Leasing", cls: "bg-blue-50 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-700" },
+  { value: "asigurare", label: "Asigurare", cls: "bg-emerald-50 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700" },
+  { value: "abonament", label: "Abonament", cls: "bg-cyan-50 dark:bg-cyan-900/40 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-700" },
+  { value: "servicii", label: "Servicii", cls: "bg-teal-50 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-700" },
+  { value: "alte_costuri", label: "Alte costuri", cls: "bg-slate-700/60 text-muted-foreground border-slate-600" },
 ];
 
 const PAYMENT_PERIODICITY: { value: string; label: string }[] = [
@@ -880,7 +930,7 @@ function categoryConfig(v: string) {
     PAYMENT_CATEGORIES.find((c) => c.value === v) ?? {
       value: v,
       label: v,
-      cls: "bg-slate-700/60 text-slate-300 border-slate-600",
+      cls: "bg-slate-700/60 text-muted-foreground border-slate-600",
     }
   );
 }
@@ -1128,40 +1178,40 @@ function RecurringPaymentsTab() {
     <div className="space-y-4">
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Total lunar (RON)</p>
-          <p className="text-[22px] font-bold text-slate-100">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Total lunar (RON)</p>
+          <p className="text-[22px] font-bold text-foreground">
             {fmtMoney(totals.monthlyByCcy.RON ?? 0, 0)}
           </p>
-          <p className="text-[10px] text-slate-500">
+          <p className="text-[10px] text-muted-foreground">
             calculat de backend (monthly_equivalent)
           </p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Alte valute (lunar)</p>
-          <p className="text-[13px] text-slate-200 font-mono break-all">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Alte valute (lunar)</p>
+          <p className="text-[13px] text-foreground font-mono break-all">
             {Object.entries(totals.monthlyByCcy)
               .filter(([k]) => k !== "RON")
               .map(([k, v]) => `${fmtMoney(v, 0)} ${k}`)
               .join(" · ") || "—"}
           </p>
-          <p className="text-[10px] text-slate-500">fără conversie valutară</p>
+          <p className="text-[10px] text-muted-foreground">fără conversie valutară</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Plăți active</p>
-          <p className="text-[22px] font-bold text-slate-100">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">Plăți active</p>
+          <p className="text-[22px] font-bold text-foreground">
             {totals.active}
-            <span className="text-[12px] text-slate-500"> / {totals.total}</span>
+            <span className="text-[12px] text-muted-foreground"> / {totals.total}</span>
           </p>
-          <p className="text-[10px] text-slate-500">status = activ</p>
+          <p className="text-[10px] text-muted-foreground">status = activ</p>
         </div>
-        <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">În overhead / utilaj</p>
-          <p className="text-[22px] font-bold text-slate-100">
+        <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">În overhead / utilaj</p>
+          <p className="text-[22px] font-bold text-foreground">
             {totals.overhead}
-            <span className="text-[12px] text-slate-500"> · {totals.machine}</span>
+            <span className="text-[12px] text-muted-foreground"> · {totals.machine}</span>
           </p>
-          <p className="text-[10px] text-slate-500">alocate în CostEngine</p>
+          <p className="text-[10px] text-muted-foreground">alocate în calcul cost intern</p>
         </div>
       </div>
 
@@ -1171,8 +1221,8 @@ function RecurringPaymentsTab() {
           onClick={() => setCategoryFilter("all")}
           className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
             categoryFilter === "all"
-              ? "bg-blue-600/20 text-blue-400 border-blue-500/50"
-              : "bg-[#111827] text-slate-400 border-[#1E293B] hover:border-slate-500"
+              ? "bg-blue-600/20 text-blue-600 dark:text-blue-400 border-blue-500/50"
+              : "bg-card text-muted-foreground border-border hover:border-slate-500"
           }`}
         >
           Toate ({items.length})
@@ -1188,8 +1238,8 @@ function RecurringPaymentsTab() {
               }
               className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition-colors ${
                 categoryFilter === cat.value
-                  ? "bg-blue-600/20 text-blue-400 border-blue-500/50"
-                  : "bg-[#111827] text-slate-400 border-[#1E293B] hover:border-slate-500"
+                  ? "bg-blue-600/20 text-blue-600 dark:text-blue-400 border-blue-500/50"
+                  : "bg-card text-muted-foreground border-border hover:border-slate-500"
               }`}
             >
               {cat.label} ({count})
@@ -1199,7 +1249,7 @@ function RecurringPaymentsTab() {
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => void load()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             Reîncarcă
@@ -1215,7 +1265,7 @@ function RecurringPaymentsTab() {
       </div>
 
       {loadError && (
-        <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-[12px] rounded-md px-3 py-2">
+        <div className="bg-red-100 border border-red-200 dark:bg-red-900/30 dark:border-red-700/50 text-red-700 dark:text-red-300 text-[12px] rounded-md px-3 py-2">
           {loadError}
         </div>
       )}
@@ -1224,12 +1274,12 @@ function RecurringPaymentsTab() {
         {/* List */}
         <div className="lg:col-span-2 space-y-2">
           {loading && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]">
+            <div className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-[13px]">
               Se încarcă...
             </div>
           )}
           {!loading && filtered.length === 0 && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]">
+            <div className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-[13px]">
               Nicio plată înregistrată.
             </div>
           )}
@@ -1243,37 +1293,37 @@ function RecurringPaymentsTab() {
                     setSelectedId(p.id);
                     setMode("view");
                   }}
-                  className={`bg-[#111827] border rounded-lg p-3 cursor-pointer transition-all ${
+                  className={`bg-card border rounded-lg p-3 cursor-pointer transition-all ${
                     active
                       ? "border-blue-500/50 ring-1 ring-blue-500/30"
-                      : "border-[#1E293B] hover:border-slate-500"
+                      : "border-border hover:border-slate-500"
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                        <span className="text-[13px] font-semibold text-slate-200">
+                        <span className="text-[13px] font-semibold text-foreground">
                           {p.name}
                         </span>
                         <CategoryBadge category={p.category} />
                         {p.status !== "active" && (
-                          <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">
+                          <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                             {statusLabel(p.status)}
                           </span>
                         )}
                         {p.include_in_overhead && (
-                          <span className="text-[10px] text-blue-300 bg-blue-900/30 border border-blue-700/50 px-1.5 py-0.5 rounded">
+                          <span className="text-[10px] text-blue-600 dark:text-blue-300 bg-blue-900/30 border border-blue-700/50 px-1.5 py-0.5 rounded">
                             overhead
                           </span>
                         )}
                         {p.include_in_machine_cost && (
-                          <span className="text-[10px] text-amber-300 bg-amber-900/30 border border-amber-700/50 px-1.5 py-0.5 rounded">
+                          <span className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/30 border border-amber-700/50 px-1.5 py-0.5 rounded">
                             utilaj
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-3 text-[10px] text-slate-500 flex-wrap">
-                        <span className="font-bold text-slate-300">
+                      <div className="flex items-center gap-3 text-[10px] text-muted-foreground flex-wrap">
+                        <span className="font-bold text-muted-foreground">
                           {fmtMoney(p.amount)} {p.currency}
                         </span>
                         <span>•</span>
@@ -1296,7 +1346,7 @@ function RecurringPaymentsTab() {
                         </span>
                       </div>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-slate-600 shrink-0" />
+                    <ChevronRight className="w-4 h-4 text-wo-text-dim shrink-0" />
                   </div>
                 </div>
               );
@@ -1314,9 +1364,9 @@ function RecurringPaymentsTab() {
             />
           )}
           {mode === "view" && !selected && (
-            <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center">
-              <DollarSign className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-              <p className="text-[13px] text-slate-500">
+            <div className="bg-card border border-border rounded-lg p-8 text-center">
+              <DollarSign className="w-8 h-8 text-wo-text-dim mx-auto mb-2" />
+              <p className="text-[13px] text-muted-foreground">
                 Selectează o plată pentru detalii sau adaugă una nouă.
               </p>
             </div>
@@ -1351,25 +1401,25 @@ function PaymentDetail({
   deleting: boolean;
 }) {
   return (
-    <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3">
+    <div className="bg-card border border-border rounded-lg p-4 space-y-3">
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1 flex-wrap">
             <CategoryBadge category={p.category} />
             <span
               className={`text-[11px] font-medium ${
-                p.status === "active" ? "text-emerald-400" : "text-slate-500"
+                p.status === "active" ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
               }`}
             >
               {p.status === "active" ? "● Activ" : `○ ${statusLabel(p.status)}`}
             </span>
           </div>
-          <h3 className="text-[16px] font-bold text-slate-100">{p.name}</h3>
+          <h3 className="text-[16px] font-bold text-foreground">{p.name}</h3>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={onEdit}
-            className="p-1.5 text-slate-400 hover:text-slate-100 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+            className="p-1.5 text-muted-foreground hover:text-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
             title="Editează"
           >
             <Pencil className="w-3.5 h-3.5" />
@@ -1377,7 +1427,7 @@ function PaymentDetail({
           <button
             onClick={onDelete}
             disabled={deleting}
-            className="p-1.5 text-red-400 hover:text-red-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-red-600/60 disabled:opacity-50"
+            className="p-1.5 text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-red-600/60 disabled:opacity-50"
             title="Șterge"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -1385,14 +1435,14 @@ function PaymentDetail({
         </div>
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 text-center">
-        <p className="text-[28px] font-bold text-slate-100">
+      <div className="bg-wo-surface-raised rounded-lg p-3 text-center">
+        <p className="text-[28px] font-bold text-foreground">
           {fmtMoney(p.amount)}
         </p>
-        <p className="text-[12px] text-slate-400">
+        <p className="text-[12px] text-muted-foreground">
           {p.currency} / {periodicityLabel(p.periodicity).toLowerCase()}
         </p>
-        <p className="text-[11px] text-slate-500 mt-1 font-mono">
+        <p className="text-[11px] text-muted-foreground mt-1 font-mono">
           ~ {fmtMoney(p.monthly_equivalent)} {p.currency} echivalent lunar
         </p>
       </div>
@@ -1412,24 +1462,24 @@ function PaymentDetail({
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
             În overhead
           </p>
           <span
             className={`text-[12px] font-semibold ${
-              p.include_in_overhead ? "text-emerald-400" : "text-slate-500"
+              p.include_in_overhead ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
             }`}
           >
             {p.include_in_overhead ? "Da" : "Nu"}
           </span>
         </div>
         <div>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
             Alocat utilaj
           </p>
           <span
             className={`text-[12px] font-semibold ${
-              p.include_in_machine_cost ? "text-emerald-400" : "text-slate-500"
+              p.include_in_machine_cost ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
             }`}
           >
             {p.include_in_machine_cost
@@ -1440,11 +1490,11 @@ function PaymentDetail({
       </div>
 
       {p.observatii && (
-        <div className="bg-[#1A2236] rounded-lg p-3">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1 flex items-center gap-1">
+        <div className="bg-wo-surface-raised rounded-lg p-3">
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1 flex items-center gap-1">
             <FileText className="w-3 h-3" /> Observații
           </p>
-          <p className="text-[12px] text-slate-300 whitespace-pre-wrap">
+          <p className="text-[12px] text-muted-foreground whitespace-pre-wrap">
             {p.observatii}
           </p>
         </div>
@@ -1479,16 +1529,16 @@ function PaymentForm({
         e.preventDefault();
         onSubmit();
       }}
-      className="bg-[#111827] border border-[#1E293B] rounded-lg p-4 space-y-3"
+      className="bg-card border border-border rounded-lg p-4 space-y-3"
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-[14px] font-bold text-slate-100">
+        <h3 className="text-[14px] font-bold text-foreground">
           {mode === "create" ? "Plată nouă" : "Editează plată"}
         </h3>
         <button
           type="button"
           onClick={onCancel}
-          className="p-1 text-slate-400 hover:text-slate-100"
+          className="p-1 text-muted-foreground hover:text-foreground"
         >
           <X className="w-4 h-4" />
         </button>
@@ -1556,11 +1606,11 @@ function PaymentForm({
         />
       </div>
 
-      <div className="bg-[#1A2236] rounded-lg p-3 space-y-2">
-        <p className="text-[10px] text-slate-500 uppercase tracking-wide">
-          Alocare CostEngine
+      <div className="bg-wo-surface-raised rounded-lg p-3 space-y-2">
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">
+          Alocare cost intern
         </p>
-        <label className="flex items-center gap-2 text-[12px] text-slate-200">
+        <label className="flex items-center gap-2 text-[12px] text-foreground">
           <input
             type="checkbox"
             checked={form.include_in_overhead}
@@ -1569,7 +1619,7 @@ function PaymentForm({
           />
           Inclus în overhead companie
         </label>
-        <label className="flex items-center gap-2 text-[12px] text-slate-200">
+        <label className="flex items-center gap-2 text-[12px] text-foreground">
           <input
             type="checkbox"
             checked={form.include_in_machine_cost}
@@ -1596,7 +1646,7 @@ function PaymentForm({
       />
 
       {saveError && (
-        <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-[12px] rounded-md px-3 py-2">
+        <div className="bg-red-100 border border-red-200 dark:bg-red-900/30 dark:border-red-700/50 text-red-700 dark:text-red-300 text-[12px] rounded-md px-3 py-2">
           {saveError}
         </div>
       )}
@@ -1613,7 +1663,7 @@ function PaymentForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+          className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
         >
           Anulează
         </button>
@@ -1778,14 +1828,14 @@ function CostEngineTab() {
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-blue-400" />
-          <h2 className="text-[14px] font-bold text-slate-200">
-            Configurație CostEngine
+          <Calculator className="w-4 h-4 text-blue-600 dark:text-blue-600 dark:text-blue-400" />
+          <h2 className="text-[14px] font-bold text-foreground">
+            Configurație cost intern
           </h2>
         </div>
         <button
           onClick={() => void load()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           Reîncarcă
@@ -1793,28 +1843,28 @@ function CostEngineTab() {
       </div>
 
       {loadError && (
-        <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-[12px] rounded-md px-3 py-2">
+        <div className="bg-red-100 border border-red-200 dark:bg-red-900/30 dark:border-red-700/50 text-red-700 dark:text-red-300 text-[12px] rounded-md px-3 py-2">
           {loadError}
         </div>
       )}
 
       {loading && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-8 text-center text-slate-500 text-[13px]">
+        <div className="bg-card border border-border rounded-lg p-8 text-center text-muted-foreground text-[13px]">
           Se încarcă...
         </div>
       )}
 
       {!loading && baseConfig && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[13px] font-bold text-slate-200">
+            <h3 className="text-[13px] font-bold text-foreground">
               Valori calculate (base-config)
             </h3>
             <span
               className={`inline-flex items-center gap-1 text-[10px] font-semibold px-1.5 py-0.5 rounded border ${
                 baseConfig.valid
-                  ? "text-emerald-400 bg-emerald-900/30 border-emerald-700/50"
-                  : "text-amber-400 bg-amber-900/30 border-amber-700/50"
+                  ? "text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/30 border-emerald-700/50"
+                  : "text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30 border-amber-700/50"
               }`}
             >
               {baseConfig.valid ? (
@@ -1888,7 +1938,7 @@ function CostEngineTab() {
               ))}
             </div>
           )}
-          <p className="text-[10px] text-slate-500 italic mt-3">
+          <p className="text-[10px] text-muted-foreground italic mt-3">
             Aceste valori sunt calculate exclusiv de backend (endpoint
             GET&nbsp;/api/v1/cost-engine/base-config). Frontend-ul le afișează
             fără recalcul.
@@ -1897,15 +1947,15 @@ function CostEngineTab() {
       )}
 
       {!loading && config && form && (
-        <div className="bg-[#111827] border border-[#1E293B] rounded-lg p-4">
+        <div className="bg-card border border-border rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[13px] font-bold text-slate-200">
+            <h3 className="text-[13px] font-bold text-foreground">
               Parametri config (editabili)
             </h3>
             {!editing && (
               <button
                 onClick={startEdit}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
               >
                 <Pencil className="w-3.5 h-3.5" />
                 Editează
@@ -1999,7 +2049,7 @@ function CostEngineTab() {
                 error={errors.cost_ora_manopera_default}
                 hint="Folosit ca fallback dacă angajatul nu are date complete."
               />
-              <label className="flex items-center gap-2 text-[12px] text-slate-200">
+              <label className="flex items-center gap-2 text-[12px] text-foreground">
                 <input
                   type="checkbox"
                   checked={form.allow_manual_override}
@@ -2008,11 +2058,11 @@ function CostEngineTab() {
                   }
                   className="rounded"
                 />
-                Permite override manual în CostEngine
+                Permite override manual în calcul cost intern
               </label>
 
               {saveError && (
-                <div className="bg-red-900/30 border border-red-700/50 text-red-300 text-[12px] rounded-md px-3 py-2">
+                <div className="bg-red-100 border border-red-200 dark:bg-red-900/30 dark:border-red-700/50 text-red-700 dark:text-red-300 text-[12px] rounded-md px-3 py-2">
                   {saveError}
                 </div>
               )}
@@ -2029,7 +2079,7 @@ function CostEngineTab() {
                 <button
                   type="button"
                   onClick={cancelEdit}
-                  className="px-3 py-1.5 text-[12px] text-slate-300 bg-[#1A2236] border border-[#2A3548] rounded-md hover:border-slate-500"
+                  className="px-3 py-1.5 text-[12px] text-muted-foreground bg-wo-surface-raised border border-wo-border-strong rounded-md hover:border-slate-500"
                 >
                   Anulează
                 </button>
@@ -2056,21 +2106,21 @@ function MetricCard({
   mono?: boolean;
 }) {
   return (
-    <div className="bg-[#1A2236] border border-[#2A3548] rounded-lg p-3">
-      <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+    <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
+      <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </p>
       <p
-        className={`text-[18px] font-bold text-slate-100 ${
+        className={`text-[18px] font-bold text-foreground ${
           mono ? "font-mono" : ""
         }`}
       >
         {value}
         {suffix && (
-          <span className="text-[11px] text-slate-500 ml-1">{suffix}</span>
+          <span className="text-[11px] text-muted-foreground ml-1">{suffix}</span>
         )}
       </p>
-      {hint && <p className="text-[10px] text-slate-500 mt-1">{hint}</p>}
+      {hint && <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>}
     </div>
   );
 }
@@ -2095,7 +2145,7 @@ function TextField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <input
@@ -2103,16 +2153,16 @@ function TextField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         step={type === "number" ? "0.01" : undefined}
-        className={`w-full bg-[#0B1220] border rounded-md px-2 py-1.5 text-[12px] text-slate-100 placeholder:text-slate-600 outline-none ${
+        className={`w-full bg-background border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none ${
           error
             ? "border-red-600/60 focus:border-red-500"
-            : "border-[#1E293B] focus:border-blue-500/50"
+            : "border-border focus:border-blue-500/50"
         }`}
       />
       {hint && !error && (
-        <p className="text-[10px] text-slate-500 mt-1">{hint}</p>
+        <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>
       )}
-      {error && <p className="text-[10px] text-red-400 mt-1">{error}</p>}
+      {error && <p className="text-[10px] text-red-600 dark:text-red-400 mt-1">{error}</p>}
     </div>
   );
 }
@@ -2128,14 +2178,14 @@ function TextareaField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <textarea
         value={value}
         rows={3}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[#0B1220] border border-[#1E293B] rounded-md px-2 py-1.5 text-[12px] text-slate-100 placeholder:text-slate-600 outline-none focus:border-blue-500/50 resize-y"
+        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground placeholder:text-wo-text-dim outline-none focus:border-blue-500/50 resize-y"
       />
     </div>
   );
@@ -2154,13 +2204,13 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-[10px] text-slate-500 uppercase tracking-wide mb-1">
+      <label className="block text-[10px] text-muted-foreground uppercase tracking-wide mb-1">
         {label}
       </label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-[#0B1220] border border-[#1E293B] rounded-md px-2 py-1.5 text-[12px] text-slate-100 outline-none focus:border-blue-500/50"
+        className="w-full bg-background border border-border rounded-md px-2 py-1.5 text-[12px] text-foreground outline-none focus:border-blue-500/50"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>

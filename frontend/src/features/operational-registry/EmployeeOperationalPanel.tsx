@@ -40,7 +40,7 @@ function MultiCheckboxGroup({
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-semibold text-slate-300 uppercase tracking-wide">{title}</p>
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{title}</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-40 overflow-y-auto pr-1">
         {options.map((opt) => {
           const code = opt[valueKey];
@@ -51,7 +51,7 @@ function MultiCheckboxGroup({
               className={`flex items-center gap-2 text-xs rounded border px-2 py-1.5 cursor-pointer ${
                 checked
                   ? "border-cyan-700/60 bg-cyan-950/30 text-cyan-100"
-                  : "border-slate-700 bg-slate-900/40 text-slate-300"
+                  : "border-border bg-wo-surface-shell/40 text-muted-foreground"
               } ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
             >
               <input
@@ -62,7 +62,7 @@ function MultiCheckboxGroup({
                 className="rounded border-slate-600"
               />
               <span>{opt[labelKey]}</span>
-              <span className="text-[10px] text-slate-500 ml-auto font-mono">{code}</span>
+              <span className="text-[10px] text-muted-foreground ml-auto font-mono">{code}</span>
             </label>
           );
         })}
@@ -135,21 +135,21 @@ export function EmployeeOperationalPanel({ employeeId, readOnly = false }: Props
   }));
 
   return (
-    <div className="rounded-lg border border-slate-700 bg-slate-900/40 p-4 space-y-4">
+    <div className="rounded-lg border border-border bg-wo-surface-shell/40 p-4 space-y-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100">Autorizări operaționale (registry)</h3>
-          <p className="text-xs text-slate-400 mt-1">
+          <h3 className="text-sm font-semibold text-foreground">Autorizări operaționale (registry)</h3>
+          <p className="text-xs text-muted-foreground mt-1">
             Sursă canonicală pentru skills, workcenters și resurse. Nu folosește HR demo (
             <code className="text-[10px]">employeeRecordsData</code>).
           </p>
           {employee && (
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-[11px] text-muted-foreground mt-1">
               Salariu HR:{" "}
               {employee.salary_amount != null
                 ? `${employee.salary_amount.toLocaleString("ro-RO")} ${employee.salary_currency}/lună`
                 : "—"}{" "}
-              · boundary CostEngine agregat, nu preț per operație.
+              · boundary cost intern agregat, nu preț per operație.
             </p>
           )}
         </div>
@@ -158,7 +158,7 @@ export function EmployeeOperationalPanel({ employeeId, readOnly = false }: Props
             <button
               type="button"
               onClick={() => void load()}
-              className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded border border-slate-600 text-slate-300 hover:bg-slate-800"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs rounded border border-slate-600 text-muted-foreground hover:bg-muted"
             >
               <RefreshCw className="w-3 h-3" />
               Reîncarcă
@@ -176,7 +176,7 @@ export function EmployeeOperationalPanel({ employeeId, readOnly = false }: Props
         )}
       </div>
 
-      {loading && <p className="text-xs text-slate-400">Se încarcă registry…</p>}
+      {loading && <p className="text-xs text-muted-foreground">Se încarcă registry…</p>}
       {error && (
         <p className="text-xs text-red-300 flex items-center gap-1">
           <AlertTriangle className="w-3 h-3" />
