@@ -173,7 +173,7 @@ export default function Utilaje() {
           <Cog className="w-5 h-5 text-cyan-600 dark:text-cyan-600 dark:text-cyan-400" />
           <h1 className="text-[18px] font-bold text-foreground">Utilaje (registry)</h1>
           <p className="text-[11px] text-muted-foreground mt-0.5">
-            Registry intern de capacitate — nu face parte din fluxul Product Template → Module produs → Product
+            Registry intern de capacitate — nu face parte din fluxul Product Template → Structură produs → Product
             Compiler.
           </p>
           <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded-full ml-1">

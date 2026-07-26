@@ -8,7 +8,8 @@ describe("ProductCompilerDisplayShell", () => {
     render(<ProductCompilerDisplayShell stage="both" />);
     expect(screen.getByTestId("product-compiler-display-shell")).toBeInTheDocument();
     expect(screen.getByTestId("product-compiler-stage-chips")).toBeInTheDocument();
-    expect(screen.getByText(/Product Template → Module produs/i)).toBeInTheDocument();
+    expect(screen.getByText(/Product Template → Structură produs/i)).toBeInTheDocument();
+    expect(screen.getByText(/MODULE_MODEL_DEFERRED/i)).toBeInTheDocument();
   });
 });
 

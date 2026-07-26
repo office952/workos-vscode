@@ -83,14 +83,14 @@ function buildModuleProdusSummary(
 
 const ACM_BOXED_TEMPLATE_CODE = "TPL-ACM-BOXED-MOUNTING-SUPPORT_v1";
 
-/** Blank workspace primary IA — Template / Modules / Compiler / Readiness only. */
+/** Blank workspace primary IA — Template / Structură / Compiler / Readiness only. */
 const PRODUCT_PRIMARY_SECTIONS: Array<{
   id: UnifiedCatalogDetailSection;
   label: string;
   testId: string;
 }> = [
   { id: "overview", label: "Product Template", testId: "product-system-template-detail-tab-overview" },
-  { id: "composition", label: "Module produs", testId: "product-system-template-detail-tab-composition" },
+  { id: "composition", label: "Structură produs", testId: "product-system-template-detail-tab-composition" },
   { id: "compiler", label: "Product Compiler", testId: "product-system-template-detail-tab-compiler" },
   { id: "readiness", label: "Pregătire", testId: "product-system-template-detail-tab-readiness" },
 ];
@@ -378,7 +378,7 @@ function ProductStoryOverview({
         </div>
         {modules.length === 0 ? (
           <p className="mt-3 text-[12px] text-slate-500">
-            Niciun Module produs expus în availability. Vezi tab-ul Compoziție pentru authoring.
+            Nicio structură expusă în availability. Vezi tab-ul Structură produs pentru authoring.
           </p>
         ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2" data-testid="product-system-template-story-modules-list">
@@ -411,7 +411,7 @@ function ProductStoryOverview({
           onClick={() => onSectionChange("composition")}
           className="mt-3 inline-flex rounded border border-slate-700/70 px-2.5 py-1 text-[11px] font-medium text-wo-text-secondary hover:bg-slate-800/60"
         >
-          Deschide Module produs
+          Deschide structură produs
         </button>
       </section>
 
@@ -581,7 +581,7 @@ export function ProductSystemTemplateDetailPanel({
         >
           <p className="text-[12px] text-wo-text-secondary">
             <span className="font-semibold text-slate-100">Centru workspace:</span>{" "}
-            Module produs + Product Compiler + Pregătire.{" "}
+            Structură produs + Product Compiler + Pregătire · Module model amânat.{" "}
             {publicationStatus === "PUBLISHED" ? (
               <>
                 Status catalog: <span className="text-emerald-200">PUBLISHED</span> (admin).

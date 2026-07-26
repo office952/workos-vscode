@@ -12,24 +12,29 @@ describe("ProductSystemSpineBand", () => {
   it("renders four Product System ownership steps without Oferta as a spine step", () => {
     render(<ProductSystemSpineBand />);
     expect(screen.getByTestId("product-system-spine-band")).toBeInTheDocument();
-    for (const id of ["template", "modules", "compiler", "readiness"]) {
+    for (const id of ["template", "structure", "compiler", "readiness"]) {
       expect(screen.getByTestId(`product-system-spine-step-${id}`)).toBeInTheDocument();
     }
     expect(screen.queryByTestId("product-system-spine-step-offer")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("product-system-spine-step-modules")).not.toBeInTheDocument();
     expect(PRODUCT_SYSTEM_SPINE_STEPS.map((s) => s.id)).toEqual([
       "template",
-      "modules",
+      "structure",
       "compiler",
       "readiness",
     ]);
     expect(PRODUCT_SYSTEM_SPINE_TAGLINE).not.toMatch(/Ofertă/i);
     expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/Product Template/);
-    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/Module produs/);
+    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/Structură produs/);
+    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/amânat/i);
+    expect(screen.getByTestId("product-system-spine-step-structure")).toHaveTextContent(
+      "Structură produs",
+    );
   });
 
   it("marks the requested step active", () => {
-    render(<ProductSystemSpineBand activeStepId="modules" />);
-    expect(screen.getByTestId("product-system-spine-step-modules")).toHaveAttribute(
+    render(<ProductSystemSpineBand activeStepId="structure" />);
+    expect(screen.getByTestId("product-system-spine-step-structure")).toHaveAttribute(
       "data-active",
       "true",
     );

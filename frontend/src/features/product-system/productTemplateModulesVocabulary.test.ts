@@ -7,14 +7,19 @@ import {
   EXECUTION_PLAN_PREVIEW_STATE_LABEL,
   INSTANCE_SCHEMA_ID_DISPLAY_LABEL,
   MINI_MODULE_OPERATIONAL_LABEL,
+  MODULE_MODEL_STATUS,
   MODULE_PRODUS_CODE_LABEL,
+  MODULE_PRODUS_DEFERRED_NAV_LABEL,
   MODULE_PRODUS_LABEL,
   MODULE_PRODUS_SHARED_LABEL,
   MODULE_PRODUS_SHARED_SINGULAR_LABEL,
   PRODUCT_COMPILER_LABEL,
   PRODUCT_MODULES_SEMANTIC_LABEL,
+  PRODUCT_SYSTEM_SPINE_STEPS,
+  PRODUCT_SYSTEM_SPINE_TAGLINE,
   PRODUCT_TEMPLATE_LABEL,
   PRODUCT_TEMPLATE_MODULE_LINKS_DISPLAY_LABEL,
+  STRUCTURA_PRODUS_LABEL,
   USAGE_MODE_DISPLAY_LABEL,
   displayModuleSourceTypeLabel,
   displayModuleTemplateWireLabel,
@@ -22,14 +27,29 @@ import {
 } from "./productTemplateModulesVocabulary";
 
 describe("productTemplateModulesVocabulary (Nivel 1 labels)", () => {
-  it("exposes Product Template → Module produs semantic label", () => {
+  it("exposes Product Template → Module produs semantic label for candidate/legacy only", () => {
     expect(PRODUCT_TEMPLATE_LABEL).toBe("Product Template");
     expect(MODULE_PRODUS_LABEL).toBe("Module produs");
+    expect(MODULE_PRODUS_DEFERRED_NAV_LABEL).toBe("Module produs (amânat)");
     expect(PRODUCT_MODULES_SEMANTIC_LABEL).toContain("Product Template");
     expect(PRODUCT_MODULES_SEMANTIC_LABEL).toContain("Module produs");
     expect(PRODUCT_MODULES_SEMANTIC_LABEL).not.toMatch(/Component Template/i);
     expect(PRODUCT_MODULES_SEMANTIC_LABEL).not.toMatch(/Module Template/i);
     expect(PRODUCT_MODULES_SEMANTIC_LABEL).not.toMatch(/candidate-module/i);
+  });
+
+  it("keeps active spine on Structură produs with MODULE_MODEL_DEFERRED policy", () => {
+    expect(MODULE_MODEL_STATUS).toBe("MODULE_MODEL_DEFERRED");
+    expect(STRUCTURA_PRODUS_LABEL).toBe("Structură produs");
+    expect(PRODUCT_SYSTEM_SPINE_STEPS.map((s) => s.label)).toEqual([
+      "Product Template",
+      "Structură produs",
+      "Product Compiler",
+      "Pregătire",
+    ]);
+    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/Structură produs/);
+    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).toMatch(/amânat/i);
+    expect(PRODUCT_SYSTEM_SPINE_TAGLINE).not.toMatch(/→ Module produs →/);
   });
 
   it("aliases candidate-module semantic label to Module produs vocabulary", () => {
@@ -47,9 +67,10 @@ describe("productTemplateModulesVocabulary (Nivel 1 labels)", () => {
     expect(displayModuleSourceTypeLabel("module produs")).toBe("module produs");
   });
 
-  it("states face/cant/back as equal modules", () => {
+  it("states face/cant/back as equal structure roles with deferred module model", () => {
     expect(equalModulesHintRo()).toMatch(/egale/i);
     expect(equalModulesHintRo()).toMatch(/Față/i);
+    expect(equalModulesHintRo()).toMatch(/MODULE_MODEL_DEFERRED/);
   });
 
   it("updates canonical dictionary away from Component Template as a separate type", () => {

@@ -32,7 +32,7 @@ function ProductSystemLayoutInner() {
         </h1>
         {/* Subtitle / breadcrumb / single Workspace tab removed — they duplicated the page header. */}
         <p className="sr-only" data-testid="product-system-shell-subtitle">
-          Product Template, Module produs, Product Compiler, Pregătire
+          Product Template, Structură produs, Product Compiler, Pregătire — Module model amânat
         </p>
       </header>
 

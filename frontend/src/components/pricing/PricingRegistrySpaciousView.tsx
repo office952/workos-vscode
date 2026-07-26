@@ -282,7 +282,7 @@ export function PricingRegistrySpaciousView({
             <TrendingUp className="w-5 h-5 text-blue-400 shrink-0" />
             <h1 className="text-[18px] font-bold text-foreground">Pricing Registry</h1>
             <p className="text-[11px] text-muted-foreground mt-0.5">
-              Registry intern de referință — nu este fluxul operator Product Template → Module produs → Product
+              Registry intern de referință — nu este fluxul operator Product Template → Structură produs → Product
               Compiler.
             </p>
             <SourceBadge

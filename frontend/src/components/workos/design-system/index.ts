@@ -35,6 +35,9 @@ export type { CapacityNoticeProps } from "./CapacityNotice";
 export { OwnerGoNotice } from "./OwnerGoNotice";
 export type { OwnerGoNoticeProps } from "./OwnerGoNotice";
 
+export { ModuleModelDeferredNotice } from "./ModuleModelDeferredNotice";
+export type { ModuleModelDeferredNoticeProps } from "./ModuleModelDeferredNotice";
+
 export { ThemeToggle } from "./ThemeToggle";
 export { PageShell } from "./PageShell";
 export { SectionCard } from "./SectionCard";

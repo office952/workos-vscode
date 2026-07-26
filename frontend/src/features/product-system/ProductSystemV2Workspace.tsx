@@ -12,6 +12,7 @@ import {
 } from "@/lib/api";
 import { normalizeTemplateCode } from "@/lib/activeTemplateScope";
 import { templateEntityForAvailability } from "./productSystemCanonicalCatalogModel";
+import { ModuleModelDeferredNotice } from "@/components/workos/design-system";
 import { ProductCompilerDisplayShell } from "./ProductCompilerDisplayShell";
 import { ProductSystemOfferCostChannels } from "./ProductSystemOfferCostChannels";
 import { ProductSystemSpineBand } from "./ProductSystemSpineBand";
@@ -117,8 +118,9 @@ export function ProductSystemV2Workspace({
       data-testid="product-system-v2-workspace"
       data-workspace="v2-blank"
     >
-      <header data-testid="product-system-v2-header">
+      <header data-testid="product-system-v2-header" className="space-y-2">
         <ProductSystemSpineBand compact testId="product-system-v2-spine" />
+        <ModuleModelDeferredNotice compact />
       </header>
 
       <div className="grid gap-4 lg:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">

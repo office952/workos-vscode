@@ -3,14 +3,30 @@
  *
  * Labels / IA only — does NOT rename DB columns, API fields (`module_template_*`),
  * formulas, ProductDefinition / ProductAggregate behavior, CPP/EIC, or mini-module registry codes.
+ *
+ * Active operator path (Owner-fixed): Product Template + Structură produs
+ * (Față / Volum / Spate / LED). Full equal-modules model = MODULE_MODEL_DEFERRED —
+ * keep MODULE_PRODUS_* labels for candidate / legacy / admin surfaces only.
  */
 
 export const PRODUCT_TEMPLATE_LABEL = "Product Template";
 
-/** Primary composition slogan for catalog / candidate panels. */
+/** Active-path structural composition (not the deferred equal-modules model). */
+export const STRUCTURA_PRODUS_LABEL = "Structură produs";
+export const STRUCTURA_PRODUS_ACTIVE_HINT =
+  "Față / Volum / Spate / LED — calea activă (Litere volumetrice / dual-mode).";
+
+/** Owner policy token — full Module produs model is not live SoT UI. */
+export const MODULE_MODEL_STATUS = "MODULE_MODEL_DEFERRED" as const;
+export const MODULE_MODEL_DEFERRED_LABEL = "Module model amânat";
+export const MODULE_MODEL_DEFERRED_NOTICE_RO =
+  "Calea activă: Product Template + structură Față / Volum / Spate / LED. Modelul complet „Module produs” egale este amânat (MODULE_MODEL_DEFERRED) — nu este SoT UI live.";
+
+/** Catalog / candidate / legacy panels only — not the V2 operator spine. */
 export const PRODUCT_MODULES_SEMANTIC_LABEL = "1 Product Template + N Module produs egale";
 
 export const MODULE_PRODUS_LABEL = "Module produs";
+export const MODULE_PRODUS_DEFERRED_NAV_LABEL = "Module produs (amânat)";
 export const MODULE_TEHNIC_LABEL = "Modul tehnic";
 export const MODULE_PRODUS_SHARED_LABEL = "Module produs partajate";
 export const MODULE_PRODUS_SHARED_SINGULAR_LABEL = "Module produs partajat";
@@ -36,7 +52,7 @@ export const PRODUCT_COMPILER_LABEL = "Product Compiler";
 export const PRODUCT_COMPILER_DEFINITION_STAGE_LABEL = "Product Compiler · Definiție";
 export const PRODUCT_COMPILER_GRAPH_STAGE_LABEL = "Product Compiler · Graf tehnic";
 export const PRODUCT_COMPILER_RELATION_HELP =
-  "Product Template → Module produs egale → Product Compiler (output tehnic pentru ofertă / plan).";
+  "Product Template → Structură produs → Product Compiler (output tehnic pentru ofertă / plan). Module produs egale = MODULE_MODEL_DEFERRED.";
 export const PRODUCT_COMPILER_NO_PRICE_HELP =
   "Product Compiler nu calculează Ofertă client. Oferta client rămâne pe canal comercial separat.";
 
@@ -53,22 +69,22 @@ export const PRICING_REGISTRY_NAV_LABEL = "Pricing (registry)";
 export const MACHINES_REGISTRY_NAV_LABEL = "Utilaje (registry)";
 export const HR_PONTAJ_REGISTRY_NAV_LABEL = "Pontaj (registry intern)";
 export const INTERNAL_REGISTRY_HELPER_HINT =
-  "Registry intern / helper — nu este fluxul principal Product Template → Module produs → Compiler.";
+  "Registry intern / helper — nu este fluxul principal Product Template → Structură produs → Compiler.";
 
 export const PRODUCT_TEMPLATE_COMPOSES_HELP =
-  "Product Template compune Module produs egale (față, cant/volum, spate, iluminare, structură, finisaj, montaj). Fiecare modul deține adevărul său tehnic. Product Compiler produce output-ul tehnic derivat (fără preț).";
+  "Product Template deține structura activă (Față / Volum / Spate / LED). Modelul complet Module produs egale rămâne amânat (MODULE_MODEL_DEFERRED). Product Compiler produce output-ul tehnic derivat (fără preț).";
 
 export const PRODUCT_TEMPLATE_COMPOSER_ONLY_HELP =
-  "Product Template este nivelul principal (composer). Modulele produsului sunt egale ca valoare structurală; acest panou arată ownership / gaps fără a inventa readiness.";
+  "Product Template este nivelul principal. Structura activă e Față / Volum / Spate / LED; panourile Module produs sunt candidate / legacy (amânate), nu SoT UI live.";
 
 export const SHARED_FOUNDATION_HELP =
-  "Contracte comune ca entități principale; Modulele produsului (rânduri child în product_templates + links) sunt binding-uri de profil. Mini-modulul operațional e separat. No pricing, no runtime activation, no Work Intake exposure change.";
+  "Contracte comune ca entități principale; legăturile child rămân pe wire pentru provenance. Mini-modulul operațional e separat. No pricing, no runtime activation, no Work Intake exposure change.";
 
 export const CANDIDATE_COMPOSER_HELP =
-  "Product Template candidat (readonly) — compune Module produs egale; nu e ofertabil în Work Intake.";
+  "Product Template candidat (readonly) — inspectare Module produs egale (MODULE_MODEL_DEFERRED); nu e ofertabil în Work Intake.";
 
 export const RETURN_CANT_MOVE_TRUTH_HELP =
-  "Aliniere read-only pentru modulul cant/volum. Arată ce există deja, ce rămâne doar pe aggregate părinte și ce trebuie să fie adevăr pe Module produs — nu pe un sistem separat de template.";
+  "Aliniere read-only pentru rolul cant/volum din structură. Arată ce există deja, ce rămâne pe aggregate părinte și ce trebuie confirmat pe structură — fără a redeschide module model ca SoT UI.";
 
 export const MUST_OWN_ON_MODULE_LABEL = "Must own truth on Module produs";
 
@@ -117,16 +133,17 @@ export function displayModuleTemplateWireLabel(wireKey: string): string {
 }
 
 export function equalModulesHintRo(): string {
-  return "Față, cant/volum și spate sunt Module produs egale — nu ierarhii nested de template.";
+  return "Față, cant/volum și spate sunt roluri egale în structură — nu ierarhii nested. Modelul Module produs egale rămâne MODULE_MODEL_DEFERRED.";
 }
 
 /**
  * Operator spine for the Product System workspace — Product System ownership only.
  * Ofertă / Cost / Execution are downstream mentions, never spine steps.
  * Display / IA only; no behavior, API, or formula changes.
+ * Step 2 is Structură produs (active) — not Module produs (deferred).
  */
 export type ProductSystemSpineStep = {
-  id: "template" | "modules" | "compiler" | "readiness";
+  id: "template" | "structure" | "compiler" | "readiness";
   index: number;
   label: string;
   hint: string;
@@ -137,13 +154,13 @@ export const PRODUCT_SYSTEM_SPINE_STEPS: ProductSystemSpineStep[] = [
     id: "template",
     index: 1,
     label: PRODUCT_TEMPLATE_LABEL,
-    hint: "Produsul vizibil — centrul workspace-ului.",
+    hint: "Produsul vizibil — centrul workspace-ului (ex. Litere volumetrice).",
   },
   {
-    id: "modules",
+    id: "structure",
     index: 2,
-    label: MODULE_PRODUS_LABEL,
-    hint: "Module egale care compun produsul (față, cant/volum, spate, LED, finisaj, montaj).",
+    label: STRUCTURA_PRODUS_LABEL,
+    hint: STRUCTURA_PRODUS_ACTIVE_HINT,
   },
   {
     id: "compiler",
@@ -160,7 +177,7 @@ export const PRODUCT_SYSTEM_SPINE_STEPS: ProductSystemSpineStep[] = [
 ];
 
 export const PRODUCT_SYSTEM_SPINE_TAGLINE =
-  "Product Template → Module produs → Product Compiler → Pregătire.";
+  "Product Template → Structură produs → Product Compiler → Pregătire · Module model: amânat.";
 
 /** Downstream channels — secondary links only; never Product System spine steps. */
 export const OFERTA_CLIENT_CHANNEL_LABEL = "Ofertă client";
@@ -180,7 +197,7 @@ export const REGISTRY_INTERN_CHANNEL_HELP =
   "Pricing / Utilaje / Pontaj — inputuri admin, pe pagini separate.";
 
 export const PRODUCT_SYSTEM_WORKSPACE_SUBTITLE =
-  "Product Template + Module produs · Product Compiler · Pregătire";
+  "Product Template + Structură produs · Product Compiler · Pregătire";
 export const INTAKE_V6_OPERATOR_PATH = "/intake-v6/operator";
 export const QUOTES_DOWNSTREAM_PATH = "/quotes";
 export const EXECUTION_DOWNSTREAM_PATH = "/execution";

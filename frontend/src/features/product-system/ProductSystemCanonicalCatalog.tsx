@@ -596,7 +596,7 @@ export function ProductSystemCanonicalCatalog({
                   Alege un Product Template
                 </p>
                 <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                  Centrul workspace: Product Template + Module produs + Product Compiler +
+                  Centrul workspace: Product Template + Structură produs + Product Compiler +
                   Pregătire. Cost / Ofertă / Execution sunt doar downstream (secundar).
                 </p>
               </div>

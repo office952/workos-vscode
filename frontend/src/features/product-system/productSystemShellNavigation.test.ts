@@ -17,7 +17,7 @@ describe("productSystemShellNavigation", () => {
     const labels = PRODUCT_SYSTEM_SHELL_NAV.map((item) => item.label);
     expect(labels).toEqual([
       "Products",
-      "Module produs",
+      "Module produs (amânat)",
       "Resources",
       "Operations",
       "Dependencies",

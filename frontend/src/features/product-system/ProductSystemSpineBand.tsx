@@ -1,6 +1,7 @@
 /**
  * Operator spine — Product System ownership only (blank workspace IA).
- * Product Template → Module produs → Product Compiler → Pregătire.
+ * Product Template → Structură produs → Product Compiler → Pregătire.
+ * Module produs model = MODULE_MODEL_DEFERRED (not a live spine step).
  * Ofertă / Cost / Execution are never spine steps.
  */
 import { ChevronRight } from "lucide-react";
@@ -13,7 +14,7 @@ import { PS_SURFACE_PANEL } from "./productSystemSurfaces";
 
 const STEP_TONE: Record<ProductSystemSpineStep["id"], string> = {
   template: "border-purple-700/50 bg-purple-950/30 text-purple-100",
-  modules: "border-cyan-700/50 bg-cyan-950/30 text-cyan-100",
+  structure: "border-cyan-700/50 bg-cyan-950/30 text-cyan-100",
   compiler: "border-violet-700/50 bg-violet-950/30 text-violet-100",
   readiness: "border-sky-700/50 bg-sky-950/30 text-sky-100",
 };

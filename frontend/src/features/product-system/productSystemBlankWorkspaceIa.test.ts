@@ -10,19 +10,23 @@ describe("productSystemBlankWorkspaceIa", () => {
   it("keeps Product System spine free of Oferta as a primary step", () => {
     expect(PRODUCT_SYSTEM_SPINE_STEPS).toHaveLength(4);
     expect(PRODUCT_SYSTEM_SPINE_STEPS.some((s) => s.id === "offer")).toBe(false);
+    expect(PRODUCT_SYSTEM_SPINE_STEPS.some((s) => s.id === "modules")).toBe(false);
+    expect(PRODUCT_SYSTEM_SPINE_STEPS.some((s) => s.id === "structure")).toBe(true);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/Product Template/);
-    expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/Module produs/);
+    expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).toMatch(/Structură produs/);
+    expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/Module produs/);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/vechi/i);
     expect(PRODUCT_SYSTEM_WORKSPACE_SUBTITLE).not.toMatch(/legacy/i);
   });
 
-  it("reduces detail primary IA to Template / Modules / Compiler / Readiness", () => {
+  it("reduces detail primary IA to Template / Structură / Compiler / Readiness", () => {
     const detail = readFileSync(
       resolve(__dirname, "ProductSystemTemplateDetailPanel.tsx"),
       "utf8",
     );
     expect(detail).toMatch(/label: "Product Template"/);
-    expect(detail).toMatch(/label: "Module produs"/);
+    expect(detail).toMatch(/label: "Structură produs"/);
+    expect(detail).not.toMatch(/label: "Module produs"/);
     expect(detail).toMatch(/label: "Product Compiler"/);
     expect(detail).toMatch(/label: "Pregătire"/);
     expect(detail).toMatch(/PRODUCT_ADMIN_SECTIONS/);
