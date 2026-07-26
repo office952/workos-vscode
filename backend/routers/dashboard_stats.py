@@ -69,6 +69,85 @@ def _task_estimated_minutes(task: dict) -> float:
         return 0.0
 
 
+def _clamp_pct(value: float) -> int:
+    """Bound a percentage to the closed interval [0, 100]."""
+    return max(0, min(100, round(value)))
+
+
+def _aggregate_workcenter_minutes(
+    plans: list,
+    realities: list,
+    plans_by_order: dict,
+) -> dict[str, dict[str, float]]:
+    """
+    Per-workcenter planned vs completed minutes from operational plan tasks
+    and finished reality sessions. Used by capacity bars and machine util KPI.
+    """
+    workcenters: dict[str, dict[str, float]] = {}
+    for p in plans:
+        tasks = _plan_operational_tasks(p.tasks_json)
+        for t in tasks:
+            wc = _task_workcenter_label(t)
+            if wc not in workcenters:
+                workcenters[wc] = {"total_min": 0.0, "completed_min": 0.0}
+            workcenters[wc]["total_min"] += _task_estimated_minutes(t)
+
+    for r in realities:
+        tasks = _safe_json_parse(r.tasks_json)
+        for t in tasks:
+            if not (t.get("ended_at") and t.get("started_at")):
+                continue
+            order_plan = plans_by_order.get(r.order_id)
+            if not order_plan:
+                continue
+            plan_tasks = _plan_operational_tasks(order_plan.tasks_json)
+            for pt in plan_tasks:
+                if pt.get("task_id") == t.get("task_id"):
+                    wc = _task_workcenter_label(pt)
+                    if wc in workcenters:
+                        try:
+                            actual = float(t.get("actual_minutes") or 0)
+                        except (TypeError, ValueError):
+                            actual = 0.0
+                        workcenters[wc]["completed_min"] += actual
+                    break
+    return workcenters
+
+
+def _machine_util_pct(workcenters: dict[str, dict[str, float]]) -> int:
+    """
+    Machine util KPI as mean workcenter planned-load completion, each WC
+    clamped to [0, 100].
+
+    Not wall-clock capacity util (no shift calendar). Prefer this over the
+    former global Σactual/Σplanned×100 overrun ratio, which exploded to
+    values like 56596% when estimates were sparse.
+    """
+    loads: list[int] = []
+    for data in workcenters.values():
+        total = data.get("total_min") or 0
+        if total <= 0:
+            continue
+        completed = data.get("completed_min") or 0
+        loads.append(_clamp_pct((completed / total) * 100))
+    if not loads:
+        return 0
+    return round(sum(loads) / len(loads))
+
+
+def _throughput_today_count(orders: list, now: datetime | None = None) -> int:
+    """Count orders completed with updated_at on the current UTC calendar day."""
+    ref = now or datetime.now(timezone.utc)
+    count = 0
+    for o in orders:
+        if o.status != "completed" or not o.updated_at:
+            continue
+        updated = o.updated_at if o.updated_at.tzinfo else o.updated_at.replace(tzinfo=timezone.utc)
+        if updated.date() == ref.date():
+            count += 1
+    return count
+
+
 @router.get("")
 async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
     """Aggregate real DB data into the shape the Dashboard frontend expects."""
@@ -95,16 +174,19 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
     realities = list(res_r.scalars().all())
     realities_by_order = {r.order_id: r for r in realities}
 
+    # Shared workcenter aggregation for capacity + machine util KPI
+    workcenters = _aggregate_workcenter_minutes(plans, realities, plans_by_order)
+
     # ── Compute KPIs ──
     order_statuses = Counter(o.status for o in orders)
     active_statuses = {"created", "confirmed", "locked", "in_execution"}
     active_jobs = sum(order_statuses.get(s, 0) for s in active_statuses)
     blocked_jobs = sum(1 for o in orders if o.status == "in_execution" and o.id in realities_by_order
                        and _has_blocked_tasks(realities_by_order[o.id]))
-    completed_jobs = order_statuses.get("completed", 0)
 
-    # Throughput: completed orders (proxy for jobs completed today)
-    throughput_today = completed_jobs
+    # Throughput Today: completed orders whose updated_at falls on UTC today
+    # (not lifetime completed count — that mislabeled "Today" and inflated the KPI).
+    throughput_today = _throughput_today_count(orders)
 
     # OTIF: percentage of completed orders that were delivered on time
     on_time = 0
@@ -124,12 +206,10 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
                     on_time += 1  # No data = assume on time
             else:
                 on_time += 1
-    otif_pct = round((on_time / total_with_deadline * 100) if total_with_deadline > 0 else 0)
+    otif_pct = _clamp_pct((on_time / total_with_deadline * 100) if total_with_deadline > 0 else 0)
 
-    # Machine utilization: derive from execution plans/realities
-    total_planned = sum(p.total_estimated_time_minutes for p in plans)
-    total_actual = sum(r.total_actual_time_minutes for r in realities if r.total_actual_time_minutes)
-    machine_util = round((total_actual / total_planned * 100) if total_planned > 0 else 0)
+    # Machine util: mean workcenter planned-load (0–100), not global overrun ratio
+    machine_util = _machine_util_pct(workcenters)
 
     # Average lead time (days) from order creation to completion
     lead_times = []
@@ -273,39 +353,18 @@ async def get_dashboard_stats(db: AsyncSession = Depends(get_db)):
             "operationsCompleted": ops_completed,
         })
 
-    # ── Capacity load (derived from execution plans) ──
-    workcenters = {}
-    for p in plans:
-        tasks = _plan_operational_tasks(p.tasks_json)
-        for t in tasks:
-            wc = _task_workcenter_label(t)
-            if wc not in workcenters:
-                workcenters[wc] = {"total_min": 0, "completed_min": 0}
-            workcenters[wc]["total_min"] += _task_estimated_minutes(t)
-
-    for r in realities:
-        tasks = _safe_json_parse(r.tasks_json)
-        for t in tasks:
-            if t.get("ended_at") and t.get("started_at"):
-                # Find workcenter from plan
-                order_plan = plans_by_order.get(r.order_id)
-                if order_plan:
-                    plan_tasks = _plan_operational_tasks(order_plan.tasks_json)
-                    for pt in plan_tasks:
-                        if pt.get("task_id") == t.get("task_id"):
-                            wc = _task_workcenter_label(pt)
-                            if wc in workcenters:
-                                workcenters[wc]["completed_min"] += t.get("actual_minutes", 0)
-
+    # ── Capacity load (same workcenter aggregation as machine util KPI) ──
     capacity_load = []
     for wc_name, data in workcenters.items():
-        load = round((data["completed_min"] / data["total_min"] * 100) if data["total_min"] > 0 else 0)
+        load = _clamp_pct(
+            (data["completed_min"] / data["total_min"] * 100) if data["total_min"] > 0 else 0
+        )
         capacity_load.append({
             "workcenterId": f"wc_{wc_name.lower().replace(' ', '_').replace('/', '_')}",
             "workcenterName": wc_name,
-            "loadToday": min(load, 100),
-            "load7d": min(load, 100),
-            "load30d": min(load, 100),
+            "loadToday": load,
+            "load7d": load,
+            "load30d": load,
             "availableToday": max(100 - load, 0),
         })
 

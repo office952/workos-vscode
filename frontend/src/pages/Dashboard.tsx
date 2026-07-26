@@ -139,6 +139,17 @@ function KPICardLarge({
           : "text-red-400"
         : "text-wo-text-muted";
 
+  // Defensive display for % KPIs: never render absurd values like 56596%.
+  // Backend is the source of truth; this only caps presentation.
+  const displayValue =
+    unit === "%"
+      ? value > 100
+        ? ">100"
+        : value < 0
+          ? "0"
+          : value
+      : value;
+
   return (
     <div
       className={`rounded-lg border p-4 transition-all duration-300 ${style.border} ${style.bg}`}
@@ -156,7 +167,7 @@ function KPICardLarge({
         )}
       </div>
       <p className={`text-3xl font-bold ${style.value}`}>
-        {value}
+        {displayValue}
         {unit && <span className="text-lg ml-0.5 opacity-60">{unit}</span>}
       </p>
       <p className="text-xs text-wo-text-muted mt-1.5 font-medium">{label}</p>
