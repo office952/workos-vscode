@@ -290,7 +290,7 @@ export default function Clients() {
             <Users className="w-5 h-5 text-blue-400" />
           </div>
           <div>
-            <h1 className="text-[18px] font-bold text-slate-100">Clienți</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Clienți</h1>
             <p className="text-[12px] text-slate-500">
               {clients.length} clienți · {entities.length} în registrul entități
             </p>
@@ -334,7 +334,7 @@ export default function Clients() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[14px] font-semibold text-slate-100 truncate">{client.name}</span>
+                      <span className="text-[14px] font-semibold text-wo-text-primary truncate">{client.name}</span>
                       <FiscalStatusBadge status={client.fiscalStatus} />
                       {client.entityOnly && (
                         <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded bg-blue-900/30 text-blue-300 border border-blue-800/30">

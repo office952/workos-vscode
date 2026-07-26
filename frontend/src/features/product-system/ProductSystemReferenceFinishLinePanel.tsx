@@ -61,7 +61,7 @@ export function ProductSystemReferenceFinishLinePanel() {
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
         Reference finish line
       </p>
-      <h3 className="text-sm font-semibold text-slate-100">{data.finish_line_name}</h3>
+      <h3 className="text-sm font-semibold text-wo-text-primary">{data.finish_line_name}</h3>
       <p className="text-[11px] text-slate-400">
         Verdict: <span className="text-slate-200">{data.overall_verdict}</span>
         {" · "}

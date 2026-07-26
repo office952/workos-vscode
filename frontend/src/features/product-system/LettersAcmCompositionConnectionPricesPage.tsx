@@ -62,7 +62,7 @@ export default function LettersAcmCompositionConnectionPricesPage() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-300/80">
           Contract Litere ↔ Alucobond
         </p>
-        <h1 className="mt-1 text-[1.45rem] font-semibold text-slate-50">
+        <h1 className="mt-1 text-[1.45rem] font-semibold text-wo-text-primary">
           {LETTERS_ACM_CONNECTION_PRICES_PAGE_TITLE_RO}
         </h1>
         <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-wo-text-muted">

@@ -29,7 +29,7 @@ function ScenarioCard({
       data-testid={`volumetric-preview-demo-scenario-${scenarioId}`}
     >
       <div>
-        <h2 className="text-[14px] font-bold text-slate-100">{title}</h2>
+        <h2 className="text-[14px] font-bold text-wo-text-primary">{title}</h2>
         <p className="text-[11px] text-slate-400 mt-1">{description}</p>
       </div>
 
@@ -68,7 +68,7 @@ export default function VolumetricLetterPreviewDemo() {
     <div className="max-w-6xl mx-auto space-y-4" data-testid="volumetric-letter-preview-demo-page">
       <header className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
-          <h1 className="text-lg font-bold text-slate-100">Volumetric Letter Preview — Demo QA</h1>
+          <h1 className="text-lg font-bold text-wo-text-primary">Volumetric Letter Preview — Demo QA</h1>
           <span
             className="inline-flex items-center gap-1 rounded border border-slate-600 bg-slate-800/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300"
             data-testid="volumetric-letter-preview-demo-internal-label"
@@ -94,7 +94,7 @@ export default function VolumetricLetterPreviewDemo() {
             type="button"
             className={`px-3 py-1.5 text-[10px] uppercase tracking-wide ${
               mode === "compact"
-                ? "bg-slate-700 text-slate-100"
+                ? "bg-slate-700 text-wo-text-primary"
                 : "bg-transparent text-slate-400 hover:text-slate-200"
             }`}
             onClick={() => setMode("compact")}
@@ -106,7 +106,7 @@ export default function VolumetricLetterPreviewDemo() {
             type="button"
             className={`px-3 py-1.5 text-[10px] uppercase tracking-wide ${
               mode === "expanded"
-                ? "bg-slate-700 text-slate-100"
+                ? "bg-slate-700 text-wo-text-primary"
                 : "bg-transparent text-slate-400 hover:text-slate-200"
             }`}
             onClick={() => setMode("expanded")}
@@ -118,7 +118,7 @@ export default function VolumetricLetterPreviewDemo() {
         <button
           type="button"
           className={`px-3 py-1.5 text-[10px] uppercase tracking-wide rounded border border-wo-border-subtle ${
-            showLabels ? "bg-slate-700 text-slate-100" : "text-slate-400 hover:text-slate-200"
+            showLabels ? "bg-slate-700 text-wo-text-primary" : "text-slate-400 hover:text-slate-200"
           }`}
           onClick={() => setShowLabels((v) => !v)}
           data-testid="volumetric-letter-preview-demo-global-toggle-labels"

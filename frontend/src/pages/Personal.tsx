@@ -127,7 +127,7 @@ export default function Personal() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-purple-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Personal / Angajați</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Personal / Angajați</h1>
           <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
             {members.length} persoane
           </span>
@@ -152,7 +152,7 @@ export default function Personal() {
                 <span className={cfg.cls}>{cfg.icon}</span>
                 <span className="text-[12px] font-semibold text-slate-200">{cfg.label}</span>
               </div>
-              <p className="text-[24px] font-bold text-slate-100">{count}</p>
+              <p className="text-[24px] font-bold text-wo-text-primary">{count}</p>
             </div>
           );
         })}
@@ -230,7 +230,7 @@ export default function Personal() {
                     {selected.name.split(" ").map((n) => n[0]).join("")}
                   </div>
                   <div>
-                    <h3 className="text-[16px] font-bold text-slate-100">{selected.name}</h3>
+                    <h3 className="text-[16px] font-bold text-wo-text-primary">{selected.name}</h3>
                     <div className="flex items-center gap-2 mt-0.5">
                       <RoleBadge role={selected.role} />
                       <StatusDot status={selected.status} />
@@ -300,15 +300,15 @@ export default function Personal() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-3 gap-3">
                     <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
-                      <p className="text-[18px] font-bold text-slate-100">{selected.tasksCompletedToday}</p>
+                      <p className="text-[18px] font-bold text-wo-text-primary">{selected.tasksCompletedToday}</p>
                       <p className="text-[9px] text-slate-500 uppercase">Azi</p>
                     </div>
                     <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
-                      <p className="text-[18px] font-bold text-slate-100">{selected.tasksCompletedWeek}</p>
+                      <p className="text-[18px] font-bold text-wo-text-primary">{selected.tasksCompletedWeek}</p>
                       <p className="text-[9px] text-slate-500 uppercase">Săptămâna</p>
                     </div>
                     <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
-                      <p className="text-[18px] font-bold text-slate-100">{selected.avgTaskDurationMin}m</p>
+                      <p className="text-[18px] font-bold text-wo-text-primary">{selected.avgTaskDurationMin}m</p>
                       <p className="text-[9px] text-slate-500 uppercase">Avg/Task</p>
                     </div>
                   </div>

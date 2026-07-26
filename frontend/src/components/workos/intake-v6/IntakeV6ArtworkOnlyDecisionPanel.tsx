@@ -73,7 +73,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
               <div className="flex items-start gap-2">
                 <ImageIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-300/80" aria-hidden />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-semibold text-slate-100">{displayName}</p>
+                  <p className="text-[11px] font-semibold text-wo-text-primary">{displayName}</p>
                   <p className="mt-0.5 text-[10px] text-slate-400">
                     type: {artworkOnlyLayerDisplayType(layer)} · role: {roleLabel} · confidence: {confidence}
                   </p>

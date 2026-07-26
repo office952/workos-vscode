@@ -159,7 +159,7 @@ export function ProductE2EReadinessPanel({ templateCode }: { templateCode: strin
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-[13px] font-semibold text-slate-100">Verifică traseul produsului</h3>
+          <h3 className="text-[13px] font-semibold text-wo-text-primary">Verifică traseul produsului</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanName}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>

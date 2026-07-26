@@ -85,7 +85,7 @@ export default function EmployeesRecords() {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
             <Users className="w-5 h-5 text-purple-400" />
-            <h1 className="text-[18px] font-bold text-slate-100">Evidență internă HR</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Evidență internă HR</h1>
             <Badge
               className="text-[10px] uppercase tracking-wide bg-amber-900/50 text-amber-300 border-amber-600/60 hover:bg-amber-900/50"
             >
@@ -118,7 +118,7 @@ export default function EmployeesRecords() {
             <Users className="w-4 h-4 text-blue-400" />
             <span className="text-[10px] text-slate-500 uppercase">Angajati activi</span>
           </div>
-          <p className="text-[22px] font-bold text-slate-100">{totalActivi}</p>
+          <p className="text-[22px] font-bold text-wo-text-primary">{totalActivi}</p>
         </div>
         <div className={`bg-wo-surface-raised border rounded-lg p-3 ${totalAlerts > 0 ? "border-amber-800/40" : "border-wo-border-strong"}`}>
           <div className="flex items-center gap-2 mb-1">

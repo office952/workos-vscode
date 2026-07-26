@@ -90,7 +90,7 @@ function SystemCard({
     >
       <div className="flex items-start justify-between gap-2 mb-1">
         <div>
-          <span className="text-[13px] font-semibold text-slate-100">{system.labelRo}</span>
+          <span className="text-[13px] font-semibold text-wo-text-primary">{system.labelRo}</span>
           <p className="text-[10px] text-slate-500">{system.technicalName}</p>
         </div>
         <span
@@ -149,7 +149,7 @@ export default function ModuleChain() {
       <div>
         <div className="flex items-center gap-2 mb-1 flex-wrap">
           <GitBranch className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Harta sistemelor</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Harta sistemelor</h1>
           <span className="text-[11px] text-slate-500 font-normal" data-testid="module-chain-alias">
             Module Chain
           </span>
@@ -166,7 +166,7 @@ export default function ModuleChain() {
           </span>
           <button
             onClick={refetch}
-            className="p-1 rounded hover:bg-slate-700/50 text-slate-400 hover:text-slate-200 transition-colors"
+            className="p-1 rounded hover:bg-slate-700/50 text-slate-400 hover:text-wo-text-primary transition-colors"
             title="Reîmprospătează verificările runtime"
             type="button"
           >
@@ -224,7 +224,7 @@ export default function ModuleChain() {
             className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md transition-colors whitespace-nowrap ${
               activeTab === tab.id
                 ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
-                : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent"
+                : "text-slate-400 hover:text-wo-text-primary hover:bg-slate-800/50 border border-transparent"
             }`}
           >
             {tab.labelRo}
@@ -247,7 +247,7 @@ export default function ModuleChain() {
                   className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
                   data-testid={`doc-hierarchy-level-${level.level}`}
                 >
-                  <p className="font-semibold text-slate-100">
+                  <p className="font-semibold text-wo-text-primary">
                     Level {level.level} — {level.labelRo}
                   </p>
                   <p className="text-slate-400 mt-1">{level.surfacesRo}</p>
@@ -277,7 +277,7 @@ export default function ModuleChain() {
             <dl className="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px] text-slate-400">
               <div>
                 <dt className="uppercase text-slate-500">Owner (țintă)</dt>
-                <dd className="text-slate-200" data-testid="active-scope-owner">
+                <dd className="text-wo-text-primary" data-testid="active-scope-owner">
                   {ACTIVE_SCOPE_SYSTEM.owner}
                 </dd>
               </div>
@@ -372,7 +372,7 @@ export default function ModuleChain() {
                 data-testid={`module-independence-${product.id}`}
               >
                 <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <p className="font-bold text-slate-100">{product.labelRo}</p>
+                  <p className="font-bold text-wo-text-primary">{product.labelRo}</p>
                   {"commercialChipRo" in product && product.commercialChipRo ? (
                     <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border border-slate-600 text-slate-300">
                       {product.commercialChipRo}
@@ -434,7 +434,7 @@ export default function ModuleChain() {
               className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px] space-y-2"
               data-testid="finish-mounting-ownership-modules"
             >
-              <p className="font-semibold text-slate-100">FINISH / MOUNTING — ownership V1</p>
+              <p className="font-semibold text-wo-text-primary">FINISH / MOUNTING — ownership V1</p>
               <div data-testid="modules-finish-ownership">
                 <p className="text-amber-200/90">{SETTINGS_OWNERSHIP_TRUTH.finishSoldRo}</p>
                 <ul className="mt-1 list-disc list-inside break-words text-slate-400 space-y-0.5">
@@ -470,7 +470,7 @@ export default function ModuleChain() {
               className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="false-generic-module-flags"
             >
-              <p className="font-semibold text-slate-100 mb-1">Module false-generic (scope real)</p>
+              <p className="font-semibold text-wo-text-primary mb-1">Module false-generic (scope real)</p>
               <ul className="list-disc list-inside text-slate-400 space-y-0.5">
                 {FALSE_GENERIC_MODULE_FLAGS_RO.map((row) => (
                   <li key={row}>{row}</li>
@@ -481,7 +481,7 @@ export default function ModuleChain() {
               className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="supporting-surface-classifications"
             >
-              <p className="font-semibold text-slate-100 mb-1">Suprafețe suport (nu Level-1 spine)</p>
+              <p className="font-semibold text-wo-text-primary mb-1">Suprafețe suport (nu Level-1 spine)</p>
               <ul className="list-disc list-inside text-slate-400 space-y-0.5">
                 {SUPPORTING_SURFACE_CLASSIFICATIONS_RO.map((row) => (
                   <li key={row}>{row}</li>
@@ -492,7 +492,7 @@ export default function ModuleChain() {
               className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="hybrid-intake-model"
             >
-              <p className="font-semibold text-slate-100">Intake entry = HYBRID</p>
+              <p className="font-semibold text-wo-text-primary">Intake entry = HYBRID</p>
               <p className="text-slate-400 mt-1">{HYBRID_INTAKE_MODEL.productFirstRo}</p>
               <p className="text-slate-400">{HYBRID_INTAKE_MODEL.moduleFirstRo}</p>
               <p className="text-amber-200/90 mt-1">{HYBRID_INTAKE_MODEL.noteRo}</p>
@@ -501,7 +501,7 @@ export default function ModuleChain() {
               className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 text-[11px]"
               data-testid="unregistered-system-policy"
             >
-              <p className="font-semibold text-slate-100">{UNREGISTERED_SYSTEM_POLICY.id}</p>
+              <p className="font-semibold text-wo-text-primary">{UNREGISTERED_SYSTEM_POLICY.id}</p>
               <p className="text-slate-400 mt-1">{UNREGISTERED_SYSTEM_POLICY.definitionRo}</p>
               <p className="text-amber-200/90 mt-1">
                 Status policy: {UNREGISTERED_SYSTEM_POLICY.status}
@@ -542,7 +542,7 @@ export default function ModuleChain() {
                 >
                   <div className="flex items-start justify-between gap-2 mb-1">
                     <div>
-                      <p className="text-[13px] font-bold text-slate-100">{concept.nameRo}</p>
+                      <p className="text-[13px] font-bold text-wo-text-primary">{concept.nameRo}</p>
                       <p className="text-[10px] text-slate-500">{concept.technicalName}</p>
                     </div>
                     <span className="px-1.5 py-0.5 text-[9px] font-semibold rounded border border-violet-700/50 text-violet-300 whitespace-nowrap">
@@ -574,7 +574,7 @@ export default function ModuleChain() {
                   data-testid={`stabilization-${product.id}`}
                 >
                   <div className="flex flex-wrap items-center gap-2 mb-1">
-                    <span className="font-bold text-slate-100">{product.familyLabelRo}</span>
+                    <span className="font-bold text-wo-text-primary">{product.familyLabelRo}</span>
                     <code className="text-[10px] text-slate-400">{product.templateCode}</code>
                     <span
                       className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${presentStatusBadgeClass(
@@ -691,17 +691,17 @@ export default function ModuleChain() {
           >
             <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">Backend</p>
-              <p className="text-slate-200">{runtimeBadge.label}</p>
+              <p className="text-wo-text-primary">{runtimeBadge.label}</p>
             </div>
             <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">DB</p>
-              <p className="text-slate-200">
+              <p className="text-wo-text-primary">
                 {dbVerified ? "DB verificată (check mapat)" : "DB neverificată"}
               </p>
             </div>
             <div className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2">
               <p className="text-slate-500 text-[10px] uppercase">Checks publice</p>
-              <p className="text-slate-200">{checksCount === 0 ? "Goale / redacted" : `${checksCount} check-uri`}</p>
+              <p className="text-wo-text-primary">{checksCount === 0 ? "Goale / redacted" : `${checksCount} check-uri`}</p>
             </div>
           </div>
           {error && (
@@ -754,7 +754,7 @@ export default function ModuleChain() {
                   <span className="text-[9px] uppercase tracking-wide text-slate-500 border border-slate-600 px-1.5 py-0.5 rounded">
                     {ev.category}
                   </span>
-                  <span className="text-slate-200 font-medium">{ev.title}</span>
+                  <span className="text-wo-text-primary font-medium">{ev.title}</span>
                   <span className="text-[10px] text-slate-500">{ev.date}</span>
                   <span
                     className={`ml-auto px-1.5 py-0.5 rounded border text-[9px] ${

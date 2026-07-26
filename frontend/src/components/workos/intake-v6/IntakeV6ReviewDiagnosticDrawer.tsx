@@ -62,10 +62,10 @@ export default function IntakeV6ReviewDiagnosticDrawer({
         data-expanded="true"
       >
         <header className="flex items-center justify-between gap-2 border-b border-wo-border-strong px-3 py-2.5">
-          <h2 className="text-[13px] font-semibold text-slate-100">{title}</h2>
+          <h2 className="text-[13px] font-semibold text-wo-text-primary">{title}</h2>
           <button
             type="button"
-            className="rounded border border-wo-border-strong p-1 text-slate-400 hover:text-slate-100"
+            className="rounded border border-wo-border-strong p-1 text-slate-400 hover:text-wo-text-primary"
             onClick={() => onOpenChange(false)}
             aria-label="Închide"
             data-testid="intake-v6-review-diagnostic-close"

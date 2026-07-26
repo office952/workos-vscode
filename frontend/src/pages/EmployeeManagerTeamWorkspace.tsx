@@ -118,7 +118,7 @@ export default function EmployeeManagerTeamWorkspace() {
   return (
     <div className="space-y-4" data-testid="employee-manager-team-workspace">
       <div className="space-y-1">
-        <h2 className="text-[16px] font-semibold text-slate-100">Echipa mea</h2>
+        <h2 className="text-[16px] font-semibold text-wo-text-primary">Echipa mea</h2>
         <p className="text-[12px] text-slate-400" data-testid="employee-manager-team-subtitle">
           Vizualizare read-only pentru angajații care raportează direct către tine.
         </p>
@@ -216,7 +216,7 @@ export default function EmployeeManagerTeamWorkspace() {
                   data-testid={`employee-manager-team-attendance-row-${row.id}`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[13px] font-medium text-slate-100">{row.employee_name}</span>
+                    <span className="text-[13px] font-medium text-wo-text-primary">{row.employee_name}</span>
                     <EmployeeMobileStatusBadge label={row.event_type} variant="readonly" />
                   </div>
                   <p className="text-[11px] text-slate-400">
@@ -289,7 +289,7 @@ export default function EmployeeManagerTeamWorkspace() {
                   data-testid={`employee-manager-team-request-row-${row.id}`}
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-[13px] font-medium text-slate-100">{row.employee_name}</span>
+                    <span className="text-[13px] font-medium text-wo-text-primary">{row.employee_name}</span>
                     <EmployeeMobileStatusBadge
                       label={row.status}
                       variant={row.status === "submitted" ? "review" : "readonly"}

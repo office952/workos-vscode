@@ -117,7 +117,7 @@ export default function IntakeV6SegmentedElectricalPanel({
               <label className="block text-[10px] text-slate-400">
                 Sursa 220V
                 <select
-                  className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-slate-100"
+                  className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-wo-text-primary"
                   disabled={disabled || status === "CONFIRMED"}
                   value={panel.supply_mode}
                   data-testid={`intake-v6-elec-supply-${panel.panel_id}`}
@@ -149,7 +149,7 @@ export default function IntakeV6SegmentedElectricalPanel({
                 <label className="block text-[10px] text-slate-400">
                   Pozitie alimentare
                   <select
-                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-slate-100"
+                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-wo-text-primary"
                     disabled={disabled || status === "CONFIRMED"}
                     value={panel.service_point_position || ""}
                     data-testid={`intake-v6-elec-position-${panel.panel_id}`}
@@ -175,7 +175,7 @@ export default function IntakeV6SegmentedElectricalPanel({
                 <label className="block text-[10px] text-slate-400">
                   Primeste din panoul
                   <select
-                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-slate-100"
+                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-wo-text-primary"
                     disabled={disabled || status === "CONFIRMED"}
                     value={panel.shared_from_panel_id || ""}
                     data-testid={`intake-v6-elec-shared-${panel.panel_id}`}
@@ -201,7 +201,7 @@ export default function IntakeV6SegmentedElectricalPanel({
                 <label className="block text-[10px] text-slate-400">
                   Nota / schita
                   <input
-                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-slate-100"
+                    className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-wo-text-primary"
                     disabled={disabled || status === "CONFIRMED"}
                     value={panel.custom_position_note || panel.sketch_ref || ""}
                     data-testid={`intake-v6-elec-custom-${panel.panel_id}`}
@@ -220,7 +220,7 @@ export default function IntakeV6SegmentedElectricalPanel({
               <label className="block text-[10px] text-slate-400">
                 Iesire cablu / directie atelier
                 <input
-                  className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-slate-100"
+                  className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-input px-2 py-1 text-[11px] text-wo-text-primary"
                   disabled={disabled || status === "CONFIRMED"}
                   placeholder="ex: spre coltul dreapta sus"
                   value={panel.routing_direction_note_ro || ""}

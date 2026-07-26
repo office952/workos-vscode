@@ -49,7 +49,7 @@ export default function IntakeV6ReviewBackingSelect({
   return (
     <div className={`${v6.card} mb-4`} data-testid="intake-v6-backing-section">
       <label className="block">
-        <span className="mb-2 block text-[13px] font-bold uppercase tracking-wide text-slate-100">
+        <span className="mb-2 block text-[13px] font-bold uppercase tracking-wide text-wo-text-primary">
           Spate litere
         </span>
         {select}

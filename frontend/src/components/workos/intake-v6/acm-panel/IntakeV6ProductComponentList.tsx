@@ -123,7 +123,7 @@ export default function IntakeV6ProductComponentList({
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-[12px] font-semibold text-slate-100">{item.title}</span>
+                    <span className="text-[12px] font-semibold text-wo-text-primary">{item.title}</span>
                     {intakeV6ShowOperatorConfigStatusBadges() ? (
                       <span
                         className={`rounded border px-1.5 py-0.5 text-[10px] font-semibold ${toneClass(item.statusTone)}`}

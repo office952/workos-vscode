@@ -228,7 +228,7 @@ export default function EmployeeAdvances() {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
             <Wallet className="w-5 h-5 text-amber-400" />
-            <h1 className="text-[18px] font-bold text-slate-100">Avansuri / Datorii</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Avansuri / Datorii</h1>
             <Badge className="text-[10px] uppercase tracking-wide bg-emerald-900/50 text-emerald-300 border-emerald-600/60">
               LIVE DB
             </Badge>
@@ -301,7 +301,7 @@ export default function EmployeeAdvances() {
             onClick={() => setFilterType("all")}
             className={`px-3 py-1.5 text-[11px] font-semibold rounded transition-colors ${
               filterType === "all"
-                ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
+                ? "bg-wo-surface-raised text-wo-text-primary border border-wo-border-strong"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
@@ -314,7 +314,7 @@ export default function EmployeeAdvances() {
               onClick={() => setFilterType(t.value)}
               className={`px-3 py-1.5 text-[11px] font-semibold rounded transition-colors ${
                 filterType === t.value
-                  ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
+                  ? "bg-wo-surface-raised text-wo-text-primary border border-wo-border-strong"
                   : "text-slate-500 hover:text-slate-300"
               }`}
             >
@@ -400,7 +400,7 @@ export default function EmployeeAdvances() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[16px] font-bold text-slate-100">
+                      <p className="text-[16px] font-bold text-wo-text-primary">
                         {tx.amount.toLocaleString("ro-RO")} {tx.currency}
                       </p>
                       <p className="text-[10px] text-slate-500">
@@ -449,7 +449,7 @@ export default function EmployeeAdvances() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="bg-wo-surface-raised border-wo-border-subtle text-slate-100 max-w-md">
+        <DialogContent className="bg-wo-surface-raised border-wo-border-subtle text-wo-text-primary max-w-md">
           <DialogHeader>
             <DialogTitle>Adaugă tranzacție internă</DialogTitle>
           </DialogHeader>

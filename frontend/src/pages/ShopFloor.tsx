@@ -59,7 +59,7 @@ export default function ShopFloor() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Factory className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Shop Floor — Live</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Shop Floor — Live</h1>
           <SourceBadge source={mapShopFloorSourceToBadge(source)} />
           <div className="flex items-center gap-2 ml-2">
             {connectionStatus === "connected" ? (
@@ -136,7 +136,7 @@ export default function ShopFloor() {
               {/* WC Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-[14px] font-semibold text-slate-200">{wc.name}</h3>
+                  <h3 className="text-[14px] font-semibold text-wo-text-primary">{wc.name}</h3>
                   {runningCount > 0 && <LiveDot />}
                   {hasBlocked && <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />}
                 </div>

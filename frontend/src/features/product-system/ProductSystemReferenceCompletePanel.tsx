@@ -66,7 +66,7 @@ export function ProductSystemReferenceCompletePanel() {
       <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
         Laboratory closure
       </p>
-      <h3 className="text-sm font-semibold text-slate-100">{data.name}</h3>
+      <h3 className="text-sm font-semibold text-wo-text-primary">{data.name}</h3>
       <p
         data-testid="reference-complete-verdict"
         className={`inline-flex rounded border px-2 py-0.5 text-[11px] font-medium ${tone}`}

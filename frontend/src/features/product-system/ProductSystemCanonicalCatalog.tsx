@@ -152,7 +152,7 @@ function CatalogProductCard({
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-slate-100">{product.displayName}</p>
+          <p className="truncate text-sm font-semibold text-wo-text-primary">{product.displayName}</p>
           <p className="mt-0.5 truncate text-xs text-slate-500">{product.familyName}</p>
           <p
             className="mt-1 font-mono text-[11px] text-slate-600"

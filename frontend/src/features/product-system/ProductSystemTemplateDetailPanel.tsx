@@ -264,7 +264,7 @@ function ModularityHonestySection({ templateCode }: { templateCode: string }) {
               className="rounded-md border border-slate-800/60 px-2.5 py-2"
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <span className="font-medium text-slate-100">{mod.labelRo}</span>
+                <span className="font-medium text-wo-text-primary">{mod.labelRo}</span>
                 <span className="text-[11px] text-wo-text-muted">{mod.independenceRo}</span>
               </div>
               {mod.scopeRo ? (
@@ -368,7 +368,7 @@ function ProductStoryOverview({
             <p className="text-[10px] font-bold uppercase tracking-wide text-cyan-300/90">
               Centrul produsului
             </p>
-            <h3 className="mt-0.5 text-sm font-semibold text-slate-100">
+            <h3 className="mt-0.5 text-sm font-semibold text-wo-text-primary">
               {MODULE_PRODUS_LIST_HEADING} care compun {humanTemplateName(template.template_code)}
             </h3>
           </div>
@@ -389,7 +389,7 @@ function ProductStoryOverview({
                 data-testid={`product-system-template-story-module-${row.moduleCode}`}
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="min-w-0 truncate text-[12px] font-semibold text-slate-100">
+                  <span className="min-w-0 truncate text-[12px] font-semibold text-wo-text-primary">
                     {row.roleLabel}
                   </span>
                   <span className="shrink-0 text-[10px] text-slate-500">{row.statusLabel}</span>
@@ -534,7 +534,7 @@ export function ProductSystemTemplateDetailPanel({
             Șablon produs
           </p>
           <div className="mt-0.5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-            <h2 className="text-lg font-semibold text-slate-100">{displayName}</h2>
+            <h2 className="text-lg font-semibold text-wo-text-primary">{displayName}</h2>
             <p className="font-mono text-xs text-slate-500">{template.template_code}</p>
           </div>
           <p
@@ -580,7 +580,7 @@ export function ProductSystemTemplateDetailPanel({
           data-testid="product-system-template-next-action-strip"
         >
           <p className="text-[12px] text-wo-text-secondary">
-            <span className="font-semibold text-slate-100">Centru workspace:</span>{" "}
+            <span className="font-semibold text-wo-text-primary">Centru workspace:</span>{" "}
             Structură produs + Product Compiler + Pregătire · Module model amânat.{" "}
             {publicationStatus === "PUBLISHED" ? (
               <>
@@ -628,7 +628,7 @@ export function ProductSystemTemplateDetailPanel({
               onClick={() => onSectionChange(tab.id)}
               className={`border-b-2 px-3 py-2 text-xs font-semibold transition-colors ${
                 section === tab.id
-                  ? "border-sky-500 text-slate-100"
+                  ? "border-sky-500 text-wo-text-primary"
                   : "border-transparent text-slate-500 hover:text-wo-text-secondary"
               }`}
             >
@@ -798,7 +798,7 @@ export function ProductSystemTemplateDetailPanel({
                 >
                   <span>{module.role_label}</span>
                   <div className="min-w-0">
-                    <p className="truncate text-slate-100">{humanTemplateName(module.module_template_code)}</p>
+                    <p className="truncate text-wo-text-primary">{humanTemplateName(module.module_template_code)}</p>
                     <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
                       {module.module_template_code}
                     </p>
@@ -813,7 +813,7 @@ export function ProductSystemTemplateDetailPanel({
                 >
                   <span>{contract.display_name}</span>
                   <div className="min-w-0">
-                    <p className="truncate text-slate-100">{humanTemplateName(contract.module_template_code)}</p>
+                    <p className="truncate text-wo-text-primary">{humanTemplateName(contract.module_template_code)}</p>
                     <p className="mt-0.5 truncate font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
                       {contract.module_template_code}
                     </p>
@@ -858,9 +858,9 @@ export function ProductSystemTemplateDetailPanel({
           <ul className="space-y-2 text-xs text-wo-text-secondary">
             {availability.composition_modules.map((module) => (
               <li key={`rel-${module.role_key}-${module.module_template_code}`}>
-                <span className="font-medium text-slate-100">{humanTemplateName(template.template_code)}</span>
+                <span className="font-medium text-wo-text-primary">{humanTemplateName(template.template_code)}</span>
                 <span className="mx-1 text-slate-500">→</span>
-                <span className="font-medium text-slate-100">{humanTemplateName(module.module_template_code)}</span>
+                <span className="font-medium text-wo-text-primary">{humanTemplateName(module.module_template_code)}</span>
                 <span className="ml-1.5 font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>
                   {module.module_template_code}
                 </span>
@@ -875,9 +875,9 @@ export function ProductSystemTemplateDetailPanel({
               : availability.parent_codes
             ).map((parentCode) => (
               <li key={`parent-${parentCode}`}>
-                <span className="font-medium text-slate-100">{humanTemplateName(parentCode)}</span>
+                <span className="font-medium text-wo-text-primary">{humanTemplateName(parentCode)}</span>
                 <span className="mx-1 text-slate-500">→</span>
-                <span className="font-medium text-slate-100">{humanTemplateName(template.template_code)}</span>
+                <span className="font-medium text-wo-text-primary">{humanTemplateName(template.template_code)}</span>
                 <span className="ml-1.5 font-mono text-[10px] text-slate-500">{template.template_code}</span>
                 <span className="text-slate-500"> (părinte)</span>
               </li>

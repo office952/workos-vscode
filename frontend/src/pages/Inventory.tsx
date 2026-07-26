@@ -216,7 +216,7 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
 
         <div className="grid grid-cols-4 gap-3 mb-4">
           <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
-            <p className="text-[20px] font-bold text-slate-100">{sheets.length}</p>
+            <p className="text-[20px] font-bold text-wo-text-primary">{sheets.length}</p>
             <p className="text-[9px] text-slate-500 uppercase">Plăci Total</p>
           </div>
           <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
@@ -228,7 +228,7 @@ function PlateDetailPanel({ material }: { material: InventoryMaterial }) {
             <p className="text-[9px] text-slate-500 uppercase">Resturi</p>
           </div>
           <div className="bg-wo-surface-raised rounded-lg p-2 text-center">
-            <p className="text-[20px] font-bold text-slate-100">{totalAreaM2.toFixed(1)}</p>
+            <p className="text-[20px] font-bold text-wo-text-primary">{totalAreaM2.toFixed(1)}</p>
             <p className="text-[9px] text-slate-500 uppercase">mp Total</p>
           </div>
         </div>
@@ -634,7 +634,7 @@ export default function Inventory() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <Warehouse className="w-5 h-5 text-cyan-400" />
-        <h1 className="text-[18px] font-bold text-slate-100">Inventar & OC</h1>
+        <h1 className="text-[18px] font-bold text-wo-text-primary">Inventar & OC</h1>
         <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
           {inventoryMaterials.length} materiale{isMockSource ? ` • ${totalSheets} plăci fizice` : ""}
         </span>
@@ -721,7 +721,7 @@ export default function Inventory() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-cyan-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Total Materiale</p>
-          <p className="text-[20px] font-bold text-slate-100 mt-1">{inventoryMaterials.length}</p>
+          <p className="text-[20px] font-bold text-wo-text-primary mt-1">{inventoryMaterials.length}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
           <p className="text-[10px] text-slate-400 uppercase tracking-wide">Plăci Fizice</p>

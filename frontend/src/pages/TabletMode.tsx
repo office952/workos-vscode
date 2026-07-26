@@ -135,7 +135,7 @@ export function TabletStationSelector() {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <span className="text-3xl">🏭</span>
-          <h1 className="text-[28px] font-bold text-slate-100">Atelier — Stații de lucru</h1>
+          <h1 className="text-[28px] font-bold text-wo-text-primary">Atelier — Stații de lucru</h1>
           <span className="ml-auto">
             <TabletSourceBadge source={loading ? "loading" : source} operatorSource={operatorSource} />
           </span>
@@ -167,7 +167,7 @@ export function TabletStationSelector() {
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-4xl">{station.icon}</span>
                 <div>
-                  <h2 className="text-[18px] font-bold text-slate-100">{station.name}</h2>
+                  <h2 className="text-[18px] font-bold text-wo-text-primary">{station.name}</h2>
                   <p className={`text-[12px] font-semibold ${station.color}`}>{station.shortName}</p>
                 </div>
               </div>
@@ -281,7 +281,7 @@ export function TabletStationQueue() {
         <div className="flex items-center gap-3">
           <span className="text-4xl">{station.icon}</span>
           <div>
-            <h1 className="text-[24px] font-bold text-slate-100">{station.name}</h1>
+            <h1 className="text-[24px] font-bold text-wo-text-primary">{station.name}</h1>
             <p className="text-[13px] text-slate-500">
               {queueTasks.length} în coadă · {activeTasks.length} active · {completedTasks.length} finalizate azi
             </p>
@@ -500,7 +500,7 @@ function TaskCard({
     >
       <div className="flex items-start justify-between mb-2">
         <div>
-          <h3 className="text-[16px] font-bold text-slate-100">{task.operationName}</h3>
+          <h3 className="text-[16px] font-bold text-wo-text-primary">{task.operationName}</h3>
           <p className="text-[13px] text-slate-400 mt-0.5">{task.client} — {task.product}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
@@ -767,7 +767,7 @@ export function TabletTaskDetail() {
           <ArrowLeft className="w-6 h-6 text-slate-300" />
         </button>
         <div className="flex-1">
-          <h1 className="text-[22px] font-bold text-slate-100">{task.operationName}</h1>
+          <h1 className="text-[22px] font-bold text-wo-text-primary">{task.operationName}</h1>
           <div className="flex items-center gap-3 mt-1">
             <span className="text-[14px] text-slate-400">{task.client} — {task.product}</span>
             <span className="font-mono text-[12px] text-blue-400">{task.orderCode}</span>
@@ -1136,7 +1136,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
         {submitted ? (
           <div className="text-center py-8">
             <CheckCircle2 className="w-16 h-16 text-purple-400 mx-auto mb-4" />
-            <h2 className="text-[20px] font-bold text-slate-100 mb-2">Cerere înregistrată (demo)</h2>
+            <h2 className="text-[20px] font-bold text-wo-text-primary mb-2">Cerere înregistrată (demo)</h2>
             <p className="text-[13px] text-slate-500 mb-4">
               Aceasta este o demonstrație. Cererea nu a fost salvată în backend.
             </p>
@@ -1151,7 +1151,7 @@ function HelpRequestModal({ onClose, taskId, stationId }: { onClose: () => void;
         ) : (
           <>
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-[20px] font-bold text-slate-100 flex items-center gap-2">
+              <h2 className="text-[20px] font-bold text-wo-text-primary flex items-center gap-2">
                 <Hand className="w-5 h-5 text-purple-400" /> Cere ajutor
               </h2>
               <button onClick={onClose} className="p-2 rounded-lg hover:bg-slate-800 transition-colors">

@@ -52,7 +52,7 @@ export default function FormSystemRuntimeCaptureReadModelPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3 p-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Runtime Capture Read Model</h3>
+          <h3 className="text-[13px] font-bold text-wo-text-primary">Runtime Capture Read Model</h3>
           <p className="mt-0.5 text-[11px] text-slate-500">
             Read-only mirror of persisted runtime capture state for Product Truth readiness review.
           </p>
@@ -90,7 +90,7 @@ export default function FormSystemRuntimeCaptureReadModelPanel({
             {fields.map((field) => (
               <div key={field.field_key} className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <span className="font-mono text-[10px] font-bold text-slate-100">{field.field_key}</span>
+                  <span className="font-mono text-[10px] font-bold text-wo-text-primary">{field.field_key}</span>
                   <Badge tone={toneForState(field.state)}>{field.state}</Badge>
                   <Badge tone={field.ready_for_product_truth ? "ok" : "warn"}>
                     {field.ready_for_product_truth ? "ready for product truth" : "not ready"}

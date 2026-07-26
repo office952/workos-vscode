@@ -122,7 +122,7 @@ export default function OperationalRealityReview() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <ShieldAlert className="w-5 h-5 text-amber-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Operational Reality Review</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Operational Reality Review</h1>
           {data?.read_only && (
             <span className="text-[10px] text-emerald-400 bg-emerald-900/30 border border-emerald-800 px-2 py-0.5 rounded-full">
               Read-only

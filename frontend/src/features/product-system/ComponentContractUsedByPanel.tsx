@@ -58,7 +58,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100">Contracte componente</h3>
+          <h3 className="text-sm font-semibold text-wo-text-primary">Contracte componente</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanTemplateName(templateCode)}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
@@ -95,7 +95,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                     key={`${edge.parent_template_code}-${edge.link_id ?? "x"}`}
                     className={`${PS_SURFACE_ROW} px-2 py-1.5 text-slate-300`}
                   >
-                    <div className="font-medium text-slate-100">
+                    <div className="font-medium text-wo-text-primary">
                       {humanTemplateName(edge.parent_template_code)}
                     </div>
                     <div className="font-mono text-[10px] text-slate-500">
@@ -125,7 +125,7 @@ export function ComponentContractUsedByPanel({ templateCode }: { templateCode: s
                       key={`${edge.module_template_code}-${linkId ?? "x"}`}
                       className={`${PS_SURFACE_ROW} px-2 py-2`}
                     >
-                      <div className="font-medium text-slate-100">
+                      <div className="font-medium text-wo-text-primary">
                         {humanTemplateName(edge.module_template_code)}
                       </div>
                       <div className="font-mono text-[10px] text-slate-500" title={MODULE_PRODUS_CODE_LABEL}>

@@ -270,7 +270,7 @@ export default function Attendance() {
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-2 flex-wrap">
             <Calendar className="w-5 h-5 text-blue-400" />
-            <h1 className="text-[18px] font-bold text-slate-100">Pontaj</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">Pontaj</h1>
             <Badge className="text-[10px] uppercase tracking-wide bg-emerald-900/50 text-emerald-300 border-emerald-600/60">
               LIVE DB
             </Badge>
@@ -285,7 +285,7 @@ export default function Attendance() {
         <div className="flex items-center gap-2 flex-wrap">
           <Link
             to="/attendance/effects"
-            className="flex items-center gap-2 px-3 py-2 text-[12px] font-medium text-slate-100 bg-violet-700 hover:bg-violet-600 rounded-md"
+            className="flex items-center gap-2 px-3 py-2 text-[12px] font-medium text-wo-text-primary bg-violet-700 hover:bg-violet-600 rounded-md"
             data-testid="attendance-effects-console-link"
           >
             <ListChecks className="w-4 h-4" />
@@ -294,7 +294,7 @@ export default function Attendance() {
           <button
             type="button"
             onClick={() => openForm()}
-            className="flex items-center gap-2 px-3 py-2 text-[12px] font-medium text-slate-100 bg-blue-600 hover:bg-blue-500 rounded-md"
+            className="flex items-center gap-2 px-3 py-2 text-[12px] font-medium text-wo-text-primary bg-blue-600 hover:bg-blue-500 rounded-md"
           >
             <Plus className="w-4 h-4" />
             Adaugă eveniment
@@ -314,7 +314,7 @@ export default function Attendance() {
         <button type="button" onClick={prevMonth} className="p-2 rounded-lg bg-wo-surface-raised border border-wo-border-strong">
           <ChevronLeft className="w-4 h-4 text-slate-300" />
         </button>
-        <p className="text-[18px] font-bold text-slate-100">{MONTHS[month - 1]} {year}</p>
+        <p className="text-[18px] font-bold text-wo-text-primary">{MONTHS[month - 1]} {year}</p>
         <button type="button" onClick={nextMonth} className="p-2 rounded-lg bg-wo-surface-raised border border-wo-border-strong">
           <ChevronRight className="w-4 h-4 text-slate-300" />
         </button>
@@ -336,7 +336,7 @@ export default function Attendance() {
           <button
             type="button"
             onClick={() => openForm()}
-            className="inline-flex items-center gap-2 px-4 py-2 text-[12px] font-medium text-slate-100 bg-blue-600 hover:bg-blue-500 rounded-md"
+            className="inline-flex items-center gap-2 px-4 py-2 text-[12px] font-medium text-wo-text-primary bg-blue-600 hover:bg-blue-500 rounded-md"
           >
             <Plus className="w-4 h-4" />
             Adaugă eveniment
@@ -453,7 +453,7 @@ export default function Attendance() {
       </div>
 
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
-        <DialogContent className="bg-wo-surface-raised border-wo-border-strong text-slate-100">
+        <DialogContent className="bg-wo-surface-raised border-wo-border-strong text-wo-text-primary">
           <DialogHeader>
             <DialogTitle>Adaugă eveniment pontaj</DialogTitle>
           </DialogHeader>
@@ -601,7 +601,7 @@ function KpiCard({
   return (
     <div className={`bg-wo-surface-raised border rounded-lg p-3 ${alert ? "border-amber-800/40" : "border-wo-border-strong"}`}>
       <div className="flex items-center gap-2 mb-1">{icon}<span className="text-[10px] text-slate-500 uppercase">{label}</span></div>
-      <p className="text-[22px] font-bold text-slate-100">{value}{suffix}</p>
+      <p className="text-[22px] font-bold text-wo-text-primary">{value}{suffix}</p>
     </div>
   );
 }

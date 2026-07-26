@@ -104,7 +104,7 @@ export const EMPLOYEE_MOBILE_SECTIONS: EmployeeMobileSection[] = [
 function EmployeeMobileBlueprintPage({ section }: { section: EmployeeMobileSection }) {
   return (
     <div className="space-y-4" data-testid={`employee-mobile-section-${section.id}`}>
-      <h2 className="text-[15px] font-semibold text-slate-100">{section.title}</h2>
+      <h2 className="text-[15px] font-semibold text-wo-text-primary">{section.title}</h2>
       <p className="text-[13px] text-slate-300">{section.description}</p>
       <EmployeeMobileEmptyState message="Secțiune planificată — disponibilă într-un build viitor." />
     </div>

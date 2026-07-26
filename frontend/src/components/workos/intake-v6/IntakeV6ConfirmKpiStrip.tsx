@@ -25,7 +25,7 @@ function KpiCell({
       <div className="min-w-0">
         <span className={`block ${v6.metricLabel}`}>{label}</span>
         <span
-          className={`block truncate tabular-nums ${highlight ? "text-[15px] font-bold text-emerald-300" : "text-[12px] font-semibold text-slate-100"}`}
+          className={`block truncate tabular-nums ${highlight ? "text-[15px] font-bold text-emerald-300" : "text-[12px] font-semibold text-wo-text-primary"}`}
         >
           {value}
         </span>

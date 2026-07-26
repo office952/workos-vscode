@@ -151,7 +151,7 @@ function LayerComponentBindingSummary({
       data-testid={`intake-v6-layer-component-${layerKey}`}
     >
       <p className="text-[10px] uppercase tracking-wide text-slate-500">Componentă produs</p>
-      <p className="text-[12px] font-medium text-slate-100">
+      <p className="text-[12px] font-medium text-wo-text-primary">
         {ownerFacingComponentProductLabel(bindable)}
       </p>
       <p className="mt-0.5 flex flex-wrap gap-x-2 gap-y-0.5 text-[10px] text-slate-400">
@@ -263,7 +263,7 @@ function LayerLegendRow({
           aria-hidden
         />
         <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-1 truncate text-[12px] font-semibold text-slate-100">
+          <p className="flex items-center gap-1 truncate text-[12px] font-semibold text-wo-text-primary">
             <RowIcon className="h-3 w-3 shrink-0 text-cyan-400/80" aria-hidden />
             {display.primaryLabel}
           </p>
@@ -351,7 +351,7 @@ function LayerCard({
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 truncate text-[12px] font-semibold text-slate-100">
+          <p className="flex items-center gap-1.5 truncate text-[12px] font-semibold text-wo-text-primary">
             <CardIcon className="h-3.5 w-3.5 shrink-0 text-cyan-400/80" aria-hidden />
             {display.primaryLabel}
           </p>
@@ -516,7 +516,7 @@ export default function IntakeV6LayersRoleTable({
                 >
                   <div className="mb-2 flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate text-[12px] font-semibold text-slate-100">{primaryLabel}</p>
+                      <p className="truncate text-[12px] font-semibold text-wo-text-primary">{primaryLabel}</p>
                       <p className="text-[11px] text-slate-500">{display.secondaryLabel}</p>
                       <p
                         className={`text-[10px] ${

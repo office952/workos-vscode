@@ -114,7 +114,7 @@ export default function AcmBoxedStructureDetailPage() {
                 {doc.titleRo}
               </h1>
             </div>
-            <p className="mt-4 max-w-3xl text-[2rem] font-semibold leading-[1.15] tracking-tight text-slate-50 sm:text-[2.35rem]">
+            <p className="mt-4 max-w-3xl text-[2rem] font-semibold leading-[1.15] tracking-tight text-wo-text-primary sm:text-[2.35rem]">
               {doc.heroMaterialRo}
             </p>
             <p className={`mt-3 font-mono text-[12px] ${styles.mono}`}>{doc.heroCodeRo}</p>
@@ -140,7 +140,7 @@ export default function AcmBoxedStructureDetailPage() {
               <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${styles.chip}`}>
                 <Wrench className="h-5 w-5" aria-hidden />
               </span>
-              <h3 className="text-[1.05rem] font-semibold text-slate-50">{doc.obtainTitleRo}</h3>
+              <h3 className="text-[1.05rem] font-semibold text-wo-text-primary">{doc.obtainTitleRo}</h3>
             </div>
             <p className="mt-4 text-[13px] leading-relaxed text-amber-100/90">{doc.withoutTheseRo}</p>
             <ol className="mt-4 space-y-2.5">
@@ -157,7 +157,7 @@ export default function AcmBoxedStructureDetailPage() {
               <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${styles.chip}`}>
                 <ListOrdered className="h-5 w-5" aria-hidden />
               </span>
-              <h3 className="text-[1.05rem] font-semibold text-slate-50">În lanțul ACM</h3>
+              <h3 className="text-[1.05rem] font-semibold text-wo-text-primary">În lanțul ACM</h3>
             </div>
             <ol className="mt-4 max-h-[22rem] space-y-1.5 overflow-y-auto pr-1">
               {ACM_BOXED_PRINCIPAL_TASK_CHAIN.map((task) => {
@@ -206,7 +206,7 @@ export default function AcmBoxedStructureDetailPage() {
                   <p className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${styles.title}`}>
                     {card.subtitleRo}
                   </p>
-                  <h3 className="mt-1.5 text-[1.35rem] font-semibold text-slate-50">{card.titleRo}</h3>
+                  <h3 className="mt-1.5 text-[1.35rem] font-semibold text-wo-text-primary">{card.titleRo}</h3>
                 </div>
               </div>
               <p

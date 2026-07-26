@@ -145,7 +145,7 @@ export default function LettersFaceStructureDetailPage() {
               />
             </div>
             <p
-              className="mt-4 max-w-3xl text-[2rem] font-semibold leading-[1.15] tracking-tight text-slate-50 sm:text-[2.35rem]"
+              className="mt-4 max-w-3xl text-[2rem] font-semibold leading-[1.15] tracking-tight text-wo-text-primary sm:text-[2.35rem]"
               data-testid="letters-face-structure-detail-material"
             >
               {LETTERS_FACE_PLEXI_3MM_OPAL_DISPLAY_NAME}
@@ -269,7 +269,7 @@ export default function LettersFaceStructureDetailPage() {
                     <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-violet-400/90">
                       {card.subtitleRo}
                     </p>
-                    <h3 className="mt-1.5 text-[1.45rem] font-semibold tracking-tight text-slate-50">
+                    <h3 className="mt-1.5 text-[1.45rem] font-semibold tracking-tight text-wo-text-primary">
                       {card.titleRo}
                     </h3>
                   </div>

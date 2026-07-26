@@ -174,7 +174,7 @@ export default function IntakeV6LayersOperatorPanel({
                 title="Straturi detectate"
               >
                 <Layers className="mx-auto h-3.5 w-3.5 text-slate-400" aria-hidden />
-                <strong className="mt-0.5 block text-[13px] tabular-nums text-slate-100">
+                <strong className="mt-0.5 block text-[13px] tabular-nums text-wo-text-primary">
                   {layerStats.total}
                 </strong>
                 <span className="sr-only">Detectate</span>

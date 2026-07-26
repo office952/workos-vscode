@@ -214,7 +214,7 @@ export function ProductSystemV2Workspace({
                   {PRODUCT_TEMPLATE_LABEL}
                 </p>
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                  <h3 className="text-xl font-semibold text-slate-50">{selected.displayName}</h3>
+                  <h3 className="text-xl font-semibold text-wo-text-primary">{selected.displayName}</h3>
                   <span className="font-mono text-xs text-wo-text-muted">{selected.templateCode}</span>
                 </div>
               </section>

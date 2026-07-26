@@ -31,7 +31,7 @@ function SummaryRow({
       <dt className="text-slate-500" title={hint}>
         {label}
       </dt>
-      <dd className={`${v6.mono} max-w-[72%] break-words text-right text-slate-100`} data-testid={testId}>
+      <dd className={`${v6.mono} max-w-[72%] break-words text-right text-wo-text-primary`} data-testid={testId}>
         {value}
       </dd>
     </div>

@@ -139,7 +139,7 @@ export default function OutputBlocksPreview() {
       <div className="flex items-center gap-3">
         <Eye className="w-6 h-6 text-purple-400" />
         <div>
-          <h1 className="text-xl font-bold text-slate-100">Output Blocks Preview</h1>
+          <h1 className="text-xl font-bold text-wo-text-primary">Output Blocks Preview</h1>
           <p className="text-xs text-slate-500 mt-0.5">
             Read-only render preview — ProductSystem / Blueprint Dossier
           </p>

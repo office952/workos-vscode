@@ -323,7 +323,7 @@ export default function ClientWorkspace() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-[17px] font-bold text-slate-100">{clientInfo.name}</h1>
+                <h1 className="text-[17px] font-bold text-wo-text-primary">{clientInfo.name}</h1>
                 <span className="px-2 py-0.5 text-[9px] font-semibold rounded bg-emerald-900/30 text-emerald-400 border border-emerald-800/30">
                   Activ
                 </span>

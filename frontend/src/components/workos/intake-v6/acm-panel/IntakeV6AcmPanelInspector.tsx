@@ -72,7 +72,7 @@ function Section({
         data-presentation="flat"
       >
         <div className="flex flex-wrap items-center gap-2">
-          <h3 className="text-[12px] font-semibold text-slate-100">{title}</h3>
+          <h3 className="text-[12px] font-semibold text-wo-text-primary">{title}</h3>
           {status ? (
             <span className="rounded border border-amber-500/25 px-1.5 py-0.5 text-[10px] text-amber-200">
               {status}
@@ -96,7 +96,7 @@ function Section({
         onClick={onToggle}
         aria-expanded={open}
       >
-        <span className="text-[12px] font-semibold text-slate-100">{title}</span>
+        <span className="text-[12px] font-semibold text-wo-text-primary">{title}</span>
         {status ? (
           <span className="rounded border border-amber-500/25 px-1.5 py-0.5 text-[10px] text-amber-200">
             {status}
@@ -152,7 +152,7 @@ function DraftNumberInput({
         className={`mt-0.5 w-full rounded border bg-wo-surface-inset px-2 py-1.5 text-[11px] ${
           props.status === "invalid"
             ? "border-rose-500/50 text-rose-100"
-            : "border-wo-border-strong text-slate-100"
+            : "border-wo-border-strong text-wo-text-primary"
         }`}
         value={props.value}
         data-testid={`intake-v6-acm-field-${field}`}
@@ -360,7 +360,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
         flat={flat}
       >
         <div className="space-y-1 text-[11px] text-slate-300" data-testid="intake-v6-acm-summary">
-          <p className="text-[13px] font-semibold text-slate-100">{model.label}</p>
+          <p className="text-[13px] font-semibold text-wo-text-primary">{model.label}</p>
           <p>Dimensiuni: {model.dimensionsSummary ?? "—"}</p>
           {intakeV6ShowOperatorConfigStatusBadges() ? (
             flat ? (
@@ -439,7 +439,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
           <label className="block text-[11px]">
             <span className="text-slate-500">Pliuri</span>
             <select
-              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] text-wo-text-primary"
               data-testid="intake-v6-acm-field-fold_count"
               value={String(drafts.getFieldProps("fold_count").value || cfg.fold_count || 1)}
               onChange={(e) => drafts.getFieldProps("fold_count").onChange(e.target.value)}

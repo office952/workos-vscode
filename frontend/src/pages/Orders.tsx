@@ -89,7 +89,7 @@ function OrderValueDisplay({ order }: { order: Order }) {
   if (handoff?.commercial_total_eur != null && handoff.exchange_rate_eur_ron != null) {
     return (
       <div data-testid="order-value-display">
-        <p className="text-[14px] font-bold text-slate-100">
+        <p className="text-[14px] font-bold text-wo-text-primary">
           {formatOrderMoney(order.totalAmount, baseCurrency)}
         </p>
         <p className="text-[10px] text-slate-500 mt-0.5">
@@ -100,7 +100,7 @@ function OrderValueDisplay({ order }: { order: Order }) {
     );
   }
   return (
-    <p className="text-[14px] font-bold text-slate-100">
+    <p className="text-[14px] font-bold text-wo-text-primary">
       {formatOrderMoney(order.totalAmount, baseCurrency)}
     </p>
   );
@@ -239,7 +239,7 @@ export default function Orders() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <ClipboardList className="w-5 h-5 text-blue-400" />
-        <h1 className="text-[18px] font-bold text-slate-100">Comenzi</h1>
+        <h1 className="text-[18px] font-bold text-wo-text-primary">Comenzi</h1>
         <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
           {orders.length} comenzi
         </span>
@@ -287,7 +287,7 @@ export default function Orders() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-blue-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">Total Comenzi</p>
-          <p className="text-[20px] font-bold text-slate-100 mt-1">{orders.length}</p>
+          <p className="text-[20px] font-bold text-wo-text-primary mt-1">{orders.length}</p>
         </div>
         <div className="bg-wo-surface-raised border border-wo-border-strong border-t-2 border-t-emerald-500 rounded-lg px-4 py-3">
           <p className="text-[11px] text-slate-400 uppercase tracking-wide">În Execuție</p>
@@ -333,7 +333,7 @@ export default function Orders() {
               data-testid="orders-empty-state"
             >
               <ClipboardList className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-              <h2 className="text-[15px] font-semibold text-slate-200">Nu există comenzi încă</h2>
+              <h2 className="text-[15px] font-semibold text-wo-text-primary">Nu există comenzi încă</h2>
               <p className="text-[12px] text-slate-400 mt-2 max-w-md mx-auto leading-relaxed">
                 Comenzile apar aici după acceptarea sau conversia unei oferte.
               </p>
@@ -376,11 +376,11 @@ export default function Orders() {
                       {payCfg.label}
                     </span>
                   </div>
-                  <span className="text-[14px] font-bold text-slate-100">
+                  <span className="text-[14px] font-bold text-wo-text-primary">
                     {formatOrderMoney(order.totalAmount, order.baseCurrency ?? "RON")}
                   </span>
                 </div>
-                <p className="text-[13px] font-semibold text-slate-200">{order.client}</p>
+                <p className="text-[13px] font-semibold text-wo-text-primary">{order.client}</p>
                 <p className="text-[11px] text-slate-400 mt-0.5">{order.productSummary}</p>
                 <div className="flex items-center gap-4 mt-2 text-[10px] text-slate-500">
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Termen: {order.promisedDelivery}</span>
@@ -413,7 +413,7 @@ export default function Orders() {
                   <span className="text-[12px] font-mono text-blue-400">{selectedOrder.id}</span>
                   <OrderStatusBadge status={selectedOrder.status} />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-100">{selectedOrder.client}</h3>
+                <h3 className="text-[16px] font-bold text-wo-text-primary">{selectedOrder.client}</h3>
                 <p className="text-[12px] text-slate-400 mt-0.5">{selectedOrder.contactPerson}</p>
 
                 <div className="mt-4 space-y-3">
@@ -544,7 +544,7 @@ export default function Orders() {
                       <span className="text-[11px] text-slate-400">
                         Op: {linkedJob.currentOperation} · WC: {linkedJob.currentWorkcenter}
                       </span>
-                      <span className="text-[14px] font-bold text-slate-200">{linkedJob.progress}%</span>
+                      <span className="text-[14px] font-bold text-wo-text-primary">{linkedJob.progress}%</span>
                     </div>
                     <ProgressBar value={linkedJob.progress} size="md" />
                     <div className="flex items-center gap-3 mt-2 text-[10px] text-slate-500">

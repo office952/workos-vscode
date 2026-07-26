@@ -1238,7 +1238,7 @@ function BackendAssistSection({
                 <div key={item.template_id} className="px-3 py-2 bg-wo-surface-inset border border-wo-border-strong rounded-lg">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-[12px] text-slate-100 font-semibold">{item.template_name}</p>
+                      <p className="text-[12px] text-wo-text-primary font-semibold">{item.template_name}</p>
                       <p className="text-[10px] text-slate-400">{item.family} · confidence {item.confidence}</p>
                     </div>
                     <button
@@ -2734,7 +2734,7 @@ export default function IntakeDetail() {
 
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 flex-wrap">
-          <h1 className="text-[20px] font-bold text-slate-100">
+          <h1 className="text-[20px] font-bold text-wo-text-primary">
             {request.id}
           </h1>
           {workspaceShell && (
@@ -2807,7 +2807,7 @@ export default function IntakeDetail() {
             <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-0.5">
               Client
             </p>
-            <p className="text-[13px] text-slate-100 font-semibold">
+            <p className="text-[13px] text-wo-text-primary font-semibold">
               {request.client}
             </p>
           </div>

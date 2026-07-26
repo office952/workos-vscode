@@ -330,7 +330,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
     <div className={v6.card} data-testid="intake-v6-commercial-spine">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Flux Ofertă client (V6)</h3>
+          <h3 className="text-[13px] font-bold text-wo-text-primary">Flux Ofertă client (V6)</h3>
           <p className="mt-1 text-[11px] text-slate-400">{heroHint}</p>
           <p className="mt-1 text-[10px] text-slate-500">
             Ofertă client = preț pentru client. Cost intern estimativ = referință atelier (canal separat).
@@ -339,7 +339,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         <div className="text-right" data-testid="intake-v6-hero-total">
           <p className="text-[10px] uppercase tracking-wide text-slate-500">Ofertă client (total)</p>
           <p
-            className={`text-[18px] font-bold ${quoteTotalsAvailable || dryRunReady ? "text-slate-100" : "text-amber-300"}`}
+            className={`text-[18px] font-bold ${quoteTotalsAvailable || dryRunReady ? "text-wo-text-primary" : "text-amber-300"}`}
           >
             {heroTotal}
           </p>

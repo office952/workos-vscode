@@ -217,15 +217,17 @@ export function TemplateConstructionStageRow({
               onClick={() => onSelectStage(stage.componentIndex)}
               className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border transition-all duration-200 ${
                 isSelected
-                  ? `${style.bgColor} ${style.borderColor} ${style.color} ring-1 ring-purple-500/40`
-                  : `${style.bgColor} ${style.borderColor} ${style.color} opacity-80 hover:opacity-100`
+                  ? `${style.bgColor} ${style.borderColor} ring-1 ring-purple-500/40`
+                  : `${style.bgColor} ${style.borderColor} opacity-90 hover:opacity-100`
               }`}
               title={stage.label}
             >
-              <span className="flex h-4 w-4 items-center justify-center shrink-0 [&>svg]:h-3.5 [&>svg]:w-3.5">
+              <span
+                className={`flex h-4 w-4 items-center justify-center shrink-0 ${style.color} [&>svg]:h-3.5 [&>svg]:w-3.5`}
+              >
                 {style.icon}
               </span>
-              <span className="text-[10px] font-semibold whitespace-nowrap">
+              <span className="text-[10px] font-semibold whitespace-nowrap text-wo-text-primary">
                 {stage.chipLabel}
               </span>
             </button>

@@ -48,7 +48,7 @@ export default function IntakeV6SvgPreviewInspectDialog({
         data-testid="intake-v6-preview-inspect-dialog"
       >
         <DialogHeader className="text-left">
-          <DialogTitle className="text-[14px] font-semibold text-slate-100">
+          <DialogTitle className="text-[14px] font-semibold text-wo-text-primary">
             Preview SVG & straturi
           </DialogTitle>
           <DialogDescription className="text-[11px] text-slate-500">

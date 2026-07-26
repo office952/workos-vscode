@@ -186,7 +186,7 @@ export default function EmployeeAttendanceEffects() {
       </div>
 
       <div className="space-y-2">
-        <h1 className="text-2xl font-bold text-slate-100">Efecte pontaj din cereri</h1>
+        <h1 className="text-2xl font-bold text-wo-text-primary">Efecte pontaj din cereri</h1>
         <p className="text-sm text-slate-400">
           Console operațională — generează efecte din cereri aprobate, apoi aplică manual în pontaj.
           Fără auto-generate la approve și fără auto-apply.
@@ -288,7 +288,7 @@ export default function EmployeeAttendanceEffects() {
                   data-testid={`attendance-effect-candidate-${candidate.employee_request_id}`}
                 >
                   <div>
-                    <p className="text-sm font-medium text-slate-100">
+                    <p className="text-sm font-medium text-wo-text-primary">
                       {candidate.employee_name} · Cerere #{candidate.employee_request_id}
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
@@ -374,7 +374,7 @@ export default function EmployeeAttendanceEffects() {
                 >
                   <div className="flex flex-wrap items-start justify-between gap-2">
                     <div>
-                      <p className="text-sm font-medium text-slate-100">
+                      <p className="text-sm font-medium text-wo-text-primary">
                         Angajat #{effect.employee_id} · Cerere #{effect.employee_request_id}
                       </p>
                       <p className="text-xs text-slate-500 mt-1">
