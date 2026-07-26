@@ -110,7 +110,7 @@ export default function AcmPanelProductionGeometryBlock({
 
   return (
     <div
-      className="mt-2 border-t border-[#2A3548]/45 pt-2"
+      className="mt-2 border-t border-wo-border-strong/45 pt-2"
       data-testid="intake-v6-acm-production-geometry"
     >
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
@@ -128,7 +128,7 @@ export default function AcmPanelProductionGeometryBlock({
 
         {panels.length > 1 ? (
           <select
-            className="h-6 max-w-[9rem] truncate rounded border border-[#2A3548]/70 bg-[#111827]/80 px-1.5 text-[10px] text-slate-300"
+            className="h-6 max-w-[9rem] truncate rounded border border-wo-border-strong/70 bg-wo-surface-raised/80 px-1.5 text-[10px] text-slate-300"
             data-testid="intake-v6-acm-pg-panel"
             value={panelId}
             onChange={(e) => setPanelId(e.target.value)}

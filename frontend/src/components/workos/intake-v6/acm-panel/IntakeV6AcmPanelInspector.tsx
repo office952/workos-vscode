@@ -66,7 +66,7 @@ function Section({
   if (flat) {
     return (
       <div
-        className="space-y-2 border-b border-[#2A3548]/50 pb-3 last:border-b-0 last:pb-0"
+        className="space-y-2 border-b border-wo-border-strong/50 pb-3 last:border-b-0 last:pb-0"
         data-testid={`intake-v6-acm-section-${id}`}
         data-open="true"
         data-presentation="flat"
@@ -86,7 +86,7 @@ function Section({
 
   return (
     <div
-      className="rounded border border-[#2A3548]/60 bg-[#0A0F1A]/35"
+      className="rounded border border-wo-border-strong/60 bg-wo-surface-inset/35"
       data-testid={`intake-v6-acm-section-${id}`}
       data-open={open ? "true" : "false"}
     >
@@ -104,7 +104,7 @@ function Section({
         ) : null}
         <span className="ml-auto text-[10px] text-slate-500">{open ? "▾" : "▸"}</span>
       </button>
-      {open ? <div className="border-t border-[#2A3548]/50 px-2.5 py-2">{children}</div> : null}
+      {open ? <div className="border-t border-wo-border-strong/50 px-2.5 py-2">{children}</div> : null}
     </div>
   );
 }
@@ -149,10 +149,10 @@ function DraftNumberInput({
       <input
         type="text"
         inputMode="decimal"
-        className={`mt-0.5 w-full rounded border bg-[#0A0F1A] px-2 py-1.5 text-[11px] ${
+        className={`mt-0.5 w-full rounded border bg-wo-surface-inset px-2 py-1.5 text-[11px] ${
           props.status === "invalid"
             ? "border-rose-500/50 text-rose-100"
-            : "border-[#2A3548] text-slate-100"
+            : "border-wo-border-strong text-slate-100"
         }`}
         value={props.value}
         data-testid={`intake-v6-acm-field-${field}`}
@@ -330,7 +330,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
   if (!model.exists || !model.instance) {
     return (
       <section
-        className="rounded border border-[#2A3548]/50 px-3 py-4 text-[12px] text-slate-400"
+        className="rounded border border-wo-border-strong/50 px-3 py-4 text-[12px] text-slate-400"
         data-testid="intake-v6-acm-panel-inspector"
       >
         Niciun Alucobond casetat instanțiat pe acest workspace.
@@ -347,7 +347,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
   return (
     <section
       ref={rootRef}
-      className={flat ? "space-y-3 rounded-lg border border-[#2A3548]/70 bg-[#0B1220]/40 p-3" : "space-y-2"}
+      className={flat ? "space-y-3 rounded-lg border border-wo-border-strong/70 bg-wo-surface-input/40 p-3" : "space-y-2"}
       data-testid="intake-v6-acm-panel-inspector"
       data-presentation={flat ? "flat" : "accordion"}
     >
@@ -439,7 +439,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
           <label className="block text-[11px]">
             <span className="text-slate-500">Pliuri</span>
             <select
-              className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] text-slate-100"
               data-testid="intake-v6-acm-field-fold_count"
               value={String(drafts.getFieldProps("fold_count").value || cfg.fold_count || 1)}
               onChange={(e) => drafts.getFieldProps("fold_count").onChange(e.target.value)}
@@ -478,7 +478,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
               <input
                 type="text"
                 readOnly
-                className="mt-0.5 w-full rounded border border-[#2A3548]/70 bg-[#0A0F1A]/60 px-2 py-1.5 text-[11px] text-slate-400"
+                className="mt-0.5 w-full rounded border border-wo-border-strong/70 bg-wo-surface-inset/60 px-2 py-1.5 text-[11px] text-slate-400"
                 value={String(drafts.getFieldProps("l1_mm").value || cfg.l1_mm || "")}
                 title="finished_depth_mm = L1"
                 data-testid="intake-v6-acm-field-finished_depth_mm"
@@ -654,7 +654,7 @@ const IntakeV6AcmPanelInspector = forwardRef<
       </Section>
 
       <div
-        className="sticky bottom-0 z-10 border-t border-[#2A3548]/70 bg-[#0B1220]/95 px-1 py-2 backdrop-blur-sm"
+        className="sticky bottom-0 z-10 border-t border-wo-border-strong/70 bg-wo-surface-input/95 px-1 py-2 backdrop-blur-sm"
         data-testid="intake-v6-acm-final-confirm-bar"
       >
         <div className="flex flex-wrap items-center justify-between gap-2">

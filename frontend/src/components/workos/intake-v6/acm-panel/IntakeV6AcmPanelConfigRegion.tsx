@@ -160,7 +160,7 @@ export default function IntakeV6AcmPanelConfigRegion({
           ) : null}
         </div>
         <div
-          className="overflow-hidden rounded border border-[#2A3548]/55 bg-[#0B1220]/80"
+          className="overflow-hidden rounded border border-wo-border-strong/55 bg-wo-surface-input/80"
           data-testid="intake-v6-acm-tech-status-strip"
         >
           <IntakeV6AcmPanelBlueprintPreview
@@ -243,7 +243,7 @@ export default function IntakeV6AcmPanelConfigRegion({
           </div>
         ) : (
           <div
-            className="rounded border border-[#2A3548]/50 bg-[#111827]/30 px-3 py-4 text-[12px] text-slate-400"
+            className="rounded border border-wo-border-strong/50 bg-wo-surface-raised/30 px-3 py-4 text-[12px] text-slate-400"
             data-testid="intake-v6-product-component-inspector-placeholder"
           >
             {selectedId === "letters"

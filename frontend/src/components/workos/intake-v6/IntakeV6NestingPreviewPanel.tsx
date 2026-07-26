@@ -22,7 +22,7 @@ function SheetCanvas({
       width={viewW}
       height={viewH}
       viewBox={`0 0 ${width} ${height}`}
-      className="max-w-full border border-[#2A3548] bg-[#0B1220]"
+      className="max-w-full border border-wo-border-strong bg-wo-surface-input"
       data-testid={`intake-v6-nesting-canvas-${sheet.config_id}`}
     >
       <rect x={0} y={0} width={width} height={height} fill="#111827" stroke="#334155" strokeWidth={2} />
@@ -97,7 +97,7 @@ function AlternativeSheetRow({
 }) {
   return (
     <div
-      className="rounded border border-[#2A3548]/80 p-2 text-[10px] text-slate-400"
+      className="rounded border border-wo-border-strong/80 p-2 text-[10px] text-slate-400"
       data-testid={`intake-v6-nesting-alt-sheet-${sheet.config_id}`}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -146,7 +146,7 @@ export default function IntakeV6NestingPreviewPanel({
   );
 
   return (
-    <div className="mt-4 border-t border-[#2A3548] pt-4" data-testid="intake-v6-nesting-preview">
+    <div className="mt-4 border-t border-wo-border-strong pt-4" data-testid="intake-v6-nesting-preview">
       <button
         type="button"
         className="mb-2 flex w-full items-center justify-between text-left text-[11px] font-bold uppercase tracking-wide text-slate-400"
@@ -252,7 +252,7 @@ export default function IntakeV6NestingPreviewPanel({
                     <div className="overflow-x-auto">
                       <table className="w-full text-[10px]">
                         <thead>
-                          <tr className="border-b border-[#2A3548] text-left text-slate-500">
+                          <tr className="border-b border-wo-border-strong text-left text-slate-500">
                             <th className="py-1 pr-2">Layer</th>
                             <th className="py-1 pr-2">Roll mm</th>
                             <th className="py-1">Status</th>
@@ -262,7 +262,7 @@ export default function IntakeV6NestingPreviewPanel({
                           {alternativeRolls.map((job, idx) => (
                             <tr
                               key={`${job.roll_config_id}-${job.source_layer_name}-${idx}`}
-                              className="border-b border-[#2A3548]/50"
+                              className="border-b border-wo-border-strong/50"
                             >
                               <td className="py-1 pr-2">{job.source_layer_name ?? "—"}</td>
                               <td className="py-1 pr-2">{job.roll_width_mm ?? "—"}</td>
@@ -286,7 +286,7 @@ export default function IntakeV6NestingPreviewPanel({
               <div className="overflow-x-auto">
                 <table className="w-full text-[10px]">
                   <thead>
-                    <tr className="border-b border-[#2A3548] text-left text-slate-500">
+                    <tr className="border-b border-wo-border-strong text-left text-slate-500">
                       <th className="py-1 pr-2">Layer</th>
                       <th className="py-1 pr-2">Role</th>
                       <th className="py-1 pr-2">Roll mm</th>
@@ -298,7 +298,7 @@ export default function IntakeV6NestingPreviewPanel({
                     {activeRolls.map((job, idx) => (
                       <tr
                         key={`${job.roll_config_id}-${job.source_layer_name}-${idx}`}
-                        className="border-b border-[#2A3548]/50"
+                        className="border-b border-wo-border-strong/50"
                       >
                         <td className="py-1 pr-2">{job.source_layer_name ?? "—"}</td>
                         <td className="py-1 pr-2">{job.layer_role ?? "—"}</td>
@@ -321,7 +321,7 @@ export default function IntakeV6NestingPreviewPanel({
               <div className="overflow-x-auto">
                 <table className="w-full text-[10px]" data-testid="intake-v6-nesting-parts-table">
                   <thead>
-                    <tr className="border-b border-[#2A3548] text-left text-slate-500">
+                    <tr className="border-b border-wo-border-strong text-left text-slate-500">
                       <th className="py-1 pr-2">partId</th>
                       <th className="py-1 pr-2">Layer</th>
                       <th className="py-1 pr-2">Role</th>
@@ -331,7 +331,7 @@ export default function IntakeV6NestingPreviewPanel({
                   </thead>
                   <tbody>
                     {partsInActiveLayout.map((part) => (
-                      <tr key={part.part_id} className="border-b border-[#2A3548]/50">
+                      <tr key={part.part_id} className="border-b border-wo-border-strong/50">
                         <td className={`py-1 pr-2 ${v6.mono}`}>{part.part_id}</td>
                         <td className="py-1 pr-2">{part.source_layer_name ?? "—"}</td>
                         <td className="py-1 pr-2">{part.layer_role ?? "—"}</td>

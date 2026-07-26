@@ -29,7 +29,7 @@ export default function IntakeV6AcmPanelValidationRail({
     if (density === "inline") {
       return (
         <div
-          className="border-t border-[#2A3548]/50 px-2.5 py-1.5"
+          className="border-t border-wo-border-strong/50 px-2.5 py-1.5"
           data-testid="intake-v6-acm-validation-rail"
           data-density="inline"
           data-state="clean"
@@ -61,7 +61,7 @@ export default function IntakeV6AcmPanelValidationRail({
   if (density === "inline") {
     return (
       <div
-        className="space-y-1.5 border-t border-[#2A3548]/50 px-2.5 py-1.5"
+        className="space-y-1.5 border-t border-wo-border-strong/50 px-2.5 py-1.5"
         data-testid="intake-v6-acm-validation-rail"
         data-density="inline"
         data-state="issues"
@@ -87,7 +87,7 @@ export default function IntakeV6AcmPanelValidationRail({
 
   return (
     <aside
-      className="sticky top-2 space-y-1.5 rounded border border-[#2A3548]/60 bg-[#111827]/40 px-2.5 py-1.5"
+      className="sticky top-2 space-y-1.5 rounded border border-wo-border-strong/60 bg-wo-surface-raised/40 px-2.5 py-1.5"
       data-testid="intake-v6-acm-validation-rail"
       data-density="rail"
       data-state="issues"
@@ -136,7 +136,7 @@ function IssueGroup({
           <li key={issue.id}>
             <button
               type="button"
-              className="w-full rounded border border-[#2A3548]/50 bg-[#0A0F1A]/50 px-2 py-1 text-left text-[11px] text-slate-300 hover:border-[#3b82f5]/40"
+              className="w-full rounded border border-wo-border-strong/50 bg-wo-surface-inset/50 px-2 py-1 text-left text-[11px] text-wo-text-secondary hover:border-blue-500/40"
               data-testid={`intake-v6-acm-issue-${issue.id}`}
               onClick={() => onIssueClick(issue)}
             >

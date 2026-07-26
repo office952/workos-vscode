@@ -33,7 +33,7 @@ export default function IntakeV6ReviewBackingFinishRow({
       className={
         embedded
           ? "mt-1.5"
-          : "mt-1.5 overflow-hidden rounded-md border border-[#2A3548] bg-[#0A0F1A]/55"
+          : "mt-1.5 overflow-hidden rounded-md border border-wo-border-strong bg-wo-surface-inset/55"
       }
       style={embedded ? undefined : { borderLeftWidth: 3, borderLeftColor: "#475569" }}
       data-testid={rowTestId}

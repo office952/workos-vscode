@@ -108,37 +108,37 @@ export default function IntakeV6GeometryPanel({
         className="mb-3 grid grid-cols-1 gap-3 text-[11px] sm:grid-cols-2"
         data-testid="intake-v6-geometry-perimeter-table"
       >
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 sm:col-span-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 sm:col-span-2">
           <span className="block text-slate-500">Perimetru total vectorial</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-full-vector-perimeter">
             {fmtM(metrics.fullVectorPerimeterM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2">
           <span className="block text-slate-500">Perimetru vectorial producție</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-corel-curve-length">
             {fmtM(metrics.corelComparableCurveLengthM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2">
           <span className="block text-slate-500">Perimetru artwork/logo vectorial</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-artwork-logo-vector-perimeter">
             {fmtM(metrics.artworkLogoVectorPerimeterM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2">
           <span className="block text-slate-500">Perimetru CNC față</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-cutting-perimeter">
             {fmtM(metrics.cncFacePerimeterM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2">
           <span className="block text-slate-500">Perimetru LED litere — exterior only</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-led-perimeter">
             {fmtM(metrics.ledExteriorPerimeterM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2">
           <span className="block text-slate-500">Cant / volum litere — exterior + goluri eligibile</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-return-perimeter">
             {metrics.cantPricingPending && metrics.analysisBundlePending
@@ -146,7 +146,7 @@ export default function IntakeV6GeometryPanel({
               : fmtM(cantDisplayM)}
           </strong>
         </div>
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 sm:col-span-2">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 sm:col-span-2">
           <span className="block text-slate-500">Artwork logo perimeter (detaliu rol)</span>
           <strong className="text-slate-200" data-testid="intake-v6-geometry-artwork-perimeter">
             {metrics.artworkPerimeterIsDiagnostic && metrics.artworkVectorPerimeterDiagnosticM != null
@@ -167,7 +167,7 @@ export default function IntakeV6GeometryPanel({
       </div>
 
       <details
-        className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/30 px-3 py-2 text-[11px]"
+        className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/30 px-3 py-2 text-[11px]"
         data-testid="intake-v6-geometry-area-technical"
       >
         <summary className="cursor-pointer font-semibold uppercase tracking-wide text-slate-400">
@@ -197,7 +197,7 @@ export default function IntakeV6GeometryPanel({
 
       {metrics.showCantSection ? (
         <div
-          className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/50 px-3 py-3 text-[11px]"
+          className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/50 px-3 py-3 text-[11px]"
           data-testid="intake-v6-geometry-cant-section"
         >
           <h4 className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-400">

@@ -27,7 +27,7 @@ export default function IntakeV6EdgeCantQuoteImpactPanel({
 
   return (
     <div
-      className={`rounded border border-[#334155]/80 bg-[#0A0F1A]/70 px-3 py-3 ${className}`}
+      className={`rounded border border-wo-border-strong/80 bg-wo-surface-inset/70 px-3 py-3 ${className}`}
       data-testid="intake-v6-oracal-cant-impact"
     >
       <h4 className="mb-2 text-[11px] font-bold uppercase tracking-wide text-slate-300">

@@ -154,7 +154,7 @@ export default function IntakeV6LayersOperatorPanel({
 
         {report && confirmation ? (
           <div
-            className="rounded-lg border border-[#2A3548]/70 bg-[#0A0F1A]/45 p-2.5"
+            className="rounded-lg border border-wo-border-strong/70 bg-wo-surface-inset/45 p-2.5"
             data-testid="intake-v6-layers-confirmation-summary"
           >
             <div className={`mb-2 flex items-center justify-between gap-2 ${v6.metricLabel}`}>
@@ -170,7 +170,7 @@ export default function IntakeV6LayersOperatorPanel({
             </div>
             <div className="grid grid-cols-3 gap-1.5 text-center">
               <div
-                className="rounded-md border border-[#2A3548]/60 bg-[#111827]/60 px-1 py-1.5"
+                className="rounded-md border border-wo-border-strong/60 bg-wo-surface-raised/60 px-1 py-1.5"
                 title="Straturi detectate"
               >
                 <Layers className="mx-auto h-3.5 w-3.5 text-slate-400" aria-hidden />

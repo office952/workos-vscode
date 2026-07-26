@@ -30,8 +30,8 @@ function tierStyles(tier: IntakeV6ConfirmConsolidatedStatusDisplay["tier"]): {
       };
     default:
       return {
-        border: "border-[#243044]/70",
-        bg: "bg-[#101827]/40",
+        border: "border-wo-border-strong/70",
+        bg: "bg-wo-surface-raised/40",
         indicator: "text-slate-400",
         headline: "text-slate-200",
       };

@@ -36,7 +36,7 @@ export default function IntakeV6SvgComponentAssignmentPanel({
 
   return (
     <section
-      className="rounded border border-[#2A3548]/60 bg-[#0A0F1A]/30 px-2.5 py-2"
+      className="rounded border border-wo-border-strong/60 bg-wo-surface-inset/30 px-2.5 py-2"
       data-testid="intake-v6-svg-component-assignment"
       data-variant="summary"
     >

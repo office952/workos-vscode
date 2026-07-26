@@ -33,7 +33,7 @@ function NestingMiniThumb({ preview }: { preview: IntakeV6NestingPreviewResponse
         width={viewW}
         height={viewH}
         viewBox={`0 0 ${width} ${height}`}
-        className="mx-auto max-w-full border border-[#2A3548] bg-[#0B1220]"
+        className="mx-auto max-w-full border border-wo-border-strong bg-wo-surface-input"
         data-testid="intake-v6-confirm-nesting-thumb"
       >
         <rect x={0} y={0} width={width} height={height} fill="#111827" stroke="#334155" strokeWidth={2} />

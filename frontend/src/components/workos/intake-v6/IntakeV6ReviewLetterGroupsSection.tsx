@@ -156,7 +156,7 @@ export default function IntakeV6ReviewLetterGroupsSection({
           >
             <button
               type="button"
-              className="rounded border border-[#2A3548] bg-[#1E293B]/80 px-2.5 py-1 text-[12px] font-semibold text-slate-300 hover:border-sky-500/30"
+              className="rounded border border-wo-border-strong bg-wo-hover/80 px-2.5 py-1 text-[12px] font-semibold text-slate-300 hover:border-sky-500/30"
               onClick={() => onChange(copyFirstCantSettingsToAllGroups(groups))}
               data-testid="intake-v6-copy-cant-to-all"
               title="Copiază finisajul și adâncimea cantului la toate layerele"

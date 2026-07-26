@@ -53,7 +53,7 @@ function ProductLineRow({ line, compact = false }: { line: OperatorDisplayLine; 
 
   return (
     <li
-      className="flex items-start justify-between gap-3 border-t border-[#2A3548] py-2 first:border-t-0 first:pt-0"
+      className="flex items-start justify-between gap-3 border-t border-wo-border-strong py-2 first:border-t-0 first:pt-0"
       data-testid={`intake-v6-modular-product-${line.key}`}
       data-module-state={line.state}
     >

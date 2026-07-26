@@ -15,7 +15,7 @@ export default function IntakeV6ReviewBackingSelect({
 }) {
   const select = (
     <select
-      className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
+      className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px]"
       value={backingMode}
       onChange={(event) => onBackingChange(event.target.value as IntakeV6BackingMode)}
       data-testid="intake-v6-backing-mode"

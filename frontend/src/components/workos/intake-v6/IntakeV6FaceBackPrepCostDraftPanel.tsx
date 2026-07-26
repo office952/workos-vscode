@@ -70,7 +70,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
       {analysisReady ? (
         <>
           <div
-            className="mb-4 rounded border border-[#2A3548] bg-[#0A0F1A]/60 px-3 py-2 text-[11px] text-slate-400"
+            className="mb-4 rounded border border-wo-border-strong bg-wo-surface-inset/60 px-3 py-2 text-[11px] text-slate-400"
             data-testid="intake-v6-face-back-prep-template"
           >
             <div className={v6.mono + " text-slate-200"}>
@@ -119,7 +119,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
               ) : null}
 
               <div
-                className="mb-4 rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 text-[10px] text-slate-500"
+                className="mb-4 rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 text-[10px] text-slate-500"
                 data-testid="intake-v6-face-back-prep-formulas"
               >
                 {formulaLines.map((line) => (
@@ -134,7 +134,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
                 <div className="overflow-x-auto">
                   <table className="w-full text-[11px]">
                     <thead>
-                      <tr className="border-b border-[#2A3548] text-left text-slate-500">
+                      <tr className="border-b border-wo-border-strong text-left text-slate-500">
                         <th className="py-2 pr-3">Material</th>
                         <th className="py-2 pr-3">Key</th>
                         <th className="py-2 pr-3">Cantitate</th>
@@ -147,7 +147,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
                       {draft.materials.map((row) => (
                         <tr
                           key={`${row.component}-${row.material_key}`}
-                          className="border-b border-[#2A3548]/60"
+                          className="border-b border-wo-border-strong/60"
                           data-testid={`intake-v6-face-back-prep-material-${row.material_key}`}
                         >
                           <td className="py-2 pr-3 text-slate-200">{row.material_label}</td>
@@ -178,7 +178,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
                 <div className="overflow-x-auto">
                   <table className="w-full text-[11px]">
                     <thead>
-                      <tr className="border-b border-[#2A3548] text-left text-slate-500">
+                      <tr className="border-b border-wo-border-strong text-left text-slate-500">
                         <th className="py-2 pr-3">Operație</th>
                         <th className="py-2 pr-3">Perimetru ml</th>
                         <th className="py-2 pr-3">Treceri</th>
@@ -192,7 +192,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
                       {draft.operations.map((row) => (
                         <tr
                           key={row.operation_key}
-                          className="border-b border-[#2A3548]/60"
+                          className="border-b border-wo-border-strong/60"
                           data-testid={`intake-v6-face-back-prep-operation-${row.task_key}`}
                         >
                           <td className="py-2 pr-3 text-slate-200">
@@ -226,7 +226,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
               </div>
 
               <div
-                className="mb-4 rounded border border-[#2A3548] bg-[#0A0F1A]/40 px-3 py-2 text-[11px] text-slate-300"
+                className="mb-4 rounded border border-wo-border-strong bg-wo-surface-inset/40 px-3 py-2 text-[11px] text-slate-300"
                 data-testid="intake-v6-face-back-prep-totals"
               >
                 {statusLabel ? (
@@ -287,7 +287,7 @@ export default function IntakeV6FaceBackPrepCostDraftPanel({
                     {draft.warnings.map((warning) => (
                       <li
                         key={`${warning.code}-${warning.message}`}
-                        className="rounded border border-[#2A3548]/60 px-3 py-2 text-slate-400"
+                        className="rounded border border-wo-border-strong/60 px-3 py-2 text-slate-400"
                         data-testid={`intake-v6-face-back-prep-warning-${warning.code}`}
                       >
                         <span className={v6.mono + " text-slate-500"}>{warning.code}</span>

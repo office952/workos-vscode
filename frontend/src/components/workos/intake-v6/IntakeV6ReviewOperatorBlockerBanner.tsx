@@ -26,7 +26,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
   if (display.loading) {
     return (
       <p
-        className="rounded-full border border-[#2A3548]/70 bg-[#0A0F1A]/80 px-2.5 py-1 text-[11px] text-slate-400"
+        className="rounded-full border border-wo-border-strong/70 bg-wo-surface-inset/80 px-2.5 py-1 text-[11px] text-wo-text-muted"
         data-testid="intake-v6-review-operator-blocker-banner-loading"
       >
         …
@@ -62,8 +62,8 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
         type="button"
         className={
           blocked
-            ? "inline-flex items-center gap-1.5 rounded-full border border-rose-400/50 bg-rose-500/25 px-2.5 py-1 text-[11px] font-bold text-rose-50 shadow-[0_0_12px_rgba(244,63,94,0.35)]"
-            : "inline-flex items-center gap-1.5 rounded-full border border-amber-400/45 bg-amber-500/20 px-2.5 py-1 text-[11px] font-bold text-amber-50 shadow-[0_0_12px_rgba(245,158,11,0.3)]"
+            ? "inline-flex items-center gap-1.5 rounded-full border border-rose-300 bg-rose-50 px-2.5 py-1 text-[11px] font-bold text-rose-800 shadow-sm dark:border-rose-400/50 dark:bg-rose-500/25 dark:text-rose-50 dark:shadow-[0_0_12px_rgba(244,63,94,0.35)]"
+            : "inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[11px] font-bold text-amber-900 shadow-sm dark:border-amber-400/45 dark:bg-amber-500/20 dark:text-amber-50 dark:shadow-[0_0_12px_rgba(245,158,11,0.3)]"
         }
         onClick={() => setExpanded((value) => !value)}
         aria-expanded={expanded}
@@ -79,25 +79,25 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
 
       {expanded ? (
         <div
-          className="absolute right-0 z-20 mt-1.5 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-[#2A3548] bg-[#101827] p-2.5 shadow-xl"
+          className="absolute right-0 z-20 mt-1.5 w-[min(22rem,calc(100vw-2rem))] rounded-md border border-wo-border-strong bg-wo-surface-raised p-2.5 shadow-xl"
           data-testid="intake-v6-review-operator-blocker-banner-list"
         >
-          <p className="mb-2 text-[11px] font-semibold text-slate-200">{display.summaryTitle}</p>
+          <p className="mb-2 text-[11px] font-semibold text-wo-text-primary">{display.summaryTitle}</p>
           <ul className="space-y-2">
             {display.issues.map((issue) => (
               <li
                 key={issue.id}
-                className="rounded border border-[#2A3548]/80 bg-[#0A0F1A]/50 px-2 py-1.5"
+                className="rounded border border-wo-border-strong/80 bg-wo-surface-inset/50 px-2 py-1.5"
                 data-testid={`intake-v6-review-operator-blocker-issue-${issue.id}`}
               >
-                <p className="text-[11px] leading-snug text-slate-200">{issue.message}</p>
+                <p className="text-[11px] leading-snug text-wo-text-primary">{issue.message}</p>
                 {issue.action ? (
-                  <p className="mt-0.5 text-[10px] text-slate-500">{issue.action}</p>
+                  <p className="mt-0.5 text-[10px] text-wo-text-dim">{issue.action}</p>
                 ) : null}
                 {issue.focusTarget && onFocusTarget ? (
                   <button
                     type="button"
-                    className="mt-1 text-[10px] font-semibold text-cyan-300 hover:text-cyan-200"
+                    className="mt-1 text-[10px] font-semibold text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"
                     onClick={() => {
                       if (issue.tabId) {
                         onFocusTarget(`tab:${issue.tabId}`);
@@ -115,7 +115,7 @@ export default function IntakeV6ReviewOperatorBlockerBanner({
           {onJumpToDiagnostic ? (
             <button
               type="button"
-              className="mt-2 text-[10px] font-semibold text-slate-500 underline-offset-2 hover:text-slate-300 hover:underline"
+              className="mt-2 text-[10px] font-semibold text-wo-text-dim underline-offset-2 hover:text-wo-text-secondary hover:underline"
               onClick={onJumpToDiagnostic}
               data-testid="intake-v6-review-operator-blocker-diagnostic-link"
             >

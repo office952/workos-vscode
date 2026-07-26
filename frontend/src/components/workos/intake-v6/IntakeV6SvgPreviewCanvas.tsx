@@ -98,7 +98,7 @@ export default function IntakeV6SvgPreviewCanvas({
         </div>
       ) : null}
       <div
-        className={`relative overflow-hidden rounded-lg border border-[#2A3548] bg-[#F8FAFC] ${framePadding}`}
+        className={`relative overflow-hidden rounded-lg border border-wo-border-strong bg-slate-50 ${framePadding}`}
         data-testid={`${testId}-frame`}
       >
         {missingExternalRaster ? (

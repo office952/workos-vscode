@@ -46,7 +46,7 @@ export default function IntakeV6ReviewCantLettersSection({
         {groups.map((group) => (
           <div
             key={group.group_key}
-            className="rounded border border-[#2A3548] bg-[#0A0F1A]/40 p-3"
+            className="rounded border border-wo-border-strong bg-wo-surface-inset/40 p-3"
             data-testid={`intake-v6-letter-group-${group.group_key}`}
           >
             <div className="mb-2 flex items-center gap-2">

@@ -52,7 +52,7 @@ export default function IntakeV6ReviewWorkbenchLayout({
       >
         <div className="min-w-0 lg:flex lg:min-h-0 lg:flex-col">
           <div
-            className="min-h-[12rem] overflow-hidden rounded-lg border border-[#2A3548]/90 bg-[#0B1220]/55"
+            className="min-h-[12rem] overflow-hidden rounded-lg border border-wo-border-strong/90 bg-wo-surface-input/55"
             data-testid="intake-v6-review-form-region"
             data-form-leads="true"
             data-workbench="true"
@@ -63,7 +63,7 @@ export default function IntakeV6ReviewWorkbenchLayout({
               data-domain-nav-placement="top"
             >
               <div
-                className="border-b border-[#2A3548]/80 bg-[#0A0F1A]/40"
+                className="border-b border-wo-border-strong/80 bg-wo-surface-inset/40"
                 data-testid="intake-v6-review-domain-nav-shell"
                 data-domain-nav-placement="top"
               >

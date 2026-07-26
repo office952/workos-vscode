@@ -48,7 +48,7 @@ export default function IntakeV6OfferScopeReviewSummary({
 
   return (
     <section
-      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-[#2A3548]/55 bg-[#111827]/30 px-2.5 py-1"
+      className="inline-flex max-w-full items-center gap-1.5 rounded-full border border-wo-border-strong/55 bg-wo-surface-raised/30 px-2.5 py-1"
       data-testid="intake-v6-review-offer-scope-summary"
       data-scope-weight="chip"
     >

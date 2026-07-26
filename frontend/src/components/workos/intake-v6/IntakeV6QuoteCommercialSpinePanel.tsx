@@ -137,7 +137,7 @@ function WorkflowStepper({ steps }: { steps: WorkflowStep[] }) {
               ? "border-emerald-700/40 bg-emerald-950/20 text-emerald-200"
               : step.active
                 ? "border-amber-600/40 bg-amber-950/20 text-amber-100"
-                : "border-[#1E293B] bg-[#0B1220] text-slate-500"
+                : "border-wo-border-subtle bg-wo-surface-input text-slate-500"
           }`}
           data-testid={`intake-v6-workflow-step-${step.id}`}
         >
@@ -350,7 +350,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       {snapshotExists && pricingReviewReadModel ? (
         <div
-          className="mb-4 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3"
+          className="mb-4 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3"
           data-testid="intake-v6-pricing-review-authority"
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -388,7 +388,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         <p className="mb-3 text-[12px] text-slate-400">Încarc starea comercială…</p>
       ) : null}
 
-      <section className="mb-4 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3" data-testid="intake-v6-priced-quote-bridge">
+      <section className="mb-4 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3" data-testid="intake-v6-priced-quote-bridge">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
           <h4 className="text-[12px] font-semibold text-slate-200">1. Ofertă client</h4>
           <span
@@ -585,7 +585,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
         )}
       </section>
 
-      <section className="mb-3 rounded-lg border border-[#1E293B] bg-[#0B1220] p-3">
+      <section className="mb-3 rounded-lg border border-wo-border-subtle bg-wo-surface-input p-3">
         <h4 className="mb-2 text-[12px] font-semibold text-slate-200">2. Aprobare & conversie</h4>
         {convertBlockers.length > 0 && !converted ? (
           <ul className="mb-3 space-y-1 text-[11px] text-amber-200" data-testid="intake-v6-spine-blockers">
@@ -741,7 +741,7 @@ export default function IntakeV6QuoteCommercialSpinePanel({
 
       {showTechnical ? (
         <div
-          className="mt-3 rounded border border-[#1E293B] bg-[#090f18] p-3 text-[10px] text-slate-500"
+          className="mt-3 rounded border border-wo-border-subtle bg-wo-surface-inset p-3 text-[10px] text-slate-500"
           data-testid="intake-v6-commercial-spine-truth-boundary"
         >
           <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">

@@ -26,7 +26,7 @@ export default function IntakeV6LayersWarningsPanel({
 
   return (
     <div
-      className="rounded-md border border-[#243044]/70 bg-[#101827]/40 px-3 py-2"
+      className="rounded-md border border-wo-border-strong/70 bg-wo-surface-raised/40 px-3 py-2"
       data-testid="intake-v6-layers-warnings"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">

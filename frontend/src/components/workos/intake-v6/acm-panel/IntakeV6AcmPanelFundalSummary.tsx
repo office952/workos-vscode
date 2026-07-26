@@ -52,7 +52,7 @@ export default function IntakeV6AcmPanelFundalSummary({
       </p>
       <button
         type="button"
-        className="mt-2 rounded border border-[#3b82f5]/45 bg-[#172952]/60 px-2.5 py-1.5 text-[11px] font-medium text-[#93c5fd] hover:bg-[#1e3a5f]"
+        className="mt-2 rounded border border-blue-500/45 bg-blue-50 px-2.5 py-1.5 text-[11px] font-medium text-sky-800 hover:bg-blue-100 dark:bg-blue-950/50 dark:text-sky-300 dark:hover:bg-blue-900/50"
         data-testid="intake-v6-acm-open-inspector-from-fundal"
         onClick={() => onOpenInspector("summary")}
       >

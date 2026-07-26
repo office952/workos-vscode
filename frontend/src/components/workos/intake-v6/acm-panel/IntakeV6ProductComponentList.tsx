@@ -98,7 +98,7 @@ export default function IntakeV6ProductComponentList({
 
   return (
     <section
-      className="rounded-md border border-[#2A3548]/70 bg-[#111827]/45 p-2"
+      className="rounded-md border border-wo-border-strong/70 bg-wo-surface-raised/45 p-2"
       data-testid="intake-v6-product-component-list"
     >
       <p className="mb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -117,8 +117,8 @@ export default function IntakeV6ProductComponentList({
                 data-selected={selected ? "true" : "false"}
                 className={`flex w-full items-start gap-2 rounded border px-2.5 py-2 text-left transition ${
                   selected
-                    ? "border-[#3b82f5]/55 bg-[#172952]/55"
-                    : "border-[#2A3548]/50 bg-[#0A0F1A]/40 hover:border-[#3b82f5]/30"
+                    ? "border-blue-500/55 bg-blue-50 dark:bg-blue-950/40"
+                    : "border-wo-border-strong/50 bg-wo-surface-inset/40 hover:border-blue-500/30"
                 }`}
               >
                 <div className="min-w-0 flex-1">

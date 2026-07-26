@@ -4,8 +4,8 @@ type ClusterTone = "primary" | "secondary" | "muted";
 
 const toneClass: Record<ClusterTone, string> = {
   primary: "border-cyan-700/50 bg-cyan-950/15",
-  secondary: "border-[#2A3548] bg-[#0A0F1A]/50",
-  muted: "border-[#2A3548]/70 bg-[#0A0F1A]/30",
+  secondary: "border-wo-border-strong bg-wo-surface-inset/50",
+  muted: "border-wo-border-strong/70 bg-wo-surface-inset/30",
 };
 
 export default function IntakeV6MontajClusterShell({
@@ -32,7 +32,7 @@ export default function IntakeV6MontajClusterShell({
         ? "border-rose-500/40 bg-rose-500/10 text-rose-100"
         : statusTone === "pending"
           ? "border-amber-500/40 bg-amber-500/10 text-amber-100"
-          : "border-[#2A3548] bg-[#111827] text-slate-300";
+          : "border-wo-border-strong bg-wo-surface-raised text-slate-300";
 
   return (
     <section

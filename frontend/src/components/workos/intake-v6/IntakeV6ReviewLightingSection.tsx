@@ -140,7 +140,7 @@ export default function IntakeV6ReviewLightingSection({
               "group flex min-w-[180px] cursor-pointer items-center gap-2 rounded border px-2.5 py-1.5 transition",
               illuminated
                 ? "border-cyan-400/60 bg-cyan-400/10 text-cyan-50"
-                : "border-[#2A3548] bg-[#0A0F1A] text-slate-400 hover:border-cyan-400/30 hover:text-slate-200",
+                : "border-wo-border-strong bg-wo-surface-inset text-slate-400 hover:border-cyan-400/30 hover:text-slate-200",
             ].join(" ")}
           >
             <input

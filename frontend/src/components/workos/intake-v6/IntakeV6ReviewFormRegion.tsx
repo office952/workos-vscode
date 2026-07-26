@@ -19,7 +19,7 @@ export default function IntakeV6ReviewFormRegion({
   if (layout === "workbench") {
     return (
       <div
-        className="rounded-lg border border-[#2A3548]/90 bg-[#0B1220]/55"
+        className="rounded-lg border border-wo-border-strong/90 bg-wo-surface-input/55"
         data-testid="intake-v6-review-form-region"
         data-form-leads="true"
         data-workbench="true"
@@ -30,7 +30,7 @@ export default function IntakeV6ReviewFormRegion({
           data-domain-nav-placement="top"
         >
           <aside
-            className="border-b border-[#2A3548]/80 bg-[#0A0F1A]/40"
+            className="border-b border-wo-border-strong/80 bg-wo-surface-inset/40"
             data-testid="intake-v6-review-domain-nav-shell"
             data-domain-nav-placement="top"
           >
@@ -54,12 +54,12 @@ export default function IntakeV6ReviewFormRegion({
 
   return (
     <div
-      className="rounded-lg border border-[#2A3548]/90 bg-[#0B1220]/55"
+      className="rounded-lg border border-wo-border-strong/90 bg-wo-surface-input/55"
       data-testid="intake-v6-review-form-region"
       data-form-leads="true"
     >
       <div
-        className="relative flex items-end justify-between gap-2 border-b border-[#2A3548]/80 px-2 pt-1.5 sm:px-3"
+        className="relative flex items-end justify-between gap-2 border-b border-wo-border-strong/80 px-2 pt-1.5 sm:px-3"
         data-testid="intake-v6-review-form-chrome"
       >
         <div className="min-w-0 flex-1 [&_[data-testid=intake-v6-review-tabs]]:mb-0 [&_[data-testid=intake-v6-review-tabs]]:border-b-0">

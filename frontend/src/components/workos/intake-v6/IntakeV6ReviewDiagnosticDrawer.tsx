@@ -57,15 +57,15 @@ export default function IntakeV6ReviewDiagnosticDrawer({
         data-testid="intake-v6-review-diagnostic-backdrop"
       />
       <aside
-        className="relative z-10 flex h-full w-full max-w-xl flex-col border-l border-[#2A3548] bg-[#0A0F1A] shadow-2xl"
+        className="relative z-10 flex h-full w-full max-w-xl flex-col border-l border-wo-border-strong bg-wo-surface-inset shadow-2xl"
         data-testid="intake-v6-review-technical-details"
         data-expanded="true"
       >
-        <header className="flex items-center justify-between gap-2 border-b border-[#2A3548] px-3 py-2.5">
+        <header className="flex items-center justify-between gap-2 border-b border-wo-border-strong px-3 py-2.5">
           <h2 className="text-[13px] font-semibold text-slate-100">{title}</h2>
           <button
             type="button"
-            className="rounded border border-[#2A3548] p-1 text-slate-400 hover:text-slate-100"
+            className="rounded border border-wo-border-strong p-1 text-slate-400 hover:text-slate-100"
             onClick={() => onOpenChange(false)}
             aria-label="Închide"
             data-testid="intake-v6-review-diagnostic-close"

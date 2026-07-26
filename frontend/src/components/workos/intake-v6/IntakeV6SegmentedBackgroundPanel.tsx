@@ -89,7 +89,7 @@ export default function IntakeV6SegmentedBackgroundPanel({
           {(config.panels || []).map((panel) => (
             <li
               key={panel.panel_id}
-              className="rounded border border-[#2A3548] bg-[#0A0F1A]/80 px-2 py-1.5 text-[10px] text-slate-200"
+              className="rounded border border-wo-border-strong bg-wo-surface-inset/80 px-2 py-1.5 text-[10px] text-slate-200"
               data-testid={`intake-v6-segmented-panel-${panel.panel_id}`}
             >
               <span className="font-medium text-amber-50">{panel.panel_id}</span>

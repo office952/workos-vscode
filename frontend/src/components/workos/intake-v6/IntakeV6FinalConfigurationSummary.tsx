@@ -34,7 +34,7 @@ function ConsolidatedBlockersList({
 			className={
 				blocked
 					? "rounded-md border border-rose-500/30 bg-rose-950/30 px-3 py-2.5"
-					: "rounded-md border border-[#243044]/70 bg-[#101827]/40 px-3 py-2.5"
+					: "rounded-md border border-wo-border-strong/70 bg-wo-surface-raised/40 px-3 py-2.5"
 			}
 			data-testid="intake-v6-final-config-status"
 			data-status-tier={tier}
@@ -166,7 +166,7 @@ export default function IntakeV6FinalConfigurationSummary({
 							</div>
 							{handoff.pricedQuoteDryRun?.commercial_totals?.subtotal_net != null ? (
 								<dl
-									className="grid grid-cols-2 gap-x-3 gap-y-1 rounded border border-[#243044]/60 bg-[#0B1220]/50 px-2.5 py-2 text-[11px]"
+									className="grid grid-cols-2 gap-x-3 gap-y-1 rounded border border-wo-border-strong/60 bg-wo-surface-input/50 px-2.5 py-2 text-[11px]"
 									data-testid="intake-v6-confirm-offer-totals-breakdown"
 								>
 									<div className="flex justify-between gap-2 text-slate-400">

@@ -38,8 +38,8 @@ export default function IntakeV6OperatorGeometrySummaryCard({
     <div
       className={
         compact
-          ? "rounded-md border border-[#2A3548]/70 bg-[#0A0F1A]/35 px-3 py-2.5"
-          : "mb-4 rounded-[10px] border border-[#2A3548] bg-[#111827] p-5 border-blue-500/20 bg-gradient-to-br from-[#0A0F1A] to-[#0f172a]/80"
+          ? "rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/35 px-3 py-2.5"
+          : "mb-4 rounded-[10px] border border-wo-border-strong border-blue-500/20 bg-gradient-to-br from-wo-surface-inset to-wo-surface-raised/80 p-5"
       }
       data-testid="intake-v6-operator-geometry-summary"
     >

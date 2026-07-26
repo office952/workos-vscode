@@ -47,10 +47,10 @@ function AtelierZoneFields({
   onChange: (next: AcmShellZoneFinish) => void;
 }) {
   return (
-    <div className="space-y-1.5 rounded border border-[#2A3548]/60 bg-[#0A0F1A]/40 px-2 py-2">
+    <div className="space-y-1.5 rounded border border-wo-border-strong/60 bg-wo-surface-inset/40 px-2 py-2">
       <p className="text-[11px] font-semibold text-slate-300">{labelRo}</p>
       <select
-        className="w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1.5 text-[12px] text-slate-100"
+        className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
         value={zone.kind}
         onChange={(e) => onChange(defaultAcmShellZone(e.target.value as AcmShellZoneKind))}
         data-testid={`intake-v6-acm-shell-zone-kind-${zoneId}`}
@@ -66,7 +66,7 @@ function AtelierZoneFields({
           <label className="block text-[10px] text-slate-500">
             Cod Oracal 651
             <input
-              className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1 text-[12px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
               value={zone.color_code}
               onChange={(e) =>
                 onChange({ ...zone, color_code: e.target.value.trim() })
@@ -78,7 +78,7 @@ function AtelierZoneFields({
           <label className="block text-[10px] text-slate-500">
             Lățime rolă
             <select
-              className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1 text-[12px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
               value={zone.roll_width_mm}
               onChange={(e) =>
                 onChange({
@@ -100,7 +100,7 @@ function AtelierZoneFields({
         <label className="block text-[10px] text-slate-500">
           Lățime rolă print+lam
           <select
-            className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1 text-[12px] text-slate-100"
+            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
             value={zone.roll_width_mm}
             onChange={(e) =>
               onChange({
@@ -216,7 +216,7 @@ export default function IntakeV6AcmShellFinishPanel({
       <label className="block text-[11px] text-slate-400">
         Cum aplici folia
         <select
-          className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
           value={applyMode}
           onChange={(e) => setApplyMode(e.target.value as FoilApplyMode)}
           data-testid="intake-v6-acm-shell-apply-mode"
@@ -254,7 +254,7 @@ export default function IntakeV6AcmShellFinishPanel({
         <p className="text-[11px] text-slate-400">Vopsire șuruburi la culoarea plăcii.</p>
       )}
       <details
-        className="rounded border border-[#2A3548]/50 bg-[#0A0F1A]/30"
+        className="rounded border border-wo-border-strong/50 bg-wo-surface-inset/30"
         open={atelierOpen}
         onToggle={(e) => setAtelierOpen((e.target as HTMLDetailsElement).open)}
         data-testid="intake-v6-acm-shell-atelier-details"
@@ -263,7 +263,7 @@ export default function IntakeV6AcmShellFinishPanel({
           Detalii atelier
         </summary>
         {atelierOpen ? (
-          <div className="space-y-2 border-t border-[#2A3548]/40 px-2 py-2">
+          <div className="space-y-2 border-t border-wo-border-strong/40 px-2 py-2">
             <AtelierZoneFields
               zoneId="face"
               labelRo="Față"
@@ -277,10 +277,10 @@ export default function IntakeV6AcmShellFinishPanel({
               onChange={(volume) => apply({ ...draft, volume, operator_confirmed: false })}
             />
             {shellNeedsFoil(draft) ? (
-              <div className="space-y-1.5 rounded border border-[#2A3548]/60 px-2 py-2">
+              <div className="space-y-1.5 rounded border border-wo-border-strong/60 px-2 py-2">
                 <p className="text-[11px] font-semibold text-slate-300">Strategie folie</p>
                 <select
-                  className="w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1.5 text-[12px] text-slate-100"
+                  className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
                   value={draft.foil_strategy?.mode ?? "face_plus_first_fold"}
                   onChange={(e) => {
                     const mode = e.target.value as AcmShellFoilStrategyMode;
@@ -319,7 +319,7 @@ export default function IntakeV6AcmShellFinishPanel({
                       <input
                         type="number"
                         min={2}
-                        className="mt-0.5 w-full rounded border border-[#2A3548] bg-[#111827] px-2 py-1 text-[12px] text-slate-100"
+                        className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
                         value={draft.foil_strategy.piece_count}
                         onChange={(e) =>
                           apply({

@@ -76,10 +76,8 @@ export default function IntakeV6ReviewTabNav({
                 ? "relative flex w-full flex-col rounded-md border px-2 py-1.5 text-left transition"
                 : "relative flex min-w-[5.5rem] flex-1 flex-col items-center rounded-md border px-2 py-1 text-center transition",
               selected
-                ? vertical
-                  ? "border-cyan-500/35 bg-cyan-500/10 text-slate-100"
-                  : "border-cyan-500/35 bg-cyan-500/10 text-slate-100"
-                : "border-transparent text-slate-500 hover:bg-[#111827]/50 hover:text-slate-300",
+                ? "border-cyan-500/40 bg-cyan-50 text-wo-text-primary dark:bg-cyan-500/10"
+                : "border-transparent text-wo-text-dim hover:bg-wo-surface-raised/50 hover:text-wo-text-secondary",
             )}
             onClick={() => onChange(tab.id)}
             data-testid={`intake-v6-review-tab-${tab.id}`}
@@ -94,7 +92,7 @@ export default function IntakeV6ReviewTabNav({
               {tab.label}
               {tab.id === "finisaje" && pendingFinisaje > 0 ? (
                 <span
-                  className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-500/20 px-1 text-[11px] font-bold text-amber-200"
+                  className="inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-amber-100 px-1 text-[11px] font-bold text-amber-800 dark:bg-amber-500/20 dark:text-amber-200"
                   data-testid="intake-v6-review-tab-finisaje-pending"
                 >
                   {pendingFinisaje}
@@ -102,11 +100,11 @@ export default function IntakeV6ReviewTabNav({
               ) : null}
             </span>
             {vertical ? (
-              <span className="mt-0.5 truncate text-[10px] font-normal text-slate-500">
+              <span className="mt-0.5 truncate text-[10px] font-normal text-wo-text-dim">
                 {tab.hint}
               </span>
             ) : (
-              <span className="mt-0.5 hidden max-w-full truncate text-[9px] font-normal text-slate-500 sm:block">
+              <span className="mt-0.5 hidden max-w-full truncate text-[9px] font-normal text-wo-text-dim sm:block">
                 {tab.hint}
               </span>
             )}

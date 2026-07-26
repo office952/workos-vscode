@@ -178,7 +178,7 @@ function ConstructionBlock({ model }: { model: AcmPanelBlueprintReadModel }) {
 
   return (
     <div
-      className="mt-2 rounded border border-[#2A3548]/50 bg-[#0A0F1A]/40 px-2 py-1.5"
+      className="mt-2 rounded border border-wo-border-strong/50 bg-wo-surface-inset/40 px-2 py-1.5"
       data-testid="intake-v6-acm-blueprint-construction"
     >
       <div className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -275,7 +275,7 @@ export default function IntakeV6AcmPanelBlueprintPreview({
       className={
         embedded
           ? "z-[1]"
-          : "sticky top-2 z-[1] rounded border border-[#2A3548]/60 bg-[#0B1220]/90"
+          : "sticky top-2 z-[1] rounded border border-wo-border-strong/60 bg-wo-surface-input/90"
       }
       data-testid="intake-v6-acm-blueprint-preview"
       data-readiness={model.readiness}
@@ -347,7 +347,7 @@ export default function IntakeV6AcmPanelBlueprintPreview({
       {expanded ? (
         <div
           id="intake-v6-acm-blueprint-panel"
-          className="border-t border-[#2A3548]/50 px-2.5 py-1.5"
+          className="border-t border-wo-border-strong/50 px-2.5 py-1.5"
           data-testid="intake-v6-acm-blueprint-expanded"
         >
           <p

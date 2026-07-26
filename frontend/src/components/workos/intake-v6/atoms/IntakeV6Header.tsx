@@ -48,30 +48,30 @@ export default function IntakeV6Header({
   const logoOnlyCandidate = isLogoOnlyCandidateNotOfferableStatus(ws?.readiness_status);
 
   return (
-    <header className="border-b border-[#2A3548] bg-[#111827]" data-testid="intake-v6-header">
+    <header className="border-b border-wo-border-strong bg-wo-surface-raised" data-testid="intake-v6-header">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-5 py-2 sm:px-6">
         <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-2 gap-y-1 text-[12px]">
           <span
-            className={`${v6.mono} font-semibold text-sky-300`}
+            className={`${v6.mono} font-semibold text-sky-700 dark:text-sky-300`}
             data-testid="intake-v6-header-workspace-code"
           >
             {code}
           </span>
-          <span className="text-slate-600" aria-hidden>
+          <span className="text-wo-text-dim" aria-hidden>
             ·
           </span>
-          <span className="truncate text-slate-400" data-testid="intake-v6-header-template">
+          <span className="truncate text-wo-text-muted" data-testid="intake-v6-header-template">
             {logoOnlyCandidate ? LOGO_ONLY_COMMERCIAL_GUARD_TITLE : template}
           </span>
-          <span className="text-slate-600" aria-hidden>
+          <span className="text-wo-text-dim" aria-hidden>
             ·
           </span>
-          <span className="text-slate-500" data-testid="intake-v6-header-step">
+          <span className="text-wo-text-dim" data-testid="intake-v6-header-step">
             {STEP_LABELS[state.currentStep]}
           </span>
           {logoOnlyCandidate ? (
             <span
-              className="basis-full text-[11px] font-semibold text-amber-200 sm:basis-auto"
+              className="basis-full text-[11px] font-semibold text-amber-800 dark:text-amber-200 sm:basis-auto"
               data-testid="intake-v6-header-logo-only-guard"
             >
               {LOGO_ONLY_COMMERCIAL_GUARD_MESSAGE} Context UI existent: {template} shell.

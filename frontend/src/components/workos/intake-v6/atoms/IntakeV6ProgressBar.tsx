@@ -25,7 +25,7 @@ export default function IntakeV6ProgressBar({
 
 	return (
 		<nav
-			className={`flex items-center gap-0 border-t border-[#2A3548]/80 bg-[#111827] ${
+			className={`flex items-center gap-0 border-t border-wo-border-strong/80 bg-wo-surface-raised ${
 				compact ? "px-5 py-1.5 sm:px-6" : "px-7 py-4"
 			}`}
 			data-testid="intake-v6-progress"
@@ -52,12 +52,12 @@ export default function IntakeV6ProgressBar({
 							<span
 								className={`flex items-center justify-center rounded-full border-2 font-bold ${circleClass} ${
 									done
-										? "border-emerald-500/40 bg-emerald-500/10 text-emerald-400"
+										? "border-emerald-500/40 bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400"
 										: active
-											? "border-sky-500/40 bg-sky-500/10 text-sky-300"
+											? "border-sky-500/40 bg-sky-50 text-sky-800 dark:bg-sky-500/10 dark:text-sky-300"
 											: visited && !complete
-												? "border-amber-500/40 bg-amber-500/10 text-amber-200"
-												: "border-[#2A3548] bg-[#1E293B] text-slate-500"
+												? "border-amber-500/40 bg-amber-50 text-amber-800 dark:bg-amber-500/10 dark:text-amber-200"
+												: "border-wo-border-strong bg-wo-hover text-wo-text-dim"
 								}`}
 							>
 								{done ? "✓" : index + 1}
@@ -81,7 +81,7 @@ export default function IntakeV6ProgressBar({
 						{index < INTAKE_V6_VISIBLE_PROGRESS_STEPS.length - 1 ? (
 							<div
 								className={`mx-2 h-0.5 flex-1 rounded ${compact ? "mx-1.5" : "mx-3"} ${
-									done ? "bg-emerald-500/40" : "bg-[#2A3548]"
+									done ? "bg-emerald-500/40" : "bg-wo-hover"
 								}`}
 							/>
 						) : null}

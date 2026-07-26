@@ -184,7 +184,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
 
   return (
     <footer
-      className="sticky bottom-0 z-10 mt-auto border-t border-[#2A3548] bg-[#111827]/95 px-5 py-2 shadow-[0_-6px_18px_rgba(0,0,0,0.28)] backdrop-blur-sm"
+      className="sticky bottom-0 z-10 mt-auto border-t border-wo-border-strong bg-wo-surface-raised/95 px-5 py-2 shadow-[0_-4px_14px_rgba(0,0,0,0.08)] dark:shadow-[0_-6px_18px_rgba(0,0,0,0.28)] backdrop-blur-sm"
       data-testid="intake-v6-operator-workspace-footer"
       data-footer-weight="compact"
     >
@@ -192,32 +192,32 @@ export default function IntakeV6OperatorWorkspaceFooter({
       (primaryActionReason || guidance.progressLabel || guidance.countsLabel) ? (
         <div
           id="intake-v6-footer-primary-action-reason"
-          className="mb-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5 text-[11px] leading-snug text-slate-300"
+          className="mb-1.5 flex flex-wrap items-baseline gap-x-2 gap-y-0.5 px-0.5 text-[11px] leading-snug text-wo-text-secondary"
           data-testid="intake-v6-footer-primary-action-reason"
           data-guidance-status={guidance.statusLabel}
           role="status"
           aria-live="polite"
         >
-          <span className="font-semibold text-slate-200" data-testid="intake-v6-guidance-status">
+          <span className="font-semibold text-wo-text-primary" data-testid="intake-v6-guidance-status">
             {guidance.statusLabel}
           </span>
           {guidance.progressLabel ? (
-            <span className="text-slate-500" data-testid="intake-v6-guidance-progress">
+            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-progress">
               · {guidance.progressLabel}
             </span>
           ) : null}
           {guidance.countsLabel ? (
-            <span className="text-slate-500" data-testid="intake-v6-guidance-counts">
+            <span className="text-wo-text-muted" data-testid="intake-v6-guidance-counts">
               · {guidance.countsLabel}
             </span>
           ) : null}
           {primaryActionReason ? (
-            <span className="basis-full text-slate-200" data-testid="intake-v6-guidance-next-action">
-              <span className="font-semibold text-slate-100">Următorul pas: </span>
+            <span className="basis-full text-wo-text-secondary" data-testid="intake-v6-guidance-next-action">
+              <span className="font-semibold text-wo-text-primary">Următorul pas: </span>
               {primaryActionReason}
             </span>
           ) : guidance.canContinue ? (
-            <span className="basis-full text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
+            <span className="basis-full text-emerald-800 dark:text-emerald-100/90" data-testid="intake-v6-guidance-next-action">
               <span className="font-semibold">Următorul pas: </span>
               {guidance.continueEnabledLabel}
             </span>
@@ -229,43 +229,43 @@ export default function IntakeV6OperatorWorkspaceFooter({
       ) : null}
 
       {showIssuesDrawer ? (
-        <div className="mb-2 rounded border border-[#2A3548] bg-[#0A0F1A]/60" data-testid="intake-v6-footer-issues">
+        <div className="mb-2 rounded border border-wo-border-strong bg-wo-surface-inset/60" data-testid="intake-v6-footer-issues">
           <button
             type="button"
-            className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold text-slate-300"
+            className="flex w-full items-center justify-between px-3 py-2 text-left text-[11px] font-semibold text-wo-text-secondary"
             onClick={() => setIssuesOpen((value) => !value)}
             data-testid="intake-v6-footer-issues-toggle"
             aria-expanded={issuesOpen}
           >
             <span data-testid="intake-v6-footer-issues-count">{countLabel}</span>
-            <span className="text-slate-500">{issuesOpen ? "▾" : "▸"}</span>
+            <span className="text-wo-text-dim">{issuesOpen ? "▾" : "▸"}</span>
           </button>
           {issuesOpen ? (
-            <div className="border-t border-[#2A3548] px-3 py-2 text-[11px]" data-testid="intake-v6-footer-issues-content">
-              <p className="mb-2 text-[10px] text-slate-500" data-testid="intake-v6-footer-issues-breakdown">
+            <div className="border-t border-wo-border-strong px-3 py-2 text-[11px]" data-testid="intake-v6-footer-issues-content">
+              <p className="mb-2 text-[10px] text-wo-text-dim" data-testid="intake-v6-footer-issues-breakdown">
                 {guidance.drawerToggleLabel}
               </p>
               {drawerGroups.map((group) => (
                 <div key={group.id} className="mb-3 last:mb-0" data-testid={`intake-v6-footer-group-${group.id}`}>
-                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                  <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-wo-text-dim">
                     {group.label}
                   </p>
                   <ul className="space-y-1">
                     {group.entries.map((entry) => (
                       <li
                         key={entry.id}
-                        className="rounded border border-[#2A3548] px-2 py-1.5 text-slate-300"
+                        className="rounded border border-wo-border-strong px-2 py-1.5 text-wo-text-secondary"
                         data-testid={`intake-v6-footer-issue-${entry.id}`}
                         data-issue-severity={entry.severity}
                       >
                         <span>{entry.message}</span>
                         {entry.action && !entry.action.startsWith("jump-") && entry.action.length > 2 ? (
-                          <span className="mt-0.5 block text-[10px] text-slate-500">{entry.action}</span>
+                          <span className="mt-0.5 block text-[10px] text-wo-text-dim">{entry.action}</span>
                         ) : null}
                         {entry.action && /^(confirm-step|jump-)/.test(entry.action) ? (
                           <button
                             type="button"
-                            className="ml-2 text-[10px] font-semibold text-cyan-300 hover:text-cyan-200"
+                            className="ml-2 text-[10px] font-semibold text-cyan-700 hover:text-cyan-800 dark:text-cyan-300 dark:hover:text-cyan-200"
                             onClick={() => handleStatusAction(entry.action!)}
                             data-testid={`intake-v6-footer-issue-action-${entry.action}`}
                           >
@@ -287,7 +287,7 @@ export default function IntakeV6OperatorWorkspaceFooter({
           Înapoi
         </button>
 
-        <span className="text-center text-[11px] text-slate-500" data-testid="intake-v6-footer-step-label">
+        <span className="text-center text-[11px] text-wo-text-muted" data-testid="intake-v6-footer-step-label">
           {centerLabel}
         </span>
 

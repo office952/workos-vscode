@@ -114,7 +114,7 @@ export default function IntakeV6LayersFileConfirmPanel({
         </>
       ) : (
         <div
-          className="flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-[#2A3548] bg-[#0A0F1A]/40 px-4 py-6 text-center"
+          className="flex min-h-[140px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-wo-border-strong bg-wo-surface-inset/40 px-4 py-6 text-center"
           data-testid="intake-v6-svg-preview-empty"
         >
           <Upload className="h-8 w-8 text-slate-600" aria-hidden />

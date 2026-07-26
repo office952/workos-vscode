@@ -95,7 +95,7 @@ function LayerRoleSelect({
     <label className="block">
       <span className="mb-1 block text-[11px] text-slate-400">Rol geometrie</span>
       <select
-        className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
+        className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-200"
         value={normalizedSelectedRole}
         onChange={(event) => onUpdateLayerRole(layerKey, event.target.value as LayerAutoRole)}
         data-testid={`intake-v6-layer-role-${layerKey}`}
@@ -147,7 +147,7 @@ function LayerComponentBindingSummary({
 
   return (
     <div
-      className="mt-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5"
+      className="mt-2 rounded border border-wo-border-strong/80 bg-wo-surface-inset/70 px-2 py-1.5"
       data-testid={`intake-v6-layer-component-${layerKey}`}
     >
       <p className="text-[10px] uppercase tracking-wide text-slate-500">Componentă produs</p>
@@ -248,7 +248,7 @@ function LayerLegendRow({
           ? "border-cyan-400/40 bg-cyan-400/5"
           : requiresAttention
             ? "border-amber-500/25 bg-amber-500/5"
-            : "border-[#2A3548]/70 bg-[#0A0F1A]/50"
+            : "border-wo-border-strong/70 bg-wo-surface-inset/50"
       }`}
       data-testid={`intake-v6-layer-legend-${layerKey}`}
       onMouseEnter={onFocus}
@@ -340,7 +340,7 @@ function LayerCard({
           ? "border-cyan-400/40 bg-cyan-400/5"
           : requiresAttention
             ? "border-amber-500/30 bg-amber-500/5"
-            : "border-[#2A3548]/80 bg-[#0A0F1A]/40"
+            : "border-wo-border-strong/80 bg-wo-surface-inset/40"
       }`}
       data-testid={`intake-v6-layer-row-${layerKey}`}
       tabIndex={0}
@@ -505,7 +505,7 @@ export default function IntakeV6LayersRoleTable({
                       ? "border-cyan-400/40 bg-cyan-400/5"
                       : row.requiresAttention
                         ? "border-amber-500/30 bg-amber-500/5"
-                        : "border-[#2A3548]/80 bg-[#0A0F1A]/40"
+                        : "border-wo-border-strong/80 bg-wo-surface-inset/40"
                   }`}
                   data-testid={`intake-v6-layer-row-${layerKey}`}
                   tabIndex={0}
@@ -582,7 +582,7 @@ export default function IntakeV6LayersRoleTable({
             return (
               <tr
                 key={layer.id}
-                className={`border-t border-[#2A3548] ${requiresAttention ? "bg-amber-500/5" : ""}`}
+                className={`border-t border-wo-border-strong ${requiresAttention ? "bg-amber-500/5" : ""}`}
                 data-testid={`intake-v6-layer-row-${layerKey}`}
               >
                 <td className="py-2 pr-3 font-medium text-slate-200">

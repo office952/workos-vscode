@@ -205,10 +205,10 @@ export default function IntakeV6ProductCompositionPanel({
     <section
       className={`rounded-md border px-2.5 py-1.5 ${
         badgeOk
-          ? "border-[#2A3548]/55 bg-[#111827]/35"
+          ? "border-wo-border-strong/55 bg-wo-surface-raised/35"
           : badgeBlocker
             ? "border-rose-500/30 bg-rose-950/15"
-            : "border-[#2A3548]/70 bg-[#111827]/45"
+            : "border-wo-border-strong/70 bg-wo-surface-raised/45"
       }`}
       data-testid="intake-v6-product-composition-panel"
       data-header-weight="compact-row"
@@ -279,7 +279,7 @@ export default function IntakeV6ProductCompositionPanel({
         {items.map((item) => (
           <div
             key={item.composition_item_id ?? item.template_code}
-            className="rounded border border-[#2A3548]/50 bg-[#0A0F1A]/40 px-2.5 py-2"
+            className="rounded border border-wo-border-strong/50 bg-wo-surface-inset/40 px-2.5 py-2"
           >
             <p className="text-[12px] font-medium text-slate-200">
               {roleLabel(item.component_role, item.template_code)}
@@ -359,7 +359,7 @@ export default function IntakeV6ProductCompositionPanel({
                 {linkedSegmentItems.map((segment) => (
                   <div
                     key={segment.segment_key}
-                    className="rounded border border-[#2A3548]/80 bg-[#111827]/55 p-2.5"
+                    className="rounded border border-wo-border-strong/80 bg-wo-surface-raised/55 p-2.5"
                     data-testid={`intake-v6-product-definition-linked-segment-${segment.segment_key}`}
                   >
                     <p className="text-[11px] font-semibold text-slate-100">

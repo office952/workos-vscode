@@ -2277,10 +2277,10 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   illuminated={form.illuminated !== false}
                 />
               </div>
-              <div className="flex shrink-0 items-center border-l border-[#2A3548]/70 px-1.5 py-1">
+              <div className="flex shrink-0 items-center border-l border-wo-border-strong/70 px-1.5 py-1">
                 <button
                   type="button"
-                  className="rounded-md border border-[#2A3548]/80 bg-[#111827]/60 px-2 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-400/40 hover:text-slate-100"
+                  className="rounded-md border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-400/40 hover:text-slate-100"
                   data-testid="intake-v6-review-composition-sheet-trigger"
                   onClick={() => setProductDetailsOpen(true)}
                 >
@@ -2599,7 +2599,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               </p>
               {!mountingPrepActive && form.mounting_template_enabled === true ? (
                 <p
-                  className="mb-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5 text-[11px] text-slate-400"
+                  className="mb-2 rounded border border-wo-border-strong/80 bg-wo-surface-inset/70 px-2 py-1.5 text-[11px] text-slate-400"
                   data-testid="intake-v6-mounting-template-inactive-legacy"
                 >
                   Șablon montaj salvat anterior rămâne în date, dar este inactiv cât timp scope-ul comercial este „fără pregătire/montaj”.
@@ -2639,13 +2639,13 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
               {mountingPrepActive ? (
               <div
-                className="mt-3 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/50 p-3"
+                className="mt-3 rounded border border-wo-border-strong/70 bg-wo-surface-inset/50 p-3"
                 data-testid="intake-v6-mounting-prep-section"
               >
                 <p className="mb-2 text-[12px] font-semibold text-slate-200">Pregătire și montaj</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {!contractRendererEnabled ? (
-              <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[12px] text-slate-100">
+              <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-slate-100">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-cyan-400"
@@ -2675,7 +2675,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                   {!contractRendererEnabled ? (
                   <label className={REVIEW_FIELD_BLOCK_CLASS}>
                     <span className={REVIEW_FIELD_LABEL_CLASS}>Arie șablon montaj</span>
-                    <div className="flex overflow-hidden rounded border border-[#2A3548] bg-[#0A0F1A] focus-within:border-cyan-400/60">
+                    <div className="flex overflow-hidden rounded border border-wo-border-strong bg-wo-surface-inset focus-within:border-cyan-400/60">
                       <input
                         type="number"
                         min={mountingTemplateAreaFallbackM2 ?? 0}
@@ -2706,7 +2706,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         }}
                         data-testid="intake-v6-mounting-template-area"
                       />
-                      <span className="flex items-center border-l border-[#2A3548] px-2 text-[11px] font-semibold text-slate-400">
+                      <span className="flex items-center border-l border-wo-border-strong px-2 text-[11px] font-semibold text-slate-400">
                         m²
                       </span>
                     </div>
@@ -2798,11 +2798,11 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
 
               {siteInstallationSectionActive ? (
               <div
-                className="mt-3 rounded border border-[#2A3548]/70 bg-[#0A0F1A]/50 p-3"
+                className="mt-3 rounded border border-wo-border-strong/70 bg-wo-surface-inset/50 p-3"
                 data-testid="intake-v6-mounting-site-section"
               >
                 <p className="mb-2 text-[12px] font-semibold text-slate-200">Montaj la locație</p>
-                  <label className="flex items-center gap-2 rounded border border-[#2A3548] bg-[#0A0F1A] px-2.5 py-1.5 text-[12px] text-slate-100">
+                  <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-slate-100">
                     <input
                       type="checkbox"
                       className="h-4 w-4 accent-cyan-400"
@@ -2975,7 +2975,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                         type="number"
                         min={1}
                         step={1}
-                        className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                        className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
                         value={Number(metalMountingConfiguration.bar_count ?? 2)}
                         disabled={!mountingPrepActive}
                         onChange={(event) =>
@@ -3110,7 +3110,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                             type="number"
                             min={field.min ?? 0}
                             step={field.key.includes("_mm") ? 1 : 0.1}
-                            className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
+                            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] outline-none disabled:cursor-not-allowed disabled:opacity-60"
                             value={Number(acmMountingConfiguration[field.key] ?? field.placeholder)}
                             disabled={!acpProductActive}
                             onChange={(event) =>
@@ -3499,7 +3499,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       (canonic V1 / read-only aici)
                     </span>
                     <p
-                      className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
+                      className="rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] text-slate-300"
                       data-testid="intake-v6-mounting-system-readonly"
                     >
                       {templateContract.allowedMountingSystems.find(
@@ -3511,7 +3511,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     <div className={REVIEW_FIELD_BLOCK_CLASS}>
                       <span className={REVIEW_FIELD_LABEL_CLASS}>Profil bare (legacy, read-only)</span>
                       <p
-                        className="rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[11px] text-slate-300"
+                        className="rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[11px] text-slate-300"
                         data-testid="intake-v6-mounting-bar-profile-readonly"
                       >
                         {legacyMountingProfileDisplay}
@@ -3661,7 +3661,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 suppressLetterCantChrome={acmPanelOnly}
               />
               <details
-                className="mt-2 rounded-md border border-[#2A3548]/70 bg-[#0B1220]/35 p-2"
+                className="mt-2 rounded-md border border-wo-border-strong/70 bg-wo-surface-input/35 p-2"
                 data-testid="intake-v6-review-commercial-adjustments"
               >
                 <summary className="cursor-pointer list-none text-[11px] font-semibold text-slate-300 [&::-webkit-details-marker]:hidden">
@@ -3701,7 +3701,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
         />
         <SheetContent
           side="right"
-          className="w-full overflow-y-auto border-[#2A3548] bg-[#0A0F1A] sm:max-w-lg"
+          className="w-full overflow-y-auto border-wo-border-strong bg-wo-surface-inset sm:max-w-lg"
           data-testid="intake-v6-review-product-details-sheet"
         >
           <SheetHeader>
@@ -3849,7 +3849,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             <label className="block">
               <span className={v6.label}>Față (default)</span>
               <select
-                className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px]"
                 value={form.face_finish_type ?? templateContract.defaultFaceFinish}
                 onChange={(event) =>
                   updateForm(
@@ -3887,7 +3887,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               <label className="block">
                 <span className={v6.label}>Lățime rolă (mm)</span>
                 <select
-                  className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-3 py-2 text-[12px]"
+                  className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-3 py-2 text-[12px]"
                   value={
                     normalizeFaceVinylRollWidthMm(
                       form.face_finish_type,
@@ -4031,7 +4031,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                     .filter((field) => field.alignment_status !== "canonical")
                 .slice(0, 6)
                 .map((field) => (
-                  <li key={field.field_key} className="border-t border-[#2A3548] pt-2">
+                  <li key={field.field_key} className="border-t border-wo-border-strong pt-2">
                     <span className="text-slate-100">{field.field_key}</span>{" "}
                             <span className="text-slate-500">({field.alignment_status})</span>
                     {field.v4_field_key ? (
@@ -4052,7 +4052,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           Task preview producție (catalog operații)
         </h3>
         <p
-          className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/60 px-3 py-2 text-[11px] text-slate-300"
+          className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/60 px-3 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-task-preview-banner"
         >
           {INTAKE_V6_TASK_PREVIEW_BOUNDARY_LINE}
@@ -4065,7 +4065,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             {preview.items.filter((item) => item.active).map((item) => (
               <li
                 key={item.operation_code}
-                className="flex items-center justify-between gap-3 border-b border-[#2A3548] py-2 text-[11px]"
+                className="flex items-center justify-between gap-3 border-b border-wo-border-strong py-2 text-[11px]"
               >
                 <span className="min-w-0 text-slate-200">
                   {item.sequence}.{" "}

@@ -20,7 +20,7 @@ export default function IntakeV6OperatorWorkSummary({
     <div className={`${v6.card} mb-4`} data-testid={testId}>
       <h3 className="mb-2 text-[12px] font-bold uppercase tracking-wide">Rezumat lucrare</h3>
       <dl className="grid gap-0 text-[12px]">
-        <div className="flex justify-between gap-4 border-b border-[#2A3548] py-2">
+        <div className="flex justify-between gap-4 border-b border-wo-border-strong py-2">
           <dt
             className="text-slate-500"
             title="Layere confirmate ca litere volumetrice in lucrare."
@@ -31,7 +31,7 @@ export default function IntakeV6OperatorWorkSummary({
             {fmtCount(counts.productionParts)}
           </dd>
         </div>
-        <div className="flex justify-between gap-4 border-b border-[#2A3548] py-2">
+        <div className="flex justify-between gap-4 border-b border-wo-border-strong py-2">
           <dt
             className="text-slate-500"
             title="Elemente confirmate ca emblemă/logo."
@@ -42,7 +42,7 @@ export default function IntakeV6OperatorWorkSummary({
             {fmtCount(counts.artworkCount)}
           </dd>
         </div>
-        <div className="flex justify-between gap-4 border-b border-[#2A3548] py-2">
+        <div className="flex justify-between gap-4 border-b border-wo-border-strong py-2">
           <dt
             className="text-slate-500"
             title="Total piese luate în calcul pentru preview: piese producție + artwork."

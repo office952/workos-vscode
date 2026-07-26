@@ -126,7 +126,7 @@ export default function IntakeV6AcpLocalFaceModulesPanel({
             return (
               <li
                 key={binding.binding_id}
-                className="rounded border border-[#2A3548] bg-[#0A0F1A]/80 px-2.5 py-2 space-y-1.5"
+                className="rounded border border-wo-border-strong bg-wo-surface-inset/80 px-2.5 py-2 space-y-1.5"
                 data-testid={`intake-v6-acp-local-module-${binding.geometry_role}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">

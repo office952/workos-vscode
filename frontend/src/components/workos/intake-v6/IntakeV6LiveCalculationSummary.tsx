@@ -578,7 +578,7 @@ function buildLogicalDisplayRows(
 
 function DiagnosticBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex rounded border border-[#2A3548] bg-[#111827] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
+    <span className="inline-flex rounded border border-wo-border-strong bg-wo-surface-raised px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-300">
       {label}
     </span>
   );
@@ -602,13 +602,13 @@ function DiagnosticSection({ rows }: { rows: LiveCalcDisplayRow[] }) {
 
   return (
     <details
-      className="mt-3 rounded border border-[#2A3548] bg-[#0d1420]/80"
+      className="mt-3 rounded border border-wo-border-strong bg-wo-surface-inset/80"
       data-testid="intake-v6-live-diagnostics"
     >
       <summary className="cursor-pointer list-none px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-amber-200">
         Neincluse / necesită configurare ({rows.length})
       </summary>
-      <div className="border-t border-[#1F2A3D]/80 px-2.5 py-2">
+      <div className="border-t border-wo-border-subtle/80 px-2.5 py-2">
         {Array.from(grouped.entries()).map(([reason, items]) => (
           <div key={reason} className="mb-3 last:mb-0" data-testid={`intake-v6-live-diagnostic-group-${reason}`}>
             <p className="mb-1 text-[11px] font-semibold text-amber-100/90">
@@ -616,7 +616,7 @@ function DiagnosticSection({ rows }: { rows: LiveCalcDisplayRow[] }) {
             </p>
             <ul className="space-y-1 text-[11px] text-slate-300">
               {items.map((item) => (
-                <li key={item.groupKey} className="rounded border border-[#1F2A3D]/80 bg-[#0A0F1A]/70 px-2 py-1.5">
+                <li key={item.groupKey} className="rounded border border-wo-border-subtle/80 bg-wo-surface-inset/70 px-2 py-1.5">
                   <div className="flex items-start justify-between gap-2">
                     <span className="min-w-0 truncate">{item.label}</span>
                     <span className="shrink-0 font-mono text-slate-400">{item.quantityText}</span>
@@ -664,13 +664,13 @@ function LiveCalcLineList({
     : [["", filteredRows] as [string, LiveCalcDisplayRow[]]];
 
   return (
-    <div className="overflow-hidden rounded border border-[#1F2A3D]/90">
-      <div className="grid grid-cols-[minmax(0,1fr)_80px_84px] border-b border-[#1F2A3D] bg-[#101827] px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+    <div className="overflow-hidden rounded border border-wo-border-subtle/90">
+      <div className="grid grid-cols-[minmax(0,1fr)_80px_84px] border-b border-wo-border-subtle bg-wo-surface-raised px-2.5 py-2 text-[11px] font-semibold uppercase tracking-wide text-slate-400">
         <span>Linie</span>
         <span className="text-right">Consum</span>
         <span className="text-right">{logicalMode ? "Preț / status" : "Preț"}</span>
       </div>
-      <ul className="divide-y divide-[#1F2A3D]/80 text-[12px]" data-testid="intake-v6-live-materials-list">
+      <ul className="divide-y divide-wo-border-subtle/80 text-[12px]" data-testid="intake-v6-live-materials-list">
         {filteredRows.length === 0 ? (
           <li className="px-2.5 py-2.5 text-[12px] text-slate-400">Nicio linie pentru filtrul selectat.</li>
         ) : (
@@ -678,7 +678,7 @@ function LiveCalcLineList({
             <li key={category || "breakdown"} className="contents">
               {logicalMode ? (
                 <div
-                  className="bg-[#0d1420] px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-200/80"
+                  className="bg-wo-surface-inset px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wide text-cyan-200/80"
                   data-testid={`intake-v6-logical-list-category-${category}`}
                 >
                   {logicalCategoryLabel(category)} · {items.length}
@@ -704,7 +704,7 @@ function LiveCalcLineList({
                         </span>
                         {(item.childRows?.length ?? 0) > 0 ? (
                           <span
-                            className="mt-1 block rounded border border-[#1F2A3D]/80 bg-[#0A0F1A]/70 px-2 py-1"
+                            className="mt-1 block rounded border border-wo-border-subtle/80 bg-wo-surface-inset/70 px-2 py-1"
                             data-testid={`intake-v6-logical-child-rows-${item.groupKey}`}
                           >
                             {(item.childRows ?? []).map((childRow) => (
@@ -754,7 +754,7 @@ function LiveCalcLineList({
       </ul>
       {activeFilter !== "all" && !logicalMode ? (
         <div
-          className="flex flex-wrap items-center justify-between gap-2 border-t border-[#1F2A3D] bg-[#0d1420]/80 px-2.5 py-2 text-[11px] text-slate-300"
+          className="flex flex-wrap items-center justify-between gap-2 border-t border-wo-border-subtle bg-wo-surface-inset/80 px-2.5 py-2 text-[11px] text-slate-300"
           data-testid="intake-v6-live-filter-subtotal"
         >
           <span>
@@ -838,7 +838,7 @@ function LiveCalcEstimateTotalsBlock({
   const containerClassName =
     emphasis === "compact"
       ? "min-w-0"
-      : "rounded-md border border-[#243044]/50 bg-[#101827]/50 px-2.5 py-2";
+      : "rounded-md border border-wo-border-strong/50 bg-wo-surface-raised/50 px-2.5 py-2";
 
   return (
     <div className={containerClassName} data-testid="intake-v6-live-totals-summary">
@@ -890,7 +890,7 @@ function LiveCalcEstimateTotalsBlock({
       <div
         className={joinClassNames(
           "flex items-baseline justify-between gap-2 text-[11px]",
-          showCommercialEstimate ? "mt-1.5 border-t border-[#243044]/40 pt-1.5" : "",
+          showCommercialEstimate ? "mt-1.5 border-t border-wo-border-strong/40 pt-1.5" : "",
         )}
       >
         <span className="text-slate-500">
@@ -919,7 +919,7 @@ function CantMetricsStrip({ operatorCantPerimeterM }: { operatorCantPerimeterM?:
   if (operatorCantPerimeterM == null || operatorCantPerimeterM <= 0) return null;
   return (
     <div
-      className="mb-2 flex items-center justify-between gap-2 rounded border border-[#243044]/80 bg-[#101827]/60 px-2 py-1.5"
+      className="mb-2 flex items-center justify-between gap-2 rounded border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2 py-1.5"
       data-testid="intake-v6-live-cant-metrics"
     >
       <span className="inline-flex items-center gap-1.5">
@@ -949,14 +949,14 @@ function DetailsSheet({
       <SheetTrigger asChild>
         <button
           type="button"
-          className="inline-flex w-full items-center justify-center gap-0.5 rounded border border-[#2A3548] bg-[#111827] px-2 py-1.5 text-[12px] font-semibold text-slate-200 hover:border-cyan-500/30"
+          className="inline-flex w-full items-center justify-center gap-0.5 rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] font-semibold text-slate-200 hover:border-cyan-500/30"
           data-testid={testId}
         >
           {triggerLabel}
           <ChevronRight className="h-3 w-3" aria-hidden />
         </button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full overflow-y-auto border-[#2A3548] bg-[#0A0F1A] sm:max-w-lg">
+      <SheetContent side="right" className="w-full overflow-y-auto border-wo-border-strong bg-wo-surface-inset sm:max-w-lg">
         <SheetHeader>
           <SheetTitle className="text-left text-[13px] text-slate-100">{INTAKE_V6_LIVE_CALC_DETAILS_TITLE}</SheetTitle>
           <SheetDescription className="mt-2 text-[10px] leading-relaxed text-slate-500">
@@ -1200,7 +1200,7 @@ export default function IntakeV6LiveCalculationSummary({
               "rounded border px-2 py-1 text-[11px] font-semibold uppercase tracking-wide transition",
               active
                 ? "border-cyan-500/40 bg-cyan-500/15 text-cyan-200"
-                : "border-[#2A3548] bg-[#111827] text-slate-400 hover:border-slate-500/40 hover:text-slate-200",
+                : "border-wo-border-strong bg-wo-surface-raised text-slate-400 hover:border-slate-500/40 hover:text-slate-200",
             )}
             onClick={() => setActiveFilter(option.id)}
             data-testid={`intake-v6-live-filter-${option.id}`}
@@ -1215,7 +1215,7 @@ export default function IntakeV6LiveCalculationSummary({
 
   const technicalDetailsToggle = (
     <label
-      className="mb-2 flex items-center gap-2 rounded border border-[#243044]/80 bg-[#101827]/60 px-2.5 py-2 text-[11px] text-slate-300"
+      className="mb-2 flex items-center gap-2 rounded border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2.5 py-2 text-[11px] text-slate-300"
       data-testid="intake-v6-live-technical-toggle"
     >
       <input
@@ -1295,7 +1295,7 @@ export default function IntakeV6LiveCalculationSummary({
     return (
       <div
         className={joinClassNames(
-          "sticky top-0 z-10 rounded-md border border-[#243044]/70 bg-[#0A0F1A]/95 backdrop-blur-sm",
+          "sticky top-0 z-10 rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/95 backdrop-blur-sm",
           className,
         )}
         data-testid="intake-v6-live-calculation-summary"
@@ -1309,7 +1309,7 @@ export default function IntakeV6LiveCalculationSummary({
           <LiveCalcPreviewHeader compact />
 
           {displayGrossRon != null && displayNetRon != null && !artworkOnlyBlocked ? (
-            <div className="min-w-0 border-l border-[#243044]/60 pl-3" data-testid="intake-v6-live-totals-summary">
+            <div className="min-w-0 border-l border-wo-border-strong/60 pl-3" data-testid="intake-v6-live-totals-summary">
               <span className="block text-[10px] text-slate-500">{INTAKE_V6_LIVE_CALC_GROSS_LABEL}</span>
               <span
                 className="text-[16px] font-semibold tabular-nums leading-none text-emerald-200"
@@ -1335,7 +1335,7 @@ export default function IntakeV6LiveCalculationSummary({
             </div>
           ) : null}
 
-          <div className="min-w-0 border-l border-[#243044]/60 pl-3">
+          <div className="min-w-0 border-l border-wo-border-strong/60 pl-3">
             <span className="block text-[10px] text-slate-500">
               {acmPanelCostFallback ? "Estimare panou ACM" : INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}
             </span>
@@ -1376,7 +1376,7 @@ export default function IntakeV6LiveCalculationSummary({
           </div>
         </div>
         {!hideAcmPanelProvisional ? (
-          <div className="border-t border-[#243044]/50 px-3 pb-2">
+          <div className="border-t border-wo-border-strong/50 px-3 pb-2">
             <AcmPanelProvisionalPricingBlock preview={acmPanelCommercialPreview} compact />
           </div>
         ) : null}
@@ -1412,7 +1412,7 @@ export default function IntakeV6LiveCalculationSummary({
     return (
       <aside
         className={joinClassNames(
-          "rounded-md border border-[#2A3548]/55 bg-[#0A0F1A]/70 p-2.5",
+          "rounded-md border border-wo-border-strong/55 bg-wo-surface-inset/70 p-2.5",
           className,
         )}
         data-testid="intake-v6-review-calculator-panel"
@@ -1430,7 +1430,7 @@ export default function IntakeV6LiveCalculationSummary({
         </div>
 
         <div
-          className="rounded-md border border-emerald-500/25 bg-[#101827]/85 px-2.5 py-2.5"
+          className="rounded-md border border-emerald-500/25 bg-wo-surface-raised/85 px-2.5 py-2.5"
           data-testid="intake-v6-live-totals-summary"
           data-offer-hero="true"
         >
@@ -1445,7 +1445,7 @@ export default function IntakeV6LiveCalculationSummary({
               >
                 {formatFaceBackPrepMoney(displayGrossRon, "RON")}
               </span>
-              <div className="mt-1.5 space-y-1 border-t border-[#243044]/50 pt-1.5 text-[11px]">
+              <div className="mt-1.5 space-y-1 border-t border-wo-border-strong/50 pt-1.5 text-[11px]">
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_NET_LABEL}</span>
                   <span className="tabular-nums text-slate-200" data-testid="intake-v6-live-offer-net">
@@ -1488,7 +1488,7 @@ export default function IntakeV6LiveCalculationSummary({
 
         {showCompositionSection ? (
           <div
-            className="mt-2 rounded-md border border-[#243044]/45 bg-[#0B1220]/35 px-2 py-1.5"
+            className="mt-2 rounded-md border border-wo-border-strong/45 bg-wo-surface-input/35 px-2 py-1.5"
             data-testid="intake-v6-offer-rail-composition"
           >
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -1565,7 +1565,7 @@ export default function IntakeV6LiveCalculationSummary({
             </div>
           ) : (
             <div
-              className="mt-2 flex items-baseline justify-between gap-2 border-t border-[#243044]/40 pt-2 text-[11px]"
+              className="mt-2 flex items-baseline justify-between gap-2 border-t border-wo-border-strong/40 pt-2 text-[11px]"
               data-testid="intake-v6-offer-rail-internal"
             >
               <span className="text-slate-500">{INTAKE_V6_LIVE_CALC_INTERNAL_LABEL}</span>
@@ -1661,7 +1661,7 @@ export default function IntakeV6LiveCalculationSummary({
   return (
     <aside
       className={joinClassNames(
-        "rounded-md border border-[#2A3548]/90 bg-[#0A0F1A]/90 p-2.5",
+        "rounded-md border border-wo-border-strong/90 bg-wo-surface-inset/90 p-2.5",
         className,
       )}
       data-testid="intake-v6-live-calculation-summary"

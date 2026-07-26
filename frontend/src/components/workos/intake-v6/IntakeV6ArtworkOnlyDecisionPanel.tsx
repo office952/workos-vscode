@@ -67,7 +67,7 @@ export default function IntakeV6ArtworkOnlyDecisionPanel({
           return (
             <li
               key={layer.id}
-              className="rounded border border-amber-500/25 bg-[#0B1220]/60 p-3"
+              className="rounded border border-amber-500/25 bg-wo-surface-input/60 p-3"
               data-testid={`intake-v6-artwork-only-layer-${layer.id}`}
             >
               <div className="flex items-start gap-2">

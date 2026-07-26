@@ -50,7 +50,7 @@ export default function IntakeV6LayerCardShell({
 }) {
   return (
     <div
-      className="overflow-hidden rounded-md border border-[#2A3548] bg-[#0A0F1A]/55"
+      className="overflow-hidden rounded-md border border-wo-border-strong bg-wo-surface-inset/55"
       style={{ borderLeftWidth: 3, borderLeftColor: accentColor }}
       data-testid={cardTestId}
       data-layer-card-expanded={expanded ? "true" : "false"}
@@ -59,7 +59,7 @@ export default function IntakeV6LayerCardShell({
     >
       <button
         type="button"
-        className="min-h-[40px] w-full min-w-0 text-left transition hover:bg-[#111827]/40"
+        className="min-h-[40px] w-full min-w-0 text-left transition hover:bg-wo-surface-raised/40"
         onClick={onToggle}
         data-testid={headerTestId}
         aria-expanded={expanded}

@@ -44,7 +44,7 @@ export default function IntakeV6TechnicalDetailsAccordion({
 
   return (
     <div
-      className={`rounded border border-[#2A3548]/80 bg-[#0A0F1A]/35 ${className}`.trim()}
+      className={`rounded border border-wo-border-strong/80 bg-wo-surface-inset/35 ${className}`.trim()}
       data-testid={testId}
       data-expanded={open ? "true" : "false"}
     >
@@ -64,7 +64,7 @@ export default function IntakeV6TechnicalDetailsAccordion({
         </div>
         {countLabel ? (
           <span
-            className="shrink-0 rounded-full border border-[#2A3548] bg-[#111827]/80 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-slate-400"
+            className="shrink-0 rounded-full border border-wo-border-strong bg-wo-surface-raised/80 px-2 py-0.5 text-[10px] font-semibold tabular-nums text-slate-400"
             data-testid={`${testId}-count`}
           >
             {countLabel}
@@ -76,7 +76,7 @@ export default function IntakeV6TechnicalDetailsAccordion({
         />
       </button>
       {open ? (
-        <div className="border-t border-[#2A3548] px-4 py-3" data-testid={`${testId}-content`}>
+        <div className="border-t border-wo-border-strong px-4 py-3" data-testid={`${testId}-content`}>
           {children}
         </div>
       ) : null}

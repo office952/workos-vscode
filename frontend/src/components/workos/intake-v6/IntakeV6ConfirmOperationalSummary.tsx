@@ -27,7 +27,7 @@ function SummaryRow({
   hint?: string;
 }) {
   return (
-    <div className="flex justify-between gap-4 border-b border-[#2A3548] py-2">
+    <div className="flex justify-between gap-4 border-b border-wo-border-strong py-2">
       <dt className="text-slate-500" title={hint}>
         {label}
       </dt>

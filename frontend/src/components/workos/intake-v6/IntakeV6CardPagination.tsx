@@ -32,7 +32,7 @@ export default function IntakeV6CardPagination({
       <div className="flex items-center gap-1">
         <button
           type="button"
-          className="inline-flex items-center gap-0.5 rounded border border-[#2A3548] bg-[#1E293B]/80 px-2 py-0.5 text-[10px] font-semibold text-slate-300 hover:border-sky-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-0.5 rounded border border-wo-border-strong bg-wo-hover/80 px-2 py-0.5 text-[10px] font-semibold text-slate-300 hover:border-sky-500/30 disabled:cursor-not-allowed disabled:opacity-40"
           onClick={() => onPageChange(pageIndex - 1)}
           disabled={pageIndex <= 0}
           data-testid={`${testId}-prev`}
@@ -49,7 +49,7 @@ export default function IntakeV6CardPagination({
         </span>
         <button
           type="button"
-          className="inline-flex items-center gap-0.5 rounded border border-[#2A3548] bg-[#1E293B]/80 px-2 py-0.5 text-[10px] font-semibold text-slate-300 hover:border-sky-500/30 disabled:cursor-not-allowed disabled:opacity-40"
+          className="inline-flex items-center gap-0.5 rounded border border-wo-border-strong bg-wo-hover/80 px-2 py-0.5 text-[10px] font-semibold text-slate-300 hover:border-sky-500/30 disabled:cursor-not-allowed disabled:opacity-40"
           onClick={() => onPageChange(pageIndex + 1)}
           disabled={pageIndex >= pageCount - 1}
           data-testid={`${testId}-next`}

@@ -205,7 +205,7 @@ export default function IntakeV6AlucobondContourPanel({
                 className={`w-full rounded border px-2 py-1.5 text-left ${
                   active
                     ? "border-cyan-500/70 bg-cyan-950/40 text-cyan-100"
-                    : "border-[#2A3548] bg-[#0A0F1A]/60 text-slate-300 hover:border-slate-500"
+                    : "border-wo-border-strong bg-wo-surface-inset/60 text-slate-300 hover:border-slate-500"
                 }`}
                 data-testid={`intake-v6-contour-candidate-${c.contour_id}`}
               >
@@ -224,11 +224,11 @@ export default function IntakeV6AlucobondContourPanel({
       </ul>
 
       {selected ? (
-        <div className="space-y-2 rounded border border-[#2A3548] p-2" data-testid="intake-v6-contour-selected">
+        <div className="space-y-2 rounded border border-wo-border-strong p-2" data-testid="intake-v6-contour-selected">
           <label className="block text-[11px] text-slate-300">
             Rol geometrie → componentă
             <select
-              className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
+              className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1"
               value={role}
               disabled={disabled || busy}
               onChange={(e) => setRole(e.target.value as ContourRoleOption)}
@@ -250,7 +250,7 @@ export default function IntakeV6AlucobondContourPanel({
               <label className="text-[11px] text-slate-300">
                 Număr de întoarceri
                 <select
-                  className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
+                  className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1"
                   value={foldCount}
                   onChange={(e) => setFoldCount(Number(e.target.value) as 1 | 2)}
                 >
@@ -263,7 +263,7 @@ export default function IntakeV6AlucobondContourPanel({
                 <input
                   type="number"
                   min={1}
-                  className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
+                  className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1"
                   value={l1}
                   onChange={(e) => setL1(Number(e.target.value))}
                 />
@@ -274,7 +274,7 @@ export default function IntakeV6AlucobondContourPanel({
                   <input
                     type="number"
                     min={1}
-                    className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
+                    className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1"
                     value={l2}
                     onChange={(e) => setL2(Number(e.target.value))}
                   />
@@ -284,7 +284,7 @@ export default function IntakeV6AlucobondContourPanel({
                 Adâncime casetă (mm)
                 <input
                   type="number"
-                  className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1 text-slate-400"
+                  className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1 text-slate-400"
                   value={l1}
                   readOnly
                   title="Authority: finished_depth_mm = L1"
@@ -293,7 +293,7 @@ export default function IntakeV6AlucobondContourPanel({
               <label className="text-[11px] text-slate-300">
                 Colț de service
                 <select
-                  className="mt-1 w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1"
+                  className="mt-1 w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1"
                   value={corner ?? ""}
                   onChange={(e) =>
                     setCorner(

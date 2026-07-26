@@ -184,7 +184,7 @@ export default function IntakeV6PricingInputPanel({
     !(group.items.length === 1 && group.items[0]?.label === group.label);
 
   const commercialSlidersBlock = (
-    <div className="rounded border border-[#2A3548]/40 bg-[#0A0F1A]/35 p-2.5">
+    <div className="rounded border border-wo-border-strong/40 bg-wo-surface-inset/35 p-2.5">
       <h4 className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-slate-500">
         Reglaje comerciale
       </h4>
@@ -203,7 +203,7 @@ export default function IntakeV6PricingInputPanel({
                 markupPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-markup"
           />
         </label>
@@ -221,7 +221,7 @@ export default function IntakeV6PricingInputPanel({
                 discountPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-discount"
           />
         </label>
@@ -235,7 +235,7 @@ export default function IntakeV6PricingInputPanel({
             value={activeCommercialInputs.vatPercent}
             readOnly
             disabled
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-vat"
           />
         </label>
@@ -251,12 +251,12 @@ export default function IntakeV6PricingInputPanel({
                 manualAdjustmentRon: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
             data-testid="intake-v6-offer-manual-adjustment"
           />
         </label>
       </div>
-      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-[#2A3548] pt-3 text-[11px]">
+      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-wo-border-strong pt-3 text-[11px]">
         <div className="flex justify-between gap-2 text-slate-400">
           <dt>Net</dt>
           <dd className="text-slate-200" data-testid="intake-v6-offer-net-price">
@@ -306,7 +306,7 @@ export default function IntakeV6PricingInputPanel({
   if (variant === "commercialSliders") {
     return (
       <div
-        className="rounded-md border border-[#2A3548]/40 bg-transparent p-0"
+        className="rounded-md border border-wo-border-strong/40 bg-transparent p-0"
         data-testid="intake-v6-pricing-input-preview"
       >
         {commercialSlidersBlock}
@@ -340,7 +340,7 @@ export default function IntakeV6PricingInputPanel({
             {officialPricingBlocker ?? "Oferta client nu este disponibilă."}
           </p>
         )}
-        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-[#243044]/70 pt-2 text-[11px]">
+        <div className="mt-2 flex flex-wrap items-baseline justify-between gap-2 border-t border-wo-border-strong/70 pt-2 text-[11px]">
           <span className="text-slate-500">Ofertă client netă</span>
           <span className="tabular-nums text-cyan-200" data-testid="intake-v6-confirm-pricing-hero-net">
             {heroNet != null ? formatCurrency(heroNet) : "—"}
@@ -424,7 +424,7 @@ export default function IntakeV6PricingInputPanel({
       </dl>
 
       <div className="mb-4 grid gap-3 lg:grid-cols-[1.3fr_0.9fr]">
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/50 p-3">
           <div className="mb-2 flex items-center justify-between gap-3">
             <h4 className={`${v6.zoneTitle} text-slate-200`}>Structura cost V6</h4>
             <span className="text-[10px] text-slate-500">
@@ -435,8 +435,8 @@ export default function IntakeV6PricingInputPanel({
           </div>
           <div className="space-y-3 text-[11px]">
             {groupedCostLines.map((group) => (
-              <section key={group.key} className="rounded border border-[#1C2433] bg-[#0F1724]/60 p-2.5">
-                <div className="mb-2 flex items-center justify-between gap-3 border-b border-[#1C2433] pb-2">
+              <section key={group.key} className="rounded border border-wo-border-subtle bg-wo-surface-inset/60 p-2.5">
+                <div className="mb-2 flex items-center justify-between gap-3 border-b border-wo-border-subtle pb-2">
                   <h5 className={v6.zoneTitle}>{group.label}</h5>
                   <strong className="text-slate-100">
                     {formatCurrency(group.items.reduce((sum, item) => sum + item.amount, 0))}
@@ -466,7 +466,7 @@ export default function IntakeV6PricingInputPanel({
           </div>
         </div>
 
-        <div className="rounded border border-[#2A3548] bg-[#0A0F1A]/50 p-3">
+        <div className="rounded border border-wo-border-strong bg-wo-surface-inset/50 p-3">
           <h4 className={`mb-3 ${v6.sectionTitle}`}>Setări comerciale</h4>
           <div className="space-y-3 text-[11px] text-slate-300">
             <label className="block">
@@ -483,7 +483,7 @@ export default function IntakeV6PricingInputPanel({
                     markupPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-markup"
               />
             </label>
@@ -501,7 +501,7 @@ export default function IntakeV6PricingInputPanel({
                     discountPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-discount"
               />
             </label>
@@ -515,7 +515,7 @@ export default function IntakeV6PricingInputPanel({
                 value={activeCommercialInputs.vatPercent}
                 readOnly
                 disabled
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-vat"
               />
             </label>
@@ -531,7 +531,7 @@ export default function IntakeV6PricingInputPanel({
                     manualAdjustmentRon: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-[#2A3548] bg-[#0F1724] px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
                 data-testid="intake-v6-offer-manual-adjustment"
               />
             </label>
@@ -552,7 +552,7 @@ export default function IntakeV6PricingInputPanel({
                     {formatCurrency(displayOfficialVat ?? 0)}
                   </dd>
                 </div>
-                <div className="flex items-center justify-between gap-3 border-t border-[#2A3548] pt-2 text-[12px] font-semibold text-emerald-300">
+                <div className="flex items-center justify-between gap-3 border-t border-wo-border-strong pt-2 text-[12px] font-semibold text-emerald-300">
                   <dt>Ofertă client cu TVA</dt>
                   <dd data-testid="intake-v6-offer-final-price">
                     {formatCurrency(displayOfficialGross ?? 0)}
@@ -569,7 +569,7 @@ export default function IntakeV6PricingInputPanel({
                   <dt>Ofertă client netă</dt>
                   <dd>—</dd>
                 </div>
-                <div className="flex items-center justify-between gap-3 border-t border-[#2A3548] pt-2 text-[12px] font-semibold text-amber-200/90">
+                <div className="flex items-center justify-between gap-3 border-t border-wo-border-strong pt-2 text-[12px] font-semibold text-amber-200/90">
                   <dt>Ofertă client</dt>
                   <dd data-testid="intake-v6-offer-final-price">—</dd>
                 </div>
@@ -578,7 +578,7 @@ export default function IntakeV6PricingInputPanel({
                     {officialPricingBlocker}
                   </div>
                 ) : null}
-                <div className="rounded border border-[#1C2433] bg-[#0F1724]/40 p-2 text-[10px] text-slate-500">
+                <div className="rounded border border-wo-border-subtle bg-wo-surface-inset/40 p-2 text-[10px] text-slate-500">
                   <p className="mb-1 font-semibold text-slate-400">Estimare locală (nu este Ofertă client)</p>
                   <div className="flex items-center justify-between gap-3 text-slate-400">
                     <span>Bază Cost intern estimativ × adaos</span>
@@ -591,7 +591,7 @@ export default function IntakeV6PricingInputPanel({
         </div>
       </div>
 
-      <div className="mb-3 rounded border border-[#2A3548] bg-[#0A0F1A]/40 p-3 text-[11px] text-slate-400">
+      <div className="mb-3 rounded border border-wo-border-strong bg-wo-surface-inset/40 p-3 text-[11px] text-slate-400">
         <h4 className={`mb-2 ${v6.sectionTitle}`}>Bază tehnică pentru ofertă</h4>
         <div className="grid gap-2 sm:grid-cols-3">
           <div>
@@ -627,7 +627,7 @@ export default function IntakeV6PricingInputPanel({
       {showDebugPayload ? (
         <details className="text-[11px] text-slate-400">
           <summary className="cursor-pointer text-slate-300">quote_input_payload (debug)</summary>
-          <pre className="mt-2 max-h-48 overflow-auto rounded border border-[#2A3548] bg-[#0A0F1A]/60 p-2 text-[10px]">
+          <pre className="mt-2 max-h-48 overflow-auto rounded border border-wo-border-strong bg-wo-surface-inset/60 p-2 text-[10px]">
             {JSON.stringify(preview.quote_input_payload, null, 2)}
           </pre>
         </details>

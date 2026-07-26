@@ -300,7 +300,7 @@ export default function IntakeV6SheetFootprintOverridePanel({
 
     ? "border-amber-500/40 bg-amber-500/5"
 
-    : "border-[#2A3548] bg-[#0A0F1A]/30";
+    : "border-wo-border-strong bg-wo-surface-inset/30";
 
 
 
@@ -310,13 +310,13 @@ export default function IntakeV6SheetFootprintOverridePanel({
 
       disabled
 
-        ? "cursor-not-allowed border-[#2A3548]/60 bg-[#0A0F1A]/20 opacity-60"
+        ? "cursor-not-allowed border-wo-border-strong/60 bg-wo-surface-inset/20 opacity-60"
 
         : selected
 
           ? "cursor-pointer border-sky-500/50 bg-sky-500/10"
 
-          : "cursor-pointer border-[#2A3548] bg-[#0A0F1A]/40 hover:border-[#3d4f6a]"
+          : "cursor-pointer border-wo-border-strong bg-wo-surface-inset/40 hover:border-wo-border-strong"
 
     }`;
 
@@ -391,7 +391,7 @@ export default function IntakeV6SheetFootprintOverridePanel({
 
 
       <details
-        className="rounded border border-[#2A3548] bg-[#0A0F1A]/30 p-3 text-[11px]"
+        className="rounded border border-wo-border-strong bg-wo-surface-inset/30 p-3 text-[11px]"
         data-testid="intake-v6-footprint-source-selection"
       >
         <summary className="cursor-pointer font-semibold uppercase tracking-wide text-slate-400">

@@ -45,10 +45,10 @@ function HeroMetricTile({
 }) {
   return (
     <div
-      className={`flex min-w-0 items-center gap-2 rounded-lg border border-[#2A3548]/70 bg-[#0A0F1A]/55 px-2 py-2 ${accentClass}`}
+      className={`flex min-w-0 items-center gap-2 rounded-lg border border-wo-border-strong/70 bg-wo-surface-inset/55 px-2 py-2 ${accentClass}`}
       data-testid={testId}
     >
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[#2A3548]/80 bg-[#111827]/80 text-slate-300">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-wo-border-strong/80 bg-wo-surface-raised/80 text-slate-300">
         {icon}
       </span>
       <div className="min-w-0">
@@ -173,7 +173,7 @@ export default function IntakeV6LayersMetricsStrip({
 
   return (
     <div
-      className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-md border border-[#2A3548]/70 bg-[#0A0F1A]/35 px-3 py-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
+      className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/35 px-3 py-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7"
       data-testid="intake-v6-layers-metrics-strip"
     >
       <div>

@@ -16,4 +16,4 @@ export const REVIEW_LAYER_CARD_NAME_CLASS =
 
 /** Stacked expanded body — Fata → Cant → Spate; no empty reserved columns. */
 export const REVIEW_LAYER_CARD_EXPANDED_STACK_CLASS =
-  "flex min-w-0 flex-col gap-3.5 border-t border-[#2A3548] px-2.5 py-3";
+  "flex min-w-0 flex-col gap-3.5 border-t border-wo-border-strong px-2.5 py-3";

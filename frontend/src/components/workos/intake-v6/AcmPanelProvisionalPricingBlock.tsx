@@ -72,7 +72,7 @@ export default function AcmPanelProvisionalPricingBlock({
         className={
           embedded
             ? "mt-0.5"
-            : "mt-1.5 rounded border border-[#2A3548]/55 bg-[#101827]/40 px-2 py-1.5"
+            : "mt-1.5 rounded border border-wo-border-strong/55 bg-wo-surface-raised/40 px-2 py-1.5"
         }
         data-testid="intake-v6-acm-panel-provisional-pricing"
         data-variant="rail"
@@ -131,7 +131,7 @@ export default function AcmPanelProvisionalPricingBlock({
                 {lines.map((line) => (
                   <li
                     key={String(line.code)}
-                    className="flex items-baseline justify-between gap-2 border-t border-[#243044]/40 pt-1 text-[10px]"
+                    className="flex items-baseline justify-between gap-2 border-t border-wo-border-strong/40 pt-1 text-[10px]"
                     data-testid={`intake-v6-acm-panel-line-${line.code}`}
                     data-provisional="true"
                   >
@@ -288,7 +288,7 @@ export default function AcmPanelProvisionalPricingBlock({
               {lines.map((line) => (
                 <li
                   key={String(line.code)}
-                  className="flex items-baseline justify-between gap-2 border-t border-[#243044]/40 pt-1 text-[10px]"
+                  className="flex items-baseline justify-between gap-2 border-t border-wo-border-strong/40 pt-1 text-[10px]"
                   data-testid={`intake-v6-acm-panel-line-${line.code}`}
                   data-provisional="true"
                 >

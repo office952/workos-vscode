@@ -329,7 +329,7 @@ export default function IntakeV6ReturnCantFields({
       {settingsRow}
       {isReviewLayout && (uiOption === "oracal_wrapped" || uiOption === "ral_paint") ? (
         <div
-          className="border-t border-[#2A3548]/60 pt-2"
+          className="border-t border-wo-border-strong/60 pt-2"
           data-testid={`${testIdPrefix}-color-row`}
         >
           {colorFields}

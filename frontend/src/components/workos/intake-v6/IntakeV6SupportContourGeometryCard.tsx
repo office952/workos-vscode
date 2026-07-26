@@ -179,7 +179,7 @@ export default function IntakeV6SupportContourGeometryCard({
           ? "border-cyan-400/40 bg-cyan-400/5"
           : associated
             ? "border-emerald-500/30 bg-emerald-500/5"
-            : "border-[#2A3548]/80 bg-[#0A0F1A]/40"
+            : "border-wo-border-strong/80 bg-wo-surface-inset/40"
       }`}
       data-testid="intake-v6-support-contour-card"
       data-acp-card="canonical"
@@ -211,7 +211,7 @@ export default function IntakeV6SupportContourGeometryCard({
       <label className="block">
         <span className="mb-1 block text-[11px] text-slate-400">Rol geometrie</span>
         <select
-          className="w-full rounded border border-[#2A3548] bg-[#0A0F1A] px-2 py-1.5 text-[12px] text-slate-200"
+          className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-200"
           value={associated || existing.role === "ALUCOBOND_CASED_PANEL" ? "SUPPORT_CONTOUR" : "NONE"}
           disabled={disabled || busy}
           data-testid="intake-v6-support-geometry-role"
@@ -229,7 +229,7 @@ export default function IntakeV6SupportContourGeometryCard({
       </label>
 
       <div
-        className="mt-2 rounded border border-[#2A3548]/80 bg-[#0A0F1A]/70 px-2 py-1.5"
+        className="mt-2 rounded border border-wo-border-strong/80 bg-wo-surface-inset/70 px-2 py-1.5"
         data-testid="intake-v6-support-contour-component"
       >
         <p className="text-[10px] uppercase tracking-wide text-slate-500">Componentă produs</p>
@@ -288,7 +288,7 @@ export default function IntakeV6SupportContourGeometryCard({
                         className={`w-full rounded border px-1.5 py-1 text-left ${
                           c.contour_id === activeContourId
                             ? "border-cyan-500/60 bg-cyan-950/40 text-cyan-100"
-                            : "border-[#2A3548] text-slate-400"
+                            : "border-wo-border-strong text-slate-400"
                         }`}
                         onClick={() => {
                           setActiveContourId(c.contour_id);

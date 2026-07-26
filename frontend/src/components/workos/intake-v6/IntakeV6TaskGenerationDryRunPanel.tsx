@@ -92,7 +92,7 @@ export default function IntakeV6TaskGenerationDryRunPanel({
 
       {alignment.status ? (
         <div
-          className="mb-4 rounded border border-[#2A3548]/60 px-3 py-2 text-[11px]"
+          className="mb-4 rounded border border-wo-border-strong/60 px-3 py-2 text-[11px]"
           data-testid="intake-v6-dry-run-template-alignment"
         >
           <p className="font-semibold text-slate-300">
@@ -130,7 +130,7 @@ export default function IntakeV6TaskGenerationDryRunPanel({
             .filter((task) => task.operation_group !== "cnc_cutting")
             .slice(0, 6)
             .map((task) => (
-            <li key={task.task_key} className="border-b border-[#2A3548]/60 py-1">
+            <li key={task.task_key} className="border-b border-wo-border-strong/60 py-1">
               {task.title}
               {task.provisional ? (
                 <span className="ml-2 text-[10px] text-amber-300">provisional</span>

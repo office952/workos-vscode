@@ -24,7 +24,7 @@ function ChecklistControlRow({
 
   return (
     <li
-      className="flex items-start gap-2 rounded-md border border-[#243044]/70 bg-[#0A0F1A]/40 px-2.5 py-2"
+      className="flex items-start gap-2 rounded-md border border-wo-border-strong/70 bg-wo-surface-inset/40 px-2.5 py-2"
       data-testid={testId}
     >
       <Icon className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${iconClass}`} aria-hidden />
