@@ -559,7 +559,7 @@ function ReadonlyStructureCard({
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-[10px] text-wo-text-muted">#{index + 1}</span>
-              <span className={`text-[11px] font-bold uppercase tracking-wide ${visual.color}`}>
+              <span className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">
                 {typeLabel}
               </span>
               {showLettersFaceProcess ? (

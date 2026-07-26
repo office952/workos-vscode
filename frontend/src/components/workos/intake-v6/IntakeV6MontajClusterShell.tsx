@@ -41,7 +41,7 @@ export default function IntakeV6MontajClusterShell({
     >
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="text-[13px] font-semibold text-slate-100">{title}</h3>
+          <h3 className="text-[13px] font-semibold text-wo-text-primary">{title}</h3>
           {description ? (
             <p className="mt-0.5 text-[11px] leading-snug text-slate-400">{description}</p>
           ) : null}

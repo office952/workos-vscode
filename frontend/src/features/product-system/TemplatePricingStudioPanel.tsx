@@ -165,7 +165,7 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
             <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
               Prețuri template
             </p>
-            <h3 className="mt-0.5 text-base font-semibold text-slate-100">
+            <h3 className="mt-0.5 text-base font-semibold text-wo-text-primary">
               Din ce este format prețul acestui template?
             </h3>
             <p className="mt-1 max-w-2xl text-[12px] leading-relaxed text-slate-400">
@@ -284,7 +284,7 @@ export function TemplatePricingStudioPanel({ templateCode }: { templateCode: str
             onClick={() => setFilter(f.id)}
             className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors ${
               filter === f.id
-                ? "bg-slate-800/80 text-slate-100 ring-1 ring-slate-600/50"
+                ? "bg-slate-800/80 text-wo-text-primary ring-1 ring-slate-600/50"
                 : "text-slate-500 hover:bg-slate-900/50 hover:text-slate-300"
             }`}
           >
@@ -369,7 +369,7 @@ function SummaryStat({
       <p className="text-[10px] uppercase text-slate-500">{label}</p>
       <p
         className={`text-sm font-semibold ${
-          tone === "warn" && Number(value) > 0 ? "text-amber-200" : "text-slate-100"
+          tone === "warn" && Number(value) > 0 ? "text-amber-200" : "text-wo-text-primary"
         }`}
       >
         {value}
@@ -441,7 +441,7 @@ function LaborRecipeSection({
               className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,1.1fr)_minmax(0,0.65fr)_minmax(0,0.65fr)_auto] gap-2 border-b border-slate-800/50 px-3 py-2.5 text-[12px] text-slate-200 last:border-b-0"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-100">{row.operator_name}</p>
+                <p className="truncate font-medium text-wo-text-primary">{row.operator_name}</p>
                 <p className="mt-0.5 font-mono text-[10px] text-slate-500">
                   {row.recipe_role} · {row.catalog_code}
                 </p>
@@ -535,7 +535,7 @@ function RecipeRow({ row }: { row: TemplatePricingRecipeItem }) {
       className="grid grid-cols-[minmax(0,1.4fr)_minmax(0,0.8fr)_minmax(0,0.7fr)_minmax(0,0.7fr)_auto] gap-2 border-b border-slate-800/50 px-3 py-2.5 text-[12px] text-slate-200 last:border-b-0"
     >
       <div className="min-w-0">
-        <p className="truncate font-medium text-slate-100">{row.operator_name}</p>
+        <p className="truncate font-medium text-wo-text-primary">{row.operator_name}</p>
         <p className="mt-0.5 font-mono text-[10px] text-slate-500">
           {KIND_LABELS[row.recipe_kind]} · {row.stable_code}
           {row.catalog_code && row.catalog_code !== row.stable_code

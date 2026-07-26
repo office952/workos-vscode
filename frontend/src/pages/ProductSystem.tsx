@@ -782,7 +782,7 @@ function ProductPreviewPanel({
                     {componentIcon}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className={`text-[9px] font-bold uppercase tracking-wide ${cfg.color}`}>
+                    <p className="text-[9px] font-bold uppercase tracking-wide text-wo-text-primary">
                       {index + 1}. {typeLabel}
                     </p>
                     <p className="text-[10px] text-wo-text-secondary truncate">
@@ -1117,7 +1117,7 @@ function CollapsibleComponentCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono text-wo-text-muted">#{index + 1}</span>
-            <span className={`text-[11px] font-bold ${cfg.color} uppercase tracking-wide`}>
+            <span className="text-[11px] font-bold uppercase tracking-wide text-wo-text-primary">
               {typeDisplayLabel}
             </span>
             {hasWarning && (
@@ -1233,7 +1233,7 @@ function CollapsibleComponentCard({
           {/* Description hint */}
           <div className={`flex items-start gap-2 px-3 py-2 rounded-lg ${cfg.bgColor} border ${cfg.borderColor}`}>
             <Info className={`w-3.5 h-3.5 ${cfg.color} mt-0.5 shrink-0`} />
-            <p className={`text-[11px] ${cfg.color} opacity-80`}>{cfg.description}</p>
+            <p className="text-[11px] text-wo-text-secondary">{cfg.description}</p>
           </div>
 
           {hasWarning && (

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Legacy fast-ask panel (classic intake). Critical SVG/parsing fixes only.
  * New operator rules belong in WorkIntake V2. See VOLUMETRIC_WORKINTAKE_V2_MIGRATION_BOUNDARY.md
  */

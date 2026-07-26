@@ -191,7 +191,7 @@ export default function IntakeV6SupportContourGeometryCard({
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-[12px] font-semibold text-slate-100">
+          <p className="truncate text-[12px] font-semibold text-wo-text-primary">
             Panou ACP — contur exterior
           </p>
           <p className="text-[11px] text-slate-500">Grup detectat: contur principal închis</p>
@@ -233,7 +233,7 @@ export default function IntakeV6SupportContourGeometryCard({
         data-testid="intake-v6-support-contour-component"
       >
         <p className="text-[10px] uppercase tracking-wide text-slate-500">Componentă produs</p>
-        <p className="text-[12px] font-medium text-slate-100">
+        <p className="text-[12px] font-medium text-wo-text-primary">
           {ownerFacingComponentProductLabel(supportComp)}
         </p>
         <p className="mt-0.5 text-[10px] text-slate-400">

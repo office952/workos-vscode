@@ -80,9 +80,9 @@ function PipelineCard({ status, count, active }: { status: IntakeStatus; count: 
         <span className={`${cfg.cls.includes("text-blue") ? "text-blue-400" : cfg.cls.includes("text-emerald") ? "text-emerald-400" : cfg.cls.includes("text-amber") ? "text-amber-400" : cfg.cls.includes("text-red") ? "text-red-400" : "text-slate-400"}`}>
           {cfg.icon}
         </span>
-        <span className="text-[12px] font-semibold text-slate-200">{cfg.label}</span>
+        <span className="text-[12px] font-semibold text-wo-text-primary">{cfg.label}</span>
       </div>
-      <p className="text-[24px] font-bold text-slate-100">{count}</p>
+      <p className="text-[24px] font-bold text-wo-text-primary">{count}</p>
     </div>
   );
 }
@@ -165,7 +165,7 @@ export default function WorkIntake() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Inbox className="w-5 h-5 text-orange-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Work Intake</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Work Intake</h1>
           <SourceBadge source={intakeSource} />
           <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">
             {intakeRequests.length} cereri
@@ -263,11 +263,11 @@ export default function WorkIntake() {
               setListPage(1);
             }}
             placeholder="Caută client, ID, descriere..."
-            className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+            className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-slate-600 outline-none w-full"
           />
         </div>
         {selectedStatus !== "all" && (
-          <button onClick={() => setSelectedStatus("all")} className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors">
+          <button onClick={() => setSelectedStatus("all")} className="text-[11px] text-slate-400 hover:text-wo-text-primary transition-colors">
             Resetează filtru
           </button>
         )}
@@ -316,7 +316,7 @@ export default function WorkIntake() {
                       {req.priority.toUpperCase()}
                     </span>
                   </div>
-                  <p className="text-[13px] font-semibold text-slate-200">{req.client}</p>
+                  <p className="text-[13px] font-semibold text-wo-text-primary">{req.client}</p>
                   <p className="text-[11px] text-slate-400 truncate mt-0.5">{req.description}</p>
                   <div className="flex items-center gap-3 mt-1.5 text-[10px] text-slate-500">
                     <span className="flex items-center gap-1">{channelIcon[req.channel]} {req.channel}</span>
@@ -385,7 +385,7 @@ export default function WorkIntake() {
                   <span className="text-[12px] font-mono text-blue-400">{selectedRequest.id}</span>
                   <IntakeStatusBadge status={selectedRequest.status} />
                 </div>
-                <h3 className="text-[16px] font-bold text-slate-100">{selectedRequest.client}</h3>
+                <h3 className="text-[16px] font-bold text-wo-text-primary">{selectedRequest.client}</h3>
                 <p className="text-[12px] text-slate-400 mt-1">{selectedRequest.contactPerson}</p>
 
                 <div className="mt-4 space-y-3">

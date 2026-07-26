@@ -94,7 +94,7 @@ export function AiOperationalDefaultsSection({
               className="grid grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)_minmax(0,0.7fr)_auto] gap-2 border-b border-slate-800/50 px-3 py-2.5 text-[12px] text-slate-200 last:border-b-0"
             >
               <div className="min-w-0">
-                <p className="truncate font-medium text-slate-100">{row.display_name_ro}</p>
+                <p className="truncate font-medium text-wo-text-primary">{row.display_name_ro}</p>
                 <p className="mt-0.5 font-mono text-[10px] text-slate-500">
                   {row.domain} · {row.target_code}
                 </p>
@@ -141,7 +141,7 @@ export function AiOperationalDefaultsSection({
                   onChange={(e) =>
                     setDrafts((prev) => ({ ...prev, [row.decision_id]: e.target.value }))
                   }
-                  className="w-full rounded border border-slate-700 bg-slate-950/60 px-2 py-1 text-[11px] text-slate-100"
+                  className="w-full rounded border border-slate-700 bg-slate-950/60 px-2 py-1 text-[11px] text-wo-text-primary"
                 />
                 <div className="flex gap-1">
                   <button

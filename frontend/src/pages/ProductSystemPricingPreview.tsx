@@ -78,7 +78,7 @@ export default function ProductSystemPricingPreview() {
         {/* Left: Input form */}
         <Card className="border-slate-800/60 bg-slate-950/70 shadow-none h-fit">
           <CardHeader className="px-5 py-4 border-b border-slate-800/40">
-            <CardTitle className="text-[14px] font-semibold text-slate-100">Date simulare</CardTitle>
+            <CardTitle className="text-[14px] font-semibold text-wo-text-primary">Date simulare</CardTitle>
             <p className="text-[11px] text-slate-500 mt-0.5">Completează datele și rulează preview-ul.</p>
           </CardHeader>
           <CardContent className="px-5 py-5 space-y-4">
@@ -124,7 +124,7 @@ export default function ProductSystemPricingPreview() {
             <Button
               onClick={runPreview}
               disabled={loading || !materialCode.trim()}
-              className="w-full h-10 bg-slate-800 text-slate-100 hover:bg-slate-700 border border-slate-700/60 font-medium"
+              className="w-full h-10 bg-slate-800 text-wo-text-primary hover:bg-slate-700 border border-slate-700/60 font-medium"
             >
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Calculator className="mr-2 h-4 w-4" />}
               Calculează preview
@@ -147,7 +147,7 @@ export default function ProductSystemPricingPreview() {
         {/* Right: Result */}
         <Card className={`border-slate-800/60 shadow-none ${hasResult ? "bg-slate-950/70" : "bg-slate-950/40"}`}>
           <CardHeader className="px-5 py-4 border-b border-slate-800/40">
-            <CardTitle className="text-[14px] font-semibold text-slate-100">Rezultat estimare</CardTitle>
+            <CardTitle className="text-[14px] font-semibold text-wo-text-primary">Rezultat estimare</CardTitle>
             <p className="text-[11px] text-slate-500 mt-0.5">
               {hasResult ? "Simulare completă — valorile de mai jos sunt informative." : "Rulează preview-ul pentru a vedea rezultatul."}
             </p>
@@ -235,7 +235,7 @@ function ResultRow({ label, value, emphasized = false }: { label: string; value:
   return (
     <div className={`flex items-center justify-between rounded-lg px-4 py-2.5 ${emphasized ? "border border-slate-700/50 bg-slate-900/40" : ""}`}>
       <span className="text-[12px] text-slate-500">{label}</span>
-      <span className={`text-[13px] font-medium ${emphasized ? "text-slate-100" : "text-slate-300"}`}>{value}</span>
+      <span className={`text-[13px] font-medium ${emphasized ? "text-wo-text-primary" : "text-slate-300"}`}>{value}</span>
     </div>
   );
 }

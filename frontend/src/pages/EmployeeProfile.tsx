@@ -113,7 +113,7 @@ export default function EmployeeProfile() {
             {employee.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
           </div>
           <div>
-            <h1 className="text-[18px] font-bold text-slate-100">{employee.name}</h1>
+            <h1 className="text-[18px] font-bold text-wo-text-primary">{employee.name}</h1>
             <div className="flex items-center gap-2 mt-0.5">
               <span className="text-[12px] text-slate-400">{employee.functie}</span>
               <span className="text-[10px] text-slate-600">•</span>
@@ -148,7 +148,7 @@ export default function EmployeeProfile() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-md text-[12px] font-semibold transition-colors ${
               activeTab === tab.id
-                ? "bg-wo-surface-raised text-slate-100 border border-wo-border-strong"
+                ? "bg-wo-surface-raised text-wo-text-primary border border-wo-border-strong"
                 : "text-slate-500 hover:text-slate-300"
             }`}
           >
@@ -342,7 +342,7 @@ function MedicinaTab({ documents, employeeName }: { documents: EmployeeDocument[
               {latest.status === "expira_curand" && <Clock className="w-6 h-6 text-amber-400" />}
               {latest.status === "expirat" && <XCircle className="w-6 h-6 text-red-400" />}
               <div>
-                <p className="text-[16px] font-bold text-slate-100">
+                <p className="text-[16px] font-bold text-wo-text-primary">
                   {latest.status === "valid" ? "Valid" : latest.status === "expira_curand" ? "Expiră curând" : "EXPIRAT"}
                 </p>
                 <p className="text-[12px] text-slate-400">

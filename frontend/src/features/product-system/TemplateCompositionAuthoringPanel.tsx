@@ -92,7 +92,7 @@ export function TemplateCompositionAuthoringPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100">Compoziție</h3>
+          <h3 className="text-sm font-semibold text-wo-text-primary">Compoziție</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanTemplateName(parentTemplateCode)}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{parentTemplateCode}</span>
@@ -153,7 +153,7 @@ export function TemplateCompositionAuthoringPanel({
             >
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <div>
-                  <p className="text-xs font-medium text-slate-100">
+                  <p className="text-xs font-medium text-wo-text-primary">
                     {humanTemplateName(link.module_template_code)}
                   </p>
                   <p className="font-mono text-[10px] text-slate-500">{link.module_template_code}</p>

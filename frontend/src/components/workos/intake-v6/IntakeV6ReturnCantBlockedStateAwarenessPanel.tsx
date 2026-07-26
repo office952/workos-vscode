@@ -75,7 +75,7 @@ export default function IntakeV6ReturnCantBlockedStateAwarenessPanel({
           <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] ${isTechnicalOnly ? "text-slate-400" : "text-red-200/80"}`}>
             Return/cant diagnostic
           </p>
-          <h3 className="mt-1 text-[14px] font-semibold text-slate-100">
+          <h3 className="mt-1 text-[14px] font-semibold text-wo-text-primary">
             {isTechnicalOnly
               ? "Detalii tehnice return/cant (read-only)."
               : "Return/cant necesită valori obligatorii lipsă."}

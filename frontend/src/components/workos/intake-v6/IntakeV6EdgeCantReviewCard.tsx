@@ -42,7 +42,7 @@ function MainRow({ label, value, testId }: { label: string; value: string; testI
 
       <dt className="text-slate-400">{label}</dt>
 
-      <dd className={`${v6.mono} text-right text-slate-100`} data-testid={testId}>
+      <dd className={`${v6.mono} text-right text-wo-text-primary`} data-testid={testId}>
 
         {value}
 
@@ -231,7 +231,7 @@ export default function IntakeV6EdgeCantReviewCard({
 
     <div className={`${v6.card} mb-4`} data-testid="intake-v6-edge-cant-review-card">
 
-      <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-slate-100">
+      <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-wo-text-primary">
 
         {INTAKE_V6_CANT_VOLUM_LABEL}
 

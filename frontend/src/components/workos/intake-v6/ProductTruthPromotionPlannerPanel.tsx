@@ -67,7 +67,7 @@ function EntryList({
           className={`rounded border px-3 py-2 ${blocked ? "border-red-900/40 bg-red-950/10" : "border-slate-800 bg-slate-950/35"}`}
         >
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="font-mono text-[10px] font-bold text-slate-100">{entry.field_key}</span>
+            <span className="font-mono text-[10px] font-bold text-wo-text-primary">{entry.field_key}</span>
             {entry.identity_key ? <Badge>{entry.identity_key}</Badge> : null}
             <Badge tone={entry.promotion_allowed ? "ok" : blocked ? "bad" : "warn"}>{entry.state}</Badge>
             <Badge tone={entry.promotion_allowed ? "ok" : "warn"}>{entry.value_status}</Badge>
@@ -121,7 +121,7 @@ export default function ProductTruthPromotionPlannerPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Product Truth Promotion Planner</h3>
+          <h3 className="text-[13px] font-bold text-wo-text-primary">Product Truth Promotion Planner</h3>
           <p className="mt-0.5 text-[11px] text-slate-500">
             Read-only diagnostic for what can move from runtime capture into Product Truth later, without writing anything now.
           </p>
@@ -150,37 +150,37 @@ export default function ProductTruthPromotionPlannerPanel({
           <dl className="grid gap-2 text-[11px] sm:grid-cols-2">
             <div>
               <dt className="text-slate-500">planner_version</dt>
-              <dd className="font-mono text-slate-100" data-testid="product-truth-promotion-planner-version">
+              <dd className="font-mono text-wo-text-primary" data-testid="product-truth-promotion-planner-version">
                 {model?.planner_version ?? "lipsa"}
               </dd>
             </div>
             <div>
               <dt className="text-slate-500">read_only</dt>
-              <dd className="text-slate-100" data-testid="product-truth-promotion-planner-read-only">
+              <dd className="text-wo-text-primary" data-testid="product-truth-promotion-planner-read-only">
                 {model?.read_only !== false ? "true" : "false"}
               </dd>
             </div>
             <div>
               <dt className="text-slate-500">root_template_code</dt>
-              <dd className="font-mono text-slate-100" data-testid="product-truth-promotion-planner-root-template">
+              <dd className="font-mono text-wo-text-primary" data-testid="product-truth-promotion-planner-root-template">
                 {formatValue(model?.root_template_code)}
               </dd>
             </div>
             <div>
               <dt className="text-slate-500">product_binding_template_code</dt>
-              <dd className="font-mono text-slate-100" data-testid="product-truth-promotion-planner-binding-template">
+              <dd className="font-mono text-wo-text-primary" data-testid="product-truth-promotion-planner-binding-template">
                 {formatValue(model?.product_binding_template_code)}
               </dd>
             </div>
             <div>
               <dt className="text-slate-500">eligible_entries</dt>
-              <dd className="text-slate-100" data-testid="product-truth-promotion-planner-eligible-count">
+              <dd className="text-wo-text-primary" data-testid="product-truth-promotion-planner-eligible-count">
                 {eligibleEntries.length}
               </dd>
             </div>
             <div>
               <dt className="text-slate-500">blocked_entries</dt>
-              <dd className="text-slate-100" data-testid="product-truth-promotion-planner-blocked-count">
+              <dd className="text-wo-text-primary" data-testid="product-truth-promotion-planner-blocked-count">
                 {blockedEntries.length}
               </dd>
             </div>

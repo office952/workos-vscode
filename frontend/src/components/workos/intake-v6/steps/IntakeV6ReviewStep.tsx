@@ -2280,7 +2280,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
               <div className="flex shrink-0 items-center border-l border-wo-border-strong/70 px-1.5 py-1">
                 <button
                   type="button"
-                  className="rounded-md border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-400/40 hover:text-slate-100"
+                  className="rounded-md border border-wo-border-strong/80 bg-wo-surface-raised/60 px-2 py-1.5 text-[11px] font-semibold text-slate-300 hover:border-slate-400/40 hover:text-wo-text-primary"
                   data-testid="intake-v6-review-composition-sheet-trigger"
                   onClick={() => setProductDetailsOpen(true)}
                 >
@@ -2645,7 +2645,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 <p className="mb-2 text-[12px] font-semibold text-slate-200">Pregătire și montaj</p>
             <div className="grid gap-2 sm:grid-cols-2">
               {!contractRendererEnabled ? (
-              <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-slate-100">
+              <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-wo-text-primary">
                 <input
                   type="checkbox"
                   className="h-4 w-4 accent-cyan-400"
@@ -2802,7 +2802,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 data-testid="intake-v6-mounting-site-section"
               >
                 <p className="mb-2 text-[12px] font-semibold text-slate-200">Montaj la locație</p>
-                  <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-slate-100">
+                  <label className="flex items-center gap-2 rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1.5 text-[12px] text-wo-text-primary">
                     <input
                       type="checkbox"
                       className="h-4 w-4 accent-cyan-400"
@@ -3019,7 +3019,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                       className="sm:col-span-3 rounded border border-cyan-500/25 bg-cyan-500/5 px-2.5 py-2 text-[11px] text-slate-300"
                       data-testid="intake-v6-mounting-svg-dimension-source"
                     >
-                      <p className="font-semibold text-slate-100">Panou ACP casetat · dimensiuni din Pasul 1</p>
+                      <p className="font-semibold text-wo-text-primary">Panou ACP casetat · dimensiuni din Pasul 1</p>
                       <p className="mt-0.5">
                         Dimensiuni panou:{" "}
                         <span className="text-cyan-100">
@@ -3705,7 +3705,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
           data-testid="intake-v6-review-product-details-sheet"
         >
           <SheetHeader>
-            <SheetTitle className="text-slate-100">Compoziție produs</SheetTitle>
+            <SheetTitle className="text-wo-text-primary">Compoziție produs</SheetTitle>
           </SheetHeader>
           <div className="mt-3 space-y-3">
             <p className="text-[11px] text-slate-400">
@@ -4005,7 +4005,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
             <div className="grid gap-2 md:grid-cols-4">
               <p>
                 Dossier fields:{" "}
-                <span className="text-slate-100">
+                <span className="text-wo-text-primary">
                   {templateFormContract.variant_fields.filter((field) => field.owner === "product_system_dossier").length}
                 </span>
               </p>
@@ -4032,7 +4032,7 @@ export default function IntakeV6ReviewStep({ hook }: { hook: IntakeV6WorkspaceHo
                 .slice(0, 6)
                 .map((field) => (
                   <li key={field.field_key} className="border-t border-wo-border-strong pt-2">
-                    <span className="text-slate-100">{field.field_key}</span>{" "}
+                    <span className="text-wo-text-primary">{field.field_key}</span>{" "}
                             <span className="text-slate-500">({field.alignment_status})</span>
                     {field.v4_field_key ? (
                       <span className="text-slate-500"> via {field.v4_field_key}</span>

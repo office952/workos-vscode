@@ -97,7 +97,7 @@ export default function IntakeV6TaskGenerationDryRunPanel({
         >
           <p className="font-semibold text-slate-300">
             Template operation alignment:{" "}
-            <span className="text-slate-100">{alignment.status}</span>
+            <span className="text-wo-text-primary">{alignment.status}</span>
           </p>
           <p className="mt-1 text-slate-500">
             aligned {alignment.aligned_count ?? 0} · partial {alignment.partial_count ?? 0} · missing{" "}

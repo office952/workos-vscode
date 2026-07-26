@@ -56,7 +56,7 @@ export function AcmBoxedAppliedContentPanel({
       data-testid="acm-boxed-applied-content-panel"
     >
       <div>
-        <h3 className="text-sm font-semibold text-slate-100">Conținut aplicat + cadru</h3>
+        <h3 className="text-sm font-semibold text-wo-text-primary">Conținut aplicat + cadru</h3>
         <p className="mt-0.5 text-[11px] text-slate-400">
           Decision A — litere <span className="text-slate-300">XOR</span> logo; cadru metalic opțional
           (operator). Fără praguri automate.

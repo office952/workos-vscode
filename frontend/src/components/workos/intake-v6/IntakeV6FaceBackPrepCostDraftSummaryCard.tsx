@@ -102,7 +102,7 @@ export default function IntakeV6FaceBackPrepCostDraftSummaryCard({
                 {!needsVerification ? (
                   <div>
                     <dt className="text-slate-500">Perimetru CNC</dt>
-                    <dd className="font-semibold text-slate-100" data-testid="intake-v6-face-back-prep-summary-perimeter">
+                    <dd className="font-semibold text-wo-text-primary" data-testid="intake-v6-face-back-prep-summary-perimeter">
                       {formatFaceBackPrepPerimeterM(perimeterM)}
                     </dd>
                   </div>

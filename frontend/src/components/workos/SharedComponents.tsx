@@ -89,7 +89,7 @@ export function AlertItem({ alert }: { alert: { id: string; severity: AlertSever
     <div className={`flex items-start gap-2 px-3 py-2 bg-wo-surface-raised border-l-2 ${cfg.borderClass} rounded-r`}>
       <span className={`mt-0.5 ${cfg.className}`}>{cfg.icon}</span>
       <div className="flex-1 min-w-0">
-        <p className="text-[12px] text-slate-200 leading-tight">{alert.message}</p>
+        <p className="text-[12px] text-wo-text-primary leading-tight">{alert.message}</p>
         <p className="text-[10px] text-slate-500 mt-0.5">{alert.code} · {new Date(alert.triggeredAt).toLocaleTimeString("ro-RO", { hour: "2-digit", minute: "2-digit" })}</p>
       </div>
     </div>
@@ -160,7 +160,7 @@ export function MachineCard({
     <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
       <div className="flex items-center gap-2 mb-2">
         <span className={`w-2 h-2 rounded-full ${dotColor} animate-pulse`} />
-        <span className="text-[12px] font-semibold text-slate-200 truncate">{machine.name}</span>
+        <span className="text-[12px] font-semibold text-wo-text-primary truncate">{machine.name}</span>
       </div>
       {machine.status === "running" ? (
         <>
@@ -278,7 +278,7 @@ export function SectionHeader({ title, count, icon }: { title: string; count?: n
   return (
     <div className="flex items-center gap-2 mb-3">
       {icon && <span className="text-slate-400">{icon}</span>}
-      <h3 className="text-[14px] font-semibold text-slate-200">{title}</h3>
+      <h3 className="text-[14px] font-semibold text-wo-text-primary">{title}</h3>
       {count !== undefined && (
         <span className="text-[11px] font-medium text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">{count}</span>
       )}

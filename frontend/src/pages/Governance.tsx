@@ -573,7 +573,7 @@ function ExportPreviewModal({
           <div className="flex items-center gap-3">
             <Download className="w-4.5 h-4.5 text-blue-400" />
             <div>
-              <h2 className="text-[15px] font-bold text-slate-100">Preview Export</h2>
+              <h2 className="text-[15px] font-bold text-wo-text-primary">Preview Export</h2>
               <p className="text-[11px] text-slate-500">
                 {rows.length} rânduri totale · {activeColumns.length}/{allExportColumns.length} coloane selectate
               </p>
@@ -581,7 +581,7 @@ function ExportPreviewModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-slate-200"
+            className="p-1.5 rounded-lg hover:bg-slate-800 transition-colors text-slate-400 hover:text-wo-text-primary"
           >
             <X className="w-4 h-4" />
           </button>
@@ -702,7 +702,7 @@ function ExportPreviewModal({
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="px-3 py-1.5 text-[12px] font-medium text-slate-400 hover:text-slate-200 rounded-lg border border-wo-border-strong hover:border-slate-500 transition-all"
+              className="px-3 py-1.5 text-[12px] font-medium text-slate-400 hover:text-wo-text-primary rounded-lg border border-wo-border-strong hover:border-slate-500 transition-all"
             >
               Anulează
             </button>
@@ -739,7 +739,7 @@ function ExportButton({ results }: { results: Map<string, SearchResult[]> }) {
     <>
       <button
         onClick={() => setShowPreview(true)}
-        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-wo-border-strong bg-wo-surface-raised text-slate-300 hover:border-slate-500 hover:text-slate-100 transition-all"
+        className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium rounded-lg border border-wo-border-strong bg-wo-surface-raised text-slate-300 hover:border-slate-500 hover:text-wo-text-primary transition-all"
       >
         <Download className="w-3.5 h-3.5" />
         Export
@@ -808,7 +808,7 @@ function SearchResultsView({
           {/* Category header */}
           <div className="flex items-center gap-2 sticky top-0 bg-wo-surface-inset py-1 z-10">
             <span className="text-slate-400">{items[0]?.categoryIcon}</span>
-            <h3 className="text-[13px] font-semibold text-slate-200">{category}</h3>
+            <h3 className="text-[13px] font-semibold text-wo-text-primary">{category}</h3>
             <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">
               {items.length}
             </span>
@@ -829,7 +829,7 @@ function SearchResultsView({
                 className="w-full text-left bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-3 hover:border-slate-500 transition-colors group"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-[13px] font-medium text-slate-200 group-hover:text-blue-300 transition-colors flex-1">
+                  <p className="text-[13px] font-medium text-wo-text-primary group-hover:text-blue-300 transition-colors flex-1">
                     <HighlightText text={item.title} query={query} />
                   </p>
                   <div className="flex items-center gap-1.5 shrink-0">
@@ -891,7 +891,7 @@ function BoundaryMapView() {
               data-testid={`boundary-${layer.id}`}
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <h3 className="text-[14px] font-bold text-slate-100">{layer.nameRo}</h3>
+                <h3 className="text-[14px] font-bold text-wo-text-primary">{layer.nameRo}</h3>
                 <span className="text-[10px] text-slate-500">{layer.technicalAlias}</span>
                 <span
                   className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(layer.status)}`}
@@ -1117,7 +1117,7 @@ function TruthHierarchyView({
               {/* Content */}
               <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3 flex-1 group-hover:border-slate-500 transition-colors">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-[13px] font-bold text-slate-200">{source.name}</p>
+                  <p className="text-[13px] font-bold text-wo-text-primary">{source.name}</p>
                   <span className="text-[10px] text-slate-500 bg-slate-800 px-1.5 py-0.5 rounded">{source.role}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
@@ -1169,7 +1169,7 @@ function GateView() {
               data-testid={`owner-gate-${gate.id}`}
             >
               <div className="flex flex-wrap items-center gap-2 mb-2">
-                <p className="text-[14px] font-bold text-slate-200">{gate.nameRo}</p>
+                <p className="text-[14px] font-bold text-wo-text-primary">{gate.nameRo}</p>
                 <span
                   className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(gate.status)}`}
                 >
@@ -1220,7 +1220,7 @@ function GuardrailsView() {
           >
             <div className="flex flex-wrap items-center gap-2 mb-1">
               <span className="text-[10px] font-mono text-slate-600">{g.id}</span>
-              <p className="text-[13px] font-semibold text-slate-200">{g.titleRo}</p>
+              <p className="text-[13px] font-semibold text-wo-text-primary">{g.titleRo}</p>
               <span
                 className={`ml-auto px-1.5 py-0.5 text-[9px] font-semibold rounded border ${governanceStatusBadgeClass(g.status)}`}
               >
@@ -1256,7 +1256,7 @@ function UITruthRulesView() {
             <span className="text-[10px] font-mono text-slate-600">{rule.id}</span>
             <span className="text-[10px] text-purple-400 bg-purple-900/20 px-1.5 py-0.5 rounded">{rule.area}</span>
           </div>
-          <p className="text-[14px] font-semibold text-slate-200 mb-3">{rule.rule}</p>
+          <p className="text-[14px] font-semibold text-wo-text-primary mb-3">{rule.rule}</p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-emerald-900/10 border border-emerald-800/30 rounded-lg p-3">
@@ -1389,7 +1389,7 @@ function StatusFlowsView() {
                 {mod.statuses.map((s) => (
                   <span key={s} className="flex items-center gap-1.5 px-2.5 py-1 bg-wo-surface-raised border border-wo-border-strong rounded-md">
                     <span className={`w-2 h-2 rounded-full ${statusColors[s] || "bg-slate-500"}`} />
-                    <span className="text-[12px] text-slate-200 font-mono">{s}</span>
+                    <span className="text-[12px] text-wo-text-primary font-mono">{s}</span>
                   </span>
                 ))}
               </div>
@@ -1503,7 +1503,7 @@ function ProductCatalogView() {
                 </span>
                 <span className="text-[10px] text-slate-500">{cat.products.length} produse</span>
               </div>
-              <p className="text-[13px] font-semibold text-slate-200">{cat.name}</p>
+              <p className="text-[13px] font-semibold text-wo-text-primary">{cat.name}</p>
               {expandedCat === cat.id && (
                 <div className="mt-3 space-y-1.5 animate-in fade-in duration-200">
                   {cat.products.map((prod) => (
@@ -1609,7 +1609,7 @@ function OwnershipHonestyView({
               key={level.id}
               className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
             >
-              <p className="text-slate-200 font-medium">
+              <p className="text-wo-text-primary font-medium">
                 Level {level.level} — {level.labelRo}
               </p>
               <p className="text-slate-500">{level.surfacesRo}</p>
@@ -1643,7 +1643,7 @@ function OwnershipHonestyView({
           className="bg-wo-surface-raised border border-amber-700/40 rounded-md px-3 py-2 text-[11px]"
           data-testid="governance-active-scope-registration"
         >
-          <p className="font-semibold text-slate-100">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
+          <p className="font-semibold text-wo-text-primary">{ACTIVE_SCOPE_SYSTEM.canonicalName}</p>
           <p className="text-amber-200 mt-1" data-testid="governance-active-scope-status">
             Status: PARTIAL / PROVEN SLICE 1 · Owner: {ACTIVE_SCOPE_SYSTEM.owner}
           </p>
@@ -1659,7 +1659,7 @@ function OwnershipHonestyView({
           title={ACTIVE_SCOPE_READINESS_LAW.titleRo}
           icon={<Lock className="w-4 h-4 text-amber-400" />}
         />
-        <p className="text-[12px] text-slate-200 font-medium" data-testid="readiness-law-binding">
+        <p className="text-[12px] text-wo-text-primary font-medium" data-testid="readiness-law-binding">
           {ACTIVE_SCOPE_READINESS_LAW.bindingRo}
         </p>
         <ul className="list-disc list-inside text-[11px] text-slate-400 space-y-0.5" data-testid="inactive-module-rules">
@@ -1681,7 +1681,7 @@ function OwnershipHonestyView({
               className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
               data-testid={`active-scope-owns-${row.systemId}`}
             >
-              <p className="text-slate-200 font-medium">{row.systemId}</p>
+              <p className="text-wo-text-primary font-medium">{row.systemId}</p>
               <p className="text-emerald-300/90">Owns: {row.ownsRo}</p>
               <p className="text-slate-500">Does not own: {row.doesNotOwnRo}</p>
             </div>
@@ -1704,7 +1704,7 @@ function OwnershipHonestyView({
               className="bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
               data-testid={`dependency-class-${cls.id}`}
             >
-              <p className="font-semibold text-slate-100">{cls.labelRo}</p>
+              <p className="font-semibold text-wo-text-primary">{cls.labelRo}</p>
               <p className="text-slate-400 mt-1">{cls.definitionRo}</p>
               <p className="text-slate-500 mt-1">Ex: {cls.exampleRo}</p>
             </div>
@@ -1753,7 +1753,7 @@ function OwnershipHonestyView({
               {PRESENT_OWNERSHIP_ROWS.map((row) => (
                 <tr key={row.systemId} className="border-b border-wo-border-subtle/60 align-top" data-testid={`ownership-${row.systemId}`}>
                   <td className="py-2 pr-3">
-                    <p className="text-slate-200 font-medium">{row.domainRo}</p>
+                    <p className="text-wo-text-primary font-medium">{row.domainRo}</p>
                     <p className="text-[10px] text-slate-500">{row.technicalAlias}</p>
                   </td>
                   <td className="py-2 pr-3 text-slate-300">{row.owner}</td>
@@ -1843,7 +1843,7 @@ function OwnershipHonestyView({
                   className="border-b border-wo-border-subtle/60 align-top"
                   data-testid={`settings-ownership-${row.setting}`}
                 >
-                  <td className="py-2 pr-3 text-slate-200 font-medium">{row.setting}</td>
+                  <td className="py-2 pr-3 text-wo-text-primary font-medium">{row.setting}</td>
                   <td className="py-2 pr-3 text-slate-400">{row.category}</td>
                   <td className="py-2 pr-3 text-slate-300 text-[11px]">{row.currentOwnerRo}</td>
                   <td className="py-2 pr-3 text-slate-400 text-[11px]">{row.runtimeSourceRo}</td>
@@ -1861,7 +1861,7 @@ function OwnershipHonestyView({
         <div className="space-y-2 mt-2">
           {HONESTY_SEPARATION_RULES.map((rule) => (
             <div key={rule.ruleRo} className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
-              <p className="text-[13px] text-slate-200 mb-1">{rule.ruleRo}</p>
+              <p className="text-[13px] text-wo-text-primary mb-1">{rule.ruleRo}</p>
               <div className="flex flex-wrap gap-2 text-[10px]">
                 <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
                   Status: {rule.status}
@@ -1928,7 +1928,7 @@ function OwnershipHonestyView({
                   key={doc.document_id}
                   className="flex flex-wrap items-center gap-2 bg-wo-surface-raised border border-wo-border-strong rounded-md px-3 py-2 text-[11px]"
                 >
-                  <span className="text-slate-200 font-medium">{doc.title || doc.document_id}</span>
+                  <span className="text-wo-text-primary font-medium">{doc.title || doc.document_id}</span>
                   <span className="px-1.5 py-0.5 rounded border border-slate-600 text-slate-400">
                     {doc.authority}
                   </span>
@@ -2029,7 +2029,7 @@ export default function Governance() {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-2 shrink-0 flex-wrap">
           <Shield className="w-5 h-5 text-amber-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Guvernanța sistemului</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Guvernanța sistemului</h1>
           <span className="text-[11px] text-slate-500" data-testid="governance-alias">
             System Governance
           </span>
@@ -2047,7 +2047,7 @@ export default function Governance() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Caută reguli, agenți, produse, statusuri..."
-              className="bg-transparent text-[13px] text-slate-200 placeholder:text-slate-600 outline-none w-full"
+              className="bg-transparent text-[13px] text-wo-text-primary placeholder:text-slate-600 outline-none w-full"
             />
             {/* Filter toggle */}
             <button
@@ -2155,7 +2155,7 @@ export default function Governance() {
               className={`flex items-center gap-1.5 px-3 py-2 text-[12px] font-medium rounded-md transition-colors whitespace-nowrap ${
                 activeTab === tab.id
                   ? "bg-blue-600/20 text-blue-400 border border-blue-600/30"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border border-transparent"
+                  : "text-slate-400 hover:text-wo-text-primary hover:bg-slate-800/50 border border-transparent"
               }`}
             >
               {tab.icon}

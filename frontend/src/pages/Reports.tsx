@@ -77,7 +77,7 @@ function MetricCard({
         <MiniSparkline data={sparkData} color={color} />
       </div>
       <div className="flex items-end gap-2">
-        <span className="text-[24px] font-bold text-slate-100">{value}</span>
+        <span className="text-[24px] font-bold text-wo-text-primary">{value}</span>
         <span className="text-[12px] text-slate-400 mb-1">{unit}</span>
       </div>
       <div
@@ -255,7 +255,7 @@ export default function Reports() {
       {/* Header */}
       <div className="flex items-center gap-2">
         <BarChart3 className="w-5 h-5 text-purple-400" />
-        <h1 className="text-[18px] font-bold text-slate-100">
+        <h1 className="text-[18px] font-bold text-wo-text-primary">
           Rapoarte &amp; Analiză
         </h1>
         <span className="text-[10px] text-slate-500 bg-slate-800 px-2 py-0.5 rounded-full ml-1">

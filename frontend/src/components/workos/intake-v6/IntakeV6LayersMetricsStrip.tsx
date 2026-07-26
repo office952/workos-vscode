@@ -53,7 +53,7 @@ function HeroMetricTile({
       </span>
       <div className="min-w-0">
         <span className={`${v6.metricLabel} block truncate`}>{label}</span>
-        <strong className="block truncate text-[13px] font-semibold tabular-nums leading-tight text-slate-50">
+        <strong className="block truncate text-[13px] font-semibold tabular-nums leading-tight text-wo-text-primary">
           {value}
         </strong>
         {footer}

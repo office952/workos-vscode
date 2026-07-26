@@ -67,7 +67,7 @@ function ScenarioCard({
       data-testid={`demo-scenario-${expectedRequiresAck ? "warn" : "ready"}`}
     >
       <div>
-        <h3 className="text-[14px] font-bold text-slate-100">{title}</h3>
+        <h3 className="text-[14px] font-bold text-wo-text-primary">{title}</h3>
         <p className="text-[11px] text-slate-400 mt-1">{description}</p>
       </div>
 
@@ -227,7 +227,7 @@ export default function CommercialSpineDemo() {
       </div>
 
       <div>
-        <h1 className="text-[20px] font-bold text-slate-100">Internal Commercial Spine Demo</h1>
+        <h1 className="text-[20px] font-bold text-wo-text-primary">Internal Commercial Spine Demo</h1>
         <p className="text-[13px] text-slate-400 mt-1">
           {DEMO_TEMPLATE} quote → order → execution plan
         </p>

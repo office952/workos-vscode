@@ -133,7 +133,7 @@ export default function EmployeeMobileShopFloorNowCard({
           {isHome ? "Recomandat acum" : "Ce am de făcut acum"}
         </p>
         <h2
-          className="text-xl font-semibold text-slate-50 leading-snug"
+          className="text-xl font-semibold text-wo-text-primary leading-snug"
           data-testid={
             testIdPrefix === "employee-mobile-home-hero"
               ? "employee-mobile-home-hero-task"

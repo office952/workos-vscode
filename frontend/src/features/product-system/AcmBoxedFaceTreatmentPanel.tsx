@@ -106,7 +106,7 @@ export function AcmBoxedFaceTreatmentPanel({
       data-testid="acm-boxed-face-treatment-panel"
     >
       <div>
-        <h3 className="text-sm font-semibold text-slate-100">Tratarea feței Bond/ACM</h3>
+        <h3 className="text-sm font-semibold text-wo-text-primary">Tratarea feței Bond/ACM</h3>
         <p className="mt-0.5 text-[11px] text-slate-400">
           Axis B — tratamente locale pe carcasă (decupaj iluminat / insert plexiglas). Ortogonal
           față de conținutul volumetric aplicat. Fără catalog optic inventat.

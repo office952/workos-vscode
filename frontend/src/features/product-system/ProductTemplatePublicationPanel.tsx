@@ -166,7 +166,7 @@ export function ProductTemplatePublicationPanel({ templateCode }: { templateCode
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100">Publicare șablon</h3>
+          <h3 className="text-sm font-semibold text-wo-text-primary">Publicare șablon</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanName}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>

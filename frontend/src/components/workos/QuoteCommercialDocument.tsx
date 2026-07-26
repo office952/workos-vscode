@@ -221,7 +221,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[0.14em] text-slate-500">Document comercial</p>
-                <h2 className="text-[17px] font-bold text-slate-50 mt-1 leading-tight">{documentTitle}</h2>
+                <h2 className="text-[17px] font-bold text-wo-text-primary mt-1 leading-tight">{documentTitle}</h2>
                 <p
                   className="text-[12px] font-mono text-blue-300/90 mt-1"
                   data-testid="commercial-document-quote-code"
@@ -380,7 +380,7 @@ export default function QuoteCommercialDocument({ quoteDbId, quoteCode, visible 
               <div className="flex justify-between items-baseline pt-2 mt-1 border-t border-slate-500/50">
                 <span className="text-[12px] font-bold tracking-wide text-slate-100">TOTAL</span>
                 <span
-                  className="text-[15px] font-bold text-slate-50 tabular-nums"
+                  className="text-[15px] font-bold text-wo-text-primary tabular-nums"
                   data-testid="commercial-document-grand-total"
                 >
                   {formatCurrency(totals.grand_total)} {totals.currency}

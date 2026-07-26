@@ -226,7 +226,7 @@ export default function EmployeePayments() {
       <header>
         <div className="flex items-center gap-2 flex-wrap">
           <Banknote className="w-5 h-5 text-emerald-400" />
-          <h1 className="text-[20px] font-bold text-slate-100">Plăți angajați</h1>
+          <h1 className="text-[20px] font-bold text-wo-text-primary">Plăți angajați</h1>
           <SourceBadge source={situations.length === 0 ? "empty" : "db"} />
           <Badge className="text-[9px] bg-slate-800 text-slate-400 border-slate-600">
             Manual
@@ -361,7 +361,7 @@ function PaymentSummaryCards({ summary }: { summary: MonthPaymentSummary }) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
       <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Calculat luna aceasta</p>
-        <p className="text-xl font-bold text-slate-100">
+        <p className="text-xl font-bold text-wo-text-primary">
           {summary.calculated.toLocaleString("ro-RO")}{" "}
           <span className="text-xs text-slate-500">RON</span>
         </p>
@@ -375,7 +375,7 @@ function PaymentSummaryCards({ summary }: { summary: MonthPaymentSummary }) {
       </div>
       <div className="bg-wo-surface-raised border border-wo-border-strong rounded-lg p-3">
         <p className="text-[10px] text-slate-500 uppercase mb-1">Rămas</p>
-        <p className="text-xl font-bold text-slate-100">
+        <p className="text-xl font-bold text-wo-text-primary">
           {summary.remaining.toLocaleString("ro-RO")} RON
         </p>
       </div>
@@ -510,7 +510,7 @@ function EmployeeListRow({
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 mb-1">
-        <span className="text-[14px] font-semibold text-slate-100">{row.employeeName}</span>
+        <span className="text-[14px] font-semibold text-wo-text-primary">{row.employeeName}</span>
         <PaymentStatusBadge status={row.missingBase ? "neplatit" : slotData.status} missingBase={row.missingBase} />
       </div>
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-slate-500 mb-2">
@@ -586,7 +586,7 @@ function EmployeePaymentDetailPanel({
   if (row.missingBase) {
     return (
       <div className="bg-wo-surface-raised border border-amber-800/40 rounded-lg p-5 space-y-4">
-        <h2 className="text-[16px] font-semibold text-slate-100">{row.employeeName}</h2>
+        <h2 className="text-[16px] font-semibold text-wo-text-primary">{row.employeeName}</h2>
         <p className="text-[12px] text-amber-300/90 flex items-center gap-1.5">
           <AlertTriangle className="w-4 h-4 shrink-0" />
           Lipsește suma lunară în profilul angajatului.
@@ -605,7 +605,7 @@ function EmployeePaymentDetailPanel({
     <div className="bg-wo-surface-raised border border-wo-border-subtle rounded-lg p-5 space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h2 className="text-[16px] font-semibold text-slate-100">{row.employeeName}</h2>
+          <h2 className="text-[16px] font-semibold text-wo-text-primary">{row.employeeName}</h2>
           <p className="text-[12px] text-slate-500 mt-1">{slotTabLabel(activeSlot)}</p>
         </div>
         <PaymentStatusBadge status={slotData.status} />
@@ -693,7 +693,7 @@ function EmployeePaymentDetailPanel({
                 step="1"
                 value={formAmount}
                 onChange={(e) => onAmountChange(e.target.value)}
-                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-wo-text-primary"
               />
             </label>
             <label className="block space-y-1 text-[12px]">
@@ -702,7 +702,7 @@ function EmployeePaymentDetailPanel({
                 type="date"
                 value={formDate}
                 onChange={(e) => onDateChange(e.target.value)}
-                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-wo-text-primary"
               />
             </label>
             <label className="block space-y-1 text-[12px]">
@@ -711,7 +711,7 @@ function EmployeePaymentDetailPanel({
                 value={formNotes}
                 onChange={(e) => onNotesChange(e.target.value)}
                 rows={2}
-                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-slate-100 resize-none"
+                className="w-full bg-wo-surface-input border border-wo-border-strong rounded px-3 py-2 text-wo-text-primary resize-none"
               />
             </label>
             {formError && <p className="text-red-400 text-[11px]">{formError}</p>}

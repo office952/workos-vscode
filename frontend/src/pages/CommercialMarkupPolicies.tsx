@@ -153,7 +153,7 @@ export default function CommercialMarkupPolicies() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         {[
-          { label: 'Total policies', value: stats.total, cls: 'text-slate-100' },
+          { label: 'Total policies', value: stats.total, cls: 'text-wo-text-primary' },
           { label: 'Active', value: stats.active, cls: 'text-emerald-400' },
           { label: 'Draft', value: stats.draft, cls: 'text-amber-400' },
           { label: 'Archived', value: stats.archived, cls: 'text-slate-500' },
@@ -171,7 +171,7 @@ export default function CommercialMarkupPolicies() {
       <Card className="border-slate-800/60 bg-slate-950/60 shadow-none overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between gap-3 px-5 py-4 border-b border-slate-800/50">
           <div>
-            <CardTitle className="text-[14px] font-semibold text-slate-100">Reguli comerciale</CardTitle>
+            <CardTitle className="text-[14px] font-semibold text-wo-text-primary">Reguli comerciale</CardTitle>
             <CardDescription className="text-[11px] text-slate-500 mt-0.5">
               Ordinea și prioritatea regulilor aplicate peste costul materialului.
             </CardDescription>
@@ -260,7 +260,7 @@ export default function CommercialMarkupPolicies() {
       {/* Dry-run simulation */}
       <Card className="border-slate-800/60 bg-slate-950/60 shadow-none">
         <CardHeader className="px-5 py-4 border-b border-slate-800/50">
-          <CardTitle className="text-[14px] font-semibold text-slate-100">Simulare markup comercial</CardTitle>
+          <CardTitle className="text-[14px] font-semibold text-wo-text-primary">Simulare markup comercial</CardTitle>
           <CardDescription className="text-[11px] text-slate-500 mt-0.5">
             Testează aplicarea regulilor pe un material. Nu modifică nimic în sistem.
           </CardDescription>

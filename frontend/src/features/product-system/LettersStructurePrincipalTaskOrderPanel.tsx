@@ -102,7 +102,7 @@ export function LettersStructurePrincipalTaskOrderPanel({
               <p className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${styles.title}`}>
                 Obținere componentă
               </p>
-              <h3 className="mt-0.5 text-[1.05rem] font-semibold text-slate-50">{obtain.titleRo}</h3>
+              <h3 className="mt-0.5 text-[1.05rem] font-semibold text-wo-text-primary">{obtain.titleRo}</h3>
             </div>
           </div>
           <p className="mt-4 text-[13px] leading-relaxed text-amber-100/90">{obtain.withoutTheseRo}</p>
@@ -113,7 +113,7 @@ export function LettersStructurePrincipalTaskOrderPanel({
                   {index + 1}.
                 </span>
                 <span>
-                  <span className="font-medium text-slate-100">{task.labelRo}</span>
+                  <span className="font-medium text-wo-text-primary">{task.labelRo}</span>
                   {task.conditionRo ? (
                     <span className="mt-0.5 block text-[11px] text-slate-500">{task.conditionRo}</span>
                   ) : null}
@@ -144,7 +144,7 @@ export function LettersStructurePrincipalTaskOrderPanel({
               <p className={`text-[10px] font-semibold uppercase tracking-[0.14em] ${styles.title}`}>
                 În lanțul literei
               </p>
-              <h3 className="mt-0.5 text-[1.05rem] font-semibold text-slate-50">
+              <h3 className="mt-0.5 text-[1.05rem] font-semibold text-wo-text-primary">
                 Ordine principală taskuri
               </h3>
             </div>

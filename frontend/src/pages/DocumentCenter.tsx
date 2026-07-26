@@ -332,7 +332,7 @@ export default function DocumentCenter() {
       {/* HEADER */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-[20px] font-bold text-slate-100 flex items-center gap-2">
+          <h1 className="text-[20px] font-bold text-wo-text-primary flex items-center gap-2">
             <FileText className="w-5 h-5 text-blue-400" />
             Document Center
           </h1>

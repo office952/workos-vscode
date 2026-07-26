@@ -147,7 +147,7 @@ export default function IntakeV6AcmPanelConfigRegion({
       >
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <div>
-            <p className="text-[13px] font-semibold text-slate-100">Panou Alucobond</p>
+            <p className="text-[13px] font-semibold text-wo-text-primary">Panou Alucobond</p>
             <p className="text-[11px] text-slate-500">Geometrie, construcție și finisaj</p>
           </div>
           {intakeV6ShowOperatorConfigStatusBadges() ? (

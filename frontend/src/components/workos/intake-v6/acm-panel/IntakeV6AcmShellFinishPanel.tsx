@@ -50,7 +50,7 @@ function AtelierZoneFields({
     <div className="space-y-1.5 rounded border border-wo-border-strong/60 bg-wo-surface-inset/40 px-2 py-2">
       <p className="text-[11px] font-semibold text-slate-300">{labelRo}</p>
       <select
-        className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
+        className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-wo-text-primary"
         value={zone.kind}
         onChange={(e) => onChange(defaultAcmShellZone(e.target.value as AcmShellZoneKind))}
         data-testid={`intake-v6-acm-shell-zone-kind-${zoneId}`}
@@ -66,7 +66,7 @@ function AtelierZoneFields({
           <label className="block text-[10px] text-slate-500">
             Cod Oracal 651
             <input
-              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
               value={zone.color_code}
               onChange={(e) =>
                 onChange({ ...zone, color_code: e.target.value.trim() })
@@ -78,7 +78,7 @@ function AtelierZoneFields({
           <label className="block text-[10px] text-slate-500">
             Lățime rolă
             <select
-              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
+              className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
               value={zone.roll_width_mm}
               onChange={(e) =>
                 onChange({
@@ -100,7 +100,7 @@ function AtelierZoneFields({
         <label className="block text-[10px] text-slate-500">
           Lățime rolă print+lam
           <select
-            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
+            className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
             value={zone.roll_width_mm}
             onChange={(e) =>
               onChange({
@@ -216,7 +216,7 @@ export default function IntakeV6AcmShellFinishPanel({
       <label className="block text-[11px] text-slate-400">
         Cum aplici folia
         <select
-          className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
+          className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-wo-text-primary"
           value={applyMode}
           onChange={(e) => setApplyMode(e.target.value as FoilApplyMode)}
           data-testid="intake-v6-acm-shell-apply-mode"
@@ -280,7 +280,7 @@ export default function IntakeV6AcmShellFinishPanel({
               <div className="space-y-1.5 rounded border border-wo-border-strong/60 px-2 py-2">
                 <p className="text-[11px] font-semibold text-slate-300">Strategie folie</p>
                 <select
-                  className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-slate-100"
+                  className="w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1.5 text-[12px] text-wo-text-primary"
                   value={draft.foil_strategy?.mode ?? "face_plus_first_fold"}
                   onChange={(e) => {
                     const mode = e.target.value as AcmShellFoilStrategyMode;
@@ -319,7 +319,7 @@ export default function IntakeV6AcmShellFinishPanel({
                       <input
                         type="number"
                         min={2}
-                        className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-slate-100"
+                        className="mt-0.5 w-full rounded border border-wo-border-strong bg-wo-surface-raised px-2 py-1 text-[12px] text-wo-text-primary"
                         value={draft.foil_strategy.piece_count}
                         onChange={(e) =>
                           apply({

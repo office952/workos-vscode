@@ -85,7 +85,7 @@ export default function LettersAcmComposerIaMockPage() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-300/80">
           Compatibilitate Litere ↔ Alucobond
         </p>
-        <h1 className="mt-1 text-[1.45rem] font-semibold text-slate-50">
+        <h1 className="mt-1 text-[1.45rem] font-semibold text-wo-text-primary">
           Composer — mock IA
         </h1>
         <p className="mt-2 max-w-3xl text-[13px] leading-relaxed text-wo-text-muted">
@@ -131,7 +131,7 @@ export default function LettersAcmComposerIaMockPage() {
         >
           <div className="flex flex-wrap items-center gap-2">
             <Layers2 className="h-4 w-4 text-emerald-300" aria-hidden />
-            <h2 className="text-[1.1rem] font-semibold text-slate-50">
+            <h2 className="text-[1.1rem] font-semibold text-wo-text-primary">
               Composit: {rootLabel} + {peer.labelRo}
             </h2>
             <span className="inline-flex items-center gap-1 rounded border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-100">

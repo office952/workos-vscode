@@ -292,7 +292,7 @@ export default function IntakeV6AcmPanelBlueprintPreview({
       >
         {embedded ? (
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <span className="shrink-0 text-[11px] font-semibold text-slate-100">
+            <span className="shrink-0 text-[11px] font-semibold text-wo-text-primary">
               Previzualizare
             </span>
             <span
@@ -316,7 +316,7 @@ export default function IntakeV6AcmPanelBlueprintPreview({
         ) : (
           <>
             <div className="flex items-center gap-2">
-              <span className="text-[11px] font-semibold text-slate-100">
+              <span className="text-[11px] font-semibold text-wo-text-primary">
                 Previzualizare tehnică
               </span>
               {intakeV6ShowOperatorConfigStatusBadges() ? (

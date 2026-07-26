@@ -355,8 +355,8 @@ export default function IntakeV6OfferScopePanel({
       className={`${v6.cardCompact} ${confirmed ? "border-emerald-500/30 bg-emerald-500/5" : "border-violet-500/30 bg-violet-500/5"}`}
       data-testid="intake-v6-offer-scope-panel"
     >
-      <p className="flex items-center gap-2 text-[12px] font-semibold text-slate-100">
-        <Package className="h-3.5 w-3.5 text-violet-300" aria-hidden />
+      <p className="flex items-center gap-2 text-[12px] font-semibold text-wo-text-primary">
+        <Package className="h-3.5 w-3.5 text-violet-500 dark:text-violet-300" aria-hidden />
         Ce producem?
       </p>
 
@@ -378,8 +378,8 @@ export default function IntakeV6OfferScopePanel({
               aria-pressed={selected}
               className={
                 selected
-                  ? "rounded border border-violet-400/50 bg-violet-500/20 px-2.5 py-1 text-[11px] text-violet-100"
-                  : "rounded border border-slate-600/70 bg-slate-950/40 px-2.5 py-1 text-[11px] text-slate-300 hover:border-slate-500"
+                  ? "rounded border border-violet-500/40 bg-violet-500/15 px-2.5 py-1 text-[11px] text-wo-text-primary"
+                  : "rounded border border-wo-border-strong bg-wo-surface-inset px-2.5 py-1 text-[11px] text-wo-text-secondary hover:border-wo-border-strong hover:text-wo-text-primary"
               }
             >
               {preset.labelRo}
@@ -389,7 +389,7 @@ export default function IntakeV6OfferScopePanel({
       </div>
 
       <fieldset className="mt-3 space-y-2" disabled={disabled || saving}>
-        <label className="flex items-center gap-2 text-[11px] text-slate-200">
+        <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
           <input
             type="radio"
             name="intake-v6-offer-scope-mode"
@@ -399,7 +399,7 @@ export default function IntakeV6OfferScopePanel({
           />
           Produs complet
         </label>
-        <label className="flex items-center gap-2 text-[11px] text-slate-200">
+        <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
           <input
             type="radio"
             name="intake-v6-offer-scope-mode"
@@ -415,7 +415,7 @@ export default function IntakeV6OfferScopePanel({
         <div className="mt-3 space-y-2" data-testid="intake-v6-offer-scope-subset-options">
           <div className="flex flex-wrap gap-3">
             {PRIMARY_MODULES.map((item) => (
-              <label key={item.code} className="flex items-center gap-2 text-[11px] text-slate-200">
+              <label key={item.code} className="flex items-center gap-2 text-[11px] text-wo-text-primary">
                 <input
                   type="checkbox"
                   checked={soldModules.includes(item.code)}
@@ -425,7 +425,7 @@ export default function IntakeV6OfferScopePanel({
                 {item.label}
               </label>
             ))}
-            <label className="flex items-center gap-2 text-[11px] text-slate-200">
+            <label className="flex items-center gap-2 text-[11px] text-wo-text-primary">
               <input
                 ref={systemLedBundleRef}
                 type="checkbox"
@@ -451,7 +451,7 @@ export default function IntakeV6OfferScopePanel({
               data-testid="intake-v6-offer-scope-advanced-options"
             >
               {ADVANCED_LED_MODULES.map((item) => (
-                <label key={item.code} className="flex items-center gap-2 text-[11px] text-slate-200">
+                <label key={item.code} className="flex items-center gap-2 text-[11px] text-wo-text-primary">
                   <input
                     type="checkbox"
                     checked={soldModules.includes(item.code)}

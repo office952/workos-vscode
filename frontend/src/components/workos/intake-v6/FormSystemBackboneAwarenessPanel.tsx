@@ -53,7 +53,7 @@ export default function FormSystemBackboneAwarenessPanel({
     >
       <div className="flex flex-wrap items-start justify-between gap-3 p-3">
         <div>
-          <h3 className="text-[13px] font-bold text-slate-100">Form System Backbone</h3>
+          <h3 className="text-[13px] font-bold text-wo-text-primary">Form System Backbone</h3>
           <p className="mt-0.5 text-[11px] text-slate-500">
             Read-only diagnostic: component ownership, source/state and Product Truth readiness.
           </p>
@@ -88,7 +88,7 @@ export default function FormSystemBackboneAwarenessPanel({
           <div className="grid gap-2 md:grid-cols-4" data-testid="form-system-backbone-root-summary">
             <div>
               <p className="text-slate-500">Root</p>
-              <p className="font-mono text-[10px] text-slate-100">{model.root.canonicalCode}</p>
+              <p className="font-mono text-[10px] text-wo-text-primary">{model.root.canonicalCode}</p>
             </div>
             <div>
               <p className="text-slate-500">Type</p>
@@ -129,7 +129,7 @@ export default function FormSystemBackboneAwarenessPanel({
               {model.fields.slice(0, 6).map((field) => (
                 <div key={field.fieldKey} className="rounded border border-slate-800 bg-slate-900/40 px-2.5 py-2">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="font-mono text-[10px] font-bold text-slate-100">{field.fieldKey}</span>
+                    <span className="font-mono text-[10px] font-bold text-wo-text-primary">{field.fieldKey}</span>
                     <Badge>{field.owningComponent}</Badge>
                     <Badge tone={field.state === "suggested" || field.state === "fallback" || field.state === "hydrated" ? "warn" : field.state === "blocked" || field.state === "missing" ? "bad" : "muted"}>
                       {field.sourceType} / {field.state}
@@ -152,7 +152,7 @@ export default function FormSystemBackboneAwarenessPanel({
               </ul>
             </div>
             <div className="rounded border border-slate-800 bg-slate-900/40 px-3 py-2" data-testid="form-system-backbone-blockers">
-              <p className="mb-1 font-semibold text-slate-100">Readiness / blockers ({model.blockers.length})</p>
+              <p className="mb-1 font-semibold text-wo-text-primary">Readiness / blockers ({model.blockers.length})</p>
               {model.blockerRows.length > 0 ? (
                 <>
                 <ul className="space-y-1 text-slate-300">

@@ -362,7 +362,7 @@ export default function IntakeV6ProductCompositionPanel({
                     className="rounded border border-wo-border-strong/80 bg-wo-surface-raised/55 p-2.5"
                     data-testid={`intake-v6-product-definition-linked-segment-${segment.segment_key}`}
                   >
-                    <p className="text-[11px] font-semibold text-slate-100">
+                    <p className="text-[11px] font-semibold text-wo-text-primary">
                       {operatorCompositionRoleLabelRo(segment.composition_role)}
                     </p>
                     <p className="mt-0.5 font-mono text-[10px] text-cyan-200">{segment.owning_template_code}</p>

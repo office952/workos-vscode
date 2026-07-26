@@ -101,7 +101,7 @@ export default function OperationalReports() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <ClipboardList className="w-5 h-5 text-blue-400" />
-          <h1 className="text-[18px] font-bold text-slate-100">Operational Reports</h1>
+          <h1 className="text-[18px] font-bold text-wo-text-primary">Operational Reports</h1>
           {data?.read_only && (
             <span className="text-[10px] text-emerald-400 bg-emerald-900/30 border border-emerald-800 px-2 py-0.5 rounded-full">
               Read-only
@@ -350,7 +350,7 @@ function MetricCard({
         {icon}
         <p className="text-[11px] uppercase tracking-wide">{label}</p>
       </div>
-      <p className="text-[20px] font-bold text-slate-100">{value}</p>
+      <p className="text-[20px] font-bold text-wo-text-primary">{value}</p>
     </div>
   );
 }

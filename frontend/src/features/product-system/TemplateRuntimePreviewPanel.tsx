@@ -61,7 +61,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
     >
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-slate-100">Runtime Preview</h3>
+          <h3 className="text-sm font-semibold text-wo-text-primary">Runtime Preview</h3>
           <p className="mt-0.5 text-[11px] text-slate-400">
             <span className="font-medium text-slate-200">{humanName}</span>
             <span className="ml-1.5 font-mono text-[10px] text-slate-500">{templateCode}</span>
@@ -108,7 +108,7 @@ export function TemplateRuntimePreviewPanel({ templateCode }: { templateCode: st
             className={`${PS_SURFACE_QUIET} px-3 py-2.5`}
             data-testid="runtime-preview-human-summary"
           >
-            <p className="text-[12px] font-medium text-slate-100">Rezumat operator</p>
+            <p className="text-[12px] font-medium text-wo-text-primary">Rezumat operator</p>
             <dl className="mt-2 grid gap-1.5 sm:grid-cols-2">
               <div>
                 <dt className="text-[10px] uppercase text-slate-500">Readiness preview</dt>

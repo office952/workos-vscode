@@ -103,7 +103,7 @@ export default function AcmPanelProvisionalPricingBlock({
               </p>
             </div>
             <span
-              className="shrink-0 text-[12px] font-semibold tabular-nums text-slate-100"
+              className="shrink-0 text-[12px] font-semibold tabular-nums text-wo-text-primary"
               data-testid="intake-v6-acm-panel-provisional-total"
             >
               {formatAcmPanelMoney(preview.estimated_total, currency)}
@@ -275,7 +275,7 @@ export default function AcmPanelProvisionalPricingBlock({
         <div className="mt-1.5">
           <button
             type="button"
-            className="inline-flex items-center gap-0.5 text-[10px] text-slate-300 hover:text-slate-100"
+            className="inline-flex items-center gap-0.5 text-[10px] text-slate-300 hover:text-wo-text-primary"
             data-testid="intake-v6-acm-panel-breakdown-toggle"
             aria-expanded={expanded}
             onClick={() => setExpanded((v) => !v)}

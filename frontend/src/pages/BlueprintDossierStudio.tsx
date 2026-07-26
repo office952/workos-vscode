@@ -291,7 +291,7 @@ function DossierTemplateFocusPanel({
         <p className="text-[10px] font-bold text-purple-400 uppercase tracking-wide mb-1">
           Șablon selectat
         </p>
-        <h2 className="text-[15px] font-bold text-slate-100 font-mono">{template.template_code}</h2>
+        <h2 className="text-[15px] font-bold text-wo-text-primary font-mono">{template.template_code}</h2>
         <p className="text-[12px] text-slate-300 mt-0.5">{template.family_name || "—"}</p>
         <span
           className={`inline-block mt-2 px-2 py-0.5 text-[9px] font-bold uppercase rounded-full border ${
@@ -1130,7 +1130,7 @@ function DossierEditor({
         <div className="flex items-center gap-3">
           <FileText className="w-5 h-5 text-purple-400" />
           <div>
-            <h2 className="text-[14px] font-bold text-slate-100">
+            <h2 className="text-[14px] font-bold text-wo-text-primary">
               Blueprint Dossier — {dossier.template_code}
             </h2>
             <p className="text-[10px] text-slate-500">
@@ -1394,7 +1394,7 @@ function DossierEditor({
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Layers className="w-4 h-4 text-purple-400" />
-              <h3 className="text-[13px] font-bold text-slate-100">Secțiuni Dossier</h3>
+              <h3 className="text-[13px] font-bold text-wo-text-primary">Secțiuni Dossier</h3>
               <span className="text-[10px] text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-full font-bold">
                 {visibleSectionKeys.length}/{ORDERED_DOSSIER_SECTION_KEYS.length}
               </span>
@@ -1791,7 +1791,7 @@ function CreateDossierPanel({
     <div className="bg-wo-surface-raised border border-purple-500/30 rounded-xl p-6 space-y-4">
       <div className="flex items-center gap-3">
         <Plus className="w-5 h-5 text-purple-400" />
-        <h3 className="text-[14px] font-bold text-slate-100">Creează dossier tehnic</h3>
+        <h3 className="text-[14px] font-bold text-wo-text-primary">Creează dossier tehnic</h3>
       </div>
       {!isActive ? (
         <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg border border-amber-800/35 bg-amber-950/20 text-amber-300/90">
@@ -2240,7 +2240,7 @@ export default function BlueprintDossierStudio() {
             <FileText className="w-6 h-6 text-purple-400" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-[18px] font-bold text-slate-100">
+            <h1 className="text-[18px] font-bold text-wo-text-primary">
               ProductSystem / Blueprint Dossier
             </h1>
             <p className="text-[11px] text-slate-500">

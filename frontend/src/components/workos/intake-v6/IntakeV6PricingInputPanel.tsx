@@ -203,7 +203,7 @@ export default function IntakeV6PricingInputPanel({
                 markupPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
             data-testid="intake-v6-offer-markup"
           />
         </label>
@@ -221,7 +221,7 @@ export default function IntakeV6PricingInputPanel({
                 discountPercent: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
             data-testid="intake-v6-offer-discount"
           />
         </label>
@@ -235,7 +235,7 @@ export default function IntakeV6PricingInputPanel({
             value={activeCommercialInputs.vatPercent}
             readOnly
             disabled
-            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
             data-testid="intake-v6-offer-vat"
           />
         </label>
@@ -251,7 +251,7 @@ export default function IntakeV6PricingInputPanel({
                 manualAdjustmentRon: Number(event.target.value) || 0,
               })
             }
-            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+            className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
             data-testid="intake-v6-offer-manual-adjustment"
           />
         </label>
@@ -438,7 +438,7 @@ export default function IntakeV6PricingInputPanel({
               <section key={group.key} className="rounded border border-wo-border-subtle bg-wo-surface-inset/60 p-2.5">
                 <div className="mb-2 flex items-center justify-between gap-3 border-b border-wo-border-subtle pb-2">
                   <h5 className={v6.zoneTitle}>{group.label}</h5>
-                  <strong className="text-slate-100">
+                  <strong className="text-wo-text-primary">
                     {formatCurrency(group.items.reduce((sum, item) => sum + item.amount, 0))}
                   </strong>
                 </div>
@@ -452,7 +452,7 @@ export default function IntakeV6PricingInputPanel({
                             {line.source === "payload" ? "sursa: breakdown ofertare" : "sursa: estimare V6 locala"}
                           </p>
                         </div>
-                        <strong className="text-slate-100">{formatCurrency(line.amount)}</strong>
+                        <strong className="text-wo-text-primary">{formatCurrency(line.amount)}</strong>
                       </li>
                     ))}
                   </ul>
@@ -483,7 +483,7 @@ export default function IntakeV6PricingInputPanel({
                     markupPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
                 data-testid="intake-v6-offer-markup"
               />
             </label>
@@ -501,7 +501,7 @@ export default function IntakeV6PricingInputPanel({
                     discountPercent: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
                 data-testid="intake-v6-offer-discount"
               />
             </label>
@@ -515,7 +515,7 @@ export default function IntakeV6PricingInputPanel({
                 value={activeCommercialInputs.vatPercent}
                 readOnly
                 disabled
-                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
                 data-testid="intake-v6-offer-vat"
               />
             </label>
@@ -531,7 +531,7 @@ export default function IntakeV6PricingInputPanel({
                     manualAdjustmentRon: Number(event.target.value) || 0,
                   })
                 }
-                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-slate-100 outline-none"
+                className="w-full rounded border border-wo-border-strong bg-wo-surface-inset px-2 py-1.5 text-[12px] text-wo-text-primary outline-none"
                 data-testid="intake-v6-offer-manual-adjustment"
               />
             </label>

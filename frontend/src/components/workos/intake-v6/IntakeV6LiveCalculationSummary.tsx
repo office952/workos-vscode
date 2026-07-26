@@ -735,7 +735,7 @@ function LiveCalcLineList({
                     className={joinClassNames(
                       "text-right text-[12px] tabular-nums",
                       logicalMode ? "font-semibold" : "font-mono",
-                      item.muted ? "text-amber-200/90" : "text-slate-100",
+                      item.muted ? "text-amber-200/90" : "text-wo-text-primary",
                     )}
                     data-testid={`intake-v6-live-material-cost-${item.groupKey}`}
                   >
@@ -958,7 +958,7 @@ function DetailsSheet({
       </SheetTrigger>
       <SheetContent side="right" className="w-full overflow-y-auto border-wo-border-strong bg-wo-surface-inset sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="text-left text-[13px] text-slate-100">{INTAKE_V6_LIVE_CALC_DETAILS_TITLE}</SheetTitle>
+          <SheetTitle className="text-left text-[13px] text-wo-text-primary">{INTAKE_V6_LIVE_CALC_DETAILS_TITLE}</SheetTitle>
           <SheetDescription className="mt-2 text-[10px] leading-relaxed text-slate-500">
             Breakdown pe materiale, operații și consumabile. Preview derivat — nu este ofertă finală.
           </SheetDescription>

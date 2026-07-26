@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Legacy compatibility intake spec editor for TPL-VOLUMETRIC-LETTERS.
  * Do not add new business rules here; use WorkIntake V2 / product_spec_json.
  * See docs/architecture/VOLUMETRIC_WORKINTAKE_V2_MIGRATION_BOUNDARY.md

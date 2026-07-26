@@ -12,7 +12,7 @@ export const REVIEW_LAYER_CARD_SPATE_SUMMARY_CLASS =
   "min-w-0 truncate text-[13px] text-slate-300 tabular-nums";
 
 export const REVIEW_LAYER_CARD_NAME_CLASS =
-  "min-w-0 truncate text-[14px] font-semibold text-slate-100";
+  "min-w-0 truncate text-[14px] font-semibold text-wo-text-primary";
 
 /** Stacked expanded body — Fata → Cant → Spate; no empty reserved columns. */
 export const REVIEW_LAYER_CARD_EXPANDED_STACK_CLASS =

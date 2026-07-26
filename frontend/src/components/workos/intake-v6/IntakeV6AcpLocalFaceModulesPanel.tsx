@@ -131,7 +131,7 @@ export default function IntakeV6AcpLocalFaceModulesPanel({
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
                   <div>
-                    <p className="text-[11px] font-medium text-slate-100">
+                    <p className="text-[11px] font-medium text-wo-text-primary">
                       {MODULE_LABELS[module.code] || module.code}
                     </p>
                     <p className="text-[10px] text-slate-400">

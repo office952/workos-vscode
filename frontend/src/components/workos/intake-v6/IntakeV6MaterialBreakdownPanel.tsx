@@ -83,7 +83,7 @@ function MaterialTable({
           <tbody>
             {rows.map((row) => (
               <tr key={row.material_key} className="border-b border-wo-border-strong/60">
-                <td className="py-2.5 pr-3 text-slate-100">
+                <td className="py-2.5 pr-3 text-wo-text-primary">
                   <div className="font-medium">{sanitizeOperatorDisplayText(row.display_name)}</div>
                   {row.material_code ?? row.registry_code ? (
                     <div className={v6.mono + " text-[11px] text-slate-400"}>
@@ -166,7 +166,7 @@ function MaterialTable({
                     "—"
                   )}
                 </td>
-                <td className="py-2.5 font-medium text-slate-100">
+                <td className="py-2.5 font-medium text-wo-text-primary">
                   {row.estimated_cost ?? row.material_cost != null ? (
                     <span>{(row.estimated_cost ?? row.material_cost)!.toFixed(2)} {row.currency}</span>
                   ) : (
@@ -276,7 +276,7 @@ export default function IntakeV6MaterialBreakdownPanel({
             className="flex flex-wrap items-start justify-between gap-2 border-b border-wo-border-strong/60 py-2.5"
             data-testid={`${testId}-${row.key}`}
           >
-            <span className="min-w-0 text-slate-100">
+            <span className="min-w-0 text-wo-text-primary">
               {sanitizeOperatorDisplayText(row.display_name)}
               {row.passes != null && row.passes > 1 ? (
                 <span className="block text-[11px] text-slate-400">
@@ -358,7 +358,7 @@ export default function IntakeV6MaterialBreakdownPanel({
                   key={row.material_key}
                   className="flex flex-wrap items-center justify-between gap-2 border-b border-wo-border-strong/60 py-2.5"
                 >
-                  <span className="text-slate-100">{sanitizeOperatorDisplayText(row.display_name)}</span>
+                  <span className="text-wo-text-primary">{sanitizeOperatorDisplayText(row.display_name)}</span>
                   <span className="tabular-nums text-slate-300">
                     {formatIntakeV6Quantity(row.quantity, row.unit, {
                       materialKey: row.material_key,
@@ -383,7 +383,7 @@ export default function IntakeV6MaterialBreakdownPanel({
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
             Status review material placă
           </p>
-          <p className="mt-1 text-[12px] font-semibold text-slate-100">
+          <p className="mt-1 text-[12px] font-semibold text-wo-text-primary">
             {SHEET_QUOTE_REVIEW_STATUS_LABELS[ownerReviewStatus]}
           </p>
         </div>
@@ -463,7 +463,7 @@ export default function IntakeV6MaterialBreakdownPanel({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-wo-border-strong pt-3 text-[12px]">
         <span className="text-slate-400">Total estimare internă materiale</span>
-        <strong className="text-slate-100" data-testid="intake-v6-material-cost-total">
+        <strong className="text-wo-text-primary" data-testid="intake-v6-material-cost-total">
           {(breakdown.totals.estimated_cost_total ?? breakdown.totals.material_cost_total).toFixed(2)}{" "}
           {breakdown.totals.currency} estimare materiale
           {breakdown.totals.contains_estimates ? " (estimări/fallback)" : ""}

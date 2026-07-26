@@ -408,7 +408,7 @@ export default function OperatorView() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-[18px] font-bold text-slate-100">Operator View</h1>
+              <h1 className="text-[18px] font-bold text-wo-text-primary">Operator View</h1>
               <SourceBadge source={source} />
             </div>
             <p className="text-[12px] text-slate-500">
@@ -445,7 +445,7 @@ export default function OperatorView() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <h2 className="text-[20px] font-bold text-slate-100">
+              <h2 className="text-[20px] font-bold text-wo-text-primary">
                 {resolveTruthForTask(currentTask)?.identity.display_label || currentTask.operationName}
               </h2>
               <OperatorTaskIdentityPresentation
