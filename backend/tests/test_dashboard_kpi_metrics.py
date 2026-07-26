@@ -1,4 +1,4 @@
-"""G6 — Dashboard KPI metric honesty (machine util + throughput today)."""
+"""G6/G7 — Dashboard KPI metric honesty (machine util + throughput + truth metadata)."""
 
 from __future__ import annotations
 
@@ -7,8 +7,11 @@ from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 
 from routers.dashboard_stats import (
+    NOTICE_CALENDAR_SHIFT_GAP,
     _aggregate_workcenter_minutes,
+    _build_capacity_load,
     _clamp_pct,
+    _kpi,
     _machine_util_pct,
     _throughput_today_count,
 )
@@ -144,3 +147,37 @@ def test_throughput_today_naive_updated_at_treated_as_utc():
         )
     ]
     assert _throughput_today_count(orders, now=now) == 1
+
+
+def test_kpi_payload_includes_operational_truth_fields():
+    payload = _kpi(
+        code="KPI_MACHINE_UTIL",
+        label="Load planificat WC",
+        value=68,
+        unit="%",
+        status="good",
+        kind="derived",
+        window="lifetime_plan_vs_finished_sessions",
+        explanation="mean planned-load",
+        gap_note=NOTICE_CALENDAR_SHIFT_GAP,
+    )
+    assert payload["kind"] == "derived"
+    assert payload["window"] == "lifetime_plan_vs_finished_sessions"
+    assert "calendar/shift" in payload["gapNote"]
+    assert "Load planificat" in payload["label"]
+
+
+def test_capacity_load_exposes_planned_actual_overrun_and_clamped_pct():
+    workcenters = {
+        "CNC": {"total_min": 100.0, "completed_min": 250.0},
+        "Print": {"total_min": 100.0, "completed_min": 40.0},
+    }
+    slots = _build_capacity_load(workcenters)
+    by_name = {s["workcenterName"]: s for s in slots}
+    assert by_name["CNC"]["loadToday"] == 100  # clamped
+    assert by_name["CNC"]["plannedMinutes"] == 100.0
+    assert by_name["CNC"]["actualMinutes"] == 250.0
+    assert by_name["CNC"]["overrunMinutes"] == 150.0
+    assert by_name["CNC"]["loadKind"] == "planned_load"
+    assert by_name["Print"]["loadToday"] == 40
+    assert by_name["Print"]["overrunMinutes"] == 0.0

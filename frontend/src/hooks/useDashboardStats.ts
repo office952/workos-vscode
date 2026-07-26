@@ -14,9 +14,32 @@ import {
   type ProductionAlert,
   type TrendPoint,
   type SystemEvent,
+  type OperationalTruth,
 } from "@/lib/mockData";
 
 export type DataSource = "db" | "mock" | "empty" | "error" | "loading";
+
+const MOCK_OPERATIONAL_TRUTH: OperationalTruth = {
+  plannedMinutesTotal: 0,
+  actualMinutesTotal: 0,
+  overrunMinutesTotal: 0,
+  throughputWindow: "utc_calendar_today",
+  workcenterLoadKind: "planned_load_0_100",
+  calendarShiftUtilAvailable: false,
+  notices: [
+    "Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter (nu utilizare pe ture/calendar).",
+    "Capacitate / load planificat — nu pricing comercial, nu cost orar utilaj → tarif client.",
+    "Throughput azi = comenzi completed cu updated_at în ziua calendaristică UTC curentă.",
+    "OTIF este proxy slab: fără realitate/deadline clar, comenzile finalizate sunt tratate ca on-time.",
+  ],
+  boundaries: {
+    pricing: "Dashboard does not compute or display client tariffs.",
+    hrCost: "No HR cost → client tariff on Dashboard.",
+    machines: "Load is planned-load %, not machine hourly rate.",
+    executionPlan: "Reads ExecutionPlan/Reality only — no materialization.",
+    productSystem: "No ProductDefinition / ProductAggregate ownership.",
+  },
+};
 
 interface DashboardStats {
   kpis: KPIValue[];
@@ -25,6 +48,7 @@ interface DashboardStats {
   alerts: ProductionAlert[];
   throughput: TrendPoint[];
   events: SystemEvent[];
+  operationalTruth: OperationalTruth | null;
   source: DataSource;
   loading: boolean;
   error: string | null;
@@ -45,6 +69,9 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
   const [alerts, setAlerts] = useState<ProductionAlert[]>(mockEnabled ? productionAlerts : []);
   const [throughput, setThroughput] = useState<TrendPoint[]>(mockEnabled ? throughputTrend : []);
   const [events, setEvents] = useState<SystemEvent[]>(mockEnabled ? recentEvents : []);
+  const [operationalTruth, setOperationalTruth] = useState<OperationalTruth | null>(
+    mockEnabled ? MOCK_OPERATIONAL_TRUTH : null,
+  );
   const [source, setSource] = useState<DataSource>(mockEnabled ? "mock" : "loading");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +119,12 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
         setEvents(data.recentEvents as SystemEvent[]);
       }
 
+      if (data.operationalTruth) {
+        setOperationalTruth(data.operationalTruth as OperationalTruth);
+      } else {
+        setOperationalTruth(MOCK_OPERATIONAL_TRUTH);
+      }
+
       setSource("db");
       setError(null);
       setLastUpdate(new Date());
@@ -99,6 +132,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
       if (!mountedRef.current) return;
       if (mockEnabled) {
         console.warn("[useDashboardStats] API unavailable, using mock data:", err);
+        setOperationalTruth(MOCK_OPERATIONAL_TRUTH);
         setSource("mock");
       } else {
         console.warn("[useDashboardStats] API unavailable, mock disabled:", err);
@@ -108,6 +142,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
         setAlerts([]);
         setThroughput([]);
         setEvents([]);
+        setOperationalTruth(null);
         setSource("error");
       }
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -137,6 +172,7 @@ export function useDashboardStats(intervalMs = 30000): DashboardStats {
     alerts,
     throughput,
     events,
+    operationalTruth,
     source,
     loading,
     error,
