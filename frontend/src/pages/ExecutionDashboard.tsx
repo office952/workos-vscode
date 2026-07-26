@@ -49,7 +49,7 @@ function statusBadgeCls(status: ExecutionStatus): string {
       return "bg-red-50 dark:bg-red-900/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-700";
     case "UNCONFIRMED":
     default:
-      return "bg-muted/60 text-muted-foreground border-slate-600";
+      return "bg-muted/60 text-muted-foreground border-border";
   }
 }
 
@@ -61,7 +61,7 @@ function alertBadgeCls(severity: AlertSeverity | null): string {
 
 function presenceBadgeCls(value: "present" | "absent"): string {
   return value === "present"
-    ? "bg-blue-900/30 text-blue-600 dark:text-blue-300 border-blue-800/60"
+    ? "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800/60"
     : "bg-muted/60 text-muted-foreground border-border";
 }
 

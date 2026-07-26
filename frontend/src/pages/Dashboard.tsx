@@ -94,19 +94,23 @@ const KIND_BADGE: Record<
 > = {
   actual: {
     label: "actual",
-    className: "bg-blue-500/15 text-blue-300 border-blue-500/30",
+    className:
+      "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-300",
   },
   planned: {
     label: "planificat",
-    className: "bg-slate-500/15 text-slate-300 border-slate-500/30",
+    className:
+      "border-slate-200 bg-slate-100 text-slate-700 dark:border-slate-500/30 dark:bg-slate-500/15 dark:text-slate-300",
   },
   derived: {
     label: "derivat",
-    className: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30",
+    className:
+      "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-500/30 dark:bg-cyan-500/15 dark:text-cyan-300",
   },
   proxy: {
     label: "proxy",
-    className: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    className:
+      "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300",
   },
   placeholder: {
     label: "gap",
@@ -145,19 +149,19 @@ function KPICardLarge({
       border: "border-wo-border-subtle",
       bg: "bg-wo-surface-raised",
       value: "text-wo-text-primary",
-      iconColor: "text-green-400",
+      iconColor: "text-green-600 dark:text-green-400",
     },
     warning: {
-      border: "border-amber-900/40",
+      border: "border-amber-200 dark:border-amber-900/40",
       bg: "bg-wo-surface-raised",
-      value: "text-amber-300",
-      iconColor: "text-amber-400",
+      value: "text-amber-800 dark:text-amber-300",
+      iconColor: "text-amber-600 dark:text-amber-400",
     },
     critical: {
-      border: "border-red-900/40",
+      border: "border-red-200 dark:border-red-900/40",
       bg: "bg-wo-surface-raised",
-      value: "text-red-300",
-      iconColor: "text-red-400",
+      value: "text-red-700 dark:text-red-300",
+      iconColor: "text-red-600 dark:text-red-400",
     },
   };
 
@@ -250,33 +254,38 @@ function OperationalTruthBanner({ truth }: { truth: OperationalTruth | null }) {
 
   return (
     <div
-      className="rounded-lg border border-amber-800/40 bg-amber-950/20 px-4 py-3 space-y-2"
+      className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 space-y-2 dark:border-amber-800/40 dark:bg-amber-950/20"
       data-testid="dashboard-operational-truth"
       role="note"
     >
       <div className="flex items-center gap-2">
-        <Info className="w-4 h-4 text-amber-400 shrink-0" />
-        <h3 className="text-xs font-semibold text-amber-200">
+        <Info className="w-4 h-4 shrink-0 text-amber-600 dark:text-amber-400" />
+        <h3 className="text-xs font-semibold text-amber-900 dark:text-amber-200">
           Adevăr operațional (Dashboard)
         </h3>
         {!truth.calendarShiftUtilAvailable && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded border border-amber-600/40 text-amber-300 bg-amber-900/30">
+          <span className="rounded border border-amber-300 bg-amber-100 px-1.5 py-0.5 text-[10px] text-amber-800 dark:border-amber-600/40 dark:bg-amber-900/30 dark:text-amber-300">
             fără util calendar/shift
           </span>
         )}
       </div>
       <ul className="space-y-1">
         {notices.slice(0, 3).map((n) => (
-          <li key={n} className="text-[11px] text-amber-100/80 leading-snug flex gap-1.5">
-            <span className="text-amber-500 shrink-0">•</span>
+          <li
+            key={n}
+            className="flex gap-1.5 text-[11px] leading-snug text-amber-900/90 dark:text-amber-100/80"
+          >
+            <span className="shrink-0 text-amber-600 dark:text-amber-500">•</span>
             <span>{n}</span>
           </li>
         ))}
       </ul>
-      <div className="flex flex-wrap gap-3 pt-1 text-[10px] text-wo-text-muted font-mono">
+      <div className="flex flex-wrap gap-3 pt-1 font-mono text-[10px] text-wo-text-muted">
         <span>Planificat: {truth.plannedMinutesTotal ?? 0} min</span>
-        <span className="text-blue-300">Actual: {truth.actualMinutesTotal ?? 0} min</span>
-        <span className="text-red-300">
+        <span className="text-blue-700 dark:text-blue-300">
+          Actual: {truth.actualMinutesTotal ?? 0} min
+        </span>
+        <span className="text-red-700 dark:text-red-300">
           Overrun: {truth.overrunMinutesTotal ?? 0} min
         </span>
         <span>Fereastră throughput: {truth.throughputWindow}</span>
@@ -380,19 +389,22 @@ function RiskCard({
 }) {
   const riskStyles = {
     high: {
-      border: "border-red-900/50",
-      bg: "bg-red-950/20",
-      badge: "bg-red-500/15 text-red-400 border-red-500/30",
+      border: "border-red-200 dark:border-red-900/50",
+      bg: "bg-red-50 dark:bg-red-950/20",
+      badge:
+        "border-red-200 bg-red-100 text-red-700 dark:border-red-500/30 dark:bg-red-500/15 dark:text-red-400",
     },
     medium: {
-      border: "border-amber-900/50",
-      bg: "bg-amber-950/15",
-      badge: "bg-amber-500/15 text-amber-400 border-amber-500/30",
+      border: "border-amber-200 dark:border-amber-900/50",
+      bg: "bg-amber-50 dark:bg-amber-950/15",
+      badge:
+        "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-400",
     },
     low: {
-      border: "border-blue-900/50",
-      bg: "bg-blue-950/15",
-      badge: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+      border: "border-blue-200 dark:border-blue-900/50",
+      bg: "bg-blue-50 dark:bg-blue-950/15",
+      badge:
+        "border-blue-200 bg-blue-100 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/15 dark:text-blue-400",
     },
   };
 
@@ -412,21 +424,21 @@ function RiskCard({
             {job.riskLevel}
           </span>
           {job.isBlocked && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded border border-red-500/40 text-red-300 bg-red-500/10 font-semibold uppercase">
+            <span className="rounded border border-red-200 bg-red-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-red-700 dark:border-red-500/40 dark:bg-red-500/10 dark:text-red-300">
               blocked
             </span>
           )}
           {!job.isBlocked && job.isLate && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded border border-amber-500/40 text-amber-300 bg-amber-500/10 font-semibold uppercase">
+            <span className="rounded border border-amber-200 bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-800 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
               late
             </span>
           )}
         </div>
         {job.isBlocked && (
-          <XCircle className="w-4 h-4 text-red-400 shrink-0" />
+          <XCircle className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400" />
         )}
         {!job.isBlocked && job.isLate && (
-          <Clock className="w-4 h-4 text-amber-400 shrink-0" />
+          <Clock className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
         )}
       </div>
 
@@ -710,28 +722,28 @@ export default function Dashboard() {
         <span className="text-[11px] text-wo-text-muted font-medium mr-1">Acțiuni rapide:</span>
         <button
           onClick={() => navigate("/intake")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-blue-600/20 border border-blue-700/40 text-blue-300 hover:bg-blue-600/30 hover:border-blue-600/60 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md border border-blue-200 bg-blue-50 px-3 py-1.5 text-[11px] font-medium text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-700/40 dark:bg-blue-600/20 dark:text-blue-300 dark:hover:border-blue-600/60 dark:hover:bg-blue-600/30"
         >
           <Plus className="w-3 h-3" />
           Cerere Nouă
         </button>
         <button
           onClick={() => navigate("/quotes")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-emerald-600/20 border border-emerald-700/40 text-emerald-300 hover:bg-emerald-600/30 hover:border-emerald-600/60 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11px] font-medium text-emerald-700 transition-colors hover:bg-emerald-100 dark:border-emerald-700/40 dark:bg-emerald-600/20 dark:text-emerald-300 dark:hover:border-emerald-600/60 dark:hover:bg-emerald-600/30"
         >
           <FileText className="w-3 h-3" />
           Oferte
         </button>
         <button
           onClick={() => navigate("/orders")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-amber-600/20 border border-amber-700/40 text-amber-300 hover:bg-amber-600/30 hover:border-amber-600/60 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md border border-amber-200 bg-amber-50 px-3 py-1.5 text-[11px] font-medium text-amber-800 transition-colors hover:bg-amber-100 dark:border-amber-700/40 dark:bg-amber-600/20 dark:text-amber-300 dark:hover:border-amber-600/60 dark:hover:bg-amber-600/30"
         >
           <ShoppingCart className="w-3 h-3" />
           Comenzi
         </button>
         <button
           onClick={() => navigate("/shop-floor")}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-medium rounded-md bg-purple-600/20 border border-purple-700/40 text-purple-300 hover:bg-purple-600/30 hover:border-purple-600/60 transition-colors"
+          className="inline-flex items-center gap-1.5 rounded-md border border-purple-200 bg-purple-50 px-3 py-1.5 text-[11px] font-medium text-purple-700 transition-colors hover:bg-purple-100 dark:border-purple-700/40 dark:bg-purple-600/20 dark:text-purple-300 dark:hover:border-purple-600/60 dark:hover:bg-purple-600/30"
         >
           <Factory className="w-3 h-3" />
           Shop Floor
@@ -907,7 +919,7 @@ export default function Dashboard() {
               />
             </div>
             <div
-              className="mb-3 rounded border border-amber-800/30 bg-amber-950/15 px-2 py-1.5 text-[10px] text-amber-200/90"
+              className="mb-3 rounded border border-amber-200 bg-amber-50 px-2 py-1.5 text-[10px] text-amber-900 dark:border-amber-800/30 dark:bg-amber-950/15 dark:text-amber-200/90"
               data-testid="capacity-calendar-gap"
             >
               Utilaj calendar/shift: date indisponibile — afișăm load planificat 0–100 pe workcenter

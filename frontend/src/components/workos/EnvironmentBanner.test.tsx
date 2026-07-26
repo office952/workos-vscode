@@ -80,6 +80,54 @@ describe("EnvironmentBanner", () => {
     expect(screen.queryByTestId("environment-banner-tech")).not.toBeInTheDocument();
   });
 
+  it("DB confirmed + backend warning chip stays specific, not generic verificare", () => {
+    mockUseRuntimeHealth.mockReturnValue({
+      snapshot: {
+        ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
+        backend: { state: "warning", rawStatus: "warning", checkedAt: "2026-07-17T04:00:00.000Z" },
+        database: { state: "confirmed", source: "diagnostics" },
+        environment: { state: "staging", rawValue: "staging" },
+        diagnostics: { authorized: true, available: true, httpStatus: 200 },
+      },
+      isLoading: false,
+      isRefreshing: false,
+      refresh: mockRefresh,
+      lastError: null,
+    });
+    renderBanner();
+    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "warning");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent(
+      "Staging · Backend cu avertisment · DB OK",
+    );
+    expect(screen.getByTestId("environment-banner-main").textContent).not.toMatch(
+      /necesită verificare/i,
+    );
+  });
+
+  it("healthy local + DB neverificată shows Backend OK, not alarmist verificare", () => {
+    mockUseRuntimeHealth.mockReturnValue({
+      snapshot: {
+        ...EMPTY_RUNTIME_TRUTH_SNAPSHOT,
+        backend: { state: "healthy", rawStatus: "ok", checkedAt: "2026-07-17T04:00:00.000Z" },
+        database: { state: "unknown", source: "none" },
+        environment: { state: "local", rawValue: "development" },
+        diagnostics: { authorized: false, available: false, httpStatus: 403 },
+      },
+      isLoading: false,
+      isRefreshing: false,
+      refresh: mockRefresh,
+      lastError: null,
+    });
+    renderBanner();
+    expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "warning");
+    expect(screen.getByTestId("environment-banner-main")).toHaveTextContent(
+      "Local · Backend OK · DB neverificată",
+    );
+    expect(screen.getByTestId("environment-banner-main").textContent).not.toMatch(
+      /necesită verificare/i,
+    );
+  });
+
   it("staging with unverified DB stays warning compact, not critical", () => {
     mockUseRuntimeHealth.mockReturnValue({
       snapshot: {
@@ -97,7 +145,10 @@ describe("EnvironmentBanner", () => {
     renderBanner();
     expect(screen.getByTestId("environment-banner")).toHaveAttribute("data-severity", "warning");
     expect(screen.getByTestId("environment-banner-main")).toHaveTextContent(
-      "Stare sistem: necesită verificare",
+      "Staging · Backend OK · DB neverificată",
+    );
+    expect(screen.getByTestId("environment-banner-main").textContent).not.toMatch(
+      /necesită verificare/i,
     );
     expect(screen.queryByTestId("environment-banner-critical-strip")).not.toBeInTheDocument();
   });
