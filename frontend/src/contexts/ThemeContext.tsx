@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
 
 export type Theme = "light" | "dark" | "system";
 
@@ -37,7 +37,8 @@ export function ThemeProvider({ children, defaultTheme = "light" }: { children: 
 
   const resolvedTheme = resolveTheme(theme);
 
-  useEffect(() => {
+  // useLayoutEffect so html.light / html.dark flips before paint (toggle must not lag).
+  useLayoutEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(resolvedTheme);

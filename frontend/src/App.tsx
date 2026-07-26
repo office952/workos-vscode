@@ -236,17 +236,17 @@ function UserMenu() {
         {initials}
       </button>
       {open && (
-        <div className="absolute right-0 top-10 w-56 bg-[#1A2236] border border-[#2A3548] rounded-lg shadow-xl overflow-hidden z-50">
-          <div className="px-3 py-2.5 border-b border-[#2A3548]">
-            <p className="text-[12px] font-semibold text-slate-200 truncate">{displayName}</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wide mt-0.5">Autentificat</p>
+        <div className="absolute right-0 top-10 w-56 bg-wo-surface-raised border border-wo-border-strong rounded-lg shadow-xl overflow-hidden z-50">
+          <div className="px-3 py-2.5 border-b border-wo-border-strong">
+            <p className="text-[12px] font-semibold text-wo-text-primary truncate">{displayName}</p>
+            <p className="text-[10px] text-wo-text-dim uppercase tracking-wide mt-0.5">Autentificat</p>
           </div>
           <button
             onClick={() => {
               setOpen(false);
               logout();
             }}
-            className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-slate-300 hover:bg-red-900/20 hover:text-red-300 transition-colors text-left"
+            className="w-full flex items-center gap-2 px-3 py-2.5 text-[12px] text-wo-text-secondary hover:bg-wo-error-muted hover:text-wo-error transition-colors text-left"
           >
             <LogOut className="w-3.5 h-3.5" />
             Deconectare
@@ -265,21 +265,21 @@ function AppShell() {
 
   return (
     <div
-      className="flex h-screen bg-[#0A0F1C] text-slate-200 overflow-hidden"
+      className="flex h-screen bg-wo-surface-app text-wo-text-primary overflow-hidden"
       data-testid="workos-desktop-shell"
       style={{ "--workos-sidebar-width": collapsed ? "60px" : "220px" } as React.CSSProperties}
     >
       {/* Sidebar */}
       <aside
         data-testid="workos-sidebar"
-        className={`relative z-30 flex shrink-0 flex-col border-r border-[#1E293B] bg-[#0D1321] transition-all duration-200 ${
+        className={`relative z-30 flex shrink-0 flex-col border-r border-wo-border-subtle bg-wo-surface-shell transition-all duration-200 ${
           collapsed ? "w-[60px]" : "w-[220px]"
         }`}
       >
         {/* Logo */}
-        <div className="flex items-center gap-2 px-4 h-[48px] border-b border-[#1E293B]">
-          <Zap className="w-5 h-5 text-blue-400 shrink-0" />
-          {!collapsed && <span className="text-[15px] font-bold tracking-tight text-slate-100">WorkOS</span>}
+        <div className="flex items-center gap-2 px-4 h-[48px] border-b border-wo-border-subtle">
+          <Zap className="w-5 h-5 text-primary shrink-0" />
+          {!collapsed && <span className="text-[15px] font-bold tracking-tight text-wo-text-primary">WorkOS</span>}
         </div>
 
         {/* Nav */}
@@ -287,7 +287,7 @@ function AppShell() {
           {navSections.map((section) => (
             <div key={section.title} className="mb-2">
               {!collapsed && (
-                <p className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-slate-600">
+                <p className="px-3 pt-2 pb-1 text-[9px] font-bold uppercase tracking-widest text-wo-text-dim">
                   {section.title}
                 </p>
               )}
@@ -304,8 +304,8 @@ function AppShell() {
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-3 py-2 rounded-md text-[13px] font-medium transition-colors ${
                         isActive
-                          ? "bg-blue-600/15 text-blue-400 border-l-2 border-blue-500"
-                          : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 border-l-2 border-transparent"
+                          ? "bg-primary/15 text-primary border-l-2 border-primary"
+                          : "text-wo-text-muted hover:text-wo-text-primary hover:bg-wo-hover border-l-2 border-transparent"
                       }`
                     }
                   >
@@ -324,7 +324,7 @@ function AppShell() {
         {/* Collapse toggle */}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="flex items-center justify-center h-10 border-t border-[#1E293B] text-slate-500 hover:text-slate-300 transition-colors"
+          className="flex items-center justify-center h-10 border-t border-wo-border-subtle text-wo-text-dim hover:text-wo-text-secondary transition-colors"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
         </button>
@@ -335,36 +335,36 @@ function AppShell() {
         {/* Top bar */}
         <header
           data-testid="workos-desktop-topbar"
-          className="flex items-center justify-between h-[48px] px-4 border-b border-[#1E293B] bg-[#0D1321]"
+          className="flex items-center justify-between h-[48px] px-4 border-b border-wo-border-subtle bg-wo-surface-shell"
         >
-          <div className="flex items-center gap-2 bg-[#111827] rounded-md px-3 py-1.5 w-72">
-            <Search className="w-3.5 h-3.5 text-slate-500" />
+          <div className="flex items-center gap-2 bg-wo-surface-input border border-wo-border-subtle rounded-md px-3 py-1.5 w-72">
+            <Search className="w-3.5 h-3.5 text-wo-text-dim" />
             <input
               id="app-global-search"
               name="app-global-search"
               type="text"
               placeholder="Search jobs, tasks, machines..."
               aria-label="Search jobs, tasks, machines"
-              className="bg-transparent text-[12px] text-slate-300 placeholder:text-slate-600 outline-none w-full"
+              className="bg-transparent text-[12px] text-wo-text-secondary placeholder:text-wo-text-dim outline-none w-full"
             />
           </div>
           <div className="flex items-center gap-3">
             {/* Compact system status — no full-width persistent strip in the work area */}
             <EnvironmentBanner />
             {criticalAlerts > 0 && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-red-900/30 border border-red-800/50 rounded text-red-400 text-[11px] font-semibold">
+              <div className="flex items-center gap-1 px-2 py-1 bg-wo-error-muted border border-wo-error/40 rounded text-wo-error text-[11px] font-semibold">
                 <AlertTriangle className="w-3 h-3" />
                 {criticalAlerts} critical
               </div>
             )}
-            <ThemeToggle compact className="text-slate-400" />
-            <button className="relative p-1.5 rounded hover:bg-slate-800 transition-colors">
-              <Bell className="w-4 h-4 text-slate-400" />
+            <ThemeToggle compact className="text-wo-text-muted" />
+            <button className="relative p-1.5 rounded hover:bg-wo-hover transition-colors">
+              <Bell className="w-4 h-4 text-wo-text-muted" />
               {criticalAlerts > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-red-500 rounded-full" />
+                <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-wo-error rounded-full" />
               )}
             </button>
-            <div className="pl-3 border-l border-[#1E293B]">
+            <div className="pl-3 border-l border-wo-border-subtle">
               <UserMenu />
             </div>
           </div>
@@ -508,9 +508,9 @@ function RuntimeStatePanel({
 }) {
   return (
     <div className="min-h-[65vh] flex items-center justify-center">
-      <div className="max-w-xl w-full rounded-xl border border-[#1E293B] bg-[#111827] p-6">
-        <h2 className="text-[18px] font-semibold text-slate-100">{title}</h2>
-        <p className="text-[13px] text-slate-400 mt-2">{description}</p>
+      <div className="max-w-xl w-full rounded-xl border border-wo-border-subtle bg-wo-surface-raised p-6">
+        <h2 className="text-[18px] font-semibold text-wo-text-primary">{title}</h2>
+        <p className="text-[13px] text-wo-text-muted mt-2">{description}</p>
         {actions ? <div className="mt-4 flex items-center gap-2 flex-wrap">{actions}</div> : null}
       </div>
     </div>
@@ -641,10 +641,10 @@ function AuthGate() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0F1C]">
+      <div className="min-h-screen flex items-center justify-center bg-wo-surface-app">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-500 mx-auto mb-3"></div>
-          <p className="text-[12px] text-slate-500">Se verifică sesiunea...</p>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary mx-auto mb-3"></div>
+          <p className="text-[12px] text-wo-text-dim">Se verifică sesiunea...</p>
         </div>
       </div>
     );
